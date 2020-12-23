@@ -4,3 +4,4 @@
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+build
