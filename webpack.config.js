@@ -64,7 +64,6 @@ module.exports = (env, argv) => {
           exclude: /node_modules/,
           use: {
             loader: require.resolve('babel-loader'),
-            options: { rootMode: 'upward' },
           },
         },
 
