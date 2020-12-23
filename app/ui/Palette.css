@@ -1,0 +1,23 @@
+.bangle-palette {
+  position: absolute;
+  background-color: var(--bg-stronger-color);
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 600px;
+  max-height: 600px;
+  overflow-y: scroll;
+  top: 0;
+}
+
+.bangle-palette input {
+  background-color: var(--bg-color);
+}
+
+@media screen and (max-width: 640px) {
+  .bangle-palette {
+    width: 100vw;
+    top: 100px;
+  }
+}

@@ -1,0 +1,19 @@
+.side-bar-row {
+  background-color: var(--bg-stronger-color);
+}
+
+.side-bar-row:hover {
+  background-color: var(--accent-color);
+}
+
+.side-bar-row.active {
+  background-color: var(--accent-2-color);
+}
+
+.side-bar-row.sticky {
+  border: 0;
+  border-top: 2px solid var(--border-color);
+}
+.side-bar-row.sticky.collapsed {
+  border: 2px solid var(--border-color);
+}
