@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-kind: [unit-tests, integration-tests]
+        test-kind: [test]
     steps:
       - uses: actions/checkout@v2
       - name: Run test "${{ matrix.test-kind }}"
