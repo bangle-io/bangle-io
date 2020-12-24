@@ -29,8 +29,6 @@ module.exports = (api) => {
 
   return {
     presets: ['@babel/preset-react', ['@babel/preset-env', envOptions]],
-    plugins: [
-      ['@babel/plugin-proposal-class-properties', { loose: true }],
-    ],
+    plugins: [['@babel/plugin-proposal-class-properties', { loose: true }]],
   };
 };

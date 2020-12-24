@@ -1,5 +1,5 @@
 import React from 'react';
-import { PluginKey } from 'prosemirror-state';
+import { PluginKey } from '@bangle.dev/prosemirror/state';
 
 import { getIdleCallback, uuid } from '@bangle.dev/core/utils/js-utils';
 import * as collab from '@bangle.dev/collab/client/collab-extension';

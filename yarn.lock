@@ -2846,17 +2846,7 @@ __metadata:
     postcss-nested: ^4.2.3
     prettier: ^2.2.1
     prop-types: ^15.7.2
-    prosemirror-commands: ^1.1.4
     prosemirror-dev-tools: "https://github.com/kepta/prosemirror-dev-tools#v3.3.4"
-    prosemirror-dropcursor: ^1.3.2
-    prosemirror-history: ^1.1.3
-    prosemirror-inputrules: ^1.1.3
-    prosemirror-model: ^1.12.0
-    prosemirror-state: ^1.3.3
-    prosemirror-tables: ^1.1.0
-    prosemirror-transform: ^1.2.8
-    prosemirror-utils: latest
-    prosemirror-view: ^1.16.3
     punycode: ^2.1.1
     react: ^16.14.0
     react-dom: ^16.14.0
@@ -8584,7 +8574,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"prosemirror-tables@npm:^1.1.0, prosemirror-tables@npm:^1.1.1":
+"prosemirror-tables@npm:^1.1.1":
   version: 1.1.1
   resolution: "prosemirror-tables@npm:1.1.1"
   dependencies:
@@ -8606,7 +8596,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"prosemirror-utils@npm:^0.9.6, prosemirror-utils@npm:latest":
+"prosemirror-utils@npm:^0.9.6":
   version: 0.9.6
   resolution: "prosemirror-utils@npm:0.9.6"
   peerDependencies:
