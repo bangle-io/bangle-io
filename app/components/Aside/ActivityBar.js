@@ -1,7 +1,7 @@
 import React from 'react';
 import { StackButton } from '../Button';
 import PropTypes from 'prop-types';
-import { UIActions } from 'bangle-play/app/store/UIContext';
+import { UIActions } from 'bangle-io/app/store/UIContext';
 
 export class ActivityBar extends React.PureComponent {
   static propTypes = {

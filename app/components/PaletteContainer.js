@@ -1,7 +1,7 @@
 import React from 'react';
 import { CommandPalette } from './CommandPalette/CommandPalette';
 import { FilePalette } from './FilePalette/FilePalette';
-import { UIActions, UIContext } from 'bangle-play/app/store/UIContext';
+import { UIActions, UIContext } from 'bangle-io/app/store/UIContext';
 import { Palette } from '../ui/Palette';
 import { WorkspacePalette } from './Palettes/WorkspacePalette';
 import { keybindingsHelper } from '../misc/keybinding-helper';

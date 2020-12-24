@@ -1,7 +1,7 @@
 {
-  "name": "bangle-play",
+  "name": "bangle-io",
   "version": "0.1.14",
-  "homepage": "https://bangle.dev",
+  "homepage": "https://bangle.io",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -12,10 +12,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle.dev.git"
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
   },
   "bugs": {
-    "url": "https://github.com/bangle-io/bangle.dev/issues"
+    "url": "https://github.com/bangle-io/bangle-io/issues"
   },
   "private": true,
   "scripts": {

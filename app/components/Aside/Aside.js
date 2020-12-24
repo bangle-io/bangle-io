@@ -2,7 +2,7 @@ import './aside.css';
 import React from 'react';
 import { ActivityBar } from './ActivityBar';
 import { FileBrowser } from './FileBrowser';
-import { UIContext } from 'bangle-play/app/store/UIContext';
+import { UIContext } from 'bangle-io/app/store/UIContext';
 
 export class Aside extends React.PureComponent {
   render() {

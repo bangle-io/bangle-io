@@ -1,4 +1,4 @@
-// // import { fileDb } from 'bangle-play/app/components/native-file-api/disk';
+// // import { fileDb } from 'bangle-io/app/components/native-file-api/disk';
 // import localforage from 'localforage';
 
 // export const activeDatabaseInstance = localforage.createInstance({

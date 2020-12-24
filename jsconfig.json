@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "bangle-io/*": ["./*"]
+    },
+    "module": "es2020",
+    "target": "esnext"
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    "archive",
+    "public",
+    ".cache",
+    ".yarn",
+    "coverage",
+    ".pnp.js"
+  ]
+}

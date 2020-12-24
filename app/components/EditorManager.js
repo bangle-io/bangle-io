@@ -8,7 +8,7 @@ import { defaultContent } from './constants';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
 import { specRegistry } from '../editor/spec-sheet';
-import { config } from 'bangle-play/config';
+import { config } from 'bangle-io/config';
 import { WorkspacesInfo } from '../workspace/workspaces-info';
 import { IndexDbWorkspace } from '../workspace/workspace';
 
