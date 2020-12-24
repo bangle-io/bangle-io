@@ -3,7 +3,7 @@ module.exports = {
     testPathIgnorePatterns: [
       `<rootDir>/.yarn`,
     ],
-    transformIgnorePatterns: ['node_modules/(?!(@popperjs)/)'],
+    transformIgnorePatterns: [],
     coverageReporters: ['json', 'lcov', 'text', 'clover'],
     coveragePathIgnorePatterns: [
       `<rootDir>/.yarn`,
@@ -16,5 +16,6 @@ module.exports = {
       '\\.(css)$': '<rootDir>/_scripts/styleMock.js',
     },
     testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
+
   };
   
