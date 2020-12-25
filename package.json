@@ -23,7 +23,8 @@
     "start": "yarn webpack serve --env development",
     "build": "NODE_ENV=production yarn webpack --env production",
     "build-serve": "yarn build && yarn run serve build",
-    "snapshot": "yarn build && yarn node ./_bangle-scripts/snapshot"
+    "snapshot": "yarn build && yarn node ./scripts/snapshot",
+    "remove-portals": "yarn node ./_scripts/remove-portals && yarn install"
   },
   "browserslist": [
     "last 3 chrome version"
