@@ -19,7 +19,8 @@
   },
   "private": true,
   "scripts": {
-    "test": "jest",
+    "lint": "yarn prettier --check . && yarn eslint .",
+    "test": "yarn lint && yarn jest",
     "start": "yarn webpack serve --env development",
     "build": "NODE_ENV=production yarn webpack --env production",
     "build-serve": "yarn build && yarn run serve build",

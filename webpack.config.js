@@ -7,6 +7,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
   const mode = isProduction ? 'production' : 'development';
+  // eslint-disable-next-line no-process-env
   if (isProduction && process.env.NODE_ENV !== 'production') {
     throw new Error('NODE_ENV not production');
   }
