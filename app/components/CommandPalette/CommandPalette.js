@@ -1,5 +1,4 @@
 import React from 'react';
-import { UIContext } from 'bangle-io/app/store/UIContext';
 import PropTypes from 'prop-types';
 import { commands } from './commands';
 import { Palette } from 'bangle-io/app/ui/Palette';
@@ -16,8 +15,6 @@ export class CommandPalette extends React.PureComponent {
     execute: PropTypes.bool,
     onDismiss: PropTypes.func.isRequired,
   };
-
-  static contextType = UIContext;
 
   renderInputTypeCommand = () => {
     const { type, query } = this.props;
@@ -40,8 +37,6 @@ export class CommandPalette extends React.PureComponent {
         isActive={false}
         execute={this.props.execute}
         onDismiss={this.props.onDismiss}
-        updateUIContext={this.context.updateUIContext}
-        updateWorkspaceContext={this.context.updateWorkspaceContext}
       />
     );
   };
@@ -63,8 +58,9 @@ export class CommandPalette extends React.PureComponent {
           isActive={isActive}
           execute={isActive && this.props.execute}
           onDismiss={this.props.onDismiss}
-          updateUIContext={this.context.updateUIContext}
-          updateWorkspaceContext={this.context.updateWorkspaceContext}
+          updateWorkspaceContext={() => {
+            console.log('stub');
+          }}
         />
       );
     });

@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { UIActions } from '../../store/UIContext';
-import { workspaceActions } from '../../workspace/WorkspaceContext';
 import { SideBarRow } from '../Aside/SideBarRow';
 import { INDEXDB_TYPE, NATIVE_FS_TYPE } from '../../workspace/type-helpers';
 import { readFile } from '../../../app/misc/index';
+import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 
 export const commands = Object.entries(Commands());
 
@@ -16,9 +15,10 @@ function Commands() {
       keywords: '',
       keyboardShortcut: '',
       priority: 10,
-
-      onExecute: ({ updateUIContext, onDismiss }) => {
-        updateUIContext(UIActions.toggleTheme());
+      onExecute: ({ onDismiss, context }) => {
+        context.dispatch({
+          type: 'UI/TOGGLE_THEME',
+        });
         onDismiss();
       },
     }),
@@ -30,8 +30,10 @@ function Commands() {
       keyboardShortcut: '',
       priority: 10,
 
-      onExecute: ({ updateUIContext, onDismiss }) => {
-        updateUIContext(UIActions.toggleSidebar());
+      onExecute: ({ context, onDismiss }) => {
+        context.dispatch({
+          type: 'UI/TOGGLE_SIDEBAR',
+        });
         onDismiss();
       },
     }),
@@ -45,7 +47,7 @@ function Commands() {
       priority: 10,
 
       onExecute: ({ updateWorkspaceContext, onDismiss }) => {
-        updateWorkspaceContext(workspaceActions.openBlankWorkspaceFile());
+        // updateWorkspaceContext(workspaceActions.openBlankWorkspaceFile());
         onDismiss();
       },
     }),
@@ -59,11 +61,11 @@ function Commands() {
       onExecute: ({ updateUIContext, updateWorkspaceContext, onDismiss }) => {
         // dismiss to reset the execute prop on the parent component
         onDismiss();
-        updateUIContext(
-          UIActions.openPalette(
-            'command/input/WorkspaceContext.newBrowserWorkspaceInput',
-          ),
-        );
+        // updateUIContext(
+        //   UIActions.openPalette(
+        //     'command/input/WorkspaceContext.newBrowserWorkspaceInput',
+        //   ),
+        // );
       },
     }),
 
@@ -75,9 +77,9 @@ function Commands() {
       keyboardShortcut: '',
       priority: 10,
       onExecute: ({ updateWorkspaceContext, onDismiss, query }) => {
-        updateWorkspaceContext(
-          workspaceActions.createNewIndexDbWorkspace(query, INDEXDB_TYPE),
-        );
+        // updateWorkspaceContext(
+        //   workspaceActions.createNewIndexDbWorkspace(query, INDEXDB_TYPE),
+        // );
         onDismiss();
       },
     }),
@@ -91,11 +93,11 @@ function Commands() {
       onExecute: ({ updateUIContext, updateWorkspaceContext, onDismiss }) => {
         // dismiss to reset the execute prop on the parent component
         onDismiss();
-        updateUIContext(
-          UIActions.openPalette(
-            'command/input/WorkspaceContext.newNativeWorkspaceInput',
-          ),
-        );
+        // updateUIContext(
+        //   UIActions.openPalette(
+        //     'command/input/WorkspaceContext.newNativeWorkspaceInput',
+        //   ),
+        // );
       },
     }),
 
@@ -107,9 +109,9 @@ function Commands() {
       keyboardShortcut: '',
       priority: 10,
       onExecute: ({ updateWorkspaceContext, onDismiss, query }) => {
-        updateWorkspaceContext(
-          workspaceActions.createNewIndexDbWorkspace(query, NATIVE_FS_TYPE),
-        );
+        // updateWorkspaceContext(
+        //   workspaceActions.createNewIndexDbWorkspace(query, NATIVE_FS_TYPE),
+        // );
         onDismiss();
       },
     }),
@@ -122,7 +124,7 @@ function Commands() {
       priority: 10,
       onExecute: ({ updateUIContext, updateWorkspaceContext, onDismiss }) => {
         onDismiss();
-        updateUIContext(UIActions.openPalette('workspace'));
+        // updateUIContext(UIActions.openPalette('workspace'));
       },
     }),
     'WorkspaceContext.restoreIndexdbWorkspaceFromBackup': restoreWorkspaceFromBackup(
@@ -154,7 +156,7 @@ function Commands() {
       keyboardShortcut: '',
       priority: 10,
       onExecute: ({ updateWorkspaceContext, onDismiss }) => {
-        updateWorkspaceContext(workspaceActions.takeWorkspaceBackup());
+        // updateWorkspaceContext(workspaceActions.takeWorkspaceBackup());
         onDismiss();
       },
     }),
@@ -166,7 +168,7 @@ function Commands() {
       priority: 10,
 
       onExecute: ({ updateWorkspaceContext, onDismiss }) => {
-        updateWorkspaceContext(workspaceActions.deleteCurrentWorkspace());
+        // updateWorkspaceContext(workspaceActions.deleteCurrentWorkspace());
         onDismiss();
       },
     }),
@@ -181,11 +183,11 @@ function Commands() {
       onExecute: ({ updateUIContext, onDismiss }) => {
         // dismiss to reset the execute prop on the parent component
         onDismiss();
-        updateUIContext(
-          UIActions.openPalette(
-            'command/input/WorkspaceContext.renameCurrentWorkspaceInput',
-          ),
-        );
+        // updateUIContext(
+        //   UIActions.openPalette(
+        //     'command/input/WorkspaceContext.renameCurrentWorkspaceInput',
+        //   ),
+        // );
       },
     }),
 
@@ -198,7 +200,7 @@ function Commands() {
       priority: 10,
 
       onExecute: ({ updateWorkspaceContext, onDismiss, query }) => {
-        updateWorkspaceContext(workspaceActions.renameCurrentWorkspace(query));
+        // updateWorkspaceContext(workspaceActions.renameCurrentWorkspace(query));
         onDismiss();
       },
     }),
@@ -220,12 +222,12 @@ function queryMatch(command, query) {
 
 function commandRenderHOC(command) {
   const component = class CommandRenderUI extends React.PureComponent {
+    static contextType = EditorManagerContext;
     static propTypes = {
       query: PropTypes.string.isRequired,
       isActive: PropTypes.bool.isRequired,
       execute: PropTypes.bool.isRequired,
       onDismiss: PropTypes.func.isRequired,
-      updateUIContext: PropTypes.func.isRequired,
       updateWorkspaceContext: PropTypes.func.isRequired,
     };
 
@@ -257,8 +259,7 @@ function commandRenderHOC(command) {
 
     onExecuteItem = () => {
       command.onExecute({
-        updateUIContext: this.props.updateUIContext,
-        updateWorkspaceContext: this.props.updateWorkspaceContext,
+        context: this.context,
         onDismiss: this.props.onDismiss,
         query: this.props.query,
       });
@@ -287,7 +288,6 @@ function restoreWorkspaceFromBackup(command, type) {
       isActive: PropTypes.bool.isRequired,
       execute: PropTypes.bool.isRequired,
       onDismiss: PropTypes.func.isRequired,
-      updateUIContext: PropTypes.func.isRequired,
       updateWorkspaceContext: PropTypes.func.isRequired,
     };
 
@@ -335,9 +335,9 @@ function restoreWorkspaceFromBackup(command, type) {
               const fileList = event.target.files;
               try {
                 const file = JSON.parse(await readFile(fileList[0]));
-                this.props.updateWorkspaceContext(
-                  workspaceActions.newWorkspaceFromBackup(file, type),
-                );
+                // this.props.updateWorkspaceContext(
+                //   workspaceActions.newWorkspaceFromBackup(file, type),
+                // );
               } catch (error) {
                 console.error(error);
                 alert('Error reading file');

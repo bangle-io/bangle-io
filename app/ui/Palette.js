@@ -104,7 +104,10 @@ class PaletteElement extends React.PureComponent {
         return;
       }
       this.props.onDismiss();
-      this.destroyWatchClickOutside();
+
+      if (this.destroyWatchClickOutside) {
+        this.destroyWatchClickOutside();
+      }
       return;
     };
     document.addEventListener('click', onClickOutside);

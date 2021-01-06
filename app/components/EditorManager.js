@@ -7,8 +7,8 @@ import {
 import { defaultContent } from './constants';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
-import { specRegistry } from '../editor/spec-sheet';
 import { config } from 'bangle-io/config';
+import { specRegistry } from '../editor/spec-sheet';
 import { WorkspacesInfo } from '../workspace/workspaces-info';
 import { IndexDbWorkspace } from '../workspace/workspace';
 
@@ -26,6 +26,7 @@ async function findMatchingWorkspace(docName, schema) {
     }
   }
 }
+
 export class EditorManager extends React.PureComponent {
   static contextType = WorkspaceContext;
 

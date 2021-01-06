@@ -1,37 +1,95 @@
-import React, {
-  useEffect,
-  useState,
-  useReducer,
-  useMemo,
-  useCallback,
-} from 'react';
+import React, { useEffect, useState, useReducer, useCallback } from 'react';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
 import { specRegistry } from '../editor/spec-sheet';
 import { defaultContent } from '../components/constants';
+import { applyTheme } from '../style/apply-theme';
+import { getDoc, saveDoc } from './Workspace';
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
-const DOCNAME = 'bangle-61:8o4fja';
+const WS_NAME = 'test3';
+const DOC_NAME = '0qioz1';
+const WS_PATH = WS_NAME + ':' + DOC_NAME;
 
 export const EditorManagerContext = React.createContext();
+const DEFAULT_PALETTE = 'file';
+
+const reducer = (state, action) => {
+  log('Received', action.type, { action });
+  switch (action.type) {
+    case 'UI/TOGGLE_SIDEBAR': {
+      return {
+        ...state,
+        sidebar: !state.sidebar,
+      };
+    }
+    case 'UI/OPEN_PALETTE': {
+      return {
+        ...state,
+        paletteType: action.paletteType || DEFAULT_PALETTE,
+      };
+    }
+    case 'UI/TOGGLE_PALETTE': {
+      return {
+        ...state,
+        paletteType: state.paletteType
+          ? undefined
+          : action.paletteType || DEFAULT_PALETTE,
+      };
+    }
+    case 'UI/CLOSE_PALETTE': {
+      return {
+        ...state,
+        paletteType: undefined,
+      };
+    }
+    case 'UI/TOGGLE_THEME': {
+      const theme = state.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', theme);
+      applyTheme(theme);
+      return {
+        ...state,
+        theme,
+      };
+    }
+    case 'WORKSPACE/OPEN_DOC': {
+      return {
+        ...state,
+        openedDocs: [
+          {
+            key: state.openedDocs[0].key + 1,
+            wsPath: WS_NAME + ':' + action.docName,
+          },
+        ],
+      };
+    }
+
+    default:
+      throw new Error(`Unrecognized action "${action.type}"`);
+  }
+};
 
 export function EditorManager({ children }) {
   const { sendRequest } = useManager();
 
-  const reducer = useMemo(
-    () => (state, action) => {
-      return state;
+  const [editorManagerState, dispatch] = useReducer(
+    reducer,
+    {
+      sendRequest,
+      openedDocs: [{ key: 1, wsPath: WS_PATH }],
+      // UI
+      sidebar: false,
+      paletteType: undefined,
+      theme: localStorage.getItem('theme') || 'light',
+      wsName: WS_NAME,
     },
-    [],
+    (store) => {
+      applyTheme(store.theme);
+      return store;
+    },
   );
-
-  const [editorManagerState, dispatch] = useReducer(reducer, {
-    openedDocs: [{ key: 1, docName: DOCNAME }],
-    sendRequest,
-  });
-
   return (
     <EditorManagerContext.Provider value={{ editorManagerState, dispatch }}>
       {children}
@@ -64,20 +122,15 @@ function useManager() {
 
 function localDisk(defaultContent) {
   return new LocalDisk({
-    getItem: async (docName) => {
-      const saved = localStorage.getItem(docName);
-      if (!saved) {
-        log('not found', docName);
+    getItem: async (wsPath) => {
+      const doc = await getDoc(wsPath);
+      if (!doc) {
         return defaultContent;
       }
-      log('getting', docName, JSON.parse(saved));
-
-      return JSON.parse(saved);
+      return doc;
     },
-    setItem: async (docName, doc) => {
-      const docJson = doc.toJSON();
-      log('setitem', docName);
-      localStorage.setItem(docName, JSON.stringify(docJson));
+    setItem: async (wsPath, doc) => {
+      await saveDoc(wsPath, doc);
     },
   });
 }
