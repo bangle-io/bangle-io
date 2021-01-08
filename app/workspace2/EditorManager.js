@@ -10,7 +10,7 @@ const LOG = true;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
 const WS_NAME = 'test3';
-const DOC_NAME = '0qioz1';
+const DOC_NAME = 'dslkqk';
 const WS_PATH = WS_NAME + ':' + DOC_NAME;
 
 export const EditorManagerContext = React.createContext();
@@ -59,8 +59,40 @@ const reducer = (state, action) => {
         ...state,
         openedDocs: [
           {
-            key: state.openedDocs[0].key + 1,
-            wsPath: WS_NAME + ':' + action.docName,
+            key: (state.openedDocs[0]?.key || 0) + 1,
+            wsPath: state.wsName + ':' + action.docName,
+          },
+        ],
+      };
+    }
+
+    case 'WORKSPACE/IS_PERMISSION_PROMPT_ACTIVE': {
+      return {
+        ...state,
+        wsIsPermissionPromptActive: action.value,
+      };
+    }
+
+    case 'WORKSPACE/CLOSE_DOC': {
+      return {
+        ...state,
+        openedDocs: action.openedDocs,
+      };
+    }
+    case 'WORKSPACE/OPEN': {
+      return {
+        ...state,
+        wsName: action.wsName,
+        openedDocs: [],
+      };
+    }
+    case 'WORKSPACE/OPEN_WS_PATH': {
+      return {
+        ...state,
+        openedDocs: [
+          {
+            key: (state.openedDocs[0]?.key || 0) + 1,
+            wsPath: action.wsPath,
           },
         ],
       };
@@ -84,12 +116,16 @@ export function EditorManager({ children }) {
       paletteType: undefined,
       theme: localStorage.getItem('theme') || 'light',
       wsName: WS_NAME,
+      wsIsPermissionPromptActive: false,
     },
     (store) => {
       applyTheme(store.theme);
       return store;
     },
   );
+
+  window.editorManagerState = editorManagerState;
+
   return (
     <EditorManagerContext.Provider value={{ editorManagerState, dispatch }}>
       {children}
@@ -124,6 +160,7 @@ function localDisk(defaultContent) {
   return new LocalDisk({
     getItem: async (wsPath) => {
       const doc = await getDoc(wsPath);
+
       if (!doc) {
         return defaultContent;
       }

@@ -1,35 +1,40 @@
 import './aside.css';
 import React, { useCallback, useContext } from 'react';
-import PropTypes from 'prop-types';
 import { SideBar } from './SideBar';
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
 import { BaseButton } from '../Button';
 import 'css.gg/icons/css/chevron-down.css';
 import { ChevronDown, ChevronRight } from '../Icons/index';
-import {
-  workspaceActions,
-  WorkspaceContext,
-} from '../../workspace/WorkspaceContext';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
-import { useGetWorkspaceFiles } from 'bangle-io/app/workspace2/Workspace';
+import {
+  useCreateNewFile,
+  useDeleteByDocName,
+  useGetWorkspaceFiles,
+  pathHelpers,
+} from 'bangle-io/app/workspace2/Workspace';
 
-FileBrowser.propTypes = {
-  toggleTheme: PropTypes.func.isRequired,
-  toggleSidebar: PropTypes.func.isRequired,
-};
+FileBrowser.propTypes = {};
 
-export function FileBrowser({ toggleTheme }) {
+export function FileBrowser() {
   const files = useGetWorkspaceFiles();
+  const createNewFile = useCreateNewFile();
+  const deleteByDocName = useDeleteByDocName();
   const {
     dispatch,
     editorManagerState: { wsName, openedDocs },
   } = useContext(EditorManagerContext);
 
-  const openNew = useCallback(() => {
+  const toggleTheme = () =>
     dispatch({
-      type: 'WORKSPACE/OPEN_NEW_DOC',
+      type: 'UI/TOGGLE_THEME',
     });
-  }, [dispatch]);
+
+  const openNew = useCallback(() => {
+    createNewFile();
+    dispatch({
+      type: 'UI/TOGGLE_SIDEBAR',
+    });
+  }, [dispatch, createNewFile]);
 
   return (
     <SideBar
@@ -53,7 +58,9 @@ export function FileBrowser({ toggleTheme }) {
               });
             }}
             title={item.title}
-            isActive={openedDocs.find((r) => r.wsPath === item.docName)}
+            isActive={openedDocs.find(
+              (r) => pathHelpers.resolve(r.wsPath).docName === item.docName,
+            )}
             rightIcon={[
               <BaseButton
                 key="delete"
@@ -61,9 +68,9 @@ export function FileBrowser({ toggleTheme }) {
                 faType="fas fa-times-circle "
                 onClick={async (e) => {
                   e.stopPropagation();
+                  deleteByDocName(item.docName);
                   dispatch({
-                    type: 'WORKSPACE/DELETE_DOC',
-                    docName: item.docName,
+                    type: 'UI/TOGGLE_SIDEBAR',
                   });
                 }}
               />,
@@ -73,71 +80,4 @@ export function FileBrowser({ toggleTheme }) {
       </CollapsibleSideBarRow>
     </SideBar>
   );
-}
-
-export class FileBrowser2 extends React.PureComponent {
-  static contextType = WorkspaceContext;
-  static propTypes = {
-    toggleTheme: PropTypes.func.isRequired,
-    toggleSidebar: PropTypes.func.isRequired,
-  };
-
-  openNew = async () => {
-    await this.context.updateContext(workspaceActions.openBlankWorkspaceFile());
-    this.props.toggleSidebar();
-  };
-
-  downloadBackup = async () => {};
-
-  generateRows = () => {
-    if (!this.context.workspace) {
-      return;
-    }
-    const { updateContext, openedDocuments, workspace } = this.context;
-    let files = workspace.files;
-
-    const children = files.map((item) => (
-      <SideBarRow
-        key={item.docName}
-        onClick={() =>
-          updateContext(workspaceActions.openWorkspaceFile(item.docName))
-        }
-        title={item.title}
-        isActive={openedDocuments.find((r) => r.docName === item.docName)}
-        rightIcon={[
-          <BaseButton
-            key="delete"
-            className="text-gray-600 hover:text-gray-900"
-            faType="fas fa-times-circle "
-            onClick={async (e) => {
-              e.stopPropagation();
-              updateContext(workspaceActions.deleteWorkspaceFile(item.docName));
-            }}
-          />,
-        ]}
-      />
-    ));
-
-    return (
-      <CollapsibleSideBarRow
-        title={this.context.workspace.name}
-        isSticky={true}
-        leftIcon={<ChevronDown style={{ width: 16, height: 16 }} />}
-        activeLeftIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
-      >
-        {children}
-      </CollapsibleSideBarRow>
-    );
-  };
-  render() {
-    return (
-      <SideBar
-        openNew={this.openNew}
-        toggleTheme={this.props.toggleTheme}
-        downloadBackup={this.downloadBackup}
-      >
-        {this.generateRows()}
-      </SideBar>
-    );
-  }
 }

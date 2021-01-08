@@ -186,6 +186,7 @@ export const workspaceActions = {
 
 const reducers = (value, { type, payload }) => {
   let newValue = value;
+  console.log(value);
   if (type === 'NO_OP') {
   } else if (type === 'ERROR') {
     // TODO implement me ? reset state?

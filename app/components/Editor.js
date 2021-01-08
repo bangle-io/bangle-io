@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
 
 import { getIdleCallback, uuid } from '@bangle.dev/core/utils/js-utils';
@@ -39,7 +39,7 @@ export function Editor({ isFirst, docName }) {
       clientId: 'client-' + uuid(4),
 
       async getDocument({ docName, userId }) {
-        log({ docName, userId });
+        // log({ docName, userId });
         return sendRequest('get_document', {
           docName,
           userId,
@@ -47,7 +47,7 @@ export function Editor({ isFirst, docName }) {
       },
 
       async pullEvents({ version, docName, userId }) {
-        log({ version, docName, userId });
+        // log({ version, docName, userId });
         return sendRequest('get_events', {
           docName,
           version,
@@ -56,7 +56,7 @@ export function Editor({ isFirst, docName }) {
       },
 
       async pushEvents({ version, steps, clientID, docName, userId }) {
-        log({ version, steps, clientID, docName, userId });
+        // log({ version, steps, clientID, docName, userId });
         return sendRequest('push_events', {
           clientID,
           version,
@@ -161,6 +161,7 @@ export function Editor({ isFirst, docName }) {
     specRegistry,
   });
 
+  useEffect(() => log('mounting editor', docName), [docName]);
   return (
     <BangleEditor
       state={editorState}

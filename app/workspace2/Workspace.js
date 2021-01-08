@@ -1,13 +1,18 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
 import { specRegistry } from '../editor/spec-sheet';
 import { IndexDbWorkspace } from '../workspace/workspace';
 import { WorkspacesInfo } from '../workspace/workspaces-info';
 import { EditorManagerContext } from './EditorManager';
+import { uuid } from '@bangle.dev/core/utils/js-utils';
+import {
+  hasPermissions,
+  requestPermission as requestFilePermission,
+} from '../workspace/native-fs-driver';
 
 const pathValidRegex = /^[0-9a-zA-Z_\-. /:]+$/;
 const last = (arr) => arr[arr.length - 1];
 
-const pathHelpers = {
+export const pathHelpers = {
   validPath(wsPath) {
     if (
       !pathValidRegex.test(wsPath) ||
@@ -18,10 +23,10 @@ const pathHelpers = {
     }
 
     if ((wsPath.match(/:/g) || []).length !== 1) {
-      console.log(wsPath);
       throw new Error('Path must have only 1 :');
     }
   },
+
   resolve(wsPath) {
     const [wsName, filePath] = wsPath.split(':');
 
@@ -50,15 +55,8 @@ export async function saveDoc(wsPath, doc) {
   const { docName, wsName } = pathHelpers.resolve(wsPath);
 
   const docJson = doc.toJSON();
-  const availableWorkspacesInfo = await WorkspacesInfo.list();
-  const workspaceInfo = availableWorkspacesInfo.find(
-    ({ name }) => name === wsName,
-  );
 
-  const workspace = await IndexDbWorkspace.openExistingWorkspace(
-    workspaceInfo,
-    specRegistry.schema,
-  );
+  const workspace = await getWorkspace(wsName);
 
   const workspaceFile = workspace.getFile(docName);
 
@@ -68,17 +66,10 @@ export async function saveDoc(wsPath, doc) {
   }
 }
 
-export async function getFile(wsPath = 'test3:0qioz1') {
+export async function getFile(wsPath = 'test3:dslkqk') {
   pathHelpers.validPath(wsPath);
   const { docName, wsName, filePath } = pathHelpers.resolve(wsPath);
-  const availableWorkspacesInfo = await WorkspacesInfo.list();
-  const workspaceInfo = availableWorkspacesInfo.find(
-    ({ name }) => name === wsName,
-  );
-  const workspace = await IndexDbWorkspace.openExistingWorkspace(
-    workspaceInfo,
-    specRegistry.schema,
-  );
+  const workspace = await getWorkspace(wsName);
 
   if (!workspace.hasFile(filePath)) {
     console.log({ docName, workspace });
@@ -89,16 +80,36 @@ export async function getFile(wsPath = 'test3:0qioz1') {
 }
 
 export async function getFiles(wsName = 'test3') {
+  const workspace = await getWorkspace(wsName);
+  return workspace.files;
+}
+
+export async function getWorkspaceInfo(wsName) {
   const availableWorkspacesInfo = await WorkspacesInfo.list();
   const workspaceInfo = availableWorkspacesInfo.find(
     ({ name }) => name === wsName,
   );
-  const workspace = await IndexDbWorkspace.openExistingWorkspace(
+  return workspaceInfo;
+}
+
+export async function getWorkspace(wsName) {
+  const workspaceInfo = await getWorkspaceInfo(wsName);
+  return IndexDbWorkspace.openExistingWorkspace(
     workspaceInfo,
     specRegistry.schema,
   );
+}
 
-  return workspace.files;
+async function wsQueryPermission(wsName) {
+  const workspaceInfo = await getWorkspaceInfo(wsName);
+  if (!workspaceInfo.metadata.dirHandle) {
+    return true;
+  }
+  const result = Boolean(
+    await hasPermissions(workspaceInfo.metadata.dirHandle),
+  );
+
+  return result;
 }
 
 export function useGetWorkspaceFiles() {
@@ -107,11 +118,182 @@ export function useGetWorkspaceFiles() {
   } = useContext(EditorManagerContext);
   const [files, setFiles] = useState([]);
 
-  useEffect(() => {
+  const refreshFiles = useCallback(() => {
     getFiles(wsName).then((items) => {
       setFiles(items);
     });
   }, [wsName]);
 
+  useEffect(() => {
+    refreshFiles();
+  }, [refreshFiles]);
+
   return files;
+}
+
+// TODO does it really need to be a hook
+export function useCreateNewFile() {
+  const {
+    editorManagerState: { wsName },
+    dispatch,
+  } = useContext(EditorManagerContext);
+
+  const createNewFile = useCallback(async () => {
+    const docName = uuid(6);
+    const workspace = await getWorkspace(wsName);
+    const newFile = await workspace.createFile(docName, null);
+    workspace.linkFile(newFile);
+    dispatch({
+      type: 'WORKSPACE/OPEN_WS_PATH',
+      wsPath: workspace.name + ':' + newFile.docName,
+    });
+  }, [dispatch, wsName]);
+
+  return createNewFile;
+}
+
+export function useDeleteByDocName() {
+  const {
+    editorManagerState: { wsName, openedDocs },
+    dispatch,
+  } = useContext(EditorManagerContext);
+
+  const deleteByDocName = useCallback(
+    async (docName) => {
+      let workspace = await getWorkspace(wsName);
+      const workspaceFile = workspace.getFile(docName);
+      if (workspaceFile) {
+        await workspaceFile.delete();
+        workspace = workspace.unlinkFile(workspaceFile);
+
+        const newFiles = openedDocs.filter(({ wsPath }) =>
+          workspace.files.find((w) => w.wsPath === wsPath),
+        );
+        dispatch({
+          type: 'WORKSPACE/CLOSE_DOC',
+          openedDocs: newFiles,
+        });
+      }
+    },
+    [wsName, dispatch, openedDocs],
+  );
+
+  return deleteByDocName;
+}
+
+export function useWorkspaces() {
+  const { dispatch } = useContext(EditorManagerContext);
+  // Array<string>
+  const [workspaces, updateWorkspaces] = useState([]);
+  const refreshWorkspaceList = useCallback(() => {
+    WorkspacesInfo.list().then((workspaces) => {
+      updateWorkspaces(workspaces.map((w) => w.name));
+    });
+  }, []);
+
+  const openWorkspace = useCallback(
+    async (wsName, autoOpenFile = false) => {
+      dispatch({
+        type: 'WORKSPACE/OPEN',
+        wsName,
+      });
+
+      if (autoOpenFile) {
+        const permission = await wsQueryPermission(wsName);
+        try {
+          if (!permission) {
+            dispatch({
+              type: 'WORKSPACE/IS_PERMISSION_PROMPT_ACTIVE',
+              value: true,
+            });
+          }
+
+          const files = await getFiles(wsName);
+          if (files[0]) {
+            dispatch({
+              type: 'WORKSPACE/OPEN_WS_PATH',
+              wsPath: wsName + ':' + files[0].docName,
+            });
+          }
+        } catch (err) {
+          if (err.name === 'NoPermissionError') {
+            console.error(err);
+          }
+        }
+        if (!permission) {
+          dispatch({
+            type: 'WORKSPACE/IS_PERMISSION_PROMPT_ACTIVE',
+            value: false,
+          });
+        }
+      }
+    },
+    [dispatch],
+  );
+
+  useEffect(() => {
+    refreshWorkspaceList();
+  }, [refreshWorkspaceList]);
+
+  return {
+    workspaces,
+    refreshWorkspaceList,
+    openWorkspace,
+  };
+}
+
+export function useWorkspacePermission() {
+  const {
+    editorManagerState: { wsName, wsIsPermissionPromptActive },
+  } = useContext(EditorManagerContext);
+  const [permission, setPermission] = useState();
+
+  useEffect(() => {
+    setPermission(undefined);
+    wsQueryPermission(wsName).then((result) => {
+      setPermission(result ? 'granted' : 'rejected');
+    });
+  }, [wsName, wsIsPermissionPromptActive]);
+
+  const requestPermission = useCallback(async () => {
+    if (permission === 'granted') {
+      return true;
+    }
+    const workspaceInfo = await getWorkspaceInfo(wsName);
+    if (!workspaceInfo.metadata.dirHandle) {
+      setPermission('granted');
+      return true;
+    }
+    const isGranted = await requestFilePermission(
+      workspaceInfo.metadata.dirHandle,
+    );
+    if (isGranted) {
+      setPermission('granted');
+      return true;
+    } else {
+      setPermission('rejected');
+      return false;
+    }
+  }, [wsName, permission]);
+
+  return [permission, requestPermission];
+}
+
+export function useWorkspaceFiles() {
+  const {
+    editorManagerState: { wsName },
+  } = useContext(EditorManagerContext);
+  const [files, setFiles] = useState([]);
+
+  const refreshFiles = useCallback(() => {
+    getFiles(wsName).then((items) => {
+      setFiles(items);
+    });
+  }, [wsName]);
+
+  useEffect(() => {
+    refreshFiles();
+  }, [refreshFiles]);
+
+  return [files, { refreshFiles }];
 }
