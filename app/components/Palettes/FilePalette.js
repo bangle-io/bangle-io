@@ -18,7 +18,7 @@ FilePalette.propTypes = {
 
 export function FilePalette({ execute, onDismiss, query, counter }) {
   const { dispatch } = useContext(EditorManagerContext);
-  const files = useGetWorkspaceFiles();
+  const [files] = useGetWorkspaceFiles();
   const items = getItems({ query, files });
 
   const onExecuteItem = useCallback(

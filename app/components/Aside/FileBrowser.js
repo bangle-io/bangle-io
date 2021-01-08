@@ -16,7 +16,7 @@ import {
 FileBrowser.propTypes = {};
 
 export function FileBrowser() {
-  const files = useGetWorkspaceFiles();
+  const [files] = useGetWorkspaceFiles();
   const createNewFile = useCreateNewFile();
   const deleteByDocName = useDeleteByDocName();
   const {

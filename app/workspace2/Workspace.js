@@ -80,7 +80,11 @@ export async function getFile(wsPath = 'test3:dslkqk') {
 }
 
 export async function getFiles(wsName = 'test3') {
+  console.time('getFiles');
+
   const workspace = await getWorkspace(wsName);
+  console.timeEnd('getFiles');
+
   return workspace.files;
 }
 
@@ -90,6 +94,18 @@ export async function getWorkspaceInfo(wsName) {
     ({ name }) => name === wsName,
   );
   return workspaceInfo;
+}
+
+const cache = new Map();
+export async function getWorkspaceInfoCached(wsName) {
+  const promise = getWorkspaceInfo(wsName).then((result) => {
+    cache.set(wsName, result);
+  });
+
+  if (!cache.has(wsName)) {
+    await promise;
+  }
+  return cache.get(wsName);
 }
 
 export async function getWorkspace(wsName) {
@@ -128,7 +144,7 @@ export function useGetWorkspaceFiles() {
     refreshFiles();
   }, [refreshFiles]);
 
-  return files;
+  return [files, refreshFiles];
 }
 
 // TODO does it really need to be a hook
@@ -277,23 +293,4 @@ export function useWorkspacePermission() {
   }, [wsName, permission]);
 
   return [permission, requestPermission];
-}
-
-export function useWorkspaceFiles() {
-  const {
-    editorManagerState: { wsName },
-  } = useContext(EditorManagerContext);
-  const [files, setFiles] = useState([]);
-
-  const refreshFiles = useCallback(() => {
-    getFiles(wsName).then((items) => {
-      setFiles(items);
-    });
-  }, [wsName]);
-
-  useEffect(() => {
-    refreshFiles();
-  }, [refreshFiles]);
-
-  return [files, { refreshFiles }];
 }

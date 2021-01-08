@@ -1,6 +1,6 @@
 import React from 'react';
-import { CommandPalette } from './CommandPalette/CommandPalette';
-import { FilePalette } from './FilePalette/FilePalette';
+import { CommandPalette } from './Palettes/CommandPalette';
+import { FilePalette } from './Palettes/FilePalette';
 import { Palette } from '../ui/Palette';
 import { WorkspacePalette } from './Palettes/WorkspacePalette';
 import { keybindingsHelper } from '../misc/keybinding-helper';
@@ -174,6 +174,7 @@ export class PaletteContainer extends React.PureComponent {
   componentWillUnmount() {
     this.removeKeybindingHelper();
   }
+
   render() {
     const { subQuery, counter } = this.state;
     const { editorManagerState } = this.context;
