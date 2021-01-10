@@ -26,15 +26,16 @@ module.exports = (env, argv) => {
     resolveLoader: {},
     devServer: {
       contentBase: path.join(__dirname, 'build'),
-      publicPath: '/',
       disableHostCheck: true,
       port: 4000,
       host: '0.0.0.0',
+      historyApiFallback: true,
     },
     output: {
       filename: 'main.[contenthash].js',
       chunkFilename: '[name].bundle.[contenthash].js',
       path: path.resolve(__dirname, 'build'),
+      publicPath: '/',
     },
 
     plugins: [
