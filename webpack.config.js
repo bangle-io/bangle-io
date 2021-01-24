@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
@@ -55,6 +56,14 @@ module.exports = (env, argv) => {
         filename: '[name].[contenthash].css',
         chunkFilename: '[id].[contenthash].css',
         ignoreOrder: false,
+      }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, 'static'),
+            to: path.resolve(__dirname, 'build'),
+          },
+        ],
       }),
     ],
     module: {
