@@ -159,53 +159,12 @@ export function useDeleteByDocName() {
 }
 
 export function useWorkspaces() {
-  const { dispatch } = useContext(EditorManagerContext);
-  // Array<string>
   const [workspaces, updateWorkspaces] = useState([]);
-  const history = useHistory();
-  // const location = useLocation();
   const refreshWorkspaceList = useCallback(() => {
     WorkspacesInfo.list().then((workspaces) => {
       updateWorkspaces(workspaces.map((w) => w.name));
     });
   }, []);
-
-  const openWorkspace = useCallback(
-    async (wsName, autoOpenFile = false) => {
-      return;
-      // history.push('/ws/' + wsName);
-      if (autoOpenFile) {
-        const permission = await wsQueryPermission(wsName);
-        try {
-          if (!permission) {
-            dispatch({
-              type: 'WORKSPACE/IS_PERMISSION_PROMPT_ACTIVE',
-              value: true,
-            });
-          }
-
-          const files = await getFiles(wsName);
-          if (files[0]) {
-            dispatch({
-              type: 'WORKSPACE/OPEN_WS_PATH',
-              value: wsName + ':' + files[0].docName,
-            });
-          }
-        } catch (err) {
-          if (err.name === 'NoPermissionError') {
-            console.error(err);
-          }
-        }
-        if (!permission) {
-          dispatch({
-            type: 'WORKSPACE/IS_PERMISSION_PROMPT_ACTIVE',
-            value: false,
-          });
-        }
-      }
-    },
-    [dispatch, history],
-  );
 
   useEffect(() => {
     refreshWorkspaceList();
@@ -214,7 +173,6 @@ export function useWorkspaces() {
   return {
     workspaces,
     refreshWorkspaceList,
-    openWorkspace,
   };
 }
 
