@@ -73,7 +73,6 @@ export async function getFiles(wsName = 'test3') {
 
   const workspace = await getWorkspace(wsName);
   console.timeEnd('getFiles');
-
   return workspace.files;
 }
 
@@ -111,9 +110,11 @@ export function useGetWorkspaceFiles() {
   const [files, setFiles] = useState([]);
 
   const refreshFiles = useCallback(() => {
-    getFiles(wsName).then((items) => {
-      setFiles(items);
-    });
+    if (wsName) {
+      getFiles(wsName).then((items) => {
+        setFiles(items);
+      });
+    }
   }, [wsName]);
 
   useEffect(() => {

@@ -10,54 +10,59 @@ import { WorkspacePermissionModal } from './workspace/WorkspacePermissionModal';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspaceDetails } from './workspace2/Workspace';
 
-export function AppRouter() {
+export function AppContainer() {
   return (
     <Router>
       <Switch>
         <Route path={['/ws/:wsName']}>
-          <AppContainer />
+          <EditorManager>
+            <div className="h-screen main-wrapper">
+              <WorkspacePermissionModal>
+                <div className="editor-wrapper">
+                  <div className="flex justify-center flex-row">
+                    <div
+                      className="flex-1 max-w-screen-md ml-6 mr-6"
+                      style={{ height: '100vh', overflowY: 'scroll' }}
+                    >
+                      <PrimaryEditor />
+                      {/* adds white space at bottoms */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexGrow: 1,
+                          height: '20vh',
+                          backgroundColor: 'transparent',
+                        }}
+                      >
+                        &nbsp;
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </WorkspacePermissionModal>
+              <PaletteContainer />
+              <Aside />
+            </div>
+          </EditorManager>
         </Route>
         <Route path="/">
-          <span>Let us open a workspace</span>
+          <EditorManager>
+            <div className="h-screen main-wrapper">
+              <span>Let us open a workspace</span>
+              <PaletteContainer />
+              <Aside />
+            </div>
+          </EditorManager>
         </Route>
       </Switch>
     </Router>
   );
 }
 
-export function AppContainer() {
+function PrimaryEditor() {
   const { wsPath } = useWorkspaceDetails();
-  return (
-    <EditorManager>
-      <div className="h-screen main-wrapper">
-        <WorkspacePermissionModal>
-          <div className="editor-wrapper">
-            <div className="flex justify-center flex-row">
-              <div
-                className="flex-1 max-w-screen-md ml-6 mr-6"
-                style={{ height: '100vh', overflowY: 'scroll' }}
-              >
-                {wsPath && (
-                  <Editor key={wsPath} isFirst={true} docName={wsPath} />
-                )}
-                {/* adds white space at bottoms */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexGrow: 1,
-                    height: '20vh',
-                    backgroundColor: 'transparent',
-                  }}
-                >
-                  &nbsp;
-                </div>
-              </div>
-            </div>
-          </div>
-        </WorkspacePermissionModal>
-        <PaletteContainer />
-        <Aside />
-      </div>
-    </EditorManager>
-  );
+
+  return wsPath ? (
+    <Editor key={wsPath} isFirst={true} docName={wsPath} />
+  ) : null;
 }

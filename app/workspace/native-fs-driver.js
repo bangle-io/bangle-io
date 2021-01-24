@@ -56,7 +56,6 @@ export class FSStorage {
 
     await Promise.all(
       this._filePathHandles.map(async (filePathHandle, i) => {
-        // const fileHandle = getLast(filePathHandle);
         const key = FSStorage.getFilePathKey(filePathHandle);
         cb(null, key, i);
       }),
@@ -69,11 +68,7 @@ export class FSStorage {
 
     fileName = fileName.endsWith('.md') ? fileName : fileName + '.md';
 
-    if (fileName.includes('/')) {
-      return fileName;
-    }
-
-    return [this.dirHandle.name, fileName].join('/');
+    return fileName;
 
     // throw new Error('Not implemented');
   }
