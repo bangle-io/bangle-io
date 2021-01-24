@@ -8,6 +8,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
   const mode = isProduction ? 'production' : 'development';
+  const buildPath = path.resolve(__dirname, 'build');
   // eslint-disable-next-line no-process-env
   if (isProduction && process.env.NODE_ENV !== 'production') {
     throw new Error('NODE_ENV not production');
@@ -37,7 +38,7 @@ module.exports = (env, argv) => {
     output: {
       filename: 'main.[contenthash].js',
       chunkFilename: '[name].bundle.[contenthash].js',
-      path: path.resolve(__dirname, 'build'),
+      path: buildPath,
       publicPath: '/',
     },
 
@@ -61,7 +62,7 @@ module.exports = (env, argv) => {
         patterns: [
           {
             from: path.resolve(__dirname, 'static'),
-            to: path.resolve(__dirname, 'build'),
+            to: buildPath,
           },
         ],
       }),
