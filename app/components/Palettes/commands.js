@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { SideBarRow } from '../Aside/SideBarRow';
 import { INDEXDB_TYPE, NATIVE_FS_TYPE } from '../../workspace/type-helpers';
 import { readFile } from '../../misc/index';
@@ -7,36 +7,63 @@ import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 
 export const commands = Object.entries(Commands());
 
+function useCommandExecute(execute, onExecuteItem) {
+  useEffect(() => {
+    // parent signals execution by setting execute to true
+    // and expects the child to call dismiss once executed
+    if (execute) {
+      onExecuteItem();
+    }
+  }, [execute, onExecuteItem]);
+}
+
+ToggleThemeCommand.title = 'View: Toggle theme';
+ToggleThemeCommand.queryMatch = (query) =>
+  queryMatch(ToggleThemeCommand, query);
+function ToggleThemeCommand({ isActive, onDismiss, execute }) {
+  const { dispatch } = useContext(EditorManagerContext);
+  const onExecuteItem = useCallback(() => {
+    dispatch({
+      type: 'UI/TOGGLE_THEME',
+    });
+    onDismiss();
+  }, [dispatch, onDismiss]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={ToggleThemeCommand.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
+ToggleSidebar.title = 'View: Toggle sidebar';
+ToggleSidebar.queryMatch = (query) => queryMatch(ToggleSidebar, query);
+function ToggleSidebar({ isActive, onDismiss, execute }) {
+  const { dispatch } = useContext(EditorManagerContext);
+  const onExecuteItem = useCallback(() => {
+    dispatch({
+      type: 'UI/TOGGLE_SIDEBAR',
+    });
+    onDismiss();
+  }, [dispatch, onDismiss]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={ToggleSidebar.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
 function Commands() {
   return {
-    'UIContext.toggleTheme': commandRenderHOC({
-      hint: '',
-      title: 'View: Toggle theme',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-      onExecute: ({ onDismiss, context }) => {
-        context.dispatch({
-          type: 'UI/TOGGLE_THEME',
-        });
-        onDismiss();
-      },
-    }),
-
-    'UIContext.toggleSideBar': commandRenderHOC({
-      hint: '',
-      title: 'View: Toggle sidebar',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-
-      onExecute: ({ context, onDismiss }) => {
-        context.dispatch({
-          type: 'UI/TOGGLE_SIDEBAR',
-        });
-        onDismiss();
-      },
-    }),
+    'UIContext.toggleTheme': ToggleThemeCommand,
+    'UIContext.toggleSideBar': ToggleSidebar,
 
     // WorkspaceContext
     'WorkspaceContext.newFile': commandRenderHOC({
@@ -212,8 +239,10 @@ function queryMatch(command, query) {
     return false;
   }
 
-  if (command.keywords.length > 0) {
-    if (strMatch(command.keywords.split(','), query)) {
+  const keywords = command.keywords || '';
+
+  if (keywords.length > 0) {
+    if (strMatch(keywords.split(','), query)) {
       return true;
     }
   }

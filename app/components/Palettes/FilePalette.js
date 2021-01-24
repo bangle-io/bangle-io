@@ -17,7 +17,7 @@ FilePalette.propTypes = {
 };
 
 export function FilePalette({ execute, onDismiss, query, counter }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch, editorManagerState } = useContext(EditorManagerContext);
   const [files] = useGetWorkspaceFiles();
   const items = getItems({ query, files });
 
@@ -36,12 +36,12 @@ export function FilePalette({ execute, onDismiss, query, counter }) {
       }
 
       dispatch({
-        type: 'WORKSPACE/OPEN_DOC',
-        docName: activeItem.docName,
+        type: 'WORKSPACE/OPEN_WS_PATH',
+        value: editorManagerState.wsName + ':' + activeItem.docName,
       });
       onDismiss();
     },
-    [counter, items, dispatch, onDismiss],
+    [counter, items, dispatch, onDismiss, editorManagerState],
   );
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppContainer } from './AppContainer';
+import { AppRouter } from './AppContainer';
 import { WorkspaceContextProvider } from './workspace/WorkspaceContext';
 
 export default class App extends React.PureComponent {
@@ -12,7 +12,7 @@ export default class App extends React.PureComponent {
     };
     return (
       <WorkspaceContextProvider>
-        {this.state.show && <AppContainer />}
+        {this.state.show && <AppRouter />}
       </WorkspaceContextProvider>
     );
   }

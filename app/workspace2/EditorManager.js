@@ -5,6 +5,7 @@ import { specRegistry } from '../editor/spec-sheet';
 import { defaultContent } from '../components/constants';
 import { applyTheme } from '../style/apply-theme';
 import { getDoc, saveDoc } from './Workspace';
+import { useParams } from 'react-router-dom';
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -92,7 +93,7 @@ const reducer = (state, action) => {
         openedDocs: [
           {
             key: (state.openedDocs[0]?.key || 0) + 1,
-            wsPath: action.wsPath,
+            wsPath: action.value,
           },
         ],
       };
@@ -105,6 +106,7 @@ const reducer = (state, action) => {
 
 export function EditorManager({ children }) {
   const { sendRequest } = useManager();
+  let { wsName } = useParams();
 
   const [editorManagerState, dispatch] = useReducer(
     reducer,
@@ -115,7 +117,7 @@ export function EditorManager({ children }) {
       sidebar: false,
       paletteType: undefined,
       theme: localStorage.getItem('theme') || 'light',
-      wsName: WS_NAME,
+      wsName: wsName,
       wsIsPermissionPromptActive: false,
     },
     (store) => {
@@ -123,6 +125,13 @@ export function EditorManager({ children }) {
       return store;
     },
   );
+
+  useEffect(() => {
+    dispatch({
+      type: 'WORKSPACE/OPEN',
+      wsName,
+    });
+  }, [wsName]);
 
   window.editorManagerState = editorManagerState;
 

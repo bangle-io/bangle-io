@@ -10,6 +10,22 @@ import {
 import { Aside } from './components/Aside/Aside';
 import { PaletteContainer } from './components/PaletteContainer';
 import { WorkspacePermissionModal } from './workspace/WorkspacePermissionModal';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
+export function AppRouter() {
+  return (
+    <Router>
+      <Switch>
+        <Route path="/ws/:wsName">
+          <AppContainer />
+        </Route>
+        <Route path="/">
+          <span>Let us open a workspace</span>
+        </Route>
+      </Switch>
+    </Router>
+  );
+}
 
 export function AppContainer() {
   return (

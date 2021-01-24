@@ -8,6 +8,7 @@ import {
   hasPermissions,
   requestPermission as requestFilePermission,
 } from '../workspace/native-fs-driver';
+import { useHistory } from 'react-router-dom';
 
 const pathValidRegex = /^[0-9a-zA-Z_\-. /:]+$/;
 const last = (arr) => arr[arr.length - 1];
@@ -39,13 +40,6 @@ export const pathHelpers = {
     };
   },
 };
-
-window.WorkspacesInfo = WorkspacesInfo;
-window.IndexDbWorkspace = IndexDbWorkspace;
-window.pathHelpers = pathHelpers;
-window.schema = specRegistry.schema;
-window.getFile = getFile;
-window.getFiles = getFiles;
 
 export async function getDoc(wsPath) {
   return (await getFile(wsPath))?.doc;
@@ -94,18 +88,6 @@ export async function getWorkspaceInfo(wsName) {
     ({ name }) => name === wsName,
   );
   return workspaceInfo;
-}
-
-const cache = new Map();
-export async function getWorkspaceInfoCached(wsName) {
-  const promise = getWorkspaceInfo(wsName).then((result) => {
-    cache.set(wsName, result);
-  });
-
-  if (!cache.has(wsName)) {
-    await promise;
-  }
-  return cache.get(wsName);
 }
 
 export async function getWorkspace(wsName) {
@@ -161,7 +143,7 @@ export function useCreateNewFile() {
     workspace.linkFile(newFile);
     dispatch({
       type: 'WORKSPACE/OPEN_WS_PATH',
-      wsPath: workspace.name + ':' + newFile.docName,
+      value: workspace.name + ':' + newFile.docName,
     });
   }, [dispatch, wsName]);
 
@@ -201,6 +183,8 @@ export function useWorkspaces() {
   const { dispatch } = useContext(EditorManagerContext);
   // Array<string>
   const [workspaces, updateWorkspaces] = useState([]);
+  const history = useHistory();
+  // const location = useLocation();
   const refreshWorkspaceList = useCallback(() => {
     WorkspacesInfo.list().then((workspaces) => {
       updateWorkspaces(workspaces.map((w) => w.name));
@@ -209,10 +193,7 @@ export function useWorkspaces() {
 
   const openWorkspace = useCallback(
     async (wsName, autoOpenFile = false) => {
-      dispatch({
-        type: 'WORKSPACE/OPEN',
-        wsName,
-      });
+      history.push('/ws/' + wsName);
 
       if (autoOpenFile) {
         const permission = await wsQueryPermission(wsName);
@@ -228,7 +209,7 @@ export function useWorkspaces() {
           if (files[0]) {
             dispatch({
               type: 'WORKSPACE/OPEN_WS_PATH',
-              wsPath: wsName + ':' + files[0].docName,
+              value: wsName + ':' + files[0].docName,
             });
           }
         } catch (err) {
@@ -244,7 +225,7 @@ export function useWorkspaces() {
         }
       }
     },
-    [dispatch],
+    [dispatch, history],
   );
 
   useEffect(() => {

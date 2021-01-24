@@ -53,8 +53,8 @@ export function FileBrowser() {
             key={item.docName}
             onClick={() => {
               dispatch({
-                type: 'WORKSPACE/OPEN_DOC',
-                docName: item.docName,
+                type: 'WORKSPACE/OPEN_WS_PATH',
+                value: wsName + ':' + item.docName,
               });
             }}
             title={item.title}

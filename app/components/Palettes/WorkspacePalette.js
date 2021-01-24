@@ -1,4 +1,3 @@
-// import './WorkspacePalette.css';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Palette } from '../../ui/Palette';
 
