@@ -20,8 +20,8 @@ export function WorkspacePermissionModal({ children }) {
   } = useContext(EditorManagerContext);
 
   const { openWorkspace } = useWorkspaces();
-
   const [permission, requestPermission] = useWorkspacePermission();
+
   const active =
     wsIsPermissionPromptActive ||
     permission === 'rejected' ||

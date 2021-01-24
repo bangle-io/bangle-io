@@ -55,6 +55,7 @@ const reducer = (state, action) => {
         theme,
       };
     }
+
     case 'WORKSPACE/OPEN_DOC': {
       return {
         ...state,
@@ -64,6 +65,13 @@ const reducer = (state, action) => {
             wsPath: state.wsName + ':' + action.docName,
           },
         ],
+      };
+    }
+
+    case 'WORKSPACE/PERMISSION': {
+      return {
+        ...state,
+        wsPermission: action.value,
       };
     }
 
@@ -119,6 +127,7 @@ export function EditorManager({ children }) {
       theme: localStorage.getItem('theme') || 'light',
       wsName: wsName,
       wsIsPermissionPromptActive: false,
+      wsPermission: undefined,
     },
     (store) => {
       applyTheme(store.theme);

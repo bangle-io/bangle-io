@@ -241,16 +241,30 @@ export function useWorkspaces() {
 
 export function useWorkspacePermission() {
   const {
-    editorManagerState: { wsName, wsIsPermissionPromptActive },
+    editorManagerState: {
+      wsName,
+      wsIsPermissionPromptActive,
+      wsPermission: permission,
+    },
+    dispatch,
   } = useContext(EditorManagerContext);
-  const [permission, setPermission] = useState();
+
+  const setPermission = useCallback(
+    (value) => {
+      dispatch({
+        type: 'WORKSPACE/PERMISSION',
+        value,
+      });
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     setPermission(undefined);
     wsQueryPermission(wsName).then((result) => {
       setPermission(result ? 'granted' : 'rejected');
     });
-  }, [wsName, wsIsPermissionPromptActive]);
+  }, [setPermission, wsName, wsIsPermissionPromptActive]);
 
   const requestPermission = useCallback(async () => {
     if (permission === 'granted') {
@@ -271,7 +285,7 @@ export function useWorkspacePermission() {
       setPermission('rejected');
       return false;
     }
-  }, [wsName, permission]);
+  }, [wsName, permission, setPermission]);
 
   return [permission, requestPermission];
 }
