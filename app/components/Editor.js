@@ -32,7 +32,6 @@ export function Editor({ isFirst, docName }) {
   const {
     editorManagerState: { sendRequest },
   } = useContext(EditorManagerContext);
-
   const getPlugins = () => {
     const collabOpts = {
       docName: docName,

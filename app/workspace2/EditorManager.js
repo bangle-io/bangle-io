@@ -9,10 +9,6 @@ import { getDoc, saveDoc } from './Workspace';
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
-const WS_NAME = 'test3';
-const DOC_NAME = 'dslkqk';
-const WS_PATH = WS_NAME + ':' + DOC_NAME;
-
 export const EditorManagerContext = React.createContext();
 const DEFAULT_PALETTE = 'file';
 
@@ -62,32 +58,6 @@ const reducer = (state, action) => {
       };
     }
 
-    case 'WORKSPACE/IS_PERMISSION_PROMPT_ACTIVE': {
-      return {
-        ...state,
-        wsIsPermissionPromptActive: action.value,
-      };
-    }
-
-    case 'WORKSPACE/CLOSE_DOC': {
-      return {
-        ...state,
-        openedDocs: action.openedDocs,
-      };
-    }
-
-    case 'WORKSPACE/OPEN_WS_PATH': {
-      return {
-        ...state,
-        openedDocs: [
-          {
-            key: (state.openedDocs[0]?.key || 0) + 1,
-            wsPath: action.value,
-          },
-        ],
-      };
-    }
-
     default:
       throw new Error(`Unrecognized action "${action.type}"`);
   }
@@ -95,17 +65,14 @@ const reducer = (state, action) => {
 
 export function EditorManager({ children }) {
   const { sendRequest } = useManager();
-
   const [editorManagerState, dispatch] = useReducer(
     reducer,
     {
       sendRequest,
-      openedDocs: [{ key: 1, wsPath: WS_PATH }],
       // UI
       sidebar: false,
       paletteType: undefined,
       theme: localStorage.getItem('theme') || 'light',
-      wsIsPermissionPromptActive: false,
       wsPermission: undefined,
     },
     (store) => {
@@ -150,7 +117,6 @@ function localDisk(defaultContent) {
   return new LocalDisk({
     getItem: async (wsPath) => {
       const doc = await getDoc(wsPath);
-
       if (!doc) {
         return defaultContent;
       }

@@ -3,13 +3,14 @@ import { Palette } from '../../ui/Palette';
 
 import { SideBarRow } from '../Aside/SideBarRow';
 import { useWorkspaces } from 'bangle-io/app/workspace2/Workspace';
+import { useHistory } from 'react-router-dom';
 
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
 export function WorkspacePalette({ counter, query, execute, onDismiss }) {
-  const { workspaces, openWorkspace } = useWorkspaces();
+  const { workspaces } = useWorkspaces();
   const items = useMemo(
     () =>
       workspaces.filter((ws) => {
@@ -17,6 +18,7 @@ export function WorkspacePalette({ counter, query, execute, onDismiss }) {
       }),
     [workspaces, query],
   );
+  const history = useHistory();
 
   const onExecuteItem = useCallback(
     async (activeItemIndex) => {
@@ -31,10 +33,10 @@ export function WorkspacePalette({ counter, query, execute, onDismiss }) {
         return;
       }
 
-      openWorkspace(workspace, true);
+      history.push('/ws/' + workspace);
       onDismiss();
     },
-    [counter, items, onDismiss, openWorkspace],
+    [counter, items, onDismiss, history],
   );
 
   useEffect(() => {

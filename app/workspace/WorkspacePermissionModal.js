@@ -19,26 +19,14 @@ const NeedsPermission = ({ wsName, requestPermission }) => {
 };
 
 export function WorkspacePermissionModal({ children }) {
-  const {
-    editorManagerState: { wsIsPermissionPromptActive },
-  } = useContext(EditorManagerContext);
   const { wsName } = useWorkspaceDetails();
-
-  const { openWorkspace } = useWorkspaces();
   const [permission, requestPermission] = useWorkspacePermission();
 
-  const active =
-    wsIsPermissionPromptActive ||
-    permission === 'rejected' ||
-    permission === undefined;
+  const active = permission === 'rejected' || permission === undefined;
 
   const open = useCallback(() => {
-    requestPermission().then((result) => {
-      if (result) {
-        openWorkspace(wsName, true);
-      }
-    });
-  }, [requestPermission, openWorkspace, wsName]);
+    requestPermission();
+  }, [requestPermission]);
 
   useEffect(() => {
     let callback;

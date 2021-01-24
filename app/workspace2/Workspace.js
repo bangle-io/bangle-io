@@ -8,7 +8,7 @@ import {
   hasPermissions,
   requestPermission as requestFilePermission,
 } from '../workspace/native-fs-driver';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 const pathValidRegex = /^[0-9a-zA-Z_\-. /:]+$/;
 const last = (arr) => arr[arr.length - 1];
@@ -46,14 +46,10 @@ export async function getDoc(wsPath) {
 }
 
 export async function saveDoc(wsPath, doc) {
-  const { docName, wsName } = pathHelpers.resolve(wsPath);
-
+  const { wsName, filePath } = pathHelpers.resolve(wsPath);
   const docJson = doc.toJSON();
-
   const workspace = await getWorkspace(wsName);
-
-  const workspaceFile = workspace.getFile(docName);
-
+  const workspaceFile = workspace.getFile(filePath);
   if (workspaceFile) {
     await workspaceFile.updateDoc(docJson);
     return;
@@ -62,11 +58,10 @@ export async function saveDoc(wsPath, doc) {
 
 export async function getFile(wsPath = 'test3:dslkqk') {
   pathHelpers.validPath(wsPath);
-  const { docName, wsName, filePath } = pathHelpers.resolve(wsPath);
+  const { wsName, filePath } = pathHelpers.resolve(wsPath);
   const workspace = await getWorkspace(wsName);
 
   if (!workspace.hasFile(filePath)) {
-    console.log({ docName, workspace });
     throw new Error('File not found in workspace');
   }
 
@@ -130,29 +125,22 @@ export function useGetWorkspaceFiles() {
 
 // TODO does it really need to be a hook
 export function useCreateNewFile() {
-  const { dispatch } = useContext(EditorManagerContext);
-  const { wsName } = useWorkspaceDetails();
+  const { wsName, pushWsPath } = useWorkspaceDetails();
 
   const createNewFile = useCallback(async () => {
     const docName = uuid(6);
     const workspace = await getWorkspace(wsName);
     const newFile = await workspace.createFile(docName, null);
     workspace.linkFile(newFile);
-    dispatch({
-      type: 'WORKSPACE/OPEN_WS_PATH',
-      value: workspace.name + ':' + newFile.docName,
-    });
-  }, [dispatch, wsName]);
+    pushWsPath(workspace.name + ':' + newFile.docName);
+  }, [wsName, pushWsPath]);
 
   return createNewFile;
 }
 
 export function useDeleteByDocName() {
-  const {
-    editorManagerState: { openedDocs },
-    dispatch,
-  } = useContext(EditorManagerContext);
   const { wsName } = useWorkspaceDetails();
+  const history = useHistory();
 
   const deleteByDocName = useCallback(
     async (docName) => {
@@ -161,17 +149,10 @@ export function useDeleteByDocName() {
       if (workspaceFile) {
         await workspaceFile.delete();
         workspace = workspace.unlinkFile(workspaceFile);
-
-        const newFiles = openedDocs.filter(({ wsPath }) =>
-          workspace.files.find((w) => w.wsPath === wsPath),
-        );
-        dispatch({
-          type: 'WORKSPACE/CLOSE_DOC',
-          openedDocs: newFiles,
-        });
+        history.push('/ws/' + wsName);
       }
     },
-    [wsName, dispatch, openedDocs],
+    [wsName, history],
   );
 
   return deleteByDocName;
@@ -191,8 +172,8 @@ export function useWorkspaces() {
 
   const openWorkspace = useCallback(
     async (wsName, autoOpenFile = false) => {
-      history.push('/ws/' + wsName);
-
+      return;
+      // history.push('/ws/' + wsName);
       if (autoOpenFile) {
         const permission = await wsQueryPermission(wsName);
         try {
@@ -239,10 +220,7 @@ export function useWorkspaces() {
 
 export function useWorkspacePermission() {
   const {
-    editorManagerState: {
-      wsIsPermissionPromptActive,
-      wsPermission: permission,
-    },
+    editorManagerState: { wsPermission: permission },
     dispatch,
   } = useContext(EditorManagerContext);
 
@@ -263,7 +241,7 @@ export function useWorkspacePermission() {
     wsQueryPermission(wsName).then((result) => {
       setPermission(result ? 'granted' : 'rejected');
     });
-  }, [setPermission, wsName, wsIsPermissionPromptActive]);
+  }, [setPermission, wsName]);
 
   const requestPermission = useCallback(async () => {
     if (permission === 'granted') {
@@ -290,10 +268,35 @@ export function useWorkspacePermission() {
 }
 
 export function useWorkspaceDetails() {
-  let { wsName, filePath } = useParams();
+  const { wsName } = useParams();
+  const { pathname } = useLocation();
+  const history = useHistory();
+  const pushWsPath = useCallback(
+    (wsPath) => {
+      const { wsName, filePath } = pathHelpers.resolve(wsPath);
+      history.push(`/ws/${wsName}/${filePath}`);
+    },
+    [history],
+  );
+
+  if (!wsName) {
+    return {};
+  }
+
+  const filePath = pathname.split('/').slice(3).join('/');
+  let wsPath;
+  let docName;
+
+  if (filePath) {
+    wsPath = wsName + ':' + filePath;
+    ({ docName } = pathHelpers.resolve(wsPath));
+  }
 
   return {
     wsName,
+    wsPath,
+    docName,
     filePath,
+    pushWsPath,
   };
 }

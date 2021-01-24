@@ -36,7 +36,6 @@ export class EditorManager extends React.PureComponent {
   disk = new LocalDisk({
     getItem: async (docName) => {
       const file = this.context.workspace.getFile(docName);
-
       if (!file) {
         let oldWorkspace = await findMatchingWorkspace(docName, this.schema);
 

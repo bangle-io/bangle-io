@@ -1,8 +1,7 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Palette } from '../../ui/Palette';
 import { SideBarRow } from '../Aside/SideBarRow';
 import PropTypes from 'prop-types';
-import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
   useGetWorkspaceFiles,
   useWorkspaceDetails,
@@ -20,15 +19,13 @@ FilePalette.propTypes = {
 };
 
 export function FilePalette({ execute, onDismiss, query, counter }) {
-  const { dispatch } = useContext(EditorManagerContext);
-  const { wsName } = useWorkspaceDetails();
+  const { wsName, pushWsPath } = useWorkspaceDetails();
 
   const [files] = useGetWorkspaceFiles();
   const items = getItems({ query, files });
 
   const onExecuteItem = useCallback(
     (activeItemIndex) => {
-      console.log('executing item');
       activeItemIndex =
         activeItemIndex == null
           ? Palette.getActiveIndex(counter, items.length)
@@ -39,14 +36,10 @@ export function FilePalette({ execute, onDismiss, query, counter }) {
       if (!activeItem) {
         return;
       }
-
-      dispatch({
-        type: 'WORKSPACE/OPEN_WS_PATH',
-        value: wsName + ':' + activeItem.docName,
-      });
+      pushWsPath(wsName + ':' + activeItem.docName);
       onDismiss();
     },
-    [counter, items, dispatch, onDismiss, wsName],
+    [counter, items, pushWsPath, onDismiss, wsName],
   );
 
   useEffect(() => {

@@ -10,7 +10,6 @@ import {
   useCreateNewFile,
   useDeleteByDocName,
   useGetWorkspaceFiles,
-  pathHelpers,
   useWorkspaceDetails,
 } from 'bangle-io/app/workspace2/Workspace';
 
@@ -20,12 +19,8 @@ export function FileBrowser() {
   const [files] = useGetWorkspaceFiles();
   const createNewFile = useCreateNewFile();
   const deleteByDocName = useDeleteByDocName();
-  const {
-    dispatch,
-    editorManagerState: { openedDocs },
-  } = useContext(EditorManagerContext);
-
-  const { wsName } = useWorkspaceDetails();
+  const { dispatch } = useContext(EditorManagerContext);
+  const { wsName, filePath, pushWsPath } = useWorkspaceDetails();
 
   const toggleTheme = () =>
     dispatch({
@@ -55,15 +50,10 @@ export function FileBrowser() {
           <SideBarRow
             key={item.docName}
             onClick={() => {
-              dispatch({
-                type: 'WORKSPACE/OPEN_WS_PATH',
-                value: wsName + ':' + item.docName,
-              });
+              pushWsPath(wsName + ':' + item.docName);
             }}
             title={item.title}
-            isActive={openedDocs.find(
-              (r) => pathHelpers.resolve(r.wsPath).docName === item.docName,
-            )}
+            isActive={filePath === item.docName}
             rightIcon={[
               <BaseButton
                 key="delete"
