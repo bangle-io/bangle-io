@@ -29,7 +29,9 @@ module.exports = (env, argv) => {
       disableHostCheck: true,
       port: 4000,
       host: '0.0.0.0',
-      historyApiFallback: true,
+      historyApiFallback: {
+        disableDotRule: true,
+      },
     },
     output: {
       filename: 'main.[contenthash].js',
