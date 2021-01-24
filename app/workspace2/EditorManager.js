@@ -5,7 +5,6 @@ import { specRegistry } from '../editor/spec-sheet';
 import { defaultContent } from '../components/constants';
 import { applyTheme } from '../style/apply-theme';
 import { getDoc, saveDoc } from './Workspace';
-import { useParams } from 'react-router-dom';
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -56,18 +55,6 @@ const reducer = (state, action) => {
       };
     }
 
-    case 'WORKSPACE/OPEN_DOC': {
-      return {
-        ...state,
-        openedDocs: [
-          {
-            key: (state.openedDocs[0]?.key || 0) + 1,
-            wsPath: state.wsName + ':' + action.docName,
-          },
-        ],
-      };
-    }
-
     case 'WORKSPACE/PERMISSION': {
       return {
         ...state,
@@ -88,13 +75,7 @@ const reducer = (state, action) => {
         openedDocs: action.openedDocs,
       };
     }
-    case 'WORKSPACE/OPEN': {
-      return {
-        ...state,
-        wsName: action.wsName,
-        openedDocs: [],
-      };
-    }
+
     case 'WORKSPACE/OPEN_WS_PATH': {
       return {
         ...state,
@@ -114,7 +95,6 @@ const reducer = (state, action) => {
 
 export function EditorManager({ children }) {
   const { sendRequest } = useManager();
-  let { wsName } = useParams();
 
   const [editorManagerState, dispatch] = useReducer(
     reducer,
@@ -125,7 +105,6 @@ export function EditorManager({ children }) {
       sidebar: false,
       paletteType: undefined,
       theme: localStorage.getItem('theme') || 'light',
-      wsName: wsName,
       wsIsPermissionPromptActive: false,
       wsPermission: undefined,
     },
@@ -134,13 +113,6 @@ export function EditorManager({ children }) {
       return store;
     },
   );
-
-  useEffect(() => {
-    dispatch({
-      type: 'WORKSPACE/OPEN',
-      wsName,
-    });
-  }, [wsName]);
 
   window.editorManagerState = editorManagerState;
 

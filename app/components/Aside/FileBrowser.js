@@ -11,6 +11,7 @@ import {
   useDeleteByDocName,
   useGetWorkspaceFiles,
   pathHelpers,
+  useWorkspaceDetails,
 } from 'bangle-io/app/workspace2/Workspace';
 
 FileBrowser.propTypes = {};
@@ -21,8 +22,10 @@ export function FileBrowser() {
   const deleteByDocName = useDeleteByDocName();
   const {
     dispatch,
-    editorManagerState: { wsName, openedDocs },
+    editorManagerState: { openedDocs },
   } = useContext(EditorManagerContext);
+
+  const { wsName } = useWorkspaceDetails();
 
   const toggleTheme = () =>
     dispatch({

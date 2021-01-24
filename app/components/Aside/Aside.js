@@ -5,8 +5,9 @@ import { FileBrowser } from './FileBrowser';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 
 export function Aside() {
-  const { editorManagerState } = useContext(EditorManagerContext);
-  const { sidebar } = editorManagerState;
+  const {
+    editorManagerState: { sidebar },
+  } = useContext(EditorManagerContext);
 
   return (
     <>

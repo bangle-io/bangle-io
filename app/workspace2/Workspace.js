@@ -8,7 +8,7 @@ import {
   hasPermissions,
   requestPermission as requestFilePermission,
 } from '../workspace/native-fs-driver';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 const pathValidRegex = /^[0-9a-zA-Z_\-. /:]+$/;
 const last = (arr) => arr[arr.length - 1];
@@ -111,9 +111,8 @@ async function wsQueryPermission(wsName) {
 }
 
 export function useGetWorkspaceFiles() {
-  const {
-    editorManagerState: { wsName },
-  } = useContext(EditorManagerContext);
+  const { wsName } = useWorkspaceDetails();
+
   const [files, setFiles] = useState([]);
 
   const refreshFiles = useCallback(() => {
@@ -131,10 +130,8 @@ export function useGetWorkspaceFiles() {
 
 // TODO does it really need to be a hook
 export function useCreateNewFile() {
-  const {
-    editorManagerState: { wsName },
-    dispatch,
-  } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(EditorManagerContext);
+  const { wsName } = useWorkspaceDetails();
 
   const createNewFile = useCallback(async () => {
     const docName = uuid(6);
@@ -152,9 +149,10 @@ export function useCreateNewFile() {
 
 export function useDeleteByDocName() {
   const {
-    editorManagerState: { wsName, openedDocs },
+    editorManagerState: { openedDocs },
     dispatch,
   } = useContext(EditorManagerContext);
+  const { wsName } = useWorkspaceDetails();
 
   const deleteByDocName = useCallback(
     async (docName) => {
@@ -242,12 +240,13 @@ export function useWorkspaces() {
 export function useWorkspacePermission() {
   const {
     editorManagerState: {
-      wsName,
       wsIsPermissionPromptActive,
       wsPermission: permission,
     },
     dispatch,
   } = useContext(EditorManagerContext);
+
+  const { wsName } = useWorkspaceDetails();
 
   const setPermission = useCallback(
     (value) => {
@@ -288,4 +287,13 @@ export function useWorkspacePermission() {
   }, [wsName, permission, setPermission]);
 
   return [permission, requestPermission];
+}
+
+export function useWorkspaceDetails() {
+  let { wsName, filePath } = useParams();
+
+  return {
+    wsName,
+    filePath,
+  };
 }

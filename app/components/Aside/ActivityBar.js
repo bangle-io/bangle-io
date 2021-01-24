@@ -4,8 +4,10 @@ import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import { config } from 'bangle-io/config';
 
 export function ActivityBar() {
-  const { editorManagerState, dispatch } = useContext(EditorManagerContext);
-  const { sidebar, paletteType } = editorManagerState;
+  const {
+    editorManagerState: { sidebar, paletteType },
+    dispatch,
+  } = useContext(EditorManagerContext);
 
   const toggleSidebar = () =>
     dispatch({

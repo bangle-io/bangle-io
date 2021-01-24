@@ -3,7 +3,10 @@ import { Palette } from '../../ui/Palette';
 import { SideBarRow } from '../Aside/SideBarRow';
 import PropTypes from 'prop-types';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
-import { useGetWorkspaceFiles } from 'bangle-io/app/workspace2/Workspace';
+import {
+  useGetWorkspaceFiles,
+  useWorkspaceDetails,
+} from 'bangle-io/app/workspace2/Workspace';
 
 const LOG = false;
 
@@ -17,7 +20,9 @@ FilePalette.propTypes = {
 };
 
 export function FilePalette({ execute, onDismiss, query, counter }) {
-  const { dispatch, editorManagerState } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(EditorManagerContext);
+  const { wsName } = useWorkspaceDetails();
+
   const [files] = useGetWorkspaceFiles();
   const items = getItems({ query, files });
 
@@ -37,11 +42,11 @@ export function FilePalette({ execute, onDismiss, query, counter }) {
 
       dispatch({
         type: 'WORKSPACE/OPEN_WS_PATH',
-        value: editorManagerState.wsName + ':' + activeItem.docName,
+        value: wsName + ':' + activeItem.docName,
       });
       onDismiss();
     },
-    [counter, items, dispatch, onDismiss, editorManagerState],
+    [counter, items, dispatch, onDismiss, wsName],
   );
 
   useEffect(() => {

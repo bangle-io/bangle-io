@@ -1,6 +1,10 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { keybindingsHelper } from '../misc/keybinding-helper';
-import { useWorkspacePermission, useWorkspaces } from '../workspace2/Workspace';
+import {
+  useWorkspaceDetails,
+  useWorkspacePermission,
+  useWorkspaces,
+} from '../workspace2/Workspace';
 import { EditorManagerContext } from '../workspace2/EditorManager';
 
 const NeedsPermission = ({ wsName, requestPermission }) => {
@@ -16,8 +20,9 @@ const NeedsPermission = ({ wsName, requestPermission }) => {
 
 export function WorkspacePermissionModal({ children }) {
   const {
-    editorManagerState: { wsName, wsIsPermissionPromptActive },
+    editorManagerState: { wsIsPermissionPromptActive },
   } = useContext(EditorManagerContext);
+  const { wsName } = useWorkspaceDetails();
 
   const { openWorkspace } = useWorkspaces();
   const [permission, requestPermission] = useWorkspacePermission();

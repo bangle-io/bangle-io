@@ -19,6 +19,9 @@ export function AppRouter() {
         <Route path="/ws/:wsName">
           <AppContainer />
         </Route>
+        <Route path="/ws/:wsName/f/:filePath">
+          <AppContainer />
+        </Route>
         <Route path="/">
           <span>Let us open a workspace</span>
         </Route>
