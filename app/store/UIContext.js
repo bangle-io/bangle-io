@@ -130,7 +130,6 @@ export class UIContextProvider extends React.PureComponent {
               return value.onExecute({
                 uiContext: this.value,
                 updateUIContext: this.updateUIContext,
-                updateWorkspaceContext: this.context.updateWorkspaceContext,
               });
             },
           ];

@@ -1,10 +1,10 @@
 import React from 'react';
-import { CommandPalette } from './CommandPalette/CommandPalette';
-import { FilePalette } from './FilePalette/FilePalette';
-import { UIActions, UIContext } from 'bangle-io/app/store/UIContext';
+import { CommandPalette } from './Palettes/CommandPalette';
+import { FilePalette } from './Palettes/FilePalette';
 import { Palette } from '../ui/Palette';
 import { WorkspacePalette } from './Palettes/WorkspacePalette';
 import { keybindingsHelper } from '../misc/keybinding-helper';
+import { EditorManagerContext } from '../workspace2/EditorManager';
 
 const parseRawQuery = (query, paletteType) => {
   // Some of the types depend on the current active query
@@ -24,8 +24,6 @@ const parseRawQuery = (query, paletteType) => {
   if (paletteType.startsWith('command/input/')) {
     return { paletteType, subQuery: query };
   }
-
-  // return { paletteType, subQuery: query };
 
   return { paletteType: 'file', subQuery: query };
 };
@@ -48,7 +46,7 @@ const generateRawQuery = (paletteType, subQuery) => {
 };
 
 export class PaletteContainer extends React.PureComponent {
-  static contextType = UIContext;
+  static contextType = EditorManagerContext;
 
   state = {
     subQuery: '',
@@ -57,8 +55,11 @@ export class PaletteContainer extends React.PureComponent {
   };
 
   onDismiss = () => {
-    if (this.context.paletteType) {
-      this.context.updateUIContext(UIActions.closePalette());
+    const { editorManagerState, dispatch } = this.context;
+    if (editorManagerState.paletteType) {
+      dispatch({
+        type: 'UI/CLOSE_PALETTE',
+      });
       this.setState({
         subQuery: '',
         counter: 0,
@@ -80,13 +81,17 @@ export class PaletteContainer extends React.PureComponent {
   };
 
   updateQuery = (rawQuery) => {
+    const { editorManagerState, dispatch } = this.context;
     const { paletteType, subQuery } = parseRawQuery(
       rawQuery,
-      this.context.paletteType,
+      editorManagerState.paletteType,
     );
 
-    if (paletteType !== this.context.paletteType) {
-      this.context.updateUIContext(UIActions.openPalette(paletteType));
+    if (paletteType !== editorManagerState.paletteType) {
+      dispatch({
+        type: 'UI/OPEN_PALETTE',
+        paletteType,
+      });
     }
 
     this.setState({
@@ -98,36 +103,49 @@ export class PaletteContainer extends React.PureComponent {
     const keyBindings = {
       toggleCommandPalette: {
         key: 'Mod-P',
-        onExecute: ({ updateUIContext }) => {
-          updateUIContext(UIActions.openCommandPalette());
+        onExecute: () => {
+          const { dispatch } = this.context;
+          dispatch({
+            type: 'UI/OPEN_PALETTE',
+            paletteType: 'command',
+          });
           return true;
         },
       },
 
       openPalette: {
         key: 'Mod-p',
-        onExecute: ({ updateUIContext }) => {
-          if (this.context.paletteType === 'file') {
+        onExecute: () => {
+          const { editorManagerState, dispatch } = this.context;
+          if (editorManagerState.paletteType === 'file') {
             this.setState({
               counter: this.state.counter + 1,
             });
             return true;
           }
-          updateUIContext(UIActions.openPalette('file'));
+          dispatch({
+            type: 'UI/OPEN_PALETTE',
+            paletteType: 'file',
+          });
           return true;
         },
       },
 
       openWorkspacePalette: {
         key: 'Ctrl-r',
-        onExecute: ({ updateUIContext }) => {
-          if (this.context.paletteType === 'workspace') {
+        onExecute: () => {
+          const { editorManagerState, dispatch } = this.context;
+
+          if (editorManagerState.paletteType === 'workspace') {
             this.setState({
               counter: this.state.counter + 1,
             });
             return true;
           }
-          updateUIContext(UIActions.openPalette('workspace'));
+          dispatch({
+            type: 'UI/OPEN_PALETTE',
+            paletteType: 'workspace',
+          });
           return true;
         },
       },
@@ -141,7 +159,6 @@ export class PaletteContainer extends React.PureComponent {
               return value.onExecute({
                 uiContext: this.value,
                 updateUIContext: this.context.updateUIContext,
-                // updateWorkspaceContext: this.context.updateWorkspaceContext,
               });
             },
           ];
@@ -157,14 +174,16 @@ export class PaletteContainer extends React.PureComponent {
   componentWillUnmount() {
     this.removeKeybindingHelper();
   }
+
   render() {
     const { subQuery, counter } = this.state;
-
-    if (!this.context.paletteType) {
+    const { editorManagerState } = this.context;
+    const { paletteType } = editorManagerState;
+    if (!paletteType) {
       return null;
     }
 
-    const type = this.context.paletteType;
+    const type = paletteType;
     const props = {
       type,
       counter: counter,
@@ -191,7 +210,7 @@ export class PaletteContainer extends React.PureComponent {
         onPressEnter={this.onPressEnter}
         updateCounter={this.updateCounter}
         updateQuery={this.updateQuery}
-        query={generateRawQuery(this.context.paletteType, this.state.subQuery)}
+        query={generateRawQuery(paletteType, this.state.subQuery)}
         counter={counter}
       >
         {child}

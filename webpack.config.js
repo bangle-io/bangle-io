@@ -7,6 +7,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
   const mode = isProduction ? 'production' : 'development';
+  // eslint-disable-next-line no-process-env
   if (isProduction && process.env.NODE_ENV !== 'production') {
     throw new Error('NODE_ENV not production');
   }
@@ -25,15 +26,18 @@ module.exports = (env, argv) => {
     resolveLoader: {},
     devServer: {
       contentBase: path.join(__dirname, 'build'),
-      publicPath: '/',
       disableHostCheck: true,
       port: 4000,
       host: '0.0.0.0',
+      historyApiFallback: {
+        disableDotRule: true,
+      },
     },
     output: {
       filename: 'main.[contenthash].js',
       chunkFilename: '[name].bundle.[contenthash].js',
       path: path.resolve(__dirname, 'build'),
+      publicPath: '/',
     },
 
     plugins: [

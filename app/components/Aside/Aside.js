@@ -1,26 +1,18 @@
 import './aside.css';
-import React from 'react';
+import React, { useContext } from 'react';
 import { ActivityBar } from './ActivityBar';
 import { FileBrowser } from './FileBrowser';
-import { UIContext } from 'bangle-io/app/store/UIContext';
+import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 
-export class Aside extends React.PureComponent {
-  render() {
-    return (
-      <UIContext.Consumer>
-        {({ isSidebarOpen, paletteType, updateUIContext }) => (
-          <>
-            <ActivityBar
-              isSidebarOpen={isSidebarOpen}
-              updateUIContext={updateUIContext}
-              paletteType={paletteType}
-            />
-            {isSidebarOpen ? (
-              <FileBrowser updateUIContext={updateUIContext} />
-            ) : null}
-          </>
-        )}
-      </UIContext.Consumer>
-    );
-  }
+export function Aside() {
+  const {
+    editorManagerState: { sidebar },
+  } = useContext(EditorManagerContext);
+
+  return (
+    <>
+      <ActivityBar />
+      {sidebar ? <FileBrowser /> : null}
+    </>
+  );
 }

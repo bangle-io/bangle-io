@@ -1,83 +1,76 @@
 import './aside.css';
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useContext } from 'react';
 import { SideBar } from './SideBar';
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
 import { BaseButton } from '../Button';
 import 'css.gg/icons/css/chevron-down.css';
 import { ChevronDown, ChevronRight } from '../Icons/index';
+import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
-  workspaceActions,
-  WorkspaceContext,
-} from '../../workspace/WorkspaceContext';
-import { UIActions } from '../../store/UIContext';
+  useCreateNewFile,
+  useDeleteByDocName,
+  useGetWorkspaceFiles,
+  useWorkspaceDetails,
+} from 'bangle-io/app/workspace2/Workspace';
 
-export class FileBrowser extends React.PureComponent {
-  static contextType = WorkspaceContext;
-  static propTypes = {
-    updateUIContext: PropTypes.func.isRequired,
-  };
+FileBrowser.propTypes = {};
 
-  openNew = async () => {
-    await this.context.updateContext(workspaceActions.openBlankWorkspaceFile());
-    await this.props.updateUIContext(UIActions.toggleSidebar());
-  };
+export function FileBrowser() {
+  const [files] = useGetWorkspaceFiles();
+  const createNewFile = useCreateNewFile();
+  const deleteByDocName = useDeleteByDocName();
+  const { dispatch } = useContext(EditorManagerContext);
+  const { wsName, filePath, pushWsPath } = useWorkspaceDetails();
 
-  toggleTheme = async () => {
-    await this.props.updateUIContext(UIActions.toggleTheme());
-  };
+  const toggleTheme = () =>
+    dispatch({
+      type: 'UI/TOGGLE_THEME',
+    });
 
-  downloadBackup = async () => {};
+  const openNew = useCallback(() => {
+    createNewFile();
+    dispatch({
+      type: 'UI/TOGGLE_SIDEBAR',
+    });
+  }, [dispatch, createNewFile]);
 
-  generateRows = () => {
-    if (!this.context.workspace) {
-      return;
-    }
-    const { updateContext, openedDocuments, workspace } = this.context;
-    let files = workspace.files;
-
-    const children = files.map((item) => (
-      <SideBarRow
-        key={item.docName}
-        onClick={() =>
-          updateContext(workspaceActions.openWorkspaceFile(item.docName))
-        }
-        title={item.title}
-        isActive={openedDocuments.find((r) => r.docName === item.docName)}
-        rightIcon={[
-          <BaseButton
-            key="delete"
-            className="text-gray-600 hover:text-gray-900"
-            faType="fas fa-times-circle "
-            onClick={async (e) => {
-              e.stopPropagation();
-              updateContext(workspaceActions.deleteWorkspaceFile(item.docName));
-            }}
-          />,
-        ]}
-      />
-    ));
-
-    return (
+  return (
+    <SideBar
+      openNew={openNew}
+      toggleTheme={toggleTheme}
+      downloadBackup={() => {}}
+    >
       <CollapsibleSideBarRow
-        title={this.context.workspace.name}
+        title={wsName}
         isSticky={true}
         leftIcon={<ChevronDown style={{ width: 16, height: 16 }} />}
         activeLeftIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
       >
-        {children}
+        {files.map((item) => (
+          <SideBarRow
+            key={item.docName}
+            onClick={() => {
+              pushWsPath(wsName + ':' + item.docName);
+            }}
+            title={item.title}
+            isActive={filePath === item.docName}
+            rightIcon={[
+              <BaseButton
+                key="delete"
+                className="text-gray-600 hover:text-gray-900"
+                faType="fas fa-times-circle "
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  deleteByDocName(item.docName);
+                  dispatch({
+                    type: 'UI/TOGGLE_SIDEBAR',
+                  });
+                }}
+              />,
+            ]}
+          />
+        ))}
       </CollapsibleSideBarRow>
-    );
-  };
-  render() {
-    return (
-      <SideBar
-        openNew={this.openNew}
-        toggleTheme={this.toggleTheme}
-        downloadBackup={this.downloadBackup}
-      >
-        {this.generateRows()}
-      </SideBar>
-    );
-  }
+    </SideBar>
+  );
 }

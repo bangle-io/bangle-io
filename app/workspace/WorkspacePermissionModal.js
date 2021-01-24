@@ -1,101 +1,64 @@
-import React from 'react';
-import { workspaceActions, WorkspaceContext } from './WorkspaceContext';
-import { requestPermission } from './native-fs-driver';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { keybindingsHelper } from '../misc/keybinding-helper';
+import {
+  useWorkspaceDetails,
+  useWorkspacePermission,
+  useWorkspaces,
+} from '../workspace2/Workspace';
+import { EditorManagerContext } from '../workspace2/EditorManager';
 
-export class WorkspacePermissionModal extends React.PureComponent {
-  static contextType = WorkspaceContext;
-  state = {
-    rejectedAccess: false,
-  };
+const NeedsPermission = ({ wsName, requestPermission }) => {
+  return (
+    <div
+      className="flex justify-center flex-row h-full"
+      onClick={requestPermission}
+    >
+      Press Enter twice or click anywhere to resume working on {wsName}
+    </div>
+  );
+};
 
-  requestPermission = async () => {
-    const workspaceInfo = this.context.workspaceInfoThatNeedsPermission;
-    if (await requestPermission(workspaceInfo.metadata.dirHandle)) {
-      this.context.updateWorkspaceContext(
-        workspaceActions.openWorkspaceByWorkspaceInfo(
-          this.context.workspaceInfoThatNeedsPermission,
-        ),
-      );
-      if (this.state.rejectedAccess) {
-        this.setState({
-          rejectedAccess: false,
-        });
+export function WorkspacePermissionModal({ children }) {
+  const { wsName } = useWorkspaceDetails();
+  const [permission, requestPermission] = useWorkspacePermission();
+
+  const active = permission === 'rejected' || permission === undefined;
+
+  const open = useCallback(() => {
+    requestPermission();
+  }, [requestPermission]);
+
+  useEffect(() => {
+    let callback;
+    if (active) {
+      callback = keybindingsHelper({
+        Enter: () => {
+          if (!active) {
+            return false;
+          }
+          open();
+          return true;
+        },
+      });
+      document.addEventListener('keydown', callback);
+    }
+    return () => {
+      if (callback) {
+        document.removeEventListener('keydown', callback);
+        callback = undefined;
       }
-      return;
-    }
-
-    this.setState({
-      rejectedAccess: true,
-    });
-  };
-
-  getMessage = () => {
-    const name = this.context.workspaceInfoThatNeedsPermission.name;
-    let msg = '';
-    if (this.state.rejectedAccess) {
-      msg += `You will need to give permission to access '${name}'.`;
-    }
-    msg += `Press Enter twice or click anywhere to resume working on '${name}'`;
-    return msg;
-  };
-
-  componentDidMount() {
-    this.setupKeybinding();
-  }
-  componentDidUpdate() {
-    this.setupKeybinding();
-  }
-  componentWillUnmount() {
-    if (this.removeKeybinding) {
-      this.removeKeybinding();
-    }
-  }
-
-  removeKeybinding = null;
-
-  setupKeybinding() {
-    if (!this.context.workspaceInfoThatNeedsPermission) {
-      if (this.removeKeybinding) {
-        this.removeKeybinding();
-      }
-      return;
-    }
-
-    // binding is already setup
-    if (this.removeKeybinding) {
-      return;
-    }
-
-    const callback = keybindingsHelper({
-      Enter: () => {
-        if (!this.context.workspaceInfoThatNeedsPermission) {
-          return false;
-        }
-        this.requestPermission();
-        return true;
-      },
-    });
-
-    document.addEventListener('keydown', callback);
-
-    this.removeKeybinding = () => {
-      document.removeEventListener('keydown', callback);
-      this.removeKeybinding = null;
     };
+  }, [active, open]);
+
+  if (active) {
+    return (
+      <NeedsPermission
+        wsName={wsName}
+        requestPermission={open}
+        rejected={permission === 'rejected'}
+      />
+    );
   }
 
-  render() {
-    if (this.context.workspaceInfoThatNeedsPermission) {
-      return (
-        <div
-          className="flex justify-center flex-row h-full"
-          onClick={this.requestPermission}
-        >
-          {this.getMessage()}
-        </div>
-      );
-    }
-    return this.props.children;
-  }
+  return children;
 }

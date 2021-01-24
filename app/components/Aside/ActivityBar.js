@@ -1,42 +1,48 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StackButton } from '../Button';
-import PropTypes from 'prop-types';
-import { UIActions } from 'bangle-io/app/store/UIContext';
+import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
+import { config } from 'bangle-io/config';
 
-export class ActivityBar extends React.PureComponent {
-  static propTypes = {
-    isSidebarOpen: PropTypes.bool.isRequired,
-    updateUIContext: PropTypes.func.isRequired,
-  };
+export function ActivityBar() {
+  const {
+    editorManagerState: { sidebar, paletteType },
+    dispatch,
+  } = useContext(EditorManagerContext);
 
-  render() {
-    return (
-      <div
-        className={`grid-activity-bar flex flex-row ${
-          this.props.isProduction ? 'bg-pink-900' : 'bg-gray-900'
-        } py-3 flex flex-col z-30`}
-      >
-        <div className="flex align-center justify-center">
-          <StackButton
-            onClick={() => {
-              this.props.updateUIContext(UIActions.toggleSidebar());
-            }}
-            isActive={this.props.isSidebarOpen}
-            faType="fas fa-folder"
-            stack={true}
-          />
-        </div>
-        <div className="flex align-center justify-center">
-          <StackButton
-            onClick={() => {
-              this.props.updateUIContext(UIActions.openPalette());
-            }}
-            isActive={!!this.props.paletteType}
-            faType="fas fa-terminal"
-            stack={true}
-          />
-        </div>
+  const toggleSidebar = () =>
+    dispatch({
+      type: 'UI/TOGGLE_SIDEBAR',
+    });
+
+  const togglePalette = () =>
+    dispatch({
+      type: 'UI/TOGGLE_PALETTE',
+    });
+
+  return (
+    <div
+      className={`grid-activity-bar flex flex-row ${
+        config.isProduction ? 'bg-pink-900' : 'bg-gray-900'
+      } py-3 flex flex-col z-30`}
+    >
+      <div className="flex align-center justify-center">
+        <StackButton
+          onClick={toggleSidebar}
+          isActive={sidebar}
+          faType="fas fa-folder"
+          stack={true}
+        />
       </div>
-    );
-  }
+      <div className="flex align-center justify-center">
+        <StackButton
+          onClick={togglePalette}
+          isActive={!!paletteType}
+          faType="fas fa-terminal"
+          stack={true}
+        />
+      </div>
+    </div>
+  );
 }
+
+ActivityBar.propTypes = {};

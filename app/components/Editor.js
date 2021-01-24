@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
 
 import { getIdleCallback, uuid } from '@bangle.dev/core/utils/js-utils';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
-import { collabRequestHandlers } from '@bangle.dev/collab/client/collab-request-handlers';
 import * as coreComps from '@bangle.dev/core/components/index';
 import { NodeView } from '@bangle.dev/core/node-view';
 import { emoji, emojisArray } from '@bangle.dev/emoji/index';
@@ -16,9 +15,10 @@ import sticker from '@bangle.dev/react-sticker';
 import { specRegistry } from '../editor/spec-sheet';
 import { floatingMenu, FloatingMenu } from '@bangle.dev/react-menu';
 import { EmojiSuggest, emojiSuggest } from '@bangle.dev/react-emoji-suggest';
+import { config } from 'bangle-io/config';
+import { EditorManagerContext } from '../workspace2/EditorManager';
 
 const LOG = false;
-const DEBUG = true;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
 const getScrollContainer = (view) => {
@@ -28,15 +28,42 @@ const getScrollContainer = (view) => {
 const menuKey = new PluginKey('menuKey');
 const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
-export function Editor({ isFirst, manager, docName }) {
+export function Editor({ isFirst, docName }) {
+  const {
+    editorManagerState: { sendRequest },
+  } = useContext(EditorManagerContext);
   const getPlugins = () => {
     const collabOpts = {
       docName: docName,
       clientId: 'client-' + uuid(4),
-      ...collabRequestHandlers((...args) =>
-        // TODO fix this resp.body
-        manager.handleRequest(...args).then((resp) => resp.body),
-      ),
+
+      async getDocument({ docName, userId }) {
+        // log({ docName, userId });
+        return sendRequest('get_document', {
+          docName,
+          userId,
+        });
+      },
+
+      async pullEvents({ version, docName, userId }) {
+        // log({ version, docName, userId });
+        return sendRequest('get_events', {
+          docName,
+          version,
+          userId,
+        });
+      },
+
+      async pushEvents({ version, steps, clientID, docName, userId }) {
+        // log({ version, steps, clientID, docName, userId });
+        return sendRequest('push_events', {
+          clientID,
+          version,
+          steps,
+          docName,
+          userId,
+        });
+      },
     };
     return [
       floatingMenu.plugins({
@@ -93,7 +120,7 @@ export function Editor({ isFirst, manager, docName }) {
   const onEditorReady = (editor) => {
     if (isFirst) {
       window.editor = editor;
-      if (process.env.NODE_ENV !== 'integration') {
+      if (!config.isIntegration) {
         getIdleCallback(() => {
           import(
             /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
@@ -133,6 +160,7 @@ export function Editor({ isFirst, manager, docName }) {
     specRegistry,
   });
 
+  useEffect(() => log('mounting editor', docName), [docName]);
   return (
     <BangleEditor
       state={editorState}
@@ -163,8 +191,4 @@ function TodoItem({ children, node, updateAttrs }) {
       {children}
     </>
   );
-}
-
-function isJestIntegration() {
-  return process.env.NODE_ENV === 'test' && process.env.JEST_INTEGRATION;
 }
