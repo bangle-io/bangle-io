@@ -1,11 +1,9 @@
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { keybindingsHelper } from '../misc/keybinding-helper';
 import {
   useWorkspaceDetails,
   useWorkspacePermission,
-  useWorkspaces,
 } from '../workspace2/Workspace';
-import { EditorManagerContext } from '../workspace2/EditorManager';
 
 const NeedsPermission = ({ wsName, requestPermission }) => {
   return (

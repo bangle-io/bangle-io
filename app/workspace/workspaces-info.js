@@ -69,8 +69,6 @@ export class WorkspacesInfo {
 
     const existing = await this._getWorkspaces();
     const { name, uid, metadata } = entry;
-    // log({ entry });
-
     const entryMatch = existing[uid];
 
     if (entryMatch) {

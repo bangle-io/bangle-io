@@ -1,6 +1,5 @@
 import React from 'react';
 import { AppContainer } from './AppContainer';
-import { WorkspaceContextProvider } from './workspace/WorkspaceContext';
 
 export default class App extends React.PureComponent {
   state = {
@@ -10,10 +9,6 @@ export default class App extends React.PureComponent {
     window.setState = () => {
       this.setState((state) => ({ show: !state.show }));
     };
-    return (
-      <WorkspaceContextProvider>
-        {this.state.show && <AppContainer />}
-      </WorkspaceContextProvider>
-    );
+    return this.state.show && <AppContainer />;
   }
 }

@@ -1,5 +1,5 @@
 import { uuid } from '@bangle.dev/core/utils/js-utils';
-import { markdownParser, markdownSerializer } from '../markdown/index';
+import { markdownParser, markdownSerializer } from './markdown';
 import { readFile } from '../misc/index';
 const DIR_IGNORE_LIST = ['node_modules', '.git'];
 
@@ -69,8 +69,6 @@ export class FSStorage {
     fileName = fileName.endsWith('.md') ? fileName : fileName + '.md';
 
     return fileName;
-
-    // throw new Error('Not implemented');
   }
 
   async getItem(key) {
