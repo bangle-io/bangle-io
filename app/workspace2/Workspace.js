@@ -128,13 +128,15 @@ export function useGetWorkspaceFiles() {
 export function useCreateNewFile() {
   const { wsName, pushWsPath } = useWorkspaceDetails();
 
-  const createNewFile = useCallback(async () => {
-    const docName = uuid(6);
-    const workspace = await getWorkspace(wsName);
-    const newFile = await workspace.createFile(docName, null);
-    workspace.linkFile(newFile);
-    pushWsPath(workspace.name + ':' + newFile.docName);
-  }, [wsName, pushWsPath]);
+  const createNewFile = useCallback(
+    async (docName = uuid(6)) => {
+      const workspace = await getWorkspace(wsName);
+      const newFile = await workspace.createFile(docName, null);
+      workspace.linkFile(newFile);
+      pushWsPath(workspace.name + ':' + newFile.docName);
+    },
+    [wsName, pushWsPath],
+  );
 
   return createNewFile;
 }

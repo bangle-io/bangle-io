@@ -4,6 +4,7 @@ import { SideBarRow } from '../Aside/SideBarRow';
 import { INDEXDB_TYPE, NATIVE_FS_TYPE } from '../../workspace/type-helpers';
 import { readFile } from '../../misc/index';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
+import { useCreateNewFile } from 'bangle-io/app/workspace2/Workspace';
 
 export const commands = Object.entries(Commands());
 
@@ -60,24 +61,32 @@ function ToggleSidebar({ isActive, onDismiss, execute }) {
   );
 }
 
+WorkspaceNewFile.title = 'Workspace: New File';
+WorkspaceNewFile.queryMatch = (query) => queryMatch(WorkspaceNewFile, query);
+function WorkspaceNewFile({ isActive, onDismiss, execute }) {
+  const createNewFile = useCreateNewFile();
+  const onExecuteItem = useCallback(() => {
+    createNewFile();
+    onDismiss();
+  }, [createNewFile, onDismiss]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={WorkspaceNewFile.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
 function Commands() {
   return {
     'UIContext.toggleTheme': ToggleThemeCommand,
     'UIContext.toggleSideBar': ToggleSidebar,
 
     // WorkspaceContext
-    'WorkspaceContext.newFile': commandRenderHOC({
-      hint: '',
-      title: 'Workspace: New file',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-
-      onExecute: ({ updateWorkspaceContext, onDismiss }) => {
-        // updateWorkspaceContext(workspaceActions.openBlankWorkspaceFile());
-        onDismiss();
-      },
-    }),
+    'WorkspaceContext.newFile': WorkspaceNewFile,
     'WorkspaceContext.newBrowserWorkspace': commandRenderHOC({
       hint: '',
       title: 'Workspace: Create new workspace saved in your browser',
