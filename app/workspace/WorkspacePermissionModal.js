@@ -3,7 +3,7 @@ import { keybindingsHelper } from '../misc/keybinding-helper';
 import {
   useWorkspaceDetails,
   useWorkspacePermission,
-} from '../workspace2/Workspace';
+} from '../workspace2/workspace-hooks';
 
 const NeedsPermission = ({ wsName, requestPermission }) => {
   return (
@@ -19,7 +19,6 @@ const NeedsPermission = ({ wsName, requestPermission }) => {
 export function WorkspacePermissionModal({ children }) {
   const { wsName } = useWorkspaceDetails();
   const [permission, requestPermission] = useWorkspacePermission();
-
   const active = permission === 'rejected' || permission === undefined;
 
   const open = useCallback(() => {

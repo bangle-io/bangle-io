@@ -1,108 +1,17 @@
 import { useContext, useEffect, useState, useCallback } from 'react';
-import { specRegistry } from '../editor/spec-sheet';
-import { IndexDbWorkspace } from '../workspace/workspace';
+
 import { WorkspacesInfo } from '../workspace/workspaces-info';
 import { EditorManagerContext } from './EditorManager';
 import { uuid } from '@bangle.dev/core/utils/js-utils';
-import {
-  hasPermissions,
-  requestPermission as requestFilePermission,
-} from '../workspace/native-fs-driver';
+import { requestPermission as requestFilePermission } from '../workspace/native-fs-driver';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-
-const pathValidRegex = /^[0-9a-zA-Z_\-. /:]+$/;
-const last = (arr) => arr[arr.length - 1];
-
-export const pathHelpers = {
-  validPath(wsPath) {
-    if (
-      !pathValidRegex.test(wsPath) ||
-      wsPath.split('/').some((r) => r.length === 0)
-    ) {
-      console.log(wsPath);
-      throw new Error('Invalid path ' + wsPath);
-    }
-
-    if ((wsPath.match(/:/g) || []).length !== 1) {
-      throw new Error('Path must have only 1 :');
-    }
-  },
-
-  resolve(wsPath) {
-    const [wsName, filePath] = wsPath.split(':');
-
-    const docName = last(filePath.split('/'));
-
-    return {
-      wsName,
-      docName,
-      filePath,
-    };
-  },
-};
-
-export async function getDoc(wsPath) {
-  return (await getFile(wsPath))?.doc;
-}
-
-export async function saveDoc(wsPath, doc) {
-  const { wsName, filePath } = pathHelpers.resolve(wsPath);
-  const docJson = doc.toJSON();
-  const workspace = await getWorkspace(wsName);
-  const workspaceFile = workspace.getFile(filePath);
-  if (workspaceFile) {
-    await workspaceFile.updateDoc(docJson);
-    return;
-  }
-}
-
-export async function getFile(wsPath = 'test3:dslkqk') {
-  pathHelpers.validPath(wsPath);
-  const { wsName, filePath } = pathHelpers.resolve(wsPath);
-  const workspace = await getWorkspace(wsName);
-
-  if (!workspace.hasFile(filePath)) {
-    throw new Error('File not found in workspace');
-  }
-
-  return workspace.getFile(filePath);
-}
-
-export async function getFiles(wsName = 'test3') {
-  console.time('getFiles');
-
-  const workspace = await getWorkspace(wsName);
-  console.timeEnd('getFiles');
-  return workspace.files;
-}
-
-export async function getWorkspaceInfo(wsName) {
-  const availableWorkspacesInfo = await WorkspacesInfo.list();
-  const workspaceInfo = availableWorkspacesInfo.find(
-    ({ name }) => name === wsName,
-  );
-  return workspaceInfo;
-}
-
-export async function getWorkspace(wsName) {
-  const workspaceInfo = await getWorkspaceInfo(wsName);
-  return IndexDbWorkspace.openExistingWorkspace(
-    workspaceInfo,
-    specRegistry.schema,
-  );
-}
-
-async function wsQueryPermission(wsName) {
-  const workspaceInfo = await getWorkspaceInfo(wsName);
-  if (!workspaceInfo.metadata.dirHandle) {
-    return true;
-  }
-  const result = Boolean(
-    await hasPermissions(workspaceInfo.metadata.dirHandle),
-  );
-
-  return result;
-}
+import {
+  getFiles,
+  getWorkspace,
+  getWorkspaceInfo,
+  resolvePath,
+  wsQueryPermission,
+} from './workspace-helpers';
 
 export function useGetWorkspaceFiles() {
   const { wsName } = useWorkspaceDetails();
@@ -128,15 +37,13 @@ export function useGetWorkspaceFiles() {
 export function useCreateNewFile() {
   const { wsName, pushWsPath } = useWorkspaceDetails();
 
-  const createNewFile = useCallback(
-    async (docName = uuid(6)) => {
-      const workspace = await getWorkspace(wsName);
-      const newFile = await workspace.createFile(docName, null);
-      workspace.linkFile(newFile);
-      pushWsPath(workspace.name + ':' + newFile.docName);
-    },
-    [wsName, pushWsPath],
-  );
+  const createNewFile = useCallback(async () => {
+    const docName = uuid(6);
+    const workspace = await getWorkspace(wsName);
+    const newFile = await workspace.createFile(docName, null);
+    workspace.linkFile(newFile);
+    pushWsPath(workspace.name + ':' + newFile.docName);
+  }, [wsName, pushWsPath]);
 
   return createNewFile;
 }
@@ -234,7 +141,7 @@ export function useWorkspaceDetails() {
   const history = useHistory();
   const pushWsPath = useCallback(
     (wsPath) => {
-      const { wsName, filePath } = pathHelpers.resolve(wsPath);
+      const { wsName, filePath } = resolvePath(wsPath);
       history.push(`/ws/${wsName}/${filePath}`);
     },
     [history],
@@ -250,7 +157,7 @@ export function useWorkspaceDetails() {
 
   if (filePath) {
     wsPath = wsName + ':' + filePath;
-    ({ docName } = pathHelpers.resolve(wsPath));
+    ({ docName } = resolvePath(wsPath));
   }
 
   return {

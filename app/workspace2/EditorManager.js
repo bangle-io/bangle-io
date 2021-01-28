@@ -4,7 +4,7 @@ import { Manager } from '@bangle.dev/collab/server/manager';
 import { specRegistry } from '../editor/spec-sheet';
 import { defaultContent } from '../components/constants';
 import { applyTheme } from '../style/apply-theme';
-import { getDoc, saveDoc } from './Workspace';
+import { getDoc, saveDoc } from './workspace-hooks';
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};

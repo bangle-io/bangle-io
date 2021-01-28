@@ -4,7 +4,7 @@ import { SideBarRow } from '../Aside/SideBarRow';
 import { INDEXDB_TYPE, NATIVE_FS_TYPE } from '../../workspace/type-helpers';
 import { readFile } from '../../misc/index';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
-import { useCreateNewFile } from 'bangle-io/app/workspace2/Workspace';
+import { useCreateNewFile } from 'bangle-io/app/workspace2/workspace-hooks';
 
 export const commands = Object.entries(Commands());
 
