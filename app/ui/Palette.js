@@ -103,6 +103,7 @@ class PaletteElement extends React.PureComponent {
         this.textInput.current.focus();
         return;
       }
+
       this.props.onDismiss();
 
       if (this.destroyWatchClickOutside) {

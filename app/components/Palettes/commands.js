@@ -4,7 +4,10 @@ import { SideBarRow } from '../Aside/SideBarRow';
 import { INDEXDB_TYPE, NATIVE_FS_TYPE } from '../../workspace/type-helpers';
 import { readFile } from '../../misc/index';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
-import { useCreateNewFile } from 'bangle-io/app/workspace2/workspace-hooks';
+import {
+  useCreateNewFile,
+  useWorkspaces,
+} from 'bangle-io/app/workspace2/workspace-hooks';
 
 export const commands = Object.entries(Commands());
 
@@ -64,17 +67,95 @@ function ToggleSidebar({ isActive, onDismiss, execute }) {
 WorkspaceNewFile.title = 'Workspace: New File';
 WorkspaceNewFile.queryMatch = (query) => queryMatch(WorkspaceNewFile, query);
 function WorkspaceNewFile({ isActive, onDismiss, execute }) {
-  const createNewFile = useCreateNewFile();
+  const { dispatch } = useContext(EditorManagerContext);
   const onExecuteItem = useCallback(() => {
-    createNewFile();
     onDismiss();
-  }, [createNewFile, onDismiss]);
+    // Doing it this way because Palette.js/watchClickOutside ends up dismissing
+    // the input palette
+    setTimeout(() => {
+      dispatch({
+        type: 'UI/OPEN_PALETTE',
+        paletteType: 'command/input/WorkspaceContext.newFileInput',
+      });
+    }, 0);
+  }, [onDismiss, dispatch]);
 
   useCommandExecute(execute, onExecuteItem);
   return (
     <SideBarRow
       isActive={isActive}
       title={WorkspaceNewFile.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
+WorkspaceNewFileInput.title = 'Enter Filename';
+WorkspaceNewFileInput.hidden = true;
+WorkspaceNewFileInput.queryMatch = (query) =>
+  queryMatch(WorkspaceNewFileInput, query);
+function WorkspaceNewFileInput({ isActive, onDismiss, execute, query }) {
+  const createNewFile = useCreateNewFile();
+
+  const onExecuteItem = useCallback(() => {
+    createNewFile(query).then(() => {
+      onDismiss();
+    });
+  }, [onDismiss, query, createNewFile]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={WorkspaceNewFileInput.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
+WorkspaceNewBrowserWS.title = 'Workspace: New Workspace in Browser';
+WorkspaceNewBrowserWS.queryMatch = (query) =>
+  queryMatch(WorkspaceNewBrowserWS, query);
+function WorkspaceNewBrowserWS({ isActive, onDismiss, execute }) {
+  const { dispatch } = useContext(EditorManagerContext);
+  const onExecuteItem = useCallback(() => {
+    onDismiss();
+    setTimeout(() => {
+      dispatch({
+        type: 'UI/OPEN_PALETTE',
+        paletteType: 'command/input/WorkspaceContext.newBrowserWSInput',
+      });
+    }, 0);
+  }, [onDismiss, dispatch]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={WorkspaceNewBrowserWS.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
+WorkspaceNewBrowserWSInput.title = 'Enter Workspace name';
+WorkspaceNewBrowserWSInput.hidden = true;
+WorkspaceNewBrowserWSInput.queryMatch = (query) =>
+  queryMatch(WorkspaceNewBrowserWSInput, query);
+function WorkspaceNewBrowserWSInput({ isActive, onDismiss, execute, query }) {
+  const { createWorkspace } = useWorkspaces();
+
+  const onExecuteItem = useCallback(() => {
+    onDismiss();
+    createWorkspace(query, 'browser');
+  }, [onDismiss, query, createWorkspace]);
+
+  useCommandExecute(execute, onExecuteItem);
+
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={WorkspaceNewBrowserWSInput.title}
       onClick={onExecuteItem}
     />
   );
@@ -87,70 +168,9 @@ function Commands() {
 
     // WorkspaceContext
     'WorkspaceContext.newFile': WorkspaceNewFile,
-    'WorkspaceContext.newBrowserWorkspace': commandRenderHOC({
-      hint: '',
-      title: 'Workspace: Create new workspace saved in your browser',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-
-      onExecute: ({ updateUIContext, updateWorkspaceContext, onDismiss }) => {
-        // dismiss to reset the execute prop on the parent component
-        onDismiss();
-        // updateUIContext(
-        //   UIActions.openPalette(
-        //     'command/input/WorkspaceContext.newBrowserWorkspaceInput',
-        //   ),
-        // );
-      },
-    }),
-
-    'WorkspaceContext.newBrowserWorkspaceInput': commandRenderHOC({
-      hint: '',
-      hidden: true,
-      title: 'Please give this workspace a name and press enter to finish',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-      onExecute: ({ updateWorkspaceContext, onDismiss, query }) => {
-        // updateWorkspaceContext(
-        //   workspaceActions.createNewIndexDbWorkspace(query, INDEXDB_TYPE),
-        // );
-        onDismiss();
-      },
-    }),
-    'WorkspaceContext.newNativeWorkspace': commandRenderHOC({
-      hint: '',
-      title: 'Workspace: Create new workspace saved in your filesystem',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-
-      onExecute: ({ updateUIContext, updateWorkspaceContext, onDismiss }) => {
-        // dismiss to reset the execute prop on the parent component
-        onDismiss();
-        // updateUIContext(
-        //   UIActions.openPalette(
-        //     'command/input/WorkspaceContext.newNativeWorkspaceInput',
-        //   ),
-        // );
-      },
-    }),
-
-    'WorkspaceContext.newNativeWorkspaceInput': commandRenderHOC({
-      hint: '',
-      hidden: true,
-      title: 'Please give this workspace a name and press enter to finish',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-      onExecute: ({ updateWorkspaceContext, onDismiss, query }) => {
-        // updateWorkspaceContext(
-        //   workspaceActions.createNewIndexDbWorkspace(query, NATIVE_FS_TYPE),
-        // );
-        onDismiss();
-      },
-    }),
+    'WorkspaceContext.newFileInput': WorkspaceNewFileInput,
+    'WorkspaceContext.newBrowserWS': WorkspaceNewBrowserWS,
+    'WorkspaceContext.newBrowserWSInput': WorkspaceNewBrowserWSInput,
 
     'WorkspaceContext.openExistingWorkspace': commandRenderHOC({
       hint: '',

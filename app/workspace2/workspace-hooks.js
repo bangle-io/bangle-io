@@ -1,14 +1,16 @@
-import { useContext, useEffect, useState, useCallback } from 'react';
-
-import { WorkspacesInfo } from '../workspace/workspaces-info';
-import { EditorManagerContext } from './EditorManager';
-import { uuid } from '@bangle.dev/core/utils/js-utils';
-import { requestPermission as requestFilePermission } from '../workspace/native-fs-driver';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useContext, useEffect, useState, useCallback } from 'react';
+import { uuid } from '@bangle.dev/core/utils/js-utils';
+
+import { EditorManagerContext } from './EditorManager';
+import { requestPermission as requestFilePermission } from '../workspace/native-fs-driver';
 import {
+  createFile,
+  createWorkspace,
+  deleteFile,
   getFiles,
-  getWorkspace,
   getWorkspaceInfo,
+  getWorkspaces,
   resolvePath,
   wsQueryPermission,
 } from './workspace-helpers';
@@ -29,7 +31,6 @@ export function useGetWorkspaceFiles() {
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
-
   return [files, refreshFiles];
 }
 
@@ -37,30 +38,29 @@ export function useGetWorkspaceFiles() {
 export function useCreateNewFile() {
   const { wsName, pushWsPath } = useWorkspaceDetails();
 
-  const createNewFile = useCallback(async () => {
-    const docName = uuid(6);
-    const workspace = await getWorkspace(wsName);
-    const newFile = await workspace.createFile(docName, null);
-    workspace.linkFile(newFile);
-    pushWsPath(workspace.name + ':' + newFile.docName);
-  }, [wsName, pushWsPath]);
+  const createNewFile = useCallback(
+    async (fileName = uuid(6)) => {
+      const wsPath = wsName + ':' + fileName;
+      await createFile(wsPath);
+      // const workspace = await getWorkspace(wsName);
+      // const newFile = await workspace.createFile(wsPath, null);
+      // workspace.linkFile(newFile);
+      pushWsPath(wsPath);
+    },
+    [wsName, pushWsPath],
+  );
 
   return createNewFile;
 }
 
-export function useDeleteByDocName() {
+export function useDeleteByWsPath() {
   const { wsName } = useWorkspaceDetails();
   const history = useHistory();
 
   const deleteByDocName = useCallback(
-    async (docName) => {
-      let workspace = await getWorkspace(wsName);
-      const workspaceFile = workspace.getFile(docName);
-      if (workspaceFile) {
-        await workspaceFile.delete();
-        workspace = workspace.unlinkFile(workspaceFile);
-        history.push('/ws/' + wsName);
-      }
+    async (wsPath) => {
+      await deleteFile(wsPath);
+      history.push('/ws/' + wsName);
     },
     [wsName, history],
   );
@@ -70,19 +70,31 @@ export function useDeleteByDocName() {
 
 export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState([]);
-  const refreshWorkspaceList = useCallback(() => {
-    WorkspacesInfo.list().then((workspaces) => {
-      updateWorkspaces(workspaces.map((w) => w.name));
-    });
-  }, []);
+  const history = useHistory();
 
   useEffect(() => {
-    refreshWorkspaceList();
-  }, [refreshWorkspaceList]);
+    let destroyed = false;
+    getWorkspaces().then((workspaces) => {
+      if (!destroyed) {
+        updateWorkspaces(workspaces.map((w) => w.name));
+      }
+    });
+    return () => {
+      destroyed = true;
+    };
+  }, []);
+
+  const createWorkspaceCb = useCallback(
+    async (wsName, type) => {
+      await createWorkspace(wsName, type);
+      history.push(`/ws/${wsName}`);
+    },
+    [history],
+  );
 
   return {
     workspaces,
-    refreshWorkspaceList,
+    createWorkspace: createWorkspaceCb,
   };
 }
 
