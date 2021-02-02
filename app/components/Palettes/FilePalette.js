@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import {
   useGetWorkspaceFiles,
   useWorkspaceDetails,
-} from 'bangle-io/app/workspace2/Workspace';
+} from 'bangle-io/app/workspace2/workspace-hooks';
+import { resolvePath } from 'bangle-io/app/workspace2/workspace-helpers';
 
 const LOG = false;
 
@@ -19,27 +20,26 @@ FilePalette.propTypes = {
 };
 
 export function FilePalette({ execute, onDismiss, query, counter }) {
-  const { wsName, pushWsPath } = useWorkspaceDetails();
+  const { pushWsPath } = useWorkspaceDetails();
 
   const [files] = useGetWorkspaceFiles();
-  const items = getItems({ query, files });
+  const wsPaths = getItems({ query, files });
 
   const onExecuteItem = useCallback(
     (activeItemIndex) => {
       activeItemIndex =
         activeItemIndex == null
-          ? Palette.getActiveIndex(counter, items.length)
+          ? Palette.getActiveIndex(counter, wsPaths.length)
           : activeItemIndex;
 
-      const activeItem = items[activeItemIndex];
-      // TODO i found that it can undefined, why/
-      if (!activeItem) {
+      const activeWsPath = wsPaths[activeItemIndex];
+      if (!activeWsPath) {
         return;
       }
-      pushWsPath(wsName + ':' + activeItem.docName);
+      pushWsPath(activeWsPath);
       onDismiss();
     },
-    [counter, items, pushWsPath, onDismiss, wsName],
+    [counter, wsPaths, pushWsPath, onDismiss],
   );
 
   useEffect(() => {
@@ -50,11 +50,11 @@ export function FilePalette({ execute, onDismiss, query, counter }) {
     }
   }, [execute, onExecuteItem]);
 
-  return items.map((file, i) => (
+  return wsPaths.map((wsPath, i) => (
     <SideBarRow
-      key={file.docName}
-      isActive={Palette.getActiveIndex(counter, items.length) === i}
-      title={file.title}
+      key={wsPath}
+      isActive={Palette.getActiveIndex(counter, wsPaths.length) === i}
+      title={resolvePath(wsPath).filePath}
       onClick={() => onExecuteItem(i)}
     />
   ));

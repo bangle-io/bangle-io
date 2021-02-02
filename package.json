@@ -48,6 +48,7 @@
     "@bangle.dev/trailing-node": "0.1.15",
     "@popperjs/core": "^2.5.4",
     "css.gg": "^2.0.0",
+    "idb-keyval": "^5.0.2",
     "localforage": "^1.9.0",
     "lodash.debounce": "^4.0.8",
     "prop-types": "^15.7.2",

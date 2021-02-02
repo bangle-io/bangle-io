@@ -7,20 +7,21 @@ import 'css.gg/icons/css/chevron-down.css';
 import { ChevronDown, ChevronRight } from '../Icons/index';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
-  useCreateNewFile,
-  useDeleteByDocName,
+  useCreateFile,
+  useDeleteFile,
   useGetWorkspaceFiles,
   useWorkspaceDetails,
-} from 'bangle-io/app/workspace2/Workspace';
+} from 'bangle-io/app/workspace2/workspace-hooks';
+import { resolvePath } from 'bangle-io/app/workspace2/workspace-helpers';
 
 FileBrowser.propTypes = {};
 
 export function FileBrowser() {
   const [files] = useGetWorkspaceFiles();
-  const createNewFile = useCreateNewFile();
-  const deleteByDocName = useDeleteByDocName();
+  const createNewFile = useCreateFile();
+  const deleteByDocName = useDeleteFile();
   const { dispatch } = useContext(EditorManagerContext);
-  const { wsName, filePath, pushWsPath } = useWorkspaceDetails();
+  const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspaceDetails();
 
   const toggleTheme = () =>
     dispatch({
@@ -46,14 +47,14 @@ export function FileBrowser() {
         leftIcon={<ChevronDown style={{ width: 16, height: 16 }} />}
         activeLeftIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
       >
-        {files.map((item) => (
+        {files.map((wsPath) => (
           <SideBarRow
-            key={item.docName}
+            key={wsPath}
             onClick={() => {
-              pushWsPath(wsName + ':' + item.docName);
+              pushWsPath(wsPath);
             }}
-            title={item.title}
-            isActive={filePath === item.docName}
+            title={resolvePath(wsPath).filePath}
+            isActive={activeWSPath === wsPath}
             rightIcon={[
               <BaseButton
                 key="delete"
@@ -61,7 +62,7 @@ export function FileBrowser() {
                 faType="fas fa-times-circle "
                 onClick={async (e) => {
                   e.stopPropagation();
-                  deleteByDocName(item.docName);
+                  deleteByDocName(wsPath);
                   dispatch({
                     type: 'UI/TOGGLE_SIDEBAR',
                   });

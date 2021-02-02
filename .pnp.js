@@ -76,6 +76,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-testing-library", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.10.1"],
             ["file-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.2.0"],
             ["html-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:4.5.0"],
+            ["idb-keyval", "npm:5.0.2"],
             ["jest", "npm:26.6.3"],
             ["jest-circus", "npm:26.6.3"],
             ["localforage", "npm:1.9.0"],
@@ -4794,6 +4795,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-testing-library", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:3.10.1"],
             ["file-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.2.0"],
             ["html-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:4.5.0"],
+            ["idb-keyval", "npm:5.0.2"],
             ["jest", "npm:26.6.3"],
             ["jest-circus", "npm:26.6.3"],
             ["localforage", "npm:1.9.0"],
@@ -8447,6 +8449,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["icss-utils", "npm:4.1.1"],
             ["postcss", "npm:7.0.35"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["idb-keyval", [
+        ["npm:5.0.2", {
+          "packageLocation": "./.yarn/cache/idb-keyval-npm-5.0.2-8cee375049-dec1ebfbef.zip/node_modules/idb-keyval/",
+          "packageDependencies": [
+            ["idb-keyval", "npm:5.0.2"]
           ],
           "linkType": "HARD",
         }]

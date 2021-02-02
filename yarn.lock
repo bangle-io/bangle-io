@@ -3106,6 +3106,7 @@ __metadata:
     eslint-plugin-testing-library: ^3.10.1
     file-loader: ^6.2.0
     html-webpack-plugin: ^4.5.0
+    idb-keyval: ^5.0.2
     jest: ^26.6.3
     jest-circus: ^26.6.3
     localforage: ^1.9.0
@@ -6253,6 +6254,13 @@ fsevents@^2.1.2:
   dependencies:
     postcss: ^7.0.14
   checksum: 437ba4f7c9543db7a007f3968698ae26c966e2c54e34ac08c8f88737d06181ffacc5de8d17435940367135822a98655e3c6c8f70504d22b2f5cbc8e10798f873
+  languageName: node
+  linkType: hard
+
+"idb-keyval@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "idb-keyval@npm:5.0.2"
+  checksum: dec1ebfbef1467c282868ef304a3a884b5a9696c52200ac11559f4f73c7472239bc104b5060d3526bc253f5b3131eddba0bcd0e99d9399fc0712ed7dbd7f7f81
   languageName: node
   linkType: hard
 

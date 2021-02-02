@@ -90,7 +90,9 @@ export class PaletteContainer extends React.PureComponent {
     if (paletteType !== editorManagerState.paletteType) {
       dispatch({
         type: 'UI/OPEN_PALETTE',
-        paletteType,
+        value: {
+          type: paletteType,
+        },
       });
     }
 
@@ -105,9 +107,12 @@ export class PaletteContainer extends React.PureComponent {
         key: 'Mod-P',
         onExecute: () => {
           const { dispatch } = this.context;
+
           dispatch({
             type: 'UI/OPEN_PALETTE',
-            paletteType: 'command',
+            value: {
+              type: 'command',
+            },
           });
           return true;
         },
@@ -125,7 +130,7 @@ export class PaletteContainer extends React.PureComponent {
           }
           dispatch({
             type: 'UI/OPEN_PALETTE',
-            paletteType: 'file',
+            value: { type: 'file' },
           });
           return true;
         },
@@ -144,7 +149,7 @@ export class PaletteContainer extends React.PureComponent {
           }
           dispatch({
             type: 'UI/OPEN_PALETTE',
-            paletteType: 'workspace',
+            value: { type: 'workspace' },
           });
           return true;
         },

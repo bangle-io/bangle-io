@@ -8,7 +8,7 @@ import { Aside } from './components/Aside/Aside';
 import { PaletteContainer } from './components/PaletteContainer';
 import { WorkspacePermissionModal } from './workspace/WorkspacePermissionModal';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { useWorkspaceDetails } from './workspace2/Workspace';
+import { useWorkspaceDetails } from './workspace2/workspace-hooks';
 
 export function AppContainer() {
   return (

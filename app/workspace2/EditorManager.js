@@ -4,7 +4,7 @@ import { Manager } from '@bangle.dev/collab/server/manager';
 import { specRegistry } from '../editor/spec-sheet';
 import { defaultContent } from '../components/constants';
 import { applyTheme } from '../style/apply-theme';
-import { getDoc, saveDoc } from './Workspace';
+import { getDoc, saveDoc } from './workspace-helpers';
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -24,7 +24,8 @@ const reducer = (state, action) => {
     case 'UI/OPEN_PALETTE': {
       return {
         ...state,
-        paletteType: action.paletteType || DEFAULT_PALETTE,
+        paletteType: action.value.type || DEFAULT_PALETTE,
+        paletteInitialQuery: action.value.initialQuery,
       };
     }
     case 'UI/TOGGLE_PALETTE': {
@@ -72,6 +73,7 @@ export function EditorManager({ children }) {
       // UI
       sidebar: false,
       paletteType: undefined,
+      paletteInitialQuery: undefined,
       theme: localStorage.getItem('theme') || 'light',
       wsPermission: undefined,
     },
