@@ -1,14 +1,12 @@
-import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect } from 'react';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
   useCreateFile,
+  useRenameActiveFile,
   useWorkspaceDetails,
   useWorkspaces,
 } from 'bangle-io/app/workspace2/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
-import { readFile } from '../../misc/index';
-import { deleteWorkspace } from 'bangle-io/app/workspace2/workspace-helpers';
 
 export const commands = Object.entries(Commands());
 
@@ -162,7 +160,7 @@ function WorkspaceNewBrowserWSInput({ isActive, onDismiss, execute, query }) {
   );
 }
 
-WorkspaceRenameFile.title = 'Workspace: Rename file';
+WorkspaceRenameFile.title = 'Workspace: Rename currently active file';
 WorkspaceRenameFile.queryMatch = (query) =>
   queryMatch(WorkspaceRenameFile, query);
 function WorkspaceRenameFile({ isActive, onDismiss, execute }) {
@@ -194,9 +192,12 @@ WorkspaceRenameFileInput.hidden = true;
 WorkspaceRenameFileInput.queryMatch = (query) =>
   queryMatch(WorkspaceRenameFileInput, query);
 function WorkspaceRenameFileInput({ isActive, onDismiss, execute, query }) {
+  const renameActiveFile = useRenameActiveFile();
+
   const onExecuteItem = useCallback(() => {
     onDismiss();
-  }, [onDismiss]);
+    renameActiveFile(query);
+  }, [onDismiss, renameActiveFile, query]);
 
   useCommandExecute(execute, onExecuteItem);
 
@@ -260,147 +261,6 @@ function queryMatch(command, query) {
     }
   }
   return strMatch(command.title, query);
-}
-
-function commandRenderHOC(command) {
-  const component = class CommandRenderUI extends React.PureComponent {
-    static contextType = EditorManagerContext;
-    static propTypes = {
-      query: PropTypes.string.isRequired,
-      isActive: PropTypes.bool.isRequired,
-      execute: PropTypes.bool.isRequired,
-      onDismiss: PropTypes.func.isRequired,
-      updateWorkspaceContext: PropTypes.func.isRequired,
-    };
-
-    static queryMatch(query) {
-      return queryMatch(command, query);
-    }
-
-    static title() {
-      return command.title;
-    }
-
-    componentDidMount() {
-      const { execute } = this.props;
-      // parent signals execution by setting execute to true
-      // and expects the child to call dismiss once executed
-      if (execute === true) {
-        this.onExecuteItem();
-      }
-    }
-
-    componentDidUpdate(prevProps) {
-      const { execute } = this.props;
-      // parent signals execution by setting execute to true
-      // and expects the child to call dismiss once executed
-      if (execute === true && prevProps.execute !== execute) {
-        this.onExecuteItem();
-      }
-    }
-
-    onExecuteItem = () => {
-      command.onExecute({
-        context: this.context,
-        onDismiss: this.props.onDismiss,
-        query: this.props.query,
-      });
-      return;
-    };
-
-    render() {
-      const { isActive } = this.props;
-      return (
-        <SideBarRow
-          isActive={isActive}
-          title={command.title}
-          onClick={() => this.onExecuteItem()}
-        />
-      );
-    }
-  };
-  return component;
-}
-
-function restoreWorkspaceFromBackup(command, type) {
-  return class RestoreWorkspaceFromBackup extends React.Component {
-    inputEl = React.createRef();
-
-    static propTypes = {
-      isActive: PropTypes.bool.isRequired,
-      execute: PropTypes.bool.isRequired,
-      onDismiss: PropTypes.func.isRequired,
-      updateWorkspaceContext: PropTypes.func.isRequired,
-    };
-
-    static queryMatch(query) {
-      return queryMatch(command, query);
-    }
-
-    componentDidMount() {
-      const { execute } = this.props;
-      // parent signals execution by setting execute to true
-      // and expects the child to call dismiss once executed
-      if (execute === true) {
-        this.onExecuteItem();
-      }
-    }
-
-    componentDidUpdate(prevProps) {
-      const { execute } = this.props;
-      // parent signals execution by setting execute to true
-      // and expects the child to call dismiss once executed
-      if (execute === true && prevProps.execute !== execute) {
-        this.onExecuteItem();
-      }
-    }
-
-    onExecuteItem = () => {
-      if (this.inputEl.current) {
-        console.log('clicking on exec');
-        this.inputEl.current.click();
-      }
-      return;
-    };
-
-    render() {
-      const { isActive } = this.props;
-      return (
-        <>
-          <input
-            type="file"
-            ref={this.inputEl}
-            id="workspaceFromBackupElement"
-            accept="application/json"
-            style={{ display: 'none' }}
-            onChange={async (event) => {
-              const fileList = event.target.files;
-              try {
-                const file = JSON.parse(await readFile(fileList[0]));
-                // this.props.updateWorkspaceContext(
-                //   workspaceActions.newWorkspaceFromBackup(file, type),
-                // );
-              } catch (error) {
-                console.error(error);
-                alert('Error reading file');
-              }
-              this.props.onDismiss();
-            }}
-          />
-          <SideBarRow
-            isActive={isActive}
-            title={command.title}
-            onClick={() => {
-              if (this.inputEl.current) {
-                console.log('clicking');
-                this.inputEl.current.click();
-              }
-            }}
-          />
-        </>
-      );
-    }
-  };
 }
 
 function strMatch(a, b) {

@@ -147,6 +147,31 @@ export async function getFiles(wsName) {
   return files;
 }
 
+export async function renameFile(wsPath, newWsPath) {
+  console.log(wsPath, newWsPath);
+  validatePath(wsPath);
+  validatePath(newWsPath);
+  const { wsName } = resolvePath(wsPath);
+  const { wsName: newWsName } = resolvePath(newWsPath);
+
+  if (wsName !== newWsName) {
+    throw new Error('Workspace name must be the same');
+  }
+
+  const workspace = await getWorkspaceInfo(wsName);
+
+  switch (workspace.type) {
+    case 'browser': {
+      await FileOps.renameFile(wsPath, newWsPath);
+      break;
+    }
+
+    default: {
+      throw new Error('Unknown workspace type ' + workspace.type);
+    }
+  }
+}
+
 // Workspace
 export async function getWorkspaceInfo(wsName) {
   const workspaces = await listWorkspaces();

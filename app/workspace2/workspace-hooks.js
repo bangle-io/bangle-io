@@ -12,6 +12,7 @@ import {
   getFiles,
   getWorkspaceInfo,
   listWorkspaces,
+  renameFile,
   resolvePath,
   wsQueryPermission,
 } from './workspace-helpers';
@@ -48,6 +49,21 @@ export function useCreateFile() {
   );
 
   return createNewFile;
+}
+
+export function useRenameActiveFile() {
+  const { wsName, wsPath, pushWsPath } = useWorkspaceDetails();
+
+  const renameFileCb = useCallback(
+    async (newFilePath) => {
+      const newWsPath = wsName + ':' + newFilePath;
+      await renameFile(wsPath, newWsPath);
+      pushWsPath(newWsPath);
+    },
+    [wsName, wsPath, pushWsPath],
+  );
+
+  return renameFileCb;
 }
 
 export function useDeleteFile() {

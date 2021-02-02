@@ -16,9 +16,17 @@ export class FileOps {
 
   static async renameFile(wsPath, newWsPath) {
     const file = await this.getFile(wsPath);
+
     if (!file) {
       throw new FileError(`File ${wsPath} does not exists`);
     }
+
+    const newFile = await this.getFile(newWsPath);
+
+    if (newFile) {
+      throw new FileError(`File ${newWsPath} already exists`);
+    }
+
     await this.deleteFile(wsPath);
     return this.createFile(newWsPath, file);
   }
