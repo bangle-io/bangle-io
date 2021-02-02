@@ -1,7 +1,7 @@
-import { get as idbGet, set as idbSet } from 'idb-keyval';
+import * as idb from 'idb-keyval';
 
 import { hasPermissions } from '../workspace/native-fs-driver';
-import { BrowserFS, NativeFS } from './io';
+import { FileOps } from './io';
 const pathValidRegex = /^[0-9a-zA-Z_\-. /:]+$/;
 const last = (arr) => arr[arr.length - 1];
 
@@ -46,7 +46,7 @@ export async function getDoc(wsPath) {
 
   switch (ws.type) {
     case 'browser': {
-      file = await BrowserFS.getFile(wsPath);
+      file = await FileOps.getFile(wsPath);
       break;
     }
 
@@ -70,11 +70,11 @@ export async function saveDoc(wsPath, doc) {
 
   switch (ws.type) {
     case 'browser': {
-      file = await BrowserFS.getFile(wsPath);
+      file = await FileOps.getFile(wsPath);
       if (!file) {
         throw new Error(`File ${wsPath} not found`);
       }
-      file = await BrowserFS.updateFile(wsPath, {
+      file = await FileOps.updateFile(wsPath, {
         ...file,
         doc: docJson,
       });
@@ -98,7 +98,7 @@ export async function createFile(wsPath) {
   });
   switch (workspace.type) {
     case 'browser': {
-      await BrowserFS.createFile(wsPath, create());
+      await FileOps.createFile(wsPath, create());
       break;
     }
 
@@ -114,7 +114,7 @@ export async function deleteFile(wsPath) {
   const workspace = await getWorkspaceInfo(wsName);
   switch (workspace.type) {
     case 'browser': {
-      await BrowserFS.deleteFile(wsPath);
+      await FileOps.deleteFile(wsPath);
       break;
     }
 
@@ -131,7 +131,7 @@ export async function getFiles(wsName) {
 
   switch (ws.type) {
     case 'browser': {
-      files = await BrowserFS.listFiles(wsName);
+      files = await FileOps.listFiles(wsName);
       break;
     }
 
@@ -144,17 +144,13 @@ export async function getFiles(wsName) {
     }
   }
 
-  // const workspace = await getWorkspace(wsName);
-  // return workspace.files;
-
   return files;
 }
 
+// Workspace
 export async function getWorkspaceInfo(wsName) {
-  const availableWorkspacesInfo = await getWorkspaces();
-  const workspaceInfo = availableWorkspacesInfo.find(
-    ({ name }) => name === wsName,
-  );
+  const workspaces = await listWorkspaces();
+  const workspaceInfo = workspaces.find(({ name }) => name === wsName);
 
   if (!workspaceInfo) {
     throw new Error('Unable to find workspace ' + wsName);
@@ -163,22 +159,25 @@ export async function getWorkspaceInfo(wsName) {
   return workspaceInfo;
 }
 
-export async function createWorkspace(wsName, type) {
+export async function createWorkspace(wsName, type = 'browser') {
   validatePath(wsName + ':' + 'random_file');
-  const existing = await getWorkspaces();
-  if (existing.find((w) => w.name === wsName)) {
-    throw new Error(`A workspace with name ${wsName} already exists`);
-  }
 
   switch (type) {
     case 'browser': {
-      await BrowserFS.createWorkspace(wsName);
+      const workspaces = await listWorkspaces();
+
+      if (workspaces.find((w) => w.name === wsName)) {
+        throw new Error(`Workspace ${wsName} exist`);
+      }
+
+      workspaces.push({
+        name: wsName,
+        type,
+      });
+
+      await idb.set('workspaces/2', workspaces);
       break;
     }
-
-    // case 'nativefs': {
-    //   break;
-    // }
 
     default: {
       throw new Error('Unknown workspace type ' + type);
@@ -186,19 +185,21 @@ export async function createWorkspace(wsName, type) {
   }
 }
 
-export async function getWorkspaces() {
-  const workspaces = (
-    await Promise.all([BrowserFS.listWorkspaces(), NativeFS.listWorkspaces()])
-  ).flatMap((r) => r);
-  return workspaces;
+export async function listWorkspaces() {
+  let ws = (await idb.get('workspaces/2')) || [];
+
+  return ws;
 }
 
-export async function deleteWorkspace(name) {
-  let workspaces = await getWorkspaces();
+export async function deleteWorkspace(wsName) {
+  let workspaces = await listWorkspaces();
 
-  workspaces = workspaces.filter((w) => w.name !== name);
+  if (!workspaces.find((w) => w.name === wsName)) {
+    throw new Error(`Workspace ${wsName} does not exist`);
+  }
 
-  await idbSet('workspaces/1', workspaces);
+  workspaces = workspaces.filter((w) => w.name !== wsName);
+  await idb.set('workspaces/2', workspaces);
 }
 
 export async function wsQueryPermission(wsName) {
@@ -217,8 +218,6 @@ export async function wsQueryPermission(wsName) {
   return result;
 }
 
-window.getWorkspaces = getWorkspaces;
-window.idbSet = idbSet;
-window.idbGet = idbGet;
+window.getWorkspaces = listWorkspaces;
 window.createFile = createFile;
 window.deleteFile = deleteFile;

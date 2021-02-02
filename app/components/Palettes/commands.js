@@ -3,11 +3,12 @@ import React, { useCallback, useContext, useEffect } from 'react';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
   useCreateFile,
+  useWorkspaceDetails,
   useWorkspaces,
 } from 'bangle-io/app/workspace2/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
-import { INDEXDB_TYPE, NATIVE_FS_TYPE } from '../../workspace/type-helpers';
 import { readFile } from '../../misc/index';
+import { deleteWorkspace } from 'bangle-io/app/workspace2/workspace-helpers';
 
 export const commands = Object.entries(Commands());
 
@@ -208,6 +209,28 @@ function WorkspaceRenameFileInput({ isActive, onDismiss, execute, query }) {
   );
 }
 
+DeleteCurrentWorkspace.title = 'Workspace: Delete active workspace';
+DeleteCurrentWorkspace.queryMatch = (query) =>
+  queryMatch(DeleteCurrentWorkspace, query);
+function DeleteCurrentWorkspace({ isActive, onDismiss, execute }) {
+  const { deleteWorkspace } = useWorkspaces();
+  const { wsName } = useWorkspaceDetails();
+
+  const onExecuteItem = useCallback(() => {
+    onDismiss();
+    deleteWorkspace(wsName);
+  }, [onDismiss, deleteWorkspace, wsName]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={DeleteCurrentWorkspace.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
 function Commands() {
   return {
     'UIContext.toggleTheme': ToggleThemeCommand,
@@ -220,6 +243,7 @@ function Commands() {
     'WorkspaceContext.newBrowserWSInput': WorkspaceNewBrowserWSInput,
     'WorkspaceContext.renameFile': WorkspaceRenameFile,
     'WorkspaceContext.renameFileInput': WorkspaceRenameFileInput,
+    'WorkspaceContext.deleteCurrentWorkspace': DeleteCurrentWorkspace,
   };
 }
 

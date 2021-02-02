@@ -8,9 +8,10 @@ import {
   createFile,
   createWorkspace,
   deleteFile,
+  deleteWorkspace,
   getFiles,
   getWorkspaceInfo,
-  getWorkspaces,
+  listWorkspaces,
   resolvePath,
   wsQueryPermission,
 } from './workspace-helpers';
@@ -70,7 +71,7 @@ export function useWorkspaces() {
 
   useEffect(() => {
     let destroyed = false;
-    getWorkspaces().then((workspaces) => {
+    listWorkspaces().then((workspaces) => {
       if (!destroyed) {
         updateWorkspaces(workspaces.map((w) => w.name));
       }
@@ -88,9 +89,18 @@ export function useWorkspaces() {
     [history],
   );
 
+  const deleteWorkspaceCb = useCallback(
+    async (wsName) => {
+      await deleteWorkspace(wsName);
+      history.push(`/ws/`);
+    },
+    [history],
+  );
+
   return {
     workspaces,
     createWorkspace: createWorkspaceCb,
+    deleteWorkspace: deleteWorkspaceCb,
   };
 }
 
