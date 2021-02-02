@@ -13,25 +13,25 @@ export class NativeFS {
 }
 
 export class BrowserFS {
-  static async createWorkspace(wsName) {
-    const workspaces = (await idb.get('workspaces_browser/1')) || [];
+  static async createWorkspace(wsName, type = 'browser') {
+    const workspaces = this.listWorkspaces();
+
+    if (workspaces.find((w) => w.name === wsName)) {
+      throw new Error(`Workspace ${wsName} exist`);
+    }
+
     workspaces.push({
       name: wsName,
-      type: 'browser',
+      type,
     });
 
     await idb.set('workspaces_browser/1', workspaces);
   }
 
   static async listWorkspaces() {
-    let olderStyleWs = (await idb.get('workspaces/1')) || [];
-    olderStyleWs = olderStyleWs
-      .filter((r) => r)
-      .filter((r) => r.uid.startsWith('indexdb'));
-
     let ws = (await idb.get('workspaces_browser/1')) || [];
 
-    return ws.concat(olderStyleWs);
+    return ws;
   }
 
   static async validWorkspace(wsName) {
@@ -47,20 +47,33 @@ export class BrowserFS {
   }
 
   static async deleteFile(wsPath) {
+    const file = await this.getFile(wsPath);
+    if (!file) {
+      throw new FileError(`File ${wsPath} does not exists`);
+    }
     return idb.del(wsPath);
   }
 
   static async renameFile(wsPath, newWsPath) {
     const file = await this.getFile(wsPath);
+    if (!file) {
+      throw new FileError(`File ${wsPath} does not exists`);
+    }
     await this.deleteFile(wsPath);
     return this.createFile(newWsPath, file);
   }
 
   static async createFile(wsPath, payload) {
+    if (this.getFile(wsPath)) {
+      throw new FileError(`File ${wsPath} already exists`);
+    }
     return idb.set(wsPath, payload);
   }
 
   static async updateFile(wsPath, payload) {
+    if (!this.getFile(wsPath)) {
+      throw new FileError(`File ${wsPath} does not exists`);
+    }
     return idb.set(wsPath, payload);
   }
 
@@ -68,10 +81,19 @@ export class BrowserFS {
     await this.validWorkspace(wsName);
     const keys = (await idb.keys()) || [];
 
-    // check if workspace exists if not handle
     return keys.filter((k) => k.startsWith(wsName + ':'));
   }
 }
 
-window.BrowserFS = BrowserFS;
-window.NativeFS = NativeFS;
+export class FileError extends Error {
+  constructor(message) {
+    super('FileError: ' + message);
+    this.name = 'FileError';
+  }
+}
+export class FilePermissionError extends Error {
+  constructor(message) {
+    super('FilePermissionError: ' + message);
+    this.name = 'FilePermissionError';
+  }
+}

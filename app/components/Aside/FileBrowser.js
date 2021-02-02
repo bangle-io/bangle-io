@@ -7,8 +7,8 @@ import 'css.gg/icons/css/chevron-down.css';
 import { ChevronDown, ChevronRight } from '../Icons/index';
 import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
-  useCreateNewFile,
-  useDeleteByWsPath,
+  useCreateFile,
+  useDeleteFile,
   useGetWorkspaceFiles,
   useWorkspaceDetails,
 } from 'bangle-io/app/workspace2/workspace-hooks';
@@ -18,8 +18,8 @@ FileBrowser.propTypes = {};
 
 export function FileBrowser() {
   const [files] = useGetWorkspaceFiles();
-  const createNewFile = useCreateNewFile();
-  const deleteByDocName = useDeleteByWsPath();
+  const createNewFile = useCreateFile();
+  const deleteByDocName = useDeleteFile();
   const { dispatch } = useContext(EditorManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspaceDetails();
 

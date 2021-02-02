@@ -20,6 +20,7 @@ export function validatePath(wsPath) {
 }
 
 export function resolvePath(wsPath) {
+  validatePath(wsPath);
   const [wsName, filePath] = wsPath.split(':');
 
   const fileName = last(filePath.split('/'));
@@ -27,12 +28,16 @@ export function resolvePath(wsPath) {
   return {
     wsName,
     // deprecate docName
-    docName: fileName,
+    get docName() {
+      console.warn('docName is deprecated');
+      return fileName;
+    },
     filePath,
     fileName: fileName,
   };
 }
 
+// TODO make this get file
 export async function getDoc(wsPath) {
   const { wsName } = resolvePath(wsPath);
   const ws = await getWorkspaceInfo(wsName);
@@ -119,7 +124,7 @@ export async function deleteFile(wsPath) {
   }
 }
 
-export async function getFiles(wsName = 'test3') {
+export async function getFiles(wsName) {
   const ws = await getWorkspaceInfo(wsName);
 
   let files = [];

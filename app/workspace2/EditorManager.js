@@ -24,7 +24,8 @@ const reducer = (state, action) => {
     case 'UI/OPEN_PALETTE': {
       return {
         ...state,
-        paletteType: action.paletteType || DEFAULT_PALETTE,
+        paletteType: action.value.type || DEFAULT_PALETTE,
+        paletteInitialQuery: action.value.initialQuery,
       };
     }
     case 'UI/TOGGLE_PALETTE': {
@@ -72,6 +73,7 @@ export function EditorManager({ children }) {
       // UI
       sidebar: false,
       paletteType: undefined,
+      paletteInitialQuery: undefined,
       theme: localStorage.getItem('theme') || 'light',
       wsPermission: undefined,
     },

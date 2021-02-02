@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect } from 'react';
+import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
+import {
+  useCreateFile,
+  useWorkspaces,
+} from 'bangle-io/app/workspace2/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
 import { INDEXDB_TYPE, NATIVE_FS_TYPE } from '../../workspace/type-helpers';
 import { readFile } from '../../misc/index';
-import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
-import {
-  useCreateNewFile,
-  useWorkspaces,
-} from 'bangle-io/app/workspace2/workspace-hooks';
 
 export const commands = Object.entries(Commands());
 
@@ -75,7 +75,7 @@ function WorkspaceNewFile({ isActive, onDismiss, execute }) {
     setTimeout(() => {
       dispatch({
         type: 'UI/OPEN_PALETTE',
-        paletteType: 'command/input/WorkspaceContext.newFileInput',
+        value: { type: 'command/input/WorkspaceContext.newFileInput' },
       });
     }, 0);
   }, [onDismiss, dispatch]);
@@ -95,7 +95,7 @@ WorkspaceNewFileInput.hidden = true;
 WorkspaceNewFileInput.queryMatch = (query) =>
   queryMatch(WorkspaceNewFileInput, query);
 function WorkspaceNewFileInput({ isActive, onDismiss, execute, query }) {
-  const createNewFile = useCreateNewFile();
+  const createNewFile = useCreateFile();
 
   const onExecuteItem = useCallback(() => {
     createNewFile(query).then(() => {
@@ -123,7 +123,7 @@ function WorkspaceNewBrowserWS({ isActive, onDismiss, execute }) {
     setTimeout(() => {
       dispatch({
         type: 'UI/OPEN_PALETTE',
-        paletteType: 'command/input/WorkspaceContext.newBrowserWSInput',
+        value: { type: 'command/input/WorkspaceContext.newBrowserWSInput' },
       });
     }, 0);
   }, [onDismiss, dispatch]);
@@ -161,6 +161,53 @@ function WorkspaceNewBrowserWSInput({ isActive, onDismiss, execute, query }) {
   );
 }
 
+WorkspaceRenameFile.title = 'Workspace: Rename file';
+WorkspaceRenameFile.queryMatch = (query) =>
+  queryMatch(WorkspaceRenameFile, query);
+function WorkspaceRenameFile({ isActive, onDismiss, execute }) {
+  const { dispatch } = useContext(EditorManagerContext);
+  const onExecuteItem = useCallback(() => {
+    onDismiss();
+    setTimeout(() => {
+      dispatch({
+        type: 'UI/OPEN_PALETTE',
+        value: {
+          type: 'command/input/WorkspaceContext.renameFileInput',
+        },
+      });
+    }, 10);
+  }, [onDismiss, dispatch]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={WorkspaceRenameFile.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
+WorkspaceRenameFileInput.title = 'Enter new file name';
+WorkspaceRenameFileInput.hidden = true;
+WorkspaceRenameFileInput.queryMatch = (query) =>
+  queryMatch(WorkspaceRenameFileInput, query);
+function WorkspaceRenameFileInput({ isActive, onDismiss, execute, query }) {
+  const onExecuteItem = useCallback(() => {
+    onDismiss();
+  }, [onDismiss]);
+
+  useCommandExecute(execute, onExecuteItem);
+
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={WorkspaceRenameFileInput.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
 function Commands() {
   return {
     'UIContext.toggleTheme': ToggleThemeCommand,
@@ -171,95 +218,8 @@ function Commands() {
     'WorkspaceContext.newFileInput': WorkspaceNewFileInput,
     'WorkspaceContext.newBrowserWS': WorkspaceNewBrowserWS,
     'WorkspaceContext.newBrowserWSInput': WorkspaceNewBrowserWSInput,
-
-    'WorkspaceContext.openExistingWorkspace': commandRenderHOC({
-      hint: '',
-      title: 'Workspace: Open an existing workspace',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-      onExecute: ({ updateUIContext, updateWorkspaceContext, onDismiss }) => {
-        onDismiss();
-        // updateUIContext(UIActions.openPalette('workspace'));
-      },
-    }),
-    'WorkspaceContext.restoreIndexdbWorkspaceFromBackup': restoreWorkspaceFromBackup(
-      {
-        hint: '',
-        title: 'Workspace: Restore workspace from a backup (browser storage)',
-        keywords: '',
-        keyboardShortcut: '',
-        priority: 10,
-      },
-      INDEXDB_TYPE,
-    ),
-
-    'WorkspaceContext.restoreNativeWorkspaceFromBackup': restoreWorkspaceFromBackup(
-      {
-        hint: '',
-        title: 'Workspace: Restore workspace from a backup (filesystem)',
-        keywords: '',
-        keyboardShortcut: '',
-        priority: 10,
-      },
-      NATIVE_FS_TYPE,
-    ),
-
-    'WorkspaceContext.takeWorkspaceBackup': commandRenderHOC({
-      hint: '',
-      title: 'Workspace: Take a backup',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-      onExecute: ({ updateWorkspaceContext, onDismiss }) => {
-        // updateWorkspaceContext(workspaceActions.takeWorkspaceBackup());
-        onDismiss();
-      },
-    }),
-    'WorkspaceContext.deleteCurrentWorkspace': commandRenderHOC({
-      hint: '',
-      title: 'Workspace: Delete current workspace',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-
-      onExecute: ({ updateWorkspaceContext, onDismiss }) => {
-        // updateWorkspaceContext(workspaceActions.deleteCurrentWorkspace());
-        onDismiss();
-      },
-    }),
-
-    'WorkspaceContext.renameCurrentWorkspace': commandRenderHOC({
-      hint: '',
-      title: 'Workspace: Rename current workspace',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-
-      onExecute: ({ updateUIContext, onDismiss }) => {
-        // dismiss to reset the execute prop on the parent component
-        onDismiss();
-        // updateUIContext(
-        //   UIActions.openPalette(
-        //     'command/input/WorkspaceContext.renameCurrentWorkspaceInput',
-        //   ),
-        // );
-      },
-    }),
-
-    'WorkspaceContext.renameCurrentWorkspaceInput': commandRenderHOC({
-      hint: '',
-      hidden: true,
-      title: 'Press enter to rename',
-      keywords: '',
-      keyboardShortcut: '',
-      priority: 10,
-
-      onExecute: ({ updateWorkspaceContext, onDismiss, query }) => {
-        // updateWorkspaceContext(workspaceActions.renameCurrentWorkspace(query));
-        onDismiss();
-      },
-    }),
+    'WorkspaceContext.renameFile': WorkspaceRenameFile,
+    'WorkspaceContext.renameFileInput': WorkspaceRenameFileInput,
   };
 }
 

@@ -34,17 +34,13 @@ export function useGetWorkspaceFiles() {
   return [files, refreshFiles];
 }
 
-// TODO does it really need to be a hook
-export function useCreateNewFile() {
+export function useCreateFile() {
   const { wsName, pushWsPath } = useWorkspaceDetails();
 
   const createNewFile = useCallback(
     async (fileName = uuid(6)) => {
       const wsPath = wsName + ':' + fileName;
       await createFile(wsPath);
-      // const workspace = await getWorkspace(wsName);
-      // const newFile = await workspace.createFile(wsPath, null);
-      // workspace.linkFile(newFile);
       pushWsPath(wsPath);
     },
     [wsName, pushWsPath],
@@ -53,7 +49,7 @@ export function useCreateNewFile() {
   return createNewFile;
 }
 
-export function useDeleteByWsPath() {
+export function useDeleteFile() {
   const { wsName } = useWorkspaceDetails();
   const history = useHistory();
 
