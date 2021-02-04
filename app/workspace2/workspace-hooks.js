@@ -1,21 +1,17 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { useContext, useEffect, useState, useCallback } from 'react';
 import { uuid } from '@bangle.dev/core/utils/js-utils';
-
+import { resolvePath } from 'bangle-io/app/workspace2/path-helpers';
 import { EditorManagerContext } from './EditorManager';
 import { requestPermission as requestFilePermission } from '../workspace/native-fs-driver';
 import {
-  createFile,
   createWorkspace,
-  deleteFile,
   deleteWorkspace,
-  getFiles,
   getWorkspaceInfo,
   listWorkspaces,
-  renameFile,
-  resolvePath,
   wsQueryPermission,
 } from './workspace-helpers';
+import { createFile, deleteFile, getFiles, renameFile } from './file-helpers';
 
 export function useGetWorkspaceFiles() {
   const { wsName } = useWorkspaceDetails();

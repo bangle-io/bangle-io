@@ -1,6 +1,8 @@
-import * as idb from 'idb-keyval';
+import * as _idb from 'idb-keyval';
+import './nativefs-helpers';
+const idb = _idb; // new IO();
 
-export class FileOps {
+export class IndexDBIO {
   // file
   static async getFile(wsPath) {
     return idb.get(wsPath);
@@ -56,11 +58,5 @@ export class FileError extends Error {
   constructor(message) {
     super('FileError: ' + message);
     this.name = 'FileError';
-  }
-}
-export class FilePermissionError extends Error {
-  constructor(message) {
-    super('FilePermissionError: ' + message);
-    this.name = 'FilePermissionError';
   }
 }

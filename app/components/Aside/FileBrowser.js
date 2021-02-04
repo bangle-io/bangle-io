@@ -12,7 +12,7 @@ import {
   useGetWorkspaceFiles,
   useWorkspaceDetails,
 } from 'bangle-io/app/workspace2/workspace-hooks';
-import { resolvePath } from 'bangle-io/app/workspace2/workspace-helpers';
+import { resolvePath } from 'bangle-io/app/workspace2/path-helpers';
 
 FileBrowser.propTypes = {};
 

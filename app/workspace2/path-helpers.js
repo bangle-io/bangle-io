@@ -1,0 +1,34 @@
+const pathValidRegex = /^[0-9a-zA-Z_\-. /:]+$/;
+const last = (arr) => arr[arr.length - 1];
+
+export function validatePath(wsPath) {
+  if (
+    !pathValidRegex.test(wsPath) ||
+    wsPath.split('/').some((r) => r.length === 0)
+  ) {
+    console.log(wsPath);
+    throw new Error('Invalid path ' + wsPath);
+  }
+
+  if ((wsPath.match(/:/g) || []).length !== 1) {
+    throw new Error('Path must have only 1 :');
+  }
+}
+
+export function resolvePath(wsPath) {
+  validatePath(wsPath);
+  const [wsName, filePath] = wsPath.split(':');
+
+  const fileName = last(filePath.split('/'));
+
+  return {
+    wsName,
+    // deprecate docName
+    get docName() {
+      console.warn('docName is deprecated');
+      return fileName;
+    },
+    filePath,
+    fileName: fileName,
+  };
+}
