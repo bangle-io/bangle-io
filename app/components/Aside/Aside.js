@@ -2,12 +2,10 @@ import './aside.css';
 import React, { useContext } from 'react';
 import { ActivityBar } from './ActivityBar';
 import { FileBrowser } from './FileBrowser';
-import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
+import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
 
 export function Aside() {
-  const {
-    editorManagerState: { sidebar },
-  } = useContext(EditorManagerContext);
+  const { sidebar } = useContext(UIManagerContext);
 
   return (
     <>

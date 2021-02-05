@@ -116,55 +116,6 @@ export function useWorkspaces() {
   };
 }
 
-export function useWorkspacePermission() {
-  const {
-    editorManagerState: { wsPermission: permission },
-    dispatch,
-  } = useContext(EditorManagerContext);
-
-  const { wsName } = useWorkspaceDetails();
-
-  const setPermission = useCallback(
-    (value) => {
-      dispatch({
-        type: 'WORKSPACE/PERMISSION',
-        value,
-      });
-    },
-    [dispatch],
-  );
-
-  useEffect(() => {
-    setPermission(undefined);
-    wsQueryPermission(wsName).then((result) => {
-      setPermission(result ? 'granted' : 'rejected');
-    });
-  }, [setPermission, wsName]);
-
-  const requestPermission = useCallback(async () => {
-    if (permission === 'granted') {
-      return true;
-    }
-    const workspaceInfo = await getWorkspaceInfo(wsName);
-    if (!workspaceInfo.metadata.dirHandle) {
-      setPermission('granted');
-      return true;
-    }
-    const isGranted = await requestFilePermission(
-      workspaceInfo.metadata.dirHandle,
-    );
-    if (isGranted) {
-      setPermission('granted');
-      return true;
-    } else {
-      setPermission('rejected');
-      return false;
-    }
-  }, [wsName, permission, setPermission]);
-
-  return [permission, requestPermission];
-}
-
 export function useWorkspaceDetails() {
   const { wsName } = useParams();
   const { pathname } = useLocation();

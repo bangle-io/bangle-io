@@ -17,45 +17,45 @@ const NeedsPermission = ({ wsName, requestPermission }) => {
 };
 
 export function WorkspacePermissionModal({ children }) {
-  const { wsName } = useWorkspaceDetails();
-  const [permission, requestPermission] = useWorkspacePermission();
-  const active = permission === 'rejected' || permission === undefined;
+  // const { wsName } = useWorkspaceDetails();
+  // const [permission, requestPermission] = useWorkspacePermission();
+  // const active = permission === 'rejected' || permission === undefined;
 
-  const open = useCallback(() => {
-    requestPermission();
-  }, [requestPermission]);
+  // const open = useCallback(() => {
+  //   requestPermission();
+  // }, [requestPermission]);
 
-  useEffect(() => {
-    let callback;
-    if (active) {
-      callback = keybindingsHelper({
-        Enter: () => {
-          if (!active) {
-            return false;
-          }
-          open();
-          return true;
-        },
-      });
-      document.addEventListener('keydown', callback);
-    }
-    return () => {
-      if (callback) {
-        document.removeEventListener('keydown', callback);
-        callback = undefined;
-      }
-    };
-  }, [active, open]);
+  // useEffect(() => {
+  //   let callback;
+  //   if (active) {
+  //     callback = keybindingsHelper({
+  //       Enter: () => {
+  //         if (!active) {
+  //           return false;
+  //         }
+  //         open();
+  //         return true;
+  //       },
+  //     });
+  //     document.addEventListener('keydown', callback);
+  //   }
+  //   return () => {
+  //     if (callback) {
+  //       document.removeEventListener('keydown', callback);
+  //       callback = undefined;
+  //     }
+  //   };
+  // }, [active, open]);
 
-  if (active) {
-    return (
-      <NeedsPermission
-        wsName={wsName}
-        requestPermission={open}
-        rejected={permission === 'rejected'}
-      />
-    );
-  }
+  // if (active) {
+  //   return (
+  //     <NeedsPermission
+  //       wsName={wsName}
+  //       requestPermission={open}
+  //       rejected={permission === 'rejected'}
+  //     />
+  //   );
+  // }
 
   return children;
 }

@@ -9,53 +9,56 @@ import { PaletteContainer } from './components/PaletteContainer';
 import { WorkspacePermissionModal } from './workspace/WorkspacePermissionModal';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspaceDetails } from './workspace2/workspace-hooks';
+import { UIManager } from './ui/UIManager';
 
 export function AppContainer() {
   return (
-    <Router>
-      <Switch>
-        <Route path={['/ws/:wsName']}>
-          <EditorManager>
-            <div className="h-screen main-wrapper">
-              <WorkspacePermissionModal>
-                <div className="editor-wrapper">
-                  <div className="flex justify-center flex-row">
-                    <div
-                      className="flex-1 max-w-screen-md ml-6 mr-6"
-                      style={{ height: '100vh', overflowY: 'scroll' }}
-                    >
-                      <PrimaryEditor />
-                      {/* adds white space at bottoms */}
+    <UIManager>
+      <Router>
+        <Switch>
+          <Route path={['/ws/:wsName']}>
+            <EditorManager>
+              <div className="h-screen main-wrapper">
+                <WorkspacePermissionModal>
+                  <div className="editor-wrapper">
+                    <div className="flex justify-center flex-row">
                       <div
-                        style={{
-                          display: 'flex',
-                          flexGrow: 1,
-                          height: '20vh',
-                          backgroundColor: 'transparent',
-                        }}
+                        className="flex-1 max-w-screen-md ml-6 mr-6"
+                        style={{ height: '100vh', overflowY: 'scroll' }}
                       >
-                        &nbsp;
+                        <PrimaryEditor />
+                        {/* adds white space at bottoms */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexGrow: 1,
+                            height: '20vh',
+                            backgroundColor: 'transparent',
+                          }}
+                        >
+                          &nbsp;
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </WorkspacePermissionModal>
-              <PaletteContainer />
-              <Aside />
-            </div>
-          </EditorManager>
-        </Route>
-        <Route path="/">
-          <EditorManager>
-            <div className="h-screen main-wrapper">
-              <span>Let us open a workspace</span>
-              <PaletteContainer />
-              <Aside />
-            </div>
-          </EditorManager>
-        </Route>
-      </Switch>
-    </Router>
+                </WorkspacePermissionModal>
+                <PaletteContainer />
+                <Aside />
+              </div>
+            </EditorManager>
+          </Route>
+          <Route path="/">
+            <EditorManager>
+              <div className="h-screen main-wrapper">
+                <span>Let us open a workspace</span>
+                <PaletteContainer />
+                <Aside />
+              </div>
+            </EditorManager>
+          </Route>
+        </Switch>
+      </Router>
+    </UIManager>
   );
 }
 

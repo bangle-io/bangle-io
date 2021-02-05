@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useEffect } from 'react';
-import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
   useCreateFile,
   useRenameActiveFile,
@@ -7,6 +6,7 @@ import {
   useWorkspaces,
 } from 'bangle-io/app/workspace2/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
+import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
 
 export const commands = Object.entries(Commands());
 
@@ -24,7 +24,7 @@ ToggleThemeCommand.title = 'View: Toggle theme';
 ToggleThemeCommand.queryMatch = (query) =>
   queryMatch(ToggleThemeCommand, query);
 function ToggleThemeCommand({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_THEME',
@@ -45,7 +45,7 @@ function ToggleThemeCommand({ isActive, onDismiss, execute }) {
 ToggleSidebar.title = 'View: Toggle sidebar';
 ToggleSidebar.queryMatch = (query) => queryMatch(ToggleSidebar, query);
 function ToggleSidebar({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
@@ -66,7 +66,7 @@ function ToggleSidebar({ isActive, onDismiss, execute }) {
 WorkspaceNewFile.title = 'Workspace: New File';
 WorkspaceNewFile.queryMatch = (query) => queryMatch(WorkspaceNewFile, query);
 function WorkspaceNewFile({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     onDismiss();
     // Doing it this way because Palette.js/watchClickOutside ends up dismissing
@@ -116,7 +116,7 @@ WorkspaceNewBrowserWS.title = 'Workspace: New Workspace in Browser';
 WorkspaceNewBrowserWS.queryMatch = (query) =>
   queryMatch(WorkspaceNewBrowserWS, query);
 function WorkspaceNewBrowserWS({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     onDismiss();
     setTimeout(() => {
@@ -164,7 +164,7 @@ WorkspaceRenameFile.title = 'Workspace: Rename currently active file';
 WorkspaceRenameFile.queryMatch = (query) =>
   queryMatch(WorkspaceRenameFile, query);
 function WorkspaceRenameFile({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     onDismiss();
     setTimeout(() => {

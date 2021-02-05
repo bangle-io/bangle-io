@@ -5,7 +5,6 @@ import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
 import { BaseButton } from '../Button';
 import 'css.gg/icons/css/chevron-down.css';
 import { ChevronDown, ChevronRight } from '../Icons/index';
-import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
   useCreateFile,
   useDeleteFile,
@@ -13,6 +12,7 @@ import {
   useWorkspaceDetails,
 } from 'bangle-io/app/workspace2/workspace-hooks';
 import { resolvePath } from 'bangle-io/app/workspace2/path-helpers';
+import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
 
 FileBrowser.propTypes = {};
 
@@ -20,7 +20,7 @@ export function FileBrowser() {
   const [files] = useGetWorkspaceFiles();
   const createNewFile = useCreateFile();
   const deleteByDocName = useDeleteFile();
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspaceDetails();
 
   const toggleTheme = () =>

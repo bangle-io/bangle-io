@@ -24,7 +24,6 @@ export function FilePalette({ execute, onDismiss, query, counter }) {
 
   const [files] = useGetWorkspaceFiles();
   const wsPaths = getItems({ query, files });
-
   const onExecuteItem = useCallback(
     (activeItemIndex) => {
       activeItemIndex =
@@ -65,7 +64,7 @@ function getItems({ query, files }) {
     return files;
   }
   return files.filter((file) => {
-    const title = file.title;
+    const title = file;
     return strMatch(title, query);
   });
 }

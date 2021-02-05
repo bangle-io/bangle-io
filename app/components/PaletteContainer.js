@@ -4,7 +4,7 @@ import { FilePalette } from './Palettes/FilePalette';
 import { Palette } from '../ui/Palette';
 import { WorkspacePalette } from './Palettes/WorkspacePalette';
 import { keybindingsHelper } from '../misc/keybinding-helper';
-import { EditorManagerContext } from '../workspace2/EditorManager';
+import { UIManagerContext } from '../ui/UIManager';
 
 const parseRawQuery = (query, paletteType) => {
   // Some of the types depend on the current active query
@@ -46,7 +46,7 @@ const generateRawQuery = (paletteType, subQuery) => {
 };
 
 export class PaletteContainer extends React.PureComponent {
-  static contextType = EditorManagerContext;
+  static contextType = UIManagerContext;
 
   state = {
     subQuery: '',
@@ -55,8 +55,8 @@ export class PaletteContainer extends React.PureComponent {
   };
 
   onDismiss = () => {
-    const { editorManagerState, dispatch } = this.context;
-    if (editorManagerState.paletteType) {
+    const { paletteType, dispatch } = this.context;
+    if (paletteType) {
       dispatch({
         type: 'UI/CLOSE_PALETTE',
       });
@@ -81,13 +81,13 @@ export class PaletteContainer extends React.PureComponent {
   };
 
   updateQuery = (rawQuery) => {
-    const { editorManagerState, dispatch } = this.context;
+    const { paletteType: initialPaletteType, dispatch } = this.context;
     const { paletteType, subQuery } = parseRawQuery(
       rawQuery,
-      editorManagerState.paletteType,
+      initialPaletteType,
     );
 
-    if (paletteType !== editorManagerState.paletteType) {
+    if (paletteType !== initialPaletteType) {
       dispatch({
         type: 'UI/OPEN_PALETTE',
         value: {
@@ -121,8 +121,8 @@ export class PaletteContainer extends React.PureComponent {
       openPalette: {
         key: 'Mod-p',
         onExecute: () => {
-          const { editorManagerState, dispatch } = this.context;
-          if (editorManagerState.paletteType === 'file') {
+          const { paletteType, dispatch } = this.context;
+          if (paletteType === 'file') {
             this.setState({
               counter: this.state.counter + 1,
             });
@@ -139,9 +139,9 @@ export class PaletteContainer extends React.PureComponent {
       openWorkspacePalette: {
         key: 'Ctrl-r',
         onExecute: () => {
-          const { editorManagerState, dispatch } = this.context;
+          const { paletteType, dispatch } = this.context;
 
-          if (editorManagerState.paletteType === 'workspace') {
+          if (paletteType === 'workspace') {
             this.setState({
               counter: this.state.counter + 1,
             });
@@ -163,7 +163,6 @@ export class PaletteContainer extends React.PureComponent {
             () => {
               return value.onExecute({
                 uiContext: this.value,
-                updateUIContext: this.context.updateUIContext,
               });
             },
           ];
@@ -182,8 +181,7 @@ export class PaletteContainer extends React.PureComponent {
 
   render() {
     const { subQuery, counter } = this.state;
-    const { editorManagerState } = this.context;
-    const { paletteType } = editorManagerState;
+    const { paletteType } = this.context;
     if (!paletteType) {
       return null;
     }
