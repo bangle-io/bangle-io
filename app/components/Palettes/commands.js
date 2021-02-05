@@ -7,6 +7,7 @@ import {
 } from 'bangle-io/app/workspace2/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
 import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
+import { pickADirectory } from 'bangle-io/app/workspace2/nativefs-helpers';
 
 export const commands = Object.entries(Commands());
 
@@ -232,6 +233,28 @@ function DeleteCurrentWorkspace({ isActive, onDismiss, execute }) {
   );
 }
 
+WorkspaceNewNativeFSWS.title = 'Workspace: New Workspace saved in FileSystem';
+WorkspaceNewNativeFSWS.queryMatch = (query) =>
+  queryMatch(WorkspaceNewNativeFSWS, query);
+function WorkspaceNewNativeFSWS({ isActive, onDismiss, execute }) {
+  const { createWorkspace } = useWorkspaces();
+
+  const onExecuteItem = useCallback(async () => {
+    onDismiss();
+    const rootDirHandle = await pickADirectory();
+    await createWorkspace(rootDirHandle.name, 'nativefs', { rootDirHandle });
+  }, [onDismiss, createWorkspace]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={WorkspaceNewNativeFSWS.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
 function Commands() {
   return {
     'UIContext.toggleTheme': ToggleThemeCommand,
@@ -242,6 +265,7 @@ function Commands() {
     'WorkspaceContext.newFileInput': WorkspaceNewFileInput,
     'WorkspaceContext.newBrowserWS': WorkspaceNewBrowserWS,
     'WorkspaceContext.newBrowserWSInput': WorkspaceNewBrowserWSInput,
+    'WorkspaceContext.newNativeFSWS': WorkspaceNewNativeFSWS,
     'WorkspaceContext.renameFile': WorkspaceRenameFile,
     'WorkspaceContext.renameFileInput': WorkspaceRenameFileInput,
     'WorkspaceContext.deleteCurrentWorkspace': DeleteCurrentWorkspace,

@@ -1,15 +1,11 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { uuid } from '@bangle.dev/core/utils/js-utils';
 import { resolvePath } from 'bangle-io/app/workspace2/path-helpers';
-import { EditorManagerContext } from './EditorManager';
-import { requestPermission as requestFilePermission } from '../workspace/native-fs-driver';
 import {
   createWorkspace,
   deleteWorkspace,
-  getWorkspaceInfo,
   listWorkspaces,
-  wsQueryPermission,
 } from './workspace-helpers';
 import { createFile, deleteFile, getFiles, renameFile } from './file-helpers';
 
@@ -85,7 +81,7 @@ export function useWorkspaces() {
     let destroyed = false;
     listWorkspaces().then((workspaces) => {
       if (!destroyed) {
-        updateWorkspaces(workspaces.map((w) => w.name));
+        updateWorkspaces(workspaces);
       }
     });
     return () => {
@@ -94,8 +90,8 @@ export function useWorkspaces() {
   }, []);
 
   const createWorkspaceCb = useCallback(
-    async (wsName, type) => {
-      await createWorkspace(wsName, type);
+    async (wsName, type, opts) => {
+      await createWorkspace(wsName, type, opts);
       history.push(`/ws/${wsName}`);
     },
     [history],

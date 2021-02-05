@@ -17,9 +17,9 @@ export function AppContainer() {
       <Router>
         <Switch>
           <Route path={['/ws/:wsName']}>
-            <EditorManager>
-              <div className="h-screen main-wrapper">
-                <WorkspacePermissionModal>
+            <WorkspacePermissionModal>
+              <EditorManager>
+                <div className="h-screen main-wrapper">
                   <div className="editor-wrapper">
                     <div className="flex justify-center flex-row">
                       <div
@@ -29,23 +29,30 @@ export function AppContainer() {
                         <PrimaryEditor />
                         {/* adds white space at bottoms */}
                         <div
-                          style={{
-                            display: 'flex',
-                            flexGrow: 1,
-                            height: '20vh',
-                            backgroundColor: 'transparent',
-                          }}
+                          className="flex-1 max-w-screen-md ml-6 mr-6"
+                          style={{ height: '100vh', overflowY: 'scroll' }}
                         >
-                          &nbsp;
+                          <PrimaryEditor />
+                          {/* adds white space at bottoms */}
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexGrow: 1,
+                              height: '20vh',
+                              backgroundColor: 'transparent',
+                            }}
+                          >
+                            &nbsp;
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </WorkspacePermissionModal>
-                <PaletteContainer />
-                <Aside />
-              </div>
-            </EditorManager>
+                  <PaletteContainer />
+                  <Aside />
+                </div>
+              </EditorManager>
+            </WorkspacePermissionModal>
           </Route>
           <Route path="/">
             <EditorManager>
