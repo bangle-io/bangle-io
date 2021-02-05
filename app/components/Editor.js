@@ -16,7 +16,7 @@ import { specRegistry } from '../editor/spec-sheet';
 import { floatingMenu, FloatingMenu } from '@bangle.dev/react-menu';
 import { EmojiSuggest, emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { config } from 'bangle-io/config';
-import { EditorManagerContext } from '../workspace2/EditorManager';
+import { EditorManagerContext } from '../editor/EditorManager';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -29,9 +29,7 @@ const menuKey = new PluginKey('menuKey');
 const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
 export function Editor({ isFirst, docName }) {
-  const {
-    editorManagerState: { sendRequest },
-  } = useContext(EditorManagerContext);
+  const { sendRequest } = useContext(EditorManagerContext);
   const getPlugins = () => {
     const collabOpts = {
       docName: docName,

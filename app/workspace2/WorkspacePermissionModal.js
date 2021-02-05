@@ -29,7 +29,7 @@ const NeedsPermission = ({ onPermissionGranted, onPermissionRejected }) => {
       onPermissionRejected();
       return;
     }
-  }, [onPermissionGranted, wsName]);
+  }, [onPermissionGranted, onPermissionRejected, wsName]);
 
   return (
     <div className="flex justify-center flex-row h-full" onClick={open}>
@@ -118,5 +118,4 @@ export function WorkspacePermissionModal({ children }) {
       {children}
     </WorkspacePermissionErrorBoundary>
   );
-  // return children;
 }

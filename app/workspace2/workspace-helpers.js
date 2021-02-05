@@ -1,6 +1,5 @@
 import * as idb from 'idb-keyval';
 
-import { hasPermissions } from '../workspace/native-fs-driver';
 import { validatePath } from './path-helpers';
 
 // Workspace
@@ -80,22 +79,6 @@ export async function deleteWorkspace(wsName) {
 
   workspaces = workspaces.filter((w) => w.name !== wsName);
   await idb.set('workspaces/2', workspaces);
-}
-
-export async function wsQueryPermission(wsName) {
-  const workspaceInfo = await getWorkspaceInfo(wsName);
-  if (workspaceInfo.type === 'browser') {
-    return true;
-  }
-
-  if (!workspaceInfo.metadata.dirHandle) {
-    return true;
-  }
-  const result = Boolean(
-    await hasPermissions(workspaceInfo.metadata.dirHandle),
-  );
-
-  return result;
 }
 
 window.getWorkspaces = listWorkspaces;

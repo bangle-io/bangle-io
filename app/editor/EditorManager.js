@@ -1,22 +1,27 @@
-import React, { useEffect, useState, useReducer, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
-import { specRegistry } from '../editor/spec-sheet';
+import { specRegistry } from './spec-sheet';
 import { defaultContent } from '../components/constants';
-import { getDoc, saveDoc } from './file-helpers';
+import { getDoc, saveDoc } from '../workspace2/file-helpers';
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
 export const EditorManagerContext = React.createContext();
 
+/**
+ * Should be parent of all editors.
+ */
 export function EditorManager({ children }) {
   const { sendRequest } = useManager();
 
+  const value = useMemo(() => {
+    return { sendRequest };
+  }, [sendRequest]);
+
   return (
-    <EditorManagerContext.Provider
-      value={{ editorManagerState: { sendRequest } }}
-    >
+    <EditorManagerContext.Provider value={value}>
       {children}
     </EditorManagerContext.Provider>
   );

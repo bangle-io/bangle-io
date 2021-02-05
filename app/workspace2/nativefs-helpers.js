@@ -1,4 +1,5 @@
 import * as idb from 'idb-keyval';
+const DEFAULT_DIR_IGNORE_LIST = ['node_modules', '.git'];
 
 /**
  *
@@ -6,7 +7,10 @@ import * as idb from 'idb-keyval';
  * @param {DirHandle} rootDirHandle
  */
 export class NativeFileOps {
-  constructor({ allowedFile, allowedDir } = {}) {
+  constructor({
+    allowedFile,
+    allowedDir = (entry) => !DEFAULT_DIR_IGNORE_LIST.includes(entry.name),
+  } = {}) {
     this._allowedFile = allowedFile;
     this._allowedDir = allowedDir;
     this._traverseCache = new WeakMap();
@@ -97,7 +101,7 @@ export class NativeFileOps {
 
     try {
       const textContent = await readFile(file);
-      return textContent;
+      return { file, textContent };
     } catch (error) {
       throw new NativeFSReadError(`file ${joinedPath} read error`, error);
     }
@@ -355,17 +359,17 @@ window.nativeFSTest1 = async function () {
     'reading README.md, expect READMEs content and a faster second read',
   );
   console.time('firstRead');
-  let fileContent = await fileOps.readFile(
+  let { textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'README.md'],
     dirHandle,
   );
   console.timeEnd('firstRead');
   console.time('secondRead');
 
-  fileContent = await fileOps.readFile(
+  ({ textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'README.md'],
     dirHandle,
-  );
+  ));
 
   console.timeEnd('secondRead');
 
@@ -379,14 +383,15 @@ window.nativeFSTest1 = async function () {
     });
 
   console.info("reading deeply nested file , expect md's content");
-  fileContent = await fileOps.readFile(
+  ({ textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'markdown', '__tests__', 'fixtures', 'todo1.md'],
     dirHandle,
-  );
+  ));
+
   console.log({ fileContent });
 
   console.info('reading a folder , should fail');
-  fileContent = await fileOps
+  await fileOps
     .readFile([dirHandle.name, 'markdown', '__tests__', 'fixtures'], dirHandle)
     .then(() => console.warn('should have failed'))
     .catch((error) => {
@@ -408,7 +413,7 @@ window.nativeFSTest2 = async function* () {
 
   yield null;
 
-  let fileContent = await fileOps.readFile(
+  let { textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'dummy.md'],
     dirHandle,
   );
@@ -425,10 +430,10 @@ window.nativeFSTest2 = async function* () {
 
   console.info('now reading dummy2.md expect contents');
 
-  fileContent = await fileOps.readFile(
+  ({ textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'dummy2.md'],
     dirHandle,
-  );
+  ));
   console.log({ fileContent });
 
   console.info('now delete dummy2.md and copy the content');
@@ -445,10 +450,10 @@ window.nativeFSTest2 = async function* () {
 
   console.info('now bring back dummy2.md and will  attempt to read it');
   yield null;
-  fileContent = await fileOps.readFile(
+  ({ textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'dummy2.md'],
     dirHandle,
-  );
+  ));
   console.log({ fileContent });
 
   console.log('done!');
@@ -475,7 +480,7 @@ window.nativeFSPermissionTestRead = async function () {
   const dirHandle = await idb.get('bangledev', customStore);
   console.log({ dirHandle });
   const fileOps = new NativeFileOps();
-  let fileContent = await fileOps.readFile(
+  let { textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'README.md'],
     dirHandle,
   );
@@ -499,7 +504,7 @@ window.nativeFSPermissionWrite2 = async function* (content = 'hi') {
   console.info('creating file ./dummy.md');
   const dirHandle = await pickADirectory();
   await fileOps.saveFile([dirHandle.name, 'dummy.md'], dirHandle, content);
-  let fileContent = await fileOps.readFile(
+  let { textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'dummy.md'],
     dirHandle,
   );
@@ -512,10 +517,10 @@ window.nativeFSPermissionWrite2 = async function* (content = 'hi') {
     dirHandle,
     content,
   );
-  fileContent = await fileOps.readFile(
+  ({ textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'a', 'b', 'c', 'dummy.md'],
     dirHandle,
-  );
+  ));
 
   console.assert(fileContent === content, 'content1 must match');
   yield null;
@@ -529,10 +534,10 @@ window.nativeFSPermissionWrite2 = async function* (content = 'hi') {
     content,
   );
 
-  fileContent = await fileOps.readFile(
+  ({ textContent: fileContent } = await fileOps.readFile(
     [dirHandle.name, 'a', 'b', 'dummy.md'],
     dirHandle,
-  );
+  ));
 
   console.assert(fileContent === content, 'content 2 must match');
 };

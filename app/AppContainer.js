@@ -3,10 +3,10 @@ import './style/style.css';
 import './style/prosemirror.css';
 import React from 'react';
 import { Editor } from './components/Editor';
-import { EditorManager } from './workspace2/EditorManager';
+import { EditorManager } from './editor/EditorManager';
 import { Aside } from './components/Aside/Aside';
 import { PaletteContainer } from './components/PaletteContainer';
-import { WorkspacePermissionModal } from './workspace/WorkspacePermissionModal';
+import { WorkspacePermissionModal } from './workspace2/WorkspacePermissionModal';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspaceDetails } from './workspace2/workspace-hooks';
 import { UIManager } from './ui/UIManager';
@@ -29,21 +29,14 @@ export function AppContainer() {
                         <PrimaryEditor />
                         {/* adds white space at bottoms */}
                         <div
-                          className="flex-1 max-w-screen-md ml-6 mr-6"
-                          style={{ height: '100vh', overflowY: 'scroll' }}
+                          style={{
+                            display: 'flex',
+                            flexGrow: 1,
+                            height: '20vh',
+                            backgroundColor: 'transparent',
+                          }}
                         >
-                          <PrimaryEditor />
-                          {/* adds white space at bottoms */}
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexGrow: 1,
-                              height: '20vh',
-                              backgroundColor: 'transparent',
-                            }}
-                          >
-                            &nbsp;
-                          </div>
+                          &nbsp;
                         </div>
                       </div>
                     </div>
@@ -55,13 +48,11 @@ export function AppContainer() {
             </WorkspacePermissionModal>
           </Route>
           <Route path="/">
-            <EditorManager>
-              <div className="h-screen main-wrapper">
-                <span>Let us open a workspace</span>
-                <PaletteContainer />
-                <Aside />
-              </div>
-            </EditorManager>
+            <div className="h-screen main-wrapper">
+              <span>Let us open a workspace</span>
+              <PaletteContainer />
+              <Aside />
+            </div>
           </Route>
         </Switch>
       </Router>

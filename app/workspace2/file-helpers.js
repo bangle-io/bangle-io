@@ -1,3 +1,4 @@
+import { markdownParser, markdownSerializer } from '../markdown/parsers';
 import { IndexDBIO } from './indexdb-io';
 import { NativeFileOps } from './nativefs-helpers';
 import { resolvePath, validatePath } from './path-helpers';
@@ -21,7 +22,13 @@ export async function getDoc(wsPath) {
     case 'nativefs': {
       const { rootDirHandle } = ws.metadata;
       const path = [rootDirHandle.name, ...filePath.split('/')];
-      file = JSON.parse(await nativeFS.readFile(path, rootDirHandle));
+      const fileData = await nativeFS.readFile(path, rootDirHandle);
+      if (fileData.file.type === 'application/json') {
+        file = JSON.parse(fileData.textContent);
+      } else if (fileData.file.name.endsWith('.md')) {
+        // TODO avoid doing toJSON
+        file = markdownParser(fileData.textContent).toJSON();
+      }
       break;
     }
 
@@ -34,7 +41,6 @@ export async function getDoc(wsPath) {
     throw new Error(`File ${wsPath} not found`);
   }
 
-  // todo
   return file;
 }
 
@@ -60,11 +66,16 @@ export async function saveDoc(wsPath, doc) {
     case 'nativefs': {
       const { rootDirHandle } = ws.metadata;
       const path = [rootDirHandle.name, ...filePath.split('/')];
-      file = await nativeFS.saveFile(
-        path,
-        rootDirHandle,
-        JSON.stringify(docJson),
-      );
+      let data;
+      if (filePath.endsWith('.md')) {
+        data = markdownSerializer(doc);
+      } else if (filePath.endsWith('.json')) {
+        data = JSON.stringify(docJson);
+      } else {
+        throw new Error('Unknown file extension ' + filePath);
+      }
+
+      file = await nativeFS.saveFile(path, rootDirHandle, data);
 
       break;
     }
