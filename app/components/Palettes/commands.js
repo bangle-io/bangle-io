@@ -1,13 +1,13 @@
-import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect } from 'react';
-import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import {
   useCreateFile,
+  useRenameActiveFile,
+  useWorkspaceDetails,
   useWorkspaces,
 } from 'bangle-io/app/workspace2/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
-import { INDEXDB_TYPE, NATIVE_FS_TYPE } from '../../workspace/type-helpers';
-import { readFile } from '../../misc/index';
+import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
+import { pickADirectory } from 'bangle-io/app/workspace2/nativefs-helpers';
 
 export const commands = Object.entries(Commands());
 
@@ -25,7 +25,7 @@ ToggleThemeCommand.title = 'View: Toggle theme';
 ToggleThemeCommand.queryMatch = (query) =>
   queryMatch(ToggleThemeCommand, query);
 function ToggleThemeCommand({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_THEME',
@@ -46,7 +46,7 @@ function ToggleThemeCommand({ isActive, onDismiss, execute }) {
 ToggleSidebar.title = 'View: Toggle sidebar';
 ToggleSidebar.queryMatch = (query) => queryMatch(ToggleSidebar, query);
 function ToggleSidebar({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
@@ -67,7 +67,7 @@ function ToggleSidebar({ isActive, onDismiss, execute }) {
 WorkspaceNewFile.title = 'Workspace: New File';
 WorkspaceNewFile.queryMatch = (query) => queryMatch(WorkspaceNewFile, query);
 function WorkspaceNewFile({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     onDismiss();
     // Doing it this way because Palette.js/watchClickOutside ends up dismissing
@@ -117,7 +117,7 @@ WorkspaceNewBrowserWS.title = 'Workspace: New Workspace in Browser';
 WorkspaceNewBrowserWS.queryMatch = (query) =>
   queryMatch(WorkspaceNewBrowserWS, query);
 function WorkspaceNewBrowserWS({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     onDismiss();
     setTimeout(() => {
@@ -161,11 +161,11 @@ function WorkspaceNewBrowserWSInput({ isActive, onDismiss, execute, query }) {
   );
 }
 
-WorkspaceRenameFile.title = 'Workspace: Rename file';
+WorkspaceRenameFile.title = 'Workspace: Rename currently active file';
 WorkspaceRenameFile.queryMatch = (query) =>
   queryMatch(WorkspaceRenameFile, query);
 function WorkspaceRenameFile({ isActive, onDismiss, execute }) {
-  const { dispatch } = useContext(EditorManagerContext);
+  const { dispatch } = useContext(UIManagerContext);
   const onExecuteItem = useCallback(() => {
     onDismiss();
     setTimeout(() => {
@@ -193,9 +193,12 @@ WorkspaceRenameFileInput.hidden = true;
 WorkspaceRenameFileInput.queryMatch = (query) =>
   queryMatch(WorkspaceRenameFileInput, query);
 function WorkspaceRenameFileInput({ isActive, onDismiss, execute, query }) {
+  const renameActiveFile = useRenameActiveFile();
+
   const onExecuteItem = useCallback(() => {
     onDismiss();
-  }, [onDismiss]);
+    renameActiveFile(query);
+  }, [onDismiss, renameActiveFile, query]);
 
   useCommandExecute(execute, onExecuteItem);
 
@@ -203,6 +206,50 @@ function WorkspaceRenameFileInput({ isActive, onDismiss, execute, query }) {
     <SideBarRow
       isActive={isActive}
       title={WorkspaceRenameFileInput.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
+DeleteCurrentWorkspace.title = 'Workspace: Delete active workspace';
+DeleteCurrentWorkspace.queryMatch = (query) =>
+  queryMatch(DeleteCurrentWorkspace, query);
+function DeleteCurrentWorkspace({ isActive, onDismiss, execute }) {
+  const { deleteWorkspace } = useWorkspaces();
+  const { wsName } = useWorkspaceDetails();
+
+  const onExecuteItem = useCallback(() => {
+    onDismiss();
+    deleteWorkspace(wsName);
+  }, [onDismiss, deleteWorkspace, wsName]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={DeleteCurrentWorkspace.title}
+      onClick={onExecuteItem}
+    />
+  );
+}
+
+WorkspaceNewNativeFSWS.title = 'Workspace: New Workspace saved in FileSystem';
+WorkspaceNewNativeFSWS.queryMatch = (query) =>
+  queryMatch(WorkspaceNewNativeFSWS, query);
+function WorkspaceNewNativeFSWS({ isActive, onDismiss, execute }) {
+  const { createWorkspace } = useWorkspaces();
+
+  const onExecuteItem = useCallback(async () => {
+    onDismiss();
+    const rootDirHandle = await pickADirectory();
+    await createWorkspace(rootDirHandle.name, 'nativefs', { rootDirHandle });
+  }, [onDismiss, createWorkspace]);
+
+  useCommandExecute(execute, onExecuteItem);
+  return (
+    <SideBarRow
+      isActive={isActive}
+      title={WorkspaceNewNativeFSWS.title}
       onClick={onExecuteItem}
     />
   );
@@ -218,8 +265,10 @@ function Commands() {
     'WorkspaceContext.newFileInput': WorkspaceNewFileInput,
     'WorkspaceContext.newBrowserWS': WorkspaceNewBrowserWS,
     'WorkspaceContext.newBrowserWSInput': WorkspaceNewBrowserWSInput,
+    'WorkspaceContext.newNativeFSWS': WorkspaceNewNativeFSWS,
     'WorkspaceContext.renameFile': WorkspaceRenameFile,
     'WorkspaceContext.renameFileInput': WorkspaceRenameFileInput,
+    'WorkspaceContext.deleteCurrentWorkspace': DeleteCurrentWorkspace,
   };
 }
 
@@ -236,147 +285,6 @@ function queryMatch(command, query) {
     }
   }
   return strMatch(command.title, query);
-}
-
-function commandRenderHOC(command) {
-  const component = class CommandRenderUI extends React.PureComponent {
-    static contextType = EditorManagerContext;
-    static propTypes = {
-      query: PropTypes.string.isRequired,
-      isActive: PropTypes.bool.isRequired,
-      execute: PropTypes.bool.isRequired,
-      onDismiss: PropTypes.func.isRequired,
-      updateWorkspaceContext: PropTypes.func.isRequired,
-    };
-
-    static queryMatch(query) {
-      return queryMatch(command, query);
-    }
-
-    static title() {
-      return command.title;
-    }
-
-    componentDidMount() {
-      const { execute } = this.props;
-      // parent signals execution by setting execute to true
-      // and expects the child to call dismiss once executed
-      if (execute === true) {
-        this.onExecuteItem();
-      }
-    }
-
-    componentDidUpdate(prevProps) {
-      const { execute } = this.props;
-      // parent signals execution by setting execute to true
-      // and expects the child to call dismiss once executed
-      if (execute === true && prevProps.execute !== execute) {
-        this.onExecuteItem();
-      }
-    }
-
-    onExecuteItem = () => {
-      command.onExecute({
-        context: this.context,
-        onDismiss: this.props.onDismiss,
-        query: this.props.query,
-      });
-      return;
-    };
-
-    render() {
-      const { isActive } = this.props;
-      return (
-        <SideBarRow
-          isActive={isActive}
-          title={command.title}
-          onClick={() => this.onExecuteItem()}
-        />
-      );
-    }
-  };
-  return component;
-}
-
-function restoreWorkspaceFromBackup(command, type) {
-  return class RestoreWorkspaceFromBackup extends React.Component {
-    inputEl = React.createRef();
-
-    static propTypes = {
-      isActive: PropTypes.bool.isRequired,
-      execute: PropTypes.bool.isRequired,
-      onDismiss: PropTypes.func.isRequired,
-      updateWorkspaceContext: PropTypes.func.isRequired,
-    };
-
-    static queryMatch(query) {
-      return queryMatch(command, query);
-    }
-
-    componentDidMount() {
-      const { execute } = this.props;
-      // parent signals execution by setting execute to true
-      // and expects the child to call dismiss once executed
-      if (execute === true) {
-        this.onExecuteItem();
-      }
-    }
-
-    componentDidUpdate(prevProps) {
-      const { execute } = this.props;
-      // parent signals execution by setting execute to true
-      // and expects the child to call dismiss once executed
-      if (execute === true && prevProps.execute !== execute) {
-        this.onExecuteItem();
-      }
-    }
-
-    onExecuteItem = () => {
-      if (this.inputEl.current) {
-        console.log('clicking on exec');
-        this.inputEl.current.click();
-      }
-      return;
-    };
-
-    render() {
-      const { isActive } = this.props;
-      return (
-        <>
-          <input
-            type="file"
-            ref={this.inputEl}
-            id="workspaceFromBackupElement"
-            accept="application/json"
-            style={{ display: 'none' }}
-            onChange={async (event) => {
-              const fileList = event.target.files;
-              try {
-                const file = JSON.parse(await readFile(fileList[0]));
-                // this.props.updateWorkspaceContext(
-                //   workspaceActions.newWorkspaceFromBackup(file, type),
-                // );
-              } catch (error) {
-                console.error(error);
-                alert('Error reading file');
-              }
-              this.props.onDismiss();
-            }}
-          />
-          <SideBarRow
-            isActive={isActive}
-            title={command.title}
-            onClick={() => {
-              if (this.inputEl.current) {
-                console.log('clicking');
-                this.inputEl.current.click();
-              }
-            }}
-          />
-        </>
-      );
-    }
-  };
 }
 
 function strMatch(a, b) {

@@ -11,12 +11,13 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
 export function WorkspacePalette({ counter, query, execute, onDismiss }) {
   const { workspaces } = useWorkspaces();
+  const workspaceNames = workspaces.map((r) => r.name);
   const items = useMemo(
     () =>
-      workspaces.filter((ws) => {
+      workspaceNames.filter((ws) => {
         return strMatch(ws, query);
       }),
-    [workspaces, query],
+    [workspaceNames, query],
   );
   const history = useHistory();
 
@@ -47,11 +48,11 @@ export function WorkspacePalette({ counter, query, execute, onDismiss }) {
     }
   }, [execute, onExecuteItem]);
 
-  return items.map((item, i) => (
+  return workspaces.map((workspace, i) => (
     <SideBarRow
       key={i}
       isActive={Palette.getActiveIndex(counter, items.length) === i}
-      title={item}
+      title={`${workspace.name} (${workspace.type})`}
       onClick={() => onExecuteItem(i)}
     />
   ));

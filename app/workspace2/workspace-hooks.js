@@ -1,19 +1,13 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { uuid } from '@bangle.dev/core/utils/js-utils';
-
-import { EditorManagerContext } from './EditorManager';
-import { requestPermission as requestFilePermission } from '../workspace/native-fs-driver';
+import { resolvePath } from 'bangle-io/app/workspace2/path-helpers';
 import {
-  createFile,
   createWorkspace,
-  deleteFile,
-  getFiles,
-  getWorkspaceInfo,
-  getWorkspaces,
-  resolvePath,
-  wsQueryPermission,
+  deleteWorkspace,
+  listWorkspaces,
 } from './workspace-helpers';
+import { createFile, deleteFile, getFiles, renameFile } from './file-helpers';
 
 export function useGetWorkspaceFiles() {
   const { wsName } = useWorkspaceDetails();
@@ -39,6 +33,10 @@ export function useCreateFile() {
 
   const createNewFile = useCallback(
     async (fileName = uuid(6)) => {
+      if (!fileName.endsWith('.md')) {
+        fileName += '.md';
+      }
+
       const wsPath = wsName + ':' + fileName;
       await createFile(wsPath);
       pushWsPath(wsPath);
@@ -49,16 +47,37 @@ export function useCreateFile() {
   return createNewFile;
 }
 
+export function useRenameActiveFile() {
+  const { wsName, wsPath, replaceWsPath } = useWorkspaceDetails();
+
+  const renameFileCb = useCallback(
+    async (newFilePath) => {
+      if (!newFilePath.endsWith('.md')) {
+        newFilePath += '.md';
+      }
+
+      const newWsPath = wsName + ':' + newFilePath;
+      await renameFile(wsPath, newWsPath);
+      replaceWsPath(newWsPath);
+    },
+    [wsName, wsPath, replaceWsPath],
+  );
+
+  return renameFileCb;
+}
+
 export function useDeleteFile() {
-  const { wsName } = useWorkspaceDetails();
+  const { wsName, wsPath } = useWorkspaceDetails();
   const history = useHistory();
 
   const deleteByDocName = useCallback(
-    async (wsPath) => {
-      await deleteFile(wsPath);
-      history.push('/ws/' + wsName);
+    async (wsPathToDelete) => {
+      await deleteFile(wsPathToDelete);
+      if (wsPathToDelete === wsPath) {
+        history.replace('/ws/' + wsName);
+      }
     },
-    [wsName, history],
+    [wsName, wsPath, history],
   );
 
   return deleteByDocName;
@@ -70,9 +89,9 @@ export function useWorkspaces() {
 
   useEffect(() => {
     let destroyed = false;
-    getWorkspaces().then((workspaces) => {
+    listWorkspaces().then((workspaces) => {
       if (!destroyed) {
-        updateWorkspaces(workspaces.map((w) => w.name));
+        updateWorkspaces(workspaces);
       }
     });
     return () => {
@@ -81,9 +100,17 @@ export function useWorkspaces() {
   }, []);
 
   const createWorkspaceCb = useCallback(
-    async (wsName, type) => {
-      await createWorkspace(wsName, type);
+    async (wsName, type, opts) => {
+      await createWorkspace(wsName, type, opts);
       history.push(`/ws/${wsName}`);
+    },
+    [history],
+  );
+
+  const deleteWorkspaceCb = useCallback(
+    async (wsName) => {
+      await deleteWorkspace(wsName);
+      history.push(`/ws/`);
     },
     [history],
   );
@@ -91,56 +118,8 @@ export function useWorkspaces() {
   return {
     workspaces,
     createWorkspace: createWorkspaceCb,
+    deleteWorkspace: deleteWorkspaceCb,
   };
-}
-
-export function useWorkspacePermission() {
-  const {
-    editorManagerState: { wsPermission: permission },
-    dispatch,
-  } = useContext(EditorManagerContext);
-
-  const { wsName } = useWorkspaceDetails();
-
-  const setPermission = useCallback(
-    (value) => {
-      dispatch({
-        type: 'WORKSPACE/PERMISSION',
-        value,
-      });
-    },
-    [dispatch],
-  );
-
-  useEffect(() => {
-    setPermission(undefined);
-    wsQueryPermission(wsName).then((result) => {
-      setPermission(result ? 'granted' : 'rejected');
-    });
-  }, [setPermission, wsName]);
-
-  const requestPermission = useCallback(async () => {
-    if (permission === 'granted') {
-      return true;
-    }
-    const workspaceInfo = await getWorkspaceInfo(wsName);
-    if (!workspaceInfo.metadata.dirHandle) {
-      setPermission('granted');
-      return true;
-    }
-    const isGranted = await requestFilePermission(
-      workspaceInfo.metadata.dirHandle,
-    );
-    if (isGranted) {
-      setPermission('granted');
-      return true;
-    } else {
-      setPermission('rejected');
-      return false;
-    }
-  }, [wsName, permission, setPermission]);
-
-  return [permission, requestPermission];
 }
 
 export function useWorkspaceDetails() {
@@ -151,6 +130,14 @@ export function useWorkspaceDetails() {
     (wsPath) => {
       const { wsName, filePath } = resolvePath(wsPath);
       history.push(`/ws/${wsName}/${filePath}`);
+    },
+    [history],
+  );
+
+  const replaceWsPath = useCallback(
+    (wsPath) => {
+      const { wsName, filePath } = resolvePath(wsPath);
+      history.replace(`/ws/${wsName}/${filePath}`);
     },
     [history],
   );
@@ -174,5 +161,6 @@ export function useWorkspaceDetails() {
     docName,
     filePath,
     pushWsPath,
+    replaceWsPath,
   };
 }

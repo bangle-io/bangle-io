@@ -1,13 +1,10 @@
 import React, { useContext } from 'react';
 import { StackButton } from '../Button';
-import { EditorManagerContext } from 'bangle-io/app/workspace2/EditorManager';
 import { config } from 'bangle-io/config';
+import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
 
 export function ActivityBar() {
-  const {
-    editorManagerState: { sidebar, paletteType },
-    dispatch,
-  } = useContext(EditorManagerContext);
+  const { sidebar, paletteType, dispatch } = useContext(UIManagerContext);
 
   const toggleSidebar = () =>
     dispatch({
