@@ -4,7 +4,9 @@ import { NativeFileOps } from './nativefs-helpers';
 import { resolvePath, validatePath } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
 
-const nativeFS = new NativeFileOps();
+const nativeFS = new NativeFileOps({
+  allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
+});
 
 // TODO make this get file
 export async function getDoc(wsPath) {

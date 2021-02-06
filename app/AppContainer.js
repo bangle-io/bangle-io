@@ -13,8 +13,8 @@ import { UIManager } from './ui/UIManager';
 
 export function AppContainer() {
   return (
-    <UIManager>
-      <Router>
+    <Router>
+      <UIManager>
         <Switch>
           <Route path={['/ws/:wsName']}>
             <WorkspacePermissionModal>
@@ -55,8 +55,8 @@ export function AppContainer() {
             </div>
           </Route>
         </Switch>
-      </Router>
-    </UIManager>
+      </UIManager>
+    </Router>
   );
 }
 

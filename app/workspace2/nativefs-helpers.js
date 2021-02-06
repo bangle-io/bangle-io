@@ -1,5 +1,7 @@
 import * as idb from 'idb-keyval';
 const DEFAULT_DIR_IGNORE_LIST = ['node_modules', '.git'];
+const LOG = true;
+let log = LOG ? console.log.bind(console, 'nativefs-helpers') : () => {};
 
 /**
  *
@@ -14,6 +16,7 @@ export class NativeFileOps {
     this._allowedFile = allowedFile;
     this._allowedDir = allowedDir;
     this._traverseCache = new WeakMap();
+    this._getFileHandle = getFileHandle({ allowedDir, allowedFile });
   }
 
   _calculateFilesCache = async (rootDirHandle) => {
@@ -38,72 +41,23 @@ export class NativeFileOps {
    * @param {*} rootDirHandle
    */
   async readFile(path, rootDirHandle) {
+    log({
+      path,
+      rootDirHandle,
+    });
     let permission = await hasPermission(rootDirHandle);
     if (!permission) {
       throw new NativeFilePermissionError(
         `Permission required to read ${path}`,
       );
     }
-
-    let availableFiles = this._traverseCache.get(rootDirHandle);
-    const joinedPath = path.join('/');
-
-    if (!availableFiles) {
-      availableFiles = await this._calculateFilesCache(rootDirHandle);
-    }
-
-    let match = availableFiles.get(joinedPath);
-
-    // Find again, because the cache might have gotten stale
-    if (!match) {
-      availableFiles = await this._calculateFilesCache(rootDirHandle);
-      match = availableFiles.get(joinedPath);
-
-      if (!match) {
-        throw new NativeFSFileNotFoundError(
-          `Cannot read as file ${joinedPath} not found`,
-        );
-      }
-    }
-
-    let file;
-
+    const fileHandle = await this._getFileHandle(path, rootDirHandle);
     try {
-      file = await getLast(match).getFile();
-    } catch (error) {
-      if (error.name === 'NotFoundError' && error instanceof DOMException) {
-        // Find again, because in case file changed but name stayed same
-        availableFiles = await this._calculateFilesCache(rootDirHandle);
-        match = availableFiles.get(joinedPath);
-
-        if (!match) {
-          throw new NativeFSFileNotFoundError(`file ${joinedPath} not found`);
-        }
-
-        try {
-          file = await getLast(match).getFile();
-        } catch (error2) {
-          if (
-            error2.name === 'NotFoundError' &&
-            error2 instanceof DOMException
-          ) {
-            throw new NativeFSFileNotFoundError(
-              `file ${joinedPath} not found`,
-              error2,
-            );
-          }
-          throw new NativeFSReadError(`file ${joinedPath} read error`, error2);
-        }
-      } else {
-        throw new NativeFSReadError(`file ${joinedPath} read error`, error);
-      }
-    }
-
-    try {
+      const file = await fileHandle.getFile();
       const textContent = await readFile(file);
       return { file, textContent };
     } catch (error) {
-      throw new NativeFSReadError(`file ${joinedPath} read error`, error);
+      throw new NativeFSReadError(`file ${path.join('/')} read error`, error);
     }
   }
 
@@ -121,27 +75,28 @@ export class NativeFileOps {
       );
     }
 
-    let availableFiles = this._traverseCache.get(rootDirHandle);
-    const joinedPath = path.join('/');
-    if (!availableFiles) {
-      availableFiles = await this._calculateFilesCache(rootDirHandle);
+    let fileHandle;
+    let shouldCreateFile = false;
+    try {
+      fileHandle = await this._getFileHandle(path, rootDirHandle);
+    } catch (error) {
+      if (error instanceof NativeFSFileNotFoundError) {
+        shouldCreateFile = true;
+      } else {
+        throw error;
+      }
     }
 
-    let match = availableFiles.get(joinedPath);
-
-    if (!match) {
+    if (shouldCreateFile) {
       try {
-        await createFile(path.slice(1), rootDirHandle, content);
+        await createFile(path, rootDirHandle, content);
+        fileHandle = await this._getFileHandle(path, rootDirHandle);
       } catch (error) {
         throw new NativeFSWriteError('Unable to create file', error);
       }
-
-      availableFiles = await this._calculateFilesCache(rootDirHandle);
-      match = availableFiles.get(joinedPath);
     }
 
-    const fileHandler = getLast(match);
-    await writeFile(fileHandler, content);
+    await writeFile(fileHandle, content);
   }
 
   async listFiles(rootDirHandle) {
@@ -180,6 +135,94 @@ async function recurseDirHandle(
   return result.filter((r) => r.length > 0);
 }
 
+/**
+ * Finds a file given a path also caches it for speedier access.
+ * Will throw error if file is not found.
+ */
+function getFileHandle({
+  allowedDir = async (dirHandle) => true,
+  allowedFile = async (fileHandle) => true,
+}) {
+  let dirToChildMap = new WeakMap();
+  log(dirToChildMap);
+  const getChildHandle = async (childName, dirHandle) => {
+    const recalcuteChildren = async () => {
+      let children = await asyncIteratorToArray(dirHandle.values());
+      children = children.filter((entry) => {
+        if (entry.kind === 'directory') {
+          return allowedDir(entry);
+        }
+        if (entry.kind === 'file') {
+          return allowedFile(entry);
+        }
+        throw new Error('Unknown kind of entry: ' + entry.kind);
+      });
+      dirToChildMap.set(dirHandle, children);
+    };
+
+    const findChild = () => {
+      const children = dirToChildMap.get(dirHandle);
+      if (!children) {
+        return undefined;
+      }
+      const match = children.find((entry) => entry.name === childName);
+      return match;
+    };
+
+    let match = findChild();
+
+    if (match) {
+      log('Cache hit', match);
+      return match;
+    }
+    log('Cache miss', childName);
+
+    await recalcuteChildren();
+
+    return findChild();
+  };
+
+  const recurse = async (path, dirHandle, absolutePath) => {
+    if (dirHandle.kind !== 'directory') {
+      throw new NativeFSReadError(
+        `Cannot get Path "${path.join('/')}" as "${
+          dirHandle.name
+        }" is not a directory`,
+      );
+    }
+
+    const [parentName, ...rest] = path;
+
+    if (path.length === 1) {
+      return dirHandle
+        .getFileHandle(parentName, {
+          create: false,
+        })
+        .catch(handleNotFoundDOMException(absolutePath));
+    }
+
+    const handle = await getChildHandle(parentName, dirHandle);
+
+    if (!handle) {
+      throw new NativeFSFileNotFoundError(
+        `Path "${absolutePath.join('/')}" not found`,
+      );
+    }
+
+    return recurse(rest, handle, absolutePath);
+  };
+
+  return (path, rootDirHandle) => {
+    if (path[0] !== rootDirHandle.name) {
+      throw new Error(
+        `getFile Error: root parent ${path[0]} must be the rootDirHandle ${rootDirHandle.name}`,
+      );
+    }
+
+    return recurse(path.slice(1), rootDirHandle, path);
+  };
+}
+
 function getLast(array) {
   return array[array.length - 1];
 }
@@ -195,21 +238,30 @@ function readFile(file) {
 
 /**
  *
- * @param {string[]} path [parent, ...rest] array of names relative to dirHandle i.e. parent must be direct child of dirHandle
+ * @param {string[]} path [parent, ...rest] array of names relative to dirHandle
  * @param {*} dirHandle
  */
-async function createFile(path, dirHandle) {
-  const [parentName, ...rest] = path;
+async function createFile(path, rootDirHandle) {
+  const recurse = async (path, dirHandle) => {
+    const [parentName, ...rest] = path;
 
-  if (path.length === 1) {
-    return dirHandle.getFileHandle(parentName, { create: true });
+    if (path.length === 1) {
+      return dirHandle.getFileHandle(parentName, { create: true });
+    }
+
+    const newHandle = await dirHandle.getDirectoryHandle(parentName, {
+      create: true,
+    });
+
+    return recurse(rest, newHandle);
+  };
+
+  if (path[0] !== rootDirHandle.name) {
+    throw new Error(
+      `getFile Error: root parent ${path[0]} must be the rootDirHandle ${rootDirHandle.name}`,
+    );
   }
-
-  const newHandle = await dirHandle.getDirectoryHandle(parentName, {
-    create: true,
-  });
-
-  return createFile(rest, newHandle);
+  return recurse(path.slice(1), rootDirHandle);
 }
 
 async function writeFile(fileHandle, contents) {
@@ -297,6 +349,26 @@ export async function requestPermission(dirHandle) {
   const perms = await dirHandle.requestPermission(opts);
 
   return perms === 'granted';
+}
+
+async function asyncIteratorToArray(iter) {
+  const arr = [];
+  for await (const i of iter) {
+    arr.push(i);
+  }
+  return arr;
+}
+
+function handleNotFoundDOMException(filePath) {
+  return (error) => {
+    if (error.name === 'NotFoundError' && error instanceof DOMException) {
+      throw new NativeFSFileNotFoundError(
+        `Path "${filePath.join('/"')}" not found`,
+        error,
+      );
+    }
+    throw error;
+  };
 }
 
 export class NativeFSReadError extends Error {
