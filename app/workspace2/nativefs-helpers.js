@@ -175,7 +175,7 @@ function getFileHandle({
       log('Cache hit', match);
       return match;
     }
-    log('Cache miss', childName);
+    log('Cache miss');
 
     await recalcuteChildren();
 

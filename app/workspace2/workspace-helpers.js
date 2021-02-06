@@ -2,6 +2,22 @@ import * as idb from 'idb-keyval';
 
 import { validatePath } from './path-helpers';
 
+/**
+ * we need to cache the workspaces because
+ * the a lot of our caches depend on uniqueness of rootDirHandler (saved in idb)
+ * invalidating cache creates a new instance of rootDirHandler for the same dir
+ * and hence messing up with downstream weakcaches.
+ */
+let cachedWorkspaces = undefined;
+
+export async function listWorkspaces() {
+  if (!cachedWorkspaces) {
+    cachedWorkspaces = (await idb.get('workspaces/2')) || [];
+  }
+
+  return cachedWorkspaces;
+}
+
 // Workspace
 export async function getWorkspaceInfo(wsName) {
   const workspaces = await listWorkspaces();
@@ -61,13 +77,8 @@ export async function createWorkspace(wsName, type = 'browser', opts = {}) {
 
   workspaces.push(workspace);
 
+  cachedWorkspaces = undefined;
   await idb.set('workspaces/2', workspaces);
-}
-
-export async function listWorkspaces() {
-  let ws = (await idb.get('workspaces/2')) || [];
-
-  return ws;
 }
 
 export async function deleteWorkspace(wsName) {
@@ -78,6 +89,7 @@ export async function deleteWorkspace(wsName) {
   }
 
   workspaces = workspaces.filter((w) => w.name !== wsName);
+  cachedWorkspaces = undefined;
   await idb.set('workspaces/2', workspaces);
 }
 
