@@ -33,6 +33,10 @@ export function useCreateFile() {
 
   const createNewFile = useCallback(
     async (fileName = uuid(6)) => {
+      if (!fileName.endsWith('.md')) {
+        fileName += '.md';
+      }
+
       const wsPath = wsName + ':' + fileName;
       await createFile(wsPath);
       pushWsPath(wsPath);
@@ -44,30 +48,36 @@ export function useCreateFile() {
 }
 
 export function useRenameActiveFile() {
-  const { wsName, wsPath, pushWsPath } = useWorkspaceDetails();
+  const { wsName, wsPath, replaceWsPath } = useWorkspaceDetails();
 
   const renameFileCb = useCallback(
     async (newFilePath) => {
+      if (!newFilePath.endsWith('.md')) {
+        newFilePath += '.md';
+      }
+
       const newWsPath = wsName + ':' + newFilePath;
       await renameFile(wsPath, newWsPath);
-      pushWsPath(newWsPath);
+      replaceWsPath(newWsPath);
     },
-    [wsName, wsPath, pushWsPath],
+    [wsName, wsPath, replaceWsPath],
   );
 
   return renameFileCb;
 }
 
 export function useDeleteFile() {
-  const { wsName } = useWorkspaceDetails();
+  const { wsName, wsPath } = useWorkspaceDetails();
   const history = useHistory();
 
   const deleteByDocName = useCallback(
-    async (wsPath) => {
-      await deleteFile(wsPath);
-      history.push('/ws/' + wsName);
+    async (wsPathToDelete) => {
+      await deleteFile(wsPathToDelete);
+      if (wsPathToDelete === wsPath) {
+        history.replace('/ws/' + wsName);
+      }
     },
-    [wsName, history],
+    [wsName, wsPath, history],
   );
 
   return deleteByDocName;
@@ -124,6 +134,14 @@ export function useWorkspaceDetails() {
     [history],
   );
 
+  const replaceWsPath = useCallback(
+    (wsPath) => {
+      const { wsName, filePath } = resolvePath(wsPath);
+      history.replace(`/ws/${wsName}/${filePath}`);
+    },
+    [history],
+  );
+
   if (!wsName) {
     return {};
   }
@@ -143,5 +161,6 @@ export function useWorkspaceDetails() {
     docName,
     filePath,
     pushWsPath,
+    replaceWsPath,
   };
 }

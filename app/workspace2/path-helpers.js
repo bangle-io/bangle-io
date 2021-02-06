@@ -25,7 +25,7 @@ export function resolvePath(wsPath) {
     wsName,
     // deprecate docName
     get docName() {
-      console.warn('docName is deprecated');
+      // console.warn('docName is deprecated');
       return fileName;
     },
     filePath,

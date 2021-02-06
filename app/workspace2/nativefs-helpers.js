@@ -1,4 +1,3 @@
-import * as idb from 'idb-keyval';
 const DEFAULT_DIR_IGNORE_LIST = ['node_modules', '.git'];
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'nativefs-helpers') : () => {};
@@ -41,17 +40,13 @@ export class NativeFileOps {
    * @param {*} rootDirHandle
    */
   async readFile(path, rootDirHandle) {
-    log({
-      path,
-      rootDirHandle,
-    });
     let permission = await hasPermission(rootDirHandle);
     if (!permission) {
       throw new NativeFilePermissionError(
         `Permission required to read ${path}`,
       );
     }
-    const fileHandle = await this._getFileHandle(path, rootDirHandle);
+    const { fileHandle } = await this._getFileHandle(path, rootDirHandle);
     try {
       const file = await fileHandle.getFile();
       const textContent = await readFile(file);
@@ -78,7 +73,7 @@ export class NativeFileOps {
     let fileHandle;
     let shouldCreateFile = false;
     try {
-      fileHandle = await this._getFileHandle(path, rootDirHandle);
+      ({ fileHandle } = await this._getFileHandle(path, rootDirHandle));
     } catch (error) {
       if (error instanceof NativeFSFileNotFoundError) {
         shouldCreateFile = true;
@@ -90,13 +85,35 @@ export class NativeFileOps {
     if (shouldCreateFile) {
       try {
         await createFile(path, rootDirHandle, content);
-        fileHandle = await this._getFileHandle(path, rootDirHandle);
+        ({ fileHandle } = await this._getFileHandle(path, rootDirHandle));
       } catch (error) {
         throw new NativeFSWriteError('Unable to create file', error);
       }
     }
 
     await writeFile(fileHandle, content);
+  }
+
+  async renameFile(oldPath, newPath, rootDirHandle) {
+    if (
+      oldPath.slice(0, oldPath.length - 1).join('/') !==
+      newPath.slice(0, newPath.length - 1).join('/')
+    ) {
+      throw new Error('Cannot rename parent directories');
+    }
+
+    const oldFile = await this.readFile(oldPath, rootDirHandle);
+    await this.saveFile(newPath, rootDirHandle, oldFile.textContent);
+    await this.deleteFile(oldPath, rootDirHandle);
+  }
+
+  async deleteFile(path, rootDirHandle) {
+    const { fileHandle, parentHandles } = await this._getFileHandle(
+      path,
+      rootDirHandle,
+    );
+    const parentHandle = getLast(parentHandles);
+    await parentHandle.removeEntry(fileHandle.name);
   }
 
   async listFiles(rootDirHandle) {
@@ -144,7 +161,6 @@ function getFileHandle({
   allowedFile = async (fileHandle) => true,
 }) {
   let dirToChildMap = new WeakMap();
-  log(dirToChildMap);
   const getChildHandle = async (childName, dirHandle) => {
     const recalcuteChildren = async () => {
       let children = await asyncIteratorToArray(dirHandle.values());
@@ -182,7 +198,7 @@ function getFileHandle({
     return findChild();
   };
 
-  const recurse = async (path, dirHandle, absolutePath) => {
+  const recurse = async (path, dirHandle, absolutePath, parents) => {
     if (dirHandle.kind !== 'directory') {
       throw new NativeFSReadError(
         `Cannot get Path "${path.join('/')}" as "${
@@ -190,6 +206,8 @@ function getFileHandle({
         }" is not a directory`,
       );
     }
+
+    parents.push(dirHandle);
 
     const [parentName, ...rest] = path;
 
@@ -209,17 +227,29 @@ function getFileHandle({
       );
     }
 
-    return recurse(rest, handle, absolutePath);
+    return recurse(rest, handle, absolutePath, parents);
   };
 
-  return (path, rootDirHandle) => {
+  return async (path, rootDirHandle) => {
     if (path[0] !== rootDirHandle.name) {
       throw new Error(
         `getFile Error: root parent ${path[0]} must be the rootDirHandle ${rootDirHandle.name}`,
       );
     }
 
-    return recurse(path.slice(1), rootDirHandle, path);
+    let parentHandles = [];
+
+    const fileHandle = await recurse(
+      path.slice(1),
+      rootDirHandle,
+      path,
+      parentHandles,
+    );
+
+    return {
+      fileHandle,
+      parentHandles,
+    };
   };
 }
 
@@ -408,208 +438,3 @@ export class NativeFilePermissionError extends NativeFSReadError {
     this.name = 'NativeFilePermissionError';
   }
 }
-
-/**
- * TESTS
- */
-
-window.FileOpts = NativeFileOps;
-window.pickADirectory = pickADirectory;
-window.recurseDirHandle = recurseDirHandle;
-window.createFile = createFile;
-
-// a poorman semimanual test
-window.nativeFSTest1 = async function () {
-  console.info('pick bangle.dev directory');
-  const dirHandle = await pickADirectory();
-  console.log({ dirHandle });
-
-  const fileOps = new NativeFileOps();
-  console.log({ fileOps });
-
-  console.info(
-    'reading README.md, expect READMEs content and a faster second read',
-  );
-  console.time('firstRead');
-  let { textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'README.md'],
-    dirHandle,
-  );
-  console.timeEnd('firstRead');
-  console.time('secondRead');
-
-  ({ textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'README.md'],
-    dirHandle,
-  ));
-
-  console.timeEnd('secondRead');
-
-  console.log({ fileContent });
-  console.info('attempted to read non existent file, expect not found error');
-  await fileOps
-    .readFile([dirHandle.name, 'README'], dirHandle)
-    .then(() => console.warn('should have failed'))
-    .catch((error) => {
-      console.error(error);
-    });
-
-  console.info("reading deeply nested file , expect md's content");
-  ({ textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'markdown', '__tests__', 'fixtures', 'todo1.md'],
-    dirHandle,
-  ));
-
-  console.log({ fileContent });
-
-  console.info('reading a folder , should fail');
-  await fileOps
-    .readFile([dirHandle.name, 'markdown', '__tests__', 'fixtures'], dirHandle)
-    .then(() => console.warn('should have failed'))
-    .catch((error) => {
-      console.error(error);
-    });
-  console.log('done');
-};
-
-//  testing file renaming and deletion
-window.nativeFSTest2 = async function* () {
-  console.info('pick bangle.dev directory');
-  const dirHandle = await pickADirectory();
-  console.log({ dirHandle });
-
-  const fileOps = new NativeFileOps();
-  console.log({ fileOps });
-
-  console.info('create dummy.md, expect dummys content');
-
-  yield null;
-
-  let { textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'dummy.md'],
-    dirHandle,
-  );
-  console.log({ fileContent });
-  console.info('now rename dummy.md to dummy2.md and  expect not found error');
-  yield null;
-
-  await fileOps
-    .readFile([dirHandle.name, 'dummy.md'], dirHandle)
-    .then(() => console.warn('should have failed'))
-    .catch((error) => {
-      console.error(error);
-    });
-
-  console.info('now reading dummy2.md expect contents');
-
-  ({ textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'dummy2.md'],
-    dirHandle,
-  ));
-  console.log({ fileContent });
-
-  console.info('now delete dummy2.md and copy the content');
-
-  yield null;
-
-  console.info('now will attempt to read deleted dummy2.md should throw error');
-  await fileOps
-    .readFile([dirHandle.name, 'dummy2.md'], dirHandle)
-    .then(() => console.warn('should have failed'))
-    .catch((error) => {
-      console.error(error);
-    });
-
-  console.info('now bring back dummy2.md and will  attempt to read it');
-  yield null;
-  ({ textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'dummy2.md'],
-    dirHandle,
-  ));
-  console.log({ fileContent });
-
-  console.log('done!');
-};
-
-const customStore = idb.createStore(
-  'test-permission-db-1',
-  'test-permission-store-1',
-);
-
-window.nativeFSPermissionTestSave = async function () {
-  const dirHandle = await pickADirectory();
-  console.info('will be saving the handle and then reload and call read test');
-  await idb.set('bangledev', dirHandle, customStore);
-};
-
-window.nativeFSPermissionTestRequestPermission = async function () {
-  const dirHandle = await idb.get('bangledev', customStore);
-  await requestPermission(dirHandle);
-  return dirHandle;
-};
-
-window.nativeFSPermissionTestRead = async function () {
-  const dirHandle = await idb.get('bangledev', customStore);
-  console.log({ dirHandle });
-  const fileOps = new NativeFileOps();
-  let { textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'README.md'],
-    dirHandle,
-  );
-  console.log({ fileContent });
-};
-const fileOps = new NativeFileOps();
-
-window.nativeFSPermissionTestWrite = async function (content = 'hi') {
-  const dirHandle = await idb.get('bangledev', customStore);
-  let fileContent = await fileOps.saveFile(
-    [dirHandle.name, 'dummy.md'],
-    dirHandle,
-    content,
-  );
-  console.log({ fileContent });
-};
-
-window.nativeFSPermissionWrite2 = async function* (content = 'hi') {
-  console.info('pick a temp directory as it will become noisy');
-
-  console.info('creating file ./dummy.md');
-  const dirHandle = await pickADirectory();
-  await fileOps.saveFile([dirHandle.name, 'dummy.md'], dirHandle, content);
-  let { textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'dummy.md'],
-    dirHandle,
-  );
-
-  console.assert(fileContent === content, 'content 0 must match');
-
-  console.info('creating file ,/a/b/c/dummy.md');
-  await fileOps.saveFile(
-    [dirHandle.name, 'a', 'b', 'c', 'dummy.md'],
-    dirHandle,
-    content,
-  );
-  ({ textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'a', 'b', 'c', 'dummy.md'],
-    dirHandle,
-  ));
-
-  console.assert(fileContent === content, 'content1 must match');
-  yield null;
-
-  console.info(
-    'create file  ./a/b/dummy.md nested in dirs but with no dir creation',
-  );
-  await fileOps.saveFile(
-    [dirHandle.name, 'a', 'b', 'dummy.md'],
-    dirHandle,
-    content,
-  );
-
-  ({ textContent: fileContent } = await fileOps.readFile(
-    [dirHandle.name, 'a', 'b', 'dummy.md'],
-    dirHandle,
-  ));
-
-  console.assert(fileContent === content, 'content 2 must match');
-};

@@ -8,6 +8,11 @@ const nativeFS = new NativeFileOps({
   allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
 });
 
+const toNativePath = (rootDirHandle, filePath) => [
+  rootDirHandle.name,
+  ...filePath.split('/'),
+];
+
 // TODO make this get file
 export async function getDoc(wsPath) {
   const { wsName, filePath } = resolvePath(wsPath);
@@ -23,7 +28,7 @@ export async function getDoc(wsPath) {
 
     case 'nativefs': {
       const { rootDirHandle } = ws.metadata;
-      const path = [rootDirHandle.name, ...filePath.split('/')];
+      const path = toNativePath(rootDirHandle, filePath);
       const fileData = await nativeFS.readFile(path, rootDirHandle);
       if (fileData.file.type === 'application/json') {
         file = JSON.parse(fileData.textContent);
@@ -67,7 +72,7 @@ export async function saveDoc(wsPath, doc) {
 
     case 'nativefs': {
       const { rootDirHandle } = ws.metadata;
-      const path = [rootDirHandle.name, ...filePath.split('/')];
+      const path = toNativePath(rootDirHandle, filePath);
       let data;
       if (filePath.endsWith('.md')) {
         data = markdownSerializer(doc);
@@ -90,7 +95,7 @@ export async function saveDoc(wsPath, doc) {
 
 export async function createFile(wsPath) {
   validatePath(wsPath);
-  const { wsName, filePath } = resolvePath(wsPath);
+  const { wsName, filePath, fileName } = resolvePath(wsPath);
   const workspace = await getWorkspaceInfo(wsName);
 
   const create = () => ({
@@ -105,8 +110,12 @@ export async function createFile(wsPath) {
 
     case 'nativefs': {
       const { rootDirHandle } = workspace.metadata;
-      const path = [rootDirHandle.name, ...filePath.split('/')];
-      await nativeFS.saveFile(path, rootDirHandle, JSON.stringify(null));
+      const path = toNativePath(rootDirHandle, filePath);
+      await nativeFS.saveFile(
+        path,
+        rootDirHandle,
+        `# ${fileName}\n Hello World!`,
+      );
 
       break;
     }
@@ -119,11 +128,21 @@ export async function createFile(wsPath) {
 
 export async function deleteFile(wsPath) {
   validatePath(wsPath);
-  const { wsName } = resolvePath(wsPath);
+  const { wsName, filePath } = resolvePath(wsPath);
   const workspace = await getWorkspaceInfo(wsName);
   switch (workspace.type) {
     case 'browser': {
       await IndexDBIO.deleteFile(wsPath);
+      break;
+    }
+
+    case 'nativefs': {
+      const { rootDirHandle } = workspace.metadata;
+
+      await nativeFS.deleteFile(
+        toNativePath(rootDirHandle, filePath),
+        rootDirHandle,
+      );
       break;
     }
 
@@ -173,8 +192,8 @@ export async function getFiles(wsName) {
 export async function renameFile(wsPath, newWsPath) {
   validatePath(wsPath);
   validatePath(newWsPath);
-  const { wsName } = resolvePath(wsPath);
-  const { wsName: newWsName } = resolvePath(newWsPath);
+  const { wsName, filePath } = resolvePath(wsPath);
+  const { wsName: newWsName, filePath: newFilePath } = resolvePath(newWsPath);
 
   if (wsName !== newWsName) {
     throw new Error('Workspace name must be the same');
@@ -185,6 +204,17 @@ export async function renameFile(wsPath, newWsPath) {
   switch (workspace.type) {
     case 'browser': {
       await IndexDBIO.renameFile(wsPath, newWsPath);
+      break;
+    }
+
+    case 'nativefs': {
+      const { rootDirHandle } = workspace.metadata;
+
+      await nativeFS.renameFile(
+        toNativePath(rootDirHandle, filePath),
+        toNativePath(rootDirHandle, newFilePath),
+        rootDirHandle,
+      );
       break;
     }
 
