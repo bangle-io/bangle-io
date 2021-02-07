@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import {
   useGetWorkspaceFiles,
   useWorkspaceDetails,
-} from 'bangle-io/app/workspace2/workspace-hooks';
-import { resolvePath } from 'bangle-io/app/workspace2/path-helpers';
+} from 'bangle-io/app/workspace/workspace-hooks';
+import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 
 const LOG = false;
 

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { Palette } from '../../ui/Palette';
 
 import { SideBarRow } from '../Aside/SideBarRow';
-import { useWorkspaces } from 'bangle-io/app/workspace2/workspace-hooks';
+import { useWorkspaces } from 'bangle-io/app/workspace/workspace-hooks';
 import { useHistory } from 'react-router-dom';
 
 const LOG = false;

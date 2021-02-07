@@ -152,7 +152,7 @@ export async function deleteFile(wsPath) {
   }
 }
 
-export async function getFiles(wsName) {
+export async function listAllFiles(wsName) {
   const ws = await getWorkspaceInfo(wsName);
 
   let files = [];
@@ -186,7 +186,7 @@ export async function getFiles(wsName) {
     }
   }
 
-  return files;
+  return files.sort((a, b) => a.localeCompare(b));
 }
 
 export async function renameFile(wsPath, newWsPath) {

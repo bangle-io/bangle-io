@@ -4,10 +4,10 @@ import {
   useRenameActiveFile,
   useWorkspaceDetails,
   useWorkspaces,
-} from 'bangle-io/app/workspace2/workspace-hooks';
+} from 'bangle-io/app/workspace/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
 import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
-import { pickADirectory } from 'bangle-io/app/workspace2/nativefs-helpers';
+import { pickADirectory } from 'bangle-io/app/workspace/nativefs-helpers';
 
 export const commands = Object.entries(Commands());
 

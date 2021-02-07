@@ -6,10 +6,10 @@ import { Editor } from './components/Editor';
 import { EditorManager } from './editor/EditorManager';
 import { Aside } from './components/Aside/Aside';
 import { PaletteContainer } from './components/PaletteContainer';
-import { WorkspacePermissionModal } from './workspace2/WorkspacePermissionModal';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { useWorkspaceDetails } from './workspace2/workspace-hooks';
+import { useWorkspaceDetails } from './workspace/workspace-hooks';
 import { UIManager } from './ui/UIManager';
+import { Workspace } from './workspace/Workspace';
 
 export function AppContainer() {
   return (
@@ -17,7 +17,7 @@ export function AppContainer() {
       <UIManager>
         <Switch>
           <Route path={['/ws/:wsName']}>
-            <WorkspacePermissionModal>
+            <Workspace>
               <EditorManager>
                 <div className="h-screen main-wrapper">
                   <div className="editor-wrapper">
@@ -45,7 +45,7 @@ export function AppContainer() {
                   <Aside />
                 </div>
               </EditorManager>
-            </WorkspacePermissionModal>
+            </Workspace>
           </Route>
           <Route path="/">
             <div className="h-screen main-wrapper">
