@@ -7,7 +7,12 @@ import {
   deleteWorkspace,
   listWorkspaces,
 } from './workspace-helpers';
-import { createFile, deleteFile, getFiles, renameFile } from './file-helpers';
+import {
+  createFile,
+  deleteFile,
+  listAllFiles,
+  renameFile,
+} from './file-helpers';
 
 export function useGetWorkspaceFiles() {
   const { wsName } = useWorkspaceDetails();
@@ -16,7 +21,7 @@ export function useGetWorkspaceFiles() {
 
   const refreshFiles = useCallback(() => {
     if (wsName) {
-      getFiles(wsName).then((items) => {
+      listAllFiles(wsName).then((items) => {
         setFiles(items);
       });
     }
@@ -126,6 +131,7 @@ export function useWorkspaceDetails() {
   const { wsName } = useParams();
   const { pathname } = useLocation();
   const history = useHistory();
+
   const pushWsPath = useCallback(
     (wsPath) => {
       const { wsName, filePath } = resolvePath(wsPath);
