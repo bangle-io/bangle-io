@@ -10,8 +10,8 @@ import {
   useDeleteFile,
   useGetWorkspaceFiles,
   useWorkspaceDetails,
-} from 'bangle-io/app/workspace2/workspace-hooks';
-import { resolvePath } from 'bangle-io/app/workspace2/path-helpers';
+} from 'bangle-io/app/workspace/workspace-hooks';
+import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
 
 FileBrowser.propTypes = {};

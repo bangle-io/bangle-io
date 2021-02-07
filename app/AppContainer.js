@@ -7,9 +7,9 @@ import { EditorManager } from './editor/EditorManager';
 import { Aside } from './components/Aside/Aside';
 import { PaletteContainer } from './components/PaletteContainer';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { useWorkspaceDetails } from './workspace2/workspace-hooks';
+import { useWorkspaceDetails } from './workspace/workspace-hooks';
 import { UIManager } from './ui/UIManager';
-import { Workspace } from './workspace2/Workspace';
+import { Workspace } from './workspace/Workspace';
 
 export function AppContainer() {
   return (

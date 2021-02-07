@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppContainer } from './AppContainer';
-import './workspace2/native-manual-tests';
+import './workspace/native-manual-tests';
 
 export default class App extends React.PureComponent {
   state = {

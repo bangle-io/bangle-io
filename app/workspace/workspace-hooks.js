@@ -1,7 +1,7 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import { uuid } from '@bangle.dev/core/utils/js-utils';
-import { resolvePath } from 'bangle-io/app/workspace2/path-helpers';
+import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 import {
   createWorkspace,
   deleteWorkspace,
