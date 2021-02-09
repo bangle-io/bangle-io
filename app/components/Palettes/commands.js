@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import {
-  useCreateFile,
+  useCreateMdFile,
   useRenameActiveFile,
-  useWorkspaceDetails,
+  useWorkspacePath,
   useWorkspaces,
 } from 'bangle-io/app/workspace/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
@@ -95,13 +95,19 @@ WorkspaceNewFileInput.hidden = true;
 WorkspaceNewFileInput.queryMatch = (query) =>
   queryMatch(WorkspaceNewFileInput, query);
 function WorkspaceNewFileInput({ isActive, onDismiss, execute, query }) {
-  const createNewFile = useCreateFile();
+  const { wsName } = useWorkspacePath();
+  const createNewFile = useCreateMdFile();
 
   const onExecuteItem = useCallback(() => {
-    createNewFile(query).then(() => {
+    let normalizedQuery = query;
+    if (!normalizedQuery.endsWith('.md')) {
+      normalizedQuery += '.md';
+    }
+
+    createNewFile(wsName + ':' + normalizedQuery).then(() => {
       onDismiss();
     });
-  }, [onDismiss, query, createNewFile]);
+  }, [onDismiss, wsName, query, createNewFile]);
 
   useCommandExecute(execute, onExecuteItem);
   return (
@@ -216,7 +222,7 @@ DeleteCurrentWorkspace.queryMatch = (query) =>
   queryMatch(DeleteCurrentWorkspace, query);
 function DeleteCurrentWorkspace({ isActive, onDismiss, execute }) {
   const { deleteWorkspace } = useWorkspaces();
-  const { wsName } = useWorkspaceDetails();
+  const { wsName } = useWorkspacePath();
 
   const onExecuteItem = useCallback(() => {
     onDismiss();

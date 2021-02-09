@@ -4,12 +4,12 @@ import { SideBar } from './SideBar';
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
 import { BaseButton } from '../Button';
 import 'css.gg/icons/css/chevron-down.css';
-import { ChevronDown, ChevronRight } from '../Icons/index';
+import { ChevronDown, ChevronRight } from '../../ui/Icons/index';
 import {
-  useCreateFile,
+  useCreateMdFile,
   useDeleteFile,
   useGetWorkspaceFiles,
-  useWorkspaceDetails,
+  useWorkspacePath,
 } from 'bangle-io/app/workspace/workspace-hooks';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
@@ -18,29 +18,29 @@ FileBrowser.propTypes = {};
 
 export function FileBrowser() {
   const [files] = useGetWorkspaceFiles();
-  const createNewFile = useCreateFile();
+  const createNewMdFile = useCreateMdFile();
   const deleteByDocName = useDeleteFile();
   const { dispatch } = useContext(UIManagerContext);
-  const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspaceDetails();
+  const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
 
-  const toggleTheme = () =>
+  const toggleTheme = () => {
     dispatch({
       type: 'UI/TOGGLE_THEME',
     });
+  };
 
   const openNew = useCallback(() => {
-    createNewFile();
+    createNewMdFile();
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
     });
-  }, [dispatch, createNewFile]);
+  }, [dispatch, createNewMdFile]);
 
   const fileTree = useMemo(
     () =>
       flatPathsToTree(
         files.map((f) => {
           const { filePath } = resolvePath(f);
-
           return filePath;
         }),
       ),
@@ -59,15 +59,18 @@ export function FileBrowser() {
         leftIcon={<ChevronDown style={{ width: 16, height: 16 }} />}
         activeLeftIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
       >
-        <RenderPathTree
-          key={wsName}
-          fileTree={fileTree}
-          wsName={wsName}
-          deleteByDocName={deleteByDocName}
-          pushWsPath={pushWsPath}
-          activeWSPath={activeWSPath}
-          dispatch={dispatch}
-        />
+        {fileTree.map((child) => (
+          <RenderPathTree
+            fileTree={child}
+            key={child.name}
+            wsName={wsName}
+            deleteByDocName={deleteByDocName}
+            pushWsPath={pushWsPath}
+            activeWSPath={activeWSPath}
+            dispatch={dispatch}
+            depth={1}
+          />
+        ))}
       </CollapsibleSideBarRow>
     </SideBar>
   );
@@ -80,32 +83,19 @@ function RenderPathTree({
   pushWsPath,
   activeWSPath,
   dispatch,
-  paddingLeft,
+  depth,
 }) {
-  if (Array.isArray(fileTree)) {
-    return fileTree.map((child) => (
-      <RenderPathTree
-        fileTree={child}
-        key={child.name}
-        wsName={wsName}
-        deleteByDocName={deleteByDocName}
-        pushWsPath={pushWsPath}
-        activeWSPath={activeWSPath}
-        dispatch={dispatch}
-        paddingLeft={paddingLeft}
-      />
-    ));
-  }
-
   const { name, children, path } = fileTree;
+
   if (children) {
     return (
       <CollapsibleSideBarRow
+        initialCollapse={true}
         title={name}
-        paddingLeft={paddingLeft}
-        isSticky={true}
         leftIcon={<ChevronDown style={{ width: 16, height: 16 }} />}
         activeLeftIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
+        depth={depth}
+        basePadding={16}
       >
         {children.map((child) => (
           <RenderPathTree
@@ -116,6 +106,8 @@ function RenderPathTree({
             pushWsPath={pushWsPath}
             activeWSPath={activeWSPath}
             dispatch={dispatch}
+            depth={depth + 1}
+            basePadding={16}
           />
         ))}
       </CollapsibleSideBarRow>
@@ -123,43 +115,34 @@ function RenderPathTree({
   }
   // for the files
   if (path) {
-    // treat as an empty folder
-    if (!name.includes('.')) {
-      return (
-        <CollapsibleSideBarRow
-          title={name}
-          leftIcon={<ChevronDown style={{ width: 16, height: 16 }} />}
-          activeLeftIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
-        ></CollapsibleSideBarRow>
-      );
-    } else {
-      const wsPath = wsName + ':' + path;
-      return (
-        <SideBarRow
-          key={wsPath}
-          onClick={() => {
-            pushWsPath(wsPath);
-          }}
-          title={name}
-          isActive={activeWSPath === wsPath}
-          paddingLeft={paddingLeft}
-          rightIcon={[
-            <BaseButton
-              key="delete"
-              className="text-gray-600 hover:text-gray-900"
-              faType="fas fa-times-circle "
-              onClick={async (e) => {
-                e.stopPropagation();
-                deleteByDocName(wsPath);
-                dispatch({
-                  type: 'UI/TOGGLE_SIDEBAR',
-                });
-              }}
-            />,
-          ]}
-        />
-      );
-    }
+    const wsPath = wsName + ':' + path;
+    return (
+      <SideBarRow
+        basePadding={16}
+        depth={depth}
+        key={wsPath}
+        onClick={() => {
+          pushWsPath(wsPath);
+        }}
+        title={name}
+        isActive={activeWSPath === wsPath}
+        leftIcon={<span style={{ width: 16, height: 16 }}> </span>}
+        rightIcon={[
+          <BaseButton
+            key="delete"
+            className="text-gray-600 hover:text-gray-900"
+            faType="fas fa-times-circle "
+            onClick={async (e) => {
+              e.stopPropagation();
+              deleteByDocName(wsPath);
+              dispatch({
+                type: 'UI/TOGGLE_SIDEBAR',
+              });
+            }}
+          />,
+        ]}
+      />
+    );
   }
 }
 
@@ -167,8 +150,8 @@ function RenderPathTree({
  *
  * @returns An array of deeply nested objects
  *          {name: string, ?children: Array<self>, ?path: string}
- *          for terminals children will be undefined and the
- *          object will have path which will be the absolute path of the file
+ *          for terminals `children` field will be undefined and the
+ *          object will have `path` which will be the absolute path of the file
  */
 export function flatPathsToTree(files) {
   let mainChain = [];
@@ -179,7 +162,6 @@ export function flatPathsToTree(files) {
     let counter = 0;
     for (const part of path) {
       counter++;
-
       let match = chain.find(({ name }) => name === part);
 
       if (!match) {

@@ -111,4 +111,19 @@ describe('flatPathsToTree', () => {
       },
     ]);
   });
+
+  test('5 case', () => {
+    const result = flatPathsToTree(['read/jo', 'read2.md']);
+
+    expect(result).toEqual([
+      {
+        name: 'read',
+        children: [{ name: 'jo', path: 'read/jo' }],
+      },
+      {
+        name: 'read2.md',
+        path: 'read2.md',
+      },
+    ]);
+  });
 });

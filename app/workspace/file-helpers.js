@@ -1,7 +1,7 @@
 import { markdownParser, markdownSerializer } from '../markdown/parsers';
 import { IndexDBIO } from './indexdb-io';
 import { NativeFileOps } from './nativefs-helpers';
-import { resolvePath, validatePath } from './path-helpers';
+import { resolvePath, validatePath, validateWsFilePath } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
 
 const nativeFS = new NativeFileOps({
@@ -51,10 +51,14 @@ export async function getDoc(wsPath) {
   return file;
 }
 
+/**
+ *
+ * @param {string} wsPath
+ * @param {PMNode} doc
+ */
 export async function saveDoc(wsPath, doc) {
   const { wsName, filePath } = resolvePath(wsPath);
   const ws = await getWorkspaceInfo(wsName);
-  const docJson = doc.toJSON();
   let file;
 
   switch (ws.type) {
@@ -65,7 +69,7 @@ export async function saveDoc(wsPath, doc) {
       }
       file = await IndexDBIO.updateFile(wsPath, {
         ...file,
-        doc: docJson,
+        doc: doc.toJSON(),
       });
       break;
     }
@@ -77,7 +81,7 @@ export async function saveDoc(wsPath, doc) {
       if (filePath.endsWith('.md')) {
         data = markdownSerializer(doc);
       } else if (filePath.endsWith('.json')) {
-        data = JSON.stringify(docJson);
+        data = JSON.stringify(doc.toJSON());
       } else {
         throw new Error('Unknown file extension ' + filePath);
       }
@@ -93,29 +97,24 @@ export async function saveDoc(wsPath, doc) {
   }
 }
 
-export async function createFile(wsPath) {
-  validatePath(wsPath);
-  const { wsName, filePath, fileName } = resolvePath(wsPath);
+export async function createFile(wsPath, doc) {
+  validateWsFilePath(wsPath);
+  const { wsName, filePath } = resolvePath(wsPath);
   const workspace = await getWorkspaceInfo(wsName);
 
-  const create = () => ({
-    name: resolvePath(wsPath).fileName,
-    doc: null,
-  });
   switch (workspace.type) {
     case 'browser': {
-      await IndexDBIO.createFile(wsPath, create());
+      await IndexDBIO.createFile(wsPath, {
+        name: resolvePath(wsPath).fileName,
+        doc: doc.toJSON(),
+      });
       break;
     }
 
     case 'nativefs': {
       const { rootDirHandle } = workspace.metadata;
       const path = toNativePath(rootDirHandle, filePath);
-      await nativeFS.saveFile(
-        path,
-        rootDirHandle,
-        `# ${fileName}\n Hello World!`,
-      );
+      await nativeFS.saveFile(path, rootDirHandle, markdownSerializer(doc));
 
       break;
     }

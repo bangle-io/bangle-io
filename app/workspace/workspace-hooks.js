@@ -1,6 +1,7 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import { uuid } from '@bangle.dev/core/utils/js-utils';
+import { Node } from '@bangle.dev/core/prosemirror/model';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 import {
   createWorkspace,
@@ -13,9 +14,10 @@ import {
   listAllFiles,
   renameFile,
 } from './file-helpers';
+import { specRegistry } from '../editor/spec-sheet';
 
 export function useGetWorkspaceFiles() {
-  const { wsName } = useWorkspaceDetails();
+  const { wsName } = useWorkspacePath();
 
   const [files, setFiles] = useState([]);
 
@@ -33,27 +35,50 @@ export function useGetWorkspaceFiles() {
   return [files, refreshFiles];
 }
 
-export function useCreateFile() {
-  const { wsName, pushWsPath } = useWorkspaceDetails();
+export function useCreateMdFile() {
+  const { pushWsPath } = useWorkspacePath();
 
-  const createNewFile = useCallback(
-    async (fileName = uuid(6)) => {
-      if (!fileName.endsWith('.md')) {
-        fileName += '.md';
-      }
-
-      const wsPath = wsName + ':' + fileName;
-      await createFile(wsPath);
+  const createNewMdFile = useCallback(
+    async (
+      wsPath,
+      doc = Node.fromJSON(specRegistry.schema, {
+        type: 'doc',
+        content: [
+          {
+            type: 'heading',
+            attrs: {
+              level: 1,
+            },
+            content: [
+              {
+                type: 'text',
+                text: resolvePath(wsPath).fileName,
+              },
+            ],
+          },
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: 'Hello world!',
+              },
+            ],
+          },
+        ],
+      }),
+    ) => {
+      await createFile(wsPath, doc);
       pushWsPath(wsPath);
     },
-    [wsName, pushWsPath],
+    [pushWsPath],
   );
 
-  return createNewFile;
+  return createNewMdFile;
 }
 
 export function useRenameActiveFile() {
-  const { wsName, wsPath, replaceWsPath } = useWorkspaceDetails();
+  const { wsName, wsPath, replaceWsPath } = useWorkspacePath();
 
   const renameFileCb = useCallback(
     async (newFilePath) => {
@@ -72,7 +97,7 @@ export function useRenameActiveFile() {
 }
 
 export function useDeleteFile() {
-  const { wsName, wsPath } = useWorkspaceDetails();
+  const { wsName, wsPath } = useWorkspacePath();
   const history = useHistory();
 
   const deleteByDocName = useCallback(
@@ -127,7 +152,7 @@ export function useWorkspaces() {
   };
 }
 
-export function useWorkspaceDetails() {
+export function useWorkspacePath() {
   const { wsName } = useParams();
   const { pathname } = useLocation();
   const history = useHistory();

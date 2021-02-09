@@ -60,9 +60,9 @@ export class NativeFileOps {
    *
    * @param {string[]} path [...parentDirNames, fileName] dont include rootDirHandleName in parentDirNames
    * @param {*} rootDirHandle
-   * @param {string} content
+   * @param {string} textContent
    */
-  async saveFile(path, rootDirHandle, content) {
+  async saveFile(path, rootDirHandle, textContent) {
     let permission = await hasPermission(rootDirHandle);
     if (!permission) {
       throw new NativeFilePermissionError(
@@ -84,14 +84,14 @@ export class NativeFileOps {
 
     if (shouldCreateFile) {
       try {
-        await createFile(path, rootDirHandle, content);
+        await createFile(path, rootDirHandle, textContent);
         ({ fileHandle } = await this._getFileHandle(path, rootDirHandle));
       } catch (error) {
         throw new NativeFSWriteError('Unable to create file', error);
       }
     }
 
-    await writeFile(fileHandle, content);
+    await writeFile(fileHandle, textContent);
   }
 
   async renameFile(oldPath, newPath, rootDirHandle) {
@@ -188,7 +188,6 @@ function getFileHandle({
     let match = findChild();
 
     if (match) {
-      log('Cache hit', match);
       return match;
     }
     log('Cache miss');

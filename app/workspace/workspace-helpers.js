@@ -92,5 +92,3 @@ export async function deleteWorkspace(wsName) {
   cachedWorkspaces = undefined;
   await idb.set('workspaces/2', workspaces);
 }
-
-window.getWorkspaces = listWorkspaces;
