@@ -4,7 +4,7 @@ import { SideBarRow } from '../Aside/SideBarRow';
 import PropTypes from 'prop-types';
 import {
   useGetWorkspaceFiles,
-  useWorkspaceDetails,
+  useWorkspacePath,
 } from 'bangle-io/app/workspace/workspace-hooks';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 
@@ -20,7 +20,7 @@ FilePalette.propTypes = {
 };
 
 export function FilePalette({ execute, onDismiss, query, counter }) {
-  const { pushWsPath } = useWorkspaceDetails();
+  const { pushWsPath } = useWorkspacePath();
 
   const [files] = useGetWorkspaceFiles();
   const wsPaths = getItems({ query, files });

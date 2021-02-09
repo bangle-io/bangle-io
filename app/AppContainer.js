@@ -5,9 +5,9 @@ import React from 'react';
 import { Editor } from './components/Editor';
 import { EditorManager } from './editor/EditorManager';
 import { Aside } from './components/Aside/Aside';
-import { PaletteContainer } from './components/PaletteContainer';
+import { PaletteContainer } from './components/Palettes/PaletteContainer';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { useWorkspaceDetails } from './workspace/workspace-hooks';
+import { useWorkspacePath } from './workspace/workspace-hooks';
 import { UIManager } from './ui/UIManager';
 import { Workspace } from './workspace/Workspace';
 
@@ -61,7 +61,7 @@ export function AppContainer() {
 }
 
 function PrimaryEditor() {
-  const { wsPath } = useWorkspaceDetails();
+  const { wsPath } = useWorkspacePath();
 
   return wsPath ? (
     <Editor key={wsPath} isFirst={true} docName={wsPath} />

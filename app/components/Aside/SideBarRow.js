@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 const PADDING_OFFSET = 16;
-const BASE_PADDING = 3;
+const BASE_PADDING = 16;
+
 export function SideBarRow({
   title,
   isActive,
   onClick,
   rightIcon,
   leftIcon,
-  paddingLeft = BASE_PADDING,
+  basePadding = BASE_PADDING,
+  depth = 1,
   children,
   className,
   scrollIntoViewIfNeeded = true,
@@ -34,7 +36,7 @@ export function SideBarRow({
           isActive ? `active` : ''
         }`}
         style={{
-          paddingLeft: paddingLeft,
+          paddingLeft: depth * basePadding,
           paddingRight: PADDING_OFFSET,
           ...style,
         }}
@@ -44,13 +46,7 @@ export function SideBarRow({
         <span className="flex-1 flex "></span>
         {rightIcon}
       </div>
-      {children
-        ? [].concat(children).map((c) =>
-            React.cloneElement(c, {
-              paddingLeft: paddingLeft + PADDING_OFFSET,
-            }),
-          )
-        : null}
+      {children}
     </>
   );
 }

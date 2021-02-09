@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
-import { StackButton } from '../Button';
 import { config } from 'bangle-io/config';
 import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
+
+import { StackButton } from '../Button';
 
 export function ActivityBar() {
   const { sidebar, paletteType, dispatch } = useContext(UIManagerContext);

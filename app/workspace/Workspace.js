@@ -2,10 +2,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { keybindingsHelper } from '../misc/keybinding-helper';
 import { hasPermission, requestPermission } from './nativefs-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
-import { useWorkspaceDetails } from './workspace-hooks';
+import { useWorkspacePath } from './workspace-hooks';
 
 export function Workspace({ children }) {
-  const { wsName } = useWorkspaceDetails();
+  const { wsName } = useWorkspacePath();
   const [state, setWorkspaceState] = useState({});
 
   useEffect(() => {

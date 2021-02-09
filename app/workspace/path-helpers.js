@@ -15,6 +15,14 @@ export function validatePath(wsPath) {
   }
 }
 
+export function validateWsFilePath(wsPath) {
+  validatePath(wsPath);
+  const { fileName } = resolvePath(wsPath);
+  if (!fileName.includes('.')) {
+    throw new Error(`Filename ${fileName} must have "." extension.`);
+  }
+}
+
 export function resolvePath(wsPath) {
   validatePath(wsPath);
   const [wsName, filePath] = wsPath.split(':');
