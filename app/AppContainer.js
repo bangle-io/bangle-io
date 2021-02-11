@@ -17,15 +17,15 @@ export function AppContainer() {
       <UIManager>
         <Switch>
           <Route path={['/ws/:wsName']}>
-            <Workspace>
-              <EditorManager>
-                <div className="h-screen main-wrapper">
-                  <div className="editor-wrapper">
-                    <div className="flex justify-center flex-row">
-                      <div
-                        className="flex-1 max-w-screen-md ml-6 mr-6"
-                        style={{ height: '100vh', overflowY: 'scroll' }}
-                      >
+            <div className="h-screen main-wrapper">
+              <div className="editor-wrapper">
+                <div className="flex justify-center flex-row">
+                  <div
+                    className="flex-1 max-w-screen-md ml-6 mr-6"
+                    style={{ height: '100vh', overflowY: 'scroll' }}
+                  >
+                    <Workspace>
+                      <EditorManager>
                         <PrimaryEditor />
                         {/* adds white space at bottoms */}
                         <div
@@ -38,14 +38,14 @@ export function AppContainer() {
                         >
                           &nbsp;
                         </div>
-                      </div>
-                    </div>
+                      </EditorManager>
+                    </Workspace>
                   </div>
-                  <PaletteContainer />
-                  <Aside />
                 </div>
-              </EditorManager>
-            </Workspace>
+              </div>
+              <PaletteContainer />
+              <Aside />
+            </div>
           </Route>
           <Route path="/">
             <div className="h-screen main-wrapper">

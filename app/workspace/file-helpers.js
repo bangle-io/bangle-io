@@ -166,7 +166,6 @@ export async function listAllFiles(wsName) {
       const { rootDirHandle } = ws.metadata;
 
       const rawPaths = await nativeFS.listFiles(rootDirHandle);
-
       files = rawPaths.map((fileHandlers) => {
         return (
           wsName +

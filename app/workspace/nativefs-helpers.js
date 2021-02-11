@@ -14,25 +14,8 @@ export class NativeFileOps {
   } = {}) {
     this._allowedFile = allowedFile;
     this._allowedDir = allowedDir;
-    this._traverseCache = new WeakMap();
     this._getFileHandle = getFileHandle({ allowedDir, allowedFile });
   }
-
-  _calculateFilesCache = async (rootDirHandle) => {
-    const listOfFiles = await recurseDirHandle(rootDirHandle, {
-      allowedFile: this._allowedFile,
-      allowedDir: this._allowedDir,
-    });
-
-    const availableFiles = new Map(
-      listOfFiles.map((f) => {
-        return [f.map((r) => r.name).join('/'), f];
-      }),
-    );
-
-    this._traverseCache.set(rootDirHandle, availableFiles);
-    return availableFiles;
-  };
 
   /**
    *
@@ -117,9 +100,12 @@ export class NativeFileOps {
   }
 
   async listFiles(rootDirHandle) {
-    const availableFiles = await this._calculateFilesCache(rootDirHandle);
+    const data = await recurseDirHandle(rootDirHandle, {
+      allowedFile: this._allowedFile,
+      allowedDir: this._allowedDir,
+    });
 
-    return [...availableFiles.values()];
+    return data;
   }
 }
 /**

@@ -48,11 +48,7 @@ export function FileBrowser() {
   );
 
   return (
-    <SideBar
-      openNew={openNew}
-      toggleTheme={toggleTheme}
-      downloadBackup={() => {}}
-    >
+    <SideBar>
       <CollapsibleSideBarRow
         title={wsName}
         isSticky={true}
