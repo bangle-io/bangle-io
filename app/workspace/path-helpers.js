@@ -26,7 +26,6 @@ export function validateWsFilePath(wsPath) {
 export function resolvePath(wsPath) {
   validatePath(wsPath);
   const [wsName, filePath] = wsPath.split(':');
-
   const fileName = last(filePath.split('/'));
 
   return {

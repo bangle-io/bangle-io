@@ -8,8 +8,8 @@ import { Aside } from './components/Aside/Aside';
 import { PaletteContainer } from './components/Palettes/PaletteContainer';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspacePath } from './workspace/workspace-hooks';
-import { UIManager } from './ui/UIManager';
 import { Workspace } from './workspace/Workspace';
+import { UIManager } from './ui/UIManager';
 
 export function AppContainer() {
   return (
