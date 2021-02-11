@@ -25,7 +25,7 @@ export class NativeFileOps {
   async readFile(path, rootDirHandle) {
     let permission = await hasPermission(rootDirHandle);
     if (!permission) {
-      throw new NativeFilePermissionError(
+      throw new NativeFSFilePermissionError(
         `Permission required to read ${path}`,
       );
     }
@@ -48,7 +48,7 @@ export class NativeFileOps {
   async saveFile(path, rootDirHandle, textContent) {
     let permission = await hasPermission(rootDirHandle);
     if (!permission) {
-      throw new NativeFilePermissionError(
+      throw new NativeFSFilePermissionError(
         `Permission required to save ${path}`,
       );
     }
@@ -326,7 +326,7 @@ export async function pickADirectory(dirHandle) {
     let permission = await requestPermission(dirHandle);
     console.log('got permissions');
     if (!permission) {
-      throw new NativeFilePermissionError(
+      throw new NativeFSFilePermissionError(
         'The permission to edit directory was denied',
       );
     }
@@ -335,7 +335,7 @@ export async function pickADirectory(dirHandle) {
       dirHandle = await window.showDirectoryPicker();
       let permission = await requestPermission(dirHandle);
       if (!permission) {
-        throw new NativeFilePermissionError(
+        throw new NativeFSFilePermissionError(
           'The permission to edit directory was denied',
         );
       }
@@ -386,40 +386,32 @@ function handleNotFoundDOMException(filePath) {
   };
 }
 
-export class NativeFSReadError extends Error {
+export class NativeFSError extends Error {
   constructor(message, src) {
+    // 'Error' breaks prototype chain here
     super(message);
+    // restore prototype chain
+    const actualProto = new.target.prototype;
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(this, actualProto);
+    } else {
+      this.__proto__ = actualProto;
+    }
+
     if (src) {
       console.log('original error');
       console.error(src);
+      this.src = src;
     }
-    this.name = 'NativeFSReadError';
-    this.src = src;
+
+    this.name = this.constructor.name;
   }
 }
 
-export class NativeFSWriteError extends Error {
-  constructor(message, src) {
-    super(message);
-    if (src) {
-      console.log('original error');
-      console.error(src);
-    }
-    this.name = 'NativeFSWriteError';
-    this.src = src;
-  }
-}
+export class NativeFSReadError extends NativeFSError {}
 
-export class NativeFSFileNotFoundError extends NativeFSReadError {
-  constructor(msg, src) {
-    super(msg, src);
-    this.name = 'NativeFSFileNotFoundError';
-  }
-}
+export class NativeFSWriteError extends NativeFSError {}
 
-export class NativeFilePermissionError extends NativeFSReadError {
-  constructor(message) {
-    super(message);
-    this.name = 'NativeFilePermissionError';
-  }
-}
+export class NativeFSFileNotFoundError extends NativeFSReadError {}
+
+export class NativeFSFilePermissionError extends NativeFSReadError {}

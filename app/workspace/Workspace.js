@@ -1,12 +1,34 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { keybindingsHelper } from '../misc/keybinding-helper';
-import { hasPermission, requestPermission } from './nativefs-helpers';
+import {
+  hasPermission,
+  NativeFSError,
+  NativeFSFilePermissionError,
+  requestPermission,
+} from './nativefs-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 
 export function Workspace({ children }) {
   const { wsName } = useWorkspacePath();
   const [state, setWorkspaceState] = useState({});
+
+  const errorHandler = useCallback(
+    (error) => {
+      if (error instanceof NativeFSError) {
+        if (error instanceof NativeFSFilePermissionError && state.workspace) {
+          setWorkspaceState({ type: 'permission', workspace: state.workspace });
+        } else {
+          setWorkspaceState({ type: 'error', error: error });
+        }
+      } else {
+        setWorkspaceState({ type: 'error', error: error });
+      }
+    },
+    [state.workspace],
+  );
+
+  useCatchError(errorHandler);
 
   useEffect(() => {
     let unmounted = false;
@@ -88,7 +110,20 @@ export function Workspace({ children }) {
 
     case 'error': {
       const { error } = state;
-      return <span>Encountered Error {error.name}</span>;
+      return (
+        <>
+          <span>Encountered an unexpected Error</span>
+          <br />
+          <span> Error:{error.name}</span>
+          <br />
+          <span> Message {error.message}</span>
+          <br />
+          <span>
+            {' '}
+            Please try reloading the page or open a ticket if the issue persists
+          </span>
+        </>
+      );
     }
 
     default:
@@ -99,7 +134,7 @@ export function Workspace({ children }) {
 function PermissionModal({ onPermissionGranted, workspace }) {
   const open = useCallback(async () => {
     if (!workspace) {
-      throw new Error(' workspace not found');
+      throw new Error('workspace not found');
     }
 
     if (workspace.type !== 'nativefs') {
@@ -134,4 +169,32 @@ function PermissionModal({ onPermissionGranted, workspace }) {
       Press Enter twice or click anywhere to resume working on {workspace.name}
     </div>
   );
+}
+
+function useCatchError(callback) {
+  useEffect(() => {
+    const errorHandler = async (errorEvent) => {
+      let error = errorEvent.error;
+      if (errorEvent.promise) {
+        try {
+          await errorEvent.promise;
+        } catch (promiseError) {
+          error = promiseError;
+        }
+      }
+
+      if (!error) {
+        return;
+      }
+
+      callback(error);
+    };
+
+    window.addEventListener('error', errorHandler);
+    window.addEventListener('unhandledrejection', errorHandler);
+    return () => {
+      window.removeEventListener('error', errorHandler);
+      window.removeEventListener('unhandledrejection', errorHandler);
+    };
+  }, [callback]);
 }
