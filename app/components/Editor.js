@@ -28,11 +28,11 @@ const getScrollContainer = (view) => {
 const menuKey = new PluginKey('menuKey');
 const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
-export function Editor({ isFirst, docName }) {
+export function Editor({ isFirst, wsPath }) {
   const { sendRequest } = useContext(EditorManagerContext);
   const getPlugins = () => {
     const collabOpts = {
-      docName: docName,
+      docName: wsPath,
       clientId: 'client-' + uuid(4),
 
       async getDocument({ docName, userId }) {
@@ -158,7 +158,7 @@ export function Editor({ isFirst, docName }) {
     specRegistry,
   });
 
-  useEffect(() => log('mounting editor', docName), [docName]);
+  useEffect(() => log('mounting editor', wsPath), [wsPath]);
   return (
     <BangleEditor
       state={editorState}

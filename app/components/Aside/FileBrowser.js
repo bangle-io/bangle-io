@@ -1,12 +1,11 @@
 import './aside.css';
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { SideBar } from './SideBar';
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
 import { BaseButton } from '../Button';
 import 'css.gg/icons/css/chevron-down.css';
 import { ChevronDown, ChevronRight } from '../../ui/Icons/index';
 import {
-  useCreateMdFile,
   useDeleteFile,
   useGetWorkspaceFiles,
   useWorkspacePath,
@@ -18,23 +17,9 @@ FileBrowser.propTypes = {};
 
 export function FileBrowser() {
   const [files] = useGetWorkspaceFiles();
-  const createNewMdFile = useCreateMdFile();
-  const deleteByDocName = useDeleteFile();
+  const deleteByWsPath = useDeleteFile();
   const { dispatch } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
-
-  const toggleTheme = () => {
-    dispatch({
-      type: 'UI/TOGGLE_THEME',
-    });
-  };
-
-  const openNew = useCallback(() => {
-    createNewMdFile();
-    dispatch({
-      type: 'UI/TOGGLE_SIDEBAR',
-    });
-  }, [dispatch, createNewMdFile]);
 
   const fileTree = useMemo(
     () =>
@@ -60,7 +45,7 @@ export function FileBrowser() {
             fileTree={child}
             key={child.name}
             wsName={wsName}
-            deleteByDocName={deleteByDocName}
+            deleteByWsPath={deleteByWsPath}
             pushWsPath={pushWsPath}
             activeWSPath={activeWSPath}
             dispatch={dispatch}
@@ -75,7 +60,7 @@ export function FileBrowser() {
 function RenderPathTree({
   fileTree,
   wsName,
-  deleteByDocName,
+  deleteByWsPath,
   pushWsPath,
   activeWSPath,
   dispatch,
@@ -98,7 +83,7 @@ function RenderPathTree({
             key={child.name}
             fileTree={child}
             wsName={wsName}
-            deleteByDocName={deleteByDocName}
+            deleteByWsPath={deleteByWsPath}
             pushWsPath={pushWsPath}
             activeWSPath={activeWSPath}
             dispatch={dispatch}
@@ -130,7 +115,7 @@ function RenderPathTree({
             faType="fas fa-times-circle "
             onClick={async (e) => {
               e.stopPropagation();
-              deleteByDocName(wsPath);
+              deleteByWsPath(wsPath);
               dispatch({
                 type: 'UI/TOGGLE_SIDEBAR',
               });

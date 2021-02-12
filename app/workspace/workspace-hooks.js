@@ -100,7 +100,7 @@ export function useDeleteFile() {
   const { wsName, wsPath } = useWorkspacePath();
   const history = useHistory();
 
-  const deleteByDocName = useCallback(
+  const deleteByWsPath = useCallback(
     async (wsPathToDelete) => {
       await deleteFile(wsPathToDelete);
       if (wsPathToDelete === wsPath) {
@@ -110,7 +110,7 @@ export function useDeleteFile() {
     [wsName, wsPath, history],
   );
 
-  return deleteByDocName;
+  return deleteByWsPath;
 }
 
 export function useWorkspaces() {
@@ -179,17 +179,14 @@ export function useWorkspacePath() {
 
   const filePath = pathname.split('/').slice(3).join('/');
   let wsPath;
-  let docName;
 
   if (filePath) {
     wsPath = wsName + ':' + filePath;
-    ({ docName } = resolvePath(wsPath));
   }
 
   return {
     wsName,
     wsPath,
-    docName,
     filePath,
     pushWsPath,
     replaceWsPath,
