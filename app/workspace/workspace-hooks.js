@@ -1,6 +1,5 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
-import { uuid } from '@bangle.dev/core/utils/js-utils';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 import {

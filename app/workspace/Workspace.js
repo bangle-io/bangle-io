@@ -59,8 +59,6 @@ export function Workspace({ children }) {
         }
 
         if (workspace.type === 'nativefs') {
-          setWorkspaceState({ type: 'permission', workspace });
-
           hasPermission(workspace.metadata.rootDirHandle).then((permission) => {
             if (unmounted) {
               return;
