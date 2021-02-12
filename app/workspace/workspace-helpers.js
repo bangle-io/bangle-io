@@ -1,3 +1,4 @@
+import React from 'react';
 import * as idb from 'idb-keyval';
 
 import { validatePath } from './path-helpers';
@@ -24,7 +25,11 @@ export async function getWorkspaceInfo(wsName) {
   const workspaceInfo = workspaces.find(({ name }) => name === wsName);
 
   if (!workspaceInfo) {
-    throw new Error('Unable to find workspace ' + wsName);
+    throw new WorkspaceNotFoundError(
+      `Workspace ${wsName} not found`,
+      null,
+      <span>Workspace "{wsName}" not found.</span>,
+    );
   }
 
   return workspaceInfo;
@@ -92,3 +97,34 @@ export async function deleteWorkspace(wsName) {
   cachedWorkspaces = undefined;
   await idb.set('workspaces/2', workspaces);
 }
+
+export class WorkspaceError extends Error {
+  /**
+   *
+   * @param {*} message
+   * @param {*} src
+   * @param {*} displayMessage - one that will be shown to the user, generally a non fatal error
+   */
+  constructor(message, src, displayMessage) {
+    // 'Error' breaks prototype chain here
+    super(message);
+    // restore prototype chain
+    const actualProto = new.target.prototype;
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(this, actualProto);
+    } else {
+      this.__proto__ = actualProto;
+    }
+
+    if (src) {
+      console.log('original error');
+      console.error(src);
+      this.src = src;
+    }
+
+    this.name = this.constructor.name;
+    this.displayMessage = displayMessage;
+  }
+}
+
+export class WorkspaceNotFoundError extends WorkspaceError {}

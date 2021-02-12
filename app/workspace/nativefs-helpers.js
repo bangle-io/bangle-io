@@ -100,6 +100,12 @@ export class NativeFileOps {
   }
 
   async listFiles(rootDirHandle) {
+    let permission = await hasPermission(rootDirHandle);
+
+    if (!permission) {
+      throw new NativeFSFilePermissionError(`Permission required to list`);
+    }
+
     const data = await recurseDirHandle(rootDirHandle, {
       allowedFile: this._allowedFile,
       allowedDir: this._allowedDir,
@@ -117,25 +123,32 @@ export class NativeFileOps {
  *           being the direct parent of file.
  */
 async function recurseDirHandle(
-  dirHandle,
+  rootDir,
   {
     allowedFile = async (fileHandle) => true,
     allowedDir = async (dirHandle) => true,
   } = {},
 ) {
-  let result = [];
-  for await (const entry of dirHandle.values()) {
-    if (entry.kind === 'file' && allowedFile(entry)) {
-      result.push([dirHandle, entry]);
+  const _recurse = async (dirHandle) => {
+    let result = [];
+    for await (const entry of dirHandle.values()) {
+      if (entry.kind === 'file' && allowedFile(entry)) {
+        result.push([dirHandle, entry]);
+      }
+      if (entry.kind === 'directory' && allowedDir(entry)) {
+        let children = await recurseDirHandle(entry, {
+          allowedDir,
+          allowedFile,
+        });
+        // attach the parent first
+        children = children.map((r) => [dirHandle, ...r]);
+        result = result.concat(children);
+      }
     }
-    if (entry.kind === 'directory' && allowedDir(entry)) {
-      let children = await recurseDirHandle(entry, { allowedDir, allowedFile });
-      // attach the parent first
-      children = children.map((r) => [dirHandle, ...r]);
-      result = result.concat(children);
-    }
-  }
-  return result.filter((r) => r.length > 0);
+    return result.filter((r) => r.length > 0);
+  };
+  const result = await _recurse(rootDir);
+  return result;
 }
 
 /**
@@ -387,7 +400,13 @@ function handleNotFoundDOMException(filePath) {
 }
 
 export class NativeFSError extends Error {
-  constructor(message, src) {
+  /**
+   *
+   * @param {*} message
+   * @param {*} src
+   * @param {*} displayMessage - one that will be shown to the user, generally a non fatal error
+   */
+  constructor(message, src, displayMessage) {
     // 'Error' breaks prototype chain here
     super(message);
     // restore prototype chain

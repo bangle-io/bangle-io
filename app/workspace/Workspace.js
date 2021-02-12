@@ -6,7 +6,11 @@ import {
   NativeFSFilePermissionError,
   requestPermission,
 } from './nativefs-helpers';
-import { getWorkspaceInfo } from './workspace-helpers';
+import {
+  getWorkspaceInfo,
+  WorkspaceError,
+  WorkspaceNotFoundError,
+} from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 
 export function Workspace({ children }) {
@@ -21,6 +25,10 @@ export function Workspace({ children }) {
         } else {
           setWorkspaceState({ type: 'error', error: error });
         }
+      } else if (error instanceof WorkspaceError) {
+        if (error instanceof WorkspaceNotFoundError) {
+          setWorkspaceState({ type: 'error', error });
+        }
       } else {
         setWorkspaceState({ type: 'error', error: error });
       }
@@ -33,44 +41,37 @@ export function Workspace({ children }) {
   useEffect(() => {
     let unmounted = false;
 
-    getWorkspaceInfo(wsName)
-      .then((workspace) => {
-        if (unmounted) {
-          return;
-        }
-        if (workspace.type === 'browser') {
-          setWorkspaceState({ type: 'ready', workspace });
-          return;
-        }
+    getWorkspaceInfo(wsName).then((workspace) => {
+      if (unmounted) {
+        return;
+      }
+      if (workspace.type === 'browser') {
+        setWorkspaceState({ type: 'ready', workspace });
+        return;
+      }
 
-        if (workspace.type === 'nativefs') {
-          setWorkspaceState({ type: 'permission', workspace });
+      if (workspace.type === 'nativefs') {
+        setWorkspaceState({ type: 'permission', workspace });
 
-          hasPermission(workspace.metadata.rootDirHandle).then((permission) => {
-            if (unmounted) {
-              return;
-            }
+        hasPermission(workspace.metadata.rootDirHandle).then((permission) => {
+          if (unmounted) {
+            return;
+          }
 
-            if (permission) {
-              setWorkspaceState({ type: 'ready', workspace });
-            } else {
-              setWorkspaceState({ type: 'permission', workspace });
-            }
-          });
-          return;
-        }
-
-        setWorkspaceState({
-          type: 'error',
-          error: new Error('Unknown workspace type'),
+          if (permission) {
+            setWorkspaceState({ type: 'ready', workspace });
+          } else {
+            setWorkspaceState({ type: 'permission', workspace });
+          }
         });
-      })
-      .catch((error) => {
-        if (unmounted) {
-          return;
-        }
-        setWorkspaceState({ type: 'error', error });
+        return;
+      }
+
+      setWorkspaceState({
+        type: 'error',
+        error: new Error('Unknown workspace type'),
       });
+    });
 
     return () => {
       unmounted = true;
@@ -112,16 +113,22 @@ export function Workspace({ children }) {
       const { error } = state;
       return (
         <>
-          <span>Encountered an unexpected Error</span>
-          <br />
-          <span> Error:{error.name}</span>
-          <br />
-          <span> Message {error.message}</span>
-          <br />
-          <span>
-            {' '}
-            Please try reloading the page or open a ticket if the issue persists
-          </span>
+          {error.displayMessage ? (
+            <span>{error.displayMessage}</span>
+          ) : (
+            <>
+              <span>Encountered an unexpected Error</span>
+              <br />
+              <span>
+                {error.name}: {error.message}
+              </span>
+              <br />
+              <span>
+                Please try reloading the page or open a ticket if the issue
+                persists
+              </span>
+            </>
+          )}
         </>
       );
     }
