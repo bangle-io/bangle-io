@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
-
 import { getIdleCallback, uuid } from '@bangle.dev/core/utils/js-utils';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
 import * as coreComps from '@bangle.dev/core/components/index';
@@ -12,10 +11,11 @@ import { BangleEditor } from '@bangle.dev/react';
 import { useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
 import sticker from '@bangle.dev/react-sticker';
-import { specRegistry } from '../editor/spec-sheet';
-import { floatingMenu, FloatingMenu } from '@bangle.dev/react-menu';
 import { EmojiSuggest, emojiSuggest } from '@bangle.dev/react-emoji-suggest';
+import { floatingMenu, FloatingMenu } from '@bangle.dev/react-menu';
 import { config } from 'bangle-io/config';
+
+import { specRegistry } from '../editor/spec-sheet';
 import { EditorManagerContext } from '../editor/EditorManager';
 
 const LOG = false;
@@ -30,6 +30,7 @@ const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
 export function Editor({ isFirst, wsPath }) {
   const { sendRequest } = useContext(EditorManagerContext);
+
   const getPlugins = () => {
     const collabOpts = {
       docName: wsPath,

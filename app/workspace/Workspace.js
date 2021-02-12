@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useCatchError } from '../misc/hooks';
 import { keybindingsHelper } from '../misc/keybinding-helper';
 import {
   hasPermission,
@@ -14,7 +15,7 @@ import {
 import { useWorkspacePath } from './workspace-hooks';
 
 export function Workspace({ children }) {
-  const { wsName } = useWorkspacePath();
+  const { wsName, wsPath } = useWorkspacePath();
   const [state, setWorkspaceState] = useState({});
 
   const errorHandler = useCallback(
@@ -28,9 +29,13 @@ export function Workspace({ children }) {
       } else if (error instanceof WorkspaceError) {
         if (error instanceof WorkspaceNotFoundError) {
           setWorkspaceState({ type: 'error', error });
+        } else {
+          setWorkspaceState({ type: 'error', error: error });
         }
-      } else {
-        setWorkspaceState({ type: 'error', error: error });
+      } else if (error instanceof RangeError) {
+        if (error.message.includes('Unknown node type')) {
+          setWorkspaceState({ type: 'error', error: error });
+        }
       }
     },
     [state.workspace],
@@ -38,45 +43,51 @@ export function Workspace({ children }) {
 
   useCatchError(errorHandler);
 
-  useEffect(() => {
-    let unmounted = false;
+  useEffect(
+    () => {
+      let unmounted = false;
 
-    getWorkspaceInfo(wsName).then((workspace) => {
-      if (unmounted) {
-        return;
-      }
-      if (workspace.type === 'browser') {
-        setWorkspaceState({ type: 'ready', workspace });
-        return;
-      }
+      setWorkspaceState({});
 
-      if (workspace.type === 'nativefs') {
-        setWorkspaceState({ type: 'permission', workspace });
+      getWorkspaceInfo(wsName).then((workspace) => {
+        if (unmounted) {
+          return;
+        }
+        if (workspace.type === 'browser') {
+          setWorkspaceState({ type: 'ready', workspace });
+          return;
+        }
 
-        hasPermission(workspace.metadata.rootDirHandle).then((permission) => {
-          if (unmounted) {
-            return;
-          }
+        if (workspace.type === 'nativefs') {
+          setWorkspaceState({ type: 'permission', workspace });
 
-          if (permission) {
-            setWorkspaceState({ type: 'ready', workspace });
-          } else {
-            setWorkspaceState({ type: 'permission', workspace });
-          }
+          hasPermission(workspace.metadata.rootDirHandle).then((permission) => {
+            if (unmounted) {
+              return;
+            }
+
+            if (permission) {
+              setWorkspaceState({ type: 'ready', workspace });
+            } else {
+              setWorkspaceState({ type: 'permission', workspace });
+            }
+          });
+          return;
+        }
+
+        setWorkspaceState({
+          type: 'error',
+          error: new Error('Unknown workspace type'),
         });
-        return;
-      }
-
-      setWorkspaceState({
-        type: 'error',
-        error: new Error('Unknown workspace type'),
       });
-    });
 
-    return () => {
-      unmounted = true;
-    };
-  }, [wsName]);
+      return () => {
+        unmounted = true;
+      };
+    },
+    // adding wsPath so that error is reset if path changes
+    [wsName, wsPath],
+  );
 
   switch (state.type) {
     case undefined: {
@@ -176,32 +187,4 @@ function PermissionModal({ onPermissionGranted, workspace }) {
       Press Enter twice or click anywhere to resume working on {workspace.name}
     </div>
   );
-}
-
-function useCatchError(callback) {
-  useEffect(() => {
-    const errorHandler = async (errorEvent) => {
-      let error = errorEvent.error;
-      if (errorEvent.promise) {
-        try {
-          await errorEvent.promise;
-        } catch (promiseError) {
-          error = promiseError;
-        }
-      }
-
-      if (!error) {
-        return;
-      }
-
-      callback(error);
-    };
-
-    window.addEventListener('error', errorHandler);
-    window.addEventListener('unhandledrejection', errorHandler);
-    return () => {
-      window.removeEventListener('error', errorHandler);
-      window.removeEventListener('unhandledrejection', errorHandler);
-    };
-  }, [callback]);
 }
