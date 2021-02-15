@@ -1,5 +1,6 @@
-import React from 'react';
+import { config } from 'bangle-io/config';
 import * as idb from 'idb-keyval';
+import { WorkspaceError } from './errors';
 
 import { validatePath } from './path-helpers';
 
@@ -11,11 +12,13 @@ import { validatePath } from './path-helpers';
  */
 let cachedWorkspaces = undefined;
 
+export const WORKSPACE_NOT_FOUND_ERROR = 'WORKSPACE_NOT_FOUND_ERROR';
+export const WORKSPACE_EXISTS_ERROR = 'WORKSPACE_EXISTS_ERROR';
+
 export async function listWorkspaces() {
-  if (!cachedWorkspaces) {
+  if (!cachedWorkspaces || config.isTest) {
     cachedWorkspaces = (await idb.get('workspaces/2')) || [];
   }
-
   return cachedWorkspaces;
 }
 
@@ -25,10 +28,9 @@ export async function getWorkspaceInfo(wsName) {
   const workspaceInfo = workspaces.find(({ name }) => name === wsName);
 
   if (!workspaceInfo) {
-    throw new WorkspaceNotFoundError(
+    throw new WorkspaceError(
       `Workspace ${wsName} not found`,
-      null,
-      <span>Workspace "{wsName}" not found.</span>,
+      WORKSPACE_NOT_FOUND_ERROR,
     );
   }
 
@@ -41,7 +43,10 @@ export async function createWorkspace(wsName, type = 'browser', opts = {}) {
   const workspaces = await listWorkspaces();
 
   if (workspaces.find((w) => w.name === wsName)) {
-    throw new Error(`Workspace ${wsName} exist`);
+    throw new WorkspaceError(
+      `Cannot create "${wsName}" as it already exists`,
+      WORKSPACE_EXISTS_ERROR,
+    );
   }
 
   let workspace = {};
@@ -90,7 +95,10 @@ export async function deleteWorkspace(wsName) {
   let workspaces = await listWorkspaces();
 
   if (!workspaces.find((w) => w.name === wsName)) {
-    throw new Error(`Workspace ${wsName} does not exist`);
+    throw new WorkspaceError(
+      `Cannot delete ${wsName} as it does not exist`,
+      WORKSPACE_NOT_FOUND_ERROR,
+    );
   }
 
   workspaces = workspaces.filter((w) => w.name !== wsName);
@@ -98,14 +106,15 @@ export async function deleteWorkspace(wsName) {
   await idb.set('workspaces/2', workspaces);
 }
 
-export class WorkspaceError extends Error {
+export class FSError extends Error {
   /**
    *
    * @param {*} message
-   * @param {*} src
+   * @param {*} code - error code
    * @param {*} displayMessage - one that will be shown to the user, generally a non fatal error
+   * @param {*} srcError - if error encapsulates another error
    */
-  constructor(message, src, displayMessage) {
+  constructor(message, code, displayMessage, srcError) {
     // 'Error' breaks prototype chain here
     super(message);
     // restore prototype chain
@@ -116,15 +125,17 @@ export class WorkspaceError extends Error {
       this.__proto__ = actualProto;
     }
 
-    if (src) {
-      console.log('original error');
-      console.error(src);
-      this.src = src;
+    if (srcError) {
+      console.log('the error occurred while handling this error');
+      console.error(srcError);
+      this.srcError = srcError;
     }
 
-    this.name = this.constructor.name;
+    if (code) {
+      this.code = code;
+    }
+
     this.displayMessage = displayMessage;
+    this.name = this.constructor.name;
   }
 }
-
-export class WorkspaceNotFoundError extends WorkspaceError {}

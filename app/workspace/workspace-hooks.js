@@ -1,6 +1,5 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
-import { uuid } from '@bangle.dev/core/utils/js-utils';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 import {
@@ -115,6 +114,7 @@ export function useDeleteFile() {
 
 export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState([]);
+  const { wsName } = useWorkspacePath();
   const history = useHistory();
 
   useEffect(() => {
@@ -127,7 +127,7 @@ export function useWorkspaces() {
     return () => {
       destroyed = true;
     };
-  }, []);
+  }, [wsName]);
 
   const createWorkspaceCb = useCallback(
     async (wsName, type, opts) => {

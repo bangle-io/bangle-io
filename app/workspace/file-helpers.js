@@ -1,5 +1,5 @@
 import { markdownParser, markdownSerializer } from '../markdown/parsers';
-import { IndexDBIO } from './indexdb-io';
+import { IndexDBIO } from './indexdb';
 import { NativeFileOps } from './nativefs-helpers';
 import { resolvePath, validatePath, validateWsFilePath } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
@@ -105,7 +105,6 @@ export async function createFile(wsPath, doc) {
   switch (workspace.type) {
     case 'browser': {
       await IndexDBIO.createFile(wsPath, {
-        name: resolvePath(wsPath).fileName,
         doc: doc.toJSON(),
       });
       break;
@@ -159,6 +158,7 @@ export async function listAllFiles(wsName) {
   switch (ws.type) {
     case 'browser': {
       files = await IndexDBIO.listFiles(wsName);
+      console.log({ files });
       break;
     }
 

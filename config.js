@@ -11,6 +11,7 @@ export const APP_ENV = nodeEnv;
 
 export const config = {
   APP_ENV,
+  isTest: nodeEnv === 'test',
   isProduction: nodeEnv === 'production',
   isIntegration: nodeEnv === 'integration',
 };
