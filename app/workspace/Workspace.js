@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useCatchError } from '../misc/hooks';
 import { keybindingsHelper } from '../misc/keybinding-helper';
+import { FSError, WorkspaceError } from './errors';
 import {
   hasPermission,
-  NativeFSError,
-  NativeFSFilePermissionError,
+  NATIVE_FS_FILE_NOT_FOUND_ERROR,
+  NATIVE_FS_PERMISSION_ERROR,
+  NATIVE_FS_READ_ERROR,
+  NATIVE_FS_WRITE_ERROR,
   requestPermission,
 } from './nativefs-helpers';
 import {
   getWorkspaceInfo,
-  WorkspaceError,
-  WorkspaceNotFoundError,
+  WORKSPACE_NOT_FOUND_ERROR,
 } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 
@@ -20,17 +22,40 @@ export function Workspace({ children }) {
 
   const errorHandler = useCallback(
     (error) => {
-      if (error instanceof NativeFSError) {
-        if (error instanceof NativeFSFilePermissionError && state.workspace) {
-          setWorkspaceState({ type: 'permission', workspace: state.workspace });
-        } else {
-          setWorkspaceState({ type: 'error', error: error });
+      if (error instanceof FSError) {
+        switch (error.code) {
+          case NATIVE_FS_READ_ERROR:
+          case NATIVE_FS_WRITE_ERROR:
+          case NATIVE_FS_FILE_NOT_FOUND_ERROR: {
+            setWorkspaceState({ type: 'error', error: error });
+            break;
+          }
+
+          case NATIVE_FS_PERMISSION_ERROR: {
+            setWorkspaceState({
+              type: 'permission',
+              workspace: state.workspace,
+            });
+            break;
+          }
+
+          default: {
+            console.error(error);
+            setWorkspaceState({ type: 'error', error: error });
+            throw new Error('Unknown FSError code ' + error.code);
+          }
         }
       } else if (error instanceof WorkspaceError) {
-        if (error instanceof WorkspaceNotFoundError) {
-          setWorkspaceState({ type: 'error', error });
-        } else {
-          setWorkspaceState({ type: 'error', error: error });
+        switch (error.code) {
+          case WORKSPACE_NOT_FOUND_ERROR: {
+            setWorkspaceState({ type: 'error', error });
+            break;
+          }
+          default: {
+            console.error(error);
+            setWorkspaceState({ type: 'error', error: error });
+            throw new Error('Unknown WorkspaceError code ' + error.code);
+          }
         }
       } else if (error instanceof RangeError) {
         if (error.message.includes('Unknown node type')) {
@@ -122,22 +147,15 @@ export function Workspace({ children }) {
       const { error } = state;
       return (
         <>
-          {error.displayMessage ? (
-            <span>{error.displayMessage}</span>
-          ) : (
-            <>
-              <span>Encountered an unexpected Error</span>
-              <br />
-              <span>
-                {error.name}: {error.message}
-              </span>
-              <br />
-              <span>
-                Please try reloading the page or open a ticket if the issue
-                persists
-              </span>
-            </>
-          )}
+          <span>Encountered an Error</span>
+          <br />
+          <span>
+            {error.name}: {error.message}
+          </span>
+          <br />
+          <span>
+            Please try reloading the page or open a ticket if the issue persists
+          </span>
         </>
       );
     }

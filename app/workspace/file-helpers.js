@@ -1,5 +1,5 @@
 import { markdownParser, markdownSerializer } from '../markdown/parsers';
-import { IndexDBIO } from './indexdb-io';
+import { IndexDBIO } from './indexdb';
 import { NativeFileOps } from './nativefs-helpers';
 import { resolvePath, validatePath, validateWsFilePath } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';

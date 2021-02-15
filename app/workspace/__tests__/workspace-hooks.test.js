@@ -17,6 +17,7 @@ jest.mock('idb-keyval', () => {
 describe('useCreateMdFile', () => {
   test('browser create file', async () => {
     let callback;
+    let testLocation;
 
     idb.get.mockImplementation((key) => {
       if (key === 'workspaces/2') {
@@ -43,6 +44,13 @@ describe('useCreateMdFile', () => {
             <Comp />
           </Route>
         </Switch>
+        <Route
+          path="*"
+          render={({ history, location }) => {
+            testLocation = location;
+            return null;
+          }}
+        />
       </Router>,
     );
 
@@ -53,8 +61,11 @@ describe('useCreateMdFile', () => {
 
     await result;
 
+    expect(testLocation.pathname).toBe('/ws/kujo/one.md');
+
     expect(idb.set).toBeCalledTimes(1);
     expect(idb.set).toBeCalledWith('kujo:one.md', {
+      name: 'one.md',
       doc: {
         content: [
           {
@@ -69,7 +80,6 @@ describe('useCreateMdFile', () => {
         ],
         type: 'doc',
       },
-      name: 'one.md',
     });
   });
 });

@@ -1,6 +1,13 @@
+import { FSError } from './errors';
+
 const DEFAULT_DIR_IGNORE_LIST = ['node_modules', '.git'];
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'nativefs-helpers') : () => {};
+
+export const NATIVE_FS_READ_ERROR = 'NATIVE_FS_READ_ERROR';
+export const NATIVE_FS_WRITE_ERROR = 'NATIVE_FS_WRITE_ERROR';
+export const NATIVE_FS_FILE_NOT_FOUND_ERROR = 'NATIVE_FS_FILE_NOT_FOUND_ERROR';
+export const NATIVE_FS_PERMISSION_ERROR = 'NATIVE_FS_PERMISSION_ERROR';
 
 /**
  *
@@ -17,25 +24,37 @@ export class NativeFileOps {
     this._getFileHandle = getFileHandle({ allowedDir, allowedFile });
   }
 
+  async _verifyPermission(rootDirHandle) {
+    let permission = await hasPermission(rootDirHandle);
+
+    if (!permission) {
+      throw new FSError(
+        `Permission required to read ${rootDirHandle.name}`,
+        NATIVE_FS_PERMISSION_ERROR,
+      );
+    }
+  }
+
   /**
    *
    * @param {string[]} path [...parentDirNames, fileName] must include rootDirHandleName at index 0
    * @param {*} rootDirHandle
    */
   async readFile(path, rootDirHandle) {
-    let permission = await hasPermission(rootDirHandle);
-    if (!permission) {
-      throw new NativeFSFilePermissionError(
-        `Permission required to read ${path}`,
-      );
-    }
+    await this._verifyPermission(rootDirHandle);
+
     const { fileHandle } = await this._getFileHandle(path, rootDirHandle);
     try {
       const file = await fileHandle.getFile();
       const textContent = await readFile(file);
       return { file, textContent };
     } catch (error) {
-      throw new NativeFSReadError(`file ${path.join('/')} read error`, error);
+      throw new FSError(
+        `file ${path.join('/')} read error`,
+        NATIVE_FS_READ_ERROR,
+        null,
+        error,
+      );
     }
   }
 
@@ -46,19 +65,17 @@ export class NativeFileOps {
    * @param {string} textContent
    */
   async saveFile(path, rootDirHandle, textContent) {
-    let permission = await hasPermission(rootDirHandle);
-    if (!permission) {
-      throw new NativeFSFilePermissionError(
-        `Permission required to save ${path}`,
-      );
-    }
+    await this._verifyPermission(rootDirHandle);
 
     let fileHandle;
     let shouldCreateFile = false;
     try {
       ({ fileHandle } = await this._getFileHandle(path, rootDirHandle));
     } catch (error) {
-      if (error instanceof NativeFSFileNotFoundError) {
+      if (
+        error instanceof FSError &&
+        error.code === NATIVE_FS_FILE_NOT_FOUND_ERROR
+      ) {
         shouldCreateFile = true;
       } else {
         throw error;
@@ -70,7 +87,12 @@ export class NativeFileOps {
         await createFile(path, rootDirHandle, textContent);
         ({ fileHandle } = await this._getFileHandle(path, rootDirHandle));
       } catch (error) {
-        throw new NativeFSWriteError('Unable to create file', error);
+        throw new FSError(
+          'Unable to create file',
+          NATIVE_FS_WRITE_ERROR,
+          null,
+          error,
+        );
       }
     }
 
@@ -100,10 +122,14 @@ export class NativeFileOps {
   }
 
   async listFiles(rootDirHandle) {
+    await this._verifyPermission(rootDirHandle);
     let permission = await hasPermission(rootDirHandle);
 
     if (!permission) {
-      throw new NativeFSFilePermissionError(`Permission required to list`);
+      throw new FSError(
+        `Permission required to list`,
+        NATIVE_FS_PERMISSION_ERROR,
+      );
     }
 
     const data = await recurseDirHandle(rootDirHandle, {
@@ -198,10 +224,11 @@ function getFileHandle({
 
   const recurse = async (path, dirHandle, absolutePath, parents) => {
     if (dirHandle.kind !== 'directory') {
-      throw new NativeFSReadError(
+      throw new FSError(
         `Cannot get Path "${path.join('/')}" as "${
           dirHandle.name
         }" is not a directory`,
+        NATIVE_FS_READ_ERROR,
       );
     }
 
@@ -220,8 +247,9 @@ function getFileHandle({
     const handle = await getChildHandle(parentName, dirHandle);
 
     if (!handle) {
-      throw new NativeFSFileNotFoundError(
+      throw new FSError(
         `Path "${absolutePath.join('/')}" not found`,
+        NATIVE_FS_FILE_NOT_FOUND_ERROR,
       );
     }
 
@@ -337,10 +365,10 @@ function _readFileLegacy(file) {
 export async function pickADirectory(dirHandle) {
   if (dirHandle) {
     let permission = await requestPermission(dirHandle);
-    console.log('got permissions');
     if (!permission) {
-      throw new NativeFSFilePermissionError(
+      throw new FSError(
         'The permission to edit directory was denied',
+        NATIVE_FS_PERMISSION_ERROR,
       );
     }
   } else {
@@ -348,8 +376,9 @@ export async function pickADirectory(dirHandle) {
       dirHandle = await window.showDirectoryPicker();
       let permission = await requestPermission(dirHandle);
       if (!permission) {
-        throw new NativeFSFilePermissionError(
+        throw new FSError(
           'The permission to edit directory was denied',
+          NATIVE_FS_PERMISSION_ERROR,
         );
       }
     } catch (err) {
@@ -390,47 +419,13 @@ async function asyncIteratorToArray(iter) {
 function handleNotFoundDOMException(filePath) {
   return (error) => {
     if (error.name === 'NotFoundError' && error instanceof DOMException) {
-      throw new NativeFSFileNotFoundError(
+      throw new FSError(
         `Path "${filePath.join('/"')}" not found`,
+        NATIVE_FS_FILE_NOT_FOUND_ERROR,
+        null,
         error,
       );
     }
     throw error;
   };
 }
-
-export class NativeFSError extends Error {
-  /**
-   *
-   * @param {*} message
-   * @param {*} src
-   * @param {*} displayMessage - one that will be shown to the user, generally a non fatal error
-   */
-  constructor(message, src, displayMessage) {
-    // 'Error' breaks prototype chain here
-    super(message);
-    // restore prototype chain
-    const actualProto = new.target.prototype;
-    if (Object.setPrototypeOf) {
-      Object.setPrototypeOf(this, actualProto);
-    } else {
-      this.__proto__ = actualProto;
-    }
-
-    if (src) {
-      console.log('original error');
-      console.error(src);
-      this.src = src;
-    }
-
-    this.name = this.constructor.name;
-  }
-}
-
-export class NativeFSReadError extends NativeFSError {}
-
-export class NativeFSWriteError extends NativeFSError {}
-
-export class NativeFSFileNotFoundError extends NativeFSReadError {}
-
-export class NativeFSFilePermissionError extends NativeFSReadError {}
