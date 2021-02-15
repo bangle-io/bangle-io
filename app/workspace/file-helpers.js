@@ -105,7 +105,6 @@ export async function createFile(wsPath, doc) {
   switch (workspace.type) {
     case 'browser': {
       await IndexDBIO.createFile(wsPath, {
-        name: resolvePath(wsPath).fileName,
         doc: doc.toJSON(),
       });
       break;
@@ -159,6 +158,7 @@ export async function listAllFiles(wsName) {
   switch (ws.type) {
     case 'browser': {
       files = await IndexDBIO.listFiles(wsName);
+      console.log({ files });
       break;
     }
 

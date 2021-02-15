@@ -1,3 +1,4 @@
+import { config } from 'bangle-io/config';
 import * as idb from 'idb-keyval';
 import { WorkspaceError } from './errors';
 
@@ -15,10 +16,9 @@ export const WORKSPACE_NOT_FOUND_ERROR = 'WORKSPACE_NOT_FOUND_ERROR';
 export const WORKSPACE_EXISTS_ERROR = 'WORKSPACE_EXISTS_ERROR';
 
 export async function listWorkspaces() {
-  if (!cachedWorkspaces) {
+  if (!cachedWorkspaces || config.isTest) {
     cachedWorkspaces = (await idb.get('workspaces/2')) || [];
   }
-
   return cachedWorkspaces;
 }
 

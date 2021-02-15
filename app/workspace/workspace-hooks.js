@@ -114,6 +114,7 @@ export function useDeleteFile() {
 
 export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState([]);
+  const { wsName } = useWorkspacePath();
   const history = useHistory();
 
   useEffect(() => {
@@ -126,7 +127,7 @@ export function useWorkspaces() {
     return () => {
       destroyed = true;
     };
-  }, []);
+  }, [wsName]);
 
   const createWorkspaceCb = useCallback(
     async (wsName, type, opts) => {
