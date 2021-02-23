@@ -25,6 +25,10 @@
   background-color: var(--bg-color);
 }
 
+.bangle-editor {
+  padding: 0 30px;
+}
+
 @media screen and (max-width: 640px) {
   .main-wrapper {
     display: grid;
@@ -85,4 +89,9 @@ button:focus {
 
 .bg-stronger {
   background-color: var(--bg-stronger-color);
+}
+
+.bangle-heading-collapsed {
+  background-color: var(--bg-stronger-color);
+  border-radius: 8px;
 }

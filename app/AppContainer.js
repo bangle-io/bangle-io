@@ -21,7 +21,7 @@ export function AppContainer() {
               <div className="editor-wrapper">
                 <div className="flex justify-center flex-row">
                   <div
-                    className="flex-1 max-w-screen-md ml-6 mr-6"
+                    className="flex-1 max-w-screen-md ml-1 mr-1"
                     style={{ height: '100vh', overflowY: 'scroll' }}
                   >
                     <Workspace>

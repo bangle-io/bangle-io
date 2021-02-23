@@ -1,3 +1,4 @@
+import './style.css';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
