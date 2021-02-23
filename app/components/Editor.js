@@ -17,6 +17,7 @@ import { config } from 'bangle-io/config';
 
 import { specRegistry } from '../editor/spec-sheet';
 import { EditorManagerContext } from '../editor/EditorManager';
+import { todoListNodeView } from '../editor/todo-list-node-view';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -110,6 +111,7 @@ export function Editor({ isFirst, wsPath }) {
       timestamp.plugins(),
       sticker.plugins(),
       collapsibleHeadingDeco.plugins(),
+      todoListNodeView,
     ];
   };
   const onEditorReady = (editor) => {
