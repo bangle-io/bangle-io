@@ -23,7 +23,6 @@ function pluginsFactory({ leftOffset = 24 } = {}) {
       view: () => ({
         update(view, lastState) {
           const state = view.state;
-          console.log('update');
           if (lastState === state) {
             return;
           }
@@ -33,13 +32,9 @@ function pluginsFactory({ leftOffset = 24 } = {}) {
             return;
           }
 
-          const domNodes = [
-            ...view.dom.querySelectorAll(
-              '.deco-collapse-positioner[data-bangle-pos]',
-            ),
-          ];
-
-          for (const node of domNodes) {
+          for (const node of view.dom.querySelectorAll(
+            '.deco-collapse-positioner[data-bangle-pos]',
+          )) {
             const pos = parseInt(node.getAttribute('data-bangle-pos'), 10);
             if (Number.isNaN(pos)) {
               continue;
@@ -49,7 +44,6 @@ function pluginsFactory({ leftOffset = 24 } = {}) {
             if (!domNode) {
               continue;
             }
-            console.log('called', `${-1 * leftOffset}px`);
             const computedStyle = window.getComputedStyle(domNode);
             node.firstChild.style.height = computedStyle.height;
             node.firstChild.style.left = `${-1 * leftOffset}px`;

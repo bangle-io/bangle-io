@@ -90,8 +90,3 @@ button:focus {
 .bg-stronger {
   background-color: var(--bg-stronger-color);
 }
-
-.bangle-heading-collapsed {
-  background-color: var(--bg-stronger-color);
-  border-radius: 8px;
-}

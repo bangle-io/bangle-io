@@ -14,3 +14,8 @@
   align-self: center;
   cursor: pointer;
 }
+
+.bangle-heading-collapsed {
+  background-color: var(--bg-stronger-color);
+  border-radius: 8px;
+}
