@@ -95,7 +95,11 @@ describe('useCreateMdFile', () => {
       doc: {
         content: [
           {
-            attrs: { level: 1 },
+            attrs: {
+              level: 1,
+
+              collapseContent: null,
+            },
             content: [{ text: 'one.md', type: 'text' }],
             type: 'heading',
           },

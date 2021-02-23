@@ -1,0 +1,21 @@
+.deco-collapse-positioner {
+  position: relative;
+}
+
+.deco-collapse {
+  display: flex;
+  position: absolute;
+}
+
+.deco-collapse-child {
+  height: 1.25rem;
+  width: 1.25rem;
+  fill: currentcolor;
+  align-self: center;
+  cursor: pointer;
+}
+
+.bangle-heading-collapsed {
+  background-color: var(--bg-stronger-color);
+  border-radius: 8px;
+}

@@ -1,9 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
-import { getIdleCallback, uuid } from '@bangle.dev/core/utils/js-utils';
+import { uuid } from '@bangle.dev/core/utils/js-utils';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
 import * as coreComps from '@bangle.dev/core/components/index';
-import { NodeView } from '@bangle.dev/core/node-view';
 import { emoji, emojisArray } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
@@ -13,6 +12,7 @@ import stopwatch from '@bangle.dev/react-stopwatch';
 import sticker from '@bangle.dev/react-sticker';
 import { EmojiSuggest, emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu, FloatingMenu } from '@bangle.dev/react-menu';
+import { collapsibleHeadingDeco } from '../editor/collapsible-heading-deco';
 import { config } from 'bangle-io/config';
 
 import { specRegistry } from '../editor/spec-sheet';
@@ -90,7 +90,12 @@ export function Editor({ isFirst, wsPath }) {
       coreComps.bulletList.plugins(),
       coreComps.codeBlock.plugins(),
       coreComps.hardBreak.plugins(),
-      coreComps.heading.plugins(),
+      coreComps.heading.plugins({
+        keybindings: {
+          ...coreComps.heading.defaultKeys,
+          toggleCollapse: 'Shift-Meta-1',
+        },
+      }),
       coreComps.horizontalRule.plugins(),
       coreComps.listItem.plugins(),
       coreComps.orderedList.plugins(),
@@ -104,29 +109,20 @@ export function Editor({ isFirst, wsPath }) {
       trailingNode.plugins(),
       timestamp.plugins(),
       sticker.plugins(),
-      NodeView.createPlugin({
-        name: 'todoItem',
-        containerDOM: [
-          'li',
-          {
-            'data-bangle-name': 'todoItem',
-          },
-        ],
-        contentDOM: ['span', {}],
-      }),
+      collapsibleHeadingDeco.plugins(),
     ];
   };
   const onEditorReady = (editor) => {
     if (isFirst) {
       window.editor = editor;
       if (!config.isIntegration) {
-        getIdleCallback(() => {
-          import(
-            /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
-          ).then((args) => {
-            args.applyDevTools(editor.view);
-          });
-        });
+        // getIdleCallback(() => {
+        //   import(
+        //     /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
+        //   ).then((args) => {
+        //     args.applyDevTools(editor.view);
+        //   });
+        // });
       }
     }
   };

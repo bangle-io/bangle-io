@@ -25,6 +25,10 @@
   background-color: var(--bg-color);
 }
 
+.bangle-editor {
+  padding: 0 30px;
+}
+
 @media screen and (max-width: 640px) {
   .main-wrapper {
     display: grid;
