@@ -47,7 +47,6 @@
     "@bangle.dev/tooltip": "0.2.1",
     "@bangle.dev/trailing-node": "0.2.1",
     "@popperjs/core": "^2.5.4",
-    "css.gg": "^2.0.0",
     "idb-keyval": "^5.0.2",
     "localforage": "^1.9.0",
     "lodash.debounce": "^4.0.8",

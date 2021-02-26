@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import { config } from 'bangle-io/config';
 import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
 
-import { StackButton } from '../Button';
+import { FolderIcon, TerminalIcon } from 'bangle-io/app/ui/Icons';
 
+ActivityBar.propTypes = {};
 export function ActivityBar() {
   const { sidebar, paletteType, dispatch } = useContext(UIManagerContext);
 
@@ -19,28 +20,34 @@ export function ActivityBar() {
 
   return (
     <div
-      className={`grid-activity-bar flex flex-row ${
+      className={`grid-activity-bar flex pt-3 py-3  ${
         config.isProduction ? 'bg-pink-900' : 'bg-gray-900'
-      } py-3 flex flex-col z-30`}
+      } flex-col z-30`}
     >
-      <div className="flex align-center justify-center">
-        <StackButton
+      <AsideButtonBox isActive={sidebar}>
+        <FolderIcon
           onClick={toggleSidebar}
-          isActive={sidebar}
-          faType="fas fa-folder"
-          stack={true}
+          className="aside-button text-gray-100 cursor-pointer"
         />
-      </div>
-      <div className="flex align-center justify-center">
-        <StackButton
+      </AsideButtonBox>
+      <AsideButtonBox isActive={!!paletteType}>
+        <TerminalIcon
           onClick={togglePalette}
-          isActive={!!paletteType}
-          faType="fas fa-terminal"
-          stack={true}
+          className="aside-button text-gray-100 cursor-pointer"
         />
-      </div>
+      </AsideButtonBox>
     </div>
   );
 }
 
-ActivityBar.propTypes = {};
+function AsideButtonBox({ children, isActive }) {
+  return (
+    <div
+      className={`flex aside-button-box align-center justify-center pt-3 pb-3 border-l-2 mt-1 mb-1 ${
+        isActive ? 'active' : ''
+      }`}
+    >
+      {children}
+    </div>
+  );
+}

@@ -3094,7 +3094,6 @@ __metadata:
     case-sensitive-paths-webpack-plugin: ^2.3.0
     copy-webpack-plugin: ^7.0.0
     css-loader: ^4.3.0
-    css.gg: ^2.0.0
     date-fns: ^2.17.0
     eslint: ^7.16.0
     eslint-config-react-app: ^6.0.0
@@ -4104,13 +4103,6 @@ __metadata:
   version: 1.5.1
   resolution: "css.escape@npm:1.5.1"
   checksum: 44fe5e93fee46fe60dbd0cdd078b14ef75697ee93519a7157f976b655463dd66eba598b0df16c16a897ac884c97845d2a3819cb8d370cbf91bc59bb557ebe826
-  languageName: node
-  linkType: hard
-
-"css.gg@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "css.gg@npm:2.0.0"
-  checksum: 40d8c9865f52b2e58e6b444e0aa7c96dd9869856092a9808fe48458bc552d140f4aaf62633b4ac991185f6ad8a9e61b3727800dacc66f9cfc9a62375b2b4b097
   languageName: node
   linkType: hard
 
