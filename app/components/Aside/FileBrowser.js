@@ -2,9 +2,7 @@ import './aside.css';
 import React, { useContext, useMemo } from 'react';
 import { SideBar } from './SideBar';
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
-import { BaseButton } from '../Button';
-import 'css.gg/icons/css/chevron-down.css';
-import { ChevronDown, ChevronRight } from '../../ui/Icons/index';
+import { ChevronDownIcon, ChevronRightIcon, CloseIcon } from '../../ui/Icons';
 import {
   useDeleteFile,
   useGetWorkspaceFiles,
@@ -37,8 +35,8 @@ export function FileBrowser() {
       <CollapsibleSideBarRow
         title={wsName}
         isSticky={true}
-        leftIcon={<ChevronDown style={{ width: 16, height: 16 }} />}
-        activeLeftIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
+        leftIcon={<ChevronDownIcon className="file-browser-button" />}
+        activeLeftIcon={<ChevronRightIcon className="file-browser-button" />}
       >
         {fileTree.map((child) => (
           <RenderPathTree
@@ -73,8 +71,8 @@ function RenderPathTree({
       <CollapsibleSideBarRow
         initialCollapse={true}
         title={name}
-        leftIcon={<ChevronDown style={{ width: 16, height: 16 }} />}
-        activeLeftIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
+        leftIcon={<ChevronDownIcon className="file-browser-button" />}
+        activeLeftIcon={<ChevronRightIcon className="file-browser-button" />}
         depth={depth}
         basePadding={16}
       >
@@ -107,12 +105,10 @@ function RenderPathTree({
         }}
         title={name}
         isActive={activeWSPath === wsPath}
-        leftIcon={<span style={{ width: 16, height: 16 }}> </span>}
-        rightIcon={[
-          <BaseButton
-            key="delete"
-            className="text-gray-600 hover:text-gray-900"
-            faType="fas fa-times-circle "
+        leftIcon={<span className="file-browser-button"> </span>}
+        rightHoverIcon={
+          <CloseIcon
+            className="file-browser-button"
             onClick={async (e) => {
               e.stopPropagation();
               deleteByWsPath(wsPath);
@@ -120,8 +116,8 @@ function RenderPathTree({
                 type: 'UI/TOGGLE_SIDEBAR',
               });
             }}
-          />,
-        ]}
+          />
+        }
       />
     );
   }
