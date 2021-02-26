@@ -13,19 +13,19 @@ import { UIManager } from './ui/UIManager';
 
 export function AppContainer() {
   return (
-    <Router>
-      <UIManager>
-        <Switch>
-          <Route path={['/ws/:wsName']}>
-            <div className="h-screen main-wrapper">
-              <div className="editor-wrapper">
-                <div className="flex justify-center flex-row">
-                  <div
-                    className="flex-1 max-w-screen-md ml-1 mr-1"
-                    style={{ height: '100vh', overflowY: 'scroll' }}
-                  >
-                    <Workspace>
-                      <EditorManager>
+    <EditorManager>
+      <Router>
+        <UIManager>
+          <Switch>
+            <Route path={['/ws/:wsName']}>
+              <div className="h-screen main-wrapper">
+                <div className="editor-wrapper">
+                  <div className="flex justify-center flex-row">
+                    <div
+                      className="flex-1 max-w-screen-md ml-1 mr-1"
+                      style={{ height: '100vh', overflowY: 'scroll' }}
+                    >
+                      <Workspace>
                         <PrimaryEditor />
                         {/* adds white space at bottoms */}
                         <div
@@ -38,25 +38,25 @@ export function AppContainer() {
                         >
                           &nbsp;
                         </div>
-                      </EditorManager>
-                    </Workspace>
+                      </Workspace>
+                    </div>
                   </div>
                 </div>
+                <PaletteContainer />
+                <Aside />
               </div>
-              <PaletteContainer />
-              <Aside />
-            </div>
-          </Route>
-          <Route path="/">
-            <div className="h-screen main-wrapper">
-              <span>Let us open a workspace</span>
-              <PaletteContainer />
-              <Aside />
-            </div>
-          </Route>
-        </Switch>
-      </UIManager>
-    </Router>
+            </Route>
+            <Route path="/">
+              <div className="h-screen main-wrapper">
+                <span>Let us open a workspace</span>
+                <PaletteContainer />
+                <Aside />
+              </div>
+            </Route>
+          </Switch>
+        </UIManager>
+      </Router>
+    </EditorManager>
   );
 }
 
