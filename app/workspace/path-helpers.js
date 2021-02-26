@@ -13,6 +13,11 @@ export function validatePath(wsPath) {
   if ((wsPath.match(/:/g) || []).length !== 1) {
     throw new Error('Path must have only 1 :');
   }
+
+  const [wsName, filePath] = wsPath.split(':');
+  if (!wsName || !filePath) {
+    throw new Error('Invalid wsPath ' + wsPath);
+  }
 }
 
 export function validateWsFilePath(wsPath) {
