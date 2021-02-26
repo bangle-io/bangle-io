@@ -24,7 +24,7 @@
     "start": "yarn webpack serve --env development",
     "build": "NODE_ENV=production yarn webpack --env production",
     "build-serve": "yarn build && yarn run serve build",
-    "snapshot": "yarn build && yarn node ./scripts/snapshot",
+    "snapshot": "yarn build && yarn node ./_scripts/snapshot",
     "add-portals": "yarn link -A -r /Users/kushanjoshi/code/bangle/bangle-play",
     "remove-portals": "yarn node ./_scripts/remove-portals && yarn install"
   },
@@ -75,6 +75,7 @@
     "case-sensitive-paths-webpack-plugin": "^2.3.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^4.3.0",
+    "date-fns": "^2.17.0",
     "eslint": "^7.16.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.2.0",

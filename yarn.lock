@@ -3095,6 +3095,7 @@ __metadata:
     copy-webpack-plugin: ^7.0.0
     css-loader: ^4.3.0
     css.gg: ^2.0.0
+    date-fns: ^2.17.0
     eslint: ^7.16.0
     eslint-config-react-app: ^6.0.0
     eslint-plugin-flowtype: ^5.2.0
@@ -4180,6 +4181,13 @@ __metadata:
     whatwg-mimetype: ^2.3.0
     whatwg-url: ^8.0.0
   checksum: 42239927c6a202e2d02b7f41c94ca53e3cea036898b97b8bf6120ed1b25e0dd11c48ec7aa5c84cf807c2cb9f3a637df9fb50f3ca25a52863186a4ac46254726b
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.17.0":
+  version: 2.17.0
+  resolution: "date-fns@npm:2.17.0"
+  checksum: 51ee9e264aac54d2a16471691d560838bad681f729573f520b03ec0c21f28904c73bf98ec2d33603e71bdabf8506140449c2b50d0db6fdd042faed9fe5467b92
   languageName: node
   linkType: hard
 
