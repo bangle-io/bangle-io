@@ -33,10 +33,9 @@ import {
   horizontalRule,
   listItem,
   orderedList,
-  todoItem,
-  todoList,
   image,
 } from '@bangle.dev/core/components/index';
+import { defaultKeys as headingKeys } from '@bangle.dev/core/components/heading';
 
 export const specRegistry = new SpecRegistry([
   doc.spec({ content: 'frontMatter? block+' }),
@@ -50,8 +49,7 @@ export const specRegistry = new SpecRegistry([
   horizontalRule.spec(),
   listItem.spec(),
   orderedList.spec(),
-  todoItem.spec(),
-  todoList.spec(),
+
   image.spec(),
   bold.spec(),
   code.spec(),
