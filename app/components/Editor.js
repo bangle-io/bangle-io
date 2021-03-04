@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
-import { uuid } from '@bangle.dev/core/utils/js-utils';
+import { uuid, getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
 import * as coreComps from '@bangle.dev/core/components/index';
 import { emoji, emojisArray } from '@bangle.dev/emoji/index';
@@ -11,13 +11,26 @@ import { useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
 import sticker from '@bangle.dev/react-sticker';
 import { EmojiSuggest, emojiSuggest } from '@bangle.dev/react-emoji-suggest';
-import { floatingMenu, FloatingMenu } from '@bangle.dev/react-menu';
+import {
+  floatingMenu,
+  FloatingMenu,
+  Menu,
+  MenuGroup,
+  BoldButton,
+  ItalicButton,
+  CodeButton,
+  FloatingLinkButton,
+  HeadingButton,
+  BulletListButton,
+  LinkSubMenu,
+  OrderedListButton,
+  TodoListButton,
+} from '@bangle.dev/react-menu';
 import { collapsibleHeadingDeco } from '../editor/collapsible-heading-deco';
 import { config } from 'bangle-io/config';
 
 import { specRegistry } from '../editor/spec-sheet';
 import { EditorManagerContext } from '../editor/EditorManager';
-import { todoListNodeView } from '../editor/todo-list-node-view';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -95,13 +108,14 @@ export function Editor({ isFirst, wsPath }) {
         keybindings: {
           ...coreComps.heading.defaultKeys,
           toggleCollapse: 'Shift-Meta-1',
+          toH4: null,
+          toH5: null,
+          toH6: null,
         },
       }),
       coreComps.horizontalRule.plugins(),
       coreComps.listItem.plugins(),
       coreComps.orderedList.plugins(),
-      coreComps.todoItem.plugins({ nodeView: false }),
-      coreComps.todoList.plugins(),
       coreComps.image.plugins(),
       coreComps.history.plugins(),
       collab.plugins(collabOpts),
@@ -111,20 +125,19 @@ export function Editor({ isFirst, wsPath }) {
       timestamp.plugins(),
       sticker.plugins(),
       collapsibleHeadingDeco.plugins(),
-      todoListNodeView,
     ];
   };
   const onEditorReady = (editor) => {
     if (isFirst) {
       window.editor = editor;
       if (!config.isIntegration) {
-        // getIdleCallback(() => {
-        //   import(
-        //     /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
-        //   ).then((args) => {
-        //     args.applyDevTools(editor.view);
-        //   });
-        // });
+        getIdleCallback(() => {
+          // import(
+          //   /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
+          // ).then((args) => {
+          //   args.applyDevTools(editor.view);
+          // });
+        });
       }
     }
   };
@@ -142,14 +155,6 @@ export function Editor({ isFirst, wsPath }) {
     if (node.type.name === 'stopwatch') {
       return <stopwatch.Stopwatch node={node} updateAttrs={updateAttrs} />;
     }
-
-    if (node.type.name === 'todoItem') {
-      return (
-        <TodoItem node={node} updateAttrs={updateAttrs}>
-          {children}
-        </TodoItem>
-      );
-    }
   };
 
   const editorState = useEditorState({
@@ -164,28 +169,39 @@ export function Editor({ isFirst, wsPath }) {
       onReady={onEditorReady}
       renderNodeViews={renderNodeViews}
     >
-      <FloatingMenu menuKey={menuKey} />
+      <FloatingMenu
+        menuKey={menuKey}
+        renderMenuType={({ type, menuKey }) => {
+          if (type === 'defaultMenu') {
+            return (
+              <Menu>
+                <MenuGroup>
+                  <BoldButton />
+                  <ItalicButton />
+                  <CodeButton />
+                  <FloatingLinkButton menuKey={menuKey} />
+                </MenuGroup>
+                <MenuGroup>
+                  <HeadingButton level={2} />
+                  <HeadingButton level={3} />
+                  <BulletListButton />
+                  <TodoListButton />
+                  <OrderedListButton />
+                </MenuGroup>
+              </Menu>
+            );
+          }
+          if (type === 'linkSubMenu') {
+            return (
+              <Menu>
+                <LinkSubMenu />
+              </Menu>
+            );
+          }
+          return null;
+        }}
+      />
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
     </BangleEditor>
-  );
-}
-
-function TodoItem({ children, node, updateAttrs }) {
-  const { done } = node.attrs;
-  return (
-    <>
-      <span contentEditable={false}>
-        <input
-          type="checkbox"
-          onChange={() => {
-            updateAttrs({
-              done: !done,
-            });
-          }}
-          checked={!!done}
-        />
-      </span>
-      {children}
-    </>
   );
 }

@@ -56,37 +56,6 @@ export const defaultContent = {
       ],
     },
     {
-      type: 'todoList',
-      content: [
-        {
-          type: 'todoItem',
-          attrs: {
-            'data-bangle-name': 'todoItem',
-            'done': false,
-          },
-          content: [
-            {
-              type: 'paragraph',
-              content: [
-                {
-                  type: 'text',
-                  text: 'This is a checkbox ',
-                },
-                {
-                  type: 'emoji',
-                  attrs: {
-                    'style': 'display: inline-block;',
-                    'emojiKind': ':mrs_claus_tone2:',
-                    'data-bangle-name': 'emoji',
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
       type: 'codeBlock',
       content: [
         {
