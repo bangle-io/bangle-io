@@ -2,7 +2,7 @@ import './aside.css';
 import React, { useContext } from 'react';
 import { ActivityBar } from './ActivityBar';
 import { FileBrowser } from './FileBrowser';
-import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
+import { UIManagerContext } from 'bangle-io/app/UIManager';
 import { useKeybindings } from 'bangle-io/app/misc/keybinding-helper';
 
 export function Aside() {

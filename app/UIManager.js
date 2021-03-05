@@ -1,5 +1,5 @@
 import React, { useReducer, createContext, useMemo } from 'react';
-import { applyTheme } from '../style/apply-theme';
+import { applyTheme } from './style/apply-theme';
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};

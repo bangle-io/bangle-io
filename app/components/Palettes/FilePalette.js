@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Palette } from '../../ui/Palette';
+import { Palette } from '../../helper-ui/Palette';
 import { SideBarRow } from '../Aside/SideBarRow';
 import PropTypes from 'prop-types';
 import {

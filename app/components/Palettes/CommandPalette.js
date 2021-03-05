@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { commands } from './commands';
-import { Palette } from 'bangle-io/app/ui/Palette';
+import { Palette } from 'bangle-io/app/helper-ui/Palette';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 const LOG = false;
 

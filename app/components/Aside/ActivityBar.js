@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { config } from 'bangle-io/config';
-import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
+import { UIManagerContext } from '../../UIManager';
 
-import { FolderIcon, TerminalIcon } from 'bangle-io/app/ui/Icons';
+import { FolderIcon, TerminalIcon } from '../../helper-ui/Icons';
 
 ActivityBar.propTypes = {};
 export function ActivityBar() {

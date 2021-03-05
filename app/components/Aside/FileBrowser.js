@@ -2,14 +2,18 @@ import './aside.css';
 import React, { useContext, useMemo } from 'react';
 import { SideBar } from './SideBar';
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
-import { ChevronDownIcon, ChevronRightIcon, CloseIcon } from '../../ui/Icons';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  CloseIcon,
+} from '../../helper-ui/Icons';
 import {
   useDeleteFile,
   useGetWorkspaceFiles,
   useWorkspacePath,
 } from 'bangle-io/app/workspace/workspace-hooks';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
-import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
+import { UIManagerContext } from 'bangle-io/app/UIManager';
 
 FileBrowser.propTypes = {};
 

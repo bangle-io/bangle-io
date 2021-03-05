@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Palette } from '../../ui/Palette';
+import { Palette } from '../../helper-ui/Palette';
 
 import { SideBarRow } from '../Aside/SideBarRow';
 import { useWorkspaces } from 'bangle-io/app/workspace/workspace-hooks';

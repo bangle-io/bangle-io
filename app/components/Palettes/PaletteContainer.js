@@ -1,10 +1,10 @@
 import React from 'react';
 import { CommandPalette } from './CommandPalette';
 import { FilePalette } from './FilePalette';
-import { Palette } from '../../ui/Palette';
+import { Palette } from '../../helper-ui/Palette';
 import { WorkspacePalette } from './WorkspacePalette';
 import { keybindingsHelper } from '../../misc/keybinding-helper';
-import { UIManagerContext } from '../../ui/UIManager';
+import { UIManagerContext } from '../../UIManager';
 
 const parseRawQuery = (query, paletteType) => {
   // Some of the types depend on the current active query

@@ -6,7 +6,7 @@ import {
   useWorkspaces,
 } from 'bangle-io/app/workspace/workspace-hooks';
 import { SideBarRow } from '../Aside/SideBarRow';
-import { UIManagerContext } from 'bangle-io/app/ui/UIManager';
+import { UIManagerContext } from 'bangle-io/app/UIManager';
 import { pickADirectory } from 'bangle-io/app/workspace/nativefs-helpers';
 
 export const commands = Object.entries(Commands());

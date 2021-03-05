@@ -9,7 +9,7 @@ import { PaletteContainer } from './components/Palettes/PaletteContainer';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspacePath } from './workspace/workspace-hooks';
 import { Workspace } from './workspace/Workspace';
-import { UIManager } from './ui/UIManager';
+import { UIManager } from './UIManager';
 
 export function AppContainer() {
   return (
