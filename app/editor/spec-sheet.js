@@ -35,7 +35,16 @@ import {
   orderedList,
   image,
 } from '@bangle.dev/core/components/index';
-import { defaultKeys as headingKeys } from '@bangle.dev/core/components/heading';
+
+let headingSpec = heading.spec();
+
+headingSpec = {
+  ...headingSpec,
+  schema: {
+    ...headingSpec.schema,
+    draggable: true,
+  },
+};
 
 export const specRegistry = new SpecRegistry([
   doc.spec({ content: 'frontMatter? block+' }),
@@ -45,7 +54,7 @@ export const specRegistry = new SpecRegistry([
   bulletList.spec(),
   codeBlock.spec(),
   hardBreak.spec(),
-  heading.spec(),
+  headingSpec,
   horizontalRule.spec(),
   listItem.spec(),
   orderedList.spec(),
