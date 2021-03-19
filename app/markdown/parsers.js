@@ -25,7 +25,6 @@ export const markdownSerializer = (doc) => {
   let text;
 
   if (collapsedHeadingSet.size === 0) {
-    console.log('nup');
     text = serializer.serialize(doc);
     return text;
   }

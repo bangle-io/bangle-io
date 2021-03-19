@@ -1,7 +1,7 @@
 import React, { useReducer, createContext, useMemo } from 'react';
 import { applyTheme } from './style/apply-theme';
 
-const LOG = true;
+const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
 const DEFAULT_PALETTE = 'file';
 
