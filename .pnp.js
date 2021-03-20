@@ -56,8 +56,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/tooltip", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.3.2"],
             ["@bangle.dev/trailing-node", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.3.2"],
             ["@popperjs/core", "npm:2.6.0"],
+            ["@testing-library/dom", "npm:7.30.0"],
             ["@testing-library/jest-dom", "npm:5.11.6"],
             ["@testing-library/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.2.5"],
+            ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.0.6"],
             ["autoprefixer", "npm:9.8.6"],
             ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],
             ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.2"],
@@ -3445,6 +3447,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pretty-format", "npm:26.6.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.30.0", {
+          "packageLocation": "./.yarn/cache/@testing-library-dom-npm-7.30.0-39543a5358-5af9f762ff.zip/node_modules/@testing-library/dom/",
+          "packageDependencies": [
+            ["@testing-library/dom", "npm:7.30.0"],
+            ["@babel/code-frame", "npm:7.12.11"],
+            ["@babel/runtime", "npm:7.12.5"],
+            ["@types/aria-query", "npm:4.2.0"],
+            ["aria-query", "npm:4.2.2"],
+            ["chalk", "npm:4.1.0"],
+            ["dom-accessibility-api", "npm:0.5.4"],
+            ["lz-string", "npm:1.4.4"],
+            ["pretty-format", "npm:26.6.2"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@testing-library/jest-dom", [
@@ -3488,6 +3505,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/react",
             "react-dom",
             "react"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@testing-library/user-event", [
+        ["npm:13.0.6", {
+          "packageLocation": "./.yarn/cache/@testing-library-user-event-npm-13.0.6-e3fd4dab53-423a67d2e2.zip/node_modules/@testing-library/user-event/",
+          "packageDependencies": [
+            ["@testing-library/user-event", "npm:13.0.6"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.0.6", {
+          "packageLocation": "./.yarn/$$virtual/@testing-library-user-event-virtual-2fc05edd69/0/cache/@testing-library-user-event-npm-13.0.6-e3fd4dab53-423a67d2e2.zip/node_modules/@testing-library/user-event/",
+          "packageDependencies": [
+            ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.0.6"],
+            ["@babel/runtime", "npm:7.12.5"],
+            ["@testing-library/dom", "npm:7.30.0"],
+            ["@types/testing-library__dom", null]
+          ],
+          "packagePeers": [
+            "@testing-library/dom",
+            "@types/testing-library__dom"
           ],
           "linkType": "HARD",
         }]
@@ -5063,8 +5103,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/tooltip", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.3.2"],
             ["@bangle.dev/trailing-node", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.3.2"],
             ["@popperjs/core", "npm:2.6.0"],
+            ["@testing-library/dom", "npm:7.30.0"],
             ["@testing-library/jest-dom", "npm:5.11.6"],
             ["@testing-library/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.2.5"],
+            ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.0.6"],
             ["autoprefixer", "npm:9.8.6"],
             ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],
             ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.2"],
