@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { createRef, useContext } from 'react';
 import { CommandPalette } from './CommandPalette';
 import { FilePalette } from './FilePalette';
 import { Palette } from '../../helper-ui/Palette';
 import { WorkspacePalette } from './WorkspacePalette';
-import { keybindingsHelper } from '../../misc/keybinding-helper';
-import { UIManagerContext } from '../../UIManager';
+import { PaletteSwitchContext } from 'bangle-io/app/helper-ui/Switch';
+import { useKeybindings, useWatchClickOutside } from 'bangle-io/app/misc/hooks';
 
 const parseRawQuery = (query, paletteType) => {
   // Some of the types depend on the current active query
@@ -33,191 +33,156 @@ const generateRawQuery = (paletteType, subQuery) => {
     return '>' + subQuery;
   }
 
-  if (paletteType.startsWith('command/input/')) {
-    return subQuery;
-  }
-
   if (paletteType === 'workspace') {
     return 'ws:' + subQuery;
+  }
+
+  if (paletteType.startsWith('command/input/')) {
+    return subQuery;
   }
 
   // defaults to file
   return subQuery;
 };
 
-export class PaletteContainer extends React.PureComponent {
-  static contextType = UIManagerContext;
+const defaultValues = {
+  type: 'file',
+  subQuery: '',
+  counter: 0,
+  onExecute: null,
+};
 
-  state = {
-    subQuery: '',
-    counter: 0,
+export function PaletteContainer() {
+  usePaletteKeybindings();
+  const paletteState = useContext(PaletteSwitchContext);
+  const paletteInputRef = createRef();
+  const containerRef = useWatchClickOutside(paletteState.clear, () => {
+    paletteInputRef.current.focus();
+  });
+
+  if (!paletteState.current) {
+    return null;
+  }
+
+  const { type, counter, subQuery } = paletteState.current;
+
+  const props = {
+    type,
+    counter: counter,
+    query: subQuery,
     execute: false,
+    onDismiss: paletteState.clear,
   };
 
-  onDismiss = () => {
-    const { paletteType, dispatch } = this.context;
-    if (paletteType) {
-      dispatch({
-        type: 'UI/CLOSE_PALETTE',
-      });
-      this.setState({
-        subQuery: '',
-        counter: 0,
-        execute: false,
-      });
-    }
-  };
-
-  onPressEnter = () => {
-    this.setState({
-      execute: true,
-    });
-  };
-
-  updateCounter = (counter) => {
-    this.setState({
-      counter,
-    });
-  };
-
-  updateQuery = (rawQuery) => {
-    const { paletteType: initialPaletteType, dispatch } = this.context;
-    const { paletteType, subQuery } = parseRawQuery(
-      rawQuery,
-      initialPaletteType,
-    );
-
-    if (paletteType !== initialPaletteType) {
-      dispatch({
-        type: 'UI/OPEN_PALETTE',
-        value: {
-          type: paletteType,
-        },
-      });
-    }
-
-    this.setState({
-      subQuery,
-    });
-  };
-
-  componentDidMount() {
-    const keyBindings = {
-      toggleCommandPalette: {
-        key: 'Mod-P',
-        onExecute: () => {
-          const { dispatch } = this.context;
-
-          dispatch({
-            type: 'UI/OPEN_PALETTE',
-            value: {
-              type: 'command',
-            },
-          });
-          return true;
-        },
-      },
-
-      openPalette: {
-        key: 'Mod-p',
-        onExecute: () => {
-          const { paletteType, dispatch } = this.context;
-          if (paletteType === 'file') {
-            this.setState({
-              counter: this.state.counter + 1,
-            });
-            return true;
-          }
-          dispatch({
-            type: 'UI/OPEN_PALETTE',
-            value: { type: 'file' },
-          });
-          return true;
-        },
-      },
-
-      openWorkspacePalette: {
-        key: 'Ctrl-r',
-        onExecute: () => {
-          const { paletteType, dispatch } = this.context;
-
-          if (paletteType === 'workspace') {
-            this.setState({
-              counter: this.state.counter + 1,
-            });
-            return true;
-          }
-          dispatch({
-            type: 'UI/OPEN_PALETTE',
-            value: { type: 'workspace' },
-          });
-          return true;
-        },
-      },
-    };
-    const callback = keybindingsHelper(
-      Object.fromEntries([
-        ...Object.entries(keyBindings).map(([key, value]) => {
-          return [
-            value.key,
-            () => {
-              return value.onExecute({
-                uiContext: this.value,
-              });
-            },
-          ];
-        }),
-      ]),
-    );
-    document.addEventListener('keydown', callback);
-    this.removeKeybindingHelper = () => {
-      document.removeEventListener('keydown', callback);
-    };
-  }
-
-  componentWillUnmount() {
-    this.removeKeybindingHelper();
-  }
-
-  render() {
-    const { subQuery, counter } = this.state;
-    const { paletteType } = this.context;
-    if (!paletteType) {
-      return null;
-    }
-
-    const type = paletteType;
-    const props = {
-      type,
-      counter: counter,
-      query: subQuery,
-      execute: this.state.execute,
-      onDismiss: this.onDismiss,
-    };
-
-    let child;
-
-    if (type === 'command' || type.startsWith('command/input/')) {
-      child = <CommandPalette {...props} />;
-    } else if (type === 'file') {
-      child = <FilePalette {...props} />;
-    } else if (type === 'workspace') {
-      child = <WorkspacePalette {...props} />;
-    } else {
-      throw new Error('Unknown type');
-    }
-
-    return (
+  return (
+    <div
+      className="bangle-palette z-30 p-2 shadow-md border flex flex-col"
+      ref={containerRef}
+    >
       <Palette
-        onDismiss={this.onDismiss}
-        onPressEnter={this.onPressEnter}
-        updateCounter={this.updateCounter}
-        updateQuery={this.updateQuery}
-        query={generateRawQuery(paletteType, this.state.subQuery)}
-        counter={counter}
-      >
-        {child}
-      </Palette>
-    );
+        ref={paletteInputRef}
+        onDismiss={paletteState.clear}
+        onPressEnter={() => {
+          if (paletteState.current.onExecute) {
+            paletteState.current.onExecute();
+          }
+        }}
+        updateCounter={(counter) => {
+          paletteState.updateCurrent({ counter });
+        }}
+        updateQuery={(rawQuery) => {
+          const initialPaletteType = paletteState.current.type;
+          const { paletteType, subQuery } = parseRawQuery(
+            rawQuery,
+            initialPaletteType,
+          );
+          paletteState.updateCurrent({
+            type: paletteType,
+            subQuery,
+          });
+        }}
+        query={generateRawQuery(type, subQuery)}
+        counter={paletteState.current.counter}
+      />
+      <PaletteItem match={/^(command|command\/input\/.*)$/}>
+        <CommandPalette {...props} />
+      </PaletteItem>
+      <PaletteItem match={/^file$/}>
+        <FilePalette {...props} />
+      </PaletteItem>
+      <PaletteItem match={/^workspace$/}>
+        <WorkspacePalette {...props} />
+      </PaletteItem>
+    </div>
+  );
+}
+
+function PaletteItem({ match, children }) {
+  const paletteState = useContext(PaletteSwitchContext);
+
+  if (!paletteState.current) {
+    return null;
   }
+
+  const { type } = paletteState.current;
+
+  if (!match.test(type)) {
+    return null;
+  }
+  return children;
+}
+
+function usePaletteKeybindings() {
+  const paletteState = useContext(PaletteSwitchContext);
+
+  useKeybindings(() => {
+    return {
+      'Mod-P': () => {
+        if (paletteState.current && paletteState.current.type === 'command') {
+          paletteState.updateCurrent((val) => ({
+            counter: val.counter + 1,
+          }));
+          return true;
+        }
+
+        paletteState.push({
+          ...defaultValues,
+          type: 'command',
+        });
+        return true;
+      },
+
+      'Mod-p': () => {
+        if (paletteState.current && paletteState.current.type === 'file') {
+          paletteState.updateCurrent((val) => ({
+            counter: val.counter + 1,
+          }));
+          return true;
+        }
+
+        paletteState.push({
+          ...defaultValues,
+          type: 'file',
+        });
+
+        return true;
+      },
+
+      'Ctrl-r': () => {
+        if (paletteState.current && paletteState.current.type === 'workspace') {
+          paletteState.updateCurrent((val) => ({
+            counter: val.counter + 1,
+          }));
+          return true;
+        }
+
+        paletteState.push({
+          ...defaultValues,
+          type: 'workspace',
+        });
+
+        return true;
+      },
+    };
+  }, [paletteState]);
 }

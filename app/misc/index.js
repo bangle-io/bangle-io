@@ -1,6 +1,10 @@
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/misc') : () => {};
 
+export function getLast(array) {
+  return array[array.length - 1];
+}
+
 export function strictCheckObject(obj, assert) {
   const entries = Object.entries(obj);
   const keys = (o) => Object.keys(o);

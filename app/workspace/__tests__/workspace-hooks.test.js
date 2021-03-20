@@ -247,7 +247,7 @@ describe('useWorkspaces', () => {
       return <div>Hello</div>;
     }
 
-    act(() =>
+    act(() => {
       render(
         <Router initialEntries={['/ws']}>
           <Switch>
@@ -261,14 +261,13 @@ describe('useWorkspaces', () => {
           <Route
             path="*"
             render={({ history, location }) => {
-              console.log({ loc: location });
               testLocation = location;
               return null;
             }}
           />
         </Router>,
-      ),
-    );
+      );
+    });
 
     await createWorkspace('kujo1');
     await act(() => promise);
