@@ -26,7 +26,9 @@ export function SideBarRow({
       if ('scrollIntoViewIfNeeded' in document.body) {
         ref.current.scrollIntoViewIfNeeded(false);
       } else {
-        ref.current.scrollIntoView(false);
+        if (ref.current.scrollIntoView) {
+          ref.current.scrollIntoView(false);
+        }
       }
     }
   }, [scrollIntoViewIfNeeded, isActive]);

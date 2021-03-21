@@ -1,6 +1,4 @@
-import { useHistory } from 'react-router-dom';
 import { useCallback, useMemo } from 'react';
-
 import { useWorkspaces } from 'bangle-io/app/workspace/workspace-hooks';
 
 const LOG = false;
@@ -8,8 +6,7 @@ const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
 export function useWorkspacePalette({ query = '' }) {
-  const { workspaces } = useWorkspaces();
-  const history = useHistory();
+  const { workspaces, switchWorkspace } = useWorkspaces();
   const workspacesFiltered = useMemo(
     () =>
       workspaces.filter((ws) => {
@@ -18,16 +15,15 @@ export function useWorkspacePalette({ query = '' }) {
     [workspaces, query],
   );
 
-  const executeItem = useCallback(
+  const onExecuteItem = useCallback(
     (item) => {
-      console.log('executing ws palette');
-      history.push('/ws/' + item.data.name);
+      switchWorkspace(item.data.name);
     },
-    [history],
+    [switchWorkspace],
   );
 
   return {
-    executeItem,
+    onExecuteItem,
     items: workspacesFiltered.map((workspace, i) => {
       return {
         uid: i,

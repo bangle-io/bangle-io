@@ -146,10 +146,18 @@ export function useWorkspaces() {
     [history],
   );
 
+  const switchWorkspaceCb = useCallback(
+    async (wsName) => {
+      history.push('/ws/' + wsName);
+    },
+    [history],
+  );
+
   return {
     workspaces,
     createWorkspace: createWorkspaceCb,
     deleteWorkspace: deleteWorkspaceCb,
+    switchWorkspace: switchWorkspaceCb,
   };
 }
 

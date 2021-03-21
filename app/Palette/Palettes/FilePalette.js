@@ -12,7 +12,7 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 export function useFilePalette({ query = '' }) {
   const { pushWsPath } = useWorkspacePath();
   const [files] = useGetWorkspaceFiles();
-  const executeItem = useCallback(
+  const onExecuteItem = useCallback(
     (item) => {
       pushWsPath(item.data);
     },
@@ -22,7 +22,7 @@ export function useFilePalette({ query = '' }) {
   const wsPaths = getItems({ query, files });
 
   return {
-    executeItem,
+    onExecuteItem,
     items: wsPaths.map((wsPath) => {
       return {
         uid: wsPath,

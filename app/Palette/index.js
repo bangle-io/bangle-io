@@ -1,2 +1,2 @@
-export * from './PaletteContext';
 export * from './PaletteInput';
+export * from './Palette';
