@@ -161,7 +161,16 @@ export function useWorkspacePath() {
   const pushWsPath = useCallback(
     (wsPath) => {
       const { wsName, filePath } = resolvePath(wsPath);
-      history.push(`/ws/${wsName}/${filePath}`);
+      const newPath = `/ws/${wsName}/${filePath}`;
+
+      if (newPath === history.location.pathname) {
+        return;
+      }
+
+      history.push({
+        ...history.location,
+        pathname: newPath,
+      });
     },
     [history],
   );
@@ -169,13 +178,17 @@ export function useWorkspacePath() {
   const replaceWsPath = useCallback(
     (wsPath) => {
       const { wsName, filePath } = resolvePath(wsPath);
-      history.replace(`/ws/${wsName}/${filePath}`);
+      history.replace({
+        ...history.location,
+        pathname: `/ws/${wsName}/${filePath}`,
+      });
     },
     [history],
   );
 
   const setWsPermissionState = useCallback(
     (payload) => {
+      console.log('setting ws state', payload);
       history.replace({
         ...history.location,
         state: { ...history.location.state, wsPermissionState: payload },

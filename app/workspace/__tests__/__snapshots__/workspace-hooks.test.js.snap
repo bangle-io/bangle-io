@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`useWorkspacePath refreshes after workspace permissions are updated 1`] = `
+<div>
+  <span>
+    Encountered an Error
+  </span>
+  <br />
+  <span>
+    Error
+    : 
+    some magical error
+  </span>
+  <br />
+  <span>
+    Please try reloading the page or open a ticket if the issue persists
+  </span>
+</div>
+`;

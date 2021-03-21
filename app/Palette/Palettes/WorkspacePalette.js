@@ -1,62 +1,41 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { PaletteInput } from '../PaletteInput';
-
-import { SideBarRow } from '../../components/Aside/SideBarRow';
-import { useWorkspaces } from 'bangle-io/app/workspace/workspace-hooks';
 import { useHistory } from 'react-router-dom';
-import { getActiveIndex } from '../get-active-index';
+import { useCallback, useMemo } from 'react';
+
+import { useWorkspaces } from 'bangle-io/app/workspace/workspace-hooks';
 
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
-export function WorkspacePalette({ counter, query, execute, onDismiss }) {
+export function useWorkspacePalette({ query = '' }) {
   const { workspaces } = useWorkspaces();
-  const workspaceNames = workspaces.map((r) => r.name);
-  const items = useMemo(
-    () =>
-      workspaceNames.filter((ws) => {
-        return strMatch(ws, query);
-      }),
-    [workspaceNames, query],
-  );
   const history = useHistory();
-
-  const onExecuteItem = useCallback(
-    async (activeItemIndex) => {
-      activeItemIndex =
-        activeItemIndex == null
-          ? PaletteInput.getActiveIndex(counter, items.length)
-          : activeItemIndex;
-
-      const workspace = items[activeItemIndex];
-
-      if (!workspace) {
-        return;
-      }
-
-      history.push('/ws/' + workspace);
-      onDismiss();
-    },
-    [counter, items, onDismiss, history],
+  const workspacesFiltered = useMemo(
+    () =>
+      workspaces.filter((ws) => {
+        return strMatch(ws.name, query);
+      }),
+    [workspaces, query],
   );
 
-  useEffect(() => {
-    // parent signals execution by setting execute to true
-    // and expects the child to call dismiss once executed
-    if (execute === true) {
-      onExecuteItem();
-    }
-  }, [execute, onExecuteItem]);
+  const executeItem = useCallback(
+    (item) => {
+      console.log('executing ws palette');
+      history.push('/ws/' + item.data.name);
+    },
+    [history],
+  );
 
-  return workspaces.map((workspace, i) => (
-    <SideBarRow
-      key={i}
-      isActive={getActiveIndex(counter, items.length) === i}
-      title={`${workspace.name} (${workspace.type})`}
-      onClick={() => onExecuteItem(i)}
-    />
-  ));
+  return {
+    executeItem,
+    items: workspacesFiltered.map((workspace, i) => {
+      return {
+        uid: i,
+        title: `${workspace.name} (${workspace.type})`,
+        data: workspace,
+      };
+    }),
+  };
 }
 
 function strMatch(a, b) {

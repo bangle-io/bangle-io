@@ -16,6 +16,9 @@ import {
 } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 
+const LOG = true;
+let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
+
 export function Workspace({ children }) {
   const {
     wsName,
@@ -116,7 +119,7 @@ export function Workspace({ children }) {
     [wsName, wsPath, setWsPermissionState],
   );
 
-  console.log(wsPermissionState);
+  log({ wsPermissionState });
   switch (wsPermissionState.type) {
     case undefined: {
       return <span></span>;

@@ -14,9 +14,9 @@ import { PaletteContextProvider } from './Palette/index';
 
 export function AppContainer() {
   return (
-    <EditorManager>
-      <PaletteContextProvider>
-        <Router>
+    <Router>
+      <EditorManager>
+        <PaletteContextProvider>
           <UIManager>
             <Switch>
               <Route path={['/ws/:wsName']}>
@@ -57,9 +57,9 @@ export function AppContainer() {
               </Route>
             </Switch>
           </UIManager>
-        </Router>
-      </PaletteContextProvider>
-    </EditorManager>
+        </PaletteContextProvider>
+      </EditorManager>
+    </Router>
   );
 }
 

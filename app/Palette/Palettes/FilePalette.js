@@ -1,63 +1,36 @@
-import React, { useCallback, useEffect } from 'react';
-import { PaletteInput } from '../PaletteInput';
-import { SideBarRow } from '../../components/Aside/SideBarRow';
-import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 import {
   useGetWorkspaceFiles,
   useWorkspacePath,
 } from 'bangle-io/app/workspace/workspace-hooks';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
-import { getActiveIndex } from '../get-active-index';
 
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
-FilePalette.propTypes = {
-  counter: PropTypes.number.isRequired,
-  query: PropTypes.string.isRequired,
-  execute: PropTypes.bool,
-  onDismiss: PropTypes.func.isRequired,
-};
-
-export function FilePalette({ execute, onDismiss, query, counter }) {
+export function useFilePalette({ query = '' }) {
   const { pushWsPath } = useWorkspacePath();
   const [files] = useGetWorkspaceFiles();
-  const wsPaths = getItems({ query, files });
-
-  const onExecuteItem = useCallback(
-    (activeItemIndex) => {
-      activeItemIndex =
-        activeItemIndex == null
-          ? getActiveIndex(counter, wsPaths.length)
-          : activeItemIndex;
-
-      const activeWsPath = wsPaths[activeItemIndex];
-      if (!activeWsPath) {
-        return;
-      }
-      pushWsPath(activeWsPath);
-      onDismiss();
+  const executeItem = useCallback(
+    (item) => {
+      pushWsPath(item.data);
     },
-    [counter, wsPaths, pushWsPath, onDismiss],
+    [pushWsPath],
   );
 
-  useEffect(() => {
-    // parent signals execution by setting execute to true
-    // and expects the child to call dismiss once executed
-    if (execute === true) {
-      onExecuteItem();
-    }
-  }, [execute, onExecuteItem]);
+  const wsPaths = getItems({ query, files });
 
-  return wsPaths.map((wsPath, i) => (
-    <SideBarRow
-      key={wsPath}
-      isActive={PaletteInput.getActiveIndex(counter, wsPaths.length) === i}
-      title={resolvePath(wsPath).filePath}
-      onClick={() => onExecuteItem(i)}
-    />
-  ));
+  return {
+    executeItem,
+    items: wsPaths.map((wsPath) => {
+      return {
+        uid: wsPath,
+        title: resolvePath(wsPath).filePath,
+        data: wsPath,
+      };
+    }),
+  };
 }
 
 function getItems({ query, files }) {

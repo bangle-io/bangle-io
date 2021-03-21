@@ -1,10 +1,10 @@
 import React, { createRef, useContext } from 'react';
-import { CommandPalette } from './CommandPalette';
-import { FilePalette } from './FilePalette';
+import { useFilePalette } from './FilePalette';
 import { PaletteInput } from '../PaletteInput';
-import { WorkspacePalette } from './WorkspacePalette';
+import { useWorkspacePalette } from './WorkspacePalette';
 import { useKeybindings, useWatchClickOutside } from 'bangle-io/app/misc/hooks';
 import { PaletteContext } from '../PaletteContext';
+import { PaletteType } from './PaletteType';
 
 const parseRawQuery = (query, paletteType) => {
   // Some of the types depend on the current active query
@@ -63,15 +63,7 @@ export function PaletteContainer() {
     return null;
   }
 
-  const { type, counter, subQuery } = paletteState.current;
-
-  const props = {
-    type,
-    counter: counter,
-    query: subQuery,
-    onDismiss: paletteState.clear,
-    execute: paletteState.execute,
-  };
+  const { type, subQuery } = paletteState.current;
 
   return (
     <div
@@ -103,32 +95,33 @@ export function PaletteContainer() {
         query={generateRawQuery(type, subQuery)}
         counter={paletteState.current.counter}
       />
-      <PaletteItem match={/^(command|command\/input\/.*)$/}>
-        <CommandPalette {...props} />
-      </PaletteItem>
-      <PaletteItem match={/^file$/}>
-        <FilePalette {...props} />
-      </PaletteItem>
-      <PaletteItem match={/^workspace$/}>
-        <WorkspacePalette {...props} />
-      </PaletteItem>
+      <PaletteItems paletteState={paletteState} />
     </div>
   );
 }
 
-function PaletteItem({ match, children }) {
-  const paletteState = useContext(PaletteContext);
+function PaletteItems({ paletteState }) {
+  const query = paletteState.current?.subQuery;
+  const filePalette = useFilePalette({ query });
+  const workspacePalette = useWorkspacePalette({ query });
 
-  if (!paletteState.current) {
-    return null;
-  }
-
-  const { type } = paletteState.current;
-
-  if (!match.test(type)) {
-    return null;
-  }
-  return children;
+  return (
+    <>
+      {/* <PaletteItem match={/^(command|command\/input\/.*)$/}>
+        <CommandPalette {...props} />
+      </PaletteItem> */}
+      <PaletteType
+        match={/^file$/}
+        items={filePalette.items}
+        executeItem={filePalette.executeItem}
+      />
+      <PaletteType
+        match={/^workspace$/}
+        items={workspacePalette.items}
+        executeItem={workspacePalette.executeItem}
+      />
+    </>
+  );
 }
 
 function usePaletteKeybindings() {

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { commands } from './commands';
-import { PaletteInput } from 'bangle-io/app/Palette/PaletteInput';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
+import { getActiveIndex } from '../get-active-index';
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
@@ -50,7 +50,7 @@ export class CommandPalette extends React.PureComponent {
 
     const items = getCommands(query);
     return items.map(([key, Command], i) => {
-      const isActive = PaletteInput.getActiveIndex(counter, items.length) === i;
+      const isActive = getActiveIndex(counter, items.length) === i;
       return (
         <Command
           key={key}
