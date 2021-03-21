@@ -16,21 +16,22 @@ import {
 import { specRegistry } from '../editor/spec-sheet';
 
 export function useGetWorkspaceFiles() {
-  const { wsName } = useWorkspacePath();
+  const { wsName, wsPermissionState } = useWorkspacePath();
 
   const [files, setFiles] = useState([]);
 
   const refreshFiles = useCallback(() => {
-    if (wsName) {
+    if (wsName && wsPermissionState.type === 'ready') {
       listAllFiles(wsName).then((items) => {
         setFiles(items);
       });
     }
-  }, [wsName]);
+  }, [wsName, wsPermissionState.type]);
 
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
+
   return [files, refreshFiles];
 }
 
@@ -173,8 +174,28 @@ export function useWorkspacePath() {
     [history],
   );
 
+  const setWsPermissionState = useCallback(
+    (payload) => {
+      history.replace({
+        ...history.location,
+        state: { ...history.location.state, wsPermissionState: payload },
+      });
+    },
+    [history],
+  );
+
+  // TODO should I add more safeguard for
+  // workspaceperm.type == ready?
   if (!wsName) {
-    return {};
+    return {
+      wsName,
+      wsPath: null,
+      filePath: null,
+      pushWsPath,
+      replaceWsPath,
+      setWsPermissionState,
+      wsPermissionState: {},
+    };
   }
 
   const filePath = pathname.split('/').slice(3).join('/');
@@ -190,5 +211,7 @@ export function useWorkspacePath() {
     filePath,
     pushWsPath,
     replaceWsPath,
+    wsPermissionState: history.location?.state?.wsPermissionState ?? {},
+    setWsPermissionState,
   };
 }
