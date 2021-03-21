@@ -1,9 +1,9 @@
 import React, { createRef, useState } from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Palette } from '../Palette';
+import { PaletteInput } from '../PaletteInput';
 
-describe('Palette', () => {
+describe('PaletteInput', () => {
   let onDismiss, result, onPressEnter;
 
   beforeEach(async () => {
@@ -17,7 +17,7 @@ describe('Palette', () => {
 
       return (
         <div>
-          <Palette
+          <PaletteInput
             ref={paletteInputRef}
             onDismiss={onDismiss}
             onPressEnter={onPressEnter}

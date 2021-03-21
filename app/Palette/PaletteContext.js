@@ -1,16 +1,27 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { getLast } from '../misc/index';
 
-export const PaletteSwitchContext = React.createContext();
+export const PaletteContext = React.createContext();
 
-export function PaletteSwitch({ children }) {
-  const [state, setState] = useState({ stack: [] });
+export function PaletteContextProvider({ children }) {
+  const [state, setState] = useState({ stack: [], execute: false });
 
   const push = useCallback(
     (val) => {
       setState({
         ...state,
         stack: [val],
+        execute: false,
+      });
+    },
+    [setState, state],
+  );
+
+  const onExecute = useCallback(
+    (val = true) => {
+      setState({
+        ...state,
+        execute: val,
       });
     },
     [setState, state],
@@ -23,6 +34,7 @@ export function PaletteSwitch({ children }) {
 
       setState({
         ...state,
+        execute: false,
         stack: [
           ...state.stack.slice(0, state.stack.length - 1),
           { ...current, ...newCurrent },
@@ -37,6 +49,7 @@ export function PaletteSwitch({ children }) {
       setState({
         ...state,
         stack: [],
+        execute: false,
       });
     },
     [setState, state],
@@ -47,13 +60,13 @@ export function PaletteSwitch({ children }) {
       updateCurrent,
       push,
       clear,
+      execute: state.execute,
+      onExecute,
       current: getLast(state.stack),
     };
-  }, [clear, updateCurrent, push, state]);
+  }, [clear, updateCurrent, push, state, onExecute]);
 
   return (
-    <PaletteSwitchContext.Provider value={value}>
-      {children}
-    </PaletteSwitchContext.Provider>
+    <PaletteContext.Provider value={value}>{children}</PaletteContext.Provider>
   );
 }

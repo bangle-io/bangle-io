@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react';
 import { keyName } from 'w3c-keyname';
 import PropTypes from 'prop-types';
 
-export const Palette = React.forwardRef(
+export const PaletteInput = React.forwardRef(
   (
     { onDismiss, onPressEnter, updateCounter, updateQuery, query, counter },
     inputRef,
@@ -57,7 +57,7 @@ export const Palette = React.forwardRef(
   },
 );
 
-Palette.propTypes = {
+PaletteInput.propTypes = {
   onDismiss: PropTypes.func.isRequired,
   onPressEnter: PropTypes.func.isRequired,
   updateCounter: PropTypes.func.isRequired,
@@ -71,7 +71,7 @@ Palette.propTypes = {
  * @param {*} counter The currently active counter passed to you by this component
  * @param {*} size The total number of elements displayed after applying query
  */
-Palette.getActiveIndex = (counter, size) => {
+PaletteInput.getActiveIndex = (counter, size) => {
   const r = counter % size;
   return r < 0 ? r + size : r;
 };

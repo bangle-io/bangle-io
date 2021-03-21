@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Palette } from '../../helper-ui/Palette';
+import { PaletteInput } from '../PaletteInput';
 
-import { SideBarRow } from '../Aside/SideBarRow';
+import { SideBarRow } from '../../components/Aside/SideBarRow';
 import { useWorkspaces } from 'bangle-io/app/workspace/workspace-hooks';
 import { useHistory } from 'react-router-dom';
+import { getActiveIndex } from '../get-active-index';
 
 const LOG = false;
 
@@ -25,7 +26,7 @@ export function WorkspacePalette({ counter, query, execute, onDismiss }) {
     async (activeItemIndex) => {
       activeItemIndex =
         activeItemIndex == null
-          ? Palette.getActiveIndex(counter, items.length)
+          ? PaletteInput.getActiveIndex(counter, items.length)
           : activeItemIndex;
 
       const workspace = items[activeItemIndex];
@@ -51,7 +52,7 @@ export function WorkspacePalette({ counter, query, execute, onDismiss }) {
   return workspaces.map((workspace, i) => (
     <SideBarRow
       key={i}
-      isActive={Palette.getActiveIndex(counter, items.length) === i}
+      isActive={getActiveIndex(counter, items.length) === i}
       title={`${workspace.name} (${workspace.type})`}
       onClick={() => onExecuteItem(i)}
     />

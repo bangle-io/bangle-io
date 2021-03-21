@@ -5,7 +5,7 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from 'bangle-io/app/workspace/workspace-hooks';
-import { SideBarRow } from '../Aside/SideBarRow';
+import { SideBarRow } from '../../components/Aside/SideBarRow';
 import { UIManagerContext } from 'bangle-io/app/UIManager';
 import { pickADirectory } from 'bangle-io/app/workspace/nativefs-helpers';
 

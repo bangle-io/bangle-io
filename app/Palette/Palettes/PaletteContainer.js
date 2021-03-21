@@ -1,10 +1,10 @@
 import React, { createRef, useContext } from 'react';
 import { CommandPalette } from './CommandPalette';
 import { FilePalette } from './FilePalette';
-import { Palette } from '../../helper-ui/Palette';
+import { PaletteInput } from '../PaletteInput';
 import { WorkspacePalette } from './WorkspacePalette';
-import { PaletteSwitchContext } from 'bangle-io/app/helper-ui/Switch';
 import { useKeybindings, useWatchClickOutside } from 'bangle-io/app/misc/hooks';
+import { PaletteContext } from '../PaletteContext';
 
 const parseRawQuery = (query, paletteType) => {
   // Some of the types depend on the current active query
@@ -49,12 +49,11 @@ const defaultValues = {
   type: 'file',
   subQuery: '',
   counter: 0,
-  onExecute: null,
 };
 
 export function PaletteContainer() {
   usePaletteKeybindings();
-  const paletteState = useContext(PaletteSwitchContext);
+  const paletteState = useContext(PaletteContext);
   const paletteInputRef = createRef();
   const containerRef = useWatchClickOutside(paletteState.clear, () => {
     paletteInputRef.current.focus();
@@ -70,8 +69,8 @@ export function PaletteContainer() {
     type,
     counter: counter,
     query: subQuery,
-    execute: false,
     onDismiss: paletteState.clear,
+    execute: paletteState.execute,
   };
 
   return (
@@ -79,12 +78,12 @@ export function PaletteContainer() {
       className="bangle-palette z-30 p-2 shadow-md border flex flex-col"
       ref={containerRef}
     >
-      <Palette
+      <PaletteInput
         ref={paletteInputRef}
         onDismiss={paletteState.clear}
         onPressEnter={() => {
-          if (paletteState.current.onExecute) {
-            paletteState.current.onExecute();
+          if (!paletteState.execute) {
+            paletteState.onExecute();
           }
         }}
         updateCounter={(counter) => {
@@ -118,7 +117,7 @@ export function PaletteContainer() {
 }
 
 function PaletteItem({ match, children }) {
-  const paletteState = useContext(PaletteSwitchContext);
+  const paletteState = useContext(PaletteContext);
 
   if (!paletteState.current) {
     return null;
@@ -133,7 +132,7 @@ function PaletteItem({ match, children }) {
 }
 
 function usePaletteKeybindings() {
-  const paletteState = useContext(PaletteSwitchContext);
+  const paletteState = useContext(PaletteContext);
 
   useKeybindings(() => {
     return {

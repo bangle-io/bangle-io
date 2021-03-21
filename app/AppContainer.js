@@ -5,17 +5,17 @@ import React from 'react';
 import { Editor } from './components/Editor';
 import { EditorManager } from './editor/EditorManager';
 import { Aside } from './components/Aside/Aside';
-import { PaletteContainer } from './components/Palettes/PaletteContainer';
+import { PaletteContainer } from './Palette/Palettes/PaletteContainer';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspacePath } from './workspace/workspace-hooks';
 import { Workspace } from './workspace/Workspace';
 import { UIManager } from './UIManager';
-import { PaletteSwitch } from './helper-ui/Switch';
+import { PaletteContextProvider } from './Palette/index';
 
 export function AppContainer() {
   return (
     <EditorManager>
-      <PaletteSwitch>
+      <PaletteContextProvider>
         <Router>
           <UIManager>
             <Switch>
@@ -58,7 +58,7 @@ export function AppContainer() {
             </Switch>
           </UIManager>
         </Router>
-      </PaletteSwitch>
+      </PaletteContextProvider>
     </EditorManager>
   );
 }

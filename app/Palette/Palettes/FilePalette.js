@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Palette } from '../../helper-ui/Palette';
-import { SideBarRow } from '../Aside/SideBarRow';
+import React, { useCallback, useEffect } from 'react';
+import { PaletteInput } from '../PaletteInput';
+import { SideBarRow } from '../../components/Aside/SideBarRow';
 import PropTypes from 'prop-types';
 import {
   useGetWorkspaceFiles,
   useWorkspacePath,
 } from 'bangle-io/app/workspace/workspace-hooks';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
+import { getActiveIndex } from '../get-active-index';
 
 const LOG = false;
 
@@ -21,14 +22,14 @@ FilePalette.propTypes = {
 
 export function FilePalette({ execute, onDismiss, query, counter }) {
   const { pushWsPath } = useWorkspacePath();
-
   const [files] = useGetWorkspaceFiles();
   const wsPaths = getItems({ query, files });
+
   const onExecuteItem = useCallback(
     (activeItemIndex) => {
       activeItemIndex =
         activeItemIndex == null
-          ? Palette.getActiveIndex(counter, wsPaths.length)
+          ? getActiveIndex(counter, wsPaths.length)
           : activeItemIndex;
 
       const activeWsPath = wsPaths[activeItemIndex];
@@ -52,7 +53,7 @@ export function FilePalette({ execute, onDismiss, query, counter }) {
   return wsPaths.map((wsPath, i) => (
     <SideBarRow
       key={wsPath}
-      isActive={Palette.getActiveIndex(counter, wsPaths.length) === i}
+      isActive={PaletteInput.getActiveIndex(counter, wsPaths.length) === i}
       title={resolvePath(wsPath).filePath}
       onClick={() => onExecuteItem(i)}
     />
