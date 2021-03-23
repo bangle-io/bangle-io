@@ -13,6 +13,9 @@ const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
 
+/**
+ * see FilePalette documentation
+ */
 export function useCommandPalette({ updatePalette }) {
   return [
     useToggleTheme(),

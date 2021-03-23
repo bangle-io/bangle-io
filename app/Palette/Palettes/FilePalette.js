@@ -10,6 +10,14 @@ const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
+/**
+ * We return a function which accepts query and paletteType,
+ * this allows us to lazily render items and control the filtering
+ * on our end. This function will be then passed to PaletteUI which
+ * will call it with right params whenever it needs to show a list of
+ * items.
+ * Dont forget to read docs at PaletteUI
+ */
 export function useFilePalette() {
   const { pushWsPath } = useWorkspacePath();
   const [files] = useGetWorkspaceFiles();
