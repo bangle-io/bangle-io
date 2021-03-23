@@ -1,13 +1,14 @@
-import React, { createRef, useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, act } from '@testing-library/react';
-import { Palette } from '../Palette';
 import { UIManager, UIManagerContext } from 'bangle-io/app/UIManager';
 import {
   useGetWorkspaceFiles,
   useWorkspacePath,
   useWorkspaces,
 } from 'bangle-io/app/workspace/workspace-hooks';
+import { FILE_PALETTE } from '../paletteTypes';
+import { Palette } from '../../Palette/Palette';
 
 let result, paletteType, paletteInitialQuery, dispatch;
 jest.mock('bangle-io/app/workspace/workspace-hooks', () => {
@@ -63,7 +64,7 @@ test('Correctly switches to file type', async () => {
   act(() => {
     dispatch({
       type: 'UI/CHANGE_PALETTE_TYPE',
-      value: { type: 'file' },
+      value: { type: FILE_PALETTE },
     });
   });
 

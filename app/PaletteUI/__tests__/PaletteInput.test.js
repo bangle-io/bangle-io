@@ -1,7 +1,7 @@
 import React, { createRef, useState } from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { PaletteInput } from '../PaletteInput';
+import { PaletteInputUI } from '../PaletteUI';
 
 describe('PaletteInput', () => {
   let onDismiss, result, onPressEnter;
@@ -17,7 +17,7 @@ describe('PaletteInput', () => {
 
       return (
         <div>
-          <PaletteInput
+          <PaletteInputUI
             ref={paletteInputRef}
             onDismiss={onDismiss}
             onPressEnter={onPressEnter}

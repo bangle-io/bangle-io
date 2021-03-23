@@ -8,7 +8,10 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from '../workspace-hooks';
-import { render, act } from '@testing-library/react';
+import {
+  render,
+  act,
+} from 'bangle-io/app/PaletteUI/__tests__/@testing-library/react';
 import * as idb from 'idb-keyval';
 import { Workspace } from '../Workspace';
 import { getWorkspaceInfo } from '../workspace-helpers';

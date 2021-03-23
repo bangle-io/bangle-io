@@ -4,33 +4,42 @@ import {
   useWorkspacePath,
 } from 'bangle-io/app/workspace/workspace-hooks';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
+import { FILE_PALETTE } from '../paletteTypes';
 
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
-export function useFilePalette({ query = '' }) {
+export function useFilePalette() {
   const { pushWsPath } = useWorkspacePath();
   const [files] = useGetWorkspaceFiles();
   const onExecuteItem = useCallback(
-    (item) => {
-      pushWsPath(item.data);
+    ({ data }) => {
+      pushWsPath(data.wsPath);
     },
     [pushWsPath],
   );
 
-  const wsPaths = getItems({ query, files });
+  const result = useCallback(
+    ({ query, paletteType }) => {
+      if (paletteType !== FILE_PALETTE) {
+        return null;
+      }
+      const wsPaths = getItems({ query, files });
 
-  return {
-    onExecuteItem,
-    items: wsPaths.map((wsPath) => {
-      return {
-        uid: wsPath,
-        title: resolvePath(wsPath).filePath,
-        data: wsPath,
-      };
-    }),
-  };
+      return wsPaths.map((wsPath) => {
+        return {
+          uid: wsPath,
+          title: resolvePath(wsPath).filePath,
+          onExecuteItem,
+          data: { wsPath },
+        };
+      });
+    },
+    [onExecuteItem, files],
+  );
+
+  return result;
 }
 
 function getItems({ query, files }) {

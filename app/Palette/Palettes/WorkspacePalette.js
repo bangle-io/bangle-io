@@ -1,37 +1,42 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useWorkspaces } from 'bangle-io/app/workspace/workspace-hooks';
+import { WORKSPACE_PALETTE } from '../paletteTypes';
 
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
-export function useWorkspacePalette({ query = '' }) {
+export function useWorkspacePalette() {
   const { workspaces, switchWorkspace } = useWorkspaces();
-  const workspacesFiltered = useMemo(
-    () =>
-      workspaces.filter((ws) => {
-        return strMatch(ws.name, query);
-      }),
-    [workspaces, query],
-  );
 
   const onExecuteItem = useCallback(
-    (item) => {
-      switchWorkspace(item.data.name);
+    ({ data }) => {
+      switchWorkspace(data.workspace.name);
     },
     [switchWorkspace],
   );
 
-  return {
-    onExecuteItem,
-    items: workspacesFiltered.map((workspace, i) => {
-      return {
-        uid: i,
-        title: `${workspace.name} (${workspace.type})`,
-        data: workspace,
-      };
-    }),
-  };
+  return useCallback(
+    ({ query, paletteType }) => {
+      if (paletteType !== WORKSPACE_PALETTE) {
+        return null;
+      }
+
+      return workspaces
+        .filter((ws) => {
+          return strMatch(ws.name, query);
+        })
+        .map((workspace, i) => {
+          return {
+            uid: `${workspace.name}-(${workspace.type})`,
+            onExecuteItem,
+            title: `${workspace.name} (${workspace.type})`,
+            data: { workspace },
+          };
+        });
+    },
+    [onExecuteItem, workspaces],
+  );
 }
 
 function strMatch(a, b) {

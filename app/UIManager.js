@@ -15,6 +15,7 @@ export function UIManager({ children }) {
       sidebar: false,
       paletteType: undefined,
       paletteInitialQuery: undefined,
+      paletteMetadata: undefined,
       theme: localStorage.getItem('theme') || 'light',
     },
     (store) => {
@@ -50,6 +51,7 @@ const reducer = (state, action) => {
         ...state,
         paletteType: action.value.type,
         paletteInitialQuery: action.value.initialQuery,
+        paletteMetadata: action.value.metadata,
       };
     }
 
@@ -57,6 +59,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         paletteInitialQuery: undefined,
+        paletteMetadata: undefined,
         paletteType: state.paletteType
           ? undefined
           : action.paletteType || DEFAULT_PALETTE,

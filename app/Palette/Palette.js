@@ -1,99 +1,115 @@
-import React, { useContext, useEffect } from 'react';
-import { useState, useCallback } from 'react';
+import React, { useContext } from 'react';
+import { useCallback } from 'react';
+
 import { useKeybindings } from '../misc/hooks';
+import { PaletteUI } from '../PaletteUI/PaletteUI';
 import { UIManagerContext } from '../UIManager';
-import { PaletteContainer } from './PaletteContainer';
+import { useCommandPalette } from './Palettes/CommandPalette';
+import { useFilePalette } from './Palettes/FilePalette';
+import { useInputPalette } from './Palettes/InputPalette';
+import {
+  COMMAND_PALETTE,
+  FILE_PALETTE,
+  INPUT_PALETTE,
+  WORKSPACE_PALETTE,
+} from './paletteTypes';
+import { useWorkspacePalette } from './Palettes/WorkspacePalette';
 
 export function Palette() {
-  const { paletteType, paletteInitialQuery, dispatch } = useContext(
-    UIManagerContext,
-  );
-  const [query, updateQuery] = useState(paletteInitialQuery || '');
-  const [counter, updateCounter] = useState(0);
+  const {
+    paletteMetadata: metadata,
+    paletteType,
+    paletteInitialQuery,
+    dispatch,
+  } = useContext(UIManagerContext);
 
-  /**
-   * Sets a flag to signal execution of whatever item
-   * is currently active. It is handlers job to set it
-   * back to false, to avoid infinite loop.
-   */
-  const [executeActiveItem, updateExecuteActiveItem] = useState(false);
-
-  useEffect(() => {
-    if (executeActiveItem) {
-      updateExecuteActiveItem(false);
-    }
-  }, [executeActiveItem, query, counter, paletteType]);
-
-  const updatePaletteType = useCallback(
-    (val, initialQuery) => {
+  const updatePalette = useCallback(
+    ({ type, initialQuery, metadata }) => {
       dispatch({
         type: 'UI/CHANGE_PALETTE_TYPE',
-        value: { type: val, initialQuery },
+        value: { type: type, initialQuery, metadata },
       });
     },
     [dispatch],
   );
 
-  useEffect(() => {
-    updateExecuteActiveItem(false);
-    updateQuery(paletteInitialQuery || '');
-    updateCounter(0);
-  }, [paletteType, paletteInitialQuery]);
+  usePaletteKeybindings({ updatePalette });
 
-  usePaletteKeybindings({ updatePaletteType, paletteType, updateCounter });
-
-  if (!paletteType) {
-    return null;
-  }
+  const paletteItems = [
+    useFilePalette(),
+    useWorkspacePalette(),
+    useCommandPalette({ updatePalette }),
+    useInputPalette({ metadata, updatePalette }),
+  ];
 
   return (
-    <PaletteContainer
-      updateExecuteActiveItem={updateExecuteActiveItem}
-      executeActiveItem={executeActiveItem}
-      updatePaletteType={updatePaletteType}
+    <PaletteUI
       paletteType={paletteType}
-      updateCounter={updateCounter}
-      updateQuery={updateQuery}
-      counter={counter}
-      query={query}
+      updatePalette={updatePalette}
+      paletteInitialQuery={paletteInitialQuery}
+      parseRawQuery={parseRawQuery}
+      generateRawQuery={generateRawQuery}
+      paletteItems={paletteItems}
     />
   );
 }
 
-function usePaletteKeybindings({
-  updatePaletteType,
-  paletteType,
-  updateCounter,
-}) {
+function usePaletteKeybindings({ updatePalette }) {
   useKeybindings(() => {
     return {
       'Mod-P': () => {
-        if (paletteType === 'command') {
-          updateCounter((val) => val + 1);
-          return true;
-        }
-        updatePaletteType('command');
+        updatePalette({ type: COMMAND_PALETTE });
         return true;
       },
 
       'Mod-p': () => {
-        if (paletteType === 'file') {
-          updateCounter((val) => val + 1);
-          return true;
-        }
-        updatePaletteType('file');
+        updatePalette({ type: FILE_PALETTE });
         return true;
       },
 
       'Ctrl-r': () => {
-        console.log({ pressed: 'yes' });
-        if (paletteType === 'workspace') {
-          updateCounter((val) => val + 1);
-          return true;
-        }
-        updatePaletteType('workspace');
+        updatePalette({ type: WORKSPACE_PALETTE });
         return true;
       },
     };
-  }, [updatePaletteType, paletteType, updateCounter]);
+  }, [updatePalette]);
 }
+
+const parseRawQuery = (currentType, rawQuery) => {
+  // Some of the types depend on the current active query
+  // for example if query starts with `>`, it becomes a command type
+  // and if a user backspaces `>` it defaults to file.
+  // but thats not true for all as `command/input/*` is static
+  // and can only be dismissed.
+  if (rawQuery.startsWith('>')) {
+    return { paletteType: COMMAND_PALETTE, query: rawQuery.slice(1) };
+  }
+
+  if (rawQuery.startsWith('ws:')) {
+    return { paletteType: WORKSPACE_PALETTE, query: rawQuery.slice(3) };
+  }
+
+  // Disallow changing of palette type
+  if (currentType === INPUT_PALETTE) {
+    return { paletteType: currentType, query: rawQuery };
+  }
+
+  return { paletteType: FILE_PALETTE, query: rawQuery };
+};
+
+const generateRawQuery = (paletteType, query) => {
+  if (paletteType === COMMAND_PALETTE) {
+    return '>' + query;
+  }
+
+  if (paletteType === WORKSPACE_PALETTE) {
+    return 'ws:' + query;
+  }
+
+  if (paletteType === INPUT_PALETTE) {
+    return query;
+  }
+
+  // defaults to file
+  return query;
+};
