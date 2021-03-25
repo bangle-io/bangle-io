@@ -8,10 +8,7 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from '../workspace-hooks';
-import {
-  render,
-  act,
-} from 'bangle-io/app/PaletteUI/__tests__/@testing-library/react';
+import { render, act } from '@testing-library/react';
 import * as idb from 'idb-keyval';
 import { Workspace } from '../Workspace';
 import { getWorkspaceInfo } from '../workspace-helpers';
@@ -89,7 +86,7 @@ describe('useGetWorkspaceFiles', () => {
       return (
         <div data-testid="result">
           {files.map((f) => (
-            <span>{f}</span>
+            <span key={f}>{f}</span>
           ))}
         </div>
       );
@@ -177,7 +174,7 @@ describe('useWorkspacePath', () => {
       return (
         <div data-testid="result">
           {files.map((f) => (
-            <span>{f}</span>
+            <span key={f}>{f}</span>
           ))}
         </div>
       );

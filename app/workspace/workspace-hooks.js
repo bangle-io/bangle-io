@@ -14,6 +14,7 @@ import {
   renameFile,
 } from './file-helpers';
 import { specRegistry } from '../editor/spec-sheet';
+import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
 
 export function useGetWorkspaceFiles() {
   const { wsName, wsPermissionState } = useWorkspacePath();
@@ -21,12 +22,20 @@ export function useGetWorkspaceFiles() {
   const [files, setFiles] = useState([]);
 
   const refreshFiles = useCallback(() => {
-    if (wsName && wsPermissionState.type === 'ready') {
+    if (
+      wsName &&
+      (wsPermissionState.type === 'ready' ||
+        // TODO I am not happy with this error code check here
+        // I feel this part of code shouldnt know so much about error and codes
+        // Can we make the wsPermissionState accomodate the common 404 not found error.
+        // allow listing of files if the current file is not found
+        wsPermissionState.error?.code === NATIVE_FS_FILE_NOT_FOUND_ERROR)
+    ) {
       listAllFiles(wsName).then((items) => {
         setFiles(items);
       });
     }
-  }, [wsName, wsPermissionState.type]);
+  }, [wsName, wsPermissionState]);
 
   useEffect(() => {
     refreshFiles();
