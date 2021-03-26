@@ -20,7 +20,7 @@ export function ActivityBar() {
 
   return (
     <div
-      className={`grid-activity-bar flex pt-3 py-3  ${
+      className={`grid-activity-bar flex md:py-3   ${
         config.isProduction ? 'bg-pink-900' : 'bg-gray-900'
       } flex-col z-30`}
     >
@@ -43,7 +43,7 @@ export function ActivityBar() {
 function AsideButtonBox({ children, isActive }) {
   return (
     <div
-      className={`flex aside-button-box align-center justify-center pt-3 pb-3 border-l-2 mt-1 mb-1 ${
+      className={`flex aside-button-box items-center justify-center pt-3 pb-3 border-l-2 mt-1 mb-1 ${
         isActive ? 'active' : ''
       }`}
     >

@@ -6,18 +6,20 @@
   margin-left: auto;
   margin-right: auto;
   width: 600px;
-  max-height: 600px;
-  overflow-y: scroll;
-  top: 0;
+  max-height: min(80vh, 600px);
 }
 
 .bangle-palette input {
   background-color: var(--bg-color);
 }
 
+.bangle-palette .palette-input-wrapper {
+  border-bottom: 2px solid var(--border-color);
+}
+
 @media screen and (max-width: 640px) {
   .bangle-palette {
     width: 100vw;
-    top: 100px;
+    top: 40px;
   }
 }

@@ -32,7 +32,7 @@
 @media screen and (max-width: 640px) {
   .main-wrapper {
     display: grid;
-    grid-template-rows: 90px auto;
+    grid-template-rows: 40px auto;
   }
   .editor-wrapper {
     grid-row: 2/4;
@@ -40,6 +40,8 @@
   }
   .grid-activity-bar {
     grid-row: 1 / 2;
+    flex-direction: row;
+    justify-content: space-around;
   }
   .grid-side-bar {
     grid-row: 2/4;

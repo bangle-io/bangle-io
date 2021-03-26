@@ -132,7 +132,7 @@ export function PaletteContainer({
 
   return (
     <div
-      className="bangle-palette z-30 p-2 shadow-md border flex flex-col"
+      className="bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
       ref={containerRef}
     >
       <PaletteInput
@@ -149,18 +149,20 @@ export function PaletteContainer({
         executeHandler={executeHandler}
         activeItemIndex={activeItemIndex}
       />
-      {resolvedItems.map((item, i) => {
-        return (
-          <SideBarRow
-            key={item.uid}
-            isActive={getActiveIndex(counter, resolvedItems.length) === i}
-            title={item.title}
-            onClick={(e) => {
-              executeHandler(i, e.metaKey);
-            }}
-          />
-        );
-      })}
+      <div className="overflow-y-auto">
+        {resolvedItems.map((item, i) => {
+          return (
+            <SideBarRow
+              key={item.uid}
+              isActive={getActiveIndex(counter, resolvedItems.length) === i}
+              title={item.title}
+              onClick={(e) => {
+                executeHandler(i, e.metaKey);
+              }}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -256,7 +258,7 @@ export const PaletteInputUI = React.forwardRef(
     }, [inputRef]);
 
     return (
-      <div className="flex mb-2 sticky top-0">
+      <div className="palette-input-wrapper flex py-2 px-2 top-0">
         <input
           type="text"
           aria-label="palette-input"
