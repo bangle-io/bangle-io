@@ -158,7 +158,6 @@ export async function listAllFiles(wsName) {
   switch (ws.type) {
     case 'browser': {
       files = await IndexDBIO.listFiles(wsName);
-      console.log({ files });
       break;
     }
 

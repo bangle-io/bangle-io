@@ -15,6 +15,7 @@ export function UIManager({ children }) {
       sidebar: false,
       paletteType: undefined,
       paletteInitialQuery: undefined,
+      paletteMetadata: undefined,
       theme: localStorage.getItem('theme') || 'light',
     },
     (store) => {
@@ -44,27 +45,27 @@ const reducer = (state, action) => {
         sidebar: !state.sidebar,
       };
     }
-    case 'UI/OPEN_PALETTE': {
+
+    case 'UI/CHANGE_PALETTE_TYPE': {
       return {
         ...state,
-        paletteType: action.value.type || DEFAULT_PALETTE,
+        paletteType: action.value.type,
         paletteInitialQuery: action.value.initialQuery,
+        paletteMetadata: action.value.metadata,
       };
     }
+
     case 'UI/TOGGLE_PALETTE': {
       return {
         ...state,
+        paletteInitialQuery: undefined,
+        paletteMetadata: undefined,
         paletteType: state.paletteType
           ? undefined
           : action.paletteType || DEFAULT_PALETTE,
       };
     }
-    case 'UI/CLOSE_PALETTE': {
-      return {
-        ...state,
-        paletteType: undefined,
-      };
-    }
+
     case 'UI/TOGGLE_THEME': {
       const theme = state.theme === 'dark' ? 'light' : 'dark';
       localStorage.setItem('theme', theme);

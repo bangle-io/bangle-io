@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { keyName } from 'w3c-keyname';
 
 const mac =
@@ -86,19 +86,4 @@ export function keybindingsHelper(bindings) {
       return;
     }
   };
-}
-
-/**
- * Using a callback to get a memoized version of bindings
- * @param {*} bindingsCb
- */
-export function useKeybindings(bindingsCb) {
-  const [bindings] = useState(bindingsCb);
-  useEffect(() => {
-    const callback = keybindingsHelper(bindings);
-    document.addEventListener('keydown', callback);
-    return () => {
-      document.removeEventListener('keydown', callback);
-    };
-  }, [bindings]);
 }

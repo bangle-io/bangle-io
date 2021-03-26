@@ -24,6 +24,12 @@ module.exports = {
     'no-process-env': 'error',
     // 'react/prop-types': ['error'],
     // 'import/no-unused-modules': [1, { unusedExports: true }],
+    'react-hooks/exhaustive-deps': [
+      'warn',
+      {
+        additionalHooks: '(useKeybindings|useMyOtherCustomHook)',
+      },
+    ],
   },
   settings: {
     jest: {

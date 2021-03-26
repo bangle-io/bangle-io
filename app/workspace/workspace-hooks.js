@@ -14,23 +14,33 @@ import {
   renameFile,
 } from './file-helpers';
 import { specRegistry } from '../editor/spec-sheet';
+import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
 
 export function useGetWorkspaceFiles() {
-  const { wsName } = useWorkspacePath();
+  const { wsName, wsPermissionState } = useWorkspacePath();
 
   const [files, setFiles] = useState([]);
 
   const refreshFiles = useCallback(() => {
-    if (wsName) {
+    if (
+      wsName &&
+      (wsPermissionState.type === 'ready' ||
+        // TODO I am not happy with this error code check here
+        // I feel this part of code shouldnt know so much about error and codes
+        // Can we make the wsPermissionState accomodate the common 404 not found error.
+        // allow listing of files if the current file is not found
+        wsPermissionState.error?.code === NATIVE_FS_FILE_NOT_FOUND_ERROR)
+    ) {
       listAllFiles(wsName).then((items) => {
         setFiles(items);
       });
     }
-  }, [wsName]);
+  }, [wsName, wsPermissionState]);
 
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
+
   return [files, refreshFiles];
 }
 
@@ -145,10 +155,18 @@ export function useWorkspaces() {
     [history],
   );
 
+  const switchWorkspaceCb = useCallback(
+    async (wsName) => {
+      history.push('/ws/' + wsName);
+    },
+    [history],
+  );
+
   return {
     workspaces,
     createWorkspace: createWorkspaceCb,
     deleteWorkspace: deleteWorkspaceCb,
+    switchWorkspace: switchWorkspaceCb,
   };
 }
 
@@ -160,7 +178,16 @@ export function useWorkspacePath() {
   const pushWsPath = useCallback(
     (wsPath) => {
       const { wsName, filePath } = resolvePath(wsPath);
-      history.push(`/ws/${wsName}/${filePath}`);
+      const newPath = `/ws/${wsName}/${filePath}`;
+
+      if (newPath === history.location.pathname) {
+        return;
+      }
+
+      history.push({
+        ...history.location,
+        pathname: newPath,
+      });
     },
     [history],
   );
@@ -168,13 +195,37 @@ export function useWorkspacePath() {
   const replaceWsPath = useCallback(
     (wsPath) => {
       const { wsName, filePath } = resolvePath(wsPath);
-      history.replace(`/ws/${wsName}/${filePath}`);
+      history.replace({
+        ...history.location,
+        pathname: `/ws/${wsName}/${filePath}`,
+      });
     },
     [history],
   );
 
+  const setWsPermissionState = useCallback(
+    (payload) => {
+      console.log('setting ws state', payload);
+      history.replace({
+        ...history.location,
+        state: { ...history.location.state, wsPermissionState: payload },
+      });
+    },
+    [history],
+  );
+
+  // TODO should I add more safeguard for
+  // workspaceperm.type == ready?
   if (!wsName) {
-    return {};
+    return {
+      wsName,
+      wsPath: null,
+      filePath: null,
+      pushWsPath,
+      replaceWsPath,
+      setWsPermissionState,
+      wsPermissionState: {},
+    };
   }
 
   const filePath = pathname.split('/').slice(3).join('/');
@@ -190,5 +241,7 @@ export function useWorkspacePath() {
     filePath,
     pushWsPath,
     replaceWsPath,
+    wsPermissionState: history.location?.state?.wsPermissionState ?? {},
+    setWsPermissionState,
   };
 }

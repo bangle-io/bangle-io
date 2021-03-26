@@ -5,7 +5,7 @@ import React from 'react';
 import { Editor } from './components/Editor';
 import { EditorManager } from './editor/EditorManager';
 import { Aside } from './components/Aside/Aside';
-import { PaletteContainer } from './components/Palettes/PaletteContainer';
+import { Palette } from './Palette/index';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspacePath } from './workspace/workspace-hooks';
 import { Workspace } from './workspace/Workspace';
@@ -13,8 +13,8 @@ import { UIManager } from './UIManager';
 
 export function AppContainer() {
   return (
-    <EditorManager>
-      <Router>
+    <Router>
+      <EditorManager>
         <UIManager>
           <Switch>
             <Route path={['/ws/:wsName']}>
@@ -42,21 +42,21 @@ export function AppContainer() {
                     </div>
                   </div>
                 </div>
-                <PaletteContainer />
+                <Palette />
                 <Aside />
               </div>
             </Route>
             <Route path="/">
               <div className="h-screen main-wrapper">
                 <span>Let us open a workspace</span>
-                <PaletteContainer />
+                <Palette />
                 <Aside />
               </div>
             </Route>
           </Switch>
         </UIManager>
-      </Router>
-    </EditorManager>
+      </EditorManager>
+    </Router>
   );
 }
 

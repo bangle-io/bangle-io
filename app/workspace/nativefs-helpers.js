@@ -8,7 +8,8 @@ export const NATIVE_FS_READ_ERROR = 'NATIVE_FS_READ_ERROR';
 export const NATIVE_FS_WRITE_ERROR = 'NATIVE_FS_WRITE_ERROR';
 export const NATIVE_FS_FILE_NOT_FOUND_ERROR = 'NATIVE_FS_FILE_NOT_FOUND_ERROR';
 export const NATIVE_FS_PERMISSION_ERROR = 'NATIVE_FS_PERMISSION_ERROR';
-
+export const CONFIG_DIRECTORY = '.bangle';
+export const BACKUP_DIRECTORY = [CONFIG_DIRECTORY, 'backups'];
 /**
  *
  * @param {string[]} filePath [...parentDirNames, fileName]
@@ -18,9 +19,14 @@ export class NativeFileOps {
   constructor({
     allowedFile,
     allowedDir = (entry) => !DEFAULT_DIR_IGNORE_LIST.includes(entry.name),
+    // hiddenDirNames is different from allowedDir in the sense that
+    // it allows your to read and write to these dirs but it doesnt show
+    // up in the listFiles, a good example is the config .bangle directory
+    hiddenDirNames = [CONFIG_DIRECTORY],
   } = {}) {
     this._allowedFile = allowedFile;
     this._allowedDir = allowedDir;
+    this._hiddenDirNames = hiddenDirNames;
     this._getFileHandle = getFileHandle({ allowedDir, allowedFile });
   }
 
@@ -108,15 +114,30 @@ export class NativeFileOps {
     }
 
     const oldFile = await this.readFile(oldPath, rootDirHandle);
+    await this.deleteFile(oldPath, rootDirHandle, true);
     await this.saveFile(newPath, rootDirHandle, oldFile.textContent);
-    await this.deleteFile(oldPath, rootDirHandle);
   }
 
-  async deleteFile(path, rootDirHandle) {
+  async deleteFile(path, rootDirHandle, backup) {
     const { fileHandle, parentHandles } = await this._getFileHandle(
       path,
       rootDirHandle,
     );
+    if (backup) {
+      const backupContent = (await this.readFile(path, rootDirHandle))
+        .textContent;
+
+      await this.saveFile(
+        [
+          rootDirHandle.name,
+          ...BACKUP_DIRECTORY,
+          new Date().getTime() + '--' + fileHandle.name,
+        ],
+        rootDirHandle,
+        backupContent,
+      );
+    }
+
     const parentHandle = getLast(parentHandles);
     await parentHandle.removeEntry(fileHandle.name);
   }
@@ -137,7 +158,13 @@ export class NativeFileOps {
       allowedDir: this._allowedDir,
     });
 
-    return data;
+    return data.filter((item) => {
+      return !item.some(
+        (handle) =>
+          handle.kind === 'directory' &&
+          this._hiddenDirNames.includes(handle.name),
+      );
+    });
   }
 }
 /**
@@ -420,7 +447,7 @@ function handleNotFoundDOMException(filePath) {
   return (error) => {
     if (error.name === 'NotFoundError' && error instanceof DOMException) {
       throw new FSError(
-        `Path "${filePath.join('/"')}" not found`,
+        `Path "${filePath.join('/')}" not found`,
         NATIVE_FS_FILE_NOT_FOUND_ERROR,
         null,
         error,

@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Correctly filters commands 1`] = `
+NodeList [
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer  active "
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      View: Toggle theme
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      View: Toggle sidebar
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Workspace: New File
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Workspace: Delete active workspace
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Workspace: New workspace in Browser
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Workspace: New workspace in filesystem
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+  </div>,
+]
+`;
+
+exports[`Correctly switches to file type 2`] = `
+<div>
+  <div>
+    <div
+      class="bangle-palette z-30 p-2 shadow-md border flex flex-col"
+    >
+      <div
+        class="flex mb-2 sticky top-0"
+      >
+        <input
+          aria-label="palette-input"
+          class="flex-grow px-2"
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        class="flex side-bar-row flex-row items-center cursor-pointer  active "
+        style="padding-left: 16px; padding-right: 16px;"
+      >
+        <span
+          class="text-lg truncate select-none"
+        >
+          one.md
+        </span>
+        <span
+          class="flex-1 flex "
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

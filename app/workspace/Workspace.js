@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useCatchError } from '../misc/hooks';
 import { keybindingsHelper } from '../misc/keybinding-helper';
 import { FSError, WorkspaceError } from './errors';
@@ -16,9 +16,16 @@ import {
 } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 
+const LOG = false;
+let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
+
 export function Workspace({ children }) {
-  const { wsName, wsPath } = useWorkspacePath();
-  const [state, setWorkspaceState] = useState({});
+  const {
+    wsName,
+    wsPath,
+    wsPermissionState,
+    setWsPermissionState,
+  } = useWorkspacePath();
 
   const errorHandler = useCallback(
     (error) => {
@@ -27,43 +34,43 @@ export function Workspace({ children }) {
           case NATIVE_FS_READ_ERROR:
           case NATIVE_FS_WRITE_ERROR:
           case NATIVE_FS_FILE_NOT_FOUND_ERROR: {
-            setWorkspaceState({ type: 'error', error: error });
+            setWsPermissionState({ type: 'error', error: error });
             break;
           }
 
           case NATIVE_FS_PERMISSION_ERROR: {
-            setWorkspaceState({
+            setWsPermissionState({
               type: 'permission',
-              workspace: state.workspace,
+              workspace: wsPermissionState.workspace,
             });
             break;
           }
 
           default: {
             console.error(error);
-            setWorkspaceState({ type: 'error', error: error });
+            setWsPermissionState({ type: 'error', error: error });
             throw new Error('Unknown FSError code ' + error.code);
           }
         }
       } else if (error instanceof WorkspaceError) {
         switch (error.code) {
           case WORKSPACE_NOT_FOUND_ERROR: {
-            setWorkspaceState({ type: 'error', error });
+            setWsPermissionState({ type: 'error', error });
             break;
           }
           default: {
             console.error(error);
-            setWorkspaceState({ type: 'error', error: error });
+            setWsPermissionState({ type: 'error', error: error });
             throw new Error('Unknown WorkspaceError code ' + error.code);
           }
         }
       } else if (error instanceof RangeError) {
         if (error.message.includes('Unknown node type')) {
-          setWorkspaceState({ type: 'error', error: error });
+          setWsPermissionState({ type: 'error', error: error });
         }
       }
     },
-    [state.workspace],
+    [wsPermissionState.workspace, setWsPermissionState],
   );
 
   useCatchError(errorHandler);
@@ -72,14 +79,14 @@ export function Workspace({ children }) {
     () => {
       let unmounted = false;
 
-      setWorkspaceState({});
+      setWsPermissionState({});
 
       getWorkspaceInfo(wsName).then((workspace) => {
         if (unmounted) {
           return;
         }
         if (workspace.type === 'browser') {
-          setWorkspaceState({ type: 'ready', workspace });
+          setWsPermissionState({ type: 'ready', workspace });
           return;
         }
 
@@ -90,15 +97,15 @@ export function Workspace({ children }) {
             }
 
             if (permission) {
-              setWorkspaceState({ type: 'ready', workspace });
+              setWsPermissionState({ type: 'ready', workspace });
             } else {
-              setWorkspaceState({ type: 'permission', workspace });
+              setWsPermissionState({ type: 'permission', workspace });
             }
           });
           return;
         }
 
-        setWorkspaceState({
+        setWsPermissionState({
           type: 'error',
           error: new Error('Unknown workspace type'),
         });
@@ -109,10 +116,11 @@ export function Workspace({ children }) {
       };
     },
     // adding wsPath so that error is reset if path changes
-    [wsName, wsPath],
+    [wsName, wsPath, setWsPermissionState],
   );
 
-  switch (state.type) {
+  log({ wsPermissionState });
+  switch (wsPermissionState.type) {
     case undefined: {
       return <span></span>;
     }
@@ -130,21 +138,24 @@ export function Workspace({ children }) {
         <PermissionModal
           onPermissionGranted={(granted) => {
             if (granted) {
-              setWorkspaceState({ type: 'ready', workspace: state.workspace });
+              setWsPermissionState({
+                type: 'ready',
+                workspace: wsPermissionState.workspace,
+              });
             } else {
-              setWorkspaceState({
+              setWsPermissionState({
                 type: 'permission',
-                workspace: state.workspace,
+                workspace: wsPermissionState.workspace,
               });
             }
           }}
-          workspace={state.workspace}
+          workspace={wsPermissionState.workspace}
         />
       );
     }
 
     case 'error': {
-      const { error } = state;
+      const { error } = wsPermissionState;
       return (
         <>
           <span>Encountered an Error</span>
@@ -161,7 +172,7 @@ export function Workspace({ children }) {
     }
 
     default:
-      throw new Error('Unknown workspaceState' + state.type);
+      throw new Error('Unknown workspaceState' + wsPermissionState.type);
   }
 }
 
