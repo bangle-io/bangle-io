@@ -5,6 +5,10 @@ export function getLast(array) {
   return array[array.length - 1];
 }
 
+export function sleep(t = 20) {
+  return new Promise((res) => setTimeout(res, t));
+}
+
 export function strictCheckObject(obj, assert) {
   const entries = Object.entries(obj);
   const keys = (o) => Object.keys(o);

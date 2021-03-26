@@ -7,8 +7,9 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from 'bangle-io/app/workspace/workspace-hooks';
-import { COMMAND_PALETTE, FILE_PALETTE } from '../paletteTypes';
+import { COMMAND_PALETTE, FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../../Palette/Palette';
+import { sleep } from 'bangle-io/app/misc/index';
 
 let result, paletteType, paletteInitialQuery, dispatch;
 jest.mock('bangle-io/app/workspace/workspace-hooks', () => {
@@ -140,6 +141,38 @@ test('Correctly filters commands', async () => {
       </div>,
     ]
   `);
+});
+
+test('input palette', async () => {
+  const initialQuery = 'hello';
+  const onInputConfirm = jest.fn();
+  act(() => {
+    dispatch({
+      type: 'UI/CHANGE_PALETTE_TYPE',
+      value: {
+        type: INPUT_PALETTE,
+        initialQuery,
+        metadata: {
+          onInputConfirm,
+        },
+      },
+    });
+  });
+
+  const input = result.getByLabelText('palette-input');
+  expect(paletteType).toBe(INPUT_PALETTE);
+
+  expect(input.value).toBe(initialQuery);
+
+  await act(async () => {
+    userEvent.type(input, '{enter}');
+    // to let uiManager settle
+    await sleep(0);
+  });
+  expect(onInputConfirm).toBeCalledTimes(1);
+  expect(onInputConfirm).nthCalledWith(1, 'hello');
+
+  expect(paletteType).toBe(null);
 });
 
 test.skip('Keybindings work', async () => {
