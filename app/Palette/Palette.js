@@ -37,7 +37,7 @@ export function Palette() {
 
   const paletteItems = [
     useFilePalette(),
-    useWorkspacePalette(),
+    useWorkspacePalette({ updatePalette }),
     useCommandPalette({ updatePalette }),
     useInputPalette({ metadata, updatePalette }),
   ];

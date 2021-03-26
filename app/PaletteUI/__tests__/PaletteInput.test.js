@@ -233,10 +233,10 @@ describe.only('PaletteUI', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="bangle-palette z-30 p-2 shadow-md border flex flex-col"
+          class="bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
         >
           <div
-            class="flex mb-2 sticky top-0"
+            class="palette-input-wrapper flex py-2 px-2 top-0"
           >
             <input
               aria-label="palette-input"
@@ -246,17 +246,21 @@ describe.only('PaletteUI', () => {
             />
           </div>
           <div
-            class="flex side-bar-row flex-row items-center cursor-pointer  active "
-            style="padding-left: 16px; padding-right: 16px;"
+            class="overflow-y-auto"
           >
-            <span
-              class="text-lg truncate select-none"
+            <div
+              class="flex side-bar-row flex-row items-center cursor-pointer  active "
+              style="padding-left: 16px; padding-right: 16px;"
             >
-              first item
-            </span>
-            <span
-              class="flex-1 flex "
-            />
+              <span
+                class="text-lg truncate select-none"
+              >
+                first item
+              </span>
+              <span
+                class="flex-1 flex "
+              />
+            </div>
           </div>
         </div>
       </div>

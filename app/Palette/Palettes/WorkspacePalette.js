@@ -1,13 +1,14 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useWorkspaces } from 'bangle-io/app/workspace/workspace-hooks';
 import { WORKSPACE_PALETTE } from '../paletteTypes';
+import { CloseIcon } from 'bangle-io/app/helper-ui/Icons';
 
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
-export function useWorkspacePalette() {
-  const { workspaces, switchWorkspace } = useWorkspaces();
+export function useWorkspacePalette({ updatePalette }) {
+  const { workspaces, switchWorkspace, deleteWorkspace } = useWorkspaces();
 
   const onPressEnter = useCallback(
     ({ data }) => {
@@ -40,10 +41,33 @@ export function useWorkspacePalette() {
             onPressMetaEnter,
             title: `${workspace.name} (${workspace.type})`,
             data: { workspace },
+            rightHoverIcon: (
+              <CloseIcon
+                className="file-browser-button"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  console.log('clicked');
+                  if (
+                    window.confirm(
+                      `Are you sure you want to remove "${workspace.name}"? Removing a workspace does not delete any files inside it.`,
+                    )
+                  ) {
+                    await deleteWorkspace(workspace.name);
+                    updatePalette({ type: null });
+                  }
+                }}
+              />
+            ),
           };
         });
     },
-    [onPressEnter, onPressMetaEnter, workspaces],
+    [
+      onPressEnter,
+      onPressMetaEnter,
+      updatePalette,
+      workspaces,
+      deleteWorkspace,
+    ],
   );
 }
 

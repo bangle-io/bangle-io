@@ -21,7 +21,7 @@ export function useCommandPalette({ updatePalette }) {
     useToggleTheme(),
     useToggleSidebar(),
     useNewFile({ updatePalette }),
-    useDeleteActiveWorkspace(),
+    useRemoveActiveWorkspace(),
     useNewBrowserWS({ updatePalette }),
     useNewFileSystemWS(),
     useRenameFile({ updatePalette }),
@@ -174,8 +174,8 @@ function useNewFileSystemWS() {
   });
 }
 
-export function useDeleteActiveWorkspace() {
-  const uid = 'DELETE_ACTIVE_WORKSPACE';
+export function useRemoveActiveWorkspace() {
+  const uid = 'REMOVE_ACTIVE_WORKSPACE';
   const { deleteWorkspace } = useWorkspaces();
   const { wsName } = useWorkspacePath();
 
@@ -188,7 +188,7 @@ export function useDeleteActiveWorkspace() {
 
   return queryMatch({
     uid,
-    title: 'Workspace: Delete active workspace',
+    title: 'Workspace: Remove active workspace',
     onPressEnter,
     onClick: onPressEnter,
   });
