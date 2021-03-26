@@ -7,7 +7,7 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from 'bangle-io/app/workspace/workspace-hooks';
-import { FILE_PALETTE } from '../paletteTypes';
+import { COMMAND_PALETTE, FILE_PALETTE } from '../paletteTypes';
 import { Palette } from '../../Palette/Palette';
 
 let result, paletteType, paletteInitialQuery, dispatch;
@@ -16,6 +16,9 @@ jest.mock('bangle-io/app/workspace/workspace-hooks', () => {
     useWorkspacePath: jest.fn(),
     useWorkspaces: jest.fn(),
     useGetWorkspaceFiles: jest.fn(),
+    useCreateMdFile: jest.fn(),
+    useRenameActiveFile: jest.fn(),
+    useDeleteFile: jest.fn(),
   };
 });
 
@@ -28,9 +31,7 @@ beforeEach(async () => {
   paletteInitialQuery = undefined;
   dispatch = null;
   function Comp() {
-    ({ paletteType, paletteInitialQuery, dispatch } = useContext(
-      UIManagerContext,
-    ));
+    ({ paletteType, dispatch } = useContext(UIManagerContext));
 
     return (
       <div>
@@ -69,7 +70,7 @@ test('Correctly switches to file type', async () => {
   });
 
   await act(() => promise);
-  await act(() => new Promise((res) => setTimeout(res, 50)));
+  await act(() => new Promise((res) => setTimeout(res, 0)));
 
   expect([...result.container.querySelectorAll('.side-bar-row')])
     .toMatchInlineSnapshot(`
@@ -93,7 +94,55 @@ test('Correctly switches to file type', async () => {
   expect(result.container).toMatchSnapshot();
 });
 
-test.skip('Keybinds work', async () => {
+test('Correctly filters commands', async () => {
+  act(() => {
+    dispatch({
+      type: 'UI/CHANGE_PALETTE_TYPE',
+      value: { type: FILE_PALETTE },
+    });
+  });
+
+  const input = result.getByLabelText('palette-input');
+  userEvent.type(input, '>');
+
+  expect(result.container.querySelectorAll('.side-bar-row')).toMatchSnapshot();
+
+  userEvent.type(input, 'toggle');
+
+  expect(result.container.querySelectorAll('.side-bar-row'))
+    .toMatchInlineSnapshot(`
+    NodeList [
+      <div
+        class="flex side-bar-row flex-row items-center cursor-pointer  active "
+        style="padding-left: 16px; padding-right: 16px;"
+      >
+        <span
+          class="text-lg truncate select-none"
+        >
+          View: Toggle theme
+        </span>
+        <span
+          class="flex-1 flex "
+        />
+      </div>,
+      <div
+        class="flex side-bar-row flex-row items-center cursor-pointer   "
+        style="padding-left: 16px; padding-right: 16px;"
+      >
+        <span
+          class="text-lg truncate select-none"
+        >
+          View: Toggle sidebar
+        </span>
+        <span
+          class="flex-1 flex "
+        />
+      </div>,
+    ]
+  `);
+});
+
+test.skip('Keybindings work', async () => {
   userEvent.keyboard('{ControlLeft>}r{/ControlLeft}');
   expect(result.container).toMatchInlineSnapshot(`
       <div>

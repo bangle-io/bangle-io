@@ -12,6 +12,15 @@ const ResolvePaletteItemShape = PropTypes.shape({
   data: PropTypes.object,
   onExecuteItem: PropTypes.func.isRequired,
 });
+
+PaletteUI.propTypes = {
+  paletteType: PropTypes.string,
+  updatePalette: PropTypes.func.isRequired,
+  paletteInitialQuery: PropTypes.string,
+  parseRawQuery: PropTypes.func.isRequired,
+  generateRawQuery: PropTypes.func.isRequired,
+  paletteItems: PropTypes.array.isRequired,
+};
 /**
  * UI abstraction for building a palette with keyboard and click handlers.
  *

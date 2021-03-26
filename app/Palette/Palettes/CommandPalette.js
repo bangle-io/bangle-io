@@ -32,14 +32,11 @@ export function useCommandPalette({ updatePalette }) {
 function useToggleTheme() {
   const { dispatch } = useContext(UIManagerContext);
   const uid = 'TOGGLE_THEME_COMMAND';
-  const onExecuteItem = useCallback(
-    (item) => {
-      dispatch({
-        type: 'UI/TOGGLE_THEME',
-      });
-    },
-    [dispatch],
-  );
+  const onExecuteItem = useCallback(() => {
+    dispatch({
+      type: 'UI/TOGGLE_THEME',
+    });
+  }, [dispatch]);
 
   return queryMatch({
     uid,
@@ -51,14 +48,11 @@ function useToggleTheme() {
 function useToggleSidebar() {
   const { dispatch } = useContext(UIManagerContext);
   const uid = 'TOGGLE_SIDEBAR_COMMAND';
-  const onExecuteItem = useCallback(
-    (item) => {
-      dispatch({
-        type: 'UI/TOGGLE_SIDEBAR',
-      });
-    },
-    [dispatch],
-  );
+  const onExecuteItem = useCallback(() => {
+    dispatch({
+      type: 'UI/TOGGLE_SIDEBAR',
+    });
+  }, [dispatch]);
 
   return queryMatch({
     uid,
@@ -72,26 +66,23 @@ function useNewFile({ updatePalette }) {
   const createNewFile = useCreateMdFile();
   const { wsName } = useWorkspacePath();
 
-  const onExecuteItem = useCallback(
-    (item) => {
-      // timeout since parent dismisses palette upon execution
-      setTimeout(() => {
-        updatePalette({
-          type: INPUT_PALETTE,
-          metadata: {
-            onInputConfirm: (query) => {
-              let normalizedQuery = query;
-              if (!normalizedQuery.endsWith('.md')) {
-                normalizedQuery += '.md';
-              }
-              return createNewFile(wsName + ':' + normalizedQuery);
-            },
+  const onExecuteItem = useCallback(() => {
+    // timeout since parent dismisses palette upon execution
+    setTimeout(() => {
+      updatePalette({
+        type: INPUT_PALETTE,
+        metadata: {
+          onInputConfirm: (query) => {
+            let normalizedQuery = query;
+            if (!normalizedQuery.endsWith('.md')) {
+              normalizedQuery += '.md';
+            }
+            return createNewFile(wsName + ':' + normalizedQuery);
           },
-        });
-      }, 0);
-    },
-    [updatePalette, wsName, createNewFile],
-  );
+        },
+      });
+    }, 0);
+  }, [updatePalette, wsName, createNewFile]);
   return queryMatch({
     uid,
     title: 'Workspace: New File',
@@ -104,24 +95,22 @@ function useNewBrowserWS({ updatePalette }) {
 
   const { createWorkspace } = useWorkspaces();
 
-  const onExecuteItem = useCallback(
-    (item) => {
-      // timeout since parent dismisses palette upon execution
-      setTimeout(() => {
-        updatePalette({
-          type: INPUT_PALETTE,
-          metadata: {
-            onInputConfirm: (query) => {
-              if (query) {
-                return createWorkspace(query, 'browser');
-              }
-            },
+  const onExecuteItem = useCallback(() => {
+    // timeout since parent dismisses palette upon execution
+    setTimeout(() => {
+      updatePalette({
+        type: INPUT_PALETTE,
+        metadata: {
+          onInputConfirm: (query) => {
+            if (query) {
+              return createWorkspace(query, 'browser');
+            }
           },
-        });
-      }, 0);
-    },
-    [updatePalette, createWorkspace],
-  );
+        },
+      });
+    }, 0);
+  }, [updatePalette, createWorkspace]);
+
   return queryMatch({
     uid,
     title: 'Workspace: New workspace in Browser',
