@@ -1,4 +1,5 @@
 import { markdownParser, markdownSerializer } from '../markdown/parsers';
+import { GithubFS } from './github-helpers';
 import { IndexDBIO } from './indexdb';
 import { NativeFileOps } from './nativefs-helpers';
 import { resolvePath, validatePath, validateWsFilePath } from './path-helpers';
@@ -22,7 +23,10 @@ export async function getDoc(wsPath) {
 
   switch (ws.type) {
     case 'browser': {
-      file = (await IndexDBIO.getFile(wsPath)).doc;
+      const rawText = await GithubFS.getFile(wsPath);
+
+      file = markdownParser(rawText).toJSON();
+      // file = (await IndexDBIO.getFile(wsPath)).doc;
       break;
     }
 
@@ -157,7 +161,8 @@ export async function listAllFiles(wsName) {
 
   switch (ws.type) {
     case 'browser': {
-      files = await IndexDBIO.listFiles(wsName);
+      // files = await IndexDBIO.listFiles(wsName);
+      files = await GithubFS.listFiles(wsName);
       break;
     }
 

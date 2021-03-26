@@ -3161,6 +3161,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.21.1":
+  version: 0.21.1
+  resolution: "axios@npm:0.21.1"
+  dependencies:
+    follow-redirects: ^1.10.0
+  checksum: 864fb7b5d077d236737f10adca53bf451a93f35a15271f56fba8da07265a02d26b7d881b935a6697dc6adb0549ea3e56d2eecb403edaa3bb78f6479901c10f69
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^2.2.0":
   version: 2.2.0
   resolution: "axobject-query@npm:2.2.0"
@@ -3372,6 +3381,7 @@ __metadata:
     eslint-plugin-react-hooks: ^4.2.0
     eslint-plugin-testing-library: ^3.10.1
     file-loader: ^6.2.0
+    github-api: ^3.4.0
     html-webpack-plugin: ^5.2.0
     idb-keyval: ^5.0.4
     jest: ^26.6.3
@@ -5905,6 +5915,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"follow-redirects@npm:^1.10.0":
+  version: 1.13.3
+  resolution: "follow-redirects@npm:1.13.3"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 9ad74c3b66ad5c32d8c009a2afb4e5c1b9e5dbe1f631419296c21f8e4f9976ed2c52f9a676c4acdd1d7f41a8f17a03dfaa3704993b25b5965eb11bc9dc9a8ef5
+  languageName: node
+  linkType: hard
+
 "for-in@npm:^1.0.2":
   version: 1.0.2
   resolution: "for-in@npm:1.0.2"
@@ -6137,6 +6157,18 @@ fsevents@^2.1.2:
   dependencies:
     assert-plus: ^1.0.0
   checksum: 2650725bc6939616da8432e5351ca87d8b29421bb8dc19c21bad2c37cd337d2a50d36fcc398ce0c16a075f6079afe114131780dca7e2f4b96063e53e7d28fd7a
+  languageName: node
+  linkType: hard
+
+"github-api@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "github-api@npm:3.4.0"
+  dependencies:
+    axios: ^0.21.1
+    debug: ^2.2.0
+    js-base64: ^2.1.9
+    utf8: ^2.1.1
+  checksum: 0efdfe89edc7601e562552f1426fe7b9de5b36726f7480a3c3f536f3f7735257425e68f9c9485d21691d604a3a6abf80c85f1505bf5987068dac4ddd87602762
   languageName: node
   linkType: hard
 
@@ -7744,6 +7776,13 @@ fsevents@^2.1.2:
   bin:
     jest: bin/jest.js
   checksum: 4ffcfefa2b30999a71c205e1aacf2b3d7af10f36c17ba1baf45677684116ad5aa6a5bb162ad2dd418f9ea99d18f24b70d8c83fb317b765a3acac361a50e9db9f
+  languageName: node
+  linkType: hard
+
+"js-base64@npm:^2.1.9":
+  version: 2.6.4
+  resolution: "js-base64@npm:2.6.4"
+  checksum: f3fadb18c2feade451a42677d29ddac4e5d40f6561fce38454c0dbf8b5b937d47e65ca54ae109325db90baaab7443780ae071b7d8577273918e8407b01b83f88
   languageName: node
   linkType: hard
 
@@ -12214,6 +12253,13 @@ fsevents@^2.1.2:
   version: 3.1.1
   resolution: "use@npm:3.1.1"
   checksum: 8dd3bdeeda53864c779e0fa8d799064739708f80b45d06fa48a1a6ba192dc3f9e3266d4556f223cd718d27aedfd957922152e7463c00ac46e185f8331353fb6f
+  languageName: node
+  linkType: hard
+
+"utf8@npm:^2.1.1":
+  version: 2.1.2
+  resolution: "utf8@npm:2.1.2"
+  checksum: 068cf6187f0526cfd5c0f95b2a470626589dce848595611b1bff8b3d3681d4eff3b6f4ca89e1be0477ecdcdeb9fc08b4006f9efe670daaf7ca6ffd2c798d1966
   languageName: node
   linkType: hard
 
