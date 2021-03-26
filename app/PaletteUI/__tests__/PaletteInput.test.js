@@ -182,7 +182,7 @@ describe.only('PaletteUI', () => {
           uid: '1',
           title: 'first item',
           data: {},
-          onExecuteItem: () => {},
+          onPressEnter: () => {},
         },
       ],
     });
@@ -224,7 +224,7 @@ describe.only('PaletteUI', () => {
       uid: '1',
       title: 'first item',
       data: {},
-      onExecuteItem: () => {},
+      onPressEnter: () => {},
     }));
     const { result, rerender } = await setup({
       paletteType: 'default',
