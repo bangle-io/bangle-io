@@ -10,7 +10,14 @@ const ResolvePaletteItemShape = PropTypes.shape({
   uid: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   data: PropTypes.object,
-  onExecuteItem: PropTypes.func.isRequired,
+  onPressEnter: PropTypes.func.isRequired,
+  // onClick is optional, if not provided
+  // will default to calling onPressEnter on click
+  onClick: PropTypes.func,
+  // Optional callback called when user keys in Meta+Enter
+  // if undefined will just call onPressEnter
+  // Note this also handles if you meta-click the item
+  onPressMetaEnter: PropTypes.func,
 });
 
 PaletteUI.propTypes = {
@@ -23,6 +30,7 @@ PaletteUI.propTypes = {
 };
 /**
  * UI abstraction for building a palette with keyboard and click handlers.
+ * Pressing enter will execute the item.onPressEnter
  *
  * @param {string|undefined} paletteType
  * @param {Function} parseRawQuery - a function with params (paletteType, rawQuery) which will be called with the raw string
@@ -45,6 +53,7 @@ export function PaletteUI({
   parseRawQuery,
   generateRawQuery,
   paletteItems,
+  onCommandEnter,
 }) {
   const [query, updateQuery] = useState(paletteInitialQuery);
   const [counter, updateCounter] = useState(0);
@@ -102,14 +111,19 @@ export function PaletteContainer({
   const activeItemIndex = getActiveIndex(counter, resolvedItems.length);
 
   const executeHandler = useCallback(
-    (itemIndex) => {
+    (itemIndex, isMetaKeyPressed) => {
       const item = resolvedItems[itemIndex];
 
       if (!item) {
         return;
       }
 
-      item.onExecuteItem(item, itemIndex);
+      let handler = item.onClick || item.onPressEnter;
+      if (isMetaKeyPressed && item.onPressMetaEnter) {
+        handler = item.onPressMetaEnter;
+      }
+
+      handler(item, itemIndex);
 
       onDismiss();
     },
@@ -141,7 +155,9 @@ export function PaletteContainer({
             key={item.uid}
             isActive={getActiveIndex(counter, resolvedItems.length) === i}
             title={item.title}
-            onClick={() => executeHandler(i)}
+            onClick={(e) => {
+              executeHandler(i, e.metaKey);
+            }}
           />
         );
       })}
@@ -170,9 +186,8 @@ export const PaletteInput = React.forwardRef(
       <PaletteInputUI
         ref={paletteInputRef}
         onDismiss={onDismiss}
-        onPressEnter={() => {
-          executeHandler(activeItemIndex);
-        }}
+        activeItemIndex={activeItemIndex}
+        executeHandler={executeHandler}
         updateCounter={updateCounter}
         updateQuery={(rawQuery) => {
           const initialPaletteType = paletteType;
@@ -196,7 +211,15 @@ export const PaletteInput = React.forwardRef(
 
 export const PaletteInputUI = React.forwardRef(
   (
-    { onDismiss, onPressEnter, updateCounter, updateQuery, query, counter },
+    {
+      onDismiss,
+      executeHandler,
+      activeItemIndex,
+      updateCounter,
+      updateQuery,
+      query,
+      counter,
+    },
     inputRef,
   ) => {
     const handleOnInputPromptChange = useCallback(
@@ -215,7 +238,7 @@ export const PaletteInputUI = React.forwardRef(
       }
 
       if (key === 'Enter') {
-        onPressEnter({ query, counter });
+        executeHandler(activeItemIndex, event.metaKey);
         event.preventDefault();
         return;
       }
@@ -250,7 +273,8 @@ export const PaletteInputUI = React.forwardRef(
 
 PaletteInputUI.propTypes = {
   onDismiss: PropTypes.func.isRequired,
-  onPressEnter: PropTypes.func.isRequired,
+  executeHandler: PropTypes.func.isRequired,
+  activeItemIndex: PropTypes.number.isRequired,
   updateCounter: PropTypes.func.isRequired,
   updateQuery: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,

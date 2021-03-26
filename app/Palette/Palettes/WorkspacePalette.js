@@ -9,9 +9,16 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 export function useWorkspacePalette() {
   const { workspaces, switchWorkspace } = useWorkspaces();
 
-  const onExecuteItem = useCallback(
+  const onPressEnter = useCallback(
     ({ data }) => {
       switchWorkspace(data.workspace.name);
+    },
+    [switchWorkspace],
+  );
+
+  const onPressMetaEnter = useCallback(
+    ({ data }) => {
+      switchWorkspace(data.workspace.name, true);
     },
     [switchWorkspace],
   );
@@ -29,13 +36,14 @@ export function useWorkspacePalette() {
         .map((workspace, i) => {
           return {
             uid: `${workspace.name}-(${workspace.type})`,
-            onExecuteItem,
+            onPressEnter,
+            onPressMetaEnter,
             title: `${workspace.name} (${workspace.type})`,
             data: { workspace },
           };
         });
     },
-    [onExecuteItem, workspaces],
+    [onPressEnter, onPressMetaEnter, workspaces],
   );
 }
 

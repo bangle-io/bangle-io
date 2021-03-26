@@ -10,7 +10,7 @@ export function useInputPalette({ metadata, updatePalette }) {
       {
         uid: 'input-confirm',
         title: 'Confirm',
-        onExecuteItem: () => {
+        onPressEnter: () => {
           Promise.resolve(metadata.onInputConfirm(query))
             .then(() => {
               updatePalette({ type: null });
@@ -24,7 +24,7 @@ export function useInputPalette({ metadata, updatePalette }) {
       {
         uid: 'input-cancel',
         title: 'Cancel',
-        onExecuteItem: () => {
+        onPressEnter: () => {
           Promise.resolve(metadata.onInputCancel?.(query))
             .then(() => {
               updatePalette({ type: null });

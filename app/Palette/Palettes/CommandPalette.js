@@ -32,7 +32,7 @@ export function useCommandPalette({ updatePalette }) {
 function useToggleTheme() {
   const { dispatch } = useContext(UIManagerContext);
   const uid = 'TOGGLE_THEME_COMMAND';
-  const onExecuteItem = useCallback(() => {
+  const onPressEnter = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_THEME',
     });
@@ -41,14 +41,15 @@ function useToggleTheme() {
   return queryMatch({
     uid,
     title: 'View: Toggle theme',
-    onExecuteItem,
+    onPressEnter,
+    onClick: onPressEnter,
   });
 }
 
 function useToggleSidebar() {
   const { dispatch } = useContext(UIManagerContext);
   const uid = 'TOGGLE_SIDEBAR_COMMAND';
-  const onExecuteItem = useCallback(() => {
+  const onPressEnter = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
     });
@@ -57,7 +58,8 @@ function useToggleSidebar() {
   return queryMatch({
     uid,
     title: 'View: Toggle sidebar',
-    onExecuteItem,
+    onPressEnter,
+    onClick: onPressEnter,
   });
 }
 
@@ -66,7 +68,7 @@ function useNewFile({ updatePalette }) {
   const createNewFile = useCreateMdFile();
   const { wsName } = useWorkspacePath();
 
-  const onExecuteItem = useCallback(() => {
+  const onPressEnter = useCallback(() => {
     // timeout since parent dismisses palette upon execution
     setTimeout(() => {
       updatePalette({
@@ -86,7 +88,8 @@ function useNewFile({ updatePalette }) {
   return queryMatch({
     uid,
     title: 'Workspace: New File',
-    onExecuteItem,
+    onPressEnter,
+    onClick: onPressEnter,
   });
 }
 
@@ -95,7 +98,7 @@ function useNewBrowserWS({ updatePalette }) {
 
   const { createWorkspace } = useWorkspaces();
 
-  const onExecuteItem = useCallback(() => {
+  const onPressEnter = useCallback(() => {
     // timeout since parent dismisses palette upon execution
     setTimeout(() => {
       updatePalette({
@@ -114,7 +117,8 @@ function useNewBrowserWS({ updatePalette }) {
   return queryMatch({
     uid,
     title: 'Workspace: New workspace in Browser',
-    onExecuteItem,
+    onPressEnter,
+    onClick: onPressEnter,
   });
 }
 
@@ -124,7 +128,7 @@ function useRenameFile({ updatePalette }) {
 
   const renameActiveFile = useRenameActiveFile();
 
-  const onExecuteItem = useCallback(
+  const onPressEnter = useCallback(
     (item) => {
       // timeout since parent dismisses palette upon execution
       setTimeout(() => {
@@ -147,7 +151,8 @@ function useRenameFile({ updatePalette }) {
     uid,
     title: 'Workspace: Rename file',
     hidden: !Boolean(filePath),
-    onExecuteItem,
+    onPressEnter,
+    onClick: onPressEnter,
   });
 }
 
@@ -156,7 +161,7 @@ function useNewFileSystemWS() {
 
   const { createWorkspace } = useWorkspaces();
 
-  const onExecuteItem = useCallback(async () => {
+  const onPressEnter = useCallback(async () => {
     const rootDirHandle = await pickADirectory();
     await createWorkspace(rootDirHandle.name, 'nativefs', { rootDirHandle });
   }, [createWorkspace]);
@@ -164,7 +169,8 @@ function useNewFileSystemWS() {
   return queryMatch({
     uid,
     title: 'Workspace: New workspace in filesystem',
-    onExecuteItem,
+    onPressEnter,
+    onClick: onPressEnter,
   });
 }
 
@@ -173,7 +179,7 @@ export function useDeleteActiveWorkspace() {
   const { deleteWorkspace } = useWorkspaces();
   const { wsName } = useWorkspacePath();
 
-  const onExecuteItem = useCallback(
+  const onPressEnter = useCallback(
     (item) => {
       deleteWorkspace(wsName);
     },
@@ -183,7 +189,8 @@ export function useDeleteActiveWorkspace() {
   return queryMatch({
     uid,
     title: 'Workspace: Delete active workspace',
-    onExecuteItem,
+    onPressEnter,
+    onClick: onPressEnter,
   });
 }
 
@@ -192,7 +199,7 @@ export function useDeleteActiveFile() {
   const deleteFile = useDeleteFile();
   const { wsPath, filePath } = useWorkspacePath();
 
-  const onExecuteItem = useCallback(() => {
+  const onPressEnter = useCallback(() => {
     deleteFile(wsPath);
   }, [deleteFile, wsPath]);
 
@@ -200,7 +207,8 @@ export function useDeleteActiveFile() {
     uid,
     hidden: !Boolean(filePath),
     title: `Workspace: Delete current file '${filePath}'`,
-    onExecuteItem,
+    onPressEnter,
+    onClick: onPressEnter,
   });
 }
 
@@ -209,6 +217,7 @@ function queryMatch(command) {
     if (paletteType !== COMMAND_PALETTE) {
       return undefined;
     }
+
     if (command.hidden) {
       return undefined;
     }
