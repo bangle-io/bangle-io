@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
 import { uuid, getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
@@ -31,6 +31,7 @@ import { config } from 'bangle-io/config';
 
 import { specRegistry } from '../editor/spec-sheet';
 import { EditorManagerContext } from '../editor/EditorManager';
+import { UIManagerContext } from '../UIManager';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -43,7 +44,16 @@ const menuKey = new PluginKey('menuKey');
 const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
 export function Editor({ isFirst, wsPath }) {
+  const [editor, setEditor] = useState();
   const { sendRequest } = useContext(EditorManagerContext);
+  const { paletteType } = useContext(UIManagerContext);
+
+  useEffect(() => {
+    // whenever paletteType goes undefined focus back on editor
+    if (editor && !editor.view.hasFocus() && paletteType == null) {
+      editor.view.focus();
+    }
+  }, [editor, paletteType]);
 
   const getPlugins = () => {
     const collabOpts = {
@@ -130,6 +140,7 @@ export function Editor({ isFirst, wsPath }) {
   const onEditorReady = (editor) => {
     if (isFirst) {
       window.editor = editor;
+      setEditor(editor);
       if (!config.isIntegration) {
         getIdleCallback(() => {
           // import(
