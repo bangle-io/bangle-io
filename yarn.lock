@@ -1557,22 +1557,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/collab@npm:0.5.0"
+"@bangle.dev/collab@portal:../bangle-play/collab::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/collab@portal:../bangle-play/collab::locator=bangle-io%40workspace%3A."
   dependencies:
+    "@bangle.dev/core": "workspace:*"
     localforage: ^1.9.0
     prosemirror-collab: ^1.2.2
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 999389ff64c0abd60fd68d967b223390daa2c28218310a1cf05620c6764ae47f88fd56af24a061c840c30af312127933a8d04f85e3f5e93567c514e67d9b382d
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/core@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/core@npm:0.5.0"
+"@bangle.dev/core@portal:../bangle-play/core::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/core@portal:../bangle-play/core::locator=bangle-io%40workspace%3A."
   dependencies:
+    prettier: ^2.2.1
     prosemirror-commands: ^1.1.4
     prosemirror-dropcursor: ^1.3.2
     prosemirror-gapcursor: ^1.1.5
@@ -1586,49 +1587,58 @@ __metadata:
     prosemirror-transform: ^1.2.8
     prosemirror-utils: ^0.9.6
     prosemirror-view: ^1.16.3
-  checksum: 6f948418e9112c45525772362c2255fbd9b14871bd6ca923dc71dbf9cb4c56142568a84797c51ee28232c667cec7bb579c0d7eb629e25416928695d90ce89934
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/emoji@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/emoji@npm:0.5.0"
+"@bangle.dev/emoji@portal:../bangle-play/emoji::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/emoji@portal:../bangle-play/emoji::locator=bangle-io%40workspace%3A."
   dependencies:
+    "@bangle.dev/core": "workspace:*"
+    "@bangle.dev/markdown": "workspace:*"
     markdown-it-emoji: ^2.0.0
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/markdown": "*"
-  checksum: a6aa91bddd12539029d42c6c5201b23052816beca7e3b8463fd9f2964c154c12380aced48a26966364e29b7734cddcb8ae443ca93aa63a64d0e9c44fb041dbf6
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/markdown-front-matter@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/markdown-front-matter@npm:0.5.0"
+"@bangle.dev/markdown-front-matter@portal:../bangle-play/contrib/markdown-front-matter::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/markdown-front-matter@portal:../bangle-play/contrib/markdown-front-matter::locator=bangle-io%40workspace%3A."
   dependencies:
+    "@bangle.dev/core": "workspace:*"
+    "@bangle.dev/markdown": "workspace:*"
     markdown-it-container: ^3.0.0
     markdown-it-front-matter: ^0.2.3
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 5a4371daca61570764a2af0f4af1b7fbbb3d89c0bbacd66778d0fabf87aef18dd0c7abd05962d8c40c1858a91d2ace985eea4146284ed48d8b2dc3ec1d8008bb
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/markdown@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/markdown@npm:0.5.0"
+"@bangle.dev/markdown@portal:../bangle-play/markdown::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/markdown@portal:../bangle-play/markdown::locator=bangle-io%40workspace%3A."
   dependencies:
+    "@bangle.dev/core": "workspace:*"
     markdown-it: ^10.0.0
     prosemirror-markdown: ^1.5.0
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: ac63571211ed0daa26866c00c6d2728ec5a5e61f81a9de1010776c63970b421f25af94e371378d44df44134e2d01fc195bbd04d93de92fb2db806a8b7522de25
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/react-emoji-suggest@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/react-emoji-suggest@npm:0.5.0"
+"@bangle.dev/react-emoji-suggest@portal:../bangle-play/contrib/react-emoji-suggest::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react-emoji-suggest@portal:../bangle-play/contrib/react-emoji-suggest::locator=bangle-io%40workspace%3A."
+  dependencies:
+    "@bangle.dev/core": "workspace:*"
+    "@bangle.dev/emoji": "workspace:*"
+    "@bangle.dev/react": "workspace:*"
+    "@bangle.dev/tooltip": "workspace:*"
+    "@testing-library/react": ^11.2.2
+    react: ^16.14.0
+    react-dom: ^16.14.0
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/emoji": "*"
@@ -1636,104 +1646,130 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: b1e7348b7cf235da8a36488e2bc8b6407381ee1ff9b3a23a02d002f265acc9c4fb3ccdefe4d9bc2159ea0a35b3e55b065541df618f27230acfdcc6f45750cafb
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/react-menu@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/react-menu@npm:0.5.0"
+"@bangle.dev/react-menu@portal:../bangle-play/react-menu::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react-menu@portal:../bangle-play/react-menu::locator=bangle-io%40workspace%3A."
   dependencies:
+    "@bangle.dev/core": "workspace:*"
+    "@bangle.dev/react": "workspace:*"
+    "@bangle.dev/tooltip": "workspace:*"
+    "@testing-library/react": ^11.2.2
     prop-types: ^15.7.2
+    react: ^16.14.0
+    react-dom: ^16.14.0
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/react": "*"
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 6cafaa03b84407faea5d7a417cf580a46b8922e429b44e0aabde711d49967c8b42df27103648d9387747323324603bb18959d219900ec82d5638693d04e3d148
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/react-sticker@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/react-sticker@npm:0.5.0"
+"@bangle.dev/react-sticker@portal:../bangle-play/contrib/react-sticker::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react-sticker@portal:../bangle-play/contrib/react-sticker::locator=bangle-io%40workspace%3A."
   dependencies:
+    "@bangle.dev/core": "workspace:*"
+    "@bangle.dev/markdown": "workspace:*"
+    "@bangle.dev/react": "workspace:*"
+    "@testing-library/react": ^11.2.2
     prop-types: ^15.7.2
+    react: ^16.14.0
+    react-dom: ^16.14.0
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/markdown": "*"
     "@bangle.dev/react": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 44a5073c82edbecfddb1148af7a2ffe52af02e4ac3ed70d5a6cc61806337da3ece305a4c6e62ef4d30347c3eb644b962b0aced0c40e6f10d66275ac8dd58a32c
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/react-stopwatch@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/react-stopwatch@npm:0.5.0"
-  peerDependencies:
-    "@bangle.dev/core": "*"
-    "@bangle.dev/markdown": "*"
-    "@bangle.dev/react": "*"
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: 119896d8c2654899c7651c8f62ad47c91ef15bac5efca077031580ed3d1d3b59a0b30d7d637b0ac3f98d5e8f34121cf6225f27d8cb7811f8ad1cb61c80382268
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/react@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/react@npm:0.5.0"
+"@bangle.dev/react-stopwatch@portal:../bangle-play/contrib/react-stopwatch::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react-stopwatch@portal:../bangle-play/contrib/react-stopwatch::locator=bangle-io%40workspace%3A."
   dependencies:
+    "@bangle.dev/core": "workspace:*"
+    "@bangle.dev/markdown": "workspace:*"
+    "@bangle.dev/react": "workspace:*"
+    "@testing-library/react": ^11.2.2
+    react: ^16.14.0
+    react-dom: ^16.14.0
+  peerDependencies:
+    "@bangle.dev/core": "*"
+    "@bangle.dev/markdown": "*"
+    "@bangle.dev/react": "*"
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  languageName: node
+  linkType: soft
+
+"@bangle.dev/react@portal:../bangle-play/react::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react@portal:../bangle-play/react::locator=bangle-io%40workspace%3A."
+  dependencies:
+    "@bangle.dev/core": "workspace:*"
+    "@testing-library/dom": ^7.28.1
+    "@testing-library/jest-dom": ^5.11.6
+    "@testing-library/react": ^11.2.2
+    "@testing-library/react-hooks": ^3.7.0
+    prettier: ^2.2.1
     prop-types: ^15.7.2
     punycode: ^2.1.1
+    react: ^16.14.0
+    react-dom: ^16.14.0
+    react-test-renderer: ^17.0.1
   peerDependencies:
     "@bangle.dev/core": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: c4a3f4d8bbc04c6de793e99f36e4be71c6afbc1bcd27e04fc9f3b98dc4297711c19a35ce73b6bc4269d255856237e406ebdb4af90092b59451ef81fed2101c83
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/text-formatting@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/text-formatting@npm:0.5.0"
-  peerDependencies:
-    "@bangle.dev/core": "*"
-  checksum: 0d8b117c0d82365738678cb32e896112839bd06af732a4186e669e1020e67ae3a84d1a84b9f294313fcc80282dab088803591e7620b5f217c7cec408aa797b4b
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/timestamp@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/timestamp@npm:0.5.0"
-  peerDependencies:
-    "@bangle.dev/core": "*"
-  checksum: d297ac5d34330b5a7d7920a51cb1bc4c85e23b7918d0396e31ca05714fcd751114421e90d0ddf25bf9ee30c8fb5ed1af9a2d1dccb056f6eadf0dc471c502e5d9
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/tooltip@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/tooltip@npm:0.5.0"
+"@bangle.dev/text-formatting@portal:../bangle-play/contrib/text-formatting::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/text-formatting@portal:../bangle-play/contrib/text-formatting::locator=bangle-io%40workspace%3A."
   dependencies:
+    "@bangle.dev/core": "workspace:*"
+  peerDependencies:
+    "@bangle.dev/core": "*"
+  languageName: node
+  linkType: soft
+
+"@bangle.dev/timestamp@portal:../bangle-play/contrib/timestamp::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/timestamp@portal:../bangle-play/contrib/timestamp::locator=bangle-io%40workspace%3A."
+  dependencies:
+    "@bangle.dev/core": "workspace:*"
+  peerDependencies:
+    "@bangle.dev/core": "*"
+  languageName: node
+  linkType: soft
+
+"@bangle.dev/tooltip@portal:../bangle-play/tooltip::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/tooltip@portal:../bangle-play/tooltip::locator=bangle-io%40workspace%3A."
+  dependencies:
+    "@bangle.dev/core": "workspace:*"
     "@popperjs/core": ^2.5.4
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 11a8e0d74a74d9322fdcacf600cd724b837a5c98d1ad0e76e7072628eeb4e835c8282a60c14496b3b11eef4f5525f673147c9abadfeaf606ce3027d026a06978
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/trailing-node@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@bangle.dev/trailing-node@npm:0.5.0"
+"@bangle.dev/trailing-node@portal:../bangle-play/contrib/trailing-node::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/trailing-node@portal:../bangle-play/contrib/trailing-node::locator=bangle-io%40workspace%3A."
+  dependencies:
+    "@bangle.dev/core": "workspace:*"
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 492972bef86767c54a52b2a2ddba232e859cf0cae2a3f819e7adf2ca16cb921a6ba99893d91c3f752ec6e6d3f99decb82205249fba5f363b516b69a2a2559942
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "@bcoe/v8-coverage@npm:^0.2.3":
   version: 0.2.3
@@ -2103,7 +2139,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^11.2.5":
+"@testing-library/react-hooks@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "@testing-library/react-hooks@npm:3.7.0"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    "@types/testing-library__react-hooks": ^3.4.0
+  peerDependencies:
+    react: ">=16.9.0"
+    react-test-renderer: ">=16.9.0"
+  checksum: 0ab518489cb5a141f82cf26ddaf2e35dcdc87685ce14c2084dea3cd1734c877793a873fe75c0aa75b8b455eced58cd1eab49001194f8a9557d93b068582dfd5f
+  languageName: node
+  linkType: hard
+
+"@testing-library/react@npm:^11.2.2, @testing-library/react@npm:^11.2.5":
   version: 11.2.5
   resolution: "@testing-library/react@npm:11.2.5"
   dependencies:
@@ -2312,6 +2361,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prop-types@npm:*":
+  version: 15.7.3
+  resolution: "@types/prop-types@npm:15.7.3"
+  checksum: bd0eab69d5120ad3784d0c9985f902653d5924707a7f2b3702a330e762dfd61b6494954cb54ad0c52b918ffd6f1e7e27c9270e4442bc15250de348596f2f60cb
+  languageName: node
+  linkType: hard
+
+"@types/react-test-renderer@npm:*":
+  version: 17.0.1
+  resolution: "@types/react-test-renderer@npm:17.0.1"
+  dependencies:
+    "@types/react": "*"
+  checksum: bd3f8c6c2ae23f270b465106ae81c7e72dc97b64f83b980239bd45a69dcc9f41aada4183f16634320e8d02cede942e46258366a596dbefaae558abad236f4ab6
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:*":
+  version: 17.0.3
+  resolution: "@types/react@npm:17.0.3"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 5bcaabadc90a23ad9008540eae98a5819b638c4cf1b968adc67be47d6a8dc8cb100061d877dae97618fb275e405dc484b37154080c7ac0ea7df5efcdd8f98c24
+  languageName: node
+  linkType: hard
+
+"@types/scheduler@npm:*":
+  version: 0.16.1
+  resolution: "@types/scheduler@npm:0.16.1"
+  checksum: 0124c2e4dee5e9b8c8524fcd6b1b8ea0b807b132e593925db04cdcc92ca2779a0d27c79414e60454b4458361a4d8319fa2b59d20585054f21617d1e9acf46a6f
+  languageName: node
+  linkType: hard
+
 "@types/stack-utils@npm:^2.0.0":
   version: 2.0.0
   resolution: "@types/stack-utils@npm:2.0.0"
@@ -2325,6 +2408,15 @@ __metadata:
   dependencies:
     "@types/jest": "*"
   checksum: 32aa324a83e67fd81eb7f0ba3e4c86406db86c1e5361b6e8091d224a1fefbfcb4e493039db3ce3faf8afa133a4f68cc7c42bcdbcae1dd91b13d741a040791038
+  languageName: node
+  linkType: hard
+
+"@types/testing-library__react-hooks@npm:^3.4.0":
+  version: 3.4.1
+  resolution: "@types/testing-library__react-hooks@npm:3.4.1"
+  dependencies:
+    "@types/react-test-renderer": "*"
+  checksum: dba2d75c168f6377cb4bbb5443b4238bb0db85271998ef5d9297ee13719df044b0f0af088eb15dca14f8551cee88c6587ce85d9d60f5c7c1e218d50aa63395a5
   languageName: node
   linkType: hard
 
@@ -3359,6 +3451,7 @@ __metadata:
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
     case-sensitive-paths-webpack-plugin: ^2.4.0
+    comlink: ^4.3.0
     copy-webpack-plugin: ^7.0.0
     css-loader: ^4.3.0
     date-fns: ^2.19.0
@@ -3399,6 +3492,7 @@ __metadata:
     webpack: ^5.24.3
     webpack-cli: ^4.5.0
     webpack-dev-server: latest
+    worker-loader: ^3.0.8
   languageName: unknown
   linkType: soft
 
@@ -4080,6 +4174,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"comlink@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "comlink@npm:4.3.0"
+  checksum: b42a40f6846f90efad1f033c759f1b8aeb9649cad9ea95dc603d237146535d67b4c37d7d4f5cab33dd686b2d7a663704d42b77ae97d9aa16dd55428cc8fcc017
+  languageName: node
+  linkType: hard
+
 "commander@npm:^2.20.0":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
@@ -4433,6 +4534,13 @@ __metadata:
   dependencies:
     cssom: ~0.3.6
   checksum: a778180d2f5eef44742b7083997a0ad6e59eee016724ceac4d6229e48842d3c5ebbb55dc02c555f793bdc486254f6eef8d2049c1815e8fc74514e3eb827d49ec
+  languageName: node
+  linkType: hard
+
+"csstype@npm:^3.0.2":
+  version: 3.0.7
+  resolution: "csstype@npm:3.0.7"
+  checksum: 76d542d719cd6bca7c491e6425a28873f76b0f4cf602b626a9fee105806446be4fab2191c5d18a045aea412bb3d5dcb5cab9414328080c672671433b786746f5
   languageName: node
   linkType: hard
 
@@ -10082,7 +10190,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:16.14.0":
+"react-dom@npm:16.14.0, react-dom@npm:^16.14.0":
   version: 16.14.0
   resolution: "react-dom@npm:16.14.0"
   dependencies:
@@ -10100,6 +10208,13 @@ fsevents@^2.1.2:
   version: 3.2.0
   resolution: "react-fast-compare@npm:3.2.0"
   checksum: 6fe65c889eb4f326e97769135f97b3d63ac68737866f9c37f9625c9de4f5eaa9abed6f748eb3fd6a66808392118842916309cab7cfa99c67991f0c837433d6d2
+  languageName: node
+  linkType: hard
+
+"react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react-is@npm:17.0.2"
+  checksum: 3eff23f410d40ab9bc5177f147a92c7f42c356a21ecea340e0554566956d67e5e1ba56f26cc7fa22339ac3c7151744177bd6305eaa26d3cbf15f354358c9d9b6
   languageName: node
   linkType: hard
 
@@ -10167,7 +10282,33 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react@npm:16.14.0":
+"react-shallow-renderer@npm:^16.13.1":
+  version: 16.14.1
+  resolution: "react-shallow-renderer@npm:16.14.1"
+  dependencies:
+    object-assign: ^4.1.1
+    react-is: ^16.12.0 || ^17.0.0
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0
+  checksum: d52cb869e25605b00d4a67ff16598dbbf2826b0f09535de499b2f21a339cabf8b954d4b8855e0e6bdaf0a95603a2b6702e2b47eca8797a7d6bf7e6170ab8b2f3
+  languageName: node
+  linkType: hard
+
+"react-test-renderer@npm:^17.0.1":
+  version: 17.0.2
+  resolution: "react-test-renderer@npm:17.0.2"
+  dependencies:
+    object-assign: ^4.1.1
+    react-is: ^17.0.2
+    react-shallow-renderer: ^16.13.1
+    scheduler: ^0.20.2
+  peerDependencies:
+    react: 17.0.2
+  checksum: 9e79031ad20f9c20941aec1eda32d39eb558e9130740013e5a7b53367cf0eb8f7505c8034fec7da47cdcd80b254f20f1311c250bb586323bec7fbf7d97a90a1e
+  languageName: node
+  linkType: hard
+
+"react@npm:16.14.0, react@npm:^16.14.0":
   version: 16.14.0
   resolution: "react@npm:16.14.0"
   dependencies:
@@ -10749,6 +10890,16 @@ fsevents@^2.1.2:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: 804f990b9f370cca6d42b65f3cba2cc2bfed4973ee5623bed1ea36a6627842db8c891e2e5ac003f06f9ee892d1d3396921e27fa077346caf0213af05776e8dee
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.20.2":
+  version: 0.20.2
+  resolution: "scheduler@npm:0.20.2"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+  checksum: 2ba121e53e8a438394598612ec9a8f465b39157042f912d2dd5956af643e0d45ec6937ae4eeb0a807d1945b209515263aed12fc3bca95c7a027ec2a54e76b399
   languageName: node
   linkType: hard
 
@@ -12673,6 +12824,18 @@ fsevents@^2.1.2:
   version: 1.2.3
   resolution: "word-wrap@npm:1.2.3"
   checksum: 6526abd75d4409c76d1989cf2fbf6080b903db29824be3d17d0a0b8f6221486c76a021174eda2616cf311199787983c34bae3c5e7b51d2ad7476f2066cddb75a
+  languageName: node
+  linkType: hard
+
+"worker-loader@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "worker-loader@npm:3.0.8"
+  dependencies:
+    loader-utils: ^2.0.0
+    schema-utils: ^3.0.0
+  peerDependencies:
+    webpack: ^4.0.0 || ^5.0.0
+  checksum: 42e93da80473b886b25084f6e15f696a1afe0d00559370a138805f9ddc368ba676436abfe147f4cdb5255716b56bf6f3bc8926364d68e27216189cea95d416cf
   languageName: node
   linkType: hard
 

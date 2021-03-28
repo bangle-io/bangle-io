@@ -21,7 +21,7 @@
   "scripts": {
     "lint": "yarn prettier --check . && yarn eslint .",
     "test": "yarn lint && yarn jest",
-    "start": "yarn webpack serve --env development",
+    "start": "yarn webpack serve --env development --stats-children",
     "build": "NODE_ENV=production yarn webpack --env production",
     "build-serve": "yarn build && yarn run serve build",
     "snapshot": "yarn build && yarn node ./_scripts/snapshot",
@@ -73,6 +73,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
+    "comlink": "^4.3.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^4.3.0",
     "date-fns": "^2.19.0",
@@ -100,7 +101,8 @@
     "surge": "^0.21.7",
     "webpack": "^5.24.3",
     "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "latest"
+    "webpack-dev-server": "latest",
+    "worker-loader": "^3.0.8"
   },
   "prettier": {
     "singleQuote": true,
@@ -116,6 +118,20 @@
     "prosemirror-view": "^1.16.3",
     "prosemirror-transform": "1.2.7",
     "prosemirror-inputrules": "^1.1.3",
-    "prosemirror-utils/prosemirror-tables": "0.9.6"
+    "prosemirror-utils/prosemirror-tables": "0.9.6",
+    "@bangle.dev/collab": "portal:../bangle-play/collab",
+    "@bangle.dev/markdown-front-matter": "portal:../bangle-play/contrib/markdown-front-matter",
+    "@bangle.dev/react-emoji-suggest": "portal:../bangle-play/contrib/react-emoji-suggest",
+    "@bangle.dev/react-sticker": "portal:../bangle-play/contrib/react-sticker",
+    "@bangle.dev/react-stopwatch": "portal:../bangle-play/contrib/react-stopwatch",
+    "@bangle.dev/text-formatting": "portal:../bangle-play/contrib/text-formatting",
+    "@bangle.dev/timestamp": "portal:../bangle-play/contrib/timestamp",
+    "@bangle.dev/trailing-node": "portal:../bangle-play/contrib/trailing-node",
+    "@bangle.dev/core": "portal:../bangle-play/core",
+    "@bangle.dev/emoji": "portal:../bangle-play/emoji",
+    "@bangle.dev/markdown": "portal:../bangle-play/markdown",
+    "@bangle.dev/react": "portal:../bangle-play/react",
+    "@bangle.dev/react-menu": "portal:../bangle-play/react-menu",
+    "@bangle.dev/tooltip": "portal:../bangle-play/tooltip"
   }
 }
