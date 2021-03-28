@@ -18,6 +18,7 @@ const ResolvePaletteItemShape = PropTypes.shape({
   // if undefined will just call onPressEnter
   // Note this also handles if you meta-click the item
   onPressMetaEnter: PropTypes.func,
+  rightHoverIcon: PropTypes.element,
 });
 
 PaletteUI.propTypes = {
@@ -156,6 +157,7 @@ export function PaletteContainer({
               key={item.uid}
               isActive={getActiveIndex(counter, resolvedItems.length) === i}
               title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
               onClick={(e) => {
                 executeHandler(i, e.metaKey);
               }}

@@ -1,5 +1,5 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
 import {
@@ -126,18 +126,22 @@ export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState([]);
   const { wsName } = useWorkspacePath();
   const history = useHistory();
+  const isDestroyed = useRef(false);
 
-  useEffect(() => {
-    let destroyed = false;
+  const refreshWorkspaces = useCallback(() => {
     listWorkspaces().then((workspaces) => {
-      if (!destroyed) {
+      if (!isDestroyed.current) {
         updateWorkspaces(workspaces);
       }
     });
+  }, []);
+
+  useEffect(() => {
+    refreshWorkspaces();
     return () => {
-      destroyed = true;
+      isDestroyed.current = true;
     };
-  }, [wsName]);
+  }, [refreshWorkspaces]);
 
   const createWorkspaceCb = useCallback(
     async (wsName, type, opts) => {
@@ -148,11 +152,15 @@ export function useWorkspaces() {
   );
 
   const deleteWorkspaceCb = useCallback(
-    async (wsName) => {
-      await deleteWorkspace(wsName);
-      history.push(`/ws/`);
+    async (targetWsName) => {
+      await deleteWorkspace(targetWsName);
+      if (targetWsName === wsName) {
+        history.push(`/ws/`);
+      } else {
+        refreshWorkspaces();
+      }
     },
-    [history],
+    [history, wsName, refreshWorkspaces],
   );
 
   const switchWorkspaceCb = useCallback(
