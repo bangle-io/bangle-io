@@ -1,8 +1,10 @@
+import { specRegistry } from '../editor/spec-sheet';
 import { markdownParser, markdownSerializer } from '../markdown/parsers';
 import { IndexDBIO } from './indexdb';
 import { NativeFileOps } from './nativefs-helpers';
 import { resolvePath, validatePath, validateWsFilePath } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
+import { Node } from '@bangle.dev/core/prosemirror/model';
 
 const nativeFS = new NativeFileOps({
   allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
@@ -56,7 +58,7 @@ export async function getDoc(wsPath) {
  * @param {string} wsPath
  * @param {PMNode} doc
  */
-export async function saveDoc(wsPath, doc) {
+export async function saveDoc(wsPath, docJSON) {
   const { wsName, filePath } = resolvePath(wsPath);
   const ws = await getWorkspaceInfo(wsName);
   let file;
@@ -69,7 +71,7 @@ export async function saveDoc(wsPath, doc) {
       }
       file = await IndexDBIO.updateFile(wsPath, {
         ...file,
-        doc: doc.toJSON(),
+        doc: docJSON,
       });
       break;
     }
@@ -79,9 +81,10 @@ export async function saveDoc(wsPath, doc) {
       const path = toNativePath(rootDirHandle, filePath);
       let data;
       if (filePath.endsWith('.md')) {
+        let doc = Node.fromJSON(specRegistry.schema, docJSON);
         data = markdownSerializer(doc);
       } else if (filePath.endsWith('.json')) {
-        data = JSON.stringify(doc.toJSON());
+        data = JSON.stringify(docJSON);
       } else {
         throw new Error('Unknown file extension ' + filePath);
       }

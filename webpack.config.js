@@ -82,6 +82,14 @@ module.exports = (env, argv) => {
         },
 
         {
+          test: /\.shared-worker\.(c|m)?js$/i,
+          loader: 'worker-loader',
+          options: {
+            worker: 'SharedWorker',
+          },
+        },
+
+        {
           test: /\.css$/i,
           use: [
             // 'style-loader',

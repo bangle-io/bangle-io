@@ -65,10 +65,12 @@ export function Editor({ isFirst, wsPath }) {
 
       async getDocument({ docName, userId }) {
         // log({ docName, userId });
-        return sendRequest('get_document', {
+        const result = await sendRequest('get_document', {
           docName,
           userId,
         });
+
+        return result;
       },
 
       async pullEvents({ version, docName, userId }) {
@@ -176,6 +178,11 @@ export function Editor({ isFirst, wsPath }) {
     specRegistry,
   });
 
+  useEffect(() => {
+    return () => {
+      console.log('unmounting bruh');
+    };
+  }, []);
   useEffect(() => log('mounting editor', wsPath), [wsPath]);
   return (
     <BangleEditor

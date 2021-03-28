@@ -16,7 +16,7 @@ import {
 } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 
-const LOG = false;
+const LOG = true;
 let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
 
 export function Workspace({ children }) {
