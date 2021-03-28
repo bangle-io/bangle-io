@@ -228,26 +228,40 @@ function usePersistSelection(wsPath, isFirst, editor) {
 
     if (editor && wsPath && isFirst && selectionHead > 0) {
       // delay it a bit
-      requestAnimationFrame(() => {
-        cache.delete(key);
-        const { state, dispatch } = editor.view;
-        const SelectionAtStart =
-          state.selection.from === Selection.atStart(state.doc);
+      // TODO we need a better event handler
+      // from the editor to only trigger this after document
+      // has settled.
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          cache.delete(key);
+          const { state, dispatch } = editor.view;
+          const SelectionAtStart =
+            state.selection.from === Selection.atStart(state.doc);
 
-        log('dispatching selection moved', wsPath);
-        if (
-          selectionHead < state.doc.content.size &&
-          selectionHead > 0 &&
-          !SelectionAtStart
-        ) {
-          let { tr } = state;
-          log('dispatching location', selectionHead);
-          tr = tr
-            .setSelection(Selection.near(tr.doc.resolve(selectionHead)))
-            .scrollIntoView();
-          dispatch(tr);
-        }
-      });
+          // log(
+          //   'dispatching selection moved',
+          //   wsPath,
+          //   selectionHead,
+          //   state.doc.content.size,
+          //   SelectionAtStart,
+          //   selectionHead < state.doc.content.size &&
+          //     selectionHead > 0 &&
+          //     !SelectionAtStart,
+          // );
+          if (
+            selectionHead < state.doc.content.size &&
+            selectionHead > 0 &&
+            !SelectionAtStart
+          ) {
+            let { tr } = state;
+            log('dispatching location', selectionHead);
+            tr = tr
+              .setSelection(Selection.near(tr.doc.resolve(selectionHead)))
+              .scrollIntoView();
+            dispatch(tr);
+          }
+        });
+      }, 10);
     }
     return () => {
       if (editor?.view && isFirst && wsPath) {
