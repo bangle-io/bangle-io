@@ -62,6 +62,5 @@ export function AppContainer() {
 
 function PrimaryEditor() {
   const { wsPath } = useWorkspacePath();
-
   return wsPath ? <Editor key={wsPath} isFirst={true} wsPath={wsPath} /> : null;
 }

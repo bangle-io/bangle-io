@@ -9,6 +9,7 @@ import { timestamp } from '@bangle.dev/timestamp';
 import { BangleEditor } from '@bangle.dev/react';
 import { useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
+import { Selection } from '@bangle.dev/core/prosemirror/state';
 import sticker from '@bangle.dev/react-sticker';
 import { EmojiSuggest, emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import {
@@ -47,6 +48,8 @@ export function Editor({ isFirst, wsPath }) {
   const [editor, setEditor] = useState();
   const { sendRequest } = useContext(EditorManagerContext);
   const { paletteType } = useContext(UIManagerContext);
+
+  usePersistSelection(wsPath, isFirst, editor);
 
   useEffect(() => {
     // whenever paletteType goes undefined focus back on editor
@@ -215,4 +218,45 @@ export function Editor({ isFirst, wsPath }) {
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
     </BangleEditor>
   );
+}
+
+const cache = new Map();
+function usePersistSelection(wsPath, isFirst, editor) {
+  useEffect(() => {
+    const key = 'editorLastHead/' + wsPath;
+    const { selectionHead } = cache.get(key) || {};
+
+    if (editor && wsPath && isFirst && selectionHead > 0) {
+      // delay it a bit
+      requestAnimationFrame(() => {
+        cache.delete(key);
+        const { state, dispatch } = editor.view;
+        const SelectionAtStart =
+          state.selection.from === Selection.atStart(state.doc);
+
+        log('dispatching selection moved', wsPath);
+        if (
+          selectionHead < state.doc.content.size &&
+          selectionHead > 0 &&
+          !SelectionAtStart
+        ) {
+          let { tr } = state;
+          log('dispatching location', selectionHead);
+          tr = tr
+            .setSelection(Selection.near(tr.doc.resolve(selectionHead)))
+            .scrollIntoView();
+          dispatch(tr);
+        }
+      });
+    }
+    return () => {
+      if (editor?.view && isFirst && wsPath) {
+        const selectionHead = editor.view.state.selection.head;
+        log('saving position', key, selectionHead);
+        cache.set(key, {
+          selectionHead,
+        });
+      }
+    };
+  }, [wsPath, isFirst, editor]);
 }

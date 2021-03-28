@@ -39,3 +39,9 @@ export function resolvePath(wsPath) {
     fileName: fileName,
   };
 }
+
+export function locationToFilePath(location) {
+  if (location) {
+    return location.pathname.split('/').slice(3).join('/');
+  }
+}

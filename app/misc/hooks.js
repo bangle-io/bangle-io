@@ -1,4 +1,4 @@
-import { createRef, useCallback, useEffect } from 'react';
+import { createRef, useCallback, useEffect, useState } from 'react';
 import { keybindingsHelper } from './keybinding-helper';
 
 /**

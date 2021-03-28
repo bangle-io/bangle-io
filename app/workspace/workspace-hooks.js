@@ -1,7 +1,10 @@
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
-import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
+import {
+  locationToFilePath,
+  resolvePath,
+} from 'bangle-io/app/workspace/path-helpers';
 import {
   createWorkspace,
   deleteWorkspace,
@@ -15,6 +18,9 @@ import {
 } from './file-helpers';
 import { specRegistry } from '../editor/spec-sheet';
 import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
+
+const LOG = false;
+let log = LOG ? console.log.bind(console, 'workspace-hooks') : () => {};
 
 export function useGetWorkspaceFiles() {
   const { wsName, wsPermissionState } = useWorkspacePath();
@@ -185,7 +191,7 @@ export function useWorkspaces() {
 
 export function useWorkspacePath() {
   const { wsName } = useParams();
-  const { pathname } = useLocation();
+  const location = useLocation();
   const history = useHistory();
 
   const pushWsPath = useCallback(
@@ -223,7 +229,7 @@ export function useWorkspacePath() {
 
   const setWsPermissionState = useCallback(
     (payload) => {
-      console.log('setting ws state', payload);
+      log('setting ws state', payload);
       history.replace({
         ...history.location,
         state: { ...history.location.state, wsPermissionState: payload },
@@ -246,7 +252,7 @@ export function useWorkspacePath() {
     };
   }
 
-  const filePath = pathname.split('/').slice(3).join('/');
+  const filePath = locationToFilePath(location);
   let wsPath;
 
   if (filePath) {
@@ -259,7 +265,7 @@ export function useWorkspacePath() {
     filePath,
     pushWsPath,
     replaceWsPath,
-    wsPermissionState: history.location?.state?.wsPermissionState ?? {},
+    wsPermissionState: location?.state?.wsPermissionState ?? {},
     setWsPermissionState,
   };
 }
