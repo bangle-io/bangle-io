@@ -27,6 +27,10 @@ export function Workspace({ children }) {
     setWsPermissionState,
   } = useWorkspacePath();
 
+  useEffect(() => {
+    document.title = `bangle.io - ${wsPath}`;
+  }, [wsPath]);
+
   const errorHandler = useCallback(
     (error) => {
       if (error instanceof FSError) {
