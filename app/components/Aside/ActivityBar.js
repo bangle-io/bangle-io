@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { config } from 'bangle-io/config';
 import { UIManagerContext } from '../../UIManager';
 
 import { FolderIcon, TerminalIcon } from '../../helper-ui/Icons';
@@ -19,35 +18,31 @@ export function ActivityBar() {
     });
 
   return (
-    <div
-      className={`grid-activity-bar flex md:py-3   ${
-        config.isProduction ? 'bg-pink-900' : 'bg-gray-900'
-      } flex-col z-30`}
-    >
-      <AsideButtonBox isActive={sidebar}>
-        <FolderIcon
-          onClick={toggleSidebar}
-          className="aside-button text-gray-100 cursor-pointer"
-        />
-      </AsideButtonBox>
-      <AsideButtonBox isActive={!!paletteType}>
-        <TerminalIcon
-          onClick={togglePalette}
-          className="aside-button text-gray-100 cursor-pointer"
-        />
-      </AsideButtonBox>
+    <div className="activity-bar">
+      <div>
+        <AsideButtonBox isActive={sidebar} onClick={toggleSidebar}>
+          <FolderIcon className="aside-button text-gray-100 cursor-pointer" />
+        </AsideButtonBox>
+        <AsideButtonBox isActive={!!paletteType} onClick={togglePalette}>
+          <TerminalIcon className="aside-button text-gray-100 cursor-pointer" />
+        </AsideButtonBox>
+      </div>
     </div>
   );
 }
 
-function AsideButtonBox({ children, isActive }) {
+function AsideButtonBox({ children, isActive, onClick }) {
   return (
-    <div
-      className={`flex aside-button-box items-center justify-center pt-3 pb-3 border-l-2 mt-1 mb-1 ${
-        isActive ? 'active' : ''
-      }`}
+    <button
+      onClick={onClick}
+      className={`flex w-full items-center justify-center
+          focus:outline-none 
+          pt-3 pb-3 border-l-2 mt-1 mb-1`}
+      style={{
+        borderColor: !isActive ? 'transparent' : 'var(--accent-2-color)',
+      }}
     >
-      {children}
-    </div>
+      <span>{children}</span>
+    </button>
   );
 }

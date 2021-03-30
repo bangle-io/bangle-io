@@ -1,4 +1,4 @@
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import {
@@ -26,6 +26,7 @@ export function useGetWorkspaceFiles() {
   const { wsName, wsPermissionState } = useWorkspacePath();
 
   const [files, setFiles] = useState([]);
+  const isDestroyed = useRef(false);
 
   const refreshFiles = useCallback(() => {
     if (
@@ -38,7 +39,9 @@ export function useGetWorkspaceFiles() {
         wsPermissionState.error?.code === NATIVE_FS_FILE_NOT_FOUND_ERROR)
     ) {
       listAllFiles(wsName).then((items) => {
-        setFiles(items);
+        if (!isDestroyed.current) {
+          setFiles(items);
+        }
       });
     }
   }, [wsName, wsPermissionState]);
@@ -46,6 +49,12 @@ export function useGetWorkspaceFiles() {
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
+
+  useEffect(() => {
+    return () => {
+      isDestroyed.current = true;
+    };
+  }, []);
 
   return [files, refreshFiles];
 }
@@ -190,8 +199,15 @@ export function useWorkspaces() {
 }
 
 export function useWorkspacePath() {
-  const { wsName } = useParams();
   const location = useLocation();
+  const match = matchPath(location.pathname, {
+    path: '/ws/:wsName',
+    exact: false,
+    strict: false,
+  });
+
+  const { wsName } = match?.params || {};
+
   const history = useHistory();
 
   const pushWsPath = useCallback(

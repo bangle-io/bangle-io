@@ -38,7 +38,7 @@ const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
 const getScrollContainer = (view) => {
-  return view.dom.parentElement.parentElement;
+  return view.dom.parentElement;
 };
 
 const menuKey = new PluginKey('menuKey');
@@ -179,6 +179,7 @@ export function Editor({ isFirst, wsPath }) {
   useEffect(() => log('mounting editor', wsPath), [wsPath]);
   return (
     <BangleEditor
+      className="bangle-editor-wrapper"
       state={editorState}
       onReady={onEditorReady}
       renderNodeViews={renderNodeViews}

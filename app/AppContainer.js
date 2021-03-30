@@ -1,3 +1,4 @@
+import './style/reset.css';
 import './style/tailwind.src.css';
 import './style/style.css';
 import './style/prosemirror.css';
@@ -16,47 +17,33 @@ export function AppContainer() {
     <Router>
       <EditorManager>
         <UIManager>
-          <Switch>
-            <Route path={['/ws/:wsName']}>
-              <div className="h-screen main-wrapper">
-                <div className="editor-wrapper">
-                  <div className="flex justify-center flex-row">
-                    <div
-                      className="flex-1 max-w-screen-md ml-1 mr-1"
-                      style={{ height: '100vh', overflowY: 'scroll' }}
-                    >
-                      <Workspace>
-                        <PrimaryEditor />
-                        {/* adds white space at bottoms */}
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexGrow: 1,
-                            height: '20vh',
-                            backgroundColor: 'transparent',
-                          }}
-                        >
-                          &nbsp;
-                        </div>
-                      </Workspace>
-                    </div>
-                  </div>
-                </div>
-                <Palette />
-                <Aside />
-              </div>
-            </Route>
-            <Route path="/">
-              <div className="h-screen main-wrapper">
-                <span>Let us open a workspace</span>
-                <Palette />
-                <Aside />
-              </div>
-            </Route>
-          </Switch>
+          <Route path={['/', '/ws/:wsName']}>
+            <Aside />
+            <Palette />
+            <MainContent />
+          </Route>
         </UIManager>
       </EditorManager>
     </Router>
+  );
+}
+
+function MainContent() {
+  return (
+    <div className="main-content">
+      <Switch>
+        <Route path="/ws/:wsName">
+          <Workspace>
+            <PrimaryEditor />
+          </Workspace>
+        </Route>
+        <Route path="/">
+          <div>
+            <span>Let us open a workspace</span>
+          </div>
+        </Route>
+      </Switch>
+    </div>
   );
 }
 

@@ -1,5 +1,5 @@
 .bangle-palette {
-  position: absolute;
+  position: fixed;
   background-color: var(--bg-stronger-color);
   left: 0;
   right: 0;

@@ -27,9 +27,172 @@ export function Workspace({ children }) {
     setWsPermissionState,
   } = useWorkspacePath();
 
+  usePermissions();
   useEffect(() => {
-    document.title = `bangle.io - ${wsPath}`;
-  }, [wsPath]);
+    if (wsName) {
+      document.title = wsPath
+        ? `bangle.io - ${wsPath}`
+        : `bangle.io - ${wsName}`;
+    } else {
+      document.title = 'bangle.io';
+    }
+  }, [wsPath, wsName]);
+
+  useHandleErrors();
+  if (wsName == null) {
+    return null;
+  }
+
+  switch (wsPermissionState.type) {
+    case undefined: {
+      return <span></span>;
+    }
+
+    case 'loading': {
+      return <span>loading...</span>;
+    }
+
+    case 'ready': {
+      return children;
+    }
+
+    case 'permission': {
+      return (
+        <PermissionModal
+          onPermissionGranted={(granted) => {
+            if (granted) {
+              setWsPermissionState({
+                type: 'ready',
+                workspace: wsPermissionState.workspace,
+              });
+            } else {
+              setWsPermissionState({
+                type: 'permission',
+                workspace: wsPermissionState.workspace,
+              });
+            }
+          }}
+          workspace={wsPermissionState.workspace}
+        />
+      );
+    }
+
+    case 'error': {
+      const { error } = wsPermissionState;
+      return (
+        <div>
+          <span>Encountered an Error</span>
+          <br />
+          <span>
+            {error.name}: {error.message}
+          </span>
+          <br />
+          <span>
+            Please try reloading the page or open a ticket if the issue persists
+          </span>
+        </div>
+      );
+    }
+
+    default:
+      throw new Error('Unknown workspaceState' + wsPermissionState.type);
+  }
+}
+
+function PermissionModal({ onPermissionGranted, workspace }) {
+  const open = useCallback(async () => {
+    if (!workspace) {
+      throw new Error('workspace not found');
+    }
+
+    if (workspace.type !== 'nativefs') {
+      onPermissionGranted(true);
+      return;
+    }
+
+    if (await requestPermission(workspace.metadata.rootDirHandle)) {
+      onPermissionGranted(true);
+    } else {
+      alert('You will need to grant permission to edit ' + workspace.name);
+      onPermissionGranted(false);
+      return;
+    }
+  }, [onPermissionGranted, workspace]);
+
+  useEffect(() => {
+    let callback = keybindingsHelper({
+      Enter: () => {
+        open();
+        return true;
+      },
+    });
+    document.addEventListener('keydown', callback);
+    return () => {
+      document.removeEventListener('keydown', callback);
+    };
+  }, [open]);
+
+  return (
+    <div className="flex justify-center flex-row h-full" onClick={open}>
+      Press Enter twice or click anywhere to resume working on {workspace.name}
+    </div>
+  );
+}
+
+function usePermissions() {
+  const { wsName, wsPath, setWsPermissionState } = useWorkspacePath();
+
+  useEffect(
+    () => {
+      let unmounted = false;
+
+      if (!wsName) {
+        return;
+      }
+
+      setWsPermissionState({});
+
+      getWorkspaceInfo(wsName).then((workspace) => {
+        if (unmounted) {
+          return;
+        }
+        if (workspace.type === 'browser') {
+          setWsPermissionState({ type: 'ready', workspace });
+          return;
+        }
+
+        if (workspace.type === 'nativefs') {
+          hasPermission(workspace.metadata.rootDirHandle).then((permission) => {
+            if (unmounted) {
+              return;
+            }
+
+            if (permission) {
+              setWsPermissionState({ type: 'ready', workspace });
+            } else {
+              setWsPermissionState({ type: 'permission', workspace });
+            }
+          });
+          return;
+        }
+
+        setWsPermissionState({
+          type: 'error',
+          error: new Error('Unknown workspace type'),
+        });
+      });
+
+      return () => {
+        unmounted = true;
+      };
+    },
+    // adding wsPath so that error is reset if path changes
+    [wsName, wsPath, setWsPermissionState],
+  );
+}
+
+function useHandleErrors() {
+  const { wsPermissionState, setWsPermissionState } = useWorkspacePath();
 
   const errorHandler = useCallback(
     (error) => {
@@ -78,144 +241,4 @@ export function Workspace({ children }) {
   );
 
   useCatchError(errorHandler);
-
-  useEffect(
-    () => {
-      let unmounted = false;
-
-      setWsPermissionState({});
-
-      getWorkspaceInfo(wsName).then((workspace) => {
-        if (unmounted) {
-          return;
-        }
-        if (workspace.type === 'browser') {
-          setWsPermissionState({ type: 'ready', workspace });
-          return;
-        }
-
-        if (workspace.type === 'nativefs') {
-          hasPermission(workspace.metadata.rootDirHandle).then((permission) => {
-            if (unmounted) {
-              return;
-            }
-
-            if (permission) {
-              setWsPermissionState({ type: 'ready', workspace });
-            } else {
-              setWsPermissionState({ type: 'permission', workspace });
-            }
-          });
-          return;
-        }
-
-        setWsPermissionState({
-          type: 'error',
-          error: new Error('Unknown workspace type'),
-        });
-      });
-
-      return () => {
-        unmounted = true;
-      };
-    },
-    // adding wsPath so that error is reset if path changes
-    [wsName, wsPath, setWsPermissionState],
-  );
-
-  log({ wsPermissionState });
-  switch (wsPermissionState.type) {
-    case undefined: {
-      return <span></span>;
-    }
-
-    case 'loading': {
-      return <span>loading...</span>;
-    }
-
-    case 'ready': {
-      return children;
-    }
-
-    case 'permission': {
-      return (
-        <PermissionModal
-          onPermissionGranted={(granted) => {
-            if (granted) {
-              setWsPermissionState({
-                type: 'ready',
-                workspace: wsPermissionState.workspace,
-              });
-            } else {
-              setWsPermissionState({
-                type: 'permission',
-                workspace: wsPermissionState.workspace,
-              });
-            }
-          }}
-          workspace={wsPermissionState.workspace}
-        />
-      );
-    }
-
-    case 'error': {
-      const { error } = wsPermissionState;
-      return (
-        <>
-          <span>Encountered an Error</span>
-          <br />
-          <span>
-            {error.name}: {error.message}
-          </span>
-          <br />
-          <span>
-            Please try reloading the page or open a ticket if the issue persists
-          </span>
-        </>
-      );
-    }
-
-    default:
-      throw new Error('Unknown workspaceState' + wsPermissionState.type);
-  }
-}
-
-function PermissionModal({ onPermissionGranted, workspace }) {
-  const open = useCallback(async () => {
-    if (!workspace) {
-      throw new Error('workspace not found');
-    }
-
-    if (workspace.type !== 'nativefs') {
-      onPermissionGranted(true);
-      return;
-    }
-
-    if (await requestPermission(workspace.metadata.rootDirHandle)) {
-      onPermissionGranted(true);
-    } else {
-      alert('You will need to grant permission to edit ' + workspace.name);
-      onPermissionGranted(false);
-      return;
-    }
-  }, [onPermissionGranted, workspace]);
-
-  useEffect(() => {
-    let callback = keybindingsHelper({
-      Enter: () => {
-        open();
-        return true;
-      },
-    });
-    document.addEventListener('keydown', callback);
-    return () => {
-      document.removeEventListener('keydown', callback);
-    };
-  }, [open]);
-
-  return (
-    <div className="flex justify-center flex-row h-full" onClick={open}>
-      Press Enter twice or click anywhere to resume working on {workspace.name}
-    </div>
-  );
 }

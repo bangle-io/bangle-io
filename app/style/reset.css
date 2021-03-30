@@ -1,0 +1,11 @@
+div:focus {
+  outline: none;
+}
+
+button:focus {
+  outline: none;
+}
+
+button {
+  outline: none;
+}

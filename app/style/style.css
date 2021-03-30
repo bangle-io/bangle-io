@@ -1,34 +1,78 @@
 :root {
-  --light-accent-color: rgb(247, 188, 99);
-  --light-accent-2-color: rgb(250, 221, 176);
-  --light-font-color: black;
-  --light-bg-color: #fff;
-  --light-bg-stronger-color: #f5f5f5;
-  --light-border-color: rgb(232, 232, 232);
+  --activity-bar-width: 70px;
 
+  --light-accent-color: rgb(247, 188, 99);
   --dark-accent-color: rgb(247, 188, 99);
+
+  --light-accent-2-color: rgb(250, 221, 176);
   --dark-accent-2-color: rgb(250, 221, 176);
+
+  --light-font-color: black;
   --dark-font-color: white;
+
+  --light-bg-color: #fff;
   --dark-bg-color: rgb(55, 59, 64);
+
+  --light-bg-stronger-color: #f5f5f5;
   --dark-bg-stronger-color: rgb(46, 48, 51);
+
+  --light-border-color: rgb(232, 232, 232);
   --dark-border-color: rgb(232, 232, 232);
+
+  --light-activity-bar-color: rgb(26, 32, 44);
+  --dark-activity-bar-color: rgb(22, 27, 34);
+  background-color: var(--bg-color);
 }
 
 #root {
   color: var(--font-color);
+  /* background-color: pink; */
+  display: flex;
+  flex-flow: row nowrap;
 }
 
-.editor-wrapper {
-  /** Keeping element relative allows for hiding of absolutely position children*/
-  position: relative;
-  overflow: hidden;
-  background-color: var(--bg-color);
+.activity-bar {
+  min-height: 100vh;
+  min-width: var(--activity-bar-width);
+  z-index: 10;
+  background-color: var(--activity-bar-color);
 }
 
-.bangle-editor {
-  padding: 0 30px;
+/** this position fixed exists so that we can keep activity bar fixed
+   while still benefiting from flex.
+*/
+.activity-bar > div {
+  position: fixed;
+  padding-top: 0.5rem;
+  box-sizing: border-box;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: var(--activity-bar-width);
 }
 
+.main-content {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.bangle-editor-wrapper {
+  max-width: 700px;
+  flex-grow: 1;
+}
+
+.side-bar {
+  position: fixed;
+  height: 100vh;
+  left: 70px;
+  top: 0;
+  z-index: 100;
+  width: 300px;
+  background-color: var(--bg-stronger-color);
+}
+
+/* 
 @media screen and (max-width: 640px) {
   .main-wrapper {
     display: grid;
@@ -72,23 +116,4 @@
     grid-row: 1 / 3;
   }
 }
-
-.grid-side-bar {
-  background-color: var(--bg-stronger-color);
-}
-
-.bg-stronger-color {
-  background-color: var(--bg-stronger-color);
-}
-
-div:focus {
-  outline: none;
-}
-
-button:focus {
-  outline: none;
-}
-
-.bg-stronger {
-  background-color: var(--bg-stronger-color);
-}
+ */
