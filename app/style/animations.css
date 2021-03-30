@@ -37,6 +37,7 @@
   animation-timing-function: ease-out;
   will-change: transform, opacity;
 }
+
 .fadeInAnimation {
   animation-name: fadeIn;
   animation-duration: 0.15s;

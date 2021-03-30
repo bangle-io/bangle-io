@@ -1,7 +1,6 @@
 import './style/reset.css';
 import './style/tailwind.src.css';
 import './style/style.css';
-import './style/prosemirror.css';
 import './style/animations.css';
 import React from 'react';
 import { Editor } from './components/Editor';

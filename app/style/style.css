@@ -54,6 +54,7 @@
 
 .main-content {
   display: flex;
+  flex-direction: row;
   width: 100%;
   justify-content: center;
 }
@@ -61,6 +62,10 @@
 .bangle-editor-wrapper {
   max-width: 700px;
   flex-grow: 1;
+  align-self: center;
+  /* This padding is important so it can cover any things hanging
+   left or right of the editor. Example the heading collapse buttons */
+  padding: 0 30px;
 }
 
 .sidebar-content {
