@@ -2,10 +2,11 @@ import './style/reset.css';
 import './style/tailwind.src.css';
 import './style/style.css';
 import './style/prosemirror.css';
+import './style/animations.css';
 import React from 'react';
 import { Editor } from './components/Editor';
 import { EditorManager } from './editor/EditorManager';
-import { Aside } from './components/Aside/Aside';
+import { LeftSidebar } from './components/LeftSidebar/LeftSidebar';
 import { Palette } from './Palette/index';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspacePath } from './workspace/workspace-hooks';
@@ -18,7 +19,7 @@ export function AppContainer() {
       <EditorManager>
         <UIManager>
           <Route path={['/', '/ws/:wsName']}>
-            <Aside />
+            <LeftSidebar />
             <Palette />
             <MainContent />
           </Route>

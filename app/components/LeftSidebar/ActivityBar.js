@@ -20,18 +20,18 @@ export function ActivityBar() {
   return (
     <div className="activity-bar">
       <div>
-        <AsideButtonBox isActive={sidebar} onClick={toggleSidebar}>
-          <FolderIcon className="aside-button text-gray-100 cursor-pointer" />
-        </AsideButtonBox>
-        <AsideButtonBox isActive={!!paletteType} onClick={togglePalette}>
-          <TerminalIcon className="aside-button text-gray-100 cursor-pointer" />
-        </AsideButtonBox>
+        <ActivityBarBox isActive={sidebar} onClick={toggleSidebar}>
+          <FolderIcon className="h-5 w-5 text-gray-100 cursor-pointer" />
+        </ActivityBarBox>
+        <ActivityBarBox isActive={!!paletteType} onClick={togglePalette}>
+          <TerminalIcon className="h-5 w-5 text-gray-100 cursor-pointer" />
+        </ActivityBarBox>
       </div>
     </div>
   );
 }
 
-function AsideButtonBox({ children, isActive, onClick }) {
+function ActivityBarBox({ children, isActive, onClick }) {
   return (
     <button
       onClick={onClick}

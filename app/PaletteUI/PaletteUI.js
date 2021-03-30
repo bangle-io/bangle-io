@@ -4,7 +4,7 @@ import React, { createRef, useCallback, useEffect, useState } from 'react';
 import { keyName } from 'w3c-keyname';
 import PropTypes from 'prop-types';
 import { useWatchClickOutside } from '../misc/hooks';
-import { SideBarRow } from '../components/Aside/SideBarRow';
+import { SideBarRow } from '../components/LeftSidebar/SideBarRow';
 
 const ResolvePaletteItemShape = PropTypes.shape({
   uid: PropTypes.string.isRequired,
@@ -133,7 +133,7 @@ export function PaletteContainer({
 
   return (
     <div
-      className="bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
+      className="fadeInScaleAnimation bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
       ref={containerRef}
     >
       <PaletteInput

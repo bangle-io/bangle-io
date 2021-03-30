@@ -1,5 +1,6 @@
 :root {
   --activity-bar-width: 70px;
+  --sidebar-content-width: 300px;
 
   --light-accent-color: rgb(247, 188, 99);
   --dark-accent-color: rgb(247, 188, 99);
@@ -34,7 +35,7 @@
 .activity-bar {
   min-height: 100vh;
   min-width: var(--activity-bar-width);
-  z-index: 10;
+  z-index: 200;
   background-color: var(--activity-bar-color);
 }
 
@@ -62,13 +63,14 @@
   flex-grow: 1;
 }
 
-.side-bar {
+.sidebar-content {
   position: fixed;
-  height: 100vh;
-  left: 70px;
+  min-height: 100vh;
+  max-height: 100vh;
+  left: var(--activity-bar-width);
   top: 0;
   z-index: 100;
-  width: 300px;
+  width: var(--sidebar-content-width);
   background-color: var(--bg-stronger-color);
 }
 

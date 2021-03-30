@@ -1,0 +1,52 @@
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.97, 0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fadeInScaleAnimation {
+  animation-duration: 0.08s;
+  animation-name: fadeInScale;
+  animation-timing-function: ease-out;
+  will-change: transform, opacity;
+}
+.fadeInAnimation {
+  animation-name: fadeIn;
+  animation-duration: 0.15s;
+  animation-timing-function: ease-out;
+  will-change: opacity;
+}
+
+.fadeInLeftAnimation {
+  animation-name: fadeInLeft;
+  animation-duration: 0.08s;
+  animation-timing-function: ease-out;
+  will-change: transform, opacity;
+}

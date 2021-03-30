@@ -19,11 +19,6 @@
   border: 2px solid var(--border-color);
 }
 
-.aside-button {
-  height: 1.25rem;
-  width: 1.25rem;
-}
-
 .file-browser-button {
   height: 16px;
   width: 16px;
