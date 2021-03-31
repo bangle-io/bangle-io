@@ -150,8 +150,6 @@ function usePermissions() {
         return;
       }
 
-      setWsPermissionState({});
-
       getWorkspaceInfo(wsName).then((workspace) => {
         if (unmounted) {
           return;

@@ -25,6 +25,8 @@ export function useFilePalette() {
     (item, itemIndex, event) => {
       if (event.metaKey) {
         pushWsPath(item.data.wsPath, true);
+      } else if (event.shiftKey) {
+        pushWsPath(item.data.wsPath, false, true);
       } else {
         pushWsPath(item.data.wsPath);
       }

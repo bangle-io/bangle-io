@@ -2,16 +2,15 @@ import './style/reset.css';
 import './style/tailwind.src.css';
 import './style/style.css';
 import './style/animations.css';
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
 import { Editor } from './components/Editor';
-import { EditorManager } from './editor/EditorManager';
+import { EditorManager, EditorManagerContext } from './editor/EditorManager';
 import { LeftSidebar } from './components/LeftSidebar/LeftSidebar';
 import { Palette } from './Palette/index';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useWorkspacePath } from './workspace/workspace-hooks';
 import { Workspace } from './workspace/Workspace';
-import { UIManager } from './UIManager';
+import { UIManager, UIManagerContext } from './UIManager';
 import { checkWidescreen } from './misc/index';
 import { useWindowSize } from './misc/hooks';
 
@@ -20,11 +19,9 @@ export function AppContainer() {
     <Router>
       <EditorManager>
         <UIManager>
-          <Route path={['/', '/ws/:wsName']}>
-            <LeftSidebar />
-            <Palette />
-            <MainContent />
-          </Route>
+          <LeftSidebar />
+          <Palette />
+          <MainContent />
         </UIManager>
       </EditorManager>
     </Router>
@@ -34,33 +31,48 @@ export function AppContainer() {
 function MainContent() {
   const windowSize = useWindowSize();
   const wideScreen = checkWidescreen(windowSize.width);
+  const { sendRequest } = useContext(EditorManagerContext);
+  const { paletteType } = useContext(UIManagerContext);
+  const { wsPath, secondaryWsPath } = useWorkspacePath();
+  const secondaryEditor = wideScreen && Boolean(secondaryWsPath);
   return (
-    <div className={`main-content ${wideScreen ? 'wide-screen' : ''}`}>
-      <Switch>
-        <Route path="/ws/:wsName">
-          <Workspace>
-            <PrimaryEditor />
-            {wideScreen ? <SecondaryEditor /> : null}
-          </Workspace>
-        </Route>
-        <Route path="/">
-          <div>
-            <span>Let us open a workspace</span>
+    <div
+      className={`main-content ${wideScreen ? 'wide-screen' : ''}
+    ${secondaryEditor ? 'has-secondary-editor' : ''}
+    `}
+    >
+      <Route exact path="/">
+        <div>
+          <span>Let us open a workspace</span>
+        </div>
+      </Route>
+      <Route path="/ws/:wsName">
+        <Workspace>
+          <div className="bangle-editor-wrapper">
+            <EditorWrapper
+              isFirst={true}
+              wsPath={wsPath}
+              sendRequest={sendRequest}
+              paletteType={paletteType}
+            />
           </div>
-        </Route>
-      </Switch>
+          {wideScreen && secondaryEditor ? (
+            <div className="bangle-editor-wrapper">
+              <EditorWrapper
+                isFirst={false}
+                wsPath={secondaryWsPath}
+                sendRequest={sendRequest}
+                paletteType={paletteType}
+              />
+            </div>
+          ) : null}
+        </Workspace>
+      </Route>
     </div>
   );
 }
 
-function PrimaryEditor() {
-  const { wsPath } = useWorkspacePath();
-  return wsPath ? <Editor key={wsPath} isFirst={true} wsPath={wsPath} /> : null;
-}
-
-function SecondaryEditor() {
-  const { secondaryWsPath: wsPath } = useWorkspacePath();
-  return wsPath ? (
-    <Editor key={wsPath} isFirst={false} wsPath={wsPath} />
-  ) : null;
+function EditorWrapper(props) {
+  // key to wsPath so that we remount the component on path change
+  return props.wsPath ? <Editor key={props.wsPath} {...props} /> : null;
 }

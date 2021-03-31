@@ -18,6 +18,7 @@ import {
 } from './file-helpers';
 import { specRegistry } from '../editor/spec-sheet';
 import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
+import { checkWidescreen } from '../misc/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace-hooks') : () => {};
@@ -220,7 +221,9 @@ export function useWorkspacePath() {
         return;
       }
 
-      if (secondary) {
+      const isWidescreen = checkWidescreen();
+
+      if (isWidescreen && secondary) {
         history.push({
           ...history.location,
           state: { ...history.location.state, secondaryWsPath: wsPath },
@@ -228,7 +231,6 @@ export function useWorkspacePath() {
         return;
       }
 
-      // allow opening the same thing in new tab
       if (newPath === history.location.pathname) {
         return;
       }
@@ -236,6 +238,12 @@ export function useWorkspacePath() {
       history.push({
         ...history.location,
         pathname: newPath,
+        state: {
+          ...history.location.state,
+          secondaryWsPath: isWidescreen
+            ? history.location.state?.secondaryWsPath
+            : null,
+        },
       });
     },
     [history],

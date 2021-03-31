@@ -32,25 +32,23 @@
   justify-content: center;
 }
 
-/*Cant use media queries as they dont support variables*/
-.main-content.wide-screen {
+.main-content.has-secondary-editor {
   display: grid;
-  overflow-y: scroll;
   grid-template-columns: 1fr 40px 1fr;
-  width: 100%;
 }
 
-.main-content.wide-screen > div {
+/* to make each editor independently scrollable */
+.main-content.has-secondary-editor > .bangle-editor-wrapper {
   overflow-y: scroll;
   height: 100vh;
 }
 
-.main-content.wide-screen > div:first-child {
+.main-content.has-secondary-editor > .bangle-editor-wrapper:first-child {
   grid-column-start: 1;
   grid-column-end: 2;
 }
 
-.main-content.wide-screen > div:nth-child(2) {
+.main-content.has-secondary-editor > .bangle-editor-wrapper:nth-child(2) {
   grid-column-start: 3;
   grid-column-end: 4;
 }
@@ -58,7 +56,6 @@
 .bangle-editor-wrapper {
   max-width: 700px;
   flex-grow: 1;
-  align-self: center;
   /* This padding is important so it can cover any things hanging
    left or right of the editor. Example the heading collapse buttons */
   padding: 0 30px;
