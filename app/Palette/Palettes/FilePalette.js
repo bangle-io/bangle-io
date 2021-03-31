@@ -21,16 +21,14 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 export function useFilePalette() {
   const { pushWsPath } = useWorkspacePath();
   const [files] = useGetWorkspaceFiles();
-  const onPressEnter = useCallback(
-    (item) => {
-      pushWsPath(item.data.wsPath);
-    },
-    [pushWsPath],
-  );
-
-  const onPressMetaEnter = useCallback(
-    (item) => {
-      pushWsPath(item.data.wsPath, true);
+  const onExecute = useCallback(
+    (item, itemIndex, event) => {
+      if (event.metaKey) {
+        pushWsPath(item.data.wsPath, true);
+      } else {
+        pushWsPath(item.data.wsPath);
+      }
+      return true;
     },
     [pushWsPath],
   );
@@ -46,13 +44,12 @@ export function useFilePalette() {
         return {
           uid: wsPath,
           title: resolvePath(wsPath).filePath,
-          onPressEnter,
-          onPressMetaEnter,
+          onExecute,
           data: { wsPath },
         };
       });
     },
-    [onPressEnter, onPressMetaEnter, files],
+    [onExecute, files],
   );
 
   return result;

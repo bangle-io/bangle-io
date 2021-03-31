@@ -4,11 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { PaletteInputUI, PaletteUI } from '../PaletteUI';
 
 describe('PaletteInput', () => {
-  let onDismiss, result, onPressEnter;
+  let onDismiss, result, onExecute;
 
   beforeEach(async () => {
     onDismiss = jest.fn();
-    onPressEnter = jest.fn();
+    onExecute = jest.fn();
 
     function Comp() {
       const [query, updateQuery] = useState('');
@@ -20,7 +20,7 @@ describe('PaletteInput', () => {
           <PaletteInputUI
             ref={paletteInputRef}
             onDismiss={onDismiss}
-            onPressEnter={onPressEnter}
+            onExecute={onExecute}
             updateCounter={updateCounter}
             updateQuery={updateQuery}
             query={query}
@@ -74,22 +74,22 @@ describe('PaletteInput', () => {
   it('enter works', async () => {
     const input = result.getByLabelText('palette-input');
     userEvent.type(input, 'Hello, {enter}World!');
-    expect(onPressEnter).toBeCalledTimes(1);
-    expect(onPressEnter).toBeCalledWith({ query: 'Hello, ', counter: 1 });
+    expect(onExecute).toBeCalledTimes(1);
+    expect(onExecute).toBeCalledWith({ query: 'Hello, ', counter: 1 });
   });
 
   it('arrow keys update counter', async () => {
     const input = result.getByLabelText('palette-input');
     userEvent.type(input, 'World {arrowUp}{enter}');
-    expect(onPressEnter).toBeCalledTimes(1);
-    expect(onPressEnter).toBeCalledWith({ query: 'World ', counter: 0 });
+    expect(onExecute).toBeCalledTimes(1);
+    expect(onExecute).toBeCalledWith({ query: 'World ', counter: 0 });
 
     userEvent.type(input, '{arrowDown}');
     userEvent.type(input, '{arrowDown}');
     userEvent.type(input, '{arrowDown}');
     userEvent.type(input, '{enter}');
 
-    expect(onPressEnter).toBeCalledWith({ query: 'World ', counter: 3 });
+    expect(onExecute).toBeCalledWith({ query: 'World ', counter: 3 });
   });
 
   it('escape dismisses', async () => {
@@ -182,7 +182,7 @@ describe.only('PaletteUI', () => {
           uid: '1',
           title: 'first item',
           data: {},
-          onPressEnter: () => {},
+          onExecute: () => {},
         },
       ],
     });
@@ -224,7 +224,7 @@ describe.only('PaletteUI', () => {
       uid: '1',
       title: 'first item',
       data: {},
-      onPressEnter: () => {},
+      onExecute: () => {},
     }));
     const { result, rerender } = await setup({
       paletteType: 'default',
@@ -233,7 +233,7 @@ describe.only('PaletteUI', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
+          class="fadeInScaleAnimation bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
         >
           <div
             class="palette-input-wrapper flex py-2 px-2 top-0"

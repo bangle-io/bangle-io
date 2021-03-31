@@ -10,14 +10,9 @@ const ResolvePaletteItemShape = PropTypes.shape({
   uid: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   data: PropTypes.object,
-  onPressEnter: PropTypes.func.isRequired,
-  // onClick is optional, if not provided
-  // will default to calling onPressEnter on click
-  onClick: PropTypes.func,
-  // Optional callback called when user keys in Meta+Enter
-  // if undefined will just call onPressEnter
-  // Note this also handles if you meta-click the item
-  onPressMetaEnter: PropTypes.func,
+  // a function that is called whenever a user clicks an item or presses enter
+  // passed with params (item, itemIndex, event) - return true or Promise that resolve to true to dismiss the palette
+  onExecute: PropTypes.func.isRequired,
   rightHoverIcon: PropTypes.element,
 });
 
@@ -54,7 +49,6 @@ export function PaletteUI({
   parseRawQuery,
   generateRawQuery,
   paletteItems,
-  onCommandEnter,
 }) {
   const [query, updateQuery] = useState(paletteInitialQuery);
   const [counter, updateCounter] = useState(0);
@@ -112,21 +106,26 @@ export function PaletteContainer({
   const activeItemIndex = getActiveIndex(counter, resolvedItems.length);
 
   const executeHandler = useCallback(
-    (itemIndex, isMetaKeyPressed) => {
+    (itemIndex, event) => {
       const item = resolvedItems[itemIndex];
 
       if (!item) {
         return;
       }
 
-      let handler = item.onClick || item.onPressEnter;
-      if (isMetaKeyPressed && item.onPressMetaEnter) {
-        handler = item.onPressMetaEnter;
+      const result = item.onExecute(item, itemIndex, event);
+      if (result === true) {
+        event.preventDefault();
+        onDismiss();
       }
 
-      handler(item, itemIndex);
-
-      onDismiss();
+      if (result instanceof Promise) {
+        result.then((outcome) => {
+          if (outcome === true) {
+            onDismiss();
+          }
+        });
+      }
     },
     [resolvedItems, onDismiss],
   );
@@ -159,7 +158,7 @@ export function PaletteContainer({
               title={item.title}
               rightHoverIcon={item.rightHoverIcon}
               onClick={(e) => {
-                executeHandler(i, e.metaKey);
+                executeHandler(i, e);
               }}
             />
           );
@@ -242,8 +241,7 @@ export const PaletteInputUI = React.forwardRef(
       }
 
       if (key === 'Enter') {
-        executeHandler(activeItemIndex, event.metaKey);
-        event.preventDefault();
+        executeHandler(activeItemIndex, event);
         return;
       }
 

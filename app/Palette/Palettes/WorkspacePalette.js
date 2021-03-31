@@ -10,16 +10,15 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 export function useWorkspacePalette({ updatePalette }) {
   const { workspaces, switchWorkspace, deleteWorkspace } = useWorkspaces();
 
-  const onPressEnter = useCallback(
-    ({ data }) => {
-      switchWorkspace(data.workspace.name);
-    },
-    [switchWorkspace],
-  );
-
-  const onPressMetaEnter = useCallback(
-    ({ data }) => {
-      switchWorkspace(data.workspace.name, true);
+  const onExecute = useCallback(
+    ({ data }, itemIndex, event) => {
+      if (event.metaKey) {
+        switchWorkspace(data.workspace.name, true);
+        return true;
+      } else {
+        switchWorkspace(data.workspace.name);
+        return true;
+      }
     },
     [switchWorkspace],
   );
@@ -37,8 +36,7 @@ export function useWorkspacePalette({ updatePalette }) {
         .map((workspace, i) => {
           return {
             uid: `${workspace.name}-(${workspace.type})`,
-            onPressEnter,
-            onPressMetaEnter,
+            onExecute,
             title: `${workspace.name} (${workspace.type})`,
             data: { workspace },
             rightHoverIcon: (
@@ -46,7 +44,6 @@ export function useWorkspacePalette({ updatePalette }) {
                 className="file-browser-button"
                 onClick={async (e) => {
                   e.stopPropagation();
-                  console.log('clicked');
                   if (
                     window.confirm(
                       `Are you sure you want to remove "${workspace.name}"? Removing a workspace does not delete any files inside it.`,
@@ -61,13 +58,7 @@ export function useWorkspacePalette({ updatePalette }) {
           };
         });
     },
-    [
-      onPressEnter,
-      onPressMetaEnter,
-      updatePalette,
-      workspaces,
-      deleteWorkspace,
-    ],
+    [onExecute, updatePalette, workspaces, deleteWorkspace],
   );
 }
 

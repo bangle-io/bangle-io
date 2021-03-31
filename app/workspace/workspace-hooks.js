@@ -211,7 +211,7 @@ export function useWorkspacePath() {
   const history = useHistory();
 
   const pushWsPath = useCallback(
-    (wsPath, newTab = false) => {
+    (wsPath, newTab = false, secondary = false) => {
       const { wsName, filePath } = resolvePath(wsPath);
       const newPath = `/ws/${wsName}/${filePath}`;
 
@@ -219,6 +219,15 @@ export function useWorkspacePath() {
         window.open(newPath);
         return;
       }
+
+      if (secondary) {
+        history.push({
+          ...history.location,
+          state: { ...history.location.state, secondaryWsPath: wsPath },
+        });
+        return;
+      }
+
       // allow opening the same thing in new tab
       if (newPath === history.location.pathname) {
         return;
@@ -260,6 +269,7 @@ export function useWorkspacePath() {
     return {
       wsName,
       wsPath: null,
+      secondaryWsPath: null,
       filePath: null,
       pushWsPath,
       replaceWsPath,
@@ -278,6 +288,7 @@ export function useWorkspacePath() {
   return {
     wsName,
     wsPath,
+    secondaryWsPath: location?.state?.secondaryWsPath,
     filePath,
     pushWsPath,
     replaceWsPath,
