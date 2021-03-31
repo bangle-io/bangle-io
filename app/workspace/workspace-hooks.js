@@ -1,4 +1,4 @@
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import {
@@ -18,6 +18,7 @@ import {
 } from './file-helpers';
 import { specRegistry } from '../editor/spec-sheet';
 import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
+import { checkWidescreen } from '../misc/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace-hooks') : () => {};
@@ -26,6 +27,7 @@ export function useGetWorkspaceFiles() {
   const { wsName, wsPermissionState } = useWorkspacePath();
 
   const [files, setFiles] = useState([]);
+  const isDestroyed = useRef(false);
 
   const refreshFiles = useCallback(() => {
     if (
@@ -38,7 +40,9 @@ export function useGetWorkspaceFiles() {
         wsPermissionState.error?.code === NATIVE_FS_FILE_NOT_FOUND_ERROR)
     ) {
       listAllFiles(wsName).then((items) => {
-        setFiles(items);
+        if (!isDestroyed.current) {
+          setFiles(items);
+        }
       });
     }
   }, [wsName, wsPermissionState]);
@@ -46,6 +50,12 @@ export function useGetWorkspaceFiles() {
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
+
+  useEffect(() => {
+    return () => {
+      isDestroyed.current = true;
+    };
+  }, []);
 
   return [files, refreshFiles];
 }
@@ -190,12 +200,19 @@ export function useWorkspaces() {
 }
 
 export function useWorkspacePath() {
-  const { wsName } = useParams();
   const location = useLocation();
+  const match = matchPath(location.pathname, {
+    path: '/ws/:wsName',
+    exact: false,
+    strict: false,
+  });
+
+  const { wsName } = match?.params || {};
+
   const history = useHistory();
 
   const pushWsPath = useCallback(
-    (wsPath, newTab = false) => {
+    (wsPath, newTab = false, secondary = false) => {
       const { wsName, filePath } = resolvePath(wsPath);
       const newPath = `/ws/${wsName}/${filePath}`;
 
@@ -203,7 +220,17 @@ export function useWorkspacePath() {
         window.open(newPath);
         return;
       }
-      // allow opening the same thing in new tab
+
+      const isWidescreen = checkWidescreen();
+
+      if (isWidescreen && secondary) {
+        history.push({
+          ...history.location,
+          state: { ...history.location.state, secondaryWsPath: wsPath },
+        });
+        return;
+      }
+
       if (newPath === history.location.pathname) {
         return;
       }
@@ -211,6 +238,12 @@ export function useWorkspacePath() {
       history.push({
         ...history.location,
         pathname: newPath,
+        state: {
+          ...history.location.state,
+          secondaryWsPath: isWidescreen
+            ? history.location.state?.secondaryWsPath
+            : null,
+        },
       });
     },
     [history],
@@ -244,6 +277,7 @@ export function useWorkspacePath() {
     return {
       wsName,
       wsPath: null,
+      secondaryWsPath: null,
       filePath: null,
       pushWsPath,
       replaceWsPath,
@@ -262,6 +296,7 @@ export function useWorkspacePath() {
   return {
     wsName,
     wsPath,
+    secondaryWsPath: location?.state?.secondaryWsPath,
     filePath,
     pushWsPath,
     replaceWsPath,

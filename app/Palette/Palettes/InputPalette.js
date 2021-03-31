@@ -1,3 +1,4 @@
+import { sleep } from 'bangle-io/app/misc/index';
 import { INPUT_PALETTE } from '../paletteTypes';
 
 export function useInputPalette({ metadata, updatePalette }) {
@@ -10,28 +11,27 @@ export function useInputPalette({ metadata, updatePalette }) {
       {
         uid: 'input-confirm',
         title: 'Confirm',
-        onPressEnter: () => {
-          Promise.resolve(metadata.onInputConfirm(query))
+        onExecute: () => {
+          return Promise.resolve(metadata.onInputConfirm(query))
             .then(() => {
-              updatePalette({ type: null });
+              return true;
             })
             .catch((err) => {
               console.error(err);
-              updatePalette({ type: null });
             });
         },
       },
       {
         uid: 'input-cancel',
         title: 'Cancel',
-        onPressEnter: () => {
-          Promise.resolve(metadata.onInputCancel?.(query))
+        onExecute: () => {
+          return Promise.resolve(metadata.onInputCancel?.(query))
             .then(() => {
-              updatePalette({ type: null });
+              return true;
             })
             .catch((err) => {
               console.error(err);
-              updatePalette({ type: null });
+              return true;
             });
         },
       },

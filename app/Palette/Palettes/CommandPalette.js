@@ -32,34 +32,34 @@ export function useCommandPalette({ updatePalette }) {
 function useToggleTheme() {
   const { dispatch } = useContext(UIManagerContext);
   const uid = 'TOGGLE_THEME_COMMAND';
-  const onPressEnter = useCallback(() => {
+  const onExecute = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_THEME',
     });
+    return true;
   }, [dispatch]);
 
   return queryMatch({
     uid,
     title: 'View: Toggle theme',
-    onPressEnter,
-    onClick: onPressEnter,
+    onExecute,
   });
 }
 
 function useToggleSidebar() {
   const { dispatch } = useContext(UIManagerContext);
   const uid = 'TOGGLE_SIDEBAR_COMMAND';
-  const onPressEnter = useCallback(() => {
+  const onExecute = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
     });
+    return true;
   }, [dispatch]);
 
   return queryMatch({
     uid,
     title: 'View: Toggle sidebar',
-    onPressEnter,
-    onClick: onPressEnter,
+    onExecute,
   });
 }
 
@@ -68,28 +68,26 @@ function useNewFile({ updatePalette }) {
   const createNewFile = useCreateMdFile();
   const { wsName } = useWorkspacePath();
 
-  const onPressEnter = useCallback(() => {
-    // timeout since parent dismisses palette upon execution
-    setTimeout(() => {
-      updatePalette({
-        type: INPUT_PALETTE,
-        metadata: {
-          onInputConfirm: (query) => {
-            let normalizedQuery = query;
-            if (!normalizedQuery.endsWith('.md')) {
-              normalizedQuery += '.md';
-            }
-            return createNewFile(wsName + ':' + normalizedQuery);
-          },
+  const onExecute = useCallback(() => {
+    updatePalette({
+      type: INPUT_PALETTE,
+      metadata: {
+        onInputConfirm: (query) => {
+          let normalizedQuery = query;
+          if (!normalizedQuery.endsWith('.md')) {
+            normalizedQuery += '.md';
+          }
+          return createNewFile(wsName + ':' + normalizedQuery);
         },
-      });
-    }, 0);
+      },
+    });
+    // to prevent dismissing of the palette
+    return false;
   }, [updatePalette, wsName, createNewFile]);
   return queryMatch({
     uid,
     title: 'Workspace: New File',
-    onPressEnter,
-    onClick: onPressEnter,
+    onExecute,
   });
 }
 
@@ -98,27 +96,24 @@ function useNewBrowserWS({ updatePalette }) {
 
   const { createWorkspace } = useWorkspaces();
 
-  const onPressEnter = useCallback(() => {
-    // timeout since parent dismisses palette upon execution
-    setTimeout(() => {
-      updatePalette({
-        type: INPUT_PALETTE,
-        metadata: {
-          onInputConfirm: (query) => {
-            if (query) {
-              return createWorkspace(query, 'browser');
-            }
-          },
+  const onExecute = useCallback(() => {
+    updatePalette({
+      type: INPUT_PALETTE,
+      metadata: {
+        onInputConfirm: (query) => {
+          if (query) {
+            return createWorkspace(query, 'browser');
+          }
         },
-      });
-    }, 0);
+      },
+    });
+    return false;
   }, [updatePalette, createWorkspace]);
 
   return queryMatch({
     uid,
     title: 'Workspace: New workspace in Browser',
-    onPressEnter,
-    onClick: onPressEnter,
+    onExecute,
   });
 }
 
@@ -128,22 +123,20 @@ function useRenameFile({ updatePalette }) {
 
   const renameActiveFile = useRenameActiveFile();
 
-  const onPressEnter = useCallback(
+  const onExecute = useCallback(
     (item) => {
-      // timeout since parent dismisses palette upon execution
-      setTimeout(() => {
-        updatePalette({
-          type: INPUT_PALETTE,
-          initialQuery: filePath,
-          metadata: {
-            onInputConfirm: (query) => {
-              if (query) {
-                return renameActiveFile(query);
-              }
-            },
+      updatePalette({
+        type: INPUT_PALETTE,
+        initialQuery: filePath,
+        metadata: {
+          onInputConfirm: (query) => {
+            if (query) {
+              return renameActiveFile(query);
+            }
           },
-        });
-      }, 0);
+        },
+      });
+      return false;
     },
     [updatePalette, filePath, renameActiveFile],
   );
@@ -151,8 +144,7 @@ function useRenameFile({ updatePalette }) {
     uid,
     title: 'Workspace: Rename file',
     hidden: !Boolean(filePath),
-    onPressEnter,
-    onClick: onPressEnter,
+    onExecute,
   });
 }
 
@@ -161,16 +153,16 @@ function useNewFileSystemWS() {
 
   const { createWorkspace } = useWorkspaces();
 
-  const onPressEnter = useCallback(async () => {
+  const onExecute = useCallback(async () => {
     const rootDirHandle = await pickADirectory();
     await createWorkspace(rootDirHandle.name, 'nativefs', { rootDirHandle });
+    return true;
   }, [createWorkspace]);
 
   return queryMatch({
     uid,
     title: 'Workspace: New workspace in filesystem',
-    onPressEnter,
-    onClick: onPressEnter,
+    onExecute,
   });
 }
 
@@ -179,9 +171,10 @@ export function useRemoveActiveWorkspace() {
   const { deleteWorkspace } = useWorkspaces();
   const { wsName } = useWorkspacePath();
 
-  const onPressEnter = useCallback(
-    (item) => {
-      deleteWorkspace(wsName);
+  const onExecute = useCallback(
+    async (item) => {
+      await deleteWorkspace(wsName);
+      return true;
     },
     [deleteWorkspace, wsName],
   );
@@ -189,8 +182,7 @@ export function useRemoveActiveWorkspace() {
   return queryMatch({
     uid,
     title: 'Workspace: Remove active workspace',
-    onPressEnter,
-    onClick: onPressEnter,
+    onExecute,
   });
 }
 
@@ -199,16 +191,16 @@ export function useDeleteActiveFile() {
   const deleteFile = useDeleteFile();
   const { wsPath, filePath } = useWorkspacePath();
 
-  const onPressEnter = useCallback(() => {
-    deleteFile(wsPath);
+  const onExecute = useCallback(async () => {
+    await deleteFile(wsPath);
+    return true;
   }, [deleteFile, wsPath]);
 
   return queryMatch({
     uid,
     hidden: !Boolean(filePath),
     title: `Workspace: Delete current file '${filePath}'`,
-    onPressEnter,
-    onClick: onPressEnter,
+    onExecute,
   });
 }
 

@@ -10,6 +10,7 @@ export function applyTheme(theme) {
   updateStyleHelper(theme, 'bg-color', element);
   updateStyleHelper(theme, 'bg-stronger-color', element);
   updateStyleHelper(theme, 'border-color', element);
+  updateStyleHelper(theme, 'activity-bar-color', element);
 }
 
 function updateStyleHelper(theme, style, element) {

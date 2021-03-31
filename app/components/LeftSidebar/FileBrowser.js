@@ -1,6 +1,5 @@
-import './aside.css';
 import React, { useContext, useMemo } from 'react';
-import { SideBar } from './SideBar';
+import { SideBarContent } from './SideBarContent';
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
 import {
   ChevronDownIcon,
@@ -35,7 +34,7 @@ export function FileBrowser() {
   );
 
   return (
-    <SideBar>
+    <SideBarContent>
       <CollapsibleSideBarRow
         title={wsName}
         isSticky={true}
@@ -55,7 +54,7 @@ export function FileBrowser() {
           />
         ))}
       </CollapsibleSideBarRow>
-    </SideBar>
+    </SideBarContent>
   );
 }
 
