@@ -34,6 +34,7 @@ export function ActivityBar() {
 function ActivityBarBox({ children, isActive, onClick }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={`flex w-full items-center justify-center
           focus:outline-none 
