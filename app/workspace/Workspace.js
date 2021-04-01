@@ -39,6 +39,7 @@ export function Workspace({ children }) {
   }, [wsPath, wsName]);
 
   useHandleErrors();
+  log('wsName', wsName, 'wsPermissionState', wsPermissionState.type);
   if (wsName == null) {
     return null;
   }
@@ -140,7 +141,14 @@ function PermissionModal({ onPermissionGranted, workspace }) {
 }
 
 function usePermissions() {
-  const { wsName, wsPath, setWsPermissionState } = useWorkspacePath();
+  const {
+    wsName,
+    wsPath,
+    setWsPermissionState,
+    wsPermissionState,
+  } = useWorkspacePath();
+
+  const isWsPermissionStateUndefined = Boolean(wsPermissionState.type);
 
   useEffect(
     () => {
@@ -185,7 +193,8 @@ function usePermissions() {
       };
     },
     // adding wsPath so that error is reset if path changes
-    [wsName, wsPath, setWsPermissionState],
+    // add isWsPermissionStateUndefined so that it doest stay in an undefined state forever
+    [wsName, wsPath, setWsPermissionState, isWsPermissionStateUndefined],
   );
 }
 

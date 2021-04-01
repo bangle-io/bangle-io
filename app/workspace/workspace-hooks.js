@@ -207,7 +207,14 @@ export function useWorkspacePath() {
     strict: false,
   });
 
-  const { wsName } = match?.params || {};
+  const { wsName } = match?.params ?? {};
+  const { secondaryWsPath } = location?.state ?? {};
+  let wsPath;
+
+  const filePath = locationToFilePath(location);
+  if (filePath) {
+    wsPath = wsName + ':' + filePath;
+  }
 
   const history = useHistory();
 
@@ -224,9 +231,11 @@ export function useWorkspacePath() {
       const isWidescreen = checkWidescreen();
 
       if (isWidescreen && secondary) {
-        history.push({
-          ...history.location,
-          state: { ...history.location.state, secondaryWsPath: wsPath },
+        // replace is intentional as native history pop
+        // for some reason isnt remembering the state.
+        history.replace(history.location.pathname, {
+          ...history.location.state,
+          secondaryWsPath: wsPath,
         });
         return;
       }
@@ -235,23 +244,19 @@ export function useWorkspacePath() {
         return;
       }
 
-      history.push({
-        ...history.location,
-        pathname: newPath,
-        state: {
-          ...history.location.state,
-          secondaryWsPath: isWidescreen
-            ? history.location.state?.secondaryWsPath
-            : null,
-        },
+      history.push(newPath, {
+        ...history.location.state,
+        secondaryWsPath: isWidescreen ? secondaryWsPath : null,
       });
     },
-    [history],
+    [history, secondaryWsPath],
   );
 
   const replaceWsPath = useCallback(
     (wsPath) => {
       const { wsName, filePath } = resolvePath(wsPath);
+      log('replaceWsPath', wsPath);
+
       history.replace({
         ...history.location,
         pathname: `/ws/${wsName}/${filePath}`,
@@ -262,7 +267,12 @@ export function useWorkspacePath() {
 
   const setWsPermissionState = useCallback(
     (payload) => {
-      log('setting ws state', payload);
+      log(
+        'setWsPermissionState',
+        payload,
+        'existing state',
+        history.location.state,
+      );
       history.replace({
         ...history.location,
         state: { ...history.location.state, wsPermissionState: payload },
@@ -271,8 +281,37 @@ export function useWorkspacePath() {
     [history],
   );
 
+  // removes the currently active wsPath
+  const removeWsPath = useCallback(() => {
+    if (!wsPath) {
+      return;
+    }
+
+    let newPath = null;
+
+    // transition any secondary to main
+    if (secondaryWsPath) {
+      const { wsName, filePath } = resolvePath(secondaryWsPath);
+      newPath = `/ws/${wsName}/${filePath}`;
+    }
+
+    history.push(newPath, {
+      ...history.location.state,
+      secondaryWsPath: null,
+    });
+  }, [history, wsPath, secondaryWsPath]);
+
+  // the editor on side
+  const removeSecondaryWsPath = useCallback(() => {
+    log('removeSecondaryWsPath');
+    history.replace(history.location.pathname, {
+      ...history.location.state,
+      secondaryWsPath: null,
+    });
+  }, [history]);
+
   // TODO should I add more safeguard for
-  // workspaceperm.type == ready?
+  // workspacePerm.type == ready?
   if (!wsName) {
     return {
       wsName,
@@ -282,25 +321,22 @@ export function useWorkspacePath() {
       pushWsPath,
       replaceWsPath,
       setWsPermissionState,
+      removeSecondaryWsPath,
+      removeWsPath,
       wsPermissionState: {},
     };
-  }
-
-  const filePath = locationToFilePath(location);
-  let wsPath;
-
-  if (filePath) {
-    wsPath = wsName + ':' + filePath;
   }
 
   return {
     wsName,
     wsPath,
-    secondaryWsPath: location?.state?.secondaryWsPath,
+    secondaryWsPath,
     filePath,
     pushWsPath,
     replaceWsPath,
-    wsPermissionState: location?.state?.wsPermissionState ?? {},
     setWsPermissionState,
+    removeWsPath,
+    removeSecondaryWsPath,
+    wsPermissionState: location?.state?.wsPermissionState ?? {},
   };
 }
