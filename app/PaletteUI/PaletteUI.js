@@ -49,6 +49,8 @@ export function PaletteUI({
   parseRawQuery,
   generateRawQuery,
   paletteItems,
+  style,
+  className,
 }) {
   const [query, updateQuery] = useState(paletteInitialQuery);
   const [counter, updateCounter] = useState(0);
@@ -78,6 +80,8 @@ export function PaletteUI({
       generateRawQuery={generateRawQuery}
       resolvedItems={resolvePaletteItems(paletteItems, query, paletteType)}
       onDismiss={onDismiss}
+      style={style}
+      className={className}
     />
   );
 }
@@ -97,6 +101,8 @@ export function PaletteContainer({
   generateRawQuery,
   resolvedItems,
   onDismiss,
+  className = '',
+  style,
 }) {
   const paletteInputRef = createRef();
   const containerRef = useWatchClickOutside(onDismiss, () => {
@@ -131,10 +137,7 @@ export function PaletteContainer({
   );
 
   return (
-    <div
-      className="fadeInScaleAnimation bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
-      ref={containerRef}
-    >
+    <div className={className} style={style} ref={containerRef}>
       <PaletteInput
         ref={paletteInputRef}
         onDismiss={onDismiss}

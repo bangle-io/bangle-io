@@ -41,7 +41,10 @@ export function useWorkspacePalette({ updatePalette }) {
             data: { workspace },
             rightHoverIcon: (
               <CloseIcon
-                className="file-browser-button"
+                style={{
+                  height: 16,
+                  width: 16,
+                }}
                 onClick={async (e) => {
                   e.stopPropagation();
                   if (

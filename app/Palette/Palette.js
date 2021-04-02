@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useCallback } from 'react';
 
 import { useKeybindings } from '../misc/hooks';
@@ -21,6 +21,8 @@ export function Palette() {
     paletteType,
     paletteInitialQuery,
     dispatch,
+    widescreen,
+    hideEditorArea,
   } = useContext(UIManagerContext);
 
   const updatePalette = useCallback(
@@ -50,6 +52,9 @@ export function Palette() {
       parseRawQuery={parseRawQuery}
       generateRawQuery={generateRawQuery}
       paletteItems={paletteItems}
+      className={`fadeInScaleAnimation bangle-palette ${
+        widescreen ? 'widescreen' : ''
+      }`}
     />
   );
 }
