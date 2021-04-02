@@ -3,7 +3,7 @@ import { useWindowSize } from './misc/hooks';
 import { checkWidescreen } from './misc/index';
 import { applyTheme } from './style/apply-theme';
 
-const LOG = true;
+const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
 const DEFAULT_PALETTE = 'file';
 

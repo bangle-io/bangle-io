@@ -38,7 +38,7 @@ export function FileBrowser() {
       leftIcon={<ChevronDownIcon style={{ width: 16, height: 16 }} />}
       activeLeftIcon={<ChevronRightIcon style={{ width: 16, height: 16 }} />}
     >
-      {[...fileTree, ...fileTree].map((child) => (
+      {fileTree.map((child) => (
         <RenderPathTree
           fileTree={child}
           key={child.name}

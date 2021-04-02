@@ -85,7 +85,7 @@ function EditorArea({ isFirst = false, showTabs }) {
 
   return (
     <div className="bangle-editor-area">
-      {showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
+      {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
       <div className="bangle-editor-container">
         {wsPath && (
           <Editor

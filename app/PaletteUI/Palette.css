@@ -9,6 +9,7 @@
   flex-direction: column;
   padding-bottom: 0.25rem;
   border-width: 1px;
+  z-index: 300;
   /* margin-top: var(--activity-bar-width); */
 }
 
