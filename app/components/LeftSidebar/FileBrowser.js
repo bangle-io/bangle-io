@@ -137,6 +137,7 @@ function RenderPathTree({
               deleteByWsPath(wsPath);
               dispatch({
                 type: 'UI/TOGGLE_SIDEBAR',
+                value: { type: null },
               });
             }}
           />

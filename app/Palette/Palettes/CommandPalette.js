@@ -52,6 +52,7 @@ function useToggleSidebar() {
   const onExecute = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
+      value: { type: 'file-browser' },
     });
     return true;
   }, [dispatch]);
