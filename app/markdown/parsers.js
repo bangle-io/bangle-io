@@ -1,7 +1,7 @@
 import * as markdown from '@bangle.dev/markdown/index';
 import { defaultMarkdownItTokenizer } from '@bangle.dev/markdown/index';
 import { emojiMarkdownItPlugin } from '@bangle.dev/emoji/index';
-import { specRegistry } from 'bangle-io/app/editor/spec-sheet';
+import { specRegistry } from 'app/editor/spec-sheet';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 import { findChildren } from '@bangle.dev/core/prosemirror/utils';
 import { Fragment, Slice } from '@bangle.dev/core/prosemirror/model';

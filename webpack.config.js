@@ -19,7 +19,7 @@ module.exports = (env, argv) => {
   return {
     target: 'web',
     mode,
-    entry: './index.js',
+    entry: './app/index.js',
     devtool: true ? 'source-map' : 'eval-source-map',
     resolve: {
       // TODO fix me punycode
@@ -51,7 +51,7 @@ module.exports = (env, argv) => {
       new CaseSensitivePathsPlugin(),
       new HtmlWebpackPlugin({
         title: 'Bangle',
-        template: 'public/index.html',
+        template: 'style/index.html',
       }),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
@@ -61,7 +61,7 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'static'),
+            from: path.resolve(__dirname, 'webpack', 'static'),
             to: buildPath,
           },
         ],

@@ -1,18 +1,19 @@
 import React, { useContext } from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, act } from '@testing-library/react';
-import { UIManager, UIManagerContext } from 'bangle-io/app/UIManager';
+import { UIManager, UIManagerContext } from 'ui-context/index';
+
 import {
   useGetWorkspaceFiles,
   useWorkspacePath,
   useWorkspaces,
-} from 'bangle-io/app/workspace/workspace-hooks';
+} from 'app/workspace/workspace-hooks';
 import { COMMAND_PALETTE, FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../../Palette/Palette';
-import { sleep } from 'bangle-io/app/misc/index';
+import { sleep } from 'app/misc/index';
 
 let result, paletteType, paletteInitialQuery, dispatch;
-jest.mock('bangle-io/app/workspace/workspace-hooks', () => {
+jest.mock('app/workspace/workspace-hooks', () => {
   return {
     useWorkspacePath: jest.fn(),
     useWorkspaces: jest.fn(),

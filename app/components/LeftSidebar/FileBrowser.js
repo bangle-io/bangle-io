@@ -1,4 +1,6 @@
 import React, { useContext, useMemo } from 'react';
+import { UIManagerContext } from 'ui-context/index';
+
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
 import {
   ChevronDownIcon,
@@ -9,9 +11,8 @@ import {
   useDeleteFile,
   useGetWorkspaceFiles,
   useWorkspacePath,
-} from 'bangle-io/app/workspace/workspace-hooks';
-import { resolvePath } from 'bangle-io/app/workspace/path-helpers';
-import { UIManagerContext } from 'bangle-io/app/UIManager';
+} from 'app/workspace/workspace-hooks';
+import { resolvePath } from 'app/workspace/path-helpers';
 
 FileBrowser.propTypes = {};
 

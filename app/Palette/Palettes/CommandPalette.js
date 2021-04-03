@@ -1,13 +1,14 @@
 import { useCallback, useContext } from 'react';
-import { UIManagerContext } from 'bangle-io/app/UIManager';
-import { pickADirectory } from 'bangle-io/app/workspace/nativefs-helpers';
+import { UIManagerContext } from 'ui-context/index';
+
+import { pickADirectory } from 'app/workspace/nativefs-helpers';
 import {
   useCreateMdFile,
   useDeleteFile,
   useRenameActiveFile,
   useWorkspacePath,
   useWorkspaces,
-} from 'bangle-io/app/workspace/workspace-hooks';
+} from 'app/workspace/workspace-hooks';
 import { COMMAND_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 const LOG = false;
 

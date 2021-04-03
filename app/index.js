@@ -1,11 +1,12 @@
+import 'style/index.js';
+import { UIManager } from 'ui-context/index';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import App from './app/App';
-import { EditorManager } from './app/editor/EditorManager';
-import { isTouchDevice } from './app/misc/index';
-import { UIManager } from './app/UIManager';
+import App from './App';
+import { EditorManager } from './editor/EditorManager';
+import { isTouchDevice } from './misc/index';
 
 const root = document.getElementById('root');
 
