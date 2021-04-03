@@ -3,11 +3,11 @@
   display: flex;
   flex-direction: column;
 }
-
 #root.widescreen {
   flex-flow: row nowrap;
 }
 
+/* the left most vertically  bar*/
 .activity-bar {
   height: var(--activity-bar-width);
   min-width: 100vw;
@@ -15,9 +15,7 @@
   background-color: var(--activity-bar-color);
   z-index: 300;
   position: sticky;
-  top: 0;
 }
-
 .activity-bar.widescreen {
   height: 100vh;
   min-width: var(--activity-bar-width);
@@ -90,9 +88,9 @@
   height: var(--editor-tab-height);
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   padding: 0 var(--editor-x-axis-padding);
-  border-bottom: 2px solid var(--border-color);
 }
 
 .left-sidebar-area {
