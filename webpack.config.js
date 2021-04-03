@@ -51,7 +51,7 @@ module.exports = (env, argv) => {
       new CaseSensitivePathsPlugin(),
       new HtmlWebpackPlugin({
         title: 'Bangle',
-        template: 'public/index.html',
+        template: 'style/index.html',
       }),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
@@ -61,7 +61,7 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'static'),
+            from: path.resolve(__dirname, 'webpack', 'static'),
             to: buildPath,
           },
         ],
