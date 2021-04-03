@@ -38,13 +38,11 @@
     "idb-keyval": "^5.0.4",
     "prop-types": "^15.7.2",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
-    "punycode": "^2.1.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "react-popper": "^2.2.4",
     "react-router-dom": "^5.2.0",
     "style": "workspace:*",
-    "tailwindcss": "^1.9.6",
     "ui-context": "workspace:*",
     "utils": "workspace:*",
     "w3c-keyname": "^2.2.4"
