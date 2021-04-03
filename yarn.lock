@@ -2919,6 +2919,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.11.6
     "@testing-library/react": ^11.2.5
     "@testing-library/user-event": ^13.0.6
+    config: "workspace:*"
     idb-keyval: ^5.0.4
     prop-types: ^15.7.2
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
@@ -2927,7 +2928,10 @@ __metadata:
     react-dom: 16.14.0
     react-popper: ^2.2.4
     react-router-dom: ^5.2.0
+    style: "workspace:*"
     tailwindcss: ^1.9.6
+    ui-context: "workspace:*"
+    utils: "workspace:*"
     w3c-keyname: ^2.2.4
   languageName: unknown
   linkType: soft
@@ -4202,6 +4206,12 @@ __metadata:
   checksum: 554e28d9ee5aa6e061795473ee092cb3d3a2cbdb76c35416e0bb6e03f136d7d07676da387b2ed0ec4106cedbb6534080d9abc48ecc4a92b76406cf2d0c3c0c4b
   languageName: node
   linkType: hard
+
+"config@workspace:*, config@workspace:config":
+  version: 0.0.0-use.local
+  resolution: "config@workspace:config"
+  languageName: unknown
+  linkType: soft
 
 "confusing-browser-globals@npm:^1.0.10":
   version: 1.0.10
@@ -11579,6 +11589,12 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"style@workspace:*, style@workspace:style":
+  version: 0.0.0-use.local
+  resolution: "style@workspace:style"
+  languageName: unknown
+  linkType: soft
+
 "supports-color@npm:^5.3.0, supports-color@npm:^5.4.0":
   version: 5.5.0
   resolution: "supports-color@npm:5.5.0"
@@ -12101,6 +12117,16 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"ui-context@workspace:*, ui-context@workspace:contexts/ui-context":
+  version: 0.0.0-use.local
+  resolution: "ui-context@workspace:contexts/ui-context"
+  dependencies:
+    react: 16.14.0
+    style: "workspace:*"
+    utils: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "unicode-canonical-property-names-ecmascript@npm:^1.0.4":
   version: 1.0.4
   resolution: "unicode-canonical-property-names-ecmascript@npm:1.0.4"
@@ -12272,6 +12298,15 @@ fsevents@^2.1.2:
   checksum: a457956ebc09efbda05da8bf213ab89140bb9dffa3c42b3315dd8fc3c45d67a1b802741f58b7bba4872113201fc275fc86470289d8bd32b74297b5e5b5980705
   languageName: node
   linkType: hard
+
+"utils@workspace:*, utils@workspace:utils":
+  version: 0.0.0-use.local
+  resolution: "utils@workspace:utils"
+  dependencies:
+    config: "workspace:*"
+    react: 16.14.0
+  languageName: unknown
+  linkType: soft
 
 "uuid@npm:^3.3.2, uuid@npm:^3.4.0":
   version: 3.4.0

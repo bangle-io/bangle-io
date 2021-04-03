@@ -3,7 +3,11 @@
   "version": "0.1.14",
   "homepage": "https://bangle.io",
   "workspaces": [
-    "app"
+    "app",
+    "utils",
+    "config",
+    "style",
+    "contexts/*"
   ],
   "authors": [
     {
@@ -12,7 +16,6 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bangle-io/bangle-io.git"

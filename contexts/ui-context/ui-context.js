@@ -1,7 +1,6 @@
 import React, { useReducer, createContext, useMemo, useEffect } from 'react';
-import { useWindowSize } from './misc/hooks';
-import { checkWidescreen } from './misc/index';
-import { applyTheme } from './style/apply-theme';
+import { useWindowSize, checkWidescreen } from 'utils/index';
+import { applyTheme } from 'style/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
@@ -17,7 +16,8 @@ function setRootWidescreenClass(widescreen) {
     root?.classList.remove('widescreen');
   }
 }
-export function UIManager({ r, children }) {
+
+export function UIManager({ children }) {
   const windowSize = useWindowSize();
   const [state, dispatch] = useReducer(
     (...args) => new UIState(reducer(...args)),

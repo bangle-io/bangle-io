@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { UIManagerContext } from '../../UIManager';
+import { UIManagerContext } from 'ui-context/index';
 
 import { FolderIcon, TerminalIcon } from '../../helper-ui/Icons';
 

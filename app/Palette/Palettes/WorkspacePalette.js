@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
-import { useWorkspaces } from 'app//workspace/workspace-hooks';
+import { useWorkspaces } from 'app/workspace/workspace-hooks';
 import { WORKSPACE_PALETTE } from '../paletteTypes';
-import { CloseIcon } from 'app//helper-ui/Icons';
+import { CloseIcon } from 'app/helper-ui/Icons';
 
 const LOG = false;
 

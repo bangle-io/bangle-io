@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import {
   useGetWorkspaceFiles,
   useWorkspacePath,
-} from 'app//workspace/workspace-hooks';
-import { resolvePath } from 'app//workspace/path-helpers';
+} from 'app/workspace/workspace-hooks';
+import { resolvePath } from 'app/workspace/path-helpers';
 import { FILE_PALETTE } from '../paletteTypes';
 
 const LOG = false;

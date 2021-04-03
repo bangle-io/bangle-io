@@ -1,4 +1,4 @@
-import { config } from 'app/config';
+import { config } from 'config/index';
 import * as idb from 'idb-keyval';
 import { WorkspaceError } from './errors';
 

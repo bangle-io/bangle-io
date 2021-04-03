@@ -1,15 +1,11 @@
-import './style/reset.css';
-import './style/tailwind.src.css';
-import './style/style.css';
-import './style/animations.css';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Editor } from './components/Editor';
 import { EditorManagerContext } from './editor/EditorManager';
 import { Palette } from './Palette/index';
 import { Route } from 'react-router-dom';
 import { useWorkspacePath } from './workspace/workspace-hooks';
 import { Workspace } from './workspace/Workspace';
-import { UIManagerContext } from './UIManager';
+import { UIManagerContext } from 'ui-context/index';
 import { useKeybindings } from './misc/hooks';
 import { resolvePath } from './workspace/path-helpers';
 import { CloseIcon } from './helper-ui/Icons';

@@ -1,5 +1,3 @@
-import { SPLIT_SCREEN_MIN_WIDTH } from '../constants';
-
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/misc') : () => {};
 
@@ -165,9 +163,6 @@ function checkTouchDevice() {
 }
 
 export const isTouchDevice = checkTouchDevice();
-
-export const checkWidescreen = (width = window.innerWidth) =>
-  SPLIT_SCREEN_MIN_WIDTH <= width;
 
 /**
  * Based on idea from https://github.com/alexreardon/raf-schd

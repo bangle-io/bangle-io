@@ -19,7 +19,7 @@ module.exports = (env, argv) => {
   return {
     target: 'web',
     mode,
-    entry: './index.js',
+    entry: './app/index.js',
     devtool: true ? 'source-map' : 'eval-source-map',
     resolve: {
       // TODO fix me punycode

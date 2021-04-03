@@ -25,13 +25,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "app",
         "reference": "workspace:app"
+      },
+      {
+        "name": "config",
+        "reference": "workspace:config"
+      },
+      {
+        "name": "ui-context",
+        "reference": "workspace:contexts/ui-context"
+      },
+      {
+        "name": "style",
+        "reference": "workspace:style"
+      },
+      {
+        "name": "utils",
+        "reference": "workspace:utils"
       }
     ],
     "enableTopLevelFallback": true,
     "ignorePatternData": "(^(?:\\.yarn\\/sdks(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$)",
     "fallbackExclusionList": [
       ["app", ["workspace:app"]],
-      ["bangle-io", ["workspace:."]]
+      ["bangle-io", ["workspace:."]],
+      ["config", ["workspace:config"]],
+      ["style", ["workspace:style"]],
+      ["ui-context", ["workspace:contexts/ui-context"]],
+      ["utils", ["workspace:utils"]]
     ],
     "fallbackPool": [
     ],
@@ -4525,6 +4545,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/jest-dom", "npm:5.11.6"],
             ["@testing-library/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.2.5"],
             ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.0.6"],
+            ["config", "workspace:config"],
             ["idb-keyval", "npm:5.0.4"],
             ["prop-types", "npm:15.7.2"],
             ["prosemirror-dev-tools", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
@@ -4533,7 +4554,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:16.14.0"],
             ["react-popper", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.2.4"],
             ["react-router-dom", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.0"],
+            ["style", "workspace:style"],
             ["tailwindcss", "npm:1.9.6"],
+            ["ui-context", "workspace:contexts/ui-context"],
+            ["utils", "workspace:utils"],
             ["w3c-keyname", "npm:2.2.4"]
           ],
           "linkType": "SOFT",
@@ -6038,6 +6062,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["concat-map", "npm:0.0.1"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["config", [
+        ["workspace:config", {
+          "packageLocation": "./config/",
+          "packageDependencies": [
+            ["config", "workspace:config"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["confusing-browser-globals", [
@@ -14454,6 +14487,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["style", [
+        ["workspace:style", {
+          "packageLocation": "./style/",
+          "packageDependencies": [
+            ["style", "workspace:style"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["style-loader", [
         ["npm:2.0.0", {
           "packageLocation": "./.yarn/cache/style-loader-npm-2.0.0-b9a5c4a2aa-ffc3054882.zip/node_modules/style-loader/",
@@ -15076,6 +15118,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["ui-context", [
+        ["workspace:contexts/ui-context", {
+          "packageLocation": "./contexts/ui-context/",
+          "packageDependencies": [
+            ["ui-context", "workspace:contexts/ui-context"],
+            ["react", "npm:16.14.0"],
+            ["style", "workspace:style"],
+            ["utils", "workspace:utils"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["unicode-canonical-property-names-ecmascript", [
         ["npm:1.0.4", {
           "packageLocation": "./.yarn/cache/unicode-canonical-property-names-ecmascript-npm-1.0.4-8c5eeb73e7-8b51950f8f.zip/node_modules/unicode-canonical-property-names-ecmascript/",
@@ -15271,6 +15325,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["utila", "npm:0.4.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["utils", [
+        ["workspace:utils", {
+          "packageLocation": "./utils/",
+          "packageDependencies": [
+            ["utils", "workspace:utils"],
+            ["config", "workspace:config"],
+            ["react", "npm:16.14.0"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["utils-merge", [
