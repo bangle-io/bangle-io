@@ -18,7 +18,7 @@ FileBrowser.propTypes = {};
 export function FileBrowser() {
   const [files] = useGetWorkspaceFiles();
   const deleteByWsPath = useDeleteFile();
-  const { dispatch } = useContext(UIManagerContext);
+  const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
 
   const fileTree = useMemo(
@@ -41,6 +41,7 @@ export function FileBrowser() {
       {fileTree.map((child) => (
         <RenderPathTree
           fileTree={child}
+          widescreen={widescreen}
           key={child.name}
           wsName={wsName}
           deleteByWsPath={deleteByWsPath}
@@ -55,6 +56,7 @@ export function FileBrowser() {
 }
 
 function RenderPathTree({
+  widescreen,
   fileTree,
   wsName,
   deleteByWsPath,
@@ -65,6 +67,12 @@ function RenderPathTree({
 }) {
   const { name, children, path } = fileTree;
 
+  const closeSidebar = () => {
+    dispatch({
+      type: 'UI/TOGGLE_SIDEBAR',
+      value: { type: null },
+    });
+  };
   if (children) {
     return (
       <CollapsibleSideBarRow
@@ -113,8 +121,17 @@ function RenderPathTree({
         basePadding={16}
         depth={depth}
         key={wsPath}
-        onClick={() => {
-          pushWsPath(wsPath);
+        onClick={(event) => {
+          if (event.metaKey) {
+            pushWsPath(wsPath, true);
+          } else if (event.shiftKey) {
+            pushWsPath(wsPath, false, true);
+          } else {
+            pushWsPath(wsPath);
+          }
+          if (!widescreen) {
+            closeSidebar();
+          }
         }}
         title={name}
         isActive={activeWSPath === wsPath}
@@ -135,10 +152,7 @@ function RenderPathTree({
             onClick={async (e) => {
               e.stopPropagation();
               deleteByWsPath(wsPath);
-              dispatch({
-                type: 'UI/TOGGLE_SIDEBAR',
-                value: { type: null },
-              });
+              closeSidebar();
             }}
           />
         }

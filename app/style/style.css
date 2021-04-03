@@ -97,7 +97,6 @@
 
 .left-sidebar-area {
   z-index: 100;
-  background-color: var(--bg-stronger-color);
   display: flex;
   flex-direction: column;
 }
@@ -106,6 +105,7 @@
   min-height: 100vh;
   max-height: 100vh;
   overflow-y: scroll;
+  background-color: var(--bg-stronger-color);
   min-width: var(--left-sidebar-area-width);
   max-width: var(--left-sidebar-area-width);
   border-right: 2px solid var(--border-color);
