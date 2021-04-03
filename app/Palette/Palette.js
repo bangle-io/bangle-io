@@ -14,6 +14,7 @@ import {
   WORKSPACE_PALETTE,
 } from './paletteTypes';
 import { useWorkspacePalette } from './Palettes/WorkspacePalette';
+import { FileDocumentIcon, AlbumIcon, TerminalIcon } from '../helper-ui/Icons';
 
 export function Palette() {
   const {
@@ -22,7 +23,6 @@ export function Palette() {
     paletteInitialQuery,
     dispatch,
     widescreen,
-    hideEditorArea,
   } = useContext(UIManagerContext);
 
   const updatePalette = useCallback(
@@ -46,6 +46,7 @@ export function Palette() {
 
   return (
     <PaletteUI
+      paletteTypeIcon={getPaletteIcon(paletteType)}
       paletteType={paletteType}
       updatePalette={updatePalette}
       paletteInitialQuery={paletteInitialQuery}
@@ -118,3 +119,30 @@ const generateRawQuery = (paletteType, query) => {
   // defaults to file
   return query;
 };
+
+function getPaletteIcon(paletteType) {
+  let Icon;
+  switch (paletteType) {
+    case FILE_PALETTE: {
+      Icon = FileDocumentIcon;
+      break;
+    }
+    case COMMAND_PALETTE: {
+      Icon = TerminalIcon;
+      break;
+    }
+    case WORKSPACE_PALETTE: {
+      Icon = AlbumIcon;
+      break;
+    }
+    default: {
+      return null;
+    }
+  }
+
+  return (
+    <span className="pr-2 flex items-center">
+      <Icon className="h-5 w-5 " />
+    </span>
+  );
+}
