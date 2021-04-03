@@ -1,5 +1,4 @@
 import React, { useContext, useMemo } from 'react';
-import { SideBarContent } from './SideBarContent';
 import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
 import {
   ChevronDownIcon,
@@ -34,27 +33,24 @@ export function FileBrowser() {
   );
 
   return (
-    <SideBarContent>
-      <CollapsibleSideBarRow
-        title={wsName}
-        isSticky={true}
-        leftIcon={<ChevronDownIcon className="file-browser-button" />}
-        activeLeftIcon={<ChevronRightIcon className="file-browser-button" />}
-      >
-        {fileTree.map((child) => (
-          <RenderPathTree
-            fileTree={child}
-            key={child.name}
-            wsName={wsName}
-            deleteByWsPath={deleteByWsPath}
-            pushWsPath={pushWsPath}
-            activeWSPath={activeWSPath}
-            dispatch={dispatch}
-            depth={1}
-          />
-        ))}
-      </CollapsibleSideBarRow>
-    </SideBarContent>
+    <CollapsibleSideBarRow
+      title={wsName}
+      leftIcon={<ChevronDownIcon style={{ width: 16, height: 16 }} />}
+      activeLeftIcon={<ChevronRightIcon style={{ width: 16, height: 16 }} />}
+    >
+      {fileTree.map((child) => (
+        <RenderPathTree
+          fileTree={child}
+          key={child.name}
+          wsName={wsName}
+          deleteByWsPath={deleteByWsPath}
+          pushWsPath={pushWsPath}
+          activeWSPath={activeWSPath}
+          dispatch={dispatch}
+          depth={1}
+        />
+      ))}
+    </CollapsibleSideBarRow>
   );
 }
 
@@ -74,8 +70,22 @@ function RenderPathTree({
       <CollapsibleSideBarRow
         initialCollapse={true}
         title={name}
-        leftIcon={<ChevronDownIcon className="file-browser-button" />}
-        activeLeftIcon={<ChevronRightIcon className="file-browser-button" />}
+        leftIcon={
+          <ChevronDownIcon
+            style={{
+              height: 16,
+              width: 16,
+            }}
+          />
+        }
+        activeLeftIcon={
+          <ChevronRightIcon
+            style={{
+              height: 16,
+              width: 16,
+            }}
+          />
+        }
         depth={depth}
         basePadding={16}
       >
@@ -108,10 +118,20 @@ function RenderPathTree({
         }}
         title={name}
         isActive={activeWSPath === wsPath}
-        leftIcon={<span className="file-browser-button"> </span>}
+        leftIcon={
+          <span
+            style={{
+              height: 16,
+              width: 16,
+            }}
+          ></span>
+        }
         rightHoverIcon={
           <CloseIcon
-            className="file-browser-button"
+            style={{
+              height: 16,
+              width: 16,
+            }}
             onClick={async (e) => {
               e.stopPropagation();
               deleteByWsPath(wsPath);

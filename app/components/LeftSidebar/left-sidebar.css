@@ -18,8 +18,3 @@
 .side-bar-row.sticky.collapsed {
   border: 2px solid var(--border-color);
 }
-
-.file-browser-button {
-  height: 16px;
-  width: 16px;
-}

@@ -1,4 +1,6 @@
-import React, { useReducer, createContext, useMemo } from 'react';
+import React, { useReducer, createContext, useMemo, useEffect } from 'react';
+import { useWindowSize } from './misc/hooks';
+import { checkWidescreen } from './misc/index';
 import { applyTheme } from './style/apply-theme';
 
 const LOG = false;
@@ -7,28 +9,50 @@ const DEFAULT_PALETTE = 'file';
 
 export const UIManagerContext = createContext();
 
-export function UIManager({ children }) {
+function setRootWidescreenClass(widescreen) {
+  const root = document.getElementById('root');
+  if (widescreen) {
+    root?.classList.add('widescreen');
+  } else {
+    root?.classList.remove('widescreen');
+  }
+}
+export function UIManager({ r, children }) {
+  const windowSize = useWindowSize();
   const [state, dispatch] = useReducer(
-    reducer,
-    {
+    (...args) => new UIState(reducer(...args)),
+    new UIState({
       // UI
-      sidebar: false,
+      sidebar: null,
+      widescreen: checkWidescreen(windowSize.width),
       paletteType: undefined,
       paletteInitialQuery: undefined,
       paletteMetadata: undefined,
       theme: localStorage.getItem('theme') || 'light',
-    },
+    }),
     (store) => {
       applyTheme(store.theme);
+      setRootWidescreenClass(store.widescreen);
       return store;
     },
   );
 
   // Does not give semantic guarantee, but we are fine
   const value = useMemo(() => {
-    return { ...state, dispatch };
-  }, [state, dispatch]);
+    state.dispatch = dispatch;
+    return state;
+  }, [state]);
 
+  useEffect(() => {
+    dispatch({
+      type: 'UI/UPDATE_WINDOW_SIZE',
+      value: {
+        windowSize,
+      },
+    });
+  }, [windowSize]);
+
+  log(value);
   return (
     <UIManagerContext.Provider value={value}>
       {children}
@@ -40,9 +64,10 @@ const reducer = (state, action) => {
   log('Received', action.type, { action });
   switch (action.type) {
     case 'UI/TOGGLE_SIDEBAR': {
+      const sidebar = Boolean(state.sidebar) ? null : action.value.type;
       return {
         ...state,
-        sidebar: !state.sidebar,
+        sidebar,
       };
     }
 
@@ -76,7 +101,44 @@ const reducer = (state, action) => {
       };
     }
 
+    case 'UI/UPDATE_WINDOW_SIZE': {
+      const { windowSize } = action.value;
+      const widescreen = checkWidescreen(windowSize.width);
+      setRootWidescreenClass(widescreen);
+      return {
+        ...state,
+        widescreen,
+      };
+    }
+
+    case 'UI/HIDE_EDITOR_AREA': {
+      return {
+        ...state,
+      };
+    }
+
     default:
       throw new Error(`Unrecognized action "${action.type}"`);
   }
 };
+
+class UIState {
+  constructor(obj) {
+    this.dispatch = undefined;
+
+    this.sidebar = obj.sidebar;
+    this.widescreen = obj.widescreen;
+    this.paletteType = obj.paletteType;
+    this.paletteInitialQuery = obj.paletteInitialQuery;
+    this.paletteMetadata = obj.paletteMetadata;
+    this.theme = obj.theme;
+  }
+
+  get hideEditorArea() {
+    if (this.widescreen) {
+      return false;
+    }
+
+    return Boolean(this.paletteType || this.sidebar);
+  }
+}

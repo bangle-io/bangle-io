@@ -233,7 +233,7 @@ describe.only('PaletteUI', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="fadeInScaleAnimation bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
+          class=""
         >
           <div
             class="palette-input-wrapper flex py-2 px-2 top-0"

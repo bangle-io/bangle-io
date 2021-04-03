@@ -6,7 +6,7 @@ import { specRegistry } from './spec-sheet';
 import { defaultContent } from '../components/constants';
 import { getDoc, saveDoc } from '../workspace/file-helpers';
 
-const LOG = true;
+const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
 export const EditorManagerContext = React.createContext();

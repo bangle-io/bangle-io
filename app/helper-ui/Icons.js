@@ -83,3 +83,53 @@ export function InfobarIcon(props) {
     </Svg>
   );
 }
+
+export function AlbumIcon(props) {
+  return (
+    <Svg {...props}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M2 19C2 20.6569 3.34315 22 5 22H19C20.6569 22 22 20.6569 22 19V5C22 3.34315 20.6569 2 19 2H5C3.34315 2 2 3.34315 2 5V19ZM20 19C20 19.5523 19.5523 20 19 20H5C4.44772 20 4 19.5523 4 19V5C4 4.44772 4.44772 4 5 4H10V12.0111L12.395 12.0112L14.0001 9.86419L15.6051 12.0112H18.0001L18 4H19C19.5523 4 20 4.44772 20 5V19ZM16 4H12V9.33585L14.0001 6.66046L16 9.33571V4Z"
+        fill="currentColor"
+      />
+    </Svg>
+  );
+}
+
+export function BrowseIcon(props) {
+  return (
+    <Svg {...props}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M14.364 13.1214C15.2876 14.045 15.4831 15.4211 14.9504 16.5362L16.4853 18.0711C16.8758 18.4616 16.8758 19.0948 16.4853 19.4853C16.0948 19.8758 15.4616 19.8758 15.0711 19.4853L13.5361 17.9504C12.421 18.4831 11.045 18.2876 10.1213 17.364C8.94975 16.1924 8.94975 14.2929 10.1213 13.1214C11.2929 11.9498 13.1924 11.9498 14.364 13.1214ZM12.9497 15.9498C13.3403 15.5593 13.3403 14.9261 12.9497 14.5356C12.5592 14.145 11.9261 14.145 11.5355 14.5356C11.145 14.9261 11.145 15.5593 11.5355 15.9498C11.9261 16.3403 12.5592 16.3403 12.9497 15.9498Z"
+        fill="currentColor"
+      />
+      <path d="M8 5H16V7H8V5Z" fill="currentColor" />
+      <path d="M16 9H8V11H16V9Z" fill="currentColor" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4 4C4 2.34315 5.34315 1 7 1H17C18.6569 1 20 2.34315 20 4V20C20 21.6569 18.6569 23 17 23H7C5.34315 23 4 21.6569 4 20V4ZM7 3H17C17.5523 3 18 3.44772 18 4V20C18 20.5523 17.5523 21 17 21H7C6.44772 21 6 20.5523 6 20V4C6 3.44772 6.44771 3 7 3Z"
+        fill="currentColor"
+      />
+    </Svg>
+  );
+}
+
+export function FileDocumentIcon(props) {
+  return (
+    <Svg {...props}>
+      <path d="M7 18H17V16H7V18Z" fill="currentColor" />
+      <path d="M17 14H7V12H17V14Z" fill="currentColor" />
+      <path d="M7 10H11V8H7V10Z" fill="currentColor" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V9C21 5.13401 17.866 2 14 2H6ZM6 4H13V9H19V19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V5C5 4.44772 5.44772 4 6 4ZM15 4.10002C16.6113 4.4271 17.9413 5.52906 18.584 7H15V4.10002Z"
+        fill="currentColor"
+      />
+    </Svg>
+  );
+}

@@ -17,6 +17,7 @@ const ResolvePaletteItemShape = PropTypes.shape({
 });
 
 PaletteUI.propTypes = {
+  paletteTypeIcon: PropTypes.element,
   paletteType: PropTypes.string,
   updatePalette: PropTypes.func.isRequired,
   paletteInitialQuery: PropTypes.string,
@@ -43,12 +44,15 @@ PaletteUI.propTypes = {
  *         See `ResolvePaletteItemShape` for the shape of expected return type of the function.
  */
 export function PaletteUI({
+  paletteTypeIcon,
   paletteType,
   updatePalette,
   paletteInitialQuery = '',
   parseRawQuery,
   generateRawQuery,
   paletteItems,
+  style,
+  className,
 }) {
   const [query, updateQuery] = useState(paletteInitialQuery);
   const [counter, updateCounter] = useState(0);
@@ -68,6 +72,7 @@ export function PaletteUI({
 
   return (
     <PaletteContainer
+      paletteTypeIcon={paletteTypeIcon}
       updatePalette={updatePalette}
       paletteType={paletteType}
       updateCounter={updateCounter}
@@ -78,6 +83,8 @@ export function PaletteUI({
       generateRawQuery={generateRawQuery}
       resolvedItems={resolvePaletteItems(paletteItems, query, paletteType)}
       onDismiss={onDismiss}
+      style={style}
+      className={className}
     />
   );
 }
@@ -87,6 +94,7 @@ PaletteContainer.propTypes = {
 };
 
 export function PaletteContainer({
+  paletteTypeIcon,
   updatePalette,
   paletteType,
   updateCounter,
@@ -97,6 +105,8 @@ export function PaletteContainer({
   generateRawQuery,
   resolvedItems,
   onDismiss,
+  className = '',
+  style,
 }) {
   const paletteInputRef = createRef();
   const containerRef = useWatchClickOutside(onDismiss, () => {
@@ -131,11 +141,9 @@ export function PaletteContainer({
   );
 
   return (
-    <div
-      className="fadeInScaleAnimation bangle-palette top-0 z-30 pb-1 shadow-md border flex flex-col"
-      ref={containerRef}
-    >
+    <div className={className} style={style} ref={containerRef}>
       <PaletteInput
+        paletteTypeIcon={paletteTypeIcon}
         ref={paletteInputRef}
         onDismiss={onDismiss}
         updatePalette={updatePalette}
@@ -171,6 +179,7 @@ export function PaletteContainer({
 export const PaletteInput = React.forwardRef(
   (
     {
+      paletteTypeIcon,
       paletteType,
       onDismiss,
       updateCounter,
@@ -187,6 +196,7 @@ export const PaletteInput = React.forwardRef(
   ) => {
     return (
       <PaletteInputUI
+        paletteTypeIcon={paletteTypeIcon}
         ref={paletteInputRef}
         onDismiss={onDismiss}
         activeItemIndex={activeItemIndex}
@@ -215,6 +225,7 @@ export const PaletteInput = React.forwardRef(
 export const PaletteInputUI = React.forwardRef(
   (
     {
+      paletteTypeIcon,
       onDismiss,
       executeHandler,
       activeItemIndex,
@@ -259,6 +270,7 @@ export const PaletteInputUI = React.forwardRef(
 
     return (
       <div className="palette-input-wrapper flex py-2 px-2 top-0">
+        {paletteTypeIcon}
         <input
           type="text"
           aria-label="palette-input"

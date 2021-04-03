@@ -1,28 +1,38 @@
 #root {
   color: var(--font-color);
-  /* background-color: pink; */
   display: flex;
+  flex-direction: column;
+}
+
+#root.widescreen {
   flex-flow: row nowrap;
 }
 
 .activity-bar {
-  min-height: 100vh;
-  min-width: var(--activity-bar-width);
-  z-index: 200;
+  height: var(--activity-bar-width);
+  min-width: 100vw;
+  max-width: 100vw;
   background-color: var(--activity-bar-color);
+  z-index: 300;
+  position: sticky;
+  top: 0;
 }
 
-/** this position fixed exists so that we can keep activity bar fixed
-   while still benefiting from flex.
-*/
-.activity-bar > div {
-  position: fixed;
+.activity-bar.widescreen {
+  height: 100vh;
+  min-width: var(--activity-bar-width);
+  max-width: var(--activity-bar-width);
+  position: static;
   padding-top: 0.5rem;
-  box-sizing: border-box;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  width: var(--activity-bar-width);
+}
+
+.activity-bar > div {
+  display: flex;
+  flex-direction: row;
+}
+
+.activity-bar.widescreen > div {
+  flex-direction: column;
 }
 
 .main-content {
@@ -32,8 +42,13 @@
   justify-content: center;
 }
 
+.main-content.widescreen {
+  height: 100vh;
+  overflow-y: scroll;
+}
+
 .bangle-editor-area {
-  max-width: 700px;
+  max-width: min(700px, 100vw);
   flex-grow: 1;
 }
 
@@ -80,13 +95,39 @@
   border-bottom: 2px solid var(--border-color);
 }
 
-.sidebar-content {
-  position: fixed;
+.left-sidebar-area {
+  z-index: 100;
+  background-color: var(--bg-stronger-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.left-sidebar-area.widescreen {
   min-height: 100vh;
   max-height: 100vh;
-  left: var(--activity-bar-width);
-  top: 0;
-  z-index: 100;
-  width: var(--sidebar-content-width);
+  overflow-y: scroll;
+  min-width: var(--left-sidebar-area-width);
+  max-width: var(--left-sidebar-area-width);
+  border-right: 2px solid var(--border-color);
+}
+
+.side-bar-row {
   background-color: var(--bg-stronger-color);
+}
+
+.side-bar-row:hover {
+  background-color: var(--accent-color);
+}
+
+.side-bar-row.active {
+  background-color: var(--accent-2-color);
+}
+
+.side-bar-row.sticky {
+  border: 0;
+  border-top: 2px solid var(--border-color);
+}
+
+.side-bar-row.sticky.collapsed {
+  border: 2px solid var(--border-color);
 }

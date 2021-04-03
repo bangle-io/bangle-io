@@ -2,99 +2,103 @@ import './style/reset.css';
 import './style/tailwind.src.css';
 import './style/style.css';
 import './style/animations.css';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Editor } from './components/Editor';
-import { EditorManager, EditorManagerContext } from './editor/EditorManager';
-import { LeftSidebar } from './components/LeftSidebar/LeftSidebar';
+import { EditorManagerContext } from './editor/EditorManager';
 import { Palette } from './Palette/index';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { useWorkspacePath } from './workspace/workspace-hooks';
 import { Workspace } from './workspace/Workspace';
-import { UIManager, UIManagerContext } from './UIManager';
-import { checkWidescreen } from './misc/index';
-import { useWindowSize } from './misc/hooks';
+import { UIManagerContext } from './UIManager';
+import { useKeybindings } from './misc/hooks';
 import { resolvePath } from './workspace/path-helpers';
 import { CloseIcon } from './helper-ui/Icons';
+import { ActivityBar } from './components/LeftSidebar/ActivityBar';
+import { FileBrowser } from './components/LeftSidebar/FileBrowser';
 
 export function AppContainer() {
+  const { widescreen, hideEditorArea } = useContext(UIManagerContext);
+  const { secondaryWsPath } = useWorkspacePath();
+  const secondaryEditor = widescreen && Boolean(secondaryWsPath);
+  const showTabs = Boolean(secondaryEditor);
+
   return (
-    <Router>
-      <EditorManager>
-        <UIManager>
-          <LeftSidebar />
-          <Palette />
-          <MainContent />
-        </UIManager>
-      </EditorManager>
-    </Router>
+    <>
+      <ActivityBar />
+      <Palette />
+      <LeftSidebarArea />
+      {!hideEditorArea && (
+        <div
+          className={`main-content ${widescreen ? 'widescreen' : ''}
+          ${secondaryEditor ? 'has-secondary-editor' : ''}`}
+        >
+          <Route exact path="/">
+            <RootHomePage />
+          </Route>
+          <Route path="/ws/:wsName">
+            <WorkspacePage
+              showTabs={showTabs}
+              secondaryEditor={secondaryEditor}
+            />
+          </Route>
+        </div>
+      )}
+    </>
   );
 }
 
-function MainContent() {
-  const windowSize = useWindowSize();
-  const wideScreen = checkWidescreen(windowSize.width);
+function RootHomePage() {
+  return (
+    <div>
+      <span>Let us open a workspace</span>
+    </div>
+  );
+}
+
+function WorkspacePage({ secondaryEditor, showTabs }) {
+  return (
+    <Workspace>
+      <EditorArea showTabs={showTabs} isFirst={true} />
+      {secondaryEditor && <div className="grid-gutter" />}
+      {secondaryEditor && <EditorArea isFirst={false} showTabs={showTabs} />}
+    </Workspace>
+  );
+}
+
+function EditorArea({ isFirst = false, showTabs }) {
   const { sendRequest } = useContext(EditorManagerContext);
   const { paletteType } = useContext(UIManagerContext);
-  const {
+
+  let {
     wsPath,
     secondaryWsPath,
     removeWsPath,
     removeSecondaryWsPath,
   } = useWorkspacePath();
 
-  const secondaryEditor = wideScreen && Boolean(secondaryWsPath);
+  let onClose = removeWsPath;
+
+  if (!isFirst) {
+    wsPath = secondaryWsPath;
+    onClose = removeSecondaryWsPath;
+  }
 
   return (
-    <div
-      className={`main-content ${
-        secondaryEditor ? 'has-secondary-editor' : ''
-      }`}
-    >
-      <Route exact path="/">
-        <div>
-          <span>Let us open a workspace</span>
-        </div>
-      </Route>
-      <Route path="/ws/:wsName">
-        <Workspace>
-          <div className="bangle-editor-area">
-            {secondaryEditor ? (
-              <Tab wsPath={wsPath} onClose={removeWsPath} />
-            ) : null}
-            <div className="bangle-editor-container">
-              <EditorWrapper
-                isFirst={true}
-                wsPath={wsPath}
-                sendRequest={sendRequest}
-                paletteType={paletteType}
-              />
-            </div>
-          </div>
-          {secondaryEditor ? (
-            <>
-              <div className="grid-gutter" />
-              <div className="bangle-editor-area">
-                <Tab wsPath={secondaryWsPath} onClose={removeSecondaryWsPath} />
-                <div className="bangle-editor-container">
-                  <EditorWrapper
-                    isFirst={false}
-                    wsPath={secondaryWsPath}
-                    sendRequest={sendRequest}
-                    paletteType={paletteType}
-                  />
-                </div>
-              </div>
-            </>
-          ) : null}
-        </Workspace>
-      </Route>
+    <div className="bangle-editor-area">
+      {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
+      <div className="bangle-editor-container">
+        {wsPath && (
+          <Editor
+            key={wsPath}
+            isFirst={isFirst}
+            wsPath={wsPath}
+            sendRequest={sendRequest}
+            paletteType={paletteType}
+          />
+        )}
+      </div>
     </div>
   );
-}
-
-function EditorWrapper(props) {
-  // key to wsPath so that we remount the component on path change
-  return props.wsPath ? <Editor key={props.wsPath} {...props} /> : null;
 }
 
 function Tab({ wsPath, onClose }) {
@@ -104,6 +108,47 @@ function Tab({ wsPath, onClose }) {
       <button type="button" onClick={onClose} className={`focus:outline-none`}>
         <CloseIcon className="h-4 w-4 cursor-pointer" />
       </button>
+    </div>
+  );
+}
+
+function LeftSidebarArea() {
+  const { sidebar, dispatch } = useContext(UIManagerContext);
+  const { widescreen } = useContext(UIManagerContext);
+
+  useKeybindings(() => {
+    return {
+      'Mod-e': () => {
+        dispatch({
+          type: 'UI/TOGGLE_SIDEBAR',
+          value: { type: 'file-browser' },
+        });
+      },
+    };
+  }, [dispatch]);
+
+  let sidebarName, component;
+
+  switch (sidebar) {
+    case 'file-browser': {
+      sidebarName = 'Files';
+      component = <FileBrowser />;
+      break;
+    }
+
+    default: {
+      return null;
+    }
+  }
+
+  return (
+    <div
+      className={`fadeInAnimation left-sidebar-area ${
+        widescreen ? 'widescreen' : ''
+      }`}
+    >
+      <div className="top-0 text-2xl pb-1 pl-3">{sidebarName}</div>
+      {component}
     </div>
   );
 }
