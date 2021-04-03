@@ -100,6 +100,7 @@ function RenderPathTree({
       >
         {children.map((child) => (
           <RenderPathTree
+            widescreen={widescreen}
             key={child.name}
             fileTree={child}
             wsName={wsName}
