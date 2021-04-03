@@ -2,7 +2,12 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "bangle-io/*": ["./*"]
+      "app/*": [
+        "./app/*"
+      ],
+      "app": [
+        "./app/index.js"
+      ]
     },
     "module": "es2020",
     "target": "esnext"

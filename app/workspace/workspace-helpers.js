@@ -1,4 +1,4 @@
-import { config } from 'bangle-io/config';
+import { config } from 'app/config';
 import * as idb from 'idb-keyval';
 import { WorkspaceError } from './errors';
 

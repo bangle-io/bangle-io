@@ -2,6 +2,9 @@
   "name": "bangle-io",
   "version": "0.1.14",
   "homepage": "https://bangle.io",
+  "workspaces": [
+    "app"
+  ],
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -49,7 +52,6 @@
     "@popperjs/core": "^2.5.4",
     "idb-keyval": "^5.0.4",
     "localforage": "^1.9.0",
-    "lodash.debounce": "^4.0.8",
     "prop-types": "^15.7.2",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "punycode": "^2.1.1",

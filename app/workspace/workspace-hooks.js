@@ -1,10 +1,7 @@
 import { useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
-import {
-  locationToFilePath,
-  resolvePath,
-} from 'bangle-io/app/workspace/path-helpers';
+import { locationToFilePath, resolvePath } from 'app//workspace/path-helpers';
 import {
   createWorkspace,
   deleteWorkspace,

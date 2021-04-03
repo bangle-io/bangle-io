@@ -21,11 +21,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "bangle-io",
         "reference": "workspace:."
+      },
+      {
+        "name": "app",
+        "reference": "workspace:app"
       }
     ],
     "enableTopLevelFallback": true,
     "ignorePatternData": "(^(?:\\.yarn\\/sdks(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$)",
     "fallbackExclusionList": [
+      ["app", ["workspace:app"]],
       ["bangle-io", ["workspace:."]]
     ],
     "fallbackPool": [
@@ -82,7 +87,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest", "npm:26.6.3"],
             ["jest-circus", "npm:26.6.3"],
             ["localforage", "npm:1.9.0"],
-            ["lodash.debounce", "npm:4.0.8"],
             ["mini-css-extract-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.3.9"],
             ["pnp-webpack-plugin", "npm:1.6.4"],
             ["postcss-custom-properties", "npm:9.2.0"],
@@ -4497,6 +4501,44 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["app", [
+        ["workspace:app", {
+          "packageLocation": "./app/",
+          "packageDependencies": [
+            ["app", "workspace:app"],
+            ["@bangle.dev/collab", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/core", "npm:0.5.1"],
+            ["@bangle.dev/emoji", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/markdown", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/markdown-front-matter", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/react-emoji-suggest", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/react-menu", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/react-sticker", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/react-stopwatch", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/text-formatting", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/timestamp", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/tooltip", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@bangle.dev/trailing-node", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:0.5.1"],
+            ["@popperjs/core", "npm:2.6.0"],
+            ["@testing-library/dom", "npm:7.30.0"],
+            ["@testing-library/jest-dom", "npm:5.11.6"],
+            ["@testing-library/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.2.5"],
+            ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.0.6"],
+            ["idb-keyval", "npm:5.0.4"],
+            ["prop-types", "npm:15.7.2"],
+            ["prosemirror-dev-tools", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
+            ["punycode", "npm:2.1.1"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:16.14.0"],
+            ["react-popper", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.2.4"],
+            ["react-router-dom", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.0"],
+            ["tailwindcss", "npm:1.9.6"],
+            ["w3c-keyname", "npm:2.2.4"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["aproba", [
         ["npm:1.2.0", {
           "packageLocation": "./.yarn/cache/aproba-npm-1.2.0-34129f0778-d4bac3e640.zip/node_modules/aproba/",
@@ -5129,7 +5171,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest", "npm:26.6.3"],
             ["jest-circus", "npm:26.6.3"],
             ["localforage", "npm:1.9.0"],
-            ["lodash.debounce", "npm:4.0.8"],
             ["mini-css-extract-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.3.9"],
             ["pnp-webpack-plugin", "npm:1.6.4"],
             ["postcss-custom-properties", "npm:9.2.0"],

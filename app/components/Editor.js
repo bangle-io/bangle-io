@@ -28,7 +28,7 @@ import {
   TodoListButton,
 } from '@bangle.dev/react-menu';
 import { collapsibleHeadingDeco } from '../editor/collapsible-heading-deco';
-import { config } from 'bangle-io/config';
+import { config } from 'app/config';
 import { specRegistry } from '../editor/spec-sheet';
 
 const LOG = false;
