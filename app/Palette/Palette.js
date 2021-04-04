@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { useCallback } from 'react';
+import React, { useContext, useCallback } from 'react';
+
 import { UIManagerContext } from 'ui-context/index';
 
 import { useKeybindings } from 'utils/index';

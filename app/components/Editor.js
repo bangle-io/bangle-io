@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
-import { BangleEditor } from '@bangle.dev/react';
-import { useEditorState } from '@bangle.dev/react';
+import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
 import sticker from '@bangle.dev/react-sticker';
 import { EmojiSuggest } from '@bangle.dev/react-emoji-suggest';
