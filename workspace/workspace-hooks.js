@@ -13,12 +13,12 @@ import {
   listAllFiles,
   renameFile,
 } from './file-helpers';
-import { specRegistry } from '../../app/editor/spec-sheet';
+import { specRegistry } from '../app/editor/spec-sheet';
 import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
 import { checkWidescreen } from 'utils/index';
 
 const LOG = false;
-let log = LOG ? console.log.bind(console, 'workspace-context/index') : () => {};
+let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 
 export function useGetWorkspaceFiles() {
   const { wsName, wsPermissionState } = useWorkspacePath();

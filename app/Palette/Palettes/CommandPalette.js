@@ -8,7 +8,7 @@ import {
   useRenameActiveFile,
   useWorkspacePath,
   useWorkspaces,
-} from 'workspace-context/index';
+} from 'workspace/index';
 import { COMMAND_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 const LOG = false;
 

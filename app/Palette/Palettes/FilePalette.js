@@ -3,7 +3,7 @@ import {
   useGetWorkspaceFiles,
   useWorkspacePath,
   resolvePath,
-} from 'workspace-context/index';
+} from 'workspace/index';
 import { FILE_PALETTE } from '../paletteTypes';
 
 const LOG = false;

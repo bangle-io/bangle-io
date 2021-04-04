@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useWorkspaces } from 'workspace-context/index';
+import { useWorkspaces } from 'workspace/index';
 import { WORKSPACE_PALETTE } from '../paletteTypes';
 import { CloseIcon } from 'app/helper-ui/Icons';
 

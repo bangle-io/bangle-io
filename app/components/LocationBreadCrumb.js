@@ -1,5 +1,5 @@
 import React from 'react';
-import { useWorkspacePath } from 'workspace-context/index';
+import { useWorkspacePath } from 'workspace/index';
 
 export function LocationBreadCrumb() {
   let { filePath } = useWorkspacePath();

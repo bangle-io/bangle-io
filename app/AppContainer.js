@@ -3,11 +3,7 @@ import { Editor } from './components/Editor';
 import { EditorManagerContext } from './editor/EditorManager';
 import { Palette } from './Palette/index';
 import { Route } from 'react-router-dom';
-import {
-  Workspace,
-  resolvePath,
-  useWorkspacePath,
-} from 'workspace-context/index';
+import { Workspace, resolvePath, useWorkspacePath } from 'workspace/index';
 import { UIManagerContext } from 'ui-context/index';
 import { useKeybindings } from 'utils/index';
 import { CloseIcon } from './helper-ui/Icons';

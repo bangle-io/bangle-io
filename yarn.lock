@@ -2930,7 +2930,7 @@ __metadata:
     ui-context: "workspace:*"
     utils: "workspace:*"
     w3c-keyname: ^2.2.4
-    workspace-context: "workspace:*"
+    workspace: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -12721,9 +12721,9 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"workspace-context@workspace:*, workspace-context@workspace:contexts/workspace-context":
+"workspace@workspace:*, workspace@workspace:workspace":
   version: 0.0.0-use.local
-  resolution: "workspace-context@workspace:contexts/workspace-context"
+  resolution: "workspace@workspace:workspace"
   dependencies:
     "@bangle.dev/core": 0.5.1
     "@testing-library/react": ^11.2.5

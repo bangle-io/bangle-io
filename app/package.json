@@ -45,7 +45,7 @@
     "ui-context": "workspace:*",
     "utils": "workspace:*",
     "w3c-keyname": "^2.2.4",
-    "workspace-context": "workspace:*"
+    "workspace": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/dom": "^7.30.0",

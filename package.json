@@ -7,6 +7,7 @@
     "utils",
     "config",
     "style",
+    "workspace",
     "contexts/*"
   ],
   "authors": [

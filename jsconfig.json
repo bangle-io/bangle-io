@@ -32,11 +32,11 @@
       "ui-context/*": [
         "./contexts/ui-context/*"
       ],
-      "workspace-context": [
-        "./contexts/workspace-context.js"
+      "workspace": [
+        "./contexts/workspace.js"
       ],
-      "workspace-context/*": [
-        "./contexts/workspace-context/*"
+      "workspace/*": [
+        "./contexts/workspace/*"
       ]
     },
     "module": "es2020",

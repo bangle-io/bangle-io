@@ -4,7 +4,7 @@ import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
 import { specRegistry } from './spec-sheet';
 import { defaultContent } from '../components/constants';
-import { getDoc, saveDoc } from 'workspace-context/index';
+import { getDoc, saveDoc } from 'workspace/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};

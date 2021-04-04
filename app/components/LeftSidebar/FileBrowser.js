@@ -12,7 +12,7 @@ import {
   useGetWorkspaceFiles,
   useWorkspacePath,
   resolvePath,
-} from 'workspace-context/index';
+} from 'workspace/index';
 
 FileBrowser.propTypes = {};
 

@@ -1,4 +1,4 @@
-import { markdownParser, markdownSerializer } from '../../app/markdown/parsers';
+import { markdownParser, markdownSerializer } from '../app/markdown/parsers';
 import { IndexDBIO } from './indexdb';
 import { NativeFileOps } from './nativefs-helpers';
 import { resolvePath, validatePath, validateWsFilePath } from './path-helpers';
