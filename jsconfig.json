@@ -26,6 +26,12 @@
       "style": [
         "./style/index.js"
       ],
+      "editor/*": [
+        "./editor/*"
+      ],
+      "editor": [
+        "./editor/index.js"
+      ],
       "ui-context": [
         "./contexts/ui-context.js"
       ],
@@ -33,10 +39,10 @@
         "./contexts/ui-context/*"
       ],
       "workspace": [
-        "./contexts/workspace.js"
+        "./workspace.js"
       ],
       "workspace/*": [
-        "./contexts/workspace/*"
+        "./workspace/*"
       ]
     },
     "module": "es2020",

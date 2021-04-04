@@ -8,6 +8,7 @@
     "config",
     "style",
     "workspace",
+    "editor",
     "contexts/*"
   ],
   "authors": [

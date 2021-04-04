@@ -1,7 +1,6 @@
 import { PluginKey, Plugin } from '@bangle.dev/core/plugin';
 import { Decoration, DecorationSet } from '@bangle.dev/core/prosemirror/view';
 import { Selection } from '@bangle.dev/core/prosemirror/state';
-
 import {
   listCollapsedHeading,
   listCollapsibleHeading,

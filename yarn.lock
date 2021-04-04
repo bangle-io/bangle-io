@@ -2904,22 +2904,19 @@ __metadata:
     "@bangle.dev/core": 0.5.1
     "@bangle.dev/emoji": 0.5.1
     "@bangle.dev/markdown": 0.5.1
-    "@bangle.dev/markdown-front-matter": 0.5.1
     "@bangle.dev/react": 0.5.1
     "@bangle.dev/react-emoji-suggest": 0.5.1
     "@bangle.dev/react-menu": 0.5.1
     "@bangle.dev/react-sticker": 0.5.1
     "@bangle.dev/react-stopwatch": 0.5.1
-    "@bangle.dev/text-formatting": 0.5.1
-    "@bangle.dev/timestamp": 0.5.1
     "@bangle.dev/tooltip": 0.5.1
-    "@bangle.dev/trailing-node": 0.5.1
     "@popperjs/core": ^2.5.4
     "@testing-library/dom": ^7.30.0
     "@testing-library/jest-dom": ^5.11.6
     "@testing-library/react": ^11.2.5
     "@testing-library/user-event": ^13.0.6
     config: "workspace:*"
+    editor: "workspace:*"
     prop-types: ^15.7.2
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
@@ -4873,6 +4870,31 @@ __metadata:
   checksum: 5b4dd05f24b2b94c1bb882488dba2b878bb5b83182669aa71fbdf53c6941618180cb226c4eb9a3e2fa51ad11f87b5edb0a7d7289cdef468ba2e6024542f73f07
   languageName: node
   linkType: hard
+
+"editor@workspace:*, editor@workspace:editor":
+  version: 0.0.0-use.local
+  resolution: "editor@workspace:editor"
+  dependencies:
+    "@bangle.dev/collab": 0.5.1
+    "@bangle.dev/core": 0.5.1
+    "@bangle.dev/emoji": 0.5.1
+    "@bangle.dev/markdown": 0.5.1
+    "@bangle.dev/markdown-front-matter": 0.5.1
+    "@bangle.dev/react": 0.5.1
+    "@bangle.dev/react-emoji-suggest": 0.5.1
+    "@bangle.dev/react-menu": 0.5.1
+    "@bangle.dev/react-sticker": 0.5.1
+    "@bangle.dev/react-stopwatch": 0.5.1
+    "@bangle.dev/text-formatting": 0.5.1
+    "@bangle.dev/timestamp": 0.5.1
+    "@bangle.dev/tooltip": 0.5.1
+    "@bangle.dev/trailing-node": 0.5.1
+    config: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    utils: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "ee-first@npm:1.1.1":
   version: 1.1.1
@@ -12728,6 +12750,7 @@ fsevents@^2.1.2:
     "@bangle.dev/core": 0.5.1
     "@testing-library/react": ^11.2.5
     config: "workspace:*"
+    editor: "workspace:*"
     idb-keyval: ^5.0.4
     react: 16.14.0
     react-dom: 16.14.0

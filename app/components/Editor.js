@@ -1,19 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
-import { PluginKey } from '@bangle.dev/core/prosemirror/state';
-import { uuid, getIdleCallback } from '@bangle.dev/core/utils/js-utils';
-import * as collab from '@bangle.dev/collab/client/collab-extension';
-import * as coreComps from '@bangle.dev/core/components/index';
-import { emoji, emojisArray } from '@bangle.dev/emoji/index';
-import { trailingNode } from '@bangle.dev/trailing-node';
-import { timestamp } from '@bangle.dev/timestamp';
+
+import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { BangleEditor } from '@bangle.dev/react';
 import { useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
 import sticker from '@bangle.dev/react-sticker';
-import { EmojiSuggest, emojiSuggest } from '@bangle.dev/react-emoji-suggest';
+import { EmojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import {
-  floatingMenu,
   FloatingMenu,
   Menu,
   MenuGroup,
@@ -27,19 +21,16 @@ import {
   OrderedListButton,
   TodoListButton,
 } from '@bangle.dev/react-menu';
-import { collapsibleHeadingDeco } from '../editor/collapsible-heading-deco';
 import { config } from 'config/index';
-import { specRegistry } from '../editor/spec-sheet';
+import {
+  specRegistry,
+  getPlugins,
+  menuKey,
+  emojiSuggestKey,
+} from 'editor/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
-
-const getScrollContainer = (view) => {
-  return view.dom.parentElement;
-};
-
-const menuKey = new PluginKey('menuKey');
-const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
 export const Editor = React.memo(function Editor({
   isFirst,
@@ -56,87 +47,8 @@ export const Editor = React.memo(function Editor({
     }
   }, [editor, paletteType]);
 
-  const getPlugins = useCallback(() => {
-    const collabOpts = {
-      docName: wsPath,
-      clientId: 'client-' + uuid(4),
-
-      async getDocument({ docName, userId }) {
-        // log({ docName, userId });
-        return sendRequest('get_document', {
-          docName,
-          userId,
-        });
-      },
-
-      async pullEvents({ version, docName, userId }) {
-        // log({ version, docName, userId });
-        return sendRequest('get_events', {
-          docName,
-          version,
-          userId,
-        });
-      },
-
-      async pushEvents({ version, steps, clientID, docName, userId }) {
-        // log({ version, steps, clientID, docName, userId });
-        return sendRequest('push_events', {
-          clientID,
-          version,
-          steps,
-          docName,
-          userId,
-        });
-      },
-    };
-    return [
-      floatingMenu.plugins({
-        key: menuKey,
-        tooltipRenderOpts: {
-          getScrollContainer,
-        },
-      }),
-      emojiSuggest.plugins({
-        key: emojiSuggestKey,
-        emojis: emojisArray,
-        markName: 'emojiSuggest',
-        tooltipRenderOpts: {
-          getScrollContainer,
-        },
-      }),
-      coreComps.bold.plugins(),
-      coreComps.code.plugins(),
-      coreComps.italic.plugins(),
-      coreComps.strike.plugins(),
-      coreComps.link.plugins(),
-      coreComps.underline.plugins(),
-      coreComps.paragraph.plugins(),
-      coreComps.blockquote.plugins(),
-      coreComps.bulletList.plugins(),
-      coreComps.codeBlock.plugins(),
-      coreComps.hardBreak.plugins(),
-      coreComps.heading.plugins({
-        keybindings: {
-          ...coreComps.heading.defaultKeys,
-          toggleCollapse: 'Shift-Meta-1',
-          toH4: null,
-          toH5: null,
-          toH6: null,
-        },
-      }),
-      coreComps.horizontalRule.plugins(),
-      coreComps.listItem.plugins(),
-      coreComps.orderedList.plugins(),
-      coreComps.image.plugins(),
-      coreComps.history.plugins(),
-      collab.plugins(collabOpts),
-      emoji.plugins(),
-      stopwatch.plugins(),
-      trailingNode.plugins(),
-      timestamp.plugins(),
-      sticker.plugins(),
-      collapsibleHeadingDeco.plugins(),
-    ];
+  const plugins = useCallback(() => {
+    return getPlugins({ sendRequest, wsPath });
   }, [sendRequest, wsPath]);
 
   const onEditorReady = useCallback(
@@ -178,7 +90,7 @@ export const Editor = React.memo(function Editor({
   );
 
   const editorState = useEditorState({
-    plugins: getPlugins,
+    plugins: plugins,
     specRegistry,
   });
 

@@ -1,6 +1,8 @@
 import { useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
+import { specRegistry } from 'editor/index';
+
 import { locationToFilePath, resolvePath } from './path-helpers';
 import {
   createWorkspace,
@@ -13,7 +15,6 @@ import {
   listAllFiles,
   renameFile,
 } from './file-helpers';
-import { specRegistry } from '../app/editor/spec-sheet';
 import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
 import { checkWidescreen } from 'utils/index';
 

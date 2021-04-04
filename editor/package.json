@@ -1,5 +1,5 @@
 {
-  "name": "workspace",
+  "name": "editor",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,17 +18,24 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
-  "devDependencies": {
-    "@testing-library/react": "^11.2.5"
-  },
   "dependencies": {
+    "@bangle.dev/collab": "0.5.1",
     "@bangle.dev/core": "0.5.1",
+    "@bangle.dev/emoji": "0.5.1",
+    "@bangle.dev/markdown": "0.5.1",
+    "@bangle.dev/markdown-front-matter": "0.5.1",
+    "@bangle.dev/react": "0.5.1",
+    "@bangle.dev/react-emoji-suggest": "0.5.1",
+    "@bangle.dev/react-menu": "0.5.1",
+    "@bangle.dev/react-sticker": "0.5.1",
+    "@bangle.dev/react-stopwatch": "0.5.1",
+    "@bangle.dev/text-formatting": "0.5.1",
+    "@bangle.dev/timestamp": "0.5.1",
+    "@bangle.dev/tooltip": "0.5.1",
+    "@bangle.dev/trailing-node": "0.5.1",
     "config": "workspace:*",
-    "editor": "workspace:*",
-    "idb-keyval": "^5.0.4",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "react-router-dom": "^5.2.0",
     "utils": "workspace:*"
   },
   "publishConfig": {
