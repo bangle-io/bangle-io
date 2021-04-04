@@ -7,14 +7,16 @@ import {
   useGetWorkspaceFiles,
   useWorkspacePath,
   useWorkspaces,
-} from 'app/workspace/workspace-hooks';
-import { COMMAND_PALETTE, FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
+} from 'workspace-context/index';
+import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../../Palette/Palette';
 import { sleep } from 'app/misc/index';
 
 let result, paletteType, paletteInitialQuery, dispatch;
-jest.mock('app/workspace/workspace-hooks', () => {
+jest.mock('workspace-context/index', () => {
+  const actual = jest.requireActual('workspace-context/index');
   return {
+    ...actual,
     useWorkspacePath: jest.fn(),
     useWorkspaces: jest.fn(),
     useGetWorkspaceFiles: jest.fn(),

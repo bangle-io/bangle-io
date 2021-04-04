@@ -1,3 +1,4 @@
+import { render, act } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import {
@@ -8,7 +9,6 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from '../workspace-hooks';
-import { render, act } from '@testing-library/react';
 import * as idb from 'idb-keyval';
 import { Workspace } from '../Workspace';
 import { getWorkspaceInfo } from '../workspace-helpers';

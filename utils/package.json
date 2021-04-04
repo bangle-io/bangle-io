@@ -20,7 +20,8 @@
   "scripts": {},
   "dependencies": {
     "config": "workspace:*",
-    "react": "16.14.0"
+    "react": "16.14.0",
+    "w3c-keyname": "^2.2.4"
   },
   "publishConfig": {
     "access": "public"

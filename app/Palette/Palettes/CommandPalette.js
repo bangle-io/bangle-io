@@ -1,14 +1,14 @@
 import { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 
-import { pickADirectory } from 'app/workspace/nativefs-helpers';
 import {
+  pickADirectory,
   useCreateMdFile,
   useDeleteFile,
   useRenameActiveFile,
   useWorkspacePath,
   useWorkspaces,
-} from 'app/workspace/workspace-hooks';
+} from 'workspace-context/index';
 import { COMMAND_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 const LOG = false;
 

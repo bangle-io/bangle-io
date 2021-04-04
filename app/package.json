@@ -35,7 +35,6 @@
     "@bangle.dev/trailing-node": "0.5.1",
     "@popperjs/core": "^2.5.4",
     "config": "workspace:*",
-    "idb-keyval": "^5.0.4",
     "prop-types": "^15.7.2",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "16.14.0",
@@ -45,7 +44,8 @@
     "style": "workspace:*",
     "ui-context": "workspace:*",
     "utils": "workspace:*",
-    "w3c-keyname": "^2.2.4"
+    "w3c-keyname": "^2.2.4",
+    "workspace-context": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/dom": "^7.30.0",

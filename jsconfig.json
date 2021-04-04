@@ -31,6 +31,12 @@
       ],
       "ui-context/*": [
         "./contexts/ui-context/*"
+      ],
+      "workspace-context": [
+        "./contexts/workspace-context.js"
+      ],
+      "workspace-context/*": [
+        "./contexts/workspace-context/*"
       ]
     },
     "module": "es2020",

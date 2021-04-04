@@ -2920,7 +2920,6 @@ __metadata:
     "@testing-library/react": ^11.2.5
     "@testing-library/user-event": ^13.0.6
     config: "workspace:*"
-    idb-keyval: ^5.0.4
     prop-types: ^15.7.2
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
@@ -2931,6 +2930,7 @@ __metadata:
     ui-context: "workspace:*"
     utils: "workspace:*"
     w3c-keyname: ^2.2.4
+    workspace-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -12279,6 +12279,7 @@ fsevents@^2.1.2:
   dependencies:
     config: "workspace:*"
     react: 16.14.0
+    w3c-keyname: ^2.2.4
   languageName: unknown
   linkType: soft
 
@@ -12719,6 +12720,21 @@ fsevents@^2.1.2:
   checksum: 6526abd75d4409c76d1989cf2fbf6080b903db29824be3d17d0a0b8f6221486c76a021174eda2616cf311199787983c34bae3c5e7b51d2ad7476f2066cddb75a
   languageName: node
   linkType: hard
+
+"workspace-context@workspace:*, workspace-context@workspace:contexts/workspace-context":
+  version: 0.0.0-use.local
+  resolution: "workspace-context@workspace:contexts/workspace-context"
+  dependencies:
+    "@bangle.dev/core": 0.5.1
+    "@testing-library/react": ^11.2.5
+    config: "workspace:*"
+    idb-keyval: ^5.0.4
+    react: 16.14.0
+    react-dom: 16.14.0
+    react-router-dom: ^5.2.0
+    utils: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "wrap-ansi@npm:^5.1.0":
   version: 5.1.0
