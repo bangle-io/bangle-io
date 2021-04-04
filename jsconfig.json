@@ -26,11 +26,23 @@
       "style": [
         "./style/index.js"
       ],
+      "editor/*": [
+        "./editor/*"
+      ],
+      "editor": [
+        "./editor/index.js"
+      ],
       "ui-context": [
         "./contexts/ui-context.js"
       ],
       "ui-context/*": [
         "./contexts/ui-context/*"
+      ],
+      "workspace": [
+        "./workspace.js"
+      ],
+      "workspace/*": [
+        "./workspace/*"
       ]
     },
     "module": "es2020",

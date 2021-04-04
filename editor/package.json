@@ -1,7 +1,6 @@
 {
-  "name": "app",
-  "version": "0.1.14",
-  "homepage": "https://bangle.io",
+  "name": "editor",
+  "version": "0.0.0",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -16,38 +15,30 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "private": true,
+  "main": "index.js",
+  "module": "index.js",
   "scripts": {},
   "dependencies": {
     "@bangle.dev/collab": "0.5.1",
     "@bangle.dev/core": "0.5.1",
     "@bangle.dev/emoji": "0.5.1",
     "@bangle.dev/markdown": "0.5.1",
+    "@bangle.dev/markdown-front-matter": "0.5.1",
     "@bangle.dev/react": "0.5.1",
     "@bangle.dev/react-emoji-suggest": "0.5.1",
     "@bangle.dev/react-menu": "0.5.1",
     "@bangle.dev/react-sticker": "0.5.1",
     "@bangle.dev/react-stopwatch": "0.5.1",
+    "@bangle.dev/text-formatting": "0.5.1",
+    "@bangle.dev/timestamp": "0.5.1",
     "@bangle.dev/tooltip": "0.5.1",
-    "@popperjs/core": "^2.5.4",
+    "@bangle.dev/trailing-node": "0.5.1",
     "config": "workspace:*",
-    "editor": "workspace:*",
-    "prop-types": "^15.7.2",
-    "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "react-popper": "^2.2.4",
-    "react-router-dom": "^5.2.0",
-    "style": "workspace:*",
-    "ui-context": "workspace:*",
-    "utils": "workspace:*",
-    "w3c-keyname": "^2.2.4",
-    "workspace": "workspace:*"
+    "utils": "workspace:*"
   },
-  "devDependencies": {
-    "@testing-library/dom": "^7.30.0",
-    "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.2.5",
-    "@testing-library/user-event": "^13.0.6"
+  "publishConfig": {
+    "access": "public"
   }
 }

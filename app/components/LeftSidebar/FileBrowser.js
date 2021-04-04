@@ -11,8 +11,8 @@ import {
   useDeleteFile,
   useGetWorkspaceFiles,
   useWorkspacePath,
-} from 'app/workspace/workspace-hooks';
-import { resolvePath } from 'app/workspace/path-helpers';
+  resolvePath,
+} from 'workspace/index';
 
 FileBrowser.propTypes = {};
 

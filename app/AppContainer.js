@@ -1,13 +1,12 @@
 import React, { useContext } from 'react';
+import { Route } from 'react-router-dom';
+import { UIManagerContext } from 'ui-context/index';
+import { Workspace, resolvePath, useWorkspacePath } from 'workspace/index';
+import { useKeybindings } from 'utils/index';
+
 import { Editor } from './components/Editor';
 import { EditorManagerContext } from './editor/EditorManager';
 import { Palette } from './Palette/index';
-import { Route } from 'react-router-dom';
-import { useWorkspacePath } from './workspace/workspace-hooks';
-import { Workspace } from './workspace/Workspace';
-import { UIManagerContext } from 'ui-context/index';
-import { useKeybindings } from './misc/hooks';
-import { resolvePath } from './workspace/path-helpers';
 import { CloseIcon } from './helper-ui/Icons';
 import { ActivityBar } from './components/LeftSidebar/ActivityBar';
 import { FileBrowser } from './components/LeftSidebar/FileBrowser';

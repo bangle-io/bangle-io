@@ -1,8 +1,9 @@
-import React, { useContext, useEffect } from 'react';
-import { useCallback } from 'react';
+import React, { useContext, useCallback } from 'react';
+
 import { UIManagerContext } from 'ui-context/index';
 
-import { useKeybindings } from '../misc/hooks';
+import { useKeybindings } from 'utils/index';
+
 import { PaletteUI } from '../PaletteUI/PaletteUI';
 import { useCommandPalette } from './Palettes/CommandPalette';
 import { useFilePalette } from './Palettes/FilePalette';

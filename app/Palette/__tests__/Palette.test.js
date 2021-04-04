@@ -7,14 +7,17 @@ import {
   useGetWorkspaceFiles,
   useWorkspacePath,
   useWorkspaces,
-} from 'app/workspace/workspace-hooks';
-import { COMMAND_PALETTE, FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
+} from 'workspace/index';
+import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../../Palette/Palette';
 import { sleep } from 'app/misc/index';
 
 let result, paletteType, paletteInitialQuery, dispatch;
-jest.mock('app/workspace/workspace-hooks', () => {
+
+jest.mock('workspace/index', () => {
+  const actual = jest.requireActual('workspace/index');
   return {
+    ...actual,
     useWorkspacePath: jest.fn(),
     useWorkspaces: jest.fn(),
     useGetWorkspaceFiles: jest.fn(),
@@ -29,9 +32,10 @@ beforeEach(async () => {
   useWorkspaces.mockImplementation(jest.fn(() => ({ workspaces: [] })));
   useWorkspacePath.mockImplementation(jest.fn(() => ({})));
 
+  dispatch = null;
   paletteType = undefined;
   paletteInitialQuery = undefined;
-  dispatch = null;
+
   function Comp() {
     ({ paletteType, dispatch } = useContext(UIManagerContext));
 
@@ -41,6 +45,7 @@ beforeEach(async () => {
       </div>
     );
   }
+
   result = await render(
     <UIManager>
       <Comp />

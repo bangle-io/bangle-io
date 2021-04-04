@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useCatchError } from '../misc/hooks';
-import { keybindingsHelper } from '../misc/keybinding-helper';
+import { keybindingsHelper, useCatchError } from 'utils/index';
 import { FSError, WorkspaceError } from './errors';
 import {
   hasPermission,

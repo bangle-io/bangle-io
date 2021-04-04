@@ -3,7 +3,7 @@ import './Palette.css';
 import React, { createRef, useCallback, useEffect, useState } from 'react';
 import { keyName } from 'w3c-keyname';
 import PropTypes from 'prop-types';
-import { useWatchClickOutside } from '../misc/hooks';
+import { useWatchClickOutside } from 'utils/index';
 import { SideBarRow } from '../components/LeftSidebar/SideBarRow';
 
 const ResolvePaletteItemShape = PropTypes.shape({
