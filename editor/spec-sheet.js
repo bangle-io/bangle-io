@@ -1,6 +1,6 @@
 import '@bangle.dev/core/style.css';
 import '@bangle.dev/tooltip/style.css';
-//
+import '@bangle.dev/table/table.css';
 import '@bangle.dev/emoji/style.css';
 import '@bangle.dev/react-menu/style.css';
 import '@bangle.dev/react-emoji-suggest/style.css';
@@ -36,6 +36,7 @@ import {
   orderedList,
   image,
 } from '@bangle.dev/core/components/index';
+import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
 
 let headingSpec = heading.spec();
 
@@ -59,7 +60,10 @@ export const specRegistry = new SpecRegistry([
   horizontalRule.spec(),
   listItem.spec(),
   orderedList.spec(),
-
+  table,
+  tableCell,
+  tableHeader,
+  tableRow,
   image.spec(),
   bold.spec(),
   code.spec(),
