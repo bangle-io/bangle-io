@@ -22,7 +22,7 @@
     "@testing-library/react": "^11.2.6"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.7.1",
+    "@bangle.dev/core": "0.7.2",
     "config": "workspace:*",
     "editor": "workspace:*",
     "idb-keyval": "^5.0.4",
