@@ -3,7 +3,8 @@ import { Manager } from '@bangle.dev/collab/server/manager';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { specRegistry } from './spec-sheet';
 import { defaultContent } from '../components/constants';
-
+import { getDoc, saveDoc } from '../workspace/file-helpers';
+// console.log(saveDoc);
 function setup(callbackObj) {
   return new Manager(specRegistry.schema, {
     disk: localDisk(defaultContent, callbackObj),
@@ -39,7 +40,7 @@ onconnect = function (event) {
 function localDisk(defaultContent, callbackObj) {
   return new LocalDisk({
     getItem: async (wsPath) => {
-      const doc = await callbackObj.getDoc(wsPath);
+      const doc = await getDoc(wsPath);
       if (!doc) {
         return defaultContent;
       }
@@ -47,7 +48,7 @@ function localDisk(defaultContent, callbackObj) {
       return doc;
     },
     setItem: async (wsPath, doc) => {
-      await callbackObj.saveDoc(wsPath, doc.toJSON());
+      await saveDoc(wsPath, doc.toJSON());
     },
   });
 }
