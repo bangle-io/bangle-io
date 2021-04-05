@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 
 import { FolderIcon, TerminalIcon } from '../../helper-ui/Icons';
@@ -22,8 +22,12 @@ export function ActivityBar() {
     });
   };
 
+  useEffect(() => {
+    setupStickyNavigation(widescreen);
+  }, [widescreen]);
+
   return (
-    <div className={`activity-bar ${widescreen ? 'widescreen' : ''}`}>
+    <div id="activity-bar" className={`${widescreen ? 'widescreen' : ''}`}>
       <div>
         <ActivityBarBox
           isActive={sidebar}
@@ -59,4 +63,56 @@ function ActivityBarBox({ widescreen, children, isActive, onClick }) {
       <span>{children}</span>
     </button>
   );
+}
+
+export function setupStickyNavigation(widescreen) {
+  if (widescreen) {
+    return;
+  }
+
+  const nav = document.getElementById('activity-bar');
+
+  let previousY = 9999;
+
+  const updateNav = () => {
+    // iOS scrolls to make sure the viewport fits, don't hide the input then
+    const hasKeyboardFocus =
+      document.activeElement &&
+      (document.activeElement.nodeName === 'INPUT' ||
+        document.activeElement.nodeName === 'TEXTAREA');
+
+    if (hasKeyboardFocus) {
+      return;
+    }
+
+    const showNav = () => {
+      nav.classList.add('down');
+      nav.classList.remove('up');
+    };
+
+    const hideNav = () => {
+      nav.classList.add('up');
+      nav.classList.remove('down');
+    };
+
+    const goingUp = window.pageYOffset > 1 && window.pageYOffset > previousY;
+    previousY = window.pageYOffset;
+
+    if (goingUp) {
+      showNav();
+    } else {
+      hideNav();
+    }
+  };
+
+  // Non-blocking nav change
+  document.removeEventListener('scroll', updateNav, {
+    capture: true,
+    passive: true,
+  });
+
+  document.addEventListener('scroll', updateNav, {
+    capture: true,
+    passive: true,
+  });
 }
