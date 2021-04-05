@@ -10,7 +10,7 @@ import sticker from '@bangle.dev/react-sticker';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { collapsibleHeadingDeco } from './collapsible-heading-deco';
-
+import { tablePlugins } from '@bangle.dev/table';
 export const menuKey = new PluginKey('menuKey');
 export const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
@@ -91,6 +91,7 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
     coreComps.orderedList.plugins(),
     coreComps.image.plugins(),
     coreComps.history.plugins(),
+    tablePlugins(),
     collab.plugins(collabOpts),
     emoji.plugins(),
     stopwatch.plugins(),
