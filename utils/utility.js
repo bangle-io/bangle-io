@@ -127,3 +127,14 @@ export function keybindingsHelper(bindings) {
     }
   };
 }
+
+export function cx(...args) {
+  const classes = [];
+  for (const arg of args) {
+    if (!arg) {
+      continue;
+    }
+    classes.push(arg);
+  }
+  return classes.join(' ');
+}

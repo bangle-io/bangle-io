@@ -1,3 +1,12 @@
+/* 
+---------------------------
+The role of this file is to keep to 
+only the styles of the skeleton. 
+
+DONOT keep internal styles here.
+---------------------------
+
+*/
 #root {
   color: var(--font-color);
   display: flex;
@@ -8,15 +17,19 @@
 }
 
 /* the left most vertically  bar*/
-.activity-bar {
+#activity-bar-area {
   height: var(--activity-bar-width);
   min-width: 100vw;
   max-width: 100vw;
   background-color: var(--activity-bar-color);
   z-index: 300;
-  position: sticky;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
-.activity-bar.widescreen {
+
+#activity-bar-area.widescreen {
   height: 100vh;
   min-width: var(--activity-bar-width);
   max-width: var(--activity-bar-width);
@@ -24,13 +37,19 @@
   padding-top: 0.5rem;
 }
 
-.activity-bar > div {
-  display: flex;
-  flex-direction: row;
+/* The position of the menu when not hidden (and default) */
+#activity-bar-area.up {
+  /* How long to get back up */
+  transition-timing-function: ease;
+  transition: transform 0.25s;
+  transform: translate(0, 0);
 }
 
-.activity-bar.widescreen > div {
-  flex-direction: column;
+#activity-bar-area.down {
+  /* How long to scroll down */
+  transition-timing-function: ease;
+  transition: transform 0.6s;
+  transform: translate(0, 8.2rem);
 }
 
 .main-content {
@@ -46,39 +65,78 @@
 }
 
 .bangle-editor-area {
-  max-width: min(700px, 100vw);
   flex-grow: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.options-bar-area {
+  z-index: 100;
+  padding: 1rem 1rem 0 0;
+  position: fixed;
+  top: 0;
+  right: 2.85rem;
+}
+
+.main-content.has-secondary-editor > .options-bar-area {
+  grid-row-start: row-first;
+  grid-row-end: row-second;
+  grid-column-start: col-first;
+  grid-column-end: col-second;
+  position: static;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .bangle-editor-container {
   padding: 0 var(--editor-x-axis-padding);
   padding-top: var(--editor-top-padding);
+  padding-bottom: var(--editor-bottom-padding);
+  max-width: min(var(--editor-max-width), 100vw);
+  width: 100%;
 }
 
 .main-content.has-secondary-editor {
   display: grid;
-  grid-template-columns: 1fr var(--gutter-width) 1fr;
+  height: 100vh;
+  grid-template-columns: [col-first] 1.2fr [col-second] var(--gutter-width) [col-third] 0.8fr [col-fourth];
+  grid-template-rows: [row-first] 50px [row-second] 1fr [row-third];
 }
 
 .main-content.has-secondary-editor > .grid-gutter {
-  grid-column-start: 2;
-  grid-column-end: 3;
-  background-color: var(--border-color);
+  grid-row-start: row-first;
+  grid-row-end: row-third;
+  grid-column-start: col-second;
+  grid-column-end: col-third;
 }
 
-.main-content.has-secondary-editor > .bangle-editor-area:first-child {
-  grid-column-start: 1;
-  grid-column-end: 2;
+.main-content.has-secondary-editor > .bangle-editor-area.primary-editor {
+  grid-column-start: col-first;
+  grid-column-end: col-second;
+  grid-row-start: row-first;
+  grid-row-end: row-third;
 }
 
-.main-content.has-secondary-editor > .bangle-editor-area:nth-child(2) {
-  grid-column-start: 3;
-  grid-column-end: 4;
+/* 2nd child is gutter */
+.main-content.has-secondary-editor > .bangle-editor-area.secondary-editor {
+  grid-column-start: col-third;
+  grid-column-end: col-fourth;
+  background-color: var(--bg-stronger-color);
+  grid-row-start: row-first;
+  grid-row-end: row-third;
 }
 
 /* to make each editor independently scrollable */
-.main-content.has-secondary-editor .bangle-editor-container {
+.main-content.has-secondary-editor .bangle-editor-area {
   overflow-y: scroll;
+  height: 100vh;
+}
+
+.main-content.has-secondary-editor .bangle-editor-container.has-tabs {
   height: calc(100vh - var(--editor-tab-height));
 }
 
@@ -91,6 +149,9 @@
   justify-content: center;
   align-items: center;
   padding: 0 var(--editor-x-axis-padding);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .left-sidebar-area {
@@ -106,9 +167,9 @@
   background-color: var(--bg-stronger-color);
   min-width: var(--left-sidebar-area-width);
   max-width: var(--left-sidebar-area-width);
-  border-right: 2px solid var(--border-color);
 }
 
+/* TODO move sidebar-row styles out of this and fix the name from SideBar to Sidebar*/
 .side-bar-row {
   background-color: var(--bg-stronger-color);
 }

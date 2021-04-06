@@ -1,5 +1,5 @@
 import { uuid } from '@bangle.dev/core/utils/js-utils';
-import { PluginKey } from '@bangle.dev/core/prosemirror/state';
+import { Plugin, PluginKey } from '@bangle.dev/core/prosemirror/state';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
 import * as coreComps from '@bangle.dev/core/components/index';
 import { emoji, emojisArray } from '@bangle.dev/emoji/index';
@@ -99,5 +99,12 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
     timestamp.plugins(),
     sticker.plugins(),
     collapsibleHeadingDeco.plugins(),
+    // new Plugin({
+    //   props: {
+    //     editable() {
+    //       return false;
+    //     },
+    //   },
+    // }),
   ];
 };
