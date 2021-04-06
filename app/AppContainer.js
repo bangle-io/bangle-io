@@ -2,14 +2,15 @@ import React, { useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { UIManagerContext } from 'ui-context/index';
 import { Workspace, resolvePath, useWorkspacePath } from 'workspace/index';
-import { useKeybindings } from 'utils/index';
+import { cx, useKeybindings } from 'utils/index';
 
 import { Editor } from './components/Editor';
 import { EditorManagerContext } from './editor/EditorManager';
 import { Palette } from './Palette/index';
 import { CloseIcon } from './helper-ui/Icons';
-import { ActivityBar } from './components/LeftSidebar/ActivityBar';
+import { ActivityBar } from './components/ActivityBar';
 import { FileBrowser } from './components/LeftSidebar/FileBrowser';
+import { OptionsBar } from './components/OptionsBar';
 
 export function AppContainer() {
   const { widescreen, hideEditorArea } = useContext(UIManagerContext);
@@ -24,8 +25,11 @@ export function AppContainer() {
       <LeftSidebarArea />
       {!hideEditorArea && (
         <div
-          className={`main-content ${widescreen ? 'widescreen' : ''}
-          ${secondaryEditor ? 'has-secondary-editor' : ''}`}
+          className={cx(
+            'main-content',
+            widescreen && 'widescreen',
+            secondaryEditor && 'has-secondary-editor',
+          )}
         >
           <Route exact path="/">
             <RootHomePage />
@@ -53,7 +57,8 @@ function RootHomePage() {
 function WorkspacePage({ secondaryEditor, showTabs }) {
   return (
     <Workspace>
-      <EditorArea showTabs={showTabs} isFirst={true} />
+      <EditorArea showTabs={false} isFirst={true} />
+      <OptionsBar />
       {secondaryEditor && <div className="grid-gutter" />}
       {secondaryEditor && <EditorArea isFirst={false} showTabs={showTabs} />}
     </Workspace>
@@ -79,9 +84,14 @@ function EditorArea({ isFirst = false, showTabs }) {
   }
 
   return (
-    <div className="bangle-editor-area">
+    <div
+      className={cx(
+        'bangle-editor-area',
+        isFirst ? 'primary-editor' : 'secondary-editor fadeInAnimation',
+      )}
+    >
       {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
-      <div className="bangle-editor-container">
+      <div className={cx('bangle-editor-container', showTabs && 'has-tabs')}>
         {wsPath && (
           <Editor
             key={wsPath}

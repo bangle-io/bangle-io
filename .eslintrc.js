@@ -34,6 +34,8 @@ module.exports = {
         additionalHooks: '(useKeybindings|useMyOtherCustomHook)',
       },
     ],
+
+    'consistent-return': ['warn'],
   },
   settings: {
     jest: {

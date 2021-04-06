@@ -30,6 +30,22 @@
     transform: translate3d(0, 0, 0);
   }
 }
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fadeInRightAnimation {
+  animation-duration: 0.2s;
+  animation-name: fadeInRight;
+}
 
 .fadeInScaleAnimation {
   animation-duration: 0.08s;

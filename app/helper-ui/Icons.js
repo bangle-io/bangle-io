@@ -133,3 +133,16 @@ export function FileDocumentIcon(props) {
     </Svg>
   );
 }
+
+export function SecondaryEditorIcon(props) {
+  return (
+    <Svg {...props}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M2 4H22V20H2V4ZM16 18V6H4V18H16Z"
+        fill="currentColor"
+      />
+    </Svg>
+  );
+}

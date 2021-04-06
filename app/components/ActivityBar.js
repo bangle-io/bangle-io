@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 
-import { FolderIcon, TerminalIcon } from '../../helper-ui/Icons';
+import { FolderIcon, TerminalIcon } from '../helper-ui/Icons';
 
 ActivityBar.propTypes = {};
 export function ActivityBar() {
@@ -27,8 +27,13 @@ export function ActivityBar() {
   }, [widescreen]);
 
   return (
-    <div id="activity-bar" className={`${widescreen ? 'widescreen' : ''}`}>
-      <div>
+    <div id="activity-bar-area" className={`${widescreen ? 'widescreen' : ''}`}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: widescreen ? 'column' : 'row',
+        }}
+      >
         <ActivityBarBox
           isActive={sidebar}
           widescreen={widescreen}
@@ -70,7 +75,7 @@ export function setupStickyNavigation(widescreen) {
     return;
   }
 
-  const nav = document.getElementById('activity-bar');
+  const nav = document.getElementById('activity-bar-area');
 
   let previousY = 9999;
 

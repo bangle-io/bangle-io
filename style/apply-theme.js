@@ -7,6 +7,7 @@ export function applyTheme(theme) {
   updateStyleHelper(theme, 'font-color', element);
   updateStyleHelper(theme, 'accent-color', element);
   updateStyleHelper(theme, 'accent-2-color', element);
+  updateStyleHelper(theme, 'accent-stronger-color', element);
   updateStyleHelper(theme, 'bg-color', element);
   updateStyleHelper(theme, 'bg-stronger-color', element);
   updateStyleHelper(theme, 'border-color', element);

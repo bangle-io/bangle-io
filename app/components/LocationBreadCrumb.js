@@ -5,10 +5,7 @@ export function LocationBreadCrumb() {
   let { filePath } = useWorkspacePath();
   const items = (filePath || '').split('/');
   return (
-    <div
-      className="sticky top-0 z-10 pl-2 py-1 shadow"
-      style={{ backgroundColor: 'var(--bg-stronger-color)' }}
-    >
+    <div className="w-full z-10 pl-2 py-1">
       {items.flatMap((r, i) => [
         <span key={i}>{r}</span>,
         i !== items.length - 1 ? (
