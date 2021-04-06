@@ -1,6 +1,5 @@
-import { SPLIT_SCREEN_MIN_WIDTH } from 'config/index';
+import { isMac, SPLIT_SCREEN_MIN_WIDTH } from 'config/index';
 import { keyName } from 'w3c-keyname';
-
 /**
  * Based on idea from https://github.com/alexreardon/raf-schd
  * Throttles the function and calls it with the latest argument
@@ -41,8 +40,7 @@ export function rafSchedule(fn) {
 export const checkWidescreen = (width = window.innerWidth) =>
   SPLIT_SCREEN_MIN_WIDTH <= width;
 
-const mac =
-  typeof navigator != 'undefined' ? /Mac/.test(navigator.platform) : false;
+// typeof navigator != 'undefined' ? /Mac/.test(navigator.platform) : false;
 // :: (Object) → (view: EditorView, event: dom.Event) → bool
 // Given a set of bindings (using the same format as
 // [`keymap`](#keymap.keymap), return a [keydown
@@ -93,7 +91,7 @@ export function keybindingsHelper(bindings) {
       } else if (/^s(hift)?$/i.test(mod)) {
         shift = true;
       } else if (/^mod$/i.test(mod)) {
-        if (mac) {
+        if (isMac) {
           meta = true;
         } else {
           ctrl = true;

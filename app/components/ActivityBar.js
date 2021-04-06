@@ -41,13 +41,6 @@ export function ActivityBar() {
         >
           <FolderIcon className="h-5 w-5 text-gray-100 cursor-pointer" />
         </ActivityBarBox>
-        <ActivityBarBox
-          widescreen={widescreen}
-          isActive={!!paletteType}
-          onClick={togglePalette}
-        >
-          <TerminalIcon className="h-5 w-5 text-gray-100 cursor-pointer" />
-        </ActivityBarBox>
       </div>
     </div>
   );

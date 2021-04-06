@@ -16,6 +16,7 @@ import {
 } from './paletteTypes';
 import { useWorkspacePalette } from './Palettes/WorkspacePalette';
 import { FileDocumentIcon, AlbumIcon, TerminalIcon } from '../helper-ui/Icons';
+import { keybindings } from 'config/index';
 
 export function Palette() {
   const {
@@ -47,6 +48,7 @@ export function Palette() {
 
   return (
     <PaletteUI
+      placeHolder={getPalettePlaceholder(paletteType)}
       paletteTypeIcon={getPaletteIcon(paletteType)}
       paletteType={paletteType}
       updatePalette={updatePalette}
@@ -64,17 +66,17 @@ export function Palette() {
 function usePaletteKeybindings({ updatePalette }) {
   useKeybindings(() => {
     return {
-      'Mod-P': () => {
+      [keybindings.toggleCommandPalette.key]: () => {
         updatePalette({ type: COMMAND_PALETTE });
         return true;
       },
 
-      'Mod-p': () => {
+      [keybindings.toggleFilePalette.key]: () => {
         updatePalette({ type: FILE_PALETTE });
         return true;
       },
 
-      'Ctrl-r': () => {
+      [keybindings.toggleWorkspacePalette.key]: () => {
         updatePalette({ type: WORKSPACE_PALETTE });
         return true;
       },
@@ -146,4 +148,21 @@ function getPaletteIcon(paletteType) {
       <Icon className="h-5 w-5 " />
     </span>
   );
+}
+
+function getPalettePlaceholder(paletteType) {
+  switch (paletteType) {
+    case FILE_PALETTE: {
+      return `Enter a file name or type '?' to see other palettes.`;
+    }
+    case COMMAND_PALETTE: {
+      return null;
+    }
+    case WORKSPACE_PALETTE: {
+      return null;
+    }
+    default: {
+      return null;
+    }
+  }
 }

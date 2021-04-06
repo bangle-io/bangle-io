@@ -17,6 +17,7 @@ const ResolvePaletteItemShape = PropTypes.shape({
 });
 
 PaletteUI.propTypes = {
+  placeHolder: PropTypes.string,
   paletteTypeIcon: PropTypes.element,
   paletteType: PropTypes.string,
   updatePalette: PropTypes.func.isRequired,
@@ -44,6 +45,7 @@ PaletteUI.propTypes = {
  *         See `ResolvePaletteItemShape` for the shape of expected return type of the function.
  */
 export function PaletteUI({
+  placeHolder,
   paletteTypeIcon,
   paletteType,
   updatePalette,
@@ -72,6 +74,7 @@ export function PaletteUI({
 
   return (
     <PaletteContainer
+      placeHolder={placeHolder}
       paletteTypeIcon={paletteTypeIcon}
       updatePalette={updatePalette}
       paletteType={paletteType}
@@ -95,6 +98,7 @@ PaletteContainer.propTypes = {
 
 export function PaletteContainer({
   paletteTypeIcon,
+  placeHolder,
   updatePalette,
   paletteType,
   updateCounter,
@@ -143,6 +147,7 @@ export function PaletteContainer({
   return (
     <div className={className} style={style} ref={containerRef}>
       <PaletteInput
+        placeHolder={placeHolder}
         paletteTypeIcon={paletteTypeIcon}
         ref={paletteInputRef}
         onDismiss={onDismiss}
@@ -179,6 +184,7 @@ export function PaletteContainer({
 export const PaletteInput = React.forwardRef(
   (
     {
+      placeHolder,
       paletteTypeIcon,
       paletteType,
       onDismiss,
@@ -196,6 +202,7 @@ export const PaletteInput = React.forwardRef(
   ) => {
     return (
       <PaletteInputUI
+        placeHolder={placeHolder}
         paletteTypeIcon={paletteTypeIcon}
         ref={paletteInputRef}
         onDismiss={onDismiss}
@@ -225,6 +232,7 @@ export const PaletteInput = React.forwardRef(
 export const PaletteInputUI = React.forwardRef(
   (
     {
+      placeHolder,
       paletteTypeIcon,
       onDismiss,
       executeHandler,
@@ -277,6 +285,7 @@ export const PaletteInputUI = React.forwardRef(
           className="flex-grow px-2"
           ref={inputRef}
           value={query}
+          placeHolder={placeHolder}
           onChange={handleOnInputPromptChange}
           onKeyDown={onInputPressKey}
         />

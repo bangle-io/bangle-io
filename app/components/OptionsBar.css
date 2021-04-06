@@ -17,3 +17,8 @@
   border-radius: 999px;
   padding: 9px;
 }
+
+.options-bar-content svg {
+  height: 24px;
+  width: 24px;
+}

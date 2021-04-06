@@ -67,3 +67,37 @@
   animation-timing-function: ease-out;
   will-change: transform, opacity;
 }
+
+@keyframes slideInRight {
+  from {
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.slideInRight {
+  animation-name: slideInRight;
+  animation-duration: 0.25s;
+  will-change: transform, opacity;
+}
+
+@keyframes rotate180AntiClockwise {
+  from {
+    transform: rotate(-180deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.rotate180AntiClockwiseAnimation {
+  animation-name: rotate180AntiClockwise;
+  animation-duration: 0s;
+  will-change: transform;
+  animation-timing-function: ease-out;
+}
