@@ -128,6 +128,7 @@ function LeftSidebarArea() {
           type: 'UI/TOGGLE_SIDEBAR',
           value: { type: 'file-browser' },
         });
+        return true;
       },
     };
   }, [dispatch]);
