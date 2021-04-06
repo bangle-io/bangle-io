@@ -169,6 +169,7 @@ DONOT keep internal styles here.
   max-width: var(--left-sidebar-area-width);
 }
 
+/* TODO move sidebar-row styles out of this and fix the name from SideBar to Sidebar*/
 .side-bar-row {
   background-color: var(--bg-stronger-color);
 }
