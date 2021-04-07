@@ -123,6 +123,7 @@ exports[`Correctly switches to file type 2`] = `
         <input
           aria-label="palette-input"
           class="flex-grow px-2"
+          placeholder="Enter a file name or type '?' to see other palettes."
           type="text"
           value=""
         />

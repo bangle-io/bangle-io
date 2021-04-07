@@ -6,13 +6,8 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import App from './App';
 import { EditorManager } from './editor/EditorManager';
-import { isTouchDevice } from './misc/index';
 
 const root = document.getElementById('root');
-
-if (isTouchDevice) {
-  root.classList.add('is-touch');
-}
 
 ReactDOM.render(
   <Router>

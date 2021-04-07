@@ -146,3 +146,51 @@ export function SecondaryEditorIcon(props) {
     </Svg>
   );
 }
+
+export function MoreAltIcon(props) {
+  return (
+    <Svg {...props} fill="none">
+      <path
+        d="M8 12C8 13.1046 7.10457 14 6 14C4.89543 14 4 13.1046 4 12C4 10.8954 4.89543 10 6 10C7.10457 10 8 10.8954 8 12Z"
+        fill="currentColor"
+      />
+      <path
+        d="M14 12C14 13.1046 13.1046 14 12 14C10.8954 14 10 13.1046 10 12C10 10.8954 10.8954 10 12 10C13.1046 10 14 10.8954 14 12Z"
+        fill="currentColor"
+      />
+      <path
+        d="M18 14C19.1046 14 20 13.1046 20 12C20 10.8954 19.1046 10 18 10C16.8954 10 16 10.8954 16 12C16 13.1046 16.8954 14 18 14Z"
+        fill="currentColor"
+      />
+    </Svg>
+  );
+}
+
+export function ChevronDoubleRightIcon(props) {
+  return (
+    <svg {...props} fill="none">
+      <path
+        d="M5.63605 7.75735L7.05026 6.34314L12.7071 12L7.05029 17.6568L5.63608 16.2426L9.87869 12L5.63605 7.75735Z"
+        fill="currentColor"
+      />
+      <path
+        d="M12.7071 6.34314L11.2929 7.75735L15.5356 12L11.2929 16.2426L12.7072 17.6568L18.364 12L12.7071 6.34314Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+export function ChevronDoubleLeftIcon(props) {
+  return (
+    <svg {...props} fill="none">
+      <path
+        d="M18.3639 7.75735L16.9497 6.34314L11.2929 12L16.9497 17.6568L18.3639 16.2426L14.1213 12L18.3639 7.75735Z"
+        fill="currentColor"
+      />
+      <path
+        d="M11.2929 6.34314L12.7071 7.75735L8.46447 12L12.7071 16.2426L11.2929 17.6568L5.63605 12L11.2929 6.34314Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
