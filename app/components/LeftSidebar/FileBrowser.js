@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 
-import { CollapsibleSideBarRow, SideBarRow } from './SideBarRow';
+import { CollapsibleSidebarRow, SidebarRow } from './SidebarRow';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -34,7 +34,7 @@ export function FileBrowser() {
   );
 
   return (
-    <CollapsibleSideBarRow
+    <CollapsibleSidebarRow
       title={wsName}
       leftIcon={<ChevronDownIcon style={{ width: 16, height: 16 }} />}
       activeLeftIcon={<ChevronRightIcon style={{ width: 16, height: 16 }} />}
@@ -52,7 +52,7 @@ export function FileBrowser() {
           depth={1}
         />
       ))}
-    </CollapsibleSideBarRow>
+    </CollapsibleSidebarRow>
   );
 }
 
@@ -76,7 +76,7 @@ function RenderPathTree({
   };
   if (children) {
     return (
-      <CollapsibleSideBarRow
+      <CollapsibleSidebarRow
         initialCollapse={true}
         title={name}
         leftIcon={
@@ -112,14 +112,14 @@ function RenderPathTree({
             basePadding={16}
           />
         ))}
-      </CollapsibleSideBarRow>
+      </CollapsibleSidebarRow>
     );
   }
   // for the files
   if (path) {
     const wsPath = wsName + ':' + path;
     return (
-      <SideBarRow
+      <SidebarRow
         basePadding={16}
         depth={depth}
         key={wsPath}

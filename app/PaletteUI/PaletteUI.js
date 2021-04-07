@@ -4,7 +4,7 @@ import React, { createRef, useCallback, useEffect, useState } from 'react';
 import { keyName } from 'w3c-keyname';
 import PropTypes from 'prop-types';
 import { useWatchClickOutside } from 'utils/index';
-import { SideBarRow } from '../components/LeftSidebar/SideBarRow';
+import { SidebarRow } from '../components/LeftSidebar/SidebarRow';
 
 const ResolvePaletteItemShape = PropTypes.shape({
   uid: PropTypes.string.isRequired,
@@ -165,7 +165,7 @@ export function PaletteContainer({
       <div className="overflow-y-auto">
         {resolvedItems.map((item, i) => {
           return (
-            <SideBarRow
+            <SidebarRow
               key={item.uid}
               isActive={getActiveIndex(counter, resolvedItems.length) === i}
               title={item.title}
