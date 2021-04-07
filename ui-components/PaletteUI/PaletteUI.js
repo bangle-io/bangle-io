@@ -4,7 +4,7 @@ import React, { createRef, useCallback, useEffect, useState } from 'react';
 import { keyName } from 'w3c-keyname';
 import PropTypes from 'prop-types';
 import { useWatchClickOutside } from 'utils/index';
-import { SidebarRow } from '../components/LeftSidebar/SidebarRow';
+import { SidebarRow } from '../SidebarRow';
 
 const ResolvePaletteItemShape = PropTypes.shape({
   uid: PropTypes.string.isRequired,

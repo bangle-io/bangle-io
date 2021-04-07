@@ -2938,6 +2938,7 @@ __metadata:
     react-popper: ^2.2.4
     react-router-dom: ^5.2.0
     style: "workspace:*"
+    ui-components: "workspace:*"
     ui-context: "workspace:*"
     utils: "workspace:*"
     w3c-keyname: ^2.2.4
@@ -12321,6 +12322,20 @@ resolve@^2.0.0-next.3:
   checksum: 9dfe5ad0a08059c3eb6ded70b7cfb6fdcb5908b385af9d4717cee7f140571f5c2bb89405093ace07cfd0e283f409495d2feafd321b4b703c1fa3014e129dab27
   languageName: node
   linkType: hard
+
+"ui-components@workspace:*, ui-components@workspace:ui-components":
+  version: 0.0.0-use.local
+  resolution: "ui-components@workspace:ui-components"
+  dependencies:
+    "@testing-library/react": ^11.2.6
+    "@testing-library/user-event": ^13.1.1
+    prop-types: ^15.7.2
+    react: 16.14.0
+    react-dom: 16.14.0
+    utils: "workspace:*"
+    w3c-keyname: ^2.2.4
+  languageName: unknown
+  linkType: soft
 
 "ui-context@workspace:*, ui-context@workspace:ui-context":
   version: 0.0.0-use.local

@@ -38,6 +38,12 @@
       "ui-context/*": [
         "./ui-context/*"
       ],
+      "ui-components": [
+        "./ui-components/index.js"
+      ],
+      "ui-components/*": [
+        "./ui-components/*"
+      ],
       "workspace": [
         "./workspace/index.js"
       ],

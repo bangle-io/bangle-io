@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import { UIManagerContext } from 'ui-context/index';
-
-import { CollapsibleSidebarRow, SidebarRow } from './SidebarRow';
+import { CollapsibleSidebarRow, SidebarRow } from 'ui-components/index';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
