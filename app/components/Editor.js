@@ -130,6 +130,7 @@ export const Editor = React.memo(function Editor({
       state={editorState}
       onReady={onEditorReady}
       renderNodeViews={renderNodeViews}
+      className="bangle-editor-inner-container"
     >
       <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
