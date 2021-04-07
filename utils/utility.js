@@ -136,3 +136,7 @@ export function cx(...args) {
   }
   return classes.join(' ');
 }
+
+export function sleep(t = 20) {
+  return new Promise((res) => setTimeout(res, t));
+}

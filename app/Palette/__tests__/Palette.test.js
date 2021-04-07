@@ -10,7 +10,7 @@ import {
 } from 'workspace/index';
 import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../../Palette/Palette';
-import { sleep } from 'app/misc/index';
+import { sleep } from 'utils/index';
 
 let result, paletteType, paletteInitialQuery, dispatch;
 

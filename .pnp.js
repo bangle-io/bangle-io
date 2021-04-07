@@ -31,16 +31,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:config"
       },
       {
-        "name": "ui-context",
-        "reference": "workspace:contexts/ui-context"
-      },
-      {
         "name": "editor",
         "reference": "workspace:editor"
       },
       {
         "name": "style",
         "reference": "workspace:style"
+      },
+      {
+        "name": "ui-context",
+        "reference": "workspace:ui-context"
       },
       {
         "name": "utils",
@@ -59,7 +59,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["config", ["workspace:config"]],
       ["editor", ["workspace:editor"]],
       ["style", ["workspace:style"]],
-      ["ui-context", ["workspace:contexts/ui-context"]],
+      ["ui-context", ["workspace:ui-context"]],
       ["utils", ["workspace:utils"]],
       ["workspace", ["workspace:workspace"]]
     ],
@@ -4585,7 +4585,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-popper", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:2.2.4"],
             ["react-router-dom", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:5.2.0"],
             ["style", "workspace:style"],
-            ["ui-context", "workspace:contexts/ui-context"],
+            ["ui-context", "workspace:ui-context"],
             ["utils", "workspace:utils"],
             ["w3c-keyname", "npm:2.2.4"],
             ["workspace", "workspace:workspace"]
@@ -15334,10 +15334,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["ui-context", [
-        ["workspace:contexts/ui-context", {
-          "packageLocation": "./contexts/ui-context/",
+        ["workspace:ui-context", {
+          "packageLocation": "./ui-context/",
           "packageDependencies": [
-            ["ui-context", "workspace:contexts/ui-context"],
+            ["ui-context", "workspace:ui-context"],
             ["react", "npm:16.14.0"],
             ["style", "workspace:style"],
             ["utils", "workspace:utils"]

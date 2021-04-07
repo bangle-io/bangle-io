@@ -20,7 +20,7 @@ function setRootWidescreenClass(widescreen) {
 export function UIManager({ children }) {
   const windowSize = useWindowSize();
   const [state, dispatch] = useReducer(
-    (...args) => new UIState(reducer(...args)),
+    (state, action) => new UIState(reducer(state, action)),
     new UIState({
       // UI
       sidebar: null,
@@ -60,6 +60,11 @@ export function UIManager({ children }) {
   );
 }
 
+/**
+ *
+ * @param {UIState} state
+ * @param {*} action
+ */
 const reducer = (state, action) => {
   log('Received', action.type, { action });
   switch (action.type) {

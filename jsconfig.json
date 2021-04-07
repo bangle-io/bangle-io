@@ -33,13 +33,13 @@
         "./editor/index.js"
       ],
       "ui-context": [
-        "./contexts/ui-context.js"
+        "./ui-context/index.js"
       ],
       "ui-context/*": [
-        "./contexts/ui-context/*"
+        "./ui-context/*"
       ],
       "workspace": [
-        "./workspace.js"
+        "./workspace/index.js"
       ],
       "workspace/*": [
         "./workspace/*"

@@ -48,7 +48,7 @@ export function Palette() {
 
   return (
     <PaletteUI
-      placeHolder={getPalettePlaceholder(paletteType)}
+      placeholder={getPalettePlaceholder(paletteType)}
       paletteTypeIcon={getPaletteIcon(paletteType)}
       paletteType={paletteType}
       updatePalette={updatePalette}

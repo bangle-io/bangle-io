@@ -1,4 +1,3 @@
-import { sleep } from 'app/misc/index';
 import { INPUT_PALETTE } from '../paletteTypes';
 
 export function useInputPalette({ metadata, updatePalette }) {

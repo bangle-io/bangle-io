@@ -17,7 +17,7 @@ const ResolvePaletteItemShape = PropTypes.shape({
 });
 
 PaletteUI.propTypes = {
-  placeHolder: PropTypes.string,
+  placeholder: PropTypes.string,
   paletteTypeIcon: PropTypes.element,
   paletteType: PropTypes.string,
   updatePalette: PropTypes.func.isRequired,
@@ -45,7 +45,7 @@ PaletteUI.propTypes = {
  *         See `ResolvePaletteItemShape` for the shape of expected return type of the function.
  */
 export function PaletteUI({
-  placeHolder,
+  placeholder,
   paletteTypeIcon,
   paletteType,
   updatePalette,
@@ -74,7 +74,7 @@ export function PaletteUI({
 
   return (
     <PaletteContainer
-      placeHolder={placeHolder}
+      placeholder={placeholder}
       paletteTypeIcon={paletteTypeIcon}
       updatePalette={updatePalette}
       paletteType={paletteType}
@@ -98,7 +98,7 @@ PaletteContainer.propTypes = {
 
 export function PaletteContainer({
   paletteTypeIcon,
-  placeHolder,
+  placeholder,
   updatePalette,
   paletteType,
   updateCounter,
@@ -147,7 +147,7 @@ export function PaletteContainer({
   return (
     <div className={className} style={style} ref={containerRef}>
       <PaletteInput
-        placeHolder={placeHolder}
+        placeholder={placeholder}
         paletteTypeIcon={paletteTypeIcon}
         ref={paletteInputRef}
         onDismiss={onDismiss}
@@ -184,7 +184,7 @@ export function PaletteContainer({
 export const PaletteInput = React.forwardRef(
   (
     {
-      placeHolder,
+      placeholder,
       paletteTypeIcon,
       paletteType,
       onDismiss,
@@ -202,7 +202,7 @@ export const PaletteInput = React.forwardRef(
   ) => {
     return (
       <PaletteInputUI
-        placeHolder={placeHolder}
+        placeholder={placeholder}
         paletteTypeIcon={paletteTypeIcon}
         ref={paletteInputRef}
         onDismiss={onDismiss}
@@ -232,7 +232,7 @@ export const PaletteInput = React.forwardRef(
 export const PaletteInputUI = React.forwardRef(
   (
     {
-      placeHolder,
+      placeholder,
       paletteTypeIcon,
       onDismiss,
       executeHandler,
@@ -285,7 +285,7 @@ export const PaletteInputUI = React.forwardRef(
           className="flex-grow px-2"
           ref={inputRef}
           value={query}
-          placeHolder={placeHolder}
+          placeholder={placeholder}
           onChange={handleOnInputPromptChange}
           onKeyDown={onInputPressKey}
         />
