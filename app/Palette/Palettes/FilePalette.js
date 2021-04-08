@@ -1,4 +1,10 @@
-import { useCallback } from 'react';
+import { dedupeArray, useLocalStorage, weakCache } from 'utils/index';
+import {
+  FILE_PALETTE_MAX_RECENT_FILES,
+  FILE_PALETTE_MAX_FILES,
+} from 'config/index';
+
+import { useCallback, useEffect } from 'react';
 import {
   useGetWorkspaceFiles,
   useWorkspacePath,
@@ -18,9 +24,19 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
  * items.
  * Dont forget to read docs at PaletteUI
  */
-export function useFilePalette() {
+export function useFilePalette({ paletteType }) {
   const { pushWsPath } = useWorkspacePath();
-  const [files] = useGetWorkspaceFiles();
+
+  let [files, refreshFiles] = useGetWorkspaceFiles();
+
+  // update files whenever palette is opened
+  useEffect(() => {
+    refreshFiles();
+  }, [refreshFiles, paletteType]);
+
+  const recentFiles = useRecordRecentWsPaths(files);
+  files = dedupeArray([...recentFiles, ...files]);
+
   const onExecute = useCallback(
     (item, itemIndex, event) => {
       if (event.metaKey) {
@@ -42,7 +58,7 @@ export function useFilePalette() {
       }
       const wsPaths = getItems({ query, files });
 
-      return wsPaths.map((wsPath) => {
+      return wsPaths.slice(0, FILE_PALETTE_MAX_FILES).map((wsPath) => {
         return {
           uid: wsPath,
           title: resolvePath(wsPath).filePath,
@@ -76,3 +92,39 @@ function strMatch(a, b) {
   a = a.toLocaleLowerCase();
   return a.includes(b) || b.includes(a);
 }
+
+export function useRecordRecentWsPaths(files) {
+  const { wsName, wsPath } = useWorkspacePath();
+  let [recentWsPaths, updateRecentWsPaths] = useLocalStorage(
+    'useRecordRecentWsPaths2-XihLD' + wsName,
+    [],
+  );
+
+  useEffect(() => {
+    if (wsPath) {
+      updateRecentWsPaths((array) =>
+        dedupeArray([wsPath, ...array]).slice(0, FILE_PALETTE_MAX_RECENT_FILES),
+      );
+    }
+  }, [updateRecentWsPaths, wsPath]);
+
+  useEffect(() => {
+    // TODO empty files can mean things havent loaded yet
+    //  but it can also mean the workspace has no file. So
+    // this will cause bugs.
+    if (files.length === 0) {
+      return;
+    }
+    // rectify if a file in recent no longer exists
+    const filesSet = cachedFileSet(files);
+    if (recentWsPaths.some((f) => !filesSet.has(f))) {
+      updateRecentWsPaths(recentWsPaths.filter((f) => filesSet.has(f)));
+    }
+  }, [files, updateRecentWsPaths, recentWsPaths]);
+
+  return recentWsPaths;
+}
+
+const cachedFileSet = weakCache((array) => {
+  return new Set(array);
+});

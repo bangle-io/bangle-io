@@ -1,5 +1,10 @@
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from 'config/index';
 import { keyName } from 'w3c-keyname';
+
+export function getLast(array) {
+  return array[array.length - 1];
+}
+
 /**
  * Based on idea from https://github.com/alexreardon/raf-schd
  * Throttles the function and calls it with the latest argument
@@ -139,4 +144,25 @@ export function cx(...args) {
 
 export function sleep(t = 20) {
   return new Promise((res) => setTimeout(res, t));
+}
+
+/**
+ * @param {Function} fn - A unary function whose paramater is non-primitive,
+ *                        so that it can be cached using WeakMap
+ */
+export function weakCache(fn) {
+  const cache = new WeakMap();
+  return (arg) => {
+    let value = cache.get(arg);
+    if (value) {
+      return value;
+    }
+    value = fn(arg);
+    cache.set(arg, value);
+    return value;
+  };
+}
+
+export function dedupeArray(array) {
+  return [...new Set(array)];
 }

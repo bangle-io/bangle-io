@@ -12,6 +12,7 @@ import { UIManagerContext } from 'ui-context/index';
 import { cx, useKeybindings, useLocalStorage } from 'utils/index';
 import { keybindings } from 'config/index';
 import { COMMAND_PALETTE, FILE_PALETTE } from '../Palette/index';
+
 let isDirty = false;
 
 const localStoragePrefix = '0.3438144247845969';

@@ -168,7 +168,7 @@ export function PaletteContainer({
             <SidebarRow
               key={item.uid}
               isActive={getActiveIndex(counter, resolvedItems.length) === i}
-              title={item.title}
+              title={addBoldToTitle(item.title, query)}
               rightHoverIcon={item.rightHoverIcon}
               onClick={(e) => {
                 executeHandler(i, e);
@@ -328,3 +328,24 @@ const getActiveIndex = (counter, size) => {
   const r = counter % size;
   return r < 0 ? r + size : r;
 };
+
+/**
+ * Takes a string and returns an array where the matched substring is wrapped
+ * in a bold
+ * @param {*} string
+ * @param {*} query
+ */
+function addBoldToTitle(string, query) {
+  if (!query) {
+    return string;
+  }
+
+  let newString = string.split(query);
+
+  return newString.flatMap((r, i) => {
+    if (i === 0) {
+      return r;
+    }
+    return [<b key={i}>{query}</b>, r];
+  });
+}

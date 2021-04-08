@@ -37,11 +37,21 @@ export function useGetWorkspaceFiles() {
         // allow listing of files if the current file is not found
         wsPermissionState.error?.code === NATIVE_FS_FILE_NOT_FOUND_ERROR)
     ) {
+      // TODO this is called like a million times
+      // we need to fix this to only update based on known things
+      // like renaming of file, delete etc.
       listAllFiles(wsName).then((items) => {
         if (!isDestroyed.current) {
           setFiles(items);
         }
       });
+    }
+    // TODO: look into this the one below is a quick fix as stale files are shown
+    // when you switch a workspace but waiting on the permission page.
+    if (wsName && wsPermissionState.type === 'permission') {
+      if (!isDestroyed.current) {
+        setFiles([]);
+      }
     }
   }, [wsName, wsPermissionState]);
 

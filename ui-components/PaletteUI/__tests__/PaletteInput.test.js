@@ -4,11 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { PaletteInputUI, PaletteUI } from '../PaletteUI';
 
 describe('PaletteInput', () => {
-  let onDismiss, result, onExecute;
+  let onDismiss, result, executeHandler;
 
   beforeEach(async () => {
     onDismiss = jest.fn();
-    onExecute = jest.fn();
+    executeHandler = jest.fn();
 
     function Comp() {
       const [query, updateQuery] = useState('');
@@ -20,13 +20,15 @@ describe('PaletteInput', () => {
           <PaletteInputUI
             ref={paletteInputRef}
             onDismiss={onDismiss}
-            onExecute={onExecute}
+            executeHandler={executeHandler}
+            activeItemIndex={0}
             updateCounter={updateCounter}
             updateQuery={updateQuery}
             query={query}
             counter={counter}
           />
           <div data-testid="query-result">{query}</div>
+          <div data-testid="query-counter">{counter}</div>
         </div>
       );
     }
@@ -39,7 +41,7 @@ describe('PaletteInput', () => {
       <div>
         <div>
           <div
-            class="flex mb-2 sticky top-0"
+            class="palette-input-wrapper flex py-2 px-2 top-0"
           >
             <input
               aria-label="palette-input"
@@ -51,6 +53,11 @@ describe('PaletteInput', () => {
           <div
             data-testid="query-result"
           />
+          <div
+            data-testid="query-counter"
+          >
+            1
+          </div>
         </div>
       </div>
     `);
@@ -74,22 +81,28 @@ describe('PaletteInput', () => {
   it('enter works', async () => {
     const input = result.getByLabelText('palette-input');
     userEvent.type(input, 'Hello, {enter}World!');
-    expect(onExecute).toBeCalledTimes(1);
-    expect(onExecute).toBeCalledWith({ query: 'Hello, ', counter: 1 });
+    expect(executeHandler).toBeCalledTimes(1);
+    expect(executeHandler).toBeCalledWith(0, expect.any(Object /** Event */));
+
+    const queryResult = result.getByTestId('query-result')?.innerHTML;
+    expect(queryResult).toEqual('Hello, World!');
   });
 
   it('arrow keys update counter', async () => {
     const input = result.getByLabelText('palette-input');
     userEvent.type(input, 'World {arrowUp}{enter}');
-    expect(onExecute).toBeCalledTimes(1);
-    expect(onExecute).toBeCalledWith({ query: 'World ', counter: 0 });
+    expect(executeHandler).toBeCalledTimes(1);
 
     userEvent.type(input, '{arrowDown}');
     userEvent.type(input, '{arrowDown}');
     userEvent.type(input, '{arrowDown}');
     userEvent.type(input, '{enter}');
+    expect(executeHandler).toBeCalledTimes(2);
+    const counter = result.getByTestId('query-counter')?.innerHTML;
+    expect(counter).toBe('3');
 
-    expect(onExecute).toBeCalledWith({ query: 'World ', counter: 3 });
+    const queryResult = result.getByTestId('query-result')?.innerHTML;
+    expect(queryResult).toEqual('World ');
   });
 
   it('escape dismisses', async () => {
@@ -101,7 +114,7 @@ describe('PaletteInput', () => {
   });
 });
 
-describe.only('PaletteUI', () => {
+describe('PaletteUI', () => {
   let updatePalette, parseRawQuery, generateRawQuery;
 
   beforeEach(async () => {
@@ -113,7 +126,7 @@ describe.only('PaletteUI', () => {
       return { paletteType: 'default', query: rawQuery.slice(1) };
     };
     generateRawQuery = (paletteType, query) => {
-      if (paletteType === 'comand') {
+      if (paletteType === 'command') {
         return '>' + query;
       }
       return query;
@@ -157,10 +170,10 @@ describe.only('PaletteUI', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="bangle-palette z-30 p-2 shadow-md border flex flex-col"
+          class=""
         >
           <div
-            class="flex mb-2 sticky top-0"
+            class="palette-input-wrapper flex py-2 px-2 top-0"
           >
             <input
               aria-label="palette-input"
@@ -169,6 +182,9 @@ describe.only('PaletteUI', () => {
               value=""
             />
           </div>
+          <div
+            class="overflow-y-auto"
+          />
         </div>
       </div>
     `);
@@ -189,10 +205,10 @@ describe.only('PaletteUI', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="bangle-palette z-30 p-2 shadow-md border flex flex-col"
+          class=""
         >
           <div
-            class="flex mb-2 sticky top-0"
+            class="palette-input-wrapper flex py-2 px-2 top-0"
           >
             <input
               aria-label="palette-input"
@@ -202,24 +218,28 @@ describe.only('PaletteUI', () => {
             />
           </div>
           <div
-            class="flex side-bar-row flex-row items-center cursor-pointer  active "
-            style="padding-left: 16px; padding-right: 16px;"
+            class="overflow-y-auto"
           >
-            <span
-              class="text-lg truncate select-none"
+            <div
+              class="flex side-bar-row flex-row items-center cursor-pointer  active "
+              style="padding-left: 16px; padding-right: 16px;"
             >
-              first item
-            </span>
-            <span
-              class="flex-1 flex "
-            />
+              <span
+                class="text-lg truncate select-none"
+              >
+                first item
+              </span>
+              <span
+                class="flex-1 flex "
+              />
+            </div>
           </div>
         </div>
       </div>
     `);
   });
 
-  test.only('renders items correctly with item is a function', async () => {
+  test('renders items correctly with item is a function', async () => {
     const item = jest.fn(() => ({
       uid: '1',
       title: 'first item',

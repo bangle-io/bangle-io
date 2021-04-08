@@ -4,6 +4,7 @@ module.exports = {
     'react-app',
     'react-app/jest',
 
+    'plugin:jest/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
   ],
@@ -36,6 +37,8 @@ module.exports = {
     ],
 
     'consistent-return': ['warn'],
+
+    'jest/no-disabled-tests': 'error',
   },
   settings: {
     jest: {

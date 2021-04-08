@@ -7,14 +7,21 @@ import { PaletteUI } from 'ui-components/index';
 import { useCommandPalette } from './Palettes/CommandPalette';
 import { useFilePalette } from './Palettes/FilePalette';
 import { useInputPalette } from './Palettes/InputPalette';
+import { useQuestionPalette } from './Palettes/QuestionPalette';
 import {
   COMMAND_PALETTE,
   FILE_PALETTE,
   INPUT_PALETTE,
   WORKSPACE_PALETTE,
+  QUESTION_PALETTE,
 } from './paletteTypes';
 import { useWorkspacePalette } from './Palettes/WorkspacePalette';
-import { FileDocumentIcon, AlbumIcon, TerminalIcon } from '../helper-ui/Icons';
+import {
+  FileDocumentIcon,
+  AlbumIcon,
+  TerminalIcon,
+  NullIcon,
+} from '../helper-ui/Icons';
 import { keybindings } from 'config/index';
 
 export function Palette() {
@@ -39,10 +46,11 @@ export function Palette() {
   usePaletteKeybindings({ updatePalette });
 
   const paletteItems = [
-    useFilePalette(),
+    useFilePalette({ paletteType }),
     useWorkspacePalette({ updatePalette }),
     useCommandPalette({ updatePalette }),
     useInputPalette({ metadata, updatePalette }),
+    useQuestionPalette({ updatePalette }),
   ];
 
   return (
@@ -97,6 +105,10 @@ const parseRawQuery = (currentType, rawQuery) => {
     return { paletteType: WORKSPACE_PALETTE, query: rawQuery.slice(3) };
   }
 
+  if (rawQuery.startsWith('?')) {
+    return { paletteType: QUESTION_PALETTE, query: rawQuery.slice(1) };
+  }
+
   // Disallow changing of palette type
   if (currentType === INPUT_PALETTE) {
     return { paletteType: currentType, query: rawQuery };
@@ -112,6 +124,10 @@ const generateRawQuery = (paletteType, query) => {
 
   if (paletteType === WORKSPACE_PALETTE) {
     return 'ws:' + query;
+  }
+
+  if (paletteType === QUESTION_PALETTE) {
+    return '?' + query;
   }
 
   if (paletteType === INPUT_PALETTE) {
@@ -135,6 +151,10 @@ function getPaletteIcon(paletteType) {
     }
     case WORKSPACE_PALETTE: {
       Icon = AlbumIcon;
+      break;
+    }
+    case QUESTION_PALETTE: {
+      Icon = NullIcon;
       break;
     }
     default: {
