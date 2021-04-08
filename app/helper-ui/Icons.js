@@ -9,7 +9,7 @@ export const Svg = ({
 }) => (
   <svg
     style={style}
-    viewBox={'0 0 24 24'}
+    viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
     className={`fill-current ${size ? `h-${size} w-${size}` : ''} ${className}`}
     {...props}
@@ -180,6 +180,7 @@ export function ChevronDoubleRightIcon(props) {
     </svg>
   );
 }
+
 export function ChevronDoubleLeftIcon(props) {
   return (
     <svg {...props} fill="none">
@@ -192,5 +193,10 @@ export function ChevronDoubleLeftIcon(props) {
         fill="currentColor"
       />
     </svg>
+  );
+}
+export function NullIcon(props) {
+  return (
+    <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"></svg>
   );
 }

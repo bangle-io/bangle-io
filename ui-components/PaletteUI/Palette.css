@@ -4,13 +4,12 @@
   margin-right: auto;
   max-width: 600px;
   width: 100%;
-  max-height: min(80vh, 600px);
+  max-height: min(75vh, 400px);
   display: flex;
   flex-direction: column;
   padding-bottom: 0.25rem;
   border-width: 1px;
   z-index: 300;
-  /* margin-top: var(--activity-bar-width); */
 }
 
 .bangle-palette.widescreen {

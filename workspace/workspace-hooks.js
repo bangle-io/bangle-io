@@ -43,6 +43,13 @@ export function useGetWorkspaceFiles() {
         }
       });
     }
+    // TODO: look into this the one below is a quick fix as stale files are shown
+    // when you switch a workspace but waiting on the permission page.
+    if (wsName && wsPermissionState.type === 'permission') {
+      if (!isDestroyed.current) {
+        setFiles([]);
+      }
+    }
   }, [wsName, wsPermissionState]);
 
   useEffect(() => {

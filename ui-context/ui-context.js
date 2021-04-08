@@ -19,17 +19,21 @@ function setRootWidescreenClass(widescreen) {
 
 export function UIManager({ children }) {
   const windowSize = useWindowSize();
+
   const [state, dispatch] = useReducer(
     (state, action) => new UIState(reducer(state, action)),
-    new UIState({
-      // UI
-      sidebar: null,
-      widescreen: checkWidescreen(windowSize.width),
-      paletteType: undefined,
-      paletteInitialQuery: undefined,
-      paletteMetadata: undefined,
-      theme: localStorage.getItem('theme') || 'light',
-    }),
+    new UIState(
+      {
+        // UI
+        sidebar: null,
+        widescreen: checkWidescreen(windowSize.width),
+        paletteType: undefined,
+        paletteInitialQuery: undefined,
+        paletteMetadata: undefined,
+        theme: localStorage.getItem('theme') || 'light',
+      },
+      true,
+    ),
     (store) => {
       applyTheme(store.theme);
       setRootWidescreenClass(store.widescreen);
@@ -128,8 +132,17 @@ const reducer = (state, action) => {
 };
 
 class UIState {
-  constructor(obj) {
+  /**
+   *
+   * @param {*} obj
+   * @param {*} restore if true restore any value from localStorage
+   */
+  constructor(obj, restore) {
     this.dispatch = undefined;
+
+    if (restore) {
+      obj = Object.assign(obj, retrievePersistedState());
+    }
 
     this.sidebar = obj.sidebar;
     this.widescreen = obj.widescreen;
@@ -137,6 +150,8 @@ class UIState {
     this.paletteInitialQuery = obj.paletteInitialQuery;
     this.paletteMetadata = obj.paletteMetadata;
     this.theme = obj.theme;
+
+    persistState({ sidebar: this.sidebar });
   }
 
   get hideEditorArea() {
@@ -145,5 +160,19 @@ class UIState {
     }
 
     return Boolean(this.paletteType || this.sidebar);
+  }
+}
+
+const persistKey = 'UIManager0.724';
+function persistState(obj) {
+  window.localStorage.setItem(persistKey, JSON.stringify(obj));
+}
+function retrievePersistedState() {
+  try {
+    const item = window.localStorage.getItem(persistKey);
+    return JSON.parse(item);
+  } catch (error) {
+    console.error(error);
+    return {};
   }
 }
