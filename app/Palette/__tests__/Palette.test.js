@@ -180,12 +180,3 @@ test('input palette', async () => {
 
   expect(paletteType).toBe(null);
 });
-
-test.skip('Keybindings work', async () => {
-  userEvent.keyboard('{ControlLeft>}r{/ControlLeft}');
-  expect(result.container).toMatchInlineSnapshot(`
-      <div>
-        <div />
-      </div>
-  `);
-});
