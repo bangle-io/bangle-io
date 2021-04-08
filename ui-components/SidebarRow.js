@@ -1,9 +1,10 @@
+import './SidebarRow.css';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;
 
-export function SideBarRow({
+export function SidebarRow({
   title,
   isActive,
   onClick,
@@ -68,7 +69,7 @@ export function SideBarRow({
   );
 }
 
-export function CollapsibleSideBarRow({
+export function CollapsibleSidebarRow({
   children,
   onClick,
   activeLeftIcon,
@@ -83,7 +84,7 @@ export function CollapsibleSideBarRow({
   let className = isSticky ? 'sticky top-0' : '';
   className += collapsed ? ' collapsed ' : '';
   return (
-    <SideBarRow
+    <SidebarRow
       {...props}
       className={className}
       leftIcon={leftIcon}
@@ -95,6 +96,6 @@ export function CollapsibleSideBarRow({
       }}
     >
       {collapsed ? null : children}
-    </SideBarRow>
+    </SidebarRow>
   );
 }

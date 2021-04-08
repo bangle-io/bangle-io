@@ -10,7 +10,7 @@ import {
   requestPermission,
 } from './nativefs-helpers';
 
-// a poorman semimanual test
+// a poorman semi-manual test
 window.nativeFSTest1 = async function () {
   console.info('pick bangle.dev directory');
   const dirHandle = await pickADirectory();

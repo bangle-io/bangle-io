@@ -9,7 +9,8 @@
     "style",
     "workspace",
     "editor",
-    "ui-context"
+    "ui-context",
+    "ui-components"
   ],
   "authors": [
     {

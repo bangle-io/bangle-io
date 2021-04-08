@@ -3,8 +3,7 @@ import React, { useContext, useCallback } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 
 import { useKeybindings } from 'utils/index';
-
-import { PaletteUI } from '../PaletteUI/PaletteUI';
+import { PaletteUI } from 'ui-components/index';
 import { useCommandPalette } from './Palettes/CommandPalette';
 import { useFilePalette } from './Palettes/FilePalette';
 import { useInputPalette } from './Palettes/InputPalette';
