@@ -30,7 +30,7 @@ export function UIManager({ children }) {
         paletteType: undefined,
         paletteInitialQuery: undefined,
         paletteMetadata: undefined,
-        theme: localStorage.getItem('theme') || 'light',
+        theme: 'light',
       },
       true,
     ),
@@ -102,7 +102,6 @@ const reducer = (state, action) => {
 
     case 'UI/TOGGLE_THEME': {
       const theme = state.theme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('theme', theme);
       applyTheme(theme);
       return {
         ...state,
@@ -117,12 +116,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         widescreen,
-      };
-    }
-
-    case 'UI/HIDE_EDITOR_AREA': {
-      return {
-        ...state,
       };
     }
 
@@ -151,9 +144,10 @@ class UIState {
     this.paletteMetadata = obj.paletteMetadata;
     this.theme = obj.theme;
 
-    persistState({ sidebar: this.sidebar });
+    persistState({ sidebar: this.sidebar, theme: this.theme });
   }
 
+  // Derived field
   get hideEditorArea() {
     if (this.widescreen) {
       return false;
@@ -164,9 +158,11 @@ class UIState {
 }
 
 const persistKey = 'UIManager0.724';
+
 function persistState(obj) {
   window.localStorage.setItem(persistKey, JSON.stringify(obj));
 }
+
 function retrievePersistedState() {
   try {
     const item = window.localStorage.getItem(persistKey);

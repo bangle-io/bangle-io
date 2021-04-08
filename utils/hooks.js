@@ -1,4 +1,4 @@
-import { createRef, useCallback, useEffect, useRef, useState } from 'react';
+import { createRef, useCallback, useEffect, useState, useRef } from 'react';
 import { keybindingsHelper, rafSchedule } from './utility';
 
 export function useWindowSize() {
@@ -108,4 +108,66 @@ export function useCatchError(callback) {
       window.removeEventListener('unhandledrejection', errorHandler);
     };
   }, [callback]);
+}
+
+/**
+ *
+ * @param {String} key the key with which it will stored in localStorage
+ * @param {Object|Function} initialValue Signature useStates's initial value and does
+ *          lazy initialization. If an item exists in the localstorage it will be used
+ *          else fallback to the initialValue.
+ */
+export function useLocalStorage(key, initialValue) {
+  // State to store our value
+  // Pass initial state function to useState so logic is only executed once
+  const [storedValue, setStoredValue] = useState(() => {
+    return getItemFromLocalStorage(key, initialValue);
+  });
+
+  const initialValueRef = useRef(initialValue);
+
+  // update ref so that when key changes we can use
+  // latest initialValue
+  useEffect(() => {
+    initialValueRef.current = initialValue;
+  }, [initialValue]);
+
+  // restore hook to the new keys state
+  useEffect(() => {
+    setStoredValue(getItemFromLocalStorage(key, initialValueRef.current));
+  }, [key]);
+
+  const setValue = useCallback(
+    (value) => {
+      setStoredValue((storedValue) => {
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
+        try {
+          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        } catch (error) {
+          console.log(error);
+        }
+        return valueToStore;
+      });
+    },
+    [key],
+  );
+
+  return [storedValue, setValue];
+}
+
+function getItemFromLocalStorage(key, _defaultValue) {
+  const defaultValue =
+    _defaultValue instanceof Function ? _defaultValue() : _defaultValue;
+
+  try {
+    // Get from local storage by key
+    const item = window.localStorage.getItem(key);
+    // Parse stored json or if none return initialValue
+    return item ? JSON.parse(item) : defaultValue;
+  } catch (error) {
+    // If error also return initialValue
+    console.log(error);
+    return defaultValue;
+  }
 }

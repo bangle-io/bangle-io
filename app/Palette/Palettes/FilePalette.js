@@ -1,4 +1,4 @@
-import { useLocalStorage } from 'utils/index';
+import { dedupeArray, useLocalStorage, weakCache } from 'utils/index';
 import {
   FILE_PALETTE_MAX_RECENT_FILES,
   FILE_PALETTE_MAX_FILES,
@@ -33,8 +33,9 @@ export function useFilePalette({ paletteType }) {
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles, paletteType]);
-  const recentFiles = useRecordRecentWsPaths(files);
-  files = [...new Set([...recentFiles, ...files])];
+
+  const recentFiles = useRecordRecentWsPaths2(files);
+  files = dedupeArray([...recentFiles, ...files]);
 
   const onExecute = useCallback(
     (item, itemIndex, event) => {
@@ -92,7 +93,37 @@ function strMatch(a, b) {
   return a.includes(b) || b.includes(a);
 }
 
-const storagePrefix = 'useFilePalette-useRecordRecentWsPaths-0.969';
+const storagePrefix = 'useRecordRecentWsPaths-0.969';
+
+export function useRecordRecentWsPaths2(files) {
+  const { wsName, wsPath } = useWorkspacePath();
+  let [recentWsPaths, updateRecentWsPaths] = useLocalStorage(
+    'useRecordRecentWsPaths2-XihLD' + wsName,
+    [],
+  );
+
+  useEffect(() => {
+    if (wsPath) {
+      updateRecentWsPaths((array) => dedupeArray([wsPath, ...array]));
+    }
+  }, [updateRecentWsPaths, wsPath]);
+
+  useEffect(() => {
+    // TODO empty files can mean things havent loaded yet
+    //  but it can also mean the workspace has no file. So
+    // this will cause bugs.
+    if (files.length === 0) {
+      return;
+    }
+    // rectify if a file in recent no longer exists
+    const filesSet = cachedFileSet(files);
+    if (recentWsPaths.some((f) => !filesSet.has(f))) {
+      updateRecentWsPaths(recentWsPaths.filter((f) => filesSet.has(f)));
+    }
+  }, [files, updateRecentWsPaths, recentWsPaths]);
+
+  return recentWsPaths;
+}
 
 function useRecordRecentWsPaths(files) {
   const { wsName, wsPath } = useWorkspacePath();
@@ -140,3 +171,8 @@ function useRecordRecentWsPaths(files) {
 
   return recentWsPaths;
 }
+
+const cachedFileSet = weakCache((array) => {
+  console.log('calculating set for array of size' + array.length);
+  return new Set(array);
+});

@@ -1,5 +1,4 @@
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from 'config/index';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { keyName } from 'w3c-keyname';
 
 export function getLast(array) {
@@ -147,61 +146,23 @@ export function sleep(t = 20) {
   return new Promise((res) => setTimeout(res, t));
 }
 
-function getItemFromLocalStorage(key, _defaultValue) {
-  const defaultValue =
-    _defaultValue instanceof Function ? _defaultValue() : _defaultValue;
-
-  try {
-    // Get from local storage by key
-    const item = window.localStorage.getItem(key);
-    // Parse stored json or if none return initialValue
-    return item ? JSON.parse(item) : defaultValue;
-  } catch (error) {
-    // If error also return initialValue
-    console.log(error);
-    return defaultValue;
-  }
+/**
+ * @param {Function} fn - A unary function whose paramater is non-primitive,
+ *                        so that it can be cached using WeakMap
+ */
+export function weakCache(fn) {
+  const cache = new WeakMap();
+  return (arg) => {
+    let value = cache.get(arg);
+    if (value) {
+      return value;
+    }
+    value = fn(arg);
+    cache.set(arg, value);
+    return value;
+  };
 }
-// TODO write tests for this
-export function useLocalStorage(key, initialValue) {
-  // State to store our value
-  // Pass initial state function to useState so logic is only executed once
-  const [storedValue, setStoredValue] = useState(() => {
-    return getItemFromLocalStorage(key, initialValue);
-  });
 
-  const initialValueRef = useRef(initialValue);
-
-  // update ref so that when key changes we can use
-  // latest initialValue
-  useEffect(() => {
-    initialValueRef.current = initialValue;
-  }, [initialValue]);
-
-  // restore hook to the new keys state
-  useEffect(() => {
-    setStoredValue(getItemFromLocalStorage(key, initialValueRef.current));
-  }, [key]);
-
-  // Return a wrapped version of useState's setter function that ...
-  // ... persists the new value to localStorage.
-  const setValue = useCallback(
-    (value) => {
-      try {
-        // Allow value to be a function so we have same API as useState
-        const valueToStore =
-          value instanceof Function ? value(storedValue) : value;
-        // Save state
-        setStoredValue(valueToStore);
-        // Save to local storage
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      } catch (error) {
-        // A more advanced implementation would handle the error case
-        console.log(error);
-      }
-    },
-    [key, storedValue],
-  );
-
-  return [storedValue, setValue];
+export function dedupeArray(array) {
+  return [...new Set(array)];
 }
