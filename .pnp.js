@@ -3600,6 +3600,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "react"
           ],
           "linkType": "HARD",
+        }],
+        ["virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:5.1.1", {
+          "packageLocation": "./.yarn/$$virtual/@testing-library-react-hooks-virtual-75e647cebe/0/cache/@testing-library-react-hooks-npm-5.1.1-7ec3be7762-cae917a90b.zip/node_modules/@testing-library/react-hooks/",
+          "packageDependencies": [
+            ["@testing-library/react-hooks", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:5.1.1"],
+            ["@babel/runtime", "npm:7.12.5"],
+            ["@types/react", "npm:17.0.3"],
+            ["@types/react-dom", "npm:17.0.3"],
+            ["@types/react-test-renderer", "npm:17.0.1"],
+            ["filter-console", "npm:0.1.1"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"],
+            ["react-error-boundary", "virtual:dde8ddab7f7377b5d5133efab8b8f79bfc5bbc787763f098a72c6e9fec37917e5d296b56a277a4a9912db415d46790f8318698e52900b7b29c5475c09ef40817#npm:3.1.1"],
+            ["react-test-renderer", "virtual:5b1786f3a1ee9fbd6a8c56cee7ed469045eddc9c5ba3e8a4b318e74d365dea7ede1f95f68c741cc87eeefd05cf14f7a412274b715c560ce9b9c1673f53b639bb#npm:17.0.2"]
+          ],
+          "packagePeers": [
+            "react-dom",
+            "react-test-renderer",
+            "react"
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@testing-library/user-event", [
@@ -4674,6 +4695,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/dom", "npm:7.30.3"],
             ["@testing-library/jest-dom", "npm:5.11.10"],
             ["@testing-library/react", "virtual:8cd8bf1e2e9b4f32172204239f967b324215827a978c39a0b247403db0c2d3af13c01e889ffb7e907ebc57ec8083574609aef7c6a445eec4e9cda6932dd0bedc#npm:11.2.6"],
+            ["@testing-library/react-hooks", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:5.1.1"],
             ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.1.1"],
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
@@ -4683,6 +4705,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"],
             ["react-popper", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:2.2.4"],
             ["react-router-dom", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:5.2.0"],
+            ["react-test-renderer", "virtual:5b1786f3a1ee9fbd6a8c56cee7ed469045eddc9c5ba3e8a4b318e74d365dea7ede1f95f68c741cc87eeefd05cf14f7a412274b715c560ce9b9c1673f53b639bb#npm:17.0.2"],
             ["style", "workspace:style"],
             ["ui-components", "workspace:ui-components"],
             ["ui-context", "workspace:ui-context"],

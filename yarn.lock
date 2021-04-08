@@ -2994,6 +2994,7 @@ __metadata:
     "@testing-library/dom": ^7.30.3
     "@testing-library/jest-dom": ^5.11.10
     "@testing-library/react": ^11.2.6
+    "@testing-library/react-hooks": ^5.1.1
     "@testing-library/user-event": ^13.1.1
     config: "workspace:*"
     editor: "workspace:*"
@@ -3003,6 +3004,7 @@ __metadata:
     react-dom: 16.14.0
     react-popper: ^2.2.4
     react-router-dom: ^5.2.0
+    react-test-renderer: ^17.0.2
     style: "workspace:*"
     ui-components: "workspace:*"
     ui-context: "workspace:*"

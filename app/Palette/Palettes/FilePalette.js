@@ -34,7 +34,7 @@ export function useFilePalette({ paletteType }) {
     refreshFiles();
   }, [refreshFiles, paletteType]);
 
-  const recentFiles = useRecordRecentWsPaths2(files);
+  const recentFiles = useRecordRecentWsPaths(files);
   files = dedupeArray([...recentFiles, ...files]);
 
   const onExecute = useCallback(
@@ -93,9 +93,7 @@ function strMatch(a, b) {
   return a.includes(b) || b.includes(a);
 }
 
-const storagePrefix = 'useRecordRecentWsPaths-0.969';
-
-export function useRecordRecentWsPaths2(files) {
+export function useRecordRecentWsPaths(files) {
   const { wsName, wsPath } = useWorkspacePath();
   let [recentWsPaths, updateRecentWsPaths] = useLocalStorage(
     'useRecordRecentWsPaths2-XihLD' + wsName,
@@ -104,7 +102,9 @@ export function useRecordRecentWsPaths2(files) {
 
   useEffect(() => {
     if (wsPath) {
-      updateRecentWsPaths((array) => dedupeArray([wsPath, ...array]));
+      updateRecentWsPaths((array) =>
+        dedupeArray([wsPath, ...array]).slice(0, FILE_PALETTE_MAX_RECENT_FILES),
+      );
     }
   }, [updateRecentWsPaths, wsPath]);
 
@@ -125,54 +125,6 @@ export function useRecordRecentWsPaths2(files) {
   return recentWsPaths;
 }
 
-function useRecordRecentWsPaths(files) {
-  const { wsName, wsPath } = useWorkspacePath();
-
-  let [recentWsPaths, updateRecentWsPaths] = useLocalStorage(
-    storagePrefix + wsName,
-    [],
-  );
-
-  useEffect(() => {
-    // do not process if files are not there yet
-    if (files.length === 0) {
-      return;
-    }
-    const newRecentWsPaths = recentWsPaths.filter((file) =>
-      // remove files that no longer exist
-      files.includes(file),
-    );
-
-    if (newRecentWsPaths.length !== recentWsPaths.length) {
-      updateRecentWsPaths(newRecentWsPaths);
-    }
-  }, [files, recentWsPaths, updateRecentWsPaths, wsPath]);
-
-  useEffect(() => {
-    if (!wsPath || files.length === 0) {
-      return;
-    }
-    // file is already at top
-    if (recentWsPaths[0] === wsPath) {
-      return;
-    }
-
-    // make sure files wsPath
-    if (!files.includes(wsPath)) {
-      return;
-    }
-
-    const newRecentWsPaths = recentWsPaths
-      .filter((file) => file !== wsPath)
-      .slice(0, FILE_PALETTE_MAX_RECENT_FILES);
-    newRecentWsPaths.unshift(wsPath);
-    updateRecentWsPaths(newRecentWsPaths);
-  }, [wsPath, files, recentWsPaths, updateRecentWsPaths]);
-
-  return recentWsPaths;
-}
-
 const cachedFileSet = weakCache((array) => {
-  console.log('calculating set for array of size' + array.length);
   return new Set(array);
 });
