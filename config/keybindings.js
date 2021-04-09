@@ -38,4 +38,7 @@ export const keybindings = {
   toggleWorkspacePalette: new KeyBinding({
     key: 'Ctrl-r',
   }),
+  toggleFileBrowser: new KeyBinding({
+    key: 'Mod-e',
+  }),
 };

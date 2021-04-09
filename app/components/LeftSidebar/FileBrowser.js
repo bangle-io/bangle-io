@@ -34,7 +34,6 @@ export function FileBrowser() {
   };
 
   const createNewFile = (path) => {
-    console.log({ path });
     newFileCommand({ initialQuery: path });
   };
 
