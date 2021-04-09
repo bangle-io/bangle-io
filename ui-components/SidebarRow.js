@@ -68,34 +68,3 @@ export function SidebarRow({
     </>
   );
 }
-
-export function CollapsibleSidebarRow({
-  children,
-  onClick,
-  activeLeftIcon,
-  leftIcon,
-  initialCollapse = false,
-  isSticky = false,
-  ...props
-}) {
-  const [collapsed, toggleCollapse] = useState(initialCollapse);
-
-  leftIcon = collapsed ? activeLeftIcon : leftIcon;
-  let className = isSticky ? 'sticky top-0' : '';
-  className += collapsed ? ' collapsed ' : '';
-  return (
-    <SidebarRow
-      {...props}
-      className={className}
-      leftIcon={leftIcon}
-      onClick={() => {
-        toggleCollapse(!collapsed);
-        if (onClick) {
-          onClick();
-        }
-      }}
-    >
-      {collapsed ? null : children}
-    </SidebarRow>
-  );
-}
