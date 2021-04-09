@@ -1,20 +1,18 @@
 import './OptionsBar.css';
 import React, { useCallback, useContext } from 'react';
-import {
-  MoreAltIcon,
-  ChevronDoubleRightIcon,
-  SecondaryEditorIcon,
-  TerminalIcon,
-  FileDocumentIcon,
-} from '../helper-ui/Icons';
 import { useWorkspacePath } from 'workspace/index';
 import { UIManagerContext } from 'ui-context/index';
 import { cx, useKeybindings, useLocalStorage } from 'utils/index';
 import { keybindings } from 'config/index';
 import { COMMAND_PALETTE, FILE_PALETTE } from '../Palette/index';
-import { ButtonIcon } from 'ui-components/ButtonIcon';
-
-let isDirty = false;
+import {
+  ButtonIcon,
+  MoreAltIcon,
+  ChevronDoubleRightIcon,
+  SecondaryEditorIcon,
+  TerminalIcon,
+  FileDocumentIcon,
+} from 'ui-components/index';
 
 const localStoragePrefix = '0.3438144247845969';
 
@@ -25,7 +23,6 @@ export function OptionsBar() {
   );
 
   const setExpanded = (...args) => {
-    isDirty = true;
     _setExpanded(...args);
   };
 
@@ -103,7 +100,7 @@ export function OptionsBar() {
       <OptionsButton
         active={paletteType === FILE_PALETTE}
         hint={'File Palette\n' + keybindings.toggleFilePalette.displayValue}
-        onClick={() => toggleFilePalette()}
+        onClick={toggleFilePalette}
       >
         <FileDocumentIcon
           style={{ transform: 'scale(0.88, 0.88)' }}
@@ -123,12 +120,7 @@ export function OptionsBar() {
         </OptionsButton>
       )}
       <OptionsButton hint="Hide options bar" onClick={() => setExpanded(false)}>
-        <ChevronDoubleRightIcon
-          className={cx(
-            'cursor-pointer',
-            isDirty && 'rotate180AntiClockwiseAnimation',
-          )}
-        />
+        <ChevronDoubleRightIcon />
       </OptionsButton>
     </>
   );

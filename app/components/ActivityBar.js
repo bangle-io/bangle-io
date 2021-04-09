@@ -1,8 +1,7 @@
 import React, { useContext, useEffect } from 'react';
-import { ButtonIcon } from 'ui-components/ButtonIcon';
 import { UIManagerContext } from 'ui-context/index';
 
-import { FolderIcon } from '../helper-ui/Icons';
+import { ButtonIcon, FolderIcon } from 'ui-components/index';
 import { keybindings } from 'config/index';
 import { cx } from 'utils/index';
 

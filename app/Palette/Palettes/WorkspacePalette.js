@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useWorkspaces } from 'workspace/index';
 import { WORKSPACE_PALETTE } from '../paletteTypes';
-import { CloseIcon } from 'app/helper-ui/Icons';
+import { CloseIcon } from 'ui-components/index';
 
 const LOG = false;
 

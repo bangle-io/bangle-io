@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "app/*": [
         "./app/*"
@@ -51,7 +51,7 @@
         "./workspace/*"
       ]
     },
-    "module": "es2020",
+    "module": "commonJS",
     "target": "esnext"
   },
   "exclude": [
