@@ -136,14 +136,14 @@ export function FileDocumentIcon(props) {
 
 export function SecondaryEditorIcon(props) {
   return (
-    <Svg {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M2 4H22V20H2V4ZM16 18V6H4V18H16Z"
         fill="currentColor"
       />
-    </Svg>
+    </svg>
   );
 }
 
@@ -168,7 +168,7 @@ export function MoreAltIcon(props) {
 
 export function ChevronDoubleRightIcon(props) {
   return (
-    <svg {...props} fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none">
       <path
         d="M5.63605 7.75735L7.05026 6.34314L12.7071 12L7.05029 17.6568L5.63608 16.2426L9.87869 12L5.63605 7.75735Z"
         fill="currentColor"
@@ -183,7 +183,7 @@ export function ChevronDoubleRightIcon(props) {
 
 export function ChevronDoubleLeftIcon(props) {
   return (
-    <svg {...props} fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none">
       <path
         d="M18.3639 7.75735L16.9497 6.34314L11.2929 12L16.9497 17.6568L18.3639 16.2426L14.1213 12L18.3639 7.75735Z"
         fill="currentColor"
@@ -197,6 +197,31 @@ export function ChevronDoubleLeftIcon(props) {
 }
 export function NullIcon(props) {
   return (
-    <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor"></svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      {...props}
+    ></svg>
+  );
+}
+
+export function DocumentAddIcon(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      {...props}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+      />
+    </svg>
   );
 }

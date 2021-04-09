@@ -1,4 +1,6 @@
+import './ActivityBar.css';
 import React, { useContext, useEffect } from 'react';
+import { ButtonIcon } from 'ui-components/ButtonIcon';
 import { UIManagerContext } from 'ui-context/index';
 
 import { FolderIcon, TerminalIcon } from '../helper-ui/Icons';
@@ -48,18 +50,14 @@ export function ActivityBar() {
 
 function ActivityBarBox({ widescreen, children, isActive, onClick }) {
   return (
-    <button
-      type="button"
+    <ButtonIcon
       onClick={onClick}
-      className={`flex w-full items-center justify-center
-          focus:outline-none 
+      active={Boolean(isActive)}
+      className={`flex justify-center
           pt-3 pb-3 ${widescreen ? 'border-l-2' : ''} mt-1 mb-1`}
-      style={{
-        borderColor: !isActive ? 'transparent' : 'var(--accent-2-color)',
-      }}
     >
-      <span>{children}</span>
-    </button>
+      {children}
+    </ButtonIcon>
   );
 }
 

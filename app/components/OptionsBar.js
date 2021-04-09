@@ -12,6 +12,7 @@ import { UIManagerContext } from 'ui-context/index';
 import { cx, useKeybindings, useLocalStorage } from 'utils/index';
 import { keybindings } from 'config/index';
 import { COMMAND_PALETTE, FILE_PALETTE } from '../Palette/index';
+import { ButtonIcon } from 'ui-components/ButtonIcon';
 
 let isDirty = false;
 
@@ -115,13 +116,10 @@ export function OptionsBar() {
             (secondaryWsPath ? 'Hide split screen' : 'Split screen') +
             `\n${keybindings.toggleSecondaryEditor.displayValue}`
           }
-          active={secondaryWsPath}
+          active={Boolean(secondaryWsPath)}
           onClick={toggleSecondaryEditor}
         >
-          <SecondaryEditorIcon
-            style={{ transform: 'scale(0.9, 1)' }}
-            className="cursor-pointer"
-          />
+          <SecondaryEditorIcon style={{ transform: 'scale(0.9, 1)' }} />
         </OptionsButton>
       )}
       <OptionsButton hint="Hide options bar" onClick={() => setExpanded(false)}>
@@ -144,7 +142,7 @@ export function OptionsBar() {
             hint="Show options bar"
             onClick={() => setExpanded(true)}
           >
-            <MoreAltIcon className="cursor-pointer" fill="red" />
+            <MoreAltIcon className="cursor-pointer" />
           </OptionsButton>
         )}
       </div>
@@ -161,12 +159,11 @@ function OptionsButton({
   active,
 }) {
   return (
-    <button
-      type="button"
-      aria-label={hint}
-      data-bangle-editor-pos={hintPos}
-      data-bangle-editor-break={true}
-      className={cx(active && 'active', 'focus:outline-none') + ' ' + className}
+    <ButtonIcon
+      hint={hint}
+      hintPos={hintPos}
+      active={active}
+      className={className}
       onClick={(event) => {
         if (event?.currentTarget) {
           event.currentTarget.blur();
@@ -175,6 +172,6 @@ function OptionsButton({
       }}
     >
       {children}
-    </button>
+    </ButtonIcon>
   );
 }

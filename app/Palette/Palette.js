@@ -14,15 +14,9 @@ import {
   INPUT_PALETTE,
   WORKSPACE_PALETTE,
   QUESTION_PALETTE,
+  palettes,
 } from './paletteTypes';
 import { useWorkspacePalette } from './Palettes/WorkspacePalette';
-import {
-  FileDocumentIcon,
-  AlbumIcon,
-  TerminalIcon,
-  NullIcon,
-} from '../helper-ui/Icons';
-import { keybindings } from 'config/index';
 
 export function Palette() {
   const {
@@ -46,7 +40,7 @@ export function Palette() {
   usePaletteKeybindings({ updatePalette });
 
   const paletteItems = [
-    useFilePalette({ paletteType }),
+    useFilePalette({ paletteType, updatePalette }),
     useWorkspacePalette({ updatePalette }),
     useCommandPalette({ updatePalette }),
     useInputPalette({ metadata, updatePalette }),
@@ -55,7 +49,7 @@ export function Palette() {
 
   return (
     <PaletteUI
-      placeholder={getPalettePlaceholder(paletteType)}
+      placeholder={palettes[paletteType]?.inputPlaceholder}
       paletteTypeIcon={getPaletteIcon(paletteType)}
       paletteType={paletteType}
       updatePalette={updatePalette}
@@ -68,27 +62,6 @@ export function Palette() {
       }`}
     />
   );
-}
-
-function usePaletteKeybindings({ updatePalette }) {
-  useKeybindings(() => {
-    return {
-      [keybindings.toggleCommandPalette.key]: () => {
-        updatePalette({ type: COMMAND_PALETTE });
-        return true;
-      },
-
-      [keybindings.toggleFilePalette.key]: () => {
-        updatePalette({ type: FILE_PALETTE });
-        return true;
-      },
-
-      [keybindings.toggleWorkspacePalette.key]: () => {
-        updatePalette({ type: WORKSPACE_PALETTE });
-        return true;
-      },
-    };
-  }, [updatePalette]);
 }
 
 const parseRawQuery = (currentType, rawQuery) => {
@@ -139,49 +112,29 @@ const generateRawQuery = (paletteType, query) => {
 };
 
 function getPaletteIcon(paletteType) {
-  let Icon;
-  switch (paletteType) {
-    case FILE_PALETTE: {
-      Icon = FileDocumentIcon;
-      break;
-    }
-    case COMMAND_PALETTE: {
-      Icon = TerminalIcon;
-      break;
-    }
-    case WORKSPACE_PALETTE: {
-      Icon = AlbumIcon;
-      break;
-    }
-    case QUESTION_PALETTE: {
-      Icon = NullIcon;
-      break;
-    }
-    default: {
-      return null;
-    }
-  }
+  let Icon = palettes[paletteType]?.Icon;
 
   return (
-    <span className="pr-2 flex items-center">
-      <Icon className="h-5 w-5 " />
-    </span>
+    Icon && (
+      <span className="pr-2 flex items-center">
+        <Icon className="h-5 w-5 " />
+      </span>
+    )
   );
 }
 
-function getPalettePlaceholder(paletteType) {
-  switch (paletteType) {
-    case FILE_PALETTE: {
-      return `Enter a file name or type '?' to see other palettes.`;
-    }
-    case COMMAND_PALETTE: {
-      return null;
-    }
-    case WORKSPACE_PALETTE: {
-      return null;
-    }
-    default: {
-      return null;
-    }
-  }
+function usePaletteKeybindings({ updatePalette }) {
+  useKeybindings(() => {
+    return Object.fromEntries(
+      Object.values(palettes)
+        .filter((r) => r.keybinding)
+        .map((r) => [
+          r.keybinding,
+          () => {
+            updatePalette({ type: r.type });
+            return true;
+          },
+        ]),
+    );
+  }, [updatePalette]);
 }

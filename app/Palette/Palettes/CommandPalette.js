@@ -9,6 +9,7 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
+import { useInputPaletteNewFileCommand } from '../Commands';
 import { COMMAND_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 const LOG = false;
 
@@ -67,25 +68,12 @@ function useToggleSidebar() {
 
 function useNewFile({ updatePalette }) {
   const uid = 'NEW_FILE_COMMAND';
-  const createNewFile = useCreateMdFile();
-  const { wsName } = useWorkspacePath();
+  const newFileCommand = useInputPaletteNewFileCommand();
 
   const onExecute = useCallback(() => {
-    updatePalette({
-      type: INPUT_PALETTE,
-      metadata: {
-        onInputConfirm: (query) => {
-          let normalizedQuery = query;
-          if (!normalizedQuery.endsWith('.md')) {
-            normalizedQuery += '.md';
-          }
-          return createNewFile(wsName + ':' + normalizedQuery);
-        },
-      },
-    });
-    // to prevent dismissing of the palette
+    newFileCommand();
     return false;
-  }, [updatePalette, wsName, createNewFile]);
+  }, [newFileCommand]);
   return queryMatch({
     uid,
     title: 'Workspace: New File',

@@ -140,6 +140,7 @@ export async function deleteFile(wsPath) {
       await nativeFS.deleteFile(
         toNativePath(rootDirHandle, filePath),
         rootDirHandle,
+        true,
       );
       break;
     }
