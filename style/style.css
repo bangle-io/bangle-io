@@ -38,6 +38,7 @@ DONOT keep internal styles here.
 }
 
 /* The position of the menu when not hidden (and default) */
+/* the .up and .down are added in small screens */
 #activity-bar-area.up {
   /* How long to get back up */
   transition-timing-function: ease;
@@ -110,7 +111,11 @@ DONOT keep internal styles here.
 .main-content.has-secondary-editor {
   display: grid;
   height: 100vh;
-  grid-template-columns: [col-first] 1.2fr [col-second] var(--gutter-width) [col-third] 0.8fr [col-fourth];
+  grid-template-columns:
+    [col-first] var(--widescreen-primary-editor-fr) [col-second] var(
+      --gutter-width
+    )
+    [col-third] var(--widescreen-secondary-editor-fr) [col-fourth];
   grid-template-rows: [row-first] 50px [row-second] 1fr [row-third];
 }
 
