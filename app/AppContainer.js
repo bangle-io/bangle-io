@@ -11,6 +11,7 @@ import { CloseIcon } from './helper-ui/Icons';
 import { ActivityBar } from './components/ActivityBar';
 import { FileBrowser } from './components/LeftSidebar/FileBrowser';
 import { OptionsBar } from './components/OptionsBar';
+import { keybindings } from 'config/index';
 
 export function AppContainer() {
   const { widescreen, hideEditorArea } = useContext(UIManagerContext);
@@ -123,7 +124,7 @@ function LeftSidebarArea() {
 
   useKeybindings(() => {
     return {
-      'Mod-e': () => {
+      [keybindings.toggleFileBrowser.key]: () => {
         dispatch({
           type: 'UI/TOGGLE_SIDEBAR',
           value: { type: 'file-browser' },
@@ -153,7 +154,14 @@ function LeftSidebarArea() {
         widescreen ? 'widescreen' : ''
       }`}
     >
-      <div className="top-0 text-2xl pb-1 pl-3">{sidebarName}</div>
+      <div
+        className="top-0 text-2xl mt-4"
+        style={{
+          padding: '0 15px',
+        }}
+      >
+        {sidebarName}
+      </div>
       {component}
     </div>
   );

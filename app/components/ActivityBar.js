@@ -1,24 +1,23 @@
+import './ActivityBar.css';
 import React, { useContext, useEffect } from 'react';
+import { ButtonIcon } from 'ui-components/ButtonIcon';
 import { UIManagerContext } from 'ui-context/index';
 
-import { FolderIcon, TerminalIcon } from '../helper-ui/Icons';
+import { FolderIcon } from '../helper-ui/Icons';
+import { keybindings } from 'config/index';
 
 ActivityBar.propTypes = {};
 export function ActivityBar() {
-  const { sidebar, paletteType, dispatch, widescreen } = useContext(
-    UIManagerContext,
-  );
+  const { sidebar, dispatch, widescreen } = useContext(UIManagerContext);
 
-  const toggleSidebar = () => {
+  const toggleSidebar = (event) => {
+    event.preventDefault();
+    if (event?.currentTarget) {
+      event.currentTarget.blur();
+    }
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
       value: { type: 'file-browser' },
-    });
-  };
-
-  const togglePalette = () => {
-    dispatch({
-      type: 'UI/TOGGLE_PALETTE',
     });
   };
 
@@ -48,18 +47,20 @@ export function ActivityBar() {
 
 function ActivityBarBox({ widescreen, children, isActive, onClick }) {
   return (
-    <button
-      type="button"
+    <ButtonIcon
       onClick={onClick}
-      className={`flex w-full items-center justify-center
-          focus:outline-none 
+      hint={
+        isActive
+          ? null
+          : 'File Browser\n' + keybindings.toggleFileBrowser.displayValue
+      }
+      hintPos="right"
+      active={Boolean(isActive)}
+      className={`flex justify-center
           pt-3 pb-3 ${widescreen ? 'border-l-2' : ''} mt-1 mb-1`}
-      style={{
-        borderColor: !isActive ? 'transparent' : 'var(--accent-2-color)',
-      }}
     >
-      <span>{children}</span>
-    </button>
+      {children}
+    </ButtonIcon>
   );
 }
 

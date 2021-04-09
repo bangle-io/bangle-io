@@ -28,7 +28,7 @@ button[aria-label][data-bangle-editor-pos] {
   padding: 0.2rem 0.5rem;
   position: absolute;
   white-space: nowrap;
-  z-index: 10;
+  z-index: 999;
 }
 [aria-label][data-bangle-editor-pos]:before {
   width: 0;
@@ -40,7 +40,7 @@ button[aria-label][data-bangle-editor-pos] {
   /* transition: all 0.1s ease-in-out 0.1s; */
   content: '';
   position: absolute;
-  z-index: 10;
+  z-index: 999;
 }
 [aria-label][data-bangle-editor-pos]:hover:before,
 [aria-label][data-bangle-editor-pos]:hover:after,

@@ -1,10 +1,12 @@
 import React, { useContext, useMemo } from 'react';
 import { UIManagerContext } from 'ui-context/index';
-import { CollapsibleSidebarRow, SidebarRow } from 'ui-components/index';
+import { SidebarRow } from 'ui-components/index';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
   CloseIcon,
+  DocumentAddIcon,
+  NullIcon,
 } from '../../helper-ui/Icons';
 import {
   useDeleteFile,
@@ -12,6 +14,9 @@ import {
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
+import { useLocalStorage } from 'utils/hooks';
+import { ButtonIcon } from 'ui-components/ButtonIcon';
+import { useInputPaletteNewFileCommand } from 'app/Palette/Commands';
 
 FileBrowser.propTypes = {};
 
@@ -20,146 +25,166 @@ export function FileBrowser() {
   const deleteByWsPath = useDeleteFile();
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
-
-  const fileTree = useMemo(
-    () =>
-      flatPathsToTree(
-        files.map((f) => {
-          const { filePath } = resolvePath(f);
-          return filePath;
-        }),
-      ),
-    [files],
-  );
-
-  return (
-    <CollapsibleSidebarRow
-      title={wsName}
-      leftIcon={<ChevronDownIcon style={{ width: 16, height: 16 }} />}
-      activeLeftIcon={<ChevronRightIcon style={{ width: 16, height: 16 }} />}
-    >
-      {fileTree.map((child) => (
-        <RenderPathTree
-          fileTree={child}
-          widescreen={widescreen}
-          key={child.name}
-          wsName={wsName}
-          deleteByWsPath={deleteByWsPath}
-          pushWsPath={pushWsPath}
-          activeWSPath={activeWSPath}
-          dispatch={dispatch}
-          depth={1}
-        />
-      ))}
-    </CollapsibleSidebarRow>
-  );
-}
-
-function RenderPathTree({
-  widescreen,
-  fileTree,
-  wsName,
-  deleteByWsPath,
-  pushWsPath,
-  activeWSPath,
-  dispatch,
-  depth,
-}) {
-  const { name, children, path } = fileTree;
-
+  const newFileCommand = useInputPaletteNewFileCommand();
   const closeSidebar = () => {
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
       value: { type: null },
     });
   };
-  if (children) {
-    return (
-      <CollapsibleSidebarRow
-        initialCollapse={true}
-        title={name}
-        leftIcon={
-          <ChevronDownIcon
-            style={{
-              height: 16,
-              width: 16,
-            }}
-          />
-        }
-        activeLeftIcon={
-          <ChevronRightIcon
-            style={{
-              height: 16,
-              width: 16,
-            }}
-          />
-        }
-        depth={depth}
-        basePadding={16}
-      >
-        {children.map((child) => (
-          <RenderPathTree
-            widescreen={widescreen}
-            key={child.name}
-            fileTree={child}
-            wsName={wsName}
-            deleteByWsPath={deleteByWsPath}
-            pushWsPath={pushWsPath}
-            activeWSPath={activeWSPath}
-            dispatch={dispatch}
-            depth={depth + 1}
-            basePadding={16}
-          />
-        ))}
-      </CollapsibleSidebarRow>
+
+  const createNewFile = (path) => {
+    newFileCommand({ initialQuery: path });
+  };
+
+  const fileTree = useMemo(() => {
+    const trees = flatPathsToTree(
+      files.map((f) => {
+        const { filePath } = resolvePath(f);
+        return filePath;
+      }),
     );
-  }
-  // for the files
-  if (path) {
-    const wsPath = wsName + ':' + path;
-    return (
-      <SidebarRow
-        basePadding={16}
-        depth={depth}
-        key={wsPath}
-        onClick={(event) => {
-          if (event.metaKey) {
-            pushWsPath(wsPath, true);
-          } else if (event.shiftKey) {
-            pushWsPath(wsPath, false, true);
-          } else {
-            pushWsPath(wsPath);
-          }
-          if (!widescreen) {
-            closeSidebar();
-          }
-        }}
-        title={name}
-        isActive={activeWSPath === wsPath}
-        leftIcon={
-          <span
-            style={{
-              height: 16,
-              width: 16,
-            }}
-          ></span>
-        }
-        rightHoverIcon={
-          <CloseIcon
-            style={{
-              height: 16,
-              width: 16,
-            }}
-            onClick={async (e) => {
-              e.stopPropagation();
+    // TODO adding this superfiically sort of messes with childrens id
+    // as it will not contain them. I think we should move to converting
+    // id to wsPath syntax. and make flatPathsToTree understand wsPath.
+    // then in createNewFile make sure we are correctly sending the file path
+    // and not wsPath.
+    return { name: wsName, id: wsName, children: trees };
+  }, [files, wsName]);
+
+  return (
+    <RenderTree
+      depth={0}
+      closeSidebar={closeSidebar}
+      fileTree={fileTree}
+      widescreen={widescreen}
+      wsName={wsName}
+      deleteByWsPath={deleteByWsPath}
+      pushWsPath={pushWsPath}
+      activeWSPath={activeWSPath}
+      dispatch={dispatch}
+      createNewFile={createNewFile}
+    />
+  );
+}
+
+const IconStyle = {
+  height: 16,
+  width: 16,
+};
+
+function RenderTree(props) {
+  const {
+    fileTree,
+    wsName,
+    pushWsPath,
+    closeSidebar,
+    widescreen,
+    activeWSPath,
+    deleteByWsPath,
+    depth,
+    basePadding = 16,
+    createNewFile,
+  } = props;
+
+  const { name, id, children: directChildren, path } = fileTree;
+  const isFile = !Boolean(directChildren);
+  const wsPath = isFile ? wsName + ':' + path : null;
+
+  const [collapsed, toggleCollapse] = useLocalStorage(
+    'RenderTree6254:' + wsName + '--' + id,
+    depth === 0 ? false : true,
+  );
+
+  const onClick = (event) => {
+    if (!isFile) {
+      toggleCollapse(!collapsed);
+      return;
+    }
+    if (event.metaKey) {
+      pushWsPath(wsPath, true);
+    } else if (event.shiftKey) {
+      pushWsPath(wsPath, false, true);
+    } else {
+      pushWsPath(wsPath);
+    }
+    if (!widescreen) {
+      closeSidebar();
+    }
+  };
+
+  return isFile ? (
+    <SidebarRow
+      depth={depth}
+      basePadding={basePadding}
+      title={name}
+      onClick={onClick}
+      isActive={activeWSPath === wsPath}
+      leftIcon={<NullIcon style={IconStyle} />}
+      rightHoverIcon={
+        <ButtonIcon
+          hint="Delete file"
+          hintPos="bottom-right"
+          onClick={async (e) => {
+            e.stopPropagation();
+            if (
+              window.confirm(
+                `Are you sure you want to delete "${
+                  resolvePath(wsPath).fileName
+                }"? `,
+              )
+            ) {
               deleteByWsPath(wsPath);
-              closeSidebar();
-            }}
-          />
-        }
-      />
-    );
-  }
+            }
+          }}
+        >
+          <CloseIcon style={IconStyle} />
+        </ButtonIcon>
+      }
+    ></SidebarRow>
+  ) : (
+    <SidebarRow
+      depth={depth}
+      basePadding={basePadding}
+      title={name}
+      onClick={onClick}
+      leftIcon={
+        collapsed ? (
+          <ChevronRightIcon style={IconStyle} />
+        ) : (
+          <ChevronDownIcon style={IconStyle} />
+        )
+      }
+      rightHoverIcon={
+        <ButtonIcon
+          hint="New file"
+          onClick={async (e) => {
+            e.stopPropagation();
+            if (depth === 0) {
+              createNewFile();
+            } else {
+              createNewFile(id + '/');
+            }
+          }}
+          hintPos="bottom-right"
+        >
+          <DocumentAddIcon style={IconStyle} />
+        </ButtonIcon>
+      }
+    >
+      {collapsed
+        ? null
+        : directChildren.map((child) => (
+            <RenderTree
+              {...props}
+              key={child.name}
+              fileTree={child}
+              depth={depth + 1}
+              basePadding={16}
+            />
+          ))}
+    </SidebarRow>
+  );
 }
 
 /**
@@ -179,9 +204,12 @@ export function flatPathsToTree(files) {
     for (const part of path) {
       counter++;
       let match = chain.find(({ name }) => name === part);
-
       if (!match) {
-        match = { name: part, children: [] };
+        match = {
+          name: part,
+          children: [],
+          id: path.slice(0, counter).join('/'),
+        };
         if (counter === path.length) {
           match.path = f;
           delete match.children;

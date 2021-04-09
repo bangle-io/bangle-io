@@ -3,11 +3,11 @@
 }
 
 .side-bar-row:hover {
-  background-color: var(--accent-color);
+  background-color: var(--accent-2-color);
 }
 
 .side-bar-row.active {
-  background-color: var(--accent-2-color);
+  background-color: var(--accent-color);
 }
 
 .side-bar-row.sticky {

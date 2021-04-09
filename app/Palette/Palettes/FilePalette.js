@@ -4,13 +4,15 @@ import {
   FILE_PALETTE_MAX_FILES,
 } from 'config/index';
 
-import { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   useGetWorkspaceFiles,
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
 import { FILE_PALETTE } from '../paletteTypes';
+import { SecondaryEditorIcon } from 'app/helper-ui/Icons';
+import { ButtonIcon } from 'ui-components/ButtonIcon';
 
 const LOG = false;
 
@@ -24,7 +26,7 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
  * items.
  * Dont forget to read docs at PaletteUI
  */
-export function useFilePalette({ paletteType }) {
+export function useFilePalette({ paletteType, updatePalette }) {
   const { pushWsPath } = useWorkspacePath();
 
   let [files, refreshFiles] = useGetWorkspaceFiles();
@@ -64,6 +66,24 @@ export function useFilePalette({ paletteType }) {
           title: resolvePath(wsPath).filePath,
           onExecute,
           data: { wsPath },
+          rightHoverIcon: (
+            <ButtonIcon
+              hint={`Open in split screen`}
+              hintPos="left"
+              onClick={async (e) => {
+                e.stopPropagation();
+                pushWsPath(wsPath, false, true);
+                updatePalette({ type: null });
+              }}
+            >
+              <SecondaryEditorIcon
+                style={{
+                  height: 18,
+                  width: 18,
+                }}
+              />
+            </ButtonIcon>
+          ),
         };
       });
     },

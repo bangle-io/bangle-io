@@ -118,6 +118,9 @@ export function useCatchError(callback) {
  *          else fallback to the initialValue.
  */
 export function useLocalStorage(key, initialValue) {
+  // TODO i think over time we might populate this with a ton of shit.
+  // we should have a mechanism to kill some of values, for example having timestamp.
+  // and then listing all keys and deleting anything which is old.
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState(() => {
