@@ -156,7 +156,7 @@ function LeftSidebarArea() {
       <div
         className="top-0 text-2xl mt-4"
         style={{
-          padding: '0 var(--left-sidebar-item-x-axis-padding)',
+          padding: '0 15px',
         }}
       >
         {sidebarName}

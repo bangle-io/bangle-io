@@ -124,7 +124,7 @@ function RenderTree(props) {
       leftIcon={<NullIcon style={IconStyle} />}
       rightHoverIcon={
         <ButtonIcon
-          hint="New File"
+          hint="Delete file"
           hintPos="bottom-right"
           onClick={async (e) => {
             e.stopPropagation();
@@ -158,7 +158,7 @@ function RenderTree(props) {
       }
       rightHoverIcon={
         <ButtonIcon
-          hint="New File"
+          hint="New file"
           onClick={async (e) => {
             e.stopPropagation();
             if (depth === 0) {
