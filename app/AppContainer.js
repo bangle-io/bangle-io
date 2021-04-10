@@ -4,12 +4,12 @@ import { UIManagerContext } from 'ui-context/index';
 import { Workspace, resolvePath, useWorkspacePath } from 'workspace/index';
 import { cx, useKeybindings } from 'utils/index';
 
-import { Editor } from './components/Editor';
+import { Editor } from './editor/Editor';
 import { EditorManagerContext } from './editor/EditorManager';
 import { Palette } from './Palette/index';
-import { CloseIcon } from './helper-ui/Icons';
+import { CloseIcon } from 'ui-components/index';
 import { ActivityBar } from './components/ActivityBar';
-import { FileBrowser } from './components/LeftSidebar/FileBrowser';
+import { FileBrowser } from './components/FileBrowser';
 import { OptionsBar } from './components/OptionsBar';
 import { keybindings } from 'config/index';
 

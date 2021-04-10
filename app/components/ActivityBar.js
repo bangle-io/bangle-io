@@ -1,10 +1,9 @@
-import './ActivityBar.css';
 import React, { useContext, useEffect } from 'react';
-import { ButtonIcon } from 'ui-components/ButtonIcon';
 import { UIManagerContext } from 'ui-context/index';
 
-import { FolderIcon } from '../helper-ui/Icons';
+import { ButtonIcon, FolderIcon } from 'ui-components/index';
 import { keybindings } from 'config/index';
+import { cx } from 'utils/index';
 
 ActivityBar.propTypes = {};
 export function ActivityBar() {
@@ -56,8 +55,15 @@ function ActivityBarBox({ widescreen, children, isActive, onClick }) {
       }
       hintPos="right"
       active={Boolean(isActive)}
-      className={`flex justify-center
-          pt-3 pb-3 ${widescreen ? 'border-l-2' : ''} mt-1 mb-1`}
+      className={cx(
+        'flex justify-center pt-3 pb-3 mt-1 mb-1',
+        widescreen && 'border-l-2',
+      )}
+      style={{
+        borderColor: isActive
+          ? 'var(--activity-bar-font-color)'
+          : 'transparent',
+      }}
     >
       {children}
     </ButtonIcon>

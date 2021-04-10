@@ -44,4 +44,5 @@ export function locationToFilePath(location) {
   if (location) {
     return location.pathname.split('/').slice(3).join('/');
   }
+  return null;
 }

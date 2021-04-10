@@ -38,7 +38,7 @@ export async function getWorkspaceInfo(wsName) {
 }
 
 export async function createWorkspace(wsName, type = 'browser', opts = {}) {
-  validatePath(wsName + ':' + 'random_file');
+  validatePath(wsName + ':random_file');
 
   const workspaces = await listWorkspaces();
 

@@ -1,13 +1,14 @@
 import React, { useContext, useMemo } from 'react';
 import { UIManagerContext } from 'ui-context/index';
-import { SidebarRow } from 'ui-components/index';
 import {
+  SidebarRow,
   ChevronDownIcon,
   ChevronRightIcon,
   CloseIcon,
   DocumentAddIcon,
   NullIcon,
-} from '../../helper-ui/Icons';
+  ButtonIcon,
+} from 'ui-components/index';
 import {
   useDeleteFile,
   useGetWorkspaceFiles,
@@ -15,7 +16,6 @@ import {
   resolvePath,
 } from 'workspace/index';
 import { useLocalStorage } from 'utils/hooks';
-import { ButtonIcon } from 'ui-components/ButtonIcon';
 import { useInputPaletteNewFileCommand } from 'app/Palette/Commands';
 
 FileBrowser.propTypes = {};

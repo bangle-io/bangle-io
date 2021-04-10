@@ -11,8 +11,7 @@ import {
   resolvePath,
 } from 'workspace/index';
 import { FILE_PALETTE } from '../paletteTypes';
-import { SecondaryEditorIcon } from 'app/helper-ui/Icons';
-import { ButtonIcon } from 'ui-components/ButtonIcon';
+import { ButtonIcon, SecondaryEditorIcon } from 'ui-components/index';
 
 const LOG = false;
 

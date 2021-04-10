@@ -1,8 +1,6 @@
 import React from 'react';
-import { useWorkspacePath } from 'workspace/index';
 
-export function LocationBreadCrumb() {
-  let { filePath } = useWorkspacePath();
+export function LocationBreadCrumb({ filePath }) {
   const items = (filePath || '').split('/');
   return (
     <div className="w-full z-10 pl-2 py-1">

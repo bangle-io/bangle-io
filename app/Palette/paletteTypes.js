@@ -3,7 +3,7 @@ import {
   FileDocumentIcon,
   NullIcon,
   TerminalIcon,
-} from 'app/helper-ui/Icons';
+} from 'ui-components/index';
 import { keybindings } from 'config/index';
 
 export const FILE_PALETTE = 'file';
