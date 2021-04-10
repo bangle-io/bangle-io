@@ -11,6 +11,7 @@ import {
 import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../../Palette/Palette';
 import { sleep } from 'utils/index';
+import { EditorManager } from 'app/editor/EditorManager';
 
 let result, paletteType, paletteInitialQuery, dispatch;
 
@@ -38,7 +39,6 @@ beforeEach(async () => {
 
   function Comp() {
     ({ paletteType, dispatch } = useContext(UIManagerContext));
-
     return (
       <div>
         <Palette />
@@ -48,7 +48,9 @@ beforeEach(async () => {
 
   result = await render(
     <UIManager>
-      <Comp />
+      <EditorManager>
+        <Comp />
+      </EditorManager>
     </UIManager>,
   );
 });
