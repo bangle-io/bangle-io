@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
@@ -66,6 +67,7 @@ module.exports = (env, argv) => {
           },
         ],
       }),
+      // new BundleAnalyzerPlugin(),
     ],
     module: {
       rules: [
@@ -93,12 +95,9 @@ module.exports = (env, argv) => {
               loader: 'css-loader',
               options: { importLoaders: 1, sourceMap: true },
             },
+
             {
               loader: 'postcss-loader',
-              options: {
-                ident: 'postcss',
-                plugins: [require('tailwindcss'), require('autoprefixer')],
-              },
             },
           ],
         },
