@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
@@ -45,9 +45,11 @@ export const Editor = React.memo(function Editor({
 
   useEffect(() => {
     // whenever paletteType goes undefined focus back on editor
-    if (editor && !editor.view.hasFocus() && paletteType == null) {
-      editor.view.focus();
-    }
+    requestAnimationFrame(() => {
+      if (editor && !editor.view.hasFocus() && paletteType == null) {
+        editor.view.focus();
+      }
+    });
   }, [editor, paletteType]);
 
   const plugins = useCallback(() => {

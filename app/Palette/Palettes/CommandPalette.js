@@ -1,20 +1,44 @@
 import { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
-
+import {
+  toggleHeadingCollapse,
+  uncollapseAllHeadings,
+  defaultKeys as headingKeys,
+} from '@bangle.dev/core/components/heading';
+import {
+  toggleBulletList,
+  toggleTodoList,
+  defaultKeys as bulletListKeys,
+} from '@bangle.dev/core/components/bullet-list';
+import {
+  moveListItemUp,
+  moveListItemDown,
+  defaultKeys as listItemKeys,
+} from '@bangle.dev/core/components/list-item';
+import {
+  convertToParagraph,
+  insertEmptyParagraphAbove,
+  insertEmptyParagraphBelow,
+  defaultKeys as paragraphKeys,
+} from '@bangle.dev/core/components/paragraph';
 import {
   pickADirectory,
-  useCreateMdFile,
   useDeleteFile,
   useRenameActiveFile,
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
-import { useInputPaletteNewFileCommand } from '../Commands';
+import {
+  useDispatchPrimaryEditorCommand,
+  useInputPaletteNewFileCommand,
+} from '../Commands';
 import { COMMAND_PALETTE, INPUT_PALETTE } from '../paletteTypes';
+import { keyDisplayValue } from 'config/index';
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
-
+const addDisabledToTitle = (title, disabled) =>
+  title + (disabled ? ' (🚫 not allowed)' : '');
 /**
  * see FilePalette documentation
  */
@@ -28,6 +52,7 @@ export function useCommandPalette({ updatePalette }) {
     useNewFileSystemWS(),
     useRenameFile({ updatePalette }),
     useDeleteActiveFile(),
+    usePrimaryEditorCommands(),
   ];
 }
 
@@ -50,7 +75,7 @@ function useToggleTheme() {
 
 function useToggleSidebar() {
   const { dispatch } = useContext(UIManagerContext);
-  const uid = 'TOGGLE_SIDEBAR_COMMAND';
+  const uid = 'TOGGLE_FILE_SIDEBAR_COMMAND';
   const onExecute = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
@@ -61,7 +86,7 @@ function useToggleSidebar() {
 
   return queryMatch({
     uid,
-    title: 'View: Toggle sidebar',
+    title: 'View: Toggle file sidebar',
     onExecute,
   });
 }
@@ -192,6 +217,142 @@ export function useDeleteActiveFile() {
     title: `Workspace: Delete current file '${filePath}'`,
     onExecute,
   });
+}
+
+function usePrimaryEditorCommands() {
+  const executeEditorCommand = useDispatchPrimaryEditorCommand(false);
+  const dryExecuteEditorCommand = useDispatchPrimaryEditorCommand(true);
+
+  return ({ query, paletteType }) => {
+    const commands = [];
+    const toggleHeadingCollapseDisabled = !dryExecuteEditorCommand(
+      toggleHeadingCollapse,
+    );
+    commands.push({
+      uid: 'toggleHeadingCollapse',
+      title: addDisabledToTitle(
+        'Editor: Collapse/uncollapse current heading',
+        toggleHeadingCollapseDisabled,
+      ),
+      disabled: toggleHeadingCollapseDisabled,
+      onExecute: () => {
+        executeEditorCommand(toggleHeadingCollapse);
+        return true;
+      },
+    });
+
+    commands.push({
+      uid: 'uncollapseAllHeadings',
+      title: 'Editor: Uncollapse all headings',
+      onExecute: () => {
+        executeEditorCommand(uncollapseAllHeadings);
+        return true;
+      },
+    });
+
+    commands.push({
+      uid: 'convertToParagraph',
+      title: addDisabledToTitle(
+        'Editor: Convert to paragraph',
+        !dryExecuteEditorCommand(convertToParagraph),
+      ),
+      keybinding: keyDisplayValue(paragraphKeys.convertToParagraph),
+      disabled: !dryExecuteEditorCommand(convertToParagraph),
+      onExecute: () => {
+        executeEditorCommand(convertToParagraph);
+        return true;
+      },
+    });
+
+    commands.push({
+      uid: 'insertParagraphAbove',
+      title: addDisabledToTitle(
+        'Editor: Insert an empty paragraph above',
+        !dryExecuteEditorCommand(insertEmptyParagraphAbove),
+      ),
+      keybinding: keyDisplayValue(paragraphKeys.insertEmptyParaAbove),
+      disabled: !dryExecuteEditorCommand(insertEmptyParagraphAbove),
+      onExecute: () => {
+        executeEditorCommand(insertEmptyParagraphAbove);
+        return true;
+      },
+    });
+
+    commands.push({
+      uid: 'insertParagraphBelow',
+      title: addDisabledToTitle(
+        'Editor: Insert an empty paragraph below',
+        !dryExecuteEditorCommand(insertEmptyParagraphBelow),
+      ),
+      keybinding: keyDisplayValue(paragraphKeys.insertEmptyParaBelow),
+      disabled: !dryExecuteEditorCommand(insertEmptyParagraphBelow),
+      onExecute: () => {
+        executeEditorCommand(insertEmptyParagraphBelow);
+        return true;
+      },
+    });
+
+    commands.push({
+      uid: 'toggleBulletList',
+      title: 'Editor: Convert to a bullet list',
+      keybinding: keyDisplayValue(bulletListKeys.toggle),
+      // TODO the dry runninng of list commands is broken
+      onExecute: () => {
+        executeEditorCommand(toggleBulletList);
+        return true;
+      },
+    });
+
+    commands.push({
+      uid: 'toggleTodoList',
+      title: 'Editor: Convert to a todo list',
+      keybinding: keyDisplayValue(bulletListKeys.toggleTodo),
+      onExecute: () => {
+        executeEditorCommand(toggleTodoList);
+        return true;
+      },
+    });
+
+    commands.push({
+      uid: 'moveListItemUp',
+      title: addDisabledToTitle(
+        'Editor: Move to list item up',
+        !dryExecuteEditorCommand(moveListItemUp),
+      ),
+      keybinding: keyDisplayValue(listItemKeys.moveUp),
+      disabled: !dryExecuteEditorCommand(moveListItemUp),
+      onExecute: () => {
+        executeEditorCommand(moveListItemUp);
+        return true;
+      },
+    });
+
+    commands.push({
+      uid: 'moveListItemDown',
+      title: addDisabledToTitle(
+        'Editor: Move to list item down',
+        !dryExecuteEditorCommand(moveListItemDown),
+      ),
+      disabled: !dryExecuteEditorCommand(moveListItemDown),
+      keybinding: keyDisplayValue(listItemKeys.moveDown),
+      onExecute: () => {
+        executeEditorCommand(moveListItemDown);
+        return true;
+      },
+    });
+
+    return commands
+      .filter((item) => queryMatch(item)({ query, paletteType }))
+      .sort((a, b) => {
+        if (a.disabled) {
+          return 1;
+        }
+        if (b.disabled) {
+          return -1;
+        }
+        return 0;
+      });
+  };
 }
 
 function queryMatch(command) {

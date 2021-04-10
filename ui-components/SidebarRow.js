@@ -1,5 +1,6 @@
 import './SidebarRow.css';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { cx } from 'utils/index';
 
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;
@@ -17,6 +18,7 @@ export function SidebarRow({
   className = '',
   scrollIntoViewIfNeeded = true,
   style = {},
+  disabled,
 }) {
   const ref = useRef(null);
 
@@ -49,9 +51,13 @@ export function SidebarRow({
         onMouseEnter={mouseEnter}
         onMouseLeave={mouseLeave}
         ref={ref}
-        className={`flex side-bar-row flex-row items-center cursor-pointer ${className} ${
-          isActive ? `active` : ''
-        } ${isHovered ? 'hover' : ''}`}
+        className={cx(
+          'flex side-bar-row flex-row items-center',
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+          className,
+          isActive && 'active',
+          isHovered && 'hover',
+        )}
         style={{
           paddingLeft: depth * basePadding,
           paddingRight: PADDING_OFFSET,
@@ -59,7 +65,14 @@ export function SidebarRow({
         }}
       >
         {leftIcon}
-        <span className="text-lg truncate select-none">{title}</span>
+        <span
+          className={cx('text-lg truncate select-none')}
+          style={{
+            color: disabled ? 'var(--font-lighter-color)' : 'inherit',
+          }}
+        >
+          {title}
+        </span>
         <span className="flex-1 flex "></span>
         {rightIcon}
         {isHovered ? rightHoverIcon : null}

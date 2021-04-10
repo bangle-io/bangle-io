@@ -14,6 +14,10 @@ const ResolvePaletteItemShape = PropTypes.shape({
   // passed with params (item, itemIndex, event) - return true or Promise that resolve to true to dismiss the palette
   onExecute: PropTypes.func.isRequired,
   rightHoverIcon: PropTypes.element,
+  // will change the font color of item and also add a not allowed text in title
+  disabled: PropTypes.bool,
+  // just used for displaying a shortcut for a particular item
+  keybinding: PropTypes.string,
 });
 
 PaletteUI.propTypes = {
@@ -127,6 +131,10 @@ export function PaletteContainer({
         return;
       }
 
+      if (item.disabled) {
+        return;
+      }
+
       const result = item.onExecute(item, itemIndex, event);
       if (result === true) {
         event.preventDefault();
@@ -166,10 +174,14 @@ export function PaletteContainer({
         {resolvedItems.map((item, i) => {
           return (
             <SidebarRow
+              disabled={item.disabled}
               key={item.uid}
               isActive={getActiveIndex(counter, resolvedItems.length) === i}
               title={addBoldToTitle(item.title, query)}
               rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
               onClick={(e) => {
                 executeHandler(i, e);
               }}
