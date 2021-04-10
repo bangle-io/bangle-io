@@ -148,7 +148,8 @@ class UIState {
 
     if (
       obj.theme === 'dark' ||
-      (!this.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      (!this.theme &&
+        window?.matchMedia?.('(prefers-color-scheme: dark)').matches)
     ) {
       this.theme = 'dark';
     } else {
