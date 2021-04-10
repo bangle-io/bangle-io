@@ -3,7 +3,7 @@
 exports[`Correctly filters commands 1`] = `
 NodeList [
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer  active "
+    class="flex side-bar-row flex-row items-center cursor-pointer active"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -14,22 +14,28 @@ NodeList [
     <span
       class="flex-1 flex "
     />
+    <kbd
+      class="whitespace-nowrap"
+    />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    class="flex side-bar-row flex-row items-center cursor-pointer"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
       class="text-lg truncate select-none"
     >
-      View: Toggle sidebar
+      View: Toggle file sidebar
     </span>
     <span
       class="flex-1 flex "
     />
+    <kbd
+      class="whitespace-nowrap"
+    />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    class="flex side-bar-row flex-row items-center cursor-pointer"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -40,9 +46,12 @@ NodeList [
     <span
       class="flex-1 flex "
     />
+    <kbd
+      class="whitespace-nowrap"
+    />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    class="flex side-bar-row flex-row items-center cursor-pointer"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -53,9 +62,12 @@ NodeList [
     <span
       class="flex-1 flex "
     />
+    <kbd
+      class="whitespace-nowrap"
+    />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    class="flex side-bar-row flex-row items-center cursor-pointer"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -66,9 +78,12 @@ NodeList [
     <span
       class="flex-1 flex "
     />
+    <kbd
+      class="whitespace-nowrap"
+    />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer   "
+    class="flex side-bar-row flex-row items-center cursor-pointer"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -79,6 +94,167 @@ NodeList [
     <span
       class="flex-1 flex "
     />
+    <kbd
+      class="whitespace-nowrap"
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Uncollapse all headings
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Convert to a bullet list
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    >
+      ⇧-Ctrl-8
+    </kbd>
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Convert to a todo list
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    >
+      ⇧-Ctrl-7
+    </kbd>
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Collapse/uncollapse current heading (🚫 not allowed)
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Convert to paragraph (🚫 not allowed)
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    >
+      Ctrl-⇧-0
+    </kbd>
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Insert an empty paragraph above (🚫 not allowed)
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    >
+      Ctrl-⇧-Enter
+    </kbd>
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Insert an empty paragraph below (🚫 not allowed)
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    >
+      Ctrl-Enter
+    </kbd>
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Move to list item up (🚫 not allowed)
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    >
+      Alt-ArrowUp
+    </kbd>
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Editor: Move to list item down (🚫 not allowed)
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    >
+      Alt-ArrowDown
+    </kbd>
   </div>,
 ]
 `;
@@ -132,7 +308,7 @@ exports[`Correctly switches to file type 2`] = `
         class="overflow-y-auto"
       >
         <div
-          class="flex side-bar-row flex-row items-center cursor-pointer  active "
+          class="flex side-bar-row flex-row items-center cursor-pointer active"
           style="padding-left: 16px; padding-right: 16px;"
         >
           <span
@@ -142,6 +318,9 @@ exports[`Correctly switches to file type 2`] = `
           </span>
           <span
             class="flex-1 flex "
+          />
+          <kbd
+            class="whitespace-nowrap"
           />
         </div>
       </div>

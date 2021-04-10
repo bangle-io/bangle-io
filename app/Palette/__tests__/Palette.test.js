@@ -85,7 +85,7 @@ test('Correctly switches to file type', async () => {
     .toMatchInlineSnapshot(`
     Array [
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer  active "
+        class="flex side-bar-row flex-row items-center cursor-pointer active"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
@@ -95,6 +95,9 @@ test('Correctly switches to file type', async () => {
         </span>
         <span
           class="flex-1 flex "
+        />
+        <kbd
+          class="whitespace-nowrap"
         />
       </div>,
     ]
@@ -122,7 +125,7 @@ test('Correctly filters commands', async () => {
     .toMatchInlineSnapshot(`
     NodeList [
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer  active "
+        class="flex side-bar-row flex-row items-center cursor-pointer active"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
@@ -133,18 +136,24 @@ test('Correctly filters commands', async () => {
         <span
           class="flex-1 flex "
         />
+        <kbd
+          class="whitespace-nowrap"
+        />
       </div>,
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer   "
+        class="flex side-bar-row flex-row items-center cursor-pointer"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
           class="text-lg truncate select-none"
         >
-          View: Toggle sidebar
+          View: Toggle file sidebar
         </span>
         <span
           class="flex-1 flex "
+        />
+        <kbd
+          class="whitespace-nowrap"
         />
       </div>,
     ]
