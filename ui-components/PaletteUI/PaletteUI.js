@@ -180,7 +180,9 @@ export function PaletteContainer({
               title={addBoldToTitle(item.title, query)}
               rightHoverIcon={item.rightHoverIcon}
               rightIcon={
-                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+                item.keybinding && (
+                  <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+                )
               }
               onClick={(e) => {
                 executeHandler(i, e);
