@@ -11,6 +11,7 @@ export const COMMAND_PALETTE = 'command';
 export const WORKSPACE_PALETTE = 'workspace';
 export const INPUT_PALETTE = 'input';
 export const QUESTION_PALETTE = 'question';
+export const HEADING_PALETTE = 'heading-palette';
 
 export const palettes = {
   [FILE_PALETTE]: {
@@ -39,6 +40,12 @@ export const palettes = {
   },
   [QUESTION_PALETTE]: {
     type: QUESTION_PALETTE,
+    Icon: NullIcon,
+    keybinding: null,
+    inputPlaceholder: null,
+  },
+  [HEADING_PALETTE]: {
+    type: HEADING_PALETTE,
     Icon: NullIcon,
     keybinding: null,
     inputPlaceholder: null,

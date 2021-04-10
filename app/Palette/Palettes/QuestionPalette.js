@@ -36,6 +36,14 @@ export function useQuestionPalette({ updatePalette }) {
           return false;
         },
       },
+      {
+        uid: 'heading-question-palette',
+        title: '# Jump to a heading',
+        onExecute: () => {
+          updatePalette({ type: WORKSPACE_PALETTE });
+          return false;
+        },
+      },
     ];
   };
 }
