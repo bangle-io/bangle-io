@@ -41,8 +41,7 @@
     "last 3 chrome version"
   ],
   "dependencies": {
-    "punycode": "^2.1.1",
-    "tailwindcss": "^1.9.6"
+    "punycode": "^2.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.13.8",
@@ -53,7 +52,7 @@
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^13.1.1",
-    "autoprefixer": "^9.8.6",
+    "autoprefixer": "^10.2.5",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
@@ -74,16 +73,20 @@
     "html-webpack-plugin": "^5.3.1",
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
-    "mini-css-extract-plugin": "^1.4.0",
+    "mini-css-extract-plugin": "^1.4.1",
     "pnp-webpack-plugin": "^1.6.4",
-    "postcss-custom-properties": "^9.2.0",
-    "postcss-loader": "^3.0.0",
-    "postcss-nested": "^4.2.3",
+    "postcss": "^8.2.9",
+    "postcss-custom-properties": "^11.0.0",
+    "postcss-import": "^14.0.1",
+    "postcss-loader": "^5.2.0",
+    "postcss-nested": "^5.0.5",
     "prettier": "^2.2.1",
     "serve": "^11.3.2",
     "style-loader": "^2.0.0",
     "surge": "^0.21.7",
-    "webpack": "^5.30.0",
+    "tailwindcss": "^2.1.1",
+    "webpack": "^5.31.2",
+    "webpack-bundle-analyzer": "^4.4.0",
     "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^3.11.2"
   },

@@ -34,18 +34,20 @@ export function useHeadingPalette({ updatePalette }) {
           title: r.title,
           onExecute: () => {
             // Using this to wait for editor to get focused
-            requestAnimationFrame(() => {
-              if (!primaryEditor || primaryEditor.destroyed) {
-                return;
-              }
-              const { dispatch, state } = primaryEditor.view;
-              const tr = state.tr;
-              dispatch(
-                tr
-                  .setSelection(Selection.near(tr.doc.resolve(r.offset)))
-                  .scrollIntoView(),
-              );
-            });
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                if (!primaryEditor || primaryEditor.destroyed) {
+                  return;
+                }
+                const { dispatch, state } = primaryEditor.view;
+                const tr = state.tr;
+                dispatch(
+                  tr
+                    .setSelection(Selection.near(tr.doc.resolve(r.offset)))
+                    .scrollIntoView(),
+                );
+              });
+            }, 10);
 
             return true;
           },

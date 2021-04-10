@@ -20,5 +20,8 @@
   "scripts": {},
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "tailwindcss": "^2.1.1"
   }
 }
