@@ -221,7 +221,7 @@ describe('PaletteUI', () => {
             class="overflow-y-auto"
           >
             <div
-              class="flex side-bar-row flex-row items-center cursor-pointer  active "
+              class="flex side-bar-row flex-row items-center cursor-pointer active"
               style="padding-left: 16px; padding-right: 16px;"
             >
               <span
@@ -231,6 +231,9 @@ describe('PaletteUI', () => {
               </span>
               <span
                 class="flex-1 flex "
+              />
+              <kbd
+                class="whitespace-nowrap"
               />
             </div>
           </div>
@@ -269,7 +272,7 @@ describe('PaletteUI', () => {
             class="overflow-y-auto"
           >
             <div
-              class="flex side-bar-row flex-row items-center cursor-pointer  active "
+              class="flex side-bar-row flex-row items-center cursor-pointer active"
               style="padding-left: 16px; padding-right: 16px;"
             >
               <span
@@ -279,6 +282,9 @@ describe('PaletteUI', () => {
               </span>
               <span
                 class="flex-1 flex "
+              />
+              <kbd
+                class="whitespace-nowrap"
               />
             </div>
           </div>
