@@ -102,8 +102,10 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
     new Plugin({
       props: {
         // This is needed by jumping to a heading to atleast show up
-        // in the middle of screen
-        scrollMargin: parseInt(window.innerHeight / 2),
+        // in the middle of screen.
+        // TODO the /4 value makes it a bit weird when moving a node up
+        // or down.
+        scrollMargin: parseInt(window.innerHeight / 4),
       },
     }),
   ];

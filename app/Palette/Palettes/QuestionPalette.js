@@ -1,6 +1,7 @@
 import {
   COMMAND_PALETTE,
   FILE_PALETTE,
+  HEADING_PALETTE,
   QUESTION_PALETTE,
   WORKSPACE_PALETTE,
 } from '../paletteTypes';
@@ -40,7 +41,7 @@ export function useQuestionPalette({ updatePalette }) {
         uid: 'heading-question-palette',
         title: '# Jump to a heading',
         onExecute: () => {
-          updatePalette({ type: WORKSPACE_PALETTE });
+          updatePalette({ type: HEADING_PALETTE });
           return false;
         },
       },

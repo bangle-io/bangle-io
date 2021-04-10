@@ -15,37 +15,51 @@ export function useHeadingPalette({ updatePalette }) {
       return null;
     }
 
-    const headings = [];
-
+    const headingNodes = [];
     primaryEditor.view.state.doc.forEach((node, offset, i) => {
-      console.log(node.toString(), offset);
       if (node.type.name === 'heading') {
-        headings.push({
-          uid: 'heading' + i,
+        headingNodes.push({
+          offset,
+          level: node.attrs.level,
           title: node.textContent,
+        });
+      }
+    });
+
+    return headingNodes
+      .filter((r) => strMatch(r.title + ' ' + r.level, query))
+      .map((r, i) => {
+        return {
+          uid: 'heading' + i,
+          title: r.title,
           onExecute: () => {
             // Using this to wait for editor to get focused
             requestAnimationFrame(() => {
               if (!primaryEditor || primaryEditor.destroyed) {
-                // dismiss it
                 return;
               }
               const { dispatch, state } = primaryEditor.view;
               const tr = state.tr;
               dispatch(
                 tr
-                  // .setSelection(Selection.atEnd(tr.doc))
-                  .setSelection(Selection.near(tr.doc.resolve(offset)))
+                  .setSelection(Selection.near(tr.doc.resolve(r.offset)))
                   .scrollIntoView(),
               );
             });
 
             return true;
           },
-        });
-      }
-    });
-
-    return headings;
+        };
+      });
   };
+}
+
+function strMatch(a, b) {
+  b = b.toLocaleLowerCase();
+  if (Array.isArray(a)) {
+    return a.filter(Boolean).some((str) => strMatch(str, b));
+  }
+
+  a = a.toLocaleLowerCase();
+  return a.includes(b) || b.includes(a);
 }
