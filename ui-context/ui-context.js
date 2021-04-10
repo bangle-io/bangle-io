@@ -30,7 +30,7 @@ export function UIManager({ children }) {
         paletteType: undefined,
         paletteInitialQuery: undefined,
         paletteMetadata: undefined,
-        theme: 'light',
+        theme: null,
       },
       true,
     ),
@@ -145,6 +145,15 @@ class UIState {
     this.theme = obj.theme;
 
     persistState({ sidebar: this.sidebar, theme: this.theme });
+
+    if (
+      obj.theme === 'dark' ||
+      (!this.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      this.theme = 'dark';
+    } else {
+      this.theme = 'light';
+    }
   }
 
   // Derived field
