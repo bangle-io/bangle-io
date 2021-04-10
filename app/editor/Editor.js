@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
@@ -27,6 +27,7 @@ import {
   menuKey,
   emojiSuggestKey,
 } from 'editor/index';
+import { EditorManagerContext } from './EditorManager';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -35,9 +36,12 @@ export const Editor = React.memo(function Editor({
   isFirst,
   wsPath,
   paletteType,
-  sendRequest,
 }) {
-  const [editor, setEditor] = useState();
+  const { sendRequest, setPrimaryEditor, primaryEditor } = useContext(
+    EditorManagerContext,
+  );
+
+  const editor = isFirst ? primaryEditor : null;
 
   useEffect(() => {
     // whenever paletteType goes undefined focus back on editor
@@ -54,7 +58,7 @@ export const Editor = React.memo(function Editor({
     (editor) => {
       if (isFirst) {
         window.editor = editor;
-        setEditor(editor);
+        setPrimaryEditor(editor);
         if (!config.isIntegration) {
           getIdleCallback(() => {
             // import(
@@ -65,8 +69,12 @@ export const Editor = React.memo(function Editor({
           });
         }
       }
+
+      return () => {
+        setPrimaryEditor(undefined);
+      };
     },
-    [isFirst],
+    [isFirst, setPrimaryEditor],
   );
 
   const renderNodeViews = useCallback(
@@ -138,65 +146,8 @@ export const Editor = React.memo(function Editor({
   );
 });
 
-// TODO This is causing bugs
-// const cache = new Map();
-// function usePersistSelection(wsPath, isFirst, editor) {
-//   useEffect(() => {
-//     const key = 'editorLastHead/' + wsPath;
-//     const { selectionHead } = cache.get(key) || {};
-
-//     if (editor && wsPath && isFirst && selectionHead > 0) {
-//       // delay it a bit
-//       // TODO we need a better event handler
-//       // from the editor to only trigger this after document
-//       // has settled.
-//       setTimeout(() => {
-//         requestAnimationFrame(() => {
-//           cache.delete(key);
-//           const { state, dispatch } = editor.view;
-//           const SelectionAtStart =
-//             state.selection.from === Selection.atStart(state.doc);
-
-//           // log(
-//           //   'dispatching selection moved',
-//           //   wsPath,
-//           //   selectionHead,
-//           //   state.doc.content.size,
-//           //   SelectionAtStart,
-//           //   selectionHead < state.doc.content.size &&
-//           //     selectionHead > 0 &&
-//           //     !SelectionAtStart,
-//           // );
-//           if (
-//             selectionHead < state.doc.content.size &&
-//             selectionHead > 0 &&
-//             !SelectionAtStart
-//           ) {
-//             let { tr } = state;
-//             log('dispatching location', selectionHead);
-//             tr = tr
-//               .setSelection(Selection.near(tr.doc.resolve(selectionHead)))
-//               .scrollIntoView();
-//             dispatch(tr);
-//           }
-//         });
-//       }, 10);
-//     }
-//     return () => {
-//       if (editor?.view && isFirst && wsPath) {
-//         const selectionHead = editor.view.state.selection.head;
-//         log('saving position', key, selectionHead);
-//         cache.set(key, {
-//           selectionHead,
-//         });
-//       }
-//     };
-//   }, [wsPath, isFirst, editor]);
-// }
-
 Editor.propTypes = {
   isFirst: PropTypes.bool.isRequired,
   wsPath: PropTypes.string.isRequired,
   paletteType: PropTypes.string,
-  sendRequest: PropTypes.func.isRequired,
 };

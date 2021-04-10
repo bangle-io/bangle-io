@@ -15,10 +15,11 @@ export const EditorManagerContext = React.createContext();
  */
 export function EditorManager({ children }) {
   const { sendRequest } = useManager();
+  const [primaryEditor, setPrimaryEditor] = useState();
 
   const value = useMemo(() => {
-    return { sendRequest };
-  }, [sendRequest]);
+    return { sendRequest, setPrimaryEditor, primaryEditor };
+  }, [sendRequest, setPrimaryEditor, primaryEditor]);
 
   return (
     <EditorManagerContext.Provider value={value}>
