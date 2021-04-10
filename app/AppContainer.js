@@ -5,7 +5,6 @@ import { Workspace, resolvePath, useWorkspacePath } from 'workspace/index';
 import { cx, useKeybindings } from 'utils/index';
 
 import { Editor } from './editor/Editor';
-import { EditorManagerContext } from './editor/EditorManager';
 import { Palette } from './Palette/index';
 import { CloseIcon } from 'ui-components/index';
 import { ActivityBar } from './components/ActivityBar';
@@ -67,7 +66,6 @@ function WorkspacePage({ secondaryEditor, showTabs }) {
 }
 
 function EditorArea({ isFirst = false, showTabs }) {
-  const { sendRequest } = useContext(EditorManagerContext);
   const { paletteType } = useContext(UIManagerContext);
 
   let {
@@ -98,7 +96,6 @@ function EditorArea({ isFirst = false, showTabs }) {
             key={wsPath}
             isFirst={isFirst}
             wsPath={wsPath}
-            sendRequest={sendRequest}
             paletteType={paletteType}
           />
         )}

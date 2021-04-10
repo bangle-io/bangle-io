@@ -8,6 +8,7 @@ import { useCommandPalette } from './Palettes/CommandPalette';
 import { useFilePalette } from './Palettes/FilePalette';
 import { useInputPalette } from './Palettes/InputPalette';
 import { useQuestionPalette } from './Palettes/QuestionPalette';
+import { useHeadingPalette } from './Palettes/HeadingPalette';
 import {
   COMMAND_PALETTE,
   FILE_PALETTE,
@@ -15,6 +16,7 @@ import {
   WORKSPACE_PALETTE,
   QUESTION_PALETTE,
   palettes,
+  HEADING_PALETTE,
 } from './paletteTypes';
 import { useWorkspacePalette } from './Palettes/WorkspacePalette';
 
@@ -45,6 +47,7 @@ export function Palette() {
     useCommandPalette({ updatePalette }),
     useInputPalette({ metadata, updatePalette }),
     useQuestionPalette({ updatePalette }),
+    useHeadingPalette({ updatePalette }),
   ];
 
   return (
@@ -82,6 +85,10 @@ const parseRawQuery = (currentType, rawQuery) => {
     return { paletteType: QUESTION_PALETTE, query: rawQuery.slice(1) };
   }
 
+  if (rawQuery.startsWith('#')) {
+    return { paletteType: HEADING_PALETTE, query: rawQuery.slice(1) };
+  }
+
   // Disallow changing of palette type
   if (currentType === INPUT_PALETTE) {
     return { paletteType: currentType, query: rawQuery };
@@ -101,6 +108,10 @@ const generateRawQuery = (paletteType, query) => {
 
   if (paletteType === QUESTION_PALETTE) {
     return '?' + query;
+  }
+
+  if (paletteType === HEADING_PALETTE) {
+    return '#' + query;
   }
 
   if (paletteType === INPUT_PALETTE) {

@@ -99,12 +99,14 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
     timestamp.plugins(),
     sticker.plugins(),
     collapsibleHeadingDeco.plugins(),
-    // new Plugin({
-    //   props: {
-    //     editable() {
-    //       return false;
-    //     },
-    //   },
-    // }),
+    new Plugin({
+      props: {
+        // This is needed by jumping to a heading to atleast show up
+        // in the middle of screen.
+        // TODO the /4 value makes it a bit weird when moving a node up
+        // or down.
+        scrollMargin: parseInt(window.innerHeight / 4),
+      },
+    }),
   ];
 };

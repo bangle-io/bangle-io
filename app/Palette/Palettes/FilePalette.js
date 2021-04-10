@@ -86,7 +86,7 @@ export function useFilePalette({ paletteType, updatePalette }) {
         };
       });
     },
-    [onExecute, files],
+    [onExecute, updatePalette, pushWsPath, files],
   );
 
   return result;
