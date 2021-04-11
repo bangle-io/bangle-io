@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@bangle.dev/core": "0.8.0",
+    "@octokit/rest": "^18.5.2",
     "config": "workspace:*",
     "editor": "workspace:*",
     "idb-keyval": "^5.0.4",
