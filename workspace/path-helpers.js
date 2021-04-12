@@ -1,4 +1,4 @@
-const pathValidRegex = /^[0-9a-zA-Z_\-. /:]+$/;
+const pathValidRegex = /^[0-9a-zA-Z_\-. /:=',()–!\[\]]+$/;
 const last = (arr) => arr[arr.length - 1];
 
 export function validatePath(wsPath) {
@@ -6,7 +6,6 @@ export function validatePath(wsPath) {
     !pathValidRegex.test(wsPath) ||
     wsPath.split('/').some((r) => r.length === 0)
   ) {
-    console.log(wsPath);
     throw new Error('Invalid path ' + wsPath);
   }
 

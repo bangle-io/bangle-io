@@ -97,24 +97,45 @@ export async function saveDoc(wsPath, doc) {
   }
 }
 
-export async function createFile(wsPath, doc) {
+/**
+ *
+ * @param {*} wsPath
+ * @param {*} content
+ * @param {'doc'|'markdown'} contentType
+ */
+export async function createFile(wsPath, content, contentType = 'doc') {
   validateWsFilePath(wsPath);
   const { wsName, filePath } = resolvePath(wsPath);
   const workspace = await getWorkspaceInfo(wsName);
 
   switch (workspace.type) {
     case 'browser': {
-      await IndexDBIO.createFile(wsPath, {
-        doc: doc.toJSON(),
-      });
+      if (contentType === 'doc') {
+        await IndexDBIO.createFile(wsPath, {
+          doc: content.toJSON(),
+        });
+      } else if (contentType === 'markdown') {
+        await IndexDBIO.createFile(wsPath, {
+          doc: markdownParser(content).toJSON(),
+        });
+      } else {
+        throw new Error('Unknown content type');
+      }
       break;
     }
 
     case 'nativefs': {
       const { rootDirHandle } = workspace.metadata;
       const path = toNativePath(rootDirHandle, filePath);
-      await nativeFS.saveFile(path, rootDirHandle, markdownSerializer(doc));
-
+      let markdown;
+      if (contentType === 'doc') {
+        markdown = markdownSerializer(content);
+      } else if (contentType === 'markdown') {
+        markdown = content;
+      } else {
+        throw new Error('Unknown content type');
+      }
+      await nativeFS.saveFile(path, rootDirHandle, markdown);
       break;
     }
 

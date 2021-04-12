@@ -50,7 +50,9 @@ export function useCommandPalette({ updatePalette }) {
     useRemoveActiveWorkspace(),
     useNewBrowserWS({ updatePalette }),
     useNewFileSystemWS(),
+    useImportWSFromGithub({ updatePalette }),
     useRenameFile({ updatePalette }),
+    useSaveGithubToken({ updatePalette }),
     useDeleteActiveFile(),
     usePrimaryEditorCommands(),
   ];
@@ -177,6 +179,61 @@ function useNewFileSystemWS() {
   return queryMatch({
     uid,
     title: 'Workspace: New workspace in filesystem',
+    onExecute,
+  });
+}
+
+function useImportWSFromGithub({ updatePalette }) {
+  const uid = 'IMPORT_WS_FROM_GITHUB';
+  const { importWorkspaceFromGithub } = useWorkspaces();
+
+  const onExecute = useCallback(async () => {
+    updatePalette({
+      type: INPUT_PALETTE,
+      metadata: {
+        inputPlaceholder:
+          'Enter a Github repos url ex: https://github.com/learn-anything/books',
+        onInputConfirm: async (query) => {
+          if (query) {
+            return importWorkspaceFromGithub(query, 'browser', {
+              token: localStorage.getItem('github_token'),
+            });
+          }
+        },
+      },
+    });
+
+    return false;
+  }, [importWorkspaceFromGithub, updatePalette]);
+
+  return queryMatch({
+    uid,
+    title: 'Workspace: Import workspace from a Github URL',
+    onExecute,
+  });
+}
+
+function useSaveGithubToken({ updatePalette }) {
+  const uid = 'SAVE_GITHUB_TOKEN';
+
+  const onExecute = useCallback(async () => {
+    updatePalette({
+      type: INPUT_PALETTE,
+      metadata: {
+        inputPlaceholder:
+          'Enter your personal Github token this will be saved in your browser',
+        onInputConfirm: async (query) => {
+          window.localStorage.setItem('github_token', query);
+        },
+      },
+    });
+
+    return false;
+  }, [updatePalette]);
+
+  return queryMatch({
+    uid,
+    title: 'Workspace: Save personal Github token',
     onExecute,
   });
 }

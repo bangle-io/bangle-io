@@ -48,6 +48,8 @@ export class IndexDBIO {
   }
 
   static async listFiles(wsName) {
+    // it might be a good idea in future to clean up dead
+    // files whose workspaces do not exist
     const keys = (await idb.keys()) || [];
 
     return keys.filter((k) => k.startsWith(wsName + ':'));
