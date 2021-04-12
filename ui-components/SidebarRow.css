@@ -2,7 +2,7 @@
   background-color: var(--bg-stronger-color);
 }
 
-.side-bar-row:hover {
+.side-bar-row.hover-allowed:hover {
   background-color: var(--accent-2-color);
 }
 

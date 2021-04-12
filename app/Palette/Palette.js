@@ -60,7 +60,7 @@ export function Palette() {
       parseRawQuery={parseRawQuery}
       generateRawQuery={generateRawQuery}
       paletteItems={paletteItems}
-      className={`fadeInScaleAnimation bangle-palette ${
+      className={`fadeInScaleAnimation bangle-palette shadow-2xl ${
         widescreen ? 'widescreen' : ''
       }`}
     />

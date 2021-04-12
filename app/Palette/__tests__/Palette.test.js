@@ -85,7 +85,7 @@ test('Correctly switches to file type', async () => {
     .toMatchInlineSnapshot(`
     Array [
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer active"
+        class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
@@ -125,7 +125,7 @@ test('Correctly filters commands', async () => {
     .toMatchInlineSnapshot(`
     NodeList [
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer active"
+        class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
@@ -141,7 +141,7 @@ test('Correctly filters commands', async () => {
         />
       </div>,
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer"
+        class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span

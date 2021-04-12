@@ -1,6 +1,6 @@
 import './SidebarRow.css';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { cx } from 'utils/index';
+import { cx, isTouchDevice } from 'utils/index';
 
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;
@@ -19,6 +19,8 @@ export function SidebarRow({
   scrollIntoViewIfNeeded = true,
   style = {},
   disabled,
+  // on touch devices having :hover forces you to click twice
+  allowHover = !isTouchDevice(),
 }) {
   const ref = useRef(null);
 
@@ -37,12 +39,12 @@ export function SidebarRow({
   }, [scrollIntoViewIfNeeded, isActive]);
 
   const mouseEnter = useCallback(() => {
-    setHover(true);
-  }, []);
+    allowHover && setHover(true);
+  }, [allowHover]);
 
   const mouseLeave = useCallback(() => {
-    setHover(false);
-  }, []);
+    allowHover && setHover(false);
+  }, [allowHover]);
 
   return (
     <>
@@ -56,7 +58,7 @@ export function SidebarRow({
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           className,
           isActive && 'active',
-          isHovered && 'hover',
+          allowHover && 'hover-allowed',
         )}
         style={{
           paddingLeft: depth * basePadding,

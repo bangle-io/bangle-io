@@ -293,6 +293,9 @@ export const PaletteInputUI = React.forwardRef(
         {paletteTypeIcon}
         <input
           type="text"
+          autoCapitalize="off"
+          spellCheck="false"
+          autoCorrect="off"
           aria-label="palette-input"
           className="flex-grow px-2"
           ref={inputRef}

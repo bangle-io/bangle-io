@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
@@ -32,11 +32,7 @@ import { EditorManagerContext } from './EditorManager';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
-export const Editor = React.memo(function Editor({
-  isFirst,
-  wsPath,
-  paletteType,
-}) {
+export const Editor = function Editor({ isFirst, wsPath, grabFocus }) {
   const { sendRequest, setPrimaryEditor, primaryEditor } = useContext(
     EditorManagerContext,
   );
@@ -44,13 +40,12 @@ export const Editor = React.memo(function Editor({
   const editor = isFirst ? primaryEditor : null;
 
   useEffect(() => {
-    // whenever paletteType goes undefined focus back on editor
     requestAnimationFrame(() => {
-      if (editor && !editor.view.hasFocus() && paletteType == null) {
+      if (grabFocus && editor && !editor.view.hasFocus()) {
         editor.view.focus();
       }
     });
-  }, [editor, paletteType]);
+  }, [editor, grabFocus]);
 
   const plugins = useCallback(() => {
     return getPlugins({ sendRequest, wsPath });
@@ -146,10 +141,11 @@ export const Editor = React.memo(function Editor({
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
     </BangleEditor>
   );
-});
+};
 
 Editor.propTypes = {
   isFirst: PropTypes.bool.isRequired,
   wsPath: PropTypes.string.isRequired,
   paletteType: PropTypes.string,
+  grabFocus: PropTypes.bool,
 };

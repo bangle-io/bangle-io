@@ -80,6 +80,13 @@ const reducer = (state, action) => {
       };
     }
 
+    case 'UI/CHANGE_SIDEBAR': {
+      return {
+        ...state,
+        sidebar: action.value.type,
+      };
+    }
+
     case 'UI/CHANGE_PALETTE_TYPE': {
       return {
         ...state,

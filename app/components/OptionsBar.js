@@ -79,10 +79,6 @@ export function OptionsBar() {
     };
   }, [widescreen, toggleSecondaryEditor]);
 
-  if (!widescreen) {
-    return null;
-  }
-
   const expandedComponents = (
     <>
       <OptionsButton
@@ -102,10 +98,7 @@ export function OptionsBar() {
         hint={'File Palette\n' + keybindings.toggleFilePalette.displayValue}
         onClick={toggleFilePalette}
       >
-        <FileDocumentIcon
-          style={{ transform: 'scale(0.88, 0.88)' }}
-          className={cx('cursor-pointer')}
-        />
+        <FileDocumentIcon style={{ transform: 'scale(0.88, 0.88)' }} />
       </OptionsButton>
       {widescreen && (
         <OptionsButton

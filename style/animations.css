@@ -51,21 +51,18 @@
   animation-duration: 0.08s;
   animation-name: fadeInScale;
   animation-timing-function: ease-out;
-  will-change: transform, opacity;
 }
 
 .fadeInAnimation {
   animation-name: fadeIn;
   animation-duration: 0.15s;
   animation-timing-function: ease-out;
-  will-change: opacity;
 }
 
 .fadeInLeftAnimation {
   animation-name: fadeInLeft;
   animation-duration: 0.08s;
   animation-timing-function: ease-out;
-  will-change: transform, opacity;
 }
 
 @keyframes slideInRight {
@@ -82,7 +79,6 @@
 .slideInRight {
   animation-name: slideInRight;
   animation-duration: 0.25s;
-  will-change: transform, opacity;
 }
 
 @keyframes rotate180AntiClockwise {
@@ -98,6 +94,5 @@
 .rotate180AntiClockwiseAnimation {
   animation-name: rotate180AntiClockwise;
   animation-duration: 0s;
-  will-change: transform;
   animation-timing-function: ease-out;
 }

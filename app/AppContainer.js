@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { UIManagerContext } from 'ui-context/index';
 import { Workspace, resolvePath, useWorkspacePath } from 'workspace/index';
-import { cx, useKeybindings } from 'utils/index';
+import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
 
 import { Editor } from './editor/Editor';
 import { Palette } from './Palette/index';
@@ -13,7 +13,7 @@ import { OptionsBar } from './components/OptionsBar';
 import { keybindings } from 'config/index';
 
 export function AppContainer() {
-  const { widescreen, hideEditorArea } = useContext(UIManagerContext);
+  const { widescreen } = useContext(UIManagerContext);
   const { secondaryWsPath } = useWorkspacePath();
   const secondaryEditor = widescreen && Boolean(secondaryWsPath);
   const showTabs = Boolean(secondaryEditor);
@@ -23,49 +23,54 @@ export function AppContainer() {
       <ActivityBar />
       <Palette />
       <LeftSidebarArea />
-      {!hideEditorArea && (
-        <div
-          className={cx(
-            'main-content',
-            widescreen && 'widescreen',
-            secondaryEditor && 'has-secondary-editor',
-          )}
-        >
-          <Route exact path="/">
-            <RootHomePage />
-          </Route>
-          <Route path="/ws/:wsName">
-            <WorkspacePage
-              showTabs={showTabs}
-              secondaryEditor={secondaryEditor}
-            />
-          </Route>
-        </div>
-      )}
+      <div
+        className={cx(
+          'main-content',
+          widescreen ? 'widescreen' : 'smallscreen',
+          secondaryEditor && 'has-secondary-editor',
+        )}
+      >
+        <Route exact path="/">
+          <RootHomePage />
+        </Route>
+        <Route path="/ws/:wsName">
+          <WorkspacePage
+            showTabs={showTabs}
+            secondaryEditor={secondaryEditor}
+            widescreen={widescreen}
+          />
+        </Route>
+      </div>
     </>
   );
 }
 
 function RootHomePage() {
   return (
-    <div>
-      <span>Let us open a workspace</span>
+    <div className="flex flex-col justify-center align-middle">
+      <button className="block">Let us open a workspace</button>
     </div>
   );
 }
 
-function WorkspacePage({ secondaryEditor, showTabs }) {
+function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
   return (
     <Workspace>
-      <EditorArea showTabs={false} isFirst={true} />
-      <OptionsBar />
-      {secondaryEditor && <div className="grid-gutter" />}
-      {secondaryEditor && <EditorArea isFirst={false} showTabs={showTabs} />}
+      <EditorArea showTabs={false} isFirst={true} widescreen={widescreen} />
+      {widescreen && <OptionsBar />}
+      {widescreen && secondaryEditor && <div className="grid-gutter" />}
+      {widescreen && secondaryEditor && (
+        <EditorArea
+          isFirst={false}
+          showTabs={showTabs}
+          widescreen={widescreen}
+        />
+      )}
     </Workspace>
   );
 }
 
-function EditorArea({ isFirst = false, showTabs }) {
+function EditorArea({ isFirst = false, showTabs, widescreen }) {
   const { paletteType } = useContext(UIManagerContext);
 
   let {
@@ -93,10 +98,12 @@ function EditorArea({ isFirst = false, showTabs }) {
       <div className={cx('bangle-editor-container', showTabs && 'has-tabs')}>
         {wsPath && (
           <Editor
+            // Key is used to reload the editor when wsPath changes
             key={wsPath}
             isFirst={isFirst}
             wsPath={wsPath}
-            paletteType={paletteType}
+            // whenever paletteType goes undefined focus back on editor
+            grabFocus={widescreen && isFirst && paletteType == null}
           />
         )}
       </div>
@@ -109,7 +116,7 @@ function Tab({ wsPath, onClose }) {
     <div className="editor-tab">
       <span>{resolvePath(wsPath).fileName}</span>
       <button type="button" onClick={onClose} className={`focus:outline-none`}>
-        <CloseIcon className="h-4 w-4 cursor-pointer" />
+        <CloseIcon className="h-4 w-4" />
       </button>
     </div>
   );
@@ -118,6 +125,18 @@ function Tab({ wsPath, onClose }) {
 function LeftSidebarArea() {
   const { sidebar, dispatch } = useContext(UIManagerContext);
   const { widescreen } = useContext(UIManagerContext);
+
+  const leftSidebarAreaRef = useWatchClickOutside(
+    () => {
+      if (!widescreen && sidebar) {
+        dispatch({
+          type: 'UI/CHANGE_SIDEBAR',
+          value: { type: null },
+        });
+      }
+    },
+    () => {},
+  );
 
   useKeybindings(() => {
     return {
@@ -145,21 +164,24 @@ function LeftSidebarArea() {
     }
   }
 
+  if (widescreen) {
+    return (
+      <div
+        ref={leftSidebarAreaRef}
+        className="fadeInAnimation left-sidebar-area widescreen"
+      >
+        <div className="top-0 text-2xl mt-4 px-4">{sidebarName}</div>
+        {component}
+      </div>
+    );
+  }
+
   return (
     <div
-      className={`fadeInAnimation left-sidebar-area ${
-        widescreen ? 'widescreen' : ''
-      }`}
+      ref={leftSidebarAreaRef}
+      className={`fadeInAnimation left-sidebar-area smallscreen shadow-lg`}
     >
-      <div
-        className="top-0 text-2xl mt-4"
-        style={{
-          padding: '0 15px',
-        }}
-      >
-        {sidebarName}
-      </div>
-      {component}
+      <div className="overflow-y-auto">{component}</div>
     </div>
   );
 }
