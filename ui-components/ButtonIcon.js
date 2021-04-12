@@ -20,6 +20,7 @@ export function ButtonIcon({
   onClick,
   active,
   style,
+  removeFocus = true,
 }) {
   return (
     <button
@@ -27,7 +28,11 @@ export function ButtonIcon({
       aria-label={hint}
       data-bangle-editor-pos={hintPos}
       data-bangle-editor-break={true}
-      className={cx(active && 'active', 'focus:outline-none', className)}
+      className={cx(
+        active && 'active',
+        removeFocus && 'focus:outline-none',
+        className,
+      )}
       onClick={onClick}
       style={style}
     >

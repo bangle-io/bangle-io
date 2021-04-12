@@ -8,30 +8,24 @@
   display: flex;
   flex-direction: column;
   padding-bottom: 0.25rem;
-  border-width: 1px;
   z-index: 300;
-}
-
-.bangle-palette.widescreen {
-  margin-top: unset;
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+  top: var(--activity-bar-width);
+}
+
+.bangle-palette.widescreen {
+  top: 0;
 }
 
 .bangle-palette input {
   background-color: var(--bg-color);
+  min-height: 28px;
 }
 
 .bangle-palette .palette-input-wrapper {
-  border-bottom: 2px solid var(--border-color);
-}
-
-@media screen and (max-width: 640px) {
-  .bangle-palette {
-    width: 100vw;
-    top: 40px;
-  }
+  border-bottom: 1px solid var(--border-color);
+  min-height: 3.2rem;
 }

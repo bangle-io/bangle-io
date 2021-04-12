@@ -1,13 +1,26 @@
+import './ActivityBar.css';
+
 import React, { useContext, useEffect } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 
-import { ButtonIcon, FolderIcon } from 'ui-components/index';
+import {
+  ButtonIcon,
+  FileDocumentIcon,
+  FolderIcon,
+  MenuIcon,
+} from 'ui-components/index';
 import { keybindings } from 'config/index';
 import { cx } from 'utils/index';
+import { resolvePath, useWorkspacePath } from 'workspace';
+import { FILE_PALETTE } from 'app/Palette';
 
 ActivityBar.propTypes = {};
+
 export function ActivityBar() {
-  const { sidebar, dispatch, widescreen } = useContext(UIManagerContext);
+  const { paletteType, sidebar, dispatch, widescreen } = useContext(
+    UIManagerContext,
+  );
+  const { wsPath } = useWorkspacePath();
 
   const toggleSidebar = (event) => {
     event.preventDefault();
@@ -18,65 +31,142 @@ export function ActivityBar() {
       type: 'UI/TOGGLE_SIDEBAR',
       value: { type: 'file-browser' },
     });
+    dispatch({
+      type: 'UI/CHANGE_PALETTE_TYPE',
+      value: {
+        type: null,
+      },
+    });
   };
 
+  const toggleFilePalette = () => {
+    dispatch({
+      type: 'UI/CHANGE_PALETTE_TYPE',
+      value: {
+        type: paletteType === FILE_PALETTE ? null : FILE_PALETTE,
+      },
+    });
+    dispatch({
+      type: 'UI/CHANGE_SIDEBAR',
+      value: { type: null },
+    });
+  };
+
+  // disable sticky when sidebar is showing
+  const disableSticky = !widescreen && sidebar;
+
+  // console.log({ disableSticky });
   useEffect(() => {
-    setupStickyNavigation(widescreen);
-  }, [widescreen]);
+    let callback;
+    if (!disableSticky) {
+      callback = setupStickyNavigation(widescreen);
+    }
+    return () => {
+      if (callback) {
+        callback();
+      }
+    };
+  }, [widescreen, disableSticky]);
+
+  if (!widescreen) {
+    return (
+      <ActivityBarSmallscreen
+        wsPath={wsPath}
+        sidebar={sidebar}
+        toggleSidebar={toggleSidebar}
+        toggleFilePalette={toggleFilePalette}
+        paletteType={paletteType}
+      />
+    );
+  }
 
   return (
-    <div id="activity-bar-area" className={`${widescreen ? 'widescreen' : ''}`}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: widescreen ? 'column' : 'row',
-        }}
-      >
-        <ActivityBarBox
-          isActive={sidebar}
-          widescreen={widescreen}
+    <div id="activity-bar-area" className="widescreen">
+      <div className="flex flex-col">
+        <ButtonIcon
           onClick={toggleSidebar}
+          hint={
+            sidebar
+              ? null
+              : 'File Browser\n' + keybindings.toggleFileBrowser.displayValue
+          }
+          hintPos="right"
+          active={Boolean(sidebar)}
+          className={cx(
+            'flex justify-center pt-3 pb-3 mt-1 mb-1',
+            widescreen && 'border-l-2',
+          )}
+          style={{
+            borderColor: sidebar
+              ? 'var(--activity-bar-font-color)'
+              : 'transparent',
+          }}
         >
-          <FolderIcon className="h-5 w-5 text-gray-100 cursor-pointer" />
-        </ActivityBarBox>
+          <FolderIcon className="h-5 w-5 text-gray-100" />
+        </ButtonIcon>
       </div>
     </div>
   );
 }
 
-function ActivityBarBox({ widescreen, children, isActive, onClick }) {
+function ActivityBarSmallscreen({
+  sidebar,
+  toggleSidebar,
+  toggleFilePalette,
+  wsPath,
+  paletteType,
+}) {
   return (
-    <ButtonIcon
-      onClick={onClick}
-      hint={
-        isActive
-          ? null
-          : 'File Browser\n' + keybindings.toggleFileBrowser.displayValue
-      }
-      hintPos="right"
-      active={Boolean(isActive)}
-      className={cx(
-        'flex justify-center pt-3 pb-3 mt-1 mb-1',
-        widescreen && 'border-l-2',
-      )}
-      style={{
-        borderColor: isActive
-          ? 'var(--activity-bar-font-color)'
-          : 'transparent',
-      }}
+    <div
+      id="activity-bar-area"
+      className="flex flex-row align-center text-gray-100"
     >
-      {children}
-    </ButtonIcon>
+      <div className="flex flex-col justify-center mr-2">
+        <ButtonIcon
+          onClick={toggleFilePalette}
+          removeFocus={false}
+          className={cx(paletteType && 'bg-gray-600 rounded-sm', 'p-2')}
+        >
+          <FileDocumentIcon className="h-5 w-5" />
+        </ButtonIcon>
+      </div>
+      <div className="flex flex-col justify-center mr-2">
+        <span>{wsPath ? resolvePath(wsPath).fileName : 'bangle.io'}</span>
+      </div>
+
+      <div className="flex flex-grow" />
+      <div className="flex flex-col justify-center mr-2">
+        {/* disabling menu for now since the command palette works pretty good */}
+        {null && (
+          <ButtonIcon
+            onClick={toggleSidebar}
+            removeFocus={false}
+            className={cx(sidebar && 'bg-gray-600 rounded-sm', 'p-2')}
+          >
+            <MenuIcon className="h-5 w-5" />
+          </ButtonIcon>
+        )}
+      </div>
+    </div>
   );
 }
 
 export function setupStickyNavigation(widescreen) {
   if (widescreen) {
-    return;
+    return () => {};
   }
 
   const nav = document.getElementById('activity-bar-area');
 
+  const removeUp = () => {
+    nav.classList.add('down');
+    nav.classList.remove('up');
+  };
+
+  const addUp = () => {
+    nav.classList.add('up');
+    nav.classList.remove('down');
+  };
   let previousY = 9999;
 
   const updateNav = () => {
@@ -90,23 +180,13 @@ export function setupStickyNavigation(widescreen) {
       return;
     }
 
-    const showNav = () => {
-      nav.classList.add('down');
-      nav.classList.remove('up');
-    };
-
-    const hideNav = () => {
-      nav.classList.add('up');
-      nav.classList.remove('down');
-    };
-
     const goingUp = window.pageYOffset > 1 && window.pageYOffset > previousY;
     previousY = window.pageYOffset;
 
     if (goingUp) {
-      showNav();
+      removeUp();
     } else {
-      hideNav();
+      addUp();
     }
   };
 
@@ -120,4 +200,12 @@ export function setupStickyNavigation(widescreen) {
     capture: true,
     passive: true,
   });
+
+  return () => {
+    document.removeEventListener('scroll', updateNav, {
+      capture: true,
+      passive: true,
+    });
+    addUp();
+  };
 }
