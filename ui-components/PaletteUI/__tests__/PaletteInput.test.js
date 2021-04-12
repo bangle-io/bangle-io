@@ -45,7 +45,10 @@ describe('PaletteInput', () => {
           >
             <input
               aria-label="palette-input"
+              autocapitalize="off"
+              autocorrect="off"
               class="flex-grow px-2"
+              spellcheck="false"
               type="text"
               value=""
             />
@@ -71,7 +74,10 @@ describe('PaletteInput', () => {
     expect(input).toMatchInlineSnapshot(`
       <input
         aria-label="palette-input"
+        autocapitalize="off"
+        autocorrect="off"
         class="flex-grow px-2"
+        spellcheck="false"
         type="text"
         value="Hello, World!"
       />
@@ -177,7 +183,10 @@ describe('PaletteUI', () => {
           >
             <input
               aria-label="palette-input"
+              autocapitalize="off"
+              autocorrect="off"
               class="flex-grow px-2"
+              spellcheck="false"
               type="text"
               value=""
             />
@@ -212,7 +221,10 @@ describe('PaletteUI', () => {
           >
             <input
               aria-label="palette-input"
+              autocapitalize="off"
+              autocorrect="off"
               class="flex-grow px-2"
+              spellcheck="false"
               type="text"
               value=""
             />
@@ -221,7 +233,7 @@ describe('PaletteUI', () => {
             class="overflow-y-auto"
           >
             <div
-              class="flex side-bar-row flex-row items-center cursor-pointer active"
+              class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
               style="padding-left: 16px; padding-right: 16px;"
             >
               <span
@@ -263,7 +275,10 @@ describe('PaletteUI', () => {
           >
             <input
               aria-label="palette-input"
+              autocapitalize="off"
+              autocorrect="off"
               class="flex-grow px-2"
+              spellcheck="false"
               type="text"
               value=""
             />
@@ -272,7 +287,7 @@ describe('PaletteUI', () => {
             class="overflow-y-auto"
           >
             <div
-              class="flex side-bar-row flex-row items-center cursor-pointer active"
+              class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
               style="padding-left: 16px; padding-right: 16px;"
             >
               <span

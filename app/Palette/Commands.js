@@ -47,7 +47,6 @@ export function useDispatchPrimaryEditorCommand(dry = true) {
   return useCallback(
     (editorCommand, ...params) => {
       if (!primaryEditor || primaryEditor.destroyed) {
-        console.log('destroyed');
         return false;
       }
       const { dispatch, state } = primaryEditor.view;

@@ -3,7 +3,7 @@
 exports[`Correctly filters commands 1`] = `
 NodeList [
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer active"
+    class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -19,7 +19,7 @@ NodeList [
     />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer"
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -35,7 +35,7 @@ NodeList [
     />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer"
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -51,7 +51,7 @@ NodeList [
     />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer"
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -67,7 +67,7 @@ NodeList [
     />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer"
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -83,7 +83,7 @@ NodeList [
     />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer"
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -99,7 +99,7 @@ NodeList [
     />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer"
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -115,7 +115,7 @@ NodeList [
     />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer"
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -133,7 +133,7 @@ NodeList [
     </kbd>
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-pointer"
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -151,7 +151,7 @@ NodeList [
     </kbd>
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    class="flex side-bar-row flex-row items-center cursor-not-allowed hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -167,7 +167,7 @@ NodeList [
     />
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    class="flex side-bar-row flex-row items-center cursor-not-allowed hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -185,7 +185,7 @@ NodeList [
     </kbd>
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    class="flex side-bar-row flex-row items-center cursor-not-allowed hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -203,7 +203,7 @@ NodeList [
     </kbd>
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    class="flex side-bar-row flex-row items-center cursor-not-allowed hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -221,7 +221,7 @@ NodeList [
     </kbd>
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    class="flex side-bar-row flex-row items-center cursor-not-allowed hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -239,7 +239,7 @@ NodeList [
     </kbd>
   </div>,
   <div
-    class="flex side-bar-row flex-row items-center cursor-not-allowed"
+    class="flex side-bar-row flex-row items-center cursor-not-allowed hover-allowed"
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
@@ -263,7 +263,7 @@ exports[`Correctly switches to file type 2`] = `
 <div>
   <div>
     <div
-      class="fadeInScaleAnimation bangle-palette "
+      class="fadeInScaleAnimation bangle-palette shadow-2xl "
     >
       <div
         class="palette-input-wrapper flex py-2 px-2 top-0"
@@ -298,8 +298,11 @@ exports[`Correctly switches to file type 2`] = `
         </span>
         <input
           aria-label="palette-input"
+          autocapitalize="off"
+          autocorrect="off"
           class="flex-grow px-2"
           placeholder="Enter a file name or type '?' to see other palettes."
+          spellcheck="false"
           type="text"
           value=""
         />
@@ -308,7 +311,7 @@ exports[`Correctly switches to file type 2`] = `
         class="overflow-y-auto"
       >
         <div
-          class="flex side-bar-row flex-row items-center cursor-pointer active"
+          class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
           style="padding-left: 16px; padding-right: 16px;"
         >
           <span
