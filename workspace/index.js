@@ -4,3 +4,4 @@ export * from './path-helpers';
 export * from './nativefs-helpers';
 export * from './file-helpers';
 export * from './Workspace';
+export * from './github-helpers';

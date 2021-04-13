@@ -17,6 +17,7 @@ import {
 } from './file-helpers';
 import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
 import { checkWidescreen } from 'utils/index';
+import { importGithubWorkspace } from './github-helpers';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
@@ -175,6 +176,22 @@ export function useWorkspaces() {
     [history],
   );
 
+  const importWorkspaceFromGithubCb = useCallback(
+    // can pass alternat wsName in the options
+    async (url, wsType, opts = {}) => {
+      const wsName = await importGithubWorkspace(
+        url,
+        wsType,
+        opts.wsName,
+        opts.token,
+      );
+
+      await refreshWorkspaces();
+      history.push(`/ws/${wsName}`);
+    },
+    [history, refreshWorkspaces],
+  );
+
   const deleteWorkspaceCb = useCallback(
     async (targetWsName) => {
       await deleteWorkspace(targetWsName);
@@ -204,6 +221,7 @@ export function useWorkspaces() {
     createWorkspace: createWorkspaceCb,
     deleteWorkspace: deleteWorkspaceCb,
     switchWorkspace: switchWorkspaceCb,
+    importWorkspaceFromGithub: importWorkspaceFromGithubCb,
   };
 }
 

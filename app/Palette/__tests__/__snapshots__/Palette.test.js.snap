@@ -105,6 +105,38 @@ NodeList [
     <span
       class="text-lg truncate select-none"
     >
+      Workspace: Import workspace from a Github URL
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
+      Workspace: Save personal Github token
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    />
+  </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg truncate select-none"
+    >
       Editor: Uncollapse all headings
     </span>
     <span

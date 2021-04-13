@@ -15,6 +15,10 @@ let cachedWorkspaces = undefined;
 export const WORKSPACE_NOT_FOUND_ERROR = 'WORKSPACE_NOT_FOUND_ERROR';
 export const WORKSPACE_EXISTS_ERROR = 'WORKSPACE_EXISTS_ERROR';
 
+export function resetCachedWorkspaces() {
+  cachedWorkspaces = undefined;
+}
+
 export async function listWorkspaces() {
   if (!cachedWorkspaces || config.isTest) {
     cachedWorkspaces = (await idb.get('workspaces/2')) || [];
@@ -87,7 +91,7 @@ export async function createWorkspace(wsName, type = 'browser', opts = {}) {
 
   workspaces.push(workspace);
 
-  cachedWorkspaces = undefined;
+  resetCachedWorkspaces();
   await idb.set('workspaces/2', workspaces);
 }
 
@@ -102,6 +106,6 @@ export async function deleteWorkspace(wsName) {
   }
 
   workspaces = workspaces.filter((w) => w.name !== wsName);
-  cachedWorkspaces = undefined;
+  resetCachedWorkspaces();
   await idb.set('workspaces/2', workspaces);
 }

@@ -52,7 +52,9 @@ export function Palette() {
 
   return (
     <PaletteUI
-      placeholder={palettes[paletteType]?.inputPlaceholder}
+      placeholder={
+        metadata?.inputPlaceholder || palettes[paletteType]?.inputPlaceholder
+      }
       paletteTypeIcon={getPaletteIcon(paletteType)}
       paletteType={paletteType}
       updatePalette={updatePalette}

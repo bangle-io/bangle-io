@@ -91,11 +91,10 @@ function buildDeco(state) {
 
   const decos = headings.map((match) => {
     return Decoration.widget(match.pos + 1, (view) => {
-      let wrapper = document.createElement('div');
+      let wrapper = document.createElement('span');
       wrapper.className = 'deco-collapse-positioner';
       wrapper.setAttribute('data-bangle-pos', match.pos);
-
-      const child = document.createElement('div');
+      const child = document.createElement('span');
       child.className = 'deco-collapse';
 
       wrapper.appendChild(child);
