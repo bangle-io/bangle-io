@@ -131,7 +131,7 @@ const reducer = (state, action) => {
   }
 };
 
-class UIState {
+export class UIState {
   /**
    *
    * @param {*} obj

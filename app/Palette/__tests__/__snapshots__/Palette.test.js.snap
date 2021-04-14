@@ -279,7 +279,7 @@ exports[`Correctly switches to file type 2`] = `
 <div>
   <div>
     <div
-      class="fadeInScaleAnimation bangle-palette shadow-2xl "
+      class="fadeInScaleAnimation bangle-palette shadow-2xl"
     >
       <div
         class="palette-input-wrapper flex py-2 px-2 top-0"
@@ -288,7 +288,7 @@ exports[`Correctly switches to file type 2`] = `
           class="pr-2 flex items-center"
         >
           <svg
-            class="fill-current  h-5 w-5 "
+            class="fill-current  "
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -317,7 +317,6 @@ exports[`Correctly switches to file type 2`] = `
           autocapitalize="off"
           autocorrect="off"
           class="flex-grow px-2"
-          placeholder="Enter a file name or type '?' to see other palettes."
           spellcheck="false"
           type="text"
           value=""

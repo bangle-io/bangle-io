@@ -1,127 +1,91 @@
 import './Palette.css';
-
-import React, { createRef, useCallback, useEffect, useState } from 'react';
 import { keyName } from 'w3c-keyname';
+
+import React, { createRef, useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useWatchClickOutside } from 'utils/index';
 import { SidebarRow } from '../SidebarRow';
 
 const ResolvePaletteItemShape = PropTypes.shape({
   uid: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  data: PropTypes.object,
-  // a function that is called whenever a user clicks an item or presses enter
-  // passed with params (item, itemIndex, event) - return true or Promise that resolve to true to dismiss the palette
+  title: PropTypes.oneOf([PropTypes.element, PropTypes.string]).isRequired,
   onExecute: PropTypes.func.isRequired,
   rightHoverIcon: PropTypes.element,
-  // will change the font color of item and also add a not allowed text in title
-  disabled: PropTypes.bool,
-  // just used for displaying a shortcut for a particular item
-  keybinding: PropTypes.string,
+  // to store any misc data
+  data: PropTypes.object,
 });
 
-PaletteUI.propTypes = {
-  placeholder: PropTypes.string,
-  paletteTypeIcon: PropTypes.element,
-  paletteType: PropTypes.string,
-  updatePalette: PropTypes.func.isRequired,
-  paletteInitialQuery: PropTypes.string,
-  parseRawQuery: PropTypes.func.isRequired,
-  generateRawQuery: PropTypes.func.isRequired,
-  paletteItems: PropTypes.array.isRequired,
-};
 /**
  * UI abstraction for building a palette with keyboard and click handlers.
  * Pressing enter will execute the item.onPressEnter
  *
- * @param {string|undefined} paletteType
- * @param {Function} parseRawQuery - a function with params (paletteType, rawQuery) which will be called with the raw string
- *                    in the input field, expected it to return {paletteType, query}.
- * @param {Function} generateRawQuery - a function with params (paletteType, query), think opposite of `parseRawQuery`
- *                    you are expected to return a string which will be set in the input field.
- * @param {Function} updatePalette - A callback with named params {type, initialQuery}
- *            will call with {type: null} for dismissing the palette.
- * @param {Array|Function|paletteItems|ResolvePaletteItemShape|undefined} paletteItems - nested data structure which will be
- *         flattened on render and used to display a list below the input field.
- *         Lazy items - if an item is a function it will be called
- *         with an object { paletteType, query } so that the consumers can
- *         implement query based filtering logic on their end.
- *         See `ResolvePaletteItemShape` for the shape of expected return type of the function.
  */
 export function PaletteUI({
   placeholder,
-  paletteTypeIcon,
-  paletteType,
-  updatePalette,
-  paletteInitialQuery = '',
-  parseRawQuery,
-  generateRawQuery,
-  paletteItems,
+  paletteIcon,
   style,
   className,
+  dismissPalette,
+  updateValue,
+  value,
+  items,
 }) {
-  const [query, updateQuery] = useState(paletteInitialQuery);
-  const [counter, updateCounter] = useState(0);
+  const { getItemProps, inputProps } = usePaletteProps({
+    onDismiss: dismissPalette,
+    resolvedItems: items,
+    value,
+    updateValue,
+  });
 
-  const onDismiss = useCallback(() => {
-    updatePalette({ type: null });
-  }, [updatePalette]);
+  const inputRef = createRef();
+  const containerRef = useWatchClickOutside(dismissPalette, () => {
+    inputRef.current.focus();
+  });
 
   useEffect(() => {
-    updateQuery(paletteInitialQuery);
-    updateCounter(0);
-  }, [paletteType, paletteInitialQuery]);
-
-  if (!paletteType) {
-    return null;
-  }
+    inputRef.current?.focus();
+  }, [inputRef]);
 
   return (
-    <PaletteContainer
-      placeholder={placeholder}
-      paletteTypeIcon={paletteTypeIcon}
-      updatePalette={updatePalette}
-      paletteType={paletteType}
-      updateCounter={updateCounter}
-      updateQuery={updateQuery}
-      counter={counter}
-      query={query}
-      parseRawQuery={parseRawQuery}
-      generateRawQuery={generateRawQuery}
-      resolvedItems={resolvePaletteItems(paletteItems, query, paletteType)}
-      onDismiss={onDismiss}
-      style={style}
-      className={className}
-    />
+    <div className={className} style={style} ref={containerRef}>
+      <div className="palette-input-wrapper flex py-2 px-2 top-0">
+        {paletteIcon}
+        <input
+          type="text"
+          autoCapitalize="off"
+          spellCheck="false"
+          autoCorrect="off"
+          aria-label="palette-input"
+          className="flex-grow px-2"
+          ref={inputRef}
+          placeholder={placeholder}
+          {...inputProps}
+        />
+      </div>
+      <div className="overflow-y-auto">
+        {items.map((item, i) => {
+          return (
+            <SidebarRow
+              disabled={item.disabled}
+              key={item.uid}
+              title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
-PaletteContainer.propTypes = {
-  resolvedItems: PropTypes.arrayOf(ResolvePaletteItemShape).isRequired,
-};
+function usePaletteProps({ onDismiss, resolvedItems, value, updateValue }) {
+  const [counter, updateCounter] = useState(0);
 
-export function PaletteContainer({
-  paletteTypeIcon,
-  placeholder,
-  updatePalette,
-  paletteType,
-  updateCounter,
-  updateQuery,
-  counter,
-  query,
-  parseRawQuery,
-  generateRawQuery,
-  resolvedItems,
-  onDismiss,
-  className = '',
-  style,
-}) {
-  const paletteInputRef = createRef();
-  const containerRef = useWatchClickOutside(onDismiss, () => {
-    paletteInputRef.current.focus();
-  });
-
-  const activeItemIndex = getActiveIndex(counter, resolvedItems.length);
+  const resolvedItemsCount = resolvedItems.length;
 
   const executeHandler = useCallback(
     (itemIndex, event) => {
@@ -135,135 +99,59 @@ export function PaletteContainer({
         return;
       }
 
-      const result = item.onExecute(item, itemIndex, event);
-      if (result === true) {
-        event.preventDefault();
-        onDismiss();
-      }
-
-      if (result instanceof Promise) {
-        result.then((outcome) => {
-          if (outcome === true) {
-            onDismiss();
-          }
-        });
-      }
+      item.onExecute(item, itemIndex, event);
     },
-    [resolvedItems, onDismiss],
+    [resolvedItems],
   );
 
-  return (
-    <div className={className} style={style} ref={containerRef}>
-      <PaletteInput
-        placeholder={placeholder}
-        paletteTypeIcon={paletteTypeIcon}
-        ref={paletteInputRef}
-        onDismiss={onDismiss}
-        updatePalette={updatePalette}
-        updateCounter={updateCounter}
-        updateQuery={updateQuery}
-        paletteType={paletteType}
-        counter={counter}
-        query={query}
-        generateRawQuery={generateRawQuery}
-        parseRawQuery={parseRawQuery}
-        executeHandler={executeHandler}
-        activeItemIndex={activeItemIndex}
-      />
-      <div className="overflow-y-auto">
-        {resolvedItems.map((item, i) => {
-          return (
-            <SidebarRow
-              disabled={item.disabled}
-              key={item.uid}
-              isActive={getActiveIndex(counter, resolvedItems.length) === i}
-              title={addBoldToTitle(item.title, query)}
-              rightHoverIcon={item.rightHoverIcon}
-              rightIcon={
-                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
-              }
-              onClick={(e) => {
-                executeHandler(i, e);
-              }}
-            />
-          );
-        })}
-      </div>
-    </div>
+  const getItemProps = useCallback(
+    (item, index) => {
+      return {
+        isActive: getActiveIndex(counter, resolvedItemsCount) === index,
+        onClick: (e) => {
+          executeHandler(index, e);
+        },
+      };
+    },
+    [executeHandler, counter, resolvedItemsCount],
   );
+
+  const inputProps = useInputProps({
+    counter,
+    resolvedItemsCount,
+    onDismiss,
+    executeHandler,
+    value,
+    updateValue,
+    updateCounter,
+  });
+
+  return {
+    resolvedItems,
+    getItemProps,
+    inputProps,
+  };
 }
 
-export const PaletteInput = React.forwardRef(
-  (
-    {
-      placeholder,
-      paletteTypeIcon,
-      paletteType,
-      onDismiss,
-      updateCounter,
-      updatePalette,
-      updateQuery,
-      counter,
-      query,
-      generateRawQuery,
-      parseRawQuery,
-      executeHandler,
-      activeItemIndex,
+function useInputProps({
+  counter,
+  resolvedItemsCount,
+  onDismiss,
+  executeHandler,
+  value,
+  updateValue,
+  updateCounter,
+}) {
+  const onChange = useCallback(
+    (e) => {
+      updateValue(e.target.value);
     },
-    paletteInputRef,
-  ) => {
-    return (
-      <PaletteInputUI
-        placeholder={placeholder}
-        paletteTypeIcon={paletteTypeIcon}
-        ref={paletteInputRef}
-        onDismiss={onDismiss}
-        activeItemIndex={activeItemIndex}
-        executeHandler={executeHandler}
-        updateCounter={updateCounter}
-        updateQuery={(rawQuery) => {
-          const initialPaletteType = paletteType;
-          const { paletteType: newType, query } = parseRawQuery(
-            initialPaletteType,
-            rawQuery,
-          );
+    [updateValue],
+  );
 
-          if (newType !== initialPaletteType) {
-            updatePalette({ type: newType, initialQuery: query });
-          } else {
-            updateQuery(query);
-          }
-        }}
-        query={generateRawQuery(paletteType, query)}
-        counter={counter}
-      />
-    );
-  },
-);
-
-export const PaletteInputUI = React.forwardRef(
-  (
-    {
-      placeholder,
-      paletteTypeIcon,
-      onDismiss,
-      executeHandler,
-      activeItemIndex,
-      updateCounter,
-      updateQuery,
-      query,
-      counter,
-    },
-    inputRef,
-  ) => {
-    const handleOnInputPromptChange = useCallback(
-      (e) => {
-        updateQuery(e.target.value);
-      },
-      [updateQuery],
-    );
-
-    const onInputPressKey = (event) => {
+  const onKeyDown = useCallback(
+    (event) => {
+      const activeItemIndex = getActiveIndex(counter, resolvedItemsCount);
       const key = keyName(event);
       if (key === 'Escape') {
         onDismiss();
@@ -278,62 +166,17 @@ export const PaletteInputUI = React.forwardRef(
 
       if (key === 'ArrowDown' || key === 'ArrowUp') {
         const dir = key === 'ArrowUp' ? -1 : 1;
-        updateCounter((counter || 0) + dir);
+
+        updateCounter((counter) => (counter || 0) + dir);
         event.preventDefault();
         return;
       }
-    };
+    },
+    [onDismiss, executeHandler, updateCounter, counter, resolvedItemsCount],
+  );
 
-    useEffect(() => {
-      inputRef.current.focus();
-    }, [inputRef]);
-
-    return (
-      <div className="palette-input-wrapper flex py-2 px-2 top-0">
-        {paletteTypeIcon}
-        <input
-          type="text"
-          autoCapitalize="off"
-          spellCheck="false"
-          autoCorrect="off"
-          aria-label="palette-input"
-          className="flex-grow px-2"
-          ref={inputRef}
-          value={query}
-          placeholder={placeholder}
-          onChange={handleOnInputPromptChange}
-          onKeyDown={onInputPressKey}
-        />
-      </div>
-    );
-  },
-);
-
-PaletteInputUI.propTypes = {
-  onDismiss: PropTypes.func.isRequired,
-  executeHandler: PropTypes.func.isRequired,
-  activeItemIndex: PropTypes.number.isRequired,
-  updateCounter: PropTypes.func.isRequired,
-  updateQuery: PropTypes.func.isRequired,
-  query: PropTypes.string.isRequired,
-  counter: PropTypes.number.isRequired,
-};
-
-function resolvePaletteItems(paletteItems, query, paletteType) {
-  return paletteItems
-    .flatMap((item) => {
-      if (typeof item === 'function') {
-        item = item({ paletteType, query });
-      }
-      if (Array.isArray(item)) {
-        return resolvePaletteItems(item, query, paletteType);
-      }
-
-      return item;
-    })
-    .filter(Boolean);
+  return { onKeyDown, onChange, value };
 }
-
 /**
  * Calculate the currently active item
  * @param {*} counter The currently active counter passed to you by this component
@@ -343,24 +186,3 @@ const getActiveIndex = (counter, size) => {
   const r = counter % size;
   return r < 0 ? r + size : r;
 };
-
-/**
- * Takes a string and returns an array where the matched substring is wrapped
- * in a bold
- * @param {*} string
- * @param {*} query
- */
-function addBoldToTitle(string, query) {
-  if (!query) {
-    return string;
-  }
-
-  let newString = string.split(query);
-
-  return newString.flatMap((r, i) => {
-    if (i === 0) {
-      return r;
-    }
-    return [<b key={i}>{query}</b>, r];
-  });
-}

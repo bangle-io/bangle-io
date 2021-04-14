@@ -35,7 +35,6 @@ beforeEach(async () => {
 
   dispatch = null;
   paletteType = undefined;
-  paletteInitialQuery = undefined;
 
   function Comp() {
     ({ paletteType, dispatch } = useContext(UIManagerContext));

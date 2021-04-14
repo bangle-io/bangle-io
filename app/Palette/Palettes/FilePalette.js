@@ -2,6 +2,7 @@ import { dedupeArray, useLocalStorage, weakCache } from 'utils/index';
 import {
   FILE_PALETTE_MAX_RECENT_FILES,
   FILE_PALETTE_MAX_FILES,
+  keybindings,
 } from 'config/index';
 
 import React, { useCallback, useEffect } from 'react';
@@ -10,31 +11,40 @@ import {
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
-import { FILE_PALETTE } from '../paletteTypes';
-import { ButtonIcon, SecondaryEditorIcon } from 'ui-components/index';
+import { FILE_PALETTE, PaletteTypeBase } from '../paletteTypes';
+import {
+  ButtonIcon,
+  FileDocumentIcon,
+  PaletteUI,
+  SecondaryEditorIcon,
+} from 'ui-components/index';
+import { addBoldToTitle } from '../utils';
 
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 
-/**
- * We return a function which accepts query and paletteType,
- * this allows us to lazily render items and control the filtering
- * on our end. This function will be then passed to PaletteUI which
- * will call it with right params whenever it needs to show a list of
- * items.
- * Dont forget to read docs at PaletteUI
- */
-export function useFilePalette({ paletteType, updatePalette }) {
+export class FilePalette extends PaletteTypeBase {
+  static type = FILE_PALETTE;
+  static identifierPrefix = '';
+  static description = 'Search for a file name';
+  static PaletteIcon = FileDocumentIcon;
+  static UIComponent = FilePaletteUIComponent;
+  static inputPlaceholder = 'Enter a workspace name';
+  static keybinding = keybindings.toggleFilePalette.key;
+
+  // match with any query
+  static parseRawQuery(rawQuery) {
+    return rawQuery;
+  }
+}
+
+function FilePaletteUIComponent({ paletteProps, query, dismissPalette }) {
   const { pushWsPath } = useWorkspacePath();
-
   let [files, refreshFiles] = useGetWorkspaceFiles();
-
-  // update files whenever palette is opened
   useEffect(() => {
     refreshFiles();
-  }, [refreshFiles, paletteType]);
-
+  }, [refreshFiles]);
   const recentFiles = useRecordRecentWsPaths(files);
   files = dedupeArray([...recentFiles, ...files]);
 
@@ -47,22 +57,19 @@ export function useFilePalette({ paletteType, updatePalette }) {
       } else {
         pushWsPath(item.data.wsPath);
       }
-      return true;
+      dismissPalette();
     },
-    [pushWsPath],
+    [pushWsPath, dismissPalette],
   );
 
-  const result = useCallback(
-    ({ query, paletteType }) => {
-      if (paletteType !== FILE_PALETTE) {
-        return null;
-      }
+  const getResolvedItems = useCallback(
+    ({ query }) => {
       const wsPaths = getItems({ query, files });
 
       return wsPaths.slice(0, FILE_PALETTE_MAX_FILES).map((wsPath) => {
         return {
           uid: wsPath,
-          title: resolvePath(wsPath).filePath,
+          title: addBoldToTitle(resolvePath(wsPath).filePath, query),
           onExecute,
           data: { wsPath },
           rightHoverIcon: (
@@ -72,7 +79,7 @@ export function useFilePalette({ paletteType, updatePalette }) {
               onClick={async (e) => {
                 e.stopPropagation();
                 pushWsPath(wsPath, false, true);
-                updatePalette({ type: null });
+                dismissPalette();
               }}
             >
               <SecondaryEditorIcon
@@ -86,10 +93,10 @@ export function useFilePalette({ paletteType, updatePalette }) {
         };
       });
     },
-    [onExecute, updatePalette, pushWsPath, files],
+    [onExecute, dismissPalette, pushWsPath, files],
   );
 
-  return result;
+  return <PaletteUI items={getResolvedItems({ query })} {...paletteProps} />;
 }
 
 function getItems({ query, files }) {
