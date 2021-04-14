@@ -52,6 +52,10 @@ export function FileBrowser() {
     return { name: wsName, id: wsName, children: trees };
   }, [files, wsName]);
 
+  if (!wsName) {
+    return null;
+  }
+
   return (
     <RenderTree
       depth={0}

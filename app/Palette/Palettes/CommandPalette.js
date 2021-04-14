@@ -34,6 +34,7 @@ import {
 } from '../Commands';
 import { COMMAND_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { keyDisplayValue } from 'config/index';
+import { WorkspaceError } from 'workspace/errors';
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
@@ -48,8 +49,8 @@ export function useCommandPalette({ updatePalette }) {
     useToggleSidebar(),
     useNewFile({ updatePalette }),
     useRemoveActiveWorkspace(),
-    useNewBrowserWS({ updatePalette }),
     useNewFileSystemWS(),
+    useNewBrowserWS({ updatePalette }),
     useImportWSFromGithub({ updatePalette }),
     useRenameFile({ updatePalette }),
     useSaveGithubToken({ updatePalette }),
@@ -117,6 +118,7 @@ function useNewBrowserWS({ updatePalette }) {
     updatePalette({
       type: INPUT_PALETTE,
       metadata: {
+        inputPlaceholder: 'Please give your workspace a name',
         onInputConfirm: (query) => {
           if (query) {
             return createWorkspace(query, 'browser');
@@ -129,7 +131,7 @@ function useNewBrowserWS({ updatePalette }) {
 
   return queryMatch({
     uid,
-    title: 'Workspace: New workspace in Browser',
+    title: 'Workspace: New workspace saved in your browser storage',
     onExecute,
   });
 }
@@ -168,18 +170,30 @@ function useRenameFile({ updatePalette }) {
 function useNewFileSystemWS() {
   const uid = 'NEW_FS_WS_COMMAND';
 
-  const { createWorkspace } = useWorkspaces();
+  const { createWorkspace, switchWorkspace } = useWorkspaces();
 
   const onExecute = useCallback(async () => {
     const rootDirHandle = await pickADirectory();
-    await createWorkspace(rootDirHandle.name, 'nativefs', { rootDirHandle });
+    try {
+      await createWorkspace(rootDirHandle.name, 'nativefs', { rootDirHandle });
+    } catch (error) {
+      if (
+        error instanceof WorkspaceError &&
+        error.message.endsWith('as it already exists')
+      ) {
+        await switchWorkspace(rootDirHandle.name);
+      } else {
+        throw error;
+      }
+    }
     return true;
-  }, [createWorkspace]);
+  }, [createWorkspace, switchWorkspace]);
 
   return queryMatch({
     uid,
-    title: 'Workspace: New workspace in filesystem',
+    title: 'Workspace: Open a workspace in your file system',
     onExecute,
+    hidden: !Boolean(window.showDirectoryPicker),
   });
 }
 
@@ -192,7 +206,7 @@ function useImportWSFromGithub({ updatePalette }) {
       type: INPUT_PALETTE,
       metadata: {
         inputPlaceholder:
-          'Enter a Github repos url ex: https://github.com/learn-anything/books',
+          'Enter a Github repos url ex: github.com/sindresorhus/awesome',
         onInputConfirm: async (query) => {
           if (query) {
             return importWorkspaceFromGithub(query, 'browser', {

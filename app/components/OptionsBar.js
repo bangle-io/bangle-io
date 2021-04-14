@@ -19,7 +19,7 @@ const localStoragePrefix = '0.3438144247845969';
 export function OptionsBar() {
   const [expanded, _setExpanded] = useLocalStorage(
     'OptionsBar' + localStoragePrefix,
-    false,
+    true,
   );
 
   const setExpanded = (...args) => {

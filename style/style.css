@@ -173,3 +173,7 @@ DONOT keep internal styles here.
   max-width: var(--left-sidebar-area-width);
   overflow-y: scroll;
 }
+
+.homepage {
+  margin-top: calc(1rem + var(--activity-bar-width));
+}

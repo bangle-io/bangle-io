@@ -133,8 +133,14 @@ function PermissionModal({ onPermissionGranted, workspace }) {
   }, [open]);
 
   return (
-    <div className="flex justify-center flex-row h-full" onClick={open}>
-      Press Enter twice or click anywhere to resume working on {workspace.name}
+    <div
+      className="flex justify-center flex-row h-full align-middle"
+      onClick={open}
+    >
+      <span className="flex-shrink text-lg sm:leading-10 font-medium mb-10 sm:mb-1">
+        Press Enter twice or click anywhere to resume working on "
+        {workspace.name}""
+      </span>
     </div>
   );
 }

@@ -7,12 +7,14 @@ import {
   ButtonIcon,
   FileDocumentIcon,
   FolderIcon,
+  HomeIcon,
   MenuIcon,
 } from 'ui-components/index';
 import { keybindings } from 'config/index';
 import { cx } from 'utils/index';
 import { resolvePath, useWorkspacePath } from 'workspace';
 import { FILE_PALETTE } from 'app/Palette';
+import { useHistory } from 'react-router-dom';
 
 ActivityBar.propTypes = {};
 
@@ -21,6 +23,7 @@ export function ActivityBar() {
     UIManagerContext,
   );
   const { wsPath } = useWorkspacePath();
+  const history = useHistory();
 
   const toggleSidebar = (event) => {
     event.preventDefault();
@@ -83,6 +86,25 @@ export function ActivityBar() {
   return (
     <div id="activity-bar-area" className="widescreen">
       <div className="flex flex-col">
+        <ButtonIcon
+          onClick={() => {
+            history.push('/');
+          }}
+          hint={sidebar ? null : 'bangle.io'}
+          hintPos="right"
+          active={!Boolean(wsPath)}
+          className={cx(
+            'flex justify-center pt-3 pb-3 mt-1 mb-1',
+            widescreen && 'border-l-2',
+          )}
+          style={{
+            borderColor: !Boolean(wsPath)
+              ? 'var(--activity-bar-font-color)'
+              : 'transparent',
+          }}
+        >
+          <HomeIcon className="h-5 w-5 text-gray-100" />
+        </ButtonIcon>
         <ButtonIcon
           onClick={toggleSidebar}
           hint={

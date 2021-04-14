@@ -73,23 +73,7 @@ NodeList [
     <span
       class="text-lg truncate select-none"
     >
-      Workspace: New workspace in Browser
-    </span>
-    <span
-      class="flex-1 flex "
-    />
-    <kbd
-      class="whitespace-nowrap"
-    />
-  </div>,
-  <div
-    class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
-    style="padding-left: 16px; padding-right: 16px;"
-  >
-    <span
-      class="text-lg truncate select-none"
-    >
-      Workspace: New workspace in filesystem
+      Workspace: New workspace saved in your browser storage
     </span>
     <span
       class="flex-1 flex "
