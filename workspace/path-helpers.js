@@ -25,6 +25,9 @@ export function validatePath(wsPath) {
   if (!wsName || !filePath) {
     throw new Error('Invalid wsPath ' + wsPath);
   }
+  if (filePath.endsWith('/.md') || filePath === '.md') {
+    throw new Error('Invalid wsPath ' + wsPath);
+  }
 }
 
 export function validateWsFilePath(wsPath) {
