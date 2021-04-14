@@ -42,7 +42,7 @@ export async function getWorkspaceInfo(wsName) {
 }
 
 export async function createWorkspace(wsName, type = 'browser', opts = {}) {
-  validWsName(wsName + ':random_file');
+  validWsName(wsName);
 
   const workspaces = await listWorkspaces();
 
