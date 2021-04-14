@@ -1,5 +1,13 @@
-const pathValidRegex = /^[0-9a-zA-Z_\-. /:=',()–!\[\]]+$/;
+const pathValidRegex = /^[0-9a-zA-Z_\-. /:=',()–!\+\[\]]+$/;
 const last = (arr) => arr[arr.length - 1];
+
+export function validWsName(wsName) {
+  if (!/^[A-Za-z0-9_.-]+$/.test(wsName)) {
+    throw new Error(
+      'Invalid wsName "' + wsName + '" . Please avoid using special characters',
+    );
+  }
+}
 
 export function validatePath(wsPath) {
   if (
