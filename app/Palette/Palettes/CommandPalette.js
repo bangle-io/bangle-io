@@ -40,6 +40,7 @@ import {
 import { keybindings, keyDisplayValue } from 'config/index';
 import { PaletteUI, TerminalIcon } from 'ui-components';
 import { addBoldToTitle } from '../utils';
+import { WorkspaceError } from 'workspace/errors';
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
