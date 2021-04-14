@@ -1,18 +1,25 @@
 import { EditorManagerContext } from 'app/editor/EditorManager';
-import { useContext } from 'react';
-import { HEADING_PALETTE } from '../paletteTypes';
+import React, { useContext } from 'react';
+import { HEADING_PALETTE, PaletteTypeBase } from '../paletteTypes';
 import { Selection } from '@bangle.dev/core/prosemirror/state';
+import { NullIcon, PaletteUI } from 'ui-components/index';
+import { addBoldToTitle } from '../utils';
 
-export function useHeadingPalette({ updatePalette }) {
+export class HeadingPalette extends PaletteTypeBase {
+  static type = HEADING_PALETTE;
+  static identifierPrefix = '#';
+  static description = 'Jump to a heading';
+  static PaletteIcon = NullIcon;
+  static UIComponent = HeadingPaletteUIComponent;
+  static inputPlaceholder = 'Type a heading name';
+}
+
+function HeadingPaletteUIComponent({ query, paletteProps, dismissPalette }) {
   const { primaryEditor } = useContext(EditorManagerContext);
 
-  return ({ query, paletteType }) => {
-    if (
-      paletteType !== HEADING_PALETTE ||
-      !primaryEditor ||
-      primaryEditor.destroyed
-    ) {
-      return null;
+  const getResolvedItems = ({ query }) => {
+    if (!primaryEditor || primaryEditor.destroyed) {
+      return [];
     }
 
     const headingNodes = [];
@@ -31,8 +38,9 @@ export function useHeadingPalette({ updatePalette }) {
       .map((r, i) => {
         return {
           uid: 'heading' + i,
-          title: r.title,
+          title: addBoldToTitle(r.title, query),
           onExecute: () => {
+            dismissPalette();
             // Using this to wait for editor to get focused
             setTimeout(() => {
               requestAnimationFrame(() => {
@@ -48,12 +56,12 @@ export function useHeadingPalette({ updatePalette }) {
                 );
               });
             }, 10);
-
-            return true;
           },
         };
       });
   };
+
+  return <PaletteUI items={getResolvedItems({ query })} {...paletteProps} />;
 }
 
 function strMatch(a, b) {

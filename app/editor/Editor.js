@@ -58,11 +58,11 @@ export const Editor = function Editor({ isFirst, wsPath, grabFocus }) {
         setPrimaryEditor(editor);
         if (!config.isIntegration) {
           getIdleCallback(() => {
-            // import(
-            //   /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
-            // ).then((args) => {
-            //   args.applyDevTools(editor.view);
-            // });
+            import(
+              /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
+            ).then((args) => {
+              args.applyDevTools(editor.view);
+            });
           });
         }
       }

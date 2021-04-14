@@ -2,7 +2,7 @@ import { config } from 'config/index';
 import * as idb from 'idb-keyval';
 import { WorkspaceError } from './errors';
 
-import { validatePath } from './path-helpers';
+import { validatePath, validWsName } from './path-helpers';
 
 /**
  * we need to cache the workspaces because
@@ -42,7 +42,7 @@ export async function getWorkspaceInfo(wsName) {
 }
 
 export async function createWorkspace(wsName, type = 'browser', opts = {}) {
-  validatePath(wsName + ':random_file');
+  validWsName(wsName);
 
   const workspaces = await listWorkspaces();
 

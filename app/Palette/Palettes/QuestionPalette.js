@@ -1,50 +1,58 @@
-import {
-  COMMAND_PALETTE,
-  FILE_PALETTE,
-  HEADING_PALETTE,
-  QUESTION_PALETTE,
-  WORKSPACE_PALETTE,
-} from '../paletteTypes';
+import React from 'react';
 
-export function useQuestionPalette({ updatePalette }) {
-  return ({ query, paletteType }) => {
-    if (paletteType !== QUESTION_PALETTE) {
-      return null;
-    }
+import { NullIcon, PaletteUI } from 'ui-components';
+import { PaletteTypeBase, QUESTION_PALETTE } from '../paletteTypes';
+import { FilePalette } from './FilePalette';
+import { CommandPalette } from './CommandPalette';
+import { WorkspacePalette } from './WorkspacePalette';
+import { HeadingPalette } from './HeadingPalette';
 
-    return [
-      {
-        uid: 'file-question-palette',
-        title: '… Open file or heading',
-        onExecute: () => {
-          updatePalette({ type: FILE_PALETTE });
-          return false;
-        },
+export class QuestionPalette extends PaletteTypeBase {
+  static type = QUESTION_PALETTE;
+  static identifierPrefix = '?';
+  static description = 'Show available palettes';
+  static PaletteIcon = NullIcon;
+  static UIComponent = QuestionPaletteUIComponent;
+  static inputPlaceholder = null;
+  static keybinding = null;
+}
+
+function QuestionPaletteUIComponent({ updatePalette, paletteProps }) {
+  const resolvedItems = [
+    {
+      uid: 'file-question-palette',
+      title: '…' + FilePalette.description,
+      onExecute: () => {
+        updatePalette({ type: FilePalette.type });
+        return false;
       },
-      {
-        uid: 'command-question-palette',
-        title: '> Run a command',
-        onExecute: () => {
-          updatePalette({ type: COMMAND_PALETTE });
-          return false;
-        },
+    },
+    {
+      uid: 'command-question-palette',
+      title: CommandPalette.identifierPrefix + ' ' + CommandPalette.description,
+      onExecute: () => {
+        updatePalette({ type: CommandPalette.type });
+        return false;
       },
-      {
-        uid: 'switch-workspace-question-palette',
-        title: 'ws: Switch workspace',
-        onExecute: () => {
-          updatePalette({ type: WORKSPACE_PALETTE });
-          return false;
-        },
+    },
+    {
+      uid: 'switch-workspace-question-palette',
+      title:
+        WorkspacePalette.identifierPrefix + ' ' + WorkspacePalette.description,
+      onExecute: () => {
+        updatePalette({ type: WorkspacePalette.type });
+        return false;
       },
-      {
-        uid: 'heading-question-palette',
-        title: '# Jump to a heading',
-        onExecute: () => {
-          updatePalette({ type: HEADING_PALETTE });
-          return false;
-        },
+    },
+    {
+      uid: 'heading-question-palette',
+      title: HeadingPalette.identifierPrefix + ' ' + HeadingPalette.description,
+      onExecute: () => {
+        updatePalette({ type: HeadingPalette.type });
+        return false;
       },
-    ];
-  };
+    },
+  ];
+
+  return <PaletteUI items={resolvedItems} {...paletteProps} />;
 }

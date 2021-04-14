@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import {
   toggleHeadingCollapse,
@@ -32,42 +32,92 @@ import {
   useDispatchPrimaryEditorCommand,
   useInputPaletteNewFileCommand,
 } from '../Commands';
-import { COMMAND_PALETTE, INPUT_PALETTE } from '../paletteTypes';
-import { keyDisplayValue } from 'config/index';
+import {
+  COMMAND_PALETTE,
+  INPUT_PALETTE,
+  PaletteTypeBase,
+} from '../paletteTypes';
+import { keybindings, keyDisplayValue } from 'config/index';
+import { PaletteUI, TerminalIcon } from 'ui-components';
+import { addBoldToTitle } from '../utils';
 import { WorkspaceError } from 'workspace/errors';
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
 const addDisabledToTitle = (title, disabled) =>
   title + (disabled ? ' (🚫 not allowed)' : '');
-/**
- * see FilePalette documentation
- */
-export function useCommandPalette({ updatePalette }) {
-  return [
-    useToggleTheme(),
-    useToggleSidebar(),
-    useNewFile({ updatePalette }),
-    useRemoveActiveWorkspace(),
-    useNewFileSystemWS(),
-    useNewBrowserWS({ updatePalette }),
-    useImportWSFromGithub({ updatePalette }),
-    useRenameFile({ updatePalette }),
-    useSaveGithubToken({ updatePalette }),
-    useDeleteActiveFile(),
-    usePrimaryEditorCommands(),
-  ];
+
+export class CommandPalette extends PaletteTypeBase {
+  static type = COMMAND_PALETTE;
+  static identifierPrefix = '>';
+  static description = 'Run a command';
+  static PaletteIcon = TerminalIcon;
+  static UIComponent = CommandPaletteUIComponent;
+  static keybinding = keybindings.toggleCommandPalette.key;
+  static inputPlaceholder = 'Type a command name and press enter to run';
 }
 
-function useToggleTheme() {
+function CommandPaletteUIComponent({
+  dismissPalette,
+  query,
+  updatePalette,
+  paletteProps,
+}) {
+  const items = [
+    useToggleTheme({ dismissPalette }),
+    useToggleSidebar({ dismissPalette }),
+    useNewFile({ updatePalette, dismissPalette }),
+    useRemoveActiveWorkspace({ dismissPalette }),
+    useNewBrowserWS({ updatePalette, dismissPalette }),
+    useNewFileSystemWS({ dismissPalette }),
+    useImportWSFromGithub({ updatePalette, dismissPalette }),
+    useRenameFile({ updatePalette, dismissPalette }),
+    useSaveGithubToken({ updatePalette, dismissPalette }),
+    useDeleteActiveFile({ dismissPalette }),
+    usePrimaryEditorCommands({ dismissPalette }),
+  ];
+
+  return (
+    <PaletteUI
+      items={resolvePaletteItems(items, query, CommandPalette.type).map(
+        (item) => ({
+          ...item,
+          title: addBoldToTitle(item.title, query),
+        }),
+      )}
+      {...paletteProps}
+    />
+  );
+}
+
+function resolvePaletteItems(items, query, paletteType) {
+  const _p = (items, query, paletteType) => {
+    return items
+      .flatMap((item) => {
+        if (typeof item === 'function') {
+          item = item({ paletteType, query });
+        }
+        if (Array.isArray(item)) {
+          return _p(item, query, paletteType);
+        }
+
+        return item;
+      })
+      .filter(Boolean);
+  };
+
+  return _p(items, query, paletteType);
+}
+
+function useToggleTheme({ dismissPalette }) {
   const { dispatch } = useContext(UIManagerContext);
   const uid = 'TOGGLE_THEME_COMMAND';
   const onExecute = useCallback(() => {
     dispatch({
       type: 'UI/TOGGLE_THEME',
     });
-    return true;
-  }, [dispatch]);
+    dismissPalette();
+  }, [dispatch, dismissPalette]);
 
   return queryMatch({
     uid,
@@ -76,7 +126,7 @@ function useToggleTheme() {
   });
 }
 
-function useToggleSidebar() {
+function useToggleSidebar({ dismissPalette }) {
   const { dispatch } = useContext(UIManagerContext);
   const uid = 'TOGGLE_FILE_SIDEBAR_COMMAND';
   const onExecute = useCallback(() => {
@@ -84,8 +134,8 @@ function useToggleSidebar() {
       type: 'UI/TOGGLE_SIDEBAR',
       value: { type: 'file-browser' },
     });
-    return true;
-  }, [dispatch]);
+    dismissPalette();
+  }, [dispatch, dismissPalette]);
 
   return queryMatch({
     uid,
@@ -94,7 +144,7 @@ function useToggleSidebar() {
   });
 }
 
-function useNewFile({ updatePalette }) {
+function useNewFile({}) {
   const uid = 'NEW_FILE_COMMAND';
   const newFileCommand = useInputPaletteNewFileCommand();
 
@@ -126,7 +176,6 @@ function useNewBrowserWS({ updatePalette }) {
         },
       },
     });
-    return false;
   }, [updatePalette, createWorkspace]);
 
   return queryMatch({
@@ -167,7 +216,7 @@ function useRenameFile({ updatePalette }) {
   });
 }
 
-function useNewFileSystemWS() {
+function useNewFileSystemWS({ dismissPalette }) {
   const uid = 'NEW_FS_WS_COMMAND';
 
   const { createWorkspace, switchWorkspace } = useWorkspaces();
@@ -186,8 +235,8 @@ function useNewFileSystemWS() {
         throw error;
       }
     }
-    return true;
-  }, [createWorkspace, switchWorkspace]);
+    dismissPalette();
+  }, [createWorkspace, switchWorkspace, dismissPalette]);
 
   return queryMatch({
     uid,
@@ -216,8 +265,6 @@ function useImportWSFromGithub({ updatePalette }) {
         },
       },
     });
-
-    return false;
   }, [importWorkspaceFromGithub, updatePalette]);
 
   return queryMatch({
@@ -241,8 +288,6 @@ function useSaveGithubToken({ updatePalette }) {
         },
       },
     });
-
-    return false;
   }, [updatePalette]);
 
   return queryMatch({
@@ -252,7 +297,7 @@ function useSaveGithubToken({ updatePalette }) {
   });
 }
 
-export function useRemoveActiveWorkspace() {
+export function useRemoveActiveWorkspace({ dismissPalette }) {
   const uid = 'REMOVE_ACTIVE_WORKSPACE';
   const { deleteWorkspace } = useWorkspaces();
   const { wsName } = useWorkspacePath();
@@ -260,9 +305,9 @@ export function useRemoveActiveWorkspace() {
   const onExecute = useCallback(
     async (item) => {
       await deleteWorkspace(wsName);
-      return true;
+      dismissPalette();
     },
-    [deleteWorkspace, wsName],
+    [deleteWorkspace, dismissPalette, wsName],
   );
 
   return queryMatch({
@@ -272,15 +317,15 @@ export function useRemoveActiveWorkspace() {
   });
 }
 
-export function useDeleteActiveFile() {
+export function useDeleteActiveFile({ dismissPalette }) {
   const uid = 'DELETE_ACTIVE_FILE';
   const deleteFile = useDeleteFile();
   const { wsPath, filePath } = useWorkspacePath();
 
   const onExecute = useCallback(async () => {
     await deleteFile(wsPath);
-    return true;
-  }, [deleteFile, wsPath]);
+    dismissPalette();
+  }, [deleteFile, wsPath, dismissPalette]);
 
   return queryMatch({
     uid,
@@ -290,7 +335,7 @@ export function useDeleteActiveFile() {
   });
 }
 
-function usePrimaryEditorCommands() {
+function usePrimaryEditorCommands({ dismissPalette }) {
   const executeEditorCommand = useDispatchPrimaryEditorCommand(false);
   const dryExecuteEditorCommand = useDispatchPrimaryEditorCommand(true);
 
@@ -308,7 +353,7 @@ function usePrimaryEditorCommands() {
       disabled: toggleHeadingCollapseDisabled,
       onExecute: () => {
         executeEditorCommand(toggleHeadingCollapse);
-        return true;
+        dismissPalette();
       },
     });
 
@@ -317,7 +362,7 @@ function usePrimaryEditorCommands() {
       title: 'Editor: Uncollapse all headings',
       onExecute: () => {
         executeEditorCommand(uncollapseAllHeadings);
-        return true;
+        dismissPalette();
       },
     });
 
@@ -331,7 +376,7 @@ function usePrimaryEditorCommands() {
       disabled: !dryExecuteEditorCommand(convertToParagraph),
       onExecute: () => {
         executeEditorCommand(convertToParagraph);
-        return true;
+        dismissPalette();
       },
     });
 
@@ -345,7 +390,7 @@ function usePrimaryEditorCommands() {
       disabled: !dryExecuteEditorCommand(insertEmptyParagraphAbove),
       onExecute: () => {
         executeEditorCommand(insertEmptyParagraphAbove);
-        return true;
+        dismissPalette();
       },
     });
 
@@ -359,7 +404,7 @@ function usePrimaryEditorCommands() {
       disabled: !dryExecuteEditorCommand(insertEmptyParagraphBelow),
       onExecute: () => {
         executeEditorCommand(insertEmptyParagraphBelow);
-        return true;
+        dismissPalette();
       },
     });
 
@@ -370,7 +415,7 @@ function usePrimaryEditorCommands() {
       // TODO the dry runninng of list commands is broken
       onExecute: () => {
         executeEditorCommand(toggleBulletList);
-        return true;
+        dismissPalette();
       },
     });
 
@@ -380,7 +425,7 @@ function usePrimaryEditorCommands() {
       keybinding: keyDisplayValue(bulletListKeys.toggleTodo),
       onExecute: () => {
         executeEditorCommand(toggleTodoList);
-        return true;
+        dismissPalette();
       },
     });
 
@@ -394,7 +439,7 @@ function usePrimaryEditorCommands() {
       disabled: !dryExecuteEditorCommand(moveListItemUp),
       onExecute: () => {
         executeEditorCommand(moveListItemUp);
-        return true;
+        dismissPalette();
       },
     });
 
@@ -408,7 +453,7 @@ function usePrimaryEditorCommands() {
       keybinding: keyDisplayValue(listItemKeys.moveDown),
       onExecute: () => {
         executeEditorCommand(moveListItemDown);
-        return true;
+        dismissPalette();
       },
     });
 
