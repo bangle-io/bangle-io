@@ -4,7 +4,6 @@ import {
   BaseFileSystem,
   BaseFileSystemError,
 } from './base-fs';
-
 import {
   FILE_ALREADY_EXISTS_ERROR,
   FILE_NOT_FOUND_ERROR,
@@ -12,10 +11,15 @@ import {
   VALIDATION_ERROR,
 } from './error-codes';
 
-const customStore = idb.createStore('baby-fs-db1', 'baby-fs-store1');
+export const dbSuffix = 3;
+
+const customStore = idb.createStore(
+  `baby-fs-db${dbSuffix}`,
+  `baby-fs-store${dbSuffix}`,
+);
 const customMetaStore = idb.createStore(
-  'baby-fs-meta-db1',
-  'baby-fs-meta-store1',
+  `baby-fs-meta-db${dbSuffix}`,
+  `baby-fs-meta-store${dbSuffix}`,
 );
 
 function catchUpstream(idbPromise, errorMessage) {
@@ -89,7 +93,6 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async writeFile(filePath, data) {
-    // TODO what do we do about this?
     if (typeof data !== 'string') {
       throw new IndexedDBFileSystemError(
         'Can only write string type',
@@ -143,6 +146,8 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     await this.unlink(oldFilePath);
   }
 
+  // recrusively list all files paths
+  // example ['a/b/c.md', 'a/e.md']
   async opendirRecursive(dirPath) {
     let keys = await catchUpstream(
       idb.keys(customStore),

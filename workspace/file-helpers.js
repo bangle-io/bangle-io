@@ -1,9 +1,13 @@
 import { markdownParser, markdownSerializer } from 'editor/index';
-import { IndexDBIO } from './indexdb';
 import { NativeFileOps } from './nativefs-helpers';
-import { resolvePath, validatePath, validateWsFilePath } from './path-helpers';
+import {
+  resolvePath,
+  validWsName,
+  validatePath,
+  validateWsFilePath,
+} from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
-
+import { IndexedDBFileSystem } from 'baby-fs';
 const nativeFS = new NativeFileOps({
   allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
 });
@@ -13,6 +17,12 @@ const toNativePath = (rootDirHandle, filePath) => [
   ...filePath.split('/'),
 ];
 
+const toIDBPath = (wsPath) => {
+  const { wsName, filePath } = resolvePath(wsPath);
+  return [wsName, filePath].join('/');
+};
+
+const idbFS = new IndexedDBFileSystem();
 // TODO make this get file
 export async function getDoc(wsPath) {
   const { wsName, filePath } = resolvePath(wsPath);
@@ -22,7 +32,15 @@ export async function getDoc(wsPath) {
 
   switch (ws.type) {
     case 'browser': {
-      file = (await IndexDBIO.getFile(wsPath)).doc;
+      const path = toIDBPath(wsPath);
+      let fileData = await idbFS.readFile(path);
+
+      if (path.endsWith('.json')) {
+        file = JSON.parse(fileData);
+      } else if (path.endsWith('.md')) {
+        // TODO avoid doing toJSON
+        file = markdownParser(fileData).toJSON();
+      }
       break;
     }
 
@@ -63,14 +81,16 @@ export async function saveDoc(wsPath, doc) {
 
   switch (ws.type) {
     case 'browser': {
-      file = await IndexDBIO.getFile(wsPath);
-      if (!file) {
-        throw new Error(`File ${wsPath} not found`);
+      const path = toIDBPath(wsPath);
+      let data;
+      if (filePath.endsWith('.md')) {
+        data = markdownSerializer(doc);
+      } else if (filePath.endsWith('.json')) {
+        data = JSON.stringify(doc.toJSON());
+      } else {
+        throw new Error('Unknown file extension ' + filePath);
       }
-      file = await IndexDBIO.updateFile(wsPath, {
-        ...file,
-        doc: doc.toJSON(),
-      });
+      file = await idbFS.writeFile(path, data);
       break;
     }
 
@@ -110,17 +130,18 @@ export async function createFile(wsPath, content, contentType = 'doc') {
 
   switch (workspace.type) {
     case 'browser': {
+      const path = toIDBPath(wsPath);
+      let markdown;
       if (contentType === 'doc') {
-        await IndexDBIO.createFile(wsPath, {
-          doc: content.toJSON(),
-        });
+        markdown = markdownSerializer(content);
       } else if (contentType === 'markdown') {
-        await IndexDBIO.createFile(wsPath, {
-          doc: markdownParser(content).toJSON(),
-        });
+        markdown = content;
       } else {
         throw new Error('Unknown content type');
       }
+
+      await idbFS.writeFile(path, markdown);
+
       break;
     }
 
@@ -151,7 +172,7 @@ export async function deleteFile(wsPath) {
   const workspace = await getWorkspaceInfo(wsName);
   switch (workspace.type) {
     case 'browser': {
-      await IndexDBIO.deleteFile(wsPath);
+      await idbFS.unlink(toIDBPath(wsPath));
       break;
     }
 
@@ -179,7 +200,13 @@ export async function listAllFiles(wsName) {
 
   switch (ws.type) {
     case 'browser': {
-      files = await IndexDBIO.listFiles(wsName);
+      const rawPaths = await idbFS.opendirRecursive(wsName);
+      files = rawPaths.map((r) => {
+        const [_wsName, ...f] = r.split('/');
+        validWsName(_wsName);
+
+        return _wsName + ':' + f.join('/');
+      });
       break;
     }
 
@@ -222,7 +249,7 @@ export async function renameFile(wsPath, newWsPath) {
 
   switch (workspace.type) {
     case 'browser': {
-      await IndexDBIO.renameFile(wsPath, newWsPath);
+      await idbFS.rename(toIDBPath(wsPath), toIDBPath(newWsPath));
       break;
     }
 

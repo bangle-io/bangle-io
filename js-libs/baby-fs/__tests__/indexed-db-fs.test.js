@@ -8,13 +8,14 @@ const getLast = (array) => array[array.length - 1];
 
 jest.mock('idb-keyval', () => {
   const idb = {};
+  const dbSuffix = 3;
 
   idb.createStore = (dbName) => {
     return dbName;
   };
 
   const getStore = (args) => {
-    if (getLast(args) === 'baby-fs-meta-db1') {
+    if (getLast(args) === `baby-fs-meta-db${dbSuffix}`) {
       return mockMetaStore;
     } else {
       return mockStore;
