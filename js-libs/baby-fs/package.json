@@ -1,5 +1,5 @@
 {
-  "name": "workspace",
+  "name": "baby-fs",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,22 +18,10 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
-  "devDependencies": {
-    "@testing-library/react": "^11.2.6"
-  },
-  "dependencies": {
-    "@bangle.dev/core": "0.8.0",
-    "@octokit/rest": "^18.5.2",
-    "baby-fs": "workspace:*",
-    "config": "workspace:*",
-    "editor": "workspace:*",
-    "idb-keyval": "^5.0.4",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "react-router-dom": "^5.2.0",
-    "utils": "workspace:*"
-  },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "idb-keyval": "^5.0.4"
   }
 }

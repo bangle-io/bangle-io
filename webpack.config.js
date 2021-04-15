@@ -67,11 +67,14 @@ module.exports = (env, argv) => {
           },
         ],
       }),
-      new webpack.SourceMapDevToolPlugin({
-        noSources: true,
-      }),
+      // eslint-disable-next-line no-process-env
+      process.env.CI
+        ? new webpack.SourceMapDevToolPlugin({
+            noSources: true,
+          })
+        : null,
       // new BundleAnalyzerPlugin(),
-    ],
+    ].filter(Boolean),
     module: {
       rules: [
         {

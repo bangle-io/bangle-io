@@ -31,6 +31,7 @@
     "@bangle.dev/table": "0.8.0",
     "@bangle.dev/tooltip": "0.8.0",
     "@popperjs/core": "^2.5.4",
+    "baby-fs": "workspace:*",
     "config": "workspace:*",
     "editor": "workspace:*",
     "prop-types": "^15.7.2",
