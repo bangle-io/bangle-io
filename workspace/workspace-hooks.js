@@ -15,9 +15,9 @@ import {
   listAllFiles,
   renameFile,
 } from './file-helpers';
-import { NATIVE_FS_FILE_NOT_FOUND_ERROR } from './nativefs-helpers';
 import { checkWidescreen } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
+import { FILE_NOT_FOUND_ERROR } from 'baby-fs';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
@@ -36,7 +36,7 @@ export function useGetWorkspaceFiles() {
         // I feel this part of code shouldnt know so much about error and codes
         // Can we make the wsPermissionState accomodate the common 404 not found error.
         // allow listing of files if the current file is not found
-        wsPermissionState.error?.code === NATIVE_FS_FILE_NOT_FOUND_ERROR)
+        wsPermissionState.error?.code === FILE_NOT_FOUND_ERROR)
     ) {
       // TODO this is called like a million times
       // we need to fix this to only update based on known things

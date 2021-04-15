@@ -67,9 +67,9 @@ module.exports = (env, argv) => {
           },
         ],
       }),
-      new webpack.SourceMapDevToolPlugin({
-        noSources: true,
-      }),
+      // new webpack.SourceMapDevToolPlugin({
+      //   noSources: true,
+      // }),
       // new BundleAnalyzerPlugin(),
     ],
     module: {

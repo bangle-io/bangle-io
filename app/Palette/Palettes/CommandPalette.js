@@ -22,7 +22,6 @@ import {
   defaultKeys as paragraphKeys,
 } from '@bangle.dev/core/components/paragraph';
 import {
-  pickADirectory,
   useDeleteFile,
   useRenameActiveFile,
   useWorkspacePath,
@@ -40,6 +39,7 @@ import {
 import { keybindings, keyDisplayValue } from 'config/index';
 import { PaletteUI, TerminalIcon } from 'ui-components';
 import { addBoldToTitle } from '../utils';
+import { pickADirectory } from 'baby-fs';
 import { WorkspaceError } from 'workspace/errors';
 const LOG = false;
 

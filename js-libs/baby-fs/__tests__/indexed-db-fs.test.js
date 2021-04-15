@@ -15,7 +15,7 @@ jest.mock('idb-keyval', () => {
   };
 
   const getStore = (args) => {
-    if (getLast(args) === `baby-fs-meta-db${dbSuffix}`) {
+    if (getLast(args) === `baby-idb-meta-${dbSuffix}`) {
       return mockMetaStore;
     } else {
       return mockStore;

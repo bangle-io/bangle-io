@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/rest';
+import { FILE_ALREADY_EXISTS_ERROR } from 'baby-fs';
 import { createFile, deleteFile } from './file-helpers';
-import { FileError } from './indexdb';
 import { createWorkspace, deleteWorkspace } from './workspace-helpers';
 
 export async function importGithubWorkspace(githubUrl, wsType, wsName, token) {
@@ -16,10 +16,7 @@ export async function importGithubWorkspace(githubUrl, wsType, wsName, token) {
         try {
           await createFile(wsPath, f.textContent, 'markdown');
         } catch (error) {
-          if (
-            error instanceof FileError &&
-            error.message.includes('already exists')
-          ) {
+          if (error.code === FILE_ALREADY_EXISTS_ERROR) {
             await deleteFile(wsPath);
             await createFile(wsPath, f.textContent, 'markdown');
             // ignore file errors

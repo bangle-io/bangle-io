@@ -1,5 +1,4 @@
 import { markdownParser, markdownSerializer } from 'editor/index';
-import { NativeFileOps } from './nativefs-helpers';
 import {
   resolvePath,
   validWsName,
@@ -7,59 +6,43 @@ import {
   validateWsFilePath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
-import { IndexedDBFileSystem } from 'baby-fs';
-const nativeFS = new NativeFileOps({
-  allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
-});
+import { IndexedDBFileSystem, NativeBrowserFileSystem } from 'baby-fs';
 
-const toNativePath = (rootDirHandle, filePath) => [
-  rootDirHandle.name,
-  ...filePath.split('/'),
-];
-
-const toIDBPath = (wsPath) => {
+const toFSPath = (wsPath) => {
   const { wsName, filePath } = resolvePath(wsPath);
   return [wsName, filePath].join('/');
 };
 
-const idbFS = new IndexedDBFileSystem();
+const getNBFS = (ws) => {
+  if (ws.type === 'browser') {
+    return new IndexedDBFileSystem();
+  }
+
+  if (ws.type === 'nativefs') {
+    return new NativeBrowserFileSystem({
+      rootDirHandle: ws.metadata.rootDirHandle,
+      allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
+    });
+  }
+
+  throw new Error('Unknown workspace type ' + ws.type);
+};
+
 // TODO make this get file
 export async function getDoc(wsPath) {
-  const { wsName, filePath } = resolvePath(wsPath);
+  const { wsName } = resolvePath(wsPath);
   const ws = await getWorkspaceInfo(wsName);
 
   let file;
 
-  switch (ws.type) {
-    case 'browser': {
-      const path = toIDBPath(wsPath);
-      let fileData = await idbFS.readFile(path);
+  const path = toFSPath(wsPath);
+  let fileData = await getNBFS(ws).readFile(path);
 
-      if (path.endsWith('.json')) {
-        file = JSON.parse(fileData);
-      } else if (path.endsWith('.md')) {
-        // TODO avoid doing toJSON
-        file = markdownParser(fileData).toJSON();
-      }
-      break;
-    }
-
-    case 'nativefs': {
-      const { rootDirHandle } = ws.metadata;
-      const path = toNativePath(rootDirHandle, filePath);
-      const fileData = await nativeFS.readFile(path, rootDirHandle);
-      if (fileData.file.type === 'application/json') {
-        file = JSON.parse(fileData.textContent);
-      } else if (fileData.file.name.endsWith('.md')) {
-        // TODO avoid doing toJSON
-        file = markdownParser(fileData.textContent).toJSON();
-      }
-      break;
-    }
-
-    default: {
-      throw new Error('Unknown workspace type ' + ws.type);
-    }
+  if (path.endsWith('.json')) {
+    file = JSON.parse(fileData);
+  } else if (path.endsWith('.md')) {
+    // TODO avoid doing toJSON
+    file = markdownParser(fileData).toJSON();
   }
 
   if (file === undefined) {
@@ -79,42 +62,16 @@ export async function saveDoc(wsPath, doc) {
   const ws = await getWorkspaceInfo(wsName);
   let file;
 
-  switch (ws.type) {
-    case 'browser': {
-      const path = toIDBPath(wsPath);
-      let data;
-      if (filePath.endsWith('.md')) {
-        data = markdownSerializer(doc);
-      } else if (filePath.endsWith('.json')) {
-        data = JSON.stringify(doc.toJSON());
-      } else {
-        throw new Error('Unknown file extension ' + filePath);
-      }
-      file = await idbFS.writeFile(path, data);
-      break;
-    }
-
-    case 'nativefs': {
-      const { rootDirHandle } = ws.metadata;
-      const path = toNativePath(rootDirHandle, filePath);
-      let data;
-      if (filePath.endsWith('.md')) {
-        data = markdownSerializer(doc);
-      } else if (filePath.endsWith('.json')) {
-        data = JSON.stringify(doc.toJSON());
-      } else {
-        throw new Error('Unknown file extension ' + filePath);
-      }
-
-      file = await nativeFS.saveFile(path, rootDirHandle, data);
-
-      break;
-    }
-
-    default: {
-      throw new Error('Unknown workspace type ' + ws.type);
-    }
+  const path = toFSPath(wsPath);
+  let data;
+  if (filePath.endsWith('.md')) {
+    data = markdownSerializer(doc);
+  } else if (filePath.endsWith('.json')) {
+    data = JSON.stringify(doc.toJSON());
+  } else {
+    throw new Error('Unknown file extension ' + filePath);
   }
+  await getNBFS(ws).writeFile(path, data);
 }
 
 /**
@@ -125,72 +82,27 @@ export async function saveDoc(wsPath, doc) {
  */
 export async function createFile(wsPath, content, contentType = 'doc') {
   validateWsFilePath(wsPath);
-  const { wsName, filePath } = resolvePath(wsPath);
+  const { wsName } = resolvePath(wsPath);
   const workspace = await getWorkspaceInfo(wsName);
 
-  switch (workspace.type) {
-    case 'browser': {
-      const path = toIDBPath(wsPath);
-      let markdown;
-      if (contentType === 'doc') {
-        markdown = markdownSerializer(content);
-      } else if (contentType === 'markdown') {
-        markdown = content;
-      } else {
-        throw new Error('Unknown content type');
-      }
-
-      await idbFS.writeFile(path, markdown);
-
-      break;
-    }
-
-    case 'nativefs': {
-      const { rootDirHandle } = workspace.metadata;
-      const path = toNativePath(rootDirHandle, filePath);
-      let markdown;
-      if (contentType === 'doc') {
-        markdown = markdownSerializer(content);
-      } else if (contentType === 'markdown') {
-        markdown = content;
-      } else {
-        throw new Error('Unknown content type');
-      }
-      await nativeFS.saveFile(path, rootDirHandle, markdown);
-      break;
-    }
-
-    default: {
-      throw new Error('Unknown workspace type ' + workspace.type);
-    }
+  const path = toFSPath(wsPath);
+  let markdown;
+  if (contentType === 'doc') {
+    markdown = markdownSerializer(content);
+  } else if (contentType === 'markdown') {
+    markdown = content;
+  } else {
+    throw new Error('Unknown content type');
   }
+
+  await getNBFS(workspace).writeFile(path, markdown);
 }
 
 export async function deleteFile(wsPath) {
   validatePath(wsPath);
-  const { wsName, filePath } = resolvePath(wsPath);
+  const { wsName } = resolvePath(wsPath);
   const workspace = await getWorkspaceInfo(wsName);
-  switch (workspace.type) {
-    case 'browser': {
-      await idbFS.unlink(toIDBPath(wsPath));
-      break;
-    }
-
-    case 'nativefs': {
-      const { rootDirHandle } = workspace.metadata;
-
-      await nativeFS.deleteFile(
-        toNativePath(rootDirHandle, filePath),
-        rootDirHandle,
-        true,
-      );
-      break;
-    }
-
-    default: {
-      throw new Error('Unknown workspace type ' + workspace.type);
-    }
-  }
+  await getNBFS(workspace).unlink(toFSPath(wsPath));
 }
 
 export async function listAllFiles(wsName) {
@@ -198,39 +110,13 @@ export async function listAllFiles(wsName) {
 
   let files = [];
 
-  switch (ws.type) {
-    case 'browser': {
-      const rawPaths = await idbFS.opendirRecursive(wsName);
-      files = rawPaths.map((r) => {
-        const [_wsName, ...f] = r.split('/');
-        validWsName(_wsName);
+  const rawPaths = await getNBFS(ws).opendirRecursive(wsName);
+  files = rawPaths.map((r) => {
+    const [_wsName, ...f] = r.split('/');
+    validWsName(_wsName);
 
-        return _wsName + ':' + f.join('/');
-      });
-      break;
-    }
-
-    case 'nativefs': {
-      const { rootDirHandle } = ws.metadata;
-
-      const rawPaths = await nativeFS.listFiles(rootDirHandle);
-      files = rawPaths.map((fileHandlers) => {
-        return (
-          wsName +
-          ':' +
-          fileHandlers
-            .slice(1)
-            .map((f) => f.name)
-            .join('/')
-        );
-      });
-      break;
-    }
-
-    default: {
-      throw new Error('Unknown workspace type ' + ws.type);
-    }
-  }
+    return _wsName + ':' + f.join('/');
+  });
 
   return files.sort((a, b) => a.localeCompare(b));
 }
@@ -238,8 +124,8 @@ export async function listAllFiles(wsName) {
 export async function renameFile(wsPath, newWsPath) {
   validatePath(wsPath);
   validatePath(newWsPath);
-  const { wsName, filePath } = resolvePath(wsPath);
-  const { wsName: newWsName, filePath: newFilePath } = resolvePath(newWsPath);
+  const { wsName } = resolvePath(wsPath);
+  const { wsName: newWsName } = resolvePath(newWsPath);
 
   if (wsName !== newWsName) {
     throw new Error('Workspace name must be the same');
@@ -247,25 +133,5 @@ export async function renameFile(wsPath, newWsPath) {
 
   const workspace = await getWorkspaceInfo(wsName);
 
-  switch (workspace.type) {
-    case 'browser': {
-      await idbFS.rename(toIDBPath(wsPath), toIDBPath(newWsPath));
-      break;
-    }
-
-    case 'nativefs': {
-      const { rootDirHandle } = workspace.metadata;
-
-      await nativeFS.renameFile(
-        toNativePath(rootDirHandle, filePath),
-        toNativePath(rootDirHandle, newFilePath),
-        rootDirHandle,
-      );
-      break;
-    }
-
-    default: {
-      throw new Error('Unknown workspace type ' + workspace.type);
-    }
-  }
+  await getNBFS(workspace).rename(toFSPath(wsPath), toFSPath(newWsPath));
 }

@@ -1,14 +1,14 @@
+import {
+  BaseFileSystemError,
+  FILE_NOT_FOUND_ERROR,
+  NATIVE_BROWSER_PERMISSION_ERROR,
+  UPSTREAM_ERROR,
+  hasPermission,
+  requestPermission,
+} from 'baby-fs';
 import React, { useEffect, useCallback } from 'react';
 import { keybindingsHelper, useCatchError } from 'utils/index';
-import { FSError, WorkspaceError } from './errors';
-import {
-  hasPermission,
-  NATIVE_FS_FILE_NOT_FOUND_ERROR,
-  NATIVE_FS_PERMISSION_ERROR,
-  NATIVE_FS_READ_ERROR,
-  NATIVE_FS_WRITE_ERROR,
-  requestPermission,
-} from './nativefs-helpers';
+import { WorkspaceError } from './errors';
 import {
   getWorkspaceInfo,
   WORKSPACE_NOT_FOUND_ERROR,
@@ -208,16 +208,19 @@ function useHandleErrors() {
 
   const errorHandler = useCallback(
     (error) => {
-      if (error instanceof FSError) {
+      if (error instanceof BaseFileSystemError) {
         switch (error.code) {
-          case NATIVE_FS_READ_ERROR:
-          case NATIVE_FS_WRITE_ERROR:
-          case NATIVE_FS_FILE_NOT_FOUND_ERROR: {
+          case UPSTREAM_ERROR: {
             setWsPermissionState({ type: 'error', error: error });
             break;
           }
 
-          case NATIVE_FS_PERMISSION_ERROR: {
+          case FILE_NOT_FOUND_ERROR: {
+            setWsPermissionState({ type: 'error', error: error });
+            break;
+          }
+
+          case NATIVE_BROWSER_PERMISSION_ERROR: {
             setWsPermissionState({
               type: 'permission',
               workspace: wsPermissionState.workspace,

@@ -14,6 +14,8 @@ export class BaseFileMetadata {
 export class BaseFileSystem {
   async stat(filePath) {}
   async readFile(filePath) {}
+  //  https://github.com/jprichardson/node-fs-extra/blob/master/docs/outputFile.md
+  // Almost the same as fs.writeFile (i.e. it overwrites), except that if the parent directory does not exist, it's created
   async writeFile(filePath, data) {}
   async unlink(filePath) {}
 
@@ -32,10 +34,6 @@ export class BaseFileSystem {
 
   // fs.extra https://github.com/jprichardson/node-fs-extra/blob/master/docs/move.md
   async move(src, dest) {}
-
-  //  https://github.com/jprichardson/node-fs-extra/blob/master/docs/outputFile.md
-  // Almost the same as writeFile (i.e. it overwrites), except that if the parent directory does not exist, it's created
-  async outputFile() {}
 
   // https://github.com/jprichardson/node-fs-extra/blob/master/docs/copy.md
   // Copy a file or directory. The directory can have contents.

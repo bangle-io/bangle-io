@@ -3157,6 +3157,7 @@ __metadata:
     "@testing-library/react": ^11.2.6
     "@testing-library/react-hooks": ^5.1.1
     "@testing-library/user-event": ^13.1.1
+    baby-fs: "workspace:*"
     config: "workspace:*"
     editor: "workspace:*"
     prop-types: ^15.7.2

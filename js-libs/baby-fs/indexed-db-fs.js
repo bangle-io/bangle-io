@@ -11,15 +11,15 @@ import {
   VALIDATION_ERROR,
 } from './error-codes';
 
-export const dbSuffix = 3;
+export const idbSuffix = 3;
 
 const customStore = idb.createStore(
-  `baby-fs-db${dbSuffix}`,
-  `baby-fs-store${dbSuffix}`,
+  `baby-idb-db-${idbSuffix}`,
+  `baby-idb-db-store-${idbSuffix}`,
 );
 const customMetaStore = idb.createStore(
-  `baby-fs-meta-db${dbSuffix}`,
-  `baby-fs-meta-store${dbSuffix}`,
+  `baby-idb-meta-${idbSuffix}`,
+  `baby-idb-meta-store${idbSuffix}`,
 );
 
 function catchUpstream(idbPromise, errorMessage) {
