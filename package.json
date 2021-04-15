@@ -10,7 +10,8 @@
     "workspace",
     "editor",
     "ui-context",
-    "ui-components"
+    "ui-components",
+    "js-libs/*"
   ],
   "authors": [
     {

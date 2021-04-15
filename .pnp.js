@@ -35,6 +35,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:editor"
       },
       {
+        "name": "baby-fs",
+        "reference": "workspace:js-libs/baby-fs"
+      },
+      {
         "name": "style",
         "reference": "workspace:style"
       },
@@ -59,6 +63,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "ignorePatternData": "(^(?:\\.yarn\\/sdks(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$)",
     "fallbackExclusionList": [
       ["app", ["workspace:app"]],
+      ["baby-fs", ["workspace:js-libs/baby-fs"]],
       ["bangle-io", ["workspace:."]],
       ["config", ["workspace:config"]],
       ["editor", ["workspace:editor"]],
@@ -5534,6 +5539,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/babel__core"
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["baby-fs", [
+        ["workspace:js-libs/baby-fs", {
+          "packageLocation": "./js-libs/baby-fs/",
+          "packageDependencies": [
+            ["baby-fs", "workspace:js-libs/baby-fs"],
+            ["idb-keyval", "npm:5.0.4"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["balanced-match", [
@@ -16968,6 +16983,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.8.0"],
             ["@octokit/rest", "npm:18.5.2"],
             ["@testing-library/react", "virtual:8cd8bf1e2e9b4f32172204239f967b324215827a978c39a0b247403db0c2d3af13c01e889ffb7e907ebc57ec8083574609aef7c6a445eec4e9cda6932dd0bedc#npm:11.2.6"],
+            ["baby-fs", "workspace:js-libs/baby-fs"],
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
             ["idb-keyval", "npm:5.0.4"],

@@ -49,9 +49,15 @@
       ],
       "workspace/*": [
         "./workspace/*"
+      ],
+      "baby-fs": [
+        "./js-libs/baby-fs/index.js"
+      ],
+      "baby-fs/*": [
+        "./js-libs/baby-fs/*"
       ]
     },
-    "module": "commonJS",
+    "module": "esnext",
     "target": "esnext"
   },
   "exclude": [
