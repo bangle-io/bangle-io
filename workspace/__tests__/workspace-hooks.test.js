@@ -12,28 +12,37 @@ import {
 import * as idb from 'idb-keyval';
 import { Workspace } from '../Workspace';
 import { getWorkspaceInfo } from '../workspace-helpers';
-
+import { IndexedDBFileSystem } from 'baby-fs';
 const mockStore = new Map();
+const mockBabyFSStore = new Map();
+
+jest.mock('baby-fs', () => {
+  const actual = jest.requireActual('baby-fs');
+  return {
+    ...actual,
+    IndexedDBFileSystem: jest.fn(),
+  };
+});
 
 jest.mock('idb-keyval', () => {
   const idb = {};
-  idb.get = jest.fn((...args) => {
+  idb.get = jest.fn(async (...args) => {
     return mockStore.get(...args);
   });
-  idb.del = jest.fn((...args) => {
+  idb.del = jest.fn(async (...args) => {
     return mockStore.delete(...args);
   });
-  idb.set = jest.fn((...args) => {
+  idb.set = jest.fn(async (...args) => {
     return mockStore.set(...args);
   });
-  idb.keys = jest.fn((...args) => {
+  idb.keys = jest.fn(async (...args) => {
     return Array.from(mockStore.keys(...args));
   });
   return idb;
 });
 
 function createFileContent(textContent = 'hello') {
-  return {
+  return JSON.stringify({
     content: [
       {
         content: [{ text: textContent, type: 'text' }],
@@ -41,11 +50,38 @@ function createFileContent(textContent = 'hello') {
       },
     ],
     type: 'doc',
-  };
+  });
 }
+
+let idbFS;
 
 beforeEach(() => {
   mockStore.clear();
+  mockBabyFSStore.clear();
+  const obj = {
+    readFile: jest.fn(async (fileName) => {
+      return mockBabyFSStore.get(fileName);
+    }),
+    writeFile: jest.fn(async (fileName, data) => {
+      mockBabyFSStore.set(fileName, data);
+    }),
+    unlink: jest.fn(async (fileName) => {
+      mockBabyFSStore.delete(fileName);
+    }),
+    rename: jest.fn(async (a, b) => {
+      mockBabyFSStore.set(b, mockBabyFSStore.get(a));
+      mockBabyFSStore.delete(a);
+    }),
+    opendirRecursive: jest.fn(async () => {
+      return Array.from(mockBabyFSStore.keys());
+    }),
+  };
+
+  IndexedDBFileSystem.mockImplementation(() => {
+    return obj;
+  });
+
+  idbFS = new IndexedDBFileSystem();
 });
 
 describe('useGetWorkspaceFiles', () => {
@@ -69,6 +105,7 @@ describe('useGetWorkspaceFiles', () => {
 
   test('works', async () => {
     let refreshFiles;
+
     mockStore.set('workspaces/2', [
       {
         name: 'kujo',
@@ -76,9 +113,7 @@ describe('useGetWorkspaceFiles', () => {
         metadata: {},
       },
     ]);
-    mockStore.set('kujo:one.md', {
-      doc: createFileContent(),
-    });
+    await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
       const [files, _refreshFiles] = useGetWorkspaceFiles();
@@ -112,9 +147,8 @@ describe('useGetWorkspaceFiles', () => {
       </div>
     `);
 
-    mockStore.set('kujo:two.md', {
-      doc: createFileContent(),
-    });
+    await idbFS.writeFile('kujo/two.md', createFileContent());
+
     await act(async () => {
       await refreshFiles();
     });
@@ -164,9 +198,7 @@ describe('useWorkspacePath', () => {
       },
     ]);
 
-    mockStore.set('kujo:one.md', {
-      doc: createFileContent(),
-    });
+    await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
       const [files] = useGetWorkspaceFiles();
@@ -274,27 +306,11 @@ describe('useCreateMdFile', () => {
 
     expect(testLocation.pathname).toBe('/ws/kujo/one.md');
 
-    expect(idb.set).toBeCalledTimes(1);
-    expect(idb.set).toBeCalledWith('kujo:one.md', {
-      doc: {
-        content: [
-          {
-            attrs: {
-              level: 1,
-
-              collapseContent: null,
-            },
-            content: [{ text: 'one.md', type: 'text' }],
-            type: 'heading',
-          },
-          {
-            content: [{ text: 'Hello world!', type: 'text' }],
-            type: 'paragraph',
-          },
-        ],
-        type: 'doc',
-      },
-    });
+    expect(idbFS.writeFile).toBeCalledTimes(1);
+    expect(idbFS.writeFile).toBeCalledWith(
+      'kujo/one.md',
+      '# one.md\n\nHello world!',
+    );
   });
 });
 
@@ -311,9 +327,7 @@ describe('useRenameActiveFile', () => {
       },
     ]);
 
-    mockStore.set('kujo:one.md', {
-      doc: createFileContent(),
-    });
+    await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
       const renameFileCb = useRenameActiveFile();
@@ -347,18 +361,8 @@ describe('useRenameActiveFile', () => {
 
     expect(testLocation.pathname).toBe('/ws/kujo/two.md');
 
-    expect(idb.set).toBeCalledTimes(1);
-    expect(idb.set).toBeCalledWith('kujo:two.md', {
-      doc: {
-        content: [
-          {
-            content: [{ text: 'hello', type: 'text' }],
-            type: 'paragraph',
-          },
-        ],
-        type: 'doc',
-      },
-    });
+    expect(idbFS.rename).toBeCalledTimes(1);
+    expect(idbFS.rename).toBeCalledWith('kujo/one.md', 'kujo/two.md');
   });
 });
 
@@ -375,9 +379,7 @@ describe('useDeleteFile', () => {
       },
     ]);
 
-    mockStore.set('kujo:one.md', {
-      doc: createFileContent(),
-    });
+    await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
       const deleteFileCb = useDeleteFile();
@@ -411,9 +413,8 @@ describe('useDeleteFile', () => {
 
     expect(testLocation.pathname).toBe('/ws/kujo');
 
-    expect(idb.set).toBeCalledTimes(0);
-    expect(idb.del).toBeCalledTimes(1);
-    expect(idb.del).toBeCalledWith('kujo:one.md');
+    expect(idbFS.unlink).toBeCalledTimes(1);
+    expect(idbFS.unlink).toBeCalledWith('kujo/one.md');
   });
 });
 

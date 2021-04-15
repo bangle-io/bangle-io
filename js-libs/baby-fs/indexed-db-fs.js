@@ -11,16 +11,8 @@ import {
   VALIDATION_ERROR,
 } from './error-codes';
 
-export const idbSuffix = 3;
-
-const customStore = idb.createStore(
-  `baby-idb-db-${idbSuffix}`,
-  `baby-idb-db-store-${idbSuffix}`,
-);
-const customMetaStore = idb.createStore(
-  `baby-idb-meta-${idbSuffix}`,
-  `baby-idb-meta-store${idbSuffix}`,
-);
+const idbSuffix = 3;
+export const BASE_IDB_NAME_PREFIX = 'baby-idb';
 
 function catchUpstream(idbPromise, errorMessage) {
   return idbPromise.catch((error) => {
@@ -31,11 +23,17 @@ function catchUpstream(idbPromise, errorMessage) {
 }
 
 class FileMetadata {
+  constructor() {
+    this._customMetaStore = idb.createStore(
+      `${BASE_IDB_NAME_PREFIX}-meta-${idbSuffix}`,
+      `${BASE_IDB_NAME_PREFIX}-meta-store${idbSuffix}`,
+    );
+  }
   // get the metadata, if not exists
   // save the given `fallback` and return it
   async get(filePath, fallback) {
     const result = await catchUpstream(
-      idb.get(filePath, customMetaStore),
+      idb.get(filePath, this._customMetaStore),
       'Error reading metadata',
     );
 
@@ -48,7 +46,7 @@ class FileMetadata {
 
   async set(filePath, metadata) {
     await catchUpstream(
-      idb.set(filePath, metadata, customMetaStore),
+      idb.set(filePath, metadata, this._customMetaStore),
       'Error writing metadata',
     );
   }
@@ -61,23 +59,33 @@ class FileMetadata {
 
   async del(filePath) {
     await catchUpstream(
-      idb.del(filePath, customMetaStore),
+      idb.del(filePath, this._customMetaStore),
       'Error deleting metadata',
     );
   }
 }
 
-let fileMetadata = new FileMetadata();
-
 export class IndexedDBFileSystem extends BaseFileSystem {
+  constructor(opts) {
+    super(opts);
+    this._customStore = idb.createStore(
+      `${BASE_IDB_NAME_PREFIX}-db-${idbSuffix}`,
+      `${BASE_IDB_NAME_PREFIX}-db-store-${idbSuffix}`,
+    );
+
+    this._fileMetadata = new FileMetadata();
+  }
   async stat(filePath) {
-    const result = await fileMetadata.get(filePath, new BaseFileMetadata());
+    const result = await this._fileMetadata.get(
+      filePath,
+      new BaseFileMetadata(),
+    );
     return result;
   }
 
   async readFile(filePath) {
     let result = await catchUpstream(
-      idb.get(filePath, customStore),
+      idb.get(filePath, this._customStore),
       'Error reading data',
     );
 
@@ -101,11 +109,11 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     }
 
     await catchUpstream(
-      idb.set(filePath, data, customStore),
+      idb.set(filePath, data, this._customStore),
       'Error writing data',
     );
     const currentTime = new Date().getTime();
-    await fileMetadata.update(
+    await this._fileMetadata.update(
       filePath,
       new BaseFileMetadata({ ctimeMs: currentTime }),
       (existingMetadata) => {
@@ -120,8 +128,11 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async unlink(filePath) {
-    await catchUpstream(idb.del(filePath, customStore), 'Error deleting file');
-    await fileMetadata.del(filePath);
+    await catchUpstream(
+      idb.del(filePath, this._customStore),
+      'Error deleting file',
+    );
+    await this._fileMetadata.del(filePath);
   }
 
   async rename(oldFilePath, newFilePath) {
@@ -150,7 +161,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   // example ['a/b/c.md', 'a/e.md']
   async opendirRecursive(dirPath) {
     let keys = await catchUpstream(
-      idb.keys(customStore),
+      idb.keys(this._customStore),
       'Error listing files',
     );
 
