@@ -18,6 +18,9 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
+  "devDependencies": {
+    "tslib": "^2.2.0"
+  },
   "dependencies": {
     "@bangle.dev/collab": "0.8.0",
     "@bangle.dev/core": "0.8.0",

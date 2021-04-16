@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@testing-library/react-hooks": "^5.1.1",
-    "react-test-renderer": "^17.0.2"
+    "react-test-renderer": "^17.0.2",
+    "tslib": "^2.2.0"
   }
 }

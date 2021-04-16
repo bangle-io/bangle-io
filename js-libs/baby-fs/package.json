@@ -23,5 +23,8 @@
   },
   "dependencies": {
     "idb-keyval": "^5.0.4"
+  },
+  "devDependencies": {
+    "tslib": "^2.2.0"
   }
 }

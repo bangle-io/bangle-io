@@ -23,5 +23,8 @@
   },
   "dependencies": {
     "tailwindcss": "^2.1.1"
+  },
+  "devDependencies": {
+    "tslib": "^2.2.0"
   }
 }

@@ -19,7 +19,8 @@
   "module": "index.js",
   "scripts": {},
   "devDependencies": {
-    "@testing-library/react": "^11.2.6"
+    "@testing-library/react": "^11.2.6",
+    "tslib": "^2.2.0"
   },
   "dependencies": {
     "@bangle.dev/core": "0.8.0",
