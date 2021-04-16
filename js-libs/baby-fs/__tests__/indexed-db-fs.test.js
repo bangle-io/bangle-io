@@ -51,7 +51,6 @@ test('writeFile', async () => {
     }
   `);
   expect(mockMetaStore.get('/hola/hi')).toEqual({
-    ctimeMs: expect.any(Number),
     mtimeMs: expect.any(Number),
   });
 });
@@ -70,7 +69,6 @@ test('stat', async () => {
 
   const data = await fs.stat('/hola/hi');
   expect(data).toEqual({
-    ctimeMs: expect.any(Number),
     mtimeMs: expect.any(Number),
   });
 });

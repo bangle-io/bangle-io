@@ -1,4 +1,8 @@
-import { BaseFileSystem, BaseFileSystemError } from './base-fs';
+import {
+  BaseFileMetadata,
+  BaseFileSystem,
+  BaseFileSystemError,
+} from './base-fs';
 import {
   FILE_NOT_FOUND_ERROR,
   UPSTREAM_ERROR,
@@ -72,7 +76,17 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
       catchUpstreamError(opendirRecursive(...args), 'Unable to open dir');
   }
 
-  async stat(filePath) {}
+  async stat(filePath) {
+    await verifyPermission(this._rootDirHandle, filePath);
+    const { fileHandle } = await this._resolveFileHandle(
+      this._rootDirHandle,
+      filePath,
+    );
+
+    const file = await fileHandle.getFile();
+
+    return new BaseFileMetadata({ mtimeMs: file.lastModified });
+  }
 
   async readFile(filePath) {
     await verifyPermission(this._rootDirHandle, filePath);

@@ -4,22 +4,63 @@ import { Manager } from '@bangle.dev/collab/server/manager';
 import { specRegistry } from 'editor/index';
 import { getDoc, saveDoc } from 'workspace/index';
 import { defaultContent } from './editor-default-content';
+import { sleep } from 'utils/index';
+import { config } from 'config/index';
+import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
 export const EditorManagerContext = React.createContext();
 
+const maxEditors = [undefined, undefined];
+const MAX_EDITOR = maxEditors.length;
 /**
  * Should be parent of all editors.
  */
 export function EditorManager({ children }) {
   const { sendRequest } = useManager();
-  const [primaryEditor, setPrimaryEditor] = useState();
+  const [editors, _setEditor] = useState(maxEditors);
 
   const value = useMemo(() => {
-    return { sendRequest, setPrimaryEditor, primaryEditor };
-  }, [sendRequest, setPrimaryEditor, primaryEditor]);
+    const setEditor = (editorId, editor) => {
+      _setEditor((array) => {
+        if (editorId > MAX_EDITOR) {
+          throw new Error(`Only ${MAX_EDITOR + 1} allowed`);
+        }
+        const newArray = array.slice(0);
+        newArray[editorId] = editor;
+        return newArray;
+      });
+    };
+
+    const [primaryEditor, secondaryEditor] = editors;
+    const getEditor = (editorId) => {
+      return editors[editorId];
+    };
+
+    return { sendRequest, setEditor, primaryEditor, getEditor };
+  }, [sendRequest, _setEditor, editors]);
+
+  useEffect(() => {
+    if (!config.isIntegration) {
+      window.editor = editors[0];
+      window.editors = editors;
+      getIdleCallback(() => {
+        if (
+          new URLSearchParams(window.location.search).get('debug_pm') ===
+            'yes' &&
+          editors[0]
+        ) {
+          import(
+            /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
+          ).then((args) => {
+            args.applyDevTools(editors[0].view);
+          });
+        }
+      });
+    }
+  }, [editors]);
 
   return (
     <EditorManagerContext.Provider value={value}>
@@ -28,6 +69,18 @@ export function EditorManager({ children }) {
   );
 }
 
+/**
+ * Understanding common loading patterns
+ *
+ * # Opening an Existing file
+ *
+ * 1. User somehow clicks on a file and triggers pushWsPath
+ * 2. That then becomes a wsPath derived from history.location
+ * 3. A <Editor /> gets mounted with new wsPath
+ * 4. At this point the editor is loaded with empty doc.
+ * 5. localDisk.getItem is called to get the document
+ * 6. Collab plugin refreshed the editor with correct content
+ */
 function useManager() {
   const [manager] = useState(
     () =>
@@ -54,6 +107,8 @@ function useManager() {
 function localDisk(defaultContent) {
   return new LocalDisk({
     getItem: async (wsPath) => {
+      log('getItem', wsPath);
+      // await sleep(5000);
       const doc = await getDoc(wsPath);
       if (!doc) {
         return defaultContent;
@@ -61,6 +116,8 @@ function localDisk(defaultContent) {
       return doc;
     },
     setItem: async (wsPath, doc) => {
+      log('setItem', wsPath);
+
       await saveDoc(wsPath, doc);
     },
   });

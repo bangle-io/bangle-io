@@ -112,19 +112,9 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       idb.set(filePath, data, this._customStore),
       'Error writing data',
     );
-    const currentTime = new Date().getTime();
-    await this._fileMetadata.update(
-      filePath,
-      new BaseFileMetadata({ ctimeMs: currentTime }),
-      (existingMetadata) => {
-        // only update mtime if updating existing file
-        if (existingMetadata.ctimeMs !== currentTime) {
-          existingMetadata.mtimeMs = new Date().getTime();
-        }
-
-        return existingMetadata;
-      },
-    );
+    await this._fileMetadata.update(filePath, new BaseFileMetadata(), () => {
+      return new BaseFileMetadata();
+    });
   }
 
   async unlink(filePath) {

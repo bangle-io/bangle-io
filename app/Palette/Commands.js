@@ -2,7 +2,7 @@ import { INPUT_PALETTE } from './paletteTypes';
 import { useCreateMdFile, useWorkspacePath } from 'workspace/index';
 import { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
-import { EditorManagerContext } from 'app/editor/EditorManager';
+import { EditorManagerContext } from '../editor/EditorManager';
 
 /**
  * Opens an input palette

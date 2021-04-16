@@ -1,10 +1,11 @@
 import * as _idb from 'idb-keyval';
 
 // based on node's stat
+
+// ctimeMs is not supported by native browser fs, so only focusing on mTime
 export class BaseFileMetadata {
-  constructor({ ctimeMs = new Date().getTime(), mtimeMs = ctimeMs } = {}) {
+  constructor({ mtimeMs = new Date().getTime() } = {}) {
     this.mtimeMs = mtimeMs;
-    this.ctimeMs = ctimeMs;
   }
 }
 

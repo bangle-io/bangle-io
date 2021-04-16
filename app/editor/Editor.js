@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect } from 'react';
 
-import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
 import sticker from '@bangle.dev/react-sticker';
@@ -32,20 +31,36 @@ import { EditorManagerContext } from './EditorManager';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
-export const Editor = function Editor({ isFirst, wsPath, grabFocus }) {
-  const { sendRequest, setPrimaryEditor, primaryEditor } = useContext(
+Editor.propTypes = {
+  wsPath: PropTypes.string.isRequired,
+  editorId: PropTypes.number.isRequired,
+  grabFocus: PropTypes.bool,
+};
+
+export function Editor({ editorId, wsPath, grabFocus }) {
+  const { sendRequest, setEditor, getEditor } = useContext(
     EditorManagerContext,
   );
 
-  const editor = isFirst ? primaryEditor : null;
+  useEffect(() => {
+    log('mounting editor', wsPath);
+    return () => {
+      log('unmounting editor', wsPath);
+    };
+  }, [wsPath]);
 
   useEffect(() => {
     requestAnimationFrame(() => {
-      if (grabFocus && editor && !editor.view.hasFocus()) {
+      if (!grabFocus) {
+        return;
+      }
+      const editor = getEditor(editorId);
+
+      if (editor && !editor.view.hasFocus()) {
         editor.view.focus();
       }
     });
-  }, [editor, grabFocus]);
+  }, [getEditor, editorId, grabFocus]);
 
   const plugins = useCallback(() => {
     return getPlugins({ sendRequest, wsPath });
@@ -53,30 +68,9 @@ export const Editor = function Editor({ isFirst, wsPath, grabFocus }) {
 
   const onEditorReady = useCallback(
     (editor) => {
-      if (isFirst) {
-        window.editor = editor;
-        setPrimaryEditor(editor);
-        if (!config.isIntegration) {
-          getIdleCallback(() => {
-            if (
-              new URLSearchParams(window.location.search).get('debug_pm') ===
-              'yes'
-            ) {
-              import(
-                /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
-              ).then((args) => {
-                args.applyDevTools(editor.view);
-              });
-            }
-          });
-        }
-      }
-
-      return () => {
-        setPrimaryEditor(undefined);
-      };
+      setEditor(editorId, editor);
     },
-    [isFirst, setPrimaryEditor],
+    [setEditor, editorId],
   );
 
   const renderNodeViews = useCallback(
@@ -102,8 +96,6 @@ export const Editor = function Editor({ isFirst, wsPath, grabFocus }) {
     plugins: plugins,
     specRegistry,
   });
-
-  useEffect(() => log('mounting editor', wsPath), [wsPath]);
 
   const renderMenuType = useCallback(({ type, menuKey }) => {
     if (type === 'defaultMenu') {
@@ -146,11 +138,4 @@ export const Editor = function Editor({ isFirst, wsPath, grabFocus }) {
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
     </BangleEditor>
   );
-};
-
-Editor.propTypes = {
-  isFirst: PropTypes.bool.isRequired,
-  wsPath: PropTypes.string.isRequired,
-  paletteType: PropTypes.string,
-  grabFocus: PropTypes.bool,
-};
+}

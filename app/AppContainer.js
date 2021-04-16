@@ -1,15 +1,14 @@
 import React, { useContext } from 'react';
 import { Route } from 'react-router-dom';
 import { UIManagerContext } from 'ui-context/index';
-import { Workspace, resolvePath, useWorkspacePath } from 'workspace/index';
+import { Workspace, useWorkspacePath } from 'workspace/index';
 import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
-import { Editor } from './editor/Editor';
-import { COMMAND_PALETTE, FILE_PALETTE, Palette } from './Palette/index';
-import { CloseIcon } from 'ui-components/index';
+import { COMMAND_PALETTE, Palette } from './Palette/index';
 import { ActivityBar } from './components/ActivityBar';
 import { FileBrowser } from './components/FileBrowser';
 import { OptionsBar } from './components/OptionsBar';
-import { keybindings, keyDisplayValue } from 'config/index';
+import { keybindings } from 'config/index';
+import { EditorArea } from './editor/EditorArea';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
@@ -122,97 +121,42 @@ function RootHomePage() {
 }
 
 function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
-  return (
-    <Workspace>
-      <EditorArea showTabs={false} isFirst={true} widescreen={widescreen} />
-      {widescreen && <OptionsBar />}
-      {widescreen && secondaryEditor && <div className="grid-gutter" />}
-      {widescreen && secondaryEditor && (
-        <EditorArea
-          isFirst={false}
-          showTabs={showTabs}
-          widescreen={widescreen}
-        />
-      )}
-    </Workspace>
-  );
-}
-
-function EditorArea({ isFirst = false, showTabs, widescreen }) {
-  const { paletteType, dispatch } = useContext(UIManagerContext);
-
   let {
     wsPath,
-    wsName,
     secondaryWsPath,
     removeWsPath,
     removeSecondaryWsPath,
   } = useWorkspacePath();
+  const { paletteType } = useContext(UIManagerContext);
 
-  let onClose = removeWsPath;
-
-  if (!isFirst) {
-    wsPath = secondaryWsPath;
-    onClose = removeSecondaryWsPath;
-  }
+  const primaryGrabFocus = widescreen && paletteType == null;
+  const secondaryGrabFocus = false;
 
   return (
-    <div
-      className={cx(
-        'bangle-editor-area',
-        isFirst ? 'primary-editor' : 'secondary-editor fadeInAnimation',
+    <Workspace>
+      <EditorArea
+        className="primary-editor"
+        editorId={0}
+        showTabs={false}
+        wsPath={wsPath}
+        onClose={removeWsPath}
+        grabFocus={primaryGrabFocus}
+      />
+      {widescreen && <OptionsBar />}
+      {widescreen && secondaryEditor && <div className="grid-gutter" />}
+      {widescreen && secondaryEditor && (
+        <EditorArea
+          className="secondary-editor fadeInAnimation"
+          editorId={1}
+          isFirst={false}
+          showTabs={showTabs}
+          widescreen={widescreen}
+          wsPath={secondaryWsPath}
+          onClose={removeSecondaryWsPath}
+          grabFocus={secondaryGrabFocus}
+        />
       )}
-    >
-      {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
-      <div className={cx('bangle-editor-container', showTabs && 'has-tabs')}>
-        {wsPath ? (
-          <Editor
-            // Key is used to reload the editor when wsPath changes
-            key={wsPath}
-            isFirst={isFirst}
-            wsPath={wsPath}
-            // whenever paletteType goes undefined focus back on editor
-            grabFocus={widescreen && isFirst && paletteType == null}
-          />
-        ) : (
-          <>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'UI/CHANGE_PALETTE_TYPE',
-                  value: { type: FILE_PALETTE },
-                });
-              }}
-              className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-gray-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
-            >
-              Open a file
-            </button>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'UI/CHANGE_PALETTE_TYPE',
-                  value: { type: COMMAND_PALETTE, initialQuery: 'new file' },
-                });
-              }}
-              className="ml-3 w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-gray-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
-            >
-              Create a file
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function Tab({ wsPath, onClose }) {
-  return (
-    <div className="editor-tab">
-      <span>{resolvePath(wsPath).fileName}</span>
-      <button type="button" onClick={onClose} className={`focus:outline-none`}>
-        <CloseIcon className="h-4 w-4" />
-      </button>
-    </div>
+    </Workspace>
   );
 }
 
