@@ -11,7 +11,7 @@ export class HeadingPalette extends PaletteTypeBase {
   static description = 'Jump to a heading';
   static PaletteIcon = NullIcon;
   static UIComponent = HeadingPaletteUIComponent;
-  static inputPlaceholder = 'Type a heading name';
+  static placeholder = 'Type a heading name';
 }
 
 function HeadingPaletteUIComponent({ query, paletteProps, dismissPalette }) {

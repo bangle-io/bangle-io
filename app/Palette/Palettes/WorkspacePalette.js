@@ -15,7 +15,7 @@ export class WorkspacePalette extends PaletteTypeBase {
   static description = 'Switch workspace';
   static PaletteIcon = AlbumIcon;
   static UIComponent = WorkspacePaletteUIComponent;
-  static inputPlaceholder = 'Enter a workspace name';
+  static placeholder = 'Enter a workspace name';
   static keybinding = keybindings.toggleWorkspacePalette.key;
 
   static parseRawQuery(rawQuery) {

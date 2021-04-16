@@ -11,7 +11,7 @@ export class PaletteTypeBase {
   static description;
   static PaletteIcon;
   static UIComponent;
-  static inputPlaceholder;
+  static placeholder;
   static keybinding;
 
   // If this palette wants to handle the rawQuery

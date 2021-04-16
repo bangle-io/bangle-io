@@ -54,7 +54,7 @@ export class CommandPalette extends PaletteTypeBase {
   static PaletteIcon = TerminalIcon;
   static UIComponent = CommandPaletteUIComponent;
   static keybinding = keybindings.toggleCommandPalette.key;
-  static inputPlaceholder = 'Type a command name and press enter to run';
+  static placeholder = 'Type a command name and press enter to run';
 }
 
 function CommandPaletteUIComponent({
@@ -168,7 +168,7 @@ function useNewBrowserWS({ updatePalette }) {
     updatePalette({
       type: INPUT_PALETTE,
       metadata: {
-        inputPlaceholder: 'Please give your workspace a name',
+        placeholder: 'Please give your workspace a name',
         onInputConfirm: (query) => {
           if (query) {
             return createWorkspace(query, 'browser');
@@ -254,7 +254,7 @@ function useImportWSFromGithub({ updatePalette }) {
     updatePalette({
       type: INPUT_PALETTE,
       metadata: {
-        inputPlaceholder:
+        placeholder:
           'Enter a Github repos url ex: github.com/sindresorhus/awesome',
         onInputConfirm: async (query) => {
           if (query) {
@@ -281,7 +281,7 @@ function useSaveGithubToken({ updatePalette }) {
     updatePalette({
       type: INPUT_PALETTE,
       metadata: {
-        inputPlaceholder:
+        placeholder:
           'Enter your personal Github token this will be saved in your browser',
         onInputConfirm: async (query) => {
           window.localStorage.setItem('github_token', query);

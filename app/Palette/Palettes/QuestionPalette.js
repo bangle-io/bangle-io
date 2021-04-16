@@ -13,7 +13,7 @@ export class QuestionPalette extends PaletteTypeBase {
   static description = 'Show available palettes';
   static PaletteIcon = NullIcon;
   static UIComponent = QuestionPaletteUIComponent;
-  static inputPlaceholder = null;
+  static placeholder = null;
   static keybinding = null;
 }
 

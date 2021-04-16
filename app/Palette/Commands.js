@@ -19,7 +19,7 @@ export function useInputPaletteNewFileCommand() {
         type: 'UI/CHANGE_PALETTE_TYPE',
         value: {
           type: INPUT_PALETTE,
-          inputPlaceholder: 'Enter your designed file name',
+          placeholder: 'Enter your designed file name',
           initialQuery,
           metadata: {
             onInputConfirm: (query) => {

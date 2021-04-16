@@ -116,7 +116,7 @@ export function Palette() {
         ),
         value: (ActivePalette.identifierPrefix || '') + query,
         updateValue: parseRawQuery,
-        placeholder: ActivePalette.placeholder,
+        placeholder: paletteMetadata?.placeholder ?? ActivePalette.placeholder,
         dismissPalette: dismissPalette,
       }}
     />
