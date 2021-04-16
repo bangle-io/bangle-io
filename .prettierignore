@@ -3,7 +3,7 @@ archive
 node_modules
 
 .yarn
-.pnp.js
+.pnp.cjs
 coverage
 .vscode
 .yarnrc.yml
