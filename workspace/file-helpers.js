@@ -100,6 +100,7 @@ export async function createFile(wsPath, content, contentType = 'doc') {
 
 export async function deleteFile(wsPath) {
   validatePath(wsPath);
+
   const { wsName } = resolvePath(wsPath);
   const workspace = await getWorkspaceInfo(wsName);
   await getNBFS(workspace).unlink(toFSPath(wsPath));
