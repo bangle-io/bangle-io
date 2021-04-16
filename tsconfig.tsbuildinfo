@@ -1,0 +1,2862 @@
+{
+  "program": {
+    "fileInfos": {
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es5.d.ts": {
+        "version": "b3584bc5798ed422ce2516df360ffa9cf2d80b5eae852867db9ba3743145f895",
+        "signature": "b3584bc5798ed422ce2516df360ffa9cf2d80b5eae852867db9ba3743145f895",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.d.ts": {
+        "version": "dc47c4fa66b9b9890cf076304de2a9c5201e94b740cffdf09f87296d877d71f6",
+        "signature": "dc47c4fa66b9b9890cf076304de2a9c5201e94b740cffdf09f87296d877d71f6",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2016.d.ts": {
+        "version": "7a387c58583dfca701b6c85e0adaf43fb17d590fb16d5b2dc0a2fbd89f35c467",
+        "signature": "7a387c58583dfca701b6c85e0adaf43fb17d590fb16d5b2dc0a2fbd89f35c467",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.d.ts": {
+        "version": "8a12173c586e95f4433e0c6dc446bc88346be73ffe9ca6eec7aa63c8f3dca7f9",
+        "signature": "8a12173c586e95f4433e0c6dc446bc88346be73ffe9ca6eec7aa63c8f3dca7f9",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.d.ts": {
+        "version": "5f4e733ced4e129482ae2186aae29fde948ab7182844c3a5a51dd346182c7b06",
+        "signature": "5f4e733ced4e129482ae2186aae29fde948ab7182844c3a5a51dd346182c7b06",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.d.ts": {
+        "version": "e6b724280c694a9f588847f754198fb96c43d805f065c3a5b28bbc9594541c84",
+        "signature": "e6b724280c694a9f588847f754198fb96c43d805f065c3a5b28bbc9594541c84",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.d.ts": {
+        "version": "e21c071ca3e1b4a815d5f04a7475adcaeea5d64367e840dd0154096d705c3940",
+        "signature": "e21c071ca3e1b4a815d5f04a7475adcaeea5d64367e840dd0154096d705c3940",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.dom.d.ts": {
+        "version": "feeeb1dd8a80fb76be42b0426e8f3ffa9bdef3c2f3c12c147e7660b1c5ba8b3b",
+        "signature": "feeeb1dd8a80fb76be42b0426e8f3ffa9bdef3c2f3c12c147e7660b1c5ba8b3b",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.core.d.ts": {
+        "version": "46ee15e9fefa913333b61eaf6b18885900b139867d89832a515059b62cf16a17",
+        "signature": "46ee15e9fefa913333b61eaf6b18885900b139867d89832a515059b62cf16a17",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.collection.d.ts": {
+        "version": "43fb1d932e4966a39a41b464a12a81899d9ae5f2c829063f5571b6b87e6d2f9c",
+        "signature": "43fb1d932e4966a39a41b464a12a81899d9ae5f2c829063f5571b6b87e6d2f9c",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.generator.d.ts": {
+        "version": "cdccba9a388c2ee3fd6ad4018c640a471a6c060e96f1232062223063b0a5ac6a",
+        "signature": "cdccba9a388c2ee3fd6ad4018c640a471a6c060e96f1232062223063b0a5ac6a",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.iterable.d.ts": {
+        "version": "8b2a5df1ce95f78f6b74f1a555ccdb6baab0486b42d8345e0871dd82811f9b9a",
+        "signature": "8b2a5df1ce95f78f6b74f1a555ccdb6baab0486b42d8345e0871dd82811f9b9a",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.promise.d.ts": {
+        "version": "2bb4b3927299434052b37851a47bf5c39764f2ba88a888a107b32262e9292b7c",
+        "signature": "2bb4b3927299434052b37851a47bf5c39764f2ba88a888a107b32262e9292b7c",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.proxy.d.ts": {
+        "version": "810627a82ac06fb5166da5ada4159c4ec11978dfbb0805fe804c86406dab8357",
+        "signature": "810627a82ac06fb5166da5ada4159c4ec11978dfbb0805fe804c86406dab8357",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.reflect.d.ts": {
+        "version": "62d80405c46c3f4c527ee657ae9d43fda65a0bf582292429aea1e69144a522a6",
+        "signature": "62d80405c46c3f4c527ee657ae9d43fda65a0bf582292429aea1e69144a522a6",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.symbol.d.ts": {
+        "version": "3013574108c36fd3aaca79764002b3717da09725a36a6fc02eac386593110f93",
+        "signature": "3013574108c36fd3aaca79764002b3717da09725a36a6fc02eac386593110f93",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts": {
+        "version": "9d122b7e8c1a5c72506eea50c0973cba55b92b5532d5cafa8a6ce2c547d57551",
+        "signature": "9d122b7e8c1a5c72506eea50c0973cba55b92b5532d5cafa8a6ce2c547d57551",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2016.array.include.d.ts": {
+        "version": "3be5a1453daa63e031d266bf342f3943603873d890ab8b9ada95e22389389006",
+        "signature": "3be5a1453daa63e031d266bf342f3943603873d890ab8b9ada95e22389389006",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.object.d.ts": {
+        "version": "17bb1fc99591b00515502d264fa55dc8370c45c5298f4a5c2083557dccba5a2a",
+        "signature": "17bb1fc99591b00515502d264fa55dc8370c45c5298f4a5c2083557dccba5a2a",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts": {
+        "version": "7ce9f0bde3307ca1f944119f6365f2d776d281a393b576a18a2f2893a2d75c98",
+        "signature": "7ce9f0bde3307ca1f944119f6365f2d776d281a393b576a18a2f2893a2d75c98",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.string.d.ts": {
+        "version": "6a6b173e739a6a99629a8594bfb294cc7329bfb7b227f12e1f7c11bc163b8577",
+        "signature": "6a6b173e739a6a99629a8594bfb294cc7329bfb7b227f12e1f7c11bc163b8577",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.intl.d.ts": {
+        "version": "12a310447c5d23c7d0d5ca2af606e3bd08afda69100166730ab92c62999ebb9d",
+        "signature": "12a310447c5d23c7d0d5ca2af606e3bd08afda69100166730ab92c62999ebb9d",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts": {
+        "version": "b0124885ef82641903d232172577f2ceb5d3e60aed4da1153bab4221e1f6dd4e",
+        "signature": "b0124885ef82641903d232172577f2ceb5d3e60aed4da1153bab4221e1f6dd4e",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.asyncgenerator.d.ts": {
+        "version": "0eb85d6c590b0d577919a79e0084fa1744c1beba6fd0d4e951432fa1ede5510a",
+        "signature": "0eb85d6c590b0d577919a79e0084fa1744c1beba6fd0d4e951432fa1ede5510a",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.asynciterable.d.ts": {
+        "version": "a40c4d82bf13fcded295ac29f354eb7d40249613c15e07b53f2fc75e45e16359",
+        "signature": "a40c4d82bf13fcded295ac29f354eb7d40249613c15e07b53f2fc75e45e16359",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.intl.d.ts": {
+        "version": "df9c8a72ca8b0ed62f5470b41208a0587f0f73f0a7db28e5a1272cf92537518e",
+        "signature": "df9c8a72ca8b0ed62f5470b41208a0587f0f73f0a7db28e5a1272cf92537518e",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.promise.d.ts": {
+        "version": "bb2d3fb05a1d2ffbca947cc7cbc95d23e1d053d6595391bd325deb265a18d36c",
+        "signature": "bb2d3fb05a1d2ffbca947cc7cbc95d23e1d053d6595391bd325deb265a18d36c",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.regexp.d.ts": {
+        "version": "c80df75850fea5caa2afe43b9949338ce4e2de086f91713e9af1a06f973872b8",
+        "signature": "c80df75850fea5caa2afe43b9949338ce4e2de086f91713e9af1a06f973872b8",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.array.d.ts": {
+        "version": "9d57b2b5d15838ed094aa9ff1299eecef40b190722eb619bac4616657a05f951",
+        "signature": "9d57b2b5d15838ed094aa9ff1299eecef40b190722eb619bac4616657a05f951",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.object.d.ts": {
+        "version": "6c51b5dd26a2c31dbf37f00cfc32b2aa6a92e19c995aefb5b97a3a64f1ac99de",
+        "signature": "6c51b5dd26a2c31dbf37f00cfc32b2aa6a92e19c995aefb5b97a3a64f1ac99de",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.string.d.ts": {
+        "version": "93544ca2f26a48716c1b6c5091842cad63129daac422dfa4bc52460465f22bb1",
+        "signature": "93544ca2f26a48716c1b6c5091842cad63129daac422dfa4bc52460465f22bb1",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.symbol.d.ts": {
+        "version": "2ad234885a4240522efccd77de6c7d99eecf9b4de0914adb9a35c0c22433f993",
+        "signature": "2ad234885a4240522efccd77de6c7d99eecf9b4de0914adb9a35c0c22433f993",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.bigint.d.ts": {
+        "version": "7b5a10e3c897fabece5a51aa85b4111727d7adb53c2734b5d37230ff96802a09",
+        "signature": "7b5a10e3c897fabece5a51aa85b4111727d7adb53c2734b5d37230ff96802a09",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.promise.d.ts": {
+        "version": "7435b75fdf3509622e79622dbe5091cf4b09688410ee2034e4fc17d0c99d0862",
+        "signature": "7435b75fdf3509622e79622dbe5091cf4b09688410ee2034e4fc17d0c99d0862",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.sharedmemory.d.ts": {
+        "version": "e7e8e1d368290e9295ef18ca23f405cf40d5456fa9f20db6373a61ca45f75f40",
+        "signature": "e7e8e1d368290e9295ef18ca23f405cf40d5456fa9f20db6373a61ca45f75f40",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.string.d.ts": {
+        "version": "faf0221ae0465363c842ce6aa8a0cbda5d9296940a8e26c86e04cc4081eea21e",
+        "signature": "faf0221ae0465363c842ce6aa8a0cbda5d9296940a8e26c86e04cc4081eea21e",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.symbol.wellknown.d.ts": {
+        "version": "936d7d2e8851af9ccfa5333b15e877a824417d352b1d7fd06388639dc69ef80a",
+        "signature": "936d7d2e8851af9ccfa5333b15e877a824417d352b1d7fd06388639dc69ef80a",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.intl.d.ts": {
+        "version": "e79ca55569f09a5dc3354be04dba4ae85865b1dce98bf46738ffe231c669621f",
+        "signature": "e79ca55569f09a5dc3354be04dba4ae85865b1dce98bf46738ffe231c669621f",
+        "affectsGlobalScope": true
+      },
+      "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts": {
+        "version": "ea7abf23498b7c214c67fc14f22f41983fbb7bf7c4826c7fcdef542b2022545f",
+        "signature": "ea7abf23498b7c214c67fc14f22f41983fbb7bf7c4826c7fcdef542b2022545f",
+        "affectsGlobalScope": false
+      },
+      "./babel.config.js": {
+        "version": "f3144bacf722f10bb634f223be66cf4dc71e3b56d14d5cd84f2230195ba8ed56",
+        "signature": "0755b9ad336458f88a54202219d668298cba551842344c16574a6081c359bef2",
+        "affectsGlobalScope": true
+      },
+      "./jest.config.js": {
+        "version": "77cf5305f93485dc6c724d82ff01e0ada24df31c1528032234ec18e3bb7c258a",
+        "signature": "9b42adea3abc14bb1d572047c8a9d7eb9ef11a14bdf8d4958c656ca6e09ab489",
+        "affectsGlobalScope": true
+      },
+      "./postcss.config.js": {
+        "version": "5fd089665bb20b26e2c6a017952f28ec9c8b242bfdd077637c3e05c06687566b",
+        "signature": "ec92f562b1c7c9710cbb28a52d2946b9dbf0e96ac4e9b4961b85d67bc65eccec",
+        "affectsGlobalScope": true
+      },
+      "./tailwind.config.js": {
+        "version": "28afeae3b22092e2e148c0c3784313071961af21dcec3867aa9c15d1c7fd5acf",
+        "signature": "6aecdb3c2901a26226b91dc29ae0d8afc0f94f185b561777131a5085fa7a686e",
+        "affectsGlobalScope": true
+      },
+      "./config/is-mac.ts": {
+        "version": "29bb14949f4e3ab0ab5fa832f3b7477304e073d4c98ff5f4dcc736bf739084aa",
+        "signature": "af719adbbff6f147d3e5e66fca226d19db2b98790d417e670217318f77623878",
+        "affectsGlobalScope": false
+      },
+      "./config/keybindings.ts": {
+        "version": "68d773d92a4d279d8e789bbc2c65aa62a6e0b550a3959b176ea88fa46f5a807e",
+        "signature": "06ca311d59f15a55534417490dbe2fcf1b2d82ec11264e264716dd4827fbf235",
+        "affectsGlobalScope": false
+      },
+      "./config/index.ts": {
+        "version": "7b4d194cd62af7225253df8e23c9baf15faca8a41e593dfb0d7f11c208dca180",
+        "signature": "a6bb2e1300e2100eea337e9d3fdf85801e580030405e67aa2165fc6abfd3a089",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/w3c-keyname-npm-2.2.4-8c6e5969c5-b711eaa986.zip/node_modules/w3c-keyname/index.d.ts": {
+        "version": "1579edb3e801f25d47773f18ca78a25a5996747d7fb888e7b70190cc38e4ea85",
+        "signature": "1579edb3e801f25d47773f18ca78a25a5996747d7fb888e7b70190cc38e4ea85",
+        "affectsGlobalScope": false
+      },
+      "./utils/utility.js": {
+        "version": "914ae9bf9b992a82512e84342343c8a70ea7398b701f2b156aaba39d7bd272a3",
+        "signature": "54cd1007433b10a1abe4e762d7db5a9885b606e4cbdd13e27db6e643e152240f",
+        "affectsGlobalScope": false
+      },
+      "./utils/hooks.js": {
+        "version": "e310324ff9f9e22aee38e996a47b3183e836c41b83eb73e6b6ab64d54ead8e72",
+        "signature": "f3a08c83cb10d192c17672e750c8f3b74b6227182b20a84415ecfac0c7be8536",
+        "affectsGlobalScope": false
+      },
+      "./utils/index.js": {
+        "version": "778277182f2c137f5f91998e72ce07266979d3f567b16592f6c56e5861a7d8d5",
+        "signature": "ba001ed566d6e5bd15c7d8915677e208363b9ced9d064895bf4216f1fcc92a67",
+        "affectsGlobalScope": false
+      },
+      "./style/apply-theme.js": {
+        "version": "a8442fed05f003295690a75cd30e108e9c08d36d25c21ced18aab1a763659d55",
+        "signature": "a6464b80b68537b70b217f4138ef1f1a0977785a3b9a75044eaa3d2bbc189649",
+        "affectsGlobalScope": false
+      },
+      "./style/index.js": {
+        "version": "5f504e1bf29cb58294bf5ebbf13c9c72c75a43e5e847bf4a6e13d82a7b8426c4",
+        "signature": "d32f737090d0e554fdf112a37b5160b4e492773d5787576921b5465a9e60846d",
+        "affectsGlobalScope": false
+      },
+      "./ui-context/ui-context.js": {
+        "version": "a5d4822cb7eaff654138c79d1baca019228157064990277961bc39c62c75adb9",
+        "signature": "63ea4e178261bb384f9620affdc71934e20625da1a2f3ac6124515e71fd410d0",
+        "affectsGlobalScope": false
+      },
+      "./ui-context/index.js": {
+        "version": "264fc7e40ff41f3094c77825e0fa43c068b0576711304c10927d844ffc08fcaa",
+        "signature": "ca4fccdb8ddcb210c89c3cf5ec7176e9f3ce70b97929a385a1c1c9a23435ba18",
+        "affectsGlobalScope": false
+      },
+      "./editor/spec-sheet.js": {
+        "version": "f858a0b6173685341381526aef7c5c2b6f0aa0660741b20d97ea923f124ab2d4",
+        "signature": "074861840b295a073e7e85d6fadba2cb06eaafd269e94e7ba33f7a1def1293cf",
+        "affectsGlobalScope": false
+      },
+      "./editor/collapsible-heading-deco.js": {
+        "version": "8c6630087a1f42efdf7ec392c38a887d237b0943c09d96e628191a6d67ff31d3",
+        "signature": "39f10d549179c2f4bc49215f4a80359eaa1e25d2486e38a53f6acd05e0b69e12",
+        "affectsGlobalScope": false
+      },
+      "./editor/plugins.js": {
+        "version": "872226023d302cd644cdca7bf1129ebddc5886094e96cdd6d3c6de9a812204e1",
+        "signature": "c0d47705a3f07cd096a611da6f254daea4196b7a6f4d6e829d8a60c083ef6f9a",
+        "affectsGlobalScope": false
+      },
+      "./editor/markdown-parser.js": {
+        "version": "c47bcd7ce9d60e460b0ddcc5852feb48cf0993c7a109bf386f02a82fdf4309c1",
+        "signature": "8e20f62a7225e2af4fe7c1f12d95ad8b92e7f1e3421e0a78f924eff1dd653bfa",
+        "affectsGlobalScope": false
+      },
+      "./editor/index.js": {
+        "version": "42a341410c30bb7e841f8fa01275c8f96fd72478ffff2ccadcdab935bbc4da4b",
+        "signature": "7eba78d3d61a7f4ef05903c3fa9d86a2d55678c98177ec32be6f9204485feb77",
+        "affectsGlobalScope": false
+      },
+      "./workspace/path-helpers.js": {
+        "version": "961cbb7134120e448fe7df53de6787f444cd3980190c08c6c0a7b96406b1dd5e",
+        "signature": "3502eb7ffad749107b32676c9bb763af7b3226c77951c9874da6e63939ee96ff",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/idb-keyval-npm-5.0.4-c10956c1b4-cae8c99767.zip/node_modules/idb-keyval/dist/esm/index.d.ts": {
+        "version": "656c849da891efa62f4aee55d34eb2f443e701ccd5119170a6f9ebcbbacc5fe3",
+        "signature": "656c849da891efa62f4aee55d34eb2f443e701ccd5119170a6f9ebcbbacc5fe3",
+        "affectsGlobalScope": false
+      },
+      "./workspace/errors.js": {
+        "version": "0e92d80ca62448d991914fbd4486f0c3ce9ebca49cb24f66e4890d68aa7faa22",
+        "signature": "a7cd8fc9dda7251e69007f1e88f007189887d372a15ee7714736d39fe748f9f7",
+        "affectsGlobalScope": false
+      },
+      "./workspace/workspace-helpers.js": {
+        "version": "f48f6be0f14eaa7f226a162e6c1927cd6cf7df55dc37c74114292b9c5944ec4a",
+        "signature": "b308ec691515b241596363452ba236991b8b10fcfc058ab380257db6059e717d",
+        "affectsGlobalScope": false
+      },
+      "./workspace/file-helpers.js": {
+        "version": "c5cd9773ab63ee1c6596a713de54f0c47d42e61b9e5e49152d5e03ae6728a985",
+        "signature": "b571d24834b77a41b17dbf0b44f88c6913b8214dfb5391ba4057a73eeec2a80e",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/before-after-hook-npm-2.2.1-0eb703f70c-697c0ac2c8.zip/node_modules/before-after-hook/index.d.ts": {
+        "version": "f4fc6f33af72add3d409feae7e6eb6fd48dd05a7fda785a832addafa4c7ce8a7",
+        "signature": "f4fc6f33af72add3d409feae7e6eb6fd48dd05a7fda785a832addafa4c7ce8a7",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts": {
+        "version": "54160aaec4f72e2045e7341301c096344b9e5162a1e48333a531117af5938713",
+        "signature": "54160aaec4f72e2045e7341301c096344b9e5162a1e48333a531117af5938713",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts": {
+        "version": "3f0d8705992ebf25221e0d3f72d496bbcebacb47c2b6ee90f4de66d760ee9152",
+        "signature": "3f0d8705992ebf25221e0d3f72d496bbcebacb47c2b6ee90f4de66d760ee9152",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Fetch.d.ts": {
+        "version": "af628c57e9826fbe767ae6afbffa7b197405a8c53ba6197bb32e806d35c1ca8f",
+        "signature": "af628c57e9826fbe767ae6afbffa7b197405a8c53ba6197bb32e806d35c1ca8f",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Signal.d.ts": {
+        "version": "76b87f8b5d13712d3fc53a231be1664c4071186120624f2ae1b5bf3db6c7b502",
+        "signature": "76b87f8b5d13712d3fc53a231be1664c4071186120624f2ae1b5bf3db6c7b502",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts": {
+        "version": "2c7742afcffed27fef8e373c7939f20b64b8783d37e737bba2b3e0d70899ee2c",
+        "signature": "2c7742afcffed27fef8e373c7939f20b64b8783d37e737bba2b3e0d70899ee2c",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts": {
+        "version": "a9cdd476c9e36aa3bf4212f4337254f2f2676506aabb6f7d8f6db50490d25c33",
+        "signature": "a9cdd476c9e36aa3bf4212f4337254f2f2676506aabb6f7d8f6db50490d25c33",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts": {
+        "version": "52c0780e990d8d2ef666d618a303bca67a5e968dbaa4e4eaaad4e415a7217fd1",
+        "signature": "52c0780e990d8d2ef666d618a303bca67a5e968dbaa4e4eaaad4e415a7217fd1",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts": {
+        "version": "80a16135e14ed2540f9687f4fb5daee3a4249126272a5a922a5a21ee3b7048c3",
+        "signature": "80a16135e14ed2540f9687f4fb5daee3a4249126272a5a922a5a21ee3b7048c3",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/ResponseHeaders.d.ts": {
+        "version": "7f7aa3e938180da966143e16c4686c7eb2ab8d0f762f038648e1cc6577e1d52e",
+        "signature": "7f7aa3e938180da966143e16c4686c7eb2ab8d0f762f038648e1cc6577e1d52e",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts": {
+        "version": "6e9413bf8a3ce70c3b7db79a29de97281576b731de079d0853f1de499304fbb3",
+        "signature": "6e9413bf8a3ce70c3b7db79a29de97281576b731de079d0853f1de499304fbb3",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts": {
+        "version": "f6aef032da1a16fa155757a6ee8a79c749e579a378d9ba54256d1cefc753d475",
+        "signature": "f6aef032da1a16fa155757a6ee8a79c749e579a378d9ba54256d1cefc753d475",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts": {
+        "version": "5f9c212f98b4df7d638dd9a8125c5e828acbf9710586cd8027e41e4e55819a37",
+        "signature": "5f9c212f98b4df7d638dd9a8125c5e828acbf9710586cd8027e41e4e55819a37",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts": {
+        "version": "2c574466b0d7ded0bfedaea3660d8f008cefa06db748d79274b4aaea46564763",
+        "signature": "2c574466b0d7ded0bfedaea3660d8f008cefa06db748d79274b4aaea46564763",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/generated/types.d.ts": {
+        "version": "0223aeea1988e933239b029cfe92f2b4046b8a8d06833b70508229e8440152fb",
+        "signature": "0223aeea1988e933239b029cfe92f2b4046b8a8d06833b70508229e8440152fb",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/version.d.ts": {
+        "version": "dcfcdca68a97c41277d8be8eaa0cbd633d6bde53d3723992590044b623641973",
+        "signature": "dcfcdca68a97c41277d8be8eaa0cbd633d6bde53d3723992590044b623641973",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/index.d.ts": {
+        "version": "bd4939cf5b4eddccc92ea5082b1b47d6d812d391cd2f593780842d4d97074fef",
+        "signature": "bd4939cf5b4eddccc92ea5082b1b47d6d812d391cd2f593780842d4d97074fef",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts": {
+        "version": "d0b273795d7f6f977bb06086c86a199304a8b756cdea541512efb68320d13bf9",
+        "signature": "d0b273795d7f6f977bb06086c86a199304a8b756cdea541512efb68320d13bf9",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts": {
+        "version": "7e122724e79d97fc601b9517da07dacf9e8162f5d78ad5740b349e2065ded611",
+        "signature": "7e122724e79d97fc601b9517da07dacf9e8162f5d78ad5740b349e2065ded611",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts": {
+        "version": "3c9c80b328558dde371257f1dec7ee2f26004c3497b3e302b94fc415b01c0190",
+        "signature": "3c9c80b328558dde371257f1dec7ee2f26004c3497b3e302b94fc415b01c0190",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts": {
+        "version": "3455a4c5f5feefa1f7062e4d8b00837e1edf7922b10cb50769b4ed3c5e37437f",
+        "signature": "3455a4c5f5feefa1f7062e4d8b00837e1edf7922b10cb50769b4ed3c5e37437f",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestError.d.ts": {
+        "version": "74fd4b09963df6d2a1c94b653199c48d5a578164517a7ae27ff86771662f6764",
+        "signature": "74fd4b09963df6d2a1c94b653199c48d5a578164517a7ae27ff86771662f6764",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/StrategyInterface.d.ts": {
+        "version": "6a6752f432019855ae0c882f1dd5b6ca11d4da35f2279e7efaa98caec41588af",
+        "signature": "6a6752f432019855ae0c882f1dd5b6ca11d4da35f2279e7efaa98caec41588af",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/VERSION.d.ts": {
+        "version": "7defd4b8de665e7cd5dc900c77a98d5ffb6c4a22a0b883c9fb93df3708647480",
+        "signature": "7defd4b8de665e7cd5dc900c77a98d5ffb6c4a22a0b883c9fb93df3708647480",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/GetResponseTypeFromEndpointMethod.d.ts": {
+        "version": "7a50f76e773ead4a34b5308879130da83192040ef6dafc5f18570ff6ad2bda61",
+        "signature": "7a50f76e773ead4a34b5308879130da83192040ef6dafc5f18570ff6ad2bda61",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts": {
+        "version": "70f53130d4dcf2f25b58eba7bb7ab4dd80994ad7dab46b37e60cd13a70761fd4",
+        "signature": "70f53130d4dcf2f25b58eba7bb7ab4dd80994ad7dab46b37e60cd13a70761fd4",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts": {
+        "version": "758e92a92871b11a9aede1787106be4764ae6a32f6c76bb29f072bfa28d9f69a",
+        "signature": "758e92a92871b11a9aede1787106be4764ae6a32f6c76bb29f072bfa28d9f69a",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/types.d.ts": {
+        "version": "45482620595159da00da23bb1bd0cf08f5d14082bc220b4252a504a5a47979a0",
+        "signature": "45482620595159da00da23bb1bd0cf08f5d14082bc220b4252a504a5a47979a0",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/index.d.ts": {
+        "version": "b4b7f5a40fe00e6d1386085367b338907127e332af336222915b085e0c62bd04",
+        "signature": "b4b7f5a40fe00e6d1386085367b338907127e332af336222915b085e0c62bd04",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/types.d.ts": {
+        "version": "68d46170e01bcf9ad47e5b62761ef0131f035c0ff6550bae02cadb1a31e9bf5e",
+        "signature": "68d46170e01bcf9ad47e5b62761ef0131f035c0ff6550bae02cadb1a31e9bf5e",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/index.d.ts": {
+        "version": "3c4095f4c57ed7def7f6692b68f484288248ddff55bdd3d7ab72370af1d212d6",
+        "signature": "3c4095f4c57ed7def7f6692b68f484288248ddff55bdd3d7ab72370af1d212d6",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts": {
+        "version": "8f71c030c1e21f8d8e6d446488938a834d2eca04a3666fc18df61bbadc9c17b1",
+        "signature": "8f71c030c1e21f8d8e6d446488938a834d2eca04a3666fc18df61bbadc9c17b1",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts": {
+        "version": "63db3f21f835af9dfa90829a54ba11a5f34c9fb9f73a235d603d5705c126f7bb",
+        "signature": "63db3f21f835af9dfa90829a54ba11a5f34c9fb9f73a235d603d5705c126f7bb",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts": {
+        "version": "ae4c8b1ed273e2d0e1578825fa823a97e92ab337f7c9d8cb8b5894712399b2cc",
+        "signature": "ae4c8b1ed273e2d0e1578825fa823a97e92ab337f7c9d8cb8b5894712399b2cc",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts": {
+        "version": "dcd84bb3a1febe31ce58cad334810f3ac7de6b94fc3bd2b9505ac24f23ac3376",
+        "signature": "dcd84bb3a1febe31ce58cad334810f3ac7de6b94fc3bd2b9505ac24f23ac3376",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts": {
+        "version": "c523378d3aa12273db8ccda1879bc645b76161b32bde7060c7381af113879312",
+        "signature": "c523378d3aa12273db8ccda1879bc645b76161b32bde7060c7381af113879312",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/index.d.ts": {
+        "version": "0978a657928f15fd8da7e16de14d623e26adf33a576da06f3aa5bbf26feb58a4",
+        "signature": "0978a657928f15fd8da7e16de14d623e26adf33a576da06f3aa5bbf26feb58a4",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts": {
+        "version": "21ee5e3056f830679d99c422273284435f684d2c346fdb6914ad6009c511fcae",
+        "signature": "21ee5e3056f830679d99c422273284435f684d2c346fdb6914ad6009c511fcae",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts": {
+        "version": "970960017f999642a2ee139932f3a08e8180c4410a1120bf79b7d0bf903703e6",
+        "signature": "970960017f999642a2ee139932f3a08e8180c4410a1120bf79b7d0bf903703e6",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/compose-paginate.d.ts": {
+        "version": "0940279b6cdfb51032bd6bb0b02c3a4ac2b0a73e380d6c48bf8b503d0de08350",
+        "signature": "0940279b6cdfb51032bd6bb0b02c3a4ac2b0a73e380d6c48bf8b503d0de08350",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/paginating-endpoints.d.ts": {
+        "version": "06ae8b7ddac3aff63085a4c6384557b36ef61075aa6c5173fdf3834b19a702d6",
+        "signature": "06ae8b7ddac3aff63085a4c6384557b36ef61075aa6c5173fdf3834b19a702d6",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/index.d.ts": {
+        "version": "b5b49a989ba1e33c2d84afe92eb47029b57df7c14a226468ca0b34c65f995a91",
+        "signature": "b5b49a989ba1e33c2d84afe92eb47029b57df7c14a226468ca0b34c65f995a91",
+        "affectsGlobalScope": false
+      },
+      "./.yarn/cache/@octokit-rest-npm-18.5.2-51dcff47d9-b6c8ee91fb.zip/node_modules/@octokit/rest/dist-types/index.d.ts": {
+        "version": "6c0d1e3be6a242e1910bebaf690b6a3edc0fa2cd3004d621f4d079fd91cd8930",
+        "signature": "6c0d1e3be6a242e1910bebaf690b6a3edc0fa2cd3004d621f4d079fd91cd8930",
+        "affectsGlobalScope": false
+      },
+      "./workspace/github-helpers.js": {
+        "version": "cd6f7098d392b90ef754d86f427b960ebbe92f8d7f85a601655ab232088138d1",
+        "signature": "a4e47987cf47ac22b1aaac6a89d0fae0dad2ed3f73f1c88be2fedab88d0bd879",
+        "affectsGlobalScope": false
+      },
+      "./workspace/workspace-hooks.js": {
+        "version": "bcc983d6a1a31bec47156ce1f29a58c3f9d784774486f4401313c4a7cf89ef8e",
+        "signature": "18f63b84f8f1a765377ea78f1dbf0937e9f2588d761618edfeaba979192f6f2c",
+        "affectsGlobalScope": false
+      },
+      "./workspace/Workspace.js": {
+        "version": "8220b69af8d329e644c4d4e299812bfe097f22b405f912fbe1505a10fd229fb6",
+        "signature": "b208cdb6477417e80f55b5ed12316b709aabdb048536180dbf24f41caf415747",
+        "affectsGlobalScope": false
+      },
+      "./workspace/index.js": {
+        "version": "beee2e7b83782e6195a316462a0a606fb3f2cb7ed4395b7fc587ee74468ef23b",
+        "signature": "d0bdc6ae07f8ccdade886c9770534972209fa4528a4b1eb2b76aa53426df2aee",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/paletteTypes.js": {
+        "version": "6af41d5846d91724d0bc2a50cdcfe28388699c2396387b9463b18501c46ff8ae",
+        "signature": "34c2ad0a49e75d628c89dfc6f8ac159c917561335d4c0082ae302f7825e143a5",
+        "affectsGlobalScope": false
+      },
+      "./app/editor/editor-default-content.js": {
+        "version": "cce0bd81909ea42729fbe51d8004c4c727a482664ab6dc06dbe353206757a4ec",
+        "signature": "179993d5b9915fb0b4ed309f918c99792b39cf1141d06b5857e38f31da2f4da7",
+        "affectsGlobalScope": false
+      },
+      "./app/editor/EditorManager.js": {
+        "version": "f57e483bf49f04a808cb0910f951951717482c0c5e3e8f994881938cf20b1513",
+        "signature": "52edba714fb2290f183f83e5a6aa92f39b5382fc169da7f91fcd0acf67afddb3",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/Commands.js": {
+        "version": "8171ea457a2c658b16d7f1c60cd3210ef5150fbbc63686e99b9e07fa0172db15",
+        "signature": "f8bd4925a4fe768c13e1da42659395eff7142afea45435436dc31f3efa6f7365",
+        "affectsGlobalScope": false
+      },
+      "./ui-components/SidebarRow.js": {
+        "version": "72892cb2ff563b1ac0fc015a15dc99114e157a9d88559b3bec5fc1b68ab03743",
+        "signature": "ee774d84f2d6b8f0a303dbfffa029e9dbd072c80983df196da1df237188014e6",
+        "affectsGlobalScope": false
+      },
+      "./ui-components/PaletteUI/PaletteUI.js": {
+        "version": "77da359ce1bd56a645f3bcb3c0e6d7b4c9630cebfc1d19d9e9563504d7d62903",
+        "signature": "e475c514c148d8adc381d5e0bc1126b536f49563c3932945573db8c3ba5aabfa",
+        "affectsGlobalScope": false
+      },
+      "./ui-components/Icons.js": {
+        "version": "7e2c34dbd0ec51fc8f7abe3c055d132a7495cd5c7a6edbe4cd16b9bd526de269",
+        "signature": "5c5752322e6b5f9f4873c464a4be69019450fa4f1cd2b4b4f645f10ce702f289",
+        "affectsGlobalScope": false
+      },
+      "./ui-components/ButtonIcon.js": {
+        "version": "e0b072840ae02b124ab06d09f6bda67726d06fddba3107f6850ed21bbd8fc41d",
+        "signature": "1584ffaeb877f8ad5a2f1d9e8675214970e3fce4b71037e5876023afb1f86fef",
+        "affectsGlobalScope": false
+      },
+      "./ui-components/LocationBreadCrumb.js": {
+        "version": "c1a818c104980856fc07a52a6cb00204fc0c73eca583de95faf3cb7dacd63243",
+        "signature": "67dbe1b3985c604cc0ed13b8fcb415a4d18d1492c7d6916bfb5710e7aae1ff72",
+        "affectsGlobalScope": false
+      },
+      "./ui-components/index.js": {
+        "version": "af38acbf845295809da6b7f0496b461ebbea14f9820fdadd03d6fc47ae5472fe",
+        "signature": "51f803a92ef9f24b0e383e6e8f8aa4d784fa992e51769cc64ba56f52973b07af",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/utils.js": {
+        "version": "f97a29930d5f336678834301f4906ab844112c6614fe8eba4880bfaad8af55fc",
+        "signature": "35fec0baa917de71078bc29579329b364110c62f8a1a8f50693b2c1714a4b6b0",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/Palettes/CommandPalette.js": {
+        "version": "79279abdf8a9254cce7e5430db14185bcc7e9ac95a7b6eba7057a875848d952f",
+        "signature": "35999d86d29574e90657beef9d481188f99ed5d098b915a66749140505fbff5c",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/Palettes/InputPalette.js": {
+        "version": "e28143dc85d7992395bf8ca474d37e23008e09cb36e245d46be1a9e6036d54ec",
+        "signature": "5cb7a7c8083886a6dab1fdbb615a7f8d8efc52b17d06a7cbb3ca047201a9289f",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/Palettes/HeadingPalette.js": {
+        "version": "e5568efe56c6a9a75058facfa6dee087649ea0a0b92bf6e918954847fb914123",
+        "signature": "cb5c8e544ea50a8fea579c02a5009b1a67885a6223bcda577d53af8f14831d5b",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/Palettes/WorkspacePalette.js": {
+        "version": "882d6155f50ee8ec10ca98f2304d9640158713e5a4de7ae96ee3427701b05b71",
+        "signature": "539976fc5497f905af5d94c7b68f986a9d791bec65f7e2c896d6a4775a8d1cb8",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/Palettes/FilePalette.js": {
+        "version": "63f334f92422d4ca1487e853c6645e86b9fc2b9ed01a0475174a21dc0dcb4fb4",
+        "signature": "268fff1dbeed6dbb576a5a20f5b2b16d1ecd920565d78635721752d4287b1f05",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/Palettes/QuestionPalette.js": {
+        "version": "af7d3d9056fa1434fe3971c634863def3159ce4d34474e9bd1f1c322b21d5542",
+        "signature": "177c6288be1d0cb2597876e9676ec8b7a21aecb847a940453c928ea9c34fa39a",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/Palette.js": {
+        "version": "0edcfca84b5287c234de95ef522cb70751642dc642b6f2f3d8defffd9dcd0156",
+        "signature": "fd669f402fffce16830fb8ad60f72f7e4e4e754d41adefce1d19bbfaa9c3f188",
+        "affectsGlobalScope": false
+      },
+      "./app/Palette/index.js": {
+        "version": "96c9253bf3cf262e0665f45f290e8d3195d473a50f4b3c8e782a7638cbbe1649",
+        "signature": "ea8e962ea16db37c60d64c183d12c3acafcf0be33a70b45df8ec402b824e2433",
+        "affectsGlobalScope": false
+      },
+      "./app/components/ActivityBar.js": {
+        "version": "f4daf09d253d4dad05e4336087654a3c1d7adc4bf45b2d81e36a070c0e3f00bd",
+        "signature": "a4d4feb3b1214c951e8baf0a64f752d1b2d4d56f9ebc4ca6fafe58d31d9fe799",
+        "affectsGlobalScope": false
+      },
+      "./app/components/FileBrowser.js": {
+        "version": "2c64108d19136de36775ed7fbcdf5b0e471f99f0ec9d2f88f2491b914418edb2",
+        "signature": "9c0126663d4abeb2886de3310cbfc247b72a8a0f7e11d95778c6969632a771d1",
+        "affectsGlobalScope": false
+      },
+      "./app/components/OptionsBar.js": {
+        "version": "606a9174dc75a99825389c441abe9ec7a774fd6b34d47e8c605dd2a9c1d5219e",
+        "signature": "9122905507ec1e2db99a8ad00ee278072535b7e6c9ad13c3c529c2da0dc485bf",
+        "affectsGlobalScope": false
+      },
+      "./app/editor/Editor.js": {
+        "version": "3ef91c4d2faf5e73a1019dd5f2c568ffdff3ed9441ef26044a47d4c22b4829e5",
+        "signature": "ade745da6266206aae27d4a41bae9da1f88d3d04c42f52051643a0ebf5615125",
+        "affectsGlobalScope": false
+      },
+      "./app/editor/EditorArea.js": {
+        "version": "4673e1b4d41e7eeed9c1c5a70bb5ecf799a0d2ae7600e4c130015ee7b6b47567",
+        "signature": "250617ec79b436afb54d99bc8b68b25fbe441ea8f71b5e32297f2680f1fd9509",
+        "affectsGlobalScope": false
+      },
+      "./app/AppContainer.js": {
+        "version": "053d7a2e162072a5359d68abb6de26bc9fdcd0d8bb745fff82a5dee35d643ce2",
+        "signature": "dac5fd3203d690778f31a5f3cb3bcf27d139c0881e9415f4438422233d6315a3",
+        "affectsGlobalScope": false
+      },
+      "./app/App.js": {
+        "version": "c3e960e6b7a50cfe4bfd5dda49a46256e81ec7b9da8a77c6d380b3ba3675a076",
+        "signature": "e4fcb563593290d0a519b48227f7999166a69e344703458d4a4a9a9dccd56479",
+        "affectsGlobalScope": false
+      },
+      "./app/index.js": {
+        "version": "de01976a14a7b694604680d895cd64b6fec924ae6e151070b6051e37458f56b6",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+        "affectsGlobalScope": false
+      },
+      "./config/types.d.ts": {
+        "version": "8cb247fdd139e8080f0dff906cb143a45a766ac9732a60f6f2c7963917d41358",
+        "signature": "8cb247fdd139e8080f0dff906cb143a45a766ac9732a60f6f2c7963917d41358",
+        "affectsGlobalScope": true
+      },
+      "./js-libs/baby-fs/base-fs.js": {
+        "version": "bf81c1813dd540ccddf2282d51ac13a810f96ce5e4c35bf4b38f5962d3634396",
+        "signature": "0545c9a4de0854c43f0c294258937dd97a4ff4155ade7ae67c271611fa94ecb9",
+        "affectsGlobalScope": false
+      },
+      "./js-libs/baby-fs/error-codes.js": {
+        "version": "297cda2bf96025a9b07499aa4e9137e069184b1a87f2b00268762b5ac13f6dd5",
+        "signature": "d73ab59e7fcbca85b7f145aa4595d2360249ce98d28c47c0b364c6c058c419a4",
+        "affectsGlobalScope": false
+      },
+      "./js-libs/baby-fs/indexed-db-fs.js": {
+        "version": "f1fcaff3210b447b9d163ad04e83b361d622e938b368c28337074bd45bcce15c",
+        "signature": "4ca4ae70a771539e4ed7d13bbbc026a985fd48a3cc013ef52f82fd19c390a666",
+        "affectsGlobalScope": false
+      },
+      "./js-libs/baby-fs/native-browser-fs-helpers.js": {
+        "version": "48767872ae87fd5657796e2ddcaa6f867ab044de817015d31ff4a15c888a2ee3",
+        "signature": "5d7df9f5fb23a3f43457ed51635cfa646b6b00566a6d1ec4bd24dc2cc9b4352a",
+        "affectsGlobalScope": false
+      },
+      "./js-libs/baby-fs/native-browser-fs.js": {
+        "version": "f5cf301b47af284b20977ddcc0a8d040c111222a7a4215634503af8c6e4d75e9",
+        "signature": "a25b1a67ebbfb3d2783f6e15a6f4f2474d975d1f4eab290ad032baa32de13361",
+        "affectsGlobalScope": false
+      },
+      "./js-libs/baby-fs/index.js": {
+        "version": "3916790df864801c7477067c0e136e608424e9b5c0c4b68094ef52d2da7aefbc",
+        "signature": "79b1664cf665a239647eba091817145a0f2b477648c1d101bca87e7dc62d83e4",
+        "affectsGlobalScope": false
+      },
+      "./workspace/workspace-context.js": {
+        "version": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "affectsGlobalScope": false
+      }
+    },
+    "options": {
+      "strict": false,
+      "noEmit": true,
+      "incremental": true,
+      "allowJs": true,
+      "checkJs": true,
+      "allowSyntheticDefaultImports": false,
+      "baseUrl": "./",
+      "esModuleInterop": true,
+      "experimentalDecorators": true,
+      "forceConsistentCasingInFileNames": true,
+      "jsx": 2,
+      "lib": [
+        "lib.dom.d.ts",
+        "lib.es2020.d.ts"
+      ],
+      "module": 1,
+      "noImplicitReturns": true,
+      "target": 7,
+      "declaration": true,
+      "importHelpers": true,
+      "isolatedModules": true,
+      "skipLibCheck": true,
+      "configFilePath": "./tsconfig.json"
+    },
+    "referencedMap": {
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/compose-paginate.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/index.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/compose-paginate.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/paginating-endpoints.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/paginating-endpoints.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/index.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts",
+        "./.yarn/cache/before-after-hook-npm-2.2.1-0eb703f70c-697c0ac2c8.zip/node_modules/before-after-hook/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts": [
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/types.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/generated/types.d.ts",
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/version.d.ts"
+      ],
+      "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/types.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-rest-npm-18.5.2-51dcff47d9-b6c8ee91fb.zip/node_modules/@octokit/rest/dist-types/index.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/index.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/index.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/ResponseHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Fetch.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Signal.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/StrategyInterface.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts": [
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Fetch.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/GetResponseTypeFromEndpointMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestError.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/ResponseHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Signal.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/StrategyInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/VERSION.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts"
+      ],
+      "./app/App.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/AppContainer.js"
+      ],
+      "./app/AppContainer.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/index.js",
+        "./app/components/ActivityBar.js",
+        "./app/components/FileBrowser.js",
+        "./app/components/OptionsBar.js",
+        "./app/editor/EditorArea.js",
+        "./config/index.ts",
+        "./ui-context/index.js",
+        "./utils/index.js",
+        "./workspace/index.js"
+      ],
+      "./app/Palette/Commands.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/paletteTypes.js",
+        "./app/editor/EditorManager.js",
+        "./ui-context/index.js",
+        "./workspace/index.js"
+      ],
+      "./app/Palette/Palette.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/Palettes/CommandPalette.js",
+        "./app/Palette/Palettes/FilePalette.js",
+        "./app/Palette/Palettes/HeadingPalette.js",
+        "./app/Palette/Palettes/InputPalette.js",
+        "./app/Palette/Palettes/QuestionPalette.js",
+        "./app/Palette/Palettes/WorkspacePalette.js",
+        "./ui-context/index.js",
+        "./utils/index.js"
+      ],
+      "./app/Palette/Palettes/CommandPalette.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/Commands.js",
+        "./app/Palette/paletteTypes.js",
+        "./app/Palette/utils.js",
+        "./config/index.ts",
+        "./js-libs/baby-fs/index.js",
+        "./ui-components/index.js",
+        "./ui-context/index.js",
+        "./workspace/errors.js",
+        "./workspace/index.js"
+      ],
+      "./app/Palette/Palettes/FilePalette.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/paletteTypes.js",
+        "./app/Palette/utils.js",
+        "./config/index.ts",
+        "./ui-components/index.js",
+        "./utils/index.js",
+        "./workspace/index.js"
+      ],
+      "./app/Palette/Palettes/HeadingPalette.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/paletteTypes.js",
+        "./app/Palette/utils.js",
+        "./app/editor/EditorManager.js",
+        "./ui-components/index.js"
+      ],
+      "./app/Palette/Palettes/InputPalette.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/paletteTypes.js",
+        "./ui-components/index.js"
+      ],
+      "./app/Palette/Palettes/QuestionPalette.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/Palettes/CommandPalette.js",
+        "./app/Palette/Palettes/FilePalette.js",
+        "./app/Palette/Palettes/HeadingPalette.js",
+        "./app/Palette/Palettes/WorkspacePalette.js",
+        "./app/Palette/paletteTypes.js",
+        "./ui-components/index.js"
+      ],
+      "./app/Palette/Palettes/WorkspacePalette.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/paletteTypes.js",
+        "./app/Palette/utils.js",
+        "./config/index.ts",
+        "./ui-components/index.js",
+        "./workspace/index.js"
+      ],
+      "./app/Palette/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/Palette.js",
+        "./app/Palette/paletteTypes.js"
+      ],
+      "./app/Palette/paletteTypes.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./app/Palette/utils.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./app/components/ActivityBar.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/index.js",
+        "./config/index.ts",
+        "./ui-components/index.js",
+        "./ui-context/index.js",
+        "./utils/index.js",
+        "./workspace/index.js"
+      ],
+      "./app/components/FileBrowser.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/Commands.js",
+        "./ui-components/index.js",
+        "./ui-context/index.js",
+        "./utils/hooks.js",
+        "./workspace/index.js"
+      ],
+      "./app/components/OptionsBar.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/index.js",
+        "./config/index.ts",
+        "./ui-components/index.js",
+        "./ui-context/index.js",
+        "./utils/index.js",
+        "./workspace/index.js"
+      ],
+      "./app/editor/Editor.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/editor/EditorManager.js",
+        "./config/index.ts",
+        "./editor/index.js"
+      ],
+      "./app/editor/EditorArea.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/Palette/index.js",
+        "./app/editor/Editor.js",
+        "./ui-components/index.js",
+        "./ui-context/index.js",
+        "./utils/index.js",
+        "./workspace/index.js"
+      ],
+      "./app/editor/EditorManager.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/editor/editor-default-content.js",
+        "./config/index.ts",
+        "./editor/index.js",
+        "./utils/index.js",
+        "./workspace/index.js"
+      ],
+      "./app/editor/editor-default-content.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./app/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./app/App.js",
+        "./app/editor/EditorManager.js",
+        "./style/index.js",
+        "./ui-context/index.js"
+      ],
+      "./babel.config.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./config/index.ts": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./config/is-mac.ts",
+        "./config/keybindings.ts"
+      ],
+      "./config/is-mac.ts": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./config/keybindings.ts": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./config/is-mac.ts"
+      ],
+      "./editor/collapsible-heading-deco.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./editor/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./editor/collapsible-heading-deco.js",
+        "./editor/markdown-parser.js",
+        "./editor/plugins.js",
+        "./editor/spec-sheet.js"
+      ],
+      "./editor/markdown-parser.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./editor/spec-sheet.js"
+      ],
+      "./editor/plugins.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./editor/collapsible-heading-deco.js"
+      ],
+      "./editor/spec-sheet.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./jest.config.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./js-libs/baby-fs/base-fs.js": [
+        "./.yarn/cache/idb-keyval-npm-5.0.4-c10956c1b4-cae8c99767.zip/node_modules/idb-keyval/dist/esm/index.d.ts",
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./js-libs/baby-fs/error-codes.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./js-libs/baby-fs/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./js-libs/baby-fs/base-fs.js",
+        "./js-libs/baby-fs/error-codes.js",
+        "./js-libs/baby-fs/indexed-db-fs.js",
+        "./js-libs/baby-fs/native-browser-fs-helpers.js",
+        "./js-libs/baby-fs/native-browser-fs.js"
+      ],
+      "./js-libs/baby-fs/indexed-db-fs.js": [
+        "./.yarn/cache/idb-keyval-npm-5.0.4-c10956c1b4-cae8c99767.zip/node_modules/idb-keyval/dist/esm/index.d.ts",
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./js-libs/baby-fs/base-fs.js",
+        "./js-libs/baby-fs/error-codes.js"
+      ],
+      "./js-libs/baby-fs/native-browser-fs-helpers.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./js-libs/baby-fs/error-codes.js"
+      ],
+      "./js-libs/baby-fs/native-browser-fs.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./js-libs/baby-fs/base-fs.js",
+        "./js-libs/baby-fs/error-codes.js",
+        "./js-libs/baby-fs/native-browser-fs-helpers.js"
+      ],
+      "./postcss.config.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./style/apply-theme.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./style/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./style/apply-theme.js"
+      ],
+      "./tailwind.config.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./ui-components/ButtonIcon.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./utils/index.js"
+      ],
+      "./ui-components/Icons.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./ui-components/LocationBreadCrumb.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./ui-components/PaletteUI/PaletteUI.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./.yarn/cache/w3c-keyname-npm-2.2.4-8c6e5969c5-b711eaa986.zip/node_modules/w3c-keyname/index.d.ts",
+        "./ui-components/SidebarRow.js",
+        "./utils/index.js"
+      ],
+      "./ui-components/SidebarRow.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./utils/index.js"
+      ],
+      "./ui-components/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./ui-components/ButtonIcon.js",
+        "./ui-components/Icons.js",
+        "./ui-components/LocationBreadCrumb.js",
+        "./ui-components/PaletteUI/PaletteUI.js",
+        "./ui-components/SidebarRow.js"
+      ],
+      "./ui-context/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./ui-context/ui-context.js"
+      ],
+      "./ui-context/ui-context.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./style/index.js",
+        "./utils/index.js"
+      ],
+      "./utils/hooks.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./utils/utility.js"
+      ],
+      "./utils/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./utils/hooks.js",
+        "./utils/utility.js"
+      ],
+      "./utils/utility.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./.yarn/cache/w3c-keyname-npm-2.2.4-8c6e5969c5-b711eaa986.zip/node_modules/w3c-keyname/index.d.ts",
+        "./config/index.ts"
+      ],
+      "./workspace/Workspace.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./js-libs/baby-fs/index.js",
+        "./utils/index.js",
+        "./workspace/errors.js",
+        "./workspace/workspace-helpers.js",
+        "./workspace/workspace-hooks.js"
+      ],
+      "./workspace/errors.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./workspace/file-helpers.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./editor/index.js",
+        "./js-libs/baby-fs/index.js",
+        "./workspace/path-helpers.js",
+        "./workspace/workspace-helpers.js"
+      ],
+      "./workspace/github-helpers.js": [
+        "./.yarn/cache/@octokit-rest-npm-18.5.2-51dcff47d9-b6c8ee91fb.zip/node_modules/@octokit/rest/dist-types/index.d.ts",
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./js-libs/baby-fs/index.js",
+        "./workspace/file-helpers.js",
+        "./workspace/workspace-helpers.js"
+      ],
+      "./workspace/index.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./workspace/Workspace.js",
+        "./workspace/file-helpers.js",
+        "./workspace/github-helpers.js",
+        "./workspace/path-helpers.js",
+        "./workspace/workspace-helpers.js",
+        "./workspace/workspace-hooks.js"
+      ],
+      "./workspace/path-helpers.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./workspace/workspace-context.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts"
+      ],
+      "./workspace/workspace-helpers.js": [
+        "./.yarn/cache/idb-keyval-npm-5.0.4-c10956c1b4-cae8c99767.zip/node_modules/idb-keyval/dist/esm/index.d.ts",
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./config/index.ts",
+        "./workspace/errors.js",
+        "./workspace/path-helpers.js"
+      ],
+      "./workspace/workspace-hooks.js": [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        "./editor/index.js",
+        "./js-libs/baby-fs/index.js",
+        "./utils/index.js",
+        "./workspace/file-helpers.js",
+        "./workspace/github-helpers.js",
+        "./workspace/path-helpers.js",
+        "./workspace/workspace-helpers.js"
+      ]
+    },
+    "exportedModulesMap": {
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/compose-paginate.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/index.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/compose-paginate.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/paginating-endpoints.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/paginating-endpoints.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/index.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts"
+      ],
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts",
+        "./.yarn/cache/before-after-hook-npm-2.2.1-0eb703f70c-697c0ac2c8.zip/node_modules/before-after-hook/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts": [
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/types.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/generated/types.d.ts",
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/version.d.ts"
+      ],
+      "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/types.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts"
+      ],
+      "./.yarn/cache/@octokit-rest-npm-18.5.2-51dcff47d9-b6c8ee91fb.zip/node_modules/@octokit/rest/dist-types/index.d.ts": [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/index.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/index.d.ts",
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/ResponseHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Fetch.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Signal.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/StrategyInterface.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts": [
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/index.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts"
+      ],
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts": [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Fetch.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/GetResponseTypeFromEndpointMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestError.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/ResponseHeaders.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Signal.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/StrategyInterface.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/VERSION.d.ts",
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts"
+      ],
+      "./config/index.ts": [
+        "./config/is-mac.ts",
+        "./config/keybindings.ts"
+      ]
+    },
+    "semanticDiagnosticsPerFile": [
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/compose-paginate.d.ts",
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts",
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/index.d.ts",
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/paginating-endpoints.d.ts",
+      "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts",
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts",
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts",
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/index.d.ts",
+      "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts",
+      "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts",
+      "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts",
+      "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/index.d.ts",
+      "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/types.d.ts",
+      "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/generated/types.d.ts",
+      "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/index.d.ts",
+      "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/version.d.ts",
+      "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/index.d.ts",
+      "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/types.d.ts",
+      "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts",
+      "./.yarn/cache/@octokit-rest-npm-18.5.2-51dcff47d9-b6c8ee91fb.zip/node_modules/@octokit/rest/dist-types/index.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Fetch.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/GetResponseTypeFromEndpointMethod.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestError.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/ResponseHeaders.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Signal.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/StrategyInterface.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/VERSION.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts",
+      "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts",
+      "./.yarn/cache/before-after-hook-npm-2.2.1-0eb703f70c-697c0ac2c8.zip/node_modules/before-after-hook/index.d.ts",
+      "./.yarn/cache/idb-keyval-npm-5.0.4-c10956c1b4-cae8c99767.zip/node_modules/idb-keyval/dist/esm/index.d.ts",
+      "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.dom.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.collection.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.core.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.generator.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.iterable.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.promise.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.proxy.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.reflect.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.symbol.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2016.array.include.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2016.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.intl.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.object.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.string.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.asyncgenerator.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.asynciterable.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.intl.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.promise.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.regexp.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.array.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.object.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.string.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.symbol.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.bigint.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.intl.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.promise.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.sharedmemory.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.string.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.symbol.wellknown.d.ts",
+      "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es5.d.ts",
+      "./.yarn/cache/w3c-keyname-npm-2.2.4-8c6e5969c5-b711eaa986.zip/node_modules/w3c-keyname/index.d.ts",
+      [
+        "./app/App.js",
+        [
+          {
+            "file": "./app/App.js",
+            "start": 187,
+            "length": 8,
+            "code": 2339,
+            "category": 1,
+            "messageText": "Property 'setState' does not exist on type 'Window & typeof globalThis'."
+          },
+          {
+            "file": "./app/App.js",
+            "start": 217,
+            "length": 8,
+            "code": 2339,
+            "category": 1,
+            "messageText": "Property 'setState' does not exist on type 'App'."
+          }
+        ]
+      ],
+      [
+        "./app/AppContainer.js",
+        [
+          {
+            "file": "./app/AppContainer.js",
+            "start": 5044,
+            "length": 9,
+            "code": 2741,
+            "category": 1,
+            "messageText": "Property 'children' is missing in type '{}' but required in type '{ children: any; }'."
+          },
+          {
+            "file": "./app/AppContainer.js",
+            "start": 5515,
+            "length": 7,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type '{ className: string; editorId: number; isFirst: boolean; showTabs: any; widescreen: any; wsPath: any; onClose: any; grabFocus: boolean; }' is not assignable to type '{ className: any; editorId: any; showTabs: any; wsPath: any; grabFocus: any; onClose: any; }'.",
+              "category": 1,
+              "code": 2322,
+              "next": [
+                {
+                  "messageText": "Property 'isFirst' does not exist on type '{ className: any; editorId: any; showTabs: any; wsPath: any; grabFocus: any; onClose: any; }'.",
+                  "category": 1,
+                  "code": 2339
+                }
+              ]
+            }
+          }
+        ]
+      ],
+      "./app/Palette/Commands.js",
+      [
+        "./app/Palette/Palette.js",
+        [
+          {
+            "file": "./app/Palette/Palette.js",
+            "start": 3042,
+            "length": 11,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type '{ query: any; updateQuery: any; paletteMetadata: any; updatePalette: any; dismissPalette: any; AllPalettes: (typeof InputPalette | typeof QuestionPalette)[]; paletteProps: { ...; }; }' is not assignable to type '{ paletteMetadata: any; dismissPalette: any; query: any; paletteProps: any; updateQuery: any; } & { updatePalette: any; paletteProps: any; }'.",
+              "category": 1,
+              "code": 2322,
+              "next": [
+                {
+                  "messageText": "Property 'AllPalettes' does not exist on type '{ paletteMetadata: any; dismissPalette: any; query: any; paletteProps: any; updateQuery: any; } & { updatePalette: any; paletteProps: any; }'.",
+                  "category": 1,
+                  "code": 2339
+                }
+              ]
+            }
+          },
+          {
+            "file": "./app/Palette/Palette.js",
+            "start": 3543,
+            "length": 11,
+            "code": 2339,
+            "category": 1,
+            "messageText": {
+              "messageText": "Property 'placeholder' does not exist on type 'typeof InputPalette | typeof QuestionPalette'.",
+              "category": 1,
+              "code": 2339,
+              "next": [
+                {
+                  "messageText": "Property 'placeholder' does not exist on type 'typeof InputPalette'.",
+                  "category": 1,
+                  "code": 2339
+                }
+              ]
+            }
+          }
+        ]
+      ],
+      [
+        "./app/Palette/Palettes/CommandPalette.js",
+        [
+          {
+            "file": "./app/Palette/Palettes/CommandPalette.js",
+            "start": 2144,
+            "length": 14,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type '{ updatePalette: any; dismissPalette: any; }' is not assignable to parameter of type '{ updatePalette: any; }'.",
+              "category": 1,
+              "code": 2345,
+              "next": [
+                {
+                  "messageText": "Object literal may only specify known properties, and 'dismissPalette' does not exist in type '{ updatePalette: any; }'.",
+                  "category": 1,
+                  "code": 2353
+                }
+              ]
+            }
+          },
+          {
+            "file": "./app/Palette/Palettes/CommandPalette.js",
+            "start": 2250,
+            "length": 14,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type '{ updatePalette: any; dismissPalette: any; }' is not assignable to parameter of type '{ updatePalette: any; }'.",
+              "category": 1,
+              "code": 2345,
+              "next": [
+                {
+                  "messageText": "Object literal may only specify known properties, and 'dismissPalette' does not exist in type '{ updatePalette: any; }'.",
+                  "category": 1,
+                  "code": 2353
+                }
+              ]
+            }
+          },
+          {
+            "file": "./app/Palette/Palettes/CommandPalette.js",
+            "start": 2304,
+            "length": 14,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type '{ updatePalette: any; dismissPalette: any; }' is not assignable to parameter of type '{ updatePalette: any; }'.",
+              "category": 1,
+              "code": 2345,
+              "next": [
+                {
+                  "messageText": "Object literal may only specify known properties, and 'dismissPalette' does not exist in type '{ updatePalette: any; }'.",
+                  "category": 1,
+                  "code": 2353
+                }
+              ]
+            }
+          },
+          {
+            "file": "./app/Palette/Palettes/CommandPalette.js",
+            "start": 2363,
+            "length": 14,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type '{ updatePalette: any; dismissPalette: any; }' is not assignable to parameter of type '{ updatePalette: any; }'.",
+              "category": 1,
+              "code": 2345,
+              "next": [
+                {
+                  "messageText": "Object literal may only specify known properties, and 'dismissPalette' does not exist in type '{ updatePalette: any; }'.",
+                  "category": 1,
+                  "code": 2353
+                }
+              ]
+            }
+          },
+          {
+            "file": "./app/Palette/Palettes/CommandPalette.js",
+            "start": 6407,
+            "length": 19,
+            "code": 2339,
+            "category": 1,
+            "messageText": "Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'."
+          }
+        ]
+      ],
+      [
+        "./app/Palette/Palettes/FilePalette.js",
+        [
+          {
+            "file": "./app/Palette/Palettes/FilePalette.js",
+            "start": 2173,
+            "length": 10,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ hint: string; hintPos: string; onClick: (e: any) => Promise<void>; }' is missing the following properties from type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; style: any; removeFocus?: boolean; }': children, active, style"
+          }
+        ]
+      ],
+      "./app/Palette/Palettes/HeadingPalette.js",
+      "./app/Palette/Palettes/InputPalette.js",
+      "./app/Palette/Palettes/QuestionPalette.js",
+      "./app/Palette/Palettes/WorkspacePalette.js",
+      "./app/Palette/index.js",
+      "./app/Palette/paletteTypes.js",
+      "./app/Palette/utils.js",
+      [
+        "./app/components/ActivityBar.js",
+        [
+          {
+            "file": "./app/components/ActivityBar.js",
+            "start": 2060,
+            "length": 10,
+            "code": 2741,
+            "category": 1,
+            "messageText": "Property 'children' is missing in type '{ onClick: () => void; hint: string; hintPos: string; active: boolean; className: string; style: { borderColor: string; }; }' but required in type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; style: any; removeFocus?: boolean; }'."
+          },
+          {
+            "file": "./app/components/ActivityBar.js",
+            "start": 2635,
+            "length": 10,
+            "code": 2741,
+            "category": 1,
+            "messageText": "Property 'children' is missing in type '{ onClick: (event: any) => void; hint: string; hintPos: string; active: boolean; className: string; style: { borderColor: string; }; }' but required in type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; style: any; removeFocus?: boolean; }'."
+          },
+          {
+            "file": "./app/components/ActivityBar.js",
+            "start": 3585,
+            "length": 10,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ onClick: any; removeFocus: false; className: string; }' is missing the following properties from type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; style: any; removeFocus?: boolean; }': hint, children, active, style"
+          },
+          {
+            "file": "./app/components/ActivityBar.js",
+            "start": 4192,
+            "length": 10,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ onClick: any; removeFocus: false; className: string; }' is missing the following properties from type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; style: any; removeFocus?: boolean; }': hint, children, active, style"
+          },
+          {
+            "file": "./app/components/ActivityBar.js",
+            "start": 5463,
+            "length": 13,
+            "code": 2769,
+            "category": 1,
+            "messageText": {
+              "messageText": "No overload matches this call.",
+              "category": 1,
+              "code": 2769,
+              "next": [
+                {
+                  "messageText": "Overload 1 of 2, '(type: \"scroll\", listener: (this: Document, ev: Event) => any, options?: boolean | EventListenerOptions): void', gave the following error.",
+                  "category": 1,
+                  "code": 2772,
+                  "next": [
+                    {
+                      "messageText": "Argument of type '{ capture: true; passive: boolean; }' is not assignable to parameter of type 'boolean | EventListenerOptions'.",
+                      "category": 1,
+                      "code": 2345,
+                      "next": [
+                        {
+                          "messageText": "Object literal may only specify known properties, and 'passive' does not exist in type 'EventListenerOptions'.",
+                          "category": 1,
+                          "code": 2353
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "messageText": "Overload 2 of 2, '(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void', gave the following error.",
+                  "category": 1,
+                  "code": 2772,
+                  "next": [
+                    {
+                      "messageText": "Argument of type '{ capture: true; passive: boolean; }' is not assignable to parameter of type 'boolean | EventListenerOptions'.",
+                      "category": 1,
+                      "code": 2345,
+                      "next": [
+                        {
+                          "messageText": "Object literal may only specify known properties, and 'passive' does not exist in type 'EventListenerOptions'.",
+                          "category": 1,
+                          "code": 2353
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "relatedInformation": []
+          },
+          {
+            "file": "./app/components/ActivityBar.js",
+            "start": 5681,
+            "length": 13,
+            "code": 2769,
+            "category": 1,
+            "messageText": {
+              "messageText": "No overload matches this call.",
+              "category": 1,
+              "code": 2769,
+              "next": [
+                {
+                  "messageText": "Overload 1 of 2, '(type: \"scroll\", listener: (this: Document, ev: Event) => any, options?: boolean | EventListenerOptions): void', gave the following error.",
+                  "category": 1,
+                  "code": 2772,
+                  "next": [
+                    {
+                      "messageText": "Argument of type '{ capture: true; passive: boolean; }' is not assignable to parameter of type 'boolean | EventListenerOptions'.",
+                      "category": 1,
+                      "code": 2345,
+                      "next": [
+                        {
+                          "messageText": "Object literal may only specify known properties, and 'passive' does not exist in type 'EventListenerOptions'.",
+                          "category": 1,
+                          "code": 2353
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "messageText": "Overload 2 of 2, '(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void', gave the following error.",
+                  "category": 1,
+                  "code": 2772,
+                  "next": [
+                    {
+                      "messageText": "Argument of type '{ capture: true; passive: boolean; }' is not assignable to parameter of type 'boolean | EventListenerOptions'.",
+                      "category": 1,
+                      "code": 2345,
+                      "next": [
+                        {
+                          "messageText": "Object literal may only specify known properties, and 'passive' does not exist in type 'EventListenerOptions'.",
+                          "category": 1,
+                          "code": 2353
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "relatedInformation": []
+          }
+        ]
+      ],
+      [
+        "./app/components/FileBrowser.js",
+        [
+          {
+            "file": "./app/components/FileBrowser.js",
+            "start": 2919,
+            "length": 10,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ depth: any; basePadding: any; title: any; onClick: (event: any) => void; isActive: boolean; leftIcon: any; rightHoverIcon: any; }' is missing the following properties from type '{ title: any; isActive: any; onClick: any; rightIcon: any; rightHoverIcon?: any; leftIcon: any; basePadding?: number; depth?: number; children: any; className?: string; scrollIntoViewIfNeeded?: boolean; style?: {}; disabled: any; allowHover?: boolean; }': rightIcon, children, disabled"
+          },
+          {
+            "file": "./app/components/FileBrowser.js",
+            "start": 3146,
+            "length": 10,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ hint: string; hintPos: string; onClick: (e: any) => Promise<void>; }' is missing the following properties from type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; style: any; removeFocus?: boolean; }': children, active, style"
+          },
+          {
+            "file": "./app/components/FileBrowser.js",
+            "start": 3667,
+            "length": 10,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ depth: any; basePadding: any; title: any; onClick: (event: any) => void; leftIcon: any; rightHoverIcon: any; }' is missing the following properties from type '{ title: any; isActive: any; onClick: any; rightIcon: any; rightHoverIcon?: any; leftIcon: any; basePadding?: number; depth?: number; children: any; className?: string; scrollIntoViewIfNeeded?: boolean; style?: {}; disabled: any; allowHover?: boolean; }': isActive, rightIcon, children, disabled"
+          },
+          {
+            "file": "./app/components/FileBrowser.js",
+            "start": 3973,
+            "length": 10,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ hint: string; onClick: (e: any) => Promise<void>; hintPos: string; }' is missing the following properties from type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; style: any; removeFocus?: boolean; }': children, active, style"
+          }
+        ]
+      ],
+      [
+        "./app/components/OptionsBar.js",
+        [
+          {
+            "file": "./app/components/OptionsBar.js",
+            "start": 1990,
+            "length": 13,
+            "code": 2741,
+            "category": 1,
+            "messageText": "Property 'children' is missing in type '{ active: boolean; hint: string; onClick: () => void; }' but required in type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; }'."
+          },
+          {
+            "file": "./app/components/OptionsBar.js",
+            "start": 2370,
+            "length": 13,
+            "code": 2741,
+            "category": 1,
+            "messageText": "Property 'children' is missing in type '{ active: boolean; hint: string; onClick: () => void; }' but required in type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; }'."
+          },
+          {
+            "file": "./app/components/OptionsBar.js",
+            "start": 2678,
+            "length": 13,
+            "code": 2741,
+            "category": 1,
+            "messageText": "Property 'children' is missing in type '{ hint: string; active: boolean; onClick: any; }' but required in type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; }'."
+          },
+          {
+            "file": "./app/components/OptionsBar.js",
+            "start": 3068,
+            "length": 13,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ hint: string; onClick: () => void; }' is missing the following properties from type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; }': children, active"
+          },
+          {
+            "file": "./app/components/OptionsBar.js",
+            "start": 3420,
+            "length": 13,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ hint: string; onClick: () => void; }' is missing the following properties from type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; }': children, active"
+          },
+          {
+            "file": "./app/components/OptionsBar.js",
+            "start": 3780,
+            "length": 10,
+            "code": 2739,
+            "category": 1,
+            "messageText": "Type '{ hint: any; hintPos: string; active: any; className: string; onClick: (event: any) => void; }' is missing the following properties from type '{ className?: string; hint: any; hintPos?: string; children: any; onClick: any; active: any; style: any; removeFocus?: boolean; }': children, style"
+          }
+        ]
+      ],
+      "./app/editor/Editor.js",
+      [
+        "./app/editor/EditorArea.js",
+        [
+          {
+            "file": "./app/editor/EditorArea.js",
+            "start": 759,
+            "length": 3,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type '{ key: any; editorId: any; wsPath: any; grabFocus: any; }' is not assignable to type '{ editorId: any; wsPath: any; grabFocus: any; }'.",
+              "category": 1,
+              "code": 2322,
+              "next": [
+                {
+                  "messageText": "Property 'key' does not exist on type '{ editorId: any; wsPath: any; grabFocus: any; }'.",
+                  "category": 1,
+                  "code": 2339
+                }
+              ]
+            }
+          }
+        ]
+      ],
+      [
+        "./app/editor/EditorManager.js",
+        [
+          {
+            "file": "./app/editor/EditorManager.js",
+            "start": 1560,
+            "length": 6,
+            "code": 2339,
+            "category": 1,
+            "messageText": "Property 'editor' does not exist on type 'Window & typeof globalThis'."
+          },
+          {
+            "file": "./app/editor/EditorManager.js",
+            "start": 1594,
+            "length": 7,
+            "code": 2339,
+            "category": 1,
+            "messageText": "Property 'editors' does not exist on type 'Window & typeof globalThis'."
+          }
+        ]
+      ],
+      "./app/editor/editor-default-content.js",
+      [
+        "./app/index.js",
+        [
+          {
+            "file": "./app/index.js",
+            "start": 355,
+            "length": 13,
+            "code": 2741,
+            "category": 1,
+            "messageText": "Property 'children' is missing in type '{}' but required in type '{ children: any; }'."
+          },
+          {
+            "file": "./app/index.js",
+            "start": 377,
+            "length": 9,
+            "code": 2741,
+            "category": 1,
+            "messageText": "Property 'children' is missing in type '{}' but required in type '{ children: any; }'."
+          }
+        ]
+      ],
+      "./babel.config.js",
+      "./config/index.ts",
+      "./config/is-mac.ts",
+      "./config/keybindings.ts",
+      "./config/types.d.ts",
+      "./editor/collapsible-heading-deco.js",
+      "./editor/index.js",
+      "./editor/markdown-parser.js",
+      [
+        "./editor/plugins.js",
+        [
+          {
+            "file": "./editor/plugins.js",
+            "start": 3306,
+            "length": 22,
+            "code": 2345,
+            "category": 1,
+            "messageText": "Argument of type 'number' is not assignable to parameter of type 'string'."
+          }
+        ]
+      ],
+      "./editor/spec-sheet.js",
+      "./jest.config.js",
+      "./js-libs/baby-fs/base-fs.js",
+      "./js-libs/baby-fs/error-codes.js",
+      "./js-libs/baby-fs/index.js",
+      [
+        "./js-libs/baby-fs/indexed-db-fs.js",
+        [
+          {
+            "file": "./js-libs/baby-fs/indexed-db-fs.js",
+            "start": 1672,
+            "length": 4,
+            "messageText": "Expected 0 arguments, but got 1.",
+            "category": 1,
+            "code": 2554
+          }
+        ]
+      ],
+      [
+        "./js-libs/baby-fs/native-browser-fs-helpers.js",
+        [
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs-helpers.js",
+            "start": 2145,
+            "length": 6,
+            "code": 2339,
+            "category": 1,
+            "messageText": "Property 'result' does not exist on type 'EventTarget'."
+          },
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs-helpers.js",
+            "start": 2538,
+            "length": 9,
+            "messageText": "JSDoc '@param' tag has name 'dirHandle', but there is no parameter with that name.",
+            "category": 1,
+            "code": 8024
+          },
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs-helpers.js",
+            "start": 2582,
+            "length": 31,
+            "messageText": "The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<[any, any][]>'?",
+            "category": 1,
+            "code": 1064
+          },
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs-helpers.js",
+            "start": 2589,
+            "length": 10,
+            "messageText": "Cannot find name 'dirHandles'.",
+            "category": 1,
+            "code": 2304
+          },
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs-helpers.js",
+            "start": 2601,
+            "length": 10,
+            "messageText": "Cannot find name 'fileHandle'.",
+            "category": 1,
+            "code": 2304
+          },
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs-helpers.js",
+            "start": 3509,
+            "length": 8,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type '[any, any, any][]' is not assignable to type '[any, any][]'.",
+              "category": 1,
+              "code": 2322,
+              "next": [
+                {
+                  "messageText": "Type '[any, any, any]' is not assignable to type '[any, any]'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": [
+                    {
+                      "messageText": "Source has 3 element(s) but target allows only 2.",
+                      "category": 1,
+                      "code": 2619
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      ],
+      [
+        "./js-libs/baby-fs/native-browser-fs.js",
+        [
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs.js",
+            "start": 937,
+            "length": 4,
+            "messageText": "Expected 0 arguments, but got 1.",
+            "category": 1,
+            "code": 2554
+          },
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs.js",
+            "start": 2167,
+            "length": 4,
+            "code": 2416,
+            "category": 1,
+            "messageText": {
+              "messageText": "Property 'stat' in type 'NativeBrowserFileSystem' is not assignable to the same property in base type 'BaseFileSystem'.",
+              "category": 1,
+              "code": 2416,
+              "next": [
+                {
+                  "messageText": "Type '(filePath: any) => Promise<BaseFileMetadata>' is not assignable to type '(filePath: any) => Promise<void>'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": [
+                    {
+                      "messageText": "Type 'Promise<BaseFileMetadata>' is not assignable to type 'Promise<void>'.",
+                      "category": 1,
+                      "code": 2322,
+                      "next": [
+                        {
+                          "messageText": "Type 'BaseFileMetadata' is not assignable to type 'void'.",
+                          "category": 1,
+                          "code": 2322
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs.js",
+            "start": 4545,
+            "length": 16,
+            "code": 2416,
+            "category": 1,
+            "messageText": {
+              "messageText": "Property 'opendirRecursive' in type 'NativeBrowserFileSystem' is not assignable to the same property in base type 'BaseFileSystem'.",
+              "category": 1,
+              "code": 2416,
+              "next": [
+                {
+                  "messageText": "Type '(dirPath: any) => Promise<string[]>' is not assignable to type '(dirPath: any) => Promise<void>'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": [
+                    {
+                      "messageText": "Type 'Promise<string[]>' is not assignable to type 'Promise<void>'.",
+                      "category": 1,
+                      "code": 2322,
+                      "next": [
+                        {
+                          "messageText": "Type 'string[]' is not assignable to type 'void'.",
+                          "category": 1,
+                          "code": 2322
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "file": "./js-libs/baby-fs/native-browser-fs.js",
+            "start": 8706,
+            "length": 19,
+            "code": 2339,
+            "category": 1,
+            "messageText": "Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'."
+          }
+        ]
+      ],
+      "./postcss.config.js",
+      "./style/apply-theme.js",
+      "./style/index.js",
+      "./tailwind.config.js",
+      "./ui-components/ButtonIcon.js",
+      "./ui-components/Icons.js",
+      "./ui-components/LocationBreadCrumb.js",
+      "./ui-components/PaletteUI/PaletteUI.js",
+      "./ui-components/SidebarRow.js",
+      "./ui-components/index.js",
+      "./ui-context/index.js",
+      [
+        "./ui-context/ui-context.js",
+        [
+          {
+            "file": "./ui-context/ui-context.js",
+            "start": 2636,
+            "length": 5,
+            "code": 2345,
+            "category": 1,
+            "messageText": {
+              "messageText": "Argument of type 'string' is not assignable to parameter of type '[\"dark\", \"light\"]'.",
+              "category": 1,
+              "code": 2345,
+              "next": [
+                {
+                  "messageText": "Type 'string' is not assignable to type '[\"dark\", \"light\"]'.",
+                  "category": 1,
+                  "code": 2322
+                }
+              ]
+            }
+          }
+        ]
+      ],
+      "./utils/hooks.js",
+      "./utils/index.js",
+      "./utils/utility.js",
+      [
+        "./workspace/Workspace.js",
+        [
+          {
+            "file": "./workspace/Workspace.js",
+            "start": 3798,
+            "length": 7,
+            "messageText": "Not all code paths return a value.",
+            "category": 1,
+            "code": 7030
+          }
+        ]
+      ],
+      "./workspace/errors.js",
+      [
+        "./workspace/file-helpers.js",
+        [
+          {
+            "file": "./workspace/file-helpers.js",
+            "start": 1366,
+            "length": 6,
+            "messageText": "Cannot find name 'PMNode'.",
+            "category": 1,
+            "code": 2304
+          }
+        ]
+      ],
+      [
+        "./workspace/github-helpers.js",
+        [
+          {
+            "file": "./workspace/github-helpers.js",
+            "start": 2028,
+            "length": 9,
+            "code": 2322,
+            "category": 1,
+            "messageText": "Type 'boolean' is not assignable to type 'string'.",
+            "relatedInformation": [
+              {
+                "file": "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/generated/types.d.ts",
+                "start": 1220918,
+                "length": 9,
+                "messageText": "The expected type comes from property 'recursive' which is declared here on type 'RequestParameters & Omit<{ owner: string; repo: string; tree_sha: string; } & { recursive?: string; }, \"baseUrl\" | \"headers\" | \"mediaType\">'",
+                "category": 3,
+                "code": 6500
+              }
+            ]
+          },
+          {
+            "file": "./workspace/github-helpers.js",
+            "start": 2416,
+            "length": 5,
+            "messageText": "Property 'value' does not exist on type 'PromiseSettledResult<OctokitResponse<{ type: string; size: number; name: string; path: string; content?: string; sha: string; url: string; git_url: string; html_url: string; download_url: string; _links: { git: string; html: string; self: string; }; }[] | { ...; } | { ...; } | { ...; }, 200>>'.",
+            "category": 1,
+            "code": 2339
+          },
+          {
+            "file": "./workspace/github-helpers.js",
+            "start": 2574,
+            "length": 18,
+            "code": 2322,
+            "category": 1,
+            "messageText": {
+              "messageText": "Type '{ <T extends readonly unknown[] | readonly [unknown]>(values: T): Promise<{ -readonly [P in keyof T]: PromiseSettledResult<T[P] extends PromiseLike<infer U> ? U : T[P]>; }>; <T>(values: Iterable<...>): Promise<...>; } | ((promises: any) => Promise<...>)' is not assignable to type '{ <T extends readonly unknown[] | readonly [unknown]>(values: T): Promise<{ -readonly [P in keyof T]: PromiseSettledResult<T[P] extends PromiseLike<infer U> ? U : T[P]>; }>; <T>(values: Iterable<...>): Promise<...>; }'.",
+              "category": 1,
+              "code": 2322,
+              "next": [
+                {
+                  "messageText": "Type '(promises: any) => Promise<[any, any, any, any, any, any, any, any, any, any]>' is not assignable to type '{ <T extends readonly unknown[] | readonly [unknown]>(values: T): Promise<{ -readonly [P in keyof T]: PromiseSettledResult<T[P] extends PromiseLike<infer U> ? U : T[P]>; }>; <T>(values: Iterable<...>): Promise<...>; }'.",
+                  "category": 1,
+                  "code": 2322,
+                  "next": [
+                    {
+                      "messageText": "Type 'Promise<[any, any, any, any, any, any, any, any, any, any]>' is not assignable to type 'Promise<{ [x: string]: PromiseSettledResult<any>; }>'.",
+                      "category": 1,
+                      "code": 2322,
+                      "next": [
+                        {
+                          "messageText": "Type '[any, any, any, any, any, any, any, any, any, any]' is not assignable to type '{ [x: string]: PromiseSettledResult<any>; }'.",
+                          "category": 1,
+                          "code": 2322,
+                          "next": [
+                            {
+                              "messageText": "Index signature is missing in type '[any, any, any, any, any, any, any, any, any, any]'.",
+                              "category": 1,
+                              "code": 2329
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      ],
+      "./workspace/index.js",
+      "./workspace/path-helpers.js",
+      "./workspace/workspace-context.js",
+      "./workspace/workspace-helpers.js",
+      "./workspace/workspace-hooks.js"
+    ],
+    "affectedFilesPendingEmit": [
+      [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/compose-paginate.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/generated/paginating-endpoints.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/paginating-endpoints.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/@octokit-plugin-paginate-rest-virtual-05b1c35933/0/cache/@octokit-plugin-paginate-rest-npm-2.13.3-1ccb944a93-b2b7772f05.zip/node_modules/@octokit/plugin-paginate-rest/dist-types/types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/generated/parameters-and-response-types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/@octokit-plugin-rest-endpoint-methods-virtual-06f4114b27/0/cache/@octokit-plugin-rest-endpoint-methods-npm-5.0.0-463db96a76-bd9a3ebd81.zip/node_modules/@octokit/plugin-rest-endpoint-methods/dist-types/types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/html-webpack-plugin-virtual-c65fff6cc1/0/cache/html-webpack-plugin-npm-5.3.1-6c61ea5be4-2d744cf314.zip/node_modules/html-webpack-plugin/typings.d.ts",
+        1
+      ],
+      [
+        "./.yarn/$$virtual/webpack-virtual-cbf44a71ef/0/cache/webpack-npm-5.31.2-2b6c41d1ab-954c4b4fad.zip/node_modules/webpack/types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-core-npm-3.4.0-0e242eba8e-bb8ba9be2c.zip/node_modules/@octokit/core/dist-types/types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-graphql-npm-4.6.1-b0d2b63384-bcac6e3d90.zip/node_modules/@octokit/graphql/dist-types/types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/generated/types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-openapi-types-npm-6.0.0-4fe173b5c1-a748ee2665.zip/node_modules/@octokit/openapi-types/dist-types/version.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-request-error-npm-2.0.5-cfd366d8eb-0d3a3103a5.zip/node_modules/@octokit/request-error/dist-types/types.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-request-npm-5.4.15-2cd9523802-15810826ee.zip/node_modules/@octokit/request/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-rest-npm-18.5.2-51dcff47d9-b6c8ee91fb.zip/node_modules/@octokit/rest/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/AuthInterface.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointDefaults.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointInterface.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/EndpointOptions.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Fetch.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/GetResponseTypeFromEndpointMethod.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/OctokitResponse.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestError.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestHeaders.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestInterface.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestMethod.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestOptions.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestParameters.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/RequestRequestOptions.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/ResponseHeaders.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Route.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Signal.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/StrategyInterface.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/Url.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/VERSION.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/generated/Endpoints.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@octokit-types-npm-6.13.0-df1213cae5-20e7f159be.zip/node_modules/@octokit/types/dist-types/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@types-estree-npm-0.0.46-173c5af455-69fcf64770.zip/node_modules/@types/estree/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@types-html-minifier-terser-npm-5.1.1-682990a5a3-1e750b93e1.zip/node_modules/@types/html-minifier-terser/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/@types-json-schema-npm-7.0.6-b307979e18-820cabe35a.zip/node_modules/@types/json-schema/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/ajv-npm-6.12.6-4b5105e2b2-19a8f3b0a0.zip/node_modules/ajv/lib/ajv.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/before-after-hook-npm-2.2.1-0eb703f70c-697c0ac2c8.zip/node_modules/before-after-hook/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/idb-keyval-npm-5.0.4-c10956c1b4-cae8c99767.zip/node_modules/idb-keyval/dist/esm/index.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/schema-utils-npm-3.0.0-e97702da81-a084f593f2.zip/node_modules/schema-utils/declarations/ValidationError.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/schema-utils-npm-3.0.0-e97702da81-a084f593f2.zip/node_modules/schema-utils/declarations/validate.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/tapable-npm-2.2.0-516ee6aa5b-f8ed725aed.zip/node_modules/tapable/tapable.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/tslib-npm-2.2.0-e83a07daa5-2d35468c47.zip/node_modules/tslib/tslib.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2015.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2016.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2017.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2018.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2019.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/typescript-patch-70a7929abf-3be4431759.zip/node_modules/typescript/lib/lib.es2020.d.ts",
+        1
+      ],
+      [
+        "./.yarn/cache/w3c-keyname-npm-2.2.4-8c6e5969c5-b711eaa986.zip/node_modules/w3c-keyname/index.d.ts",
+        1
+      ],
+      [
+        "./app/App.js",
+        1
+      ],
+      [
+        "./app/AppContainer.js",
+        1
+      ],
+      [
+        "./app/Palette/Commands.js",
+        1
+      ],
+      [
+        "./app/Palette/Palette.js",
+        1
+      ],
+      [
+        "./app/Palette/Palettes/CommandPalette.js",
+        1
+      ],
+      [
+        "./app/Palette/Palettes/FilePalette.js",
+        1
+      ],
+      [
+        "./app/Palette/Palettes/HeadingPalette.js",
+        1
+      ],
+      [
+        "./app/Palette/Palettes/InputPalette.js",
+        1
+      ],
+      [
+        "./app/Palette/Palettes/QuestionPalette.js",
+        1
+      ],
+      [
+        "./app/Palette/Palettes/WorkspacePalette.js",
+        1
+      ],
+      [
+        "./app/Palette/index.js",
+        1
+      ],
+      [
+        "./app/Palette/paletteTypes.js",
+        1
+      ],
+      [
+        "./app/Palette/utils.js",
+        1
+      ],
+      [
+        "./app/components/ActivityBar.js",
+        1
+      ],
+      [
+        "./app/components/FileBrowser.js",
+        1
+      ],
+      [
+        "./app/components/OptionsBar.js",
+        1
+      ],
+      [
+        "./app/editor/Editor.js",
+        1
+      ],
+      [
+        "./app/editor/EditorArea.js",
+        1
+      ],
+      [
+        "./app/editor/EditorManager.js",
+        1
+      ],
+      [
+        "./app/editor/editor-default-content.js",
+        1
+      ],
+      [
+        "./app/index.js",
+        1
+      ],
+      [
+        "./babel.config.js",
+        1
+      ],
+      [
+        "./config/index.ts",
+        1
+      ],
+      [
+        "./config/is-mac.ts",
+        1
+      ],
+      [
+        "./config/keybindings.ts",
+        1
+      ],
+      [
+        "./config/types.d.ts",
+        1
+      ],
+      [
+        "./editor/collapsible-heading-deco.js",
+        1
+      ],
+      [
+        "./editor/index.js",
+        1
+      ],
+      [
+        "./editor/markdown-parser.js",
+        1
+      ],
+      [
+        "./editor/plugins.js",
+        1
+      ],
+      [
+        "./editor/spec-sheet.js",
+        1
+      ],
+      [
+        "./jest.config.js",
+        1
+      ],
+      [
+        "./js-libs/baby-fs/base-fs.js",
+        1
+      ],
+      [
+        "./js-libs/baby-fs/error-codes.js",
+        1
+      ],
+      [
+        "./js-libs/baby-fs/index.js",
+        1
+      ],
+      [
+        "./js-libs/baby-fs/indexed-db-fs.js",
+        1
+      ],
+      [
+        "./js-libs/baby-fs/native-browser-fs-helpers.js",
+        1
+      ],
+      [
+        "./js-libs/baby-fs/native-browser-fs.js",
+        1
+      ],
+      [
+        "./postcss.config.js",
+        1
+      ],
+      [
+        "./style/apply-theme.js",
+        1
+      ],
+      [
+        "./style/index.js",
+        1
+      ],
+      [
+        "./tailwind.config.js",
+        1
+      ],
+      [
+        "./ui-components/ButtonIcon.js",
+        1
+      ],
+      [
+        "./ui-components/Icons.js",
+        1
+      ],
+      [
+        "./ui-components/LocationBreadCrumb.js",
+        1
+      ],
+      [
+        "./ui-components/PaletteUI/PaletteUI.js",
+        1
+      ],
+      [
+        "./ui-components/SidebarRow.js",
+        1
+      ],
+      [
+        "./ui-components/index.js",
+        1
+      ],
+      [
+        "./ui-context/index.js",
+        1
+      ],
+      [
+        "./ui-context/ui-context.js",
+        1
+      ],
+      [
+        "./utils/hooks.js",
+        1
+      ],
+      [
+        "./utils/index.js",
+        1
+      ],
+      [
+        "./utils/utility.js",
+        1
+      ],
+      [
+        "./webpack.config.js",
+        1
+      ],
+      [
+        "./workspace/Workspace.js",
+        1
+      ],
+      [
+        "./workspace/errors.js",
+        1
+      ],
+      [
+        "./workspace/file-helpers.js",
+        1
+      ],
+      [
+        "./workspace/github-helpers.js",
+        1
+      ],
+      [
+        "./workspace/index.js",
+        1
+      ],
+      [
+        "./workspace/path-helpers.js",
+        1
+      ],
+      [
+        "./workspace/workspace-context.js",
+        1
+      ],
+      [
+        "./workspace/workspace-helpers.js",
+        1
+      ],
+      [
+        "./workspace/workspace-hooks.js",
+        1
+      ]
+    ]
+  },
+  "version": "4.2.4"
+}

@@ -2,11 +2,10 @@ import { isMac } from './is-mac';
 
 const altInMac = '⌥'; // option
 
-export function keyDisplayValue(key) {
+export function keyDisplayValue(key: string) {
   if (key.includes('Mod')) {
     key = key.split('Mod').join(isMac ? '⌘' : 'Ctrl');
   }
-
   key = key
     .split('-')
     .map((r) => {
@@ -24,7 +23,8 @@ export function keyDisplayValue(key) {
 }
 
 class KeyBinding {
-  constructor({ key }) {
+  key: string;
+  constructor({ key }: { key: string }) {
     this.key = key;
   }
   get displayValue() {

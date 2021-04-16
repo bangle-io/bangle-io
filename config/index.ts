@@ -1,7 +1,14 @@
+declare var process: {
+  env: {
+    NODE_ENV: string;
+  };
+};
+
 let nodeEnv = undefined;
 
 // Done this way to allow for bundlers
 // to do a string replace.
+
 try {
   // eslint-disable-next-line no-process-env
   nodeEnv = process.env.NODE_ENV;

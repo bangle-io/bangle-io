@@ -18,6 +18,10 @@ import { useWorkspacePath } from './workspace-hooks';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
 
+/**
+ *
+ * @param {Object} param0
+ */
 export function Workspace({ children }) {
   const {
     wsName,

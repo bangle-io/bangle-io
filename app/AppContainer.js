@@ -148,9 +148,7 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
         <EditorArea
           className="secondary-editor fadeInAnimation"
           editorId={1}
-          isFirst={false}
           showTabs={showTabs}
-          widescreen={widescreen}
           wsPath={secondaryWsPath}
           onClose={removeSecondaryWsPath}
           grabFocus={secondaryGrabFocus}

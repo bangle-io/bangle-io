@@ -14,12 +14,12 @@
       "utils": [
         "./utils/index.js"
       ],
-      "config/*": [
-        "./config/*"
-      ],
-      "config": [
-        "./config/index.js"
-      ],
+      // "config/*": [
+      //   "./config/*"
+      // ],
+      // "config": [
+      //   "./config/index.js"
+      // ],
       "style/*": [
         "./style/*"
       ],

@@ -22,9 +22,10 @@ module.exports = (env, argv) => {
     mode,
     entry: './app/index.js',
     devtool: true ? 'source-map' : 'eval-source-map',
+
     resolve: {
-      // TODO fix me punycode
       fallback: { punycode: require.resolve('punycode/') },
+      extensions: ['.tsx', '.ts', '.js'],
     },
     resolveLoader: {},
     devServer: {
@@ -82,12 +83,24 @@ module.exports = (env, argv) => {
           use: ['file-loader'],
         },
         {
-          test: /\.js$/,
+          test: /\.(js)$/,
           exclude: /node_modules/,
-          use: {
-            loader: require.resolve('babel-loader'),
-          },
+          use: ['babel-loader'],
         },
+
+        {
+          test: /\.tsx?$/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            },
+          ],
+        },
+
+        // { test: /\.js$/, loader: 'source-map-loader' },
 
         {
           test: /\.css$/i,

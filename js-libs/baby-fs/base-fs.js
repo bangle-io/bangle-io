@@ -13,6 +13,7 @@ export class BaseFileMetadata {
 // - a path with `.` extension is a file
 // - a path with no `.` is a directory
 export class BaseFileSystem {
+  constructor(opts) {}
   async stat(filePath) {}
   async readFile(filePath) {}
   //  https://github.com/jprichardson/node-fs-extra/blob/master/docs/outputFile.md

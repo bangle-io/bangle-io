@@ -6,9 +6,6 @@ export default class App extends React.PureComponent {
     show: true,
   };
   render() {
-    window.setState = () => {
-      this.setState((state) => ({ show: !state.show }));
-    };
     return this.state.show && <AppContainer />;
   }
 }

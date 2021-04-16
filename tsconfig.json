@@ -1,0 +1,43 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "strict": false,
+        "noEmit": true,
+        "incremental": true,
+        "allowJs": true,
+        "checkJs": true,
+        "allowSyntheticDefaultImports": false,
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "jsx": "react",
+        "lib": [
+            "DOM",
+            "ES2020",
+        ],
+        "module": "commonjs",
+        "noImplicitReturns": true,
+        "target": "ES2020",
+        "declaration": true,
+        "importHelpers": true,
+        "isolatedModules": true,
+        "skipLibCheck": true
+    },
+    "exclude": [
+        ".yarn/releases/*",
+        ".yarn/plugins/*",
+        ".yarn/cache/*",
+        "**/dist",
+        "**/build",
+        "node_modules",
+        "**/node_modules",
+        "**/*.spec.ts",
+        "**/__tests__",
+        "**/*.test.ts",
+        "**/FlowType*",
+        "**/setup-jest.ts",
+        "_scripts/*",
+        "webpack.config.js"
+    ]
+}
