@@ -248,7 +248,6 @@ export function useWorkspacePath() {
     (wsPath, newTab = false, secondary = false) => {
       const { wsName, filePath } = resolvePath(wsPath);
       const newPath = `/ws/${wsName}/${filePath}`;
-
       if (newTab) {
         window.open(newPath);
         return;
