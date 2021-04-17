@@ -129,10 +129,19 @@ function RootHomePage() {
         <a
           target="_blank"
           rel="noreferrer"
-          className="text-indigo-500 font-extrabold hover:underline"
+          className="text-gray-700 font-extrabold hover:underline"
           href="https://github.com/bangle-io/bangle-io-issues"
         >
           Github
+        </a>
+        {' or '}
+        <a
+          target="_blank"
+          rel="noreferrer"
+          className="text-indigo-500 font-extrabold hover:underline"
+          href="https://discord.gg/GvvbWJrVQY"
+        >
+          Discord
         </a>
       </p>
     </div>
