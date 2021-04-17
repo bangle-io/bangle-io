@@ -1,16 +1,20 @@
 let nodeEnv = undefined;
-let gitHash = undefined;
+let releaseId = undefined;
+let deployEnv = undefined;
 // Done this way to allow for bundlers
 // to do a string replace.
 try {
   // eslint-disable-next-line no-process-env
   nodeEnv = process.env.NODE_ENV;
   // eslint-disable-next-line no-process-env
-  gitHash = process.env.GIT_HASH;
+  releaseId = process.env.RELEASE_ID;
+  // eslint-disable-next-line no-process-env
+  deployEnv = process.env.DEPLOY_ENV;
 } catch (err) {}
 
 export const APP_ENV = nodeEnv;
-export const GIT_HASH = gitHash;
+export const RELEASE_ID = releaseId;
+export const DEPLOY_ENV = deployEnv;
 
 export const config = {
   APP_ENV,

@@ -1,3 +1,4 @@
+/* eslint-disable no-process-env */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -52,7 +53,14 @@ module.exports = (env, argv) => {
         'process.env.NODE_ENV': JSON.stringify(
           isProduction ? 'production' : 'development',
         ),
-        'process.env.GIT_HASH': JSON.stringify(commitHash),
+        'process.env.RELEASE_ID': JSON.stringify(
+          process.env.NETLIFY
+            ? `${process.env.CONTEXT}@` + process.env.COMMIT_REF
+            : 'local@' + commitHash,
+        ),
+        'process.env.DEPLOY_ENV': JSON.stringify(
+          process.env.NETLIFY ? process.env.CONTEXT : 'local',
+        ),
       }),
       new CaseSensitivePathsPlugin(),
       new HtmlWebpackPlugin({

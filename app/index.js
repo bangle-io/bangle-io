@@ -7,13 +7,14 @@ import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import App from './App';
 import { EditorManager } from './editor/EditorManager';
-import { GIT_HASH } from 'config/index';
+import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
 import { createBrowserHistory } from 'history';
 const history = createBrowserHistory();
 
 const routes = [{ path: '/ws/:wsName' }, { path: '/' }];
 
 Sentry.init({
+  environment: DEPLOY_ENV,
   dsn:
     'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',
   integrations: [
@@ -25,7 +26,7 @@ Sentry.init({
       ),
     }),
   ],
-  release: 'bangle-io@' + GIT_HASH,
+  release: RELEASE_ID,
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
