@@ -194,7 +194,11 @@ export function useWorkspaces() {
 }
 
 export function useWorkspacePath() {
+  // I think history doesnt change when location changes
+  // so it is a good idea to use useLocation instead of location
   const location = useLocation();
+  const history = useHistory();
+
   const match = matchPath(location.pathname, {
     path: '/ws/:wsName',
     exact: false,
@@ -202,15 +206,14 @@ export function useWorkspacePath() {
   });
 
   const { wsName } = match?.params ?? {};
-  const { secondaryWsPath } = location?.state ?? {};
+  const search = new URLSearchParams(location?.search);
+  const secondaryWsPath = search.get('secondary') ?? undefined;
   let wsPath;
 
   const filePath = locationToFilePath(location);
   if (filePath) {
     wsPath = wsName + ':' + filePath;
   }
-
-  const history = useHistory();
 
   const pushWsPath = useCallback(
     (wsPath, newTab = false, secondary = false) => {
@@ -222,27 +225,43 @@ export function useWorkspacePath() {
       }
 
       const isWidescreen = checkWidescreen();
+      const newSearch = new URLSearchParams(location?.search);
 
       if (isWidescreen && secondary) {
         // replace is intentional as native history pop
         // for some reason isnt remembering the state.
-        history.replace(history.location.pathname, {
+        if (isWidescreen) {
+          newSearch.set('secondary', wsPath);
+        } else {
+          newSearch.delete('secondary');
+        }
+        history.replace(
+          {
+            ...location,
+            search: newSearch.toString(),
+          },
+          {
+            ...history.location?.state,
+          },
+        );
+        return;
+      }
+
+      if (newPath === location.pathname && !secondary) {
+        return;
+      }
+      history.push(
+        {
+          ...location,
+          pathname: newPath,
+          search: newSearch.toString(),
+        },
+        {
           ...history.location?.state,
-          secondaryWsPath: wsPath,
-        });
-        return;
-      }
-
-      if (newPath === history.location.pathname) {
-        return;
-      }
-
-      history.push(newPath, {
-        ...history.location?.state,
-        secondaryWsPath: isWidescreen ? secondaryWsPath : null,
-      });
+        },
+      );
     },
-    [history, secondaryWsPath],
+    [history, location],
   );
 
   const replaceWsPath = useCallback(
@@ -251,11 +270,11 @@ export function useWorkspacePath() {
       log('replaceWsPath', wsPath);
 
       history.replace({
-        ...history.location,
+        ...location,
         pathname: `/ws/${wsName}/${filePath}`,
       });
     },
-    [history],
+    [history, location],
   );
 
   // removes the currently active wsPath
@@ -274,20 +293,19 @@ export function useWorkspacePath() {
       newPath = `/ws/${wsName}`;
     }
 
-    history.push(newPath, {
-      ...history.location?.state,
-      secondaryWsPath: null,
-    });
+    history.push(newPath);
   }, [history, wsPath, wsName, secondaryWsPath]);
 
   // the editor on side
   const removeSecondaryWsPath = useCallback(() => {
     log('removeSecondaryWsPath');
-    history.replace(history.location.pathname, {
-      ...history.location?.state,
-      secondaryWsPath: null,
+    const newSearch = new URLSearchParams(location?.search);
+    newSearch.delete('secondary');
+    history.replace({
+      ...location,
+      search: newSearch.toString(),
     });
-  }, [history]);
+  }, [history, location]);
 
   // TODO should I add more safeguard for
   // workspacePerm.type == ready?

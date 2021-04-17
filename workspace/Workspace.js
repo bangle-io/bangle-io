@@ -5,7 +5,7 @@ import {
 } from 'baby-fs';
 import React, { useEffect, useState } from 'react';
 import { useCatchRejection } from 'utils/index';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { getWorkspaceInfo } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 import { replaceHistoryState } from './history-utils';
@@ -28,11 +28,14 @@ export const WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND';
 export function Workspace({ children, renderPermission, renderNotFound }) {
   const { wsName } = useWorkspacePath();
   const history = useHistory();
+  const location = useLocation();
   const [workspaceStatus, updateWorkspaceStatus] = useState(READY);
   const [workspaceInfo, updateWorkspaceInfo] = useState();
 
-  log('history state', history.location.state);
-  log('history location', history.location);
+  log('history', history);
+  log('history state', location.state);
+  log('history location', location);
+  log('workspaceInfo', workspaceInfo);
 
   // reset status when wsName changes
   useEffect(() => {
@@ -42,6 +45,7 @@ export function Workspace({ children, renderPermission, renderNotFound }) {
   useEffect(() => {
     let destroyed = false;
     if (wsName) {
+      log('getting getWorkspaceInfo', wsName);
       getWorkspaceInfo(wsName).then((_workspaceInfo) => {
         if (!destroyed) {
           updateWorkspaceInfo(_workspaceInfo);
@@ -57,7 +61,7 @@ export function Workspace({ children, renderPermission, renderNotFound }) {
     if (!workspaceInfo) {
       return;
     }
-    const state = history.location?.state;
+    const state = location?.state;
     if (
       state?.workspaceInfo?.name === workspaceInfo?.name &&
       state?.workspaceStatus === workspaceStatus
@@ -65,14 +69,14 @@ export function Workspace({ children, renderPermission, renderNotFound }) {
       log('history state synced');
       return;
     }
-
+    log('replacing history state');
     // Persist workspaceInfo in the history to
     // prevent release of the native browser FS permission
     replaceHistoryState(history, {
       workspaceInfo,
       workspaceStatus: workspaceStatus,
     });
-  }, [history, workspaceStatus, workspaceInfo]);
+  }, [history, location, workspaceStatus, workspaceInfo]);
 
   useCatchRejection((e) => {
     const reason = e.reason;
