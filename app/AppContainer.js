@@ -8,13 +8,14 @@ import {
   useKeybindings,
   useWatchClickOutside,
 } from 'utils/index';
-import { COMMAND_PALETTE, Palette } from './Palette/index';
+import { Palette, WORKSPACE_PALETTE } from './Palette/index';
 import { ActivityBar } from './components/ActivityBar';
 import { FileBrowser } from './components/FileBrowser';
 import { OptionsBar } from './components/OptionsBar';
 import { keybindings } from 'config/index';
 import { EditorArea } from './editor/EditorArea';
 import { RootHomePage } from './components/RootHomePage';
+import { EditorWrapperUI } from './components/EditorWrapperUI';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
@@ -56,24 +57,42 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
     removeWsPath,
     removeSecondaryWsPath,
   } = useWorkspacePath();
-  const { paletteType } = useContext(UIManagerContext);
+  const { paletteType, dispatch } = useContext(UIManagerContext);
 
   const primaryGrabFocus = widescreen && paletteType == null;
   const secondaryGrabFocus = false;
 
   return (
     <Workspace
-      renderPermissionModal={({
-        permissionDenied,
-        requestFSPermission,
-        wsName,
-      }) => (
+      renderPermission={({ permissionDenied, requestFSPermission, wsName }) => (
         <PermissionModal
           permissionDenied={permissionDenied}
           requestFSPermission={requestFSPermission}
           wsName={wsName}
         />
       )}
+      renderNotFound={({ wsName }) => {
+        return (
+          <EditorWrapperUI>
+            <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
+              🕵️‍♀️‍ Workspace "{wsName}" was not found
+            </h3>
+            <button
+              onClick={() => {
+                dispatch({
+                  type: 'UI/CHANGE_PALETTE_TYPE',
+                  value: {
+                    type: WORKSPACE_PALETTE,
+                  },
+                });
+              }}
+              className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-purple-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
+            >
+              Open something else?
+            </button>
+          </EditorWrapperUI>
+        );
+      }}
     >
       <EditorArea
         className="primary-editor"
@@ -182,20 +201,27 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
   }, [requestFSPermission]);
 
   return (
-    <div
-      className="bangle-editor-container flex justify-center flex-col h-full align-middle cursor-pointer"
-      onClick={() => requestFSPermission()}
-    >
-      <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
-        👩‍💻 Bangle.io needs your permission to read "{wsName}"
-      </h3>
-      <span className="flex-shrink text-lg sm:leading-10 font-semibold mb-10 sm:mb-1">
-        {permissionDenied &&
-          'You have denied bangle.io permission to access your workspace.'}
-      </span>
-      <span className="flex-shrink text-xl sm:leading-10  mb-10 sm:mb-1">
-        Press <kbd>Enter</kbd> or 👆click anywhere to it grant permission.
-      </span>
-    </div>
+    <EditorWrapperUI>
+      <div
+        className="flex flex-grow justify-center flex-col cursor-pointer"
+        onClick={() => requestFSPermission()}
+      >
+        <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
+          👩‍💻 Bangle.io needs your permission to read "{wsName}"
+        </h3>
+        <span className="flex-shrink text-lg sm:leading-10 font-semibold mb-10 sm:mb-1">
+          {permissionDenied &&
+            'You have denied bangle.io permission to access your workspace.'}
+        </span>
+        <button
+          onClick={() => {
+            requestFSPermission();
+          }}
+          className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-purple-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
+        >
+          Press <kbd>Enter</kbd> or 👆click this grant permission.
+        </button>
+      </div>
+    </EditorWrapperUI>
   );
 }

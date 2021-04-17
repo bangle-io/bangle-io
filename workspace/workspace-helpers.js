@@ -1,6 +1,10 @@
 import { config } from 'config/index';
 import * as idb from 'idb-keyval';
-import { WorkspaceError } from './errors';
+import {
+  WorkspaceError,
+  WORKSPACE_NOT_FOUND_ERROR,
+  WORKSPACE_ALREADY_EXISTS_ERROR,
+} from './errors';
 
 import { validatePath, validWsName } from './path-helpers';
 
@@ -11,9 +15,6 @@ import { validatePath, validWsName } from './path-helpers';
  * and hence messing up with downstream weakcaches.
  */
 let cachedWorkspaces = undefined;
-
-export const WORKSPACE_NOT_FOUND_ERROR = 'WORKSPACE_NOT_FOUND_ERROR';
-export const WORKSPACE_EXISTS_ERROR = 'WORKSPACE_EXISTS_ERROR';
 
 export function resetCachedWorkspaces() {
   cachedWorkspaces = undefined;
@@ -35,6 +36,7 @@ export async function getWorkspaceInfo(wsName) {
     throw new WorkspaceError(
       `Workspace ${wsName} not found`,
       WORKSPACE_NOT_FOUND_ERROR,
+      `Cannot find the workspace ${wsName}`,
     );
   }
 
@@ -49,7 +51,7 @@ export async function createWorkspace(wsName, type = 'browser', opts = {}) {
   if (workspaces.find((w) => w.name === wsName)) {
     throw new WorkspaceError(
       `Cannot create "${wsName}" as it already exists`,
-      WORKSPACE_EXISTS_ERROR,
+      WORKSPACE_ALREADY_EXISTS_ERROR,
     );
   }
 

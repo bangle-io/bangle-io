@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom';
 import { getWorkspaceInfo } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 import { replaceHistoryState } from './history-utils';
+import { WorkspaceError, WORKSPACE_NOT_FOUND_ERROR } from './errors';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
@@ -16,14 +17,15 @@ let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
 export const NEEDS_PERMISSION = 'NEEDS_PERMISSION';
 export const PERMISSION_DENIED = 'PERMISSION_DENIED';
 export const READY = 'READY';
-export const notAllowedStatuses = [NEEDS_PERMISSION, PERMISSION_DENIED];
+export const permissionStatuses = [NEEDS_PERMISSION, PERMISSION_DENIED];
+export const WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND';
 
 /**
  *
- * renderPermissionModal - if workspace requires permission
+ * renderPermission - if workspace requires permission
  *    this render prop will rendered instead of the children
  */
-export function Workspace({ children, renderPermissionModal }) {
+export function Workspace({ children, renderPermission, renderNotFound }) {
   const { wsName } = useWorkspacePath();
   const history = useHistory();
   const [workspaceStatus, updateWorkspaceStatus] = useState(READY);
@@ -78,15 +80,25 @@ export function Workspace({ children, renderPermissionModal }) {
       reason instanceof BaseFileSystemError &&
       reason.code === NATIVE_BROWSER_PERMISSION_ERROR
     ) {
-      if (!notAllowedStatuses.includes(workspaceStatus)) {
+      if (!permissionStatuses.includes(workspaceStatus)) {
         updateWorkspaceStatus(NEEDS_PERMISSION);
+      }
+      e.preventDefault();
+    }
+
+    if (
+      reason instanceof WorkspaceError &&
+      reason.code === WORKSPACE_NOT_FOUND_ERROR
+    ) {
+      if (workspaceStatus !== WORKSPACE_NOT_FOUND) {
+        updateWorkspaceStatus(WORKSPACE_NOT_FOUND);
       }
       e.preventDefault();
     }
   });
 
-  if (notAllowedStatuses.includes(workspaceStatus)) {
-    return renderPermissionModal({
+  if (permissionStatuses.includes(workspaceStatus)) {
+    return renderPermission({
       wsName,
       // if the user denies explicitly in the prompt
       permissionDenied: workspaceStatus === PERMISSION_DENIED,
@@ -112,5 +124,12 @@ export function Workspace({ children, renderPermissionModal }) {
       },
     });
   }
+
+  if (workspaceStatus === WORKSPACE_NOT_FOUND) {
+    return renderNotFound({
+      wsName,
+    });
+  }
+
   return children;
 }
