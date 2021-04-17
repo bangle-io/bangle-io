@@ -288,7 +288,7 @@ exports[`Correctly switches to file type 2`] = `
           class="pr-2 flex items-center"
         >
           <svg
-            class="fill-current  "
+            class="fill-current  h-5 w-5"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >

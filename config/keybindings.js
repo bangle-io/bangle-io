@@ -1,5 +1,9 @@
 import { isMac } from './is-mac';
 
+const isFirefox =
+  typeof navigator != 'undefined'
+    ? navigator.userAgent?.toLocaleLowerCase()?.indexOf('firefox') > -1
+    : false;
 const altInMac = '⌥'; // option
 
 export function keyDisplayValue(key) {
@@ -37,7 +41,7 @@ export const keybindings = {
     key: 'Mod-\\',
   }),
   toggleCommandPalette: new KeyBinding({
-    key: 'Mod-P',
+    key: isFirefox ? 'Mod-o' : 'Mod-P',
   }),
   toggleFilePalette: new KeyBinding({
     key: 'Mod-p',
