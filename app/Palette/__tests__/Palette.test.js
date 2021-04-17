@@ -120,7 +120,7 @@ test('Correctly filters commands', async () => {
 
   userEvent.type(input, 'toggle');
 
-  expect(input.getAttribute('placeholder')).toBe('Enter a workspace name');
+  expect(input.getAttribute('placeholder')).toBe('Enter a file name');
 
   expect(result.container.querySelectorAll('.side-bar-row'))
     .toMatchInlineSnapshot(`
