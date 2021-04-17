@@ -30,7 +30,7 @@ export class FilePalette extends PaletteTypeBase {
   static description = 'Search for a file name';
   static PaletteIcon = FileDocumentIcon;
   static UIComponent = FilePaletteUIComponent;
-  static placeholder = 'Enter a file name';
+  static placeholder = "Enter a file name or type '?' to see other palettes.";
   static keybinding = keybindings.toggleFilePalette.key;
 
   // match with any query
