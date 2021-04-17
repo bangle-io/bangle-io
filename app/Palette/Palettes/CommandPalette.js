@@ -22,8 +22,8 @@ import {
   defaultKeys as paragraphKeys,
 } from '@bangle.dev/core/components/paragraph';
 import {
+  renameFile,
   useDeleteFile,
-  useRenameActiveFile,
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
@@ -71,7 +71,7 @@ function CommandPaletteUIComponent({
     useNewBrowserWS({ updatePalette, dismissPalette }),
     useNewFileSystemWS({ dismissPalette }),
     useImportWSFromGithub({ updatePalette, dismissPalette }),
-    useRenameFile({ updatePalette, dismissPalette }),
+    useRenameActiveFile({ updatePalette, dismissPalette }),
     useSaveGithubToken({ updatePalette, dismissPalette }),
     useDeleteActiveFile({ dismissPalette }),
     usePrimaryEditorCommands({ dismissPalette }),
@@ -185,11 +185,22 @@ function useNewBrowserWS({ updatePalette }) {
   });
 }
 
-function useRenameFile({ updatePalette }) {
-  const uid = 'RENAME_FILE_COMMAND';
-  const { filePath } = useWorkspacePath();
+function useRenameActiveFile({ updatePalette }) {
+  const uid = 'RENAME_ACTIVE_FILE_COMMAND';
+  const { filePath, wsName, wsPath, replaceWsPath } = useWorkspacePath();
 
-  const renameActiveFile = useRenameActiveFile();
+  const renameFileCb = useCallback(
+    async (newFilePath) => {
+      if (!newFilePath.endsWith('.md')) {
+        newFilePath += '.md';
+      }
+
+      const newWsPath = wsName + ':' + newFilePath;
+      await renameFile(wsPath, newWsPath);
+      replaceWsPath(newWsPath);
+    },
+    [wsName, wsPath, replaceWsPath],
+  );
 
   const onExecute = useCallback(
     (item) => {
@@ -199,14 +210,14 @@ function useRenameFile({ updatePalette }) {
         metadata: {
           onInputConfirm: (query) => {
             if (query) {
-              return renameActiveFile(query);
+              return renameFileCb(query);
             }
           },
         },
       });
       return false;
     },
-    [updatePalette, filePath, renameActiveFile],
+    [updatePalette, filePath, renameFileCb],
   );
   return queryMatch({
     uid,

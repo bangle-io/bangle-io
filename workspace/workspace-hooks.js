@@ -9,31 +9,24 @@ import {
   deleteWorkspace,
   listWorkspaces,
 } from './workspace-helpers';
-import {
-  createFile,
-  deleteFile,
-  listAllFiles,
-  renameFile,
-} from './file-helpers';
+import { cachedListAllFiles, createFile, deleteFile } from './file-helpers';
 import { checkWidescreen } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
-
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 
 export function useGetWorkspaceFiles() {
   const { wsName } = useWorkspacePath();
-
+  const location = useLocation();
   const [files, setFiles] = useState([]);
   const isDestroyed = useRef(false);
 
   const refreshFiles = useCallback(() => {
     if (wsName) {
-      console.log('here');
       // TODO this is called like a million times
       // we need to fix this to only update based on known things
       // like renaming of file, delete etc.
-      listAllFiles(wsName)
+      cachedListAllFiles(wsName)
         .then((items) => {
           if (!isDestroyed.current) {
             setFiles(items);
@@ -50,7 +43,9 @@ export function useGetWorkspaceFiles() {
 
   useEffect(() => {
     refreshFiles();
-  }, [refreshFiles]);
+    // workspaceStatus is added here so that if permission
+    // changes the files can be updated
+  }, [refreshFiles, location.state?.workspaceStatus]);
 
   useEffect(() => {
     return () => {
@@ -103,25 +98,6 @@ export function useCreateMdFile() {
   return createNewMdFile;
 }
 
-export function useRenameActiveFile() {
-  const { wsName, wsPath, replaceWsPath } = useWorkspacePath();
-
-  const renameFileCb = useCallback(
-    async (newFilePath) => {
-      if (!newFilePath.endsWith('.md')) {
-        newFilePath += '.md';
-      }
-
-      const newWsPath = wsName + ':' + newFilePath;
-      await renameFile(wsPath, newWsPath);
-      replaceWsPath(newWsPath);
-    },
-    [wsName, wsPath, replaceWsPath],
-  );
-
-  return renameFileCb;
-}
-
 export function useDeleteFile() {
   const { wsName, wsPath } = useWorkspacePath();
   const history = useHistory();
@@ -169,7 +145,7 @@ export function useWorkspaces() {
   );
 
   const importWorkspaceFromGithubCb = useCallback(
-    // can pass alternat wsName in the options
+    // can pass alternate wsName in the options
     async (url, wsType, opts = {}) => {
       const wsName = await importGithubWorkspace(
         url,

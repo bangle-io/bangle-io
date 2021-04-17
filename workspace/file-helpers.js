@@ -7,13 +7,14 @@ import {
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
 import { IndexedDBFileSystem, NativeBrowserFileSystem } from 'baby-fs';
+import { listFilesCache } from './native-browser-list-fs-cache';
 
 const toFSPath = (wsPath) => {
   const { wsName, filePath } = resolvePath(wsPath);
   return [wsName, filePath].join('/');
 };
 
-const getNBFS = (ws) => {
+const getFS = (ws) => {
   if (ws.type === 'browser') {
     return new IndexedDBFileSystem();
   }
@@ -31,12 +32,12 @@ const getNBFS = (ws) => {
 // TODO make this get file
 export async function getDoc(wsPath) {
   const { wsName } = resolvePath(wsPath);
-  const ws = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfo(wsName);
 
   let file;
 
   const path = toFSPath(wsPath);
-  let fileData = await getNBFS(ws).readFile(path);
+  let fileData = await getFS(workspaceInfo).readFile(path);
 
   if (path.endsWith('.json')) {
     file = JSON.parse(fileData);
@@ -59,8 +60,7 @@ export async function getDoc(wsPath) {
  */
 export async function saveDoc(wsPath, doc) {
   const { wsName, filePath } = resolvePath(wsPath);
-  const ws = await getWorkspaceInfo(wsName);
-  let file;
+  const workspaceInfo = await getWorkspaceInfo(wsName);
 
   const path = toFSPath(wsPath);
   let data;
@@ -71,7 +71,7 @@ export async function saveDoc(wsPath, doc) {
   } else {
     throw new Error('Unknown file extension ' + filePath);
   }
-  await getNBFS(ws).writeFile(path, data);
+  await getFS(workspaceInfo).writeFile(path, data);
 }
 
 /**
@@ -83,7 +83,7 @@ export async function saveDoc(wsPath, doc) {
 export async function createFile(wsPath, content, contentType = 'doc') {
   validateWsFilePath(wsPath);
   const { wsName } = resolvePath(wsPath);
-  const workspace = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfo(wsName);
 
   const path = toFSPath(wsPath);
   let markdown;
@@ -95,23 +95,47 @@ export async function createFile(wsPath, content, contentType = 'doc') {
     throw new Error('Unknown content type');
   }
 
-  await getNBFS(workspace).writeFile(path, markdown);
+  await getFS(workspaceInfo).writeFile(path, markdown);
+  listFilesCache.deleteEntry(workspaceInfo);
 }
 
 export async function deleteFile(wsPath) {
   validatePath(wsPath);
 
   const { wsName } = resolvePath(wsPath);
-  const workspace = await getWorkspaceInfo(wsName);
-  await getNBFS(workspace).unlink(toFSPath(wsPath));
+  const workspaceInfo = await getWorkspaceInfo(wsName);
+  await getFS(workspaceInfo).unlink(toFSPath(wsPath));
+  listFilesCache.deleteEntry(workspaceInfo);
+}
+
+/**
+ * A smart cached version of `listAllFiles` which
+ * only recalculates list of all files if there was a
+ * modification via the delete, create, rename etc methods.
+ * Currently only caches `nativefs` type.
+ * @param {*} wsName
+ */
+export async function cachedListAllFiles(wsName) {
+  const workspaceInfo = await getWorkspaceInfo(wsName);
+
+  if (workspaceInfo.type !== 'nativefs') {
+    return listAllFiles(wsName);
+  }
+
+  const cachedEntry = listFilesCache.getEntry(workspaceInfo);
+  if (!cachedEntry) {
+    return listAllFiles(wsName);
+  }
+
+  return cachedEntry;
 }
 
 export async function listAllFiles(wsName) {
-  const ws = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfo(wsName);
 
   let files = [];
 
-  const rawPaths = await getNBFS(ws).opendirRecursive(wsName);
+  const rawPaths = await getFS(workspaceInfo).opendirRecursive(wsName);
   files = rawPaths.map((r) => {
     const [_wsName, ...f] = r.split('/');
     validWsName(_wsName);
@@ -119,7 +143,11 @@ export async function listAllFiles(wsName) {
     return _wsName + ':' + f.join('/');
   });
 
-  return files.sort((a, b) => a.localeCompare(b));
+  const result = files.sort((a, b) => a.localeCompare(b));
+
+  listFilesCache.saveEntry(workspaceInfo, result);
+
+  return result;
 }
 
 export async function renameFile(wsPath, newWsPath) {
@@ -132,7 +160,9 @@ export async function renameFile(wsPath, newWsPath) {
     throw new Error('Workspace name must be the same');
   }
 
-  const workspace = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfo(wsName);
 
-  await getNBFS(workspace).rename(toFSPath(wsPath), toFSPath(newWsPath));
+  await getFS(workspaceInfo).rename(toFSPath(wsPath), toFSPath(newWsPath));
+
+  listFilesCache.deleteEntry(workspaceInfo);
 }

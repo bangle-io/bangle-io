@@ -8,6 +8,7 @@ import { useCatchRejection } from 'utils/index';
 import { useHistory } from 'react-router-dom';
 import { getWorkspaceInfo } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
+import { replaceHistoryState } from './history-utils';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
@@ -25,12 +26,51 @@ export const notAllowedStatuses = [NEEDS_PERMISSION, PERMISSION_DENIED];
 export function Workspace({ children, renderPermissionModal }) {
   const { wsName } = useWorkspacePath();
   const history = useHistory();
-  const [status, updateStatus] = useState(READY);
+  const [workspaceStatus, updateWorkspaceStatus] = useState(READY);
+  const [workspaceInfo, updateWorkspaceInfo] = useState();
+
+  log('history state', history.location.state);
+  log('history location', history.location);
 
   // reset status when wsName changes
   useEffect(() => {
-    updateStatus(READY);
+    updateWorkspaceStatus(READY);
   }, [wsName]);
+
+  useEffect(() => {
+    let destroyed = false;
+    if (wsName) {
+      getWorkspaceInfo(wsName).then((_workspaceInfo) => {
+        if (!destroyed) {
+          updateWorkspaceInfo(_workspaceInfo);
+        }
+      });
+    }
+    return () => {
+      destroyed = true;
+    };
+  }, [wsName]);
+
+  useEffect(() => {
+    if (!workspaceInfo) {
+      return;
+    }
+    const state = history.location.state;
+    if (
+      state?.workspaceInfo?.name === workspaceInfo?.name &&
+      state?.workspaceStatus === workspaceStatus
+    ) {
+      log('history state synced');
+      return;
+    }
+
+    // Persist workspaceInfo in the history to
+    // prevent release of the native browser FS permission
+    replaceHistoryState(history, {
+      workspaceInfo,
+      workspaceStatus: workspaceStatus,
+    });
+  }, [history, workspaceStatus, workspaceInfo]);
 
   useCatchRejection((e) => {
     const reason = e.reason;
@@ -38,58 +78,35 @@ export function Workspace({ children, renderPermissionModal }) {
       reason instanceof BaseFileSystemError &&
       reason.code === NATIVE_BROWSER_PERMISSION_ERROR
     ) {
-      if (!notAllowedStatuses.includes(status)) {
-        updateStatus(NEEDS_PERMISSION);
+      if (!notAllowedStatuses.includes(workspaceStatus)) {
+        updateWorkspaceStatus(NEEDS_PERMISSION);
       }
       e.preventDefault();
     }
   });
 
-  // Persist workspaceInfo in the history to
-  // prevent release of the native browser FS permission
-  useEffect(() => {
-    let destroyed = false;
-    // update the history state only if it is different from the current
-    // wsName
-    if (history.location?.state?.workspaceInfo?.name !== wsName) {
-      getWorkspaceInfo(wsName).then((workspaceInfo) => {
-        if (destroyed) {
-          return;
-        }
-        history.replace({
-          ...history.location,
-          state: { ...history.location.state, workspaceInfo },
-        });
-      });
-    }
-
-    return () => {
-      destroyed = true;
-    };
-  }, [wsName, history]);
-
-  if (notAllowedStatuses.includes(status)) {
+  if (notAllowedStatuses.includes(workspaceStatus)) {
     return renderPermissionModal({
       wsName,
       // if the user denies explicitly in the prompt
-      permissionDenied: status === PERMISSION_DENIED,
+      permissionDenied: workspaceStatus === PERMISSION_DENIED,
       requestFSPermission: async () => {
         const workspace = await getWorkspaceInfo(wsName);
         if (!workspace) {
           throw new Error('workspace not found');
         }
         if (workspace.type !== 'nativefs') {
-          updateStatus(READY);
+          updateWorkspaceStatus(READY);
           return true;
         }
         const result = await requestNativeBrowserFSPermission(
           workspace.metadata.rootDirHandle,
         );
         if (result) {
-          updateStatus(READY);
+          updateWorkspaceStatus(READY);
           return true;
         } else {
-          updateStatus(PERMISSION_DENIED);
+          updateWorkspaceStatus(PERMISSION_DENIED);
           return false;
         }
       },
