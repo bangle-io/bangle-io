@@ -4,15 +4,14 @@ import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import {
   useCreateMdFile,
   useDeleteFile,
-  useGetWorkspaceFiles,
-  useRenameActiveFile,
+  useGetCachedWorkspaceFiles,
   useWorkspacePath,
   useWorkspaces,
 } from '../workspace-hooks';
 import * as idb from 'idb-keyval';
 import { Workspace } from '../Workspace';
-import { getWorkspaceInfo } from '../workspace-helpers';
 import { IndexedDBFileSystem } from 'baby-fs';
+import { checkWidescreen } from 'utils/index';
 const mockStore = new Map();
 const mockBabyFSStore = new Map();
 
@@ -24,6 +23,14 @@ jest.mock('baby-fs', () => {
   };
 });
 
+jest.mock('utils/index', () => {
+  const actual = jest.requireActual('utils/index');
+
+  return {
+    ...actual,
+    checkWidescreen: jest.fn(() => false),
+  };
+});
 jest.mock('idb-keyval', () => {
   const idb = {};
   idb.get = jest.fn(async (...args) => {
@@ -84,7 +91,7 @@ beforeEach(() => {
   idbFS = new IndexedDBFileSystem();
 });
 
-describe('useGetWorkspaceFiles', () => {
+describe('useGetCachedWorkspaceFiles', () => {
   const App = ({ Comp }) => (
     <Router initialEntries={['/ws/kujo']}>
       <Switch>
@@ -116,7 +123,7 @@ describe('useGetWorkspaceFiles', () => {
     await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
-      const [files, _refreshFiles] = useGetWorkspaceFiles();
+      const [files, _refreshFiles] = useGetCachedWorkspaceFiles();
       refreshFiles = _refreshFiles;
       return (
         <div data-testid="result">
@@ -171,6 +178,7 @@ describe('useGetWorkspaceFiles', () => {
 });
 
 describe('useWorkspacePath', () => {
+  let testLocation;
   const App = ({ Comp }) => (
     <Router initialEntries={['/ws/kujo']}>
       <Switch>
@@ -183,13 +191,23 @@ describe('useWorkspacePath', () => {
       <Route
         path="*"
         render={({ history, location }) => {
+          testLocation = location;
+
           return null;
         }}
       />
     </Router>
   );
-  test('refreshes after workspace permissions are updated', async () => {
-    let setWsPermissionState;
+
+  beforeEach(() => {
+    testLocation = null;
+  });
+
+  test('pushWsPath works', async () => {
+    // to get secondary tested
+    checkWidescreen.mockImplementation(() => true);
+
+    let workspacePathHookResult;
     mockStore.set('workspaces/2', [
       {
         name: 'kujo',
@@ -201,8 +219,8 @@ describe('useWorkspacePath', () => {
     await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
-      const [files] = useGetWorkspaceFiles();
-      ({ setWsPermissionState } = useWorkspacePath());
+      const [files] = useGetCachedWorkspaceFiles();
+      workspacePathHookResult = useWorkspacePath();
       return (
         <div data-testid="result">
           {files.map((f) => (
@@ -217,6 +235,8 @@ describe('useWorkspacePath', () => {
     act(() => {
       result = render(<App Comp={Comp} />);
     });
+    expect(workspacePathHookResult).toMatchSnapshot();
+
     // To let the initial setState settle in Workspace after mount
     await act(() => promise);
 
@@ -225,39 +245,44 @@ describe('useWorkspacePath', () => {
     ).toHaveLength(1);
 
     await act(async () => {
-      await setWsPermissionState({
-        type: 'error',
-        error: new Error('some magical error'),
-      });
+      await workspacePathHookResult.pushWsPath('kujo:two.md');
     });
 
-    // Should show error instead of showing our component
-    expect(result.container).toMatchSnapshot();
-
-    expect(
-      result.container.querySelectorAll('[data-testid="result"]'),
-    ).toHaveLength(0);
+    expect(testLocation?.pathname).toBe('/ws/kujo/two.md');
+    expect(testLocation?.state).toMatchInlineSnapshot(`
+      Object {
+        "secondaryWsPath": undefined,
+        "workspaceInfo": Object {
+          "metadata": Object {},
+          "name": "kujo",
+          "type": "browser",
+        },
+        "workspaceStatus": "READY",
+      }
+    `);
+    expect(workspacePathHookResult).toMatchSnapshot();
 
     await act(async () => {
-      await setWsPermissionState({
-        type: 'ready',
-        workspace: await getWorkspaceInfo('kujo'),
-      });
+      await workspacePathHookResult.removeWsPath();
     });
+    expect(testLocation?.pathname).toBe('/ws/kujo');
 
-    expect(
-      result.container.querySelectorAll('[data-testid="result"]'),
-    ).toHaveLength(1);
+    await act(async () => {
+      await workspacePathHookResult.replaceWsPath('kujo:one.md');
+    });
+    expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
 
-    expect(result.getByTestId('result')).toMatchInlineSnapshot(`
-      <div
-        data-testid="result"
-      >
-        <span>
-          kujo:one.md
-        </span>
-      </div>
-  `);
+    expect(workspacePathHookResult.secondaryWsPath).toBe(null);
+
+    await act(async () => {
+      await workspacePathHookResult.pushWsPath(
+        'kujo:three.md',
+        undefined,
+        true,
+      );
+    });
+    expect(workspacePathHookResult.secondaryWsPath).toBe('kujo:three.md');
+    expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
   });
 });
 
@@ -311,58 +336,6 @@ describe('useCreateMdFile', () => {
       'kujo/one.md',
       '# one.md\n\nHello world!',
     );
-  });
-});
-
-describe('useRenameActiveFile', () => {
-  test('browser rename file', async () => {
-    let callback;
-    let testLocation;
-
-    mockStore.set('workspaces/2', [
-      {
-        name: 'kujo',
-        type: 'browser',
-        metadata: {},
-      },
-    ]);
-
-    await idbFS.writeFile('kujo/one.md', createFileContent());
-
-    function Comp() {
-      const renameFileCb = useRenameActiveFile();
-      callback = renameFileCb;
-      return <div>Hello</div>;
-    }
-
-    await render(
-      <Router initialEntries={['/ws/kujo/one.md']}>
-        <Switch>
-          <Route path={['/ws/:wsName']}>
-            <Comp />
-          </Route>
-        </Switch>
-        <Route
-          path="*"
-          render={({ history, location }) => {
-            testLocation = location;
-            return null;
-          }}
-        />
-      </Router>,
-    );
-
-    expect(callback).not.toBeUndefined();
-
-    const result = callback('two.md');
-    expect(result).toBeInstanceOf(Promise);
-
-    await result;
-
-    expect(testLocation.pathname).toBe('/ws/kujo/two.md');
-
-    expect(idbFS.rename).toBeCalledTimes(1);
-    expect(idbFS.rename).toBeCalledWith('kujo/one.md', 'kujo/two.md');
   });
 });
 

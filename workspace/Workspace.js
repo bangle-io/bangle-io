@@ -55,7 +55,7 @@ export function Workspace({ children, renderPermissionModal }) {
     if (!workspaceInfo) {
       return;
     }
-    const state = history.location.state;
+    const state = history.location?.state;
     if (
       state?.workspaceInfo?.name === workspaceInfo?.name &&
       state?.workspaceStatus === workspaceStatus

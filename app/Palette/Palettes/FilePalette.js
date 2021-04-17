@@ -7,7 +7,7 @@ import {
 
 import React, { useCallback, useEffect } from 'react';
 import {
-  useGetWorkspaceFiles,
+  useGetCachedWorkspaceFiles,
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
@@ -41,7 +41,7 @@ export class FilePalette extends PaletteTypeBase {
 
 function FilePaletteUIComponent({ paletteProps, query, dismissPalette }) {
   const { pushWsPath } = useWorkspacePath();
-  let [files, refreshFiles] = useGetWorkspaceFiles();
+  let [files, refreshFiles] = useGetCachedWorkspaceFiles();
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);

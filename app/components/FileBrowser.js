@@ -11,7 +11,7 @@ import {
 } from 'ui-components/index';
 import {
   useDeleteFile,
-  useGetWorkspaceFiles,
+  useGetCachedWorkspaceFiles,
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
@@ -21,7 +21,7 @@ import { useInputPaletteNewFileCommand } from 'app/Palette/Commands';
 FileBrowser.propTypes = {};
 
 export function FileBrowser() {
-  const [files, refreshFiles] = useGetWorkspaceFiles();
+  const [files, refreshFiles] = useGetCachedWorkspaceFiles();
   const deleteByWsPath = useDeleteFile();
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();

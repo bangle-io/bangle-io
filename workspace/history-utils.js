@@ -4,7 +4,7 @@ export function replaceHistoryState(history, newState) {
   return history.replace({
     ...history.location,
     state: {
-      ...history.location.state,
+      ...history.location?.state,
       ...newState,
     },
   });

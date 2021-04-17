@@ -19,7 +19,7 @@ jest.mock('workspace/index', () => {
       wsPath: mockWsPath,
     })),
     useWorkspaces: jest.fn(),
-    useGetWorkspaceFiles: jest.fn(),
+    useGetCachedWorkspaceFiles: jest.fn(),
     useCreateMdFile: jest.fn(),
     useRenameActiveFile: jest.fn(),
     useDeleteFile: jest.fn(),

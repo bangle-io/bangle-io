@@ -15,7 +15,7 @@ import { importGithubWorkspace } from './github-helpers';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 
-export function useGetWorkspaceFiles() {
+export function useGetCachedWorkspaceFiles() {
   const { wsName } = useWorkspacePath();
   const location = useLocation();
   const [files, setFiles] = useState([]);
@@ -227,7 +227,7 @@ export function useWorkspacePath() {
         // replace is intentional as native history pop
         // for some reason isnt remembering the state.
         history.replace(history.location.pathname, {
-          ...history.location.state,
+          ...history.location?.state,
           secondaryWsPath: wsPath,
         });
         return;
@@ -238,7 +238,7 @@ export function useWorkspacePath() {
       }
 
       history.push(newPath, {
-        ...history.location.state,
+        ...history.location?.state,
         secondaryWsPath: isWidescreen ? secondaryWsPath : null,
       });
     },
@@ -270,19 +270,21 @@ export function useWorkspacePath() {
     if (secondaryWsPath) {
       const { wsName, filePath } = resolvePath(secondaryWsPath);
       newPath = `/ws/${wsName}/${filePath}`;
+    } else {
+      newPath = `/ws/${wsName}`;
     }
 
     history.push(newPath, {
-      ...history.location.state,
+      ...history.location?.state,
       secondaryWsPath: null,
     });
-  }, [history, wsPath, secondaryWsPath]);
+  }, [history, wsPath, wsName, secondaryWsPath]);
 
   // the editor on side
   const removeSecondaryWsPath = useCallback(() => {
     log('removeSecondaryWsPath');
     history.replace(history.location.pathname, {
-      ...history.location.state,
+      ...history.location?.state,
       secondaryWsPath: null,
     });
   }, [history]);
