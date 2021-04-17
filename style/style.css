@@ -177,3 +177,7 @@ DONOT keep internal styles here.
 .homepage {
   margin-top: calc(1rem + var(--activity-bar-width));
 }
+
+.homepage.widescreen {
+  margin-top: unset;
+}

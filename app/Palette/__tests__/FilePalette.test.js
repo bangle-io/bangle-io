@@ -1,5 +1,5 @@
-import { useRecordRecentWsPaths } from '../Palettes/FilePalette';
 import { renderHook } from '@testing-library/react-hooks';
+import { useRecordRecentWsPaths } from 'app/hooks';
 import { useLocalStorage } from 'utils/index';
 
 let mockWsName, mockWsPath;

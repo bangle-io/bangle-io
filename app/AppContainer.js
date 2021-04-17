@@ -183,16 +183,18 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
 
   return (
     <div
-      className="flex justify-center flex-col h-full align-middle cursor-pointer"
+      className="bangle-editor-container flex justify-center flex-col h-full align-middle cursor-pointer"
       onClick={() => requestFSPermission()}
     >
+      <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
+        👩‍💻 Bangle.io needs your permission to read "{wsName}"
+      </h3>
       <span className="flex-shrink text-lg sm:leading-10 font-semibold mb-10 sm:mb-1">
         {permissionDenied &&
-          `You have denied bangle.io permission to access your workspace.`}
+          'You have denied bangle.io permission to access your workspace.'}
       </span>
-      <span className="flex-shrink text-lg sm:leading-10 font-medium  mb-10 sm:mb-1">
-        Press Enter or click anywhere to grant permission and resume working on
-        "{wsName}"
+      <span className="flex-shrink text-xl sm:leading-10  mb-10 sm:mb-1">
+        Press <kbd>Enter</kbd> or 👆click anywhere to it grant permission.
       </span>
     </div>
   );
