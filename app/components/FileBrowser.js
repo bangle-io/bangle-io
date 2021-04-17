@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useCallback, useEffect } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import {
   SidebarRow,
@@ -11,7 +11,7 @@ import {
 } from 'ui-components/index';
 import {
   useDeleteFile,
-  useGetWorkspaceFiles,
+  useGetCachedWorkspaceFiles,
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
@@ -21,7 +21,7 @@ import { useInputPaletteNewFileCommand } from 'app/Palette/Commands';
 FileBrowser.propTypes = {};
 
 export function FileBrowser() {
-  const [files] = useGetWorkspaceFiles();
+  const [files, refreshFiles] = useGetCachedWorkspaceFiles();
   const deleteByWsPath = useDeleteFile();
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
@@ -32,6 +32,18 @@ export function FileBrowser() {
       value: { type: null },
     });
   };
+
+  const deleteFile = useCallback(
+    async (wsPath) => {
+      await deleteByWsPath(wsPath);
+      await refreshFiles();
+    },
+    [refreshFiles, deleteByWsPath],
+  );
+
+  useEffect(() => {
+    refreshFiles();
+  }, [wsName, refreshFiles]);
 
   const createNewFile = (path) => {
     newFileCommand({ initialQuery: path });
@@ -63,7 +75,7 @@ export function FileBrowser() {
       fileTree={fileTree}
       widescreen={widescreen}
       wsName={wsName}
-      deleteByWsPath={deleteByWsPath}
+      deleteFile={deleteFile}
       pushWsPath={pushWsPath}
       activeWSPath={activeWSPath}
       dispatch={dispatch}
@@ -85,7 +97,7 @@ function RenderTree(props) {
     closeSidebar,
     widescreen,
     activeWSPath,
-    deleteByWsPath,
+    deleteFile,
     depth,
     basePadding = 16,
     createNewFile,
@@ -138,7 +150,7 @@ function RenderTree(props) {
                 }"? `,
               )
             ) {
-              deleteByWsPath(wsPath);
+              deleteFile(wsPath);
             }
           }}
         >

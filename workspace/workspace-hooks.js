@@ -9,56 +9,43 @@ import {
   deleteWorkspace,
   listWorkspaces,
 } from './workspace-helpers';
-import {
-  createFile,
-  deleteFile,
-  listAllFiles,
-  renameFile,
-} from './file-helpers';
+import { cachedListAllFiles, createFile, deleteFile } from './file-helpers';
 import { checkWidescreen } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
-import { FILE_NOT_FOUND_ERROR } from 'baby-fs';
-
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 
-export function useGetWorkspaceFiles() {
-  const { wsName, wsPermissionState } = useWorkspacePath();
-
+export function useGetCachedWorkspaceFiles() {
+  const { wsName } = useWorkspacePath();
+  const location = useLocation();
   const [files, setFiles] = useState([]);
   const isDestroyed = useRef(false);
 
   const refreshFiles = useCallback(() => {
-    if (
-      wsName &&
-      (wsPermissionState.type === 'ready' ||
-        // TODO I am not happy with this error code check here
-        // I feel this part of code shouldnt know so much about error and codes
-        // Can we make the wsPermissionState accomodate the common 404 not found error.
-        // allow listing of files if the current file is not found
-        wsPermissionState.error?.code === FILE_NOT_FOUND_ERROR)
-    ) {
+    if (wsName) {
       // TODO this is called like a million times
       // we need to fix this to only update based on known things
       // like renaming of file, delete etc.
-      listAllFiles(wsName).then((items) => {
-        if (!isDestroyed.current) {
-          setFiles(items);
-        }
-      });
+      cachedListAllFiles(wsName)
+        .then((items) => {
+          if (!isDestroyed.current) {
+            setFiles(items);
+          }
+        })
+        .catch((error) => {
+          if (!isDestroyed.current) {
+            setFiles([]);
+          }
+          throw error;
+        });
     }
-    // TODO: look into this the one below is a quick fix as stale files are shown
-    // when you switch a workspace but waiting on the permission page.
-    if (wsName && wsPermissionState.type === 'permission') {
-      if (!isDestroyed.current) {
-        setFiles([]);
-      }
-    }
-  }, [wsName, wsPermissionState]);
+  }, [wsName]);
 
   useEffect(() => {
     refreshFiles();
-  }, [refreshFiles]);
+    // workspaceStatus is added here so that if permission
+    // changes the files can be updated
+  }, [refreshFiles, location.state?.workspaceStatus]);
 
   useEffect(() => {
     return () => {
@@ -111,25 +98,6 @@ export function useCreateMdFile() {
   return createNewMdFile;
 }
 
-export function useRenameActiveFile() {
-  const { wsName, wsPath, replaceWsPath } = useWorkspacePath();
-
-  const renameFileCb = useCallback(
-    async (newFilePath) => {
-      if (!newFilePath.endsWith('.md')) {
-        newFilePath += '.md';
-      }
-
-      const newWsPath = wsName + ':' + newFilePath;
-      await renameFile(wsPath, newWsPath);
-      replaceWsPath(newWsPath);
-    },
-    [wsName, wsPath, replaceWsPath],
-  );
-
-  return renameFileCb;
-}
-
 export function useDeleteFile() {
   const { wsName, wsPath } = useWorkspacePath();
   const history = useHistory();
@@ -177,7 +145,7 @@ export function useWorkspaces() {
   );
 
   const importWorkspaceFromGithubCb = useCallback(
-    // can pass alternat wsName in the options
+    // can pass alternate wsName in the options
     async (url, wsType, opts = {}) => {
       const wsName = await importGithubWorkspace(
         url,
@@ -259,7 +227,7 @@ export function useWorkspacePath() {
         // replace is intentional as native history pop
         // for some reason isnt remembering the state.
         history.replace(history.location.pathname, {
-          ...history.location.state,
+          ...history.location?.state,
           secondaryWsPath: wsPath,
         });
         return;
@@ -270,7 +238,7 @@ export function useWorkspacePath() {
       }
 
       history.push(newPath, {
-        ...history.location.state,
+        ...history.location?.state,
         secondaryWsPath: isWidescreen ? secondaryWsPath : null,
       });
     },
@@ -290,22 +258,6 @@ export function useWorkspacePath() {
     [history],
   );
 
-  const setWsPermissionState = useCallback(
-    (payload) => {
-      log(
-        'setWsPermissionState',
-        payload,
-        'existing state',
-        history.location.state,
-      );
-      history.replace({
-        ...history.location,
-        state: { ...history.location.state, wsPermissionState: payload },
-      });
-    },
-    [history],
-  );
-
   // removes the currently active wsPath
   const removeWsPath = useCallback(() => {
     if (!wsPath) {
@@ -318,19 +270,21 @@ export function useWorkspacePath() {
     if (secondaryWsPath) {
       const { wsName, filePath } = resolvePath(secondaryWsPath);
       newPath = `/ws/${wsName}/${filePath}`;
+    } else {
+      newPath = `/ws/${wsName}`;
     }
 
     history.push(newPath, {
-      ...history.location.state,
+      ...history.location?.state,
       secondaryWsPath: null,
     });
-  }, [history, wsPath, secondaryWsPath]);
+  }, [history, wsPath, wsName, secondaryWsPath]);
 
   // the editor on side
   const removeSecondaryWsPath = useCallback(() => {
     log('removeSecondaryWsPath');
     history.replace(history.location.pathname, {
-      ...history.location.state,
+      ...history.location?.state,
       secondaryWsPath: null,
     });
   }, [history]);
@@ -345,10 +299,8 @@ export function useWorkspacePath() {
       filePath: null,
       pushWsPath,
       replaceWsPath,
-      setWsPermissionState,
       removeSecondaryWsPath,
       removeWsPath,
-      wsPermissionState: {},
     };
   }
 
@@ -359,9 +311,7 @@ export function useWorkspacePath() {
     filePath,
     pushWsPath,
     replaceWsPath,
-    setWsPermissionState,
     removeWsPath,
     removeSecondaryWsPath,
-    wsPermissionState: location?.state?.wsPermissionState ?? {},
   };
 }

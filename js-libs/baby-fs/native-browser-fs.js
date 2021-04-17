@@ -172,6 +172,8 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   // recrusively list all files paths
   // example ['a/b/c.md', 'a/e.md']
   async opendirRecursive(dirPath) {
+    await verifyPermission(this._rootDirHandle);
+
     const data = await recurseDirHandle(this._rootDirHandle, {
       allowedFile: this._allowedFile,
       allowedDir: this._allowedDir,
@@ -331,7 +333,7 @@ async function asyncIteratorToArray(iter) {
 
 export async function pickADirectory(dirHandle) {
   if (dirHandle) {
-    let permission = await requestPermission(dirHandle);
+    let permission = await requestNativeBrowserFSPermission(dirHandle);
     if (!permission) {
       throw new NativeBrowserFileSystemError(
         'The permission to edit directory was denied',
@@ -341,7 +343,7 @@ export async function pickADirectory(dirHandle) {
   } else {
     try {
       dirHandle = await window.showDirectoryPicker();
-      let permission = await requestPermission(dirHandle);
+      let permission = await requestNativeBrowserFSPermission(dirHandle);
       if (!permission) {
         throw new NativeBrowserFileSystemError(
           'The permission to edit directory was denied',
@@ -357,7 +359,7 @@ export async function pickADirectory(dirHandle) {
   return dirHandle;
 }
 
-export async function requestPermission(dirHandle) {
+export async function requestNativeBrowserFSPermission(dirHandle) {
   const opts = {};
   opts.writable = true;
   // For Chrome 86 and later...

@@ -7,7 +7,7 @@ import {
 
 import React, { useCallback, useEffect } from 'react';
 import {
-  useGetWorkspaceFiles,
+  useGetCachedWorkspaceFiles,
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
@@ -30,7 +30,7 @@ export class FilePalette extends PaletteTypeBase {
   static description = 'Search for a file name';
   static PaletteIcon = FileDocumentIcon;
   static UIComponent = FilePaletteUIComponent;
-  static placeholder = 'Enter a workspace name';
+  static placeholder = 'Enter a file name';
   static keybinding = keybindings.toggleFilePalette.key;
 
   // match with any query
@@ -41,7 +41,7 @@ export class FilePalette extends PaletteTypeBase {
 
 function FilePaletteUIComponent({ paletteProps, query, dismissPalette }) {
   const { pushWsPath } = useWorkspacePath();
-  let [files, refreshFiles] = useGetWorkspaceFiles();
+  let [files, refreshFiles] = useGetCachedWorkspaceFiles();
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);

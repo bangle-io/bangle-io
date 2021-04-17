@@ -1,21 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`useWorkspacePath refreshes after workspace permissions are updated 1`] = `
-<div>
-  <div>
-    <span>
-      Encountered an Error
-    </span>
-    <br />
-    <span>
-      Error
-      : 
-      some magical error
-    </span>
-    <br />
-    <span>
-      Please try reloading the page or open a ticket if the issue persists
-    </span>
-  </div>
-</div>
+exports[`useWorkspacePath pushWsPath works 1`] = `
+Object {
+  "filePath": "",
+  "pushWsPath": [Function],
+  "removeSecondaryWsPath": [Function],
+  "removeWsPath": [Function],
+  "replaceWsPath": [Function],
+  "secondaryWsPath": undefined,
+  "wsName": "kujo",
+  "wsPath": undefined,
+}
+`;
+
+exports[`useWorkspacePath pushWsPath works 3`] = `
+Object {
+  "filePath": "two.md",
+  "pushWsPath": [Function],
+  "removeSecondaryWsPath": [Function],
+  "removeWsPath": [Function],
+  "replaceWsPath": [Function],
+  "secondaryWsPath": undefined,
+  "wsName": "kujo",
+  "wsPath": "kujo:two.md",
+}
 `;

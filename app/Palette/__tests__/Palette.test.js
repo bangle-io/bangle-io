@@ -4,7 +4,7 @@ import { render, act } from '@testing-library/react';
 import { UIManager, UIManagerContext } from 'ui-context/index';
 
 import {
-  useGetWorkspaceFiles,
+  useGetCachedWorkspaceFiles,
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
@@ -21,7 +21,7 @@ jest.mock('workspace/index', () => {
     ...actual,
     useWorkspacePath: jest.fn(),
     useWorkspaces: jest.fn(),
-    useGetWorkspaceFiles: jest.fn(),
+    useGetCachedWorkspaceFiles: jest.fn(),
     useCreateMdFile: jest.fn(),
     useRenameActiveFile: jest.fn(),
     useDeleteFile: jest.fn(),
@@ -29,7 +29,7 @@ jest.mock('workspace/index', () => {
 });
 
 beforeEach(async () => {
-  useGetWorkspaceFiles.mockImplementation(jest.fn(() => [[], jest.fn()]));
+  useGetCachedWorkspaceFiles.mockImplementation(jest.fn(() => [[], jest.fn()]));
   useWorkspaces.mockImplementation(jest.fn(() => ({ workspaces: [] })));
   useWorkspacePath.mockImplementation(jest.fn(() => ({})));
 
@@ -67,7 +67,7 @@ test('Empty on mount', async () => {
 test('Correctly switches to file type', async () => {
   let promise = Promise.resolve();
 
-  useGetWorkspaceFiles.mockImplementation(() => {
+  useGetCachedWorkspaceFiles.mockImplementation(() => {
     return [['my-ws:one.md'], jest.fn()];
   });
   act(() => {
@@ -120,7 +120,7 @@ test('Correctly filters commands', async () => {
 
   userEvent.type(input, 'toggle');
 
-  expect(input.getAttribute('placeholder')).toBe('Enter a workspace name');
+  expect(input.getAttribute('placeholder')).toBe('Enter a file name');
 
   expect(result.container.querySelectorAll('.side-bar-row'))
     .toMatchInlineSnapshot(`

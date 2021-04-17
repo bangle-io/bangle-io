@@ -9,7 +9,7 @@ export class InputPalette extends PaletteTypeBase {
   static description = 'Input';
   static PaletteIcon = NullIcon;
   static UIComponent = InputPaletteUIComponent;
-  static placeholder = 'Enter a workspace name';
+  static placeholder = '';
   static keybinding = null;
   // Donot parse any raw query
   static parseRawQuery(rawQuery) {
