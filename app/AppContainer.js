@@ -202,10 +202,7 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
 
   return (
     <EditorWrapperUI>
-      <div
-        className="flex flex-grow justify-center flex-col cursor-pointer"
-        onClick={() => requestFSPermission()}
-      >
+      <div className="flex flex-grow justify-center flex-col cursor-pointer">
         <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
           👩‍💻 Bangle.io needs your permission to read "{wsName}"
         </h3>
