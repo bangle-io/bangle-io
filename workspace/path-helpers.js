@@ -47,6 +47,7 @@ export function resolvePath(wsPath) {
     wsName,
     filePath,
     fileName: fileName,
+    locationPath: '/ws/' + wsName + '/' + filePath,
   };
 }
 
