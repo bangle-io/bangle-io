@@ -82,30 +82,11 @@ export function useWatchClickOutside(onClickOutside, onClickInside) {
 /**
  * Catches unhandled sync and async error
  */
-export function useCatchError(callback) {
+export function useCatchRejection(callback) {
   useEffect(() => {
-    const errorHandler = async (errorEvent) => {
-      let error = errorEvent.error;
-      if (errorEvent.promise) {
-        try {
-          await errorEvent.promise;
-        } catch (promiseError) {
-          error = promiseError;
-        }
-      }
-
-      if (!error) {
-        return;
-      }
-
-      callback(error);
-    };
-
-    window.addEventListener('error', errorHandler);
-    window.addEventListener('unhandledrejection', errorHandler);
+    window.addEventListener('unhandledrejection', callback);
     return () => {
-      window.removeEventListener('error', errorHandler);
-      window.removeEventListener('unhandledrejection', errorHandler);
+      window.removeEventListener('unhandledrejection', callback);
     };
   }, [callback]);
 }

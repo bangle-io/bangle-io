@@ -1,8 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { UIManagerContext } from 'ui-context/index';
 import { Workspace, useWorkspacePath } from 'workspace/index';
-import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
+import {
+  cx,
+  keybindingsHelper,
+  useKeybindings,
+  useWatchClickOutside,
+} from 'utils/index';
 import { COMMAND_PALETTE, Palette } from './Palette/index';
 import { ActivityBar } from './components/ActivityBar';
 import { FileBrowser } from './components/FileBrowser';
@@ -133,7 +138,19 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
   const secondaryGrabFocus = false;
 
   return (
-    <Workspace>
+    <Workspace
+      renderPermissionModal={({
+        permissionDenied,
+        requestFSPermission,
+        wsName,
+      }) => (
+        <PermissionModal
+          permissionDenied={permissionDenied}
+          requestFSPermission={requestFSPermission}
+          wsName={wsName}
+        />
+      )}
+    >
       <EditorArea
         className="primary-editor"
         editorId={0}
@@ -222,6 +239,37 @@ function LeftSidebarArea() {
       className={`fadeInAnimation left-sidebar-area smallscreen shadow-lg`}
     >
       <div className="overflow-y-auto">{component}</div>
+    </div>
+  );
+}
+
+function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
+  useEffect(() => {
+    let callback = keybindingsHelper({
+      Enter: () => {
+        requestFSPermission();
+        return true;
+      },
+    });
+    document.addEventListener('keydown', callback);
+    return () => {
+      document.removeEventListener('keydown', callback);
+    };
+  }, [requestFSPermission]);
+
+  return (
+    <div
+      className="flex justify-center flex-col h-full align-middle cursor-pointer"
+      onClick={() => requestFSPermission()}
+    >
+      <span className="flex-shrink text-lg sm:leading-10 font-semibold mb-10 sm:mb-1">
+        {permissionDenied &&
+          `You have denied bangle.io permission to access your workspace.`}
+      </span>
+      <span className="flex-shrink text-lg sm:leading-10 font-medium  mb-10 sm:mb-1">
+        Press Enter or click anywhere to grant permission and resume working on
+        "{wsName}"
+      </span>
     </div>
   );
 }
