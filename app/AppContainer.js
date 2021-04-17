@@ -57,24 +57,38 @@ function RootHomePage() {
           servers.
         </li>
         <li className="text-lg sm:text-2xl sm:leading-10 font-medium mb-10 sm:mb-1">
-          WYSIWG editor that edits markdown files saved in your hard drive*
+          WYSIWG editor that edits markdown files saved in your hard drive
         </li>
         <li className="text-lg sm:text-2xl sm:leading-10 font-medium mb-10 sm:mb-1">
           You own your data, nothing leaves your computer.
         </li>
       </ul>
 
-      <button
-        onClick={() => {
-          dispatch({
-            type: 'UI/CHANGE_PALETTE_TYPE',
-            value: { type: COMMAND_PALETTE, initialQuery: 'workspace ' },
-          });
-        }}
-        className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-pink-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
-      >
-        Open a local directory with markdown content^
-      </button>
+      {Boolean(window.showDirectoryPicker) ? (
+        <button
+          onClick={() => {
+            dispatch({
+              type: 'UI/CHANGE_PALETTE_TYPE',
+              value: { type: COMMAND_PALETTE, initialQuery: 'file system' },
+            });
+          }}
+          className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-pink-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
+        >
+          Open a local directory that has markdown content*
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            dispatch({
+              type: 'UI/CHANGE_PALETTE_TYPE',
+              value: { type: COMMAND_PALETTE, initialQuery: 'new workspace' },
+            });
+          }}
+          className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-pink-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
+        >
+          Create a workspace in your browser
+        </button>
+      )}
 
       <button
         onClick={() => {

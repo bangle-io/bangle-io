@@ -111,7 +111,7 @@ export function Palette() {
         ),
         paletteIcon: (
           <span className="pr-2 flex items-center">
-            <ActivePalette.PaletteIcon />
+            <ActivePalette.PaletteIcon className="h-5 w-5" />
           </span>
         ),
         value: (ActivePalette.identifierPrefix || '') + query,
