@@ -42,11 +42,12 @@ export class FilePalette extends PaletteTypeBase {
 
 function FilePaletteUIComponent({ paletteProps, query, dismissPalette }) {
   const { pushWsPath } = useWorkspacePath();
-  let [files, refreshFiles] = useGetCachedWorkspaceFiles();
+  let [files = [], refreshFiles] = useGetCachedWorkspaceFiles();
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
-  const recentFiles = useRecordRecentWsPaths(files);
+  const recentFiles = useRecordRecentWsPaths();
+
   files = dedupeArray([...recentFiles, ...files]);
 
   const onExecute = useCallback(

@@ -18,7 +18,7 @@ let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 export function useGetCachedWorkspaceFiles() {
   const { wsName } = useWorkspacePath();
   const location = useLocation();
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState(undefined);
   const isDestroyed = useRef(false);
 
   const refreshFiles = useCallback(() => {
@@ -34,7 +34,7 @@ export function useGetCachedWorkspaceFiles() {
         })
         .catch((error) => {
           if (!isDestroyed.current) {
-            setFiles([]);
+            setFiles(undefined);
           }
           throw error;
         });

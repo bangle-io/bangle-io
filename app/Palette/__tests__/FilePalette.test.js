@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useRecordRecentWsPaths } from 'app/hooks';
 import { useLocalStorage } from 'utils/index';
-
+import { useGetCachedWorkspaceFiles } from 'workspace/index';
 let mockWsName, mockWsPath;
 
 jest.mock('utils/index', () => {
@@ -30,6 +30,7 @@ describe('useRecordRecentWsPaths', () => {
   let store;
 
   beforeEach(() => {
+    useGetCachedWorkspaceFiles.mockImplementation(() => []);
     mockWsName = 'my-ws';
     mockWsPath = 'my-ws:something';
     store = {};
@@ -49,7 +50,7 @@ describe('useRecordRecentWsPaths', () => {
   });
 
   test('sets up', async () => {
-    const { result } = renderHook(() => useRecordRecentWsPaths([]));
+    const { result } = renderHook(() => useRecordRecentWsPaths());
     expect(result.current).toEqual([]);
     expect(useLocalStorage).toBeCalledWith(
       'useRecordRecentWsPaths2-XihLDmy-ws',
@@ -59,18 +60,17 @@ describe('useRecordRecentWsPaths', () => {
 
   test('saves files', async () => {
     mockWsPath = 'x';
-    let filePaths = ['a', 'b', 'c', 'x'];
+    let value = { filePaths: ['a', 'b', 'c', 'x'] };
+    useGetCachedWorkspaceFiles.mockImplementation(() => [value.filePaths]);
 
-    const { result, rerender } = renderHook(() =>
-      useRecordRecentWsPaths(filePaths),
-    );
+    const { result, rerender } = renderHook(() => useRecordRecentWsPaths());
 
     rerender();
 
     expect(result.current).toEqual(['x']);
 
     mockWsPath = 'y';
-    filePaths = [...filePaths, 'y'];
+    value.filePaths = [...value.filePaths, 'y'];
 
     rerender();
     // second rerender as state is update on seeing a new wsPAth
@@ -82,17 +82,18 @@ describe('useRecordRecentWsPaths', () => {
     // retrieve an existing state
     store.value = ['y', 'x'];
     mockWsPath = 'x';
-    let filePaths = ['a', 'b', 'c', 'y', 'x'];
+    let value = { filePaths: ['a', 'b', 'c', 'y', 'x'] };
+    useGetCachedWorkspaceFiles.mockImplementation(() => [value.filePaths]);
 
     const { result, rerender } = renderHook(() =>
-      useRecordRecentWsPaths(filePaths),
+      useRecordRecentWsPaths(value.filePaths),
     );
 
     rerender();
 
     expect(result.current).toEqual(['x', 'y']);
 
-    filePaths = ['a', 'b', 'c', 'x'];
+    value.filePaths = ['a', 'b', 'c', 'x'];
 
     rerender();
     rerender();

@@ -127,9 +127,7 @@ describe('useGetCachedWorkspaceFiles', () => {
       refreshFiles = _refreshFiles;
       return (
         <div data-testid="result">
-          {files.map((f) => (
-            <span key={f}>{f}</span>
-          ))}
+          {files && files.map((f) => <span key={f}>{f}</span>)}
         </div>
       );
     }
@@ -223,9 +221,7 @@ describe('useWorkspacePath', () => {
       workspacePathHookResult = useWorkspacePath();
       return (
         <div data-testid="result">
-          {files.map((f) => (
-            <span key={f}>{f}</span>
-          ))}
+          {files && files.map((f) => <span key={f}>{f}</span>)}
         </div>
       );
     }

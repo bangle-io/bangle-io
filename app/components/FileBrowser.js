@@ -21,7 +21,7 @@ import { useInputPaletteNewFileCommand } from 'app/Palette/Commands';
 FileBrowser.propTypes = {};
 
 export function FileBrowser() {
-  const [files, refreshFiles] = useGetCachedWorkspaceFiles();
+  let [files = [], refreshFiles] = useGetCachedWorkspaceFiles();
   const deleteByWsPath = useDeleteFile();
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();

@@ -29,7 +29,9 @@ jest.mock('workspace/index', () => {
 });
 
 beforeEach(async () => {
-  useGetCachedWorkspaceFiles.mockImplementation(jest.fn(() => [[], jest.fn()]));
+  useGetCachedWorkspaceFiles.mockImplementation(
+    jest.fn(() => [undefined, jest.fn()]),
+  );
   useWorkspaces.mockImplementation(jest.fn(() => ({ workspaces: [] })));
   useWorkspacePath.mockImplementation(jest.fn(() => ({})));
 

@@ -1,9 +1,10 @@
 import { FILE_PALETTE_MAX_RECENT_FILES } from 'config/index';
 import { dedupeArray, useLocalStorage, weakCache } from 'utils/index';
-import { useWorkspacePath } from 'workspace';
+import { useGetCachedWorkspaceFiles, useWorkspacePath } from 'workspace';
 import React, { useCallback, useEffect } from 'react';
 
-export function useRecordRecentWsPaths(files) {
+export function useRecordRecentWsPaths() {
+  let [files] = useGetCachedWorkspaceFiles();
   const { wsName, wsPath } = useWorkspacePath();
   let [recentWsPaths, updateRecentWsPaths] = useLocalStorage(
     'useRecordRecentWsPaths2-XihLD' + wsName,
@@ -19,10 +20,7 @@ export function useRecordRecentWsPaths(files) {
   }, [updateRecentWsPaths, wsPath]);
 
   useEffect(() => {
-    // TODO empty files can mean things havent loaded yet
-    //  but it can also mean the workspace has no file. So
-    // this will cause bugs.
-    if (files.length === 0) {
+    if (!files) {
       return;
     }
     // rectify if a file in recent no longer exists

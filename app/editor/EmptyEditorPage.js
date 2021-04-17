@@ -7,12 +7,11 @@ import { Link } from 'react-router-dom';
 
 export function EmptyEditorPage() {
   const { dispatch } = useContext(UIManagerContext);
-  let [files, refreshFiles] = useGetCachedWorkspaceFiles();
+  let [files = [], refreshFiles] = useGetCachedWorkspaceFiles();
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
-  const recentFiles = useRecordRecentWsPaths(files);
-  console.log(recentFiles);
+  const recentFiles = useRecordRecentWsPaths();
   return (
     <>
       <h3 className="text-xl sm:text-2xl lg:text-3xl leading-none">
