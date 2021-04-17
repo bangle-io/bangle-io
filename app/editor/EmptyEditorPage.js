@@ -20,7 +20,6 @@ export function EmptyEditorPage() {
       <ul className="list-inside list-disc my-2">
         {Array.from(new Set([...recentFiles, ...files.slice(0, 3)])).map(
           (r, i) => {
-            console.log(r, resolvePath(r));
             return (
               <li key={i}>
                 <Link

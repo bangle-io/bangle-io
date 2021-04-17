@@ -5727,7 +5727,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-libs/baby-fs/",
           "packageDependencies": [
             ["baby-fs", "workspace:js-libs/baby-fs"],
-            ["idb-keyval", "npm:5.0.4"]
+            ["idb-keyval", "npm:5.0.4"],
+            ["utils", "workspace:utils"]
           ],
           "linkType": "SOFT",
         }]

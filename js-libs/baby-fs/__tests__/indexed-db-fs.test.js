@@ -90,7 +90,7 @@ test('rename throws error if old file not found', async () => {
   await expect(
     fs.rename('/hola/hi', '/ebola/two'),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"FILE_NOT_FOUND_ERROR:File /hola/hi not found"`,
+    `"BABY_FS_FILE_NOT_FOUND_ERROR:File /hola/hi not found"`,
   );
 });
 
@@ -102,7 +102,7 @@ test('rename throws error if new file already exists', async () => {
   await expect(
     fs.rename('/hola/hi', '/ebola/two'),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"FILE_ALREADY_EXISTS_ERROR:File already exists"`,
+    `"BABY_FS_FILE_ALREADY_EXISTS_ERROR:File already exists"`,
   );
 });
 
