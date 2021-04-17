@@ -1,13 +1,16 @@
 let nodeEnv = undefined;
-
+let gitHash = undefined;
 // Done this way to allow for bundlers
 // to do a string replace.
 try {
   // eslint-disable-next-line no-process-env
   nodeEnv = process.env.NODE_ENV;
+  // eslint-disable-next-line no-process-env
+  gitHash = process.env.GIT_HASH;
 } catch (err) {}
 
 export const APP_ENV = nodeEnv;
+export const GIT_HASH = gitHash;
 
 export const config = {
   APP_ENV,

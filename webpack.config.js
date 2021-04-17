@@ -6,6 +6,10 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
+let commitHash = require('child_process')
+  .execSync('git rev-parse --short HEAD')
+  .toString();
+
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
   const mode = isProduction ? 'production' : 'development';
@@ -48,6 +52,7 @@ module.exports = (env, argv) => {
         'process.env.NODE_ENV': JSON.stringify(
           isProduction ? 'production' : 'development',
         ),
+        'process.env.GIT_HASH': JSON.stringify(commitHash),
       }),
       new CaseSensitivePathsPlugin(),
       new HtmlWebpackPlugin({

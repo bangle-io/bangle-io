@@ -120,7 +120,9 @@ test('Correctly filters commands', async () => {
 
   userEvent.type(input, 'toggle');
 
-  expect(input.getAttribute('placeholder')).toBe('Enter a file name');
+  expect(input.getAttribute('placeholder')).toBe(
+    "Enter a file name or type '?' to see other palettes.",
+  );
 
   expect(result.container.querySelectorAll('.side-bar-row'))
     .toMatchInlineSnapshot(`
