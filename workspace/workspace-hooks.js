@@ -209,7 +209,6 @@ export function useWorkspacePath() {
   const search = new URLSearchParams(location?.search);
   const secondaryWsPath = search.get('secondary') ?? undefined;
   let wsPath;
-
   const filePath = locationToFilePath(location);
   if (filePath) {
     wsPath = wsName + ':' + filePath;
@@ -235,31 +234,21 @@ export function useWorkspacePath() {
         } else {
           newSearch.delete('secondary');
         }
-        history.replace(
-          {
-            ...location,
-            search: newSearch.toString(),
-          },
-          {
-            ...history.location?.state,
-          },
-        );
+        history.replace({
+          ...location,
+          search: newSearch.toString(),
+        });
         return;
       }
 
       if (newPath === location.pathname && !secondary) {
         return;
       }
-      history.push(
-        {
-          ...location,
-          pathname: newPath,
-          search: newSearch.toString(),
-        },
-        {
-          ...history.location?.state,
-        },
-      );
+      history.push({
+        ...location,
+        pathname: newPath,
+        search: newSearch.toString(),
+      });
     },
     [history, location],
   );
@@ -306,21 +295,6 @@ export function useWorkspacePath() {
       search: newSearch.toString(),
     });
   }, [history, location]);
-
-  // TODO should I add more safeguard for
-  // workspacePerm.type == ready?
-  if (!wsName) {
-    return {
-      wsName,
-      wsPath: null,
-      secondaryWsPath: null,
-      filePath: null,
-      pushWsPath,
-      replaceWsPath,
-      removeSecondaryWsPath,
-      removeWsPath,
-    };
-  }
 
   return {
     wsName,
