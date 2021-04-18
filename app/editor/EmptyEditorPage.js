@@ -12,6 +12,7 @@ export function EmptyEditorPage() {
     refreshFiles();
   }, [refreshFiles]);
   const recentFiles = useRecordRecentWsPaths();
+
   return (
     <>
       <h3 className="text-xl sm:text-2xl lg:text-3xl leading-none">

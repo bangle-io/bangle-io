@@ -6,7 +6,12 @@ import {
   validateWsFilePath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
-import { IndexedDBFileSystem, NativeBrowserFileSystem } from 'baby-fs';
+import {
+  BaseFileSystemError,
+  FILE_NOT_FOUND_ERROR,
+  IndexedDBFileSystem,
+  NativeBrowserFileSystem,
+} from 'baby-fs';
 import { listFilesCache } from './native-browser-list-fs-cache';
 
 const toFSPath = (wsPath) => {
@@ -28,6 +33,25 @@ const getFS = (ws) => {
 
   throw new Error('Unknown workspace type ' + ws.type);
 };
+
+export async function checkFileExists(wsPath) {
+  const { wsName } = resolvePath(wsPath);
+  const workspaceInfo = await getWorkspaceInfo(wsName);
+
+  const path = toFSPath(wsPath);
+  try {
+    await getFS(workspaceInfo).stat(path);
+    return true;
+  } catch (error) {
+    if (
+      error instanceof BaseFileSystemError &&
+      error.code === FILE_NOT_FOUND_ERROR
+    ) {
+      return false;
+    }
+    throw error;
+  }
+}
 
 // TODO make this get file
 export async function getDoc(wsPath) {
