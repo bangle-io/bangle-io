@@ -43,11 +43,11 @@ export function Editor({ editorId, wsPath, grabFocus }) {
   );
 
   useEffect(() => {
-    log('mounting editor', wsPath);
+    log('mounting editor', editorId, wsPath);
     return () => {
-      log('unmounting editor', wsPath);
+      log('unmounting editor', editorId, wsPath);
     };
-  }, [wsPath]);
+  }, [wsPath, editorId]);
 
   useEffect(() => {
     requestAnimationFrame(() => {

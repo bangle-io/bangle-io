@@ -247,7 +247,6 @@ describe('useWorkspacePath', () => {
     expect(testLocation?.pathname).toBe('/ws/kujo/two.md');
     expect(testLocation?.state).toMatchInlineSnapshot(`
       Object {
-        "secondaryWsPath": undefined,
         "workspaceInfo": Object {
           "metadata": Object {},
           "name": "kujo",
@@ -268,7 +267,7 @@ describe('useWorkspacePath', () => {
     });
     expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
 
-    expect(workspacePathHookResult.secondaryWsPath).toBe(null);
+    expect(testLocation.search).toBe('');
 
     await act(async () => {
       await workspacePathHookResult.pushWsPath(
@@ -277,7 +276,13 @@ describe('useWorkspacePath', () => {
         true,
       );
     });
-    expect(workspacePathHookResult.secondaryWsPath).toBe('kujo:three.md');
+    expect(testLocation?.search).toBe('?secondary=kujo%3Athree.md');
+    expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
+
+    await act(async () => {
+      await workspacePathHookResult.removeSecondaryWsPath();
+    });
+    expect(testLocation?.search).toBe('');
     expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
   });
 });
