@@ -66,6 +66,7 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
     <Workspace
       renderPermission={({ permissionDenied, requestFSPermission, wsName }) => (
         <PermissionModal
+          isPaletteActive={Boolean(paletteType)}
           permissionDenied={permissionDenied}
           requestFSPermission={requestFSPermission}
           wsName={wsName}
@@ -186,10 +187,18 @@ function LeftSidebarArea() {
   );
 }
 
-function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
+function PermissionModal({
+  isPaletteActive,
+  permissionDenied,
+  requestFSPermission,
+  wsName,
+}) {
   useEffect(() => {
     let callback = keybindingsHelper({
       Enter: () => {
+        if (isPaletteActive) {
+          return false;
+        }
         requestFSPermission();
         return true;
       },
@@ -198,7 +207,7 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
     return () => {
       document.removeEventListener('keydown', callback);
     };
-  }, [requestFSPermission]);
+  }, [requestFSPermission, isPaletteActive]);
 
   return (
     <EditorWrapperUI>
