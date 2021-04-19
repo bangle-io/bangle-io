@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`create a new page saved in browser 2`] = `
+exports[`create a new page saved in browser 1`] = `
 "<h1>
   <span
     class=\\"deco-collapse-positioner ProseMirror-widget\\"

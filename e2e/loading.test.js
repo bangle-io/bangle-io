@@ -1,6 +1,7 @@
 const url = 'http://localhost:1234';
 const os = require('os');
 const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
+// const backSpaceKey = os.platform() === 'darwin' ? 'Backspace' : 'Delete';
 const { sleep, frmtHTML } = require('./helpers');
 jest.setTimeout(105 * 1000);
 
@@ -81,7 +82,7 @@ test('create a new page saved in browser', async () => {
   expect(await page.url()).toBe(
     url + '/ws/' + wsName + '/' + newFileName + '.md',
   );
-  await sleep();
+  await sleep(50);
   const editorHandle = await page.$('.bangle-editor');
   await clearEditor(editorHandle);
 
@@ -126,8 +127,9 @@ async function clickPaletteRow(id) {
 }
 
 async function clearEditor() {
+  await sleep(30);
   await page.keyboard.down(ctrlKey);
-  await page.keyboard.press('a', { delay: 5 });
+  await page.keyboard.press('a', { delay: 30 });
   await page.keyboard.up(ctrlKey);
-  await page.keyboard.press('Backspace', { delay: 5 });
+  await page.keyboard.press('Backspace', { delay: 30 });
 }
