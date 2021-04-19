@@ -89,15 +89,6 @@ test('create a new page saved in browser', async () => {
   await editorHandle.press('Enter');
   await editorHandle.type('[ ] list');
 
-  expect(await editorHandle.evaluate((node) => node.innerText))
-    .toMatchInlineSnapshot(`
-    "Wow
-
-    list
-
-
-    "
-  `);
   expect(
     await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML)),
   ).toMatchSnapshot();

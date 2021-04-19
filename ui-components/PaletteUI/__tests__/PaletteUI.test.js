@@ -67,7 +67,8 @@ describe('PaletteUI', () => {
               class="overflow-y-auto"
             >
               <div
-                class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
+                class="flex side-bar-row flex-row items-center cursor-pointer palette-row active hover-allowed"
+                data-id="item-one"
                 style="padding-left: 16px; padding-right: 16px;"
               >
                 <span
