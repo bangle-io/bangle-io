@@ -11,7 +11,8 @@
     "editor",
     "ui-context",
     "ui-components",
-    "js-libs/*"
+    "js-libs/*",
+    "e2e"
   ],
   "authors": [
     {
@@ -33,6 +34,8 @@
     "test": "yarn lint && yarn jest",
     "start": "yarn webpack serve --env development",
     "build": "NODE_ENV=production yarn webpack --env production",
+    "g:build-dev-serve": "NODE_ENV=development yarn webpack --env development && yarn run  http-server build -p 1234",
+    "g:build-prod-serve": "NODE_ENV=production yarn webpack --env production && yarn run http-server build -p 1234",
     "build-serve": "yarn build && yarn run serve build",
     "snapshot": "yarn build && yarn node ./_scripts/snapshot",
     "add-portals": "yarn link -A -r /Users/kushanjoshi/code/bangle/bangle-play",
@@ -76,8 +79,11 @@
     "file-loader": "^6.2.0",
     "git-revision-webpack-plugin": "^3.0.6",
     "html-webpack-plugin": "^5.3.1",
+    "http-server": "^0.12.3",
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
+    "jest-environment-puppeteer": "^5.0.1",
+    "jest-puppeteer": "^5.0.1",
     "mini-css-extract-plugin": "^1.4.1",
     "pnp-webpack-plugin": "^1.6.4",
     "postcss": "^8.2.9",
@@ -86,6 +92,7 @@
     "postcss-loader": "^5.2.0",
     "postcss-nested": "^5.0.5",
     "prettier": "^2.2.1",
+    "puppeteer": "^8.0.0",
     "serve": "^11.3.2",
     "style-loader": "^2.0.0",
     "surge": "^0.21.7",

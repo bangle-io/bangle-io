@@ -86,7 +86,8 @@ test('Correctly switches to file type', async () => {
     .toMatchInlineSnapshot(`
     Array [
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
+        class="flex side-bar-row flex-row items-center cursor-pointer palette-row active hover-allowed"
+        data-id="my-ws:one.md"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
@@ -130,7 +131,8 @@ test('Correctly filters commands', async () => {
     .toMatchInlineSnapshot(`
     NodeList [
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer active hover-allowed"
+        class="flex side-bar-row flex-row items-center cursor-pointer palette-row active hover-allowed"
+        data-id="TOGGLE_THEME_COMMAND"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
@@ -146,7 +148,8 @@ test('Correctly filters commands', async () => {
         />
       </div>,
       <div
-        class="flex side-bar-row flex-row items-center cursor-pointer hover-allowed"
+        class="flex side-bar-row flex-row items-center cursor-pointer palette-row hover-allowed"
+        data-id="TOGGLE_FILE_SIDEBAR_COMMAND"
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span

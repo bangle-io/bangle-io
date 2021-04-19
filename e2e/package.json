@@ -1,0 +1,37 @@
+{
+  "name": "e2e",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.js",
+  "module": "index.js",
+  "scripts": {
+    "g:e2e": "yarn jest"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "jest": "^26.6.3",
+    "jest-circus": "^26.6.3",
+    "jest-environment-puppeteer": "^5.0.1",
+    "jest-puppeteer": "^5.0.1",
+    "prettier": "^2.2.1",
+    "puppeteer": "^8.0.0"
+  },
+  "devDependencies": {
+    "http-server": "^0.12.3"
+  }
+}

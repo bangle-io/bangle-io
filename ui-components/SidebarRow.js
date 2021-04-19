@@ -6,6 +6,7 @@ const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;
 
 export function SidebarRow({
+  dataId,
   title,
   isActive,
   onClick,
@@ -49,6 +50,7 @@ export function SidebarRow({
   return (
     <>
       <div
+        data-id={dataId}
         onClick={onClick}
         onMouseEnter={mouseEnter}
         onMouseLeave={mouseLeave}

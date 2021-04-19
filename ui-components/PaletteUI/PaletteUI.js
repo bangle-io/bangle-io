@@ -66,6 +66,8 @@ export function PaletteUI({
         {items.map((item, i) => {
           return (
             <SidebarRow
+              dataId={item.uid}
+              className="palette-row"
               disabled={item.disabled}
               key={item.uid}
               title={item.title}
