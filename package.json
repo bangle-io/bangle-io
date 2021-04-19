@@ -34,6 +34,8 @@
     "test": "yarn lint && yarn jest",
     "start": "yarn webpack serve --env development",
     "build": "NODE_ENV=production yarn webpack --env production",
+    "g:build-dev-serve": "NODE_ENV=development yarn webpack --env development && yarn run serve build -l 1234",
+    "g:build-prod-serve": "NODE_ENV=production yarn webpack --env production && yarn run serve build -l 1234",
     "build-serve": "yarn build && yarn run serve build",
     "snapshot": "yarn build && yarn node ./_scripts/snapshot",
     "add-portals": "yarn link -A -r /Users/kushanjoshi/code/bangle/bangle-play",

@@ -17,7 +17,9 @@
   },
   "main": "index.js",
   "module": "index.js",
-  "scripts": {},
+  "scripts": {
+    "g:e2e": "yarn jest"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -27,5 +29,8 @@
     "jest-environment-puppeteer": "^5.0.1",
     "jest-puppeteer": "^5.0.1",
     "puppeteer": "^8.0.0"
+  },
+  "devDependencies": {
+    "http-server": "^0.12.3"
   }
 }
