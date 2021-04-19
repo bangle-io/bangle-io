@@ -10,10 +10,7 @@ export function validWsName(wsName) {
 }
 
 export function validatePath(wsPath) {
-  if (
-    !pathValidRegex.test(wsPath) ||
-    wsPath.split('/').some((r) => r.length === 0)
-  ) {
+  if (wsPath.split('/').some((r) => r.length === 0)) {
     throw new Error('Invalid path ' + wsPath);
   }
 
@@ -22,9 +19,11 @@ export function validatePath(wsPath) {
   }
 
   const [wsName, filePath] = wsPath.split(':');
+
   if (!wsName || !filePath) {
     throw new Error('Invalid wsPath ' + wsPath);
   }
+
   if (filePath.endsWith('/.md') || filePath === '.md') {
     throw new Error('Invalid wsPath ' + wsPath);
   }
