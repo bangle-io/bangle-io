@@ -19,7 +19,6 @@ export class BaseFileSystem {
   // Almost the same as fs.writeFile (i.e. it overwrites), except that if the parent directory does not exist, it's created
   async writeFile(filePath, data) {}
   async unlink(filePath) {}
-
   // Rename a file or directory
   async rename() {}
   // should return an async iterator of kids inside it

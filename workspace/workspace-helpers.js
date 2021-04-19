@@ -6,7 +6,7 @@ import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
 } from './errors';
 
-import { validatePath, validWsName } from './path-helpers';
+import { validWsName } from './path-helpers';
 
 /**
  * we need to cache the workspaces because
@@ -15,7 +15,6 @@ import { validatePath, validWsName } from './path-helpers';
  * and hence messing up with downstream weakcaches.
  */
 let cachedWorkspaces = undefined;
-
 export function resetCachedWorkspaces() {
   cachedWorkspaces = undefined;
 }

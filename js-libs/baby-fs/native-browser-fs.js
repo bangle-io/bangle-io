@@ -21,6 +21,9 @@ import {
 
 const dirToChildMap = new WeakMap();
 
+const isNotFoundDOMException = (error) =>
+  error.name === 'NotFoundError' && error instanceof DOMException;
+
 const DEFAULT_DIR_IGNORE_LIST = ['node_modules', '.git'];
 
 function catchUpstreamError(promise, errorMessage) {
@@ -28,6 +31,14 @@ function catchUpstreamError(promise, errorMessage) {
     if (error instanceof NativeBrowserFileSystemError) {
       throw error;
     } else {
+      if (isNotFoundDOMException(error)) {
+        throw new NativeBrowserFileSystemError(
+          `Not found`,
+          FILE_NOT_FOUND_ERROR,
+          `The requested resource was not found`,
+          error,
+        );
+      }
       return Promise.reject(
         new NativeBrowserFileSystemError(
           errorMessage,
@@ -186,7 +197,6 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     let files = data.map((r) => r.map((f) => f.name).join('/'));
 
     files = files.filter((k) => k.startsWith(dirPath));
-
     return files;
   }
 }
@@ -195,7 +205,6 @@ export class NativeBrowserFileSystemError extends BaseFileSystemError {}
 
 async function verifyPermission(rootDirHandle, filePath = '') {
   let permission = await hasPermission(rootDirHandle);
-
   if (!permission) {
     throw new NativeBrowserFileSystemError(
       `Permission rejected to read ${rootDirHandle.name}`,
@@ -311,7 +320,7 @@ function resolveFileHandle({
 
 function handleNotFoundDOMException(arrayFilePath) {
   return (error) => {
-    if (error.name === 'NotFoundError' && error instanceof DOMException) {
+    if (isNotFoundDOMException(error)) {
       throw new NativeBrowserFileSystemError(
         `Path "${arrayFilePath.join('/')}" not found`,
         FILE_NOT_FOUND_ERROR,

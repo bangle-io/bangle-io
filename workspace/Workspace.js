@@ -2,6 +2,7 @@ import {
   BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
   requestNativeBrowserFSPermission,
+  FILE_NOT_FOUND_ERROR,
 } from 'baby-fs';
 import React, { useEffect, useState } from 'react';
 import { useCatchRejection } from 'utils/index';
@@ -93,6 +94,20 @@ export function Workspace({ children, renderPermission, renderNotFound }) {
     if (
       reason instanceof WorkspaceError &&
       reason.code === WORKSPACE_NOT_FOUND_ERROR
+    ) {
+      if (workspaceStatus !== WORKSPACE_NOT_FOUND) {
+        updateWorkspaceStatus(WORKSPACE_NOT_FOUND);
+      }
+      e.preventDefault();
+    }
+
+    // TODO This one is tricky as our babyfs doesnt really
+    // support checking if a directory exists.
+    // So right now it is made to throw this error
+    // if there is a problem when rootDir goes missing.
+    if (
+      reason instanceof BaseFileSystemError &&
+      reason.code === FILE_NOT_FOUND_ERROR
     ) {
       if (workspaceStatus !== WORKSPACE_NOT_FOUND) {
         updateWorkspaceStatus(WORKSPACE_NOT_FOUND);

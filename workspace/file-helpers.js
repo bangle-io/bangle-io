@@ -6,33 +6,9 @@ import {
   validateWsFilePath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
-import {
-  BaseFileSystemError,
-  FILE_NOT_FOUND_ERROR,
-  IndexedDBFileSystem,
-  NativeBrowserFileSystem,
-} from 'baby-fs';
+import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs';
 import { listFilesCache } from './native-browser-list-fs-cache';
-
-const toFSPath = (wsPath) => {
-  const { wsName, filePath } = resolvePath(wsPath);
-  return [wsName, filePath].join('/');
-};
-
-const getFS = (ws) => {
-  if (ws.type === 'browser') {
-    return new IndexedDBFileSystem();
-  }
-
-  if (ws.type === 'nativefs') {
-    return new NativeBrowserFileSystem({
-      rootDirHandle: ws.metadata.rootDirHandle,
-      allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
-    });
-  }
-
-  throw new Error('Unknown workspace type ' + ws.type);
-};
+import { toFSPath, getFileSystemFromWsInfo } from './get-fs';
 
 export async function checkFileExists(wsPath) {
   const { wsName } = resolvePath(wsPath);
@@ -40,7 +16,7 @@ export async function checkFileExists(wsPath) {
 
   const path = toFSPath(wsPath);
   try {
-    await getFS(workspaceInfo).stat(path);
+    await getFileSystemFromWsInfo(workspaceInfo).stat(path);
     return true;
   } catch (error) {
     if (
@@ -61,7 +37,7 @@ export async function getDoc(wsPath) {
   let file;
 
   const path = toFSPath(wsPath);
-  let fileData = await getFS(workspaceInfo).readFile(path);
+  let fileData = await getFileSystemFromWsInfo(workspaceInfo).readFile(path);
 
   if (path.endsWith('.json')) {
     file = JSON.parse(fileData);
@@ -95,7 +71,7 @@ export async function saveDoc(wsPath, doc) {
   } else {
     throw new Error('Unknown file extension ' + filePath);
   }
-  await getFS(workspaceInfo).writeFile(path, data);
+  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, data);
 }
 
 /**
@@ -119,7 +95,7 @@ export async function createFile(wsPath, content, contentType = 'doc') {
     throw new Error('Unknown content type');
   }
 
-  await getFS(workspaceInfo).writeFile(path, markdown);
+  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, markdown);
   listFilesCache.deleteEntry(workspaceInfo);
 }
 
@@ -128,7 +104,7 @@ export async function deleteFile(wsPath) {
 
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
-  await getFS(workspaceInfo).unlink(toFSPath(wsPath));
+  await getFileSystemFromWsInfo(workspaceInfo).unlink(toFSPath(wsPath));
   listFilesCache.deleteEntry(workspaceInfo);
 }
 
@@ -159,7 +135,9 @@ export async function listAllFiles(wsName) {
 
   let files = [];
 
-  const rawPaths = await getFS(workspaceInfo).opendirRecursive(wsName);
+  const rawPaths = await getFileSystemFromWsInfo(
+    workspaceInfo,
+  ).opendirRecursive(wsName);
   files = rawPaths.map((r) => {
     const [_wsName, ...f] = r.split('/');
     validWsName(_wsName);
@@ -186,7 +164,10 @@ export async function renameFile(wsPath, newWsPath) {
 
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
-  await getFS(workspaceInfo).rename(toFSPath(wsPath), toFSPath(newWsPath));
+  await getFileSystemFromWsInfo(workspaceInfo).rename(
+    toFSPath(wsPath),
+    toFSPath(newWsPath),
+  );
 
   listFilesCache.deleteEntry(workspaceInfo);
 }
