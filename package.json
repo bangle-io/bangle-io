@@ -11,7 +11,8 @@
     "editor",
     "ui-context",
     "ui-components",
-    "js-libs/*"
+    "js-libs/*",
+    "e2e"
   ],
   "authors": [
     {
@@ -78,6 +79,8 @@
     "html-webpack-plugin": "^5.3.1",
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
+    "jest-environment-puppeteer": "^5.0.1",
+    "jest-puppeteer": "^5.0.1",
     "mini-css-extract-plugin": "^1.4.1",
     "pnp-webpack-plugin": "^1.6.4",
     "postcss": "^8.2.9",
@@ -86,6 +89,7 @@
     "postcss-loader": "^5.2.0",
     "postcss-nested": "^5.0.5",
     "prettier": "^2.2.1",
+    "puppeteer": "^8.0.0",
     "serve": "^11.3.2",
     "style-loader": "^2.0.0",
     "surge": "^0.21.7",
