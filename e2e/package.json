@@ -28,6 +28,7 @@
     "jest-circus": "^26.6.3",
     "jest-environment-puppeteer": "^5.0.1",
     "jest-puppeteer": "^5.0.1",
+    "prettier": "^2.2.1",
     "puppeteer": "^8.0.0"
   },
   "devDependencies": {
