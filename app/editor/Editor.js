@@ -34,13 +34,10 @@ let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 Editor.propTypes = {
   wsPath: PropTypes.string.isRequired,
   editorId: PropTypes.number.isRequired,
-  grabFocus: PropTypes.bool,
 };
 
-export function Editor({ editorId, wsPath, grabFocus }) {
-  const { sendRequest, setEditor, getEditor } = useContext(
-    EditorManagerContext,
-  );
+export function Editor({ editorId, wsPath }) {
+  const { sendRequest, setEditor } = useContext(EditorManagerContext);
 
   useEffect(() => {
     log('mounting editor', editorId, wsPath);
@@ -48,19 +45,6 @@ export function Editor({ editorId, wsPath, grabFocus }) {
       log('unmounting editor', editorId, wsPath);
     };
   }, [wsPath, editorId]);
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      if (!grabFocus) {
-        return;
-      }
-      const editor = getEditor(editorId);
-
-      if (editor && !editor.view.hasFocus()) {
-        editor.view.focus();
-      }
-    });
-  }, [getEditor, editorId, grabFocus]);
 
   const plugins = useCallback(() => {
     return getPlugins({ sendRequest, wsPath });
@@ -132,6 +116,7 @@ export function Editor({ editorId, wsPath, grabFocus }) {
       state={editorState}
       onReady={onEditorReady}
       renderNodeViews={renderNodeViews}
+      focusOnInit={false}
       className="bangle-editor-inner-container"
     >
       <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />

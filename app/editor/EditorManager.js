@@ -1,12 +1,18 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
 import { specRegistry } from 'editor/index';
 import { getDoc, saveDoc } from 'workspace/index';
 import { defaultContent } from './editor-default-content';
-import { sleep } from 'utils/index';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
+import { UIManagerContext } from 'ui-context/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -21,7 +27,8 @@ const MAX_EDITOR = maxEditors.length;
 export function EditorManager({ children }) {
   const { sendRequest } = useManager();
   const [editors, _setEditor] = useState(maxEditors);
-
+  const [primaryEditor, secondaryEditor] = editors;
+  const { paletteType } = useContext(UIManagerContext);
   const value = useMemo(() => {
     const setEditor = (editorId, editor) => {
       _setEditor((array) => {
@@ -34,13 +41,26 @@ export function EditorManager({ children }) {
       });
     };
 
-    const [primaryEditor, secondaryEditor] = editors;
+    const [primaryEditor] = editors;
     const getEditor = (editorId) => {
       return editors[editorId];
     };
 
     return { sendRequest, setEditor, primaryEditor, getEditor };
   }, [sendRequest, _setEditor, editors]);
+
+  useEffect(() => {
+    if (!paletteType) {
+      rafEditorFocus(primaryEditor);
+    }
+  }, [paletteType, primaryEditor]);
+
+  useEffect(() => {
+    if (!paletteType) {
+      rafEditorFocus(secondaryEditor);
+    }
+    return () => {};
+  }, [paletteType, secondaryEditor]);
 
   useEffect(() => {
     if (!config.isIntegration) {
@@ -121,4 +141,12 @@ function localDisk(defaultContent) {
       await saveDoc(wsPath, doc);
     },
   });
+}
+
+function rafEditorFocus(editor) {
+  if (editor && !editor.view.hasFocus()) {
+    requestAnimationFrame(() => {
+      editor.view.focus();
+    });
+  }
 }

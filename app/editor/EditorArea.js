@@ -44,7 +44,6 @@ export function EditorArea({
   editorId,
   showTabs,
   wsPath: incomingWsPath,
-  grabFocus,
   onClose,
 }) {
   const { fileExists, wsPath } = useHandleWsPath(incomingWsPath);
@@ -58,8 +57,6 @@ export function EditorArea({
             key={wsPath}
             editorId={editorId}
             wsPath={wsPath}
-            // whenever paletteType goes undefined focus back on editor
-            grabFocus={grabFocus}
           />
         )}
         {wsPath && fileExists === false && (

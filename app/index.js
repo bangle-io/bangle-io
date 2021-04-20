@@ -37,11 +37,11 @@ const root = document.getElementById('root');
 
 ReactDOM.render(
   <Router history={history}>
-    <EditorManager>
-      <UIManager>
+    <UIManager>
+      <EditorManager>
         <App />
-      </UIManager>
-    </EditorManager>
+      </EditorManager>
+    </UIManager>
   </Router>,
   root,
 );

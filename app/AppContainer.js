@@ -59,9 +59,6 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
   } = useWorkspacePath();
   const { paletteType, dispatch } = useContext(UIManagerContext);
 
-  const primaryGrabFocus = widescreen && paletteType == null;
-  const secondaryGrabFocus = false;
-
   return (
     <Workspace
       renderPermission={({ permissionDenied, requestFSPermission, wsName }) => (
@@ -101,7 +98,6 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
         showTabs={false}
         wsPath={wsPath}
         onClose={removeWsPath}
-        grabFocus={primaryGrabFocus}
       />
       {widescreen && <OptionsBar />}
       {widescreen && secondaryEditor && <div className="grid-gutter" />}
@@ -109,12 +105,9 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
         <EditorArea
           className="secondary-editor fadeInAnimation"
           editorId={1}
-          isFirst={false}
           showTabs={showTabs}
-          widescreen={widescreen}
           wsPath={secondaryWsPath}
           onClose={removeSecondaryWsPath}
-          grabFocus={secondaryGrabFocus}
         />
       )}
     </Workspace>
