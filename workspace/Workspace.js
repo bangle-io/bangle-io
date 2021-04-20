@@ -11,6 +11,7 @@ import { getWorkspaceInfo } from './workspace-helpers';
 import { useWorkspacePath } from './workspace-hooks';
 import { replaceHistoryState } from './history-utils';
 import { WorkspaceError, WORKSPACE_NOT_FOUND_ERROR } from './errors';
+import { resolvePath } from './path-helpers';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
@@ -27,7 +28,7 @@ export const WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND';
  *    this render prop will rendered instead of the children
  */
 export function Workspace({ children, renderPermission, renderNotFound }) {
-  const { wsName } = useWorkspacePath();
+  const { wsName, wsPath } = useWorkspacePath();
   const history = useHistory();
   const location = useLocation();
   const [workspaceStatus, updateWorkspaceStatus] = useState(READY);
@@ -57,6 +58,16 @@ export function Workspace({ children, renderPermission, renderNotFound }) {
       destroyed = true;
     };
   }, [wsName]);
+
+  useEffect(() => {
+    if (wsName) {
+      document.title = wsPath
+        ? `${resolvePath(wsPath).fileName} - bangle.io`
+        : `${wsName} - bangle.io`;
+    } else {
+      document.title = 'bangle.io';
+    }
+  }, [wsPath, wsName]);
 
   useEffect(() => {
     if (!workspaceInfo) {
