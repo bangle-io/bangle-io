@@ -10,10 +10,17 @@ import {
   listWorkspaces,
 } from './workspace-helpers';
 import { cachedListAllFiles, createFile, deleteFile } from './file-helpers';
-import { checkWidescreen } from 'utils/index';
+import { checkWidescreen, serialExecuteQueue } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
+
+// Refresh hooks get bombarded with many concurrent
+// requests and that defeats the point of caching
+// as everyone tries to get the results. So this exists
+// to help the first one do its thing, so that the others
+// in queue can get the cached result.
+const refreshFileQueue = serialExecuteQueue();
 
 export function useGetCachedWorkspaceFiles() {
   const { wsName } = useWorkspacePath();
@@ -23,13 +30,14 @@ export function useGetCachedWorkspaceFiles() {
 
   const refreshFiles = useCallback(() => {
     if (wsName) {
-      // TODO this is called like a million times
-      // we need to fix this to only update based on known things
-      // like renaming of file, delete etc.
-      cachedListAllFiles(wsName)
+      // const t = Math.random();
+      // console.time('refresh' + t);
+      refreshFileQueue
+        .add(() => cachedListAllFiles(wsName))
         .then((items) => {
           if (!isDestroyed.current) {
             setFiles(items);
+            // console.timeEnd('refresh' + t);
           }
         })
         .catch((error) => {
