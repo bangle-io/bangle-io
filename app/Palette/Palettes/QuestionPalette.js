@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
-import { NullIcon, PaletteUI } from 'ui-components';
+import {
+  NullIcon,
+  PaletteInput,
+  PaletteItemsContainer,
+  SidebarRow,
+  usePaletteProps,
+} from 'ui-components';
 import { PaletteTypeBase, QUESTION_PALETTE } from '../paletteTypes';
 import { FilePalette } from './FilePalette';
 import { CommandPalette } from './CommandPalette';
@@ -17,7 +23,15 @@ export class QuestionPalette extends PaletteTypeBase {
   static keybinding = null;
 }
 
-function QuestionPaletteUIComponent({ updatePalette, paletteProps }) {
+const ActivePalette = QuestionPalette;
+
+function QuestionPaletteUIComponent({
+  dismissPalette,
+  updateRawInputValue,
+  rawInputValue,
+
+  updatePalette,
+}) {
   const resolvedItems = [
     {
       uid: 'file-question-palette',
@@ -54,5 +68,43 @@ function QuestionPaletteUIComponent({ updatePalette, paletteProps }) {
     },
   ];
 
-  return <PaletteUI items={resolvedItems} {...paletteProps} />;
+  const { getItemProps, inputProps } = usePaletteProps({
+    onDismiss: dismissPalette,
+    resolvedItems,
+    value: rawInputValue,
+    updateValue: updateRawInputValue,
+  });
+
+  return (
+    <>
+      <PaletteInput
+        placeholder={ActivePalette.placeholder}
+        ref={useRef()}
+        paletteIcon={
+          <span className="pr-2 flex items-center">
+            <NullIcon className="h-5 w-5" />
+          </span>
+        }
+        {...inputProps}
+      />
+      <PaletteItemsContainer>
+        {resolvedItems.map((item, i) => {
+          return (
+            <SidebarRow
+              dataId={item.uid}
+              className="palette-row"
+              disabled={item.disabled}
+              key={item.uid}
+              title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+      </PaletteItemsContainer>
+    </>
+  );
 }

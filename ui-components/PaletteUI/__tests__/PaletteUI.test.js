@@ -50,7 +50,9 @@ describe('PaletteUI', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div>
-          <div>
+          <div
+            class="bangle-palette palette-container"
+          >
             <div
               class="palette-input-wrapper flex py-2 px-2 top-0"
             >

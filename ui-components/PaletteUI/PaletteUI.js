@@ -1,7 +1,7 @@
 import './Palette.css';
 import { keyName } from 'w3c-keyname';
 
-import React, { createRef, useCallback, useState, useEffect } from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { cx, useWatchClickOutside } from 'utils/index';
 import { SidebarRow } from '../SidebarRow';
@@ -39,7 +39,7 @@ export function PaletteUI({
     updateCounterRef,
   });
 
-  const inputRef = createRef();
+  const inputRef = useRef();
 
   return (
     <PaletteContainer
@@ -86,7 +86,11 @@ export function PaletteContainer({
   });
 
   return (
-    <div className={className} style={style} ref={containerRef}>
+    <div
+      className={cx('bangle-palette palette-container', className)}
+      style={style}
+      ref={containerRef}
+    >
       {children}
     </div>
   );
@@ -143,7 +147,9 @@ export function usePaletteProps({
       updateCounterRef.current = updateCounter;
     }
     return () => {
-      updateCounterRef.current = undefined;
+      if (updateCounterRef) {
+        updateCounterRef.current = undefined;
+      }
     };
   }, [updateCounterRef, updateCounter]);
 

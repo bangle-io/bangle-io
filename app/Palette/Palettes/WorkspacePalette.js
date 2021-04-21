@@ -1,9 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useWorkspaces } from 'workspace/index';
 import { PaletteTypeBase, WORKSPACE_PALETTE } from '../paletteTypes';
-import { AlbumIcon, CloseIcon, PaletteUI } from 'ui-components/index';
+import {
+  AlbumIcon,
+  CloseIcon,
+  PaletteInput,
+  PaletteItemsContainer,
+  SidebarRow,
+  usePaletteProps,
+} from 'ui-components/index';
 import { keybindings } from 'config/index';
 import { addBoldToTitle } from '../utils';
+import { useKeybindings } from 'utils/hooks';
 
 const LOG = false;
 
@@ -13,11 +21,9 @@ export class WorkspacePalette extends PaletteTypeBase {
   static type = WORKSPACE_PALETTE;
   static identifierPrefix = 'ws:';
   static description = 'Switch workspace';
-  static PaletteIcon = AlbumIcon;
   static UIComponent = WorkspacePaletteUIComponent;
   static placeholder = 'Enter a workspace name';
   static keybinding = keybindings.toggleWorkspacePalette.key;
-
   static parseRawQuery(rawQuery) {
     if (this.identifierPrefix && rawQuery.startsWith(this.identifierPrefix)) {
       return rawQuery.slice(3);
@@ -26,10 +32,18 @@ export class WorkspacePalette extends PaletteTypeBase {
   }
 }
 
-function WorkspacePaletteUIComponent({ dismissPalette, query, paletteProps }) {
+const ActivePalette = WorkspacePalette;
+
+function WorkspacePaletteUIComponent({
+  query,
+  dismissPalette,
+  updateRawInputValue,
+  rawInputValue,
+}) {
   const { workspaces, switchWorkspace, deleteWorkspace } = useWorkspaces();
-  const onExecute = useCallback(
-    ({ data }, itemIndex, event) => {
+
+  const resolvedItems = useMemo(() => {
+    const onExecute = ({ data }, itemIndex, event) => {
       if (event.metaKey) {
         switchWorkspace(data.workspace.name, true);
         dismissPalette();
@@ -37,11 +51,8 @@ function WorkspacePaletteUIComponent({ dismissPalette, query, paletteProps }) {
         switchWorkspace(data.workspace.name);
         dismissPalette();
       }
-    },
-    [switchWorkspace, dismissPalette],
-  );
+    };
 
-  const getResolvedItems = ({ query }) => {
     return workspaces
       .filter((ws) => {
         return strMatch(ws.name, query);
@@ -73,8 +84,57 @@ function WorkspacePaletteUIComponent({ dismissPalette, query, paletteProps }) {
           ),
         };
       });
-  };
-  return <PaletteUI items={getResolvedItems({ query })} {...paletteProps} />;
+  }, [query, dismissPalette, deleteWorkspace, switchWorkspace, workspaces]);
+
+  const updateCounterRef = useRef();
+  const { getItemProps, inputProps } = usePaletteProps({
+    onDismiss: dismissPalette,
+    resolvedItems,
+    value: rawInputValue,
+    updateValue: updateRawInputValue,
+    updateCounterRef,
+  });
+
+  useKeybindings(() => {
+    return {
+      [ActivePalette.keybinding]: () => {
+        updateCounterRef.current?.((counter) => counter + 1);
+      },
+    };
+  }, []);
+
+  return (
+    <>
+      <PaletteInput
+        placeholder={ActivePalette.placeholder}
+        ref={useRef()}
+        paletteIcon={
+          <span className="pr-2 flex items-center">
+            <AlbumIcon className="h-5 w-5" />
+          </span>
+        }
+        {...inputProps}
+      />
+      <PaletteItemsContainer>
+        {resolvedItems.map((item, i) => {
+          return (
+            <SidebarRow
+              dataId={item.uid}
+              className="palette-row"
+              disabled={item.disabled}
+              key={item.uid}
+              title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+      </PaletteItemsContainer>
+    </>
+  );
 }
 
 function strMatch(a, b) {

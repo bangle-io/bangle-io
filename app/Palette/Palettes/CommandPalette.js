@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useRef, useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import {
   toggleHeadingCollapse,
@@ -37,10 +37,18 @@ import {
   PaletteTypeBase,
 } from '../paletteTypes';
 import { keybindings, keyDisplayValue } from 'config/index';
-import { PaletteUI, TerminalIcon } from 'ui-components';
+import {
+  PaletteInput,
+  PaletteItemsContainer,
+  SidebarRow,
+  TerminalIcon,
+  usePaletteProps,
+} from 'ui-components';
 import { addBoldToTitle } from '../utils';
 import { pickADirectory } from 'baby-fs';
 import { WorkspaceError } from 'workspace/errors';
+import { cx } from 'utils/utility';
+import { useKeybindings } from 'utils/hooks';
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
@@ -51,19 +59,22 @@ export class CommandPalette extends PaletteTypeBase {
   static type = COMMAND_PALETTE;
   static identifierPrefix = '>';
   static description = 'Run a command';
-  static PaletteIcon = TerminalIcon;
   static UIComponent = CommandPaletteUIComponent;
   static keybinding = keybindings.toggleCommandPalette.key;
   static placeholder = 'Type a command name and press enter to run';
 }
 
+const ActivePalette = CommandPalette;
+
 function CommandPaletteUIComponent({
   dismissPalette,
   query,
   updatePalette,
-  paletteProps,
+  //
+  updateRawInputValue,
+  rawInputValue,
 }) {
-  const items = [
+  let items = [
     useToggleTheme({ dismissPalette }),
     useToggleSidebar({ dismissPalette }),
     useNewFile({ updatePalette, dismissPalette }),
@@ -77,16 +88,64 @@ function CommandPaletteUIComponent({
     usePrimaryEditorCommands({ dismissPalette }),
   ];
 
+  const resolvedItems = resolvePaletteItems(
+    items,
+    query,
+    ActivePalette.type,
+  ).map((item) => ({
+    ...item,
+    title: addBoldToTitle(item.title, query),
+  }));
+
+  const updateCounterRef = useRef();
+
+  const { getItemProps, inputProps } = usePaletteProps({
+    onDismiss: dismissPalette,
+    resolvedItems,
+    value: rawInputValue,
+    updateValue: updateRawInputValue,
+    updateCounterRef,
+  });
+
+  useKeybindings(() => {
+    return {
+      [ActivePalette.keybinding]: () => {
+        updateCounterRef.current?.((counter) => counter + 1);
+      },
+    };
+  }, []);
+
   return (
-    <PaletteUI
-      items={resolvePaletteItems(items, query, CommandPalette.type).map(
-        (item) => ({
-          ...item,
-          title: addBoldToTitle(item.title, query),
-        }),
-      )}
-      {...paletteProps}
-    />
+    <>
+      <PaletteInput
+        placeholder={ActivePalette.placeholder}
+        ref={useRef()}
+        paletteIcon={
+          <span className="pr-2 flex items-center">
+            <TerminalIcon className="h-5 w-5" />
+          </span>
+        }
+        {...inputProps}
+      />
+      <PaletteItemsContainer>
+        {resolvedItems.map((item, i) => {
+          return (
+            <SidebarRow
+              dataId={item.uid}
+              className="palette-row"
+              disabled={item.disabled}
+              key={item.uid}
+              title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+      </PaletteItemsContainer>
+    </>
   );
 }
 

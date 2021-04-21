@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
-import { NullIcon, PaletteUI } from 'ui-components';
+import {
+  NullIcon,
+  PaletteInput,
+  PaletteItemsContainer,
+  SidebarRow,
+  usePaletteProps,
+} from 'ui-components';
 import { INPUT_PALETTE, PaletteTypeBase } from '../paletteTypes';
 
 export class InputPalette extends PaletteTypeBase {
   static type = INPUT_PALETTE;
   static identifierPrefix = null;
   static description = 'Input';
-  static PaletteIcon = NullIcon;
   static UIComponent = InputPaletteUIComponent;
   static placeholder = '';
   static keybinding = null;
@@ -17,12 +22,14 @@ export class InputPalette extends PaletteTypeBase {
   }
 }
 
+const ActivePalette = InputPalette;
+
 function InputPaletteUIComponent({
-  paletteMetadata,
-  dismissPalette,
   query,
-  paletteProps,
+  dismissPalette,
   updateQuery,
+  rawInputValue,
+  paletteMetadata,
 }) {
   const resolvedItems = [
     {
@@ -57,13 +64,45 @@ function InputPaletteUIComponent({
     },
   ];
 
-  paletteProps = {
-    ...paletteProps,
-    value: query,
+  const { getItemProps, inputProps } = usePaletteProps({
+    onDismiss: dismissPalette,
+    resolvedItems,
+    value: rawInputValue,
     updateValue: (rawQuery) => {
       updateQuery(rawQuery);
     },
-  };
+  });
 
-  return <PaletteUI items={resolvedItems} {...paletteProps} />;
+  return (
+    <>
+      <PaletteInput
+        placeholder={paletteMetadata?.placeholder}
+        ref={useRef()}
+        paletteIcon={
+          <span className="pr-2 flex items-center">
+            <NullIcon className="h-5 w-5" />
+          </span>
+        }
+        {...inputProps}
+      />
+      <PaletteItemsContainer>
+        {resolvedItems.map((item, i) => {
+          return (
+            <SidebarRow
+              dataId={item.uid}
+              className="palette-row"
+              disabled={item.disabled}
+              key={item.uid}
+              title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+      </PaletteItemsContainer>
+    </>
+  );
 }
