@@ -1,4 +1,4 @@
-import React, { createRef, useState } from 'react';
+import React, { useRef, createRef, useState } from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PaletteUI } from '../PaletteUI';
@@ -27,7 +27,7 @@ describe('PaletteUI', () => {
 
     Comp = function Comp({ placeholder, items, initialValue = '' }) {
       const [value, updateValue] = useState(initialValue);
-
+      const updateCounterRef = useRef();
       return (
         <div>
           <PaletteUI
@@ -36,6 +36,7 @@ describe('PaletteUI', () => {
             value={value}
             updateValue={updateValue}
             items={items}
+            updateCounterRef={updateCounterRef}
           />
           <div data-testid="query-result">{value}</div>
         </div>

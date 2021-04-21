@@ -29,12 +29,14 @@ export function PaletteUI({
   updateValue,
   value,
   items,
+  updateCounterRef,
 }) {
   const { getItemProps, inputProps } = usePaletteProps({
     onDismiss: dismissPalette,
     resolvedItems: items,
     value,
     updateValue,
+    updateCounterRef,
   });
 
   const inputRef = createRef();
@@ -44,6 +46,7 @@ export function PaletteUI({
 
   useEffect(() => {
     inputRef.current?.focus();
+    window.z = inputRef;
   }, [inputRef]);
 
   return (
@@ -84,8 +87,25 @@ export function PaletteUI({
   );
 }
 
-function usePaletteProps({ onDismiss, resolvedItems, value, updateValue }) {
+export function usePaletteProps({
+  onDismiss,
+  resolvedItems,
+  value,
+  updateValue,
+  updateCounterRef,
+}) {
   const [counter, updateCounter] = useState(0);
+
+  // this is hacky but I couldnt think of
+  // a better way to update counter from outside
+  useEffect(() => {
+    if (updateCounterRef) {
+      updateCounterRef.current = updateCounter;
+    }
+    return () => {
+      updateCounterRef.current = undefined;
+    };
+  }, [updateCounterRef, updateCounter]);
 
   const resolvedItemsCount = resolvedItems.length;
 

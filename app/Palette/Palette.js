@@ -36,6 +36,8 @@ export function Palette() {
     widescreen,
   } = useContext(UIManagerContext);
 
+  const updateCounterRef = useRef();
+
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const updatePalette = useCallback(
     ({ type, initialQuery, metadata }) => {
@@ -52,7 +54,7 @@ export function Palette() {
     updateQuery(paletteInitialQuery || '');
   }, [paletteType, paletteInitialQuery]);
 
-  usePaletteKeybindings({ updatePalette });
+  usePaletteKeybindings({ updatePalette, paletteType, updateCounterRef });
 
   const ActivePalette = AllPalettes.find((P) => P.type === paletteType);
 
@@ -118,12 +120,17 @@ export function Palette() {
         updateValue: parseRawQuery,
         placeholder: paletteMetadata?.placeholder ?? ActivePalette.placeholder,
         dismissPalette: dismissPalette,
+        updateCounterRef,
       }}
     />
   );
 }
 
-function usePaletteKeybindings({ updatePalette }) {
+function usePaletteKeybindings({
+  updatePalette,
+  paletteType,
+  updateCounterRef,
+}) {
   useKeybindings(() => {
     return Object.fromEntries(
       Object.values(AllPalettes)
@@ -131,10 +138,15 @@ function usePaletteKeybindings({ updatePalette }) {
         .map((r) => [
           r.keybinding,
           () => {
-            updatePalette({ type: r.type });
+            if (paletteType !== r.type) {
+              updatePalette({ type: r.type });
+            } else {
+              // Increments the counter if the palette is already selected
+              updateCounterRef.current?.((counter) => counter + 1);
+            }
             return true;
           },
         ]),
     );
-  }, [updatePalette]);
+  }, [updatePalette, updateCounterRef, paletteType]);
 }
