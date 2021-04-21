@@ -58,14 +58,14 @@ describe('PaletteUI', () => {
                 aria-label="palette-input"
                 autocapitalize="off"
                 autocorrect="off"
-                class="flex-grow px-2"
+                class="palette-input flex-grow px-2"
                 spellcheck="false"
                 type="text"
                 value="hola"
               />
             </div>
             <div
-              class="overflow-y-auto"
+              class="overflow-y-auto palette-items-container"
             >
               <div
                 class="flex side-bar-row flex-row items-center cursor-pointer palette-row active hover-allowed"
@@ -110,7 +110,7 @@ describe('PaletteUI', () => {
         aria-label="palette-input"
         autocapitalize="off"
         autocorrect="off"
-        class="flex-grow px-2"
+        class="palette-input flex-grow px-2"
         spellcheck="false"
         type="text"
         value="Hello, World!"

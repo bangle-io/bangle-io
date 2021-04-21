@@ -3,7 +3,7 @@ import { keyName } from 'w3c-keyname';
 
 import React, { createRef, useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useWatchClickOutside } from 'utils/index';
+import { cx, useWatchClickOutside } from 'utils/index';
 import { SidebarRow } from '../SidebarRow';
 
 const ResolvePaletteItemShape = PropTypes.shape({
@@ -40,32 +40,20 @@ export function PaletteUI({
   });
 
   const inputRef = createRef();
-  const containerRef = useWatchClickOutside(dismissPalette, () => {
-    inputRef.current.focus();
-  });
-
-  useEffect(() => {
-    inputRef.current?.focus();
-    window.z = inputRef;
-  }, [inputRef]);
 
   return (
-    <div className={className} style={style} ref={containerRef}>
-      <div className="palette-input-wrapper flex py-2 px-2 top-0">
-        {paletteIcon}
-        <input
-          type="text"
-          autoCapitalize="off"
-          spellCheck="false"
-          autoCorrect="off"
-          aria-label="palette-input"
-          className="flex-grow px-2"
-          ref={inputRef}
-          placeholder={placeholder}
-          {...inputProps}
-        />
-      </div>
-      <div className="overflow-y-auto">
+    <PaletteContainer
+      className={className}
+      style={style}
+      dismissPalette={dismissPalette}
+    >
+      <PaletteInput
+        placeholder={placeholder}
+        ref={inputRef}
+        paletteIcon={paletteIcon}
+        {...inputProps}
+      />
+      <PaletteItemsContainer>
         {items.map((item, i) => {
           return (
             <SidebarRow
@@ -82,10 +70,62 @@ export function PaletteUI({
             />
           );
         })}
-      </div>
+      </PaletteItemsContainer>
+    </PaletteContainer>
+  );
+}
+
+export function PaletteContainer({
+  children,
+  className,
+  style,
+  dismissPalette,
+}) {
+  const containerRef = useWatchClickOutside(dismissPalette, () => {
+    document.querySelector('.palette-input')?.focus();
+  });
+
+  return (
+    <div className={className} style={style} ref={containerRef}>
+      {children}
     </div>
   );
 }
+
+export function PaletteItemsContainer({ className, children }) {
+  return (
+    <div className={cx('overflow-y-auto palette-items-container', className)}>
+      {children}
+    </div>
+  );
+}
+
+export const PaletteInput = React.forwardRef(function PaletteInput(
+  { paletteIcon, className, inputClassName, ...props },
+  ref,
+) {
+  useEffect(() => {
+    ref.current?.focus();
+  }, [ref]);
+
+  return (
+    <div
+      className={cx('palette-input-wrapper flex py-2 px-2 top-0', className)}
+    >
+      {paletteIcon}
+      <input
+        type="text"
+        ref={ref}
+        autoCapitalize="off"
+        spellCheck="false"
+        autoCorrect="off"
+        aria-label="palette-input"
+        className={cx('palette-input flex-grow px-2', inputClassName)}
+        {...props}
+      />
+    </div>
+  );
+});
 
 export function usePaletteProps({
   onDismiss,
