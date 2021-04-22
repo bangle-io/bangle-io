@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CloseIcon } from 'ui-components';
-import { cx } from 'utils/index';
+import { cx, useDestroyRef } from 'utils/index';
 import { checkFileExists, resolvePath } from 'workspace/index';
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';
@@ -17,11 +17,12 @@ function useHandleWsPath(incomingWsPath) {
   const [wsPath, updateWsPath] = useState(undefined);
   const [fileExists, updateFileExists] = useState(undefined);
 
+  const destroyedRef = useDestroyRef();
+
   useEffect(() => {
-    let destroyed = false;
     if (incomingWsPath) {
       checkFileExists(incomingWsPath).then((r) => {
-        if (!destroyed) {
+        if (!destroyedRef.current) {
           updateFileExists(r);
           updateWsPath(incomingWsPath);
         }
@@ -31,10 +32,7 @@ function useHandleWsPath(incomingWsPath) {
       updateFileExists(undefined);
       updateWsPath(undefined);
     }
-    return () => {
-      destroyed = true;
-    };
-  }, [incomingWsPath, wsPath]);
+  }, [incomingWsPath, wsPath, destroyedRef]);
 
   return { fileExists, wsPath };
 }

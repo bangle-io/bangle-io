@@ -155,3 +155,15 @@ function getItemFromLocalStorage(key, _defaultValue) {
     return defaultValue;
   }
 }
+
+export function useDestroyRef() {
+  const destroyed = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      destroyed.current = true;
+    };
+  }, []);
+
+  return destroyed;
+}

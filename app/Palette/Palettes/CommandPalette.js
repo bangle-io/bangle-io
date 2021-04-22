@@ -56,7 +56,7 @@ import { addBoldToTitle } from '../utils';
 import { pickADirectory } from 'baby-fs';
 import { WorkspaceError } from 'workspace/errors';
 import { cx } from 'utils/utility';
-import { useKeybindings } from 'utils/hooks';
+import { useDestroyRef, useKeybindings } from 'utils/hooks';
 import { BaseError } from 'utils/base-error';
 const LOG = false;
 
@@ -84,13 +84,7 @@ function CommandPaletteUIComponent({
 }) {
   const [error, updateError] = useState();
 
-  const destroyed = useRef(false);
-
-  useEffect(() => {
-    return () => {
-      destroyed.current = true;
-    };
-  }, [destroyed]);
+  const destroyed = useDestroyRef();
 
   useEffect(() => {
     updateError(undefined);
