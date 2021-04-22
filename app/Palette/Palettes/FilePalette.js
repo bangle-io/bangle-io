@@ -1,11 +1,11 @@
-import { dedupeArray, useLocalStorage, weakCache } from 'utils/index';
+import { dedupeArray, useKeybindings } from 'utils/index';
 import {
-  FILE_PALETTE_MAX_RECENT_FILES,
   FILE_PALETTE_MAX_FILES,
   keybindings,
+  keyDisplayValue,
 } from 'config/index';
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useRef, useMemo, useEffect } from 'react';
 import {
   useGetCachedWorkspaceFiles,
   useWorkspacePath,
@@ -15,8 +15,13 @@ import { FILE_PALETTE, PaletteTypeBase } from '../paletteTypes';
 import {
   ButtonIcon,
   FileDocumentIcon,
-  PaletteUI,
+  PaletteInfo,
+  PaletteInfoItem,
+  PaletteInput,
+  PaletteItemsContainer,
   SecondaryEditorIcon,
+  SidebarRow,
+  usePaletteProps,
 } from 'ui-components/index';
 import { addBoldToTitle } from '../utils';
 import { useRecordRecentWsPaths } from 'app/hooks';
@@ -29,7 +34,6 @@ export class FilePalette extends PaletteTypeBase {
   static type = FILE_PALETTE;
   static identifierPrefix = '';
   static description = 'Search for a file name';
-  static PaletteIcon = FileDocumentIcon;
   static UIComponent = FilePaletteUIComponent;
   static placeholder = "Enter a file name or type '?' to see other palettes.";
   static keybinding = keybindings.toggleFilePalette.key;
@@ -40,18 +44,24 @@ export class FilePalette extends PaletteTypeBase {
   }
 }
 
-function FilePaletteUIComponent({ paletteProps, query, dismissPalette }) {
+const ActivePalette = FilePalette;
+
+function FilePaletteUIComponent({
+  query,
+  dismissPalette,
+  updateRawInputValue,
+  rawInputValue,
+}) {
   const { pushWsPath } = useWorkspacePath();
-  let [files = [], refreshFiles] = useGetCachedWorkspaceFiles();
-  useEffect(() => {
-    refreshFiles();
-  }, [refreshFiles]);
+  const [currentFiles = [], refreshFiles] = useGetCachedWorkspaceFiles();
   const recentFiles = useRecordRecentWsPaths();
 
-  files = dedupeArray([...recentFiles, ...files]);
+  const resolvedItems = useMemo(() => {
+    const files = dedupeArray([...recentFiles, ...currentFiles]);
 
-  const onExecute = useCallback(
-    (item, itemIndex, event) => {
+    const wsPaths = getItems({ query, files });
+
+    const onExecute = (item, itemIndex, event) => {
       if (event.metaKey) {
         pushWsPath(item.data.wsPath, true);
       } else if (event.shiftKey) {
@@ -60,45 +70,105 @@ function FilePaletteUIComponent({ paletteProps, query, dismissPalette }) {
         pushWsPath(item.data.wsPath);
       }
       dismissPalette();
-    },
-    [pushWsPath, dismissPalette],
-  );
+    };
 
-  const getResolvedItems = useCallback(
-    ({ query }) => {
-      const wsPaths = getItems({ query, files });
-
-      return wsPaths.slice(0, FILE_PALETTE_MAX_FILES).map((wsPath) => {
-        return {
-          uid: wsPath,
-          title: addBoldToTitle(resolvePath(wsPath).filePath, query),
-          onExecute,
-          data: { wsPath },
-          rightHoverIcon: (
-            <ButtonIcon
-              hint={`Open in split screen`}
-              hintPos="left"
-              onClick={async (e) => {
-                e.stopPropagation();
-                pushWsPath(wsPath, false, true);
-                dismissPalette();
+    return wsPaths.slice(0, FILE_PALETTE_MAX_FILES).map((wsPath) => {
+      return {
+        uid: wsPath,
+        title: addBoldToTitle(resolvePath(wsPath).filePath, query),
+        onExecute,
+        data: { wsPath },
+        rightHoverIcon: (
+          <ButtonIcon
+            hint={`Open in split screen`}
+            hintPos="left"
+            onClick={async (e) => {
+              e.stopPropagation();
+              pushWsPath(wsPath, false, true);
+              dismissPalette();
+            }}
+          >
+            <SecondaryEditorIcon
+              style={{
+                height: 18,
+                width: 18,
               }}
-            >
-              <SecondaryEditorIcon
-                style={{
-                  height: 18,
-                  width: 18,
-                }}
-              />
-            </ButtonIcon>
-          ),
-        };
-      });
-    },
-    [onExecute, dismissPalette, pushWsPath, files],
-  );
+            />
+          </ButtonIcon>
+        ),
+      };
+    });
+  }, [pushWsPath, query, currentFiles, recentFiles, dismissPalette]);
 
-  return <PaletteUI items={getResolvedItems({ query })} {...paletteProps} />;
+  const updateCounterRef = useRef();
+  const { getItemProps, inputProps } = usePaletteProps({
+    onDismiss: dismissPalette,
+    resolvedItems,
+    value: rawInputValue,
+    updateValue: updateRawInputValue,
+    updateCounterRef,
+  });
+
+  useKeybindings(() => {
+    return {
+      [ActivePalette.keybinding]: () => {
+        updateCounterRef.current?.((counter) => counter + 1);
+      },
+    };
+  }, []);
+
+  useEffect(() => {
+    refreshFiles();
+  }, [refreshFiles]);
+
+  return (
+    <>
+      <PaletteInput
+        placeholder={ActivePalette.placeholder}
+        ref={useRef()}
+        paletteIcon={
+          <span className="pr-2 flex items-center">
+            <FileDocumentIcon className="h-5 w-5" />
+          </span>
+        }
+        {...inputProps}
+      />
+      <PaletteItemsContainer>
+        {resolvedItems.map((item, i) => {
+          return (
+            <SidebarRow
+              dataId={item.uid}
+              className="palette-row"
+              disabled={item.disabled}
+              key={item.uid}
+              title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+      </PaletteItemsContainer>
+      <PaletteInfo>
+        <PaletteInfoItem>use:</PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">↑↓</kbd> Navigate
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">Enter</kbd> Open
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">Shift-Enter</kbd> Open in side
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">{keyDisplayValue('Mod')}-Enter</kbd> Open
+          in new tab
+        </PaletteInfoItem>
+      </PaletteInfo>
+    </>
+  );
 }
 
 function getItems({ query, files }) {

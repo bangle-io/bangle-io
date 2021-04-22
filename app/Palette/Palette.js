@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from 'react';
 import { UIManagerContext } from 'ui-context/index';
-import { cx, useKeybindings } from 'utils/index';
+import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
 import { CommandPalette } from './Palettes/CommandPalette';
 import { InputPalette } from './Palettes/InputPalette';
 import { HeadingPalette } from './Palettes/HeadingPalette';
@@ -36,6 +36,8 @@ export function Palette() {
     widescreen,
   } = useContext(UIManagerContext);
 
+  const updateCounterRef = useRef();
+
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const updatePalette = useCallback(
     ({ type, initialQuery, metadata }) => {
@@ -52,7 +54,7 @@ export function Palette() {
     updateQuery(paletteInitialQuery || '');
   }, [paletteType, paletteInitialQuery]);
 
-  usePaletteKeybindings({ updatePalette });
+  usePaletteKeybindings({ updatePalette, paletteType, updateCounterRef });
 
   const ActivePalette = AllPalettes.find((P) => P.type === paletteType);
 
@@ -63,7 +65,7 @@ export function Palette() {
   // deriving the final input value helps us avoid keeping two states (paletteType, rawQuery) in sync.
   // with this there is always a a single state paletteType + query , where raw query is derived from it.
   // Note: that we are passing this callback to the children and they are free to override it.
-  const parseRawQuery = useCallback(
+  const updateRawInputValue = useCallback(
     (rawQuery) => {
       const match = AllPalettes.find((P) => P.parseRawQuery(rawQuery) != null);
       if (!match) {
@@ -91,39 +93,42 @@ export function Palette() {
     showAnimationRef.current = !Boolean(ActivePalette);
   }, [ActivePalette]);
 
+  const containerRef = useWatchClickOutside(dismissPalette, () => {
+    document.querySelector('.palette-input')?.focus();
+  });
+
   if (!ActivePalette) {
     return null;
   }
 
   return (
-    <ActivePalette.UIComponent
-      query={query}
-      updateQuery={updateQuery}
-      paletteMetadata={paletteMetadata}
-      updatePalette={updatePalette}
-      dismissPalette={dismissPalette}
-      AllPalettes={AllPalettes}
-      paletteProps={{
-        className: cx(
-          showAnimationRef.current && 'fadeInScaleAnimation',
-          'bangle-palette shadow-2xl',
-          widescreen && 'widescreen',
-        ),
-        paletteIcon: (
-          <span className="pr-2 flex items-center">
-            <ActivePalette.PaletteIcon className="h-5 w-5" />
-          </span>
-        ),
-        value: (ActivePalette.identifierPrefix || '') + query,
-        updateValue: parseRawQuery,
-        placeholder: paletteMetadata?.placeholder ?? ActivePalette.placeholder,
-        dismissPalette: dismissPalette,
-      }}
-    />
+    <div
+      className={cx(
+        'bangle-palette shadow-2xl',
+        widescreen && 'widescreen',
+        showAnimationRef.current && 'fadeInScaleAnimation',
+      )}
+      ref={containerRef}
+    >
+      <ActivePalette.UIComponent
+        query={query}
+        paletteInitialQuery={paletteInitialQuery}
+        updateQuery={updateQuery}
+        paletteMetadata={paletteMetadata}
+        updatePalette={updatePalette}
+        dismissPalette={dismissPalette}
+        rawInputValue={(ActivePalette.identifierPrefix || '') + query}
+        updateRawInputValue={updateRawInputValue}
+      />
+    </div>
   );
 }
 
-function usePaletteKeybindings({ updatePalette }) {
+function usePaletteKeybindings({
+  updatePalette,
+  paletteType,
+  updateCounterRef,
+}) {
   useKeybindings(() => {
     return Object.fromEntries(
       Object.values(AllPalettes)
@@ -131,10 +136,15 @@ function usePaletteKeybindings({ updatePalette }) {
         .map((r) => [
           r.keybinding,
           () => {
-            updatePalette({ type: r.type });
+            if (paletteType !== r.type) {
+              updatePalette({ type: r.type });
+            } else {
+              // Increments the counter if the palette is already selected
+              updateCounterRef.current?.((counter) => counter + 1);
+            }
             return true;
           },
         ]),
     );
-  }, [updatePalette]);
+  }, [updatePalette, updateCounterRef, paletteType]);
 }

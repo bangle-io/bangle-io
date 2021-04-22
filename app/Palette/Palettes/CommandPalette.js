@@ -1,4 +1,10 @@
-import React, { useCallback, useContext } from 'react';
+import React, {
+  useRef,
+  useCallback,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import {
   toggleHeadingCollapse,
@@ -37,10 +43,21 @@ import {
   PaletteTypeBase,
 } from '../paletteTypes';
 import { keybindings, keyDisplayValue } from 'config/index';
-import { PaletteUI, TerminalIcon } from 'ui-components';
+import {
+  PaletteInfo,
+  PaletteInfoItem,
+  PaletteInput,
+  PaletteItemsContainer,
+  SidebarRow,
+  TerminalIcon,
+  usePaletteProps,
+} from 'ui-components';
 import { addBoldToTitle } from '../utils';
 import { pickADirectory } from 'baby-fs';
 import { WorkspaceError } from 'workspace/errors';
+import { cx } from 'utils/utility';
+import { useDestroyRef, useKeybindings } from 'utils/hooks';
+import { BaseError } from 'utils/base-error';
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
@@ -51,19 +68,29 @@ export class CommandPalette extends PaletteTypeBase {
   static type = COMMAND_PALETTE;
   static identifierPrefix = '>';
   static description = 'Run a command';
-  static PaletteIcon = TerminalIcon;
   static UIComponent = CommandPaletteUIComponent;
   static keybinding = keybindings.toggleCommandPalette.key;
   static placeholder = 'Type a command name and press enter to run';
 }
 
+const ActivePalette = CommandPalette;
+
 function CommandPaletteUIComponent({
   dismissPalette,
   query,
   updatePalette,
-  paletteProps,
+  updateRawInputValue,
+  rawInputValue,
 }) {
-  const items = [
+  const [error, updateError] = useState();
+
+  const destroyedRef = useDestroyRef();
+
+  useEffect(() => {
+    updateError(undefined);
+  }, [query]);
+
+  let items = [
     useToggleTheme({ dismissPalette }),
     useToggleSidebar({ dismissPalette }),
     useNewFile({ updatePalette, dismissPalette }),
@@ -77,16 +104,104 @@ function CommandPaletteUIComponent({
     usePrimaryEditorCommands({ dismissPalette }),
   ];
 
+  const resolvedItems = resolvePaletteItems(
+    items,
+    query,
+    ActivePalette.type,
+  ).map((item) => ({
+    ...item,
+    title: addBoldToTitle(item.title, query),
+    onExecute: (...args) => {
+      return Promise.resolve(item.onExecute(...args))
+        .then((r) => {
+          if (!destroyedRef.current) {
+            updateError(undefined);
+          }
+          return r;
+        })
+        .catch((err) => {
+          if (!destroyedRef.current) {
+            updateError(err);
+          }
+          throw err;
+        });
+    },
+  }));
+
+  const updateCounterRef = useRef();
+
+  const { getItemProps, inputProps } = usePaletteProps({
+    onDismiss: dismissPalette,
+    resolvedItems,
+    value: rawInputValue,
+    updateValue: updateRawInputValue,
+    updateCounterRef,
+  });
+
+  useKeybindings(() => {
+    return {
+      [ActivePalette.keybinding]: () => {
+        updateError(undefined);
+        updateCounterRef.current?.((counter) => {
+          return counter + 1;
+        });
+      },
+    };
+  }, []);
+
   return (
-    <PaletteUI
-      items={resolvePaletteItems(items, query, CommandPalette.type).map(
-        (item) => ({
-          ...item,
-          title: addBoldToTitle(item.title, query),
-        }),
+    <>
+      <PaletteInput
+        placeholder={ActivePalette.placeholder}
+        ref={useRef()}
+        paletteIcon={
+          <span className="pr-2 flex items-center">
+            <TerminalIcon className="h-5 w-5" />
+          </span>
+        }
+        {...inputProps}
+      />
+      {error && (
+        <SidebarRow
+          style={{ backgroundColor: 'var(--error-bg-color)' }}
+          title={
+            <div className="flex flex-col">
+              <span>🤦‍♀️ there was en error</span>
+              <span className="ml-3 text-sm">
+                {error.displayMessage || error.message}
+              </span>
+            </div>
+          }
+        />
       )}
-      {...paletteProps}
-    />
+      <PaletteItemsContainer>
+        {resolvedItems.map((item, i) => {
+          return (
+            <SidebarRow
+              dataId={item.uid}
+              className="palette-row"
+              disabled={item.disabled}
+              key={item.uid}
+              title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+      </PaletteItemsContainer>
+      <PaletteInfo>
+        <PaletteInfoItem>use:</PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">↑↓</kbd> Navigate
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">Enter</kbd> Execute a command
+        </PaletteInfoItem>
+      </PaletteInfo>
+    </>
   );
 }
 
@@ -208,9 +323,18 @@ function useRenameActiveFile({ updatePalette }) {
         type: INPUT_PALETTE,
         initialQuery: filePath,
         metadata: {
+          paletteInfo: 'You are currently renaming a file',
           onInputConfirm: (query) => {
             if (query) {
               return renameFileCb(query);
+            } else {
+              return Promise.reject(
+                new BaseError(
+                  'Invalid input query',
+                  undefined,
+                  'Filename cannot be empty',
+                ),
+              );
             }
           },
         },
@@ -315,7 +439,13 @@ export function useRemoveActiveWorkspace({ dismissPalette }) {
 
   const onExecute = useCallback(
     async (item) => {
-      await deleteWorkspace(wsName);
+      if (
+        window.confirm(
+          `Are you sure you want to remove "${wsName}"? Removing a workspace does not delete any files inside it.`,
+        )
+      ) {
+        await deleteWorkspace(wsName);
+      }
       dismissPalette();
     },
     [deleteWorkspace, dismissPalette, wsName],

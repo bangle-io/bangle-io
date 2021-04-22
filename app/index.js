@@ -12,26 +12,27 @@ import { createBrowserHistory } from 'history';
 const history = createBrowserHistory();
 
 const routes = [{ path: '/ws/:wsName' }, { path: '/' }];
-
-Sentry.init({
-  environment: DEPLOY_ENV,
-  dsn:
-    'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',
-  integrations: [
-    new Integrations.BrowserTracing({
-      routingInstrumentation: Sentry.reactRouterV5Instrumentation(
-        history,
-        routes,
-        matchPath,
-      ),
-    }),
-  ],
-  release: RELEASE_ID,
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
-});
+if (DEPLOY_ENV !== 'local') {
+  Sentry.init({
+    environment: DEPLOY_ENV,
+    dsn:
+      'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',
+    integrations: [
+      new Integrations.BrowserTracing({
+        routingInstrumentation: Sentry.reactRouterV5Instrumentation(
+          history,
+          routes,
+          matchPath,
+        ),
+      }),
+    ],
+    release: RELEASE_ID,
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+  });
+}
 
 const root = document.getElementById('root');
 

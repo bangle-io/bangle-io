@@ -7,7 +7,9 @@ export class BaseError extends Error {
    * @param {*} srcError - if error encapsulates another error
    */
   constructor(message, code, displayMessage, srcError) {
-    message = code + ':' + message;
+    if (code != null) {
+      message = code + ':' + message;
+    }
     // 'Error' breaks prototype chain here
     super(message);
     // restore prototype chain

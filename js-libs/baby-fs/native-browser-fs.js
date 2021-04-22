@@ -285,6 +285,7 @@ function resolveFileHandle({
       throw new NativeBrowserFileSystemError(
         `Path "${absolutePath.join('/')}" not found`,
         FILE_NOT_FOUND_ERROR,
+        `File not found`,
       );
     }
 
@@ -324,7 +325,7 @@ function handleNotFoundDOMException(arrayFilePath) {
       throw new NativeBrowserFileSystemError(
         `Path "${arrayFilePath.join('/')}" not found`,
         FILE_NOT_FOUND_ERROR,
-        null,
+        'File not found',
         error,
       );
     }

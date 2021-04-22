@@ -8,5 +8,6 @@ coverage
 .vscode
 .yarnrc.yml
 jsconfig.json
+CHANGELOG.md
 
 build

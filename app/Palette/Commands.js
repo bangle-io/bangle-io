@@ -19,9 +19,10 @@ export function useInputPaletteNewFileCommand() {
         type: 'UI/CHANGE_PALETTE_TYPE',
         value: {
           type: INPUT_PALETTE,
-          placeholder: 'Enter your designed file name',
           initialQuery,
           metadata: {
+            paletteInfo: 'You are currently creating a new file',
+            placeholder: 'Type the name of the file to create',
             onInputConfirm: (query) => {
               let normalizedQuery = query;
               if (!normalizedQuery.endsWith('.md')) {

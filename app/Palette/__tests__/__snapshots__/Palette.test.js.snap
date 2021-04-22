@@ -295,7 +295,7 @@ exports[`Correctly switches to file type 2`] = `
 <div>
   <div>
     <div
-      class="fadeInScaleAnimation bangle-palette shadow-2xl"
+      class="bangle-palette shadow-2xl fadeInScaleAnimation"
     >
       <div
         class="palette-input-wrapper flex py-2 px-2 top-0"
@@ -332,7 +332,7 @@ exports[`Correctly switches to file type 2`] = `
           aria-label="palette-input"
           autocapitalize="off"
           autocorrect="off"
-          class="flex-grow px-2"
+          class="palette-input flex-grow px-2"
           placeholder="Enter a file name or type '?' to see other palettes."
           spellcheck="false"
           type="text"
@@ -340,7 +340,7 @@ exports[`Correctly switches to file type 2`] = `
         />
       </div>
       <div
-        class="overflow-y-auto"
+        class="overflow-y-auto palette-items-container"
       >
         <div
           class="flex side-bar-row flex-row items-center cursor-pointer palette-row active hover-allowed"
@@ -359,6 +359,56 @@ exports[`Correctly switches to file type 2`] = `
             class="whitespace-nowrap"
           />
         </div>
+      </div>
+      <div
+        class="flex flex-row justify-center my-1 space"
+      >
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          use:
+        </span>
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          <kbd
+            class="font-normal"
+          >
+            ↑↓
+          </kbd>
+           Navigate
+        </span>
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          <kbd
+            class="font-normal"
+          >
+            Enter
+          </kbd>
+           Open
+        </span>
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          <kbd
+            class="font-normal"
+          >
+            Shift-Enter
+          </kbd>
+           Open in side
+        </span>
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          <kbd
+            class="font-normal"
+          >
+            Ctrl
+            -Enter
+          </kbd>
+           Open in new tab
+        </span>
       </div>
     </div>
   </div>

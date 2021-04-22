@@ -1,4 +1,4 @@
-import React, { createRef, useState } from 'react';
+import React, { useRef, createRef, useState } from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PaletteUI } from '../PaletteUI';
@@ -27,7 +27,7 @@ describe('PaletteUI', () => {
 
     Comp = function Comp({ placeholder, items, initialValue = '' }) {
       const [value, updateValue] = useState(initialValue);
-
+      const updateCounterRef = useRef();
       return (
         <div>
           <PaletteUI
@@ -36,6 +36,7 @@ describe('PaletteUI', () => {
             value={value}
             updateValue={updateValue}
             items={items}
+            updateCounterRef={updateCounterRef}
           />
           <div data-testid="query-result">{value}</div>
         </div>
@@ -49,7 +50,9 @@ describe('PaletteUI', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div>
-          <div>
+          <div
+            class="bangle-palette palette-container"
+          >
             <div
               class="palette-input-wrapper flex py-2 px-2 top-0"
             >
@@ -57,14 +60,14 @@ describe('PaletteUI', () => {
                 aria-label="palette-input"
                 autocapitalize="off"
                 autocorrect="off"
-                class="flex-grow px-2"
+                class="palette-input flex-grow px-2"
                 spellcheck="false"
                 type="text"
                 value="hola"
               />
             </div>
             <div
-              class="overflow-y-auto"
+              class="overflow-y-auto palette-items-container"
             >
               <div
                 class="flex side-bar-row flex-row items-center cursor-pointer palette-row active hover-allowed"
@@ -109,7 +112,7 @@ describe('PaletteUI', () => {
         aria-label="palette-input"
         autocapitalize="off"
         autocorrect="off"
-        class="flex-grow px-2"
+        class="palette-input flex-grow px-2"
         spellcheck="false"
         type="text"
         value="Hello, World!"

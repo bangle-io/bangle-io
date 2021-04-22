@@ -1,9 +1,16 @@
 import { EditorManagerContext } from '../../editor/EditorManager';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
 import { HEADING_PALETTE, PaletteTypeBase } from '../paletteTypes';
 import { Selection } from '@bangle.dev/core/prosemirror/state';
-import { NullIcon, PaletteUI } from 'ui-components/index';
+import {
+  NullIcon,
+  PaletteInput,
+  PaletteItemsContainer,
+  SidebarRow,
+  usePaletteProps,
+} from 'ui-components/index';
 import { addBoldToTitle } from '../utils';
+import { useKeybindings } from 'utils/hooks';
 
 export class HeadingPalette extends PaletteTypeBase {
   static type = HEADING_PALETTE;
@@ -14,10 +21,17 @@ export class HeadingPalette extends PaletteTypeBase {
   static placeholder = 'Type a heading name';
 }
 
-function HeadingPaletteUIComponent({ query, paletteProps, dismissPalette }) {
+const ActivePalette = HeadingPalette;
+
+function HeadingPaletteUIComponent({
+  query,
+  dismissPalette,
+  updateRawInputValue,
+  rawInputValue,
+}) {
   const { primaryEditor } = useContext(EditorManagerContext);
 
-  const getResolvedItems = ({ query }) => {
+  const resolvedItems = useMemo(() => {
     if (!primaryEditor || primaryEditor.destroyed) {
       return [];
     }
@@ -59,9 +73,57 @@ function HeadingPaletteUIComponent({ query, paletteProps, dismissPalette }) {
           },
         };
       });
-  };
+  }, [query, dismissPalette, primaryEditor]);
 
-  return <PaletteUI items={getResolvedItems({ query })} {...paletteProps} />;
+  const updateCounterRef = useRef();
+  const { getItemProps, inputProps } = usePaletteProps({
+    onDismiss: dismissPalette,
+    resolvedItems,
+    value: rawInputValue,
+    updateValue: updateRawInputValue,
+    updateCounterRef,
+  });
+
+  useKeybindings(() => {
+    return {
+      [ActivePalette.keybinding]: () => {
+        updateCounterRef.current?.((counter) => counter + 1);
+      },
+    };
+  }, []);
+
+  return (
+    <>
+      <PaletteInput
+        placeholder={ActivePalette.placeholder}
+        ref={useRef()}
+        paletteIcon={
+          <span className="pr-2 flex items-center">
+            <NullIcon className="h-5 w-5" />
+          </span>
+        }
+        {...inputProps}
+      />
+      <PaletteItemsContainer>
+        {resolvedItems.map((item, i) => {
+          return (
+            <SidebarRow
+              dataId={item.uid}
+              className="palette-row"
+              disabled={item.disabled}
+              key={item.uid}
+              title={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+      </PaletteItemsContainer>
+    </>
+  );
 }
 
 function strMatch(a, b) {

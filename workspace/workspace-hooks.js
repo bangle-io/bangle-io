@@ -10,7 +10,11 @@ import {
   listWorkspaces,
 } from './workspace-helpers';
 import { cachedListAllFiles, createFile, deleteFile } from './file-helpers';
-import { checkWidescreen, serialExecuteQueue } from 'utils/index';
+import {
+  checkWidescreen,
+  serialExecuteQueue,
+  useDestroyRef,
+} from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
@@ -26,7 +30,8 @@ export function useGetCachedWorkspaceFiles() {
   const { wsName } = useWorkspacePath();
   const location = useLocation();
   const [files, setFiles] = useState(undefined);
-  const isDestroyed = useRef(false);
+
+  const destroyedRef = useDestroyRef();
 
   const refreshFiles = useCallback(() => {
     if (wsName) {
@@ -35,31 +40,25 @@ export function useGetCachedWorkspaceFiles() {
       refreshFileQueue
         .add(() => cachedListAllFiles(wsName))
         .then((items) => {
-          if (!isDestroyed.current) {
+          if (!destroyedRef.current) {
             setFiles(items);
             // console.timeEnd('refresh' + t);
           }
         })
         .catch((error) => {
-          if (!isDestroyed.current) {
+          if (!destroyedRef.current) {
             setFiles(undefined);
           }
           throw error;
         });
     }
-  }, [wsName]);
+  }, [wsName, destroyedRef]);
 
   useEffect(() => {
     refreshFiles();
     // workspaceStatus is added here so that if permission
     // changes the files can be updated
   }, [refreshFiles, location.state?.workspaceStatus]);
-
-  useEffect(() => {
-    return () => {
-      isDestroyed.current = true;
-    };
-  }, []);
 
   return [files, refreshFiles];
 }
@@ -127,22 +126,15 @@ export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState([]);
   const { wsName } = useWorkspacePath();
   const history = useHistory();
-  const isDestroyed = useRef(false);
+  const destroyedRef = useDestroyRef();
 
   const refreshWorkspaces = useCallback(() => {
     listWorkspaces().then((workspaces) => {
-      if (!isDestroyed.current) {
+      if (!destroyedRef.current) {
         updateWorkspaces(workspaces);
       }
     });
-  }, []);
-
-  useEffect(() => {
-    refreshWorkspaces();
-    return () => {
-      isDestroyed.current = true;
-    };
-  }, [refreshWorkspaces]);
+  }, [destroyedRef]);
 
   const createWorkspaceCb = useCallback(
     async (wsName, type, opts) => {
