@@ -190,15 +190,29 @@ function RenderTree(props) {
     >
       {collapsed
         ? null
-        : directChildren.map((child) => (
-            <RenderTree
-              {...props}
-              key={child.name}
-              fileTree={child}
-              depth={depth + 1}
-              basePadding={16}
-            />
-          ))}
+        : directChildren
+            .sort((a, b) => {
+              if (a.children && b.children) {
+                return a.name.localeCompare(b.name);
+              }
+              if (a.children) {
+                return -1;
+              }
+              if (b.children) {
+                return 1;
+              }
+
+              return a.name.localeCompare(b.name);
+            })
+            .map((child) => (
+              <RenderTree
+                {...props}
+                key={child.name}
+                fileTree={child}
+                depth={depth + 1}
+                basePadding={16}
+              />
+            ))}
     </SidebarRow>
   );
 }
