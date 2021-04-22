@@ -360,6 +360,56 @@ exports[`Correctly switches to file type 2`] = `
           />
         </div>
       </div>
+      <div
+        class="flex flex-row justify-center my-1 space"
+      >
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          use:
+        </span>
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          <kbd
+            class="font-normal"
+          >
+            ↑↓
+          </kbd>
+           Navigate
+        </span>
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          <kbd
+            class="font-normal"
+          >
+            Enter
+          </kbd>
+           Open
+        </span>
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          <kbd
+            class="font-normal"
+          >
+            Shift-Enter
+          </kbd>
+           Open in side
+        </span>
+        <span
+          class="text-xs mr-3 font-light"
+        >
+          <kbd
+            class="font-normal"
+          >
+            Ctrl
+            -Enter
+          </kbd>
+           Open in new tab
+        </span>
+      </div>
     </div>
   </div>
 </div>

@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 
 import {
   NullIcon,
+  PaletteInfo,
+  PaletteInfoItem,
   PaletteInput,
   PaletteItemsContainer,
   SidebarRow,
@@ -105,6 +107,16 @@ function QuestionPaletteUIComponent({
           );
         })}
       </PaletteItemsContainer>
+
+      <PaletteInfo>
+        <PaletteInfoItem>use:</PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">↑↓</kbd> Navigate
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">Enter</kbd> Switch palette type
+        </PaletteInfoItem>
+      </PaletteInfo>
     </>
   );
 }

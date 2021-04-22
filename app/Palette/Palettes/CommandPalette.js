@@ -1,4 +1,10 @@
-import React, { useRef, useCallback, useContext } from 'react';
+import React, {
+  useRef,
+  useCallback,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import {
   toggleHeadingCollapse,
@@ -38,6 +44,8 @@ import {
 } from '../paletteTypes';
 import { keybindings, keyDisplayValue } from 'config/index';
 import {
+  PaletteInfo,
+  PaletteInfoItem,
   PaletteInput,
   PaletteItemsContainer,
   SidebarRow,
@@ -49,6 +57,7 @@ import { pickADirectory } from 'baby-fs';
 import { WorkspaceError } from 'workspace/errors';
 import { cx } from 'utils/utility';
 import { useKeybindings } from 'utils/hooks';
+import { BaseError } from 'utils/base-error';
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
@@ -70,10 +79,23 @@ function CommandPaletteUIComponent({
   dismissPalette,
   query,
   updatePalette,
-  //
   updateRawInputValue,
   rawInputValue,
 }) {
+  const [error, updateError] = useState();
+
+  const destroyed = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      destroyed.current = true;
+    };
+  }, [destroyed]);
+
+  useEffect(() => {
+    updateError(undefined);
+  }, [query]);
+
   let items = [
     useToggleTheme({ dismissPalette }),
     useToggleSidebar({ dismissPalette }),
@@ -95,6 +117,21 @@ function CommandPaletteUIComponent({
   ).map((item) => ({
     ...item,
     title: addBoldToTitle(item.title, query),
+    onExecute: (...args) => {
+      return Promise.resolve(item.onExecute(...args))
+        .then((r) => {
+          if (!destroyed.current) {
+            updateError(undefined);
+          }
+          return r;
+        })
+        .catch((err) => {
+          if (!destroyed.current) {
+            updateError(err);
+          }
+          throw err;
+        });
+    },
   }));
 
   const updateCounterRef = useRef();
@@ -110,7 +147,10 @@ function CommandPaletteUIComponent({
   useKeybindings(() => {
     return {
       [ActivePalette.keybinding]: () => {
-        updateCounterRef.current?.((counter) => counter + 1);
+        updateError(undefined);
+        updateCounterRef.current?.((counter) => {
+          return counter + 1;
+        });
       },
     };
   }, []);
@@ -127,6 +167,19 @@ function CommandPaletteUIComponent({
         }
         {...inputProps}
       />
+      {error && (
+        <SidebarRow
+          style={{ backgroundColor: 'var(--error-bg-color)' }}
+          title={
+            <div className="flex flex-col">
+              <span>🤦‍♀️ there was en error</span>
+              <span className="ml-3 text-sm">
+                {error.displayMessage || error.message}
+              </span>
+            </div>
+          }
+        />
+      )}
       <PaletteItemsContainer>
         {resolvedItems.map((item, i) => {
           return (
@@ -145,6 +198,15 @@ function CommandPaletteUIComponent({
           );
         })}
       </PaletteItemsContainer>
+      <PaletteInfo>
+        <PaletteInfoItem>use:</PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">↑↓</kbd> Navigate
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">Enter</kbd> Execute a command
+        </PaletteInfoItem>
+      </PaletteInfo>
     </>
   );
 }
@@ -267,9 +329,18 @@ function useRenameActiveFile({ updatePalette }) {
         type: INPUT_PALETTE,
         initialQuery: filePath,
         metadata: {
+          paletteInfo: 'You are currently renaming a file',
           onInputConfirm: (query) => {
             if (query) {
               return renameFileCb(query);
+            } else {
+              return Promise.reject(
+                new BaseError(
+                  'Invalid input query',
+                  undefined,
+                  'Filename cannot be empty',
+                ),
+              );
             }
           },
         },
@@ -374,7 +445,13 @@ export function useRemoveActiveWorkspace({ dismissPalette }) {
 
   const onExecute = useCallback(
     async (item) => {
-      await deleteWorkspace(wsName);
+      if (
+        window.confirm(
+          `Are you sure you want to remove "${wsName}"? Removing a workspace does not delete any files inside it.`,
+        )
+      ) {
+        await deleteWorkspace(wsName);
+      }
       dismissPalette();
     },
     [deleteWorkspace, dismissPalette, wsName],

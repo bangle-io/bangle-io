@@ -1,13 +1,8 @@
+import { dedupeArray, useKeybindings } from 'utils/index';
 import {
-  dedupeArray,
-  useKeybindings,
-  useLocalStorage,
-  weakCache,
-} from 'utils/index';
-import {
-  FILE_PALETTE_MAX_RECENT_FILES,
   FILE_PALETTE_MAX_FILES,
   keybindings,
+  keyDisplayValue,
 } from 'config/index';
 
 import React, { useCallback, useRef, useMemo, useEffect } from 'react';
@@ -20,6 +15,8 @@ import { FILE_PALETTE, PaletteTypeBase } from '../paletteTypes';
 import {
   ButtonIcon,
   FileDocumentIcon,
+  PaletteInfo,
+  PaletteInfoItem,
   PaletteInput,
   PaletteItemsContainer,
   SecondaryEditorIcon,
@@ -154,6 +151,22 @@ function FilePaletteUIComponent({
           );
         })}
       </PaletteItemsContainer>
+      <PaletteInfo>
+        <PaletteInfoItem>use:</PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">↑↓</kbd> Navigate
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">Enter</kbd> Open
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">Shift-Enter</kbd> Open in side
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">{keyDisplayValue('Mod')}-Enter</kbd> Open
+          in new tab
+        </PaletteInfoItem>
+      </PaletteInfo>
     </>
   );
 }

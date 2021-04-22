@@ -58,7 +58,6 @@ export function ActivityBar() {
   // disable sticky when sidebar is showing
   const disableSticky = !widescreen && sidebar;
 
-  // console.log({ disableSticky });
   useEffect(() => {
     let callback;
     if (!disableSticky) {

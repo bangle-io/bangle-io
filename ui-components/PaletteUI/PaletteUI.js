@@ -25,6 +25,7 @@ export function PaletteUI({
   paletteIcon,
   style,
   className,
+  inputClassName,
   dismissPalette,
   updateValue,
   value,
@@ -40,7 +41,6 @@ export function PaletteUI({
   });
 
   const inputRef = useRef();
-
   return (
     <PaletteContainer
       className={className}
@@ -101,6 +101,19 @@ export function PaletteItemsContainer({ className, children }) {
     <div className={cx('overflow-y-auto palette-items-container', className)}>
       {children}
     </div>
+  );
+}
+export function PaletteInfo({ children, className }) {
+  return (
+    <div className={cx('flex flex-row justify-center my-1 space', className)}>
+      {children}
+    </div>
+  );
+}
+
+export function PaletteInfoItem({ children, className }) {
+  return (
+    <span className={cx('text-xs mr-3 font-light', className)}>{children}</span>
   );
 }
 

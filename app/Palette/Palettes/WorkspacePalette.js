@@ -4,12 +4,14 @@ import { PaletteTypeBase, WORKSPACE_PALETTE } from '../paletteTypes';
 import {
   AlbumIcon,
   CloseIcon,
+  PaletteInfo,
+  PaletteInfoItem,
   PaletteInput,
   PaletteItemsContainer,
   SidebarRow,
   usePaletteProps,
 } from 'ui-components/index';
-import { keybindings } from 'config/index';
+import { keybindings, keyDisplayValue } from 'config/index';
 import { addBoldToTitle } from '../utils';
 import { useKeybindings } from 'utils/hooks';
 
@@ -133,6 +135,19 @@ function WorkspacePaletteUIComponent({
           );
         })}
       </PaletteItemsContainer>
+      <PaletteInfo>
+        <PaletteInfoItem>use:</PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">↑↓</kbd> Navigate
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">Enter</kbd> Open a workspace
+        </PaletteInfoItem>
+        <PaletteInfoItem>
+          <kbd className="font-normal">{keyDisplayValue('Mod')}-Enter</kbd> Open
+          a in new tab
+        </PaletteInfoItem>
+      </PaletteInfo>
     </>
   );
 }

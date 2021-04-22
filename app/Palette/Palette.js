@@ -112,6 +112,7 @@ export function Palette() {
     >
       <ActivePalette.UIComponent
         query={query}
+        paletteInitialQuery={paletteInitialQuery}
         updateQuery={updateQuery}
         paletteMetadata={paletteMetadata}
         updatePalette={updatePalette}
