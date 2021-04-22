@@ -84,7 +84,7 @@ function CommandPaletteUIComponent({
 }) {
   const [error, updateError] = useState();
 
-  const destroyed = useDestroyRef();
+  const destroyedRef = useDestroyRef();
 
   useEffect(() => {
     updateError(undefined);
@@ -114,13 +114,13 @@ function CommandPaletteUIComponent({
     onExecute: (...args) => {
       return Promise.resolve(item.onExecute(...args))
         .then((r) => {
-          if (!destroyed.current) {
+          if (!destroyedRef.current) {
             updateError(undefined);
           }
           return r;
         })
         .catch((err) => {
-          if (!destroyed.current) {
+          if (!destroyedRef.current) {
             updateError(err);
           }
           throw err;
