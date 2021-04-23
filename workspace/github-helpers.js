@@ -1,6 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import { FILE_ALREADY_EXISTS_ERROR } from 'baby-fs';
-import { createFile, deleteFile } from './file-helpers';
+import { WorkspaceError, WORKSPACE_ALREADY_EXISTS_ERROR } from './errors';
+import { createFile, deleteFile } from './file-ops';
 import { createWorkspace, deleteWorkspace } from './workspace-helpers';
 
 export async function importGithubWorkspace(githubUrl, wsType, wsName, token) {
@@ -8,7 +9,20 @@ export async function importGithubWorkspace(githubUrl, wsType, wsName, token) {
 
   wsName = wsName || repo;
 
-  await createWorkspace(wsName, wsType);
+  try {
+    await createWorkspace(wsName, wsType);
+  } catch (error) {
+    if (
+      error instanceof WorkspaceError &&
+      error.code === WORKSPACE_ALREADY_EXISTS_ERROR
+    ) {
+      // TODO lets move to a separate sync github functionality
+      // ignore if ws already exists as we can use this opportunity
+      // to refresh the files
+    } else {
+      throw error;
+    }
+  }
   try {
     await Promise.all(
       files.map(async (f) => {

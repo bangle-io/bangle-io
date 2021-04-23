@@ -9,7 +9,7 @@ import {
   deleteWorkspace,
   listWorkspaces,
 } from './workspace-helpers';
-import { cachedListAllFiles, createFile, deleteFile } from './file-helpers';
+import { cachedListAllFiles, createFile, deleteFile } from './file-ops';
 import {
   checkWidescreen,
   serialExecuteQueue,
