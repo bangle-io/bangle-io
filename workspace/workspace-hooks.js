@@ -172,6 +172,10 @@ export function useWorkspaces() {
     [history, wsName, refreshWorkspaces],
   );
 
+  useEffect(() => {
+    refreshWorkspaces();
+  }, [refreshWorkspaces]);
+
   const switchWorkspaceCb = useCallback(
     async (wsName, newTab) => {
       const newPath = '/ws/' + wsName;

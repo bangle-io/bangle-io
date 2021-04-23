@@ -393,6 +393,54 @@ describe('useDeleteFile', () => {
 });
 
 describe('useWorkspaces', () => {
+  test('loads workspace on mount', async () => {
+    mockStore.clear();
+    let createWorkspace, testLocation;
+
+    idb.set('workspaces/2', [{ metadata: {}, name: 'kujo1', type: 'browser' }]);
+
+    function CompCreateWS() {
+      const { workspaces = [] } = useWorkspaces();
+      return <div data-testid="result">{workspaces.map((r) => r.name)}</div>;
+    }
+
+    let result;
+    act(() => {
+      result = render(
+        <Router initialEntries={['/ws']}>
+          <Switch>
+            <Route path="/ws">
+              <CompCreateWS />
+            </Route>
+            <Route exact path="/ws/:wsName">
+              <CompCreateWS />
+            </Route>
+          </Switch>
+          <Route
+            path="*"
+            render={({ history, location }) => {
+              testLocation = location;
+              return null;
+            }}
+          />
+        </Router>,
+      );
+    });
+
+    let promise = Promise.resolve();
+
+    await act(() => promise);
+    expect(result.container).toMatchInlineSnapshot(`
+      <div>
+        <div
+          data-testid="result"
+        >
+          kujo1
+        </div>
+      </div>
+    `);
+  });
+
   test('createWorkspace', async () => {
     mockStore.clear();
     let createWorkspace, testLocation;
