@@ -1,4 +1,3 @@
-import { Octokit } from '@octokit/rest';
 import { FILE_ALREADY_EXISTS_ERROR } from 'baby-fs';
 import { WorkspaceError, WORKSPACE_ALREADY_EXISTS_ERROR } from './errors';
 import { createFile, deleteFile } from './file-ops';
@@ -55,6 +54,11 @@ async function getGithubRepoContents(
 ) {
   let owner, repo;
 
+  const { Octokit } = await import(
+    /* webpackChunkName: "@octokit/rest" */
+    '@octokit/rest'
+  );
+  console.log(Octokit);
   const octokit = new Octokit({
     auth: token,
   });
