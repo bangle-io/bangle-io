@@ -12,6 +12,7 @@ const history = createBrowserHistory();
 window.Sentry.onLoad(function () {
   import(
     /* webpackChunkName: "@sentry/tracing" */
+    /* webpackPrefetch: true */
     '@sentry/tracing'
   ).then(({ Integrations }) => {
     window.Sentry.init({

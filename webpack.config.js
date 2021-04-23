@@ -41,8 +41,24 @@ module.exports = (env, argv) => {
         disableDotRule: true,
       },
     },
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/](prosemirror-[a-z]*|markdown-it|markdown-it-emoji|entities|linkify-it|react|react-dom|react-router|history|@popperjs)[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+          },
+          bangledev: {
+            test: /[\\/]node_modules[\\/](@bangle.dev)[\\/]/,
+            name: 'bangledev',
+            chunks: 'all',
+          },
+        },
+      },
+    },
     output: {
-      filename: 'main.[contenthash].js',
+      filename: '[name].[contenthash].js',
       chunkFilename: '[name].bundle.[contenthash].js',
       path: buildPath,
       publicPath: '/',
