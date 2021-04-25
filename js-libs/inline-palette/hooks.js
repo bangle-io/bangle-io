@@ -1,0 +1,91 @@
+import { useCallback, useEffect, useMemo } from 'react';
+import { removeSuggestMark } from '@bangle.dev/tooltip/suggest-tooltip';
+import { suggestTooltip } from '@bangle.dev/tooltip/index';
+import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
+import { getSuggestTooltipKey } from './inline-palette';
+
+/**
+ * Hook which takes a function to get the items to render.
+ * returns the properties needed to get on click and enter working
+ * on these items.
+ * @param {*} param0
+ * @returns
+ */
+export function useInlinePaletteItems({ inlinePaletteKey, getItems }) {
+  const { tooltipContentDOM, setExecuteItemCommand } = usePluginState(
+    inlinePaletteKey,
+  );
+  const suggestTooltipKey = getSuggestTooltipKey(inlinePaletteKey);
+  const view = useEditorViewContext();
+  const { triggerText: query, counter } = usePluginState(suggestTooltipKey);
+
+  const items = useMemo(() => {
+    return getItems(query, view);
+  }, [query, view, getItems]);
+
+  const dismissPalette = useCallback(() => {
+    return removeSuggestMark(inlinePaletteKey)(view.state, view.dispatch, view);
+  }, [view, inlinePaletteKey]);
+
+  const activeIndex = getActiveIndex(counter, items.length);
+
+  const executeHandler = useCallback(
+    (itemIndex) => {
+      const item = items[itemIndex];
+
+      if (!item) {
+        return removeSuggestMark(inlinePaletteKey);
+      }
+
+      return (state, dispatch, view) => {
+        return item.editorExecuteCommand({
+          item,
+          itemIndex,
+        })(state, dispatch, view);
+      };
+    },
+    [inlinePaletteKey, items],
+  );
+
+  useEffect(() => {
+    // Save the callback to get the active item so that the plugin
+    // can execute an enter on the active item
+    setExecuteItemCommand((state, dispatch, view) => {
+      return executeHandler(getActiveIndex(counter, items.length))(
+        state,
+        dispatch,
+        view,
+      );
+    });
+    return () => {
+      setExecuteItemCommand(undefined);
+    };
+  }, [setExecuteItemCommand, executeHandler, items, counter]);
+
+  const getItemProps = useCallback(
+    (item, index) => {
+      return {
+        isActive: activeIndex === index,
+        onClick: (e) => {
+          if (executeHandler(index)(view.state, view.dispatch, view)) {
+            e.preventDefault();
+          }
+        },
+      };
+    },
+    [activeIndex, executeHandler, view],
+  );
+
+  return {
+    tooltipContentDOM,
+    query,
+    getItemProps,
+    dismissPalette,
+    items,
+  };
+}
+
+function getActiveIndex(counter, size) {
+  const r = counter % size;
+  return r < 0 ? r + size : r;
+}

@@ -2,18 +2,8 @@ import './Palette.css';
 import { keyName } from 'w3c-keyname';
 
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { cx, useWatchClickOutside } from 'utils/index';
 import { SidebarRow } from '../SidebarRow';
-
-const ResolvePaletteItemShape = PropTypes.shape({
-  uid: PropTypes.string.isRequired,
-  title: PropTypes.oneOf([PropTypes.element, PropTypes.string]).isRequired,
-  onExecute: PropTypes.func.isRequired,
-  rightHoverIcon: PropTypes.element,
-  // to store any misc data
-  data: PropTypes.object,
-});
 
 /**
  * UI abstraction for building a palette with keyboard and click handlers.
@@ -143,6 +133,15 @@ export const PaletteInput = React.forwardRef(function PaletteInput(
     </div>
   );
 });
+
+// const ResolvePaletteItemShape = PropTypes.shape({
+//   uid: PropTypes.string.isRequired,
+//   title: PropTypes.oneOf([PropTypes.element, PropTypes.string]).isRequired,
+//   onExecute: PropTypes.func.isRequired,
+//   rightHoverIcon: PropTypes.element,
+//   // to store any misc data
+//   data: PropTypes.object,
+// });
 
 export function usePaletteProps({
   onDismiss,

@@ -11,8 +11,10 @@ import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { collapsibleHeadingDeco } from './collapsible-heading-deco';
 import { tablePlugins } from '@bangle.dev/table';
+import { inlinePalette } from 'inline-palette';
 export const menuKey = new PluginKey('menuKey');
 export const emojiSuggestKey = new PluginKey('emojiSuggestKey');
+export const inlinePaletteKey = new PluginKey('inlinePaletteKey');
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
@@ -106,6 +108,14 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
         // TODO the /4 value makes it a bit weird when moving a node up
         // or down.
         scrollMargin: parseInt(window.innerHeight / 4),
+      },
+    }),
+
+    inlinePalette.plugins({
+      key: inlinePaletteKey,
+      markName: 'inlinePalette',
+      tooltipRenderOpts: {
+        getScrollContainer,
       },
     }),
   ];

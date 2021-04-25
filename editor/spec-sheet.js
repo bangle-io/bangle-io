@@ -37,6 +37,7 @@ import {
   image,
 } from '@bangle.dev/core/components/components';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
+import { inlinePalette } from 'inline-palette';
 
 let headingSpec = heading.spec();
 
@@ -80,4 +81,5 @@ export const specRegistry = new SpecRegistry([
   timestamp.spec(),
   // sticker.spec(),
   markdownFrontMatter.spec(),
+  inlinePalette.spec({ markName: 'inlinePalette', trigger: '/' }),
 ]);

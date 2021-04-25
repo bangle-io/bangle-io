@@ -19,7 +19,6 @@ import {
   OrderedListButton,
   TodoListButton,
 } from '@bangle.dev/react-menu';
-import { config } from 'config/index';
 import {
   specRegistry,
   getPlugins,
@@ -27,7 +26,7 @@ import {
   emojiSuggestKey,
 } from 'editor/index';
 import { EditorManagerContext } from './EditorManager';
-
+import { InlineCommandPalette } from './InlineCommandPalette';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
@@ -121,6 +120,7 @@ export function Editor({ editorId, wsPath }) {
     >
       <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
+      <InlineCommandPalette />
     </BangleEditor>
   );
 }

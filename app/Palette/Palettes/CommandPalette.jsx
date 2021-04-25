@@ -625,6 +625,7 @@ function usePrimaryEditorCommands({ dismissPalette }) {
 
 function queryMatch(command) {
   return ({ query, paletteType }) => {
+    // TODO remove paletteType its redundant
     if (paletteType !== COMMAND_PALETTE) {
       return undefined;
     }

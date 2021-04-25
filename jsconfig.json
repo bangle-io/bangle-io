@@ -62,6 +62,12 @@
       ],
       "baby-fs/*": [
         "./js-libs/baby-fs/*"
+      ],
+      "inline-palette": [
+        "./js-libs/inline-palette/index.js"
+      ],
+      "inline-palette/*": [
+        "./js-libs/inline-palette/*"
       ]
     },
     "module": "esnext",
