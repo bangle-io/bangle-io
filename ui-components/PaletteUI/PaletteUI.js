@@ -176,10 +176,6 @@ export function usePaletteProps({
         return;
       }
 
-      if (item.disabled) {
-        return;
-      }
-
       item.onExecute(item, itemIndex, event);
     },
     [resolvedItems],
@@ -242,6 +238,7 @@ function useInputProps({
 
       if (key === 'Enter') {
         executeHandler(activeItemIndex, event);
+        event.preventDefault();
         return;
       }
 
