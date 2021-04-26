@@ -112,6 +112,9 @@ function CommandPaletteUIComponent({
     ...item,
     title: addBoldToTitle(item.title, query),
     onExecute: (...args) => {
+      if (item.disabled) {
+        return Promise.resolve();
+      }
       return Promise.resolve(item.onExecute(...args))
         .then((r) => {
           if (!destroyedRef.current) {

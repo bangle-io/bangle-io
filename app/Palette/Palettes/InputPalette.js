@@ -137,7 +137,6 @@ function InputPaletteUIComponent({
             <SidebarRow
               dataId={item.uid}
               className="palette-row"
-              disabled={item.disabled}
               key={item.uid}
               title={item.title}
               rightHoverIcon={item.rightHoverIcon}
