@@ -1,0 +1,40 @@
+{
+  "name": "inline-palette",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.js",
+  "module": "index.js",
+  "scripts": {},
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "peerDependencies": {
+    "@bangle.dev/core": "*",
+    "@bangle.dev/react": "*",
+    "@bangle.dev/tooltip": "*",
+    "react": "*",
+    "react-dom": "*",
+    "utils": "*"
+  },
+  "devDependencies": {
+    "@bangle.dev/core": "0.9.0",
+    "@bangle.dev/react": "0.9.0",
+    "@bangle.dev/tooltip": "0.9.0",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "utils": "workspace:*"
+  }
+}

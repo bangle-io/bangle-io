@@ -55,6 +55,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-libs/baby-fs"
       },
       {
+        "name": "inline-palette",
+        "reference": "workspace:js-libs/inline-palette"
+      },
+      {
         "name": "style",
         "reference": "workspace:style"
       },
@@ -87,6 +91,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["config", ["workspace:config"]],
       ["e2e", ["workspace:e2e"]],
       ["editor", ["workspace:editor"]],
+      ["inline-palette", ["virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#workspace:js-libs/inline-palette", "workspace:js-libs/inline-palette"]],
       ["style", ["workspace:style"]],
       ["ui-components", ["workspace:ui-components"]],
       ["ui-context", ["workspace:ui-context"]],
@@ -8245,6 +8250,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/tooltip", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.10.3"],
             ["@bangle.dev/trailing-node", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.10.3"],
             ["config", "workspace:config"],
+            ["inline-palette", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"],
             ["utils", "workspace:utils"]
@@ -10781,6 +10787,54 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ini", "npm:1.3.8"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["inline-palette", [
+        ["virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#workspace:js-libs/inline-palette", {
+          "packageLocation": "./.yarn/__virtual__/inline-palette-virtual-90848a316e/1/js-libs/inline-palette/",
+          "packageDependencies": [
+            ["inline-palette", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#workspace:js-libs/inline-palette"],
+            ["@bangle.dev/core", "npm:0.9.0"],
+            ["@bangle.dev/react", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.9.0"],
+            ["@bangle.dev/tooltip", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.9.0"],
+            ["@types/bangle.dev__core", null],
+            ["@types/bangle.dev__react", null],
+            ["@types/bangle.dev__tooltip", null],
+            ["@types/react", null],
+            ["@types/react-dom", null],
+            ["@types/utils", null],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"],
+            ["utils", "workspace:utils"]
+          ],
+          "packagePeers": [
+            "@bangle.dev/core",
+            "@bangle.dev/react",
+            "@bangle.dev/tooltip",
+            "@types/bangle.dev__core",
+            "@types/bangle.dev__react",
+            "@types/bangle.dev__tooltip",
+            "@types/react-dom",
+            "@types/react",
+            "@types/utils",
+            "react-dom",
+            "react",
+            "utils"
+          ],
+          "linkType": "SOFT",
+        }],
+        ["workspace:js-libs/inline-palette", {
+          "packageLocation": "./js-libs/inline-palette/",
+          "packageDependencies": [
+            ["inline-palette", "workspace:js-libs/inline-palette"],
+            ["@bangle.dev/core", "npm:0.9.0"],
+            ["@bangle.dev/react", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.9.0"],
+            ["@bangle.dev/tooltip", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.9.0"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"],
+            ["utils", "workspace:utils"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["inquirer", [

@@ -5878,6 +5878,7 @@ __metadata:
     "@bangle.dev/tooltip": 0.10.3
     "@bangle.dev/trailing-node": 0.10.3
     config: "workspace:*"
+    inline-palette: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
     utils: "workspace:*"
@@ -8078,6 +8079,26 @@ fsevents@~2.3.1:
   checksum: dfd98b0ca3a4fc1e323e38a6c8eb8936e31a97a918d3b377649ea15bdb15d481207a0dda1021efbd86b464cae29a0d33c1d7dcaf6c5672bee17fa849bc50a1b3
   languageName: node
   linkType: hard
+
+"inline-palette@workspace:*, inline-palette@workspace:js-libs/inline-palette":
+  version: 0.0.0-use.local
+  resolution: "inline-palette@workspace:js-libs/inline-palette"
+  dependencies:
+    "@bangle.dev/core": 0.9.0
+    "@bangle.dev/react": 0.9.0
+    "@bangle.dev/tooltip": 0.9.0
+    react: 16.14.0
+    react-dom: 16.14.0
+    utils: "workspace:*"
+  peerDependencies:
+    "@bangle.dev/core": "*"
+    "@bangle.dev/react": "*"
+    "@bangle.dev/tooltip": "*"
+    react: "*"
+    react-dom: "*"
+    utils: "*"
+  languageName: unknown
+  linkType: soft
 
 "inquirer@npm:^6.2.2":
   version: 6.5.2
