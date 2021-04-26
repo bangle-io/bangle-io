@@ -22,6 +22,6 @@
     "access": "public"
   },
   "dependencies": {
-    "tailwindcss": "^2.1.1"
+    "tailwindcss": "^2.1.2"
   }
 }

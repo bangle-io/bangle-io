@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.1"
+    "@testing-library/user-event": "^13.1.5"
   },
   "publishConfig": {
     "access": "public"

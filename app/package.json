@@ -30,9 +30,9 @@
     "@bangle.dev/react-stopwatch": "0.9.0",
     "@bangle.dev/table": "0.9.0",
     "@bangle.dev/tooltip": "0.9.0",
-    "@popperjs/core": "^2.5.4",
-    "@sentry/react": "^6.2.5",
-    "@sentry/tracing": "^6.2.5",
+    "@popperjs/core": "^2.9.2",
+    "@sentry/react": "^6.3.1",
+    "@sentry/tracing": "^6.3.1",
     "baby-fs": "workspace:*",
     "config": "workspace:*",
     "editor": "workspace:*",
@@ -41,7 +41,7 @@
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "react-popper": "^2.2.4",
+    "react-popper": "^2.2.5",
     "react-router-dom": "^5.2.0",
     "style": "workspace:*",
     "ui-components": "workspace:*",
@@ -51,11 +51,11 @@
     "workspace": "workspace:*"
   },
   "devDependencies": {
-    "@testing-library/dom": "^7.30.3",
-    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/dom": "^7.30.4",
+    "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
-    "@testing-library/react-hooks": "^5.1.1",
-    "@testing-library/user-event": "^13.1.1",
+    "@testing-library/react-hooks": "^5.1.2",
+    "@testing-library/user-event": "^13.1.5",
     "react-test-renderer": "^17.0.2"
   }
 }
