@@ -5,11 +5,11 @@ import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import { getSuggestTooltipKey } from './inline-palette';
 
 export function useInlinePaletteQuery(inlinePaletteKey) {
-  const { triggerText: query } = usePluginState(
+  const { triggerText: query, counter } = usePluginState(
     getSuggestTooltipKey(inlinePaletteKey),
     true,
   );
-  return query;
+  return { query, counter };
 }
 /**
  * Hook which takes a function to get the items to render.
@@ -18,15 +18,12 @@ export function useInlinePaletteQuery(inlinePaletteKey) {
  * @param {*} param0
  * @returns
  */
-export function useInlinePaletteItems(inlinePaletteKey, items) {
+export function useInlinePaletteItems(inlinePaletteKey, items, counter) {
   const { tooltipContentDOM, setExecuteItemCommand } = usePluginState(
     inlinePaletteKey,
   );
   const view = useEditorViewContext();
-  const { counter } = usePluginState(
-    getSuggestTooltipKey(inlinePaletteKey),
-    true,
-  );
+
   const dismissPalette = useCallback(() => {
     return removeSuggestMark(inlinePaletteKey)(view.state, view.dispatch, view);
   }, [view, inlinePaletteKey]);

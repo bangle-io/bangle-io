@@ -69,7 +69,7 @@ const insertDateCommand = (type) => {
 };
 
 export function InlineCommandPalette() {
-  const query = useInlinePaletteQuery(inlinePaletteKey);
+  const { query, counter } = useInlinePaletteQuery(inlinePaletteKey);
 
   const items = useMemo(() => {
     const items = [
@@ -119,6 +119,7 @@ export function InlineCommandPalette() {
   const { tooltipContentDOM, getItemProps } = useInlinePaletteItems(
     inlinePaletteKey,
     items,
+    counter,
   );
 
   return reactDOM.createPortal(
