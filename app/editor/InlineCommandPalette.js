@@ -1,12 +1,12 @@
-import React, { useCallback } from 'react';
-import { suggestTooltip } from '@bangle.dev/tooltip/index';
+import React, { useMemo } from 'react';
 import reactDOM from 'react-dom';
-import { bangleWarn, rafCommandExec } from '@bangle.dev/core/utils/js-utils';
-
+import { rafCommandExec } from '@bangle.dev/core/utils/js-utils';
 import { inlinePaletteKey } from 'editor/plugins';
-import { useInlinePaletteItems } from 'inline-palette/index';
+import {
+  useInlinePaletteItems,
+  useInlinePaletteQuery,
+} from 'inline-palette/index';
 import { SidebarRow } from 'ui-components';
-import { timestamp } from '@bangle.dev/timestamp';
 import { replaceSuggestionMarkWith } from 'inline-palette/inline-palette';
 
 const OneDayMilliseconds = 24 * 60 * 60 * 1000;
@@ -69,52 +69,57 @@ const insertDateCommand = (type) => {
 };
 
 export function InlineCommandPalette() {
-  const { items, tooltipContentDOM, getItemProps } = useInlinePaletteItems({
+  const query = useInlinePaletteQuery(inlinePaletteKey);
+
+  const items = useMemo(() => {
+    const items = [
+      {
+        uid: 'dateTodaysDate',
+        title: "Date: Insert today's date",
+        editorExecuteCommand: ({}) => {
+          return insertDateCommand('today-date');
+        },
+      },
+      {
+        uid: 'dateTodaysDateAndTime',
+        title: 'Date: Insert current date and time',
+        editorExecuteCommand: ({}) => {
+          return insertDateCommand('today-date-time');
+        },
+      },
+
+      {
+        uid: 'dateTodaysTime',
+        title: 'Date: Insert current time',
+        editorExecuteCommand: ({}) => {
+          return insertDateCommand('today-time');
+        },
+      },
+
+      {
+        uid: 'dateTomorrowsDate',
+        title: "Date: Insert tomorrow's date",
+        editorExecuteCommand: ({}) => {
+          return insertDateCommand('tomorrow-date');
+        },
+      },
+
+      {
+        uid: 'dateYesterdaysDate',
+        title: "Date: Insert yesterday's date",
+        editorExecuteCommand: ({}) => {
+          return insertDateCommand('yesterday-date');
+        },
+      },
+    ];
+
+    return items.filter((item) => queryMatch(item, query));
+  }, [query]);
+
+  const { tooltipContentDOM, getItemProps } = useInlinePaletteItems(
     inlinePaletteKey,
-    getItems: useCallback((query) => {
-      const items = [
-        {
-          uid: 'dateTodaysDate',
-          title: "Date: Insert today's date",
-          editorExecuteCommand: ({}) => {
-            return insertDateCommand('today-date');
-          },
-        },
-        {
-          uid: 'dateTodaysDateAndTime',
-          title: 'Date: Insert current date and time',
-          editorExecuteCommand: ({}) => {
-            return insertDateCommand('today-date-time');
-          },
-        },
-
-        {
-          uid: 'dateTodaysTime',
-          title: 'Date: Insert current time',
-          editorExecuteCommand: ({}) => {
-            return insertDateCommand('today-time');
-          },
-        },
-
-        {
-          uid: 'dateTomorrowsDate',
-          title: "Date: Insert tomorrow's date",
-          editorExecuteCommand: ({}) => {
-            return insertDateCommand('tomorrow-date');
-          },
-        },
-        {
-          uid: 'dateYesterdaysDate',
-          title: "Date: Insert yesterday's date",
-          editorExecuteCommand: ({}) => {
-            return insertDateCommand('yesterday-date');
-          },
-        },
-      ];
-
-      return items.filter((item) => queryMatch(item, query));
-    }, []),
-  });
+    items,
+  );
 
   return reactDOM.createPortal(
     <div className="bangle-emoji-suggest">
