@@ -22,7 +22,7 @@
     "access": "public"
   },
   "dependencies": {
-    "idb-keyval": "^5.0.4",
+    "idb-keyval": "^5.0.5",
     "utils": "workspace:*"
   }
 }

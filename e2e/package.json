@@ -27,9 +27,9 @@
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
     "jest-environment-puppeteer": "^5.0.1",
-    "jest-puppeteer": "^5.0.1",
+    "jest-puppeteer": "^5.0.2",
     "prettier": "^2.2.1",
-    "puppeteer": "^8.0.0"
+    "puppeteer": "^9.0.0"
   },
   "devDependencies": {
     "http-server": "^0.12.3"
