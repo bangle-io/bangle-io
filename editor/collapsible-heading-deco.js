@@ -6,6 +6,7 @@ import {
   listCollapsibleHeading,
   toggleHeadingCollapse,
 } from '@bangle.dev/core/components/heading';
+import { rafSchedule } from 'utils/utility';
 
 export const collapsibleHeadingDeco = {
   plugins: pluginsFactory,
@@ -13,9 +14,42 @@ export const collapsibleHeadingDeco = {
 
 const name = 'collapsible_heading_deco';
 
+// TODO even after optimizations, this is far for perfect
+// every keystroke triggers a redundant layout shift of
+// collapsibles.
 function pluginsFactory({ leftOffset = 24 } = {}) {
   const plugin = new PluginKey(name);
+  const updateHeight = rafSchedule((view) => {
+    const nodes = [
+      ...view.dom.querySelectorAll(
+        '.deco-collapse-positioner[data-bangle-pos]',
+      ),
+    ]
+      .map((node) => {
+        const pos = parseInt(node.getAttribute('data-bangle-pos'), 10);
+        if (Number.isNaN(pos)) {
+          return undefined;
+        }
 
+        const domNode = view.nodeDOM(pos);
+        if (!domNode) {
+          return undefined;
+        }
+        // NOTE This separation of getting style and updating the style
+        // is important as it prevent computing the layout everytime if were to do `window.getComputedStyle`
+        // and then directly update height. With this approach
+        // layout is only calculated once and then applied to all nodes
+        // together.
+        const computedStyle = window.getComputedStyle(domNode);
+        return [node, computedStyle.height];
+      })
+      .filter(Boolean);
+
+    for (const [node, height] of nodes) {
+      node.firstChild.style.height = height;
+      node.firstChild.style.left = `${-1 * leftOffset}px`;
+    }
+  });
   return [
     new Plugin({
       key: plugin,
@@ -30,23 +64,7 @@ function pluginsFactory({ leftOffset = 24 } = {}) {
           if (newPluginState === plugin.getState(lastState)) {
             return;
           }
-
-          for (const node of view.dom.querySelectorAll(
-            '.deco-collapse-positioner[data-bangle-pos]',
-          )) {
-            const pos = parseInt(node.getAttribute('data-bangle-pos'), 10);
-            if (Number.isNaN(pos)) {
-              continue;
-            }
-
-            const domNode = view.nodeDOM(pos);
-            if (!domNode) {
-              continue;
-            }
-            const computedStyle = window.getComputedStyle(domNode);
-            node.firstChild.style.height = computedStyle.height;
-            node.firstChild.style.left = `${-1 * leftOffset}px`;
-          }
+          updateHeight(view);
         },
       }),
       state: {
