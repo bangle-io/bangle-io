@@ -27,7 +27,6 @@ import {
   emojiSuggestKey,
 } from 'editor/index';
 import { EditorManagerContext } from './EditorManager';
-import { InlineCommandPalette } from './InlineCommandPalette';
 import { InlineFilePalette } from './InlineFilePalette';
 import { resolvePath } from 'workspace';
 
@@ -131,7 +130,7 @@ export function Editor({ editorId, wsPath }) {
     >
       <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
-      <InlineCommandPalette />
+      {/* <InlineCommandPalette /> */}
       <InlineFilePalette />
     </BangleEditor>
   );

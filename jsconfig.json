@@ -68,6 +68,12 @@
       ],
       "inline-palette/*": [
         "./js-libs/inline-palette/*"
+      ],
+      "inline-command-palette": [
+        "./js-libs/inline-command-palette/index.js"
+      ],
+      "inline-command-palette/*": [
+        "./js-libs/inline-command-palette/*"
       ]
     },
     "module": "esnext",

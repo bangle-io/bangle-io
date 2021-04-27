@@ -8,6 +8,7 @@ import {
 import { SidebarRow } from 'ui-components';
 import { replaceSuggestionMarkWith } from 'inline-palette/inline-palette';
 import { resolvePath, useGetCachedWorkspaceFiles } from 'workspace/index';
+
 export function InlineFilePalette() {
   const { query, counter } = useInlinePaletteQuery(inlineFilePaletteKey);
   const [currentFiles = []] = useGetCachedWorkspaceFiles();

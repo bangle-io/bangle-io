@@ -121,10 +121,10 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
         getScrollContainer,
       },
     }),
+
     inlinePalette.plugins({
       key: inlineFilePaletteKey,
       markName: 'inlineFilePalette',
-
       tooltipRenderOpts: {
         getScrollContainer,
       },

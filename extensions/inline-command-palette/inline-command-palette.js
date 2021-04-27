@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import reactDOM from 'react-dom';
 import { rafCommandExec } from '@bangle.dev/core/utils/js-utils';
-import { inlinePaletteKey } from 'editor/plugins';
 import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
+  replaceSuggestionMarkWith,
 } from 'inline-palette/index';
 import { SidebarRow } from 'ui-components';
-import { replaceSuggestionMarkWith } from 'inline-palette/inline-palette';
+import { inlinePaletteKey } from './plugin-key';
 
 const OneDayMilliseconds = 24 * 60 * 60 * 1000;
 let getTimestamp = (type) => {

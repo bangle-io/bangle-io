@@ -15,7 +15,9 @@
     "e2e",
     "app-vite",
     "app-webpack",
-    "bangle-io-context"
+    "bangle-io-context",
+    "extensions/*",
+    "e2e"
   ],
   "authors": [
     {

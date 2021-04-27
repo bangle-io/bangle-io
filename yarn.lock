@@ -8126,6 +8126,20 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"inline-command-palette@workspace:extensions/inline-command-palette":
+  version: 0.0.0-use.local
+  resolution: "inline-command-palette@workspace:extensions/inline-command-palette"
+  dependencies:
+    "@bangle.dev/core": 0.9.0
+    config: "workspace:*"
+    inline-palette: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    ui-components: "workspace:*"
+    utils: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "inline-palette@workspace:*, inline-palette@workspace:js-libs/inline-palette":
   version: 0.0.0-use.local
   resolution: "inline-palette@workspace:js-libs/inline-palette"
@@ -14923,7 +14937,6 @@ resolve@^2.0.0-next.3:
     baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
     config: "workspace:*"
-    editor: "workspace:*"
     idb-keyval: ^5.0.5
     react: 16.14.0
     react-dom: 16.14.0

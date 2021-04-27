@@ -49,6 +49,7 @@ headingSpec = {
   },
 };
 
+// TODO move this async, i think a promise should be fine.
 export const specRegistry = new SpecRegistry([
   doc.spec({ content: 'frontMatter? block+' }),
   text.spec(),
@@ -81,7 +82,7 @@ export const specRegistry = new SpecRegistry([
   timestamp.spec(),
   // sticker.spec(),
   markdownFrontMatter.spec(),
-  inlinePalette.spec({ markName: 'inlineCommandPalette', trigger: '/' }),
+  // inlinePalette.spec({ markName: 'inlineCommandPalette', trigger: '/' }),
   inlinePalette.spec({
     markName: 'inlineFilePalette',
     // prettier-ignore

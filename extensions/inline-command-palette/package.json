@@ -1,5 +1,5 @@
 {
-  "name": "workspace",
+  "name": "inline-command-palette",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,22 +18,16 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
-  "devDependencies": {
-    "@testing-library/react": "^11.2.6",
-    "bangle-io-context": "workspace:*"
-  },
   "dependencies": {
-    "@bangle.dev/core": "0.10.3",
-    "@octokit/rest": "^18.5.3",
-    "baby-fs": "workspace:*",
+    "@bangle.dev/core": "0.9.0",
     "config": "workspace:*",
-    "idb-keyval": "^5.0.5",
+    "inline-palette": "workspace:*",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "react-router-dom": "^5.2.0",
+    "ui-components": "workspace:*",
     "utils": "workspace:*"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   }
 }
