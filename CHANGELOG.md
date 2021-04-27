@@ -1,5 +1,9 @@
 # HEAD
 
+### Ap 27 2021
+
+- Collapsing heading performance improvement.
+
 ### Apr 22, 2021
 
 Palette now shows helpful keyboard shortcuts.
