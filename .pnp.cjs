@@ -4275,25 +4275,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:8cd8bf1e2e9b4f32172204239f967b324215827a978c39a0b247403db0c2d3af13c01e889ffb7e907ebc57ec8083574609aef7c6a445eec4e9cda6932dd0bedc#npm:11.2.6", {
-          "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-24ba36e44a/0/cache/@testing-library-react-npm-11.2.6-92e094c052-be64e1c365.zip/node_modules/@testing-library/react/",
-          "packageDependencies": [
-            ["@testing-library/react", "virtual:8cd8bf1e2e9b4f32172204239f967b324215827a978c39a0b247403db0c2d3af13c01e889ffb7e907ebc57ec8083574609aef7c6a445eec4e9cda6932dd0bedc#npm:11.2.6"],
-            ["@babel/runtime", "npm:7.12.5"],
-            ["@testing-library/dom", "npm:7.29.0"],
-            ["@types/react", null],
-            ["@types/react-dom", null],
-            ["react", "npm:16.14.0"],
-            ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"]
-          ],
-          "packagePeers": [
-            "@types/react-dom",
-            "@types/react",
-            "react-dom",
-            "react"
-          ],
-          "linkType": "HARD",
-        }],
         ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.2.6", {
           "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-c69f837880/0/cache/@testing-library-react-npm-11.2.6-92e094c052-be64e1c365.zip/node_modules/@testing-library/react/",
           "packageDependencies": [
@@ -4304,6 +4285,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", null],
             ["react", null],
             ["react-dom", null]
+          ],
+          "packagePeers": [
+            "@types/react-dom",
+            "@types/react",
+            "react-dom",
+            "react"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6", {
+          "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-721ebbcef8/0/cache/@testing-library-react-npm-11.2.6-92e094c052-be64e1c365.zip/node_modules/@testing-library/react/",
+          "packageDependencies": [
+            ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
+            ["@babel/runtime", "npm:7.12.5"],
+            ["@testing-library/dom", "npm:7.29.0"],
+            ["@types/react", null],
+            ["@types/react-dom", null],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"]
           ],
           "packagePeers": [
             "@types/react-dom",
@@ -5560,7 +5560,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.3.1"],
             ["@testing-library/dom", "npm:7.30.4"],
             ["@testing-library/jest-dom", "npm:5.12.0"],
-            ["@testing-library/react", "virtual:8cd8bf1e2e9b4f32172204239f967b324215827a978c39a0b247403db0c2d3af13c01e889ffb7e907ebc57ec8083574609aef7c6a445eec4e9cda6932dd0bedc#npm:11.2.6"],
+            ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["@testing-library/react-hooks", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:5.1.2"],
             ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.1.5"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
@@ -10874,9 +10874,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", null],
             ["@types/react-dom", null],
             ["@types/utils", null],
+            ["@types/workspace", null],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"],
-            ["utils", "workspace:utils"]
+            ["utils", "workspace:utils"],
+            ["workspace", "workspace:workspace"]
           ],
           "packagePeers": [
             "@bangle.dev/core",
@@ -10888,6 +10890,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/react-dom",
             "@types/react",
             "@types/utils",
+            "@types/workspace",
             "react-dom",
             "react",
             "utils"
@@ -10903,7 +10906,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/tooltip", "virtual:e48cc95d7bcc1f29ae3cca14b7d17f1c5fe9b569691034b5a85197476cb5ce9c1200ab10c81a008cc64eb5a7ae1a4834d2c282f52cf56967f7bec162f86261b2#npm:0.9.0"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:16.14.0"],
-            ["utils", "workspace:utils"]
+            ["utils", "workspace:utils"],
+            ["workspace", "workspace:workspace"]
           ],
           "linkType": "SOFT",
         }]
@@ -17907,7 +17911,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./ui-components/",
           "packageDependencies": [
             ["ui-components", "workspace:ui-components"],
-            ["@testing-library/react", "virtual:8cd8bf1e2e9b4f32172204239f967b324215827a978c39a0b247403db0c2d3af13c01e889ffb7e907ebc57ec8083574609aef7c6a445eec4e9cda6932dd0bedc#npm:11.2.6"],
+            ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["@testing-library/user-event", "virtual:8cd8bf1e2e9b4f32172204239f967b324215827a978c39a0b247403db0c2d3af13c01e889ffb7e907ebc57ec8083574609aef7c6a445eec4e9cda6932dd0bedc#npm:13.1.5"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.14.0"],
@@ -18909,7 +18913,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["workspace", "workspace:workspace"],
             ["@bangle.dev/core", "npm:0.10.3"],
             ["@octokit/rest", "npm:18.5.3"],
-            ["@testing-library/react", "virtual:8cd8bf1e2e9b4f32172204239f967b324215827a978c39a0b247403db0c2d3af13c01e889ffb7e907ebc57ec8083574609aef7c6a445eec4e9cda6932dd0bedc#npm:11.2.6"],
+            ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["bangle-io-context", "workspace:bangle-io-context"],
             ["config", "workspace:config"],

@@ -15,6 +15,7 @@ import { inlinePalette } from 'inline-palette';
 export const menuKey = new PluginKey('menuKey');
 export const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 export const inlinePaletteKey = new PluginKey('inlinePaletteKey');
+export const inlineFilePaletteKey = new PluginKey('inlineFilePaletteKey');
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
@@ -68,6 +69,7 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
         getScrollContainer,
       },
     }),
+
     coreComps.bold.plugins(),
     coreComps.code.plugins(),
     coreComps.italic.plugins(),
@@ -96,6 +98,7 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
     tablePlugins(),
     collab.plugins(collabOpts),
     emoji.plugins(),
+
     stopwatch.plugins(),
     trailingNode.plugins(),
     timestamp.plugins(),
@@ -113,7 +116,15 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
 
     inlinePalette.plugins({
       key: inlinePaletteKey,
-      markName: 'inlinePalette',
+      markName: 'inlineCommandPalette',
+      tooltipRenderOpts: {
+        getScrollContainer,
+      },
+    }),
+    inlinePalette.plugins({
+      key: inlineFilePaletteKey,
+      markName: 'inlineFilePalette',
+
       tooltipRenderOpts: {
         getScrollContainer,
       },

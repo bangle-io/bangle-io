@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { removeSuggestMark } from '@bangle.dev/tooltip/suggest-tooltip';
-import { suggestTooltip } from '@bangle.dev/tooltip/index';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import { getSuggestTooltipKey } from './inline-palette';
 
@@ -52,11 +51,12 @@ export function useInlinePaletteItems(inlinePaletteKey, items, counter) {
     // Save the callback to get the active item so that the plugin
     // can execute an enter on the active item
     setExecuteItemCommand((state, dispatch, view) => {
-      return executeHandler(getActiveIndex(counter, items.length))(
+      const result = executeHandler(getActiveIndex(counter, items.length))(
         state,
         dispatch,
         view,
       );
+      return result;
     });
     return () => {
       setExecuteItemCommand(undefined);

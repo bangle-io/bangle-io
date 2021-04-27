@@ -2,12 +2,10 @@ import { bangleWarn } from '@bangle.dev/core/utils/js-utils';
 import { suggestTooltip, createTooltipDOM } from '@bangle.dev/tooltip/index';
 import {
   decrementSuggestTooltipCounter,
-  removeSuggestMark,
   incrementSuggestTooltipCounter,
 } from '@bangle.dev/tooltip/suggest-tooltip';
 import { valuePlugin } from '@bangle.dev/core/utils/pm-utils';
 import { pluginKeyStore } from '@bangle.dev/core/utils/plugin-key-store';
-import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 
 export const spec = specFactory;
 export const plugins = pluginsFactory;
@@ -68,7 +66,6 @@ function pluginsFactory({ key, markName, tooltipRenderOpts = {} } = {}) {
     };
 
     let executeItemCommand;
-
     return [
       valuePlugin(key, {
         // We are setting this callback which returns us the

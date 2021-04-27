@@ -8136,6 +8136,7 @@ fsevents@~2.3.1:
     react: 16.14.0
     react-dom: 16.14.0
     utils: "workspace:*"
+    workspace: "workspace:*"
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/react": "*"
@@ -8143,6 +8144,7 @@ fsevents@~2.3.1:
     react: "*"
     react-dom: "*"
     utils: "*"
+    workspace: "*"
   languageName: unknown
   linkType: soft
 

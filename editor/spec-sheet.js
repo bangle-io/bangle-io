@@ -81,5 +81,10 @@ export const specRegistry = new SpecRegistry([
   timestamp.spec(),
   // sticker.spec(),
   markdownFrontMatter.spec(),
-  inlinePalette.spec({ markName: 'inlinePalette', trigger: '/' }),
+  inlinePalette.spec({ markName: 'inlineCommandPalette', trigger: '/' }),
+  inlinePalette.spec({
+    markName: 'inlineFilePalette',
+    // prettier-ignore
+    trigger: '[[',
+  }),
 ]);

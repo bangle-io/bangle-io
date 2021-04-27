@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
@@ -27,6 +28,9 @@ import {
 } from 'editor/index';
 import { EditorManagerContext } from './EditorManager';
 import { InlineCommandPalette } from './InlineCommandPalette';
+import { InlineFilePalette } from './InlineFilePalette';
+import { resolvePath } from 'workspace';
+
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
@@ -70,6 +74,13 @@ export function Editor({ editorId, wsPath }) {
 
       if (node.type.name === 'stopwatch') {
         return <stopwatch.Stopwatch node={node} updateAttrs={updateAttrs} />;
+      }
+      if (node.type.name === 'noteLink') {
+        return (
+          <Link to={resolvePath(node.attrs.wsPath).locationPath}>
+            [[{node.attrs.title}]]
+          </Link>
+        );
       }
     },
     [],
@@ -121,6 +132,7 @@ export function Editor({ editorId, wsPath }) {
       <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
       <InlineCommandPalette />
+      <InlineFilePalette />
     </BangleEditor>
   );
 }
