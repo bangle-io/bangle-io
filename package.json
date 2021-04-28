@@ -13,6 +13,7 @@
     "ui-components",
     "js-libs/*",
     "e2e",
+    "app-vite",
     "bangle-io-context"
   ],
   "authors": [
