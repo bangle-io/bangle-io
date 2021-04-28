@@ -50,6 +50,12 @@
       "workspace/*": [
         "./workspace/*"
       ],
+      "bangle-io-context": [
+        "./bangle-io-context/index.js"
+      ],
+      "bangle-io-context/*": [
+        "./bangle-io-context/*"
+      ],
       "baby-fs": [
         "./js-libs/baby-fs/index.js"
       ],

@@ -3,7 +3,13 @@ import { WorkspaceError, WORKSPACE_ALREADY_EXISTS_ERROR } from './errors';
 import { createFile, deleteFile } from './file-ops';
 import { createWorkspace, deleteWorkspace } from './workspace-helpers';
 
-export async function importGithubWorkspace(githubUrl, wsType, wsName, token) {
+export async function importGithubWorkspace(
+  bangleIOContext,
+  githubUrl,
+  wsType,
+  wsName,
+  token,
+) {
   const { repo, files } = await getGithubRepoContents(githubUrl, token);
 
   wsName = wsName || repo;
@@ -27,11 +33,16 @@ export async function importGithubWorkspace(githubUrl, wsType, wsName, token) {
       files.map(async (f) => {
         const wsPath = wsName + ':' + f.path;
         try {
-          await createFile(wsPath, f.textContent, 'markdown');
+          await createFile(bangleIOContext, wsPath, f.textContent, 'markdown');
         } catch (error) {
           if (error.code === FILE_ALREADY_EXISTS_ERROR) {
             await deleteFile(wsPath);
-            await createFile(wsPath, f.textContent, 'markdown');
+            await createFile(
+              bangleIOContext,
+              wsPath,
+              f.textContent,
+              'markdown',
+            );
             // ignore file errors
           }
         }

@@ -30,7 +30,7 @@ export async function checkFileExists(wsPath) {
 }
 
 // TODO make this get file
-export async function getDoc(wsPath) {
+export async function getDoc(bangleIOContext, wsPath) {
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
@@ -43,7 +43,11 @@ export async function getDoc(wsPath) {
     file = JSON.parse(fileData);
   } else if (path.endsWith('.md')) {
     // TODO avoid doing toJSON
-    file = markdownParser(fileData).toJSON();
+    file = markdownParser(
+      fileData,
+      bangleIOContext.specRegistry,
+      bangleIOContext.markdownItPlugins,
+    ).toJSON();
   }
 
   if (file === undefined) {
@@ -58,14 +62,14 @@ export async function getDoc(wsPath) {
  * @param {string} wsPath
  * @param {PMNode} doc
  */
-export async function saveDoc(wsPath, doc) {
+export async function saveDoc(bangleIOContext, wsPath, doc) {
   const { wsName, filePath } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
   const path = toFSPath(wsPath);
   let data;
   if (filePath.endsWith('.md')) {
-    data = markdownSerializer(doc);
+    data = markdownSerializer(doc, bangleIOContext.specRegistry);
   } else if (filePath.endsWith('.json')) {
     data = JSON.stringify(doc.toJSON());
   } else {
@@ -80,7 +84,12 @@ export async function saveDoc(wsPath, doc) {
  * @param {*} content
  * @param {'doc'|'markdown'} contentType
  */
-export async function createFile(wsPath, content, contentType = 'doc') {
+export async function createFile(
+  bangleIOContext,
+  wsPath,
+  content,
+  contentType = 'doc',
+) {
   validateWsFilePath(wsPath);
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
@@ -88,7 +97,7 @@ export async function createFile(wsPath, content, contentType = 'doc') {
   const path = toFSPath(wsPath);
   let markdown;
   if (contentType === 'doc') {
-    markdown = markdownSerializer(content);
+    markdown = markdownSerializer(content, bangleIOContext.specRegistry);
   } else if (contentType === 'markdown') {
     markdown = content;
   } else {

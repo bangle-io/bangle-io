@@ -12,6 +12,8 @@ import * as idb from 'idb-keyval';
 import { Workspace } from '../Workspace';
 import { IndexedDBFileSystem } from 'baby-fs';
 import { checkWidescreen } from 'utils/index';
+import { BangleIOContext } from 'bangle-io-context/index';
+import { specRegistry } from 'editor/spec-sheet';
 const mockStore = new Map();
 const mockBabyFSStore = new Map();
 
@@ -325,7 +327,10 @@ describe('useCreateMdFile', () => {
 
     expect(callback).not.toBeUndefined();
 
-    const result = callback('kujo:one.md');
+    const result = callback(
+      new BangleIOContext({ specRegistry, markdownItPlugins: [] }),
+      'kujo:one.md',
+    );
     expect(result).toBeInstanceOf(Promise);
 
     await result;
