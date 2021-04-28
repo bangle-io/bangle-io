@@ -58,6 +58,8 @@ import { WorkspaceError } from 'workspace/errors';
 import { cx } from 'utils/utility';
 import { useDestroyRef, useKeybindings } from 'utils/hooks';
 import { BaseError } from 'utils/base-error';
+import { EditorManagerContext } from 'app/editor/EditorManager';
+
 const LOG = false;
 
 let log = LOG ? console.log.bind(console, 'play/command-palette') : () => {};
@@ -387,6 +389,7 @@ function useNewFileSystemWS({ dismissPalette }) {
 function useImportWSFromGithub({ updatePalette }) {
   const uid = 'IMPORT_WS_FROM_GITHUB';
   const { importWorkspaceFromGithub } = useWorkspaces();
+  const { bangleIOContext } = useContext(EditorManagerContext);
 
   const onExecute = useCallback(async () => {
     updatePalette({
@@ -396,14 +399,19 @@ function useImportWSFromGithub({ updatePalette }) {
           'Enter a Github repos url ex: github.com/sindresorhus/awesome',
         onInputConfirm: async (query) => {
           if (query) {
-            return importWorkspaceFromGithub(query, 'browser', {
-              token: localStorage.getItem('github_token'),
-            });
+            return importWorkspaceFromGithub(
+              bangleIOContext,
+              query,
+              'browser',
+              {
+                token: localStorage.getItem('github_token'),
+              },
+            );
           }
         },
       },
     });
-  }, [importWorkspaceFromGithub, updatePalette]);
+  }, [importWorkspaceFromGithub, updatePalette, bangleIOContext]);
 
   return queryMatch({
     uid,

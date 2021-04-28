@@ -8,6 +8,8 @@ import { EditorManagerContext } from '../editor/EditorManager';
  * Opens an input palette
  */
 export function useInputPaletteNewFileCommand() {
+  const { bangleIOContext } = useContext(EditorManagerContext);
+
   const createNewFile = useCreateMdFile();
   const { wsName } = useWorkspacePath();
 
@@ -28,13 +30,16 @@ export function useInputPaletteNewFileCommand() {
               if (!normalizedQuery.endsWith('.md')) {
                 normalizedQuery += '.md';
               }
-              return createNewFile(wsName + ':' + normalizedQuery);
+              return createNewFile(
+                bangleIOContext,
+                wsName + ':' + normalizedQuery,
+              );
             },
           },
         },
       });
     },
-    [createNewFile, dispatch, wsName],
+    [createNewFile, bangleIOContext, dispatch, wsName],
   );
 
   return createFile;

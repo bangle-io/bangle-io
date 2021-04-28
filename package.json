@@ -12,7 +12,8 @@
     "ui-context",
     "ui-components",
     "js-libs/*",
-    "e2e"
+    "e2e",
+    "bangle-io-context"
   ],
   "authors": [
     {

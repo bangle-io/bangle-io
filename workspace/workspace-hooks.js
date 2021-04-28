@@ -1,7 +1,6 @@
 import { useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
-import { specRegistry } from 'editor/index';
 
 import { locationToFilePath, resolvePath } from './path-helpers';
 import {
@@ -68,8 +67,9 @@ export function useCreateMdFile() {
 
   const createNewMdFile = useCallback(
     async (
+      bangleIOContext,
       wsPath,
-      doc = Node.fromJSON(specRegistry.schema, {
+      doc = Node.fromJSON(bangleIOContext.specRegistry.schema, {
         type: 'doc',
         content: [
           {
@@ -96,7 +96,7 @@ export function useCreateMdFile() {
         ],
       }),
     ) => {
-      await createFile(wsPath, doc);
+      await createFile(bangleIOContext, wsPath, doc);
       pushWsPath(wsPath);
     },
     [pushWsPath],
@@ -146,8 +146,9 @@ export function useWorkspaces() {
 
   const importWorkspaceFromGithubCb = useCallback(
     // can pass alternate wsName in the options
-    async (url, wsType, opts = {}) => {
+    async (bangleIOContext, url, wsType, opts = {}) => {
       const wsName = await importGithubWorkspace(
+        bangleIOContext,
         url,
         wsType,
         opts.wsName,

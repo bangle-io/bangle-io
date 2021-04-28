@@ -13,6 +13,9 @@ import { defaultContent } from './editor-default-content';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
+import { BangleIOContext } from 'bangle-io-context/index';
+import { emojiMarkdownItPlugin } from '@bangle.dev/emoji/index';
+import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -21,6 +24,11 @@ export const EditorManagerContext = React.createContext();
 
 const maxEditors = [undefined, undefined];
 const MAX_EDITOR = maxEditors.length;
+
+const bangleIOContext = new BangleIOContext({
+  specRegistry,
+  markdownItPlugins: [emojiMarkdownItPlugin, frontMatterMarkdownItPlugin],
+});
 /**
  * Should be parent of all editors.
  */
@@ -46,7 +54,13 @@ export function EditorManager({ children }) {
       return editors[editorId];
     };
 
-    return { sendRequest, setEditor, primaryEditor, getEditor };
+    return {
+      sendRequest,
+      setEditor,
+      primaryEditor,
+      getEditor,
+      bangleIOContext,
+    };
   }, [sendRequest, _setEditor, editors]);
 
   useEffect(() => {
@@ -129,7 +143,7 @@ function localDisk(defaultContent) {
     getItem: async (wsPath) => {
       log('getItem', wsPath);
       // await sleep(5000);
-      const doc = await getDoc(wsPath);
+      const doc = await getDoc(bangleIOContext, wsPath);
       if (!doc) {
         return defaultContent;
       }
@@ -138,7 +152,7 @@ function localDisk(defaultContent) {
     setItem: async (wsPath, doc) => {
       log('setItem', wsPath);
 
-      await saveDoc(wsPath, doc);
+      await saveDoc(bangleIOContext, wsPath, doc);
     },
   });
 }
