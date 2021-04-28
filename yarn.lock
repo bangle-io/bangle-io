@@ -3656,6 +3656,9 @@ __metadata:
     config: "workspace:*"
     editor: "workspace:*"
     history: ^4.0.0
+    inline-backlink: "workspace:*"
+    inline-command-palette: "workspace:*"
+    inline-palette: "workspace:*"
     prop-types: ^15.7.2
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
@@ -4147,6 +4150,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bangle-io-context@workspace:bangle-io-context"
   dependencies:
+    "@bangle.dev/core": 0.9.0
+    react: 16.14.0
+    react-dom: 16.14.0
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -5924,6 +5930,7 @@ __metadata:
     "@bangle.dev/tooltip": 0.10.3
     "@bangle.dev/trailing-node": 0.10.3
     config: "workspace:*"
+    inline-command-palette: "workspace:*"
     inline-palette: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
@@ -8126,7 +8133,23 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"inline-command-palette@workspace:extensions/inline-command-palette":
+"inline-backlink@workspace:*, inline-backlink@workspace:extensions/inline-backlink":
+  version: 0.0.0-use.local
+  resolution: "inline-backlink@workspace:extensions/inline-backlink"
+  dependencies:
+    "@bangle.dev/core": 0.9.0
+    config: "workspace:*"
+    inline-palette: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    react-router-dom: ^5.2.0
+    ui-components: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"inline-command-palette@workspace:*, inline-command-palette@workspace:extensions/inline-command-palette":
   version: 0.0.0-use.local
   resolution: "inline-command-palette@workspace:extensions/inline-command-palette"
   dependencies:
@@ -14937,6 +14960,7 @@ resolve@^2.0.0-next.3:
     baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
     config: "workspace:*"
+    editor: "workspace:*"
     idb-keyval: ^5.0.5
     react: 16.14.0
     react-dom: 16.14.0

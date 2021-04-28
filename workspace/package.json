@@ -27,6 +27,7 @@
     "@octokit/rest": "^18.5.3",
     "baby-fs": "workspace:*",
     "config": "workspace:*",
+    "editor": "workspace:*",
     "idb-keyval": "^5.0.5",
     "react": "16.14.0",
     "react-dom": "16.14.0",
