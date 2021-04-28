@@ -1763,9 +1763,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/core@npm:0.9.0":
-  version: 0.9.0
-  resolution: "@bangle.dev/core@npm:0.9.0"
+"@bangle.dev/core@npm:0.9.1":
+  version: 0.9.1
+  resolution: "@bangle.dev/core@npm:0.9.1"
   dependencies:
     prosemirror-commands: ^1.1.4
     prosemirror-dropcursor: ^1.3.2
@@ -1780,7 +1780,7 @@ __metadata:
     prosemirror-transform: ^1.2.8
     prosemirror-utils: ^0.9.6
     prosemirror-view: ^1.16.3
-  checksum: 9cc636f6948101869fae07704e1d01ab9096dfedfd254d1ffd5ea44fcf3b9e12e2b1ccc17c62bf8a7238d98ad5bdc323e999b52792fc995d8de8127e38ef44f5
+  checksum: 910267f31a9e12defeea2623cb7146e3be881fe97b9ff57cf918a50e450781ee44f5bd342c5c4943e538b5113ed9c54c2d775cf6af0c165eff6e68740dc8a66a
   languageName: node
   linkType: hard
 
@@ -1892,9 +1892,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/react@npm:0.9.0":
-  version: 0.9.0
-  resolution: "@bangle.dev/react@npm:0.9.0"
+"@bangle.dev/react@npm:0.9.1":
+  version: 0.9.1
+  resolution: "@bangle.dev/react@npm:0.9.1"
   dependencies:
     prop-types: ^15.7.2
     punycode: ^2.1.1
@@ -1902,7 +1902,7 @@ __metadata:
     "@bangle.dev/core": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 432d35dbeed16cb8f50b8c6892b649eb73a724f39ebeba8ab9f6687c58fd1a3840e84d2680db45e3b037bef43145fb3bc8ce3cc056bd870e980452dd95432c2d
+  checksum: 4842e32bb706662745d8e0af877a7fde8fa6b7a89a7b949e62d7713db614c673d1bfcc0af8ddf080efae4e232bf9bd0cbe358d128875520069eb358474bc6552
   languageName: node
   linkType: hard
 
@@ -1947,14 +1947,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/tooltip@npm:0.9.0":
-  version: 0.9.0
-  resolution: "@bangle.dev/tooltip@npm:0.9.0"
+"@bangle.dev/tooltip@npm:0.9.1":
+  version: 0.9.1
+  resolution: "@bangle.dev/tooltip@npm:0.9.1"
   dependencies:
     "@popperjs/core": ^2.5.4
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 57dce34fc2ac6cb953349a7f8d96250f8b78e5666a18e4171aee6f268567dd30086571245d194eeb851b0797c2dc2c0a98afc11b7baa40b535e226f0f0c6ebcf
+  checksum: 9784f120dc9fefd785b2d3c82d64825bd38a9c61c903888accd3e087dea14cb145423a0327b30927e6dd6686e496dcd9c3ce3eb722b71aea7e9a2161918cef8a
   languageName: node
   linkType: hard
 
@@ -4150,7 +4150,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bangle-io-context@workspace:bangle-io-context"
   dependencies:
-    "@bangle.dev/core": 0.9.0
+    "@bangle.dev/core": 0.9.1
     react: 16.14.0
     react-dom: 16.14.0
     utils: "workspace:*"
@@ -8137,7 +8137,7 @@ fsevents@~2.3.1:
   version: 0.0.0-use.local
   resolution: "inline-backlink@workspace:extensions/inline-backlink"
   dependencies:
-    "@bangle.dev/core": 0.9.0
+    "@bangle.dev/core": 0.9.1
     config: "workspace:*"
     inline-palette: "workspace:*"
     react: 16.14.0
@@ -8153,7 +8153,7 @@ fsevents@~2.3.1:
   version: 0.0.0-use.local
   resolution: "inline-command-palette@workspace:extensions/inline-command-palette"
   dependencies:
-    "@bangle.dev/core": 0.9.0
+    "@bangle.dev/core": 0.9.1
     config: "workspace:*"
     inline-palette: "workspace:*"
     react: 16.14.0
@@ -8167,9 +8167,9 @@ fsevents@~2.3.1:
   version: 0.0.0-use.local
   resolution: "inline-palette@workspace:js-libs/inline-palette"
   dependencies:
-    "@bangle.dev/core": 0.9.0
-    "@bangle.dev/react": 0.9.0
-    "@bangle.dev/tooltip": 0.9.0
+    "@bangle.dev/core": 0.9.1
+    "@bangle.dev/react": 0.9.1
+    "@bangle.dev/tooltip": 0.9.1
     react: 16.14.0
     react-dom: 16.14.0
     utils: "workspace:*"
