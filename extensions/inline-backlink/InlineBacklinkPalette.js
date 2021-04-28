@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import reactDOM from 'react-dom';
-import { inlineFilePaletteKey } from 'editor/plugins';
 import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
@@ -8,9 +7,10 @@ import {
 import { SidebarRow } from 'ui-components';
 import { replaceSuggestionMarkWith } from 'inline-palette/inline-palette';
 import { resolvePath, useGetCachedWorkspaceFiles } from 'workspace/index';
+import { backLinkNodeName, palettePluginKey } from './config';
 
-export function InlineFilePalette() {
-  const { query, counter } = useInlinePaletteQuery(inlineFilePaletteKey);
+export function InlineBacklinkPalette() {
+  const { query, counter } = useInlinePaletteQuery(palettePluginKey);
   const [currentFiles = []] = useGetCachedWorkspaceFiles();
 
   const items = useMemo(() => {
@@ -24,10 +24,10 @@ export function InlineFilePalette() {
         title: wsPath,
         editorExecuteCommand: ({ item }) => {
           return (state, dispatch, view) => {
-            let noteLinkType = state.schema.nodes['noteLink'];
+            let nodeType = state.schema.nodes[backLinkNodeName];
             return replaceSuggestionMarkWith(
-              inlineFilePaletteKey,
-              noteLinkType.create({
+              palettePluginKey,
+              nodeType.create({
                 title: resolvePath(wsPath).fileName,
                 wsPath: wsPath,
               }),
@@ -40,7 +40,7 @@ export function InlineFilePalette() {
   }, [query, currentFiles]);
 
   const { tooltipContentDOM, getItemProps } = useInlinePaletteItems(
-    inlineFilePaletteKey,
+    palettePluginKey,
     items,
     counter,
   );

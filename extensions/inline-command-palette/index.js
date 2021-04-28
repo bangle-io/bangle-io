@@ -1,5 +1,5 @@
 import { inlinePalette } from 'inline-palette/index';
-import { inlinePaletteKey } from './plugin-key';
+import { inlineCommandPaletteKey } from './plugin-key';
 import { InlineCommandPalette } from './inline-command-palette';
 
 const getScrollContainer = (view) => {
@@ -8,19 +8,17 @@ const getScrollContainer = (view) => {
 
 const extension = {
   name: 'inline-command-palette',
-  editorReactComponents: [InlineCommandPalette],
-  bangleSpecs: [
+  editorReactComponent: InlineCommandPalette,
+  editorSpecs: [
     inlinePalette.spec({ markName: 'inlineCommandPalette', trigger: '/' }),
   ],
-  banglePlugin: () => [
-    inlinePalette.plugins({
-      key: inlinePaletteKey,
-      markName: 'inlineCommandPalette',
-      tooltipRenderOpts: {
-        getScrollContainer,
-      },
-    }),
-  ],
+  editorPlugins: inlinePalette.plugins({
+    key: inlineCommandPaletteKey,
+    markName: 'inlineCommandPalette',
+    tooltipRenderOpts: {
+      getScrollContainer,
+    },
+  }),
 };
 
 export default extension;

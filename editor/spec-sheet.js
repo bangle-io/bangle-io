@@ -37,7 +37,6 @@ import {
   image,
 } from '@bangle.dev/core/components/components';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
-import { inlinePalette } from 'inline-palette';
 
 let headingSpec = heading.spec();
 
@@ -49,8 +48,7 @@ headingSpec = {
   },
 };
 
-// TODO move this async, i think a promise should be fine.
-export const specRegistry = new SpecRegistry([
+export const rawSpecs = [
   doc.spec({ content: 'frontMatter? block+' }),
   text.spec(),
   paragraph.spec(),
@@ -80,12 +78,5 @@ export const specRegistry = new SpecRegistry([
   stopwatch.spec(),
   trailingNode.spec(),
   timestamp.spec(),
-  // sticker.spec(),
   markdownFrontMatter.spec(),
-  // inlinePalette.spec({ markName: 'inlineCommandPalette', trigger: '/' }),
-  inlinePalette.spec({
-    markName: 'inlineFilePalette',
-    // prettier-ignore
-    trigger: '[[',
-  }),
-]);
+];

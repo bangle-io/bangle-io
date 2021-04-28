@@ -13,7 +13,8 @@ import { Workspace } from '../Workspace';
 import { IndexedDBFileSystem } from 'baby-fs';
 import { checkWidescreen } from 'utils/index';
 import { BangleIOContext } from 'bangle-io-context/index';
-import { specRegistry } from 'editor/spec-sheet';
+import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
+
 const mockStore = new Map();
 const mockBabyFSStore = new Map();
 
@@ -328,7 +329,10 @@ describe('useCreateMdFile', () => {
     expect(callback).not.toBeUndefined();
 
     const result = callback(
-      new BangleIOContext({ specRegistry, markdownItPlugins: [] }),
+      new BangleIOContext({
+        coreRawSpecs: defaultSpecs(),
+        markdownItPlugins: [],
+      }),
       'kujo:one.md',
     );
     expect(result).toBeInstanceOf(Promise);

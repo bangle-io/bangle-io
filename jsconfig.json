@@ -70,10 +70,16 @@
         "./js-libs/inline-palette/*"
       ],
       "inline-command-palette": [
-        "./js-libs/inline-command-palette/index.js"
+        "./extensions/inline-command-palette/index.js"
       ],
       "inline-command-palette/*": [
-        "./js-libs/inline-command-palette/*"
+        "./extensions/inline-command-palette/*"
+      ],
+      "inline-backlink": [
+        "./extensions/inline-backlink/index.js"
+      ],
+      "inline-backlink/*": [
+        "./extensions/inline-backlink/*"
       ]
     },
     "module": "esnext",

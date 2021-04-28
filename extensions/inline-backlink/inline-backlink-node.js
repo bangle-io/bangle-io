@@ -1,18 +1,16 @@
-import React from 'react';
 import { NodeView } from '@bangle.dev/core/node-view';
 import { domSerializationHelpers } from '@bangle.dev/core/utils/dom-serialization-helpers';
 import { resolvePath } from 'workspace';
+import { backLinkNodeName } from './config';
 
 export const spec = specFactory;
 export const plugins = pluginsFactory;
 export const commands = {};
 
-const name = 'noteLink';
-
 function specFactory() {
   let spec = {
     type: 'node',
-    name,
+    name: backLinkNodeName,
     schema: {
       attrs: {
         wsPath: {
@@ -37,7 +35,7 @@ function specFactory() {
 
   spec.schema = {
     ...spec.schema,
-    ...domSerializationHelpers(name, { tag: 'span' }),
+    ...domSerializationHelpers(backLinkNodeName, { tag: 'span' }),
   };
 
   return spec;
@@ -46,13 +44,13 @@ function specFactory() {
 function pluginsFactory() {
   return ({ schema }) => [
     NodeView.createPlugin({
-      name,
+      name: backLinkNodeName,
       // inline-block allows the span to get full height of image
       // or else folks depending on the boundingBox get incorrect
       // dimensions.
       containerDOM: [
         'span',
-        { style: 'display: inline-block;', class: 'note-link' },
+        { style: 'display: inline-block;', class: 'inline-backlink' },
       ],
     }),
   ];

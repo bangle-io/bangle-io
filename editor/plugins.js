@@ -6,22 +6,18 @@ import { emoji, emojisArray } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import stopwatch from '@bangle.dev/react-stopwatch';
-// import sticker from '@bangle.dev/react-sticker';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { collapsibleHeadingDeco } from './collapsible-heading-deco';
 import { tablePlugins } from '@bangle.dev/table';
-import { inlinePalette } from 'inline-palette';
 export const menuKey = new PluginKey('menuKey');
 export const emojiSuggestKey = new PluginKey('emojiSuggestKey');
-export const inlinePaletteKey = new PluginKey('inlinePaletteKey');
-export const inlineFilePaletteKey = new PluginKey('inlineFilePaletteKey');
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };
 
-export const getPlugins = ({ wsPath, sendRequest }) => {
+export const getPlugins = (wsPath, sendRequest) => {
   const collabOpts = {
     docName: wsPath,
     clientId: 'client-' + uuid(4),
@@ -102,7 +98,6 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
     stopwatch.plugins(),
     trailingNode.plugins(),
     timestamp.plugins(),
-    // sticker.plugins(),
     collapsibleHeadingDeco.plugins(),
     new Plugin({
       props: {
@@ -111,22 +106,6 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
         // TODO the /4 value makes it a bit weird when moving a node up
         // or down.
         scrollMargin: parseInt(window.innerHeight / 4),
-      },
-    }),
-
-    inlinePalette.plugins({
-      key: inlinePaletteKey,
-      markName: 'inlineCommandPalette',
-      tooltipRenderOpts: {
-        getScrollContainer,
-      },
-    }),
-
-    inlinePalette.plugins({
-      key: inlineFilePaletteKey,
-      markName: 'inlineFilePalette',
-      tooltipRenderOpts: {
-        getScrollContainer,
       },
     }),
   ];

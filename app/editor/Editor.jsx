@@ -20,15 +20,10 @@ import {
   OrderedListButton,
   TodoListButton,
 } from '@bangle.dev/react-menu';
-import {
-  specRegistry,
-  getPlugins,
-  menuKey,
-  emojiSuggestKey,
-} from 'editor/index';
+import { menuKey, emojiSuggestKey } from 'editor/index';
 import { EditorManagerContext } from './EditorManager';
-import { InlineFilePalette } from './InlineFilePalette';
 import { resolvePath } from 'workspace';
+import { EditorComponents } from 'bangle-io-context';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -39,7 +34,9 @@ Editor.propTypes = {
 };
 
 export function Editor({ editorId, wsPath }) {
-  const { sendRequest, setEditor } = useContext(EditorManagerContext);
+  const { sendRequest, setEditor, bangleIOContext } = useContext(
+    EditorManagerContext,
+  );
 
   useEffect(() => {
     log('mounting editor', editorId, wsPath);
@@ -49,8 +46,8 @@ export function Editor({ editorId, wsPath }) {
   }, [wsPath, editorId]);
 
   const plugins = useCallback(() => {
-    return getPlugins({ sendRequest, wsPath });
-  }, [sendRequest, wsPath]);
+    return bangleIOContext.getPlugins(wsPath, sendRequest);
+  }, [sendRequest, wsPath, bangleIOContext]);
 
   const onEditorReady = useCallback(
     (editor) => {
@@ -60,34 +57,20 @@ export function Editor({ editorId, wsPath }) {
   );
 
   const renderNodeViews = useCallback(
-    ({ node, updateAttrs, children, selected }) => {
-      // if (node.type.name === 'sticker') {
-      //   return (
-      //     <sticker.Sticker
-      //       node={node}
-      //       updateAttrs={updateAttrs}
-      //       selected={selected}
-      //     />
-      //   );
-      // }
-
+    (nodeViewRenderArg) => {
+      const { node, updateAttrs, children, selected } = nodeViewRenderArg;
       if (node.type.name === 'stopwatch') {
         return <stopwatch.Stopwatch node={node} updateAttrs={updateAttrs} />;
       }
-      if (node.type.name === 'noteLink') {
-        return (
-          <Link to={resolvePath(node.attrs.wsPath).locationPath}>
-            [[{node.attrs.title}]]
-          </Link>
-        );
-      }
+
+      return bangleIOContext.renderReactNodeViews(nodeViewRenderArg);
     },
-    [],
+    [bangleIOContext],
   );
 
   const editorState = useEditorState({
     plugins: plugins,
-    specRegistry,
+    specRegistry: bangleIOContext.specRegistry,
   });
 
   const renderMenuType = useCallback(({ type, menuKey }) => {
@@ -130,8 +113,7 @@ export function Editor({ editorId, wsPath }) {
     >
       <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
-      {/* <InlineCommandPalette /> */}
-      <InlineFilePalette />
+      <EditorComponents bangleIOContext={bangleIOContext} />
     </BangleEditor>
   );
 }
