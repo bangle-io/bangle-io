@@ -18,6 +18,7 @@ import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 import inlineCommandPalette from 'inline-command-palette/index';
 import inlineBacklinkPalette from 'inline-backlink/index';
 import { getPlugins, rawSpecs } from 'editor/index';
+import collapsibleHeading from 'collapsible-heading/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -31,7 +32,7 @@ const MAX_EDITOR = maxEditors.length;
 const bangleIOContext = new BangleIOContext({
   coreRawSpecs: rawSpecs,
   getCorePlugins: getPlugins,
-  extensions: [inlineCommandPalette, inlineBacklinkPalette],
+  extensions: [inlineCommandPalette, inlineBacklinkPalette, collapsibleHeading],
   // specRegistry: setupSpecRegistry(),
   markdownItPlugins: [emojiMarkdownItPlugin, frontMatterMarkdownItPlugin],
 });

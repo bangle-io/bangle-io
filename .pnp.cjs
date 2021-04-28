@@ -51,6 +51,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:editor"
       },
       {
+        "name": "extension-helpers",
+        "reference": "workspace:extension-helpers"
+      },
+      {
+        "name": "collapsible-heading",
+        "reference": "workspace:extensions/collapsible-heading"
+      },
+      {
         "name": "inline-backlink",
         "reference": "workspace:extensions/inline-backlink"
       },
@@ -96,9 +104,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["baby-fs", ["workspace:js-libs/baby-fs"]],
       ["bangle-io", ["workspace:."]],
       ["bangle-io-context", ["workspace:bangle-io-context"]],
+      ["collapsible-heading", ["workspace:extensions/collapsible-heading"]],
       ["config", ["workspace:config"]],
       ["e2e", ["workspace:e2e"]],
       ["editor", ["workspace:editor"]],
+      ["extension-helpers", ["workspace:extension-helpers"]],
       ["inline-backlink", ["workspace:extensions/inline-backlink"]],
       ["inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["inline-palette", ["virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#workspace:js-libs/inline-palette", "workspace:js-libs/inline-palette"]],
@@ -5575,6 +5585,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.1.5"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["bangle-io-context", "workspace:bangle-io-context"],
+            ["collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
             ["history", "npm:4.10.1"],
@@ -7107,6 +7118,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["code-point-at", "npm:1.1.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["collapsible-heading", [
+        ["workspace:extensions/collapsible-heading", {
+          "packageLocation": "./extensions/collapsible-heading/",
+          "packageDependencies": [
+            ["collapsible-heading", "workspace:extensions/collapsible-heading"],
+            ["@bangle.dev/core", "npm:0.9.1"],
+            ["extension-helpers", "workspace:extension-helpers"],
+            ["utils", "workspace:utils"],
+            ["workspace", "workspace:workspace"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["collect-v8-coverage", [
@@ -9340,6 +9364,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["extension-helpers", [
+        ["workspace:extension-helpers", {
+          "packageLocation": "./extension-helpers/",
+          "packageDependencies": [
+            ["extension-helpers", "workspace:extension-helpers"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["external-editor", [
         ["npm:3.1.0", {
           "packageLocation": "./.yarn/cache/external-editor-npm-3.1.0-878e7807af-1c2a616a73.zip/node_modules/external-editor/",
@@ -10884,6 +10917,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["inline-backlink", "workspace:extensions/inline-backlink"],
             ["@bangle.dev/core", "npm:0.9.1"],
             ["config", "workspace:config"],
+            ["extension-helpers", "workspace:extension-helpers"],
             ["inline-palette", "virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],
@@ -10902,6 +10936,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
             ["@bangle.dev/core", "npm:0.9.1"],
             ["config", "workspace:config"],
+            ["extension-helpers", "workspace:extension-helpers"],
             ["inline-palette", "virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],

@@ -57,6 +57,12 @@
       "bangle-io-context/*": [
         "./bangle-io-context/*"
       ],
+      "extension-helpers": [
+        "./extension-helpers/index.js"
+      ],
+      "extension-helpers/*": [
+        "./extension-helpers/*"
+      ],
       "baby-fs": [
         "./js-libs/baby-fs/index.js"
       ],
@@ -80,6 +86,12 @@
       ],
       "inline-backlink/*": [
         "./extensions/inline-backlink/*"
+      ],
+      "collapsible-heading": [
+        "./extensions/collapsible-heading/index.js"
+      ],
+      "collapsible-heading/*": [
+        "./extensions/collapsible-heading/*"
       ]
     },
     "module": "esnext",

@@ -1,24 +1,27 @@
 import { inlinePalette } from 'inline-palette/index';
-import { inlineCommandPaletteKey } from './plugin-key';
 import { InlineCommandPalette } from './inline-command-palette';
+import { extensionName, paletteMarkName, palettePluginKey } from './config';
+import { Extension } from 'extension-helpers';
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };
 
-const extension = {
-  name: 'inline-command-palette',
+const extension = Extension.create({
+  name: extensionName,
   editorReactComponent: InlineCommandPalette,
   editorSpecs: [
-    inlinePalette.spec({ markName: 'inlineCommandPalette', trigger: '/' }),
+    inlinePalette.spec({ markName: paletteMarkName, trigger: '/' }),
   ],
-  editorPlugins: inlinePalette.plugins({
-    key: inlineCommandPaletteKey,
-    markName: 'inlineCommandPalette',
-    tooltipRenderOpts: {
-      getScrollContainer,
-    },
-  }),
-};
+  editorPlugins: [
+    inlinePalette.plugins({
+      key: palettePluginKey,
+      markName: paletteMarkName,
+      tooltipRenderOpts: {
+        getScrollContainer,
+      },
+    }),
+  ],
+});
 
 export default extension;

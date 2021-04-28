@@ -8,7 +8,6 @@ import { timestamp } from '@bangle.dev/timestamp';
 import stopwatch from '@bangle.dev/react-stopwatch';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu } from '@bangle.dev/react-menu';
-import { collapsibleHeadingDeco } from './collapsible-heading-deco';
 import { tablePlugins } from '@bangle.dev/table';
 export const menuKey = new PluginKey('menuKey');
 export const emojiSuggestKey = new PluginKey('emojiSuggestKey');
@@ -98,7 +97,6 @@ export const getPlugins = (wsPath, sendRequest) => {
     stopwatch.plugins(),
     trailingNode.plugins(),
     timestamp.plugins(),
-    collapsibleHeadingDeco.plugins(),
     new Plugin({
       props: {
         // This is needed by jumping to a heading to atleast show up

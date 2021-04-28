@@ -3653,6 +3653,7 @@ __metadata:
     "@testing-library/user-event": ^13.1.5
     baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
+    collapsible-heading: "workspace:*"
     config: "workspace:*"
     editor: "workspace:*"
     history: ^4.0.0
@@ -4912,6 +4913,17 @@ __metadata:
   checksum: 17d5666611f9b16d64fdf48176d9b7fb1c7d1c1607a189f7e600040a11a6616982876af148230336adb7d8fe728a559f743a4e29db3747e3b1a32fa7f4529681
   languageName: node
   linkType: hard
+
+"collapsible-heading@workspace:*, collapsible-heading@workspace:extensions/collapsible-heading":
+  version: 0.0.0-use.local
+  resolution: "collapsible-heading@workspace:extensions/collapsible-heading"
+  dependencies:
+    "@bangle.dev/core": 0.9.1
+    extension-helpers: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "collect-v8-coverage@npm:^1.0.0":
   version: 1.0.1
@@ -6761,6 +6773,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"extension-helpers@workspace:*, extension-helpers@workspace:extension-helpers":
+  version: 0.0.0-use.local
+  resolution: "extension-helpers@workspace:extension-helpers"
+  languageName: unknown
+  linkType: soft
+
 "external-editor@npm:^3.0.3":
   version: 3.1.0
   resolution: "external-editor@npm:3.1.0"
@@ -8139,6 +8157,7 @@ fsevents@~2.3.1:
   dependencies:
     "@bangle.dev/core": 0.9.1
     config: "workspace:*"
+    extension-helpers: "workspace:*"
     inline-palette: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
@@ -8155,6 +8174,7 @@ fsevents@~2.3.1:
   dependencies:
     "@bangle.dev/core": 0.9.1
     config: "workspace:*"
+    extension-helpers: "workspace:*"
     inline-palette: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0

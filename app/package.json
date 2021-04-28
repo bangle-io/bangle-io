@@ -36,6 +36,7 @@
     "@sentry/tracing": "^6.3.1",
     "baby-fs": "workspace:*",
     "bangle-io-context": "workspace:*",
+    "collapsible-heading": "workspace:*",
     "config": "workspace:*",
     "editor": "workspace:*",
     "history": "^4.0.0",

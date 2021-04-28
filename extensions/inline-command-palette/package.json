@@ -21,6 +21,7 @@
   "dependencies": {
     "@bangle.dev/core": "0.9.1",
     "config": "workspace:*",
+    "extension-helpers": "workspace:*",
     "inline-palette": "workspace:*",
     "react": "16.14.0",
     "react-dom": "16.14.0",

@@ -1,6 +1,7 @@
 import React from 'react';
 import { inlinePalette } from 'inline-palette/index';
 import { Link } from 'react-router-dom';
+import { Extension } from 'extension-helpers';
 
 import { InlineBacklinkPalette } from './InlineBacklinkPalette';
 import * as inlineBacklink from './inline-backlink-node';
@@ -11,12 +12,12 @@ import {
   paletteMark,
   palettePluginKey,
 } from './config';
-//
+
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };
 
-const extension = {
+const extension = Extension.create({
   name: extensionName,
   editorSpecs: [
     inlineBacklink.spec(),
@@ -48,6 +49,6 @@ const extension = {
       );
     },
   },
-};
+});
 
 export default extension;

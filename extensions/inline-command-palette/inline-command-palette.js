@@ -7,7 +7,7 @@ import {
   replaceSuggestionMarkWith,
 } from 'inline-palette/index';
 import { SidebarRow } from 'ui-components';
-import { inlineCommandPaletteKey } from './plugin-key';
+import { palettePluginKey } from './config';
 
 const OneDayMilliseconds = 24 * 60 * 60 * 1000;
 let getTimestamp = (type) => {
@@ -60,15 +60,16 @@ const insertDateCommand = (type) => {
     rafCommandExec(view, (state, dispatch, view) => {
       dispatch?.(state.tr.replaceSelectionWith(state.schema.text(' ')));
     });
-    return replaceSuggestionMarkWith(
-      inlineCommandPaletteKey,
-      getTimestamp(type),
-    )(state, dispatch, view);
+    return replaceSuggestionMarkWith(palettePluginKey, getTimestamp(type))(
+      state,
+      dispatch,
+      view,
+    );
   };
 };
 
 export function InlineCommandPalette() {
-  const { query, counter } = useInlinePaletteQuery(inlineCommandPaletteKey);
+  const { query, counter } = useInlinePaletteQuery(palettePluginKey);
 
   const items = useMemo(() => {
     const items = [
@@ -116,7 +117,7 @@ export function InlineCommandPalette() {
   }, [query]);
 
   const { tooltipContentDOM, getItemProps } = useInlinePaletteItems(
-    inlineCommandPaletteKey,
+    palettePluginKey,
     items,
     counter,
   );

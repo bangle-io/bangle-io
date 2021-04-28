@@ -64,7 +64,6 @@ export const rawSpecs = [
   tableCell,
   tableHeader,
   tableRow,
-
   image.spec(),
   bold.spec(),
   code.spec(),
