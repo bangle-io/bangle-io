@@ -6,7 +6,7 @@ import { emoji, emojisArray } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import stopwatch from '@bangle.dev/react-stopwatch';
-import sticker from '@bangle.dev/react-sticker';
+// import sticker from '@bangle.dev/react-sticker';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { collapsibleHeadingDeco } from './collapsible-heading-deco';
@@ -97,7 +97,7 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
     stopwatch.plugins(),
     trailingNode.plugins(),
     timestamp.plugins(),
-    sticker.plugins(),
+    // sticker.plugins(),
     collapsibleHeadingDeco.plugins(),
     new Plugin({
       props: {

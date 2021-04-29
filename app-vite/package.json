@@ -2,7 +2,7 @@
   "name": "app-vite",
   "version": "0.0.0",
   "scripts": {
-    "g:dev": "vite",
+    "g:vite-dev": "vite",
     "g:vite-build": "vite build",
     "g:vite-serve": "vite preview"
   },
