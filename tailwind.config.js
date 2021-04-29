@@ -4,5 +4,5 @@ module.exports = {
   },
   variants: {},
   plugins: [],
-  purge: ['./**/*.js'],
+  purge: ['./**/*.js', './**/*.jsx'],
 };
