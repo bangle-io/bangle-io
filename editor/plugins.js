@@ -1,7 +1,7 @@
 import { uuid } from '@bangle.dev/core/utils/js-utils';
 import { Plugin, PluginKey } from '@bangle.dev/core/prosemirror/state';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
-import * as coreComps from '@bangle.dev/core/components/index';
+import { components as coreComps } from '@bangle.dev/core';
 import { emoji, emojisArray } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';

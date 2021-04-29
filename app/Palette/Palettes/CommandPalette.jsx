@@ -20,7 +20,7 @@ import {
   moveListItemUp,
   moveListItemDown,
   defaultKeys as listItemKeys,
-} from '@bangle.dev/core/components/list-item';
+} from '@bangle.dev/core/components/list-item/list-item';
 import {
   convertToParagraph,
   insertEmptyParagraphAbove,

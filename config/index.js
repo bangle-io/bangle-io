@@ -23,6 +23,12 @@ export const config = {
   isIntegration: nodeEnv === 'integration',
 };
 
+console.log({
+  APP_ENV,
+  RELEASE_ID,
+  DEPLOY_ENV,
+});
+
 export const SPLIT_SCREEN_MIN_WIDTH = parseInt(
   getComputedStyle(document.documentElement).getPropertyValue(
     '--widescreen-min-width',
