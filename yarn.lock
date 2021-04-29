@@ -1742,6 +1742,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bangle.dev/core@npm:0.10.2":
+  version: 0.10.2
+  resolution: "@bangle.dev/core@npm:0.10.2"
+  dependencies:
+    prosemirror-commands: ^1.1.4
+    prosemirror-dropcursor: ^1.3.2
+    prosemirror-gapcursor: ^1.1.5
+    prosemirror-history: ^1.1.3
+    prosemirror-inputrules: ^1.1.3
+    prosemirror-keymap: ^1.1.4
+    prosemirror-model: ^1.12.0
+    prosemirror-schema-list: ^1.1.4
+    prosemirror-state: ^1.3.3
+    prosemirror-tables: ^1.1.1
+    prosemirror-transform: ^1.2.8
+    prosemirror-utils: ^0.9.6
+    prosemirror-view: ^1.16.3
+  checksum: 152b74d5fb108dcc387e346593c4a29a43a32e89a3e7de3348d3ed0f0a1c6af4e04583147a00a6931533b9bfbe9e6a302e96a88e4ae8c0f22690adf7566e6cfa
+  languageName: node
+  linkType: hard
+
 "@bangle.dev/core@npm:0.10.3":
   version: 0.10.3
   resolution: "@bangle.dev/core@npm:0.10.3"
@@ -1760,27 +1781,6 @@ __metadata:
     prosemirror-utils: ^0.9.6
     prosemirror-view: ^1.16.3
   checksum: 64d6c4849897c4274187ea6e1bd54aafaccf804406da58b142a62190854af327e118344abbc4856b6d7d22b0281dee19d058ee9298c88e40fdfc033724f37a75
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/core@npm:0.9.1":
-  version: 0.9.1
-  resolution: "@bangle.dev/core@npm:0.9.1"
-  dependencies:
-    prosemirror-commands: ^1.1.4
-    prosemirror-dropcursor: ^1.3.2
-    prosemirror-gapcursor: ^1.1.5
-    prosemirror-history: ^1.1.3
-    prosemirror-inputrules: ^1.1.3
-    prosemirror-keymap: ^1.1.4
-    prosemirror-model: ^1.12.0
-    prosemirror-schema-list: ^1.1.4
-    prosemirror-state: ^1.3.3
-    prosemirror-tables: ^1.1.1
-    prosemirror-transform: ^1.2.8
-    prosemirror-utils: ^0.9.6
-    prosemirror-view: ^1.16.3
-  checksum: 910267f31a9e12defeea2623cb7146e3be881fe97b9ff57cf918a50e450781ee44f5bd342c5c4943e538b5113ed9c54c2d775cf6af0c165eff6e68740dc8a66a
   languageName: node
   linkType: hard
 
@@ -1878,6 +1878,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bangle.dev/react@npm:0.10.2":
+  version: 0.10.2
+  resolution: "@bangle.dev/react@npm:0.10.2"
+  dependencies:
+    prop-types: ^15.7.2
+    punycode: ^2.1.1
+  peerDependencies:
+    "@bangle.dev/core": "*"
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: 4891db95177001f8d3afc98c4acb15ebe625629a7b59abc525505c44bd92a2259607eb52049ec434665e19ac0f217db4afb3e4b5e18dda11a76dd5267f4715d4
+  languageName: node
+  linkType: hard
+
 "@bangle.dev/react@npm:0.10.3":
   version: 0.10.3
   resolution: "@bangle.dev/react@npm:0.10.3"
@@ -1889,20 +1903,6 @@ __metadata:
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
   checksum: 6accbb1466cb09d03c921a5789676bba3900e7f730a21df6dfabbfed55d3f4f49805f1126206043d6759fec922b5fba18c48157b9e7c191a5adb3a2a33e81c8f
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/react@npm:0.9.1":
-  version: 0.9.1
-  resolution: "@bangle.dev/react@npm:0.9.1"
-  dependencies:
-    prop-types: ^15.7.2
-    punycode: ^2.1.1
-  peerDependencies:
-    "@bangle.dev/core": "*"
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: 4842e32bb706662745d8e0af877a7fde8fa6b7a89a7b949e62d7713db614c673d1bfcc0af8ddf080efae4e232bf9bd0cbe358d128875520069eb358474bc6552
   languageName: node
   linkType: hard
 
@@ -1936,6 +1936,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bangle.dev/tooltip@npm:0.10.2":
+  version: 0.10.2
+  resolution: "@bangle.dev/tooltip@npm:0.10.2"
+  dependencies:
+    "@popperjs/core": ^2.5.4
+  peerDependencies:
+    "@bangle.dev/core": "*"
+  checksum: 3a49a960c73c25220f148f026d6834ea9dba3aa9dd29be393c1d60a0118bc54670b858ad1f475f96e21ae279357aee215874a21437707cd2c3e2473378247b72
+  languageName: node
+  linkType: hard
+
 "@bangle.dev/tooltip@npm:0.10.3":
   version: 0.10.3
   resolution: "@bangle.dev/tooltip@npm:0.10.3"
@@ -1944,17 +1955,6 @@ __metadata:
   peerDependencies:
     "@bangle.dev/core": "*"
   checksum: c4ff63693140a0ee22ee4d743c3f0003bc4b8b4d9c90bd34d5bc1400066c444d71c55b54e5db4ed6c5232da61020e0f026df1c3b0f92a1b5cfbd470053d7985a
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/tooltip@npm:0.9.1":
-  version: 0.9.1
-  resolution: "@bangle.dev/tooltip@npm:0.9.1"
-  dependencies:
-    "@popperjs/core": ^2.5.4
-  peerDependencies:
-    "@bangle.dev/core": "*"
-  checksum: 9784f120dc9fefd785b2d3c82d64825bd38a9c61c903888accd3e087dea14cb145423a0327b30927e6dd6686e496dcd9c3ce3eb722b71aea7e9a2161918cef8a
   languageName: node
   linkType: hard
 
@@ -4151,7 +4151,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bangle-io-context@workspace:bangle-io-context"
   dependencies:
-    "@bangle.dev/core": 0.9.1
+    "@bangle.dev/core": 0.10.2
     react: 16.14.0
     react-dom: 16.14.0
     utils: "workspace:*"
@@ -4918,7 +4918,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "collapsible-heading@workspace:extensions/collapsible-heading"
   dependencies:
-    "@bangle.dev/core": 0.9.1
+    "@bangle.dev/core": 0.10.2
     extension-helpers: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
@@ -8155,7 +8155,7 @@ fsevents@~2.3.1:
   version: 0.0.0-use.local
   resolution: "inline-backlink@workspace:extensions/inline-backlink"
   dependencies:
-    "@bangle.dev/core": 0.9.1
+    "@bangle.dev/core": 0.10.2
     config: "workspace:*"
     extension-helpers: "workspace:*"
     inline-palette: "workspace:*"
@@ -8165,6 +8165,8 @@ fsevents@~2.3.1:
     ui-components: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
+  peerDependencies:
+    react-router-dom: "*"
   languageName: unknown
   linkType: soft
 
@@ -8172,7 +8174,7 @@ fsevents@~2.3.1:
   version: 0.0.0-use.local
   resolution: "inline-command-palette@workspace:extensions/inline-command-palette"
   dependencies:
-    "@bangle.dev/core": 0.9.1
+    "@bangle.dev/core": 0.10.2
     config: "workspace:*"
     extension-helpers: "workspace:*"
     inline-palette: "workspace:*"
@@ -8187,9 +8189,9 @@ fsevents@~2.3.1:
   version: 0.0.0-use.local
   resolution: "inline-palette@workspace:js-libs/inline-palette"
   dependencies:
-    "@bangle.dev/core": 0.9.1
-    "@bangle.dev/react": 0.9.1
-    "@bangle.dev/tooltip": 0.9.1
+    "@bangle.dev/core": 0.10.2
+    "@bangle.dev/react": 0.10.2
+    "@bangle.dev/tooltip": 0.10.2
     react: 16.14.0
     react-dom: 16.14.0
     utils: "workspace:*"

@@ -109,7 +109,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["e2e", ["workspace:e2e"]],
       ["editor", ["workspace:editor"]],
       ["extension-helpers", ["workspace:extension-helpers"]],
-      ["inline-backlink", ["workspace:extensions/inline-backlink"]],
+      ["inline-backlink", ["virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#workspace:extensions/inline-backlink", "workspace:extensions/inline-backlink"]],
       ["inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["inline-palette", ["virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#workspace:js-libs/inline-palette", "workspace:js-libs/inline-palette"]],
       ["style", ["workspace:style"]],
@@ -3008,10 +3008,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@bangle.dev/core", [
-        ["npm:0.10.3", {
-          "packageLocation": "./.yarn/cache/@bangle.dev-core-npm-0.10.3-36741855ad-64d6c48498.zip/node_modules/@bangle.dev/core/",
+        ["npm:0.10.2", {
+          "packageLocation": "./.yarn/cache/@bangle.dev-core-npm-0.10.2-d68860e0d6-152b74d5fb.zip/node_modules/@bangle.dev/core/",
           "packageDependencies": [
-            ["@bangle.dev/core", "npm:0.10.3"],
+            ["@bangle.dev/core", "npm:0.10.2"],
             ["prosemirror-commands", "npm:1.1.4"],
             ["prosemirror-dropcursor", "npm:1.3.2"],
             ["prosemirror-gapcursor", "npm:1.1.5"],
@@ -3028,10 +3028,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:0.9.1", {
-          "packageLocation": "./.yarn/cache/@bangle.dev-core-npm-0.9.1-b1a304a7ba-910267f31a.zip/node_modules/@bangle.dev/core/",
+        ["npm:0.10.3", {
+          "packageLocation": "./.yarn/cache/@bangle.dev-core-npm-0.10.3-36741855ad-64d6c48498.zip/node_modules/@bangle.dev/core/",
           "packageDependencies": [
-            ["@bangle.dev/core", "npm:0.9.1"],
+            ["@bangle.dev/core", "npm:0.10.3"],
             ["prosemirror-commands", "npm:1.1.4"],
             ["prosemirror-dropcursor", "npm:1.3.2"],
             ["prosemirror-gapcursor", "npm:1.1.5"],
@@ -3129,17 +3129,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@bangle.dev/react", [
+        ["npm:0.10.2", {
+          "packageLocation": "./.yarn/cache/@bangle.dev-react-npm-0.10.2-990f0c2656-4891db9517.zip/node_modules/@bangle.dev/react/",
+          "packageDependencies": [
+            ["@bangle.dev/react", "npm:0.10.2"]
+          ],
+          "linkType": "SOFT",
+        }],
         ["npm:0.10.3", {
           "packageLocation": "./.yarn/cache/@bangle.dev-react-npm-0.10.3-0cffb77fc3-6accbb1466.zip/node_modules/@bangle.dev/react/",
           "packageDependencies": [
             ["@bangle.dev/react", "npm:0.10.3"]
-          ],
-          "linkType": "SOFT",
-        }],
-        ["npm:0.9.1", {
-          "packageLocation": "./.yarn/cache/@bangle.dev-react-npm-0.9.1-944d72f86e-4842e32bb7.zip/node_modules/@bangle.dev/react/",
-          "packageDependencies": [
-            ["@bangle.dev/react", "npm:0.9.1"]
           ],
           "linkType": "SOFT",
         }],
@@ -3166,11 +3166,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.9.1", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-virtual-f65d0dbb61/0/cache/@bangle.dev-react-npm-0.9.1-944d72f86e-4842e32bb7.zip/node_modules/@bangle.dev/react/",
+        ["virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.10.2", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-react-virtual-6007276840/0/cache/@bangle.dev-react-npm-0.10.2-990f0c2656-4891db9517.zip/node_modules/@bangle.dev/react/",
           "packageDependencies": [
-            ["@bangle.dev/react", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.9.1"],
-            ["@bangle.dev/core", "npm:0.9.1"],
+            ["@bangle.dev/react", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.10.2"],
+            ["@bangle.dev/core", "npm:0.10.2"],
             ["@types/bangle.dev__core", null],
             ["@types/react", null],
             ["@types/react-dom", null],
@@ -3417,17 +3417,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@bangle.dev/tooltip", [
+        ["npm:0.10.2", {
+          "packageLocation": "./.yarn/cache/@bangle.dev-tooltip-npm-0.10.2-e20eb8dde2-3a49a960c7.zip/node_modules/@bangle.dev/tooltip/",
+          "packageDependencies": [
+            ["@bangle.dev/tooltip", "npm:0.10.2"]
+          ],
+          "linkType": "SOFT",
+        }],
         ["npm:0.10.3", {
           "packageLocation": "./.yarn/cache/@bangle.dev-tooltip-npm-0.10.3-98233b0887-c4ff636931.zip/node_modules/@bangle.dev/tooltip/",
           "packageDependencies": [
             ["@bangle.dev/tooltip", "npm:0.10.3"]
-          ],
-          "linkType": "SOFT",
-        }],
-        ["npm:0.9.1", {
-          "packageLocation": "./.yarn/cache/@bangle.dev-tooltip-npm-0.9.1-9c78bc0e85-9784f120dc.zip/node_modules/@bangle.dev/tooltip/",
-          "packageDependencies": [
-            ["@bangle.dev/tooltip", "npm:0.9.1"]
           ],
           "linkType": "SOFT",
         }],
@@ -3445,11 +3445,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.9.1", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-tooltip-virtual-3dd260191c/0/cache/@bangle.dev-tooltip-npm-0.9.1-9c78bc0e85-9784f120dc.zip/node_modules/@bangle.dev/tooltip/",
+        ["virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.10.2", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-tooltip-virtual-60986fdc7f/0/cache/@bangle.dev-tooltip-npm-0.10.2-e20eb8dde2-3a49a960c7.zip/node_modules/@bangle.dev/tooltip/",
           "packageDependencies": [
-            ["@bangle.dev/tooltip", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.9.1"],
-            ["@bangle.dev/core", "npm:0.9.1"],
+            ["@bangle.dev/tooltip", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.10.2"],
+            ["@bangle.dev/core", "npm:0.10.2"],
             ["@popperjs/core", "npm:2.6.0"],
             ["@types/bangle.dev__core", null]
           ],
@@ -5589,7 +5589,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
             ["history", "npm:4.10.1"],
-            ["inline-backlink", "workspace:extensions/inline-backlink"],
+            ["inline-backlink", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#workspace:extensions/inline-backlink"],
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
             ["inline-palette", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#workspace:js-libs/inline-palette"],
             ["prop-types", "npm:15.7.2"],
@@ -6361,7 +6361,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./bangle-io-context/",
           "packageDependencies": [
             ["bangle-io-context", "workspace:bangle-io-context"],
-            ["@bangle.dev/core", "npm:0.9.1"],
+            ["@bangle.dev/core", "npm:0.10.2"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],
             ["utils", "workspace:utils"]
@@ -7125,7 +7125,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/collapsible-heading/",
           "packageDependencies": [
             ["collapsible-heading", "workspace:extensions/collapsible-heading"],
-            ["@bangle.dev/core", "npm:0.9.1"],
+            ["@bangle.dev/core", "npm:0.10.2"],
             ["extension-helpers", "workspace:extension-helpers"],
             ["utils", "workspace:utils"],
             ["workspace", "workspace:workspace"]
@@ -10911,11 +10911,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["inline-backlink", [
+        ["virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#workspace:extensions/inline-backlink", {
+          "packageLocation": "./.yarn/__virtual__/inline-backlink-virtual-8a8b9c89b2/1/extensions/inline-backlink/",
+          "packageDependencies": [
+            ["inline-backlink", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#workspace:extensions/inline-backlink"],
+            ["@bangle.dev/core", "npm:0.10.2"],
+            ["@types/react-router-dom", null],
+            ["config", "workspace:config"],
+            ["extension-helpers", "workspace:extension-helpers"],
+            ["inline-palette", "virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],
+            ["react-router-dom", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:5.2.0"],
+            ["ui-components", "workspace:ui-components"],
+            ["utils", "workspace:utils"],
+            ["workspace", "workspace:workspace"]
+          ],
+          "packagePeers": [
+            "@types/react-router-dom",
+            "react-router-dom"
+          ],
+          "linkType": "SOFT",
+        }],
         ["workspace:extensions/inline-backlink", {
           "packageLocation": "./extensions/inline-backlink/",
           "packageDependencies": [
             ["inline-backlink", "workspace:extensions/inline-backlink"],
-            ["@bangle.dev/core", "npm:0.9.1"],
+            ["@bangle.dev/core", "npm:0.10.2"],
             ["config", "workspace:config"],
             ["extension-helpers", "workspace:extension-helpers"],
             ["inline-palette", "virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette"],
@@ -10934,7 +10956,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/inline-command-palette/",
           "packageDependencies": [
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
-            ["@bangle.dev/core", "npm:0.9.1"],
+            ["@bangle.dev/core", "npm:0.10.2"],
             ["config", "workspace:config"],
             ["extension-helpers", "workspace:extension-helpers"],
             ["inline-palette", "virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette"],
@@ -10951,9 +10973,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/inline-palette-virtual-faa710d589/1/js-libs/inline-palette/",
           "packageDependencies": [
             ["inline-palette", "virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette"],
-            ["@bangle.dev/core", "npm:0.9.1"],
-            ["@bangle.dev/react", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.9.1"],
-            ["@bangle.dev/tooltip", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.9.1"],
+            ["@bangle.dev/core", "npm:0.10.2"],
+            ["@bangle.dev/react", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.10.2"],
+            ["@bangle.dev/tooltip", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.10.2"],
             ["@types/bangle.dev__core", null],
             ["@types/bangle.dev__react", null],
             ["@types/bangle.dev__tooltip", null],
@@ -11021,9 +11043,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-libs/inline-palette/",
           "packageDependencies": [
             ["inline-palette", "workspace:js-libs/inline-palette"],
-            ["@bangle.dev/core", "npm:0.9.1"],
-            ["@bangle.dev/react", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.9.1"],
-            ["@bangle.dev/tooltip", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.9.1"],
+            ["@bangle.dev/core", "npm:0.10.2"],
+            ["@bangle.dev/react", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.10.2"],
+            ["@bangle.dev/tooltip", "virtual:faa710d58905010be038cd1115fe3f3874be2a0101cd7a1c6929de34c416791dcd0d47435510f50234e83c35c8050c9566575fd8415f865d4bedd9770c1a7ff8#npm:0.10.2"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],
             ["utils", "workspace:utils"],
