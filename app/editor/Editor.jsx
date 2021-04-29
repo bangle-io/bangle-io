@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect } from 'react';
 
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
-import sticker from '@bangle.dev/react-sticker';
+// import sticker from '@bangle.dev/react-sticker';
 import { EmojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import {
   FloatingMenu,
@@ -59,15 +59,15 @@ export function Editor({ editorId, wsPath }) {
 
   const renderNodeViews = useCallback(
     ({ node, updateAttrs, children, selected }) => {
-      if (node.type.name === 'sticker') {
-        return (
-          <sticker.Sticker
-            node={node}
-            updateAttrs={updateAttrs}
-            selected={selected}
-          />
-        );
-      }
+      // if (node.type.name === 'sticker') {
+      //   return (
+      //     <sticker.Sticker
+      //       node={node}
+      //       updateAttrs={updateAttrs}
+      //       selected={selected}
+      //     />
+      //   );
+      // }
 
       if (node.type.name === 'stopwatch') {
         return <stopwatch.Stopwatch node={node} updateAttrs={updateAttrs} />;

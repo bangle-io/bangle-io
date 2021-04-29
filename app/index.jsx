@@ -6,8 +6,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { EditorManager } from './editor/EditorManager';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
-import { createBrowserHistory } from 'history';
-const history = createBrowserHistory();
 
 window.Sentry.onLoad(function () {
   import(
@@ -32,7 +30,7 @@ window.Sentry.onLoad(function () {
 const root = document.getElementById('root');
 
 ReactDOM.render(
-  <Router history={history}>
+  <Router>
     <UIManager>
       <EditorManager>
         <App />
