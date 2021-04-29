@@ -86,9 +86,10 @@ test('create a new page saved in browser', async () => {
   const editorHandle = await page.$('.bangle-editor');
   await clearEditor(editorHandle);
 
-  await editorHandle.type('# Wow');
-  await editorHandle.press('Enter');
-  await editorHandle.type('[ ] list');
+  await editorHandle.type('# Wow', { delay: 3 });
+  await editorHandle.press('Enter', { delay: 20 });
+  await editorHandle.type('[ ] list', { delay: 3 });
+  await sleep(20);
 
   expect(
     await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML)),

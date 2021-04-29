@@ -1,7 +1,7 @@
 import { FILE_PALETTE_MAX_RECENT_FILES } from 'config/index';
 import { dedupeArray, useLocalStorage, weakCache } from 'utils/index';
 import { useGetCachedWorkspaceFiles, useWorkspacePath } from 'workspace';
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 export function useRecordRecentWsPaths() {
   let [files] = useGetCachedWorkspaceFiles();

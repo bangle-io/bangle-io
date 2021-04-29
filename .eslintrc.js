@@ -21,6 +21,7 @@ module.exports = {
     Plugin: 'off',
     Image: 'off',
   },
+
   rules: {
     'curly': 'error',
     'no-process-env': 'error',
@@ -41,11 +42,16 @@ module.exports = {
     'jest/no-disabled-tests': 'error',
   },
   settings: {
-    jest: {
+    'jest': {
       version: '26',
     },
-    react: {
+    'react': {
       version: '16',
+    },
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx'],
+      },
     },
   },
 };

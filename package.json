@@ -13,6 +13,8 @@
     "ui-components",
     "js-libs/*",
     "e2e",
+    "app-vite",
+    "app-webpack",
     "bangle-io-context"
   ],
   "authors": [
@@ -33,7 +35,8 @@
   "scripts": {
     "lint": "yarn prettier --check . && yarn eslint .",
     "test": "yarn lint && yarn jest",
-    "start": "yarn webpack serve --env development",
+    "start": "yarn g:vite-dev",
+    "webpack-start": "yarn webpack serve --env development",
     "build": "NODE_ENV=production yarn webpack --env production",
     "g:build-dev-serve": "NODE_ENV=development yarn webpack --env development && yarn run  http-server build -p 1234",
     "g:build-prod-serve": "NODE_ENV=production yarn webpack --env production && yarn run http-server build -p 1234",

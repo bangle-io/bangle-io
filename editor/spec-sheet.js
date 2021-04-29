@@ -13,7 +13,7 @@ import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import { SpecRegistry } from '@bangle.dev/core/spec-registry';
 import stopwatch from '@bangle.dev/react-stopwatch';
-import sticker from '@bangle.dev/react-sticker';
+// import sticker from '@bangle.dev/react-sticker';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
 import {
@@ -78,6 +78,6 @@ export const specRegistry = new SpecRegistry([
   stopwatch.spec(),
   trailingNode.spec(),
   timestamp.spec(),
-  sticker.spec(),
+  // sticker.spec(),
   markdownFrontMatter.spec(),
 ]);

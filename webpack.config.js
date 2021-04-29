@@ -25,9 +25,10 @@ module.exports = (env, argv) => {
   return {
     target: 'web',
     mode,
-    entry: './app/index.js',
+    entry: './app/index.jsx',
     devtool: true ? 'source-map' : 'eval-source-map',
     resolve: {
+      extensions: ['.jsx', '.js', '...'],
       // TODO fix me punycode
       fallback: { punycode: require.resolve('punycode/') },
     },
@@ -111,7 +112,7 @@ module.exports = (env, argv) => {
           use: ['file-loader'],
         },
         {
-          test: /\.js$/,
+          test: /\.(js|jsx)$/,
           exclude: /node_modules/,
           use: {
             loader: require.resolve('babel-loader'),
