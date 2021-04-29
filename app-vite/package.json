@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "g:dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "g:vite-build": "vite build",
+    "g:vite-serve": "vite preview"
   },
   "dependencies": {
     "app": "workspace:*",
