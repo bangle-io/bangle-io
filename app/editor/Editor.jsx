@@ -22,7 +22,6 @@ import {
 } from '@bangle.dev/react-menu';
 import { menuKey, emojiSuggestKey } from 'editor/index';
 import { EditorManagerContext } from './EditorManager';
-import { resolvePath } from 'workspace';
 import { EditorComponents } from 'bangle-io-context';
 
 const LOG = false;
@@ -33,11 +32,13 @@ Editor.propTypes = {
   editorId: PropTypes.number.isRequired,
 };
 
-export function Editor({ editorId, wsPath }) {
-  const { sendRequest, setEditor, bangleIOContext } = useContext(
-    EditorManagerContext,
-  );
-
+export function Editor({
+  editorId,
+  wsPath,
+  bangleIOContext,
+  sendRequest,
+  setEditor,
+}) {
   useEffect(() => {
     log('mounting editor', editorId, wsPath);
     return () => {

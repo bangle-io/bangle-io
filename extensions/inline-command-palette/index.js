@@ -1,5 +1,5 @@
 import { inlinePalette } from 'inline-palette/index';
-import { InlineCommandPalette } from './inline-command-palette';
+import { InlineCommandPalette } from './InlineCommandPalette';
 import { extensionName, paletteMarkName, palettePluginKey } from './config';
 import { Extension } from 'extension-helpers';
 

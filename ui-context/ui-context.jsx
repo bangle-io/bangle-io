@@ -5,8 +5,65 @@ import { applyTheme } from 'style/index';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
 const DEFAULT_PALETTE = 'file';
+const persistKey = 'UIManager0.724';
 
-export const UIManagerContext = createContext();
+export class UIState {
+  /**
+   *
+   * @param {*} obj
+   * @param {*} restore if true restore any value from localStorage
+   */
+  constructor(obj, restore) {
+    this.dispatch = undefined;
+
+    if (restore) {
+      obj = Object.assign(obj, retrievePersistedState());
+    }
+
+    this.sidebar = obj.sidebar;
+    this.widescreen = obj.widescreen;
+    this.paletteType = obj.paletteType;
+    this.paletteInitialQuery = obj.paletteInitialQuery;
+    this.paletteMetadata = obj.paletteMetadata;
+    this.theme = obj.theme;
+
+    persistState({ sidebar: this.sidebar, theme: this.theme });
+
+    if (
+      obj.theme === 'dark' ||
+      (!this.theme &&
+        window?.matchMedia?.('(prefers-color-scheme: dark)').matches)
+    ) {
+      this.theme = 'dark';
+    } else {
+      this.theme = 'light';
+    }
+  }
+
+  // Derived field
+  get hideEditorArea() {
+    if (this.widescreen) {
+      return false;
+    }
+
+    return Boolean(this.paletteType || this.sidebar);
+  }
+}
+
+export const UIManagerContext = createContext(
+  new UIState(
+    {
+      // UI
+      sidebar: null,
+      widescreen: checkWidescreen(),
+      paletteType: undefined,
+      paletteInitialQuery: undefined,
+      paletteMetadata: undefined,
+      theme: null,
+    },
+    true,
+  ),
+);
 
 function setRootWidescreenClass(widescreen) {
   const root = document.getElementById('root');
@@ -130,51 +187,6 @@ const reducer = (state, action) => {
       throw new Error(`Unrecognized action "${action.type}"`);
   }
 };
-
-export class UIState {
-  /**
-   *
-   * @param {*} obj
-   * @param {*} restore if true restore any value from localStorage
-   */
-  constructor(obj, restore) {
-    this.dispatch = undefined;
-
-    if (restore) {
-      obj = Object.assign(obj, retrievePersistedState());
-    }
-
-    this.sidebar = obj.sidebar;
-    this.widescreen = obj.widescreen;
-    this.paletteType = obj.paletteType;
-    this.paletteInitialQuery = obj.paletteInitialQuery;
-    this.paletteMetadata = obj.paletteMetadata;
-    this.theme = obj.theme;
-
-    persistState({ sidebar: this.sidebar, theme: this.theme });
-
-    if (
-      obj.theme === 'dark' ||
-      (!this.theme &&
-        window?.matchMedia?.('(prefers-color-scheme: dark)').matches)
-    ) {
-      this.theme = 'dark';
-    } else {
-      this.theme = 'light';
-    }
-  }
-
-  // Derived field
-  get hideEditorArea() {
-    if (this.widescreen) {
-      return false;
-    }
-
-    return Boolean(this.paletteType || this.sidebar);
-  }
-}
-
-const persistKey = 'UIManager0.724';
 
 function persistState(obj) {
   window.localStorage.setItem(persistKey, JSON.stringify(obj));

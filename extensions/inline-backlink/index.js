@@ -1,17 +1,9 @@
-import React from 'react';
 import { inlinePalette } from 'inline-palette/index';
-import { Link } from 'react-router-dom';
 import { Extension } from 'extension-helpers';
-
 import { InlineBacklinkPalette } from './InlineBacklinkPalette';
 import * as inlineBacklink from './inline-backlink-node';
-import { resolvePath } from 'workspace';
-import {
-  backLinkNodeName,
-  extensionName,
-  paletteMark,
-  palettePluginKey,
-} from './config';
+import { extensionName, paletteMark, palettePluginKey } from './config';
+import { renderReactNodeView } from './renderReactNodeView';
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
@@ -38,17 +30,7 @@ const extension = Extension.create({
   ],
   markdownItPlugins: [],
   editorReactComponent: InlineBacklinkPalette,
-  renderReactNodeView: {
-    [backLinkNodeName]: (nodeViewRenderArg) => {
-      return (
-        <Link
-          to={resolvePath(nodeViewRenderArg.node.attrs.wsPath).locationPath}
-        >
-          [[{nodeViewRenderArg.node.attrs.title}]]
-        </Link>
-      );
-    },
-  },
+  renderReactNodeView: renderReactNodeView,
 });
 
 export default extension;

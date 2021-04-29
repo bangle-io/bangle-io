@@ -23,8 +23,6 @@ import collapsibleHeading from 'collapsible-heading/index';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
-export const EditorManagerContext = React.createContext();
-
 const maxEditors = [undefined, undefined];
 const MAX_EDITOR = maxEditors.length;
 
@@ -36,6 +34,8 @@ const bangleIOContext = new BangleIOContext({
   // specRegistry: setupSpecRegistry(),
   markdownItPlugins: [emojiMarkdownItPlugin, frontMatterMarkdownItPlugin],
 });
+export const EditorManagerContext = React.createContext({});
+
 /**
  * Should be parent of all editors.
  */
@@ -103,6 +103,7 @@ export function EditorManager({ children }) {
     }
   }, [editors]);
 
+  console.log({ value });
   return (
     <EditorManagerContext.Provider value={value}>
       {children}

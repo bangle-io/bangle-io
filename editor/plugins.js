@@ -1,7 +1,7 @@
 import { uuid } from '@bangle.dev/core/utils/js-utils';
 import { Plugin, PluginKey } from '@bangle.dev/core/prosemirror/state';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
-import { components as coreComps } from '@bangle.dev/core';
+import { components } from '@bangle.dev/core';
 import { emoji, emojisArray } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
@@ -65,31 +65,31 @@ export const getPlugins = (wsPath, sendRequest) => {
       },
     }),
 
-    coreComps.bold.plugins(),
-    coreComps.code.plugins(),
-    coreComps.italic.plugins(),
-    coreComps.strike.plugins(),
-    coreComps.link.plugins(),
-    coreComps.underline.plugins(),
-    coreComps.paragraph.plugins(),
-    coreComps.blockquote.plugins(),
-    coreComps.bulletList.plugins(),
-    coreComps.codeBlock.plugins(),
-    coreComps.hardBreak.plugins(),
-    coreComps.heading.plugins({
+    components.bold.plugins(),
+    components.code.plugins(),
+    components.italic.plugins(),
+    components.strike.plugins(),
+    components.link.plugins(),
+    components.underline.plugins(),
+    components.paragraph.plugins(),
+    components.blockquote.plugins(),
+    components.bulletList.plugins(),
+    components.codeBlock.plugins(),
+    components.hardBreak.plugins(),
+    components.heading.plugins({
       keybindings: {
-        ...coreComps.heading.defaultKeys,
+        ...components.heading.defaultKeys,
         toggleCollapse: 'Shift-Meta-1',
         toH4: null,
         toH5: null,
         toH6: null,
       },
     }),
-    coreComps.horizontalRule.plugins(),
-    coreComps.listItem.plugins(),
-    coreComps.orderedList.plugins(),
-    coreComps.image.plugins(),
-    coreComps.history.plugins(),
+    components.horizontalRule.plugins(),
+    components.listItem.plugins(),
+    components.orderedList.plugins(),
+    components.image.plugins(),
+    components.history.plugins(),
     tablePlugins(),
     collab.plugins(collabOpts),
     emoji.plugins(),
