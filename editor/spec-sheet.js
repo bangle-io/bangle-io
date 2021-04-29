@@ -35,7 +35,7 @@ import {
   listItem,
   orderedList,
   image,
-} from '@bangle.dev/core/components/index';
+} from '@bangle.dev/core/components/components';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
 
 let headingSpec = heading.spec();
