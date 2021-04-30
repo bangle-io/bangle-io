@@ -35,13 +35,18 @@ const baseItem = {
 let _libraries;
 async function getTimeLibrary() {
   if (!_libraries) {
-    const [chrono, dayjs, localizedFormat] = await Promise.all([
+    let [chrono, dayjs, localizedFormat] = await Promise.all([
       import('chrono-node'),
       import('dayjs'),
       import('dayjs/plugin/localizedFormat'),
     ]);
-    dayjs.extend(localizedFormat.default);
-    _libraries = { chrono, dayjs: dayjs.default };
+
+    chrono = chrono.default || chrono;
+    dayjs = dayjs.default || dayjs;
+    localizedFormat = localizedFormat.default || localizedFormat;
+
+    dayjs.extend(localizedFormat);
+    _libraries = { chrono: chrono, dayjs: dayjs };
   }
   return _libraries;
 }
