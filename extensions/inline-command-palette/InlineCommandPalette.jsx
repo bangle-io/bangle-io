@@ -39,10 +39,10 @@ export function InlineCommandPalette() {
           queryMatch(item, query) && item.type === PALETTE_ITEM_REGULAR_TYPE,
       )
       .sort((a, b) => {
-        if (a.show) {
+        if (a.highPriority) {
           return 1;
         }
-        if (b.show) {
+        if (b.highPriority) {
           return 1;
         }
 
@@ -121,7 +121,7 @@ export function InlineCommandPalette() {
 }
 
 function queryMatch(command, query) {
-  if (command.show) {
+  if (command.skipFiltering) {
     return command;
   }
 

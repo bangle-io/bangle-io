@@ -52,4 +52,7 @@ export const keybindings = {
   toggleFileBrowser: new KeyBinding({
     key: 'Mod-e',
   }),
+  toggleInlineCommandPalette: new KeyBinding({
+    key: 'Mod-/',
+  }),
 };

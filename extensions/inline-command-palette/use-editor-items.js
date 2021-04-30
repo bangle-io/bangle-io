@@ -1,9 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  insertEmptyParagraphAbove,
-  insertEmptyParagraphBelow,
-  convertToParagraph,
-} from '@bangle.dev/core/components/paragraph';
+import { convertToParagraph } from '@bangle.dev/core/components/paragraph';
 import {
   toggleBulletList,
   toggleTodoList,
@@ -15,6 +11,10 @@ import { setBlockType } from '@bangle.dev/core/prosemirror/commands';
 
 import { palettePluginKey } from './config';
 import { PaletteItem } from './palette-item';
+import {
+  chainedInsertParagraphAbove,
+  chainedInsertParagraphBelow,
+} from './commands';
 
 export function useEditorItems(query) {
   const baseItem = [
@@ -22,10 +22,10 @@ export function useEditorItems(query) {
       uid: 'paraBelow',
       title: 'Insert paragraph below ⤵️',
       group: 'editor',
-      description: 'Inserts a new paragraph above this block',
+      description: 'Inserts a new paragraph below this block',
       editorExecuteCommand: ({}) => {
         return (state, dispatch, view) => {
-          rafCommandExec(view, insertEmptyParagraphBelow());
+          rafCommandExec(view, chainedInsertParagraphBelow());
           return replaceSuggestionMarkWith(palettePluginKey, '')(
             state,
             dispatch,
@@ -39,10 +39,10 @@ export function useEditorItems(query) {
       uid: 'paraAbove',
       title: 'Insert paragraph above ⤴️',
       group: 'editor',
-      description: 'Inserts a new paragraph below this block',
+      description: 'Inserts a new paragraph above this block',
       editorExecuteCommand: ({}) => {
         return (state, dispatch, view) => {
-          rafCommandExec(view, insertEmptyParagraphAbove());
+          rafCommandExec(view, chainedInsertParagraphAbove());
           return replaceSuggestionMarkWith(palettePluginKey, '')(
             state,
             dispatch,

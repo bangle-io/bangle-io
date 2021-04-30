@@ -16,7 +16,8 @@ export class PaletteItem {
       disabled,
       editorExecuteCommand,
       group,
-      show,
+      highPriority,
+      skipFiltering,
       ...otherKeys
     } = obj;
 
@@ -42,6 +43,7 @@ export class PaletteItem {
     this.disabled = disabled;
     this.editorExecuteCommand = editorExecuteCommand;
     this.group = group;
-    this.show = show;
+    this.highPriority = highPriority;
+    this.skipFiltering = skipFiltering;
   }
 }

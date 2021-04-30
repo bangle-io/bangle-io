@@ -64,7 +64,8 @@ export function useDateItems(query) {
       return parsedDates.map((p, i) =>
         PaletteItem.create({
           uid: 'parsedDate' + i,
-          show: true,
+          highPriority: true,
+          skipFiltering: true,
           title: 'Insert date',
           group: 'date',
           description: 'Insert "' + prettyPrintDate(dayjs, p.date()) + '"',
