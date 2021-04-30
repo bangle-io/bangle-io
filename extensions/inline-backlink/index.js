@@ -18,8 +18,7 @@ const extension = Extension.create({
       trigger: '[[',
     }),
   ],
-  editorPlugins: [
-    inlineBacklink.plugins(),
+  highPriorityEditorPlugins: [
     inlinePalette.plugins({
       key: palettePluginKey,
       markName: paletteMark,
@@ -28,6 +27,7 @@ const extension = Extension.create({
       },
     }),
   ],
+  editorPlugins: [inlineBacklink.plugins()],
   markdownItPlugins: [],
   editorReactComponent: InlineBacklinkPalette,
   renderReactNodeView: renderReactNodeView,

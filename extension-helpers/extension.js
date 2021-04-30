@@ -10,7 +10,16 @@ export class Extension {
       markdownItPlugins = [],
       editorReactComponent,
       renderReactNodeView,
+      ...remainingFields
     } = obj;
+
+    if (Object.keys(remainingFields).length > 0) {
+      throw new Error(
+        `Extension: the following fields are not recognized ${Object.keys(
+          remainingFields,
+        ).join(',')}`,
+      );
+    }
 
     if (!name) {
       throw new Error('Extension: name is required');

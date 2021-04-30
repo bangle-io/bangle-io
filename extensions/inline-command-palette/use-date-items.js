@@ -52,7 +52,6 @@ async function getTimeLibrary() {
 }
 
 export function useDateItems(query) {
-  //   const [items, updateItems] = useState(query);
   const [parsedDateObj, updateParsedDate] = useState(null);
   const destroyedRef = useDestroyRef();
 
