@@ -48,7 +48,7 @@ headingSpec = {
   },
 };
 
-export const specRegistry = new SpecRegistry([
+export const rawSpecs = [
   doc.spec({ content: 'frontMatter? block+' }),
   text.spec(),
   paragraph.spec(),
@@ -64,7 +64,6 @@ export const specRegistry = new SpecRegistry([
   tableCell,
   tableHeader,
   tableRow,
-
   image.spec(),
   bold.spec(),
   code.spec(),
@@ -78,6 +77,5 @@ export const specRegistry = new SpecRegistry([
   stopwatch.spec(),
   trailingNode.spec(),
   timestamp.spec(),
-  // sticker.spec(),
   markdownFrontMatter.spec(),
-]);
+];

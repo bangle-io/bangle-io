@@ -1,5 +1,5 @@
 {
-  "name": "bangle-io-context",
+  "name": "inline-backlink",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,13 +18,24 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
-  "publishConfig": {
-    "access": "restricted"
+  "peerDependencies": {
+    "react-router-dom": "*"
+  },
+  "devDependencies": {
+    "react-router-dom": "^5.2.0"
   },
   "dependencies": {
     "@bangle.dev/core": "0.10.3",
+    "config": "workspace:*",
+    "extension-helpers": "workspace:*",
+    "inline-palette": "workspace:*",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "utils": "workspace:*"
+    "ui-components": "workspace:*",
+    "utils": "workspace:*",
+    "workspace": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "restricted"
   }
 }

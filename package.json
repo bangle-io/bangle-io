@@ -4,18 +4,20 @@
   "homepage": "https://bangle.io",
   "workspaces": [
     "app",
-    "utils",
-    "config",
-    "style",
-    "workspace",
-    "editor",
-    "ui-context",
-    "ui-components",
-    "js-libs/*",
-    "e2e",
     "app-vite",
     "app-webpack",
-    "bangle-io-context"
+    "bangle-io-context",
+    "config",
+    "e2e",
+    "editor",
+    "extension-helpers",
+    "extensions/*",
+    "js-libs/*",
+    "style",
+    "ui-components",
+    "ui-context",
+    "utils",
+    "workspace"
   ],
   "authors": [
     {

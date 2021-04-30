@@ -3607,9 +3607,13 @@ __metadata:
     "@testing-library/user-event": ^13.1.5
     baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
+    collapsible-heading: "workspace:*"
     config: "workspace:*"
     editor: "workspace:*"
     history: ^4.0.0
+    inline-backlink: "workspace:*"
+    inline-command-palette: "workspace:*"
+    inline-palette: "workspace:*"
     prop-types: ^15.7.2
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
@@ -4101,6 +4105,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bangle-io-context@workspace:bangle-io-context"
   dependencies:
+    "@bangle.dev/core": 0.10.3
+    react: 16.14.0
+    react-dom: 16.14.0
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -4719,6 +4726,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chrono-node@npm:^2.2.6":
+  version: 2.2.6
+  resolution: "chrono-node@npm:2.2.6"
+  dependencies:
+    dayjs: ^1.10.0
+  checksum: ae7a4964cb7c413a840e7df7afbf520f7ddcd3fd29ab03b670624f8e9596d7ff5238835d098c1ecaa932b5c92f8ab120aa58deeccd0dda1679d53d342ac3d7a0
+  languageName: node
+  linkType: hard
+
 "ci-info@npm:^2.0.0":
   version: 2.0.0
   resolution: "ci-info@npm:2.0.0"
@@ -4860,6 +4876,17 @@ __metadata:
   checksum: 17d5666611f9b16d64fdf48176d9b7fb1c7d1c1607a189f7e600040a11a6616982876af148230336adb7d8fe728a559f743a4e29db3747e3b1a32fa7f4529681
   languageName: node
   linkType: hard
+
+"collapsible-heading@workspace:*, collapsible-heading@workspace:extensions/collapsible-heading":
+  version: 0.0.0-use.local
+  resolution: "collapsible-heading@workspace:extensions/collapsible-heading"
+  dependencies:
+    "@bangle.dev/core": 0.10.3
+    extension-helpers: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "collect-v8-coverage@npm:^1.0.0":
   version: 1.0.1
@@ -5400,6 +5427,13 @@ __metadata:
   version: 2.21.1
   resolution: "date-fns@npm:2.21.1"
   checksum: 4ff90f6ab6b9e92d4605530704303aa269f40a4a2fe3624628e2a0310b06bd36d8a18867c2ddf88844afa54bc71a33b5b93c97c927da8989e9d05d32471dbd75
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.10.0, dayjs@npm:^1.10.4":
+  version: 1.10.4
+  resolution: "dayjs@npm:1.10.4"
+  checksum: d248d6aa1e04f8577a94978e5194c1023347bc08b7c2766d4a4d50b0b69382d3f4fd912b9fcb64ffad4ee2947d53cd8e5d707f49b14817eb7810959d8d95c938
   languageName: node
   linkType: hard
 
@@ -6706,6 +6740,12 @@ __metadata:
   checksum: a50a8309ca65ea5d426382ff09f33586527882cf532931cb08ca786ea3146c0553310bda688710ff61d7668eba9f96b923fe1420cdf56a2c3eaf30fcab87b515
   languageName: node
   linkType: hard
+
+"extension-helpers@workspace:*, extension-helpers@workspace:extension-helpers":
+  version: 0.0.0-use.local
+  resolution: "extension-helpers@workspace:extension-helpers"
+  languageName: unknown
+  linkType: soft
 
 "external-editor@npm:^3.0.3":
   version: 3.1.0
@@ -8078,6 +8118,64 @@ fsevents@~2.3.1:
   checksum: dfd98b0ca3a4fc1e323e38a6c8eb8936e31a97a918d3b377649ea15bdb15d481207a0dda1021efbd86b464cae29a0d33c1d7dcaf6c5672bee17fa849bc50a1b3
   languageName: node
   linkType: hard
+
+"inline-backlink@workspace:*, inline-backlink@workspace:extensions/inline-backlink":
+  version: 0.0.0-use.local
+  resolution: "inline-backlink@workspace:extensions/inline-backlink"
+  dependencies:
+    "@bangle.dev/core": 0.10.3
+    config: "workspace:*"
+    extension-helpers: "workspace:*"
+    inline-palette: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    react-router-dom: ^5.2.0
+    ui-components: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  peerDependencies:
+    react-router-dom: "*"
+  languageName: unknown
+  linkType: soft
+
+"inline-command-palette@workspace:*, inline-command-palette@workspace:extensions/inline-command-palette":
+  version: 0.0.0-use.local
+  resolution: "inline-command-palette@workspace:extensions/inline-command-palette"
+  dependencies:
+    "@bangle.dev/core": 0.10.3
+    chrono-node: ^2.2.6
+    config: "workspace:*"
+    dayjs: ^1.10.4
+    extension-helpers: "workspace:*"
+    inline-palette: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    ui-components: "workspace:*"
+    utils: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"inline-palette@workspace:*, inline-palette@workspace:js-libs/inline-palette":
+  version: 0.0.0-use.local
+  resolution: "inline-palette@workspace:js-libs/inline-palette"
+  dependencies:
+    "@bangle.dev/core": 0.10.3
+    "@bangle.dev/react": 0.10.3
+    "@bangle.dev/tooltip": 0.10.3
+    react: 16.14.0
+    react-dom: 16.14.0
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  peerDependencies:
+    "@bangle.dev/core": "*"
+    "@bangle.dev/react": "*"
+    "@bangle.dev/tooltip": "*"
+    react: "*"
+    react-dom: "*"
+    utils: "*"
+    workspace: "*"
+  languageName: unknown
+  linkType: soft
 
 "inquirer@npm:^6.2.2":
   version: 6.5.2

@@ -1,15 +1,13 @@
 import { uuid } from '@bangle.dev/core/utils/js-utils';
 import { Plugin, PluginKey } from '@bangle.dev/core/prosemirror/state';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
-import { components as coreComps } from '@bangle.dev/core';
+import { components } from '@bangle.dev/core';
 import { emoji, emojisArray } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import stopwatch from '@bangle.dev/react-stopwatch';
-// import sticker from '@bangle.dev/react-sticker';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu } from '@bangle.dev/react-menu';
-import { collapsibleHeadingDeco } from './collapsible-heading-deco';
 import { tablePlugins } from '@bangle.dev/table';
 export const menuKey = new PluginKey('menuKey');
 export const emojiSuggestKey = new PluginKey('emojiSuggestKey');
@@ -18,7 +16,7 @@ const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };
 
-export const getPlugins = ({ wsPath, sendRequest }) => {
+export const getPlugins = (wsPath, sendRequest) => {
   const collabOpts = {
     docName: wsPath,
     clientId: 'client-' + uuid(4),
@@ -66,39 +64,39 @@ export const getPlugins = ({ wsPath, sendRequest }) => {
         getScrollContainer,
       },
     }),
-    coreComps.bold.plugins(),
-    coreComps.code.plugins(),
-    coreComps.italic.plugins(),
-    coreComps.strike.plugins(),
-    coreComps.link.plugins(),
-    coreComps.underline.plugins(),
-    coreComps.paragraph.plugins(),
-    coreComps.blockquote.plugins(),
-    coreComps.bulletList.plugins(),
-    coreComps.codeBlock.plugins(),
-    coreComps.hardBreak.plugins(),
-    coreComps.heading.plugins({
+
+    components.bold.plugins(),
+    components.code.plugins(),
+    components.italic.plugins(),
+    components.strike.plugins(),
+    components.link.plugins(),
+    components.underline.plugins(),
+    components.paragraph.plugins(),
+    components.blockquote.plugins(),
+    components.bulletList.plugins(),
+    components.codeBlock.plugins(),
+    components.hardBreak.plugins(),
+    components.heading.plugins({
       keybindings: {
-        ...coreComps.heading.defaultKeys,
+        ...components.heading.defaultKeys,
         toggleCollapse: 'Shift-Meta-1',
         toH4: null,
         toH5: null,
         toH6: null,
       },
     }),
-    coreComps.horizontalRule.plugins(),
-    coreComps.listItem.plugins(),
-    coreComps.orderedList.plugins(),
-    coreComps.image.plugins(),
-    coreComps.history.plugins(),
+    components.horizontalRule.plugins(),
+    components.listItem.plugins(),
+    components.orderedList.plugins(),
+    components.image.plugins(),
+    components.history.plugins(),
     tablePlugins(),
     collab.plugins(collabOpts),
     emoji.plugins(),
+
     stopwatch.plugins(),
     trailingNode.plugins(),
     timestamp.plugins(),
-    // sticker.plugins(),
-    collapsibleHeadingDeco.plugins(),
     new Plugin({
       props: {
         // This is needed by jumping to a heading to atleast show up

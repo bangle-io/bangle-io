@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { CloseIcon } from 'ui-components';
 import { cx, useDestroyRef } from 'utils/index';
 import { checkFileExists, resolvePath } from 'workspace/index';
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';
+import { EditorManagerContext } from './EditorManager';
 
 /**
  * This exists to save a render cycle
@@ -45,16 +46,22 @@ export function EditorArea({
   onClose,
 }) {
   const { fileExists, wsPath } = useHandleWsPath(incomingWsPath);
+  const { sendRequest, setEditor, bangleIOContext } = useContext(
+    EditorManagerContext,
+  );
   return (
     <div className={cx('bangle-editor-area', className)}>
       {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
       <div className={cx('bangle-editor-container', showTabs && 'has-tabs')}>
-        {fileExists && wsPath && (
+        {fileExists && wsPath && bangleIOContext && (
           <Editor
             // Key is used to reload the editor when wsPath changes
             key={wsPath}
             editorId={editorId}
             wsPath={wsPath}
+            sendRequest={sendRequest}
+            setEditor={setEditor}
+            bangleIOContext={bangleIOContext}
           />
         )}
         {wsPath && fileExists === false && (

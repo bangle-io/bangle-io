@@ -1,5 +1,5 @@
 {
-  "name": "bangle-io-context",
+  "name": "inline-palette",
   "version": "0.0.0",
   "authors": [
     {
@@ -21,10 +21,22 @@
   "publishConfig": {
     "access": "restricted"
   },
-  "dependencies": {
+  "peerDependencies": {
+    "@bangle.dev/core": "*",
+    "@bangle.dev/react": "*",
+    "@bangle.dev/tooltip": "*",
+    "react": "*",
+    "react-dom": "*",
+    "utils": "*",
+    "workspace": "*"
+  },
+  "devDependencies": {
     "@bangle.dev/core": "0.10.3",
+    "@bangle.dev/react": "0.10.3",
+    "@bangle.dev/tooltip": "0.10.3",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "utils": "workspace:*"
+    "utils": "workspace:*",
+    "workspace": "workspace:*"
   }
 }

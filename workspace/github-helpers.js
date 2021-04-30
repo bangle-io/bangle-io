@@ -65,11 +65,12 @@ async function getGithubRepoContents(
 ) {
   let owner, repo;
 
+  // TODO this needs fix in vite
+  // we shoudl ideally remove it
   const { Octokit } = await import(
     /* webpackChunkName: "@octokit/rest" */
     '@octokit/rest'
   );
-  console.log(Octokit);
   const octokit = new Octokit({
     auth: token,
   });

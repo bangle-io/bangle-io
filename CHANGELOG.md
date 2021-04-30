@@ -1,5 +1,7 @@
 # HEAD
 
+- A new inline command palette! Type `/` to use it.
+
 ### Ap 27 2021
 
 - Collapsing heading performance improvement.

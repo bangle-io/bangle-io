@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
-import { specRegistry } from 'editor/index';
 import { getDoc, saveDoc } from 'workspace/index';
 import { defaultContent } from './editor-default-content';
 import { config } from 'config/index';
@@ -16,19 +15,26 @@ import { UIManagerContext } from 'ui-context/index';
 import { BangleIOContext } from 'bangle-io-context/index';
 import { emojiMarkdownItPlugin } from '@bangle.dev/emoji/index';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
+import inlineCommandPalette from 'inline-command-palette/index';
+import inlineBacklinkPalette from 'inline-backlink/index';
+import { getPlugins, rawSpecs } from 'editor/index';
+import collapsibleHeading from 'collapsible-heading/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
-export const EditorManagerContext = React.createContext();
-
 const maxEditors = [undefined, undefined];
 const MAX_EDITOR = maxEditors.length;
 
+// TODO move this async, i think a promise should be fine.
 const bangleIOContext = new BangleIOContext({
-  specRegistry,
+  coreRawSpecs: rawSpecs,
+  getCorePlugins: getPlugins,
+  extensions: [inlineCommandPalette, inlineBacklinkPalette, collapsibleHeading],
   markdownItPlugins: [emojiMarkdownItPlugin, frontMatterMarkdownItPlugin],
 });
+export const EditorManagerContext = React.createContext({});
+
 /**
  * Should be parent of all editors.
  */
@@ -118,7 +124,7 @@ export function EditorManager({ children }) {
 function useManager() {
   const [manager] = useState(
     () =>
-      new Manager(specRegistry.schema, {
+      new Manager(bangleIOContext.specRegistry.schema, {
         disk: localDisk(defaultContent),
       }),
   );

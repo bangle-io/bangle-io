@@ -1,5 +1,5 @@
 {
-  "name": "bangle-io-context",
+  "name": "collapsible-heading",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,13 +18,13 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
     "@bangle.dev/core": "0.10.3",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "utils": "workspace:*"
+    "extension-helpers": "workspace:*",
+    "utils": "workspace:*",
+    "workspace": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "restricted"
   }
 }
