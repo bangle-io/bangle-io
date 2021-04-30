@@ -98,7 +98,7 @@ module.exports = (env, argv) => {
         ],
       }),
       // eslint-disable-next-line no-process-env
-      process.env.CI
+      process.env.NETLIFY
         ? new webpack.SourceMapDevToolPlugin({
             noSources: true,
           })
