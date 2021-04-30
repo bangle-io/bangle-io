@@ -1,4 +1,4 @@
-# HEAD
+# Apr 30 2021
 
 - A new inline command palette! Type `/` to use it.
 
