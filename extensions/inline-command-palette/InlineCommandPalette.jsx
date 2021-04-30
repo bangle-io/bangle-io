@@ -1,120 +1,39 @@
 import React, { useMemo } from 'react';
 import reactDOM from 'react-dom';
-import { rafCommandExec } from '@bangle.dev/core/utils/js-utils';
 import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
-  replaceSuggestionMarkWith,
 } from 'inline-palette/index';
-import { SidebarRow } from 'ui-components';
 import { palettePluginKey } from './config';
-
-const OneDayMilliseconds = 24 * 60 * 60 * 1000;
-let getTimestamp = (type) => {
-  switch (type) {
-    case 'today-date': {
-      const formatter = new Intl.DateTimeFormat('default', {
-        dateStyle: 'medium',
-        hour12: true,
-      });
-      return '' + formatter.format(new Date().getTime());
-    }
-    case 'today-date-time': {
-      const formatter = new Intl.DateTimeFormat('default', {
-        dateStyle: 'medium',
-        timeStyle: 'medium',
-        hour12: true,
-      });
-      return '' + formatter.format(new Date().getTime());
-    }
-    case 'today-time': {
-      const formatter = new Intl.DateTimeFormat('default', {
-        // dateStyle: 'medium',
-        timeStyle: 'medium',
-        hour12: true,
-      });
-      return '' + formatter.format(new Date().getTime());
-    }
-    case 'tomorrow-date': {
-      const formatter = new Intl.DateTimeFormat('default', {
-        dateStyle: 'medium',
-        hour12: true,
-      });
-      return '' + formatter.format(new Date().getTime() + OneDayMilliseconds);
-    }
-    case 'yesterday-date': {
-      const formatter = new Intl.DateTimeFormat('default', {
-        dateStyle: 'medium',
-        hour12: false,
-      });
-      return '' + formatter.format(new Date().getTime() - OneDayMilliseconds);
-    }
-    default: {
-      throw new Error('Unknown timestamp type');
-    }
-  }
-};
-
-const insertDateCommand = (type) => {
-  return (state, dispatch, view) => {
-    rafCommandExec(view, (state, dispatch, view) => {
-      dispatch?.(state.tr.replaceSelectionWith(state.schema.text(' ')));
-    });
-    return replaceSuggestionMarkWith(palettePluginKey, getTimestamp(type))(
-      state,
-      dispatch,
-      view,
-    );
-  };
-};
+import { useDateItems } from './use-date-items';
+import { ItemRow } from './ItemRow';
+import { useEditorItems } from './use-editor-items';
 
 export function InlineCommandPalette() {
   const { query, counter } = useInlinePaletteQuery(palettePluginKey);
 
+  const timestampItems = useDateItems(query);
+  const editorItems = useEditorItems(query);
   const items = useMemo(() => {
-    const items = [
-      {
-        uid: 'dateTodaysDate',
-        title: "Date: Insert today's date",
-        editorExecuteCommand: ({}) => {
-          return insertDateCommand('today-date');
-        },
-      },
-      {
-        uid: 'dateTodaysDateAndTime',
-        title: 'Date: Insert current date and time',
-        editorExecuteCommand: ({}) => {
-          return insertDateCommand('today-date-time');
-        },
-      },
+    return [...timestampItems, ...editorItems]
+      .filter((item) => queryMatch(item, query))
+      .sort((a, b) => {
+        if (a.show) {
+          return 1;
+        }
+        if (b.show) {
+          return 1;
+        }
+        if (a.disabled) {
+          return -1;
+        }
+        if (b.disabled) {
+          return -1;
+        }
 
-      {
-        uid: 'dateTodaysTime',
-        title: 'Date: Insert current time',
-        editorExecuteCommand: ({}) => {
-          return insertDateCommand('today-time');
-        },
-      },
-
-      {
-        uid: 'dateTomorrowsDate',
-        title: "Date: Insert tomorrow's date",
-        editorExecuteCommand: ({}) => {
-          return insertDateCommand('tomorrow-date');
-        },
-      },
-
-      {
-        uid: 'dateYesterdaysDate',
-        title: "Date: Insert yesterday's date",
-        editorExecuteCommand: ({}) => {
-          return insertDateCommand('yesterday-date');
-        },
-      },
-    ];
-
-    return items.filter((item) => queryMatch(item, query));
-  }, [query]);
+        return a.title.localeCompare(b.title);
+      });
+  }, [query, editorItems, timestampItems]);
 
   const { tooltipContentDOM, getItemProps } = useInlinePaletteItems(
     palettePluginKey,
@@ -126,11 +45,13 @@ export function InlineCommandPalette() {
     <div className="bangle-emoji-suggest">
       {items.map((item, i) => {
         return (
-          <SidebarRow
+          <ItemRow
             key={item.uid}
             dataId={item.uid}
             className="palette-row"
+            disabled={item.disabled}
             title={item.title}
+            description={item.description}
             rightHoverIcon={item.rightHoverIcon}
             rightIcon={
               <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
@@ -145,14 +66,23 @@ export function InlineCommandPalette() {
 }
 
 function queryMatch(command, query) {
-  const keywords = command.keywords || '';
-
-  if (keywords.length > 0) {
-    if (strMatch(keywords.split(','), query)) {
-      return command;
-    }
+  if (command.show) {
+    return command;
   }
-  return strMatch(command.title, query) ? command : undefined;
+
+  if (strMatch(command.title, query)) {
+    return command;
+  }
+
+  if (command.keywords && strMatch(command.keywords, query)) {
+    return command;
+  }
+
+  if (strMatch(command.description, query)) {
+    return command;
+  }
+
+  return undefined;
 }
 
 function strMatch(a, b) {

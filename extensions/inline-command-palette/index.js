@@ -1,3 +1,4 @@
+import './style.css';
 import { inlinePalette } from 'inline-palette/index';
 import { InlineCommandPalette } from './InlineCommandPalette';
 import { extensionName, paletteMarkName, palettePluginKey } from './config';
@@ -13,7 +14,7 @@ const extension = Extension.create({
   editorSpecs: [
     inlinePalette.spec({ markName: paletteMarkName, trigger: '/' }),
   ],
-  editorPlugins: [
+  highPriorityEditorPlugins: [
     inlinePalette.plugins({
       key: palettePluginKey,
       markName: paletteMarkName,

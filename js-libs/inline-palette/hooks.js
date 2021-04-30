@@ -37,6 +37,10 @@ export function useInlinePaletteItems(inlinePaletteKey, items, counter) {
         return removeSuggestMark(inlinePaletteKey);
       }
 
+      if (item.disabled) {
+        return (state, dispatch, view) => {};
+      }
+
       return (state, dispatch, view) => {
         return item.editorExecuteCommand({
           item,

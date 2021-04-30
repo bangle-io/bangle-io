@@ -6,6 +6,7 @@ export class Extension {
       name,
       editorSpecs = [],
       editorPlugins = [],
+      highPriorityEditorPlugins = [],
       markdownItPlugins = [],
       editorReactComponent,
       renderReactNodeView,
@@ -20,6 +21,10 @@ export class Extension {
 
     if (!Array.isArray(editorPlugins)) {
       throw new Error('Extension: editorPlugins must be an array');
+    }
+
+    if (!Array.isArray(highPriorityEditorPlugins)) {
+      throw new Error('Extension: highPriorityEditorPlugins must be an array');
     }
 
     if (!Array.isArray(markdownItPlugins)) {
@@ -50,6 +55,7 @@ export class Extension {
     this.name = obj.name;
     this.editorSpecs = obj.editorSpecs;
     this.editorPlugins = obj.editorPlugins;
+    this.highPriorityEditorPlugins = obj.highPriorityEditorPlugins;
     this.markdownItPlugins = obj.markdownItPlugins;
     this.editorReactComponent = obj.editorReactComponent;
     this.renderReactNodeView = obj.renderReactNodeView;

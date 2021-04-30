@@ -20,7 +20,9 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/core": "0.10.3",
+    "chrono-node": "^2.2.6",
     "config": "workspace:*",
+    "dayjs": "^1.10.4",
     "extension-helpers": "workspace:*",
     "inline-palette": "workspace:*",
     "react": "16.14.0",

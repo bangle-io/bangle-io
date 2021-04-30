@@ -6893,6 +6893,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["chrono-node", [
+        ["npm:2.2.6", {
+          "packageLocation": "./.yarn/cache/chrono-node-npm-2.2.6-0c021a9db1-ae7a4964cb.zip/node_modules/chrono-node/",
+          "packageDependencies": [
+            ["chrono-node", "npm:2.2.6"],
+            ["dayjs", "npm:1.10.4"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["ci-info", [
         ["npm:2.0.0", {
           "packageLocation": "./.yarn/cache/ci-info-npm-2.0.0-78012236a1-3b374666a8.zip/node_modules/ci-info/",
@@ -7712,6 +7722,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/date-fns-npm-2.21.1-a333d4fe93-4ff90f6ab6.zip/node_modules/date-fns/",
           "packageDependencies": [
             ["date-fns", "npm:2.21.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["dayjs", [
+        ["npm:1.10.4", {
+          "packageLocation": "./.yarn/cache/dayjs-npm-1.10.4-e450424eab-d248d6aa1e.zip/node_modules/dayjs/",
+          "packageDependencies": [
+            ["dayjs", "npm:1.10.4"]
           ],
           "linkType": "HARD",
         }]
@@ -10886,7 +10905,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
             ["@bangle.dev/core", "npm:0.10.3"],
+            ["chrono-node", "npm:2.2.6"],
             ["config", "workspace:config"],
+            ["dayjs", "npm:1.10.4"],
             ["extension-helpers", "workspace:extension-helpers"],
             ["inline-palette", "virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],

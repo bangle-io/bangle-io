@@ -48,6 +48,7 @@ export class BangleIOContext {
 
   getPlugins(wsPath, sendRequest) {
     return [
+      ...filterFlatMap(this._extensions, 'highPriorityEditorPlugins'),
       this._getCorePlugins(wsPath, sendRequest),
       ...filterFlatMap(this._extensions, 'editorPlugins'),
     ];
