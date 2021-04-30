@@ -2,7 +2,7 @@
   background-color: var(--bg-stronger-color);
   margin-left: auto;
   margin-right: auto;
-  max-width: var(--max-palette-width);
+  max-width: var(--palette-max-width);
   width: 100%;
   max-height: min(75vh, 400px);
   display: flex;

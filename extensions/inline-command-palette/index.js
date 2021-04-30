@@ -1,4 +1,3 @@
-import './style.css';
 import { inlinePalette } from 'inline-palette/index';
 import { InlineCommandPalette } from './InlineCommandPalette';
 import { extensionName, paletteMarkName, palettePluginKey } from './config';

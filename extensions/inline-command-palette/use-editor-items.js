@@ -14,12 +14,14 @@ import { replaceSuggestionMarkWith } from 'inline-palette';
 import { setBlockType } from '@bangle.dev/core/prosemirror/commands';
 
 import { palettePluginKey } from './config';
+import { PaletteItem } from './palette-item';
 
 export function useEditorItems(query) {
   const baseItem = [
-    {
+    PaletteItem.create({
       uid: 'paraBelow',
       title: 'Insert paragraph below ⤵️',
+      group: 'editor',
       description: 'Inserts a new paragraph above this block',
       editorExecuteCommand: ({}) => {
         return (state, dispatch, view) => {
@@ -31,11 +33,12 @@ export function useEditorItems(query) {
           );
         };
       },
-    },
+    }),
 
-    {
+    PaletteItem.create({
       uid: 'paraAbove',
       title: 'Insert paragraph above ⤴️',
+      group: 'editor',
       description: 'Inserts a new paragraph below this block',
       editorExecuteCommand: ({}) => {
         return (state, dispatch, view) => {
@@ -47,11 +50,12 @@ export function useEditorItems(query) {
           );
         };
       },
-    },
+    }),
 
-    {
+    PaletteItem.create({
       uid: 'paraConvert',
-      title: 'Convert to Paragraph',
+      title: 'Paragraph',
+      group: 'editor',
       description: 'Convert the current block to paragraph',
       editorExecuteCommand: ({}) => {
         return (state, dispatch, view) => {
@@ -63,12 +67,12 @@ export function useEditorItems(query) {
           );
         };
       },
-    },
+    }),
 
-    {
+    PaletteItem.create({
       uid: 'bulletListConvert',
-      title: 'Convert to Bullet List',
-      group: 'list',
+      title: 'Bullet List',
+      group: 'editor',
       keywords: ['unordered', 'lists'],
       description: 'Convert the current block to bullet list',
       editorExecuteCommand: ({}) => {
@@ -81,12 +85,12 @@ export function useEditorItems(query) {
           );
         };
       },
-    },
+    }),
 
-    {
+    PaletteItem.create({
       uid: 'todoListConvert',
-      title: 'Convert to Todo List',
-      group: 'list',
+      title: 'Todo List',
+      group: 'editor',
       keywords: ['todo', 'lists', 'checkbox', 'checked'],
       description: 'Convert the current block to todo list',
       editorExecuteCommand: ({}) => {
@@ -99,12 +103,12 @@ export function useEditorItems(query) {
           );
         };
       },
-    },
+    }),
 
-    {
+    PaletteItem.create({
       uid: 'orderedListConvert',
-      group: 'list',
-      title: 'Convert to Ordered List',
+      group: 'editor',
+      title: 'Ordered List',
       keywords: ['numbered', 'lists'],
       description: 'Convert the current block to ordered list',
       editorExecuteCommand: ({}) => {
@@ -117,13 +121,14 @@ export function useEditorItems(query) {
           );
         };
       },
-    },
+    }),
 
     ...Array.from({ length: 3 }, (_, i) => {
       const level = i + 1;
-      return {
+      return PaletteItem.create({
         uid: 'headingConvert' + level,
-        title: 'Convert to H' + level,
+        title: 'H' + level,
+        group: 'editor',
         description: 'Convert the current block to heading level ' + level,
         editorExecuteCommand: () => {
           return (state, dispatch, view) => {
@@ -138,7 +143,7 @@ export function useEditorItems(query) {
             );
           };
         },
-      };
+      });
     }),
   ];
 
