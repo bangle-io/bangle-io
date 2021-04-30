@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function EditorComponents({ bangleIOContext }) {
+export function ExtensionEditorComponents({ bangleIOContext }) {
   const result = bangleIOContext._extensions
     .filter((extension) => extension.editorReactComponent)
     .map((extension) => (

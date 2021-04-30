@@ -1,2 +1,2 @@
 export * from './bangle-io-context';
-export * from './EditorComponents';
+export * from './ExtensionEditorComponents';

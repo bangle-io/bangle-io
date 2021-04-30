@@ -62,7 +62,7 @@ export function useGetCachedWorkspaceFiles() {
   return [files, refreshFiles];
 }
 
-export function useCreateMdFile(specRegistry) {
+export function useCreateMdFile() {
   const { pushWsPath } = useWorkspacePath();
 
   const createNewMdFile = useCallback(

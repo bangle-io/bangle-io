@@ -35,8 +35,6 @@
     "@bangle.dev/tooltip": "0.10.3",
     "@bangle.dev/trailing-node": "0.10.3",
     "config": "workspace:*",
-    "inline-command-palette": "workspace:*",
-    "inline-palette": "workspace:*",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "utils": "workspace:*"

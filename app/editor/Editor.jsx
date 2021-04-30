@@ -21,8 +21,7 @@ import {
   TodoListButton,
 } from '@bangle.dev/react-menu';
 import { menuKey, emojiSuggestKey } from 'editor/index';
-import { EditorManagerContext } from './EditorManager';
-import { EditorComponents } from 'bangle-io-context';
+import { ExtensionEditorComponents } from 'bangle-io-context';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -114,7 +113,7 @@ export function Editor({
     >
       <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />
       <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
-      <EditorComponents bangleIOContext={bangleIOContext} />
+      <ExtensionEditorComponents bangleIOContext={bangleIOContext} />
     </BangleEditor>
   );
 }

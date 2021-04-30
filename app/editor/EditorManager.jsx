@@ -31,7 +31,6 @@ const bangleIOContext = new BangleIOContext({
   coreRawSpecs: rawSpecs,
   getCorePlugins: getPlugins,
   extensions: [inlineCommandPalette, inlineBacklinkPalette, collapsibleHeading],
-  // specRegistry: setupSpecRegistry(),
   markdownItPlugins: [emojiMarkdownItPlugin, frontMatterMarkdownItPlugin],
 });
 export const EditorManagerContext = React.createContext({});
