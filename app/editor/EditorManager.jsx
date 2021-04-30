@@ -103,7 +103,6 @@ export function EditorManager({ children }) {
     }
   }, [editors]);
 
-  console.log({ value });
   return (
     <EditorManagerContext.Provider value={value}>
       {children}

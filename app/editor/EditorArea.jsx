@@ -49,7 +49,6 @@ export function EditorArea({
   const { sendRequest, setEditor, bangleIOContext } = useContext(
     EditorManagerContext,
   );
-  console.log({ bangleIOContext });
   return (
     <div className={cx('bangle-editor-area', className)}>
       {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
