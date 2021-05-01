@@ -104,7 +104,6 @@ export function useDateItems(query) {
       updateParsedDate(undefined);
     }
   }, [query, parsedDateObj]);
-
   return items;
 }
 
