@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { convertToParagraph } from '@bangle.dev/core/components/paragraph';
 import {
   toggleBulletList,
@@ -6,11 +6,17 @@ import {
   queryIsBulletListActive,
   queryIsTodoListActive,
 } from '@bangle.dev/core/components/bullet-list';
-import { toggleOrderedList } from '@bangle.dev/core/components/ordered-list';
+import {
+  insertEmptySiblingListAbove,
+  insertEmptySiblingListBelow,
+} from '@bangle.dev/core/components/list-item/list-item';
+import {
+  toggleOrderedList,
+  queryIsOrderedListActive,
+} from '@bangle.dev/core/components/ordered-list';
 import { rafCommandExec } from '@bangle.dev/core/utils/js-utils';
 import { replaceSuggestionMarkWith } from 'inline-palette';
 import { setBlockType } from '@bangle.dev/core/prosemirror/commands';
-import { queryIsOrderedListActive } from '@bangle.dev/core/components/ordered-list';
 
 import { palettePluginKey } from './config';
 import { PaletteItem } from './palette-item';
@@ -143,6 +149,48 @@ export function useEditorItems() {
         editorExecuteCommand: ({}) => {
           return (state, dispatch, view) => {
             rafCommandExec(view, toggleOrderedList());
+            return replaceSuggestionMarkWith(palettePluginKey, '')(
+              state,
+              dispatch,
+              view,
+            );
+          };
+        },
+      }),
+
+      PaletteItem.create({
+        uid: 'insertSiblingListAbove',
+        group: 'editor',
+        title: 'Insert List above ⤴️',
+        keywords: ['insert', 'above', 'lists'],
+        description: 'Insert a list item above the current list item',
+        disabled: (state) => {
+          return !isList()(state);
+        },
+        editorExecuteCommand: ({}) => {
+          return (state, dispatch, view) => {
+            rafCommandExec(view, insertEmptySiblingListAbove());
+            return replaceSuggestionMarkWith(palettePluginKey, '')(
+              state,
+              dispatch,
+              view,
+            );
+          };
+        },
+      }),
+
+      PaletteItem.create({
+        uid: 'insertSiblingListBelow',
+        group: 'editor',
+        title: 'Insert List below ⤵️',
+        keywords: ['insert', 'below', 'lists'],
+        description: 'Insert a list item below the current list item',
+        disabled: (state) => {
+          return !isList()(state);
+        },
+        editorExecuteCommand: ({}) => {
+          return (state, dispatch, view) => {
+            rafCommandExec(view, insertEmptySiblingListBelow());
             return replaceSuggestionMarkWith(palettePluginKey, '')(
               state,
               dispatch,
