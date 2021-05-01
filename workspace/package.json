@@ -23,7 +23,7 @@
     "bangle-io-context": "workspace:*"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.10.3",
+    "@bangle.dev/core": "0.10.4",
     "@octokit/rest": "^18.5.3",
     "baby-fs": "workspace:*",
     "config": "workspace:*",
