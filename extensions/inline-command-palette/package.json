@@ -19,8 +19,8 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.10.4",
-    "@bangle.dev/react": "0.10.4",
+    "@bangle.dev/core": "0.10.5",
+    "@bangle.dev/react": "0.10.5",
     "chrono-node": "^2.2.6",
     "config": "workspace:*",
     "dayjs": "^1.10.4",
