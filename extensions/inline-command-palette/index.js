@@ -1,10 +1,9 @@
-import { inlinePalette, getSuggestTooltipKey } from 'inline-palette/index';
+import { inlinePalette, queryInlinePaletteActive } from 'inline-palette/index';
 import { InlineCommandPalette } from './InlineCommandPalette';
 import { extensionName, paletteMarkName, palettePluginKey } from './config';
 import { Extension } from 'extension-helpers';
 import { keymap } from '@bangle.dev/core/prosemirror/keymap';
 import { keybindings } from 'config/keybindings';
-import { queryIsSuggestTooltipActive } from '@bangle.dev/tooltip/suggest-tooltip';
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
@@ -29,11 +28,7 @@ const extension = Extension.create({
       [keybindings.toggleInlineCommandPalette.key]: (state, dispatch, view) => {
         const { tr, schema, selection } = state;
 
-        if (
-          queryIsSuggestTooltipActive(getSuggestTooltipKey(palettePluginKey))(
-            state,
-          )
-        ) {
+        if (queryInlinePaletteActive(palettePluginKey)(state)) {
           return false;
         }
         const marks = selection.$from.marks();

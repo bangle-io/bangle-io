@@ -3,6 +3,7 @@ import { suggestTooltip, createTooltipDOM } from '@bangle.dev/tooltip/index';
 import {
   decrementSuggestTooltipCounter,
   incrementSuggestTooltipCounter,
+  queryIsSuggestTooltipActive,
 } from '@bangle.dev/tooltip/suggest-tooltip';
 import { valuePlugin } from '@bangle.dev/core/utils/pm-utils';
 import { pluginKeyStore } from '@bangle.dev/core/utils/plugin-key-store';
@@ -112,4 +113,8 @@ export function replaceSuggestionMarkWith(key, replaceWith) {
       replaceWith,
     )(state, dispatch, view);
   };
+}
+
+export function queryInlinePaletteActive(key) {
+  return queryIsSuggestTooltipActive(getSuggestTooltipKey(key));
 }
