@@ -20,7 +20,7 @@ jobs:
       - name: Run test "${{ matrix.test-kind }}"
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn install --immutable --immutable-cache
       - run: yarn ${{ matrix.test-kind }}
   build-bangle-io:
@@ -30,7 +30,7 @@ jobs:
       - name: Build
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn install --immutable --immutable-cache
       - run: yarn workspace bangle-io build
       - run: yarn build
