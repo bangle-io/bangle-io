@@ -1,7 +1,7 @@
 const url = 'http://localhost:1234';
 const os = require('os');
 const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
-const { sleep, frmtHTML } = require('./helpers');
+const { sleep, longSleep, frmtHTML } = require('./helpers');
 jest.setTimeout(105 * 1000);
 
 beforeEach(async () => {
@@ -70,29 +70,63 @@ test('create a new page saved in browser', async () => {
   const newFileName = 'new-file';
   const wsName = await createWorkspace();
 
-  await runACommand('NEW_FILE_COMMAND');
-  let handle = await page.$('.bangle-palette');
+  await createNewNote(wsName, newFileName);
 
-  const input = await handle.$('input');
-  await input.type('new-file');
-  await clickPaletteRow('input-confirm');
-  await page.waitForNavigation();
-
-  expect(await page.url()).toBe(
-    url + '/ws/' + wsName + '/' + newFileName + '.md',
-  );
-  await sleep(50);
   const editorHandle = await page.$('.bangle-editor');
   await clearEditor(editorHandle);
 
   await editorHandle.type('# Wow', { delay: 3 });
   await editorHandle.press('Enter', { delay: 20 });
   await editorHandle.type('[ ] list', { delay: 3 });
-  await sleep(20);
+  await sleep();
 
-  expect(
-    await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML)),
-  ).toMatchSnapshot();
+  expect(await getEditorHTML(editorHandle)).toMatchSnapshot();
+});
+
+test('inline command palette convert to bullet list', async () => {
+  const newFileName = 'new-file';
+  const wsName = await createWorkspace();
+
+  await createNewNote(wsName, newFileName);
+
+  const editorHandle = await page.$('.bangle-editor');
+  const hasOneUnorderedListElement = () =>
+    editorHandle.evaluate((node) => node.querySelectorAll('ul').length === 1);
+
+  await clearEditor(editorHandle);
+
+  expect(await hasOneUnorderedListElement()).toBe(false);
+
+  await editorHandle.type('/bullet list', { delay: 3 });
+  await page.keyboard.press('Enter');
+  await sleep();
+  expect(await hasOneUnorderedListElement()).toBe(true);
+  await editorHandle.type('I should a bullet list', { delay: 1 });
+  expect(await getEditorHTML(editorHandle)).toMatchSnapshot();
+});
+
+test('inline command palette convert to heading 3', async () => {
+  const newFileName = 'new-file';
+  const wsName = await createWorkspace();
+
+  await createNewNote(wsName, newFileName);
+
+  const editorHandle = await page.$('.bangle-editor');
+  const hasOneH3Element = () =>
+    editorHandle.evaluate((node) => node.querySelectorAll('h3').length === 1);
+
+  await clearEditor(editorHandle);
+
+  expect(await hasOneH3Element()).toBe(false);
+
+  await editorHandle.type('/h3', { delay: 10 });
+  await sleep();
+  await page.keyboard.press('Enter');
+  await longSleep();
+
+  expect(await hasOneH3Element()).toBe(true);
+  await editorHandle.type('I am a heading', { delay: 1 });
+  expect(await getEditorHTML(editorHandle)).toContain('I am a heading');
 });
 
 async function createWorkspace(
@@ -108,6 +142,18 @@ async function createWorkspace(
   await page.waitForNavigation();
 
   return wsName;
+}
+
+async function createNewNote(wsName, fileName) {
+  await runACommand('NEW_FILE_COMMAND');
+  let handle = await page.$('.bangle-palette');
+
+  const input = await handle.$('input');
+  await input.type('new-file');
+  await clickPaletteRow('input-confirm');
+  await page.waitForNavigation();
+  await longSleep();
+  expect(await page.url()).toBe(url + '/ws/' + wsName + '/' + fileName + '.md');
 }
 
 async function runACommand(commandId) {
@@ -127,9 +173,14 @@ async function clickPaletteRow(id) {
 }
 
 async function clearEditor() {
-  await sleep(30);
+  await longSleep();
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('a', { delay: 30 });
   await page.keyboard.up(ctrlKey);
   await page.keyboard.press('Backspace', { delay: 30 });
+  await sleep();
+}
+
+async function getEditorHTML(editorHandle) {
+  return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
 }
