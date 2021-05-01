@@ -4,7 +4,7 @@ module.exports = {
     {
       command: 'yarn g:build-prod-serve',
       port: 1234,
-      launchTimeout: 60 * 1000,
+      launchTimeout: 120 * 1000,
     },
   ],
 

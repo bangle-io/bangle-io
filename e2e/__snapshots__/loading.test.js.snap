@@ -38,3 +38,20 @@ exports[`create a new page saved in browser 1`] = `
 <p><br /></p>
 "
 `;
+
+exports[`inline command palette convert to bullet list 1`] = `
+"<ul>
+  <li
+    data-bangle-name=\\"listItem\\"
+    class=\\"bangle-nv-container\\"
+  >
+    <span class=\\"bangle-nv-content\\"
+      ><p>
+        I should a bullet list
+      </p></span
+    >
+  </li>
+</ul>
+<p><br /></p>
+"
+`;
