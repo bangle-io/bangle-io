@@ -1,10 +1,12 @@
+import './InlinePaletteUI.css';
+
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { cx, isTouchDevice } from 'utils/index';
 
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;
 
-export function ItemRow({
+export function InlinePaletteRow({
   dataId,
   title,
   isActive,
@@ -14,7 +16,6 @@ export function ItemRow({
   leftIcon,
   basePadding = BASE_PADDING,
   depth = 1,
-  children,
   description = '',
   className = '',
   scrollIntoViewIfNeeded = true,
@@ -38,7 +39,6 @@ export function ItemRow({
       }
     }
   }, [scrollIntoViewIfNeeded, isActive]);
-
   const mouseEnter = useCallback(() => {
     allowHover && setHover(true);
   }, [allowHover]);
@@ -56,7 +56,7 @@ export function ItemRow({
         onMouseLeave={mouseLeave}
         ref={ref}
         className={cx(
-          'flex flex-row items-center inline-command-palette item-row',
+          'flex flex-row items-center inline-palette-row',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           className,
           isActive && 'active',
@@ -80,7 +80,7 @@ export function ItemRow({
             {title}
           </span>
           <span
-            className={cx('text-base font-normal truncate select-none')}
+            className={cx('text-sm font-normal select-none')}
             style={{
               color: disabled ? 'var(--font-lighter-color)' : 'inherit',
             }}
@@ -93,7 +93,6 @@ export function ItemRow({
         {rightIcon}
         {isHovered ? rightHoverIcon : null}
       </div>
-      {children}
     </>
   );
 }

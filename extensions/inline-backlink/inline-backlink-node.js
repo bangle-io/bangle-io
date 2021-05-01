@@ -22,6 +22,7 @@ function specFactory() {
       },
       inline: true,
       group: 'inline',
+      selectable: false,
       draggable: true,
     },
     markdown: {
@@ -32,10 +33,15 @@ function specFactory() {
       },
     },
   };
+  const { toDOM, parseDOM } = domSerializationHelpers(backLinkNodeName, {
+    tag: 'span',
+    parsingPriority: 60,
+  });
 
   spec.schema = {
     ...spec.schema,
-    ...domSerializationHelpers(backLinkNodeName, { tag: 'span' }),
+    toDOM,
+    parseDOM,
   };
 
   return spec;

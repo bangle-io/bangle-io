@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { replaceSuggestionMarkWith } from 'inline-palette/index';
 import { palettePluginKey } from './config';
 import { useDestroyRef } from 'utils/index';
+import { PaletteItem, PALETTE_ITEM_HINT_TYPE } from './palette-item';
 
 const OneDayMilliseconds = 24 * 60 * 60 * 1000;
 
@@ -21,16 +22,18 @@ const prettyPrintDate = (dayjs, date) => {
   }
   return dayjsInputDate.format('ll LT');
 };
-const baseItem = {
+const baseItem = PaletteItem.create({
   uid: 'date',
+  type: PALETTE_ITEM_HINT_TYPE,
   title: 'Insert date',
-  description: 'Use natural language like "tomorrow", "next friday 3pm" etc',
+  description: `You can type things like '/tomorrow', '/next friday 3pm', '/sep 23'`,
   keywords: ['date', 'time'],
+  group: 'date',
   disabled: true,
   editorExecuteCommand: ({}) => {
     // return replaceSuggestionMarkWith(palettePluginKey, getDate(type));
   },
-};
+});
 
 let _libraries;
 async function getTimeLibrary() {
@@ -52,31 +55,31 @@ async function getTimeLibrary() {
 }
 
 export function useDateItems(query) {
-  //   const [items, updateItems] = useState(query);
   const [parsedDateObj, updateParsedDate] = useState(null);
   const destroyedRef = useDestroyRef();
 
   const items = useMemo(() => {
-    if (query === '') {
-      return [baseItem];
-    }
     if (parsedDateObj) {
       const { parsedDates, dayjs } = parsedDateObj;
-      return parsedDates.map((p, i) => ({
-        uid: 'parsedDate' + i,
-        show: true,
-        title: 'Insert date',
-        description: 'Insert "' + prettyPrintDate(dayjs, p.date()) + '"',
-        editorExecuteCommand: ({}) => {
-          return replaceSuggestionMarkWith(
-            palettePluginKey,
-            prettyPrintDate(dayjs, p.date()) + ' ',
-          );
-        },
-      }));
+      return parsedDates.map((p, i) =>
+        PaletteItem.create({
+          uid: 'parsedDate' + i,
+          highPriority: true,
+          skipFiltering: true,
+          title: 'Insert date',
+          group: 'date',
+          description: 'Insert "' + prettyPrintDate(dayjs, p.date()) + '"',
+          editorExecuteCommand: ({}) => {
+            return replaceSuggestionMarkWith(
+              palettePluginKey,
+              prettyPrintDate(dayjs, p.date()) + ' ',
+            );
+          },
+        }),
+      );
     }
-    return [];
-  }, [query, parsedDateObj]);
+    return [baseItem];
+  }, [parsedDateObj]);
 
   useEffect(() => {
     if (query) {
@@ -94,6 +97,13 @@ export function useDateItems(query) {
       });
     }
   }, [query, destroyedRef]);
+
+  useEffect(() => {
+    // reset state if query is undefined
+    if (query === '' && parsedDateObj) {
+      updateParsedDate(undefined);
+    }
+  }, [query, parsedDateObj]);
 
   return items;
 }

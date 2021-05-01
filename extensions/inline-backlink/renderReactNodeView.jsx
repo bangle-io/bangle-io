@@ -6,7 +6,12 @@ import { backLinkNodeName } from './config';
 export const renderReactNodeView = {
   [backLinkNodeName]: (nodeViewRenderArg) => {
     return (
-      <Link to={resolvePath(nodeViewRenderArg.node.attrs.wsPath).locationPath}>
+      <Link
+        // prevent the a-href from being dragged, which messes up our system
+        // we want the node view to be dragged to the dom serializers can kick in
+        draggable={false}
+        to={resolvePath(nodeViewRenderArg.node.attrs.wsPath).locationPath}
+      >
         [[{nodeViewRenderArg.node.attrs.title}]]
       </Link>
     );
