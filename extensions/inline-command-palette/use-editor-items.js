@@ -17,7 +17,6 @@ import {
 import { rafCommandExec } from '@bangle.dev/core/utils/js-utils';
 import { replaceSuggestionMarkWith } from 'inline-palette';
 import { setBlockType } from '@bangle.dev/core/prosemirror/commands';
-
 import { palettePluginKey } from './config';
 import { PaletteItem } from './palette-item';
 import {
@@ -207,8 +206,10 @@ export function useEditorItems() {
           title: 'H' + level,
           group: 'editor',
           description: 'Convert the current block to heading level ' + level,
-          disabled: (state) =>
-            !setHeadingBlockType(level)(state) || isList()(state),
+          disabled: (state) => {
+            const result = isList()(state);
+            return result;
+          },
           editorExecuteCommand: () => {
             return (state, dispatch, view) => {
               rafCommandExec(view, setHeadingBlockType(level));

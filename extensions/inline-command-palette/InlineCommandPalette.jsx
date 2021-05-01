@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import reactDOM from 'react-dom';
 import { useEditorViewContext } from '@bangle.dev/react';
 
@@ -17,8 +17,62 @@ import {
 import { PaletteInfo, PaletteInfoItem } from 'ui-components';
 import { InlinePaletteRow } from 'ui-components/InlinePaletteUI/InlinePaletteUI';
 
+function getItemsAndHints(
+  view,
+  query,
+  editorItems,
+  timestampItems,
+  isItemDisabled,
+) {
+  let items = [...timestampItems, ...editorItems];
+  if (!items.every((item) => item instanceof PaletteItem)) {
+    throw new Error(
+      `uid: "${
+        items.find((item) => !(item instanceof PaletteItem))?.uid
+      }" must be an instance of PaletteItem `,
+    );
+  }
+
+  items = items.filter((item) =>
+    typeof item.hidden === 'function' ? !item.hidden(view.state) : !item.hidden,
+  );
+
+  // TODO This is hacky
+  items.forEach((item) => {
+    item._isItemDisabled = isItemDisabled(item);
+  });
+
+  let hintItems = items.filter((item) => item.type === PALETTE_ITEM_HINT_TYPE);
+
+  items = items
+    .filter(
+      (item) =>
+        queryMatch(item, query) && item.type === PALETTE_ITEM_REGULAR_TYPE,
+    )
+    .sort((a, b) => {
+      let result = fieldExistenceSort(a, b, 'highPriority');
+
+      if (result !== 0) {
+        return result;
+      }
+
+      result = fieldExistenceSort(a, b, '_isItemDisabled', true);
+
+      if (result !== 0) {
+        return result;
+      }
+
+      if (a.group === b.group) {
+        return a.title.localeCompare(b.title);
+      }
+      return a.group.localeCompare(b.group);
+    });
+
+  return { items, hintItems };
+}
+
 export function InlineCommandPalette() {
-  const { query, counter } = useInlinePaletteQuery(palettePluginKey);
+  const { query, counter, isVisible } = useInlinePaletteQuery(palettePluginKey);
   const view = useEditorViewContext();
 
   const timestampItems = useDateItems(query);
@@ -32,57 +86,34 @@ export function InlineCommandPalette() {
     [view],
   );
 
-  const [items, hintItems] = useMemo(() => {
-    let items = [...timestampItems, ...editorItems];
-    if (!items.every((item) => item instanceof PaletteItem)) {
-      throw new Error(
-        `uid: "${
-          items.find((item) => !(item instanceof PaletteItem))?.uid
-        }" must be an instance of PaletteItem `,
-      );
-    }
-
-    items = items.filter((item) =>
-      typeof item.hidden === 'function'
-        ? !item.hidden(view.state)
-        : !item.hidden,
+  const [{ items, hintItems }, updateItem] = useState(() => {
+    return getItemsAndHints(
+      view,
+      query,
+      editorItems,
+      timestampItems,
+      isItemDisabled,
     );
+  });
 
-    // TODO This is hacky
-    items.forEach((item) => {
-      item._isItemDisabled = isItemDisabled(item);
-    });
-
-    let hintItems = items.filter(
-      (item) => item.type === PALETTE_ITEM_HINT_TYPE,
+  useEffect(() => {
+    const payload = getItemsAndHints(
+      view,
+      query,
+      editorItems,
+      timestampItems,
+      isItemDisabled,
     );
-
-    items = items
-      .filter(
-        (item) =>
-          queryMatch(item, query) && item.type === PALETTE_ITEM_REGULAR_TYPE,
-      )
-      .sort((a, b) => {
-        let result = fieldExistenceSort(a, b, 'highPriority');
-
-        if (result !== 0) {
-          return result;
-        }
-
-        result = fieldExistenceSort(a, b, '_isItemDisabled', true);
-
-        if (result !== 0) {
-          return result;
-        }
-
-        if (a.group === b.group) {
-          return a.title.localeCompare(b.title);
-        }
-        return a.group.localeCompare(b.group);
-      });
-
-    return [items, hintItems];
-  }, [query, editorItems, timestampItems, view, isItemDisabled]);
+    updateItem(payload);
+  }, [
+    view,
+    query,
+    editorItems,
+    timestampItems,
+    isItemDisabled,
+    // so that we recompute things, especially disabled, is palette visibility changes
+    isVisible,
+  ]);
 
   const { tooltipContentDOM, getItemProps } = useInlinePaletteItems(
     palettePluginKey,

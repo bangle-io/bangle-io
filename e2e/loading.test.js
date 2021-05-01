@@ -1,7 +1,6 @@
 const url = 'http://localhost:1234';
 const os = require('os');
 const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
-// const backSpaceKey = os.platform() === 'darwin' ? 'Backspace' : 'Delete';
 const { sleep, frmtHTML } = require('./helpers');
 jest.setTimeout(105 * 1000);
 

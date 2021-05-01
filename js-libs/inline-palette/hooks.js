@@ -4,11 +4,12 @@ import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import { getSuggestTooltipKey } from './inline-palette';
 
 export function useInlinePaletteQuery(inlinePaletteKey) {
-  const { triggerText: query, counter } = usePluginState(
+  // TODO show is a bad name
+  const { triggerText: query, counter, show: isVisible } = usePluginState(
     getSuggestTooltipKey(inlinePaletteKey),
     true,
   );
-  return { query, counter };
+  return { query, counter, isVisible };
 }
 /**
  * Hook which takes a function to get the items to render.
