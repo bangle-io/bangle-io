@@ -39,7 +39,6 @@ export function InlinePaletteRow({
       }
     }
   }, [scrollIntoViewIfNeeded, isActive]);
-
   const mouseEnter = useCallback(() => {
     allowHover && setHover(true);
   }, [allowHover]);

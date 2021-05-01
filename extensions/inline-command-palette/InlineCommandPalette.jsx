@@ -1,5 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import reactDOM from 'react-dom';
+import { useEditorViewContext } from '@bangle.dev/react';
+
 import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
@@ -17,9 +19,19 @@ import { InlinePaletteRow } from 'ui-components/InlinePaletteUI/InlinePaletteUI'
 
 export function InlineCommandPalette() {
   const { query, counter } = useInlinePaletteQuery(palettePluginKey);
+  const view = useEditorViewContext();
 
   const timestampItems = useDateItems(query);
   const editorItems = useEditorItems(query);
+  const isItemDisabled = useCallback(
+    (item) => {
+      return typeof item.disabled === 'function'
+        ? item.disabled(view.state)
+        : item.disabled;
+    },
+    [view],
+  );
+
   const [items, hintItems] = useMemo(() => {
     let items = [...timestampItems, ...editorItems];
     if (!items.every((item) => item instanceof PaletteItem)) {
@@ -29,28 +41,38 @@ export function InlineCommandPalette() {
         }" must be an instance of PaletteItem `,
       );
     }
+
+    items = items.filter((item) =>
+      typeof item.hidden === 'function'
+        ? !item.hidden(view.state)
+        : !item.hidden,
+    );
+
+    // TODO This is hacky
+    items.forEach((item) => {
+      item._isItemDisabled = isItemDisabled(item);
+    });
+
     let hintItems = items.filter(
       (item) => item.type === PALETTE_ITEM_HINT_TYPE,
     );
 
-    items = [...timestampItems, ...editorItems]
+    items = items
       .filter(
         (item) =>
           queryMatch(item, query) && item.type === PALETTE_ITEM_REGULAR_TYPE,
       )
       .sort((a, b) => {
-        if (a.highPriority) {
-          return 1;
-        }
-        if (b.highPriority) {
-          return 1;
+        let result = fieldExistenceSort(a, b, 'highPriority');
+
+        if (result !== 0) {
+          return result;
         }
 
-        if (a.disabled) {
-          return -1;
-        }
-        if (b.disabled) {
-          return -1;
+        result = fieldExistenceSort(a, b, '_isItemDisabled', true);
+
+        if (result !== 0) {
+          return result;
         }
 
         if (a.group === b.group) {
@@ -60,12 +82,13 @@ export function InlineCommandPalette() {
       });
 
     return [items, hintItems];
-  }, [query, editorItems, timestampItems]);
+  }, [query, editorItems, timestampItems, view, isItemDisabled]);
 
   const { tooltipContentDOM, getItemProps } = useInlinePaletteItems(
     palettePluginKey,
     items,
     counter,
+    isItemDisabled,
   );
 
   return reactDOM.createPortal(
@@ -76,8 +99,8 @@ export function InlineCommandPalette() {
             <InlinePaletteRow
               key={item.uid}
               dataId={item.uid}
-              disabled={item.disabled}
-              title={item.title}
+              disabled={item._isItemDisabled}
+              title={(item._isItemDisabled ? '🚫 ' : '') + item.title}
               description={item.description}
               rightHoverIcon={item.rightHoverIcon}
               rightIcon={
@@ -152,4 +175,18 @@ function strMatch(a, b) {
 
   a = a.toLocaleLowerCase();
   return a.includes(b) || b.includes(a);
+}
+
+// returning -1 means keep order [a, b]
+// returning 1 means reverse order ie [b, a]
+function fieldExistenceSort(a, b, field, reverse = false) {
+  if (a[field] && !b[field]) {
+    return reverse ? 1 : -1;
+  }
+
+  if (b[field] && !a[field]) {
+    return reverse ? -1 : 1;
+  }
+
+  return 0;
 }

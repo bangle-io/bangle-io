@@ -14,6 +14,7 @@ export class PaletteItem {
       description,
       keywords,
       disabled,
+      hidden,
       editorExecuteCommand,
       group,
       highPriority,
@@ -41,6 +42,7 @@ export class PaletteItem {
     this.description = description;
     this.keywords = keywords;
     this.disabled = disabled;
+    this.hidden = hidden;
     this.editorExecuteCommand = editorExecuteCommand;
     this.group = group;
     this.highPriority = highPriority;

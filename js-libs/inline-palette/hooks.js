@@ -14,10 +14,16 @@ export function useInlinePaletteQuery(inlinePaletteKey) {
  * Hook which takes a function to get the items to render.
  * returns the properties needed to get on click and enter working
  * on these items.
+ * TODO this api can be improved currently its unituitive
  * @param {*} param0
  * @returns
  */
-export function useInlinePaletteItems(inlinePaletteKey, items, counter) {
+export function useInlinePaletteItems(
+  inlinePaletteKey,
+  items,
+  counter,
+  isItemDisabled,
+) {
   const { tooltipContentDOM, setExecuteItemCommand } = usePluginState(
     inlinePaletteKey,
   );
@@ -37,8 +43,9 @@ export function useInlinePaletteItems(inlinePaletteKey, items, counter) {
         return removeSuggestMark(inlinePaletteKey);
       }
 
-      if (item.disabled) {
-        return (state, dispatch, view) => {};
+      if (isItemDisabled(item)) {
+        // still handle the key
+        return (state) => true;
       }
 
       return (state, dispatch, view) => {
@@ -48,7 +55,7 @@ export function useInlinePaletteItems(inlinePaletteKey, items, counter) {
         })(state, dispatch, view);
       };
     },
-    [inlinePaletteKey, items],
+    [inlinePaletteKey, items, isItemDisabled],
   );
 
   useEffect(() => {

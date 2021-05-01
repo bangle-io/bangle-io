@@ -3,8 +3,8 @@ import {
   insertEmptyParagraphAbove,
   insertEmptyParagraphBelow,
 } from '@bangle.dev/core/components/paragraph';
-
-import { insertEmpty } from '@bangle.dev/core/utils/pm-utils';
+import { queryIsBulletListActive } from '@bangle.dev/core/components/bullet-list';
+import { queryIsOrderedListActive } from '@bangle.dev/core/components/ordered-list';
 
 import {
   insertEmptyParaAbove as headingInsertEmptyParaAbove,
@@ -30,4 +30,8 @@ export function chainedInsertParagraphBelow() {
     headingInsertEmptyParaBelow(),
     blockquoteInsertEmptyParaBelow(),
   );
+}
+
+export function isList() {
+  return chainCommands(queryIsOrderedListActive(), queryIsBulletListActive());
 }
