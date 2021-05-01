@@ -1,6 +1,10 @@
 const prettier = require('prettier');
 
-function sleep(t = 20) {
+function sleep(t = 10) {
+  return new Promise((res) => setTimeout(res, t));
+}
+
+function longSleep(t = 50) {
   return new Promise((res) => setTimeout(res, t));
 }
 
@@ -13,4 +17,4 @@ function frmtHTML(doc) {
   });
 }
 
-module.exports = { sleep, frmtHTML };
+module.exports = { sleep, longSleep, frmtHTML };
