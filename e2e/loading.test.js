@@ -145,7 +145,7 @@ async function createWorkspace(
 }
 
 async function createNewNote(wsName, fileName) {
-  await runACommand('NEW_FILE_COMMAND');
+  await runACommand('NEW_NOTE_COMMAND');
   let handle = await page.$('.bangle-palette');
 
   const input = await handle.$('input');

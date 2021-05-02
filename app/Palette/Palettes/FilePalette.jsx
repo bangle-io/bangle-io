@@ -7,7 +7,7 @@ import {
 
 import React, { useCallback, useRef, useMemo, useEffect } from 'react';
 import {
-  useGetCachedWorkspaceFiles,
+  useListCachedNoteWsPaths,
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
@@ -53,7 +53,7 @@ function FilePaletteUIComponent({
   rawInputValue,
 }) {
   const { pushWsPath } = useWorkspacePath();
-  const [currentFiles = [], refreshFiles] = useGetCachedWorkspaceFiles();
+  const [currentFiles = [], refreshFiles] = useListCachedNoteWsPaths();
   const recentFiles = useRecordRecentWsPaths();
 
   const resolvedItems = useMemo(() => {

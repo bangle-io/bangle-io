@@ -2,12 +2,12 @@ import { useRecordRecentWsPaths } from 'app/hooks';
 import { COMMAND_PALETTE, FILE_PALETTE } from 'app/Palette/index';
 import React, { useContext, useEffect } from 'react';
 import { UIManagerContext } from 'ui-context';
-import { resolvePath, useGetCachedWorkspaceFiles } from 'workspace';
+import { resolvePath, useListCachedNoteWsPaths } from 'workspace/index';
 import { Link } from 'react-router-dom';
 
 export function EmptyEditorPage() {
   const { dispatch } = useContext(UIManagerContext);
-  let [files = [], refreshFiles] = useGetCachedWorkspaceFiles();
+  let [files = [], refreshFiles] = useListCachedNoteWsPaths();
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
@@ -43,18 +43,18 @@ export function EmptyEditorPage() {
         }}
         className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-gray-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
       >
-        Open a file
+        Open a note
       </button>
       <button
         onClick={() => {
           dispatch({
             type: 'UI/CHANGE_PALETTE_TYPE',
-            value: { type: COMMAND_PALETTE, initialQuery: 'new file' },
+            value: { type: COMMAND_PALETTE, initialQuery: 'new note' },
           });
         }}
         className="ml-3 w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-gray-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
       >
-        Create a file
+        Create a note
       </button>
     </>
   );

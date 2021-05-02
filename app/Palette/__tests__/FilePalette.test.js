@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useRecordRecentWsPaths } from 'app/hooks';
 import { useLocalStorage } from 'utils/index';
-import { useGetCachedWorkspaceFiles } from 'workspace/index';
+import { useListCachedNoteWsPaths } from 'workspace/index';
 let mockWsName, mockWsPath;
 
 jest.mock('utils/index', () => {
@@ -19,9 +19,9 @@ jest.mock('workspace/index', () => {
       wsPath: mockWsPath,
     })),
     useWorkspaces: jest.fn(),
-    useGetCachedWorkspaceFiles: jest.fn(),
-    useCreateMdFile: jest.fn(),
-    useRenameActiveFile: jest.fn(),
+    useListCachedNoteWsPaths: jest.fn(),
+    useCreateNote: jest.fn(),
+    useRenameActiveNote: jest.fn(),
     useDeleteFile: jest.fn(),
   };
 });
@@ -30,7 +30,7 @@ describe('useRecordRecentWsPaths', () => {
   let store;
 
   beforeEach(() => {
-    useGetCachedWorkspaceFiles.mockImplementation(() => []);
+    useListCachedNoteWsPaths.mockImplementation(() => []);
     mockWsName = 'my-ws';
     mockWsPath = 'my-ws:something';
     store = {};
@@ -61,7 +61,7 @@ describe('useRecordRecentWsPaths', () => {
   test('saves files', async () => {
     mockWsPath = 'x';
     let value = { filePaths: ['a', 'b', 'c', 'x'] };
-    useGetCachedWorkspaceFiles.mockImplementation(() => [value.filePaths]);
+    useListCachedNoteWsPaths.mockImplementation(() => [value.filePaths]);
 
     const { result, rerender } = renderHook(() => useRecordRecentWsPaths());
 
@@ -73,7 +73,7 @@ describe('useRecordRecentWsPaths', () => {
     value.filePaths = [...value.filePaths, 'y'];
 
     rerender();
-    // second rerender as state is update on seeing a new wsPAth
+    // second rerender as state is update on seeing a new wsPath
     rerender();
     expect(result.current).toEqual(['y', 'x']);
   });
@@ -83,7 +83,7 @@ describe('useRecordRecentWsPaths', () => {
     store.value = ['y', 'x'];
     mockWsPath = 'x';
     let value = { filePaths: ['a', 'b', 'c', 'y', 'x'] };
-    useGetCachedWorkspaceFiles.mockImplementation(() => [value.filePaths]);
+    useListCachedNoteWsPaths.mockImplementation(() => [value.filePaths]);
 
     const { result, rerender } = renderHook(() =>
       useRecordRecentWsPaths(value.filePaths),

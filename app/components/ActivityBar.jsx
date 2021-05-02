@@ -12,7 +12,7 @@ import {
 } from 'ui-components/index';
 import { keybindings } from 'config/index';
 import { cx } from 'utils/index';
-import { resolvePath, useWorkspacePath } from 'workspace';
+import { resolvePath, useWorkspacePath } from 'workspace/index';
 import { FILE_PALETTE } from 'app/Palette';
 import { useHistory } from 'react-router-dom';
 

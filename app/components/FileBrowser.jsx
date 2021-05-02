@@ -11,21 +11,21 @@ import {
 } from 'ui-components/index';
 import {
   useDeleteFile,
-  useGetCachedWorkspaceFiles,
+  useListCachedNoteWsPaths,
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
 import { useLocalStorage } from 'utils/hooks';
-import { useInputPaletteNewFileCommand } from 'app/Palette/Commands';
+import { useInputPaletteNewNoteCommand } from 'app/Palette/Commands';
 
 FileBrowser.propTypes = {};
 
 export function FileBrowser() {
-  let [files = [], refreshFiles] = useGetCachedWorkspaceFiles();
+  let [files = [], refreshFiles] = useListCachedNoteWsPaths();
   const deleteByWsPath = useDeleteFile();
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
-  const newFileCommand = useInputPaletteNewFileCommand();
+  const newFileCommand = useInputPaletteNewNoteCommand();
   const closeSidebar = () => {
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',

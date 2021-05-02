@@ -14,10 +14,12 @@ export class BaseFileMetadata {
 // - a path with no `.` is a directory
 export class BaseFileSystem {
   async stat(filePath) {}
-  async readFile(filePath) {}
+  // should return a string
+  async readFileAsText(filePath) {}
   //  https://github.com/jprichardson/node-fs-extra/blob/master/docs/outputFile.md
   // Almost the same as fs.writeFile (i.e. it overwrites), except that if the parent directory does not exist, it's created
-  async writeFile(filePath, data) {}
+  // and date must be a string type
+  async writeFileAsText(filePath, data) {}
   async unlink(filePath) {}
   // Rename a file or directory
   async rename() {}

@@ -10,12 +10,12 @@ import {
   InlinePaletteRow,
 } from 'ui-components/index';
 import { replaceSuggestionMarkWith } from 'inline-palette/inline-palette';
-import { resolvePath, useGetCachedWorkspaceFiles } from 'workspace/index';
+import { resolvePath, useListCachedNoteWsPaths } from 'workspace/index';
 import { backLinkNodeName, palettePluginKey } from './config';
 
 export function InlineBacklinkPalette() {
   const { query, counter } = useInlinePaletteQuery(palettePluginKey);
-  const [currentFiles = []] = useGetCachedWorkspaceFiles();
+  const [currentFiles = []] = useListCachedNoteWsPaths();
 
   const items = useMemo(() => {
     if (!query) {

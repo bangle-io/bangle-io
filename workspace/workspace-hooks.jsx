@@ -2,13 +2,17 @@ import { useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 
-import { locationToFilePath, resolvePath } from './path-helpers';
+import {
+  isValidNoteWsPath,
+  locationToFilePath,
+  resolvePath,
+} from './path-helpers';
 import {
   createWorkspace,
   deleteWorkspace,
   listWorkspaces,
 } from './workspace-helpers';
-import { cachedListAllFiles, createFile, deleteFile } from './file-ops';
+import { cachedListAllFiles, createNote, deleteFile } from './file-ops';
 import {
   checkWidescreen,
   serialExecuteQueue,
@@ -25,7 +29,7 @@ let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 // in queue can get the cached result.
 const refreshFileQueue = serialExecuteQueue();
 
-export function useGetCachedWorkspaceFiles() {
+export function useListCachedNoteWsPaths() {
   const { wsName } = useWorkspacePath();
   const location = useLocation();
   const [files, setFiles] = useState(undefined);
@@ -34,14 +38,11 @@ export function useGetCachedWorkspaceFiles() {
 
   const refreshFiles = useCallback(() => {
     if (wsName) {
-      // const t = Math.random();
-      // console.time('refresh' + t);
       refreshFileQueue
         .add(() => cachedListAllFiles(wsName))
         .then((items) => {
           if (!destroyedRef.current) {
-            setFiles(items);
-            // console.timeEnd('refresh' + t);
+            setFiles(items.filter((wsPath) => isValidNoteWsPath(wsPath)));
           }
         })
         .catch((error) => {
@@ -62,10 +63,10 @@ export function useGetCachedWorkspaceFiles() {
   return [files, refreshFiles];
 }
 
-export function useCreateMdFile() {
+export function useCreateNote() {
   const { pushWsPath } = useWorkspacePath();
 
-  const createNewMdFile = useCallback(
+  const createNoteCallback = useCallback(
     async (
       bangleIOContext,
       wsPath,
@@ -96,13 +97,13 @@ export function useCreateMdFile() {
         ],
       }),
     ) => {
-      await createFile(bangleIOContext, wsPath, doc);
+      await createNote(bangleIOContext, wsPath, doc);
       pushWsPath(wsPath);
     },
     [pushWsPath],
   );
 
-  return createNewMdFile;
+  return createNoteCallback;
 }
 
 export function useDeleteFile() {

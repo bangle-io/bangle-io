@@ -2,7 +2,7 @@ import { COMMAND_PALETTE } from '../Palette/paletteTypes';
 import { keybindings } from 'config/index';
 import React, { useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
-import { useWorkspaces } from 'workspace';
+import { useWorkspaces } from 'workspace/index';
 import { Link } from 'react-router-dom';
 import { cx } from 'utils/utility';
 import { EditorWrapperUI } from './EditorWrapperUI';

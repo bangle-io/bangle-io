@@ -3,6 +3,7 @@ import {
   BaseFileSystem,
   BaseFileSystemError,
 } from './base-fs';
+import { DEFAULT_DIR_IGNORE_LIST } from './config';
 import {
   FILE_NOT_FOUND_ERROR,
   UPSTREAM_ERROR,
@@ -12,7 +13,7 @@ import {
 } from './error-codes';
 
 import {
-  readFile,
+  readFileAsText,
   createFile,
   writeFile,
   hasPermission,
@@ -23,8 +24,6 @@ const dirToChildMap = new WeakMap();
 
 const isNotFoundDOMException = (error) =>
   error.name === 'NotFoundError' && error instanceof DOMException;
-
-const DEFAULT_DIR_IGNORE_LIST = ['node_modules', '.git'];
 
 function catchUpstreamError(promise, errorMessage) {
   return promise.catch((error) => {
@@ -69,16 +68,16 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     this._allowedDir = allowedDir;
     this._resolveFileHandle = resolveFileHandle({ allowedDir, allowedFile });
 
-    const readFile = this.readFile.bind(this);
-    const writeFile = this.writeFile.bind(this);
+    const readFileAsText = this.readFileAsText.bind(this);
+    const writeFileAsText = this.writeFileAsText.bind(this);
     const unlink = this.unlink.bind(this);
     const rename = this.rename.bind(this);
     const opendirRecursive = this.opendirRecursive.bind(this);
 
-    this.readFile = (...args) =>
-      catchUpstreamError(readFile(...args), 'Unable to read file');
-    this.writeFile = (...args) =>
-      catchUpstreamError(writeFile(...args), 'Unable to write file');
+    this.readFileAsText = (...args) =>
+      catchUpstreamError(readFileAsText(...args), 'Unable to read file');
+    this.writeFileAsText = (...args) =>
+      catchUpstreamError(writeFileAsText(...args), 'Unable to write file');
     this.unlink = (...args) =>
       catchUpstreamError(unlink(...args), 'Unable to unlink file');
     this.rename = (...args) =>
@@ -99,7 +98,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     return new BaseFileMetadata({ mtimeMs: file.lastModified });
   }
 
-  async readFile(filePath) {
+  async readFileAsText(filePath) {
     await verifyPermission(this._rootDirHandle, filePath);
     const { fileHandle } = await this._resolveFileHandle(
       this._rootDirHandle,
@@ -107,11 +106,11 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     );
 
     const file = await fileHandle.getFile();
-    const textContent = await readFile(file);
+    const textContent = await readFileAsText(file);
     return textContent;
   }
 
-  async writeFile(filePath, data) {
+  async writeFileAsText(filePath, data) {
     await verifyPermission(this._rootDirHandle, filePath);
 
     let fileHandle;
@@ -157,11 +156,11 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async rename(oldFilePath, newFilePath) {
-    const file = await this.readFile(oldFilePath);
+    const file = await this.readFileAsText(oldFilePath);
     let existingFile;
 
     try {
-      existingFile = await this.readFile(newFilePath);
+      existingFile = await this.readFileAsText(newFilePath);
     } catch (error) {
       if (error.code !== FILE_NOT_FOUND_ERROR) {
         throw error;
@@ -176,7 +175,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
       );
     }
 
-    await this.writeFile(newFilePath, file);
+    await this.writeFileAsText(newFilePath, file);
     await this.unlink(oldFilePath);
   }
 

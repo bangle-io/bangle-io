@@ -1,6 +1,5 @@
 import { BaseError } from 'utils/base-error';
 
-const pathValidRegex = /^[0-9a-zA-Z_\-. /:=',()–!\+\[\]]+$/;
 const last = (arr) => arr[arr.length - 1];
 export class PathValidationError extends BaseError {}
 
@@ -14,7 +13,9 @@ export function validWsName(wsName) {
   }
 }
 
-export function validatePath(wsPath) {
+export const NOTE_WS_PATH_EXTENSION = /.+\.md$/;
+
+export function validateWsPath(wsPath) {
   if (wsPath.split('/').some((r) => r.length === 0)) {
     throw new PathValidationError(
       'Invalid path ' + wsPath,
@@ -40,26 +41,11 @@ export function validatePath(wsPath) {
       'You provided any empty file path',
     );
   }
-
-  if (filePath.endsWith('/.md')) {
-    throw new PathValidationError(
-      'Invalid wsPath ' + wsPath,
-      undefined,
-      'File name cannot be empty',
-    );
-  }
-
-  if (filePath === '.md') {
-    throw new PathValidationError(
-      'Invalid wsPath ' + wsPath,
-      undefined,
-      'File name must end with .md',
-    );
-  }
 }
 
-export function validateWsFilePath(wsPath) {
-  validatePath(wsPath);
+// a file wsPath is workspace path to a file
+export function validateFileWsPath(wsPath) {
+  validateWsPath(wsPath);
   const { fileName } = resolvePath(wsPath);
   if (!fileName.includes('.')) {
     throw new PathValidationError(
@@ -69,8 +55,21 @@ export function validateWsFilePath(wsPath) {
   }
 }
 
+// a note wsPath is every what a file wsPath is
+// but restricted to only .md for now
+export function validateNoteWsPath(wsPath) {
+  validateFileWsPath(wsPath);
+  if (!isValidNoteWsPath(wsPath)) {
+    throw new PathValidationError('Notes can only be saved in .md format');
+  }
+}
+
+export function isValidNoteWsPath(wsPath) {
+  return NOTE_WS_PATH_EXTENSION.test(wsPath);
+}
+
 export function resolvePath(wsPath) {
-  validatePath(wsPath);
+  validateWsPath(wsPath);
   const [wsName, filePath] = wsPath.split(':');
   const fileName = last(filePath.split('/'));
 

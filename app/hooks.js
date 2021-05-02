@@ -1,10 +1,10 @@
 import { FILE_PALETTE_MAX_RECENT_FILES } from 'config/index';
 import { dedupeArray, useLocalStorage, weakCache } from 'utils/index';
-import { useGetCachedWorkspaceFiles, useWorkspacePath } from 'workspace';
+import { useListCachedNoteWsPaths, useWorkspacePath } from 'workspace/index';
 import { useCallback, useEffect } from 'react';
 
 export function useRecordRecentWsPaths() {
-  let [files] = useGetCachedWorkspaceFiles();
+  let [files] = useListCachedNoteWsPaths();
   const { wsName, wsPath } = useWorkspacePath();
   let [recentWsPaths, updateRecentWsPaths] = useLocalStorage(
     'useRecordRecentWsPaths2-XihLD' + wsName,

@@ -75,6 +75,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 
     this._fileMetadata = new FileMetadata();
   }
+
   async stat(filePath) {
     const result = await this._fileMetadata.get(
       filePath,
@@ -83,7 +84,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     return result;
   }
 
-  async readFile(filePath) {
+  async readFileAsText(filePath) {
     let result = await catchUpstream(
       idb.get(filePath, this._customStore),
       'Error reading data',
@@ -100,7 +101,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     return result;
   }
 
-  async writeFile(filePath, data) {
+  async writeFileAsText(filePath, data) {
     if (typeof data !== 'string') {
       throw new IndexedDBFileSystemError(
         'Can only write string type',
@@ -126,10 +127,10 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async rename(oldFilePath, newFilePath) {
-    const file = await this.readFile(oldFilePath);
+    const file = await this.readFileAsText(oldFilePath);
     let existingFile;
     try {
-      existingFile = await this.readFile(newFilePath);
+      existingFile = await this.readFileAsText(newFilePath);
     } catch (error) {
       if (error.code !== FILE_NOT_FOUND_ERROR) {
         throw error;
@@ -143,7 +144,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
         'Cannot rename as a file with the same name already exists',
       );
     }
-    await this.writeFile(newFilePath, file);
+    await this.writeFileAsText(newFilePath, file);
     await this.unlink(oldFilePath);
   }
 

@@ -1,5 +1,9 @@
 import { INPUT_PALETTE } from './paletteTypes';
-import { useCreateMdFile, useWorkspacePath } from 'workspace/index';
+import {
+  isValidNoteWsPath,
+  useCreateNote,
+  useWorkspacePath,
+} from 'workspace/index';
 import { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
 import { EditorManagerContext } from '../editor/EditorManager';
@@ -7,15 +11,15 @@ import { EditorManagerContext } from '../editor/EditorManager';
 /**
  * Opens an input palette
  */
-export function useInputPaletteNewFileCommand() {
+export function useInputPaletteNewNoteCommand() {
   const { bangleIOContext } = useContext(EditorManagerContext);
 
-  const createNewFile = useCreateMdFile();
+  const createNote = useCreateNote();
   const { wsName } = useWorkspacePath();
 
   const { dispatch } = useContext(UIManagerContext);
 
-  const createFile = useCallback(
+  const createNoteCallback = useCallback(
     ({ initialQuery = '' } = {}) => {
       dispatch({
         type: 'UI/CHANGE_PALETTE_TYPE',
@@ -23,26 +27,29 @@ export function useInputPaletteNewFileCommand() {
           type: INPUT_PALETTE,
           initialQuery,
           metadata: {
-            paletteInfo: 'You are currently creating a new file',
-            placeholder: 'Type the name of the file to create',
+            paletteInfo: 'You are currently creating a new note',
+            placeholder: 'Type the name of the note to create',
             onInputConfirm: (query) => {
               let normalizedQuery = query;
-              if (!normalizedQuery.endsWith('.md')) {
-                normalizedQuery += '.md';
+              if (!query) {
+                return Promise.reject(new Error('Must provide a note name'));
               }
-              return createNewFile(
-                bangleIOContext,
-                wsName + ':' + normalizedQuery,
-              );
+
+              let newWsPath = wsName + ':' + normalizedQuery;
+              if (!isValidNoteWsPath(newWsPath)) {
+                newWsPath += '.md';
+              }
+
+              return createNote(bangleIOContext, newWsPath);
             },
           },
         },
       });
     },
-    [createNewFile, bangleIOContext, dispatch, wsName],
+    [createNote, bangleIOContext, dispatch, wsName],
   );
 
-  return createFile;
+  return createNoteCallback;
 }
 
 /**

@@ -14,7 +14,7 @@ import { WorkspaceError, WORKSPACE_NOT_FOUND_ERROR } from './errors';
 import { resolvePath } from './path-helpers';
 
 const LOG = false;
-let log = LOG ? console.log.bind(console, 'Workspace') : () => {};
+let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 
 export const NEEDS_PERMISSION = 'NEEDS_PERMISSION';
 export const PERMISSION_DENIED = 'PERMISSION_DENIED';

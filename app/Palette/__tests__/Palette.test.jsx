@@ -4,7 +4,7 @@ import { render, act } from '@testing-library/react';
 import { UIManager, UIManagerContext } from 'ui-context/index';
 
 import {
-  useGetCachedWorkspaceFiles,
+  useListCachedNoteWsPaths,
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
@@ -21,15 +21,15 @@ jest.mock('workspace/index', () => {
     ...actual,
     useWorkspacePath: jest.fn(),
     useWorkspaces: jest.fn(),
-    useGetCachedWorkspaceFiles: jest.fn(),
-    useCreateMdFile: jest.fn(),
-    useRenameActiveFile: jest.fn(),
+    useListCachedNoteWsPaths: jest.fn(),
+    useCreateNote: jest.fn(),
+    useRenameActiveNote: jest.fn(),
     useDeleteFile: jest.fn(),
   };
 });
 
 beforeEach(async () => {
-  useGetCachedWorkspaceFiles.mockImplementation(
+  useListCachedNoteWsPaths.mockImplementation(
     jest.fn(() => [undefined, jest.fn()]),
   );
   useWorkspaces.mockImplementation(jest.fn(() => ({ workspaces: [] })));
@@ -69,7 +69,7 @@ test('Empty on mount', async () => {
 test('Correctly switches to file type', async () => {
   let promise = Promise.resolve();
 
-  useGetCachedWorkspaceFiles.mockImplementation(() => {
+  useListCachedNoteWsPaths.mockImplementation(() => {
     return [['my-ws:one.md'], jest.fn()];
   });
   act(() => {

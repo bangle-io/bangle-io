@@ -1,28 +1,17 @@
 import { IndexedDBFileSystem, NativeBrowserFileSystem } from 'baby-fs';
-import { resolvePath } from './path-helpers';
 
-export const toFSPath = (wsPath) => {
-  const { wsName, filePath } = resolvePath(wsPath);
-  return [wsName, filePath].join('/');
-};
-
-export const getFileSystemFromWsInfo = (ws) => {
-  if (ws.type === 'browser') {
+export const getFileSystemFromWsInfo = (wsInfo) => {
+  if (wsInfo.type === 'browser') {
     return new IndexedDBFileSystem();
   }
 
-  if (ws.type === 'nativefs') {
-    return createNativeBrowserFileSystem({
-      rootDirHandle: ws.metadata.rootDirHandle,
+  if (wsInfo.type === 'nativefs') {
+    const rootDirHandle = wsInfo.metadata.rootDirHandle;
+    return new NativeBrowserFileSystem({
+      rootDirHandle: rootDirHandle,
+      allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
     });
   }
 
-  throw new Error('Unknown workspace type ' + ws.type);
-};
-
-export const createNativeBrowserFileSystem = ({ rootDirHandle }) => {
-  return new NativeBrowserFileSystem({
-    rootDirHandle: rootDirHandle,
-    allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
-  });
+  throw new Error('Unknown workspace type ' + wsInfo.type);
 };

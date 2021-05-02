@@ -10,7 +10,7 @@ import {
   usePaletteProps,
 } from 'ui-components/index';
 import { cx } from 'utils/utility';
-import { PathValidationError } from 'workspace';
+import { PathValidationError } from 'workspace/index';
 import { INPUT_PALETTE, PaletteTypeBase } from '../paletteTypes';
 
 export class InputPalette extends PaletteTypeBase {
