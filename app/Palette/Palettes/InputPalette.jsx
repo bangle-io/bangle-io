@@ -8,7 +8,7 @@ import {
   PaletteItemsContainer,
   SidebarRow,
   usePaletteProps,
-} from 'ui-components';
+} from 'ui-components/index';
 import { cx } from 'utils/utility';
 import { PathValidationError } from 'workspace';
 import { INPUT_PALETTE, PaletteTypeBase } from '../paletteTypes';

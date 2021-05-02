@@ -51,7 +51,7 @@ import {
   SidebarRow,
   TerminalIcon,
   usePaletteProps,
-} from 'ui-components';
+} from 'ui-components/index';
 import { addBoldToTitle } from '../utils';
 import { pickADirectory } from 'baby-fs';
 import { WorkspaceError } from 'workspace/errors';

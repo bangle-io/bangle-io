@@ -1,51 +1,7 @@
 import { NodeView } from '@bangle.dev/core/node-view';
-import { domSerializationHelpers } from '@bangle.dev/core/utils/dom-serialization-helpers';
-import { resolvePath } from 'workspace';
 import { backLinkNodeName } from './config';
 
-export const spec = specFactory;
 export const plugins = pluginsFactory;
-export const commands = {};
-
-function specFactory() {
-  let spec = {
-    type: 'node',
-    name: backLinkNodeName,
-    schema: {
-      attrs: {
-        wsPath: {
-          default: null,
-        },
-        title: {
-          default: null,
-        },
-      },
-      inline: true,
-      group: 'inline',
-      selectable: false,
-      draggable: true,
-    },
-    markdown: {
-      toMarkdown: (state, node) => {
-        state.text('[[', false);
-        state.text(resolvePath(node.attrs.wsPath).filePath, false);
-        state.text(']]', false);
-      },
-    },
-  };
-  const { toDOM, parseDOM } = domSerializationHelpers(backLinkNodeName, {
-    tag: 'span',
-    parsingPriority: 60,
-  });
-
-  spec.schema = {
-    ...spec.schema,
-    toDOM,
-    parseDOM,
-  };
-
-  return spec;
-}
 
 function pluginsFactory() {
   return ({ schema }) => [
