@@ -2,12 +2,12 @@ import { useRecordRecentWsPaths } from 'app/hooks';
 import { COMMAND_PALETTE, FILE_PALETTE } from 'app/Palette/index';
 import React, { useContext, useEffect } from 'react';
 import { UIManagerContext } from 'ui-context';
-import { resolvePath, useGetCachedWorkspaceFiles } from 'workspace';
+import { resolvePath, useListCachedNoteWsPaths } from 'workspace/index';
 import { Link } from 'react-router-dom';
 
 export function EmptyEditorPage() {
   const { dispatch } = useContext(UIManagerContext);
-  let [files = [], refreshFiles] = useGetCachedWorkspaceFiles();
+  let [files = [], refreshFiles] = useListCachedNoteWsPaths();
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);

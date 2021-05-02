@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
-import { getDoc, saveDoc } from 'workspace/index';
+import { getNote, saveNote } from 'workspace/index';
 import { defaultContent } from './editor-default-content';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
@@ -149,7 +149,7 @@ function localDisk(defaultContent) {
     getItem: async (wsPath) => {
       log('getItem', wsPath);
       // await sleep(5000);
-      const doc = await getDoc(bangleIOContext, wsPath);
+      const doc = await getNote(bangleIOContext, wsPath);
       if (!doc) {
         return defaultContent;
       }
@@ -158,7 +158,7 @@ function localDisk(defaultContent) {
     setItem: async (wsPath, doc) => {
       log('setItem', wsPath);
 
-      await saveDoc(bangleIOContext, wsPath, doc);
+      await saveNote(bangleIOContext, wsPath, doc);
     },
   });
 }

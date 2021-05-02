@@ -35,7 +35,7 @@ import {
 } from 'workspace/index';
 import {
   useDispatchPrimaryEditorCommand,
-  useInputPaletteNewFileCommand,
+  useInputPaletteNewNoteCommand,
 } from '../Commands';
 import {
   COMMAND_PALETTE,
@@ -265,16 +265,16 @@ function useToggleSidebar({ dismissPalette }) {
 }
 
 function useNewFile({}) {
-  const uid = 'NEW_FILE_COMMAND';
-  const newFileCommand = useInputPaletteNewFileCommand();
+  const uid = 'NEW_NOTE_COMMAND';
+  const newNoteCommand = useInputPaletteNewNoteCommand();
 
   const onExecute = useCallback(() => {
-    newFileCommand();
+    newNoteCommand();
     return false;
-  }, [newFileCommand]);
+  }, [newNoteCommand]);
   return queryMatch({
     uid,
-    title: 'Workspace: New File',
+    title: 'Workspace: New Note',
     onExecute,
   });
 }

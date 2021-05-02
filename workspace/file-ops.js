@@ -2,15 +2,21 @@ import { markdownParser, markdownSerializer } from 'editor/index';
 import {
   resolvePath,
   validWsName,
-  validatePath,
-  validateWsFilePath,
+  validateFileWsPath,
+  validateNoteWsPath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
 import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs';
 import { listFilesCache } from './native-browser-list-fs-cache';
-import { toFSPath, getFileSystemFromWsInfo } from './get-fs';
+import { getFileSystemFromWsInfo } from './get-fs';
+
+const toFSPath = (wsPath) => {
+  const { wsName, filePath } = resolvePath(wsPath);
+  return [wsName, filePath].join('/');
+};
 
 export async function checkFileExists(wsPath) {
+  validateFileWsPath(wsPath);
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
@@ -29,26 +35,24 @@ export async function checkFileExists(wsPath) {
   }
 }
 
-// TODO make this get file
-export async function getDoc(bangleIOContext, wsPath) {
+export async function getNote(bangleIOContext, wsPath) {
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
-  let file;
+  validateNoteWsPath(wsPath);
 
   const path = toFSPath(wsPath);
-  let fileData = await getFileSystemFromWsInfo(workspaceInfo).readFile(path);
 
-  if (path.endsWith('.json')) {
-    file = JSON.parse(fileData);
-  } else if (path.endsWith('.md')) {
-    // TODO avoid doing toJSON
-    file = markdownParser(
-      fileData,
-      bangleIOContext.specRegistry,
-      bangleIOContext.markdownItPlugins,
-    ).toJSON();
-  }
+  let fileText = await getFileSystemFromWsInfo(workspaceInfo).readFileAsText(
+    path,
+  );
+
+  // TODO avoid doing toJSON
+  const file = markdownParser(
+    fileText,
+    bangleIOContext.specRegistry,
+    bangleIOContext.markdownItPlugins,
+  ).toJSON();
 
   if (file === undefined) {
     throw new Error(`File ${wsPath} not found`);
@@ -57,40 +61,29 @@ export async function getDoc(bangleIOContext, wsPath) {
   return file;
 }
 
-/**
- *
- * @param {string} wsPath
- * @param {PMNode} doc
- */
-export async function saveDoc(bangleIOContext, wsPath, doc) {
-  const { wsName, filePath } = resolvePath(wsPath);
+export async function saveNote(bangleIOContext, wsPath, doc) {
+  validateNoteWsPath(wsPath);
+
+  const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
   const path = toFSPath(wsPath);
-  let data;
-  if (filePath.endsWith('.md')) {
-    data = markdownSerializer(doc, bangleIOContext.specRegistry);
-  } else if (filePath.endsWith('.json')) {
-    data = JSON.stringify(doc.toJSON());
-  } else {
-    throw new Error('Unknown file extension ' + filePath);
-  }
-  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, data);
+  const data = markdownSerializer(doc, bangleIOContext.specRegistry);
+
+  await getFileSystemFromWsInfo(workspaceInfo).writeFileAsText(path, data);
 }
 
 /**
  *
- * @param {*} wsPath
- * @param {*} content
  * @param {'doc'|'markdown'} contentType
  */
-export async function createFile(
+export async function createNote(
   bangleIOContext,
   wsPath,
   content,
   contentType = 'doc',
 ) {
-  validateWsFilePath(wsPath);
+  validateNoteWsPath(wsPath);
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
@@ -104,13 +97,12 @@ export async function createFile(
     throw new Error('Unknown content type');
   }
 
-  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, markdown);
+  await getFileSystemFromWsInfo(workspaceInfo).writeFileAsText(path, markdown);
   listFilesCache.deleteEntry(workspaceInfo);
 }
 
 export async function deleteFile(wsPath) {
-  validatePath(wsPath);
-
+  validateFileWsPath(wsPath);
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
   await getFileSystemFromWsInfo(workspaceInfo).unlink(toFSPath(wsPath));
@@ -162,8 +154,8 @@ export async function listAllFiles(wsName) {
 }
 
 export async function renameFile(wsPath, newWsPath) {
-  validatePath(wsPath);
-  validatePath(newWsPath);
+  validateFileWsPath(wsPath);
+  validateFileWsPath(newWsPath);
   const { wsName } = resolvePath(wsPath);
   const { wsName: newWsName } = resolvePath(newWsPath);
 

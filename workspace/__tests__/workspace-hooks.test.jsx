@@ -2,9 +2,9 @@ import { render, act } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import {
-  useCreateMdFile,
+  useCreateNote,
   useDeleteFile,
-  useGetCachedWorkspaceFiles,
+  useListCachedNoteWsPaths,
   useWorkspacePath,
   useWorkspaces,
 } from '../workspace-hooks';
@@ -69,10 +69,10 @@ beforeEach(() => {
   mockStore.clear();
   mockBabyFSStore.clear();
   const obj = {
-    readFile: jest.fn(async (fileName) => {
+    readFileAsText: jest.fn(async (fileName) => {
       return mockBabyFSStore.get(fileName);
     }),
-    writeFile: jest.fn(async (fileName, data) => {
+    writeFileAsText: jest.fn(async (fileName, data) => {
       mockBabyFSStore.set(fileName, data);
     }),
     unlink: jest.fn(async (fileName) => {
@@ -94,7 +94,7 @@ beforeEach(() => {
   idbFS = new IndexedDBFileSystem();
 });
 
-describe('useGetCachedWorkspaceFiles', () => {
+describe('useListCachedNoteWsPaths', () => {
   const App = ({ Comp }) => (
     <Router initialEntries={['/ws/kujo']}>
       <Switch>
@@ -123,10 +123,10 @@ describe('useGetCachedWorkspaceFiles', () => {
         metadata: {},
       },
     ]);
-    await idbFS.writeFile('kujo/one.md', createFileContent());
+    await idbFS.writeFileAsText('kujo/one.md', createFileContent());
 
     function Comp() {
-      const [files, _refreshFiles] = useGetCachedWorkspaceFiles();
+      const [files, _refreshFiles] = useListCachedNoteWsPaths();
       refreshFiles = _refreshFiles;
       return (
         <div data-testid="result">
@@ -155,7 +155,7 @@ describe('useGetCachedWorkspaceFiles', () => {
       </div>
     `);
 
-    await idbFS.writeFile('kujo/two.md', createFileContent());
+    await idbFS.writeFileAsText('kujo/two.md', createFileContent());
 
     await act(async () => {
       await refreshFiles();
@@ -217,10 +217,10 @@ describe('useWorkspacePath', () => {
       },
     ]);
 
-    await idbFS.writeFile('kujo/one.md', createFileContent());
+    await idbFS.writeFileAsText('kujo/one.md', createFileContent());
 
     function Comp() {
-      const [files] = useGetCachedWorkspaceFiles();
+      const [files] = useListCachedNoteWsPaths();
       workspacePathHookResult = useWorkspacePath();
       return (
         <div data-testid="result">
@@ -290,7 +290,7 @@ describe('useWorkspacePath', () => {
   });
 });
 
-describe('useCreateMdFile', () => {
+describe('useCreateNote', () => {
   test('browser create file', async () => {
     let callback;
     let testLocation;
@@ -304,7 +304,7 @@ describe('useCreateMdFile', () => {
     ]);
 
     function Comp() {
-      const createMdFile = useCreateMdFile();
+      const createMdFile = useCreateNote();
       callback = createMdFile;
       return <div>Hello</div>;
     }
@@ -341,8 +341,8 @@ describe('useCreateMdFile', () => {
 
     expect(testLocation.pathname).toBe('/ws/kujo/one.md');
 
-    expect(idbFS.writeFile).toBeCalledTimes(1);
-    expect(idbFS.writeFile).toBeCalledWith(
+    expect(idbFS.writeFileAsText).toBeCalledTimes(1);
+    expect(idbFS.writeFileAsText).toBeCalledWith(
       'kujo/one.md',
       '# one.md\n\nHello world!',
     );
@@ -362,7 +362,7 @@ describe('useDeleteFile', () => {
       },
     ]);
 
-    await idbFS.writeFile('kujo/one.md', createFileContent());
+    await idbFS.writeFileAsText('kujo/one.md', createFileContent());
 
     function Comp() {
       const deleteFileCb = useDeleteFile();

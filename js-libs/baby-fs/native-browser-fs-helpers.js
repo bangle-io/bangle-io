@@ -51,7 +51,7 @@ export async function writeFile(fileHandle, contents) {
   await writable.close();
 }
 
-export function readFile(file) {
+export function readFileAsText(file) {
   // If the new .text() reader is available, use it.
   if (file.text) {
     return file.text();
