@@ -314,11 +314,12 @@ function useRenameActiveNote({ updatePalette }) {
 
   const renameFileCb = useCallback(
     async (newFilePath) => {
-      if (!newFilePath.endsWith('.md')) {
-        newFilePath += '.md';
+      let newWsPath = wsName + ':' + newFilePath;
+
+      if (!isValidNoteWsPath(newWsPath)) {
+        newWsPath += '.md';
       }
 
-      const newWsPath = wsName + ':' + newFilePath;
       await renameFile(wsPath, newWsPath);
       replaceWsPath(newWsPath);
     },

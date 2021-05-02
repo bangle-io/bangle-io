@@ -1,5 +1,9 @@
 import { INPUT_PALETTE } from './paletteTypes';
-import { useCreateNote, useWorkspacePath } from 'workspace/index';
+import {
+  isValidNoteWsPath,
+  useCreateNote,
+  useWorkspacePath,
+} from 'workspace/index';
 import { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
 import { EditorManagerContext } from '../editor/EditorManager';
@@ -30,13 +34,13 @@ export function useInputPaletteNewNoteCommand() {
               if (!query) {
                 return Promise.reject(new Error('Must provide a note name'));
               }
-              if (!normalizedQuery.endsWith('.md')) {
-                normalizedQuery += '.md';
+
+              let newWsPath = wsName + ':' + normalizedQuery;
+              if (!isValidNoteWsPath(newWsPath)) {
+                newWsPath += '.md';
               }
-              return createNote(
-                bangleIOContext,
-                wsName + ':' + normalizedQuery,
-              );
+
+              return createNote(bangleIOContext, newWsPath);
             },
           },
         },
