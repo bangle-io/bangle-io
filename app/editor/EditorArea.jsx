@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { CloseIcon } from 'ui-components';
+import { CloseIcon } from 'ui-components/index';
 import { cx, useDestroyRef } from 'utils/index';
 import { checkFileExists, resolvePath } from 'workspace/index';
 import { Editor } from './Editor';

@@ -4,7 +4,11 @@ import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
 } from 'inline-palette/index';
-import { SidebarRow } from 'ui-components';
+import {
+  PaletteInfo,
+  PaletteInfoItem,
+  InlinePaletteRow,
+} from 'ui-components/index';
 import { replaceSuggestionMarkWith } from 'inline-palette/inline-palette';
 import { resolvePath, useGetCachedWorkspaceFiles } from 'workspace/index';
 import { backLinkNodeName, palettePluginKey } from './config';
@@ -21,15 +25,14 @@ export function InlineBacklinkPalette() {
     const items = currentFiles.map((wsPath) => {
       return {
         uid: wsPath,
-        title: wsPath,
+        title: resolvePath(wsPath).filePath,
         editorExecuteCommand: ({ item }) => {
           return (state, dispatch, view) => {
             let nodeType = state.schema.nodes[backLinkNodeName];
             return replaceSuggestionMarkWith(
               palettePluginKey,
               nodeType.create({
-                title: resolvePath(wsPath).fileName,
-                wsPath: wsPath,
+                path: resolvePath(wsPath).filePath,
               }),
             )(state, dispatch, view);
           };
@@ -43,32 +46,47 @@ export function InlineBacklinkPalette() {
     palettePluginKey,
     items,
     counter,
+    () => false,
   );
 
   return reactDOM.createPortal(
-    <div className="bangle-emoji-suggest">
-      {query === '' && (
-        <SidebarRow
-          dataId="searchNote"
-          className="palette-row"
-          title="Search for a note"
-        />
-      )}
-      {items.map((item, i) => {
-        return (
-          <SidebarRow
-            key={item.uid}
-            dataId={item.uid}
+    <div className="inline-palette-wrapper shadow-2xl">
+      <div className="inline-palette-items-wrapper">
+        {query === '' && (
+          <InlinePaletteRow
+            dataId="searchNote"
             className="palette-row"
-            title={item.title}
-            rightHoverIcon={item.rightHoverIcon}
-            rightIcon={
-              <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
-            }
-            {...getItemProps(item, i)}
+            title={'💡 Search for a note to link it'}
           />
-        );
-      })}
+        )}
+        {items.map((item, i) => {
+          return (
+            <InlinePaletteRow
+              key={item.uid}
+              dataId={item.uid}
+              className="palette-row"
+              // TODO this is hacky
+              description={item.title}
+              rightHoverIcon={item.rightHoverIcon}
+              rightIcon={
+                <kbd className="whitespace-nowrap">{item.keybinding}</kbd>
+              }
+              {...getItemProps(item, i)}
+            />
+          );
+        })}
+        <PaletteInfo>
+          <PaletteInfoItem>
+            <kbd className="font-normal">↑↓</kbd> Navigate
+          </PaletteInfoItem>
+          <PaletteInfoItem>
+            <kbd className="font-normal">Enter</kbd> Create link
+          </PaletteInfoItem>
+          <PaletteInfoItem>
+            <kbd className="font-normal">Esc</kbd> Dismiss
+          </PaletteInfoItem>
+        </PaletteInfo>
+      </div>
     </div>,
     tooltipContentDOM,
   );

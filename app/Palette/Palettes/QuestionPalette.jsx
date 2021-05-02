@@ -8,7 +8,7 @@ import {
   PaletteItemsContainer,
   SidebarRow,
   usePaletteProps,
-} from 'ui-components';
+} from 'ui-components/index';
 import { PaletteTypeBase, QUESTION_PALETTE } from '../paletteTypes';
 import { FilePalette } from './FilePalette';
 import { CommandPalette } from './CommandPalette';

@@ -2,6 +2,8 @@
 
 - you can now insert blocks above and below your current block via command palette (Type `/` to use it) or by pressing `Command-Enter` (below) or `Command-Shift-Enter` (above).
 
+- We now support wiki style links. Type `[[` followed by the name of your note to create a link to it.
+
 ### Apr 30 2021
 
 - A new inline command palette! Type `/` to use it.

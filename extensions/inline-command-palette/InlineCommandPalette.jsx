@@ -14,9 +14,27 @@ import {
   PALETTE_ITEM_HINT_TYPE,
   PALETTE_ITEM_REGULAR_TYPE,
 } from './palette-item';
-import { PaletteInfo, PaletteInfoItem } from 'ui-components';
-import { InlinePaletteRow } from 'ui-components/InlinePaletteUI/InlinePaletteUI';
+import {
+  PaletteInfo,
+  PaletteInfoItem,
+  InlinePaletteRow,
+} from 'ui-components/index';
 
+const staticHints = [
+  PaletteItem.create({
+    uid: 'useBackLink',
+    type: PALETTE_ITEM_HINT_TYPE,
+    title: 'Linking a note',
+    description: `Type [[ and then name of the note to create a link to it`,
+    keywords: ['backlink', 'link'],
+    group: 'hints',
+    disabled: true,
+    // TODO clicking this hint to switch to backlink suggest
+    editorExecuteCommand: ({}) => {
+      // return replaceSuggestionMarkWith(palettePluginKey, getDate(type));
+    },
+  }),
+];
 function getItemsAndHints(
   view,
   query,
@@ -42,7 +60,10 @@ function getItemsAndHints(
     item._isItemDisabled = isItemDisabled(item);
   });
 
-  let hintItems = items.filter((item) => item.type === PALETTE_ITEM_HINT_TYPE);
+  let hintItems = [
+    ...staticHints,
+    ...items.filter((item) => item.type === PALETTE_ITEM_HINT_TYPE),
+  ];
 
   items = items
     .filter(

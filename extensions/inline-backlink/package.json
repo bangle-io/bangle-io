@@ -25,7 +25,8 @@
     "react-router-dom": "^5.2.0"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.10.5",
+    "@bangle.dev/core": "0.11.0",
+    "@bangle.dev/wiki-link": "0.11.0",
     "config": "workspace:*",
     "extension-helpers": "workspace:*",
     "inline-palette": "workspace:*",

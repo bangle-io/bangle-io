@@ -4,7 +4,7 @@ import { InlineBacklinkPalette } from './InlineBacklinkPalette';
 import * as inlineBacklink from './inline-backlink-node';
 import { extensionName, paletteMark, palettePluginKey } from './config';
 import { renderReactNodeView } from './renderReactNodeView';
-
+import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };
@@ -12,7 +12,7 @@ const getScrollContainer = (view) => {
 const extension = Extension.create({
   name: extensionName,
   editorSpecs: [
-    inlineBacklink.spec(),
+    wikiLink.spec(),
     inlinePalette.spec({
       markName: paletteMark,
       trigger: '[[',
@@ -28,7 +28,7 @@ const extension = Extension.create({
     }),
   ],
   editorPlugins: [inlineBacklink.plugins()],
-  markdownItPlugins: [],
+  markdownItPlugins: [wikiLinkMarkdownItPlugin],
   editorReactComponent: InlineBacklinkPalette,
   renderReactNodeView: renderReactNodeView,
 });
