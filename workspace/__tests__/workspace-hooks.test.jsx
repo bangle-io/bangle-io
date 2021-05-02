@@ -176,6 +176,51 @@ describe('useListCachedNoteWsPaths', () => {
       </div>
     `);
   });
+
+  test('only returns md files', async () => {
+    mockStore.set('workspaces/2', [
+      {
+        name: 'kujo',
+        type: 'browser',
+        metadata: {},
+      },
+    ]);
+    await idbFS.writeFileAsText('kujo/one.md', createFileContent());
+    await idbFS.writeFileAsText('kujo/two.png', createFileContent());
+    await idbFS.writeFileAsText('kujo/three.md', createFileContent());
+
+    function Comp() {
+      const [files] = useListCachedNoteWsPaths();
+      return (
+        <div data-testid="result">
+          {files && files.map((f) => <span key={f}>{f}</span>)}
+        </div>
+      );
+    }
+
+    let promise = Promise.resolve();
+    let result;
+    act(() => {
+      result = render(<App Comp={Comp} />);
+    });
+    // To let the initial setState settle in Workspace after mount
+    await act(() => promise);
+
+    expect(result.container).toMatchInlineSnapshot(`
+      <div>
+        <div
+          data-testid="result"
+        >
+          <span>
+            kujo:one.md
+          </span>
+          <span>
+            kujo:three.md
+          </span>
+        </div>
+      </div>
+    `);
+  });
 });
 
 describe('useWorkspacePath', () => {

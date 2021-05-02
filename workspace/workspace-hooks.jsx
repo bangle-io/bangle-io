@@ -2,7 +2,11 @@ import { useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 
-import { locationToFilePath, resolvePath } from './path-helpers';
+import {
+  isValidNoteWsPath,
+  locationToFilePath,
+  resolvePath,
+} from './path-helpers';
 import {
   createWorkspace,
   deleteWorkspace,
@@ -38,7 +42,7 @@ export function useListCachedNoteWsPaths() {
         .add(() => cachedListAllFiles(wsName))
         .then((items) => {
           if (!destroyedRef.current) {
-            setFiles(items);
+            setFiles(items.filter((wsPath) => isValidNoteWsPath(wsPath)));
           }
         })
         .catch((error) => {
