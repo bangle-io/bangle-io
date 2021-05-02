@@ -19,3 +19,7 @@
   background-color: var(--bg-stronger-color);
   border-radius: 8px;
 }
+
+.bangle-editor-inner-container > .bangle-editor p {
+  font-size: 1rem;
+}
