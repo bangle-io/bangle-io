@@ -59,9 +59,13 @@ export function validateFileWsPath(wsPath) {
 // but restricted to only .md for now
 export function validateNoteWsPath(wsPath) {
   validateFileWsPath(wsPath);
-  if (!NOTE_WS_PATH_EXTENSION.test(wsPath)) {
+  if (!isValidNoteWsPath(wsPath)) {
     throw new PathValidationError('Notes can only be saved in .md format');
   }
+}
+
+export function isValidNoteWsPath(wsPath) {
+  return NOTE_WS_PATH_EXTENSION.test(wsPath);
 }
 
 export function resolvePath(wsPath) {

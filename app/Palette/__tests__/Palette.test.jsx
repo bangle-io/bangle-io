@@ -23,7 +23,7 @@ jest.mock('workspace/index', () => {
     useWorkspaces: jest.fn(),
     useListCachedNoteWsPaths: jest.fn(),
     useCreateNote: jest.fn(),
-    useRenameActiveFile: jest.fn(),
+    useRenameActiveNote: jest.fn(),
     useDeleteFile: jest.fn(),
   };
 });

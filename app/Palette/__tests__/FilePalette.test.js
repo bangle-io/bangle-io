@@ -21,7 +21,7 @@ jest.mock('workspace/index', () => {
     useWorkspaces: jest.fn(),
     useListCachedNoteWsPaths: jest.fn(),
     useCreateNote: jest.fn(),
-    useRenameActiveFile: jest.fn(),
+    useRenameActiveNote: jest.fn(),
     useDeleteFile: jest.fn(),
   };
 });
@@ -73,7 +73,7 @@ describe('useRecordRecentWsPaths', () => {
     value.filePaths = [...value.filePaths, 'y'];
 
     rerender();
-    // second rerender as state is update on seeing a new wsPAth
+    // second rerender as state is update on seeing a new wsPath
     rerender();
     expect(result.current).toEqual(['y', 'x']);
   });

@@ -28,6 +28,7 @@ import {
   defaultKeys as paragraphKeys,
 } from '@bangle.dev/core/components/paragraph';
 import {
+  isValidNoteWsPath,
   renameFile,
   useDeleteFile,
   useWorkspacePath,
@@ -95,14 +96,14 @@ function CommandPaletteUIComponent({
   let items = [
     useToggleTheme({ dismissPalette }),
     useToggleSidebar({ dismissPalette }),
-    useNewFile({ updatePalette, dismissPalette }),
+    useNewNote({ updatePalette, dismissPalette }),
     useRemoveActiveWorkspace({ dismissPalette }),
     useNewBrowserWS({ updatePalette, dismissPalette }),
     useNewFileSystemWS({ dismissPalette }),
     useImportWSFromGithub({ updatePalette, dismissPalette }),
-    useRenameActiveFile({ updatePalette, dismissPalette }),
+    useRenameActiveNote({ updatePalette, dismissPalette }),
     useSaveGithubToken({ updatePalette, dismissPalette }),
-    useDeleteActiveFile({ dismissPalette }),
+    useDeleteActiveNote({ dismissPalette }),
     usePrimaryEditorCommands({ dismissPalette }),
   ];
 
@@ -264,8 +265,9 @@ function useToggleSidebar({ dismissPalette }) {
   });
 }
 
-function useNewFile({}) {
+function useNewNote({}) {
   const uid = 'NEW_NOTE_COMMAND';
+  const { wsName } = useWorkspacePath();
   const newNoteCommand = useInputPaletteNewNoteCommand();
 
   const onExecute = useCallback(() => {
@@ -274,6 +276,7 @@ function useNewFile({}) {
   }, [newNoteCommand]);
   return queryMatch({
     uid,
+    hidden: !Boolean(wsName),
     title: 'Workspace: New Note',
     onExecute,
   });
@@ -305,7 +308,7 @@ function useNewBrowserWS({ updatePalette }) {
   });
 }
 
-function useRenameActiveFile({ updatePalette }) {
+function useRenameActiveNote({ updatePalette }) {
   const uid = 'RENAME_ACTIVE_FILE_COMMAND';
   const { filePath, wsName, wsPath, replaceWsPath } = useWorkspacePath();
 
@@ -328,7 +331,7 @@ function useRenameActiveFile({ updatePalette }) {
         type: INPUT_PALETTE,
         initialQuery: filePath,
         metadata: {
-          paletteInfo: 'You are currently renaming a file',
+          paletteInfo: 'You are currently renaming a note',
           onInputConfirm: (query) => {
             if (query) {
               return renameFileCb(query);
@@ -351,7 +354,7 @@ function useRenameActiveFile({ updatePalette }) {
   return queryMatch({
     uid,
     title: 'Workspace: Rename file',
-    hidden: !Boolean(filePath),
+    hidden: !isValidNoteWsPath(wsPath),
     onExecute,
   });
 }
@@ -469,8 +472,8 @@ export function useRemoveActiveWorkspace({ dismissPalette }) {
   });
 }
 
-export function useDeleteActiveFile({ dismissPalette }) {
-  const uid = 'DELETE_ACTIVE_FILE';
+export function useDeleteActiveNote({ dismissPalette }) {
+  const uid = 'DELETE_ACTIVE_NOTE';
   const deleteFile = useDeleteFile();
   const { wsPath, filePath } = useWorkspacePath();
 
@@ -481,8 +484,8 @@ export function useDeleteActiveFile({ dismissPalette }) {
 
   return queryMatch({
     uid,
-    hidden: !Boolean(filePath),
-    title: `Workspace: Delete current file '${filePath}'`,
+    hidden: !isValidNoteWsPath(wsPath),
+    title: `Workspace: Delete current note '${filePath}'`,
     onExecute,
   });
 }
