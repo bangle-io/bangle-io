@@ -15,6 +15,29 @@ export function validWsName(wsName) {
 
 export const NOTE_WS_PATH_EXTENSION = /.+\.md$/;
 
+export function isWsPath(wsPath) {
+  if (!wsPath || typeof wsPath !== 'string') {
+    return false;
+  }
+  if (wsPath.split(':').length !== 2) {
+    return false;
+  }
+  return true;
+}
+
+export function isValidFileWsPath(wsPath) {
+  if (!isWsPath(wsPath)) {
+    return false;
+  }
+
+  const items = wsPath.split('/');
+  if (items[items.length - 1]?.includes('.')) {
+    return true;
+  }
+
+  return false;
+}
+
 export function validateWsPath(wsPath) {
   if (wsPath.split('/').some((r) => r.length === 0)) {
     throw new PathValidationError(
@@ -45,14 +68,11 @@ export function validateWsPath(wsPath) {
 
 // a file wsPath is workspace path to a file
 export function validateFileWsPath(wsPath) {
-  validateWsPath(wsPath);
-  const { fileName } = resolvePath(wsPath);
-  if (!fileName.includes('.')) {
-    throw new PathValidationError(
-      `Filename ${fileName} must have "." extension.`,
-      undefined,
-    );
+  if (!isValidFileWsPath(wsPath)) {
+    throw new PathValidationError('Invalid path ' + wsPath);
   }
+
+  validateWsPath(wsPath);
 }
 
 // a note wsPath is every what a file wsPath is

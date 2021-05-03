@@ -110,6 +110,17 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     return textContent;
   }
 
+  // TODO implement in index db
+  async readFile(filePath) {
+    await verifyPermission(this._rootDirHandle, filePath);
+    const { fileHandle } = await this._resolveFileHandle(
+      this._rootDirHandle,
+      filePath,
+    );
+
+    return fileHandle.getFile();
+  }
+
   async writeFileAsText(filePath, data) {
     await verifyPermission(this._rootDirHandle, filePath);
 

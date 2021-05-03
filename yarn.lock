@@ -3617,6 +3617,7 @@ __metadata:
     config: "workspace:*"
     editor: "workspace:*"
     history: ^4.0.0
+    image-extension: "workspace:*"
     inline-backlink: "workspace:*"
     inline-command-palette: "workspace:*"
     inline-palette: "workspace:*"
@@ -8031,6 +8032,19 @@ fsevents@~2.3.1:
   checksum: 967abadb61e2cb0e5c5e8c4e1686ab926f91bc1a4680d994b91947d3c65d04c3ae126dcdf67f08e0feeb8ff8407d453e641aeeddcc47a3a3cca359f283cf6121
   languageName: node
   linkType: hard
+
+"image-extension@workspace:*, image-extension@workspace:extensions/image-extension":
+  version: 0.0.0-use.local
+  resolution: "image-extension@workspace:extensions/image-extension"
+  dependencies:
+    "@bangle.dev/core": 0.11.0
+    extension-helpers: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "immediate@npm:~3.0.5":
   version: 3.0.6

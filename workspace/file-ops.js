@@ -61,6 +61,23 @@ export async function getNote(bangleIOContext, wsPath) {
   return file;
 }
 
+export async function getImageAsBlob(wsPath) {
+  const { wsName } = resolvePath(wsPath);
+  const workspaceInfo = await getWorkspaceInfo(wsName);
+
+  validateFileWsPath(wsPath);
+
+  const path = toFSPath(wsPath);
+
+  const file = await getFileSystemFromWsInfo(workspaceInfo).readFile(path);
+
+  if (file === undefined) {
+    throw new Error(`File ${wsPath} not found`);
+  }
+
+  return window.URL.createObjectURL(file);
+}
+
 export async function saveNote(bangleIOContext, wsPath, doc) {
   validateNoteWsPath(wsPath);
 

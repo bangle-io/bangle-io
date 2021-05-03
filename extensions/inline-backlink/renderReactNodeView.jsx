@@ -17,7 +17,12 @@ function BackLinkNode({ nodeAttrs }) {
   let { path, title } = nodeAttrs;
   const { wsName } = useWorkspacePath();
   let to;
+  title = title || path;
   try {
+    if (!path.endsWith('.md')) {
+      path += '.md';
+    }
+
     const wsPath = filePathToWsPath(wsName, path);
 
     to = resolvePath(wsPath).locationPath;
@@ -38,7 +43,7 @@ function BackLinkNode({ nodeAttrs }) {
       draggable={false}
       to={to}
     >
-      [[{title || path}]]
+      [[{title}]]
     </Link>
   );
 }

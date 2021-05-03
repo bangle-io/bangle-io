@@ -59,6 +59,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/collapsible-heading"
       },
       {
+        "name": "image-extension",
+        "reference": "workspace:extensions/image-extension"
+      },
+      {
         "name": "inline-backlink",
         "reference": "workspace:extensions/inline-backlink"
       },
@@ -109,6 +113,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["e2e", ["workspace:e2e"]],
       ["editor", ["workspace:editor"]],
       ["extension-helpers", ["workspace:extension-helpers"]],
+      ["image-extension", ["workspace:extensions/image-extension"]],
       ["inline-backlink", ["virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#workspace:extensions/inline-backlink", "workspace:extensions/inline-backlink"]],
       ["inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["inline-palette", ["virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette", "virtual:8a8b9c89b29e5f2d0dfc28da702950b7abcbad26b27e3f03553be986ab7741e1b6c7a3754c086cb0311f89ad000c969f9ea9890d3345104d1245d4318fe5985a#workspace:js-libs/inline-palette", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#workspace:js-libs/inline-palette", "workspace:js-libs/inline-palette"]],
@@ -5538,6 +5543,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
             ["history", "npm:4.10.1"],
+            ["image-extension", "workspace:extensions/image-extension"],
             ["inline-backlink", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#workspace:extensions/inline-backlink"],
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
             ["inline-palette", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#workspace:js-libs/inline-palette"],
@@ -10771,6 +10777,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ignore", "npm:5.1.8"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["image-extension", [
+        ["workspace:extensions/image-extension", {
+          "packageLocation": "./extensions/image-extension/",
+          "packageDependencies": [
+            ["image-extension", "workspace:extensions/image-extension"],
+            ["@bangle.dev/core", "npm:0.11.0"],
+            ["extension-helpers", "workspace:extension-helpers"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],
+            ["utils", "workspace:utils"],
+            ["workspace", "workspace:workspace"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["immediate", [
