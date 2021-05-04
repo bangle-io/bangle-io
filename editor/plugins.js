@@ -88,7 +88,6 @@ export const getPlugins = (wsPath, sendRequest) => {
     components.horizontalRule.plugins(),
     components.listItem.plugins(),
     components.orderedList.plugins(),
-    components.image.plugins(),
     components.history.plugins(),
     tablePlugins(),
     collab.plugins(collabOpts),

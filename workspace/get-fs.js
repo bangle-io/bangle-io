@@ -9,7 +9,8 @@ export const getFileSystemFromWsInfo = (wsInfo) => {
     const rootDirHandle = wsInfo.metadata.rootDirHandle;
     return new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
-      allowedFile: (fileHandle) => fileHandle.name.endsWith('.md'),
+      allowedFile: (fileHandle) =>
+        fileHandle.name.endsWith('.md') || fileHandle.name.endsWith('.png'),
     });
   }
 

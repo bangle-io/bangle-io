@@ -69,15 +69,15 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     this._resolveFileHandle = resolveFileHandle({ allowedDir, allowedFile });
 
     const readFileAsText = this.readFileAsText.bind(this);
-    const writeFileAsText = this.writeFileAsText.bind(this);
+    const writeFile = this.writeFile.bind(this);
     const unlink = this.unlink.bind(this);
     const rename = this.rename.bind(this);
     const opendirRecursive = this.opendirRecursive.bind(this);
 
     this.readFileAsText = (...args) =>
       catchUpstreamError(readFileAsText(...args), 'Unable to read file');
-    this.writeFileAsText = (...args) =>
-      catchUpstreamError(writeFileAsText(...args), 'Unable to write file');
+    this.writeFile = (...args) =>
+      catchUpstreamError(writeFile(...args), 'Unable to write file');
     this.unlink = (...args) =>
       catchUpstreamError(unlink(...args), 'Unable to unlink file');
     this.rename = (...args) =>
@@ -110,7 +110,18 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     return textContent;
   }
 
-  async writeFileAsText(filePath, data) {
+  // TODO implement in index db
+  async readFile(filePath) {
+    await verifyPermission(this._rootDirHandle, filePath);
+    const { fileHandle } = await this._resolveFileHandle(
+      this._rootDirHandle,
+      filePath,
+    );
+
+    return fileHandle.getFile();
+  }
+
+  async writeFile(filePath, data) {
     await verifyPermission(this._rootDirHandle, filePath);
 
     let fileHandle;
@@ -175,7 +186,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
       );
     }
 
-    await this.writeFileAsText(newFilePath, file);
+    await this.writeFile(newFilePath, file);
     await this.unlink(oldFilePath);
   }
 

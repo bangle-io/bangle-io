@@ -199,6 +199,9 @@ export function useWorkspaces() {
   };
 }
 
+/**
+ * WARNING check if wsName, wsPath exists before working on it
+ */
 export function useWorkspacePath() {
   // I think history doesnt change when location changes
   // so it is a good idea to use useLocation instead of location

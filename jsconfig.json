@@ -92,6 +92,12 @@
       ],
       "collapsible-heading/*": [
         "./extensions/collapsible-heading/*"
+      ],
+      "image-extension": [
+        "./extensions/image-extension/index.js"
+      ],
+      "image-extension/*": [
+        "./extensions/image-extension/*"
       ]
     },
     "module": "esnext",

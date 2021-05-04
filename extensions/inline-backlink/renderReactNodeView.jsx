@@ -17,7 +17,37 @@ function BackLinkNode({ nodeAttrs }) {
   let { path, title } = nodeAttrs;
   const { wsName } = useWorkspacePath();
   let to;
+  title = title || path;
+
+  if (!wsName) {
+    return (
+      <Link draggable={false} to={''}>
+        [[{title || null}]]
+      </Link>
+    );
+  }
+
+  ({ title, to } = getToPath(wsName, title, path));
+
+  return (
+    <Link
+      // prevent the a-href from being dragged, which messes up our system
+      // we want the node view to be dragged to the dom serializers can kick in
+      draggable={false}
+      to={to}
+    >
+      [[{title}]]
+    </Link>
+  );
+}
+
+function getToPath(wsName, title, path) {
+  let to;
   try {
+    if (!path.endsWith('.md')) {
+      path += '.md';
+    }
+
     const wsPath = filePathToWsPath(wsName, path);
 
     to = resolvePath(wsPath).locationPath;
@@ -31,14 +61,5 @@ function BackLinkNode({ nodeAttrs }) {
     title = 'Error parsing link';
   }
 
-  return (
-    <Link
-      // prevent the a-href from being dragged, which messes up our system
-      // we want the node view to be dragged to the dom serializers can kick in
-      draggable={false}
-      to={to}
-    >
-      [[{title || path}]]
-    </Link>
-  );
+  return { to, title };
 }

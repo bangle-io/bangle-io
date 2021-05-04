@@ -72,7 +72,7 @@ beforeEach(() => {
     readFileAsText: jest.fn(async (fileName) => {
       return mockBabyFSStore.get(fileName);
     }),
-    writeFileAsText: jest.fn(async (fileName, data) => {
+    writeFile: jest.fn(async (fileName, data) => {
       mockBabyFSStore.set(fileName, data);
     }),
     unlink: jest.fn(async (fileName) => {
@@ -123,7 +123,7 @@ describe('useListCachedNoteWsPaths', () => {
         metadata: {},
       },
     ]);
-    await idbFS.writeFileAsText('kujo/one.md', createFileContent());
+    await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
       const [files, _refreshFiles] = useListCachedNoteWsPaths();
@@ -155,7 +155,7 @@ describe('useListCachedNoteWsPaths', () => {
       </div>
     `);
 
-    await idbFS.writeFileAsText('kujo/two.md', createFileContent());
+    await idbFS.writeFile('kujo/two.md', createFileContent());
 
     await act(async () => {
       await refreshFiles();
@@ -185,9 +185,9 @@ describe('useListCachedNoteWsPaths', () => {
         metadata: {},
       },
     ]);
-    await idbFS.writeFileAsText('kujo/one.md', createFileContent());
-    await idbFS.writeFileAsText('kujo/two.png', createFileContent());
-    await idbFS.writeFileAsText('kujo/three.md', createFileContent());
+    await idbFS.writeFile('kujo/one.md', createFileContent());
+    await idbFS.writeFile('kujo/two.png', createFileContent());
+    await idbFS.writeFile('kujo/three.md', createFileContent());
 
     function Comp() {
       const [files] = useListCachedNoteWsPaths();
@@ -262,7 +262,7 @@ describe('useWorkspacePath', () => {
       },
     ]);
 
-    await idbFS.writeFileAsText('kujo/one.md', createFileContent());
+    await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
       const [files] = useListCachedNoteWsPaths();
@@ -386,8 +386,8 @@ describe('useCreateNote', () => {
 
     expect(testLocation.pathname).toBe('/ws/kujo/one.md');
 
-    expect(idbFS.writeFileAsText).toBeCalledTimes(1);
-    expect(idbFS.writeFileAsText).toBeCalledWith(
+    expect(idbFS.writeFile).toBeCalledTimes(1);
+    expect(idbFS.writeFile).toBeCalledWith(
       'kujo/one.md',
       '# one.md\n\nHello world!',
     );
@@ -407,7 +407,7 @@ describe('useDeleteFile', () => {
       },
     ]);
 
-    await idbFS.writeFileAsText('kujo/one.md', createFileContent());
+    await idbFS.writeFile('kujo/one.md', createFileContent());
 
     function Comp() {
       const deleteFileCb = useDeleteFile();

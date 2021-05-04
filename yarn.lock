@@ -3617,6 +3617,7 @@ __metadata:
     config: "workspace:*"
     editor: "workspace:*"
     history: ^4.0.0
+    image-extension: "workspace:*"
     inline-backlink: "workspace:*"
     inline-command-palette: "workspace:*"
     inline-palette: "workspace:*"
@@ -8032,6 +8033,20 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"image-extension@workspace:*, image-extension@workspace:extensions/image-extension":
+  version: 0.0.0-use.local
+  resolution: "image-extension@workspace:extensions/image-extension"
+  dependencies:
+    "@bangle.dev/core": 0.11.0
+    "@bangle.dev/react": 0.11.0
+    extension-helpers: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "immediate@npm:~3.0.5":
   version: 3.0.6
   resolution: "immediate@npm:3.0.6"
@@ -8153,7 +8168,6 @@ fsevents@~2.3.1:
     "@bangle.dev/react": 0.11.0
     chrono-node: ^2.2.6
     config: "workspace:*"
-    dayjs: ^1.10.4
     extension-helpers: "workspace:*"
     inline-palette: "workspace:*"
     react: 16.14.0
@@ -14424,6 +14438,7 @@ resolve@^2.0.0-next.3:
   dependencies:
     "@testing-library/react-hooks": ^5.1.2
     config: "workspace:*"
+    dayjs: ^1.10.4
     react: 16.14.0
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2

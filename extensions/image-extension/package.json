@@ -1,5 +1,5 @@
 {
-  "name": "inline-command-palette",
+  "name": "image-extension",
   "version": "0.0.0",
   "authors": [
     {
@@ -21,14 +21,11 @@
   "dependencies": {
     "@bangle.dev/core": "0.11.0",
     "@bangle.dev/react": "0.11.0",
-    "chrono-node": "^2.2.6",
-    "config": "workspace:*",
     "extension-helpers": "workspace:*",
-    "inline-palette": "workspace:*",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "ui-components": "workspace:*",
-    "utils": "workspace:*"
+    "utils": "workspace:*",
+    "workspace": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

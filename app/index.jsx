@@ -22,7 +22,7 @@ window.Sentry?.onLoad(function () {
       // Set tracesSampleRate to 1.0 to capture 100%
       // of transactions for performance monitoring.
       // We recommend adjusting this value in production
-      tracesSampleRate: 1.0,
+      tracesSampleRate: DEPLOY_ENV === 'local' ? 0 : 1.0,
     });
   });
 });

@@ -40,6 +40,7 @@
     "config": "workspace:*",
     "editor": "workspace:*",
     "history": "^4.0.0",
+    "image-extension": "workspace:*",
     "inline-backlink": "workspace:*",
     "inline-command-palette": "workspace:*",
     "inline-palette": "workspace:*",

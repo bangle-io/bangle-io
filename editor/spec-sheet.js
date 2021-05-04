@@ -11,9 +11,7 @@ import * as collab from '@bangle.dev/collab/client/collab-extension';
 import { emoji } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
-import { SpecRegistry } from '@bangle.dev/core/spec-registry';
 import stopwatch from '@bangle.dev/react-stopwatch';
-// import sticker from '@bangle.dev/react-sticker';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
 import {
@@ -34,7 +32,6 @@ import {
   horizontalRule,
   listItem,
   orderedList,
-  image,
 } from '@bangle.dev/core/components/components';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
 
@@ -64,7 +61,6 @@ export const rawSpecs = [
   tableCell,
   tableHeader,
   tableRow,
-  image.spec(),
   bold.spec(),
   code.spec(),
   italic.spec(),

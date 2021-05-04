@@ -19,7 +19,8 @@ export class BaseFileSystem {
   //  https://github.com/jprichardson/node-fs-extra/blob/master/docs/outputFile.md
   // Almost the same as fs.writeFile (i.e. it overwrites), except that if the parent directory does not exist, it's created
   // and date must be a string type
-  async writeFileAsText(filePath, data) {}
+  // data - can be blob or string
+  async writeFile(filePath, data) {}
   async unlink(filePath) {}
   // Rename a file or directory
   async rename() {}

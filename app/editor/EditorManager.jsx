@@ -19,7 +19,7 @@ import inlineCommandPalette from 'inline-command-palette/index';
 import inlineBacklinkPalette from 'inline-backlink/index';
 import { getPlugins, rawSpecs } from 'editor/index';
 import collapsibleHeading from 'collapsible-heading/index';
-
+import imageExtension from 'image-extension/index';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
@@ -30,7 +30,12 @@ const MAX_EDITOR = maxEditors.length;
 const bangleIOContext = new BangleIOContext({
   coreRawSpecs: rawSpecs,
   getCorePlugins: getPlugins,
-  extensions: [inlineCommandPalette, inlineBacklinkPalette, collapsibleHeading],
+  extensions: [
+    inlineCommandPalette,
+    inlineBacklinkPalette,
+    collapsibleHeading,
+    imageExtension,
+  ],
   markdownItPlugins: [emojiMarkdownItPlugin, frontMatterMarkdownItPlugin],
 });
 export const EditorManagerContext = React.createContext({});
