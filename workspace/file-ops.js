@@ -61,7 +61,7 @@ export async function getNote(bangleIOContext, wsPath) {
   return file;
 }
 
-export async function getImageAsBlob(wsPath) {
+export async function getFile(wsPath) {
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
@@ -71,11 +71,7 @@ export async function getImageAsBlob(wsPath) {
 
   const file = await getFileSystemFromWsInfo(workspaceInfo).readFile(path);
 
-  if (file === undefined) {
-    throw new Error(`File ${wsPath} not found`);
-  }
-
-  return window.URL.createObjectURL(file);
+  return file;
 }
 
 export async function saveNote(bangleIOContext, wsPath, doc) {

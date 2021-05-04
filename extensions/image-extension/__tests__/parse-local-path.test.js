@@ -12,6 +12,12 @@ test('It handles ./ url', () => {
   ).toMatchInlineSnapshot(`"wallah:my-img.png"`);
 });
 
+test('handles spaces in url', () => {
+  expect(
+    parseLocalPath('./my%20img.png', 'wallah:my-baby.md'),
+  ).toMatchInlineSnapshot(`"wallah:my img.png"`);
+});
+
 test('It handles ./ url when in inside a folder', () => {
   expect(
     parseLocalPath('./my-img.png', 'wallah:parent-dir/note.md'),

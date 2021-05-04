@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  getImageAsBlob,
-  isValidFileWsPath,
-  useWorkspacePath,
-} from 'workspace/index';
+import { getFile, isValidFileWsPath, useWorkspacePath } from 'workspace/index';
 import { useDestroyRef } from 'utils/index';
 import { parseLocalPath } from './parse-local-path';
 
@@ -23,45 +19,43 @@ const checkExternalSrc = (src) => {
 export function ImageComponent({ nodeAttrs }) {
   const { src, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState(null);
-  const { wsPath } = useWorkspacePath();
   const destroyRef = useDestroyRef();
+  const { wsPath } = useWorkspacePath();
 
   useEffect(() => {
     let imageWsPath;
-    let fileBlob;
-    if (checkExternalSrc(src)) {
-      updateImageSrc(src);
-    } else {
-      if (isValidFileWsPath(src)) {
-        imageWsPath = src;
-      } else {
-        imageWsPath = parseLocalPath(src, wsPath);
-      }
+    let objectUrl;
 
-      getImageAsBlob(imageWsPath)
-        .then((_fileBlob) => {
-          fileBlob = _fileBlob;
-          if (!destroyRef.current) {
-            updateImageSrc(_fileBlob);
-          }
-        })
-        .catch((error) => {
-          // silence the error in case we were not able
-          // to get the image
-        });
+    if (wsPath) {
+      if (checkExternalSrc(src)) {
+        updateImageSrc(src);
+      } else {
+        if (isValidFileWsPath(src)) {
+          imageWsPath = src;
+        } else {
+          imageWsPath = parseLocalPath(src, wsPath);
+        }
+
+        getFile(imageWsPath)
+          .then((file) => {
+            objectUrl = window.URL.createObjectURL(file);
+            if (!destroyRef.current) {
+              updateImageSrc(objectUrl);
+            }
+          })
+          .catch((error) => {
+            // silence the error in case we were not able
+            // to get the image
+          });
+      }
     }
     return () => {
-      if (fileBlob) {
-        window.URL.revokeObjectURL(fileBlob);
+      if (objectUrl) {
+        window.URL.revokeObjectURL(objectUrl);
       }
     };
   }, [src, wsPath, destroyRef]);
 
-  useEffect(() => {
-    if (imageSrc && imageSrc.startsWith('blob:')) {
-    }
-  }, [imageSrc]);
-
-  // TODO show filler image
-  return <img src={imageSrc} alt={alt} />;
+  // TODO add height width
+  return <img src={imageSrc || '/404.png'} alt={alt || src} loading="lazy" />;
 }
