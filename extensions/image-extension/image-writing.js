@@ -69,5 +69,5 @@ async function getSourceFromFile(file, view) {
 
   // prepending a / to make it an absolute URL
   // since we are returning a web url we need to encode it
-  return '/' + encodeURIComponent(resolvePath(imageWsPath).filePath);
+  return encodeURI('/' + resolvePath(imageWsPath).filePath);
 }
