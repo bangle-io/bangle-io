@@ -7,7 +7,7 @@ import App from './App';
 import { EditorManager } from './editor/EditorManager';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
 
-window.Sentry.onLoad(function () {
+window.Sentry?.onLoad(function () {
   import(
     /* webpackChunkName: "@sentry/tracing" */
     /* webpackPrefetch: true */
