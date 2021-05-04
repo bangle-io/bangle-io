@@ -87,7 +87,24 @@ export async function saveNote(bangleIOContext, wsPath, doc) {
   const path = toFSPath(wsPath);
   const data = markdownSerializer(doc, bangleIOContext.specRegistry);
 
-  await getFileSystemFromWsInfo(workspaceInfo).writeFileAsText(path, data);
+  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, data);
+}
+
+// TODO check if saveFile  (.writeFile) will work on other browsers
+/**
+ *
+ * @param {*} bangleIOContext
+ * @param {*} wsPath
+ * @param {*} fileBlob  a blob https://developer.mozilla.org/en-US/docs/Web/API/FileSystemWritableFileStream .write can take
+ */
+export async function saveFile(wsPath, fileBlob) {
+  validateFileWsPath(wsPath);
+
+  const { wsName } = resolvePath(wsPath);
+  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const path = toFSPath(wsPath);
+
+  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, fileBlob);
 }
 
 /**
@@ -114,7 +131,7 @@ export async function createNote(
     throw new Error('Unknown content type');
   }
 
-  await getFileSystemFromWsInfo(workspaceInfo).writeFileAsText(path, markdown);
+  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, markdown);
   listFilesCache.deleteEntry(workspaceInfo);
 }
 

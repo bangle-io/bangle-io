@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { replaceSuggestionMarkWith } from 'inline-palette/index';
 import { palettePluginKey } from './config';
-import { useDestroyRef } from 'utils/index';
+import { getDayJs, useDestroyRef } from 'utils/index';
 import { PaletteItem, PALETTE_ITEM_HINT_TYPE } from './palette-item';
 
 const OneDayMilliseconds = 24 * 60 * 60 * 1000;
@@ -38,17 +38,13 @@ const baseItem = PaletteItem.create({
 let _libraries;
 async function getTimeLibrary() {
   if (!_libraries) {
-    let [chrono, dayjs, localizedFormat] = await Promise.all([
+    let [chrono, dayjs] = await Promise.all([
       import('chrono-node'),
-      import('dayjs'),
-      import('dayjs/plugin/localizedFormat'),
+      getDayJs(),
     ]);
 
     chrono = chrono.default || chrono;
-    dayjs = dayjs.default || dayjs;
-    localizedFormat = localizedFormat.default || localizedFormat;
 
-    dayjs.extend(localizedFormat);
     _libraries = { chrono: chrono, dayjs: dayjs };
   }
   return _libraries;

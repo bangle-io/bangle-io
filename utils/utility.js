@@ -215,3 +215,20 @@ export function serialExecuteQueue() {
     },
   };
 }
+
+let dayJs;
+export async function getDayJs() {
+  if (dayJs) {
+    return dayJs;
+  }
+  let [_dayjs, _localizedFormat] = await Promise.all([
+    import('dayjs'),
+    import('dayjs/plugin/localizedFormat'),
+  ]);
+
+  dayJs = _dayjs.default || _dayjs;
+  _localizedFormat = _localizedFormat.default || _localizedFormat;
+  dayJs.extend(_localizedFormat);
+
+  return dayJs;
+}

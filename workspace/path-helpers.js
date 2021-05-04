@@ -88,15 +88,21 @@ export function isValidNoteWsPath(wsPath) {
   return NOTE_WS_PATH_EXTENSION.test(wsPath);
 }
 
+// TODO rename this to resolveWsPath
 export function resolvePath(wsPath) {
   validateWsPath(wsPath);
   const [wsName, filePath] = wsPath.split(':');
-  const fileName = last(filePath.split('/'));
+  const filePathSplitted = filePath.split('/');
+  const fileName = last(filePathSplitted);
 
+  const dirPath = filePathSplitted
+    .slice(0, filePathSplitted.length - 1)
+    .join('/');
   return {
     wsName,
-    filePath,
-    fileName: fileName,
+    filePath, // wsName:filePath
+    dirPath, // wsName:dirPath/fileName
+    fileName,
     locationPath: '/ws/' + wsName + '/' + filePath,
   };
 }

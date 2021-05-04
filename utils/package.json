@@ -20,6 +20,7 @@
   "scripts": {},
   "dependencies": {
     "config": "workspace:*",
+    "dayjs": "^1.10.4",
     "react": "16.14.0",
     "react-dom": "^17.0.2",
     "w3c-keyname": "^2.2.4"

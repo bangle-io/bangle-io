@@ -101,7 +101,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     return result;
   }
 
-  async writeFileAsText(filePath, data) {
+  async writeFile(filePath, data) {
     if (typeof data !== 'string') {
       throw new IndexedDBFileSystemError(
         'Can only write string type',
@@ -144,7 +144,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
         'Cannot rename as a file with the same name already exists',
       );
     }
-    await this.writeFileAsText(newFilePath, file);
+    await this.writeFile(newFilePath, file);
     await this.unlink(oldFilePath);
   }
 

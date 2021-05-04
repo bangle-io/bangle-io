@@ -10950,7 +10950,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#portal:../bangle-play/react::locator=bangle-io%40workspace%3A."],
             ["chrono-node", "npm:2.2.6"],
             ["config", "workspace:config"],
-            ["dayjs", "npm:1.10.4"],
             ["extension-helpers", "workspace:extension-helpers"],
             ["inline-palette", "virtual:4cb17a9a1ec80bbbb0fc4175accc1d678a9f6e05046f06480f547fc9be52c18bf37d1a3d08ddfe2f1c346b361bc0dbc5a0ab4c09a3f8b1e1977b8911298f82b4#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],
