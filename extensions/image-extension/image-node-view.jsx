@@ -9,15 +9,17 @@ export const renderReactNodeView = {
   },
 };
 
-const checkExternalSrc = (src) => {
+const isOtherSources = (src) => {
   return (
+    !src ||
     src.startsWith('http://') ||
     src.startsWith('https://') ||
     src.startsWith('data:image/')
   );
 };
+
 export function ImageComponent({ nodeAttrs }) {
-  const { src, alt } = nodeAttrs;
+  const { src: inputSrc, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState(null);
   const destroyRef = useDestroyRef();
   const { wsPath } = useWorkspacePath();
@@ -27,17 +29,21 @@ export function ImageComponent({ nodeAttrs }) {
     let objectUrl;
 
     if (wsPath) {
-      if (checkExternalSrc(src)) {
-        updateImageSrc(src);
+      if (isOtherSources(inputSrc)) {
+        updateImageSrc(inputSrc);
       } else {
-        if (isValidFileWsPath(src)) {
-          imageWsPath = src;
+        if (isValidFileWsPath(inputSrc)) {
+          throw new Error('Image source cannot be a wsPath');
         } else {
-          imageWsPath = parseLocalPath(src, wsPath);
+          imageWsPath = parseLocalPath(inputSrc, wsPath);
         }
 
         getFile(imageWsPath)
           .then((file) => {
+            if (!file) {
+              return;
+            }
+
             objectUrl = window.URL.createObjectURL(file);
             if (!destroyRef.current) {
               updateImageSrc(objectUrl);
@@ -54,8 +60,10 @@ export function ImageComponent({ nodeAttrs }) {
         window.URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [src, wsPath, destroyRef]);
+  }, [inputSrc, wsPath, destroyRef]);
 
   // TODO add height width
-  return <img src={imageSrc || '/404.png'} alt={alt || src} loading="lazy" />;
+  return (
+    <img src={imageSrc || '/404.png'} alt={alt || inputSrc} loading="lazy" />
+  );
 }

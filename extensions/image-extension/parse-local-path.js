@@ -1,6 +1,10 @@
 import { filePathToWsPath, resolvePath } from 'workspace';
 
-// wsPath must be a file wsPath
+/**
+ * @param {String} imageSrc - The image source read directly form the user input like an md file
+ * @param {String} wsPath - the current file wsPath to resolve the imageSrc from
+ * @returns {String} a wsPath to the image file
+ */
 export function parseLocalPath(imageSrc, wsPath) {
   if (imageSrc.startsWith('./')) {
     imageSrc = imageSrc.slice(2);
