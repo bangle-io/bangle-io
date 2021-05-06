@@ -66,7 +66,7 @@ export function EditorArea({
         )}
         {wsPath && fileExists === false && (
           <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
-            🕵️‍♀️‍ File "{resolvePath(wsPath).fileName}" was not found
+            🕵️‍♀️‍ Note "{resolvePath(wsPath).fileName}" was not found
           </h3>
         )}
         {!wsPath && <EmptyEditorPage />}

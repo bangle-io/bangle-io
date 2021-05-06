@@ -89,6 +89,7 @@ export function isValidNoteWsPath(wsPath) {
 }
 
 // TODO rename this to resolveWsPath
+// TODO add test where wsPath has `//`
 export function resolvePath(wsPath) {
   validateWsPath(wsPath);
   const [wsName, filePath] = wsPath.split(':');
@@ -97,6 +98,7 @@ export function resolvePath(wsPath) {
 
   const dirPath = filePathSplitted
     .slice(0, filePathSplitted.length - 1)
+    .filter(Boolean)
     .join('/');
   return {
     wsName,
@@ -108,6 +110,9 @@ export function resolvePath(wsPath) {
 }
 
 export function filePathToWsPath(wsName, filePath) {
+  if (filePath.startsWith('/')) {
+    filePath = filePath.slice(1);
+  }
   return wsName + ':' + filePath;
 }
 

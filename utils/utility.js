@@ -232,3 +232,17 @@ export async function getDayJs() {
 
   return dayJs;
 }
+
+export function conditionalPrefix(str, part) {
+  if (str.startsWith(part)) {
+    return str;
+  }
+  return part + str;
+}
+
+export function conditionalSuffix(str, part) {
+  if (str.endsWith(part)) {
+    return str;
+  }
+  return str + part;
+}
