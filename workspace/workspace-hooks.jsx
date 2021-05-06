@@ -210,7 +210,8 @@ export function useWorkspacePath() {
   const pushWsPath = useCallback(
     (wsPath, newTab = false, secondary = false) => {
       const { wsName, filePath } = resolvePath(wsPath);
-      const newPath = `/ws/${wsName}/${filePath}`;
+      const newPath = encodeURI(`/ws/${wsName}/${filePath}`);
+
       if (newTab) {
         window.open(newPath);
         return;
@@ -253,7 +254,7 @@ export function useWorkspacePath() {
 
       history.replace({
         ...location,
-        pathname: `/ws/${wsName}/${filePath}`,
+        pathname: encodeURI(`/ws/${wsName}/${filePath}`),
       });
     },
     [history, location],
@@ -270,9 +271,9 @@ export function useWorkspacePath() {
     // transition any secondary to main
     if (secondaryWsPath) {
       const { wsName, filePath } = resolvePath(secondaryWsPath);
-      newPath = `/ws/${wsName}/${filePath}`;
+      newPath = encodeURI(`/ws/${wsName}/${filePath}`);
     } else {
-      newPath = `/ws/${wsName}`;
+      newPath = encodeURI(`/ws/${wsName}`);
     }
 
     history.push(newPath);
