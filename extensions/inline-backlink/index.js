@@ -5,6 +5,7 @@ import * as inlineBacklink from './inline-backlink-node';
 import { extensionName, paletteMark, palettePluginKey } from './config';
 import { renderReactNodeView } from './renderReactNodeView';
 import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
+
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };

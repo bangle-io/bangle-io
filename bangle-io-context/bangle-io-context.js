@@ -43,6 +43,7 @@ export class BangleIOContext {
   renderReactNodeViews(nodeViewRenderArg) {
     return this._renderReactNodeViewLookup[nodeViewRenderArg.node.type.name]?.(
       nodeViewRenderArg,
+      this,
     );
   }
 
