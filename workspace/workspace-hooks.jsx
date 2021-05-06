@@ -1,33 +1,17 @@
 import { useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
-
-import {
-  isValidNoteWsPath,
-  locationToFilePath,
-  resolvePath,
-} from './path-helpers';
+import { locationToFilePath, resolvePath } from './path-helpers';
 import {
   createWorkspace,
   deleteWorkspace,
   listWorkspaces,
 } from './workspace-helpers';
-import { cachedListAllFiles, createNote, deleteFile } from './file-ops';
-import {
-  checkWidescreen,
-  serialExecuteQueue,
-  useDestroyRef,
-} from 'utils/index';
+import { cachedListAllNoteWsPaths, createNote, deleteFile } from './file-ops';
+import { checkWidescreen, useDestroyRef } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
-
-// Refresh hooks get bombarded with many concurrent
-// requests and that defeats the point of caching
-// as everyone tries to get the results. So this exists
-// to help the first one do its thing, so that the others
-// in queue can get the cached result.
-const refreshFileQueue = serialExecuteQueue();
 
 export function useListCachedNoteWsPaths() {
   const { wsName } = useWorkspacePath();
@@ -38,11 +22,11 @@ export function useListCachedNoteWsPaths() {
 
   const refreshFiles = useCallback(() => {
     if (wsName) {
-      refreshFileQueue
-        .add(() => cachedListAllFiles(wsName))
+      cachedListAllNoteWsPaths(wsName)
         .then((items) => {
           if (!destroyedRef.current) {
-            setFiles(items.filter((wsPath) => isValidNoteWsPath(wsPath)));
+            setFiles(items);
+            return;
           }
         })
         .catch((error) => {

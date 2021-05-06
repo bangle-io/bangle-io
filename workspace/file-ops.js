@@ -4,11 +4,13 @@ import {
   validWsName,
   validateFileWsPath,
   validateNoteWsPath,
+  isValidNoteWsPath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
 import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs';
 import { listFilesCache } from './native-browser-list-fs-cache';
 import { getFileSystemFromWsInfo } from './get-fs';
+import { serialExecuteQueue } from 'utils/utility';
 
 const toFSPath = (wsPath) => {
   const { wsName, filePath } = resolvePath(wsPath);
@@ -139,6 +141,12 @@ export async function deleteFile(wsPath) {
   listFilesCache.deleteEntry(workspaceInfo);
 }
 
+// This get bombarded with many concurrent
+// requests and that defeats the point of caching
+// as everyone tries to get the results. So this exists
+// to help the first one do its thing, so that the others
+// in queue can get the cached result.
+const cachedListAllFilesQueue = serialExecuteQueue();
 /**
  * A smart cached version of `listAllFiles` which
  * only recalculates list of all files if there was a
@@ -147,18 +155,29 @@ export async function deleteFile(wsPath) {
  * @param {*} wsName
  */
 export async function cachedListAllFiles(wsName) {
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const getWsPaths = async (wsName) => {
+    const workspaceInfo = await getWorkspaceInfo(wsName);
 
-  if (workspaceInfo.type !== 'nativefs') {
-    return listAllFiles(wsName);
-  }
+    if (workspaceInfo.type !== 'nativefs') {
+      return listAllFiles(wsName);
+    }
 
-  const cachedEntry = listFilesCache.getEntry(workspaceInfo);
-  if (!cachedEntry) {
-    return listAllFiles(wsName);
-  }
+    const cachedEntry = listFilesCache.getEntry(workspaceInfo);
 
-  return cachedEntry;
+    if (!cachedEntry) {
+      return listAllFiles(wsName);
+    }
+
+    return cachedEntry;
+  };
+
+  return cachedListAllFilesQueue.add(() => getWsPaths(wsName));
+}
+
+export async function cachedListAllNoteWsPaths(wsName) {
+  return cachedListAllFiles(wsName).then((items) => {
+    return items.filter((wsPath) => isValidNoteWsPath(wsPath));
+  });
 }
 
 export async function listAllFiles(wsName) {
