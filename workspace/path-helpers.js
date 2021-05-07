@@ -131,7 +131,7 @@ export function sanitizeFilePath(filePath) {
  * The local file paths are the paths supported by the file system.
  * For example ./my-file is a relative file.
  * @param {String} filePath - The file path read directly form the user input like an md file
- * @param {String} wsPath - the current file wsPath to resolve the file from
+ * @param {String} wsPath - the current file wsPath to resolve the relative path from
  * @returns {String} a valid wsPath to it
  */
 export function parseLocalFilePath(filePath, wsPath) {

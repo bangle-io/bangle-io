@@ -46,7 +46,7 @@ describe('BackLinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="link"
+          class="back-link"
           draggable="false"
         >
           [[some/path]]
@@ -66,7 +66,7 @@ describe('BackLinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="link"
+          class="back-link"
           draggable="false"
         >
           [[monako]]
@@ -155,6 +155,38 @@ describe('BackLinkNode', () => {
       expect(pushWsPathMock).nthCalledWith(
         1,
         'test-ws:magic/some/note1.md',
+        false,
+        false,
+      );
+    });
+
+    test('fall backs to  case insensitive if no case sensitive match', async () => {
+      cachedListAllNoteWsPaths.mockImplementation(async () => {
+        return ['test-ws:magic/note1.md'];
+      });
+
+      await clickSetup({ path: 'Note1' });
+
+      expect(pushWsPathMock).toBeCalledTimes(1);
+      expect(pushWsPathMock).nthCalledWith(
+        1,
+        'test-ws:magic/note1.md',
+        false,
+        false,
+      );
+    });
+
+    test('Get the exact match if it exists', async () => {
+      cachedListAllNoteWsPaths.mockImplementation(async () => {
+        return ['test-ws:magic/NoTe1.md', 'test-ws:note1.md'];
+      });
+
+      await clickSetup({ path: 'NoTe1' });
+
+      expect(pushWsPathMock).toBeCalledTimes(1);
+      expect(pushWsPathMock).nthCalledWith(
+        1,
+        'test-ws:magic/NoTe1.md',
         false,
         false,
       );
@@ -296,7 +328,7 @@ describe('BackLinkNode', () => {
       expect(renderResult.container).toMatchInlineSnapshot(`
         <div>
           <button
-            class="link"
+            class="back-link"
             draggable="false"
           >
             [[Invalid link!monako]]
