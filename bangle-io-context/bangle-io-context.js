@@ -13,7 +13,7 @@ export class BangleIOContext {
     coreRawSpecs,
     getCorePlugins,
     extensions = [],
-    markdownItPlugins,
+    markdownItPlugins = [],
   }) {
     this._extensions = extensions;
     if (

@@ -1,10 +1,8 @@
 import { NodeView } from '@bangle.dev/core/node-view';
 import { backLinkNodeName } from './config';
 
-export const plugins = pluginsFactory;
-
-function pluginsFactory() {
-  return ({ schema }) => [
+export function inlineBackLinkPlugin() {
+  return () => [
     NodeView.createPlugin({
       name: backLinkNodeName,
       // inline-block allows the span to get full height of image

@@ -122,3 +122,7 @@ export function locationToFilePath(location) {
   }
   return null;
 }
+
+export function sanitizeFilePath(filePath) {
+  return filePath.replace(/[^\w\s-\.]/g, '');
+}

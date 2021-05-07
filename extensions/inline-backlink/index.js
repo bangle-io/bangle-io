@@ -1,9 +1,9 @@
 import { inlinePalette } from 'inline-palette/index';
 import { Extension } from 'extension-helpers';
 import { InlineBacklinkPalette } from './InlineBacklinkPalette';
-import * as inlineBacklink from './inline-backlink-node';
+import { inlineBackLinkPlugin } from './inline-backlink-plugin';
 import { extensionName, paletteMark, palettePluginKey } from './config';
-import { renderReactNodeView } from './renderReactNodeView';
+import { renderReactNodeView } from './BackLinkNode';
 import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
 
 const getScrollContainer = (view) => {
@@ -28,7 +28,7 @@ const extension = Extension.create({
       },
     }),
   ],
-  editorPlugins: [inlineBacklink.plugins()],
+  editorPlugins: [inlineBackLinkPlugin()],
   markdownItPlugins: [wikiLinkMarkdownItPlugin],
   editorReactComponent: InlineBacklinkPalette,
   renderReactNodeView: renderReactNodeView,

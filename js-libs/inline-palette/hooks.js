@@ -9,7 +9,9 @@ export function useInlinePaletteQuery(inlinePaletteKey) {
     getSuggestTooltipKey(inlinePaletteKey),
     true,
   );
-  return { query, counter, isVisible };
+  const { tooltipContentDOM } = usePluginState(inlinePaletteKey);
+
+  return { query, counter, isVisible, tooltipContentDOM };
 }
 /**
  * Hook which takes a function to get the items to render.
@@ -25,9 +27,7 @@ export function useInlinePaletteItems(
   counter,
   isItemDisabled,
 ) {
-  const { tooltipContentDOM, setExecuteItemCommand } = usePluginState(
-    inlinePaletteKey,
-  );
+  const { setExecuteItemCommand } = usePluginState(inlinePaletteKey);
   const view = useEditorViewContext();
 
   const dismissPalette = useCallback(() => {
@@ -90,7 +90,6 @@ export function useInlinePaletteItems(
   );
 
   return {
-    tooltipContentDOM,
     getItemProps,
     dismissPalette,
   };
