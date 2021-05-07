@@ -1,0 +1,7 @@
+.bangle-editor .back-link {
+  color: var(--link-color);
+}
+
+.bangle-editor .back-link:hover {
+  text-decoration: underline;
+}

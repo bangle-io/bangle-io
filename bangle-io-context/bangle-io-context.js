@@ -13,7 +13,7 @@ export class BangleIOContext {
     coreRawSpecs,
     getCorePlugins,
     extensions = [],
-    markdownItPlugins,
+    markdownItPlugins = [],
   }) {
     this._extensions = extensions;
     if (
@@ -43,6 +43,7 @@ export class BangleIOContext {
   renderReactNodeViews(nodeViewRenderArg) {
     return this._renderReactNodeViewLookup[nodeViewRenderArg.node.type.name]?.(
       nodeViewRenderArg,
+      this,
     );
   }
 

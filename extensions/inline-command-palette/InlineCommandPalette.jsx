@@ -93,7 +93,12 @@ function getItemsAndHints(
 }
 
 export function InlineCommandPalette() {
-  const { query, counter, isVisible } = useInlinePaletteQuery(palettePluginKey);
+  const {
+    query,
+    counter,
+    isVisible,
+    tooltipContentDOM,
+  } = useInlinePaletteQuery(palettePluginKey);
   const view = useEditorViewContext();
 
   const timestampItems = useDateItems(query);
@@ -136,7 +141,7 @@ export function InlineCommandPalette() {
     isVisible,
   ]);
 
-  const { tooltipContentDOM, getItemProps } = useInlinePaletteItems(
+  const { getItemProps } = useInlinePaletteItems(
     palettePluginKey,
     items,
     counter,

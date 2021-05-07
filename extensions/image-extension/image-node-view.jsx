@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getFile, isValidFileWsPath, useWorkspacePath } from 'workspace/index';
+import {
+  getFile,
+  isValidFileWsPath,
+  useWorkspacePath,
+  parseLocalFilePath,
+} from 'workspace/index';
 import { useDestroyRef } from 'utils/index';
-import { parseLocalPath } from './parse-local-path';
 
 export const renderReactNodeView = {
   image: (nodeViewRenderArg) => {
@@ -35,7 +39,7 @@ export function ImageComponent({ nodeAttrs }) {
         if (isValidFileWsPath(inputSrc)) {
           throw new Error('Image source cannot be a wsPath');
         } else {
-          imageWsPath = parseLocalPath(inputSrc, wsPath);
+          imageWsPath = parseLocalFilePath(inputSrc, wsPath);
         }
 
         getFile(imageWsPath)

@@ -11,3 +11,8 @@
 .bangle-emoji-suggest > .bangle-row:hover {
   background-color: var(--accent-color);
 }
+
+.bangle-editor a {
+  color: var(--link-color);
+  text-decoration: underline;
+}
