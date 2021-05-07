@@ -2,7 +2,7 @@ import React from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 
-import { render, fireEvent, act } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import { filterItems, InlineBacklinkPalette } from '../InlineBacklinkPalette';
 import { useEditorViewContext } from '@bangle.dev/react';
 import { coreSpec, corePlugins } from '@bangle.dev/core/utils/core-components';

@@ -192,7 +192,7 @@ describe('BackLinkNode', () => {
       );
     });
 
-    test('doesnt confuse if match ends with same', async () => {
+    test("doesn't confuse if match ends with same", async () => {
       cachedListAllNoteWsPaths.mockImplementation(async () => {
         return [
           'test-ws:magic/some-place/hotel/something-note1.md',
@@ -206,7 +206,7 @@ describe('BackLinkNode', () => {
       expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note1.md', false, false);
     });
 
-    test('if absolute path doesnt do matching', async () => {
+    test('doesnt confuse if a subdirectory path match partially matches 1', async () => {
       cachedListAllNoteWsPaths.mockImplementation(async () => {
         return [
           'test-ws:magic/some-place/hotel/note1.md',
@@ -214,6 +214,7 @@ describe('BackLinkNode', () => {
         ];
       });
 
+      // notice the `tel` and `hotel`
       await clickSetup({ path: 'tel/note1' });
 
       expect(pushWsPathMock).toBeCalledTimes(1);
@@ -225,7 +226,7 @@ describe('BackLinkNode', () => {
       );
     });
 
-    test('doesnt confuse if a subdirectory path match', async () => {
+    test('doesnt confuse if a subdirectory path match partially matches 2', async () => {
       cachedListAllNoteWsPaths.mockImplementation(async () => {
         return [
           'test-ws:magic/some-place/hotel/note1.md',

@@ -1,3 +1,7 @@
+### May 7, 2021
+
+- Fixed a bunch of bugs and feature gap in wiki links. They should now match with what other editors provide.
+
 ### May 3, 2021
 
 - :city_sunset: **Images!** You can now _paste_ or _drag-n-drop_ an image into your note and Bangle will automatically save that file in your workspace.
