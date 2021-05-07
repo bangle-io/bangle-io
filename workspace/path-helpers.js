@@ -126,3 +126,28 @@ export function locationToFilePath(location) {
 export function sanitizeFilePath(filePath) {
   return filePath.replace(/[^\w\s-\.]/g, '');
 }
+
+/**
+ * The local file paths are the paths supported by the file system.
+ * For example ./my-file is a relative file.
+ * @param {String} filePath - The file path read directly form the user input like an md file
+ * @param {String} wsPath - the current file wsPath to resolve the file from
+ * @returns {String} a valid wsPath to it
+ */
+export function parseLocalFilePath(filePath, wsPath) {
+  if (filePath.startsWith('./')) {
+    filePath = filePath.slice(2);
+  }
+  const { wsName, dirPath } = resolvePath(wsPath);
+  let sampleDomain = 'https://bangle.io';
+  if (dirPath) {
+    sampleDomain += '/' + dirPath + '/';
+  }
+  let webPath = new URL(filePath, sampleDomain).pathname;
+
+  if (webPath.startsWith('/')) {
+    webPath = webPath.slice(1);
+  }
+  // need to decode uri as filesystems dont do encoding
+  return filePathToWsPath(wsName, decodeURIComponent(webPath));
+}
