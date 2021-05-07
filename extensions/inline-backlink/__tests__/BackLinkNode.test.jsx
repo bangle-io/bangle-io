@@ -6,9 +6,11 @@ import {
 } from 'workspace/index';
 import { render, fireEvent, act } from '@testing-library/react';
 import { sleep } from 'utils/utility';
-import { SpecRegistry } from '@bangle.dev/core';
-import { coreSpec } from '@bangle.dev/core/utils/core-components';
+import { coreSpec, corePlugins } from '@bangle.dev/core/utils/core-components';
 import { BackLinkNode } from '../BackLinkNode';
+import { BangleIOContext } from 'bangle-io-context/index';
+import { Node } from '@bangle.dev/core/prosemirror/model';
+import inlineBackLinkExtension from '../index';
 
 jest.mock('workspace/index', () => {
   const workspaceThings = jest.requireActual('workspace/index');
@@ -19,13 +21,15 @@ jest.mock('workspace/index', () => {
     createNote: jest.fn(),
   };
 });
-
-const bangleIOContext = {
-  specRegistry: new SpecRegistry(coreSpec()),
-};
+const bangleIOContext = new BangleIOContext({
+  coreRawSpecs: coreSpec(),
+  getCorePlugins: corePlugins,
+  extensions: [inlineBackLinkExtension],
+});
 
 describe('BackLinkNode', () => {
   const pushWsPathMock = jest.fn();
+
   beforeEach(() => {
     useWorkspacePath.mockImplementation(() => ({
       wsName: 'test-ws',
@@ -99,6 +103,8 @@ describe('BackLinkNode', () => {
       // wait for the promise in click to resolve
       await clickSetup({ path: 'magic/some/path' });
 
+      expect(createNote).toBeCalledTimes(0);
+
       expect(pushWsPathMock).toBeCalledTimes(1);
       expect(pushWsPathMock).nthCalledWith(
         1,
@@ -114,6 +120,7 @@ describe('BackLinkNode', () => {
       });
 
       await clickSetup({ path: 'note1' });
+      expect(createNote).toBeCalledTimes(0);
 
       expect(pushWsPathMock).toBeCalledTimes(1);
       expect(pushWsPathMock).nthCalledWith(
@@ -150,6 +157,7 @@ describe('BackLinkNode', () => {
       });
 
       await clickSetup({ path: 'note1' });
+      expect(createNote).toBeCalledTimes(0);
 
       expect(pushWsPathMock).toBeCalledTimes(1);
       expect(pushWsPathMock).nthCalledWith(
@@ -166,6 +174,7 @@ describe('BackLinkNode', () => {
       });
 
       await clickSetup({ path: 'Note1' });
+      expect(createNote).toBeCalledTimes(0);
 
       expect(pushWsPathMock).toBeCalledTimes(1);
       expect(pushWsPathMock).nthCalledWith(
@@ -371,6 +380,57 @@ describe('BackLinkNode', () => {
         false,
         false,
       );
+    });
+
+    test('matches if path follows local file system style', async () => {
+      useWorkspacePath.mockImplementation(() => ({
+        wsName: 'test-ws',
+        pushWsPath: pushWsPathMock,
+        wsPath: 'test-ws:magic/hello/beautiful/world.md',
+      }));
+
+      cachedListAllNoteWsPaths.mockImplementation(async () => {
+        return [
+          'test-ws:magic/some-place/hotel/note1.md',
+          'test-ws:magic/some/note2.md',
+          'test-ws:magic/hello/beautiful/world.md',
+          'test-ws:magic/note2.md',
+        ];
+      });
+
+      await clickSetup({ path: '../note2' });
+
+      expect(createNote).toBeCalledTimes(0);
+
+      expect(pushWsPathMock).toBeCalledTimes(1);
+      expect(pushWsPathMock).nthCalledWith(
+        1,
+        'test-ws:magic/hello/note2.md',
+        false,
+        false,
+      );
+    });
+
+    test('if no match creates note', async () => {
+      cachedListAllNoteWsPaths.mockImplementation(async () => {
+        return [
+          'test-ws:magic/some-place/hotel/note1.md',
+          'test-ws:magic/some/note1.md',
+          'test-ws:magic/some-other/place/dig/note1.md',
+        ];
+      });
+
+      await clickSetup({ path: 'note2' });
+
+      expect(createNote).toBeCalledTimes(1);
+      expect(createNote).nthCalledWith(
+        1,
+        bangleIOContext,
+        'test-ws:note2.md',
+        expect.any(Node),
+      );
+      expect(pushWsPathMock).toBeCalledTimes(1);
+      expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note2.md', false, false);
     });
   });
 });

@@ -59,7 +59,10 @@ export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
           }
 
           // deal with the case if the path is a local file system style path
-          if (backLinkPath.startsWith('./') || backLinkPath.startsWith('../')) {
+          if (
+            currentWsPath &&
+            (backLinkPath.startsWith('./') || backLinkPath.startsWith('../'))
+          ) {
             try {
               const matchedWsPath = parseLocalFilePath(
                 backLinkPath,
