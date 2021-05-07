@@ -1,6 +1,6 @@
 ### May 7, 2021
 
-- Fixed a bunch of bugs and feature gap in wiki links. They should now match with what other editors provide.
+- **Bugs** Fixed a bunch of bugs and feature gap in wiki links. They should now match with what other editors provide.
 
 ### May 3, 2021
 
