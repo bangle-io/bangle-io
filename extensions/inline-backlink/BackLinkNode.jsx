@@ -8,6 +8,7 @@ import {
   resolvePath,
   createNote,
   parseLocalFilePath,
+  PathValidationError,
 } from 'workspace/index';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import { backLinkNodeName } from './config';
@@ -46,78 +47,87 @@ export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
           shift = true;
         }
 
-        cachedListAllNoteWsPaths(wsName).then((allWsPaths) => {
-          const matchedWsPath = getMatchingWsPath(
-            wsName,
-            backLinkPath,
-            allWsPaths,
-          );
-
-          if (matchedWsPath) {
+        handleClick({
+          backLinkPath,
+          currentWsPath,
+          wsName,
+          bangleIOContext,
+        }).then(
+          (matchedWsPath) => {
             pushWsPath(matchedWsPath, newTab, shift);
-            return;
-          }
-
-          // deal with the case if the path is a local file system style path
-          if (
-            currentWsPath &&
-            (backLinkPath.startsWith('./') || backLinkPath.startsWith('../'))
-          ) {
-            try {
-              const matchedWsPath = parseLocalFilePath(
-                backLinkPath,
-                currentWsPath,
-              );
-              validateNoteWsPath(matchedWsPath);
-              pushWsPath(matchedWsPath, newTab, shift);
-              return;
-            } catch (error) {
+          },
+          (error) => {
+            if (error instanceof PathValidationError) {
               updatedInvalidLink(true);
               return;
             }
-          }
-
-          const newWsPath = filePathToWsPath(wsName, backLinkPath);
-
-          try {
-            validateNoteWsPath(newWsPath);
-          } catch (error) {
-            updatedInvalidLink(true);
-            return;
-          }
-
-          createNote(
-            bangleIOContext,
-            newWsPath,
-            Node.fromJSON(bangleIOContext.specRegistry.schema, {
-              type: 'doc',
-              content: [
-                {
-                  type: 'heading',
-                  attrs: {
-                    level: 1,
-                  },
-                  content: [
-                    {
-                      type: 'text',
-                      text: resolvePath(newWsPath).fileName,
-                    },
-                  ],
-                },
-                {
-                  type: 'paragraph',
-                },
-              ],
-            }),
-          ).then(() => {
-            pushWsPath(newWsPath, newTab, shift);
-          });
-        });
+            throw error;
+          },
+        );
       }}
     >
       {`[[${title}]]`}
     </button>
   );
+}
+
+async function handleClick({
+  backLinkPath,
+  currentWsPath,
+  bangleIOContext,
+  wsName,
+}) {
+  const allWsPaths = await cachedListAllNoteWsPaths(wsName);
+  const existingWsPathMatch = getMatchingWsPath(
+    wsName,
+    backLinkPath,
+    allWsPaths,
+  );
+
+  if (existingWsPathMatch) {
+    return existingWsPathMatch;
+  }
+
+  // deal with the case if the path is a local file system style path
+  if (
+    currentWsPath &&
+    (backLinkPath.startsWith('./') || backLinkPath.startsWith('../'))
+  ) {
+    const matchedWsPath = parseLocalFilePath(backLinkPath, currentWsPath);
+    validateNoteWsPath(matchedWsPath);
+    return matchedWsPath;
+  }
+
+  // create a new note as no existing wsPaths match
+  const newWsPath = filePathToWsPath(wsName, backLinkPath);
+  validateNoteWsPath(newWsPath);
+
+  await createNote(
+    bangleIOContext,
+    newWsPath,
+    Node.fromJSON(bangleIOContext.specRegistry.schema, {
+      type: 'doc',
+      content: [
+        {
+          type: 'heading',
+          attrs: {
+            level: 1,
+          },
+          content: [
+            {
+              type: 'text',
+              text: resolvePath(newWsPath).fileName,
+            },
+          ],
+        },
+        {
+          type: 'paragraph',
+        },
+      ],
+    }),
+  );
+
+  return newWsPath;
 }
 
 export const renderReactNodeView = {
