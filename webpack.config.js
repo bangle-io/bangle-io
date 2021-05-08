@@ -83,6 +83,13 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         title: 'Bangle',
         template: 'style/index.html',
+        sentry: isProduction
+          ? `<script
+          src="https://js.sentry-cdn.com/f1a3d53e530e465e8f74f847370b594b.min.js"
+          crossorigin="anonymous"
+          data-lazy="no"
+        ></script>`
+          : '',
       }),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',

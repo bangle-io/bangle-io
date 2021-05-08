@@ -23,6 +23,8 @@ const config = ({ command, mode }) => {
       .split('<!-- VITE_ENTRY -->')
       .join('<script type="module" src="/src/index.js"></script>');
 
+  html = html.split('<%= htmlWebpackPlugin.options.sentry %>').join('');
+
   fs.writeFileSync(path.resolve(__dirname, 'index.html'), html, 'utf-8');
   return {
     plugins: [reactRefresh()],
