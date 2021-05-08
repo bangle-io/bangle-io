@@ -8,7 +8,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       View: Toggle theme
     </span>
@@ -25,7 +25,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       View: Toggle file sidebar
     </span>
@@ -42,7 +42,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Workspace: Remove active workspace
     </span>
@@ -59,7 +59,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Workspace: New workspace saved in your browser storage
     </span>
@@ -76,7 +76,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Workspace: Import workspace from a Github URL
     </span>
@@ -93,7 +93,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Workspace: Save personal Github token
     </span>
@@ -110,7 +110,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Uncollapse all headings
     </span>
@@ -127,7 +127,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Convert to a bullet list
     </span>
@@ -146,7 +146,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Convert to a todo list
     </span>
@@ -165,7 +165,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Collapse/uncollapse current heading (🚫 not allowed)
     </span>
@@ -182,7 +182,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Convert to paragraph (🚫 not allowed)
     </span>
@@ -201,7 +201,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Insert an empty paragraph above (🚫 not allowed)
     </span>
@@ -220,7 +220,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Insert an empty paragraph below (🚫 not allowed)
     </span>
@@ -239,7 +239,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Move to list item up (🚫 not allowed)
     </span>
@@ -258,7 +258,7 @@ NodeList [
     style="padding-left: 16px; padding-right: 16px;"
   >
     <span
-      class="text-lg truncate select-none"
+      class="text-lg  truncate select-none"
     >
       Editor: Move to list item down (🚫 not allowed)
     </span>
@@ -331,7 +331,7 @@ exports[`Correctly switches to file type 2`] = `
           style="padding-left: 16px; padding-right: 16px;"
         >
           <span
-            class="text-lg truncate select-none"
+            class="text-lg  truncate select-none"
           >
             one.md
           </span>

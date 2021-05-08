@@ -91,7 +91,7 @@ test('Correctly switches to file type', async () => {
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
-          class="text-lg truncate select-none"
+          class="text-lg  truncate select-none"
         >
           one.md
         </span>
@@ -136,7 +136,7 @@ test('Correctly filters commands', async () => {
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
-          class="text-lg truncate select-none"
+          class="text-lg  truncate select-none"
         >
           View: Toggle theme
         </span>
@@ -153,7 +153,7 @@ test('Correctly filters commands', async () => {
         style="padding-left: 16px; padding-right: 16px;"
       >
         <span
-          class="text-lg truncate select-none"
+          class="text-lg  truncate select-none"
         >
           View: Toggle file sidebar
         </span>

@@ -75,7 +75,7 @@ describe('PaletteUI', () => {
                 style="padding-left: 16px; padding-right: 16px;"
               >
                 <span
-                  class="text-lg truncate select-none"
+                  class="text-lg  truncate select-none"
                 >
                   I am a title
                 </span>
