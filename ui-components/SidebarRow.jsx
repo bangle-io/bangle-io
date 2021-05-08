@@ -20,6 +20,7 @@ export function SidebarRow({
   scrollIntoViewIfNeeded = true,
   style = {},
   disabled,
+  textSizeClassName = 'text-lg',
   // on touch devices having :hover forces you to click twice
   allowHover = !isTouchDevice(),
 }) {
@@ -70,7 +71,7 @@ export function SidebarRow({
       >
         {leftIcon}
         <span
-          className={cx('text-lg truncate select-none')}
+          className={cx(textSizeClassName, ' truncate select-none')}
           style={{
             color: disabled ? 'var(--font-lighter-color)' : 'inherit',
           }}

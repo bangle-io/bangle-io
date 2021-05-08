@@ -10,7 +10,7 @@ import { getWorkspaceInfo } from './workspace-helpers';
 import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs';
 import { listFilesCache } from './native-browser-list-fs-cache';
 import { getFileSystemFromWsInfo } from './get-fs';
-import { serialExecuteQueue } from 'utils/utility';
+import { serialExecuteQueue, weakCache } from 'utils/utility';
 
 const toFSPath = (wsPath) => {
   const { wsName, filePath } = resolvePath(wsPath);
@@ -174,9 +174,13 @@ export async function cachedListAllFiles(wsName) {
   return cachedListAllFilesQueue.add(() => getWsPaths(wsName));
 }
 
+const weakFilterNoteWsPaths = weakCache((items) =>
+  items.filter((wsPath) => isValidNoteWsPath(wsPath)),
+);
+
 export async function cachedListAllNoteWsPaths(wsName) {
   return cachedListAllFiles(wsName).then((items) => {
-    return items.filter((wsPath) => isValidNoteWsPath(wsPath));
+    return weakFilterNoteWsPaths(items);
   });
 }
 

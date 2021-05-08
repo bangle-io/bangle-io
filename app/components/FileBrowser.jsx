@@ -17,21 +17,36 @@ import {
 } from 'workspace/index';
 import { useLocalStorage } from 'utils/hooks';
 import { useInputPaletteNewNoteCommand } from 'app/Palette/Commands';
+import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
+import { useVirtual } from 'react-virtual';
 
+const DEFAULT_FOLD_DEPTH = 2;
 FileBrowser.propTypes = {};
 
+const rem =
+  typeof window === 'undefined'
+    ? 16
+    : parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
+
+// TODO the current design just ignores empty directory
+// TODO check if in widescreen sidebar is closed
 export function FileBrowser() {
   let [files = [], refreshFiles] = useListCachedNoteWsPaths();
   const deleteByWsPath = useDeleteFile();
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
+  const activeFilePath = activeWSPath && resolvePath(activeWSPath).filePath;
   const newFileCommand = useInputPaletteNewNoteCommand();
-  const closeSidebar = () => {
-    dispatch({
-      type: 'UI/TOGGLE_SIDEBAR',
-      value: { type: null },
-    });
-  };
+  const closeSidebar = useCallback(() => {
+    if (!widescreen) {
+      dispatch({
+        type: 'UI/TOGGLE_SIDEBAR',
+        value: { type: null },
+      });
+    }
+  }, [dispatch, widescreen]);
 
   const deleteFile = useCallback(
     async (wsPath) => {
@@ -45,211 +60,230 @@ export function FileBrowser() {
     refreshFiles();
   }, [wsName, refreshFiles]);
 
-  const createNewFile = (path) => {
-    newFileCommand({ initialQuery: path });
-  };
+  const createNewFile = useCallback(
+    (path) => {
+      newFileCommand({ initialQuery: path });
+    },
+    [newFileCommand],
+  );
 
-  const fileTree = useMemo(() => {
-    const trees = flatPathsToTree(
-      files.map((f) => {
-        const { filePath } = resolvePath(f);
-        return filePath;
-      }),
-    );
-    // TODO adding this superfiically sort of messes with childrens id
-    // as it will not contain them. I think we should move to converting
-    // id to wsPath syntax. and make flatPathsToTree understand wsPath.
-    // then in createNewFile make sure we are correctly sending the file path
-    // and not wsPath.
-    return { name: wsName, id: wsName, children: trees };
-  }, [files, wsName]);
+  const { filesAndDirList, dirSet } = useMemo(() => {
+    return fileWsPathsToFlatDirTree(files);
+  }, [files]);
 
-  if (!wsName) {
+  if (!wsName || filesAndDirList.length === 0) {
     return null;
   }
 
   return (
-    <RenderTree
-      depth={0}
-      closeSidebar={closeSidebar}
-      fileTree={fileTree}
-      widescreen={widescreen}
+    <RenderItems
       wsName={wsName}
+      filesAndDirList={filesAndDirList}
+      dirSet={dirSet}
       deleteFile={deleteFile}
       pushWsPath={pushWsPath}
-      activeWSPath={activeWSPath}
-      dispatch={dispatch}
+      widescreen={widescreen}
+      activeFilePath={activeFilePath}
+      closeSidebar={closeSidebar}
       createNewFile={createNewFile}
     />
   );
 }
-
 const IconStyle = {
   height: 16,
   width: 16,
 };
 
-function RenderTree(props) {
-  const {
-    fileTree,
-    wsName,
-    pushWsPath,
-    closeSidebar,
-    widescreen,
-    activeWSPath,
-    deleteFile,
-    depth,
-    basePadding = 16,
-    createNewFile,
-  } = props;
-
-  const { name, id, children: directChildren, path } = fileTree;
-  const isFile = !Boolean(directChildren);
-  const wsPath = isFile ? wsName + ':' + path : null;
-
-  const [collapsed, toggleCollapse] = useLocalStorage(
-    'RenderTree6254:' + wsName + '--' + id,
-    depth === 0 ? false : true,
-  );
-
-  const onClick = (event) => {
-    if (!isFile) {
-      toggleCollapse(!collapsed);
-      return;
-    }
-    if (event.metaKey) {
-      pushWsPath(wsPath, true);
-    } else if (event.shiftKey) {
-      pushWsPath(wsPath, false, true);
-    } else {
-      pushWsPath(wsPath);
-    }
-    if (!widescreen) {
-      closeSidebar();
-    }
-  };
-
-  return isFile ? (
-    <SidebarRow
-      depth={depth}
-      basePadding={basePadding}
-      title={name}
-      onClick={onClick}
-      isActive={activeWSPath === wsPath}
-      leftIcon={<NullIcon style={IconStyle} />}
-      rightHoverIcon={
-        <ButtonIcon
-          hint="Delete file"
-          hintPos="bottom-right"
-          onClick={async (e) => {
-            e.stopPropagation();
-            if (
-              window.confirm(
-                `Are you sure you want to delete "${
-                  resolvePath(wsPath).fileName
-                }"? `,
-              )
-            ) {
-              deleteFile(wsPath);
-            }
-          }}
-        >
-          <CloseIcon style={IconStyle} />
-        </ButtonIcon>
-      }
-    ></SidebarRow>
-  ) : (
-    <SidebarRow
-      depth={depth}
-      basePadding={basePadding}
-      title={name}
-      onClick={onClick}
-      leftIcon={
-        collapsed ? (
-          <ChevronRightIcon style={IconStyle} />
-        ) : (
-          <ChevronDownIcon style={IconStyle} />
-        )
-      }
-      rightHoverIcon={
-        <ButtonIcon
-          hint="New file"
-          onClick={async (e) => {
-            e.stopPropagation();
-            if (depth === 0) {
-              createNewFile();
-            } else {
-              createNewFile(id + '/');
-            }
-          }}
-          hintPos="bottom-right"
-        >
-          <DocumentAddIcon style={IconStyle} />
-        </ButtonIcon>
-      }
+function RenderRow({
+  virtualRow,
+  path,
+  isDir,
+  wsPath,
+  name,
+  depth,
+  isActive,
+  isCollapsed,
+  createNewFile,
+  deleteFile,
+  onClick,
+}) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: `${virtualRow.size}px`,
+        transform: `translateY(${virtualRow.start}px)`,
+      }}
     >
-      {collapsed
-        ? null
-        : directChildren
-            .sort((a, b) => {
-              if (a.children && b.children) {
-                return a.name.localeCompare(b.name);
-              }
-              if (a.children) {
-                return -1;
-              }
-              if (b.children) {
-                return 1;
-              }
-
-              return a.name.localeCompare(b.name);
-            })
-            .map((child) => (
-              <RenderTree
-                {...props}
-                key={child.name}
-                fileTree={child}
-                depth={depth + 1}
-                basePadding={16}
-              />
-            ))}
-    </SidebarRow>
+      <SidebarRow
+        depth={depth}
+        basePadding={16}
+        title={name}
+        onClick={onClick}
+        isActive={isActive}
+        // before changing this look at estimateSize of virtual
+        textSizeClassName="text-lg"
+        leftIcon={
+          isDir ? (
+            isCollapsed ? (
+              <ChevronRightIcon style={IconStyle} />
+            ) : (
+              <ChevronDownIcon style={IconStyle} />
+            )
+          ) : (
+            <NullIcon style={IconStyle} />
+          )
+        }
+        rightHoverIcon={
+          isDir ? (
+            <ButtonIcon
+              hint="New file"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (depth === 0) {
+                  createNewFile();
+                } else {
+                  createNewFile(path + '/');
+                }
+              }}
+              hintPos="bottom-right"
+            >
+              <DocumentAddIcon style={IconStyle} />
+            </ButtonIcon>
+          ) : (
+            <ButtonIcon
+              hint="Delete file"
+              hintPos="bottom-right"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (
+                  window.confirm(`Are you sure you want to delete "${name}"? `)
+                ) {
+                  deleteFile(wsPath);
+                }
+              }}
+            >
+              <CloseIcon style={IconStyle} />
+            </ButtonIcon>
+          )
+        }
+      />
+    </div>
   );
 }
 
-/**
- *
- * @returns An array of deeply nested objects
- *          {name: string, ?children: Array<self>, ?path: string}
- *          for terminals `children` field will be undefined and the
- *          object will have `path` which will be the absolute path of the file
- */
-export function flatPathsToTree(files) {
-  let mainChain = [];
-
-  for (const f of files) {
-    const path = f.split('/');
-    let chain = mainChain;
-    let counter = 0;
-    for (const part of path) {
-      counter++;
-      let match = chain.find(({ name }) => name === part);
-      if (!match) {
-        match = {
-          name: part,
-          children: [],
-          id: path.slice(0, counter).join('/'),
-        };
-        if (counter === path.length) {
-          match.path = f;
-          delete match.children;
+const RenderItems = React.memo(
+  ({
+    wsName,
+    filesAndDirList,
+    dirSet,
+    deleteFile,
+    pushWsPath,
+    activeFilePath,
+    closeSidebar,
+    createNewFile,
+  }) => {
+    const [collapsed, toggleCollapse] = useLocalStorage(
+      'RenderTree6261:' + wsName,
+      () => {
+        const result = filesAndDirList.filter(
+          (path) =>
+            dirSet.has(path) && path.split('/').length === DEFAULT_FOLD_DEPTH,
+        );
+        return result;
+      },
+    );
+    const parentRef = React.useRef();
+    const rows = useMemo(() => {
+      return filesAndDirList.filter((path) => {
+        if (
+          collapsed.some((collapseDirPath) =>
+            path.startsWith(collapseDirPath + '/'),
+          )
+        ) {
+          return false;
         }
-        chain.push(match);
-      }
+        return true;
+      });
+    }, [filesAndDirList, collapsed]);
 
-      chain = match.children;
-    }
-  }
+    const rowVirtualizer = useVirtual({
+      size: rows.length,
+      parentRef,
+      overscan: 60,
+      estimateSize: React.useCallback(() => {
+        // NOTE its easy to trip this and make it run on every render
+        // if (!window.counter) {
+        //   window.counter = 1;
+        // }
+        // window.counter++;
+        return rowHeight;
+      }, []),
+      keyExtractor: useCallback((i) => rows[i], [rows]),
+    });
 
-  return mainChain;
-}
+    const result = rowVirtualizer.virtualItems.map((virtualRow) => {
+      const path = rows[virtualRow.index];
+      const isDir = dirSet.has(path);
+      const wsPath = wsName + ':' + path;
+      const splittedPath = path.split('/');
+      const depth = splittedPath.length;
+      const name = splittedPath.pop();
+
+      const onClick = (event) => {
+        if (isDir) {
+          toggleCollapse((array) => {
+            if (array.includes(path)) {
+              return array.filter((p) => p !== path);
+            } else {
+              return [...array, path];
+            }
+          });
+          return;
+        }
+        if (event.metaKey) {
+          pushWsPath(wsPath, true);
+        } else if (event.shiftKey) {
+          pushWsPath(wsPath, false, true);
+        } else {
+          pushWsPath(wsPath);
+        }
+        closeSidebar();
+      };
+
+      return (
+        <RenderRow
+          key={path}
+          virtualRow={virtualRow}
+          path={path}
+          isDir={isDir}
+          wsPath={wsPath}
+          name={name}
+          depth={depth}
+          isActive={activeFilePath === path}
+          isCollapsed={collapsed.includes(path)}
+          createNewFile={createNewFile}
+          deleteFile={deleteFile}
+          onClick={onClick}
+        />
+      );
+    });
+
+    return (
+      <div ref={parentRef} style={{ height: '100%', overflow: 'auto' }}>
+        <div
+          style={{
+            height: `${rowVirtualizer.totalSize}px`,
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          {result}
+        </div>
+      </div>
+    );
+  },
+);
