@@ -23,6 +23,12 @@ import { useVirtual } from 'react-virtual';
 const DEFAULT_FOLD_DEPTH = 2;
 FileBrowser.propTypes = {};
 
+const rem =
+  typeof window === 'undefined'
+    ? 16
+    : parseFloat(getComputedStyle(document.documentElement).fontSize);
+const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
+
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function FileBrowser() {
@@ -51,6 +57,7 @@ export function FileBrowser() {
 
   useEffect(() => {
     refreshFiles();
+    console.log('refreshed', wsName);
   }, [wsName, refreshFiles]);
 
   const createNewFile = useCallback(
@@ -176,7 +183,7 @@ const RenderItems = React.memo(
     createNewFile,
   }) => {
     const [collapsed, toggleCollapse] = useLocalStorage(
-      'RenderTree6259:' + wsName,
+      'RenderTree6261:' + wsName,
       () => {
         const result = filesAndDirList.filter(
           (path) =>
@@ -186,31 +193,32 @@ const RenderItems = React.memo(
       },
     );
     const parentRef = React.useRef();
-    const rows = filesAndDirList.filter((path) => {
-      if (
-        collapsed.some((collapseDirPath) =>
-          path.startsWith(collapseDirPath + '/'),
-        )
-      ) {
-        return false;
-      }
-      return true;
-    });
+    const rows = useMemo(() => {
+      return filesAndDirList.filter((path) => {
+        if (
+          collapsed.some((collapseDirPath) =>
+            path.startsWith(collapseDirPath + '/'),
+          )
+        ) {
+          return false;
+        }
+        return true;
+      });
+    }, [filesAndDirList, collapsed]);
+
     const rowVirtualizer = useVirtual({
       size: rows.length,
       parentRef,
-      overscan: 50,
+      overscan: 10,
       estimateSize: React.useCallback(() => {
-        // we are using text-lg as the height of the row
-        // and currently hardcoding it
-        const size =
-          typeof window === 'undefined'
-            ? 16
-            : parseFloat(getComputedStyle(document.documentElement).fontSize);
-        const result = 1.75 * size; // 1.75rem line height of text-lg
-        return result;
+        // NOTE its easy to trip this and make it run on every render
+        // if (!window.counter) {
+        //   window.counter = 1;
+        // }
+        // window.counter++;
+        return rowHeight;
       }, []),
-      keyExtractor: (i) => rows[i],
+      keyExtractor: useCallback((i) => rows[i], [rows]),
     });
 
     const result = rowVirtualizer.virtualItems.map((virtualRow) => {
