@@ -3987,6 +3987,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@reach/observe-rect", [
+        ["npm:1.2.0", {
+          "packageLocation": "./.yarn/cache/@reach-observe-rect-npm-1.2.0-ae7ce1a341-7dd903eeaa.zip/node_modules/@reach/observe-rect/",
+          "packageDependencies": [
+            ["@reach/observe-rect", "npm:1.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@sentry/browser", [
         ["npm:6.3.1", {
           "packageLocation": "./.yarn/cache/@sentry-browser-npm-6.3.1-578a0d912c-ed6e0b870d.zip/node_modules/@sentry/browser/",
@@ -5554,6 +5563,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-popper", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:2.2.5"],
             ["react-router-dom", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:5.2.0"],
             ["react-test-renderer", "virtual:5b1786f3a1ee9fbd6a8c56cee7ed469045eddc9c5ba3e8a4b318e74d365dea7ede1f95f68c741cc87eeefd05cf14f7a412274b715c560ce9b9c1673f53b639bb#npm:17.0.2"],
+            ["react-virtual", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:2.7.1"],
             ["style", "workspace:style"],
             ["ui-components", "workspace:ui-components"],
             ["ui-context", "workspace:ui-context"],
@@ -15598,6 +15608,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-is", "npm:17.0.2"],
             ["react-shallow-renderer", "virtual:6d2e58f46542236222bbd0eb3850572f2d1c62bb50c4d889a50c4beb040de3afd63d4f2f04892ec4c154b59a0e86707c713ee888f9c2a66453ea984c7850630a#npm:16.14.1"],
             ["scheduler", "npm:0.20.2"]
+          ],
+          "packagePeers": [
+            "@types/react",
+            "react"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["react-virtual", [
+        ["npm:2.7.1", {
+          "packageLocation": "./.yarn/cache/react-virtual-npm-2.7.1-07772ad86a-00f47269ff.zip/node_modules/react-virtual/",
+          "packageDependencies": [
+            ["react-virtual", "npm:2.7.1"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:2.7.1", {
+          "packageLocation": "./.yarn/__virtual__/react-virtual-virtual-b9a54fcf8b/0/cache/react-virtual-npm-2.7.1-07772ad86a-00f47269ff.zip/node_modules/react-virtual/",
+          "packageDependencies": [
+            ["react-virtual", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:2.7.1"],
+            ["@reach/observe-rect", "npm:1.2.0"],
+            ["@types/react", null],
+            ["react", "npm:16.14.0"]
           ],
           "packagePeers": [
             "@types/react",

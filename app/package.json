@@ -50,6 +50,7 @@
     "react-dom": "16.14.0",
     "react-popper": "^2.2.5",
     "react-router-dom": "^5.2.0",
+    "react-virtual": "^2.7.1",
     "style": "workspace:*",
     "ui-components": "workspace:*",
     "ui-context": "workspace:*",

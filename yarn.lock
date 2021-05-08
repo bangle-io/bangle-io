@@ -2405,6 +2405,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reach/observe-rect@npm:^1.1.0":
+  version: 1.2.0
+  resolution: "@reach/observe-rect@npm:1.2.0"
+  checksum: 7dd903eeaad0e22c6d973bd26265d91eadba56ab5134701ceb3e85214db75339fae94aa7e8b88a65e8daa64bc7cf1b915d4ffcdfd324466b561dc6adc3c6e070
+  languageName: node
+  linkType: hard
+
 "@sentry/browser@npm:6.3.1":
   version: 6.3.1
   resolution: "@sentry/browser@npm:6.3.1"
@@ -3628,6 +3635,7 @@ __metadata:
     react-popper: ^2.2.5
     react-router-dom: ^5.2.0
     react-test-renderer: ^17.0.2
+    react-virtual: ^2.7.1
     style: "workspace:*"
     ui-components: "workspace:*"
     ui-context: "workspace:*"
@@ -12040,6 +12048,17 @@ fsevents@~2.3.1:
   peerDependencies:
     react: 17.0.2
   checksum: e6b5c6ed2a0bde2c34f1ab9523ff9bc4c141a271daf730d6b852374e83acc0155d58ab71a318251e953ebfa65b8bebb9c5dce3eba1ccfcbef7cc4e1e8261c401
+  languageName: node
+  linkType: hard
+
+"react-virtual@npm:^2.7.1":
+  version: 2.7.1
+  resolution: "react-virtual@npm:2.7.1"
+  dependencies:
+    "@reach/observe-rect": ^1.1.0
+  peerDependencies:
+    react: ^16.6.3 || ^17.0.0
+  checksum: 00f47269ff3e3a48305c4b6b67b65cf5c5b5507cf13c316dd8c3a320461e6a7520d4a611005a8cca4f3ef2e38c0c79759c7fd806326fa583d8aa222781c743c9
   languageName: node
   linkType: hard
 

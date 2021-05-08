@@ -18,11 +18,13 @@ import {
 import { useLocalStorage } from 'utils/hooks';
 import { useInputPaletteNewNoteCommand } from 'app/Palette/Commands';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
+import { useVirtual } from 'react-virtual';
 
 const DEFAULT_FOLD_DEPTH = 2;
 FileBrowser.propTypes = {};
 
 // TODO the current design just ignores empty directory
+// TODO check if in widescreen sidebar is closed
 export function FileBrowser() {
   let [files = [], refreshFiles] = useListCachedNoteWsPaths();
   const deleteByWsPath = useDeleteFile();
@@ -31,11 +33,13 @@ export function FileBrowser() {
   const activeFilePath = activeWSPath && resolvePath(activeWSPath).filePath;
   const newFileCommand = useInputPaletteNewNoteCommand();
   const closeSidebar = useCallback(() => {
-    dispatch({
-      type: 'UI/TOGGLE_SIDEBAR',
-      value: { type: null },
-    });
-  }, [dispatch]);
+    if (!widescreen) {
+      dispatch({
+        type: 'UI/TOGGLE_SIDEBAR',
+        value: { type: null },
+      });
+    }
+  }, [dispatch, widescreen]);
 
   const deleteFile = useCallback(
     async (wsPath) => {
@@ -60,10 +64,6 @@ export function FileBrowser() {
     return fileWsPathsToFlatDirTree(files);
   }, [files]);
 
-  if (!wsName || filesAndDirList.length === 0) {
-    return null;
-  }
-
   return (
     <RenderItems
       wsName={wsName}
@@ -83,6 +83,87 @@ const IconStyle = {
   width: 16,
 };
 
+function RenderRow({
+  virtualRow,
+  path,
+  isDir,
+  wsPath,
+  name,
+  depth,
+  isActive,
+  isCollapsed,
+  createNewFile,
+  deleteFile,
+  onClick,
+}) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: `${virtualRow.size}px`,
+        transform: `translateY(${virtualRow.start}px)`,
+      }}
+    >
+      <SidebarRow
+        depth={depth}
+        basePadding={16}
+        title={name}
+        onClick={onClick}
+        isActive={isActive}
+        // before changing this look at estimateSize of virtual
+        textSizeClassName="text-lg"
+        leftIcon={
+          isDir ? (
+            isCollapsed ? (
+              <ChevronRightIcon style={IconStyle} />
+            ) : (
+              <ChevronDownIcon style={IconStyle} />
+            )
+          ) : (
+            <NullIcon style={IconStyle} />
+          )
+        }
+        rightHoverIcon={
+          isDir ? (
+            <ButtonIcon
+              hint="New file"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (depth === 0) {
+                  createNewFile();
+                } else {
+                  createNewFile(path + '/');
+                }
+              }}
+              hintPos="bottom-right"
+            >
+              <DocumentAddIcon style={IconStyle} />
+            </ButtonIcon>
+          ) : (
+            <ButtonIcon
+              hint="Delete file"
+              hintPos="bottom-right"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (
+                  window.confirm(`Are you sure you want to delete "${name}"? `)
+                ) {
+                  deleteFile(wsPath);
+                }
+              }}
+            >
+              <CloseIcon style={IconStyle} />
+            </ButtonIcon>
+          )
+        }
+      />
+    </div>
+  );
+}
+
 const RenderItems = React.memo(
   ({
     wsName,
@@ -90,7 +171,6 @@ const RenderItems = React.memo(
     dirSet,
     deleteFile,
     pushWsPath,
-    widescreen,
     activeFilePath,
     closeSidebar,
     createNewFile,
@@ -102,108 +182,96 @@ const RenderItems = React.memo(
           (path) =>
             dirSet.has(path) && path.split('/').length === DEFAULT_FOLD_DEPTH,
         );
-        console.log('being computed');
         return result;
       },
     );
+    const parentRef = React.useRef();
+    const rows = filesAndDirList.filter((path) => {
+      if (
+        collapsed.some((collapseDirPath) =>
+          path.startsWith(collapseDirPath + '/'),
+        )
+      ) {
+        return false;
+      }
+      return true;
+    });
+    const rowVirtualizer = useVirtual({
+      size: rows.length,
+      parentRef,
+      overscan: 50,
+      estimateSize: React.useCallback(() => {
+        // we are using text-lg as the height of the row
+        // and currently hardcoding it
+        const size =
+          typeof window === 'undefined'
+            ? 16
+            : parseFloat(getComputedStyle(document.documentElement).fontSize);
+        const result = 1.75 * size; // 1.75rem line height of text-lg
+        return result;
+      }, []),
+      keyExtractor: (i) => rows[i],
+    });
 
-    return filesAndDirList
-      .filter((path) => {
-        if (
-          collapsed.some((collapseDirPath) =>
-            path.startsWith(collapseDirPath + '/'),
-          )
-        ) {
-          return false;
+    const result = rowVirtualizer.virtualItems.map((virtualRow) => {
+      const path = rows[virtualRow.index];
+      const isDir = dirSet.has(path);
+      const wsPath = wsName + ':' + path;
+      const splittedPath = path.split('/');
+      const depth = splittedPath.length;
+      const name = splittedPath.pop();
+
+      const onClick = (event) => {
+        if (isDir) {
+          toggleCollapse((array) => {
+            if (array.includes(path)) {
+              return array.filter((p) => p !== path);
+            } else {
+              return [...array, path];
+            }
+          });
+          return;
         }
-        return true;
-      })
-      .map((path, i) => {
-        const splittedPath = path.split('/');
-        const depth = splittedPath.length;
-        const name = splittedPath.pop();
-        // this works because by design we cannot have empty directories
-        const isDir = dirSet.has(path);
-        const wsPath = wsName + ':' + path;
-        const onClick = (event) => {
-          if (isDir) {
-            toggleCollapse((array) => {
-              if (array.includes(path)) {
-                return array.filter((p) => p !== path);
-              } else {
-                return [...array, path];
-              }
-            });
-            return;
-          }
-          if (event.metaKey) {
-            pushWsPath(wsPath, true);
-          } else if (event.shiftKey) {
-            pushWsPath(wsPath, false, true);
-          } else {
-            pushWsPath(wsPath);
-          }
-          if (!widescreen) {
-            closeSidebar();
-          }
-        };
+        if (event.metaKey) {
+          pushWsPath(wsPath, true);
+        } else if (event.shiftKey) {
+          pushWsPath(wsPath, false, true);
+        } else {
+          pushWsPath(wsPath);
+        }
+        closeSidebar();
+      };
 
-        return (
-          <SidebarRow
-            key={path}
-            depth={depth}
-            basePadding={16}
-            title={name}
-            onClick={onClick}
-            isActive={activeFilePath === path}
-            leftIcon={
-              isDir ? (
-                collapsed.includes(path) ? (
-                  <ChevronRightIcon style={IconStyle} />
-                ) : (
-                  <ChevronDownIcon style={IconStyle} />
-                )
-              ) : (
-                <NullIcon style={IconStyle} />
-              )
-            }
-            rightHoverIcon={
-              isDir ? (
-                <ButtonIcon
-                  hint="New file"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    if (depth === 0) {
-                      createNewFile();
-                    } else {
-                      createNewFile(path + '/');
-                    }
-                  }}
-                  hintPos="bottom-right"
-                >
-                  <DocumentAddIcon style={IconStyle} />
-                </ButtonIcon>
-              ) : (
-                <ButtonIcon
-                  hint="Delete file"
-                  hintPos="bottom-right"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    if (
-                      window.confirm(
-                        `Are you sure you want to delete "${name}"? `,
-                      )
-                    ) {
-                      deleteFile(wsPath);
-                    }
-                  }}
-                >
-                  <CloseIcon style={IconStyle} />
-                </ButtonIcon>
-              )
-            }
-          />
-        );
-      });
+      return (
+        <RenderRow
+          key={path}
+          virtualRow={virtualRow}
+          path={path}
+          isDir={isDir}
+          wsPath={wsPath}
+          name={name}
+          depth={depth}
+          isActive={activeFilePath === path}
+          isCollapsed={collapsed.includes(path)}
+          createNewFile={createNewFile}
+          deleteFile={deleteFile}
+          onClick={onClick}
+        />
+      );
+    });
+
+    return (
+      <div ref={parentRef} style={{ height: '100%', overflow: 'auto' }}>
+        <div
+          style={{
+            height: `${rowVirtualizer.totalSize}px`,
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          {result}
+        </div>
+      </div>
+    );
   },
 );
