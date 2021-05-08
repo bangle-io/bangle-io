@@ -1,6 +1,42 @@
 import { fileWsPathsToFlatDirTree } from '../file-ws-paths-to-flat-dir-tree';
-import { flatPathsToTree as oldPathToTree } from '../FileBrowser';
 import { resolvePath } from 'workspace';
+
+/**
+ *
+ * @returns An array of deeply nested objects
+ *          {name: string, ?children: Array<self>, ?path: string}
+ *          for terminals `children` field will be undefined and the
+ *          object will have `path` which will be the absolute path of the file
+ */
+function oldPathToTree(files) {
+  let mainChain = [];
+
+  for (const f of files) {
+    const path = f.split('/');
+    let chain = mainChain;
+    let counter = 0;
+    for (const part of path) {
+      counter++;
+      let match = chain.find(({ name }) => name === part);
+      if (!match) {
+        match = {
+          name: part,
+          children: [],
+          id: path.slice(0, counter).join('/'),
+        };
+        if (counter === path.length) {
+          match.path = f;
+          delete match.children;
+        }
+        chain.push(match);
+      }
+
+      chain = match.children;
+    }
+  }
+
+  return mainChain;
+}
 
 function understandOldFunc(data) {
   const obj = oldPathToTree(data);
@@ -47,7 +83,9 @@ test('sample data', () => {
     'idly:packages/idly-worker/bugs.md',
     'idly:README.md',
   ];
-  expect(fileWsPathsToFlatDirTree(data)).toEqual(understandOldFunc(data));
+  expect(fileWsPathsToFlatDirTree(data).filesAndDirList).toEqual(
+    understandOldFunc(data),
+  );
   expect(fileWsPathsToFlatDirTree(data)).toMatchSnapshot();
 });
 test('sample data 2', () => {
@@ -89,32 +127,42 @@ test('sample data 2', () => {
     'yxxsg:wow.md',
   ];
   expect(fileWsPathsToFlatDirTree(data)).toMatchSnapshot();
-  expect(fileWsPathsToFlatDirTree(data)).toEqual(understandOldFunc(data));
+  expect(fileWsPathsToFlatDirTree(data).filesAndDirList).toEqual(
+    understandOldFunc(data),
+  );
 });
 
 test('sample data 3', async () => {
   const data = require('./fixture-file-wspaths-1.json');
 
-  expect(fileWsPathsToFlatDirTree(data)).toEqual(understandOldFunc(data));
+  expect(fileWsPathsToFlatDirTree(data).filesAndDirList).toEqual(
+    understandOldFunc(data),
+  );
   expect(fileWsPathsToFlatDirTree(data)).toMatchSnapshot();
 });
 
 test('sample data 4', async () => {
   const data = require('./fixture-file-wspaths-2.json');
 
-  expect(fileWsPathsToFlatDirTree(data)).toEqual(understandOldFunc(data));
+  expect(fileWsPathsToFlatDirTree(data).filesAndDirList).toEqual(
+    understandOldFunc(data),
+  );
   expect(fileWsPathsToFlatDirTree(data)).toMatchSnapshot();
 });
 
 test('sample data 5', async () => {
   const data = require('./fixture-file-wspaths-3.json');
 
-  expect(fileWsPathsToFlatDirTree(data)).toEqual(understandOldFunc(data));
+  expect(fileWsPathsToFlatDirTree(data).filesAndDirList).toEqual(
+    understandOldFunc(data),
+  );
   expect(fileWsPathsToFlatDirTree(data)).toMatchSnapshot();
 });
 
 test('sample data 6', async () => {
   const data = require('./fixture-file-wspaths-4.json');
-  expect(fileWsPathsToFlatDirTree(data)).toEqual(understandOldFunc(data));
+  expect(fileWsPathsToFlatDirTree(data).filesAndDirList).toEqual(
+    understandOldFunc(data),
+  );
   expect(fileWsPathsToFlatDirTree(data)).toMatchSnapshot();
 });
