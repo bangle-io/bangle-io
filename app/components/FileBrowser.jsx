@@ -27,6 +27,7 @@ const rem =
   typeof window === 'undefined'
     ? 16
     : parseFloat(getComputedStyle(document.documentElement).fontSize);
+
 const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
 
 // TODO the current design just ignores empty directory
@@ -57,7 +58,6 @@ export function FileBrowser() {
 
   useEffect(() => {
     refreshFiles();
-    console.log('refreshed', wsName);
   }, [wsName, refreshFiles]);
 
   const createNewFile = useCallback(
@@ -70,6 +70,10 @@ export function FileBrowser() {
   const { filesAndDirList, dirSet } = useMemo(() => {
     return fileWsPathsToFlatDirTree(files);
   }, [files]);
+
+  if (!wsName || filesAndDirList.length === 0) {
+    return null;
+  }
 
   return (
     <RenderItems
@@ -209,7 +213,7 @@ const RenderItems = React.memo(
     const rowVirtualizer = useVirtual({
       size: rows.length,
       parentRef,
-      overscan: 10,
+      overscan: 60,
       estimateSize: React.useCallback(() => {
         // NOTE its easy to trip this and make it run on every render
         // if (!window.counter) {
