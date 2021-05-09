@@ -389,7 +389,7 @@ describe('useCreateNote', () => {
     expect(idbFS.writeFile).toBeCalledTimes(1);
     expect(idbFS.writeFile).toBeCalledWith(
       'kujo/one.md',
-      '# one.md\n\nHello world!',
+      '# one\n\nHello world!',
     );
   });
 });
