@@ -12,6 +12,7 @@ import {
 } from 'workspace/index';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import { backLinkNodeName } from './config';
+import { removeMdExtension } from 'utils/index';
 
 export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
   let { path, title } = nodeAttrs;
@@ -116,7 +117,7 @@ async function handleClick({
           content: [
             {
               type: 'text',
-              text: resolvePath(newWsPath).fileName,
+              text: removeMdExtension(resolvePath(newWsPath).fileName),
             },
           ],
         },

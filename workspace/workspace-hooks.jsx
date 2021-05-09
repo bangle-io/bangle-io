@@ -8,7 +8,7 @@ import {
   listWorkspaces,
 } from './workspace-helpers';
 import { cachedListAllNoteWsPaths, createNote, deleteFile } from './file-ops';
-import { checkWidescreen, useDestroyRef } from 'utils/index';
+import { checkWidescreen, removeMdExtension, useDestroyRef } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
@@ -65,7 +65,7 @@ export function useCreateNote() {
             content: [
               {
                 type: 'text',
-                text: resolvePath(wsPath).fileName,
+                text: removeMdExtension(resolvePath(wsPath).fileName),
               },
             ],
           },

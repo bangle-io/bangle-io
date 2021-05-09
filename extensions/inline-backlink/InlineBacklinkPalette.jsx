@@ -20,8 +20,7 @@ import {
   sanitizeFilePath,
 } from 'workspace/index';
 import { backLinkNodeName, palettePluginKey } from './config';
-import { conditionalSuffix } from 'utils/index';
-import { removeMdExtension } from './utils';
+import { conditionalSuffix, removeMdExtension } from 'utils/index';
 
 // Creating this also closes the palette
 const createBackLinkNode = (wsPath, allNoteWsPaths) => {
