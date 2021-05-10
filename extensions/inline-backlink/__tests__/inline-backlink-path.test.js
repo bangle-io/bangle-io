@@ -24,4 +24,12 @@ describe('getBacklinkPath', () => {
     ]);
     expect(result).toBe('x-file');
   });
+
+  test('if no match and provided a nested wsPath', () => {
+    const result = getBacklinkPath('test-ws:some-dir/x-file.md', [
+      'test-ws:xyz/some-dir/my-file.md',
+      'test-ws:some-path/hotel/my-file.md',
+    ]);
+    expect(result).toBe('some-dir/x-file');
+  });
 });
