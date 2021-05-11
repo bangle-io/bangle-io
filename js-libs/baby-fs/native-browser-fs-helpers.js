@@ -1,5 +1,3 @@
-import { NATIVE_BROWSER_PERMISSION_ERROR } from './error-codes';
-
 export async function createFile(rootDirHandle, path) {
   if (typeof path === 'string') {
     path = path.split('/');
@@ -120,5 +118,6 @@ export async function recurseDirHandle(
     return result.filter((r) => r.length > 0);
   };
   const result = await _recurse(rootDir);
+
   return result;
 }

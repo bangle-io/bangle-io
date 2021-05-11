@@ -67,6 +67,19 @@ export async function createWorkspace(wsName, type = 'browser', opts = {}) {
       break;
     }
 
+    case 'helpfs': {
+      workspace = {
+        name: wsName,
+        type,
+        metadata: {
+          githubOwner: opts.githubOwner,
+          githubRepo: opts.githubRepo,
+          githubBranch: opts.githubBranch,
+        },
+      };
+      break;
+    }
+
     case 'nativefs': {
       const { rootDirHandle } = opts;
       if (!rootDirHandle) {

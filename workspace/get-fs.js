@@ -1,16 +1,32 @@
 import { IndexedDBFileSystem, NativeBrowserFileSystem } from 'baby-fs';
+import { HelpFileSystem } from 'baby-fs/help-fs';
+
+const allowedFile = (name) => {
+  return name.endsWith('.md') || name.endsWith('.png');
+};
 
 export const getFileSystemFromWsInfo = (wsInfo) => {
   if (wsInfo.type === 'browser') {
     return new IndexedDBFileSystem();
   }
 
+  if (wsInfo.type === 'helpfs') {
+    return new HelpFileSystem({
+      githubToken:
+        new URLSearchParams(window.location.search).get('github_token') ||
+        localStorage.getItem('github_token'),
+      githubOwner: wsInfo.metadata.githubOwner,
+      githubRepo: wsInfo.metadata.githubRepo,
+      githubBranch: wsInfo.metadata.githubBranch,
+      allowedFile,
+    });
+  }
+
   if (wsInfo.type === 'nativefs') {
     const rootDirHandle = wsInfo.metadata.rootDirHandle;
     return new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
-      allowedFile: (fileHandle) =>
-        fileHandle.name.endsWith('.md') || fileHandle.name.endsWith('.png'),
+      allowedFile: (fileHandle) => allowedFile(fileHandle.name),
     });
   }
 
