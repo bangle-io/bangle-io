@@ -7,9 +7,11 @@ import {
   PaletteInput,
   PaletteItemsContainer,
   SidebarRow,
+  SpinnerIcon,
   usePaletteProps,
 } from 'ui-components/index';
-import { cx } from 'utils/utility';
+import { useDestroyRef } from 'utils/hooks';
+import { cx, sleep } from 'utils/utility';
 import { PathValidationError } from 'workspace/index';
 import { INPUT_PALETTE, PaletteTypeBase } from '../paletteTypes';
 
@@ -45,17 +47,36 @@ function InputPaletteUIComponent({
   paletteMetadata,
   updatePalette,
 }) {
+  const destroyedRef = useDestroyRef();
   const [error, updateError] = useState();
+  const [showSpinner, updateSpinner] = useState();
   useEffect(() => {
     updateError(undefined);
+    updateSpinner(undefined);
   }, [query]);
 
   let resolvedItems;
 
   const onExecuteHOC = (selectedItem) => (item, itemIndex, event) => {
     event.preventDefault();
+    if (destroyedRef.current) {
+      return Promise.resolve();
+    }
+    let resolved = false;
+
+    sleep(250).then(() => {
+      if (!resolved) {
+        updateSpinner(true);
+      }
+    });
+
     return Promise.resolve(paletteMetadata.onInputConfirm(selectedItem))
       .then((result) => {
+        resolved = true;
+        if (destroyedRef.current) {
+          return;
+        }
+        updateSpinner(false);
         // prevent dismissing if result === false
         if (result === false) {
         } else {
@@ -63,6 +84,9 @@ function InputPaletteUIComponent({
         }
       })
       .catch((err) => {
+        if (destroyedRef.current) {
+          return;
+        }
         updateError(err);
         if (!(err instanceof PathValidationError)) {
           throw err;
@@ -134,9 +158,15 @@ function InputPaletteUIComponent({
           error && 'focus:outline-none focus:ring  focus:ring-red-600',
         )}
         paletteIcon={
-          <span className="pr-2 flex items-center">
-            <NullIcon className="h-5 w-5" />
-          </span>
+          showSpinner ? (
+            <span className="pr-2 flex items-center">
+              <SpinnerIcon className="h-5 w-5" />
+            </span>
+          ) : (
+            <span className="pr-2 flex items-center">
+              <NullIcon className="h-5 w-5" />
+            </span>
+          )
         }
         {...inputProps}
       />
@@ -171,16 +201,22 @@ function InputPaletteUIComponent({
         })}
       </PaletteItemsContainer>
       <PaletteInfo>
-        {paletteMetadata?.paletteInfo && (
-          <PaletteInfoItem>{paletteMetadata?.paletteInfo}</PaletteInfoItem>
+        {showSpinner ? (
+          <PaletteInfoItem>Processing, please wait...</PaletteInfoItem>
+        ) : (
+          <>
+            {paletteMetadata?.paletteInfo && (
+              <PaletteInfoItem>{paletteMetadata?.paletteInfo}</PaletteInfoItem>
+            )}
+            <PaletteInfoItem>use:</PaletteInfoItem>
+            <PaletteInfoItem>
+              <kbd className="font-normal">↑↓</kbd> to navigate
+            </PaletteInfoItem>
+            <PaletteInfoItem>
+              <kbd className="font-normal">Esc</kbd> to cancel
+            </PaletteInfoItem>
+          </>
         )}
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
-          <kbd className="font-normal">↑↓</kbd> to navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
-          <kbd className="font-normal">Esc</kbd> to cancel
-        </PaletteInfoItem>
       </PaletteInfo>
     </>
   );
