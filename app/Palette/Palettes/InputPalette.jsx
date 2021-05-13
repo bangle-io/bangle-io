@@ -50,49 +50,71 @@ function InputPaletteUIComponent({
     updateError(undefined);
   }, [query]);
 
-  const resolvedItems = [
-    !error && {
-      uid: 'input-confirm',
-      title: 'Confirm',
-      onExecute: (item, itemIndex, event) => {
-        event.preventDefault();
-        return Promise.resolve(paletteMetadata.onInputConfirm(query))
-          .then(() => {
-            dismissPalette();
-          })
-          .catch((err) => {
-            updateError(err);
-            if (!(err instanceof PathValidationError)) {
-              throw err;
-            }
-          });
-      },
-    },
-    error && {
-      uid: 'input-clear',
-      title: 'Clear input and retry',
-      onExecute: (item, itemIndex, event) => {
-        event.preventDefault();
-        updateQuery(paletteInitialQuery || '');
-      },
-    },
-    {
-      uid: 'input-cancel',
-      title: 'Cancel',
-      onExecute: (item, itemIndex, event) => {
-        event.preventDefault();
+  let resolvedItems;
 
-        return Promise.resolve(paletteMetadata.onInputCancel?.(query))
-          .then(() => {
-            dismissPalette();
-          })
-          .catch((err) => {
-            dismissPalette();
-            throw err;
-          });
+  const onExecuteHOC = (selectedItem) => (item, itemIndex, event) => {
+    event.preventDefault();
+    return Promise.resolve(paletteMetadata.onInputConfirm(selectedItem))
+      .then((result) => {
+        // prevent dismissing if result === false
+        if (result === false) {
+        } else {
+          dismissPalette();
+        }
+      })
+      .catch((err) => {
+        updateError(err);
+        if (!(err instanceof PathValidationError)) {
+          throw err;
+        }
+      });
+  };
+
+  if (paletteMetadata.availableOptions) {
+    resolvedItems = paletteMetadata.availableOptions.map((option) => {
+      if (!(option instanceof InputPaletteOption)) {
+        throw new Error('Must be InputPaletteOption');
+      }
+      return {
+        uid: option.uid,
+        title: option.title,
+        onExecute: onExecuteHOC(option.uid),
+      };
+    });
+  } else {
+    resolvedItems = [
+      !error && {
+        uid: 'input-confirm',
+        title: 'Confirm',
+        onExecute: onExecuteHOC(query),
       },
+      error && {
+        uid: 'input-clear',
+        title: 'Clear input and retry',
+        onExecute: (item, itemIndex, event) => {
+          event.preventDefault();
+          updateQuery(paletteInitialQuery || '');
+        },
+      },
+    ].filter(Boolean);
+  }
+
+  resolvedItems.push({
+    uid: 'input-cancel',
+    title: 'Cancel',
+    onExecute: (item, itemIndex, event) => {
+      event.preventDefault();
+
+      return Promise.resolve(paletteMetadata.onInputCancel?.(query))
+        .then(() => {
+          dismissPalette();
+        })
+        .catch((err) => {
+          dismissPalette();
+          throw err;
+        });
     },
-  ].filter(Boolean);
+  });
 
   const { getItemProps, inputProps } = usePaletteProps({
     onDismiss: dismissPalette,
@@ -162,4 +184,11 @@ function InputPaletteUIComponent({
       </PaletteInfo>
     </>
   );
+}
+
+export class InputPaletteOption {
+  constructor({ title, uid }) {
+    this.title = title;
+    this.uid = uid;
+  }
 }

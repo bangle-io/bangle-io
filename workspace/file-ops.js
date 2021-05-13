@@ -5,9 +5,10 @@ import {
   validateFileWsPath,
   validateNoteWsPath,
   isValidNoteWsPath,
+  filePathToWsPath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
-import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs';
+import { BaseFileSystemError, FILE_NOT_FOUND_ERROR, writeFile } from 'baby-fs';
 import { listFilesCache } from './native-browser-list-fs-cache';
 import { getFileSystemFromWsInfo } from './get-fs';
 import { serialExecuteQueue, weakCache } from 'utils/utility';
@@ -210,5 +211,27 @@ export async function renameFile(wsPath, newWsPath) {
     toFSPath(newWsPath),
   );
 
+  listFilesCache.deleteEntry(workspaceInfo);
+}
+
+/**
+ * Copies all files from `wsNameFrom` to `wsNameTo`, overwriting
+ * any that already exists in `wsNameTo`. Both the workspaces need to
+ * exist.
+ * @param {*} wsNameFrom
+ * @param {*} wsNameTo
+ */
+export async function copyWorkspace(wsNameFrom, wsNameTo) {
+  const fileWsPaths = await listAllFiles(wsNameFrom);
+
+  await Promise.all(
+    fileWsPaths.map(async (wsPath) => {
+      const file = await getFile(wsPath);
+      const { filePath } = resolvePath(wsPath);
+      const newWsPath = filePathToWsPath(wsNameTo, filePath);
+      await saveFile(newWsPath, file);
+    }),
+  );
+  const workspaceInfo = await getWorkspaceInfo(wsNameTo);
   listFilesCache.deleteEntry(workspaceInfo);
 }
