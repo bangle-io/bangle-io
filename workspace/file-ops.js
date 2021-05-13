@@ -50,17 +50,17 @@ export async function getNote(bangleIOContext, wsPath) {
   );
 
   // TODO avoid doing toJSON
-  const file = markdownParser(
+  const doc = markdownParser(
     fileText,
     bangleIOContext.specRegistry,
     bangleIOContext.markdownItPlugins,
   ).toJSON();
 
-  if (file === undefined) {
+  if (doc === undefined) {
     throw new Error(`File ${wsPath} not found`);
   }
 
-  return file;
+  return doc;
 }
 
 export async function getFile(wsPath) {
@@ -78,20 +78,18 @@ export async function getFile(wsPath) {
 
 export async function saveNote(bangleIOContext, wsPath, doc) {
   validateNoteWsPath(wsPath);
-
-  const { wsName } = resolvePath(wsPath);
-  const workspaceInfo = await getWorkspaceInfo(wsName);
-
-  const path = toFSPath(wsPath);
+  const { fileName } = resolvePath(wsPath);
   const data = markdownSerializer(doc, bangleIOContext.specRegistry);
-
-  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, data);
+  await saveFile(
+    wsPath,
+    new File([data], fileName, {
+      type: 'text/plain',
+    }),
+  );
 }
 
-// TODO check if saveFile  (.writeFile) will work on other browsers
 /**
  *
- * @param {*} bangleIOContext
  * @param {*} wsPath
  * @param {*} fileBlob  a blob https://developer.mozilla.org/en-US/docs/Web/API/FileSystemWritableFileStream .write can take
  */
@@ -115,22 +113,11 @@ export async function createNote(
   content,
   contentType = 'doc',
 ) {
-  validateNoteWsPath(wsPath);
-  const { wsName } = resolvePath(wsPath);
-  const workspaceInfo = await getWorkspaceInfo(wsName);
-
-  const path = toFSPath(wsPath);
-  let markdown;
   if (contentType === 'doc') {
-    markdown = markdownSerializer(content, bangleIOContext.specRegistry);
-  } else if (contentType === 'markdown') {
-    markdown = content;
+    await saveNote(bangleIOContext, wsPath, content);
   } else {
-    throw new Error('Unknown content type');
+    throw new Error('createNote:Unknown content type');
   }
-
-  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, markdown);
-  listFilesCache.deleteEntry(workspaceInfo);
 }
 
 export async function deleteFile(wsPath) {

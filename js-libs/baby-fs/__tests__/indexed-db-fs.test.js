@@ -6,6 +6,17 @@ let mockMetaStore = new Map();
 
 const getLast = (array) => array[array.length - 1];
 
+const toFile = (str) => {
+  var file = new File([str], 'foo.txt', { type: 'text/plain' });
+  return file;
+};
+
+const serializeMap = (map) => {
+  return Promise.all(
+    [...map.entries()].map(async (r) => [r[0], await r[1]?.text()]),
+  );
+};
+
 jest.mock('idb-keyval', () => {
   const idb = {};
   const dbSuffix = 3;
@@ -37,19 +48,38 @@ jest.mock('idb-keyval', () => {
   return idb;
 });
 
+const originalFile = window.File;
 beforeEach(() => {
   mockStore?.clear();
   mockMetaStore?.clear();
+  window.File = class File {
+    constructor(content, fileName, opts) {
+      this.content = content;
+      this.fileName = fileName;
+      this.opts = opts;
+    }
+    async text() {
+      return this.content;
+    }
+  };
 });
 
+afterEach(() => {
+  window.File = originalFile;
+});
 test('writeFile', async () => {
   const fs = new IndexedDBFileSystem();
-  await fs.writeFile('/hola/hi', 'my-data');
-  expect(mockStore).toMatchInlineSnapshot(`
-    Map {
-      "/hola/hi" => "my-data",
-    }
-  `);
+  await fs.writeFile('/hola/hi', toFile('my-data'));
+  await expect(serializeMap(mockStore)).resolves.toMatchInlineSnapshot(`
+          Array [
+            Array [
+              "/hola/hi",
+              Array [
+                "my-data",
+              ],
+            ],
+          ]
+        `);
   expect(mockMetaStore.get('/hola/hi')).toEqual({
     mtimeMs: expect.any(Number),
   });
@@ -57,15 +87,19 @@ test('writeFile', async () => {
 
 test('readFile', async () => {
   const fs = new IndexedDBFileSystem();
-  await fs.writeFile('/hola/hi', 'my-data');
+  await fs.writeFile('/hola/hi', toFile('my-data'));
 
   const data = await fs.readFileAsText('/hola/hi');
-  expect(data).toMatchInlineSnapshot(`"my-data"`);
+  expect(data).toMatchInlineSnapshot(`
+    Array [
+      "my-data",
+    ]
+  `);
 });
 
 test('stat', async () => {
   const fs = new IndexedDBFileSystem();
-  await fs.writeFile('/hola/hi', 'my-data');
+  await fs.writeFile('/hola/hi', toFile('my-data'));
 
   const data = await fs.stat('/hola/hi');
   expect(data).toEqual({
@@ -75,13 +109,18 @@ test('stat', async () => {
 
 test('rename', async () => {
   const fs = new IndexedDBFileSystem();
-  await fs.writeFile('/hola/hi', 'mydata');
+  await fs.writeFile('/hola/hi', toFile('mydata'));
   await fs.rename('/hola/hi', '/ebola/two');
-  expect(mockStore).toMatchInlineSnapshot(`
-    Map {
-      "/ebola/two" => "mydata",
-    }
-  `);
+  await expect(serializeMap(mockStore)).resolves.toMatchInlineSnapshot(`
+          Array [
+            Array [
+              "/ebola/two",
+              Array [
+                "mydata",
+              ],
+            ],
+          ]
+        `);
 });
 
 test('rename throws error if old file not found', async () => {
@@ -96,8 +135,8 @@ test('rename throws error if old file not found', async () => {
 
 test('rename throws error if new file already exists', async () => {
   const fs = new IndexedDBFileSystem();
-  await fs.writeFile('/hola/hi', 'mydata');
-  await fs.writeFile('/ebola/two', 'mydata');
+  await fs.writeFile('/hola/hi', toFile('mydata'));
+  await fs.writeFile('/ebola/two', toFile('mydata'));
 
   await expect(
     fs.rename('/hola/hi', '/ebola/two'),
@@ -108,7 +147,7 @@ test('rename throws error if new file already exists', async () => {
 
 test('unlink', async () => {
   const fs = new IndexedDBFileSystem();
-  await fs.writeFile('/hola/hi', 'my-data');
+  await fs.writeFile('/hola/hi', toFile('my-data'));
   await fs.unlink('/hola/hi');
   expect(mockStore.size).toEqual(0);
   expect(mockMetaStore.size).toEqual(0);
@@ -117,8 +156,8 @@ test('unlink', async () => {
 test('opendirRecursive root', async () => {
   const fs = new IndexedDBFileSystem();
 
-  await fs.writeFile('/hola/hi', 'my-data');
-  await fs.writeFile('/hola/bye', 'my-data');
+  await fs.writeFile('/hola/hi', toFile('my-data'));
+  await fs.writeFile('/hola/bye', toFile('my-data'));
   const result = await fs.opendirRecursive('/');
   expect(result).toMatchInlineSnapshot(`
     Array [
@@ -131,9 +170,9 @@ test('opendirRecursive root', async () => {
 test('opendirRecursive subdir', async () => {
   const fs = new IndexedDBFileSystem();
 
-  await fs.writeFile('/hola/hi', 'my-data');
-  await fs.writeFile('/hola/bye', 'my-data');
-  await fs.writeFile('/jango/bye', 'my-data');
+  await fs.writeFile('/hola/hi', toFile('my-data'));
+  await fs.writeFile('/hola/bye', toFile('my-data'));
+  await fs.writeFile('/jango/bye', toFile('my-data'));
   let result = await fs.opendirRecursive('/jango');
   expect(result).toMatchInlineSnapshot(`
     Array [
