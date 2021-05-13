@@ -314,7 +314,7 @@ function useCloneWorkspace({ updatePalette }) {
   const uid = 'CLONE_WORKSPACE_COMMAND';
 
   const { createWorkspace } = useWorkspaces();
-  const { wsName } = useWorkspacePath();
+  const { wsName, refreshHistoryStateKey } = useWorkspacePath();
 
   const onExecute = useCallback(() => {
     updatePalette({
@@ -339,6 +339,7 @@ function useCloneWorkspace({ updatePalette }) {
             });
 
             await copyWorkspace(wsName, rootDirHandle.name);
+            refreshHistoryStateKey();
             return true;
           } else if (query === 'browser') {
             // TODO be able to move to the palette
@@ -353,7 +354,7 @@ function useCloneWorkspace({ updatePalette }) {
                     if (query) {
                       await createWorkspace(query, 'browser');
                       await copyWorkspace(wsName, query);
-                      return false;
+                      refreshHistoryStateKey();
                     }
                   },
                 },
@@ -366,7 +367,7 @@ function useCloneWorkspace({ updatePalette }) {
         },
       },
     });
-  }, [updatePalette, createWorkspace, wsName]);
+  }, [updatePalette, createWorkspace, wsName, refreshHistoryStateKey]);
 
   return queryMatch({
     uid,

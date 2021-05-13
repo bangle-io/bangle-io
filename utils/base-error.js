@@ -21,10 +21,6 @@ export class BaseError extends Error {
     }
 
     if (srcError) {
-      console.log('--Source error start--');
-      console.error(srcError);
-      console.log('--Source error end--');
-
       this.srcError = srcError;
     }
 

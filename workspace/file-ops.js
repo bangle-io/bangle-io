@@ -8,7 +8,7 @@ import {
   filePathToWsPath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
-import { BaseFileSystemError, FILE_NOT_FOUND_ERROR, writeFile } from 'baby-fs';
+import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs';
 import { listFilesCache } from './native-browser-list-fs-cache';
 import { getFileSystemFromWsInfo } from './get-fs';
 import { serialExecuteQueue, weakCache } from 'utils/utility';
@@ -229,6 +229,7 @@ export async function copyWorkspace(wsNameFrom, wsNameTo) {
       const file = await getFile(wsPath);
       const { filePath } = resolvePath(wsPath);
       const newWsPath = filePathToWsPath(wsNameTo, filePath);
+
       await saveFile(newWsPath, file);
     }),
   );
