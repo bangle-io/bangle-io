@@ -4,6 +4,7 @@ exports[`useWorkspacePath pushWsPath works 1`] = `
 Object {
   "filePath": "",
   "pushWsPath": [Function],
+  "refreshHistoryStateKey": [Function],
   "removeSecondaryWsPath": [Function],
   "removeWsPath": [Function],
   "replaceWsPath": [Function],
@@ -17,6 +18,7 @@ exports[`useWorkspacePath pushWsPath works 3`] = `
 Object {
   "filePath": "two.md",
   "pushWsPath": [Function],
+  "refreshHistoryStateKey": [Function],
   "removeSecondaryWsPath": [Function],
   "removeWsPath": [Function],
   "replaceWsPath": [Function],
