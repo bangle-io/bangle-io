@@ -34,6 +34,7 @@ jest.mock('utils/index', () => {
     checkWidescreen: jest.fn(() => false),
   };
 });
+
 jest.mock('idb-keyval', () => {
   const idb = {};
   idb.get = jest.fn(async (...args) => {
@@ -65,8 +66,18 @@ function createFileContent(textContent = 'hello') {
 
 let idbFS;
 
+const originalFile = window.File;
+
 beforeEach(() => {
   mockStore.clear();
+  window.File = class File {
+    constructor(content, fileName, opts) {
+      this.content = content;
+      this.fileName = fileName;
+      this.opts = opts;
+    }
+  };
+
   mockBabyFSStore.clear();
   const obj = {
     readFileAsText: jest.fn(async (fileName) => {
@@ -92,6 +103,10 @@ beforeEach(() => {
   });
 
   idbFS = new IndexedDBFileSystem();
+});
+
+afterEach(() => {
+  window.File = originalFile;
 });
 
 describe('useListCachedNoteWsPaths', () => {
@@ -389,7 +404,7 @@ describe('useCreateNote', () => {
     expect(idbFS.writeFile).toBeCalledTimes(1);
     expect(idbFS.writeFile).toBeCalledWith(
       'kujo/one.md',
-      '# one\n\nHello world!',
+      new File(['# one\n\nHello world!'], 'one.md', { type: 'text/plain' }),
     );
   });
 });

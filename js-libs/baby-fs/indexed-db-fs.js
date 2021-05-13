@@ -8,8 +8,8 @@ import {
   FILE_ALREADY_EXISTS_ERROR,
   FILE_NOT_FOUND_ERROR,
   UPSTREAM_ERROR,
-  VALIDATION_ERROR,
 } from './error-codes';
+import { readFileAsText as readFileAsTextHelper } from './native-browser-fs-helpers';
 
 const idbSuffix = 3;
 export const BASE_IDB_NAME_PREFIX = 'baby-idb';
@@ -85,20 +85,9 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async readFileAsText(filePath) {
-    let result = await catchUpstream(
-      idb.get(filePath, this._customStore),
-      'Error reading data',
-    );
-
-    if (result == null) {
-      throw new IndexedDBFileSystemError(
-        `File ${filePath} not found`,
-        FILE_NOT_FOUND_ERROR,
-        `File ${filePath} not found`,
-      );
-    }
-
-    return result;
+    const file = await this.readFile(filePath);
+    const textContent = await readFileAsTextHelper(file);
+    return textContent;
   }
 
   async readFile(filePath) {
@@ -119,6 +108,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async writeFile(filePath, data) {
+    this._verifyFileType(data);
     await catchUpstream(
       idb.set(filePath, data, this._customStore),
       'Error writing data',
@@ -137,10 +127,10 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async rename(oldFilePath, newFilePath) {
-    const file = await this.readFileAsText(oldFilePath);
+    const file = await this.readFile(oldFilePath);
     let existingFile;
     try {
-      existingFile = await this.readFileAsText(newFilePath);
+      existingFile = await this.readFile(newFilePath);
     } catch (error) {
       if (error.code !== FILE_NOT_FOUND_ERROR) {
         throw error;

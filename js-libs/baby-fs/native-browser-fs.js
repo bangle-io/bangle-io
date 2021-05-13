@@ -13,7 +13,7 @@ import {
 } from './error-codes';
 
 import {
-  readFileAsText,
+  readFileAsText as readFileAsTextHelper,
   createFile,
   writeFile,
   hasPermission,
@@ -99,18 +99,11 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async readFileAsText(filePath) {
-    await verifyPermission(this._rootDirHandle, filePath);
-    const { fileHandle } = await this._resolveFileHandle(
-      this._rootDirHandle,
-      filePath,
-    );
-
-    const file = await fileHandle.getFile();
-    const textContent = await readFileAsText(file);
+    const file = await this.readFile(filePath);
+    const textContent = await readFileAsTextHelper(file);
     return textContent;
   }
 
-  // TODO implement in index db
   async readFile(filePath) {
     await verifyPermission(this._rootDirHandle, filePath);
     const { fileHandle } = await this._resolveFileHandle(
@@ -122,6 +115,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async writeFile(filePath, data) {
+    this._verifyFileType(data);
     await verifyPermission(this._rootDirHandle, filePath);
 
     let fileHandle;
@@ -167,11 +161,11 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async rename(oldFilePath, newFilePath) {
-    const file = await this.readFileAsText(oldFilePath);
+    const file = await this.readFile(oldFilePath);
     let existingFile;
 
     try {
-      existingFile = await this.readFileAsText(newFilePath);
+      existingFile = await this.readFile(newFilePath);
     } catch (error) {
       if (error.code !== FILE_NOT_FOUND_ERROR) {
         throw error;

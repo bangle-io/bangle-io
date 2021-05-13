@@ -1,6 +1,7 @@
 import { FILE_ALREADY_EXISTS_ERROR } from 'baby-fs';
 import { WorkspaceError, WORKSPACE_ALREADY_EXISTS_ERROR } from './errors';
-import { createNote, deleteFile } from './file-ops';
+import { deleteFile, saveFile } from './file-ops';
+import { resolvePath } from './path-helpers';
 import { createWorkspace, deleteWorkspace } from './workspace-helpers';
 
 export async function importGithubWorkspace(
@@ -32,19 +33,26 @@ export async function importGithubWorkspace(
     await Promise.all(
       files.map(async (f) => {
         const wsPath = wsName + ':' + f.path;
+        const { fileName } = resolvePath(wsPath);
         try {
-          await createNote(bangleIOContext, wsPath, f.textContent, 'markdown');
+          await saveFile(
+            wsPath,
+            new File([f.textContent], fileName, {
+              type: 'text/plain',
+            }),
+          );
         } catch (error) {
           if (error.code === FILE_ALREADY_EXISTS_ERROR) {
             await deleteFile(wsPath);
-            await createNote(
-              bangleIOContext,
+            await saveFile(
               wsPath,
-              f.textContent,
-              'markdown',
+              new File([f.textContent], fileName, {
+                type: 'text/plain',
+              }),
             );
-            // ignore file errors
+            return;
           }
+          // ignore file errors
         }
       }),
     );
