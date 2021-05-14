@@ -1,3 +1,7 @@
+### May 13, 2021
+
+- A new command to clone a workspace.
+
 ### May 7, 2021
 
 - **Bugs** Fixed a bunch of bugs and feature gap in wiki links. They should now match with what other editors provide.
