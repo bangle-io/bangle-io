@@ -109,7 +109,6 @@ async function handleClick({
     !backLinkPath.includes('/')
   ) {
     newWsPath = parseLocalFilePath(backLinkPath, currentWsPath);
-    console.log({ newWsPath });
   }
 
   validateNoteWsPath(newWsPath);
