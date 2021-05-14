@@ -11,7 +11,7 @@ import {
   PathValidationError,
 } from 'workspace/index';
 import { Node } from '@bangle.dev/core/prosemirror/model';
-import { backLinkNodeName } from './config';
+import { backLinkNodeName, newNoteLocation } from './config';
 import { removeMdExtension } from 'utils/index';
 
 export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
@@ -100,7 +100,17 @@ async function handleClick({
   }
 
   // create a new note as no existing wsPaths match
-  const newWsPath = filePathToWsPath(wsName, backLinkPath);
+  let newWsPath = filePathToWsPath(wsName, backLinkPath);
+
+  // Check if the user wants to create a new note in the same dir
+  if (
+    newNoteLocation === 'CURRENT_DIR' &&
+    currentWsPath &&
+    !backLinkPath.includes('/')
+  ) {
+    newWsPath = parseLocalFilePath(backLinkPath, currentWsPath);
+  }
+
   validateNoteWsPath(newWsPath);
 
   await createNote(

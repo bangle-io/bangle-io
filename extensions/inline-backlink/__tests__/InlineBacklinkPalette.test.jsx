@@ -144,7 +144,7 @@ describe('filterItems', () => {
         Object {
           "editorExecuteCommand": [Function],
           "title": "Create: file",
-          "uid": "test-ws:file.md",
+          "uid": "create-test-ws:file.md",
         },
         Object {
           "editorExecuteCommand": [Function],

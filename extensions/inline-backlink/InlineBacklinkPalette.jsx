@@ -27,6 +27,7 @@ const createBackLinkNode = (wsPath, allNoteWsPaths) => {
   return (state, dispatch, view) => {
     const nodeType = state.schema.nodes[backLinkNodeName];
     const backLinkPath = getBacklinkPath(wsPath, allNoteWsPaths);
+
     return replaceSuggestionMarkWith(
       palettePluginKey,
       nodeType.create({
@@ -150,7 +151,7 @@ export function filterItems(wsName, query, allNoteWsPaths) {
     const wsPath = wsPathFromQuery(query, wsName);
 
     filteredItems.unshift({
-      uid: wsPath,
+      uid: 'create-' + wsPath,
       title: 'Create: ' + removeMdExtension(resolvePath(wsPath).filePath),
       editorExecuteCommand: () => {
         return createBackLinkNode(wsPath, allNoteWsPaths);
@@ -187,6 +188,10 @@ export function getBacklinkPath(wsPath, allWsPaths) {
   const matchingFilenames = allWsPaths.filter(
     (w) => resolvePath(w).fileName === fileName,
   );
+
+  if (matchingFilenames.length === 0) {
+    return removeMdExtension(filePath);
+  }
 
   // if there are multiple files with the same name
   // give it an absolute path
