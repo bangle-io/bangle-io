@@ -26,6 +26,7 @@ export class UIState {
     this.paletteInitialQuery = obj.paletteInitialQuery;
     this.paletteMetadata = obj.paletteMetadata;
     this.theme = obj.theme;
+    this.notifications = obj.notifications;
 
     persistState({ sidebar: this.sidebar, theme: this.theme });
 
@@ -40,6 +41,8 @@ export class UIState {
     }
   }
 
+  // NOTE this is not used but sits here as a demonstration
+  // on how to do derived fields
   // Derived field
   get hideEditorArea() {
     if (this.widescreen) {
@@ -50,20 +53,21 @@ export class UIState {
   }
 }
 
-export const UIManagerContext = createContext(
-  new UIState(
-    {
-      // UI
-      sidebar: null,
-      widescreen: checkWidescreen(),
-      paletteType: undefined,
-      paletteInitialQuery: undefined,
-      paletteMetadata: undefined,
-      theme: null,
-    },
-    true,
-  ),
-);
+const initialState = {
+  // UI
+  sidebar: null,
+  widescreen: checkWidescreen(),
+  paletteType: undefined,
+  paletteInitialQuery: undefined,
+  paletteMetadata: undefined,
+  theme: null,
+  notifications: [],
+};
+
+const initialContextUIState = new UIState(initialState, true);
+initialContextUIState.dispatch = () => {};
+
+export const UIManagerContext = createContext(initialContextUIState);
 
 function setRootWidescreenClass(widescreen) {
   const root = document.getElementById('root');
@@ -79,18 +83,7 @@ export function UIManager({ children }) {
 
   const [state, dispatch] = useReducer(
     (state, action) => new UIState(reducer(state, action)),
-    new UIState(
-      {
-        // UI
-        sidebar: null,
-        widescreen: checkWidescreen(windowSize.width),
-        paletteType: undefined,
-        paletteInitialQuery: undefined,
-        paletteMetadata: undefined,
-        theme: null,
-      },
-      true,
-    ),
+    new UIState(initialState, true),
     (store) => {
       applyTheme(store.theme);
       setRootWidescreenClass(store.widescreen);
@@ -137,6 +130,34 @@ const reducer = (state, action) => {
       };
     }
 
+    case 'UI/SHOW_NOTIFICATION': {
+      const { uid, content, buttons } = action.value;
+      if (!content) {
+        throw new Error('Must provide content for notification');
+      }
+      // Prevent repeat firing of notifications
+      if (state.notifications.find((n) => n.uid === uid)) {
+        return state;
+      }
+
+      return {
+        ...state,
+        notifications: [...state.notifications, action.value],
+      };
+    }
+
+    case 'UI/DISMISS_NOTIFICATION': {
+      const { uid } = action.value;
+      if (state.notifications.some((n) => n.uid === uid)) {
+        return {
+          ...state,
+          notifications: state.notifications.filter((n) => n.uid !== uid),
+        };
+      }
+
+      return state;
+    }
+
     case 'UI/CHANGE_SIDEBAR': {
       return {
         ...state,
@@ -150,17 +171,6 @@ const reducer = (state, action) => {
         paletteType: action.value.type,
         paletteInitialQuery: action.value.initialQuery,
         paletteMetadata: action.value.metadata,
-      };
-    }
-
-    case 'UI/TOGGLE_PALETTE': {
-      return {
-        ...state,
-        paletteInitialQuery: undefined,
-        paletteMetadata: undefined,
-        paletteType: state.paletteType
-          ? undefined
-          : action.paletteType || DEFAULT_PALETTE,
       };
     }
 

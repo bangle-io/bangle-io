@@ -16,7 +16,7 @@ import { keybindings } from 'config/index';
 import { EditorArea } from './editor/EditorArea';
 import { RootHomePage } from './components/RootHomePage';
 import { EditorWrapperUI } from './components/EditorWrapperUI';
-import { Notification, NotificationWrapper } from 'ui-components/Notifications';
+import { NotificationArea } from './components/NotificationArea';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
@@ -47,6 +47,7 @@ export function AppContainer() {
           />
         </Route>
       </div>
+      <NotificationArea />
     </>
   );
 }
