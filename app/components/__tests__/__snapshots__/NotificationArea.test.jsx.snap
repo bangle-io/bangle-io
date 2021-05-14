@@ -12,6 +12,24 @@ exports[`NotificationArea renders with content 2`] = `
       <div
         class="w-full flex flex-row "
       >
+        <span
+          class="mr-2"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+        </span>
         <div
           class="w-full text-sm"
         >
@@ -24,7 +42,7 @@ exports[`NotificationArea renders with content 2`] = `
             aria-label="dismiss"
             class="focus:outline-none"
             data-bangle-editor-break="true"
-            data-bangle-editor-pos="bottom"
+            data-bangle-editor-pos="left"
             type="button"
           >
             <svg
@@ -52,6 +70,24 @@ exports[`NotificationArea renders with content 2`] = `
       <div
         class="w-full flex flex-row "
       >
+        <span
+          class="mr-2"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+        </span>
         <div
           class="w-full text-sm"
         >
@@ -64,7 +100,7 @@ exports[`NotificationArea renders with content 2`] = `
             aria-label="dismiss"
             class="focus:outline-none"
             data-bangle-editor-break="true"
-            data-bangle-editor-pos="bottom"
+            data-bangle-editor-pos="left"
             type="button"
           >
             <svg

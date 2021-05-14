@@ -131,7 +131,10 @@ const reducer = (state, action) => {
     }
 
     case 'UI/SHOW_NOTIFICATION': {
-      const { uid, content, buttons } = action.value;
+      const { uid, content, buttons, severity = 'info' } = action.value;
+      if (!['error', 'warning', 'info', 'success'].includes(severity)) {
+        throw new Error('Unknown severity value: ' + severity);
+      }
       if (!content) {
         throw new Error('Must provide content for notification');
       }
@@ -142,7 +145,10 @@ const reducer = (state, action) => {
 
       return {
         ...state,
-        notifications: [...state.notifications, action.value],
+        notifications: [
+          ...state.notifications,
+          { uid, content, buttons, severity },
+        ],
       };
     }
 
