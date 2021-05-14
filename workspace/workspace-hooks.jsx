@@ -10,6 +10,7 @@ import {
 import { cachedListAllNoteWsPaths, createNote, deleteFile } from './file-ops';
 import { checkWidescreen, removeMdExtension, useDestroyRef } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
+import { replaceHistoryState } from './history-utils';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 
@@ -22,10 +23,13 @@ export function useListCachedNoteWsPaths() {
 
   const refreshFiles = useCallback(() => {
     if (wsName) {
+      // const t = Math.random();
+      // console.time('cachedListAllNoteWsPaths' + t);
       cachedListAllNoteWsPaths(wsName)
         .then((items) => {
           if (!destroyedRef.current) {
             setFiles(items);
+            // console.timeEnd('cachedListAllNoteWsPaths' + t);
             return;
           }
         })
@@ -42,7 +46,12 @@ export function useListCachedNoteWsPaths() {
     refreshFiles();
     // workspaceStatus is added here so that if permission
     // changes the files can be updated
-  }, [refreshFiles, location.state?.workspaceStatus]);
+  }, [
+    refreshFiles,
+    location.state?.workspaceStatus,
+    // this is a way for someone to signal things this hook cares about have changed
+    location.state?.historyStateKey,
+  ]);
 
   return [files, refreshFiles];
 }
@@ -290,6 +299,14 @@ export function useWorkspacePath() {
     });
   }, [history, location]);
 
+  // A way to signal something has changed
+  // making all hooks watching for this key will update
+  const refreshHistoryStateKey = useCallback(() => {
+    replaceHistoryState(history, {
+      historyStateKey: Math.random(),
+    });
+  }, [history]);
+
   return {
     wsName,
     wsPath,
@@ -299,5 +316,6 @@ export function useWorkspacePath() {
     replaceWsPath,
     removeWsPath,
     removeSecondaryWsPath,
+    refreshHistoryStateKey,
   };
 }

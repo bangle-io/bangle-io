@@ -1,6 +1,13 @@
+import mockBabyFs from './baby-fs.mock';
+
 import { render, act } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
+import * as idb from 'idb-keyval';
+import { checkWidescreen } from 'utils/index';
+import { BangleIOContext } from 'bangle-io-context/index';
+import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
+import { Workspace } from '../Workspace';
 import {
   useCreateNote,
   useDeleteFile,
@@ -8,23 +15,6 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from '../workspace-hooks';
-import * as idb from 'idb-keyval';
-import { Workspace } from '../Workspace';
-import { IndexedDBFileSystem } from 'baby-fs';
-import { checkWidescreen } from 'utils/index';
-import { BangleIOContext } from 'bangle-io-context/index';
-import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
-
-const mockStore = new Map();
-const mockBabyFSStore = new Map();
-
-jest.mock('baby-fs', () => {
-  const actual = jest.requireActual('baby-fs');
-  return {
-    ...actual,
-    IndexedDBFileSystem: jest.fn(),
-  };
-});
 
 jest.mock('utils/index', () => {
   const actual = jest.requireActual('utils/index');
@@ -33,23 +23,6 @@ jest.mock('utils/index', () => {
     ...actual,
     checkWidescreen: jest.fn(() => false),
   };
-});
-
-jest.mock('idb-keyval', () => {
-  const idb = {};
-  idb.get = jest.fn(async (...args) => {
-    return mockStore.get(...args);
-  });
-  idb.del = jest.fn(async (...args) => {
-    return mockStore.delete(...args);
-  });
-  idb.set = jest.fn(async (...args) => {
-    return mockStore.set(...args);
-  });
-  idb.keys = jest.fn(async (...args) => {
-    return Array.from(mockStore.keys(...args));
-  });
-  return idb;
 });
 
 function createFileContent(textContent = 'hello') {
@@ -64,12 +37,9 @@ function createFileContent(textContent = 'hello') {
   });
 }
 
-let idbFS;
-
 const originalFile = window.File;
 
 beforeEach(() => {
-  mockStore.clear();
   window.File = class File {
     constructor(content, fileName, opts) {
       this.content = content;
@@ -77,32 +47,6 @@ beforeEach(() => {
       this.opts = opts;
     }
   };
-
-  mockBabyFSStore.clear();
-  const obj = {
-    readFileAsText: jest.fn(async (fileName) => {
-      return mockBabyFSStore.get(fileName);
-    }),
-    writeFile: jest.fn(async (fileName, data) => {
-      mockBabyFSStore.set(fileName, data);
-    }),
-    unlink: jest.fn(async (fileName) => {
-      mockBabyFSStore.delete(fileName);
-    }),
-    rename: jest.fn(async (a, b) => {
-      mockBabyFSStore.set(b, mockBabyFSStore.get(a));
-      mockBabyFSStore.delete(a);
-    }),
-    opendirRecursive: jest.fn(async () => {
-      return Array.from(mockBabyFSStore.keys());
-    }),
-  };
-
-  IndexedDBFileSystem.mockImplementation(() => {
-    return obj;
-  });
-
-  idbFS = new IndexedDBFileSystem();
 });
 
 afterEach(() => {
@@ -131,14 +75,9 @@ describe('useListCachedNoteWsPaths', () => {
   test('works', async () => {
     let refreshFiles;
 
-    mockStore.set('workspaces/2', [
-      {
-        name: 'kujo',
-        type: 'browser',
-        metadata: {},
-      },
-    ]);
-    await idbFS.writeFile('kujo/one.md', createFileContent());
+    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
+
+    await mockBabyFs.setupMockFile('kujo', 'one.md');
 
     function Comp() {
       const [files, _refreshFiles] = useListCachedNoteWsPaths();
@@ -170,7 +109,8 @@ describe('useListCachedNoteWsPaths', () => {
       </div>
     `);
 
-    await idbFS.writeFile('kujo/two.md', createFileContent());
+    await mockBabyFs.idbFS.writeFile('kujo/two.md', createFileContent());
+    await mockBabyFs.setupMockFile('kujo', 'two.md');
 
     await act(async () => {
       await refreshFiles();
@@ -193,16 +133,10 @@ describe('useListCachedNoteWsPaths', () => {
   });
 
   test('only returns md files', async () => {
-    mockStore.set('workspaces/2', [
-      {
-        name: 'kujo',
-        type: 'browser',
-        metadata: {},
-      },
-    ]);
-    await idbFS.writeFile('kujo/one.md', createFileContent());
-    await idbFS.writeFile('kujo/two.png', createFileContent());
-    await idbFS.writeFile('kujo/three.md', createFileContent());
+    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
+    await mockBabyFs.setupMockFile('kujo', 'one.md');
+    await mockBabyFs.setupMockFile('kujo', 'two.png');
+    await mockBabyFs.setupMockFile('kujo', 'three.md');
 
     function Comp() {
       const [files] = useListCachedNoteWsPaths();
@@ -269,15 +203,9 @@ describe('useWorkspacePath', () => {
     checkWidescreen.mockImplementation(() => true);
 
     let workspacePathHookResult;
-    mockStore.set('workspaces/2', [
-      {
-        name: 'kujo',
-        type: 'browser',
-        metadata: {},
-      },
-    ]);
+    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
 
-    await idbFS.writeFile('kujo/one.md', createFileContent());
+    await mockBabyFs.setupMockFile('kujo', 'one.md');
 
     function Comp() {
       const [files] = useListCachedNoteWsPaths();
@@ -355,13 +283,7 @@ describe('useCreateNote', () => {
     let callback;
     let testLocation;
 
-    mockStore.set('workspaces/2', [
-      {
-        name: 'kujo',
-        type: 'browser',
-        metadata: {},
-      },
-    ]);
+    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
 
     function Comp() {
       const createMdFile = useCreateNote();
@@ -401,8 +323,8 @@ describe('useCreateNote', () => {
 
     expect(testLocation.pathname).toBe('/ws/kujo/one.md');
 
-    expect(idbFS.writeFile).toBeCalledTimes(1);
-    expect(idbFS.writeFile).toBeCalledWith(
+    expect(mockBabyFs.idbFS.writeFile).toBeCalledTimes(1);
+    expect(mockBabyFs.idbFS.writeFile).toBeCalledWith(
       'kujo/one.md',
       new File(['# one\n\nHello world!'], 'one.md', { type: 'text/plain' }),
     );
@@ -414,15 +336,9 @@ describe('useDeleteFile', () => {
     let callback;
     let testLocation;
 
-    mockStore.set('workspaces/2', [
-      {
-        name: 'kujo',
-        type: 'browser',
-        metadata: {},
-      },
-    ]);
+    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
 
-    await idbFS.writeFile('kujo/one.md', createFileContent());
+    await mockBabyFs.setupMockFile('kujo', 'one.md');
 
     function Comp() {
       const deleteFileCb = useDeleteFile();
@@ -456,17 +372,16 @@ describe('useDeleteFile', () => {
 
     expect(testLocation.pathname).toBe('/ws/kujo');
 
-    expect(idbFS.unlink).toBeCalledTimes(1);
-    expect(idbFS.unlink).toBeCalledWith('kujo/one.md');
+    expect(mockBabyFs.idbFS.unlink).toBeCalledTimes(1);
+    expect(mockBabyFs.idbFS.unlink).toBeCalledWith('kujo/one.md');
   });
 });
 
 describe('useWorkspaces', () => {
   test('loads workspace on mount', async () => {
-    mockStore.clear();
+    mockBabyFs.mockStore.clear();
     let createWorkspace, testLocation;
-
-    idb.set('workspaces/2', [{ metadata: {}, name: 'kujo1', type: 'browser' }]);
+    mockBabyFs.setupMockWorkspace({ name: 'kujo1' });
 
     function CompCreateWS() {
       const { workspaces = [] } = useWorkspaces();
@@ -511,7 +426,7 @@ describe('useWorkspaces', () => {
   });
 
   test('createWorkspace', async () => {
-    mockStore.clear();
+    mockBabyFs.mockStore.clear();
     let createWorkspace, testLocation;
 
     function CompCreateWS() {

@@ -1,4 +1,4 @@
-const nativeFSType = (workspaceInfo) => workspaceInfo.type === 'nativefs';
+const cacheableFSType = (workspaceInfo) => workspaceInfo.type === 'nativefs';
 
 const LOG = false;
 
@@ -12,7 +12,7 @@ class ListFilesCache {
   }
 
   deleteEntry(workspaceInfo) {
-    if (!nativeFSType(workspaceInfo)) {
+    if (!cacheableFSType(workspaceInfo)) {
       return;
     }
     this._cache.delete(workspaceInfo.metadata.rootDirHandle);
@@ -20,7 +20,7 @@ class ListFilesCache {
   }
 
   saveEntry(workspaceInfo, data) {
-    if (!nativeFSType(workspaceInfo)) {
+    if (!cacheableFSType(workspaceInfo)) {
       return;
     }
     this._cache.set(workspaceInfo.metadata.rootDirHandle, data);
@@ -28,7 +28,7 @@ class ListFilesCache {
   }
 
   getEntry(workspaceInfo) {
-    if (!nativeFSType(workspaceInfo)) {
+    if (!cacheableFSType(workspaceInfo)) {
       return undefined;
     }
     const result = this._cache.get(workspaceInfo.metadata.rootDirHandle);
