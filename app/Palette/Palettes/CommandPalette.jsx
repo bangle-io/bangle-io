@@ -28,7 +28,6 @@ import {
   defaultKeys as paragraphKeys,
 } from '@bangle.dev/core/components/paragraph';
 import {
-  copyWorkspace,
   isValidNoteWsPath,
   renameFile,
   useDeleteFile,
@@ -36,6 +35,7 @@ import {
   useWorkspaces,
 } from 'workspace/index';
 import {
+  useCloneWorkspaceCommand,
   useDispatchPrimaryEditorCommand,
   useInputPaletteNewNoteCommand,
 } from '../Commands';
@@ -60,7 +60,6 @@ import { WorkspaceError } from 'workspace/errors';
 import { useDestroyRef, useKeybindings } from 'utils/hooks';
 import { BaseError } from 'utils/base-error';
 import { EditorManagerContext } from 'app/editor/EditorManager';
-import { InputPaletteOption } from './InputPalette';
 
 const LOG = false;
 
@@ -310,69 +309,14 @@ function useNewBrowserWS({ updatePalette }) {
   });
 }
 
-function useCloneWorkspace({ updatePalette }) {
+function useCloneWorkspace() {
   const uid = 'CLONE_WORKSPACE_COMMAND';
-
-  const { createWorkspace } = useWorkspaces();
-  const { wsName, refreshHistoryStateKey } = useWorkspacePath();
-
-  const onExecute = useCallback(() => {
-    updatePalette({
-      type: INPUT_PALETTE,
-      metadata: {
-        placeholder: 'Please select the storage type of workspace',
-        availableOptions: [
-          new InputPaletteOption({
-            uid: 'nativefs',
-            title: 'Native file storage (recommended)',
-          }),
-          new InputPaletteOption({
-            uid: 'browser',
-            title: 'Browser storage',
-          }),
-        ],
-        onInputConfirm: async (query) => {
-          if (query === 'nativefs') {
-            const rootDirHandle = await pickADirectory();
-            await createWorkspace(rootDirHandle.name, 'nativefs', {
-              rootDirHandle,
-            });
-
-            await copyWorkspace(wsName, rootDirHandle.name);
-            refreshHistoryStateKey();
-            return true;
-          } else if (query === 'browser') {
-            // TODO be able to move to the palette
-            // await createWorkspace(query, 'browser');
-            // await copyWorkspace(wsName, );
-            setTimeout(() => {
-              updatePalette({
-                type: INPUT_PALETTE,
-                metadata: {
-                  placeholder: 'Please give your workspace a name',
-                  onInputConfirm: async (query) => {
-                    if (query) {
-                      await createWorkspace(query, 'browser');
-                      await copyWorkspace(wsName, query);
-                      refreshHistoryStateKey();
-                    }
-                  },
-                },
-              });
-            }, 0);
-            return false;
-          } else {
-            throw new Error('Unknown query');
-          }
-        },
-      },
-    });
-  }, [updatePalette, createWorkspace, wsName, refreshHistoryStateKey]);
+  const { wsName } = useWorkspacePath();
 
   return queryMatch({
     uid,
     title: 'Workspace: Clone workspace',
-    onExecute,
+    onExecute: useCloneWorkspaceCommand(),
     disabled: !wsName,
   });
 }

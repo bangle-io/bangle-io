@@ -5,7 +5,7 @@ import {
   keyDisplayValue,
 } from 'config/index';
 
-import React, { useCallback, useRef, useMemo, useEffect } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import {
   useListCachedNoteWsPaths,
   useWorkspacePath,
