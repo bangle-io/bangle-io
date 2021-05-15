@@ -12,6 +12,16 @@ export class BaseError extends Error {
     }
     // 'Error' breaks prototype chain here
     super(message);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, BaseError);
+    } else {
+      const stack = new Error().stack;
+      if (stack) {
+        this.stack = stack;
+      }
+    }
+
     // restore prototype chain
     const actualProto = new.target.prototype;
     if (Object.setPrototypeOf) {
