@@ -288,6 +288,23 @@ NodeList [
       class="whitespace-nowrap"
     />
   </div>,
+  <div
+    class="flex side-bar-row flex-row items-center cursor-pointer palette-row hover-allowed"
+    data-id="NEW_HELPFS_WS_COMMAND"
+    style="padding-left: 16px; padding-right: 16px;"
+  >
+    <span
+      class="text-lg  truncate select-none"
+    >
+      Workspace: New helpfs
+    </span>
+    <span
+      class="flex-1 flex "
+    />
+    <kbd
+      class="whitespace-nowrap"
+    />
+  </div>,
 ]
 `;
 

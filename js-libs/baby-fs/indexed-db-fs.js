@@ -66,8 +66,10 @@ class FileMetadata {
 }
 
 export class IndexedDBFileSystem extends BaseFileSystem {
-  constructor(opts) {
+  constructor(opts = {}) {
     super(opts);
+
+    this._allowedFile = opts.allowedFile ?? ((filePath) => () => true);
     this._customStore = idb.createStore(
       `${BASE_IDB_NAME_PREFIX}-db-${idbSuffix}`,
       `${BASE_IDB_NAME_PREFIX}-db-store-${idbSuffix}`,
@@ -77,6 +79,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async stat(filePath) {
+    this._verifyFilePath(filePath);
     const result = await this._fileMetadata.get(
       filePath,
       new BaseFileMetadata(),
@@ -85,12 +88,16 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async readFileAsText(filePath) {
+    this._verifyFilePath(filePath);
+
     const file = await this.readFile(filePath);
     const textContent = await readFileAsTextHelper(file);
     return textContent;
   }
 
   async readFile(filePath) {
+    this._verifyFilePath(filePath);
+
     let result = await catchUpstream(
       idb.get(filePath, this._customStore),
       'Error reading data',
@@ -108,6 +115,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async writeFile(filePath, data) {
+    this._verifyFilePath(filePath);
     this._verifyFileType(data);
     await catchUpstream(
       idb.set(filePath, data, this._customStore),
@@ -119,6 +127,8 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async unlink(filePath) {
+    this._verifyFilePath(filePath);
+
     await catchUpstream(
       idb.del(filePath, this._customStore),
       'Error deleting file',
@@ -127,6 +137,9 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   }
 
   async rename(oldFilePath, newFilePath) {
+    this._verifyFilePath(oldFilePath);
+    this._verifyFilePath(newFilePath);
+
     const file = await this.readFile(oldFilePath);
     let existingFile;
     try {
@@ -148,9 +161,10 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     await this.unlink(oldFilePath);
   }
 
-  // recrusively list all files paths
-  // example ['a/b/c.md', 'a/e.md']
   async opendirRecursive(dirPath) {
+    if (!dirPath) {
+      throw new Error('dirPath must be defined');
+    }
     let keys = await catchUpstream(
       idb.keys(this._customStore),
       'Error listing files',
@@ -159,10 +173,12 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     if (keys == null) {
       keys = [];
     }
-    if (!dirPath.endsWith('/')) {
+
+    if (dirPath && !dirPath.endsWith('/')) {
       dirPath += '/';
     }
-    const result = keys.filter((k) => k.startsWith(dirPath));
+
+    const result = dirPath ? keys.filter((k) => k.startsWith(dirPath)) : keys;
     return result;
   }
 }

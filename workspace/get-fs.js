@@ -1,5 +1,8 @@
-import { IndexedDBFileSystem, NativeBrowserFileSystem } from 'baby-fs';
-import { HelpFileSystem } from 'baby-fs/help-fs';
+import {
+  IndexedDBFileSystem,
+  NativeBrowserFileSystem,
+  GithubReadFileSystem,
+} from 'baby-fs/index';
 
 const allowedFile = (name) => {
   return name.endsWith('.md') || name.endsWith('.png');
@@ -10,8 +13,8 @@ export const getFileSystemFromWsInfo = (wsInfo) => {
     return new IndexedDBFileSystem();
   }
 
-  if (wsInfo.type === 'helpfs') {
-    return new HelpFileSystem({
+  if (wsInfo.type === 'github-read-fs') {
+    return new GithubReadFileSystem({
       githubToken:
         new URLSearchParams(window.location.search).get('github_token') ||
         localStorage.getItem('github_token'),

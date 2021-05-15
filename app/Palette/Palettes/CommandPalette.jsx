@@ -55,7 +55,7 @@ import {
   usePaletteProps,
 } from 'ui-components/index';
 import { addBoldToTitle } from '../utils';
-import { pickADirectory } from 'baby-fs';
+import { pickADirectory } from 'baby-fs/index';
 import { WorkspaceError } from 'workspace/errors';
 import { useDestroyRef, useKeybindings } from 'utils/hooks';
 import { BaseError } from 'utils/base-error';
@@ -106,6 +106,7 @@ function CommandPaletteUIComponent({
     useDeleteActiveNote({ dismissPalette }),
     usePrimaryEditorCommands({ dismissPalette }),
     useCloneWorkspace({ updatePalette, dismissPalette }),
+    useNewHelpFSWorkspace({ updatePalette }),
   ];
 
   const resolvedItems = resolvePaletteItems(
@@ -305,6 +306,39 @@ function useNewBrowserWS({ updatePalette }) {
   return queryMatch({
     uid,
     title: 'Workspace: New workspace saved in your browser storage',
+    onExecute,
+  });
+}
+
+function useNewHelpFSWorkspace({ updatePalette }) {
+  const uid = 'NEW_HELPFS_WS_COMMAND';
+
+  const { createWorkspace } = useWorkspaces();
+
+  const onExecute = useCallback(() => {
+    updatePalette({
+      type: INPUT_PALETTE,
+      metadata: {
+        placeholder: 'Please give your workspace a name',
+        onInputConfirm: (query) => {
+          const [githubOwner, githubRepo, githubBranch, name] = query.split(
+            '/',
+          );
+          if (query) {
+            return createWorkspace(name, 'github-read-fs', {
+              githubOwner,
+              githubRepo,
+              githubBranch,
+            });
+          }
+        },
+      },
+    });
+  }, [updatePalette, createWorkspace]);
+
+  return queryMatch({
+    uid,
+    title: 'Workspace: New helpfs',
     onExecute,
   });
 }

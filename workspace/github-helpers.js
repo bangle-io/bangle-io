@@ -1,4 +1,4 @@
-import { FILE_ALREADY_EXISTS_ERROR } from 'baby-fs';
+import { FILE_ALREADY_EXISTS_ERROR } from 'baby-fs/index';
 import { WorkspaceError, WORKSPACE_ALREADY_EXISTS_ERROR } from './errors';
 import { deleteFile, saveFile } from './file-ops';
 import { resolvePath } from './path-helpers';

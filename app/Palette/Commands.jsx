@@ -10,7 +10,7 @@ import { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
 import { EditorManagerContext } from '../editor/EditorManager';
 import { InputPaletteOption } from './Palettes/InputPalette';
-import { pickADirectory } from 'baby-fs';
+import { pickADirectory } from 'baby-fs/index';
 
 /**
  * On generic commands

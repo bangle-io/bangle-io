@@ -1,4 +1,4 @@
-import { IndexedDBFileSystem } from 'baby-fs';
+import { IndexedDBFileSystem } from 'baby-fs/index';
 
 function createDoc(textContent = 'hello') {
   return JSON.stringify({
@@ -35,8 +35,8 @@ const mockExport = {
   },
 };
 
-jest.mock('baby-fs', () => {
-  const actual = jest.requireActual('baby-fs');
+jest.mock('baby-fs/index', () => {
+  const actual = jest.requireActual('baby-fs/index');
   return {
     ...actual,
     IndexedDBFileSystem: jest.fn(),
