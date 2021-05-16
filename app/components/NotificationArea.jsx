@@ -75,7 +75,7 @@ export function Notification({ content = '', buttons, severity, onDismiss }) {
           </ButtonIcon>
         </div>
       </div>
-      <div className="w-full flex flex-row-reverse">
+      <div className="w-full flex flex-row-reverse mt-3">
         {buttons &&
           buttons.map((b, i) => <React.Fragment key={i}>{b}</React.Fragment>)}
       </div>

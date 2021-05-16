@@ -7,6 +7,7 @@
     "app-vite",
     "app-webpack",
     "bangle-io-context",
+    "env-vars",
     "config",
     "e2e",
     "editor",
@@ -54,6 +55,7 @@
     "last 3 chrome version"
   ],
   "dependencies": {
+    "env-vars": "workspace:*",
     "punycode": "^2.1.1"
   },
   "devDependencies": {
@@ -71,6 +73,7 @@
     "autoprefixer": "^10.2.5",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
+    "bangle-io-help": "^1.4.0",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.4",

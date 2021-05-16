@@ -67,17 +67,7 @@ module.exports = (env, argv) => {
 
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(
-          isProduction ? 'production' : 'development',
-        ),
-        'process.env.RELEASE_ID': JSON.stringify(
-          process.env.NETLIFY
-            ? `${process.env.CONTEXT}@` + process.env.COMMIT_REF
-            : 'local@' + commitHash,
-        ),
-        'process.env.DEPLOY_ENV': JSON.stringify(
-          process.env.NETLIFY ? process.env.CONTEXT : 'local',
-        ),
+        ...require('env-vars')({ isProduction }).appEnvs,
       }),
       new CaseSensitivePathsPlugin(),
       new HtmlWebpackPlugin({

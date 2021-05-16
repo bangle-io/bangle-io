@@ -3,7 +3,7 @@ import reactRefresh from '@vitejs/plugin-react-refresh';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-let commitHash = execSync('git rev-parse --short HEAD').toString();
+import envVars from 'env-vars';
 
 // https://vitejs.dev/config/
 const config = ({ command, mode }) => {
@@ -33,18 +33,7 @@ const config = ({ command, mode }) => {
       sourcemap: isProduction ? false : true,
     },
     define: {
-      'global': 'window',
-      'process.env.NODE_ENV': JSON.stringify(
-        mode === 'production' ? 'production' : 'development',
-      ),
-      'process.env.RELEASE_ID': JSON.stringify(
-        process.env.NETLIFY
-          ? `${process.env.CONTEXT}@` + process.env.COMMIT_REF
-          : 'local@' + commitHash,
-      ),
-      'process.env.DEPLOY_ENV': JSON.stringify(
-        process.env.NETLIFY ? process.env.CONTEXT : 'local',
-      ),
+      ...envVars({ isProduction: mode === 'production' }).appEnvs,
     },
     server: {
       port: PORT,
