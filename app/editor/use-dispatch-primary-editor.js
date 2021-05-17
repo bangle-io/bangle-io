@@ -2,10 +2,10 @@ import { useCallback, useContext } from 'react';
 import { EditorManagerContext } from './EditorManager';
 
 /**
- * Returns a callback which will accept a bangle command and ...params
+ * Returns a callback which will accept a bangle editor command and ...params
  * and on calling this callback it will execute the command.
  */
-export function useDispatchPrimaryEditorCommand(dry = true) {
+export function useDispatchPrimaryEditor(dry = true) {
   const { primaryEditor } = useContext(EditorManagerContext);
   return useCallback(
     (editorCommand, ...params) => {

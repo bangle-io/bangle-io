@@ -35,9 +35,10 @@ import {
   useWorkspaces,
 } from 'workspace/index';
 import {
-  useCloneWorkspaceCommand,
-  useInputPaletteNewNoteCommand,
-} from '../Commands';
+  useCloneWorkspaceCmd,
+  useNewNoteCmd,
+  useNewWorkspace,
+} from '../../Commands';
 import {
   COMMAND_PALETTE,
   INPUT_PALETTE,
@@ -59,7 +60,7 @@ import { WorkspaceError } from 'workspace/errors';
 import { useDestroyRef, useKeybindings } from 'utils/hooks';
 import { BaseError } from 'utils/base-error';
 import { EditorManagerContext } from 'app/editor/EditorManager';
-import { useDispatchPrimaryEditorCommand } from 'app/editor/useDispatchPrimaryEditorCommand';
+import { useDispatchPrimaryEditor } from 'app/editor/use-dispatch-primary-editor';
 
 const LOG = false;
 
@@ -98,8 +99,7 @@ function CommandPaletteUIComponent({
     useToggleSidebar({ dismissPalette }),
     useNewNote({ updatePalette, dismissPalette }),
     useRemoveActiveWorkspace({ dismissPalette }),
-    useNewBrowserWS({ updatePalette, dismissPalette }),
-    useNewFileSystemWS({ dismissPalette }),
+    useNewWorkspacePalette(),
     useImportWSFromGithub({ updatePalette, dismissPalette }),
     useRenameActiveNote({ updatePalette, dismissPalette }),
     useSaveGithubToken({ updatePalette, dismissPalette }),
@@ -269,7 +269,7 @@ function useToggleSidebar({ dismissPalette }) {
 function useNewNote({}) {
   const uid = 'NEW_NOTE_COMMAND';
   const { wsName } = useWorkspacePath();
-  const newNoteCommand = useInputPaletteNewNoteCommand();
+  const newNoteCommand = useNewNoteCmd();
 
   const onExecute = useCallback(() => {
     newNoteCommand();
@@ -278,33 +278,21 @@ function useNewNote({}) {
   return queryMatch({
     uid,
     hidden: !Boolean(wsName),
-    title: 'Workspace: New Note',
+    title: 'Workspace: New note',
     onExecute,
   });
 }
 
-function useNewBrowserWS({ updatePalette }) {
-  const uid = 'NEW_BROWSER_WS_COMMAND';
-
-  const { createWorkspace } = useWorkspaces();
-
+function useNewWorkspacePalette() {
+  const uid = 'NEW_WORKSPACE';
+  const createWorkspace = useNewWorkspace();
   const onExecute = useCallback(() => {
-    updatePalette({
-      type: INPUT_PALETTE,
-      metadata: {
-        placeholder: 'Please give your workspace a name',
-        onInputConfirm: (query) => {
-          if (query) {
-            return createWorkspace(query, 'browser');
-          }
-        },
-      },
-    });
-  }, [updatePalette, createWorkspace]);
+    createWorkspace();
+  }, [createWorkspace]);
 
   return queryMatch({
     uid,
-    title: 'Workspace: New workspace saved in your browser storage',
+    title: 'Workspace: New workspace',
     onExecute,
   });
 }
@@ -315,8 +303,8 @@ function useCloneWorkspace() {
 
   return queryMatch({
     uid,
-    title: 'Workspace: Clone workspace',
-    onExecute: useCloneWorkspaceCommand(),
+    title: 'Workspace: Clone current workspace',
+    onExecute: useCloneWorkspaceCmd(),
     disabled: !wsName,
   });
 }
@@ -505,8 +493,8 @@ export function useDeleteActiveNote({ dismissPalette }) {
 }
 
 function usePrimaryEditorCommands({ dismissPalette }) {
-  const executeEditorCommand = useDispatchPrimaryEditorCommand(false);
-  const dryExecuteEditorCommand = useDispatchPrimaryEditorCommand(true);
+  const executeEditorCommand = useDispatchPrimaryEditor(false);
+  const dryExecuteEditorCommand = useDispatchPrimaryEditor(true);
 
   return ({ query, paletteType }) => {
     const commands = [];
