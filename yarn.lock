@@ -3568,6 +3568,7 @@ __metadata:
     config: "workspace:*"
     editor: "workspace:*"
     editor-manager-context: "workspace:*"
+    help-docs: "workspace:*"
     palettes: "workspace:*"
     prop-types: ^15.7.2
     react: 16.14.0
@@ -4089,7 +4090,6 @@ __metadata:
     autoprefixer: ^10.2.5
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
-    bangle-io-help: ^1.4.0
     case-sensitive-paths-webpack-plugin: ^2.4.0
     copy-webpack-plugin: ^8.1.1
     css-loader: ^5.2.4
@@ -7719,6 +7719,20 @@ fsevents@~2.3.1:
   checksum: 3d4d6babccccd79c5c5a3f929a68af33360d6445587d628087f39a965079d84f18ce9c3d3f917ee1e3978916fc833bb8b29377c3b403f919426f91bc6965e7a7
   languageName: node
   linkType: hard
+
+"help-docs@workspace:*, help-docs@workspace:help-docs":
+  version: 0.0.0-use.local
+  resolution: "help-docs@workspace:help-docs"
+  dependencies:
+    bangle-io-help: ^1.4.0
+    commands: "workspace:*"
+    react: 16.14.0
+    ui-components: "workspace:*"
+    ui-context: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "history@npm:^4.9.0":
   version: 4.10.1
