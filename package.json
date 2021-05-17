@@ -8,6 +8,7 @@
     "app-webpack",
     "bangle-io-context",
     "env-vars",
+    "editor-manager-context",
     "config",
     "e2e",
     "editor",

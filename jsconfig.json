@@ -15,6 +15,12 @@
       "utils": [
         "./utils/index.js"
       ],
+      "editor-manager-context/*": [
+        "./editor-manager-context/*"
+      ],
+      "editor-manager-context": [
+        "./editor-manager-context/index.js"
+      ],
       "config/*": [
         "./config/*"
       ],

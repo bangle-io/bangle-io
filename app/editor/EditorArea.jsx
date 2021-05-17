@@ -1,10 +1,10 @@
+import { EditorManagerContext } from 'editor-manager-context/EditorManagerContext';
 import React, { useEffect, useContext, useState } from 'react';
 import { CloseIcon } from 'ui-components/index';
 import { cx, sleep, useDestroyRef } from 'utils/index';
 import { checkFileExists, resolvePath } from 'workspace/index';
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';
-import { EditorManagerContext } from './EditorManager';
 
 /**
  * This exists to save a render cycle

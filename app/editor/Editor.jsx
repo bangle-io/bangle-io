@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import stopwatch from '@bangle.dev/react-stopwatch';
 // import sticker from '@bangle.dev/react-sticker';

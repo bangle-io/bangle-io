@@ -59,7 +59,7 @@ import { pickADirectory } from 'baby-fs/index';
 import { WorkspaceError } from 'workspace/errors';
 import { useDestroyRef, useKeybindings } from 'utils/hooks';
 import { BaseError } from 'utils/base-error';
-import { EditorManagerContext } from 'app/editor/EditorManager';
+import { EditorManagerContext } from 'editor-manager-context/index';
 import { useDispatchPrimaryEditor } from 'app/editor/use-dispatch-primary-editor';
 
 const LOG = false;

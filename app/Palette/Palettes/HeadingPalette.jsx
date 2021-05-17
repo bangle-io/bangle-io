@@ -1,4 +1,4 @@
-import { EditorManagerContext } from '../../editor/EditorManager';
+import { EditorManagerContext } from 'editor-manager-context/index';
 import React, { useContext, useMemo, useRef } from 'react';
 import { HEADING_PALETTE, PaletteTypeBase } from '../paletteTypes';
 import { Selection } from '@bangle.dev/core/prosemirror/state';

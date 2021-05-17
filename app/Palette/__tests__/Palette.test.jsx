@@ -11,7 +11,7 @@ import {
 import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../../Palette/Palette';
 import { sleep } from 'utils/index';
-import { EditorManager } from 'app/editor/EditorManager';
+import { EditorManager } from 'editor-manager-context/index';
 
 let result, paletteType, paletteInitialQuery, dispatch;
 

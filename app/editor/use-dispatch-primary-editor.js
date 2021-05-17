@@ -1,5 +1,5 @@
 import { useCallback, useContext } from 'react';
-import { EditorManagerContext } from './EditorManager';
+import { EditorManagerContext } from 'editor-manager-context/index';
 
 /**
  * Returns a callback which will accept a bangle editor command and ...params
