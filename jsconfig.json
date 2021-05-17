@@ -15,6 +15,12 @@
       "utils": [
         "./utils/index.js"
       ],
+      "commands/*": [
+        "./commands/*"
+      ],
+      "commands": [
+        "./commands/index.js"
+      ],
       "editor-manager-context/*": [
         "./editor-manager-context/*"
       ],

@@ -1,4 +1,5 @@
-import { INPUT_PALETTE } from './Palette/paletteTypes';
+// import { InputPaletteOption } from './Palette/Palettes/InputPalette';
+// import { INPUT_PALETTE } from './Palette/paletteTypes';
 import {
   copyWorkspace,
   isValidNoteWsPath,
@@ -7,11 +8,17 @@ import {
   useWorkspaces,
 } from 'workspace/index';
 import { useCallback, useContext } from 'react';
-import { UIManagerContext } from 'ui-context';
+import { UIManagerContext } from 'ui-context/index';
 import { EditorManagerContext } from 'editor-manager-context/index';
-import { InputPaletteOption } from './Palette/Palettes/InputPalette';
 import { pickADirectory } from 'baby-fs/index';
+class InputPaletteOption {
+  constructor({ title, uid }) {
+    this.title = title;
+    this.uid = uid;
+  }
+}
 
+const INPUT_PALETTE = 'input';
 /**
  * On generic commands
  * The hook has no parameter and returns a single value the callback which

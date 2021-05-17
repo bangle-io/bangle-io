@@ -38,7 +38,7 @@ import {
   useCloneWorkspaceCmd,
   useNewNoteCmd,
   useNewWorkspace,
-} from '../../Commands';
+} from 'commands/index';
 import {
   COMMAND_PALETTE,
   INPUT_PALETTE,
@@ -57,10 +57,9 @@ import {
 import { addBoldToTitle } from '../utils';
 import { pickADirectory } from 'baby-fs/index';
 import { WorkspaceError } from 'workspace/errors';
-import { useDestroyRef, useKeybindings } from 'utils/hooks';
-import { BaseError } from 'utils/base-error';
+import { useDestroyRef, useKeybindings, BaseError } from 'utils/index';
 import { EditorManagerContext } from 'editor-manager-context/index';
-import { useDispatchPrimaryEditor } from 'app/editor/use-dispatch-primary-editor';
+import { useDispatchPrimaryEditor } from '../../editor/use-dispatch-primary-editor';
 
 const LOG = false;
 

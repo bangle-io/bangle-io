@@ -3608,6 +3608,7 @@ __metadata:
     "@testing-library/user-event": ^13.1.5
     baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
+    commands: "workspace:*"
     config: "workspace:*"
     editor: "workspace:*"
     editor-manager-context: "workspace:*"
@@ -5032,6 +5033,21 @@ __metadata:
   checksum: 99c120b939b610b1fb4a14424b48dc6431643ec46836f251a26434ad77b1eed22577a36378cfd66ed4b56fc69f98553f7dcb30f1539e3685874fd77cfb6e52fb
   languageName: node
   linkType: hard
+
+"commands@workspace:*, commands@workspace:commands":
+  version: 0.0.0-use.local
+  resolution: "commands@workspace:commands"
+  dependencies:
+    "@bangle.dev/core": 0.13.0
+    baby-fs: "workspace:*"
+    editor-manager-context: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    ui-context: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "commondir@npm:^1.0.1":
   version: 1.0.1

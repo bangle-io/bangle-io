@@ -39,6 +39,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:bangle-io-context"
       },
       {
+        "name": "commands",
+        "reference": "workspace:commands"
+      },
+      {
         "name": "config",
         "reference": "workspace:config"
       },
@@ -117,6 +121,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["bangle-io", ["workspace:."]],
       ["bangle-io-context", ["workspace:bangle-io-context"]],
       ["collapsible-heading", ["workspace:extensions/collapsible-heading"]],
+      ["commands", ["workspace:commands"]],
       ["config", ["workspace:config"]],
       ["e2e", ["workspace:e2e"]],
       ["editor", ["workspace:editor"]],
@@ -5645,6 +5650,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/user-event", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:13.1.5"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["bangle-io-context", "workspace:bangle-io-context"],
+            ["commands", "workspace:commands"],
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:editor-manager-context"],
@@ -7362,6 +7368,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["commander", "npm:7.1.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["commands", [
+        ["workspace:commands", {
+          "packageLocation": "./commands/",
+          "packageDependencies": [
+            ["commands", "workspace:commands"],
+            ["@bangle.dev/core", "npm:0.13.0"],
+            ["baby-fs", "workspace:js-libs/baby-fs"],
+            ["editor-manager-context", "workspace:editor-manager-context"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],
+            ["ui-context", "workspace:ui-context"],
+            ["utils", "workspace:utils"],
+            ["workspace", "workspace:workspace"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["commondir", [

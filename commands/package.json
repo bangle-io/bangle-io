@@ -1,0 +1,32 @@
+{
+  "name": "commands",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.js",
+  "module": "index.js",
+  "scripts": {},
+  "publishConfig": {},
+  "dependencies": {
+    "@bangle.dev/core": "0.13.0",
+    "baby-fs": "workspace:*",
+    "editor-manager-context": "workspace:*",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "ui-context": "workspace:*",
+    "utils": "workspace:*",
+    "workspace": "workspace:*"
+  }
+}

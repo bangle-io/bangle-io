@@ -30,6 +30,7 @@
     "@sentry/tracing": "^6.3.1",
     "baby-fs": "workspace:*",
     "bangle-io-context": "workspace:*",
+    "commands": "workspace:*",
     "config": "workspace:*",
     "editor": "workspace:*",
     "editor-manager-context": "workspace:*",

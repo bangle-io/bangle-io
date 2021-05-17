@@ -15,8 +15,8 @@ import {
   useWorkspacePath,
   resolvePath,
 } from 'workspace/index';
-import { useLocalStorage } from 'utils/hooks';
-import { useNewNoteCmd } from 'app/Commands';
+import { useLocalStorage } from 'utils/index';
+import { useNewNoteCmd } from 'commands/index';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 import { useVirtual } from 'react-virtual';
 
