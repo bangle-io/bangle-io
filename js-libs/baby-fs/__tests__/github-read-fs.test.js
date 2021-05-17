@@ -137,7 +137,7 @@ test('readFile from github 404s', async () => {
   const data = fs.readFile(filePath);
 
   await expect(data).rejects.toMatchInlineSnapshot(
-    `[HelpFileSystemError: BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi not found]`,
+    `[GithubReadFileSystemError: BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi not found]`,
   );
   expect(window.fetch).toHaveBeenCalledTimes(1);
   expect(window.fetch).nthCalledWith(
@@ -167,7 +167,7 @@ test('readFile from github with non 404s', async () => {
   const data = fs.readFile(filePath);
 
   await expect(data).rejects.toMatchInlineSnapshot(
-    `[HelpFileSystemError: BABY_FS_UPSTREAM_ERROR:Encountered an error making request to github]`,
+    `[GithubReadFileSystemError: BABY_FS_UPSTREAM_ERROR:Encountered an error making request to github]`,
   );
   expect(window.fetch).toHaveBeenCalledTimes(1);
   expect(window.fetch).nthCalledWith(

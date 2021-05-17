@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { CloseIcon } from 'ui-components/index';
-import { cx, useDestroyRef } from 'utils/index';
+import { cx, sleep, useDestroyRef } from 'utils/index';
 import { checkFileExists, resolvePath } from 'workspace/index';
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';
@@ -49,27 +49,50 @@ export function EditorArea({
   const { sendRequest, setEditor, bangleIOContext } = useContext(
     EditorManagerContext,
   );
+  const [showEmptyEditor, updateShowEmptyEditor] = useState(false);
+
+  // prevents unwarranted flash of empty editor by waiting
+  // a certain time before showing the editor.
+  useEffect(() => {
+    let destroyed = false;
+    if (!wsPath) {
+      sleep(150).then(() => {
+        if (!wsPath && !destroyed) {
+          updateShowEmptyEditor(true);
+        }
+      });
+    }
+    if (wsPath && showEmptyEditor) {
+      updateShowEmptyEditor(false);
+    }
+    return () => {
+      destroyed = true;
+    };
+  }, [wsPath, showEmptyEditor]);
+
   return (
     <div className={cx('bangle-editor-area', className)}>
       {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
       <div className={cx('bangle-editor-container', showTabs && 'has-tabs')}>
         {fileExists && wsPath && bangleIOContext && (
-          <Editor
-            // Key is used to reload the editor when wsPath changes
-            key={wsPath}
-            editorId={editorId}
-            wsPath={wsPath}
-            sendRequest={sendRequest}
-            setEditor={setEditor}
-            bangleIOContext={bangleIOContext}
-          />
+          <>
+            <Editor
+              // Key is used to reload the editor when wsPath changes
+              key={wsPath}
+              editorId={editorId}
+              wsPath={wsPath}
+              sendRequest={sendRequest}
+              setEditor={setEditor}
+              bangleIOContext={bangleIOContext}
+            />
+          </>
         )}
         {wsPath && fileExists === false && (
           <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
             🕵️‍♀️‍ Note "{resolvePath(wsPath).fileName}" was not found
           </h3>
         )}
-        {!wsPath && <EmptyEditorPage />}
+        {showEmptyEditor && <EmptyEditorPage />}
       </div>
     </div>
   );

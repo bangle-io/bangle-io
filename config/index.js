@@ -33,7 +33,9 @@ export const config = {
   isIntegration: nodeEnv === 'integration',
 };
 
-console.debug(config);
+if (!config.isTest) {
+  console.debug(config);
+}
 
 export const SPLIT_SCREEN_MIN_WIDTH = parseInt(
   getComputedStyle(document.documentElement).getPropertyValue(

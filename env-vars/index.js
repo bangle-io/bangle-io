@@ -13,6 +13,7 @@ const helpDocsVersion = JSON.parse(
 
 module.exports = ({ isProduction }) => {
   return {
+    helpDocsVersion,
     appEnvs: {
       'process.env.NODE_ENV': JSON.stringify(
         isProduction ? 'production' : 'development',

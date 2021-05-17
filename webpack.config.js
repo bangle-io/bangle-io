@@ -7,12 +7,10 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-let commitHash = require('child_process')
-  .execSync('git rev-parse --short HEAD')
-  .toString();
-
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
+  const envVars = require('env-vars')({ isProduction });
+
   const mode = isProduction ? 'production' : 'development';
   const buildPath = path.resolve(__dirname, 'build');
   // eslint-disable-next-line no-process-env
@@ -67,7 +65,7 @@ module.exports = (env, argv) => {
 
     plugins: [
       new webpack.DefinePlugin({
-        ...require('env-vars')({ isProduction }).appEnvs,
+        ...envVars.appEnvs,
       }),
       new CaseSensitivePathsPlugin(),
       new HtmlWebpackPlugin({
@@ -80,6 +78,13 @@ module.exports = (env, argv) => {
           data-lazy="no"
         ></script>`
           : '',
+
+        bangleHelpPreload: `<link
+          rel="preload"
+          href="https://unpkg.com/bangle-io-help@${envVars.helpDocsVersion}/docs/landing.md"
+          as="fetch"
+          crossorigin
+        />`,
       }),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',

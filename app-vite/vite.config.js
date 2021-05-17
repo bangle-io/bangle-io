@@ -24,6 +24,9 @@ const config = ({ command, mode }) => {
       .join('<script type="module" src="/src/index.js"></script>');
 
   html = html.split('<%= htmlWebpackPlugin.options.sentry %>').join('');
+  html = html
+    .split('<%= htmlWebpackPlugin.options.bangleHelpPreload %>')
+    .join('');
 
   fs.writeFileSync(path.resolve(__dirname, 'index.html'), html, 'utf-8');
   return {

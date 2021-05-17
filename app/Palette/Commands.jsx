@@ -88,75 +88,57 @@ export function useCloneWorkspaceCommand() {
   const updatePalette = useUpdatePaletteCommand();
 
   return useCallback(() => {
-    updatePalette({
-      type: INPUT_PALETTE,
-      metadata: {
-        placeholder: 'Please select the storage type of workspace',
-        availableOptions: [
-          new InputPaletteOption({
-            uid: 'nativefs',
-            title: 'Native file storage (recommended)',
-          }),
-          new InputPaletteOption({
-            uid: 'browser',
-            title: 'Browser storage',
-          }),
-        ],
-        onInputConfirm: async (query) => {
-          if (query === 'nativefs') {
-            const rootDirHandle = await pickADirectory();
-            await createWorkspace(rootDirHandle.name, 'nativefs', {
-              rootDirHandle,
-            });
-
-            await copyWorkspace(wsName, rootDirHandle.name);
-            refreshHistoryStateKey();
-            return true;
-          } else if (query === 'browser') {
-            setTimeout(() => {
-              updatePalette({
-                type: INPUT_PALETTE,
-                metadata: {
-                  placeholder: 'Please give your workspace a name',
-                  onInputConfirm: async (query) => {
-                    if (query) {
-                      await createWorkspace(query, 'browser');
-                      await copyWorkspace(wsName, query);
-                      refreshHistoryStateKey();
-                    }
-                  },
-                },
+    return new Promise((res, rej) => {
+      updatePalette({
+        type: INPUT_PALETTE,
+        metadata: {
+          placeholder: 'Please select the storage type of workspace',
+          availableOptions: [
+            new InputPaletteOption({
+              uid: 'nativefs',
+              title: 'Native file storage (recommended)',
+            }),
+            new InputPaletteOption({
+              uid: 'browser',
+              title: 'Browser storage',
+            }),
+          ],
+          onInputConfirm: async (query) => {
+            if (query === 'nativefs') {
+              const rootDirHandle = await pickADirectory();
+              await createWorkspace(rootDirHandle.name, 'nativefs', {
+                rootDirHandle,
               });
-            }, 0);
-            return false;
-          } else {
-            throw new Error('Unknown query');
-          }
+
+              await copyWorkspace(wsName, rootDirHandle.name);
+              refreshHistoryStateKey();
+              res();
+              return true;
+            } else if (query === 'browser') {
+              setTimeout(() => {
+                updatePalette({
+                  type: INPUT_PALETTE,
+                  metadata: {
+                    placeholder: 'Please give your workspace a name',
+                    onInputConfirm: async (query) => {
+                      if (query) {
+                        await createWorkspace(query, 'browser');
+                        await copyWorkspace(wsName, query);
+                        refreshHistoryStateKey();
+                        res();
+                      }
+                    },
+                  },
+                });
+              }, 0);
+              return false;
+            } else {
+              rej(new Error('Unknown query'));
+              throw new Error('Unknown query');
+            }
+          },
         },
-      },
+      });
     });
   }, [updatePalette, createWorkspace, wsName, refreshHistoryStateKey]);
-}
-
-/**
- * Returns a callback which will accept a bangle command and ...params
- * and on calling this callback it will execute the command.
- */
-export function useDispatchPrimaryEditorCommand(dry = true) {
-  const { primaryEditor } = useContext(EditorManagerContext);
-  return useCallback(
-    (editorCommand, ...params) => {
-      if (!primaryEditor || primaryEditor.destroyed) {
-        return false;
-      }
-      const { dispatch, state } = primaryEditor.view;
-      if (dry) {
-        const result = editorCommand(...params)(state);
-        return result;
-      }
-
-      return editorCommand(...params)(state, dispatch, primaryEditor.view);
-    },
-    [dry, primaryEditor],
-  );
 }

@@ -46,7 +46,8 @@ export class BaseFileSystem {
   // should return an async iterator of kids inside it
   /// see https://nodejs.org/api/fs.html#fs_class_fs_dir
   // recrusively list all files paths under the rootPath
-  // in the example below the rootPath is where dirPath =`w`
+  // in the example below the dirPath is `w`, almost always `w` is
+  // the wsName.
   // return value ['w/b/c.md', 'w/e.md']
   // for a dirPath= `foo/bar`, internally will filter all paths starting with `foo/bar/`
   async opendirRecursive(dirPath) {}

@@ -69,7 +69,7 @@ export class GithubReadFileSystem extends IndexedDBFileSystem {
   }
 
   async rename(oldFilePath, newFilePath) {
-    throw new GithubReadFileSystem(
+    throw new GithubReadFileSystemError(
       `Rename not allowed`,
       // TODO handle this error
       NOT_ALLOWED_ERROR,
@@ -115,7 +115,7 @@ function fetchRawGithub({ owner, repo, branch }) {
         }
         if (r.status === 404) {
           return Promise.reject(
-            new GithubReadFileSystem(
+            new GithubReadFileSystemError(
               `File ${filePath} not found`,
               FILE_NOT_FOUND_ERROR,
               `File ${filePath} not found`,
@@ -123,7 +123,7 @@ function fetchRawGithub({ owner, repo, branch }) {
           );
         }
         return Promise.reject(
-          new GithubReadFileSystem(
+          new GithubReadFileSystemError(
             'Encountered an error making request to github',
             UPSTREAM_ERROR,
             null,
@@ -132,7 +132,7 @@ function fetchRawGithub({ owner, repo, branch }) {
         );
       },
       (error) => {
-        throw new GithubReadFileSystem(
+        throw new GithubReadFileSystemError(
           'Encountered an error with github',
           UPSTREAM_ERROR,
           null,
@@ -192,7 +192,7 @@ async function apiGetFiles({ token, owner, repo, branch }) {
       return r.json();
     }
     if (r.status === 403) {
-      throw new GithubReadFileSystem(
+      throw new GithubReadFileSystemError(
         'Github API rate limited',
         UPSTREAM_ERROR,
         'Github requests are being rate limited, please use a personal access token to avoid this',
@@ -200,7 +200,7 @@ async function apiGetFiles({ token, owner, repo, branch }) {
       );
     }
 
-    throw new GithubReadFileSystem(
+    throw new GithubReadFileSystemError(
       'Github API error',
       UPSTREAM_ERROR,
       null,
@@ -209,7 +209,7 @@ async function apiGetFiles({ token, owner, repo, branch }) {
   });
 
   if (data.truncated) {
-    throw new GithubReadFileSystem(
+    throw new GithubReadFileSystemError(
       'Github API response was truncated',
       UPSTREAM_ERROR,
       null,

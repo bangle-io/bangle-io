@@ -206,7 +206,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
       allowedDir: this._allowedDir,
     });
 
-    if (dirPath && !dirPath.endsWith('/')) {
+    if (!dirPath.endsWith('/')) {
       dirPath += '/';
     }
 
