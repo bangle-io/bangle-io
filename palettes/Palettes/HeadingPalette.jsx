@@ -10,7 +10,7 @@ import {
   usePaletteProps,
 } from 'ui-components/index';
 import { addBoldToTitle } from '../utils';
-import { useKeybindings } from 'utils/hooks';
+import { useKeybindings } from 'utils/index';
 
 export class HeadingPalette extends PaletteTypeBase {
   static type = HEADING_PALETTE;

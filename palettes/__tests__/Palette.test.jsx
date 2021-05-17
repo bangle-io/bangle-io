@@ -8,10 +8,10 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
-import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
-import { Palette } from '../../Palette/Palette';
 import { sleep } from 'utils/index';
 import { EditorManager } from 'editor-manager-context/index';
+import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
+import { Palette } from '../Palette';
 
 let result, paletteType, paletteInitialQuery, dispatch;
 

@@ -54,12 +54,12 @@ import {
   TerminalIcon,
   usePaletteProps,
 } from 'ui-components/index';
-import { addBoldToTitle } from '../utils';
 import { pickADirectory } from 'baby-fs/index';
 import { WorkspaceError } from 'workspace/errors';
 import { useDestroyRef, useKeybindings, BaseError } from 'utils/index';
 import { EditorManagerContext } from 'editor-manager-context/index';
-import { useDispatchPrimaryEditor } from '../../editor/use-dispatch-primary-editor';
+import { useDispatchPrimaryEditor } from '../use-dispatch-primary-editor';
+import { addBoldToTitle } from '../utils';
 
 const LOG = false;
 

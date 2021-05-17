@@ -4,7 +4,7 @@ import { useWorkspacePath } from 'workspace/index';
 import { UIManagerContext } from 'ui-context/index';
 import { cx, useKeybindings, useLocalStorage } from 'utils/index';
 import { keybindings } from 'config/index';
-import { COMMAND_PALETTE, FILE_PALETTE } from '../Palette/index';
+import { COMMAND_PALETTE, FILE_PALETTE } from 'palettes/index';
 import {
   ButtonIcon,
   MoreAltIcon,

@@ -8,7 +8,7 @@ import {
   useKeybindings,
   useWatchClickOutside,
 } from 'utils/index';
-import { Palette, WORKSPACE_PALETTE } from './Palette/index';
+import { Palette, WORKSPACE_PALETTE } from 'palettes/index';
 import { ActivityBar } from './components/ActivityBar';
 import { FileBrowser } from './components/FileBrowser';
 import { OptionsBar } from './components/OptionsBar';
