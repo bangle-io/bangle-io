@@ -100,9 +100,9 @@ function InputPaletteUIComponent({
     resolvedItems = paletteMetadata.availableOptions
       .filter(Boolean)
       .map((option) => {
-        if (!(option instanceof InputPaletteOption)) {
-          throw new Error('Must be InputPaletteOption');
-        }
+        // if (!(option instanceof InputPaletteOption)) {
+        //   throw new Error('Must be InputPaletteOption');
+        // }
         return {
           uid: option.uid,
           title: option.title,

@@ -1826,21 +1826,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-sticker@npm:0.13.0":
-  version: 0.13.0
-  resolution: "@bangle.dev/react-sticker@npm:0.13.0"
-  dependencies:
-    prop-types: ^15.7.2
-  peerDependencies:
-    "@bangle.dev/core": "*"
-    "@bangle.dev/markdown": "*"
-    "@bangle.dev/react": "*"
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: ef25eea9bcc81b23b10ff1bea750f20d9c42dc890b07cc756f9fdaf008292388d2ef4a2c1dabe8a14f20553c7cc039139d94aeee05dc89e3cd583cf7d9825c45
-  languageName: node
-  linkType: hard
-
 "@bangle.dev/react-stopwatch@npm:0.13.0":
   version: 0.13.0
   resolution: "@bangle.dev/react-stopwatch@npm:0.13.0"
@@ -1877,15 +1862,6 @@ __metadata:
   peerDependencies:
     "@bangle.dev/core": "*"
   checksum: 7cee351d6e28967387569024782a70a36f1d275dbd1caec15a4c4919683d0e8edd2d671cd8a0a0cdf11378cd5e1acf001ba8f75c20ae3bc6985ea9366031c42f
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/text-formatting@npm:0.13.0":
-  version: 0.13.0
-  resolution: "@bangle.dev/text-formatting@npm:0.13.0"
-  peerDependencies:
-    "@bangle.dev/core": "*"
-  checksum: eed2d6f177eedc5a6236f5fe1a89c3638246e02091915eeed4b133cd3e2ff5cc0a66ee90cc1c41e3907fab8f1b3e6a7aa87a0556443dd2c2b9477e85c741a2ff
   languageName: node
   linkType: hard
 
@@ -2398,13 +2374,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@popperjs/core@npm:^2.9.2":
-  version: 2.9.2
-  resolution: "@popperjs/core@npm:2.9.2"
-  checksum: a5916302e706b7dfbbbcd8728bafc1682b450d5ec70dd10da84a07c89a419fa72f83cbf990798589e6e69e1b520d6768176ea4bd360d7450d08a2fbc25a14e1c
-  languageName: node
-  linkType: hard
-
 "@reach/observe-rect@npm:^1.1.0":
   version: 1.2.0
   resolution: "@reach/observe-rect@npm:1.2.0"
@@ -2652,6 +2621,19 @@ __metadata:
     react: "*"
     react-dom: "*"
   checksum: be64e1c365a34e8fdab0f4178b4df7925423e846f86724cc945528cd90bb3d8faa46427a8e72b2015fa64f481d5b762602d2fa0842310df7fa365fc677dcc1ee
+  languageName: node
+  linkType: hard
+
+"@testing-library/react@npm:^11.2.7":
+  version: 11.2.7
+  resolution: "@testing-library/react@npm:11.2.7"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    "@testing-library/dom": ^7.28.1
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: 64e07cb96e40dbdbd3c46a09c47bed14446b30efafaa65a5d4fed5a7553878990cda108578f2b114422a775f31c635d51fd50b752f6163ddd6b8474e0e5fc2ce
   languageName: node
   linkType: hard
 
@@ -3570,78 +3552,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"app-webpack@workspace:app-webpack":
-  version: 0.0.0-use.local
-  resolution: "app-webpack@workspace:app-webpack"
-  dependencies:
-    "@sentry/webpack-plugin": ^1.15.1
-    app: "workspace:*"
-    autoprefixer: ^10.2.5
-    case-sensitive-paths-webpack-plugin: ^2.4.0
-    copy-webpack-plugin: ^8.1.1
-    git-revision-webpack-plugin: ^3.0.6
-    html-webpack-plugin: ^5.3.1
-    pnp-webpack-plugin: ^1.6.4
-    postcss: ^8.2.12
-    postcss-custom-properties: ^11.0.0
-    postcss-import: ^14.0.1
-    postcss-loader: ^5.2.0
-    postcss-nested: ^5.0.5
-    tailwindcss: ^2.1.2
-    webpack: ^5.35.1
-    webpack-bundle-analyzer: ^4.4.1
-    webpack-cli: ^4.6.0
-    webpack-dev-server: ^3.11.2
-  languageName: unknown
-  linkType: soft
-
 "app@workspace:*, app@workspace:app":
   version: 0.0.0-use.local
   resolution: "app@workspace:app"
   dependencies:
-    "@bangle.dev/collab": 0.13.0
     "@bangle.dev/core": 0.13.0
-    "@bangle.dev/emoji": 0.13.0
-    "@bangle.dev/markdown": 0.13.0
-    "@bangle.dev/markdown-front-matter": 0.13.0
     "@bangle.dev/react": 0.13.0
-    "@bangle.dev/react-emoji-suggest": 0.13.0
     "@bangle.dev/react-menu": 0.13.0
-    "@bangle.dev/react-sticker": 0.13.0
     "@bangle.dev/react-stopwatch": 0.13.0
-    "@bangle.dev/table": 0.13.0
     "@bangle.dev/tooltip": 0.13.0
-    "@popperjs/core": ^2.9.2
-    "@sentry/react": ^6.3.1
     "@sentry/tracing": ^6.3.1
-    "@testing-library/dom": ^7.30.4
-    "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": ^11.2.6
-    "@testing-library/react-hooks": ^5.1.2
-    "@testing-library/user-event": ^13.1.5
-    baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
-    collapsible-heading: "workspace:*"
+    commands: "workspace:*"
     config: "workspace:*"
     editor: "workspace:*"
-    history: ^4.0.0
-    image-extension: "workspace:*"
-    inline-backlink: "workspace:*"
-    inline-command-palette: "workspace:*"
-    inline-palette: "workspace:*"
+    editor-manager-context: "workspace:*"
+    palettes: "workspace:*"
     prop-types: ^15.7.2
-    prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
     react-dom: 16.14.0
-    react-popper: ^2.2.5
     react-router-dom: ^5.2.0
-    react-test-renderer: ^17.0.2
     react-virtual: ^2.7.1
     style: "workspace:*"
     ui-components: "workspace:*"
     ui-context: "workspace:*"
     utils: "workspace:*"
-    w3c-keyname: ^2.2.4
     workspace: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -5054,6 +4990,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commands@workspace:*, commands@workspace:commands":
+  version: 0.0.0-use.local
+  resolution: "commands@workspace:commands"
+  dependencies:
+    baby-fs: "workspace:*"
+    config: "workspace:*"
+    editor-manager-context: "workspace:*"
+    react: 16.14.0
+    ui-context: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "commondir@npm:^1.0.1":
   version: 1.0.1
   resolution: "commondir@npm:1.0.1"
@@ -5917,6 +5866,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"editor-manager-context@workspace:*, editor-manager-context@workspace:editor-manager-context":
+  version: 0.0.0-use.local
+  resolution: "editor-manager-context@workspace:editor-manager-context"
+  dependencies:
+    "@bangle.dev/collab": 0.13.0
+    "@bangle.dev/core": 0.13.0
+    "@bangle.dev/emoji": 0.13.0
+    "@bangle.dev/markdown": 0.13.0
+    "@bangle.dev/markdown-front-matter": 0.13.0
+    "@bangle.dev/react": 0.13.0
+    "@bangle.dev/react-emoji-suggest": 0.13.0
+    "@bangle.dev/react-menu": 0.13.0
+    "@bangle.dev/react-stopwatch": 0.13.0
+    "@bangle.dev/table": 0.13.0
+    "@bangle.dev/timestamp": 0.13.0
+    "@bangle.dev/tooltip": 0.13.0
+    "@bangle.dev/trailing-node": 0.13.0
+    bangle-io-context: "workspace:*"
+    collapsible-heading: "workspace:*"
+    config: "workspace:*"
+    editor: "workspace:*"
+    image-extension: "workspace:*"
+    inline-backlink: "workspace:*"
+    inline-command-palette: "workspace:*"
+    prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
+    react: 16.14.0
+    react-dom: 16.14.0
+    ui-context: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "editor@workspace:*, editor@workspace:editor":
   version: 0.0.0-use.local
   resolution: "editor@workspace:editor"
@@ -5929,17 +5910,13 @@ __metadata:
     "@bangle.dev/react": 0.13.0
     "@bangle.dev/react-emoji-suggest": 0.13.0
     "@bangle.dev/react-menu": 0.13.0
-    "@bangle.dev/react-sticker": 0.13.0
     "@bangle.dev/react-stopwatch": 0.13.0
     "@bangle.dev/table": 0.13.0
-    "@bangle.dev/text-formatting": 0.13.0
     "@bangle.dev/timestamp": 0.13.0
     "@bangle.dev/tooltip": 0.13.0
     "@bangle.dev/trailing-node": 0.13.0
-    config: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
-    utils: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -7743,7 +7720,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"history@npm:^4.0.0, history@npm:^4.9.0":
+"history@npm:^4.9.0":
   version: 4.10.1
   resolution: "history@npm:4.10.1"
   dependencies:
@@ -9830,7 +9807,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"loose-envify@npm:^1.0.0, loose-envify@npm:^1.1.0, loose-envify@npm:^1.2.0, loose-envify@npm:^1.3.1, loose-envify@npm:^1.4.0":
+"loose-envify@npm:^1.1.0, loose-envify@npm:^1.2.0, loose-envify@npm:^1.3.1, loose-envify@npm:^1.4.0":
   version: 1.4.0
   resolution: "loose-envify@npm:1.4.0"
   dependencies:
@@ -10936,6 +10913,29 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"palettes@workspace:*, palettes@workspace:palettes":
+  version: 0.0.0-use.local
+  resolution: "palettes@workspace:palettes"
+  dependencies:
+    "@bangle.dev/core": 0.13.0
+    "@testing-library/react": ^11.2.7
+    "@testing-library/react-hooks": ^5.1.2
+    "@testing-library/user-event": ^13.1.5
+    baby-fs: "workspace:*"
+    collapsible-heading: "workspace:*"
+    commands: "workspace:*"
+    config: "workspace:*"
+    editor: "workspace:*"
+    editor-manager-context: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    ui-components: "workspace:*"
+    ui-context: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "param-case@npm:^3.0.3":
   version: 3.0.4
   resolution: "param-case@npm:3.0.4"
@@ -11956,13 +11956,6 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"react-fast-compare@npm:^3.0.1":
-  version: 3.2.0
-  resolution: "react-fast-compare@npm:3.2.0"
-  checksum: 8ef272c825ae329f61633ce4ce7f15aa5b84e5214d88bc0823880236e03e985a13195befa2c7a4eda7db3b017dc7985729152d88445823f652403cf36c2b86aa
-  languageName: node
-  linkType: hard
-
 "react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
@@ -11981,19 +11974,6 @@ fsevents@~2.3.1:
   version: 17.0.1
   resolution: "react-is@npm:17.0.1"
   checksum: 5e6945a286367894d11b24f41a0065607ba62bdac0df0b567294b2e299c037e3641434e66f9be30536b8c47f7ad94d44e633feb2ba25959c2c42423844e6c2f1
-  languageName: node
-  linkType: hard
-
-"react-popper@npm:^2.2.5":
-  version: 2.2.5
-  resolution: "react-popper@npm:2.2.5"
-  dependencies:
-    react-fast-compare: ^3.0.1
-    warning: ^4.0.2
-  peerDependencies:
-    "@popperjs/core": ^2.0.0
-    react: ^16.8.0 || ^17
-  checksum: 915fcf08e1da4fd48a200074fcdd936f601ee2173f1e730cfed8a54fd47716aa8bf9cce2392463e3bcbe64a096d0baf463809ed2874b94d3a9d430ae6d817b5d
   languageName: node
   linkType: hard
 
@@ -14630,15 +14610,6 @@ resolve@^2.0.0-next.3:
   dependencies:
     makeerror: 1.0.x
   checksum: 4038fcf92f6ab0288267ad05008aec9e089a759f1bd32e1ea45cc2eb498eb12095ec43cf8ca2bf23a465f4580a0d33b25b89f450ba521dd27083cbc695ee6bf5
-  languageName: node
-  linkType: hard
-
-"warning@npm:^4.0.2":
-  version: 4.0.3
-  resolution: "warning@npm:4.0.3"
-  dependencies:
-    loose-envify: ^1.0.0
-  checksum: 4f2cb6a9575e4faf71ddad9ad1ae7a00d0a75d24521c193fa464f30e6b04027bd97aa5d9546b0e13d3a150ab402eda216d59c1d0f2d6ca60124d96cd40dfa35c
   languageName: node
   linkType: hard
 

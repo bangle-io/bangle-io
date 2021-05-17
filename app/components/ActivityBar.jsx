@@ -13,7 +13,7 @@ import {
 import { keybindings } from 'config/index';
 import { cx } from 'utils/index';
 import { resolvePath, useWorkspacePath } from 'workspace/index';
-import { FILE_PALETTE } from 'app/Palette';
+import { FILE_PALETTE } from 'palettes/index';
 import { useHistory } from 'react-router-dom';
 
 ActivityBar.propTypes = {};

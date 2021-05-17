@@ -1,4 +1,4 @@
-import { COMMAND_PALETTE } from '../Palette/paletteTypes';
+import { COMMAND_PALETTE } from 'palettes/index';
 import { keybindings } from 'config/index';
 import React, { useContext } from 'react';
 import { UIManagerContext } from 'ui-context';

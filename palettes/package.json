@@ -1,7 +1,6 @@
 {
-  "name": "app",
-  "version": "0.1.14",
-  "homepage": "https://bangle.io",
+  "name": "palettes",
+  "version": "0.0.0",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -16,33 +15,28 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "private": true,
+  "main": "index.js",
+  "module": "index.js",
   "scripts": {},
+  "publishConfig": {},
   "dependencies": {
     "@bangle.dev/core": "0.13.0",
-    "@bangle.dev/react": "0.13.0",
-    "@bangle.dev/react-menu": "0.13.0",
-    "@bangle.dev/react-stopwatch": "0.13.0",
-    "@bangle.dev/tooltip": "0.13.0",
-    "@sentry/tracing": "^6.3.1",
-    "bangle-io-context": "workspace:*",
+    "baby-fs": "workspace:*",
+    "collapsible-heading": "workspace:*",
     "commands": "workspace:*",
     "config": "workspace:*",
     "editor": "workspace:*",
     "editor-manager-context": "workspace:*",
-    "palettes": "workspace:*",
-    "prop-types": "^15.7.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "react-router-dom": "^5.2.0",
-    "react-virtual": "^2.7.1",
-    "style": "workspace:*",
     "ui-components": "workspace:*",
     "ui-context": "workspace:*",
     "utils": "workspace:*",
     "workspace": "workspace:*"
   },
   "devDependencies": {
-    "@testing-library/react": "^11.2.6"
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/react-hooks": "^5.1.2",
+    "@testing-library/user-event": "^13.1.5"
   }
 }

@@ -15,6 +15,24 @@
       "utils": [
         "./utils/index.js"
       ],
+      "commands/*": [
+        "./commands/*"
+      ],
+      "commands": [
+        "./commands/index.js"
+      ],
+      "palettes/*": [
+        "./palettes/*"
+      ],
+      "palettes": [
+        "./palettes/index.js"
+      ],
+      "editor-manager-context/*": [
+        "./editor-manager-context/*"
+      ],
+      "editor-manager-context": [
+        "./editor-manager-context/index.js"
+      ],
       "config/*": [
         "./config/*"
       ],

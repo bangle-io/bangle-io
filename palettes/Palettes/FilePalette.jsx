@@ -24,7 +24,7 @@ import {
   usePaletteProps,
 } from 'ui-components/index';
 import { addBoldToTitle } from '../utils';
-import { useRecordRecentWsPaths } from 'app/hooks';
+import { useRecordRecentWsPaths } from '../use-record-recent-ws-paths';
 
 const LOG = false;
 

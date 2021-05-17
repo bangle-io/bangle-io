@@ -3,6 +3,7 @@ import { dedupeArray, useLocalStorage, weakCache } from 'utils/index';
 import { useListCachedNoteWsPaths, useWorkspacePath } from 'workspace/index';
 import { useCallback, useEffect } from 'react';
 
+// TODO this doenst really work great
 export function useRecordRecentWsPaths() {
   let [files] = useListCachedNoteWsPaths();
   const { wsName, wsPath } = useWorkspacePath();

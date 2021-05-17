@@ -8,7 +8,6 @@ import React, {
 import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
 import { Manager } from '@bangle.dev/collab/server/manager';
 import { getNote, saveNote } from 'workspace/index';
-import { defaultContent } from './editor-default-content';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
@@ -25,6 +24,24 @@ let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
 const maxEditors = [undefined, undefined];
 const MAX_EDITOR = maxEditors.length;
+
+const defaultContent = {
+  type: 'doc',
+  content: [
+    {
+      type: 'heading',
+      attrs: {
+        level: 2,
+      },
+      content: [
+        {
+          type: 'text',
+          text: 'Hi there,',
+        },
+      ],
+    },
+  ],
+};
 
 // TODO move this async, i think a promise should be fine.
 const bangleIOContext = new BangleIOContext({

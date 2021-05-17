@@ -1,7 +1,6 @@
 {
-  "name": "app",
-  "version": "0.1.14",
-  "homepage": "https://bangle.io",
+  "name": "editor-manager-context",
+  "version": "0.0.0",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -16,33 +15,35 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "private": true,
+  "main": "index.js",
+  "module": "index.js",
   "scripts": {},
+  "publishConfig": {},
   "dependencies": {
+    "@bangle.dev/collab": "0.13.0",
     "@bangle.dev/core": "0.13.0",
+    "@bangle.dev/emoji": "0.13.0",
+    "@bangle.dev/markdown": "0.13.0",
+    "@bangle.dev/markdown-front-matter": "0.13.0",
     "@bangle.dev/react": "0.13.0",
+    "@bangle.dev/react-emoji-suggest": "0.13.0",
     "@bangle.dev/react-menu": "0.13.0",
     "@bangle.dev/react-stopwatch": "0.13.0",
+    "@bangle.dev/table": "0.13.0",
+    "@bangle.dev/timestamp": "0.13.0",
     "@bangle.dev/tooltip": "0.13.0",
-    "@sentry/tracing": "^6.3.1",
+    "@bangle.dev/trailing-node": "0.13.0",
     "bangle-io-context": "workspace:*",
-    "commands": "workspace:*",
+    "collapsible-heading": "workspace:*",
     "config": "workspace:*",
     "editor": "workspace:*",
-    "editor-manager-context": "workspace:*",
-    "palettes": "workspace:*",
-    "prop-types": "^15.7.2",
+    "image-extension": "workspace:*",
+    "inline-backlink": "workspace:*",
+    "inline-command-palette": "workspace:*",
+    "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "react-router-dom": "^5.2.0",
-    "react-virtual": "^2.7.1",
-    "style": "workspace:*",
-    "ui-components": "workspace:*",
     "ui-context": "workspace:*",
-    "utils": "workspace:*",
     "workspace": "workspace:*"
-  },
-  "devDependencies": {
-    "@testing-library/react": "^11.2.6"
   }
 }

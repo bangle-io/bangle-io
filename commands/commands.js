@@ -1,4 +1,3 @@
-import { INPUT_PALETTE } from './Palette/paletteTypes';
 import {
   copyWorkspace,
   isValidNoteWsPath,
@@ -7,10 +6,10 @@ import {
   useWorkspaces,
 } from 'workspace/index';
 import { useCallback, useContext } from 'react';
-import { UIManagerContext } from 'ui-context';
-import { EditorManagerContext } from './editor/EditorManager';
-import { InputPaletteOption } from './Palette/Palettes/InputPalette';
+import { UIManagerContext } from 'ui-context/index';
+import { EditorManagerContext } from 'editor-manager-context/index';
 import { pickADirectory } from 'baby-fs/index';
+import { INPUT_PALETTE } from 'config/paletteTypes';
 
 /**
  * On generic commands
@@ -90,16 +89,15 @@ export function useNewWorkspace() {
         metadata: {
           placeholder: 'Please select the storage type',
           availableOptions: [
-            Boolean(window.showDirectoryPicker) &&
-              new InputPaletteOption({
-                uid: 'nativefs',
-                title:
-                  'Hard drive: will save your notes in your local hard drive (recommended)',
-              }),
-            new InputPaletteOption({
+            Boolean(window.showDirectoryPicker) && {
+              uid: 'nativefs',
+              title:
+                'Hard drive: will save your notes in your local hard drive (recommended)',
+            },
+            {
               uid: 'browser',
               title: 'Browser: will save your notes in your browser storage',
-            }),
+            },
           ],
           onInputConfirm: async (query) => {
             if (query === 'nativefs') {
@@ -156,15 +154,14 @@ export function useCloneWorkspaceCmd() {
         metadata: {
           placeholder: 'Please select the storage type of workspace',
           availableOptions: [
-            Boolean(window.showDirectoryPicker) &&
-              new InputPaletteOption({
-                uid: 'nativefs',
-                title: 'Native file storage (recommended)',
-              }),
-            new InputPaletteOption({
+            Boolean(window.showDirectoryPicker) && {
+              uid: 'nativefs',
+              title: 'Native file storage (recommended)',
+            },
+            {
               uid: 'browser',
               title: 'Browser storage',
-            }),
+            },
           ],
           onInputConfirm: async (query) => {
             if (query === 'nativefs') {

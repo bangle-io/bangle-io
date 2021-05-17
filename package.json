@@ -5,9 +5,9 @@
   "workspaces": [
     "app",
     "app-vite",
-    "app-webpack",
     "bangle-io-context",
     "env-vars",
+    "editor-manager-context",
     "config",
     "e2e",
     "editor",
@@ -17,7 +17,9 @@
     "style",
     "ui-components",
     "ui-context",
+    "commands",
     "utils",
+    "palettes",
     "workspace"
   ],
   "authors": [

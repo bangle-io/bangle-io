@@ -1,5 +1,4 @@
-import { useRecordRecentWsPaths } from 'app/hooks';
-import { COMMAND_PALETTE, FILE_PALETTE } from 'app/Palette/index';
+import { COMMAND_PALETTE, FILE_PALETTE } from 'palettes/index';
 import React, { useContext, useEffect } from 'react';
 import { UIManagerContext } from 'ui-context';
 import { resolvePath, useListCachedNoteWsPaths } from 'workspace/index';
@@ -11,7 +10,7 @@ export function EmptyEditorPage() {
   useEffect(() => {
     refreshFiles();
   }, [refreshFiles]);
-  const recentFiles = useRecordRecentWsPaths();
+  const recentFiles = [];
 
   return (
     <>
