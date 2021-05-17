@@ -35,6 +35,8 @@
     "workspace": "workspace:*"
   },
   "devDependencies": {
-    "@testing-library/react-hooks": "^5.1.2"
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/react-hooks": "^5.1.2",
+    "@testing-library/user-event": "^13.1.5"
   }
 }

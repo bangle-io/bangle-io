@@ -2624,6 +2624,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/react@npm:^11.2.7":
+  version: 11.2.7
+  resolution: "@testing-library/react@npm:11.2.7"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    "@testing-library/dom": ^7.28.1
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: 64e07cb96e40dbdbd3c46a09c47bed14446b30efafaa65a5d4fed5a7553878990cda108578f2b114422a775f31c635d51fd50b752f6163ddd6b8474e0e5fc2ce
+  languageName: node
+  linkType: hard
+
 "@testing-library/user-event@npm:^13.1.5":
   version: 13.1.5
   resolution: "@testing-library/user-event@npm:13.1.5"
@@ -3552,12 +3565,7 @@ __metadata:
     "@bangle.dev/react-stopwatch": 0.13.0
     "@bangle.dev/tooltip": 0.13.0
     "@sentry/tracing": ^6.3.1
-    "@testing-library/dom": ^7.30.4
-    "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": ^11.2.6
-    "@testing-library/react-hooks": ^5.1.2
-    "@testing-library/user-event": ^13.1.5
-    baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
     commands: "workspace:*"
     config: "workspace:*"
@@ -3568,7 +3576,6 @@ __metadata:
     react: 16.14.0
     react-dom: 16.14.0
     react-router-dom: ^5.2.0
-    react-test-renderer: ^17.0.2
     react-virtual: ^2.7.1
     style: "workspace:*"
     ui-components: "workspace:*"
@@ -10905,7 +10912,9 @@ fsevents@~2.3.1:
   resolution: "palettes@workspace:palettes"
   dependencies:
     "@bangle.dev/core": 0.13.0
+    "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^5.1.2
+    "@testing-library/user-event": ^13.1.5
     baby-fs: "workspace:*"
     collapsible-heading: "workspace:*"
     commands: "workspace:*"
