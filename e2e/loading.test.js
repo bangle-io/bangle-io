@@ -132,10 +132,14 @@ test('inline command palette convert to heading 3', async () => {
 async function createWorkspace(
   wsName = ('test-' + Math.random()).slice(0, 12),
 ) {
-  await runACommand('NEW_BROWSER_WS_COMMAND');
+  await runACommand('NEW_WORKSPACE');
   let handle = await page.$('.bangle-palette');
 
+  await sleep();
+  await clickPaletteRow('browser');
+
   const input = await handle.$('input');
+
   await input.type(wsName);
   await clickPaletteRow('input-confirm');
 

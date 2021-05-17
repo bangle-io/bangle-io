@@ -1,15 +1,12 @@
-import { HelpFileSystem } from 'baby-fs/help-fs';
+import { HelpFileSystem } from '../help-fs';
 
 let mockStore = new Map();
 let mockMetaStore = new Map();
 
 const getLast = (array) => array[array.length - 1];
 
-const githubBranch = 'master';
-const githubRepo = 'fake-repo';
-const githubOwner = 'fake-owner';
 const toFile = (str) => {
-  var file = new File([str], 'foo.txt', { type: 'text/plain' });
+  var file = new File(str, 'foo.txt', { type: 'text/plain' });
   return file;
 };
 
@@ -65,136 +62,53 @@ afterEach(() => {
   window.File = originalFile;
 });
 
-test('writeFile', async () => {
+test('readFileAsText', async () => {
+  const filePath = 'hola/hi.md';
+  const fileContent = 'i am a content';
+
+  const readFile = jest.fn(async () => {
+    return toFile(fileContent);
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md'];
+  });
   const fs = new HelpFileSystem({
-    githubToken: undefined,
-    githubOwner: undefined,
-    githubRepo: undefined,
-    githubBranch: undefined,
-    allowedFile: undefined,
+    readFile,
+    localFallback: false,
+    listFiles,
   });
-  await fs.writeFile('/hola/hi', toFile('my-data'));
-  expect(mockStore).toMatchInlineSnapshot(`
-    Map {
-      "/hola/hi" => File {
-        "content": Array [
-          "my-data",
-        ],
-        "fileName": "foo.txt",
-        "opts": Object {
-          "type": "text/plain",
-        },
-      },
-    }
-  `);
-  expect(mockMetaStore.get('/hola/hi')).toEqual({
-    mtimeMs: expect.any(Number),
-  });
+
+  const data = await fs.readFileAsText(filePath);
+
+  expect(data).toMatchInlineSnapshot(`"i am a content"`);
+
+  expect(readFile).toHaveBeenCalledTimes(1);
+  expect(readFile).nthCalledWith(1, 'hola/hi.md');
 });
 
-test('readFile from github', async () => {
-  window.fetch = jest.fn(async () => {
-    return {
-      ok: true,
-      status: 200,
-      blob: () => 'my-data',
-    };
-  });
-  const filePath = '/hola/hi';
+test('readFile', async () => {
+  const filePath = 'hola/hi.md';
+  const fileContent = 'i am a content';
 
+  const readFile = jest.fn(async () => {
+    return toFile(fileContent);
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md'];
+  });
   const fs = new HelpFileSystem({
-    githubBranch,
-    githubRepo,
-    githubOwner,
+    readFile,
+    localFallback: false,
+    listFiles,
   });
 
   const data = await fs.readFile(filePath);
 
-  expect(window.fetch).toHaveBeenCalledTimes(1);
-  expect(window.fetch).nthCalledWith(
-    1,
-    `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${githubBranch}${filePath}`,
-  );
-  expect(data).toMatchInlineSnapshot(`"my-data"`);
-});
+  expect(readFile).toHaveBeenCalledTimes(1);
 
-test('readFile from github 404s', async () => {
-  window.fetch = jest.fn(async () => {
-    return {
-      ok: false,
-      status: 404,
-      blob: () => 'my-data',
-    };
-  });
-  const filePath = '/hola/hi';
-
-  const fs = new HelpFileSystem({
-    githubBranch,
-    githubRepo,
-    githubOwner,
-  });
-
-  const data = fs.readFile(filePath);
-
-  await expect(data).rejects.toMatchInlineSnapshot(
-    `[HelpFileSystemError: BABY_FS_FILE_NOT_FOUND_ERROR:File /hola/hi not found]`,
-  );
-  expect(window.fetch).toHaveBeenCalledTimes(1);
-  expect(window.fetch).nthCalledWith(
-    1,
-    `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${githubBranch}${filePath}`,
-  );
-});
-
-test('readFile from github with non 404s', async () => {
-  window.fetch = jest.fn(async () => {
-    return {
-      ok: false,
-      status: 403,
-      blob: () => 'my-data',
-    };
-  });
-  const originalConsoleError = console.error;
-  console.error = jest.fn();
-  const filePath = '/hola/hi';
-
-  const fs = new HelpFileSystem({
-    githubBranch,
-    githubRepo,
-    githubOwner,
-  });
-
-  const data = fs.readFile(filePath);
-
-  await expect(data).rejects.toMatchInlineSnapshot(
-    `[HelpFileSystemError: BABY_FS_UPSTREAM_ERROR:Encountered an error making request to github]`,
-  );
-  expect(window.fetch).toHaveBeenCalledTimes(1);
-  expect(window.fetch).nthCalledWith(
-    1,
-    `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${githubBranch}${filePath}`,
-  );
-  console.error = originalConsoleError;
-});
-test('doesnt readFile from github if one already exists', async () => {
-  window.fetch = jest.fn(async () => {});
-  const filePath = '/hola/hi';
-  const fs = new HelpFileSystem({
-    githubBranch,
-    githubRepo,
-    githubOwner,
-  });
-
-  await fs.writeFile('/hola/hi', toFile('my-data'));
-
-  const data = await fs.readFile(filePath);
-
-  expect(window.fetch).toHaveBeenCalledTimes(0);
   expect(data).toMatchInlineSnapshot(`
     File {
-      "content": Array [
-        "my-data",
-      ],
+      "content": "i am a content",
       "fileName": "foo.txt",
       "opts": Object {
         "type": "text/plain",
@@ -203,107 +117,168 @@ test('doesnt readFile from github if one already exists', async () => {
   `);
 });
 
-test('opendirRecursive hits correct .bangle/files.json', async () => {
+test('readFile from local by default', async () => {
+  const filePath = 'hola/hi.md';
+  const fileContent = 'i am a content';
+
+  const readFile = jest.fn(async () => {
+    return toFile(fileContent);
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md'];
+  });
   const fs = new HelpFileSystem({
-    githubBranch,
-    githubRepo,
-    githubOwner,
+    readFile,
+    localFallback: true,
+    listFiles,
   });
 
-  window.fetch = jest.fn(async () => {
-    return {
-      ok: true,
-      json: () => ['other-file'],
-    };
-  });
+  await fs.writeFile(filePath, toFile('my-data'));
 
-  await fs.writeFile('/hola/hi', toFile('my-data'));
-  const data = await fs.opendirRecursive('/');
+  await fs.readFile(filePath);
 
-  expect(data).toMatchInlineSnapshot(`
-    Array [
-      "/other-file",
-      "/hola/hi",
-    ]
-  `);
-  expect(window.fetch).toBeCalledTimes(1);
-  expect(window.fetch).nthCalledWith(
-    1,
-    `https://raw.githubusercontent.com/fake-owner/fake-repo/master/.bangle/files.json`,
-  );
+  expect(readFile).toHaveBeenCalledTimes(0);
 });
 
-test('opendirRecursive hits github api if no .bangle/files.json', async () => {
+test('when opts.readFile returns null should throw not found error', async () => {
+  const filePath = 'hola/hi.md';
+
+  const readFile = jest.fn(async () => {
+    return null;
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md'];
+  });
   const fs = new HelpFileSystem({
-    githubBranch,
-    githubRepo,
-    githubOwner,
+    readFile,
+    localFallback: false,
+    listFiles,
   });
 
-  window.fetch = jest.fn(async (url) => {
-    if (url.endsWith('files.json')) {
-      return {
-        okay: false,
-        status: 404,
-      };
-    }
-    return {
-      ok: true,
-      json: () => ({
-        truncated: false,
-        tree: [{ path: 'some/path/in/tree' }],
-      }),
-    };
-  });
-
-  await fs.writeFile('/hola/hi', toFile('my-data'));
-  const data = await fs.opendirRecursive('/');
-
-  expect(data).toMatchInlineSnapshot(`
-    Array [
-      "/some/path/in/tree",
-      "/hola/hi",
-    ]
-  `);
-  expect(window.fetch).toBeCalledTimes(2);
-  expect(window.fetch).nthCalledWith(
-    1,
-    `https://raw.githubusercontent.com/fake-owner/fake-repo/master/.bangle/files.json`,
+  await expect(
+    fs.readFile(filePath),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi.md not found"`,
   );
+  expect(readFile).toHaveBeenCalledTimes(1);
+});
 
-  expect(window.fetch).nthCalledWith(
-    2,
-    'https://api.github.com/repos/fake-owner/fake-repo/git/trees/master?recursive=true',
-    {
-      headers: {
-        accept: 'application/vnd.github.v3+json',
-        authorization: undefined,
+test('writeFile works by default', async () => {
+  const filePath = 'hola/hi.md';
+
+  const readFile = jest.fn(async () => {
+    return null;
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md'];
+  });
+  const fs = new HelpFileSystem({
+    readFile,
+    listFiles,
+  });
+
+  await fs.writeFile(filePath, toFile('my-data'));
+  expect(mockStore).toMatchInlineSnapshot(`
+    Map {
+      "hola/hi.md" => File {
+        "content": "my-data",
+        "fileName": "foo.txt",
+        "opts": Object {
+          "type": "text/plain",
+        },
       },
-      method: 'GET',
-    },
+    }
+  `);
+  expect(readFile).toHaveBeenCalledTimes(0);
+});
+
+test('writeFile throws error when fallback is disabled', async () => {
+  const filePath = 'hola/hi.md';
+
+  const readFile = jest.fn(async () => {
+    return null;
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md'];
+  });
+  const fs = new HelpFileSystem({
+    readFile,
+    localFallback: false,
+    listFiles,
+  });
+
+  await expect(
+    fs.writeFile(filePath, toFile('my-data')),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"BABY_FS_NOT_ALLOWED_ERROR:Writing not allowed"`,
   );
 });
 
-test('_allowedFile works', async () => {
+test("listFile fallback is disabled doesn't return local files", async () => {
+  const readFile = jest.fn(async () => {
+    return;
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md', 'hi2.md'];
+  });
   const fs = new HelpFileSystem({
-    githubBranch,
-    githubRepo,
-    githubOwner,
-    allowedFile: (file) => file.endsWith('.md'),
+    readFile,
+    localFallback: false,
+    listFiles,
+  });
+  const fsLocal = new HelpFileSystem({
+    readFile,
+    localFallback: true,
+    listFiles,
   });
 
-  window.fetch = jest.fn(async () => {
-    return {
-      ok: true,
-      json: () => ['other-file.md', 'good.exe'],
-    };
+  await fsLocal.writeFile('hola/local-hi.md', toFile('my-data'));
+
+  await expect(fs.opendirRecursive('hola')).resolves.toMatchInlineSnapshot(`
+          Array [
+            "hola/hi.md",
+            "hola/hi2.md",
+          ]
+        `);
+  await expect(fsLocal.opendirRecursive('hola')).resolves
+    .toMatchInlineSnapshot(`
+          Array [
+            "hola/hi.md",
+            "hola/hi2.md",
+            "hola/local-hi.md",
+          ]
+        `);
+
+  expect(listFiles).toHaveBeenCalledTimes(2);
+  expect(listFiles).nthCalledWith(1, 'hola');
+  expect(listFiles).nthCalledWith(2, 'hola');
+});
+
+test('readFile fallback local override', async () => {
+  const readFile = jest.fn(async () => {
+    return toFile('original content');
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md', 'hi2.md'];
+  });
+  const fs = new HelpFileSystem({
+    readFile,
+    localFallback: false,
+    listFiles,
+  });
+  const fsLocal = new HelpFileSystem({
+    readFile,
+    localFallback: true,
+    listFiles,
   });
 
-  const data = await fs.opendirRecursive('/');
+  await fsLocal.writeFile('hola/hi.md', toFile('local override'));
 
-  expect(data).toMatchInlineSnapshot(`
-    Array [
-      "/other-file.md",
-    ]
-  `);
+  expect(await fs.readFileAsText('hola/hi.md')).toMatchInlineSnapshot(
+    `"original content"`,
+  );
+
+  expect(await fsLocal.readFileAsText('hola/hi.md')).toMatchInlineSnapshot(
+    `"local override"`,
+  );
 });

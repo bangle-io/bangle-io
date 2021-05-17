@@ -51,6 +51,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:editor"
       },
       {
+        "name": "env-vars",
+        "reference": "workspace:env-vars"
+      },
+      {
         "name": "extension-helpers",
         "reference": "workspace:extension-helpers"
       },
@@ -112,6 +116,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["config", ["workspace:config"]],
       ["e2e", ["workspace:e2e"]],
       ["editor", ["workspace:editor"]],
+      ["env-vars", ["workspace:env-vars"]],
       ["extension-helpers", ["workspace:extension-helpers"]],
       ["image-extension", ["workspace:extensions/image-extension"]],
       ["inline-backlink", ["workspace:extensions/inline-backlink"]],
@@ -144,10 +149,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.2.5"],
             ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],
             ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.2"],
+            ["bangle-io-help", "npm:1.4.0"],
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],
             ["copy-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.1.1"],
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.4"],
             ["date-fns", "npm:2.21.1"],
+            ["env-vars", "workspace:env-vars"],
             ["eslint", "npm:7.25.0"],
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.0.0"],
             ["eslint-import-resolver-node", "npm:0.3.4"],
@@ -5582,6 +5589,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@vitejs/plugin-react-refresh", "npm:1.3.3"],
             ["app", "workspace:app"],
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.2.5"],
+            ["env-vars", "workspace:env-vars"],
             ["postcss", "npm:8.2.12"],
             ["postcss-custom-properties", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.0.0"],
             ["postcss-import", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:14.0.1"],
@@ -6277,10 +6285,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.2.5"],
             ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],
             ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.2"],
+            ["bangle-io-help", "npm:1.4.0"],
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],
             ["copy-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.1.1"],
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.4"],
             ["date-fns", "npm:2.21.1"],
+            ["env-vars", "workspace:env-vars"],
             ["eslint", "npm:7.25.0"],
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.0.0"],
             ["eslint-import-resolver-node", "npm:0.3.4"],
@@ -6332,6 +6342,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["utils", "workspace:utils"]
           ],
           "linkType": "SOFT",
+        }]
+      ]],
+      ["bangle-io-help", [
+        ["npm:1.4.0", {
+          "packageLocation": "./.yarn/cache/bangle-io-help-npm-1.4.0-3a0ba4b6a0-8ac948df67.zip/node_modules/bangle-io-help/",
+          "packageDependencies": [
+            ["bangle-io-help", "npm:1.4.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["base", [
@@ -8495,6 +8514,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["env-paths", "npm:2.2.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["env-vars", [
+        ["workspace:env-vars", {
+          "packageLocation": "./env-vars/",
+          "packageDependencies": [
+            ["env-vars", "workspace:env-vars"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["envinfo", [

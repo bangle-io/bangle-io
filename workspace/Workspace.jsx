@@ -3,7 +3,7 @@ import {
   NATIVE_BROWSER_PERMISSION_ERROR,
   requestNativeBrowserFSPermission,
   FILE_NOT_FOUND_ERROR,
-} from 'baby-fs';
+} from 'baby-fs/index';
 import React, { useEffect, useState } from 'react';
 import { useCatchRejection } from 'utils/index';
 import { useHistory, useLocation } from 'react-router-dom';

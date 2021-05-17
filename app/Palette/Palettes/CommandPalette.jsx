@@ -28,7 +28,6 @@ import {
   defaultKeys as paragraphKeys,
 } from '@bangle.dev/core/components/paragraph';
 import {
-  copyWorkspace,
   isValidNoteWsPath,
   renameFile,
   useDeleteFile,
@@ -36,9 +35,10 @@ import {
   useWorkspaces,
 } from 'workspace/index';
 import {
-  useDispatchPrimaryEditorCommand,
-  useInputPaletteNewNoteCommand,
-} from '../Commands';
+  useCloneWorkspaceCmd,
+  useNewNoteCmd,
+  useNewWorkspace,
+} from '../../Commands';
 import {
   COMMAND_PALETTE,
   INPUT_PALETTE,
@@ -55,12 +55,12 @@ import {
   usePaletteProps,
 } from 'ui-components/index';
 import { addBoldToTitle } from '../utils';
-import { pickADirectory } from 'baby-fs';
+import { pickADirectory } from 'baby-fs/index';
 import { WorkspaceError } from 'workspace/errors';
 import { useDestroyRef, useKeybindings } from 'utils/hooks';
 import { BaseError } from 'utils/base-error';
 import { EditorManagerContext } from 'app/editor/EditorManager';
-import { InputPaletteOption } from './InputPalette';
+import { useDispatchPrimaryEditor } from 'app/editor/use-dispatch-primary-editor';
 
 const LOG = false;
 
@@ -99,8 +99,7 @@ function CommandPaletteUIComponent({
     useToggleSidebar({ dismissPalette }),
     useNewNote({ updatePalette, dismissPalette }),
     useRemoveActiveWorkspace({ dismissPalette }),
-    useNewBrowserWS({ updatePalette, dismissPalette }),
-    useNewFileSystemWS({ dismissPalette }),
+    useNewWorkspacePalette(),
     useImportWSFromGithub({ updatePalette, dismissPalette }),
     useRenameActiveNote({ updatePalette, dismissPalette }),
     useSaveGithubToken({ updatePalette, dismissPalette }),
@@ -270,7 +269,7 @@ function useToggleSidebar({ dismissPalette }) {
 function useNewNote({}) {
   const uid = 'NEW_NOTE_COMMAND';
   const { wsName } = useWorkspacePath();
-  const newNoteCommand = useInputPaletteNewNoteCommand();
+  const newNoteCommand = useNewNoteCmd();
 
   const onExecute = useCallback(() => {
     newNoteCommand();
@@ -279,100 +278,33 @@ function useNewNote({}) {
   return queryMatch({
     uid,
     hidden: !Boolean(wsName),
-    title: 'Workspace: New Note',
+    title: 'Workspace: New note',
     onExecute,
   });
 }
 
-function useNewBrowserWS({ updatePalette }) {
-  const uid = 'NEW_BROWSER_WS_COMMAND';
-
-  const { createWorkspace } = useWorkspaces();
-
+function useNewWorkspacePalette() {
+  const uid = 'NEW_WORKSPACE';
+  const createWorkspace = useNewWorkspace();
   const onExecute = useCallback(() => {
-    updatePalette({
-      type: INPUT_PALETTE,
-      metadata: {
-        placeholder: 'Please give your workspace a name',
-        onInputConfirm: (query) => {
-          if (query) {
-            return createWorkspace(query, 'browser');
-          }
-        },
-      },
-    });
-  }, [updatePalette, createWorkspace]);
+    createWorkspace();
+  }, [createWorkspace]);
 
   return queryMatch({
     uid,
-    title: 'Workspace: New workspace saved in your browser storage',
+    title: 'Workspace: New workspace',
     onExecute,
   });
 }
 
-function useCloneWorkspace({ updatePalette }) {
+function useCloneWorkspace() {
   const uid = 'CLONE_WORKSPACE_COMMAND';
-
-  const { createWorkspace } = useWorkspaces();
-  const { wsName, refreshHistoryStateKey } = useWorkspacePath();
-
-  const onExecute = useCallback(() => {
-    updatePalette({
-      type: INPUT_PALETTE,
-      metadata: {
-        placeholder: 'Please select the storage type of workspace',
-        availableOptions: [
-          new InputPaletteOption({
-            uid: 'nativefs',
-            title: 'Native file storage (recommended)',
-          }),
-          new InputPaletteOption({
-            uid: 'browser',
-            title: 'Browser storage',
-          }),
-        ],
-        onInputConfirm: async (query) => {
-          if (query === 'nativefs') {
-            const rootDirHandle = await pickADirectory();
-            await createWorkspace(rootDirHandle.name, 'nativefs', {
-              rootDirHandle,
-            });
-
-            await copyWorkspace(wsName, rootDirHandle.name);
-            refreshHistoryStateKey();
-            return true;
-          } else if (query === 'browser') {
-            // TODO be able to move to the palette
-            // await createWorkspace(query, 'browser');
-            // await copyWorkspace(wsName, );
-            setTimeout(() => {
-              updatePalette({
-                type: INPUT_PALETTE,
-                metadata: {
-                  placeholder: 'Please give your workspace a name',
-                  onInputConfirm: async (query) => {
-                    if (query) {
-                      await createWorkspace(query, 'browser');
-                      await copyWorkspace(wsName, query);
-                      refreshHistoryStateKey();
-                    }
-                  },
-                },
-              });
-            }, 0);
-            return false;
-          } else {
-            throw new Error('Unknown query');
-          }
-        },
-      },
-    });
-  }, [updatePalette, createWorkspace, wsName, refreshHistoryStateKey]);
+  const { wsName } = useWorkspacePath();
 
   return queryMatch({
     uid,
-    title: 'Workspace: Clone workspace',
-    onExecute,
+    title: 'Workspace: Clone current workspace',
+    onExecute: useCloneWorkspaceCmd(),
     disabled: !wsName,
   });
 }
@@ -561,8 +493,8 @@ export function useDeleteActiveNote({ dismissPalette }) {
 }
 
 function usePrimaryEditorCommands({ dismissPalette }) {
-  const executeEditorCommand = useDispatchPrimaryEditorCommand(false);
-  const dryExecuteEditorCommand = useDispatchPrimaryEditorCommand(true);
+  const executeEditorCommand = useDispatchPrimaryEditor(false);
+  const dryExecuteEditorCommand = useDispatchPrimaryEditor(true);
 
   return ({ query, paletteType }) => {
     const commands = [];

@@ -99,12 +99,16 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async readFileAsText(filePath) {
+    this._verifyFilePath(filePath);
+
     const file = await this.readFile(filePath);
     const textContent = await readFileAsTextHelper(file);
     return textContent;
   }
 
   async readFile(filePath) {
+    this._verifyFilePath(filePath);
+
     await verifyPermission(this._rootDirHandle, filePath);
     const { fileHandle } = await this._resolveFileHandle(
       this._rootDirHandle,
@@ -115,6 +119,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async writeFile(filePath, data) {
+    this._verifyFilePath(filePath);
     this._verifyFileType(data);
     await verifyPermission(this._rootDirHandle, filePath);
 
@@ -149,6 +154,8 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async unlink(filePath) {
+    this._verifyFilePath(filePath);
+
     await verifyPermission(this._rootDirHandle, filePath);
 
     const { fileHandle, parentHandles } = await this._resolveFileHandle(
@@ -161,6 +168,9 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
   }
 
   async rename(oldFilePath, newFilePath) {
+    this._verifyFilePath(oldFilePath);
+    this._verifyFilePath(newFilePath);
+
     const file = await this.readFile(oldFilePath);
     let existingFile;
 
@@ -184,9 +194,11 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     await this.unlink(oldFilePath);
   }
 
-  // recrusively list all files paths
-  // example ['a/b/c.md', 'a/e.md']
   async opendirRecursive(dirPath) {
+    if (!dirPath) {
+      throw new Error('dirPath must be defined');
+    }
+
     await verifyPermission(this._rootDirHandle);
 
     const data = await recurseDirHandle(this._rootDirHandle, {
@@ -200,7 +212,8 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 
     let files = data.map((r) => r.map((f) => f.name).join('/'));
 
-    files = files.filter((k) => k.startsWith(dirPath));
+    files = dirPath ? files.filter((k) => k.startsWith(dirPath)) : files;
+
     return files;
   }
 }

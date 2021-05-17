@@ -52,7 +52,7 @@ const Severity = {
 export function Notification({ content = '', buttons, severity, onDismiss }) {
   return (
     <div
-      className="relative shadow my-4 mx-4 w-96 p-2"
+      className="relative shadow my-4 mx-4 w-96 p-2 duration-100 ease-in-out transition"
       style={{
         backgroundColor: 'var(--bg-stronger-color)',
         boxShadow: '0px 0px 4px 2px rgba(0, 0, 0, 0.15)',
@@ -75,7 +75,7 @@ export function Notification({ content = '', buttons, severity, onDismiss }) {
           </ButtonIcon>
         </div>
       </div>
-      <div className="w-full flex flex-row-reverse">
+      <div className="w-full flex flex-row-reverse mt-3">
         {buttons &&
           buttons.map((b, i) => <React.Fragment key={i}>{b}</React.Fragment>)}
       </div>

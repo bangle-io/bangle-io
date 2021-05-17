@@ -67,7 +67,7 @@ export async function createWorkspace(wsName, type = 'browser', opts = {}) {
       break;
     }
 
-    case 'helpfs': {
+    case 'github-read-fs': {
       workspace = {
         name: wsName,
         type,

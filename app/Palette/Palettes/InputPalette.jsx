@@ -77,6 +77,8 @@ function InputPaletteUIComponent({
           return;
         }
         updateSpinner(false);
+        // TODO lets move away from this and give the caller
+        // the power to dismiss
         // prevent dismissing if result === false
         if (result === false) {
         } else {
@@ -95,16 +97,18 @@ function InputPaletteUIComponent({
   };
 
   if (paletteMetadata.availableOptions) {
-    resolvedItems = paletteMetadata.availableOptions.map((option) => {
-      if (!(option instanceof InputPaletteOption)) {
-        throw new Error('Must be InputPaletteOption');
-      }
-      return {
-        uid: option.uid,
-        title: option.title,
-        onExecute: onExecuteHOC(option.uid),
-      };
-    });
+    resolvedItems = paletteMetadata.availableOptions
+      .filter(Boolean)
+      .map((option) => {
+        if (!(option instanceof InputPaletteOption)) {
+          throw new Error('Must be InputPaletteOption');
+        }
+        return {
+          uid: option.uid,
+          title: option.title,
+          onExecute: onExecuteHOC(option.uid),
+        };
+      });
   } else {
     resolvedItems = [
       !error && {

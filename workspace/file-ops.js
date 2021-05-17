@@ -8,7 +8,7 @@ import {
   filePathToWsPath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
-import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs';
+import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs/index';
 import { listFilesCache } from './native-browser-list-fs-cache';
 import { getFileSystemFromWsInfo } from './get-fs';
 import { serialExecuteQueue, weakCache } from 'utils/utility';

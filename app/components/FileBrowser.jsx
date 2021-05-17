@@ -16,7 +16,7 @@ import {
   resolvePath,
 } from 'workspace/index';
 import { useLocalStorage } from 'utils/hooks';
-import { useInputPaletteNewNoteCommand } from 'app/Palette/Commands';
+import { useNewNoteCmd } from 'app/Commands';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 import { useVirtual } from 'react-virtual';
 
@@ -38,7 +38,7 @@ export function FileBrowser() {
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
   const activeFilePath = activeWSPath && resolvePath(activeWSPath).filePath;
-  const newFileCommand = useInputPaletteNewNoteCommand();
+  const newFileCommand = useNewNoteCmd();
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
       dispatch({
