@@ -1,5 +1,5 @@
 {
-  "name": "commands",
+  "name": "palettes",
   "version": "0.0.0",
   "authors": [
     {
@@ -20,11 +20,21 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
+    "@bangle.dev/core": "0.13.0",
     "baby-fs": "workspace:*",
+    "collapsible-heading": "workspace:*",
+    "commands": "workspace:*",
     "config": "workspace:*",
+    "editor": "workspace:*",
     "editor-manager-context": "workspace:*",
     "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "ui-components": "workspace:*",
     "ui-context": "workspace:*",
+    "utils": "workspace:*",
     "workspace": "workspace:*"
+  },
+  "devDependencies": {
+    "@testing-library/react-hooks": "^5.1.2"
   }
 }

@@ -19,6 +19,7 @@
     "ui-context",
     "commands",
     "utils",
+    "palettes",
     "workspace"
   ],
   "authors": [

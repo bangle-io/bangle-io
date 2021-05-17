@@ -34,6 +34,7 @@
     "config": "workspace:*",
     "editor": "workspace:*",
     "editor-manager-context": "workspace:*",
+    "palettes": "workspace:*",
     "prop-types": "^15.7.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",

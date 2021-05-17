@@ -1826,21 +1826,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-sticker@npm:0.13.0":
-  version: 0.13.0
-  resolution: "@bangle.dev/react-sticker@npm:0.13.0"
-  dependencies:
-    prop-types: ^15.7.2
-  peerDependencies:
-    "@bangle.dev/core": "*"
-    "@bangle.dev/markdown": "*"
-    "@bangle.dev/react": "*"
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: ef25eea9bcc81b23b10ff1bea750f20d9c42dc890b07cc756f9fdaf008292388d2ef4a2c1dabe8a14f20553c7cc039139d94aeee05dc89e3cd583cf7d9825c45
-  languageName: node
-  linkType: hard
-
 "@bangle.dev/react-stopwatch@npm:0.13.0":
   version: 0.13.0
   resolution: "@bangle.dev/react-stopwatch@npm:0.13.0"
@@ -1877,15 +1862,6 @@ __metadata:
   peerDependencies:
     "@bangle.dev/core": "*"
   checksum: 7cee351d6e28967387569024782a70a36f1d275dbd1caec15a4c4919683d0e8edd2d671cd8a0a0cdf11378cd5e1acf001ba8f75c20ae3bc6985ea9366031c42f
-  languageName: node
-  linkType: hard
-
-"@bangle.dev/text-formatting@npm:0.13.0":
-  version: 0.13.0
-  resolution: "@bangle.dev/text-formatting@npm:0.13.0"
-  peerDependencies:
-    "@bangle.dev/core": "*"
-  checksum: eed2d6f177eedc5a6236f5fe1a89c3638246e02091915eeed4b133cd3e2ff5cc0a66ee90cc1c41e3907fab8f1b3e6a7aa87a0556443dd2c2b9477e85c741a2ff
   languageName: node
   linkType: hard
 
@@ -3563,31 +3539,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"app-webpack@workspace:app-webpack":
-  version: 0.0.0-use.local
-  resolution: "app-webpack@workspace:app-webpack"
-  dependencies:
-    "@sentry/webpack-plugin": ^1.15.1
-    app: "workspace:*"
-    autoprefixer: ^10.2.5
-    case-sensitive-paths-webpack-plugin: ^2.4.0
-    copy-webpack-plugin: ^8.1.1
-    git-revision-webpack-plugin: ^3.0.6
-    html-webpack-plugin: ^5.3.1
-    pnp-webpack-plugin: ^1.6.4
-    postcss: ^8.2.12
-    postcss-custom-properties: ^11.0.0
-    postcss-import: ^14.0.1
-    postcss-loader: ^5.2.0
-    postcss-nested: ^5.0.5
-    tailwindcss: ^2.1.2
-    webpack: ^5.35.1
-    webpack-bundle-analyzer: ^4.4.1
-    webpack-cli: ^4.6.0
-    webpack-dev-server: ^3.11.2
-  languageName: unknown
-  linkType: soft
-
 "app@workspace:*, app@workspace:app":
   version: 0.0.0-use.local
   resolution: "app@workspace:app"
@@ -3612,6 +3563,7 @@ __metadata:
     config: "workspace:*"
     editor: "workspace:*"
     editor-manager-context: "workspace:*"
+    palettes: "workspace:*"
     prop-types: ^15.7.2
     react: 16.14.0
     react-dom: 16.14.0
@@ -5038,13 +4990,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "commands@workspace:commands"
   dependencies:
-    "@bangle.dev/core": 0.13.0
     baby-fs: "workspace:*"
+    config: "workspace:*"
     editor-manager-context: "workspace:*"
     react: 16.14.0
-    react-dom: 16.14.0
     ui-context: "workspace:*"
-    utils: "workspace:*"
     workspace: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -5947,17 +5897,13 @@ __metadata:
     "@bangle.dev/react": 0.13.0
     "@bangle.dev/react-emoji-suggest": 0.13.0
     "@bangle.dev/react-menu": 0.13.0
-    "@bangle.dev/react-sticker": 0.13.0
     "@bangle.dev/react-stopwatch": 0.13.0
     "@bangle.dev/table": 0.13.0
-    "@bangle.dev/text-formatting": 0.13.0
     "@bangle.dev/timestamp": 0.13.0
     "@bangle.dev/tooltip": 0.13.0
     "@bangle.dev/trailing-node": 0.13.0
-    config: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
-    utils: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -10953,6 +10899,27 @@ fsevents@~2.3.1:
   checksum: f8a8e9a7693659383f06aec604ad5ead237c7a261c18048a6e1b5b85a5f8a067e469aa24f5bc009b991ea3b058a87f5065ef4176793a200d4917349881216cae
   languageName: node
   linkType: hard
+
+"palettes@workspace:*, palettes@workspace:palettes":
+  version: 0.0.0-use.local
+  resolution: "palettes@workspace:palettes"
+  dependencies:
+    "@bangle.dev/core": 0.13.0
+    "@testing-library/react-hooks": ^5.1.2
+    baby-fs: "workspace:*"
+    collapsible-heading: "workspace:*"
+    commands: "workspace:*"
+    config: "workspace:*"
+    editor: "workspace:*"
+    editor-manager-context: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    ui-components: "workspace:*"
+    ui-context: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "param-case@npm:^3.0.3":
   version: 3.0.4
