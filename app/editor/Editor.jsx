@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect } from 'react';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
-import stopwatch from '@bangle.dev/react-stopwatch';
-// import sticker from '@bangle.dev/react-sticker';
-import { EmojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import {
   FloatingMenu,
   Menu,
@@ -18,7 +15,7 @@ import {
   OrderedListButton,
   TodoListButton,
 } from '@bangle.dev/react-menu';
-import { menuKey, emojiSuggestKey } from 'editor/index';
+import { menuKey } from 'editor/index';
 import { ExtensionEditorComponents } from 'bangle-io-context/index';
 
 const LOG = false;
@@ -57,9 +54,6 @@ export function Editor({
   const renderNodeViews = useCallback(
     (nodeViewRenderArg) => {
       const { node, updateAttrs, children, selected } = nodeViewRenderArg;
-      if (node.type.name === 'stopwatch') {
-        return <stopwatch.Stopwatch node={node} updateAttrs={updateAttrs} />;
-      }
 
       return bangleIOContext.renderReactNodeViews(nodeViewRenderArg);
     },
@@ -110,7 +104,6 @@ export function Editor({
       className="bangle-editor-inner-container"
     >
       <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />
-      <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />
       <ExtensionEditorComponents bangleIOContext={bangleIOContext} />
     </BangleEditor>
   );
