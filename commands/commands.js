@@ -105,6 +105,7 @@ export function useNewWorkspace() {
               await createWorkspace(rootDirHandle.name, 'nativefs', {
                 rootDirHandle,
               });
+              window.fathom?.trackGoal('K3NFTGWX', 0);
               refreshHistoryStateKey();
               res();
               return true;
@@ -119,6 +120,7 @@ export function useNewWorkspace() {
                     onInputConfirm: async (query) => {
                       if (query) {
                         await createWorkspace(query, 'browser');
+                        window.fathom?.trackGoal('AISLCLRF', 0);
                         refreshHistoryStateKey();
                         res();
                       }
