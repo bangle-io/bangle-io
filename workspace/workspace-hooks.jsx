@@ -1,16 +1,28 @@
 import { useHistory, matchPath, useLocation } from 'react-router-dom';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
-import { locationToFilePath, resolvePath } from './path-helpers';
+import {
+  isValidNoteWsPath,
+  locationToFilePath,
+  resolvePath,
+  toFSPath,
+} from './path-helpers';
 import {
   createWorkspace,
   deleteWorkspace,
+  getWorkspaceInfo,
   listWorkspaces,
 } from './workspace-helpers';
 import { cachedListAllNoteWsPaths, createNote, deleteFile } from './file-ops';
 import { checkWidescreen, removeMdExtension, useDestroyRef } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
 import { replaceHistoryState } from './history-utils';
+import {
+  HELP_FS_INDEX_FILE_NAME,
+  HELP_FS_WORKSPACE_NAME,
+  HELP_FS_WORKSPACE_TYPE,
+} from 'config/help-fs';
+import { getFileSystemFromWsInfo } from './get-fs';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 
@@ -196,7 +208,7 @@ export function useWorkspaces() {
  * WARNING check if wsName, wsPath exists before working on it
  */
 export function useWorkspacePath() {
-  // I think history doesnt change when location changes
+  // I think history doesn't change when location changes
   // so it is a good idea to use useLocation instead of location
   const location = useLocation();
   const history = useHistory();
@@ -207,14 +219,20 @@ export function useWorkspacePath() {
     strict: false,
   });
 
-  const { wsName } = match?.params ?? {};
-  const search = new URLSearchParams(location?.search);
-  const secondaryWsPath = search.get('secondary') ?? undefined;
+  const { wsName = HELP_FS_WORKSPACE_NAME } = match?.params ?? {};
+
   let wsPath;
   const filePath = locationToFilePath(location);
   if (filePath) {
     wsPath = wsName + ':' + filePath;
   }
+  // show the landing page if no file path i.e. at root '/'
+  else if (wsName === HELP_FS_WORKSPACE_NAME && !filePath) {
+    wsPath = wsName + ':' + HELP_FS_INDEX_FILE_NAME;
+  }
+
+  const search = new URLSearchParams(location?.search);
+  const secondaryWsPath = search.get('secondary') ?? undefined;
 
   const pushWsPath = useCallback(
     (wsPath, newTab = false, secondary = false) => {
@@ -318,4 +336,74 @@ export function useWorkspacePath() {
     removeSecondaryWsPath,
     refreshHistoryStateKey,
   };
+}
+
+const isHelpFileModified = async (wsPath) => {
+  if (!wsPath) {
+    return false;
+  }
+  const { wsName } = resolvePath(wsPath);
+
+  if (wsName !== HELP_FS_WORKSPACE_NAME) {
+    return false;
+  }
+
+  const wsInfo = await getWorkspaceInfo(wsName);
+
+  if (wsInfo.type !== HELP_FS_WORKSPACE_TYPE) {
+    return false;
+  }
+
+  const fs = getFileSystemFromWsInfo(wsInfo);
+
+  const isModified = await fs.isFileModified(toFSPath(wsPath));
+
+  return isModified;
+};
+
+/**
+ * A hook that checks if the user has made any modifications
+ * to the help workspace. Will return isModified false is not currently
+ * in help workspace.
+ * @param {*} checkInterval time to check
+ * @returns
+ */
+export function useIsHelpWorkspaceModified(wsPath, checkInterval = 6000) {
+  const [isModified, updateModified] = useState(false);
+
+  const wsName = wsPath && resolvePath(wsPath).wsName;
+
+  const isHelpWorkspace = wsName === HELP_FS_WORKSPACE_NAME;
+
+  useEffect(() => {
+    let id;
+    let effectDestroyed = false;
+    if (isHelpWorkspace && wsPath && isValidNoteWsPath(wsPath)) {
+      id = setInterval(() => {
+        isHelpFileModified(wsPath).then((result) => {
+          console.log({ result });
+          if (effectDestroyed) {
+            return;
+          }
+          if (result) {
+            updateModified(result);
+          }
+        });
+      }, checkInterval);
+    }
+    return () => {
+      effectDestroyed = true;
+      if (id != null) {
+        clearInterval(id);
+      }
+    };
+  }, [wsPath, wsName, isModified, checkInterval, isHelpWorkspace]);
+
+  useEffect(() => {
+    return () => {
+      updateModified(false);
+    };
+  }, [wsName]);
+
+  return { isModified, isHelpWorkspace };
 }

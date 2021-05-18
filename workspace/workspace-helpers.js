@@ -1,3 +1,4 @@
+import { helpFSWorkspaceInfo, HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
 import { config } from 'config/index';
 import * as idb from 'idb-keyval';
 import {
@@ -23,6 +24,14 @@ export async function listWorkspaces() {
   if (!cachedWorkspaces || config.isTest) {
     cachedWorkspaces = (await idb.get('workspaces/2')) || [];
   }
+
+  // because we save the entire array in one indexedDb key, the helpfs
+  // will also get saved. This removes it so that we can add in a predictable way.
+  cachedWorkspaces = cachedWorkspaces.filter(
+    (f) => f.type !== HELP_FS_WORKSPACE_TYPE,
+  );
+  cachedWorkspaces.push(helpFSWorkspaceInfo);
+
   return cachedWorkspaces;
 }
 

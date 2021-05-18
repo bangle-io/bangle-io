@@ -10,7 +10,7 @@ import { EmptyEditorPage } from './EmptyEditorPage';
  * This exists to save a render cycle
  * when incomingWsPath changes to something else
  * and while `checkFileExists` is doing its thing
- * we let the previous wsPath stay, to avoid flash.
+ * we let the previous wsPath stay, to avoid an unwanted flash.
  * @param {*} incomingWsPath
  * @returns
  */

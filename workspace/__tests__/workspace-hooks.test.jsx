@@ -420,6 +420,7 @@ describe('useWorkspaces', () => {
           data-testid="result"
         >
           kujo1
+          bangle-help
         </div>
       </div>
     `);
@@ -463,6 +464,7 @@ describe('useWorkspaces', () => {
     // Note: for some reason MemoryRouter doesnt do urlParams
     // correctly
     expect(idb.set).toBeCalledWith('workspaces/2', [
+      helpFSWorkspaceInfo,
       { metadata: {}, name: 'kujo1', type: 'browser' },
     ]);
   });

@@ -155,3 +155,8 @@ export function parseLocalFilePath(filePath, wsPath) {
   // need to decode uri as filesystems dont do encoding
   return filePathToWsPath(wsName, decodeURIComponent(webPath));
 }
+
+export const toFSPath = (wsPath) => {
+  const { wsName, filePath } = resolvePath(wsPath);
+  return [wsName, filePath].join('/');
+};

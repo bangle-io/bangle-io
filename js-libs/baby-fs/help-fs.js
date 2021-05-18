@@ -1,11 +1,63 @@
+import { HELP_DOCS_VERSION } from 'config/index';
 import { BaseFileSystemError } from './base-fs';
 import {
   FILE_NOT_FOUND_ERROR,
   NOT_ALLOWED_ERROR,
+  UPSTREAM_ERROR,
   VALIDATION_ERROR,
 } from './error-codes';
 import { IndexedDBFileSystem, IndexedDBFileSystemError } from './indexed-db-fs';
 import { readFileAsText as readFileAsTextHelper } from './native-browser-fs-helpers';
+
+function readFileFromUnpkg(filePath) {
+  const splitted = filePath.split('/');
+  const [wsName, ...path] = splitted;
+
+  return fetchHelpFiles(path.join('/'))
+    .then((r) => r?.blob())
+    .then((r) => {
+      if (!r) {
+        return undefined;
+      }
+      const name = splitted[splitted.length - 1];
+      const file = new File([r], name);
+      return file;
+    });
+}
+
+function listFilesFromUnpkg(dirPath) {
+  // we follow a convention of storing all the files in this location
+  return fetchHelpFiles('.bangle/files.json', true)
+    .then((result) => {
+      if (!result) {
+        throw new HelpFileSystemError(
+          'Unable to load help files.json',
+          UPSTREAM_ERROR,
+        );
+      }
+      return result.json();
+    })
+    .then((result) => result.files);
+}
+
+function fetchHelpFiles(path, json = false) {
+  return fetch(
+    `https://unpkg.com/bangle-io-help@${HELP_DOCS_VERSION}/docs/` + path,
+  ).then((r) => {
+    if (!r.ok) {
+      if (r.status === 404) {
+        return null;
+      }
+      return Promise.reject(
+        new HelpFileSystemError(
+          `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
+          UPSTREAM_ERROR,
+        ),
+      );
+    }
+    return r;
+  });
+}
 
 /**
  * A file system geared towards the internal use of displaying
@@ -15,18 +67,26 @@ export class HelpFileSystem extends IndexedDBFileSystem {
   constructor(opts) {
     super(opts);
     this._allowedFile = opts.allowedFile ?? ((filePath) => () => true);
-    // if localFallback is true, this will not be called if
+    // if allowLocalChanges is true, this will not be called if
     // a matching file exists locally
     // return null if a file is not found.
-    this._readFile = opts.readFile;
+    this._readFile = opts.readFile ?? readFileFromUnpkg;
+    this._listFiles = opts.listFiles ?? listFilesFromUnpkg;
     // whether to allow certain indexedb persistence operation like saving a file in indexeddb
-    this._localFallback = opts.localFallback ?? true;
-    // Returns list of all available files
-    // in the format `a/b/c` where a is the direct child subdir
-    // of a workspace named `w`.
-    // NOTE: this is different from the format of what `opendirRecursive`
-    // returns.
-    this._listFiles = opts.listFiles;
+    this._allowLocalChanges = opts.allowLocalChanges ?? true;
+  }
+
+  async _readFromLocal(filePath) {
+    return super.readFile(filePath).catch((error) => {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === FILE_NOT_FOUND_ERROR
+      ) {
+        return;
+      } else {
+        throw error;
+      }
+    });
   }
 
   async readFileAsText(filePath) {
@@ -38,17 +98,8 @@ export class HelpFileSystem extends IndexedDBFileSystem {
 
   async readFile(filePath) {
     let result;
-    if (this._localFallback) {
-      result = await super.readFile(filePath).catch((error) => {
-        if (
-          error instanceof BaseFileSystemError &&
-          error.code === FILE_NOT_FOUND_ERROR
-        ) {
-          return;
-        } else {
-          throw error;
-        }
-      });
+    if (this._allowLocalChanges) {
+      result = await this._readFromLocal(filePath);
     }
 
     if (!result) {
@@ -66,7 +117,7 @@ export class HelpFileSystem extends IndexedDBFileSystem {
   }
 
   async writeFile(filePath, data) {
-    if (this._localFallback) {
+    if (this._allowLocalChanges) {
       return super.writeFile(filePath, data);
     }
 
@@ -91,7 +142,7 @@ export class HelpFileSystem extends IndexedDBFileSystem {
     // this is the wsName and all paths are returned
     // starting with their wsName
     const [prefix] = dirPath.split('/');
-    const localFiles = this._localFallback
+    const localFiles = this._allowLocalChanges
       ? await super.opendirRecursive(dirPath)
       : [];
 
@@ -110,6 +161,29 @@ export class HelpFileSystem extends IndexedDBFileSystem {
     ).filter((filePath) => this._allowedFile(filePath));
 
     return result;
+  }
+
+  // miscellaneous function
+  // check if a help file has modifications (existence of a local file indicates it)
+  async isFileModified(filePath, compareWithBlob) {
+    const localFile = await this._readFromLocal(filePath);
+    if (localFile) {
+      return true;
+    }
+
+    const actualFile = await this._readFile(filePath);
+    if (!actualFile) {
+      return true;
+    }
+
+    if (compareWithBlob) {
+      const actualFileText = await readFileAsTextHelper(actualFile);
+      const compareWithText = await readFileAsTextHelper(compareWithBlob);
+
+      return actualFileText !== compareWithText;
+    }
+
+    return false;
   }
 }
 

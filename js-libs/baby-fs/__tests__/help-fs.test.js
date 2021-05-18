@@ -74,7 +74,7 @@ test('readFileAsText', async () => {
   });
   const fs = new HelpFileSystem({
     readFile,
-    localFallback: false,
+    allowLocalChanges: false,
     listFiles,
   });
 
@@ -98,7 +98,7 @@ test('readFile', async () => {
   });
   const fs = new HelpFileSystem({
     readFile,
-    localFallback: false,
+    allowLocalChanges: false,
     listFiles,
   });
 
@@ -129,7 +129,7 @@ test('readFile from local by default', async () => {
   });
   const fs = new HelpFileSystem({
     readFile,
-    localFallback: true,
+    allowLocalChanges: true,
     listFiles,
   });
 
@@ -151,7 +151,7 @@ test('when opts.readFile returns null should throw not found error', async () =>
   });
   const fs = new HelpFileSystem({
     readFile,
-    localFallback: false,
+    allowLocalChanges: false,
     listFiles,
   });
 
@@ -203,7 +203,7 @@ test('writeFile throws error when fallback is disabled', async () => {
   });
   const fs = new HelpFileSystem({
     readFile,
-    localFallback: false,
+    allowLocalChanges: false,
     listFiles,
   });
 
@@ -223,12 +223,12 @@ test("listFile fallback is disabled doesn't return local files", async () => {
   });
   const fs = new HelpFileSystem({
     readFile,
-    localFallback: false,
+    allowLocalChanges: false,
     listFiles,
   });
   const fsLocal = new HelpFileSystem({
     readFile,
-    localFallback: true,
+    allowLocalChanges: true,
     listFiles,
   });
 
@@ -263,12 +263,12 @@ test('readFile fallback local override', async () => {
   });
   const fs = new HelpFileSystem({
     readFile,
-    localFallback: false,
+    allowLocalChanges: false,
     listFiles,
   });
   const fsLocal = new HelpFileSystem({
     readFile,
-    localFallback: true,
+    allowLocalChanges: true,
     listFiles,
   });
 
