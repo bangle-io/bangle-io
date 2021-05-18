@@ -3568,7 +3568,6 @@ __metadata:
     config: "workspace:*"
     editor: "workspace:*"
     editor-manager-context: "workspace:*"
-    help-docs: "workspace:*"
     palettes: "workspace:*"
     prop-types: ^15.7.2
     react: 16.14.0
@@ -4064,13 +4063,6 @@ __metadata:
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
-
-"bangle-io-help@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "bangle-io-help@npm:1.4.0"
-  checksum: 8ac948df67d7d1d0c5d4407e5926fab0ea4e68a6e1e6cb3db1a2bdacff2439da1cd87b51dd94a2e15053ba584bef296e46250b1de66eb69ab27aa8ce13e2c09e
-  languageName: node
-  linkType: hard
 
 "bangle-io@workspace:.":
   version: 0.0.0-use.local
@@ -7719,20 +7711,6 @@ fsevents@~2.3.1:
   checksum: 3d4d6babccccd79c5c5a3f929a68af33360d6445587d628087f39a965079d84f18ce9c3d3f917ee1e3978916fc833bb8b29377c3b403f919426f91bc6965e7a7
   languageName: node
   linkType: hard
-
-"help-docs@workspace:*, help-docs@workspace:help-docs":
-  version: 0.0.0-use.local
-  resolution: "help-docs@workspace:help-docs"
-  dependencies:
-    bangle-io-help: ^1.4.0
-    commands: "workspace:*"
-    react: 16.14.0
-    ui-components: "workspace:*"
-    ui-context: "workspace:*"
-    utils: "workspace:*"
-    workspace: "workspace:*"
-  languageName: unknown
-  linkType: soft
 
 "history@npm:^4.9.0":
   version: 4.10.1

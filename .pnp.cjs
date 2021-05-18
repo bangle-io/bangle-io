@@ -79,10 +79,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/inline-command-palette"
       },
       {
-        "name": "help-docs",
-        "reference": "workspace:help-docs"
-      },
-      {
         "name": "baby-fs",
         "reference": "workspace:js-libs/baby-fs"
       },
@@ -131,7 +127,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["editor-manager-context", ["workspace:editor-manager-context"]],
       ["env-vars", ["workspace:env-vars"]],
       ["extension-helpers", ["workspace:extension-helpers"]],
-      ["help-docs", ["workspace:help-docs"]],
       ["image-extension", ["workspace:extensions/image-extension"]],
       ["inline-backlink", ["workspace:extensions/inline-backlink"]],
       ["inline-command-palette", ["workspace:extensions/inline-command-palette"]],
@@ -5481,7 +5476,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:editor-manager-context"],
-            ["help-docs", "workspace:help-docs"],
             ["palettes", "workspace:palettes"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.14.0"],
@@ -6230,15 +6224,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["utils", "workspace:utils"]
           ],
           "linkType": "SOFT",
-        }]
-      ]],
-      ["bangle-io-help", [
-        ["npm:1.4.0", {
-          "packageLocation": "./.yarn/cache/bangle-io-help-npm-1.4.0-3a0ba4b6a0-8ac948df67.zip/node_modules/bangle-io-help/",
-          "packageDependencies": [
-            ["bangle-io-help", "npm:1.4.0"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["base", [
@@ -10345,22 +10330,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["he", "npm:1.2.0"]
           ],
           "linkType": "HARD",
-        }]
-      ]],
-      ["help-docs", [
-        ["workspace:help-docs", {
-          "packageLocation": "./help-docs/",
-          "packageDependencies": [
-            ["help-docs", "workspace:help-docs"],
-            ["bangle-io-help", "npm:1.4.0"],
-            ["commands", "workspace:commands"],
-            ["react", "npm:16.14.0"],
-            ["ui-components", "workspace:ui-components"],
-            ["ui-context", "workspace:ui-context"],
-            ["utils", "workspace:utils"],
-            ["workspace", "workspace:workspace"]
-          ],
-          "linkType": "SOFT",
         }]
       ]],
       ["history", [
