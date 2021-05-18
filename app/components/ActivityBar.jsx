@@ -9,6 +9,7 @@ import {
   FolderIcon,
   HomeIcon,
   MenuIcon,
+  QuestionIcon,
 } from 'ui-components/index';
 import { keybindings } from 'config/index';
 import { cx } from 'utils/index';
@@ -83,8 +84,8 @@ export function ActivityBar() {
   }
 
   return (
-    <div id="activity-bar-area" className="widescreen">
-      <div className="flex flex-col">
+    <div id="activity-bar-area" className="widescreen flex">
+      <div className="flex flex-col flex-grow">
         <ButtonIcon
           onClick={() => {
             history.push('/');
@@ -98,11 +99,11 @@ export function ActivityBar() {
           )}
           style={{
             borderColor: !Boolean(wsPath)
-              ? 'var(--activity-bar-font-color)'
+              ? 'var(--accent-stronger-color)'
               : 'transparent',
           }}
         >
-          <HomeIcon className="h-5 w-5 text-gray-100" />
+          <HomeIcon className="h-7 w-7 text-gray-100" />
         </ButtonIcon>
         <ButtonIcon
           onClick={toggleSidebar}
@@ -114,16 +115,36 @@ export function ActivityBar() {
           hintPos="right"
           active={Boolean(sidebar)}
           className={cx(
-            'flex justify-center pt-3 pb-3 mt-1 mb-1',
+            'flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200',
             widescreen && 'border-l-2',
           )}
           style={{
             borderColor: sidebar
-              ? 'var(--activity-bar-font-color)'
+              ? 'var(--accent-stronger-color)'
               : 'transparent',
           }}
         >
-          <FolderIcon className="h-5 w-5 text-gray-100" />
+          <FolderIcon className="h-7 w-7 text-gray-100" />
+        </ButtonIcon>
+        <div className="flex-grow"></div>
+        <ButtonIcon
+          onClick={() => {
+            history.push('/');
+          }}
+          hint={sidebar ? null : 'bangle.io'}
+          hintPos="right"
+          active={!Boolean(wsPath)}
+          className={cx(
+            'flex justify-center pt-3 pb-3 mt-1 mb-1',
+            widescreen && 'border-l-2',
+          )}
+          style={{
+            borderColor: !Boolean(wsPath)
+              ? 'var(--accent-stronger-color)'
+              : 'transparent',
+          }}
+        >
+          <QuestionIcon className="h-7 w-7 text-gray-100" />
         </ButtonIcon>
       </div>
     </div>

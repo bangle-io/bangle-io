@@ -1,6 +1,5 @@
 #activity-bar-area button:active {
-  background-color: var(--accent-color);
-  border-radius: 4px;
+  background-color: var(--font-lighter-color);
 }
 
 /* The position of the menu when not hidden (and default) */
