@@ -6,17 +6,14 @@ import {
   validateNoteWsPath,
   isValidNoteWsPath,
   filePathToWsPath,
+  toFSPath,
 } from './path-helpers';
 import { getWorkspaceInfo } from './workspace-helpers';
 import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs/index';
 import { listFilesCache } from './native-browser-list-fs-cache';
 import { getFileSystemFromWsInfo } from './get-fs';
 import { serialExecuteQueue, weakCache } from 'utils/utility';
-
-const toFSPath = (wsPath) => {
-  const { wsName, filePath } = resolvePath(wsPath);
-  return [wsName, filePath].join('/');
-};
+import { HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
 
 export async function checkFileExists(wsPath) {
   validateFileWsPath(wsPath);
@@ -73,7 +70,6 @@ export async function getFile(wsPath) {
   const path = toFSPath(wsPath);
 
   const file = await getFileSystemFromWsInfo(workspaceInfo).readFile(path);
-
   return file;
 }
 
@@ -101,7 +97,18 @@ export async function saveFile(wsPath, fileBlob) {
   const workspaceInfo = await getWorkspaceInfo(wsName);
   const path = toFSPath(wsPath);
 
-  await getFileSystemFromWsInfo(workspaceInfo).writeFile(path, fileBlob);
+  const fs = getFileSystemFromWsInfo(workspaceInfo);
+  // TODO hack to check if the user actually wrote anything
+  if (
+    workspaceInfo.type === HELP_FS_WORKSPACE_TYPE &&
+    isValidNoteWsPath(wsPath)
+  ) {
+    if (!(await fs.isFileModified(toFSPath(wsPath), fileBlob))) {
+      return;
+    }
+  }
+
+  await fs.writeFile(path, fileBlob);
 }
 
 /**

@@ -47,6 +47,6 @@ export const SPLIT_SCREEN_MIN_WIDTH = parseInt(
 export * from './keybindings';
 export * from './is-mac';
 export * from './paletteTypes';
-
+export * from './help-fs';
 export const FILE_PALETTE_MAX_RECENT_FILES = 15;
 export const FILE_PALETTE_MAX_FILES = 200;

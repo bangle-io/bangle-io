@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Landing page is correct 1`] = `
+"bangle.io
+
+A fully local Markdown Editor - no servers.
+
+WYSIWG editor that edits markdown files saved in your hard drive
+
+You own your data, nothing leaves your computer.
+
+Please note that is a work in progress, for Issues/thoughts/❤️ please visit Github or Discord."
+`;

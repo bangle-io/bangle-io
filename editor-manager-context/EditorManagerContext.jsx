@@ -170,7 +170,6 @@ function localDisk(defaultContent) {
   return new LocalDisk({
     getItem: async (wsPath) => {
       log('getItem', wsPath);
-      // await sleep(5000);
       const doc = await getNote(bangleIOContext, wsPath);
       if (!doc) {
         return defaultContent;

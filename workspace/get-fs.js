@@ -2,7 +2,9 @@ import {
   IndexedDBFileSystem,
   NativeBrowserFileSystem,
   GithubReadFileSystem,
+  HelpFileSystem,
 } from 'baby-fs/index';
+import { HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
 
 const allowedFile = (name) => {
   return name.endsWith('.md') || name.endsWith('.png');
@@ -30,6 +32,12 @@ export const getFileSystemFromWsInfo = (wsInfo) => {
     return new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
       allowedFile: (fileHandle) => allowedFile(fileHandle.name),
+    });
+  }
+
+  if (wsInfo.type === HELP_FS_WORKSPACE_TYPE) {
+    return new HelpFileSystem({
+      allowLocalChanges: wsInfo.metadata.allowLocalChanges ?? true,
     });
   }
 

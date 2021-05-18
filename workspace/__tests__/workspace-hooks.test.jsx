@@ -15,6 +15,7 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from '../workspace-hooks';
+import { helpFSWorkspaceInfo } from 'config/help-fs';
 
 jest.mock('utils/index', () => {
   const actual = jest.requireActual('utils/index');
@@ -420,6 +421,7 @@ describe('useWorkspaces', () => {
           data-testid="result"
         >
           kujo1
+          bangle-help
         </div>
       </div>
     `);
@@ -463,6 +465,7 @@ describe('useWorkspaces', () => {
     // Note: for some reason MemoryRouter doesnt do urlParams
     // correctly
     expect(idb.set).toBeCalledWith('workspaces/2', [
+      helpFSWorkspaceInfo,
       { metadata: {}, name: 'kujo1', type: 'browser' },
     ]);
   });

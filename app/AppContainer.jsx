@@ -14,9 +14,9 @@ import { FileBrowser } from './components/FileBrowser';
 import { OptionsBar } from './components/OptionsBar';
 import { keybindings } from 'config/index';
 import { EditorArea } from './editor/EditorArea';
-import { RootHomePage } from './components/RootHomePage';
 import { EditorWrapperUI } from './components/EditorWrapperUI';
 import { NotificationArea } from './components/NotificationArea';
+import { HelpWorkspaceMonitor } from './help-docs/HelpWorkspaceModified';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
@@ -37,7 +37,12 @@ export function AppContainer() {
         )}
       >
         <Route exact path="/">
-          <RootHomePage />
+          {/* Show the default landing page at root */}
+          <WorkspacePage
+            showTabs={showTabs}
+            secondaryEditor={secondaryEditor}
+            widescreen={widescreen}
+          />
         </Route>
         <Route path="/ws/:wsName">
           <WorkspacePage
@@ -101,6 +106,9 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
         wsPath={wsPath}
         onClose={removeWsPath}
       />
+
+      {wsPath && <HelpWorkspaceMonitor wsPath={wsPath} />}
+      {secondaryWsPath && <HelpWorkspaceMonitor wsPath={secondaryWsPath} />}
       {widescreen && <OptionsBar />}
       {widescreen && secondaryEditor && <div className="grid-gutter" />}
       {widescreen && secondaryEditor && (

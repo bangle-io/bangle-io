@@ -1,7 +1,14 @@
-const url = 'http://localhost:1234';
-const os = require('os');
-const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
-const { sleep, longSleep, frmtHTML } = require('./helpers');
+const {
+  sleep,
+  longSleep,
+  ctrlKey,
+  frmtHTML,
+  url,
+  createNewNote,
+  clearEditor,
+  getEditorHTML,
+  createWorkspace,
+} = require('./helpers');
 jest.setTimeout(105 * 1000);
 
 beforeEach(async () => {
@@ -19,7 +26,7 @@ beforeEach(async () => {
 });
 
 test('Title check', async () => {
-  await expect(page.title()).resolves.toMatch('Bangle App');
+  await expect(page.title()).resolves.toMatch('landing.md - bangle.io');
 });
 
 test('Activity bar', async () => {
@@ -128,63 +135,3 @@ test('inline command palette convert to heading 3', async () => {
   await editorHandle.type('I am a heading', { delay: 1 });
   expect(await getEditorHTML(editorHandle)).toContain('I am a heading');
 });
-
-async function createWorkspace(
-  wsName = ('test-' + Math.random()).slice(0, 12),
-) {
-  await runACommand('NEW_WORKSPACE');
-  let handle = await page.$('.bangle-palette');
-
-  await sleep();
-  await clickPaletteRow('browser');
-
-  const input = await handle.$('input');
-
-  await input.type(wsName);
-  await clickPaletteRow('input-confirm');
-
-  await page.waitForNavigation();
-
-  return wsName;
-}
-
-async function createNewNote(wsName, fileName) {
-  await runACommand('NEW_NOTE_COMMAND');
-  let handle = await page.$('.bangle-palette');
-
-  const input = await handle.$('input');
-  await input.type('new-file');
-  await clickPaletteRow('input-confirm');
-  await page.waitForNavigation();
-  await longSleep();
-  expect(await page.url()).toBe(url + '/ws/' + wsName + '/' + fileName + '.md');
-}
-
-async function runACommand(commandId) {
-  await page.keyboard.press('Escape');
-  await page.keyboard.down(ctrlKey);
-  await page.keyboard.down('Shift');
-  await page.keyboard.press('P');
-  await page.keyboard.up('Shift');
-  await page.keyboard.up(ctrlKey);
-
-  await clickPaletteRow(commandId);
-}
-
-async function clickPaletteRow(id) {
-  const result = await page.$(`.palette-row[data-id="${id}"]`);
-  await result.click();
-}
-
-async function clearEditor() {
-  await longSleep();
-  await page.keyboard.down(ctrlKey);
-  await page.keyboard.press('a', { delay: 30 });
-  await page.keyboard.up(ctrlKey);
-  await page.keyboard.press('Backspace', { delay: 30 });
-  await sleep();
-}
-
-async function getEditorHTML(editorHandle) {
-  return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
-}
