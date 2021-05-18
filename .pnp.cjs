@@ -159,6 +159,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.2.5"],
             ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],
             ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.2"],
+            ["bangle-io-help", "npm:1.4.0"],
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],
             ["copy-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.1.1"],
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.4"],
@@ -6134,6 +6135,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-libs/baby-fs/",
           "packageDependencies": [
             ["baby-fs", "workspace:js-libs/baby-fs"],
+            ["config", "workspace:config"],
             ["idb-keyval", "npm:5.0.5"],
             ["utils", "workspace:utils"]
           ],
@@ -6168,6 +6170,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["autoprefixer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.2.5"],
             ["babel-eslint", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:10.1.0"],
             ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.2"],
+            ["bangle-io-help", "npm:1.4.0"],
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],
             ["copy-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.1.1"],
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.4"],
@@ -6224,6 +6227,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["utils", "workspace:utils"]
           ],
           "linkType": "SOFT",
+        }]
+      ]],
+      ["bangle-io-help", [
+        ["npm:1.4.0", {
+          "packageLocation": "./.yarn/cache/bangle-io-help-npm-1.4.0-3a0ba4b6a0-8ac948df67.zip/node_modules/bangle-io-help/",
+          "packageDependencies": [
+            ["bangle-io-help", "npm:1.4.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["base", [
