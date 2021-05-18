@@ -381,7 +381,6 @@ export function useIsHelpWorkspaceModified(wsPath, checkInterval = 6000) {
     if (isHelpWorkspace && wsPath && isValidNoteWsPath(wsPath)) {
       id = setInterval(() => {
         isHelpFileModified(wsPath).then((result) => {
-          console.log({ result });
           if (effectDestroyed) {
             return;
           }

@@ -15,6 +15,7 @@ import {
   useWorkspacePath,
   useWorkspaces,
 } from '../workspace-hooks';
+import { helpFSWorkspaceInfo } from 'config/help-fs';
 
 jest.mock('utils/index', () => {
   const actual = jest.requireActual('utils/index');
