@@ -39,6 +39,7 @@ export function FileBrowser() {
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
   const activeFilePath = activeWSPath && resolvePath(activeWSPath).filePath;
   const newFileCommand = useNewNoteCmd();
+
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
       dispatch({
@@ -67,6 +68,34 @@ export function FileBrowser() {
     [newFileCommand],
   );
 
+  return (
+    <GenericFileBrowser
+      wsName={wsName}
+      files={files}
+      deleteFile={deleteFile}
+      pushWsPath={pushWsPath}
+      widescreen={widescreen}
+      activeFilePath={activeFilePath}
+      closeSidebar={closeSidebar}
+      createNewFile={createNewFile}
+    />
+  );
+}
+const IconStyle = {
+  height: 16,
+  width: 16,
+};
+
+export function GenericFileBrowser({
+  wsName,
+  files,
+  deleteFile,
+  pushWsPath,
+  widescreen,
+  activeFilePath,
+  closeSidebar,
+  createNewFile,
+}) {
   const { filesAndDirList, dirSet } = useMemo(() => {
     return fileWsPathsToFlatDirTree(files);
   }, [files]);
@@ -89,10 +118,6 @@ export function FileBrowser() {
     />
   );
 }
-const IconStyle = {
-  height: 16,
-  width: 16,
-};
 
 function RenderRow({
   virtualRow,

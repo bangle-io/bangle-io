@@ -36,7 +36,7 @@ DONOT keep internal styles here.
   min-width: var(--activity-bar-width);
   max-width: var(--activity-bar-width);
   position: static;
-  padding: 0.5rem 0 0 0;
+  padding: 0.5rem 0 0.5rem 0;
 }
 
 .main-content {
@@ -49,6 +49,10 @@ DONOT keep internal styles here.
 .main-content.widescreen {
   height: 100vh;
   overflow-y: scroll;
+}
+/* prevent two scroll bars */
+.main-content.widescreen.has-secondary-editor {
+  overflow-y: unset;
 }
 
 .bangle-editor-area {
@@ -172,7 +176,6 @@ DONOT keep internal styles here.
   max-height: 100vh;
   min-width: var(--left-sidebar-area-width);
   max-width: var(--left-sidebar-area-width);
-  overflow-y: scroll;
 }
 
 .homepage {

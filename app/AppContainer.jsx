@@ -17,6 +17,7 @@ import { EditorArea } from './editor/EditorArea';
 import { EditorWrapperUI } from './components/EditorWrapperUI';
 import { NotificationArea } from './components/NotificationArea';
 import { HelpWorkspaceMonitor } from './help-docs/HelpWorkspaceModified';
+import { HelpBrowser } from './components/HelpBrowser';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
@@ -161,6 +162,12 @@ function LeftSidebarArea() {
       break;
     }
 
+    case 'help-browser': {
+      sidebarName = 'Help';
+      component = <HelpBrowser />;
+      break;
+    }
+
     default: {
       return null;
     }
@@ -172,7 +179,7 @@ function LeftSidebarArea() {
         ref={leftSidebarAreaRef}
         className="fadeInAnimation left-sidebar-area widescreen"
       >
-        <div className="top-0 text-2xl mt-4 px-4">{sidebarName}</div>
+        <div className="top-0 text-2xl mt-4 px-4 mb-2">{sidebarName}</div>
         {component}
       </div>
     );
