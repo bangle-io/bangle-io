@@ -92,7 +92,7 @@ export function useNewWorkspace() {
             Boolean(window.showDirectoryPicker) && {
               uid: 'nativefs',
               title:
-                'Hard drive: will save your notes in your local hard drive (recommended)',
+                'Your computer: will save your notes in a folder of your choice (recommended)',
             },
             {
               uid: 'browser',

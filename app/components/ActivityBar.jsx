@@ -31,10 +31,18 @@ export function ActivityBar() {
     if (event?.currentTarget) {
       event.currentTarget.blur();
     }
-    dispatch({
-      type: 'UI/TOGGLE_SIDEBAR',
-      value: { type },
-    });
+    if (type === sidebar) {
+      dispatch({
+        type: 'UI/TOGGLE_SIDEBAR',
+        value: { type },
+      });
+    } else {
+      dispatch({
+        type: 'UI/CHANGE_SIDEBAR',
+        value: { type: type },
+      });
+    }
+
     dispatch({
       type: 'UI/CHANGE_PALETTE_TYPE',
       value: {
@@ -88,20 +96,16 @@ export function ActivityBar() {
       <div className="flex flex-col flex-grow">
         <ButtonIcon
           onClick={() => {
+            dispatch({
+              type: 'UI/CHANGE_SIDEBAR',
+              value: { type: null },
+            });
             history.push('/');
           }}
           hint={sidebar ? null : 'bangle.io'}
           hintPos="right"
-          active={!Boolean(wsPath)}
-          className={cx(
-            'flex justify-center pt-3 pb-3 mt-1 mb-1',
-            widescreen && 'border-l-2',
-          )}
-          style={{
-            borderColor: !Boolean(wsPath)
-              ? 'var(--accent-stronger-color)'
-              : 'transparent',
-          }}
+          className={cx('flex justify-center pt-3 pb-3 mt-1 mb-1')}
+          style={{}}
         >
           <HomeIcon className="h-7 w-7 text-gray-100" />
         </ButtonIcon>

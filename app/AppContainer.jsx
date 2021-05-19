@@ -179,7 +179,7 @@ function LeftSidebarArea() {
         ref={leftSidebarAreaRef}
         className="fadeInAnimation left-sidebar-area widescreen"
       >
-        <div className="top-0 text-2xl mt-4 px-4">{sidebarName}</div>
+        <div className="top-0 text-2xl mt-4 px-4 mb-2">{sidebarName}</div>
         {component}
       </div>
     );
