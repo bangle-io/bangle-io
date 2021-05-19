@@ -50,6 +50,10 @@ DONOT keep internal styles here.
   height: 100vh;
   overflow-y: scroll;
 }
+/* prevent two scroll bars */
+.main-content.widescreen.has-secondary-editor {
+  overflow-y: unset;
+}
 
 .bangle-editor-area {
   flex-grow: 1;
@@ -172,7 +176,6 @@ DONOT keep internal styles here.
   max-height: 100vh;
   min-width: var(--left-sidebar-area-width);
   max-width: var(--left-sidebar-area-width);
-  overflow-y: scroll;
 }
 
 .homepage {

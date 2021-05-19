@@ -26,14 +26,14 @@ export function ActivityBar() {
   const { wsPath } = useWorkspacePath();
   const history = useHistory();
 
-  const toggleSidebar = (event) => {
+  const toggleSidebar = (type) => (event) => {
     event.preventDefault();
     if (event?.currentTarget) {
       event.currentTarget.blur();
     }
     dispatch({
       type: 'UI/TOGGLE_SIDEBAR',
-      value: { type: 'file-browser' },
+      value: { type },
     });
     dispatch({
       type: 'UI/CHANGE_PALETTE_TYPE',
@@ -76,7 +76,7 @@ export function ActivityBar() {
       <ActivityBarSmallscreen
         wsPath={wsPath}
         sidebar={sidebar}
-        toggleSidebar={toggleSidebar}
+        toggleSidebar={toggleSidebar('file-browser')}
         toggleFilePalette={toggleFilePalette}
         paletteType={paletteType}
       />
@@ -106,42 +106,44 @@ export function ActivityBar() {
           <HomeIcon className="h-7 w-7 text-gray-100" />
         </ButtonIcon>
         <ButtonIcon
-          onClick={toggleSidebar}
+          onClick={toggleSidebar('file-browser')}
           hint={
             sidebar
               ? null
               : 'File Browser\n' + keybindings.toggleFileBrowser.displayValue
           }
           hintPos="right"
-          active={Boolean(sidebar)}
+          active={sidebar === 'file-browser'}
           className={cx(
             'flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200',
             widescreen && 'border-l-2',
+            sidebar === 'file-browser' && 'active',
           )}
           style={{
-            borderColor: sidebar
-              ? 'var(--accent-stronger-color)'
-              : 'transparent',
+            borderColor:
+              sidebar === 'file-browser'
+                ? 'var(--accent-stronger-color)'
+                : 'transparent',
           }}
         >
           <FolderIcon className="h-7 w-7 text-gray-100" />
         </ButtonIcon>
         <div className="flex-grow"></div>
         <ButtonIcon
-          onClick={() => {
-            history.push('/');
-          }}
-          hint={sidebar ? null : 'bangle.io'}
+          onClick={toggleSidebar('help-browser')}
+          hint={sidebar ? null : 'Help, Keyboard Shortcuts'}
           hintPos="right"
           active={!Boolean(wsPath)}
           className={cx(
             'flex justify-center pt-3 pb-3 mt-1 mb-1',
             widescreen && 'border-l-2',
+            sidebar === 'help-browser' && 'active',
           )}
           style={{
-            borderColor: !Boolean(wsPath)
-              ? 'var(--accent-stronger-color)'
-              : 'transparent',
+            borderColor:
+              sidebar === 'help-browser'
+                ? 'var(--accent-stronger-color)'
+                : 'transparent',
           }}
         >
           <QuestionIcon className="h-7 w-7 text-gray-100" />

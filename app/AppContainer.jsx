@@ -17,6 +17,7 @@ import { EditorArea } from './editor/EditorArea';
 import { EditorWrapperUI } from './components/EditorWrapperUI';
 import { NotificationArea } from './components/NotificationArea';
 import { HelpWorkspaceMonitor } from './help-docs/HelpWorkspaceModified';
+import { HelpBrowser } from './components/HelpBrowser';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
@@ -158,6 +159,12 @@ function LeftSidebarArea() {
     case 'file-browser': {
       sidebarName = 'Files';
       component = <FileBrowser />;
+      break;
+    }
+
+    case 'help-browser': {
+      sidebarName = 'Help';
+      component = <HelpBrowser />;
       break;
     }
 
