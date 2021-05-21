@@ -1,6 +1,5 @@
 import { useEditorViewContext } from '@bangle.dev/react';
 import { useEffect } from 'react';
-import { getDayJs } from 'utils/index';
 import { IMAGE_SAVE_DIR } from './config';
 import {
   filePathToWsPath,
@@ -8,7 +7,10 @@ import {
   saveFile,
   useWorkspacePath,
 } from 'workspace/index';
-import { calcImageDimensions } from './calc-image-dimensions';
+import {
+  calcImageDimensions,
+  setImageMetadataInWsPath,
+} from './image-file-helpers';
 
 // TODO I need a better solution to access
 // app contexts from inside of a pm plugin
@@ -66,28 +68,13 @@ export async function createImageNodes(files, imageType, view) {
  * @param {*} fileName  - the filename name of the image
  * @param {*} wsName - the current wsName
  * @param {*} dimensions - the the widthxheight of the image
+ * @param {Boolean} timestamp - whether to add timestamp in the fileName for uniqueness. If fileName already has one it will be updated
  * @returns - a wsPath and srcUrl for the image
  */
-export async function createImage(fileName, wsName, dimensions) {
-  const dotIndex = fileName.lastIndexOf('.');
+export async function createImage(fileName, wsName, dimensions, timestamp) {
+  let imageWsPath = filePathToWsPath(wsName, IMAGE_SAVE_DIR + '/' + fileName);
 
-  const name = dotIndex === -1 ? fileName : fileName.slice(0, dotIndex);
-
-  const ext = dotIndex === -1 ? '' : fileName.slice(dotIndex);
-
-  const dayJs = await getDayJs();
-  const date = dayJs(Date.now()).format('YYYY-MM-DD-HH-mm-ss-SSS');
-  let newFilename = `${name}-${date}`;
-  if (dimensions) {
-    newFilename += `-${dimensions.width}x${dimensions.height}`;
-  }
-  newFilename += ext;
-
-  const imageWsPath = filePathToWsPath(
-    wsName,
-    IMAGE_SAVE_DIR + '/' + newFilename,
-  );
-
+  imageWsPath = await setImageMetadataInWsPath(imageWsPath, dimensions, true);
   // pre-pending a / to make it an absolute URL
   // since we are returning a web url we need to encode it
   return {

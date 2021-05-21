@@ -7,7 +7,10 @@ import {
   resolvePath,
 } from 'workspace/index';
 import { useDestroyRef } from 'utils/index';
-import { calcImageDimensions } from './calc-image-dimensions';
+import {
+  calcImageDimensions,
+  imageDimensionFromWsPath,
+} from './image-file-helpers';
 
 export const renderReactNodeView = {
   image: (nodeViewRenderArg) => {
@@ -95,18 +98,4 @@ export function ImageComponent({ nodeAttrs }) {
       loading="lazy"
     />
   );
-}
-
-/**
- * Take hint about image dimensions from the wsPAth
- * example a file named my-pic-343x500.png means width = 343 and height = 500
- */
-export function imageDimensionFromWsPath(imageWsPath) {
-  const { fileName } = resolvePath(imageWsPath);
-  const result = /.*-(\d+x\d+)\..*/.exec(fileName);
-  if (result) {
-    const [width, height] = result[1].split('x').map((r) => parseInt(r, 10));
-    return { width, height };
-  }
-  return {};
 }
