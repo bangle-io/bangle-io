@@ -12,7 +12,7 @@ const getScrollContainer = (view) => {
 const trigger = '/';
 const extension = Extension.create({
   name: extensionName,
-  editorReactComponent: InlineCommandPalette,
+  EditorReactComponent: InlineCommandPalette,
   editorSpecs: [inlinePalette.spec({ markName: paletteMarkName, trigger })],
   highPriorityEditorPlugins: [
     inlinePalette.plugins({
