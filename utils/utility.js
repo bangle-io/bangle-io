@@ -217,7 +217,7 @@ export function serialExecuteQueue() {
 }
 
 let dayJs;
-export async function getDayJs() {
+export async function getDayJs({} = {}) {
   if (dayJs) {
     return dayJs;
   }

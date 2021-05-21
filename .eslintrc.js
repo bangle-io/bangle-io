@@ -19,7 +19,7 @@ module.exports = {
     Node: 'off',
     Selection: 'off',
     Plugin: 'off',
-    Image: 'off',
+    Image: true,
   },
 
   rules: {

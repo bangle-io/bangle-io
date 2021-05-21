@@ -8,7 +8,7 @@ export class Extension {
       editorPlugins = [],
       highPriorityEditorPlugins = [],
       markdownItPlugins = [],
-      editorReactComponent,
+      EditorReactComponent,
       renderReactNodeView,
       ...remainingFields
     } = obj;
@@ -49,9 +49,6 @@ export class Extension {
       );
     }
 
-    if (editorReactComponent) {
-    }
-
     return new Extension(obj, _check);
   }
 
@@ -66,7 +63,7 @@ export class Extension {
     this.editorPlugins = obj.editorPlugins;
     this.highPriorityEditorPlugins = obj.highPriorityEditorPlugins;
     this.markdownItPlugins = obj.markdownItPlugins;
-    this.editorReactComponent = obj.editorReactComponent;
+    this.EditorReactComponent = obj.EditorReactComponent;
     this.renderReactNodeView = obj.renderReactNodeView;
   }
 }

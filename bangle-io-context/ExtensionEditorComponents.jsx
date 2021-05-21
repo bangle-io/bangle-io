@@ -2,9 +2,9 @@ import React from 'react';
 
 export function ExtensionEditorComponents({ bangleIOContext }) {
   const result = bangleIOContext._extensions
-    .filter((extension) => extension.editorReactComponent)
+    .filter((extension) => extension.EditorReactComponent)
     .map((extension) => (
-      <extension.editorReactComponent key={extension.name} />
+      <extension.EditorReactComponent key={extension.name} />
     ));
   return result;
 }

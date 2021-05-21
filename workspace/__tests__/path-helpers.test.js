@@ -3,7 +3,7 @@ import { parseLocalFilePath } from '../path-helpers';
 describe('parseLocalFilePath', () => {
   test('simple filename', () => {
     expect(
-      parseLocalFilePath('my-img.png', 'wallah:my-baby'),
+      parseLocalFilePath('my-img.png', 'wallah:my-baby.png'),
     ).toMatchInlineSnapshot(`"wallah:my-img.png"`);
   });
 

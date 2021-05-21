@@ -7,7 +7,12 @@ import {
 } from 'workspace/index';
 import { useDestroyRef } from 'utils/index';
 
-export const renderReactNodeView = {
+import {
+  calcImageDimensions,
+  imageDimensionFromWsPath,
+} from './image-file-helpers';
+
+export const renderImageReactNodeView = {
   image: (nodeViewRenderArg) => {
     return <ImageComponent nodeAttrs={nodeViewRenderArg.node.attrs} />;
   },
@@ -22,14 +27,21 @@ const isOtherSources = (src) => {
   );
 };
 
-export function ImageComponent({ nodeAttrs }) {
+function ImageComponent({ nodeAttrs }) {
   const { src: inputSrc, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState(null);
-  const destroyRef = useDestroyRef();
   const { wsPath } = useWorkspacePath();
+  const imageWsPath = wsPath && parseLocalFilePath(inputSrc, wsPath);
+
+  const [{ height, width }, updateDimensions] = useState(() => {
+    if (imageWsPath) {
+      return imageDimensionFromWsPath(imageWsPath) ?? {};
+    }
+    return {};
+  });
+  const destroyRef = useDestroyRef();
 
   useEffect(() => {
-    let imageWsPath;
     let objectUrl;
 
     if (wsPath) {
@@ -38,8 +50,6 @@ export function ImageComponent({ nodeAttrs }) {
       } else {
         if (isValidFileWsPath(inputSrc)) {
           throw new Error('Image source cannot be a wsPath');
-        } else {
-          imageWsPath = parseLocalFilePath(inputSrc, wsPath);
         }
 
         getFile(imageWsPath)
@@ -47,8 +57,15 @@ export function ImageComponent({ nodeAttrs }) {
             if (!file) {
               return;
             }
-
             objectUrl = window.URL.createObjectURL(file);
+            if (!width) {
+              calcImageDimensions(objectUrl).then((dim) => {
+                if (!destroyRef.current) {
+                  updateDimensions({ height: dim.height, width: dim.width });
+                }
+              });
+            }
+
             if (!destroyRef.current) {
               updateImageSrc(objectUrl);
             }
@@ -64,10 +81,24 @@ export function ImageComponent({ nodeAttrs }) {
         window.URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [inputSrc, wsPath, destroyRef]);
+  }, [inputSrc, wsPath, destroyRef, imageWsPath, width]);
 
-  // TODO add height width
+  let newWidth = width;
+  let newHeight = height;
+  if (width && alt && /.*scale\d.\d\d$/.test(alt)) {
+    const perc = parseFloat(alt.split('scale')[1]);
+
+    newWidth = perc * width;
+    newHeight = perc * height;
+  }
+
   return (
-    <img src={imageSrc || '/404.png'} alt={alt || inputSrc} loading="lazy" />
+    <img
+      src={imageSrc || '/404.png'}
+      alt={alt || inputSrc}
+      width={newWidth}
+      height={newHeight}
+      loading="lazy"
+    />
   );
 }

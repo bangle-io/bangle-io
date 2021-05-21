@@ -31,7 +31,7 @@ const extension = Extension.create({
   ],
   editorPlugins: [inlineBackLinkPlugin()],
   markdownItPlugins: [wikiLinkMarkdownItPlugin],
-  editorReactComponent: InlineBacklinkPalette,
+  EditorReactComponent: InlineBacklinkPalette,
   renderReactNodeView: renderReactNodeView,
 });
 
