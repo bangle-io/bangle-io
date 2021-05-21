@@ -185,13 +185,3 @@ DONOT keep internal styles here.
 .homepage.widescreen {
   margin-top: unset;
 }
-
-.bangle-editor p {
-  content-visibility: auto;
-}
-
-.bangle-editor h1,
-h2,
-h3 {
-  content-visibility: auto;
-}
