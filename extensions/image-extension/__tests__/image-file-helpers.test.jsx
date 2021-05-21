@@ -122,7 +122,7 @@ describe('setImageDimensionInWsPath', () => {
       },
       true,
     );
-    expect(result).toBe('something:my-file-20210504144933551-9x99.png');
+    expect(result).toBe('something:my-file-20210504214933551-9x99.png');
   });
 
   test('if timestamp already there updates it', async () => {
@@ -134,7 +134,7 @@ describe('setImageDimensionInWsPath', () => {
       },
       true,
     );
-    expect(result).toBe('something:my-file-20210504144933551-9x99.png');
+    expect(result).toBe('something:my-file-20210504214933551-9x99.png');
   });
 
   test('1 works if there is an invalid timestamp', async () => {
@@ -147,7 +147,7 @@ describe('setImageDimensionInWsPath', () => {
       true,
     );
     expect(result).toBe(
-      'something:my-file-2020010314493355-20210504144933551-9x99.png',
+      'something:my-file-2020010314493355-20210504214933551-9x99.png',
     );
   });
 
@@ -161,7 +161,7 @@ describe('setImageDimensionInWsPath', () => {
       true,
     );
     expect(result).toBe(
-      'something:my-file-20211304144933551-20210504144933551-9x99.png',
+      'something:my-file-20211304144933551-20210504214933551-9x99.png',
     );
   });
 
@@ -175,7 +175,7 @@ describe('setImageDimensionInWsPath', () => {
       true,
     );
     expect(result).toBe(
-      'something:my-file-20211304144933551-20210504144933551-9x99.png',
+      'something:my-file-20211304144933551-20210504214933551-9x99.png',
     );
   });
 
@@ -189,7 +189,7 @@ describe('setImageDimensionInWsPath', () => {
       true,
     );
     expect(result).toBe(
-      'something:my-file-20211304144933551-20210504144933551-9x99.png',
+      'something:my-file-20211304144933551-20210504214933551-9x99.png',
     );
   });
 });

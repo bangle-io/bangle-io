@@ -1,16 +1,6 @@
-import { useEditorViewContext } from '@bangle.dev/react';
-import { useEffect } from 'react';
 import { IMAGE_SAVE_DIR } from './config';
-import {
-  filePathToWsPath,
-  resolvePath,
-  saveFile,
-  useWorkspacePath,
-} from 'workspace/index';
-import {
-  calcImageDimensions,
-  setImageMetadataInWsPath,
-} from './image-file-helpers';
+import { filePathToWsPath, resolvePath } from 'workspace/index';
+import { setImageMetadataInWsPath } from './image-file-helpers';
 
 /**
  *

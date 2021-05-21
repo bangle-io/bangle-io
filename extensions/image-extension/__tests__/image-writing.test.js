@@ -23,8 +23,8 @@ describe('createImage', () => {
     );
 
     expect(result).toEqual({
-      srcUrl: '/assets/images/my-file-20210504144933551-1x2.png',
-      wsPath: 'test-ws:assets/images/my-file-20210504144933551-1x2.png',
+      srcUrl: '/assets/images/my-file-20210504214933551-1x2.png',
+      wsPath: 'test-ws:assets/images/my-file-20210504214933551-1x2.png',
     });
   });
 
@@ -37,9 +37,9 @@ describe('createImage', () => {
     );
 
     expect(result).toEqual({
-      srcUrl: '/assets/images/my-file-20210504144933551-1x2.png',
+      srcUrl: '/assets/images/my-file-20210504214933551-1x2.png',
 
-      wsPath: 'test-ws:assets/images/my-file-20210504144933551-1x2.png',
+      wsPath: 'test-ws:assets/images/my-file-20210504214933551-1x2.png',
     });
   });
 
@@ -52,9 +52,9 @@ describe('createImage', () => {
     );
 
     expect(result).toEqual({
-      srcUrl: '/assets/images/my-file-20210504144933551-1x2.png',
+      srcUrl: '/assets/images/my-file-20210504214933551-1x2.png',
 
-      wsPath: 'test-ws:assets/images/my-file-20210504144933551-1x2.png',
+      wsPath: 'test-ws:assets/images/my-file-20210504214933551-1x2.png',
     });
   });
 
@@ -67,9 +67,9 @@ describe('createImage', () => {
     );
 
     expect(result).toEqual({
-      srcUrl: '/assets/images/myfile-20210504144933551-1x2.png',
+      srcUrl: '/assets/images/myfile-20210504214933551-1x2.png',
 
-      wsPath: 'test-ws:assets/images/myfile-20210504144933551-1x2.png',
+      wsPath: 'test-ws:assets/images/myfile-20210504214933551-1x2.png',
     });
   });
 
@@ -83,9 +83,9 @@ describe('createImage', () => {
 
     expect(result).toEqual({
       srcUrl:
-        '/assets/images/my20190303134933553file-20210504144933551-1x2.png',
+        '/assets/images/my20190303134933553file-20210504214933551-1x2.png',
       wsPath:
-        'test-ws:assets/images/my20190303134933553file-20210504144933551-1x2.png',
+        'test-ws:assets/images/my20190303134933553file-20210504214933551-1x2.png',
     });
   });
 
@@ -99,10 +99,10 @@ describe('createImage', () => {
 
     expect(result).toEqual({
       srcUrl:
-        '/assets/images/my-file-10200303134933553-20210504144933551-1x2.png',
+        '/assets/images/my-file-10200303134933553-20210504214933551-1x2.png',
 
       wsPath:
-        'test-ws:assets/images/my-file-10200303134933553-20210504144933551-1x2.png',
+        'test-ws:assets/images/my-file-10200303134933553-20210504214933551-1x2.png',
     });
   });
 
@@ -115,8 +115,8 @@ describe('createImage', () => {
     );
 
     expect(result).toEqual({
-      srcUrl: '/assets/images/my%20file-20210504144933551-1x2.png',
-      wsPath: 'test-ws:assets/images/my file-20210504144933551-1x2.png',
+      srcUrl: '/assets/images/my%20file-20210504214933551-1x2.png',
+      wsPath: 'test-ws:assets/images/my file-20210504214933551-1x2.png',
     });
   });
 });
