@@ -1,3 +1,11 @@
+### May 20, 2021
+
+- Adding ability to scale down images. Click on an image to pick the percentage to scale down the image.
+
+### May 17, 2021
+
+- An interactive landing and documentation page.
+
 ### May 13, 2021
 
 - A new command to clone a workspace.

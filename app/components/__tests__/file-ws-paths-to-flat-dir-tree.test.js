@@ -69,7 +69,21 @@ function understandOldFunc(data) {
 
   return recurse(res)
     .filter((r) => r !== '$starter')
-    .map((r) => resolvePath(r).filePath);
+    .map((r) => {
+      // TODO the prepending of .md is a hack because
+      // resolvePath doesnt do dirs right now
+      const endsWithMd = r.endsWith('.md');
+      if (!endsWithMd) {
+        r += '.md';
+      }
+      let result = resolvePath(r).filePath;
+
+      if (endsWithMd) {
+        return result;
+      }
+
+      return result.slice(0, -3);
+    });
 }
 
 test('sample data', () => {
