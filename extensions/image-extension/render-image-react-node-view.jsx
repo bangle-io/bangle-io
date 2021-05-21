@@ -4,15 +4,15 @@ import {
   isValidFileWsPath,
   useWorkspacePath,
   parseLocalFilePath,
-  resolvePath,
 } from 'workspace/index';
 import { useDestroyRef } from 'utils/index';
+
 import {
   calcImageDimensions,
   imageDimensionFromWsPath,
 } from './image-file-helpers';
 
-export const renderReactNodeView = {
+export const renderImageReactNodeView = {
   image: (nodeViewRenderArg) => {
     return <ImageComponent nodeAttrs={nodeViewRenderArg.node.attrs} />;
   },
@@ -27,14 +27,17 @@ const isOtherSources = (src) => {
   );
 };
 
-export function ImageComponent({ nodeAttrs }) {
+function ImageComponent({ nodeAttrs }) {
   const { src: inputSrc, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState(null);
   const { wsPath } = useWorkspacePath();
   const imageWsPath = wsPath && parseLocalFilePath(inputSrc, wsPath);
 
   const [{ height, width }, updateDimensions] = useState(() => {
-    return imageWsPath ? imageDimensionFromWsPath(imageWsPath) : {};
+    if (imageWsPath) {
+      return imageDimensionFromWsPath(imageWsPath) ?? {};
+    }
+    return {};
   });
   const destroyRef = useDestroyRef();
 

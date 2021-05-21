@@ -12,57 +12,6 @@ import {
   setImageMetadataInWsPath,
 } from './image-file-helpers';
 
-// TODO I need a better solution to access
-// app contexts from inside of a pm plugin
-const wsNameViewWeakStore = new WeakMap();
-
-export function EditorImageComponent() {
-  const view = useEditorViewContext();
-  const { wsName } = useWorkspacePath();
-  useEffect(() => {
-    if (wsName) {
-      wsNameViewWeakStore.set(view, wsName);
-    }
-    return () => {
-      // I know weakmap will automatically clean it
-      // but still :shrug
-      wsNameViewWeakStore.delete(view);
-    };
-  }, [view, wsName]);
-  return null;
-}
-
-export async function createImageNodes(files, imageType, view) {
-  const sources = await Promise.all(
-    files.map(async (file) => {
-      const wsName = wsNameViewWeakStore.get(view);
-
-      if (!wsName) {
-        return Promise.resolve();
-      }
-
-      const objectUrl = window.URL.createObjectURL(file);
-      const dimensions = await calcImageDimensions(objectUrl);
-      window.URL.revokeObjectURL(objectUrl);
-
-      const { wsPath, srcUrl } = await createImage(
-        file.name,
-        wsName,
-        dimensions,
-      );
-
-      await saveFile(wsPath, file);
-
-      return srcUrl;
-    }),
-  );
-  return sources.filter(Boolean).map((source) => {
-    return imageType.create({
-      src: source,
-    });
-  });
-}
-
 /**
  *
  * @param {*} fileName  - the filename name of the image

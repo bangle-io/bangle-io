@@ -1,5 +1,6 @@
 import { getDayJs } from 'utils/utility';
 import { resolvePath, updateFileName } from 'workspace';
+const dayFormat = 'YYYYMMDDHHmmssSSS';
 
 export function calcImageDimensions(blobUrl) {
   const image = new Image();
@@ -41,7 +42,6 @@ export function parseFileName(fileName) {
   const ext = dotIndex === -1 ? '' : fileName.slice(dotIndex);
   return { name, ext };
 }
-let dayFormat = 'YYYYMMDDHHmmssSSS';
 
 export async function setImageMetadataInWsPath(
   imageWsPath,
