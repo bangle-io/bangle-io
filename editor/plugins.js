@@ -1,5 +1,13 @@
 import { uuid } from '@bangle.dev/core/utils/js-utils';
-import { Plugin, PluginKey } from '@bangle.dev/core/prosemirror/state';
+import {
+  queryIsSelectionAroundLink,
+  queryIsLinkActive,
+} from '@bangle.dev/core/components/link';
+import {
+  Plugin,
+  PluginKey,
+  NodeSelection,
+} from '@bangle.dev/core/prosemirror/state';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
 import { components } from '@bangle.dev/core';
 import { emoji, emojisArray } from '@bangle.dev/emoji/index';
@@ -10,6 +18,7 @@ import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { tablePlugins } from '@bangle.dev/table';
 export const menuKey = new PluginKey('menuKey');
+
 export const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
 const getScrollContainer = (view) => {
@@ -54,6 +63,18 @@ export const getPlugins = (wsPath, sendRequest) => {
       key: menuKey,
       tooltipRenderOpts: {
         getScrollContainer,
+      },
+      calculateType: (state, prevType) => {
+        if (state.selection instanceof NodeSelection) {
+          return null;
+        }
+        if (queryIsSelectionAroundLink()(state) || queryIsLinkActive()(state)) {
+          return 'linkSubMenu';
+        }
+        if (state.selection.empty) {
+          return null;
+        }
+        return 'defaultMenu';
       },
     }),
     emojiSuggest.plugins({
