@@ -8041,6 +8041,8 @@ fsevents@~2.3.1:
   dependencies:
     "@bangle.dev/core": 0.13.0
     "@bangle.dev/react": 0.13.0
+    "@bangle.dev/react-menu": 0.13.0
+    "@bangle.dev/tooltip": 0.13.0
     extension-helpers: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
