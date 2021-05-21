@@ -11,7 +11,6 @@ export function calcImageDimensions(blobUrl) {
     };
   });
 }
-const dimensionRegex = /.*-(\d+x\d+)\..*/;
 
 /**
  * Take hint about image dimensions from the wsPAth
@@ -19,6 +18,7 @@ const dimensionRegex = /.*-(\d+x\d+)\..*/;
  */
 export function imageDimensionFromWsPath(imageWsPath) {
   const { fileName } = resolvePath(imageWsPath);
+  const dimensionRegex = /.*-(\d+x\d+)\..*/;
   const result = dimensionRegex.exec(fileName);
   if (result) {
     const [width, height] = result[1].split('x').map((r) => parseInt(r, 10));
@@ -126,4 +126,35 @@ function validTimestamp(timestamp) {
     milliseconds >= 0 &&
     milliseconds < 1000
   );
+}
+
+const scaleRegex = /.*-scale(\d.+)$/;
+
+export function getImageAltScaleFactor(alt) {
+  if (!alt) {
+    alt = '';
+  }
+  const result = scaleRegex.exec(alt);
+  if (result) {
+    return parseFloat(result[1]);
+  }
+
+  return 1;
+}
+
+export function updateImageAltScaleFactor(alt, scaleFactor = 1) {
+  // so that null is also covered
+  if (!alt) {
+    alt = '';
+  }
+  const match = scaleRegex.exec(alt);
+  if (match && match[1]) {
+    alt = alt.replaceAll(`-scale${match[1]}`, '');
+  }
+
+  if (scaleFactor === 1) {
+    return alt;
+  }
+
+  return alt + '-scale' + scaleFactor.toFixed(2);
 }
