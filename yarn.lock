@@ -8043,6 +8043,8 @@ fsevents@~2.3.1:
     "@bangle.dev/react": 0.13.0
     "@bangle.dev/react-menu": 0.13.0
     "@bangle.dev/tooltip": 0.13.0
+    "@testing-library/react": ^11.2.6
+    "@testing-library/user-event": ^13.1.5
     extension-helpers: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0

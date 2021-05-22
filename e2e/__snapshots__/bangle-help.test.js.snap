@@ -15,29 +15,29 @@ Thanks for taking out the time to read about bangle.io. I know it is an insanely
 
 1. You own your notes
 
-Bangle reads and stores notes from a folder of your choice right in your computer. This means your data stays local and never leaves your computer.
+Local: Modify notes right from your computer. Think Notion, but local only.
 
-Bangle uses Markdown syntax to save your files so that to avoid data lock-in and keep it human readable.
+No data lock-in: bangle stores your notes in a human readable Markdown format.
 
-2. Simple, extensible and powerful
+2. Not your usual note taking app
 
-Bangle is a WYSIWYG editor. It is surprising that majority of the fancy markdown note apps do not have WYSIWYG and force the user to switch context between two split screens. (Bangle has a split screen, but that is for multitasking different notes.)
+WYSIWYG: Even though we save things in Markdown format, Bangle will enrich your eyes with rich text formatting.
 
-I have spent a lot of time first perfecting the editor (see bangle.dev) which will me to build a powerful editor like Notion or Dropbox paper and support real time collaboration.
+Modern rich text editor: Bangle uses its sister project bangle.dev which unlocks us to build a powerful editor like Notion or Dropbox paper and support real time collaboration.
 
-Extensibility is one of the reasons I wanted to build a new note taking app. The core features of bangle are encapsulated in an extension and I am working on finalizing the API to allow for community built extensions.
+Extensibility: Even though it's a web app it was built ground up to be extended by awesome extensions. (We have bunch of community extensions coming out soon.)
 
-3. Portable
+3. Portability at its core
 
-I ❤️ web and I strongly believe in PWAs, which is why I donot intend to make this an Electron app.
+No Electron:  ❤️ for web and speed, thats it.
 
-Bangle.io is fast and performant. Try opening a heavy project like 10,000 Markdown Files to test out the performance.
+Performant: Throw thousands of notes at it and Bangle will chug along fine. (Try opening a heavy project like 10,000 Markdown Files.)
 
 Why should you try it out?
 
-The cost of trying it out is low, a there is no data lock-in because Bangle is completely local and uses Markdown syntax to read/write your notes.
+The cost of trying it out is low as this is a web app, not installation and as I mentioned above there is no data lock-in. You can open your existing Markdown notes try it out and still continue to use your favorite note taking app.
 
-Bangle.io is in its early stages, so expect some important features missing and some stability issues. If you are already happy with your current setup, thats great, but if you think there is potential her please help us spread the word, every bit counts 🙋‍♀️ !
+Bangle.io is in its early stages, so expect some important features missing and some stability issues. If you are already happy with your current setup, thats great, but if you think there is a potential here please help us spread the word, every bit counts 🙋‍♀️ !
 
 Head to 📗 [[Getting Started]] to create your workspace
 

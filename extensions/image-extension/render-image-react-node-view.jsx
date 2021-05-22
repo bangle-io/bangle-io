@@ -27,11 +27,14 @@ const isOtherSources = (src) => {
   );
 };
 
-function ImageComponent({ nodeAttrs }) {
+export function ImageComponent({ nodeAttrs }) {
   const { src: inputSrc, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState(null);
   const { wsPath } = useWorkspacePath();
-  const imageWsPath = wsPath && parseLocalFilePath(inputSrc, wsPath);
+  const imageWsPath =
+    wsPath && !isOtherSources(inputSrc)
+      ? parseLocalFilePath(inputSrc, wsPath)
+      : undefined;
 
   const [{ height, width }, updateDimensions] = useState(() => {
     if (imageWsPath) {
@@ -58,6 +61,7 @@ function ImageComponent({ nodeAttrs }) {
               return;
             }
             objectUrl = window.URL.createObjectURL(file);
+            console.log(objectUrl);
             if (!width) {
               calcImageDimensions(objectUrl).then((dim) => {
                 if (!destroyRef.current) {
