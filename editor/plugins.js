@@ -10,16 +10,12 @@ import {
 } from '@bangle.dev/core/prosemirror/state';
 import * as collab from '@bangle.dev/collab/client/collab-extension';
 import { components } from '@bangle.dev/core';
-import { emoji, emojisArray } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import stopwatch from '@bangle.dev/react-stopwatch';
-import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { tablePlugins } from '@bangle.dev/table';
 export const menuKey = new PluginKey('menuKey');
-
-export const emojiSuggestKey = new PluginKey('emojiSuggestKey');
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
@@ -77,14 +73,6 @@ export const getPlugins = (wsPath, sendRequest) => {
         return 'defaultMenu';
       },
     }),
-    emojiSuggest.plugins({
-      key: emojiSuggestKey,
-      emojis: emojisArray,
-      markName: 'emojiSuggest',
-      tooltipRenderOpts: {
-        getScrollContainer,
-      },
-    }),
 
     components.bold.plugins(),
     components.code.plugins(),
@@ -112,7 +100,6 @@ export const getPlugins = (wsPath, sendRequest) => {
     components.history.plugins(),
     tablePlugins(),
     collab.plugins(collabOpts),
-    emoji.plugins(),
 
     stopwatch.plugins(),
     trailingNode.plugins(),

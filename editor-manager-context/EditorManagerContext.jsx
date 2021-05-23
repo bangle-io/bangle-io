@@ -12,13 +12,13 @@ import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
 import { BangleIOContext } from 'bangle-io-context/index';
-import { emojiMarkdownItPlugin } from '@bangle.dev/emoji/index';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 import inlineCommandPalette from 'inline-command-palette/index';
 import inlineBacklinkPalette from 'inline-backlink/index';
 import { getPlugins, rawSpecs } from 'editor/index';
 import collapsibleHeading from 'collapsible-heading/index';
 import imageExtension from 'image-extension/index';
+import inlineEmoji from 'inline-emoji/index';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
@@ -52,8 +52,9 @@ const bangleIOContext = new BangleIOContext({
     inlineBacklinkPalette,
     collapsibleHeading,
     imageExtension,
+    inlineEmoji,
   ],
-  markdownItPlugins: [emojiMarkdownItPlugin, frontMatterMarkdownItPlugin],
+  markdownItPlugins: [frontMatterMarkdownItPlugin],
 });
 export const EditorManagerContext = React.createContext({});
 

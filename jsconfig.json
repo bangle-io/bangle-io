@@ -116,6 +116,12 @@
       ],
       "image-extension/*": [
         "./extensions/image-extension/*"
+      ],
+      "inline-emoji": [
+        "./extensions/inline-emoji/index.js"
+      ],
+      "inline-emoji/*": [
+        "./extensions/inline-emoji/*"
       ]
     },
     "module": "esnext",

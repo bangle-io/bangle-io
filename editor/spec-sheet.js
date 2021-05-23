@@ -1,18 +1,14 @@
 import '@bangle.dev/core/style.css';
 import '@bangle.dev/tooltip/style.css';
-import '@bangle.dev/emoji/style.css';
 import '@bangle.dev/react-menu/style.css';
-import '@bangle.dev/react-emoji-suggest/style.css';
 import '@bangle.dev/markdown-front-matter/style.css';
 import '@bangle.dev/table/style.css';
 import './extensions-override.css';
 
 import * as collab from '@bangle.dev/collab/client/collab-extension';
-import { emoji } from '@bangle.dev/emoji/index';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import stopwatch from '@bangle.dev/react-stopwatch';
-import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
 import {
   bold,
@@ -68,8 +64,6 @@ export const rawSpecs = [
   link.spec(),
   underline.spec(),
   collab.spec(),
-  emoji.spec(),
-  emojiSuggest.spec({ markName: 'emojiSuggest' }),
   stopwatch.spec(),
   trailingNode.spec(),
   timestamp.spec(),
