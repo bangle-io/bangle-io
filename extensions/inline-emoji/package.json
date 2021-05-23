@@ -21,9 +21,9 @@
   "dependencies": {
     "@bangle.dev/core": "^0.13.0",
     "@bangle.dev/emoji": "^0.13.0",
-    "@bangle.dev/markdown": "0.13.0",
+    "@bangle.dev/markdown": "0.14.0",
     "@bangle.dev/react": "^0.13.0",
-    "@bangle.dev/react-emoji-suggest": "0.13.0",
+    "@bangle.dev/react-emoji-suggest": "0.14.0",
     "@bangle.dev/tooltip": "^0.13.0",
     "emoji-lookup-data": "^1.0.0",
     "extension-helpers": "workspace:*",
