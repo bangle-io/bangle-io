@@ -1742,7 +1742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/core@npm:0.13.0":
+"@bangle.dev/core@npm:0.13.0, @bangle.dev/core@npm:^0.13.0":
   version: 0.13.0
   resolution: "@bangle.dev/core@npm:0.13.0"
   dependencies:
@@ -1763,7 +1763,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/emoji@npm:0.13.0":
+"@bangle.dev/emoji@npm:0.13.0, @bangle.dev/emoji@npm:^0.13.0":
   version: 0.13.0
   resolution: "@bangle.dev/emoji@npm:0.13.0"
   dependencies:
@@ -1839,7 +1839,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/react@npm:0.13.0":
+"@bangle.dev/react@npm:0.13.0, @bangle.dev/react@npm:^0.13.0":
   version: 0.13.0
   resolution: "@bangle.dev/react@npm:0.13.0"
   dependencies:
@@ -1874,7 +1874,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/tooltip@npm:0.13.0":
+"@bangle.dev/tooltip@npm:0.13.0, @bangle.dev/tooltip@npm:^0.13.0":
   version: 0.13.0
   resolution: "@bangle.dev/tooltip@npm:0.13.0"
   dependencies:
@@ -5891,6 +5891,7 @@ __metadata:
     image-extension: "workspace:*"
     inline-backlink: "workspace:*"
     inline-command-palette: "workspace:*"
+    inline-emoji: "workspace:*"
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
     react-dom: 16.14.0
@@ -5905,11 +5906,9 @@ __metadata:
   dependencies:
     "@bangle.dev/collab": 0.13.0
     "@bangle.dev/core": 0.13.0
-    "@bangle.dev/emoji": 0.13.0
     "@bangle.dev/markdown": 0.13.0
     "@bangle.dev/markdown-front-matter": 0.13.0
     "@bangle.dev/react": 0.13.0
-    "@bangle.dev/react-emoji-suggest": 0.13.0
     "@bangle.dev/react-menu": 0.13.0
     "@bangle.dev/react-stopwatch": 0.13.0
     "@bangle.dev/table": 0.13.0
@@ -8181,6 +8180,26 @@ fsevents@~2.3.1:
     react-dom: 16.14.0
     ui-components: "workspace:*"
     utils: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"inline-emoji@workspace:*, inline-emoji@workspace:extensions/inline-emoji":
+  version: 0.0.0-use.local
+  resolution: "inline-emoji@workspace:extensions/inline-emoji"
+  dependencies:
+    "@bangle.dev/core": ^0.13.0
+    "@bangle.dev/emoji": ^0.13.0
+    "@bangle.dev/markdown": 0.13.0
+    "@bangle.dev/react": ^0.13.0
+    "@bangle.dev/react-emoji-suggest": 0.13.0
+    "@bangle.dev/tooltip": ^0.13.0
+    "@testing-library/react": ^11.2.6
+    "@testing-library/user-event": ^13.1.5
+    extension-helpers: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    utils: "workspace:*"
+    workspace: "workspace:*"
   languageName: unknown
   linkType: soft
 
