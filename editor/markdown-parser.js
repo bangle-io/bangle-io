@@ -24,7 +24,12 @@ const setupGetParser = () => {
     log('setting up parser');
     let tokenizer = defaultMarkdownItTokenizer;
     markdownItPlugins.forEach((plugin) => {
-      tokenizer = tokenizer.use(plugin);
+      // to allow passing of plugin options
+      if (Array.isArray(plugin)) {
+        tokenizer = tokenizer.use(...plugin);
+      } else {
+        tokenizer = tokenizer.use(plugin);
+      }
     });
     return markdown.markdownParser(specRegistry, tokenizer);
   };
