@@ -5932,6 +5932,7 @@ __metadata:
   resolution: "editor@workspace:editor"
   dependencies:
     "@bangle.dev/collab-client": 0.15.0
+    "@bangle.dev/collab-server": 0.15.0
     "@bangle.dev/core": 0.15.0
     "@bangle.dev/emoji": 0.15.0
     "@bangle.dev/markdown": 0.15.0

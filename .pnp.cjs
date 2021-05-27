@@ -3018,44 +3018,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#npm:0.15.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-28a953ad5c/0/cache/@bangle.dev-collab-client-npm-0.15.0-1f79b22316-91c89d24f0.zip/node_modules/@bangle.dev/collab-client/",
-          "packageDependencies": [
-            ["@bangle.dev/collab-client", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#npm:0.15.0"],
-            ["@bangle.dev/collab-server", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#npm:0.15.0"],
-            ["@bangle.dev/core", "npm:0.15.0"],
-            ["@types/bangle.dev__collab-server", null],
-            ["@types/bangle.dev__core", null],
-            ["@types/prosemirror-collab", null],
-            ["@types/prosemirror-model", null],
-            ["@types/prosemirror-state", null],
-            ["@types/prosemirror-transform", null],
-            ["@types/prosemirror-view", null],
-            ["localforage", "npm:1.9.0"],
-            ["prosemirror-collab", "npm:1.2.2"],
-            ["prosemirror-model", "npm:1.13.3"],
-            ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-transform", "npm:1.2.7"],
-            ["prosemirror-view", "npm:1.18.1"]
-          ],
-          "packagePeers": [
-            "@bangle.dev/collab-server",
-            "@bangle.dev/core",
-            "@types/bangle.dev__collab-server",
-            "@types/bangle.dev__core",
-            "@types/prosemirror-collab",
-            "@types/prosemirror-model",
-            "@types/prosemirror-state",
-            "@types/prosemirror-transform",
-            "@types/prosemirror-view"
-          ],
-          "linkType": "HARD",
-        }],
         ["virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0", {
           "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-a20335c49e/0/cache/@bangle.dev-collab-client-npm-0.15.0-1f79b22316-91c89d24f0.zip/node_modules/@bangle.dev/collab-client/",
           "packageDependencies": [
             ["@bangle.dev/collab-client", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
-            ["@bangle.dev/collab-server", null],
+            ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
             ["@bangle.dev/core", "npm:0.15.0"],
             ["@types/bangle.dev__collab-server", null],
             ["@types/bangle.dev__core", null],
@@ -3093,10 +3060,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#npm:0.15.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-server-virtual-5cb0d78be4/0/cache/@bangle.dev-collab-server-npm-0.15.0-b167e3bc4b-04d06cd1df.zip/node_modules/@bangle.dev/collab-server/",
+        ["virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-server-virtual-1322117e10/0/cache/@bangle.dev-collab-server-npm-0.15.0-b167e3bc4b-04d06cd1df.zip/node_modules/@bangle.dev/collab-server/",
           "packageDependencies": [
-            ["@bangle.dev/collab-server", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#npm:0.15.0"],
+            ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
             ["@bangle.dev/core", "npm:0.15.0"],
             ["@types/bangle.dev__core", null],
             ["@types/prosemirror-model", null],
@@ -8385,6 +8352,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["editor", "workspace:editor"],
             ["@bangle.dev/collab-client", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
+            ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
             ["@bangle.dev/core", "npm:0.15.0"],
             ["@bangle.dev/emoji", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
             ["@bangle.dev/markdown", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
@@ -8408,8 +8376,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./editor-manager-context/",
           "packageDependencies": [
             ["editor-manager-context", "workspace:editor-manager-context"],
-            ["@bangle.dev/collab-client", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#npm:0.15.0"],
-            ["@bangle.dev/collab-server", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#npm:0.15.0"],
+            ["@bangle.dev/collab-client", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
+            ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
             ["@bangle.dev/core", "npm:0.15.0"],
             ["@bangle.dev/emoji", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
             ["@bangle.dev/markdown", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.15.0"],
