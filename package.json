@@ -40,11 +40,11 @@
   "scripts": {
     "lint": "yarn prettier --check . && yarn eslint .",
     "test": "yarn lint && yarn jest",
-    "start": "yarn g:vite-dev",
-    "webpack-start": "yarn webpack serve --env development",
+    "start": "BROWSERSLIST_ENV=development yarn g:vite-dev",
+    "webpack-start": "BROWSERSLIST_ENV=development yarn webpack serve --env development",
     "webpack-build": "NODE_ENV=production yarn webpack --env production",
     "build": "NODE_ENV=production yarn webpack --env production",
-    "g:e2e-serve": " yarn run  http-server build -p 1234",
+    "g:e2e-serve": "BROWSERSLIST_ENV=development yarn run  http-server build -p 1234",
     "g:build-dev-serve": "NODE_ENV=development yarn webpack --env development && yarn g:e2e-serve",
     "g:build-prod-serve": "NODE_ENV=production yarn webpack --env production && yarn g:e2e-serve",
     "vite-build": "NODE_ENV=production yarn g:vite-build",
@@ -53,9 +53,17 @@
     "add-portals": "yarn link -A -r /Users/kushanjoshi/code/bangle/bangle-play",
     "remove-portals": "yarn node ./_scripts/remove-portals && yarn install"
   },
-  "browserslist": [
-    "last 3 chrome version"
-  ],
+  "browserslist": {
+    "production": [
+      "last 10 chrome version",
+      "last 10 firefox version",
+      "last 4 safari version",
+      "ios 12"
+    ],
+    "development": [
+      "last 3 chrome version"
+    ]
+  },
   "dependencies": {
     "env-vars": "workspace:*",
     "punycode": "^2.1.1"

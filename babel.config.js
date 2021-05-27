@@ -23,7 +23,7 @@ module.exports = (api) => {
   let envOptions = { debug: DEBUG, targets: {} };
 
   // browserslist is not configured when running integration tests
-  envOptions.targets = 'last 2 chrome version';
+  // envOptions.targets = 'last 2 chrome version';
 
   return {
     presets: ['@babel/preset-react', ['@babel/preset-env', envOptions]],
