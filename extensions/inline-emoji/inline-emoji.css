@@ -1,0 +1,13 @@
+.bangle-emoji-suggest {
+  background-color: var(--bg-stronger-color);
+  color: var(--font-color);
+  /* width: 500px; */
+}
+
+.bangle-emoji-suggest > .bangle-row.bangle-is-selected {
+  background-color: var(--accent-color);
+}
+
+.bangle-emoji-suggest > .bangle-row:hover {
+  background-color: var(--accent-color);
+}

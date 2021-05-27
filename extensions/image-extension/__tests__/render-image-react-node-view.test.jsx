@@ -24,11 +24,11 @@ describe('ImageComponent', () => {
   beforeEach(() => {
     window.Image = class Imgx {
       constructor() {
-        setTimeout(() => {
-          this.onload();
-        }, 4);
         this.height = 300;
         this.width = 200;
+        setTimeout(() => {
+          this.onload();
+        }, 5);
       }
     };
     window.URL.createObjectURL = jest.fn((file) => 'blob:' + file.content);

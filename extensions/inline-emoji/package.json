@@ -1,5 +1,5 @@
 {
-  "name": "image-extension",
+  "name": "inline-emoji",
   "version": "0.0.0",
   "authors": [
     {
@@ -20,9 +20,12 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/core": "0.15.0",
+    "@bangle.dev/emoji": "0.15.0",
+    "@bangle.dev/markdown": "0.15.0",
     "@bangle.dev/react": "0.15.0",
-    "@bangle.dev/react-menu": "0.15.0",
+    "@bangle.dev/react-emoji-suggest": "0.15.0",
     "@bangle.dev/tooltip": "0.15.0",
+    "emoji-lookup-data": "^1.2.0",
     "extension-helpers": "workspace:*",
     "react": "16.14.0",
     "react-dom": "16.14.0",
