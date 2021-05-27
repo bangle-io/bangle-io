@@ -47,7 +47,6 @@ function getEmojis(queryText) {
         .flatMap((eIndex) =>
           aliasArray[eIndex].map((a) => [a, emojiArray[eIndex]]),
         );
-      console.log(emo);
       return [categoryName, emo];
     })
     .filter((r) => {
@@ -70,7 +69,6 @@ const extension = Extension.create({
       key: emojiSuggestKey,
       getEmojiGroups: (queryText) => {
         const result = getEmojis(queryText);
-        console.log({ result });
         return result;
       },
       markName: emojiSuggestMarkName,

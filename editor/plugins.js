@@ -8,7 +8,7 @@ import {
   PluginKey,
   NodeSelection,
 } from '@bangle.dev/core/prosemirror/state';
-import * as collab from '@bangle.dev/collab/client/collab-extension';
+import { collabClient } from '@bangle.dev/collab-client';
 import { components } from '@bangle.dev/core';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
@@ -99,7 +99,7 @@ export const getPlugins = (wsPath, sendRequest) => {
     components.orderedList.plugins(),
     components.history.plugins(),
     tablePlugins(),
-    collab.plugins(collabOpts),
+    collabClient.plugins(collabOpts),
 
     stopwatch.plugins(),
     trailingNode.plugins(),

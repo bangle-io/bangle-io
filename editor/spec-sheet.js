@@ -5,7 +5,8 @@ import '@bangle.dev/markdown-front-matter/style.css';
 import '@bangle.dev/table/style.css';
 import './extensions-override.css';
 
-import * as collab from '@bangle.dev/collab/client/collab-extension';
+import { collabClient } from '@bangle.dev/collab-client';
+
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import stopwatch from '@bangle.dev/react-stopwatch';
@@ -63,7 +64,7 @@ export const rawSpecs = [
   strike.spec(),
   link.spec(),
   underline.spec(),
-  collab.spec(),
+  collabClient.spec(),
   stopwatch.spec(),
   trailingNode.spec(),
   timestamp.spec(),

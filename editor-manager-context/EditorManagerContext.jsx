@@ -5,8 +5,8 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { LocalDisk } from '@bangle.dev/collab/client/local-disk';
-import { Manager } from '@bangle.dev/collab/server/manager';
+import { LocalDisk } from '@bangle.dev/collab-client';
+import { Manager } from '@bangle.dev/collab-server';
 import { getNote, saveNote } from 'workspace/index';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
