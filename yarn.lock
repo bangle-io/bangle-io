@@ -4147,7 +4147,7 @@ __metadata:
     postcss-import: ^14.0.1
     postcss-loader: ^5.2.0
     postcss-nested: ^5.0.5
-    prettier: ^2.2.1
+    prettier: ^2.3.0
     punycode: ^2.1.1
     puppeteer: ^9.0.0
     serve: ^11.3.2
@@ -5865,7 +5865,7 @@ __metadata:
     jest-circus: ^26.6.3
     jest-environment-puppeteer: ^5.0.1
     jest-puppeteer: ^5.0.2
-    prettier: ^2.2.1
+    prettier: ^2.3.0
     puppeteer: ^9.0.0
   languageName: unknown
   linkType: soft
@@ -11508,12 +11508,12 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "prettier@npm:2.2.1"
+"prettier@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "prettier@npm:2.3.0"
   bin:
     prettier: bin-prettier.js
-  checksum: 800de2df3d37067ab24478c7f32c60ca0c57b01742133287829feeb4a70d239a7bf6bccb56196784777af591ad80fb9ba70c1a49b0fcecf9f5622a764d513edb
+  checksum: e8851a45f60f2994775f96e07964646c299b8a8f9c64da4fbd8efafc20db3458bdcedac79aed34e1d5477540b3aa04f6499adc4979cb7937f8ebd058a767d8ff
   languageName: node
   linkType: hard
 

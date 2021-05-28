@@ -1,19 +1,19 @@
 {
-    "compilerOptions": {
-        "jsx": "react",
-        "target": "esnext",
-        "module": "commonJS",
-        "allowSyntheticDefaultImports": true
-    },
-    "exclude": [
-        "node_modules",
-        "build",
-        "dist",
-        "archive",
-        "public",
-        ".cache",
-        ".yarn",
-        "coverage",
-        ".pnp.js"
-    ]
+  "compilerOptions": {
+    "jsx": "react",
+    "target": "esnext",
+    "module": "commonJS",
+    "allowSyntheticDefaultImports": true
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    "archive",
+    "public",
+    ".cache",
+    ".yarn",
+    "coverage",
+    ".pnp.js"
+  ]
 }

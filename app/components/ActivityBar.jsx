@@ -20,9 +20,8 @@ import { useHistory } from 'react-router-dom';
 ActivityBar.propTypes = {};
 
 export function ActivityBar() {
-  const { paletteType, sidebar, dispatch, widescreen } = useContext(
-    UIManagerContext,
-  );
+  const { paletteType, sidebar, dispatch, widescreen } =
+    useContext(UIManagerContext);
   const { wsPath } = useWorkspacePath();
   const history = useHistory();
 

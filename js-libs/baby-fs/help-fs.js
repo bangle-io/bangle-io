@@ -156,9 +156,9 @@ export class HelpFileSystem extends IndexedDBFileSystem {
     }
     remoteData = remoteData.map((r) => prefix + '/' + r);
 
-    const result = Array.from(
-      new Set([...remoteData, ...localFiles]),
-    ).filter((filePath) => this._allowedFile(filePath));
+    const result = Array.from(new Set([...remoteData, ...localFiles])).filter(
+      (filePath) => this._allowedFile(filePath),
+    );
 
     return result;
   }

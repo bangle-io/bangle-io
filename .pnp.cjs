@@ -195,7 +195,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["postcss-import", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:14.0.1"],
             ["postcss-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.0"],
             ["postcss-nested", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.5"],
-            ["prettier", "npm:2.2.1"],
+            ["prettier", "npm:2.3.0"],
             ["punycode", "npm:2.1.1"],
             ["puppeteer", "npm:9.0.0"],
             ["serve", "npm:11.3.2"],
@@ -6325,7 +6325,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["postcss-import", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:14.0.1"],
             ["postcss-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.0"],
             ["postcss-nested", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.5"],
-            ["prettier", "npm:2.2.1"],
+            ["prettier", "npm:2.3.0"],
             ["punycode", "npm:2.1.1"],
             ["puppeteer", "npm:9.0.0"],
             ["serve", "npm:11.3.2"],
@@ -8318,7 +8318,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-circus", "npm:26.6.3"],
             ["jest-environment-puppeteer", "npm:5.0.1"],
             ["jest-puppeteer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.2"],
-            ["prettier", "npm:2.2.1"],
+            ["prettier", "npm:2.3.0"],
             ["puppeteer", "npm:9.0.0"]
           ],
           "linkType": "SOFT",
@@ -14828,10 +14828,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["prettier", [
-        ["npm:2.2.1", {
-          "packageLocation": "./.yarn/cache/prettier-npm-2.2.1-e0670992f8-800de2df3d.zip/node_modules/prettier/",
+        ["npm:2.3.0", {
+          "packageLocation": "./.yarn/cache/prettier-npm-2.3.0-29ef37e8b6-e8851a45f6.zip/node_modules/prettier/",
           "packageDependencies": [
-            ["prettier", "npm:2.2.1"]
+            ["prettier", "npm:2.3.0"]
           ],
           "linkType": "HARD",
         }]

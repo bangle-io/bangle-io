@@ -28,12 +28,8 @@ export function OptionsBar() {
 
   const { paletteType, widescreen, dispatch } = useContext(UIManagerContext);
 
-  const {
-    wsPath,
-    secondaryWsPath,
-    pushWsPath,
-    removeSecondaryWsPath,
-  } = useWorkspacePath();
+  const { wsPath, secondaryWsPath, pushWsPath, removeSecondaryWsPath } =
+    useWorkspacePath();
 
   const toggleFilePalette = () => {
     dispatch({
