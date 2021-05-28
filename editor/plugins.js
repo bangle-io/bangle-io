@@ -35,7 +35,7 @@ export const getPlugins = (wsPath, sendRequest) => {
 
     async pullEvents({ version, docName, userId }) {
       // log({ version, docName, userId });
-      return sendRequest('get_events', {
+      return sendRequest('pull_events', {
         docName,
         version,
         userId,
