@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "jsx": "react",
+        "module": "esnext",
+        "target": "esnext"
+    },
+    "exclude": [
+        "node_modules",
+        "build",
+        "dist",
+        "archive",
+        "public",
+        ".cache",
+        ".yarn",
+        "coverage",
+        ".pnp.js"
+    ]
+}
