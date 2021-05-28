@@ -3,7 +3,10 @@
 exports[`create a new page saved in browser 1`] = `
 "<h1>
   <span
-    class=\\"deco-collapse-positioner ProseMirror-widget\\"
+    class=\\"
+      deco-collapse-positioner
+      ProseMirror-widget
+    \\"
     data-bangle-pos=\\"0\\"
     contenteditable=\\"false\\"
     ><span
