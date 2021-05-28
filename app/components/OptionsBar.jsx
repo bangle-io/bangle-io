@@ -3,7 +3,7 @@ import React, { useCallback, useContext } from 'react';
 import { useWorkspacePath } from 'workspace/index';
 import { UIManagerContext } from 'ui-context/index';
 import { cx, useKeybindings, useLocalStorage } from 'utils/index';
-import { keybindings } from 'config/index';
+import { keybindings, WORKSPACE_PALETTE } from 'config/index';
 import { COMMAND_PALETTE, FILE_PALETTE } from 'palettes/index';
 import {
   ButtonIcon,
@@ -12,6 +12,7 @@ import {
   SecondaryEditorIcon,
   TerminalIcon,
   FileDocumentIcon,
+  AlbumIcon,
 } from 'ui-components/index';
 
 const localStoragePrefix = '0.3438144247845969';
@@ -45,6 +46,14 @@ export function OptionsBar() {
       type: 'UI/CHANGE_PALETTE_TYPE',
       value: {
         type: paletteType === COMMAND_PALETTE ? null : COMMAND_PALETTE,
+      },
+    });
+  };
+  const toggleWorkspacePalette = () => {
+    dispatch({
+      type: 'UI/CHANGE_PALETTE_TYPE',
+      value: {
+        type: paletteType === WORKSPACE_PALETTE ? null : WORKSPACE_PALETTE,
       },
     });
   };
@@ -89,6 +98,18 @@ export function OptionsBar() {
           className={cx('cursor-pointer')}
         />
       </OptionsButton>
+      {widescreen && (
+        <OptionsButton
+          hint={
+            'Workspace Palette\n' +
+            keybindings.toggleWorkspacePalette.displayValue
+          }
+          active={paletteType === WORKSPACE_PALETTE}
+          onClick={() => toggleWorkspacePalette()}
+        >
+          <AlbumIcon style={{ transform: 'scale(0.9, 0.9)' }} />
+        </OptionsButton>
+      )}
       <OptionsButton
         active={paletteType === FILE_PALETTE}
         hint={'File Palette\n' + keybindings.toggleFilePalette.displayValue}
@@ -108,6 +129,7 @@ export function OptionsBar() {
           <SecondaryEditorIcon style={{ transform: 'scale(0.9, 1)' }} />
         </OptionsButton>
       )}
+
       <OptionsButton hint="Hide options bar" onClick={() => setExpanded(false)}>
         <ChevronDoubleRightIcon />
       </OptionsButton>
