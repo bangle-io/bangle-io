@@ -22,13 +22,13 @@ class File {
 describe('ImageComponent', () => {
   const globalImage = window.Image;
   beforeEach(() => {
-    window.Image = class Imgx {
+    window.Image = class Image {
       constructor() {
         this.height = 300;
         this.width = 200;
         setTimeout(() => {
           this.onload();
-        }, 5);
+        }, 15);
       }
     };
     window.URL.createObjectURL = jest.fn((file) => 'blob:' + file.content);
@@ -65,7 +65,7 @@ describe('ImageComponent', () => {
       <ImageComponent nodeAttrs={{ src: './google.png', alt: undefined }} />,
     );
 
-    const prom = sleep(20);
+    const prom = sleep(50);
 
     // wait for the promise in click to resolve
     await act(() => prom);

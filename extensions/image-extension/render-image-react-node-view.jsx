@@ -61,7 +61,6 @@ export function ImageComponent({ nodeAttrs }) {
               return;
             }
             objectUrl = window.URL.createObjectURL(file);
-            console.log(objectUrl);
             if (!width) {
               calcImageDimensions(objectUrl).then((dim) => {
                 if (!destroyRef.current) {
