@@ -37,9 +37,8 @@ const createBackLinkNode = (wsPath, allNoteWsPaths) => {
   };
 };
 export function InlineBacklinkPalette() {
-  const { query, counter, tooltipContentDOM } = useInlinePaletteQuery(
-    palettePluginKey,
-  );
+  const { query, counter, tooltipContentDOM } =
+    useInlinePaletteQuery(palettePluginKey);
 
   return reactDOM.createPortal(
     <div className="inline-palette-wrapper shadow-2xl">

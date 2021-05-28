@@ -59,12 +59,8 @@ export function AppContainer() {
 }
 
 function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
-  let {
-    wsPath,
-    secondaryWsPath,
-    removeWsPath,
-    removeSecondaryWsPath,
-  } = useWorkspacePath();
+  let { wsPath, secondaryWsPath, removeWsPath, removeSecondaryWsPath } =
+    useWorkspacePath();
   const { paletteType, dispatch } = useContext(UIManagerContext);
 
   return (

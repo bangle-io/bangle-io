@@ -106,9 +106,8 @@ export function parseTimestamp(timestamp) {
 }
 
 function validTimestamp(timestamp) {
-  let { year, month, day, hour, minute, second, milliseconds } = parseTimestamp(
-    timestamp,
-  );
+  let { year, month, day, hour, minute, second, milliseconds } =
+    parseTimestamp(timestamp);
 
   return (
     year > 2000 &&

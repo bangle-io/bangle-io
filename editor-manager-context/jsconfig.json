@@ -1,0 +1,68 @@
+{
+  "extends": "../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "bangle-io-context/*": [
+        "../bangle-io-context/*"
+      ],
+      "bangle-io-context": [
+        "../bangle-io-context/index.js"
+      ],
+      "collapsible-heading/*": [
+        "../extensions/collapsible-heading/*"
+      ],
+      "collapsible-heading": [
+        "../extensions/collapsible-heading/index.js"
+      ],
+      "config/*": [
+        "../config/*"
+      ],
+      "config": [
+        "../config/index.js"
+      ],
+      "editor/*": [
+        "../editor/*"
+      ],
+      "editor": [
+        "../editor/index.js"
+      ],
+      "image-extension/*": [
+        "../extensions/image-extension/*"
+      ],
+      "image-extension": [
+        "../extensions/image-extension/index.js"
+      ],
+      "inline-backlink/*": [
+        "../extensions/inline-backlink/*"
+      ],
+      "inline-backlink": [
+        "../extensions/inline-backlink/index.js"
+      ],
+      "inline-command-palette/*": [
+        "../extensions/inline-command-palette/*"
+      ],
+      "inline-command-palette": [
+        "../extensions/inline-command-palette/index.js"
+      ],
+      "inline-emoji/*": [
+        "../extensions/inline-emoji/*"
+      ],
+      "inline-emoji": [
+        "../extensions/inline-emoji/index.js"
+      ],
+      "ui-context/*": [
+        "../ui-context/*"
+      ],
+      "ui-context": [
+        "../ui-context/index.js"
+      ],
+      "workspace/*": [
+        "../workspace/*"
+      ],
+      "workspace": [
+        "../workspace/index.js"
+      ]
+    }
+  }
+}

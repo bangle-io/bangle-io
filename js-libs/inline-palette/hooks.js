@@ -5,10 +5,11 @@ import { getSuggestTooltipKey } from './inline-palette';
 
 export function useInlinePaletteQuery(inlinePaletteKey) {
   // TODO show is a bad name
-  const { triggerText: query, counter, show: isVisible } = usePluginState(
-    getSuggestTooltipKey(inlinePaletteKey),
-    true,
-  );
+  const {
+    triggerText: query,
+    counter,
+    show: isVisible,
+  } = usePluginState(getSuggestTooltipKey(inlinePaletteKey), true);
   const { tooltipContentDOM } = usePluginState(inlinePaletteKey);
 
   return { query, counter, isVisible, tooltipContentDOM };

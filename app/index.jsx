@@ -15,8 +15,7 @@ window.Sentry?.onLoad(function () {
   ).then(({ Integrations }) => {
     window.Sentry.init({
       environment: DEPLOY_ENV,
-      dsn:
-        'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',
+      dsn: 'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',
       integrations: [new Integrations.BrowserTracing()],
       release: RELEASE_ID,
       // Set tracesSampleRate to 1.0 to capture 100%

@@ -1,0 +1,14 @@
+{
+  "extends": "../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "utils/*": [
+        "../utils/*"
+      ],
+      "utils": [
+        "../utils/index.js"
+      ]
+    }
+  }
+}

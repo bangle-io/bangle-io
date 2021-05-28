@@ -4147,13 +4147,14 @@ __metadata:
     postcss-import: ^14.0.1
     postcss-loader: ^5.2.0
     postcss-nested: ^5.0.5
-    prettier: ^2.2.1
+    prettier: ^2.3.0
     punycode: ^2.1.1
     puppeteer: ^9.0.0
     serve: ^11.3.2
     style-loader: ^2.0.0
     surge: ^0.23.0
     tailwindcss: ^2.1.2
+    typescript: 4.2.4
     webpack: ^5.35.1
     webpack-bundle-analyzer: ^4.4.1
     webpack-cli: ^4.6.0
@@ -5864,7 +5865,7 @@ __metadata:
     jest-circus: ^26.6.3
     jest-environment-puppeteer: ^5.0.1
     jest-puppeteer: ^5.0.2
-    prettier: ^2.2.1
+    prettier: ^2.3.0
     puppeteer: ^9.0.0
   languageName: unknown
   linkType: soft
@@ -11507,12 +11508,12 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "prettier@npm:2.2.1"
+"prettier@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "prettier@npm:2.3.0"
   bin:
     prettier: bin-prettier.js
-  checksum: 800de2df3d37067ab24478c7f32c60ca0c57b01742133287829feeb4a70d239a7bf6bccb56196784777af591ad80fb9ba70c1a49b0fcecf9f5622a764d513edb
+  checksum: e8851a45f60f2994775f96e07964646c299b8a8f9c64da4fbd8efafc20db3458bdcedac79aed34e1d5477540b3aa04f6499adc4979cb7937f8ebd058a767d8ff
   languageName: node
   linkType: hard
 
@@ -14259,6 +14260,26 @@ resolve@^2.0.0-next.3:
   dependencies:
     is-typedarray: ^1.0.0
   checksum: 99c11aaa8f45189fcfba6b8a4825fd684a321caa9bd7a76a27cf0c7732c174d198b99f449c52c3818107430b5f41c0ccbbfb75cb2ee3ca4a9451710986d61a60
+  languageName: node
+  linkType: hard
+
+typescript@4.2.4:
+  version: 4.2.4
+  resolution: "typescript@npm:4.2.4"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 89c397df192f239359ad798b96d8e8d552e12c0c189ac5676cec4c20c410d6eec636b8e59a88f2aef0a56d961a9678d99c400099be9b7cae2f7b062eb4b7b171
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@4.2.4#~builtin<compat/typescript>":
+  version: 4.2.4
+  resolution: "typescript@patch:typescript@npm%3A4.2.4#~builtin<compat/typescript>::version=4.2.4&hash=34ad7d"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 083de437033ea11e57b0c66305a2c1d6d05e9383e57de2af405b0833ab68bd96d82d1f4f317fac06f3420410a006244648cf70278f58b3b4d55632dc7aeb8d4a
   languageName: node
   linkType: hard
 

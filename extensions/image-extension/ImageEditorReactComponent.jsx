@@ -106,26 +106,28 @@ function useAssociateViewWsName(view) {
 }
 
 // TODO move this to bangle.dev, the only change here is that attr can be a function
-const updateImageNodeAttribute = (attr = {}) => (state, dispatch, view) => {
-  if (!(state.selection instanceof NodeSelection) || !state.selection.node) {
-    return false;
-  }
-  const { node } = state.selection;
-  if (node.type !== state.schema.nodes.image) {
-    return false;
-  }
+const updateImageNodeAttribute =
+  (attr = {}) =>
+  (state, dispatch, view) => {
+    if (!(state.selection instanceof NodeSelection) || !state.selection.node) {
+      return false;
+    }
+    const { node } = state.selection;
+    if (node.type !== state.schema.nodes.image) {
+      return false;
+    }
 
-  if (dispatch) {
-    const newAttrs = typeof attr === 'function' ? attr(node.attrs) : attr;
-    dispatch(
-      state.tr.setNodeMarkup(state.selection.$from.pos, undefined, {
-        ...node.attrs,
-        ...newAttrs,
-      }),
-    );
-  }
-  return true;
-};
+    if (dispatch) {
+      const newAttrs = typeof attr === 'function' ? attr(node.attrs) : attr;
+      dispatch(
+        state.tr.setNodeMarkup(state.selection.$from.pos, undefined, {
+          ...node.attrs,
+          ...newAttrs,
+        }),
+      );
+    }
+    return true;
+  };
 
 function getSelectedImageNodeScale(state) {
   if (!(state.selection instanceof NodeSelection) || !state.selection.node) {
