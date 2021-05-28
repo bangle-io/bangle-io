@@ -24,7 +24,7 @@ module.exports = (env, argv) => {
     target: 'web',
     mode,
     entry: './app/index.jsx',
-    devtool: true ? 'source-map' : 'eval-source-map',
+    devtool: process.env.NETLIFY ? false : 'source-map',
     resolve: {
       extensions: ['.jsx', '.js', '...'],
       // TODO fix me punycode
