@@ -20,11 +20,11 @@ module.exports = (env, argv) => {
   console.log(`
   ====================${mode}========================
   `);
-  return {
+  const result = {
     target: 'web',
     mode,
     entry: './app/index.jsx',
-    devtool: process.env.NETLIFY ? false : 'source-map',
+    devtool: 'source-map',
     resolve: {
       extensions: ['.jsx', '.js', '...'],
       // TODO fix me punycode
@@ -142,4 +142,10 @@ module.exports = (env, argv) => {
       ],
     },
   };
+
+  if (process.env.NETLIFY) {
+    delete result['devtool'];
+  }
+
+  return result;
 };
