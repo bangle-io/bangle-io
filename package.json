@@ -39,6 +39,7 @@
   "private": true,
   "scripts": {
     "lint": "yarn prettier --check . && yarn eslint .",
+    "update-jsconfig": "yarn node _scripts/create-jsconfig.js",
     "test": "yarn lint && yarn jest",
     "start": "BROWSERSLIST_ENV=development yarn g:vite-dev",
     "webpack-start": "BROWSERSLIST_ENV=development yarn webpack serve --env development",
