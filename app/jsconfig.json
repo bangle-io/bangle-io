@@ -1,0 +1,74 @@
+{
+  "extends": "../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "bangle-io-context/*": [
+        "../bangle-io-context/*"
+      ],
+      "bangle-io-context": [
+        "../bangle-io-context/index.js"
+      ],
+      "commands/*": [
+        "../commands/*"
+      ],
+      "commands": [
+        "../commands/index.js"
+      ],
+      "config/*": [
+        "../config/*"
+      ],
+      "config": [
+        "../config/index.js"
+      ],
+      "editor/*": [
+        "../editor/*"
+      ],
+      "editor": [
+        "../editor/index.js"
+      ],
+      "editor-manager-context/*": [
+        "../editor-manager-context/*"
+      ],
+      "editor-manager-context": [
+        "../editor-manager-context/index.js"
+      ],
+      "palettes/*": [
+        "../palettes/*"
+      ],
+      "palettes": [
+        "../palettes/index.js"
+      ],
+      "style/*": [
+        "../style/*"
+      ],
+      "style": [
+        "../style/index.js"
+      ],
+      "ui-components/*": [
+        "../ui-components/*"
+      ],
+      "ui-components": [
+        "../ui-components/index.js"
+      ],
+      "ui-context/*": [
+        "../ui-context/*"
+      ],
+      "ui-context": [
+        "../ui-context/index.js"
+      ],
+      "utils/*": [
+        "../utils/*"
+      ],
+      "utils": [
+        "../utils/index.js"
+      ],
+      "workspace/*": [
+        "../workspace/*"
+      ],
+      "workspace": [
+        "../workspace/index.js"
+      ]
+    }
+  }
+}

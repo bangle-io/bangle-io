@@ -1,0 +1,68 @@
+{
+  "extends": "../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "baby-fs/*": [
+        "../js-libs/baby-fs/*"
+      ],
+      "baby-fs": [
+        "../js-libs/baby-fs/index.js"
+      ],
+      "collapsible-heading/*": [
+        "../extensions/collapsible-heading/*"
+      ],
+      "collapsible-heading": [
+        "../extensions/collapsible-heading/index.js"
+      ],
+      "commands/*": [
+        "../commands/*"
+      ],
+      "commands": [
+        "../commands/index.js"
+      ],
+      "config/*": [
+        "../config/*"
+      ],
+      "config": [
+        "../config/index.js"
+      ],
+      "editor/*": [
+        "../editor/*"
+      ],
+      "editor": [
+        "../editor/index.js"
+      ],
+      "editor-manager-context/*": [
+        "../editor-manager-context/*"
+      ],
+      "editor-manager-context": [
+        "../editor-manager-context/index.js"
+      ],
+      "ui-components/*": [
+        "../ui-components/*"
+      ],
+      "ui-components": [
+        "../ui-components/index.js"
+      ],
+      "ui-context/*": [
+        "../ui-context/*"
+      ],
+      "ui-context": [
+        "../ui-context/index.js"
+      ],
+      "utils/*": [
+        "../utils/*"
+      ],
+      "utils": [
+        "../utils/index.js"
+      ],
+      "workspace/*": [
+        "../workspace/*"
+      ],
+      "workspace": [
+        "../workspace/index.js"
+      ]
+    }
+  }
+}

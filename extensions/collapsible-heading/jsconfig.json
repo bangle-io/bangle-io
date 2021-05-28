@@ -1,0 +1,26 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "extension-helpers/*": [
+        "../../extension-helpers/*"
+      ],
+      "extension-helpers": [
+        "../../extension-helpers/index.js"
+      ],
+      "utils/*": [
+        "../../utils/*"
+      ],
+      "utils": [
+        "../../utils/index.js"
+      ],
+      "workspace/*": [
+        "../../workspace/*"
+      ],
+      "workspace": [
+        "../../workspace/index.js"
+      ]
+    }
+  }
+}

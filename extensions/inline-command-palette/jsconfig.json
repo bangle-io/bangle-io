@@ -1,0 +1,38 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "config/*": [
+        "../../config/*"
+      ],
+      "config": [
+        "../../config/index.js"
+      ],
+      "extension-helpers/*": [
+        "../../extension-helpers/*"
+      ],
+      "extension-helpers": [
+        "../../extension-helpers/index.js"
+      ],
+      "inline-palette/*": [
+        "../../js-libs/inline-palette/*"
+      ],
+      "inline-palette": [
+        "../../js-libs/inline-palette/index.js"
+      ],
+      "ui-components/*": [
+        "../../ui-components/*"
+      ],
+      "ui-components": [
+        "../../ui-components/index.js"
+      ],
+      "utils/*": [
+        "../../utils/*"
+      ],
+      "utils": [
+        "../../utils/index.js"
+      ]
+    }
+  }
+}

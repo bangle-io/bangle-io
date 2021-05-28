@@ -1,0 +1,38 @@
+{
+  "extends": "../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "baby-fs/*": [
+        "../js-libs/baby-fs/*"
+      ],
+      "baby-fs": [
+        "../js-libs/baby-fs/index.js"
+      ],
+      "config/*": [
+        "../config/*"
+      ],
+      "config": [
+        "../config/index.js"
+      ],
+      "editor-manager-context/*": [
+        "../editor-manager-context/*"
+      ],
+      "editor-manager-context": [
+        "../editor-manager-context/index.js"
+      ],
+      "ui-context/*": [
+        "../ui-context/*"
+      ],
+      "ui-context": [
+        "../ui-context/index.js"
+      ],
+      "workspace/*": [
+        "../workspace/*"
+      ],
+      "workspace": [
+        "../workspace/index.js"
+      ]
+    }
+  }
+}
