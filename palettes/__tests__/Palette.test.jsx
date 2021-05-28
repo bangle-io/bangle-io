@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import React, { useContext } from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, act } from '@testing-library/react';

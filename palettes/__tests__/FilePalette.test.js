@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { renderHook } from '@testing-library/react-hooks';
 import { useRecordRecentWsPaths } from '../use-record-recent-ws-paths';
 import { useLocalStorage } from 'utils/index';
