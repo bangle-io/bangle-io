@@ -124,7 +124,8 @@
     "webpack": "^5.35.1",
     "webpack-bundle-analyzer": "^4.4.1",
     "webpack-cli": "^4.6.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
+    "worker-loader": "^3.0.8"
   },
   "prettier": {
     "singleQuote": true,

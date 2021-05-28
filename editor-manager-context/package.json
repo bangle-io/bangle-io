@@ -36,6 +36,7 @@
     "@bangle.dev/trailing-node": "0.15.0",
     "bangle-io-context": "workspace:*",
     "collapsible-heading": "workspace:*",
+    "comlink": "^4.3.1",
     "config": "workspace:*",
     "editor": "workspace:*",
     "image-extension": "workspace:*",
