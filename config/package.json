@@ -15,8 +15,9 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "main": "index.js",
-  "module": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.ts",
+  "types": "dist/index.d.ts",
   "scripts": {},
   "publishConfig": {
     "access": "public"

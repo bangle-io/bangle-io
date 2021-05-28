@@ -1,7 +1,16 @@
+declare var process: {
+  env: {
+    NODE_ENV: string;
+    RELEASE_ID: string;
+    DEPLOY_ENV: string;
+    HELP_DOCS_VERSION: string;
+  };
+};
+
 let nodeEnv = undefined;
 let releaseId = undefined;
 let deployEnv = undefined;
-let helpDocsVersion = undefined;
+let helpDocsVersion = '';
 // Done this way to allow for bundlers
 // to do a string replace.
 try {

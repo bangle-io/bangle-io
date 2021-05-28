@@ -13,7 +13,7 @@
         "../config/*"
       ],
       "config": [
-        "../config/index.js"
+        "../config/index.ts"
       ],
       "editor-manager-context/*": [
         "../editor-manager-context/*"

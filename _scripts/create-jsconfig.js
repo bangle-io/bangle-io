@@ -27,6 +27,7 @@ async function main() {
   const workspaceToPath = Object.fromEntries(
     workspaces.map((r) => [r.name, r.path]),
   );
+
   for (const w of workspaces) {
     if (w.name === 'bangle-io') {
       continue;

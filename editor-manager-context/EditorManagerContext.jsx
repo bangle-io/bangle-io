@@ -8,7 +8,7 @@ import React, {
 import { LocalDisk } from '@bangle.dev/collab-client';
 import { Manager } from '@bangle.dev/collab-server';
 import { getNote, saveNote } from 'workspace/index';
-import { config } from 'config/index';
+import { config } from 'config';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
 import { BangleIOContext } from 'bangle-io-context/index';

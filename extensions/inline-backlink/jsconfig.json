@@ -7,7 +7,7 @@
         "../../config/*"
       ],
       "config": [
-        "../../config/index.js"
+        "../../config/index.ts"
       ],
       "extension-helpers/*": [
         "../../extension-helpers/*"

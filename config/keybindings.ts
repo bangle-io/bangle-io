@@ -4,9 +4,9 @@ const isFirefox =
   typeof navigator != 'undefined'
     ? navigator.userAgent?.toLocaleLowerCase()?.indexOf('firefox') > -1
     : false;
-const altInMac = '⌥'; // option
+// const altInMac = '⌥'; // option
 
-export function keyDisplayValue(key) {
+export function keyDisplayValue(key: string) {
   if (key.includes('Mod')) {
     key = key.split('Mod').join(isMac ? '⌘' : 'Ctrl');
   }
@@ -28,10 +28,12 @@ export function keyDisplayValue(key) {
 }
 
 class KeyBinding {
-  constructor({ key }) {
+  key: string;
+  constructor({ key }: { key: string }) {
     this.key = key;
   }
   get displayValue() {
+    debugger;
     return keyDisplayValue(this.key);
   }
 }
