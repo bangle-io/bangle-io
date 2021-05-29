@@ -5,46 +5,26 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { LocalDisk } from '@bangle.dev/collab-client';
 import { parseCollabResponse } from '@bangle.dev/collab-server';
-import { getNote, saveNote } from 'workspace/index';
 import { config } from 'config/index';
 import { getIdleCallback, sleep } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
 import { bangleIOContext } from './bangle-io-context';
-import * as Comlink from 'comlink';
 // eslint-disable-next-line import/default
-import MyWorker from './manager.worker.js';
+import { setupManager } from './setup-manager';
+// import * as Comlink from 'comlink';
+// eslint-disable-next-line import/default
+// // import MyWorker from './manager.worker.js';
+// const worker = new MyWorker();
+// const manager = Comlink.wrap(worker);
 
-const worker = new MyWorker();
-
-const workerManager = Comlink.wrap(worker);
-
-window.worker = workerManager;
+const manager = setupManager();
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
 const maxEditors = [undefined, undefined];
 const MAX_EDITOR = maxEditors.length;
-
-const defaultContent = {
-  type: 'doc',
-  content: [
-    {
-      type: 'heading',
-      attrs: {
-        level: 2,
-      },
-      content: [
-        {
-          type: 'text',
-          text: 'Hi there,',
-        },
-      ],
-    },
-  ],
-};
 
 export const EditorManagerContext = React.createContext({});
 
@@ -136,13 +116,12 @@ export function EditorManager({ children }) {
  */
 function useManager() {
   const sendRequest = useCallback(async (...args) => {
-    await sleep(Math.random() * 700);
-    return workerManager.handleRequest(...args).then((obj) => {
+    return manager.handleRequest(...args).then((obj) => {
       return parseCollabResponse(obj);
     });
   }, []);
 
-  return { manager: workerManager, sendRequest };
+  return { manager: manager, sendRequest };
 }
 
 function rafEditorFocus(editor) {
