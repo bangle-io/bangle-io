@@ -3574,7 +3574,7 @@ __metadata:
     react: ^17.0.0
     react-dom: ^17.0.0
     tailwindcss: ^2.1.2
-    vite: ^2.2.3
+    vite: ^2.3.4
   languageName: unknown
   linkType: soft
 
@@ -6209,12 +6209,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.9.3":
-  version: 0.9.7
-  resolution: "esbuild@npm:0.9.7"
+"esbuild@npm:^0.11.23":
+  version: 0.11.23
+  resolution: "esbuild@npm:0.11.23"
   bin:
     esbuild: bin/esbuild
-  checksum: fc2a33e46cf66747f9a4416a03ecd39adc353516b6972086d2633040221c9bb4d01cde409f6396d223517ac6fe73bbeea16b79109fcb283d0ed13e7ae7f04d42
+  checksum: d55bea84f94e7854fa6fb013ffc63747f2286001b3d73c2a7beb605e6e4847c24ff2cde0660f03045d06d083695c8082423b007a9ee8687e70b52719458bfdd6
   languageName: node
   linkType: hard
 
@@ -14625,13 +14625,13 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "vite@npm:2.2.3"
+"vite@npm:^2.3.4":
+  version: 2.3.4
+  resolution: "vite@npm:2.3.4"
   dependencies:
-    esbuild: ^0.9.3
+    esbuild: ^0.11.23
     fsevents: ~2.3.1
-    postcss: ^8.2.1
+    postcss: ^8.2.10
     resolve: ^1.19.0
     rollup: ^2.38.5
   dependenciesMeta:
@@ -14639,7 +14639,7 @@ typescript@4.2.4:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 53b78abe279cbff00e527043ba67deaee52e6acd568714593d5a26d3912ebb218a13ee638581fc7d3e9dfb919ee7899b1286945f8cc0c21849e9d34765cf8e0b
+  checksum: 9bda0ee947c8e036c1f4a5cd51a1ff2c2afd03c055759ed6dd4717090b46caccb2584b76068b5acfc794cff602aecf1eda1a2ccdd96d15e3a7876af78e3b42f4
   languageName: node
   linkType: hard
 

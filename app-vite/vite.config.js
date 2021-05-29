@@ -31,7 +31,7 @@ const config = ({ command, mode }) => {
   return {
     // plugins: [reactRefresh()],
     build: {
-      target: 'es2020',
+      target: 'es2018',
       sourcemap: isProduction ? false : true,
     },
     define: {
