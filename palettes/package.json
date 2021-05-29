@@ -20,7 +20,7 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/core": "0.15.0",
+    "@bangle.dev/core": "0.16.0",
     "baby-fs": "workspace:*",
     "collapsible-heading": "workspace:*",
     "commands": "workspace:*",
