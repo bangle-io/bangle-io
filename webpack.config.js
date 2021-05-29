@@ -105,7 +105,7 @@ module.exports = (env, argv) => {
             noSources: true,
           })
         : null,
-      new BundleAnalyzerPlugin(),
+      // new BundleAnalyzerPlugin(),
     ].filter(Boolean),
     module: {
       rules: [
