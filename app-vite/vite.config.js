@@ -1,5 +1,4 @@
 /* eslint-disable no-process-env */
-import reactRefresh from '@vitejs/plugin-react-refresh';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -30,7 +29,7 @@ const config = ({ command, mode }) => {
 
   fs.writeFileSync(path.resolve(__dirname, 'index.html'), html, 'utf-8');
   return {
-    plugins: [reactRefresh()],
+    // plugins: [reactRefresh()],
     build: {
       target: 'es2020',
       sourcemap: isProduction ? false : true,
@@ -41,6 +40,7 @@ const config = ({ command, mode }) => {
     server: {
       port: PORT,
       strictPort: true,
+      // hmr: false,
       proxy: {
         // string shorthand
         '^.*\\.md$': {

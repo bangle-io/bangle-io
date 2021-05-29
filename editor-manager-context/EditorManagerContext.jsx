@@ -11,14 +11,14 @@ import { getIdleCallback, sleep } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
 import { bangleIOContext } from './bangle-io-context';
 // eslint-disable-next-line import/default
-import { setupManager } from './setup-manager';
-// import * as Comlink from 'comlink';
+// import { setupManager } from './setup-manager';
+import * as Comlink from 'comlink';
 // eslint-disable-next-line import/default
-// // import MyWorker from './manager.worker.js';
-// const worker = new MyWorker();
-// const manager = Comlink.wrap(worker);
+import MyWorker from './manager.worker.js?worker';
+const worker = new MyWorker();
+const manager = Comlink.wrap(worker);
 
-const manager = setupManager();
+// const manager = setupManager();
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
