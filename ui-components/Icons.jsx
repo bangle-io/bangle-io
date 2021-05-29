@@ -1,4 +1,3 @@
-import './Icons.css';
 import React from 'react';
 
 export const Svg = ({

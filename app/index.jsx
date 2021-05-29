@@ -1,4 +1,4 @@
-import 'style/index.js';
+import './style';
 import { UIManager } from 'ui-context/index';
 import React from 'react';
 import ReactDOM from 'react-dom';

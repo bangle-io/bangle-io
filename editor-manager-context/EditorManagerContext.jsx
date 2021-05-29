@@ -10,12 +10,13 @@ import { Manager } from '@bangle.dev/collab-server';
 import { getNote, saveNote } from 'workspace/index';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
-import { UIManagerContext } from 'ui-context/index';
 import { BangleIOContext } from 'bangle-io-context/index';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
+
+import { getPlugins, rawSpecs } from 'editor/index';
+import { UIManagerContext } from 'ui-context/index';
 import inlineCommandPalette from 'inline-command-palette/index';
 import inlineBacklinkPalette from 'inline-backlink/index';
-import { getPlugins, rawSpecs } from 'editor/index';
 import collapsibleHeading from 'collapsible-heading/index';
 import imageExtension from 'image-extension/index';
 import inlineEmoji from 'inline-emoji/index';

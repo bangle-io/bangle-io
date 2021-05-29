@@ -1,4 +1,3 @@
-import './TextButton.css';
 import React from 'react';
 import { cx } from 'utils/utility';
 
