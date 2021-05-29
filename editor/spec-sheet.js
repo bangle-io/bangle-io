@@ -1,10 +1,3 @@
-import '@bangle.dev/core/style.css';
-import '@bangle.dev/tooltip/style.css';
-import '@bangle.dev/react-menu/style.css';
-import '@bangle.dev/markdown-front-matter/style.css';
-import '@bangle.dev/table/style.css';
-import './extensions-override.css';
-
 import { collabClient } from '@bangle.dev/collab-client';
 
 import { trailingNode } from '@bangle.dev/trailing-node';

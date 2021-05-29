@@ -37,12 +37,15 @@ if (!config.isTest) {
   console.debug(config);
 }
 
-export const SPLIT_SCREEN_MIN_WIDTH = parseInt(
-  getComputedStyle(document.documentElement).getPropertyValue(
-    '--widescreen-min-width',
-  ),
-  10,
-);
+export const SPLIT_SCREEN_MIN_WIDTH =
+  typeof document === 'undefined'
+    ? 500
+    : parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          '--widescreen-min-width',
+        ),
+        10,
+      );
 
 export * from './keybindings';
 export * from './is-mac';

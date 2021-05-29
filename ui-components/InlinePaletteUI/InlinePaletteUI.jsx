@@ -1,5 +1,3 @@
-import './InlinePaletteUI.css';
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { cx, isTouchDevice } from 'utils/index';
 

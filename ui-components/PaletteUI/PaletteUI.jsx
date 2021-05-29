@@ -1,4 +1,3 @@
-import './Palette.css';
 import { keyName } from 'w3c-keyname';
 
 import React, { useRef, useCallback, useState, useEffect } from 'react';

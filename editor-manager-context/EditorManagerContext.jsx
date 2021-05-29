@@ -5,57 +5,27 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { LocalDisk } from '@bangle.dev/collab-client';
-import { Manager } from '@bangle.dev/collab-server';
-import { getNote, saveNote } from 'workspace/index';
+import { parseCollabResponse } from '@bangle.dev/collab-server';
 import { config } from 'config/index';
-import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
+import { getIdleCallback, sleep } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
-import { BangleIOContext } from 'bangle-io-context/index';
-import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
-import inlineCommandPalette from 'inline-command-palette/index';
-import inlineBacklinkPalette from 'inline-backlink/index';
-import { getPlugins, rawSpecs } from 'editor/index';
-import collapsibleHeading from 'collapsible-heading/index';
-import imageExtension from 'image-extension/index';
-import inlineEmoji from 'inline-emoji/index';
+import { bangleIOContext } from './bangle-io-context';
+// eslint-disable-next-line import/default
+import { setupManager } from './setup-manager';
+// import * as Comlink from 'comlink';
+// eslint-disable-next-line import/default
+// // import MyWorker from './manager.worker.js';
+// const worker = new MyWorker();
+// const manager = Comlink.wrap(worker);
+
+const manager = setupManager();
+
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
 const maxEditors = [undefined, undefined];
 const MAX_EDITOR = maxEditors.length;
 
-const defaultContent = {
-  type: 'doc',
-  content: [
-    {
-      type: 'heading',
-      attrs: {
-        level: 2,
-      },
-      content: [
-        {
-          type: 'text',
-          text: 'Hi there,',
-        },
-      ],
-    },
-  ],
-};
-
-// TODO move this async, i think a promise should be fine.
-const bangleIOContext = new BangleIOContext({
-  coreRawSpecs: rawSpecs,
-  getCorePlugins: getPlugins,
-  extensions: [
-    inlineCommandPalette,
-    inlineBacklinkPalette,
-    collapsibleHeading,
-    imageExtension,
-    inlineEmoji,
-  ],
-  markdownItPlugins: [frontMatterMarkdownItPlugin],
-});
 export const EditorManagerContext = React.createContext({});
 
 /**
@@ -145,44 +115,13 @@ export function EditorManager({ children }) {
  * 6. Collab plugin refreshed the editor with correct content
  */
 function useManager() {
-  const [manager] = useState(
-    () =>
-      new Manager(bangleIOContext.specRegistry.schema, {
-        disk: localDisk(defaultContent),
-      }),
-  );
+  const sendRequest = useCallback(async (...args) => {
+    return manager.handleRequest(...args).then((obj) => {
+      return parseCollabResponse(obj);
+    });
+  }, []);
 
-  useEffect(() => {
-    return () => {
-      log('destroying manager');
-      manager.destroy();
-    };
-  }, [manager]);
-
-  const sendRequest = useCallback(
-    (...args) => manager.handleRequest(...args).then((resp) => resp.body),
-    [manager],
-  );
-
-  return { manager, sendRequest };
-}
-
-function localDisk(defaultContent) {
-  return new LocalDisk({
-    getItem: async (wsPath) => {
-      log('getItem', wsPath);
-      const doc = await getNote(bangleIOContext, wsPath);
-      if (!doc) {
-        return defaultContent;
-      }
-      return doc;
-    },
-    setItem: async (wsPath, doc) => {
-      log('setItem', wsPath);
-
-      await saveNote(bangleIOContext, wsPath, doc);
-    },
-  });
+  return { manager: manager, sendRequest };
 }
 
 function rafEditorFocus(editor) {

@@ -1,4 +1,3 @@
-import './style.css';
 import { inlinePalette } from 'inline-palette/index';
 import { Extension } from 'extension-helpers';
 import { InlineBacklinkPalette } from './InlineBacklinkPalette';
