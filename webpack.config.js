@@ -105,7 +105,7 @@ module.exports = (env, argv) => {
             noSources: true,
           })
         : null,
-      // new BundleAnalyzerPlugin(),
+      new BundleAnalyzerPlugin(),
     ].filter(Boolean),
     module: {
       rules: [
@@ -138,6 +138,13 @@ module.exports = (env, argv) => {
               loader: 'postcss-loader',
             },
           ],
+        },
+        {
+          test: /\.worker\.(c|m)?js$/i,
+          loader: 'worker-loader',
+          // options: {
+          //   worker: 'Worker',
+          // },
         },
       ],
     },
