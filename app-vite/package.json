@@ -21,6 +21,6 @@
     "postcss-loader": "^5.2.0",
     "postcss-nested": "^5.0.5",
     "tailwindcss": "^2.1.2",
-    "vite": "^2.2.3"
+    "vite": "^2.3.4"
   }
 }

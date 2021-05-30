@@ -5634,7 +5634,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:d31442770f02388e9fe05289a0661fd9c95c141684f7bc9ee2e637044f67b5b53ce74e4de84215ea98094437658c43b838646630df9cbdd082ebd942416663b4#npm:17.0.2"],
             ["tailwindcss", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.1.2"],
-            ["vite", "npm:2.2.3"]
+            ["vite", "npm:2.3.4"]
           ],
           "linkType": "SOFT",
         }]
@@ -8697,10 +8697,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["esbuild", [
-        ["npm:0.9.7", {
-          "packageLocation": "./.yarn/unplugged/esbuild-npm-0.9.7-6b1d054429/node_modules/esbuild/",
+        ["npm:0.11.23", {
+          "packageLocation": "./.yarn/unplugged/esbuild-npm-0.11.23-3c7e5ace5a/node_modules/esbuild/",
           "packageDependencies": [
-            ["esbuild", "npm:0.9.7"]
+            ["esbuild", "npm:0.11.23"]
           ],
           "linkType": "HARD",
         }]
@@ -18434,13 +18434,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["vite", [
-        ["npm:2.2.3", {
-          "packageLocation": "./.yarn/cache/vite-npm-2.2.3-8ddc2faf87-53b78abe27.zip/node_modules/vite/",
+        ["npm:2.3.4", {
+          "packageLocation": "./.yarn/cache/vite-npm-2.3.4-96e7481737-9bda0ee947.zip/node_modules/vite/",
           "packageDependencies": [
-            ["vite", "npm:2.2.3"],
-            ["esbuild", "npm:0.9.7"],
+            ["vite", "npm:2.3.4"],
+            ["esbuild", "npm:0.11.23"],
             ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=1cc4b2"],
-            ["postcss", "npm:8.2.9"],
+            ["postcss", "npm:8.2.12"],
             ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=00b1ff"],
             ["rollup", "npm:2.45.2"]
           ],
