@@ -106,7 +106,7 @@ test('inline command palette convert to bullet list', async () => {
 
   await editorHandle.type('/bullet list', { delay: 3 });
   await page.keyboard.press('Enter');
-  await sleep();
+  await sleep(30);
   expect(await hasOneUnorderedListElement()).toBe(true);
   await editorHandle.type('I should a bullet list', { delay: 1 });
   expect(await getEditorHTML(editorHandle)).toMatchSnapshot();

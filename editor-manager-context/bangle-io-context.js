@@ -1,8 +1,8 @@
 import { BangleIOContext } from 'bangle-io-context/index';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
+import { getPlugins, rawSpecs } from 'editor/index';
 import inlineCommandPalette from 'inline-command-palette/index';
 import inlineBacklinkPalette from 'inline-backlink/index';
-import { getPlugins, rawSpecs } from 'editor/index';
 import collapsibleHeading from 'collapsible-heading/index';
 import imageExtension from 'image-extension/index';
 import inlineEmoji from 'inline-emoji/index';
