@@ -2,39 +2,31 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import envVars from 'env-vars';
+import getEnvVars from 'env-vars';
+import { minifyHtml, injectHtml } from 'vite-plugin-html';
 
-// https://vitejs.dev/config/
 const config = ({ command, mode }) => {
   const isProduction = mode === 'production';
   const PORT = isProduction ? 5000 : 4000;
+  const envVars = getEnvVars({ isProduction: isProduction, isVite: true });
 
-  let html = fs.readFileSync(
-    path.resolve(__dirname, '..', 'style', 'index.html'),
-    'utf-8',
-  );
-
-  if (!html.includes('<!-- VITE_ENTRY -->')) {
-    throw new Error('Vite entry point not exists');
-  }
-  html =
-    `<!-- This FILE is auto generated -->\n` +
-    html
-      .split('<!-- VITE_ENTRY -->')
-      .join('<script type="module" src="/src/index.js"></script>');
-
-  html = html.split('<%= htmlWebpackPlugin.options.sentry %>').join('');
-  html = html
-    .split('<%= htmlWebpackPlugin.options.bangleHelpPreload %>')
-    .join('');
-
-  fs.writeFileSync(path.resolve(__dirname, 'index.html'), html, 'utf-8');
-  return {
+  /**
+   * @type {import('vite').UserConfig}
+   */
+  const c = {
     // plugins: [reactRefresh()],
     build: {
       target: 'es2018',
       sourcemap: isProduction ? false : true,
     },
+    plugins: [
+      minifyHtml(),
+      injectHtml({
+        injectData: {
+          ...envVars.htmlInjections,
+        },
+      }),
+    ],
     exclude: [
       // '@bangle.dev/collab-client',
       // '@bangle.dev/collab-server',
@@ -55,7 +47,7 @@ const config = ({ command, mode }) => {
       // '@bangle.dev/tooltip',
     ],
     define: {
-      ...envVars({ isProduction: mode === 'production' }).appEnvs,
+      ...envVars.appEnvs,
     },
     server: {
       port: PORT,
@@ -70,6 +62,8 @@ const config = ({ command, mode }) => {
       },
     },
   };
+
+  return c;
 };
 
 export default config;
