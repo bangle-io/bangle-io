@@ -19,7 +19,7 @@ const config = ({ command, mode }) => {
       target: 'es2018',
       sourcemap: isProduction ? false : true,
       emptyOutDir: true,
-      outDir: '../build',
+      outDir: './build',
     },
     plugins: [
       minifyHtml(),

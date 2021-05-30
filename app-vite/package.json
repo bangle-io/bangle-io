@@ -1,11 +1,7 @@
 {
   "name": "app-vite",
   "version": "0.0.0",
-  "scripts": {
-    "g:vite-dev": "vite",
-    "g:vite-build": "vite build",
-    "g:vite-serve": "vite preview"
-  },
+  "scripts": {},
   "dependencies": {
     "app": "workspace:*",
     "react": "^17.0.0",

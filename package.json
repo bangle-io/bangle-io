@@ -52,7 +52,10 @@
     "build-serve": "yarn build && yarn run serve build",
     "snapshot": "yarn build && yarn node ./_scripts/snapshot",
     "add-portals": "yarn link -A -r /Users/kushanjoshi/code/bangle/bangle-play",
-    "remove-portals": "yarn node ./_scripts/remove-portals && yarn install"
+    "remove-portals": "yarn node ./_scripts/remove-portals && yarn install",
+    "g:vite-dev": "vite",
+    "g:vite-build": "vite build",
+    "g:vite-serve": "vite preview"
   },
   "browserslist": {
     "production": [
@@ -66,6 +69,7 @@
     ]
   },
   "dependencies": {
+    "app": "workspace:*",
     "env-vars": "workspace:*",
     "punycode": "^2.1.1"
   },
@@ -81,6 +85,7 @@
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^13.1.5",
+    "@vitejs/plugin-react-refresh": "^1.3.1",
     "autoprefixer": "^10.2.5",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
@@ -90,6 +95,7 @@
     "css-loader": "^5.2.4",
     "date-fns": "^2.21.1",
     "ejs": "^3.1.6",
+    "env-vars": "workspace:*",
     "eslint": "^7.25.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-import-resolver-node": "^0.3.4",
@@ -122,6 +128,8 @@
     "surge": "^0.23.0",
     "tailwindcss": "^2.1.2",
     "typescript": "4.2.4",
+    "vite": "^2.3.4",
+    "vite-plugin-html": "^2.0.7",
     "webpack": "^5.35.1",
     "webpack-bundle-analyzer": "^4.4.1",
     "webpack-cli": "^4.6.0",
