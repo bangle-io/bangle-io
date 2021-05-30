@@ -3596,6 +3596,7 @@ __metadata:
     editor: "workspace:*"
     editor-manager-context: "workspace:*"
     palettes: "workspace:*"
+    polyfill: "workspace:*"
     prop-types: ^15.7.2
     react: 16.14.0
     react-dom: 16.14.0
@@ -4153,6 +4154,7 @@ __metadata:
     jest-puppeteer: ^5.0.2
     mini-css-extract-plugin: ^1.5.0
     pnp-webpack-plugin: ^1.6.4
+    polyfill: "workspace:*"
     postcss: ^8.2.12
     postcss-custom-properties: ^11.0.0
     postcss-import: ^14.0.1
@@ -5240,6 +5242,13 @@ __metadata:
   version: 3.8.1
   resolution: "core-js-pure@npm:3.8.1"
   checksum: 02815b17d01ec98649cb6d46ebe01ea5c10d532baadf74832acba9225dff1c21adbc01894b3cd5b68b365c1c532a869e491b899fc7364d594ff54c001a495b0c
+  languageName: node
+  linkType: hard
+
+"core-js@npm:^3.13.1":
+  version: 3.13.1
+  resolution: "core-js@npm:3.13.1"
+  checksum: f020e194bac93eb54fbefd1c33931582e3408d08584d9c6829cd3428ebe8b39e1e93a3b03e8aa49f7bf731ff07ef9c76abc2e9efa128edfa2216e00620830dee
   languageName: node
   linkType: hard
 
@@ -11335,6 +11344,14 @@ fsevents@~2.3.1:
   checksum: 0606a63db96400b07f182300168298da9518727a843f9e10cf5045d2a102a4be06bb18c73dc481281e3e0f1ed8d04ef0d285a342b6dcd0eff1340e28e5d2328d
   languageName: node
   linkType: hard
+
+"polyfill@workspace:*, polyfill@workspace:polyfill":
+  version: 0.0.0-use.local
+  resolution: "polyfill@workspace:polyfill"
+  dependencies:
+    core-js: ^3.13.1
+  languageName: unknown
+  linkType: soft
 
 "portfinder@npm:^1.0.25, portfinder@npm:^1.0.26":
   version: 1.0.28

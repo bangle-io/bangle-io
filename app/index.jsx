@@ -1,11 +1,13 @@
 import './style';
 import { UIManager } from 'ui-context/index';
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
+import { polyfills } from 'polyfill/index';
+import { useEffect } from 'react/cjs/react.development';
 
 window.Sentry?.onLoad(function () {
   import(
@@ -28,13 +30,28 @@ window.Sentry?.onLoad(function () {
 
 const root = document.getElementById('root');
 
+function LoadingBlock({ children }) {
+  const [loaded, updateLoaded] = useState(() => {
+    return polyfills.length === 0;
+  });
+  useEffect(() => {
+    if (polyfills.length > 0) {
+      console.debug('Polyfilling ' + polyfills.length + ' features.');
+      Promise.all(polyfills).then(() => [updateLoaded(true)]);
+    }
+  }, []);
+  return loaded ? children : null;
+}
+
 ReactDOM.render(
-  <Router>
-    <UIManager>
-      <EditorManager>
-        <App />
-      </EditorManager>
-    </UIManager>
-  </Router>,
+  <LoadingBlock>
+    <Router>
+      <UIManager>
+        <EditorManager>
+          <App />
+        </EditorManager>
+      </UIManager>
+    </Router>
+  </LoadingBlock>,
   root,
 );

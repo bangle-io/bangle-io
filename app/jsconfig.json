@@ -39,6 +39,12 @@
       "palettes": [
         "../palettes/index.js"
       ],
+      "polyfill/*": [
+        "../polyfill/*"
+      ],
+      "polyfill": [
+        "../polyfill/index.js"
+      ],
       "style/*": [
         "../style/*"
       ],
