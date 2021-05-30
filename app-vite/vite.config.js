@@ -18,6 +18,8 @@ const config = ({ command, mode }) => {
     build: {
       target: 'es2018',
       sourcemap: isProduction ? false : true,
+      emptyOutDir: true,
+      outDir: '../build',
     },
     plugins: [
       minifyHtml(),
@@ -27,6 +29,7 @@ const config = ({ command, mode }) => {
         },
       }),
     ],
+
     exclude: [
       // '@bangle.dev/collab-client',
       // '@bangle.dev/collab-server',
