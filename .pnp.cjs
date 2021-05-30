@@ -169,6 +169,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["copy-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.1.1"],
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.4"],
             ["date-fns", "npm:2.21.1"],
+            ["ejs", "npm:3.1.6"],
             ["env-vars", "workspace:env-vars"],
             ["eslint", "npm:7.25.0"],
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.0.0"],
@@ -5634,7 +5635,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:d31442770f02388e9fe05289a0661fd9c95c141684f7bc9ee2e637044f67b5b53ce74e4de84215ea98094437658c43b838646630df9cbdd082ebd942416663b4#npm:17.0.2"],
             ["tailwindcss", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.1.2"],
-            ["vite", "npm:2.2.3"]
+            ["vite", "npm:2.3.4"],
+            ["vite-plugin-html", "virtual:d31442770f02388e9fe05289a0661fd9c95c141684f7bc9ee2e637044f67b5b53ce74e4de84215ea98094437658c43b838646630df9cbdd082ebd942416663b4#npm:2.0.7"]
           ],
           "linkType": "SOFT",
         }]
@@ -5874,6 +5876,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["async", [
+        ["npm:0.9.2", {
+          "packageLocation": "./.yarn/cache/async-npm-0.9.2-d8cafe6cc3-87dbf12929.zip/node_modules/async/",
+          "packageDependencies": [
+            ["async", "npm:0.9.2"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:2.6.3", {
           "packageLocation": "./.yarn/cache/async-npm-2.6.3-2de4150248-5e5561ff8f.zip/node_modules/async/",
           "packageDependencies": [
@@ -6300,6 +6309,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["copy-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.1.1"],
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.4"],
             ["date-fns", "npm:2.21.1"],
+            ["ejs", "npm:3.1.6"],
             ["env-vars", "workspace:env-vars"],
             ["eslint", "npm:7.25.0"],
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.0.0"],
@@ -8430,6 +8440,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["ejs", [
+        ["npm:3.1.6", {
+          "packageLocation": "./.yarn/cache/ejs-npm-3.1.6-03db39fd15-81a9cdea0b.zip/node_modules/ejs/",
+          "packageDependencies": [
+            ["ejs", "npm:3.1.6"],
+            ["jake", "npm:10.8.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["electron-to-chromium", [
         ["npm:1.3.632", {
           "packageLocation": "./.yarn/cache/electron-to-chromium-npm-1.3.632-c220e08f24-4d09917848.zip/node_modules/electron-to-chromium/",
@@ -8697,10 +8717,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["esbuild", [
-        ["npm:0.9.7", {
-          "packageLocation": "./.yarn/unplugged/esbuild-npm-0.9.7-6b1d054429/node_modules/esbuild/",
+        ["npm:0.11.23", {
+          "packageLocation": "./.yarn/unplugged/esbuild-npm-0.11.23-3c7e5ace5a/node_modules/esbuild/",
           "packageDependencies": [
-            ["esbuild", "npm:0.9.7"]
+            ["esbuild", "npm:0.11.23"]
           ],
           "linkType": "HARD",
         }]
@@ -9670,6 +9690,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/file-uri-to-path-npm-1.0.0-1043ac6206-b648580bdd.zip/node_modules/file-uri-to-path/",
           "packageDependencies": [
             ["file-uri-to-path", "npm:1.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["filelist", [
+        ["npm:1.0.2", {
+          "packageLocation": "./.yarn/cache/filelist-npm-1.0.2-d98495ab20-4d6953cb6f.zip/node_modules/filelist/",
+          "packageDependencies": [
+            ["filelist", "npm:1.0.2"],
+            ["minimatch", "npm:3.0.4"]
           ],
           "linkType": "HARD",
         }]
@@ -11781,6 +11811,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["istanbul-reports", "npm:3.0.2"],
             ["html-escaper", "npm:2.0.2"],
             ["istanbul-lib-report", "npm:3.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["jake", [
+        ["npm:10.8.2", {
+          "packageLocation": "./.yarn/cache/jake-npm-10.8.2-e211473cb9-b604c51863.zip/node_modules/jake/",
+          "packageDependencies": [
+            ["jake", "npm:10.8.2"],
+            ["async", "npm:0.9.2"],
+            ["chalk", "npm:2.4.2"],
+            ["filelist", "npm:1.0.2"],
+            ["minimatch", "npm:3.0.4"]
           ],
           "linkType": "HARD",
         }]
@@ -18434,15 +18477,40 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["vite", [
-        ["npm:2.2.3", {
-          "packageLocation": "./.yarn/cache/vite-npm-2.2.3-8ddc2faf87-53b78abe27.zip/node_modules/vite/",
+        ["npm:2.3.4", {
+          "packageLocation": "./.yarn/cache/vite-npm-2.3.4-96e7481737-9bda0ee947.zip/node_modules/vite/",
           "packageDependencies": [
-            ["vite", "npm:2.2.3"],
-            ["esbuild", "npm:0.9.7"],
+            ["vite", "npm:2.3.4"],
+            ["esbuild", "npm:0.11.23"],
             ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=1cc4b2"],
-            ["postcss", "npm:8.2.9"],
+            ["postcss", "npm:8.2.12"],
             ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=00b1ff"],
             ["rollup", "npm:2.45.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["vite-plugin-html", [
+        ["npm:2.0.7", {
+          "packageLocation": "./.yarn/cache/vite-plugin-html-npm-2.0.7-9d54a9c2a2-30730a04f7.zip/node_modules/vite-plugin-html/",
+          "packageDependencies": [
+            ["vite-plugin-html", "npm:2.0.7"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:d31442770f02388e9fe05289a0661fd9c95c141684f7bc9ee2e637044f67b5b53ce74e4de84215ea98094437658c43b838646630df9cbdd082ebd942416663b4#npm:2.0.7", {
+          "packageLocation": "./.yarn/__virtual__/vite-plugin-html-virtual-8fb2841ef8/0/cache/vite-plugin-html-npm-2.0.7-9d54a9c2a2-30730a04f7.zip/node_modules/vite-plugin-html/",
+          "packageDependencies": [
+            ["vite-plugin-html", "virtual:d31442770f02388e9fe05289a0661fd9c95c141684f7bc9ee2e637044f67b5b53ce74e4de84215ea98094437658c43b838646630df9cbdd082ebd942416663b4#npm:2.0.7"],
+            ["@types/vite", null],
+            ["ejs", "npm:3.1.6"],
+            ["fs-extra", "npm:9.1.0"],
+            ["html-minifier-terser", "npm:5.1.1"],
+            ["vite", "npm:2.3.4"]
+          ],
+          "packagePeers": [
+            "@types/vite",
+            "vite"
           ],
           "linkType": "HARD",
         }]

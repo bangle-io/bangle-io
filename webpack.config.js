@@ -6,7 +6,8 @@ const webpack = require('webpack');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-
+const ejs = require('ejs');
+const fs = require('fs');
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
   const envVars = require('env-vars')({ isProduction });
@@ -17,6 +18,15 @@ module.exports = (env, argv) => {
   if (isProduction && process.env.NODE_ENV !== 'production') {
     throw new Error('NODE_ENV not production');
   }
+
+  let rawHtml = fs.readFileSync(
+    path.resolve(__dirname, 'app-vite', 'index.html'),
+    'utf-8',
+  );
+  const html = ejs.render(rawHtml, {
+    ...envVars.htmlInjections,
+  });
+
   console.log(`
   ====================${mode}========================
   `);
@@ -70,21 +80,7 @@ module.exports = (env, argv) => {
       new CaseSensitivePathsPlugin(),
       new HtmlWebpackPlugin({
         title: 'Bangle',
-        template: 'style/index.html',
-        sentry: isProduction
-          ? `<script
-          src="https://js.sentry-cdn.com/f1a3d53e530e465e8f74f847370b594b.min.js"
-          crossorigin="anonymous"
-          data-lazy="no"
-        ></script>`
-          : '',
-
-        bangleHelpPreload: `<link
-          rel="preload"
-          href="https://unpkg.com/bangle-io-help@${envVars.helpDocsVersion}/docs/landing.md"
-          as="fetch"
-          crossorigin
-        />`,
+        templateContent: html,
       }),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
@@ -94,7 +90,7 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'webpack', 'static'),
+            from: path.resolve(__dirname, 'app-vite', 'public'),
             to: buildPath,
           },
         ],
@@ -109,6 +105,13 @@ module.exports = (env, argv) => {
     ].filter(Boolean),
     module: {
       rules: [
+        {
+          test: /\.ejs$/,
+          loader: 'ejs-loader',
+          options: {
+            variable: 'data',
+          },
+        },
         {
           test: /\.(png|svg|jpg|gif)$/,
           use: ['file-loader'],

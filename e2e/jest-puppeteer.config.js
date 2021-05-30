@@ -17,6 +17,6 @@ module.exports = {
   // /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --no-first-run --no-default-browser-check --user-data-dir=$(mktemp -d -t 'chrome-remote_data_dir')
   // connect: {
   //   browserWSEndpoint:
-  //     'ws://127.0.0.1:9222/devtools/browser/e68e2bd6-cf73-477f-99c8-f0d6582333bb',
+  //     'ws://127.0.0.1:9222/devtools/browser/9a854614-685b-4738-a1db-3834e7bc5bb3',
   // },
 };

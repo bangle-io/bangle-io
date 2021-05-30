@@ -11,9 +11,27 @@ const helpDocsVersion = JSON.parse(
     .toString(),
 ).children.Version;
 
-module.exports = ({ isProduction }) => {
+module.exports = ({ isProduction, isVite = false }) => {
   return {
     helpDocsVersion,
+    htmlInjections: {
+      sentry: isProduction
+        ? `<script
+      src="https://js.sentry-cdn.com/f1a3d53e530e465e8f74f847370b594b.min.js"
+      crossorigin="anonymous"
+      data-lazy="no"
+    ></script>`
+        : '',
+      bangleHelpPreload: `<link
+      rel="preload"
+      href="https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/landing.md"
+      as="fetch"
+      crossorigin
+    />`,
+      viteJsEntry: isVite
+        ? '<script type="module" src="/src/index.js"></script>'
+        : '',
+    },
     appEnvs: {
       'process.env.NODE_ENV': JSON.stringify(
         isProduction ? 'production' : 'development',
