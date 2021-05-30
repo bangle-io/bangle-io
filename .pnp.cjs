@@ -115,6 +115,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:utils"
       },
       {
+        "name": "web-worker-helpers",
+        "reference": "workspace:web-worker-helpers"
+      },
+      {
         "name": "workspace",
         "reference": "workspace:workspace"
       }
@@ -146,6 +150,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["ui-components", ["workspace:ui-components"]],
       ["ui-context", ["workspace:ui-context"]],
       ["utils", ["workspace:utils"]],
+      ["web-worker-helpers", ["workspace:web-worker-helpers"]],
       ["workspace", ["workspace:workspace"]]
     ],
     "fallbackPool": [
@@ -5624,6 +5629,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ui-components", "workspace:ui-components"],
             ["ui-context", "workspace:ui-context"],
             ["utils", "workspace:utils"],
+            ["web-worker-helpers", "workspace:web-worker-helpers"],
             ["workspace", "workspace:workspace"]
           ],
           "linkType": "SOFT",
@@ -18634,6 +18640,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["minimalistic-assert", "npm:1.0.1"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["web-worker-helpers", [
+        ["workspace:web-worker-helpers", {
+          "packageLocation": "./web-worker-helpers/",
+          "packageDependencies": [
+            ["web-worker-helpers", "workspace:web-worker-helpers"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["webidl-conversions", [

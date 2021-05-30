@@ -41,6 +41,7 @@
     "ui-components": "workspace:*",
     "ui-context": "workspace:*",
     "utils": "workspace:*",
+    "web-worker-helpers": "worker:*",
     "workspace": "workspace:*"
   },
   "devDependencies": {

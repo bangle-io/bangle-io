@@ -3,6 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "web-worker-helpers/*": [
+        "../web-worker-helpers/*"
+      ],
+      "web-worker-helpers": [
+        "../web-worker-helpers/index.js"
+      ],
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],

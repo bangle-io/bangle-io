@@ -21,7 +21,8 @@
     "utils",
     "palettes",
     "workspace",
-    "polyfill"
+    "polyfill",
+    "web-worker-helpers"
   ],
   "authors": [
     {
