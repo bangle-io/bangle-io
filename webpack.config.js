@@ -90,7 +90,7 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'webpack', 'static'),
+            from: path.resolve(__dirname, 'app-vite', 'public'),
             to: buildPath,
           },
         ],
