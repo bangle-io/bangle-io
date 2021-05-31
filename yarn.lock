@@ -10640,15 +10640,15 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"naukar-proxy@workspace:*, naukar-proxy@workspace:naukar-proxy":
+"naukar-proxy@workspace:*, naukar-proxy@workspace:worker/naukar-proxy":
   version: 0.0.0-use.local
-  resolution: "naukar-proxy@workspace:naukar-proxy"
+  resolution: "naukar-proxy@workspace:worker/naukar-proxy"
   languageName: unknown
   linkType: soft
 
-"naukar-worker@workspace:*, naukar-worker@workspace:naukar-worker":
+"naukar-worker@workspace:*, naukar-worker@workspace:worker/naukar-worker":
   version: 0.0.0-use.local
-  resolution: "naukar-worker@workspace:naukar-worker"
+  resolution: "naukar-worker@workspace:worker/naukar-worker"
   dependencies:
     "@bangle.dev/collab-client": 0.16.2
     "@bangle.dev/collab-server": 0.16.2
@@ -15339,6 +15339,12 @@ typescript@4.2.4:
   checksum: 84f4a7eeb2a1d8b9704425837e017c91eedfae67ac89e0b866a2dcf283323c1dcabe0258196278b7d5fd0041392da895c8a0c59ddf3a94f1b2e003df68ddfec3
   languageName: node
   linkType: hard
+
+"worker@workspace:worker":
+  version: 0.0.0-use.local
+  resolution: "worker@workspace:worker"
+  languageName: unknown
+  linkType: soft
 
 "workspace@workspace:*, workspace@workspace:workspace":
   version: 0.0.0-use.local

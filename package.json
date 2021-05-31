@@ -8,7 +8,7 @@
     "tooling",
     "editor-manager-context",
     "create-bangle-io-context",
-    "naukar-proxy",
+    "worker",
     "config",
     "e2e",
     "editor",
@@ -22,8 +22,7 @@
     "utils",
     "palettes",
     "workspace",
-    "polyfill",
-    "naukar-worker"
+    "polyfill"
   ],
   "authors": [
     {

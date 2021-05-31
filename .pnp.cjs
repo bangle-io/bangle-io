@@ -87,14 +87,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-libs/inline-palette"
       },
       {
-        "name": "naukar-proxy",
-        "reference": "workspace:naukar-proxy"
-      },
-      {
-        "name": "naukar-worker",
-        "reference": "workspace:naukar-worker"
-      },
-      {
         "name": "palettes",
         "reference": "workspace:palettes"
       },
@@ -123,6 +115,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:utils"
       },
       {
+        "name": "worker",
+        "reference": "workspace:worker"
+      },
+      {
         "name": "workspace",
         "reference": "workspace:workspace"
       },
@@ -137,6 +133,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "env-vars",
         "reference": "workspace:tooling/env-vars"
+      },
+      {
+        "name": "naukar-proxy",
+        "reference": "workspace:worker/naukar-proxy"
+      },
+      {
+        "name": "naukar-worker",
+        "reference": "workspace:worker/naukar-worker"
       }
     ],
     "enableTopLevelFallback": true,
@@ -162,8 +166,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["inline-emoji", ["workspace:extensions/inline-emoji"]],
       ["inline-palette", ["virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette", "workspace:js-libs/inline-palette"]],
-      ["naukar-proxy", ["workspace:naukar-proxy"]],
-      ["naukar-worker", ["workspace:naukar-worker"]],
+      ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
+      ["naukar-worker", ["workspace:worker/naukar-worker"]],
       ["palettes", ["workspace:palettes"]],
       ["polyfill", ["workspace:polyfill"]],
       ["style", ["workspace:style"]],
@@ -171,6 +175,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["ui-components", ["workspace:ui-components"]],
       ["ui-context", ["workspace:ui-context"]],
       ["utils", ["workspace:utils"]],
+      ["worker", ["workspace:worker"]],
       ["workspace", ["workspace:workspace"]]
     ],
     "fallbackPool": [
@@ -3056,11 +3061,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.2", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-d7aaa22d35/0/cache/@bangle.dev-collab-client-npm-0.16.2-5099e32c6c-1641fa59c7.zip/node_modules/@bangle.dev/collab-client/",
+        ["virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-038046a905/0/cache/@bangle.dev-collab-client-npm-0.16.2-5099e32c6c-1641fa59c7.zip/node_modules/@bangle.dev/collab-client/",
           "packageDependencies": [
-            ["@bangle.dev/collab-client", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.2"],
-            ["@bangle.dev/collab-server", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.2"],
+            ["@bangle.dev/collab-client", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2"],
+            ["@bangle.dev/collab-server", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2"],
             ["@bangle.dev/core", null],
             ["@types/bangle.dev__collab-server", null],
             ["@types/bangle.dev__core", null],
@@ -3131,10 +3136,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.2", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-server-virtual-a465790e68/0/cache/@bangle.dev-collab-server-npm-0.16.2-3b6471513b-9cfb667209.zip/node_modules/@bangle.dev/collab-server/",
+        ["virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-server-virtual-afb307e8e1/0/cache/@bangle.dev-collab-server-npm-0.16.2-3b6471513b-9cfb667209.zip/node_modules/@bangle.dev/collab-server/",
           "packageDependencies": [
-            ["@bangle.dev/collab-server", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.2"],
+            ["@bangle.dev/collab-server", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2"],
             ["@bangle.dev/core", null],
             ["@types/bangle.dev__core", null],
             ["@types/prosemirror-model", null],
@@ -5755,8 +5760,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["create-bangle-io-context", "workspace:create-bangle-io-context"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:editor-manager-context"],
-            ["naukar-proxy", "workspace:naukar-proxy"],
-            ["naukar-worker", "workspace:naukar-worker"],
+            ["naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["naukar-worker", "workspace:worker/naukar-worker"],
             ["palettes", "workspace:palettes"],
             ["polyfill", "workspace:polyfill"],
             ["prop-types", "npm:15.7.2"],
@@ -7298,7 +7303,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/collab-server", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#npm:0.16.2"],
             ["@bangle.dev/core", "npm:0.16.2"],
             ["extension-helpers", "workspace:extension-helpers"],
-            ["naukar-proxy", "workspace:naukar-proxy"]
+            ["naukar-proxy", "workspace:worker/naukar-proxy"]
           ],
           "linkType": "SOFT",
         }]
@@ -13808,21 +13813,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["naukar-proxy", [
-        ["workspace:naukar-proxy", {
-          "packageLocation": "./naukar-proxy/",
+        ["workspace:worker/naukar-proxy", {
+          "packageLocation": "./worker/naukar-proxy/",
           "packageDependencies": [
-            ["naukar-proxy", "workspace:naukar-proxy"]
+            ["naukar-proxy", "workspace:worker/naukar-proxy"]
           ],
           "linkType": "SOFT",
         }]
       ]],
       ["naukar-worker", [
-        ["workspace:naukar-worker", {
-          "packageLocation": "./naukar-worker/",
+        ["workspace:worker/naukar-worker", {
+          "packageLocation": "./worker/naukar-worker/",
           "packageDependencies": [
-            ["naukar-worker", "workspace:naukar-worker"],
-            ["@bangle.dev/collab-client", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.2"],
-            ["@bangle.dev/collab-server", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.2"],
+            ["naukar-worker", "workspace:worker/naukar-worker"],
+            ["@bangle.dev/collab-client", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2"],
+            ["@bangle.dev/collab-server", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2"],
             ["comlink", "npm:4.3.1"],
             ["config", "workspace:config"],
             ["idb-keyval", "npm:5.0.5"],
@@ -19269,6 +19274,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["word-wrap", "npm:1.2.3"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["worker", [
+        ["workspace:worker", {
+          "packageLocation": "./worker/",
+          "packageDependencies": [
+            ["worker", "workspace:worker"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["worker-loader", [
