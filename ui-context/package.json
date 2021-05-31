@@ -20,7 +20,6 @@
   "scripts": {},
   "dependencies": {
     "react": "16.14.0",
-    "style": "workspace:*",
     "utils": "workspace:*"
   },
   "publishConfig": {

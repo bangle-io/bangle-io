@@ -1,6 +1,6 @@
+import { applyTheme } from './apply-theme';
 import React, { useReducer, createContext, useMemo, useEffect } from 'react';
 import { useWindowSize, checkWidescreen } from 'utils/index';
-import { applyTheme } from 'style/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
@@ -84,7 +84,7 @@ export function UIManager({ children }) {
     (state, action) => new UIState(reducer(state, action)),
     new UIState(initialState, true),
     (store) => {
-      applyTheme(store.theme);
+      applyThemee(store.theme);
       setRootWidescreenClass(store.widescreen);
       return store;
     },
