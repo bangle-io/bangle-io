@@ -7,11 +7,11 @@ import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
 import { polyfills } from 'polyfill/index';
-import { setupBrahmaan } from './setup-brahmaan/setup-brahmaan';
-import { setBrahmaanReady } from 'brahmaan-proxy/index';
+import { setupNaukar } from './setup-naukar/setup-naukar';
+import { setNaukarReady } from 'naukar-proxy/index';
 
-setupBrahmaan().then((brahmaan) => {
-  setBrahmaanReady(brahmaan);
+setupNaukar().then((naukar) => {
+  setNaukarReady(naukar);
 });
 
 window.Sentry?.onLoad(function () {

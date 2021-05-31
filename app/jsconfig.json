@@ -9,17 +9,17 @@
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
-      "brahmaan-proxy": [
-        "../brahmaan-proxy/index.js"
+      "naukar-proxy": [
+        "../naukar-proxy/index.js"
       ],
-      "brahmaan-proxy/*": [
-        "../brahmaan-proxy/*"
+      "naukar-proxy/*": [
+        "../naukar-proxy/*"
       ],
-      "brahmaan-worker": [
-        "../brahmaan-worker/index.js"
+      "naukar-worker": [
+        "../naukar-worker/index.js"
       ],
-      "brahmaan-worker/*": [
-        "../brahmaan-worker/*"
+      "naukar-worker/*": [
+        "../naukar-worker/*"
       ],
       "commands": [
         "../commands/index.js"

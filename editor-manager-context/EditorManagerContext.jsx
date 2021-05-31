@@ -10,7 +10,7 @@ import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
 import { bangleIOContext } from 'create-bangle-io-context/index';
-import { brahmaanWorkerProxy } from 'brahmaan-proxy/index';
+import { naukarWorkerProxy } from 'naukar-proxy/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -110,7 +110,7 @@ export function EditorManager({ children }) {
  */
 function useManager() {
   const sendRequest = useCallback(async (...args) => {
-    return brahmaanWorkerProxy.handleCollabRequest(...args).then((obj) => {
+    return naukarWorkerProxy.handleCollabRequest(...args).then((obj) => {
       return parseCollabResponse(obj);
     });
   }, []);

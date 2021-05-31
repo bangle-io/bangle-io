@@ -1,7 +1,7 @@
 import * as Comlink from 'comlink';
-import { validateNonWorkerGlobalScope } from 'brahmaan-worker/index';
+import { validateNonWorkerGlobalScope } from 'naukar-worker/index';
 // eslint-disable-next-line import/no-unresolved
-import Worker from './expose-brahmaan-worker.worker?worker';
+import Worker from './expose-naukar-worker.worker?worker';
 
 validateNonWorkerGlobalScope();
 

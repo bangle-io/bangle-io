@@ -9,7 +9,7 @@
     "env-vars",
     "editor-manager-context",
     "create-bangle-io-context",
-    "brahmaan-proxy",
+    "naukar-proxy",
     "config",
     "e2e",
     "editor",
@@ -24,7 +24,7 @@
     "palettes",
     "workspace",
     "polyfill",
-    "brahmaan-worker"
+    "naukar-worker"
   ],
   "authors": [
     {

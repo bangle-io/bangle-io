@@ -35,14 +35,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:bangle-io-context"
       },
       {
-        "name": "brahmaan-proxy",
-        "reference": "workspace:brahmaan-proxy"
-      },
-      {
-        "name": "brahmaan-worker",
-        "reference": "workspace:brahmaan-worker"
-      },
-      {
         "name": "commands",
         "reference": "workspace:commands"
       },
@@ -103,6 +95,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-libs/inline-palette"
       },
       {
+        "name": "naukar-proxy",
+        "reference": "workspace:naukar-proxy"
+      },
+      {
+        "name": "naukar-worker",
+        "reference": "workspace:naukar-worker"
+      },
+      {
         "name": "palettes",
         "reference": "workspace:palettes"
       },
@@ -139,8 +139,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["baby-fs", ["workspace:js-libs/baby-fs"]],
       ["bangle-io", ["workspace:."]],
       ["bangle-io-context", ["workspace:bangle-io-context"]],
-      ["brahmaan-proxy", ["workspace:brahmaan-proxy"]],
-      ["brahmaan-worker", ["workspace:brahmaan-worker"]],
       ["collapsible-heading", ["workspace:extensions/collapsible-heading"]],
       ["commands", ["workspace:commands"]],
       ["config", ["workspace:config"]],
@@ -155,6 +153,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["inline-emoji", ["workspace:extensions/inline-emoji"]],
       ["inline-palette", ["virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette", "workspace:js-libs/inline-palette"]],
+      ["naukar-proxy", ["workspace:naukar-proxy"]],
+      ["naukar-worker", ["workspace:naukar-worker"]],
       ["palettes", ["workspace:palettes"]],
       ["polyfill", ["workspace:polyfill"]],
       ["style", ["workspace:style"]],
@@ -3046,12 +3046,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-44e2ff1575/0/cache/@bangle.dev-collab-client-npm-0.16.0-7c2b778220-53ccb1b056.zip/node_modules/@bangle.dev/collab-client/",
+        ["virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-16770aa93f/0/cache/@bangle.dev-collab-client-npm-0.16.0-7c2b778220-53ccb1b056.zip/node_modules/@bangle.dev/collab-client/",
           "packageDependencies": [
-            ["@bangle.dev/collab-client", "virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0"],
-            ["@bangle.dev/collab-server", "virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0"],
-            ["@bangle.dev/core", null],
+            ["@bangle.dev/collab-client", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0"],
+            ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0"],
+            ["@bangle.dev/core", "npm:0.16.0"],
             ["@types/bangle.dev__collab-server", null],
             ["@types/bangle.dev__core", null],
             ["@types/prosemirror-collab", null],
@@ -3079,12 +3079,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-16770aa93f/0/cache/@bangle.dev-collab-client-npm-0.16.0-7c2b778220-53ccb1b056.zip/node_modules/@bangle.dev/collab-client/",
+        ["virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.0", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-client-virtual-cfadc7323c/0/cache/@bangle.dev-collab-client-npm-0.16.0-7c2b778220-53ccb1b056.zip/node_modules/@bangle.dev/collab-client/",
           "packageDependencies": [
-            ["@bangle.dev/collab-client", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0"],
-            ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0"],
-            ["@bangle.dev/core", "npm:0.16.0"],
+            ["@bangle.dev/collab-client", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.0"],
+            ["@bangle.dev/collab-server", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.0"],
+            ["@bangle.dev/core", null],
             ["@types/bangle.dev__collab-server", null],
             ["@types/bangle.dev__core", null],
             ["@types/prosemirror-collab", null],
@@ -3121,11 +3121,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-server-virtual-38e2098e14/0/cache/@bangle.dev-collab-server-npm-0.16.0-87e9b0c1f3-3751c583d8.zip/node_modules/@bangle.dev/collab-server/",
+        ["virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-server-virtual-71fe4963f5/0/cache/@bangle.dev-collab-server-npm-0.16.0-87e9b0c1f3-3751c583d8.zip/node_modules/@bangle.dev/collab-server/",
           "packageDependencies": [
-            ["@bangle.dev/collab-server", "virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0"],
-            ["@bangle.dev/core", null],
+            ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0"],
+            ["@bangle.dev/core", "npm:0.16.0"],
             ["@types/bangle.dev__core", null],
             ["@types/prosemirror-model", null],
             ["@types/prosemirror-transform", null],
@@ -3142,11 +3142,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-server-virtual-71fe4963f5/0/cache/@bangle.dev-collab-server-npm-0.16.0-87e9b0c1f3-3751c583d8.zip/node_modules/@bangle.dev/collab-server/",
+        ["virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.0", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-collab-server-virtual-7e16f0b728/0/cache/@bangle.dev-collab-server-npm-0.16.0-87e9b0c1f3-3751c583d8.zip/node_modules/@bangle.dev/collab-server/",
           "packageDependencies": [
-            ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0"],
-            ["@bangle.dev/core", "npm:0.16.0"],
+            ["@bangle.dev/collab-server", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.0"],
+            ["@bangle.dev/core", null],
             ["@types/bangle.dev__core", null],
             ["@types/prosemirror-model", null],
             ["@types/prosemirror-transform", null],
@@ -5678,14 +5678,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.3.1"],
             ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["bangle-io-context", "workspace:bangle-io-context"],
-            ["brahmaan-proxy", "workspace:brahmaan-proxy"],
-            ["brahmaan-worker", "workspace:brahmaan-worker"],
             ["comlink", "npm:4.3.1"],
             ["commands", "workspace:commands"],
             ["config", "workspace:config"],
             ["create-bangle-io-context", "workspace:create-bangle-io-context"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:editor-manager-context"],
+            ["naukar-proxy", "workspace:naukar-proxy"],
+            ["naukar-worker", "workspace:naukar-worker"],
             ["palettes", "workspace:palettes"],
             ["polyfill", "workspace:polyfill"],
             ["prop-types", "npm:15.7.2"],
@@ -6678,31 +6678,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fill-range", "npm:7.0.1"]
           ],
           "linkType": "HARD",
-        }]
-      ]],
-      ["brahmaan-proxy", [
-        ["workspace:brahmaan-proxy", {
-          "packageLocation": "./brahmaan-proxy/",
-          "packageDependencies": [
-            ["brahmaan-proxy", "workspace:brahmaan-proxy"]
-          ],
-          "linkType": "SOFT",
-        }]
-      ]],
-      ["brahmaan-worker", [
-        ["workspace:brahmaan-worker", {
-          "packageLocation": "./brahmaan-worker/",
-          "packageDependencies": [
-            ["brahmaan-worker", "workspace:brahmaan-worker"],
-            ["@bangle.dev/collab-client", "virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0"],
-            ["@bangle.dev/collab-server", "virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0"],
-            ["comlink", "npm:4.3.1"],
-            ["config", "workspace:config"],
-            ["idb-keyval", "npm:5.0.5"],
-            ["polyfill", "workspace:polyfill"],
-            ["workspace", "workspace:workspace"]
-          ],
-          "linkType": "SOFT",
         }]
       ]],
       ["browser-process-hrtime", [
@@ -8543,9 +8518,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/collab-server", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.0"],
             ["@bangle.dev/core", "npm:0.16.0"],
             ["bangle-io-context", "workspace:bangle-io-context"],
-            ["brahmaan-proxy", "workspace:brahmaan-proxy"],
             ["config", "workspace:config"],
             ["create-bangle-io-context", "workspace:create-bangle-io-context"],
+            ["naukar-proxy", "workspace:naukar-proxy"],
             ["prosemirror-dev-tools", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],
@@ -13641,6 +13616,31 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["natural-compare", "npm:1.4.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["naukar-proxy", [
+        ["workspace:naukar-proxy", {
+          "packageLocation": "./naukar-proxy/",
+          "packageDependencies": [
+            ["naukar-proxy", "workspace:naukar-proxy"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["naukar-worker", [
+        ["workspace:naukar-worker", {
+          "packageLocation": "./naukar-worker/",
+          "packageDependencies": [
+            ["naukar-worker", "workspace:naukar-worker"],
+            ["@bangle.dev/collab-client", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.0"],
+            ["@bangle.dev/collab-server", "virtual:50ece4e8d6d475d2a0e6c2e4683a162ddd33e7d27dd282b1bfabc37b128883aa9be44b6ed532548f5e44abff57e6adb8d13d7896633e6c9e887e1d58b60e68f5#npm:0.16.0"],
+            ["comlink", "npm:4.3.1"],
+            ["config", "workspace:config"],
+            ["idb-keyval", "npm:5.0.5"],
+            ["polyfill", "workspace:polyfill"],
+            ["workspace", "workspace:workspace"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["negotiator", [

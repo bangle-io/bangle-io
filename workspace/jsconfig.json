@@ -15,11 +15,11 @@
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
-      "brahmaan-proxy": [
-        "../brahmaan-proxy/index.js"
+      "naukar-proxy": [
+        "../naukar-proxy/index.js"
       ],
-      "brahmaan-proxy/*": [
-        "../brahmaan-proxy/*"
+      "naukar-proxy/*": [
+        "../naukar-proxy/*"
       ],
       "config": [
         "../config/index.js"

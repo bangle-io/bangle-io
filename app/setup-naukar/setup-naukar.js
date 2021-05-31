@@ -1,16 +1,16 @@
 import {
-  Brahmaan,
+  Naukar,
   validateNonWorkerGlobalScope,
   checkModuleWorkerSupport,
-} from 'brahmaan-worker/index';
+} from 'naukar-worker/index';
 import { bangleIOContext } from 'create-bangle-io-context/index';
 validateNonWorkerGlobalScope();
 
-export async function setupBrahmaan() {
+export async function setupNaukar() {
   const moduleSupport = checkModuleWorkerSupport();
   if (moduleSupport) {
-    const { default: handlers } = await import('./wrap-brahmaan-worker');
+    const { default: handlers } = await import('./wrap-naukar-worker');
     return handlers;
   }
-  return new Brahmaan({ bangleIOContext });
+  return new Naukar({ bangleIOContext });
 }

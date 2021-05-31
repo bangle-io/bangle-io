@@ -2,7 +2,7 @@ import { setupCollabManager } from './collab-manager';
 import { config } from 'config/index';
 import * as idb from 'idb-keyval';
 
-export class Brahmaan {
+export class Naukar {
   constructor({ bangleIOContext }) {
     const envType =
       typeof WorkerGlobalScope !== 'undefined' &&
@@ -10,7 +10,7 @@ export class Brahmaan {
       self instanceof WorkerGlobalScope
         ? 'worker'
         : 'window';
-    console.debug('Brahmaan running in ', envType);
+    console.debug('Naukar running in ', envType);
 
     this.bangleIOContext = bangleIOContext;
     this.manager = setupCollabManager(bangleIOContext);

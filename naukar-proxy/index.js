@@ -1,4 +1,4 @@
-let brahmaan;
+let naukar;
 
 class Emitter {
   constructor() {
@@ -45,27 +45,23 @@ class Emitter {
 
 const emitter = new Emitter();
 
-export const setBrahmaanReady = (_brahmaan) => {
-  brahmaan = _brahmaan;
+export const setNaukarReady = (_naukar) => {
+  naukar = _naukar;
   emitter.emit('ready');
 };
 
-export const brahmaanWorkerProxy = new Proxy(
+export const naukarWorkerProxy = new Proxy(
   {},
   {
     get(_target, prop) {
-      if (brahmaan) {
-        return Reflect.get(brahmaan, prop);
+      if (naukar) {
+        return Reflect.get(naukar, prop);
       }
       return (...args) => {
         return new Promise((res, rej) => {
           const callback = () => {
             try {
-              let value = Reflect.apply(
-                Reflect.get(brahmaan, prop),
-                null,
-                args,
-              );
+              let value = Reflect.apply(Reflect.get(naukar, prop), null, args);
               res(value);
               emitter.off('ready', callback);
             } catch (error) {

@@ -3591,14 +3591,14 @@ __metadata:
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
     bangle-io-context: "workspace:*"
-    brahmaan-proxy: "workspace:*"
-    brahmaan-worker: "workspace:*"
     comlink: ^4.3.1
     commands: "workspace:*"
     config: "workspace:*"
     create-bangle-io-context: "workspace:*"
     editor: "workspace:*"
     editor-manager-context: "workspace:*"
+    naukar-proxy: "workspace:*"
+    naukar-worker: "workspace:*"
     palettes: "workspace:*"
     polyfill: "workspace:*"
     prop-types: ^15.7.2
@@ -4374,26 +4374,6 @@ __metadata:
   checksum: e2a8e769a863f3d4ee887b5fe21f63193a891c68b612ddb4b68d82d1b5f3ff9073af066c343e9867a393fe4c2555dcb33e89b937195feb9c1613d259edfcd459
   languageName: node
   linkType: hard
-
-"brahmaan-proxy@workspace:*, brahmaan-proxy@workspace:brahmaan-proxy":
-  version: 0.0.0-use.local
-  resolution: "brahmaan-proxy@workspace:brahmaan-proxy"
-  languageName: unknown
-  linkType: soft
-
-"brahmaan-worker@workspace:*, brahmaan-worker@workspace:brahmaan-worker":
-  version: 0.0.0-use.local
-  resolution: "brahmaan-worker@workspace:brahmaan-worker"
-  dependencies:
-    "@bangle.dev/collab-client": 0.16.0
-    "@bangle.dev/collab-server": 0.16.0
-    comlink: ^4.3.1
-    config: "workspace:*"
-    idb-keyval: ^5.0.5
-    polyfill: "workspace:*"
-    workspace: "workspace:*"
-  languageName: unknown
-  linkType: soft
 
 "browser-process-hrtime@npm:^1.0.0":
   version: 1.0.0
@@ -5971,9 +5951,9 @@ __metadata:
     "@bangle.dev/collab-server": 0.16.0
     "@bangle.dev/core": 0.16.0
     bangle-io-context: "workspace:*"
-    brahmaan-proxy: "workspace:*"
     config: "workspace:*"
     create-bangle-io-context: "workspace:*"
+    naukar-proxy: "workspace:*"
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
     react-dom: 16.14.0
@@ -10482,6 +10462,26 @@ fsevents@~2.3.1:
   checksum: 23ad088b08f898fc9b53011d7bb78ec48e79de7627e01ab5518e806033861bef68d5b0cd0e2205c2f36690ac9571ff6bcb05eb777ced2eeda8d4ac5b44592c3d
   languageName: node
   linkType: hard
+
+"naukar-proxy@workspace:*, naukar-proxy@workspace:naukar-proxy":
+  version: 0.0.0-use.local
+  resolution: "naukar-proxy@workspace:naukar-proxy"
+  languageName: unknown
+  linkType: soft
+
+"naukar-worker@workspace:*, naukar-worker@workspace:naukar-worker":
+  version: 0.0.0-use.local
+  resolution: "naukar-worker@workspace:naukar-worker"
+  dependencies:
+    "@bangle.dev/collab-client": 0.16.0
+    "@bangle.dev/collab-server": 0.16.0
+    comlink: ^4.3.1
+    config: "workspace:*"
+    idb-keyval: ^5.0.5
+    polyfill: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "negotiator@npm:0.6.2":
   version: 0.6.2
