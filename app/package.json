@@ -2,6 +2,7 @@
   "name": "app",
   "workspaces": [
     "app-entry",
-    "palettes"
+    "palettes",
+    "commands"
   ]
 }

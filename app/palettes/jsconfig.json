@@ -1,19 +1,19 @@
 {
-  "extends": "../jsconfig-base.json",
+  "extends": "../../jsconfig-base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "baby-fs": [
-        "../js-libs/baby-fs/index.js"
+        "../../js-libs/baby-fs/index.js"
       ],
       "baby-fs/*": [
-        "../js-libs/baby-fs/*"
+        "../../js-libs/baby-fs/*"
       ],
       "collapsible-heading": [
-        "../extensions/collapsible-heading/index.js"
+        "../../extensions/collapsible-heading/index.js"
       ],
       "collapsible-heading/*": [
-        "../extensions/collapsible-heading/*"
+        "../../extensions/collapsible-heading/*"
       ],
       "commands": [
         "../commands/index.js"
@@ -22,46 +22,46 @@
         "../commands/*"
       ],
       "config": [
-        "../config/index.js"
+        "../../config/index.js"
       ],
       "config/*": [
-        "../config/*"
+        "../../config/*"
       ],
       "editor": [
-        "../editor/index.js"
+        "../../editor/index.js"
       ],
       "editor-manager-context": [
-        "../editor-manager-context/index.js"
+        "../../editor-manager-context/index.js"
       ],
       "editor-manager-context/*": [
-        "../editor-manager-context/*"
+        "../../editor-manager-context/*"
       ],
       "editor/*": [
-        "../editor/*"
+        "../../editor/*"
       ],
       "ui-components": [
-        "../ui-components/index.js"
+        "../../ui-components/index.js"
       ],
       "ui-components/*": [
-        "../ui-components/*"
+        "../../ui-components/*"
       ],
       "ui-context": [
-        "../ui-context/index.js"
+        "../../ui-context/index.js"
       ],
       "ui-context/*": [
-        "../ui-context/*"
+        "../../ui-context/*"
       ],
       "utils": [
-        "../utils/index.js"
+        "../../utils/index.js"
       ],
       "utils/*": [
-        "../utils/*"
+        "../../utils/*"
       ],
       "workspace": [
-        "../workspace/index.js"
+        "../../workspace/index.js"
       ],
       "workspace/*": [
-        "../workspace/*"
+        "../../workspace/*"
       ]
     }
   }

@@ -1,25 +1,25 @@
 {
-  "extends": "../jsconfig-base.json",
+  "extends": "../../jsconfig-base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "bangle-io-context": [
-        "../bangle-io-context/index.js"
+        "../../bangle-io-context/index.js"
       ],
       "bangle-io-context/*": [
-        "../bangle-io-context/*"
+        "../../bangle-io-context/*"
       ],
       "collab-extension": [
-        "../extensions/collab-extension/index.js"
+        "../../extensions/collab-extension/index.js"
       ],
       "collab-extension/*": [
-        "../extensions/collab-extension/*"
+        "../../extensions/collab-extension/*"
       ],
       "collapsible-heading": [
-        "../extensions/collapsible-heading/index.js"
+        "../../extensions/collapsible-heading/index.js"
       ],
       "collapsible-heading/*": [
-        "../extensions/collapsible-heading/*"
+        "../../extensions/collapsible-heading/*"
       ],
       "commands": [
         "../commands/index.js"
@@ -28,58 +28,58 @@
         "../commands/*"
       ],
       "config": [
-        "../config/index.js"
+        "../../config/index.js"
       ],
       "config/*": [
-        "../config/*"
+        "../../config/*"
       ],
       "editor": [
-        "../editor/index.js"
+        "../../editor/index.js"
       ],
       "editor-manager-context": [
-        "../editor-manager-context/index.js"
+        "../../editor-manager-context/index.js"
       ],
       "editor-manager-context/*": [
-        "../editor-manager-context/*"
+        "../../editor-manager-context/*"
       ],
       "editor/*": [
-        "../editor/*"
+        "../../editor/*"
       ],
       "image-extension": [
-        "../extensions/image-extension/index.js"
+        "../../extensions/image-extension/index.js"
       ],
       "image-extension/*": [
-        "../extensions/image-extension/*"
+        "../../extensions/image-extension/*"
       ],
       "inline-backlink": [
-        "../extensions/inline-backlink/index.js"
+        "../../extensions/inline-backlink/index.js"
       ],
       "inline-backlink/*": [
-        "../extensions/inline-backlink/*"
+        "../../extensions/inline-backlink/*"
       ],
       "inline-command-palette": [
-        "../extensions/inline-command-palette/index.js"
+        "../../extensions/inline-command-palette/index.js"
       ],
       "inline-command-palette/*": [
-        "../extensions/inline-command-palette/*"
+        "../../extensions/inline-command-palette/*"
       ],
       "inline-emoji": [
-        "../extensions/inline-emoji/index.js"
+        "../../extensions/inline-emoji/index.js"
       ],
       "inline-emoji/*": [
-        "../extensions/inline-emoji/*"
+        "../../extensions/inline-emoji/*"
       ],
       "naukar-proxy": [
-        "../worker/naukar-proxy/index.js"
+        "../../worker/naukar-proxy/index.js"
       ],
       "naukar-proxy/*": [
-        "../worker/naukar-proxy/*"
+        "../../worker/naukar-proxy/*"
       ],
       "naukar-worker": [
-        "../worker/naukar-worker/index.js"
+        "../../worker/naukar-worker/index.js"
       ],
       "naukar-worker/*": [
-        "../worker/naukar-worker/*"
+        "../../worker/naukar-worker/*"
       ],
       "palettes": [
         "../palettes/index.js"
@@ -88,34 +88,34 @@
         "../palettes/*"
       ],
       "style": [
-        "../style/index.js"
+        "../../style/index.js"
       ],
       "style/*": [
-        "../style/*"
+        "../../style/*"
       ],
       "ui-components": [
-        "../ui-components/index.js"
+        "../../ui-components/index.js"
       ],
       "ui-components/*": [
-        "../ui-components/*"
+        "../../ui-components/*"
       ],
       "ui-context": [
-        "../ui-context/index.js"
+        "../../ui-context/index.js"
       ],
       "ui-context/*": [
-        "../ui-context/*"
+        "../../ui-context/*"
       ],
       "utils": [
-        "../utils/index.js"
+        "../../utils/index.js"
       ],
       "utils/*": [
-        "../utils/*"
+        "../../utils/*"
       ],
       "workspace": [
-        "../workspace/index.js"
+        "../../workspace/index.js"
       ],
       "workspace/*": [
-        "../workspace/*"
+        "../../workspace/*"
       ]
     }
   }

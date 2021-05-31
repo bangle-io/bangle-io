@@ -17,7 +17,6 @@
     "style",
     "ui-components",
     "ui-context",
-    "commands",
     "utils",
     "workspace"
   ],

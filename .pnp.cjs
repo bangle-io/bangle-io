@@ -31,10 +31,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:bangle-io-context"
       },
       {
-        "name": "commands",
-        "reference": "workspace:commands"
-      },
-      {
         "name": "config",
         "reference": "workspace:config"
       },
@@ -115,6 +111,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app/app-entry"
       },
       {
+        "name": "commands",
+        "reference": "workspace:app/commands"
+      },
+      {
         "name": "palettes",
         "reference": "workspace:app/palettes"
       },
@@ -150,7 +150,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["bangle-io-context", ["workspace:bangle-io-context"]],
       ["collab-extension", ["workspace:extensions/collab-extension"]],
       ["collapsible-heading", ["workspace:extensions/collapsible-heading"]],
-      ["commands", ["workspace:commands"]],
+      ["commands", ["workspace:app/commands"]],
       ["config", ["workspace:config"]],
       ["e2e", ["workspace:tooling/e2e"]],
       ["editor", ["workspace:editor"]],
@@ -5761,7 +5761,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["collab-extension", "workspace:extensions/collab-extension"],
             ["collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["comlink", "npm:4.3.1"],
-            ["commands", "workspace:commands"],
+            ["commands", "workspace:app/commands"],
             ["config", "workspace:config"],
             ["core-js", "npm:3.13.1"],
             ["editor", "workspace:editor"],
@@ -7494,10 +7494,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["commands", [
-        ["workspace:commands", {
-          "packageLocation": "./commands/",
+        ["workspace:app/commands", {
+          "packageLocation": "./app/commands/",
           "packageDependencies": [
-            ["commands", "workspace:commands"],
+            ["commands", "workspace:app/commands"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["config", "workspace:config"],
             ["editor-manager-context", "workspace:editor-manager-context"],
@@ -14483,7 +14483,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/user-event", "virtual:30bbe5a9fd71bdedc988bef6dbbf7be8741a536210ced89040612d879c28fe8c68aa6f54170853cf930ad3b759b33f0d397e90bf35b31e32c7cda2064108bb55#npm:13.1.5"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["collapsible-heading", "workspace:extensions/collapsible-heading"],
-            ["commands", "workspace:commands"],
+            ["commands", "workspace:app/commands"],
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:editor-manager-context"],

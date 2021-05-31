@@ -5127,9 +5127,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commands@workspace:*, commands@workspace:commands":
+"commands@workspace:*, commands@workspace:app/commands":
   version: 0.0.0-use.local
-  resolution: "commands@workspace:commands"
+  resolution: "commands@workspace:app/commands"
   dependencies:
     baby-fs: "workspace:*"
     config: "workspace:*"
