@@ -14,7 +14,6 @@
     "js-libs/*",
     "lib",
     "ui-components",
-    "ui-context",
     "utils",
     "workspace"
   ],

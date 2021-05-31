@@ -35,10 +35,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:editor"
       },
       {
-        "name": "editor-manager-context",
-        "reference": "workspace:editor-manager-context"
-      },
-      {
         "name": "extension-helpers",
         "reference": "workspace:extension-helpers"
       },
@@ -87,10 +83,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:ui-components"
       },
       {
-        "name": "ui-context",
-        "reference": "workspace:ui-context"
-      },
-      {
         "name": "utils",
         "reference": "workspace:utils"
       },
@@ -121,6 +113,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "bangle-io-context",
         "reference": "workspace:lib/bangle-io-context"
+      },
+      {
+        "name": "editor-manager-context",
+        "reference": "workspace:lib/editor-manager-context"
+      },
+      {
+        "name": "ui-context",
+        "reference": "workspace:lib/ui-context"
       },
       {
         "name": "_scripts",
@@ -158,7 +158,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["config", ["workspace:config"]],
       ["e2e", ["workspace:tooling/e2e"]],
       ["editor", ["workspace:editor"]],
-      ["editor-manager-context", ["workspace:editor-manager-context"]],
+      ["editor-manager-context", ["workspace:lib/editor-manager-context"]],
       ["env-vars", ["workspace:tooling/env-vars"]],
       ["extension-helpers", ["workspace:extension-helpers"]],
       ["image-extension", ["workspace:extensions/image-extension"]],
@@ -173,7 +173,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["style", ["workspace:app/style"]],
       ["tooling", ["workspace:tooling"]],
       ["ui-components", ["workspace:ui-components"]],
-      ["ui-context", ["workspace:ui-context"]],
+      ["ui-context", ["workspace:lib/ui-context"]],
       ["utils", ["workspace:utils"]],
       ["worker", ["workspace:worker"]],
       ["workspace", ["workspace:workspace"]]
@@ -5770,7 +5770,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["config", "workspace:config"],
             ["core-js", "npm:3.13.1"],
             ["editor", "workspace:editor"],
-            ["editor-manager-context", "workspace:editor-manager-context"],
+            ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["image-extension", "workspace:extensions/image-extension"],
             ["inline-backlink", "workspace:extensions/inline-backlink"],
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
@@ -5785,7 +5785,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-virtual", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:2.7.1"],
             ["style", "workspace:app/style"],
             ["ui-components", "workspace:ui-components"],
-            ["ui-context", "workspace:ui-context"],
+            ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:utils"],
             ["workspace", "workspace:workspace"]
           ],
@@ -7505,9 +7505,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["commands", "workspace:app/commands"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["config", "workspace:config"],
-            ["editor-manager-context", "workspace:editor-manager-context"],
+            ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["react", "npm:16.14.0"],
-            ["ui-context", "workspace:ui-context"],
+            ["ui-context", "workspace:lib/ui-context"],
             ["workspace", "workspace:workspace"]
           ],
           "linkType": "SOFT",
@@ -8599,16 +8599,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["editor-manager-context", [
-        ["workspace:editor-manager-context", {
-          "packageLocation": "./editor-manager-context/",
+        ["workspace:lib/editor-manager-context", {
+          "packageLocation": "./lib/editor-manager-context/",
           "packageDependencies": [
-            ["editor-manager-context", "workspace:editor-manager-context"],
+            ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.dev/core", "npm:0.16.2"],
             ["config", "workspace:config"],
-            ["prosemirror-dev-tools", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
+            ["prosemirror-dev-tools", "virtual:0fdae22d71903efea080f73eeec5d486370ca842951151e68c71c6980654f730fc373f04cd4c3a27b7e1cd4927597050f8e4873ca870575e9c98a3fe09be4661#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
-            ["ui-context", "workspace:ui-context"]
+            ["ui-context", "workspace:lib/ui-context"]
           ],
           "linkType": "SOFT",
         }]
@@ -14500,11 +14500,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["commands", "workspace:app/commands"],
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
-            ["editor-manager-context", "workspace:editor-manager-context"],
+            ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
             ["ui-components", "workspace:ui-components"],
-            ["ui-context", "workspace:ui-context"],
+            ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:utils"],
             ["workspace", "workspace:workspace"]
           ],
@@ -15335,10 +15335,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020", {
-          "packageLocation": "./.yarn/__virtual__/prosemirror-dev-tools-virtual-d9f7450633/0/cache/prosemirror-dev-tools-https-9f499403da-115fd5891c.zip/node_modules/prosemirror-dev-tools/",
+        ["virtual:0fdae22d71903efea080f73eeec5d486370ca842951151e68c71c6980654f730fc373f04cd4c3a27b7e1cd4927597050f8e4873ca870575e9c98a3fe09be4661#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020", {
+          "packageLocation": "./.yarn/__virtual__/prosemirror-dev-tools-virtual-fde05e503b/0/cache/prosemirror-dev-tools-https-9f499403da-115fd5891c.zip/node_modules/prosemirror-dev-tools/",
           "packageDependencies": [
-            ["prosemirror-dev-tools", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
+            ["prosemirror-dev-tools", "virtual:0fdae22d71903efea080f73eeec5d486370ca842951151e68c71c6980654f730fc373f04cd4c3a27b7e1cd4927597050f8e4873ca870575e9c98a3fe09be4661#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
             ["@types/react", null],
             ["@types/react-dom", null],
             ["react", "npm:16.14.0"],
@@ -18404,10 +18404,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["ui-context", [
-        ["workspace:ui-context", {
-          "packageLocation": "./ui-context/",
+        ["workspace:lib/ui-context", {
+          "packageLocation": "./lib/ui-context/",
           "packageDependencies": [
-            ["ui-context", "workspace:ui-context"],
+            ["ui-context", "workspace:lib/ui-context"],
             ["react", "npm:16.14.0"],
             ["utils", "workspace:utils"]
           ],

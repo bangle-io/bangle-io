@@ -6015,9 +6015,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"editor-manager-context@workspace:*, editor-manager-context@workspace:editor-manager-context":
+"editor-manager-context@workspace:*, editor-manager-context@workspace:lib/editor-manager-context":
   version: 0.0.0-use.local
-  resolution: "editor-manager-context@workspace:editor-manager-context"
+  resolution: "editor-manager-context@workspace:lib/editor-manager-context"
   dependencies:
     "@bangle.dev/core": 0.16.2
     config: "workspace:*"
@@ -14569,9 +14569,9 @@ typescript@4.2.4:
   languageName: unknown
   linkType: soft
 
-"ui-context@workspace:*, ui-context@workspace:ui-context":
+"ui-context@workspace:*, ui-context@workspace:lib/ui-context":
   version: 0.0.0-use.local
-  resolution: "ui-context@workspace:ui-context"
+  resolution: "ui-context@workspace:lib/ui-context"
   dependencies:
     react: 16.14.0
     utils: "workspace:*"
