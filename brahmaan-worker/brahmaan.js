@@ -1,4 +1,6 @@
 import { setupCollabManager } from './collab-manager';
+import { config } from 'config/index';
+import * as idb from 'idb-keyval';
 
 export class Brahmaan {
   constructor({ bangleIOContext }) {
@@ -12,9 +14,10 @@ export class Brahmaan {
 
     this.bangleIOContext = bangleIOContext;
     this.manager = setupCollabManager(bangleIOContext);
+    this.cachedWorkspaces = undefined;
   }
 
-  handleCollabRequest(...args) {
+  async handleCollabRequest(...args) {
     return this.manager.handleRequest(...args);
   }
 

@@ -6697,6 +6697,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/collab-client", "virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0"],
             ["@bangle.dev/collab-server", "virtual:34d4e72f4fca77d4e354674d78bc2e93cf7e6d0e418ac0f087ee8122548653aaf1a1869c443856da69906a12e4544dfc3b08db8b50565db2c84b358ace4c38fb#npm:0.16.0"],
             ["comlink", "npm:4.3.1"],
+            ["config", "workspace:config"],
+            ["idb-keyval", "npm:5.0.5"],
             ["polyfill", "workspace:polyfill"],
             ["workspace", "workspace:workspace"]
           ],
@@ -19144,7 +19146,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["bangle-io-context", "workspace:bangle-io-context"],
-            ["brahmaan-proxy", "workspace:brahmaan-proxy"],
             ["config", "workspace:config"],
             ["editor", "workspace:editor"],
             ["idb-keyval", "npm:5.0.5"],

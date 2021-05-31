@@ -1,40 +1,45 @@
 import { helpFSWorkspaceInfo, HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
-import { config } from 'config/index';
 import * as idb from 'idb-keyval';
 import {
   WorkspaceError,
   WORKSPACE_NOT_FOUND_ERROR,
   WORKSPACE_ALREADY_EXISTS_ERROR,
 } from './errors';
-
 import { validWsName } from './path-helpers';
 
 /**
- * we need to cache the workspaces because
- * the a lot of our caches depend on uniqueness of rootDirHandler (saved in idb)
- * invalidating cache creates a new instance of rootDirHandler for the same dir
- * and hence messing up with downstream weakcaches.
+ * This function exists to retain the instance of the wsInfo (in particular rootDirHandler)
+ * We have a lot of caches that depend on uniqueness (a === b checks) of rootDirHandler
+ * if we simply return the rootDirHandler from idb everytime, we get a new instance of the
+ * handler everytime, hence messing up with downstream weakcaches.
  */
-let cachedWorkspaces = undefined;
-export function resetCachedWorkspaces() {
-  cachedWorkspaces = undefined;
+function listWorkspacesHigherOrder() {
+  let workspaces = [];
+  return async () => {
+    let currentWorkspaces = (await idb.get('workspaces/2')) || [];
+    currentWorkspaces = currentWorkspaces.map((cWsInfo) => {
+      const existingWsInfo = workspaces.find(
+        (wsInfo) => wsInfo.name === cWsInfo.name,
+      );
+      if (existingWsInfo) {
+        return existingWsInfo;
+      }
+      return cWsInfo;
+    });
+
+    // because we save the entire array in one indexedDb key, the helpfs
+    // will also get saved. This removes it so that we can add in a predictable way.
+    currentWorkspaces = currentWorkspaces.filter(
+      (f) => f.type !== HELP_FS_WORKSPACE_TYPE,
+    );
+    currentWorkspaces.push(helpFSWorkspaceInfo);
+    workspaces = currentWorkspaces;
+    return currentWorkspaces;
+  };
 }
 
-export async function listWorkspaces() {
-  if (!cachedWorkspaces || config.isTest) {
-    cachedWorkspaces = (await idb.get('workspaces/2')) || [];
-  }
+export const listWorkspaces = listWorkspacesHigherOrder();
 
-  // because we save the entire array in one indexedDb key, the helpfs
-  // will also get saved. This removes it so that we can add in a predictable way.
-  cachedWorkspaces = cachedWorkspaces.filter(
-    (f) => f.type !== HELP_FS_WORKSPACE_TYPE,
-  );
-  cachedWorkspaces.push(helpFSWorkspaceInfo);
-  return cachedWorkspaces;
-}
-
-// Workspace
 export async function getWorkspaceInfo(wsName) {
   const workspaces = await listWorkspaces();
   const workspaceInfo = workspaces.find(({ name }) => name === wsName);
@@ -113,7 +118,6 @@ export async function createWorkspace(wsName, type = 'browser', opts = {}) {
 
   workspaces.push(workspace);
 
-  resetCachedWorkspaces();
   await idb.set('workspaces/2', workspaces);
 }
 
@@ -128,6 +132,5 @@ export async function deleteWorkspace(wsName) {
   }
 
   workspaces = workspaces.filter((w) => w.name !== wsName);
-  resetCachedWorkspaces();
   await idb.set('workspaces/2', workspaces);
 }
