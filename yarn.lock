@@ -13946,9 +13946,9 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"style@workspace:*, style@workspace:style":
+"style@workspace:*, style@workspace:app/style":
   version: 0.0.0-use.local
-  resolution: "style@workspace:style"
+  resolution: "style@workspace:app/style"
   dependencies:
     tailwindcss: ^2.1.2
   languageName: unknown
@@ -14568,7 +14568,6 @@ typescript@4.2.4:
   resolution: "ui-context@workspace:ui-context"
   dependencies:
     react: 16.14.0
-    style: "workspace:*"
     utils: "workspace:*"
   languageName: unknown
   linkType: soft

@@ -84,7 +84,7 @@ export function UIManager({ children }) {
     (state, action) => new UIState(reducer(state, action)),
     new UIState(initialState, true),
     (store) => {
-      applyThemee(store.theme);
+      applyTheme(store.theme);
       setRootWidescreenClass(store.widescreen);
       return store;
     },

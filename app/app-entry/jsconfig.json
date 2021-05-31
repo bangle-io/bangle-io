@@ -88,10 +88,10 @@
         "../palettes/*"
       ],
       "style": [
-        "../../style/index.js"
+        "../style/index.js"
       ],
       "style/*": [
-        "../../style/*"
+        "../style/*"
       ],
       "ui-components": [
         "../../ui-components/index.js"

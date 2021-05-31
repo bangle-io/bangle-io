@@ -3,6 +3,7 @@
   "workspaces": [
     "app-entry",
     "palettes",
-    "commands"
+    "commands",
+    "style"
   ]
 }

@@ -14,7 +14,6 @@
     "extension-helpers",
     "extensions/*",
     "js-libs/*",
-    "style",
     "ui-components",
     "ui-context",
     "utils",
