@@ -1,3 +1,4 @@
+const { rootDir } = require('./constants');
 const fs = require('fs/promises');
 const path = require('path');
 
@@ -53,7 +54,7 @@ async function mapFiles(dir = '.', mapper, { ignore = () => false } = {}) {
 }
 
 async function walkWorkspace() {
-  const rootPath = path.resolve(__dirname, '..');
+  const rootPath = rootDir;
   let result = await Promise.all(
     require('child_process')
       .execSync(`yarn workspaces list --json`)

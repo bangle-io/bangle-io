@@ -1,13 +1,11 @@
+const { rootDir, rootPackagePath } = require('./constants');
 const fs = require('fs/promises');
 const path = require('path');
-const pkg = require('../package.json');
-
-const bangleDevLocal = '../bangle-play';
 
 removePortals();
 
 async function removePortals() {
-  const resolvedPath = path.resolve(__dirname, '../package.json');
+  const pkg = JSON.parse(await fs.readFile(rootPackagePath, 'utf-8'));
   const deps = Object.entries(pkg.resolutions).filter(
     ([r, value]) => !r.startsWith('@bangle.dev/'),
   );
@@ -16,9 +14,5 @@ async function removePortals() {
     ...Object.fromEntries(deps),
   };
 
-  await fs.writeFile(
-    path.resolve(__dirname, '../package.json'),
-    JSON.stringify(pkg, null, 2),
-    'utf-8',
-  );
+  await fs.writeFile(rootPackagePath, JSON.stringify(pkg, null, 2), 'utf-8');
 }

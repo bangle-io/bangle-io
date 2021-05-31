@@ -127,6 +127,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:workspace"
       },
       {
+        "name": "_scripts",
+        "reference": "workspace:tooling/_scripts"
+      },
+      {
         "name": "e2e",
         "reference": "workspace:tooling/e2e"
       },
@@ -138,6 +142,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "enableTopLevelFallback": true,
     "ignorePatternData": "(^(?:\\.yarn\\/sdks(?:\\/(?!\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)|$))$)",
     "fallbackExclusionList": [
+      ["_scripts", ["workspace:tooling/_scripts"]],
       ["app", ["workspace:app"]],
       ["baby-fs", ["workspace:js-libs/baby-fs"]],
       ["bangle-io", ["workspace:."]],
@@ -5400,6 +5405,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@zeit/schemas", "npm:2.6.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["_scripts", [
+        ["workspace:tooling/_scripts", {
+          "packageLocation": "./tooling/_scripts/",
+          "packageDependencies": [
+            ["_scripts", "workspace:tooling/_scripts"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["abab", [

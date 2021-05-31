@@ -3347,6 +3347,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"_scripts@workspace:tooling/_scripts":
+  version: 0.0.0-use.local
+  resolution: "_scripts@workspace:tooling/_scripts"
+  languageName: unknown
+  linkType: soft
+
 "abab@npm:^2.0.3":
   version: 2.0.5
   resolution: "abab@npm:2.0.5"

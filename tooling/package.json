@@ -2,6 +2,7 @@
   "name": "tooling",
   "workspaces": [
     "env-vars",
-    "e2e"
+    "e2e",
+    "_scripts"
   ]
 }
