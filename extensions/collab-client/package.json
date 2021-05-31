@@ -1,5 +1,5 @@
 {
-  "name": "bangle-io-context",
+  "name": "collab-client",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,13 +18,13 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
+  "dependencies": {
+    "@bangle.dev/collab-client": "0.16.1",
+    "@bangle.dev/core": "0.16.1",
+    "extension-helpers": "workspace:*",
+    "utils": "workspace:*"
+  },
   "publishConfig": {
     "access": "restricted"
-  },
-  "dependencies": {
-    "@bangle.dev/core": "0.16.1",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "utils": "workspace:*"
   }
 }

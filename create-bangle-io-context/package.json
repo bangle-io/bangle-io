@@ -20,8 +20,8 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/core": "0.16.0",
-    "@bangle.dev/markdown-front-matter": "0.16.0",
+    "@bangle.dev/core": "0.16.1",
+    "@bangle.dev/markdown-front-matter": "0.16.1",
     "bangle-io-context": "workspace:*",
     "collapsible-heading": "workspace:*",
     "editor": "workspace:*",
