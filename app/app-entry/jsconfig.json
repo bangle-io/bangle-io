@@ -4,10 +4,10 @@
     "baseUrl": ".",
     "paths": {
       "bangle-io-context": [
-        "../../bangle-io-context/index.js"
+        "../../lib/bangle-io-context/index.js"
       ],
       "bangle-io-context/*": [
-        "../../bangle-io-context/*"
+        "../../lib/bangle-io-context/*"
       ],
       "collab-extension": [
         "../../extensions/collab-extension/index.js"
@@ -28,19 +28,19 @@
         "../commands/*"
       ],
       "config": [
-        "../../config/index.js"
+        "../../lib/config/index.js"
       ],
       "config/*": [
-        "../../config/*"
+        "../../lib/config/*"
       ],
       "editor": [
         "../../editor/index.js"
       ],
       "editor-manager-context": [
-        "../../editor-manager-context/index.js"
+        "../../lib/editor-manager-context/index.js"
       ],
       "editor-manager-context/*": [
-        "../../editor-manager-context/*"
+        "../../lib/editor-manager-context/*"
       ],
       "editor/*": [
         "../../editor/*"
@@ -100,10 +100,10 @@
         "../../ui-components/*"
       ],
       "ui-context": [
-        "../../ui-context/index.js"
+        "../../lib/ui-context/index.js"
       ],
       "ui-context/*": [
-        "../../ui-context/*"
+        "../../lib/ui-context/*"
       ],
       "utils": [
         "../../utils/index.js"

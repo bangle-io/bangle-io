@@ -10,22 +10,22 @@
         "../../js-libs/baby-fs/*"
       ],
       "config": [
-        "../../config/index.js"
+        "../../lib/config/index.js"
       ],
       "config/*": [
-        "../../config/*"
+        "../../lib/config/*"
       ],
       "editor-manager-context": [
-        "../../editor-manager-context/index.js"
+        "../../lib/editor-manager-context/index.js"
       ],
       "editor-manager-context/*": [
-        "../../editor-manager-context/*"
+        "../../lib/editor-manager-context/*"
       ],
       "ui-context": [
-        "../../ui-context/index.js"
+        "../../lib/ui-context/index.js"
       ],
       "ui-context/*": [
-        "../../ui-context/*"
+        "../../lib/ui-context/*"
       ],
       "workspace": [
         "../../workspace/index.js"

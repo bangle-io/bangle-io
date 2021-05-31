@@ -6,7 +6,6 @@
     "app",
     "tooling",
     "worker",
-    "config",
     "e2e",
     "editor",
     "extension-helpers",

@@ -27,10 +27,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app"
       },
       {
-        "name": "config",
-        "reference": "workspace:config"
-      },
-      {
         "name": "editor",
         "reference": "workspace:editor"
       },
@@ -115,6 +111,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/bangle-io-context"
       },
       {
+        "name": "config",
+        "reference": "workspace:lib/config"
+      },
+      {
         "name": "editor-manager-context",
         "reference": "workspace:lib/editor-manager-context"
       },
@@ -155,7 +155,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["collab-extension", ["workspace:extensions/collab-extension"]],
       ["collapsible-heading", ["workspace:extensions/collapsible-heading"]],
       ["commands", ["workspace:app/commands"]],
-      ["config", ["workspace:config"]],
+      ["config", ["workspace:lib/config"]],
       ["e2e", ["workspace:tooling/e2e"]],
       ["editor", ["workspace:editor"]],
       ["editor-manager-context", ["workspace:lib/editor-manager-context"]],
@@ -5767,7 +5767,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["comlink", "npm:4.3.1"],
             ["commands", "workspace:app/commands"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["core-js", "npm:3.13.1"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
@@ -6420,7 +6420,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-libs/baby-fs/",
           "packageDependencies": [
             ["baby-fs", "workspace:js-libs/baby-fs"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["idb-keyval", "npm:5.0.5"],
             ["utils", "workspace:utils"]
           ],
@@ -7504,7 +7504,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["commands", "workspace:app/commands"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["react", "npm:16.14.0"],
             ["ui-context", "workspace:lib/ui-context"],
@@ -7581,10 +7581,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["config", [
-        ["workspace:config", {
-          "packageLocation": "./config/",
+        ["workspace:lib/config", {
+          "packageLocation": "./lib/config/",
           "packageDependencies": [
-            ["config", "workspace:config"]
+            ["config", "workspace:lib/config"]
           ],
           "linkType": "SOFT",
         }]
@@ -8604,7 +8604,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.dev/core", "npm:0.16.2"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["prosemirror-dev-tools", "virtual:0fdae22d71903efea080f73eeec5d486370ca842951151e68c71c6980654f730fc373f04cd4c3a27b7e1cd4927597050f8e4873ca870575e9c98a3fe09be4661#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
@@ -11202,7 +11202,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["@testing-library/user-event", "virtual:30bbe5a9fd71bdedc988bef6dbbf7be8741a536210ced89040612d879c28fe8c68aa6f54170853cf930ad3b759b33f0d397e90bf35b31e32c7cda2064108bb55#npm:13.1.5"],
             ["bangle-io-context", "workspace:lib/bangle-io-context"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["extension-helpers", "workspace:extension-helpers"],
             ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],
@@ -11222,7 +11222,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.16.2"],
             ["@bangle.dev/react", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.2"],
             ["chrono-node", "npm:2.2.6"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["extension-helpers", "workspace:extension-helpers"],
             ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],
@@ -13832,7 +13832,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/collab-client", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2"],
             ["@bangle.dev/collab-server", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.16.2"],
             ["comlink", "npm:4.3.1"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["idb-keyval", "npm:5.0.5"],
             ["workspace", "workspace:workspace"]
           ],
@@ -14498,7 +14498,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["commands", "workspace:app/commands"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["react", "npm:16.14.0"],
@@ -18667,7 +18667,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["utils", "workspace:utils"],
             ["@testing-library/react-hooks", "virtual:5b1786f3a1ee9fbd6a8c56cee7ed469045eddc9c5ba3e8a4b318e74d365dea7ede1f95f68c741cc87eeefd05cf14f7a412274b715c560ce9b9c1673f53b639bb#npm:5.1.2"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["dayjs", "npm:1.10.4"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:5b1786f3a1ee9fbd6a8c56cee7ed469045eddc9c5ba3e8a4b318e74d365dea7ede1f95f68c741cc87eeefd05cf14f7a412274b715c560ce9b9c1673f53b639bb#npm:17.0.2"],
@@ -19310,7 +19310,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["baby-fs", "workspace:js-libs/baby-fs"],
             ["bangle-io-context", "workspace:lib/bangle-io-context"],
-            ["config", "workspace:config"],
+            ["config", "workspace:lib/config"],
             ["editor", "workspace:editor"],
             ["idb-keyval", "npm:5.0.5"],
             ["react", "npm:16.14.0"],

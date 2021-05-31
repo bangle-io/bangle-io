@@ -4,10 +4,10 @@
     "baseUrl": ".",
     "paths": {
       "config": [
-        "../../config/index.js"
+        "../../lib/config/index.js"
       ],
       "config/*": [
-        "../../config/*"
+        "../../lib/config/*"
       ],
       "workspace": [
         "../../workspace/index.js"
