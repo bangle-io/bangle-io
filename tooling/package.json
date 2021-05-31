@@ -1,6 +1,7 @@
 {
   "name": "tooling",
   "workspaces": [
-    "env-vars"
+    "env-vars",
+    "e2e"
   ]
 }
