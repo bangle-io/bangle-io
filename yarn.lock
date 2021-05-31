@@ -4147,9 +4147,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bangle-io-context@workspace:*, bangle-io-context@workspace:bangle-io-context":
+"bangle-io-context@workspace:*, bangle-io-context@workspace:lib/bangle-io-context":
   version: 0.0.0-use.local
-  resolution: "bangle-io-context@workspace:bangle-io-context"
+  resolution: "bangle-io-context@workspace:lib/bangle-io-context"
   dependencies:
     "@bangle.dev/core": 0.16.2
     react: 16.14.0
@@ -9951,6 +9951,12 @@ fsevents@~2.3.1:
   checksum: 0d084a524231a8246bb10fec48cdbb35282099f6954838604f3c7fc66f2e16fa66fd9cc2f3f20a541a113c4dafdf181e822c887c8a319c9195444e6c64ac395e
   languageName: node
   linkType: hard
+
+"lib@workspace:lib":
+  version: 0.0.0-use.local
+  resolution: "lib@workspace:lib"
+  languageName: unknown
+  linkType: soft
 
 "lie@npm:3.1.1":
   version: 3.1.1

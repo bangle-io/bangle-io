@@ -1,0 +1,6 @@
+{
+  "name": "lib",
+  "workspaces": [
+    "bangle-io-context"
+  ]
+}

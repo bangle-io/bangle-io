@@ -4,7 +4,6 @@
   "homepage": "https://bangle.io",
   "workspaces": [
     "app",
-    "bangle-io-context",
     "tooling",
     "editor-manager-context",
     "worker",
@@ -14,6 +13,7 @@
     "extension-helpers",
     "extensions/*",
     "js-libs/*",
+    "lib",
     "ui-components",
     "ui-context",
     "utils",
