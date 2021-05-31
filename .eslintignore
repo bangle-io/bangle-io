@@ -4,6 +4,5 @@ node_modules
 .yarn
 .pnp.js
 coverage
-app-vite/dist
 build
 dist
