@@ -5,7 +5,6 @@
   "workspaces": [
     "app",
     "tooling",
-    "editor-manager-context",
     "worker",
     "config",
     "e2e",

@@ -1,6 +1,7 @@
 {
   "name": "lib",
   "workspaces": [
-    "bangle-io-context"
+    "bangle-io-context",
+    "editor-manager-context"
   ]
 }

@@ -23,7 +23,6 @@ jest.mock('idb-keyval', () => {
     return mockStore.delete(...args);
   });
   idb.set = jest.fn(async (key, value) => {
-    console.log({ value });
     return mockStore.set(key, value);
   });
   idb.keys = jest.fn(async (...args) => {
