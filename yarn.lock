@@ -3621,9 +3621,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app@workspace:*, app@workspace:app":
+"app-entry@workspace:*, app-entry@workspace:app/app-entry":
   version: 0.0.0-use.local
-  resolution: "app@workspace:app"
+  resolution: "app-entry@workspace:app/app-entry"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@bangle.dev/markdown-front-matter": 0.16.2
@@ -3659,6 +3659,12 @@ __metadata:
     ui-context: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"app@workspace:app":
+  version: 0.0.0-use.local
+  resolution: "app@workspace:app"
   languageName: unknown
   linkType: soft
 
@@ -4175,7 +4181,7 @@ __metadata:
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
     "@vitejs/plugin-react-refresh": ^1.3.1
-    app: "workspace:*"
+    app-entry: "workspace:*"
     autoprefixer: ^10.2.5
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
@@ -11227,9 +11233,9 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"palettes@workspace:*, palettes@workspace:palettes":
+"palettes@workspace:*, palettes@workspace:app/palettes":
   version: 0.0.0-use.local
-  resolution: "palettes@workspace:palettes"
+  resolution: "palettes@workspace:app/palettes"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@testing-library/react": ^11.2.7

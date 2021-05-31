@@ -1,6 +1,7 @@
 {
   "name": "app",
   "workspaces": [
-    "app-entry"
+    "app-entry",
+    "palettes"
   ]
 }
