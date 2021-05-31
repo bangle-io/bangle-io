@@ -3,24 +3,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "bangle-io-context": [
-        "../bangle-io-context/index.js"
-      ],
-      "bangle-io-context/*": [
-        "../bangle-io-context/*"
-      ],
-      "naukar-proxy": [
-        "../naukar-proxy/index.js"
-      ],
-      "naukar-proxy/*": [
-        "../naukar-proxy/*"
-      ],
-      "collapsible-heading": [
-        "../extensions/collapsible-heading/index.js"
-      ],
-      "collapsible-heading/*": [
-        "../extensions/collapsible-heading/*"
-      ],
       "config": [
         "../config/index.js"
       ],
@@ -33,47 +15,11 @@
       "create-bangle-io-context/*": [
         "../create-bangle-io-context/*"
       ],
-      "editor": [
-        "../editor/index.js"
-      ],
-      "editor/*": [
-        "../editor/*"
-      ],
-      "image-extension": [
-        "../extensions/image-extension/index.js"
-      ],
-      "image-extension/*": [
-        "../extensions/image-extension/*"
-      ],
-      "inline-backlink": [
-        "../extensions/inline-backlink/index.js"
-      ],
-      "inline-backlink/*": [
-        "../extensions/inline-backlink/*"
-      ],
-      "inline-command-palette": [
-        "../extensions/inline-command-palette/index.js"
-      ],
-      "inline-command-palette/*": [
-        "../extensions/inline-command-palette/*"
-      ],
-      "inline-emoji": [
-        "../extensions/inline-emoji/index.js"
-      ],
-      "inline-emoji/*": [
-        "../extensions/inline-emoji/*"
-      ],
       "ui-context": [
         "../ui-context/index.js"
       ],
       "ui-context/*": [
         "../ui-context/*"
-      ],
-      "workspace": [
-        "../workspace/index.js"
-      ],
-      "workspace/*": [
-        "../workspace/*"
       ]
     }
   }

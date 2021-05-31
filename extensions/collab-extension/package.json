@@ -1,5 +1,5 @@
 {
-  "name": "inline-emoji",
+  "name": "collab-extension",
   "version": "0.0.0",
   "authors": [
     {
@@ -19,22 +19,11 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
+    "@bangle.dev/collab-client": "0.16.2",
+    "@bangle.dev/collab-server": "0.16.2",
     "@bangle.dev/core": "0.16.2",
-    "@bangle.dev/emoji": "0.16.2",
-    "@bangle.dev/markdown": "0.16.2",
-    "@bangle.dev/react": "0.16.2",
-    "@bangle.dev/react-emoji-suggest": "0.16.2",
-    "@bangle.dev/tooltip": "0.16.2",
-    "emoji-lookup-data": "^1.2.0",
     "extension-helpers": "workspace:*",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "utils": "workspace:*",
-    "workspace": "workspace:*"
-  },
-  "devDependencies": {
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.5"
+    "naukar-proxy": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

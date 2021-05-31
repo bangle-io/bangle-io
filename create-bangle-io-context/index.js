@@ -6,12 +6,14 @@ import inlineBacklinkPalette from 'inline-backlink/index';
 import collapsibleHeading from 'collapsible-heading/index';
 import imageExtension from 'image-extension/index';
 import inlineEmoji from 'inline-emoji/index';
+import collabExtension from 'collab-extension/index';
 
 // TODO move this async, i think a promise should be fine.
 export const bangleIOContext = new BangleIOContext({
   coreRawSpecs: rawSpecs,
   getCorePlugins: getPlugins,
   extensions: [
+    collabExtension,
     inlineCommandPalette,
     inlineBacklinkPalette,
     collapsibleHeading,

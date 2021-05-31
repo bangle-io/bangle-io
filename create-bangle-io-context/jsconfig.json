@@ -9,6 +9,12 @@
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
+      "collab-extension": [
+        "../extensions/collab-extension/index.js"
+      ],
+      "collab-extension/*": [
+        "../extensions/collab-extension/*"
+      ],
       "collapsible-heading": [
         "../extensions/collapsible-heading/index.js"
       ],
