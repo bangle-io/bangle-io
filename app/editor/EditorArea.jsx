@@ -46,8 +46,7 @@ export function EditorArea({
   onClose,
 }) {
   const { fileExists, wsPath } = useHandleWsPath(incomingWsPath);
-  const { sendRequest, setEditor, bangleIOContext } =
-    useContext(EditorManagerContext);
+  const { setEditor, bangleIOContext } = useContext(EditorManagerContext);
   const [showEmptyEditor, updateShowEmptyEditor] = useState(false);
 
   // prevents unwarranted flash of empty editor by waiting
@@ -80,7 +79,6 @@ export function EditorArea({
               key={wsPath}
               editorId={editorId}
               wsPath={wsPath}
-              sendRequest={sendRequest}
               setEditor={setEditor}
               bangleIOContext={bangleIOContext}
             />

@@ -47,10 +47,10 @@ export class BangleIOContext {
     );
   }
 
-  getPlugins(wsPath, sendRequest) {
+  getPlugins() {
     return [
       ...filterFlatMap(this._extensions, 'highPriorityEditorPlugins'),
-      this._getCorePlugins(wsPath, sendRequest),
+      this._getCorePlugins(),
       ...filterFlatMap(this._extensions, 'editorPlugins'),
     ];
   }

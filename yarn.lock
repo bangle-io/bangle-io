@@ -4874,7 +4874,6 @@ __metadata:
     "@bangle.dev/core": 0.16.2
     extension-helpers: "workspace:*"
     naukar-proxy: "workspace:*"
-    utils: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5941,12 +5940,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "editor-manager-context@workspace:editor-manager-context"
   dependencies:
-    "@bangle.dev/collab-server": 0.16.2
     "@bangle.dev/core": 0.16.2
-    bangle-io-context: "workspace:*"
     config: "workspace:*"
     create-bangle-io-context: "workspace:*"
-    naukar-proxy: "workspace:*"
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
     react-dom: 16.14.0

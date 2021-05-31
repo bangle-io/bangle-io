@@ -3,6 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "config": [
+        "../config/index.js"
+      ],
+      "config/*": [
+        "../config/*"
+      ],
       "polyfill": [
         "../polyfill/index.js"
       ],

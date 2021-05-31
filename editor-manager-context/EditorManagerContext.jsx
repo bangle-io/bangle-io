@@ -1,16 +1,8 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-} from 'react';
-import { parseCollabResponse } from '@bangle.dev/collab-server';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
 import { bangleIOContext } from 'create-bangle-io-context/index';
-import { naukarWorkerProxy } from 'naukar-proxy/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -24,7 +16,21 @@ export const EditorManagerContext = React.createContext({});
  * Should be parent of all editors.
  */
 export function EditorManager({ children }) {
-  const { sendRequest } = useManager();
+  /**
+   * Understanding common loading patterns
+   *
+   * # Opening an Existing file
+   *
+   * 1. User somehow clicks on a file and triggers pushWsPath
+   * 2. That then becomes a wsPath derived from history.location
+   * 3. A <Editor /> gets mounted with new wsPath
+   * 4. At this point the editor is loaded with empty doc.
+   * 5. Collab-extension's collab-client sets up communication with worker thread.
+   * 6. Worker thread has a collab-manager instance running.
+   * 7. When collab-client calls getDocument, it is passed on to worker thread's manager
+   * 8. manager calls localDisk.getItem to get the document from indexdb.
+   * 9. Collab-client plugin refreshes the editor with correct content
+   */
   const [editors, _setEditor] = useState(maxEditors);
   const [primaryEditor, secondaryEditor] = editors;
   const { paletteType } = useContext(UIManagerContext);
@@ -44,17 +50,14 @@ export function EditorManager({ children }) {
     const getEditor = (editorId) => {
       return editors[editorId];
     };
-    if (!sendRequest) {
-      return {};
-    }
+
     return {
-      sendRequest,
       setEditor,
       primaryEditor,
       getEditor,
       bangleIOContext,
     };
-  }, [sendRequest, _setEditor, editors]);
+  }, [_setEditor, editors]);
 
   useEffect(() => {
     if (!paletteType) {
@@ -91,31 +94,9 @@ export function EditorManager({ children }) {
 
   return (
     <EditorManagerContext.Provider value={value}>
-      {sendRequest && children}
+      {children}
     </EditorManagerContext.Provider>
   );
-}
-
-/**
- * Understanding common loading patterns
- *
- * # Opening an Existing file
- *
- * 1. User somehow clicks on a file and triggers pushWsPath
- * 2. That then becomes a wsPath derived from history.location
- * 3. A <Editor /> gets mounted with new wsPath
- * 4. At this point the editor is loaded with empty doc.
- * 5. localDisk.getItem is called to get the document
- * 6. Collab plugin refreshed the editor with correct content
- */
-function useManager() {
-  const sendRequest = useCallback(async (...args) => {
-    return naukarWorkerProxy.handleCollabRequest(...args).then((obj) => {
-      return parseCollabResponse(obj);
-    });
-  }, []);
-
-  return { sendRequest: sendRequest };
 }
 
 function rafEditorFocus(editor) {

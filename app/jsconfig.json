@@ -9,18 +9,6 @@
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
-      "naukar-proxy": [
-        "../naukar-proxy/index.js"
-      ],
-      "naukar-proxy/*": [
-        "../naukar-proxy/*"
-      ],
-      "naukar-worker": [
-        "../naukar-worker/index.js"
-      ],
-      "naukar-worker/*": [
-        "../naukar-worker/*"
-      ],
       "commands": [
         "../commands/index.js"
       ],
@@ -50,6 +38,18 @@
       ],
       "editor/*": [
         "../editor/*"
+      ],
+      "naukar-proxy": [
+        "../naukar-proxy/index.js"
+      ],
+      "naukar-proxy/*": [
+        "../naukar-proxy/*"
+      ],
+      "naukar-worker": [
+        "../naukar-worker/index.js"
+      ],
+      "naukar-worker/*": [
+        "../naukar-worker/*"
       ],
       "palettes": [
         "../palettes/index.js"

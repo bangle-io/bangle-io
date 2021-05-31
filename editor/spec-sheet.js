@@ -1,5 +1,3 @@
-import { collabClient } from '@bangle.dev/collab-client';
-
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import stopwatch from '@bangle.dev/react-stopwatch';
@@ -57,7 +55,6 @@ export const rawSpecs = [
   strike.spec(),
   link.spec(),
   underline.spec(),
-  collabClient.spec(),
   stopwatch.spec(),
   trailingNode.spec(),
   timestamp.spec(),

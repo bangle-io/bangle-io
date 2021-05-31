@@ -23,8 +23,7 @@
     "@bangle.dev/collab-server": "0.16.2",
     "@bangle.dev/core": "0.16.2",
     "extension-helpers": "workspace:*",
-    "naukar-proxy": "workspace:*",
-    "utils": "workspace:*"
+    "naukar-proxy": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

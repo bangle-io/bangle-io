@@ -15,12 +15,6 @@
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
-      "naukar-proxy": [
-        "../naukar-proxy/index.js"
-      ],
-      "naukar-proxy/*": [
-        "../naukar-proxy/*"
-      ],
       "config": [
         "../config/index.js"
       ],

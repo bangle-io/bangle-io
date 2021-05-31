@@ -26,13 +26,7 @@ Editor.propTypes = {
   editorId: PropTypes.number.isRequired,
 };
 
-export function Editor({
-  editorId,
-  wsPath,
-  bangleIOContext,
-  sendRequest,
-  setEditor,
-}) {
+export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
   useEffect(() => {
     log('mounting editor', editorId, wsPath);
     return () => {
@@ -41,8 +35,8 @@ export function Editor({
   }, [wsPath, editorId]);
 
   const plugins = useCallback(() => {
-    return bangleIOContext.getPlugins(wsPath, sendRequest);
-  }, [sendRequest, wsPath, bangleIOContext]);
+    return bangleIOContext.getPlugins();
+  }, [bangleIOContext]);
 
   const onEditorReady = useCallback(
     (editor) => {
@@ -62,6 +56,9 @@ export function Editor({
 
   const editorState = useEditorState({
     plugins: plugins,
+    pluginMetadata: {
+      wsPath,
+    },
     specRegistry: bangleIOContext.specRegistry,
   });
 
