@@ -1,5 +1,5 @@
 {
-  "name": "collab-client",
+  "name": "collab-extension",
   "version": "0.0.0",
   "authors": [
     {
@@ -19,9 +19,11 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/collab-client": "0.16.1",
-    "@bangle.dev/core": "0.16.1",
+    "@bangle.dev/collab-client": "0.16.2",
+    "@bangle.dev/collab-server": "0.16.2",
+    "@bangle.dev/core": "0.16.2",
     "extension-helpers": "workspace:*",
+    "naukar-proxy": "workspace:*",
     "utils": "workspace:*"
   },
   "publishConfig": {

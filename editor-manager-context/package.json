@@ -20,8 +20,8 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/collab-server": "0.16.1",
-    "@bangle.dev/core": "0.16.1",
+    "@bangle.dev/collab-server": "0.16.2",
+    "@bangle.dev/core": "0.16.2",
     "bangle-io-context": "workspace:*",
     "config": "workspace:*",
     "create-bangle-io-context": "workspace:*",
