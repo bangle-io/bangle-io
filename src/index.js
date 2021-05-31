@@ -1,1 +1,1 @@
-import 'app/index';
+import 'app-entry/index';

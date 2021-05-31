@@ -30,7 +30,7 @@ module.exports = (env, argv) => {
   const result = {
     target: 'web',
     mode,
-    entry: './app/index.jsx',
+    entry: './app/app-entry/index.jsx',
     devtool: 'source-map',
     resolve: {
       extensions: ['.jsx', '.js', '...'],
