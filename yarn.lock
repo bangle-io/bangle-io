@@ -6021,7 +6021,6 @@ __metadata:
   dependencies:
     "@bangle.dev/core": 0.16.2
     config: "workspace:*"
-    create-bangle-io-context: "workspace:*"
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 16.14.0
     react-dom: 16.14.0

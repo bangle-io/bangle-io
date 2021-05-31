@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
-import { bangleIOContext } from 'create-bangle-io-context/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -15,7 +14,7 @@ export const EditorManagerContext = React.createContext({});
 /**
  * Should be parent of all editors.
  */
-export function EditorManager({ children }) {
+export function EditorManager({ bangleIOContext, children }) {
   /**
    * Understanding common loading patterns
    *
@@ -57,7 +56,7 @@ export function EditorManager({ children }) {
       getEditor,
       bangleIOContext,
     };
-  }, [_setEditor, editors]);
+  }, [_setEditor, bangleIOContext, editors]);
 
   useEffect(() => {
     if (!paletteType) {

@@ -8587,7 +8587,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["editor-manager-context", "workspace:editor-manager-context"],
             ["@bangle.dev/core", "npm:0.16.2"],
             ["config", "workspace:config"],
-            ["create-bangle-io-context", "workspace:create-bangle-io-context"],
             ["prosemirror-dev-tools", "virtual:1137f5560641b3e1e562015bea83b8a458bd4e2238a19809e32bad320698e3bcebffe0ab7770ac31a3a953724cc6cda75cfa17755fefa365763bb6659f034bd8#https://github.com/kepta/prosemirror-dev-tools.git#commit=7a68a0a13a9ce6e1a0a4e1da94c2e3e51ffd3020"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],

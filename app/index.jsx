@@ -9,6 +9,7 @@ import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
 import { polyfills } from 'polyfill/index';
 import { setupNaukar } from './setup-naukar/setup-naukar';
 import { setNaukarReady } from 'naukar-proxy/index';
+import { bangleIOContext } from 'create-bangle-io-context/index';
 
 setupNaukar().then((naukar) => {
   setNaukarReady(naukar);
@@ -52,7 +53,7 @@ ReactDOM.render(
   <LoadingBlock>
     <Router>
       <UIManager>
-        <EditorManager>
+        <EditorManager bangleIOContext={bangleIOContext}>
           <App />
         </EditorManager>
       </UIManager>

@@ -4,7 +4,6 @@ import { applyTheme } from 'style/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
-const DEFAULT_PALETTE = 'file';
 const persistKey = 'UIManager0.724';
 
 export class UIState {
