@@ -47,13 +47,15 @@ beforeEach(async () => {
     );
   }
 
-  result = await render(
-    <UIManager>
-      <EditorManager>
-        <Comp />
-      </EditorManager>
-    </UIManager>,
-  );
+  await act(async () => {
+    result = await render(
+      <UIManager>
+        <EditorManager>
+          <Comp />
+        </EditorManager>
+      </UIManager>,
+    );
+  });
 });
 
 test('Empty on mount', async () => {

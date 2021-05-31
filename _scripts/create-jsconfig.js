@@ -51,10 +51,12 @@ async function main() {
       continue;
     }
     const workspacePaths = Object.fromEntries(
-      internalDep.flatMap((r) => [
-        [r.depName + '/*', [r.relativePath + '/*']],
-        [r.depName + '', [r.relativePath + '/index.js']],
-      ]),
+      internalDep
+        .flatMap((r) => [
+          [r.depName + '/*', [r.relativePath + '/*']],
+          [r.depName + '', [r.relativePath + '/index.js']],
+        ])
+        .sort((a, b) => a[0].localeCompare(b[0])),
     );
     const jsconfig = jsconfigTemplate(workspacePaths, w.path, w.rootPath);
     await fs.writeFile(path.join(w.path, 'jsconfig.json'), jsconfig, 'utf-8');

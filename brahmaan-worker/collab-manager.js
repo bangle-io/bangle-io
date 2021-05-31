@@ -1,17 +1,16 @@
 import { LocalDisk } from '@bangle.dev/collab-client';
 import { Manager } from '@bangle.dev/collab-server';
 import { getNote, saveNote } from 'workspace/index';
-import { bangleIOContext } from './bangle-io-context';
 
-export function setupManager() {
+export function setupCollabManager(bangleIOContext) {
   const manager = new Manager(bangleIOContext.specRegistry.schema, {
-    disk: localDisk(),
+    disk: localDisk(bangleIOContext),
   });
-
   return manager;
 }
 
 function localDisk(
+  bangleIOContext,
   defaultContent = {
     type: 'doc',
     content: [

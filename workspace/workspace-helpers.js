@@ -31,7 +31,6 @@ export async function listWorkspaces() {
     (f) => f.type !== HELP_FS_WORKSPACE_TYPE,
   );
   cachedWorkspaces.push(helpFSWorkspaceInfo);
-
   return cachedWorkspaces;
 }
 

@@ -26,8 +26,12 @@
     "@bangle.dev/tooltip": "0.16.0",
     "@sentry/tracing": "^6.3.1",
     "bangle-io-context": "workspace:*",
+    "brahmaan-proxy": "workspace:*",
+    "brahmaan-worker": "workspace:*",
+    "comlink": "^4.3.1",
     "commands": "workspace:*",
     "config": "workspace:*",
+    "create-bangle-io-context": "workspace:*",
     "editor": "workspace:*",
     "editor-manager-context": "workspace:*",
     "palettes": "workspace:*",
@@ -41,7 +45,6 @@
     "ui-components": "workspace:*",
     "ui-context": "workspace:*",
     "utils": "workspace:*",
-    "web-worker-helpers": "worker:*",
     "workspace": "workspace:*"
   },
   "devDependencies": {

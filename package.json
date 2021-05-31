@@ -8,6 +8,8 @@
     "bangle-io-context",
     "env-vars",
     "editor-manager-context",
+    "create-bangle-io-context",
+    "brahmaan-proxy",
     "config",
     "e2e",
     "editor",
@@ -22,7 +24,7 @@
     "palettes",
     "workspace",
     "polyfill",
-    "web-worker-helpers"
+    "brahmaan-worker"
   ],
   "authors": [
     {

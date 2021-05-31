@@ -1,13 +1,18 @@
 import './style';
 import { UIManager } from 'ui-context/index';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
 import { polyfills } from 'polyfill/index';
-import { useEffect } from 'react/cjs/react.development';
+import { setupBrahmaan } from './setup-brahmaan/setup-brahmaan';
+import { setBrahmaanReady } from 'brahmaan-proxy/index';
+
+setupBrahmaan().then((brahmaan) => {
+  setBrahmaanReady(brahmaan);
+});
 
 window.Sentry?.onLoad(function () {
   import(

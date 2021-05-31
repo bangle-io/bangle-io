@@ -19,10 +19,7 @@ module.exports = (env, argv) => {
     throw new Error('NODE_ENV not production');
   }
 
-  let rawHtml = fs.readFileSync(
-    path.resolve(__dirname, 'app-vite', 'index.html'),
-    'utf-8',
-  );
+  let rawHtml = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
   const html = ejs.render(rawHtml, {
     ...envVars.htmlInjections,
   });
@@ -90,7 +87,7 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'app-vite', 'public'),
+            from: path.resolve(__dirname, 'public'),
             to: buildPath,
           },
         ],

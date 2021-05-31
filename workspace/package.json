@@ -26,6 +26,7 @@
     "@bangle.dev/core": "0.16.0",
     "@octokit/rest": "^18.5.3",
     "baby-fs": "workspace:*",
+    "brahmaan-proxy": "workspace:*",
     "config": "workspace:*",
     "editor": "workspace:*",
     "idb-keyval": "^5.0.5",

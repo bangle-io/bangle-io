@@ -15,6 +15,13 @@ import { getFileSystemFromWsInfo } from './get-fs';
 import { serialExecuteQueue, weakCache } from 'utils/utility';
 import { HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
 
+// This get bombarded with many concurrent
+// requests and that defeats the point of caching
+// as everyone tries to get the results. So this exists
+// to help the first one do its thing, so that the others
+// in queue can get the cached result.
+const cachedListAllFilesQueue = serialExecuteQueue();
+
 export async function checkFileExists(wsPath) {
   validateFileWsPath(wsPath);
   const { wsName } = resolvePath(wsPath);
@@ -136,12 +143,6 @@ export async function deleteFile(wsPath) {
   listFilesCache.deleteEntry(workspaceInfo);
 }
 
-// This get bombarded with many concurrent
-// requests and that defeats the point of caching
-// as everyone tries to get the results. So this exists
-// to help the first one do its thing, so that the others
-// in queue can get the cached result.
-const cachedListAllFilesQueue = serialExecuteQueue();
 /**
  * A smart cached version of `listAllFiles` which
  * only recalculates list of all files if there was a
