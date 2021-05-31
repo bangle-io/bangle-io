@@ -4,6 +4,7 @@
     "bangle-io-context",
     "editor-manager-context",
     "ui-context",
+    "ui-components",
     "config"
   ]
 }

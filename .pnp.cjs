@@ -75,10 +75,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:tooling"
       },
       {
-        "name": "ui-components",
-        "reference": "workspace:ui-components"
-      },
-      {
         "name": "utils",
         "reference": "workspace:utils"
       },
@@ -117,6 +113,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "editor-manager-context",
         "reference": "workspace:lib/editor-manager-context"
+      },
+      {
+        "name": "ui-components",
+        "reference": "workspace:lib/ui-components"
       },
       {
         "name": "ui-context",
@@ -172,7 +172,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["palettes", ["workspace:app/palettes"]],
       ["style", ["workspace:app/style"]],
       ["tooling", ["workspace:tooling"]],
-      ["ui-components", ["workspace:ui-components"]],
+      ["ui-components", ["workspace:lib/ui-components"]],
       ["ui-context", ["workspace:lib/ui-context"]],
       ["utils", ["workspace:utils"]],
       ["worker", ["workspace:worker"]],
@@ -5784,7 +5784,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-router-dom", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:5.2.0"],
             ["react-virtual", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:2.7.1"],
             ["style", "workspace:app/style"],
-            ["ui-components", "workspace:ui-components"],
+            ["ui-components", "workspace:lib/ui-components"],
             ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:utils"],
             ["workspace", "workspace:workspace"]
@@ -11207,7 +11207,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
-            ["ui-components", "workspace:ui-components"],
+            ["ui-components", "workspace:lib/ui-components"],
             ["utils", "workspace:utils"],
             ["workspace", "workspace:workspace"]
           ],
@@ -11227,7 +11227,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
-            ["ui-components", "workspace:ui-components"],
+            ["ui-components", "workspace:lib/ui-components"],
             ["utils", "workspace:utils"]
           ],
           "linkType": "SOFT",
@@ -14503,7 +14503,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
-            ["ui-components", "workspace:ui-components"],
+            ["ui-components", "workspace:lib/ui-components"],
             ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:utils"],
             ["workspace", "workspace:workspace"]
@@ -18388,10 +18388,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["ui-components", [
-        ["workspace:ui-components", {
-          "packageLocation": "./ui-components/",
+        ["workspace:lib/ui-components", {
+          "packageLocation": "./lib/ui-components/",
           "packageDependencies": [
-            ["ui-components", "workspace:ui-components"],
+            ["ui-components", "workspace:lib/ui-components"],
             ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["@testing-library/user-event", "virtual:30bbe5a9fd71bdedc988bef6dbbf7be8741a536210ced89040612d879c28fe8c68aa6f54170853cf930ad3b759b33f0d397e90bf35b31e32c7cda2064108bb55#npm:13.1.5"],
             ["prop-types", "npm:15.7.2"],

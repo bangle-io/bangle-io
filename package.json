@@ -12,7 +12,6 @@
     "extensions/*",
     "js-libs/*",
     "lib",
-    "ui-components",
     "utils",
     "workspace"
   ],
