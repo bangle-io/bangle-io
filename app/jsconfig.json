@@ -9,6 +9,18 @@
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
+      "collab-extension": [
+        "../extensions/collab-extension/index.js"
+      ],
+      "collab-extension/*": [
+        "../extensions/collab-extension/*"
+      ],
+      "collapsible-heading": [
+        "../extensions/collapsible-heading/index.js"
+      ],
+      "collapsible-heading/*": [
+        "../extensions/collapsible-heading/*"
+      ],
       "commands": [
         "../commands/index.js"
       ],
@@ -20,12 +32,6 @@
       ],
       "config/*": [
         "../config/*"
-      ],
-      "create-bangle-io-context": [
-        "../create-bangle-io-context/index.js"
-      ],
-      "create-bangle-io-context/*": [
-        "../create-bangle-io-context/*"
       ],
       "editor": [
         "../editor/index.js"
@@ -39,17 +45,41 @@
       "editor/*": [
         "../editor/*"
       ],
+      "image-extension": [
+        "../extensions/image-extension/index.js"
+      ],
+      "image-extension/*": [
+        "../extensions/image-extension/*"
+      ],
+      "inline-backlink": [
+        "../extensions/inline-backlink/index.js"
+      ],
+      "inline-backlink/*": [
+        "../extensions/inline-backlink/*"
+      ],
+      "inline-command-palette": [
+        "../extensions/inline-command-palette/index.js"
+      ],
+      "inline-command-palette/*": [
+        "../extensions/inline-command-palette/*"
+      ],
+      "inline-emoji": [
+        "../extensions/inline-emoji/index.js"
+      ],
+      "inline-emoji/*": [
+        "../extensions/inline-emoji/*"
+      ],
       "naukar-proxy": [
-        "../naukar-proxy/index.js"
+        "../worker/naukar-proxy/index.js"
       ],
       "naukar-proxy/*": [
-        "../naukar-proxy/*"
+        "../worker/naukar-proxy/*"
       ],
       "naukar-worker": [
-        "../naukar-worker/index.js"
+        "../worker/naukar-worker/index.js"
       ],
       "naukar-worker/*": [
-        "../naukar-worker/*"
+        "../worker/naukar-worker/*"
       ],
       "palettes": [
         "../palettes/index.js"

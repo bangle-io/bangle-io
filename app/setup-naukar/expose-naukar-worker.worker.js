@@ -4,7 +4,7 @@ import {
   workerInitialSetup,
   validateWorkerGlobalScope,
 } from 'naukar-worker/index';
-import { bangleIOContext } from 'create-bangle-io-context/index';
+import { bangleIOContext } from '../create-bangle-io-context';
 validateWorkerGlobalScope();
 workerInitialSetup();
 

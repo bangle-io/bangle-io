@@ -3626,6 +3626,7 @@ __metadata:
   resolution: "app@workspace:app"
   dependencies:
     "@bangle.dev/core": 0.16.2
+    "@bangle.dev/markdown-front-matter": 0.16.2
     "@bangle.dev/react": 0.16.2
     "@bangle.dev/react-menu": 0.16.2
     "@bangle.dev/react-stopwatch": 0.16.2
@@ -3633,12 +3634,17 @@ __metadata:
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
     bangle-io-context: "workspace:*"
+    collab-extension: "workspace:*"
+    collapsible-heading: "workspace:*"
     comlink: ^4.3.1
     commands: "workspace:*"
     config: "workspace:*"
-    create-bangle-io-context: "workspace:*"
     editor: "workspace:*"
     editor-manager-context: "workspace:*"
+    image-extension: "workspace:*"
+    inline-backlink: "workspace:*"
+    inline-command-palette: "workspace:*"
+    inline-emoji: "workspace:*"
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
     palettes: "workspace:*"
@@ -5353,23 +5359,6 @@ __metadata:
   checksum: 6801feaa0249e9b9fdde5b3d70dc33b4f9c69095bec94d67e3fe08b66eac24dc7e2099f053597cfbc94b743de269aa5d2cfa7da3fde765433423b06bd122941a
   languageName: node
   linkType: hard
-
-"create-bangle-io-context@workspace:*, create-bangle-io-context@workspace:create-bangle-io-context":
-  version: 0.0.0-use.local
-  resolution: "create-bangle-io-context@workspace:create-bangle-io-context"
-  dependencies:
-    "@bangle.dev/core": 0.16.2
-    "@bangle.dev/markdown-front-matter": 0.16.2
-    bangle-io-context: "workspace:*"
-    collab-extension: "workspace:*"
-    collapsible-heading: "workspace:*"
-    editor: "workspace:*"
-    image-extension: "workspace:*"
-    inline-backlink: "workspace:*"
-    inline-command-palette: "workspace:*"
-    inline-emoji: "workspace:*"
-  languageName: unknown
-  linkType: soft
 
 "cross-spawn@npm:^5.0.1":
   version: 5.1.0

@@ -1,9 +1,9 @@
+import { bangleIOContext } from '../create-bangle-io-context';
 import {
   Naukar,
   validateNonWorkerGlobalScope,
   checkModuleWorkerSupport,
 } from 'naukar-worker/index';
-import { bangleIOContext } from 'create-bangle-io-context/index';
 validateNonWorkerGlobalScope();
 
 export async function setupNaukar() {
@@ -12,5 +12,5 @@ export async function setupNaukar() {
     const { default: handlers } = await import('./wrap-naukar-worker');
     return handlers;
   }
-  return new Naukar({ bangleIOContext });
+  return new Naukar({ bangleIOContext: bangleIOContext });
 }

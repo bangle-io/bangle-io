@@ -10,10 +10,10 @@
         "../../extension-helpers/*"
       ],
       "naukar-proxy": [
-        "../../naukar-proxy/index.js"
+        "../../worker/naukar-proxy/index.js"
       ],
       "naukar-proxy/*": [
-        "../../naukar-proxy/*"
+        "../../worker/naukar-proxy/*"
       ]
     }
   }

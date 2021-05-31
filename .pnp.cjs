@@ -39,10 +39,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:config"
       },
       {
-        "name": "create-bangle-io-context",
-        "reference": "workspace:create-bangle-io-context"
-      },
-      {
         "name": "editor",
         "reference": "workspace:editor"
       },
@@ -155,7 +151,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["collapsible-heading", ["workspace:extensions/collapsible-heading"]],
       ["commands", ["workspace:commands"]],
       ["config", ["workspace:config"]],
-      ["create-bangle-io-context", ["workspace:create-bangle-io-context"]],
       ["e2e", ["workspace:tooling/e2e"]],
       ["editor", ["workspace:editor"]],
       ["editor-manager-context", ["workspace:editor-manager-context"]],
@@ -5747,6 +5742,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["app", "workspace:app"],
             ["@bangle.dev/core", "npm:0.16.2"],
+            ["@bangle.dev/markdown-front-matter", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.2"],
             ["@bangle.dev/react", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.2"],
             ["@bangle.dev/react-menu", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.2"],
             ["@bangle.dev/react-stopwatch", "virtual:e75651e5332acab272a999511ceb1d590bce71b23805da845e95013f64713cb0d6d5ff642e55e6f52cfffa4aa82d52a8d58226a538b5d6f9574fab8068ba54d2#npm:0.16.2"],
@@ -5754,12 +5750,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/tracing", "npm:6.3.1"],
             ["@testing-library/react", "virtual:a91a07e625e6cb2c84b7d15a3722ed150d9bef748280eb99cfed0c11adfa5aecb34480775ed65925329bdaae13de6010603ff10c0ee0f907ac4e48be75c75085#npm:11.2.6"],
             ["bangle-io-context", "workspace:bangle-io-context"],
+            ["collab-extension", "workspace:extensions/collab-extension"],
+            ["collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["comlink", "npm:4.3.1"],
             ["commands", "workspace:commands"],
             ["config", "workspace:config"],
-            ["create-bangle-io-context", "workspace:create-bangle-io-context"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:editor-manager-context"],
+            ["image-extension", "workspace:extensions/image-extension"],
+            ["inline-backlink", "workspace:extensions/inline-backlink"],
+            ["inline-command-palette", "workspace:extensions/inline-command-palette"],
+            ["inline-emoji", "workspace:extensions/inline-emoji"],
             ["naukar-proxy", "workspace:worker/naukar-proxy"],
             ["naukar-worker", "workspace:worker/naukar-worker"],
             ["palettes", "workspace:palettes"],
@@ -7772,25 +7773,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yaml", "npm:1.10.2"]
           ],
           "linkType": "HARD",
-        }]
-      ]],
-      ["create-bangle-io-context", [
-        ["workspace:create-bangle-io-context", {
-          "packageLocation": "./create-bangle-io-context/",
-          "packageDependencies": [
-            ["create-bangle-io-context", "workspace:create-bangle-io-context"],
-            ["@bangle.dev/core", "npm:0.16.2"],
-            ["@bangle.dev/markdown-front-matter", "virtual:4dcff63b3dc0035a07dd03504bbc54df42b452e67907ce23bba6c4e1f322618b41f02d8500bcd3cc8733b7249088464df19f54e8d8f980a3a4d8340d27580327#npm:0.16.2"],
-            ["bangle-io-context", "workspace:bangle-io-context"],
-            ["collab-extension", "workspace:extensions/collab-extension"],
-            ["collapsible-heading", "workspace:extensions/collapsible-heading"],
-            ["editor", "workspace:editor"],
-            ["image-extension", "workspace:extensions/image-extension"],
-            ["inline-backlink", "workspace:extensions/inline-backlink"],
-            ["inline-command-palette", "workspace:extensions/inline-command-palette"],
-            ["inline-emoji", "workspace:extensions/inline-emoji"]
-          ],
-          "linkType": "SOFT",
         }]
       ]],
       ["cross-spawn", [

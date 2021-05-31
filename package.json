@@ -7,7 +7,6 @@
     "bangle-io-context",
     "tooling",
     "editor-manager-context",
-    "create-bangle-io-context",
     "worker",
     "config",
     "e2e",
