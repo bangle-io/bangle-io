@@ -3,35 +3,35 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "config/*": [
-        "../../config/*"
-      ],
       "config": [
         "../../config/index.js"
       ],
-      "extension-helpers/*": [
-        "../../extension-helpers/*"
+      "config/*": [
+        "../../config/*"
       ],
       "extension-helpers": [
         "../../extension-helpers/index.js"
       ],
-      "inline-palette/*": [
-        "../../js-libs/inline-palette/*"
+      "extension-helpers/*": [
+        "../../extension-helpers/*"
       ],
       "inline-palette": [
         "../../js-libs/inline-palette/index.js"
       ],
-      "ui-components/*": [
-        "../../ui-components/*"
+      "inline-palette/*": [
+        "../../js-libs/inline-palette/*"
       ],
       "ui-components": [
         "../../ui-components/index.js"
       ],
-      "utils/*": [
-        "../../utils/*"
+      "ui-components/*": [
+        "../../ui-components/*"
       ],
       "utils": [
         "../../utils/index.js"
+      ],
+      "utils/*": [
+        "../../utils/*"
       ]
     }
   }

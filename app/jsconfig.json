@@ -3,83 +3,95 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "web-worker-helpers/*": [
-        "../web-worker-helpers/*"
-      ],
-      "web-worker-helpers": [
-        "../web-worker-helpers/index.js"
+      "bangle-io-context": [
+        "../bangle-io-context/index.js"
       ],
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
-      "bangle-io-context": [
-        "../bangle-io-context/index.js"
+      "brahmaan-proxy": [
+        "../brahmaan-proxy/index.js"
       ],
-      "commands/*": [
-        "../commands/*"
+      "brahmaan-proxy/*": [
+        "../brahmaan-proxy/*"
+      ],
+      "brahmaan-worker": [
+        "../brahmaan-worker/index.js"
+      ],
+      "brahmaan-worker/*": [
+        "../brahmaan-worker/*"
       ],
       "commands": [
         "../commands/index.js"
       ],
-      "config/*": [
-        "../config/*"
+      "commands/*": [
+        "../commands/*"
       ],
       "config": [
         "../config/index.js"
       ],
-      "editor/*": [
-        "../editor/*"
+      "config/*": [
+        "../config/*"
+      ],
+      "create-bangle-io-context": [
+        "../create-bangle-io-context/index.js"
+      ],
+      "create-bangle-io-context/*": [
+        "../create-bangle-io-context/*"
       ],
       "editor": [
         "../editor/index.js"
       ],
-      "editor-manager-context/*": [
-        "../editor-manager-context/*"
-      ],
       "editor-manager-context": [
         "../editor-manager-context/index.js"
       ],
-      "palettes/*": [
-        "../palettes/*"
+      "editor-manager-context/*": [
+        "../editor-manager-context/*"
+      ],
+      "editor/*": [
+        "../editor/*"
       ],
       "palettes": [
         "../palettes/index.js"
       ],
-      "polyfill/*": [
-        "../polyfill/*"
+      "palettes/*": [
+        "../palettes/*"
       ],
       "polyfill": [
         "../polyfill/index.js"
       ],
-      "style/*": [
-        "../style/*"
+      "polyfill/*": [
+        "../polyfill/*"
       ],
       "style": [
         "../style/index.js"
       ],
-      "ui-components/*": [
-        "../ui-components/*"
+      "style/*": [
+        "../style/*"
       ],
       "ui-components": [
         "../ui-components/index.js"
       ],
-      "ui-context/*": [
-        "../ui-context/*"
+      "ui-components/*": [
+        "../ui-components/*"
       ],
       "ui-context": [
         "../ui-context/index.js"
       ],
-      "utils/*": [
-        "../utils/*"
+      "ui-context/*": [
+        "../ui-context/*"
       ],
       "utils": [
         "../utils/index.js"
       ],
-      "workspace/*": [
-        "../workspace/*"
+      "utils/*": [
+        "../utils/*"
       ],
       "workspace": [
         "../workspace/index.js"
+      ],
+      "workspace/*": [
+        "../workspace/*"
       ]
     }
   }

@@ -9,29 +9,11 @@
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
-      "brahmaan-proxy": [
-        "../brahmaan-proxy/index.js"
-      ],
-      "brahmaan-proxy/*": [
-        "../brahmaan-proxy/*"
-      ],
       "collapsible-heading": [
         "../extensions/collapsible-heading/index.js"
       ],
       "collapsible-heading/*": [
         "../extensions/collapsible-heading/*"
-      ],
-      "config": [
-        "../config/index.js"
-      ],
-      "config/*": [
-        "../config/*"
-      ],
-      "create-bangle-io-context": [
-        "../create-bangle-io-context/index.js"
-      ],
-      "create-bangle-io-context/*": [
-        "../create-bangle-io-context/*"
       ],
       "editor": [
         "../editor/index.js"
@@ -62,18 +44,6 @@
       ],
       "inline-emoji/*": [
         "../extensions/inline-emoji/*"
-      ],
-      "ui-context": [
-        "../ui-context/index.js"
-      ],
-      "ui-context/*": [
-        "../ui-context/*"
-      ],
-      "workspace": [
-        "../workspace/index.js"
-      ],
-      "workspace/*": [
-        "../workspace/*"
       ]
     }
   }

@@ -3,35 +3,35 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "baby-fs/*": [
-        "../js-libs/baby-fs/*"
-      ],
       "baby-fs": [
         "../js-libs/baby-fs/index.js"
       ],
-      "config/*": [
-        "../config/*"
+      "baby-fs/*": [
+        "../js-libs/baby-fs/*"
       ],
       "config": [
         "../config/index.js"
       ],
-      "editor-manager-context/*": [
-        "../editor-manager-context/*"
+      "config/*": [
+        "../config/*"
       ],
       "editor-manager-context": [
         "../editor-manager-context/index.js"
       ],
-      "ui-context/*": [
-        "../ui-context/*"
+      "editor-manager-context/*": [
+        "../editor-manager-context/*"
       ],
       "ui-context": [
         "../ui-context/index.js"
       ],
-      "workspace/*": [
-        "../workspace/*"
+      "ui-context/*": [
+        "../ui-context/*"
       ],
       "workspace": [
         "../workspace/index.js"
+      ],
+      "workspace/*": [
+        "../workspace/*"
       ]
     }
   }

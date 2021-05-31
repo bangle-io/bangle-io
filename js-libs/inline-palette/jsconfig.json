@@ -3,17 +3,17 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "utils/*": [
-        "../../utils/*"
-      ],
       "utils": [
         "../../utils/index.js"
       ],
-      "workspace/*": [
-        "../../workspace/*"
+      "utils/*": [
+        "../../utils/*"
       ],
       "workspace": [
         "../../workspace/index.js"
+      ],
+      "workspace/*": [
+        "../../workspace/*"
       ]
     }
   }

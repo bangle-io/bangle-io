@@ -3,65 +3,65 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "baby-fs/*": [
-        "../js-libs/baby-fs/*"
-      ],
       "baby-fs": [
         "../js-libs/baby-fs/index.js"
       ],
-      "collapsible-heading/*": [
-        "../extensions/collapsible-heading/*"
+      "baby-fs/*": [
+        "../js-libs/baby-fs/*"
       ],
       "collapsible-heading": [
         "../extensions/collapsible-heading/index.js"
       ],
-      "commands/*": [
-        "../commands/*"
+      "collapsible-heading/*": [
+        "../extensions/collapsible-heading/*"
       ],
       "commands": [
         "../commands/index.js"
       ],
-      "config/*": [
-        "../config/*"
+      "commands/*": [
+        "../commands/*"
       ],
       "config": [
         "../config/index.js"
       ],
-      "editor/*": [
-        "../editor/*"
+      "config/*": [
+        "../config/*"
       ],
       "editor": [
         "../editor/index.js"
       ],
-      "editor-manager-context/*": [
-        "../editor-manager-context/*"
-      ],
       "editor-manager-context": [
         "../editor-manager-context/index.js"
       ],
-      "ui-components/*": [
-        "../ui-components/*"
+      "editor-manager-context/*": [
+        "../editor-manager-context/*"
+      ],
+      "editor/*": [
+        "../editor/*"
       ],
       "ui-components": [
         "../ui-components/index.js"
       ],
-      "ui-context/*": [
-        "../ui-context/*"
+      "ui-components/*": [
+        "../ui-components/*"
       ],
       "ui-context": [
         "../ui-context/index.js"
       ],
-      "utils/*": [
-        "../utils/*"
+      "ui-context/*": [
+        "../ui-context/*"
       ],
       "utils": [
         "../utils/index.js"
       ],
-      "workspace/*": [
-        "../workspace/*"
+      "utils/*": [
+        "../utils/*"
       ],
       "workspace": [
         "../workspace/index.js"
+      ],
+      "workspace/*": [
+        "../workspace/*"
       ]
     }
   }

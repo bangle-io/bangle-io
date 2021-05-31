@@ -3,47 +3,47 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "config/*": [
-        "../../config/*"
-      ],
-      "config": [
-        "../../config/index.js"
-      ],
-      "extension-helpers/*": [
-        "../../extension-helpers/*"
-      ],
-      "extension-helpers": [
-        "../../extension-helpers/index.js"
-      ],
-      "inline-palette/*": [
-        "../../js-libs/inline-palette/*"
-      ],
-      "inline-palette": [
-        "../../js-libs/inline-palette/index.js"
-      ],
-      "ui-components/*": [
-        "../../ui-components/*"
-      ],
-      "ui-components": [
-        "../../ui-components/index.js"
-      ],
-      "utils/*": [
-        "../../utils/*"
-      ],
-      "utils": [
-        "../../utils/index.js"
-      ],
-      "workspace/*": [
-        "../../workspace/*"
-      ],
-      "workspace": [
-        "../../workspace/index.js"
+      "bangle-io-context": [
+        "../../bangle-io-context/index.js"
       ],
       "bangle-io-context/*": [
         "../../bangle-io-context/*"
       ],
-      "bangle-io-context": [
-        "../../bangle-io-context/index.js"
+      "config": [
+        "../../config/index.js"
+      ],
+      "config/*": [
+        "../../config/*"
+      ],
+      "extension-helpers": [
+        "../../extension-helpers/index.js"
+      ],
+      "extension-helpers/*": [
+        "../../extension-helpers/*"
+      ],
+      "inline-palette": [
+        "../../js-libs/inline-palette/index.js"
+      ],
+      "inline-palette/*": [
+        "../../js-libs/inline-palette/*"
+      ],
+      "ui-components": [
+        "../../ui-components/index.js"
+      ],
+      "ui-components/*": [
+        "../../ui-components/*"
+      ],
+      "utils": [
+        "../../utils/index.js"
+      ],
+      "utils/*": [
+        "../../utils/*"
+      ],
+      "workspace": [
+        "../../workspace/index.js"
+      ],
+      "workspace/*": [
+        "../../workspace/*"
       ]
     }
   }

@@ -3,23 +3,23 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "extension-helpers/*": [
-        "../../extension-helpers/*"
-      ],
       "extension-helpers": [
         "../../extension-helpers/index.js"
       ],
-      "utils/*": [
-        "../../utils/*"
+      "extension-helpers/*": [
+        "../../extension-helpers/*"
       ],
       "utils": [
         "../../utils/index.js"
       ],
-      "workspace/*": [
-        "../../workspace/*"
+      "utils/*": [
+        "../../utils/*"
       ],
       "workspace": [
         "../../workspace/index.js"
+      ],
+      "workspace/*": [
+        "../../workspace/*"
       ]
     }
   }

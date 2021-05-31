@@ -3,17 +3,17 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "app/*": [
-        "../app/*"
-      ],
       "app": [
         "../app/index.js"
       ],
-      "env-vars/*": [
-        "../env-vars/*"
+      "app/*": [
+        "../app/*"
       ],
       "env-vars": [
         "../env-vars/index.js"
+      ],
+      "env-vars/*": [
+        "../env-vars/*"
       ]
     }
   }
