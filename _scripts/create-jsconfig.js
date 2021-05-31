@@ -28,7 +28,7 @@ async function main() {
     workspaces.map((r) => [r.name, r.path]),
   );
   for (const w of workspaces) {
-    if (w.name === 'bangle-io') {
+    if (w.name === 'bangle-io' || Array.isArray(w.packageJSON.workspaces)) {
       continue;
     }
     const r = w.packageJSON;

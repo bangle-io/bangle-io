@@ -55,10 +55,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:editor-manager-context"
       },
       {
-        "name": "env-vars",
-        "reference": "workspace:env-vars"
-      },
-      {
         "name": "extension-helpers",
         "reference": "workspace:extension-helpers"
       },
@@ -115,6 +111,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:style"
       },
       {
+        "name": "tooling",
+        "reference": "workspace:tooling"
+      },
+      {
         "name": "ui-components",
         "reference": "workspace:ui-components"
       },
@@ -129,6 +129,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "workspace",
         "reference": "workspace:workspace"
+      },
+      {
+        "name": "env-vars",
+        "reference": "workspace:tooling/env-vars"
       }
     ],
     "enableTopLevelFallback": true,
@@ -146,7 +150,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["e2e", ["workspace:e2e"]],
       ["editor", ["workspace:editor"]],
       ["editor-manager-context", ["workspace:editor-manager-context"]],
-      ["env-vars", ["workspace:env-vars"]],
+      ["env-vars", ["workspace:tooling/env-vars"]],
       ["extension-helpers", ["workspace:extension-helpers"]],
       ["image-extension", ["workspace:extensions/image-extension"]],
       ["inline-backlink", ["workspace:extensions/inline-backlink"]],
@@ -158,6 +162,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["palettes", ["workspace:palettes"]],
       ["polyfill", ["workspace:polyfill"]],
       ["style", ["workspace:style"]],
+      ["tooling", ["workspace:tooling"]],
       ["ui-components", ["workspace:ui-components"]],
       ["ui-context", ["workspace:ui-context"]],
       ["utils", ["workspace:utils"]],
@@ -192,7 +197,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.4"],
             ["date-fns", "npm:2.21.1"],
             ["ejs", "npm:3.1.6"],
-            ["env-vars", "workspace:env-vars"],
+            ["env-vars", "workspace:tooling/env-vars"],
             ["eslint", "npm:7.25.0"],
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.0.0"],
             ["eslint-import-resolver-node", "npm:0.3.4"],
@@ -6425,7 +6430,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.4"],
             ["date-fns", "npm:2.21.1"],
             ["ejs", "npm:3.1.6"],
-            ["env-vars", "workspace:env-vars"],
+            ["env-vars", "workspace:tooling/env-vars"],
             ["eslint", "npm:7.25.0"],
             ["eslint-config-react-app", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.0.0"],
             ["eslint-import-resolver-node", "npm:0.3.4"],
@@ -8760,10 +8765,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["env-vars", [
-        ["workspace:env-vars", {
-          "packageLocation": "./env-vars/",
+        ["workspace:tooling/env-vars", {
+          "packageLocation": "./tooling/env-vars/",
           "packageDependencies": [
-            ["env-vars", "workspace:env-vars"]
+            ["env-vars", "workspace:tooling/env-vars"]
           ],
           "linkType": "SOFT",
         }]
@@ -18124,6 +18129,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["toidentifier", "npm:1.0.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["tooling", [
+        ["workspace:tooling", {
+          "packageLocation": "./tooling/",
+          "packageDependencies": [
+            ["tooling", "workspace:tooling"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["totalist", [

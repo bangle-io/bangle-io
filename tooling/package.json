@@ -1,0 +1,6 @@
+{
+  "name": "tooling",
+  "workspaces": [
+    "env-vars"
+  ]
+}

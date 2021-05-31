@@ -6193,9 +6193,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"env-vars@workspace:*, env-vars@workspace:env-vars":
+"env-vars@workspace:*, env-vars@workspace:tooling/env-vars":
   version: 0.0.0-use.local
-  resolution: "env-vars@workspace:env-vars"
+  resolution: "env-vars@workspace:tooling/env-vars"
   languageName: unknown
   linkType: soft
 
@@ -14343,6 +14343,12 @@ resolve@^2.0.0-next.3:
   checksum: 199e6bfca1531d49b3506cff02353d53ec987c9ee10ee272ca6484ed97f1fc10fb77c6c009079ca16d5c5be4a10378178c3cacdb41ce9ec954c3297c74c6053e
   languageName: node
   linkType: hard
+
+"tooling@workspace:tooling":
+  version: 0.0.0-use.local
+  resolution: "tooling@workspace:tooling"
+  languageName: unknown
+  linkType: soft
 
 "totalist@npm:^1.0.0":
   version: 1.1.0

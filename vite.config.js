@@ -9,7 +9,6 @@ const config = ({ command, mode }) => {
   const isProduction = mode === 'production';
   const PORT = isProduction ? 5000 : 4000;
   const envVars = getEnvVars({ isProduction: isProduction, isVite: true });
-
   /**
    * @type {import('vite').UserConfig}
    */

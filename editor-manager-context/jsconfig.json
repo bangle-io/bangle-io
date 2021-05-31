@@ -9,12 +9,6 @@
       "config/*": [
         "../config/*"
       ],
-      "create-bangle-io-context": [
-        "../create-bangle-io-context/index.js"
-      ],
-      "create-bangle-io-context/*": [
-        "../create-bangle-io-context/*"
-      ],
       "ui-context": [
         "../ui-context/index.js"
       ],

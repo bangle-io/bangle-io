@@ -5,7 +5,7 @@
   "workspaces": [
     "app",
     "bangle-io-context",
-    "env-vars",
+    "tooling",
     "editor-manager-context",
     "create-bangle-io-context",
     "naukar-proxy",
@@ -73,7 +73,6 @@
   },
   "dependencies": {
     "app": "workspace:*",
-    "env-vars": "workspace:*",
     "polyfill": "workspace:*",
     "punycode": "^2.1.1"
   },
