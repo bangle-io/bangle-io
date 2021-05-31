@@ -4,10 +4,11 @@
   "homepage": "https://bangle.io",
   "workspaces": [
     "app",
-    "app-vite",
     "bangle-io-context",
     "env-vars",
     "editor-manager-context",
+    "create-bangle-io-context",
+    "naukar-proxy",
     "config",
     "e2e",
     "editor",
@@ -22,7 +23,7 @@
     "palettes",
     "workspace",
     "polyfill",
-    "web-worker-helpers"
+    "naukar-worker"
   ],
   "authors": [
     {
@@ -47,7 +48,7 @@
     "webpack-start": "BROWSERSLIST_ENV=development yarn webpack serve --env development",
     "webpack-build": "NODE_ENV=production yarn webpack --env production",
     "build": "yarn vite-build",
-    "g:e2e-serve": "BROWSERSLIST_ENV=development yarn http-server app-vite/dist -p 1234",
+    "g:e2e-serve": "BROWSERSLIST_ENV=development yarn http-server build -p 1234",
     "g:build-dev-serve": "NODE_ENV=development yarn g:vite-build -m development && yarn g:e2e-serve",
     "g:build-prod-serve": "NODE_ENV=production yarn g:vite-build && yarn g:e2e-serve",
     "vite-build": "NODE_ENV=production yarn g:vite-build",

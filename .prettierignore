@@ -9,6 +9,5 @@ coverage
 .yarnrc.yml
 jsconfig.json
 CHANGELOG.md
-app-vite/dist
 build
 

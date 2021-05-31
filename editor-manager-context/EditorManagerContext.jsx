@@ -7,18 +7,10 @@ import React, {
 } from 'react';
 import { parseCollabResponse } from '@bangle.dev/collab-server';
 import { config } from 'config/index';
-import { getIdleCallback, sleep } from '@bangle.dev/core/utils/js-utils';
+import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 import { UIManagerContext } from 'ui-context/index';
-import { bangleIOContext } from './bangle-io-context';
-// eslint-disable-next-line import/default
-import { setupManager } from './setup-manager';
-// import * as Comlink from 'comlink';
-// eslint-disable-next-line import/default
-// // import MyWorker from './manager.worker.js';
-// const worker = new MyWorker();
-// const manager = Comlink.wrap(worker);
-
-const manager = setupManager();
+import { bangleIOContext } from 'create-bangle-io-context/index';
+import { naukarWorkerProxy } from 'naukar-proxy/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -52,7 +44,9 @@ export function EditorManager({ children }) {
     const getEditor = (editorId) => {
       return editors[editorId];
     };
-
+    if (!sendRequest) {
+      return {};
+    }
     return {
       sendRequest,
       setEditor,
@@ -97,7 +91,7 @@ export function EditorManager({ children }) {
 
   return (
     <EditorManagerContext.Provider value={value}>
-      {children}
+      {sendRequest && children}
     </EditorManagerContext.Provider>
   );
 }
@@ -116,12 +110,12 @@ export function EditorManager({ children }) {
  */
 function useManager() {
   const sendRequest = useCallback(async (...args) => {
-    return manager.handleRequest(...args).then((obj) => {
+    return naukarWorkerProxy.handleCollabRequest(...args).then((obj) => {
       return parseCollabResponse(obj);
     });
   }, []);
 
-  return { manager: manager, sendRequest };
+  return { sendRequest: sendRequest };
 }
 
 function rafEditorFocus(editor) {

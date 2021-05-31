@@ -3,17 +3,17 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "style/*": [
-        "../style/*"
-      ],
       "style": [
         "../style/index.js"
       ],
-      "utils/*": [
-        "../utils/*"
+      "style/*": [
+        "../style/*"
       ],
       "utils": [
         "../utils/index.js"
+      ],
+      "utils/*": [
+        "../utils/*"
       ]
     }
   }

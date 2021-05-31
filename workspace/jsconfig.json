@@ -3,35 +3,41 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "baby-fs/*": [
-        "../js-libs/baby-fs/*"
-      ],
       "baby-fs": [
         "../js-libs/baby-fs/index.js"
       ],
-      "config/*": [
-        "../config/*"
+      "baby-fs/*": [
+        "../js-libs/baby-fs/*"
       ],
-      "config": [
-        "../config/index.js"
-      ],
-      "editor/*": [
-        "../editor/*"
-      ],
-      "editor": [
-        "../editor/index.js"
-      ],
-      "utils/*": [
-        "../utils/*"
-      ],
-      "utils": [
-        "../utils/index.js"
+      "bangle-io-context": [
+        "../bangle-io-context/index.js"
       ],
       "bangle-io-context/*": [
         "../bangle-io-context/*"
       ],
-      "bangle-io-context": [
-        "../bangle-io-context/index.js"
+      "naukar-proxy": [
+        "../naukar-proxy/index.js"
+      ],
+      "naukar-proxy/*": [
+        "../naukar-proxy/*"
+      ],
+      "config": [
+        "../config/index.js"
+      ],
+      "config/*": [
+        "../config/*"
+      ],
+      "editor": [
+        "../editor/index.js"
+      ],
+      "editor/*": [
+        "../editor/*"
+      ],
+      "utils": [
+        "../utils/index.js"
+      ],
+      "utils/*": [
+        "../utils/*"
       ]
     }
   }

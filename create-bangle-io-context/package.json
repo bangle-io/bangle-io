@@ -1,5 +1,5 @@
 {
-  "name": "editor-manager-context",
+  "name": "create-bangle-io-context",
   "version": "0.0.0",
   "authors": [
     {
@@ -20,15 +20,14 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/collab-server": "0.16.0",
     "@bangle.dev/core": "0.16.0",
+    "@bangle.dev/markdown-front-matter": "0.16.0",
     "bangle-io-context": "workspace:*",
-    "config": "workspace:*",
-    "create-bangle-io-context": "workspace:*",
-    "naukar-proxy": "workspace:*",
-    "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "ui-context": "workspace:*"
+    "collapsible-heading": "workspace:*",
+    "editor": "workspace:*",
+    "image-extension": "workspace:*",
+    "inline-backlink": "workspace:*",
+    "inline-command-palette": "workspace:*",
+    "inline-emoji": "workspace:*"
   }
 }

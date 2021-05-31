@@ -3,11 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "utils/*": [
-        "../utils/*"
-      ],
       "utils": [
         "../utils/index.js"
+      ],
+      "utils/*": [
+        "../utils/*"
       ]
     }
   }
