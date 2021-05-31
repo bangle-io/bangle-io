@@ -9,12 +9,6 @@
       "config/*": [
         "../../config/*"
       ],
-      "polyfill": [
-        "../../polyfill/index.js"
-      ],
-      "polyfill/*": [
-        "../../polyfill/*"
-      ],
       "workspace": [
         "../../workspace/index.js"
       ],

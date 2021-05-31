@@ -3639,6 +3639,7 @@ __metadata:
     comlink: ^4.3.1
     commands: "workspace:*"
     config: "workspace:*"
+    core-js: ^3.13.1
     editor: "workspace:*"
     editor-manager-context: "workspace:*"
     image-extension: "workspace:*"
@@ -3648,7 +3649,6 @@ __metadata:
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
     palettes: "workspace:*"
-    polyfill: "workspace:*"
     prop-types: ^15.7.2
     react: 16.14.0
     react-dom: 16.14.0
@@ -4206,7 +4206,6 @@ __metadata:
     jest-puppeteer: ^5.0.2
     mini-css-extract-plugin: ^1.5.0
     pnp-webpack-plugin: ^1.6.4
-    polyfill: "workspace:*"
     postcss: ^8.2.12
     postcss-custom-properties: ^11.0.0
     postcss-import: ^14.0.1
@@ -10644,7 +10643,6 @@ fsevents@~2.3.1:
     comlink: ^4.3.1
     config: "workspace:*"
     idb-keyval: ^5.0.5
-    polyfill: "workspace:*"
     workspace: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -11539,14 +11537,6 @@ fsevents@~2.3.1:
   checksum: 0606a63db96400b07f182300168298da9518727a843f9e10cf5045d2a102a4be06bb18c73dc481281e3e0f1ed8d04ef0d285a342b6dcd0eff1340e28e5d2328d
   languageName: node
   linkType: hard
-
-"polyfill@workspace:*, polyfill@workspace:polyfill":
-  version: 0.0.0-use.local
-  resolution: "polyfill@workspace:polyfill"
-  dependencies:
-    core-js: ^3.13.1
-  languageName: unknown
-  linkType: soft
 
 "portfinder@npm:^1.0.25, portfinder@npm:^1.0.26":
   version: 1.0.28

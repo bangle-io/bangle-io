@@ -20,8 +20,7 @@
     "commands",
     "utils",
     "palettes",
-    "workspace",
-    "polyfill"
+    "workspace"
   ],
   "authors": [
     {
@@ -71,7 +70,6 @@
   },
   "dependencies": {
     "app": "workspace:*",
-    "polyfill": "workspace:*",
     "punycode": "^2.1.1"
   },
   "devDependencies": {

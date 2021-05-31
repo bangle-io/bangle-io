@@ -1,5 +1,3 @@
-import { polyfills } from 'polyfill/index';
-
 export function checkModuleWorkerSupport() {
   let supportsModuleWorker = false;
   const options = {
@@ -16,16 +14,6 @@ export function checkModuleWorkerSupport() {
   }
 
   return supportsModuleWorker;
-}
-
-/**
- * Things to initialize when starting a webworker
- */
-export async function workerInitialSetup() {
-  // polyfills
-  if (polyfills.length > 0) {
-    await Promise.all(polyfills);
-  }
 }
 
 /**

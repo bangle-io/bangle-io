@@ -87,10 +87,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:palettes"
       },
       {
-        "name": "polyfill",
-        "reference": "workspace:polyfill"
-      },
-      {
         "name": "style",
         "reference": "workspace:style"
       },
@@ -164,7 +160,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
       ["naukar-worker", ["workspace:worker/naukar-worker"]],
       ["palettes", ["workspace:palettes"]],
-      ["polyfill", ["workspace:polyfill"]],
       ["style", ["workspace:style"]],
       ["tooling", ["workspace:tooling"]],
       ["ui-components", ["workspace:ui-components"]],
@@ -223,7 +218,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-puppeteer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.2"],
             ["mini-css-extract-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.5.0"],
             ["pnp-webpack-plugin", "npm:1.6.4"],
-            ["polyfill", "workspace:polyfill"],
             ["postcss", "npm:8.2.12"],
             ["postcss-custom-properties", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.0.0"],
             ["postcss-import", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:14.0.1"],
@@ -5755,6 +5749,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comlink", "npm:4.3.1"],
             ["commands", "workspace:commands"],
             ["config", "workspace:config"],
+            ["core-js", "npm:3.13.1"],
             ["editor", "workspace:editor"],
             ["editor-manager-context", "workspace:editor-manager-context"],
             ["image-extension", "workspace:extensions/image-extension"],
@@ -5764,7 +5759,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["naukar-proxy", "workspace:worker/naukar-proxy"],
             ["naukar-worker", "workspace:worker/naukar-worker"],
             ["palettes", "workspace:palettes"],
-            ["polyfill", "workspace:polyfill"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ca6c2411bc139796608e00c00dbc3aaf9b9d0d36f131fea29e1d4def94ee8954b967e6736535f37e62f7eb3e3495be2d2542985fd78b9273bbe8dc8058bb07b9#npm:16.14.0"],
@@ -6471,7 +6465,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-puppeteer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.2"],
             ["mini-css-extract-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.5.0"],
             ["pnp-webpack-plugin", "npm:1.6.4"],
-            ["polyfill", "workspace:polyfill"],
             ["postcss", "npm:8.2.12"],
             ["postcss-custom-properties", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.0.0"],
             ["postcss-import", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:14.0.1"],
@@ -13813,7 +13806,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comlink", "npm:4.3.1"],
             ["config", "workspace:config"],
             ["idb-keyval", "npm:5.0.5"],
-            ["polyfill", "workspace:polyfill"],
             ["workspace", "workspace:workspace"]
           ],
           "linkType": "SOFT",
@@ -14815,16 +14807,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ts-pnp", "virtual:c497046afcbefb679e3fe12575088ec12205b913a36c3d158b27e7cd646d448426540ab27ba98e54ddb75b1ed97de7e3ce5dc0158c9ba4e76ce942c87e5d02d8#npm:1.2.0"]
           ],
           "linkType": "HARD",
-        }]
-      ]],
-      ["polyfill", [
-        ["workspace:polyfill", {
-          "packageLocation": "./polyfill/",
-          "packageDependencies": [
-            ["polyfill", "workspace:polyfill"],
-            ["core-js", "npm:3.13.1"]
-          ],
-          "linkType": "SOFT",
         }]
       ]],
       ["portfinder", [
