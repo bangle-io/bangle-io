@@ -16,10 +16,10 @@
         "../../extension-helpers/*"
       ],
       "inline-palette": [
-        "../../js-libs/inline-palette/index.js"
+        "../../js-lib/inline-palette/index.js"
       ],
       "inline-palette/*": [
-        "../../js-libs/inline-palette/*"
+        "../../js-lib/inline-palette/*"
       ],
       "ui-components": [
         "../../ui-components/index.js"

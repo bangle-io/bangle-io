@@ -8,7 +8,7 @@
     "worker",
     "e2e",
     "extensions/*",
-    "js-libs/*",
+    "js-lib/*",
     "lib"
   ],
   "authors": [

@@ -4,10 +4,10 @@
     "baseUrl": ".",
     "paths": {
       "baby-fs": [
-        "../js-libs/baby-fs/index.js"
+        "../js-lib/baby-fs/index.js"
       ],
       "baby-fs/*": [
-        "../js-libs/baby-fs/*"
+        "../js-lib/baby-fs/*"
       ],
       "bangle-io-context": [
         "../lib/bangle-io-context/index.js"

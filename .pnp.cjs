@@ -56,11 +56,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       },
       {
         "name": "baby-fs",
-        "reference": "workspace:js-libs/baby-fs"
+        "reference": "workspace:js-lib/baby-fs"
       },
       {
         "name": "inline-palette",
-        "reference": "workspace:js-libs/inline-palette"
+        "reference": "workspace:js-lib/inline-palette"
       },
       {
         "name": "lib",
@@ -153,7 +153,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["_scripts", ["workspace:tooling/_scripts"]],
       ["app", ["workspace:app"]],
       ["app-entry", ["workspace:app/app-entry"]],
-      ["baby-fs", ["workspace:js-libs/baby-fs"]],
+      ["baby-fs", ["workspace:js-lib/baby-fs"]],
       ["bangle-io", ["workspace:."]],
       ["bangle-io-context", ["workspace:lib/bangle-io-context"]],
       ["collab-extension", ["workspace:extensions/collab-extension"]],
@@ -169,7 +169,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["inline-backlink", ["workspace:extensions/inline-backlink"]],
       ["inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["inline-emoji", ["workspace:extensions/inline-emoji"]],
-      ["inline-palette", ["virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette", "workspace:js-libs/inline-palette"]],
+      ["inline-palette", ["virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-lib/inline-palette", "workspace:js-lib/inline-palette"]],
       ["lib", ["workspace:lib"]],
       ["markdown", ["workspace:lib/markdown"]],
       ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
@@ -6421,10 +6421,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["baby-fs", [
-        ["workspace:js-libs/baby-fs", {
-          "packageLocation": "./js-libs/baby-fs/",
+        ["workspace:js-lib/baby-fs", {
+          "packageLocation": "./js-lib/baby-fs/",
           "packageDependencies": [
-            ["baby-fs", "workspace:js-libs/baby-fs"],
+            ["baby-fs", "workspace:js-lib/baby-fs"],
             ["config", "workspace:lib/config"],
             ["idb-keyval", "npm:5.0.5"],
             ["utils", "workspace:lib/utils"]
@@ -7508,7 +7508,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/commands/",
           "packageDependencies": [
             ["commands", "workspace:app/commands"],
-            ["baby-fs", "workspace:js-libs/baby-fs"],
+            ["baby-fs", "workspace:js-lib/baby-fs"],
             ["config", "workspace:lib/config"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["react", "npm:16.14.0"],
@@ -11210,7 +11210,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["bangle-io-context", "workspace:lib/bangle-io-context"],
             ["config", "workspace:lib/config"],
             ["extension-helpers", "workspace:lib/extension-helpers"],
-            ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette"],
+            ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-lib/inline-palette"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
             ["ui-components", "workspace:lib/ui-components"],
@@ -11230,7 +11230,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chrono-node", "npm:2.2.6"],
             ["config", "workspace:lib/config"],
             ["extension-helpers", "workspace:lib/extension-helpers"],
-            ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette"],
+            ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-lib/inline-palette"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
             ["ui-components", "workspace:lib/ui-components"],
@@ -11263,10 +11263,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["inline-palette", [
-        ["virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette", {
-          "packageLocation": "./.yarn/__virtual__/inline-palette-virtual-f9790ac74f/1/js-libs/inline-palette/",
+        ["virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-lib/inline-palette", {
+          "packageLocation": "./.yarn/__virtual__/inline-palette-virtual-9adf406688/1/js-lib/inline-palette/",
           "packageDependencies": [
-            ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-libs/inline-palette"],
+            ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-lib/inline-palette"],
             ["@bangle.dev/core", "npm:0.16.2"],
             ["@bangle.dev/react", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.16.2"],
             ["@bangle.dev/tooltip", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.16.2"],
@@ -11299,10 +11299,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["workspace:js-libs/inline-palette", {
-          "packageLocation": "./js-libs/inline-palette/",
+        ["workspace:js-lib/inline-palette", {
+          "packageLocation": "./js-lib/inline-palette/",
           "packageDependencies": [
-            ["inline-palette", "workspace:js-libs/inline-palette"],
+            ["inline-palette", "workspace:js-lib/inline-palette"],
             ["@bangle.dev/core", "npm:0.16.2"],
             ["@bangle.dev/react", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.16.2"],
             ["@bangle.dev/tooltip", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.16.2"],
@@ -14514,7 +14514,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:415347616d2b551b3cd9a7c8fa378d022df1011d7f8a0edfe135cb1ed920ef9e53a10540dadf2dc29a499890712c19eaf14bfac41511e19bc7dffd6653eda40d#npm:11.2.7"],
             ["@testing-library/react-hooks", "virtual:415347616d2b551b3cd9a7c8fa378d022df1011d7f8a0edfe135cb1ed920ef9e53a10540dadf2dc29a499890712c19eaf14bfac41511e19bc7dffd6653eda40d#npm:5.1.2"],
             ["@testing-library/user-event", "virtual:30bbe5a9fd71bdedc988bef6dbbf7be8741a536210ced89040612d879c28fe8c68aa6f54170853cf930ad3b759b33f0d397e90bf35b31e32c7cda2064108bb55#npm:13.1.5"],
-            ["baby-fs", "workspace:js-libs/baby-fs"],
+            ["baby-fs", "workspace:js-lib/baby-fs"],
             ["collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["commands", "workspace:app/commands"],
             ["config", "workspace:lib/config"],
@@ -19326,7 +19326,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.16.2"],
             ["@octokit/rest", "npm:18.5.3"],
             ["@testing-library/react", "virtual:1b848b7296ee27ba66b4940b155c324a4313217d7338c2d69e8186aac1b15b6ff64ddf487207f58198da10c3467ce994c00edf9aa9e00e94484db8b1d390c2ef#npm:11.2.6"],
-            ["baby-fs", "workspace:js-libs/baby-fs"],
+            ["baby-fs", "workspace:js-lib/baby-fs"],
             ["bangle-io-context", "workspace:lib/bangle-io-context"],
             ["config", "workspace:lib/config"],
             ["idb-keyval", "npm:5.0.5"],

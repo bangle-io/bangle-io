@@ -4130,9 +4130,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"baby-fs@workspace:*, baby-fs@workspace:js-libs/baby-fs":
+"baby-fs@workspace:*, baby-fs@workspace:js-lib/baby-fs":
   version: 0.0.0-use.local
-  resolution: "baby-fs@workspace:js-libs/baby-fs"
+  resolution: "baby-fs@workspace:js-lib/baby-fs"
   dependencies:
     config: "workspace:*"
     idb-keyval: ^5.0.5
@@ -8358,9 +8358,9 @@ fsevents@~2.3.1:
   languageName: unknown
   linkType: soft
 
-"inline-palette@workspace:*, inline-palette@workspace:js-libs/inline-palette":
+"inline-palette@workspace:*, inline-palette@workspace:js-lib/inline-palette":
   version: 0.0.0-use.local
-  resolution: "inline-palette@workspace:js-libs/inline-palette"
+  resolution: "inline-palette@workspace:js-lib/inline-palette"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@bangle.dev/react": 0.16.2
