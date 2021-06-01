@@ -25,7 +25,6 @@
     "collapsible-heading": "workspace:*",
     "commands": "workspace:*",
     "config": "workspace:*",
-    "editor": "workspace:*",
     "editor-manager-context": "workspace:*",
     "react": "16.14.0",
     "react-dom": "16.14.0",

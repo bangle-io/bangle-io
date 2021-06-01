@@ -7,7 +7,6 @@
     "tooling",
     "worker",
     "e2e",
-    "editor",
     "extensions/*",
     "js-libs/*",
     "lib"

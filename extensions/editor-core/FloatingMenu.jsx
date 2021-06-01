@@ -1,0 +1,50 @@
+import React, { useCallback } from 'react';
+import {
+  FloatingMenu,
+  Menu,
+  MenuGroup,
+  BoldButton,
+  ItalicButton,
+  CodeButton,
+  FloatingLinkButton,
+  HeadingButton,
+  BulletListButton,
+  LinkSubMenu,
+  OrderedListButton,
+  TodoListButton,
+} from '@bangle.dev/react-menu';
+import { menuKey } from './plugins';
+
+export function MenuComp() {
+  console.log('here');
+  const renderMenuType = useCallback(({ type, menuKey }) => {
+    if (type === 'defaultMenu') {
+      return (
+        <Menu>
+          <MenuGroup>
+            <BoldButton />
+            <ItalicButton />
+            <CodeButton />
+            <FloatingLinkButton menuKey={menuKey} />
+          </MenuGroup>
+          <MenuGroup>
+            <HeadingButton level={2} />
+            <HeadingButton level={3} />
+            <BulletListButton />
+            <TodoListButton />
+            <OrderedListButton />
+          </MenuGroup>
+        </Menu>
+      );
+    }
+    if (type === 'linkSubMenu') {
+      return (
+        <Menu>
+          <LinkSubMenu />
+        </Menu>
+      );
+    }
+    return null;
+  }, []);
+  return <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />;
+}

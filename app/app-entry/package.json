@@ -33,7 +33,7 @@
     "commands": "workspace:*",
     "config": "workspace:*",
     "core-js": "^3.13.1",
-    "editor": "workspace:*",
+    "editor-core": "workspace:*",
     "editor-manager-context": "workspace:*",
     "image-extension": "workspace:*",
     "inline-backlink": "workspace:*",

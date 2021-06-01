@@ -1,6 +1,6 @@
 import { BangleIOContext } from 'bangle-io-context/index';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
-import { getPlugins, rawSpecs } from 'editor/index';
+import editorCore from 'editor-core/index';
 import inlineCommandPalette from 'inline-command-palette/index';
 import inlineBacklinkPalette from 'inline-backlink/index';
 import collapsibleHeading from 'collapsible-heading/index';
@@ -10,9 +10,10 @@ import collabExtension from 'collab-extension/index';
 
 // TODO move this async, i think a promise should be fine.
 export const bangleIOContext = new BangleIOContext({
-  coreRawSpecs: rawSpecs,
-  getCorePlugins: getPlugins,
+  coreRawSpecs: [],
+  getCorePlugins: () => [],
   extensions: [
+    editorCore,
     collabExtension,
     inlineCommandPalette,
     inlineBacklinkPalette,

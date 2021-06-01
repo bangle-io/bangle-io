@@ -1,5 +1,5 @@
 {
-  "name": "editor",
+  "name": "editor-core",
   "version": "0.0.0",
   "authors": [
     {
@@ -31,6 +31,7 @@
     "@bangle.dev/timestamp": "0.16.2",
     "@bangle.dev/tooltip": "0.16.2",
     "@bangle.dev/trailing-node": "0.16.2",
+    "extension-helpers": "workspace:*",
     "react": "16.14.0",
     "react-dom": "16.14.0"
   },

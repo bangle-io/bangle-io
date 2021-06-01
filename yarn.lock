@@ -3640,7 +3640,7 @@ __metadata:
     commands: "workspace:*"
     config: "workspace:*"
     core-js: ^3.13.1
-    editor: "workspace:*"
+    editor-core: "workspace:*"
     editor-manager-context: "workspace:*"
     image-extension: "workspace:*"
     inline-backlink: "workspace:*"
@@ -6015,22 +6015,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"editor-manager-context@workspace:*, editor-manager-context@workspace:lib/editor-manager-context":
+"editor-core@workspace:*, editor-core@workspace:extensions/editor-core":
   version: 0.0.0-use.local
-  resolution: "editor-manager-context@workspace:lib/editor-manager-context"
-  dependencies:
-    "@bangle.dev/core": 0.16.2
-    config: "workspace:*"
-    prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
-    react: 16.14.0
-    react-dom: 16.14.0
-    ui-context: "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"editor@workspace:*, editor@workspace:editor":
-  version: 0.0.0-use.local
-  resolution: "editor@workspace:editor"
+  resolution: "editor-core@workspace:extensions/editor-core"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@bangle.dev/emoji": 0.16.2
@@ -6044,8 +6031,22 @@ __metadata:
     "@bangle.dev/timestamp": 0.16.2
     "@bangle.dev/tooltip": 0.16.2
     "@bangle.dev/trailing-node": 0.16.2
+    extension-helpers: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
+  languageName: unknown
+  linkType: soft
+
+"editor-manager-context@workspace:*, editor-manager-context@workspace:lib/editor-manager-context":
+  version: 0.0.0-use.local
+  resolution: "editor-manager-context@workspace:lib/editor-manager-context"
+  dependencies:
+    "@bangle.dev/core": 0.16.2
+    config: "workspace:*"
+    prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
+    react: 16.14.0
+    react-dom: 16.14.0
+    ui-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -11262,7 +11263,6 @@ fsevents@~2.3.1:
     collapsible-heading: "workspace:*"
     commands: "workspace:*"
     config: "workspace:*"
-    editor: "workspace:*"
     editor-manager-context: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
