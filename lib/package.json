@@ -6,6 +6,7 @@
     "ui-context",
     "ui-components",
     "config",
-    "extension-helpers"
+    "extension-helpers",
+    "utils"
   ]
 }

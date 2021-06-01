@@ -14795,9 +14795,9 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"utils@workspace:*, utils@workspace:utils":
+"utils@workspace:*, utils@workspace:lib/utils":
   version: 0.0.0-use.local
-  resolution: "utils@workspace:utils"
+  resolution: "utils@workspace:lib/utils"
   dependencies:
     "@testing-library/react-hooks": ^5.1.2
     config: "workspace:*"
