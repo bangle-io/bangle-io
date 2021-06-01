@@ -73,6 +73,7 @@ test('readFileAsText', async () => {
     return ['hi.md'];
   });
   const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: false,
     listFiles,
@@ -97,6 +98,7 @@ test('readFile', async () => {
     return ['hi.md'];
   });
   const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: false,
     listFiles,
@@ -128,6 +130,7 @@ test('readFile from local by default', async () => {
     return ['hi.md'];
   });
   const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: true,
     listFiles,
@@ -150,6 +153,7 @@ test('when opts.readFile returns null should throw not found error', async () =>
     return ['hi.md'];
   });
   const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: false,
     listFiles,
@@ -173,6 +177,7 @@ test('writeFile works by default', async () => {
     return ['hi.md'];
   });
   const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     listFiles,
   });
@@ -202,6 +207,7 @@ test('writeFile throws error when fallback is disabled', async () => {
     return ['hi.md'];
   });
   const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: false,
     listFiles,
@@ -222,11 +228,13 @@ test("listFile fallback is disabled doesn't return local files", async () => {
     return ['hi.md', 'hi2.md'];
   });
   const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: false,
     listFiles,
   });
   const fsLocal = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: true,
     listFiles,
@@ -262,11 +270,13 @@ test('readFile fallback local override', async () => {
     return ['hi.md', 'hi2.md'];
   });
   const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: false,
     listFiles,
   });
   const fsLocal = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
     readFile,
     allowLocalChanges: true,
     listFiles,

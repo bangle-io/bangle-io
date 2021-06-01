@@ -1,0 +1,8 @@
+{
+  "name": "js-lib",
+  "workspaces": [
+    "baby-fs",
+    "inline-palette",
+    "base-error"
+  ]
+}
