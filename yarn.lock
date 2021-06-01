@@ -4135,6 +4135,7 @@ __metadata:
   resolution: "baby-fs@workspace:js-lib/baby-fs"
   dependencies:
     base-error: "workspace:*"
+    config: "workspace:*"
     idb-keyval: ^5.0.5
   languageName: unknown
   linkType: soft
