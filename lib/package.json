@@ -1,0 +1,14 @@
+{
+  "name": "lib",
+  "workspaces": [
+    "bangle-io-context",
+    "editor-manager-context",
+    "ui-context",
+    "ui-components",
+    "config",
+    "extension-helpers",
+    "utils",
+    "workspace",
+    "markdown"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "worker",
+  "workspaces": [
+    "naukar-worker",
+    "naukar-proxy"
+  ]
+}

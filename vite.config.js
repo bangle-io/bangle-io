@@ -9,7 +9,6 @@ const config = ({ command, mode }) => {
   const isProduction = mode === 'production';
   const PORT = isProduction ? 5000 : 4000;
   const envVars = getEnvVars({ isProduction: isProduction, isVite: true });
-
   /**
    * @type {import('vite').UserConfig}
    */
@@ -29,6 +28,24 @@ const config = ({ command, mode }) => {
         },
       }),
     ],
+    publicDir: './tooling/public',
+
+    define: {
+      ...envVars.appEnvs,
+    },
+    server: {
+      port: PORT,
+      strictPort: true,
+
+      // hmr: false,
+      proxy: {
+        // string shorthand
+        '^.*\\.md$': {
+          target: 'http://localhost:' + PORT,
+          rewrite: (path) => path.split('.md').join(''),
+        },
+      },
+    },
 
     // optimizeDeps: {
     //   exclude: [
@@ -51,22 +68,6 @@ const config = ({ command, mode }) => {
     //     '@bangle.dev/tooltip',
     //   ],
     // },
-    define: {
-      ...envVars.appEnvs,
-    },
-    server: {
-      port: PORT,
-      strictPort: true,
-
-      // hmr: false,
-      proxy: {
-        // string shorthand
-        '^.*\\.md$': {
-          target: 'http://localhost:' + PORT,
-          rewrite: (path) => path.split('.md').join(''),
-        },
-      },
-    },
   };
 
   return c;

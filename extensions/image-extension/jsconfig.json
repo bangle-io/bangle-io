@@ -4,22 +4,22 @@
     "baseUrl": ".",
     "paths": {
       "extension-helpers": [
-        "../../extension-helpers/index.js"
+        "../../lib/extension-helpers/index.js"
       ],
       "extension-helpers/*": [
-        "../../extension-helpers/*"
+        "../../lib/extension-helpers/*"
       ],
       "utils": [
-        "../../utils/index.js"
+        "../../lib/utils/index.js"
       ],
       "utils/*": [
-        "../../utils/*"
+        "../../lib/utils/*"
       ],
       "workspace": [
-        "../../workspace/index.js"
+        "../../lib/workspace/index.js"
       ],
       "workspace/*": [
-        "../../workspace/*"
+        "../../lib/workspace/*"
       ]
     }
   }

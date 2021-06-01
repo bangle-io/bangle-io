@@ -1,0 +1,61 @@
+{
+  "name": "app-entry",
+  "version": "0.1.14",
+  "homepage": "https://bangle.io",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "private": true,
+  "main": "index.js",
+  "module": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "@bangle.dev/core": "0.16.2",
+    "@bangle.dev/markdown-front-matter": "0.16.2",
+    "@bangle.dev/react": "0.16.2",
+    "@bangle.dev/react-menu": "0.16.2",
+    "@bangle.dev/react-stopwatch": "0.16.2",
+    "@bangle.dev/tooltip": "0.16.2",
+    "@sentry/tracing": "^6.3.1",
+    "bangle-io-context": "workspace:*",
+    "collab-extension": "workspace:*",
+    "collapsible-heading": "workspace:*",
+    "comlink": "^4.3.1",
+    "commands": "workspace:*",
+    "config": "workspace:*",
+    "core-js": "^3.13.1",
+    "editor-core": "workspace:*",
+    "editor-manager-context": "workspace:*",
+    "image-extension": "workspace:*",
+    "inline-backlink": "workspace:*",
+    "inline-command-palette": "workspace:*",
+    "inline-emoji": "workspace:*",
+    "naukar-proxy": "workspace:*",
+    "naukar-worker": "workspace:*",
+    "palettes": "workspace:*",
+    "prop-types": "^15.7.2",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "react-router-dom": "^5.2.0",
+    "react-virtual": "^2.7.1",
+    "style": "workspace:*",
+    "ui-components": "workspace:*",
+    "ui-context": "workspace:*",
+    "utils": "workspace:*",
+    "workspace": "workspace:*"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^11.2.6"
+  }
+}

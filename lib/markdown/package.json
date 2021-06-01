@@ -1,0 +1,30 @@
+{
+  "name": "markdown",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.js",
+  "module": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "@bangle.dev/core": "0.16.2",
+    "@bangle.dev/markdown": "0.16.2",
+    "@bangle.dev/markdown-front-matter": "0.16.2",
+    "@bangle.dev/table": "0.16.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

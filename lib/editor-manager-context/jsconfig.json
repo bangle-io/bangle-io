@@ -1,0 +1,20 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "config": [
+        "../config/index.js"
+      ],
+      "config/*": [
+        "../config/*"
+      ],
+      "ui-context": [
+        "../ui-context/index.js"
+      ],
+      "ui-context/*": [
+        "../ui-context/*"
+      ]
+    }
+  }
+}

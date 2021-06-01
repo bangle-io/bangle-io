@@ -4,26 +4,12 @@
   "homepage": "https://bangle.io",
   "workspaces": [
     "app",
-    "bangle-io-context",
-    "env-vars",
-    "editor-manager-context",
-    "create-bangle-io-context",
-    "naukar-proxy",
-    "config",
+    "tooling",
+    "worker",
     "e2e",
-    "editor",
-    "extension-helpers",
     "extensions/*",
-    "js-libs/*",
-    "style",
-    "ui-components",
-    "ui-context",
-    "commands",
-    "utils",
-    "palettes",
-    "workspace",
-    "polyfill",
-    "naukar-worker"
+    "js-lib/*",
+    "lib"
   ],
   "authors": [
     {
@@ -42,7 +28,7 @@
   "private": true,
   "scripts": {
     "lint": "yarn prettier --check . && yarn eslint .",
-    "update-jsconfig": "yarn node _scripts/create-jsconfig.js",
+    "update-jsconfig": "yarn node ./tooling/_scripts/create-jsconfig.js",
     "test": "yarn lint && yarn jest",
     "start": "BROWSERSLIST_ENV=development yarn g:vite-dev",
     "webpack-start": "BROWSERSLIST_ENV=development yarn webpack serve --env development",
@@ -53,9 +39,9 @@
     "g:build-prod-serve": "NODE_ENV=production yarn g:vite-build && yarn g:e2e-serve",
     "vite-build": "NODE_ENV=production yarn g:vite-build",
     "build-serve": "yarn build && yarn run serve build",
-    "snapshot": "yarn build && yarn node ./_scripts/snapshot",
+    "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
     "add-portals": "yarn link -A -r /Users/kushanjoshi/code/bangle/bangle-play",
-    "remove-portals": "yarn node ./_scripts/remove-portals && yarn install",
+    "remove-portals": "yarn node ./tooling/_scripts/remove-portals && yarn install",
     "g:vite-dev": "vite",
     "g:vite-build": "vite build",
     "g:vite-serve": "vite preview"
@@ -72,9 +58,7 @@
     ]
   },
   "dependencies": {
-    "app": "workspace:*",
-    "env-vars": "workspace:*",
-    "polyfill": "workspace:*",
+    "app-entry": "workspace:*",
     "punycode": "^2.1.1"
   },
   "devDependencies": {

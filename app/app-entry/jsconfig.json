@@ -1,0 +1,122 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "bangle-io-context": [
+        "../../lib/bangle-io-context/index.js"
+      ],
+      "bangle-io-context/*": [
+        "../../lib/bangle-io-context/*"
+      ],
+      "collab-extension": [
+        "../../extensions/collab-extension/index.js"
+      ],
+      "collab-extension/*": [
+        "../../extensions/collab-extension/*"
+      ],
+      "collapsible-heading": [
+        "../../extensions/collapsible-heading/index.js"
+      ],
+      "collapsible-heading/*": [
+        "../../extensions/collapsible-heading/*"
+      ],
+      "commands": [
+        "../commands/index.js"
+      ],
+      "commands/*": [
+        "../commands/*"
+      ],
+      "config": [
+        "../../lib/config/index.js"
+      ],
+      "config/*": [
+        "../../lib/config/*"
+      ],
+      "editor-core": [
+        "../../extensions/editor-core/index.js"
+      ],
+      "editor-core/*": [
+        "../../extensions/editor-core/*"
+      ],
+      "editor-manager-context": [
+        "../../lib/editor-manager-context/index.js"
+      ],
+      "editor-manager-context/*": [
+        "../../lib/editor-manager-context/*"
+      ],
+      "image-extension": [
+        "../../extensions/image-extension/index.js"
+      ],
+      "image-extension/*": [
+        "../../extensions/image-extension/*"
+      ],
+      "inline-backlink": [
+        "../../extensions/inline-backlink/index.js"
+      ],
+      "inline-backlink/*": [
+        "../../extensions/inline-backlink/*"
+      ],
+      "inline-command-palette": [
+        "../../extensions/inline-command-palette/index.js"
+      ],
+      "inline-command-palette/*": [
+        "../../extensions/inline-command-palette/*"
+      ],
+      "inline-emoji": [
+        "../../extensions/inline-emoji/index.js"
+      ],
+      "inline-emoji/*": [
+        "../../extensions/inline-emoji/*"
+      ],
+      "naukar-proxy": [
+        "../../worker/naukar-proxy/index.js"
+      ],
+      "naukar-proxy/*": [
+        "../../worker/naukar-proxy/*"
+      ],
+      "naukar-worker": [
+        "../../worker/naukar-worker/index.js"
+      ],
+      "naukar-worker/*": [
+        "../../worker/naukar-worker/*"
+      ],
+      "palettes": [
+        "../palettes/index.js"
+      ],
+      "palettes/*": [
+        "../palettes/*"
+      ],
+      "style": [
+        "../style/index.js"
+      ],
+      "style/*": [
+        "../style/*"
+      ],
+      "ui-components": [
+        "../../lib/ui-components/index.js"
+      ],
+      "ui-components/*": [
+        "../../lib/ui-components/*"
+      ],
+      "ui-context": [
+        "../../lib/ui-context/index.js"
+      ],
+      "ui-context/*": [
+        "../../lib/ui-context/*"
+      ],
+      "utils": [
+        "../../lib/utils/index.js"
+      ],
+      "utils/*": [
+        "../../lib/utils/*"
+      ],
+      "workspace": [
+        "../../lib/workspace/index.js"
+      ],
+      "workspace/*": [
+        "../../lib/workspace/*"
+      ]
+    }
+  }
+}

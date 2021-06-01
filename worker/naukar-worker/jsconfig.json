@@ -1,0 +1,20 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "config": [
+        "../../lib/config/index.js"
+      ],
+      "config/*": [
+        "../../lib/config/*"
+      ],
+      "workspace": [
+        "../../lib/workspace/index.js"
+      ],
+      "workspace/*": [
+        "../../lib/workspace/*"
+      ]
+    }
+  }
+}

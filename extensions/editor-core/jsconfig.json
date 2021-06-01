@@ -1,0 +1,14 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "extension-helpers": [
+        "../../lib/extension-helpers/index.js"
+      ],
+      "extension-helpers/*": [
+        "../../lib/extension-helpers/*"
+      ]
+    }
+  }
+}

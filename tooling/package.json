@@ -1,0 +1,8 @@
+{
+  "name": "tooling",
+  "workspaces": [
+    "env-vars",
+    "e2e",
+    "_scripts"
+  ]
+}

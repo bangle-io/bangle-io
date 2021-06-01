@@ -3347,6 +3347,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"_scripts@workspace:tooling/_scripts":
+  version: 0.0.0-use.local
+  resolution: "_scripts@workspace:tooling/_scripts"
+  languageName: unknown
+  linkType: soft
+
 "abab@npm:^2.0.3":
   version: 2.0.5
   resolution: "abab@npm:2.0.5"
@@ -3615,11 +3621,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app@workspace:*, app@workspace:app":
+"app-entry@workspace:*, app-entry@workspace:app/app-entry":
   version: 0.0.0-use.local
-  resolution: "app@workspace:app"
+  resolution: "app-entry@workspace:app/app-entry"
   dependencies:
     "@bangle.dev/core": 0.16.2
+    "@bangle.dev/markdown-front-matter": 0.16.2
     "@bangle.dev/react": 0.16.2
     "@bangle.dev/react-menu": 0.16.2
     "@bangle.dev/react-stopwatch": 0.16.2
@@ -3627,16 +3634,21 @@ __metadata:
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
     bangle-io-context: "workspace:*"
+    collab-extension: "workspace:*"
+    collapsible-heading: "workspace:*"
     comlink: ^4.3.1
     commands: "workspace:*"
     config: "workspace:*"
-    create-bangle-io-context: "workspace:*"
-    editor: "workspace:*"
+    core-js: ^3.13.1
+    editor-core: "workspace:*"
     editor-manager-context: "workspace:*"
+    image-extension: "workspace:*"
+    inline-backlink: "workspace:*"
+    inline-command-palette: "workspace:*"
+    inline-emoji: "workspace:*"
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
     palettes: "workspace:*"
-    polyfill: "workspace:*"
     prop-types: ^15.7.2
     react: 16.14.0
     react-dom: 16.14.0
@@ -3647,6 +3659,12 @@ __metadata:
     ui-context: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"app@workspace:app":
+  version: 0.0.0-use.local
+  resolution: "app@workspace:app"
   languageName: unknown
   linkType: soft
 
@@ -4112,9 +4130,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"baby-fs@workspace:*, baby-fs@workspace:js-libs/baby-fs":
+"baby-fs@workspace:*, baby-fs@workspace:js-lib/baby-fs":
   version: 0.0.0-use.local
-  resolution: "baby-fs@workspace:js-libs/baby-fs"
+  resolution: "baby-fs@workspace:js-lib/baby-fs"
   dependencies:
     config: "workspace:*"
     idb-keyval: ^5.0.5
@@ -4129,9 +4147,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bangle-io-context@workspace:*, bangle-io-context@workspace:bangle-io-context":
+"bangle-io-context@workspace:*, bangle-io-context@workspace:lib/bangle-io-context":
   version: 0.0.0-use.local
-  resolution: "bangle-io-context@workspace:bangle-io-context"
+  resolution: "bangle-io-context@workspace:lib/bangle-io-context"
   dependencies:
     "@bangle.dev/core": 0.16.2
     react: 16.14.0
@@ -4163,7 +4181,7 @@ __metadata:
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
     "@vitejs/plugin-react-refresh": ^1.3.1
-    app: "workspace:*"
+    app-entry: "workspace:*"
     autoprefixer: ^10.2.5
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
@@ -4194,7 +4212,6 @@ __metadata:
     jest-puppeteer: ^5.0.2
     mini-css-extract-plugin: ^1.5.0
     pnp-webpack-plugin: ^1.6.4
-    polyfill: "workspace:*"
     postcss: ^8.2.12
     postcss-custom-properties: ^11.0.0
     postcss-import: ^14.0.1
@@ -5110,9 +5127,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commands@workspace:*, commands@workspace:commands":
+"commands@workspace:*, commands@workspace:app/commands":
   version: 0.0.0-use.local
-  resolution: "commands@workspace:commands"
+  resolution: "commands@workspace:app/commands"
   dependencies:
     baby-fs: "workspace:*"
     config: "workspace:*"
@@ -5183,9 +5200,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"config@workspace:*, config@workspace:config":
+"config@workspace:*, config@workspace:lib/config":
   version: 0.0.0-use.local
-  resolution: "config@workspace:config"
+  resolution: "config@workspace:lib/config"
   languageName: unknown
   linkType: soft
 
@@ -5347,23 +5364,6 @@ __metadata:
   checksum: 6801feaa0249e9b9fdde5b3d70dc33b4f9c69095bec94d67e3fe08b66eac24dc7e2099f053597cfbc94b743de269aa5d2cfa7da3fde765433423b06bd122941a
   languageName: node
   linkType: hard
-
-"create-bangle-io-context@workspace:*, create-bangle-io-context@workspace:create-bangle-io-context":
-  version: 0.0.0-use.local
-  resolution: "create-bangle-io-context@workspace:create-bangle-io-context"
-  dependencies:
-    "@bangle.dev/core": 0.16.2
-    "@bangle.dev/markdown-front-matter": 0.16.2
-    bangle-io-context: "workspace:*"
-    collab-extension: "workspace:*"
-    collapsible-heading: "workspace:*"
-    editor: "workspace:*"
-    image-extension: "workspace:*"
-    inline-backlink: "workspace:*"
-    inline-command-palette: "workspace:*"
-    inline-emoji: "workspace:*"
-  languageName: unknown
-  linkType: soft
 
 "cross-spawn@npm:^5.0.1":
   version: 5.1.0
@@ -5977,9 +5977,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"e2e@workspace:e2e":
+"e2e@workspace:tooling/e2e":
   version: 0.0.0-use.local
-  resolution: "e2e@workspace:e2e"
+  resolution: "e2e@workspace:tooling/e2e"
   dependencies:
     http-server: ^0.12.3
     jest: ^26.6.3
@@ -6015,22 +6015,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"editor-manager-context@workspace:*, editor-manager-context@workspace:editor-manager-context":
+"editor-core@workspace:*, editor-core@workspace:extensions/editor-core":
   version: 0.0.0-use.local
-  resolution: "editor-manager-context@workspace:editor-manager-context"
-  dependencies:
-    "@bangle.dev/core": 0.16.2
-    config: "workspace:*"
-    prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
-    react: 16.14.0
-    react-dom: 16.14.0
-    ui-context: "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"editor@workspace:*, editor@workspace:editor":
-  version: 0.0.0-use.local
-  resolution: "editor@workspace:editor"
+  resolution: "editor-core@workspace:extensions/editor-core"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@bangle.dev/emoji": 0.16.2
@@ -6044,8 +6031,22 @@ __metadata:
     "@bangle.dev/timestamp": 0.16.2
     "@bangle.dev/tooltip": 0.16.2
     "@bangle.dev/trailing-node": 0.16.2
+    extension-helpers: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
+  languageName: unknown
+  linkType: soft
+
+"editor-manager-context@workspace:*, editor-manager-context@workspace:lib/editor-manager-context":
+  version: 0.0.0-use.local
+  resolution: "editor-manager-context@workspace:lib/editor-manager-context"
+  dependencies:
+    "@bangle.dev/core": 0.16.2
+    config: "workspace:*"
+    prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
+    react: 16.14.0
+    react-dom: 16.14.0
+    ui-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -6193,9 +6194,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"env-vars@workspace:*, env-vars@workspace:env-vars":
+"env-vars@workspace:*, env-vars@workspace:tooling/env-vars":
   version: 0.0.0-use.local
-  resolution: "env-vars@workspace:env-vars"
+  resolution: "env-vars@workspace:tooling/env-vars"
   languageName: unknown
   linkType: soft
 
@@ -6903,9 +6904,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"extension-helpers@workspace:*, extension-helpers@workspace:extension-helpers":
+"extension-helpers@workspace:*, extension-helpers@workspace:lib/extension-helpers":
   version: 0.0.0-use.local
-  resolution: "extension-helpers@workspace:extension-helpers"
+  resolution: "extension-helpers@workspace:lib/extension-helpers"
   languageName: unknown
   linkType: soft
 
@@ -8357,9 +8358,9 @@ fsevents@~2.3.1:
   languageName: unknown
   linkType: soft
 
-"inline-palette@workspace:*, inline-palette@workspace:js-libs/inline-palette":
+"inline-palette@workspace:*, inline-palette@workspace:js-lib/inline-palette":
   version: 0.0.0-use.local
-  resolution: "inline-palette@workspace:js-libs/inline-palette"
+  resolution: "inline-palette@workspace:js-lib/inline-palette"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@bangle.dev/react": 0.16.2
@@ -9952,6 +9953,12 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"lib@workspace:lib":
+  version: 0.0.0-use.local
+  resolution: "lib@workspace:lib"
+  languageName: unknown
+  linkType: soft
+
 "lie@npm:3.1.1":
   version: 3.1.1
   resolution: "lie@npm:3.1.1"
@@ -10208,6 +10215,17 @@ fsevents@~2.3.1:
   checksum: 69f5ee640cbebb451b80d3cce308fff7230767e05c0f8c206a1e413775b7a6e5a08e91e9f3ec59f9b5c5a45493f9ce7ac089379cffb60c9d3e6677ed9d535086
   languageName: node
   linkType: hard
+
+"markdown@workspace:*, markdown@workspace:lib/markdown":
+  version: 0.0.0-use.local
+  resolution: "markdown@workspace:lib/markdown"
+  dependencies:
+    "@bangle.dev/core": 0.16.2
+    "@bangle.dev/markdown": 0.16.2
+    "@bangle.dev/markdown-front-matter": 0.16.2
+    "@bangle.dev/table": 0.16.2
+  languageName: unknown
+  linkType: soft
 
 "mdurl@npm:^1.0.1":
   version: 1.0.1
@@ -10634,22 +10652,21 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"naukar-proxy@workspace:*, naukar-proxy@workspace:naukar-proxy":
+"naukar-proxy@workspace:*, naukar-proxy@workspace:worker/naukar-proxy":
   version: 0.0.0-use.local
-  resolution: "naukar-proxy@workspace:naukar-proxy"
+  resolution: "naukar-proxy@workspace:worker/naukar-proxy"
   languageName: unknown
   linkType: soft
 
-"naukar-worker@workspace:*, naukar-worker@workspace:naukar-worker":
+"naukar-worker@workspace:*, naukar-worker@workspace:worker/naukar-worker":
   version: 0.0.0-use.local
-  resolution: "naukar-worker@workspace:naukar-worker"
+  resolution: "naukar-worker@workspace:worker/naukar-worker"
   dependencies:
     "@bangle.dev/collab-client": 0.16.2
     "@bangle.dev/collab-server": 0.16.2
     comlink: ^4.3.1
     config: "workspace:*"
     idb-keyval: ^5.0.5
-    polyfill: "workspace:*"
     workspace: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -11234,9 +11251,9 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"palettes@workspace:*, palettes@workspace:palettes":
+"palettes@workspace:*, palettes@workspace:app/palettes":
   version: 0.0.0-use.local
-  resolution: "palettes@workspace:palettes"
+  resolution: "palettes@workspace:app/palettes"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@testing-library/react": ^11.2.7
@@ -11246,7 +11263,6 @@ fsevents@~2.3.1:
     collapsible-heading: "workspace:*"
     commands: "workspace:*"
     config: "workspace:*"
-    editor: "workspace:*"
     editor-manager-context: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
@@ -11544,14 +11560,6 @@ fsevents@~2.3.1:
   checksum: 0606a63db96400b07f182300168298da9518727a843f9e10cf5045d2a102a4be06bb18c73dc481281e3e0f1ed8d04ef0d285a342b6dcd0eff1340e28e5d2328d
   languageName: node
   linkType: hard
-
-"polyfill@workspace:*, polyfill@workspace:polyfill":
-  version: 0.0.0-use.local
-  resolution: "polyfill@workspace:polyfill"
-  dependencies:
-    core-js: ^3.13.1
-  languageName: unknown
-  linkType: soft
 
 "portfinder@npm:^1.0.25, portfinder@npm:^1.0.26":
   version: 1.0.28
@@ -13955,9 +13963,9 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"style@workspace:*, style@workspace:style":
+"style@workspace:*, style@workspace:app/style":
   version: 0.0.0-use.local
-  resolution: "style@workspace:style"
+  resolution: "style@workspace:app/style"
   dependencies:
     tailwindcss: ^2.1.2
   languageName: unknown
@@ -14344,6 +14352,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"tooling@workspace:tooling":
+  version: 0.0.0-use.local
+  resolution: "tooling@workspace:tooling"
+  languageName: unknown
+  linkType: soft
+
 "totalist@npm:^1.0.0":
   version: 1.1.0
   resolution: "totalist@npm:1.1.0"
@@ -14552,9 +14566,9 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"ui-components@workspace:*, ui-components@workspace:ui-components":
+"ui-components@workspace:*, ui-components@workspace:lib/ui-components":
   version: 0.0.0-use.local
-  resolution: "ui-components@workspace:ui-components"
+  resolution: "ui-components@workspace:lib/ui-components"
   dependencies:
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
@@ -14566,12 +14580,11 @@ typescript@4.2.4:
   languageName: unknown
   linkType: soft
 
-"ui-context@workspace:*, ui-context@workspace:ui-context":
+"ui-context@workspace:*, ui-context@workspace:lib/ui-context":
   version: 0.0.0-use.local
-  resolution: "ui-context@workspace:ui-context"
+  resolution: "ui-context@workspace:lib/ui-context"
   dependencies:
     react: 16.14.0
-    style: "workspace:*"
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -14793,9 +14806,9 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"utils@workspace:*, utils@workspace:utils":
+"utils@workspace:*, utils@workspace:lib/utils":
   version: 0.0.0-use.local
-  resolution: "utils@workspace:utils"
+  resolution: "utils@workspace:lib/utils"
   dependencies:
     "@testing-library/react-hooks": ^5.1.2
     config: "workspace:*"
@@ -15328,9 +15341,15 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"workspace@workspace:*, workspace@workspace:workspace":
+"worker@workspace:worker":
   version: 0.0.0-use.local
-  resolution: "workspace@workspace:workspace"
+  resolution: "worker@workspace:worker"
+  languageName: unknown
+  linkType: soft
+
+"workspace@workspace:*, workspace@workspace:lib/workspace":
+  version: 0.0.0-use.local
+  resolution: "workspace@workspace:lib/workspace"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@octokit/rest": ^18.5.3
@@ -15338,8 +15357,8 @@ typescript@4.2.4:
     baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
     config: "workspace:*"
-    editor: "workspace:*"
     idb-keyval: ^5.0.5
+    markdown: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
     react-router-dom: ^5.2.0
