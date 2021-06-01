@@ -8,7 +8,6 @@
     "worker",
     "e2e",
     "editor",
-    "extension-helpers",
     "extensions/*",
     "js-libs/*",
     "lib",

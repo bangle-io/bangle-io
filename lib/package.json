@@ -5,6 +5,7 @@
     "editor-manager-context",
     "ui-context",
     "ui-components",
-    "config"
+    "config",
+    "extension-helpers"
   ]
 }

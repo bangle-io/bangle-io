@@ -6903,9 +6903,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"extension-helpers@workspace:*, extension-helpers@workspace:extension-helpers":
+"extension-helpers@workspace:*, extension-helpers@workspace:lib/extension-helpers":
   version: 0.0.0-use.local
-  resolution: "extension-helpers@workspace:extension-helpers"
+  resolution: "extension-helpers@workspace:lib/extension-helpers"
   languageName: unknown
   linkType: soft
 
