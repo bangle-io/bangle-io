@@ -10,7 +10,7 @@
     "build",
     "dist",
     "archive",
-    "public",
+    "tooling/public",
     ".cache",
     ".yarn",
     "coverage",

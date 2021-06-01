@@ -28,6 +28,24 @@ const config = ({ command, mode }) => {
         },
       }),
     ],
+    publicDir: './tooling/public',
+
+    define: {
+      ...envVars.appEnvs,
+    },
+    server: {
+      port: PORT,
+      strictPort: true,
+
+      // hmr: false,
+      proxy: {
+        // string shorthand
+        '^.*\\.md$': {
+          target: 'http://localhost:' + PORT,
+          rewrite: (path) => path.split('.md').join(''),
+        },
+      },
+    },
 
     // optimizeDeps: {
     //   exclude: [
@@ -50,22 +68,6 @@ const config = ({ command, mode }) => {
     //     '@bangle.dev/tooltip',
     //   ],
     // },
-    define: {
-      ...envVars.appEnvs,
-    },
-    server: {
-      port: PORT,
-      strictPort: true,
-
-      // hmr: false,
-      proxy: {
-        // string shorthand
-        '^.*\\.md$': {
-          target: 'http://localhost:' + PORT,
-          rewrite: (path) => path.split('.md').join(''),
-        },
-      },
-    },
   };
 
   return c;

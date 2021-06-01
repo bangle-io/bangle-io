@@ -10,10 +10,10 @@
         "../../lib/config/*"
       ],
       "extension-helpers": [
-        "../../extension-helpers/index.js"
+        "../../lib/extension-helpers/index.js"
       ],
       "extension-helpers/*": [
-        "../../extension-helpers/*"
+        "../../lib/extension-helpers/*"
       ],
       "inline-palette": [
         "../../js-lib/inline-palette/index.js"
@@ -22,16 +22,16 @@
         "../../js-lib/inline-palette/*"
       ],
       "ui-components": [
-        "../../ui-components/index.js"
+        "../../lib/ui-components/index.js"
       ],
       "ui-components/*": [
-        "../../ui-components/*"
+        "../../lib/ui-components/*"
       ],
       "utils": [
-        "../../utils/index.js"
+        "../../lib/utils/index.js"
       ],
       "utils/*": [
-        "../../utils/*"
+        "../../lib/utils/*"
       ]
     }
   }

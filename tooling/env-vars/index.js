@@ -29,7 +29,7 @@ module.exports = ({ isProduction, isVite = false }) => {
       crossorigin
     />`,
       viteJsEntry: isVite
-        ? '<script type="module" src="/src/index.js"></script>'
+        ? '<script type="module" src="/app/app-entry/index.js"></script>'
         : '',
     },
     appEnvs: {

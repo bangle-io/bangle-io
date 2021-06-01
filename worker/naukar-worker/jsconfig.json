@@ -10,10 +10,10 @@
         "../../lib/config/*"
       ],
       "workspace": [
-        "../../workspace/index.js"
+        "../../lib/workspace/index.js"
       ],
       "workspace/*": [
-        "../../workspace/*"
+        "../../lib/workspace/*"
       ]
     }
   }

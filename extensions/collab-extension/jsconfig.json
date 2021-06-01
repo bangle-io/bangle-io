@@ -4,10 +4,10 @@
     "baseUrl": ".",
     "paths": {
       "extension-helpers": [
-        "../../extension-helpers/index.js"
+        "../../lib/extension-helpers/index.js"
       ],
       "extension-helpers/*": [
-        "../../extension-helpers/*"
+        "../../lib/extension-helpers/*"
       ],
       "naukar-proxy": [
         "../../worker/naukar-proxy/index.js"

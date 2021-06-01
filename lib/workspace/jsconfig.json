@@ -1,31 +1,31 @@
 {
-  "extends": "../jsconfig-base.json",
+  "extends": "../../jsconfig-base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "baby-fs": [
-        "../js-lib/baby-fs/index.js"
+        "../../js-lib/baby-fs/index.js"
       ],
       "baby-fs/*": [
-        "../js-lib/baby-fs/*"
+        "../../js-lib/baby-fs/*"
       ],
       "bangle-io-context": [
-        "../lib/bangle-io-context/index.js"
+        "../bangle-io-context/index.js"
       ],
       "bangle-io-context/*": [
-        "../lib/bangle-io-context/*"
+        "../bangle-io-context/*"
       ],
       "config": [
-        "../lib/config/index.js"
+        "../config/index.js"
       ],
       "config/*": [
-        "../lib/config/*"
+        "../config/*"
       ],
-      "editor": [
-        "../editor/index.js"
+      "markdown": [
+        "../markdown/index.js"
       ],
-      "editor/*": [
-        "../editor/*"
+      "markdown/*": [
+        "../markdown/*"
       ],
       "utils": [
         "../utils/index.js"

@@ -33,17 +33,17 @@
       "config/*": [
         "../../lib/config/*"
       ],
-      "editor": [
-        "../../editor/index.js"
+      "editor-core": [
+        "../../extensions/editor-core/index.js"
+      ],
+      "editor-core/*": [
+        "../../extensions/editor-core/*"
       ],
       "editor-manager-context": [
         "../../lib/editor-manager-context/index.js"
       ],
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
-      ],
-      "editor/*": [
-        "../../editor/*"
       ],
       "image-extension": [
         "../../extensions/image-extension/index.js"
@@ -94,10 +94,10 @@
         "../style/*"
       ],
       "ui-components": [
-        "../../ui-components/index.js"
+        "../../lib/ui-components/index.js"
       ],
       "ui-components/*": [
-        "../../ui-components/*"
+        "../../lib/ui-components/*"
       ],
       "ui-context": [
         "../../lib/ui-context/index.js"
@@ -106,16 +106,16 @@
         "../../lib/ui-context/*"
       ],
       "utils": [
-        "../../utils/index.js"
+        "../../lib/utils/index.js"
       ],
       "utils/*": [
-        "../../utils/*"
+        "../../lib/utils/*"
       ],
       "workspace": [
-        "../../workspace/index.js"
+        "../../lib/workspace/index.js"
       ],
       "workspace/*": [
-        "../../workspace/*"
+        "../../lib/workspace/*"
       ]
     }
   }

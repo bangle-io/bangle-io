@@ -16,7 +16,6 @@ import {
 import { menuKey } from './plugins';
 
 export function MenuComp() {
-  console.log('here');
   const renderMenuType = useCallback(({ type, menuKey }) => {
     if (type === 'defaultMenu') {
       return (

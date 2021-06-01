@@ -4,16 +4,16 @@
     "baseUrl": ".",
     "paths": {
       "utils": [
-        "../../utils/index.js"
+        "../../lib/utils/index.js"
       ],
       "utils/*": [
-        "../../utils/*"
+        "../../lib/utils/*"
       ],
       "workspace": [
-        "../../workspace/index.js"
+        "../../lib/workspace/index.js"
       ],
       "workspace/*": [
-        "../../workspace/*"
+        "../../lib/workspace/*"
       ]
     }
   }

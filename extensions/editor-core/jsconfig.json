@@ -8,18 +8,6 @@
       ],
       "extension-helpers/*": [
         "../../lib/extension-helpers/*"
-      ],
-      "utils": [
-        "../../lib/utils/index.js"
-      ],
-      "utils/*": [
-        "../../lib/utils/*"
-      ],
-      "workspace": [
-        "../../lib/workspace/index.js"
-      ],
-      "workspace/*": [
-        "../../lib/workspace/*"
       ]
     }
   }

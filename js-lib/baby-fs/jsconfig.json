@@ -10,10 +10,10 @@
         "../../lib/config/*"
       ],
       "utils": [
-        "../../utils/index.js"
+        "../../lib/utils/index.js"
       ],
       "utils/*": [
-        "../../utils/*"
+        "../../lib/utils/*"
       ]
     }
   }

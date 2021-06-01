@@ -30,7 +30,7 @@ module.exports = (env, argv) => {
   const result = {
     target: 'web',
     mode,
-    entry: './app/app-entry/index.jsx',
+    entry: './app/app-entry/index.js',
     devtool: 'source-map',
     resolve: {
       extensions: ['.jsx', '.js', '...'],
@@ -87,7 +87,7 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'public'),
+            from: path.resolve(__dirname, 'tooling', 'public'),
             to: buildPath,
           },
         ],

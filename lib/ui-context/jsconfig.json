@@ -4,10 +4,10 @@
     "baseUrl": ".",
     "paths": {
       "utils": [
-        "../../utils/index.js"
+        "../utils/index.js"
       ],
       "utils/*": [
-        "../../utils/*"
+        "../utils/*"
       ]
     }
   }
