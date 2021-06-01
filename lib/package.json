@@ -8,6 +8,7 @@
     "config",
     "extension-helpers",
     "utils",
-    "workspace"
+    "workspace",
+    "markdown"
   ]
 }

@@ -10215,6 +10215,17 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"markdown@workspace:*, markdown@workspace:lib/markdown":
+  version: 0.0.0-use.local
+  resolution: "markdown@workspace:lib/markdown"
+  dependencies:
+    "@bangle.dev/core": 0.16.2
+    "@bangle.dev/markdown": 0.16.2
+    "@bangle.dev/markdown-front-matter": 0.16.2
+    "@bangle.dev/table": 0.16.2
+  languageName: unknown
+  linkType: soft
+
 "mdurl@npm:^1.0.1":
   version: 1.0.1
   resolution: "mdurl@npm:1.0.1"
@@ -15346,8 +15357,8 @@ typescript@4.2.4:
     baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
     config: "workspace:*"
-    editor: "workspace:*"
     idb-keyval: ^5.0.5
+    markdown: "workspace:*"
     react: 16.14.0
     react-dom: 16.14.0
     react-router-dom: ^5.2.0

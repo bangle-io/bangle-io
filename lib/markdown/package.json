@@ -1,5 +1,5 @@
 {
-  "name": "workspace",
+  "name": "markdown",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,21 +18,11 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
-  "devDependencies": {
-    "@testing-library/react": "^11.2.6",
-    "bangle-io-context": "workspace:*"
-  },
   "dependencies": {
     "@bangle.dev/core": "0.16.2",
-    "@octokit/rest": "^18.5.3",
-    "baby-fs": "workspace:*",
-    "config": "workspace:*",
-    "idb-keyval": "^5.0.5",
-    "markdown": "workspace:*",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "react-router-dom": "^5.2.0",
-    "utils": "workspace:*"
+    "@bangle.dev/markdown": "0.16.2",
+    "@bangle.dev/markdown-front-matter": "0.16.2",
+    "@bangle.dev/table": "0.16.2"
   },
   "publishConfig": {
     "access": "public"
