@@ -64,7 +64,6 @@ const getDepConstraints = async () => {
 
 async function checkDepConstraints() {
   const workspaces = await walkWorkspace();
-  // console.log(await getWorktreeWorkspaces('tooling'));
   const depConstraints = await getDepConstraints();
   for (const w of workspaces) {
     if (w.isWorktree) {
