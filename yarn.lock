@@ -15336,9 +15336,9 @@ typescript@4.2.4:
   languageName: unknown
   linkType: soft
 
-"workspace@workspace:*, workspace@workspace:workspace":
+"workspace@workspace:*, workspace@workspace:lib/workspace":
   version: 0.0.0-use.local
-  resolution: "workspace@workspace:workspace"
+  resolution: "workspace@workspace:lib/workspace"
   dependencies:
     "@bangle.dev/core": 0.16.2
     "@octokit/rest": ^18.5.3

@@ -10,8 +10,7 @@
     "editor",
     "extensions/*",
     "js-libs/*",
-    "lib",
-    "workspace"
+    "lib"
   ],
   "authors": [
     {
