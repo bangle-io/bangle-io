@@ -1,0 +1,12 @@
+{
+  "name": "extensions",
+  "workspaces": [
+    "collab-extension",
+    "collapsible-heading",
+    "editor-core",
+    "image-extension",
+    "inline-backlink",
+    "inline-command-palette",
+    "inline-emoji"
+  ]
+}

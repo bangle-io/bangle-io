@@ -1,4 +1,3 @@
-import { HELP_DOCS_VERSION } from 'config/index';
 import { BaseFileSystemError } from './base-fs';
 import {
   FILE_NOT_FOUND_ERROR,
@@ -9,54 +8,64 @@ import {
 import { IndexedDBFileSystem, IndexedDBFileSystemError } from './indexed-db-fs';
 import { readFileAsText as readFileAsTextHelper } from './native-browser-fs-helpers';
 
-function readFileFromUnpkg(filePath) {
-  const splitted = filePath.split('/');
-  const [wsName, ...path] = splitted;
+function defaultHelpers(helpDocsVersion) {
+  if (!helpDocsVersion) {
+    throw new Error('helpDocsVersion is needed');
+  }
 
-  return fetchHelpFiles(path.join('/'))
-    .then((r) => r?.blob())
-    .then((r) => {
-      if (!r) {
-        return undefined;
-      }
-      const name = splitted[splitted.length - 1];
-      const file = new File([r], name);
-      return file;
-    });
-}
+  function readFileFromUnpkg(filePath) {
+    const splitted = filePath.split('/');
+    const [wsName, ...path] = splitted;
 
-function listFilesFromUnpkg(dirPath) {
-  // we follow a convention of storing all the files in this location
-  return fetchHelpFiles('.bangle/files.json', true)
-    .then((result) => {
-      if (!result) {
-        throw new HelpFileSystemError(
-          'Unable to load help files.json',
-          UPSTREAM_ERROR,
+    return fetchHelpFiles(path.join('/'))
+      .then((r) => r?.blob())
+      .then((r) => {
+        if (!r) {
+          return undefined;
+        }
+        const name = splitted[splitted.length - 1];
+        const file = new File([r], name);
+        return file;
+      });
+  }
+
+  function listFilesFromUnpkg(dirPath) {
+    // we follow a convention of storing all the files in this location
+    return fetchHelpFiles('.bangle/files.json', true)
+      .then((result) => {
+        if (!result) {
+          throw new HelpFileSystemError(
+            'Unable to load help files.json',
+            UPSTREAM_ERROR,
+          );
+        }
+        return result.json();
+      })
+      .then((result) => result.files);
+  }
+
+  function fetchHelpFiles(path, json = false) {
+    return fetch(
+      `https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/` + path,
+    ).then((r) => {
+      if (!r.ok) {
+        if (r.status === 404) {
+          return null;
+        }
+        return Promise.reject(
+          new HelpFileSystemError(
+            `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
+            UPSTREAM_ERROR,
+          ),
         );
       }
-      return result.json();
-    })
-    .then((result) => result.files);
-}
-
-function fetchHelpFiles(path, json = false) {
-  return fetch(
-    `https://unpkg.com/bangle-io-help@${HELP_DOCS_VERSION}/docs/` + path,
-  ).then((r) => {
-    if (!r.ok) {
-      if (r.status === 404) {
-        return null;
-      }
-      return Promise.reject(
-        new HelpFileSystemError(
-          `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
-          UPSTREAM_ERROR,
-        ),
-      );
-    }
-    return r;
-  });
+      return r;
+    });
+  }
+  return {
+    readFileFromUnpkg,
+    listFilesFromUnpkg,
+  };
 }
 
 /**
@@ -67,6 +76,9 @@ export class HelpFileSystem extends IndexedDBFileSystem {
   constructor(opts) {
     super(opts);
     this._allowedFile = opts.allowedFile ?? ((filePath) => () => true);
+    const { readFileFromUnpkg, listFilesFromUnpkg } = defaultHelpers(
+      opts.helpDocsVersion,
+    );
     // if allowLocalChanges is true, this will not be called if
     // a matching file exists locally
     // return null if a file is not found.

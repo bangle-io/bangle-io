@@ -1,6 +1,6 @@
 // based on node's stat
 
-import { BaseError } from 'utils/index';
+import { BaseError } from 'base-error/index';
 import { VALIDATION_ERROR } from './error-codes';
 
 // ctimeMs is not supported by native browser fs, so only focusing on mTime

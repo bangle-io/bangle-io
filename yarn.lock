@@ -4134,9 +4134,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "baby-fs@workspace:js-lib/baby-fs"
   dependencies:
-    config: "workspace:*"
+    base-error: "workspace:*"
     idb-keyval: ^5.0.5
-    utils: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -4232,6 +4231,12 @@ __metadata:
     webpack-cli: ^4.6.0
     webpack-dev-server: ^3.11.2
     worker-loader: ^3.0.8
+  languageName: unknown
+  linkType: soft
+
+"base-error@workspace:*, base-error@workspace:js-lib/base-error":
+  version: 0.0.0-use.local
+  resolution: "base-error@workspace:js-lib/base-error"
   languageName: unknown
   linkType: soft
 
@@ -6907,6 +6912,12 @@ __metadata:
 "extension-helpers@workspace:*, extension-helpers@workspace:lib/extension-helpers":
   version: 0.0.0-use.local
   resolution: "extension-helpers@workspace:lib/extension-helpers"
+  languageName: unknown
+  linkType: soft
+
+"extensions@workspace:extensions":
+  version: 0.0.0-use.local
+  resolution: "extensions@workspace:extensions"
   languageName: unknown
   linkType: soft
 
@@ -9644,6 +9655,12 @@ fsevents@~2.3.1:
   checksum: c293bb7f1218b446cbed96a2cd7fbcb0c6d0ab98b9896e1ae683b1b66603718af52b100d8b5032647127bace29f50fabeaa7e0bc16c7167f2df7491d5c4827d0
   languageName: node
   linkType: hard
+
+"js-lib@workspace:js-lib":
+  version: 0.0.0-use.local
+  resolution: "js-lib@workspace:js-lib"
+  languageName: unknown
+  linkType: soft
 
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
@@ -14811,6 +14828,7 @@ typescript@4.2.4:
   resolution: "utils@workspace:lib/utils"
   dependencies:
     "@testing-library/react-hooks": ^5.1.2
+    base-error: "workspace:*"
     config: "workspace:*"
     dayjs: ^1.10.4
     react: 16.14.0

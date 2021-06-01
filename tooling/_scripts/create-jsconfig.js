@@ -31,13 +31,9 @@ async function main() {
     if (w.name === 'bangle-io' || Array.isArray(w.packageJSON.workspaces)) {
       continue;
     }
-    const r = w.packageJSON;
     // the bangle.io dependnencies
     const internalDep = [];
-    [
-      ...Object.keys(r.dependencies || {}),
-      ...Object.keys(r.devDependencies || {}),
-    ].forEach((dep) => {
+    [...w.workspaceDeps, ...w.workspaceDevDeps].forEach((dep) => {
       if (workspaceNames.includes(dep)) {
         internalDep.push({
           depName: dep,

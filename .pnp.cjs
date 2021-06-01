@@ -27,6 +27,42 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app"
       },
       {
+        "name": "extensions",
+        "reference": "workspace:extensions"
+      },
+      {
+        "name": "js-lib",
+        "reference": "workspace:js-lib"
+      },
+      {
+        "name": "lib",
+        "reference": "workspace:lib"
+      },
+      {
+        "name": "tooling",
+        "reference": "workspace:tooling"
+      },
+      {
+        "name": "worker",
+        "reference": "workspace:worker"
+      },
+      {
+        "name": "app-entry",
+        "reference": "workspace:app/app-entry"
+      },
+      {
+        "name": "commands",
+        "reference": "workspace:app/commands"
+      },
+      {
+        "name": "palettes",
+        "reference": "workspace:app/palettes"
+      },
+      {
+        "name": "style",
+        "reference": "workspace:app/style"
+      },
+      {
         "name": "collab-extension",
         "reference": "workspace:extensions/collab-extension"
       },
@@ -59,36 +95,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/baby-fs"
       },
       {
+        "name": "base-error",
+        "reference": "workspace:js-lib/base-error"
+      },
+      {
         "name": "inline-palette",
         "reference": "workspace:js-lib/inline-palette"
-      },
-      {
-        "name": "lib",
-        "reference": "workspace:lib"
-      },
-      {
-        "name": "tooling",
-        "reference": "workspace:tooling"
-      },
-      {
-        "name": "worker",
-        "reference": "workspace:worker"
-      },
-      {
-        "name": "app-entry",
-        "reference": "workspace:app/app-entry"
-      },
-      {
-        "name": "commands",
-        "reference": "workspace:app/commands"
-      },
-      {
-        "name": "palettes",
-        "reference": "workspace:app/palettes"
-      },
-      {
-        "name": "style",
-        "reference": "workspace:app/style"
       },
       {
         "name": "bangle-io-context",
@@ -156,6 +168,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["baby-fs", ["workspace:js-lib/baby-fs"]],
       ["bangle-io", ["workspace:."]],
       ["bangle-io-context", ["workspace:lib/bangle-io-context"]],
+      ["base-error", ["workspace:js-lib/base-error"]],
       ["collab-extension", ["workspace:extensions/collab-extension"]],
       ["collapsible-heading", ["workspace:extensions/collapsible-heading"]],
       ["commands", ["workspace:app/commands"]],
@@ -165,11 +178,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["editor-manager-context", ["workspace:lib/editor-manager-context"]],
       ["env-vars", ["workspace:tooling/env-vars"]],
       ["extension-helpers", ["workspace:lib/extension-helpers"]],
+      ["extensions", ["workspace:extensions"]],
       ["image-extension", ["workspace:extensions/image-extension"]],
       ["inline-backlink", ["workspace:extensions/inline-backlink"]],
       ["inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["inline-emoji", ["workspace:extensions/inline-emoji"]],
       ["inline-palette", ["virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-lib/inline-palette", "workspace:js-lib/inline-palette"]],
+      ["js-lib", ["workspace:js-lib"]],
       ["lib", ["workspace:lib"]],
       ["markdown", ["workspace:lib/markdown"]],
       ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
@@ -6425,9 +6440,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/baby-fs/",
           "packageDependencies": [
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["config", "workspace:lib/config"],
-            ["idb-keyval", "npm:5.0.5"],
-            ["utils", "workspace:lib/utils"]
+            ["base-error", "workspace:js-lib/base-error"],
+            ["idb-keyval", "npm:5.0.5"]
           ],
           "linkType": "SOFT",
         }]
@@ -6549,6 +6563,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pascalcase", "npm:0.1.1"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["base-error", [
+        ["workspace:js-lib/base-error", {
+          "packageLocation": "./js-lib/base-error/",
+          "packageDependencies": [
+            ["base-error", "workspace:js-lib/base-error"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["base64-js", [
@@ -9657,6 +9680,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["extensions", [
+        ["workspace:extensions", {
+          "packageLocation": "./extensions/",
+          "packageDependencies": [
+            ["extensions", "workspace:extensions"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["external-editor", [
         ["npm:3.1.0", {
           "packageLocation": "./.yarn/cache/external-editor-npm-3.1.0-878e7807af-1c2a616a73.zip/node_modules/external-editor/",
@@ -12702,6 +12734,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sideway/pinpoint", "npm:2.0.0"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["js-lib", [
+        ["workspace:js-lib", {
+          "packageLocation": "./js-lib/",
+          "packageDependencies": [
+            ["js-lib", "workspace:js-lib"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["js-tokens", [
@@ -18685,6 +18726,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["utils", "workspace:lib/utils"],
             ["@testing-library/react-hooks", "virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:5.1.2"],
+            ["base-error", "workspace:js-lib/base-error"],
             ["config", "workspace:lib/config"],
             ["dayjs", "npm:1.10.4"],
             ["react", "npm:16.14.0"],
