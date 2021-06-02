@@ -292,3 +292,22 @@ test('readFile fallback local override', async () => {
     `"local override"`,
   );
 });
+
+test('stat', async () => {
+  const readFile = jest.fn(async () => {
+    return toFile('original content');
+  });
+  const listFiles = jest.fn(async () => {
+    return ['hi.md', 'hi2.md'];
+  });
+  const fs = new HelpFileSystem({
+    helpDocsVersion: '1.0.1',
+    readFile,
+    allowLocalChanges: false,
+    listFiles,
+  });
+  const data = await fs.stat('hola/hi');
+  expect(data).toEqual({
+    mtimeMs: expect.any(Number),
+  });
+});
