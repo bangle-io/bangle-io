@@ -29,7 +29,6 @@
     "@bangle.dev/tooltip": "0.16.2",
     "@sentry/tracing": "^6.3.1",
     "bangle-io-context": "workspace:*",
-    "broadcast-channel": "^3.6.0",
     "collab-extension": "workspace:*",
     "collapsible-heading": "workspace:*",
     "comlink": "^4.3.1",
