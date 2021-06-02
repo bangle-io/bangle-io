@@ -1598,6 +1598,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.6.2, @babel/runtime@npm:^7.7.2":
+  version: 7.14.0
+  resolution: "@babel/runtime@npm:7.14.0"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: 257dc2594355dd8798455f25b6f2f9a00f162b427391265752933e0e3337b3b14661d09283187d5039ae3764f723890ffe767e995c73d662f1d515bdf48e5ade
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.10.4, @babel/template@npm:^7.12.7, @babel/template@npm:^7.3.3":
   version: 7.12.7
   resolution: "@babel/template@npm:7.12.7"
@@ -1730,9 +1739,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-client@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/collab-client@npm:0.16.2"
+"@bangle.dev/collab-client@portal:../bangle-play/collab-client::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/collab-client@portal:../bangle-play/collab-client::locator=bangle-io%40workspace%3A."
   dependencies:
     localforage: ^1.9.0
     prosemirror-collab: ^1.2.2
@@ -1748,13 +1757,12 @@ __metadata:
     prosemirror-state: "*"
     prosemirror-transform: "*"
     prosemirror-view: "*"
-  checksum: 1641fa59c7e8bf5b6ca91ea84c98e119a71d12c4704ae56f1df7987bc9f7624debb652b4aeaf77617f2d922f4d4054ab52a9c9c683e6bc5af465be0aa342b3af
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/collab-server@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/collab-server@npm:0.16.2"
+"@bangle.dev/collab-server@portal:../bangle-play/collab-server::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/collab-server@portal:../bangle-play/collab-server::locator=bangle-io%40workspace%3A."
   dependencies:
     localforage: ^1.9.0
     prosemirror-collab: ^1.2.2
@@ -1764,13 +1772,12 @@ __metadata:
     "@bangle.dev/core": "*"
     prosemirror-model: "*"
     prosemirror-transform: "*"
-  checksum: 9cfb667209e1d2bc7206efc1743c8ee2f8b088ccd25a9df00623755d7811ea070e23f5857f5b23ac8376829597ed54e7b9aa0dd9d5a48ab2142f1229ad774f7e
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/core@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/core@npm:0.16.2"
+"@bangle.dev/core@portal:../bangle-play/core::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/core@portal:../bangle-play/core::locator=bangle-io%40workspace%3A."
   dependencies:
     prosemirror-commands: ^1.1.4
     prosemirror-dropcursor: ^1.3.2
@@ -1785,47 +1792,43 @@ __metadata:
     prosemirror-transform: ^1.2.8
     prosemirror-utils: ^0.9.6
     prosemirror-view: ^1.16.3
-  checksum: 75f15748a0370a8012617694882853415adeaff4b34f4450d5ef6e11f2bc30128bcb093432fc14608fefc9d38d04e938cdc621041f123fe8592b4bc46037c847
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/emoji@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/emoji@npm:0.16.2"
+"@bangle.dev/emoji@portal:../bangle-play/emoji::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/emoji@portal:../bangle-play/emoji::locator=bangle-io%40workspace%3A."
   dependencies:
     markdown-it-emoji: ^2.0.0
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/markdown": "*"
-  checksum: 5517b28a5fcc82118e85a6a410f4f4a780b5f1ddace49c71f062e22f5732f38e19fdc2f16c09e8633bb15d9e36d9f2660104861f726b17911f4c093ad30a657d
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/markdown-front-matter@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/markdown-front-matter@npm:0.16.2"
+"@bangle.dev/markdown-front-matter@portal:../bangle-play/contrib/markdown-front-matter::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/markdown-front-matter@portal:../bangle-play/contrib/markdown-front-matter::locator=bangle-io%40workspace%3A."
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: f9e674ddaca691888dcea3d246e4fe5963d3f897c56168fe753f6fccdf694f6062c8630ec20e3f1c7234d3c48912f8ad74e3c29f9327312bccb40eaeec60cca4
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/markdown@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/markdown@npm:0.16.2"
+"@bangle.dev/markdown@portal:../bangle-play/markdown::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/markdown@portal:../bangle-play/markdown::locator=bangle-io%40workspace%3A."
   dependencies:
     markdown-it: ^10.0.0
     prosemirror-markdown: ^1.5.1
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/table": "*"
-  checksum: 0d78475079bf9bb4ac555e36cd61f447af1ade5b19114768ea7f91b85657ba5f7f23b4cbe31d857d913fdf8691a80ac8c27131f99a45b5175689be9895ef8dfd
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/react-emoji-suggest@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/react-emoji-suggest@npm:0.16.2"
+"@bangle.dev/react-emoji-suggest@portal:../bangle-play/contrib/react-emoji-suggest::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react-emoji-suggest@portal:../bangle-play/contrib/react-emoji-suggest::locator=bangle-io%40workspace%3A."
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/emoji": "*"
@@ -1833,13 +1836,12 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: d0343ac90cfd527f892ce4df08c384123c2a0a639f35905caee1ebccbcbb0e7da5335827303bb0699a610b2de70e699ea53dae0dca179daad8122b7cfb8e0cd6
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/react-menu@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/react-menu@npm:0.16.2"
+"@bangle.dev/react-menu@portal:../bangle-play/react-menu::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react-menu@portal:../bangle-play/react-menu::locator=bangle-io%40workspace%3A."
   dependencies:
     prop-types: ^15.7.2
   peerDependencies:
@@ -1848,26 +1850,24 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 8e4f405ea885bef3f5e11e6a1c09df269db2ef864f40d1eba832a5249869cf210478cf317250fd4a10e905095884b3f225323a14f22f62824cab0988fd5b35e2
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/react-stopwatch@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/react-stopwatch@npm:0.16.2"
+"@bangle.dev/react-stopwatch@portal:../bangle-play/contrib/react-stopwatch::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react-stopwatch@portal:../bangle-play/contrib/react-stopwatch::locator=bangle-io%40workspace%3A."
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/markdown": "*"
     "@bangle.dev/react": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 5bbb1844dc2cfab17244bf88f9107abc78e5c90c34628759f10bb74af28a65dc8d3a73892e20f809399feb148fff88d936d7c8d085ad2e6e9f4bad06d24435be
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/react@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/react@npm:0.16.2"
+"@bangle.dev/react@portal:../bangle-play/react::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/react@portal:../bangle-play/react::locator=bangle-io%40workspace%3A."
   dependencies:
     prop-types: ^15.7.2
     punycode: ^2.1.1
@@ -1875,59 +1875,53 @@ __metadata:
     "@bangle.dev/core": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: cb26e9f694450c56c5ea83d8c84e46d1e06d6bce049526ca9e73b865cc926322bc0bc02c1b2f05dc66fc6a374303fc5b20185024de09da909051103800b2e2c9
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/table@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/table@npm:0.16.2"
+"@bangle.dev/table@portal:../bangle-play/table::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/table@portal:../bangle-play/table::locator=bangle-io%40workspace%3A."
   dependencies:
     prosemirror-keymap: ^1.1.4
     prosemirror-tables: ^1.1.1
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: c6506a44941c90f454055694c29c37e4d1810d8106facd318175148dabf014af2250f1907ab92465890314aec9f3f27b8a26f05d35dd89384a4b0924155ea73d
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/timestamp@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/timestamp@npm:0.16.2"
+"@bangle.dev/timestamp@portal:../bangle-play/contrib/timestamp::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/timestamp@portal:../bangle-play/contrib/timestamp::locator=bangle-io%40workspace%3A."
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 2664df04e2f8c25cdecd879636729ec3fec6656dfdcd475090f8f33505a9b2cbd941c480ffa25fb3b61d0fa5164cfaec1c84f171d30eef11d0f73a279407112c
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/tooltip@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/tooltip@npm:0.16.2"
+"@bangle.dev/tooltip@portal:../bangle-play/tooltip::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/tooltip@portal:../bangle-play/tooltip::locator=bangle-io%40workspace%3A."
   dependencies:
     "@popperjs/core": ^2.5.4
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 19ada4bdfad83a6d6b5d8030b8784b36214d2444414ba33b34266c56a72cf6d6659de2b41ad84fa8b609ea61b59532f627f915a039972b013fe35132c71848d9
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/trailing-node@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/trailing-node@npm:0.16.2"
+"@bangle.dev/trailing-node@portal:../bangle-play/contrib/trailing-node::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/trailing-node@portal:../bangle-play/contrib/trailing-node::locator=bangle-io%40workspace%3A."
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: e52db905869724e5e35dfdf75b9cd76243d3c1148e1db3874fa75cf1869297e52a0620020e398331be4809f39045f7ad1c31520cf6cd50cb3fb7d0243f4ef9fe
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@bangle.dev/wiki-link@npm:0.16.2":
-  version: 0.16.2
-  resolution: "@bangle.dev/wiki-link@npm:0.16.2"
+"@bangle.dev/wiki-link@portal:../bangle-play/contrib/wiki-link::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/wiki-link@portal:../bangle-play/contrib/wiki-link::locator=bangle-io%40workspace%3A."
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 79179d9772b22dbc00e552115a0f75ff7b75d96f643417ca12fc08b4561f1136f11bbce6ed00157d1ca932f270b1f5bdb8ae731c5d4f6be7e8f582ae0509af4a
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "@bcoe/v8-coverage@npm:^0.2.3":
   version: 0.2.3
@@ -3634,6 +3628,7 @@ __metadata:
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
     bangle-io-context: "workspace:*"
+    broadcast-channel: ^3.6.0
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
     comlink: ^4.3.1
@@ -4292,6 +4287,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"big-integer@npm:^1.6.16":
+  version: 1.6.48
+  resolution: "big-integer@npm:1.6.48"
+  checksum: fc43ae12ebf2b2a58d6da92ef7069666d131fa993be4020cb1a11e384f6d8e7a69dced7f69d27b65a6aff2e6abb548fb823303bde138eab60b556100c17761f3
+  languageName: node
+  linkType: hard
+
 "big.js@npm:^5.2.2":
   version: 5.2.2
   resolution: "big.js@npm:5.2.2"
@@ -4430,6 +4432,21 @@ __metadata:
   dependencies:
     fill-range: ^7.0.1
   checksum: e2a8e769a863f3d4ee887b5fe21f63193a891c68b612ddb4b68d82d1b5f3ff9073af066c343e9867a393fe4c2555dcb33e89b937195feb9c1613d259edfcd459
+  languageName: node
+  linkType: hard
+
+"broadcast-channel@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "broadcast-channel@npm:3.6.0"
+  dependencies:
+    "@babel/runtime": ^7.7.2
+    detect-node: ^2.1.0
+    js-sha3: 0.8.0
+    microseconds: 0.2.0
+    nano-time: 1.0.0
+    rimraf: 3.0.2
+    unload: 2.2.0
+  checksum: 8b417f58c1a6cf22b136bf5948f64a0071449175b525283d276e959ddb74c844547ca46224992c00e7fab64a071a9010d3b029c7ad190e6098242a50007a0214
   languageName: node
   linkType: hard
 
@@ -5780,6 +5797,13 @@ __metadata:
   version: 2.0.4
   resolution: "detect-node@npm:2.0.4"
   checksum: c06ae40fefbad8cb8cbb6ca819c93568b2a809e747bfc9c71f3524b027f5e988163b0ac0517fd65288b375360b30bc4822172eb05d211f99003d73cf8ec22911
+  languageName: node
+  linkType: hard
+
+"detect-node@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "detect-node@npm:2.1.0"
+  checksum: 832184ec458353e41533ac9c622f16c19f7c02d8b10c303dfd3a756f56be93e903616c0bb2d4226183c9351c15fc0b3dba41a17a2308262afabcfa3776e6ae6e
   languageName: node
   linkType: hard
 
@@ -9662,6 +9686,13 @@ fsevents@~2.3.1:
   languageName: unknown
   linkType: soft
 
+"js-sha3@npm:0.8.0":
+  version: 0.8.0
+  resolution: "js-sha3@npm:0.8.0"
+  checksum: 75df77c1fc266973f06cce8309ce010e9e9f07ec35ab12022ed29b7f0d9c8757f5a73e1b35aa24840dced0dea7059085aa143d817aea9e188e2a80d569d9adce
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -10348,6 +10379,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"microseconds@npm:0.2.0":
+  version: 0.2.0
+  resolution: "microseconds@npm:0.2.0"
+  checksum: 22bfa8553f92c7d95afff6de0aeb2aecf750680d41b8c72b02098ccc5bbbb0a384380ff539292dbd3788f5dfc298682f9d38a2b4c101f5ee2c9471d53934c5fa
+  languageName: node
+  linkType: hard
+
 "mime-db@npm:1.44.0":
   version: 1.44.0
   resolution: "mime-db@npm:1.44.0"
@@ -10631,6 +10669,15 @@ fsevents@~2.3.1:
   dependencies:
     node-gyp: latest
   checksum: 7a269139b66a7d37470effb7fb36a8de8cc3b5ffba6e40bb8e0545307911fe5ebf94797ec62f655ecde79c237d169899f8bd28256c66a32cbc8284faaf94c3f4
+  languageName: node
+  linkType: hard
+
+"nano-time@npm:1.0.0":
+  version: 1.0.0
+  resolution: "nano-time@npm:1.0.0"
+  dependencies:
+    big-integer: ^1.6.16
+  checksum: eef8548546cc1020625f8e44751a7263e9eddf0412a6a1a6c80a8d2be2ea7973622804a977cdfe796807b85b20ff6c8ba340e8dd20effcc7078193ed5edbb5d4
   languageName: node
   linkType: hard
 
@@ -14698,6 +14745,16 @@ typescript@4.2.4:
   version: 2.0.0
   resolution: "universalify@npm:2.0.0"
   checksum: 2406a4edf4a8830aa6813278bab1f953a8e40f2f63a37873ffa9a3bc8f9745d06cc8e88f3572cb899b7e509013f7f6fcc3e37e8a6d914167a5381d8440518c44
+  languageName: node
+  linkType: hard
+
+"unload@npm:2.2.0":
+  version: 2.2.0
+  resolution: "unload@npm:2.2.0"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    detect-node: ^2.0.4
+  checksum: 88ba950c5ff83ab4f9bbd8f63bbf19ba09687ed3c434efd43b7338cc595bc574df8f9b155ee6eee7a435de3d3a4a226726988428977a68ba4907045f1fac5d41
   languageName: node
   linkType: hard
 
