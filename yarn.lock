@@ -3632,7 +3632,6 @@ __metadata:
     comlink: ^4.3.1
     commands: "workspace:*"
     config: "workspace:*"
-    core-js: ^3.13.1
     editor-core: "workspace:*"
     editor-manager-context: "workspace:*"
     image-extension: "workspace:*"
@@ -3641,16 +3640,20 @@ __metadata:
     inline-emoji: "workspace:*"
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
+    object-sync: "workspace:*"
+    page-lifecycle: ^0.1.2
     palettes: "workspace:*"
     prop-types: ^15.7.2
     react: 16.14.0
     react-dom: 16.14.0
     react-router-dom: ^5.2.0
     react-virtual: ^2.7.1
+    shared: "workspace:*"
     style: "workspace:*"
     ui-components: "workspace:*"
     ui-context: "workspace:*"
     utils: "workspace:*"
+    worker-setup: "workspace:*"
     workspace: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -10694,6 +10697,7 @@ fsevents@~2.3.1:
     comlink: ^4.3.1
     config: "workspace:*"
     idb-keyval: ^5.0.5
+    object-sync: "workspace:*"
     workspace: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -10975,6 +10979,12 @@ fsevents@~2.3.1:
   checksum: b363c5e7644b1e1b04aa507e88dcb8e3a2f52b6ffd0ea801e4c7a62d5aa559affe21c55a07fd4b1fd55fc03a33c610d73426664b20032405d7b92a1414c34d6a
   languageName: node
   linkType: hard
+
+"object-sync@workspace:*, object-sync@workspace:js-lib/object-sync":
+  version: 0.0.0-use.local
+  resolution: "object-sync@workspace:js-lib/object-sync"
+  languageName: unknown
+  linkType: soft
 
 "object-visit@npm:^1.0.0":
   version: 1.0.1
@@ -11275,6 +11285,13 @@ fsevents@~2.3.1:
   version: 2.2.0
   resolution: "p-try@npm:2.2.0"
   checksum: f8a8e9a7693659383f06aec604ad5ead237c7a261c18048a6e1b5b85a5f8a067e469aa24f5bc009b991ea3b058a87f5065ef4176793a200d4917349881216cae
+  languageName: node
+  linkType: hard
+
+"page-lifecycle@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "page-lifecycle@npm:0.1.2"
+  checksum: 082359f37dad4f5a55a8db814d968675dd5d707ef9c8279ab3a3627535846cd825530ca8fdae6cf5a2bade5bbf1546fe443aabd0950671d7a6c93003f9004070
   languageName: node
   linkType: hard
 
@@ -13375,6 +13392,25 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"shared@workspace:*, shared@workspace:app/shared":
+  version: 0.0.0-use.local
+  resolution: "shared@workspace:app/shared"
+  dependencies:
+    "@bangle.dev/core": 0.16.2
+    "@bangle.dev/markdown": 0.16.2
+    "@bangle.dev/markdown-front-matter": 0.16.2
+    bangle-io-context: "workspace:*"
+    collab-extension: "workspace:*"
+    collapsible-heading: "workspace:*"
+    core-js: ^3.13.1
+    editor-core: "workspace:*"
+    image-extension: "workspace:*"
+    inline-backlink: "workspace:*"
+    inline-command-palette: "workspace:*"
+    inline-emoji: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "shebang-command@npm:^1.2.0":
   version: 1.2.0
   resolution: "shebang-command@npm:1.2.0"
@@ -15368,6 +15404,17 @@ typescript@4.2.4:
   checksum: 84f4a7eeb2a1d8b9704425837e017c91eedfae67ac89e0b866a2dcf283323c1dcabe0258196278b7d5fd0041392da895c8a0c59ddf3a94f1b2e003df68ddfec3
   languageName: node
   linkType: hard
+
+"worker-setup@workspace:*, worker-setup@workspace:app/worker-setup":
+  version: 0.0.0-use.local
+  resolution: "worker-setup@workspace:app/worker-setup"
+  dependencies:
+    comlink: ^4.3.1
+    naukar-proxy: "workspace:*"
+    naukar-worker: "workspace:*"
+    shared: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "worker@workspace:worker":
   version: 0.0.0-use.local

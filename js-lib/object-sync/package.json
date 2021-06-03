@@ -1,5 +1,5 @@
 {
-  "name": "naukar-worker",
+  "name": "object-sync",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,15 +18,5 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
-  "publishConfig": {},
-  "dependencies": {
-    "@bangle.dev/collab-client": "0.16.2",
-    "@bangle.dev/collab-server": "0.16.2",
-    "@bangle.dev/disk": "0.16.2",
-    "comlink": "^4.3.1",
-    "config": "workspace:*",
-    "idb-keyval": "^5.0.5",
-    "object-sync": "workspace:*",
-    "workspace": "workspace:*"
-  }
+  "publishConfig": {}
 }

@@ -1,0 +1,56 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "bangle-io-context": [
+        "../../lib/bangle-io-context/index.js"
+      ],
+      "bangle-io-context/*": [
+        "../../lib/bangle-io-context/*"
+      ],
+      "collab-extension": [
+        "../../extensions/collab-extension/index.js"
+      ],
+      "collab-extension/*": [
+        "../../extensions/collab-extension/*"
+      ],
+      "collapsible-heading": [
+        "../../extensions/collapsible-heading/index.js"
+      ],
+      "collapsible-heading/*": [
+        "../../extensions/collapsible-heading/*"
+      ],
+      "editor-core": [
+        "../../extensions/editor-core/index.js"
+      ],
+      "editor-core/*": [
+        "../../extensions/editor-core/*"
+      ],
+      "image-extension": [
+        "../../extensions/image-extension/index.js"
+      ],
+      "image-extension/*": [
+        "../../extensions/image-extension/*"
+      ],
+      "inline-backlink": [
+        "../../extensions/inline-backlink/index.js"
+      ],
+      "inline-backlink/*": [
+        "../../extensions/inline-backlink/*"
+      ],
+      "inline-command-palette": [
+        "../../extensions/inline-command-palette/index.js"
+      ],
+      "inline-command-palette/*": [
+        "../../extensions/inline-command-palette/*"
+      ],
+      "inline-emoji": [
+        "../../extensions/inline-emoji/index.js"
+      ],
+      "inline-emoji/*": [
+        "../../extensions/inline-emoji/*"
+      ]
+    }
+  }
+}

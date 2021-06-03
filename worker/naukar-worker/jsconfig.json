@@ -9,6 +9,12 @@
       "config/*": [
         "../../lib/config/*"
       ],
+      "object-sync": [
+        "../../js-lib/object-sync/index.js"
+      ],
+      "object-sync/*": [
+        "../../js-lib/object-sync/*"
+      ],
       "workspace": [
         "../../lib/workspace/index.js"
       ],

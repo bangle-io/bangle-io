@@ -59,8 +59,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app/palettes"
       },
       {
+        "name": "shared",
+        "reference": "workspace:app/shared"
+      },
+      {
         "name": "style",
         "reference": "workspace:app/style"
+      },
+      {
+        "name": "worker-setup",
+        "reference": "workspace:app/worker-setup"
       },
       {
         "name": "collab-extension",
@@ -101,6 +109,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "inline-palette",
         "reference": "workspace:js-lib/inline-palette"
+      },
+      {
+        "name": "object-sync",
+        "reference": "workspace:js-lib/object-sync"
       },
       {
         "name": "bangle-io-context",
@@ -189,13 +201,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["markdown", ["workspace:lib/markdown"]],
       ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
       ["naukar-worker", ["workspace:worker/naukar-worker"]],
+      ["object-sync", ["workspace:js-lib/object-sync"]],
       ["palettes", ["workspace:app/palettes"]],
+      ["shared", ["workspace:app/shared"]],
       ["style", ["workspace:app/style"]],
       ["tooling", ["workspace:tooling"]],
       ["ui-components", ["workspace:lib/ui-components"]],
       ["ui-context", ["workspace:lib/ui-context"]],
       ["utils", ["workspace:lib/utils"]],
       ["worker", ["workspace:worker"]],
+      ["worker-setup", ["workspace:app/worker-setup"]],
       ["workspace", ["workspace:lib/workspace"]]
     ],
     "fallbackPool": [
@@ -5798,7 +5813,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comlink", "npm:4.3.1"],
             ["commands", "workspace:app/commands"],
             ["config", "workspace:lib/config"],
-            ["core-js", "npm:3.13.1"],
             ["editor-core", "workspace:extensions/editor-core"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["image-extension", "workspace:extensions/image-extension"],
@@ -5807,16 +5821,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["inline-emoji", "workspace:extensions/inline-emoji"],
             ["naukar-proxy", "workspace:worker/naukar-proxy"],
             ["naukar-worker", "workspace:worker/naukar-worker"],
+            ["object-sync", "workspace:js-lib/object-sync"],
+            ["page-lifecycle", "npm:0.1.2"],
             ["palettes", "workspace:app/palettes"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.14.0"],
             ["react-dom", "virtual:ab8d08acecc054a75b9b289d5ae4a074c6fc8a11ab06a806aaab683797678338c4400fcbc032187d9c188d8b375e2bc2611782f524015d1fd4947fe571c585a9#npm:16.14.0"],
             ["react-router-dom", "virtual:1b848b7296ee27ba66b4940b155c324a4313217d7338c2d69e8186aac1b15b6ff64ddf487207f58198da10c3467ce994c00edf9aa9e00e94484db8b1d390c2ef#npm:5.2.0"],
             ["react-virtual", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:2.7.1"],
+            ["shared", "workspace:app/shared"],
             ["style", "workspace:app/style"],
             ["ui-components", "workspace:lib/ui-components"],
             ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:lib/utils"],
+            ["worker-setup", "workspace:app/worker-setup"],
             ["workspace", "workspace:lib/workspace"]
           ],
           "linkType": "SOFT",
@@ -13922,6 +13940,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comlink", "npm:4.3.1"],
             ["config", "workspace:lib/config"],
             ["idb-keyval", "npm:5.0.5"],
+            ["object-sync", "workspace:js-lib/object-sync"],
             ["workspace", "workspace:lib/workspace"]
           ],
           "linkType": "SOFT",
@@ -14244,6 +14263,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object-keys", "npm:1.1.1"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["object-sync", [
+        ["workspace:js-lib/object-sync", {
+          "packageLocation": "./js-lib/object-sync/",
+          "packageDependencies": [
+            ["object-sync", "workspace:js-lib/object-sync"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["object-visit", [
@@ -14570,6 +14598,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/p-try-npm-2.2.0-e0390dbaf8-f8a8e9a769.zip/node_modules/p-try/",
           "packageDependencies": [
             ["p-try", "npm:2.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["page-lifecycle", [
+        ["npm:0.1.2", {
+          "packageLocation": "./.yarn/cache/page-lifecycle-npm-0.1.2-1685db13fe-082359f37d.zip/node_modules/page-lifecycle/",
+          "packageDependencies": [
+            ["page-lifecycle", "npm:0.1.2"]
           ],
           "linkType": "HARD",
         }]
@@ -17061,6 +17098,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["shared", [
+        ["workspace:app/shared", {
+          "packageLocation": "./app/shared/",
+          "packageDependencies": [
+            ["shared", "workspace:app/shared"],
+            ["@bangle.dev/core", "portal:../bangle-play/core::locator=bangle-io%40workspace%3A."],
+            ["@bangle.dev/markdown", "virtual:908f0fb132b118cd184736dd9e5270b63b2330b1375e45e868a6b286cfb6645b40e46d847ec20b286b35151eee6b474e72f0a48aa9c06c64eb287bb94fc974de#portal:../bangle-play/markdown::locator=bangle-io%40workspace%3A."],
+            ["@bangle.dev/markdown-front-matter", "virtual:5d6819dcad1008c9c22d4a859a683f33ae84293feb1ecfc101eb1000a7c6edbc3940ec2b586bc310c1117b806f8f09134f282209b48826ed9a219ad3ef12775c#portal:../bangle-play/contrib/markdown-front-matter::locator=bangle-io%40workspace%3A."],
+            ["bangle-io-context", "workspace:lib/bangle-io-context"],
+            ["collab-extension", "workspace:extensions/collab-extension"],
+            ["collapsible-heading", "workspace:extensions/collapsible-heading"],
+            ["core-js", "npm:3.13.1"],
+            ["editor-core", "workspace:extensions/editor-core"],
+            ["image-extension", "workspace:extensions/image-extension"],
+            ["inline-backlink", "workspace:extensions/inline-backlink"],
+            ["inline-command-palette", "workspace:extensions/inline-command-palette"],
+            ["inline-emoji", "workspace:extensions/inline-emoji"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["shebang-command", [
         ["npm:1.2.0", {
           "packageLocation": "./.yarn/cache/shebang-command-npm-1.2.0-8990ba5d1d-9eed175030.zip/node_modules/shebang-command/",
@@ -19386,6 +19444,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "webpack"
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["worker-setup", [
+        ["workspace:app/worker-setup", {
+          "packageLocation": "./app/worker-setup/",
+          "packageDependencies": [
+            ["worker-setup", "workspace:app/worker-setup"],
+            ["comlink", "npm:4.3.1"],
+            ["naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["naukar-worker", "workspace:worker/naukar-worker"],
+            ["shared", "workspace:app/shared"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["workspace", [

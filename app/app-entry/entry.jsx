@@ -6,14 +6,12 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
-import { polyfills } from './polyfill';
-import { setupNaukar } from './setup-naukar/setup-naukar';
-import { setNaukarReady } from 'naukar-proxy/index';
-import { bangleIOContext } from './create-bangle-io-context';
+import { polyfills, bangleIOContext } from 'shared/index';
+import { workerSetup } from 'worker-setup/index';
+import './watch-page-lifecycle';
+import './app-state';
 
-setupNaukar({ bangleIOContext }).then((naukar) => {
-  setNaukarReady(naukar);
-});
+workerSetup();
 
 window.Sentry?.onLoad(function () {
   import(

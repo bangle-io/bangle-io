@@ -3,6 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "base-error": [
+        "../../js-lib/base-error/index.js"
+      ],
+      "base-error/*": [
+        "../../js-lib/base-error/*"
+      ],
       "config": [
         "../config/index.js"
       ],

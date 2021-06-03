@@ -1,9 +1,15 @@
 import { setupCollabManager } from './collab-manager';
-import { config } from 'config/index';
-import * as idb from 'idb-keyval';
+import { localDiskSetup } from './local-disk';
+import { objectSync } from 'object-sync/index';
 
 export class Naukar {
-  constructor({ bangleIOContext }) {
+  pageState;
+  oldPageState;
+  bangleIOContext;
+  manager;
+  diskSetup;
+
+  constructor({ bangleIOContext, initialAppState }) {
     const envType =
       typeof WorkerGlobalScope !== 'undefined' &&
       // eslint-disable-next-line no-restricted-globals, no-undef
@@ -12,18 +18,42 @@ export class Naukar {
         : 'window';
     console.debug('Naukar running in ', envType);
 
-    this.bangleIOContext = bangleIOContext;
-    this.manager = setupCollabManager(bangleIOContext);
-    this.cachedWorkspaces = undefined;
+    const { appState, updateAppState, registerUpdateCallback } =
+      setupAppState(initialAppState);
+    this.updateAppState = updateAppState;
+    this.registerUpdateCallback = registerUpdateCallback;
+
+    const diskSetup = localDiskSetup(bangleIOContext, appState);
+
+    this.manager = setupCollabManager(bangleIOContext, diskSetup.disk);
   }
 
   async handleCollabRequest(...args) {
     return this.manager.handleRequest(...args);
   }
+}
 
-  validate() {
-    return {
-      good: 'true',
-    };
-  }
+function setupAppState(initialAppState) {
+  const pendingEvents = [];
+  let appStateWorkerToMain;
+  const appState = objectSync(initialAppState, (event) => {
+    if (appStateWorkerToMain) {
+      appStateWorkerToMain(event);
+      return;
+    }
+    pendingEvents.push(event);
+  });
+
+  return {
+    appState,
+    updateAppState: (event) => {
+      appState.applyChange(event);
+    },
+    registerUpdateCallback: (cb) => {
+      appStateWorkerToMain = cb;
+      while (pendingEvents.length > 0) {
+        cb(pendingEvents.pop());
+      }
+    },
+  };
 }

@@ -1,0 +1,26 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "naukar-proxy": [
+        "../../worker/naukar-proxy/index.js"
+      ],
+      "naukar-proxy/*": [
+        "../../worker/naukar-proxy/*"
+      ],
+      "naukar-worker": [
+        "../../worker/naukar-worker/index.js"
+      ],
+      "naukar-worker/*": [
+        "../../worker/naukar-worker/*"
+      ],
+      "shared": [
+        "../shared/index.js"
+      ],
+      "shared/*": [
+        "../shared/*"
+      ]
+    }
+  }
+}
