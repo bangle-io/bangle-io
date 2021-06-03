@@ -1786,6 +1786,14 @@ __metadata:
   languageName: node
   linkType: soft
 
+"@bangle.dev/disk@portal:../bangle-play/contrib/disk::locator=bangle-io%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@bangle.dev/disk@portal:../bangle-play/contrib/disk::locator=bangle-io%40workspace%3A."
+  dependencies:
+    debounce-fn: ^5.0.0
+  languageName: node
+  linkType: soft
+
 "@bangle.dev/emoji@portal:../bangle-play/emoji::locator=bangle-io%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@bangle.dev/emoji@portal:../bangle-play/emoji::locator=bangle-io%40workspace%3A."
@@ -5542,6 +5550,15 @@ __metadata:
   version: 1.10.4
   resolution: "dayjs@npm:1.10.4"
   checksum: d248d6aa1e04f8577a94978e5194c1023347bc08b7c2766d4a4d50b0b69382d3f4fd912b9fcb64ffad4ee2947d53cd8e5d707f49b14817eb7810959d8d95c938
+  languageName: node
+  linkType: hard
+
+"debounce-fn@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "debounce-fn@npm:5.0.0"
+  dependencies:
+    mimic-fn: ^3.0.0
+  checksum: 2e6c7f7a5e9e7a1402c63d6c42752dad77dd7bc5327b766e078faf59f8305e024881a395750724dc5a50cd61ae86c39d53587d4f0190b93344e630538aca09a4
   languageName: node
   linkType: hard
 
@@ -10413,6 +10430,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"mimic-fn@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "mimic-fn@npm:3.1.0"
+  checksum: f7b167f9115b8bbdf2c3ee55dce9149d14be9e54b237259c4bc1d8d0512ea60f25a1b323f814eb1fe8f5a541662804bcfcfff3202ca58df143edb986849d58db
+  languageName: node
+  linkType: hard
+
 "min-indent@npm:^1.0.0":
   version: 1.0.1
   resolution: "min-indent@npm:1.0.1"
@@ -10666,6 +10690,7 @@ fsevents@~2.3.1:
   dependencies:
     "@bangle.dev/collab-client": 0.16.2
     "@bangle.dev/collab-server": 0.16.2
+    "@bangle.dev/disk": 0.16.2
     comlink: ^4.3.1
     config: "workspace:*"
     idb-keyval: ^5.0.5

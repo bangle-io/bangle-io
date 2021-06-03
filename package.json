@@ -154,6 +154,7 @@
     "@bangle.dev/react": "portal:../bangle-play/react",
     "@bangle.dev/react-menu": "portal:../bangle-play/react-menu",
     "@bangle.dev/table": "portal:../bangle-play/table",
-    "@bangle.dev/tooltip": "portal:../bangle-play/tooltip"
+    "@bangle.dev/tooltip": "portal:../bangle-play/tooltip",
+    "@bangle.dev/disk": "portal:../bangle-play/contrib/disk"
   }
 }

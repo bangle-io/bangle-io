@@ -3220,6 +3220,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["@bangle.dev/disk", [
+        ["portal:../bangle-play/contrib/disk::locator=bangle-io%40workspace%3A.", {
+          "packageLocation": "../bangle-play/contrib/disk/",
+          "packageDependencies": [
+            ["@bangle.dev/disk", "portal:../bangle-play/contrib/disk::locator=bangle-io%40workspace%3A."],
+            ["debounce-fn", "npm:5.0.0"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.dev/emoji", [
         ["portal:../bangle-play/emoji::locator=bangle-io%40workspace%3A.", {
           "packageLocation": "../bangle-play/emoji/",
@@ -8034,6 +8044,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/dayjs-npm-1.10.4-e450424eab-d248d6aa1e.zip/node_modules/dayjs/",
           "packageDependencies": [
             ["dayjs", "npm:1.10.4"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["debounce-fn", [
+        ["npm:5.0.0", {
+          "packageLocation": "./.yarn/cache/debounce-fn-npm-5.0.0-e59b93eece-2e6c7f7a5e.zip/node_modules/debounce-fn/",
+          "packageDependencies": [
+            ["debounce-fn", "npm:5.0.0"],
+            ["mimic-fn", "npm:3.1.0"]
           ],
           "linkType": "HARD",
         }]
@@ -13584,6 +13604,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mimic-fn", "npm:2.1.0"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:3.1.0", {
+          "packageLocation": "./.yarn/cache/mimic-fn-npm-3.1.0-12d126ec66-f7b167f911.zip/node_modules/mimic-fn/",
+          "packageDependencies": [
+            ["mimic-fn", "npm:3.1.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["min-indent", [
@@ -13891,6 +13918,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.dev/collab-client", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#portal:../bangle-play/collab-client::locator=bangle-io%40workspace%3A."],
             ["@bangle.dev/collab-server", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#portal:../bangle-play/collab-server::locator=bangle-io%40workspace%3A."],
+            ["@bangle.dev/disk", "portal:../bangle-play/contrib/disk::locator=bangle-io%40workspace%3A."],
             ["comlink", "npm:4.3.1"],
             ["config", "workspace:lib/config"],
             ["idb-keyval", "npm:5.0.5"],
