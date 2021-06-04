@@ -13,10 +13,10 @@ export const appState = objectSync(initialAppState, (event) => {
 
 if (moduleSupport) {
   naukarWorkerProxy.registerUpdateCallback(
-    Comlink.proxy((event) => appState.applyChange(event)),
+    Comlink.proxy((event) => appState.applyForeignChange(event)),
   );
 } else {
   naukarWorkerProxy.registerUpdateCallback((event) =>
-    appState.applyChange(event),
+    appState.applyForeignChange(event),
   );
 }

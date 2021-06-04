@@ -47,7 +47,7 @@ function setupAppState(initialAppState) {
   return {
     appState,
     updateAppState: (event) => {
-      appState.applyChange(event);
+      appState.applyForeignChange(event);
     },
     registerUpdateCallback: (cb) => {
       appStateWorkerToMain = cb;

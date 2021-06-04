@@ -8,12 +8,12 @@ test('syncing works', async () => {
 
   let a = objectSync(objA, (p) => {
     return sleep(5).then(() => {
-      b.applyChange(p);
+      b.applyForeignChange(p);
     });
   });
   let b = objectSync(objB, (p) => {
     return sleep(5).then(() => {
-      a.applyChange(p);
+      a.applyForeignChange(p);
     });
   });
 
@@ -36,12 +36,12 @@ test('throws error if not primitive type', async () => {
 
   let a = objectSync(objA, (p) => {
     return sleep(5).then(() => {
-      b.applyChange(p);
+      b.applyForeignChange(p);
     });
   });
   let b = objectSync(objB, (p) => {
     return sleep(5).then(() => {
-      a.applyChange(p);
+      a.applyForeignChange(p);
     });
   });
 
@@ -56,12 +56,12 @@ test('throws error if initial not primitive type', async () => {
 
   let a = objectSync(objA, (p) => {
     return sleep(5).then(() => {
-      b.applyChange(p);
+      b.applyForeignChange(p);
     });
   });
   let b = objectSync(objB, (p) => {
     return sleep(5).then(() => {
-      a.applyChange(p);
+      a.applyForeignChange(p);
     });
   });
 

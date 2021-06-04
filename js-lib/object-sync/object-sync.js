@@ -65,7 +65,9 @@ export function objectSync(obj, emitChange) {
     get counter() {
       return counter;
     },
-    applyChange: ({ type, payload: { key, value } }) => {
+    // callback that updates the current object to match
+    // with the one you are syncing with.
+    applyForeignChange: ({ type, payload: { key, value } }) => {
       if (type === 'UPDATE') {
         updateProp(obj, key, value);
       } else {
