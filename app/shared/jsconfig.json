@@ -50,6 +50,24 @@
       ],
       "inline-emoji/*": [
         "../../extensions/inline-emoji/*"
+      ],
+      "naukar-proxy": [
+        "../../worker/naukar-proxy/index.js"
+      ],
+      "naukar-proxy/*": [
+        "../../worker/naukar-proxy/*"
+      ],
+      "naukar-worker": [
+        "../../worker/naukar-worker/index.js"
+      ],
+      "naukar-worker/*": [
+        "../../worker/naukar-worker/*"
+      ],
+      "object-sync": [
+        "../../js-lib/object-sync/index.js"
+      ],
+      "object-sync/*": [
+        "../../js-lib/object-sync/*"
       ]
     }
   }

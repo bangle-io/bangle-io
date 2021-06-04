@@ -23,7 +23,6 @@
     "@bangle.dev/collab-client": "0.17.0",
     "@bangle.dev/collab-server": "0.17.0",
     "@bangle.dev/disk": "0.17.0",
-    "comlink": "^4.3.1",
     "config": "workspace:*",
     "idb-keyval": "^5.0.5",
     "object-sync": "workspace:*",

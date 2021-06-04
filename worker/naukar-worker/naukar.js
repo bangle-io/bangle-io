@@ -2,55 +2,62 @@ import { setupCollabManager } from './collab-manager';
 import { localDiskSetup } from './local-disk';
 import { objectSync } from 'object-sync/index';
 
-export class Naukar {
-  pageState;
-  oldPageState;
-  bangleIOContext;
-  manager;
-  diskSetup;
+// Things to remember about the return type
+// 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
+// 2. Keep the return type simple and flat. Ie. an object whose values are not object.
+export function createNaukar({ bangleIOContext, initialAppState }) {
+  const envType =
+    typeof WorkerGlobalScope !== 'undefined' &&
+    // eslint-disable-next-line no-restricted-globals, no-undef
+    self instanceof WorkerGlobalScope
+      ? 'worker'
+      : 'window';
+  console.debug('Naukar running in ', envType);
 
-  constructor({ bangleIOContext, initialAppState }) {
-    const envType =
-      typeof WorkerGlobalScope !== 'undefined' &&
-      // eslint-disable-next-line no-restricted-globals, no-undef
-      self instanceof WorkerGlobalScope
-        ? 'worker'
-        : 'window';
-    console.debug('Naukar running in ', envType);
+  const { appState, updateWorkerAppState, registerUpdateMainAppStateCallback } =
+    setupAppState(initialAppState);
 
-    const { appState, updateAppState, registerUpdateCallback } =
-      setupAppState(initialAppState);
-    this.updateAppState = updateAppState;
-    this.registerUpdateCallback = registerUpdateCallback;
+  const diskSetup = localDiskSetup(bangleIOContext, appState);
+  const manager = setupCollabManager(bangleIOContext, diskSetup.disk);
 
-    const diskSetup = localDiskSetup(bangleIOContext, appState);
+  return {
+    // app state
+    updateWorkerAppState,
+    registerUpdateMainAppStateCallback,
 
-    this.manager = setupCollabManager(bangleIOContext, diskSetup.disk);
-  }
-
-  handleCollabRequest = async (...args) => {
-    return this.manager.handleRequest(...args);
+    // collab
+    handleCollabRequest: (...args) => {
+      return manager.handleRequest(...args);
+    },
   };
 }
 
 function setupAppState(initialAppState) {
   const pendingEvents = [];
-  let appStateWorkerToMain;
-  const appState = objectSync(initialAppState, (event) => {
-    if (appStateWorkerToMain) {
-      appStateWorkerToMain(event);
-      return;
-    }
-    pendingEvents.push(event);
+  let updateMainAppState;
+  const updateWorkerAppState = (event) => {
+    appState.applyForeignChange(event);
+  };
+
+  const appState = objectSync(initialAppState, {
+    objectName: 'appStateValue',
+    emitChange: (event) => {
+      if (updateMainAppState) {
+        updateMainAppState(event);
+        return;
+      }
+      // since we dynamically inject updateMainState cb,
+      // it might take a while for it to be injected, so till then
+      // save the events.
+      pendingEvents.push(event);
+    },
   });
 
   return {
     appState,
-    updateAppState: (event) => {
-      appState.applyForeignChange(event);
-    },
-    registerUpdateCallback: (cb) => {
-      appStateWorkerToMain = cb;
+    updateWorkerAppState,
+    registerUpdateMainAppStateCallback: (cb) => {
+      updateMainAppState = cb;
       while (pendingEvents.length > 0) {
         cb(pendingEvents.pop());
       }

@@ -13937,7 +13937,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/collab-client", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.17.0"],
             ["@bangle.dev/collab-server", "virtual:5beb899eb1be363dc9186d1addea4f8d887713580076ee5c4453d4fb0054d830e28bbaaa4033a95de13b1ab8f36a52b9b765a9ec98f55ddef42b7c56dad7f151#npm:0.17.0"],
             ["@bangle.dev/disk", "npm:0.17.0"],
-            ["comlink", "npm:4.3.1"],
             ["config", "workspace:lib/config"],
             ["idb-keyval", "npm:5.0.5"],
             ["object-sync", "workspace:js-lib/object-sync"],
@@ -17109,12 +17108,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["bangle-io-context", "workspace:lib/bangle-io-context"],
             ["collab-extension", "workspace:extensions/collab-extension"],
             ["collapsible-heading", "workspace:extensions/collapsible-heading"],
+            ["comlink", "npm:4.3.1"],
             ["core-js", "npm:3.13.1"],
             ["editor-core", "workspace:extensions/editor-core"],
             ["image-extension", "workspace:extensions/image-extension"],
             ["inline-backlink", "workspace:extensions/inline-backlink"],
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
-            ["inline-emoji", "workspace:extensions/inline-emoji"]
+            ["inline-emoji", "workspace:extensions/inline-emoji"],
+            ["naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["naukar-worker", "workspace:worker/naukar-worker"],
+            ["object-sync", "workspace:js-lib/object-sync"]
           ],
           "linkType": "SOFT",
         }]
@@ -19454,6 +19457,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["comlink", "npm:4.3.1"],
             ["naukar-proxy", "workspace:worker/naukar-proxy"],
             ["naukar-worker", "workspace:worker/naukar-worker"],
+            ["react", "npm:16.14.0"],
             ["shared", "workspace:app/shared"]
           ],
           "linkType": "SOFT",

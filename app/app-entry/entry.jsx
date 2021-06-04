@@ -7,11 +7,10 @@ import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
 import { polyfills, bangleIOContext } from 'shared/index';
-import { workerSetup } from 'worker-setup/index';
+import { WorkerSetup } from 'worker-setup/index';
 import { MonitorPageLifeCycle } from './MonitorPageLifeCycle';
-import './app-state';
-
-workerSetup();
+import { moduleSupport } from './module-support';
+import { AppState } from './AppStateContext';
 
 window.Sentry?.onLoad(function () {
   import(
@@ -49,14 +48,17 @@ function LoadingBlock({ children }) {
 
 ReactDOM.render(
   <LoadingBlock>
-    <MonitorPageLifeCycle />
-    <Router>
-      <UIManager>
-        <EditorManager bangleIOContext={bangleIOContext}>
-          <App />
-        </EditorManager>
-      </UIManager>
-    </Router>
+    <AppState>
+      <WorkerSetup loadWebworker={moduleSupport} />
+      <MonitorPageLifeCycle />
+      <Router>
+        <UIManager>
+          <EditorManager bangleIOContext={bangleIOContext}>
+            <App />
+          </EditorManager>
+        </UIManager>
+      </Router>
+    </AppState>
   </LoadingBlock>,
   root,
 );

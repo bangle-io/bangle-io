@@ -1,4 +1,7 @@
-export function objectSync(obj, emitChange) {
+export function objectSync(
+  obj,
+  { emitChange = () => {}, objectName = 'proxy' } = {},
+) {
   const allowedKeys = new Set(Object.keys(obj));
 
   obj = Object.assign({}, obj);
@@ -57,7 +60,7 @@ export function objectSync(obj, emitChange) {
   });
 
   let notifyListeners = () => {
-    changeListeners.forEach((fn) => fn(proxy));
+    changeListeners.forEach((fn) => fn({ counter, [objectName]: proxy }));
   };
 
   return {
@@ -74,14 +77,14 @@ export function objectSync(obj, emitChange) {
         throw new Error('Unknown type of change');
       }
     },
-    proxy,
-    register: (fn) => {
+    [objectName]: proxy,
+    registerListener: (fn) => {
       if (changeListeners.includes(fn)) {
         return;
       }
       changeListeners.push(fn);
     },
-    deregister: (fn) => {
+    deregisterListener: (fn) => {
       changeListeners = changeListeners.filter((f) => f !== fn);
     },
   };

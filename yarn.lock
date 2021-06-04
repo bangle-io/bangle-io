@@ -10710,7 +10710,6 @@ fsevents@~2.3.1:
     "@bangle.dev/collab-client": 0.17.0
     "@bangle.dev/collab-server": 0.17.0
     "@bangle.dev/disk": 0.17.0
-    comlink: ^4.3.1
     config: "workspace:*"
     idb-keyval: ^5.0.5
     object-sync: "workspace:*"
@@ -13418,12 +13417,16 @@ resolve@^2.0.0-next.3:
     bangle-io-context: "workspace:*"
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
+    comlink: ^4.3.1
     core-js: ^3.13.1
     editor-core: "workspace:*"
     image-extension: "workspace:*"
     inline-backlink: "workspace:*"
     inline-command-palette: "workspace:*"
     inline-emoji: "workspace:*"
+    naukar-proxy: "workspace:*"
+    naukar-worker: "workspace:*"
+    object-sync: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -15428,6 +15431,7 @@ typescript@4.2.4:
     comlink: ^4.3.1
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
+    react: 16.14.0
     shared: "workspace:*"
   languageName: unknown
   linkType: soft

@@ -1,36 +1,33 @@
-import { useEffect } from 'react';
-import { appState } from './app-state';
+import { useState, useContext, useEffect } from 'react';
+import { AppStateContext } from './AppStateContext';
 
 const pendingSymbol = Symbol('pending-tasks');
 
 export function MonitorPageLifeCycle() {
-  useEffect(() => {
-    let dealWithPendingWrites;
-    // dynamic import since it has something which uses document
-    // and fucks with worker.
-    import('page-lifecycle').then(({ default: lifecycle }) => {
-      let blockingReload = false;
-      dealWithPendingWrites = function dealWithPendingWrites({
-        hasPendingWrites,
-      }) {
-        console.log({ hasPendingWrites });
-        if (hasPendingWrites && !blockingReload) {
-          blockingReload = true;
-          // TODO show a notification saying saving changes
-          lifecycle.addUnsavedChanges(pendingSymbol);
-        }
-        if (!hasPendingWrites && blockingReload) {
-          blockingReload = false;
-          lifecycle.removeUnsavedChanges(pendingSymbol);
-        }
-      };
-      appState.register(dealWithPendingWrites);
-    });
+  const [lifecycle, updateLifecycle] = useState();
+  const [blockReload, updateBlockReload] = useState(false);
+  const { appStateValue } = useContext(AppStateContext);
 
-    return () => {
-      dealWithPendingWrites && appState.deregister(dealWithPendingWrites);
-    };
-  }, []);
+  useEffect(() => {
+    import('page-lifecycle').then(({ default: lifecycle }) => {
+      updateLifecycle(lifecycle);
+    });
+  });
+
+  useEffect(() => {
+    updateBlockReload(appStateValue.hasPendingWrites);
+  }, [appStateValue.hasPendingWrites]);
+
+  useEffect(() => {
+    if (!lifecycle) {
+      return;
+    }
+    if (blockReload) {
+      lifecycle.addUnsavedChanges(pendingSymbol);
+    } else {
+      lifecycle.removeUnsavedChanges(pendingSymbol);
+    }
+  }, [lifecycle, blockReload]);
 
   return null;
 }

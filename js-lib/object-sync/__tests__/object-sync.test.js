@@ -6,15 +6,19 @@ test('syncing works', async () => {
   let objA = { test: undefined };
   let objB = { test: undefined };
 
-  let a = objectSync(objA, (p) => {
-    return sleep(5).then(() => {
-      b.applyForeignChange(p);
-    });
+  let a = objectSync(objA, {
+    emitChange: (p) => {
+      return sleep(5).then(() => {
+        b.applyForeignChange(p);
+      });
+    },
   });
-  let b = objectSync(objB, (p) => {
-    return sleep(5).then(() => {
-      a.applyForeignChange(p);
-    });
+  let b = objectSync(objB, {
+    emitChange: (p) => {
+      return sleep(5).then(() => {
+        a.applyForeignChange(p);
+      });
+    },
   });
 
   a.proxy.test = 123;
@@ -34,15 +38,19 @@ test('throws error if not primitive type', async () => {
   let objA = {};
   let objB = {};
 
-  let a = objectSync(objA, (p) => {
-    return sleep(5).then(() => {
-      b.applyForeignChange(p);
-    });
+  let a = objectSync(objA, {
+    emitChange: (p) => {
+      return sleep(5).then(() => {
+        b.applyForeignChange(p);
+      });
+    },
   });
-  let b = objectSync(objB, (p) => {
-    return sleep(5).then(() => {
-      a.applyForeignChange(p);
-    });
+  let b = objectSync(objB, {
+    emitChange: (p) => {
+      return sleep(5).then(() => {
+        a.applyForeignChange(p);
+      });
+    },
   });
 
   expect(() => {
@@ -54,15 +62,19 @@ test('throws error if initial not primitive type', async () => {
   let objA = { b: 12 };
   let objB = {};
 
-  let a = objectSync(objA, (p) => {
-    return sleep(5).then(() => {
-      b.applyForeignChange(p);
-    });
+  let a = objectSync(objA, {
+    emitChange: (p) => {
+      return sleep(5).then(() => {
+        b.applyForeignChange(p);
+      });
+    },
   });
-  let b = objectSync(objB, (p) => {
-    return sleep(5).then(() => {
-      a.applyForeignChange(p);
-    });
+  let b = objectSync(objB, {
+    emitChange: (p) => {
+      return sleep(5).then(() => {
+        a.applyForeignChange(p);
+      });
+    },
   });
 
   expect(() => {
@@ -73,9 +85,7 @@ test('throws error if initial not primitive type', async () => {
 test('throws error if unknown key', async () => {
   let objA = { b: 12 };
 
-  let a = objectSync(objA, (p) => {
-    return;
-  });
+  let a = objectSync(objA);
   // this should be fine
   a.proxy.b = 13;
 

@@ -22,6 +22,7 @@
     "comlink": "^4.3.1",
     "naukar-proxy": "workspace:*",
     "naukar-worker": "workspace:*",
+    "react": "16.14.0",
     "shared": "workspace:*"
   },
   "publishConfig": {

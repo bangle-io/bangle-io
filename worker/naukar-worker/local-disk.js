@@ -15,7 +15,7 @@ export function localDiskSetup(bangleIOContext, appState) {
       debounceWait: 250,
       debounceMaxWait: 1000,
       onPendingWrites: (size) => {
-        appState.proxy.hasPendingWrites = size !== 0;
+        appState.appStateValue.hasPendingWrites = size !== 0;
       },
     }),
   };
