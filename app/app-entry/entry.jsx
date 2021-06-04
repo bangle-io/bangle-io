@@ -8,7 +8,7 @@ import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
 import { polyfills, bangleIOContext } from 'shared/index';
 import { workerSetup } from 'worker-setup/index';
-import './watch-page-lifecycle';
+import { MonitorPageLifeCycle } from './MonitorPageLifeCycle';
 import './app-state';
 
 workerSetup();
@@ -49,6 +49,7 @@ function LoadingBlock({ children }) {
 
 ReactDOM.render(
   <LoadingBlock>
+    <MonitorPageLifeCycle />
     <Router>
       <UIManager>
         <EditorManager bangleIOContext={bangleIOContext}>
