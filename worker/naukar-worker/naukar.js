@@ -28,9 +28,9 @@ export class Naukar {
     this.manager = setupCollabManager(bangleIOContext, diskSetup.disk);
   }
 
-  async handleCollabRequest(...args) {
+  handleCollabRequest = async (...args) => {
     return this.manager.handleRequest(...args);
-  }
+  };
 }
 
 function setupAppState(initialAppState) {
