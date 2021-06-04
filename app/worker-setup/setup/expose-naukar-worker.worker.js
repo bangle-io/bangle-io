@@ -1,7 +1,8 @@
 import * as Comlink from 'comlink';
-import { Naukar, validateWorkerGlobalScope } from 'naukar-worker/index';
-import { polyfills } from '../polyfill';
-import { bangleIOContext } from '../create-bangle-io-context';
+import { validateWorkerGlobalScope } from 'naukar-worker/index';
+import { polyfills } from 'shared/polyfill';
+import naukar from './naukar-init';
+
 validateWorkerGlobalScope();
 workerInitialSetup();
 
@@ -14,7 +15,5 @@ async function workerInitialSetup() {
     await Promise.all(polyfills);
   }
 }
-
-const naukar = new Naukar({ bangleIOContext });
 
 Comlink.expose(naukar);

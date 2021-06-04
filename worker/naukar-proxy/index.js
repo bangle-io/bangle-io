@@ -61,6 +61,7 @@ export const naukarWorkerProxy = new Proxy(
         return new Promise((res, rej) => {
           const callback = () => {
             try {
+              // curently only supports callable
               let value = Reflect.apply(Reflect.get(naukar, prop), null, args);
               res(value);
               emitter.off('ready', callback);

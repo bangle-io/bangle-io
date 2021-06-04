@@ -1,44 +1,13 @@
-import { LocalDisk } from '@bangle.dev/collab-client';
 import { Manager } from '@bangle.dev/collab-server';
-import { getNote, saveNote } from 'workspace/index';
 
-export function setupCollabManager(bangleIOContext) {
+const SLOW_FACTOR = 1;
+
+export function setupCollabManager(bangleIOContext, disk) {
   const manager = new Manager(bangleIOContext.specRegistry.schema, {
-    disk: localDisk(bangleIOContext),
+    disk,
+    collectUsersTimeout: SLOW_FACTOR * 700,
+    userWaitTimeout: SLOW_FACTOR * 500,
+    instanceCleanupTimeout: SLOW_FACTOR * 2000,
   });
   return manager;
-}
-
-function localDisk(
-  bangleIOContext,
-  defaultContent = {
-    type: 'doc',
-    content: [
-      {
-        type: 'heading',
-        attrs: {
-          level: 2,
-        },
-        content: [
-          {
-            type: 'text',
-            text: 'Hi there,',
-          },
-        ],
-      },
-    ],
-  },
-) {
-  return new LocalDisk({
-    getItem: async (wsPath) => {
-      const doc = await getNote(bangleIOContext, wsPath);
-      if (!doc) {
-        return defaultContent;
-      }
-      return doc;
-    },
-    setItem: async (wsPath, doc) => {
-      await saveNote(bangleIOContext, wsPath, doc);
-    },
-  });
 }

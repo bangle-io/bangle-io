@@ -4,6 +4,8 @@
     "app-entry",
     "palettes",
     "commands",
-    "style"
+    "style",
+    "worker-setup",
+    "shared"
   ]
 }

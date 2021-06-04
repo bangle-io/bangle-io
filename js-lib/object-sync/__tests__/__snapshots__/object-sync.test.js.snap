@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`throws error if initial not primitive type 1`] = `"Invalid value type object"`;
+
+exports[`throws error if not primitive type 1`] = `"Invalid value type object"`;
+
+exports[`throws error if unknown key 1`] = `"Invalid key c"`;

@@ -81,11 +81,23 @@
       "naukar-worker/*": [
         "../../worker/naukar-worker/*"
       ],
+      "object-sync": [
+        "../../js-lib/object-sync/index.js"
+      ],
+      "object-sync/*": [
+        "../../js-lib/object-sync/*"
+      ],
       "palettes": [
         "../palettes/index.js"
       ],
       "palettes/*": [
         "../palettes/*"
+      ],
+      "shared": [
+        "../shared/index.js"
+      ],
+      "shared/*": [
+        "../shared/*"
       ],
       "style": [
         "../style/index.js"
@@ -110,6 +122,12 @@
       ],
       "utils/*": [
         "../../lib/utils/*"
+      ],
+      "worker-setup": [
+        "../worker-setup/index.js"
+      ],
+      "worker-setup/*": [
+        "../worker-setup/*"
       ],
       "workspace": [
         "../../lib/workspace/index.js"

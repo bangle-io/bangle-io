@@ -3,6 +3,7 @@
   "workspaces": [
     "baby-fs",
     "inline-palette",
-    "base-error"
+    "base-error",
+    "object-sync"
   ]
 }

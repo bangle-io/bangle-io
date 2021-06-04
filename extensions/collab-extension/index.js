@@ -44,6 +44,11 @@ function collabPlugin({ metadata: { wsPath } = {} }) {
         userId,
       });
     },
+    onFatalError(error) {
+      console.log('received fatal error');
+      console.error(error);
+      return false;
+    },
   });
 }
 
