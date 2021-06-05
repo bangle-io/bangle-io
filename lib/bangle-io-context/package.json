@@ -22,7 +22,7 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.17.0",
+    "@bangle.dev/core": "0.17.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "utils": "workspace:*"

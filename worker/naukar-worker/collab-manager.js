@@ -1,6 +1,6 @@
 import { Manager } from '@bangle.dev/collab-server';
 
-const SLOW_FACTOR = 1;
+const SLOW_FACTOR = 2;
 
 export function setupCollabManager(bangleIOContext, disk) {
   const manager = new Manager(bangleIOContext.specRegistry.schema, {

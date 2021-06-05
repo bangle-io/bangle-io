@@ -27,21 +27,23 @@ function collabPlugin({ metadata: { wsPath } = {} }) {
       });
     },
 
-    async pullEvents({ version, docName, userId }) {
+    async pullEvents({ version, docName, userId, managerId }) {
       return sendRequest('pull_events', {
         docName,
         version,
         userId,
+        managerId,
       });
     },
 
-    async pushEvents({ version, steps, clientID, docName, userId }) {
+    async pushEvents({ version, steps, clientID, docName, userId, managerId }) {
       return sendRequest('push_events', {
         clientID,
         version,
         steps,
         docName,
         userId,
+        managerId,
       });
     },
     onFatalError(error) {

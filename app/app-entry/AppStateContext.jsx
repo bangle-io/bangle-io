@@ -19,7 +19,8 @@ const appState = objectSync(initialAppState, {
 });
 
 export const AppStateContext = React.createContext({
-  appStateValue: initialAppState,
+  mutableAppStateValue: appState.appStateValue,
+  appStateValue: Object.assign({}, appState.appStateValue),
 });
 
 export function AppState({ children }) {
@@ -49,6 +50,7 @@ export function AppState({ children }) {
 
   const value = useMemo(() => {
     return {
+      mutableAppStateValue: appState.appStateValue,
       appStateValue,
     };
   }, [appStateValue]);

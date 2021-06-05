@@ -2,6 +2,10 @@ import { setupCollabManager } from './collab-manager';
 import { localDiskSetup } from './local-disk';
 import { objectSync } from 'object-sync/index';
 
+const LOG = false;
+
+const log = LOG ? console.log.bind(console, 'naukar') : () => {};
+
 // Things to remember about the return type
 // 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
 // 2. Keep the return type simple and flat. Ie. an object whose values are not object.
@@ -18,7 +22,7 @@ export function createNaukar({ bangleIOContext, initialAppState }) {
     setupAppState(initialAppState);
 
   const diskSetup = localDiskSetup(bangleIOContext, appState);
-  const manager = setupCollabManager(bangleIOContext, diskSetup.disk);
+  let manager = setupCollabManager(bangleIOContext, diskSetup.disk);
 
   return {
     // app state
@@ -28,6 +32,15 @@ export function createNaukar({ bangleIOContext, initialAppState }) {
     // collab
     handleCollabRequest: (...args) => {
       return manager.handleRequest(...args);
+    },
+    resetManager: () => {
+      console.debug('destroying manager');
+      manager.destroy();
+      manager = setupCollabManager(bangleIOContext, diskSetup.disk);
+    },
+    flushDisk: async () => {
+      await diskSetup.disk.flushAll();
+      console.debug('flushed everything');
     },
   };
 }
@@ -51,6 +64,10 @@ function setupAppState(initialAppState) {
       // save the events.
       pendingEvents.push(event);
     },
+  });
+
+  appState.registerListener(({ appStateValue }) => {
+    log('appStateValue', appStateValue);
   });
 
   return {

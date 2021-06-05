@@ -6,7 +6,7 @@ export function localDiskSetup(bangleIOContext, appState) {
     const doc = await getNote(bangleIOContext, wsPath);
     return doc;
   };
-  const setItem = async (wsPath, doc) => {
+  const setItem = async (wsPath, doc, version) => {
     await saveNote(bangleIOContext, wsPath, doc);
   };
 
