@@ -8,7 +8,7 @@ import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
 import { polyfills, bangleIOContext } from 'shared/index';
 import { WorkerSetup } from 'worker-setup/index';
-import { MonitorPageLifeCycle } from './MonitorPageLifeCycle';
+import { MonitorPageLifecycle } from './MonitorPageLifecycle';
 import { moduleSupport } from './module-support';
 import { AppState } from './AppStateContext';
 
@@ -50,7 +50,7 @@ ReactDOM.render(
   <LoadingBlock>
     <AppState>
       <WorkerSetup loadWebworker={moduleSupport} />
-      <MonitorPageLifeCycle />
+      <MonitorPageLifecycle />
       <Router>
         <UIManager>
           <EditorManager bangleIOContext={bangleIOContext}>
