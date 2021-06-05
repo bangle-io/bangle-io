@@ -4,7 +4,7 @@ import { AppStateContext } from './AppStateContext';
 
 const pendingSymbol = Symbol('pending-tasks');
 
-export function MonitorPageLifecycle() {
+export function PageLifecycle() {
   const [lifecycle, updateLifecycle] = useState();
   const [blockReload, updateBlockReload] = useState(false);
   const { appStateValue, mutableAppStateValue } = useContext(AppStateContext);

@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import { ExtensionEditorComponents } from 'bangle-io-context/index';
 import { getNote } from 'workspace/index';
-import { useState } from 'react/cjs/react.development';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
