@@ -1,3 +1,15 @@
+### Jun 5, 2021
+
+- I now synchronizes changes across browser tabs.
+
+- I can now remember the scroll positions of your documents as you switch between them.
+
+- I have started running part of my functionality in a worker thread, making me more more responsive than before.
+
+### May 29, 2021
+
+- I now have the functionality to pick great variety of :partying_face:  :disguised_face:  emojis.
+
 ### May 20, 2021
 
 - Adding ability to scale down images. Click on an image to pick the percentage to scale down the image.
