@@ -48,7 +48,9 @@ async function createNewNote(wsName, fileName = 'new-file') {
   await clickPaletteRow('input-confirm');
   await page.waitForNavigation();
   await longSleep();
-  expect(await page.url()).toBe(url + '/ws/' + wsName + '/' + fileName + '.md');
+  expect(await page.url()).toMatch(
+    url + '/ws/' + wsName + '/' + fileName + '.md',
+  );
 }
 
 async function runACommand(commandId) {
@@ -103,6 +105,9 @@ async function getSecondaryEditorDebugString(page) {
 async function setPageWidescreen(page) {
   await page.setViewport({ width: 1024, height: 768 });
 }
+async function setPageSmallscreen(page) {
+  await page.setViewport({ width: 400, height: 768 });
+}
 
 module.exports = {
   sleep,
@@ -116,6 +121,7 @@ module.exports = {
   getEditorHTML,
   createWorkspace,
   setPageWidescreen,
+  setPageSmallscreen,
   getPrimaryEditorHandler,
   getSecondaryEditorHandler,
   getPrimaryEditorDebugString,
