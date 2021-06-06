@@ -34,11 +34,12 @@ test('Split screen and typing in secondary works', async () => {
   const wsName = await createWorkspace();
   await createNewNote(wsName, 'test-123');
 
-  await page.keyboard.down('Meta');
+  await page.keyboard.down(ctrlKey);
   await page.keyboard.press('\\');
-  await page.keyboard.up('Meta');
+  await page.keyboard.up(ctrlKey);
 
   await longSleep();
+
   let primaryText = await getPrimaryEditorDebugString(page);
   let secondaryText = await getSecondaryEditorDebugString(page);
 
@@ -58,16 +59,17 @@ test('Split screen and typing in primary works', async () => {
   const wsName = await createWorkspace();
   await createNewNote(wsName, 'test-123');
 
-  await page.keyboard.down('Meta');
+  await page.keyboard.down(ctrlKey);
   await page.keyboard.press('\\');
-  await page.keyboard.up('Meta');
+  await page.keyboard.up(ctrlKey);
 
   const primaryHandle = await getPrimaryEditorHandler(page);
   await longSleep();
+
   await primaryHandle.press('Enter');
   await primaryHandle.type('manthanoy', { delay: 10 });
 
-  await sleep();
+  await longSleep();
 
   let primaryText = await getPrimaryEditorDebugString(page);
   expect(primaryText).toMatch(/manthanoy/);

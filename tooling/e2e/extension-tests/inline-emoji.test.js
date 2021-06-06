@@ -4,6 +4,7 @@ const {
   clearEditor,
   getEditorHTML,
   createWorkspace,
+  sleep,
 } = require('../helpers');
 jest.setTimeout(105 * 1000);
 
@@ -29,7 +30,7 @@ test('Emoji works in heading', async () => {
   const editorHandle = await page.$('.bangle-editor');
 
   await clearEditor(editorHandle);
-
+  await sleep();
   await editorHandle.type('# Wow :', { delay: 3 });
   await editorHandle.press('ArrowDown');
   await editorHandle.press('Enter');
