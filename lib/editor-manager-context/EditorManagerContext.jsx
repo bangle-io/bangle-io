@@ -73,8 +73,8 @@ export function EditorManager({ bangleIOContext, children }) {
 
   useEffect(() => {
     if (!config.isIntegration) {
-      window.editor = editors[0];
-      window.editors = editors;
+      window.primaryEditor = editors[0];
+      window.secondaryEditor = editors[1];
       getIdleCallback(() => {
         if (
           new URLSearchParams(window.location.search).get('debug_pm') ===

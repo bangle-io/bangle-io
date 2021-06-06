@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import { ExtensionEditorComponents } from 'bangle-io-context/index';
 import { getNote } from 'workspace/index';
+import { usePreserveScroll } from './scroll-state';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -17,7 +18,6 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
   // preloading the content will give us the benefit of static height, which comes
   // in handy when loading editor with a given scroll position.
   const [initialValue, setInitialDoc] = useState();
-
   useEffect(() => {
     let destroyed = false;
     getNote(bangleIOContext, wsPath).then((doc) => {
@@ -29,6 +29,8 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
       destroyed = true;
     };
   }, [bangleIOContext, wsPath]);
+
+  usePreserveScroll(editorId, wsPath, Boolean(initialValue));
 
   return initialValue ? (
     <EditorInner

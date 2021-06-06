@@ -39,6 +39,7 @@ function useHandleWsPath(incomingWsPath) {
 }
 
 export function EditorArea({
+  id,
   className,
   editorId,
   showTabs,
@@ -69,7 +70,7 @@ export function EditorArea({
   }, [wsPath, showEmptyEditor]);
 
   return (
-    <div className={cx('bangle-editor-area', className)}>
+    <div id={id} className={cx('bangle-editor-area', className)}>
       {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
       <div className={cx('bangle-editor-container', showTabs && 'has-tabs')}>
         {fileExists && wsPath && bangleIOContext && (

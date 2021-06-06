@@ -31,6 +31,9 @@ export function AppContainer() {
       <Palette />
       <LeftSidebarArea />
       <div
+        id={cx(
+          widescreen && !secondaryEditor && 'primary-editor-scroll-parent',
+        )}
         className={cx(
           'main-content',
           widescreen ? 'widescreen' : 'smallscreen',
@@ -97,6 +100,7 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
       }}
     >
       <EditorArea
+        id={cx(widescreen && secondaryEditor && 'primary-editor-scroll-parent')}
         className="primary-editor"
         editorId={0}
         showTabs={false}
@@ -110,6 +114,9 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
       {widescreen && secondaryEditor && <div className="grid-gutter" />}
       {widescreen && secondaryEditor && (
         <EditorArea
+          id={cx(
+            widescreen && secondaryEditor && 'secondary-editor-scroll-parent',
+          )}
           className="secondary-editor fadeInAnimation"
           editorId={1}
           showTabs={showTabs}
