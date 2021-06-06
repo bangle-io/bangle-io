@@ -13,13 +13,13 @@ export const bangleIOContext = new BangleIOContext({
   coreRawSpecs: [],
   getCorePlugins: () => [],
   extensions: [
+    inlineEmoji,
     editorCore,
     collabExtension,
     inlineCommandPalette,
     inlineBacklinkPalette,
     collapsibleHeading,
     imageExtension,
-    inlineEmoji,
   ],
   markdownItPlugins: [frontMatterMarkdownItPlugin],
 });
