@@ -39,12 +39,12 @@ async function createWorkspace(
   return wsName;
 }
 
-async function createNewNote(wsName, fileName) {
+async function createNewNote(wsName, fileName = 'new-file') {
   await runACommand('NEW_NOTE_COMMAND');
   let handle = await page.$('.bangle-palette');
 
   const input = await handle.$('input');
-  await input.type('new-file');
+  await input.type(fileName);
   await clickPaletteRow('input-confirm');
   await page.waitForNavigation();
   await longSleep();
