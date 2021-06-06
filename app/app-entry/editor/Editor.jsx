@@ -98,7 +98,11 @@ function EditorInner({
       focusOnInit={false}
       className="bangle-editor-inner-container"
     >
-      <ExtensionEditorComponents bangleIOContext={bangleIOContext} />
+      <ExtensionEditorComponents
+        bangleIOContext={bangleIOContext}
+        wsPath={wsPath}
+        editorId={editorId}
+      />
     </BangleEditor>
   );
 }

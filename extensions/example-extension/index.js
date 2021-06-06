@@ -11,7 +11,7 @@ export const renderReactNodeView = {
   // 3. editorId - a number representing the editorId
   // 4. bangleIOContext itself
   myPMNodeName: ({ nodeViewRenderArg, wsPath, editorId, bangleIOContext }) => {
-    return <span></span>;
+    return null;
   },
 };
 
@@ -19,6 +19,7 @@ const extension = Extension.create({
   name: extensionName,
   editorPlugins: [collabPlugin],
   renderReactNodeView: renderReactNodeView,
+  EditorReactComponent: EditorReactComponent,
 });
 
 function collabPlugin({
@@ -28,5 +29,9 @@ function collabPlugin({
   // - `editorId`
   metadata,
 }) {}
+
+function EditorReactComponent({ wsPath, editorId }) {
+  return null;
+}
 
 export default extension;
