@@ -1,8 +1,4 @@
 const {
-  sleep,
-  longSleep,
-  ctrlKey,
-  frmtHTML,
   url,
   createNewNote,
   clearEditor,
@@ -23,7 +19,6 @@ beforeEach(async () => {
     throw pageerr;
   });
   await page.evaluate(() => localStorage.clear());
-  // await longSleep();
 });
 
 test('Emoji works in heading', async () => {

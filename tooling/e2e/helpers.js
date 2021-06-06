@@ -80,6 +80,30 @@ async function getEditorHTML(editorHandle) {
   return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
 }
 
+async function getPrimaryEditorHandler(page) {
+  return await page.$('.primary-editor');
+}
+
+async function getSecondaryEditorHandler(page) {
+  return await page.$('.secondary-editor');
+}
+
+async function getPrimaryEditorDebugString(page) {
+  return page.evaluate(async () =>
+    window.primaryEditor?.view.state.doc.toString(),
+  );
+}
+
+async function getSecondaryEditorDebugString(page) {
+  return page.evaluate(async () =>
+    window.secondaryEditor?.view.state.doc.toString(),
+  );
+}
+
+async function setPageWidescreen(page) {
+  await page.setViewport({ width: 1024, height: 768 });
+}
+
 module.exports = {
   sleep,
   url,
@@ -91,4 +115,9 @@ module.exports = {
   clearEditor,
   getEditorHTML,
   createWorkspace,
+  setPageWidescreen,
+  getPrimaryEditorHandler,
+  getSecondaryEditorHandler,
+  getPrimaryEditorDebugString,
+  getSecondaryEditorDebugString,
 };
