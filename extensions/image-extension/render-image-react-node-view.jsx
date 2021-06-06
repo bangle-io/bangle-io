@@ -13,7 +13,7 @@ import {
 } from './image-file-helpers';
 
 export const renderImageReactNodeView = {
-  image: (nodeViewRenderArg) => {
+  image: ({ nodeViewRenderArg }) => {
     return <ImageComponent nodeAttrs={nodeViewRenderArg.node.attrs} />;
   },
 };

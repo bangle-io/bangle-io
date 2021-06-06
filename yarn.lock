@@ -6721,6 +6721,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"example-extension@workspace:extensions/example-extension":
+  version: 0.0.0-use.local
+  resolution: "example-extension@workspace:extensions/example-extension"
+  dependencies:
+    "@bangle.dev/core": 0.17.1
+    extension-helpers: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "exec-sh@npm:^0.3.2":
   version: 0.3.4
   resolution: "exec-sh@npm:0.3.4"

@@ -72,14 +72,19 @@ function EditorInner({
     (nodeViewRenderArg) => {
       const { node, updateAttrs, children, selected } = nodeViewRenderArg;
 
-      return bangleIOContext.renderReactNodeViews(nodeViewRenderArg);
+      return bangleIOContext.renderReactNodeViews({
+        nodeViewRenderArg,
+        wsPath,
+        editorId,
+      });
     },
-    [bangleIOContext],
+    [bangleIOContext, wsPath, editorId],
   );
   const editorState = useEditorState({
     plugins: plugins,
     pluginMetadata: {
       wsPath,
+      editorId,
     },
     specRegistry: bangleIOContext.specRegistry,
     initialValue: initialValue,

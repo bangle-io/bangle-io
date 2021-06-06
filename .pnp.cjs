@@ -83,6 +83,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/editor-core"
       },
       {
+        "name": "example-extension",
+        "reference": "workspace:extensions/example-extension"
+      },
+      {
         "name": "image-extension",
         "reference": "workspace:extensions/image-extension"
       },
@@ -189,6 +193,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["editor-core", ["workspace:extensions/editor-core"]],
       ["editor-manager-context", ["workspace:lib/editor-manager-context"]],
       ["env-vars", ["workspace:tooling/env-vars"]],
+      ["example-extension", ["workspace:extensions/example-extension"]],
       ["extension-helpers", ["workspace:lib/extension-helpers"]],
       ["extensions", ["workspace:extensions"]],
       ["image-extension", ["workspace:extensions/image-extension"]],
@@ -9489,6 +9494,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["original", "npm:1.0.2"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["example-extension", [
+        ["workspace:extensions/example-extension", {
+          "packageLocation": "./extensions/example-extension/",
+          "packageDependencies": [
+            ["example-extension", "workspace:extensions/example-extension"],
+            ["@bangle.dev/core", "npm:0.17.1"],
+            ["extension-helpers", "workspace:lib/extension-helpers"],
+            ["utils", "workspace:lib/utils"],
+            ["workspace", "workspace:lib/workspace"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["exec-sh", [

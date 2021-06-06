@@ -11,7 +11,6 @@ export function getScrollParentElement(editorId) {
   if (scrollParent == null) {
     scrollParent = document.scrollingElement;
   }
-
   return scrollParent;
 }
 

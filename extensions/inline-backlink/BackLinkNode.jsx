@@ -142,7 +142,8 @@ async function handleClick({
 }
 
 export const renderReactNodeView = {
-  [backLinkNodeName]: (nodeViewRenderArg, bangleIOContext) => {
+  // TODO move to using param wsPath
+  [backLinkNodeName]: ({ nodeViewRenderArg, wsPath, bangleIOContext }) => {
     return (
       <BackLinkNode
         nodeAttrs={nodeViewRenderArg.node.attrs}
