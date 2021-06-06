@@ -68,13 +68,19 @@ export function EditorManager({ bangleIOContext, children }) {
     if (!paletteType) {
       rafEditorFocus(secondaryEditor);
     }
+
     return () => {};
   }, [paletteType, secondaryEditor]);
 
   useEffect(() => {
+    window.primaryEditor = primaryEditor;
+  }, [primaryEditor]);
+  useEffect(() => {
+    window.secondaryEditor = secondaryEditor;
+  }, [secondaryEditor]);
+
+  useEffect(() => {
     if (!config.isIntegration) {
-      window.primaryEditor = editors[0];
-      window.secondaryEditor = editors[1];
       getIdleCallback(() => {
         if (
           new URLSearchParams(window.location.search).get('debug_pm') ===
