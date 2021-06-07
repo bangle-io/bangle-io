@@ -3,6 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "app-state-context": [
+        "../../lib/app-state-context/index.js"
+      ],
+      "app-state-context/*": [
+        "../../lib/app-state-context/*"
+      ],
       "bangle-io-context": [
         "../../lib/bangle-io-context/index.js"
       ],
@@ -32,6 +38,12 @@
       ],
       "config/*": [
         "../../lib/config/*"
+      ],
+      "constants": [
+        "../../lib/constants/index.js"
+      ],
+      "constants/*": [
+        "../../lib/constants/*"
       ],
       "editor-core": [
         "../../extensions/editor-core/index.js"

@@ -27,6 +27,12 @@
       "editor-core/*": [
         "../../extensions/editor-core/*"
       ],
+      "editor-scroll-extension": [
+        "../../extensions/editor-scroll-extension/index.js"
+      ],
+      "editor-scroll-extension/*": [
+        "../../extensions/editor-scroll-extension/*"
+      ],
       "image-extension": [
         "../../extensions/image-extension/index.js"
       ],
