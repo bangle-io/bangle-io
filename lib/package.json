@@ -3,12 +3,14 @@
   "workspaces": [
     "bangle-io-context",
     "editor-manager-context",
+    "app-state-context",
     "ui-context",
     "ui-components",
     "config",
     "extension-helpers",
     "utils",
     "workspace",
-    "markdown"
+    "markdown",
+    "constants"
   ]
 }

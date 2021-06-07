@@ -8,6 +8,7 @@
     "inline-backlink",
     "inline-command-palette",
     "inline-emoji",
-    "example-extension"
+    "example-extension",
+    "editor-scroll-extension"
   ]
 }

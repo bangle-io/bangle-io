@@ -1,5 +1,5 @@
 {
-  "name": "utils",
+  "name": "editor-scroll-extension",
   "version": "0.0.0",
   "authors": [
     {
@@ -19,19 +19,14 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "base-error": "workspace:*",
-    "config": "workspace:*",
-    "constants": "workspace:*",
-    "dayjs": "^1.10.4",
+    "@bangle.dev/core": "0.17.1",
+    "app-state-context": "workspace:*",
+    "debounce-fn": "^5.0.0",
+    "extension-helpers": "workspace:*",
     "react": "16.14.0",
-    "react-dom": "^17.0.2",
-    "w3c-keyname": "^2.2.4"
+    "utils": "workspace:*"
   },
   "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "@testing-library/react-hooks": "^5.1.2",
-    "react-test-renderer": "^17.0.2"
+    "access": "restricted"
   }
 }

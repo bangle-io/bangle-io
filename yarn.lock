@@ -3642,12 +3642,14 @@ __metadata:
     "@bangle.dev/tooltip": 0.17.1
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
+    app-state-context: "workspace:*"
     bangle-io-context: "workspace:*"
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
     comlink: ^4.3.1
     commands: "workspace:*"
     config: "workspace:*"
+    constants: "workspace:*"
     editor-core: "workspace:*"
     editor-manager-context: "workspace:*"
     image-extension: "workspace:*"
@@ -3671,6 +3673,15 @@ __metadata:
     utils: "workspace:*"
     worker-setup: "workspace:*"
     workspace: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"app-state-context@workspace:*, app-state-context@workspace:lib/app-state-context":
+  version: 0.0.0-use.local
+  resolution: "app-state-context@workspace:lib/app-state-context"
+  dependencies:
+    react: 16.14.0
+    react-dom: 16.14.0
   languageName: unknown
   linkType: soft
 
@@ -5244,6 +5255,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"constants@workspace:*, constants@workspace:lib/constants":
+  version: 0.0.0-use.local
+  resolution: "constants@workspace:lib/constants"
+  languageName: unknown
+  linkType: soft
+
 "contains-path@npm:^0.1.0":
   version: 0.1.0
   resolution: "contains-path@npm:0.1.0"
@@ -6073,6 +6090,19 @@ __metadata:
     react: 16.14.0
     react-dom: 16.14.0
     ui-context: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"editor-scroll-extension@workspace:*, editor-scroll-extension@workspace:extensions/editor-scroll-extension":
+  version: 0.0.0-use.local
+  resolution: "editor-scroll-extension@workspace:extensions/editor-scroll-extension"
+  dependencies:
+    "@bangle.dev/core": 0.17.1
+    app-state-context: "workspace:*"
+    debounce-fn: ^5.0.0
+    extension-helpers: "workspace:*"
+    react: 16.14.0
+    utils: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -10711,6 +10741,8 @@ fsevents@~2.3.1:
 "naukar-proxy@workspace:*, naukar-proxy@workspace:worker/naukar-proxy":
   version: 0.0.0-use.local
   resolution: "naukar-proxy@workspace:worker/naukar-proxy"
+  dependencies:
+    utils: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -13431,6 +13463,7 @@ resolve@^2.0.0-next.3:
     comlink: ^4.3.1
     core-js: ^3.13.1
     editor-core: "workspace:*"
+    editor-scroll-extension: "workspace:*"
     image-extension: "workspace:*"
     inline-backlink: "workspace:*"
     inline-command-palette: "workspace:*"
@@ -14906,6 +14939,7 @@ typescript@4.2.4:
     "@testing-library/react-hooks": ^5.1.2
     base-error: "workspace:*"
     config: "workspace:*"
+    constants: "workspace:*"
     dayjs: ^1.10.4
     react: 16.14.0
     react-dom: ^17.0.2
