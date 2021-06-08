@@ -20,9 +20,7 @@ const setupScreenSize = async (screenType) => {
   await jestPuppeteer.resetPage();
   if (screenType === 'small') {
     await setPageSmallscreen(page);
-  } else if (screenType === 'regular') {
-    await setPageWidescreen(page);
-  } else if (screenType === 'split-screen') {
+  } else {
     await setPageWidescreen(page);
   }
 
@@ -38,26 +36,53 @@ const setupScreenSize = async (screenType) => {
   await page.evaluate(() => localStorage.clear());
 };
 
-describe('widescreen', () => {
+describe('type', () => {
+  const getTopAndLastElement = async (page) => {
+    let topElement = await page.$('.primary-editor h2');
+    expect(await topElement.evaluate((node) => node.innerText)).toEqual(
+      'top element',
+    );
+
+    let lastElement = await page.$('.primary-editor h3');
+    expect(await lastElement.evaluate((node) => node.innerText)).toEqual(
+      'last element',
+    );
+    return { topElement, lastElement };
+  };
+
+  const typeScrollable = async () => {
+    let primaryHandle = await getPrimaryEditorHandler(page);
+    await page.focus('.primary-editor .bangle-editor');
+    await longSleep();
+    await clearEditor(primaryHandle);
+    await page.keyboard.type('## top element');
+    await page.keyboard.press('Enter');
+    for (let i = 0; i < 15; i++) {
+      await page.keyboard.type('# ' + i);
+      await page.keyboard.press('Enter');
+    }
+
+    await page.keyboard.type('### last element');
+    await page.keyboard.press('Enter');
+    expect(
+      await primaryHandle.evaluate((node) =>
+        Boolean(
+          node.querySelectorAll('h2').length === 1 &&
+            node.querySelectorAll('h3').length === 1,
+        ),
+      ),
+    ).toBe(true);
+
+    await longSleep();
+  };
+
   test.each(['small', 'regular', 'split-screen'])(
     '%s scroll state preserve',
     async (screenType) => {
       await setupScreenSize(screenType);
 
-      const getTopAndLastElement = async (page) => {
-        let topElement = await page.$('.primary-editor h2');
-        expect(await topElement.evaluate((node) => node.innerText)).toEqual(
-          'top element',
-        );
-
-        let lastElement = await page.$('.primary-editor h3');
-        expect(await lastElement.evaluate((node) => node.innerText)).toEqual(
-          'last element',
-        );
-        return { topElement, lastElement };
-      };
       const wsName = await createWorkspace();
-      await createNewNote(wsName, 'test-123');
+      await createNewNote(wsName, 'test123');
 
       if (screenType === 'split-screen') {
         await page.keyboard.down(ctrlKey);
@@ -67,27 +92,7 @@ describe('widescreen', () => {
         // eslint-disable-next-line jest/no-conditional-expect
         expect(await page.$('.secondary-editor')).not.toBeNull();
       }
-      let primaryHandle = await getPrimaryEditorHandler(page);
-      await page.focus('.primary-editor .bangle-editor');
-      await longSleep();
-      await clearEditor(primaryHandle);
-      await page.keyboard.type('## top element');
-      await page.keyboard.press('Enter');
-      for (let i = 0; i < 20; i++) {
-        await page.keyboard.type('# ' + i);
-        await page.keyboard.press('Enter');
-      }
-
-      await page.keyboard.type('### last element');
-      await page.keyboard.press('Enter');
-      expect(
-        await primaryHandle.evaluate((node) =>
-          Boolean(
-            node.querySelectorAll('h2').length === 1 &&
-              node.querySelectorAll('h3').length === 1,
-          ),
-        ),
-      ).toBe(true);
+      await typeScrollable();
 
       let { topElement, lastElement } = await getTopAndLastElement(page);
       // check that the last element is in view port
@@ -107,7 +112,7 @@ describe('widescreen', () => {
       await longSleep();
 
       // make sure we are back to our previous page
-      await expect(page.title()).resolves.toMatch('test-123');
+      await expect(page.title()).resolves.toMatch('test123');
 
       ({ topElement, lastElement } = await getTopAndLastElement(page));
       // check if the scroll state is preserved
@@ -115,4 +120,32 @@ describe('widescreen', () => {
       expect(await lastElement.isIntersectingViewport()).toBe(true);
     },
   );
+
+  test('reloading preserves scroll', async () => {
+    await setupScreenSize('regular');
+
+    const wsName = await createWorkspace();
+    await createNewNote(wsName, 'test123');
+
+    await typeScrollable();
+
+    let { topElement, lastElement } = await getTopAndLastElement(page);
+    // check that the last element is in view port
+    expect(await topElement.isIntersectingViewport()).toBe(false);
+    expect(await lastElement.isIntersectingViewport()).toBe(true);
+    // let editor flush out changes or it will block reload
+    await sleep(500);
+
+    await page.reload({ timeout: 8000, waitUntil: 'networkidle0' });
+
+    await longSleep();
+
+    // make sure we are back to our previous page
+    await expect(page.title()).resolves.toMatch('test123');
+
+    ({ topElement, lastElement } = await getTopAndLastElement(page));
+    // check if the scroll state is preserved
+    expect(await topElement.isIntersectingViewport()).toBe(false);
+    expect(await lastElement.isIntersectingViewport()).toBe(true);
+  });
 });

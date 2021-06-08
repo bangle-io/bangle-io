@@ -1,6 +1,6 @@
 import { naukarWorkerProxy } from 'naukar-proxy';
 import { useState, useContext, useEffect } from 'react';
-import { AppStateContext } from './AppStateContext';
+import { AppStateContext } from 'app-state-context/index';
 
 const pendingSymbol = Symbol('pending-tasks');
 
@@ -42,6 +42,8 @@ export function PageLifecycle() {
         pageStateCurrent: event.newState,
         pageStatePrevious: event.oldState,
       });
+      mutableAppStateValue.pageLifecycleState = event.newState;
+      mutableAppStateValue.prevPageLifecycleState = event.oldState;
     });
   }, [lifecycle, mutableAppStateValue]);
 

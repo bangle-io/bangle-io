@@ -32,7 +32,7 @@ beforeEach(async () => {
 
 test('Split screen and typing in secondary works', async () => {
   const wsName = await createWorkspace();
-  await createNewNote(wsName, 'test-123');
+  await createNewNote(wsName, 'test123');
 
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('\\');
@@ -57,7 +57,7 @@ test('Split screen and typing in secondary works', async () => {
 
 test('Split screen and typing in primary works', async () => {
   const wsName = await createWorkspace();
-  await createNewNote(wsName, 'test-123');
+  await createNewNote(wsName, 'test123');
 
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('\\');

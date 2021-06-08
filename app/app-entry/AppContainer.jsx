@@ -18,7 +18,10 @@ import { EditorWrapperUI } from './components/EditorWrapperUI';
 import { NotificationArea } from './components/NotificationArea';
 import { HelpWorkspaceMonitor } from './help-docs/HelpWorkspaceModified';
 import { HelpBrowser } from './components/HelpBrowser';
-
+import {
+  PRIMARY_SCROLL_PARENT_ID,
+  SECONDARY_SCROLL_PARENT_ID,
+} from 'constants/index';
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
   const { secondaryWsPath } = useWorkspacePath();
@@ -31,9 +34,7 @@ export function AppContainer() {
       <Palette />
       <LeftSidebarArea />
       <div
-        id={cx(
-          widescreen && !secondaryEditor && 'primary-editor-scroll-parent',
-        )}
+        id={cx(widescreen && !secondaryEditor && PRIMARY_SCROLL_PARENT_ID)}
         className={cx(
           'main-content',
           widescreen ? 'widescreen' : 'smallscreen',
@@ -100,7 +101,7 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
       }}
     >
       <EditorArea
-        id={cx(widescreen && secondaryEditor && 'primary-editor-scroll-parent')}
+        id={cx(widescreen && secondaryEditor && PRIMARY_SCROLL_PARENT_ID)}
         className="primary-editor"
         editorId={0}
         showTabs={false}
@@ -114,9 +115,7 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
       {widescreen && secondaryEditor && <div className="grid-gutter" />}
       {widescreen && secondaryEditor && (
         <EditorArea
-          id={cx(
-            widescreen && secondaryEditor && 'secondary-editor-scroll-parent',
-          )}
+          id={cx(widescreen && secondaryEditor && SECONDARY_SCROLL_PARENT_ID)}
           className="secondary-editor fadeInAnimation"
           editorId={1}
           showTabs={showTabs}

@@ -74,7 +74,7 @@ test('create a workspace in browser', async () => {
 });
 
 test('create a new page saved in browser', async () => {
-  const newFileName = 'new-file';
+  const newFileName = 'new_file';
   const wsName = await createWorkspace();
 
   await createNewNote(wsName, newFileName);
@@ -91,7 +91,7 @@ test('create a new page saved in browser', async () => {
 });
 
 test('inline command palette convert to bullet list', async () => {
-  const newFileName = 'new-file';
+  const newFileName = 'new_file';
   const wsName = await createWorkspace();
 
   await createNewNote(wsName, newFileName);
@@ -113,7 +113,7 @@ test('inline command palette convert to bullet list', async () => {
 });
 
 test('inline command palette convert to heading 3', async () => {
-  const newFileName = 'new-file';
+  const newFileName = 'new_file';
   const wsName = await createWorkspace();
 
   await createNewNote(wsName, newFileName);
