@@ -3,15 +3,13 @@ module.exports = {
   server: [
     {
       command: 'yarn g:build-prod-serve',
-      // command: 'sleep 100000',
       port: 1234,
       launchTimeout: 120 * 1000,
     },
   ],
 
   launch: {
-    // slowMo: 5,
-    // slowMo: 150,
+    // slowMo: 50,
     // headless: false,
   },
 

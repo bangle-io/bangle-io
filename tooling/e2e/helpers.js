@@ -20,9 +20,7 @@ function frmtHTML(doc) {
   });
 }
 
-async function createWorkspace(
-  wsName = ('test-' + Math.random()).slice(0, 12),
-) {
+async function createWorkspace(wsName = 'test' + uuid()) {
   await runACommand('NEW_WORKSPACE');
   let handle = await page.$('.bangle-palette');
 
@@ -39,7 +37,7 @@ async function createWorkspace(
   return wsName;
 }
 
-async function createNewNote(wsName, fileName = 'new-file') {
+async function createNewNote(wsName, fileName = 'new_file') {
   await runACommand('NEW_NOTE_COMMAND');
   let handle = await page.$('.bangle-palette');
 
@@ -107,6 +105,10 @@ async function setPageWidescreen(page) {
 }
 async function setPageSmallscreen(page) {
   await page.setViewport({ width: 400, height: 768 });
+}
+
+function uuid(len = 10) {
+  return Math.random().toString(36).substring(2, 15).slice(0, len);
 }
 
 module.exports = {

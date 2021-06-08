@@ -5,6 +5,7 @@ const {
   getEditorHTML,
   createWorkspace,
   sleep,
+  longSleep,
 } = require('../helpers');
 jest.setTimeout(105 * 1000);
 
@@ -25,10 +26,10 @@ beforeEach(async () => {
 test('Emoji works in heading', async () => {
   const wsName = await createWorkspace();
 
-  await createNewNote(wsName, 'test-123');
+  await createNewNote(wsName, 'test123');
+  await longSleep();
 
   const editorHandle = await page.$('.bangle-editor');
-
   await clearEditor(editorHandle);
   await sleep();
   await editorHandle.type('# Wow :', { delay: 3 });
@@ -45,7 +46,7 @@ test('Emoji works in heading', async () => {
 test('Emoji works in para', async () => {
   const wsName = await createWorkspace();
 
-  await createNewNote(wsName, 'test-123');
+  await createNewNote(wsName, 'test123');
 
   const editorHandle = await page.$('.bangle-editor');
 
@@ -61,7 +62,7 @@ test('Emoji works in para', async () => {
 test('Emoji works in list', async () => {
   const wsName = await createWorkspace();
 
-  await createNewNote(wsName, 'test-123');
+  await createNewNote(wsName, 'test123');
 
   const editorHandle = await page.$('.bangle-editor');
 
