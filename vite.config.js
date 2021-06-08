@@ -5,13 +5,23 @@ import path from 'path';
 import getEnvVars from 'env-vars';
 import { minifyHtml, injectHtml } from 'vite-plugin-html';
 
+const argv = require('minimist')(process.argv.slice(2));
+
 const config = ({ command, mode }) => {
   const isProduction = mode === 'production';
-  const PORT = isProduction ? 5000 : 4000;
   const envVars = getEnvVars({ isProduction: isProduction, isVite: true });
   /**
    * @type {import('vite').UserConfig}
    */
+
+  const port = argv.port;
+  // NOTE: we are relying on cli passing port
+  // as I couldnt find a reliable way to get the port
+  // from vite. and we need port to do the proxy hack below
+  if (command !== 'build' && !port) {
+    throw new Error('Port must be defined');
+  }
+
   const c = {
     // plugins: [reactRefresh()],
     build: {
@@ -34,14 +44,12 @@ const config = ({ command, mode }) => {
       ...envVars.appEnvs,
     },
     server: {
-      port: PORT,
       strictPort: true,
-
       // hmr: false,
       proxy: {
         // string shorthand
         '^.*\\.md$': {
-          target: 'http://localhost:' + PORT,
+          target: 'http://localhost:' + port,
           rewrite: (path) => path.split('.md').join(''),
         },
       },
