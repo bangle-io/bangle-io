@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import { ExtensionEditorComponents } from 'bangle-io-context/index';
 import { getNote } from 'workspace/index';
-import { usePreserveScroll } from './scroll-state';
+import { getScrollParentElement } from 'utils/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -14,6 +14,8 @@ Editor.propTypes = {
 };
 
 export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
+  // an object which can is used to provide extensions a store unique to this editor instance
+  const [uniqueEditorObj] = useState({});
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
   // in handy when loading editor with a given scroll position.
@@ -30,7 +32,31 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
     };
   }, [bangleIOContext, wsPath]);
 
-  usePreserveScroll(editorId, wsPath, Boolean(initialValue));
+  useEffect(() => {
+    if (initialValue) {
+      const scrollParent = getScrollParentElement(editorId);
+      const pos = bangleIOContext.editor.initialScrollPos({
+        wsPath,
+        editorId,
+        scrollParent,
+        doc: initialValue,
+        uniqueEditorObj: uniqueEditorObj,
+      });
+      if (pos > 0) {
+        scrollParent.scrollTop = pos;
+      }
+    }
+  }, [editorId, wsPath, bangleIOContext, uniqueEditorObj, initialValue]);
+
+  useEffect(() => {
+    return () => {
+      bangleIOContext.editor.beforeDestroy({
+        wsPath,
+        editorId,
+        uniqueEditorObj: uniqueEditorObj,
+      });
+    };
+  }, [wsPath, editorId, uniqueEditorObj, bangleIOContext]);
 
   return initialValue ? (
     <EditorInner

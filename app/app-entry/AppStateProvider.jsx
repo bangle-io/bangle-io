@@ -4,7 +4,7 @@ import { naukarWorkerProxy } from 'naukar-proxy/index';
 import { objectSync } from 'object-sync/index';
 import { initialAppState as _initialAppState } from 'shared/index';
 import { moduleSupport } from './module-support';
-
+import { AppStateContext } from 'app-state-context/index';
 const initialAppState = Object.assign({}, _initialAppState);
 
 const LOG = false;
@@ -16,11 +16,6 @@ const appState = objectSync(initialAppState, {
   emitChange: (event) => {
     naukarWorkerProxy.updateWorkerAppState(event);
   },
-});
-
-export const AppStateContext = React.createContext({
-  mutableAppStateValue: appState.appStateValue,
-  appStateValue: Object.assign({}, appState.appStateValue),
 });
 
 export function AppState({ children }) {
@@ -52,6 +47,7 @@ export function AppState({ children }) {
     return {
       mutableAppStateValue: appState.appStateValue,
       appStateValue,
+      appState,
     };
   }, [appStateValue]);
 

@@ -10,7 +10,7 @@ import { polyfills, bangleIOContext } from 'shared/index';
 import { WorkerSetup } from 'worker-setup/index';
 import { PageLifecycle } from './PageLifecycle';
 import { moduleSupport } from './module-support';
-import { AppState } from './AppStateContext';
+import { AppState } from './AppStateProvider';
 
 if (typeof window !== undefined) {
   window.Sentry?.onLoad(function () {

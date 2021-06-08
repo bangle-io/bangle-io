@@ -29,7 +29,7 @@
     "lint": "yarn g:package-patrol && yarn prettier --check . && yarn eslint .",
     "update-jsconfig": "yarn node ./tooling/_scripts/create-jsconfig.js",
     "test": "yarn lint && yarn jest",
-    "start": "BROWSERSLIST_ENV=development yarn g:vite-dev",
+    "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
     "webpack-start": "BROWSERSLIST_ENV=development yarn webpack serve --env development",
     "webpack-build": "NODE_ENV=production yarn webpack --env production",
     "build": "yarn vite-build",
@@ -41,7 +41,6 @@
     "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
     "add-portals": "yarn link -A -r /Users/kushanjoshi/code/bangle/bangle-play",
     "remove-portals": "yarn node ./tooling/_scripts/remove-portals && yarn install",
-    "g:vite-dev": "vite",
     "g:vite-build": "vite build",
     "g:vite-serve": "vite preview"
   },

@@ -7,6 +7,7 @@ import collapsibleHeading from 'collapsible-heading/index';
 import imageExtension from 'image-extension/index';
 import inlineEmoji from 'inline-emoji/index';
 import collabExtension from 'collab-extension/index';
+import editorScrollExtension from 'editor-scroll-extension';
 
 // TODO move this async, i think a promise should be fine.
 export const bangleIOContext = new BangleIOContext({
@@ -20,6 +21,7 @@ export const bangleIOContext = new BangleIOContext({
     inlineBacklinkPalette,
     collapsibleHeading,
     imageExtension,
+    editorScrollExtension,
   ],
   markdownItPlugins: [frontMatterMarkdownItPlugin],
 });
