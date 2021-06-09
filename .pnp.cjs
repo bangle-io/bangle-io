@@ -8441,7 +8441,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["react", "npm:16.14.0"],
             ["ui-context", "workspace:lib/ui-context"],
-            ["workspace", "workspace:lib/workspace"]
+            ["workspace", "workspace:lib/workspace"],
+            ["workspace-hooks", "workspace:lib/workspace-hooks"]
           ],
           "linkType": "SOFT",
         }]
@@ -21041,6 +21042,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/workspace-hooks/",
           "packageDependencies": [
             ["workspace-hooks", "workspace:lib/workspace-hooks"],
+            ["@bangle.dev/core", "portal:../bangle-play/core::locator=bangle-io%40workspace%3A."],
             ["@testing-library/react", "virtual:1b848b7296ee27ba66b4940b155c324a4313217d7338c2d69e8186aac1b15b6ff64ddf487207f58198da10c3467ce994c00edf9aa9e00e94484db8b1d390c2ef#npm:11.2.6"],
             ["@testing-library/react-hooks", "virtual:0f251e21ce47ba607b80829a0214d5d2aec9c0ae8c40151f30d8ff401ea06ff08fecb7b557eca2be576d0e761df2792dbc279bf1b9f3552fa74c3fdc6f832852#npm:5.1.2"],
             ["baby-fs", "workspace:js-lib/baby-fs"],

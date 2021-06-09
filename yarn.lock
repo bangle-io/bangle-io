@@ -5535,6 +5535,7 @@ __metadata:
     react: 16.14.0
     ui-context: "workspace:*"
     workspace: "workspace:*"
+    workspace-hooks: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -16482,6 +16483,7 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "workspace-hooks@workspace:lib/workspace-hooks"
   dependencies:
+    "@bangle.dev/core": 0.17.1
     "@testing-library/react": ^11.2.6
     "@testing-library/react-hooks": ^5.1.2
     baby-fs: "workspace:*"

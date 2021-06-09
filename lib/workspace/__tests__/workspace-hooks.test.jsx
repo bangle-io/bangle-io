@@ -9,7 +9,6 @@ import { BangleIOContext } from 'bangle-io-context/index';
 import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
 import { Workspace } from '../Workspace';
 import {
-  useCreateNote,
   useDeleteFile,
   useWorkspacePath,
   useWorkspaces,
@@ -152,59 +151,6 @@ describe('useWorkspacePath', () => {
     });
     expect(testLocation?.search).toBe('');
     expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
-  });
-});
-
-describe('useCreateNote', () => {
-  test('browser create file', async () => {
-    let callback;
-    let testLocation;
-
-    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
-
-    function Comp() {
-      const createMdFile = useCreateNote();
-      callback = createMdFile;
-      return <div>Hello</div>;
-    }
-
-    await render(
-      <Router initialEntries={['/ws/kujo']}>
-        <Switch>
-          <Route path={['/ws/:wsName']}>
-            <Comp />
-          </Route>
-        </Switch>
-        <Route
-          path="*"
-          render={({ history, location }) => {
-            testLocation = location;
-            return null;
-          }}
-        />
-      </Router>,
-    );
-
-    expect(callback).not.toBeUndefined();
-
-    const result = callback(
-      new BangleIOContext({
-        coreRawSpecs: defaultSpecs(),
-        markdownItPlugins: [],
-      }),
-      'kujo:one.md',
-    );
-    expect(result).toBeInstanceOf(Promise);
-
-    await result;
-
-    expect(testLocation.pathname).toBe('/ws/kujo/one.md');
-
-    expect(mockBabyFs.idbFS.writeFile).toBeCalledTimes(1);
-    expect(mockBabyFs.idbFS.writeFile).toBeCalledWith(
-      'kujo/one.md',
-      new File(['# one\n\nHello world!'], 'one.md', { type: 'text/plain' }),
-    );
   });
 });
 

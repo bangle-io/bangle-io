@@ -13,7 +13,7 @@ import {
   getWorkspaceInfo,
   listWorkspaces,
 } from './workspace-helpers';
-import { createNote, deleteFile } from './file-ops';
+import { deleteFile } from './file-ops';
 import { checkWidescreen, removeMdExtension, useDestroyRef } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
 import { replaceHistoryState } from './history-utils';
@@ -25,49 +25,6 @@ import {
 import { getFileSystemFromWsInfo } from './get-fs';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
-
-export function useCreateNote() {
-  const { pushWsPath } = useWorkspacePath();
-
-  const createNoteCallback = useCallback(
-    async (
-      bangleIOContext,
-      wsPath,
-      doc = Node.fromJSON(bangleIOContext.specRegistry.schema, {
-        type: 'doc',
-        content: [
-          {
-            type: 'heading',
-            attrs: {
-              level: 1,
-            },
-            content: [
-              {
-                type: 'text',
-                text: removeMdExtension(resolvePath(wsPath).fileName),
-              },
-            ],
-          },
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                text: 'Hello world!',
-              },
-            ],
-          },
-        ],
-      }),
-    ) => {
-      await createNote(bangleIOContext, wsPath, doc);
-      pushWsPath(wsPath);
-    },
-    [pushWsPath],
-  );
-
-  return createNoteCallback;
-}
 
 export function useDeleteFile() {
   const { wsName, wsPath } = useWorkspacePath();
@@ -195,7 +152,6 @@ export function useWorkspacePath() {
     (wsPath, newTab = false, secondary = false) => {
       const { wsName, filePath } = resolvePath(wsPath);
       const newPath = encodeURI(`/ws/${wsName}/${filePath}`);
-
       if (newTab) {
         window.open(newPath);
         return;

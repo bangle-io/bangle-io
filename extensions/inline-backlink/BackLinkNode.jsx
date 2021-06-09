@@ -1,23 +1,20 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { conditionalSuffix } from 'utils/utility';
 import {
   filePathToWsPath,
   useWorkspacePath,
   validateNoteWsPath,
   resolvePath,
-  createNote,
   parseLocalFilePath,
   PathValidationError,
 } from 'workspace/index';
-import { Node } from '@bangle.dev/core/prosemirror/model';
 import { backLinkNodeName, newNoteLocation } from './config';
-import { removeMdExtension } from 'utils/index';
 import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
   let { path, title } = nodeAttrs;
   const { wsName, wsPath: currentWsPath, pushWsPath } = useWorkspacePath();
-  const { noteWsPaths } = useWorkspaceHooksContext();
+  const { noteWsPaths, createNote } = useWorkspaceHooksContext();
 
   const [invalidLink, updatedInvalidLink] = useState();
   title = title || path;
@@ -56,6 +53,7 @@ export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
           wsName,
           noteWsPaths,
           bangleIOContext,
+          createNote,
         }).then(
           (matchedWsPath) => {
             pushWsPath(matchedWsPath, newTab, shift);
@@ -81,6 +79,7 @@ async function handleClick({
   wsName,
   noteWsPaths,
   bangleIOContext,
+  createNote,
 }) {
   const existingWsPathMatch = getMatchingWsPath(
     wsName,
@@ -116,30 +115,7 @@ async function handleClick({
 
   validateNoteWsPath(newWsPath);
 
-  await createNote(
-    bangleIOContext,
-    newWsPath,
-    Node.fromJSON(bangleIOContext.specRegistry.schema, {
-      type: 'doc',
-      content: [
-        {
-          type: 'heading',
-          attrs: {
-            level: 1,
-          },
-          content: [
-            {
-              type: 'text',
-              text: removeMdExtension(resolvePath(newWsPath).fileName),
-            },
-          ],
-        },
-        {
-          type: 'paragraph',
-        },
-      ],
-    }),
-  );
+  await createNote(bangleIOContext, newWsPath, { open: false });
 
   return newWsPath;
 }

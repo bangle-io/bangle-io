@@ -1,7 +1,6 @@
 import {
   copyWorkspace,
   isValidNoteWsPath,
-  useCreateNote,
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
@@ -10,7 +9,7 @@ import { UIManagerContext } from 'ui-context/index';
 import { EditorManagerContext } from 'editor-manager-context/index';
 import { pickADirectory } from 'baby-fs/index';
 import { INPUT_PALETTE } from 'config/paletteTypes';
-
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 /**
  * On generic commands
  * The hook has no parameter and returns a single value the callback which
@@ -28,7 +27,7 @@ import { INPUT_PALETTE } from 'config/paletteTypes';
 export function useNewNoteCmd() {
   const { bangleIOContext } = useContext(EditorManagerContext);
 
-  const createNote = useCreateNote();
+  const { createNote } = useWorkspaceHooksContext();
   const { wsName } = useWorkspacePath();
 
   const { dispatch } = useContext(UIManagerContext);
