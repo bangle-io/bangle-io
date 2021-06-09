@@ -1,3 +1,9 @@
+### Jun 8, 2021
+
+- Fixed issues when creating and deleting files won't be propagated across the app.
+
+- I now remember the selection position of your document as you switch between them.
+
 ### Jun 5, 2021
 
 - I now synchronizes changes across browser tabs.
