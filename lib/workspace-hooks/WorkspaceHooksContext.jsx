@@ -16,7 +16,7 @@ import {
   resolvePath,
   deleteFile,
 } from 'workspace/index';
-import { removeMdExtension } from 'utils/index';
+import { shallowCompareArray, removeMdExtension } from 'utils/index';
 
 const LOG = false;
 
@@ -30,6 +30,12 @@ export function useWorkspaceHooksContext() {
   return useContext(WorkspaceHooksContext);
 }
 
+/**
+ *
+ * @param {*} param0
+ * @returns
+ * - noteWsPaths, fileWsPaths - retain their instance if there is no change. This is useful for runing `===` fearlessly.
+ */
 export function WorkspaceHooksContextProvider({ children }) {
   const { wsName } = useWorkspacePath();
 
@@ -52,10 +58,30 @@ export function useFiles(wsName) {
   const location = useLocation();
 
   const [fileWsPaths, setFiles] = useState(undefined);
+  const { wsPath, secondaryWsPath, removeWsPath, removeSecondaryWsPath } =
+    useWorkspacePath();
 
   const noteWsPaths = useMemo(() => {
     return fileWsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
   }, [fileWsPaths]);
+
+  useEffect(() => {
+    if (noteWsPaths) {
+      if (wsPath && !noteWsPaths.includes(wsPath)) {
+        removeWsPath();
+      }
+
+      if (secondaryWsPath && !noteWsPaths.includes(secondaryWsPath)) {
+        removeSecondaryWsPath();
+      }
+    }
+  }, [
+    noteWsPaths,
+    wsPath,
+    secondaryWsPath,
+    removeWsPath,
+    removeSecondaryWsPath,
+  ]);
 
   const refreshWsPaths = useCallback(() => {
     log('refreshing wsPaths');
@@ -64,7 +90,14 @@ export function useFiles(wsName) {
       listAllFiles(wsName)
         .then((items) => {
           if (!destroyed) {
-            setFiles(items);
+            setFiles((existing) => {
+              if (!existing) {
+                return items;
+              }
+              // preserve the identity
+              const isEqual = shallowCompareArray(existing, items);
+              return isEqual ? existing : items;
+            });
             return;
           }
         })

@@ -14,15 +14,26 @@ jest.mock('workspace/index', () => {
 });
 
 describe('useFiles', () => {
+  let testLocation;
   function Comp({ children }) {
     return (
-      <Router initialEntries={['/ws/kujo/one.md']}>
+      <Router initialEntries={['/ws/test-ws1/one.md']}>
         <Switch>
           <Route path={['/ws/:wsName']}>{children}</Route>
         </Switch>
+        <Route
+          path="*"
+          render={({ history, location }) => {
+            testLocation = location;
+            return null;
+          }}
+        />
       </Router>
     );
   }
+  beforeEach(() => {
+    testLocation = undefined;
+  });
   test('works', async () => {
     let render;
 
@@ -44,7 +55,7 @@ describe('useFiles', () => {
     expect(listAllFiles).nthCalledWith(1, 'test-ws1');
   });
 
-  test('refreshes correctly', async () => {
+  test('refreshes and preserves instance correctly', async () => {
     let render;
 
     act(() => {
@@ -62,18 +73,68 @@ describe('useFiles', () => {
       refreshWsPaths: expect.any(Function),
     });
 
+    const filesInstance = ['test-ws1:hi.md', 'test-ws1:img.png'];
     listAllFiles.mockImplementation(async () => {
-      return ['test-ws1:hi.md', 'test-ws1:img.png'];
+      return filesInstance;
     });
     await act(async () => {
       return render.result.current.refreshWsPaths();
     });
+
+    expect(render.result.current.fileWsPaths).toBe(filesInstance);
 
     expect(render.result.current).toEqual({
       fileWsPaths: ['test-ws1:hi.md', 'test-ws1:img.png'],
       noteWsPaths: ['test-ws1:hi.md'],
       refreshWsPaths: expect.any(Function),
     });
+
+    // the same thing to check if the `===` instance is preserved
+    listAllFiles.mockImplementation(async () => {
+      return ['test-ws1:hi.md', 'test-ws1:img.png'];
+    });
+    await act(async () => {
+      return render.result.current.refreshWsPaths();
+    });
+    expect(render.result.current.fileWsPaths).toBe(filesInstance);
+  });
+
+  test('if an opened wsPath is removed, useFiles removes it from history', async () => {
+    let render;
+
+    const filesInstance = [
+      'test-ws1:one.md',
+      'test-ws1:hi.md',
+      'test-ws1:img.png',
+    ];
+    listAllFiles.mockImplementation(async () => {
+      return filesInstance;
+    });
+
+    act(() => {
+      render = renderHook(() => useFiles('test-ws1'), { wrapper: Comp });
+    });
+
+    expect(testLocation.pathname).toBe('/ws/test-ws1/one.md');
+
+    let promise;
+    await act(async () => {
+      return promise;
+    });
+
+    expect(render.result.current.fileWsPaths).toBe(filesInstance);
+
+    // make one.md disappear (delete operation from outside)
+    listAllFiles.mockImplementation(async () => {
+      return ['test-ws1:hi.md', 'test-ws1:img.png'];
+    });
+    await act(async () => {
+      await render.result.current.refreshWsPaths();
+    });
+
+    // since one.md was actively opened, if deleted
+    // the hook should close the active wsPath
+    expect(testLocation.pathname).toBe('/ws/test-ws1');
   });
 });
 
