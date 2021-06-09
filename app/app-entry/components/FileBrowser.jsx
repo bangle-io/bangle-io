@@ -29,7 +29,7 @@ const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function FileBrowser() {
-  const { noteWsPaths, deleteNote } = useWorkspaceHooksContext();
+  const { noteWsPaths = [], deleteNote } = useWorkspaceHooksContext();
 
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();

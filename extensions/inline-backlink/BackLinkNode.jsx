@@ -14,7 +14,7 @@ import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
   let { path, title } = nodeAttrs;
   const { wsName, wsPath: currentWsPath, pushWsPath } = useWorkspacePath();
-  const { noteWsPaths, createNote } = useWorkspaceHooksContext();
+  const { noteWsPaths = [], createNote } = useWorkspaceHooksContext();
 
   const [invalidLink, updatedInvalidLink] = useState();
   title = title || path;

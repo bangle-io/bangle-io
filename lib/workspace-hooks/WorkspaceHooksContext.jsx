@@ -1,5 +1,4 @@
 import { useHistory, useLocation } from 'react-router-dom';
-
 import React, {
   useEffect,
   useContext,
@@ -52,10 +51,10 @@ export function WorkspaceHooksContextProvider({ children }) {
 export function useFiles(wsName) {
   const location = useLocation();
 
-  const [fileWsPaths, setFiles] = useState([]);
+  const [fileWsPaths, setFiles] = useState(undefined);
 
   const noteWsPaths = useMemo(() => {
-    return fileWsPaths.filter((wsPath) => isValidNoteWsPath(wsPath));
+    return fileWsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
   }, [fileWsPaths]);
 
   const refreshWsPaths = useCallback(() => {
@@ -71,7 +70,7 @@ export function useFiles(wsName) {
         })
         .catch((error) => {
           if (!destroyed) {
-            setFiles([]);
+            setFiles(undefined);
           }
           throw error;
         });
@@ -82,6 +81,7 @@ export function useFiles(wsName) {
   }, [wsName]);
 
   useEffect(() => {
+    setFiles(undefined);
     // load the wsPaths on mount
     refreshWsPaths();
   }, [

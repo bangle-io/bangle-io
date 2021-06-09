@@ -65,7 +65,7 @@ export function InlineBacklinkPalette() {
 function InlineBacklinkPaletteInner({ query, counter }) {
   const { wsName } = useWorkspacePath();
   const view = useEditorViewContext();
-  const { noteWsPaths } = useWorkspaceHooksContext();
+  const { noteWsPaths = [] } = useWorkspaceHooksContext();
   const items = useMemo(() => {
     return filterItems(wsName, query, noteWsPaths);
   }, [query, noteWsPaths, wsName]);
