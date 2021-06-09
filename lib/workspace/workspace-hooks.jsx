@@ -13,10 +13,8 @@ import {
   getWorkspaceInfo,
   listWorkspaces,
 } from './workspace-helpers';
-import { deleteFile } from './file-ops';
-import { checkWidescreen, removeMdExtension, useDestroyRef } from 'utils/index';
+import { checkWidescreen, useDestroyRef } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
-import { replaceHistoryState } from './history-utils';
 import {
   HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
@@ -213,14 +211,6 @@ export function useWorkspacePath() {
     });
   }, [history, location]);
 
-  // A way to signal something has changed
-  // making all hooks watching for this key will update
-  const refreshHistoryStateKey = useCallback(() => {
-    replaceHistoryState(history, {
-      historyStateKey: Math.random(),
-    });
-  }, [history]);
-
   return {
     wsName,
     wsPath,
@@ -230,7 +220,6 @@ export function useWorkspacePath() {
     replaceWsPath,
     removeWsPath,
     removeSecondaryWsPath,
-    refreshHistoryStateKey,
   };
 }
 

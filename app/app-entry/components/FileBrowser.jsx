@@ -45,13 +45,6 @@ export function FileBrowser() {
     }
   }, [dispatch, widescreen]);
 
-  const deleteFile = useCallback(
-    async (wsPath) => {
-      await deleteNote(wsPath);
-    },
-    [deleteNote],
-  );
-
   const createNewFile = useCallback(
     (path) => {
       newFileCommand({ initialQuery: path });
@@ -63,7 +56,7 @@ export function FileBrowser() {
     <GenericFileBrowser
       wsName={wsName}
       files={noteWsPaths}
-      deleteFile={deleteFile}
+      deleteNote={deleteNote}
       pushWsPath={pushWsPath}
       widescreen={widescreen}
       activeFilePath={activeFilePath}
@@ -80,7 +73,7 @@ const IconStyle = {
 export function GenericFileBrowser({
   wsName,
   files,
-  deleteFile,
+  deleteNote,
   pushWsPath,
   widescreen,
   activeFilePath,
@@ -100,7 +93,7 @@ export function GenericFileBrowser({
       wsName={wsName}
       filesAndDirList={filesAndDirList}
       dirSet={dirSet}
-      deleteFile={deleteFile}
+      deleteNote={deleteNote}
       pushWsPath={pushWsPath}
       widescreen={widescreen}
       activeFilePath={activeFilePath}
@@ -120,7 +113,7 @@ function RenderRow({
   isActive,
   isCollapsed,
   createNewFile,
-  deleteFile,
+  deleteNote,
   onClick,
 }) {
   return (
@@ -178,7 +171,7 @@ function RenderRow({
                 if (
                   window.confirm(`Are you sure you want to delete "${name}"? `)
                 ) {
-                  deleteFile(wsPath);
+                  deleteNote(wsPath);
                 }
               }}
             >
@@ -196,7 +189,7 @@ const RenderItems = React.memo(
     wsName,
     filesAndDirList,
     dirSet,
-    deleteFile,
+    deleteNote,
     pushWsPath,
     activeFilePath,
     closeSidebar,
@@ -282,7 +275,7 @@ const RenderItems = React.memo(
           isActive={activeFilePath === path}
           isCollapsed={collapsed.includes(path)}
           createNewFile={createNewFile}
-          deleteFile={deleteFile}
+          deleteNote={deleteNote}
           onClick={onClick}
         />
       );
