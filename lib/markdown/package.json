@@ -19,10 +19,10 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.17.1",
-    "@bangle.dev/markdown": "0.17.1",
-    "@bangle.dev/markdown-front-matter": "0.17.1",
-    "@bangle.dev/table": "0.17.1"
+    "@bangle.dev/core": "0.17.2",
+    "@bangle.dev/markdown": "0.17.2",
+    "@bangle.dev/markdown-front-matter": "0.17.2",
+    "@bangle.dev/table": "0.17.2"
   },
   "publishConfig": {
     "access": "public"
