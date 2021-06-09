@@ -11,16 +11,18 @@ import {
   useInlinePaletteQuery,
   replaceSuggestionMarkWith,
 } from 'inline-palette/index';
-import { useListCachedNoteWsPaths, useWorkspacePath } from 'workspace/index';
+import { useWorkspacePath } from 'workspace/index';
 import { sleep } from 'utils/utility';
 import { BangleIOContext } from 'bangle-io-context/index';
 import inlineBackLinkExtension from '../index';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 jest.mock('@bangle.dev/react', () => {
   return {
     useEditorViewContext: jest.fn(() => jest.fn()),
   };
 });
+
 jest.mock('inline-palette', () => {
   const otherThings = jest.requireActual('inline-palette');
 
@@ -37,7 +39,13 @@ jest.mock('workspace/index', () => {
   return {
     ...workspaceThings,
     useWorkspacePath: jest.fn(),
-    useListCachedNoteWsPaths: jest.fn(),
+  };
+});
+
+jest.mock('workspace-hooks/index', () => {
+  return {
+    ...jest.requireActual('workspace-hooks/index'),
+    useWorkspaceHooksContext: jest.fn(),
   };
 });
 
@@ -61,7 +69,7 @@ beforeEach(async () => {
   useEditorViewContext.mockImplementation(() => {
     return mockView;
   });
-  useListCachedNoteWsPaths.mockImplementation(() => [[]]);
+  useWorkspaceHooksContext.mockImplementation(() => ({ noteWsPaths: [] }));
   useInlinePaletteItems.mockImplementation(() => {
     return {
       getItemProps: jest.fn(),
@@ -76,7 +84,9 @@ beforeEach(async () => {
 });
 
 test('Initial render', async () => {
-  useListCachedNoteWsPaths.mockImplementation(() => [['test-ws:hello.md']]);
+  useWorkspaceHooksContext.mockImplementation(() => ({
+    noteWsPaths: ['test-ws:hello.md'],
+  }));
 
   const result = render(<InlineBacklinkPalette />);
 
@@ -84,7 +94,9 @@ test('Initial render', async () => {
 });
 
 test('Renders palette rows correctly', async () => {
-  useListCachedNoteWsPaths.mockImplementation(() => [['test-ws:my-file.md']]);
+  useWorkspaceHooksContext.mockImplementation(() => ({
+    noteWsPaths: ['test-ws:my-file.md'],
+  }));
   query = 'my';
 
   const result = render(<InlineBacklinkPalette />);
@@ -105,7 +117,9 @@ test('Renders palette rows correctly', async () => {
 });
 
 test('Handles malformed query', async () => {
-  useListCachedNoteWsPaths.mockImplementation(() => [['test-ws:my-file.md']]);
+  useWorkspaceHooksContext.mockImplementation(() => ({
+    noteWsPaths: ['test-ws:my-file.md'],
+  }));
   query = ']]';
 
   const result = render(<InlineBacklinkPalette />);
@@ -116,7 +130,9 @@ test('Handles malformed query', async () => {
 });
 
 test('Creates a backlink node when closed by typing ]]', async () => {
-  useListCachedNoteWsPaths.mockImplementation(() => [['test-ws:my-file.md']]);
+  useWorkspaceHooksContext.mockImplementation(() => ({
+    noteWsPaths: ['test-ws:my-file.md'],
+  }));
   // NOTE: its not [[better]], because [[ is part of the suggest query mark
   query = 'better]]';
   render(<InlineBacklinkPalette />);

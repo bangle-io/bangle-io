@@ -20,9 +20,9 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/collab-client": "0.17.1",
-    "@bangle.dev/collab-server": "0.17.1",
-    "@bangle.dev/disk": "0.17.1",
+    "@bangle.dev/collab-client": "0.17.2",
+    "@bangle.dev/collab-server": "0.17.2",
+    "@bangle.dev/disk": "0.17.2",
     "config": "workspace:*",
     "idb-keyval": "^5.0.5",
     "object-sync": "workspace:*",

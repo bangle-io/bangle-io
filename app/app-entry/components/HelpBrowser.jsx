@@ -1,7 +1,11 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { HELP_FS_WORKSPACE_NAME } from 'config/help-fs';
 import { GenericFileBrowser } from './FileBrowser';
-import { cachedListAllNoteWsPaths, useWorkspacePath } from 'workspace';
+import {
+  listAllFiles,
+  useWorkspacePath,
+  isValidNoteWsPath,
+} from 'workspace/index';
 import { useDestroyRef } from 'utils/hooks';
 import { UIManagerContext } from 'ui-context';
 
@@ -14,9 +18,9 @@ export function HelpBrowser() {
   const destroyedRef = useDestroyRef();
 
   useEffect(() => {
-    cachedListAllNoteWsPaths(wsName).then((f) => {
+    listAllFiles(wsName).then((files) => {
       if (!destroyedRef.current) {
-        setFiles(f);
+        setFiles(files.filter((wsPath) => isValidNoteWsPath(wsPath)));
       }
     });
   }, [destroyedRef, wsName]);

@@ -1,7 +1,6 @@
 import {
   copyWorkspace,
   isValidNoteWsPath,
-  useCreateNote,
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
@@ -10,7 +9,7 @@ import { UIManagerContext } from 'ui-context/index';
 import { EditorManagerContext } from 'editor-manager-context/index';
 import { pickADirectory } from 'baby-fs/index';
 import { INPUT_PALETTE } from 'config/paletteTypes';
-
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 /**
  * On generic commands
  * The hook has no parameter and returns a single value the callback which
@@ -28,7 +27,7 @@ import { INPUT_PALETTE } from 'config/paletteTypes';
 export function useNewNoteCmd() {
   const { bangleIOContext } = useContext(EditorManagerContext);
 
-  const createNote = useCreateNote();
+  const { createNote } = useWorkspaceHooksContext();
   const { wsName } = useWorkspacePath();
 
   const { dispatch } = useContext(UIManagerContext);
@@ -80,8 +79,8 @@ export function useUpdatePaletteCmd() {
 export function useNewWorkspace() {
   const { createWorkspace } = useWorkspaces();
   const updatePalette = useUpdatePaletteCmd();
+  const { refreshWsPaths } = useWorkspaceHooksContext();
 
-  const { refreshHistoryStateKey } = useWorkspacePath();
   return useCallback(() => {
     return new Promise((res, rej) => {
       updatePalette({
@@ -106,7 +105,7 @@ export function useNewWorkspace() {
                 rootDirHandle,
               });
               window.fathom?.trackGoal('K3NFTGWX', 0);
-              refreshHistoryStateKey();
+              await refreshWsPaths();
               res();
               return true;
             } else if (query === 'browser') {
@@ -121,7 +120,7 @@ export function useNewWorkspace() {
                       if (query) {
                         await createWorkspace(query, 'browser');
                         window.fathom?.trackGoal('AISLCLRF', 0);
-                        refreshHistoryStateKey();
+                        await refreshWsPaths();
                         res();
                       }
                     },
@@ -137,7 +136,7 @@ export function useNewWorkspace() {
         },
       });
     });
-  }, [updatePalette, createWorkspace, refreshHistoryStateKey]);
+  }, [updatePalette, createWorkspace, refreshWsPaths]);
 }
 
 /**
@@ -146,8 +145,9 @@ export function useNewWorkspace() {
  */
 export function useCloneWorkspaceCmd() {
   const { createWorkspace } = useWorkspaces();
-  const { wsName, refreshHistoryStateKey } = useWorkspacePath();
+  const { wsName } = useWorkspacePath();
   const updatePalette = useUpdatePaletteCmd();
+  const { refreshWsPaths } = useWorkspaceHooksContext();
 
   return useCallback(() => {
     return new Promise((res, rej) => {
@@ -173,7 +173,8 @@ export function useCloneWorkspaceCmd() {
               });
 
               await copyWorkspace(wsName, rootDirHandle.name);
-              refreshHistoryStateKey();
+
+              await refreshWsPaths();
               res();
               return true;
             } else if (query === 'browser') {
@@ -186,7 +187,8 @@ export function useCloneWorkspaceCmd() {
                       if (query) {
                         await createWorkspace(query, 'browser');
                         await copyWorkspace(wsName, query);
-                        refreshHistoryStateKey();
+
+                        await refreshWsPaths();
                         res();
                       }
                     },
@@ -202,5 +204,5 @@ export function useCloneWorkspaceCmd() {
         },
       });
     });
-  }, [updatePalette, createWorkspace, wsName, refreshHistoryStateKey]);
+  }, [updatePalette, createWorkspace, wsName, refreshWsPaths]);
 }

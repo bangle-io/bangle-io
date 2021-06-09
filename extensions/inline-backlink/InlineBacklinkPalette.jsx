@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useContext } from 'react';
 import reactDOM from 'react-dom';
 import { useEditorViewContext } from '@bangle.dev/react';
 import {
@@ -14,13 +14,13 @@ import {
 import {
   resolvePath,
   filePathToWsPath,
-  useListCachedNoteWsPaths,
   useWorkspacePath,
   validateWsPath,
   sanitizeFilePath,
 } from 'workspace/index';
 import { backLinkNodeName, palettePluginKey } from './config';
 import { conditionalSuffix, removeMdExtension } from 'utils/index';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 // Creating this also closes the palette
 const createBackLinkNode = (wsPath, allNoteWsPaths) => {
@@ -65,10 +65,10 @@ export function InlineBacklinkPalette() {
 function InlineBacklinkPaletteInner({ query, counter }) {
   const { wsName } = useWorkspacePath();
   const view = useEditorViewContext();
-  const [allNoteWsPaths = []] = useListCachedNoteWsPaths();
+  const { noteWsPaths } = useWorkspaceHooksContext();
   const items = useMemo(() => {
-    return filterItems(wsName, query, allNoteWsPaths);
-  }, [query, allNoteWsPaths, wsName]);
+    return filterItems(wsName, query, noteWsPaths);
+  }, [query, noteWsPaths, wsName]);
 
   const { getItemProps } = useInlinePaletteItems(
     palettePluginKey,
@@ -85,13 +85,13 @@ function InlineBacklinkPaletteInner({ query, counter }) {
         view,
       );
     } else if (query.endsWith(']]')) {
-      createBackLinkNode(wsPathFromQuery(query, wsName), allNoteWsPaths)(
+      createBackLinkNode(wsPathFromQuery(query, wsName), noteWsPaths)(
         view.state,
         view.dispatch,
         view,
       );
     }
-  }, [query, wsName, view, allNoteWsPaths]);
+  }, [query, wsName, view, noteWsPaths]);
 
   return (
     <>

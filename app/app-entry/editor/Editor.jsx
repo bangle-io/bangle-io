@@ -65,6 +65,7 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
       setEditor={setEditor}
       bangleIOContext={bangleIOContext}
       initialValue={initialValue}
+      uniqueEditorObj={uniqueEditorObj}
     />
   ) : null;
 }
@@ -75,6 +76,7 @@ function EditorInner({
   bangleIOContext,
   setEditor,
   initialValue,
+  uniqueEditorObj,
 }) {
   useEffect(() => {
     log('mounting editor', editorId, wsPath);
@@ -114,6 +116,14 @@ function EditorInner({
     },
     specRegistry: bangleIOContext.specRegistry,
     initialValue: initialValue,
+    pmStateOpts: {
+      selection: bangleIOContext.editor.initialSelection({
+        wsPath,
+        editorId,
+        doc: initialValue,
+        uniqueEditorObj: uniqueEditorObj,
+      }),
+    },
   });
 
   return (

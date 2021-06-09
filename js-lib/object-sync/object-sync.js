@@ -14,7 +14,6 @@ export function objectSync(
     ) {
       return true;
     }
-    console.log(value);
     throw new Error('Invalid value type ' + typeof value);
   };
 

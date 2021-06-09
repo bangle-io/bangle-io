@@ -19,11 +19,13 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.17.1",
+    "@bangle.dev/core": "0.17.2",
+    "@bangle.dev/react": "0.17.2",
     "app-state-context": "workspace:*",
     "debounce-fn": "^5.0.0",
     "extension-helpers": "workspace:*",
     "react": "16.14.0",
+    "react-dom": "16.14.0",
     "utils": "workspace:*"
   },
   "publishConfig": {

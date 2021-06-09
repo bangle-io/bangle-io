@@ -30,7 +30,6 @@ import {
 import {
   isValidNoteWsPath,
   renameFile,
-  useDeleteFile,
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
@@ -60,6 +59,7 @@ import { useDestroyRef, useKeybindings, BaseError } from 'utils/index';
 import { EditorManagerContext } from 'editor-manager-context/index';
 import { useDispatchPrimaryEditor } from '../use-dispatch-primary-editor';
 import { addBoldToTitle } from '../utils';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 const LOG = false;
 
@@ -475,13 +475,19 @@ export function useRemoveActiveWorkspace({ dismissPalette }) {
 
 export function useDeleteActiveNote({ dismissPalette }) {
   const uid = 'DELETE_ACTIVE_NOTE';
-  const deleteFile = useDeleteFile();
+  const { deleteNote } = useWorkspaceHooksContext();
   const { wsPath, filePath } = useWorkspacePath();
 
   const onExecute = useCallback(async () => {
-    await deleteFile(wsPath);
+    if (
+      window.confirm(
+        `Are you sure you want to remove "${filePath}"? It cannot be undone.`,
+      )
+    ) {
+      await deleteNote(wsPath);
+    }
     dismissPalette();
-  }, [deleteFile, wsPath, dismissPalette]);
+  }, [deleteNote, wsPath, filePath, dismissPalette]);
 
   return queryMatch({
     uid,

@@ -11,6 +11,7 @@ import { WorkerSetup } from 'worker-setup/index';
 import { PageLifecycle } from './PageLifecycle';
 import { moduleSupport } from './module-support';
 import { AppState } from './AppStateProvider';
+import { WorkspaceHooksContextProvider } from 'workspace-hooks/index';
 
 if (typeof window !== undefined) {
   window.Sentry?.onLoad(function () {
@@ -59,9 +60,11 @@ ReactDOM.render(
       <PageLifecycle />
       <Router>
         <UIManager>
-          <EditorManager bangleIOContext={bangleIOContext}>
-            <App />
-          </EditorManager>
+          <WorkspaceHooksContextProvider>
+            <EditorManager bangleIOContext={bangleIOContext}>
+              <App />
+            </EditorManager>
+          </WorkspaceHooksContextProvider>
         </UIManager>
       </Router>
     </AppState>

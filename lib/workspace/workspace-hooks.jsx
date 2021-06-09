@@ -13,10 +13,8 @@ import {
   getWorkspaceInfo,
   listWorkspaces,
 } from './workspace-helpers';
-import { cachedListAllNoteWsPaths, createNote, deleteFile } from './file-ops';
-import { checkWidescreen, removeMdExtension, useDestroyRef } from 'utils/index';
+import { checkWidescreen, useDestroyRef } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
-import { replaceHistoryState } from './history-utils';
 import {
   HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
@@ -25,108 +23,6 @@ import {
 import { getFileSystemFromWsInfo } from './get-fs';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
-
-export function useListCachedNoteWsPaths() {
-  const { wsName } = useWorkspacePath();
-  const location = useLocation();
-  const [files, setFiles] = useState(undefined);
-
-  const destroyedRef = useDestroyRef();
-
-  const refreshFiles = useCallback(() => {
-    if (wsName) {
-      // const t = Math.random();
-      // console.time('cachedListAllNoteWsPaths' + t);
-      cachedListAllNoteWsPaths(wsName)
-        .then((items) => {
-          if (!destroyedRef.current) {
-            setFiles(items);
-            // console.timeEnd('cachedListAllNoteWsPaths' + t);
-            return;
-          }
-        })
-        .catch((error) => {
-          if (!destroyedRef.current) {
-            setFiles(undefined);
-          }
-          throw error;
-        });
-    }
-  }, [wsName, destroyedRef]);
-
-  useEffect(() => {
-    refreshFiles();
-    // workspaceStatus is added here so that if permission
-    // changes the files can be updated
-  }, [
-    refreshFiles,
-    location.state?.workspaceStatus,
-    // this is a way for someone to signal things this hook cares about have changed
-    location.state?.historyStateKey,
-  ]);
-
-  return [files, refreshFiles];
-}
-
-export function useCreateNote() {
-  const { pushWsPath } = useWorkspacePath();
-
-  const createNoteCallback = useCallback(
-    async (
-      bangleIOContext,
-      wsPath,
-      doc = Node.fromJSON(bangleIOContext.specRegistry.schema, {
-        type: 'doc',
-        content: [
-          {
-            type: 'heading',
-            attrs: {
-              level: 1,
-            },
-            content: [
-              {
-                type: 'text',
-                text: removeMdExtension(resolvePath(wsPath).fileName),
-              },
-            ],
-          },
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                text: 'Hello world!',
-              },
-            ],
-          },
-        ],
-      }),
-    ) => {
-      await createNote(bangleIOContext, wsPath, doc);
-      pushWsPath(wsPath);
-    },
-    [pushWsPath],
-  );
-
-  return createNoteCallback;
-}
-
-export function useDeleteFile() {
-  const { wsName, wsPath } = useWorkspacePath();
-  const history = useHistory();
-
-  const deleteByWsPath = useCallback(
-    async (wsPathToDelete) => {
-      await deleteFile(wsPathToDelete);
-      if (wsPathToDelete === wsPath) {
-        history.replace('/ws/' + wsName);
-      }
-    },
-    [wsName, wsPath, history],
-  );
-
-  return deleteByWsPath;
-}
 
 export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState([]);
@@ -212,7 +108,6 @@ export function useWorkspacePath() {
   // so it is a good idea to use useLocation instead of location
   const location = useLocation();
   const history = useHistory();
-
   const match = matchPath(location.pathname, {
     path: '/ws/:wsName',
     exact: false,
@@ -238,7 +133,6 @@ export function useWorkspacePath() {
     (wsPath, newTab = false, secondary = false) => {
       const { wsName, filePath } = resolvePath(wsPath);
       const newPath = encodeURI(`/ws/${wsName}/${filePath}`);
-
       if (newTab) {
         window.open(newPath);
         return;
@@ -317,14 +211,6 @@ export function useWorkspacePath() {
     });
   }, [history, location]);
 
-  // A way to signal something has changed
-  // making all hooks watching for this key will update
-  const refreshHistoryStateKey = useCallback(() => {
-    replaceHistoryState(history, {
-      historyStateKey: Math.random(),
-    });
-  }, [history]);
-
   return {
     wsName,
     wsPath,
@@ -334,7 +220,6 @@ export function useWorkspacePath() {
     replaceWsPath,
     removeWsPath,
     removeSecondaryWsPath,
-    refreshHistoryStateKey,
   };
 }
 

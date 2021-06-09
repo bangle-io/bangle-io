@@ -25,6 +25,7 @@
     "editor-manager-context": "workspace:*",
     "react": "16.14.0",
     "ui-context": "workspace:*",
-    "workspace": "workspace:*"
+    "workspace": "workspace:*",
+    "workspace-hooks": "workspace:*"
   }
 }

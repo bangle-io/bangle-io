@@ -3,20 +3,19 @@ import { conditionalSuffix } from 'utils/utility';
 import {
   filePathToWsPath,
   useWorkspacePath,
-  cachedListAllNoteWsPaths,
   validateNoteWsPath,
   resolvePath,
-  createNote,
   parseLocalFilePath,
   PathValidationError,
 } from 'workspace/index';
-import { Node } from '@bangle.dev/core/prosemirror/model';
 import { backLinkNodeName, newNoteLocation } from './config';
-import { removeMdExtension } from 'utils/index';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
   let { path, title } = nodeAttrs;
   const { wsName, wsPath: currentWsPath, pushWsPath } = useWorkspacePath();
+  const { noteWsPaths, createNote } = useWorkspaceHooksContext();
+
   const [invalidLink, updatedInvalidLink] = useState();
   title = title || path;
 
@@ -52,7 +51,9 @@ export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
           backLinkPath,
           currentWsPath,
           wsName,
+          noteWsPaths,
           bangleIOContext,
+          createNote,
         }).then(
           (matchedWsPath) => {
             pushWsPath(matchedWsPath, newTab, shift);
@@ -75,14 +76,15 @@ export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
 async function handleClick({
   backLinkPath,
   currentWsPath,
-  bangleIOContext,
   wsName,
+  noteWsPaths,
+  bangleIOContext,
+  createNote,
 }) {
-  const allWsPaths = await cachedListAllNoteWsPaths(wsName);
   const existingWsPathMatch = getMatchingWsPath(
     wsName,
     backLinkPath,
-    allWsPaths,
+    noteWsPaths,
   );
 
   if (existingWsPathMatch) {
@@ -113,30 +115,7 @@ async function handleClick({
 
   validateNoteWsPath(newWsPath);
 
-  await createNote(
-    bangleIOContext,
-    newWsPath,
-    Node.fromJSON(bangleIOContext.specRegistry.schema, {
-      type: 'doc',
-      content: [
-        {
-          type: 'heading',
-          attrs: {
-            level: 1,
-          },
-          content: [
-            {
-              type: 'text',
-              text: removeMdExtension(resolvePath(newWsPath).fileName),
-            },
-          ],
-        },
-        {
-          type: 'paragraph',
-        },
-      ],
-    }),
-  );
+  await createNote(bangleIOContext, newWsPath, { open: false });
 
   return newWsPath;
 }

@@ -10,6 +10,8 @@ export class BaseFileMetadata {
   }
 }
 
+// can look into https://github.com/fagbokforlaget/simple-fs/tree/master/src/filesystem
+// for inspiration of node style api for fs in browser
 // Assumptions
 // - a path with `.` extension is a file
 // - a path with no `.` is a directory

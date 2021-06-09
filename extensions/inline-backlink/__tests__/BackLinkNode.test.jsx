@@ -1,9 +1,7 @@
 import React from 'react';
-import {
-  createNote,
-  useWorkspacePath,
-  cachedListAllNoteWsPaths,
-} from 'workspace/index';
+import { useWorkspacePath } from 'workspace/index';
+
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 import { render, fireEvent, act } from '@testing-library/react';
 import { sleep } from 'utils/utility';
 import { coreSpec, corePlugins } from '@bangle.dev/core/utils/core-components';
@@ -17,8 +15,12 @@ jest.mock('workspace/index', () => {
   return {
     ...workspaceThings,
     useWorkspacePath: jest.fn(),
-    cachedListAllNoteWsPaths: jest.fn(),
-    createNote: jest.fn(),
+  };
+});
+jest.mock('workspace-hooks/index', () => {
+  return {
+    ...jest.requireActual('workspace-hooks/index'),
+    useWorkspaceHooksContext: jest.fn(),
   };
 });
 const bangleIOContext = new BangleIOContext({
@@ -29,14 +31,18 @@ const bangleIOContext = new BangleIOContext({
 
 describe('BackLinkNode', () => {
   const pushWsPathMock = jest.fn();
+  let createNote;
 
   beforeEach(() => {
+    createNote = jest.fn(async () => {});
     useWorkspacePath.mockImplementation(() => ({
       wsName: 'test-ws',
       pushWsPath: pushWsPathMock,
     }));
-    cachedListAllNoteWsPaths.mockImplementation(async () => []);
-    createNote.mockImplementation(async () => {});
+    useWorkspaceHooksContext.mockImplementation(() => ({
+      noteWsPaths: [],
+      createNote,
+    }));
   });
 
   test('renders correctly', async () => {
@@ -96,8 +102,8 @@ describe('BackLinkNode', () => {
     };
 
     test('clicks correctly when there is a match', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return ['test-ws:magic/some/path.md'];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return { noteWsPaths: ['test-ws:magic/some/path.md'], createNote };
       });
 
       // wait for the promise in click to resolve
@@ -115,8 +121,14 @@ describe('BackLinkNode', () => {
     });
 
     test('picks the top most when there are two matches match', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return ['test-ws:magic/note1.md', 'test-ws:magic/some/note1.md'];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          noteWsPaths: [
+            'test-ws:magic/note1.md',
+            'test-ws:magic/some/note1.md',
+          ],
+          createNote,
+        };
       });
 
       await clickSetup({ path: 'note1' });
@@ -132,8 +144,14 @@ describe('BackLinkNode', () => {
     });
 
     test('doesnt add md if already there', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return ['test-ws:magic/note1.md', 'test-ws:magic/some/note1.md'];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          noteWsPaths: [
+            'test-ws:magic/note1.md',
+            'test-ws:magic/some/note1.md',
+          ],
+          createNote,
+        };
       });
 
       await clickSetup({ path: 'note1.md' });
@@ -148,12 +166,15 @@ describe('BackLinkNode', () => {
     });
 
     test('picks the least nested when there are three matches match', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/some/note1.md',
-          'test-ws:magic/some-other/place/dig/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/some/note1.md',
+            'test-ws:magic/some-other/place/dig/note1.md',
+          ],
+          createNote,
+        };
       });
 
       await clickSetup({ path: 'note1' });
@@ -169,8 +190,8 @@ describe('BackLinkNode', () => {
     });
 
     test('fall backs to  case insensitive if no case sensitive match', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return ['test-ws:magic/note1.md'];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return { noteWsPaths: ['test-ws:magic/note1.md'], createNote };
       });
 
       await clickSetup({ path: 'Note1' });
@@ -186,8 +207,11 @@ describe('BackLinkNode', () => {
     });
 
     test('Get the exact match if it exists', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return ['test-ws:magic/NoTe1.md', 'test-ws:note1.md'];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          noteWsPaths: ['test-ws:magic/NoTe1.md', 'test-ws:note1.md'],
+          createNote,
+        };
       });
 
       await clickSetup({ path: 'NoTe1' });
@@ -202,11 +226,14 @@ describe('BackLinkNode', () => {
     });
 
     test("doesn't confuse if match ends with same", async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/something-note1.md',
-          'test-ws:magic/some-other/place/dig/some-else-note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/something-note1.md',
+            'test-ws:magic/some-other/place/dig/some-else-note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'note1' });
@@ -216,11 +243,14 @@ describe('BackLinkNode', () => {
     });
 
     test('doesnt confuse if a subdirectory path match partially matches 1', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/some-other/place/dig/some-else-note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/some-other/place/dig/some-else-note1.md',
+          ],
+          createNote,
+        };
       });
 
       // notice the `tel` and `hotel`
@@ -236,11 +266,14 @@ describe('BackLinkNode', () => {
     });
 
     test('doesnt confuse if a subdirectory path match partially matches 2', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/tel/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/tel/note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'tel/note1' });
@@ -255,11 +288,14 @@ describe('BackLinkNode', () => {
     });
 
     test('matches file name', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/tel/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/tel/note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'note1' });
@@ -274,11 +310,14 @@ describe('BackLinkNode', () => {
     });
 
     test('if no file name match', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/tel/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/tel/note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'note2' });
@@ -288,12 +327,15 @@ describe('BackLinkNode', () => {
     });
 
     test('opens sidebar on shift click', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/some/note1.md',
-          'test-ws:magic/some-other/place/dig/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/some/note1.md',
+            'test-ws:magic/some-other/place/dig/note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'note1' }, { shiftKey: true });
@@ -308,12 +350,15 @@ describe('BackLinkNode', () => {
     });
 
     test('opens new tab on shift click', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/some/note1.md',
-          'test-ws:magic/some-other/place/dig/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/some/note1.md',
+            'test-ws:magic/some-other/place/dig/note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'note1' }, { metaKey: true });
@@ -328,8 +373,8 @@ describe('BackLinkNode', () => {
     });
 
     test('no click if path validation fails', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return ['test-ws:magic/some/note1.md'];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return { noteWsPaths: ['test-ws:magic/some/note1.md'], createNote };
       });
 
       const renderResult = await clickSetup({ path: 'note:1' });
@@ -348,12 +393,15 @@ describe('BackLinkNode', () => {
     });
 
     test('if no match still clicks', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/some/note1.md',
-          'test-ws:magic/some-other/place/dig/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/some/note1.md',
+            'test-ws:magic/some-other/place/dig/note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'note2' });
@@ -363,12 +411,15 @@ describe('BackLinkNode', () => {
     });
 
     test('if no match still clicks 2', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/some/note1.md',
-          'test-ws:magic/some-other/place/dig/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/some/note1.md',
+            'test-ws:magic/some-other/place/dig/note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'some-place/note2' });
@@ -389,13 +440,16 @@ describe('BackLinkNode', () => {
         wsPath: 'test-ws:magic/hello/beautiful/world.md',
       }));
 
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/some/note2.md',
-          'test-ws:magic/hello/beautiful/world.md',
-          'test-ws:magic/note2.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/some/note2.md',
+            'test-ws:magic/hello/beautiful/world.md',
+            'test-ws:magic/note2.md',
+          ],
+        };
       });
 
       await clickSetup({ path: '../note2' });
@@ -412,23 +466,23 @@ describe('BackLinkNode', () => {
     });
 
     test('if no match creates note', async () => {
-      cachedListAllNoteWsPaths.mockImplementation(async () => {
-        return [
-          'test-ws:magic/some-place/hotel/note1.md',
-          'test-ws:magic/some/note1.md',
-          'test-ws:magic/some-other/place/dig/note1.md',
-        ];
+      useWorkspaceHooksContext.mockImplementation(() => {
+        return {
+          createNote,
+          noteWsPaths: [
+            'test-ws:magic/some-place/hotel/note1.md',
+            'test-ws:magic/some/note1.md',
+            'test-ws:magic/some-other/place/dig/note1.md',
+          ],
+        };
       });
 
       await clickSetup({ path: 'note2' });
 
       expect(createNote).toBeCalledTimes(1);
-      expect(createNote).nthCalledWith(
-        1,
-        bangleIOContext,
-        'test-ws:note2.md',
-        expect.any(Node),
-      );
+      expect(createNote).nthCalledWith(1, bangleIOContext, 'test-ws:note2.md', {
+        open: false,
+      });
       expect(pushWsPathMock).toBeCalledTimes(1);
       expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note2.md', false, false);
     });

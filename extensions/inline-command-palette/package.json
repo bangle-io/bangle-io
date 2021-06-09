@@ -19,8 +19,8 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.17.1",
-    "@bangle.dev/react": "0.17.1",
+    "@bangle.dev/core": "0.17.2",
+    "@bangle.dev/react": "0.17.2",
     "chrono-node": "^2.2.6",
     "config": "workspace:*",
     "extension-helpers": "workspace:*",

@@ -9,12 +9,8 @@ import {
   NullIcon,
   ButtonIcon,
 } from 'ui-components/index';
-import {
-  useDeleteFile,
-  useListCachedNoteWsPaths,
-  useWorkspacePath,
-  resolvePath,
-} from 'workspace/index';
+import { useWorkspacePath, resolvePath } from 'workspace/index';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 import { useLocalStorage } from 'utils/index';
 import { useNewNoteCmd } from 'commands/index';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
@@ -33,8 +29,8 @@ const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function FileBrowser() {
-  let [files = [], refreshFiles] = useListCachedNoteWsPaths();
-  const deleteByWsPath = useDeleteFile();
+  const { noteWsPaths, deleteNote } = useWorkspaceHooksContext();
+
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
   const activeFilePath = activeWSPath && resolvePath(activeWSPath).filePath;
@@ -49,18 +45,6 @@ export function FileBrowser() {
     }
   }, [dispatch, widescreen]);
 
-  const deleteFile = useCallback(
-    async (wsPath) => {
-      await deleteByWsPath(wsPath);
-      await refreshFiles();
-    },
-    [refreshFiles, deleteByWsPath],
-  );
-
-  useEffect(() => {
-    refreshFiles();
-  }, [wsName, refreshFiles]);
-
   const createNewFile = useCallback(
     (path) => {
       newFileCommand({ initialQuery: path });
@@ -71,8 +55,8 @@ export function FileBrowser() {
   return (
     <GenericFileBrowser
       wsName={wsName}
-      files={files}
-      deleteFile={deleteFile}
+      files={noteWsPaths}
+      deleteNote={deleteNote}
       pushWsPath={pushWsPath}
       widescreen={widescreen}
       activeFilePath={activeFilePath}
@@ -89,7 +73,7 @@ const IconStyle = {
 export function GenericFileBrowser({
   wsName,
   files,
-  deleteFile,
+  deleteNote,
   pushWsPath,
   widescreen,
   activeFilePath,
@@ -109,7 +93,7 @@ export function GenericFileBrowser({
       wsName={wsName}
       filesAndDirList={filesAndDirList}
       dirSet={dirSet}
-      deleteFile={deleteFile}
+      deleteNote={deleteNote}
       pushWsPath={pushWsPath}
       widescreen={widescreen}
       activeFilePath={activeFilePath}
@@ -129,7 +113,7 @@ function RenderRow({
   isActive,
   isCollapsed,
   createNewFile,
-  deleteFile,
+  deleteNote,
   onClick,
 }) {
   return (
@@ -187,7 +171,7 @@ function RenderRow({
                 if (
                   window.confirm(`Are you sure you want to delete "${name}"? `)
                 ) {
-                  deleteFile(wsPath);
+                  deleteNote(wsPath);
                 }
               }}
             >
@@ -205,7 +189,7 @@ const RenderItems = React.memo(
     wsName,
     filesAndDirList,
     dirSet,
-    deleteFile,
+    deleteNote,
     pushWsPath,
     activeFilePath,
     closeSidebar,
@@ -291,7 +275,7 @@ const RenderItems = React.memo(
           isActive={activeFilePath === path}
           isCollapsed={collapsed.includes(path)}
           createNewFile={createNewFile}
-          deleteFile={deleteFile}
+          deleteNote={deleteNote}
           onClick={onClick}
         />
       );

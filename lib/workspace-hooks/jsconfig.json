@@ -1,0 +1,32 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "bangle-io-context": [
+        "../bangle-io-context/index.js"
+      ],
+      "bangle-io-context/*": [
+        "../bangle-io-context/*"
+      ],
+      "config": [
+        "../config/index.js"
+      ],
+      "config/*": [
+        "../config/*"
+      ],
+      "utils": [
+        "../utils/index.js"
+      ],
+      "utils/*": [
+        "../utils/*"
+      ],
+      "workspace": [
+        "../workspace/index.js"
+      ],
+      "workspace/*": [
+        "../workspace/*"
+      ]
+    }
+  }
+}
