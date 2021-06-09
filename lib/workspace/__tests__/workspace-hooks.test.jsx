@@ -8,11 +8,7 @@ import { checkWidescreen } from 'utils/index';
 import { BangleIOContext } from 'bangle-io-context/index';
 import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
 import { Workspace } from '../Workspace';
-import {
-  useDeleteFile,
-  useWorkspacePath,
-  useWorkspaces,
-} from '../workspace-hooks';
+import { useWorkspacePath, useWorkspaces } from '../workspace-hooks';
 import { helpFSWorkspaceInfo } from 'config/help-fs';
 import { listAllFiles } from '../file-ops';
 
@@ -151,52 +147,6 @@ describe('useWorkspacePath', () => {
     });
     expect(testLocation?.search).toBe('');
     expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
-  });
-});
-
-describe('useDeleteFile', () => {
-  test('browser delete file', async () => {
-    let callback;
-    let testLocation;
-
-    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
-
-    await mockBabyFs.setupMockFile('kujo', 'one.md');
-
-    function Comp() {
-      const deleteFileCb = useDeleteFile();
-      callback = deleteFileCb;
-      return <div>Hello</div>;
-    }
-
-    await render(
-      <Router initialEntries={['/ws/kujo/one.md']}>
-        <Switch>
-          <Route path={['/ws/:wsName']}>
-            <Comp />
-          </Route>
-        </Switch>
-        <Route
-          path="*"
-          render={({ history, location }) => {
-            testLocation = location;
-            return null;
-          }}
-        />
-      </Router>,
-    );
-
-    expect(callback).not.toBeUndefined();
-
-    const result = callback('kujo:one.md');
-    expect(result).toBeInstanceOf(Promise);
-
-    await result;
-
-    expect(testLocation.pathname).toBe('/ws/kujo');
-
-    expect(mockBabyFs.idbFS.unlink).toBeCalledTimes(1);
-    expect(mockBabyFs.idbFS.unlink).toBeCalledWith('kujo/one.md');
   });
 });
 

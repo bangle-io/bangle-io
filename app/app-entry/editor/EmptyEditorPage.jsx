@@ -7,10 +7,7 @@ import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 export function EmptyEditorPage() {
   const { dispatch } = useContext(UIManagerContext);
-  const { noteWsPaths, refreshWsPaths } = useWorkspaceHooksContext();
-  useEffect(() => {
-    refreshWsPaths();
-  }, [refreshWsPaths]);
+  const { noteWsPaths } = useWorkspaceHooksContext();
 
   const recentFiles = [];
   return (

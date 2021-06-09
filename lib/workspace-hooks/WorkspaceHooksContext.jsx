@@ -1,3 +1,5 @@
+import { useHistory } from 'react-router-dom';
+
 import React, {
   useEffect,
   useContext,
@@ -10,11 +12,18 @@ import {
   listAllFiles,
   useWorkspacePath,
   isValidNoteWsPath,
+  validateNoteWsPath,
   createNote,
   resolvePath,
   deleteFile,
 } from 'workspace/index';
 import { removeMdExtension } from 'utils/index';
+
+const LOG = true;
+
+let log = LOG
+  ? console.log.bind(console, 'WorkspaceHooksContextProvider')
+  : () => {};
 
 const WorkspaceHooksContext = React.createContext({});
 
@@ -27,9 +36,11 @@ export function WorkspaceHooksContextProvider({ children }) {
 
   const { fileWsPaths, noteWsPaths, refreshWsPaths } = useFiles(wsName);
   const createNote = useCreateNote({ refreshWsPaths });
+  const deleteNote = useDeleteNote({ refreshWsPaths });
+
   const value = useMemo(() => {
-    return { fileWsPaths, noteWsPaths, refreshWsPaths, createNote };
-  }, [fileWsPaths, noteWsPaths, refreshWsPaths, createNote]);
+    return { fileWsPaths, noteWsPaths, refreshWsPaths, createNote, deleteNote };
+  }, [fileWsPaths, noteWsPaths, refreshWsPaths, createNote, deleteNote]);
 
   return (
     <WorkspaceHooksContext.Provider value={value}>
@@ -46,6 +57,7 @@ export function useFiles(wsName) {
   }, [fileWsPaths]);
 
   const refreshWsPaths = useCallback(() => {
+    log('refreshing wsPaths');
     let destroyed = false;
     if (wsName) {
       listAllFiles(wsName)
@@ -70,7 +82,7 @@ export function useFiles(wsName) {
   useEffect(() => {
     // load the wsPaths on mount
     refreshWsPaths();
-  }, [refreshWsPaths]);
+  }, [refreshWsPaths, wsName]);
 
   return { fileWsPaths, noteWsPaths, refreshWsPaths };
 }
@@ -120,4 +132,34 @@ export function useCreateNote({ refreshWsPaths }) {
   );
 
   return createNoteCallback;
+}
+
+export function useDeleteNote({ refreshWsPaths }) {
+  const { wsName, wsPath, secondaryWsPath, removeSecondaryWsPath } =
+    useWorkspacePath();
+  const history = useHistory();
+
+  const deleteByWsPath = useCallback(
+    async (wsPathToDelete) => {
+      validateNoteWsPath(wsPathToDelete);
+
+      if (wsPathToDelete === wsPath) {
+        history.replace('/ws/' + wsName);
+      } else if (wsPathToDelete === secondaryWsPath) {
+        removeSecondaryWsPath();
+      }
+      await deleteFile(wsPathToDelete);
+      await refreshWsPaths();
+    },
+    [
+      wsName,
+      wsPath,
+      history,
+      secondaryWsPath,
+      removeSecondaryWsPath,
+      refreshWsPaths,
+    ],
+  );
+
+  return deleteByWsPath;
 }

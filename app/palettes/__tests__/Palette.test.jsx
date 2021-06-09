@@ -19,7 +19,6 @@ jest.mock('workspace/index', () => {
     useWorkspacePath: jest.fn(),
     useWorkspaces: jest.fn(),
     useRenameActiveNote: jest.fn(),
-    useDeleteFile: jest.fn(),
   };
 });
 

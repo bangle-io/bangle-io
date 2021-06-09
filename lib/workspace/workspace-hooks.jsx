@@ -26,23 +26,6 @@ import { getFileSystemFromWsInfo } from './get-fs';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
 
-export function useDeleteFile() {
-  const { wsName, wsPath } = useWorkspacePath();
-  const history = useHistory();
-
-  const deleteByWsPath = useCallback(
-    async (wsPathToDelete) => {
-      await deleteFile(wsPathToDelete);
-      if (wsPathToDelete === wsPath) {
-        history.replace('/ws/' + wsName);
-      }
-    },
-    [wsName, wsPath, history],
-  );
-
-  return deleteByWsPath;
-}
-
 export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState([]);
   const { wsName } = useWorkspacePath();

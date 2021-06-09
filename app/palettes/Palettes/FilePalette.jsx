@@ -50,7 +50,7 @@ function FilePaletteUIComponent({
   rawInputValue,
 }) {
   const { pushWsPath } = useWorkspacePath();
-  const { noteWsPaths, refreshWsPaths } = useWorkspaceHooksContext();
+  const { noteWsPaths } = useWorkspaceHooksContext();
 
   const recentFiles = useRecordRecentWsPaths();
 
@@ -114,10 +114,6 @@ function FilePaletteUIComponent({
       },
     };
   }, []);
-
-  useEffect(() => {
-    refreshWsPaths();
-  }, [refreshWsPaths]);
 
   return (
     <>
