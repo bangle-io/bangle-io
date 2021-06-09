@@ -19,7 +19,7 @@ import {
 } from 'workspace/index';
 import { removeMdExtension } from 'utils/index';
 
-const LOG = true;
+const LOG = false;
 
 let log = LOG
   ? console.log.bind(console, 'WorkspaceHooksContextProvider')

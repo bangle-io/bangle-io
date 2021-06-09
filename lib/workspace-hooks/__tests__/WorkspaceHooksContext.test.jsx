@@ -14,11 +14,20 @@ jest.mock('workspace/index', () => {
 });
 
 describe('useFiles', () => {
+  function Comp({ children }) {
+    return (
+      <Router initialEntries={['/ws/kujo/one.md']}>
+        <Switch>
+          <Route path={['/ws/:wsName']}>{children}</Route>
+        </Switch>
+      </Router>
+    );
+  }
   test('works', async () => {
     let render;
 
     act(() => {
-      render = renderHook(() => useFiles('test-ws1'));
+      render = renderHook(() => useFiles('test-ws1'), { wrapper: Comp });
     });
 
     let promise;
@@ -39,7 +48,7 @@ describe('useFiles', () => {
     let render;
 
     act(() => {
-      render = renderHook(() => useFiles('test-ws1'));
+      render = renderHook(() => useFiles('test-ws1'), { wrapper: Comp });
     });
 
     let promise;

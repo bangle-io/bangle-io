@@ -185,10 +185,8 @@ export function useCloneWorkspaceCmd() {
                     placeholder: 'Please give your workspace a name',
                     onInputConfirm: async (query) => {
                       if (query) {
-                        console.log('starting');
                         await createWorkspace(query, 'browser');
                         await copyWorkspace(wsName, query);
-                        console.log('finsihed');
 
                         await refreshWsPaths();
                         res();
