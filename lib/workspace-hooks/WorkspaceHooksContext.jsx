@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import React, {
   useEffect,
@@ -50,6 +50,8 @@ export function WorkspaceHooksContextProvider({ children }) {
 }
 
 export function useFiles(wsName) {
+  const location = useLocation();
+
   const [fileWsPaths, setFiles] = useState([]);
 
   const noteWsPaths = useMemo(() => {
@@ -82,7 +84,12 @@ export function useFiles(wsName) {
   useEffect(() => {
     // load the wsPaths on mount
     refreshWsPaths();
-  }, [refreshWsPaths, wsName]);
+  }, [
+    refreshWsPaths,
+    wsName,
+    // when user grants permission to read file
+    location.state?.workspaceStatus,
+  ]);
 
   return { fileWsPaths, noteWsPaths, refreshWsPaths };
 }
