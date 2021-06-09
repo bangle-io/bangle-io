@@ -13,7 +13,7 @@ import {
   getWorkspaceInfo,
   listWorkspaces,
 } from './workspace-helpers';
-import { cachedListAllNoteWsPaths, createNote, deleteFile } from './file-ops';
+import { createNote, deleteFile } from './file-ops';
 import { checkWidescreen, removeMdExtension, useDestroyRef } from 'utils/index';
 import { importGithubWorkspace } from './github-helpers';
 import { replaceHistoryState } from './history-utils';
@@ -25,48 +25,6 @@ import {
 import { getFileSystemFromWsInfo } from './get-fs';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspace/index') : () => {};
-
-export function useListCachedNoteWsPaths() {
-  const { wsName } = useWorkspacePath();
-  const location = useLocation();
-  const [files, setFiles] = useState(undefined);
-
-  const destroyedRef = useDestroyRef();
-
-  const refreshFiles = useCallback(() => {
-    if (wsName) {
-      // const t = Math.random();
-      // console.time('cachedListAllNoteWsPaths' + t);
-      cachedListAllNoteWsPaths(wsName)
-        .then((items) => {
-          if (!destroyedRef.current) {
-            setFiles(items);
-            // console.timeEnd('cachedListAllNoteWsPaths' + t);
-            return;
-          }
-        })
-        .catch((error) => {
-          if (!destroyedRef.current) {
-            setFiles(undefined);
-          }
-          throw error;
-        });
-    }
-  }, [wsName, destroyedRef]);
-
-  useEffect(() => {
-    refreshFiles();
-    // workspaceStatus is added here so that if permission
-    // changes the files can be updated
-  }, [
-    refreshFiles,
-    location.state?.workspaceStatus,
-    // this is a way for someone to signal things this hook cares about have changed
-    location.state?.historyStateKey,
-  ]);
-
-  return [files, refreshFiles];
-}
 
 export function useCreateNote() {
   const { pushWsPath } = useWorkspacePath();
@@ -212,7 +170,6 @@ export function useWorkspacePath() {
   // so it is a good idea to use useLocation instead of location
   const location = useLocation();
   const history = useHistory();
-
   const match = matchPath(location.pathname, {
     path: '/ws/:wsName',
     exact: false,

@@ -1,24 +1,25 @@
 import { COMMAND_PALETTE, FILE_PALETTE } from 'palettes/index';
 import React, { useContext, useEffect } from 'react';
 import { UIManagerContext } from 'ui-context';
-import { resolvePath, useListCachedNoteWsPaths } from 'workspace/index';
+import { resolvePath } from 'workspace/index';
 import { Link } from 'react-router-dom';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 export function EmptyEditorPage() {
   const { dispatch } = useContext(UIManagerContext);
-  let [files = [], refreshFiles] = useListCachedNoteWsPaths();
+  const { noteWsPaths, refreshWsPaths } = useWorkspaceHooksContext();
   useEffect(() => {
-    refreshFiles();
-  }, [refreshFiles]);
-  const recentFiles = [];
+    refreshWsPaths();
+  }, [refreshWsPaths]);
 
+  const recentFiles = [];
   return (
     <>
       <h3 className="text-xl sm:text-2xl lg:text-3xl leading-none">
         Recently opened files
       </h3>
       <ul className="list-inside list-disc my-2">
-        {Array.from(new Set([...recentFiles, ...files.slice(0, 3)])).map(
+        {Array.from(new Set([...recentFiles, ...noteWsPaths.slice(0, 3)])).map(
           (r, i) => {
             return (
               <li key={i}>

@@ -4,13 +4,10 @@ import {
   keybindings,
   keyDisplayValue,
 } from 'config/index';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
-import React, { useRef, useMemo, useEffect } from 'react';
-import {
-  useListCachedNoteWsPaths,
-  useWorkspacePath,
-  resolvePath,
-} from 'workspace/index';
+import React, { useRef, useMemo, useEffect, useContext } from 'react';
+import { useWorkspacePath, resolvePath } from 'workspace/index';
 import { FILE_PALETTE, PaletteTypeBase } from '../paletteTypes';
 import {
   ButtonIcon,
@@ -53,11 +50,12 @@ function FilePaletteUIComponent({
   rawInputValue,
 }) {
   const { pushWsPath } = useWorkspacePath();
-  const [currentFiles = [], refreshFiles] = useListCachedNoteWsPaths();
+  const { noteWsPaths, refreshWsPaths } = useWorkspaceHooksContext();
+
   const recentFiles = useRecordRecentWsPaths();
 
   const resolvedItems = useMemo(() => {
-    const files = dedupeArray([...recentFiles, ...currentFiles]);
+    const files = dedupeArray([...recentFiles, ...noteWsPaths]);
 
     const wsPaths = getItems({ query, files });
 
@@ -98,7 +96,7 @@ function FilePaletteUIComponent({
         ),
       };
     });
-  }, [pushWsPath, query, currentFiles, recentFiles, dismissPalette]);
+  }, [pushWsPath, query, noteWsPaths, recentFiles, dismissPalette]);
 
   const updateCounterRef = useRef();
   const { getItemProps, inputProps } = usePaletteProps({
@@ -118,8 +116,8 @@ function FilePaletteUIComponent({
   }, []);
 
   useEffect(() => {
-    refreshFiles();
-  }, [refreshFiles]);
+    refreshWsPaths();
+  }, [refreshWsPaths]);
 
   return (
     <>

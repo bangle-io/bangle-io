@@ -1,5 +1,5 @@
 {
-  "name": "inline-backlink",
+  "name": "workspace-hooks",
   "version": "0.0.0",
   "authors": [
     {
@@ -20,24 +20,20 @@
   "scripts": {},
   "devDependencies": {
     "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.5",
-    "bangle-io-context": "workspace:*"
+    "@testing-library/react-hooks": "^5.1.2",
+    "baby-fs": "workspace:*",
+    "bangle-io-context": "workspace:*",
+    "react-dom": "16.14.0",
+    "react-test-renderer": "16.14.0"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.17.1",
-    "@bangle.dev/react": "0.17.1",
-    "@bangle.dev/wiki-link": "0.17.1",
     "config": "workspace:*",
-    "extension-helpers": "workspace:*",
-    "inline-palette": "workspace:*",
     "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "ui-components": "workspace:*",
+    "react-router-dom": "^5.2.0",
     "utils": "workspace:*",
-    "workspace": "workspace:*",
-    "workspace-hooks": "workspace:*"
+    "workspace": "workspace:*"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   }
 }

@@ -9,12 +9,8 @@ import {
   NullIcon,
   ButtonIcon,
 } from 'ui-components/index';
-import {
-  useDeleteFile,
-  useListCachedNoteWsPaths,
-  useWorkspacePath,
-  resolvePath,
-} from 'workspace/index';
+import { useDeleteFile, useWorkspacePath, resolvePath } from 'workspace/index';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 import { useLocalStorage } from 'utils/index';
 import { useNewNoteCmd } from 'commands/index';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
@@ -33,7 +29,8 @@ const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function FileBrowser() {
-  let [files = [], refreshFiles] = useListCachedNoteWsPaths();
+  const { noteWsPaths, refreshWsPaths } = useWorkspaceHooksContext();
+
   const deleteByWsPath = useDeleteFile();
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
@@ -52,14 +49,14 @@ export function FileBrowser() {
   const deleteFile = useCallback(
     async (wsPath) => {
       await deleteByWsPath(wsPath);
-      await refreshFiles();
+      await refreshWsPaths();
     },
-    [refreshFiles, deleteByWsPath],
+    [refreshWsPaths, deleteByWsPath],
   );
 
   useEffect(() => {
-    refreshFiles();
-  }, [wsName, refreshFiles]);
+    refreshWsPaths();
+  }, [wsName, refreshWsPaths]);
 
   const createNewFile = useCallback(
     (path) => {
@@ -71,7 +68,7 @@ export function FileBrowser() {
   return (
     <GenericFileBrowser
       wsName={wsName}
-      files={files}
+      files={noteWsPaths}
       deleteFile={deleteFile}
       pushWsPath={pushWsPath}
       widescreen={widescreen}

@@ -10,6 +10,7 @@
     "extension-helpers",
     "utils",
     "workspace",
+    "workspace-hooks",
     "markdown",
     "constants"
   ]

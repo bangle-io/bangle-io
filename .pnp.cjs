@@ -167,6 +167,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/workspace"
       },
       {
+        "name": "workspace-hooks",
+        "reference": "workspace:lib/workspace-hooks"
+      },
+      {
         "name": "_scripts",
         "reference": "workspace:tooling/_scripts"
       },
@@ -231,7 +235,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["utils", ["workspace:lib/utils"]],
       ["worker", ["workspace:worker"]],
       ["worker-setup", ["workspace:app/worker-setup"]],
-      ["workspace", ["workspace:lib/workspace"]]
+      ["workspace", ["workspace:lib/workspace"]],
+      ["workspace-hooks", ["workspace:lib/workspace-hooks"]]
     ],
     "fallbackPool": [
     ],
@@ -5272,6 +5277,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
+        ["virtual:0f251e21ce47ba607b80829a0214d5d2aec9c0ae8c40151f30d8ff401ea06ff08fecb7b557eca2be576d0e761df2792dbc279bf1b9f3552fa74c3fdc6f832852#npm:5.1.2", {
+          "packageLocation": "./.yarn/__virtual__/@testing-library-react-hooks-virtual-5dec1a5aed/0/cache/@testing-library-react-hooks-npm-5.1.2-1c7503f518-7d8f033190.zip/node_modules/@testing-library/react-hooks/",
+          "packageDependencies": [
+            ["@testing-library/react-hooks", "virtual:0f251e21ce47ba607b80829a0214d5d2aec9c0ae8c40151f30d8ff401ea06ff08fecb7b557eca2be576d0e761df2792dbc279bf1b9f3552fa74c3fdc6f832852#npm:5.1.2"],
+            ["@babel/runtime", "npm:7.12.5"],
+            ["@types/react", "npm:17.0.3"],
+            ["@types/react-dom", "npm:17.0.3"],
+            ["@types/react-test-renderer", "npm:17.0.1"],
+            ["filter-console", "npm:0.1.1"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:16.14.0"],
+            ["react-error-boundary", "virtual:752910076076bfd21741c9bdd0d852688519adf99cfff24cee6b4afcae7335c2fb930d6d1acc88874ebff68a0e165fd1346bf1e81e1fd790864b04bc6886e21a#npm:3.1.1"],
+            ["react-test-renderer", "virtual:0f251e21ce47ba607b80829a0214d5d2aec9c0ae8c40151f30d8ff401ea06ff08fecb7b557eca2be576d0e761df2792dbc279bf1b9f3552fa74c3fdc6f832852#npm:16.14.0"]
+          ],
+          "packagePeers": [
+            "react-dom",
+            "react-test-renderer",
+            "react"
+          ],
+          "linkType": "HARD",
+        }],
         ["virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:5.1.2", {
           "packageLocation": "./.yarn/__virtual__/@testing-library-react-hooks-virtual-7529100760/0/cache/@testing-library-react-hooks-npm-5.1.2-1c7503f518-7d8f033190.zip/node_modules/@testing-library/react-hooks/",
           "packageDependencies": [
@@ -6546,7 +6572,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:lib/utils"],
             ["worker-setup", "workspace:app/worker-setup"],
-            ["workspace", "workspace:lib/workspace"]
+            ["workspace", "workspace:lib/workspace"],
+            ["workspace-hooks", "workspace:lib/workspace-hooks"]
           ],
           "linkType": "SOFT",
         }]
@@ -12235,7 +12262,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:16.14.0"],
             ["ui-components", "workspace:lib/ui-components"],
             ["utils", "workspace:lib/utils"],
-            ["workspace", "workspace:lib/workspace"]
+            ["workspace", "workspace:lib/workspace"],
+            ["workspace-hooks", "workspace:lib/workspace-hooks"]
           ],
           "linkType": "SOFT",
         }]
@@ -16068,7 +16096,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ui-components", "workspace:lib/ui-components"],
             ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:lib/utils"],
-            ["workspace", "workspace:lib/workspace"]
+            ["workspace", "workspace:lib/workspace"],
+            ["workspace-hooks", "workspace:lib/workspace-hooks"]
           ],
           "linkType": "SOFT",
         }]
@@ -17510,12 +17539,36 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["react-test-renderer", [
+        ["npm:16.14.0", {
+          "packageLocation": "./.yarn/cache/react-test-renderer-npm-16.14.0-25f352205f-96eb8a2566.zip/node_modules/react-test-renderer/",
+          "packageDependencies": [
+            ["react-test-renderer", "npm:16.14.0"]
+          ],
+          "linkType": "SOFT",
+        }],
         ["npm:17.0.2", {
           "packageLocation": "./.yarn/cache/react-test-renderer-npm-17.0.2-1086717127-e6b5c6ed2a.zip/node_modules/react-test-renderer/",
           "packageDependencies": [
             ["react-test-renderer", "npm:17.0.2"]
           ],
           "linkType": "SOFT",
+        }],
+        ["virtual:0f251e21ce47ba607b80829a0214d5d2aec9c0ae8c40151f30d8ff401ea06ff08fecb7b557eca2be576d0e761df2792dbc279bf1b9f3552fa74c3fdc6f832852#npm:16.14.0", {
+          "packageLocation": "./.yarn/__virtual__/react-test-renderer-virtual-3d5b33fa3a/0/cache/react-test-renderer-npm-16.14.0-25f352205f-96eb8a2566.zip/node_modules/react-test-renderer/",
+          "packageDependencies": [
+            ["react-test-renderer", "virtual:0f251e21ce47ba607b80829a0214d5d2aec9c0ae8c40151f30d8ff401ea06ff08fecb7b557eca2be576d0e761df2792dbc279bf1b9f3552fa74c3fdc6f832852#npm:16.14.0"],
+            ["@types/react", null],
+            ["object-assign", "npm:4.1.1"],
+            ["prop-types", "npm:15.7.2"],
+            ["react", "npm:16.14.0"],
+            ["react-is", "npm:16.13.1"],
+            ["scheduler", "npm:0.19.1"]
+          ],
+          "packagePeers": [
+            "@types/react",
+            "react"
+          ],
+          "linkType": "HARD",
         }],
         ["virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:17.0.2", {
           "packageLocation": "./.yarn/__virtual__/react-test-renderer-virtual-68858e954c/0/cache/react-test-renderer-npm-17.0.2-1086717127-e6b5c6ed2a.zip/node_modules/react-test-renderer/",
@@ -20979,6 +21032,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:16.14.0"],
             ["react-router-dom", "virtual:1b848b7296ee27ba66b4940b155c324a4313217d7338c2d69e8186aac1b15b6ff64ddf487207f58198da10c3467ce994c00edf9aa9e00e94484db8b1d390c2ef#npm:5.2.0"],
             ["utils", "workspace:lib/utils"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["workspace-hooks", [
+        ["workspace:lib/workspace-hooks", {
+          "packageLocation": "./lib/workspace-hooks/",
+          "packageDependencies": [
+            ["workspace-hooks", "workspace:lib/workspace-hooks"],
+            ["@testing-library/react", "virtual:1b848b7296ee27ba66b4940b155c324a4313217d7338c2d69e8186aac1b15b6ff64ddf487207f58198da10c3467ce994c00edf9aa9e00e94484db8b1d390c2ef#npm:11.2.6"],
+            ["@testing-library/react-hooks", "virtual:0f251e21ce47ba607b80829a0214d5d2aec9c0ae8c40151f30d8ff401ea06ff08fecb7b557eca2be576d0e761df2792dbc279bf1b9f3552fa74c3fdc6f832852#npm:5.1.2"],
+            ["baby-fs", "workspace:js-lib/baby-fs"],
+            ["bangle-io-context", "workspace:lib/bangle-io-context"],
+            ["config", "workspace:lib/config"],
+            ["react", "npm:16.14.0"],
+            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:16.14.0"],
+            ["react-router-dom", "virtual:1b848b7296ee27ba66b4940b155c324a4313217d7338c2d69e8186aac1b15b6ff64ddf487207f58198da10c3467ce994c00edf9aa9e00e94484db8b1d390c2ef#npm:5.2.0"],
+            ["react-test-renderer", "virtual:0f251e21ce47ba607b80829a0214d5d2aec9c0ae8c40151f30d8ff401ea06ff08fecb7b557eca2be576d0e761df2792dbc279bf1b9f3552fa74c3fdc6f832852#npm:16.14.0"],
+            ["utils", "workspace:lib/utils"],
+            ["workspace", "workspace:lib/workspace"]
           ],
           "linkType": "SOFT",
         }]

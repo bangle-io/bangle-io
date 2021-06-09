@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { conditionalSuffix } from 'utils/utility';
 import {
   filePathToWsPath,
   useWorkspacePath,
-  cachedListAllNoteWsPaths,
   validateNoteWsPath,
   resolvePath,
   createNote,
@@ -13,10 +12,13 @@ import {
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import { backLinkNodeName, newNoteLocation } from './config';
 import { removeMdExtension } from 'utils/index';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
   let { path, title } = nodeAttrs;
   const { wsName, wsPath: currentWsPath, pushWsPath } = useWorkspacePath();
+  const { noteWsPaths } = useWorkspaceHooksContext();
+
   const [invalidLink, updatedInvalidLink] = useState();
   title = title || path;
 
@@ -52,6 +54,7 @@ export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
           backLinkPath,
           currentWsPath,
           wsName,
+          noteWsPaths,
           bangleIOContext,
         }).then(
           (matchedWsPath) => {
@@ -75,14 +78,14 @@ export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
 async function handleClick({
   backLinkPath,
   currentWsPath,
-  bangleIOContext,
   wsName,
+  noteWsPaths,
+  bangleIOContext,
 }) {
-  const allWsPaths = await cachedListAllNoteWsPaths(wsName);
   const existingWsPathMatch = getMatchingWsPath(
     wsName,
     backLinkPath,
-    allWsPaths,
+    noteWsPaths,
   );
 
   if (existingWsPathMatch) {

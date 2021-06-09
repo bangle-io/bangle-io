@@ -3,15 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { render, act } from '@testing-library/react';
 import { UIManager, UIManagerContext } from 'ui-context/index';
 
-import {
-  useListCachedNoteWsPaths,
-  useWorkspacePath,
-  useWorkspaces,
-} from 'workspace/index';
+import { useWorkspacePath, useWorkspaces } from 'workspace/index';
 import { sleep } from 'utils/index';
 import { EditorManager } from 'editor-manager-context/index';
 import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../Palette';
+import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 let result, paletteType, paletteInitialQuery, dispatch;
 
@@ -21,17 +18,24 @@ jest.mock('workspace/index', () => {
     ...actual,
     useWorkspacePath: jest.fn(),
     useWorkspaces: jest.fn(),
-    useListCachedNoteWsPaths: jest.fn(),
     useCreateNote: jest.fn(),
     useRenameActiveNote: jest.fn(),
     useDeleteFile: jest.fn(),
   };
 });
 
+jest.mock('workspace-hooks/index', () => {
+  return {
+    ...jest.requireActual('workspace-hooks/index'),
+    useWorkspaceHooksContext: jest.fn(),
+  };
+});
+
 beforeEach(async () => {
-  useListCachedNoteWsPaths.mockImplementation(
-    jest.fn(() => [undefined, jest.fn()]),
-  );
+  useWorkspaceHooksContext.mockImplementation(() => ({
+    noteWsPaths: [],
+    refreshWsPaths: jest.fn(),
+  }));
   useWorkspaces.mockImplementation(jest.fn(() => ({ workspaces: [] })));
   useWorkspacePath.mockImplementation(jest.fn(() => ({})));
 
@@ -71,8 +75,8 @@ test('Empty on mount', async () => {
 test('Correctly switches to file type', async () => {
   let promise = Promise.resolve();
 
-  useListCachedNoteWsPaths.mockImplementation(() => {
-    return [['my-ws:one.md'], jest.fn()];
+  useWorkspaceHooksContext.mockImplementation(() => {
+    return { noteWsPaths: ['my-ws:one.md'], refreshWsPaths: jest.fn() };
   });
   act(() => {
     dispatch({

@@ -3980,6 +3980,7 @@ __metadata:
     utils: "workspace:*"
     worker-setup: "workspace:*"
     workspace: "workspace:*"
+    workspace-hooks: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -8830,6 +8831,7 @@ fsevents@^2.1.2:
     ui-components: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
+    workspace-hooks: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -12285,6 +12287,7 @@ fsevents@^2.1.2:
     ui-context: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
+    workspace-hooks: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -13328,7 +13331,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
+"react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1, react-is@npm:^16.8.6":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
@@ -13395,6 +13398,20 @@ fsevents@^2.1.2:
   peerDependencies:
     react: ^16.0.0 || ^17.0.0
   checksum: f344c663c48720d19559b4198b1f63ad47a3f11bedc92ede053a6c0706b5209e6110086f3ccc6db04eda9f0d1a415845956ddfb6ce09a922167d4831fcba9314
+  languageName: node
+  linkType: hard
+
+"react-test-renderer@npm:16.14.0":
+  version: 16.14.0
+  resolution: "react-test-renderer@npm:16.14.0"
+  dependencies:
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+    react-is: ^16.8.6
+    scheduler: ^0.19.1
+  peerDependencies:
+    react: ^16.14.0
+  checksum: 96eb8a2566e67ebd246ef6e1b36d8c8498c68ebfdb94ca8399c19b4e3b73368caf0ffbe44767593e3499f2f58b4b5e57ba0565a47628048d2ab01b23a422724e
   languageName: node
   linkType: hard
 
@@ -16458,6 +16475,24 @@ typescript@4.2.4:
 "worker@workspace:worker":
   version: 0.0.0-use.local
   resolution: "worker@workspace:worker"
+  languageName: unknown
+  linkType: soft
+
+"workspace-hooks@workspace:*, workspace-hooks@workspace:lib/workspace-hooks":
+  version: 0.0.0-use.local
+  resolution: "workspace-hooks@workspace:lib/workspace-hooks"
+  dependencies:
+    "@testing-library/react": ^11.2.6
+    "@testing-library/react-hooks": ^5.1.2
+    baby-fs: "workspace:*"
+    bangle-io-context: "workspace:*"
+    config: "workspace:*"
+    react: 16.14.0
+    react-dom: 16.14.0
+    react-router-dom: ^5.2.0
+    react-test-renderer: 16.14.0
+    utils: "workspace:*"
+    workspace: "workspace:*"
   languageName: unknown
   linkType: soft
 
