@@ -48,6 +48,7 @@ function collabPlugin({ metadata: { wsPath } = {} }) {
     },
     onFatalError(error) {
       console.log('received fatal error');
+      // TODO show a user notification
       console.error(error);
       return false;
     },

@@ -32,176 +32,156 @@ jest.mock('workspace-hooks/index', () => {
   };
 });
 
+let Comp;
+let useWorkspaceHooksContextReturn;
+let useBroadcastChannelReturn;
+let useWorkspacePathReturn;
 beforeEach(() => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceHooksContextReturn = {
     fileWsPaths: [],
     refreshWsPaths: jest.fn(),
-  }));
-
-  useWorkspacePath.mockImplementation(() => ({
+  };
+  useBroadcastChannelReturn = [undefined, jest.fn()];
+  useWorkspacePathReturn = {
     wsName: ourWsName,
     wsPath: undefined,
     secondaryWsPath: undefined,
     removeWsPath: jest.fn(),
     removeSecondaryWsPath: jest.fn(),
-  }));
+    removePrimaryAndSecondaryWsPath: jest.fn(),
+  };
 
-  useBroadcastChannel.mockImplementation(() => [undefined, jest.fn()]);
+  useWorkspaceHooksContext.mockImplementation(
+    () => useWorkspaceHooksContextReturn,
+  );
+  useWorkspacePath.mockImplementation(() => useWorkspacePathReturn);
+  useBroadcastChannel.mockImplementation(() => useBroadcastChannelReturn);
+
+  Comp = function Comp() {
+    return <WatchWorkspace />;
+  };
 });
 
 test('works', async () => {
-  function Comp() {
-    return <WatchWorkspace />;
-  }
-
   const result = render(<Comp />);
   expect(result.container).toMatchInlineSnapshot(`<div />`);
 });
 
 test('does nothing if event is for some other workspace', async () => {
-  const refreshWsPaths = jest.fn();
-  useWorkspaceHooksContext.mockImplementation(() => ({
-    fileWsPaths: [],
-    refreshWsPaths,
-  }));
-
-  function Comp() {
-    return <WatchWorkspace />;
-  }
-
   const result = render(<Comp />);
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
-  expect(refreshWsPaths).toBeCalledTimes(0);
-
-  const broadCastMessage = jest.fn();
-
-  useBroadcastChannel.mockImplementation(() => [
-    {
-      type: 'FILE_TREE_CHANGED',
-      payload: { wsName: 'other-ws', size: 1, lameHash: 'hash' },
-    },
-    broadCastMessage,
-  ]);
+  useBroadcastChannelReturn[0] = {
+    type: 'FILE_TREE_CHANGED',
+    payload: { wsName: 'other-ws', size: 1, lameHash: 'hash' },
+  };
 
   result.rerender(<Comp />);
 
-  expect(refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
 });
 
 test('refreshes for if the event is correct', async () => {
-  const refreshWsPaths = jest.fn();
-  const removeWsPath = jest.fn();
-
-  useWorkspaceHooksContext.mockImplementation(() => ({
-    fileWsPaths: [],
-    refreshWsPaths,
-  }));
-
-  useWorkspacePath.mockImplementation(() => ({
-    wsName: ourWsName,
-    wsPath: undefined,
-    secondaryWsPath: undefined,
-    removeWsPath,
-    removeSecondaryWsPath: undefined,
-  }));
-
-  function Comp() {
-    return <WatchWorkspace />;
-  }
-
   const result = render(<Comp />);
 
-  expect(refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
-  const broadCastMessage = jest.fn();
-
-  useBroadcastChannel.mockImplementation(() => [
-    {
-      type: 'FILE_TREE_CHANGED',
-      payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
-    },
-    broadCastMessage,
-  ]);
+  useBroadcastChannelReturn[0] = {
+    type: 'FILE_TREE_CHANGED',
+    payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
+  };
 
   result.rerender(<Comp />);
 
-  expect(refreshWsPaths).toBeCalledTimes(1);
-  expect(removeWsPath).toBeCalledTimes(0);
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
 });
 
-test('for a refresh checks if file is not currently opened', async () => {
-  const refreshWsPaths = jest.fn();
-  const removeWsPath = jest.fn();
-  const removeSecondaryWsPath = jest.fn();
-  useWorkspaceHooksContext.mockImplementation(() => ({
-    fileWsPaths: [ourFileWsPath],
-    refreshWsPaths,
-  }));
-
-  useWorkspacePath.mockImplementation(() => ({
-    wsName: ourWsName,
-    wsPath: ourFileWsPath,
-    secondaryWsPath: undefined,
-    removeWsPath,
-    removeSecondaryWsPath,
-  }));
-
-  function Comp() {
-    return <WatchWorkspace />;
-  }
+test('if a deleted file is open it closed it', async () => {
+  useWorkspaceHooksContextReturn.fileWsPaths = [ourFileWsPath];
+  useWorkspacePathReturn.wsPath = ourFileWsPath;
 
   const result = render(<Comp />);
 
-  expect(refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
-  const broadCastMessage = jest.fn();
+  useBroadcastChannelReturn[0] = {
+    type: 'FILE_TREE_CHANGED',
+    payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
+  };
 
-  useBroadcastChannel.mockImplementation(() => [
-    {
-      type: 'FILE_TREE_CHANGED',
-      payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
-    },
-    broadCastMessage,
-  ]);
-
-  useWorkspaceHooksContext.mockImplementation(() => ({
-    fileWsPaths: [],
-    refreshWsPaths,
-  }));
+  useWorkspaceHooksContextReturn.fileWsPaths = [];
 
   result.rerender(<Comp />);
 
-  expect(refreshWsPaths).toBeCalledTimes(1);
-  expect(removeWsPath).toBeCalledTimes(1);
-  expect(removeSecondaryWsPath).toBeCalledTimes(0);
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(1);
+  expect(useWorkspacePathReturn.removeSecondaryWsPath).toBeCalledTimes(0);
+});
+
+test('if a deleted file is open in both primary and secondary', async () => {
+  useWorkspaceHooksContextReturn.fileWsPaths = [ourFileWsPath];
+  useWorkspacePathReturn.wsPath = ourFileWsPath;
+  useWorkspacePathReturn.secondaryWsPath = ourFileWsPath;
+
+  const result = render(<Comp />);
+
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+
+  useBroadcastChannelReturn[0] = {
+    type: 'FILE_TREE_CHANGED',
+    payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
+  };
+
+  useWorkspaceHooksContextReturn.fileWsPaths = [];
+
+  result.rerender(<Comp />);
+
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
+  expect(
+    useWorkspacePathReturn.removePrimaryAndSecondaryWsPath,
+  ).toBeCalledTimes(1);
+  expect(useWorkspacePathReturn.removeSecondaryWsPath).toBeCalledTimes(0);
+});
+
+test('if a deleted file is open in secondary', async () => {
+  useWorkspaceHooksContextReturn.fileWsPaths = [ourFileWsPath];
+  useWorkspacePathReturn.secondaryWsPath = ourFileWsPath;
+
+  const result = render(<Comp />);
+
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+
+  useBroadcastChannelReturn[0] = {
+    type: 'FILE_TREE_CHANGED',
+    payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
+  };
+  useWorkspaceHooksContextReturn.fileWsPaths = [];
+
+  result.rerender(<Comp />);
+
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
+  expect(
+    useWorkspacePathReturn.removePrimaryAndSecondaryWsPath,
+  ).toBeCalledTimes(0);
+  expect(useWorkspacePathReturn.removeSecondaryWsPath).toBeCalledTimes(1);
 });
 
 test('does not refreshes for if file size and lame hash are the same', async () => {
-  const refreshWsPaths = jest.fn();
-  useWorkspaceHooksContext.mockImplementation(() => ({
-    fileWsPaths: [ourFileWsPath],
-    refreshWsPaths,
-  }));
-
-  function Comp() {
-    return <WatchWorkspace />;
-  }
+  useWorkspaceHooksContextReturn.fileWsPaths = [ourFileWsPath];
 
   const result = render(<Comp />);
 
-  expect(refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
-  const broadCastMessage = jest.fn();
-
-  useBroadcastChannel.mockImplementation(() => [
-    {
-      type: 'FILE_TREE_CHANGED',
-      payload: { wsName: ourWsName, size: 1, lameHash: ourFileWsPath },
-    },
-    broadCastMessage,
-  ]);
+  useBroadcastChannelReturn[0] = {
+    type: 'FILE_TREE_CHANGED',
+    payload: { wsName: ourWsName, size: 1, lameHash: ourFileWsPath },
+  };
 
   result.rerender(<Comp />);
 
-  expect(refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
 });

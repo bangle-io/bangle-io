@@ -13,3 +13,4 @@ This is the checklist to do things.
 - Renaming active file should close it in any other tabs.
 - Creating a new note should be propagated.
 - Delete a new new note should be propagated and if active in other tab, should be closed.
+- Split screen deleting the note should work across tab.

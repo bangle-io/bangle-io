@@ -22,6 +22,8 @@ export function WatchWorkspace() {
     secondaryWsPath,
     removeWsPath,
     removeSecondaryWsPath,
+    replacePrimaryAndSecondaryWsPath,
+    removePrimaryAndSecondaryWsPath,
   } = useWorkspacePath();
   const [lastMessage, broadcastMessage] = useBroadcastChannel(CHANNEL_NAME);
   const isFirstMountRef = useRef(true);
@@ -66,11 +68,15 @@ export function WatchWorkspace() {
   useEffect(() => {
     if (fileWsPaths && checkCurrentEditors.current === true) {
       checkCurrentEditors.current = false;
-      if (wsPath && !fileWsPaths.includes(wsPath)) {
+      if (
+        wsPath &&
+        secondaryWsPath === wsPath &&
+        !fileWsPaths.includes(wsPath)
+      ) {
+        removePrimaryAndSecondaryWsPath();
+      } else if (wsPath && !fileWsPaths.includes(wsPath)) {
         removeWsPath();
-      }
-
-      if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
+      } else if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
         removeSecondaryWsPath();
       }
     }
@@ -80,6 +86,8 @@ export function WatchWorkspace() {
     secondaryWsPath,
     removeWsPath,
     removeSecondaryWsPath,
+    replacePrimaryAndSecondaryWsPath,
+    removePrimaryAndSecondaryWsPath,
   ]);
 
   useEffect(() => {

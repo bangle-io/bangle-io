@@ -162,6 +162,7 @@ export function useRenameNote({ refreshWsPaths }) {
       refreshWsPaths,
       replaceWsPath,
       replaceSecondaryWsPath,
+      replacePrimaryAndSecondaryWsPath,
     ],
   );
 }

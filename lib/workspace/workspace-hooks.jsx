@@ -223,6 +223,17 @@ export function useWorkspacePath() {
     });
   }, [history, location]);
 
+  const removePrimaryAndSecondaryWsPath = useCallback(() => {
+    log('removePrimaryAndSecondaryWsPath');
+    const newSearch = new URLSearchParams(location?.search);
+    newSearch.delete('secondary');
+    history.replace({
+      ...location,
+      pathname: encodeURI(`/ws/${wsName}`),
+      search: newSearch.toString(),
+    });
+  }, [wsName, history, location]);
+
   const replacePrimaryAndSecondaryWsPath = useCallback(
     (primaryWsPath, secondaryWsPath) => {
       const { wsName, filePath } = resolvePath(primaryWsPath);
@@ -257,6 +268,7 @@ export function useWorkspacePath() {
     replaceSecondaryWsPath,
     removeWsPath,
     removeSecondaryWsPath,
+    removePrimaryAndSecondaryWsPath,
     replacePrimaryAndSecondaryWsPath,
   };
 }
