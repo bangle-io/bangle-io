@@ -6,6 +6,7 @@ const {
   createWorkspace,
   sleep,
   longSleep,
+  getPrimaryEditorDebugString,
 } = require('../helpers');
 jest.setTimeout(105 * 1000);
 
@@ -40,7 +41,7 @@ test('Emoji works in heading', async () => {
 
   expect(html.includes('😉')).toBe(true);
 
-  expect(html).toMatchSnapshot();
+  expect(await getPrimaryEditorDebugString(page)).toMatchSnapshot();
 });
 
 test('Emoji works in para', async () => {

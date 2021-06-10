@@ -20,35 +20,52 @@ function frmtHTML(doc) {
   });
 }
 
+const SELECTOR_TIMEOUT = 500;
+
 async function createWorkspace(wsName = 'test' + uuid()) {
   await runACommand('NEW_WORKSPACE');
-  let handle = await page.$('.bangle-palette');
+  let handle = await page.waitForSelector('.bangle-palette', {
+    timeout: SELECTOR_TIMEOUT,
+  });
 
-  await sleep();
   await clickPaletteRow('browser');
 
   const input = await handle.$('input');
 
   await input.type(wsName);
-  await clickPaletteRow('input-confirm');
 
-  await page.waitForNavigation();
+  await longSleep();
+
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'networkidle0' }), // The promise resolves after navigation has finished
+    clickPaletteRow('input-confirm'),
+  ]);
+
+  expect(await page.url()).toMatch(url + '/ws/' + wsName);
 
   return wsName;
 }
 
-async function createNewNote(wsName, fileName = 'new_file') {
+async function createNewNote(wsName, noteName = 'new_file.md') {
   await runACommand('NEW_NOTE_COMMAND');
-  let handle = await page.$('.bangle-palette');
-
+  let handle = await page.waitForSelector('.bangle-palette', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+  if (!noteName.endsWith('.md')) {
+    noteName += '.md';
+  }
   const input = await handle.$('input');
-  await input.type(fileName);
-  await clickPaletteRow('input-confirm');
-  await page.waitForNavigation();
+  await input.type(noteName);
+
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'networkidle0' }),
+    clickPaletteRow('input-confirm'),
+  ]);
+
   await longSleep();
-  expect(await page.url()).toMatch(
-    url + '/ws/' + wsName + '/' + fileName + '.md',
-  );
+  expect(await page.url()).toMatch(url + '/ws/' + wsName + '/' + noteName);
+
+  return wsName + ':' + noteName;
 }
 
 async function runACommand(commandId) {
@@ -63,7 +80,9 @@ async function runACommand(commandId) {
 }
 
 async function clickPaletteRow(id) {
-  const result = await page.$(`.palette-row[data-id="${id}"]`);
+  const result = await page.waitForSelector(`.palette-row[data-id="${id}"]`, {
+    timeout: SELECTOR_TIMEOUT,
+  });
   await result.click();
 }
 
@@ -80,12 +99,35 @@ async function getEditorHTML(editorHandle) {
   return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
 }
 
-async function getPrimaryEditorHandler(page) {
-  return await page.$('.primary-editor');
+async function getPrimaryEditorHandler(page, { focus = false } = {}) {
+  const handle = await page.waitForSelector('.primary-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+
+  await page.waitForSelector('.primary-editor .bangle-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+
+  if (focus) {
+    await page.evaluate(async () => {
+      window.primaryEditor.view.focus();
+    });
+  }
+
+  return handle;
 }
 
-async function getSecondaryEditorHandler(page) {
-  return await page.$('.secondary-editor');
+async function getSecondaryEditorHandler(page, { focus = false } = {}) {
+  const handle = await page.waitForSelector('.secondary-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+
+  if (focus) {
+    await page.evaluate(async () => {
+      window.primaryEditor.view.focus();
+    });
+  }
+  return handle;
 }
 
 async function getPrimaryEditorDebugString(page) {
@@ -111,7 +153,27 @@ function uuid(len = 10) {
   return Math.random().toString(36).substring(2, 15).slice(0, len);
 }
 
+async function getWsPathsShownInFilePalette(page) {
+  await page.keyboard.press('Escape');
+  await page.keyboard.down(ctrlKey);
+  await page.keyboard.press('p');
+  await page.keyboard.up(ctrlKey);
+
+  const handle = await page.waitForSelector('.bangle-palette', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+
+  const wsPaths = await handle.$$eval(`.palette-row[data-id]`, (nodes) =>
+    [...nodes].map((n) => n.getAttribute('data-id')),
+  );
+
+  await page.keyboard.press('Escape');
+
+  return wsPaths;
+}
+
 module.exports = {
+  SELECTOR_TIMEOUT,
   sleep,
   url,
   ctrlKey,
@@ -128,4 +190,5 @@ module.exports = {
   getSecondaryEditorHandler,
   getPrimaryEditorDebugString,
   getSecondaryEditorDebugString,
+  getWsPathsShownInFilePalette,
 };

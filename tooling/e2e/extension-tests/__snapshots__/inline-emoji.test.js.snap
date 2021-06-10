@@ -1,39 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Emoji works in heading 1`] = `
-"<h1>
-  <span
-    class=\\"
-      deco-collapse-positioner
-      ProseMirror-widget
-    \\"
-    data-bangle-pos=\\"0\\"
-    contenteditable=\\"false\\"
-    ><span
-      class=\\"deco-collapse\\"
-      style=\\"
-        height: 72px;
-        left: -24px;
-      \\"
-      ><svg
-        viewBox=\\"0 0 24 24\\"
-        class=\\"deco-collapse-child\\"
-      >
-        <path
-          d=\\"M6.34317 7.75732L4.92896 9.17154L12 16.2426L19.0711 9.17157L17.6569 7.75735L12 13.4142L6.34317 7.75732Z\\"
-        ></path></svg></span></span
-  >Wow
-  <span
-    data-bangle-name=\\"emoji\\"
-    data-bangle-attrs='{\\"emojiAlias\\":\\"wink\\"}'
-    contenteditable=\\"false\\"
-    draggable=\\"true\\"
-    >😉</span
-  >
-</h1>
-<p><br /></p>
-"
-`;
+exports[`Emoji works in heading 1`] = `"doc(heading(\\"Wow \\", emoji, \\" \\"), paragraph)"`;
 
 exports[`Emoji works in list 1`] = `
 "<ul>

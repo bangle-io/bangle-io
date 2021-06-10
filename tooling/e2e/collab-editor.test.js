@@ -63,9 +63,7 @@ test('Split screen and typing in primary works', async () => {
   await page.keyboard.press('\\');
   await page.keyboard.up(ctrlKey);
 
-  const primaryHandle = await getPrimaryEditorHandler(page);
-  await longSleep();
-
+  const primaryHandle = await getPrimaryEditorHandler(page, { focus: true });
   await primaryHandle.press('Enter');
   await primaryHandle.type('manthanoy', { delay: 10 });
 

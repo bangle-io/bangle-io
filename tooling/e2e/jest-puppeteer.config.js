@@ -9,7 +9,7 @@ module.exports = {
   ],
 
   launch: {
-    // slowMo: 50,
+    // slowMo: 20,
     // headless: false,
   },
 

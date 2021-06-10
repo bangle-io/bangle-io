@@ -11,6 +11,7 @@ const {
   sleep,
   longSleep,
   getPrimaryEditorHandler,
+  SELECTOR_TIMEOUT,
 } = require('../helpers');
 const { ctrlKey } = require('../helpers');
 
@@ -37,7 +38,9 @@ const setupScreenSize = async (screenType) => {
 };
 
 const getTopAndLastElement = async (page) => {
-  let topElement = await page.$('.primary-editor h2');
+  let topElement = await page.waitForSelector('.primary-editor h2', {
+    timeout: SELECTOR_TIMEOUT,
+  });
   expect(await topElement.evaluate((node) => node.innerText)).toEqual(
     'top element',
   );
@@ -50,8 +53,7 @@ const getTopAndLastElement = async (page) => {
 };
 
 const typeScrollableThings = async () => {
-  let primaryHandle = await getPrimaryEditorHandler(page);
-  await page.focus('.primary-editor .bangle-editor');
+  let primaryHandle = await getPrimaryEditorHandler(page, { focus: true });
   await longSleep();
   await clearEditor(primaryHandle);
   await page.keyboard.type('## top element');
@@ -108,9 +110,7 @@ test.each(['small', 'regular', 'split-screen'])(
     );
     await longSleep();
 
-    await page.goBack();
-
-    await longSleep();
+    await page.goBack({ waitUntil: 'networkidle2' });
 
     // make sure we are back to our previous page
     await expect(page.title()).resolves.toMatch('test123');
@@ -156,6 +156,8 @@ test('reloading preserves scroll & selection', async () => {
   expect(await topElement.isIntersectingViewport()).toBe(false);
   expect(await lastElement.isIntersectingViewport()).toBe(true);
 
+  await page.keyboard.press('Enter');
+
   // selection should be at the bottom
   await page.keyboard.type(
     '#### My existence at the bottom proves that I was spared from a reload.',
@@ -164,6 +166,6 @@ test('reloading preserves scroll & selection', async () => {
   expect(await topElement.isIntersectingViewport()).toBe(false);
   expect(await lastElement.isIntersectingViewport()).toBe(true);
   expect(await getPrimaryEditorDebugString(page)).toMatchInlineSnapshot(
-    `"doc(heading(\\"top element\\"), heading(\\"0\\"), heading(\\"1\\"), heading(\\"2\\"), heading(\\"3\\"), heading(\\"4\\"), heading(\\"5\\"), heading(\\"6\\"), heading(\\"7\\"), heading(\\"8\\"), heading(\\"9\\"), heading(\\"10\\"), heading(\\"11\\"), heading(\\"12\\"), heading(\\"13\\"), heading(\\"14\\"), heading(\\"last element#### My existence at the bottom proves that I was spared from a reload.\\"), paragraph)"`,
+    `"doc(heading(\\"top element\\"), heading(\\"0\\"), heading(\\"1\\"), heading(\\"2\\"), heading(\\"3\\"), heading(\\"4\\"), heading(\\"5\\"), heading(\\"6\\"), heading(\\"7\\"), heading(\\"8\\"), heading(\\"9\\"), heading(\\"10\\"), heading(\\"11\\"), heading(\\"12\\"), heading(\\"13\\"), heading(\\"14\\"), heading(\\"last element\\"), heading(\\"My existence at the bottom proves that I was spared from a reload.\\"), paragraph)"`,
   );
 });
