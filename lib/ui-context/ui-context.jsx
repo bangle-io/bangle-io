@@ -188,6 +188,14 @@ const reducer = (state, action) => {
       };
     }
 
+    case 'UI/UPDATE_THEME': {
+      applyTheme(action.value.theme);
+      return {
+        ...state,
+        theme: action.value.theme,
+      };
+    }
+
     case 'UI/UPDATE_WINDOW_SIZE': {
       const { windowSize } = action.value;
       const widescreen = checkWidescreen(windowSize.width);
