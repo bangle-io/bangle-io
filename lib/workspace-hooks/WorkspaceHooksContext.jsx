@@ -1,5 +1,4 @@
 import { useHistory, useLocation } from 'react-router-dom';
-
 import React, {
   useEffect,
   useContext,
@@ -15,9 +14,10 @@ import {
   validateNoteWsPath,
   createNote,
   resolvePath,
+  renameFile,
   deleteFile,
 } from 'workspace/index';
-import { removeMdExtension } from 'utils/index';
+import { shallowCompareArray, removeMdExtension } from 'utils/index';
 
 const LOG = false;
 
@@ -31,16 +31,37 @@ export function useWorkspaceHooksContext() {
   return useContext(WorkspaceHooksContext);
 }
 
+/**
+ *
+ * @param {*} param0
+ * @returns
+ * - noteWsPaths, fileWsPaths - retain their instance if there is no change. This is useful for runing `===` fearlessly.
+ */
 export function WorkspaceHooksContextProvider({ children }) {
   const { wsName } = useWorkspacePath();
 
   const { fileWsPaths, noteWsPaths, refreshWsPaths } = useFiles(wsName);
   const createNote = useCreateNote({ refreshWsPaths });
   const deleteNote = useDeleteNote({ refreshWsPaths });
+  const renameNote = useRenameNote({ refreshWsPaths });
 
   const value = useMemo(() => {
-    return { fileWsPaths, noteWsPaths, refreshWsPaths, createNote, deleteNote };
-  }, [fileWsPaths, noteWsPaths, refreshWsPaths, createNote, deleteNote]);
+    return {
+      fileWsPaths,
+      noteWsPaths,
+      refreshWsPaths,
+      createNote,
+      deleteNote,
+      renameNote,
+    };
+  }, [
+    fileWsPaths,
+    noteWsPaths,
+    refreshWsPaths,
+    createNote,
+    deleteNote,
+    renameNote,
+  ]);
 
   return (
     <WorkspaceHooksContext.Provider value={value}>
@@ -52,10 +73,10 @@ export function WorkspaceHooksContextProvider({ children }) {
 export function useFiles(wsName) {
   const location = useLocation();
 
-  const [fileWsPaths, setFiles] = useState([]);
+  const [fileWsPaths, setFiles] = useState(undefined);
 
   const noteWsPaths = useMemo(() => {
-    return fileWsPaths.filter((wsPath) => isValidNoteWsPath(wsPath));
+    return fileWsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
   }, [fileWsPaths]);
 
   const refreshWsPaths = useCallback(() => {
@@ -65,13 +86,20 @@ export function useFiles(wsName) {
       listAllFiles(wsName)
         .then((items) => {
           if (!destroyed) {
-            setFiles(items);
+            setFiles((existing) => {
+              if (!existing) {
+                return items;
+              }
+              // preserve the identity
+              const isEqual = shallowCompareArray(existing, items);
+              return isEqual ? existing : items;
+            });
             return;
           }
         })
         .catch((error) => {
           if (!destroyed) {
-            setFiles([]);
+            setFiles(undefined);
           }
           throw error;
         });
@@ -82,6 +110,7 @@ export function useFiles(wsName) {
   }, [wsName]);
 
   useEffect(() => {
+    setFiles(undefined);
     // load the wsPaths on mount
     refreshWsPaths();
   }, [
@@ -92,6 +121,42 @@ export function useFiles(wsName) {
   ]);
 
   return { fileWsPaths, noteWsPaths, refreshWsPaths };
+}
+
+export function useRenameNote({ refreshWsPaths }) {
+  const {
+    wsPath,
+    secondaryWsPath,
+    replaceWsPath,
+    replacePrimaryAndSecondaryWsPath,
+    replaceSecondaryWsPath,
+  } = useWorkspacePath();
+
+  return useCallback(
+    async (oldWsPath, newWsPath, { updateLocation = true } = {}) => {
+      await renameFile(wsPath, newWsPath);
+      if (updateLocation) {
+        // update both at the same time to avoid problem
+        // of one editor not finding the older files
+        if (secondaryWsPath === wsPath) {
+          replacePrimaryAndSecondaryWsPath(newWsPath, newWsPath);
+        } else if (oldWsPath === wsPath) {
+          replaceWsPath(newWsPath);
+        } else if (oldWsPath === secondaryWsPath) {
+          replaceSecondaryWsPath(newWsPath);
+        }
+      }
+
+      await refreshWsPaths();
+    },
+    [
+      wsPath,
+      secondaryWsPath,
+      refreshWsPaths,
+      replaceWsPath,
+      replaceSecondaryWsPath,
+    ],
+  );
 }
 
 export function useCreateNote({ refreshWsPaths }) {
@@ -132,8 +197,8 @@ export function useCreateNote({ refreshWsPaths }) {
       } = {},
     ) => {
       await createNote(bangleIOContext, wsPath, doc);
-      open && pushWsPath(wsPath);
       await refreshWsPaths();
+      open && pushWsPath(wsPath);
     },
     [pushWsPath, refreshWsPaths],
   );

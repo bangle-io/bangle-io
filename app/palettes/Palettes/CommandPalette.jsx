@@ -29,7 +29,6 @@ import {
 } from '@bangle.dev/core/components/paragraph';
 import {
   isValidNoteWsPath,
-  renameFile,
   useWorkspacePath,
   useWorkspaces,
 } from 'workspace/index';
@@ -309,8 +308,9 @@ function useCloneWorkspace() {
 }
 
 function useRenameActiveNote({ updatePalette }) {
-  const uid = 'RENAME_ACTIVE_FILE_COMMAND';
-  const { filePath, wsName, wsPath, replaceWsPath } = useWorkspacePath();
+  const uid = 'RENAME_ACTIVE_NOTE_COMMAND';
+  const { filePath, wsName, wsPath } = useWorkspacePath();
+  const { renameNote } = useWorkspaceHooksContext();
 
   const renameFileCb = useCallback(
     async (newFilePath) => {
@@ -320,10 +320,9 @@ function useRenameActiveNote({ updatePalette }) {
         newWsPath += '.md';
       }
 
-      await renameFile(wsPath, newWsPath);
-      replaceWsPath(newWsPath);
+      await renameNote(wsPath, newWsPath);
     },
-    [wsName, wsPath, replaceWsPath],
+    [wsName, wsPath, renameNote],
   );
 
   const onExecute = useCallback(
@@ -332,7 +331,7 @@ function useRenameActiveNote({ updatePalette }) {
         type: INPUT_PALETTE,
         initialQuery: filePath,
         metadata: {
-          paletteInfo: 'You are currently renaming a note',
+          paletteInfo: `You are currently renaming "${filePath}"`,
           onInputConfirm: (query) => {
             if (query) {
               return renameFileCb(query);
@@ -354,7 +353,7 @@ function useRenameActiveNote({ updatePalette }) {
   );
   return queryMatch({
     uid,
-    title: 'Workspace: Rename file',
+    title: `Workspace: Rename note "${filePath}"`,
     hidden: !isValidNoteWsPath(wsPath),
     onExecute,
   });

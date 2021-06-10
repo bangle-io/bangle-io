@@ -129,19 +129,11 @@ export function useWorkspacePath() {
   const search = new URLSearchParams(location?.search);
   const secondaryWsPath = search.get('secondary') ?? undefined;
 
-  const pushWsPath = useCallback(
-    (wsPath, newTab = false, secondary = false) => {
-      const { wsName, filePath } = resolvePath(wsPath);
-      const newPath = encodeURI(`/ws/${wsName}/${filePath}`);
-      if (newTab) {
-        window.open(newPath);
-        return;
-      }
-
+  const replaceSecondaryWsPath = useCallback(
+    (wsPath) => {
       const isWidescreen = checkWidescreen();
       const newSearch = new URLSearchParams(location?.search);
-
-      if (isWidescreen && secondary) {
+      if (isWidescreen) {
         // replace is intentional as native history pop
         // for some reason isnt remembering the state.
         if (isWidescreen) {
@@ -155,6 +147,26 @@ export function useWorkspacePath() {
         });
         return;
       }
+    },
+    [history, location],
+  );
+
+  const pushWsPath = useCallback(
+    (wsPath, newTab = false, secondary = false) => {
+      const { wsName, filePath } = resolvePath(wsPath);
+      const newPath = encodeURI(`/ws/${wsName}/${filePath}`);
+      if (newTab) {
+        window.open(newPath);
+        return;
+      }
+
+      const isWidescreen = checkWidescreen();
+      const newSearch = new URLSearchParams(location?.search);
+
+      if (isWidescreen && secondary) {
+        replaceSecondaryWsPath(wsPath);
+        return;
+      }
 
       if (newPath === location.pathname && !secondary) {
         return;
@@ -165,7 +177,7 @@ export function useWorkspacePath() {
         search: newSearch.toString(),
       });
     },
-    [history, location],
+    [history, location, replaceSecondaryWsPath],
   );
 
   const replaceWsPath = useCallback(
@@ -211,6 +223,30 @@ export function useWorkspacePath() {
     });
   }, [history, location]);
 
+  const replacePrimaryAndSecondaryWsPath = useCallback(
+    (primaryWsPath, secondaryWsPath) => {
+      const { wsName, filePath } = resolvePath(primaryWsPath);
+      const newPath = encodeURI(`/ws/${wsName}/${filePath}`);
+      const isWidescreen = checkWidescreen();
+
+      const newSearch = new URLSearchParams(location?.search);
+      if (secondaryWsPath) {
+        if (isWidescreen) {
+          newSearch.set('secondary', secondaryWsPath);
+        } else {
+          newSearch.delete('secondary');
+        }
+      }
+
+      history.push({
+        ...location,
+        pathname: newPath,
+        search: newSearch.toString(),
+      });
+    },
+    [history, location],
+  );
+
   return {
     wsName,
     wsPath,
@@ -218,8 +254,10 @@ export function useWorkspacePath() {
     filePath,
     pushWsPath,
     replaceWsPath,
+    replaceSecondaryWsPath,
     removeWsPath,
     removeSecondaryWsPath,
+    replacePrimaryAndSecondaryWsPath,
   };
 }
 

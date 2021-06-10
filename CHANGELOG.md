@@ -1,3 +1,9 @@
+### Jun 9, 2021
+
+- Synchronize new files created or deleted across tabs.
+
+- Synchronize the color theme across tabs.
+
 ### Jun 8, 2021
 
 - Fixed issues when creating and deleting files won't be propagated across the app.
