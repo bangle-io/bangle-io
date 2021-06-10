@@ -1,10 +1,9 @@
 import { TAB_ID } from 'config/index';
-import { useRef } from 'react';
-import { useEffect, useState } from 'react/cjs/react.development';
-import { useWorkspacePath } from 'workspace';
+import { useRef, useEffect } from 'react';
+import { useWorkspacePath } from 'workspace/index';
 import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 import { weakCache, useBroadcastChannel } from 'utils/index';
-const channelNamePrefix = 'watch_workspace';
+const CHANNEL_NAME = 'watch_workspace';
 const FILE_TREE_CHANGED = 'FILE_TREE_CHANGED';
 
 const LOG = false;
@@ -17,10 +16,16 @@ const weakComputeLameHash = weakCache((fileWsPaths) =>
 
 export function WatchWorkspace() {
   const { fileWsPaths, refreshWsPaths } = useWorkspaceHooksContext();
-  const { wsName } = useWorkspacePath();
-  const [lastMessage, broadcastMessage] =
-    useBroadcastChannel(channelNamePrefix);
+  const {
+    wsName,
+    wsPath,
+    secondaryWsPath,
+    removeWsPath,
+    removeSecondaryWsPath,
+  } = useWorkspacePath();
+  const [lastMessage, broadcastMessage] = useBroadcastChannel(CHANNEL_NAME);
   const isFirstMountRef = useRef(true);
+  const checkCurrentEditors = useRef(false);
 
   useEffect(() => {
     if (lastMessage) {
@@ -32,8 +37,8 @@ export function WatchWorkspace() {
       log('received from', tabName, 'type =', type, payload.size);
       switch (type) {
         case FILE_TREE_CHANGED: {
-          if (!fileWsPaths) {
-            refreshWsPaths();
+          // no point refereshing if fileWsPaths hasn't loaded
+          if (fileWsPaths == null) {
             break;
           }
           if (
@@ -42,6 +47,7 @@ export function WatchWorkspace() {
           ) {
             log('refreshing wsPaths');
             refreshWsPaths();
+            checkCurrentEditors.current = true;
           }
           break;
         }
@@ -51,6 +57,26 @@ export function WatchWorkspace() {
       }
     }
   }, [lastMessage, refreshWsPaths, wsName, fileWsPaths]);
+
+  // close any tabs that might have been deleted
+  useEffect(() => {
+    if (fileWsPaths && checkCurrentEditors.current === true) {
+      checkCurrentEditors.current = false;
+      if (wsPath && !fileWsPaths.includes(wsPath)) {
+        removeWsPath();
+      }
+
+      if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
+        removeSecondaryWsPath();
+      }
+    }
+  }, [
+    fileWsPaths,
+    wsPath,
+    secondaryWsPath,
+    removeWsPath,
+    removeSecondaryWsPath,
+  ]);
 
   useEffect(() => {
     // fileWsPaths is undefined when its loading

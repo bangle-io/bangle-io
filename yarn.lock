@@ -3965,6 +3965,7 @@ __metadata:
     "@bangle.dev/tooltip": 0.17.2
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
+    "@testing-library/react-hooks": ^5.1.2
     app-state-context: "workspace:*"
     bangle-io-context: "workspace:*"
     collab-extension: "workspace:*"
@@ -3988,6 +3989,7 @@ __metadata:
     react: 16.14.0
     react-dom: 16.14.0
     react-router-dom: ^5.2.0
+    react-test-renderer: ^17.0.2
     react-virtual: ^2.7.1
     shared: "workspace:*"
     style: "workspace:*"

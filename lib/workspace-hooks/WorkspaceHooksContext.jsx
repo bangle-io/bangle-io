@@ -58,30 +58,10 @@ export function useFiles(wsName) {
   const location = useLocation();
 
   const [fileWsPaths, setFiles] = useState(undefined);
-  const { wsPath, secondaryWsPath, removeWsPath, removeSecondaryWsPath } =
-    useWorkspacePath();
 
   const noteWsPaths = useMemo(() => {
     return fileWsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
   }, [fileWsPaths]);
-
-  useEffect(() => {
-    if (noteWsPaths) {
-      if (wsPath && !noteWsPaths.includes(wsPath)) {
-        removeWsPath();
-      }
-
-      if (secondaryWsPath && !noteWsPaths.includes(secondaryWsPath)) {
-        removeSecondaryWsPath();
-      }
-    }
-  }, [
-    noteWsPaths,
-    wsPath,
-    secondaryWsPath,
-    removeWsPath,
-    removeSecondaryWsPath,
-  ]);
 
   const refreshWsPaths = useCallback(() => {
     log('refreshing wsPaths');
@@ -165,8 +145,8 @@ export function useCreateNote({ refreshWsPaths }) {
       } = {},
     ) => {
       await createNote(bangleIOContext, wsPath, doc);
-      open && pushWsPath(wsPath);
       await refreshWsPaths();
+      open && pushWsPath(wsPath);
     },
     [pushWsPath, refreshWsPaths],
   );

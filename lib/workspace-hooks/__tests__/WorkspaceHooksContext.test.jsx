@@ -98,44 +98,6 @@ describe('useFiles', () => {
     });
     expect(render.result.current.fileWsPaths).toBe(filesInstance);
   });
-
-  test('if an opened wsPath is removed, useFiles removes it from history', async () => {
-    let render;
-
-    const filesInstance = [
-      'test-ws1:one.md',
-      'test-ws1:hi.md',
-      'test-ws1:img.png',
-    ];
-    listAllFiles.mockImplementation(async () => {
-      return filesInstance;
-    });
-
-    act(() => {
-      render = renderHook(() => useFiles('test-ws1'), { wrapper: Comp });
-    });
-
-    expect(testLocation.pathname).toBe('/ws/test-ws1/one.md');
-
-    let promise;
-    await act(async () => {
-      return promise;
-    });
-
-    expect(render.result.current.fileWsPaths).toBe(filesInstance);
-
-    // make one.md disappear (delete operation from outside)
-    listAllFiles.mockImplementation(async () => {
-      return ['test-ws1:hi.md', 'test-ws1:img.png'];
-    });
-    await act(async () => {
-      await render.result.current.refreshWsPaths();
-    });
-
-    // since one.md was actively opened, if deleted
-    // the hook should close the active wsPath
-    expect(testLocation.pathname).toBe('/ws/test-ws1');
-  });
 });
 
 describe('useDeleteNote', () => {
