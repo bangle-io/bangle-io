@@ -80,13 +80,16 @@ export function useFiles(wsName) {
   }, [fileWsPaths]);
 
   const refreshWsPaths = useCallback(() => {
-    log('refreshing wsPaths');
+    log('refreshing wsPaths', wsName);
+    // console.trace();
     let destroyed = false;
     if (wsName) {
       listAllFiles(wsName)
         .then((items) => {
+          log('received files for wsName', wsName, 'file count', items.length);
           if (!destroyed) {
             setFiles((existing) => {
+              log('setting files', { existing, items, wsName });
               if (!existing) {
                 return items;
               }
@@ -108,6 +111,10 @@ export function useFiles(wsName) {
       destroyed = true;
     };
   }, [wsName]);
+  if (!window.zz) {
+    window.zz = {};
+  }
+  window.zz[wsName] = refreshWsPaths;
 
   useEffect(() => {
     setFiles(undefined);

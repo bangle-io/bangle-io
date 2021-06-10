@@ -79,7 +79,6 @@ export function useUpdatePaletteCmd() {
 export function useNewWorkspace() {
   const { createWorkspace } = useWorkspaces();
   const updatePalette = useUpdatePaletteCmd();
-  const { refreshWsPaths } = useWorkspaceHooksContext();
 
   return useCallback(() => {
     return new Promise((res, rej) => {
@@ -105,7 +104,6 @@ export function useNewWorkspace() {
                 rootDirHandle,
               });
               window.fathom?.trackGoal('K3NFTGWX', 0);
-              await refreshWsPaths();
               res();
               return true;
             } else if (query === 'browser') {
@@ -120,7 +118,6 @@ export function useNewWorkspace() {
                       if (query) {
                         await createWorkspace(query, 'browser');
                         window.fathom?.trackGoal('AISLCLRF', 0);
-                        await refreshWsPaths();
                         res();
                       }
                     },
@@ -136,7 +133,7 @@ export function useNewWorkspace() {
         },
       });
     });
-  }, [updatePalette, createWorkspace, refreshWsPaths]);
+  }, [updatePalette, createWorkspace]);
 }
 
 /**
@@ -147,7 +144,6 @@ export function useCloneWorkspaceCmd() {
   const { createWorkspace } = useWorkspaces();
   const { wsName } = useWorkspacePath();
   const updatePalette = useUpdatePaletteCmd();
-  const { refreshWsPaths } = useWorkspaceHooksContext();
 
   return useCallback(() => {
     return new Promise((res, rej) => {
@@ -174,7 +170,6 @@ export function useCloneWorkspaceCmd() {
 
               await copyWorkspace(wsName, rootDirHandle.name);
 
-              await refreshWsPaths();
               res();
               return true;
             } else if (query === 'browser') {
@@ -187,8 +182,6 @@ export function useCloneWorkspaceCmd() {
                       if (query) {
                         await createWorkspace(query, 'browser');
                         await copyWorkspace(wsName, query);
-
-                        await refreshWsPaths();
                         res();
                       }
                     },
@@ -204,5 +197,5 @@ export function useCloneWorkspaceCmd() {
         },
       });
     });
-  }, [updatePalette, createWorkspace, wsName, refreshWsPaths]);
+  }, [updatePalette, createWorkspace, wsName]);
 }
