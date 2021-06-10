@@ -14,6 +14,7 @@ import {
   validateNoteWsPath,
   createNote,
   resolvePath,
+  renameFile,
   deleteFile,
 } from 'workspace/index';
 import { shallowCompareArray, removeMdExtension } from 'utils/index';
@@ -42,10 +43,25 @@ export function WorkspaceHooksContextProvider({ children }) {
   const { fileWsPaths, noteWsPaths, refreshWsPaths } = useFiles(wsName);
   const createNote = useCreateNote({ refreshWsPaths });
   const deleteNote = useDeleteNote({ refreshWsPaths });
+  const renameNote = useRenameNote({ refreshWsPaths });
 
   const value = useMemo(() => {
-    return { fileWsPaths, noteWsPaths, refreshWsPaths, createNote, deleteNote };
-  }, [fileWsPaths, noteWsPaths, refreshWsPaths, createNote, deleteNote]);
+    return {
+      fileWsPaths,
+      noteWsPaths,
+      refreshWsPaths,
+      createNote,
+      deleteNote,
+      renameNote,
+    };
+  }, [
+    fileWsPaths,
+    noteWsPaths,
+    refreshWsPaths,
+    createNote,
+    deleteNote,
+    renameNote,
+  ]);
 
   return (
     <WorkspaceHooksContext.Provider value={value}>
@@ -105,6 +121,42 @@ export function useFiles(wsName) {
   ]);
 
   return { fileWsPaths, noteWsPaths, refreshWsPaths };
+}
+
+export function useRenameNote({ refreshWsPaths }) {
+  const {
+    wsPath,
+    secondaryWsPath,
+    replaceWsPath,
+    replacePrimaryAndSecondaryWsPath,
+    replaceSecondaryWsPath,
+  } = useWorkspacePath();
+
+  return useCallback(
+    async (oldWsPath, newWsPath, { updateLocation = true } = {}) => {
+      await renameFile(wsPath, newWsPath);
+      if (updateLocation) {
+        // update both at the same time to avoid problem
+        // of one editor not finding the older files
+        if (secondaryWsPath === wsPath) {
+          replacePrimaryAndSecondaryWsPath(newWsPath, newWsPath);
+        } else if (oldWsPath === wsPath) {
+          replaceWsPath(newWsPath);
+        } else if (oldWsPath === secondaryWsPath) {
+          replaceSecondaryWsPath(newWsPath);
+        }
+      }
+
+      await refreshWsPaths();
+    },
+    [
+      wsPath,
+      secondaryWsPath,
+      refreshWsPaths,
+      replaceWsPath,
+      replaceSecondaryWsPath,
+    ],
+  );
 }
 
 export function useCreateNote({ refreshWsPaths }) {

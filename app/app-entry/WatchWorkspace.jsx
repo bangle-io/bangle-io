@@ -59,6 +59,10 @@ export function WatchWorkspace() {
   }, [lastMessage, refreshWsPaths, wsName, fileWsPaths]);
 
   // close any tabs that might have been deleted
+  // NOTE: We are doing this rectification here and not
+  // useWorkspaceHooksContext because here we know for sure ( due to`checkCurrentEditors`)
+  // that an external modification was made. We cannot do the same (check and remove active wsPaths from history)
+  // for any internal changes due to race conditions like closing a wsPath which didnt show up in `fileWsPaths` yet.
   useEffect(() => {
     if (fileWsPaths && checkCurrentEditors.current === true) {
       checkCurrentEditors.current = false;
