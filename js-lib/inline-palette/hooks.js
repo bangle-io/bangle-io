@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { removeSuggestMark } from '@bangle.dev/tooltip/suggest-tooltip';
+import { suggestTooltip } from '@bangle.dev/tooltip';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import { getSuggestTooltipKey } from './inline-palette';
 
@@ -32,7 +32,11 @@ export function useInlinePaletteItems(
   const view = useEditorViewContext();
 
   const dismissPalette = useCallback(() => {
-    return removeSuggestMark(inlinePaletteKey)(view.state, view.dispatch, view);
+    return suggestTooltip.removeSuggestMark(inlinePaletteKey)(
+      view.state,
+      view.dispatch,
+      view,
+    );
   }, [view, inlinePaletteKey]);
 
   const activeIndex = getActiveIndex(counter, items.length);
@@ -42,7 +46,7 @@ export function useInlinePaletteItems(
       const item = items[itemIndex];
 
       if (!item) {
-        return removeSuggestMark(inlinePaletteKey);
+        return suggestTooltip.removeSuggestMark(inlinePaletteKey);
       }
 
       if (isItemDisabled(item)) {

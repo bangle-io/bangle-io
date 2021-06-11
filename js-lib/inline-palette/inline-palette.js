@@ -1,13 +1,13 @@
 import { bangleWarn } from '@bangle.dev/core/utils/js-utils';
-import { suggestTooltip, createTooltipDOM } from '@bangle.dev/tooltip/index';
-import {
-  decrementSuggestTooltipCounter,
-  incrementSuggestTooltipCounter,
-  queryIsSuggestTooltipActive,
-} from '@bangle.dev/tooltip/suggest-tooltip';
+import { suggestTooltip, createTooltipDOM } from '@bangle.dev/tooltip';
 import { valuePlugin } from '@bangle.dev/core/utils/pm-utils';
 import { pluginKeyStore } from '@bangle.dev/core/utils/plugin-key-store';
 
+const {
+  decrementSuggestTooltipCounter,
+  incrementSuggestTooltipCounter,
+  queryIsSuggestTooltipActive,
+} = suggestTooltip;
 export const spec = specFactory;
 export const plugins = pluginsFactory;
 export const commands = {};
