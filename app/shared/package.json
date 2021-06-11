@@ -19,9 +19,9 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.17.2-alpha.0",
-    "@bangle.dev/markdown": "0.17.2-alpha.0",
-    "@bangle.dev/markdown-front-matter": "0.17.2-alpha.0",
+    "@bangle.dev/core": "0.18.0",
+    "@bangle.dev/markdown": "0.18.0",
+    "@bangle.dev/markdown-front-matter": "0.18.0",
     "bangle-io-context": "workspace:*",
     "collab-extension": "workspace:*",
     "collapsible-heading": "workspace:*",
