@@ -3986,8 +3986,8 @@ __metadata:
     page-lifecycle: ^0.1.2
     palettes: "workspace:*"
     prop-types: ^15.7.2
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     react-router-dom: ^5.2.0
     react-test-renderer: ^17.0.2
     react-virtual: ^2.7.1
@@ -4006,8 +4006,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app-state-context@workspace:lib/app-state-context"
   dependencies:
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
   languageName: unknown
   linkType: soft
 
@@ -4542,8 +4542,8 @@ __metadata:
   resolution: "bangle-io-context@workspace:lib/bangle-io-context"
   dependencies:
     "@bangle.dev/core": 0.17.2-alpha.0
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -4598,6 +4598,7 @@ __metadata:
     http-server: ^0.12.3
     jest: ^26.6.3
     jest-circus: ^26.6.3
+    jest-puppeteer: ^5.0.4
     mini-css-extract-plugin: ^1.5.0
     minimist: ^1.2.5
     pnp-webpack-plugin: ^1.6.4
@@ -4608,6 +4609,7 @@ __metadata:
     postcss-nested: ^5.0.5
     prettier: ^2.3.0
     punycode: ^2.1.1
+    puppeteer: ^10.0.0
     serve: ^11.3.2
     servor: "github:kepta/servor#master"
     style-loader: ^2.0.0
@@ -5547,7 +5549,7 @@ __metadata:
     baby-fs: "workspace:*"
     config: "workspace:*"
     editor-manager-context: "workspace:*"
-    react: 16.14.0
+    react: 17.0.2
     ui-context: "workspace:*"
     workspace: "workspace:*"
     workspace-hooks: "workspace:*"
@@ -6468,8 +6470,8 @@ __metadata:
     "@bangle.dev/tooltip": 0.17.2-alpha.0
     "@bangle.dev/trailing-node": 0.17.2-alpha.0
     extension-helpers: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
   languageName: unknown
   linkType: soft
 
@@ -6480,8 +6482,8 @@ __metadata:
     "@bangle.dev/core": 0.17.2-alpha.0
     config: "workspace:*"
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     ui-context: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -6495,8 +6497,8 @@ __metadata:
     app-state-context: "workspace:*"
     debounce-fn: ^5.0.0
     extension-helpers: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -8722,8 +8724,8 @@ fsevents@^2.1.2:
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
     extension-helpers: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     utils: "workspace:*"
     workspace: "workspace:*"
   languageName: unknown
@@ -8835,8 +8837,8 @@ fsevents@^2.1.2:
     config: "workspace:*"
     extension-helpers: "workspace:*"
     inline-palette: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     ui-components: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
@@ -8854,8 +8856,8 @@ fsevents@^2.1.2:
     config: "workspace:*"
     extension-helpers: "workspace:*"
     inline-palette: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     ui-components: "workspace:*"
     utils: "workspace:*"
   languageName: unknown
@@ -8875,8 +8877,8 @@ fsevents@^2.1.2:
     "@testing-library/user-event": ^13.1.5
     emoji-lookup-data: ^1.2.0
     extension-helpers: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     utils: "workspace:*"
     workspace: "workspace:*"
   languageName: unknown
@@ -8889,8 +8891,8 @@ fsevents@^2.1.2:
     "@bangle.dev/core": 0.17.2-alpha.0
     "@bangle.dev/react": 0.17.2-alpha.0
     "@bangle.dev/tooltip": 0.17.2-alpha.0
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     utils: "workspace:*"
     workspace: "workspace:*"
   peerDependencies:
@@ -9156,11 +9158,11 @@ fsevents@^2.1.2:
   linkType: hard
 
 "is-docker@npm:^2.0.0":
-  version: 2.1.1
-  resolution: "is-docker@npm:2.1.1"
+  version: 2.2.1
+  resolution: "is-docker@npm:2.2.1"
   bin:
     is-docker: cli.js
-  checksum: dfa7338b446c13807590f9bd7408a09fd9ef49bc977b94408723c0857b3ba0d49f20b48e23f0d426d6914b52c38066672105f19eb3c970c5f2a25a39275afb64
+  checksum: 3fef7ddbf0be25958e8991ad941901bf5922ab2753c46980b60b05c1bf9c9c2402d35e6dc32e4380b980ef5e1970a5d9d5e5aa2e02d77727c3b6b5e918474c56
   languageName: node
   linkType: hard
 
@@ -11740,8 +11742,8 @@ fsevents@^2.1.2:
   linkType: hard
 
 "node-notifier@npm:^8.0.0":
-  version: 8.0.1
-  resolution: "node-notifier@npm:8.0.1"
+  version: 8.0.2
+  resolution: "node-notifier@npm:8.0.2"
   dependencies:
     growly: ^1.3.0
     is-wsl: ^2.2.0
@@ -11749,7 +11751,7 @@ fsevents@^2.1.2:
     shellwords: ^0.1.1
     uuid: ^8.3.0
     which: ^2.0.2
-  checksum: b84f24060f9f968c6141fcd16d22125caa42eb048fa5867f63e3411384a0bbc22b82d1a64e242ee9a557aaf6a0542a562713c4467f648dbcffea15d6da08f750
+  checksum: 7db1683003f6aaa4324959dfa663cd56e301ccc0165977a9e7737989ffe3b4763297f9fc85f44d0662b63a4fd85516eda43411b492a4d2fae207afb23773f912
   languageName: node
   linkType: hard
 
@@ -12250,8 +12252,8 @@ fsevents@^2.1.2:
     commands: "workspace:*"
     config: "workspace:*"
     editor-manager-context: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     ui-components: "workspace:*"
     ui-context: "workspace:*"
     utils: "workspace:*"
@@ -13254,21 +13256,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:16.14.0":
-  version: 16.14.0
-  resolution: "react-dom@npm:16.14.0"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    scheduler: ^0.19.1
-  peerDependencies:
-    react: ^16.14.0
-  checksum: 5a5c49da0f106b2655a69f96c622c347febcd10532db391c262b26aec225b235357d9da1834103457683482ab1b229af7a50f6927a6b70e53150275e31785544
-  languageName: node
-  linkType: hard
-
-"react-dom@npm:^17.0.2":
+"react-dom@npm:17.0.2, react-dom@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
   dependencies:
@@ -13299,7 +13287,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1, react-is@npm:^16.8.6":
+"react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
@@ -13369,21 +13357,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react-test-renderer@npm:16.14.0":
-  version: 16.14.0
-  resolution: "react-test-renderer@npm:16.14.0"
-  dependencies:
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    react-is: ^16.8.6
-    scheduler: ^0.19.1
-  peerDependencies:
-    react: ^16.14.0
-  checksum: 96eb8a2566e67ebd246ef6e1b36d8c8498c68ebfdb94ca8399c19b4e3b73368caf0ffbe44767593e3499f2f58b4b5e57ba0565a47628048d2ab01b23a422724e
-  languageName: node
-  linkType: hard
-
-"react-test-renderer@npm:^17.0.2":
+"react-test-renderer@npm:17.0.2, react-test-renderer@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-test-renderer@npm:17.0.2"
   dependencies:
@@ -13408,14 +13382,13 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react@npm:16.14.0":
-  version: 16.14.0
-  resolution: "react@npm:16.14.0"
+"react@npm:17.0.2":
+  version: 17.0.2
+  resolution: "react@npm:17.0.2"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
-    prop-types: ^15.6.2
-  checksum: 8484f3ecb13414526f2a7412190575fc134da785c02695eb92bb6028c930bfe1c238d7be2a125088fec663cc7cda0a3623373c46807cf2c281f49c34b79881ac
+  checksum: b254cc17ce3011788330f7bbf383ab653c6848902d7936a87b09d835d091e3f295f7e9dd1597c6daac5dc80f90e778c8230218ba8ad599f74adcc11e33b9d61b
   languageName: node
   linkType: hard
 
@@ -14081,16 +14054,6 @@ resolve@^2.0.0-next.3:
   dependencies:
     xmlchars: ^2.2.0
   checksum: 5636b55cf15f7cf0baa73f2797bf992bdcf75d1b39d82c0aa4608555c774368f6ac321cb641fd5f3d3ceb87805122cd47540da6a7b5960fe0dbdb8f8c263f000
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.19.1":
-  version: 0.19.1
-  resolution: "scheduler@npm:0.19.1"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: 73e185a59e2ff5aa3609f5b9cb97ddd376f89e1610579d29939d952411ca6eb7a24907a4ea4556569dacb931467a1a4a56d94fe809ef713aa76748642cd96a6c
   languageName: node
   linkType: hard
 
@@ -15640,8 +15603,8 @@ typescript@4.2.4:
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
     prop-types: ^15.7.2
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     utils: "workspace:*"
     w3c-keyname: ^2.2.4
   languageName: unknown
@@ -15651,7 +15614,7 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "ui-context@workspace:lib/ui-context"
   dependencies:
-    react: 16.14.0
+    react: 17.0.2
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -15889,7 +15852,7 @@ typescript@4.2.4:
     config: "workspace:*"
     constants: "workspace:*"
     dayjs: ^1.10.4
-    react: 16.14.0
+    react: 17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     w3c-keyname: ^2.2.4
@@ -16435,7 +16398,7 @@ typescript@4.2.4:
     comlink: ^4.3.1
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
-    react: 16.14.0
+    react: 17.0.2
     shared: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -16456,10 +16419,10 @@ typescript@4.2.4:
     baby-fs: "workspace:*"
     bangle-io-context: "workspace:*"
     config: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     react-router-dom: ^5.2.0
-    react-test-renderer: 16.14.0
+    react-test-renderer: 17.0.2
     utils: "workspace:*"
     workspace: "workspace:*"
   languageName: unknown
@@ -16477,8 +16440,8 @@ typescript@4.2.4:
     config: "workspace:*"
     idb-keyval: ^5.0.5
     markdown: "workspace:*"
-    react: 16.14.0
-    react-dom: 16.14.0
+    react: 17.0.2
+    react-dom: 17.0.2
     react-router-dom: ^5.2.0
     utils: "workspace:*"
   languageName: unknown

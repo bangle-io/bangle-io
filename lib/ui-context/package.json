@@ -19,7 +19,7 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "react": "16.14.0",
+    "react": "17.0.2",
     "utils": "workspace:*"
   },
   "publishConfig": {
