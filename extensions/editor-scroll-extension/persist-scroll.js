@@ -21,10 +21,10 @@ export function getSavedScrollPos(wsPath, editorId) {
   return Number.isNaN(result) ? undefined : result;
 }
 
-export function saveScrollPos(wsPath, editorId) {
-  const scrollPos = getScrollParentElement(editorId)?.scrollTop;
-  log('saveScrollPos', scrollKey(wsPath, editorId), scrollPos);
-  sessionStorage.setItem(scrollKey(wsPath, editorId), scrollPos);
+export function saveScrollPos(wsPath, editorId, value) {
+  if (typeof value === 'number') {
+    sessionStorage.setItem(scrollKey(wsPath, editorId), value);
+  }
 }
 
 export function getSavedSelection(wsPath, editorId, doc) {

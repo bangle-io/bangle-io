@@ -1,11 +1,7 @@
 import { Extension } from 'extension-helpers/index';
 import { extensionName } from './config';
 import { PreserveScroll } from './editor-scroll-extension';
-import {
-  getSavedScrollPos,
-  getSavedSelection,
-  saveScrollPos,
-} from './persist-scroll';
+import { getSavedScrollPos, getSavedSelection } from './persist-scroll';
 import { Selection } from '@bangle.dev/core/prosemirror/state';
 
 const extension = Extension.create({
@@ -28,21 +24,7 @@ const extension = Extension.create({
       }
       return undefined;
     },
-    beforeDestroy({ wsPath, editorId, store }) {
-      // Note we are saving scroll pos here and not in the EditorReactComponent's
-      // unmount, because the editor loses its dom (we need to calculate scroll pos)
-      // before the unmount hook is called.
-      saveScrollPos(wsPath, editorId);
-    },
   },
 });
-
-function collabPlugin({
-  // coming from pluginMetadata in Editor.jsx
-  // props:
-  // - `wsPath`
-  // - `editorId`
-  metadata,
-}) {}
 
 export default extension;
