@@ -1855,7 +1855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-client@npm:0.18.0":
+"@bangle.dev/collab-client@npm:0.18.0, @bangle.dev/collab-client@npm:^0.18.0":
   version: 0.18.0
   resolution: "@bangle.dev/collab-client@npm:0.18.0"
   dependencies:
@@ -1877,7 +1877,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-server@npm:0.18.0":
+"@bangle.dev/collab-server@npm:0.18.0, @bangle.dev/collab-server@npm:^0.18.0":
   version: 0.18.0
   resolution: "@bangle.dev/collab-server@npm:0.18.0"
   dependencies:
@@ -1894,7 +1894,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/core@npm:0.18.0":
+"@bangle.dev/core@npm:0.18.0, @bangle.dev/core@npm:^0.18.0":
   version: 0.18.0
   resolution: "@bangle.dev/core@npm:0.18.0"
   dependencies:
@@ -3969,9 +3969,6 @@ __metadata:
     "@bangle.dev/core": 0.18.0
     "@bangle.dev/markdown-front-matter": 0.18.0
     "@bangle.dev/react": 0.18.0
-    "@bangle.dev/react-menu": 0.18.0
-    "@bangle.dev/react-stopwatch": 0.18.0
-    "@bangle.dev/tooltip": 0.18.0
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
     "@testing-library/react-hooks": ^5.1.2
@@ -4611,7 +4608,7 @@ __metadata:
     mini-css-extract-plugin: ^1.5.0
     minimist: ^1.2.5
     pnp-webpack-plugin: ^1.6.4
-    postcss: ^8.2.12
+    postcss: ^8.3.2
     postcss-custom-properties: ^11.0.0
     postcss-import: ^14.0.1
     postcss-loader: ^5.2.0
@@ -5384,9 +5381,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "collab-extension@workspace:extensions/collab-extension"
   dependencies:
-    "@bangle.dev/collab-client": 0.18.0
-    "@bangle.dev/collab-server": 0.18.0
-    "@bangle.dev/core": 0.18.0
+    "@bangle.dev/collab-client": ^0.18.0
+    "@bangle.dev/collab-server": ^0.18.0
+    "@bangle.dev/core": ^0.18.0
     extension-helpers: "workspace:*"
     naukar-proxy: "workspace:*"
   languageName: unknown
@@ -8881,6 +8878,7 @@ fsevents@^2.1.2:
     "@bangle.dev/markdown": 0.18.0
     "@bangle.dev/react": 0.18.0
     "@bangle.dev/react-emoji-suggest": 0.18.0
+    "@bangle.dev/table": 0.18.0
     "@bangle.dev/tooltip": 0.18.0
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
@@ -11607,6 +11605,15 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^3.1.23":
+  version: 3.1.23
+  resolution: "nanoid@npm:3.1.23"
+  bin:
+    nanoid: bin/nanoid.cjs
+  checksum: 8fa8dc3283a4fa159700a36cb22f61197547c8155831cb74f1b9c51fbc29ea80c136fd91001468d147a31d3a77f884958aec6c1beabac903c89780acacca9327
+  languageName: node
+  linkType: hard
+
 "nanomatch@npm:^1.2.9":
   version: 1.2.13
   resolution: "nanomatch@npm:1.2.13"
@@ -11647,6 +11654,7 @@ fsevents@^2.1.2:
   dependencies:
     "@bangle.dev/collab-client": 0.18.0
     "@bangle.dev/collab-server": 0.18.0
+    "@bangle.dev/core": ^0.18.0
     "@bangle.dev/disk": 0.18.0
     config: "workspace:*"
     idb-keyval: ^5.0.5
@@ -12769,7 +12777,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.10, postcss@npm:^8.2.12":
+"postcss@npm:^8.2.10":
   version: 8.2.12
   resolution: "postcss@npm:8.2.12"
   dependencies:
@@ -12777,6 +12785,17 @@ fsevents@^2.1.2:
     nanoid: ^3.1.22
     source-map: ^0.6.1
   checksum: de4c3d123254e6279b1ed88491ea971dd8a515ef2c77aa0af0e19408f3531c13a02a7d0dfd52815a0599ae4426875ab9f39c828e19ae58a82015f004459031d6
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "postcss@npm:8.3.2"
+  dependencies:
+    colorette: ^1.2.2
+    nanoid: ^3.1.23
+    source-map-js: ^0.6.2
+  checksum: 639170fd696c45238407f996c49a828dd57bf0d5b5b4aa4ef98ed568d1df52bdd8c1ad94784fa15da66ff2184f0d9debd2d08f2b037ff0886426687b21b8a292
   languageName: node
   linkType: hard
 
@@ -12934,13 +12953,13 @@ fsevents@^2.1.2:
   linkType: hard
 
 "prosemirror-dropcursor@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "prosemirror-dropcursor@npm:1.3.2"
+  version: 1.3.5
+  resolution: "prosemirror-dropcursor@npm:1.3.5"
   dependencies:
     prosemirror-state: ^1.0.0
     prosemirror-transform: ^1.1.0
     prosemirror-view: ^1.1.0
-  checksum: 0e89f41cbf3bd72b36b0c441581783c4ba6daea29f01e8947ec2b2e16e7a401933ca22ea2e617670f9be5ca1b99ad3306723cb5314848f8f0657229bc7a03c11
+  checksum: cf9c725ba8acaf2b0777c6a03e163355f3de430fee56a057c8ed654b021b221fd9ee5ae9345449940dd0bf5991020004a30fb0e422e071c6ecdd78d6c61f9490
   languageName: node
   linkType: hard
 
@@ -14343,6 +14362,7 @@ resolve@^2.0.0-next.3:
     "@bangle.dev/core": 0.18.0
     "@bangle.dev/markdown": 0.18.0
     "@bangle.dev/markdown-front-matter": 0.18.0
+    "@bangle.dev/table": 0.18.0
     bangle-io-context: "workspace:*"
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
@@ -14527,6 +14547,13 @@ resolve@^2.0.0-next.3:
   version: 2.0.1
   resolution: "source-list-map@npm:2.0.1"
   checksum: 806efc6f75e7cd31e4815e7a3aaf75a45c704871ea4075cb2eb49882c6fca28998f44fc5ac91adb6de03b2882ee6fb02f951fdc85e6a22b338c32bfe19557938
+  languageName: node
+  linkType: hard
+
+"source-map-js@npm:^0.6.2":
+  version: 0.6.2
+  resolution: "source-map-js@npm:0.6.2"
+  checksum: 9c8151a29e00fd8d3ba87709fdf9a9ce48313d653f4a29a39b4ae53d346ac79e005de624796ff42eff55cbaf26d2e87f4466001ca87831d400d818c5cf146a0e
   languageName: node
   linkType: hard
 
@@ -14979,6 +15006,8 @@ resolve@^2.0.0-next.3:
   version: 0.0.0-use.local
   resolution: "style@workspace:app/style"
   dependencies:
+    autoprefixer: ^10.2.5
+    postcss: ^8.3.2
     tailwindcss: ^2.1.2
   languageName: unknown
   linkType: soft

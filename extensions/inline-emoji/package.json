@@ -24,6 +24,7 @@
     "@bangle.dev/markdown": "0.18.0",
     "@bangle.dev/react": "0.18.0",
     "@bangle.dev/react-emoji-suggest": "0.18.0",
+    "@bangle.dev/table": "0.18.0",
     "@bangle.dev/tooltip": "0.18.0",
     "emoji-lookup-data": "^1.2.0",
     "extension-helpers": "workspace:*",

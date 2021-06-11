@@ -102,7 +102,7 @@
     "mini-css-extract-plugin": "^1.5.0",
     "minimist": "^1.2.5",
     "pnp-webpack-plugin": "^1.6.4",
-    "postcss": "^8.2.12",
+    "postcss": "^8.3.2",
     "postcss-custom-properties": "^11.0.0",
     "postcss-import": "^14.0.1",
     "postcss-loader": "^5.2.0",
