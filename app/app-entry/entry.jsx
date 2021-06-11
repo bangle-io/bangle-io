@@ -57,21 +57,23 @@ function LoadingBlock({ children }) {
 
 ReactDOM.render(
   <LoadingBlock>
-    <AppState>
-      <WorkerSetup loadWebworker={moduleSupport} />
-      <PageLifecycle />
-      <Router>
-        <UIManager>
-          <WorkspaceHooksContextProvider>
-            <WatchWorkspace />
-            <WatchUI />
-            <EditorManager bangleIOContext={bangleIOContext}>
-              <App />
-            </EditorManager>
-          </WorkspaceHooksContextProvider>
-        </UIManager>
-      </Router>
-    </AppState>
+    <React.StrictMode>
+      <AppState>
+        <WorkerSetup loadWebworker={moduleSupport} />
+        <PageLifecycle />
+        <Router>
+          <UIManager>
+            <WorkspaceHooksContextProvider>
+              <WatchWorkspace />
+              <WatchUI />
+              <EditorManager bangleIOContext={bangleIOContext}>
+                <App />
+              </EditorManager>
+            </WorkspaceHooksContextProvider>
+          </UIManager>
+        </Router>
+      </AppState>
+    </React.StrictMode>
   </LoadingBlock>,
   root,
 );
