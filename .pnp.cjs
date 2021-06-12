@@ -3618,10 +3618,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/prosemirror-view", null],
             ["localforage", "npm:1.9.0"],
             ["prosemirror-collab", "npm:1.2.2"],
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-transform", "npm:1.2.7"],
-            ["prosemirror-view", "npm:1.18.1"]
+            ["prosemirror-transform", "npm:1.3.2"],
+            ["prosemirror-view", "npm:1.18.7"]
           ],
           "packagePeers": [
             "@bangle.dev/collab-server",
@@ -3656,8 +3656,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/prosemirror-transform", null],
             ["localforage", "npm:1.9.0"],
             ["prosemirror-collab", "npm:1.2.2"],
-            ["prosemirror-model", "npm:1.13.3"],
-            ["prosemirror-transform", "npm:1.2.7"]
+            ["prosemirror-model", "npm:1.14.1"],
+            ["prosemirror-transform", "npm:1.3.2"]
           ],
           "packagePeers": [
             "@bangle.dev/core",
@@ -3674,19 +3674,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@bangle.dev-core-npm-0.18.0-92691506e7-5276508445.zip/node_modules/@bangle.dev/core/",
           "packageDependencies": [
             ["@bangle.dev/core", "npm:0.18.0"],
-            ["prosemirror-commands", "npm:1.1.4"],
+            ["prosemirror-commands", "npm:1.1.9"],
             ["prosemirror-dropcursor", "npm:1.3.5"],
             ["prosemirror-gapcursor", "npm:1.1.5"],
             ["prosemirror-history", "npm:1.1.3"],
             ["prosemirror-inputrules", "npm:1.1.3"],
             ["prosemirror-keymap", "npm:1.1.4"],
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-schema-list", "npm:1.1.4"],
             ["prosemirror-state", "npm:1.3.4"],
             ["prosemirror-tables", "npm:1.1.1"],
-            ["prosemirror-transform", "npm:1.2.7"],
+            ["prosemirror-transform", "npm:1.3.2"],
             ["prosemirror-utils", "virtual:92691506e79c632af7452aaf6d54c3a6970c7f9a76fe5736fc2db7e5f4e03ee445b3a998b750531755b5891b30b58421d3cf67c27c02ac690f9b503adcc1c2c1#npm:1.0.0-0"],
-            ["prosemirror-view", "npm:1.18.1"]
+            ["prosemirror-view", "npm:1.18.7"]
           ],
           "linkType": "HARD",
         }]
@@ -3995,9 +3995,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/prosemirror-state", null],
             ["@types/prosemirror-view", null],
             ["prosemirror-inputrules", "npm:1.1.3"],
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-view", "npm:1.18.1"]
+            ["prosemirror-view", "npm:1.18.7"]
           ],
           "packagePeers": [
             "@bangle.dev/core",
@@ -16702,13 +16702,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["prosemirror-commands", [
-        ["npm:1.1.4", {
-          "packageLocation": "./.yarn/cache/prosemirror-commands-npm-1.1.4-fccd3faf10-7a0001e212.zip/node_modules/prosemirror-commands/",
+        ["npm:1.1.9", {
+          "packageLocation": "./.yarn/cache/prosemirror-commands-npm-1.1.9-880ad2cfab-9c75891dcd.zip/node_modules/prosemirror-commands/",
           "packageDependencies": [
-            ["prosemirror-commands", "npm:1.1.4"],
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-commands", "npm:1.1.9"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-transform", "npm:1.2.7"]
+            ["prosemirror-transform", "npm:1.3.2"]
           ],
           "linkType": "HARD",
         }]
@@ -16745,8 +16745,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["prosemirror-dropcursor", "npm:1.3.5"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-transform", "npm:1.2.7"],
-            ["prosemirror-view", "npm:1.18.1"]
+            ["prosemirror-transform", "npm:1.3.2"],
+            ["prosemirror-view", "npm:1.18.7"]
           ],
           "linkType": "HARD",
         }]
@@ -16757,9 +16757,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["prosemirror-gapcursor", "npm:1.1.5"],
             ["prosemirror-keymap", "npm:1.1.4"],
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-view", "npm:1.18.1"]
+            ["prosemirror-view", "npm:1.18.7"]
           ],
           "linkType": "HARD",
         }]
@@ -16770,7 +16770,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["prosemirror-history", "npm:1.1.3"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-transform", "npm:1.2.7"],
+            ["prosemirror-transform", "npm:1.3.2"],
             ["rope-sequence", "npm:1.3.2"]
           ],
           "linkType": "HARD",
@@ -16782,7 +16782,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["prosemirror-inputrules", "npm:1.1.3"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-transform", "npm:1.2.7"]
+            ["prosemirror-transform", "npm:1.3.2"]
           ],
           "linkType": "HARD",
         }]
@@ -16804,16 +16804,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["prosemirror-markdown", "npm:1.5.1"],
             ["markdown-it", "npm:10.0.0"],
-            ["prosemirror-model", "npm:1.13.3"]
+            ["prosemirror-model", "npm:1.14.1"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["prosemirror-model", [
-        ["npm:1.13.3", {
-          "packageLocation": "./.yarn/cache/prosemirror-model-npm-1.13.3-873150498b-1d5436232e.zip/node_modules/prosemirror-model/",
+        ["npm:1.14.1", {
+          "packageLocation": "./.yarn/cache/prosemirror-model-npm-1.14.1-167e0a33ae-85394aaff0.zip/node_modules/prosemirror-model/",
           "packageDependencies": [
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["orderedmap", "npm:1.1.1"]
           ],
           "linkType": "HARD",
@@ -16824,8 +16824,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/prosemirror-schema-list-npm-1.1.4-314796cf2a-b6b3a830c0.zip/node_modules/prosemirror-schema-list/",
           "packageDependencies": [
             ["prosemirror-schema-list", "npm:1.1.4"],
-            ["prosemirror-model", "npm:1.13.3"],
-            ["prosemirror-transform", "npm:1.2.7"]
+            ["prosemirror-model", "npm:1.14.1"],
+            ["prosemirror-transform", "npm:1.3.2"]
           ],
           "linkType": "HARD",
         }]
@@ -16835,8 +16835,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/prosemirror-state-npm-1.3.4-c4b4427e53-088748bca0.zip/node_modules/prosemirror-state/",
           "packageDependencies": [
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-model", "npm:1.13.3"],
-            ["prosemirror-transform", "npm:1.2.7"]
+            ["prosemirror-model", "npm:1.14.1"],
+            ["prosemirror-transform", "npm:1.3.2"]
           ],
           "linkType": "HARD",
         }]
@@ -16847,20 +16847,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["prosemirror-tables", "npm:1.1.1"],
             ["prosemirror-keymap", "npm:1.1.4"],
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-transform", "npm:1.2.7"],
-            ["prosemirror-view", "npm:1.18.1"]
+            ["prosemirror-transform", "npm:1.3.2"],
+            ["prosemirror-view", "npm:1.18.7"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["prosemirror-transform", [
-        ["npm:1.2.7", {
-          "packageLocation": "./.yarn/cache/prosemirror-transform-npm-1.2.7-87fd537eb5-f2556d418e.zip/node_modules/prosemirror-transform/",
+        ["npm:1.3.2", {
+          "packageLocation": "./.yarn/cache/prosemirror-transform-npm-1.3.2-1e54a567f3-060804f64e.zip/node_modules/prosemirror-transform/",
           "packageDependencies": [
-            ["prosemirror-transform", "npm:1.2.7"],
-            ["prosemirror-model", "npm:1.13.3"]
+            ["prosemirror-transform", "npm:1.3.2"],
+            ["prosemirror-model", "npm:1.14.1"]
           ],
           "linkType": "HARD",
         }]
@@ -16879,7 +16879,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-utils", "virtual:92691506e79c632af7452aaf6d54c3a6970c7f9a76fe5736fc2db7e5f4e03ee445b3a998b750531755b5891b30b58421d3cf67c27c02ac690f9b503adcc1c2c1#npm:1.0.0-0"],
             ["@types/prosemirror-model", null],
             ["@types/prosemirror-state", null],
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-state", "npm:1.3.4"]
           ],
           "packagePeers": [
@@ -16892,13 +16892,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["prosemirror-view", [
-        ["npm:1.18.1", {
-          "packageLocation": "./.yarn/cache/prosemirror-view-npm-1.18.1-9fccd973aa-cb7ad93011.zip/node_modules/prosemirror-view/",
+        ["npm:1.18.7", {
+          "packageLocation": "./.yarn/cache/prosemirror-view-npm-1.18.7-2a4cd9960c-a0343ff29d.zip/node_modules/prosemirror-view/",
           "packageDependencies": [
-            ["prosemirror-view", "npm:1.18.1"],
-            ["prosemirror-model", "npm:1.13.3"],
+            ["prosemirror-view", "npm:1.18.7"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-transform", "npm:1.2.7"]
+            ["prosemirror-transform", "npm:1.3.2"]
           ],
           "linkType": "HARD",
         }]
