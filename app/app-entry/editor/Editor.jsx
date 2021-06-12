@@ -42,7 +42,7 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
         doc: initialValue,
         uniqueEditorObj: uniqueEditorObj,
       });
-      if (pos > 0) {
+      if (typeof pos === 'number') {
         scrollParent.scrollTop = pos;
       }
     }

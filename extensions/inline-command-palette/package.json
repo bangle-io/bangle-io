@@ -19,14 +19,14 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.17.2",
-    "@bangle.dev/react": "0.17.2",
+    "@bangle.dev/core": "0.18.1",
+    "@bangle.dev/react": "0.18.1",
     "chrono-node": "^2.2.6",
     "config": "workspace:*",
     "extension-helpers": "workspace:*",
     "inline-palette": "workspace:*",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "ui-components": "workspace:*",
     "utils": "workspace:*"
   },

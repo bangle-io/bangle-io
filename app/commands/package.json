@@ -23,7 +23,7 @@
     "baby-fs": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
-    "react": "16.14.0",
+    "react": "17.0.2",
     "ui-context": "workspace:*",
     "workspace": "workspace:*",
     "workspace-hooks": "workspace:*"
