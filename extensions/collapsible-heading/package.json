@@ -19,7 +19,7 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.18.0",
+    "@bangle.dev/core": "0.18.1",
     "extension-helpers": "workspace:*",
     "utils": "workspace:*",
     "workspace": "workspace:*"

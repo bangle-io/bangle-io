@@ -1855,7 +1855,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-client@npm:0.18.0, @bangle.dev/collab-client@npm:^0.18.0":
+"@bangle.dev/collab-client@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/collab-client@npm:0.18.1"
+  dependencies:
+    localforage: ^1.9.0
+    prosemirror-collab: ^1.2.2
+    prosemirror-model: ^1.14.1
+    prosemirror-state: ^1.3.4
+    prosemirror-transform: ^1.3.2
+    prosemirror-view: ^1.18.7
+  peerDependencies:
+    "@bangle.dev/collab-server": "*"
+    "@bangle.dev/core": "*"
+    prosemirror-collab: "*"
+    prosemirror-model: "*"
+    prosemirror-state: "*"
+    prosemirror-transform: "*"
+    prosemirror-view: "*"
+  checksum: f102a1751737a138a5997972801519cdcd0e74a2a82d37b248a505b13c6586c742a15876320af6124ed56b78cd5d61522237215ae74b2bda96eb8336d7ea88a4
+  languageName: node
+  linkType: hard
+
+"@bangle.dev/collab-client@npm:^0.18.0":
   version: 0.18.0
   resolution: "@bangle.dev/collab-client@npm:0.18.0"
   dependencies:
@@ -1877,7 +1899,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-server@npm:0.18.0, @bangle.dev/collab-server@npm:^0.18.0":
+"@bangle.dev/collab-server@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/collab-server@npm:0.18.1"
+  dependencies:
+    "@bangle.dev/disk": 0.18.1
+    localforage: ^1.9.0
+    prosemirror-collab: ^1.2.2
+    prosemirror-model: ^1.14.1
+    prosemirror-transform: ^1.3.2
+  peerDependencies:
+    "@bangle.dev/core": "*"
+    "@bangle.dev/disk": "*"
+    prosemirror-collab: "*"
+    prosemirror-model: "*"
+    prosemirror-transform: "*"
+  checksum: 2d1f23582bbe4af14eb7061c63c9fd9399e39e56bf6c5e0c1cd411b9ecf4474b5988033f4bb4a494698daafb5f78bdebc863f91691c1c9506c5fdb23532da546
+  languageName: node
+  linkType: hard
+
+"@bangle.dev/collab-server@npm:^0.18.0":
   version: 0.18.0
   resolution: "@bangle.dev/collab-server@npm:0.18.0"
   dependencies:
@@ -1894,7 +1935,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/core@npm:0.18.0, @bangle.dev/core@npm:^0.18.0":
+"@bangle.dev/core@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/core@npm:0.18.1"
+  dependencies:
+    prosemirror-commands: ^1.1.9
+    prosemirror-dropcursor: ^1.3.5
+    prosemirror-gapcursor: ^1.1.5
+    prosemirror-history: ^1.1.3
+    prosemirror-inputrules: ^1.1.3
+    prosemirror-keymap: ^1.1.4
+    prosemirror-model: ^1.14.1
+    prosemirror-schema-list: ^1.1.4
+    prosemirror-state: ^1.3.4
+    prosemirror-tables: ^1.1.1
+    prosemirror-transform: ^1.3.2
+    prosemirror-utils: 1.0.0-0
+    prosemirror-view: ^1.18.7
+  checksum: 48b110e5e760c695a16a06bdab4f60d41fb0e2771a86646b086b0e21e0f2b8b7d55e34052b63fee5a50adb350a816fa252a82ca0747c8db1561e59f99f35c0b0
+  languageName: node
+  linkType: hard
+
+"@bangle.dev/core@npm:^0.18.0":
   version: 0.18.0
   resolution: "@bangle.dev/core@npm:0.18.0"
   dependencies:
@@ -1915,52 +1977,51 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/disk@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/disk@npm:0.18.0"
+"@bangle.dev/disk@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/disk@npm:0.18.1"
   dependencies:
     debounce-fn: ^5.0.0
-  checksum: 6dfd14f9997dc57dfbf999b0a748356a4fe50da5cd41cae514bad3e715cf1e5e7c7aa7681413dd1a38b5e44521ce15fe33da0efefc1505b2774d904ff6eb0449
+  checksum: c4527b4b32f95bba3ef0ea84c3b6ac695cff77a4f9e06b610e1b97f9b73c12e095f0c73713c9f341597cd4d1ec2fe340c9c79802b79f31835f8d8150972284ef
   languageName: node
   linkType: hard
 
-"@bangle.dev/emoji@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/emoji@npm:0.18.0"
+"@bangle.dev/emoji@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/emoji@npm:0.18.1"
   dependencies:
     markdown-it-emoji: ^2.0.0
   peerDependencies:
     "@bangle.dev/core": "*"
-    "@bangle.dev/markdown": "*"
-  checksum: 8a4690587ac7977bb67be710c88c94e32ef4ec52512ca3a1fdc6a43787e8f6adc3ebfdea8c0fbb6a8884ef175cf67c98dc7f039c6dee7d4da38951186ddb438f
+  checksum: 5e369882694ca4561226e582cc598d0307cd3f74a175c28aa7c4fb06803c2dc38a1e5dc08783add43d746290345e28eb26f45dc0c958b3d7767925cb8c477146
   languageName: node
   linkType: hard
 
-"@bangle.dev/markdown-front-matter@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/markdown-front-matter@npm:0.18.0"
+"@bangle.dev/markdown-front-matter@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/markdown-front-matter@npm:0.18.1"
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 767653793153c7ca9e4ca198140bc3d8113a2486e44eda0802ef58920e6324c5138e33f579a6332c66bb9a46e6bd88a676f49cc7d0f6682e0e1d4bc8c1859e96
+  checksum: 76cf5de89cb9df10428a9ee29044abb21cdf24c532fd42d6cfa20e0cbcc8e3a0afe6b68873618c44faed5c18ca3aff0a683b7cd2beda48693e315c2e3f27e193
   languageName: node
   linkType: hard
 
-"@bangle.dev/markdown@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/markdown@npm:0.18.0"
+"@bangle.dev/markdown@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/markdown@npm:0.18.1"
   dependencies:
     markdown-it: ^10.0.0
     prosemirror-markdown: ^1.5.1
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/table": "*"
-  checksum: 957cef607e5c8e1f87730de3d8a25723526c3fb9c381b692cb87c44caf181ee105d2e793c27a4a58faaf6819f4ae9d43e09b9fa670bbac3594eb15ece753595c
+  checksum: 22c993ca9d68a75f018a32d0d15e6cbec54119dd6f61170f82bbf22689d91fa3b7c47ae9c2f5829224b3041387dd2ccbe224754e76df22d69f153b0ea250a6f2
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-emoji-suggest@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/react-emoji-suggest@npm:0.18.0"
+"@bangle.dev/react-emoji-suggest@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/react-emoji-suggest@npm:0.18.1"
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/emoji": "*"
@@ -1968,13 +2029,13 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 6001585768fbbfbcfc5196be6a8674842fcc33fbcf897b3ead6015d21464d04a8878fadb71035eeb9a35ca67a1ba1f683a133bf28ab65cb86ec6b5262f3e59ce
+  checksum: 30fdea21f70a17b589af407daf5ecb021629bf93e8d158c90ae135b06298de1f7ead511c8a2b70407e96c9f09f27cb9e1bcd9cf6de6d027ad083f20d5738b118
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-menu@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/react-menu@npm:0.18.0"
+"@bangle.dev/react-menu@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/react-menu@npm:0.18.1"
   dependencies:
     prop-types: ^15.7.2
   peerDependencies:
@@ -1983,26 +2044,26 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 0c5bc0d9cb5feaa02eb6e58177721a7c3c45a8efd173cb8f2cae8e018681c1f61078e5375136d4ab05ae160db9e90c961e7a633120951af9da641ca404222fa0
+  checksum: a23d65daf8c7241214f30ab059ef816deedb88e48e8ebfea04ce5b539841d6559fa626151c0d4378056fc5aa26d9a1ed8095e4a4923e8b0ba6a96312a0038486
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-stopwatch@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/react-stopwatch@npm:0.18.0"
+"@bangle.dev/react-stopwatch@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/react-stopwatch@npm:0.18.1"
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/markdown": "*"
     "@bangle.dev/react": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: d6f476e3365e7eaf59f1478529cd4f17525dd844b60937e3e5a9cf005036d9ab97242537acd94d1cdd2bf390aee73d9b0a97d0255a69dd87dbf55f7ec497c683
+  checksum: 43d1213defad9ca5552c9faa1771b8e963f1088f0c7aaec5018c81fd6222fc381efe10628ceb4490a3db89a59ea7ade6899d8faecf07c24d269d6d0ca110aa7c
   languageName: node
   linkType: hard
 
-"@bangle.dev/react@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/react@npm:0.18.0"
+"@bangle.dev/react@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/react@npm:0.18.1"
   dependencies:
     prop-types: ^15.7.2
     punycode: ^2.1.1
@@ -2010,65 +2071,65 @@ __metadata:
     "@bangle.dev/core": "*"
     react: "*"
     react-dom: "*"
-  checksum: f6adceaef6dd207d88cc2a902374f67116ffe6c5aeea0f9607a6f534f06a7183a6ffcc68dcac4f6af4a39e64268a3618b75f7de4b972095a5a4528b026b4b6a9
+  checksum: 3646fdfdbe1b91a8bbbf5d38c717dc0bf8d931b7cd41c1f40618fd4271104bd628cd9d92359c9b8f5a51df1946c8f4465d19e963927c8eb5f59a0d60f6ad9e61
   languageName: node
   linkType: hard
 
-"@bangle.dev/table@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/table@npm:0.18.0"
+"@bangle.dev/table@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/table@npm:0.18.1"
   dependencies:
     prosemirror-keymap: ^1.1.4
     prosemirror-tables: ^1.1.1
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 70149f815660ef166cbcd9de7f8bc531d136bd52bf9a1d48457b792b271a681d660873e063c4afee887c048148b2dc663178c2434de75bcc9e8ee44c85139983
+  checksum: ee45e0b1de32a97b11ad207011c33ed289ac83e33946f7002058aeff4603efdaeca5ca9a857af40bb3b9e265925e7603603b0c2511b7ccaf2ba7d95d6f8a2303
   languageName: node
   linkType: hard
 
-"@bangle.dev/timestamp@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/timestamp@npm:0.18.0"
+"@bangle.dev/timestamp@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/timestamp@npm:0.18.1"
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 4f78b699c93c9acaee2f52abbec1b21aa7a671bee9ba44e99e263396f6a3b06a7cc8e6a5a34fb10cdc29fd56755c330f85364daab8d00f0237017208540e5405
+  checksum: f88c42b71218d34ba576c599ecbb254c1c5378bbef2a4d2455e47c3147ccb63e000b9c8ffd8f77771369826ef568c76573a080daa0283a5ed68a0d7b4526e479
   languageName: node
   linkType: hard
 
-"@bangle.dev/tooltip@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/tooltip@npm:0.18.0"
+"@bangle.dev/tooltip@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/tooltip@npm:0.18.1"
   dependencies:
     "@popperjs/core": ^2.5.4
     prosemirror-inputrules: ^1.1.3
-    prosemirror-model: ^1.12.0
-    prosemirror-state: ^1.3.3
-    prosemirror-view: ^1.16.3
+    prosemirror-model: ^1.14.1
+    prosemirror-state: ^1.3.4
+    prosemirror-view: ^1.18.7
   peerDependencies:
     "@bangle.dev/core": "*"
     prosemirror-inputrules: "*"
     prosemirror-model: "*"
     prosemirror-state: "*"
     prosemirror-view: "*"
-  checksum: 48cf99672c145c740480172ce6e3a53a23a3193f2ac314b1b523fe3eb33e29b96e74d5014f50e9dd1ef8db4eb4ec640b67e48c998e8b43fd2ba5b89b9848b899
+  checksum: 0e5e65ec7f549f6328f42ec857050e385c524aae7e3a16756b61f6774d91f921b648461aab5c6500a80d27bea0216e040d220bd4b9ee642535c7a3b2e4a76788
   languageName: node
   linkType: hard
 
-"@bangle.dev/trailing-node@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/trailing-node@npm:0.18.0"
+"@bangle.dev/trailing-node@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/trailing-node@npm:0.18.1"
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: ceb39492024b851fdcd5b906f84e7487174bed2a5e32b4980f55cba2a7495734343bbb726df8cdc3d0712f8c63141c5d0cf3b5b80f0ce76ad4a8a2ab2b299c3e
+  checksum: e1b03a880460e643b7861bac6ac0891893338410877879b431466ba22575d09f2c0b0972c1afb2394a9e990687d8c2c1904fc913a81bb7fc55d42fd34b943df6
   languageName: node
   linkType: hard
 
-"@bangle.dev/wiki-link@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@bangle.dev/wiki-link@npm:0.18.0"
+"@bangle.dev/wiki-link@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@bangle.dev/wiki-link@npm:0.18.1"
   peerDependencies:
     "@bangle.dev/core": "*"
-  checksum: 7fc258e6465ecf1c56341848b8b4ee717d939577751ee63a83343ce7353730eee72ba6d359e1add18b6b4673515f5e3335e6e237757510d00399b7daced3e9f2
+  checksum: 446c5a1d0b921eecc04ae21b93292b57f7c405edfcad8cc595b8b7c77b50eac23f205e8f13654a6fbe7b2f05c88103509edd788fb0979f1c763c2ed528382223
   languageName: node
   linkType: hard
 
@@ -3966,9 +4027,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app-entry@workspace:app/app-entry"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/markdown-front-matter": 0.18.0
-    "@bangle.dev/react": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/markdown-front-matter": 0.18.1
+    "@bangle.dev/react": 0.18.1
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
     "@testing-library/react-hooks": ^5.1.2
@@ -4547,7 +4608,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bangle-io-context@workspace:lib/bangle-io-context"
   dependencies:
-    "@bangle.dev/core": 0.18.0
+    "@bangle.dev/core": 0.18.1
     react: 17.0.2
     react-dom: 17.0.2
     utils: "workspace:*"
@@ -5393,7 +5454,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "collapsible-heading@workspace:extensions/collapsible-heading"
   dependencies:
-    "@bangle.dev/core": 0.18.0
+    "@bangle.dev/core": 0.18.1
     extension-helpers: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
@@ -6463,18 +6524,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "editor-core@workspace:extensions/editor-core"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/emoji": 0.18.0
-    "@bangle.dev/markdown": 0.18.0
-    "@bangle.dev/markdown-front-matter": 0.18.0
-    "@bangle.dev/react": 0.18.0
-    "@bangle.dev/react-emoji-suggest": 0.18.0
-    "@bangle.dev/react-menu": 0.18.0
-    "@bangle.dev/react-stopwatch": 0.18.0
-    "@bangle.dev/table": 0.18.0
-    "@bangle.dev/timestamp": 0.18.0
-    "@bangle.dev/tooltip": 0.18.0
-    "@bangle.dev/trailing-node": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/emoji": 0.18.1
+    "@bangle.dev/markdown": 0.18.1
+    "@bangle.dev/markdown-front-matter": 0.18.1
+    "@bangle.dev/react": 0.18.1
+    "@bangle.dev/react-emoji-suggest": 0.18.1
+    "@bangle.dev/react-menu": 0.18.1
+    "@bangle.dev/react-stopwatch": 0.18.1
+    "@bangle.dev/table": 0.18.1
+    "@bangle.dev/timestamp": 0.18.1
+    "@bangle.dev/tooltip": 0.18.1
+    "@bangle.dev/trailing-node": 0.18.1
     extension-helpers: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2
@@ -6485,7 +6546,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "editor-manager-context@workspace:lib/editor-manager-context"
   dependencies:
-    "@bangle.dev/core": 0.18.0
+    "@bangle.dev/core": 0.18.1
     config: "workspace:*"
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 17.0.2
@@ -6498,8 +6559,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "editor-scroll-extension@workspace:extensions/editor-scroll-extension"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/react": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/react": 0.18.1
     app-state-context: "workspace:*"
     debounce-fn: ^5.0.0
     extension-helpers: "workspace:*"
@@ -7184,7 +7245,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-extension@workspace:extensions/example-extension"
   dependencies:
-    "@bangle.dev/core": 0.18.0
+    "@bangle.dev/core": 0.18.1
     extension-helpers: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
@@ -8723,10 +8784,10 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "image-extension@workspace:extensions/image-extension"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/react": 0.18.0
-    "@bangle.dev/react-menu": 0.18.0
-    "@bangle.dev/tooltip": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/react": 0.18.1
+    "@bangle.dev/react-menu": 0.18.1
+    "@bangle.dev/tooltip": 0.18.1
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
     extension-helpers: "workspace:*"
@@ -8834,9 +8895,9 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "inline-backlink@workspace:extensions/inline-backlink"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/react": 0.18.0
-    "@bangle.dev/wiki-link": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/react": 0.18.1
+    "@bangle.dev/wiki-link": 0.18.1
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
     bangle-io-context: "workspace:*"
@@ -8856,8 +8917,8 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "inline-command-palette@workspace:extensions/inline-command-palette"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/react": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/react": 0.18.1
     chrono-node: ^2.2.6
     config: "workspace:*"
     extension-helpers: "workspace:*"
@@ -8873,13 +8934,13 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "inline-emoji@workspace:extensions/inline-emoji"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/emoji": 0.18.0
-    "@bangle.dev/markdown": 0.18.0
-    "@bangle.dev/react": 0.18.0
-    "@bangle.dev/react-emoji-suggest": 0.18.0
-    "@bangle.dev/table": 0.18.0
-    "@bangle.dev/tooltip": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/emoji": 0.18.1
+    "@bangle.dev/markdown": 0.18.1
+    "@bangle.dev/react": 0.18.1
+    "@bangle.dev/react-emoji-suggest": 0.18.1
+    "@bangle.dev/table": 0.18.1
+    "@bangle.dev/tooltip": 0.18.1
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
     emoji-lookup-data: ^1.2.0
@@ -8895,9 +8956,9 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "inline-palette@workspace:js-lib/inline-palette"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/react": 0.18.0
-    "@bangle.dev/tooltip": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/react": 0.18.1
+    "@bangle.dev/tooltip": 0.18.1
     react: 17.0.2
     react-dom: 17.0.2
     utils: "workspace:*"
@@ -11192,10 +11253,10 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "markdown@workspace:lib/markdown"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/markdown": 0.18.0
-    "@bangle.dev/markdown-front-matter": 0.18.0
-    "@bangle.dev/table": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/markdown": 0.18.1
+    "@bangle.dev/markdown-front-matter": 0.18.1
+    "@bangle.dev/table": 0.18.1
   languageName: unknown
   linkType: soft
 
@@ -11652,10 +11713,10 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "naukar-worker@workspace:worker/naukar-worker"
   dependencies:
-    "@bangle.dev/collab-client": 0.18.0
-    "@bangle.dev/collab-server": 0.18.0
+    "@bangle.dev/collab-client": 0.18.1
+    "@bangle.dev/collab-server": 0.18.1
     "@bangle.dev/core": ^0.18.0
-    "@bangle.dev/disk": 0.18.0
+    "@bangle.dev/disk": 0.18.1
     config: "workspace:*"
     idb-keyval: ^5.0.5
     object-sync: "workspace:*"
@@ -12260,7 +12321,7 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "palettes@workspace:app/palettes"
   dependencies:
-    "@bangle.dev/core": 0.18.0
+    "@bangle.dev/core": 0.18.1
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^5.1.2
     "@testing-library/user-event": ^13.1.5
@@ -12952,7 +13013,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"prosemirror-dropcursor@npm:^1.3.2":
+"prosemirror-dropcursor@npm:^1.3.2, prosemirror-dropcursor@npm:^1.3.5":
   version: 1.3.5
   resolution: "prosemirror-dropcursor@npm:1.3.5"
   dependencies:
@@ -14359,10 +14420,10 @@ resolve@^2.0.0-next.3:
   version: 0.0.0-use.local
   resolution: "shared@workspace:app/shared"
   dependencies:
-    "@bangle.dev/core": 0.18.0
-    "@bangle.dev/markdown": 0.18.0
-    "@bangle.dev/markdown-front-matter": 0.18.0
-    "@bangle.dev/table": 0.18.0
+    "@bangle.dev/core": 0.18.1
+    "@bangle.dev/markdown": 0.18.1
+    "@bangle.dev/markdown-front-matter": 0.18.1
+    "@bangle.dev/table": 0.18.1
     bangle-io-context: "workspace:*"
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
@@ -16451,7 +16512,7 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "workspace-hooks@workspace:lib/workspace-hooks"
   dependencies:
-    "@bangle.dev/core": 0.18.0
+    "@bangle.dev/core": 0.18.1
     "@testing-library/react": ^11.2.6
     "@testing-library/react-hooks": ^5.1.2
     baby-fs: "workspace:*"
@@ -16470,7 +16531,7 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "workspace@workspace:lib/workspace"
   dependencies:
-    "@bangle.dev/core": 0.18.0
+    "@bangle.dev/core": 0.18.1
     "@octokit/rest": ^18.5.3
     "@testing-library/react": ^11.2.6
     baby-fs: "workspace:*"

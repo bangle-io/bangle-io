@@ -19,7 +19,7 @@
   "module": "index.js",
   "scripts": {},
   "devDependencies": {
-    "@bangle.dev/core": "0.18.0",
+    "@bangle.dev/core": "0.18.1",
     "@testing-library/react": "^11.2.6",
     "@testing-library/react-hooks": "^5.1.2",
     "baby-fs": "workspace:*",

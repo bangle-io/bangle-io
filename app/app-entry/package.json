@@ -21,9 +21,9 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.18.0",
-    "@bangle.dev/markdown-front-matter": "0.18.0",
-    "@bangle.dev/react": "0.18.0",
+    "@bangle.dev/core": "0.18.1",
+    "@bangle.dev/markdown-front-matter": "0.18.1",
+    "@bangle.dev/react": "0.18.1",
     "@sentry/tracing": "^6.3.1",
     "app-state-context": "workspace:*",
     "bangle-io-context": "workspace:*",
