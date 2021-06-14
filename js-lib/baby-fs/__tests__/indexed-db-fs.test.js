@@ -107,6 +107,17 @@ test('stat', async () => {
   });
 });
 
+test('stat throws error if file not found', async () => {
+  const fs = new IndexedDBFileSystem();
+  await fs.writeFile('hola/hi', toFile('my-data'));
+
+  await expect(
+    fs.stat('hola/unknown'),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"BABY_FS_FILE_NOT_FOUND_ERROR:File hola/unknown not found"`,
+  );
+});
+
 test('rename', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.writeFile('hola/hi', toFile('mydata'));

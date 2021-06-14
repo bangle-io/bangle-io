@@ -80,6 +80,8 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 
   async stat(filePath) {
     this._verifyFilePath(filePath);
+    // read file so that if there is an error we throw it
+    await this.readFile(filePath);
     const result = await this._fileMetadata.get(
       filePath,
       new BaseFileMetadata(),
