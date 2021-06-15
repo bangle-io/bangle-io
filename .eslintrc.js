@@ -8,6 +8,11 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
   ],
+  overrides: [
+    {
+      files: '*.jsx',
+    },
+  ],
   env: {
     jest: true,
   },
@@ -31,7 +36,7 @@ module.exports = {
       { maxDepth: 2 },
     ],
     'react-hooks/exhaustive-deps': [
-      'warn',
+      'error',
       {
         additionalHooks: '(useKeybindings|useMyOtherCustomHook)',
       },
@@ -48,6 +53,7 @@ module.exports = {
     'react': {
       version: '16',
     },
+    'import/extensions': ['.js', '.jsx'],
     'import/resolver': {
       node: {
         extensions: ['.js', '.jsx'],
