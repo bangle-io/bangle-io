@@ -9,6 +9,8 @@
     "inline-command-palette",
     "inline-emoji",
     "example-extension",
-    "editor-scroll-extension"
+    "editor-scroll-extension",
+    "core-palettes",
+    "core-actions"
   ]
 }

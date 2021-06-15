@@ -1,5 +1,5 @@
 {
-  "name": "ui-components",
+  "name": "core-palettes",
   "version": "0.0.0",
   "authors": [
     {
@@ -19,18 +19,20 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
+    "@bangle.dev/core": "0.18.1",
+    "action-context": "workspace:*",
+    "config": "workspace:*",
+    "editor-manager-context": "workspace:*",
+    "extension-helpers": "workspace:*",
     "magic-palette": "workspace:*",
-    "prop-types": "^15.7.2",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
+    "react": "^17.0.2",
+    "ui-components": "workspace:*",
+    "ui-context": "workspace:*",
     "utils": "workspace:*",
-    "w3c-keyname": "^2.2.4"
-  },
-  "devDependencies": {
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.5"
+    "workspace": "workspace:*",
+    "workspace-hooks": "workspace:*"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   }
 }

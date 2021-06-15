@@ -25,6 +25,7 @@
     "@bangle.dev/markdown-front-matter": "0.18.1",
     "@bangle.dev/react": "0.18.1",
     "@sentry/tracing": "^6.3.1",
+    "action-context": "workspace:*",
     "app-state-context": "workspace:*",
     "bangle-io-context": "workspace:*",
     "collab-extension": "workspace:*",

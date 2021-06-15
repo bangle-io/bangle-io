@@ -3841,6 +3841,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"action-context@workspace:*, action-context@workspace:lib/action-context":
+  version: 0.0.0-use.local
+  resolution: "action-context@workspace:lib/action-context"
+  dependencies:
+    react: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
 "agent-base@npm:6":
   version: 6.0.2
   resolution: "agent-base@npm:6.0.2"
@@ -4033,6 +4041,7 @@ __metadata:
     "@sentry/tracing": ^6.3.1
     "@testing-library/react": ^11.2.6
     "@testing-library/react-hooks": ^5.1.2
+    action-context: "workspace:*"
     app-state-context: "workspace:*"
     bangle-io-context: "workspace:*"
     collab-extension: "workspace:*"
@@ -4683,7 +4692,7 @@ __metadata:
     surge: ^0.23.0
     tailwindcss: ^2.1.2
     typescript: 4.2.4
-    vite: ^2.3.4
+    vite: ^2.3.7
     vite-plugin-html: ^2.0.7
     webpack: ^5.35.1
     webpack-bundle-analyzer: ^4.4.1
@@ -5793,6 +5802,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"core-actions@workspace:*, core-actions@workspace:extensions/core-actions":
+  version: 0.0.0-use.local
+  resolution: "core-actions@workspace:extensions/core-actions"
+  dependencies:
+    "@bangle.dev/core": 0.18.1
+    action-context: "workspace:*"
+    baby-fs: "workspace:*"
+    config: "workspace:*"
+    editor-manager-context: "workspace:*"
+    extension-helpers: "workspace:*"
+    magic-palette: "workspace:*"
+    react: ^17.0.2
+    ui-components: "workspace:*"
+    ui-context: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+    workspace-hooks: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "core-js-compat@npm:^3.9.0":
   version: 3.9.1
   resolution: "core-js-compat@npm:3.9.1"
@@ -5826,6 +5855,25 @@ __metadata:
   checksum: f020e194bac93eb54fbefd1c33931582e3408d08584d9c6829cd3428ebe8b39e1e93a3b03e8aa49f7bf731ff07ef9c76abc2e9efa128edfa2216e00620830dee
   languageName: node
   linkType: hard
+
+"core-palettes@workspace:*, core-palettes@workspace:extensions/core-palettes":
+  version: 0.0.0-use.local
+  resolution: "core-palettes@workspace:extensions/core-palettes"
+  dependencies:
+    "@bangle.dev/core": 0.18.1
+    action-context: "workspace:*"
+    config: "workspace:*"
+    editor-manager-context: "workspace:*"
+    extension-helpers: "workspace:*"
+    magic-palette: "workspace:*"
+    react: ^17.0.2
+    ui-components: "workspace:*"
+    ui-context: "workspace:*"
+    utils: "workspace:*"
+    workspace: "workspace:*"
+    workspace-hooks: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "core-util-is@npm:1.0.2, core-util-is@npm:~1.0.0":
   version: 1.0.2
@@ -6536,6 +6584,7 @@ __metadata:
     "@bangle.dev/timestamp": 0.18.1
     "@bangle.dev/tooltip": 0.18.1
     "@bangle.dev/trailing-node": 0.18.1
+    editor-manager-context: "workspace:*"
     extension-helpers: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2
@@ -6837,12 +6886,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.11.23":
-  version: 0.11.23
-  resolution: "esbuild@npm:0.11.23"
+"esbuild@npm:^0.12.5":
+  version: 0.12.8
+  resolution: "esbuild@npm:0.12.8"
   bin:
     esbuild: bin/esbuild
-  checksum: d55bea84f94e7854fa6fb013ffc63747f2286001b3d73c2a7beb605e6e4847c24ff2cde0660f03045d06d083695c8082423b007a9ee8687e70b52719458bfdd6
+  checksum: e7579f765a8d79c562a3bcda8e83015b5ce8de237ed5e646851bb73fc4c1262cb1611b5b0591f36dad6af63b909062a6fb4e90417ab8341f6ba182a00c7c4e86
   languageName: node
   linkType: hard
 
@@ -11193,6 +11242,28 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"magic-palette@workspace:*, magic-palette@workspace:js-lib/magic-palette":
+  version: 0.0.0-use.local
+  resolution: "magic-palette@workspace:js-lib/magic-palette"
+  dependencies:
+    "@vitejs/plugin-react-refresh": ^1.3.1
+    autoprefixer: ^10.2.5
+    postcss: ^8.3.2
+    postcss-custom-properties: ^11.0.0
+    postcss-import: ^14.0.1
+    postcss-loader: ^5.2.0
+    postcss-nested: ^5.0.5
+    prop-types: 15.7.2
+    react: ^17.0.0
+    react-dom: ^17.0.0
+    tailwindcss: ^2.1.2
+    vite: ^2.3.7
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  languageName: unknown
+  linkType: soft
+
 "make-dir@npm:^3.0.0, make-dir@npm:^3.0.2, make-dir@npm:^3.1.0":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
@@ -12325,11 +12396,13 @@ fsevents@^2.1.2:
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^5.1.2
     "@testing-library/user-event": ^13.1.5
+    action-context: "workspace:*"
     baby-fs: "workspace:*"
     collapsible-heading: "workspace:*"
     commands: "workspace:*"
     config: "workspace:*"
     editor-manager-context: "workspace:*"
+    magic-palette: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2
     ui-components: "workspace:*"
@@ -12849,7 +12922,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.3.2":
+"postcss@npm:^8.3.0, postcss@npm:^8.3.2":
   version: 8.3.2
   resolution: "postcss@npm:8.3.2"
   dependencies:
@@ -12972,7 +13045,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
+"prop-types@npm:15.7.2, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -13345,7 +13418,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:17.0.2, react-dom@npm:^17.0.2":
+"react-dom@npm:17.0.2, react-dom@npm:^17.0.0, react-dom@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
   dependencies:
@@ -13471,7 +13544,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"react@npm:17.0.2":
+"react@npm:17.0.2, react@npm:^17.0.0, react@npm:^17.0.2":
   version: 17.0.2
   resolution: "react@npm:17.0.2"
   dependencies:
@@ -14428,7 +14501,9 @@ resolve@^2.0.0-next.3:
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
     comlink: ^4.3.1
+    core-actions: "workspace:*"
     core-js: ^3.13.1
+    core-palettes: "workspace:*"
     editor-core: "workspace:*"
     editor-scroll-extension: "workspace:*"
     image-extension: "workspace:*"
@@ -15701,6 +15776,7 @@ typescript@4.2.4:
   dependencies:
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
+    magic-palette: "workspace:*"
     prop-types: ^15.7.2
     react: 17.0.2
     react-dom: 17.0.2
@@ -16042,13 +16118,13 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.3.4":
-  version: 2.3.4
-  resolution: "vite@npm:2.3.4"
+"vite@npm:^2.3.7":
+  version: 2.3.7
+  resolution: "vite@npm:2.3.7"
   dependencies:
-    esbuild: ^0.11.23
+    esbuild: ^0.12.5
     fsevents: ~2.3.1
-    postcss: ^8.2.10
+    postcss: ^8.3.0
     resolve: ^1.19.0
     rollup: ^2.38.5
   dependenciesMeta:
@@ -16056,7 +16132,7 @@ typescript@4.2.4:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 9bda0ee947c8e036c1f4a5cd51a1ff2c2afd03c055759ed6dd4717090b46caccb2584b76068b5acfc794cff602aecf1eda1a2ccdd96d15e3a7876af78e3b42f4
+  checksum: f67574e957b452259edbf72d5cbd37de4d5656bf516a7b7358d93484cb25480c2c1c7eb30c3071d0951ab1a2b1e163753869eddf059bec553642fd5d84a2c8fc
   languageName: node
   linkType: hard
 
