@@ -12,12 +12,15 @@ import {
   useWorkspacePath,
   isValidNoteWsPath,
   validateNoteWsPath,
-  createNote,
+  saveNote,
   resolvePath,
   renameFile,
   deleteFile,
+  PathValidationError,
 } from 'workspace/index';
 import { shallowCompareArray, removeMdExtension } from 'utils/index';
+import { checkFileExists } from 'workspace/file-ops';
+import { HELP_FS_WORKSPACE_NAME } from 'config';
 
 const LOG = false;
 
@@ -133,6 +136,7 @@ export function useFiles(wsName) {
 export function useRenameNote({ refreshWsPaths }) {
   const {
     wsPath,
+    wsName,
     secondaryWsPath,
     replaceWsPath,
     replacePrimaryAndSecondaryWsPath,
@@ -141,6 +145,10 @@ export function useRenameNote({ refreshWsPaths }) {
 
   return useCallback(
     async (oldWsPath, newWsPath, { updateLocation = true } = {}) => {
+      if (wsName === HELP_FS_WORKSPACE_NAME) {
+        throw new PathValidationError('Cannot rename a help document');
+      }
+
       await renameFile(wsPath, newWsPath);
       if (updateLocation) {
         // update both at the same time to avoid problem
@@ -158,6 +166,7 @@ export function useRenameNote({ refreshWsPaths }) {
     },
     [
       wsPath,
+      wsName,
       secondaryWsPath,
       refreshWsPaths,
       replaceWsPath,
@@ -204,7 +213,10 @@ export function useCreateNote({ refreshWsPaths }) {
         }),
       } = {},
     ) => {
-      await createNote(bangleIOContext, wsPath, doc);
+      const fileExists = await checkFileExists(wsPath);
+      if (!fileExists) {
+        await saveNote(bangleIOContext, wsPath, doc);
+      }
       await refreshWsPaths();
       open && pushWsPath(wsPath);
     },
@@ -222,6 +234,9 @@ export function useDeleteNote({ refreshWsPaths }) {
   const deleteByWsPath = useCallback(
     async (wsPathToDelete) => {
       validateNoteWsPath(wsPathToDelete);
+      if (wsName === HELP_FS_WORKSPACE_NAME) {
+        throw new PathValidationError('Cannot delete a help document');
+      }
 
       if (wsPathToDelete === wsPath) {
         history.replace('/ws/' + wsName);

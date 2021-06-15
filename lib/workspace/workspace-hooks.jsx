@@ -117,13 +117,14 @@ export function useWorkspacePath() {
   const { wsName = HELP_FS_WORKSPACE_NAME } = match?.params ?? {};
 
   let wsPath;
-  const filePath = locationToFilePath(location);
+  let filePath = locationToFilePath(location);
   if (filePath) {
     wsPath = wsName + ':' + filePath;
   }
   // show the landing page if no file path i.e. at root '/'
   else if (wsName === HELP_FS_WORKSPACE_NAME && !filePath) {
     wsPath = wsName + ':' + HELP_FS_INDEX_FILE_NAME;
+    filePath = resolvePath(wsPath).filePath;
   }
 
   const search = new URLSearchParams(location?.search);

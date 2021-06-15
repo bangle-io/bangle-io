@@ -63,7 +63,7 @@ const initialState = {
   notifications: [],
 };
 
-const initialContextUIState = new UIState(initialState, true);
+const initialContextUIState = {};
 initialContextUIState.dispatch = () => {};
 
 export const UIManagerContext = createContext(initialContextUIState);
@@ -170,12 +170,21 @@ const reducer = (state, action) => {
       };
     }
 
-    case 'UI/CHANGE_PALETTE_TYPE': {
+    case 'UI/UPDATE_PALETTE': {
       return {
         ...state,
         paletteType: action.value.type,
         paletteInitialQuery: action.value.initialQuery,
         paletteMetadata: action.value.metadata,
+      };
+    }
+
+    case 'UI/RESET_PALETTE': {
+      return {
+        ...state,
+        paletteType: null,
+        paletteInitialQuery: '',
+        paletteMetadata: {},
       };
     }
 
@@ -212,12 +221,12 @@ const reducer = (state, action) => {
 };
 
 function persistState(obj) {
-  window.localStorage.setItem(persistKey, JSON.stringify(obj));
+  localStorage.setItem(persistKey, JSON.stringify(obj));
 }
 
 function retrievePersistedState() {
   try {
-    const item = window.localStorage.getItem(persistKey);
+    const item = localStorage.getItem(persistKey);
     return JSON.parse(item);
   } catch (error) {
     console.error(error);
