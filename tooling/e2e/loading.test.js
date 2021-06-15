@@ -40,13 +40,13 @@ test('Main content exists', async () => {
 });
 
 test('shows file palette', async () => {
-  let handle = await page.$('.bangle-palette');
+  let handle = await page.$('.magic-palette-container');
   expect(handle).toBe(null);
 
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('p');
   await page.keyboard.up(ctrlKey);
-  handle = await page.$('.bangle-palette');
+  handle = await page.$('.magic-palette-container');
   expect(handle).not.toBe(null);
 });
 
@@ -57,14 +57,14 @@ test('shows command palette', async () => {
   await page.keyboard.up('Shift');
   await page.keyboard.up(ctrlKey);
 
-  let handle = await page.$('.bangle-palette');
+  let handle = await page.$('.magic-palette-container');
   expect(handle).not.toBe(null);
   expect(
     (
-      await page.$$eval('.palette-row', (nodes) =>
+      await page.$$eval('.magic-palette-item', (nodes) =>
         nodes.map((n) => n.getAttribute('data-id')),
       )
-    ).includes('TOGGLE_THEME_COMMAND'),
+    ).includes('@action/core-actions/TOGGLE_THEME_ACTION'),
   ).toBe(true);
 });
 
