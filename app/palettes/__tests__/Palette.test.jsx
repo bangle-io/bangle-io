@@ -78,7 +78,7 @@ test('Correctly switches to file type', async () => {
   });
   act(() => {
     dispatch({
-      type: 'UI/CHANGE_PALETTE_TYPE',
+      type: 'UI/UPDATE_PALETTE',
       value: { type: FILE_PALETTE },
     });
   });
@@ -115,7 +115,7 @@ test('Correctly switches to file type', async () => {
 test('Correctly filters commands', async () => {
   act(() => {
     dispatch({
-      type: 'UI/CHANGE_PALETTE_TYPE',
+      type: 'UI/UPDATE_PALETTE',
       value: { type: FILE_PALETTE },
     });
   });
@@ -177,7 +177,7 @@ test('input palette', async () => {
   const onInputConfirm = jest.fn();
   act(() => {
     dispatch({
-      type: 'UI/CHANGE_PALETTE_TYPE',
+      type: 'UI/UPDATE_PALETTE',
       value: {
         type: INPUT_PALETTE,
         initialQuery,

@@ -1,19 +1,20 @@
 import { COMMAND_PALETTE, FILE_PALETTE } from 'palettes/index';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
-import { resolvePath } from 'workspace/index';
+import { resolvePath, useWorkspacePath } from 'workspace/index';
 import { Link } from 'react-router-dom';
 import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
 export function EmptyEditorPage() {
   const { dispatch } = useContext(UIManagerContext);
   const { noteWsPaths = [] } = useWorkspaceHooksContext();
+  const { wsName } = useWorkspacePath();
 
   const recentFiles = [];
   return (
     <>
       <h3 className="text-xl sm:text-2xl lg:text-3xl leading-none">
-        Recently opened files
+        Recently opened files in "{wsName}"
       </h3>
       <ul className="list-inside list-disc my-2">
         {Array.from(new Set([...recentFiles, ...noteWsPaths.slice(0, 3)])).map(
@@ -34,7 +35,7 @@ export function EmptyEditorPage() {
       <button
         onClick={() => {
           dispatch({
-            type: 'UI/CHANGE_PALETTE_TYPE',
+            type: 'UI/UPDATE_PALETTE',
             value: { type: FILE_PALETTE },
           });
         }}
@@ -45,7 +46,7 @@ export function EmptyEditorPage() {
       <button
         onClick={() => {
           dispatch({
-            type: 'UI/CHANGE_PALETTE_TYPE',
+            type: 'UI/UPDATE_PALETTE',
             value: { type: COMMAND_PALETTE, initialQuery: 'new note' },
           });
         }}

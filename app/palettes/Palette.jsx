@@ -8,10 +8,8 @@ import React, {
 import { UIManagerContext } from 'ui-context/index';
 import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
 import { CommandPalette } from './Palettes/CommandPalette';
-import { InputPalette } from './Palettes/InputPalette';
-import { HeadingPalette } from './Palettes/HeadingPalette';
-import { WorkspacePalette } from './Palettes/WorkspacePalette';
 import { FilePalette } from './Palettes/FilePalette';
+import { InputPalette } from './Palettes/InputPalette';
 import { QuestionPalette } from './Palettes/QuestionPalette';
 
 // This is ordered -- the ones with higher rank will
@@ -19,8 +17,6 @@ import { QuestionPalette } from './Palettes/QuestionPalette';
 const AllPalettes = [
   InputPalette,
   CommandPalette,
-  WorkspacePalette,
-  HeadingPalette,
   QuestionPalette,
   // FilePalette must be last since it matches with every
   // raw query: see its parseRawQuery method
@@ -42,7 +38,7 @@ export function Palette() {
   const updatePalette = useCallback(
     ({ type, initialQuery, metadata }) => {
       dispatch({
-        type: 'UI/CHANGE_PALETTE_TYPE',
+        type: 'UI/UPDATE_PALETTE',
         value: { type: type, initialQuery, metadata },
       });
     },

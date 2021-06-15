@@ -61,7 +61,7 @@ export function RootHomePage() {
             <button
               onClick={() => {
                 dispatch({
-                  type: 'UI/CHANGE_PALETTE_TYPE',
+                  type: 'UI/UPDATE_PALETTE',
                   value: {
                     type: COMMAND_PALETTE,
                     initialQuery: 'file system',
@@ -76,7 +76,7 @@ export function RootHomePage() {
             <button
               onClick={() => {
                 dispatch({
-                  type: 'UI/CHANGE_PALETTE_TYPE',
+                  type: 'UI/UPDATE_PALETTE',
                   value: {
                     type: COMMAND_PALETTE,
                     initialQuery: 'new workspace',
@@ -91,7 +91,7 @@ export function RootHomePage() {
           <button
             onClick={() => {
               dispatch({
-                type: 'UI/CHANGE_PALETTE_TYPE',
+                type: 'UI/UPDATE_PALETTE',
                 value: {
                   type: COMMAND_PALETTE,
                   initialQuery: 'import workspace',
