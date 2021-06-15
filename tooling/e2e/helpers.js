@@ -32,7 +32,7 @@ async function createWorkspace(wsName = 'test' + uuid()) {
 
   const input = await handle.$('input');
 
-  await input.type(wsName);
+  await input.type(wsName, { delay: 10 });
 
   await longSleep();
 

@@ -58,7 +58,9 @@ export function useRecencyWatcher(uniqueStoreId) {
         const firstNotRecent = newItems.find(
           (a) => actionHistory[a.uid] == null,
         );
-        firstNotRecent.showDividerAbove = true;
+        if (firstNotRecent) {
+          firstNotRecent.showDividerAbove = true;
+        }
       }
 
       return newItems;

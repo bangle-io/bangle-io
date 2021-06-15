@@ -34,7 +34,7 @@ test('Create a new workspace when already in a workspace', async () => {
   const n2 = await createNewNote(wsName1, 'file-2');
 
   const wsPathsOfWsName1 = await getWsPathsShownInFilePalette(page);
-  expect(wsPathsOfWsName1).toEqual([n1, n2]);
+  expect(wsPathsOfWsName1).toEqual([n2, n1]);
 
   const wsName2 = await createWorkspace();
 
@@ -51,7 +51,7 @@ test('Create a new workspace when already in a workspace and go back', async () 
   const n2 = await createNewNote(wsName1, 'file-2');
 
   const wsPathsOfWsName1 = await getWsPathsShownInFilePalette(page);
-  expect(wsPathsOfWsName1).toEqual([n1, n2]);
+  expect(wsPathsOfWsName1).toEqual([n2, n1]);
 
   const wsName2 = await createWorkspace();
 
@@ -62,7 +62,7 @@ test('Create a new workspace when already in a workspace and go back', async () 
   expect(await page.url()).toMatch(url + '/ws/' + wsName1);
   await getPrimaryEditorHandler(page);
 
-  expect(await getWsPathsShownInFilePalette(page)).toEqual([n1, n2]);
+  expect(await getWsPathsShownInFilePalette(page)).toEqual([n2, n1]);
 });
 
 test('Create a new workspace from home page', async () => {
