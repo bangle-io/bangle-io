@@ -3,11 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "bangle-io-context": [
-        "../../lib/bangle-io-context/index.js"
+      "action-context": [
+        "../../lib/action-context/index.js"
       ],
-      "bangle-io-context/*": [
-        "../../lib/bangle-io-context/*"
+      "action-context/*": [
+        "../../lib/action-context/*"
       ],
       "config": [
         "../../lib/config/index.js"
@@ -15,23 +15,35 @@
       "config/*": [
         "../../lib/config/*"
       ],
+      "editor-manager-context": [
+        "../../lib/editor-manager-context/index.js"
+      ],
+      "editor-manager-context/*": [
+        "../../lib/editor-manager-context/*"
+      ],
       "extension-helpers": [
         "../../lib/extension-helpers/index.js"
       ],
       "extension-helpers/*": [
         "../../lib/extension-helpers/*"
       ],
-      "inline-palette": [
-        "../../js-lib/inline-palette/index.js"
+      "magic-palette": [
+        "../../js-lib/magic-palette/index.js"
       ],
-      "inline-palette/*": [
-        "../../js-lib/inline-palette/*"
+      "magic-palette/*": [
+        "../../js-lib/magic-palette/*"
       ],
       "ui-components": [
         "../../lib/ui-components/index.js"
       ],
       "ui-components/*": [
         "../../lib/ui-components/*"
+      ],
+      "ui-context": [
+        "../../lib/ui-context/index.js"
+      ],
+      "ui-context/*": [
+        "../../lib/ui-context/*"
       ],
       "utils": [
         "../../lib/utils/index.js"
