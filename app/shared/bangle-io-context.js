@@ -8,6 +8,8 @@ import imageExtension from 'image-extension/index';
 import inlineEmoji from 'inline-emoji/index';
 import collabExtension from 'collab-extension/index';
 import editorScrollExtension from 'editor-scroll-extension';
+import corePalette from 'core-palettes';
+import coreActions from 'core-actions';
 
 // TODO move this async, i think a promise should be fine.
 export const bangleIOContext = new BangleIOContext({
@@ -22,6 +24,10 @@ export const bangleIOContext = new BangleIOContext({
     collapsibleHeading,
     imageExtension,
     editorScrollExtension,
+    coreActions,
+    // NOTE: keep the core palette last
+    // as it has note palette in it
+    corePalette,
   ],
   markdownItPlugins: [frontMatterMarkdownItPlugin],
 });

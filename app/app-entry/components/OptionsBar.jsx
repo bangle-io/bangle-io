@@ -34,7 +34,7 @@ export function OptionsBar() {
 
   const toggleFilePalette = () => {
     dispatch({
-      type: 'UI/CHANGE_PALETTE_TYPE',
+      type: 'UI/UPDATE_PALETTE',
       value: {
         type: paletteType === FILE_PALETTE ? null : FILE_PALETTE,
       },
@@ -43,7 +43,7 @@ export function OptionsBar() {
 
   const toggleCommandPalette = () => {
     dispatch({
-      type: 'UI/CHANGE_PALETTE_TYPE',
+      type: 'UI/UPDATE_PALETTE',
       value: {
         type: paletteType === COMMAND_PALETTE ? null : COMMAND_PALETTE,
       },
@@ -51,7 +51,7 @@ export function OptionsBar() {
   };
   const toggleWorkspacePalette = () => {
     dispatch({
-      type: 'UI/CHANGE_PALETTE_TYPE',
+      type: 'UI/UPDATE_PALETTE',
       value: {
         type: paletteType === WORKSPACE_PALETTE ? null : WORKSPACE_PALETTE,
       },

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
-import { UIManagerContext } from 'ui-context/index';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -32,7 +31,6 @@ export function EditorManager({ bangleIOContext, children }) {
    */
   const [editors, _setEditor] = useState(maxEditors);
   const [primaryEditor, secondaryEditor] = editors;
-  const { paletteType } = useContext(UIManagerContext);
   const value = useMemo(() => {
     const setEditor = (editorId, editor) => {
       _setEditor((array) => {
@@ -57,20 +55,6 @@ export function EditorManager({ bangleIOContext, children }) {
       bangleIOContext,
     };
   }, [_setEditor, bangleIOContext, editors]);
-
-  useEffect(() => {
-    if (!paletteType) {
-      rafEditorFocus(primaryEditor);
-    }
-  }, [paletteType, primaryEditor]);
-
-  useEffect(() => {
-    if (!paletteType) {
-      rafEditorFocus(secondaryEditor);
-    }
-
-    return () => {};
-  }, [paletteType, secondaryEditor]);
 
   useEffect(() => {
     window.primaryEditor = primaryEditor;
@@ -102,12 +86,4 @@ export function EditorManager({ bangleIOContext, children }) {
       {children}
     </EditorManagerContext.Provider>
   );
-}
-
-function rafEditorFocus(editor) {
-  if (editor && !editor.view.hasFocus()) {
-    requestAnimationFrame(() => {
-      editor.view.focus();
-    });
-  }
 }

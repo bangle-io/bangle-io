@@ -23,8 +23,8 @@ function frmtHTML(doc) {
 const SELECTOR_TIMEOUT = 500;
 
 async function createWorkspace(wsName = 'test' + uuid()) {
-  await runACommand('NEW_WORKSPACE');
-  let handle = await page.waitForSelector('.bangle-palette', {
+  await runAction('@action/core-actions/NEW_WORKSPACE_ACTION');
+  let handle = await page.waitForSelector('.magic-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
 
@@ -32,12 +32,15 @@ async function createWorkspace(wsName = 'test' + uuid()) {
 
   const input = await handle.$('input');
 
-  await input.type(wsName);
+  await input.type(wsName, { delay: 10 });
 
   await longSleep();
 
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle0' }), // The promise resolves after navigation has finished
+    page.waitForNavigation({
+      timeout: 5000,
+      waitUntil: 'networkidle0',
+    }), // The promise resolves after navigation has finished
     clickPaletteRow('input-confirm'),
   ]);
 
@@ -47,8 +50,8 @@ async function createWorkspace(wsName = 'test' + uuid()) {
 }
 
 async function createNewNote(wsName, noteName = 'new_file.md') {
-  await runACommand('NEW_NOTE_COMMAND');
-  let handle = await page.waitForSelector('.bangle-palette', {
+  await runAction('@action/core-actions/NEW_NOTE_ACTION');
+  let handle = await page.waitForSelector('.magic-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
   if (!noteName.endsWith('.md')) {
@@ -58,7 +61,10 @@ async function createNewNote(wsName, noteName = 'new_file.md') {
   await input.type(noteName);
 
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle0' }),
+    page.waitForNavigation({
+      timeout: 5000,
+      waitUntil: 'networkidle0',
+    }),
     clickPaletteRow('input-confirm'),
   ]);
 
@@ -68,7 +74,7 @@ async function createNewNote(wsName, noteName = 'new_file.md') {
   return wsName + ':' + noteName;
 }
 
-async function runACommand(commandId) {
+async function runAction(actionId) {
   await page.keyboard.press('Escape');
   await page.keyboard.down(ctrlKey);
   await page.keyboard.down('Shift');
@@ -76,13 +82,16 @@ async function runACommand(commandId) {
   await page.keyboard.up('Shift');
   await page.keyboard.up(ctrlKey);
 
-  await clickPaletteRow(commandId);
+  await clickPaletteRow(actionId);
 }
 
 async function clickPaletteRow(id) {
-  const result = await page.waitForSelector(`.palette-row[data-id="${id}"]`, {
-    timeout: SELECTOR_TIMEOUT,
-  });
+  const result = await page.waitForSelector(
+    `.magic-palette-item[data-id="${id}"]`,
+    {
+      timeout: SELECTOR_TIMEOUT,
+    },
+  );
   await result.click();
 }
 
@@ -159,11 +168,11 @@ async function getWsPathsShownInFilePalette(page) {
   await page.keyboard.press('p');
   await page.keyboard.up(ctrlKey);
 
-  const handle = await page.waitForSelector('.bangle-palette', {
+  const handle = await page.waitForSelector('.magic-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
 
-  const wsPaths = await handle.$$eval(`.palette-row[data-id]`, (nodes) =>
+  const wsPaths = await handle.$$eval(`.magic-palette-item[data-id]`, (nodes) =>
     [...nodes].map((n) => n.getAttribute('data-id')),
   );
 
@@ -180,7 +189,7 @@ module.exports = {
   longSleep,
   frmtHTML,
   createNewNote,
-  runACommand,
+  runAction,
   clearEditor,
   getEditorHTML,
   createWorkspace,

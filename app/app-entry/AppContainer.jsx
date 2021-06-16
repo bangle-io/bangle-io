@@ -8,7 +8,7 @@ import {
   useKeybindings,
   useWatchClickOutside,
 } from 'utils/index';
-import { Palette, WORKSPACE_PALETTE } from 'palettes/index';
+import { PaletteManager, Palette, WORKSPACE_PALETTE } from 'palettes/index';
 import { ActivityBar } from './components/ActivityBar';
 import { FileBrowser } from './components/FileBrowser';
 import { OptionsBar } from './components/OptionsBar';
@@ -22,16 +22,21 @@ import {
   PRIMARY_SCROLL_PARENT_ID,
   SECONDARY_SCROLL_PARENT_ID,
 } from 'constants/index';
+import { EditorManagerContext } from 'editor-manager-context';
+
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
   const { secondaryWsPath } = useWorkspacePath();
   const secondaryEditor = widescreen && Boolean(secondaryWsPath);
   const showTabs = Boolean(secondaryEditor);
+  const { bangleIOContext } = useContext(EditorManagerContext);
 
   return (
     <>
-      <ActivityBar />
+      {bangleIOContext.renderApplicationComponents()}
       <Palette />
+      <ActivityBar />
+      <PaletteManager bangleIOContext={bangleIOContext} />
       <LeftSidebarArea />
       <div
         id={cx(widescreen && !secondaryEditor && PRIMARY_SCROLL_PARENT_ID)}
@@ -86,7 +91,7 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
             <button
               onClick={() => {
                 dispatch({
-                  type: 'UI/CHANGE_PALETTE_TYPE',
+                  type: 'UI/UPDATE_PALETTE',
                   value: {
                     type: WORKSPACE_PALETTE,
                   },

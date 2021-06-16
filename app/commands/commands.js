@@ -19,14 +19,8 @@ import { useWorkspaceHooksContext } from 'workspace-hooks/index';
  * completion or failure, to allow for chaining of commands.
  * The commands will never resolve to a value.
  */
-
-/**
- *
- * @returns
- */
 export function useNewNoteCmd() {
   const { bangleIOContext } = useContext(EditorManagerContext);
-
   const { createNote } = useWorkspaceHooksContext();
   const { wsName } = useWorkspacePath();
 
@@ -35,7 +29,7 @@ export function useNewNoteCmd() {
   return useCallback(
     async ({ initialQuery = '' } = {}) => {
       dispatch({
-        type: 'UI/CHANGE_PALETTE_TYPE',
+        type: 'UI/UPDATE_PALETTE',
         value: {
           type: INPUT_PALETTE,
           initialQuery,
@@ -68,7 +62,7 @@ export function useUpdatePaletteCmd() {
   return useCallback(
     async ({ type, initialQuery, metadata }) => {
       dispatch({
-        type: 'UI/CHANGE_PALETTE_TYPE',
+        type: 'UI/UPDATE_PALETTE',
         value: { type: type, initialQuery, metadata },
       });
     },

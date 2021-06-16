@@ -3,6 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "editor-manager-context": [
+        "../../lib/editor-manager-context/index.js"
+      ],
+      "editor-manager-context/*": [
+        "../../lib/editor-manager-context/*"
+      ],
       "extension-helpers": [
         "../../lib/extension-helpers/index.js"
       ],

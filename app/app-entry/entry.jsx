@@ -14,6 +14,7 @@ import { AppState } from './AppStateProvider';
 import { WorkspaceHooksContextProvider } from 'workspace-hooks/index';
 import { WatchWorkspace } from './WatchWorkspace';
 import { WatchUI } from './WatchUI';
+import { ActionContextProvider } from './ActionContext';
 
 if (typeof window !== undefined) {
   window.Sentry?.onLoad(function () {
@@ -67,7 +68,9 @@ ReactDOM.render(
               <WatchWorkspace />
               <WatchUI />
               <EditorManager bangleIOContext={bangleIOContext}>
-                <App />
+                <ActionContextProvider>
+                  <App />
+                </ActionContextProvider>
               </EditorManager>
             </WorkspaceHooksContextProvider>
           </UIManager>

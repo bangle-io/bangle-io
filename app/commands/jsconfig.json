@@ -30,6 +30,12 @@
       "workspace": [
         "../../lib/workspace/index.js"
       ],
+      "workspace-hooks": [
+        "../../lib/workspace-hooks/index.js"
+      ],
+      "workspace-hooks/*": [
+        "../../lib/workspace-hooks/*"
+      ],
       "workspace/*": [
         "../../lib/workspace/*"
       ]

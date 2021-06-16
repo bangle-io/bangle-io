@@ -12,6 +12,7 @@
     "workspace",
     "workspace-hooks",
     "markdown",
-    "constants"
+    "constants",
+    "action-context"
   ]
 }

@@ -1,4 +1,5 @@
 import { SpecRegistry } from '@bangle.dev/core/spec-registry';
+import React from 'react';
 
 function filterFlatMap(array, field, flatten = true) {
   let items = array.filter((item) => Boolean(item[field]));
@@ -38,6 +39,13 @@ export class BangleIOContext {
         Object.entries(obj),
       ),
     );
+
+    this._palettes = filterFlatMap(extensions, 'palettes');
+    this._palettesLookup = Object.fromEntries(
+      this._palettes.map((obj) => [obj.type, obj]),
+    );
+    this._actionHandlers = new Set();
+    this._registeredActions = filterFlatMap(extensions, 'actions');
   }
 
   _getExtensionStore(uniqueObj, extension) {
@@ -63,6 +71,59 @@ export class BangleIOContext {
       ...filterFlatMap(this._extensions, 'editorPlugins'),
     ];
   }
+
+  getPalette(type) {
+    return this._palettesLookup[type];
+  }
+
+  getAllPalettes() {
+    return this._palettes;
+  }
+
+  paletteParseRawQuery(query) {
+    return this._palettes.find(
+      (palette) => palette.parseRawQuery(query) != null,
+    );
+  }
+
+  renderExtensionEditorComponents = function ({ wsPath, editorId }) {
+    const result = this._extensions
+      .filter((extension) => extension.EditorReactComponent)
+      .map((extension) => (
+        <extension.EditorReactComponent
+          key={extension.name}
+          wsPath={wsPath}
+          editorId={editorId}
+        />
+      ));
+    return result;
+  };
+
+  getRegisteredActions() {
+    return this._registeredActions;
+  }
+  getActionHandlers() {
+    return this._actionHandlers;
+  }
+
+  renderApplicationComponents = function () {
+    const result = this._extensions
+      .filter((extension) => extension.ApplicationReactComponent)
+      .map((extension) => (
+        <extension.ApplicationReactComponent
+          key={extension.name}
+          registerActionHandler={this._registerActionHandler}
+        />
+      ));
+    return result;
+  };
+
+  _registerActionHandler = (cb) => {
+    this._actionHandlers.add(cb);
+    return () => {
+      this._actionHandlers.delete(cb);
+    };
+  };
 
   editor = {
     beforeDestroy: ({ uniqueEditorObj, wsPath, editorId }) => {

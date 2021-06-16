@@ -43,7 +43,7 @@ export function ActivityBar() {
     }
 
     dispatch({
-      type: 'UI/CHANGE_PALETTE_TYPE',
+      type: 'UI/UPDATE_PALETTE',
       value: {
         type: null,
       },
@@ -52,7 +52,7 @@ export function ActivityBar() {
 
   const toggleFilePalette = () => {
     dispatch({
-      type: 'UI/CHANGE_PALETTE_TYPE',
+      type: 'UI/UPDATE_PALETTE',
       value: {
         type: paletteType === FILE_PALETTE ? null : FILE_PALETTE,
       },

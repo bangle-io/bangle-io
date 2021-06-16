@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
-import { ExtensionEditorComponents } from 'bangle-io-context/index';
 import { getNote } from 'workspace/index';
 import { getScrollParentElement } from 'utils/index';
 
@@ -92,6 +91,7 @@ function EditorInner({
   const onEditorReady = useCallback(
     (editor) => {
       setEditor(editorId, editor);
+      editor.focusView();
     },
     [setEditor, editorId],
   );
@@ -134,11 +134,7 @@ function EditorInner({
       focusOnInit={false}
       className="bangle-editor-inner-container"
     >
-      <ExtensionEditorComponents
-        bangleIOContext={bangleIOContext}
-        wsPath={wsPath}
-        editorId={editorId}
-      />
+      {bangleIOContext.renderExtensionEditorComponents({ wsPath, editorId })}
     </BangleEditor>
   );
 }

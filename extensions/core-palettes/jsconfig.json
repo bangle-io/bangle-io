@@ -1,0 +1,68 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "action-context": [
+        "../../lib/action-context/index.js"
+      ],
+      "action-context/*": [
+        "../../lib/action-context/*"
+      ],
+      "config": [
+        "../../lib/config/index.js"
+      ],
+      "config/*": [
+        "../../lib/config/*"
+      ],
+      "editor-manager-context": [
+        "../../lib/editor-manager-context/index.js"
+      ],
+      "editor-manager-context/*": [
+        "../../lib/editor-manager-context/*"
+      ],
+      "extension-helpers": [
+        "../../lib/extension-helpers/index.js"
+      ],
+      "extension-helpers/*": [
+        "../../lib/extension-helpers/*"
+      ],
+      "magic-palette": [
+        "../../js-lib/magic-palette/index.js"
+      ],
+      "magic-palette/*": [
+        "../../js-lib/magic-palette/*"
+      ],
+      "ui-components": [
+        "../../lib/ui-components/index.js"
+      ],
+      "ui-components/*": [
+        "../../lib/ui-components/*"
+      ],
+      "ui-context": [
+        "../../lib/ui-context/index.js"
+      ],
+      "ui-context/*": [
+        "../../lib/ui-context/*"
+      ],
+      "utils": [
+        "../../lib/utils/index.js"
+      ],
+      "utils/*": [
+        "../../lib/utils/*"
+      ],
+      "workspace": [
+        "../../lib/workspace/index.js"
+      ],
+      "workspace-hooks": [
+        "../../lib/workspace-hooks/index.js"
+      ],
+      "workspace-hooks/*": [
+        "../../lib/workspace-hooks/*"
+      ],
+      "workspace/*": [
+        "../../lib/workspace/*"
+      ]
+    }
+  }
+}
