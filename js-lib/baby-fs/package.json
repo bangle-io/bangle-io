@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "base-error": "workspace:*",
-    "idb-keyval": "^5.0.5"
+    "idb-keyval": "^5.0.6"
   }
 }

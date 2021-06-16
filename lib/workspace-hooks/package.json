@@ -20,8 +20,8 @@
   "scripts": {},
   "devDependencies": {
     "@bangle.dev/core": "0.18.1",
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/react-hooks": "^5.1.2",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/react-hooks": "^7.0.0",
     "baby-fs": "workspace:*",
     "bangle-io-context": "workspace:*",
     "react-dom": "17.0.2",

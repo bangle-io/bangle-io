@@ -22,7 +22,7 @@
     "base-error": "workspace:*",
     "config": "workspace:*",
     "constants": "workspace:*",
-    "dayjs": "^1.10.4",
+    "dayjs": "^1.10.5",
     "react": "17.0.2",
     "react-dom": "^17.0.2",
     "w3c-keyname": "^2.2.4"
@@ -31,7 +31,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@testing-library/react-hooks": "^5.1.2",
+    "@testing-library/react-hooks": "^7.0.0",
     "react-test-renderer": "^17.0.2"
   }
 }

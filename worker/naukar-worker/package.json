@@ -22,10 +22,10 @@
   "dependencies": {
     "@bangle.dev/collab-client": "0.18.1",
     "@bangle.dev/collab-server": "0.18.1",
-    "@bangle.dev/core": "^0.18.0",
+    "@bangle.dev/core": "0.18.1",
     "@bangle.dev/disk": "0.18.1",
     "config": "workspace:*",
-    "idb-keyval": "^5.0.5",
+    "idb-keyval": "^5.0.6",
     "object-sync": "workspace:*",
     "workspace": "workspace:*"
   }

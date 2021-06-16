@@ -27,8 +27,8 @@
     "w3c-keyname": "^2.2.4"
   },
   "devDependencies": {
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.5"
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^13.1.9"
   },
   "publishConfig": {
     "access": "public"

@@ -26,7 +26,7 @@
     "@bangle.dev/react-emoji-suggest": "0.18.1",
     "@bangle.dev/table": "0.18.1",
     "@bangle.dev/tooltip": "0.18.1",
-    "emoji-lookup-data": "^1.2.0",
+    "emoji-lookup-data": "^1.3.0",
     "extension-helpers": "workspace:*",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -34,8 +34,8 @@
     "workspace": "workspace:*"
   },
   "devDependencies": {
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.5"
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^13.1.9"
   },
   "publishConfig": {
     "access": "restricted"
