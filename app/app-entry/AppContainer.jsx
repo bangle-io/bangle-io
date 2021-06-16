@@ -34,7 +34,6 @@ export function AppContainer() {
   return (
     <>
       {bangleIOContext.renderApplicationComponents()}
-      <Palette />
       <ActivityBar />
       <PaletteManager bangleIOContext={bangleIOContext} />
       <LeftSidebarArea />
