@@ -13,6 +13,7 @@
     "workspace-hooks",
     "markdown",
     "constants",
-    "action-context"
+    "action-context",
+    "extension-registry"
   ]
 }

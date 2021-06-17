@@ -32,6 +32,7 @@
     "core-palettes": "workspace:*",
     "editor-core": "workspace:*",
     "editor-scroll-extension": "workspace:*",
+    "extension-registry": "workspace:*",
     "image-extension": "workspace:*",
     "inline-backlink": "workspace:*",
     "inline-command-palette": "workspace:*",
