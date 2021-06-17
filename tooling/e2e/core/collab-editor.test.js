@@ -1,17 +1,14 @@
 const {
   url,
   createNewNote,
-  clearEditor,
-  getEditorHTML,
   createWorkspace,
   setPageWidescreen,
   getPrimaryEditorDebugString,
   getSecondaryEditorDebugString,
-  sleep,
   longSleep,
   getPrimaryEditorHandler,
-} = require('./helpers');
-const { ctrlKey } = require('./helpers');
+  ctrlKey,
+} = require('../helpers');
 
 jest.setTimeout(105 * 1000);
 

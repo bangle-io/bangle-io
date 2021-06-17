@@ -22,7 +22,7 @@ function frmtHTML(doc) {
 
 const SELECTOR_TIMEOUT = 500;
 
-async function createWorkspace(wsName = 'test' + uuid()) {
+async function createWorkspace(wsName = 'test' + uuid(4)) {
   await runAction('@action/core-actions/NEW_WORKSPACE_ACTION');
   let handle = await page.waitForSelector('.magic-palette-container', {
     timeout: SELECTOR_TIMEOUT,

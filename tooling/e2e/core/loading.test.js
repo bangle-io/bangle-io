@@ -8,7 +8,7 @@ const {
   clearEditor,
   getEditorHTML,
   createWorkspace,
-} = require('./helpers');
+} = require('../helpers');
 jest.setTimeout(105 * 1000);
 
 beforeEach(async () => {
@@ -66,11 +66,6 @@ test('shows command palette', async () => {
       )
     ).includes('@action/core-actions/TOGGLE_THEME_ACTION'),
   ).toBe(true);
-});
-
-test('create a workspace in browser', async () => {
-  const wsName = await createWorkspace();
-  expect(await page.url()).toBe(url + '/ws/' + wsName);
 });
 
 test('create a new page saved in browser', async () => {

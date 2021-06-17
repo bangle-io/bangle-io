@@ -1,16 +1,11 @@
 const {
-  sleep,
   longSleep,
-  ctrlKey,
-  frmtHTML,
   url,
   createNewNote,
-  clearEditor,
-  getEditorHTML,
   createWorkspace,
   getWsPathsShownInFilePalette,
   getPrimaryEditorHandler,
-} = require('./helpers');
+} = require('../helpers');
 jest.setTimeout(105 * 1000);
 
 beforeEach(async () => {

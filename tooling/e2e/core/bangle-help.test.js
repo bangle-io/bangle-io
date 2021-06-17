@@ -1,4 +1,4 @@
-const { sleep, url, SELECTOR_TIMEOUT } = require('./helpers');
+const { sleep, url } = require('../helpers');
 
 beforeEach(async () => {
   await jestPuppeteer.resetPage();
