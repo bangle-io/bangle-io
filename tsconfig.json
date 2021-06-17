@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "checkJs": true,
+    // danger
+    "noImplicitAny": false,
+    // 
+    "checkJs": false,
     "allowJs": true,
     "noEmit": true,
     "module": "ES2020",
@@ -31,6 +34,7 @@
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "extensions/editor-core/index.js",
   ]
 }
