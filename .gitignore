@@ -6,3 +6,4 @@
 !.yarn/versions
 build
 coverage
+dist
