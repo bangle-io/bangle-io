@@ -33,6 +33,7 @@
     "@bangle.dev/trailing-node": "0.18.1",
     "editor-manager-context": "workspace:*",
     "extension-helpers": "workspace:*",
+    "extension-registry": "workspace:*",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },

@@ -7,10 +7,10 @@ import {
   PluginKey,
   NodeSelection,
 } from '@bangle.dev/core/prosemirror/state';
+import stopwatch from '@bangle.dev/react-stopwatch';
 import { components } from '@bangle.dev/core';
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
-import stopwatch from '@bangle.dev/react-stopwatch';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { tablePlugins } from '@bangle.dev/table';
 export const menuKey = new PluginKey('menuKey');
@@ -20,7 +20,7 @@ const getScrollContainer = (view) => {
 };
 
 export const getPlugins = () => {
-  return () => [
+  return [
     floatingMenu.plugins({
       key: menuKey,
       tooltipRenderOpts: {
