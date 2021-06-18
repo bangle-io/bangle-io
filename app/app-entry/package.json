@@ -27,7 +27,6 @@
     "@sentry/tracing": "^6.7.1",
     "action-context": "workspace:*",
     "app-state-context": "workspace:*",
-    "bangle-io-context": "workspace:*",
     "collab-extension": "workspace:*",
     "collapsible-heading": "workspace:*",
     "comlink": "^4.3.1",
@@ -36,6 +35,7 @@
     "constants": "workspace:*",
     "editor-core": "workspace:*",
     "editor-manager-context": "workspace:*",
+    "extension-registry": "workspace:*",
     "image-extension": "workspace:*",
     "inline-backlink": "workspace:*",
     "inline-command-palette": "workspace:*",
@@ -57,7 +57,7 @@
     "utils": "workspace:*",
     "worker-setup": "workspace:*",
     "workspace": "workspace:*",
-    "workspace-hooks": "workspace:*"
+    "workspace-context": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.7",

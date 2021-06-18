@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { config } from 'config/index';
 import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
 
@@ -13,7 +13,7 @@ export const EditorManagerContext = React.createContext({});
 /**
  * Should be parent of all editors.
  */
-export function EditorManager({ bangleIOContext, children }) {
+export function EditorManager({ children }) {
   /**
    * Understanding common loading patterns
    *
@@ -52,9 +52,8 @@ export function EditorManager({ bangleIOContext, children }) {
       setEditor,
       primaryEditor,
       getEditor,
-      bangleIOContext,
     };
-  }, [_setEditor, bangleIOContext, editors]);
+  }, [_setEditor, editors]);
 
   useEffect(() => {
     window.primaryEditor = primaryEditor;

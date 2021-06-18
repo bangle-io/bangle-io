@@ -27,6 +27,7 @@
     "commands": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
+    "extension-registry": "workspace:*",
     "magic-palette": "workspace:*",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -34,7 +35,7 @@
     "ui-context": "workspace:*",
     "utils": "workspace:*",
     "workspace": "workspace:*",
-    "workspace-hooks": "workspace:*"
+    "workspace-context": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.7",

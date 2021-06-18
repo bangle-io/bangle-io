@@ -20,7 +20,7 @@
   "scripts": {},
   "devDependencies": {
     "@testing-library/react": "^11.2.7",
-    "bangle-io-context": "workspace:*"
+    "extension-registry": "workspace:*"
   },
   "dependencies": {
     "@bangle.dev/core": "0.18.1",

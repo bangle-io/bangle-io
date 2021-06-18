@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    // danger
+    "noImplicitAny": false,
+    // 
+    "checkJs": false,
+    "allowJs": true,
+    "noEmit": true,
+    "module": "ES2020",
+    "target": "es2019",
+    "strict": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "declarationMap": true,
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": false,
+    "jsx": "react",
+    "newLine": "lf",
+    "pretty": true,
+    "stripInternal": true,
+    "noEmitOnError": false,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+  ]
+}

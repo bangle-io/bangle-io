@@ -22,20 +22,19 @@ import {
   PRIMARY_SCROLL_PARENT_ID,
   SECONDARY_SCROLL_PARENT_ID,
 } from 'constants/index';
-import { EditorManagerContext } from 'editor-manager-context';
+import { ApplicationComponents } from './ApplicationComponents';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
   const { secondaryWsPath } = useWorkspacePath();
   const secondaryEditor = widescreen && Boolean(secondaryWsPath);
   const showTabs = Boolean(secondaryEditor);
-  const { bangleIOContext } = useContext(EditorManagerContext);
 
   return (
     <>
-      {bangleIOContext.renderApplicationComponents()}
+      <ApplicationComponents />
       <ActivityBar />
-      <PaletteManager bangleIOContext={bangleIOContext} />
+      <PaletteManager />
       <LeftSidebarArea />
       <div
         id={cx(widescreen && !secondaryEditor && PRIMARY_SCROLL_PARENT_ID)}

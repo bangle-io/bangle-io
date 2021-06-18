@@ -1,6 +1,7 @@
 import React from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
 import { Node } from '@bangle.dev/core/prosemirror/model';
+import { ExtensionRegistry, Extension } from 'extension-registry/index';
 
 import { render, act } from '@testing-library/react';
 import { filterItems, InlineBacklinkPalette } from '../InlineBacklinkPalette';
@@ -13,9 +14,8 @@ import {
 } from 'inline-palette/index';
 import { useWorkspacePath } from 'workspace/index';
 import { sleep } from 'utils/utility';
-import { BangleIOContext } from 'bangle-io-context/index';
 import inlineBackLinkExtension from '../index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 jest.mock('@bangle.dev/react', () => {
   return {
@@ -42,20 +42,27 @@ jest.mock('workspace/index', () => {
   };
 });
 
-jest.mock('workspace-hooks/index', () => {
+jest.mock('workspace-context/index', () => {
   return {
-    ...jest.requireActual('workspace-hooks/index'),
-    useWorkspaceHooksContext: jest.fn(),
+    ...jest.requireActual('workspace-context/index'),
+    useWorkspaceContext: jest.fn(),
   };
 });
 
-const bangleIOContext = new BangleIOContext({
-  coreRawSpecs: coreSpec(),
-  getCorePlugins: corePlugins,
-  extensions: [inlineBackLinkExtension],
+const coreExtension = Extension.create({
+  name: 'core',
+  editor: {
+    specs: [coreSpec()],
+    plugins: [...corePlugins()],
+  },
 });
 
-const schema = bangleIOContext.specRegistry.schema;
+const extensionRegistry = new ExtensionRegistry([
+  coreExtension,
+  inlineBackLinkExtension,
+]);
+
+const schema = extensionRegistry.specRegistry.schema;
 const mockView = {
   state: {
     schema,
@@ -69,7 +76,7 @@ beforeEach(async () => {
   useEditorViewContext.mockImplementation(() => {
     return mockView;
   });
-  useWorkspaceHooksContext.mockImplementation(() => ({ noteWsPaths: [] }));
+  useWorkspaceContext.mockImplementation(() => ({ noteWsPaths: [] }));
   useInlinePaletteItems.mockImplementation(() => {
     return {
       getItemProps: jest.fn(),
@@ -84,7 +91,7 @@ beforeEach(async () => {
 });
 
 test('Initial render', async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: ['test-ws:hello.md'],
   }));
 
@@ -94,7 +101,7 @@ test('Initial render', async () => {
 });
 
 test('Renders palette rows correctly', async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: ['test-ws:my-file.md'],
   }));
   query = 'my';
@@ -117,7 +124,7 @@ test('Renders palette rows correctly', async () => {
 });
 
 test('Handles malformed query', async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: ['test-ws:my-file.md'],
   }));
   query = ']]';
@@ -130,7 +137,7 @@ test('Handles malformed query', async () => {
 });
 
 test('Creates a backlink node when closed by typing ]]', async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: ['test-ws:my-file.md'],
   }));
   // NOTE: its not [[better]], because [[ is part of the suggest query mark

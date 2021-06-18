@@ -25,12 +25,12 @@ import { HELP_FS_WORKSPACE_NAME } from 'config';
 const LOG = false;
 
 let log = LOG
-  ? console.log.bind(console, 'WorkspaceHooksContextProvider')
+  ? console.log.bind(console, 'WorkspaceContextProvider')
   : () => {};
 
 const WorkspaceHooksContext = React.createContext({});
 
-export function useWorkspaceHooksContext() {
+export function useWorkspaceContext() {
   return useContext(WorkspaceHooksContext);
 }
 
@@ -40,7 +40,7 @@ export function useWorkspaceHooksContext() {
  * @returns
  * - noteWsPaths, fileWsPaths - retain their instance if there is no change. This is useful for runing `===` fearlessly.
  */
-export function WorkspaceHooksContextProvider({ children }) {
+export function WorkspaceContextProvider({ children }) {
   const { wsName } = useWorkspacePath();
 
   const { fileWsPaths, noteWsPaths, refreshWsPaths } = useFiles(wsName);
@@ -181,11 +181,11 @@ export function useCreateNote({ refreshWsPaths }) {
 
   const createNoteCallback = useCallback(
     async (
-      bangleIOContext,
+      extensionRegistry,
       wsPath,
       {
         open = true,
-        doc = Node.fromJSON(bangleIOContext.specRegistry.schema, {
+        doc = Node.fromJSON(extensionRegistry.specRegistry.schema, {
           type: 'doc',
           content: [
             {
@@ -215,7 +215,7 @@ export function useCreateNote({ refreshWsPaths }) {
     ) => {
       const fileExists = await checkFileExists(wsPath);
       if (!fileExists) {
-        await saveNote(bangleIOContext, wsPath, doc);
+        await saveNote(extensionRegistry, wsPath, doc);
       }
       await refreshWsPaths();
       open && pushWsPath(wsPath);

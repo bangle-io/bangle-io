@@ -21,11 +21,11 @@
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
       ],
-      "extension-helpers": [
-        "../../lib/extension-helpers/index.js"
+      "extension-registry": [
+        "../../lib/extension-registry/index.ts"
       ],
-      "extension-helpers/*": [
-        "../../lib/extension-helpers/*"
+      "extension-registry/*": [
+        "../../lib/extension-registry/*"
       ],
       "magic-palette": [
         "../../js-lib/magic-palette/index.js"
@@ -54,7 +54,7 @@
       "workspace": [
         "../../lib/workspace/index.js"
       ],
-      "workspace-hooks": [
+      "workspace-context": [
         "../../lib/workspace-hooks/index.js"
       ],
       "workspace-hooks/*": [

@@ -11,5 +11,8 @@ jsconfig.json
 jsconfig-base.json
 CHANGELOG.md
 build
+dist
 
 *.md
+
+tsconfig.json

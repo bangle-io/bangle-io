@@ -9,23 +9,23 @@
       "action-context/*": [
         "../../lib/action-context/*"
       ],
+      "baby-fs": [
+        "../../js-lib/baby-fs/index.js"
+      ],
+      "baby-fs/*": [
+        "../../js-lib/baby-fs/*"
+      ],
       "config": [
         "../../lib/config/index.js"
       ],
       "config/*": [
         "../../lib/config/*"
       ],
-      "editor-manager-context": [
-        "../../lib/editor-manager-context/index.js"
+      "extension-registry": [
+        "../../lib/extension-registry/index.ts"
       ],
-      "editor-manager-context/*": [
-        "../../lib/editor-manager-context/*"
-      ],
-      "extension-helpers": [
-        "../../lib/extension-helpers/index.js"
-      ],
-      "extension-helpers/*": [
-        "../../lib/extension-helpers/*"
+      "extension-registry/*": [
+        "../../lib/extension-registry/*"
       ],
       "magic-palette": [
         "../../js-lib/magic-palette/index.js"
@@ -54,7 +54,7 @@
       "workspace": [
         "../../lib/workspace/index.js"
       ],
-      "workspace-hooks": [
+      "workspace-context": [
         "../../lib/workspace-hooks/index.js"
       ],
       "workspace-hooks/*": [

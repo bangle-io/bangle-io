@@ -20,22 +20,21 @@
   "scripts": {},
   "devDependencies": {
     "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^13.1.9",
-    "bangle-io-context": "workspace:*"
+    "@testing-library/user-event": "^13.1.9"
   },
   "dependencies": {
     "@bangle.dev/core": "0.18.1",
     "@bangle.dev/react": "0.18.1",
     "@bangle.dev/wiki-link": "0.18.1",
     "config": "workspace:*",
-    "extension-helpers": "workspace:*",
+    "extension-registry": "workspace:*",
     "inline-palette": "workspace:*",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "ui-components": "workspace:*",
     "utils": "workspace:*",
     "workspace": "workspace:*",
-    "workspace-hooks": "workspace:*"
+    "workspace-context": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

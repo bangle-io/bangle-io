@@ -3,23 +3,17 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "bangle-io-context": [
-        "../../lib/bangle-io-context/index.js"
-      ],
-      "bangle-io-context/*": [
-        "../../lib/bangle-io-context/*"
-      ],
       "config": [
         "../../lib/config/index.js"
       ],
       "config/*": [
         "../../lib/config/*"
       ],
-      "extension-helpers": [
-        "../../lib/extension-helpers/index.js"
+      "extension-registry": [
+        "../../lib/extension-registry/index.ts"
       ],
-      "extension-helpers/*": [
-        "../../lib/extension-helpers/*"
+      "extension-registry/*": [
+        "../../lib/extension-registry/*"
       ],
       "inline-palette": [
         "../../js-lib/inline-palette/index.js"
@@ -42,7 +36,7 @@
       "workspace": [
         "../../lib/workspace/index.js"
       ],
-      "workspace-hooks": [
+      "workspace-context": [
         "../../lib/workspace-hooks/index.js"
       ],
       "workspace-hooks/*": [

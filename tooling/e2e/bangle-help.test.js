@@ -1,4 +1,4 @@
-const { sleep, url } = require('./helpers');
+const { sleep, url, SELECTOR_TIMEOUT } = require('./helpers');
 
 beforeEach(async () => {
   await jestPuppeteer.resetPage();
@@ -14,9 +14,16 @@ beforeEach(async () => {
   await page.evaluate(() => localStorage.clear());
 });
 
+afterAll(async () => {
+  // await page.close();
+});
+
 test('Landing page is correct', async () => {
-  await sleep(500);
-  const handle = await page.$('.main-content');
+  const handle = await page.waitForSelector('.bangle-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+  await sleep(100);
+
   const result = await handle.evaluate((node) => node.innerText);
   expect(result.includes('bangle.io')).toBe(true);
   expect(result).toMatchSnapshot();

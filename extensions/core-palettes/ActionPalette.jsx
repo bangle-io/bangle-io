@@ -10,10 +10,10 @@ import {
 } from 'magic-palette/index';
 import { PaletteInfo, PaletteInfoItem, NullIcon } from 'ui-components';
 import { extensionName } from './config';
-import { EditorManagerContext } from 'editor-manager-context/index';
 import { ActionContext } from 'action-context';
 import { keybindings } from 'config/index';
 import { useRecencyWatcher } from './hooks';
+import { ExtensionRegistryContext } from 'extension-registry';
 
 const identifierPrefix = '>';
 export const actionPalette = {
@@ -41,13 +41,13 @@ function ActionPaletteUIComponent(
   { query, updatePalette, dismissPalette, paletteItemProps },
   ref,
 ) {
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const extensionRegistry = useContext(ExtensionRegistryContext);
   const { dispatchAction } = useContext(ActionContext);
   const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
   const items = useMemo(() => {
     let actions = injectRecency(
-      bangleIOContext
+      extensionRegistry
         .getRegisteredActions()
         .map((actionDefinition) => {
           return {
@@ -60,7 +60,7 @@ function ActionPaletteUIComponent(
     );
 
     return actions.slice(0, 50);
-  }, [bangleIOContext, injectRecency, query]);
+  }, [extensionRegistry, injectRecency, query]);
 
   const onExecuteItem = useCallback(
     (getUid, sourceInfo) => {

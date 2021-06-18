@@ -1,6 +1,6 @@
 import { listAllFiles, deleteFile } from 'workspace/index';
 import { renderHook, act } from '@testing-library/react-hooks';
-import { useDeleteNote, useFiles } from '../WorkspaceHooksContext';
+import { useDeleteNote, useFiles } from '../WorkspaceContext';
 import { render } from '@testing-library/react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import React from 'react';

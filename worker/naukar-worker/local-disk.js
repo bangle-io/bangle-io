@@ -1,13 +1,13 @@
 import { getNote, saveNote } from 'workspace/index';
 import { DebouncedDisk } from '@bangle.dev/disk';
 
-export function localDiskSetup(bangleIOContext, appState) {
+export function localDiskSetup(extensionRegistry, appState) {
   const getItem = async (wsPath) => {
-    const doc = await getNote(bangleIOContext, wsPath);
+    const doc = await getNote(extensionRegistry, wsPath);
     return doc;
   };
   const setItem = async (wsPath, doc, version) => {
-    await saveNote(bangleIOContext, wsPath, doc);
+    await saveNote(extensionRegistry, wsPath, doc);
   };
 
   return {

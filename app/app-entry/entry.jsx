@@ -6,15 +6,16 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
-import { polyfills, bangleIOContext } from 'shared/index';
+import { polyfills, initExtensionRegistry } from 'shared/index';
 import { WorkerSetup } from 'worker-setup/index';
 import { PageLifecycle } from './PageLifecycle';
 import { moduleSupport } from './module-support';
 import { AppState } from './AppStateProvider';
-import { WorkspaceHooksContextProvider } from 'workspace-hooks/index';
+import { WorkspaceContextProvider } from 'workspace-context/index';
 import { WatchWorkspace } from './WatchWorkspace';
 import { WatchUI } from './WatchUI';
 import { ActionContextProvider } from './ActionContext';
+import { ExtensionRegistryContextProvider } from 'extension-registry/index';
 
 if (typeof window !== undefined) {
   window.Sentry?.onLoad(function () {
@@ -56,6 +57,8 @@ function LoadingBlock({ children }) {
   return loaded ? children : null;
 }
 
+const extensionRegistry = initExtensionRegistry();
+
 ReactDOM.render(
   <LoadingBlock>
     <React.StrictMode>
@@ -64,15 +67,19 @@ ReactDOM.render(
         <PageLifecycle />
         <Router>
           <UIManager>
-            <WorkspaceHooksContextProvider>
+            <WorkspaceContextProvider>
               <WatchWorkspace />
               <WatchUI />
-              <EditorManager bangleIOContext={bangleIOContext}>
-                <ActionContextProvider>
-                  <App />
-                </ActionContextProvider>
-              </EditorManager>
-            </WorkspaceHooksContextProvider>
+              <ExtensionRegistryContextProvider
+                extensionRegistry={extensionRegistry}
+              >
+                <EditorManager>
+                  <ActionContextProvider>
+                    <App />
+                  </ActionContextProvider>
+                </EditorManager>
+              </ExtensionRegistryContextProvider>
+            </WorkspaceContextProvider>
           </UIManager>
         </Router>
       </AppState>

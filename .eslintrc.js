@@ -7,6 +7,7 @@ module.exports = {
     'plugin:jest/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
+    'plugin:import/typescript',
   ],
   overrides: [
     {
@@ -53,10 +54,10 @@ module.exports = {
     'react': {
       version: '16',
     },
-    'import/extensions': ['.js', '.jsx'],
+    'import/extensions': ['.js', '.ts', '.tsx', '.jsx'],
     'import/resolver': {
       node: {
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.ts', '.tsx', '.jsx'],
       },
     },
   },

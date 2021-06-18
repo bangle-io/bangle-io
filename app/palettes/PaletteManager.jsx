@@ -13,8 +13,9 @@ import {
 } from 'magic-palette/index';
 import { useKeybindings } from 'utils/index';
 import { ActionContext } from 'action-context/index';
+import { ExtensionRegistryContext } from 'extension-registry/index';
 
-export function PaletteManager({ bangleIOContext }) {
+export function PaletteManager() {
   const {
     paletteMetadata,
     paletteType,
@@ -25,7 +26,7 @@ export function PaletteManager({ bangleIOContext }) {
   const inputRef = useRef();
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const { dispatchAction } = useContext(ActionContext);
-
+  const extensionRegistry = useContext(ExtensionRegistryContext);
   const dismissPalette = useCallback(
     (focusEditor = true) => {
       updateQuery('');
@@ -79,7 +80,7 @@ export function PaletteManager({ bangleIOContext }) {
     updatePalette,
     paletteType,
     updateCounter,
-    bangleIOContext,
+    extensionRegistry,
   });
 
   // deriving the final input value helps us avoid keeping two states (paletteType, rawQuery) in sync.
@@ -87,7 +88,7 @@ export function PaletteManager({ bangleIOContext }) {
   // Note: that we are passing this callback to the children and they are free to override it.
   const updateRawInputValue = useCallback(
     (rawQuery) => {
-      const match = bangleIOContext.paletteParseRawQuery(rawQuery);
+      const match = extensionRegistry.paletteParseRawQuery(rawQuery);
 
       resetCounter();
       if (!match) {
@@ -106,14 +107,14 @@ export function PaletteManager({ bangleIOContext }) {
     [
       resetCounter,
       dismissPalette,
-      bangleIOContext,
+      extensionRegistry,
       paletteType,
       updatePalette,
       updateQuery,
     ],
   );
 
-  const Palette = bangleIOContext.getPalette(paletteType);
+  const Palette = extensionRegistry.getPalette(paletteType);
 
   if (!Palette) {
     return null;
@@ -152,11 +153,11 @@ function usePaletteKeybindings({
   updatePalette,
   paletteType,
   updateCounter,
-  bangleIOContext,
+  extensionRegistry,
 }) {
   useKeybindings(() => {
     return Object.fromEntries(
-      bangleIOContext.getAllPalettes().map((r) => [
+      extensionRegistry.getAllPalettes().map((r) => [
         r.keybinding,
         () => {
           if (paletteType !== r.type) {
@@ -169,5 +170,5 @@ function usePaletteKeybindings({
         },
       ]),
     );
-  }, [updatePalette, bangleIOContext, updateCounter, paletteType]);
+  }, [updatePalette, extensionRegistry, updateCounter, paletteType]);
 }

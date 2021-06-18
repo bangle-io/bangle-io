@@ -15,12 +15,6 @@
       "app-state-context/*": [
         "../../lib/app-state-context/*"
       ],
-      "bangle-io-context": [
-        "../../lib/bangle-io-context/index.js"
-      ],
-      "bangle-io-context/*": [
-        "../../lib/bangle-io-context/*"
-      ],
       "collab-extension": [
         "../../extensions/collab-extension/index.js"
       ],
@@ -62,6 +56,12 @@
       ],
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
+      ],
+      "extension-registry": [
+        "../../lib/extension-registry/index.ts"
+      ],
+      "extension-registry/*": [
+        "../../lib/extension-registry/*"
       ],
       "image-extension": [
         "../../extensions/image-extension/index.js"
@@ -150,7 +150,7 @@
       "workspace": [
         "../../lib/workspace/index.js"
       ],
-      "workspace-hooks": [
+      "workspace-context": [
         "../../lib/workspace-hooks/index.js"
       ],
       "workspace-hooks/*": [

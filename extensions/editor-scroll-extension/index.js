@@ -1,4 +1,4 @@
-import { Extension } from 'extension-helpers/index';
+import { Extension } from 'extension-registry/index';
 import { extensionName } from './config';
 import { PreserveScroll } from './editor-scroll-extension';
 import { getSavedScrollPos, getSavedSelection } from './persist-scroll';
@@ -6,7 +6,6 @@ import { Selection } from '@bangle.dev/core/prosemirror/state';
 
 const extension = Extension.create({
   name: extensionName,
-  EditorReactComponent: PreserveScroll,
   editor: {
     initialScrollPos({ wsPath, editorId, store }) {
       return getSavedScrollPos(wsPath, editorId);
@@ -24,6 +23,7 @@ const extension = Extension.create({
       }
       return undefined;
     },
+    ReactComponent: PreserveScroll,
   },
 });
 

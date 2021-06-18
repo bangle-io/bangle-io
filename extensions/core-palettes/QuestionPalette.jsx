@@ -1,18 +1,11 @@
-import React, {
-  useContext,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-} from 'react';
-import { Selection } from '@bangle.dev/core/prosemirror/state';
-import { useWorkspacePath } from 'workspace/index';
+import React, { useContext, useCallback, useImperativeHandle } from 'react';
 import {
   MagicPaletteItem,
   MagicPaletteItemsContainer,
 } from 'magic-palette/index';
 import { PaletteInfo, PaletteInfoItem, NullIcon } from 'ui-components';
 import { extensionName } from './config';
-import { EditorManagerContext } from 'editor-manager-context/index';
+import { ExtensionRegistryContext } from 'extension-registry';
 
 const identifierPrefix = '?';
 export const questionPalette = {
@@ -37,9 +30,9 @@ function QuestionPaletteUIComponent(
   { query, updatePalette, dismissPalette, paletteItemProps },
   ref,
 ) {
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const extensionRegistry = useContext(ExtensionRegistryContext);
 
-  const items2 = bangleIOContext.getAllPalettes();
+  const items2 = extensionRegistry.getAllPalettes();
   const items = items2.map((r) => {
     return {
       uid: r.type,

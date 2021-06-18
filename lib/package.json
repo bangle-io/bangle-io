@@ -1,18 +1,17 @@
 {
   "name": "lib",
   "workspaces": [
-    "bangle-io-context",
     "editor-manager-context",
     "app-state-context",
     "ui-context",
     "ui-components",
     "config",
-    "extension-helpers",
     "utils",
     "workspace",
-    "workspace-hooks",
+    "workspace-context",
     "markdown",
     "constants",
-    "action-context"
+    "action-context",
+    "extension-registry"
   ]
 }

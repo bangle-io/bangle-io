@@ -23,9 +23,10 @@
     "baby-fs": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
+    "extension-registry": "workspace:*",
     "react": "17.0.2",
     "ui-context": "workspace:*",
     "workspace": "workspace:*",
-    "workspace-hooks": "workspace:*"
+    "workspace-context": "workspace:*"
   }
 }

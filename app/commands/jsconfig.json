@@ -21,6 +21,12 @@
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
       ],
+      "extension-registry": [
+        "../../lib/extension-registry/index.ts"
+      ],
+      "extension-registry/*": [
+        "../../lib/extension-registry/*"
+      ],
       "ui-context": [
         "../../lib/ui-context/index.js"
       ],
@@ -30,7 +36,7 @@
       "workspace": [
         "../../lib/workspace/index.js"
       ],
-      "workspace-hooks": [
+      "workspace-context": [
         "../../lib/workspace-hooks/index.js"
       ],
       "workspace-hooks/*": [

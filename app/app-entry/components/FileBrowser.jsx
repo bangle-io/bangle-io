@@ -10,7 +10,7 @@ import {
   ButtonIcon,
 } from 'ui-components/index';
 import { useWorkspacePath, resolvePath } from 'workspace/index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 import { useLocalStorage } from 'utils/index';
 import { useNewNoteCmd } from 'commands/index';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
@@ -29,7 +29,7 @@ const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function FileBrowser() {
-  const { noteWsPaths = [], deleteNote } = useWorkspaceHooksContext();
+  const { noteWsPaths = [], deleteNote } = useWorkspaceContext();
 
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();

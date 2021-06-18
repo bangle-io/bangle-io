@@ -1,7 +1,7 @@
 import { TAB_ID } from 'config/index';
 import { useRef, useEffect } from 'react';
 import { useWorkspacePath } from 'workspace/index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 import { weakCache, useBroadcastChannel } from 'utils/index';
 const CHANNEL_NAME = 'watch_workspace';
 const FILE_TREE_CHANGED = 'FILE_TREE_CHANGED';
@@ -15,7 +15,7 @@ const weakComputeLameHash = weakCache((fileWsPaths) =>
 );
 
 export function WatchWorkspace() {
-  const { fileWsPaths, refreshWsPaths } = useWorkspaceHooksContext();
+  const { fileWsPaths, refreshWsPaths } = useWorkspaceContext();
   const {
     wsName,
     wsPath,
@@ -62,7 +62,7 @@ export function WatchWorkspace() {
 
   // close any tabs that might have been deleted
   // NOTE: We are doing this rectification here and not
-  // useWorkspaceHooksContext because here we know for sure ( due to`checkCurrentEditors`)
+  // useWorkspaceContext because here we know for sure ( due to`checkCurrentEditors`)
   // that an external modification was made. We cannot do the same (check and remove active wsPaths from history)
   // for any internal changes due to race conditions like closing a wsPath which didnt show up in `fileWsPaths` yet.
   useEffect(() => {

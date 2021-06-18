@@ -24,6 +24,9 @@ const jsconfigTemplate = (workspacePaths, currentPath, rootPath) => {
 async function main() {
   const workspaces = await walkWorkspace();
   const workspaceNames = workspaces.map((r) => r.name);
+  const workspaceLookup = Object.fromEntries(
+    workspaces.map((r) => [r.name, r]),
+  );
   const workspaceToPath = Object.fromEntries(
     workspaces.map((r) => [r.name, r.path]),
   );
@@ -39,6 +42,7 @@ async function main() {
           depName: dep,
           path: workspaceToPath[dep],
           relativePath: path.relative(w.path, workspaceToPath[dep]),
+          packageJSON: workspaceLookup[dep].packageJSON,
         });
       }
     });
@@ -48,10 +52,12 @@ async function main() {
     }
     const workspacePaths = Object.fromEntries(
       internalDep
-        .flatMap((r) => [
-          [r.depName + '/*', [r.relativePath + '/*']],
-          [r.depName + '', [r.relativePath + '/index.js']],
-        ])
+        .flatMap((r) => {
+          return [
+            [r.depName + '/*', [r.relativePath + '/*']],
+            [r.depName + '', [r.relativePath + '/' + r.packageJSON.main]],
+          ];
+        })
         .sort((a, b) => a[0].localeCompare(b[0])),
     );
     const jsconfig = jsconfigTemplate(workspacePaths, w.path, w.rootPath);

@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import { useBroadcastChannel } from 'utils/index';
 import { useWorkspacePath } from 'workspace/index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 import { render, act } from '@testing-library/react';
 
 import { WatchWorkspace } from '../WatchWorkspace';
@@ -24,20 +24,20 @@ jest.mock('workspace/index', () => {
     useWorkspacePath: jest.fn(),
   };
 });
-jest.mock('workspace-hooks/index', () => {
-  const actual = jest.requireActual('workspace-hooks/index');
+jest.mock('workspace-context/index', () => {
+  const actual = jest.requireActual('workspace-context/index');
   return {
     ...actual,
-    useWorkspaceHooksContext: jest.fn(),
+    useWorkspaceContext: jest.fn(),
   };
 });
 
 let Comp;
-let useWorkspaceHooksContextReturn;
+let useWorkspaceContextReturn;
 let useBroadcastChannelReturn;
 let useWorkspacePathReturn;
 beforeEach(() => {
-  useWorkspaceHooksContextReturn = {
+  useWorkspaceContextReturn = {
     fileWsPaths: [],
     refreshWsPaths: jest.fn(),
   };
@@ -51,9 +51,7 @@ beforeEach(() => {
     removePrimaryAndSecondaryWsPath: jest.fn(),
   };
 
-  useWorkspaceHooksContext.mockImplementation(
-    () => useWorkspaceHooksContextReturn,
-  );
+  useWorkspaceContext.mockImplementation(() => useWorkspaceContextReturn);
   useWorkspacePath.mockImplementation(() => useWorkspacePathReturn);
   useBroadcastChannel.mockImplementation(() => useBroadcastChannelReturn);
 
@@ -69,7 +67,7 @@ test('works', async () => {
 
 test('does nothing if event is for some other workspace', async () => {
   const result = render(<Comp />);
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
   useBroadcastChannelReturn[0] = {
     type: 'FILE_TREE_CHANGED',
@@ -78,13 +76,13 @@ test('does nothing if event is for some other workspace', async () => {
 
   result.rerender(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(0);
 });
 
 test('refreshes for if the event is correct', async () => {
   const result = render(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
   useBroadcastChannelReturn[0] = {
     type: 'FILE_TREE_CHANGED',
@@ -93,51 +91,51 @@ test('refreshes for if the event is correct', async () => {
 
   result.rerender(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
   expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
 });
 
 test('if a deleted file is open it closed it', async () => {
-  useWorkspaceHooksContextReturn.fileWsPaths = [ourFileWsPath];
+  useWorkspaceContextReturn.fileWsPaths = [ourFileWsPath];
   useWorkspacePathReturn.wsPath = ourFileWsPath;
 
   const result = render(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
   useBroadcastChannelReturn[0] = {
     type: 'FILE_TREE_CHANGED',
     payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
   };
 
-  useWorkspaceHooksContextReturn.fileWsPaths = [];
+  useWorkspaceContextReturn.fileWsPaths = [];
 
   result.rerender(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
   expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(1);
   expect(useWorkspacePathReturn.removeSecondaryWsPath).toBeCalledTimes(0);
 });
 
 test('if a deleted file is open in both primary and secondary', async () => {
-  useWorkspaceHooksContextReturn.fileWsPaths = [ourFileWsPath];
+  useWorkspaceContextReturn.fileWsPaths = [ourFileWsPath];
   useWorkspacePathReturn.wsPath = ourFileWsPath;
   useWorkspacePathReturn.secondaryWsPath = ourFileWsPath;
 
   const result = render(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
   useBroadcastChannelReturn[0] = {
     type: 'FILE_TREE_CHANGED',
     payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
   };
 
-  useWorkspaceHooksContextReturn.fileWsPaths = [];
+  useWorkspaceContextReturn.fileWsPaths = [];
 
   result.rerender(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
   expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
   expect(
     useWorkspacePathReturn.removePrimaryAndSecondaryWsPath,
@@ -146,22 +144,22 @@ test('if a deleted file is open in both primary and secondary', async () => {
 });
 
 test('if a deleted file is open in secondary', async () => {
-  useWorkspaceHooksContextReturn.fileWsPaths = [ourFileWsPath];
+  useWorkspaceContextReturn.fileWsPaths = [ourFileWsPath];
   useWorkspacePathReturn.secondaryWsPath = ourFileWsPath;
 
   const result = render(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
   useBroadcastChannelReturn[0] = {
     type: 'FILE_TREE_CHANGED',
     payload: { wsName: ourWsName, size: 1, lameHash: 'hash' },
   };
-  useWorkspaceHooksContextReturn.fileWsPaths = [];
+  useWorkspaceContextReturn.fileWsPaths = [];
 
   result.rerender(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
   expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
   expect(
     useWorkspacePathReturn.removePrimaryAndSecondaryWsPath,
@@ -170,11 +168,11 @@ test('if a deleted file is open in secondary', async () => {
 });
 
 test('does not refreshes for if file size and lame hash are the same', async () => {
-  useWorkspaceHooksContextReturn.fileWsPaths = [ourFileWsPath];
+  useWorkspaceContextReturn.fileWsPaths = [ourFileWsPath];
 
   const result = render(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(0);
 
   useBroadcastChannelReturn[0] = {
     type: 'FILE_TREE_CHANGED',
@@ -183,5 +181,5 @@ test('does not refreshes for if file size and lame hash are the same', async () 
 
   result.rerender(<Comp />);
 
-  expect(useWorkspaceHooksContextReturn.refreshWsPaths).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(0);
 });
