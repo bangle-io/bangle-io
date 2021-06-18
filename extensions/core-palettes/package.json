@@ -23,7 +23,7 @@
     "action-context": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
-    "extension-helpers": "workspace:*",
+    "extension-registry": "workspace:*",
     "magic-palette": "workspace:*",
     "react": "^17.0.2",
     "ui-components": "workspace:*",

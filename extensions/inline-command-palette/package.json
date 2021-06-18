@@ -23,7 +23,7 @@
     "@bangle.dev/react": "0.18.1",
     "chrono-node": "^2.2.6",
     "config": "workspace:*",
-    "extension-helpers": "workspace:*",
+    "extension-registry": "workspace:*",
     "inline-palette": "workspace:*",
     "react": "17.0.2",
     "react-dom": "17.0.2",

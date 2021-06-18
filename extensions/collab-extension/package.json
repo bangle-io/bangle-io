@@ -22,7 +22,7 @@
     "@bangle.dev/collab-client": "0.18.1",
     "@bangle.dev/collab-server": "0.18.1",
     "@bangle.dev/core": "0.18.1",
-    "extension-helpers": "workspace:*",
+    "extension-registry": "workspace:*",
     "naukar-proxy": "workspace:*"
   },
   "publishConfig": {

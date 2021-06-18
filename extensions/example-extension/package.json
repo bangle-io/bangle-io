@@ -20,7 +20,7 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/core": "0.18.1",
-    "extension-helpers": "workspace:*",
+    "extension-registry": "workspace:*",
     "utils": "workspace:*",
     "workspace": "workspace:*"
   },
