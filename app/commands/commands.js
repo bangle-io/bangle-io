@@ -20,7 +20,7 @@ import { useWorkspaceHooksContext } from 'workspace-hooks/index';
  * The commands will never resolve to a value.
  */
 export function useNewNoteCmd() {
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const { extensionRegistry } = useContext(EditorManagerContext);
   const { createNote } = useWorkspaceHooksContext();
   const { wsName } = useWorkspacePath();
 
@@ -47,13 +47,13 @@ export function useNewNoteCmd() {
                 newWsPath += '.md';
               }
 
-              return createNote(bangleIOContext, newWsPath);
+              return createNote(extensionRegistry, newWsPath);
             },
           },
         },
       });
     },
-    [createNote, bangleIOContext, dispatch, wsName],
+    [createNote, extensionRegistry, dispatch, wsName],
   );
 }
 

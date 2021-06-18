@@ -11,7 +11,7 @@ import {
 import { backLinkNodeName, newNoteLocation } from './config';
 import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
-export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
+export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
   let { path, title } = nodeAttrs;
   const { wsName, wsPath: currentWsPath, pushWsPath } = useWorkspacePath();
   const { noteWsPaths = [], createNote } = useWorkspaceHooksContext();
@@ -52,7 +52,7 @@ export function BackLinkNode({ nodeAttrs, bangleIOContext }) {
           currentWsPath,
           wsName,
           noteWsPaths,
-          bangleIOContext,
+          extensionRegistry,
           createNote,
         }).then(
           (matchedWsPath) => {
@@ -78,7 +78,7 @@ async function handleClick({
   currentWsPath,
   wsName,
   noteWsPaths,
-  bangleIOContext,
+  extensionRegistry,
   createNote,
 }) {
   const existingWsPathMatch = getMatchingWsPath(
@@ -115,18 +115,18 @@ async function handleClick({
 
   validateNoteWsPath(newWsPath);
 
-  await createNote(bangleIOContext, newWsPath, { open: false });
+  await createNote(extensionRegistry, newWsPath, { open: false });
 
   return newWsPath;
 }
 
 export const renderReactNodeView = {
   // TODO move to using param wsPath
-  [backLinkNodeName]: ({ nodeViewRenderArg, wsPath, bangleIOContext }) => {
+  [backLinkNodeName]: ({ nodeViewRenderArg, wsPath, extensionRegistry }) => {
     return (
       <BackLinkNode
         nodeAttrs={nodeViewRenderArg.node.attrs}
-        bangleIOContext={bangleIOContext}
+        extensionRegistry={extensionRegistry}
       />
     );
   },

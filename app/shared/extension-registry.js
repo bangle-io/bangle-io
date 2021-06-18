@@ -11,7 +11,7 @@ import coreActions from 'core-actions';
 import { ExtensionRegistry } from 'extension-registry/index';
 
 // TODO move this async, i think a promise should be fine.
-export const bangleIOContext = new ExtensionRegistry([
+export const extensionRegistry = new ExtensionRegistry([
   inlineEmoji,
   editorCore,
   collabExtension,

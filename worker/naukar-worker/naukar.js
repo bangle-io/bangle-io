@@ -9,7 +9,7 @@ const log = LOG ? console.log.bind(console, 'naukar') : () => {};
 // Things to remember about the return type
 // 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
 // 2. Keep the return type simple and flat. Ie. an object whose values are not object.
-export function createNaukar({ bangleIOContext, initialAppState }) {
+export function createNaukar({ extensionRegistry, initialAppState }) {
   const envType =
     typeof WorkerGlobalScope !== 'undefined' &&
     // eslint-disable-next-line no-restricted-globals, no-undef
@@ -21,8 +21,8 @@ export function createNaukar({ bangleIOContext, initialAppState }) {
   const { appState, updateWorkerAppState, registerUpdateMainAppStateCallback } =
     setupAppState(initialAppState);
 
-  const diskSetup = localDiskSetup(bangleIOContext, appState);
-  let manager = setupCollabManager(bangleIOContext, diskSetup.disk);
+  const diskSetup = localDiskSetup(extensionRegistry, appState);
+  let manager = setupCollabManager(extensionRegistry, diskSetup.disk);
 
   return {
     // app state
@@ -36,7 +36,7 @@ export function createNaukar({ bangleIOContext, initialAppState }) {
     resetManager: () => {
       console.debug('destroying manager');
       manager.destroy();
-      manager = setupCollabManager(bangleIOContext, diskSetup.disk);
+      manager = setupCollabManager(extensionRegistry, diskSetup.disk);
     },
     flushDisk: async () => {
       await diskSetup.disk.flushAll();

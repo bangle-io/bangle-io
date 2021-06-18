@@ -3,11 +3,11 @@ import React, { useCallback, useMemo, useContext } from 'react';
 import { ActionContext } from 'action-context/index';
 
 export function ActionContextProvider({ children }) {
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const { extensionRegistry } = useContext(EditorManagerContext);
 
   const actionNameSet = useMemo(() => {
-    return new Set(bangleIOContext.getRegisteredActions().map((r) => r.name));
-  }, [bangleIOContext]);
+    return new Set(extensionRegistry.getRegisteredActions().map((r) => r.name));
+  }, [extensionRegistry]);
 
   const dispatchAction = useCallback(
     (action) => {
@@ -17,13 +17,13 @@ export function ActionContextProvider({ children }) {
       if (!actionNameSet.has(action.name)) {
         throw new Error('Unknown action ' + action.name);
       }
-      for (const handler of bangleIOContext.getActionHandlers()) {
+      for (const handler of extensionRegistry.getActionHandlers()) {
         if (handler(action) === true) {
           break;
         }
       }
     },
-    [bangleIOContext, actionNameSet],
+    [extensionRegistry, actionNameSet],
   );
 
   const value = useMemo(() => {

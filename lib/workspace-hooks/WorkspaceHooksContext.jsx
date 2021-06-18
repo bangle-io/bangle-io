@@ -181,11 +181,11 @@ export function useCreateNote({ refreshWsPaths }) {
 
   const createNoteCallback = useCallback(
     async (
-      bangleIOContext,
+      extensionRegistry,
       wsPath,
       {
         open = true,
-        doc = Node.fromJSON(bangleIOContext.specRegistry.schema, {
+        doc = Node.fromJSON(extensionRegistry.specRegistry.schema, {
           type: 'doc',
           content: [
             {
@@ -215,7 +215,7 @@ export function useCreateNote({ refreshWsPaths }) {
     ) => {
       const fileExists = await checkFileExists(wsPath);
       if (!fileExists) {
-        await saveNote(bangleIOContext, wsPath, doc);
+        await saveNote(extensionRegistry, wsPath, doc);
       }
       await refreshWsPaths();
       open && pushWsPath(wsPath);

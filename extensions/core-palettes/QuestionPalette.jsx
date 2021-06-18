@@ -37,9 +37,9 @@ function QuestionPaletteUIComponent(
   { query, updatePalette, dismissPalette, paletteItemProps },
   ref,
 ) {
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const { extensionRegistry } = useContext(EditorManagerContext);
 
-  const items2 = bangleIOContext.getAllPalettes();
+  const items2 = extensionRegistry.getAllPalettes();
   const items = items2.map((r) => {
     return {
       uid: r.type,

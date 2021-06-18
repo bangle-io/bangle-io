@@ -57,12 +57,12 @@ const coreExtension = Extension.create({
   },
 });
 
-const bangleIOContext = new ExtensionRegistry([
+const extensionRegistry = new ExtensionRegistry([
   coreExtension,
   inlineBackLinkExtension,
 ]);
 
-const schema = bangleIOContext.specRegistry.schema;
+const schema = extensionRegistry.specRegistry.schema;
 const mockView = {
   state: {
     schema,

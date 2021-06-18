@@ -41,13 +41,13 @@ function ActionPaletteUIComponent(
   { query, updatePalette, dismissPalette, paletteItemProps },
   ref,
 ) {
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const { extensionRegistry } = useContext(EditorManagerContext);
   const { dispatchAction } = useContext(ActionContext);
   const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
   const items = useMemo(() => {
     let actions = injectRecency(
-      bangleIOContext
+      extensionRegistry
         .getRegisteredActions()
         .map((actionDefinition) => {
           return {
@@ -60,7 +60,7 @@ function ActionPaletteUIComponent(
     );
 
     return actions.slice(0, 50);
-  }, [bangleIOContext, injectRecency, query]);
+  }, [extensionRegistry, injectRecency, query]);
 
   const onExecuteItem = useCallback(
     (getUid, sourceInfo) => {

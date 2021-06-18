@@ -48,9 +48,9 @@ export function useWorkspaces() {
 
   const importWorkspaceFromGithubCb = useCallback(
     // can pass alternate wsName in the options
-    async (bangleIOContext, url, wsType, opts = {}) => {
+    async (extensionRegistry, url, wsType, opts = {}) => {
       const wsName = await importGithubWorkspace(
-        bangleIOContext,
+        extensionRegistry,
         url,
         wsType,
         opts.wsName,

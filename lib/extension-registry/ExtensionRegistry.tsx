@@ -166,8 +166,6 @@ export class ExtensionRegistry {
       nodeViewRenderArg,
       wsPath,
       editorId,
-      // TODO remove this
-      bangleIOContext: this,
       extensionRegistry: this,
     });
   }

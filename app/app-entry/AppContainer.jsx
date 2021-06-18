@@ -29,13 +29,13 @@ export function AppContainer() {
   const { secondaryWsPath } = useWorkspacePath();
   const secondaryEditor = widescreen && Boolean(secondaryWsPath);
   const showTabs = Boolean(secondaryEditor);
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const { extensionRegistry } = useContext(EditorManagerContext);
 
   return (
     <>
-      {bangleIOContext.renderApplicationComponents()}
+      {extensionRegistry.renderApplicationComponents()}
       <ActivityBar />
-      <PaletteManager bangleIOContext={bangleIOContext} />
+      <PaletteManager extensionRegistry={extensionRegistry} />
       <LeftSidebarArea />
       <div
         id={cx(widescreen && !secondaryEditor && PRIMARY_SCROLL_PARENT_ID)}

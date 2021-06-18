@@ -13,7 +13,7 @@ export const EditorManagerContext = React.createContext({});
 /**
  * Should be parent of all editors.
  */
-export function EditorManager({ bangleIOContext, children }) {
+export function EditorManager({ extensionRegistry, children }) {
   /**
    * Understanding common loading patterns
    *
@@ -52,9 +52,9 @@ export function EditorManager({ bangleIOContext, children }) {
       setEditor,
       primaryEditor,
       getEditor,
-      bangleIOContext,
+      extensionRegistry,
     };
-  }, [_setEditor, bangleIOContext, editors]);
+  }, [_setEditor, extensionRegistry, editors]);
 
   useEffect(() => {
     window.primaryEditor = primaryEditor;

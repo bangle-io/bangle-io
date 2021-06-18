@@ -6,7 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
-import { polyfills, bangleIOContext } from 'shared/index';
+import { polyfills, extensionRegistry } from 'shared/index';
 import { WorkerSetup } from 'worker-setup/index';
 import { PageLifecycle } from './PageLifecycle';
 import { moduleSupport } from './module-support';
@@ -67,7 +67,7 @@ ReactDOM.render(
             <WorkspaceHooksContextProvider>
               <WatchWorkspace />
               <WatchUI />
-              <EditorManager bangleIOContext={bangleIOContext}>
+              <EditorManager extensionRegistry={extensionRegistry}>
                 <ActionContextProvider>
                   <App />
                 </ActionContextProvider>

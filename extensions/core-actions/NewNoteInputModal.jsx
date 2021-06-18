@@ -13,7 +13,7 @@ import { PaletteInfo, PaletteInfoItem } from 'ui-components';
 
 export function NewNoteInputModal({ dismissModal }) {
   const destroyedRef = useDestroyRef();
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const { extensionRegistry } = useContext(EditorManagerContext);
   const { createNote } = useWorkspaceHooksContext();
   const { wsName } = useWorkspacePath();
   const [error, updateError] = useState();
@@ -28,7 +28,7 @@ export function NewNoteInputModal({ dismissModal }) {
         newWsPath += '.md';
       }
       try {
-        await createNote(bangleIOContext, newWsPath);
+        await createNote(extensionRegistry, newWsPath);
         dismissModal();
       } catch (error) {
         if (destroyedRef.current) {
@@ -40,7 +40,7 @@ export function NewNoteInputModal({ dismissModal }) {
         }
       }
     },
-    [bangleIOContext, dismissModal, createNote, destroyedRef, wsName],
+    [extensionRegistry, dismissModal, createNote, destroyedRef, wsName],
   );
 
   return (

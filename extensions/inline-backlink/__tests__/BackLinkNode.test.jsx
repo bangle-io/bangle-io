@@ -31,7 +31,7 @@ const coreExtension = Extension.create({
   },
 });
 
-const bangleIOContext = new ExtensionRegistry([
+const extensionRegistry = new ExtensionRegistry([
   coreExtension,
   inlineBackLinkExtension,
 ]);
@@ -56,7 +56,7 @@ describe('BackLinkNode', () => {
     const renderResult = render(
       <BackLinkNode
         nodeAttrs={{ path: 'some/path', title: undefined }}
-        bangleIOContext={bangleIOContext}
+        extensionRegistry={extensionRegistry}
       />,
     );
 
@@ -76,7 +76,7 @@ describe('BackLinkNode', () => {
     const renderResult = render(
       <BackLinkNode
         nodeAttrs={{ path: 'some/path', title: 'monako' }}
-        bangleIOContext={bangleIOContext}
+        extensionRegistry={extensionRegistry}
       />,
     );
 
@@ -97,7 +97,7 @@ describe('BackLinkNode', () => {
       const renderResult = render(
         <BackLinkNode
           nodeAttrs={{ path, title: 'monako' }}
-          bangleIOContext={bangleIOContext}
+          extensionRegistry={extensionRegistry}
         />,
       );
       const prom = sleep();
@@ -487,9 +487,14 @@ describe('BackLinkNode', () => {
       await clickSetup({ path: 'note2' });
 
       expect(createNote).toBeCalledTimes(1);
-      expect(createNote).nthCalledWith(1, bangleIOContext, 'test-ws:note2.md', {
-        open: false,
-      });
+      expect(createNote).nthCalledWith(
+        1,
+        extensionRegistry,
+        'test-ws:note2.md',
+        {
+          open: false,
+        },
+      );
       expect(pushWsPathMock).toBeCalledTimes(1);
       expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note2.md', false, false);
     });

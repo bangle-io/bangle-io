@@ -392,7 +392,7 @@ function useNewFileSystemWS({ dismissPalette }) {
 function useImportWSFromGithub({ updatePalette }) {
   const uid = 'IMPORT_WS_FROM_GITHUB';
   const { importWorkspaceFromGithub } = useWorkspaces();
-  const { bangleIOContext } = useContext(EditorManagerContext);
+  const { extensionRegistry } = useContext(EditorManagerContext);
 
   const onExecute = useCallback(async () => {
     updatePalette({
@@ -403,7 +403,7 @@ function useImportWSFromGithub({ updatePalette }) {
         onInputConfirm: async (query) => {
           if (query) {
             return importWorkspaceFromGithub(
-              bangleIOContext,
+              extensionRegistry,
               query,
               'browser',
               {
@@ -414,7 +414,7 @@ function useImportWSFromGithub({ updatePalette }) {
         },
       },
     });
-  }, [importWorkspaceFromGithub, updatePalette, bangleIOContext]);
+  }, [importWorkspaceFromGithub, updatePalette, extensionRegistry]);
 
   return queryMatch({
     uid,

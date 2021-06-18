@@ -9,8 +9,13 @@ const renderReactNodeView = {
   //  - https://github.com/kepta/bangle-play/blob/3a074f539afc711aff99ecfc064469e066a338bb/core/node-view.js#L13
   // 2. wsPath - the current editors wsPath
   // 3. editorId - a number representing the editorId
-  // 4. bangleIOContext itself
-  myPMNodeName: ({ nodeViewRenderArg, wsPath, editorId, bangleIOContext }) => {
+  // 4. extensionRegistry itself
+  myPMNodeName: ({
+    nodeViewRenderArg,
+    wsPath,
+    editorId,
+    extensionRegistry,
+  }) => {
     return null;
   },
 };

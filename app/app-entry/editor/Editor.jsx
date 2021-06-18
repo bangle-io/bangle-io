@@ -12,7 +12,7 @@ Editor.propTypes = {
   editorId: PropTypes.number.isRequired,
 };
 
-export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
+export function Editor({ editorId, wsPath, extensionRegistry, setEditor }) {
   // an object which can is used to provide extensions a store unique to this editor instance
   const [uniqueEditorObj] = useState({});
   // Even though the collab extension will reset the content to its convenience
@@ -21,7 +21,7 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
   const [initialValue, setInitialDoc] = useState();
   useEffect(() => {
     let destroyed = false;
-    getNote(bangleIOContext, wsPath).then((doc) => {
+    getNote(extensionRegistry, wsPath).then((doc) => {
       if (!destroyed) {
         setInitialDoc(doc);
       }
@@ -29,12 +29,12 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
     return () => {
       destroyed = true;
     };
-  }, [bangleIOContext, wsPath]);
+  }, [extensionRegistry, wsPath]);
 
   useEffect(() => {
     if (initialValue) {
       const scrollParent = getScrollParentElement(editorId);
-      const pos = bangleIOContext.editor.initialScrollPos({
+      const pos = extensionRegistry.editor.initialScrollPos({
         wsPath,
         editorId,
         scrollParent,
@@ -45,24 +45,24 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
         scrollParent.scrollTop = pos;
       }
     }
-  }, [editorId, wsPath, bangleIOContext, uniqueEditorObj, initialValue]);
+  }, [editorId, wsPath, extensionRegistry, uniqueEditorObj, initialValue]);
 
   useEffect(() => {
     return () => {
-      bangleIOContext.editor.beforeDestroy({
+      extensionRegistry.editor.beforeDestroy({
         wsPath,
         editorId,
         uniqueEditorObj: uniqueEditorObj,
       });
     };
-  }, [wsPath, editorId, uniqueEditorObj, bangleIOContext]);
+  }, [wsPath, editorId, uniqueEditorObj, extensionRegistry]);
 
   return initialValue ? (
     <EditorInner
       editorId={editorId}
       wsPath={wsPath}
       setEditor={setEditor}
-      bangleIOContext={bangleIOContext}
+      extensionRegistry={extensionRegistry}
       initialValue={initialValue}
       uniqueEditorObj={uniqueEditorObj}
     />
@@ -72,7 +72,7 @@ export function Editor({ editorId, wsPath, bangleIOContext, setEditor }) {
 function EditorInner({
   editorId,
   wsPath,
-  bangleIOContext,
+  extensionRegistry,
   setEditor,
   initialValue,
   uniqueEditorObj,
@@ -85,8 +85,8 @@ function EditorInner({
   }, [wsPath, editorId]);
 
   const plugins = useCallback(() => {
-    return bangleIOContext.getPlugins();
-  }, [bangleIOContext]);
+    return extensionRegistry.getPlugins();
+  }, [extensionRegistry]);
 
   const onEditorReady = useCallback(
     (editor) => {
@@ -100,13 +100,13 @@ function EditorInner({
     (nodeViewRenderArg) => {
       const { node, updateAttrs, children, selected } = nodeViewRenderArg;
 
-      return bangleIOContext.renderReactNodeViews({
+      return extensionRegistry.renderReactNodeViews({
         nodeViewRenderArg,
         wsPath,
         editorId,
       });
     },
-    [bangleIOContext, wsPath, editorId],
+    [extensionRegistry, wsPath, editorId],
   );
   const editorState = useEditorState({
     plugins: plugins,
@@ -114,10 +114,10 @@ function EditorInner({
       wsPath,
       editorId,
     },
-    specRegistry: bangleIOContext.specRegistry,
+    specRegistry: extensionRegistry.specRegistry,
     initialValue: initialValue,
     pmStateOpts: {
-      selection: bangleIOContext.editor.initialSelection({
+      selection: extensionRegistry.editor.initialSelection({
         wsPath,
         editorId,
         doc: initialValue,
@@ -134,7 +134,7 @@ function EditorInner({
       focusOnInit={false}
       className="bangle-editor-inner-container"
     >
-      {bangleIOContext.renderExtensionEditorComponents({ wsPath, editorId })}
+      {extensionRegistry.renderExtensionEditorComponents({ wsPath, editorId })}
     </BangleEditor>
   );
 }

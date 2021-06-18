@@ -47,7 +47,7 @@ export function EditorArea({
   onClose,
 }) {
   const { fileExists, wsPath } = useHandleWsPath(incomingWsPath);
-  const { setEditor, bangleIOContext } = useContext(EditorManagerContext);
+  const { setEditor, extensionRegistry } = useContext(EditorManagerContext);
   const [showEmptyEditor, updateShowEmptyEditor] = useState(false);
 
   // prevents unwarranted flash of empty editor by waiting
@@ -73,7 +73,7 @@ export function EditorArea({
     <div id={id} className={cx('bangle-editor-area', className)}>
       {wsPath && showTabs ? <Tab wsPath={wsPath} onClose={onClose} /> : null}
       <div className={cx('bangle-editor-container', showTabs && 'has-tabs')}>
-        {fileExists && wsPath && bangleIOContext && (
+        {fileExists && wsPath && extensionRegistry && (
           <>
             <Editor
               // Key is used to reload the editor when wsPath changes
@@ -81,7 +81,7 @@ export function EditorArea({
               editorId={editorId}
               wsPath={wsPath}
               setEditor={setEditor}
-              bangleIOContext={bangleIOContext}
+              extensionRegistry={extensionRegistry}
             />
           </>
         )}
