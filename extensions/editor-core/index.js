@@ -3,6 +3,8 @@ import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
 import { MenuComp } from './FloatingMenu';
 import { EditorCore } from './EditorCore';
+import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
+
 const extensionName = 'editor-core';
 
 const extension = Extension.create({
@@ -11,6 +13,7 @@ const extension = Extension.create({
     specs: rawSpecs,
     plugins: [getPlugins],
     ReactComponent: MenuComp,
+    markdownItPlugins: [frontMatterMarkdownItPlugin],
   },
   application: {
     ReactComponent: EditorCore,

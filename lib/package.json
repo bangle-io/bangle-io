@@ -7,7 +7,6 @@
     "ui-context",
     "ui-components",
     "config",
-    "extension-helpers",
     "utils",
     "workspace",
     "workspace-hooks",

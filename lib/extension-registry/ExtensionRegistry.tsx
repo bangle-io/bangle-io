@@ -14,6 +14,92 @@ function filterFlatMap<F, T extends keyof F>(
   return items.map((item) => item[field]);
 }
 
+class EditorHandlers {
+  constructor(private extensions: Extension[]) {}
+
+  private _getExtensionStore(
+    uniqueObj: Record<string, any>,
+    extension: Extension,
+  ) {
+    if (!uniqueObj[extension.name]) {
+      uniqueObj[extension.name] = {};
+    }
+    return uniqueObj[extension.name];
+  }
+  // deprecate this
+  beforeDestroy = ({
+    uniqueEditorObj,
+    wsPath,
+    editorId,
+  }: {
+    uniqueEditorObj: any;
+    wsPath: string;
+    editorId: number;
+  }) => {
+    for (const ext of this.extensions.filter((e) => e.editor?.beforeDestroy)) {
+      ext.editor.beforeDestroy?.({
+        wsPath,
+        editorId,
+        store: this._getExtensionStore(uniqueEditorObj, ext),
+      });
+    }
+  };
+
+  initialScrollPos = ({
+    uniqueEditorObj,
+    wsPath,
+    editorId,
+    scrollParent,
+    doc,
+  }: {
+    uniqueEditorObj: any;
+    wsPath: string;
+    editorId: number;
+    scrollParent: any;
+    doc: any;
+  }) => {
+    for (const ext of this.extensions) {
+      const result = ext.editor?.initialScrollPos?.({
+        wsPath,
+        editorId,
+        scrollParent,
+        doc,
+        store: this._getExtensionStore(uniqueEditorObj, ext),
+      });
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return undefined;
+  };
+
+  initialSelection = ({
+    uniqueEditorObj,
+    wsPath,
+    editorId,
+    doc,
+  }: {
+    uniqueEditorObj: any;
+    wsPath: string;
+    editorId: number;
+    doc: any;
+  }) => {
+    for (const ext of this.extensions) {
+      const result = ext.editor?.initialSelection?.({
+        wsPath,
+        editorId,
+        doc,
+        store: this._getExtensionStore(uniqueEditorObj, ext),
+      });
+      if (result != null) {
+        return result;
+      }
+    }
+    return undefined;
+  };
+}
+
 export class ExtensionRegistry {
   // TODO move this to a method
   specRegistry: typeof SpecRegistry;
@@ -115,10 +201,16 @@ export class ExtensionRegistry {
     editorId: number;
   }) => {
     const result = this.editorConfig
-      .filter((e) => e.ReactComponent)
-      .map((e) => (
-        <e.ReactComponent key={e.name} wsPath={wsPath} editorId={editorId} />
-      ));
+      .map((e) => {
+        const { ReactComponent } = e;
+        if (ReactComponent) {
+          return (
+            <ReactComponent key={e.name} wsPath={wsPath} editorId={editorId} />
+          );
+        }
+        return undefined;
+      })
+      .filter((e): e is JSX.Element => Boolean(e));
     return result;
   };
 
@@ -154,91 +246,5 @@ export class ExtensionRegistry {
     return () => {
       this.actionHandlers.delete(cb);
     };
-  };
-}
-
-class EditorHandlers {
-  constructor(private extensions: Extension[]) {}
-
-  private _getExtensionStore(
-    uniqueObj: Record<string, any>,
-    extension: Extension,
-  ) {
-    if (!uniqueObj[extension.name]) {
-      uniqueObj[extension.name] = {};
-    }
-    return uniqueObj[extension.name];
-  }
-  // deprecate this
-  beforeDestroy = ({
-    uniqueEditorObj,
-    wsPath,
-    editorId,
-  }: {
-    uniqueEditorObj: any;
-    wsPath: string;
-    editorId: number;
-  }) => {
-    for (const ext of this.extensions.filter((e) => e.editor?.beforeDestroy)) {
-      ext.editor.beforeDestroy?.({
-        wsPath,
-        editorId,
-        store: this._getExtensionStore(uniqueEditorObj, ext),
-      });
-    }
-  };
-
-  initialScrollPos = ({
-    uniqueEditorObj,
-    wsPath,
-    editorId,
-    scrollParent,
-    doc,
-  }: {
-    uniqueEditorObj: any;
-    wsPath: string;
-    editorId: number;
-    scrollParent: any;
-    doc: any;
-  }) => {
-    for (const ext of this.extensions) {
-      const result = ext.editor?.initialScrollPos?.({
-        wsPath,
-        editorId,
-        scrollParent,
-        doc,
-        store: this._getExtensionStore(uniqueEditorObj, ext),
-      });
-      if (result != null) {
-        return result;
-      }
-    }
-
-    return undefined;
-  };
-
-  initialSelection = ({
-    uniqueEditorObj,
-    wsPath,
-    editorId,
-    doc,
-  }: {
-    uniqueEditorObj: any;
-    wsPath: string;
-    editorId: number;
-    doc: any;
-  }) => {
-    for (const ext of this.extensions) {
-      const result = ext.editor?.initialSelection?.({
-        wsPath,
-        editorId,
-        doc,
-        store: this._getExtensionStore(uniqueEditorObj, ext),
-      });
-      if (result != null) {
-        return result;
-      }
-    }
-    return undefined;
   };
 }

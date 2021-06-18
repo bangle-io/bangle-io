@@ -5,12 +5,21 @@ import React, { useState, useEffect } from 'react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import * as idb from 'idb-keyval';
 import { checkWidescreen } from 'utils/index';
-import { BangleIOContext } from 'bangle-io-context/index';
 import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
 import { Workspace } from '../Workspace';
 import { useWorkspacePath, useWorkspaces } from '../workspace-hooks';
 import { helpFSWorkspaceInfo } from 'config/help-fs';
 import { listAllFiles } from '../file-ops';
+import { Extension, ExtensionRegistry } from 'extension-registry';
+
+const bangleIOContext = new ExtensionRegistry([
+  Extension.create({
+    name: 'core',
+    editor: {
+      specs: [...defaultSpecs()],
+    },
+  }),
+]);
 
 jest.mock('utils/index', () => {
   const actual = jest.requireActual('utils/index');

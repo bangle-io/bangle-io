@@ -1,4 +1,4 @@
-import { Extension } from 'extension-helpers';
+import { Extension } from 'extension-registry';
 import { CoreActions } from './CoreActions';
 import {
   extensionName,
@@ -12,15 +12,17 @@ import {
 
 const extension = Extension.create({
   name: extensionName,
-  ApplicationReactComponent: CoreActions,
-  actions: [
-    { name: TOGGLE_THEME_ACTION, title: 'Toggle theme' },
-    { name: TOGGLE_FILE_SIDEBAR_ACTION, title: 'Toggle file sidebar' },
-    { name: NEW_NOTE_ACTION, title: 'New note' },
-    { name: NEW_WORKSPACE_ACTION, title: 'New workspace' },
-    { name: RENAME_ACTIVE_NOTE_ACTION, title: 'Rename active note' },
-    { name: DELETE_ACTIVE_NOTE_ACTION, title: 'Delete active note' },
-  ],
+  application: {
+    actions: [
+      { name: TOGGLE_THEME_ACTION, title: 'Toggle theme' },
+      { name: TOGGLE_FILE_SIDEBAR_ACTION, title: 'Toggle file sidebar' },
+      { name: NEW_NOTE_ACTION, title: 'New note' },
+      { name: NEW_WORKSPACE_ACTION, title: 'New workspace' },
+      { name: RENAME_ACTIVE_NOTE_ACTION, title: 'Rename active note' },
+      { name: DELETE_ACTIVE_NOTE_ACTION, title: 'Delete active note' },
+    ],
+    ReactComponent: CoreActions,
+  },
 });
 
 export default extension;

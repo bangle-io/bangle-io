@@ -35,6 +35,5 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "extensions/editor-core/index.js",
   ]
 }

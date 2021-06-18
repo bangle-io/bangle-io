@@ -1,6 +1,7 @@
 import React from 'react';
 import { PluginKey } from '@bangle.dev/core/prosemirror/state';
 import { Node } from '@bangle.dev/core/prosemirror/model';
+import { ExtensionRegistry, Extension } from 'extension-registry/index';
 
 import { render, act } from '@testing-library/react';
 import { filterItems, InlineBacklinkPalette } from '../InlineBacklinkPalette';
@@ -13,7 +14,6 @@ import {
 } from 'inline-palette/index';
 import { useWorkspacePath } from 'workspace/index';
 import { sleep } from 'utils/utility';
-import { BangleIOContext } from 'bangle-io-context/index';
 import inlineBackLinkExtension from '../index';
 import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 
@@ -49,11 +49,18 @@ jest.mock('workspace-hooks/index', () => {
   };
 });
 
-const bangleIOContext = new BangleIOContext({
-  coreRawSpecs: coreSpec(),
-  getCorePlugins: corePlugins,
-  extensions: [inlineBackLinkExtension],
+const coreExtension = Extension.create({
+  name: 'core',
+  editor: {
+    specs: [coreSpec()],
+    plugins: [...corePlugins()],
+  },
 });
+
+const bangleIOContext = new ExtensionRegistry([
+  coreExtension,
+  inlineBackLinkExtension,
+]);
 
 const schema = bangleIOContext.specRegistry.schema;
 const mockView = {

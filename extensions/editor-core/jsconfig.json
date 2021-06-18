@@ -14,6 +14,12 @@
       ],
       "extension-helpers/*": [
         "../../lib/extension-helpers/*"
+      ],
+      "extension-registry": [
+        "../../lib/extension-registry/index.js"
+      ],
+      "extension-registry/*": [
+        "../../lib/extension-registry/*"
       ]
     }
   }

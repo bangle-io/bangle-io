@@ -1,5 +1,3 @@
-import { BangleIOContext } from 'bangle-io-context/index';
-import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 import editorCore from 'editor-core/index';
 import inlineCommandPalette from 'inline-command-palette/index';
 import inlineBacklinkPalette from 'inline-backlink/index';
@@ -14,16 +12,16 @@ import { ExtensionRegistry } from 'extension-registry/index';
 
 // TODO move this async, i think a promise should be fine.
 export const bangleIOContext = new ExtensionRegistry([
-  // inlineEmoji,
+  inlineEmoji,
   editorCore,
-  // collabExtension,
-  // inlineCommandPalette,
-  // inlineBacklinkPalette,
-  // collapsibleHeading,
-  // imageExtension,
-  // editorScrollExtension,
-  // coreActions,
-  // // NOTE: keep the core palette last
-  // // as it has note palette in it
-  // corePalette,
+  collabExtension,
+  inlineCommandPalette,
+  inlineBacklinkPalette,
+  collapsibleHeading,
+  imageExtension,
+  editorScrollExtension,
+  coreActions,
+  // NOTE: keep the core palette last
+  // as it has note palette in it
+  corePalette,
 ]);

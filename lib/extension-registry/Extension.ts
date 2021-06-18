@@ -6,7 +6,11 @@ export interface EditorConfig {
   plugins?: any[];
   highPriorityPlugins?: any[];
   markdownItPlugins?: any[];
-  ReactComponent?: any;
+  ReactComponent?: React.ComponentType<{
+    key: string;
+    wsPath: string;
+    editorId: number;
+  }>;
   renderReactNodeView?: (...args: any[]) => any;
   initialScrollPos?: (arg: any) => any;
   initialSelection?: (...args: any[]) => any;
@@ -20,7 +24,25 @@ export interface ApplicationConfig {
     key: string;
     registerActionHandler: (cb) => () => void;
   }>;
-  palettes?: any[];
+  palettes?: Array<{
+    type: string;
+    icon: JSX.Element;
+    identifierPrefix: string;
+    placeholder: string;
+    parseRawQuery: (query: string) => string | undefined | null;
+    ReactComponent: React.ComponentType<{
+      query: string;
+      paletteType: string;
+      paletteItemProps: any;
+      paletteMetadata: any;
+      updatePalette: (
+        type: string,
+        initialQuery?: string,
+        metadata?: any,
+      ) => void;
+      dismissPalette: (focusEditor?: boolean) => void;
+    }>;
+  }>;
   actions?: Array<{
     name: string;
     title: string;

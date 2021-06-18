@@ -1,8 +1,8 @@
-import { Extension } from 'extension-helpers';
+import { Extension } from 'extension-registry';
 
 const extensionName = 'extension-example';
 
-export const renderReactNodeView = {
+const renderReactNodeView = {
   // params
   // 1. nodeViewRenderArg object
   //  - https://bangle.dev/docs/api/react#bangleeditor-reactelement
@@ -17,9 +17,11 @@ export const renderReactNodeView = {
 
 const extension = Extension.create({
   name: extensionName,
-  editorPlugins: [collabPlugin],
-  renderReactNodeView: renderReactNodeView,
-  EditorReactComponent: EditorReactComponent,
+  editor: {
+    plugins: [collabPlugin],
+    renderReactNodeView: renderReactNodeView,
+    ReactComponent: EditorReactComponent,
+  },
 });
 
 function collabPlugin({

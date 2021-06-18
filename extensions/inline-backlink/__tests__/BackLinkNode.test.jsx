@@ -6,8 +6,7 @@ import { render, fireEvent, act } from '@testing-library/react';
 import { sleep } from 'utils/utility';
 import { coreSpec, corePlugins } from '@bangle.dev/core/utils/core-components';
 import { BackLinkNode } from '../BackLinkNode';
-import { BangleIOContext } from 'bangle-io-context/index';
-import { Node } from '@bangle.dev/core/prosemirror/model';
+import { ExtensionRegistry, Extension } from 'extension-registry/index';
 import inlineBackLinkExtension from '../index';
 
 jest.mock('workspace/index', () => {
@@ -23,11 +22,19 @@ jest.mock('workspace-hooks/index', () => {
     useWorkspaceHooksContext: jest.fn(),
   };
 });
-const bangleIOContext = new BangleIOContext({
-  coreRawSpecs: coreSpec(),
-  getCorePlugins: corePlugins,
-  extensions: [inlineBackLinkExtension],
+
+const coreExtension = Extension.create({
+  name: 'core',
+  editor: {
+    specs: [coreSpec()],
+    plugins: [...corePlugins()],
+  },
 });
+
+const bangleIOContext = new ExtensionRegistry([
+  coreExtension,
+  inlineBackLinkExtension,
+]);
 
 describe('BackLinkNode', () => {
   const pushWsPathMock = jest.fn();

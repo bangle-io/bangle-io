@@ -1,4 +1,4 @@
-import { Extension } from 'extension-helpers';
+import { Extension } from 'extension-registry/index';
 import { collabClient } from '@bangle.dev/collab-client';
 import { naukarWorkerProxy } from 'naukar-proxy/index';
 import { parseCollabResponse } from '@bangle.dev/collab-server';
@@ -8,7 +8,9 @@ const extensionName = 'collab-extension';
 
 const extension = Extension.create({
   name: extensionName,
-  editorPlugins: [collabPlugin],
+  editor: {
+    plugins: [collabPlugin],
+  },
 });
 
 function collabPlugin({ metadata: { wsPath } = {} }) {
