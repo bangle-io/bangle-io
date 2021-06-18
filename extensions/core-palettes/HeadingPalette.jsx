@@ -5,7 +5,6 @@ import React, {
   useMemo,
 } from 'react';
 import { Selection } from '@bangle.dev/core/prosemirror/state';
-import { useWorkspacePath } from 'workspace/index';
 import {
   MagicPaletteItem,
   MagicPaletteItemsContainer,

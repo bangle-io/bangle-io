@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 import { UIManagerContext } from 'ui-context/index';
+import { ExtensionRegistryContext } from 'extension-registry/index';
 import {
   toggleHeadingCollapse,
   uncollapseAllHeadings,
@@ -55,7 +56,6 @@ import {
 import { pickADirectory } from 'baby-fs/index';
 import { WorkspaceError } from 'workspace/errors';
 import { useDestroyRef, useKeybindings, BaseError } from 'utils/index';
-import { EditorManagerContext } from 'editor-manager-context/index';
 import { useDispatchPrimaryEditor } from '../use-dispatch-primary-editor';
 import { addBoldToTitle } from '../utils';
 import { useWorkspaceHooksContext } from 'workspace-hooks/index';
@@ -392,7 +392,7 @@ function useNewFileSystemWS({ dismissPalette }) {
 function useImportWSFromGithub({ updatePalette }) {
   const uid = 'IMPORT_WS_FROM_GITHUB';
   const { importWorkspaceFromGithub } = useWorkspaces();
-  const { extensionRegistry } = useContext(EditorManagerContext);
+  const extensionRegistry = useContext(ExtensionRegistryContext);
 
   const onExecute = useCallback(async () => {
     updatePalette({

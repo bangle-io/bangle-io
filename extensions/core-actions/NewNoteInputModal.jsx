@@ -4,19 +4,20 @@ import {
   useWorkspacePath,
   PathValidationError,
 } from 'workspace/index';
-import { EditorManagerContext } from 'editor-manager-context/index';
 import { useWorkspaceHooksContext } from 'workspace-hooks/index';
 import { useDestroyRef } from 'utils/hooks';
 import { InputModal } from './InputModal';
 import { randomName } from 'utils/index';
 import { PaletteInfo, PaletteInfoItem } from 'ui-components';
+import { ExtensionRegistryContext } from 'extension-registry';
 
 export function NewNoteInputModal({ dismissModal }) {
   const destroyedRef = useDestroyRef();
-  const { extensionRegistry } = useContext(EditorManagerContext);
+  const extensionRegistry = useContext(ExtensionRegistryContext);
   const { createNote } = useWorkspaceHooksContext();
   const { wsName } = useWorkspacePath();
   const [error, updateError] = useState();
+
   const onExecute = useCallback(
     async (inputValue) => {
       if (!inputValue) {

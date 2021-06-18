@@ -16,7 +16,7 @@
         "../config/*"
       ],
       "extension-registry": [
-        "../extension-registry/index.js"
+        "../extension-registry/index.ts"
       ],
       "extension-registry/*": [
         "../extension-registry/*"

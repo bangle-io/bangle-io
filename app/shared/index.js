@@ -1,3 +1,3 @@
 export * from './initial-app-state';
 export * from './polyfill';
-export * from './extension-registry';
+export * from './init-extension-registry';

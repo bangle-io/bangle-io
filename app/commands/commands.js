@@ -6,10 +6,11 @@ import {
 } from 'workspace/index';
 import { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
-import { EditorManagerContext } from 'editor-manager-context/index';
 import { pickADirectory } from 'baby-fs/index';
 import { INPUT_PALETTE } from 'config/paletteTypes';
 import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { ExtensionRegistryContext } from 'extension-registry/index';
+
 /**
  * On generic commands
  * The hook has no parameter and returns a single value the callback which
@@ -20,10 +21,9 @@ import { useWorkspaceHooksContext } from 'workspace-hooks/index';
  * The commands will never resolve to a value.
  */
 export function useNewNoteCmd() {
-  const { extensionRegistry } = useContext(EditorManagerContext);
+  const extensionRegistry = useContext(ExtensionRegistryContext);
   const { createNote } = useWorkspaceHooksContext();
   const { wsName } = useWorkspacePath();
-
   const { dispatch } = useContext(UIManagerContext);
 
   return useCallback(

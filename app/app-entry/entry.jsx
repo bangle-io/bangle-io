@@ -6,7 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
-import { polyfills, extensionRegistry } from 'shared/index';
+import { polyfills, initExtensionRegistry } from 'shared/index';
 import { WorkerSetup } from 'worker-setup/index';
 import { PageLifecycle } from './PageLifecycle';
 import { moduleSupport } from './module-support';
@@ -15,6 +15,7 @@ import { WorkspaceHooksContextProvider } from 'workspace-hooks/index';
 import { WatchWorkspace } from './WatchWorkspace';
 import { WatchUI } from './WatchUI';
 import { ActionContextProvider } from './ActionContext';
+import { ExtensionRegistryContextProvider } from 'extension-registry/index';
 
 if (typeof window !== undefined) {
   window.Sentry?.onLoad(function () {
@@ -56,6 +57,8 @@ function LoadingBlock({ children }) {
   return loaded ? children : null;
 }
 
+const extensionRegistry = initExtensionRegistry();
+
 ReactDOM.render(
   <LoadingBlock>
     <React.StrictMode>
@@ -67,11 +70,15 @@ ReactDOM.render(
             <WorkspaceHooksContextProvider>
               <WatchWorkspace />
               <WatchUI />
-              <EditorManager extensionRegistry={extensionRegistry}>
-                <ActionContextProvider>
-                  <App />
-                </ActionContextProvider>
-              </EditorManager>
+              <ExtensionRegistryContextProvider
+                extensionRegistry={extensionRegistry}
+              >
+                <EditorManager extensionRegistry={extensionRegistry}>
+                  <ActionContextProvider>
+                    <App />
+                  </ActionContextProvider>
+                </EditorManager>
+              </ExtensionRegistryContextProvider>
             </WorkspaceHooksContextProvider>
           </UIManager>
         </Router>

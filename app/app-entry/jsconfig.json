@@ -57,6 +57,12 @@
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
       ],
+      "extension-registry": [
+        "../../lib/extension-registry/index.ts"
+      ],
+      "extension-registry/*": [
+        "../../lib/extension-registry/*"
+      ],
       "image-extension": [
         "../../extensions/image-extension/index.js"
       ],

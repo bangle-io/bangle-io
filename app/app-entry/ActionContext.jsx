@@ -1,9 +1,9 @@
-import { EditorManagerContext } from 'editor-manager-context';
+import { ExtensionRegistryContext } from 'extension-registry/index';
 import React, { useCallback, useMemo, useContext } from 'react';
 import { ActionContext } from 'action-context/index';
 
 export function ActionContextProvider({ children }) {
-  const { extensionRegistry } = useContext(EditorManagerContext);
+  const extensionRegistry = useContext(ExtensionRegistryContext);
 
   const actionNameSet = useMemo(() => {
     return new Set(extensionRegistry.getRegisteredActions().map((r) => r.name));

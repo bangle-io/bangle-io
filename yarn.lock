@@ -4350,6 +4350,7 @@ __metadata:
     constants: "workspace:*"
     editor-core: "workspace:*"
     editor-manager-context: "workspace:*"
+    extension-registry: "workspace:*"
     image-extension: "workspace:*"
     inline-backlink: "workspace:*"
     inline-command-palette: "workspace:*"
@@ -5933,6 +5934,7 @@ __metadata:
     baby-fs: "workspace:*"
     config: "workspace:*"
     editor-manager-context: "workspace:*"
+    extension-registry: "workspace:*"
     react: 17.0.2
     ui-context: "workspace:*"
     workspace: "workspace:*"
@@ -6111,7 +6113,6 @@ __metadata:
     action-context: "workspace:*"
     baby-fs: "workspace:*"
     config: "workspace:*"
-    editor-manager-context: "workspace:*"
     extension-registry: "workspace:*"
     magic-palette: "workspace:*"
     react: ^17.0.2
@@ -12794,6 +12795,7 @@ fsevents@^2.1.2:
     commands: "workspace:*"
     config: "workspace:*"
     editor-manager-context: "workspace:*"
+    extension-registry: "workspace:*"
     magic-palette: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2

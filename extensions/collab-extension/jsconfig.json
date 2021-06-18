@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "extension-registry": [
-        "../../lib/extension-registry/index.js"
+        "../../lib/extension-registry/index.ts"
       ],
       "extension-registry/*": [
         "../../lib/extension-registry/*"

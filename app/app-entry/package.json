@@ -35,6 +35,7 @@
     "constants": "workspace:*",
     "editor-core": "workspace:*",
     "editor-manager-context": "workspace:*",
+    "extension-registry": "workspace:*",
     "image-extension": "workspace:*",
     "inline-backlink": "workspace:*",
     "inline-command-palette": "workspace:*",

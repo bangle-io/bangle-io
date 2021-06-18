@@ -13,8 +13,9 @@ import {
 } from 'magic-palette/index';
 import { useKeybindings } from 'utils/index';
 import { ActionContext } from 'action-context/index';
+import { ExtensionRegistryContext } from 'extension-registry/index';
 
-export function PaletteManager({ extensionRegistry }) {
+export function PaletteManager() {
   const {
     paletteMetadata,
     paletteType,
@@ -25,7 +26,7 @@ export function PaletteManager({ extensionRegistry }) {
   const inputRef = useRef();
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const { dispatchAction } = useContext(ActionContext);
-
+  const extensionRegistry = useContext(ExtensionRegistryContext);
   const dismissPalette = useCallback(
     (focusEditor = true) => {
       updateQuery('');
