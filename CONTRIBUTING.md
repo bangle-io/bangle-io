@@ -1,6 +1,6 @@
 _This is [bangle.io](http://bangle.io) ._
 
-Hey there, this document will cover how to setup [bangle.io](http://bangle.io) locally and also a brief overview of its achitecture.
+Hey there, this document will cover how to setup [bangle.io](http://bangle.io) locally and also a brief overview of its architecture.
 
 ## Setup
 
@@ -18,7 +18,7 @@ More commands in the `package.json`.
 
 > If you are wondering about `g:` in `yarn g:e2e`, it is a yarn thing which allows to run a packages command from anywhere.
 
-# Architecture :scientist:
+# Architecture :grinning:
 
 ### File structure
 
@@ -37,3 +37,15 @@ Bangle has the following top level directories containing smaller packages.
 - `tooling:`The code that will not show in the actual app. For example integration tests, validation scripts, etc.
 
 ### Contexts
+
+- action-context: for dispatching actions.
+
+- app-state-context: used for pending writes, page lifecycle etc.
+
+- editor-manager-context: exposes editors
+
+- ui-context: for ui state and also persists select UI state in localstorage.
+
+- workspace-hooks context: place for centralised workspace ops like note creation,  and deletison etc.
+
+- So you can give people the **choice** to use a more familiar, discoverable deletioen interface.

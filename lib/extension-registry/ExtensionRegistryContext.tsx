@@ -1,5 +1,5 @@
-import { ExtensionRegistry } from 'ExtensionRegistry';
 import React, { useMemo } from 'react';
+import { ExtensionRegistry } from './ExtensionRegistry';
 
 export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(
   undefined as any,
