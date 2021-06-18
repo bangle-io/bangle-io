@@ -3,12 +3,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "bangle-io-context": [
-        "../../lib/bangle-io-context/index.js"
-      ],
-      "bangle-io-context/*": [
-        "../../lib/bangle-io-context/*"
-      ],
       "config": [
         "../../lib/config/index.js"
       ],

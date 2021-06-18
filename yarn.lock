@@ -4342,7 +4342,6 @@ __metadata:
     "@testing-library/react-hooks": ^7.0.0
     action-context: "workspace:*"
     app-state-context: "workspace:*"
-    bangle-io-context: "workspace:*"
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
     comlink: ^4.3.1
@@ -4911,17 +4910,6 @@ __metadata:
   checksum: 9b67bfe558772f40cf743a3469b48b286aecec2ea9fe80c48d74845e53aab1cef524fafedf123a63019b49ac397760573ef5f173f539423061f7217cbb5fbd40
   languageName: node
   linkType: hard
-
-"bangle-io-context@workspace:*, bangle-io-context@workspace:lib/bangle-io-context":
-  version: 0.0.0-use.local
-  resolution: "bangle-io-context@workspace:lib/bangle-io-context"
-  dependencies:
-    "@bangle.dev/core": 0.18.1
-    react: 17.0.2
-    react-dom: 17.0.2
-    utils: "workspace:*"
-  languageName: unknown
-  linkType: soft
 
 "bangle-io-help@npm:1.7.2":
   version: 1.7.2
@@ -6901,7 +6889,6 @@ __metadata:
     "@bangle.dev/tooltip": 0.18.1
     "@bangle.dev/trailing-node": 0.18.1
     editor-manager-context: "workspace:*"
-    extension-helpers: "workspace:*"
     extension-registry: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2
@@ -7871,12 +7858,6 @@ __metadata:
   checksum: a50a8309ca65ea5d426382ff09f33586527882cf532931cb08ca786ea3146c0553310bda688710ff61d7668eba9f96b923fe1420cdf56a2c3eaf30fcab87b515
   languageName: node
   linkType: hard
-
-"extension-helpers@workspace:*, extension-helpers@workspace:lib/extension-helpers":
-  version: 0.0.0-use.local
-  resolution: "extension-helpers@workspace:lib/extension-helpers"
-  languageName: unknown
-  linkType: soft
 
 "extension-registry@workspace:*, extension-registry@workspace:lib/extension-registry":
   version: 0.0.0-use.local
@@ -9302,7 +9283,6 @@ fsevents@^2.1.2:
     "@bangle.dev/wiki-link": 0.18.1
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
-    bangle-io-context: "workspace:*"
     config: "workspace:*"
     extension-registry: "workspace:*"
     inline-palette: "workspace:*"
@@ -14933,7 +14913,6 @@ resolve@^2.0.0-next.3:
     "@bangle.dev/markdown": 0.18.1
     "@bangle.dev/markdown-front-matter": 0.18.1
     "@bangle.dev/table": 0.18.1
-    bangle-io-context: "workspace:*"
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
     comlink: ^4.3.1
@@ -17042,7 +17021,6 @@ typescript@4.2.4:
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^7.0.0
     baby-fs: "workspace:*"
-    bangle-io-context: "workspace:*"
     config: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2

@@ -9,12 +9,6 @@
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
       ],
-      "extension-helpers": [
-        "../../lib/extension-helpers/index.js"
-      ],
-      "extension-helpers/*": [
-        "../../lib/extension-helpers/*"
-      ],
       "extension-registry": [
         "../../lib/extension-registry/index.js"
       ],

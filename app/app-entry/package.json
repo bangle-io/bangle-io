@@ -27,7 +27,6 @@
     "@sentry/tracing": "^6.7.1",
     "action-context": "workspace:*",
     "app-state-context": "workspace:*",
-    "bangle-io-context": "workspace:*",
     "collab-extension": "workspace:*",
     "collapsible-heading": "workspace:*",
     "comlink": "^4.3.1",

@@ -15,12 +15,6 @@
       "app-state-context/*": [
         "../../lib/app-state-context/*"
       ],
-      "bangle-io-context": [
-        "../../lib/bangle-io-context/index.js"
-      ],
-      "bangle-io-context/*": [
-        "../../lib/bangle-io-context/*"
-      ],
       "collab-extension": [
         "../../extensions/collab-extension/index.js"
       ],

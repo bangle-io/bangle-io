@@ -1,25 +1,13 @@
 import mockBabyFs from './baby-fs.mock';
 
 import { render, act } from '@testing-library/react';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import * as idb from 'idb-keyval';
 import { checkWidescreen } from 'utils/index';
-import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
 import { Workspace } from '../Workspace';
 import { useWorkspacePath, useWorkspaces } from '../workspace-hooks';
 import { helpFSWorkspaceInfo } from 'config/help-fs';
-import { listAllFiles } from '../file-ops';
-import { Extension, ExtensionRegistry } from 'extension-registry';
-
-const bangleIOContext = new ExtensionRegistry([
-  Extension.create({
-    name: 'core',
-    editor: {
-      specs: [...defaultSpecs()],
-    },
-  }),
-]);
 
 jest.mock('utils/index', () => {
   const actual = jest.requireActual('utils/index');
@@ -29,18 +17,6 @@ jest.mock('utils/index', () => {
     checkWidescreen: jest.fn(() => false),
   };
 });
-
-function createFileContent(textContent = 'hello') {
-  return JSON.stringify({
-    content: [
-      {
-        content: [{ text: textContent, type: 'text' }],
-        type: 'paragraph',
-      },
-    ],
-    type: 'doc',
-  });
-}
 
 const originalFile = window.File;
 

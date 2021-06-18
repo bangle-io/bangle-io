@@ -23,7 +23,6 @@
     "@bangle.dev/markdown": "0.18.1",
     "@bangle.dev/markdown-front-matter": "0.18.1",
     "@bangle.dev/table": "0.18.1",
-    "bangle-io-context": "workspace:*",
     "collab-extension": "workspace:*",
     "collapsible-heading": "workspace:*",
     "comlink": "^4.3.1",

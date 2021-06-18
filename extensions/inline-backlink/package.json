@@ -20,8 +20,7 @@
   "scripts": {},
   "devDependencies": {
     "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^13.1.9",
-    "bangle-io-context": "workspace:*"
+    "@testing-library/user-event": "^13.1.9"
   },
   "dependencies": {
     "@bangle.dev/core": "0.18.1",

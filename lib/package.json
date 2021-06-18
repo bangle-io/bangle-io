@@ -1,7 +1,6 @@
 {
   "name": "lib",
   "workspaces": [
-    "bangle-io-context",
     "editor-manager-context",
     "app-state-context",
     "ui-context",
