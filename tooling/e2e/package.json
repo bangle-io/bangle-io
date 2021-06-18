@@ -18,7 +18,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "g:e2e": "yarn jest"
+    "g:e2e": "yarn jest --runInBand"
   },
   "publishConfig": {
     "access": "public"
