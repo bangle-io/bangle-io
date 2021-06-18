@@ -4373,7 +4373,7 @@ __metadata:
     utils: "workspace:*"
     worker-setup: "workspace:*"
     workspace: "workspace:*"
-    workspace-hooks: "workspace:*"
+    workspace-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5938,7 +5938,7 @@ __metadata:
     react: 17.0.2
     ui-context: "workspace:*"
     workspace: "workspace:*"
-    workspace-hooks: "workspace:*"
+    workspace-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -6120,7 +6120,7 @@ __metadata:
     ui-context: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
-    workspace-hooks: "workspace:*"
+    workspace-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -6173,7 +6173,7 @@ __metadata:
     ui-context: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
-    workspace-hooks: "workspace:*"
+    workspace-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -9292,7 +9292,7 @@ fsevents@^2.1.2:
     ui-components: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
-    workspace-hooks: "workspace:*"
+    workspace-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -12803,7 +12803,7 @@ fsevents@^2.1.2:
     ui-context: "workspace:*"
     utils: "workspace:*"
     workspace: "workspace:*"
-    workspace-hooks: "workspace:*"
+    workspace-context: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -17015,9 +17015,9 @@ typescript@4.2.4:
   languageName: unknown
   linkType: soft
 
-"workspace-hooks@workspace:*, workspace-hooks@workspace:lib/workspace-hooks":
+"workspace-context@workspace:*, workspace-context@workspace:lib/workspace-context":
   version: 0.0.0-use.local
-  resolution: "workspace-hooks@workspace:lib/workspace-hooks"
+  resolution: "workspace-context@workspace:lib/workspace-context"
   dependencies:
     "@bangle.dev/core": 0.18.1
     "@testing-library/react": ^11.2.7

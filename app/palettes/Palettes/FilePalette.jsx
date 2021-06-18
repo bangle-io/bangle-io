@@ -4,7 +4,7 @@ import {
   keybindings,
   keyDisplayValue,
 } from 'config/index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 import React, { useRef, useMemo, useEffect, useContext } from 'react';
 import { useWorkspacePath, resolvePath } from 'workspace/index';
@@ -50,7 +50,7 @@ function FilePaletteUIComponent({
   rawInputValue,
 }) {
   const { pushWsPath } = useWorkspacePath();
-  const { noteWsPaths = [] } = useWorkspaceHooksContext();
+  const { noteWsPaths = [] } = useWorkspaceContext();
 
   const recentFiles = useRecordRecentWsPaths();
 

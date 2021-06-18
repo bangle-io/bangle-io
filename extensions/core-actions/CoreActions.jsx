@@ -12,13 +12,13 @@ import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 import { ActionContext } from 'action-context';
 import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
 import { useWorkspacePath } from 'workspace/index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 export function CoreActions({ registerActionHandler }) {
   const { dispatch } = useContext(UIManagerContext);
   const { dispatchAction } = useContext(ActionContext);
   const { wsName, wsPath, filePath } = useWorkspacePath();
-  const { deleteNote } = useWorkspaceHooksContext();
+  const { deleteNote } = useWorkspaceContext();
 
   const [inputModal, updateInputModal] = useState(null);
   const actionHandler = useCallback(

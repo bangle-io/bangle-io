@@ -58,7 +58,7 @@ import { WorkspaceError } from 'workspace/errors';
 import { useDestroyRef, useKeybindings, BaseError } from 'utils/index';
 import { useDispatchPrimaryEditor } from '../use-dispatch-primary-editor';
 import { addBoldToTitle } from '../utils';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 const LOG = false;
 
@@ -310,7 +310,7 @@ function useCloneWorkspace() {
 function useRenameActiveNote({ updatePalette }) {
   const uid = 'RENAME_ACTIVE_NOTE_COMMAND';
   const { filePath, wsName, wsPath } = useWorkspacePath();
-  const { renameNote } = useWorkspaceHooksContext();
+  const { renameNote } = useWorkspaceContext();
 
   const renameFileCb = useCallback(
     async (newFilePath) => {
@@ -474,7 +474,7 @@ export function useRemoveActiveWorkspace({ dismissPalette }) {
 
 export function useDeleteActiveNote({ dismissPalette }) {
   const uid = 'DELETE_ACTIVE_NOTE';
-  const { deleteNote } = useWorkspaceHooksContext();
+  const { deleteNote } = useWorkspaceContext();
   const { wsPath, filePath } = useWorkspacePath();
 
   const onExecute = useCallback(async () => {

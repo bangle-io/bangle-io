@@ -8,7 +8,7 @@ import { useCallback, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import { pickADirectory } from 'baby-fs/index';
 import { INPUT_PALETTE } from 'config/paletteTypes';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 import { ExtensionRegistryContext } from 'extension-registry/index';
 
 /**
@@ -22,7 +22,7 @@ import { ExtensionRegistryContext } from 'extension-registry/index';
  */
 export function useNewNoteCmd() {
   const extensionRegistry = useContext(ExtensionRegistryContext);
-  const { createNote } = useWorkspaceHooksContext();
+  const { createNote } = useWorkspaceContext();
   const { wsName } = useWorkspacePath();
   const { dispatch } = useContext(UIManagerContext);
 

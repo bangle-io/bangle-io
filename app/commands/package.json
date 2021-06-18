@@ -27,6 +27,6 @@
     "react": "17.0.2",
     "ui-context": "workspace:*",
     "workspace": "workspace:*",
-    "workspace-hooks": "workspace:*"
+    "workspace-context": "workspace:*"
   }
 }

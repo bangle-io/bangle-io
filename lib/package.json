@@ -8,7 +8,7 @@
     "config",
     "utils",
     "workspace",
-    "workspace-hooks",
+    "workspace-context",
     "markdown",
     "constants",
     "action-context",

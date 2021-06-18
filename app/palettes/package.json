@@ -35,7 +35,7 @@
     "ui-context": "workspace:*",
     "utils": "workspace:*",
     "workspace": "workspace:*",
-    "workspace-hooks": "workspace:*"
+    "workspace-context": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^11.2.7",

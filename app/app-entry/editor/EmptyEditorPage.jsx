@@ -3,11 +3,11 @@ import React, { useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
 import { resolvePath, useWorkspacePath } from 'workspace/index';
 import { Link } from 'react-router-dom';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 export function EmptyEditorPage() {
   const { dispatch } = useContext(UIManagerContext);
-  const { noteWsPaths = [] } = useWorkspaceHooksContext();
+  const { noteWsPaths = [] } = useWorkspaceContext();
   const { wsName } = useWorkspacePath();
 
   const recentFiles = [];

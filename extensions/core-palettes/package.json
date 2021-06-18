@@ -30,7 +30,7 @@
     "ui-context": "workspace:*",
     "utils": "workspace:*",
     "workspace": "workspace:*",
-    "workspace-hooks": "workspace:*"
+    "workspace-context": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

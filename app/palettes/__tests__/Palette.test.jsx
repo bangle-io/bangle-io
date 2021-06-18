@@ -8,7 +8,7 @@ import { sleep } from 'utils/index';
 import { EditorManager } from 'editor-manager-context/index';
 import { FILE_PALETTE, INPUT_PALETTE } from '../paletteTypes';
 import { Palette } from '../Palette';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 let result, paletteType, paletteInitialQuery, dispatch;
 
@@ -22,15 +22,15 @@ jest.mock('workspace/index', () => {
   };
 });
 
-jest.mock('workspace-hooks/index', () => {
+jest.mock('workspace-context/index', () => {
   return {
-    ...jest.requireActual('workspace-hooks/index'),
-    useWorkspaceHooksContext: jest.fn(),
+    ...jest.requireActual('workspace-context/index'),
+    useWorkspaceContext: jest.fn(),
   };
 });
 
 beforeEach(async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: [],
     refreshWsPaths: jest.fn(),
   }));
@@ -73,7 +73,7 @@ test('Empty on mount', async () => {
 test('Correctly switches to file type', async () => {
   let promise = Promise.resolve();
 
-  useWorkspaceHooksContext.mockImplementation(() => {
+  useWorkspaceContext.mockImplementation(() => {
     return { noteWsPaths: ['my-ws:one.md'], refreshWsPaths: jest.fn() };
   });
   act(() => {

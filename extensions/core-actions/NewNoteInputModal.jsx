@@ -4,7 +4,7 @@ import {
   useWorkspacePath,
   PathValidationError,
 } from 'workspace/index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 import { useDestroyRef } from 'utils/hooks';
 import { InputModal } from './InputModal';
 import { randomName } from 'utils/index';
@@ -14,7 +14,7 @@ import { ExtensionRegistryContext } from 'extension-registry';
 export function NewNoteInputModal({ dismissModal }) {
   const destroyedRef = useDestroyRef();
   const extensionRegistry = useContext(ExtensionRegistryContext);
-  const { createNote } = useWorkspaceHooksContext();
+  const { createNote } = useWorkspaceContext();
   const { wsName } = useWorkspacePath();
   const [error, updateError] = useState();
 
@@ -67,7 +67,7 @@ export function RenameNoteInputModal({ dismissModal }) {
   const destroyedRef = useDestroyRef();
   const { filePath, wsName, wsPath } = useWorkspacePath();
 
-  const { renameNote } = useWorkspaceHooksContext();
+  const { renameNote } = useWorkspaceContext();
   const [error, updateError] = useState();
   const onExecute = useCallback(
     async (inputValue) => {

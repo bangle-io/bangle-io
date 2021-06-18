@@ -11,7 +11,7 @@ import { WorkerSetup } from 'worker-setup/index';
 import { PageLifecycle } from './PageLifecycle';
 import { moduleSupport } from './module-support';
 import { AppState } from './AppStateProvider';
-import { WorkspaceHooksContextProvider } from 'workspace-hooks/index';
+import { WorkspaceContextProvider } from 'workspace-context/index';
 import { WatchWorkspace } from './WatchWorkspace';
 import { WatchUI } from './WatchUI';
 import { ActionContextProvider } from './ActionContext';
@@ -67,19 +67,19 @@ ReactDOM.render(
         <PageLifecycle />
         <Router>
           <UIManager>
-            <WorkspaceHooksContextProvider>
+            <WorkspaceContextProvider>
               <WatchWorkspace />
               <WatchUI />
               <ExtensionRegistryContextProvider
                 extensionRegistry={extensionRegistry}
               >
-                <EditorManager extensionRegistry={extensionRegistry}>
+                <EditorManager>
                   <ActionContextProvider>
                     <App />
                   </ActionContextProvider>
                 </EditorManager>
               </ExtensionRegistryContextProvider>
-            </WorkspaceHooksContextProvider>
+            </WorkspaceContextProvider>
           </UIManager>
         </Router>
       </AppState>

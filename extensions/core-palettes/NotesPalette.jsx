@@ -17,7 +17,7 @@ import {
   PaletteInfo,
   PaletteInfoItem,
 } from 'ui-components/index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 import { extensionName } from './config';
 import { keybindings, keyDisplayValue } from 'config/index';
 import { useRecencyWatcher } from './hooks';
@@ -38,7 +38,7 @@ const storageKey = 'NotesPalette/1';
 
 function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
   const { wsPath, pushWsPath } = useWorkspacePath();
-  const { noteWsPaths = emptyArray } = useWorkspaceHooksContext();
+  const { noteWsPaths = emptyArray } = useWorkspaceContext();
   const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
   const items = useMemo(() => {

@@ -179,8 +179,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/workspace"
       },
       {
-        "name": "workspace-hooks",
-        "reference": "workspace:lib/workspace-hooks"
+        "name": "workspace-context",
+        "reference": "workspace:lib/workspace-context"
       },
       {
         "name": "_scripts",
@@ -251,7 +251,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["worker", ["workspace:worker"]],
       ["worker-setup", ["workspace:app/worker-setup"]],
       ["workspace", ["workspace:lib/workspace"]],
-      ["workspace-hooks", ["workspace:lib/workspace-hooks"]]
+      ["workspace-context", ["workspace:lib/workspace-context"]]
     ],
     "fallbackPool": [
     ],
@@ -6873,7 +6873,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["utils", "workspace:lib/utils"],
             ["worker-setup", "workspace:app/worker-setup"],
             ["workspace", "workspace:lib/workspace"],
-            ["workspace-hooks", "workspace:lib/workspace-hooks"]
+            ["workspace-context", "workspace:lib/workspace-context"]
           ],
           "linkType": "SOFT",
         }]
@@ -8747,7 +8747,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["ui-context", "workspace:lib/ui-context"],
             ["workspace", "workspace:lib/workspace"],
-            ["workspace-hooks", "workspace:lib/workspace-hooks"]
+            ["workspace-context", "workspace:lib/workspace-context"]
           ],
           "linkType": "SOFT",
         }]
@@ -8972,7 +8972,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:lib/utils"],
             ["workspace", "workspace:lib/workspace"],
-            ["workspace-hooks", "workspace:lib/workspace-hooks"]
+            ["workspace-context", "workspace:lib/workspace-context"]
           ],
           "linkType": "SOFT",
         }]
@@ -9031,7 +9031,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:lib/utils"],
             ["workspace", "workspace:lib/workspace"],
-            ["workspace-hooks", "workspace:lib/workspace-hooks"]
+            ["workspace-context", "workspace:lib/workspace-context"]
           ],
           "linkType": "SOFT",
         }]
@@ -12636,7 +12636,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ui-components", "workspace:lib/ui-components"],
             ["utils", "workspace:lib/utils"],
             ["workspace", "workspace:lib/workspace"],
-            ["workspace-hooks", "workspace:lib/workspace-hooks"]
+            ["workspace-context", "workspace:lib/workspace-context"]
           ],
           "linkType": "SOFT",
         }]
@@ -16571,7 +16571,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:lib/utils"],
             ["workspace", "workspace:lib/workspace"],
-            ["workspace-hooks", "workspace:lib/workspace-hooks"]
+            ["workspace-context", "workspace:lib/workspace-context"]
           ],
           "linkType": "SOFT",
         }]
@@ -21499,11 +21499,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
-      ["workspace-hooks", [
-        ["workspace:lib/workspace-hooks", {
-          "packageLocation": "./lib/workspace-hooks/",
+      ["workspace-context", [
+        ["workspace:lib/workspace-context", {
+          "packageLocation": "./lib/workspace-context/",
           "packageDependencies": [
-            ["workspace-hooks", "workspace:lib/workspace-hooks"],
+            ["workspace-context", "workspace:lib/workspace-context"],
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:1b848b7296ee27ba66b4940b155c324a4313217d7338c2d69e8186aac1b15b6ff64ddf487207f58198da10c3467ce994c00edf9aa9e00e94484db8b1d390c2ef#npm:11.2.7"],
             ["@testing-library/react-hooks", "virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:7.0.0"],

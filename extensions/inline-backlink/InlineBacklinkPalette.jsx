@@ -20,7 +20,7 @@ import {
 } from 'workspace/index';
 import { backLinkNodeName, palettePluginKey } from './config';
 import { conditionalSuffix, removeMdExtension } from 'utils/index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 // Creating this also closes the palette
 const createBackLinkNode = (wsPath, allNoteWsPaths) => {
@@ -65,7 +65,7 @@ export function InlineBacklinkPalette() {
 function InlineBacklinkPaletteInner({ query, counter }) {
   const { wsName } = useWorkspacePath();
   const view = useEditorViewContext();
-  const { noteWsPaths = [] } = useWorkspaceHooksContext();
+  const { noteWsPaths = [] } = useWorkspaceContext();
   const items = useMemo(() => {
     return filterItems(wsName, query, noteWsPaths);
   }, [query, noteWsPaths, wsName]);

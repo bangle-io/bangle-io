@@ -15,7 +15,7 @@ import {
 import { useWorkspacePath } from 'workspace/index';
 import { sleep } from 'utils/utility';
 import inlineBackLinkExtension from '../index';
-import { useWorkspaceHooksContext } from 'workspace-hooks/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 jest.mock('@bangle.dev/react', () => {
   return {
@@ -42,10 +42,10 @@ jest.mock('workspace/index', () => {
   };
 });
 
-jest.mock('workspace-hooks/index', () => {
+jest.mock('workspace-context/index', () => {
   return {
-    ...jest.requireActual('workspace-hooks/index'),
-    useWorkspaceHooksContext: jest.fn(),
+    ...jest.requireActual('workspace-context/index'),
+    useWorkspaceContext: jest.fn(),
   };
 });
 
@@ -76,7 +76,7 @@ beforeEach(async () => {
   useEditorViewContext.mockImplementation(() => {
     return mockView;
   });
-  useWorkspaceHooksContext.mockImplementation(() => ({ noteWsPaths: [] }));
+  useWorkspaceContext.mockImplementation(() => ({ noteWsPaths: [] }));
   useInlinePaletteItems.mockImplementation(() => {
     return {
       getItemProps: jest.fn(),
@@ -91,7 +91,7 @@ beforeEach(async () => {
 });
 
 test('Initial render', async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: ['test-ws:hello.md'],
   }));
 
@@ -101,7 +101,7 @@ test('Initial render', async () => {
 });
 
 test('Renders palette rows correctly', async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: ['test-ws:my-file.md'],
   }));
   query = 'my';
@@ -124,7 +124,7 @@ test('Renders palette rows correctly', async () => {
 });
 
 test('Handles malformed query', async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: ['test-ws:my-file.md'],
   }));
   query = ']]';
@@ -137,7 +137,7 @@ test('Handles malformed query', async () => {
 });
 
 test('Creates a backlink node when closed by typing ]]', async () => {
-  useWorkspaceHooksContext.mockImplementation(() => ({
+  useWorkspaceContext.mockImplementation(() => ({
     noteWsPaths: ['test-ws:my-file.md'],
   }));
   // NOTE: its not [[better]], because [[ is part of the suggest query mark
