@@ -64,30 +64,24 @@ ReactDOM.render(
         <AppState>
           <WorkerSetup loadWebworker={moduleSupport} />
           <PageLifecycle />
-          <RemainingApplication />
+          <UIManager>
+            <WorkspaceContextProvider>
+              <WatchWorkspace />
+              <WatchUI />
+              <ExtensionRegistryContextProvider
+                initExtensionRegistry={initExtensionRegistry}
+              >
+                <EditorManager>
+                  <ActionContextProvider>
+                    <App />
+                  </ActionContextProvider>
+                </EditorManager>
+              </ExtensionRegistryContextProvider>
+            </WorkspaceContextProvider>
+          </UIManager>
         </AppState>
       </Router>
     </React.StrictMode>
   </LoadingBlock>,
   root,
 );
-
-function RemainingApplication() {
-  return (
-    <UIManager>
-      <WorkspaceContextProvider>
-        <WatchWorkspace />
-        <WatchUI />
-        <ExtensionRegistryContextProvider
-          initExtensionRegistry={initExtensionRegistry}
-        >
-          <EditorManager>
-            <ActionContextProvider>
-              <App />
-            </ActionContextProvider>
-          </EditorManager>
-        </ExtensionRegistryContextProvider>
-      </WorkspaceContextProvider>
-    </UIManager>
-  );
-}

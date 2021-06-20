@@ -57,7 +57,7 @@ export function WatchWorkspace() {
     }
   }, [lastMessage, refreshWsPaths, wsName, fileWsPaths]);
 
-  // close any tabs that might have been deleted
+  // close any tabs that might have been deleted or renamed
   // NOTE: We are doing this rectification here and not
   // useWorkspaceContext because here we know for sure ( due to`checkCurrentEditors`)
   // that an external modification was made. We cannot do the same (check and remove active wsPaths from history)
@@ -73,7 +73,6 @@ export function WatchWorkspace() {
           if (primaryWsPath && !fileWsPaths.includes(primaryWsPath)) {
             newOpenedWsPaths = newOpenedWsPaths.removeIfFound(primaryWsPath);
           }
-
           if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
             newOpenedWsPaths = newOpenedWsPaths.removeIfFound(secondaryWsPath);
           }

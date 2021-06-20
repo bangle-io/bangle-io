@@ -1,13 +1,11 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import { useWorkspaces } from 'workspaces';
-
 import {
   AlbumIcon,
   CloseIcon,
   PaletteInfo,
   PaletteInfoItem,
 } from 'ui-components/index';
-
 import { extensionName } from './config';
 import {
   MagicPaletteItem,

@@ -25,7 +25,6 @@
     "editor-manager-context": "workspace:*",
     "extension-registry": "workspace:*",
     "magic-palette": "workspace:*",
-    "react": "^17.0.2",
     "ui-components": "workspace:*",
     "ui-context": "workspace:*",
     "utils": "workspace:*",
@@ -33,9 +32,15 @@
     "workspaces": "workspace:*",
     "ws-path": "workspace:*"
   },
+  "peerDependencies": {
+    "react": "*"
+  },
   "devDependencies": {
+    "@testing-library/react": "^11.2.7",
     "@types/react": "^17.0.11",
-    "@types/react-dom": "^17.0.8"
+    "@types/react-dom": "^17.0.8",
+    "react": "^17.0.2",
+    "react-dom": "17.0.2"
   },
   "publishConfig": {
     "access": "restricted"
