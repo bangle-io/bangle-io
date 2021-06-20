@@ -1,0 +1,20 @@
+{
+  "extends": "../../jsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "baby-fs": [
+        "../../js-lib/baby-fs/index.js"
+      ],
+      "baby-fs/*": [
+        "../../js-lib/baby-fs/*"
+      ],
+      "base-error": [
+        "../../js-lib/base-error/index.js"
+      ],
+      "base-error/*": [
+        "../../js-lib/base-error/*"
+      ]
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "name": "workspaces",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "scripts": {},
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*",
+    "react-router-dom": "*"
+  },
+  "dependencies": {
+    "baby-fs": "workspace:*",
+    "config": "workspace:*",
+    "idb-keyval": "^5.0.6",
+    "markdown": "workspace:*",
+    "utils": "workspace:*",
+    "ws-path": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "restricted",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  },
+  "devDependencies": {
+    "@bangle.dev/core": "0.18.1",
+    "@testing-library/react": "^11.2.7",
+    "@types/history": "^4.7.8",
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.8",
+    "@types/react-router-dom": "^5.1.7",
+    "baby-fs-test-mock": "workspace:*",
+    "extension-registry": "workspace:*",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-router-dom": "^5.2.0"
+  }
+}

@@ -51,17 +51,23 @@
       "utils/*": [
         "../../lib/utils/*"
       ],
-      "workspace": [
-        "../../lib/workspace/index.js"
-      ],
       "workspace-context": [
-        "../../lib/workspace-hooks/index.js"
+        "../../lib/workspace-context/index.ts"
       ],
-      "workspace-hooks/*": [
-        "../../lib/workspace-hooks/*"
+      "workspace-context/*": [
+        "../../lib/workspace-context/*"
       ],
-      "workspace/*": [
-        "../../lib/workspace/*"
+      "workspaces": [
+        "../../lib/workspaces/index.ts"
+      ],
+      "workspaces/*": [
+        "../../lib/workspaces/*"
+      ],
+      "ws-path": [
+        "../../lib/ws-path/index.ts"
+      ],
+      "ws-path/*": [
+        "../../lib/ws-path/*"
       ]
     }
   }

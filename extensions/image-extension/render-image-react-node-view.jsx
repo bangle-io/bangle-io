@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {
-  getFile,
-  isValidFileWsPath,
-  useWorkspacePath,
-  parseLocalFilePath,
-} from 'workspace/index';
+import { getFile } from 'workspaces/index';
 import { useDestroyRef } from 'utils/index';
 
 import {
   calcImageDimensions,
   imageDimensionFromWsPath,
 } from './image-file-helpers';
+import { useWorkspaceContext } from 'workspace-context';
+import { isValidFileWsPath, parseLocalFilePath } from 'ws-path';
 
 export const renderImageReactNodeView = {
   image: ({ nodeViewRenderArg }) => {
@@ -30,10 +27,10 @@ const isOtherSources = (src) => {
 export function ImageComponent({ nodeAttrs }) {
   const { src: inputSrc, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState(null);
-  const { wsPath } = useWorkspacePath();
+  const { primaryWsPath } = useWorkspaceContext();
   const imageWsPath =
-    wsPath && !isOtherSources(inputSrc)
-      ? parseLocalFilePath(inputSrc, wsPath)
+    primaryWsPath && !isOtherSources(inputSrc)
+      ? parseLocalFilePath(inputSrc, primaryWsPath)
       : undefined;
 
   const [{ height, width }, updateDimensions] = useState(() => {
@@ -47,7 +44,7 @@ export function ImageComponent({ nodeAttrs }) {
   useEffect(() => {
     let objectUrl;
 
-    if (wsPath) {
+    if (primaryWsPath) {
       if (isOtherSources(inputSrc)) {
         updateImageSrc(inputSrc);
       } else {
@@ -84,7 +81,7 @@ export function ImageComponent({ nodeAttrs }) {
         window.URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [inputSrc, wsPath, destroyRef, imageWsPath, width]);
+  }, [inputSrc, primaryWsPath, destroyRef, imageWsPath, width]);
 
   let newWidth = width;
   let newHeight = height;

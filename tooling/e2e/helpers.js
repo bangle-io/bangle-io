@@ -22,16 +22,15 @@ function frmtHTML(doc) {
 
 const SELECTOR_TIMEOUT = 500;
 
-async function createWorkspace(wsName = 'test' + uuid(4)) {
-  await runAction('@action/core-actions/NEW_WORKSPACE_ACTION');
+async function createWorkspace(page, wsName = 'test' + uuid(4)) {
+  await runAction(page, '@action/core-actions/NEW_WORKSPACE_ACTION');
   let handle = await page.waitForSelector('.magic-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
 
-  await clickPaletteRow('browser');
+  await clickPaletteRow(page, 'browser');
 
   const input = await handle.$('input');
-
   await input.type(wsName, { delay: 10 });
 
   await longSleep();
@@ -41,7 +40,7 @@ async function createWorkspace(wsName = 'test' + uuid(4)) {
       timeout: 5000,
       waitUntil: 'networkidle0',
     }), // The promise resolves after navigation has finished
-    clickPaletteRow('input-confirm'),
+    clickPaletteRow(page, 'input-confirm'),
   ]);
 
   expect(await page.url()).toMatch(url + '/ws/' + wsName);
@@ -49,8 +48,24 @@ async function createWorkspace(wsName = 'test' + uuid(4)) {
   return wsName;
 }
 
-async function createNewNote(wsName, noteName = 'new_file.md') {
-  await runAction('@action/core-actions/NEW_NOTE_ACTION');
+async function newPage(browser) {
+  const page = await browser.newPage();
+  const handleError = (error) => {
+    process.emit('uncaughtException', error);
+  };
+  page.on('error', handleError);
+  page.on('pageerror', handleError);
+  return {
+    page: page,
+    destroyPage: async () => {
+      page.off('error', handleError);
+      page.off('pageerror', handleError);
+      await page.close();
+    },
+  };
+}
+async function createNewNote(page, wsName, noteName = 'new_file.md') {
+  await runAction(page, '@action/core-actions/NEW_NOTE_ACTION');
   let handle = await page.waitForSelector('.magic-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
@@ -65,7 +80,7 @@ async function createNewNote(wsName, noteName = 'new_file.md') {
       timeout: 5000,
       waitUntil: 'networkidle0',
     }),
-    clickPaletteRow('input-confirm'),
+    clickPaletteRow(page, 'input-confirm'),
   ]);
 
   await longSleep();
@@ -74,7 +89,7 @@ async function createNewNote(wsName, noteName = 'new_file.md') {
   return wsName + ':' + noteName;
 }
 
-async function runAction(actionId) {
+async function runAction(page, actionId) {
   await page.keyboard.press('Escape');
   await page.keyboard.down(ctrlKey);
   await page.keyboard.down('Shift');
@@ -82,10 +97,10 @@ async function runAction(actionId) {
   await page.keyboard.up('Shift');
   await page.keyboard.up(ctrlKey);
 
-  await clickPaletteRow(actionId);
+  await clickPaletteRow(page, actionId);
 }
 
-async function clickPaletteRow(id) {
+async function clickPaletteRow(page, id) {
   const result = await page.waitForSelector(
     `.magic-palette-item[data-id="${id}"]`,
     {
@@ -95,8 +110,8 @@ async function clickPaletteRow(id) {
   await result.click();
 }
 
-async function clearEditor() {
-  await longSleep();
+async function sendCtrlABackspace(page) {
+  await sleep();
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('a', { delay: 30 });
   await page.keyboard.up(ctrlKey);
@@ -186,11 +201,12 @@ module.exports = {
   sleep,
   url,
   ctrlKey,
+  newPage,
   longSleep,
   frmtHTML,
   createNewNote,
   runAction,
-  clearEditor,
+  sendCtrlABackspace,
   getEditorHTML,
   createWorkspace,
   setPageWidescreen,

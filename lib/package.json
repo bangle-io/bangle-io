@@ -7,11 +7,13 @@
     "ui-components",
     "config",
     "utils",
-    "workspace",
+    "workspaces",
     "workspace-context",
+    "ws-path",
     "markdown",
     "constants",
     "action-context",
-    "extension-registry"
+    "extension-registry",
+    "baby-fs-test-mock"
   ]
 }

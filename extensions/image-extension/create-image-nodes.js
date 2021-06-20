@@ -1,4 +1,4 @@
-import { saveFile } from 'workspace/index';
+import { saveFile } from 'workspaces/index';
 import { wsNameViewWeakStore } from './config';
 import { calcImageDimensions } from './image-file-helpers';
 import { createImage } from './image-writing';

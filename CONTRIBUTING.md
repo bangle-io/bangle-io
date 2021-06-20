@@ -18,7 +18,7 @@ More commands in the `package.json`.
 
 > If you are wondering about `g:` in `yarn g:e2e`, it is a yarn thing which allows to run a packages command from anywhere.
 
-# Architecture :grinning:
+# Fledgling Architecture :grinning:
 
 ### File structure
 
@@ -46,6 +46,16 @@ Bangle has the following top level directories containing smaller packages.
 
 - ui-context: for ui state and also persists select UI state in localstorage.
 
-- workspace-hooks context: place for centralised workspace ops like note creation,  and deletison etc.
+- workspace-context: place for centralised workspace ops like note creation,  and deletion etc.
 
-- So you can give people the **choice** to use a more familiar, discoverable deletioen interface.
+- extension-registry-context: the glue code for the extension. If you are developing an extension you can ignore this.
+
+## Actions
+
+Action is a syncronous fire and forget system. The dispatcher of action is not expected to handle the failure. If while handling the action a failure occurs, its up to the handler to show a popup notification to the user or not.
+
+Every handler in the application will be called in the order of their setup, untill one of them returns true. The handler returning true will be considered as the true handler of the action. This mechanism exists for other extensions to passively watch an action being dispatced, though they do need to be defined before the true handler extension.
+
+## WsPaths
+
+- Everything is denoted by `wsPath`, example `hello:foo/bar.md` here hello is the `wsName` and `foo/bar.md` is the path to the file.

@@ -1,21 +1,23 @@
-const { SELECTOR_TIMEOUT, sleep, url } = require('../helpers');
+const {
+  SELECTOR_TIMEOUT,
+  sleep,
+  url,
+  longSleep,
+  newPage,
+} = require('../helpers');
 
+let page, destroyPage;
 beforeEach(async () => {
-  await jestPuppeteer.resetPage();
-  await page.goto(url);
-  page.on('error', (err) => {
-    console.log('error happen at the page');
-    throw err;
-  });
-  page.on('pageerror', (pageerr) => {
-    console.log('pageerror occurred');
-    throw pageerr;
-  });
+  ({ page, destroyPage } = await newPage(browser));
+
+  // await jestPuppeteer.resetPage();
+  await page.goto(url, { waitUntil: 'networkidle2' });
+
   await page.evaluate(() => localStorage.clear());
 });
 
-afterAll(async () => {
-  // await page.close();
+afterEach(async () => {
+  await destroyPage();
 });
 
 test('Landing page is correct', async () => {

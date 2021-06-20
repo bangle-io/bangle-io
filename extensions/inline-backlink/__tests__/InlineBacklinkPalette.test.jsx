@@ -12,7 +12,6 @@ import {
   useInlinePaletteQuery,
   replaceSuggestionMarkWith,
 } from 'inline-palette/index';
-import { useWorkspacePath } from 'workspace/index';
 import { sleep } from 'utils/utility';
 import inlineBackLinkExtension from '../index';
 import { useWorkspaceContext } from 'workspace-context/index';
@@ -31,14 +30,6 @@ jest.mock('inline-palette', () => {
     useInlinePaletteItems: jest.fn(),
     useInlinePaletteQuery: jest.fn(),
     replaceSuggestionMarkWith: jest.fn(),
-  };
-});
-
-jest.mock('workspace/index', () => {
-  const workspaceThings = jest.requireActual('workspace/index');
-  return {
-    ...workspaceThings,
-    useWorkspacePath: jest.fn(),
   };
 });
 
@@ -76,7 +67,10 @@ beforeEach(async () => {
   useEditorViewContext.mockImplementation(() => {
     return mockView;
   });
-  useWorkspaceContext.mockImplementation(() => ({ noteWsPaths: [] }));
+  useWorkspaceContext.mockImplementation(() => ({
+    wsName: 'test-ws',
+    noteWsPaths: [],
+  }));
   useInlinePaletteItems.mockImplementation(() => {
     return {
       getItemProps: jest.fn(),
@@ -87,7 +81,6 @@ beforeEach(async () => {
     query,
     counter: 0,
   }));
-  useWorkspacePath.mockImplementation(() => ({ wsName: 'test-ws' }));
 });
 
 test('Initial render', async () => {

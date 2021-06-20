@@ -18,19 +18,24 @@
   "main": "index.ts",
   "module": "index.ts",
   "scripts": {},
-  "dependencies": {
-    "@bangle.dev/core": "^0.18.1",
-    "prosemirror-model": "^1.14.1",
-    "react": "^17.0.2"
+  "peerDependencies": {
+    "@bangle.dev/core": "*",
+    "prosemirror-model": "*",
+    "react": "*"
   },
   "publishConfig": {
     "access": "restricted",
-    "main": "./dist/index.ts",
-    "module": "./dist/index.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
+    "@bangle.dev/core": "^0.18.1",
     "@types/prosemirror-model": "^1.13.0",
-    "@types/react": "^17.0.11"
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.8",
+    "prosemirror-model": "^1.14.1",
+    "react": "^17.0.2",
+    "react-dom": "17.0.2"
   }
 }

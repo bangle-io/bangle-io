@@ -26,7 +26,12 @@ const config = ({ command, mode }) => {
     // plugins: [reactRefresh()],
     build: {
       target: 'es2018',
-      sourcemap: isProduction ? false : true,
+      sourcemap: isProduction
+        ? process.env.CONTEXT === 'branch-deploy'
+          ? true
+          : false
+        : true,
+      // sourcemap: true,
       emptyOutDir: true,
       outDir: './build',
     },

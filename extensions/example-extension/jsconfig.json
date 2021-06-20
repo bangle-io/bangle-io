@@ -14,12 +14,6 @@
       ],
       "utils/*": [
         "../../lib/utils/*"
-      ],
-      "workspace": [
-        "../../lib/workspace/index.js"
-      ],
-      "workspace/*": [
-        "../../lib/workspace/*"
       ]
     }
   }

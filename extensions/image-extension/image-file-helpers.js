@@ -1,5 +1,5 @@
 import { getDayJs } from 'utils/utility';
-import { resolvePath, updateFileName } from 'workspace';
+import { resolvePath, updateFileName } from 'ws-path';
 const dayFormat = 'YYYYMMDDHHmmssSSS';
 
 export function calcImageDimensions(blobUrl) {

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useCallback, useEffect } from 'react';
+import React, { useContext, useMemo, useCallback } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import {
   SidebarRow,
@@ -9,12 +9,12 @@ import {
   NullIcon,
   ButtonIcon,
 } from 'ui-components/index';
-import { useWorkspacePath, resolvePath } from 'workspace/index';
-import { useWorkspaceContext } from 'workspace-context/index';
+import { resolvePath } from 'ws-path';
+import { useWorkspaceContext } from 'workspace-context';
 import { useLocalStorage } from 'utils/index';
-import { useNewNoteCmd } from 'commands/index';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 import { useVirtual } from 'react-virtual';
+import { ActionContext } from 'action-context';
 
 const DEFAULT_FOLD_DEPTH = 2;
 FileBrowser.propTypes = {};
@@ -29,12 +29,13 @@ const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function FileBrowser() {
-  const { noteWsPaths = [], deleteNote } = useWorkspaceContext();
+  const { pushWsPath, noteWsPaths = [], deleteNote } = useWorkspaceContext();
 
   const { dispatch, widescreen } = useContext(UIManagerContext);
-  const { wsName, wsPath: activeWSPath, pushWsPath } = useWorkspacePath();
-  const activeFilePath = activeWSPath && resolvePath(activeWSPath).filePath;
-  const newFileCommand = useNewNoteCmd();
+  const { wsName, primaryWsPath } = useWorkspaceContext();
+  const { dispatchAction } = useContext(ActionContext);
+
+  const activeFilePath = primaryWsPath && resolvePath(primaryWsPath).filePath;
 
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
@@ -47,9 +48,12 @@ export function FileBrowser() {
 
   const createNewFile = useCallback(
     (path) => {
-      newFileCommand({ initialQuery: path });
+      dispatchAction({
+        name: '@action/core-actions/NEW_NOTE_ACTION',
+        value: path,
+      });
     },
-    [newFileCommand],
+    [dispatchAction],
   );
 
   return (
@@ -70,7 +74,7 @@ const IconStyle = {
   width: 16,
 };
 
-export function GenericFileBrowser({
+export const GenericFileBrowser = React.memo(function GenericFileBrowser({
   wsName,
   files,
   deleteNote,
@@ -101,7 +105,7 @@ export function GenericFileBrowser({
       createNewFile={createNewFile}
     />
   );
-}
+});
 
 function RenderRow({
   virtualRow,

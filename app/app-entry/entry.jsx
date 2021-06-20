@@ -57,21 +57,19 @@ function LoadingBlock({ children }) {
   return loaded ? children : null;
 }
 
-const extensionRegistry = initExtensionRegistry();
-
 ReactDOM.render(
   <LoadingBlock>
     <React.StrictMode>
-      <AppState>
-        <WorkerSetup loadWebworker={moduleSupport} />
-        <PageLifecycle />
-        <Router>
+      <Router>
+        <AppState>
+          <WorkerSetup loadWebworker={moduleSupport} />
+          <PageLifecycle />
           <UIManager>
             <WorkspaceContextProvider>
               <WatchWorkspace />
               <WatchUI />
               <ExtensionRegistryContextProvider
-                extensionRegistry={extensionRegistry}
+                initExtensionRegistry={initExtensionRegistry}
               >
                 <EditorManager>
                   <ActionContextProvider>
@@ -81,8 +79,8 @@ ReactDOM.render(
               </ExtensionRegistryContextProvider>
             </WorkspaceContextProvider>
           </UIManager>
-        </Router>
-      </AppState>
+        </AppState>
+      </Router>
     </React.StrictMode>
   </LoadingBlock>,
   root,

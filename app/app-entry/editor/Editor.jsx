@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
-import { getNote } from 'workspace/index';
+import { getNote } from 'workspaces/index';
 import { getScrollParentElement } from 'utils/index';
 
 const LOG = false;

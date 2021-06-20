@@ -1,4 +1,4 @@
-import { splitWsPath } from 'workspace/index';
+import { splitWsPath } from 'ws-path/index';
 
 /**
  * The name is sort of misleading in the sense that it doesnt return a tree

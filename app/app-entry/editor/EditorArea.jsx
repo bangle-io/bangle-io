@@ -3,7 +3,8 @@ import { ExtensionRegistryContext } from 'extension-registry';
 import React, { useEffect, useContext, useState } from 'react';
 import { CloseIcon } from 'ui-components/index';
 import { cx, sleep, useDestroyRef } from 'utils/index';
-import { checkFileExists, resolvePath } from 'workspace/index';
+import { checkFileExists } from 'workspaces/index';
+import { resolvePath } from 'ws-path';
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';
 

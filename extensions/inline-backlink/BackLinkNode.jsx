@@ -2,19 +2,23 @@ import React, { useState } from 'react';
 import { conditionalSuffix } from 'utils/utility';
 import {
   filePathToWsPath,
-  useWorkspacePath,
   validateNoteWsPath,
   resolvePath,
   parseLocalFilePath,
   PathValidationError,
-} from 'workspace/index';
+} from 'ws-path';
 import { backLinkNodeName, newNoteLocation } from './config';
 import { useWorkspaceContext } from 'workspace-context/index';
 
 export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
   let { path, title } = nodeAttrs;
-  const { wsName, wsPath: currentWsPath, pushWsPath } = useWorkspacePath();
-  const { noteWsPaths = [], createNote } = useWorkspaceContext();
+  const {
+    primaryWsPath,
+    wsName,
+    noteWsPaths = [],
+    createNote,
+    pushWsPath,
+  } = useWorkspaceContext();
 
   const [invalidLink, updatedInvalidLink] = useState();
   title = title || path;
@@ -49,7 +53,7 @@ export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
 
         handleClick({
           backLinkPath,
-          currentWsPath,
+          currentWsPath: primaryWsPath,
           wsName,
           noteWsPaths,
           extensionRegistry,

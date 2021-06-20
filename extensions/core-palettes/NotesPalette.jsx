@@ -5,7 +5,7 @@ import React, {
   useMemo,
 } from 'react';
 import { removeMdExtension } from 'utils/index';
-import { useWorkspacePath, resolvePath } from 'workspace/index';
+import { resolvePath } from 'ws-path';
 import {
   MagicPaletteItem,
   MagicPaletteItemsContainer,
@@ -37,10 +37,12 @@ export const notesPalette = {
 const storageKey = 'NotesPalette/1';
 
 function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
-  const { wsPath, pushWsPath } = useWorkspacePath();
-  const { noteWsPaths = emptyArray } = useWorkspaceContext();
+  const {
+    pushWsPath,
+    primaryWsPath,
+    noteWsPaths = emptyArray,
+  } = useWorkspaceContext();
   const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
-
   const items = useMemo(() => {
     const _items = injectRecency(
       noteWsPaths
@@ -76,10 +78,10 @@ function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
     // doing it this way, instead of inside `onExecuteItem`
     // so that we can monitor recency more widely, as there
     // are external ways to open a note.
-    if (wsPath) {
-      updateRecency(wsPath);
+    if (primaryWsPath) {
+      updateRecency(primaryWsPath);
     }
-  }, [updateRecency, wsPath]);
+  }, [updateRecency, primaryWsPath]);
 
   // Expose onExecuteItem for the parent to call it
   // If we dont do this clicking or entering will not work

@@ -15,23 +15,28 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "main": "index.js",
-  "module": "index.js",
+  "main": "index.ts",
+  "module": "index.ts",
   "scripts": {},
   "devDependencies": {
     "@bangle.dev/core": "0.18.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/react-hooks": "^7.0.0",
+    "@types/history": "^4.7.8",
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.8",
+    "@types/react-router-dom": "^5.1.7",
     "baby-fs": "workspace:*",
+    "react": "^17.0.2",
     "react-dom": "17.0.2",
     "react-test-renderer": "17.0.2"
   },
   "dependencies": {
     "config": "workspace:*",
-    "react": "17.0.2",
     "react-router-dom": "^5.2.0",
     "utils": "workspace:*",
-    "workspace": "workspace:*"
+    "workspaces": "workspace:*",
+    "ws-path": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

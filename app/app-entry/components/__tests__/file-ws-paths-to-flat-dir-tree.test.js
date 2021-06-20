@@ -1,5 +1,5 @@
 import { fileWsPathsToFlatDirTree } from '../file-ws-paths-to-flat-dir-tree';
-import { resolvePath } from 'workspace';
+import { resolvePath } from 'ws-path';
 
 /**
  *

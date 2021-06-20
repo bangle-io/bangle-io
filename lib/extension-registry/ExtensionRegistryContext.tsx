@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ExtensionRegistry } from './ExtensionRegistry';
 
 export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(
@@ -6,15 +6,13 @@ export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(
 );
 
 export function ExtensionRegistryContextProvider({
-  extensionRegistry,
+  initExtensionRegistry,
   children,
 }: {
-  extensionRegistry: ExtensionRegistry;
+  initExtensionRegistry: () => ExtensionRegistry;
   children: JSX.Element;
 }) {
-  const value = useMemo(() => {
-    return extensionRegistry;
-  }, [extensionRegistry]);
+  const [value] = useState(() => initExtensionRegistry());
 
   return (
     <ExtensionRegistryContext.Provider value={value}>

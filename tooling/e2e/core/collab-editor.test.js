@@ -8,28 +8,29 @@ const {
   longSleep,
   getPrimaryEditorHandler,
   ctrlKey,
+  sleep,
+  newPage,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
 
+let page, destroyPage;
+
 beforeEach(async () => {
-  await jestPuppeteer.resetPage();
+  ({ page, destroyPage } = await newPage(browser));
   await setPageWidescreen(page);
-  await page.goto(url);
-  page.on('error', (err) => {
-    console.log('error happen at the page');
-    throw err;
-  });
-  page.on('pageerror', (pageerr) => {
-    console.log('pageerror occurred');
-    throw pageerr;
-  });
+  await page.goto(url, { waitUntil: 'networkidle2' });
+
   await page.evaluate(() => localStorage.clear());
 });
 
+afterEach(async () => {
+  await destroyPage();
+});
+
 test('Split screen and typing in secondary works', async () => {
-  const wsName = await createWorkspace();
-  await createNewNote(wsName, 'test123');
+  const wsName = await createWorkspace(page);
+  await createNewNote(page, wsName, 'test123');
 
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('\\');
@@ -53,8 +54,8 @@ test('Split screen and typing in secondary works', async () => {
 });
 
 test('Split screen and typing in primary works', async () => {
-  const wsName = await createWorkspace();
-  await createNewNote(wsName, 'test123');
+  const wsName = await createWorkspace(page);
+  await createNewNote(page, wsName, 'test123');
 
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('\\');

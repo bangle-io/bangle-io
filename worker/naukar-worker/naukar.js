@@ -2,7 +2,7 @@ import { setupCollabManager } from './collab-manager';
 import { localDiskSetup } from './local-disk';
 import { objectSync } from 'object-sync/index';
 
-const LOG = true;
+const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'naukar') : () => {};
 

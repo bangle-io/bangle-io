@@ -1,14 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { UIManagerContext } from 'ui-context/index';
-import { Workspace, useWorkspacePath } from 'workspace/index';
 import {
   cx,
   keybindingsHelper,
   useKeybindings,
   useWatchClickOutside,
 } from 'utils/index';
-import { PaletteManager, Palette, WORKSPACE_PALETTE } from 'palettes/index';
 import { ActivityBar } from './components/ActivityBar';
 import { FileBrowser } from './components/FileBrowser';
 import { OptionsBar } from './components/OptionsBar';
@@ -23,10 +21,14 @@ import {
   SECONDARY_SCROLL_PARENT_ID,
 } from 'constants/index';
 import { ApplicationComponents } from './ApplicationComponents';
+import { useWorkspaceContext } from 'workspace-context/index';
+import { PaletteManager } from './PaletteManager';
+import { NativeFSAuth } from './components/NativeFSAuth';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
-  const { secondaryWsPath } = useWorkspacePath();
+  const { secondaryWsPath } = useWorkspaceContext();
+
   const secondaryEditor = widescreen && Boolean(secondaryWsPath);
   const showTabs = Boolean(secondaryEditor);
 
@@ -66,12 +68,13 @@ export function AppContainer() {
 }
 
 function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
-  let { wsPath, secondaryWsPath, removeWsPath, removeSecondaryWsPath } =
-    useWorkspacePath();
+  const { primaryWsPath, secondaryWsPath, updateOpenedWsPaths } =
+    useWorkspaceContext();
+
   const { paletteType, dispatch } = useContext(UIManagerContext);
 
   return (
-    <Workspace
+    <NativeFSAuth
       renderPermission={({ permissionDenied, requestFSPermission, wsName }) => (
         <PermissionModal
           isPaletteActive={Boolean(paletteType)}
@@ -88,12 +91,12 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
             </h3>
             <button
               onClick={() => {
-                dispatch({
-                  type: 'UI/UPDATE_PALETTE',
-                  value: {
-                    type: WORKSPACE_PALETTE,
-                  },
-                });
+                // dispatch({
+                //   type: 'UI/UPDATE_PALETTE',
+                //   value: {
+                //     type: WORKSPACE_PALETTE,
+                //   },
+                // });
               }}
               className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-purple-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
             >
@@ -108,11 +111,15 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
         className="primary-editor"
         editorId={0}
         showTabs={false}
-        wsPath={wsPath}
-        onClose={removeWsPath}
+        wsPath={primaryWsPath}
+        onClose={() =>
+          updateOpenedWsPaths((openedWsPaths) =>
+            openedWsPaths.updatePrimaryWsPath(null),
+          )
+        }
       />
 
-      {wsPath && <HelpWorkspaceMonitor wsPath={wsPath} />}
+      {primaryWsPath && <HelpWorkspaceMonitor wsPath={primaryWsPath} />}
       {secondaryWsPath && <HelpWorkspaceMonitor wsPath={secondaryWsPath} />}
       {widescreen && <OptionsBar />}
       {widescreen && secondaryEditor && <div className="grid-gutter" />}
@@ -123,10 +130,14 @@ function WorkspacePage({ widescreen, secondaryEditor, showTabs }) {
           editorId={1}
           showTabs={showTabs}
           wsPath={secondaryWsPath}
-          onClose={removeSecondaryWsPath}
+          onClose={() =>
+            updateOpenedWsPaths((openedWsPaths) =>
+              openedWsPaths.updateSecondaryWsPath(null),
+            )
+          }
         />
       )}
-    </Workspace>
+    </NativeFSAuth>
   );
 }
 

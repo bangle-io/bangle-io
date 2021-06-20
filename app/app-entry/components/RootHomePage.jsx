@@ -1,8 +1,7 @@
-import { COMMAND_PALETTE } from 'palettes/index';
 import { keybindings } from 'config/index';
 import React, { useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
-import { useWorkspaces } from 'workspace/index';
+import { useWorkspaces } from 'workspaces';
 import { Link } from 'react-router-dom';
 import { cx } from 'utils/utility';
 import { EditorWrapperUI } from './EditorWrapperUI';
@@ -10,7 +9,6 @@ import { EditorWrapperUI } from './EditorWrapperUI';
 export function RootHomePage() {
   const { dispatch } = useContext(UIManagerContext);
   const { workspaces } = useWorkspaces();
-
   const recentWsComp = workspaces.length > 0 && (
     <>
       <h3 className="mt-3  text-lg font-semibold my-2">
@@ -60,13 +58,13 @@ export function RootHomePage() {
           {Boolean(window.showDirectoryPicker) ? (
             <button
               onClick={() => {
-                dispatch({
-                  type: 'UI/UPDATE_PALETTE',
-                  value: {
-                    type: COMMAND_PALETTE,
-                    initialQuery: 'file system',
-                  },
-                });
+                // dispatch({
+                //   type: 'UI/UPDATE_PALETTE',
+                //   value: {
+                //     type: COMMAND_PALETTE,
+                //     initialQuery: 'file system',
+                //   },
+                // });
               }}
               className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-pink-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
             >
@@ -75,13 +73,13 @@ export function RootHomePage() {
           ) : (
             <button
               onClick={() => {
-                dispatch({
-                  type: 'UI/UPDATE_PALETTE',
-                  value: {
-                    type: COMMAND_PALETTE,
-                    initialQuery: 'new workspace',
-                  },
-                });
+                // dispatch({
+                //   type: 'UI/UPDATE_PALETTE',
+                //   value: {
+                //     type: COMMAND_PALETTE,
+                //     initialQuery: 'new workspace',
+                //   },
+                // });
               }}
               className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-pink-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
             >
@@ -90,13 +88,13 @@ export function RootHomePage() {
           )}
           <button
             onClick={() => {
-              dispatch({
-                type: 'UI/UPDATE_PALETTE',
-                value: {
-                  type: COMMAND_PALETTE,
-                  initialQuery: 'import workspace',
-                },
-              });
+              // dispatch({
+              //   type: 'UI/UPDATE_PALETTE',
+              //   value: {
+              //     type: COMMAND_PALETTE,
+              //     initialQuery: 'import workspace',
+              //   },
+              // });
             }}
             className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-purple-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
           >

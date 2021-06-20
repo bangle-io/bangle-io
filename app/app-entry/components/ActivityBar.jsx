@@ -13,16 +13,16 @@ import {
 } from 'ui-components/index';
 import { keybindings } from 'config/index';
 import { cx } from 'utils/index';
-import { resolvePath, useWorkspacePath } from 'workspace/index';
-import { FILE_PALETTE } from 'palettes/index';
+import { resolvePath } from 'ws-path';
 import { useHistory } from 'react-router-dom';
+import { useWorkspaceContext } from 'workspace-context/index';
 
 ActivityBar.propTypes = {};
 
 export function ActivityBar() {
   const { paletteType, sidebar, dispatch, widescreen } =
     useContext(UIManagerContext);
-  const { wsPath } = useWorkspacePath();
+  const { primaryWsPath } = useWorkspaceContext();
   const history = useHistory();
 
   const toggleSidebar = (type) => (event) => {
@@ -51,12 +51,12 @@ export function ActivityBar() {
   };
 
   const toggleFilePalette = () => {
-    dispatch({
-      type: 'UI/UPDATE_PALETTE',
-      value: {
-        type: paletteType === FILE_PALETTE ? null : FILE_PALETTE,
-      },
-    });
+    // dispatch({
+    //   type: 'UI/UPDATE_PALETTE',
+    //   value: {
+    //     type: paletteType === FILE_PALETTE ? null : FILE_PALETTE,
+    //   },
+    // });
     dispatch({
       type: 'UI/CHANGE_SIDEBAR',
       value: { type: null },
@@ -81,7 +81,7 @@ export function ActivityBar() {
   if (!widescreen) {
     return (
       <ActivityBarSmallscreen
-        wsPath={wsPath}
+        wsPath={primaryWsPath}
         sidebar={sidebar}
         toggleSidebar={toggleSidebar('file-browser')}
         toggleFilePalette={toggleFilePalette}
@@ -136,7 +136,7 @@ export function ActivityBar() {
           onClick={toggleSidebar('help-browser')}
           hint={sidebar ? null : 'Help, Keyboard Shortcuts'}
           hintPos="right"
-          active={!Boolean(wsPath)}
+          active={!Boolean(primaryWsPath)}
           className={cx(
             'flex justify-center pt-3 pb-3 mt-1 mb-1',
             widescreen && 'border-l-2',

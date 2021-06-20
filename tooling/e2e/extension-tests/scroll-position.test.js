@@ -1,40 +1,41 @@
 const {
   url,
   createNewNote,
-  clearEditor,
-  getEditorHTML,
+  sendCtrlABackspace,
   createWorkspace,
   setPageWidescreen,
   setPageSmallscreen,
   getPrimaryEditorDebugString,
-  getSecondaryEditorDebugString,
   sleep,
   longSleep,
   getPrimaryEditorHandler,
   SELECTOR_TIMEOUT,
+  newPage,
 } = require('../helpers');
 const { ctrlKey } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
+let page, destroyPage;
+
+beforeEach(async () => {
+  ({ page, destroyPage } = await newPage(browser));
+
+  await page.goto(url, { waitUntil: 'networkidle2' });
+  await page.evaluate(() => localStorage.clear());
+  await page.goto(url, { waitUntil: 'networkidle2' });
+});
+
+afterEach(async () => {
+  await destroyPage();
+});
 
 const setupScreenSize = async (screenType) => {
-  await jestPuppeteer.resetPage();
   if (screenType === 'small') {
     await setPageSmallscreen(page);
   } else {
     await setPageWidescreen(page);
   }
-
-  await page.goto(url);
-  page.on('error', (err) => {
-    console.log('error happen at the page');
-    throw err;
-  });
-  page.on('pageerror', (pageerr) => {
-    console.log('pageerror occurred');
-    throw pageerr;
-  });
-  await page.evaluate(() => localStorage.clear());
+  await page.goto(url, { waitUntil: 'networkidle2' });
 };
 
 const getTopAndLastElement = async (page) => {
@@ -52,10 +53,10 @@ const getTopAndLastElement = async (page) => {
   return { topElement, lastElement };
 };
 
-const typeScrollableThings = async () => {
+const typeScrollableThings = async (page) => {
   let primaryHandle = await getPrimaryEditorHandler(page, { focus: true });
   await longSleep();
-  await clearEditor(primaryHandle);
+  await sendCtrlABackspace(page);
   await page.keyboard.type('## top element');
   await page.keyboard.press('Enter');
   for (let i = 0; i < 15; i++) {
@@ -76,13 +77,13 @@ const typeScrollableThings = async () => {
   await longSleep();
 };
 
-test.each(['small', 'regular', 'split-screen'])(
+test.each(['regular', 'split-screen'])(
   '%s scroll state preserve',
   async (screenType) => {
     await setupScreenSize(screenType);
 
-    const wsName = await createWorkspace();
-    await createNewNote(wsName, 'test123');
+    const wsName = await createWorkspace(page);
+    await createNewNote(page, wsName, 'test123');
 
     if (screenType === 'split-screen') {
       await page.keyboard.down(ctrlKey);
@@ -92,7 +93,7 @@ test.each(['small', 'regular', 'split-screen'])(
       // eslint-disable-next-line jest/no-conditional-expect
       expect(await page.$('.secondary-editor')).not.toBeNull();
     }
-    await typeScrollableThings();
+    await typeScrollableThings(page);
 
     const selectionJSON = await page.evaluate(async () =>
       window.primaryEditor?.view.state.selection.toJSON(),
@@ -102,7 +103,7 @@ test.each(['small', 'regular', 'split-screen'])(
     expect(await topElement.isIntersectingViewport()).toBe(false);
     expect(await lastElement.isIntersectingViewport()).toBe(true);
 
-    await createNewNote(wsName, 'other-note-1');
+    await createNewNote(page, wsName, 'other-note-1');
     await longSleep();
     await expect(page.title()).resolves.toMatch('other-note-1');
     expect(await getPrimaryEditorDebugString(page)).toMatchInlineSnapshot(
@@ -132,10 +133,10 @@ test.each(['small', 'regular', 'split-screen'])(
 test('reloading preserves scroll & selection', async () => {
   await setupScreenSize('regular');
 
-  const wsName = await createWorkspace();
-  await createNewNote(wsName, 'test123');
+  const wsName = await createWorkspace(page);
+  await createNewNote(page, wsName, 'test123');
 
-  await typeScrollableThings();
+  await typeScrollableThings(page);
 
   let { topElement, lastElement } = await getTopAndLastElement(page);
   // check that the last element is in view port

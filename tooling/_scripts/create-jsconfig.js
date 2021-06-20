@@ -46,8 +46,9 @@ async function main() {
         });
       }
     });
+
     // no ts
-    if (w.topFiles.includes('tsconfig.json')) {
+    if (w.packageJSON.main?.endsWith('.ts')) {
       continue;
     }
     const workspacePaths = Object.fromEntries(

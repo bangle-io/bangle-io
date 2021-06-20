@@ -14,10 +14,9 @@ import {
 import {
   resolvePath,
   filePathToWsPath,
-  useWorkspacePath,
   validateWsPath,
   sanitizeFilePath,
-} from 'workspace/index';
+} from 'ws-path';
 import { backLinkNodeName, palettePluginKey } from './config';
 import { conditionalSuffix, removeMdExtension } from 'utils/index';
 import { useWorkspaceContext } from 'workspace-context/index';
@@ -63,9 +62,8 @@ export function InlineBacklinkPalette() {
 }
 
 function InlineBacklinkPaletteInner({ query, counter }) {
-  const { wsName } = useWorkspacePath();
   const view = useEditorViewContext();
-  const { noteWsPaths = [] } = useWorkspaceContext();
+  const { wsName, noteWsPaths = [] } = useWorkspaceContext();
   const items = useMemo(() => {
     return filterItems(wsName, query, noteWsPaths);
   }, [query, noteWsPaths, wsName]);

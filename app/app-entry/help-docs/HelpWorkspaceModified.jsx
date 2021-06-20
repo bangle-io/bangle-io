@@ -1,19 +1,21 @@
-import { useCloneWorkspaceCmd } from 'commands';
-import React, { useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { TextButton } from 'ui-components';
 import { UIManagerContext } from 'ui-context';
+import { isValidNoteWsPath, resolvePath, toFSPath } from 'ws-path';
+import { ActionContext } from 'action-context';
+import { HELP_FS_WORKSPACE_NAME, HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
 import {
   deleteFile,
   listAllFiles,
-  resolvePath,
-  useIsHelpWorkspaceModified,
-} from 'workspace/index';
+  getWorkspaceInfo,
+  getFileSystemFromWsInfo,
+} from 'workspaces/index';
 
 export function HelpWorkspaceMonitor({ wsPath }) {
   const { dispatch } = useContext(UIManagerContext);
   const { isModified, isHelpWorkspace } = useIsHelpWorkspaceModified(wsPath);
   const wsName = wsPath && resolvePath(wsPath).wsName;
-  const cloneWs = useCloneWorkspaceCmd();
+  const { dispatchAction } = useContext(ActionContext);
   const uid = 'ws-modified-' + wsName;
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export function HelpWorkspaceMonitor({ wsPath }) {
             hintPos="left"
             className="ml-3"
             onClick={async () => {
-              await reset(wsName);
+              await reset(HELP_FS_WORKSPACE_NAME);
               window.location.pathname = '';
             }}
             hint={`Delete current modifications\nand reset the help pages to their original content`}
@@ -67,14 +69,17 @@ export function HelpWorkspaceMonitor({ wsPath }) {
             hintPos="left"
             className="ml-3"
             onClick={() => {
-              cloneWs().then(() => {
-                reset(wsName);
-                dispatch({
-                  type: 'UI/DISMISS_NOTIFICATION',
-                  value: {
-                    uid,
-                  },
-                });
+              dispatchAction({
+                name: '@action/core-actions/CLONE_WORKSPACE_ACTION',
+                value: {
+                  resetWsName: HELP_FS_WORKSPACE_NAME,
+                },
+              });
+              dispatch({
+                type: 'UI/DISMISS_NOTIFICATION',
+                value: {
+                  uid,
+                },
               });
             }}
             hint={`Save the modifications to a new workspace\nand reset the help pages to their original content`}
@@ -84,6 +89,83 @@ export function HelpWorkspaceMonitor({ wsPath }) {
         ],
       },
     });
-  }, [wsPath, isModified, uid, cloneWs, wsName, dispatch, isHelpWorkspace]);
+  }, [
+    wsPath,
+    isModified,
+    uid,
+    wsName,
+    dispatch,
+    dispatchAction,
+    isHelpWorkspace,
+  ]);
   return null;
+}
+
+/**
+ * A hook that checks if the user has made any modifications
+ * to the help workspace. Will return isModified false is not currently
+ * in help workspace.
+ * @param {*} checkInterval time to check
+ * @returns
+ */
+function useIsHelpWorkspaceModified(wsPath, checkInterval = 6000) {
+  const [isModified, updateModified] = useState(false);
+
+  const wsName = wsPath && resolvePath(wsPath).wsName;
+
+  const isHelpWorkspace = wsName === HELP_FS_WORKSPACE_NAME;
+
+  useEffect(() => {
+    let id;
+    let effectDestroyed = false;
+    if (isHelpWorkspace && wsPath && isValidNoteWsPath(wsPath)) {
+      id = setInterval(() => {
+        isHelpFileModified(wsPath).then((result) => {
+          if (effectDestroyed) {
+            return;
+          }
+          if (result) {
+            updateModified(result);
+          }
+        });
+      }, checkInterval);
+    }
+    return () => {
+      effectDestroyed = true;
+      if (id != null) {
+        clearInterval(id);
+      }
+    };
+  }, [wsPath, wsName, isModified, checkInterval, isHelpWorkspace]);
+
+  useEffect(() => {
+    return () => {
+      updateModified(false);
+    };
+  }, [wsName]);
+
+  return { isModified, isHelpWorkspace };
+}
+
+async function isHelpFileModified(wsPath) {
+  if (!wsPath) {
+    return false;
+  }
+  const { wsName } = resolvePath(wsPath);
+
+  if (wsName !== HELP_FS_WORKSPACE_NAME) {
+    return false;
+  }
+
+  const wsInfo = await getWorkspaceInfo(wsName);
+
+  if (wsInfo.type !== HELP_FS_WORKSPACE_TYPE) {
+    return false;
+  }
+
+  const fs = getFileSystemFromWsInfo(wsInfo);
+
+  const isModified = await fs.isFileModified(toFSPath(wsPath));
+
+  return isModified;
 }
