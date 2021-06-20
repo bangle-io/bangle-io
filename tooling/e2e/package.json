@@ -25,12 +25,16 @@
     "access": "public"
   },
   "dependencies": {
+    "@babel/core": "^7.13.16",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/preset-typescript": "^7.14.5",
     "jest": "^27.0.4",
     "jest-circus": "^27.0.4",
     "jest-environment-puppeteer": "^5.0.4",
     "jest-puppeteer": "^5.0.4",
     "prettier": "^2.3.1",
-    "puppeteer": "^10.0.0"
+    "puppeteer": "^10.0.0",
+    "ws-path": "workspace:*"
   },
   "devDependencies": {
     "http-server": "^0.12.3"

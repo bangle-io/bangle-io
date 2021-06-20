@@ -11,8 +11,8 @@ const {
   getPrimaryEditorHandler,
   SELECTOR_TIMEOUT,
   newPage,
+  ctrlKey,
 } = require('../helpers');
-const { ctrlKey } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
 let page, destroyPage;

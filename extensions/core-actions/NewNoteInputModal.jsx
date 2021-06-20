@@ -1,5 +1,6 @@
 import React, { useContext, useCallback, useState } from 'react';
 import {
+  filePathToWsPath,
   isValidNoteWsPath,
   PathValidationError,
   resolvePath,
@@ -27,7 +28,8 @@ export function NewNoteInputModal({ initialValue, dismissModal }) {
         updateError(new Error('Must provide a note name'));
         return;
       }
-      let newWsPath = wsName + ':' + inputValue;
+      let newWsPath = filePathToWsPath(wsName, inputValue);
+
       if (!isValidNoteWsPath(newWsPath)) {
         newWsPath += '.md';
       }
@@ -81,7 +83,8 @@ export function RenameNoteInputModal({ dismissModal }) {
         updateError(new Error('Must provide a note name'));
         return;
       }
-      let newWsPath = wsName + ':' + inputValue;
+      let newWsPath = filePathToWsPath(wsName, inputValue);
+
       if (!isValidNoteWsPath(newWsPath)) {
         newWsPath += '.md';
       }

@@ -49,7 +49,9 @@ test('Create a new workspace when already in a workspace and go back', async () 
   expect(await page.url()).toMatch(url + '/ws/' + wsName1);
   await getPrimaryEditorHandler(page);
 
-  expect(await getWsPathsShownInFilePalette(page)).toEqual([n2, n1]);
+  expect((await getWsPathsShownInFilePalette(page)).sort()).toEqual(
+    [n2, n1].sort(),
+  );
 });
 
 test('Create a new workspace from home page', async () => {

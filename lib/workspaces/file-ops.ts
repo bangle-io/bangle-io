@@ -1,5 +1,6 @@
 import {
   filePathToWsPath,
+  fromFsPath,
   isValidNoteWsPath,
   resolvePath,
   toFSPath,
@@ -25,13 +26,8 @@ export async function listAllFiles(wsName: string) {
 
   files = rawPaths
     .map((r) => {
-      const [_wsName, ...f] = r.split('/');
-      if (!_wsName) {
-        return undefined;
-      }
-      validWsName(_wsName);
-
-      return _wsName + ':' + f.join('/');
+      const wsPath = fromFsPath(r);
+      return wsPath;
     })
     .filter((r): r is string => Boolean(r));
 

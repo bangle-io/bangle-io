@@ -9,7 +9,7 @@ import {
   NullIcon,
   ButtonIcon,
 } from 'ui-components/index';
-import { resolvePath } from 'ws-path';
+import { filePathToWsPath, resolvePath } from 'ws-path';
 import { useWorkspaceContext } from 'workspace-context';
 import { useLocalStorage } from 'utils/index';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
@@ -241,7 +241,7 @@ const RenderItems = React.memo(
     const result = rowVirtualizer.virtualItems.map((virtualRow) => {
       const path = rows[virtualRow.index];
       const isDir = dirSet.has(path);
-      const wsPath = wsName + ':' + path;
+      const wsPath = filePathToWsPath(wsName, path);
       const splittedPath = path.split('/');
       const depth = splittedPath.length;
       const name = splittedPath.pop();

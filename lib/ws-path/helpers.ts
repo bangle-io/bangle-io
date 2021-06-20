@@ -2,6 +2,14 @@ import { BaseError } from 'utils';
 
 const getLast = (arr) => arr[arr.length - 1];
 
+/**
+ * Types of paths
+ * wsPath - <wsName>:<filePath>
+ * fsPath - /<wsName>/<filePath>
+ * locationPath - /ws/<wsName>/<filePath>
+ * localFilePath - a vanilla relative path like ./xys or ../sysd/sds.md
+ */
+
 export class PathValidationError extends BaseError {}
 
 export function validWsName(wsName: string) {
@@ -133,6 +141,15 @@ export const toFSPath = (wsPath: string) => {
   const { wsName, filePath } = resolvePath(wsPath);
   return [wsName, filePath].join('/');
 };
+
+export function fromFsPath(fsPath: string) {
+  const [_wsName, ...f] = fsPath.split('/');
+  if (!_wsName || _wsName.includes(':')) {
+    return undefined;
+  }
+
+  return filePathToWsPath(_wsName, f.join('/'));
+}
 
 // TODO add test where wsPath has `//`
 export function resolvePath(wsPath: string) {

@@ -1,6 +1,6 @@
 import type { History as _History } from 'history';
 import { matchPath } from 'react-router-dom';
-import { resolvePath } from './helpers';
+import { filePathToWsPath, resolvePath } from './helpers';
 
 type MaybeWsPath = string | undefined | null;
 
@@ -123,8 +123,7 @@ export function getPrimaryWsPath(location: Location) {
   if (!wsName || !filePath) {
     return undefined;
   }
-
-  return wsName + ':' + filePath;
+  return filePathToWsPath(wsName, filePath);
 }
 
 export function getSecondaryWsPath(location: Location) {

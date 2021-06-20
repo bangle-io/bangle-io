@@ -1,8 +1,8 @@
 const os = require('os');
 const prettier = require('prettier');
+const { filePathToWsPath, resolvePath } = require('ws-path');
 const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
 const url = 'http://localhost:1234';
-
 function sleep(t = 10) {
   return new Promise((res) => setTimeout(res, t));
 }
@@ -84,9 +84,10 @@ async function createNewNote(page, wsName, noteName = 'new_file.md') {
   ]);
 
   await longSleep();
-  expect(await page.url()).toMatch(url + '/ws/' + wsName + '/' + noteName);
+  const wsPath = filePathToWsPath(wsName, noteName);
+  expect(await page.url()).toMatch(url + resolvePath(wsPath).locationPath);
 
-  return wsName + ':' + noteName;
+  return wsPath;
 }
 
 async function runAction(page, actionId) {
@@ -187,6 +188,8 @@ async function getWsPathsShownInFilePalette(page) {
     timeout: SELECTOR_TIMEOUT,
   });
 
+  await longSleep();
+
   const wsPaths = await handle.$$eval(`.magic-palette-item[data-id]`, (nodes) =>
     [...nodes].map((n) => n.getAttribute('data-id')),
   );
@@ -197,23 +200,25 @@ async function getWsPathsShownInFilePalette(page) {
 }
 
 module.exports = {
+  clickPaletteRow,
+  createNewNote,
+  createWorkspace,
+  ctrlKey,
+  frmtHTML,
+  getEditorHTML,
+  getPrimaryEditorDebugString,
+  getPrimaryEditorHandler,
+  getSecondaryEditorDebugString,
+  getSecondaryEditorHandler,
+  getWsPathsShownInFilePalette,
+  longSleep,
+  newPage,
+  runAction,
   SELECTOR_TIMEOUT,
+  sendCtrlABackspace,
+  setPageSmallscreen,
+  setPageWidescreen,
   sleep,
   url,
-  ctrlKey,
-  newPage,
-  longSleep,
-  frmtHTML,
-  createNewNote,
-  runAction,
-  sendCtrlABackspace,
-  getEditorHTML,
-  createWorkspace,
-  setPageWidescreen,
-  setPageSmallscreen,
-  getPrimaryEditorHandler,
-  getSecondaryEditorHandler,
-  getPrimaryEditorDebugString,
-  getSecondaryEditorDebugString,
-  getWsPathsShownInFilePalette,
+  uuid,
 };

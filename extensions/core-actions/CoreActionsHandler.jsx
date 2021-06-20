@@ -21,7 +21,7 @@ import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { resolvePath } from 'ws-path';
 
-export function CoreActions({ registerActionHandler }) {
+export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch } = useContext(UIManagerContext);
   const { dispatchAction } = useContext(ActionContext);
   const { wsName, primaryWsPath, deleteNote } = useWorkspaceContext();

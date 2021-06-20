@@ -9707,13 +9707,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./tooling/e2e/",
           "packageDependencies": [
             ["e2e", "workspace:tooling/e2e"],
+            ["@babel/core", "npm:7.13.16"],
+            ["@babel/preset-env", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.13.15"],
+            ["@babel/preset-typescript", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.14.5"],
             ["http-server", "npm:0.12.3"],
             ["jest", "virtual:8310a579e30288af5af69f493d2da1e03243dde766ff3b43a9ee2da13f3853ea67d1797ad8289e01ed8bdc1e3c8237afc76b6d99c59d15604ca2825fcae85a5f#npm:27.0.4"],
             ["jest-circus", "npm:27.0.4"],
             ["jest-environment-puppeteer", "npm:5.0.4"],
             ["jest-puppeteer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.4"],
             ["prettier", "npm:2.3.1"],
-            ["puppeteer", "npm:10.0.0"]
+            ["puppeteer", "npm:10.0.0"],
+            ["ws-path", "workspace:lib/ws-path"]
           ],
           "linkType": "SOFT",
         }]

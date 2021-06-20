@@ -6740,6 +6740,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "e2e@workspace:tooling/e2e"
   dependencies:
+    "@babel/core": ^7.13.16
+    "@babel/preset-env": ^7.13.15
+    "@babel/preset-typescript": ^7.14.5
     http-server: ^0.12.3
     jest: ^27.0.4
     jest-circus: ^27.0.4
@@ -6747,6 +6750,7 @@ __metadata:
     jest-puppeteer: ^5.0.4
     prettier: ^2.3.1
     puppeteer: ^10.0.0
+    ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
 
