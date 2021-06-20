@@ -91,7 +91,10 @@ function checkMultipleInstances() {
     .filter(
       (r) =>
         r.value.startsWith('@bangle.dev/') ||
-        r.value.startsWith('prosemirror-'),
+        r.value.startsWith('prosemirror-') ||
+        r.value.startsWith('react-router-dom@') ||
+        r.value.startsWith('react@') ||
+        r.value.startsWith('react-dom@'),
     );
 
   const faultyDeps = output.filter((r) => r.children.Instances > 1);

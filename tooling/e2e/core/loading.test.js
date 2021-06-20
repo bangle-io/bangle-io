@@ -2,27 +2,30 @@ const {
   sleep,
   longSleep,
   ctrlKey,
-  frmtHTML,
   url,
   createNewNote,
-  clearEditor,
+  sendCtrlABackspace,
   getEditorHTML,
   createWorkspace,
 } = require('../helpers');
 jest.setTimeout(105 * 1000);
 
+let page;
 beforeEach(async () => {
-  await jestPuppeteer.resetPage();
-  await page.goto(url);
-  page.on('error', (err) => {
-    console.log('error happen at the page');
-    throw err;
-  });
-  page.on('pageerror', (pageerr) => {
-    console.log('pageerror occurred');
-    throw pageerr;
-  });
+  page = await browser.newPage();
+  await page.goto(url, { waitUntil: 'networkidle2' });
+
   await page.evaluate(() => localStorage.clear());
+});
+afterEach(async () => {
+  await page.close();
+});
+
+// for some reason first test suit fails
+// so this exists as a hack
+test('init', async () => {
+  expect(4).toBe(4);
+  await longSleep(1000);
 });
 
 test('Title check', async () => {
@@ -70,12 +73,13 @@ test('shows command palette', async () => {
 
 test('create a new page saved in browser', async () => {
   const newFileName = 'new_file';
-  const wsName = await createWorkspace();
+  const wsName = await createWorkspace(page);
 
-  await createNewNote(wsName, newFileName);
+  await createNewNote(page, wsName, newFileName);
 
   const editorHandle = await page.$('.bangle-editor');
-  await clearEditor(editorHandle);
+
+  await sendCtrlABackspace(page);
 
   await editorHandle.type('# Wow', { delay: 3 });
   await editorHandle.press('Enter', { delay: 20 });
@@ -87,15 +91,15 @@ test('create a new page saved in browser', async () => {
 
 test('inline command palette convert to bullet list', async () => {
   const newFileName = 'new_file';
-  const wsName = await createWorkspace();
+  const wsName = await createWorkspace(page);
 
-  await createNewNote(wsName, newFileName);
+  await createNewNote(page, wsName, newFileName);
 
   const editorHandle = await page.$('.bangle-editor');
   const hasOneUnorderedListElement = () =>
     editorHandle.evaluate((node) => node.querySelectorAll('ul').length === 1);
 
-  await clearEditor(editorHandle);
+  await sendCtrlABackspace(page);
 
   expect(await hasOneUnorderedListElement()).toBe(false);
 
@@ -109,15 +113,15 @@ test('inline command palette convert to bullet list', async () => {
 
 test('inline command palette convert to heading 3', async () => {
   const newFileName = 'new_file';
-  const wsName = await createWorkspace();
+  const wsName = await createWorkspace(page);
 
-  await createNewNote(wsName, newFileName);
+  await createNewNote(page, wsName, newFileName);
 
   const editorHandle = await page.$('.bangle-editor');
   const hasOneH3Element = () =>
     editorHandle.evaluate((node) => node.querySelectorAll('h3').length === 1);
 
-  await clearEditor(editorHandle);
+  await sendCtrlABackspace(page);
 
   expect(await hasOneH3Element()).toBe(false);
 
