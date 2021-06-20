@@ -1,6 +1,6 @@
 import { SpecRegistry } from '@bangle.dev/core';
 import React from 'react';
-import { EditorConfig, Extension, ApplicationConfig } from './Extension';
+import { EditorConfig, Extension } from './Extension';
 
 function filterFlatMap<F, T extends keyof F>(
   array: F[],

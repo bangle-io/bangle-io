@@ -1,11 +1,11 @@
 import React from 'react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import { useBroadcastChannel } from 'utils/index';
-import { useWorkspacePath } from 'workspace/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { render, act } from '@testing-library/react';
 
 import { WatchWorkspace } from '../WatchWorkspace';
+import { OpenedWsPaths } from 'ws-path';
 
 const ourWsName = 'test-ws1';
 const ourFileWsPath = ourWsName + ':hi.md';
@@ -15,13 +15,6 @@ jest.mock('utils/index', () => {
   return {
     ...actual,
     useBroadcastChannel: jest.fn(),
-  };
-});
-jest.mock('workspace/index', () => {
-  const actual = jest.requireActual('workspace/index');
-  return {
-    ...actual,
-    useWorkspacePath: jest.fn(),
   };
 });
 jest.mock('workspace-context/index', () => {
@@ -35,24 +28,22 @@ jest.mock('workspace-context/index', () => {
 let Comp;
 let useWorkspaceContextReturn;
 let useBroadcastChannelReturn;
-let useWorkspacePathReturn;
+let updateOpenedWsPathsCallback;
 beforeEach(() => {
+  updateOpenedWsPathsCallback = undefined;
   useWorkspaceContextReturn = {
+    wsName: ourWsName,
     fileWsPaths: [],
+    primaryWsPath: undefined,
+    secondaryWsPath: undefined,
     refreshWsPaths: jest.fn(),
+    updateOpenedWsPaths: jest.fn((cb) => {
+      updateOpenedWsPathsCallback = cb;
+    }),
   };
   useBroadcastChannelReturn = [undefined, jest.fn()];
-  useWorkspacePathReturn = {
-    wsName: ourWsName,
-    wsPath: undefined,
-    secondaryWsPath: undefined,
-    removeWsPath: jest.fn(),
-    removeSecondaryWsPath: jest.fn(),
-    removePrimaryAndSecondaryWsPath: jest.fn(),
-  };
 
   useWorkspaceContext.mockImplementation(() => useWorkspaceContextReturn);
-  useWorkspacePath.mockImplementation(() => useWorkspacePathReturn);
   useBroadcastChannel.mockImplementation(() => useBroadcastChannelReturn);
 
   Comp = function Comp() {
@@ -92,12 +83,12 @@ test('refreshes for if the event is correct', async () => {
   result.rerender(<Comp />);
 
   expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
-  expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.updateOpenedWsPaths).toBeCalledTimes(0);
 });
 
 test('if a deleted file is open it closed it', async () => {
   useWorkspaceContextReturn.fileWsPaths = [ourFileWsPath];
-  useWorkspacePathReturn.wsPath = ourFileWsPath;
+  useWorkspaceContextReturn.primaryWsPath = ourFileWsPath;
 
   const result = render(<Comp />);
 
@@ -113,14 +104,20 @@ test('if a deleted file is open it closed it', async () => {
   result.rerender(<Comp />);
 
   expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
-  expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(1);
-  expect(useWorkspacePathReturn.removeSecondaryWsPath).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.updateOpenedWsPaths).toBeCalledTimes(1);
+  const openedWsPaths = new OpenedWsPaths([
+    ourFileWsPath,
+    'ws:xyz/some-other-file',
+  ]);
+  const newOpenedWsPaths = updateOpenedWsPathsCallback(openedWsPaths);
+  expect(newOpenedWsPaths.primaryWsPath).toBe(null);
+  expect(newOpenedWsPaths.secondaryWsPath).toBe('ws:xyz/some-other-file');
 });
 
 test('if a deleted file is open in both primary and secondary', async () => {
   useWorkspaceContextReturn.fileWsPaths = [ourFileWsPath];
-  useWorkspacePathReturn.wsPath = ourFileWsPath;
-  useWorkspacePathReturn.secondaryWsPath = ourFileWsPath;
+  useWorkspaceContextReturn.primaryWsPath = ourFileWsPath;
+  useWorkspaceContextReturn.secondaryWsPath = ourFileWsPath;
 
   const result = render(<Comp />);
 
@@ -136,16 +133,17 @@ test('if a deleted file is open in both primary and secondary', async () => {
   result.rerender(<Comp />);
 
   expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
-  expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
-  expect(
-    useWorkspacePathReturn.removePrimaryAndSecondaryWsPath,
-  ).toBeCalledTimes(1);
-  expect(useWorkspacePathReturn.removeSecondaryWsPath).toBeCalledTimes(0);
+  expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
+  expect(useWorkspaceContextReturn.updateOpenedWsPaths).toBeCalledTimes(1);
+  const openedWsPaths = new OpenedWsPaths([ourFileWsPath, ourFileWsPath]);
+  const newOpenedWsPaths = updateOpenedWsPathsCallback(openedWsPaths);
+  expect(newOpenedWsPaths.primaryWsPath).toBe(null);
+  expect(newOpenedWsPaths.secondaryWsPath).toBe(null);
 });
 
 test('if a deleted file is open in secondary', async () => {
   useWorkspaceContextReturn.fileWsPaths = [ourFileWsPath];
-  useWorkspacePathReturn.secondaryWsPath = ourFileWsPath;
+  useWorkspaceContextReturn.secondaryWsPath = ourFileWsPath;
 
   const result = render(<Comp />);
 
@@ -160,11 +158,10 @@ test('if a deleted file is open in secondary', async () => {
   result.rerender(<Comp />);
 
   expect(useWorkspaceContextReturn.refreshWsPaths).toBeCalledTimes(1);
-  expect(useWorkspacePathReturn.removeWsPath).toBeCalledTimes(0);
-  expect(
-    useWorkspacePathReturn.removePrimaryAndSecondaryWsPath,
-  ).toBeCalledTimes(0);
-  expect(useWorkspacePathReturn.removeSecondaryWsPath).toBeCalledTimes(1);
+  expect(useWorkspaceContextReturn.updateOpenedWsPaths).toBeCalledTimes(1);
+  const openedWsPaths = new OpenedWsPaths([null, ourFileWsPath]);
+  const newOpenedWsPaths = updateOpenedWsPathsCallback(openedWsPaths);
+  expect(newOpenedWsPaths.secondaryWsPath).toBe(null);
 });
 
 test('does not refreshes for if file size and lame hash are the same', async () => {

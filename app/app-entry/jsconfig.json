@@ -15,6 +15,12 @@
       "app-state-context/*": [
         "../../lib/app-state-context/*"
       ],
+      "baby-fs": [
+        "../../js-lib/baby-fs/index.js"
+      ],
+      "baby-fs/*": [
+        "../../js-lib/baby-fs/*"
+      ],
       "collab-extension": [
         "../../extensions/collab-extension/index.js"
       ],
@@ -26,12 +32,6 @@
       ],
       "collapsible-heading/*": [
         "../../extensions/collapsible-heading/*"
-      ],
-      "commands": [
-        "../commands/index.js"
-      ],
-      "commands/*": [
-        "../commands/*"
       ],
       "config": [
         "../../lib/config/index.js"
@@ -87,6 +87,12 @@
       "inline-emoji/*": [
         "../../extensions/inline-emoji/*"
       ],
+      "magic-palette": [
+        "../../js-lib/magic-palette/index.js"
+      ],
+      "magic-palette/*": [
+        "../../js-lib/magic-palette/*"
+      ],
       "naukar-proxy": [
         "../../worker/naukar-proxy/index.js"
       ],
@@ -104,12 +110,6 @@
       ],
       "object-sync/*": [
         "../../js-lib/object-sync/*"
-      ],
-      "palettes": [
-        "../palettes/index.js"
-      ],
-      "palettes/*": [
-        "../palettes/*"
       ],
       "shared": [
         "../shared/index.js"
@@ -147,17 +147,23 @@
       "worker-setup/*": [
         "../worker-setup/*"
       ],
-      "workspace": [
-        "../../lib/workspace/index.js"
-      ],
       "workspace-context": [
-        "../../lib/workspace-hooks/index.js"
+        "../../lib/workspace-context/index.ts"
       ],
-      "workspace-hooks/*": [
-        "../../lib/workspace-hooks/*"
+      "workspace-context/*": [
+        "../../lib/workspace-context/*"
       ],
-      "workspace/*": [
-        "../../lib/workspace/*"
+      "workspaces": [
+        "../../lib/workspaces/index.ts"
+      ],
+      "workspaces/*": [
+        "../../lib/workspaces/*"
+      ],
+      "ws-path": [
+        "../../lib/ws-path/index.ts"
+      ],
+      "ws-path/*": [
+        "../../lib/ws-path/*"
       ]
     }
   }

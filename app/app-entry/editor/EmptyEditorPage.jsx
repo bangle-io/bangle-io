@@ -1,14 +1,12 @@
-import { COMMAND_PALETTE, FILE_PALETTE } from 'palettes/index';
 import React, { useContext } from 'react';
 import { UIManagerContext } from 'ui-context';
-import { resolvePath, useWorkspacePath } from 'workspace/index';
 import { Link } from 'react-router-dom';
 import { useWorkspaceContext } from 'workspace-context/index';
+import { resolvePath } from 'ws-path';
 
 export function EmptyEditorPage() {
   const { dispatch } = useContext(UIManagerContext);
-  const { noteWsPaths = [] } = useWorkspaceContext();
-  const { wsName } = useWorkspacePath();
+  const { wsName, noteWsPaths = [] } = useWorkspaceContext();
 
   const recentFiles = [];
   return (
@@ -34,10 +32,10 @@ export function EmptyEditorPage() {
       </ul>
       <button
         onClick={() => {
-          dispatch({
-            type: 'UI/UPDATE_PALETTE',
-            value: { type: FILE_PALETTE },
-          });
+          // dispatch({
+          //   type: 'UI/UPDATE_PALETTE',
+          //   value: { type: FILE_PALETTE },
+          // });
         }}
         className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-gray-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
       >
@@ -45,10 +43,10 @@ export function EmptyEditorPage() {
       </button>
       <button
         onClick={() => {
-          dispatch({
-            type: 'UI/UPDATE_PALETTE',
-            value: { type: COMMAND_PALETTE, initialQuery: 'new note' },
-          });
+          // dispatch({
+          //   type: 'UI/UPDATE_PALETTE',
+          //   value: { type: COMMAND_PALETTE, initialQuery: 'new note' },
+          // });
         }}
         className="ml-3 w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-gray-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
       >

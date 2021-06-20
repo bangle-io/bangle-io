@@ -1,6 +1,5 @@
 import { TAB_ID } from 'config/index';
 import { useRef, useEffect } from 'react';
-import { useWorkspacePath } from 'workspace/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { weakCache, useBroadcastChannel } from 'utils/index';
 const CHANNEL_NAME = 'watch_workspace';
@@ -15,16 +14,14 @@ const weakComputeLameHash = weakCache((fileWsPaths) =>
 );
 
 export function WatchWorkspace() {
-  const { fileWsPaths, refreshWsPaths } = useWorkspaceContext();
   const {
     wsName,
-    wsPath,
+    fileWsPaths,
+    refreshWsPaths,
+    primaryWsPath,
     secondaryWsPath,
-    removeWsPath,
-    removeSecondaryWsPath,
-    replacePrimaryAndSecondaryWsPath,
-    removePrimaryAndSecondaryWsPath,
-  } = useWorkspacePath();
+    updateOpenedWsPaths,
+  } = useWorkspaceContext();
   const [lastMessage, broadcastMessage] = useBroadcastChannel(CHANNEL_NAME);
   const isFirstMountRef = useRef(true);
   const checkCurrentEditors = useRef(false);
@@ -68,27 +65,25 @@ export function WatchWorkspace() {
   useEffect(() => {
     if (fileWsPaths && checkCurrentEditors.current === true) {
       checkCurrentEditors.current = false;
-      if (
-        wsPath &&
-        secondaryWsPath === wsPath &&
-        !fileWsPaths.includes(wsPath)
-      ) {
-        removePrimaryAndSecondaryWsPath();
-      } else if (wsPath && !fileWsPaths.includes(wsPath)) {
-        removeWsPath();
-      } else if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
-        removeSecondaryWsPath();
-      }
+
+      updateOpenedWsPaths(
+        (openedWsPaths) => {
+          let newOpenedWsPaths = openedWsPaths;
+
+          if (primaryWsPath && !fileWsPaths.includes(primaryWsPath)) {
+            newOpenedWsPaths = newOpenedWsPaths.removeIfFound(primaryWsPath);
+          }
+
+          if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
+            newOpenedWsPaths = newOpenedWsPaths.removeIfFound(secondaryWsPath);
+          }
+
+          return newOpenedWsPaths;
+        },
+        { replaceHistory: true },
+      );
     }
-  }, [
-    fileWsPaths,
-    wsPath,
-    secondaryWsPath,
-    removeWsPath,
-    removeSecondaryWsPath,
-    replacePrimaryAndSecondaryWsPath,
-    removePrimaryAndSecondaryWsPath,
-  ]);
+  }, [fileWsPaths, primaryWsPath, secondaryWsPath, updateOpenedWsPaths]);
 
   useEffect(() => {
     // fileWsPaths is undefined when its loading

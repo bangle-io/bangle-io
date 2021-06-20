@@ -15,11 +15,11 @@
       "object-sync/*": [
         "../../js-lib/object-sync/*"
       ],
-      "workspace": [
-        "../../lib/workspace/index.js"
+      "workspaces": [
+        "../../lib/workspaces/index.ts"
       ],
-      "workspace/*": [
-        "../../lib/workspace/*"
+      "workspaces/*": [
+        "../../lib/workspaces/*"
       ]
     }
   }

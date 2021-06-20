@@ -57,33 +57,37 @@ function LoadingBlock({ children }) {
   return loaded ? children : null;
 }
 
-const extensionRegistry = initExtensionRegistry();
-
 ReactDOM.render(
   <LoadingBlock>
     <React.StrictMode>
-      <AppState>
-        <WorkerSetup loadWebworker={moduleSupport} />
-        <PageLifecycle />
-        <Router>
-          <UIManager>
-            <WorkspaceContextProvider>
-              <WatchWorkspace />
-              <WatchUI />
-              <ExtensionRegistryContextProvider
-                extensionRegistry={extensionRegistry}
-              >
-                <EditorManager>
-                  <ActionContextProvider>
-                    <App />
-                  </ActionContextProvider>
-                </EditorManager>
-              </ExtensionRegistryContextProvider>
-            </WorkspaceContextProvider>
-          </UIManager>
-        </Router>
-      </AppState>
+      <Router>
+        <AppState>
+          <WorkerSetup loadWebworker={moduleSupport} />
+          <PageLifecycle />
+          <RemainingApplication />
+        </AppState>
+      </Router>
     </React.StrictMode>
   </LoadingBlock>,
   root,
 );
+
+function RemainingApplication() {
+  return (
+    <UIManager>
+      <WorkspaceContextProvider>
+        <WatchWorkspace />
+        <WatchUI />
+        <ExtensionRegistryContextProvider
+          initExtensionRegistry={initExtensionRegistry}
+        >
+          <EditorManager>
+            <ActionContextProvider>
+              <App />
+            </ActionContextProvider>
+          </EditorManager>
+        </ExtensionRegistryContextProvider>
+      </WorkspaceContextProvider>
+    </UIManager>
+  );
+}

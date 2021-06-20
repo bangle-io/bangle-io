@@ -1,4 +1,4 @@
-import { getNote, saveNote } from 'workspace/index';
+import { getNote, saveNote } from 'workspaces/index';
 import { DebouncedDisk } from '@bangle.dev/disk';
 
 export function localDiskSetup(extensionRegistry, appState) {

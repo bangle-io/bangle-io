@@ -6,7 +6,7 @@ export class BaseError extends Error {
    * @param {*} displayMessage - one that will be shown to the user, generally a non fatal error
    * @param {*} srcError - if error encapsulates another error
    */
-  constructor(message, code, displayMessage, srcError) {
+  constructor(message, code = null, displayMessage = null, srcError = null) {
     if (code != null) {
       message = code + ':' + message;
     }
