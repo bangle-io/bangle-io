@@ -8,6 +8,7 @@ import {
   NEW_WORKSPACE_ACTION,
   RENAME_ACTIVE_NOTE_ACTION,
   DELETE_ACTIVE_NOTE_ACTION,
+  CLONE_WORKSPACE_ACTION,
 } from './config';
 
 const extension = Extension.create({
@@ -18,6 +19,7 @@ const extension = Extension.create({
       { name: TOGGLE_FILE_SIDEBAR_ACTION, title: 'Toggle file sidebar' },
       { name: NEW_NOTE_ACTION, title: 'New note' },
       { name: NEW_WORKSPACE_ACTION, title: 'New workspace' },
+      { name: CLONE_WORKSPACE_ACTION, title: 'Clone current workspace' },
       { name: RENAME_ACTIVE_NOTE_ACTION, title: 'Rename active note' },
       { name: DELETE_ACTIVE_NOTE_ACTION, title: 'Delete active note' },
     ],

@@ -1,5 +1,6 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
-import { useWorkspaces } from 'workspace/index';
+import { useWorkspaces } from 'workspaces';
+
 import {
   AlbumIcon,
   CloseIcon,

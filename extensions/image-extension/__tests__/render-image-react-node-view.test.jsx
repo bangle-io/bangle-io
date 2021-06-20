@@ -1,17 +1,26 @@
 import React from 'react';
-import { render, fireEvent, act } from '@testing-library/react';
-import { useWorkspacePath, getFile } from 'workspace/index';
+import { render, act } from '@testing-library/react';
+import { getFile } from 'workspaces/index';
+import { useWorkspaceContext } from 'workspace-context/index';
 import { ImageComponent } from '../render-image-react-node-view';
 import { sleep } from 'utils/utility';
 
-jest.mock('workspace/index', () => {
-  const workspaceThings = jest.requireActual('workspace/index');
+jest.mock('workspace-context/index', () => {
+  const other = jest.requireActual('workspace-context/index');
+
+  return {
+    ...other,
+    useWorkspaceContext: jest.fn(),
+  };
+});
+jest.mock('workspaces/index', () => {
+  const workspaceThings = jest.requireActual('workspaces/index');
   return {
     ...workspaceThings,
-    useWorkspacePath: jest.fn(),
     getFile: jest.fn(),
   };
 });
+
 class File {
   constructor(content, fileName, opts) {
     this.content = content;
@@ -38,7 +47,7 @@ describe('ImageComponent', () => {
     window.Image = globalImage;
   });
   test('first pass renders a 404', async () => {
-    useWorkspacePath.mockImplementation(() => ({}));
+    useWorkspaceContext.mockImplementation(() => ({}));
     const renderResult = render(
       <ImageComponent nodeAttrs={{ src: './google.png', alt: undefined }} />,
     );
@@ -55,8 +64,8 @@ describe('ImageComponent', () => {
   });
 
   test('loads the file blob', async () => {
-    useWorkspacePath.mockImplementation(() => ({
-      wsPath: 'test-ws:my-file.md',
+    useWorkspaceContext.mockImplementation(() => ({
+      primaryWsPath: 'test-ws:my-file.md',
     }));
     getFile.mockImplementation(async () => {
       return new File('I am the content of image', 'google.png', {});
@@ -84,8 +93,8 @@ describe('ImageComponent', () => {
   });
 
   test('handles http urls as image src', async () => {
-    useWorkspacePath.mockImplementation(() => ({
-      wsPath: 'test-ws:my-file.md',
+    useWorkspaceContext.mockImplementation(() => ({
+      primaryWsPath: 'test-ws:my-file.md',
     }));
     const renderResult = render(
       <ImageComponent
@@ -108,8 +117,8 @@ describe('ImageComponent', () => {
   });
 
   test('handles image dimensions that are statically set in the name', async () => {
-    useWorkspacePath.mockImplementation(() => ({
-      wsPath: 'test-ws:my-file.md',
+    useWorkspaceContext.mockImplementation(() => ({
+      primaryWsPath: 'test-ws:my-file.md',
     }));
     getFile.mockImplementation(async () => {
       return new File('I am the content of image', 'google.png', {});

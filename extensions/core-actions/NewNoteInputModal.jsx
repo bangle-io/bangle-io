@@ -1,9 +1,9 @@
 import React, { useContext, useCallback, useState } from 'react';
 import {
   isValidNoteWsPath,
-  useWorkspacePath,
   PathValidationError,
-} from 'workspace/index';
+  resolvePath,
+} from 'ws-path/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { useDestroyRef } from 'utils/hooks';
 import { InputModal } from './InputModal';
@@ -11,16 +11,19 @@ import { randomName } from 'utils/index';
 import { PaletteInfo, PaletteInfoItem } from 'ui-components';
 import { ExtensionRegistryContext } from 'extension-registry';
 
-export function NewNoteInputModal({ dismissModal }) {
+export function NewNoteInputModal({ initialValue, dismissModal }) {
   const destroyedRef = useDestroyRef();
   const extensionRegistry = useContext(ExtensionRegistryContext);
-  const { createNote } = useWorkspaceContext();
-  const { wsName } = useWorkspacePath();
+  const { wsName, createNote } = useWorkspaceContext();
   const [error, updateError] = useState();
 
   const onExecute = useCallback(
     async (inputValue) => {
-      if (!inputValue) {
+      if (
+        !inputValue ||
+        inputValue.endsWith('/') ||
+        inputValue.endsWith('/.md')
+      ) {
         updateError(new Error('Must provide a note name'));
         return;
       }
@@ -51,7 +54,7 @@ export function NewNoteInputModal({ dismissModal }) {
       dismissModal={dismissModal}
       updateError={updateError}
       error={error}
-      initialValue={randomName()}
+      initialValue={initialValue || randomName()}
       selectOnMount={true}
     >
       <PaletteInfo>
@@ -65,13 +68,16 @@ export function NewNoteInputModal({ dismissModal }) {
 
 export function RenameNoteInputModal({ dismissModal }) {
   const destroyedRef = useDestroyRef();
-  const { filePath, wsName, wsPath } = useWorkspacePath();
 
-  const { renameNote } = useWorkspaceContext();
+  const { wsName, renameNote, primaryWsPath } = useWorkspaceContext();
   const [error, updateError] = useState();
   const onExecute = useCallback(
     async (inputValue) => {
-      if (!inputValue) {
+      if (
+        !inputValue ||
+        inputValue.endsWith('/') ||
+        inputValue.endsWith('/.md')
+      ) {
         updateError(new Error('Must provide a note name'));
         return;
       }
@@ -80,7 +86,7 @@ export function RenameNoteInputModal({ dismissModal }) {
         newWsPath += '.md';
       }
       try {
-        await renameNote(wsPath, newWsPath);
+        await renameNote(primaryWsPath, newWsPath);
         dismissModal();
       } catch (error) {
         if (destroyedRef.current) {
@@ -92,7 +98,7 @@ export function RenameNoteInputModal({ dismissModal }) {
         }
       }
     },
-    [wsPath, dismissModal, renameNote, destroyedRef, wsName],
+    [primaryWsPath, dismissModal, renameNote, destroyedRef, wsName],
   );
 
   return (
@@ -102,12 +108,12 @@ export function RenameNoteInputModal({ dismissModal }) {
       dismissModal={dismissModal}
       updateError={updateError}
       error={error}
-      initialValue={filePath}
+      initialValue={resolvePath(primaryWsPath).filePath}
       selectOnMount={true}
     >
       <PaletteInfo>
         <PaletteInfoItem>
-          You are currently renaming "{filePath}"
+          You are currently renaming "{resolvePath(primaryWsPath).filePath}"
         </PaletteInfoItem>
       </PaletteInfo>
     </InputModal>

@@ -2,13 +2,14 @@ import React, { useEffect } from 'react';
 import { useEditorViewContext } from '@bangle.dev/react';
 import { NodeSelection } from '@bangle.dev/core/prosemirror/state';
 import { menuKey, wsNameViewWeakStore } from './config';
+import { useWorkspaceContext } from 'workspace-context';
+
 import {
   FloatingMenu,
   Menu,
   MenuGroup,
   MenuButton,
 } from '@bangle.dev/react-menu';
-import { useWorkspacePath } from 'workspace';
 import {
   getImageAltScaleFactor,
   updateImageAltScaleFactor,
@@ -91,7 +92,7 @@ export function ImageEditorReactComponent() {
 }
 
 function useAssociateViewWsName(view) {
-  const { wsName } = useWorkspacePath();
+  const { wsName } = useWorkspaceContext();
   useEffect(() => {
     if (wsName) {
       wsNameViewWeakStore.set(view, wsName);

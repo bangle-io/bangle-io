@@ -1,20 +1,39 @@
 import React, { useCallback, useState } from 'react';
-import { useWorkspaces } from 'workspace/index';
 import { InputModal } from './InputModal';
 import { ListModal } from './ListModal';
 import { pickADirectory } from 'baby-fs/index';
 import { PaletteInfo, PaletteInfoItem } from 'ui-components';
+import {
+  deleteFile,
+  listAllFiles,
+  copyWorkspace,
+  useWorkspaces,
+} from 'workspaces';
+import { useWorkspaceContext } from 'workspace-context';
 
-export function NewWorkspaceInputModal({ dismissModal }) {
+const deleteAllFiles = async (wsName) => {
+  const files = await listAllFiles(wsName);
+  await Promise.all(files.map((w) => deleteFile(w)));
+};
+
+export function NewWorkspaceInputModal({ resetWsName, dismissModal, clone }) {
   const [showLocalStorageOption, updateShowLocalStorage] = useState(false);
 
   if (showLocalStorageOption === true) {
-    return <NewWorkspaceNameStage dismissModal={dismissModal} />;
+    return (
+      <NewWorkspaceNameStage
+        dismissModal={dismissModal}
+        resetWsName={resetWsName}
+        clone={clone}
+      />
+    );
   }
 
   return (
     <NewWorkspaceStorageStage
       dismissModal={dismissModal}
+      resetWsName={resetWsName}
+      clone={clone}
       onSelectBrowserStorage={async () => {
         updateShowLocalStorage(true);
       }}
@@ -22,9 +41,15 @@ export function NewWorkspaceInputModal({ dismissModal }) {
   );
 }
 
-function NewWorkspaceStorageStage({ dismissModal, onSelectBrowserStorage }) {
+function NewWorkspaceStorageStage({
+  dismissModal,
+  onSelectBrowserStorage,
+  clone,
+  resetWsName,
+}) {
   const { createWorkspace } = useWorkspaces();
   const [error, updateError] = useState();
+  const { wsName } = useWorkspaceContext();
 
   return (
     <ListModal
@@ -54,8 +79,15 @@ function NewWorkspaceStorageStage({ dismissModal, onSelectBrowserStorage }) {
               const rootDirHandle = await pickADirectory();
               await createWorkspace(rootDirHandle.name, 'nativefs', {
                 rootDirHandle,
+                beforeHistoryChange: async () => {
+                  if (clone && wsName) {
+                    await copyWorkspace(wsName, rootDirHandle.name);
+                    if (resetWsName) {
+                      await deleteAllFiles(resetWsName);
+                    }
+                  }
+                },
               });
-
               dismissModal();
             } catch (error) {
               updateError(error);
@@ -75,9 +107,11 @@ function NewWorkspaceStorageStage({ dismissModal, onSelectBrowserStorage }) {
   );
 }
 
-function NewWorkspaceNameStage({ dismissModal, onDone }) {
+function NewWorkspaceNameStage({ dismissModal, clone, resetWsName }) {
   const { createWorkspace } = useWorkspaces();
   const [error, updateError] = useState();
+  const { wsName } = useWorkspaceContext();
+
   const onExecute = useCallback(
     async (inputValue) => {
       if (!inputValue) {
@@ -85,14 +119,23 @@ function NewWorkspaceNameStage({ dismissModal, onDone }) {
         return;
       }
       try {
-        await createWorkspace(inputValue, 'browser');
+        await createWorkspace(inputValue, 'browser', {
+          beforeHistoryChange: async () => {
+            if (clone && wsName) {
+              await copyWorkspace(wsName, inputValue);
+              if (resetWsName) {
+                await deleteAllFiles(resetWsName);
+              }
+            }
+          },
+        });
         window.fathom?.trackGoal('AISLCLRF', 0);
         dismissModal();
       } catch (error) {
         updateError(error);
       }
     },
-    [createWorkspace, dismissModal],
+    [createWorkspace, dismissModal, resetWsName, wsName, clone],
   );
 
   return (
