@@ -6,8 +6,7 @@ import {
   GithubReadFileSystem,
   HelpFileSystem,
 } from 'baby-fs/index';
-import { HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
-import { WorkspaceInfo } from './types';
+import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './types';
 
 const allowedFile = (name: string) => {
   return name.endsWith('.md') || name.endsWith('.png');

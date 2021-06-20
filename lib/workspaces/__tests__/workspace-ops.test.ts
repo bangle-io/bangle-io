@@ -1,5 +1,4 @@
-import * as idb from 'idb-keyval';
-import { helpFSWorkspaceInfo } from 'config/help-fs';
+import { helpFSWorkspaceInfo } from '../types';
 import {
   createWorkspace,
   deleteWorkspace,

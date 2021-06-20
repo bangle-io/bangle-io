@@ -11,7 +11,7 @@ import { getFileSystemFromWsInfo } from './get-fs';
 import { getWorkspaceInfo } from './workspaces-ops';
 import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs/index';
 import { markdownParser, markdownSerializer } from 'markdown/index';
-import { HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
+import { HELP_FS_WORKSPACE_TYPE } from './types';
 import type { ExtensionRegistry } from 'extension-registry';
 
 export async function listAllFiles(wsName: string) {

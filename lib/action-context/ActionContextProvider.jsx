@@ -1,6 +1,6 @@
-import { ExtensionRegistryContext } from 'extension-registry/index';
 import React, { useCallback, useMemo, useContext } from 'react';
-import { ActionContext } from 'action-context/index';
+import { ExtensionRegistryContext } from 'extension-registry/index';
+import { ActionContext } from './ActionContext';
 
 export function ActionContextProvider({ children }) {
   const extensionRegistry = useContext(ExtensionRegistryContext);

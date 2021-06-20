@@ -21,7 +21,12 @@
   "publishConfig": {
     "access": "restricted"
   },
-  "dependencies": {
-    "react": "^17.0.2"
+  "peerDependencies": {
+    "extension-registry": "*",
+    "react": "*"
+  },
+  "devDependencies": {
+    "extension-registry": "workspace:*",
+    "react": "17.0.2"
   }
 }

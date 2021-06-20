@@ -3,12 +3,13 @@ import { TextButton } from 'ui-components';
 import { UIManagerContext } from 'ui-context';
 import { isValidNoteWsPath, resolvePath, toFSPath } from 'ws-path';
 import { ActionContext } from 'action-context';
-import { HELP_FS_WORKSPACE_NAME, HELP_FS_WORKSPACE_TYPE } from 'config/help-fs';
 import {
   deleteFile,
   listAllFiles,
   getWorkspaceInfo,
   getFileSystemFromWsInfo,
+  HELP_FS_WORKSPACE_NAME,
+  HELP_FS_WORKSPACE_TYPE,
 } from 'workspaces/index';
 
 export function HelpWorkspaceMonitor({ wsPath }) {

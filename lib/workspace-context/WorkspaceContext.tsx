@@ -13,9 +13,10 @@ import {
   deleteFile,
   listAllFiles,
   checkFileExists,
+  HELP_FS_INDEX_FILE_NAME,
+  HELP_FS_WORKSPACE_NAME,
 } from 'workspaces/index';
 import { shallowCompareArray, removeMdExtension } from 'utils/index';
-import { HELP_FS_INDEX_FILE_NAME, HELP_FS_WORKSPACE_NAME } from 'config';
 import {
   filePathToWsPath,
   getPrimaryWsPath,

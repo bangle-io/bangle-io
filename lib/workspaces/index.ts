@@ -3,3 +3,4 @@ export * from './hooks';
 export * from './file-ops';
 export * from './get-fs';
 export * from './errors';
+export * from './types';

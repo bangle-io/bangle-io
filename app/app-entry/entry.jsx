@@ -14,7 +14,7 @@ import { AppState } from './AppStateProvider';
 import { WorkspaceContextProvider } from 'workspace-context/index';
 import { WatchWorkspace } from './WatchWorkspace';
 import { WatchUI } from './WatchUI';
-import { ActionContextProvider } from './ActionContext';
+import { ActionContextProvider } from 'action-context';
 import { ExtensionRegistryContextProvider } from 'extension-registry/index';
 
 if (typeof window !== undefined) {
