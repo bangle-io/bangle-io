@@ -10,21 +10,23 @@ const {
   longSleep,
   getPrimaryEditorHandler,
   SELECTOR_TIMEOUT,
+  newPage,
 } = require('../helpers');
 const { ctrlKey } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
-let page;
+let page, destroyPage;
 
 beforeEach(async () => {
-  page = await browser.newPage();
+  ({ page, destroyPage } = await newPage(browser));
+
   await page.goto(url, { waitUntil: 'networkidle2' });
   await page.evaluate(() => localStorage.clear());
   await page.goto(url, { waitUntil: 'networkidle2' });
 });
 
 afterEach(async () => {
-  await page.close();
+  await destroyPage();
 });
 
 const setupScreenSize = async (screenType) => {

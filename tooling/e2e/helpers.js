@@ -48,6 +48,22 @@ async function createWorkspace(page, wsName = 'test' + uuid(4)) {
   return wsName;
 }
 
+async function newPage(browser) {
+  const page = await browser.newPage();
+  const handleError = (error) => {
+    process.emit('uncaughtException', error);
+  };
+  page.on('error', handleError);
+  page.on('pageerror', handleError);
+  return {
+    page: page,
+    destroyPage: async () => {
+      page.off('error', handleError);
+      page.off('pageerror', handleError);
+      await page.close();
+    },
+  };
+}
 async function createNewNote(page, wsName, noteName = 'new_file.md') {
   await runAction(page, '@action/core-actions/NEW_NOTE_ACTION');
   let handle = await page.waitForSelector('.magic-palette-container', {
@@ -185,6 +201,7 @@ module.exports = {
   sleep,
   url,
   ctrlKey,
+  newPage,
   longSleep,
   frmtHTML,
   createNewNote,

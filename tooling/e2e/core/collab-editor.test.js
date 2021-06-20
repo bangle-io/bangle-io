@@ -9,14 +9,15 @@ const {
   getPrimaryEditorHandler,
   ctrlKey,
   sleep,
+  newPage,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
 
-let page;
+let page, destroyPage;
 
 beforeEach(async () => {
-  page = await browser.newPage();
+  ({ page, destroyPage } = await newPage(browser));
   await setPageWidescreen(page);
   await page.goto(url, { waitUntil: 'networkidle2' });
 
@@ -24,14 +25,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  await page.close();
-});
-
-// for some reason first test suit fails
-// so this exists as a hack
-test('init', async () => {
-  expect(4).toBe(4);
-  await longSleep();
+  await destroyPage();
 });
 
 test('Split screen and typing in secondary works', async () => {
