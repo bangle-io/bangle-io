@@ -1,5 +1,5 @@
 {
-  "name": "workspace-context",
+  "name": "workspaces",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,27 +18,36 @@
   "main": "index.ts",
   "module": "index.ts",
   "scripts": {},
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*",
+    "react-router-dom": "*"
+  },
+  "dependencies": {
+    "baby-fs": "workspace:*",
+    "config": "workspace:*",
+    "idb-keyval": "^5.0.6",
+    "markdown": "workspace:*",
+    "utils": "workspace:*",
+    "ws-path": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "restricted",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  },
   "devDependencies": {
     "@bangle.dev/core": "0.18.1",
     "@testing-library/react": "^11.2.7",
-    "@testing-library/react-hooks": "^7.0.0",
     "@types/history": "^4.7.8",
     "@types/react": "^17.0.11",
     "@types/react-dom": "^17.0.8",
     "@types/react-router-dom": "^5.1.7",
-    "baby-fs": "workspace:*",
-    "react": "^17.0.2",
+    "baby-fs-test-mock": "workspace:*",
+    "extension-registry": "workspace:*",
+    "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-test-renderer": "17.0.2"
-  },
-  "dependencies": {
-    "config": "workspace:*",
-    "react-router-dom": "^5.2.0",
-    "utils": "workspace:*",
-    "workspaces": "workspace:*",
-    "ws-path": "workspace:*"
-  },
-  "publishConfig": {
-    "access": "public"
+    "react-router-dom": "^5.2.0"
   }
 }

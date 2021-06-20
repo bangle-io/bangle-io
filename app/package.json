@@ -2,8 +2,6 @@
   "name": "app",
   "workspaces": [
     "app-entry",
-    "palettes",
-    "commands",
     "style",
     "worker-setup",
     "shared"

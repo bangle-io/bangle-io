@@ -1,5 +1,5 @@
 {
-  "name": "commands",
+  "name": "baby-fs-test-mock",
   "version": "0.0.0",
   "authors": [
     {
@@ -18,15 +18,12 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {},
-  "publishConfig": {},
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "baby-fs": "workspace:*",
-    "config": "workspace:*",
-    "editor-manager-context": "workspace:*",
-    "extension-registry": "workspace:*",
-    "react": "17.0.2",
-    "ui-context": "workspace:*",
-    "workspace": "workspace:*",
-    "workspace-context": "workspace:*"
+    "base-error": "workspace:*",
+    "idb-keyval": "^5.0.6"
   }
 }

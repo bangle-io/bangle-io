@@ -2813,153 +2813,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/auth-token@npm:^2.4.4":
-  version: 2.4.5
-  resolution: "@octokit/auth-token@npm:2.4.5"
-  dependencies:
-    "@octokit/types": ^6.0.3
-  checksum: 49620119949870e63d5758be4f9065167a617b4ff343d2bf17f89497dffe17dad2a158e8a3311afc25157a83757a19835f01d66ae53a3583ccf425b60a20968b
-  languageName: node
-  linkType: hard
-
-"@octokit/core@npm:^3.2.3":
-  version: 3.4.0
-  resolution: "@octokit/core@npm:3.4.0"
-  dependencies:
-    "@octokit/auth-token": ^2.4.4
-    "@octokit/graphql": ^4.5.8
-    "@octokit/request": ^5.4.12
-    "@octokit/request-error": ^2.0.5
-    "@octokit/types": ^6.0.3
-    before-after-hook: ^2.2.0
-    universal-user-agent: ^6.0.0
-  checksum: 162102ae988191d7426221f12962c1ecf932273c222c60a7dc5b85449da15bcaf2b6756a4ad4a14b23ef37862efe7d64633c96f2199219bd8cc030237e1867dd
-  languageName: node
-  linkType: hard
-
-"@octokit/endpoint@npm:^6.0.1":
-  version: 6.0.11
-  resolution: "@octokit/endpoint@npm:6.0.11"
-  dependencies:
-    "@octokit/types": ^6.0.3
-    is-plain-object: ^5.0.0
-    universal-user-agent: ^6.0.0
-  checksum: a02bdf68cd2f5a2f71b63f2dcbb7bd852306df14b0fdde268d24e33e2278d5025a4174b7fba01ce50d08599b616d214ea8a238d43d1662cb499fb58a5264701d
-  languageName: node
-  linkType: hard
-
-"@octokit/graphql@npm:^4.5.8":
-  version: 4.6.1
-  resolution: "@octokit/graphql@npm:4.6.1"
-  dependencies:
-    "@octokit/request": ^5.3.0
-    "@octokit/types": ^6.0.3
-    universal-user-agent: ^6.0.0
-  checksum: f9ee42fd5e3c2c7041c4867c102b0ca28d8fb32fc160c0b77a3f59da515d66995eb7df84a799aebd557561f1908f85777dce62b4a29fbff35cbd6a9df170fe6d
-  languageName: node
-  linkType: hard
-
-"@octokit/openapi-types@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@octokit/openapi-types@npm:6.0.0"
-  checksum: bf29622813715e6e391f799a0d31fa4244f9c760f0db6a383589633eb9c9af82debde033a49a21dfec43b0227ca24a3a73751783e8f663a44ca4fb3732397846
-  languageName: node
-  linkType: hard
-
-"@octokit/openapi-types@npm:^6.1.1":
-  version: 6.1.1
-  resolution: "@octokit/openapi-types@npm:6.1.1"
-  checksum: 2edf6a561315c851ce56d9d8ec9b1a6b2b374974f898efa70fef02058ce2df69c88178e51e90b9c74c035532b7391a706b1473cc7ccc27256ba7ca7a2e2bd666
-  languageName: node
-  linkType: hard
-
-"@octokit/plugin-paginate-rest@npm:^2.6.2":
-  version: 2.13.3
-  resolution: "@octokit/plugin-paginate-rest@npm:2.13.3"
-  dependencies:
-    "@octokit/types": ^6.11.0
-  peerDependencies:
-    "@octokit/core": ">=2"
-  checksum: 68d99a66e5487ae39ff1aadab2bdd1a71375a3ff51e0948cefad1a6c27d6e1dbd568681745e0b7b09ecd691fd56067b5eaf6f7a56c09ef8634bdef0c2e4df352
-  languageName: node
-  linkType: hard
-
-"@octokit/plugin-request-log@npm:^1.0.2":
-  version: 1.0.3
-  resolution: "@octokit/plugin-request-log@npm:1.0.3"
-  peerDependencies:
-    "@octokit/core": ">=3"
-  checksum: 48ec556c1784048cd6129061c164be3565c77de68a2b4fa44e132fca08648a7034a4435d2cbdec82dacdd8da3f991fa0957e569ab2b092ae4d3a43a822a8a2d0
-  languageName: node
-  linkType: hard
-
-"@octokit/plugin-rest-endpoint-methods@npm:5.0.1":
-  version: 5.0.1
-  resolution: "@octokit/plugin-rest-endpoint-methods@npm:5.0.1"
-  dependencies:
-    "@octokit/types": ^6.13.1
-    deprecation: ^2.3.1
-  peerDependencies:
-    "@octokit/core": ">=3"
-  checksum: 4ab86352360930221eb179ee197d95a6c5d3c953f8975fd9a2721da84f21a54057607c897e44d19cbed46096de3611d881e8a4a56763ec25d7861f756721defc
-  languageName: node
-  linkType: hard
-
-"@octokit/request-error@npm:^2.0.0, @octokit/request-error@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "@octokit/request-error@npm:2.0.5"
-  dependencies:
-    "@octokit/types": ^6.0.3
-    deprecation: ^2.0.0
-    once: ^1.4.0
-  checksum: 61aef8e3c4f9035ba0e8225674c3f9a2d9e157d1add26c9f53835ebdb8405c05e6ffe948398cce32af5517f216ac889e81b1a224af6a2eb8595adecb037bc942
-  languageName: node
-  linkType: hard
-
-"@octokit/request@npm:^5.3.0, @octokit/request@npm:^5.4.12":
-  version: 5.4.15
-  resolution: "@octokit/request@npm:5.4.15"
-  dependencies:
-    "@octokit/endpoint": ^6.0.1
-    "@octokit/request-error": ^2.0.0
-    "@octokit/types": ^6.7.1
-    is-plain-object: ^5.0.0
-    node-fetch: ^2.6.1
-    universal-user-agent: ^6.0.0
-  checksum: 31114ccce70cba76c5848629f0f120587eb59542f7e49cba99791100928d805d8d194c0f5718dfd4425b9051fcc716635077050ee0e060ae51c97412bb4bab4b
-  languageName: node
-  linkType: hard
-
-"@octokit/rest@npm:^18.5.3":
-  version: 18.5.3
-  resolution: "@octokit/rest@npm:18.5.3"
-  dependencies:
-    "@octokit/core": ^3.2.3
-    "@octokit/plugin-paginate-rest": ^2.6.2
-    "@octokit/plugin-request-log": ^1.0.2
-    "@octokit/plugin-rest-endpoint-methods": 5.0.1
-  checksum: 8c8384c18bc7204058e702b46fad062e72a31cff8608ac909889a6e2f1317dd6d69a26a16bf29af6977a2b32f48e8e2fd4e49274129d26ab528dcffddb60f31b
-  languageName: node
-  linkType: hard
-
-"@octokit/types@npm:^6.0.3, @octokit/types@npm:^6.11.0, @octokit/types@npm:^6.7.1":
-  version: 6.13.0
-  resolution: "@octokit/types@npm:6.13.0"
-  dependencies:
-    "@octokit/openapi-types": ^6.0.0
-  checksum: 9b2d8631f351bf368bcd90e46a39fae42b5c821b6f66275ee2504bbfb0c6ac7dfc045c6585ce346f37ceb3979dde0de241d777a4e7cd1310eaff0318bfc7e4a9
-  languageName: node
-  linkType: hard
-
-"@octokit/types@npm:^6.13.1":
-  version: 6.13.2
-  resolution: "@octokit/types@npm:6.13.2"
-  dependencies:
-    "@octokit/openapi-types": ^6.1.1
-  checksum: 9408814d2eec01c2ea2b1e4f2ea889c954fcb55127b6242a8ce56eff6d4a2120d20881af0b52ae090e56e2cf9069cbd68bcc40934cfe3182882c9e2673cd0980
-  languageName: node
-  linkType: hard
-
 "@polka/url@npm:^1.0.0-next.9":
   version: 1.0.0-next.12
   resolution: "@polka/url@npm:1.0.0-next.12"
@@ -3365,6 +3218,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/history@npm:*, @types/history@npm:^4.7.8":
+  version: 4.7.8
+  resolution: "@types/history@npm:4.7.8"
+  checksum: 9c867532afd80f72a7101a5bb3c10c1ad7cc8c2c14e92fdbc54d5fed0ef8cdb6060c0f261a39884e243424636c6ff85d8aaffb984e2edaac348d2f216f9eedeb
+  languageName: node
+  linkType: hard
+
 "@types/html-minifier-terser@npm:^5.0.0":
   version: 5.1.1
   resolution: "@types/html-minifier-terser@npm:5.1.1"
@@ -3404,6 +3264,16 @@ __metadata:
     jest-diff: ^26.0.0
     pretty-format: ^26.0.0
   checksum: 3f034a52f6fe605d6cded0a10a08652b09025321aa53904420cb5a3e5e3678990de24ff9a79267aef04ec86d851b749ec8ba262a7d418d9720bb3f2383cc1009
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^26.0.23":
+  version: 26.0.23
+  resolution: "@types/jest@npm:26.0.23"
+  dependencies:
+    jest-diff: ^26.0.0
+    pretty-format: ^26.0.0
+  checksum: 69db26061e6be34de2a440c8a470b651c53ba6ee0057614a278c4f756ff00281f46cc075b24e5bd761f399f175f49d0a5758b50dd921342a8592461548dea29a
   languageName: node
   linkType: hard
 
@@ -3499,6 +3369,36 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 102a3ee9ecf96fdd82d37d90860d0b80e160a368117e4e84512c801f8c7f381d7a2b9305f155670f42eab4784d036375cbf16c9905839dd0857e7031ff966803
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^17.0.8":
+  version: 17.0.8
+  resolution: "@types/react-dom@npm:17.0.8"
+  dependencies:
+    "@types/react": "*"
+  checksum: 9ad1220297bede365e0d2aae4bc4a2deee3247da9da62d45bcd770812d246d46c219b3f58755b08423a4339c3c654fddd6c2b16b27151d09213b527a7cde8910
+  languageName: node
+  linkType: hard
+
+"@types/react-router-dom@npm:^5.1.7":
+  version: 5.1.7
+  resolution: "@types/react-router-dom@npm:5.1.7"
+  dependencies:
+    "@types/history": "*"
+    "@types/react": "*"
+    "@types/react-router": "*"
+  checksum: ad40f55557bb7cd8d19d783c1d7dbca85e8874e03cced37e464f74f9f0a588a9a7e411de74da362d1a5c5bf80f7aaca78fe9a66d26741e47c5c06e49a62d1229
+  languageName: node
+  linkType: hard
+
+"@types/react-router@npm:*":
+  version: 5.1.15
+  resolution: "@types/react-router@npm:5.1.15"
+  dependencies:
+    "@types/history": "*"
+    "@types/react": "*"
+  checksum: b27c4a0b0fea6e31edbcbf1b1c2590575ad454016701997df48ffd26c08f7c18fab5433e9dc8b3f3131c13aac1a8eacb2fd21f77c03c1b1550cabf4aeee127a2
   languageName: node
   linkType: hard
 
@@ -4340,12 +4240,14 @@ __metadata:
     "@sentry/tracing": ^6.7.1
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^7.0.0
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     action-context: "workspace:*"
     app-state-context: "workspace:*"
+    baby-fs: "workspace:*"
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
     comlink: ^4.3.1
-    commands: "workspace:*"
     config: "workspace:*"
     constants: "workspace:*"
     editor-core: "workspace:*"
@@ -4355,11 +4257,11 @@ __metadata:
     inline-backlink: "workspace:*"
     inline-command-palette: "workspace:*"
     inline-emoji: "workspace:*"
+    magic-palette: "workspace:*"
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
     object-sync: "workspace:*"
     page-lifecycle: ^0.1.2
-    palettes: "workspace:*"
     prop-types: ^15.7.2
     react: 17.0.2
     react-dom: 17.0.2
@@ -4372,8 +4274,9 @@ __metadata:
     ui-context: "workspace:*"
     utils: "workspace:*"
     worker-setup: "workspace:*"
-    workspace: "workspace:*"
     workspace-context: "workspace:*"
+    workspaces: "workspace:*"
+    ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -4381,6 +4284,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app-state-context@workspace:lib/app-state-context"
   dependencies:
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     react: 17.0.2
     react-dom: 17.0.2
   languageName: unknown
@@ -4896,6 +4801,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"baby-fs-test-mock@workspace:*, baby-fs-test-mock@workspace:lib/baby-fs-test-mock":
+  version: 0.0.0-use.local
+  resolution: "baby-fs-test-mock@workspace:lib/baby-fs-test-mock"
+  dependencies:
+    baby-fs: "workspace:*"
+    base-error: "workspace:*"
+    idb-keyval: ^5.0.6
+  languageName: unknown
+  linkType: soft
+
 "baby-fs@workspace:*, baby-fs@workspace:js-lib/baby-fs":
   version: 0.0.0-use.local
   resolution: "baby-fs@workspace:js-lib/baby-fs"
@@ -4935,7 +4850,9 @@ __metadata:
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
+    "@types/jest": ^26.0.23
     "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     "@typescript-eslint/eslint-plugin": ^4.26.1
     "@typescript-eslint/parser": ^4.26.1
     "@vitejs/plugin-react-refresh": ^1.3.3
@@ -5043,13 +4960,6 @@ __metadata:
   dependencies:
     tweetnacl: ^0.14.3
   checksum: 4edfc9fe7d07019609ccf797a2af28351736e9d012c8402a07120c4453a3b789a15f2ee1530dc49eee8f7eb9379331a8dd4b3766042b9e502f74a68e7f662291
-  languageName: node
-  linkType: hard
-
-"before-after-hook@npm:^2.2.0":
-  version: 2.2.1
-  resolution: "before-after-hook@npm:2.2.1"
-  checksum: 2562bdcc2e4e53365fb97674410580c40b73db0c0137def18af93332ef4dd16db150c0670d0d986328cb8b0b05f4f58906895ba406ece294817f28540e19aba5
   languageName: node
   linkType: hard
 
@@ -5775,7 +5685,6 @@ __metadata:
     "@bangle.dev/core": 0.18.1
     extension-registry: "workspace:*"
     utils: "workspace:*"
-    workspace: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5926,21 +5835,6 @@ __metadata:
   checksum: 99c120b939b610b1fb4a14424b48dc6431643ec46836f251a26434ad77b1eed22577a36378cfd66ed4b56fc69f98553f7dcb30f1539e3685874fd77cfb6e52fb
   languageName: node
   linkType: hard
-
-"commands@workspace:*, commands@workspace:app/commands":
-  version: 0.0.0-use.local
-  resolution: "commands@workspace:app/commands"
-  dependencies:
-    baby-fs: "workspace:*"
-    config: "workspace:*"
-    editor-manager-context: "workspace:*"
-    extension-registry: "workspace:*"
-    react: 17.0.2
-    ui-context: "workspace:*"
-    workspace: "workspace:*"
-    workspace-context: "workspace:*"
-  languageName: unknown
-  linkType: soft
 
 "commondir@npm:^1.0.1":
   version: 1.0.1
@@ -6110,6 +6004,8 @@ __metadata:
   resolution: "core-actions@workspace:extensions/core-actions"
   dependencies:
     "@bangle.dev/core": 0.18.1
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     action-context: "workspace:*"
     baby-fs: "workspace:*"
     config: "workspace:*"
@@ -6119,8 +6015,9 @@ __metadata:
     ui-components: "workspace:*"
     ui-context: "workspace:*"
     utils: "workspace:*"
-    workspace: "workspace:*"
     workspace-context: "workspace:*"
+    workspaces: "workspace:*"
+    ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -6163,6 +6060,8 @@ __metadata:
   resolution: "core-palettes@workspace:extensions/core-palettes"
   dependencies:
     "@bangle.dev/core": 0.18.1
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     action-context: "workspace:*"
     config: "workspace:*"
     editor-manager-context: "workspace:*"
@@ -6172,8 +6071,9 @@ __metadata:
     ui-components: "workspace:*"
     ui-context: "workspace:*"
     utils: "workspace:*"
-    workspace: "workspace:*"
     workspace-context: "workspace:*"
+    workspaces: "workspace:*"
+    ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -6604,13 +6504,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deprecation@npm:^2.0.0, deprecation@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "deprecation@npm:2.3.1"
-  checksum: f56a05e182c2c195071385455956b0c4106fe14e36245b00c689ceef8e8ab639235176a96977ba7c74afb173317fac2e0ec6ec7a1c6d1e6eaa401c586c714132
-  languageName: node
-  linkType: hard
-
 "destroy@npm:~1.0.4":
   version: 1.0.4
   resolution: "destroy@npm:1.0.4"
@@ -6889,6 +6782,8 @@ __metadata:
     "@bangle.dev/timestamp": 0.18.1
     "@bangle.dev/tooltip": 0.18.1
     "@bangle.dev/trailing-node": 0.18.1
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     editor-manager-context: "workspace:*"
     extension-registry: "workspace:*"
     react: 17.0.2
@@ -6901,6 +6796,8 @@ __metadata:
   resolution: "editor-manager-context@workspace:lib/editor-manager-context"
   dependencies:
     "@bangle.dev/core": 0.18.1
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     config: "workspace:*"
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: 17.0.2
@@ -6915,6 +6812,8 @@ __metadata:
   dependencies:
     "@bangle.dev/core": 0.18.1
     "@bangle.dev/react": 0.18.1
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     app-state-context: "workspace:*"
     debounce-fn: ^5.0.0
     extension-registry: "workspace:*"
@@ -7655,7 +7554,6 @@ __metadata:
     "@bangle.dev/core": 0.18.1
     extension-registry: "workspace:*"
     utils: "workspace:*"
-    workspace: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -7867,8 +7765,14 @@ __metadata:
     "@bangle.dev/core": ^0.18.1
     "@types/prosemirror-model": ^1.13.0
     "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     prosemirror-model: ^1.14.1
     react: ^17.0.2
+    react-dom: 17.0.2
+  peerDependencies:
+    "@bangle.dev/core": "*"
+    prosemirror-model: "*"
+    react: "*"
   languageName: unknown
   linkType: soft
 
@@ -9174,11 +9078,15 @@ fsevents@^2.1.2:
     "@bangle.dev/tooltip": 0.18.1
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     extension-registry: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2
     utils: "workspace:*"
-    workspace: "workspace:*"
+    workspace-context: "workspace:*"
+    workspaces: "workspace:*"
+    ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -9284,6 +9192,8 @@ fsevents@^2.1.2:
     "@bangle.dev/wiki-link": 0.18.1
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     config: "workspace:*"
     extension-registry: "workspace:*"
     inline-palette: "workspace:*"
@@ -9291,8 +9201,8 @@ fsevents@^2.1.2:
     react-dom: 17.0.2
     ui-components: "workspace:*"
     utils: "workspace:*"
-    workspace: "workspace:*"
     workspace-context: "workspace:*"
+    ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -9302,6 +9212,8 @@ fsevents@^2.1.2:
   dependencies:
     "@bangle.dev/core": 0.18.1
     "@bangle.dev/react": 0.18.1
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     chrono-node: ^2.2.6
     config: "workspace:*"
     extension-registry: "workspace:*"
@@ -9326,12 +9238,13 @@ fsevents@^2.1.2:
     "@bangle.dev/tooltip": 0.18.1
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     emoji-lookup-data: ^1.3.0
     extension-registry: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2
     utils: "workspace:*"
-    workspace: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -9342,10 +9255,11 @@ fsevents@^2.1.2:
     "@bangle.dev/core": 0.18.1
     "@bangle.dev/react": 0.18.1
     "@bangle.dev/tooltip": 0.18.1
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     react: 17.0.2
     react-dom: 17.0.2
     utils: "workspace:*"
-    workspace: "workspace:*"
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/react": "*"
@@ -9353,7 +9267,6 @@ fsevents@^2.1.2:
     react: "*"
     react-dom: "*"
     utils: "*"
-    workspace: "*"
   languageName: unknown
   linkType: soft
 
@@ -9788,13 +9701,6 @@ fsevents@^2.1.2:
   dependencies:
     isobject: ^3.0.1
   checksum: 2a401140cfd86cabe25214956ae2cfee6fbd8186809555cd0e84574f88de7b17abacb2e477a6a658fa54c6083ecbda1e6ae404c7720244cd198903848fca70ca
-  languageName: node
-  linkType: hard
-
-"is-plain-object@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "is-plain-object@npm:5.0.0"
-  checksum: e32d27061eef62c0847d303125440a38660517e586f2f3db7c9d179ae5b6674ab0f469d519b2e25c147a1a3bc87156d0d5f4d8821e0ce4a9ee7fe1fcf11ce45c
   languageName: node
   linkType: hard
 
@@ -11634,6 +11540,7 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "magic-palette@workspace:js-lib/magic-palette"
   dependencies:
+    "@types/react": ^17.0.11
     "@vitejs/plugin-react-refresh": ^1.3.3
     autoprefixer: ^10.2.6
     postcss: ^8.3.4
@@ -11648,7 +11555,6 @@ fsevents@^2.1.2:
     vite: ^2.3.7
   peerDependencies:
     react: "*"
-    react-dom: "*"
   languageName: unknown
   linkType: soft
 
@@ -12179,7 +12085,7 @@ fsevents@^2.1.2:
     config: "workspace:*"
     idb-keyval: ^5.0.6
     object-sync: "workspace:*"
-    workspace: "workspace:*"
+    workspaces: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -12230,7 +12136,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.1, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
+"node-fetch@npm:2.6.1, node-fetch@npm:^2.6.0":
   version: 2.6.1
   resolution: "node-fetch@npm:2.6.1"
   checksum: 91075bedd57879117e310fbcc36983ad5d699e522edb1ebcdc4ee5294c982843982652925c3532729fdc86b2d64a8a827797a745f332040d91823c8752ee4d7c
@@ -12780,32 +12686,6 @@ fsevents@^2.1.2:
   checksum: 082359f37dad4f5a55a8db814d968675dd5d707ef9c8279ab3a3627535846cd825530ca8fdae6cf5a2bade5bbf1546fe443aabd0950671d7a6c93003f9004070
   languageName: node
   linkType: hard
-
-"palettes@workspace:*, palettes@workspace:app/palettes":
-  version: 0.0.0-use.local
-  resolution: "palettes@workspace:app/palettes"
-  dependencies:
-    "@bangle.dev/core": 0.18.1
-    "@testing-library/react": ^11.2.7
-    "@testing-library/react-hooks": ^7.0.0
-    "@testing-library/user-event": ^13.1.9
-    action-context: "workspace:*"
-    baby-fs: "workspace:*"
-    collapsible-heading: "workspace:*"
-    commands: "workspace:*"
-    config: "workspace:*"
-    editor-manager-context: "workspace:*"
-    extension-registry: "workspace:*"
-    magic-palette: "workspace:*"
-    react: 17.0.2
-    react-dom: 17.0.2
-    ui-components: "workspace:*"
-    ui-context: "workspace:*"
-    utils: "workspace:*"
-    workspace: "workspace:*"
-    workspace-context: "workspace:*"
-  languageName: unknown
-  linkType: soft
 
 "param-case@npm:^3.0.3":
   version: 3.0.4
@@ -16208,6 +16088,8 @@ typescript@4.2.4:
   dependencies:
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     magic-palette: "workspace:*"
     prop-types: ^15.7.2
     react: 17.0.2
@@ -16304,13 +16186,6 @@ typescript@4.2.4:
   version: 1.0.1
   resolution: "uniq@npm:1.0.1"
   checksum: 8206535f83745ea83f9da7035f3b983fd6ed5e35b8ed7745441944e4065b616bc67cf0d0a23a86b40ee0074426f0607f0a138f9b78e124eb6a7a6a6966055709
-  languageName: node
-  linkType: hard
-
-"universal-user-agent@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "universal-user-agent@npm:6.0.0"
-  checksum: 5092bbc80dd0d583cef0b62c17df0043193b74f425112ea6c1f69bc5eda21eeec7a08d8c4f793a277eb2202ffe9b44bec852fa3faff971234cd209874d1b79ef
   languageName: node
   linkType: hard
 
@@ -16455,6 +16330,8 @@ typescript@4.2.4:
   resolution: "utils@workspace:lib/utils"
   dependencies:
     "@testing-library/react-hooks": ^7.0.0
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     base-error: "workspace:*"
     config: "workspace:*"
     constants: "workspace:*"
@@ -17022,25 +16899,34 @@ typescript@4.2.4:
     "@bangle.dev/core": 0.18.1
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^7.0.0
+    "@types/history": ^4.7.8
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
+    "@types/react-router-dom": ^5.1.7
     baby-fs: "workspace:*"
     config: "workspace:*"
-    react: 17.0.2
+    react: ^17.0.2
     react-dom: 17.0.2
     react-router-dom: ^5.2.0
     react-test-renderer: 17.0.2
     utils: "workspace:*"
-    workspace: "workspace:*"
+    workspaces: "workspace:*"
+    ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"workspace@workspace:*, workspace@workspace:lib/workspace":
+"workspaces@workspace:*, workspaces@workspace:lib/workspaces":
   version: 0.0.0-use.local
-  resolution: "workspace@workspace:lib/workspace"
+  resolution: "workspaces@workspace:lib/workspaces"
   dependencies:
     "@bangle.dev/core": 0.18.1
-    "@octokit/rest": ^18.5.3
     "@testing-library/react": ^11.2.7
+    "@types/history": ^4.7.8
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
+    "@types/react-router-dom": ^5.1.7
     baby-fs: "workspace:*"
+    baby-fs-test-mock: "workspace:*"
     config: "workspace:*"
     extension-registry: "workspace:*"
     idb-keyval: ^5.0.6
@@ -17049,6 +16935,11 @@ typescript@4.2.4:
     react-dom: 17.0.2
     react-router-dom: ^5.2.0
     utils: "workspace:*"
+    ws-path: "workspace:*"
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+    react-router-dom: "*"
   languageName: unknown
   linkType: soft
 
@@ -17103,6 +16994,22 @@ typescript@4.2.4:
   checksum: c55b24617cc61c3a4379f425fc62a386cc51916a9b9d993f39734d005a09d5a4bb748bc251f1304e7abd71d0a26d339996c275955f527a131b1dcded67878280
   languageName: node
   linkType: hard
+
+"ws-path@workspace:*, ws-path@workspace:lib/ws-path":
+  version: 0.0.0-use.local
+  resolution: "ws-path@workspace:lib/ws-path"
+  dependencies:
+    "@types/history": ^4.7.8
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
+    "@types/react-router-dom": ^5.1.7
+    config: "workspace:*"
+    react: ^17.0.2
+    react-dom: 17.0.2
+    react-router-dom: ^5.2.0
+    utils: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "ws@npm:7.4.6, ws@npm:^7.4.5":
   version: 7.4.6

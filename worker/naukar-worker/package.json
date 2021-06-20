@@ -27,6 +27,6 @@
     "config": "workspace:*",
     "idb-keyval": "^5.0.6",
     "object-sync": "workspace:*",
-    "workspace": "workspace:*"
+    "workspaces": "workspace:*"
   }
 }

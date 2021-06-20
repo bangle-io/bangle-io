@@ -21,8 +21,7 @@
   "dependencies": {
     "@bangle.dev/core": "0.18.1",
     "extension-registry": "workspace:*",
-    "utils": "workspace:*",
-    "workspace": "workspace:*"
+    "utils": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"
