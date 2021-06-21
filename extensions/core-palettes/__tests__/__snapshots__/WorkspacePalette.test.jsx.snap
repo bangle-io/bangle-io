@@ -25,7 +25,7 @@ exports[`Component renders correctly 1`] = `
             test-ws1
           </span>
           <span
-            class="mp-extra-info"
+            class="extra-info"
           >
             nativefs
           </span>

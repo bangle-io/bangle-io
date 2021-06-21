@@ -47,12 +47,12 @@ export function InputPalette({
         {
           uid: 'input-confirm',
           title: 'Confirm',
-          disabled: Boolean(showSpinner || error),
+          isDisabled: Boolean(showSpinner || error),
         },
         {
           uid: 'input-cancel',
           title: 'Cancel',
-          disabled: Boolean(showSpinner),
+          isDisabled: Boolean(showSpinner),
         },
       ].filter(Boolean),
     [error, showSpinner],

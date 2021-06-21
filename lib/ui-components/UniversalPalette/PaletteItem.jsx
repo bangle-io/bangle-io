@@ -11,7 +11,7 @@ const ItemPropTypes = PropTypes.exact({
   showDividerAbove: PropTypes.bool,
   description: PropTypes.node,
   extraInfo: PropTypes.node,
-  disabled: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 });
 
 PaletteItemUI.propTypes = {
@@ -47,9 +47,13 @@ export function PaletteItemUI({
 
   const titleElement = (
     <span>
-      <span className="mp-title">{item.title}</span>
+      <span className="u-palette-title text-base font-normal">
+        {item.title}
+      </span>
       {item.extraInfo && (
-        <span className="mp-extra-info">{item.extraInfo}</span>
+        <span className="u-palette-extra-info text-base font-light">
+          {item.extraInfo}
+        </span>
       )}
     </span>
   );
@@ -83,12 +87,14 @@ export function PaletteItemUI({
         ...style,
       }}
     >
-      <div className="mp-details" style={{ display: 'flex' }}>
+      <div className="u-palette-details" style={{ display: 'flex' }}>
         <div className="left-icon">{item.leftIcon}</div>
         {item.description ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {titleElement}
-            <span className="description">{item.description}</span>
+            <span className="u-palette-description text-sm">
+              {item.description}
+            </span>
           </div>
         ) : (
           titleElement
