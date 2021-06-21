@@ -27,12 +27,6 @@
       "extension-registry/*": [
         "../../lib/extension-registry/*"
       ],
-      "magic-palette": [
-        "../../js-lib/magic-palette/index.js"
-      ],
-      "magic-palette/*": [
-        "../../js-lib/magic-palette/*"
-      ],
       "ui-components": [
         "../../lib/ui-components/index.js"
       ],

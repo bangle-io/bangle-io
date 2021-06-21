@@ -2,6 +2,13 @@
   "extends": "../../jsconfig-base.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "ws-path": [
+        "../../lib/ws-path/index.ts"
+      ],
+      "ws-path/*": [
+        "../../lib/ws-path/*"
+      ]
+    }
   }
 }

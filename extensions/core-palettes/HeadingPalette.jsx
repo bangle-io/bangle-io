@@ -5,22 +5,14 @@ import React, {
   useMemo,
 } from 'react';
 import { Selection } from '@bangle.dev/core/prosemirror/state';
-import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
-import { PaletteInfo, PaletteInfoItem, NullIcon } from 'ui-components';
+import { UniversalPalette, NullIcon } from 'ui-components/index';
 import { extensionName } from './config';
 import { EditorManagerContext } from 'editor-manager-context/index';
 
 const identifierPrefix = '#';
 export const headingPalette = {
   type: extensionName + '/heading',
-  icon: (
-    <span className="pr-2 flex items-center">
-      <NullIcon className="h-5 w-5" />
-    </span>
-  ),
+  icon: <NullIcon />,
   identifierPrefix,
   placeholder: 'Jump to a heading.',
   parseRawQuery: (rawQuery) => {
@@ -32,7 +24,7 @@ export const headingPalette = {
   ReactComponent: React.forwardRef(HeadingPalette),
 };
 
-function HeadingPalette({ query, paletteItemProps }, ref) {
+function HeadingPalette({ query, onSelect, getActivePaletteItem }, ref) {
   const { primaryEditor } = useContext(EditorManagerContext);
 
   const items = useMemo(() => {
@@ -102,33 +94,33 @@ function HeadingPalette({ query, paletteItemProps }, ref) {
     [onExecuteItem],
   );
 
+  const activeItem = getActivePaletteItem(items);
+
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              isDisabled={item.disabled}
-              {...paletteItemProps}
+              item={item}
+              onSelect={onSelect}
+              isActive={activeItem === item}
             />
           );
         })}
-      </MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Jump to a heading
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

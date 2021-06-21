@@ -18,12 +18,15 @@ let workspaces = [
   },
 ];
 
-let switchWorkspace, deleteWorkspace, dismissPalette, paletteItemProps;
+let switchWorkspace,
+  deleteWorkspace,
+  dismissPalette,
+  onSelect,
+  getActivePaletteItem;
 beforeEach(async () => {
-  paletteItemProps = {
-    counter: 0,
-    onSelect: jest.fn(),
-  };
+  onSelect = jest.fn();
+  getActivePaletteItem = jest.fn();
+
   deleteWorkspace = jest.fn();
   switchWorkspace = jest.fn();
   dismissPalette = jest.fn();
@@ -39,7 +42,8 @@ test('Component renders correctly', async () => {
     <workspacePalette.ReactComponent
       query=""
       dismissPalette={dismissPalette}
-      paletteItemProps={paletteItemProps}
+      onSelect={onSelect}
+      getActivePaletteItem={getActivePaletteItem}
     />,
   );
 

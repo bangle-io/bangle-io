@@ -1,16 +1,8 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import { useWorkspaces } from 'workspaces';
-import {
-  AlbumIcon,
-  CloseIcon,
-  PaletteInfo,
-  PaletteInfoItem,
-} from 'ui-components/index';
+import { AlbumIcon, CloseIcon, UniversalPalette } from 'ui-components/index';
 import { extensionName } from './config';
-import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
+
 import { keybindings, keyDisplayValue } from 'config/index';
 import { useRecencyWatcher } from './hooks';
 
@@ -21,11 +13,7 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 const identifierPrefix = 'ws:';
 export const workspacePalette = {
   type: extensionName + '/workspace',
-  icon: (
-    <span className="pr-2 flex items-center">
-      <AlbumIcon className="h-5 w-5" />
-    </span>
-  ),
+  icon: <AlbumIcon />,
   identifierPrefix,
   placeholder: 'Select a workspace to open',
   keybinding: keybindings.toggleWorkspacePalette.key,
@@ -39,7 +27,7 @@ export const workspacePalette = {
 };
 const storageKey = 'WorkspacePaletteUIComponent/1';
 function WorkspacePaletteUIComponent(
-  { query, dismissPalette, paletteItemProps },
+  { query, dismissPalette, onSelect, getActivePaletteItem },
   ref,
 ) {
   const { workspaces, switchWorkspace, deleteWorkspace } = useWorkspaces();
@@ -57,12 +45,33 @@ function WorkspacePaletteUIComponent(
             title: workspace.name,
             extraInfo: workspace.type,
             data: { workspace },
+            rightHoverIcons: (
+              <CloseIcon
+                style={{
+                  height: 16,
+                  width: 16,
+                }}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (
+                    window.confirm(
+                      `Are you sure you want to remove "${workspace.name}"? Removing a workspace does not delete any files inside it.`,
+                    )
+                  ) {
+                    await deleteWorkspace(workspace.name);
+                    dismissPalette();
+                  }
+                }}
+              />
+            ),
           };
         }),
     );
 
     return _items;
-  }, [query, workspaces, injectRecency]);
+  }, [query, workspaces, dismissPalette, deleteWorkspace, injectRecency]);
+
+  const activeItem = getActivePaletteItem(items);
 
   const onExecuteItem = useCallback(
     (getUid, sourceInfo) => {
@@ -86,55 +95,33 @@ function WorkspacePaletteUIComponent(
 
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              isDisabled={item.disabled}
-              rightIcons={item.rightIcons}
-              {...paletteItemProps}
-              rightHoverIcons={
-                <CloseIcon
-                  style={{
-                    height: 16,
-                    width: 16,
-                  }}
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    if (
-                      window.confirm(
-                        `Are you sure you want to remove "${item.data.workspace.name}"? Removing a workspace does not delete any files inside it.`,
-                      )
-                    ) {
-                      await deleteWorkspace(item.data.workspace.name);
-                      dismissPalette();
-                    }
-                  }}
-                />
-              }
+              item={item}
+              onSelect={onSelect}
+              isActive={item === activeItem}
             />
           );
         })}
-      </MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Open a workspace
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">{keyDisplayValue('Mod')}-Enter</kbd> Open
           a in new tab
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

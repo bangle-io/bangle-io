@@ -6,27 +6,35 @@ import React, {
   useEffect,
 } from 'react';
 import { sleep } from 'utils/utility';
-import {
-  MagicInputPalette,
-  MagicPaletteContainer,
-  usePaletteDriver,
-  MagicPaletteItemsContainer,
-  MagicPaletteItem,
-  MagicPaletteItemUI,
-} from 'magic-palette/index';
-import { NullIcon, SpinnerIcon } from 'ui-components';
 import { useDestroyRef } from 'utils/index';
+import { UniversalPalette } from '../UniversalPalette/index';
+import { NullIcon, SpinnerIcon } from '../Icons';
+import PropTypes from 'prop-types';
 
-export function InputModal({
+InputPalette.propTypes = {
+  placeholder: PropTypes.string,
+  initialValue: PropTypes.string,
+  onDismiss: PropTypes.func.isRequired,
+  onExecute: PropTypes.func.isRequired,
+  updateError: PropTypes.func.isRequired,
+  error: PropTypes.object,
+  children: PropTypes.element,
+  widescreen: PropTypes.bool.isRequired,
+  selectOnMount: PropTypes.bool,
+};
+
+export function InputPalette({
   placeholder,
   initialValue = '',
-  dismissModal,
+  onDismiss,
   // you are expected to never throw error in the onExecute
   onExecute,
   updateError,
   error,
   children,
   selectOnMount,
+  widescreen,
+  className = '',
 }) {
   const destroyedRef = useDestroyRef();
   const [showSpinner, updateSpinner] = useState();
@@ -39,9 +47,13 @@ export function InputModal({
         {
           uid: 'input-confirm',
           title: 'Confirm',
-          disabled: showSpinner || error,
+          isDisabled: Boolean(showSpinner || error),
         },
-        { uid: 'input-cancel', title: 'Cancel', disabled: showSpinner },
+        {
+          uid: 'input-cancel',
+          title: 'Cancel',
+          isDisabled: Boolean(showSpinner),
+        },
       ].filter(Boolean),
     [error, showSpinner],
   );
@@ -86,41 +98,37 @@ export function InputModal({
           resolved = true;
         }
       } else if (uid === 'input-cancel') {
-        dismissModal();
+        onDismiss();
       }
       resolved = true;
     },
-    [inputValue, dismissModal, items, error, onExecute, destroyedRef],
+    [inputValue, onDismiss, items, error, onExecute, destroyedRef],
   );
 
-  const { inputProps, resetCounter, paletteItemProps } = usePaletteDriver(
-    dismissModal,
-    onExecuteItem,
-  );
+  const { inputProps, resetCounter, onSelect, counter } =
+    UniversalPalette.usePaletteDriver(onDismiss, onExecuteItem);
 
   const onInputValueChange = (value) => {
     _onInputValueChange(value);
     resetCounter();
   };
 
+  const activeItem =
+    items[UniversalPalette.getActiveIndex(counter, items.length)];
+
   return (
-    <MagicPaletteContainer
+    <UniversalPalette.PaletteContainer
       onClickOutside={() => {
-        dismissModal();
+        onDismiss();
       }}
       onClickInside={() => {
         inputRef.current?.focus();
       }}
-      widescreen={false}
+      widescreen={widescreen}
+      className={'input-palette ' + className}
     >
-      <MagicInputPalette
-        leftIcon={
-          showSpinner ? (
-            <SpinnerIcon className="h-5 w-5" />
-          ) : (
-            <NullIcon className="h-5 w-5" />
-          )
-        }
+      <UniversalPalette.PaletteInput
+        leftIcon={showSpinner ? <SpinnerIcon /> : <NullIcon />}
         placeholder={placeholder}
         inputValue={inputValue}
         onInputValueChange={onInputValueChange}
@@ -128,31 +136,27 @@ export function InputModal({
         selectOnMount={selectOnMount}
         {...inputProps}
       />
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item, i) => (
-          <MagicPaletteItem
-            uid={item.uid}
-            items={items}
-            title={item.title}
-            extraInfo={item.extraInfo}
-            description={item.description}
+          <UniversalPalette.PaletteItemUI
             key={item.uid}
-            isDisabled={item.disabled}
-            {...paletteItemProps}
+            item={item}
+            onSelect={onSelect}
+            isActive={item === activeItem}
           />
         ))}
         {errorItem && (
-          <MagicPaletteItemUI
-            uid={errorItem.uid}
-            title={errorItem.title}
-            description={errorItem.description}
+          <UniversalPalette.PaletteItemUI
+            item={errorItem}
+            isActive={false}
+            onSelect={() => {}}
             style={{
               backgroundColor: 'var(--error-bg-color)',
             }}
           />
         )}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.PaletteItemsContainer>
       {children}
-    </MagicPaletteContainer>
+    </UniversalPalette.PaletteContainer>
   );
 }

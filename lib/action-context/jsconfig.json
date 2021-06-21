@@ -2,6 +2,13 @@
   "extends": "../../jsconfig-base.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "extension-registry": [
+        "../extension-registry/index.ts"
+      ],
+      "extension-registry/*": [
+        "../extension-registry/*"
+      ]
+    }
   }
 }

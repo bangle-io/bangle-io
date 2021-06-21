@@ -87,12 +87,6 @@
       "inline-emoji/*": [
         "../../extensions/inline-emoji/*"
       ],
-      "magic-palette": [
-        "../../js-lib/magic-palette/index.js"
-      ],
-      "magic-palette/*": [
-        "../../js-lib/magic-palette/*"
-      ],
       "naukar-proxy": [
         "../../worker/naukar-proxy/index.js"
       ],

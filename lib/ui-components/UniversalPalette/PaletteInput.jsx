@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-export const MagicInputPalette = React.forwardRef(function MagicInputPalette(
+export const PaletteInput = React.forwardRef(function PaletteInput(
   {
     className,
     onInputValueChange,
@@ -16,7 +16,7 @@ export const MagicInputPalette = React.forwardRef(function MagicInputPalette(
   ref,
 ) {
   useEffect(() => {
-    ref.current?.focus();
+    ref?.current?.focus();
   }, [ref]);
 
   const onFocus = useCallback(
@@ -47,18 +47,14 @@ export const MagicInputPalette = React.forwardRef(function MagicInputPalette(
 
   return (
     <div
-      className={'magic-palette-input-wrapper ' + (className ? className : '')}
+      className={
+        'universal-palette-input-wrapper ' + (className ? className : '')
+      }
       style={{ display: 'flex' }}
     >
       {leftIcon && (
-        <div
-          className="left-icon"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          {leftIcon}
+        <div className="left-icon">
+          <span className="h-5 w-5">{leftIcon}</span>
         </div>
       )}
       <input
@@ -70,9 +66,9 @@ export const MagicInputPalette = React.forwardRef(function MagicInputPalette(
         autoCapitalize="off"
         spellCheck="false"
         autoCorrect="off"
-        aria-label="magic-palette-input"
+        aria-label="universal-palette-input"
         style={{ flexGrow: 1 }}
-        className={'magic-palette-input'}
+        className={'universal-palette-input'}
         value={inputValue}
         onChange={onChange}
       />
@@ -80,7 +76,7 @@ export const MagicInputPalette = React.forwardRef(function MagicInputPalette(
   );
 });
 
-MagicInputPalette.propTypes = {
+PaletteInput.propTypes = {
   onSpecialKey: PropTypes.func.isRequired,
   specialKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
   inputValue: PropTypes.string.isRequired,

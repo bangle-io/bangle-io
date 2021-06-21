@@ -32,7 +32,7 @@
 
 ### May 13, 2021
 
-- A new command to clone a workspace.
+- A new action to clone a workspace.
 
 ### May 7, 2021
 
@@ -44,13 +44,13 @@
 
 ### May 1, 2021
 
-- you can now insert blocks above and below your current block via command palette (Type `/` to use it) or by pressing `Command-Enter` (below) or `Command-Shift-Enter` (above).
+- you can now insert blocks above and below your current block via action palette (Type `/` to use it) or by pressing `Command-Enter` (below) or `Command-Shift-Enter` (above).
 
 - We now support wiki style links. Type `[[` followed by the name of your note to create a link to it.
 
 ### Apr 30 2021
 
-- A new inline command palette! Type `/` to use it.
+- A new inline action palette! Type `/` to use it.
 
 ### Ap 27 2021
 

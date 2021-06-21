@@ -24,7 +24,7 @@ const SELECTOR_TIMEOUT = 500;
 
 async function createWorkspace(page, wsName = 'test' + uuid(4)) {
   await runAction(page, '@action/core-actions/NEW_WORKSPACE_ACTION');
-  let handle = await page.waitForSelector('.magic-palette-container', {
+  let handle = await page.waitForSelector('.universal-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
 
@@ -66,7 +66,7 @@ async function newPage(browser) {
 }
 async function createNewNote(page, wsName, noteName = 'new_file.md') {
   await runAction(page, '@action/core-actions/NEW_NOTE_ACTION');
-  let handle = await page.waitForSelector('.magic-palette-container', {
+  let handle = await page.waitForSelector('.universal-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
   if (!noteName.endsWith('.md')) {
@@ -103,7 +103,7 @@ async function runAction(page, actionId) {
 
 async function clickPaletteRow(page, id) {
   const result = await page.waitForSelector(
-    `.magic-palette-item[data-id="${id}"]`,
+    `.universal-palette-item[data-id="${id}"]`,
     {
       timeout: SELECTOR_TIMEOUT,
     },
@@ -184,14 +184,13 @@ async function getWsPathsShownInFilePalette(page) {
   await page.keyboard.press('p');
   await page.keyboard.up(ctrlKey);
 
-  const handle = await page.waitForSelector('.magic-palette-container', {
+  const handle = await page.waitForSelector('.universal-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
 
-  await longSleep();
-
-  const wsPaths = await handle.$$eval(`.magic-palette-item[data-id]`, (nodes) =>
-    [...nodes].map((n) => n.getAttribute('data-id')),
+  const wsPaths = await handle.$$eval(
+    `.universal-palette-item[data-id]`,
+    (nodes) => [...nodes].map((n) => n.getAttribute('data-id')),
   );
 
   await page.keyboard.press('Escape');

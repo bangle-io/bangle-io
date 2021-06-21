@@ -1,20 +1,12 @@
 import React, { useContext, useCallback, useImperativeHandle } from 'react';
-import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
-import { PaletteInfo, PaletteInfoItem, NullIcon } from 'ui-components';
+import { UniversalPalette, NullIcon } from 'ui-components';
 import { extensionName } from './config';
 import { ExtensionRegistryContext } from 'extension-registry';
 
 const identifierPrefix = '?';
 export const questionPalette = {
   type: extensionName + '/question',
-  icon: (
-    <span className="pr-2 flex items-center">
-      <NullIcon className="h-5 w-5" />
-    </span>
-  ),
+  icon: <NullIcon />,
   identifierPrefix,
   placeholder: 'Available palettes',
   parseRawQuery: (rawQuery) => {
@@ -27,23 +19,26 @@ export const questionPalette = {
 };
 
 function QuestionPaletteUIComponent(
-  { query, updatePalette, dismissPalette, paletteItemProps },
+  { query, updatePalette, onSelect, getActivePaletteItem },
   ref,
 ) {
   const extensionRegistry = useContext(ExtensionRegistryContext);
 
-  const items2 = extensionRegistry.getAllPalettes();
-  const items = items2.map((r) => {
-    return {
-      uid: r.type,
-      rightIcons: <kbd>{r.identifierPrefix}</kbd>,
-      rightHoverIcons: <kbd>{r.identifierPrefix}</kbd>,
-      title: r.type.split('/').slice(1).join('/'),
-      data: {
-        type: r.type,
-      },
-    };
-  });
+  const items = extensionRegistry
+    .getAllPalettes()
+    .map((r) => {
+      return {
+        uid: r.type,
+        rightIcons: <kbd>{r.identifierPrefix}</kbd>,
+        rightHoverIcons: <kbd>{r.identifierPrefix}</kbd>,
+        title: r.type.split('/').slice(1).join('/'),
+        data: {
+          type: r.type,
+        },
+      };
+    })
+    .filter((obj) => strMatch(obj.title, query));
+
   const onExecuteItem = useCallback(
     (getUid, sourceInfo) => {
       const uid = getUid(items);
@@ -65,35 +60,33 @@ function QuestionPaletteUIComponent(
     [onExecuteItem],
   );
 
+  const activeItem = getActivePaletteItem(items);
+
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              rightIcons={item.rightIcons}
-              rightHoverIcons={item.rightHoverIcons}
-              isDisabled={item.disabled}
-              {...paletteItemProps}
+              item={item}
+              isActive={activeItem === item}
+              onSelect={onSelect}
             />
           );
         })}
-      </MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Select a Palette
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

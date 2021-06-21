@@ -1,29 +1,16 @@
-import React, {
-  useMemo,
-  useRef,
-  useCallback,
-  useState,
-  useEffect,
-} from 'react';
-import { sleep } from 'utils/utility';
-import {
-  MagicInputPalette,
-  MagicPaletteContainer,
-  usePaletteDriver,
-  MagicPaletteItemsContainer,
-  MagicPaletteItem,
-  MagicPaletteItemUI,
-} from 'magic-palette/index';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
+import { UniversalPalette } from '../UniversalPalette/index';
 
-export function ListModal({
+export function ListPalette({
   placeholder,
   initialValue = '',
-  dismissModal,
+  onDismiss,
   items,
   onSelectItem,
   error,
   children,
   updateError,
+  widescreen,
 }) {
   const [inputValue, _onInputValueChange] = useState(initialValue);
   items = items.filter((obj) => strMatch(obj.title, inputValue));
@@ -53,10 +40,10 @@ export function ListModal({
     [onSelectItem, items],
   );
 
-  const { inputProps, resetCounter, paletteItemProps } = usePaletteDriver(
-    dismissModal,
-    onExecuteItem,
-  );
+  const { inputProps, counter, resetCounter, onSelect } =
+    UniversalPalette.usePaletteDriver(onDismiss, onExecuteItem);
+
+  const activeItem = UniversalPalette.useActivePaletteItem(items, counter);
 
   const onInputValueChange = (value) => {
     _onInputValueChange(value);
@@ -64,48 +51,44 @@ export function ListModal({
   };
 
   return (
-    <MagicPaletteContainer
+    <UniversalPalette.PaletteContainer
+      widescreen={widescreen}
       onClickOutside={() => {
-        dismissModal();
+        onDismiss();
       }}
       onClickInside={() => {
         inputRef.current?.focus();
       }}
-      widescreen={false}
     >
-      <MagicInputPalette
+      <UniversalPalette.PaletteInput
         placeholder={placeholder}
         inputValue={inputValue}
         onInputValueChange={onInputValueChange}
         ref={inputRef}
         {...inputProps}
       />
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {errorItem && (
-          <MagicPaletteItemUI
-            uid={errorItem.uid}
-            title={errorItem.title}
-            description={errorItem.description}
+          <UniversalPalette.PaletteItemUI
+            item={errorItem}
+            isActive={false}
+            onSelect={() => {}}
             style={{
               backgroundColor: 'var(--error-bg-color)',
             }}
           />
         )}
         {items.map((item, i) => (
-          <MagicPaletteItem
-            uid={item.uid}
-            items={items}
-            title={item.title}
-            extraInfo={item.extraInfo}
-            description={item.description}
+          <UniversalPalette.PaletteItemUI
             key={item.uid}
-            isDisabled={item.disabled}
-            {...paletteItemProps}
+            item={item}
+            onSelect={onSelect}
+            isActive={activeItem === item}
           />
         ))}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.PaletteItemsContainer>
       {children}
-    </MagicPaletteContainer>
+    </UniversalPalette.PaletteContainer>
   );
 }
 

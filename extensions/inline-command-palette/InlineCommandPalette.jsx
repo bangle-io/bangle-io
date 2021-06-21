@@ -14,11 +14,7 @@ import {
   PALETTE_ITEM_HINT_TYPE,
   PALETTE_ITEM_REGULAR_TYPE,
 } from './palette-item';
-import {
-  PaletteInfo,
-  PaletteInfoItem,
-  InlinePaletteRow,
-} from 'ui-components/index';
+import { UniversalPalette, InlinePaletteRow } from 'ui-components/index';
 
 const staticHints = [
   PaletteItem.create({
@@ -180,17 +176,17 @@ export function InlineCommandPalette() {
           );
         })}
       </div>
-      <PaletteInfo>
-        <PaletteInfoItem>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Execute a command
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Esc</kbd> Dismiss
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </div>,
     tooltipContentDOM,
   );

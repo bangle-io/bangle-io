@@ -6,11 +6,7 @@ import React, {
   useRef,
 } from 'react';
 import { UIManagerContext } from 'ui-context';
-import {
-  MagicInputPalette,
-  MagicPaletteContainer,
-  usePaletteDriver,
-} from 'magic-palette/index';
+import { UniversalPalette } from 'ui-components/index';
 import { useKeybindings } from 'utils/index';
 import { ActionContext } from 'action-context/index';
 import { ExtensionRegistryContext } from 'extension-registry/index';
@@ -57,14 +53,14 @@ export function PaletteManager() {
         value: { type, initialQuery, metadata },
       });
       if (type) {
-        document.querySelector('.magic-palette-container input')?.focus();
+        document.querySelector('.universal-palette-container input')?.focus();
       }
     },
     [dispatch],
   );
 
-  const { inputProps, updateCounter, resetCounter, paletteItemProps } =
-    usePaletteDriver(dismissPalette, onExecuteItem);
+  const { inputProps, updateCounter, resetCounter, counter, onSelect } =
+    UniversalPalette.usePaletteDriver(dismissPalette, onExecuteItem);
 
   useEffect(() => {
     resetCounter();
@@ -116,19 +112,26 @@ export function PaletteManager() {
 
   const Palette = extensionRegistry.getPalette(paletteType);
 
+  const getActivePaletteItem = useCallback(
+    (items) => {
+      return items[UniversalPalette.getActiveIndex(counter, items.length)];
+    },
+    [counter],
+  );
+
   if (!Palette) {
     return null;
   }
 
   return (
-    <MagicPaletteContainer
+    <UniversalPalette.PaletteContainer
       widescreen={widescreen}
       onClickOutside={dismissPalette}
       onClickInside={() => {
-        document.querySelector('.magic-palette-container input')?.focus();
+        document.querySelector('.universal-palette-container input')?.focus();
       }}
     >
-      <MagicInputPalette
+      <UniversalPalette.PaletteInput
         leftIcon={Palette.icon}
         placeholder={Palette.placeholder}
         inputValue={Palette.identifierPrefix + query}
@@ -143,9 +146,11 @@ export function PaletteManager() {
         paletteMetadata={paletteMetadata}
         updatePalette={updatePalette}
         dismissPalette={dismissPalette}
-        paletteItemProps={paletteItemProps}
+        onSelect={onSelect}
+        counter={counter}
+        getActivePaletteItem={getActivePaletteItem}
       />
-    </MagicPaletteContainer>
+    </UniversalPalette.PaletteContainer>
   );
 }
 

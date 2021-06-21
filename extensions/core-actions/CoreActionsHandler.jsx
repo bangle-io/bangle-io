@@ -183,7 +183,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
     };
   }, [actionHandler, registerActionHandler]);
 
-  const dismissModal = useCallback(
+  const onDismiss = useCallback(
     (focusEditor = true) => {
       updateInputModal({});
       if (focusEditor) {
@@ -196,18 +196,18 @@ export function CoreActionsHandler({ registerActionHandler }) {
   if (inputModal.type === 'new-note') {
     return (
       <NewNoteInputModal
-        dismissModal={dismissModal}
+        onDismiss={onDismiss}
         initialValue={inputModal.initialValue}
       />
     );
   }
   if (inputModal.type === 'rename-note') {
-    return <RenameNoteInputModal dismissModal={dismissModal} />;
+    return <RenameNoteInputModal onDismiss={onDismiss} />;
   }
   if (inputModal.type === 'new-workspace') {
     return (
       <NewWorkspaceInputModal
-        dismissModal={dismissModal}
+        onDismiss={onDismiss}
         clone={inputModal.clone}
         resetWsName={inputModal.resetWsName}
       />

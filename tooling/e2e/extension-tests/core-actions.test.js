@@ -43,7 +43,7 @@ describe('clone workspace action', () => {
       [n2, n1].sort(),
     );
     await runAction(page, '@action/core-actions/CLONE_WORKSPACE_ACTION');
-    const handle = await page.waitForSelector('.magic-palette-container', {
+    const handle = await page.waitForSelector('.universal-palette-container', {
       timeout: SELECTOR_TIMEOUT,
     });
 
@@ -61,7 +61,7 @@ describe('clone workspace action', () => {
     ]);
 
     expect(await page.url()).toMatch(url + '/ws/' + wsName2);
-
+    await longSleep(200);
     expect(
       (await getWsPathsShownInFilePalette(page))
         .map((r) => resolvePath(r).filePath)

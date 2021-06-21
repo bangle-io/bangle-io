@@ -4,11 +4,8 @@ import React, {
   useImperativeHandle,
   useMemo,
 } from 'react';
-import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
-import { PaletteInfo, PaletteInfoItem, NullIcon } from 'ui-components';
+
+import { UniversalPalette, NullIcon, TerminalIcon } from 'ui-components/index';
 import { extensionName } from './config';
 import { ActionContext } from 'action-context';
 import { keybindings } from 'config/index';
@@ -18,11 +15,7 @@ import { ExtensionRegistryContext } from 'extension-registry';
 const identifierPrefix = '>';
 export const actionPalette = {
   type: extensionName + '/action',
-  icon: (
-    <span className="pr-2 flex items-center">
-      <NullIcon className="h-5 w-5" />
-    </span>
-  ),
+  icon: <TerminalIcon />,
   identifierPrefix,
   placeholder: 'Actions',
   keybinding: keybindings.toggleCommandPalette.key,
@@ -38,7 +31,7 @@ export const actionPalette = {
 const storageKey = 'ActionPaletteUIComponent/1';
 
 function ActionPaletteUIComponent(
-  { query, updatePalette, dismissPalette, paletteItemProps },
+  { query, onSelect, getActivePaletteItem },
   ref,
 ) {
   const extensionRegistry = useContext(ExtensionRegistryContext);
@@ -84,35 +77,33 @@ function ActionPaletteUIComponent(
     [onExecuteItem],
   );
 
+  const activeItem = getActivePaletteItem(items);
+
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              rightIcons={item.rightIcons}
-              rightHoverIcons={item.rightHoverIcons}
-              isDisabled={item.disabled}
-              {...paletteItemProps}
+              item={item}
+              onSelect={onSelect}
+              isActive={activeItem === item}
             />
           );
         })}
-      </MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Select a Palette
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

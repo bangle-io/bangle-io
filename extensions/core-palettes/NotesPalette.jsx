@@ -6,16 +6,12 @@ import React, {
 } from 'react';
 import { removeMdExtension } from 'utils/index';
 import { resolvePath } from 'ws-path';
+
 import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
-import {
+  UniversalPalette,
   ButtonIcon,
   FileDocumentIcon,
   SecondaryEditorIcon,
-  PaletteInfo,
-  PaletteInfoItem,
 } from 'ui-components/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { extensionName } from './config';
@@ -26,7 +22,7 @@ const emptyArray = [];
 
 export const notesPalette = {
   type: extensionName + '/notes',
-  icon: <PaletteIcon />,
+  icon: <FileDocumentIcon />,
   identifierPrefix: '',
   placeholder: "Enter a file name or type '?' to see other palettes.",
   keybinding: keybindings.toggleFilePalette.key,
@@ -36,7 +32,10 @@ export const notesPalette = {
 };
 const storageKey = 'NotesPalette/1';
 
-function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
+function NotesPalette(
+  { query, dismissPalette, onSelect, getActivePaletteItem },
+  ref,
+) {
   const {
     pushWsPath,
     primaryWsPath,
@@ -55,13 +54,31 @@ function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
             data: {
               wsPath,
             },
+            rightHoverIcons: (
+              <ButtonIcon
+                hint={`Open in split screen`}
+                hintPos="left"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  pushWsPath(wsPath, false, true);
+                  dismissPalette();
+                }}
+              >
+                <SecondaryEditorIcon
+                  style={{
+                    height: 18,
+                    width: 18,
+                  }}
+                />
+              </ButtonIcon>
+            ),
           };
         })
         .filter((obj) => strMatch(obj.title, query)),
     );
 
     return _items.slice(0, 100);
-  }, [noteWsPaths, injectRecency, query]);
+  }, [noteWsPaths, injectRecency, pushWsPath, dismissPalette, query]);
 
   const onExecuteItem = useCallback(
     (getUid, sourceInfo) => {
@@ -93,59 +110,40 @@ function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
     [onExecuteItem],
   );
 
+  const activeItem = getActivePaletteItem(items);
+
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              isDisabled={item.disabled}
-              rightIcons={item.rightIcons}
-              {...paletteItemProps}
-              rightHoverIcons={
-                <ButtonIcon
-                  hint={`Open in split screen`}
-                  hintPos="left"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    pushWsPath(item.data.wsPath, false, true);
-                    dismissPalette();
-                  }}
-                >
-                  <SecondaryEditorIcon
-                    style={{
-                      height: 18,
-                      width: 18,
-                    }}
-                  />
-                </ButtonIcon>
-              }
+              item={item}
+              onSelect={onSelect}
+              isActive={activeItem === item}
             />
           );
         })}
-      </MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Open
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Shift-Enter</kbd> Open in side
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">{keyDisplayValue('Mod')}-Enter</kbd> Open
           in new tab
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }
@@ -158,12 +156,4 @@ function strMatch(a, b) {
 
   a = a.toLocaleLowerCase();
   return a.includes(b) || b.includes(a);
-}
-
-function PaletteIcon() {
-  return (
-    <span className="pr-2 flex items-center">
-      <FileDocumentIcon className="h-5 w-5" />
-    </span>
-  );
 }
