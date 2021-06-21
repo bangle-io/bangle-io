@@ -23,23 +23,26 @@ export const questionPalette = {
 };
 
 function QuestionPaletteUIComponent(
-  { query, updatePalette, dismissPalette, paletteItemProps },
+  { query, updatePalette, onSelect, getActivePaletteItem },
   ref,
 ) {
   const extensionRegistry = useContext(ExtensionRegistryContext);
 
-  const items2 = extensionRegistry.getAllPalettes();
-  const items = items2.map((r) => {
-    return {
-      uid: r.type,
-      rightIcons: <kbd>{r.identifierPrefix}</kbd>,
-      rightHoverIcons: <kbd>{r.identifierPrefix}</kbd>,
-      title: r.type.split('/').slice(1).join('/'),
-      data: {
-        type: r.type,
-      },
-    };
-  });
+  const items = extensionRegistry
+    .getAllPalettes()
+    .map((r) => {
+      return {
+        uid: r.type,
+        rightIcons: <kbd>{r.identifierPrefix}</kbd>,
+        rightHoverIcons: <kbd>{r.identifierPrefix}</kbd>,
+        title: r.type.split('/').slice(1).join('/'),
+        data: {
+          type: r.type,
+        },
+      };
+    })
+    .filter((obj) => strMatch(obj.title, query));
+
   const onExecuteItem = useCallback(
     (getUid, sourceInfo) => {
       const uid = getUid(items);
@@ -61,22 +64,18 @@ function QuestionPaletteUIComponent(
     [onExecuteItem],
   );
 
+  const activeItem = getActivePaletteItem(items);
+
   return (
     <>
       <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.PaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              rightIcons={item.rightIcons}
-              rightHoverIcons={item.rightHoverIcons}
-              isDisabled={item.disabled}
-              {...paletteItemProps}
+              item={item}
+              isActive={activeItem === item}
+              onSelect={onSelect}
             />
           );
         })}

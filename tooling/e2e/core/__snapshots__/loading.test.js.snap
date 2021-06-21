@@ -42,7 +42,7 @@ exports[`create a new page saved in browser 1`] = `
 "
 `;
 
-exports[`inline command palette convert to bullet list 1`] = `
+exports[`inline action palette convert to bullet list 1`] = `
 "<ul>
   <li
     data-bangle-name=\\"listItem\\"

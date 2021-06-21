@@ -47,7 +47,7 @@ test('shows file palette', async () => {
   expect(handle).not.toBe(null);
 });
 
-test('shows command palette', async () => {
+test('shows action palette', async () => {
   await page.keyboard.down(ctrlKey);
   await page.keyboard.down('Shift');
   await page.keyboard.press('P');
@@ -83,7 +83,7 @@ test('create a new page saved in browser', async () => {
   expect(await getEditorHTML(editorHandle)).toMatchSnapshot();
 });
 
-test('inline command palette convert to bullet list', async () => {
+test('inline action palette convert to bullet list', async () => {
   const newFileName = 'new_file';
   const wsName = await createWorkspace(page);
 
@@ -105,7 +105,7 @@ test('inline command palette convert to bullet list', async () => {
   expect(await getEditorHTML(editorHandle)).toMatchSnapshot();
 });
 
-test('inline command palette convert to heading 3', async () => {
+test('inline action palette convert to heading 3', async () => {
   const newFileName = 'new_file';
   const wsName = await createWorkspace(page);
 

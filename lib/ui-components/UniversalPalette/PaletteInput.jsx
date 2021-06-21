@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-export const InputPalette = React.forwardRef(function InputPalette(
+export const PaletteInput = React.forwardRef(function PaletteInput(
   {
     className,
     onInputValueChange,
@@ -82,7 +82,7 @@ export const InputPalette = React.forwardRef(function InputPalette(
   );
 });
 
-InputPalette.propTypes = {
+PaletteInput.propTypes = {
   onSpecialKey: PropTypes.func.isRequired,
   specialKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
   inputValue: PropTypes.string.isRequired,

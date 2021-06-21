@@ -1,53 +1,34 @@
-import React, { useMemo, useCallback, useEffect, useRef } from 'react';
-import { getActiveIndex } from './hooks';
+import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-PaletteItem.propTypes = {
-  uid: PropTypes.string.isRequired,
-  onSelect: PropTypes.func.isRequired,
-  items: PropTypes.array.isRequired,
-  counter: PropTypes.number.isRequired,
-};
-
-export function PaletteItem({ uid, onSelect, items, counter, ...props }) {
-  const isActive = useMemo(() => {
-    return items[getActiveIndex(counter, items.length)]?.uid === uid;
-  }, [items, uid, counter]);
-
-  const onClick = useCallback(
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      onSelect(uid, 'click', e);
-    },
-    [onSelect, uid],
-  );
-
-  return (
-    <PaletteItemUI uid={uid} onClick={onClick} isActive={isActive} {...props} />
-  );
-}
-
-PaletteItemUI.propTypes = {
+const ItemPropTypes = PropTypes.exact({
   uid: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
+  data: PropTypes.object,
+  leftIcon: PropTypes.element,
+  rightIcons: PropTypes.node,
+  rightHoverIcons: PropTypes.node,
+  showDividerAbove: PropTypes.bool,
+  description: PropTypes.node,
+  extraInfo: PropTypes.node,
+  disabled: PropTypes.bool,
+});
+
+PaletteItemUI.propTypes = {
+  item: ItemPropTypes.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  isActive: PropTypes.bool,
+  className: PropTypes.string,
+  scrollIntoViewIfNeeded: PropTypes.bool,
+  style: PropTypes.object,
 };
 
 export function PaletteItemUI({
-  uid,
-  title,
-  extraInfo,
-  description,
-  onClick,
-
+  item,
+  onSelect,
   // styling
   isActive,
   className = '',
-  leftIcon,
-  rightIcons,
-  rightHoverIcons,
-  isDisabled = false,
-  showDividerAbove = false,
   scrollIntoViewIfNeeded = true,
   style,
 }) {
@@ -66,20 +47,33 @@ export function PaletteItemUI({
 
   const titleElement = (
     <span>
-      <span className="mp-title">{title}</span>
-      {extraInfo && <span className="mp-extra-info">{extraInfo}</span>}
+      <span className="mp-title">{item.title}</span>
+      {item.extraInfo && (
+        <span className="mp-extra-info">{item.extraInfo}</span>
+      )}
     </span>
+  );
+
+  const { uid } = item;
+
+  const onClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onSelect(uid, 'click', e);
+    },
+    [onSelect, uid],
   );
 
   return (
     <div
-      data-id={uid}
+      data-id={item.uid}
       ref={ref}
       onClick={onClick}
       className={`universal-palette-item ${className} ${
         isActive ? 'active' : ''
-      } ${isDisabled ? 'disabled' : ''} ${
-        showDividerAbove ? 'show-divider-above' : ''
+      } ${item.isDisabled ? 'disabled' : ''} ${
+        item.showDividerAbove ? 'show-divider-above' : ''
       }`}
       style={{
         cursor: 'pointer',
@@ -90,19 +84,19 @@ export function PaletteItemUI({
       }}
     >
       <div className="mp-details" style={{ display: 'flex' }}>
-        <div className="left-icon">{leftIcon}</div>
-        {description ? (
+        <div className="left-icon">{item.leftIcon}</div>
+        {item.description ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {titleElement}
-            <span className="description">{description}</span>
+            <span className="description">{item.description}</span>
           </div>
         ) : (
           titleElement
         )}
       </div>
       <div>
-        <span className="right-icons">{rightIcons}</span>
-        <span className="right-hover-icons">{rightHoverIcons}</span>
+        <span className="right-icons">{item.rightIcons}</span>
+        <span className="right-hover-icons">{item.rightHoverIcons}</span>
       </div>
     </div>
   );

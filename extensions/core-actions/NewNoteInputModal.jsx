@@ -7,16 +7,17 @@ import {
 } from 'ws-path/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { useDestroyRef } from 'utils/hooks';
-import { InputModal } from './InputModal';
 import { randomName } from 'utils/index';
-import { UniversalPalette } from 'ui-components';
+import { InputPalette, UniversalPalette } from 'ui-components';
 import { ExtensionRegistryContext } from 'extension-registry';
+import { UIManagerContext } from 'ui-context';
 
-export function NewNoteInputModal({ initialValue, dismissModal }) {
+export function NewNoteInputModal({ initialValue, onDismiss }) {
   const destroyedRef = useDestroyRef();
   const extensionRegistry = useContext(ExtensionRegistryContext);
   const { wsName, createNote } = useWorkspaceContext();
   const [error, updateError] = useState();
+  const { widescreen } = useContext(UIManagerContext);
 
   const onExecute = useCallback(
     async (inputValue) => {
@@ -35,7 +36,7 @@ export function NewNoteInputModal({ initialValue, dismissModal }) {
       }
       try {
         await createNote(extensionRegistry, newWsPath);
-        dismissModal();
+        onDismiss();
       } catch (error) {
         if (destroyedRef.current) {
           return;
@@ -46,16 +47,17 @@ export function NewNoteInputModal({ initialValue, dismissModal }) {
         }
       }
     },
-    [extensionRegistry, dismissModal, createNote, destroyedRef, wsName],
+    [extensionRegistry, onDismiss, createNote, destroyedRef, wsName],
   );
 
   return (
-    <InputModal
+    <InputPalette
       placeholder="Enter the name of your note"
       onExecute={onExecute}
-      dismissModal={dismissModal}
+      onDismiss={onDismiss}
       updateError={updateError}
       error={error}
+      widescreen={widescreen}
       initialValue={initialValue || randomName()}
       selectOnMount={true}
     >
@@ -64,12 +66,13 @@ export function NewNoteInputModal({ initialValue, dismissModal }) {
           You are providing a name for your note
         </UniversalPalette.PaletteInfoItem>
       </UniversalPalette.PaletteInfo>
-    </InputModal>
+    </InputPalette>
   );
 }
 
-export function RenameNoteInputModal({ dismissModal }) {
+export function RenameNoteInputModal({ onDismiss }) {
   const destroyedRef = useDestroyRef();
+  const { widescreen } = useContext(UIManagerContext);
 
   const { wsName, renameNote, primaryWsPath } = useWorkspaceContext();
   const [error, updateError] = useState();
@@ -90,7 +93,7 @@ export function RenameNoteInputModal({ dismissModal }) {
       }
       try {
         await renameNote(primaryWsPath, newWsPath);
-        dismissModal();
+        onDismiss();
       } catch (error) {
         if (destroyedRef.current) {
           return;
@@ -101,24 +104,25 @@ export function RenameNoteInputModal({ dismissModal }) {
         }
       }
     },
-    [primaryWsPath, dismissModal, renameNote, destroyedRef, wsName],
+    [primaryWsPath, onDismiss, renameNote, destroyedRef, wsName],
   );
 
   return (
-    <InputModal
+    <InputPalette
       placeholder="Enter the new name"
       onExecute={onExecute}
-      dismissModal={dismissModal}
+      onDismiss={onDismiss}
       updateError={updateError}
       error={error}
       initialValue={resolvePath(primaryWsPath).filePath}
       selectOnMount={true}
+      widescreen={widescreen}
     >
       <UniversalPalette.PaletteInfo>
         <UniversalPalette.PaletteInfoItem>
           You are currently renaming "{resolvePath(primaryWsPath).filePath}"
         </UniversalPalette.PaletteInfoItem>
       </UniversalPalette.PaletteInfo>
-    </InputModal>
+    </InputPalette>
   );
 }

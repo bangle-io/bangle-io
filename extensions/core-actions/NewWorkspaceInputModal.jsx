@@ -1,8 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import { InputModal } from './InputModal';
-import { ListModal } from './ListModal';
+import React, { useContext, useCallback, useState } from 'react';
 import { pickADirectory } from 'baby-fs/index';
-import { UniversalPalette } from 'ui-components';
+import { ListPalette, UniversalPalette, InputPalette } from 'ui-components';
 import {
   deleteFile,
   listAllFiles,
@@ -10,53 +8,115 @@ import {
   useWorkspaces,
 } from 'workspaces';
 import { useWorkspaceContext } from 'workspace-context';
+import { UIManagerContext } from 'ui-context';
 
 const deleteAllFiles = async (wsName) => {
   const files = await listAllFiles(wsName);
   await Promise.all(files.map((w) => deleteFile(w)));
 };
 
-export function NewWorkspaceInputModal({ resetWsName, dismissModal, clone }) {
+export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
   const [showLocalStorageOption, updateShowLocalStorage] = useState(false);
+  const { createWorkspace } = useWorkspaces();
+  const { dispatch } = useContext(UIManagerContext);
+  const [error, updateError] = useState();
+  const { wsName } = useWorkspaceContext();
+  const { widescreen } = useContext(UIManagerContext);
+
+  const onConfirm = useCallback(
+    async (type, inputValue) => {
+      let newWsName, rootDirHandle;
+      try {
+        if (type === 'nativefs') {
+          rootDirHandle = await pickADirectory();
+          newWsName = rootDirHandle.name;
+          window.fathom?.trackGoal('K3NFTGWX', 0);
+        } else if (type === 'browser') {
+          newWsName = inputValue;
+          window.fathom?.trackGoal('AISLCLRF', 0);
+        } else {
+          throw new Error('Unknown workspace type ' + type);
+        }
+
+        await createWorkspace(newWsName, type, {
+          rootDirHandle,
+          beforeHistoryChange: async () => {
+            if (clone && wsName) {
+              await copyWorkspace(wsName, newWsName);
+              if (resetWsName) {
+                await deleteAllFiles(resetWsName);
+              }
+              dispatch({
+                type: 'UI/SHOW_NOTIFICATION',
+                value: {
+                  severity: 'success',
+                  uid: 'success-clone-' + wsName,
+                  content: 'Successfully cloned ' + wsName + ' to ' + newWsName,
+                },
+              });
+            }
+          },
+        });
+
+        onDismiss();
+      } catch (error) {
+        updateError(error);
+      }
+    },
+    [
+      updateError,
+      onDismiss,
+      dispatch,
+      clone,
+      createWorkspace,
+      resetWsName,
+      wsName,
+    ],
+  );
 
   if (showLocalStorageOption === true) {
     return (
       <NewWorkspaceNameStage
-        dismissModal={dismissModal}
+        onDismiss={onDismiss}
         resetWsName={resetWsName}
         clone={clone}
+        onConfirm={onConfirm}
+        error={error}
+        updateError={updateError}
+        widescreen={widescreen}
       />
     );
   }
 
   return (
     <NewWorkspaceStorageStage
-      dismissModal={dismissModal}
+      onDismiss={onDismiss}
       resetWsName={resetWsName}
       clone={clone}
-      onSelectBrowserStorage={async () => {
-        updateShowLocalStorage(true);
-      }}
+      updateShowLocalStorage={updateShowLocalStorage}
+      onConfirm={onConfirm}
+      error={error}
+      updateError={updateError}
+      widescreen={widescreen}
     />
   );
 }
 
 function NewWorkspaceStorageStage({
-  dismissModal,
-  onSelectBrowserStorage,
-  clone,
-  resetWsName,
+  onDismiss,
+  updateShowLocalStorage,
+  onConfirm,
+  error,
+  updateError,
+  widescreen,
 }) {
-  const { createWorkspace } = useWorkspaces();
-  const [error, updateError] = useState();
-  const { wsName } = useWorkspaceContext();
-
   return (
-    <ListModal
+    <ListPalette
+      widescreen={widescreen}
       error={error}
       updateError={updateError}
       placeholder="Select the storage type of your workspace"
-      dismissModal={dismissModal}
+      onDismiss={onDismiss}
       items={[
         {
           uid: 'nativefs',
@@ -75,25 +135,9 @@ function NewWorkspaceStorageStage({
       onSelectItem={async (item) => {
         if (item) {
           if (item.uid === 'nativefs') {
-            try {
-              const rootDirHandle = await pickADirectory();
-              await createWorkspace(rootDirHandle.name, 'nativefs', {
-                rootDirHandle,
-                beforeHistoryChange: async () => {
-                  if (clone && wsName) {
-                    await copyWorkspace(wsName, rootDirHandle.name);
-                    if (resetWsName) {
-                      await deleteAllFiles(resetWsName);
-                    }
-                  }
-                },
-              });
-              dismissModal();
-            } catch (error) {
-              updateError(error);
-            }
+            await onConfirm('nativefs');
           } else if (item.uid === 'browser') {
-            onSelectBrowserStorage();
+            updateShowLocalStorage(true);
           }
         }
       }}
@@ -103,54 +147,38 @@ function NewWorkspaceStorageStage({
           You are picking a storage type for your new workspace
         </UniversalPalette.PaletteInfoItem>
       </UniversalPalette.PaletteInfo>
-    </ListModal>
+    </ListPalette>
   );
 }
 
-function NewWorkspaceNameStage({ dismissModal, clone, resetWsName }) {
-  const { createWorkspace } = useWorkspaces();
-  const [error, updateError] = useState();
-  const { wsName } = useWorkspaceContext();
-
+function NewWorkspaceNameStage({
+  widescreen,
+  error,
+  onDismiss,
+  updateError,
+  onConfirm,
+}) {
   const onExecute = useCallback(
     async (inputValue) => {
-      if (!inputValue) {
-        updateError(new Error('Must give workspace a name'));
-        return;
-      }
-      try {
-        await createWorkspace(inputValue, 'browser', {
-          beforeHistoryChange: async () => {
-            if (clone && wsName) {
-              await copyWorkspace(wsName, inputValue);
-              if (resetWsName) {
-                await deleteAllFiles(resetWsName);
-              }
-            }
-          },
-        });
-        window.fathom?.trackGoal('AISLCLRF', 0);
-        dismissModal();
-      } catch (error) {
-        updateError(error);
-      }
+      await onConfirm('browser', inputValue);
     },
-    [createWorkspace, dismissModal, resetWsName, wsName, clone],
+    [onConfirm],
   );
 
   return (
-    <InputModal
+    <InputPalette
+      widescreen={widescreen}
       placeholder="Enter the name of your workspace"
       onExecute={onExecute}
-      dismissModal={dismissModal}
-      updateError={updateError}
+      onDismiss={onDismiss}
       error={error}
+      updateError={updateError}
     >
       <UniversalPalette.PaletteInfo>
         <UniversalPalette.PaletteInfoItem>
           You are providing a name for your workspace
         </UniversalPalette.PaletteInfoItem>
       </UniversalPalette.PaletteInfo>
-    </InputModal>
+    </InputPalette>
   );
 }

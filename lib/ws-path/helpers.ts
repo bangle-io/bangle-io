@@ -13,6 +13,14 @@ const getLast = (arr) => arr[arr.length - 1];
 export class PathValidationError extends BaseError {}
 
 export function validWsName(wsName: string) {
+  if (wsName === '') {
+    throw new PathValidationError(
+      'Invalid wsName "' + wsName + '" .',
+      undefined,
+      'Workspace name cannot be empty',
+      undefined,
+    );
+  }
   if (wsName.includes(':')) {
     throw new PathValidationError(
       'Invalid wsName "' + wsName + '" .',

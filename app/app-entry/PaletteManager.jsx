@@ -59,7 +59,7 @@ export function PaletteManager() {
     [dispatch],
   );
 
-  const { inputProps, updateCounter, resetCounter, paletteItemProps } =
+  const { inputProps, updateCounter, resetCounter, counter, onSelect } =
     UniversalPalette.usePaletteDriver(dismissPalette, onExecuteItem);
 
   useEffect(() => {
@@ -112,6 +112,13 @@ export function PaletteManager() {
 
   const Palette = extensionRegistry.getPalette(paletteType);
 
+  const getActivePaletteItem = useCallback(
+    (items) => {
+      return items[UniversalPalette.getActiveIndex(counter, items.length)];
+    },
+    [counter],
+  );
+
   if (!Palette) {
     return null;
   }
@@ -124,7 +131,7 @@ export function PaletteManager() {
         document.querySelector('.universal-palette-container input')?.focus();
       }}
     >
-      <UniversalPalette.InputPalette
+      <UniversalPalette.PaletteInput
         leftIcon={Palette.icon}
         placeholder={Palette.placeholder}
         inputValue={Palette.identifierPrefix + query}
@@ -139,7 +146,9 @@ export function PaletteManager() {
         paletteMetadata={paletteMetadata}
         updatePalette={updatePalette}
         dismissPalette={dismissPalette}
-        paletteItemProps={paletteItemProps}
+        onSelect={onSelect}
+        counter={counter}
+        getActivePaletteItem={getActivePaletteItem}
       />
     </UniversalPalette.PaletteContainer>
   );

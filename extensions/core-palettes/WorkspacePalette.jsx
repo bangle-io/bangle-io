@@ -31,7 +31,7 @@ export const workspacePalette = {
 };
 const storageKey = 'WorkspacePaletteUIComponent/1';
 function WorkspacePaletteUIComponent(
-  { query, dismissPalette, paletteItemProps },
+  { query, dismissPalette, onSelect, getActivePaletteItem },
   ref,
 ) {
   const { workspaces, switchWorkspace, deleteWorkspace } = useWorkspaces();
@@ -49,12 +49,33 @@ function WorkspacePaletteUIComponent(
             title: workspace.name,
             extraInfo: workspace.type,
             data: { workspace },
+            rightHoverIcons: (
+              <CloseIcon
+                style={{
+                  height: 16,
+                  width: 16,
+                }}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (
+                    window.confirm(
+                      `Are you sure you want to remove "${workspace.name}"? Removing a workspace does not delete any files inside it.`,
+                    )
+                  ) {
+                    await deleteWorkspace(workspace.name);
+                    dismissPalette();
+                  }
+                }}
+              />
+            ),
           };
         }),
     );
 
     return _items;
-  }, [query, workspaces, injectRecency]);
+  }, [query, workspaces, dismissPalette, deleteWorkspace, injectRecency]);
+
+  const activeItem = getActivePaletteItem(items);
 
   const onExecuteItem = useCallback(
     (getUid, sourceInfo) => {
@@ -81,35 +102,11 @@ function WorkspacePaletteUIComponent(
       <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.PaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              isDisabled={item.disabled}
-              rightIcons={item.rightIcons}
-              {...paletteItemProps}
-              rightHoverIcons={
-                <CloseIcon
-                  style={{
-                    height: 16,
-                    width: 16,
-                  }}
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    if (
-                      window.confirm(
-                        `Are you sure you want to remove "${item.data.workspace.name}"? Removing a workspace does not delete any files inside it.`,
-                      )
-                    ) {
-                      await deleteWorkspace(item.data.workspace.name);
-                      dismissPalette();
-                    }
-                  }}
-                />
-              }
+              item={item}
+              onSelect={onSelect}
+              isActive={item === activeItem}
             />
           );
         })}

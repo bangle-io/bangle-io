@@ -1,23 +1,16 @@
-import React, {
-  useMemo,
-  useRef,
-  useCallback,
-  useState,
-  useEffect,
-} from 'react';
-import { sleep } from 'utils/utility';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
+import { UniversalPalette } from '../UniversalPalette/index';
 
-import { UniversalPalette } from 'ui-components/index';
-
-export function ListModal({
+export function ListPalette({
   placeholder,
   initialValue = '',
-  dismissModal,
+  onDismiss,
   items,
   onSelectItem,
   error,
   children,
   updateError,
+  widescreen,
 }) {
   const [inputValue, _onInputValueChange] = useState(initialValue);
   items = items.filter((obj) => strMatch(obj.title, inputValue));
@@ -47,8 +40,10 @@ export function ListModal({
     [onSelectItem, items],
   );
 
-  const { inputProps, resetCounter, paletteItemProps } =
-    UniversalPalette.usePaletteDriver(dismissModal, onExecuteItem);
+  const { inputProps, counter, resetCounter, onSelect } =
+    UniversalPalette.usePaletteDriver(onDismiss, onExecuteItem);
+
+  const activeItem = UniversalPalette.useActivePaletteItem(items, counter);
 
   const onInputValueChange = (value) => {
     _onInputValueChange(value);
@@ -57,15 +52,15 @@ export function ListModal({
 
   return (
     <UniversalPalette.PaletteContainer
+      widescreen={widescreen}
       onClickOutside={() => {
-        dismissModal();
+        onDismiss();
       }}
       onClickInside={() => {
         inputRef.current?.focus();
       }}
-      widescreen={false}
     >
-      <UniversalPalette.InputPalette
+      <UniversalPalette.PaletteInput
         placeholder={placeholder}
         inputValue={inputValue}
         onInputValueChange={onInputValueChange}
@@ -75,24 +70,20 @@ export function ListModal({
       <UniversalPalette.PaletteItemsContainer>
         {errorItem && (
           <UniversalPalette.PaletteItemUI
-            uid={errorItem.uid}
-            title={errorItem.title}
-            description={errorItem.description}
+            item={errorItem}
+            isActive={false}
+            onSelect={() => {}}
             style={{
               backgroundColor: 'var(--error-bg-color)',
             }}
           />
         )}
         {items.map((item, i) => (
-          <UniversalPalette.PaletteItem
-            uid={item.uid}
-            items={items}
-            title={item.title}
-            extraInfo={item.extraInfo}
-            description={item.description}
+          <UniversalPalette.PaletteItemUI
             key={item.uid}
-            isDisabled={item.disabled}
-            {...paletteItemProps}
+            item={item}
+            onSelect={onSelect}
+            isActive={activeItem === item}
           />
         ))}
       </UniversalPalette.PaletteItemsContainer>

@@ -35,7 +35,7 @@ export const actionPalette = {
 const storageKey = 'ActionPaletteUIComponent/1';
 
 function ActionPaletteUIComponent(
-  { query, updatePalette, dismissPalette, paletteItemProps },
+  { query, onSelect, getActivePaletteItem },
   ref,
 ) {
   const extensionRegistry = useContext(ExtensionRegistryContext);
@@ -81,22 +81,18 @@ function ActionPaletteUIComponent(
     [onExecuteItem],
   );
 
+  const activeItem = getActivePaletteItem(items);
+
   return (
     <>
       <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.PaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              rightIcons={item.rightIcons}
-              rightHoverIcons={item.rightHoverIcons}
-              isDisabled={item.disabled}
-              {...paletteItemProps}
+              item={item}
+              onSelect={onSelect}
+              isActive={activeItem === item}
             />
           );
         })}

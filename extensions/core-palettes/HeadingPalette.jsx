@@ -28,7 +28,7 @@ export const headingPalette = {
   ReactComponent: React.forwardRef(HeadingPalette),
 };
 
-function HeadingPalette({ query, paletteItemProps }, ref) {
+function HeadingPalette({ query, onSelect, getActivePaletteItem }, ref) {
   const { primaryEditor } = useContext(EditorManagerContext);
 
   const items = useMemo(() => {
@@ -98,20 +98,18 @@ function HeadingPalette({ query, paletteItemProps }, ref) {
     [onExecuteItem],
   );
 
+  const activeItem = getActivePaletteItem(items);
+
   return (
     <>
       <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.PaletteItem
+            <UniversalPalette.PaletteItemUI
               key={item.uid}
-              items={items}
-              title={item.title}
-              extraInfo={item.extraInfo}
-              showDividerAbove={item.showDividerAbove}
-              uid={item.uid}
-              isDisabled={item.disabled}
-              {...paletteItemProps}
+              item={item}
+              onSelect={onSelect}
+              isActive={activeItem === item}
             />
           );
         })}

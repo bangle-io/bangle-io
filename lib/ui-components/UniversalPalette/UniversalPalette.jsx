@@ -1,4 +1,4 @@
-export * from './InputPalette';
+export * from './PaletteInput';
 export * from './PaletteContainer';
 export * from './PaletteItem';
 export * from './PaletteItemsContainer';

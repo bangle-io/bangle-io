@@ -7,7 +7,7 @@ exports[`Component renders correctly 1`] = `
     style="overflow-y: scroll;"
   >
     <div
-      class="universal-palette-item  active  "
+      class="universal-palette-item    "
       data-id="test-ws1-(nativefs)"
       style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
     >
