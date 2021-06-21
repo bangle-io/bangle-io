@@ -57,8 +57,10 @@
 }
 
 .universal-palette-input-wrapper .left-icon {
-  margin-right: var(--universal-palette-alignment-spacing);
+  margin-right: calc(var(--universal-palette-alignment-spacing) * 1.5);
   margin-left: var(--universal-palette-alignment-spacing);
+  display: flex;
+  align-items: center;
 }
 
 /* palette-items-container */

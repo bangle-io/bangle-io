@@ -12,11 +12,7 @@ import { EditorManagerContext } from 'editor-manager-context/index';
 const identifierPrefix = '#';
 export const headingPalette = {
   type: extensionName + '/heading',
-  icon: (
-    <span className="pr-2 flex items-center">
-      <NullIcon className="h-5 w-5" />
-    </span>
-  ),
+  icon: <NullIcon />,
   identifierPrefix,
   placeholder: 'Jump to a heading.',
   parseRawQuery: (rawQuery) => {

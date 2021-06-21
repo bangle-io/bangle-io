@@ -22,7 +22,7 @@ const emptyArray = [];
 
 export const notesPalette = {
   type: extensionName + '/notes',
-  icon: <PaletteIcon />,
+  icon: <FileDocumentIcon />,
   identifierPrefix: '',
   placeholder: "Enter a file name or type '?' to see other palettes.",
   keybinding: keybindings.toggleFilePalette.key,
@@ -156,12 +156,4 @@ function strMatch(a, b) {
 
   a = a.toLocaleLowerCase();
   return a.includes(b) || b.includes(a);
-}
-
-function PaletteIcon() {
-  return (
-    <span className="pr-2 flex items-center">
-      <FileDocumentIcon className="h-5 w-5" />
-    </span>
-  );
 }

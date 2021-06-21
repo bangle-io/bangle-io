@@ -6,11 +6,7 @@ import { ExtensionRegistryContext } from 'extension-registry';
 const identifierPrefix = '?';
 export const questionPalette = {
   type: extensionName + '/question',
-  icon: (
-    <span className="pr-2 flex items-center">
-      <NullIcon className="h-5 w-5" />
-    </span>
-  ),
+  icon: <NullIcon />,
   identifierPrefix,
   placeholder: 'Available palettes',
   parseRawQuery: (rawQuery) => {

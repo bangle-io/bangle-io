@@ -12,7 +12,7 @@ exports[`Component renders correctly 1`] = `
       style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
     >
       <div
-        class="mp-details"
+        class="u-palette-details"
         style="display: flex;"
       >
         <div
@@ -20,12 +20,12 @@ exports[`Component renders correctly 1`] = `
         />
         <span>
           <span
-            class="mp-title"
+            class="u-palette-title text-base font-normal"
           >
             test-ws1
           </span>
           <span
-            class="extra-info"
+            class="u-palette-extra-info text-base font-light"
           >
             nativefs
           </span>

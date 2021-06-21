@@ -61,7 +61,7 @@ describe('clone workspace action', () => {
     ]);
 
     expect(await page.url()).toMatch(url + '/ws/' + wsName2);
-
+    await longSleep(200);
     expect(
       (await getWsPathsShownInFilePalette(page))
         .map((r) => resolvePath(r).filePath)

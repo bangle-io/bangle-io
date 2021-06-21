@@ -128,13 +128,7 @@ export function InputPalette({
       className={'input-palette ' + className}
     >
       <UniversalPalette.PaletteInput
-        leftIcon={
-          showSpinner ? (
-            <SpinnerIcon className="h-5 w-5" />
-          ) : (
-            <NullIcon className="h-5 w-5" />
-          )
-        }
+        leftIcon={showSpinner ? <SpinnerIcon /> : <NullIcon />}
         placeholder={placeholder}
         inputValue={inputValue}
         onInputValueChange={onInputValueChange}

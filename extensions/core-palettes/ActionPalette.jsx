@@ -5,7 +5,7 @@ import React, {
   useMemo,
 } from 'react';
 
-import { UniversalPalette, NullIcon } from 'ui-components/index';
+import { UniversalPalette, NullIcon, TerminalIcon } from 'ui-components/index';
 import { extensionName } from './config';
 import { ActionContext } from 'action-context';
 import { keybindings } from 'config/index';
@@ -15,11 +15,7 @@ import { ExtensionRegistryContext } from 'extension-registry';
 const identifierPrefix = '>';
 export const actionPalette = {
   type: extensionName + '/action',
-  icon: (
-    <span className="pr-2 flex items-center">
-      <NullIcon className="h-5 w-5" />
-    </span>
-  ),
+  icon: <TerminalIcon />,
   identifierPrefix,
   placeholder: 'Actions',
   keybinding: keybindings.toggleCommandPalette.key,

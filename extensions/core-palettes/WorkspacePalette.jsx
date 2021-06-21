@@ -13,11 +13,7 @@ let log = LOG ? console.log.bind(console, 'play/file-palette') : () => {};
 const identifierPrefix = 'ws:';
 export const workspacePalette = {
   type: extensionName + '/workspace',
-  icon: (
-    <span className="pr-2 flex items-center">
-      <AlbumIcon className="h-5 w-5" />
-    </span>
-  ),
+  icon: <AlbumIcon />,
   identifierPrefix,
   placeholder: 'Select a workspace to open',
   keybinding: keybindings.toggleWorkspacePalette.key,

@@ -53,14 +53,8 @@ export const PaletteInput = React.forwardRef(function PaletteInput(
       style={{ display: 'flex' }}
     >
       {leftIcon && (
-        <div
-          className="left-icon"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          {leftIcon}
+        <div className="left-icon">
+          <span className="h-5 w-5">{leftIcon}</span>
         </div>
       )}
       <input
