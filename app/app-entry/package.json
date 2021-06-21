@@ -40,7 +40,6 @@
     "inline-backlink": "workspace:*",
     "inline-command-palette": "workspace:*",
     "inline-emoji": "workspace:*",
-    "magic-palette": "workspace:*",
     "naukar-proxy": "workspace:*",
     "naukar-worker": "workspace:*",
     "object-sync": "workspace:*",

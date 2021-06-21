@@ -6,11 +6,7 @@ import React, {
   useRef,
 } from 'react';
 import { UIManagerContext } from 'ui-context';
-import {
-  MagicInputPalette,
-  MagicPaletteContainer,
-  usePaletteDriver,
-} from 'magic-palette/index';
+import { UniversalPalette } from 'ui-components/index';
 import { useKeybindings } from 'utils/index';
 import { ActionContext } from 'action-context/index';
 import { ExtensionRegistryContext } from 'extension-registry/index';
@@ -64,7 +60,7 @@ export function PaletteManager() {
   );
 
   const { inputProps, updateCounter, resetCounter, paletteItemProps } =
-    usePaletteDriver(dismissPalette, onExecuteItem);
+    UniversalPalette.usePaletteDriver(dismissPalette, onExecuteItem);
 
   useEffect(() => {
     resetCounter();
@@ -121,14 +117,14 @@ export function PaletteManager() {
   }
 
   return (
-    <MagicPaletteContainer
+    <UniversalPalette.MagicPaletteContainer
       widescreen={widescreen}
       onClickOutside={dismissPalette}
       onClickInside={() => {
         document.querySelector('.magic-palette-container input')?.focus();
       }}
     >
-      <MagicInputPalette
+      <UniversalPalette.MagicInputPalette
         leftIcon={Palette.icon}
         placeholder={Palette.placeholder}
         inputValue={Palette.identifierPrefix + query}
@@ -145,7 +141,7 @@ export function PaletteManager() {
         dismissPalette={dismissPalette}
         paletteItemProps={paletteItemProps}
       />
-    </MagicPaletteContainer>
+    </UniversalPalette.MagicPaletteContainer>
   );
 }
 

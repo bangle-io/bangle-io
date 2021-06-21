@@ -6,15 +6,8 @@ import React, {
   useEffect,
 } from 'react';
 import { sleep } from 'utils/utility';
-import {
-  MagicInputPalette,
-  MagicPaletteContainer,
-  usePaletteDriver,
-  MagicPaletteItemsContainer,
-  MagicPaletteItem,
-  MagicPaletteItemUI,
-} from 'magic-palette/index';
-import { NullIcon, SpinnerIcon } from 'ui-components';
+
+import { UniversalPalette, NullIcon, SpinnerIcon } from 'ui-components';
 import { useDestroyRef } from 'utils/index';
 
 export function InputModal({
@@ -93,10 +86,8 @@ export function InputModal({
     [inputValue, dismissModal, items, error, onExecute, destroyedRef],
   );
 
-  const { inputProps, resetCounter, paletteItemProps } = usePaletteDriver(
-    dismissModal,
-    onExecuteItem,
-  );
+  const { inputProps, resetCounter, paletteItemProps } =
+    UniversalPalette.usePaletteDriver(dismissModal, onExecuteItem);
 
   const onInputValueChange = (value) => {
     _onInputValueChange(value);
@@ -104,7 +95,7 @@ export function InputModal({
   };
 
   return (
-    <MagicPaletteContainer
+    <UniversalPalette.MagicPaletteContainer
       onClickOutside={() => {
         dismissModal();
       }}
@@ -113,7 +104,7 @@ export function InputModal({
       }}
       widescreen={false}
     >
-      <MagicInputPalette
+      <UniversalPalette.MagicInputPalette
         leftIcon={
           showSpinner ? (
             <SpinnerIcon className="h-5 w-5" />
@@ -128,9 +119,9 @@ export function InputModal({
         selectOnMount={selectOnMount}
         {...inputProps}
       />
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.MagicPaletteItemsContainer>
         {items.map((item, i) => (
-          <MagicPaletteItem
+          <UniversalPalette.MagicPaletteItem
             uid={item.uid}
             items={items}
             title={item.title}
@@ -142,7 +133,7 @@ export function InputModal({
           />
         ))}
         {errorItem && (
-          <MagicPaletteItemUI
+          <UniversalPalette.MagicPaletteItemUI
             uid={errorItem.uid}
             title={errorItem.title}
             description={errorItem.description}
@@ -151,8 +142,8 @@ export function InputModal({
             }}
           />
         )}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.MagicPaletteItemsContainer>
       {children}
-    </MagicPaletteContainer>
+    </UniversalPalette.MagicPaletteContainer>
   );
 }

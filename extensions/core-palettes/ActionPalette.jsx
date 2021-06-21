@@ -4,11 +4,13 @@ import React, {
   useImperativeHandle,
   useMemo,
 } from 'react';
+
 import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
-import { PaletteInfo, PaletteInfoItem, NullIcon } from 'ui-components';
+  UniversalPalette,
+  PaletteInfo,
+  PaletteInfoItem,
+  NullIcon,
+} from 'ui-components/index';
 import { extensionName } from './config';
 import { ActionContext } from 'action-context';
 import { keybindings } from 'config/index';
@@ -86,10 +88,10 @@ function ActionPaletteUIComponent(
 
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.MagicPaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.MagicPaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -103,7 +105,7 @@ function ActionPaletteUIComponent(
             />
           );
         })}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.MagicPaletteItemsContainer>
       <PaletteInfo>
         <PaletteInfoItem>use:</PaletteInfoItem>
         <PaletteInfoItem>

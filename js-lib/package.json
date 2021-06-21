@@ -4,7 +4,6 @@
     "baby-fs",
     "inline-palette",
     "base-error",
-    "magic-palette",
     "object-sync"
   ]
 }

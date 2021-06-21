@@ -1,9 +1,11 @@
 import React, { useContext, useCallback, useImperativeHandle } from 'react';
+
 import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
-import { PaletteInfo, PaletteInfoItem, NullIcon } from 'ui-components';
+  UniversalPalette,
+  PaletteInfo,
+  PaletteInfoItem,
+  NullIcon,
+} from 'ui-components';
 import { extensionName } from './config';
 import { ExtensionRegistryContext } from 'extension-registry';
 
@@ -67,10 +69,10 @@ function QuestionPaletteUIComponent(
 
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.MagicPaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.MagicPaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -84,7 +86,7 @@ function QuestionPaletteUIComponent(
             />
           );
         })}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.MagicPaletteItemsContainer>
       <PaletteInfo>
         <PaletteInfoItem>use:</PaletteInfoItem>
         <PaletteInfoItem>

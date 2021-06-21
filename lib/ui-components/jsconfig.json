@@ -3,12 +3,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "magic-palette": [
-        "../../js-lib/magic-palette/index.js"
-      ],
-      "magic-palette/*": [
-        "../../js-lib/magic-palette/*"
-      ],
       "utils": [
         "../utils/index.js"
       ],

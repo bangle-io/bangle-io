@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 // TODO move this to a common package
 function useWatchClickOutside(ref, onClickOutside, onClickInside) {

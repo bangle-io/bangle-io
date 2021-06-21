@@ -6,14 +6,8 @@ import React, {
   useEffect,
 } from 'react';
 import { sleep } from 'utils/utility';
-import {
-  MagicInputPalette,
-  MagicPaletteContainer,
-  usePaletteDriver,
-  MagicPaletteItemsContainer,
-  MagicPaletteItem,
-  MagicPaletteItemUI,
-} from 'magic-palette/index';
+
+import { UniversalPalette } from 'ui-components/index';
 
 export function ListModal({
   placeholder,
@@ -53,10 +47,8 @@ export function ListModal({
     [onSelectItem, items],
   );
 
-  const { inputProps, resetCounter, paletteItemProps } = usePaletteDriver(
-    dismissModal,
-    onExecuteItem,
-  );
+  const { inputProps, resetCounter, paletteItemProps } =
+    UniversalPalette.usePaletteDriver(dismissModal, onExecuteItem);
 
   const onInputValueChange = (value) => {
     _onInputValueChange(value);
@@ -64,7 +56,7 @@ export function ListModal({
   };
 
   return (
-    <MagicPaletteContainer
+    <UniversalPalette.MagicPaletteContainer
       onClickOutside={() => {
         dismissModal();
       }}
@@ -73,16 +65,16 @@ export function ListModal({
       }}
       widescreen={false}
     >
-      <MagicInputPalette
+      <UniversalPalette.MagicInputPalette
         placeholder={placeholder}
         inputValue={inputValue}
         onInputValueChange={onInputValueChange}
         ref={inputRef}
         {...inputProps}
       />
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.MagicPaletteItemsContainer>
         {errorItem && (
-          <MagicPaletteItemUI
+          <UniversalPalette.MagicPaletteItemUI
             uid={errorItem.uid}
             title={errorItem.title}
             description={errorItem.description}
@@ -92,7 +84,7 @@ export function ListModal({
           />
         )}
         {items.map((item, i) => (
-          <MagicPaletteItem
+          <UniversalPalette.MagicPaletteItem
             uid={item.uid}
             items={items}
             title={item.title}
@@ -103,9 +95,9 @@ export function ListModal({
             {...paletteItemProps}
           />
         ))}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.MagicPaletteItemsContainer>
       {children}
-    </MagicPaletteContainer>
+    </UniversalPalette.MagicPaletteContainer>
   );
 }
 

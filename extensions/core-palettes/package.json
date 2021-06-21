@@ -24,7 +24,6 @@
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
     "extension-registry": "workspace:*",
-    "magic-palette": "workspace:*",
     "ui-components": "workspace:*",
     "ui-context": "workspace:*",
     "utils": "workspace:*",

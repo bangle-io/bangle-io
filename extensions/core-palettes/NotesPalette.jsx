@@ -6,11 +6,9 @@ import React, {
 } from 'react';
 import { removeMdExtension } from 'utils/index';
 import { resolvePath } from 'ws-path';
+
 import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
-import {
+  UniversalPalette,
   ButtonIcon,
   FileDocumentIcon,
   SecondaryEditorIcon,
@@ -95,10 +93,10 @@ function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
 
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.MagicPaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.MagicPaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -129,7 +127,7 @@ function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
             />
           );
         })}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.MagicPaletteItemsContainer>
       <PaletteInfo>
         <PaletteInfoItem>use:</PaletteInfoItem>
         <PaletteInfoItem>

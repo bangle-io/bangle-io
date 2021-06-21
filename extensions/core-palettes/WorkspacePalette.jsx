@@ -4,13 +4,11 @@ import {
   AlbumIcon,
   CloseIcon,
   PaletteInfo,
+  UniversalPalette,
   PaletteInfoItem,
 } from 'ui-components/index';
 import { extensionName } from './config';
-import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
+
 import { keybindings, keyDisplayValue } from 'config/index';
 import { useRecencyWatcher } from './hooks';
 
@@ -86,10 +84,10 @@ function WorkspacePaletteUIComponent(
 
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.MagicPaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.MagicPaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -121,7 +119,7 @@ function WorkspacePaletteUIComponent(
             />
           );
         })}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.MagicPaletteItemsContainer>
       <PaletteInfo>
         <PaletteInfoItem>use:</PaletteInfoItem>
         <PaletteInfoItem>

@@ -9,6 +9,22 @@
   --mp-item-disabled-bg-text-color: rgb(161, 161, 161);
 }
 
+.magic-palette-item .right-icons {
+  display: inline-block;
+}
+
+.magic-palette-item:hover .right-icons {
+  display: none;
+}
+
+.magic-palette-item .right-hover-icons {
+  display: none;
+}
+
+.magic-palette-item:hover .right-hover-icons {
+  display: inline-block;
+}
+
 .magic-palette-container.widescreen {
   top: 0;
 }

@@ -6,10 +6,11 @@ import React, {
 } from 'react';
 import { Selection } from '@bangle.dev/core/prosemirror/state';
 import {
-  MagicPaletteItem,
-  MagicPaletteItemsContainer,
-} from 'magic-palette/index';
-import { PaletteInfo, PaletteInfoItem, NullIcon } from 'ui-components';
+  UniversalPalette,
+  PaletteInfo,
+  PaletteInfoItem,
+  NullIcon,
+} from 'ui-components/index';
 import { extensionName } from './config';
 import { EditorManagerContext } from 'editor-manager-context/index';
 
@@ -104,10 +105,10 @@ function HeadingPalette({ query, paletteItemProps }, ref) {
 
   return (
     <>
-      <MagicPaletteItemsContainer>
+      <UniversalPalette.MagicPaletteItemsContainer>
         {items.map((item) => {
           return (
-            <MagicPaletteItem
+            <UniversalPalette.MagicPaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -119,7 +120,7 @@ function HeadingPalette({ query, paletteItemProps }, ref) {
             />
           );
         })}
-      </MagicPaletteItemsContainer>
+      </UniversalPalette.MagicPaletteItemsContainer>
       <PaletteInfo>
         <PaletteInfoItem>use:</PaletteInfoItem>
         <PaletteInfoItem>
