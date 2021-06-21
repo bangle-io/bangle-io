@@ -95,7 +95,7 @@ export function InputModal({
   };
 
   return (
-    <UniversalPalette.MagicPaletteContainer
+    <UniversalPalette.PaletteContainer
       onClickOutside={() => {
         dismissModal();
       }}
@@ -104,7 +104,7 @@ export function InputModal({
       }}
       widescreen={false}
     >
-      <UniversalPalette.MagicInputPalette
+      <UniversalPalette.InputPalette
         leftIcon={
           showSpinner ? (
             <SpinnerIcon className="h-5 w-5" />
@@ -119,9 +119,9 @@ export function InputModal({
         selectOnMount={selectOnMount}
         {...inputProps}
       />
-      <UniversalPalette.MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item, i) => (
-          <UniversalPalette.MagicPaletteItem
+          <UniversalPalette.PaletteItem
             uid={item.uid}
             items={items}
             title={item.title}
@@ -133,7 +133,7 @@ export function InputModal({
           />
         ))}
         {errorItem && (
-          <UniversalPalette.MagicPaletteItemUI
+          <UniversalPalette.PaletteItemUI
             uid={errorItem.uid}
             title={errorItem.title}
             description={errorItem.description}
@@ -142,8 +142,8 @@ export function InputModal({
             }}
           />
         )}
-      </UniversalPalette.MagicPaletteItemsContainer>
+      </UniversalPalette.PaletteItemsContainer>
       {children}
-    </UniversalPalette.MagicPaletteContainer>
+    </UniversalPalette.PaletteContainer>
   );
 }

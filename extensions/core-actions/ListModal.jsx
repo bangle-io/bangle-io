@@ -56,7 +56,7 @@ export function ListModal({
   };
 
   return (
-    <UniversalPalette.MagicPaletteContainer
+    <UniversalPalette.PaletteContainer
       onClickOutside={() => {
         dismissModal();
       }}
@@ -65,16 +65,16 @@ export function ListModal({
       }}
       widescreen={false}
     >
-      <UniversalPalette.MagicInputPalette
+      <UniversalPalette.InputPalette
         placeholder={placeholder}
         inputValue={inputValue}
         onInputValueChange={onInputValueChange}
         ref={inputRef}
         {...inputProps}
       />
-      <UniversalPalette.MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {errorItem && (
-          <UniversalPalette.MagicPaletteItemUI
+          <UniversalPalette.PaletteItemUI
             uid={errorItem.uid}
             title={errorItem.title}
             description={errorItem.description}
@@ -84,7 +84,7 @@ export function ListModal({
           />
         )}
         {items.map((item, i) => (
-          <UniversalPalette.MagicPaletteItem
+          <UniversalPalette.PaletteItem
             uid={item.uid}
             items={items}
             title={item.title}
@@ -95,9 +95,9 @@ export function ListModal({
             {...paletteItemProps}
           />
         ))}
-      </UniversalPalette.MagicPaletteItemsContainer>
+      </UniversalPalette.PaletteItemsContainer>
       {children}
-    </UniversalPalette.MagicPaletteContainer>
+    </UniversalPalette.PaletteContainer>
   );
 }
 

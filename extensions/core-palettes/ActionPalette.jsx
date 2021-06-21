@@ -5,12 +5,7 @@ import React, {
   useMemo,
 } from 'react';
 
-import {
-  UniversalPalette,
-  PaletteInfo,
-  PaletteInfoItem,
-  NullIcon,
-} from 'ui-components/index';
+import { UniversalPalette, NullIcon } from 'ui-components/index';
 import { extensionName } from './config';
 import { ActionContext } from 'action-context';
 import { keybindings } from 'config/index';
@@ -88,10 +83,10 @@ function ActionPaletteUIComponent(
 
   return (
     <>
-      <UniversalPalette.MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.MagicPaletteItem
+            <UniversalPalette.PaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -105,16 +100,18 @@ function ActionPaletteUIComponent(
             />
           );
         })}
-      </UniversalPalette.MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Select a Palette
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

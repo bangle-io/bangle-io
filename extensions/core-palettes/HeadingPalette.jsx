@@ -5,12 +5,7 @@ import React, {
   useMemo,
 } from 'react';
 import { Selection } from '@bangle.dev/core/prosemirror/state';
-import {
-  UniversalPalette,
-  PaletteInfo,
-  PaletteInfoItem,
-  NullIcon,
-} from 'ui-components/index';
+import { UniversalPalette, NullIcon } from 'ui-components/index';
 import { extensionName } from './config';
 import { EditorManagerContext } from 'editor-manager-context/index';
 
@@ -105,10 +100,10 @@ function HeadingPalette({ query, paletteItemProps }, ref) {
 
   return (
     <>
-      <UniversalPalette.MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.MagicPaletteItem
+            <UniversalPalette.PaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -120,16 +115,18 @@ function HeadingPalette({ query, paletteItemProps }, ref) {
             />
           );
         })}
-      </UniversalPalette.MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Jump to a heading
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

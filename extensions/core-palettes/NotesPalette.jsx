@@ -12,8 +12,6 @@ import {
   ButtonIcon,
   FileDocumentIcon,
   SecondaryEditorIcon,
-  PaletteInfo,
-  PaletteInfoItem,
 } from 'ui-components/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { extensionName } from './config';
@@ -93,10 +91,10 @@ function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
 
   return (
     <>
-      <UniversalPalette.MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.MagicPaletteItem
+            <UniversalPalette.PaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -127,23 +125,25 @@ function NotesPalette({ query, dismissPalette, paletteItemProps }, ref) {
             />
           );
         })}
-      </UniversalPalette.MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Open
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Shift-Enter</kbd> Open in side
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">{keyDisplayValue('Mod')}-Enter</kbd> Open
           in new tab
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

@@ -53,7 +53,7 @@ export function PaletteManager() {
         value: { type, initialQuery, metadata },
       });
       if (type) {
-        document.querySelector('.magic-palette-container input')?.focus();
+        document.querySelector('.universal-palette-container input')?.focus();
       }
     },
     [dispatch],
@@ -117,14 +117,14 @@ export function PaletteManager() {
   }
 
   return (
-    <UniversalPalette.MagicPaletteContainer
+    <UniversalPalette.PaletteContainer
       widescreen={widescreen}
       onClickOutside={dismissPalette}
       onClickInside={() => {
-        document.querySelector('.magic-palette-container input')?.focus();
+        document.querySelector('.universal-palette-container input')?.focus();
       }}
     >
-      <UniversalPalette.MagicInputPalette
+      <UniversalPalette.InputPalette
         leftIcon={Palette.icon}
         placeholder={Palette.placeholder}
         inputValue={Palette.identifierPrefix + query}
@@ -141,7 +141,7 @@ export function PaletteManager() {
         dismissPalette={dismissPalette}
         paletteItemProps={paletteItemProps}
       />
-    </UniversalPalette.MagicPaletteContainer>
+    </UniversalPalette.PaletteContainer>
   );
 }
 

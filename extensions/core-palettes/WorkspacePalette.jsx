@@ -1,12 +1,6 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import { useWorkspaces } from 'workspaces';
-import {
-  AlbumIcon,
-  CloseIcon,
-  PaletteInfo,
-  UniversalPalette,
-  PaletteInfoItem,
-} from 'ui-components/index';
+import { AlbumIcon, CloseIcon, UniversalPalette } from 'ui-components/index';
 import { extensionName } from './config';
 
 import { keybindings, keyDisplayValue } from 'config/index';
@@ -84,10 +78,10 @@ function WorkspacePaletteUIComponent(
 
   return (
     <>
-      <UniversalPalette.MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.MagicPaletteItem
+            <UniversalPalette.PaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -119,20 +113,22 @@ function WorkspacePaletteUIComponent(
             />
           );
         })}
-      </UniversalPalette.MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Open a workspace
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">{keyDisplayValue('Mod')}-Enter</kbd> Open
           a in new tab
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

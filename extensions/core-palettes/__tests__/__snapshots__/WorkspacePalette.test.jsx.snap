@@ -3,11 +3,11 @@
 exports[`Component renders correctly 1`] = `
 <div>
   <div
-    class="magic-palette-items-container"
+    class="universal-palette-items-container"
     style="overflow-y: scroll;"
   >
     <div
-      class="magic-palette-item  active  "
+      class="universal-palette-item  active  "
       data-id="test-ws1-(nativefs)"
       style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
     >

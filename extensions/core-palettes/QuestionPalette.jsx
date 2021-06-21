@@ -1,11 +1,5 @@
 import React, { useContext, useCallback, useImperativeHandle } from 'react';
-
-import {
-  UniversalPalette,
-  PaletteInfo,
-  PaletteInfoItem,
-  NullIcon,
-} from 'ui-components';
+import { UniversalPalette, NullIcon } from 'ui-components';
 import { extensionName } from './config';
 import { ExtensionRegistryContext } from 'extension-registry';
 
@@ -69,10 +63,10 @@ function QuestionPaletteUIComponent(
 
   return (
     <>
-      <UniversalPalette.MagicPaletteItemsContainer>
+      <UniversalPalette.PaletteItemsContainer>
         {items.map((item) => {
           return (
-            <UniversalPalette.MagicPaletteItem
+            <UniversalPalette.PaletteItem
               key={item.uid}
               items={items}
               title={item.title}
@@ -86,16 +80,18 @@ function QuestionPaletteUIComponent(
             />
           );
         })}
-      </UniversalPalette.MagicPaletteItemsContainer>
-      <PaletteInfo>
-        <PaletteInfoItem>use:</PaletteInfoItem>
-        <PaletteInfoItem>
+      </UniversalPalette.PaletteItemsContainer>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
+          use:
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">↑↓</kbd> Navigate
-        </PaletteInfoItem>
-        <PaletteInfoItem>
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">Enter</kbd> Select a Palette
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </>
   );
 }

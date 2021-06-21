@@ -9,7 +9,7 @@ import { useWorkspaceContext } from 'workspace-context/index';
 import { useDestroyRef } from 'utils/hooks';
 import { InputModal } from './InputModal';
 import { randomName } from 'utils/index';
-import { PaletteInfo, PaletteInfoItem } from 'ui-components';
+import { UniversalPalette } from 'ui-components';
 import { ExtensionRegistryContext } from 'extension-registry';
 
 export function NewNoteInputModal({ initialValue, dismissModal }) {
@@ -59,11 +59,11 @@ export function NewNoteInputModal({ initialValue, dismissModal }) {
       initialValue={initialValue || randomName()}
       selectOnMount={true}
     >
-      <PaletteInfo>
-        <PaletteInfoItem>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
           You are providing a name for your note
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </InputModal>
   );
 }
@@ -114,11 +114,11 @@ export function RenameNoteInputModal({ dismissModal }) {
       initialValue={resolvePath(primaryWsPath).filePath}
       selectOnMount={true}
     >
-      <PaletteInfo>
-        <PaletteInfoItem>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
           You are currently renaming "{resolvePath(primaryWsPath).filePath}"
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </InputModal>
   );
 }

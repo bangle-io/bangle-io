@@ -2,14 +2,14 @@ import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import { getActiveIndex } from './hooks';
 import PropTypes from 'prop-types';
 
-MagicPaletteItem.propTypes = {
+PaletteItem.propTypes = {
   uid: PropTypes.string.isRequired,
   onSelect: PropTypes.func.isRequired,
   items: PropTypes.array.isRequired,
   counter: PropTypes.number.isRequired,
 };
 
-export function MagicPaletteItem({ uid, onSelect, items, counter, ...props }) {
+export function PaletteItem({ uid, onSelect, items, counter, ...props }) {
   const isActive = useMemo(() => {
     return items[getActiveIndex(counter, items.length)]?.uid === uid;
   }, [items, uid, counter]);
@@ -24,21 +24,16 @@ export function MagicPaletteItem({ uid, onSelect, items, counter, ...props }) {
   );
 
   return (
-    <MagicPaletteItemUI
-      uid={uid}
-      onClick={onClick}
-      isActive={isActive}
-      {...props}
-    />
+    <PaletteItemUI uid={uid} onClick={onClick} isActive={isActive} {...props} />
   );
 }
 
-MagicPaletteItemUI.propTypes = {
+PaletteItemUI.propTypes = {
   uid: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
 };
 
-export function MagicPaletteItemUI({
+export function PaletteItemUI({
   uid,
   title,
   extraInfo,
@@ -81,9 +76,11 @@ export function MagicPaletteItemUI({
       data-id={uid}
       ref={ref}
       onClick={onClick}
-      className={`magic-palette-item ${className} ${isActive ? 'active' : ''} ${
-        isDisabled ? 'disabled' : ''
-      } ${showDividerAbove ? 'show-divider-above' : ''}`}
+      className={`universal-palette-item ${className} ${
+        isActive ? 'active' : ''
+      } ${isDisabled ? 'disabled' : ''} ${
+        showDividerAbove ? 'show-divider-above' : ''
+      }`}
       style={{
         cursor: 'pointer',
         display: 'flex',

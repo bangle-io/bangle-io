@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { InputModal } from './InputModal';
 import { ListModal } from './ListModal';
 import { pickADirectory } from 'baby-fs/index';
-import { PaletteInfo, PaletteInfoItem } from 'ui-components';
+import { UniversalPalette } from 'ui-components';
 import {
   deleteFile,
   listAllFiles,
@@ -98,11 +98,11 @@ function NewWorkspaceStorageStage({
         }
       }}
     >
-      <PaletteInfo>
-        <PaletteInfoItem>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
           You are picking a storage type for your new workspace
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </ListModal>
   );
 }
@@ -146,11 +146,11 @@ function NewWorkspaceNameStage({ dismissModal, clone, resetWsName }) {
       updateError={updateError}
       error={error}
     >
-      <PaletteInfo>
-        <PaletteInfoItem>
+      <UniversalPalette.PaletteInfo>
+        <UniversalPalette.PaletteInfoItem>
           You are providing a name for your workspace
-        </PaletteInfoItem>
-      </PaletteInfo>
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </InputModal>
   );
 }

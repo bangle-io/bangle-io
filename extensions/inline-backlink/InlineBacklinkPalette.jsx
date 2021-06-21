@@ -6,11 +6,7 @@ import {
   useInlinePaletteQuery,
   replaceSuggestionMarkWith,
 } from 'inline-palette/index';
-import {
-  PaletteInfo,
-  PaletteInfoItem,
-  InlinePaletteRow,
-} from 'ui-components/index';
+import { UniversalPalette, InlinePaletteRow } from 'ui-components/index';
 import {
   resolvePath,
   filePathToWsPath,
@@ -44,17 +40,17 @@ export function InlineBacklinkPalette() {
       <div className="inline-palette-items-wrapper">
         {/* TODO I am unable to hide inner when palette is invisible */}
         <InlineBacklinkPaletteInner query={query} counter={counter} />
-        <PaletteInfo>
-          <PaletteInfoItem>
+        <UniversalPalette.PaletteInfo>
+          <UniversalPalette.PaletteInfoItem>
             <kbd className="font-normal">↑↓</kbd> Navigate
-          </PaletteInfoItem>
-          <PaletteInfoItem>
+          </UniversalPalette.PaletteInfoItem>
+          <UniversalPalette.PaletteInfoItem>
             <kbd className="font-normal">Enter</kbd> Create link
-          </PaletteInfoItem>
-          <PaletteInfoItem>
+          </UniversalPalette.PaletteInfoItem>
+          <UniversalPalette.PaletteInfoItem>
             <kbd className="font-normal">Esc</kbd> Dismiss
-          </PaletteInfoItem>
-        </PaletteInfo>
+          </UniversalPalette.PaletteInfoItem>
+        </UniversalPalette.PaletteInfo>
       </div>
     </div>,
     tooltipContentDOM,
