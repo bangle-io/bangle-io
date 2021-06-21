@@ -8,15 +8,17 @@ import {
   MoreAltIcon,
   ChevronDoubleRightIcon,
   SecondaryEditorIcon,
-  TerminalIcon,
-  FileDocumentIcon,
-  AlbumIcon,
 } from 'ui-components/index';
 import { useWorkspaceContext } from 'workspace-context';
+import { ExtensionRegistryContext } from 'extension-registry';
+import { ActionContext } from 'action-context/index';
 
 const localStoragePrefix = '0.3438144247845969';
 
 export function OptionsBar() {
+  const extensionRegistry = useContext(ExtensionRegistryContext);
+  const { dispatchAction } = useContext(ActionContext);
+
   const [expanded, _setExpanded] = useLocalStorage(
     'OptionsBar' + localStoragePrefix,
     true,
@@ -26,36 +28,10 @@ export function OptionsBar() {
     _setExpanded(...args);
   };
 
-  const { paletteType, widescreen, dispatch } = useContext(UIManagerContext);
+  const { widescreen } = useContext(UIManagerContext);
 
   const { pushWsPath, primaryWsPath, secondaryWsPath, updateOpenedWsPaths } =
     useWorkspaceContext();
-
-  const toggleFilePalette = () => {
-    // dispatch({
-    //   type: 'UI/UPDATE_PALETTE',
-    //   value: {
-    //     type: paletteType === FILE_PALETTE ? null : FILE_PALETTE,
-    //   },
-    // });
-  };
-
-  const toggleCommandPalette = () => {
-    // dispatch({
-    //   type: 'UI/UPDATE_PALETTE',
-    //   value: {
-    //     type: paletteType === COMMAND_PALETTE ? null : COMMAND_PALETTE,
-    //   },
-    // });
-  };
-  const toggleWorkspacePalette = () => {
-    // dispatch({
-    //   type: 'UI/UPDATE_PALETTE',
-    //   value: {
-    //     type: paletteType === WORKSPACE_PALETTE ? null : WORKSPACE_PALETTE,
-    //   },
-    // });
-  };
 
   const toggleSecondaryEditor = useCallback(
     (event) => {
@@ -84,42 +60,24 @@ export function OptionsBar() {
       },
     };
   }, [widescreen, toggleSecondaryEditor]);
-
+  const injectedOptions = extensionRegistry
+    .getOptionsBarEntries()
+    .map((r, i) => {
+      return (
+        <OptionsButton
+          key={i}
+          hint={r.hint}
+          onClick={() => {
+            dispatchAction({ name: r.action });
+          }}
+        >
+          {r.icon}
+        </OptionsButton>
+      );
+    });
   const expandedComponents = (
     <>
-      <OptionsButton
-        // active={
-        //   // paletteType === COMMAND_PALETTE
-        // }
-        hint={
-          'Command Palette\n' + keybindings.toggleCommandPalette.displayValue
-        }
-        onClick={() => toggleCommandPalette()}
-      >
-        <TerminalIcon
-          style={{ transform: 'scale(0.83, 0.83)' }}
-          className={cx('cursor-pointer')}
-        />
-      </OptionsButton>
-      {widescreen && (
-        <OptionsButton
-          hint={
-            'Workspace Palette\n' +
-            keybindings.toggleWorkspacePalette.displayValue
-          }
-          // active={paletteType === WORKSPACE_PALETTE}
-          onClick={() => toggleWorkspacePalette()}
-        >
-          <AlbumIcon style={{ transform: 'scale(0.9, 0.9)' }} />
-        </OptionsButton>
-      )}
-      <OptionsButton
-        // active={paletteType === FILE_PALETTE}
-        hint={'File Palette\n' + keybindings.toggleFilePalette.displayValue}
-        onClick={toggleFilePalette}
-      >
-        <FileDocumentIcon style={{ transform: 'scale(0.88, 0.88)' }} />
-      </OptionsButton>
+      {widescreen && injectedOptions}
       {widescreen && (
         <OptionsButton
           hint={

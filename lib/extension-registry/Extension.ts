@@ -47,6 +47,11 @@ export interface ApplicationConfig {
     name: string;
     title: string;
   }>;
+  optionsBar?: Array<{
+    icon: JSX.Element;
+    hint: string;
+    action: string;
+  }>;
 }
 
 interface Config {
@@ -110,7 +115,7 @@ export class Extension {
       );
     }
 
-    const { palettes, actions } = application;
+    const { palettes, actions, optionsBar } = application;
 
     if (palettes) {
       if (!Array.isArray(palettes)) {
@@ -140,6 +145,12 @@ export class Extension {
       }
       if (actions.length !== new Set(actions.map((r) => r.name)).size) {
         throw new Error('Action name must be unique');
+      }
+    }
+
+    if (optionsBar) {
+      if (!Array.isArray(actions)) {
+        throw new Error('optionsBar must be an array');
       }
     }
 

@@ -42,6 +42,7 @@ function ActionPaletteUIComponent(
     let actions = injectRecency(
       extensionRegistry
         .getRegisteredActions()
+        .filter((obj) => !obj.hidden)
         .map((actionDefinition) => {
           return {
             uid: actionDefinition.name,

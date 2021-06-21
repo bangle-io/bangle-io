@@ -1,12 +1,12 @@
 import { SpecRegistry } from '@bangle.dev/core';
 import React from 'react';
-import { EditorConfig, Extension } from './Extension';
+import { ApplicationConfig, EditorConfig, Extension } from './Extension';
 
-function filterFlatMap<F, T extends keyof F>(
-  array: F[],
-  field: T,
+function filterFlatMap<K>(
+  array: any[],
+  field: string,
   flatten = true,
-): Array<F[T]> {
+): Array<K> {
   let items = array.filter((item) => Boolean(item[field]));
   if (flatten) {
     return items.flatMap((item) => item[field]);
@@ -111,7 +111,7 @@ export class ExtensionRegistry {
   private actionHandlers: Set<Function>;
   private registeredActions: any[];
   private editorConfig: EditorConfig[];
-
+  private optionsBarEntries: ApplicationConfig['optionsBar'];
   editor = new EditorHandlers(this.extensions);
 
   constructor(
@@ -143,6 +143,7 @@ export class ExtensionRegistry {
 
     this.actionHandlers = new Set();
     this.registeredActions = filterFlatMap(applicationConfig, 'actions');
+    this.optionsBarEntries = filterFlatMap(applicationConfig, 'optionsBar');
   }
   private validate() {
     if (
@@ -189,6 +190,10 @@ export class ExtensionRegistry {
     return this.palettes.find(
       (palette) => palette.parseRawQuery(query) != null,
     );
+  }
+
+  getOptionsBarEntries() {
+    return this.optionsBarEntries;
   }
 
   renderExtensionEditorComponents = ({
