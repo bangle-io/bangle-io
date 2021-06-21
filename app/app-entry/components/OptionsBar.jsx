@@ -18,18 +18,11 @@ const localStoragePrefix = '0.3438144247845969';
 export function OptionsBar() {
   const extensionRegistry = useContext(ExtensionRegistryContext);
   const { dispatchAction } = useContext(ActionContext);
-
-  const [expanded, _setExpanded] = useLocalStorage(
+  const [expanded, setExpanded] = useLocalStorage(
     'OptionsBar' + localStoragePrefix,
     true,
   );
-
-  const setExpanded = (...args) => {
-    _setExpanded(...args);
-  };
-
   const { widescreen } = useContext(UIManagerContext);
-
   const { pushWsPath, primaryWsPath, secondaryWsPath, updateOpenedWsPaths } =
     useWorkspaceContext();
 

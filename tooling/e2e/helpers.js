@@ -198,11 +198,16 @@ async function getWsPathsShownInFilePalette(page) {
   return wsPaths;
 }
 
+async function jestDebug() {
+  return jestPuppeteer.debug();
+}
+
 module.exports = {
   clickPaletteRow,
   createNewNote,
   createWorkspace,
   ctrlKey,
+  jestDebug,
   frmtHTML,
   getEditorHTML,
   getPrimaryEditorDebugString,
