@@ -3,7 +3,6 @@ import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import { useBroadcastChannel } from 'utils/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { render, act } from '@testing-library/react';
-
 import { WatchWorkspace } from '../WatchWorkspace';
 import { OpenedWsPaths } from 'ws-path';
 

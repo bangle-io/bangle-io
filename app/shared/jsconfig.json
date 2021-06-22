@@ -22,7 +22,7 @@
         "../../extensions/core-actions/*"
       ],
       "core-palettes": [
-        "../../extensions/core-palettes/index.js"
+        "../../extensions/core-palettes/index.jsx"
       ],
       "core-palettes/*": [
         "../../extensions/core-palettes/*"

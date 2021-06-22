@@ -2,18 +2,19 @@ import './style';
 import { UIManager } from 'ui-context/index';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import App from './App';
 import { EditorManager } from 'editor-manager-context/index';
 import { polyfills, initExtensionRegistry } from 'shared/index';
 import { WorkerSetup } from 'worker-setup/index';
-import { PageLifecycle } from './PageLifecycle';
-import { moduleSupport } from './module-support';
-import { AppState } from './AppStateProvider';
-import { WorkspaceContextProvider } from 'workspace-context/index';
-import { WatchWorkspace } from './WatchWorkspace';
-import { WatchUI } from './WatchUI';
 import { ActionContextProvider } from 'action-context';
 import { ExtensionRegistryContextProvider } from 'extension-registry/index';
+import { WorkspaceContextProvider } from 'workspace-context/index';
+
+import { PageLifecycle } from './watchers/PageLifecycle';
+import App from './App';
+import { moduleSupport } from './misc/module-support';
+import { AppStateProvider } from './AppStateProvider';
+import { WatchWorkspace } from './watchers/WatchWorkspace';
+import { WatchUI } from './watchers/WatchUI';
 
 function LoadingBlock({ children }) {
   const [loaded, updateLoaded] = useState(() => {
@@ -33,7 +34,7 @@ export function Entry() {
     <React.StrictMode>
       <LoadingBlock>
         <Router>
-          <AppState>
+          <AppStateProvider>
             <WorkerSetup loadWebworker={moduleSupport} />
             <PageLifecycle />
             <UIManager>
@@ -51,7 +52,7 @@ export function Entry() {
                 </ExtensionRegistryContextProvider>
               </WorkspaceContextProvider>
             </UIManager>
-          </AppState>
+          </AppStateProvider>
         </Router>
       </LoadingBlock>
     </React.StrictMode>
