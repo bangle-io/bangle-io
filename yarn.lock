@@ -4257,14 +4257,12 @@ __metadata:
     editor-core: "workspace:*"
     editor-manager-context: "workspace:*"
     extension-registry: "workspace:*"
-    idb-keyval: ^5.0.6
     image-extension: "workspace:*"
     inline-backlink: "workspace:*"
     inline-command-palette: "workspace:*"
     inline-emoji: "workspace:*"
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
-    node-fetch: ^2.6.1
     object-sync: "workspace:*"
     page-lifecycle: ^0.1.2
     prop-types: ^15.7.2
@@ -12125,7 +12123,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.1, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1":
+"node-fetch@npm:2.6.1, node-fetch@npm:^2.6.0":
   version: 2.6.1
   resolution: "node-fetch@npm:2.6.1"
   checksum: 91075bedd57879117e310fbcc36983ad5d699e522edb1ebcdc4ee5294c982843982652925c3532729fdc86b2d64a8a827797a745f332040d91823c8752ee4d7c

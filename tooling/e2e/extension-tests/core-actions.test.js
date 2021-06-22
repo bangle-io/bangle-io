@@ -15,6 +15,8 @@ const { resolvePath } = require('ws-path');
 jest.setTimeout(105 * 1000);
 let page, destroyPage;
 
+jest.retryTimes(2);
+
 beforeEach(async () => {
   ({ page, destroyPage } = await newPage(browser));
 
@@ -36,6 +38,7 @@ describe('clone workspace action', () => {
     expect((await getWsPathsShownInFilePalette(page)).sort()).toEqual(
       [n2, n1].sort(),
     );
+
     await runAction(page, '@action/core-actions/CLONE_WORKSPACE_ACTION');
     const handle = await page.waitForSelector('.universal-palette-container', {
       timeout: SELECTOR_TIMEOUT,
