@@ -24,6 +24,7 @@ import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { PaletteManager } from './extension-glue/PaletteManager';
 import { NativeFSAuth } from './components/NativeFSAuth';
+import { Routes } from './Routes';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
@@ -46,8 +47,8 @@ export function AppContainer() {
           secondaryEditor && 'has-secondary-editor',
         )}
       >
-        <Route exact path="/">
-          {/* Show the default landing page at root */}
+        <Routes />
+        {/* <Route exact path="/">
           <WorkspacePage
             showTabs={showTabs}
             secondaryEditor={secondaryEditor}
@@ -60,7 +61,7 @@ export function AppContainer() {
             secondaryEditor={secondaryEditor}
             widescreen={widescreen}
           />
-        </Route>
+        </Route> */}
       </div>
       <NotificationArea />
     </>

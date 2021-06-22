@@ -6,6 +6,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
+import { BaseFileSystemError } from 'baby-fs/index';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import {
   renameFile,
@@ -217,7 +218,6 @@ export function useFiles(wsName) {
   const noteWsPaths = useMemo(() => {
     return fileWsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
   }, [fileWsPaths]);
-
   const refreshWsPaths = useCallback(() => {
     log('refreshing wsPaths', wsName);
     if (wsName) {
@@ -237,7 +237,12 @@ export function useFiles(wsName) {
         })
         .catch((error) => {
           setFiles(undefined);
-          throw error;
+          // ignore file system error here as other parts of the
+          // application should have handled it
+          if (error instanceof BaseFileSystemError) {
+          } else {
+            throw error;
+          }
         });
     }
   }, [wsName]);
