@@ -74,6 +74,18 @@ export function CoreActionsHandler({ registerActionHandler }) {
         }
 
         case CLONE_WORKSPACE_ACTION: {
+          // no point clone if there is no active workspace
+          if (!wsName) {
+            dispatch({
+              type: 'UI/SHOW_NOTIFICATION',
+              value: {
+                severity: 'error',
+                uid: 'clone-workspace-no-active-workspace',
+                content: 'No active workspace',
+              },
+            });
+            return true;
+          }
           // To avoid overlapping
           dispatch({
             type: 'UI/UPDATE_PALETTE',

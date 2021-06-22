@@ -1,4 +1,4 @@
-import { saveFile } from 'workspaces/index';
+import { FileOps } from 'workspaces/index';
 import { wsNameViewWeakStore } from './config';
 import { calcImageDimensions } from './image-file-helpers';
 import { createImage } from './image-writing';
@@ -21,7 +21,7 @@ export async function createImageNodes(files, imageType, view) {
         dimensions,
       );
 
-      await saveFile(wsPath, file);
+      await FileOps.saveFile(wsPath, file);
 
       return srcUrl;
     }),

@@ -1,18 +1,13 @@
 import React, { useContext, useCallback, useState } from 'react';
 import { pickADirectory } from 'baby-fs/index';
 import { ListPalette, UniversalPalette, InputPalette } from 'ui-components';
-import {
-  deleteFile,
-  listAllFiles,
-  copyWorkspace,
-  useWorkspaces,
-} from 'workspaces';
+import { FileOps, useWorkspaces } from 'workspaces';
 import { useWorkspaceContext } from 'workspace-context';
 import { UIManagerContext } from 'ui-context';
 
 const deleteAllFiles = async (wsName) => {
-  const files = await listAllFiles(wsName);
-  await Promise.all(files.map((w) => deleteFile(w)));
+  const files = await FileOps.listAllFiles(wsName);
+  await Promise.all(files.map((w) => FileOps.deleteFile(w)));
 };
 
 export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
@@ -42,7 +37,7 @@ export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
           rootDirHandle,
           beforeHistoryChange: async () => {
             if (clone && wsName) {
-              await copyWorkspace(wsName, newWsName);
+              await FileOps.copyWorkspace(wsName, newWsName);
               if (resetWsName) {
                 await deleteAllFiles(resetWsName);
               }

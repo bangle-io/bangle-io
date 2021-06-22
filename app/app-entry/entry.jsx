@@ -15,6 +15,7 @@ import { moduleSupport } from './misc/module-support';
 import { AppStateProvider } from './AppStateProvider';
 import { WatchWorkspace } from './watchers/WatchWorkspace';
 import { WatchUI } from './watchers/WatchUI';
+import { handleNativefsAuthError } from './Routes';
 
 function LoadingBlock({ children }) {
   const [loaded, updateLoaded] = useState(() => {
@@ -41,7 +42,9 @@ export function Entry() {
               <ExtensionRegistryContextProvider
                 initExtensionRegistry={initExtensionRegistry}
               >
-                <WorkspaceContextProvider>
+                <WorkspaceContextProvider
+                  onNativefsAuthError={handleNativefsAuthError}
+                >
                   <WatchWorkspace />
                   <WatchUI />
                   <EditorManager>

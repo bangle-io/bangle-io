@@ -4,7 +4,7 @@ import { useDestroyRef } from 'utils/hooks';
 import { UIManagerContext } from 'ui-context';
 import { isValidNoteWsPath } from 'ws-path';
 import { useWorkspaceContext } from 'workspace-context';
-import { HELP_FS_WORKSPACE_NAME, listAllFiles } from 'workspaces';
+import { HELP_FS_WORKSPACE_NAME, FileOps } from 'workspaces';
 
 export function HelpBrowser() {
   const wsName = HELP_FS_WORKSPACE_NAME;
@@ -15,7 +15,7 @@ export function HelpBrowser() {
   const destroyedRef = useDestroyRef();
 
   useEffect(() => {
-    listAllFiles(wsName).then((files) => {
+    FileOps.listAllFiles(wsName).then((files) => {
       if (!destroyedRef.current) {
         setFiles(files.filter((wsPath) => isValidNoteWsPath(wsPath)));
       }
