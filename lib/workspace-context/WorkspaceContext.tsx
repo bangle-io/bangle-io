@@ -8,9 +8,10 @@ import React, {
 } from 'react';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import {
-  saveNote,
   renameFile,
   deleteFile,
+  getDoc,
+  saveDoc,
   listAllFiles,
   checkFileExists,
   HELP_FS_INDEX_FILE_NAME,
@@ -30,6 +31,11 @@ import {
   isValidNoteWsPath,
   resolvePath,
 } from 'ws-path';
+import { markdownParser, markdownSerializer } from 'markdown/index';
+import {
+  ExtensionRegistry,
+  ExtensionRegistryContext,
+} from 'extension-registry';
 
 const LOG = false;
 
@@ -44,6 +50,7 @@ interface WorkspaceContextType {
   fileWsPaths: ReturnType<typeof useFiles>['fileWsPaths'];
   noteWsPaths: ReturnType<typeof useFiles>['noteWsPaths'];
   refreshWsPaths: RefreshWsPaths;
+  getNote: ReturnType<typeof useGetNote>;
   createNote: ReturnType<typeof useCreateNote>;
   deleteNote: ReturnType<typeof useDeleteNote>;
   renameNote: ReturnType<typeof useRenameNote>;
@@ -71,6 +78,8 @@ export function useWorkspaceContext() {
  * - noteWsPaths, fileWsPaths - retain their instance if there is no change. This is useful for runing `===` fearlessly.
  */
 export function WorkspaceContextProvider({ children }) {
+  const extensionRegistry = useContext(ExtensionRegistryContext);
+
   const history = useHistory();
   const location = useLocation();
   const wsName = useWsName(location);
@@ -103,6 +112,7 @@ export function WorkspaceContextProvider({ children }) {
     location,
   );
 
+  const getNote = useGetNote(extensionRegistry);
   const pushWsPath = usePushWsPath(updateOpenedWsPaths);
 
   const value: WorkspaceContextType = useMemo(() => {
@@ -112,6 +122,7 @@ export function WorkspaceContextProvider({ children }) {
       fileWsPaths,
       noteWsPaths,
       refreshWsPaths,
+      getNote,
       createNote,
       deleteNote,
       renameNote,
@@ -128,6 +139,7 @@ export function WorkspaceContextProvider({ children }) {
     fileWsPaths,
     noteWsPaths,
     refreshWsPaths,
+    getNote,
     createNote,
     deleteNote,
     renameNote,
@@ -272,6 +284,20 @@ export function useRenameNote(
   );
 }
 
+export function useGetNote(extensionRegistry: ExtensionRegistry) {
+  return useCallback(
+    async (wsPath: string) => {
+      const doc = await getDoc(
+        wsPath,
+        extensionRegistry.specRegistry,
+        extensionRegistry.markdownItPlugins,
+      );
+      return doc;
+    },
+    [extensionRegistry.specRegistry, extensionRegistry.markdownItPlugins],
+  );
+}
+
 export function useCreateNote(
   wsName: string,
   openedWsPaths: OpenedWsPaths,
@@ -315,7 +341,7 @@ export function useCreateNote(
     ) => {
       const fileExists = await checkFileExists(wsPath);
       if (!fileExists) {
-        await saveNote(extensionRegistry, wsPath, doc);
+        await saveDoc(wsPath, doc, extensionRegistry.specRegistry);
       }
       await refreshWsPaths();
       if (open) {

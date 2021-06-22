@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
-import { getNote } from 'workspaces/index';
 import { getScrollParentElement } from 'utils/index';
+import { useWorkspaceContext } from 'workspace-context';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -13,6 +13,7 @@ Editor.propTypes = {
 };
 
 export function Editor({ editorId, wsPath, extensionRegistry, setEditor }) {
+  const { getNote } = useWorkspaceContext();
   // an object which can is used to provide extensions a store unique to this editor instance
   const [uniqueEditorObj] = useState({});
   // Even though the collab extension will reset the content to its convenience
@@ -21,7 +22,7 @@ export function Editor({ editorId, wsPath, extensionRegistry, setEditor }) {
   const [initialValue, setInitialDoc] = useState();
   useEffect(() => {
     let destroyed = false;
-    getNote(extensionRegistry, wsPath).then((doc) => {
+    getNote(wsPath).then((doc) => {
       if (!destroyed) {
         setInitialDoc(doc);
       }
@@ -29,7 +30,7 @@ export function Editor({ editorId, wsPath, extensionRegistry, setEditor }) {
     return () => {
       destroyed = true;
     };
-  }, [extensionRegistry, wsPath]);
+  }, [getNote, wsPath]);
 
   useEffect(() => {
     if (initialValue) {

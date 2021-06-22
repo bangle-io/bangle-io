@@ -38,8 +38,10 @@ export function HelpWorkspaceMonitor({ wsPath }) {
     }
 
     const reset = async (otherWsName) => {
-      const files = await listAllFiles(otherWsName);
-      await Promise.all(files.map((w) => deleteFile(w)));
+      if (otherWsName === HELP_FS_WORKSPACE_NAME) {
+        const files = await listAllFiles(otherWsName);
+        await Promise.all(files.map((w) => deleteFile(w)));
+      }
     };
     dispatch({
       type: 'UI/SHOW_NOTIFICATION',

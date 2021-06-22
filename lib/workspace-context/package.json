@@ -33,6 +33,8 @@
   },
   "dependencies": {
     "config": "workspace:*",
+    "extension-registry": "workspace:*",
+    "markdown": "workspace:*",
     "react-router-dom": "^5.2.0",
     "utils": "workspace:*",
     "workspaces": "workspace:*",

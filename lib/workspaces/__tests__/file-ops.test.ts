@@ -1,5 +1,6 @@
 import mockBabyFs from 'baby-fs-test-mock/index';
-import { copyWorkspace, deleteFile, listAllFiles, saveNote } from '../file-ops';
+import { copyWorkspace, deleteFile, listAllFiles, saveDoc } from '../file-ops';
+
 import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import { Extension, ExtensionRegistry } from 'extension-registry';
@@ -77,7 +78,7 @@ describe('deleteFile', () => {
     expect(mockBabyFs.idbFS.unlink).toBeCalledWith('kujo/one.md');
   });
 });
-describe('saveNote', () => {
+describe('saveDoc', () => {
   test('works', async () => {
     mockBabyFs.setupMockWorkspace({ name: 'kujo' });
 
@@ -107,7 +108,7 @@ describe('saveNote', () => {
         },
       ],
     });
-    await saveNote(extensionRegistry, 'kujo:one.md', doc);
+    await saveDoc('kujo:one.md', doc, extensionRegistry.specRegistry);
 
     expect(mockBabyFs.idbFS.writeFile).toBeCalledTimes(1);
     expect(mockBabyFs.idbFS.writeFile).toBeCalledWith(

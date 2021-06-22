@@ -38,19 +38,19 @@ export function Entry() {
             <WorkerSetup loadWebworker={moduleSupport} />
             <PageLifecycle />
             <UIManager>
-              <WorkspaceContextProvider>
-                <WatchWorkspace />
-                <WatchUI />
-                <ExtensionRegistryContextProvider
-                  initExtensionRegistry={initExtensionRegistry}
-                >
+              <ExtensionRegistryContextProvider
+                initExtensionRegistry={initExtensionRegistry}
+              >
+                <WorkspaceContextProvider>
+                  <WatchWorkspace />
+                  <WatchUI />
                   <EditorManager>
                     <ActionContextProvider>
                       <App />
                     </ActionContextProvider>
                   </EditorManager>
-                </ExtensionRegistryContextProvider>
-              </WorkspaceContextProvider>
+                </WorkspaceContextProvider>
+              </ExtensionRegistryContextProvider>
             </UIManager>
           </AppStateProvider>
         </Router>

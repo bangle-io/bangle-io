@@ -7778,10 +7778,6 @@ __metadata:
     prosemirror-model: ^1.14.1
     react: ^17.0.2
     react-dom: 17.0.2
-  peerDependencies:
-    "@bangle.dev/core": "*"
-    prosemirror-model: "*"
-    react: "*"
   languageName: unknown
   linkType: soft
 
@@ -16891,6 +16887,8 @@ typescript@4.2.4:
     "@types/react-router-dom": ^5.1.7
     baby-fs: "workspace:*"
     config: "workspace:*"
+    extension-registry: "workspace:*"
+    markdown: "workspace:*"
     react: ^17.0.2
     react-dom: 17.0.2
     react-router-dom: ^5.2.0

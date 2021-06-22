@@ -1,13 +1,17 @@
-import { getNote, saveNote } from 'workspaces/index';
+import { getDoc, saveDoc } from 'workspaces/index';
 import { DebouncedDisk } from '@bangle.dev/disk';
 
 export function localDiskSetup(extensionRegistry, appState) {
   const getItem = async (wsPath) => {
-    const doc = await getNote(extensionRegistry, wsPath);
+    const doc = await getDoc(
+      wsPath,
+      extensionRegistry.specRegistry,
+      extensionRegistry.markdownItPlugins,
+    );
     return doc;
   };
   const setItem = async (wsPath, doc, version) => {
-    await saveNote(extensionRegistry, wsPath, doc);
+    await saveDoc(wsPath, doc, extensionRegistry.specRegistry);
   };
 
   return {
