@@ -15,6 +15,8 @@ const {
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
+jest.retryTimes(2);
+
 let page, destroyPage;
 
 beforeEach(async () => {

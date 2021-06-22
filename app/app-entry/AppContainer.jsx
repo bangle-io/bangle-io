@@ -14,15 +14,15 @@ import { keybindings } from 'config/index';
 import { EditorArea } from './editor/EditorArea';
 import { EditorWrapperUI } from './components/EditorWrapperUI';
 import { NotificationArea } from './components/NotificationArea';
-import { HelpWorkspaceMonitor } from './help-docs/HelpWorkspaceModified';
+import { HelpWorkspaceMonitor } from './watchers/HelpWorkspaceModified';
 import { HelpBrowser } from './components/HelpBrowser';
 import {
   PRIMARY_SCROLL_PARENT_ID,
   SECONDARY_SCROLL_PARENT_ID,
 } from 'constants/index';
-import { ApplicationComponents } from './ApplicationComponents';
+import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { useWorkspaceContext } from 'workspace-context/index';
-import { PaletteManager } from './PaletteManager';
+import { PaletteManager } from './extension-glue/PaletteManager';
 import { NativeFSAuth } from './components/NativeFSAuth';
 
 export function AppContainer() {

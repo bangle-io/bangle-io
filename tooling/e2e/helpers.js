@@ -188,6 +188,8 @@ async function getWsPathsShownInFilePalette(page) {
     timeout: SELECTOR_TIMEOUT,
   });
 
+  await longSleep(100);
+
   const wsPaths = await handle.$$eval(
     `.universal-palette-item[data-id]`,
     (nodes) => [...nodes].map((n) => n.getAttribute('data-id')),
@@ -198,11 +200,16 @@ async function getWsPathsShownInFilePalette(page) {
   return wsPaths;
 }
 
+async function jestDebug() {
+  return jestPuppeteer.debug();
+}
+
 module.exports = {
   clickPaletteRow,
   createNewNote,
   createWorkspace,
   ctrlKey,
+  jestDebug,
   frmtHTML,
   getEditorHTML,
   getPrimaryEditorDebugString,

@@ -4,9 +4,10 @@ const getLast = (arr) => arr[arr.length - 1];
 
 /**
  * Types of paths
+ * filePath - /a/b/c.md simple file path
  * wsPath - <wsName>:<filePath>
- * fsPath - /<wsName>/<filePath>
- * locationPath - /ws/<wsName>/<filePath>
+ * fsPath - /<wsName>/<filePath> - this is what is used internally by the fs module
+ * locationPath - /ws/<wsName>/<filePath> - used in browser's location
  * localFilePath - a vanilla relative path like ./xys or ../sysd/sds.md
  */
 

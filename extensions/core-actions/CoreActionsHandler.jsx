@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useContext,
-  useEffect,
-  useCallback,
-  useState,
-} from 'react';
+import React, { useContext, useEffect, useCallback, useState } from 'react';
 import {
   NEW_NOTE_ACTION,
   TOGGLE_FILE_SIDEBAR_ACTION,

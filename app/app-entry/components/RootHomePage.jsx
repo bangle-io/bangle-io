@@ -7,7 +7,6 @@ import { cx } from 'utils/utility';
 import { EditorWrapperUI } from './EditorWrapperUI';
 
 export function RootHomePage() {
-  const { dispatch } = useContext(UIManagerContext);
   const { workspaces } = useWorkspaces();
   const recentWsComp = workspaces.length > 0 && (
     <>
