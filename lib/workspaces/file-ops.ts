@@ -6,14 +6,12 @@ import {
   toFSPath,
   validateFileWsPath,
   validateNoteWsPath,
-  validWsName,
 } from 'ws-path';
 import { getFileSystemFromWsInfo } from './get-fs';
 import { getWorkspaceInfo } from './workspaces-ops';
 import { BaseFileSystemError, FILE_NOT_FOUND_ERROR } from 'baby-fs/index';
 import { markdownParser, markdownSerializer } from 'markdown/index';
 import { HELP_FS_WORKSPACE_TYPE } from './types';
-import type { ExtensionRegistry } from 'extension-registry';
 
 export async function listAllFiles(wsName: string) {
   const workspaceInfo = await getWorkspaceInfo(wsName);
@@ -76,10 +74,15 @@ export async function getFileLastModified(wsPath: string) {
   }
 }
 
-export async function getNote(
-  extensionRegistry: ExtensionRegistry,
-  wsPath: string,
-) {
+export async function getDoc(wsPath: string, specRegistry, markdownItPlugins) {
+  const fileText = await getFileAsText(wsPath);
+
+  const doc = markdownParser(fileText, specRegistry, markdownItPlugins);
+
+  return doc;
+}
+
+export async function getFileAsText(wsPath: string) {
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
@@ -91,13 +94,7 @@ export async function getNote(
     path,
   );
 
-  const doc = markdownParser(
-    fileText,
-    extensionRegistry.specRegistry,
-    extensionRegistry.markdownItPlugins,
-  );
-
-  return doc;
+  return fileText;
 }
 
 export async function getFile(wsPath: string) {
@@ -112,14 +109,10 @@ export async function getFile(wsPath: string) {
   return file;
 }
 
-export async function saveNote(
-  extensionRegistry: ExtensionRegistry,
-  wsPath: string,
-  doc: any,
-) {
+export async function saveDoc(wsPath: string, doc: any, specRegistry) {
   validateNoteWsPath(wsPath);
   const { fileName } = resolvePath(wsPath);
-  const data = markdownSerializer(doc, extensionRegistry.specRegistry);
+  const data = markdownSerializer(doc, specRegistry);
   await saveFile(
     wsPath,
     new File([data], fileName, {

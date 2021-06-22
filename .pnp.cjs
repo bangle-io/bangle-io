@@ -223,7 +223,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["editor-scroll-extension", ["workspace:extensions/editor-scroll-extension"]],
       ["env-vars", ["workspace:tooling/env-vars"]],
       ["example-extension", ["workspace:extensions/example-extension"]],
-      ["extension-registry", ["virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry", "workspace:lib/extension-registry"]],
+      ["extension-registry", ["workspace:lib/extension-registry"]],
       ["extensions", ["workspace:extensions"]],
       ["image-extension", ["workspace:extensions/image-extension"]],
       ["inline-backlink", ["workspace:extensions/inline-backlink"]],
@@ -6430,7 +6430,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
             ["@types/extension-registry", null],
             ["@types/react", "npm:17.0.11"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"]
           ],
           "packagePeers": [
@@ -6445,7 +6445,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/action-context/",
           "packageDependencies": [
             ["action-context", "workspace:lib/action-context"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"]
           ],
           "linkType": "SOFT",
@@ -6697,7 +6697,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["constants", "workspace:lib/constants"],
             ["editor-core", "workspace:extensions/editor-core"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["image-extension", "workspace:extensions/image-extension"],
             ["inline-backlink", "workspace:extensions/inline-backlink"],
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
@@ -8406,7 +8406,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/collab-client", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#npm:0.18.1"],
             ["@bangle.dev/collab-server", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#npm:0.18.1"],
             ["@bangle.dev/core", "npm:0.18.1"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["naukar-proxy", "workspace:worker/naukar-proxy"]
           ],
           "linkType": "SOFT",
@@ -8418,7 +8418,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.dev/core", "npm:0.18.1"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["utils", "workspace:lib/utils"]
           ],
           "linkType": "SOFT",
@@ -8803,7 +8803,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
             ["config", "workspace:lib/config"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["ui-components", "workspace:lib/ui-components"],
             ["ui-context", "workspace:lib/ui-context"],
@@ -8865,7 +8865,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
             ["config", "workspace:lib/config"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["ui-components", "workspace:lib/ui-components"],
@@ -8888,7 +8888,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
             ["config", "workspace:lib/config"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["ui-components", "workspace:lib/ui-components"],
@@ -9757,7 +9757,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"]
           ],
@@ -9792,7 +9792,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.8"],
             ["app-state-context", "workspace:lib/app-state-context"],
             ["debounce-fn", "npm:5.0.0"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["utils", "workspace:lib/utils"]
@@ -10698,7 +10698,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["example-extension", "workspace:extensions/example-extension"],
             ["@bangle.dev/core", "npm:0.18.1"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["utils", "workspace:lib/utils"]
           ],
           "linkType": "SOFT",
@@ -10915,25 +10915,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["extension-registry", [
-        ["virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry", {
-          "packageLocation": "./.yarn/__virtual__/extension-registry-virtual-efdbe9f0d4/1/lib/extension-registry/",
-          "packageDependencies": [
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
-            ["@bangle.dev/core", "npm:0.18.1"],
-            ["@types/bangle.dev__core", null],
-            ["@types/prosemirror-model", "npm:1.13.0"],
-            ["@types/react", "npm:17.0.11"],
-            ["@types/react-dom", "npm:17.0.8"],
-            ["prosemirror-model", "npm:1.14.1"],
-            ["react", "npm:17.0.2"],
-            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"]
-          ],
-          "packagePeers": [
-            "@bangle.dev/core",
-            "@types/bangle.dev__core"
-          ],
-          "linkType": "SOFT",
-        }],
         ["workspace:lib/extension-registry", {
           "packageLocation": "./lib/extension-registry/",
           "packageDependencies": [
@@ -12394,7 +12375,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/user-event", "virtual:30bbe5a9fd71bdedc988bef6dbbf7be8741a536210ced89040612d879c28fe8c68aa6f54170853cf930ad3b759b33f0d397e90bf35b31e32c7cda2064108bb55#npm:13.1.9"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["utils", "workspace:lib/utils"],
@@ -12521,7 +12502,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["config", "workspace:lib/config"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-lib/inline-palette"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
@@ -12544,7 +12525,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.8"],
             ["chrono-node", "npm:2.2.6"],
             ["config", "workspace:lib/config"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["inline-palette", "virtual:34f3217bd46ceddf7919c973a4577f8c089322d17848e49e529471f6585fd6923e833c130dffac10649d1d001b8e0c233bcaff6f0a41a4aafd03ecd98e26a462#workspace:js-lib/inline-palette"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
@@ -12571,7 +12552,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["emoji-lookup-data", "npm:1.3.0"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["utils", "workspace:lib/utils"]
@@ -18840,7 +18821,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["core-palettes", "virtual:aa1c8d7944f8800bbdb7ca393d5db6f1afa86d22b62459627c785b9585f7ad9ee0ced3c3949bd5b23056b168fa0079e541f4a8be858a5d25f9eaa419021fdd0d#workspace:extensions/core-palettes"],
             ["editor-core", "workspace:extensions/editor-core"],
             ["editor-scroll-extension", "workspace:extensions/editor-scroll-extension"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["image-extension", "workspace:extensions/image-extension"],
             ["inline-backlink", "workspace:extensions/inline-backlink"],
             ["inline-command-palette", "workspace:extensions/inline-command-palette"],
@@ -21249,6 +21230,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
             ["config", "workspace:lib/config"],
+            ["extension-registry", "workspace:lib/extension-registry"],
+            ["markdown", "workspace:lib/markdown"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
@@ -21274,7 +21257,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["baby-fs", "workspace:js-lib/baby-fs"],
             ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
             ["markdown", "workspace:lib/markdown"],
             ["react", "npm:17.0.2"],
@@ -21306,7 +21289,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["baby-fs", "workspace:js-lib/baby-fs"],
             ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
             ["markdown", "workspace:lib/markdown"],
             ["react", "npm:17.0.2"],
@@ -21336,7 +21319,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["baby-fs", "workspace:js-lib/baby-fs"],
             ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
             ["markdown", "workspace:lib/markdown"],
             ["react", "npm:17.0.2"],
@@ -21360,7 +21343,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["baby-fs", "workspace:js-lib/baby-fs"],
             ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
-            ["extension-registry", "virtual:832e5c66693f409455e79992c8fab028c82ea382b9075ff4845ec1d91992448c668335cb7ae3eacc50da3bfadb5678c9f937f0086cca4efb9bc79b2d97a8c84e#workspace:lib/extension-registry"],
+            ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
             ["markdown", "workspace:lib/markdown"],
             ["react", "npm:17.0.2"],

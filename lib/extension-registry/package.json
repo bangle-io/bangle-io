@@ -18,11 +18,6 @@
   "main": "index.ts",
   "module": "index.ts",
   "scripts": {},
-  "peerDependencies": {
-    "@bangle.dev/core": "*",
-    "prosemirror-model": "*",
-    "react": "*"
-  },
   "publishConfig": {
     "access": "restricted",
     "main": "./dist/index.js",
