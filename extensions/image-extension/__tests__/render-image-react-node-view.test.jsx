@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import { getFile } from 'workspaces/index';
+import { FileOps } from 'workspaces/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { ImageComponent } from '../render-image-react-node-view';
 import { sleep } from 'utils/utility';
@@ -17,7 +17,9 @@ jest.mock('workspaces/index', () => {
   const workspaceThings = jest.requireActual('workspaces/index');
   return {
     ...workspaceThings,
-    getFile: jest.fn(),
+    FileOps: {
+      getFile: jest.fn(),
+    },
   };
 });
 
@@ -67,7 +69,7 @@ describe('ImageComponent', () => {
     useWorkspaceContext.mockImplementation(() => ({
       primaryWsPath: 'test-ws:my-file.md',
     }));
-    getFile.mockImplementation(async () => {
+    FileOps.getFile.mockImplementation(async () => {
       return new File('I am the content of image', 'google.png', {});
     });
     const renderResult = render(
@@ -120,7 +122,7 @@ describe('ImageComponent', () => {
     useWorkspaceContext.mockImplementation(() => ({
       primaryWsPath: 'test-ws:my-file.md',
     }));
-    getFile.mockImplementation(async () => {
+    FileOps.getFile.mockImplementation(async () => {
       return new File('I am the content of image', 'google.png', {});
     });
     const renderResult = render(

@@ -4,10 +4,8 @@ import { UIManagerContext } from 'ui-context';
 import { isValidNoteWsPath, resolvePath, toFSPath } from 'ws-path';
 import { ActionContext } from 'action-context';
 import {
-  deleteFile,
-  listAllFiles,
+  FileOps,
   getWorkspaceInfo,
-  getFileSystemFromWsInfo,
   HELP_FS_WORKSPACE_NAME,
   HELP_FS_WORKSPACE_TYPE,
 } from 'workspaces/index';
@@ -39,8 +37,8 @@ export function HelpWorkspaceMonitor({ wsPath }) {
 
     const reset = async (otherWsName) => {
       if (otherWsName === HELP_FS_WORKSPACE_NAME) {
-        const files = await listAllFiles(otherWsName);
-        await Promise.all(files.map((w) => deleteFile(w)));
+        const files = await FileOps.listAllFiles(otherWsName);
+        await Promise.all(files.map((w) => FileOps.deleteFile(w)));
       }
     };
     dispatch({
@@ -166,7 +164,7 @@ async function isHelpFileModified(wsPath) {
     return false;
   }
 
-  const fs = getFileSystemFromWsInfo(wsInfo);
+  const fs = FileOps.getFileSystemFromWsInfo(wsInfo);
 
   const isModified = await fs.isFileModified(toFSPath(wsPath));
 

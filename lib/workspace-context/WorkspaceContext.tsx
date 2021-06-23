@@ -6,18 +6,23 @@ import React, {
   useState,
   useMemo,
 } from 'react';
+import {
+  BaseFileSystemError,
+  NATIVE_BROWSER_PERMISSION_ERROR,
+} from 'baby-fs/index';
 import { Node } from '@bangle.dev/core/prosemirror/model';
 import {
-  renameFile,
-  deleteFile,
-  getDoc,
-  saveDoc,
-  listAllFiles,
-  checkFileExists,
+  FileOps,
   HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
+  WORKSPACE_NOT_FOUND_ERROR,
+  WorkspaceError,
 } from 'workspaces/index';
-import { shallowCompareArray, removeMdExtension } from 'utils/index';
+import {
+  shallowCompareArray,
+  removeMdExtension,
+  serialExecuteQueue,
+} from 'utils/index';
 import {
   filePathToWsPath,
   getPrimaryWsPath,
@@ -31,7 +36,6 @@ import {
   isValidNoteWsPath,
   resolvePath,
 } from 'ws-path';
-import { markdownParser, markdownSerializer } from 'markdown/index';
 import {
   ExtensionRegistry,
   ExtensionRegistryContext,
@@ -46,7 +50,7 @@ let log = LOG
 type RefreshWsPaths = ReturnType<typeof useFiles>['refreshWsPaths'];
 
 interface WorkspaceContextType {
-  wsName: string;
+  wsName: string | undefined;
   fileWsPaths: ReturnType<typeof useFiles>['fileWsPaths'];
   noteWsPaths: ReturnType<typeof useFiles>['noteWsPaths'];
   refreshWsPaths: RefreshWsPaths;
@@ -61,6 +65,7 @@ interface WorkspaceContextType {
     typeof useOpenedWsPaths
   >['updateOpenedWsPaths'];
   pushWsPath: ReturnType<typeof usePushWsPath>;
+  checkFileExists: ReturnType<typeof useGetFileOps>['checkFileExists'];
 }
 
 const WorkspaceHooksContext = React.createContext<WorkspaceContextType>(
@@ -77,25 +82,49 @@ export function useWorkspaceContext() {
  * @returns
  * - noteWsPaths, fileWsPaths - retain their instance if there is no change. This is useful for runing `===` fearlessly.
  */
-export function WorkspaceContextProvider({ children }) {
+export function WorkspaceContextProvider({
+  children,
+  onNativefsAuthError,
+  onWorkspaceNotFound,
+}: {
+  children: React.ReactNode;
+  onNativefsAuthError: (wsName: string | undefined, history: History) => void;
+  onWorkspaceNotFound: (wsName: string | undefined, history: History) => void;
+}) {
   const extensionRegistry = useContext(ExtensionRegistryContext);
-
   const history = useHistory();
   const location = useLocation();
   const wsName = useWsName(location);
+  const onAuthError = useCallback(() => {
+    if (wsName) {
+      onNativefsAuthError(wsName, history);
+    }
+  }, [history, wsName, onNativefsAuthError]);
+
+  const _onWorkspaceNoteFound = useCallback(() => {
+    if (wsName) {
+      onWorkspaceNotFound(wsName, history);
+    }
+  }, [wsName, history, onWorkspaceNotFound]);
+
+  const fileOps = useGetFileOps(onAuthError, _onWorkspaceNoteFound);
   const { openedWsPaths, updateOpenedWsPaths } = useOpenedWsPaths(
     wsName,
     history,
     location,
   );
   const { primaryWsPath, secondaryWsPath } = openedWsPaths;
-  const { fileWsPaths, noteWsPaths, refreshWsPaths } = useFiles(wsName);
+  const { fileWsPaths, noteWsPaths, refreshWsPaths } = useFiles(
+    wsName,
+    fileOps,
+  );
   const createNote = useCreateNote(
     wsName,
     openedWsPaths,
     refreshWsPaths,
     history,
     location,
+    fileOps,
   );
 
   const deleteNote = useDeleteNote(
@@ -103,6 +132,7 @@ export function WorkspaceContextProvider({ children }) {
     openedWsPaths,
     refreshWsPaths,
     updateOpenedWsPaths,
+    fileOps,
   );
   const renameNote = useRenameNote(
     wsName,
@@ -110,10 +140,12 @@ export function WorkspaceContextProvider({ children }) {
     refreshWsPaths,
     history,
     location,
+    fileOps,
   );
 
-  const getNote = useGetNote(extensionRegistry);
+  const getNote = useGetNote(extensionRegistry, fileOps);
   const pushWsPath = usePushWsPath(updateOpenedWsPaths);
+  const checkFileExists = fileOps.checkFileExists;
 
   const value: WorkspaceContextType = useMemo(() => {
     return {
@@ -130,6 +162,7 @@ export function WorkspaceContextProvider({ children }) {
       secondaryWsPath,
       updateOpenedWsPaths,
       pushWsPath,
+      checkFileExists,
     };
   }, [
     wsName,
@@ -145,6 +178,7 @@ export function WorkspaceContextProvider({ children }) {
     renameNote,
     updateOpenedWsPaths,
     pushWsPath,
+    checkFileExists,
   ]);
 
   return (
@@ -157,15 +191,11 @@ export function WorkspaceContextProvider({ children }) {
 function useWsName(location: Location) {
   const wsName = getWsName(location);
 
-  if (!wsName) {
-    return HELP_FS_WORKSPACE_NAME;
-  }
-
   return wsName;
 }
 
 export function useOpenedWsPaths(
-  wsName: string,
+  wsName: string | undefined,
   history: History,
   location: Location,
 ) {
@@ -188,6 +218,9 @@ export function useOpenedWsPaths(
         | ((currentOpened: OpenedWsPaths) => OpenedWsPaths),
       { replaceHistory = false } = {},
     ): boolean => {
+      if (!wsName) {
+        return false;
+      }
       if (newOpened instanceof Function) {
         newOpened = newOpened(openedWsPaths);
       }
@@ -209,7 +242,10 @@ export function useOpenedWsPaths(
   return { openedWsPaths, updateOpenedWsPaths };
 }
 
-export function useFiles(wsName) {
+export function useFiles(
+  wsName: string | undefined,
+  fileOps: ReturnType<typeof useGetFileOps>,
+) {
   const location = useLocation<any>();
 
   const [fileWsPaths, setFiles] = useState<undefined | string[]>(undefined);
@@ -217,30 +253,36 @@ export function useFiles(wsName) {
   const noteWsPaths = useMemo(() => {
     return fileWsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
   }, [fileWsPaths]);
-
   const refreshWsPaths = useCallback(() => {
-    log('refreshing wsPaths', wsName);
-    if (wsName) {
-      listAllFiles(wsName)
-        .then((items) => {
-          log('received files for wsName', wsName, 'file count', items.length);
-          setFiles((existing) => {
-            log('setting files', { existing, items, wsName });
-            if (!existing) {
-              return items;
-            }
-            // preserve the identity
-            const isEqual = shallowCompareArray(existing, items);
-            return isEqual ? existing : items;
-          });
-          return;
-        })
-        .catch((error) => {
-          setFiles(undefined);
-          throw error;
-        });
+    if (!wsName) {
+      return;
     }
-  }, [wsName]);
+    log('refreshing wsPaths', wsName);
+    fileOps
+      .listAllFiles(wsName)
+      .then((items) => {
+        log('received files for wsName', wsName, 'file count', items.length);
+        setFiles((existing) => {
+          log('setting files', { existing, items, wsName });
+          if (!existing) {
+            return items;
+          }
+          // preserve the identity
+          const isEqual = shallowCompareArray(existing, items);
+          return isEqual ? existing : items;
+        });
+        return;
+      })
+      .catch((error) => {
+        setFiles(undefined);
+        // ignore file system error here as other parts of the
+        // application should have handled it
+        if (error instanceof BaseFileSystemError) {
+        } else {
+          throw error;
+        }
+      });
+  }, [wsName, fileOps]);
 
   useEffect(() => {
     setFiles(undefined);
@@ -257,19 +299,24 @@ export function useFiles(wsName) {
 }
 
 export function useRenameNote(
-  wsName: string,
+  wsName: string | undefined,
   openedWsPaths: OpenedWsPaths,
   refreshWsPaths: RefreshWsPaths,
   history: History,
   location: Location,
+  fileOps: ReturnType<typeof useGetFileOps>,
 ) {
   return useCallback(
     async (oldWsPath, newWsPath, { updateLocation = true } = {}) => {
+      if (!wsName) {
+        return;
+      }
+
       if (wsName === HELP_FS_WORKSPACE_NAME) {
         throw new PathValidationError('Cannot rename a help document');
       }
 
-      await renameFile(oldWsPath, newWsPath);
+      await fileOps.renameFile(oldWsPath, newWsPath);
       if (updateLocation) {
         const newLocation = openedWsPaths
           .updateIfFound(oldWsPath, newWsPath)
@@ -280,30 +327,38 @@ export function useRenameNote(
 
       await refreshWsPaths();
     },
-    [openedWsPaths, location, history, wsName, refreshWsPaths],
+    [fileOps, openedWsPaths, location, history, wsName, refreshWsPaths],
   );
 }
 
-export function useGetNote(extensionRegistry: ExtensionRegistry) {
+export function useGetNote(
+  extensionRegistry: ExtensionRegistry,
+  fileOps: ReturnType<typeof useGetFileOps>,
+) {
   return useCallback(
     async (wsPath: string) => {
-      const doc = await getDoc(
+      const doc = await fileOps.getDoc(
         wsPath,
         extensionRegistry.specRegistry,
         extensionRegistry.markdownItPlugins,
       );
       return doc;
     },
-    [extensionRegistry.specRegistry, extensionRegistry.markdownItPlugins],
+    [
+      fileOps,
+      extensionRegistry.specRegistry,
+      extensionRegistry.markdownItPlugins,
+    ],
   );
 }
 
 export function useCreateNote(
-  wsName: string,
+  wsName: string | undefined,
   openedWsPaths: OpenedWsPaths,
   refreshWsPaths: RefreshWsPaths,
   history: History,
   location: Location,
+  fileOps: ReturnType<typeof useGetFileOps>,
 ) {
   const createNoteCallback = useCallback(
     async (
@@ -339,9 +394,12 @@ export function useCreateNote(
         }),
       } = {},
     ) => {
-      const fileExists = await checkFileExists(wsPath);
+      if (!wsName) {
+        return;
+      }
+      const fileExists = await fileOps.checkFileExists(wsPath);
       if (!fileExists) {
-        await saveDoc(wsPath, doc, extensionRegistry.specRegistry);
+        await fileOps.saveDoc(wsPath, doc, extensionRegistry.specRegistry);
       }
       await refreshWsPaths();
       if (open) {
@@ -352,22 +410,27 @@ export function useCreateNote(
         historyPush(history, newLocation);
       }
     },
-    [refreshWsPaths, wsName, location, openedWsPaths, history],
+    [refreshWsPaths, wsName, location, openedWsPaths, history, fileOps],
   );
 
   return createNoteCallback;
 }
 
 export function useDeleteNote(
-  wsName: string,
+  wsName: string | undefined,
   openedWsPaths: OpenedWsPaths,
   refreshWsPaths: RefreshWsPaths,
   updateOpenedWsPaths: ReturnType<
     typeof useOpenedWsPaths
   >['updateOpenedWsPaths'],
+  fileOps: ReturnType<typeof useGetFileOps>,
 ) {
   return useCallback(
     async (wsPathToDelete: Array<string> | string) => {
+      if (!wsName) {
+        return;
+      }
+
       if (wsName === HELP_FS_WORKSPACE_NAME) {
         // TODO move this to a notification
         throw new PathValidationError('Cannot delete a help document');
@@ -387,12 +450,12 @@ export function useDeleteNote(
       updateOpenedWsPaths(newOpenedWsPaths, { replaceHistory: true });
 
       for (let wsPath of wsPathToDelete) {
-        await deleteFile(wsPath);
+        await fileOps.deleteFile(wsPath);
       }
 
       await refreshWsPaths();
     },
-    [wsName, refreshWsPaths, openedWsPaths, updateOpenedWsPaths],
+    [fileOps, wsName, refreshWsPaths, openedWsPaths, updateOpenedWsPaths],
   );
 }
 
@@ -429,4 +492,66 @@ function usePushWsPath(
     [updateOpenedWsPaths],
   );
   return pushWsPath;
+}
+
+function handleErrors<T extends (...args: any[]) => any>(
+  cb: T,
+  onAuthNeeded: () => void,
+  onWorkspaceNotFound: () => void,
+) {
+  return (...args: Parameters<T>): ReturnType<T> => {
+    return cb(...args).catch((error) => {
+      if (
+        error instanceof BaseFileSystemError &&
+        error.code === NATIVE_BROWSER_PERMISSION_ERROR
+      ) {
+        onAuthNeeded();
+      }
+      if (
+        error instanceof WorkspaceError &&
+        error.code === WORKSPACE_NOT_FOUND_ERROR
+      ) {
+        onWorkspaceNotFound();
+      }
+      throw error;
+    });
+  };
+}
+
+/**
+ * This whole thing exists so that we can tap into auth errors
+ * and do the necessary.
+ */
+function useGetFileOps(
+  onAuthError: () => void,
+  onWorkspaceNotFound: () => void,
+) {
+  const obj = useMemo(() => {
+    return {
+      renameFile: handleErrors(
+        FileOps.renameFile,
+        onAuthError,
+        onWorkspaceNotFound,
+      ),
+      deleteFile: handleErrors(
+        FileOps.deleteFile,
+        onAuthError,
+        onWorkspaceNotFound,
+      ),
+      getDoc: handleErrors(FileOps.getDoc, onAuthError, onWorkspaceNotFound),
+      saveDoc: handleErrors(FileOps.saveDoc, onAuthError, onWorkspaceNotFound),
+      listAllFiles: handleErrors(
+        FileOps.listAllFiles,
+        onAuthError,
+        onWorkspaceNotFound,
+      ),
+      checkFileExists: handleErrors(
+        FileOps.checkFileExists,
+        onAuthError,
+        onWorkspaceNotFound,
+      ),
+    };
+  }, [onAuthError, onWorkspaceNotFound]);
+
+  return obj;
 }

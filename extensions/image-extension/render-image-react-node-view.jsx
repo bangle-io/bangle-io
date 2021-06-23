@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getFile } from 'workspaces/index';
+import { FileOps } from 'workspaces/index';
 import { useDestroyRef } from 'utils/index';
 
 import {
@@ -52,7 +52,7 @@ export function ImageComponent({ nodeAttrs }) {
           throw new Error('Image source cannot be a wsPath');
         }
 
-        getFile(imageWsPath)
+        FileOps.getFile(imageWsPath)
           .then((file) => {
             if (!file) {
               return;

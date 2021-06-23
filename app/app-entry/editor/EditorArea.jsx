@@ -3,7 +3,7 @@ import { ExtensionRegistryContext } from 'extension-registry';
 import React, { useEffect, useContext, useState } from 'react';
 import { CloseIcon } from 'ui-components/index';
 import { cx, sleep, useDestroyRef } from 'utils/index';
-import { checkFileExists } from 'workspaces/index';
+import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';
@@ -19,7 +19,7 @@ import { EmptyEditorPage } from './EmptyEditorPage';
 function useHandleWsPath(incomingWsPath) {
   const [wsPath, updateWsPath] = useState(undefined);
   const [fileExists, updateFileExists] = useState(undefined);
-
+  const { checkFileExists } = useWorkspaceContext();
   const destroyedRef = useDestroyRef();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ function useHandleWsPath(incomingWsPath) {
       updateFileExists(undefined);
       updateWsPath(undefined);
     }
-  }, [incomingWsPath, wsPath, destroyedRef]);
+  }, [incomingWsPath, checkFileExists, wsPath, destroyedRef]);
 
   return { fileExists, wsPath };
 }

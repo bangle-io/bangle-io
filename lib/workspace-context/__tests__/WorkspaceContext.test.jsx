@@ -1,4 +1,4 @@
-import { listAllFiles, deleteFile } from 'workspaces/index';
+import { FileOps } from 'workspaces/index';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useDeleteNote, useOpenedWsPaths, useFiles } from '../WorkspaceContext';
 import { render } from '@testing-library/react';
@@ -15,13 +15,23 @@ jest.mock('workspaces/index', () => {
   const actual = jest.requireActual('workspaces/index');
   return {
     ...actual,
-    deleteFile: jest.fn(async () => {}),
-    listAllFiles: jest.fn(async () => []),
+    FileOps: {
+      deleteFile: jest.fn(async () => {}),
+      listAllFiles: jest.fn(async () => []),
+    },
+  };
+});
+
+let fileOps = {};
+
+beforeEach(() => {
+  fileOps = {
+    listAllFiles: FileOps.listAllFiles,
+    deleteFile: FileOps.deleteFile,
   };
 });
 
 describe('useFiles', () => {
-  let testLocation;
   function Comp({ children }) {
     return (
       <Router initialEntries={['/ws/test-ws1/one.md']}>
@@ -31,21 +41,20 @@ describe('useFiles', () => {
         <Route
           path="*"
           render={({ history, location }) => {
-            testLocation = location;
             return null;
           }}
         />
       </Router>
     );
   }
-  beforeEach(() => {
-    testLocation = undefined;
-  });
+
   test('works', async () => {
     let render;
 
     act(() => {
-      render = renderHook(() => useFiles('test-ws1'), { wrapper: Comp });
+      render = renderHook(() => useFiles('test-ws1', fileOps), {
+        wrapper: Comp,
+      });
     });
 
     let promise;
@@ -58,15 +67,17 @@ describe('useFiles', () => {
       noteWsPaths: [],
       refreshWsPaths: expect.any(Function),
     });
-    expect(listAllFiles).toBeCalledTimes(1);
-    expect(listAllFiles).nthCalledWith(1, 'test-ws1');
+    expect(FileOps.listAllFiles).toBeCalledTimes(1);
+    expect(FileOps.listAllFiles).nthCalledWith(1, 'test-ws1');
   });
 
   test('refreshes and preserves instance correctly', async () => {
     let render;
 
     act(() => {
-      render = renderHook(() => useFiles('test-ws1'), { wrapper: Comp });
+      render = renderHook(() => useFiles('test-ws1', fileOps), {
+        wrapper: Comp,
+      });
     });
 
     let promise;
@@ -81,7 +92,7 @@ describe('useFiles', () => {
     });
 
     const filesInstance = ['test-ws1:hi.md', 'test-ws1:img.png'];
-    listAllFiles.mockImplementation(async () => {
+    FileOps.listAllFiles.mockImplementation(async () => {
       return filesInstance;
     });
     await act(async () => {
@@ -97,7 +108,7 @@ describe('useFiles', () => {
     });
 
     // the same thing to check if the `===` instance is preserved
-    listAllFiles.mockImplementation(async () => {
+    FileOps.listAllFiles.mockImplementation(async () => {
       return ['test-ws1:hi.md', 'test-ws1:img.png'];
     });
     await act(async () => {
@@ -149,6 +160,7 @@ describe('useDeleteNote', () => {
         openedWsPaths,
         refreshWsPaths,
         updateOpenedWsPaths,
+        fileOps,
       );
       return <div>Hello</div>;
     }
@@ -167,8 +179,8 @@ describe('useDeleteNote', () => {
     // should remove it from the current path
     expect(testLocation.pathname).toBe('/ws/kujo');
 
-    expect(deleteFile).toBeCalledTimes(1);
-    expect(deleteFile).toBeCalledWith('kujo:one.md');
+    expect(FileOps.deleteFile).toBeCalledTimes(1);
+    expect(FileOps.deleteFile).toBeCalledWith('kujo:one.md');
     expect(refreshWsPaths).toBeCalledTimes(1);
   });
 
@@ -187,6 +199,7 @@ describe('useDeleteNote', () => {
         openedWsPaths,
         refreshWsPaths,
         updateOpenedWsPaths,
+        fileOps,
       );
       return <div>Hello</div>;
     }
@@ -216,6 +229,7 @@ describe('useDeleteNote', () => {
         openedWsPaths,
         refreshWsPaths,
         updateOpenedWsPaths,
+        fileOps,
       );
       return <div>Hello</div>;
     }
@@ -245,6 +259,7 @@ describe('useDeleteNote', () => {
         openedWsPaths,
         refreshWsPaths,
         updateOpenedWsPaths,
+        fileOps,
       );
       return <div>Hello</div>;
     }
