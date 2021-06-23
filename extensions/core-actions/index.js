@@ -1,3 +1,4 @@
+import React from 'react';
 import { Extension } from 'extension-registry';
 import { CoreActionsHandler } from './CoreActionsHandler';
 import {
@@ -10,6 +11,7 @@ import {
   DELETE_ACTIVE_NOTE_ACTION,
   CLONE_WORKSPACE_ACTION,
 } from './config';
+import { NewNoteIcon } from 'ui-components';
 
 const extension = Extension.create({
   name: extensionName,
@@ -22,6 +24,15 @@ const extension = Extension.create({
       { name: CLONE_WORKSPACE_ACTION, title: 'Clone current workspace' },
       { name: RENAME_ACTIVE_NOTE_ACTION, title: 'Rename active note' },
       { name: DELETE_ACTIVE_NOTE_ACTION, title: 'Delete active note' },
+    ],
+    optionsBar: [
+      {
+        icon: React.createElement(NewNoteIcon, {
+          transform: 'scale(0.94, 0.94)',
+        }),
+        hint: 'New Note\n',
+        action: NEW_NOTE_ACTION,
+      },
     ],
     ReactComponent: CoreActionsHandler,
   },

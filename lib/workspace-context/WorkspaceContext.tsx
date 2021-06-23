@@ -15,6 +15,8 @@ import {
   FileOps,
   HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
+  WORKSPACE_NOT_FOUND_ERROR,
+  WorkspaceError,
 } from 'workspaces/index';
 import {
   shallowCompareArray,
@@ -66,8 +68,6 @@ interface WorkspaceContextType {
   checkFileExists: ReturnType<typeof useGetFileOps>['checkFileExists'];
 }
 
-const listAllFilesQueue = serialExecuteQueue();
-
 const WorkspaceHooksContext = React.createContext<WorkspaceContextType>(
   {} as any,
 );
@@ -85,9 +85,11 @@ export function useWorkspaceContext() {
 export function WorkspaceContextProvider({
   children,
   onNativefsAuthError,
+  onWorkspaceNotFound,
 }: {
   children: React.ReactNode;
   onNativefsAuthError: (wsName: string | undefined, history: History) => void;
+  onWorkspaceNotFound: (wsName: string | undefined, history: History) => void;
 }) {
   const extensionRegistry = useContext(ExtensionRegistryContext);
   const history = useHistory();
@@ -99,7 +101,13 @@ export function WorkspaceContextProvider({
     }
   }, [history, wsName, onNativefsAuthError]);
 
-  const fileOps = useGetFileOps(onAuthError);
+  const _onWorkspaceNoteFound = useCallback(() => {
+    if (wsName) {
+      onWorkspaceNotFound(wsName, history);
+    }
+  }, [wsName, history, onWorkspaceNotFound]);
+
+  const fileOps = useGetFileOps(onAuthError, _onWorkspaceNoteFound);
   const { openedWsPaths, updateOpenedWsPaths } = useOpenedWsPaths(
     wsName,
     history,
@@ -486,9 +494,10 @@ function usePushWsPath(
   return pushWsPath;
 }
 
-function handleNativefsAuthError<T extends (...args: any[]) => any>(
+function handleErrors<T extends (...args: any[]) => any>(
   cb: T,
   onAuthNeeded: () => void,
+  onWorkspaceNotFound: () => void,
 ) {
   return (...args: Parameters<T>): ReturnType<T> => {
     return cb(...args).catch((error) => {
@@ -497,6 +506,12 @@ function handleNativefsAuthError<T extends (...args: any[]) => any>(
         error.code === NATIVE_BROWSER_PERMISSION_ERROR
       ) {
         onAuthNeeded();
+      }
+      if (
+        error instanceof WorkspaceError &&
+        error.code === WORKSPACE_NOT_FOUND_ERROR
+      ) {
+        onWorkspaceNotFound();
       }
       throw error;
     });
@@ -507,20 +522,36 @@ function handleNativefsAuthError<T extends (...args: any[]) => any>(
  * This whole thing exists so that we can tap into auth errors
  * and do the necessary.
  */
-function useGetFileOps(onAuthError) {
+function useGetFileOps(
+  onAuthError: () => void,
+  onWorkspaceNotFound: () => void,
+) {
   const obj = useMemo(() => {
     return {
-      renameFile: handleNativefsAuthError(FileOps.renameFile, onAuthError),
-      deleteFile: handleNativefsAuthError(FileOps.deleteFile, onAuthError),
-      getDoc: handleNativefsAuthError(FileOps.getDoc, onAuthError),
-      saveDoc: handleNativefsAuthError(FileOps.saveDoc, onAuthError),
-      listAllFiles: handleNativefsAuthError(FileOps.listAllFiles, onAuthError),
-      checkFileExists: handleNativefsAuthError(
+      renameFile: handleErrors(
+        FileOps.renameFile,
+        onAuthError,
+        onWorkspaceNotFound,
+      ),
+      deleteFile: handleErrors(
+        FileOps.deleteFile,
+        onAuthError,
+        onWorkspaceNotFound,
+      ),
+      getDoc: handleErrors(FileOps.getDoc, onAuthError, onWorkspaceNotFound),
+      saveDoc: handleErrors(FileOps.saveDoc, onAuthError, onWorkspaceNotFound),
+      listAllFiles: handleErrors(
+        FileOps.listAllFiles,
+        onAuthError,
+        onWorkspaceNotFound,
+      ),
+      checkFileExists: handleErrors(
         FileOps.checkFileExists,
         onAuthError,
+        onWorkspaceNotFound,
       ),
     };
-  }, [onAuthError]);
+  }, [onAuthError, onWorkspaceNotFound]);
 
   return obj;
 }
