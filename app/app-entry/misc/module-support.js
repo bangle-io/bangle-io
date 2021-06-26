@@ -1,10 +1,15 @@
 import { validateNonWorkerGlobalScope } from 'naukar-worker/index';
-
+import { config } from 'config/index';
 validateNonWorkerGlobalScope();
 
 export const moduleSupport = checkModuleWorkerSupport();
 
 function checkModuleWorkerSupport() {
+  // hot module reload aint working with workers
+  if (config.BANGLE_HOT) {
+    return false;
+  }
+
   let supportsModuleWorker = false;
   const options = {
     get type() {

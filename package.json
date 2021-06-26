@@ -30,6 +30,7 @@
     "update-jsconfig": "yarn node ./tooling/_scripts/create-jsconfig.js",
     "test": "yarn lint && yarn jest",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
+    "hot-start": "BANGLE_HOT=yes yarn start",
     "webpack-start": "BROWSERSLIST_ENV=development yarn webpack serve --env development",
     "webpack-build": "NODE_ENV=production yarn webpack --env production",
     "build": "yarn vite-build",

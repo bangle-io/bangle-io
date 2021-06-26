@@ -42,7 +42,7 @@ test('Component renders correctly', async () => {
     <workspacePalette.ReactComponent
       query=""
       dismissPalette={dismissPalette}
-      onClick={onSelect}
+      onSelect={onSelect}
       getActivePaletteItem={getActivePaletteItem}
     />,
   );

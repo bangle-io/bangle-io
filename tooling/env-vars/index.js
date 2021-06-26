@@ -46,6 +46,9 @@ module.exports = ({ isProduction, isVite = false }) => {
       ),
 
       'process.env.HELP_DOCS_VERSION': JSON.stringify(helpDocsVersion),
+      'process.env.BANGLE_HOT': JSON.stringify(
+        process.env.BANGLE_HOT ? true : false,
+      ),
     },
   };
 };
