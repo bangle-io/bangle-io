@@ -132,7 +132,7 @@ export function PaletteManager() {
       }}
     >
       <UniversalPalette.PaletteInput
-        leftIcon={Palette.icon}
+        leftNode={Palette.icon}
         placeholder={Palette.placeholder}
         inputValue={Palette.identifierPrefix + query}
         onInputValueChange={updateRawInputValue}

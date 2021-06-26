@@ -139,7 +139,7 @@ function RenderRow({
         isActive={isActive}
         // before changing this look at estimateSize of virtual
         textSizeClassName="text-lg"
-        leftIcon={
+        leftNode={
           isDir ? (
             isCollapsed ? (
               <ChevronRightIcon style={IconStyle} />

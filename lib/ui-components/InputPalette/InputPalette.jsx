@@ -128,7 +128,7 @@ export function InputPalette({
       className={'input-palette ' + className}
     >
       <UniversalPalette.PaletteInput
-        leftIcon={showSpinner ? <SpinnerIcon /> : <NullIcon />}
+        leftNode={showSpinner ? <SpinnerIcon /> : <NullIcon />}
         placeholder={placeholder}
         inputValue={inputValue}
         onInputValueChange={onInputValueChange}
@@ -141,7 +141,7 @@ export function InputPalette({
           <UniversalPalette.PaletteItemUI
             key={item.uid}
             item={item}
-            onSelect={onSelect}
+            onClick={onSelect}
             isActive={item === activeItem}
           />
         ))}
@@ -149,7 +149,7 @@ export function InputPalette({
           <UniversalPalette.PaletteItemUI
             item={errorItem}
             isActive={false}
-            onSelect={() => {}}
+            onClick={() => {}}
             style={{
               backgroundColor: 'var(--error-bg-color)',
             }}

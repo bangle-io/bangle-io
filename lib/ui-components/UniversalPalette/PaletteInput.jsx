@@ -9,7 +9,7 @@ export const PaletteInput = React.forwardRef(function PaletteInput(
     specialKeys,
     onSpecialKey,
     placeholder,
-    leftIcon,
+    leftNode,
     // select the value on mount
     selectOnMount = false,
   },
@@ -52,9 +52,9 @@ export const PaletteInput = React.forwardRef(function PaletteInput(
       }
       style={{ display: 'flex' }}
     >
-      {leftIcon && (
-        <div className="left-icon">
-          <span className="h-5 w-5">{leftIcon}</span>
+      {leftNode && (
+        <div className="b-left-node">
+          <span className="h-5 w-5">{leftNode}</span>
         </div>
       )}
       <input

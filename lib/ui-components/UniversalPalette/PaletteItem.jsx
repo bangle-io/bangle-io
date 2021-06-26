@@ -5,9 +5,9 @@ const ItemPropTypes = PropTypes.exact({
   uid: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   data: PropTypes.object,
-  leftIcon: PropTypes.element,
-  rightIcons: PropTypes.node,
-  rightHoverIcons: PropTypes.node,
+  leftNode: PropTypes.node,
+  rightNode: PropTypes.node,
+  rightHoverNode: PropTypes.node,
   showDividerAbove: PropTypes.bool,
   description: PropTypes.node,
   extraInfo: PropTypes.node,
@@ -16,7 +16,7 @@ const ItemPropTypes = PropTypes.exact({
 
 PaletteItemUI.propTypes = {
   item: ItemPropTypes.isRequired,
-  onSelect: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
   isActive: PropTypes.bool,
   className: PropTypes.string,
   scrollIntoViewIfNeeded: PropTypes.bool,
@@ -25,7 +25,7 @@ PaletteItemUI.propTypes = {
 
 export function PaletteItemUI({
   item,
-  onSelect,
+  onClick,
   // styling
   isActive,
   className = '',
@@ -51,22 +51,11 @@ export function PaletteItemUI({
         {item.title}
       </span>
       {item.extraInfo && (
-        <span className="u-palette-extra-info text-base font-light">
+        <span className="b-extra-info text-base font-light">
           {item.extraInfo}
         </span>
       )}
     </span>
-  );
-
-  const { uid } = item;
-
-  const onClick = useCallback(
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      onSelect(uid, 'click', e);
-    },
-    [onSelect, uid],
   );
 
   return (
@@ -77,7 +66,7 @@ export function PaletteItemUI({
       className={`universal-palette-item ${className} ${
         isActive ? 'active' : ''
       } ${item.isDisabled ? 'disabled' : ''} ${
-        item.showDividerAbove ? 'show-divider-above' : ''
+        item.showDividerAbove ? 'b-divider' : ''
       }`}
       style={{
         cursor: 'pointer',
@@ -87,22 +76,20 @@ export function PaletteItemUI({
         ...style,
       }}
     >
-      <div className="u-palette-details" style={{ display: 'flex' }}>
-        <div className="left-icon">{item.leftIcon}</div>
+      <div className="flex flex-row">
+        <div className="b-left-node">{item.leftNode}</div>
         {item.description ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {titleElement}
-            <span className="u-palette-description text-sm">
-              {item.description}
-            </span>
+            <span className="b-description text-sm">{item.description}</span>
           </div>
         ) : (
           titleElement
         )}
       </div>
-      <div>
-        <span className="right-icons">{item.rightIcons}</span>
-        <span className="right-hover-icons">{item.rightHoverIcons}</span>
+      <div className="flex flex-row">
+        <span className="b-right-node">{item.rightNode}</span>
+        <span className="b-right-hover-node">{item.rightHoverNode}</span>
       </div>
     </div>
   );

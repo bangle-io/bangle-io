@@ -29,8 +29,8 @@ function QuestionPaletteUIComponent(
     .map((r) => {
       return {
         uid: r.type,
-        rightIcons: <kbd>{r.identifierPrefix}</kbd>,
-        rightHoverIcons: <kbd>{r.identifierPrefix}</kbd>,
+        rightNode: <kbd>{r.identifierPrefix}</kbd>,
+        rightHoverNode: <kbd>{r.identifierPrefix}</kbd>,
         title: r.type.split('/').slice(1).join('/'),
         data: {
           type: r.type,
@@ -71,7 +71,7 @@ function QuestionPaletteUIComponent(
               key={item.uid}
               item={item}
               isActive={activeItem === item}
-              onSelect={onSelect}
+              onClick={onSelect}
             />
           );
         })}

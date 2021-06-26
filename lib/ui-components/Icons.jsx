@@ -169,7 +169,7 @@ export function ChevronDoubleRightIcon(props) {
   );
 }
 
-export function ChevronDoubleLeftIcon(props) {
+export function ChevronDoubleleftNode(props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none">
       <path

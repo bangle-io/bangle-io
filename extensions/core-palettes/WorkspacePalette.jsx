@@ -45,7 +45,7 @@ function WorkspacePaletteUIComponent(
             title: workspace.name,
             extraInfo: workspace.type,
             data: { workspace },
-            rightHoverIcons: (
+            rightHoverNode: (
               <CloseIcon
                 style={{
                   height: 16,
@@ -101,7 +101,7 @@ function WorkspacePaletteUIComponent(
             <UniversalPalette.PaletteItemUI
               key={item.uid}
               item={item}
-              onSelect={onSelect}
+              onClick={onSelect}
               isActive={item === activeItem}
             />
           );

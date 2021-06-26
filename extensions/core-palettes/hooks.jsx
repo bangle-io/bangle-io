@@ -54,7 +54,7 @@ export function useRecencyWatcher(uniqueStoreId) {
       // check if top one is recently used, if it is
       // add some juicy UI hints
       if (newItems[0] && actionHistory[newItems[0].uid]) {
-        newItems[0].rightIcons = 'Recent';
+        newItems[0].rightNode = 'Recent';
         const firstNotRecent = newItems.find(
           (a) => actionHistory[a.uid] == null,
         );
