@@ -72,7 +72,7 @@ export function ListPalette({
           <UniversalPalette.PaletteItemUI
             item={errorItem}
             isActive={false}
-            onSelect={() => {}}
+            onClick={() => {}}
             style={{
               backgroundColor: 'var(--error-bg-color)',
             }}
@@ -82,7 +82,7 @@ export function ListPalette({
           <UniversalPalette.PaletteItemUI
             key={item.uid}
             item={item}
-            onSelect={onSelect}
+            onClick={onSelect}
             isActive={activeItem === item}
           />
         ))}

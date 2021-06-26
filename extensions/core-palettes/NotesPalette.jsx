@@ -54,7 +54,7 @@ function NotesPalette(
             data: {
               wsPath,
             },
-            rightHoverIcons: (
+            rightHoverNode: (
               <ButtonIcon
                 hint={`Open in split screen`}
                 hintPos="left"
@@ -120,7 +120,7 @@ function NotesPalette(
             <UniversalPalette.PaletteItemUI
               key={item.uid}
               item={item}
-              onSelect={onSelect}
+              onClick={onSelect}
               isActive={activeItem === item}
             />
           );

@@ -12,11 +12,10 @@ exports[`Component renders correctly 1`] = `
       style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
     >
       <div
-        class="u-palette-details"
-        style="display: flex;"
+        class="flex flex-row"
       >
         <div
-          class="left-icon"
+          class="b-left-node"
         />
         <span>
           <span
@@ -25,18 +24,20 @@ exports[`Component renders correctly 1`] = `
             test-ws1
           </span>
           <span
-            class="u-palette-extra-info text-base font-light"
+            class="b-extra-info text-base font-light"
           >
             nativefs
           </span>
         </span>
       </div>
-      <div>
+      <div
+        class="flex flex-row"
+      >
         <span
-          class="right-icons"
+          class="b-right-node"
         />
         <span
-          class="right-hover-icons"
+          class="b-right-hover-node"
         >
           <svg
             class="fill-current  "

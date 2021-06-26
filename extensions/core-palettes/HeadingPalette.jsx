@@ -104,7 +104,7 @@ function HeadingPalette({ query, onSelect, getActivePaletteItem }, ref) {
             <UniversalPalette.PaletteItemUI
               key={item.uid}
               item={item}
-              onSelect={onSelect}
+              onClick={onSelect}
               isActive={activeItem === item}
             />
           );

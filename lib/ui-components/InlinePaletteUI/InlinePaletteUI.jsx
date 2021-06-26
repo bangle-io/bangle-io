@@ -11,7 +11,7 @@ export function InlinePaletteRow({
   onClick,
   rightIcon,
   rightHoverIcon = null,
-  leftIcon,
+  leftNode,
   basePadding = BASE_PADDING,
   depth = 1,
   description = '',
@@ -67,7 +67,7 @@ export function InlinePaletteRow({
           ...style,
         }}
       >
-        {leftIcon}
+        {leftNode}
         <span className="flex flex-col">
           <span
             className={cx('text-base font-bold truncate select-none')}

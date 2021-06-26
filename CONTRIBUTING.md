@@ -36,6 +36,21 @@ Bangle has the following top level directories containing smaller packages.
 
 - `tooling:`The code that will not show in the actual app. For example integration tests, validation scripts, etc.
 
+
+### Extension file structure
+
+Each package/extension must have the following top level files:
+
+- `style.css`: A single css file containing all the styles of your extension.
+- `style.js`: A js file which `imports` the `style.css` file.
+
+**Please note** your `index.js` file should not be importing any of these files. This restriction exists to keep the imports within the realms of standard javascript.
+
+### CSS conventions
+
+You are expected to write your own css and not rely on any of the css classes available throughout bangle as they are internal and subject to change.
+
+
 ### Contexts
 
 - action-context: for dispatching actions.

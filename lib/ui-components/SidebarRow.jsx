@@ -11,7 +11,7 @@ export function SidebarRow({
   onClick,
   rightIcon,
   rightHoverIcon = null,
-  leftIcon,
+  leftNode,
   basePadding = BASE_PADDING,
   depth = 1,
   children,
@@ -68,7 +68,7 @@ export function SidebarRow({
           ...style,
         }}
       >
-        {leftIcon}
+        {leftNode}
         <span
           className={cx(textSizeClassName, ' truncate select-none')}
           style={{
