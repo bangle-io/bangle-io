@@ -1,3 +1,5 @@
+import React from 'react';
+
 const _check = Symbol();
 
 export interface EditorConfig {
@@ -52,6 +54,12 @@ export interface ApplicationConfig {
     hint: string;
     action: string;
   }>;
+  sidebars?: Array<{
+    name: string;
+    icon: JSX.Element;
+    ReactComponent: React.ComponentType<{}>;
+    hint: string;
+  }>;
 }
 
 interface Config {
@@ -75,8 +83,8 @@ export class Extension {
   }
   static create(config: {
     name: string;
-    editor: Omit<EditorConfig, 'name'>;
-    application: Omit<ApplicationConfig, 'name'>;
+    editor?: Omit<EditorConfig, 'name'>;
+    application?: Omit<ApplicationConfig, 'name'>;
   }) {
     const { name } = config;
     if (!name) {
@@ -115,7 +123,7 @@ export class Extension {
       );
     }
 
-    const { palettes, actions, optionsBar } = application;
+    const { palettes, actions, optionsBar, sidebars } = application;
 
     if (palettes) {
       if (!Array.isArray(palettes)) {
@@ -154,6 +162,27 @@ export class Extension {
       }
     }
 
+    if (sidebars) {
+      if (!Array.isArray(sidebars)) {
+        throw new Error('Extension: sidebars must be an array');
+      }
+
+      if (
+        !sidebars.every((s) => {
+          const validName =
+            typeof s.name === 'string' &&
+            s.name.startsWith('@sidebar/' + name + '/');
+          const validIcon = Boolean(s.icon);
+          const validComponent = Boolean(s.ReactComponent);
+          const validHint = typeof s.hint === 'string';
+          return (
+            validName && validIcon && validIcon && validComponent && validHint
+          );
+        })
+      ) {
+        throw new Error('Extension: Invalid sidebars config.');
+      }
+    }
     return new Extension({ name, editor, application }, _check);
   }
 }

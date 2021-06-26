@@ -8,6 +8,7 @@ import {
   validateNoteWsPath,
 } from 'ws-path';
 import { markdownParser, markdownSerializer } from 'markdown/index';
+import type { Node } from 'prosemirror-model';
 import { getWorkspaceInfo } from './workspaces-ops';
 import {
   BaseFileSystemError,
@@ -84,7 +85,7 @@ export async function getFileLastModified(wsPath: string) {
 export async function getDoc(wsPath: string, specRegistry, markdownItPlugins) {
   const fileText = await getFileAsText(wsPath);
 
-  const doc = markdownParser(fileText, specRegistry, markdownItPlugins);
+  const doc: Node = markdownParser(fileText, specRegistry, markdownItPlugins);
 
   return doc;
 }
