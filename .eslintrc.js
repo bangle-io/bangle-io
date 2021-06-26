@@ -52,7 +52,7 @@ module.exports = {
       version: '26',
     },
     'react': {
-      version: '16',
+      version: '17',
     },
     'import/extensions': ['.js', '.ts', '.tsx', '.jsx'],
     'import/resolver': {

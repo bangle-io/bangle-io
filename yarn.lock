@@ -14543,6 +14543,22 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"search-notes@workspace:*, search-notes@workspace:extensions/search-notes":
+  version: 0.0.0-use.local
+  resolution: "search-notes@workspace:extensions/search-notes"
+  dependencies:
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
+    extension-registry: "workspace:*"
+    react: ^17.0.2
+    react-router-dom: ^5.2.0
+    ui-components: "workspace:*"
+    utils: "workspace:*"
+    workspace-context: "workspace:*"
+    ws-path: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "secure-compare@npm:3.0.1":
   version: 3.0.1
   resolution: "secure-compare@npm:3.0.1"
@@ -14794,6 +14810,7 @@ resolve@^2.0.0-next.3:
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
     object-sync: "workspace:*"
+    search-notes: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -16905,6 +16922,7 @@ typescript@4.2.4:
     "@bangle.dev/core": 0.18.1
     "@testing-library/react": ^11.2.7
     "@types/history": ^4.7.8
+    "@types/prosemirror-model": ^1.13.0
     "@types/react": ^17.0.11
     "@types/react-dom": ^17.0.8
     "@types/react-router-dom": ^5.1.7

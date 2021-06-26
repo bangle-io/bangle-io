@@ -107,6 +107,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/inline-emoji"
       },
       {
+        "name": "search-notes",
+        "reference": "workspace:extensions/search-notes"
+      },
+      {
         "name": "baby-fs",
         "reference": "workspace:js-lib/baby-fs"
       },
@@ -236,6 +240,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
       ["naukar-worker", ["workspace:worker/naukar-worker"]],
       ["object-sync", ["workspace:js-lib/object-sync"]],
+      ["search-notes", ["workspace:extensions/search-notes"]],
       ["shared", ["workspace:app/shared"]],
       ["style", ["workspace:app/style"]],
       ["tooling", ["workspace:tooling"]],
@@ -18573,6 +18578,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["search-notes", [
+        ["workspace:extensions/search-notes", {
+          "packageLocation": "./extensions/search-notes/",
+          "packageDependencies": [
+            ["search-notes", "workspace:extensions/search-notes"],
+            ["@types/react", "npm:17.0.11"],
+            ["@types/react-dom", "npm:17.0.8"],
+            ["extension-registry", "workspace:lib/extension-registry"],
+            ["react", "npm:17.0.2"],
+            ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["ui-components", "workspace:lib/ui-components"],
+            ["utils", "workspace:lib/utils"],
+            ["workspace-context", "workspace:lib/workspace-context"],
+            ["ws-path", "workspace:lib/ws-path"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["secure-compare", [
         ["npm:3.0.1", {
           "packageLocation": "./.yarn/cache/secure-compare-npm-3.0.1-5bb9fae9c0-0a8d8d3e54.zip/node_modules/secure-compare/",
@@ -18828,7 +18851,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["inline-emoji", "workspace:extensions/inline-emoji"],
             ["naukar-proxy", "workspace:worker/naukar-proxy"],
             ["naukar-worker", "workspace:worker/naukar-worker"],
-            ["object-sync", "workspace:js-lib/object-sync"]
+            ["object-sync", "workspace:js-lib/object-sync"],
+            ["search-notes", "workspace:extensions/search-notes"]
           ],
           "linkType": "SOFT",
         }]
@@ -21250,6 +21274,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@types/history", "npm:4.7.8"],
+            ["@types/prosemirror-model", "npm:1.13.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
@@ -21282,6 +21307,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@types/history", "npm:4.7.8"],
+            ["@types/prosemirror-model", "npm:1.13.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
@@ -21312,6 +21338,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@types/history", "npm:4.7.8"],
+            ["@types/prosemirror-model", "npm:1.13.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
@@ -21336,6 +21363,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@types/history", "npm:4.7.8"],
+            ["@types/prosemirror-model", "npm:1.13.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],

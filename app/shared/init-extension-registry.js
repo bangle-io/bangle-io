@@ -9,6 +9,7 @@ import editorScrollExtension from 'editor-scroll-extension';
 import corePalette from 'core-palettes';
 import coreActions from 'core-actions';
 import { ExtensionRegistry } from 'extension-registry/index';
+import searchNotes from 'search-notes';
 
 // TODO move this async, i think a promise should be fine.
 export const initExtensionRegistry = () => {
@@ -22,6 +23,7 @@ export const initExtensionRegistry = () => {
     imageExtension,
     editorScrollExtension,
     coreActions,
+    searchNotes,
     // NOTE: keep the core palette last
     // as it has note palette in it
     corePalette,

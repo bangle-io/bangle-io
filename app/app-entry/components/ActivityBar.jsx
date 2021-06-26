@@ -16,10 +16,13 @@ import { cx } from 'utils/index';
 import { resolvePath } from 'ws-path';
 import { useHistory } from 'react-router-dom';
 import { useWorkspaceContext } from 'workspace-context/index';
+import { ExtensionRegistryContext } from 'extension-registry';
 
 ActivityBar.propTypes = {};
 
 export function ActivityBar() {
+  const extensionRegistry = useContext(ExtensionRegistryContext);
+
   const { paletteType, sidebar, dispatch, widescreen } =
     useContext(UIManagerContext);
   const { primaryWsPath } = useWorkspaceContext();
@@ -90,6 +93,31 @@ export function ActivityBar() {
     );
   }
 
+  const injectedSidebars = extensionRegistry.getSidebars().map((r) => {
+    const isActive = sidebar === r.name;
+    return (
+      <ButtonIcon
+        key={r.name}
+        onClick={toggleSidebar(r.name)}
+        hint={isActive ? null : r.hint}
+        hintPos="right"
+        active={isActive}
+        className={cx(
+          'flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200',
+          widescreen && 'border-l-2',
+          isActive && 'active',
+        )}
+        style={{
+          borderColor: isActive
+            ? 'var(--accent-stronger-color)'
+            : 'transparent',
+        }}
+      >
+        <span className="h-7 w-7 text-gray-100">{r.icon}</span>
+      </ButtonIcon>
+    );
+  });
+
   return (
     <div id="activity-bar-area" className="widescreen flex">
       <div className="flex flex-col flex-grow">
@@ -111,7 +139,7 @@ export function ActivityBar() {
         <ButtonIcon
           onClick={toggleSidebar('file-browser')}
           hint={
-            sidebar
+            sidebar === 'file-browser'
               ? null
               : 'File Browser\n' + keybindings.toggleFileBrowser.displayValue
           }
@@ -131,6 +159,7 @@ export function ActivityBar() {
         >
           <FolderIcon className="h-7 w-7 text-gray-100" />
         </ButtonIcon>
+        {injectedSidebars}
         <div className="flex-grow"></div>
         <ButtonIcon
           onClick={toggleSidebar('help-browser')}

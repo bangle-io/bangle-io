@@ -38,7 +38,8 @@
     "inline-emoji": "workspace:*",
     "naukar-proxy": "workspace:*",
     "naukar-worker": "workspace:*",
-    "object-sync": "workspace:*"
+    "object-sync": "workspace:*",
+    "search-notes": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"
