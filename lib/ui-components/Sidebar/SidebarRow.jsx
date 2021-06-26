@@ -4,7 +4,7 @@ import { cx, isTouchDevice } from 'utils/index';
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;
 
-export function SidebarRow({
+export function Row({
   dataId,
   title,
   isActive,

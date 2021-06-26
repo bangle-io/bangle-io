@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { Input } from '../Input';
 
 export const PaletteInput = React.forwardRef(function PaletteInput(
   {
@@ -57,8 +58,7 @@ export const PaletteInput = React.forwardRef(function PaletteInput(
           <span className="h-5 w-5">{leftNode}</span>
         </div>
       )}
-      <input
-        type="text"
+      <Input
         ref={ref}
         onKeyDown={onKeyDown}
         placeholder={placeholder}
@@ -67,7 +67,6 @@ export const PaletteInput = React.forwardRef(function PaletteInput(
         spellCheck="false"
         autoCorrect="off"
         aria-label="universal-palette-input"
-        style={{ flexGrow: 1 }}
         className={'universal-palette-input'}
         value={inputValue}
         onChange={onChange}

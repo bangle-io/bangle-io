@@ -7,7 +7,7 @@ ButtonIcon.propTypes = {
   hint: PropTypes.string,
   hintPos: PropTypes.string,
   onClick: PropTypes.func,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
   active: PropTypes.bool,
   style: PropTypes.object,
 };

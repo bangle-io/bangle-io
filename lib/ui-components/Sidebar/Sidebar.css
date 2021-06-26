@@ -23,3 +23,7 @@
 .side-bar-row.sticky.collapsed {
   border: 2px solid var(--border-color);
 }
+
+.b-item-container.hover:hover {
+  background-color: var(--accent-2-color);
+}
