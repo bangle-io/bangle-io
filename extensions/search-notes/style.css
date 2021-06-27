@@ -1,4 +1,4 @@
-.search-notes .search-result-file:not(:nth-of-type(1)) {
+.search-notes .search-result-note-match:not(:nth-of-type(1)) {
   margin-top: 0.75rem;
 }
 

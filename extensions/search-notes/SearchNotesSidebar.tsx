@@ -1,12 +1,12 @@
 import { ActionContext } from 'action-context';
 import React, { useContext, useEffect, useState } from 'react';
 import { ButtonIcon, Sidebar, SpinnerIcon } from 'ui-components/index';
-import { useWorkspaceContext } from 'workspace-context/index';
+import { useWorkspaceContext } from 'workspace-context';
 import { useSearchNotes } from './hooks';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
 
-export function SearchNotes() {
+export function SearchNotesSidebar() {
   const { dispatchAction } = useContext(ActionContext);
   const [query, updateQuery] = useState('');
   const { wsName } = useWorkspaceContext();

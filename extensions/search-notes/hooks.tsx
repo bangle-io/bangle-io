@@ -3,8 +3,7 @@ import { debounceFn } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { searchNotes } from './search-notes';
 import { SearchResultItem } from './types';
-const DEBOUNCE_WAIT = 250;
-const DEBOUNCE_MAX_WAIT = 2000;
+import { DEBOUNCE_WAIT, DEBOUNCE_MAX_WAIT } from './debounce-config';
 
 export function useSearchNotes(query: string): {
   results: SearchResultItem[] | null;

@@ -23,6 +23,7 @@ export function SearchInput({ className = '', query, updateQuery }) {
   );
   return (
     <Input
+      label="Search"
       className={className}
       ref={inputRef}
       showClear

@@ -2,12 +2,21 @@ import React from 'react';
 
 export const Input = React.forwardRef(
   (
-    { style, showClear = false, onClear, className = '', value, ...props },
+    {
+      style,
+      showClear = false,
+      onClear,
+      className = '',
+      value,
+      label,
+      ...props
+    },
     ref,
   ) => {
     return (
       <div className="bangle-input-container">
         <input
+          aria-label={label}
           type="text"
           ref={ref}
           className={'bangle-input ' + className}

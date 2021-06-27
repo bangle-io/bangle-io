@@ -74,11 +74,11 @@ export function SearchResults({
           <React.Fragment key={i}>
             <Sidebar.Row2
               titleClassName="text-sm font-bold"
-              className={'search-result-file pl-1 pr-3 '}
+              className={'search-result-note-match pl-1 pr-3 '}
               extraInfoClassName="ml-1 text-sm"
               onClick={onClicks[i]}
               item={{
-                uid: i + '',
+                uid: 'search-notes-result-' + i,
                 showDividerAbove: false,
                 title: resolvePath(r.wsPath).fileName,
                 extraInfo: resolvePath(r.wsPath).dirPath,
@@ -112,13 +112,13 @@ export function SearchResults({
                 <Sidebar.Row2
                   key={j}
                   className={
-                    'search-result-match ml-1 pl-3 rounded-sm ' +
+                    'search-result-text-match ml-1 pl-3 rounded-sm ' +
                     (j === 0 ? 'mt-3' : 'mt-4')
                   }
                   titleClassName="text-sm "
                   hoverBgColorChange
                   item={{
-                    uid: j + '',
+                    uid: 'search-result-text-match-' + j,
                     title: (
                       <Link to={resolvePath(r.wsPath).locationPath}>
                         <HighlightText
