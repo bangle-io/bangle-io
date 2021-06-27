@@ -16340,6 +16340,7 @@ typescript@4.2.4:
     config: "workspace:*"
     constants: "workspace:*"
     dayjs: ^1.10.5
+    debounce-fn: ^5.0.0
     react: 17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2

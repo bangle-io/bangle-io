@@ -1,71 +1,21 @@
-import { SearchInput } from './SearchInput';
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-  useCallback,
-  useState,
-  useMemo,
-} from 'react';
-import { SearchResults } from './SearchResults';
-import { Sidebar, ButtonIcon } from 'ui-components/index';
-import { useWorkspaceContext } from 'workspace-context/index';
-import { searchNotes } from './search-notes';
-import { rIdleDebounce } from 'utils/index';
 import { ActionContext } from 'action-context';
-import { SearchResultItem } from './types';
+import React, { useContext, useEffect, useState } from 'react';
+import { ButtonIcon, Sidebar, SpinnerIcon } from 'ui-components/index';
+import { useWorkspaceContext } from 'workspace-context/index';
+import { useSearchNotes } from './hooks';
+import { SearchInput } from './SearchInput';
+import { SearchResults } from './SearchResults';
 
 export function SearchNotes() {
   const { dispatchAction } = useContext(ActionContext);
-
-  const { wsName, noteWsPaths = [], getNote } = useWorkspaceContext();
-  const [results, updateResults] = useState<SearchResultItem[] | null>(null);
   const [query, updateQuery] = useState('');
+  const { wsName } = useWorkspaceContext();
   const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
-
-  const counterRef = useRef(0);
-  const controllerRef = useRef<AbortController>();
-  const theFunc = useCallback(() => {
-    counterRef.current++;
-    const startCounter = counterRef.current;
-    const controller = new AbortController();
-    controllerRef.current = controller;
-    updateResults(null);
-    searchNotes(query, noteWsPaths, getNote, controller.signal)
-      .then((result) => {
-        if (startCounter === counterRef.current && !controller.signal.aborted) {
-          updateResults(result);
-        }
-      })
-      .catch((error) => {
-        if (error instanceof DOMException && error.name === 'AbortError') {
-          return;
-        }
-        throw error;
-      });
-  }, [query, noteWsPaths, getNote]);
-
-  const findTextRef = useRef(theFunc);
-
-  findTextRef.current = theFunc;
-
-  const debouncedFunc = useMemo(() => {
-    return rIdleDebounce(() => findTextRef.current());
-  }, [findTextRef]);
+  const { results, pendingSearch } = useSearchNotes(query);
 
   useEffect(() => {
-    controllerRef.current?.abort();
-    if (query.length > 0) {
-      debouncedFunc();
-    }
     updateCollapseAllCounter(0);
-  }, [query, wsName, debouncedFunc]);
-
-  useEffect(() => {
-    return () => {
-      controllerRef.current?.abort();
-    };
-  }, []);
+  }, [query, wsName]);
 
   if (!wsName) {
     return (
@@ -91,7 +41,13 @@ export function SearchNotes() {
         <SearchInput updateQuery={updateQuery} query={query} />
       </Sidebar.ItemContainer>
       <Sidebar.ItemContainer className="flex flex-row justify-between my-1 px-2 text-xs">
-        <span className="">{results && `Found ${results.length} notes`}</span>
+        {results && (
+          <span className="">
+            {results.length === 0
+              ? 'No match found'
+              : `Found ${results.length} notes`}
+          </span>
+        )}
         {results && (
           <ButtonIcon
             onClick={() => {
@@ -100,6 +56,14 @@ export function SearchNotes() {
           >
             Collapse all
           </ButtonIcon>
+        )}
+        {pendingSearch && (
+          <>
+            <span className="">Searching </span>
+            <span className="h-3 w-3 mr-2">
+              <SpinnerIcon />
+            </span>
+          </>
         )}
       </Sidebar.ItemContainer>
       <Sidebar.ScrollableContainer>

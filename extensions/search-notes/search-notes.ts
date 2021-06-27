@@ -13,15 +13,15 @@ export async function searchNotes(
   {
     caseSensitive = false,
     offset = maxChars,
-    intraFileLimit = 200,
-    interFileLimit = 2000,
+    perFileMatchMax = 200,
+    totalMatchMax = 5000,
   } = {},
 ): Promise<SearchResultItem[]> {
   if (query === '') {
     return [];
   }
 
-  query = query.slice(0, 200);
+  query = query.slice(0, 500);
 
   query = caseSensitive ? query : query.toLocaleLowerCase();
   const docs = await pMap(
@@ -53,7 +53,7 @@ export async function searchNotes(
               query,
               source,
               offset,
-              intraFileLimit,
+              perFileMatchMax,
             );
 
             let parentName = parent.type.name;
@@ -79,10 +79,10 @@ export async function searchNotes(
   );
 
   let matchCount = 0;
-  let interFileLimitReached = false;
+  let limitReached = false;
 
   return docs.filter((r): r is SearchResultItem => {
-    if (r == null || interFileLimitReached) {
+    if (r == null || limitReached) {
       return false;
     }
     const currentMatchCount = r.matches.length;
@@ -92,9 +92,11 @@ export async function searchNotes(
     }
     matchCount += currentMatchCount;
 
-    // so that we can limit things for the next file
-    if (matchCount >= interFileLimit) {
-      interFileLimitReached = true;
+    // so that we can limit things for the next file and not truncate
+    // current file, to avoid the edge case of 1 file having many results
+    // and not showing it.
+    if (matchCount >= totalMatchMax) {
+      limitReached = true;
     }
 
     return true;
