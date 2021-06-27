@@ -1,4 +1,4 @@
-import mockBabyFs from 'baby-fs-test-mock/index';
+import mockBabyFs from 'test-utils/baby-fs-test-mock';
 import { copyWorkspace, deleteFile, listAllFiles, saveDoc } from '../file-ops';
 
 import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
