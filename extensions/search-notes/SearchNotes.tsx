@@ -94,8 +94,6 @@ export function SearchNotes() {
         <span className="">{results && `Found ${results.length} notes`}</span>
         {results && (
           <ButtonIcon
-            hint="Collapses all search results"
-            className="cursor-pointer px-1 b-text-color-lighter rounded-sm hover:b-accent-2-color"
             onClick={() => {
               updateCollapseAllCounter((c) => c + 1);
             }}

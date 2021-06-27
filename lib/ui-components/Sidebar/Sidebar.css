@@ -27,3 +27,53 @@
 .b-item-container.hover:hover {
   background-color: var(--accent-2-color);
 }
+
+/* sidebar row2 */
+.b-sidebar-row2:hover {
+  background-color: var(--accent-2-color);
+}
+.b-sidebar-row2.active {
+  background-color: var(--accent-color);
+}
+.b-sidebar-row2.disable {
+  color: var(--font-lighter-color);
+  cursor: not-allowed;
+  background-color: var(--universal-palette-item-disabled-bg-color);
+}
+.b-sidebar-row2.disable:hover {
+  background-color: var(--universal-palette-item-disabled-bg-color);
+}
+
+/* node positioning */
+.b-sidebar-row2 .b-left-node {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.b-sidebar-row2 .b-right-node {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.b-sidebar-row2:hover .b-right-node {
+  display: none;
+}
+
+.b-sidebar-row2 .b-right-hover-node {
+  display: none;
+}
+
+.b-sidebar-row2:hover .b-right-hover-node {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.b-sidebar-row2 .b-extra-info {
+  color: var(--font-lighter-color);
+}
+
+.b-sidebar-row2 .b-description {
+  color: var(--font-lighter-color);
+}

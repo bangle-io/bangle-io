@@ -20,8 +20,11 @@
     "access": "public"
   },
   "dependencies": {
+    "@bangle.dev/core": "0.18.1",
     "baby-fs": "workspace:*",
     "base-error": "workspace:*",
-    "idb-keyval": "^5.0.6"
+    "extension-registry": "workspace:*",
+    "idb-keyval": "^5.0.6",
+    "markdown": "workspace:*"
   }
 }

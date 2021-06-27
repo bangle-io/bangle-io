@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-const ItemPropTypes = PropTypes.exact({
+export const ItemPropTypes = PropTypes.exact({
   uid: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   data: PropTypes.object,
@@ -47,7 +47,7 @@ export function PaletteItemUI({
 
   const titleElement = (
     <span>
-      <span className="u-palette-title text-base font-normal">
+      <span className="b-palette-title text-base font-normal">
         {item.title}
       </span>
       {item.extraInfo && (

@@ -14,6 +14,12 @@
       ],
       "base-error/*": [
         "../../js-lib/base-error/*"
+      ],
+      "extension-registry": [
+        "../extension-registry/index.ts"
+      ],
+      "extension-registry/*": [
+        "../extension-registry/*"
       ]
     }
   }

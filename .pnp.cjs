@@ -135,10 +135,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/app-state-context"
       },
       {
-        "name": "baby-fs-test-mock",
-        "reference": "workspace:lib/baby-fs-test-mock"
-      },
-      {
         "name": "config",
         "reference": "workspace:lib/config"
       },
@@ -157,6 +153,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "markdown",
         "reference": "workspace:lib/markdown"
+      },
+      {
+        "name": "test-utils",
+        "reference": "workspace:lib/test-utils"
       },
       {
         "name": "ui-components",
@@ -212,7 +212,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["app-entry", ["workspace:app/app-entry"]],
       ["app-state-context", ["workspace:lib/app-state-context"]],
       ["baby-fs", ["workspace:js-lib/baby-fs"]],
-      ["baby-fs-test-mock", ["workspace:lib/baby-fs-test-mock"]],
       ["bangle-io", ["workspace:."]],
       ["base-error", ["workspace:js-lib/base-error"]],
       ["collab-extension", ["workspace:extensions/collab-extension"]],
@@ -243,6 +242,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["search-notes", ["workspace:extensions/search-notes"]],
       ["shared", ["workspace:app/shared"]],
       ["style", ["workspace:app/style"]],
+      ["test-utils", ["workspace:lib/test-utils"]],
       ["tooling", ["workspace:tooling"]],
       ["ui-components", ["workspace:lib/ui-components"]],
       ["ui-context", ["workspace:lib/ui-context"]],
@@ -7479,18 +7479,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["workspace:js-lib/baby-fs", {
           "packageLocation": "./js-lib/baby-fs/",
           "packageDependencies": [
-            ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["base-error", "workspace:js-lib/base-error"],
-            ["idb-keyval", "npm:5.0.6"]
-          ],
-          "linkType": "SOFT",
-        }]
-      ]],
-      ["baby-fs-test-mock", [
-        ["workspace:lib/baby-fs-test-mock", {
-          "packageLocation": "./lib/baby-fs-test-mock/",
-          "packageDependencies": [
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
             ["base-error", "workspace:js-lib/base-error"],
             ["idb-keyval", "npm:5.0.6"]
@@ -18585,9 +18573,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["search-notes", "workspace:extensions/search-notes"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
+            ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["ui-components", "workspace:lib/ui-components"],
             ["utils", "workspace:lib/utils"],
             ["workspace-context", "workspace:lib/workspace-context"],
@@ -19868,6 +19858,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["minimatch", "npm:3.0.4"]
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["test-utils", [
+        ["workspace:lib/test-utils", {
+          "packageLocation": "./lib/test-utils/",
+          "packageDependencies": [
+            ["test-utils", "workspace:lib/test-utils"],
+            ["@bangle.dev/core", "npm:0.18.1"],
+            ["baby-fs", "workspace:js-lib/baby-fs"],
+            ["base-error", "workspace:js-lib/base-error"],
+            ["extension-registry", "workspace:lib/extension-registry"],
+            ["idb-keyval", "npm:5.0.6"],
+            ["markdown", "workspace:lib/markdown"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["text-table", [
@@ -21279,7 +21284,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
@@ -21287,6 +21291,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["utils", "workspace:lib/utils"],
             ["ws-path", "workspace:lib/ws-path"]
           ],
@@ -21312,7 +21317,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
@@ -21320,6 +21324,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["utils", "workspace:lib/utils"],
             ["ws-path", "workspace:lib/ws-path"]
           ],
@@ -21343,7 +21348,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
@@ -21351,6 +21355,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["utils", "workspace:lib/utils"],
             ["ws-path", "workspace:lib/ws-path"]
           ],
@@ -21368,7 +21373,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
@@ -21376,6 +21380,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["utils", "workspace:lib/utils"],
             ["ws-path", "workspace:lib/ws-path"]
           ],

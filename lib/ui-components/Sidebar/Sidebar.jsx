@@ -56,3 +56,4 @@ export function ScrollableContainer({ children }) {
 }
 
 export * from './SidebarRow';
+export * from './SidebarRow2';
