@@ -107,6 +107,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/inline-emoji"
       },
       {
+        "name": "search-notes",
+        "reference": "workspace:extensions/search-notes"
+      },
+      {
         "name": "baby-fs",
         "reference": "workspace:js-lib/baby-fs"
       },
@@ -131,10 +135,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/app-state-context"
       },
       {
-        "name": "baby-fs-test-mock",
-        "reference": "workspace:lib/baby-fs-test-mock"
-      },
-      {
         "name": "config",
         "reference": "workspace:lib/config"
       },
@@ -153,6 +153,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "markdown",
         "reference": "workspace:lib/markdown"
+      },
+      {
+        "name": "test-utils",
+        "reference": "workspace:lib/test-utils"
       },
       {
         "name": "ui-components",
@@ -208,7 +212,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["app-entry", ["workspace:app/app-entry"]],
       ["app-state-context", ["workspace:lib/app-state-context"]],
       ["baby-fs", ["workspace:js-lib/baby-fs"]],
-      ["baby-fs-test-mock", ["workspace:lib/baby-fs-test-mock"]],
       ["bangle-io", ["workspace:."]],
       ["base-error", ["workspace:js-lib/base-error"]],
       ["collab-extension", ["workspace:extensions/collab-extension"]],
@@ -236,8 +239,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
       ["naukar-worker", ["workspace:worker/naukar-worker"]],
       ["object-sync", ["workspace:js-lib/object-sync"]],
+      ["search-notes", ["workspace:extensions/search-notes"]],
       ["shared", ["workspace:app/shared"]],
       ["style", ["workspace:app/style"]],
+      ["test-utils", ["workspace:lib/test-utils"]],
       ["tooling", ["workspace:tooling"]],
       ["ui-components", ["workspace:lib/ui-components"]],
       ["ui-context", ["workspace:lib/ui-context"]],
@@ -5118,6 +5123,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pretty-format", "npm:26.6.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:8.0.0", {
+          "packageLocation": "./.yarn/cache/@testing-library-dom-npm-8.0.0-297a9d9bef-72ee7eed46.zip/node_modules/@testing-library/dom/",
+          "packageDependencies": [
+            ["@testing-library/dom", "npm:8.0.0"],
+            ["@babel/code-frame", "npm:7.12.11"],
+            ["@babel/runtime", "npm:7.12.5"],
+            ["@types/aria-query", "npm:4.2.0"],
+            ["aria-query", "npm:4.2.2"],
+            ["chalk", "npm:4.1.0"],
+            ["dom-accessibility-api", "npm:0.5.6"],
+            ["lz-string", "npm:1.4.4"],
+            ["pretty-format", "npm:27.0.2"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@testing-library/jest-dom", [
@@ -5145,6 +5165,32 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "npm:11.2.7"]
           ],
           "linkType": "SOFT",
+        }],
+        ["npm:12.0.0", {
+          "packageLocation": "./.yarn/cache/@testing-library-react-npm-12.0.0-93b24587bc-07f0ba4092.zip/node_modules/@testing-library/react/",
+          "packageDependencies": [
+            ["@testing-library/react", "npm:12.0.0"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:12.0.0", {
+          "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-6dd2685b07/0/cache/@testing-library-react-npm-12.0.0-93b24587bc-07f0ba4092.zip/node_modules/@testing-library/react/",
+          "packageDependencies": [
+            ["@testing-library/react", "virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:12.0.0"],
+            ["@babel/runtime", "npm:7.12.5"],
+            ["@testing-library/dom", "npm:8.0.0"],
+            ["@types/react", "npm:17.0.11"],
+            ["@types/react-dom", "npm:17.0.8"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"]
+          ],
+          "packagePeers": [
+            "@types/react-dom",
+            "@types/react",
+            "react-dom",
+            "react"
+          ],
+          "linkType": "HARD",
         }],
         ["virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7", {
           "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-30a963ab39/0/cache/@testing-library-react-npm-11.2.7-3a0469c756-64e07cb96e.zip/node_modules/@testing-library/react/",
@@ -7474,18 +7520,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["workspace:js-lib/baby-fs", {
           "packageLocation": "./js-lib/baby-fs/",
           "packageDependencies": [
-            ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["base-error", "workspace:js-lib/base-error"],
-            ["idb-keyval", "npm:5.0.6"]
-          ],
-          "linkType": "SOFT",
-        }]
-      ]],
-      ["baby-fs-test-mock", [
-        ["workspace:lib/baby-fs-test-mock", {
-          "packageLocation": "./lib/baby-fs-test-mock/",
-          "packageDependencies": [
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
             ["base-error", "workspace:js-lib/base-error"],
             ["idb-keyval", "npm:5.0.6"]
@@ -18573,6 +18607,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["search-notes", [
+        ["workspace:extensions/search-notes", {
+          "packageLocation": "./extensions/search-notes/",
+          "packageDependencies": [
+            ["search-notes", "workspace:extensions/search-notes"],
+            ["@testing-library/react", "virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:12.0.0"],
+            ["@types/react", "npm:17.0.11"],
+            ["@types/react-dom", "npm:17.0.8"],
+            ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
+            ["extension-registry", "workspace:lib/extension-registry"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
+            ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
+            ["ui-components", "workspace:lib/ui-components"],
+            ["utils", "workspace:lib/utils"],
+            ["workspace-context", "workspace:lib/workspace-context"],
+            ["ws-path", "workspace:lib/ws-path"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["secure-compare", [
         ["npm:3.0.1", {
           "packageLocation": "./.yarn/cache/secure-compare-npm-3.0.1-5bb9fae9c0-0a8d8d3e54.zip/node_modules/secure-compare/",
@@ -18828,7 +18884,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["inline-emoji", "workspace:extensions/inline-emoji"],
             ["naukar-proxy", "workspace:worker/naukar-proxy"],
             ["naukar-worker", "workspace:worker/naukar-worker"],
-            ["object-sync", "workspace:js-lib/object-sync"]
+            ["object-sync", "workspace:js-lib/object-sync"],
+            ["search-notes", "workspace:extensions/search-notes"]
           ],
           "linkType": "SOFT",
         }]
@@ -19846,6 +19903,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["test-utils", [
+        ["workspace:lib/test-utils", {
+          "packageLocation": "./lib/test-utils/",
+          "packageDependencies": [
+            ["test-utils", "workspace:lib/test-utils"],
+            ["@bangle.dev/core", "npm:0.18.1"],
+            ["@types/react", "npm:17.0.11"],
+            ["@types/react-dom", "npm:17.0.8"],
+            ["baby-fs", "workspace:js-lib/baby-fs"],
+            ["base-error", "workspace:js-lib/base-error"],
+            ["extension-registry", "workspace:lib/extension-registry"],
+            ["idb-keyval", "npm:5.0.6"],
+            ["markdown", "workspace:lib/markdown"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
+            ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["workspace-context", "workspace:lib/workspace-context"],
+            ["ws-path", "workspace:lib/ws-path"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["text-table", [
         ["npm:0.2.0", {
           "packageLocation": "./.yarn/cache/text-table-npm-0.2.0-d92a778b59-b6937a38c8.zip/node_modules/text-table/",
@@ -20562,6 +20641,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["config", "workspace:lib/config"],
             ["constants", "workspace:lib/constants"],
             ["dayjs", "npm:1.10.5"],
+            ["debounce-fn", "npm:5.0.0"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-test-renderer", "virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:17.0.2"],
@@ -21250,18 +21330,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@types/history", "npm:4.7.8"],
+            ["@types/prosemirror-model", "npm:1.13.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
             ["markdown", "workspace:lib/markdown"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["utils", "workspace:lib/utils"],
             ["ws-path", "workspace:lib/ws-path"]
           ],
@@ -21282,18 +21364,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@types/history", "npm:4.7.8"],
+            ["@types/prosemirror-model", "npm:1.13.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
             ["markdown", "workspace:lib/markdown"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["utils", "workspace:lib/utils"],
             ["ws-path", "workspace:lib/ws-path"]
           ],
@@ -21312,18 +21396,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@types/history", "npm:4.7.8"],
+            ["@types/prosemirror-model", "npm:1.13.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
             ["markdown", "workspace:lib/markdown"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["utils", "workspace:lib/utils"],
             ["ws-path", "workspace:lib/ws-path"]
           ],
@@ -21336,18 +21422,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "npm:0.18.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@types/history", "npm:4.7.8"],
+            ["@types/prosemirror-model", "npm:1.13.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["@types/react-router-dom", "npm:5.1.7"],
             ["baby-fs", "workspace:js-lib/baby-fs"],
-            ["baby-fs-test-mock", "workspace:lib/baby-fs-test-mock"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["idb-keyval", "npm:5.0.6"],
             ["markdown", "workspace:lib/markdown"],
+            ["prosemirror-model", "npm:1.14.1"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
+            ["test-utils", "workspace:lib/test-utils"],
             ["utils", "workspace:lib/utils"],
             ["ws-path", "workspace:lib/ws-path"]
           ],

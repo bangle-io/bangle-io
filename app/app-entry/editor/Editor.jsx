@@ -125,6 +125,7 @@ function EditorInner({
         uniqueEditorObj: uniqueEditorObj,
       }),
     },
+    editorProps: {},
   });
 
   return (

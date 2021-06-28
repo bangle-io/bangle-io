@@ -1,0 +1,14 @@
+.b-text-color {
+  color: var(--font-color);
+}
+
+.b-text-color-lighter {
+  color: var(--font-lighter-color);
+}
+
+.b-accent-2-color:hover {
+  background-color: var(--accent-2-color);
+}
+.hover\:b-accent-2-color:hover {
+  background-color: var(--accent-2-color);
+}

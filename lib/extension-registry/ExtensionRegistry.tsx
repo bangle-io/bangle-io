@@ -112,6 +112,7 @@ export class ExtensionRegistry {
   private registeredActions: any[];
   private editorConfig: EditorConfig[];
   private optionsBarEntries: ApplicationConfig['optionsBar'];
+  private sidebars: any[];
   editor = new EditorHandlers(this.extensions);
 
   constructor(
@@ -144,6 +145,7 @@ export class ExtensionRegistry {
     this.actionHandlers = new Set();
     this.registeredActions = filterFlatMap(applicationConfig, 'actions');
     this.optionsBarEntries = filterFlatMap(applicationConfig, 'optionsBar');
+    this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
   }
   private validate() {
     if (
@@ -194,6 +196,10 @@ export class ExtensionRegistry {
 
   getOptionsBarEntries() {
     return this.optionsBarEntries;
+  }
+
+  getSidebars() {
+    return this.sidebars;
   }
 
   renderExtensionEditorComponents = ({

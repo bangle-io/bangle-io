@@ -48,13 +48,17 @@ async function createWorkspace(page, wsName = 'test' + uuid(4)) {
   return wsName;
 }
 
-async function newPage(browser) {
+async function newPage(browser, { widescreen = false } = {}) {
   const page = await browser.newPage();
   const handleError = (error) => {
     process.emit('uncaughtException', error);
   };
   page.on('error', handleError);
   page.on('pageerror', handleError);
+
+  if (widescreen) {
+    await setPageWidescreen(page);
+  }
   return {
     page: page,
     destroyPage: async () => {

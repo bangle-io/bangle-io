@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
 import { ActivityBar } from './components/ActivityBar';
@@ -11,6 +11,7 @@ import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { PaletteManager } from './extension-glue/PaletteManager';
 import { Routes } from './Routes';
+import { ExtensionRegistryContext } from 'extension-registry';
 
 export function AppContainer() {
   const { widescreen } = useContext(UIManagerContext);
@@ -41,6 +42,7 @@ export function AppContainer() {
 function LeftSidebarArea() {
   const { sidebar, dispatch } = useContext(UIManagerContext);
   const { widescreen } = useContext(UIManagerContext);
+  const extensionRegistry = useContext(ExtensionRegistryContext);
 
   const leftSidebarAreaRef = useWatchClickOutside(
     () => {
@@ -66,23 +68,34 @@ function LeftSidebarArea() {
     };
   }, [dispatch]);
 
+  const extensionSidebars = useMemo(() => {
+    return Object.fromEntries(
+      extensionRegistry.getSidebars().map((r) => [r.name, r]),
+    );
+  }, [extensionRegistry]);
+
   let sidebarName, component;
+  if (extensionSidebars[sidebar]) {
+    const sidebarObj = extensionSidebars[sidebar];
+    sidebarName = sidebarObj.hint;
+    component = <sidebarObj.ReactComponent />;
+  } else {
+    switch (sidebar) {
+      case 'file-browser': {
+        sidebarName = 'Files';
+        component = <FileBrowser />;
+        break;
+      }
 
-  switch (sidebar) {
-    case 'file-browser': {
-      sidebarName = 'Files';
-      component = <FileBrowser />;
-      break;
-    }
+      case 'help-browser': {
+        sidebarName = 'Help';
+        component = <HelpBrowser />;
+        break;
+      }
 
-    case 'help-browser': {
-      sidebarName = 'Help';
-      component = <HelpBrowser />;
-      break;
-    }
-
-    default: {
-      return null;
+      default: {
+        return null;
+      }
     }
   }
 
@@ -92,7 +105,6 @@ function LeftSidebarArea() {
         ref={leftSidebarAreaRef}
         className="fadeInAnimation left-sidebar-area widescreen"
       >
-        <div className="top-0 text-2xl mt-4 px-4 mb-2">{sidebarName}</div>
         {component}
       </div>
     );

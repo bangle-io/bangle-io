@@ -12,6 +12,7 @@ export function PageLifecycle() {
     pageStateCurrent: undefined,
     pageStatePrevious: undefined,
   });
+
   useEffect(() => {
     import('page-lifecycle').then(({ default: lifecycle }) => {
       updateLifecycle(lifecycle);
@@ -34,17 +35,19 @@ export function PageLifecycle() {
   }, [lifecycle, blockReload]);
 
   useEffect(() => {
-    if (!lifecycle) {
-      return;
-    }
-    lifecycle.addEventListener('statechange', function (event) {
+    const handler = (event) => {
       updatePageState({
         pageStateCurrent: event.newState,
         pageStatePrevious: event.oldState,
       });
       mutableAppStateValue.pageLifecycleState = event.newState;
       mutableAppStateValue.prevPageLifecycleState = event.oldState;
-    });
+    };
+
+    lifecycle?.addEventListener('statechange', handler);
+    return () => {
+      lifecycle?.removeEventListener('statechange', handler);
+    };
   }, [lifecycle, mutableAppStateValue]);
 
   useEffect(() => {

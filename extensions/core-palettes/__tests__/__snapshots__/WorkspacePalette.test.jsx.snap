@@ -19,7 +19,7 @@ exports[`Component renders correctly 1`] = `
         />
         <span>
           <span
-            class="u-palette-title text-base font-normal"
+            class="b-palette-title text-base font-normal"
           >
             test-ws1
           </span>

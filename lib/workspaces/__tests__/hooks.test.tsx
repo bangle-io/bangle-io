@@ -1,4 +1,4 @@
-import mockBabyFs from 'baby-fs-test-mock/index';
+import mockBabyFs from 'test-utils/baby-fs-test-mock';
 import { render, act } from '@testing-library/react';
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import React from 'react';

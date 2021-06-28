@@ -1,0 +1,43 @@
+.bangle-input-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.bangle-input {
+  color: var(--font-color);
+  background-color: var(--bg-color);
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.125rem;
+  outline-offset: 2px;
+  width: 100%;
+}
+
+.bangle-input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border: 1px solid transparent;
+  --bangle-ring-offset-width: 0px;
+  --bangle-ring-offset-color: #fff;
+  --bangle-ring-color: var(--accent-stronger-color);
+  --bangle-ring-offset-shadow: 0 0 0 var(--bangle-ring-offset-width)
+    var(--bangle-ring-offset-color);
+  --bangle-ring-shadow: 0 0 0 calc(1.5px + var(--bangle-ring-offset-width))
+    var(--bangle-ring-color);
+  --bangle-shadow: 0 0 #0000;
+  box-shadow: var(--bangle-ring-offset-shadow), var(--bangle-ring-shadow),
+    var(--bangle-shadow, 0 0 #0000);
+}
+
+.bangle-search-clear {
+  position: absolute;
+  left: -20px;
+  cursor: pointer;
+  color: var(--font-lighter-color);
+}
+
+.bangle-search-clear:before {
+  font-size: 22px;
+  content: '\00D7';
+}

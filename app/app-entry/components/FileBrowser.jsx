@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useCallback } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import {
-  SidebarRow,
+  Sidebar,
   ChevronDownIcon,
   ChevronRightIcon,
   CloseIcon,
@@ -131,7 +131,7 @@ function RenderRow({
         transform: `translateY(${virtualRow.start}px)`,
       }}
     >
-      <SidebarRow
+      <Sidebar.Row
         depth={depth}
         basePadding={16}
         title={name}
