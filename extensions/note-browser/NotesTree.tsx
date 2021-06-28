@@ -10,7 +10,7 @@ import {
   ButtonIcon,
 } from 'ui-components/index';
 import { filePathToWsPath, resolvePath } from 'ws-path';
-import { useWorkspaceContext } from 'workspace-context';
+import { WorkspaceContextType, useWorkspaceContext } from 'workspace-context';
 import { useLocalStorage } from 'utils/index';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 import { useVirtual } from 'react-virtual';
@@ -34,7 +34,9 @@ export function NotesTree() {
   const { wsName, primaryWsPath } = useWorkspaceContext();
   const { dispatchAction } = useContext(ActionContext);
 
-  const activeFilePath = primaryWsPath && resolvePath(primaryWsPath).filePath;
+  const activeFilePath = primaryWsPath
+    ? resolvePath(primaryWsPath).filePath
+    : undefined;
 
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
@@ -55,13 +57,29 @@ export function NotesTree() {
     [dispatchAction],
   );
 
+  if (!wsName) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center">
+        <span
+          className="text-sm font-extrabold b-text-color-lighter cursor-pointer"
+          onClick={() => {
+            dispatchAction({
+              name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',
+            });
+          }}
+        >
+          Please open a workspace
+        </span>
+      </div>
+    );
+  }
+
   return (
     <GenericFileBrowser
       wsName={wsName}
       files={noteWsPaths}
       deleteNote={deleteNote}
       pushWsPath={pushWsPath}
-      widescreen={widescreen}
       activeFilePath={activeFilePath}
       closeSidebar={closeSidebar}
       createNewFile={createNewFile}
@@ -73,15 +91,22 @@ const IconStyle = {
   width: 16,
 };
 
-export const GenericFileBrowser = React.memo(function GenericFileBrowser({
+export function GenericFileBrowser({
   wsName,
   files,
   deleteNote,
   pushWsPath,
-  widescreen,
   activeFilePath,
   closeSidebar,
   createNewFile,
+}: {
+  wsName: string;
+  files: string[];
+  deleteNote?: WorkspaceContextType['deleteNote'];
+  pushWsPath: WorkspaceContextType['pushWsPath'];
+  activeFilePath?: string;
+  closeSidebar: () => void;
+  createNewFile: (path?: string) => void;
 }) {
   const { filesAndDirList, dirSet } = useMemo(() => {
     return fileWsPathsToFlatDirTree(files);
@@ -98,13 +123,12 @@ export const GenericFileBrowser = React.memo(function GenericFileBrowser({
       dirSet={dirSet}
       deleteNote={deleteNote}
       pushWsPath={pushWsPath}
-      widescreen={widescreen}
       activeFilePath={activeFilePath}
       closeSidebar={closeSidebar}
       createNewFile={createNewFile}
     />
   );
-});
+}
 
 function RenderRow({
   virtualRow,
@@ -115,9 +139,21 @@ function RenderRow({
   depth,
   isActive,
   isCollapsed,
+  onClick,
   createNewFile,
   deleteNote,
-  onClick,
+}: {
+  virtualRow;
+  path;
+  isDir;
+  wsPath;
+  name;
+  depth;
+  isActive;
+  isCollapsed;
+  onClick;
+  deleteNote?: WorkspaceContextType['deleteNote'];
+  createNewFile: (path?: string) => void;
 }) {
   return (
     <div
@@ -166,20 +202,24 @@ function RenderRow({
               <DocumentAddIcon style={IconStyle} />
             </ButtonIcon>
           ) : (
-            <ButtonIcon
-              hint="Delete file"
-              hintPos="bottom-right"
-              onClick={async (e) => {
-                e.stopPropagation();
-                if (
-                  window.confirm(`Are you sure you want to delete "${name}"? `)
-                ) {
-                  deleteNote(wsPath);
-                }
-              }}
-            >
-              <CloseIcon style={IconStyle} />
-            </ButtonIcon>
+            deleteNote && (
+              <ButtonIcon
+                hint="Delete file"
+                hintPos="bottom-right"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (
+                    window.confirm(
+                      `Are you sure you want to delete "${name}"? `,
+                    )
+                  ) {
+                    deleteNote(wsPath);
+                  }
+                }}
+              >
+                <CloseIcon style={IconStyle} />
+              </ButtonIcon>
+            )
           )
         }
       />
@@ -197,6 +237,15 @@ const RenderItems = React.memo(
     activeFilePath,
     closeSidebar,
     createNewFile,
+  }: {
+    wsName: string;
+    filesAndDirList: string[];
+    dirSet: Set<string>;
+    deleteNote?: WorkspaceContextType['deleteNote'];
+    pushWsPath: WorkspaceContextType['pushWsPath'];
+    activeFilePath?: string;
+    closeSidebar: () => void;
+    createNewFile: (path?: string) => void;
   }) => {
     const [collapsed, toggleCollapse] = useLocalStorage(
       'RenderTree6261:' + wsName,
@@ -208,7 +257,7 @@ const RenderItems = React.memo(
         return result;
       },
     );
-    const parentRef = React.useRef();
+    const parentRef = React.useRef<HTMLDivElement>(null);
     const rows = useMemo(() => {
       return filesAndDirList.filter((path) => {
         if (
@@ -228,17 +277,14 @@ const RenderItems = React.memo(
       overscan: 60,
       estimateSize: React.useCallback(() => {
         // NOTE its easy to trip this and make it run on every render
-        // if (!window.counter) {
-        //   window.counter = 1;
-        // }
-        // window.counter++;
+
         return rowHeight;
       }, []),
-      keyExtractor: useCallback((i) => rows[i], [rows]),
+      keyExtractor: useCallback((i: number) => rows[i]!, [rows]),
     });
 
     const result = rowVirtualizer.virtualItems.map((virtualRow) => {
-      const path = rows[virtualRow.index];
+      const path = rows[virtualRow.index]!;
       const isDir = dirSet.has(path);
       const wsPath = filePathToWsPath(wsName, path);
       const splittedPath = path.split('/');

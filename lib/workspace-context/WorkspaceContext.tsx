@@ -49,7 +49,7 @@ let log = LOG
 
 type RefreshWsPaths = ReturnType<typeof useFiles>['refreshWsPaths'];
 
-interface WorkspaceContextType {
+export interface WorkspaceContextType {
   wsName: string | undefined;
   fileWsPaths: ReturnType<typeof useFiles>['fileWsPaths'];
   noteWsPaths: ReturnType<typeof useFiles>['noteWsPaths'];

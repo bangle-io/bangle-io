@@ -5,14 +5,14 @@ import { UIManagerContext } from 'ui-context';
 import { isValidNoteWsPath } from 'ws-path';
 import { useWorkspaceContext } from 'workspace-context';
 import { HELP_FS_WORKSPACE_NAME, FileOps } from 'workspaces';
-import { ButtonIcon, Sidebar, SpinnerIcon } from 'ui-components/index';
+import { ButtonIcon, Sidebar } from 'ui-components/index';
 
 export function HelpDocuments() {
   const wsName = HELP_FS_WORKSPACE_NAME;
   const { dispatch, widescreen } = useContext(UIManagerContext);
   const { pushWsPath } = useWorkspaceContext();
 
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState<string[]>([]);
   const destroyedRef = useDestroyRef();
 
   useEffect(() => {
@@ -32,8 +32,6 @@ export function HelpDocuments() {
     }
   }, [dispatch, widescreen]);
 
-  const deleteFile = useCallback(async (wsPath) => {}, []);
-
   const createNewFile = useCallback((path) => {}, []);
 
   return (
@@ -43,9 +41,7 @@ export function HelpDocuments() {
       <GenericFileBrowser
         wsName={wsName}
         files={files}
-        deleteFile={deleteFile}
         pushWsPath={pushWsPath}
-        widescreen={widescreen}
         activeFilePath={Math.random() + ''}
         closeSidebar={closeSidebar}
         createNewFile={createNewFile}
