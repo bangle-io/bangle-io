@@ -109,25 +109,24 @@ export function SearchResults({
             />
             {!isCollapsed(r) &&
               r.matches.map((matchObj, j) => (
-                <Sidebar.Row2
-                  key={j}
-                  className={
-                    'search-result-text-match ml-1 pl-3 rounded-sm ' +
-                    (j === 0 ? 'mt-3' : 'mt-4')
-                  }
-                  titleClassName="text-sm "
-                  hoverBgColorChange
-                  item={{
-                    uid: 'search-result-text-match-' + j,
-                    title: (
-                      <Link to={resolvePath(r.wsPath).locationPath}>
+                <Link to={resolvePath(r.wsPath).locationPath} key={j}>
+                  <Sidebar.Row2
+                    className={
+                      'search-result-text-match ml-1 pl-3 rounded-sm ' +
+                      (j === 0 ? 'mt-3' : 'mt-4')
+                    }
+                    titleClassName="text-sm "
+                    hoverBgColorChange
+                    item={{
+                      uid: 'search-result-text-match-' + j,
+                      title: (
                         <HighlightText
                           highlightText={matchObj.match}
                         ></HighlightText>
-                      </Link>
-                    ),
-                  }}
-                ></Sidebar.Row2>
+                      ),
+                    }}
+                  ></Sidebar.Row2>
+                </Link>
               ))}
           </React.Fragment>
         );
