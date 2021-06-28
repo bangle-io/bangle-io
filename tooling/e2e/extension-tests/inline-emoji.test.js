@@ -8,7 +8,7 @@ const {
   longSleep,
   getPrimaryEditorDebugString,
 } = require('../helpers');
-jest.setTimeout(105 * 1000);
+jest.setTimeout(155 * 1000);
 
 beforeEach(async () => {
   await jestPuppeteer.resetPage();

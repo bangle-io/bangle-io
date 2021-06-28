@@ -67,8 +67,8 @@ exports[`show results if match 1`] = `
         <div
           style="position: relative; display: flex;"
         >
-          <div
-            aria-label="Clear"
+          <button
+            aria-label="Clear search"
             class="bangle-search-clear"
           />
         </div>

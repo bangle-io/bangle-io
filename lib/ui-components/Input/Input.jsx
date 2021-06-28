@@ -26,9 +26,9 @@ export const Input = React.forwardRef(
         />
         <div style={{ position: 'relative', display: 'flex' }}>
           {showClear && value?.length > 0 && (
-            <div
+            <button
               className="bangle-search-clear"
-              aria-label="Clear"
+              aria-label="Clear search"
               onMouseDown={onClear}
             />
           )}
