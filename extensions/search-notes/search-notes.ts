@@ -29,7 +29,6 @@ export async function searchNotes(
     (wsPath) => {
       return getNote(wsPath).then((doc) => {
         if (signal.aborted) {
-          console.log('aborted');
           return null;
         }
 

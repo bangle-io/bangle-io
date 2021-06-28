@@ -38,6 +38,7 @@
     "inline-emoji": "workspace:*",
     "naukar-proxy": "workspace:*",
     "naukar-worker": "workspace:*",
+    "note-browser": "workspace:*",
     "object-sync": "workspace:*",
     "search-notes": "workspace:*"
   },

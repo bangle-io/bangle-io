@@ -12,6 +12,7 @@
     "editor-scroll-extension",
     "core-palettes",
     "core-actions",
-    "search-notes"
+    "search-notes",
+    "note-browser"
   ]
 }

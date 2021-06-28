@@ -17,18 +17,17 @@ import { useVirtual } from 'react-virtual';
 import { ActionContext } from 'action-context';
 
 const DEFAULT_FOLD_DEPTH = 2;
-FileBrowser.propTypes = {};
 
 const rem =
   typeof window === 'undefined'
     ? 16
     : parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-const rowHeight = 1.75 * rem; // 1.75rem line height of text-lg
+const rowHeight = 1.5 * rem; // 1.75rem line height of text-lg
 
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
-export function FileBrowser() {
+export function NotesTree() {
   const { pushWsPath, noteWsPaths = [], deleteNote } = useWorkspaceContext();
 
   const { dispatch, widescreen } = useContext(UIManagerContext);
@@ -138,7 +137,7 @@ function RenderRow({
         onClick={onClick}
         isActive={isActive}
         // before changing this look at estimateSize of virtual
-        textSizeClassName="text-lg"
+        textSizeClassName="text-base"
         leftNode={
           isDir ? (
             isCollapsed ? (

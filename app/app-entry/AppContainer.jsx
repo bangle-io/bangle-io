@@ -2,10 +2,8 @@ import React, { useMemo, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
 import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
 import { ActivityBar } from './components/ActivityBar';
-import { FileBrowser } from './components/FileBrowser';
 import { keybindings } from 'config/index';
 import { NotificationArea } from './components/NotificationArea';
-import { HelpBrowser } from './components/HelpBrowser';
 import { PRIMARY_SCROLL_PARENT_ID } from 'constants/index';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { useWorkspaceContext } from 'workspace-context/index';
@@ -75,7 +73,7 @@ function LeftSidebarArea() {
 
     console.log(keys);
     return {
-      [keybindings.toggleFileBrowser.key]: () => {
+      [keybindings.toggleNoteBrowser.key]: () => {
         dispatch({
           type: 'UI/TOGGLE_SIDEBAR',
           value: { type: 'file-browser' },
@@ -97,21 +95,7 @@ function LeftSidebarArea() {
     const sidebarObj = extensionSidebars[sidebar];
     component = <sidebarObj.ReactComponent />;
   } else {
-    switch (sidebar) {
-      case 'file-browser': {
-        component = <FileBrowser />;
-        break;
-      }
-
-      case 'help-browser': {
-        component = <HelpBrowser />;
-        break;
-      }
-
-      default: {
-        return null;
-      }
-    }
+    return null;
   }
 
   if (widescreen) {

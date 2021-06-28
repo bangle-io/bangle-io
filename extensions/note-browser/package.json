@@ -1,0 +1,44 @@
+{
+  "name": "note-browser",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "scripts": {},
+  "dependencies": {
+    "action-context": "workspace:*",
+    "config": "workspace:*",
+    "extension-registry": "workspace:*",
+    "react": "^17.0.2",
+    "react-virtual": "^2.7.1",
+    "ui-components": "workspace:*",
+    "ui-context": "workspace:*",
+    "utils": "workspace:*",
+    "workspace-context": "workspace:*",
+    "workspaces": "workspace:*",
+    "ws-path": "workspace:*"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^12.0.0",
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.8",
+    "react-dom": "^17.0.2",
+    "test-utils": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

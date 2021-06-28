@@ -6,22 +6,21 @@ import { UIManagerContext } from 'ui-context/index';
 import {
   ButtonIcon,
   FileDocumentIcon,
-  FolderIcon,
   HomeIcon,
   MenuIcon,
-  QuestionIcon,
 } from 'ui-components/index';
-import { keybindings } from 'config/index';
 import { cx } from 'utils/index';
 import { resolvePath } from 'ws-path';
 import { useHistory } from 'react-router-dom';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { ExtensionRegistryContext } from 'extension-registry';
+import { ActionContext } from 'action-context/index';
 
 ActivityBar.propTypes = {};
 
 export function ActivityBar() {
   const extensionRegistry = useContext(ExtensionRegistryContext);
+  const { dispatchAction } = useContext(ActionContext);
 
   const { paletteType, sidebar, dispatch, widescreen } =
     useContext(UIManagerContext);
@@ -53,19 +52,6 @@ export function ActivityBar() {
     });
   };
 
-  const toggleFilePalette = () => {
-    // dispatch({
-    //   type: 'UI/UPDATE_PALETTE',
-    //   value: {
-    //     type: paletteType === FILE_PALETTE ? null : FILE_PALETTE,
-    //   },
-    // });
-    dispatch({
-      type: 'UI/CHANGE_SIDEBAR',
-      value: { type: null },
-    });
-  };
-
   // disable sticky when sidebar is showing
   const disableSticky = !widescreen && sidebar;
 
@@ -87,36 +73,45 @@ export function ActivityBar() {
         wsPath={primaryWsPath}
         sidebar={sidebar}
         toggleSidebar={toggleSidebar('file-browser')}
-        toggleFilePalette={toggleFilePalette}
+        toggleFilePalette={() => {
+          dispatchAction({
+            name: '@action/core-palettes/TOGGLE_NOTES_PALETTE',
+          });
+        }}
         paletteType={paletteType}
       />
     );
   }
 
-  const injectedSidebars = extensionRegistry.getSidebars().map((r) => {
-    const isActive = sidebar === r.name;
-    return (
-      <ButtonIcon
-        key={r.name}
-        onClick={toggleSidebar(r.name)}
-        hint={isActive ? null : r.hint}
-        hintPos="right"
-        active={isActive}
-        className={cx(
-          'flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200',
-          widescreen && 'border-l-2',
-          isActive && 'active',
-        )}
-        style={{
-          borderColor: isActive
-            ? 'var(--accent-stronger-color)'
-            : 'transparent',
-        }}
-      >
-        <span className="h-7 w-7 text-gray-100">{r.icon}</span>
-      </ButtonIcon>
-    );
-  });
+  const topInjectedSidebars = extensionRegistry
+    .getSidebars()
+    .filter((r) => r.iconPlacement !== 'bottom')
+    .map((r) => {
+      const isActive = sidebar === r.name;
+      return (
+        <ActivityBarButton
+          key={r.name}
+          sidebar={r}
+          isActive={isActive}
+          toggleSidebar={toggleSidebar}
+        />
+      );
+    });
+
+  const bottomInjectedSidebars = extensionRegistry
+    .getSidebars()
+    .filter((r) => r.iconPlacement === 'bottom')
+    .map((r) => {
+      const isActive = sidebar === r.name;
+      return (
+        <ActivityBarButton
+          key={r.name}
+          sidebar={r}
+          isActive={isActive}
+          toggleSidebar={toggleSidebar}
+        />
+      );
+    });
 
   return (
     <div id="activity-bar-area" className="widescreen flex">
@@ -136,50 +131,9 @@ export function ActivityBar() {
         >
           <HomeIcon className="h-7 w-7 text-gray-100" />
         </ButtonIcon>
-        <ButtonIcon
-          onClick={toggleSidebar('file-browser')}
-          hint={
-            sidebar === 'file-browser'
-              ? null
-              : 'File Browser\n' + keybindings.toggleFileBrowser.displayValue
-          }
-          hintPos="right"
-          active={sidebar === 'file-browser'}
-          className={cx(
-            'flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200',
-            widescreen && 'border-l-2',
-            sidebar === 'file-browser' && 'active',
-          )}
-          style={{
-            borderColor:
-              sidebar === 'file-browser'
-                ? 'var(--accent-stronger-color)'
-                : 'transparent',
-          }}
-        >
-          <FolderIcon className="h-7 w-7 text-gray-100" />
-        </ButtonIcon>
-        {injectedSidebars}
+        {topInjectedSidebars}
         <div className="flex-grow"></div>
-        <ButtonIcon
-          onClick={toggleSidebar('help-browser')}
-          hint={sidebar ? null : 'Help, Keyboard Shortcuts'}
-          hintPos="right"
-          active={!Boolean(primaryWsPath)}
-          className={cx(
-            'flex justify-center pt-3 pb-3 mt-1 mb-1',
-            widescreen && 'border-l-2',
-            sidebar === 'help-browser' && 'active',
-          )}
-          style={{
-            borderColor:
-              sidebar === 'help-browser'
-                ? 'var(--accent-stronger-color)'
-                : 'transparent',
-          }}
-        >
-          <QuestionIcon className="h-7 w-7 text-gray-100" />
-        </ButtonIcon>
+        {bottomInjectedSidebars}
       </div>
     </div>
   );
@@ -284,4 +238,26 @@ export function setupStickyNavigation(widescreen) {
     });
     addUp();
   };
+}
+
+function ActivityBarButton({ sidebar, isActive, widescreen, toggleSidebar }) {
+  return (
+    <ButtonIcon
+      key={sidebar.name}
+      onClick={toggleSidebar(sidebar.name)}
+      hint={isActive ? null : sidebar.hint}
+      hintPos="right"
+      active={isActive}
+      className={cx(
+        'flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200',
+        widescreen && 'border-l-2',
+        isActive && 'active',
+      )}
+      style={{
+        borderColor: isActive ? 'var(--accent-stronger-color)' : 'transparent',
+      }}
+    >
+      <span className="h-7 w-7 text-gray-100">{sidebar.icon}</span>
+    </ButtonIcon>
+  );
 }

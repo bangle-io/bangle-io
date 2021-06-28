@@ -20,6 +20,24 @@
       ],
       "extension-registry/*": [
         "../extension-registry/*"
+      ],
+      "markdown": [
+        "../markdown/index.js"
+      ],
+      "markdown/*": [
+        "../markdown/*"
+      ],
+      "workspace-context": [
+        "../workspace-context/index.ts"
+      ],
+      "workspace-context/*": [
+        "../workspace-context/*"
+      ],
+      "ws-path": [
+        "../ws-path/index.ts"
+      ],
+      "ws-path/*": [
+        "../ws-path/*"
       ]
     }
   }

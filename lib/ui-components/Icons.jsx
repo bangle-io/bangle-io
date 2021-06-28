@@ -341,8 +341,8 @@ export function QuestionIcon({ className = 'h-6 w-6', ...props }) {
         x="25%"
         y="70"
         strokeWidth={2}
-        fontSize="70px"
-        fontWeight={200}
+        fontSize="90px"
+        fontWeight={300}
         style={
           {
             // font: 'regular 70px sans-serif',
