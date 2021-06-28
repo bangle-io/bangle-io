@@ -57,6 +57,23 @@ function LeftSidebarArea() {
   );
 
   useKeybindings(() => {
+    const keys = Object.fromEntries(
+      extensionRegistry
+        .getSidebars()
+        .filter((r) => r.keybinding)
+        .map((r) => [
+          r.keybinding.key,
+          () => {
+            dispatch({
+              type: 'UI/TOGGLE_SIDEBAR',
+              value: { type: r.name },
+            });
+            return true;
+          },
+        ]),
+    );
+
+    console.log(keys);
     return {
       [keybindings.toggleFileBrowser.key]: () => {
         dispatch({
@@ -65,8 +82,9 @@ function LeftSidebarArea() {
         });
         return true;
       },
+      ...keys,
     };
-  }, [dispatch]);
+  }, [dispatch, extensionRegistry]);
 
   const extensionSidebars = useMemo(() => {
     return Object.fromEntries(
@@ -77,18 +95,15 @@ function LeftSidebarArea() {
   let sidebarName, component;
   if (extensionSidebars[sidebar]) {
     const sidebarObj = extensionSidebars[sidebar];
-    sidebarName = sidebarObj.hint;
     component = <sidebarObj.ReactComponent />;
   } else {
     switch (sidebar) {
       case 'file-browser': {
-        sidebarName = 'Files';
         component = <FileBrowser />;
         break;
       }
 
       case 'help-browser': {
-        sidebarName = 'Help';
         component = <HelpBrowser />;
         break;
       }
