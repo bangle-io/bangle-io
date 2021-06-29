@@ -107,6 +107,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/inline-emoji"
       },
       {
+        "name": "note-browser",
+        "reference": "workspace:extensions/note-browser"
+      },
+      {
         "name": "search-notes",
         "reference": "workspace:extensions/search-notes"
       },
@@ -238,6 +242,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["markdown", ["workspace:lib/markdown"]],
       ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
       ["naukar-worker", ["workspace:worker/naukar-worker"]],
+      ["note-browser", ["workspace:extensions/note-browser"]],
       ["object-sync", ["workspace:js-lib/object-sync"]],
       ["search-notes", ["workspace:extensions/search-notes"]],
       ["shared", ["workspace:app/shared"]],
@@ -5173,10 +5178,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:12.0.0", {
-          "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-6dd2685b07/0/cache/@testing-library-react-npm-12.0.0-93b24587bc-07f0ba4092.zip/node_modules/@testing-library/react/",
+        ["virtual:06a75056df3e61e0c586a169b6d11108e0a2fcbb364fc0033cfc1dc04c63b00a55a5022495b99eb4608c94efeb53a5be0783493a2c41508e253b0c33550911c3#npm:12.0.0", {
+          "packageLocation": "./.yarn/__virtual__/@testing-library-react-virtual-0758ee2c33/0/cache/@testing-library-react-npm-12.0.0-93b24587bc-07f0ba4092.zip/node_modules/@testing-library/react/",
           "packageDependencies": [
-            ["@testing-library/react", "virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:12.0.0"],
+            ["@testing-library/react", "virtual:06a75056df3e61e0c586a169b6d11108e0a2fcbb364fc0033cfc1dc04c63b00a55a5022495b99eb4608c94efeb53a5be0783493a2c41508e253b0c33550911c3#npm:12.0.0"],
             ["@babel/runtime", "npm:7.12.5"],
             ["@testing-library/dom", "npm:8.0.0"],
             ["@types/react", "npm:17.0.11"],
@@ -6757,7 +6762,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
             ["react-test-renderer", "virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:17.0.2"],
-            ["react-virtual", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:2.7.1"],
+            ["react-virtual", "virtual:06a75056df3e61e0c586a169b6d11108e0a2fcbb364fc0033cfc1dc04c63b00a55a5022495b99eb4608c94efeb53a5be0783493a2c41508e253b0c33550911c3#npm:2.7.1"],
             ["shared", "workspace:app/shared"],
             ["style", "workspace:app/style"],
             ["ui-components", "workspace:lib/ui-components"],
@@ -15896,6 +15901,31 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["note-browser", [
+        ["workspace:extensions/note-browser", {
+          "packageLocation": "./extensions/note-browser/",
+          "packageDependencies": [
+            ["note-browser", "workspace:extensions/note-browser"],
+            ["@testing-library/react", "virtual:06a75056df3e61e0c586a169b6d11108e0a2fcbb364fc0033cfc1dc04c63b00a55a5022495b99eb4608c94efeb53a5be0783493a2c41508e253b0c33550911c3#npm:12.0.0"],
+            ["@types/react", "npm:17.0.11"],
+            ["@types/react-dom", "npm:17.0.8"],
+            ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
+            ["config", "workspace:lib/config"],
+            ["extension-registry", "workspace:lib/extension-registry"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
+            ["react-virtual", "virtual:06a75056df3e61e0c586a169b6d11108e0a2fcbb364fc0033cfc1dc04c63b00a55a5022495b99eb4608c94efeb53a5be0783493a2c41508e253b0c33550911c3#npm:2.7.1"],
+            ["test-utils", "workspace:lib/test-utils"],
+            ["ui-components", "workspace:lib/ui-components"],
+            ["ui-context", "workspace:lib/ui-context"],
+            ["utils", "workspace:lib/utils"],
+            ["workspace-context", "workspace:lib/workspace-context"],
+            ["workspaces", "virtual:30bbe5a9fd71bdedc988bef6dbbf7be8741a536210ced89040612d879c28fe8c68aa6f54170853cf930ad3b759b33f0d397e90bf35b31e32c7cda2064108bb55#workspace:lib/workspaces"],
+            ["ws-path", "workspace:lib/ws-path"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["npm-run-path", [
         ["npm:2.0.2", {
           "packageLocation": "./.yarn/cache/npm-run-path-npm-2.0.2-96c8b48857-acd5ad8164.zip/node_modules/npm-run-path/",
@@ -17829,10 +17859,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:2.7.1", {
-          "packageLocation": "./.yarn/__virtual__/react-virtual-virtual-1898c95ea1/0/cache/react-virtual-npm-2.7.1-07772ad86a-00f47269ff.zip/node_modules/react-virtual/",
+        ["virtual:06a75056df3e61e0c586a169b6d11108e0a2fcbb364fc0033cfc1dc04c63b00a55a5022495b99eb4608c94efeb53a5be0783493a2c41508e253b0c33550911c3#npm:2.7.1", {
+          "packageLocation": "./.yarn/__virtual__/react-virtual-virtual-acded2f63d/0/cache/react-virtual-npm-2.7.1-07772ad86a-00f47269ff.zip/node_modules/react-virtual/",
           "packageDependencies": [
-            ["react-virtual", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:2.7.1"],
+            ["react-virtual", "virtual:06a75056df3e61e0c586a169b6d11108e0a2fcbb364fc0033cfc1dc04c63b00a55a5022495b99eb4608c94efeb53a5be0783493a2c41508e253b0c33550911c3#npm:2.7.1"],
             ["@reach/observe-rect", "npm:1.2.0"],
             ["@types/react", "npm:17.0.11"],
             ["react", "npm:17.0.2"]
@@ -18612,10 +18642,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/search-notes/",
           "packageDependencies": [
             ["search-notes", "workspace:extensions/search-notes"],
-            ["@testing-library/react", "virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:12.0.0"],
+            ["@testing-library/react", "virtual:06a75056df3e61e0c586a169b6d11108e0a2fcbb364fc0033cfc1dc04c63b00a55a5022495b99eb4608c94efeb53a5be0783493a2c41508e253b0c33550911c3#npm:12.0.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],
             ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
+            ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
@@ -18884,6 +18915,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["inline-emoji", "workspace:extensions/inline-emoji"],
             ["naukar-proxy", "workspace:worker/naukar-proxy"],
             ["naukar-worker", "workspace:worker/naukar-worker"],
+            ["note-browser", "workspace:extensions/note-browser"],
             ["object-sync", "workspace:js-lib/object-sync"],
             ["search-notes", "workspace:extensions/search-notes"]
           ],

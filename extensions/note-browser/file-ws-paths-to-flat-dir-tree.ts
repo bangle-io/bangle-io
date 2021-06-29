@@ -8,11 +8,10 @@ import { splitWsPath } from 'ws-path/index';
  *          the parent directory path comes before the file path.
  *          dirSet - a JS Set of directory path
  */
-export function fileWsPathsToFlatDirTree(wsFilePaths) {
-  const dirSet = new Set();
+export function fileWsPathsToFlatDirTree(wsFilePaths: string[]) {
+  const dirSet = new Set<string>();
   const filePaths = wsFilePaths.map((f) => {
-    const [wsName, filePath] = splitWsPath(f);
-    return filePath;
+    return splitWsPath(f)[1];
   });
 
   filePaths.forEach((filePath) => {
@@ -30,7 +29,7 @@ export function fileWsPathsToFlatDirTree(wsFilePaths) {
     }
   });
 
-  const compare = (a, b) => {
+  const compare = (a: string, b: string) => {
     const aSplit = a.split('/');
     const bSplit = b.split('/');
     const till = Math.min(aSplit.length, bSplit.length);

@@ -57,8 +57,10 @@ export interface ApplicationConfig {
   sidebars?: Array<{
     name: string;
     icon: JSX.Element;
+    iconPlacement?: 'bottom' | 'top';
     ReactComponent: React.ComponentType<{}>;
     hint: string;
+    keybinding?: any;
   }>;
 }
 
@@ -183,6 +185,7 @@ export class Extension {
         throw new Error('Extension: Invalid sidebars config.');
       }
     }
+
     return new Extension({ name, editor, application }, _check);
   }
 }

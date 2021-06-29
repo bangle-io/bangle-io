@@ -45,7 +45,7 @@ test('Is able to search for a note', async () => {
   await sleep();
 
   const searchButton = await page.waitForSelector(
-    'button[aria-label="Search notes"]',
+    'button[aria-label^="Search notes"]',
     {
       timeout: SELECTOR_TIMEOUT,
     },

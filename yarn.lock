@@ -12260,6 +12260,29 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"note-browser@workspace:*, note-browser@workspace:extensions/note-browser":
+  version: 0.0.0-use.local
+  resolution: "note-browser@workspace:extensions/note-browser"
+  dependencies:
+    "@testing-library/react": ^12.0.0
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
+    action-context: "workspace:*"
+    config: "workspace:*"
+    extension-registry: "workspace:*"
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-virtual: ^2.7.1
+    test-utils: "workspace:*"
+    ui-components: "workspace:*"
+    ui-context: "workspace:*"
+    utils: "workspace:*"
+    workspace-context: "workspace:*"
+    workspaces: "workspace:*"
+    ws-path: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "npm-run-path@npm:^2.0.0":
   version: 2.0.2
   resolution: "npm-run-path@npm:2.0.2"
@@ -14570,6 +14593,7 @@ resolve@^2.0.0-next.3:
     "@types/react": ^17.0.11
     "@types/react-dom": ^17.0.8
     action-context: "workspace:*"
+    config: "workspace:*"
     extension-registry: "workspace:*"
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -14832,6 +14856,7 @@ resolve@^2.0.0-next.3:
     inline-emoji: "workspace:*"
     naukar-proxy: "workspace:*"
     naukar-worker: "workspace:*"
+    note-browser: "workspace:*"
     object-sync: "workspace:*"
     search-notes: "workspace:*"
   languageName: unknown

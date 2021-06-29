@@ -1,4 +1,4 @@
-import { useWorkspaceContext } from 'workspace-context';
+import { WorkspaceContextType } from 'workspace-context';
 import { SearchResultItem } from './types';
 import { pMap } from './p-map';
 export const CONCURRENCY = 10;
@@ -8,7 +8,7 @@ const maxChars = 75;
 export async function searchNotes(
   query: string,
   noteWsPaths: string[],
-  getNote: ReturnType<typeof useWorkspaceContext>['getNote'],
+  getNote: WorkspaceContextType['getNote'],
   signal: AbortSignal,
   {
     caseSensitive = false,
@@ -29,7 +29,6 @@ export async function searchNotes(
     (wsPath) => {
       return getNote(wsPath).then((doc) => {
         if (signal.aborted) {
-          console.log('aborted');
           return null;
         }
 

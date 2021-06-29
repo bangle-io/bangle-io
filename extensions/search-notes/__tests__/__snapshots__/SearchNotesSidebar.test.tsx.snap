@@ -162,22 +162,22 @@ exports[`show results if match 1`] = `
           </span>
         </div>
       </div>
-      <div
-        class="b-sidebar-row2 search-result-text-match ml-1 pl-3 rounded-sm mt-3   "
-        data-id="search-result-text-match-0"
-        style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
-      >
+      <span>
         <div
-          class="flex flex-row"
+          class="b-sidebar-row2 search-result-text-match ml-1 pl-3 rounded-sm mt-3   "
+          data-id="search-result-text-match-0"
+          style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
         >
           <div
-            class="b-left-node"
-          />
-          <span>
-            <span
-              class="b-title text-sm "
-            >
-              <span>
+            class="flex flex-row"
+          >
+            <div
+              class="b-left-node"
+            />
+            <span>
+              <span
+                class="b-title text-sm "
+              >
                 <div
                   class="highlight-text-container"
                 >
@@ -197,19 +197,19 @@ exports[`show results if match 1`] = `
                 </div>
               </span>
             </span>
-          </span>
+          </div>
+          <div
+            class="flex flex-row"
+          >
+            <span
+              class="b-right-node"
+            />
+            <span
+              class="b-right-hover-node"
+            />
+          </div>
         </div>
-        <div
-          class="flex flex-row"
-        >
-          <span
-            class="b-right-node"
-          />
-          <span
-            class="b-right-hover-node"
-          />
-        </div>
-      </div>
+      </span>
     </div>
   </div>
 </div>
