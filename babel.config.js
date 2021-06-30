@@ -1,8 +1,9 @@
+/* eslint-disable no-process-env */
 // babel.config.js
 
 const DEBUG = true;
 
-module.exports = (api) => {
+module.exports = (api, ...args) => {
   if (api.env('test')) {
     return {
       presets: [
@@ -26,8 +27,17 @@ module.exports = (api) => {
   // browserslist is not configured when running integration tests
   // envOptions.targets = 'last 2 chrome version';
 
-  return {
-    presets: ['@babel/preset-react', ['@babel/preset-env', envOptions]],
+  const config = {
+    presets: [
+      '@babel/preset-react',
+      ['@babel/preset-env', envOptions],
+      process.env.WEBPACK && '@babel/preset-typescript',
+    ].filter(Boolean),
     plugins: [['@babel/plugin-proposal-class-properties', { loose: true }]],
   };
+
+  if (DEBUG) {
+    console.info(config);
+  }
+  return config;
 };

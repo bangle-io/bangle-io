@@ -8,6 +8,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ejs = require('ejs');
 const fs = require('fs');
+process.env.WEBPACK = true;
+
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
   const envVars = require('env-vars')({ isProduction });
@@ -33,7 +35,7 @@ module.exports = (env, argv) => {
     entry: './app/app-entry/index.js',
     devtool: 'source-map',
     resolve: {
-      extensions: ['.jsx', '.js', '...'],
+      extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],
       // TODO fix me punycode
       fallback: { punycode: require.resolve('punycode/') },
     },
@@ -102,6 +104,11 @@ module.exports = (env, argv) => {
     ].filter(Boolean),
     module: {
       rules: [
+        // {
+        //   test: /\.tsx?$/,
+        //   use: 'ts-loader',
+        //   exclude: /node_modules/,
+        // },
         {
           test: /\.ejs$/,
           loader: 'ejs-loader',
@@ -114,10 +121,10 @@ module.exports = (env, argv) => {
           use: ['file-loader'],
         },
         {
-          test: /\.(js|jsx)$/,
+          test: /\.(js|jsx|ts|tsx)$/,
           exclude: /node_modules/,
           use: {
-            loader: require.resolve('babel-loader'),
+            loader: 'babel-loader',
           },
         },
 
