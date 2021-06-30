@@ -9,13 +9,7 @@
     <%- sentry %>
     <meta name="theme-color" content="#000000" />
     <%- bangleHelpPreload %>
-    <script
-      src="https://cdn.usefathom.com/script.js"
-      data-spa="auto"
-      data-site="AOGIPUKY"
-      data-excluded-domains="master.bangle.io,localhost"
-      defer
-    ></script>
+
     <style>
       :root {
         --activity-bar-width: 50px;
@@ -93,5 +87,12 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <%- viteJsEntry %>
+    <script
+      defer
+      src="https://cdn.usefathom.com/script.js"
+      data-spa="auto"
+      data-site="AOGIPUKY"
+      data-excluded-domains="master.bangle.io,localhost"
+    ></script>
   </body>
 </html>

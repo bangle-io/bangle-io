@@ -11,6 +11,7 @@ function filterFlatMap<K>(
   if (flatten) {
     return items.flatMap((item) => item[field]);
   }
+
   return items.map((item) => item[field]);
 }
 
@@ -101,8 +102,7 @@ class EditorHandlers {
 }
 
 export class ExtensionRegistry {
-  // TODO move this to a method
-  specRegistry: typeof SpecRegistry;
+  specRegistry: SpecRegistry;
   // TODO move this to a method
   markdownItPlugins: any[];
   private renderReactNodeViewLookup: Record<string, Function>;
