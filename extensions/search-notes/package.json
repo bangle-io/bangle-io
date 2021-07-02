@@ -19,8 +19,11 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
+    "@bangle.dev/core": "0.18.1",
+    "@bangle.dev/search": "0.18.1",
     "action-context": "workspace:*",
     "config": "workspace:*",
+    "editor-manager-context": "workspace:*",
     "extension-registry": "workspace:*",
     "react": "^17.0.2",
     "react-router-dom": "^5.2.0",

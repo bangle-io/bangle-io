@@ -147,6 +147,25 @@
     "prosemirror-state": "^1.3.4",
     "prosemirror-view": "^1.18.7",
     "prosemirror-transform": "^1.3.2",
-    "prosemirror-inputrules": "^1.1.3"
+    "prosemirror-inputrules": "^1.1.3",
+    "@bangle.dev/collab-client": "portal:../bangle-play/collab-client",
+    "@bangle.dev/collab-server": "portal:../bangle-play/collab-server",
+    "@bangle.dev/disk": "portal:../bangle-play/contrib/disk",
+    "@bangle.dev/markdown-front-matter": "portal:../bangle-play/contrib/markdown-front-matter",
+    "@bangle.dev/react-emoji-suggest": "portal:../bangle-play/contrib/react-emoji-suggest",
+    "@bangle.dev/react-sticker": "portal:../bangle-play/contrib/react-sticker",
+    "@bangle.dev/react-stopwatch": "portal:../bangle-play/contrib/react-stopwatch",
+    "@bangle.dev/search": "portal:../bangle-play/contrib/search",
+    "@bangle.dev/text-formatting": "portal:../bangle-play/contrib/text-formatting",
+    "@bangle.dev/timestamp": "portal:../bangle-play/contrib/timestamp",
+    "@bangle.dev/trailing-node": "portal:../bangle-play/contrib/trailing-node",
+    "@bangle.dev/wiki-link": "portal:../bangle-play/contrib/wiki-link",
+    "@bangle.dev/core": "portal:../bangle-play/core",
+    "@bangle.dev/emoji": "portal:../bangle-play/emoji",
+    "@bangle.dev/markdown": "portal:../bangle-play/markdown",
+    "@bangle.dev/react": "portal:../bangle-play/react",
+    "@bangle.dev/react-menu": "portal:../bangle-play/react-menu",
+    "@bangle.dev/table": "portal:../bangle-play/table",
+    "@bangle.dev/tooltip": "portal:../bangle-play/tooltip"
   }
 }
