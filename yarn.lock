@@ -4067,9 +4067,11 @@ __metadata:
   dependencies:
     extension-registry: "workspace:*"
     react: 17.0.2
+    utils: "workpace:*"
   peerDependencies:
     extension-registry: "*"
     react: "*"
+    utils: "*"
   languageName: unknown
   linkType: soft
 
@@ -14595,6 +14597,7 @@ resolve@^2.0.0-next.3:
     react-router-dom: ^5.2.0
     test-utils: "workspace:*"
     ui-components: "workspace:*"
+    ui-context: "workspace:*"
     utils: "workspace:*"
     workspace-context: "workspace:*"
     ws-path: "workspace:*"
@@ -16387,7 +16390,7 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"utils@workspace:*, utils@workspace:lib/utils":
+"utils@workpace:*, utils@workspace:*, utils@workspace:lib/utils":
   version: 0.0.0-use.local
   resolution: "utils@workspace:lib/utils"
   dependencies:

@@ -19,12 +19,20 @@ export interface EditorConfig {
   // deprecate this
   beforeDestroy?: (arg: any) => any;
 }
-
+export interface ActionType {
+  name: string;
+  title: string;
+  keybinding?: string;
+  // when true, will hide it from the user
+  hidden?: boolean;
+}
+export type ActionHandler = (action: ActionType) => boolean;
+export type RegisterActionHandlerType = (cb: ActionHandler) => () => void;
 export interface ApplicationConfig {
   name: string;
   ReactComponent?: React.ComponentType<{
     key: string;
-    registerActionHandler: (cb) => () => void;
+    registerActionHandler: RegisterActionHandlerType;
   }>;
   palettes?: Array<{
     type: string;
@@ -45,10 +53,7 @@ export interface ApplicationConfig {
       dismissPalette: (focusEditor?: boolean) => void;
     }>;
   }>;
-  actions?: Array<{
-    name: string;
-    title: string;
-  }>;
+  actions?: Array<ActionType>;
   optionsBar?: Array<{
     icon: JSX.Element;
     hint: string;
@@ -60,7 +65,6 @@ export interface ApplicationConfig {
     iconPlacement?: 'bottom' | 'top';
     ReactComponent: React.ComponentType<{}>;
     hint: string;
-    keybinding?: any;
   }>;
 }
 

@@ -1,5 +1,4 @@
 import { Extension } from 'extension-registry/index';
-import { keybindings } from 'config';
 import React from 'react';
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';
 import { FolderIcon, QuestionIcon } from 'ui-components';
@@ -9,14 +8,21 @@ const extensionName = 'note-browser';
 
 const extension = Extension.create({
   name: extensionName,
+
   application: {
+    actions: [
+      {
+        name: '@action/note-browser/show-note-browser',
+        title: 'Note Browser',
+        keybinding: 'Mod-e',
+      },
+    ],
     sidebars: [
       {
         name: '@sidebar/' + extensionName + '/note-browser',
-        hint: `Note browser\n${keybindings.toggleNoteBrowser.displayValue}`,
+        hint: `Note browser`,
         icon: React.createElement(FolderIcon, {}),
         ReactComponent: NoteBrowserSidebar,
-        keybinding: keybindings.toggleNoteBrowser,
       },
 
       {

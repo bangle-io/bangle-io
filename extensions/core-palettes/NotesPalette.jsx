@@ -15,7 +15,7 @@ import {
 } from 'ui-components/index';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { extensionName } from './config';
-import { keybindings, keyDisplayValue } from 'config/index';
+import { keyDisplayValue } from 'config/index';
 import { useRecencyWatcher } from './hooks';
 
 const emptyArray = [];
@@ -25,7 +25,6 @@ export const notesPalette = {
   icon: <FileDocumentIcon />,
   identifierPrefix: '',
   placeholder: "Enter a file name or type '?' to see other palettes.",
-  keybinding: keybindings.toggleFilePalette.key,
   // match with any query
   parseRawQuery: (rawQuery) => rawQuery,
   ReactComponent: React.forwardRef(NotesPalette),

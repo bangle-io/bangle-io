@@ -7,3 +7,6 @@ export interface SearchResultItem {
   wsPath: string;
   matches: Array<{ parent: string; match: HighlightTextType }>;
 }
+
+export const SHOW_SEARCH_SIDEBAR_ACTION =
+  '@action/search-notes/show-search-sidebar';

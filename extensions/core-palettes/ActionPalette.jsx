@@ -5,10 +5,9 @@ import React, {
   useMemo,
 } from 'react';
 
-import { UniversalPalette, NullIcon, TerminalIcon } from 'ui-components/index';
+import { UniversalPalette, TerminalIcon } from 'ui-components/index';
 import { extensionName } from './config';
 import { ActionContext } from 'action-context';
-import { keybindings } from 'config/index';
 import { useRecencyWatcher } from './hooks';
 import { ExtensionRegistryContext } from 'extension-registry';
 
@@ -18,7 +17,6 @@ export const actionPalette = {
   icon: <TerminalIcon />,
   identifierPrefix,
   placeholder: 'Actions',
-  keybinding: keybindings.toggleCommandPalette.key,
   parseRawQuery: (rawQuery) => {
     if (identifierPrefix && rawQuery.startsWith(identifierPrefix)) {
       return rawQuery.slice(1);

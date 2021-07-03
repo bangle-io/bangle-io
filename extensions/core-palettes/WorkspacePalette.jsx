@@ -3,7 +3,7 @@ import { useWorkspaces } from 'workspaces';
 import { AlbumIcon, CloseIcon, UniversalPalette } from 'ui-components/index';
 import { extensionName } from './config';
 
-import { keybindings, keyDisplayValue } from 'config/index';
+import { keyDisplayValue } from 'config/index';
 import { useRecencyWatcher } from './hooks';
 
 const LOG = false;
@@ -16,7 +16,6 @@ export const workspacePalette = {
   icon: <AlbumIcon />,
   identifierPrefix,
   placeholder: 'Select a workspace to open',
-  keybinding: keybindings.toggleWorkspacePalette.key,
   parseRawQuery: (rawQuery) => {
     if (identifierPrefix && rawQuery.startsWith(identifierPrefix)) {
       return rawQuery.slice(3);

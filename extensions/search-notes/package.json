@@ -28,6 +28,7 @@
     "react": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "ui-components": "workspace:*",
+    "ui-context": "workspace:*",
     "utils": "workspace:*",
     "workspace-context": "workspace:*",
     "ws-path": "workspace:*"

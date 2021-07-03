@@ -1,17 +1,17 @@
-import './OptionsBar.css';
+import { ActionContext } from 'action-context/index';
+import { keybindings, keyDisplayValue } from 'config/index';
+import { ExtensionRegistryContext } from 'extension-registry';
 import React, { useCallback, useContext } from 'react';
-import { UIManagerContext } from 'ui-context/index';
-import { cx, useKeybindings, useLocalStorage } from 'utils/index';
-import { keybindings } from 'config/index';
 import {
   ButtonIcon,
-  MoreAltIcon,
   ChevronDoubleRightIcon,
+  MoreAltIcon,
   SecondaryEditorIcon,
 } from 'ui-components/index';
+import { UIManagerContext } from 'ui-context/index';
+import { cx, useKeybindings, useLocalStorage } from 'utils/index';
 import { useWorkspaceContext } from 'workspace-context';
-import { ExtensionRegistryContext } from 'extension-registry';
-import { ActionContext } from 'action-context/index';
+import './OptionsBar.css';
 
 const localStoragePrefix = '0.3438144247845969';
 
@@ -56,10 +56,20 @@ export function OptionsBar() {
   const injectedOptions = extensionRegistry
     .getOptionsBarEntries()
     .map((r, i) => {
+      const keybinding = extensionRegistry.getRegisteredAction(
+        r.action,
+      )?.keybinding;
+
+      let hint = r.hint;
+
+      if (keybinding) {
+        hint += '\n' + keyDisplayValue(keybinding);
+      }
+
       return (
         <OptionsButton
           key={i}
-          hint={r.hint}
+          hint={hint}
           onClick={() => {
             dispatchAction({ name: r.action });
           }}

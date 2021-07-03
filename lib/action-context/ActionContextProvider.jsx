@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useContext } from 'react';
 import { ExtensionRegistryContext } from 'extension-registry/index';
+import { useKeybindings } from 'utils/index';
 import { ActionContext } from './ActionContext';
 
 export function ActionContextProvider({ children }) {
@@ -38,6 +39,26 @@ export function ActionContextProvider({ children }) {
       dispatchAction,
     };
   }, [dispatchAction]);
+
+  useKeybindings(() => {
+    const actions = extensionRegistry.getRegisteredActions();
+    const keys = Object.fromEntries(
+      actions
+        .filter((r) => r.keybinding)
+        .map((r) => [
+          r.keybinding,
+          () => {
+            dispatchAction({
+              name: r.name,
+              value: {},
+            });
+            return true;
+          },
+        ]),
+    );
+    return keys;
+  }, [extensionRegistry, dispatchAction]);
+
   return (
     <ActionContext.Provider value={value}>{children}</ActionContext.Provider>
   );

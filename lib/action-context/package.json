@@ -23,10 +23,12 @@
   },
   "peerDependencies": {
     "extension-registry": "*",
-    "react": "*"
+    "react": "*",
+    "utils": "*"
   },
   "devDependencies": {
     "extension-registry": "workspace:*",
-    "react": "17.0.2"
+    "react": "17.0.2",
+    "utils": "workpace:*"
   }
 }

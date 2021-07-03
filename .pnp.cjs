@@ -6503,14 +6503,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
             ["@types/extension-registry", null],
             ["@types/react", "npm:17.0.11"],
+            ["@types/utils", null],
             ["extension-registry", "workspace:lib/extension-registry"],
-            ["react", "npm:17.0.2"]
+            ["react", "npm:17.0.2"],
+            ["utils", "workspace:lib/utils"]
           ],
           "packagePeers": [
             "@types/extension-registry",
             "@types/react",
+            "@types/utils",
             "extension-registry",
-            "react"
+            "react",
+            "utils"
           ],
           "linkType": "SOFT",
         }],
@@ -6519,7 +6523,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["action-context", "workspace:lib/action-context"],
             ["extension-registry", "workspace:lib/extension-registry"],
-            ["react", "npm:17.0.2"]
+            ["react", "npm:17.0.2"],
+            ["utils", "workspace:lib/utils"]
           ],
           "linkType": "SOFT",
         }]
@@ -18678,6 +18683,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],
             ["test-utils", "workspace:lib/test-utils"],
             ["ui-components", "workspace:lib/ui-components"],
+            ["ui-context", "workspace:lib/ui-context"],
             ["utils", "workspace:lib/utils"],
             ["workspace-context", "workspace:lib/workspace-context"],
             ["ws-path", "workspace:lib/ws-path"]
