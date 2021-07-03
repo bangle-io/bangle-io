@@ -26,9 +26,7 @@ export function ActionContextProvider({ children }) {
         );
       }
       for (const handler of extensionRegistry.getActionHandlers()) {
-        if (handler(action) === true) {
-          break;
-        }
+        handler(action);
       }
     },
     [extensionRegistry, actionNameSet],

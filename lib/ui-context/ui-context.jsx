@@ -129,6 +129,13 @@ const reducer = (state, action) => {
       };
     }
 
+    case 'UI/CHANGE_SIDEBAR': {
+      return {
+        ...state,
+        sidebar: action.value.type,
+      };
+    }
+
     case 'UI/SHOW_NOTIFICATION': {
       const { uid, content, buttons, severity = 'info' } = action.value;
       if (!['error', 'warning', 'info', 'success'].includes(severity)) {
@@ -161,13 +168,6 @@ const reducer = (state, action) => {
       }
 
       return state;
-    }
-
-    case 'UI/CHANGE_SIDEBAR': {
-      return {
-        ...state,
-        sidebar: action.value.type,
-      };
     }
 
     case 'UI/UPDATE_PALETTE': {

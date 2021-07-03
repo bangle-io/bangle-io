@@ -1,8 +1,7 @@
 import React, { useMemo, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
-import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
+import { cx, useWatchClickOutside } from 'utils/index';
 import { ActivityBar } from './components/ActivityBar';
-import { keybindings } from 'config/index';
 import { NotificationArea } from './components/NotificationArea';
 import { PRIMARY_SCROLL_PARENT_ID } from 'constants/index';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
