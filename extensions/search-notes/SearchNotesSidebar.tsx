@@ -5,17 +5,50 @@ import { useWorkspaceContext } from 'workspace-context';
 import { useSearchNotes } from './hooks';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
+import { search } from '@bangle.dev/search';
+import { useEditorManagerContext } from 'editor-manager-context/index';
+import { searchPluginKey } from './plugin-key';
 
 export function SearchNotesSidebar() {
   const { dispatchAction } = useContext(ActionContext);
+  const { forEachEditor } = useEditorManagerContext();
   const [query, updateQuery] = useState('');
   const { wsName } = useWorkspaceContext();
   const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
   const { results, pendingSearch } = useSearchNotes(query);
-
   useEffect(() => {
     updateCollapseAllCounter(0);
   }, [query, wsName]);
+
+  useEffect(() => {
+    if (results && results.length > 0 && query) {
+      forEachEditor((editor) => {
+        if (editor?.destroyed === false) {
+          const queryRegex = query
+            ? new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'))
+            : undefined;
+
+          search.updateSearchQuery(searchPluginKey, queryRegex)(
+            editor.view.state,
+            editor.view.dispatch,
+          );
+        }
+      });
+    }
+  }, [forEachEditor, query, results]);
+
+  useEffect(() => {
+    return () => {
+      forEachEditor((editor) => {
+        if (editor?.destroyed === false) {
+          search.updateSearchQuery(searchPluginKey, undefined)(
+            editor.view.state,
+            editor.view.dispatch,
+          );
+        }
+      });
+    };
+  }, [forEachEditor]);
 
   if (!wsName) {
     return (

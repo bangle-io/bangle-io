@@ -1,5 +1,11 @@
 import { applyTheme } from './apply-theme';
-import React, { useReducer, createContext, useMemo, useEffect } from 'react';
+import React, {
+  useContext,
+  useReducer,
+  createContext,
+  useMemo,
+  useEffect,
+} from 'react';
 import { useWindowSize, checkWidescreen } from 'utils/index';
 
 const LOG = false;
@@ -67,6 +73,10 @@ const initialContextUIState = {};
 initialContextUIState.dispatch = () => {};
 
 export const UIManagerContext = createContext(initialContextUIState);
+
+export function useUIManagerContext() {
+  return useContext(UIManagerContext);
+}
 
 function setRootWidescreenClass(widescreen) {
   const root = document.getElementById('root');

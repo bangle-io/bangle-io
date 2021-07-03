@@ -2,6 +2,7 @@ import { render, fireEvent, act } from '@testing-library/react';
 import React from 'react';
 import { SearchNotesSidebar } from '../SearchNotesSidebar';
 import { useWorkspaceContext } from 'workspace-context';
+import { useEditorManagerContext } from 'editor-manager-context';
 import { createPMNode } from 'test-utils/create-pm-node';
 import { sleep } from 'utils';
 
@@ -17,6 +18,11 @@ jest.mock('workspace-context', () => {
     useWorkspaceContext: jest.fn(),
   };
 });
+jest.mock('editor-manager-context', () => {
+  return {
+    useEditorManagerContext: jest.fn(),
+  };
+});
 
 jest.mock('../debounce-config', () => {
   return {
@@ -26,14 +32,22 @@ jest.mock('../debounce-config', () => {
 });
 
 let useWorkspaceContextReturn;
+let useEditorManagerContextReturn;
 beforeEach(() => {
   useWorkspaceContextReturn = {
     wsName: undefined,
     noteWsPaths: [],
     getNote: jest.fn(),
   };
+  useEditorManagerContextReturn = {
+    forEachEditor: jest.fn(),
+  };
   (useWorkspaceContext as any).mockImplementation(() => {
     return useWorkspaceContextReturn;
+  });
+
+  (useEditorManagerContext as any).mockImplementation(() => {
+    return useEditorManagerContextReturn;
   });
 });
 
