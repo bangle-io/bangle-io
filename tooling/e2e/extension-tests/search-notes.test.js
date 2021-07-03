@@ -7,6 +7,7 @@ const {
   getPrimaryEditorHandler,
   SELECTOR_TIMEOUT,
   newPage,
+  getPrimaryEditorHTML,
 } = require('../helpers');
 jest.setTimeout(155 * 1000);
 
@@ -105,4 +106,13 @@ Array [
 1",
 ]
 `);
+
+  // highlights in editor
+  expect(
+    countOcurrences(await getPrimaryEditorHTML(page), '"bangle-search-match"'),
+  ).toBe(1);
 });
+
+function countOcurrences(string, match) {
+  return string.split(match).length - 1;
+}
