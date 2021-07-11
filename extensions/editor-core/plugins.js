@@ -1,4 +1,4 @@
-import { link , components } from '@bangle.dev/core';
+import { link, components } from '@bangle.dev/core';
 import { Plugin, PluginKey, NodeSelection } from 'prosemirror-state';
 import stopwatch from '@bangle.dev/react-stopwatch';
 
