@@ -20,7 +20,7 @@ import {
   horizontalRule,
   listItem,
   orderedList,
-} from '@bangle.dev/core/components/components';
+} from '@bangle.dev/core';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
 
 let headingSpec = heading.spec();

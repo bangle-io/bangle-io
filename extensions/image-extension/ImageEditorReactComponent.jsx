@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useEditorViewContext } from '@bangle.dev/react';
-import { NodeSelection } from '@bangle.dev/core/prosemirror/state';
+import { NodeSelection } from 'prosemirror-state';
 import { menuKey, wsNameViewWeakStore } from './config';
 import { useWorkspaceContext } from 'workspace-context';
 

@@ -1,4 +1,4 @@
-import { PluginKey } from '@bangle.dev/core/prosemirror/state';
+import { PluginKey } from 'prosemirror-state';
 
 export const extensionName = 'inline-emoji';
 export const emojiSuggestKey = new PluginKey(extensionName + 'SuggestKey');

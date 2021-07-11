@@ -19,10 +19,13 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.18.1",
-    "@bangle.dev/markdown": "0.18.1",
-    "@bangle.dev/markdown-front-matter": "0.18.1",
-    "@bangle.dev/table": "0.18.1"
+    "@bangle.dev/core": "0.21.1",
+    "@bangle.dev/markdown": "0.21.1",
+    "@bangle.dev/markdown-front-matter": "0.21.1",
+    "@bangle.dev/pm-utils": "0.21.1",
+    "@bangle.dev/table": "0.21.1",
+    "prosemirror-model": "^1.14.1",
+    "prosemirror-utils": "1.0.0-0"
   },
   "publishConfig": {
     "access": "public"

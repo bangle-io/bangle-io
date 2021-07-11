@@ -2,7 +2,7 @@ import { inlinePalette, queryInlinePaletteActive } from 'inline-palette/index';
 import { InlineCommandPalette } from './InlineCommandPalette';
 import { extensionName, paletteMarkName, palettePluginKey } from './config';
 import { Extension } from 'extension-registry';
-import { keymap } from '@bangle.dev/core/prosemirror/keymap';
+import { keymap } from 'prosemirror-keymap';
 import { keybindings } from 'config/keybindings';
 
 const getScrollContainer = (view) => {

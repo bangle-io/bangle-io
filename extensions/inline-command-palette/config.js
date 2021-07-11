@@ -1,4 +1,4 @@
-import { PluginKey } from '@bangle.dev/core/prosemirror/state';
+import { PluginKey } from 'prosemirror-state';
 
 export const extensionName = 'inline-command-palette';
 export const paletteMarkName = extensionName + '-paletteMark';

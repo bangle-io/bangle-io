@@ -1,11 +1,6 @@
-import { PluginKey, Plugin } from '@bangle.dev/core/plugin';
-import { Decoration, DecorationSet } from '@bangle.dev/core/prosemirror/view';
-import { Selection } from '@bangle.dev/core/prosemirror/state';
-import {
-  listCollapsedHeading,
-  listCollapsibleHeading,
-  toggleHeadingCollapse,
-} from '@bangle.dev/core/components/heading';
+import { heading } from '@bangle.dev/core';
+import { Plugin, PluginKey, Selection } from 'prosemirror-state';
+import { Decoration, DecorationSet } from 'prosemirror-view';
 import { rafSchedule } from 'utils/utility';
 
 export const collapsibleHeadingDeco = {
@@ -86,9 +81,10 @@ function pluginsFactory({ leftOffset = 24 } = {}) {
 
 function buildDeco(state) {
   const collapsedHeadingSet = new Set(
-    listCollapsedHeading(state).map((r) => r.node),
+    heading.listCollapsedHeading(state).map((r) => r.node),
   );
-  const headings = listCollapsibleHeading(state)
+  const headings = heading
+    .listCollapsibleHeading(state)
     .filter((r) => {
       return r.node.content.size > 0;
     })
@@ -128,10 +124,10 @@ function buildDeco(state) {
           tr.setSelection(Selection.near(tr.doc.resolve(match.pos))),
         );
 
-        let result = toggleHeadingCollapse()(view.state);
+        let result = heading.toggleHeadingCollapse()(view.state);
 
         if (result) {
-          toggleHeadingCollapse()(view.state, view.dispatch, view);
+          heading.toggleHeadingCollapse()(view.state, view.dispatch, view);
           e.preventDefault();
         }
       });

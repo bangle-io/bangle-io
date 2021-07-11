@@ -1,7 +1,7 @@
-import { bangleWarn } from '@bangle.dev/core/utils/js-utils';
+import { bangleWarn } from '@bangle.dev/js-utils';
 import { suggestTooltip, createTooltipDOM } from '@bangle.dev/tooltip';
-import { valuePlugin } from '@bangle.dev/core/utils/pm-utils';
-import { pluginKeyStore } from '@bangle.dev/core/utils/plugin-key-store';
+import { valuePlugin } from '@bangle.dev/pm-utils';
+import { pluginKeyStore } from '@bangle.dev/core';
 
 const {
   decrementSuggestTooltipCounter,

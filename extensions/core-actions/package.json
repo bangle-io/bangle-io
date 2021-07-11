@@ -19,7 +19,7 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.18.1",
+    "@bangle.dev/core": "0.21.1",
     "action-context": "workspace:*",
     "baby-fs": "workspace:*",
     "config": "workspace:*",

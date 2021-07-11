@@ -28,6 +28,7 @@
     "config": "workspace:*",
     "idb-keyval": "^5.0.6",
     "markdown": "workspace:*",
+    "prosemirror-model": "^1.14.1",
     "utils": "workspace:*",
     "ws-path": "workspace:*"
   },
@@ -38,7 +39,7 @@
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.18.1",
+    "@bangle.dev/core": "0.21.1",
     "@testing-library/react": "^11.2.7",
     "@types/history": "^4.7.8",
     "@types/prosemirror-model": "^1.13.0",

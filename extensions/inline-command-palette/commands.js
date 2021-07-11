@@ -1,19 +1,23 @@
-import { chainCommands } from '@bangle.dev/core/prosemirror/commands';
 import {
-  insertEmptyParagraphAbove,
-  insertEmptyParagraphBelow,
-} from '@bangle.dev/core/components/paragraph';
-import { queryIsBulletListActive } from '@bangle.dev/core/components/bullet-list';
-import { queryIsOrderedListActive } from '@bangle.dev/core/components/ordered-list';
-import {
-  insertEmptyParaAbove as headingInsertEmptyParaAbove,
-  insertEmptyParaBelow as headingInsertEmptyParaBelow,
-} from '@bangle.dev/core/components/heading';
+  blockquote,
+  bulletList,
+  heading,
+  orderedList,
+  paragraph,
+} from '@bangle.dev/core';
+import { chainCommands } from 'prosemirror-commands';
+const { insertEmptyParagraphAbove, insertEmptyParagraphBelow } = paragraph;
+const { queryIsBulletListActive } = bulletList;
+const { queryIsOrderedListActive } = orderedList;
+const {
+  insertEmptyParaAbove: headingInsertEmptyParaAbove,
+  insertEmptyParaBelow: headingInsertEmptyParaBelow,
+} = heading;
 
-import {
-  insertEmptyParaAbove as blockquoteInsertEmptyParaAbove,
-  insertEmptyParaBelow as blockquoteInsertEmptyParaBelow,
-} from '@bangle.dev/core/components/blockquote';
+const {
+  insertEmptyParaAbove: blockquoteInsertEmptyParaAbove,
+  insertEmptyParaBelow: blockquoteInsertEmptyParaBelow,
+} = blockquote;
 
 export function chainedInsertParagraphAbove() {
   return chainCommands(

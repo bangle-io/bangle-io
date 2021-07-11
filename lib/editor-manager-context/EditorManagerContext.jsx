@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { config } from 'config/index';
-import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
+import { getIdleCallback } from '@bangle.dev/js-utils';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};

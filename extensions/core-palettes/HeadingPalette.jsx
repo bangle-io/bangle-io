@@ -4,7 +4,7 @@ import React, {
   useImperativeHandle,
   useMemo,
 } from 'react';
-import { Selection } from '@bangle.dev/core/prosemirror/state';
+import { Selection } from 'prosemirror-state';
 import { UniversalPalette, NullIcon } from 'ui-components/index';
 import { extensionName } from './config';
 import { EditorManagerContext } from 'editor-manager-context/index';
