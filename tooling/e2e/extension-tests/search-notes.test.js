@@ -109,7 +109,7 @@ Array [
 
   // highlights in editor
   expect(
-    countOcurrences(await getPrimaryEditorHTML(page), '"bangle-search-match"'),
+    countOcurrences(await getPrimaryEditorHTML(page), 'bangle-search-match'),
   ).toBe(1);
 });
 
