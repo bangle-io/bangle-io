@@ -4135,6 +4135,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "action-context@workspace:lib/action-context"
   dependencies:
+    "@bangle.dev/core": 0.21.1
+    "@testing-library/react": ^12.0.0
     "@types/react": ^17.0.11
     "@types/react-dom": ^17.0.8
     extension-registry: "workspace:*"

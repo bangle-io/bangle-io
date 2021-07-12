@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, createContext } from 'react';
 import { ActionType, useExtensionRegistryContext } from 'extension-registry';
 import { useKeybindings } from 'utils';
+
 export const ActionContext = createContext<ContextType>({
   dispatchAction: () => {},
 });
