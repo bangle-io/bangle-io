@@ -1,22 +1,24 @@
-import React, { useContext, useMemo, useCallback } from 'react';
-import { useUIManagerContext } from 'ui-context';
+import { useActionContext } from 'action-context';
+import React, { useCallback, useMemo } from 'react';
+import { useVirtual } from 'react-virtual';
 import {
-  Sidebar,
+  ButtonIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   CloseIcon,
   DocumentAddIcon,
   NullIcon,
-  ButtonIcon,
+  Sidebar,
 } from 'ui-components';
+import { useUIManagerContext } from 'ui-context';
+import { removeMdExtension, useLocalStorage } from 'utils';
+import { useWorkspaceContext, WorkspaceContextType } from 'workspace-context';
 import { filePathToWsPath, resolvePath } from 'ws-path';
-import { WorkspaceContextType, useWorkspaceContext } from 'workspace-context';
-import { useLocalStorage } from 'utils';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
-import { useVirtual } from 'react-virtual';
-import { useActionContext } from 'action-context';
 
 const DEFAULT_FOLD_DEPTH = 2;
+const PADDING_OFFSET = 16;
+const BASE_PADDING = 16;
 
 const rem =
   typeof window === 'undefined'
@@ -166,27 +168,33 @@ function RenderRow({
         transform: `translateY(${virtualRow.start}px)`,
       }}
     >
-      <Sidebar.Row
-        depth={depth}
-        basePadding={16}
-        title={name}
-        onClick={onClick}
+      <Sidebar.Row2
         isActive={isActive}
+        onClick={onClick}
         // before changing this look at estimateSize of virtual
-        textSizeClassName="text-base"
-        leftNode={
-          isDir ? (
-            isCollapsed ? (
-              <ChevronRightIcon style={IconStyle} />
-            ) : (
-              <ChevronDownIcon style={IconStyle} />
-            )
-          ) : (
-            <NullIcon style={IconStyle} />
-          )
-        }
-        rightHoverIcon={
-          isDir ? (
+        titleClassName="text-base truncate select-none"
+        style={{
+          paddingLeft: depth * BASE_PADDING,
+          paddingRight: PADDING_OFFSET,
+        }}
+        item={{
+          uid: wsPath,
+          showDividerAbove: false,
+          title: name,
+          leftNode: (
+            <ButtonIcon onClick={async (e) => {}}>
+              {isDir ? (
+                isCollapsed ? (
+                  <ChevronRightIcon style={IconStyle} />
+                ) : (
+                  <ChevronDownIcon style={IconStyle} />
+                )
+              ) : (
+                <NullIcon style={IconStyle} />
+              )}
+            </ButtonIcon>
+          ),
+          rightHoverNode: isDir ? (
             <ButtonIcon
               hint="New file"
               onClick={async (e) => {
@@ -220,8 +228,8 @@ function RenderRow({
                 <CloseIcon style={IconStyle} />
               </ButtonIcon>
             )
-          )
-        }
+          ),
+        }}
       />
     </div>
   );
@@ -289,7 +297,7 @@ const RenderItems = React.memo(
       const wsPath = filePathToWsPath(wsName, path);
       const splittedPath = path.split('/');
       const depth = splittedPath.length;
-      const name = splittedPath.pop();
+      const name = removeMdExtension(splittedPath.pop());
 
       const onClick = (event) => {
         if (isDir) {

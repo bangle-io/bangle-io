@@ -1,4 +1,5 @@
 import React from 'react';
+import { cx, isTouchDevice } from 'utils';
 
 import { UniversalPalette } from '../UniversalPalette';
 
@@ -15,6 +16,8 @@ export function Row2({
   onClick,
   isActive,
   style,
+  // on touch devices having :hover forces you to click twice
+  allowHover = !isTouchDevice(),
 }) {
   const titleElement = (
     <span>
@@ -31,9 +34,14 @@ export function Row2({
     <div
       data-id={item.uid}
       onClick={onClick}
-      className={`b-sidebar-row2 ${className} ${isActive ? 'active' : ''} ${
-        item.isDisabled ? 'disabled' : ''
-      } ${item.showDividerAbove ? 'b-divider' : ''}`}
+      className={cx(
+        'b-sidebar-row2',
+        allowHover && 'hover',
+        isActive && 'active',
+        item.isDisabled && 'disabled',
+        item.showDividerAbove && 'b-divider',
+        className,
+      )}
       style={{
         cursor: 'pointer',
         display: 'flex',

@@ -77,7 +77,7 @@ export function SearchResults({
           <React.Fragment key={i}>
             <Sidebar.Row2
               titleClassName="text-sm font-bold"
-              className={'search-result-note-match pl-1 pr-3 '}
+              className={'search-result-note-match pl-1 pr-3  select-none'}
               extraInfoClassName="ml-1 text-sm"
               onClick={onClicks[i]}
               item={{
