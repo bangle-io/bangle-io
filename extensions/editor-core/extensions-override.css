@@ -3,6 +3,18 @@
   text-decoration: underline;
 }
 
+.bangle-editor code {
+  color: var(--font-color);
+}
+.bangle-editor pre {
+  background-color: var(--bg-stronger-color);
+}
+
+.bangle-editor blockquote {
+  background-color: var(--bg-stronger-color);
+  color: var(--font-lighter-color);
+}
+
 .bangle-editor li[data-bangle-is-todo] > span:first-child > input {
   margin-top: 0.45rem;
 }
