@@ -1,12 +1,13 @@
 import React from 'react';
+import { EditorPluginDefinition } from './PluginType';
 
 const _check = Symbol();
 
 export interface EditorConfig {
   name: string;
   specs?: any;
-  plugins?: any[];
-  highPriorityPlugins?: any[];
+  plugins?: EditorPluginDefinition[];
+  highPriorityPlugins?: EditorPluginDefinition[];
   markdownItPlugins?: any[];
   ReactComponent?: React.ComponentType<{
     key: string;
