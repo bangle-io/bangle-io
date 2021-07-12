@@ -1,12 +1,12 @@
-import { collapsibleHeadingDeco } from './collapsible-heading-deco';
 import { Extension } from 'extension-registry';
+import { pluginsFactory } from './collapsible-heading-deco';
 
 const extensionName = 'collapsible-heading';
 
 const extension = Extension.create({
   name: extensionName,
   editor: {
-    plugins: [collapsibleHeadingDeco.plugins()],
+    plugins: [pluginsFactory()],
   },
 });
 

@@ -3,25 +3,23 @@ import { Plugin, PluginKey, Selection } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 import { rafSchedule } from 'utils/utility';
 
-export const collapsibleHeadingDeco = {
-  plugins: pluginsFactory,
-};
-
 const name = 'collapsible_heading_deco';
-
+const leftOffset = 24;
 // TODO even after optimizations, this is far for perfect
 // every keystroke triggers a redundant layout shift of
 // collapsibles.
-function pluginsFactory({ leftOffset = 24 } = {}) {
+export function pluginsFactory() {
   const plugin = new PluginKey(name);
   const updateHeight = rafSchedule((view) => {
-    const nodes = [
-      ...view.dom.querySelectorAll(
-        '.deco-collapse-positioner[data-bangle-pos]',
-      ),
-    ]
-      .map((node) => {
-        const pos = parseInt(node.getAttribute('data-bangle-pos'), 10);
+    const nodes = (
+      [
+        ...view.dom.querySelectorAll(
+          '.deco-collapse-positioner[data-bangle-pos]',
+        ),
+      ] as HTMLSpanElement[]
+    )
+      .map((node): [HTMLSpanElement, string] | undefined => {
+        const pos = parseInt(node.getAttribute('data-bangle-pos') + '', 10);
         if (Number.isNaN(pos)) {
           return undefined;
         }
@@ -38,11 +36,11 @@ function pluginsFactory({ leftOffset = 24 } = {}) {
         const computedStyle = window.getComputedStyle(domNode);
         return [node, computedStyle.height];
       })
-      .filter(Boolean);
+      .filter((r): r is [HTMLSpanElement, string] => Boolean(r));
 
     for (const [node, height] of nodes) {
-      node.firstChild.style.height = height;
-      node.firstChild.style.left = `${-1 * leftOffset}px`;
+      (node.firstChild as HTMLSpanElement).style.height = height;
+      (node.firstChild as HTMLSpanElement).style.left = `${-1 * leftOffset}px`;
     }
   });
   return [
@@ -107,7 +105,7 @@ function buildDeco(state) {
     return Decoration.widget(match.pos + 1, (view) => {
       let wrapper = document.createElement('span');
       wrapper.className = 'deco-collapse-positioner';
-      wrapper.setAttribute('data-bangle-pos', match.pos);
+      wrapper.setAttribute('data-bangle-pos', match.pos + '');
       const child = document.createElement('span');
       child.className = 'deco-collapse';
 
