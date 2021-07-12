@@ -2,21 +2,35 @@ import React from 'react';
 import { Extension } from 'extension-registry/index';
 import { SearchNotesSidebar } from './SearchNotesSidebar';
 import { SearchIcon } from 'ui-components/index';
-import { keybindings } from 'config';
+import { SearchNotesActionHandler } from './SearchNotesActionHandler';
+import { keyDisplayValue } from 'config';
+import { searchPlugin } from './search-plugin';
+import { SHOW_SEARCH_SIDEBAR_ACTION, SIDEBAR_NAME } from './types';
 const extensionName = 'search-notes';
+const key = 'Mod-F';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
-    sidebars: [
+    ReactComponent: SearchNotesActionHandler,
+    actions: [
       {
-        name: '@sidebar/' + extensionName + '/search-notes',
-        hint: `Search notes\n${keybindings.searchNotes.displayValue}`,
-        icon: React.createElement(SearchIcon, {}),
-        ReactComponent: SearchNotesSidebar,
-        keybinding: keybindings.searchNotes,
+        name: SHOW_SEARCH_SIDEBAR_ACTION,
+        title: 'Open search sidebar',
+        keybinding: key,
       },
     ],
+    sidebars: [
+      {
+        name: SIDEBAR_NAME,
+        hint: `Search notes\n` + keyDisplayValue(key),
+        icon: React.createElement(SearchIcon, {}),
+        ReactComponent: SearchNotesSidebar,
+      },
+    ],
+  },
+  editor: {
+    plugins: [searchPlugin],
   },
 });
 

@@ -73,7 +73,7 @@ export function ActivityBar() {
         wsPath={primaryWsPath}
         sidebar={sidebar}
         toggleSidebar={toggleSidebar('file-browser')}
-        toggleFilePalette={() => {
+        toggleNotesPalette={() => {
           dispatchAction({
             name: '@action/core-palettes/TOGGLE_NOTES_PALETTE',
           });
@@ -92,6 +92,7 @@ export function ActivityBar() {
         <ActivityBarButton
           key={r.name}
           sidebar={r}
+          widescreen={widescreen}
           isActive={isActive}
           toggleSidebar={toggleSidebar}
         />
@@ -108,6 +109,7 @@ export function ActivityBar() {
           key={r.name}
           sidebar={r}
           isActive={isActive}
+          widescreen={widescreen}
           toggleSidebar={toggleSidebar}
         />
       );
@@ -142,7 +144,7 @@ export function ActivityBar() {
 function ActivityBarSmallscreen({
   sidebar,
   toggleSidebar,
-  toggleFilePalette,
+  toggleNotesPalette,
   wsPath,
   paletteType,
 }) {
@@ -153,7 +155,7 @@ function ActivityBarSmallscreen({
     >
       <div className="flex flex-col justify-center mr-2">
         <ButtonIcon
-          onClick={toggleFilePalette}
+          onClick={toggleNotesPalette}
           removeFocus={false}
           className={cx(paletteType && 'bg-gray-600 rounded-sm', 'p-2')}
         >
@@ -257,7 +259,11 @@ function ActivityBarButton({ sidebar, isActive, widescreen, toggleSidebar }) {
         borderColor: isActive ? 'var(--accent-stronger-color)' : 'transparent',
       }}
     >
-      <span className="h-7 w-7 text-gray-100">{sidebar.icon}</span>
+      <span
+        className={cx('h-7 w-7', !isActive ? 'text-gray-300' : 'text-gray-100')}
+      >
+        {sidebar.icon}
+      </span>
     </ButtonIcon>
   );
 }

@@ -9,6 +9,8 @@ import { Link } from 'react-router-dom';
 import { resolvePath } from 'ws-path';
 import { HighlightText } from './HighlightText';
 import { SearchResultItem } from './types';
+import { useEditorManagerContext } from 'editor-manager-context/index';
+import { Selection } from 'prosemirror-state';
 
 function useCollapseMarker(
   results: SearchResultItem[],
@@ -66,6 +68,7 @@ export function SearchResults({
     results,
     collapseAllCounter,
   );
+  const { primaryEditor } = useEditorManagerContext();
 
   return (
     <>
@@ -109,7 +112,31 @@ export function SearchResults({
             />
             {!isCollapsed(r) &&
               r.matches.map((matchObj, j) => (
-                <Link to={resolvePath(r.wsPath).locationPath} key={j}>
+                <Link
+                  to={resolvePath(r.wsPath).locationPath}
+                  onClick={() => {
+                    if (primaryEditor && primaryEditor.destroyed !== true) {
+                      requestAnimationFrame(() => {
+                        if (!primaryEditor || primaryEditor.destroyed) {
+                          return;
+                        }
+                        primaryEditor.focusView();
+                        const { dispatch, state } = primaryEditor.view;
+                        let tr = state.tr;
+
+                        if (matchObj.parentPos >= tr.doc.content.size) {
+                          tr = tr.setSelection(Selection.atEnd(tr.doc));
+                        } else {
+                          tr = tr.setSelection(
+                            Selection.near(tr.doc.resolve(matchObj.parentPos)),
+                          );
+                        }
+                        dispatch(tr.scrollIntoView());
+                      });
+                    }
+                  }}
+                  key={j}
+                >
                   <Sidebar.Row2
                     className={
                       'search-result-text-match ml-1 pl-3 rounded-sm ' +

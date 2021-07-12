@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { config } from 'config/index';
-import { getIdleCallback } from '@bangle.dev/core/utils/js-utils';
+import { getIdleCallback } from '@bangle.dev/js-utils';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -10,6 +10,9 @@ const MAX_EDITOR = maxEditors.length;
 
 export const EditorManagerContext = React.createContext({});
 
+export function useEditorManagerContext() {
+  return useContext(EditorManagerContext);
+}
 /**
  * Should be parent of all editors.
  */
@@ -48,10 +51,17 @@ export function EditorManager({ children }) {
       return editors[editorId];
     };
 
+    const forEachEditor = (cb) => {
+      editors.forEach((editor, index) => {
+        cb(editor, index);
+      });
+    };
+
     return {
       setEditor,
       primaryEditor,
       getEditor,
+      forEachEditor,
     };
   }, [_setEditor, editors]);
 

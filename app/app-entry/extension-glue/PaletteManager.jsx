@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import { UIManagerContext } from 'ui-context';
 import { UniversalPalette } from 'ui-components/index';
-import { useKeybindings } from 'utils/index';
 import { ActionContext } from 'action-context/index';
 import { ExtensionRegistryContext } from 'extension-registry/index';
 
@@ -23,6 +22,7 @@ export function PaletteManager() {
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const { dispatchAction } = useContext(ActionContext);
   const extensionRegistry = useContext(ExtensionRegistryContext);
+
   const dismissPalette = useCallback(
     (focusEditor = true) => {
       updateQuery('');
@@ -71,13 +71,6 @@ export function PaletteManager() {
     updateQuery(paletteInitialQuery || '');
     resetCounter();
   }, [resetCounter, paletteType, paletteInitialQuery]);
-
-  usePaletteKeybindings({
-    updatePalette,
-    paletteType,
-    updateCounter,
-    extensionRegistry,
-  });
 
   // deriving the final input value helps us avoid keeping two states (paletteType, rawQuery) in sync.
   // with this there is always a a single state paletteType + query , where raw query is derived from it.
@@ -149,31 +142,8 @@ export function PaletteManager() {
         onSelect={onSelect}
         counter={counter}
         getActivePaletteItem={getActivePaletteItem}
+        updateCounter={updateCounter}
       />
     </UniversalPalette.PaletteContainer>
   );
-}
-
-function usePaletteKeybindings({
-  updatePalette,
-  paletteType,
-  updateCounter,
-  extensionRegistry,
-}) {
-  useKeybindings(() => {
-    return Object.fromEntries(
-      extensionRegistry.getAllPalettes().map((r) => [
-        r.keybinding,
-        () => {
-          if (paletteType !== r.type) {
-            updatePalette(r.type);
-          } else {
-            // Increments the counter if the palette is already selected
-            updateCounter((c) => c + 1);
-          }
-          return true;
-        },
-      ]),
-    );
-  }, [updatePalette, extensionRegistry, updateCounter, paletteType]);
 }

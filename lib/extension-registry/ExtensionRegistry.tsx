@@ -1,6 +1,12 @@
 import { SpecRegistry } from '@bangle.dev/core';
 import React from 'react';
-import { ApplicationConfig, EditorConfig, Extension } from './Extension';
+import {
+  ActionType,
+  ApplicationConfig,
+  EditorConfig,
+  ActionHandler,
+  Extension,
+} from './Extension';
 
 function filterFlatMap<K>(
   array: any[],
@@ -100,7 +106,6 @@ class EditorHandlers {
     return undefined;
   };
 }
-
 export class ExtensionRegistry {
   specRegistry: SpecRegistry;
   // TODO move this to a method
@@ -108,8 +113,8 @@ export class ExtensionRegistry {
   private renderReactNodeViewLookup: Record<string, Function>;
   private palettes: any[];
   private palettesLookup: Record<string, any>;
-  private actionHandlers: Set<Function>;
-  private registeredActions: any[];
+  private actionHandlers: Set<ActionHandler>;
+  private registeredActions: ActionType[];
   private editorConfig: EditorConfig[];
   private optionsBarEntries: ApplicationConfig['optionsBar'];
   private sidebars: any[];
@@ -227,6 +232,10 @@ export class ExtensionRegistry {
     return this.registeredActions;
   }
 
+  getRegisteredAction(name: string) {
+    return this.registeredActions.find((a) => a.name === name);
+  }
+
   getActionHandlers() {
     return this.actionHandlers;
   }
@@ -250,7 +259,7 @@ export class ExtensionRegistry {
     return result;
   };
 
-  private _registerActionHandler = (cb: any) => {
+  private _registerActionHandler = (cb: ActionHandler) => {
     this.actionHandlers.add(cb);
     return () => {
       this.actionHandlers.delete(cb);

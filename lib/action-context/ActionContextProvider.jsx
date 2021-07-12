@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useContext } from 'react';
 import { ExtensionRegistryContext } from 'extension-registry/index';
+import { useKeybindings } from 'utils/index';
 import { ActionContext } from './ActionContext';
 
 export function ActionContextProvider({ children }) {
@@ -24,10 +25,11 @@ export function ActionContextProvider({ children }) {
           'Unknown keys in action : ' + Object.keys(others).join(','),
         );
       }
-      for (const handler of extensionRegistry.getActionHandlers()) {
-        if (handler(action) === true) {
-          break;
-        }
+
+      // Converting to array so that we have a fixed action handlers for the current action
+      // because there are cases which add or remove handler (react hooks) resulting in double execution
+      for (const handler of Array.from(extensionRegistry.getActionHandlers())) {
+        handler(action);
       }
     },
     [extensionRegistry, actionNameSet],
@@ -38,6 +40,26 @@ export function ActionContextProvider({ children }) {
       dispatchAction,
     };
   }, [dispatchAction]);
+
+  useKeybindings(() => {
+    const actions = extensionRegistry.getRegisteredActions();
+    const keys = Object.fromEntries(
+      actions
+        .filter((r) => r.keybinding)
+        .map((r) => [
+          r.keybinding,
+          () => {
+            dispatchAction({
+              name: r.name,
+              value: {},
+            });
+            return true;
+          },
+        ]),
+    );
+    return keys;
+  }, [extensionRegistry, dispatchAction]);
+
   return (
     <ActionContext.Provider value={value}>{children}</ActionContext.Provider>
   );

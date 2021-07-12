@@ -1,12 +1,16 @@
 import React, { useCallback } from 'react';
 import { useLocalStorage } from 'utils';
+const MAX_ENTRIES = 10;
 /**
  * WARNING this will modify items in place
  * @param {*} uniqueStoreId
  * @param {*} items
  * @returns
  */
-export function useRecencyWatcher(uniqueStoreId) {
+export function useRecencyWatcher(
+  uniqueStoreId,
+  { maxEntries = MAX_ENTRIES } = {},
+) {
   const [actionHistory, updateActionHistory] = useLocalStorage(
     uniqueStoreId,
     {},
@@ -21,13 +25,13 @@ export function useRecencyWatcher(uniqueStoreId) {
           }
           return 0;
         });
-        // trim the object to contain its size to 5
-        const newObj = Object.fromEntries(entries.slice(0, 5));
+        // trim the object to contain its size
+        const newObj = Object.fromEntries(entries.slice(0, maxEntries));
         newObj[uid] = Date.now();
         return newObj;
       });
     },
-    [updateActionHistory],
+    [updateActionHistory, maxEntries],
   );
 
   const injectRecency = useCallback(

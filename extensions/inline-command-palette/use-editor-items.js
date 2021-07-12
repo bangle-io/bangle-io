@@ -1,22 +1,9 @@
 import { useMemo } from 'react';
-import { convertToParagraph } from '@bangle.dev/core/components/paragraph';
-import {
-  toggleBulletList,
-  toggleTodoList,
-  queryIsBulletListActive,
-  queryIsTodoListActive,
-} from '@bangle.dev/core/components/bullet-list';
-import {
-  insertEmptySiblingListAbove,
-  insertEmptySiblingListBelow,
-} from '@bangle.dev/core/components/list-item/list-item';
-import {
-  toggleOrderedList,
-  queryIsOrderedListActive,
-} from '@bangle.dev/core/components/ordered-list';
-import { rafCommandExec } from '@bangle.dev/core/utils/js-utils';
+import { paragraph, bulletList, listItem, orderedList } from '@bangle.dev/core';
+
+import { rafCommandExec } from '@bangle.dev/pm-utils';
 import { replaceSuggestionMarkWith } from 'inline-palette';
-import { setBlockType } from '@bangle.dev/core/prosemirror/commands';
+import { setBlockType } from 'prosemirror-commands';
 import { palettePluginKey } from './config';
 import { PaletteItem } from './palette-item';
 import {
@@ -24,6 +11,16 @@ import {
   chainedInsertParagraphBelow,
   isList,
 } from './commands';
+
+const { convertToParagraph } = paragraph;
+const {
+  toggleBulletList,
+  toggleTodoList,
+  queryIsBulletListActive,
+  queryIsTodoListActive,
+} = bulletList;
+const { insertEmptySiblingListAbove, insertEmptySiblingListBelow } = listItem;
+const { toggleOrderedList, queryIsOrderedListActive } = orderedList;
 
 const setHeadingBlockType = (level) => (state, dispatch, view) => {
   const type = state.schema.nodes.heading;

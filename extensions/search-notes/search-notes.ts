@@ -3,8 +3,6 @@ import { SearchResultItem } from './types';
 import { pMap } from './p-map';
 export const CONCURRENCY = 10;
 
-const maxChars = 75;
-
 export async function searchNotes(
   query: string,
   noteWsPaths: string[],
@@ -12,7 +10,7 @@ export async function searchNotes(
   signal: AbortSignal,
   {
     caseSensitive = false,
-    offset = maxChars,
+    maxChars = 75,
     perFileMatchMax = 200,
     totalMatchMax = 5000,
   } = {},
@@ -32,11 +30,16 @@ export async function searchNotes(
           return null;
         }
 
+        let perFileMatchCount = 0;
+
         const results: SearchResultItem = {
           wsPath,
           matches: [],
         };
         doc.descendants((node, pos, parent) => {
+          if (perFileMatchCount > perFileMatchMax) {
+            return false;
+          }
           if (node.isTextblock) {
             const source = caseSensitive
               ? node.textContent
@@ -45,27 +48,32 @@ export async function searchNotes(
             const includes = source.includes(query);
 
             if (!includes) {
-              return;
+              return true;
             }
-
-            const matchedResult = matchText(
-              query,
-              source,
-              offset,
-              perFileMatchMax,
-            );
 
             let parentName = parent.type.name;
             if (parentName === 'doc') {
               parentName = node.type.name;
             }
+
+            let matchedResult = matchText(
+              query,
+              source,
+              maxChars,
+              perFileMatchMax,
+            );
+
+            perFileMatchCount += matchedResult.length;
+
             results.matches.push(
               ...matchedResult.map((m) => ({
                 parent: parentName,
+                parentPos: pos,
                 match: m,
               })),
             );
           }
+          return true;
         });
 
         return results;
@@ -105,7 +113,7 @@ export async function searchNotes(
 export function matchText(
   query: string,
   text: string,
-  offset: number,
+  maxChars: number,
   limit?: number,
 ) {
   query = query.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&');
@@ -120,7 +128,7 @@ export function matchText(
     if (limit && count > limit) {
       break;
     }
-    result.push(getMatchFragment(text, start, end, offset));
+    result.push(getMatchFragment(text, start, end, maxChars));
   }
 
   return result;
@@ -130,9 +138,9 @@ export function getMatchFragment(
   str: string,
   start: number,
   end: number,
-  offset: number,
+  maxChars: number,
 ) {
-  const prefixStart = Math.max(0, start - offset);
+  const prefixStart = Math.max(0, start - maxChars);
   let prefix = str.substring(prefixStart, start).trimStart();
   if (prefixStart > 0) {
     // to avoid cutting of words start from
@@ -140,8 +148,8 @@ export function getMatchFragment(
     prefix = '…' + prefix;
   }
 
-  let suffix = str.substr(end, offset).trimEnd();
-  if (end + offset < str.length) {
+  let suffix = str.substr(end, maxChars).trimEnd();
+  if (end + maxChars < str.length) {
     suffix = endStringWithWord(suffix);
     suffix += '…';
   }

@@ -3,7 +3,7 @@ import React from 'react';
 import { useWorkspaceContext } from 'workspace-context/index';
 import { render, fireEvent, act } from '@testing-library/react';
 import { sleep } from 'utils/utility';
-import { coreSpec, corePlugins } from '@bangle.dev/core/utils/core-components';
+import { coreSpec, corePlugins } from '@bangle.dev/core';
 import { BackLinkNode } from '../BackLinkNode';
 import { ExtensionRegistry, Extension } from 'extension-registry/index';
 import inlineBackLinkExtension from '../index';

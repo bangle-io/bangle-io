@@ -1,8 +1,7 @@
 import React, { useMemo, useContext } from 'react';
 import { UIManagerContext } from 'ui-context/index';
-import { cx, useKeybindings, useWatchClickOutside } from 'utils/index';
+import { cx, useWatchClickOutside } from 'utils/index';
 import { ActivityBar } from './components/ActivityBar';
-import { keybindings } from 'config/index';
 import { NotificationArea } from './components/NotificationArea';
 import { PRIMARY_SCROLL_PARENT_ID } from 'constants/index';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
@@ -54,43 +53,13 @@ function LeftSidebarArea() {
     () => {},
   );
 
-  useKeybindings(() => {
-    const keys = Object.fromEntries(
-      extensionRegistry
-        .getSidebars()
-        .filter((r) => r.keybinding)
-        .map((r) => [
-          r.keybinding.key,
-          () => {
-            dispatch({
-              type: 'UI/TOGGLE_SIDEBAR',
-              value: { type: r.name },
-            });
-            return true;
-          },
-        ]),
-    );
-
-    console.log(keys);
-    return {
-      [keybindings.toggleNoteBrowser.key]: () => {
-        dispatch({
-          type: 'UI/TOGGLE_SIDEBAR',
-          value: { type: 'file-browser' },
-        });
-        return true;
-      },
-      ...keys,
-    };
-  }, [dispatch, extensionRegistry]);
-
   const extensionSidebars = useMemo(() => {
     return Object.fromEntries(
       extensionRegistry.getSidebars().map((r) => [r.name, r]),
     );
   }, [extensionRegistry]);
 
-  let sidebarName, component;
+  let component;
   if (extensionSidebars[sidebar]) {
     const sidebarObj = extensionSidebars[sidebar];
     component = <sidebarObj.ReactComponent />;

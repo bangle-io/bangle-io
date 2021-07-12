@@ -19,11 +19,12 @@
   "module": "index.jsx",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.18.1",
+    "@bangle.dev/core": "0.21.1",
     "action-context": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
     "extension-registry": "workspace:*",
+    "prosemirror-state": "^1.3.4",
     "ui-components": "workspace:*",
     "ui-context": "workspace:*",
     "utils": "workspace:*",

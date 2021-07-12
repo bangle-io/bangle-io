@@ -1,5 +1,11 @@
 import { applyTheme } from './apply-theme';
-import React, { useReducer, createContext, useMemo, useEffect } from 'react';
+import React, {
+  useContext,
+  useReducer,
+  createContext,
+  useMemo,
+  useEffect,
+} from 'react';
 import { useWindowSize, checkWidescreen } from 'utils/index';
 
 const LOG = false;
@@ -68,6 +74,10 @@ initialContextUIState.dispatch = () => {};
 
 export const UIManagerContext = createContext(initialContextUIState);
 
+export function useUIManagerContext() {
+  return useContext(UIManagerContext);
+}
+
 function setRootWidescreenClass(widescreen) {
   const root = document.getElementById('root');
   if (widescreen) {
@@ -129,6 +139,13 @@ const reducer = (state, action) => {
       };
     }
 
+    case 'UI/CHANGE_SIDEBAR': {
+      return {
+        ...state,
+        sidebar: action.value.type,
+      };
+    }
+
     case 'UI/SHOW_NOTIFICATION': {
       const { uid, content, buttons, severity = 'info' } = action.value;
       if (!['error', 'warning', 'info', 'success'].includes(severity)) {
@@ -161,13 +178,6 @@ const reducer = (state, action) => {
       }
 
       return state;
-    }
-
-    case 'UI/CHANGE_SIDEBAR': {
-      return {
-        ...state,
-        sidebar: action.value.type,
-      };
     }
 
     case 'UI/UPDATE_PALETTE': {

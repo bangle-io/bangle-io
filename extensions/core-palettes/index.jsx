@@ -7,7 +7,7 @@ import { headingPalette } from './HeadingPalette';
 import { questionPalette } from './QuestionPalette';
 import { actionPalette } from './ActionPalette';
 import { AlbumIcon, FileDocumentIcon, TerminalIcon } from 'ui-components';
-import { keybindings } from 'config/index';
+import { isFirefox } from 'config/index';
 import { ActionHandler } from './ActionHandler';
 
 const extension = Extension.create({
@@ -27,35 +27,35 @@ const extension = Extension.create({
         name: '@action/core-palettes/TOGGLE_ACTION_PALETTE',
         title: 'Action Palette',
         hidden: true,
+        keybinding: isFirefox ? 'Mod-o' : 'Mod-P',
       },
       {
         name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',
         title: 'Workspace Palette',
         hidden: true,
+        keybinding: 'Ctrl-r',
       },
       {
         name: '@action/core-palettes/TOGGLE_NOTES_PALETTE',
-        title: 'Workspace Palette',
+        title: 'Notes Palette',
         hidden: true,
+        keybinding: 'Mod-p',
       },
     ],
     optionsBar: [
       {
         icon: <TerminalIcon style={{ transform: 'scale(0.83, 0.83)' }} />,
-        hint:
-          'Action Palette\n' + keybindings.toggleCommandPalette.displayValue,
+        hint: 'Action Palette',
         action: '@action/core-palettes/TOGGLE_ACTION_PALETTE',
       },
       {
         icon: <AlbumIcon style={{ transform: 'scale(0.9, 0.9)' }} />,
-        hint:
-          'Workspace Palette\n' +
-          keybindings.toggleWorkspacePalette.displayValue,
+        hint: 'Workspace Palette',
         action: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',
       },
       {
         icon: <FileDocumentIcon style={{ transform: 'scale(0.88, 0.88)' }} />,
-        hint: 'Notes Palette\n' + keybindings.toggleFilePalette.displayValue,
+        hint: 'Notes Palette',
         action: '@action/core-palettes/TOGGLE_NOTES_PALETTE',
       },
     ],

@@ -1,14 +1,7 @@
-import {
-  queryIsSelectionAroundLink,
-  queryIsLinkActive,
-} from '@bangle.dev/core/components/link';
-import {
-  Plugin,
-  PluginKey,
-  NodeSelection,
-} from '@bangle.dev/core/prosemirror/state';
+import { link, components } from '@bangle.dev/core';
+import { Plugin, PluginKey, NodeSelection } from 'prosemirror-state';
 import stopwatch from '@bangle.dev/react-stopwatch';
-import { components } from '@bangle.dev/core';
+
 import { trailingNode } from '@bangle.dev/trailing-node';
 import { timestamp } from '@bangle.dev/timestamp';
 import { floatingMenu } from '@bangle.dev/react-menu';
@@ -19,6 +12,7 @@ const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };
 
+const { queryIsSelectionAroundLink, queryIsLinkActive } = link;
 export const getPlugins = () => {
   return [
     floatingMenu.plugins({

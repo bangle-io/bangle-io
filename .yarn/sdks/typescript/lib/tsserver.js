@@ -10,6 +10,10 @@ const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
 
 const moduleWrapper = tsserver => {
+  if (!process.versions.pnp) {
+    return tsserver;
+  }
+
   const {isAbsolute} = require(`path`);
   const pnpApi = require(`pnpapi`);
 
@@ -106,7 +110,7 @@ const moduleWrapper = tsserver => {
   const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
   let hostInfo = `unknown`;
 
-  return Object.assign(Session.prototype, {
+  Object.assign(Session.prototype, {
     onMessage(/** @type {string} */ message) {
       const parsedMessage = JSON.parse(message)
 
@@ -130,6 +134,8 @@ const moduleWrapper = tsserver => {
       })));
     }
   });
+
+  return tsserver;
 };
 
 if (existsSync(absPnpApiPath)) {

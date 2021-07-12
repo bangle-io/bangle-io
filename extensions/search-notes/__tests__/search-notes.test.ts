@@ -106,9 +106,14 @@ describe('Works with simple data', () => {
         ])
       )?.[0]?.matches,
     ).toEqual([
-      { parent: 'listItem', match: ['', 'beauty', ' is a subjective matter'] },
       {
         parent: 'listItem',
+        parentPos: 2,
+        match: ['', 'beauty', ' is a subjective matter'],
+      },
+      {
+        parent: 'listItem',
+        parentPos: 35,
         match: ['ugliness and ', 'beauty', ' go hand in hand'],
       },
     ]);
@@ -128,6 +133,7 @@ describe('Works with simple data', () => {
                 "graph",
               ],
               "parent": "paragraph",
+              "parentPos": 0,
             },
           ],
           "wsPath": "test-ws:1.md",
@@ -171,6 +177,7 @@ describe('Works with simple data', () => {
                 " is what in real life?",
               ],
               "parent": "listItem",
+              "parentPos": 2,
             },
             Object {
               "match": Array [
@@ -179,6 +186,7 @@ describe('Works with simple data', () => {
                 " in real life?",
               ],
               "parent": "listItem",
+              "parentPos": 2,
             },
             Object {
               "match": Array [
@@ -187,6 +195,7 @@ describe('Works with simple data', () => {
                 " do you think about that question",
               ],
               "parent": "blockquote",
+              "parentPos": 33,
             },
           ],
           "wsPath": "test-ws:1.md",
@@ -213,6 +222,7 @@ describe('Works with simple data', () => {
                 "",
               ],
               "parent": "paragraph",
+              "parentPos": 0,
             },
           ],
           "wsPath": "test-ws:1.md",
@@ -226,6 +236,7 @@ describe('Works with simple data', () => {
                 "",
               ],
               "parent": "paragraph",
+              "parentPos": 0,
             },
           ],
           "wsPath": "test-ws:3.md",
@@ -391,7 +402,7 @@ describe('getMatchFragment', () => {
     `);
   });
 
-  test('no end ellipsis if offset is bigger than text', () => {
+  test('no end ellipsis if maxChars is bigger than text', () => {
     const str = 'my big banana is good';
     expect(getMatchFragment(str, 3, 6, 40)).toMatchInlineSnapshot(`
       Array [

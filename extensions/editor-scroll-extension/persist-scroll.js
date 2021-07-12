@@ -1,6 +1,6 @@
 import { getScrollParentElement } from 'utils/index';
 import { extensionName } from './config';
-import { Selection } from '@bangle.dev/core/prosemirror/state';
+import { Selection } from 'prosemirror-state';
 
 const LOG = false;
 

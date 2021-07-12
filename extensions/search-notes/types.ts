@@ -5,5 +5,14 @@ export type HighlightTextType = Array<string>;
 
 export interface SearchResultItem {
   wsPath: string;
-  matches: Array<{ parent: string; match: HighlightTextType }>;
+  matches: Array<{
+    parent: string;
+    parentPos: number;
+    match: HighlightTextType;
+  }>;
 }
+
+export const SHOW_SEARCH_SIDEBAR_ACTION =
+  '@action/search-notes/show-search-sidebar';
+
+export const SIDEBAR_NAME = '@sidebar/search-notes/search-notes';

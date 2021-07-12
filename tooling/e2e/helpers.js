@@ -128,6 +128,11 @@ async function getEditorHTML(editorHandle) {
   return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
 }
 
+async function getPrimaryEditorHTML(page) {
+  const editorHandle = await getPrimaryEditorHandler(page);
+  return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
+}
+
 async function getPrimaryEditorHandler(page, { focus = false } = {}) {
   const handle = await page.waitForSelector('.primary-editor', {
     timeout: SELECTOR_TIMEOUT,
@@ -159,6 +164,10 @@ async function getSecondaryEditorHandler(page, { focus = false } = {}) {
   return handle;
 }
 
+async function getSecondaryEditorHTML(page) {
+  const editorHandle = await getSecondaryEditorHandler(page);
+  return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
+}
 async function getPrimaryEditorDebugString(page) {
   return page.evaluate(async () =>
     window.primaryEditor?.view.state.doc.toString(),
@@ -216,10 +225,12 @@ module.exports = {
   jestDebug,
   frmtHTML,
   getEditorHTML,
+  getPrimaryEditorHTML,
   getPrimaryEditorDebugString,
   getPrimaryEditorHandler,
   getSecondaryEditorDebugString,
   getSecondaryEditorHandler,
+  getSecondaryEditorHTML,
   getWsPathsShownInFilePalette,
   longSleep,
   newPage,
