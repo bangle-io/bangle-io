@@ -4143,7 +4143,7 @@ __metadata:
     prosemirror-model: ^1.14.1
     react: ^17.0.2
     react-dom: 17.0.2
-    utils: "workpace:*"
+    utils: "workspace:*"
   peerDependencies:
     extension-registry: "*"
     react: "*"
@@ -16490,7 +16490,7 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"utils@workpace:*, utils@workspace:*, utils@workspace:lib/utils":
+"utils@workspace:*, utils@workspace:lib/utils":
   version: 0.0.0-use.local
   resolution: "utils@workspace:lib/utils"
   dependencies:
