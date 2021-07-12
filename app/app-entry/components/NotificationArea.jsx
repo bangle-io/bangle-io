@@ -6,11 +6,11 @@ import {
   InformationCircleIcon,
   ExclamationCircleIcon,
   CheckCircleIcon,
-} from 'ui-components/index';
-import { UIManagerContext } from 'ui-context';
+} from 'ui-components';
+import { useUIManagerContext } from 'ui-context';
 
 export function NotificationArea({}) {
-  const { notifications, dispatch } = useContext(UIManagerContext);
+  const { notifications, dispatch } = useUIManagerContext();
   return (
     <div className="z-50 fixed bottom-0 right-0">
       {notifications.map((n) => (

@@ -8,16 +8,16 @@ import {
   DELETE_ACTIVE_NOTE_ACTION,
   CLONE_WORKSPACE_ACTION,
 } from './config';
-import { UIManagerContext } from 'ui-context/index';
+import { useUIManagerContext } from 'ui-context';
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
-import { ActionContext } from 'action-context';
+import { useActionContext } from 'action-context';
 import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
-import { useWorkspaceContext } from 'workspace-context/index';
+import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
 
 export function CoreActionsHandler({ registerActionHandler }) {
-  const { dispatch } = useContext(UIManagerContext);
-  const { dispatchAction } = useContext(ActionContext);
+  const { dispatch } = useUIManagerContext();
+  const { dispatchAction } = useActionContext();
   const { wsName, primaryWsPath, deleteNote } = useWorkspaceContext();
 
   const [inputModal, updateInputModal] = useState({});

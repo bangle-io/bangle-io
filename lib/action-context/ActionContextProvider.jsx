@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, useContext } from 'react';
-import { ExtensionRegistryContext } from 'extension-registry/index';
-import { useKeybindings } from 'utils/index';
+import { useExtensionRegistryContext } from 'extension-registry';
+import { useKeybindings } from 'utils';
 import { ActionContext } from './ActionContext';
 
 export function ActionContextProvider({ children }) {
-  const extensionRegistry = useContext(ExtensionRegistryContext);
+  const extensionRegistry = useExtensionRegistryContext();
 
   const actionNameSet = useMemo(() => {
     return new Set(extensionRegistry.getRegisteredActions().map((r) => r.name));

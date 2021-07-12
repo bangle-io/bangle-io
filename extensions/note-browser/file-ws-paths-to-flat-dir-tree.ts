@@ -1,4 +1,4 @@
-import { splitWsPath } from 'ws-path/index';
+import { splitWsPath } from 'ws-path';
 
 /**
  * The name is sort of misleading in the sense that it doesnt return a tree

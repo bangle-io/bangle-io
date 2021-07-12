@@ -1,6 +1,6 @@
 import { RegisterActionHandlerType } from 'extension-registry';
 import { useEffect } from 'react';
-import { useUIManagerContext } from 'ui-context/index';
+import { useUIManagerContext } from 'ui-context';
 import { SHOW_SEARCH_SIDEBAR_ACTION, SIDEBAR_NAME } from './types';
 
 export function SearchNotesActionHandler({

@@ -1,7 +1,7 @@
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
-import { Extension } from 'extension-registry/index';
+import { Extension } from 'extension-registry';
 
-import { emoji, emojiMarkdownItPlugin } from '@bangle.dev/emoji/index';
+import { emoji, emojiMarkdownItPlugin } from '@bangle.dev/emoji';
 import { EmojiSuggestComponent } from './EmojiSuggestComponent';
 import { emojiSuggestKey, emojiSuggestMarkName, extensionName } from './config';
 

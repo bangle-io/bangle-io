@@ -1,6 +1,6 @@
-import { Extension } from 'extension-registry/index';
+import { Extension } from 'extension-registry';
 import { collabClient } from '@bangle.dev/collab-client';
-import { naukarWorkerProxy } from 'naukar-proxy/index';
+import { naukarWorkerProxy } from 'naukar-proxy';
 import { parseCollabResponse } from '@bangle.dev/collab-server';
 import { uuid } from '@bangle.dev/js-utils';
 

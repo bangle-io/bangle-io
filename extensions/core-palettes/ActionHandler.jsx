@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useCallback } from 'react';
-import { UIManagerContext } from 'ui-context/index';
+import { useUIManagerContext } from 'ui-context';
 import { actionPalette } from './ActionPalette';
 import { notesPalette } from './NotesPalette';
 import { workspacePalette } from './WorkspacePalette';
 
 export function ActionHandler({ registerActionHandler }) {
-  const { dispatch, paletteType } = useContext(UIManagerContext);
+  const { dispatch, paletteType } = useUIManagerContext();
   const updatePalette = useCallback(
     (type) => {
       dispatch({

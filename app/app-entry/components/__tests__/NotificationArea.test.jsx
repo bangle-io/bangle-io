@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { UIManager, UIManagerContext } from 'ui-context/index';
+import { UIManager, useUIManagerContext } from 'ui-context';
 import { render, act, fireEvent } from '@testing-library/react';
 
 import { NotificationArea } from '../NotificationArea';
@@ -25,7 +25,7 @@ describe('NotificationArea', () => {
   test('renders with content', async () => {
     let _dispatch;
     function DummyComp() {
-      const { dispatch } = useContext(UIManagerContext);
+      const { dispatch } = useUIManagerContext();
       _dispatch = dispatch;
       return null;
     }
@@ -76,7 +76,7 @@ describe('NotificationArea', () => {
   test('removes notification on clicking', async () => {
     let _dispatch;
     function DummyComp() {
-      const { dispatch } = useContext(UIManagerContext);
+      const { dispatch } = useUIManagerContext();
       _dispatch = dispatch;
       return null;
     }
@@ -110,7 +110,7 @@ describe('NotificationArea', () => {
   test('shows buttons', async () => {
     let _dispatch;
     function DummyComp() {
-      const { dispatch } = useContext(UIManagerContext);
+      const { dispatch } = useUIManagerContext();
       _dispatch = dispatch;
       return null;
     }

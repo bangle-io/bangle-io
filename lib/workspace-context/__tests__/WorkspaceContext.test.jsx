@@ -1,4 +1,4 @@
-import { FileOps } from 'workspaces/index';
+import { FileOps } from 'workspaces';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useDeleteNote, useOpenedWsPaths, useFiles } from '../WorkspaceContext';
 import { render } from '@testing-library/react';

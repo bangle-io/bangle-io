@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FileOps } from 'workspaces/index';
-import { useDestroyRef } from 'utils/index';
+import { FileOps } from 'workspaces';
+import { useDestroyRef } from 'utils';
 
 import {
   calcImageDimensions,

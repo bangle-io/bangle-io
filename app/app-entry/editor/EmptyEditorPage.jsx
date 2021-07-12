@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
-import { UIManagerContext } from 'ui-context';
+import { useUIManagerContext } from 'ui-context';
 import { Link } from 'react-router-dom';
-import { useWorkspaceContext } from 'workspace-context/index';
+import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
-import { ActionContext } from 'action-context/index';
+import { useActionContext } from 'action-context';
 
 export function EmptyEditorPage() {
   const { wsName, noteWsPaths = [] } = useWorkspaceContext();
-  const { dispatchAction } = useContext(ActionContext);
+  const { dispatchAction } = useActionContext();
   const recentFiles = [];
   return (
     <>

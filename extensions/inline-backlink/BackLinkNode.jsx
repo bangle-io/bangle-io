@@ -8,7 +8,7 @@ import {
   PathValidationError,
 } from 'ws-path';
 import { backLinkNodeName, newNoteLocation } from './config';
-import { useWorkspaceContext } from 'workspace-context/index';
+import { useWorkspaceContext } from 'workspace-context';
 
 export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
   let { path, title } = nodeAttrs;

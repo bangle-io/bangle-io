@@ -1,7 +1,7 @@
-import { TAB_ID } from 'config/index';
+import { TAB_ID } from 'config';
 import { useRef, useEffect } from 'react';
-import { useWorkspaceContext } from 'workspace-context/index';
-import { weakCache, useBroadcastChannel } from 'utils/index';
+import { useWorkspaceContext } from 'workspace-context';
+import { weakCache, useBroadcastChannel } from 'utils';
 const CHANNEL_NAME = 'watch_workspace';
 const FILE_TREE_CHANGED = 'FILE_TREE_CHANGED';
 

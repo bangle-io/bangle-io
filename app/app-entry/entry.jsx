@@ -1,13 +1,13 @@
 import './style';
-import { UIManager } from 'ui-context/index';
+import { UIManager } from 'ui-context';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { EditorManager } from 'editor-manager-context/index';
-import { polyfills, initExtensionRegistry } from 'shared/index';
-import { WorkerSetup } from 'worker-setup/index';
+import { EditorManager } from 'editor-manager-context';
+import { polyfills, initExtensionRegistry } from 'shared';
+import { WorkerSetup } from 'worker-setup';
 import { ActionContextProvider } from 'action-context';
-import { ExtensionRegistryContextProvider } from 'extension-registry/index';
-import { WorkspaceContextProvider } from 'workspace-context/index';
+import { ExtensionRegistryContextProvider } from 'extension-registry';
+import { WorkspaceContextProvider } from 'workspace-context';
 
 import { PageLifecycle } from './watchers/PageLifecycle';
 import App from './App';

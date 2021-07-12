@@ -1,13 +1,13 @@
 import { heading, listItem } from '@bangle.dev/core';
-import { EditorManagerContext } from 'editor-manager-context/index';
-import { useCallback, useContext, useEffect } from 'react';
+import { useEditorManagerContext } from 'editor-manager-context';
+import { useCallback, useEffect } from 'react';
 import { useDispatchPrimaryEditor } from './hooks';
 
 const { toggleHeadingCollapse, uncollapseAllHeadings } = heading;
 const { moveListItemUp, moveListItemDown } = listItem;
 
 export function EditorCore({ registerActionHandler }) {
-  const { primaryEditor } = useContext(EditorManagerContext);
+  const { primaryEditor } = useEditorManagerContext();
   const executeEditorCommand = useDispatchPrimaryEditor(false);
 
   const actionHandler = useCallback(

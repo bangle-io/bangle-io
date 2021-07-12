@@ -1,4 +1,4 @@
-import { Extension } from 'extension-registry/index';
+import { Extension } from 'extension-registry';
 import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
 import { MenuComp } from './FloatingMenu';

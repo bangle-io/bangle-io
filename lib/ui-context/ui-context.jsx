@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import { useWindowSize, checkWidescreen } from 'utils/index';
+import { useWindowSize, checkWidescreen } from 'utils';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};

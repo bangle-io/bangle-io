@@ -1,17 +1,17 @@
 import React, { useMemo, useContext } from 'react';
-import { UIManagerContext } from 'ui-context/index';
-import { cx, useWatchClickOutside } from 'utils/index';
+import { useUIManagerContext } from 'ui-context';
+import { cx, useWatchClickOutside } from 'utils';
 import { ActivityBar } from './components/ActivityBar';
 import { NotificationArea } from './components/NotificationArea';
-import { PRIMARY_SCROLL_PARENT_ID } from 'constants/index';
+import { PRIMARY_SCROLL_PARENT_ID } from 'constants';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
-import { useWorkspaceContext } from 'workspace-context/index';
+import { useWorkspaceContext } from 'workspace-context';
 import { PaletteManager } from './extension-glue/PaletteManager';
 import { Routes } from './Routes';
-import { ExtensionRegistryContext } from 'extension-registry';
+import { useExtensionRegistryContext } from 'extension-registry';
 
 export function AppContainer() {
-  const { widescreen } = useContext(UIManagerContext);
+  const { widescreen } = useUIManagerContext();
   const { secondaryWsPath } = useWorkspaceContext();
   const secondaryEditor = widescreen && Boolean(secondaryWsPath);
 
@@ -37,9 +37,8 @@ export function AppContainer() {
 }
 
 function LeftSidebarArea() {
-  const { sidebar, dispatch } = useContext(UIManagerContext);
-  const { widescreen } = useContext(UIManagerContext);
-  const extensionRegistry = useContext(ExtensionRegistryContext);
+  const { widescreen, sidebar, dispatch } = useUIManagerContext();
+  const extensionRegistry = useExtensionRegistryContext();
 
   const leftSidebarAreaRef = useWatchClickOutside(
     () => {

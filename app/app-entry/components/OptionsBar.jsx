@@ -1,28 +1,28 @@
-import { ActionContext } from 'action-context/index';
-import { keybindings, keyDisplayValue } from 'config/index';
-import { ExtensionRegistryContext } from 'extension-registry';
+import { useActionContext } from 'action-context';
+import { keybindings, keyDisplayValue } from 'config';
+import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useCallback, useContext } from 'react';
 import {
   ButtonIcon,
   ChevronDoubleRightIcon,
   MoreAltIcon,
   SecondaryEditorIcon,
-} from 'ui-components/index';
-import { UIManagerContext } from 'ui-context/index';
-import { cx, useKeybindings, useLocalStorage } from 'utils/index';
+} from 'ui-components';
+import { useUIManagerContext } from 'ui-context';
+import { cx, useKeybindings, useLocalStorage } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import './OptionsBar.css';
 
 const localStoragePrefix = '0.3438144247845969';
 
 export function OptionsBar() {
-  const extensionRegistry = useContext(ExtensionRegistryContext);
-  const { dispatchAction } = useContext(ActionContext);
+  const extensionRegistry = useExtensionRegistryContext();
+  const { dispatchAction } = useActionContext();
   const [expanded, setExpanded] = useLocalStorage(
     'OptionsBar' + localStoragePrefix,
     true,
   );
-  const { widescreen } = useContext(UIManagerContext);
+  const { widescreen } = useUIManagerContext();
   const { pushWsPath, primaryWsPath, secondaryWsPath, updateOpenedWsPaths } =
     useWorkspaceContext();
 

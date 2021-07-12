@@ -1,7 +1,6 @@
-import { render, fireEvent, act } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React from 'react';
-import { SearchNotesSidebar } from '../SearchNotesSidebar';
-import { useUIManagerContext } from 'ui-context/index';
+import { useUIManagerContext } from 'ui-context';
 import { SearchNotesActionHandler } from '../SearchNotesActionHandler';
 import { ActionHandler } from 'extension-registry';
 import { SHOW_SEARCH_SIDEBAR_ACTION, SIDEBAR_NAME } from '../types';

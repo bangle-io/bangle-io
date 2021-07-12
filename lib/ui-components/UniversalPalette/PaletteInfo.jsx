@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { cx } from 'utils/index';
+import { cx } from 'utils';
 
 export function PaletteInfo({ children, className }) {
   return (

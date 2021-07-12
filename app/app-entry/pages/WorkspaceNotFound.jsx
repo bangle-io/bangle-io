@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { EditorWrapperUI } from '../components/EditorWrapperUI';
-import { ActionContext } from 'action-context/index';
+import { useActionContext } from 'action-context';
 
 export function WorkspaceNotFound({}) {
   const { wsName } = useParams();
-  const { dispatchAction } = useContext(ActionContext);
+  const { dispatchAction } = useActionContext();
 
   return (
     <EditorWrapperUI>

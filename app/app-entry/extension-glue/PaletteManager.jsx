@@ -5,10 +5,10 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import { UIManagerContext } from 'ui-context';
-import { UniversalPalette } from 'ui-components/index';
-import { ActionContext } from 'action-context/index';
-import { ExtensionRegistryContext } from 'extension-registry/index';
+import { useUIManagerContext } from 'ui-context';
+import { UniversalPalette } from 'ui-components';
+import { useActionContext } from 'action-context';
+import { useExtensionRegistryContext } from 'extension-registry';
 
 export function PaletteManager() {
   const {
@@ -17,11 +17,11 @@ export function PaletteManager() {
     paletteInitialQuery,
     dispatch,
     widescreen,
-  } = useContext(UIManagerContext);
+  } = useUIManagerContext();
   const inputRef = useRef();
   const [query, updateQuery] = useState(paletteInitialQuery || '');
-  const { dispatchAction } = useContext(ActionContext);
-  const extensionRegistry = useContext(ExtensionRegistryContext);
+  const { dispatchAction } = useActionContext();
+  const extensionRegistry = useExtensionRegistryContext();
 
   const dismissPalette = useCallback(
     (focusEditor = true) => {

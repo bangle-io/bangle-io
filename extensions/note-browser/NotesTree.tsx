@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useCallback } from 'react';
-import { UIManagerContext } from 'ui-context/index';
+import { useUIManagerContext } from 'ui-context';
 import {
   Sidebar,
   ChevronDownIcon,
@@ -8,13 +8,13 @@ import {
   DocumentAddIcon,
   NullIcon,
   ButtonIcon,
-} from 'ui-components/index';
+} from 'ui-components';
 import { filePathToWsPath, resolvePath } from 'ws-path';
 import { WorkspaceContextType, useWorkspaceContext } from 'workspace-context';
-import { useLocalStorage } from 'utils/index';
+import { useLocalStorage } from 'utils';
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 import { useVirtual } from 'react-virtual';
-import { ActionContext } from 'action-context';
+import { useActionContext } from 'action-context';
 
 const DEFAULT_FOLD_DEPTH = 2;
 
@@ -30,9 +30,9 @@ const rowHeight = 1.5 * rem; // 1.75rem line height of text-lg
 export function NotesTree() {
   const { pushWsPath, noteWsPaths = [], deleteNote } = useWorkspaceContext();
 
-  const { dispatch, widescreen } = useContext(UIManagerContext);
+  const { dispatch, widescreen } = useUIManagerContext();
   const { wsName, primaryWsPath } = useWorkspaceContext();
-  const { dispatchAction } = useContext(ActionContext);
+  const { dispatchAction } = useActionContext();
 
   const activeFilePath = primaryWsPath
     ? resolvePath(primaryWsPath).filePath

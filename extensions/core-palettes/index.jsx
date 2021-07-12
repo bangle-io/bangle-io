@@ -7,7 +7,7 @@ import { headingPalette } from './HeadingPalette';
 import { questionPalette } from './QuestionPalette';
 import { actionPalette } from './ActionPalette';
 import { AlbumIcon, FileDocumentIcon, TerminalIcon } from 'ui-components';
-import { isFirefox } from 'config/index';
+import { isFirefox } from 'config';
 import { ActionHandler } from './ActionHandler';
 
 const extension = Extension.create({

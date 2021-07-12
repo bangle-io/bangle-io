@@ -2,10 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import reactDOM from 'react-dom';
 import { useEditorViewContext } from '@bangle.dev/react';
 
-import {
-  useInlinePaletteItems,
-  useInlinePaletteQuery,
-} from 'inline-palette/index';
+import { useInlinePaletteItems, useInlinePaletteQuery } from 'inline-palette';
 import { palettePluginKey } from './config';
 import { useDateItems } from './use-date-items';
 import { useEditorItems } from './use-editor-items';
@@ -14,7 +11,7 @@ import {
   PALETTE_ITEM_HINT_TYPE,
   PALETTE_ITEM_REGULAR_TYPE,
 } from './palette-item';
-import { UniversalPalette, InlinePaletteRow } from 'ui-components/index';
+import { UniversalPalette, InlinePaletteRow } from 'ui-components';
 
 const staticHints = [
   PaletteItem.create({

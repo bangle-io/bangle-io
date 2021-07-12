@@ -1,4 +1,4 @@
-import { Extension } from 'extension-registry/index';
+import { Extension } from 'extension-registry';
 import React from 'react';
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';
 import { FolderIcon, QuestionIcon } from 'ui-components';

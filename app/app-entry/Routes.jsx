@@ -3,7 +3,7 @@ import { Route, useHistory, Redirect } from 'react-router-dom';
 import { WorkspacePage } from './pages/Workspace';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
-import { HELP_FS_WORKSPACE_NAME, getWorkspaceInfo } from 'workspaces/index';
+import { HELP_FS_WORKSPACE_NAME, getWorkspaceInfo } from 'workspaces';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
 

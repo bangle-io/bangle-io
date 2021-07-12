@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { UIManagerContext } from 'ui-context';
+import { useUIManagerContext } from 'ui-context';
 import { cx } from 'utils/utility';
 
 /**
@@ -9,7 +9,7 @@ import { cx } from 'utils/utility';
  * @param {*} param0
  */
 export function EditorWrapperUI({ children }) {
-  const { widescreen } = useContext(UIManagerContext);
+  const { widescreen } = useUIManagerContext();
 
   return (
     <div

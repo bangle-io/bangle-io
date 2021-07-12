@@ -1,6 +1,6 @@
 import { setupCollabManager } from './collab-manager';
 import { localDiskSetup } from './local-disk';
-import { objectSync } from 'object-sync/index';
+import { objectSync } from 'object-sync';
 
 const LOG = false;
 

@@ -4,20 +4,20 @@ import {
   isValidNoteWsPath,
   PathValidationError,
   resolvePath,
-} from 'ws-path/index';
-import { useWorkspaceContext } from 'workspace-context/index';
+} from 'ws-path';
+import { useWorkspaceContext } from 'workspace-context';
 import { useDestroyRef } from 'utils/hooks';
-import { randomName } from 'utils/index';
+import { randomName } from 'utils';
 import { InputPalette, UniversalPalette } from 'ui-components';
-import { ExtensionRegistryContext } from 'extension-registry';
-import { UIManagerContext } from 'ui-context';
+import { useExtensionRegistryContext } from 'extension-registry';
+import { useUIManagerContext } from 'ui-context';
 
 export function NewNoteInputModal({ initialValue, onDismiss }) {
   const destroyedRef = useDestroyRef();
-  const extensionRegistry = useContext(ExtensionRegistryContext);
+  const extensionRegistry = useExtensionRegistryContext();
   const { wsName, createNote } = useWorkspaceContext();
   const [error, updateError] = useState();
-  const { widescreen } = useContext(UIManagerContext);
+  const { widescreen } = useUIManagerContext();
 
   const onExecute = useCallback(
     async (inputValue) => {
@@ -72,7 +72,7 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
 
 export function RenameNoteInputModal({ onDismiss }) {
   const destroyedRef = useDestroyRef();
-  const { widescreen } = useContext(UIManagerContext);
+  const { widescreen } = useUIManagerContext();
 
   const { wsName, renameNote, primaryWsPath } = useWorkspaceContext();
   const [error, updateError] = useState();

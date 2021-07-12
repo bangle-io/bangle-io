@@ -1,5 +1,5 @@
 import React from 'react';
-import { cx } from 'utils/index';
+import { cx } from 'utils';
 
 export function ItemContainer({
   hoverBgColorChange = false,

@@ -1,5 +1,5 @@
 import { collapsibleHeadingDeco } from './collapsible-heading-deco';
-import { Extension } from 'extension-registry/index';
+import { Extension } from 'extension-registry';
 
 const extensionName = 'collapsible-heading';
 

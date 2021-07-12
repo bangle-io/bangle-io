@@ -5,8 +5,8 @@ import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
   replaceSuggestionMarkWith,
-} from 'inline-palette/index';
-import { UniversalPalette, InlinePaletteRow } from 'ui-components/index';
+} from 'inline-palette';
+import { UniversalPalette, InlinePaletteRow } from 'ui-components';
 import {
   resolvePath,
   filePathToWsPath,
@@ -14,8 +14,8 @@ import {
   sanitizeFilePath,
 } from 'ws-path';
 import { backLinkNodeName, palettePluginKey } from './config';
-import { conditionalSuffix, removeMdExtension } from 'utils/index';
-import { useWorkspaceContext } from 'workspace-context/index';
+import { conditionalSuffix, removeMdExtension } from 'utils';
+import { useWorkspaceContext } from 'workspace-context';
 
 // Creating this also closes the palette
 const createBackLinkNode = (wsPath, allNoteWsPaths) => {

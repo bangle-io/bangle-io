@@ -4,12 +4,12 @@ import {
   ChevronRightIcon,
   ChevronDownIcon,
   ButtonIcon,
-} from 'ui-components/index';
+} from 'ui-components';
 import { Link } from 'react-router-dom';
 import { resolvePath } from 'ws-path';
 import { HighlightText } from './HighlightText';
 import { SearchResultItem } from './types';
-import { useEditorManagerContext } from 'editor-manager-context/index';
+import { useEditorManagerContext } from 'editor-manager-context';
 import { Selection } from 'prosemirror-state';
 
 function useCollapseMarker(

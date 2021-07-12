@@ -5,11 +5,11 @@ import {
   useLayoutEffect,
   useCallback,
 } from 'react';
-import { AppStateContext } from 'app-state-context/index';
+import { AppStateContext } from 'app-state-context';
 import { extensionName } from './config';
 import { saveScrollPos, saveSelection } from './persist-scroll';
 import { useEditorViewContext } from '@bangle.dev/react';
-import { getScrollParentElement, rIdleDebounce } from 'utils/index';
+import { getScrollParentElement, rIdleDebounce } from 'utils';
 
 const LOG = false;
 

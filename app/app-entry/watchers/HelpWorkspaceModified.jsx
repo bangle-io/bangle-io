@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { TextButton } from 'ui-components';
-import { UIManagerContext } from 'ui-context';
+import { useUIManagerContext } from 'ui-context';
 import { isValidNoteWsPath, resolvePath, toFSPath } from 'ws-path';
-import { ActionContext } from 'action-context';
+import { useActionContext } from 'action-context';
 import {
   FileOps,
   getWorkspaceInfo,
   HELP_FS_WORKSPACE_NAME,
   HELP_FS_WORKSPACE_TYPE,
-} from 'workspaces/index';
+} from 'workspaces';
 
 export function HelpWorkspaceMonitor({ wsPath }) {
-  const { dispatch } = useContext(UIManagerContext);
+  const { dispatch } = useUIManagerContext();
   const { isModified, isHelpWorkspace } = useIsHelpWorkspaceModified(wsPath);
   const wsName = wsPath && resolvePath(wsPath).wsName;
-  const { dispatchAction } = useContext(ActionContext);
+  const { dispatchAction } = useActionContext();
   const uid = 'ws-modified-' + wsName;
 
   useEffect(() => {

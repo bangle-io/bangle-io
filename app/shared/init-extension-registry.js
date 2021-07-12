@@ -1,14 +1,14 @@
-import editorCore from 'editor-core/index';
-import inlineCommandPalette from 'inline-command-palette/index';
-import inlineBacklinkPalette from 'inline-backlink/index';
-import collapsibleHeading from 'collapsible-heading/index';
-import imageExtension from 'image-extension/index';
-import inlineEmoji from 'inline-emoji/index';
-import collabExtension from 'collab-extension/index';
+import editorCore from 'editor-core';
+import inlineCommandPalette from 'inline-command-palette';
+import inlineBacklinkPalette from 'inline-backlink';
+import collapsibleHeading from 'collapsible-heading';
+import imageExtension from 'image-extension';
+import inlineEmoji from 'inline-emoji';
+import collabExtension from 'collab-extension';
 import editorScrollExtension from 'editor-scroll-extension';
 import corePalette from 'core-palettes';
 import coreActions from 'core-actions';
-import { ExtensionRegistry } from 'extension-registry/index';
+import { ExtensionRegistry } from 'extension-registry';
 import searchNotes from 'search-notes';
 import noteBrowser from 'note-browser';
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { cx, isTouchDevice } from 'utils/index';
+import { cx, isTouchDevice } from 'utils';
 
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;

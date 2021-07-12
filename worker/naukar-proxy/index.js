@@ -1,4 +1,4 @@
-import { Emitter } from 'utils/index';
+import { Emitter } from 'utils';
 let naukar;
 
 const emitter = new Emitter();

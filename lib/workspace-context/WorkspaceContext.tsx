@@ -6,10 +6,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import {
-  BaseFileSystemError,
-  NATIVE_BROWSER_PERMISSION_ERROR,
-} from 'baby-fs/index';
+import { BaseFileSystemError, NATIVE_BROWSER_PERMISSION_ERROR } from 'baby-fs';
 import { Node } from 'prosemirror-model';
 import {
   FileOps,
@@ -17,12 +14,8 @@ import {
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
-} from 'workspaces/index';
-import {
-  shallowCompareArray,
-  removeMdExtension,
-  serialExecuteQueue,
-} from 'utils/index';
+} from 'workspaces';
+import { shallowCompareArray, removeMdExtension } from 'utils';
 import {
   filePathToWsPath,
   getPrimaryWsPath,
@@ -38,7 +31,7 @@ import {
 } from 'ws-path';
 import {
   ExtensionRegistry,
-  ExtensionRegistryContext,
+  useExtensionRegistryContext,
 } from 'extension-registry';
 
 const LOG = false;
@@ -91,7 +84,7 @@ export function WorkspaceContextProvider({
   onNativefsAuthError: (wsName: string | undefined, history: History) => void;
   onWorkspaceNotFound: (wsName: string | undefined, history: History) => void;
 }) {
-  const extensionRegistry = useContext(ExtensionRegistryContext);
+  const extensionRegistry = useExtensionRegistryContext();
   const history = useHistory();
   const location = useLocation();
   const wsName = useWsName(location);

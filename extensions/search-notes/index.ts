@@ -1,7 +1,7 @@
 import React from 'react';
-import { Extension } from 'extension-registry/index';
+import { Extension } from 'extension-registry';
 import { SearchNotesSidebar } from './SearchNotesSidebar';
-import { SearchIcon } from 'ui-components/index';
+import { SearchIcon } from 'ui-components';
 import { SearchNotesActionHandler } from './SearchNotesActionHandler';
 import { keyDisplayValue } from 'config';
 import { searchPlugin } from './search-plugin';

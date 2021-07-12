@@ -1,4 +1,4 @@
-import { isWorkerGlobalScope } from 'naukar-worker/index';
+import { isWorkerGlobalScope } from 'naukar-worker';
 
 const polyfills = [];
 

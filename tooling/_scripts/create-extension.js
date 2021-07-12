@@ -36,7 +36,7 @@ const getPackageJSON = (name) =>
     2,
   );
 const getIndexJS = (name) => `
-import { Extension } from 'extension-registry/index';
+import { Extension } from 'extension-registry';
 
 const extensionName = '${name}';
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import * as Comlink from 'comlink';
-import { naukarWorkerProxy } from 'naukar-proxy/index';
-import { objectSync } from 'object-sync/index';
-import { initialAppState as _initialAppState } from 'shared/index';
+import { naukarWorkerProxy } from 'naukar-proxy';
+import { objectSync } from 'object-sync';
+import { initialAppState as _initialAppState } from 'shared';
 import { moduleSupport } from './misc/module-support';
-import { AppStateContext } from 'app-state-context/index';
+import { AppStateContext } from 'app-state-context';
 const initialAppState = Object.assign({}, _initialAppState);
 
 const LOG = false;

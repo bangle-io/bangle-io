@@ -1,8 +1,8 @@
-import { EditorManagerContext } from 'editor-manager-context';
-import { ExtensionRegistryContext } from 'extension-registry';
-import React, { useEffect, useContext, useState } from 'react';
-import { CloseIcon } from 'ui-components/index';
-import { cx, sleep, useDestroyRef } from 'utils/index';
+import { useEditorManagerContext } from 'editor-manager-context';
+import { useExtensionRegistryContext } from 'extension-registry';
+import React, { useEffect, useState } from 'react';
+import { CloseIcon } from 'ui-components';
+import { cx, sleep, useDestroyRef } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
 import { Editor } from './Editor';
@@ -49,8 +49,8 @@ export function EditorArea({
   onClose,
 }) {
   const { fileExists, wsPath } = useHandleWsPath(incomingWsPath);
-  const { setEditor } = useContext(EditorManagerContext);
-  const extensionRegistry = useContext(ExtensionRegistryContext);
+  const { setEditor } = useEditorManagerContext();
+  const extensionRegistry = useExtensionRegistryContext();
   const [showEmptyEditor, updateShowEmptyEditor] = useState(false);
 
   // prevents unwarranted flash of empty editor by waiting

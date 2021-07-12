@@ -5,11 +5,11 @@ import React, {
   useMemo,
 } from 'react';
 
-import { UniversalPalette, TerminalIcon } from 'ui-components/index';
+import { UniversalPalette, TerminalIcon } from 'ui-components';
 import { extensionName } from './config';
-import { ActionContext } from 'action-context';
+import { useActionContext } from 'action-context';
 import { useRecencyWatcher } from './hooks';
-import { ExtensionRegistryContext } from 'extension-registry';
+import { useExtensionRegistryContext } from 'extension-registry';
 
 const identifierPrefix = '>';
 export const actionPalette = {
@@ -32,8 +32,8 @@ function ActionPaletteUIComponent(
   { query, onSelect, getActivePaletteItem },
   ref,
 ) {
-  const extensionRegistry = useContext(ExtensionRegistryContext);
-  const { dispatchAction } = useContext(ActionContext);
+  const extensionRegistry = useExtensionRegistryContext();
+  const { dispatchAction } = useActionContext();
   const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
   const items = useMemo(() => {

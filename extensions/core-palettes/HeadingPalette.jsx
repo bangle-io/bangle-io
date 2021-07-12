@@ -5,9 +5,9 @@ import React, {
   useMemo,
 } from 'react';
 import { Selection } from 'prosemirror-state';
-import { UniversalPalette, NullIcon } from 'ui-components/index';
+import { UniversalPalette, NullIcon } from 'ui-components';
 import { extensionName } from './config';
-import { EditorManagerContext } from 'editor-manager-context/index';
+import { useEditorManagerContext } from 'editor-manager-context';
 
 const identifierPrefix = '#';
 export const headingPalette = {
@@ -25,7 +25,7 @@ export const headingPalette = {
 };
 
 function HeadingPalette({ query, onSelect, getActivePaletteItem }, ref) {
-  const { primaryEditor } = useContext(EditorManagerContext);
+  const { primaryEditor } = useEditorManagerContext();
 
   const items = useMemo(() => {
     if (!primaryEditor || primaryEditor.destroyed) {

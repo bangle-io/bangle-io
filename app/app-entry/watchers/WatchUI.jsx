@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useContext } from 'react';
-import { useBroadcastChannel } from 'utils/index';
-import { UIManagerContext } from 'ui-context/index';
-import { TAB_ID } from 'config/index';
+import { useBroadcastChannel } from 'utils';
+import { useUIManagerContext } from 'ui-context';
+import { TAB_ID } from 'config';
 
 const CHANNEL_NAME = 'watch_ui';
 const UI_THEME_CHANGED = 'UI_THEME_CHANGED';
@@ -12,7 +12,7 @@ const log = LOG ? console.log.bind(console, 'WatchUI') : () => {};
 
 export function WatchUI() {
   const [lastMessage, broadcastMessage] = useBroadcastChannel(CHANNEL_NAME);
-  const { theme, dispatch } = useContext(UIManagerContext);
+  const { theme, dispatch } = useUIManagerContext();
   const isFirstMountRef = useRef(true);
 
   useEffect(() => {

@@ -1,15 +1,15 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { GenericFileBrowser } from './NotesTree';
 import { useDestroyRef } from 'utils/hooks';
-import { UIManagerContext } from 'ui-context';
+import { useUIManagerContext } from 'ui-context';
 import { isValidNoteWsPath } from 'ws-path';
 import { useWorkspaceContext } from 'workspace-context';
 import { HELP_FS_WORKSPACE_NAME, FileOps } from 'workspaces';
-import { ButtonIcon, Sidebar } from 'ui-components/index';
+import { ButtonIcon, Sidebar } from 'ui-components';
 
 export function HelpDocuments() {
   const wsName = HELP_FS_WORKSPACE_NAME;
-  const { dispatch, widescreen } = useContext(UIManagerContext);
+  const { dispatch, widescreen } = useUIManagerContext();
   const { pushWsPath } = useWorkspaceContext();
 
   const [files, setFiles] = useState<string[]>([]);

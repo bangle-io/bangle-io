@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { UniversalPalette } from '../UniversalPalette/index';
+import { UniversalPalette } from '../UniversalPalette';
 
 export function ListPalette({
   placeholder,

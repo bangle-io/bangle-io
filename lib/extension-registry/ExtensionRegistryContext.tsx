@@ -1,9 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useContext } from 'react';
 import { ExtensionRegistry } from './ExtensionRegistry';
 
 export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(
   undefined as any,
 );
+
+export function useExtensionRegistryContext() {
+  return useContext(ExtensionRegistryContext);
+}
 
 export function ExtensionRegistryContextProvider({
   initExtensionRegistry,

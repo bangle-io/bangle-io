@@ -1,6 +1,6 @@
 import { RegisterActionHandlerType } from 'extension-registry';
 import { useEffect } from 'react';
-import { useUIManagerContext } from 'ui-context/index';
+import { useUIManagerContext } from 'ui-context';
 
 export function NoteBrowserActionHandler({
   registerActionHandler,

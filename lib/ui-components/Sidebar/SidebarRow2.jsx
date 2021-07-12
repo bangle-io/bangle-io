@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { UniversalPalette } from '../UniversalPalette/index';
+import { UniversalPalette } from '../UniversalPalette';
 
 Row2.propType = {
   item: UniversalPalette.ItemPropTypes,

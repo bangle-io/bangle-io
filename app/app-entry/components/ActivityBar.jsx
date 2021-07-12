@@ -1,29 +1,28 @@
 import './ActivityBar.css';
 
 import React, { useContext, useEffect } from 'react';
-import { UIManagerContext } from 'ui-context/index';
+import { useUIManagerContext } from 'ui-context';
 
 import {
   ButtonIcon,
   FileDocumentIcon,
   HomeIcon,
   MenuIcon,
-} from 'ui-components/index';
-import { cx } from 'utils/index';
+} from 'ui-components';
+import { cx } from 'utils';
 import { resolvePath } from 'ws-path';
 import { useHistory } from 'react-router-dom';
-import { useWorkspaceContext } from 'workspace-context/index';
-import { ExtensionRegistryContext } from 'extension-registry';
-import { ActionContext } from 'action-context/index';
+import { useWorkspaceContext } from 'workspace-context';
+import { useExtensionRegistryContext } from 'extension-registry';
+import { useActionContext } from 'action-context';
 
 ActivityBar.propTypes = {};
 
 export function ActivityBar() {
-  const extensionRegistry = useContext(ExtensionRegistryContext);
-  const { dispatchAction } = useContext(ActionContext);
+  const extensionRegistry = useExtensionRegistryContext();
+  const { dispatchAction } = useActionContext();
 
-  const { paletteType, sidebar, dispatch, widescreen } =
-    useContext(UIManagerContext);
+  const { paletteType, sidebar, dispatch, widescreen } = useUIManagerContext();
   const { primaryWsPath } = useWorkspaceContext();
   const history = useHistory();
 

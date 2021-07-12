@@ -1,6 +1,6 @@
 import { naukarWorkerProxy } from 'naukar-proxy';
 import { useState, useContext, useEffect } from 'react';
-import { AppStateContext } from 'app-state-context/index';
+import { AppStateContext } from 'app-state-context';
 
 const pendingSymbol = Symbol('pending-tasks');
 

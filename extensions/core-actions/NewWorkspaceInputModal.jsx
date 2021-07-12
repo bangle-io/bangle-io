@@ -1,9 +1,9 @@
 import React, { useContext, useCallback, useState } from 'react';
-import { pickADirectory } from 'baby-fs/index';
+import { pickADirectory } from 'baby-fs';
 import { ListPalette, UniversalPalette, InputPalette } from 'ui-components';
 import { FileOps, useWorkspaces } from 'workspaces';
 import { useWorkspaceContext } from 'workspace-context';
-import { UIManagerContext } from 'ui-context';
+import { useUIManagerContext } from 'ui-context';
 
 const deleteAllFiles = async (wsName) => {
   const files = await FileOps.listAllFiles(wsName);
@@ -13,10 +13,10 @@ const deleteAllFiles = async (wsName) => {
 export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
   const [showLocalStorageOption, updateShowLocalStorage] = useState(false);
   const { createWorkspace } = useWorkspaces();
-  const { dispatch } = useContext(UIManagerContext);
+  const { dispatch } = useUIManagerContext();
   const [error, updateError] = useState();
   const { wsName } = useWorkspaceContext();
-  const { widescreen } = useContext(UIManagerContext);
+  const { widescreen } = useUIManagerContext();
 
   const onConfirm = useCallback(
     async (type, inputValue) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
-import { Input } from 'ui-components/index';
+import { Input } from 'ui-components';
 
 export function SearchInput({ className = '', query, updateQuery }) {
   const inputRef = useRef<HTMLInputElement>(null);

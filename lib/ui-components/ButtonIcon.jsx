@@ -1,5 +1,5 @@
 import React from 'react';
-import { cx } from 'utils/index';
+import { cx } from 'utils';
 import PropTypes from 'prop-types';
 
 ButtonIcon.propTypes = {

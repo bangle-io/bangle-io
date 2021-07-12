@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useContext } from 'react';
-import { config } from 'config/index';
+import { config } from 'config';
 import { getIdleCallback } from '@bangle.dev/js-utils';
 
 const LOG = false;
@@ -8,7 +8,7 @@ let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 const maxEditors = [undefined, undefined];
 const MAX_EDITOR = maxEditors.length;
 
-export const EditorManagerContext = React.createContext({});
+const EditorManagerContext = React.createContext({});
 
 export function useEditorManagerContext() {
   return useContext(EditorManagerContext);

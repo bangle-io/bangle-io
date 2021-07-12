@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import { FileOps } from 'workspaces/index';
-import { useWorkspaceContext } from 'workspace-context/index';
+import { FileOps } from 'workspaces';
+import { useWorkspaceContext } from 'workspace-context';
 import { ImageComponent } from '../render-image-react-node-view';
 import { sleep } from 'utils/utility';
 

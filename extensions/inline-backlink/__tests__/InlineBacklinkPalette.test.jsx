@@ -1,7 +1,7 @@
 import React from 'react';
 import { PluginKey } from 'prosemirror-state';
 import { Node } from 'prosemirror-model';
-import { ExtensionRegistry, Extension } from 'extension-registry/index';
+import { ExtensionRegistry, Extension } from 'extension-registry';
 
 import { render, act } from '@testing-library/react';
 import { filterItems, InlineBacklinkPalette } from '../InlineBacklinkPalette';
@@ -11,10 +11,10 @@ import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
   replaceSuggestionMarkWith,
-} from 'inline-palette/index';
+} from 'inline-palette';
 import { sleep } from 'utils/utility';
-import inlineBackLinkExtension from '../index';
-import { useWorkspaceContext } from 'workspace-context/index';
+import inlineBackLinkExtension from '..';
+import { useWorkspaceContext } from 'workspace-context';
 
 jest.mock('@bangle.dev/react', () => {
   return {

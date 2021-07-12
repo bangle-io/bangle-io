@@ -7,7 +7,7 @@ import {
   validateFileWsPath,
   validateNoteWsPath,
 } from 'ws-path';
-import { markdownParser, markdownSerializer } from 'markdown/index';
+import { markdownParser, markdownSerializer } from 'markdown';
 import type { Node } from 'prosemirror-model';
 import { getWorkspaceInfo } from './workspaces-ops';
 import {
@@ -17,9 +17,9 @@ import {
   NativeBrowserFileSystem,
   GithubReadFileSystem,
   HelpFileSystem,
-} from 'baby-fs/index';
+} from 'baby-fs';
 import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './types';
-import { HELP_DOCS_VERSION } from 'config/index';
+import { HELP_DOCS_VERSION } from 'config';
 
 export async function listAllFiles(wsName: string) {
   const workspaceInfo = await getWorkspaceInfo(wsName);

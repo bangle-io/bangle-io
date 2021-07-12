@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { setNaukarReady } from 'naukar-proxy/index';
+import { setNaukarReady } from 'naukar-proxy';
 
 export function WorkerSetup({ loadWebworker }) {
   useEffect(() => {

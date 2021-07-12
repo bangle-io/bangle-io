@@ -1,14 +1,14 @@
 import { EditorWrapperUI } from '../components/EditorWrapperUI';
 import React, { useContext, useState, useEffect } from 'react';
 import { useParams, useHistory, Redirect } from 'react-router-dom';
-import { requestNativeBrowserFSPermission } from 'baby-fs/index';
+import { requestNativeBrowserFSPermission } from 'baby-fs';
 import {
   WorkspaceError,
   WORKSPACE_NOT_FOUND_ERROR,
   getWorkspaceInfo,
-} from 'workspaces/index';
+} from 'workspaces';
 import { keybindingsHelper } from 'utils';
-import { UIManagerContext } from 'ui-context';
+import { useUIManagerContext } from 'ui-context';
 
 export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {
   const [permissionDenied, updatePermissionDenied] = useState(false);
@@ -77,7 +77,7 @@ export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {
 }
 
 function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
-  const { paletteType } = useContext(UIManagerContext);
+  const { paletteType } = useUIManagerContext();
   const isPaletteActive = Boolean(paletteType);
   useEffect(() => {
     let callback = keybindingsHelper({

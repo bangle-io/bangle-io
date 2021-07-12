@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { useWorkspaceContext } from 'workspace-context/index';
+import { useWorkspaceContext } from 'workspace-context';
 import { render, fireEvent, act } from '@testing-library/react';
 import { sleep } from 'utils/utility';
 import { coreSpec, corePlugins } from '@bangle.dev/core';
 import { BackLinkNode } from '../BackLinkNode';
-import { ExtensionRegistry, Extension } from 'extension-registry/index';
-import inlineBackLinkExtension from '../index';
+import { ExtensionRegistry, Extension } from 'extension-registry';
+import inlineBackLinkExtension from '..';
 
 jest.mock('workspace-context/index', () => {
   return {

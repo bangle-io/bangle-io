@@ -6,8 +6,8 @@ import React, {
   useEffect,
 } from 'react';
 import { sleep } from 'utils/utility';
-import { useDestroyRef } from 'utils/index';
-import { UniversalPalette } from '../UniversalPalette/index';
+import { useDestroyRef } from 'utils';
+import { UniversalPalette } from '../UniversalPalette';
 import { NullIcon, SpinnerIcon } from '../Icons';
 import PropTypes from 'prop-types';
 

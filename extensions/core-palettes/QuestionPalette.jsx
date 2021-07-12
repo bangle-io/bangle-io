@@ -1,7 +1,7 @@
 import React, { useContext, useCallback, useImperativeHandle } from 'react';
 import { UniversalPalette, NullIcon } from 'ui-components';
 import { extensionName } from './config';
-import { ExtensionRegistryContext } from 'extension-registry';
+import { useExtensionRegistryContext } from 'extension-registry';
 
 const identifierPrefix = '?';
 export const questionPalette = {
@@ -22,7 +22,7 @@ function QuestionPaletteUIComponent(
   { query, updatePalette, onSelect, getActivePaletteItem },
   ref,
 ) {
-  const extensionRegistry = useContext(ExtensionRegistryContext);
+  const extensionRegistry = useExtensionRegistryContext();
 
   const items = extensionRegistry
     .getAllPalettes()

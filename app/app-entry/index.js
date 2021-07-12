@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Entry } from './entry';
-import { RELEASE_ID, DEPLOY_ENV } from 'config/index';
+import { RELEASE_ID, DEPLOY_ENV } from 'config';
 const root = document.getElementById('root');
 
 if (typeof window !== undefined) {

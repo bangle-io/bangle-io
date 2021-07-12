@@ -1,4 +1,4 @@
-import { inlinePalette } from 'inline-palette/index';
+import { inlinePalette } from 'inline-palette';
 import { Extension } from 'extension-registry';
 import { InlineBacklinkPalette } from './InlineBacklinkPalette';
 import { inlineBackLinkPlugin } from './inline-backlink-plugin';

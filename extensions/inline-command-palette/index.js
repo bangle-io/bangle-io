@@ -1,4 +1,4 @@
-import { inlinePalette, queryInlinePaletteActive } from 'inline-palette/index';
+import { inlinePalette, queryInlinePaletteActive } from 'inline-palette';
 import { InlineCommandPalette } from './InlineCommandPalette';
 import { extensionName, paletteMarkName, palettePluginKey } from './config';
 import { Extension } from 'extension-registry';

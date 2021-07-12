@@ -4,7 +4,7 @@ import React, {
   useImperativeHandle,
   useMemo,
 } from 'react';
-import { removeMdExtension } from 'utils/index';
+import { removeMdExtension } from 'utils';
 import { resolvePath } from 'ws-path';
 
 import {
@@ -12,10 +12,10 @@ import {
   ButtonIcon,
   FileDocumentIcon,
   SecondaryEditorIcon,
-} from 'ui-components/index';
-import { useWorkspaceContext } from 'workspace-context/index';
+} from 'ui-components';
+import { useWorkspaceContext } from 'workspace-context';
 import { extensionName } from './config';
-import { keyDisplayValue } from 'config/index';
+import { keyDisplayValue } from 'config';
 import { useRecencyWatcher } from './hooks';
 
 const emptyArray = [];
