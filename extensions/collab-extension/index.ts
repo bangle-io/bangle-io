@@ -1,4 +1,4 @@
-import { Extension } from 'extension-registry';
+import { PluginMetadata, Extension } from 'extension-registry';
 import { collabClient } from '@bangle.dev/collab-client';
 import { naukarWorkerProxy } from 'naukar-proxy';
 import { parseCollabResponse } from '@bangle.dev/collab-server';
@@ -13,15 +13,15 @@ const extension = Extension.create({
   },
 });
 
-function collabPlugin({ metadata: { wsPath } = {} }) {
+function collabPlugin({ metadata }: { metadata: PluginMetadata }) {
   const sendRequest = (type, payload) =>
     naukarWorkerProxy.handleCollabRequest(type, payload).then((obj) => {
       return parseCollabResponse(obj);
     });
 
   return collabClient.plugins({
-    docName: wsPath,
-    clientId: 'client-' + uuid(4),
+    docName: metadata.wsPath,
+    clientID: 'client-' + uuid(4),
     async getDocument({ docName, userId }) {
       return sendRequest('get_document', {
         docName,
