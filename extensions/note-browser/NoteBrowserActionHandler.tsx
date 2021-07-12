@@ -12,11 +12,14 @@ export function NoteBrowserActionHandler({
   useEffect(() => {
     const deregister = registerActionHandler((actionObject) => {
       switch (actionObject.name) {
-        case '@action/note-browser/show-note-browser': {
+        case '@action/note-browser/toggle-note-browser': {
           dispatch({
             type: 'UI/CHANGE_SIDEBAR',
             value: {
-              type: '@sidebar/note-browser/note-browser',
+              type:
+                sidebar === '@sidebar/note-browser/note-browser'
+                  ? undefined
+                  : '@sidebar/note-browser/note-browser',
             },
           });
           return true;

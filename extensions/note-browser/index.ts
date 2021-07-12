@@ -15,7 +15,7 @@ const extension = Extension.create({
     ReactComponent: NoteBrowserActionHandler,
     actions: [
       {
-        name: '@action/note-browser/show-note-browser',
+        name: '@action/note-browser/toggle-note-browser',
         title: 'Note Browser',
         keybinding: key,
       },

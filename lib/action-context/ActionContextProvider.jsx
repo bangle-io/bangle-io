@@ -25,7 +25,10 @@ export function ActionContextProvider({ children }) {
           'Unknown keys in action : ' + Object.keys(others).join(','),
         );
       }
-      for (const handler of extensionRegistry.getActionHandlers()) {
+
+      // Converting to array so that we have a fixed action handlers for the current action
+      // because there are cases which add or remove handler (react hooks) resulting in double execution
+      for (const handler of Array.from(extensionRegistry.getActionHandlers())) {
         handler(action);
       }
     },
