@@ -92,6 +92,7 @@ export function ActivityBar() {
         <ActivityBarButton
           key={r.name}
           sidebar={r}
+          widescreen={widescreen}
           isActive={isActive}
           toggleSidebar={toggleSidebar}
         />
@@ -108,6 +109,7 @@ export function ActivityBar() {
           key={r.name}
           sidebar={r}
           isActive={isActive}
+          widescreen={widescreen}
           toggleSidebar={toggleSidebar}
         />
       );
@@ -257,7 +259,11 @@ function ActivityBarButton({ sidebar, isActive, widescreen, toggleSidebar }) {
         borderColor: isActive ? 'var(--accent-stronger-color)' : 'transparent',
       }}
     >
-      <span className="h-7 w-7 text-gray-100">{sidebar.icon}</span>
+      <span
+        className={cx('h-7 w-7', !isActive ? 'text-gray-300' : 'text-gray-100')}
+      >
+        {sidebar.icon}
+      </span>
     </ButtonIcon>
   );
 }

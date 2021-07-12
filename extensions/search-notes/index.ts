@@ -8,6 +8,7 @@ import { searchPlugin } from './search-plugin';
 import { SHOW_SEARCH_SIDEBAR_ACTION, SIDEBAR_NAME } from './types';
 const extensionName = 'search-notes';
 const key = 'Mod-F';
+
 const extension = Extension.create({
   name: extensionName,
   application: {

@@ -3,30 +3,33 @@ import React from 'react';
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';
 import { FolderIcon, QuestionIcon } from 'ui-components';
 import { HelpDocuments } from './HelpDocuments';
+import { NoteBrowserActionHandler } from './NoteBrowserActionHandler';
+import { keyDisplayValue } from 'config';
 
 const extensionName = 'note-browser';
+const key = 'Mod-e';
 
 const extension = Extension.create({
   name: extensionName,
-
   application: {
+    ReactComponent: NoteBrowserActionHandler,
     actions: [
       {
         name: '@action/note-browser/show-note-browser',
         title: 'Note Browser',
-        keybinding: 'Mod-e',
+        keybinding: key,
       },
     ],
     sidebars: [
       {
-        name: '@sidebar/' + extensionName + '/note-browser',
-        hint: `Note browser`,
+        name: '@sidebar/note-browser/note-browser',
+        hint: `Note browser\n` + keyDisplayValue(key),
         icon: React.createElement(FolderIcon, {}),
         ReactComponent: NoteBrowserSidebar,
       },
 
       {
-        name: '@sidebar/' + extensionName + '/help-documents-browser',
+        name: '@sidebar/note-browser/help-documents-browser',
         iconPlacement: 'bottom',
         hint: `Help`,
         icon: React.createElement(QuestionIcon, {}),
