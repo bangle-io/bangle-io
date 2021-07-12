@@ -1,7 +1,13 @@
-import React, { useCallback, useMemo, useContext } from 'react';
-import { useExtensionRegistryContext } from 'extension-registry';
+import React, { useCallback, useMemo, createContext } from 'react';
+import { ActionType, useExtensionRegistryContext } from 'extension-registry';
 import { useKeybindings } from 'utils';
-import { ActionContext } from './ActionContext';
+export const ActionContext = createContext<ContextType>({
+  dispatchAction: () => {},
+});
+
+interface ContextType {
+  dispatchAction: (action: ActionType) => void;
+}
 
 export function ActionContextProvider({ children }) {
   const extensionRegistry = useExtensionRegistryContext();
@@ -10,7 +16,7 @@ export function ActionContextProvider({ children }) {
     return new Set(extensionRegistry.getRegisteredActions().map((r) => r.name));
   }, [extensionRegistry]);
 
-  const dispatchAction = useCallback(
+  const dispatchAction = useCallback<ContextType['dispatchAction']>(
     (action) => {
       const { name, value, ...others } = action;
 
@@ -36,9 +42,10 @@ export function ActionContextProvider({ children }) {
   );
 
   const value = useMemo(() => {
-    return {
+    const val: ContextType = {
       dispatchAction,
     };
+    return val;
   }, [dispatchAction]);
 
   useKeybindings(() => {
@@ -51,7 +58,6 @@ export function ActionContextProvider({ children }) {
           () => {
             dispatchAction({
               name: r.name,
-              value: {},
             });
             return true;
           },

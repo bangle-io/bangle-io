@@ -4135,8 +4135,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "action-context@workspace:lib/action-context"
   dependencies:
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     extension-registry: "workspace:*"
-    react: 17.0.2
+    prosemirror-model: ^1.14.1
+    react: ^17.0.2
+    react-dom: 17.0.2
     utils: "workpace:*"
   peerDependencies:
     extension-registry: "*"

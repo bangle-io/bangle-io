@@ -1,7 +1,7 @@
 import { SpecRegistry } from '@bangle.dev/core';
 import React from 'react';
 import {
-  ActionType,
+  ActionDefinitionType,
   ApplicationConfig,
   EditorConfig,
   ActionHandler,
@@ -114,7 +114,7 @@ export class ExtensionRegistry {
   private palettes: any[];
   private palettesLookup: Record<string, any>;
   private actionHandlers: Set<ActionHandler>;
-  private registeredActions: ActionType[];
+  private registeredActions: ActionDefinitionType[];
   private editorConfig: EditorConfig[];
   private optionsBarEntries: ApplicationConfig['optionsBar'];
   private sidebars: any[];

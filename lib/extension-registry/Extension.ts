@@ -19,13 +19,19 @@ export interface EditorConfig {
   // deprecate this
   beforeDestroy?: (arg: any) => any;
 }
-export interface ActionType {
+export interface ActionDefinitionType {
   name: string;
   title: string;
   keybinding?: string;
   // when true, will hide it from the user
   hidden?: boolean;
 }
+
+export interface ActionType {
+  name: string;
+  value?: any;
+}
+
 export type ActionHandler = (action: ActionType) => boolean;
 export type RegisterActionHandlerType = (cb: ActionHandler) => () => void;
 export interface ApplicationConfig {
@@ -53,7 +59,7 @@ export interface ApplicationConfig {
       dismissPalette: (focusEditor?: boolean) => void;
     }>;
   }>;
-  actions?: Array<ActionType>;
+  actions?: Array<ActionDefinitionType>;
   optionsBar?: Array<{
     icon: JSX.Element;
     hint: string;

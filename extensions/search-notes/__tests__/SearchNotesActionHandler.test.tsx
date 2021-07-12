@@ -57,7 +57,6 @@ test('focuses correctly on input if sidebar is already open', async () => {
   expect(renderResult.container).toMatchInlineSnapshot(`<div />`);
   callback!({
     name: SHOW_SEARCH_SIDEBAR_ACTION,
-    title: 'show',
   });
 
   expect(useUIManagerContextReturn.dispatch).toBeCalledTimes(1);
@@ -71,7 +70,6 @@ test('focuses correctly on input if sidebar is already open', async () => {
 
   callback!({
     name: SHOW_SEARCH_SIDEBAR_ACTION,
-    title: 'show',
   });
 
   expect(useUIManagerContextReturn.dispatch).toBeCalledTimes(2);

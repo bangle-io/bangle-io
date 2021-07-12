@@ -44,7 +44,7 @@ function ActionPaletteUIComponent(
         .map((actionDefinition) => {
           return {
             uid: actionDefinition.name,
-            title: actionDefinition.title,
+            title: actionDefinition.title || actionDefinition.name,
             data: actionDefinition,
           };
         })
