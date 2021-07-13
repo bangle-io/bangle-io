@@ -16,7 +16,7 @@
         "../config/*"
       ],
       "constants": [
-        "../constants/index.js"
+        "../constants/index.ts"
       ],
       "constants/*": [
         "../constants/*"
