@@ -6,14 +6,19 @@ let bangleHot = undefined;
 // Done this way to allow for bundlers
 // to do a string replace.
 try {
+  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   nodeEnv = process.env.NODE_ENV;
+  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   releaseId = process.env.RELEASE_ID;
+  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   deployEnv = process.env.DEPLOY_ENV;
+  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   helpDocsVersion = process.env.HELP_DOCS_VERSION;
+  // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   bangleHot = process.env.BANGLE_HOT;
 } catch (err) {}
@@ -23,7 +28,7 @@ export const RELEASE_ID = releaseId;
 export const DEPLOY_ENV = deployEnv;
 export const HELP_DOCS_VERSION = helpDocsVersion;
 
-if (!/^\d+\.\d+\.\d+/.test(HELP_DOCS_VERSION)) {
+if (!/^\d+\.\d+\.\d+/.test(HELP_DOCS_VERSION || '')) {
   throw new Error('Invalid HELP_DOCS_VERSION: ' + HELP_DOCS_VERSION);
 }
 
