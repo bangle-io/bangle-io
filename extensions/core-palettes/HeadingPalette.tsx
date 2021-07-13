@@ -32,7 +32,11 @@ function HeadingPalette({ query, onSelect, getActivePaletteItem }, ref) {
       return [];
     }
 
-    const headingNodes = [];
+    const headingNodes: Array<{
+      offset: number;
+      level: number;
+      title: string;
+    }> = [];
     primaryEditor.view.state.doc.forEach((node, offset, i) => {
       if (node.type.name === 'heading') {
         headingNodes.push({
