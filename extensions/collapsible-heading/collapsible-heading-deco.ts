@@ -10,56 +10,11 @@ const leftOffset = 24;
 // collapsibles.
 export function pluginsFactory() {
   const plugin = new PluginKey(name);
-  const updateHeight = rafSchedule((view) => {
-    const nodes = (
-      [
-        ...view.dom.querySelectorAll(
-          '.deco-collapse-positioner[data-bangle-pos]',
-        ),
-      ] as HTMLSpanElement[]
-    )
-      .map((node): [HTMLSpanElement, string] | undefined => {
-        const pos = parseInt(node.getAttribute('data-bangle-pos') + '', 10);
-        if (Number.isNaN(pos)) {
-          return undefined;
-        }
 
-        const domNode = view.nodeDOM(pos);
-        if (!domNode) {
-          return undefined;
-        }
-        // NOTE This separation of getting style and updating the style
-        // is important as it prevent computing the layout everytime if were to do `window.getComputedStyle`
-        // and then directly update height. With this approach
-        // layout is only calculated once and then applied to all nodes
-        // together.
-        const computedStyle = window.getComputedStyle(domNode);
-        return [node, computedStyle.height];
-      })
-      .filter((r): r is [HTMLSpanElement, string] => Boolean(r));
-
-    for (const [node, height] of nodes) {
-      (node.firstChild as HTMLSpanElement).style.height = height;
-      (node.firstChild as HTMLSpanElement).style.left = `${-1 * leftOffset}px`;
-    }
-  });
   return [
     new Plugin({
       key: plugin,
-      view: () => ({
-        update(view, lastState) {
-          const state = view.state;
-          if (lastState === state) {
-            return;
-          }
-          const newPluginState = plugin.getState(state);
-
-          if (newPluginState === plugin.getState(lastState)) {
-            return;
-          }
-          updateHeight(view);
-        },
-      }),
+      view: () => ({}),
       state: {
         init(_, state) {
           return buildDeco(state);
@@ -105,7 +60,7 @@ function buildDeco(state) {
     return Decoration.widget(match.pos + 1, (view) => {
       let wrapper = document.createElement('span');
       wrapper.className = 'deco-collapse-positioner';
-      wrapper.setAttribute('data-bangle-pos', match.pos + '');
+      // wrapper.setAttribute('data-bangle-pos', match.pos + '');
       const child = document.createElement('span');
       child.className = 'deco-collapse';
 

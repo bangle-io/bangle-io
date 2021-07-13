@@ -7,14 +7,8 @@ exports[`create a new page saved in browser 1`] = `
       deco-collapse-positioner
       ProseMirror-widget
     \\"
-    data-bangle-pos=\\"0\\"
     contenteditable=\\"false\\"
-    ><span
-      class=\\"deco-collapse\\"
-      style=\\"
-        height: 72px;
-        left: -24px;
-      \\"
+    ><span class=\\"deco-collapse\\"
       ><svg
         viewBox=\\"0 0 24 24\\"
         class=\\"deco-collapse-child\\"
