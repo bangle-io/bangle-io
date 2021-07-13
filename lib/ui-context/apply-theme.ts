@@ -1,8 +1,6 @@
-/**
- *
- * @param {['dark', 'light']} theme
- */
-export function applyTheme(theme) {
+export type ThemeType = 'dark' | 'light';
+
+export function applyTheme(theme: ThemeType) {
   const element = document.documentElement;
   updateStyleHelper(theme, 'font-color', element);
   updateStyleHelper(theme, 'link-color', element);
@@ -24,6 +22,10 @@ export function applyTheme(theme) {
   updateStyleHelper(theme, 'severity-success-color', element);
 }
 
-function updateStyleHelper(theme, style, element) {
+function updateStyleHelper(
+  theme: ThemeType,
+  style: string,
+  element: HTMLElement,
+) {
   element.style.setProperty(`--${style}`, `var(--${theme}-${style})`);
 }
