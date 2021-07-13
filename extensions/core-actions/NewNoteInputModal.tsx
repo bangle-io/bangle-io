@@ -16,7 +16,7 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
   const destroyedRef = useDestroyRef();
   const extensionRegistry = useExtensionRegistryContext();
   const { wsName, createNote } = useWorkspaceContext();
-  const [error, updateError] = useState();
+  const [error, updateError] = useState<Error | undefined>();
   const { widescreen } = useUIManagerContext();
 
   const onExecute = useCallback(
@@ -27,6 +27,10 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
         inputValue.endsWith('/.md')
       ) {
         updateError(new Error('Must provide a note name'));
+        return;
+      }
+      if (!wsName) {
+        updateError(new Error('No workspace open'));
         return;
       }
       let newWsPath = filePathToWsPath(wsName, inputValue);
@@ -75,7 +79,7 @@ export function RenameNoteInputModal({ onDismiss }) {
   const { widescreen } = useUIManagerContext();
 
   const { wsName, renameNote, primaryWsPath } = useWorkspaceContext();
-  const [error, updateError] = useState();
+  const [error, updateError] = useState<Error | undefined>();
   const onExecute = useCallback(
     async (inputValue) => {
       if (
@@ -86,6 +90,12 @@ export function RenameNoteInputModal({ onDismiss }) {
         updateError(new Error('Must provide a note name'));
         return;
       }
+
+      if (!wsName) {
+        updateError(new Error('No workspace open'));
+        return;
+      }
+
       let newWsPath = filePathToWsPath(wsName, inputValue);
 
       if (!isValidNoteWsPath(newWsPath)) {
@@ -107,6 +117,7 @@ export function RenameNoteInputModal({ onDismiss }) {
     [primaryWsPath, onDismiss, renameNote, destroyedRef, wsName],
   );
 
+  const initialValue = primaryWsPath ? resolvePath(primaryWsPath).filePath : '';
   return (
     <InputPalette
       placeholder="Enter the new name"
@@ -114,13 +125,13 @@ export function RenameNoteInputModal({ onDismiss }) {
       onDismiss={onDismiss}
       updateError={updateError}
       error={error}
-      initialValue={resolvePath(primaryWsPath).filePath}
+      initialValue={initialValue}
       selectOnMount={true}
       widescreen={widescreen}
     >
       <UniversalPalette.PaletteInfo>
         <UniversalPalette.PaletteInfoItem>
-          You are currently renaming "{resolvePath(primaryWsPath).filePath}"
+          You are currently renaming "{initialValue}"
         </UniversalPalette.PaletteInfoItem>
       </UniversalPalette.PaletteInfo>
     </InputPalette>

@@ -10,7 +10,7 @@
         "../../lib/extension-registry/*"
       ],
       "utils": [
-        "../../lib/utils/index.js"
+        "../../lib/utils/index.ts"
       ],
       "utils/*": [
         "../../lib/utils/*"

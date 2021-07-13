@@ -9,7 +9,7 @@ export function PaletteContainer({
   widescreen,
   className = '',
 }) {
-  const containerRef = useRef();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useWatchClickOutside(containerRef, onClickOutside, onClickInside);
   return (

@@ -4,19 +4,19 @@
     "baseUrl": ".",
     "paths": {
       "action-context": [
-        "../../lib/action-context/index.js"
+        "../../lib/action-context/index.ts"
       ],
       "action-context/*": [
         "../../lib/action-context/*"
       ],
       "config": [
-        "../../lib/config/index.js"
+        "../../lib/config/index.ts"
       ],
       "config/*": [
         "../../lib/config/*"
       ],
       "editor-manager-context": [
-        "../../lib/editor-manager-context/index.js"
+        "../../lib/editor-manager-context/index.ts"
       ],
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
@@ -34,13 +34,13 @@
         "../../lib/ui-components/*"
       ],
       "ui-context": [
-        "../../lib/ui-context/index.js"
+        "../../lib/ui-context/index.ts"
       ],
       "ui-context/*": [
         "../../lib/ui-context/*"
       ],
       "utils": [
-        "../../lib/utils/index.js"
+        "../../lib/utils/index.ts"
       ],
       "utils/*": [
         "../../lib/utils/*"

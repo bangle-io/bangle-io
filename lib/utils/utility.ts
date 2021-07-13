@@ -1,10 +1,39 @@
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from 'config';
 import { keyName } from 'w3c-keyname';
 import _debounceFn from 'debounce-fn';
+import { Emitter } from '@bangle.dev/js-utils';
+
+export { Emitter };
 
 export function getLast(array) {
   return array[array.length - 1];
 }
+
+type RequestIdleCallbackHandle = any;
+type RequestIdleCallbackOptions = {
+  timeout: number;
+};
+type RequestIdleCallbackDeadline = {
+  readonly didTimeout: boolean;
+  timeRemaining: () => number;
+};
+
+type RequestIdleCallback = (
+  callback: (deadline: RequestIdleCallbackDeadline) => void,
+  opts?: RequestIdleCallbackOptions,
+) => RequestIdleCallbackHandle;
+
+declare global {
+  interface Window {
+    requestIdleCallback: RequestIdleCallback;
+    cancelIdleCallback: (handle: RequestIdleCallbackHandle) => void;
+  }
+}
+
+const requestIdleCallback =
+  typeof window !== 'undefined' && window.requestIdleCallback
+    ? window.requestIdleCallback
+    : undefined;
 
 /**
  * Based on idea from https://github.com/alexreardon/raf-schd
@@ -12,8 +41,8 @@ export function getLast(array) {
  * @param {Function} fn
  */
 export function rafSchedule(fn) {
-  let lastArgs = [];
-  let frameId = null;
+  let lastArgs: any[] = [];
+  let frameId: null | number = null;
 
   const wrapperFn = (...args) => {
     // Always capture the latest value
@@ -35,17 +64,18 @@ export function rafSchedule(fn) {
   wrapperFn.cancel = () => {
     if (!frameId) {
       return;
+    } else {
+      cancelAnimationFrame(frameId);
+      frameId = null;
     }
-    cancelAnimationFrame(frameId);
-    frameId = null;
   };
 
   return wrapperFn;
 }
 
 export const checkWidescreen = (
-  width = typeof window !== 'undefined' && window.innerWidth,
-) => width && SPLIT_SCREEN_MIN_WIDTH <= width;
+  width = typeof window !== 'undefined' ? window.innerWidth : undefined,
+) => (width ? SPLIT_SCREEN_MIN_WIDTH <= width : false);
 
 // typeof navigator != 'undefined' ? /Mac/.test(navigator.platform) : false;
 // :: (Object) → (view: EditorView, event: dom.Event) → bool
@@ -133,8 +163,8 @@ export function keybindingsHelper(bindings) {
   };
 }
 
-export function cx(...args) {
-  const classes = [];
+export function cx(...args: any[]) {
+  const classes: string[] = [];
   for (const arg of args) {
     if (!arg) {
       continue;
@@ -223,10 +253,10 @@ export async function getDayJs({} = {}) {
   if (dayJs) {
     return dayJs;
   }
-  let [_dayjs, _localizedFormat] = await Promise.all([
+  let [_dayjs, _localizedFormat] = (await Promise.all([
     import('dayjs'),
     import('dayjs/plugin/localizedFormat'),
-  ]);
+  ])) as [any, any];
 
   dayJs = _dayjs.default || _dayjs;
   _localizedFormat = _localizedFormat.default || _localizedFormat;
@@ -254,49 +284,6 @@ export function removeMdExtension(str) {
     return str.slice(0, -3);
   }
   return str;
-}
-
-export class Emitter {
-  constructor() {
-    Object.defineProperty(this, '_callbacks', {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: {},
-    });
-  }
-  on(event, fn) {
-    if (!this._callbacks[event]) {
-      this._callbacks[event] = [];
-    }
-    this._callbacks[event].push(fn);
-    return this;
-  }
-  emit(event, data) {
-    const callbacks = this._callbacks[event];
-    if (callbacks) {
-      callbacks.forEach((callback) => callback(data));
-    }
-    return this;
-  }
-  off(event, fn) {
-    if (!arguments.length) {
-      this._callbacks = {};
-    } else {
-      const callbacks = this._callbacks ? this._callbacks[event] : null;
-      if (callbacks) {
-        if (fn) {
-          this._callbacks[event] = callbacks.filter((cb) => cb !== fn);
-        } else {
-          this._callbacks[event] = [];
-        }
-      }
-    }
-    return this;
-  }
-  destroy() {
-    this._callbacks = {};
-  }
 }
 
 export function shallowCompareArray(array1, array2) {
@@ -328,9 +315,11 @@ export function rIdleDebounce(func) {
     if (last < wait) {
       setTimeout(later, wait - last);
     } else {
-      (typeof requestIdleCallback === 'undefined' ? run : requestIdleCallback)(
-        run,
-      );
+      if (requestIdleCallback) {
+        requestIdleCallback(run);
+      } else {
+        run();
+      }
     }
   };
 

@@ -1,18 +1,32 @@
-import React, { useEffect, useState, useMemo, useContext } from 'react';
-import { config } from 'config';
+import type { BangleEditor } from '@bangle.dev/core';
 import { getIdleCallback } from '@bangle.dev/js-utils';
+import { config } from 'config';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
-const maxEditors = [undefined, undefined];
-const MAX_EDITOR = maxEditors.length;
+const MAX_EDITOR = 2;
 
-const EditorManagerContext = React.createContext({});
+interface EditorManagerContextValue {
+  setEditor: (editorId: number, editor: BangleEditor) => void;
+  primaryEditor: BangleEditor | undefined;
+  getEditor: (editorId: number) => BangleEditor | undefined;
+  forEachEditor: (cb: (editor: BangleEditor, index: number) => void) => void;
+}
+
+type EditorsType = [BangleEditor | undefined, BangleEditor | undefined];
+const EditorManagerContext = React.createContext<EditorManagerContextValue>({
+  setEditor: () => {},
+  primaryEditor: undefined,
+  getEditor: () => undefined,
+  forEachEditor: () => {},
+});
 
 export function useEditorManagerContext() {
   return useContext(EditorManagerContext);
 }
+
 /**
  * Should be parent of all editors.
  */
@@ -32,28 +46,33 @@ export function EditorManager({ children }) {
    * 8. manager calls localDisk.getItem to get the document from indexdb.
    * 9. Collab-client plugin refreshes the editor with correct content
    */
-  const [editors, _setEditor] = useState(maxEditors);
+  const [editors, _setEditor] = useState<EditorsType>([undefined, undefined]);
   const [primaryEditor, secondaryEditor] = editors;
   const value = useMemo(() => {
-    const setEditor = (editorId, editor) => {
+    const setEditor: EditorManagerContextValue['setEditor'] = (
+      editorId,
+      editor,
+    ) => {
       _setEditor((array) => {
         if (editorId > MAX_EDITOR) {
           throw new Error(`Only ${MAX_EDITOR + 1} allowed`);
         }
-        const newArray = array.slice(0);
+        const newArray = array.slice(0) as EditorsType;
         newArray[editorId] = editor;
         return newArray;
       });
     };
 
     const [primaryEditor] = editors;
-    const getEditor = (editorId) => {
+    const getEditor: EditorManagerContextValue['getEditor'] = (editorId) => {
       return editors[editorId];
     };
 
-    const forEachEditor = (cb) => {
+    const forEachEditor: EditorManagerContextValue['forEachEditor'] = (cb) => {
       editors.forEach((editor, index) => {
-        cb(editor, index);
+        if (editor) {
+          cb(editor, index);
+        }
       });
     };
 
@@ -66,10 +85,10 @@ export function EditorManager({ children }) {
   }, [_setEditor, editors]);
 
   useEffect(() => {
-    window.primaryEditor = primaryEditor;
+    (window as any).primaryEditor = primaryEditor;
   }, [primaryEditor]);
   useEffect(() => {
-    window.secondaryEditor = secondaryEditor;
+    (window as any).secondaryEditor = secondaryEditor;
   }, [secondaryEditor]);
 
   useEffect(() => {
@@ -83,7 +102,7 @@ export function EditorManager({ children }) {
           import(
             /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
           ).then((args) => {
-            args.applyDevTools(editors[0].view);
+            args.applyDevTools(editors[0]!.view);
           });
         }
       });

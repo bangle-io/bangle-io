@@ -1,12 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
+import { ItemType } from './PaletteItem';
 
-export function useActivePaletteItem(items, counter) {
+export function useActivePaletteItem(items: ItemType[], counter: number) {
   return useMemo(() => {
     return items[getActiveIndex(counter, items.length)];
   }, [items, counter]);
 }
 
-export function usePaletteDriver(onEscape, onExecuteItem) {
+export function usePaletteDriver(
+  onEscape: () => void,
+  onExecuteItem: (
+    cb: (items: ItemType[]) => string | undefined,
+    info: { source: string; metaKey: boolean; shiftKey: boolean },
+  ) => {},
+) {
   const [counter, updateCounter] = useState(0);
 
   const specialKeys = useMemo(
@@ -32,7 +39,7 @@ export function usePaletteDriver(onEscape, onExecuteItem) {
         }
       }
 
-      const uid = event.currentTarget?.getAttribute('data-id');
+      const uid: string = event.currentTarget?.getAttribute('data-id');
       onExecuteItem(
         uid
           ? () => uid
@@ -49,7 +56,7 @@ export function usePaletteDriver(onEscape, onExecuteItem) {
   );
 
   const onSpecialKey = useCallback(
-    (event) => {
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
       switch (event.key) {
         case 'ArrowUp': {
           updateCounter((c) => c - 1);
@@ -87,7 +94,7 @@ export function usePaletteDriver(onEscape, onExecuteItem) {
   };
 }
 
-export function getActiveIndex(counter, size) {
+export function getActiveIndex(counter: number, size: number) {
   const r = counter % size;
   return r < 0 ? r + size : r;
 }

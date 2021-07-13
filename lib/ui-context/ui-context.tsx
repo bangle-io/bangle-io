@@ -1,4 +1,4 @@
-import { applyTheme } from './apply-theme';
+import { applyTheme, ThemeType } from './apply-theme';
 import React, {
   useContext,
   useReducer,
@@ -12,67 +12,45 @@ const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
 const persistKey = 'UIManager0.724';
 
-export class UIState {
-  /**
-   *
-   * @param {*} obj
-   * @param {*} restore if true restore any value from localStorage
-   */
-  constructor(obj, restore) {
-    this.dispatch = undefined;
-
-    if (restore) {
-      obj = Object.assign(obj, retrievePersistedState());
-    }
-
-    this.sidebar = obj.sidebar;
-    this.widescreen = obj.widescreen;
-    this.paletteType = obj.paletteType;
-    this.paletteInitialQuery = obj.paletteInitialQuery;
-    this.paletteMetadata = obj.paletteMetadata;
-    this.theme = obj.theme;
-    this.notifications = obj.notifications;
-
-    persistState({ sidebar: this.sidebar, theme: this.theme });
-
-    if (
-      obj.theme === 'dark' ||
-      (!this.theme &&
-        window?.matchMedia?.('(prefers-color-scheme: dark)').matches)
-    ) {
-      this.theme = 'dark';
-    } else {
-      this.theme = 'light';
-    }
-  }
-
-  // NOTE this is not used but sits here as a demonstration
-  // on how to do derived fields
-  // Derived field
-  get hideEditorArea() {
-    if (this.widescreen) {
-      return false;
-    }
-
-    return Boolean(this.paletteType || this.sidebar);
-  }
+interface NotificationType {
+  uid: string;
+  content: string;
+  buttons: any[];
+  severity?: string;
 }
 
-const initialState = {
+interface UIStateObj {
+  sidebar: string | undefined;
+  widescreen: boolean;
+  paletteType: string | undefined;
+  paletteInitialQuery: string | undefined;
+  paletteMetadata: any | undefined;
+  theme: ThemeType;
+  notifications: NotificationType[];
+  dispatch: Function;
+}
+function getThemePreference() {
+  if (typeof window === 'undefined') {
+    return 'light';
+  }
+  return window?.matchMedia?.('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+}
+
+const initialState: UIStateObj = {
   // UI
-  sidebar: null,
+  sidebar: undefined,
   widescreen: checkWidescreen(),
   paletteType: undefined,
   paletteInitialQuery: undefined,
   paletteMetadata: undefined,
-  theme: null,
+  theme: getThemePreference(),
   notifications: [],
+  dispatch: () => {},
 };
 
-const initialContextUIState = {};
-initialContextUIState.dispatch = () => {};
-
-export const UIManagerContext = createContext(initialContextUIState);
+export const UIManagerContext = createContext(initialState);
 
 export function useUIManagerContext() {
   return useContext(UIManagerContext);
@@ -91,14 +69,20 @@ export function UIManager({ children }) {
   const windowSize = useWindowSize();
 
   const [state, dispatch] = useReducer(
-    (state, action) => new UIState(reducer(state, action)),
-    new UIState(initialState, true),
+    (state, action) => reducer(state, action),
+    initialState,
     (store) => {
+      store = Object.assign({}, store, retrievePersistedState());
+
       applyTheme(store.theme);
       setRootWidescreenClass(store.widescreen);
       return store;
     },
   );
+
+  useEffect(() => {
+    persistState({ sidebar: state.sidebar, theme: state.theme });
+  }, [state]);
 
   // Does not give semantic guarantee, but we are fine
   const value = useMemo(() => {
@@ -128,7 +112,10 @@ export function UIManager({ children }) {
  * @param {UIState} state
  * @param {*} action
  */
-const reducer = (state, action) => {
+const reducer = (
+  state: UIStateObj,
+  action: { type: string; value: any },
+): UIStateObj => {
   log('Received', action.type, { action });
   switch (action.type) {
     case 'UI/TOGGLE_SIDEBAR': {
@@ -147,7 +134,12 @@ const reducer = (state, action) => {
     }
 
     case 'UI/SHOW_NOTIFICATION': {
-      const { uid, content, buttons, severity = 'info' } = action.value;
+      const {
+        uid,
+        content,
+        buttons,
+        severity = 'info',
+      } = action.value as NotificationType;
       if (!['error', 'warning', 'info', 'success'].includes(severity)) {
         throw new Error('Unknown severity value: ' + severity);
       }
@@ -192,7 +184,7 @@ const reducer = (state, action) => {
     case 'UI/RESET_PALETTE': {
       return {
         ...state,
-        paletteType: null,
+        paletteType: undefined,
         paletteInitialQuery: '',
         paletteMetadata: {},
       };
@@ -230,16 +222,18 @@ const reducer = (state, action) => {
   }
 };
 
-function persistState(obj) {
+function persistState(obj: Partial<UIStateObj>) {
   localStorage.setItem(persistKey, JSON.stringify(obj));
 }
 
-function retrievePersistedState() {
+function retrievePersistedState(): Partial<UIStateObj> {
   try {
     const item = localStorage.getItem(persistKey);
-    return JSON.parse(item);
+    if (typeof item === 'string') {
+      return JSON.parse(item);
+    }
   } catch (error) {
     console.error(error);
-    return {};
   }
+  return {};
 }

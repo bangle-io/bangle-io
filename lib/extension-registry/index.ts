@@ -3,3 +3,4 @@
 export * from './ExtensionRegistry';
 export * from './Extension';
 export * from './ExtensionRegistryContext';
+export * from './PluginType';

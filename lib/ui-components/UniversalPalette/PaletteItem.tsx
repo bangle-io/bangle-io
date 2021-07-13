@@ -1,5 +1,18 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+
+export interface ItemType {
+  uid: string;
+  title: ReactNode;
+  data?: any;
+  leftNode?: ReactNode;
+  rightNode?: ReactNode;
+  rightHoverNode?: ReactNode;
+  showDividerAbove?: boolean;
+  description?: ReactNode;
+  extraInfo?: ReactNode;
+  isDisabled?: boolean;
+}
 
 export const ItemPropTypes = PropTypes.exact({
   uid: PropTypes.string.isRequired,
@@ -31,15 +44,22 @@ export function PaletteItemUI({
   className = '',
   scrollIntoViewIfNeeded = true,
   style,
+}: {
+  item: ItemType;
+  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  isActive?: boolean;
+  className?: string;
+  scrollIntoViewIfNeeded?: boolean;
+  style?: any;
 }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (scrollIntoViewIfNeeded && isActive) {
       if ('scrollIntoViewIfNeeded' in document.body) {
-        ref.current.scrollIntoViewIfNeeded(false);
+        (ref.current as any)?.scrollIntoViewIfNeeded(false);
       } else {
-        if (ref.current.scrollIntoView) {
-          ref.current.scrollIntoView(false);
+        if (ref.current?.scrollIntoView) {
+          ref.current?.scrollIntoView(false);
         }
       }
     }

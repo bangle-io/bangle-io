@@ -1,4 +1,5 @@
 import React from 'react';
+import { ItemType } from '../UniversalPalette/PaletteItem';
 import { cx, isTouchDevice } from 'utils';
 
 import { UniversalPalette } from '../UniversalPalette';
@@ -18,6 +19,16 @@ export function Row2({
   style,
   // on touch devices having :hover forces you to click twice
   allowHover = !isTouchDevice(),
+}: {
+  item: ItemType;
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  className?: string;
+  titleClassName?: string;
+  extraInfoClassName?: string;
+  descriptionClassName?: string;
+  isActive?: boolean;
+  style?: any;
+  allowHover?: boolean;
 }) {
   const titleElement = (
     <span>

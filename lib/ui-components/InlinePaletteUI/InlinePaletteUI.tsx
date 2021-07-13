@@ -22,17 +22,17 @@ export function InlinePaletteRow({
   // on touch devices having :hover forces you to click twice
   allowHover = !isTouchDevice(),
 }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLInputElement>(null);
 
   const [isHovered, setHover] = useState(false);
 
   useEffect(() => {
     if (scrollIntoViewIfNeeded && isActive) {
       if ('scrollIntoViewIfNeeded' in document.body) {
-        ref.current.scrollIntoViewIfNeeded(false);
+        (ref.current as any)?.scrollIntoViewIfNeeded(false);
       } else {
-        if (ref.current.scrollIntoView) {
-          ref.current.scrollIntoView(false);
+        if (ref.current?.scrollIntoView) {
+          ref.current?.scrollIntoView(false);
         }
       }
     }

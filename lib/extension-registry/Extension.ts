@@ -1,12 +1,13 @@
 import React from 'react';
+import { EditorPluginDefinition } from './PluginType';
 
 const _check = Symbol();
 
 export interface EditorConfig {
   name: string;
   specs?: any;
-  plugins?: any[];
-  highPriorityPlugins?: any[];
+  plugins?: EditorPluginDefinition[];
+  highPriorityPlugins?: EditorPluginDefinition[];
   markdownItPlugins?: any[];
   ReactComponent?: React.ComponentType<{
     key: string;
@@ -48,8 +49,7 @@ export interface ApplicationConfig {
     parseRawQuery: (query: string) => string | undefined | null;
     ReactComponent: React.ComponentType<{
       query: string;
-      paletteType: string;
-      paletteItemProps: any;
+      paletteType: string | undefined;
       paletteMetadata: any;
       updatePalette: (
         type: string,
@@ -57,6 +57,10 @@ export interface ApplicationConfig {
         metadata?: any,
       ) => void;
       dismissPalette: (focusEditor?: boolean) => void;
+      onSelect: (e: Event) => void;
+      counter: number;
+      getActivePaletteItem: () => any;
+      updateCounter: (c: number) => void;
     }>;
   }>;
   actions?: Array<ActionDefinitionType>;

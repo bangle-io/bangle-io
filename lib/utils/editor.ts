@@ -3,8 +3,8 @@ import {
   SECONDARY_SCROLL_PARENT_ID,
 } from 'constants';
 
-export function getScrollParentElement(editorId) {
-  let scrollParent;
+export function getScrollParentElement(editorId: number) {
+  let scrollParent: Element | undefined | null;
   if (editorId === 0) {
     scrollParent = document.querySelector('#' + PRIMARY_SCROLL_PARENT_ID);
   } else if (editorId === 1) {

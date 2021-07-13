@@ -19,6 +19,8 @@ exports[`renders correctly workspace is opened 1`] = `
       >
         <input
           aria-label="Search"
+          autocapitalize="off"
+          autocorrect="off"
           class="bangle-input "
           placeholder="Search"
           type="text"
@@ -59,6 +61,8 @@ exports[`show results if match 1`] = `
       >
         <input
           aria-label="Search"
+          autocapitalize="off"
+          autocorrect="off"
           class="bangle-input "
           placeholder="Search"
           type="text"

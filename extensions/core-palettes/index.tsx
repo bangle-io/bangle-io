@@ -18,8 +18,8 @@ const extension = Extension.create({
       workspacePalette,
       questionPalette,
       actionPalette,
-      // should always be the last palette
-      // TODO: add constraints to make sure it always is
+      // // should always be the last palette
+      // // TODO: add constraints to make sure it always is
       notesPalette,
     ],
     actions: [
