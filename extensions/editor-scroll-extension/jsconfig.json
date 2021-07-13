@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "app-state-context": [
-        "../../lib/app-state-context/index.js"
+        "../../lib/app-state-context/index.ts"
       ],
       "app-state-context/*": [
         "../../lib/app-state-context/*"
@@ -16,7 +16,7 @@
         "../../lib/extension-registry/*"
       ],
       "utils": [
-        "../../lib/utils/index.js"
+        "../../lib/utils/index.ts"
       ],
       "utils/*": [
         "../../lib/utils/*"

@@ -3,11 +3,41 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "action-context": [
+        "../../lib/action-context/index.ts"
+      ],
+      "action-context/*": [
+        "../../lib/action-context/*"
+      ],
+      "config": [
+        "../../lib/config/index.ts"
+      ],
+      "config/*": [
+        "../../lib/config/*"
+      ],
+      "editor-manager-context": [
+        "../../lib/editor-manager-context/index.ts"
+      ],
+      "editor-manager-context/*": [
+        "../../lib/editor-manager-context/*"
+      ],
       "extension-registry": [
         "../../lib/extension-registry/index.ts"
       ],
       "extension-registry/*": [
         "../../lib/extension-registry/*"
+      ],
+      "ui-components": [
+        "../../lib/ui-components/index.js"
+      ],
+      "ui-components/*": [
+        "../../lib/ui-components/*"
+      ],
+      "ui-context": [
+        "../../lib/ui-context/index.ts"
+      ],
+      "ui-context/*": [
+        "../../lib/ui-context/*"
       ],
       "utils": [
         "../../lib/utils/index.ts"

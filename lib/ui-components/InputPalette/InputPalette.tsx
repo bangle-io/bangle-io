@@ -37,9 +37,9 @@ export function InputPalette({
   className = '',
 }) {
   const destroyedRef = useDestroyRef();
-  const [showSpinner, updateSpinner] = useState();
+  const [showSpinner, updateSpinner] = useState(false);
   const [inputValue, _onInputValueChange] = useState(initialValue);
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const items = useMemo(
     () =>
@@ -66,11 +66,11 @@ export function InputPalette({
 
   useEffect(() => {
     updateError?.(undefined);
-    updateSpinner(undefined);
+    updateSpinner(false);
   }, [inputValue, updateError]);
 
   useEffect(() => {
-    updateSpinner(undefined);
+    updateSpinner(false);
   }, [error]);
 
   useEffect(() => {

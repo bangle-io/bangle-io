@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "config": [
-        "../../lib/config/index.js"
+        "../../lib/config/index.ts"
       ],
       "config/*": [
         "../../lib/config/*"

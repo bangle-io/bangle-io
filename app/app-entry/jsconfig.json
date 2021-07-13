@@ -4,13 +4,13 @@
     "baseUrl": ".",
     "paths": {
       "action-context": [
-        "../../lib/action-context/index.js"
+        "../../lib/action-context/index.ts"
       ],
       "action-context/*": [
         "../../lib/action-context/*"
       ],
       "app-state-context": [
-        "../../lib/app-state-context/index.js"
+        "../../lib/app-state-context/index.ts"
       ],
       "app-state-context/*": [
         "../../lib/app-state-context/*"
@@ -22,25 +22,25 @@
         "../../js-lib/baby-fs/*"
       ],
       "collab-extension": [
-        "../../extensions/collab-extension/index.js"
+        "../../extensions/collab-extension/index.ts"
       ],
       "collab-extension/*": [
         "../../extensions/collab-extension/*"
       ],
       "collapsible-heading": [
-        "../../extensions/collapsible-heading/index.js"
+        "../../extensions/collapsible-heading/index.ts"
       ],
       "collapsible-heading/*": [
         "../../extensions/collapsible-heading/*"
       ],
       "config": [
-        "../../lib/config/index.js"
+        "../../lib/config/index.ts"
       ],
       "config/*": [
         "../../lib/config/*"
       ],
       "constants": [
-        "../../lib/constants/index.js"
+        "../../lib/constants/index.ts"
       ],
       "constants/*": [
         "../../lib/constants/*"
@@ -52,7 +52,7 @@
         "../../extensions/editor-core/*"
       ],
       "editor-manager-context": [
-        "../../lib/editor-manager-context/index.js"
+        "../../lib/editor-manager-context/index.ts"
       ],
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
@@ -124,13 +124,13 @@
         "../../lib/ui-components/*"
       ],
       "ui-context": [
-        "../../lib/ui-context/index.js"
+        "../../lib/ui-context/index.ts"
       ],
       "ui-context/*": [
         "../../lib/ui-context/*"
       ],
       "utils": [
-        "../../lib/utils/index.js"
+        "../../lib/utils/index.ts"
       ],
       "utils/*": [
         "../../lib/utils/*"

@@ -143,7 +143,6 @@ export function SearchResults({
                       (j === 0 ? 'mt-3' : 'mt-4')
                     }
                     titleClassName="text-sm "
-                    hoverBgColorChange
                     item={{
                       uid: 'search-result-text-match-' + j,
                       title: (

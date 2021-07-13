@@ -1,4 +1,5 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
+import { ItemType } from '../UniversalPalette/PaletteItem';
 import { UniversalPalette } from '../UniversalPalette';
 
 export function ListPalette({
@@ -11,10 +12,20 @@ export function ListPalette({
   children,
   updateError,
   widescreen,
+}: {
+  placeholder?: string;
+  initialValue?: string;
+  onDismiss: () => void;
+  items: ItemType[];
+  onSelectItem: any;
+  error: any;
+  children: any;
+  updateError: any;
+  widescreen: any;
 }) {
   const [inputValue, _onInputValueChange] = useState(initialValue);
   items = items.filter((obj) => strMatch(obj.title, inputValue));
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     updateError?.(undefined);

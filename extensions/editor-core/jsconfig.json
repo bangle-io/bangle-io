@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "editor-manager-context": [
-        "../../lib/editor-manager-context/index.js"
+        "../../lib/editor-manager-context/index.ts"
       ],
       "editor-manager-context/*": [
         "../../lib/editor-manager-context/*"
