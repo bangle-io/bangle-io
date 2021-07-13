@@ -16268,6 +16268,8 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "ui-context@workspace:lib/ui-context"
   dependencies:
+    "@types/react": ^17.0.11
+    "@types/react-dom": ^17.0.8
     react: 17.0.2
     utils: "workspace:*"
   languageName: unknown

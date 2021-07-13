@@ -20580,6 +20580,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/ui-context/",
           "packageDependencies": [
             ["ui-context", "workspace:lib/ui-context"],
+            ["@types/react", "npm:17.0.11"],
+            ["@types/react-dom", "npm:17.0.8"],
             ["react", "npm:17.0.2"],
             ["utils", "workspace:lib/utils"]
           ],
