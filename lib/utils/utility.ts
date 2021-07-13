@@ -1,7 +1,9 @@
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from 'config';
 import { keyName } from 'w3c-keyname';
 import _debounceFn from 'debounce-fn';
-export { Emitter } from '@bangle.dev/js-utils';
+import { Emitter } from '@bangle.dev/js-utils';
+
+export { Emitter };
 
 export function getLast(array) {
   return array[array.length - 1];

@@ -20,7 +20,12 @@ export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatchAction } = useActionContext();
   const { wsName, primaryWsPath, deleteNote } = useWorkspaceContext();
 
-  const [inputModal, updateInputModal] = useState({});
+  const [inputModal, updateInputModal] = useState<{
+    type: string | undefined;
+    clone?: boolean;
+    initialValue?: string;
+    resetWsName?: string;
+  }>({ type: undefined });
 
   const actionHandler = useCallback(
     (actionObject) => {
@@ -191,7 +196,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
 
   const onDismiss = useCallback(
     (focusEditor = true) => {
-      updateInputModal({});
+      updateInputModal({ type: undefined });
       if (focusEditor) {
         dispatchAction({ name: '@action/editor-core/focus-primary-editor' });
       }

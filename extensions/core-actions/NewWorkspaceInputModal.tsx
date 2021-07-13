@@ -25,10 +25,11 @@ export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
         if (type === 'nativefs') {
           rootDirHandle = await pickADirectory();
           newWsName = rootDirHandle.name;
-          window.fathom?.trackGoal('K3NFTGWX', 0);
+          // TODO move fathom out of this to an action
+          (window as any).fathom?.trackGoal('K3NFTGWX', 0);
         } else if (type === 'browser') {
           newWsName = inputValue;
-          window.fathom?.trackGoal('AISLCLRF', 0);
+          (window as any).fathom?.trackGoal('AISLCLRF', 0);
         } else {
           throw new Error('Unknown workspace type ' + type);
         }
@@ -73,8 +74,6 @@ export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
     return (
       <NewWorkspaceNameStage
         onDismiss={onDismiss}
-        resetWsName={resetWsName}
-        clone={clone}
         onConfirm={onConfirm}
         error={error}
         updateError={updateError}
@@ -86,8 +85,6 @@ export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
   return (
     <NewWorkspaceStorageStage
       onDismiss={onDismiss}
-      resetWsName={resetWsName}
-      clone={clone}
       updateShowLocalStorage={updateShowLocalStorage}
       onConfirm={onConfirm}
       error={error}

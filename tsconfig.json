@@ -31,23 +31,7 @@
     "useDefineForClassFields": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "paths": {
-      "config": [
-        "./lib/config/index.js"
-      ],
-      "config/*": [
-        "./lib/config/*"
-      ],
-      "utils": [
-        "./lib/utils/index.js"
-      ],
-      "utils/*": [
-        "./lib/utils/*"
-      ],
-      "base-error": [
-        "./js-lib/base-error/index.js"
-      ]
-    }
+    "paths": {}
   },
   "include": [
     "**/*.ts",
