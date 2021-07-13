@@ -15,10 +15,11 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "main": "index.js",
-  "module": "index.js",
+  "main": "index.ts",
+  "module": "index.ts",
   "scripts": {},
   "dependencies": {
+    "@bangle.dev/js-utils": "0.21.1",
     "base-error": "workspace:*",
     "config": "workspace:*",
     "constants": "workspace:*",

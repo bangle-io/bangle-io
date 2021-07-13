@@ -68,6 +68,7 @@ function useMonitorScrollEnd(wsPath, editorId) {
 
   const queryPos = useCallback(
     (e) => {
+      console.count('oye');
       // save the scroll pos on every invocation
       // be
       const scrollParent = getScrollParentElement(editorId);

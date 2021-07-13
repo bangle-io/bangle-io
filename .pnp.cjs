@@ -20838,6 +20838,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./lib/utils/",
           "packageDependencies": [
             ["utils", "workspace:lib/utils"],
+            ["@bangle.dev/js-utils", "npm:0.21.1"],
             ["@testing-library/react-hooks", "virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:7.0.0"],
             ["@types/react", "npm:17.0.11"],
             ["@types/react-dom", "npm:17.0.8"],

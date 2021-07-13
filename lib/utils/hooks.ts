@@ -174,7 +174,7 @@ const INFINITE_RECURSION_TIME_THRESHOLD = 50;
 
 export function useBroadcastChannel(channelName) {
   const infiniteRecurseRef = useRef(0);
-  const lastSentRef = useRef();
+  const lastSentRef = useRef<Number | undefined>();
   const destroyedRef = useRef(false);
   const [lastMessage, updateEvent] = useState();
   const [bChannel] = useState(() => {
@@ -205,9 +205,10 @@ export function useBroadcastChannel(channelName) {
   const broadcastMessage = useCallback(
     (data) => {
       if (!destroyedRef.current) {
+        const lastSent = lastSentRef.current;
         if (
-          lastSentRef.current &&
-          Date.now() - lastSentRef.current < INFINITE_RECURSION_TIME_THRESHOLD
+          lastSent &&
+          Date.now() - (lastSent as number) < INFINITE_RECURSION_TIME_THRESHOLD
         ) {
           infiniteRecurseRef.current++;
         } else {

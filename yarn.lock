@@ -16496,6 +16496,7 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "utils@workspace:lib/utils"
   dependencies:
+    "@bangle.dev/js-utils": 0.21.1
     "@testing-library/react-hooks": ^7.0.0
     "@types/react": ^17.0.11
     "@types/react-dom": ^17.0.8
