@@ -6,6 +6,7 @@ import { useUIManagerContext } from 'ui-context';
 import {
   ButtonIcon,
   FileDocumentIcon,
+  GiftIcon,
   HomeIcon,
   MenuIcon,
 } from 'ui-components';
@@ -134,6 +135,15 @@ export function ActivityBar() {
         </ButtonIcon>
         {topInjectedSidebars}
         <div className="flex-grow"></div>
+        <ButtonIcon
+          onClick={() => {}}
+          hint={'Whats new'}
+          hintPos="right"
+          className={cx('flex justify-center pt-3 pb-3 mt-1 mb-1')}
+          style={{}}
+        >
+          <GiftIcon className="h-7 w-7 text-gray-100" />
+        </ButtonIcon>
         {bottomInjectedSidebars}
       </div>
     </div>
