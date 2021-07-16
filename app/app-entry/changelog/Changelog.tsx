@@ -14,7 +14,7 @@ export function Changelog() {
 
   return modal === '@modal/changelog' ? (
     <Modal
-      title="🎁 Whats new?"
+      title="🎁 What's new?"
       onDismiss={() => {
         dispatch({
           type: 'UI/DISMISS_MODAL',

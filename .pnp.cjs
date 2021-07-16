@@ -4012,26 +4012,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:0.21.1", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-markdown-virtual-4dfd373ab5/0/cache/@bangle.dev-markdown-npm-0.21.1-b5412623b6-131ef2cefd.zip/node_modules/@bangle.dev/markdown/",
-          "packageDependencies": [
-            ["@bangle.dev/markdown", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:0.21.1"],
-            ["@bangle.dev/core", "npm:0.21.1"],
-            ["@bangle.dev/js-utils", "npm:0.21.1"],
-            ["@bangle.dev/table", null],
-            ["@types/bangle.dev__core", null],
-            ["@types/bangle.dev__table", null],
-            ["markdown-it", "npm:10.0.0"],
-            ["prosemirror-markdown", "npm:1.5.1"]
-          ],
-          "packagePeers": [
-            "@bangle.dev/core",
-            "@bangle.dev/table",
-            "@types/bangle.dev__core",
-            "@types/bangle.dev__table"
-          ],
-          "linkType": "HARD",
-        }],
         ["virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1", {
           "packageLocation": "./.yarn/__virtual__/@bangle.dev-markdown-virtual-0e9670c97e/0/cache/@bangle.dev-markdown-npm-0.21.1-b5412623b6-131ef2cefd.zip/node_modules/@bangle.dev/markdown/",
           "packageDependencies": [
@@ -6831,9 +6811,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["app-entry", "workspace:app/app-entry"],
             ["@bangle.dev/core", "npm:0.21.1"],
-            ["@bangle.dev/markdown", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:0.21.1"],
+            ["@bangle.dev/markdown", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@bangle.dev/markdown-front-matter", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@bangle.dev/react", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
+            ["@bangle.dev/table", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@sentry/tracing", "npm:6.7.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@testing-library/react-hooks", "virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:7.0.0"],

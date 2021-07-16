@@ -142,7 +142,7 @@ export function ActivityBar() {
               value: { modal: '@modal/changelog' },
             });
           }}
-          hint={'Whats new'}
+          hint={"What's new"}
           hintPos="right"
           className={cx('flex justify-center pt-3 pb-3 mt-1 mb-1')}
           style={{}}

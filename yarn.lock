@@ -4341,6 +4341,7 @@ __metadata:
     "@bangle.dev/markdown": 0.21.1
     "@bangle.dev/markdown-front-matter": 0.21.1
     "@bangle.dev/react": 0.21.1
+    "@bangle.dev/table": 0.21.1
     "@sentry/tracing": ^6.7.1
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^7.0.0
