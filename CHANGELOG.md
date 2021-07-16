@@ -1,6 +1,6 @@
 ### Jul 15, 2021
 
-- **What's new:** Ability to see `Whats new?` in the sidebar _(the one you are viewing)_. This will allow you to stay updated on how the produce is evolving.
+- **What's new:** Ability to see `Whats new?` in the sidebar _(the one you are viewing)_. This will allow you to stay updated on how the product is evolving.
 
 ### Jun 30, 2021
 
