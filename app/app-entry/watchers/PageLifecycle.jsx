@@ -1,6 +1,7 @@
 import { naukarWorkerProxy } from 'naukar-proxy';
 import { useState, useContext, useEffect } from 'react';
 import { AppStateContext } from 'app-state-context';
+import { useEditorManagerContext } from 'editor-manager-context';
 
 const pendingSymbol = Symbol('pending-tasks');
 
@@ -12,6 +13,8 @@ export function PageLifecycle() {
     pageStateCurrent: undefined,
     pageStatePrevious: undefined,
   });
+
+  const { forEachEditor } = useEditorManagerContext();
 
   useEffect(() => {
     import('page-lifecycle').then(({ default: lifecycle }) => {
@@ -59,9 +62,36 @@ export function PageLifecycle() {
     }
     // save things immediately when we lose focus
     else if (pageStateCurrent === 'passive' || pageStateCurrent === 'hidden') {
+      forEachEditor((editor, i) => {
+        if (editor.view.hasFocus()) {
+          trimWhiteSpaceBeforeCursor(editor);
+        }
+      });
       naukarWorkerProxy.flushDisk();
     }
-  }, [pageStateCurrent, pageStatePrevious]);
+  }, [pageStateCurrent, pageStatePrevious, forEachEditor]);
 
   return null;
+}
+
+function trimWhiteSpaceBeforeCursor(editor) {
+  const { view } = editor;
+  const { state, dispatch } = view;
+
+  if (!state.selection.empty) {
+    return;
+  }
+  const nodeBefore = state.selection.$from.nodeBefore;
+  if (nodeBefore?.type.name === 'text') {
+    const textBefore = nodeBefore.text;
+    const whiteSpaceChars = textBefore.length - textBefore.trimEnd().length;
+    if (whiteSpaceChars > 0) {
+      dispatch(
+        state.tr.delete(
+          state.selection.from - whiteSpaceChars,
+          state.selection.from,
+        ),
+      );
+    }
+  }
 }
