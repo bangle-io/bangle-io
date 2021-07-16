@@ -25,9 +25,8 @@ export function SearchNotesSidebar() {
       forEachEditor((editor) => {
         if (editor?.destroyed === false) {
           const queryRegex = query
-            ? new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'))
+            ? new RegExp(query.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'), 'i')
             : undefined;
-
           search.updateSearchQuery(searchPluginKey, queryRegex)(
             editor.view.state,
             editor.view.dispatch,
