@@ -14,6 +14,7 @@
     "constants",
     "action-context",
     "extension-registry",
+    "editor-utils",
     "test-utils"
   ]
 }
