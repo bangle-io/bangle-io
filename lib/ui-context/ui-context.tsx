@@ -28,6 +28,7 @@ interface UIStateObj {
   theme: ThemeType;
   notifications: NotificationType[];
   dispatch: Function;
+  modal: string | undefined;
 }
 function getThemePreference() {
   if (typeof window === 'undefined') {
@@ -48,6 +49,7 @@ const initialState: UIStateObj = {
   theme: getThemePreference(),
   notifications: [],
   dispatch: () => {},
+  modal: undefined,
 };
 
 export const UIManagerContext = createContext(initialState);
@@ -214,6 +216,20 @@ const reducer = (
       return {
         ...state,
         widescreen,
+      };
+    }
+
+    case 'UI/SHOW_MODAL': {
+      return {
+        ...state,
+        modal: action.value.modal,
+      };
+    }
+
+    case 'UI/DISMISS_MODAL': {
+      return {
+        ...state,
+        modal: undefined,
       };
     }
 

@@ -136,7 +136,12 @@ export function ActivityBar() {
         {topInjectedSidebars}
         <div className="flex-grow"></div>
         <ButtonIcon
-          onClick={() => {}}
+          onClick={() => {
+            dispatch({
+              type: 'UI/SHOW_MODAL',
+              value: { modal: '@modal/changelog' },
+            });
+          }}
           hint={'Whats new'}
           hintPos="right"
           className={cx('flex justify-center pt-3 pb-3 mt-1 mb-1')}

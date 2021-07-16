@@ -1,3 +1,7 @@
+### Jul 15, 2021
+
+- Ability to show changelog _(the one you are viewing)_.
+
 ### Jun 9, 2021
 
 - Synchronize new files created or deleted across tabs.

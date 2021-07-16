@@ -24,6 +24,7 @@
     "@bangle.dev/markdown-front-matter": "0.21.1",
     "@bangle.dev/pm-utils": "0.21.1",
     "@bangle.dev/table": "0.21.1",
+    "markdown-it": "^10.0.0",
     "prosemirror-model": "^1.14.1",
     "prosemirror-utils": "1.0.0-0"
   },

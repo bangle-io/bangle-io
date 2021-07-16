@@ -36,7 +36,6 @@ Bangle has the following top level directories containing smaller packages.
 
 - `tooling:`The code that will not show in the actual app. For example integration tests, validation scripts, etc.
 
-
 ### Extension file structure
 
 Each package/extension must have the following top level files:
@@ -49,7 +48,6 @@ Each package/extension must have the following top level files:
 ### CSS conventions
 
 You are expected to write your own css and not rely on any of the css classes available throughout bangle as they are internal and subject to change.
-
 
 ### Contexts
 

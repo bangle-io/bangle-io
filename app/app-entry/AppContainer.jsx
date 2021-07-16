@@ -10,6 +10,7 @@ import { PaletteManager } from './extension-glue/PaletteManager';
 import { Routes } from './Routes';
 import { useExtensionRegistryContext } from 'extension-registry';
 import { Changelog } from './changelog/Changelog';
+import { ErrorBoundary } from 'ui-components';
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
@@ -59,7 +60,7 @@ function LeftSidebarArea() {
   if (widescreen) {
     return (
       <div className="fadeInAnimation left-sidebar-area widescreen">
-        {component}
+        <ErrorBoundary>{component}</ErrorBoundary>
       </div>
     );
   }
