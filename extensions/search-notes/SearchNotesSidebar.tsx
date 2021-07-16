@@ -69,7 +69,7 @@ export function SearchNotesSidebar() {
 
   return (
     <Sidebar.Container className="search-notes">
-      <Sidebar.Title className="mt-2 px-2">Search notes</Sidebar.Title>
+      <Sidebar.Title className="mt-2 px-2">🔍 Search notes</Sidebar.Title>
       <Sidebar.ItemContainer className="mt-2 px-2">
         <SearchInput updateQuery={updateQuery} query={query} />
       </Sidebar.ItemContainer>

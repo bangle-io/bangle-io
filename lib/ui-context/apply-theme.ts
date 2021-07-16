@@ -15,6 +15,7 @@ export function applyTheme(theme: ThemeType) {
   updateStyleHelper(theme, 'border-color', element);
   updateStyleHelper(theme, 'activity-bar-color', element);
   updateStyleHelper(theme, 'activity-bar-font-color', element);
+  updateStyleHelper(theme, 'modal-overlay-color', element);
 
   updateStyleHelper(theme, 'severity-error-color', element);
   updateStyleHelper(theme, 'severity-warning-color', element);

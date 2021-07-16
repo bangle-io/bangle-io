@@ -74,8 +74,6 @@ export function useWatchClickOutside(ref, onClickOutside, onClickInside) {
       document.removeEventListener('click', handler);
     };
   }, [ref, onClickOutside, onClickInside]);
-
-  return ref;
 }
 
 /**

@@ -9,6 +9,7 @@ import { useWorkspaceContext } from 'workspace-context';
 import { PaletteManager } from './extension-glue/PaletteManager';
 import { Routes } from './Routes';
 import { useExtensionRegistryContext } from 'extension-registry';
+import { Changelog } from './changelog/Changelog';
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
@@ -17,6 +18,7 @@ export function AppContainer() {
 
   return (
     <>
+      <Changelog />
       <ApplicationComponents />
       <ActivityBar />
       <PaletteManager />
@@ -37,20 +39,8 @@ export function AppContainer() {
 }
 
 function LeftSidebarArea() {
-  const { widescreen, sidebar, dispatch } = useUIManagerContext();
+  const { widescreen, sidebar } = useUIManagerContext();
   const extensionRegistry = useExtensionRegistryContext();
-
-  const leftSidebarAreaRef = useWatchClickOutside(
-    () => {
-      if (!widescreen && sidebar) {
-        dispatch({
-          type: 'UI/CHANGE_SIDEBAR',
-          value: { type: null },
-        });
-      }
-    },
-    () => {},
-  );
 
   const extensionSidebars = useMemo(() => {
     return Object.fromEntries(
@@ -68,10 +58,7 @@ function LeftSidebarArea() {
 
   if (widescreen) {
     return (
-      <div
-        ref={leftSidebarAreaRef}
-        className="fadeInAnimation left-sidebar-area widescreen"
-      >
+      <div className="fadeInAnimation left-sidebar-area widescreen">
         {component}
       </div>
     );

@@ -4338,6 +4338,7 @@ __metadata:
   resolution: "app-entry@workspace:app/app-entry"
   dependencies:
     "@bangle.dev/core": 0.21.1
+    "@bangle.dev/markdown": 0.21.1
     "@bangle.dev/markdown-front-matter": 0.21.1
     "@bangle.dev/react": 0.21.1
     "@sentry/tracing": ^6.7.1
@@ -5501,20 +5502,6 @@ __metadata:
   checksum: 036e973e665ba1a32c975e291d5f3d549bceeb7b1b983320d4598fb75d70fe20c5db5d62971ec0fe76cdbce83985a00ee42372416abfc3a5584465005a7855ed
   languageName: node
   linkType: hard
-
-"changelog@workspace:extensions/changelog":
-  version: 0.0.0-use.local
-  resolution: "changelog@workspace:extensions/changelog"
-  dependencies:
-    "@testing-library/react": ^12.0.0
-    "@types/react": ^17.0.11
-    "@types/react-dom": ^17.0.8
-    extension-registry: "workspace:*"
-    react: ^17.0.2
-    react-dom: 17.0.2
-    utils: "workspace:*"
-  languageName: unknown
-  linkType: soft
 
 "char-regex@npm:^1.0.2":
   version: 1.0.2
@@ -11729,6 +11716,7 @@ fsevents@^2.1.2:
     "@bangle.dev/markdown-front-matter": 0.21.1
     "@bangle.dev/pm-utils": 0.21.1
     "@bangle.dev/table": 0.21.1
+    markdown-it: ^10.0.0
     prosemirror-model: ^1.14.1
     prosemirror-utils: 1.0.0-0
   languageName: unknown

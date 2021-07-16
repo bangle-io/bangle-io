@@ -19,7 +19,7 @@ export function WorkspaceNotFound({}) {
             target="_blank"
             rel="noreferrer"
             className="text-gray-700 font-extrabold hover:underline"
-            href="https://github.com/bangle-io/bangle-io-issues"
+            href="https://github.com/bangle-io/bangle-io-issues/issues/new"
           >
             Github
           </a>

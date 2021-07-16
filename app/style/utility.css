@@ -6,9 +6,21 @@
   color: var(--font-lighter-color);
 }
 
-.b-accent-2-color:hover {
-  background-color: var(--accent-2-color);
-}
 .hover\:b-accent-2-color:hover {
   background-color: var(--accent-2-color);
+}
+
+.b-bg-stronger-color {
+  background-color: var(--bg-stronger-color);
+}
+
+.b-modal-overlay-color {
+  background-color: var(--modal-overlay-color);
+}
+
+.b-border-color {
+  border-color: var(--border-color);
+}
+.b-border-bottom-color {
+  border-bottom-color: var(--border-color);
 }

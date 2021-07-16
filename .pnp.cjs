@@ -63,10 +63,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app/worker-setup"
       },
       {
-        "name": "changelog",
-        "reference": "workspace:extensions/changelog"
-      },
-      {
         "name": "collab-extension",
         "reference": "workspace:extensions/collab-extension"
       },
@@ -222,7 +218,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["baby-fs", ["workspace:js-lib/baby-fs"]],
       ["bangle-io", ["workspace:."]],
       ["base-error", ["workspace:js-lib/base-error"]],
-      ["changelog", ["workspace:extensions/changelog"]],
       ["collab-extension", ["workspace:extensions/collab-extension"]],
       ["collapsible-heading", ["workspace:extensions/collapsible-heading"]],
       ["config", ["workspace:lib/config"]],
@@ -4017,6 +4012,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
+        ["virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:0.21.1", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.dev-markdown-virtual-4dfd373ab5/0/cache/@bangle.dev-markdown-npm-0.21.1-b5412623b6-131ef2cefd.zip/node_modules/@bangle.dev/markdown/",
+          "packageDependencies": [
+            ["@bangle.dev/markdown", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:0.21.1"],
+            ["@bangle.dev/core", "npm:0.21.1"],
+            ["@bangle.dev/js-utils", "npm:0.21.1"],
+            ["@bangle.dev/table", null],
+            ["@types/bangle.dev__core", null],
+            ["@types/bangle.dev__table", null],
+            ["markdown-it", "npm:10.0.0"],
+            ["prosemirror-markdown", "npm:1.5.1"]
+          ],
+          "packagePeers": [
+            "@bangle.dev/core",
+            "@bangle.dev/table",
+            "@types/bangle.dev__core",
+            "@types/bangle.dev__table"
+          ],
+          "linkType": "HARD",
+        }],
         ["virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1", {
           "packageLocation": "./.yarn/__virtual__/@bangle.dev-markdown-virtual-0e9670c97e/0/cache/@bangle.dev-markdown-npm-0.21.1-b5412623b6-131ef2cefd.zip/node_modules/@bangle.dev/markdown/",
           "packageDependencies": [
@@ -6816,6 +6831,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["app-entry", "workspace:app/app-entry"],
             ["@bangle.dev/core", "npm:0.21.1"],
+            ["@bangle.dev/markdown", "virtual:48c7f677c44e1c58ab67253286a364540d28ace51d5209d819958a1f5d315fd25bf0c4c713a359f38aa64a60f691b05b6544e8f1cd3544f51c1d5a265faa5333#npm:0.21.1"],
             ["@bangle.dev/markdown-front-matter", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@bangle.dev/react", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@sentry/tracing", "npm:6.7.1"],
@@ -8249,22 +8265,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["supports-color", "npm:7.2.0"]
           ],
           "linkType": "HARD",
-        }]
-      ]],
-      ["changelog", [
-        ["workspace:extensions/changelog", {
-          "packageLocation": "./extensions/changelog/",
-          "packageDependencies": [
-            ["changelog", "workspace:extensions/changelog"],
-            ["@testing-library/react", "virtual:732cfcce2d09e3fb8628fea864e2a236f8aa179614c01c796eb87b82f7db9d69296da3ed6f753886585e863950653547965ff141328054e31c71a3ba42824eb4#npm:12.0.0"],
-            ["@types/react", "npm:17.0.11"],
-            ["@types/react-dom", "npm:17.0.8"],
-            ["extension-registry", "workspace:lib/extension-registry"],
-            ["react", "npm:17.0.2"],
-            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
-            ["utils", "workspace:lib/utils"]
-          ],
-          "linkType": "SOFT",
         }]
       ]],
       ["char-regex", [
@@ -15322,6 +15322,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/markdown-front-matter", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@bangle.dev/pm-utils", "virtual:d7146d7f448e3f328c6f8c48e8fd5cd8a694357cde5756f3013b6f8166607b490722aa16291792ce0be80348206f25f2a8864797c1d0686c2d8e417cd3812e8f#npm:0.21.1"],
             ["@bangle.dev/table", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
+            ["markdown-it", "npm:10.0.0"],
             ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-utils", "virtual:5d6819dcad1008c9c22d4a859a683f33ae84293feb1ecfc101eb1000a7c6edbc3940ec2b586bc310c1117b806f8f09134f282209b48826ed9a219ad3ef12775c#npm:1.0.0-0"]
           ],

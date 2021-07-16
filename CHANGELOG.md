@@ -60,4 +60,4 @@
 
 Palette now shows helpful keyboard shortcuts.
 
-![](/assets/images/image-2021-05-03-22-12-19-498.png)
+![](/changelog/image-2021-05-03-22-12-19-498.png)

@@ -23,7 +23,7 @@ DONOT keep internal styles here.
   max-width: 100vw;
   background-color: var(--activity-bar-color);
   padding: 0 var(--editor-x-axis-padding);
-  z-index: 300;
+  z-index: 30;
   position: fixed;
   top: 0;
   left: 0;
@@ -62,7 +62,7 @@ DONOT keep internal styles here.
 }
 
 .options-bar-area {
-  z-index: 100;
+  z-index: 20;
   padding: 1rem 1rem 0 0;
   position: fixed;
   top: 0;
@@ -152,11 +152,11 @@ DONOT keep internal styles here.
   padding: 0 var(--editor-x-axis-padding);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 20;
 }
 
 .left-sidebar-area {
-  z-index: 100;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-stronger-color);
