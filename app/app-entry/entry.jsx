@@ -37,7 +37,6 @@ export function Entry() {
         <Router>
           <AppStateProvider>
             <WorkerSetup loadWebworker={moduleSupport} />
-            <PageLifecycle />
             <UIManager>
               <ExtensionRegistryContextProvider
                 initExtensionRegistry={initExtensionRegistry}
@@ -49,6 +48,7 @@ export function Entry() {
                   <WatchWorkspace />
                   <WatchUI />
                   <EditorManager>
+                    <PageLifecycle />
                     <ActionContextProvider>
                       <App />
                     </ActionContextProvider>

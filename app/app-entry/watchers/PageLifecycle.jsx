@@ -1,6 +1,8 @@
 import { naukarWorkerProxy } from 'naukar-proxy';
 import { useState, useContext, useEffect } from 'react';
 import { AppStateContext } from 'app-state-context';
+import { useEditorManagerContext } from 'editor-manager-context';
+import { trimWhiteSpaceBeforeCursor } from 'editor-utils';
 
 const pendingSymbol = Symbol('pending-tasks');
 
@@ -12,6 +14,8 @@ export function PageLifecycle() {
     pageStateCurrent: undefined,
     pageStatePrevious: undefined,
   });
+
+  const { forEachEditor } = useEditorManagerContext();
 
   useEffect(() => {
     import('page-lifecycle').then(({ default: lifecycle }) => {
@@ -59,9 +63,14 @@ export function PageLifecycle() {
     }
     // save things immediately when we lose focus
     else if (pageStateCurrent === 'passive' || pageStateCurrent === 'hidden') {
+      forEachEditor((editor, i) => {
+        if (editor.view.hasFocus()) {
+          trimWhiteSpaceBeforeCursor()(editor.view.state, editor.view.dispatch);
+        }
+      });
       naukarWorkerProxy.flushDisk();
     }
-  }, [pageStateCurrent, pageStatePrevious]);
+  }, [pageStateCurrent, pageStatePrevious, forEachEditor]);
 
   return null;
 }
