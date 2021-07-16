@@ -4338,8 +4338,10 @@ __metadata:
   resolution: "app-entry@workspace:app/app-entry"
   dependencies:
     "@bangle.dev/core": 0.21.1
+    "@bangle.dev/markdown": 0.21.1
     "@bangle.dev/markdown-front-matter": 0.21.1
     "@bangle.dev/react": 0.21.1
+    "@bangle.dev/table": 0.21.1
     "@sentry/tracing": ^6.7.1
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^7.0.0
@@ -11715,6 +11717,7 @@ fsevents@^2.1.2:
     "@bangle.dev/markdown-front-matter": 0.21.1
     "@bangle.dev/pm-utils": 0.21.1
     "@bangle.dev/table": 0.21.1
+    markdown-it: ^10.0.0
     prosemirror-model: ^1.14.1
     prosemirror-utils: 1.0.0-0
   languageName: unknown

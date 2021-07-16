@@ -1,3 +1,4 @@
+export * from './Modal';
 export * from './Icons';
 export * from './ButtonIcon';
 export * from './LocationBreadCrumb';
@@ -8,3 +9,4 @@ export * from './Input';
 export * from './Sidebar';
 export * from './InputPalette';
 export * from './ListPalette';
+export * from './ErrorBoundary';

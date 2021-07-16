@@ -22,8 +22,10 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/core": "0.21.1",
+    "@bangle.dev/markdown": "0.21.1",
     "@bangle.dev/markdown-front-matter": "0.21.1",
     "@bangle.dev/react": "0.21.1",
+    "@bangle.dev/table": "0.21.1",
     "@sentry/tracing": "^6.7.1",
     "action-context": "workspace:*",
     "app-state-context": "workspace:*",

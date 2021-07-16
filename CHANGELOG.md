@@ -1,26 +1,38 @@
+### Jul 15, 2021
+
+- **What's new:** Ability to see `Whats new?` in the sidebar _(the one you are viewing)_. This will allow you to stay updated on how the produce is evolving.
+
+### Jun 30, 2021
+
+- **Search:** You can now perform text search on your notes, by either hitting the search icon in sidebar or pressing `Ctrl-shift-F` or `Command-shift-F`.
+
+### Jun 23, 2021
+
+- Behind the scenes revamped the architecture to allow for Extensions.
+
+### Jun 14, 2021
+
+- Palettes now remember what you did last. For example, the notes palette will show you your recently opened notes.
+
 ### Jun 9, 2021
 
-- Synchronize new files created or deleted across tabs.
+- Bangle now propagates note modification across tabs. So go ahead and open tabs and live the multi-tasking life.
 
-- Synchronize the color theme across tabs.
+- Bangle also synchronizes bunch of editor settings across tabs. For example, switching to dark mode on one tab, makes it dark in every tab.
 
 ### Jun 8, 2021
 
 - Fixed issues when creating and deleting files won't be propagated across the app.
 
-- I now remember the selection position of your document as you switch between them.
+- Bangle now remembers the selection position of your document as you switch between them.
 
 ### Jun 5, 2021
 
-- I now synchronizes changes across browser tabs.
-
-- I can now remember the scroll positions of your documents as you switch between them.
-
-- I have started running part of my functionality in a worker thread, making me more more responsive than before.
+- Part of Bangle has been moved to a worker thread making it more responsive.
 
 ### May 29, 2021
 
-- I now have the functionality to pick great variety of :partying_face:  :disguised_face:  emojis.
+- Bangle now allows you to add emoji to your notes. Type `:` in your note to see the available emojis.
 
 ### May 20, 2021
 
@@ -36,21 +48,21 @@
 
 ### May 7, 2021
 
-- **Bugs** Fixed a bunch of bugs and feature gap in wiki links. They should now match with what other editors provide.
+- Fixed a bunch of bugs and feature gap in wiki links.
 
 ### May 3, 2021
 
-- :city_sunset: **Images!** You can now _paste_ or _drag-n-drop_ an image into your note and Bangle will automatically save that file in your workspace.
+- **Images:** You can now _paste_ or _drag-n-drop_ an image into your note and Bangle will automatically save that file in your workspace.
 
 ### May 1, 2021
 
-- you can now insert blocks above and below your current block via action palette (Type `/` to use it) or by pressing `Command-Enter` (below) or `Command-Shift-Enter` (above).
+- **Inline action palette:** You can now insert blocks above and below your current block via action palette (Type `/` to use it) or by pressing `Command-Enter` (below) or `Command-Shift-Enter` (above).
 
 - We now support wiki style links. Type `[[` followed by the name of your note to create a link to it.
 
 ### Apr 30 2021
 
-- A new inline action palette! Type `/` to use it.
+- **Inline action palette:** A new inline action palette! Type `/` to use it.
 
 ### Ap 27 2021
 
@@ -58,6 +70,6 @@
 
 ### Apr 22, 2021
 
-Palette now shows helpful keyboard shortcuts.
+- Palette now shows helpful keyboard shortcuts.
 
-![](/assets/images/image-2021-05-03-22-12-19-498.png)
+![](/changelog/image-2021-05-03-22-12-19-498.png)

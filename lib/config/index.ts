@@ -3,6 +3,7 @@ let releaseId = undefined;
 let deployEnv = undefined;
 let helpDocsVersion = undefined;
 let bangleHot = undefined;
+let changelogText = undefined;
 // Done this way to allow for bundlers
 // to do a string replace.
 try {
@@ -21,6 +22,9 @@ try {
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
   bangleHot = process.env.BANGLE_HOT;
+  // @ts-ignore process is undefined unless we pull in @types/node
+  // eslint-disable-next-line no-process-env
+  changelogText = process.env.CHANGELOG_TEXT;
 } catch (err) {}
 
 export const APP_ENV = nodeEnv;
@@ -34,7 +38,18 @@ if (!/^\d+\.\d+\.\d+/.test(HELP_DOCS_VERSION || '')) {
 
 export const TAB_ID = 'tab_' + randomStr(4);
 
-export const config = {
+export const config: {
+  APP_ENV: string | undefined;
+  RELEASE_ID: string | undefined;
+  DEPLOY_ENV: string | undefined;
+  HELP_DOCS_VERSION: string | undefined;
+  isTest: boolean | undefined;
+  isProduction: boolean | undefined;
+  isIntegration: boolean | undefined;
+  TAB_ID: string | undefined;
+  BANGLE_HOT: boolean | undefined;
+  changelogText: string | undefined;
+} = {
   APP_ENV,
   RELEASE_ID,
   DEPLOY_ENV,
@@ -44,6 +59,7 @@ export const config = {
   isIntegration: nodeEnv === 'integration',
   TAB_ID,
   BANGLE_HOT: bangleHot,
+  changelogText,
 };
 
 if (!config.isTest) {

@@ -1,5 +1,6 @@
 /* eslint-disable no-process-env */
-
+const path = require('path');
+const fs = require('fs');
 let commitHash = require('child_process')
   .execSync('git rev-parse --short HEAD')
   .toString()
@@ -10,6 +11,13 @@ const helpDocsVersion = JSON.parse(
     .execSync('yarn info bangle-io-help --json -A')
     .toString(),
 ).children.Version;
+
+function readChangelogText() {
+  return fs.readFileSync(
+    path.join(__dirname, '..', '..', 'CHANGELOG.md'),
+    'utf-8',
+  );
+}
 
 module.exports = ({ isProduction, isVite = false }) => {
   return {
@@ -49,6 +57,7 @@ module.exports = ({ isProduction, isVite = false }) => {
       'process.env.BANGLE_HOT': JSON.stringify(
         process.env.BANGLE_HOT ? true : false,
       ),
+      'process.env.CHANGELOG_TEXT': JSON.stringify(readChangelogText()),
     },
   };
 };

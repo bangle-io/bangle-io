@@ -6811,8 +6811,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["app-entry", "workspace:app/app-entry"],
             ["@bangle.dev/core", "npm:0.21.1"],
+            ["@bangle.dev/markdown", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@bangle.dev/markdown-front-matter", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@bangle.dev/react", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
+            ["@bangle.dev/table", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@sentry/tracing", "npm:6.7.1"],
             ["@testing-library/react", "virtual:208bf970805b4e213f5c4c53dd26d25a5b84fc1451dd524222183d264fa64d6932a2408178663fd02fe00b91d0a700222b20ad20a7f9c8528c8e21137a86af57#npm:11.2.7"],
             ["@testing-library/react-hooks", "virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:7.0.0"],
@@ -15301,6 +15303,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/markdown-front-matter", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
             ["@bangle.dev/pm-utils", "virtual:d7146d7f448e3f328c6f8c48e8fd5cd8a694357cde5756f3013b6f8166607b490722aa16291792ce0be80348206f25f2a8864797c1d0686c2d8e417cd3812e8f#npm:0.21.1"],
             ["@bangle.dev/table", "virtual:5fb1cf732363f7c1f12f8fc1433de031d723646bf1766cc9b8f5f8b2bfd2e6427b3c7f6db3df4b4771a77325b2a8e61218db933ed9c7b29c62e204dbcd7554a7#npm:0.21.1"],
+            ["markdown-it", "npm:10.0.0"],
             ["prosemirror-model", "npm:1.14.1"],
             ["prosemirror-utils", "virtual:5d6819dcad1008c9c22d4a859a683f33ae84293feb1ecfc101eb1000a7c6edbc3940ec2b586bc310c1117b806f8f09134f282209b48826ed9a219ad3ef12775c#npm:1.0.0-0"]
           ],

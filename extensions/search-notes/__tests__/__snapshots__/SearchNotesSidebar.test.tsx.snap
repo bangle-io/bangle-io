@@ -9,7 +9,7 @@ exports[`renders correctly workspace is opened 1`] = `
     <div
       class="b-item-container font-semibold text-sm uppercase mt-2 px-2"
     >
-      Search notes
+      🔍 Search notes
     </div>
     <div
       class="b-item-container mt-2 px-2"
@@ -51,7 +51,7 @@ exports[`show results if match 1`] = `
     <div
       class="b-item-container font-semibold text-sm uppercase mt-2 px-2"
     >
-      Search notes
+      🔍 Search notes
     </div>
     <div
       class="b-item-container mt-2 px-2"
