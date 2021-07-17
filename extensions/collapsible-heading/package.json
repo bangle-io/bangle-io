@@ -19,7 +19,7 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.21.1",
+    "@bangle.dev/core": "0.22.0",
     "extension-registry": "workspace:*",
     "prosemirror-state": "^1.3.4",
     "prosemirror-view": "^1.18.7",

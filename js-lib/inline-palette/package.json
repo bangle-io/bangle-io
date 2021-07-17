@@ -32,11 +32,11 @@
     "utils": "*"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.21.1",
-    "@bangle.dev/js-utils": "0.21.1",
-    "@bangle.dev/pm-utils": "0.21.1",
-    "@bangle.dev/react": "0.21.1",
-    "@bangle.dev/tooltip": "0.21.1",
+    "@bangle.dev/core": "0.22.0",
+    "@bangle.dev/js-utils": "0.22.0",
+    "@bangle.dev/pm-utils": "0.22.0",
+    "@bangle.dev/react": "0.22.0",
+    "@bangle.dev/tooltip": "0.22.0",
     "@types/prosemirror-commands": "^1.0.4",
     "@types/prosemirror-inputrules": "^1.0.4",
     "@types/prosemirror-keymap": "^1.0.4",

@@ -39,7 +39,7 @@
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.21.1",
+    "@bangle.dev/core": "0.22.0",
     "@testing-library/react": "^11.2.7",
     "@types/history": "^4.7.8",
     "@types/prosemirror-model": "^1.13.0",
