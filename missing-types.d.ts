@@ -1,7 +1,3 @@
-declare module '@bangle.dev/markdown-front-matter' {
-  export const frontMatterMarkdownItPlugin: any;
-}
-
 declare module '@bangle.dev/trailing-node' {
   export const trailingNode: any;
 }

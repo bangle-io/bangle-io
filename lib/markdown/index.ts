@@ -1,5 +1,4 @@
 import * as markdown from '@bangle.dev/markdown';
-import { defaultMarkdownItTokenizer } from './tokenizer';
 import { findChildren } from '@bangle.dev/pm-utils';
 import { Fragment, Slice } from 'prosemirror-model';
 import { heading } from '@bangle.dev/core';
@@ -23,7 +22,7 @@ const setupSerializer = () => {
 const setupGetParser = () => {
   const setupParser = (specRegistry, markdownItPlugins) => {
     log('setting up parser');
-    let tokenizer = defaultMarkdownItTokenizer;
+    let tokenizer = markdown.getDefaultMarkdownItTokenizer();
     markdownItPlugins.forEach((plugin) => {
       // to allow passing of plugin options
       if (Array.isArray(plugin)) {

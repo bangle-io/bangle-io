@@ -4,7 +4,7 @@ import { Modal } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import { SpecRegistry, corePlugins, coreSpec } from '@bangle.dev/core';
-import * as markdown from '@bangle.dev/markdown';
+import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { config } from 'config';
 import { useLocalStorage } from 'utils';
 
@@ -37,8 +37,8 @@ export function Changelog() {
     </Modal>
   ) : null;
 }
-const parser = markdown.markdownParser(specRegistry);
-const serializer = markdown.markdownSerializer(specRegistry);
+const parser = markdownParser(specRegistry);
+const serializer = markdownSerializer(specRegistry);
 
 export function serializeMarkdown(editor) {
   return serializer.serialize(editor.view.state.doc);
