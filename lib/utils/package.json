@@ -19,7 +19,7 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/js-utils": "0.22.0",
+    "@bangle.dev/js-utils": "0.22.1",
     "base-error": "workspace:*",
     "config": "workspace:*",
     "constants": "workspace:*",
@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@testing-library/react-hooks": "^7.0.0",
-    "@types/react": "^17.0.11",
-    "@types/react-dom": "^17.0.8",
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9",
     "react-test-renderer": "^17.0.2"
   }
 }

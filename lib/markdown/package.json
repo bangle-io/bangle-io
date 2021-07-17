@@ -19,20 +19,20 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.22.0",
-    "@bangle.dev/markdown": "0.22.0",
-    "@bangle.dev/markdown-front-matter": "0.22.0",
-    "@bangle.dev/pm-utils": "0.22.0",
-    "@bangle.dev/table": "0.22.0",
-    "prosemirror-model": "^1.14.1",
+    "@bangle.dev/core": "0.22.1",
+    "@bangle.dev/markdown": "0.22.1",
+    "@bangle.dev/markdown-front-matter": "0.22.1",
+    "@bangle.dev/pm-utils": "0.22.1",
+    "@bangle.dev/table": "0.22.1",
+    "prosemirror-model": "^1.14.2",
     "prosemirror-state": "^1.3.4",
     "prosemirror-utils": "1.0.0-0"
   },
   "devDependencies": {
     "@types/prosemirror-commands": "^1.0.4",
-    "@types/prosemirror-model": "^1.13.0",
-    "@types/prosemirror-state": "^1.2.6",
-    "@types/prosemirror-view": "^1.17.1"
+    "@types/prosemirror-model": "^1.13.1",
+    "@types/prosemirror-state": "^1.2.7",
+    "@types/prosemirror-view": "^1.17.2"
   },
   "publishConfig": {
     "access": "public"

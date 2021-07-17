@@ -19,8 +19,8 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.22.0",
-    "@bangle.dev/search": "0.22.0",
+    "@bangle.dev/core": "0.22.1",
+    "@bangle.dev/search": "0.22.1",
     "action-context": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
@@ -36,8 +36,8 @@
   },
   "devDependencies": {
     "@testing-library/react": "^12.0.0",
-    "@types/react": "^17.0.11",
-    "@types/react-dom": "^17.0.8",
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9",
     "react-dom": "^17.0.2",
     "test-utils": "workspace:*"
   },

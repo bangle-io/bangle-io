@@ -19,8 +19,8 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.22.0",
-    "@bangle.dev/react": "0.22.0",
+    "@bangle.dev/core": "0.22.1",
+    "@bangle.dev/react": "0.22.1",
     "app-state-context": "workspace:*",
     "debounce-fn": "^5.0.0",
     "extension-registry": "workspace:*",
@@ -30,8 +30,8 @@
     "utils": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^17.0.11",
-    "@types/react-dom": "^17.0.8"
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9"
   },
   "publishConfig": {
     "access": "restricted"

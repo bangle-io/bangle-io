@@ -24,9 +24,9 @@
   },
   "devDependencies": {
     "@types/history": "^4.7.8",
-    "@types/react": "^17.0.11",
-    "@types/react-dom": "^17.0.8",
-    "@types/react-router-dom": "^5.1.7",
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-router-dom": "^5.1.8",
     "react": "^17.0.2",
     "react-dom": "17.0.2",
     "react-router-dom": "^5.2.0"
