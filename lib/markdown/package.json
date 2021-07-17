@@ -19,11 +19,11 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.22.1",
-    "@bangle.dev/markdown": "0.22.1",
-    "@bangle.dev/markdown-front-matter": "0.22.1",
-    "@bangle.dev/pm-utils": "0.22.1",
-    "@bangle.dev/table": "0.22.1",
+    "@bangle.dev/core": "0.22.2",
+    "@bangle.dev/markdown": "0.22.2",
+    "@bangle.dev/markdown-front-matter": "0.22.2",
+    "@bangle.dev/pm-utils": "0.22.2",
+    "@bangle.dev/table": "0.22.2",
     "prosemirror-model": "^1.14.2",
     "prosemirror-state": "^1.3.4",
     "prosemirror-utils": "1.0.0-0"

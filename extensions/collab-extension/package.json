@@ -19,10 +19,10 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/collab-client": "0.22.1",
-    "@bangle.dev/collab-server": "0.22.1",
-    "@bangle.dev/core": "0.22.1",
-    "@bangle.dev/js-utils": "0.22.1",
+    "@bangle.dev/collab-client": "0.22.2",
+    "@bangle.dev/collab-server": "0.22.2",
+    "@bangle.dev/core": "0.22.2",
+    "@bangle.dev/js-utils": "0.22.2",
     "extension-registry": "workspace:*",
     "naukar-proxy": "workspace:*"
   },

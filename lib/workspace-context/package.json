@@ -19,7 +19,7 @@
   "module": "index.ts",
   "scripts": {},
   "devDependencies": {
-    "@bangle.dev/core": "0.22.1",
+    "@bangle.dev/core": "0.22.2",
     "@testing-library/react": "^11.2.7",
     "@testing-library/react-hooks": "^7.0.0",
     "@types/history": "^4.7.8",

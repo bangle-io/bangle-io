@@ -20,8 +20,8 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/core": "0.22.1",
-    "@bangle.dev/js-utils": "0.22.1",
+    "@bangle.dev/core": "0.22.2",
+    "@bangle.dev/js-utils": "0.22.2",
     "prosemirror-commands": "^1.1.10",
     "prosemirror-dropcursor": "^1.3.5",
     "prosemirror-gapcursor": "^1.1.5",
