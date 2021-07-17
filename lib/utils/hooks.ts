@@ -95,7 +95,7 @@ export function useCatchRejection(callback) {
  *          lazy initialization. If an item exists in the localstorage it will be used
  *          else fallback to the initialValue.
  */
-export function useLocalStorage(key, initialValue) {
+export function useLocalStorage(key: string, initialValue) {
   // TODO i think over time we might populate this with a ton of shit.
   // we should have a mechanism to kill some of values, for example having timestamp.
   // and then listing all keys and deleting anything which is old.

@@ -23,7 +23,8 @@ export function ActivityBar() {
   const extensionRegistry = useExtensionRegistryContext();
   const { dispatchAction } = useActionContext();
 
-  const { paletteType, sidebar, dispatch, widescreen } = useUIManagerContext();
+  const { changelogHasUpdates, paletteType, sidebar, dispatch, widescreen } =
+    useUIManagerContext();
   const { primaryWsPath } = useWorkspaceContext();
   const history = useHistory();
 
@@ -147,7 +148,10 @@ export function ActivityBar() {
           className={cx('flex justify-center pt-3 pb-3 mt-1 mb-1')}
           style={{}}
         >
-          <GiftIcon className="h-7 w-7 text-gray-100" />
+          <GiftIcon
+            className="h-7 w-7 text-gray-100"
+            showDot={changelogHasUpdates}
+          />
         </ButtonIcon>
         {bottomInjectedSidebars}
       </div>

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { cx, useWatchClickOutside } from 'utils';
+import { cx, useKeybindings, useWatchClickOutside } from 'utils';
 import { ButtonIcon } from '../ButtonIcon';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { CloseIcon } from '../Icons';
@@ -21,6 +21,15 @@ export function Modal({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   useWatchClickOutside(containerRef, onDismiss, () => {});
+
+  useKeybindings(() => {
+    return {
+      Escape: () => {
+        onDismiss();
+        return true;
+      },
+    };
+  }, [onDismiss]);
 
   return (
     <div

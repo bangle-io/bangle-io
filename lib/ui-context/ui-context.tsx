@@ -29,6 +29,7 @@ interface UIStateObj {
   notifications: NotificationType[];
   dispatch: Function;
   modal: string | undefined;
+  changelogHasUpdates: boolean;
 }
 function getThemePreference() {
   if (typeof window === 'undefined') {
@@ -50,6 +51,7 @@ const initialState: UIStateObj = {
   notifications: [],
   dispatch: () => {},
   modal: undefined,
+  changelogHasUpdates: false,
 };
 
 export const UIManagerContext = createContext(initialState);
@@ -230,6 +232,13 @@ const reducer = (
       return {
         ...state,
         modal: undefined,
+      };
+    }
+
+    case 'UI/UPDATE_NEW_CHANGELOG': {
+      return {
+        ...state,
+        changelogHasUpdates: action.value,
       };
     }
 
