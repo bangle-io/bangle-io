@@ -19,8 +19,9 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.23.1",
+    "@bangle.dev/core": "0.24.0-alpha.7",
     "@bangle.dev/pm": "0.5.0",
+    "@bangle.dev/utils": "0.24.0-alpha.7",
     "extension-registry": "workspace:*",
     "utils": "workspace:*"
   },
