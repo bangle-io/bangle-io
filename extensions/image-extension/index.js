@@ -1,6 +1,6 @@
 import { image } from '@bangle.dev/core';
 import { Extension } from 'extension-registry';
-import { NodeSelection } from 'prosemirror-state';
+import { NodeSelection } from '@bangle.dev/pm';
 import { imageNodeViewPlugin } from './image-node-view-plugin';
 import { renderImageReactNodeView } from './render-image-react-node-view';
 import { floatingMenu } from '@bangle.dev/react-menu';

@@ -3,7 +3,7 @@ import { paragraph, bulletList, listItem, orderedList } from '@bangle.dev/core';
 
 import { rafCommandExec } from '@bangle.dev/pm-utils';
 import { replaceSuggestionMarkWith } from 'inline-palette';
-import { setBlockType } from 'prosemirror-commands';
+import { setBlockType } from '@bangle.dev/pm';
 import { palettePluginKey } from './config';
 import { PaletteItem } from './palette-item';
 import {

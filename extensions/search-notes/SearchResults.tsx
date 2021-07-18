@@ -10,7 +10,7 @@ import { resolvePath } from 'ws-path';
 import { HighlightText } from './HighlightText';
 import { SearchResultItem } from './types';
 import { useEditorManagerContext } from 'editor-manager-context';
-import { Selection } from 'prosemirror-state';
+import { Selection } from '@bangle.dev/pm';
 
 function useCollapseMarker(
   results: SearchResultItem[],

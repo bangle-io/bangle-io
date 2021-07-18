@@ -20,12 +20,12 @@
   "scripts": {},
   "dependencies": {
     "@bangle.dev/core": "0.23.1",
+    "@bangle.dev/pm": "^0.4.0",
     "@bangle.dev/search": "0.23.1",
     "action-context": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
     "extension-registry": "workspace:*",
-    "prosemirror-state": "^1.3.4",
     "react": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "ui-components": "workspace:*",

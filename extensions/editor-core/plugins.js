@@ -1,5 +1,5 @@
 import { link, components } from '@bangle.dev/core';
-import { Plugin, PluginKey, NodeSelection } from 'prosemirror-state';
+import { Plugin, PluginKey, NodeSelection } from '@bangle.dev/pm';
 import stopwatch from '@bangle.dev/react-stopwatch';
 
 import { trailingNode } from '@bangle.dev/trailing-node';

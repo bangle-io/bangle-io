@@ -1,4 +1,4 @@
-import { PluginKey } from 'prosemirror-state';
+import { PluginKey } from '@bangle.dev/pm';
 
 export const extensionName = 'inline-backlink';
 export const backLinkNodeName = 'wikiLink';

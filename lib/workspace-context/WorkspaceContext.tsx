@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react';
 import { BaseFileSystemError, NATIVE_BROWSER_PERMISSION_ERROR } from 'baby-fs';
-import { Node } from 'prosemirror-model';
+import { Node } from '@bangle.dev/pm';
 import {
   FileOps,
   HELP_FS_INDEX_FILE_NAME,

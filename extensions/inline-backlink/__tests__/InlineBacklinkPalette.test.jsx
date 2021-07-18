@@ -1,6 +1,6 @@
 import React from 'react';
-import { PluginKey } from 'prosemirror-state';
-import { Node } from 'prosemirror-model';
+import { PluginKey } from '@bangle.dev/pm';
+import { Node } from '@bangle.dev/pm';
 import { ExtensionRegistry, Extension } from 'extension-registry';
 
 import { render, act } from '@testing-library/react';

@@ -5,7 +5,7 @@ import {
   orderedList,
   paragraph,
 } from '@bangle.dev/core';
-import { chainCommands } from 'prosemirror-commands';
+import { chainCommands } from '@bangle.dev/pm';
 const { insertEmptyParagraphAbove, insertEmptyParagraphBelow } = paragraph;
 const { queryIsBulletListActive } = bulletList;
 const { queryIsOrderedListActive } = orderedList;

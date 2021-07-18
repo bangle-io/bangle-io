@@ -1,4 +1,4 @@
-import type { Command } from 'prosemirror-commands';
+import type { Command } from '@bangle.dev/pm';
 
 export function trimWhiteSpaceBeforeCursor(): Command {
   return (state, dispatch) => {

@@ -1,4 +1,4 @@
-import type { Schema } from 'prosemirror-model';
+import type { Schema } from '@bangle.dev/pm';
 import type { BangleEditorStateProps } from '@bangle.dev/core';
 export interface PluginMetadata {
   wsPath: string;

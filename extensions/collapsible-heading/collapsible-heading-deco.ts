@@ -1,7 +1,11 @@
 import { heading } from '@bangle.dev/core';
-import { Plugin, PluginKey, Selection } from 'prosemirror-state';
-import { Decoration, DecorationSet } from 'prosemirror-view';
-import { rafSchedule } from 'utils/utility';
+import {
+  Plugin,
+  PluginKey,
+  Selection,
+  Decoration,
+  DecorationSet,
+} from '@bangle.dev/pm';
 
 const name = 'collapsible_heading_deco';
 const leftOffset = 24;
