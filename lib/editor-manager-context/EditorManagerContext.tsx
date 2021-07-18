@@ -1,5 +1,5 @@
 import type { BangleEditor } from '@bangle.dev/core';
-import { getIdleCallback } from '@bangle.dev/js-utils';
+import { getIdleCallback } from '@bangle.dev/utils';
 import { config } from 'config';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 

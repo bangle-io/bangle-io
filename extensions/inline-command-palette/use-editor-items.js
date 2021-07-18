@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { paragraph, bulletList, listItem, orderedList } from '@bangle.dev/core';
 
-import { rafCommandExec } from '@bangle.dev/pm-utils';
+import { rafCommandExec } from '@bangle.dev/utils';
 import { replaceSuggestionMarkWith } from 'inline-palette';
 import { setBlockType } from '@bangle.dev/pm';
 import { palettePluginKey } from './config';

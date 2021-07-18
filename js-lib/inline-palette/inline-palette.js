@@ -1,6 +1,6 @@
-import { bangleWarn } from '@bangle.dev/js-utils';
+import { bangleWarn } from '@bangle.dev/utils';
 import { suggestTooltip, createTooltipDOM } from '@bangle.dev/tooltip';
-import { valuePlugin } from '@bangle.dev/pm-utils';
+import { valuePlugin } from '@bangle.dev/utils';
 import { pluginKeyStore } from '@bangle.dev/core';
 
 const {

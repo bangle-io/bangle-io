@@ -2,7 +2,7 @@ import { PluginMetadata, Extension } from 'extension-registry';
 import { collabClient } from '@bangle.dev/collab-client';
 import { naukarWorkerProxy } from 'naukar-proxy';
 import { parseCollabResponse } from '@bangle.dev/collab-server';
-import { uuid } from '@bangle.dev/js-utils';
+import { uuid } from '@bangle.dev/utils';
 
 const extensionName = 'collab-extension';
 
