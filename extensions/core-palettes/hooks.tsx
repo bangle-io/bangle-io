@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useLocalStorage } from 'utils';
 const MAX_ENTRIES = 10;
 /**

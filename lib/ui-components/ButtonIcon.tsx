@@ -1,6 +1,6 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { cx } from 'utils';
-import PropTypes from 'prop-types';
 
 ButtonIcon.propTypes = {
   className: PropTypes.string,

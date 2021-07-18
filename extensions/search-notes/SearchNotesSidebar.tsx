@@ -1,13 +1,13 @@
+import { search } from '@bangle.dev/search';
 import { useActionContext } from 'action-context';
-import React, { useContext, useEffect, useState } from 'react';
+import { useEditorManagerContext } from 'editor-manager-context';
+import React, { useEffect, useState } from 'react';
 import { ButtonIcon, Sidebar, SpinnerIcon } from 'ui-components';
 import { useWorkspaceContext } from 'workspace-context';
 import { useSearchNotes } from './hooks';
+import { searchPluginKey } from './plugin-key';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
-import { search } from '@bangle.dev/search';
-import { useEditorManagerContext } from 'editor-manager-context';
-import { searchPluginKey } from './plugin-key';
 
 export function SearchNotesSidebar() {
   const { dispatchAction } = useActionContext();

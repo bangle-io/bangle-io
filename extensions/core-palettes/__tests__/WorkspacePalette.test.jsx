@@ -1,5 +1,5 @@
-import React from 'react';
 import { render } from '@testing-library/react';
+import React from 'react';
 import { useWorkspaces } from 'workspaces';
 import { workspacePalette } from '../WorkspacePalette';
 

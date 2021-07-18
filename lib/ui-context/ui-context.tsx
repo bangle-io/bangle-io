@@ -1,12 +1,12 @@
-import { applyTheme, ThemeType } from './apply-theme';
 import React, {
-  useContext,
-  useReducer,
   createContext,
-  useMemo,
+  useContext,
   useEffect,
+  useMemo,
+  useReducer,
 } from 'react';
-import { useWindowSize, checkWidescreen } from 'utils';
+import { checkWidescreen, useWindowSize } from 'utils';
+import { applyTheme, ThemeType } from './apply-theme';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};

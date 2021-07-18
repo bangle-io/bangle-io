@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { render, act } from '@testing-library/react';
 import { defaultSpecs } from '@bangle.dev/core/dist/test-helpers/default-components';
+import { act, render } from '@testing-library/react';
 import {
-  ActionType,
   Extension,
   ExtensionRegistry,
   ExtensionRegistryContextProvider,
   RegisterActionHandlerType,
   useExtensionRegistryContext,
 } from 'extension-registry';
-import { ActionContextProvider } from '../ActionContextProvider';
+import React, { useEffect, useState } from 'react';
 import { useActionContext } from '../ActionContext';
-import { sleep } from 'utils';
+import { ActionContextProvider } from '../ActionContextProvider';
 
 function ApplicationComponents() {
   const extensionRegistry = useExtensionRegistryContext();

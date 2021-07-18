@@ -1,16 +1,16 @@
 import * as idb from 'idb-keyval';
+import { validWsName } from 'ws-path';
+import {
+  WorkspaceError,
+  WORKSPACE_ALREADY_EXISTS_ERROR,
+  WORKSPACE_NOT_FOUND_ERROR,
+} from './errors';
 import {
   helpFSWorkspaceInfo,
   HELP_FS_WORKSPACE_TYPE,
   WorkspaceInfo,
   WorkspaceType,
 } from './types';
-import {
-  WorkspaceError,
-  WORKSPACE_NOT_FOUND_ERROR,
-  WORKSPACE_ALREADY_EXISTS_ERROR,
-} from './errors';
-import { validWsName } from 'ws-path';
 
 /**
  * This function exists to retain the instance of the wsInfo (in particular rootDirHandler)

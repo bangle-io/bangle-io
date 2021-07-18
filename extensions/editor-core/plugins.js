@@ -1,11 +1,11 @@
-import { link, components } from '@bangle.dev/core';
-import { Plugin, PluginKey, NodeSelection } from '@bangle.dev/pm';
-import stopwatch from '@bangle.dev/react-stopwatch';
-
-import { trailingNode } from '@bangle.dev/trailing-node';
-import { timestamp } from '@bangle.dev/timestamp';
+import { components, link } from '@bangle.dev/core';
+import { NodeSelection, Plugin, PluginKey } from '@bangle.dev/pm';
 import { floatingMenu } from '@bangle.dev/react-menu';
+import stopwatch from '@bangle.dev/react-stopwatch';
 import { tablePlugins } from '@bangle.dev/table';
+import { timestamp } from '@bangle.dev/timestamp';
+import { trailingNode } from '@bangle.dev/trailing-node';
+
 export const menuKey = new PluginKey('menuKey');
 
 const getScrollContainer = (view) => {

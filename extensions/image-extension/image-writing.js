@@ -1,5 +1,5 @@
-import { IMAGE_SAVE_DIR } from './config';
 import { filePathToWsPath, resolvePath } from 'ws-path';
+import { IMAGE_SAVE_DIR } from './config';
 import { setImageMetadataInWsPath } from './image-file-helpers';
 
 /**

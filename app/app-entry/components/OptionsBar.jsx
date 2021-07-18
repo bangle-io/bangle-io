@@ -1,7 +1,7 @@
 import { useActionContext } from 'action-context';
 import { keybindings, keyDisplayValue } from 'config';
 import { useExtensionRegistryContext } from 'extension-registry';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import {
   ButtonIcon,
   ChevronDoubleRightIcon,

@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
-import { useUIManagerContext } from 'ui-context';
-import { cx } from 'utils';
-import { OptionsBar } from '../components/OptionsBar';
-import { EditorArea } from '../editor/EditorArea';
-import { HelpWorkspaceMonitor } from '../watchers/HelpWorkspaceModified';
 import {
   PRIMARY_SCROLL_PARENT_ID,
   SECONDARY_SCROLL_PARENT_ID,
 } from 'constants';
+import React from 'react';
+import { useUIManagerContext } from 'ui-context';
+import { cx } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
+import { OptionsBar } from '../components/OptionsBar';
+import { EditorArea } from '../editor/EditorArea';
+import { HelpWorkspaceMonitor } from '../watchers/HelpWorkspaceModified';
 
 export function WorkspacePage() {
   const { widescreen } = useUIManagerContext();

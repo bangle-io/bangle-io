@@ -1,15 +1,14 @@
-import React, { useEffect } from 'react';
-import { useEditorViewContext } from '@bangle.dev/react';
 import { NodeSelection } from '@bangle.dev/pm';
-import { menuKey, wsNameViewWeakStore } from './config';
-import { useWorkspaceContext } from 'workspace-context';
-
+import { useEditorViewContext } from '@bangle.dev/react';
 import {
   FloatingMenu,
   Menu,
-  MenuGroup,
   MenuButton,
+  MenuGroup,
 } from '@bangle.dev/react-menu';
+import React, { useEffect } from 'react';
+import { useWorkspaceContext } from 'workspace-context';
+import { menuKey, wsNameViewWeakStore } from './config';
 import {
   getImageAltScaleFactor,
   updateImageAltScaleFactor,

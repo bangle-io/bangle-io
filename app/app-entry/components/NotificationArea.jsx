@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   ButtonIcon,
+  CheckCircleIcon,
   CloseIcon,
+  ExclamationCircleIcon,
   ExclamationIcon,
   InformationCircleIcon,
-  ExclamationCircleIcon,
-  CheckCircleIcon,
 } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
 

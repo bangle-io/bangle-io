@@ -1,12 +1,12 @@
-import './Changelog.css';
+import { corePlugins, coreSpec, SpecRegistry } from '@bangle.dev/core';
+import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
+import { BangleEditor, useEditorState } from '@bangle.dev/react';
+import { config } from 'config';
 import React, { useCallback, useEffect } from 'react';
 import { Modal } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
-import { BangleEditor, useEditorState } from '@bangle.dev/react';
-import { SpecRegistry, corePlugins, coreSpec } from '@bangle.dev/core';
-import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
-import { config } from 'config';
 import { useLocalStorage } from 'utils';
+import './Changelog.css';
 
 const specRegistry = new SpecRegistry(coreSpec());
 
@@ -51,7 +51,8 @@ function getMarkdown() {
 function ChangelogDisplay() {
   const editorState = useEditorState({
     specRegistry,
-    plugins: () => corePlugins(),
+    // TODO remove as any
+    plugins: () => corePlugins() as any,
     initialValue: parser.parse(getMarkdown()),
   });
 

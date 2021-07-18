@@ -1,15 +1,15 @@
-import { FileOps } from 'workspaces';
-import { renderHook, act } from '@testing-library/react-hooks';
-import { useDeleteNote, useOpenedWsPaths, useFiles } from '../WorkspaceContext';
 import { render } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react-hooks';
+import React from 'react';
 import {
   MemoryRouter as Router,
-  Switch,
   Route,
+  Switch,
   useHistory,
   useLocation,
 } from 'react-router-dom';
-import React from 'react';
+import { FileOps } from 'workspaces';
+import { useDeleteNote, useFiles, useOpenedWsPaths } from '../WorkspaceContext';
 
 jest.mock('workspaces/index', () => {
   const actual = jest.requireActual('workspaces/index');

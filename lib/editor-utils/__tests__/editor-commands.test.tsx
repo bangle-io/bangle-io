@@ -4,12 +4,12 @@
 /** @jsx psx */
 /// <reference path="../../../missing-test-types.d.ts" />
 
-import { PluginKey, SpecRegistry } from '@bangle.dev/core';
+import { SpecRegistry } from '@bangle.dev/core';
+import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
 import {
   psx,
   renderTestEditor,
 } from '@bangle.dev/core/test-helpers/test-helpers';
-import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
 import { trimWhiteSpaceBeforeCursor } from '../editor-commands';
 const specRegistry = new SpecRegistry([...defaultSpecs()]);
 

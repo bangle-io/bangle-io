@@ -1,6 +1,5 @@
-import { getScrollParentElement } from 'utils';
-import { extensionName } from './config';
 import { Selection } from '@bangle.dev/pm';
+import { extensionName } from './config';
 
 const LOG = false;
 

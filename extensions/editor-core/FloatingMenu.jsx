@@ -1,18 +1,18 @@
-import React, { useCallback } from 'react';
 import {
-  FloatingMenu,
-  Menu,
-  MenuGroup,
   BoldButton,
-  ItalicButton,
+  BulletListButton,
   CodeButton,
   FloatingLinkButton,
+  FloatingMenu,
   HeadingButton,
-  BulletListButton,
+  ItalicButton,
   LinkSubMenu,
+  Menu,
+  MenuGroup,
   OrderedListButton,
   TodoListButton,
 } from '@bangle.dev/react-menu';
+import React, { useCallback } from 'react';
 import { menuKey } from './plugins';
 
 export function MenuComp() {

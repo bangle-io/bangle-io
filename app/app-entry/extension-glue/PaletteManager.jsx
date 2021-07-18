@@ -1,14 +1,8 @@
-import React, {
-  useContext,
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-} from 'react';
-import { useUIManagerContext } from 'ui-context';
-import { UniversalPalette } from 'ui-components';
 import { useActionContext } from 'action-context';
 import { useExtensionRegistryContext } from 'extension-registry';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { UniversalPalette } from 'ui-components';
+import { useUIManagerContext } from 'ui-context';
 
 export function PaletteManager() {
   const {

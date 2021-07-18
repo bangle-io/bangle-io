@@ -1,21 +1,20 @@
+import { keyDisplayValue } from 'config';
 import React, {
-  useEffect,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
 } from 'react';
-import { removeMdExtension } from 'utils';
-import { resolvePath } from 'ws-path';
-
 import {
-  UniversalPalette,
   ButtonIcon,
   FileDocumentIcon,
   SecondaryEditorIcon,
+  UniversalPalette,
 } from 'ui-components';
+import { removeMdExtension } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
+import { resolvePath } from 'ws-path';
 import { extensionName } from './config';
-import { keyDisplayValue } from 'config';
 import { useRecencyWatcher } from './hooks';
 
 const emptyArray = [];

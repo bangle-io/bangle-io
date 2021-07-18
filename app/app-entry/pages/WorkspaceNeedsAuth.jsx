@@ -1,14 +1,14 @@
-import { EditorWrapperUI } from '../components/EditorWrapperUI';
-import React, { useContext, useState, useEffect } from 'react';
-import { useParams, useHistory, Redirect } from 'react-router-dom';
 import { requestNativeBrowserFSPermission } from 'baby-fs';
+import React, { useEffect, useState } from 'react';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { useUIManagerContext } from 'ui-context';
+import { keybindingsHelper } from 'utils';
 import {
+  getWorkspaceInfo,
   WorkspaceError,
   WORKSPACE_NOT_FOUND_ERROR,
-  getWorkspaceInfo,
 } from 'workspaces';
-import { keybindingsHelper } from 'utils';
-import { useUIManagerContext } from 'ui-context';
+import { EditorWrapperUI } from '../components/EditorWrapperUI';
 
 export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {
   const [permissionDenied, updatePermissionDenied] = useState(false);

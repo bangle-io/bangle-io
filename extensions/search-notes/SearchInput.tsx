@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Input } from 'ui-components';
 
 export function SearchInput({ className = '', query, updateQuery }) {

@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import { act, fireEvent, render } from '@testing-library/react';
+import React from 'react';
 import { UIManager, useUIManagerContext } from 'ui-context';
-import { render, act, fireEvent } from '@testing-library/react';
-
-import { NotificationArea } from '../NotificationArea';
 import { sleep } from 'utils/utility';
+import { NotificationArea } from '../NotificationArea';
 
 describe('NotificationArea', () => {
   test('renders empty', async () => {

@@ -1,11 +1,11 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { GenericFileBrowser } from './NotesTree';
-import { useDestroyRef } from 'utils/hooks';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Sidebar } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
-import { isValidNoteWsPath } from 'ws-path';
+import { useDestroyRef } from 'utils/hooks';
 import { useWorkspaceContext } from 'workspace-context';
-import { HELP_FS_WORKSPACE_NAME, FileOps } from 'workspaces';
-import { ButtonIcon, Sidebar } from 'ui-components';
+import { FileOps, HELP_FS_WORKSPACE_NAME } from 'workspaces';
+import { isValidNoteWsPath } from 'ws-path';
+import { GenericFileBrowser } from './NotesTree';
 
 export function HelpDocuments() {
   const wsName = HELP_FS_WORKSPACE_NAME;

@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
-import { useUIManagerContext } from 'ui-context';
+import { useActionContext } from 'action-context';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
-import { useActionContext } from 'action-context';
 
 export function EmptyEditorPage() {
   const { wsName, noteWsPaths = [] } = useWorkspaceContext();

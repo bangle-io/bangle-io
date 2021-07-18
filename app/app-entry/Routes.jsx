@@ -1,9 +1,9 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { Route, useHistory, Redirect } from 'react-router-dom';
-import { WorkspacePage } from './pages/Workspace';
+import React, { useEffect, useState } from 'react';
+import { Redirect, Route, useHistory } from 'react-router-dom';
 import { useWorkspaceContext } from 'workspace-context';
+import { getWorkspaceInfo, HELP_FS_WORKSPACE_NAME } from 'workspaces';
 import { resolvePath } from 'ws-path';
-import { HELP_FS_WORKSPACE_NAME, getWorkspaceInfo } from 'workspaces';
+import { WorkspacePage } from './pages/Workspace';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
 

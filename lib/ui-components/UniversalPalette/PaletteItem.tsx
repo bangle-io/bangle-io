@@ -1,5 +1,5 @@
-import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import React, { ReactNode, useEffect, useRef } from 'react';
 
 export interface ItemType {
   uid: string;

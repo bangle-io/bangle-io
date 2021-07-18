@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { conditionalSuffix } from 'utils/utility';
+import { useWorkspaceContext } from 'workspace-context';
 import {
   filePathToWsPath,
-  validateNoteWsPath,
-  resolvePath,
   parseLocalFilePath,
   PathValidationError,
+  resolvePath,
+  validateNoteWsPath,
 } from 'ws-path';
 import { backLinkNodeName, newNoteLocation } from './config';
-import { useWorkspaceContext } from 'workspace-context';
 
 export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
   let { path, title } = nodeAttrs;

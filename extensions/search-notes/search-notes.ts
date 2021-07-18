@@ -1,6 +1,6 @@
 import { WorkspaceContextType } from 'workspace-context';
-import { SearchResultItem } from './types';
 import { pMap } from './p-map';
+import { SearchResultItem } from './types';
 export const CONCURRENCY = 10;
 
 export async function searchNotes(

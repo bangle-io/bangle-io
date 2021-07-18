@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useContext } from 'react';
-import { useBroadcastChannel } from 'utils';
-import { useUIManagerContext } from 'ui-context';
 import { TAB_ID } from 'config';
+import { useEffect, useRef } from 'react';
+import { useUIManagerContext } from 'ui-context';
+import { useBroadcastChannel } from 'utils';
 
 const CHANNEL_NAME = 'watch_ui';
 const UI_THEME_CHANGED = 'UI_THEME_CHANGED';

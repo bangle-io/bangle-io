@@ -1,9 +1,9 @@
-import { inlinePalette, queryInlinePaletteActive } from 'inline-palette';
-import { InlineCommandPalette } from './InlineCommandPalette';
-import { extensionName, paletteMarkName, palettePluginKey } from './config';
-import { Extension } from 'extension-registry';
 import { keymap } from '@bangle.dev/pm';
 import { keybindings } from 'config/keybindings';
+import { Extension } from 'extension-registry';
+import { inlinePalette, queryInlinePaletteActive } from 'inline-palette';
+import { extensionName, paletteMarkName, palettePluginKey } from './config';
+import { InlineCommandPalette } from './InlineCommandPalette';
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;

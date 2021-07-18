@@ -2,12 +2,12 @@ import { createPMNode } from 'test-utils/create-pm-node';
 import { sleep } from 'utils';
 import { resolvePath } from 'ws-path';
 import {
-  searchNotes,
   CONCURRENCY,
-  matchText,
-  startStringWithWord,
   endStringWithWord,
   getMatchFragment,
+  matchText,
+  searchNotes,
+  startStringWithWord,
 } from '../search-notes';
 
 test('works with empty data', async () => {

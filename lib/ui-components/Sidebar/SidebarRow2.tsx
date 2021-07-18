@@ -1,8 +1,7 @@
 import React from 'react';
-import { ItemType } from '../UniversalPalette/PaletteItem';
 import { cx, isTouchDevice } from 'utils';
-
 import { UniversalPalette } from '../UniversalPalette';
+import { ItemType } from '../UniversalPalette/PaletteItem';
 
 Row2.propType = {
   item: UniversalPalette.ItemPropTypes,

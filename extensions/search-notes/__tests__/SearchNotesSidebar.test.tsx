@@ -1,10 +1,10 @@
-import { render, fireEvent, act } from '@testing-library/react';
-import React from 'react';
-import { SearchNotesSidebar } from '../SearchNotesSidebar';
-import { useWorkspaceContext } from 'workspace-context';
+import { act, fireEvent, render } from '@testing-library/react';
 import { useEditorManagerContext } from 'editor-manager-context';
+import React from 'react';
 import { createPMNode } from 'test-utils/create-pm-node';
 import { sleep } from 'utils';
+import { useWorkspaceContext } from 'workspace-context';
+import { SearchNotesSidebar } from '../SearchNotesSidebar';
 
 jest.mock('react-router-dom', () => {
   return {

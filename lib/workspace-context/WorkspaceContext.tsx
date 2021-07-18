@@ -1,38 +1,38 @@
-import { useHistory, useLocation } from 'react-router-dom';
-import React, {
-  useEffect,
-  useContext,
-  useCallback,
-  useState,
-  useMemo,
-} from 'react';
-import { BaseFileSystemError, NATIVE_BROWSER_PERMISSION_ERROR } from 'baby-fs';
 import { Node } from '@bangle.dev/pm';
+import { BaseFileSystemError, NATIVE_BROWSER_PERMISSION_ERROR } from 'baby-fs';
+import {
+  ExtensionRegistry,
+  useExtensionRegistryContext,
+} from 'extension-registry';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
+import { removeMdExtension, shallowCompareArray } from 'utils';
 import {
   FileOps,
   HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
-  WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
+  WORKSPACE_NOT_FOUND_ERROR,
 } from 'workspaces';
-import { shallowCompareArray, removeMdExtension } from 'utils';
 import {
   filePathToWsPath,
   getPrimaryWsPath,
   getSecondaryWsPath,
   getWsName,
-  OpenedWsPaths,
-  Location,
   History,
-  validateNoteWsPath,
-  PathValidationError,
   isValidNoteWsPath,
+  Location,
+  OpenedWsPaths,
+  PathValidationError,
   resolvePath,
+  validateNoteWsPath,
 } from 'ws-path';
-import {
-  ExtensionRegistry,
-  useExtensionRegistryContext,
-} from 'extension-registry';
 
 const LOG = false;
 

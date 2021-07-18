@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { debounceFn } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
+import { DEBOUNCE_MAX_WAIT, DEBOUNCE_WAIT } from './debounce-config';
 import { searchNotes } from './search-notes';
 import { SearchResultItem } from './types';
-import { DEBOUNCE_WAIT, DEBOUNCE_MAX_WAIT } from './debounce-config';
 
 export function useSearchNotes(query: string): {
   results: SearchResultItem[] | null;

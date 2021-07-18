@@ -1,10 +1,9 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import { useBroadcastChannel } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
-import { render, act } from '@testing-library/react';
-import { WatchWorkspace } from '../WatchWorkspace';
 import { OpenedWsPaths } from 'ws-path';
+import { WatchWorkspace } from '../WatchWorkspace';
 
 const ourWsName = 'test-ws1';
 const ourFileWsPath = ourWsName + ':hi.md';

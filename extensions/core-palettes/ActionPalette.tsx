@@ -1,15 +1,9 @@
-import React, {
-  useContext,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-} from 'react';
-
-import { UniversalPalette, TerminalIcon } from 'ui-components';
-import { extensionName } from './config';
 import { useActionContext } from 'action-context';
-import { useRecencyWatcher } from './hooks';
 import { useExtensionRegistryContext } from 'extension-registry';
+import React, { useCallback, useImperativeHandle, useMemo } from 'react';
+import { TerminalIcon, UniversalPalette } from 'ui-components';
+import { extensionName } from './config';
+import { useRecencyWatcher } from './hooks';
 
 const identifierPrefix = '>';
 export const actionPalette = {

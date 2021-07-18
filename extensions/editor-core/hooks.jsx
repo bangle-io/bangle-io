@@ -1,5 +1,5 @@
-import { useCallback, useContext } from 'react';
 import { useEditorManagerContext } from 'editor-manager-context';
+import { useCallback } from 'react';
 
 export function useDispatchPrimaryEditor(dry = true) {
   const { primaryEditor } = useEditorManagerContext();

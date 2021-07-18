@@ -1,16 +1,16 @@
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
-import {
-  Sidebar,
-  ChevronRightIcon,
-  ChevronDownIcon,
-  ButtonIcon,
-} from 'ui-components';
+import { Selection } from '@bangle.dev/pm';
+import { useEditorManagerContext } from 'editor-manager-context';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  ButtonIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  Sidebar,
+} from 'ui-components';
 import { resolvePath } from 'ws-path';
 import { HighlightText } from './HighlightText';
 import { SearchResultItem } from './types';
-import { useEditorManagerContext } from 'editor-manager-context';
-import { Selection } from '@bangle.dev/pm';
 
 function useCollapseMarker(
   results: SearchResultItem[],

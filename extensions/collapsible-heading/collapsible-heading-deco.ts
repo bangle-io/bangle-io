@@ -1,10 +1,10 @@
 import { heading } from '@bangle.dev/core';
 import {
+  Decoration,
+  DecorationSet,
   Plugin,
   PluginKey,
   Selection,
-  Decoration,
-  DecorationSet,
 } from '@bangle.dev/pm';
 
 const name = 'collapsible_heading_deco';

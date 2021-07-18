@@ -1,6 +1,6 @@
+import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
-import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import { getScrollParentElement } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 

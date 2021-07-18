@@ -1,15 +1,15 @@
+import { useEditorViewContext } from '@bangle.dev/react';
+import { AppStateContext } from 'app-state-context';
 import {
+  useCallback,
   useContext,
   useEffect,
-  useRef,
   useLayoutEffect,
-  useCallback,
+  useRef,
 } from 'react';
-import { AppStateContext } from 'app-state-context';
+import { getScrollParentElement, rIdleDebounce } from 'utils';
 import { extensionName } from './config';
 import { saveScrollPos, saveSelection } from './persist-scroll';
-import { useEditorViewContext } from '@bangle.dev/react';
-import { getScrollParentElement, rIdleDebounce } from 'utils';
 
 const LOG = false;
 
