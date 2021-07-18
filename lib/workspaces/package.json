@@ -24,7 +24,7 @@
     "react-router-dom": "*"
   },
   "dependencies": {
-    "@bangle.dev/pm": "^0.4.0",
+    "@bangle.dev/pm": "0.5.0",
     "baby-fs": "workspace:*",
     "config": "workspace:*",
     "idb-keyval": "^5.0.6",

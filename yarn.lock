@@ -2212,10 +2212,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/pm@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@bangle.dev/pm@npm:0.4.0"
+"@bangle.dev/pm@npm:0.5.0":
+  version: 0.5.0
+  resolution: "@bangle.dev/pm@npm:0.5.0"
   dependencies:
+    "@types/prosemirror-commands": ^1.0.4
+    "@types/prosemirror-dropcursor": ^1.0.2
+    "@types/prosemirror-gapcursor": ^1.0.4
+    "@types/prosemirror-history": ^1.0.3
+    "@types/prosemirror-inputrules": ^1.0.4
+    "@types/prosemirror-keymap": ^1.0.4
+    "@types/prosemirror-model": ^1.13.1
+    "@types/prosemirror-schema-list": ^1.0.3
+    "@types/prosemirror-state": ^1.2.7
+    "@types/prosemirror-transform": ^1.1.4
+    "@types/prosemirror-view": ^1.17.2
     prosemirror-commands: ^1.1.10
     prosemirror-dropcursor: ^1.3.5
     prosemirror-gapcursor: ^1.1.5
@@ -2229,6 +2240,17 @@ __metadata:
     prosemirror-transform: ^1.3.2
     prosemirror-view: ^1.18.10
   peerDependencies:
+    "@types/prosemirror-commands": "*"
+    "@types/prosemirror-dropcursor": "*"
+    "@types/prosemirror-gapcursor": "*"
+    "@types/prosemirror-history": "*"
+    "@types/prosemirror-inputrules": "*"
+    "@types/prosemirror-keymap": "*"
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-schema-list": "*"
+    "@types/prosemirror-state": "*"
+    "@types/prosemirror-transform": "*"
+    "@types/prosemirror-view": "*"
     prosemirror-commands: "*"
     prosemirror-dropcursor: "*"
     prosemirror-gapcursor: "*"
@@ -2241,7 +2263,7 @@ __metadata:
     prosemirror-tables: "*"
     prosemirror-transform: "*"
     prosemirror-view: "*"
-  checksum: 8355f40faf652875842313a87d099df525cc1bb73e197ffa793ebdfff1373ed428e4d2baaa178895399fe51f9ef936854a490cb6702d2556b46bb3f9e119a293
+  checksum: 3232d073568b201da55a2454e5c1a73866dbe9030217b28ba69ea4a38cf1161ff9173531737c8edc9f60ba2fb3bef173d39e98117887e482683dbaf23c473ec1
   languageName: node
   linkType: hard
 
@@ -3444,6 +3466,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/orderedmap@npm:*":
+  version: 1.0.0
+  resolution: "@types/orderedmap@npm:1.0.0"
+  checksum: 8629e0046e02ec09edf3787c4c592b8b026ff354be5f7a837e81367fb98c8606c0702a02bcf2a94d346b917ee3ae869311efbcec4e85941ae78cb7c18d9ee96b
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -3469,6 +3498,119 @@ __metadata:
   version: 15.7.3
   resolution: "@types/prop-types@npm:15.7.3"
   checksum: 41831d53c44c9eeafdaf9762bcb4553c13a3bbf990745ed9065a1cc3581b80633113b53fd49b202bf51731b258da5d0a9aa09c9035d5af7f78b0f6bc273f1325
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-commands@npm:*, @types/prosemirror-commands@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@types/prosemirror-commands@npm:1.0.4"
+  dependencies:
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-state": "*"
+    "@types/prosemirror-view": "*"
+  checksum: 9fd1d68d0edc06322dc4cb728a3eb2fa5a00b968f962f124c1c7e877584aea76b14f9b982b2bede41ecf4adadb4b0bf02159c321bb7d5864f15165643505d366
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-dropcursor@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@types/prosemirror-dropcursor@npm:1.0.2"
+  dependencies:
+    "@types/prosemirror-state": "*"
+  checksum: cfd39acf1aacde5137dbe8ab8983e35cea2ad2104ba10276b909da5825da706807cce5cbdb67b9c196c3c49bb7a4f6bf8590e01d13cb59dbdacd52a7e46540d7
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-gapcursor@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@types/prosemirror-gapcursor@npm:1.0.4"
+  dependencies:
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-state": "*"
+  checksum: 927d3eec859337b180c67b341cf95954ab517d5894e8e7b43c23a5f0f524cb2a32f7dab054f884b1c910b8a53984103ae87516940ec47ee9311493fd5638eaad
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-history@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@types/prosemirror-history@npm:1.0.3"
+  dependencies:
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-state": "*"
+  checksum: d1c9b4d2f603ac60895db711ff6eeda6ea7d81eb65754a878a2d9f8f64e66e0737e8ac33a3a1ab22a6597fd84e954a593bf2f39c47cbdbc4bb524bdad422b432
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-inputrules@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@types/prosemirror-inputrules@npm:1.0.4"
+  dependencies:
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-state": "*"
+  checksum: af89b9e4495aa344a474a9a6efbcd3508ebfc30d25b6997834fb7b44a4308835ba450853bd3b5a6ab4114bffd37324f4e0de04e13aac85cd014ae3ffdd64fcb9
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-keymap@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@types/prosemirror-keymap@npm:1.0.4"
+  dependencies:
+    "@types/prosemirror-commands": "*"
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-state": "*"
+    "@types/prosemirror-view": "*"
+  checksum: d749d25f869b04293dcbb91c89da672b4006433226dad9a0e9b32d295c9948bf09b6bd0a5ff8a5db83fdd63825e73142e070de0063c7d1d9235a828b224f9abc
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-model@npm:*, @types/prosemirror-model@npm:^1.13.1":
+  version: 1.13.1
+  resolution: "@types/prosemirror-model@npm:1.13.1"
+  dependencies:
+    "@types/orderedmap": "*"
+  checksum: d529d6cb87a0231f62c2be25d3e95e538d27c451c45e324373042676dd4d257753c3db32549e7efe5ed3d837877b5450dc1063ebe592076fc0b04aec0f984ad9
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-schema-list@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@types/prosemirror-schema-list@npm:1.0.3"
+  dependencies:
+    "@types/orderedmap": "*"
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-state": "*"
+  checksum: 5552080504622ed2ab9c9e42206817c1bbbcbde02a82c2be60daeaef203d08d0457e5bf1079393fff1187ae6a830ea608f05592c9c0191a7e793b24f6f6eb9b4
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-state@npm:*, @types/prosemirror-state@npm:^1.2.7":
+  version: 1.2.7
+  resolution: "@types/prosemirror-state@npm:1.2.7"
+  dependencies:
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-transform": "*"
+    "@types/prosemirror-view": "*"
+  checksum: 711295b617e8fc836a536386ef096f23c4c6b4cb650b4229d76257c6bd97e645273cf4aec4bd6e123e4f1aed4d8041fb66efc7630ae466cc440a6b40ffef9f44
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-transform@npm:*, @types/prosemirror-transform@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@types/prosemirror-transform@npm:1.1.4"
+  dependencies:
+    "@types/prosemirror-model": "*"
+  checksum: f267a63ac35b82b342f16563a02cdbe68dc28275684eecbb972d6342c428aa289173a9fa4f12b0ee0471e42c4d9a1a4d10f4bc97a14eb2f8da830df55fbdf640
+  languageName: node
+  linkType: hard
+
+"@types/prosemirror-view@npm:*, @types/prosemirror-view@npm:^1.17.2":
+  version: 1.17.2
+  resolution: "@types/prosemirror-view@npm:1.17.2"
+  dependencies:
+    "@types/prosemirror-model": "*"
+    "@types/prosemirror-state": "*"
+    "@types/prosemirror-transform": "*"
+  checksum: 5b35f59fd5a9fc1f1682b123a5e7e46a6d9d6f1d3934832d7b9ca7f345b1f8a855d9fd8a6322195f5dda9be0870f2214706918fe068565354f8269d033d7c13e
   languageName: node
   linkType: hard
 
@@ -4154,7 +4296,7 @@ __metadata:
   resolution: "action-context@workspace:lib/action-context"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@testing-library/react": ^12.0.0
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
@@ -5797,7 +5939,7 @@ __metadata:
   resolution: "collapsible-heading@workspace:extensions/collapsible-heading"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     extension-registry: "workspace:*"
     utils: "workspace:*"
   languageName: unknown
@@ -6174,7 +6316,7 @@ __metadata:
   resolution: "core-palettes@workspace:extensions/core-palettes"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@testing-library/react": ^11.2.7
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
@@ -6896,7 +7038,7 @@ __metadata:
     "@bangle.dev/emoji": 0.23.1
     "@bangle.dev/markdown": 0.23.1
     "@bangle.dev/markdown-front-matter": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/react": 0.23.1
     "@bangle.dev/react-emoji-suggest": 0.23.1
     "@bangle.dev/react-menu": 0.23.1
@@ -6935,7 +7077,7 @@ __metadata:
   resolution: "editor-scroll-extension@workspace:extensions/editor-scroll-extension"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/react": 0.23.1
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
@@ -6954,7 +7096,7 @@ __metadata:
   dependencies:
     "@bangle.dev/core": 0.23.1
     "@bangle.dev/js-utils": 0.23.1
-    "@bangle.dev/pm": ^0.3.0
+    "@bangle.dev/pm": 0.5.0
     "@testing-library/react": ^12.0.0
     "@types/jest": ^26.0.23
     "@types/react": ^17.0.14
@@ -7902,7 +8044,7 @@ __metadata:
   resolution: "extension-registry@workspace:lib/extension-registry"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     react: ^17.0.2
@@ -9207,7 +9349,7 @@ fsevents@^2.1.2:
   resolution: "image-extension@workspace:extensions/image-extension"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/react": 0.23.1
     "@bangle.dev/react-menu": 0.23.1
     "@bangle.dev/tooltip": 0.23.1
@@ -9323,7 +9465,7 @@ fsevents@^2.1.2:
   resolution: "inline-backlink@workspace:extensions/inline-backlink"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/react": 0.23.1
     "@bangle.dev/wiki-link": 0.23.1
     "@testing-library/react": ^11.2.7
@@ -9348,7 +9490,7 @@ fsevents@^2.1.2:
   dependencies:
     "@bangle.dev/core": 0.23.1
     "@bangle.dev/js-utils": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/pm-utils": 0.23.1
     "@bangle.dev/react": 0.23.1
     "@types/react": ^17.0.14
@@ -9371,7 +9513,7 @@ fsevents@^2.1.2:
     "@bangle.dev/core": 0.23.1
     "@bangle.dev/emoji": 0.23.1
     "@bangle.dev/markdown": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/react": 0.23.1
     "@bangle.dev/react-emoji-suggest": 0.23.1
     "@bangle.dev/table": 0.23.1
@@ -9394,7 +9536,7 @@ fsevents@^2.1.2:
   dependencies:
     "@bangle.dev/core": 0.23.1
     "@bangle.dev/js-utils": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/pm-utils": 0.23.1
     "@bangle.dev/react": 0.23.1
     "@bangle.dev/tooltip": 0.23.1
@@ -11744,7 +11886,7 @@ fsevents@^2.1.2:
     "@bangle.dev/core": 0.23.1
     "@bangle.dev/markdown": 0.23.1
     "@bangle.dev/markdown-front-matter": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/pm-utils": 0.23.1
     "@bangle.dev/table": 0.23.1
   languageName: unknown
@@ -14713,7 +14855,7 @@ resolve@^2.0.0-next.3:
   resolution: "search-notes@workspace:extensions/search-notes"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@bangle.dev/search": 0.23.1
     "@testing-library/react": ^12.0.0
     "@types/react": ^17.0.14
@@ -17096,7 +17238,7 @@ typescript@4.2.4:
   resolution: "workspace-context@workspace:lib/workspace-context"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^7.0.0
     "@types/history": ^4.7.8
@@ -17121,7 +17263,7 @@ typescript@4.2.4:
   resolution: "workspaces@workspace:lib/workspaces"
   dependencies:
     "@bangle.dev/core": 0.23.1
-    "@bangle.dev/pm": ^0.4.0
+    "@bangle.dev/pm": 0.5.0
     "@testing-library/react": ^11.2.7
     "@types/history": ^4.7.8
     "@types/react": ^17.0.14

@@ -22,7 +22,7 @@
     "@bangle.dev/core": "0.23.1",
     "@bangle.dev/markdown": "0.23.1",
     "@bangle.dev/markdown-front-matter": "0.23.1",
-    "@bangle.dev/pm": "^0.4.0",
+    "@bangle.dev/pm": "0.5.0",
     "@bangle.dev/pm-utils": "0.23.1",
     "@bangle.dev/table": "0.23.1"
   },

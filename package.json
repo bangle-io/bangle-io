@@ -139,8 +139,5 @@
     "trailingComma": "all",
     "quoteProps": "consistent",
     "arrowParens": "always"
-  },
-  "resolutions": {
-    "@bangle.dev/pm": "^0.4.0"
   }
 }

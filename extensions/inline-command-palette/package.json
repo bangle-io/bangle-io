@@ -21,7 +21,7 @@
   "dependencies": {
     "@bangle.dev/core": "0.23.1",
     "@bangle.dev/js-utils": "0.23.1",
-    "@bangle.dev/pm": "^0.4.0",
+    "@bangle.dev/pm": "0.5.0",
     "@bangle.dev/pm-utils": "0.23.1",
     "@bangle.dev/react": "0.23.1",
     "chrono-node": "^2.2.6",
