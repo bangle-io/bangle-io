@@ -1,8 +1,8 @@
+import mockBabyFs from 'test-utils/baby-fs-test-mock';
 import { act, render } from '@testing-library/react';
 import * as idb from 'idb-keyval';
 import React from 'react';
 import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
-import mockBabyFs from 'test-utils/baby-fs-test-mock';
 import { useWorkspaces } from '../hooks';
 import { helpFSWorkspaceInfo } from '../types';
 
