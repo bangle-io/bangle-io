@@ -19,9 +19,9 @@
   "module": "index.ts",
   "scripts": {},
   "devDependencies": {
-    "@bangle.dev/core": "0.24.0-alpha.9",
+    "@bangle.dev/core": "0.24.0",
     "@bangle.dev/pm": "0.6.0",
-    "@bangle.dev/utils": "0.24.0-alpha.9",
+    "@bangle.dev/utils": "0.24.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/react-hooks": "^7.0.0",
     "@types/history": "^4.7.8",

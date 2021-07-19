@@ -25,11 +25,11 @@
     "@types/react-dom": "^17.0.9"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.24.0-alpha.9",
+    "@bangle.dev/core": "0.24.0",
     "@bangle.dev/pm": "0.6.0",
-    "@bangle.dev/react": "0.24.0-alpha.9",
-    "@bangle.dev/utils": "0.24.0-alpha.9",
-    "@bangle.dev/wiki-link": "0.24.0-alpha.9",
+    "@bangle.dev/react": "0.24.0",
+    "@bangle.dev/utils": "0.24.0",
+    "@bangle.dev/wiki-link": "0.24.0",
     "config": "workspace:*",
     "extension-registry": "workspace:*",
     "inline-palette": "workspace:*",

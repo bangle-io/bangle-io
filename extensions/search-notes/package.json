@@ -19,10 +19,10 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.24.0-alpha.9",
+    "@bangle.dev/core": "0.24.0",
     "@bangle.dev/pm": "0.6.0",
-    "@bangle.dev/search": "0.24.0-alpha.9",
-    "@bangle.dev/utils": "0.24.0-alpha.9",
+    "@bangle.dev/search": "0.24.0",
+    "@bangle.dev/utils": "0.24.0",
     "action-context": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",
