@@ -19,8 +19,9 @@
   "module": "index.tsx",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.23.1",
-    "@bangle.dev/pm": "^0.4.0",
+    "@bangle.dev/core": "0.24.0",
+    "@bangle.dev/pm": "0.6.0",
+    "@bangle.dev/utils": "0.24.0",
     "action-context": "workspace:*",
     "config": "workspace:*",
     "editor-manager-context": "workspace:*",

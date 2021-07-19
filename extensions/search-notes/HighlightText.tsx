@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React from 'react';
 import { HighlightTextType } from './types';
 
 export function HighlightText({

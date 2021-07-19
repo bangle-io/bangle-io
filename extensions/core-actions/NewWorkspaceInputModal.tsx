@@ -1,9 +1,9 @@
-import React, { useContext, useCallback, useState } from 'react';
 import { pickADirectory } from 'baby-fs';
-import { ListPalette, UniversalPalette, InputPalette } from 'ui-components';
-import { FileOps, useWorkspaces } from 'workspaces';
-import { useWorkspaceContext } from 'workspace-context';
+import React, { useCallback, useState } from 'react';
+import { InputPalette, ListPalette, UniversalPalette } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
+import { useWorkspaceContext } from 'workspace-context';
+import { FileOps, useWorkspaces } from 'workspaces';
 
 const deleteAllFiles = async (wsName) => {
   const files = await FileOps.listAllFiles(wsName);

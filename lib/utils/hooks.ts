@@ -1,4 +1,4 @@
-import { createRef, useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { keybindingsHelper, rafSchedule } from './utility';
 
 export function useWindowSize() {

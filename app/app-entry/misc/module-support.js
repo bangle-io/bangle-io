@@ -1,5 +1,5 @@
-import { validateNonWorkerGlobalScope } from 'naukar-worker';
 import { config } from 'config';
+import { validateNonWorkerGlobalScope } from 'naukar-worker';
 validateNonWorkerGlobalScope();
 
 export const moduleSupport = checkModuleWorkerSupport();

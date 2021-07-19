@@ -76,8 +76,8 @@ export const SPLIT_SCREEN_MIN_WIDTH =
         10,
       );
 
-export * from './keybindings';
 export * from './is-mac';
+export * from './keybindings';
 export const FILE_PALETTE_MAX_RECENT_FILES = 15;
 export const FILE_PALETTE_MAX_FILES = 200;
 

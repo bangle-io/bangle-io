@@ -1,27 +1,27 @@
-import { trailingNode } from '@bangle.dev/trailing-node';
-import { timestamp } from '@bangle.dev/timestamp';
-import stopwatch from '@bangle.dev/react-stopwatch';
-import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
 import {
-  bold,
-  code,
-  italic,
-  strike,
-  link,
-  underline,
-  doc,
-  text,
-  paragraph,
   blockquote,
+  bold,
   bulletList,
+  code,
   codeBlock,
+  doc,
   hardBreak,
   heading,
   horizontalRule,
+  italic,
+  link,
   listItem,
   orderedList,
+  paragraph,
+  strike,
+  text,
+  underline,
 } from '@bangle.dev/core';
+import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
+import stopwatch from '@bangle.dev/react-stopwatch';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
+import { timestamp } from '@bangle.dev/timestamp';
+import { trailingNode } from '@bangle.dev/trailing-node';
 
 let headingSpec = heading.spec();
 

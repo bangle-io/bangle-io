@@ -1,14 +1,14 @@
-import React from 'react';
-import { Extension } from 'extension-registry';
-import { notesPalette } from './NotesPalette';
-import { extensionName } from './config';
-import { workspacePalette } from './WorkspacePalette';
-import { headingPalette } from './HeadingPalette';
-import { questionPalette } from './QuestionPalette';
-import { actionPalette } from './ActionPalette';
-import { AlbumIcon, FileDocumentIcon, TerminalIcon } from 'ui-components';
 import { isFirefox } from 'config';
+import { Extension } from 'extension-registry';
+import React from 'react';
+import { AlbumIcon, FileDocumentIcon, TerminalIcon } from 'ui-components';
 import { ActionHandler } from './ActionHandler';
+import { actionPalette } from './ActionPalette';
+import { extensionName } from './config';
+import { headingPalette } from './HeadingPalette';
+import { notesPalette } from './NotesPalette';
+import { questionPalette } from './QuestionPalette';
+import { workspacePalette } from './WorkspacePalette';
 
 const extension = Extension.create({
   name: extensionName,

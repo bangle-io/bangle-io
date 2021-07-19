@@ -1,9 +1,8 @@
-import mockBabyFs from 'test-utils/baby-fs-test-mock';
-import { copyWorkspace, deleteFile, listAllFiles, saveDoc } from '../file-ops';
-
 import { defaultSpecs } from '@bangle.dev/core/dist/test-helpers/default-components';
 import { Node } from '@bangle.dev/pm';
 import { Extension, ExtensionRegistry } from 'extension-registry';
+import mockBabyFs from 'test-utils/baby-fs-test-mock';
+import { copyWorkspace, deleteFile, listAllFiles, saveDoc } from '../file-ops';
 
 const originalFile = window.File;
 

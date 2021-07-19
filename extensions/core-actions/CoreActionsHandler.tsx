@@ -1,19 +1,19 @@
-import React, { useContext, useEffect, useCallback, useState } from 'react';
-import {
-  NEW_NOTE_ACTION,
-  TOGGLE_FILE_SIDEBAR_ACTION,
-  TOGGLE_THEME_ACTION,
-  NEW_WORKSPACE_ACTION,
-  RENAME_ACTIVE_NOTE_ACTION,
-  DELETE_ACTIVE_NOTE_ACTION,
-  CLONE_WORKSPACE_ACTION,
-} from './config';
-import { useUIManagerContext } from 'ui-context';
-import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 import { useActionContext } from 'action-context';
-import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useUIManagerContext } from 'ui-context';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
+import {
+  CLONE_WORKSPACE_ACTION,
+  DELETE_ACTIVE_NOTE_ACTION,
+  NEW_NOTE_ACTION,
+  NEW_WORKSPACE_ACTION,
+  RENAME_ACTIVE_NOTE_ACTION,
+  TOGGLE_FILE_SIDEBAR_ACTION,
+  TOGGLE_THEME_ACTION,
+} from './config';
+import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
+import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
 
 export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch } = useUIManagerContext();

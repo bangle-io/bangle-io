@@ -1,16 +1,16 @@
-import editorCore from 'editor-core';
-import inlineCommandPalette from 'inline-command-palette';
-import inlineBacklinkPalette from 'inline-backlink';
-import collapsibleHeading from 'collapsible-heading';
-import imageExtension from 'image-extension';
-import inlineEmoji from 'inline-emoji';
 import collabExtension from 'collab-extension';
-import editorScrollExtension from 'editor-scroll-extension';
-import corePalette from 'core-palettes';
+import collapsibleHeading from 'collapsible-heading';
 import coreActions from 'core-actions';
+import corePalette from 'core-palettes';
+import editorCore from 'editor-core';
+import editorScrollExtension from 'editor-scroll-extension';
 import { ExtensionRegistry } from 'extension-registry';
-import searchNotes from 'search-notes';
+import imageExtension from 'image-extension';
+import inlineBacklinkPalette from 'inline-backlink';
+import inlineCommandPalette from 'inline-command-palette';
+import inlineEmoji from 'inline-emoji';
 import noteBrowser from 'note-browser';
+import searchNotes from 'search-notes';
 
 // TODO move this async, i think a promise should be fine.
 export const initExtensionRegistry = () => {

@@ -1,6 +1,6 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { ItemType } from '../UniversalPalette/PaletteItem';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { UniversalPalette } from '../UniversalPalette';
+import { ItemType } from '../UniversalPalette/PaletteItem';
 
 export function ListPalette({
   placeholder,

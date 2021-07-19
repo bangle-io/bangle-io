@@ -1,21 +1,21 @@
-import React, { useMemo, useEffect, useContext } from 'react';
-import reactDOM from 'react-dom';
 import { useEditorViewContext } from '@bangle.dev/react';
 import {
+  replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
-  replaceSuggestionMarkWith,
 } from 'inline-palette';
-import { UniversalPalette, InlinePaletteRow } from 'ui-components';
-import {
-  resolvePath,
-  filePathToWsPath,
-  validateWsPath,
-  sanitizeFilePath,
-} from 'ws-path';
-import { backLinkNodeName, palettePluginKey } from './config';
+import React, { useEffect, useMemo } from 'react';
+import reactDOM from 'react-dom';
+import { InlinePaletteRow, UniversalPalette } from 'ui-components';
 import { conditionalSuffix, removeMdExtension } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
+import {
+  filePathToWsPath,
+  resolvePath,
+  sanitizeFilePath,
+  validateWsPath,
+} from 'ws-path';
+import { backLinkNodeName, palettePluginKey } from './config';
 
 // Creating this also closes the palette
 const createBackLinkNode = (wsPath, allNoteWsPaths) => {

@@ -1,20 +1,18 @@
-import React from 'react';
-import { PluginKey } from '@bangle.dev/pm';
-import { Node } from '@bangle.dev/pm';
-import { ExtensionRegistry, Extension } from 'extension-registry';
-
-import { render, act } from '@testing-library/react';
-import { filterItems, InlineBacklinkPalette } from '../InlineBacklinkPalette';
+import { corePlugins, coreSpec } from '@bangle.dev/core';
+import { Node, PluginKey } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
-import { coreSpec, corePlugins } from '@bangle.dev/core';
+import { act, render } from '@testing-library/react';
+import { Extension, ExtensionRegistry } from 'extension-registry';
 import {
+  replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
-  replaceSuggestionMarkWith,
 } from 'inline-palette';
+import React from 'react';
 import { sleep } from 'utils/utility';
-import inlineBackLinkExtension from '..';
 import { useWorkspaceContext } from 'workspace-context';
+import inlineBackLinkExtension from '..';
+import { filterItems, InlineBacklinkPalette } from '../InlineBacklinkPalette';
 
 jest.mock('@bangle.dev/react', () => {
   return {

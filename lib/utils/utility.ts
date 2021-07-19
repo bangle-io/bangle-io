@@ -1,7 +1,7 @@
+import { Emitter } from '@bangle.dev/utils';
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from 'config';
-import { keyName } from 'w3c-keyname';
 import _debounceFn from 'debounce-fn';
-import { Emitter } from '@bangle.dev/js-utils';
+import { keyName } from 'w3c-keyname';
 
 export { Emitter };
 

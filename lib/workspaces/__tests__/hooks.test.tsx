@@ -1,10 +1,10 @@
 import mockBabyFs from 'test-utils/baby-fs-test-mock';
-import { render, act } from '@testing-library/react';
-import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
+import { act, render } from '@testing-library/react';
+import * as idb from 'idb-keyval';
 import React from 'react';
+import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
 import { useWorkspaces } from '../hooks';
 import { helpFSWorkspaceInfo } from '../types';
-import * as idb from 'idb-keyval';
 
 describe('useWorkspaces', () => {
   test('loads workspace on mount', async () => {

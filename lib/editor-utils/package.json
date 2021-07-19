@@ -20,9 +20,9 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/core": "0.23.1",
-    "@bangle.dev/js-utils": "0.23.1",
-    "@bangle.dev/pm": "^0.3.0"
+    "@bangle.dev/core": "0.24.0",
+    "@bangle.dev/pm": "0.6.0",
+    "@bangle.dev/utils": "0.24.0"
   },
   "devDependencies": {
     "@testing-library/react": "^12.0.0",

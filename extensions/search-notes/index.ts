@@ -1,10 +1,10 @@
-import React from 'react';
-import { Extension } from 'extension-registry';
-import { SearchNotesSidebar } from './SearchNotesSidebar';
-import { SearchIcon } from 'ui-components';
-import { SearchNotesActionHandler } from './SearchNotesActionHandler';
 import { keyDisplayValue } from 'config';
+import { Extension } from 'extension-registry';
+import React from 'react';
+import { SearchIcon } from 'ui-components';
 import { searchPlugin } from './search-plugin';
+import { SearchNotesActionHandler } from './SearchNotesActionHandler';
+import { SearchNotesSidebar } from './SearchNotesSidebar';
 import { SHOW_SEARCH_SIDEBAR_ACTION, SIDEBAR_NAME } from './types';
 const extensionName = 'search-notes';
 const key = 'Mod-F';

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useUIManagerContext } from 'ui-context';
 import { actionPalette } from './ActionPalette';
 import { notesPalette } from './NotesPalette';

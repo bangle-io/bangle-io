@@ -1,17 +1,17 @@
-import React from 'react';
 import { Extension } from 'extension-registry';
-import { CoreActionsHandler } from './CoreActionsHandler';
+import React from 'react';
+import { NewNoteIcon } from 'ui-components';
 import {
+  CLONE_WORKSPACE_ACTION,
+  DELETE_ACTIVE_NOTE_ACTION,
   extensionName,
-  TOGGLE_FILE_SIDEBAR_ACTION,
-  TOGGLE_THEME_ACTION,
   NEW_NOTE_ACTION,
   NEW_WORKSPACE_ACTION,
   RENAME_ACTIVE_NOTE_ACTION,
-  DELETE_ACTIVE_NOTE_ACTION,
-  CLONE_WORKSPACE_ACTION,
+  TOGGLE_FILE_SIDEBAR_ACTION,
+  TOGGLE_THEME_ACTION,
 } from './config';
-import { NewNoteIcon } from 'ui-components';
+import { CoreActionsHandler } from './CoreActionsHandler';
 
 const extension = Extension.create({
   name: extensionName,

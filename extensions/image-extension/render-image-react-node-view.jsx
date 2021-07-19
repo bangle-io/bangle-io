@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { FileOps } from 'workspaces';
+import React, { useEffect, useState } from 'react';
 import { useDestroyRef } from 'utils';
-
+import { useWorkspaceContext } from 'workspace-context';
+import { FileOps } from 'workspaces';
+import { isValidFileWsPath, parseLocalFilePath } from 'ws-path';
 import {
   calcImageDimensions,
   imageDimensionFromWsPath,
 } from './image-file-helpers';
-import { useWorkspaceContext } from 'workspace-context';
-import { isValidFileWsPath, parseLocalFilePath } from 'ws-path';
 
 export const renderImageReactNodeView = {
   image: ({ nodeViewRenderArg }) => {

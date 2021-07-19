@@ -1,16 +1,16 @@
-import React, { useContext, useCallback, useState } from 'react';
+import { useExtensionRegistryContext } from 'extension-registry';
+import React, { useCallback, useState } from 'react';
+import { InputPalette, UniversalPalette } from 'ui-components';
+import { useUIManagerContext } from 'ui-context';
+import { randomName } from 'utils';
+import { useDestroyRef } from 'utils/hooks';
+import { useWorkspaceContext } from 'workspace-context';
 import {
   filePathToWsPath,
   isValidNoteWsPath,
   PathValidationError,
   resolvePath,
 } from 'ws-path';
-import { useWorkspaceContext } from 'workspace-context';
-import { useDestroyRef } from 'utils/hooks';
-import { randomName } from 'utils';
-import { InputPalette, UniversalPalette } from 'ui-components';
-import { useExtensionRegistryContext } from 'extension-registry';
-import { useUIManagerContext } from 'ui-context';
 
 export function NewNoteInputModal({ initialValue, onDismiss }) {
   const destroyedRef = useDestroyRef();

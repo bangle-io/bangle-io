@@ -1,21 +1,20 @@
-import './style';
-import { UIManager } from 'ui-context';
+import { ActionContextProvider } from 'action-context';
+import { EditorManager } from 'editor-manager-context';
+import { ExtensionRegistryContextProvider } from 'extension-registry';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { EditorManager } from 'editor-manager-context';
-import { polyfills, initExtensionRegistry } from 'shared';
+import { initExtensionRegistry, polyfills } from 'shared';
+import { UIManager } from 'ui-context';
 import { WorkerSetup } from 'worker-setup';
-import { ActionContextProvider } from 'action-context';
-import { ExtensionRegistryContextProvider } from 'extension-registry';
 import { WorkspaceContextProvider } from 'workspace-context';
-
-import { PageLifecycle } from './watchers/PageLifecycle';
 import App from './App';
-import { moduleSupport } from './misc/module-support';
 import { AppStateProvider } from './AppStateProvider';
-import { WatchWorkspace } from './watchers/WatchWorkspace';
-import { WatchUI } from './watchers/WatchUI';
+import { moduleSupport } from './misc/module-support';
 import { handleNativefsAuthError, handleWorkspaceNotFound } from './Routes';
+import './style';
+import { PageLifecycle } from './watchers/PageLifecycle';
+import { WatchUI } from './watchers/WatchUI';
+import { WatchWorkspace } from './watchers/WatchWorkspace';
 
 function LoadingBlock({ children }) {
   const [loaded, updateLoaded] = useState(() => {

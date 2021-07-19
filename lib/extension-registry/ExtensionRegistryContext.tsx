@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { ExtensionRegistry } from './ExtensionRegistry';
 
 export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(

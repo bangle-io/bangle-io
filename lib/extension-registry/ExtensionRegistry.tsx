@@ -2,9 +2,9 @@ import { SpecRegistry } from '@bangle.dev/core';
 import React from 'react';
 import {
   ActionDefinitionType,
+  ActionHandler,
   ApplicationConfig,
   EditorConfig,
-  ActionHandler,
   Extension,
 } from './Extension';
 

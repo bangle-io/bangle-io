@@ -1,15 +1,15 @@
+import PropTypes from 'prop-types';
 import React, {
+  useCallback,
+  useEffect,
   useMemo,
   useRef,
-  useCallback,
   useState,
-  useEffect,
 } from 'react';
-import { sleep } from 'utils/utility';
 import { useDestroyRef } from 'utils';
-import { UniversalPalette } from '../UniversalPalette';
+import { sleep } from 'utils/utility';
 import { NullIcon, SpinnerIcon } from '../Icons';
-import PropTypes from 'prop-types';
+import { UniversalPalette } from '../UniversalPalette';
 
 InputPalette.propTypes = {
   placeholder: PropTypes.string,

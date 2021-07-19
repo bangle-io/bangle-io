@@ -1,16 +1,15 @@
-import { useMemo } from 'react';
-import { paragraph, bulletList, listItem, orderedList } from '@bangle.dev/core';
-
-import { rafCommandExec } from '@bangle.dev/pm-utils';
-import { replaceSuggestionMarkWith } from 'inline-palette';
+import { bulletList, listItem, orderedList, paragraph } from '@bangle.dev/core';
 import { setBlockType } from '@bangle.dev/pm';
-import { palettePluginKey } from './config';
-import { PaletteItem } from './palette-item';
+import { rafCommandExec } from '@bangle.dev/utils';
+import { replaceSuggestionMarkWith } from 'inline-palette';
+import { useMemo } from 'react';
 import {
   chainedInsertParagraphAbove,
   chainedInsertParagraphBelow,
   isList,
 } from './commands';
+import { palettePluginKey } from './config';
+import { PaletteItem } from './palette-item';
 
 const { convertToParagraph } = paragraph;
 const {

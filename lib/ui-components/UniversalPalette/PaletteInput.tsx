@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useCallback, useEffect } from 'react';
 import { Input } from '../Input';
 
 export const PaletteInput = React.forwardRef<

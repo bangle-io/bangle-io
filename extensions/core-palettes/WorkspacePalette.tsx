@@ -1,9 +1,8 @@
-import React, { useCallback, useImperativeHandle, useMemo } from 'react';
-import { useWorkspaces } from 'workspaces';
-import { AlbumIcon, CloseIcon, UniversalPalette } from 'ui-components';
-import { extensionName } from './config';
-
 import { keyDisplayValue } from 'config';
+import React, { useCallback, useImperativeHandle, useMemo } from 'react';
+import { AlbumIcon, CloseIcon, UniversalPalette } from 'ui-components';
+import { useWorkspaces } from 'workspaces';
+import { extensionName } from './config';
 import { useRecencyWatcher } from './hooks';
 
 const LOG = false;

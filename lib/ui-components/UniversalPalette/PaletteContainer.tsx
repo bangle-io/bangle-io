@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { cx, useWatchClickOutside } from 'utils';
 
 export function PaletteContainer({

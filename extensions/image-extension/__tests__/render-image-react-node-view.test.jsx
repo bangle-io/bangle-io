@@ -1,9 +1,9 @@
+import { act, render } from '@testing-library/react';
 import React from 'react';
-import { render, act } from '@testing-library/react';
-import { FileOps } from 'workspaces';
-import { useWorkspaceContext } from 'workspace-context';
-import { ImageComponent } from '../render-image-react-node-view';
 import { sleep } from 'utils/utility';
+import { useWorkspaceContext } from 'workspace-context';
+import { FileOps } from 'workspaces';
+import { ImageComponent } from '../render-image-react-node-view';
 
 jest.mock('workspace-context/index', () => {
   const other = jest.requireActual('workspace-context/index');

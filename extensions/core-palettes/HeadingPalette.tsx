@@ -1,13 +1,8 @@
-import React, {
-  useContext,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-} from 'react';
 import { Selection } from '@bangle.dev/pm';
-import { UniversalPalette, NullIcon } from 'ui-components';
-import { extensionName } from './config';
 import { useEditorManagerContext } from 'editor-manager-context';
+import React, { useCallback, useImperativeHandle, useMemo } from 'react';
+import { NullIcon, UniversalPalette } from 'ui-components';
+import { extensionName } from './config';
 
 const identifierPrefix = '#';
 export const headingPalette = {

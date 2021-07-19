@@ -30,8 +30,9 @@
     "utils": "*"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.23.1",
-    "@bangle.dev/pm": "^0.4.0",
+    "@bangle.dev/core": "0.24.0",
+    "@bangle.dev/pm": "0.6.0",
+    "@bangle.dev/utils": "0.24.0",
     "@testing-library/react": "^12.0.0",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",

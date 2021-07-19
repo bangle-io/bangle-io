@@ -1,6 +1,6 @@
-import { NotesTree } from './NotesTree';
 import React from 'react';
-import { ButtonIcon, Sidebar, SpinnerIcon } from 'ui-components';
+import { Sidebar } from 'ui-components';
+import { NotesTree } from './NotesTree';
 
 export function NoteBrowserSidebar({}) {
   return (

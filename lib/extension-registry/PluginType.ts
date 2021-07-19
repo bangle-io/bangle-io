@@ -1,5 +1,5 @@
-import type { Schema } from '@bangle.dev/pm';
 import type { BangleEditorStateProps } from '@bangle.dev/core';
+import type { Schema } from '@bangle.dev/pm';
 export interface PluginMetadata {
   wsPath: string;
 }

@@ -1,9 +1,9 @@
+import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 import { Extension } from 'extension-registry';
+import { EditorCore } from './EditorCore';
+import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
-import { MenuComp } from './FloatingMenu';
-import { EditorCore } from './EditorCore';
-import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 
 const extensionName = 'editor-core';
 

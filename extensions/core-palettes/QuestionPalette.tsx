@@ -1,7 +1,7 @@
-import React, { useContext, useCallback, useImperativeHandle } from 'react';
-import { UniversalPalette, NullIcon } from 'ui-components';
-import { extensionName } from './config';
 import { useExtensionRegistryContext } from 'extension-registry';
+import React, { useCallback, useImperativeHandle } from 'react';
+import { NullIcon, UniversalPalette } from 'ui-components';
+import { extensionName } from './config';
 
 const identifierPrefix = '?';
 export const questionPalette = {

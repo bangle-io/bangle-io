@@ -1,7 +1,7 @@
 import { heading } from '@bangle.dev/core';
 import * as markdown from '@bangle.dev/markdown';
 import { Fragment, Slice } from '@bangle.dev/pm';
-import { findChildren } from '@bangle.dev/pm-utils';
+import { findChildren } from '@bangle.dev/utils';
 
 const { flattenFragmentJSON } = heading;
 const LOG = false;

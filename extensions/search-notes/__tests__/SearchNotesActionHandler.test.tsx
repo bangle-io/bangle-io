@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
+import { ActionHandler } from 'extension-registry';
 import React from 'react';
 import { useUIManagerContext } from 'ui-context';
 import { SearchNotesActionHandler } from '../SearchNotesActionHandler';
-import { ActionHandler } from 'extension-registry';
 import { SHOW_SEARCH_SIDEBAR_ACTION, SIDEBAR_NAME } from '../types';
 
 jest.mock('ui-context', () => {

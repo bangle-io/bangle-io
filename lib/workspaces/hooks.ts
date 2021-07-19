@@ -1,13 +1,13 @@
+import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { useEffect, useState, useCallback } from 'react';
+import { useDestroyRef } from 'utils';
+import { getWsName } from 'ws-path';
+import { WorkspaceInfo, WorkspaceType } from './types';
 import {
   createWorkspace,
   deleteWorkspace,
   listWorkspaces,
 } from './workspaces-ops';
-import { getWsName } from 'ws-path';
-import { useDestroyRef } from 'utils';
-import { WorkspaceInfo, WorkspaceType } from './types';
 
 export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
