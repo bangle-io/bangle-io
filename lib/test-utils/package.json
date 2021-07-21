@@ -20,9 +20,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.24.0",
-    "@bangle.dev/pm": "0.6.0",
-    "@bangle.dev/utils": "0.24.0",
+    "@bangle.dev/core": "0.25.0",
+    "@bangle.dev/pm": "0.8.0",
+    "@bangle.dev/utils": "0.25.0",
     "baby-fs": "workspace:*",
     "base-error": "workspace:*",
     "extension-registry": "workspace:*",

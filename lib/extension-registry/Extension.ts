@@ -1,11 +1,12 @@
 import React from 'react';
 import { EditorPluginDefinition } from './PluginType';
+import type { RawSpecs } from '@bangle.dev/core';
 
 const _check = Symbol();
 
 export interface EditorConfig {
   name: string;
-  specs?: any;
+  specs?: RawSpecs[];
   plugins?: EditorPluginDefinition[];
   highPriorityPlugins?: EditorPluginDefinition[];
   markdownItPlugins?: any[];

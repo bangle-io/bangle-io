@@ -7,6 +7,7 @@ import {
   EditorConfig,
   Extension,
 } from './Extension';
+import type { RawSpecs } from '@bangle.dev/core';
 
 function filterFlatMap<K>(
   array: any[],
@@ -129,7 +130,7 @@ export class ExtensionRegistry {
 
     this.editorConfig = extensions.map((e) => e.editor);
     this.specRegistry = new SpecRegistry([
-      ...filterFlatMap(this.editorConfig, 'specs'),
+      ...filterFlatMap<RawSpecs>(this.editorConfig, 'specs'),
     ]);
     this.markdownItPlugins = [
       ..._markdownItPlugins,

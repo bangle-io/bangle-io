@@ -2,6 +2,8 @@ const { rootDir } = require('./constants');
 const fs = require('fs/promises');
 const path = require('path');
 
+const ROOT_PKG_NAME = 'bangle-io';
+
 module.exports = {
   walkWorkspace,
   walk,
@@ -78,7 +80,7 @@ async function getWorktreeWorkspaces(worktreeName) {
 async function getWorktrees() {
   const workspaces = await walkWorkspace();
   return workspaces.filter((w) => {
-    if (w.name !== 'bangle-io' && Array.isArray(w.packageJSON.workspaces)) {
+    if (w.name !== ROOT_PKG_NAME && Array.isArray(w.packageJSON.workspaces)) {
       return true;
     }
     return false;
@@ -154,7 +156,7 @@ async function walkWorkspace({ skipRootWorkspace = true } = {}) {
 
   return result.filter((r) => {
     if (skipRootWorkspace) {
-      return r.name !== 'bangle-io';
+      return r.name !== ROOT_PKG_NAME;
     }
     return r;
   });
