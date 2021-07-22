@@ -19,9 +19,9 @@
   "module": "index.ts",
   "scripts": {},
   "devDependencies": {
-    "@bangle.dev/core": "0.25.0",
-    "@bangle.dev/pm": "0.8.0",
-    "@bangle.dev/utils": "0.25.0",
+    "@bangle.dev/core": "0.25.3",
+    "@bangle.dev/pm": "0.25.3",
+    "@bangle.dev/utils": "0.25.3",
     "@testing-library/react": "^11.2.7",
     "@testing-library/react-hooks": "^7.0.0",
     "@types/history": "^4.7.8",
@@ -34,7 +34,7 @@
     "react-test-renderer": "17.0.2"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.8.0",
+    "@bangle.dev/pm": "0.25.3",
     "config": "workspace:*",
     "extension-registry": "workspace:*",
     "react-router-dom": "^5.2.0",

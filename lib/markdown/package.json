@@ -19,12 +19,12 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.25.0",
-    "@bangle.dev/markdown": "0.25.0",
-    "@bangle.dev/markdown-front-matter": "0.25.0",
-    "@bangle.dev/pm": "0.8.0",
-    "@bangle.dev/table": "0.25.0",
-    "@bangle.dev/utils": "0.25.0"
+    "@bangle.dev/core": "0.25.3",
+    "@bangle.dev/markdown": "0.25.3",
+    "@bangle.dev/markdown-front-matter": "0.25.3",
+    "@bangle.dev/pm": "0.25.3",
+    "@bangle.dev/table": "0.25.3",
+    "@bangle.dev/utils": "0.25.3"
   },
   "publishConfig": {
     "access": "public"
