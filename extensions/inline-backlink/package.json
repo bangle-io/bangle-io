@@ -25,12 +25,12 @@
     "@types/react-dom": "^17.0.9"
   },
   "dependencies": {
-    "@bangle.dev/all-base-components": "0.26.0-alpha.2",
-    "@bangle.dev/core": "0.26.0-alpha.2",
-    "@bangle.dev/pm": "0.26.0-alpha.2",
-    "@bangle.dev/react": "0.26.0-alpha.2",
-    "@bangle.dev/utils": "0.26.0-alpha.2",
-    "@bangle.dev/wiki-link": "0.26.0-alpha.2",
+    "@bangle.dev/all-base-components": "0.26.0-alpha.3",
+    "@bangle.dev/core": "0.26.0-alpha.3",
+    "@bangle.dev/pm": "0.26.0-alpha.3",
+    "@bangle.dev/react": "0.26.0-alpha.3",
+    "@bangle.dev/utils": "0.26.0-alpha.3",
+    "@bangle.dev/wiki-link": "0.26.0-alpha.3",
     "config": "workspace:*",
     "extension-registry": "workspace:*",
     "inline-palette": "workspace:*",

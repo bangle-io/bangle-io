@@ -20,11 +20,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@bangle.dev/all-base-components": "0.26.0-alpha.2",
-    "@bangle.dev/core": "0.26.0-alpha.2",
-    "@bangle.dev/pm": "0.26.0-alpha.2",
-    "@bangle.dev/test-helpers": "0.26.0-alpha.2",
-    "@bangle.dev/utils": "0.26.0-alpha.2",
+    "@bangle.dev/all-base-components": "0.26.0-alpha.3",
+    "@bangle.dev/core": "0.26.0-alpha.3",
+    "@bangle.dev/pm": "0.26.0-alpha.3",
+    "@bangle.dev/test-helpers": "0.26.0-alpha.3",
+    "@bangle.dev/utils": "0.26.0-alpha.3",
     "baby-fs": "workspace:*",
     "base-error": "workspace:*",
     "extension-registry": "workspace:*",
