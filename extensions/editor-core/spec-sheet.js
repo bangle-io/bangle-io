@@ -16,7 +16,7 @@ import {
   strike,
   text,
   underline,
-} from '@bangle.dev/core';
+} from '@bangle.dev/base-components';
 import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
 import stopwatch from '@bangle.dev/react-stopwatch';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';

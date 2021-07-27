@@ -4,7 +4,7 @@ import {
   heading,
   orderedList,
   paragraph,
-} from '@bangle.dev/core';
+} from '@bangle.dev/base-components';
 import { chainCommands } from '@bangle.dev/pm';
 const { insertEmptyParagraphAbove, insertEmptyParagraphBelow } = paragraph;
 const { queryIsBulletListActive } = bulletList;

@@ -1,4 +1,4 @@
-import { corePlugins, coreSpec } from '@bangle.dev/core';
+import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { act, fireEvent, render } from '@testing-library/react';
 import { Extension, ExtensionRegistry } from 'extension-registry';
 import React from 'react';
@@ -17,8 +17,8 @@ jest.mock('workspace-context/index', () => {
 const coreExtension = Extension.create({
   name: 'core',
   editor: {
-    specs: [coreSpec()],
-    plugins: [...corePlugins()],
+    specs: defaultSpecs(),
+    plugins: defaultPlugins(),
   },
 });
 

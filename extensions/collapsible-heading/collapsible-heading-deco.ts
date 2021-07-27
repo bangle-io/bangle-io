@@ -1,4 +1,4 @@
-import { heading } from '@bangle.dev/core';
+import { heading } from '@bangle.dev/base-components';
 import {
   Decoration,
   DecorationSet,

@@ -1,4 +1,4 @@
-import { defaultSpecs } from '@bangle.dev/core/dist/test-helpers/default-components';
+import { defaultSpecs } from '@bangle.dev/all-base-components';
 import { Node } from '@bangle.dev/pm';
 import { Extension, ExtensionRegistry } from 'extension-registry';
 import mockBabyFs from 'test-utils/baby-fs-test-mock';

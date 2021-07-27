@@ -13,6 +13,12 @@ module.exports = {
     {
       files: '*.jsx',
     },
+    {
+      files: '*.tsx',
+    },
+    {
+      files: '*.ts',
+    },
   ],
   env: {
     jest: true,

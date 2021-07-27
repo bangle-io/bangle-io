@@ -1,4 +1,24 @@
-import { corePlugins, coreSpec, SpecRegistry } from '@bangle.dev/core';
+import { SpecRegistry } from '@bangle.dev/core';
+import {
+  blockquote,
+  bold,
+  bulletList,
+  code,
+  codeBlock,
+  doc,
+  hardBreak,
+  heading,
+  horizontalRule,
+  image,
+  italic,
+  link,
+  listItem,
+  orderedList,
+  paragraph,
+  strike,
+  text,
+  underline,
+} from '@bangle.dev/base-components';
 import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import { config } from 'config';
@@ -8,7 +28,26 @@ import { useUIManagerContext } from 'ui-context';
 import { useLocalStorage } from 'utils';
 import './Changelog.css';
 
-const specRegistry = new SpecRegistry(coreSpec());
+const specRegistry = new SpecRegistry([
+  blockquote.spec(),
+  bold.spec(),
+  bulletList.spec(),
+  code.spec(),
+  codeBlock.spec(),
+  doc.spec(),
+  hardBreak.spec(),
+  heading.spec(),
+  horizontalRule.spec(),
+  image.spec(),
+  italic.spec(),
+  link.spec(),
+  listItem.spec(),
+  orderedList.spec(),
+  paragraph.spec(),
+  strike.spec(),
+  text.spec(),
+  underline.spec(),
+]);
 
 export function Changelog() {
   const { modal, dispatch } = useUIManagerContext();
@@ -52,7 +91,7 @@ function ChangelogDisplay() {
   const editorState = useEditorState({
     specRegistry,
     // TODO remove as any
-    plugins: () => corePlugins() as any,
+    plugins: () => [],
     initialValue: parser.parse(getMarkdown()),
   });
 

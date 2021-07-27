@@ -1,4 +1,9 @@
-import { bulletList, listItem, orderedList, paragraph } from '@bangle.dev/core';
+import {
+  bulletList,
+  listItem,
+  orderedList,
+  paragraph,
+} from '@bangle.dev/base-components';
 import { setBlockType } from '@bangle.dev/pm';
 import { rafCommandExec } from '@bangle.dev/utils';
 import { replaceSuggestionMarkWith } from 'inline-palette';
