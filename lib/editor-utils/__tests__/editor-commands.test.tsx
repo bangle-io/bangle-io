@@ -5,11 +5,9 @@
 /// <reference path="../../../missing-test-types.d.ts" />
 
 import { SpecRegistry } from '@bangle.dev/core';
-import { defaultSpecs } from '@bangle.dev/core/test-helpers/default-components';
-import {
-  psx,
-  renderTestEditor,
-} from '@bangle.dev/core/test-helpers/test-helpers';
+import { defaultSpecs, defaultPlugins } from '@bangle.dev/all-base-components';
+
+import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 import { trimWhiteSpaceBeforeCursor } from '../editor-commands';
 const specRegistry = new SpecRegistry([...defaultSpecs()]);
 
@@ -17,7 +15,7 @@ describe('trimWhiteSpaceBeforeCursor', () => {
   test('works with paragraph', async () => {
     const testEditor = renderTestEditor({
       specRegistry,
-      plugins: [],
+      plugins: defaultPlugins(),
     });
 
     const { container, view } = testEditor(

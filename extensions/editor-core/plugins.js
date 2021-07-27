@@ -1,7 +1,24 @@
-import { components, link } from '@bangle.dev/core';
+import {
+  blockquote,
+  bold,
+  bulletList,
+  code,
+  codeBlock,
+  hardBreak,
+  heading,
+  horizontalRule,
+  italic,
+  link,
+  listItem,
+  orderedList,
+  paragraph,
+  strike,
+  history,
+  underline,
+} from '@bangle.dev/base-components';
 import { NodeSelection, Plugin, PluginKey } from '@bangle.dev/pm';
 import { floatingMenu } from '@bangle.dev/react-menu';
-import stopwatch from '@bangle.dev/react-stopwatch';
+import { stopwatch } from '@bangle.dev/react-stopwatch';
 import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
@@ -34,30 +51,30 @@ export const getPlugins = () => {
       },
     }),
 
-    components.bold.plugins(),
-    components.code.plugins(),
-    components.italic.plugins(),
-    components.strike.plugins(),
-    components.link.plugins(),
-    components.underline.plugins(),
-    components.paragraph.plugins(),
-    components.blockquote.plugins(),
-    components.bulletList.plugins(),
-    components.codeBlock.plugins(),
-    components.hardBreak.plugins(),
-    components.heading.plugins({
+    bold.plugins(),
+    code.plugins(),
+    italic.plugins(),
+    strike.plugins(),
+    link.plugins(),
+    underline.plugins(),
+    paragraph.plugins(),
+    blockquote.plugins(),
+    bulletList.plugins(),
+    codeBlock.plugins(),
+    hardBreak.plugins(),
+    heading.plugins({
       keybindings: {
-        ...components.heading.defaultKeys,
+        ...heading.defaultKeys,
         toggleCollapse: 'Shift-Meta-1',
         toH4: null,
         toH5: null,
         toH6: null,
       },
     }),
-    components.horizontalRule.plugins(),
-    components.listItem.plugins(),
-    components.orderedList.plugins(),
-    components.history.plugins(),
+    horizontalRule.plugins(),
+    listItem.plugins(),
+    orderedList.plugins(),
+    history.plugins(),
     tablePlugins(),
     stopwatch.plugins(),
     trailingNode.plugins(),

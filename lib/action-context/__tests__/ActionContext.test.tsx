@@ -1,4 +1,4 @@
-import { defaultSpecs } from '@bangle.dev/core/dist/test-helpers/default-components';
+import { defaultSpecs } from '@bangle.dev/all-base-components';
 import { act, render } from '@testing-library/react';
 import {
   Extension,
