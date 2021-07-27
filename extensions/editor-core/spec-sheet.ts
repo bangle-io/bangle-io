@@ -17,23 +17,28 @@ import {
   text,
   underline,
 } from '@bangle.dev/base-components';
+import { RawSpecs } from '@bangle.dev/core';
 import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
 import stopwatch from '@bangle.dev/react-stopwatch';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
 
-let headingSpec = heading.spec();
+const headingSpec = (() => {
+  const spec = heading.spec();
+  if (spec) {
+    return {
+      ...spec,
+      schema: {
+        ...((spec as any).schema || {}),
+        draggable: true,
+      },
+    };
+  }
+  return spec;
+})();
 
-headingSpec = {
-  ...headingSpec,
-  schema: {
-    ...headingSpec.schema,
-    draggable: true,
-  },
-};
-
-export const rawSpecs = [
+export const rawSpecs: RawSpecs[] = [
   doc.spec({ content: 'frontMatter? block+' }),
   text.spec(),
   paragraph.spec(),
@@ -56,7 +61,5 @@ export const rawSpecs = [
   link.spec(),
   underline.spec(),
   stopwatch.spec(),
-  trailingNode.spec(),
-  timestamp.spec(),
   markdownFrontMatter.spec(),
 ];

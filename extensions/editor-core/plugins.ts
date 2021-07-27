@@ -66,9 +66,9 @@ export const getPlugins = () => {
       keybindings: {
         ...heading.defaultKeys,
         toggleCollapse: 'Shift-Meta-1',
-        toH4: null,
-        toH5: null,
-        toH6: null,
+        toH4: undefined,
+        toH5: undefined,
+        toH6: undefined,
       },
     }),
     horizontalRule.plugins(),
@@ -85,7 +85,7 @@ export const getPlugins = () => {
         // in the middle of screen.
         // TODO the /4 value makes it a bit weird when moving a node up
         // or down.
-        scrollMargin: parseInt(window.innerHeight / 4),
+        scrollMargin: Math.floor(window.innerHeight / 4),
       },
     }),
   ];
