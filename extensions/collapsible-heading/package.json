@@ -19,10 +19,10 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/base-components": "0.26.0-alpha.3",
-    "@bangle.dev/core": "0.26.0-alpha.3",
-    "@bangle.dev/pm": "0.26.0-alpha.3",
-    "@bangle.dev/utils": "0.26.0-alpha.3",
+    "@bangle.dev/base-components": "0.26.1",
+    "@bangle.dev/core": "0.26.1",
+    "@bangle.dev/pm": "0.26.1",
+    "@bangle.dev/utils": "0.26.1",
     "extension-registry": "workspace:*",
     "utils": "workspace:*"
   },
