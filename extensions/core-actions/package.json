@@ -19,9 +19,9 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.26.5",
-    "@bangle.dev/pm": "0.26.5",
-    "@bangle.dev/utils": "0.26.5",
+    "@bangle.dev/core": "0.26.5-alpha.0",
+    "@bangle.dev/pm": "0.26.5-alpha.0",
+    "@bangle.dev/utils": "0.26.5-alpha.0",
     "action-context": "workspace:*",
     "baby-fs": "workspace:*",
     "config": "workspace:*",

@@ -19,9 +19,9 @@
   "module": "index.js",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/core": "0.26.5",
-    "@bangle.dev/pm": "0.26.5",
-    "@bangle.dev/utils": "0.26.5",
+    "@bangle.dev/core": "0.26.5-alpha.0",
+    "@bangle.dev/pm": "0.26.5-alpha.0",
+    "@bangle.dev/utils": "0.26.5-alpha.0",
     "extension-registry": "workspace:*",
     "utils": "workspace:*"
   },
