@@ -9,9 +9,9 @@ export function InlinePaletteRow({
   title,
   isActive,
   onClick,
-  rightIcon,
+  rightIcon = null,
   rightHoverIcon = null,
-  leftNode,
+  leftNode = null,
   basePadding = BASE_PADDING,
   depth = 1,
   description = '',
@@ -21,6 +21,23 @@ export function InlinePaletteRow({
   disabled,
   // on touch devices having :hover forces you to click twice
   allowHover = !isTouchDevice(),
+}: {
+  dataId: string;
+  title?: string;
+  isActive?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  rightIcon?: JSX.Element | null;
+  rightHoverIcon?: JSX.Element | null;
+  leftNode?: JSX.Element | null;
+  basePadding?: number;
+  depth?: number;
+  description?: string;
+  className?: string;
+  scrollIntoViewIfNeeded?: boolean;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+  // on touch devices having :hover forces you to click twice
+  allowHover?: boolean;
 }) {
   const ref = useRef<HTMLInputElement>(null);
 

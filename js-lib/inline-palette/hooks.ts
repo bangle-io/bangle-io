@@ -27,7 +27,16 @@ export function useInlinePaletteItems(
   items,
   counter,
   isItemDisabled,
-) {
+): {
+  getItemProps: (
+    item: any,
+    index: number,
+  ) => {
+    isActive: boolean;
+    onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  };
+  dismissPalette: () => boolean;
+} {
   const { setExecuteItemCommand } = usePluginState(inlinePaletteKey);
   const view = useEditorViewContext();
 
@@ -81,10 +90,10 @@ export function useInlinePaletteItems(
   }, [setExecuteItemCommand, executeHandler, items, counter]);
 
   const getItemProps = useCallback(
-    (item, index) => {
+    (item: any, index: number) => {
       return {
         isActive: activeIndex === index,
-        onClick: (e) => {
+        onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           if (executeHandler(index)(view.state, view.dispatch, view)) {
             e.preventDefault();
           }
@@ -100,7 +109,7 @@ export function useInlinePaletteItems(
   };
 }
 
-function getActiveIndex(counter, size) {
+function getActiveIndex(counter, size): number {
   const r = counter % size;
   return r < 0 ? r + size : r;
 }

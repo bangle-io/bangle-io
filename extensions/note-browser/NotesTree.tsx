@@ -297,7 +297,7 @@ const RenderItems = React.memo(
       const wsPath = filePathToWsPath(wsName, path);
       const splittedPath = path.split('/');
       const depth = splittedPath.length;
-      const name = removeMdExtension(splittedPath.pop());
+      const name = removeMdExtension(splittedPath.pop() || 'Unknown file name');
 
       const onClick = (event) => {
         if (isDir) {
