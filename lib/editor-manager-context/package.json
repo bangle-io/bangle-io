@@ -20,9 +20,9 @@
   "scripts": {},
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/core": "0.26.4",
-    "@bangle.dev/pm": "0.26.4",
-    "@bangle.dev/utils": "0.26.4",
+    "@bangle.dev/core": "0.26.5",
+    "@bangle.dev/pm": "0.26.5",
+    "@bangle.dev/utils": "0.26.5",
     "config": "workspace:*",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "17.0.2",
