@@ -265,21 +265,21 @@ export async function getDayJs({} = {}) {
   return dayJs;
 }
 
-export function conditionalPrefix(str, part) {
+export function conditionalPrefix(str: string, part: string) {
   if (str.startsWith(part)) {
     return str;
   }
   return part + str;
 }
 
-export function conditionalSuffix(str, part) {
+export function conditionalSuffix(str: string, part: string) {
   if (str.endsWith(part)) {
     return str;
   }
   return str + part;
 }
 
-export function removeMdExtension(str) {
+export function removeMdExtension(str: string) {
   if (str.endsWith('.md')) {
     return str.slice(0, -3);
   }

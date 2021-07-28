@@ -19,12 +19,12 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/collab-client": "0.26.4",
-    "@bangle.dev/collab-server": "0.26.4",
-    "@bangle.dev/core": "0.26.4",
-    "@bangle.dev/disk": "0.26.4",
-    "@bangle.dev/pm": "0.26.4",
-    "@bangle.dev/utils": "0.26.4",
+    "@bangle.dev/collab-client": "0.26.5-alpha.1",
+    "@bangle.dev/collab-server": "0.26.5-alpha.1",
+    "@bangle.dev/core": "0.26.5-alpha.1",
+    "@bangle.dev/disk": "0.26.5-alpha.1",
+    "@bangle.dev/pm": "0.26.5-alpha.1",
+    "@bangle.dev/utils": "0.26.5-alpha.1",
     "extension-registry": "workspace:*",
     "naukar-proxy": "workspace:*"
   },

@@ -1,9 +1,15 @@
-import { BangleEditor, useEditorState } from '@bangle.dev/react';
+import {
+  BangleEditor,
+  useEditorState,
+  RenderNodeViewsFunction,
+} from '@bangle.dev/react';
 import { Node } from '@bangle.dev/pm';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { getScrollParentElement } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
+import { ExtensionRegistry } from 'extension-registry';
+import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
@@ -13,7 +19,17 @@ Editor.propTypes = {
   editorId: PropTypes.number.isRequired,
 };
 
-export function Editor({ editorId, wsPath, extensionRegistry, setEditor }) {
+export function Editor({
+  editorId,
+  wsPath,
+  extensionRegistry,
+  setEditor,
+}: {
+  extensionRegistry: ExtensionRegistry;
+  editorId: number;
+  wsPath: string;
+  setEditor: (editorId: number, editor: CoreBangleEditor) => void;
+}) {
   const { getNote } = useWorkspaceContext();
   // an object which can is used to provide extensions a store unique to this editor instance
   const [uniqueEditorObj] = useState({});
@@ -78,6 +94,13 @@ function EditorInner({
   setEditor,
   initialValue,
   uniqueEditorObj,
+}: {
+  extensionRegistry: ExtensionRegistry;
+  editorId: number;
+  wsPath: string;
+  setEditor: (editorId: number, editor: CoreBangleEditor) => void;
+  initialValue: any;
+  uniqueEditorObj: any;
 }) {
   useEffect(() => {
     log('mounting editor', editorId, wsPath);
@@ -98,10 +121,8 @@ function EditorInner({
     [setEditor, editorId],
   );
 
-  const renderNodeViews = useCallback(
+  const renderNodeViews: RenderNodeViewsFunction = useCallback(
     (nodeViewRenderArg) => {
-      const { node, updateAttrs, children, selected } = nodeViewRenderArg;
-
       return extensionRegistry.renderReactNodeViews({
         nodeViewRenderArg,
         wsPath,

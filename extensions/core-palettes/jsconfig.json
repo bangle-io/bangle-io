@@ -28,7 +28,7 @@
         "../../lib/extension-registry/*"
       ],
       "ui-components": [
-        "../../lib/ui-components/index.js"
+        "../../lib/ui-components/index.ts"
       ],
       "ui-components/*": [
         "../../lib/ui-components/*"

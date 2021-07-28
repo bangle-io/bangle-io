@@ -1,5 +1,6 @@
 import { SpecRegistry } from '@bangle.dev/core';
 import React from 'react';
+import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 import {
   ActionDefinitionType,
   ActionHandler,
@@ -112,7 +113,10 @@ export class ExtensionRegistry {
   specRegistry: SpecRegistry;
   // TODO move this to a method
   markdownItPlugins: any[];
-  private renderReactNodeViewLookup: Record<string, Function>;
+  private renderReactNodeViewLookup: Exclude<
+    EditorConfig['renderReactNodeView'],
+    undefined
+  >;
   private palettes: ExtensionPaletteType[];
   private palettesLookup: Record<string, ExtensionPaletteType>;
   private actionHandlers: Set<ActionHandler>;
@@ -141,9 +145,11 @@ export class ExtensionRegistry {
       ...filterFlatMap(this.editorConfig, 'markdownItPlugins'),
     ];
     this.renderReactNodeViewLookup = Object.fromEntries(
-      filterFlatMap(this.editorConfig, 'renderReactNodeView', false).flatMap(
-        (obj) => Object.entries(obj as any),
-      ),
+      filterFlatMap<any>(
+        this.editorConfig,
+        'renderReactNodeView',
+        false,
+      ).flatMap((obj) => Object.entries(obj)),
     );
 
     const applicationConfig = extensions.map((e) => e.application);
@@ -171,10 +177,10 @@ export class ExtensionRegistry {
     wsPath,
     editorId,
   }: {
-    nodeViewRenderArg: any;
+    nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
     wsPath: string;
     editorId: number;
-  }) {
+  }): React.ReactNode {
     return this.renderReactNodeViewLookup[nodeViewRenderArg.node.type.name]?.({
       nodeViewRenderArg,
       wsPath,

@@ -1,6 +1,10 @@
-import { createTooltipDOM, suggestTooltip } from '@bangle.dev/tooltip';
+import {
+  createTooltipDOM,
+  suggestTooltip,
+  SuggestTooltipRenderOpts,
+} from '@bangle.dev/tooltip';
 import { bangleWarn, pluginKeyStore, valuePlugin } from '@bangle.dev/utils';
-
+import type { BaseRawMarkSpec, PluginKey } from '@bangle.dev/core';
 const {
   decrementSuggestTooltipCounter,
   incrementSuggestTooltipCounter,
@@ -10,7 +14,13 @@ export const spec = specFactory;
 export const plugins = pluginsFactory;
 export const commands = {};
 
-function specFactory({ markName, trigger } = {}) {
+function specFactory({
+  markName,
+  trigger,
+}: {
+  markName: string;
+  trigger: string;
+}): BaseRawMarkSpec {
   const spec = suggestTooltip.spec({ markName, trigger });
 
   return {
@@ -24,7 +34,15 @@ function specFactory({ markName, trigger } = {}) {
 
 const keyStore = pluginKeyStore();
 
-function pluginsFactory({ key, markName, tooltipRenderOpts = {} } = {}) {
+function pluginsFactory({
+  key,
+  markName,
+  tooltipRenderOpts = {},
+}: {
+  key: PluginKey;
+  markName: string;
+  tooltipRenderOpts: SuggestTooltipRenderOpts;
+}) {
   return ({ schema, specRegistry }) => {
     const { trigger } = specRegistry.options[markName];
     const suggestTooltipKey = keyStore.create(key, 'suggestTooltipKey');

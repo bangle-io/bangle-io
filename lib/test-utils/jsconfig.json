@@ -22,7 +22,7 @@
         "../extension-registry/*"
       ],
       "markdown": [
-        "../markdown/index.js"
+        "../markdown/index.ts"
       ],
       "markdown/*": [
         "../markdown/*"

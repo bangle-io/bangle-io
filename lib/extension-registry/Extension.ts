@@ -1,7 +1,20 @@
-import React from 'react';
-import { EditorPluginDefinition } from './PluginType';
 import type { RawSpecs } from '@bangle.dev/core';
+import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
+import React from 'react';
+import type { ExtensionRegistry } from './ExtensionRegistry';
+import { EditorPluginDefinition } from './PluginType';
 import { ExtensionPaletteType } from './UniversalPaletteType';
+
+export type RenderReactNodeViewCb = (arg: {
+  nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
+  wsPath: string;
+  editorId: number;
+  extensionRegistry: ExtensionRegistry;
+}) => React.ReactNode;
+
+export type RenderReactNodeView = {
+  [k: string]: RenderReactNodeViewCb;
+};
 
 const _check = Symbol();
 
@@ -16,7 +29,7 @@ export interface EditorConfig {
     wsPath: string;
     editorId: number;
   }>;
-  renderReactNodeView?: (...args: any[]) => any;
+  renderReactNodeView?: RenderReactNodeView;
   initialScrollPos?: (arg: any) => any;
   initialSelection?: (...args: any[]) => any;
   // deprecate this

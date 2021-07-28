@@ -1,3 +1,4 @@
+import { RenderReactNodeView } from 'extension-registry';
 import React, { useState } from 'react';
 import { conditionalSuffix } from 'utils/utility';
 import { useWorkspaceContext } from 'workspace-context';
@@ -20,7 +21,7 @@ export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
     pushWsPath,
   } = useWorkspaceContext();
 
-  const [invalidLink, updatedInvalidLink] = useState();
+  const [invalidLink, updatedInvalidLink] = useState(false);
   title = title || path;
 
   const backLinkPath = conditionalSuffix(path, '.md');
@@ -124,7 +125,7 @@ async function handleClick({
   return newWsPath;
 }
 
-export const renderReactNodeView = {
+export const renderReactNodeView: RenderReactNodeView = {
   // TODO move to using param wsPath
   [backLinkNodeName]: ({ nodeViewRenderArg, wsPath, extensionRegistry }) => {
     return (
