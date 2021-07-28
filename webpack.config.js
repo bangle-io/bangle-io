@@ -32,7 +32,7 @@ module.exports = (env, argv) => {
   const result = {
     target: 'web',
     mode,
-    entry: './app/app-entry/index.js',
+    entry: './app/app-entry/index.ts',
     devtool: 'source-map',
     resolve: {
       extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],

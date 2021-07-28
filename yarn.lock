@@ -8122,6 +8122,7 @@ __metadata:
     "@types/react-dom": ^17.0.9
     react: ^17.0.2
     react-dom: 17.0.2
+    ui-components: "workspace:*"
   languageName: unknown
   linkType: soft
 

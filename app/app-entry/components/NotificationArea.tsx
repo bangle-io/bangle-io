@@ -16,7 +16,6 @@ export function NotificationArea({}) {
       {notifications.map((n) => (
         <Notification
           key={n.uid}
-          uid={n.uid}
           onDismiss={() => {
             dispatch({
               type: 'UI/DISMISS_NOTIFICATION',

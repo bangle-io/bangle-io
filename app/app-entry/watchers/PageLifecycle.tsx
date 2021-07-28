@@ -7,7 +7,15 @@ import { trimWhiteSpaceBeforeCursor } from 'editor-utils';
 const pendingSymbol = Symbol('pending-tasks');
 
 export function PageLifecycle() {
-  const [lifecycle, updateLifecycle] = useState();
+  const [lifecycle, updateLifecycle] = useState<
+    | undefined
+    | {
+        addEventListener: (name: string, cb: any) => {};
+        removeEventListener: (name: string, cb: any) => {};
+        addUnsavedChanges: (s: Symbol) => void;
+        removeUnsavedChanges: (s: Symbol) => void;
+      }
+  >();
   const [blockReload, updateBlockReload] = useState(false);
   const { appStateValue, mutableAppStateValue } = useContext(AppStateContext);
   const [{ pageStateCurrent, pageStatePrevious }, updatePageState] = useState({
@@ -24,8 +32,8 @@ export function PageLifecycle() {
   });
 
   useEffect(() => {
-    updateBlockReload(appStateValue.hasPendingWrites);
-  }, [appStateValue.hasPendingWrites]);
+    updateBlockReload(Boolean(appStateValue?.hasPendingWrites));
+  }, [appStateValue, appStateValue?.hasPendingWrites]);
 
   useEffect(() => {
     if (!lifecycle) {
@@ -40,12 +48,15 @@ export function PageLifecycle() {
 
   useEffect(() => {
     const handler = (event) => {
-      updatePageState({
-        pageStateCurrent: event.newState,
-        pageStatePrevious: event.oldState,
-      });
-      mutableAppStateValue.pageLifecycleState = event.newState;
-      mutableAppStateValue.prevPageLifecycleState = event.oldState;
+      if (mutableAppStateValue) {
+        updatePageState({
+          pageStateCurrent: event.newState,
+          pageStatePrevious: event.oldState,
+        });
+
+        mutableAppStateValue.pageLifecycleState = event.newState;
+        mutableAppStateValue.prevPageLifecycleState = event.oldState;
+      }
     };
 
     lifecycle?.addEventListener('statechange', handler);

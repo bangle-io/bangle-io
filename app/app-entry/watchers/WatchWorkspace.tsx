@@ -13,6 +13,16 @@ const weakComputeLameHash = weakCache((fileWsPaths) =>
   fileWsPaths.sort((a, b) => a.localeCompare(b)).join(','),
 );
 
+interface MessageType {
+  type: typeof FILE_TREE_CHANGED;
+  tabName: string;
+  payload: {
+    wsName: string;
+    size: number;
+    lameHash: string;
+  };
+}
+
 export function WatchWorkspace() {
   const {
     wsName,
@@ -22,7 +32,8 @@ export function WatchWorkspace() {
     secondaryWsPath,
     updateOpenedWsPaths,
   } = useWorkspaceContext();
-  const [lastMessage, broadcastMessage] = useBroadcastChannel(CHANNEL_NAME);
+  const [lastMessage, broadcastMessage] =
+    useBroadcastChannel<MessageType>(CHANNEL_NAME);
   const isFirstMountRef = useRef(true);
   const checkCurrentEditors = useRef(false);
 
@@ -86,7 +97,7 @@ export function WatchWorkspace() {
 
   useEffect(() => {
     // fileWsPaths is undefined when its loading
-    if (!isFirstMountRef.current && fileWsPaths) {
+    if (!isFirstMountRef.current && fileWsPaths && wsName) {
       log('sending update', 'type =', FILE_TREE_CHANGED);
       broadcastMessage({
         type: FILE_TREE_CHANGED,

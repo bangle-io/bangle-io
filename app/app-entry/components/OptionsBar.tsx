@@ -26,21 +26,18 @@ export function OptionsBar() {
   const { pushWsPath, primaryWsPath, secondaryWsPath, updateOpenedWsPaths } =
     useWorkspaceContext();
 
-  const toggleSecondaryEditor = useCallback(
-    (event) => {
-      if (!primaryWsPath) {
-        return;
-      }
-      if (secondaryWsPath) {
-        updateOpenedWsPaths((openedWsPath) =>
-          openedWsPath.updateSecondaryWsPath(null),
-        );
-      } else {
-        pushWsPath(primaryWsPath, false, true);
-      }
-    },
-    [secondaryWsPath, primaryWsPath, updateOpenedWsPaths, pushWsPath],
-  );
+  const toggleSecondaryEditor = useCallback(() => {
+    if (!primaryWsPath) {
+      return;
+    }
+    if (secondaryWsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateSecondaryWsPath(null),
+      );
+    } else {
+      pushWsPath(primaryWsPath, false, true);
+    }
+  }, [secondaryWsPath, primaryWsPath, updateOpenedWsPaths, pushWsPath]);
 
   useKeybindings(() => {
     return {
@@ -124,6 +121,13 @@ function OptionsButton({
   children,
   onClick,
   active,
+}: {
+  className?: string;
+  hint?: string;
+  hintPos?: string;
+  children: any;
+  onClick: () => void;
+  active?: boolean;
 }) {
   return (
     <ButtonIcon
@@ -135,7 +139,7 @@ function OptionsButton({
         if (event?.currentTarget) {
           event.currentTarget.blur();
         }
-        onClick(event);
+        onClick();
       }}
     >
       {children}

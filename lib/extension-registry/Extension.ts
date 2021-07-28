@@ -1,6 +1,7 @@
 import React from 'react';
 import { EditorPluginDefinition } from './PluginType';
 import type { RawSpecs } from '@bangle.dev/core';
+import { ExtensionPaletteType } from './UniversalPaletteType';
 
 const _check = Symbol();
 
@@ -42,28 +43,7 @@ export interface ApplicationConfig {
     key: string;
     registerActionHandler: RegisterActionHandlerType;
   }>;
-  palettes?: Array<{
-    type: string;
-    icon: JSX.Element;
-    identifierPrefix: string;
-    placeholder: string;
-    parseRawQuery: (query: string) => string | undefined | null;
-    ReactComponent: React.ComponentType<{
-      query: string;
-      paletteType: string | undefined;
-      paletteMetadata: any;
-      updatePalette: (
-        type: string,
-        initialQuery?: string,
-        metadata?: any,
-      ) => void;
-      dismissPalette: (focusEditor?: boolean) => void;
-      onSelect: (e: Event) => void;
-      counter: number;
-      getActivePaletteItem: () => any;
-      updateCounter: (c: number) => void;
-    }>;
-  }>;
+  palettes?: Array<ExtensionPaletteType>;
   actions?: Array<ActionDefinitionType>;
   optionsBar?: Array<{
     icon: JSX.Element;

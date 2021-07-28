@@ -17,8 +17,10 @@ import { EmptyEditorPage } from './EmptyEditorPage';
  * @returns
  */
 function useHandleWsPath(incomingWsPath) {
-  const [wsPath, updateWsPath] = useState(undefined);
-  const [fileExists, updateFileExists] = useState(undefined);
+  const [wsPath, updateWsPath] = useState<string | undefined>(undefined);
+  const [fileExists, updateFileExists] = useState<boolean | undefined>(
+    undefined,
+  );
   const { checkFileExists } = useWorkspaceContext();
   const destroyedRef = useDestroyRef();
 
@@ -90,7 +92,8 @@ export function EditorArea({
         )}
         {wsPath && fileExists === false && (
           <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
-            🕵️‍♀️‍ Note "{resolvePath(wsPath).fileName}" was not found
+            🕵️‍♀️‍ Note "{wsPath ? resolvePath(wsPath).fileName : ''}" was not
+            found
           </h3>
         )}
         {showEmptyEditor && <EmptyEditorPage />}

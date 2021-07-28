@@ -8,6 +8,7 @@ import {
   Extension,
 } from './Extension';
 import type { RawSpecs } from '@bangle.dev/core';
+import { ExtensionPaletteType } from './UniversalPaletteType';
 
 function filterFlatMap<K>(
   array: any[],
@@ -112,12 +113,15 @@ export class ExtensionRegistry {
   // TODO move this to a method
   markdownItPlugins: any[];
   private renderReactNodeViewLookup: Record<string, Function>;
-  private palettes: any[];
-  private palettesLookup: Record<string, any>;
+  private palettes: ExtensionPaletteType[];
+  private palettesLookup: Record<string, ExtensionPaletteType>;
   private actionHandlers: Set<ActionHandler>;
   private registeredActions: ActionDefinitionType[];
   private editorConfig: EditorConfig[];
-  private optionsBarEntries: ApplicationConfig['optionsBar'];
+  private optionsBarEntries: Exclude<
+    ApplicationConfig['optionsBar'],
+    undefined
+  >;
   private sidebars: any[];
   editor = new EditorHandlers(this.extensions);
 

@@ -10,8 +10,17 @@ const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'WatchUI') : () => {};
 
+interface MessageType {
+  type: typeof UI_THEME_CHANGED;
+  tabName: string;
+  payload: {
+    theme: string;
+  };
+}
+
 export function WatchUI() {
-  const [lastMessage, broadcastMessage] = useBroadcastChannel(CHANNEL_NAME);
+  const [lastMessage, broadcastMessage] =
+    useBroadcastChannel<MessageType>(CHANNEL_NAME);
   const { theme, dispatch } = useUIManagerContext();
   const isFirstMountRef = useRef(true);
 

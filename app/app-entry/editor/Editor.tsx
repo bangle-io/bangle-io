@@ -1,4 +1,5 @@
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
+import { Node } from '@bangle.dev/pm';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { getScrollParentElement } from 'utils';
@@ -19,7 +20,7 @@ export function Editor({ editorId, wsPath, extensionRegistry, setEditor }) {
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
   // in handy when loading editor with a given scroll position.
-  const [initialValue, setInitialDoc] = useState();
+  const [initialValue, setInitialDoc] = useState<Node | undefined>();
   useEffect(() => {
     let destroyed = false;
     getNote(wsPath).then((doc) => {
@@ -42,7 +43,7 @@ export function Editor({ editorId, wsPath, extensionRegistry, setEditor }) {
         doc: initialValue,
         uniqueEditorObj: uniqueEditorObj,
       });
-      if (typeof pos === 'number') {
+      if (typeof pos === 'number' && scrollParent) {
         scrollParent.scrollTop = pos;
       }
     }

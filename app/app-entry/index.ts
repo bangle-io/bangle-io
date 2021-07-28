@@ -5,13 +5,13 @@ import { Entry } from './entry';
 const root = document.getElementById('root');
 
 if (typeof window !== undefined) {
-  window.Sentry?.onLoad(function () {
+  (window as any).Sentry?.onLoad(function () {
     import(
       /* webpackChunkName: "@sentry/tracing" */
       /* webpackPrefetch: true */
       '@sentry/tracing'
     ).then(({ Integrations }) => {
-      window.Sentry.init({
+      (window as any).Sentry.init({
         environment: DEPLOY_ENV,
         dsn: 'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',
         integrations: [new Integrations.BrowserTracing()],

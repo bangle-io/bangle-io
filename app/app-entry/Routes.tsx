@@ -40,10 +40,13 @@ export function Routes() {
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'Routes') : () => {};
+type UnPromisify<T> = T extends Promise<infer U> ? U : T;
 
 function WorkspaceBlockade({ children }) {
   const { wsName, primaryWsPath } = useWorkspaceContext();
-  const [workspaceInfo, updateWorkspaceInfo] = useState();
+  const [workspaceInfo, updateWorkspaceInfo] = useState<
+    UnPromisify<ReturnType<typeof getWorkspaceInfo>> | undefined
+  >();
   const history = useHistory();
 
   // Persist workspaceInfo in the history to

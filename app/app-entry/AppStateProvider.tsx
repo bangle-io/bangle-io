@@ -19,9 +19,7 @@ const appState = objectSync(initialAppState, {
 });
 
 export function AppStateProvider({ children }) {
-  const [appStateValue, updateAppStateValue] = useState({
-    appStateValue: initialAppState,
-  });
+  const [appStateValue, updateAppStateValue] = useState(initialAppState);
 
   useEffect(() => {
     const listener = ({ appStateValue }) => {

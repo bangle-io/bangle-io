@@ -2,7 +2,12 @@ import { useActionContext } from 'action-context';
 import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { UniversalPalette } from 'ui-components';
+import { PaletteOnExecuteItem } from 'ui-components/UniversalPalette/hooks';
 import { useUIManagerContext } from 'ui-context';
+import type {
+  PaletteManagerReactComponentProps,
+  PaletteManagerImperativeHandle,
+} from 'extension-registry';
 
 export function PaletteManager() {
   const {
@@ -12,7 +17,7 @@ export function PaletteManager() {
     dispatch,
     widescreen,
   } = useUIManagerContext();
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const { dispatchAction } = useActionContext();
   const extensionRegistry = useExtensionRegistryContext();
@@ -30,24 +35,28 @@ export function PaletteManager() {
     [dispatch, dispatchAction],
   );
 
-  const paletteRef = useRef();
+  const paletteRef = useRef<PaletteManagerImperativeHandle>(null);
 
-  const onExecuteItem = useCallback(
-    (...args) => {
+  const onExecuteItem = useCallback<PaletteOnExecuteItem>(
+    (items, info) => {
       dismissPalette();
-      paletteRef.current?.onExecuteItem(...args);
+      paletteRef.current?.onExecuteItem(items, info);
     },
     [dismissPalette],
   );
 
-  const updatePalette = useCallback(
+  const updatePalette = useCallback<
+    PaletteManagerReactComponentProps['updatePalette']
+  >(
     (type, initialQuery = '', metadata = {}) => {
       dispatch({
         type: 'UI/UPDATE_PALETTE',
         value: { type, initialQuery, metadata },
       });
       if (type) {
-        document.querySelector('.universal-palette-container input')?.focus();
+        document
+          .querySelector<HTMLInputElement>('.universal-palette-container input')
+          ?.focus();
       }
     },
     [dispatch],
@@ -82,9 +91,9 @@ export function PaletteManager() {
       const query = match.parseRawQuery(rawQuery);
       // if some other palette parses this query, switch to it
       if (match.type !== paletteType) {
-        updatePalette(match.type, query);
+        updatePalette(match.type, query || '');
       } else {
-        updateQuery(query);
+        updateQuery(query || '');
       }
     },
     [
@@ -97,7 +106,9 @@ export function PaletteManager() {
     ],
   );
 
-  const Palette = extensionRegistry.getPalette(paletteType);
+  const Palette = paletteType
+    ? extensionRegistry.getPalette(paletteType)
+    : undefined;
 
   const getActivePaletteItem = useCallback(
     (items) => {
@@ -115,7 +126,9 @@ export function PaletteManager() {
       widescreen={widescreen}
       onClickOutside={dismissPalette}
       onClickInside={() => {
-        document.querySelector('.universal-palette-container input')?.focus();
+        document
+          .querySelector<HTMLInputElement>('.universal-palette-container input')
+          ?.focus();
       }}
     >
       <UniversalPalette.PaletteInput

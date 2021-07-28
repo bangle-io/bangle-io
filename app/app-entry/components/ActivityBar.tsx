@@ -204,7 +204,7 @@ export function setupStickyNavigation(widescreen) {
     return () => {};
   }
 
-  const nav = document.getElementById('activity-bar-area');
+  const nav = document.getElementById('activity-bar-area')!;
 
   const removeUp = () => {
     nav.classList.add('down');
@@ -238,22 +238,18 @@ export function setupStickyNavigation(widescreen) {
     }
   };
 
-  // Non-blocking nav change
-  document.removeEventListener('scroll', updateNav, {
+  const opts = {
     capture: true,
     passive: true,
-  });
+  };
 
-  document.addEventListener('scroll', updateNav, {
-    capture: true,
-    passive: true,
-  });
+  // Non-blocking nav change
+  document.removeEventListener('scroll', updateNav, opts);
+
+  document.addEventListener('scroll', updateNav, opts);
 
   return () => {
-    document.removeEventListener('scroll', updateNav, {
-      capture: true,
-      passive: true,
-    });
+    document.removeEventListener('scroll', updateNav, opts);
     addUp();
   };
 }

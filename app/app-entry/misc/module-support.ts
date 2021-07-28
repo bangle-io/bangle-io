@@ -11,7 +11,7 @@ function checkModuleWorkerSupport() {
   }
 
   let supportsModuleWorker = false;
-  const options = {
+  const options: any = {
     get type() {
       supportsModuleWorker = true;
       return 'module';

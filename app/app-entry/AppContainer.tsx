@@ -50,7 +50,7 @@ function LeftSidebarArea() {
   }, [extensionRegistry]);
 
   let component;
-  if (extensionSidebars[sidebar]) {
+  if (sidebar && extensionSidebars[sidebar]) {
     const sidebarObj = extensionSidebars[sidebar];
     component = <sidebarObj.ReactComponent />;
   } else {
