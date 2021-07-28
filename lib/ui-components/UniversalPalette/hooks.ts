@@ -7,12 +7,14 @@ export function useActivePaletteItem(items: ItemType[], counter: number) {
   }, [items, counter]);
 }
 
+export type PaletteOnExecuteItem = (
+  cb: (items: ItemType[]) => string | undefined,
+  info: { source: string; metaKey: boolean; shiftKey: boolean },
+) => void;
+
 export function usePaletteDriver(
   onEscape: () => void,
-  onExecuteItem: (
-    cb: (items: ItemType[]) => string | undefined,
-    info: { source: string; metaKey: boolean; shiftKey: boolean },
-  ) => {},
+  onExecuteItem: PaletteOnExecuteItem,
 ) {
   const [counter, updateCounter] = useState(0);
 
@@ -25,7 +27,11 @@ export function usePaletteDriver(
   }, []);
 
   const onSelect = useCallback(
-    (event) => {
+    (
+      event:
+        | React.KeyboardEvent<HTMLInputElement>
+        | React.MouseEvent<HTMLDivElement, MouseEvent>,
+    ) => {
       event.preventDefault();
       event.stopPropagation();
       const source2 = event.type;
@@ -39,7 +45,7 @@ export function usePaletteDriver(
         }
       }
 
-      const uid: string = event.currentTarget?.getAttribute('data-id');
+      const uid = event.currentTarget?.getAttribute('data-id');
       onExecuteItem(
         uid
           ? () => uid

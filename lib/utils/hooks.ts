@@ -170,11 +170,13 @@ export function useDestroyRef() {
 const INFINITE_RECURSION_SEND_COUNT = 12;
 const INFINITE_RECURSION_TIME_THRESHOLD = 50;
 
-export function useBroadcastChannel(channelName) {
+export function useBroadcastChannel<T>(
+  channelName,
+): [T | undefined, (data: T) => void] {
   const infiniteRecurseRef = useRef(0);
   const lastSentRef = useRef<Number | undefined>();
   const destroyedRef = useRef(false);
-  const [lastMessage, updateEvent] = useState();
+  const [lastMessage, updateEvent] = useState<T | undefined>();
   const [bChannel] = useState(() => {
     if (channelName == null) {
       throw new Error('channelName must be provided');
@@ -201,7 +203,7 @@ export function useBroadcastChannel(channelName) {
   }, [bChannel]);
 
   const broadcastMessage = useCallback(
-    (data) => {
+    (data: T) => {
       if (!destroyedRef.current) {
         const lastSent = lastSentRef.current;
         if (

@@ -1,10 +1,87 @@
-import { useExtensionRegistryContext } from 'extension-registry';
+import {
+  ExtensionPaletteType,
+  useExtensionRegistryContext,
+} from 'extension-registry';
 import React, { useCallback, useImperativeHandle } from 'react';
 import { NullIcon, UniversalPalette } from 'ui-components';
 import { extensionName } from './config';
 
 const identifierPrefix = '?';
-export const questionPalette = {
+
+const QuestionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
+  React.forwardRef(
+    ({ query, updatePalette, onSelect, getActivePaletteItem }, ref) => {
+      const extensionRegistry = useExtensionRegistryContext();
+
+      const items = extensionRegistry
+        .getAllPalettes()
+        .map((r) => {
+          return {
+            uid: r.type,
+            rightNode: <kbd>{r.identifierPrefix}</kbd>,
+            rightHoverNode: <kbd>{r.identifierPrefix}</kbd>,
+            title: r.type.split('/').slice(1).join('/'),
+            data: {
+              type: r.type,
+            },
+          };
+        })
+        .filter((obj) => strMatch(obj.title, query));
+
+      const onExecuteItem = useCallback(
+        (getUid, sourceInfo) => {
+          const uid = getUid(items);
+          const item = items.find((item) => item.uid === uid);
+          if (item) {
+            updatePalette(item.data.type);
+          }
+        },
+        [updatePalette, items],
+      );
+
+      // Expose onExecuteItem for the parent to call it
+      // If we dont do this clicking or entering will not work
+      useImperativeHandle(
+        ref,
+        () => ({
+          onExecuteItem,
+        }),
+        [onExecuteItem],
+      );
+
+      const activeItem = getActivePaletteItem(items);
+
+      return (
+        <>
+          <UniversalPalette.PaletteItemsContainer>
+            {items.map((item) => {
+              return (
+                <UniversalPalette.PaletteItemUI
+                  key={item.uid}
+                  item={item}
+                  isActive={activeItem === item}
+                  onClick={onSelect}
+                />
+              );
+            })}
+          </UniversalPalette.PaletteItemsContainer>
+          <UniversalPalette.PaletteInfo>
+            <UniversalPalette.PaletteInfoItem>
+              use:
+            </UniversalPalette.PaletteInfoItem>
+            <UniversalPalette.PaletteInfoItem>
+              <kbd className="font-normal">↑↓</kbd> Navigate
+            </UniversalPalette.PaletteInfoItem>
+            <UniversalPalette.PaletteInfoItem>
+              <kbd className="font-normal">Enter</kbd> Select a Palette
+            </UniversalPalette.PaletteInfoItem>
+          </UniversalPalette.PaletteInfo>
+        </>
+      );
+    },
+  );
+
+export const questionPalette: ExtensionPaletteType = {
   type: extensionName + '/question',
   icon: <NullIcon />,
   identifierPrefix,
@@ -15,81 +92,8 @@ export const questionPalette = {
     }
     return null;
   },
-  ReactComponent: React.forwardRef(QuestionPaletteUIComponent),
+  ReactComponent: QuestionPaletteUIComponent,
 };
-
-function QuestionPaletteUIComponent(
-  { query, updatePalette, onSelect, getActivePaletteItem },
-  ref,
-) {
-  const extensionRegistry = useExtensionRegistryContext();
-
-  const items = extensionRegistry
-    .getAllPalettes()
-    .map((r) => {
-      return {
-        uid: r.type,
-        rightNode: <kbd>{r.identifierPrefix}</kbd>,
-        rightHoverNode: <kbd>{r.identifierPrefix}</kbd>,
-        title: r.type.split('/').slice(1).join('/'),
-        data: {
-          type: r.type,
-        },
-      };
-    })
-    .filter((obj) => strMatch(obj.title, query));
-
-  const onExecuteItem = useCallback(
-    (getUid, sourceInfo) => {
-      const uid = getUid(items);
-      const item = items.find((item) => item.uid === uid);
-      if (item) {
-        updatePalette(item.data.type);
-      }
-    },
-    [updatePalette, items],
-  );
-
-  // Expose onExecuteItem for the parent to call it
-  // If we dont do this clicking or entering will not work
-  useImperativeHandle(
-    ref,
-    () => ({
-      onExecuteItem,
-    }),
-    [onExecuteItem],
-  );
-
-  const activeItem = getActivePaletteItem(items);
-
-  return (
-    <>
-      <UniversalPalette.PaletteItemsContainer>
-        {items.map((item) => {
-          return (
-            <UniversalPalette.PaletteItemUI
-              key={item.uid}
-              item={item}
-              isActive={activeItem === item}
-              onClick={onSelect}
-            />
-          );
-        })}
-      </UniversalPalette.PaletteItemsContainer>
-      <UniversalPalette.PaletteInfo>
-        <UniversalPalette.PaletteInfoItem>
-          use:
-        </UniversalPalette.PaletteInfoItem>
-        <UniversalPalette.PaletteInfoItem>
-          <kbd className="font-normal">↑↓</kbd> Navigate
-        </UniversalPalette.PaletteInfoItem>
-        <UniversalPalette.PaletteInfoItem>
-          <kbd className="font-normal">Enter</kbd> Select a Palette
-        </UniversalPalette.PaletteInfoItem>
-      </UniversalPalette.PaletteInfo>
-    </>
-  );
-}
 
 function strMatch(a, b) {
   b = b.toLocaleLowerCase();
