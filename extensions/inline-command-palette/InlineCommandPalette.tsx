@@ -22,7 +22,7 @@ const staticHints = [
     group: 'hints',
     disabled: true,
     // TODO clicking this hint to switch to backlink suggest
-    editorExecuteCommand: ({}) => {
+    editorExecuteCommand: () => {
       // return replaceSuggestionMarkWith(palettePluginKey, getDate(type));
     },
   }),
@@ -90,7 +90,7 @@ export function InlineCommandPalette() {
   const view = useEditorViewContext();
 
   const timestampItems = useDateItems(query);
-  const editorItems = useEditorItems(query);
+  const editorItems = useEditorItems();
   const isItemDisabled = useCallback(
     (item) => {
       return typeof item.disabled === 'function'

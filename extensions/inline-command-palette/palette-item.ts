@@ -2,11 +2,36 @@ export const PALETTE_ITEM_REGULAR_TYPE = 'REGULAR_TYPE';
 export const PALETTE_ITEM_HINT_TYPE = 'HINT_TYPE';
 const allTypes = [PALETTE_ITEM_HINT_TYPE, PALETTE_ITEM_REGULAR_TYPE];
 
+interface PaletteItemType {
+  uid: string;
+  title: string;
+  type: string;
+  description: string;
+  keywords: string[];
+  disabled: (state) => boolean;
+  hidden: boolean;
+  editorExecuteCommand: Function;
+  group: string;
+  highPriority: boolean;
+  skipFiltering: boolean;
+}
+
 export class PaletteItem {
-  static create(obj) {
+  static create(obj: any) {
     return new PaletteItem(obj);
   }
-  constructor(obj) {
+  uid: string;
+  title: string;
+  type: string;
+  description: string;
+  keywords: string[];
+  disabled: (state) => boolean;
+  hidden: boolean;
+  editorExecuteCommand: Function;
+  group: string;
+  highPriority: boolean;
+  skipFiltering: boolean;
+  constructor(obj: any) {
     const {
       uid,
       title,

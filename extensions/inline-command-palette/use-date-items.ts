@@ -38,10 +38,10 @@ const baseItem = PaletteItem.create({
 let _libraries;
 async function getTimeLibrary() {
   if (!_libraries) {
-    let [chrono, dayjs] = await Promise.all([
+    let [chrono, dayjs] = (await Promise.all([
       import('chrono-node'),
       getDayJs(),
-    ]);
+    ])) as any;
 
     chrono = chrono.default || chrono;
 
@@ -50,8 +50,15 @@ async function getTimeLibrary() {
   return _libraries;
 }
 
-export function useDateItems(query) {
-  const [parsedDateObj, updateParsedDate] = useState(null);
+export function useDateItems(query: string) {
+  const [parsedDateObj, updateParsedDate] = useState<
+    | undefined
+    | {
+        parsedDates: any;
+        chrono: any;
+        dayjs: any;
+      }
+  >(undefined);
   const destroyedRef = useDestroyRef();
 
   const items = useMemo(() => {
@@ -65,7 +72,7 @@ export function useDateItems(query) {
           title: 'Insert date',
           group: 'date',
           description: 'Insert "' + prettyPrintDate(dayjs, p.date()) + '"',
-          editorExecuteCommand: ({}) => {
+          editorExecuteCommand: () => {
             return replaceSuggestionMarkWith(
               palettePluginKey,
               prettyPrintDate(dayjs, p.date()) + ' ',
@@ -102,16 +109,3 @@ export function useDateItems(query) {
   }, [query, parsedDateObj]);
   return items;
 }
-
-// function insertDateCommand(type) {
-//   return (state, dispatch, view) => {
-//     rafCommandExec(view, (state, dispatch, view) => {
-//       dispatch?.(state.tr.replaceSelectionWith(state.schema.text(' ')));
-//     });
-//     return replaceSuggestionMarkWith(palettePluginKey, getDate(type))(
-//       state,
-//       dispatch,
-//       view,
-//     );
-//   };
-// }

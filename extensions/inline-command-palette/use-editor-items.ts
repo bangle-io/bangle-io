@@ -26,9 +26,9 @@ const {
 const { insertEmptySiblingListAbove, insertEmptySiblingListBelow } = listItem;
 const { toggleOrderedList, queryIsOrderedListActive } = orderedList;
 
-const setHeadingBlockType = (level) => (state, dispatch, view) => {
+const setHeadingBlockType = (level) => (state, dispatch) => {
   const type = state.schema.nodes.heading;
-  return setBlockType(type, { level })(state, dispatch, view);
+  return setBlockType(type, { level })(state, dispatch);
 };
 
 export function useEditorItems() {

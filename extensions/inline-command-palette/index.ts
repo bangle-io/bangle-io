@@ -30,7 +30,7 @@ const extension = Extension.create({
           state,
           dispatch,
           view,
-        ) => {
+        ): boolean => {
           const { tr, schema, selection } = state;
 
           if (queryInlinePaletteActive(palettePluginKey)(state)) {
@@ -48,7 +48,8 @@ const extension = Extension.create({
             schema.text(trigger, [mark, ...marks]),
             false,
           );
-          return dispatch?.(tr);
+          dispatch?.(tr);
+          return true;
         },
       }),
     ],

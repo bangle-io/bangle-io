@@ -15,8 +15,8 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "main": "index.js",
-  "module": "index.js",
+  "main": "index.ts",
+  "module": "index.ts",
   "scripts": {},
   "dependencies": {
     "@bangle.dev/base-components": "0.26.5-alpha.1",
