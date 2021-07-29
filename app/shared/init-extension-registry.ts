@@ -20,7 +20,7 @@ export const initExtensionRegistry = () => {
     collabExtension,
     inlineCommandPalette,
     inlineBacklinkPalette,
-    collapsibleHeading,
+    // collapsibleHeading,
     imageExtension,
     editorScrollExtension,
     coreActions,

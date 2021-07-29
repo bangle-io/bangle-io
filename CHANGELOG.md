@@ -1,3 +1,7 @@
+### HEAD
+
+- Disabled collapsible heading for performance reasons.
+
 ### Jul 15, 2021
 
 - **What's new:** Ability to see `Whats new?` in the sidebar _(the one you are viewing)_. This will allow you to stay updated on how the product is evolving.
