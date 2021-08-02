@@ -41,6 +41,7 @@
     "naukar-proxy": "workspace:*",
     "naukar-worker": "workspace:*",
     "note-browser": "workspace:*",
+    "note-tags": "workspace:*",
     "object-sync": "workspace:*",
     "search-notes": "workspace:*"
   },

@@ -111,6 +111,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/note-browser"
       },
       {
+        "name": "note-tags",
+        "reference": "workspace:extensions/note-tags"
+      },
+      {
         "name": "search-notes",
         "reference": "workspace:extensions/search-notes"
       },
@@ -248,6 +252,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["naukar-proxy", ["workspace:worker/naukar-proxy"]],
       ["naukar-worker", ["workspace:worker/naukar-worker"]],
       ["note-browser", ["workspace:extensions/note-browser"]],
+      ["note-tags", ["workspace:extensions/note-tags"]],
       ["object-sync", ["workspace:js-lib/object-sync"]],
       ["search-notes", ["workspace:extensions/search-notes"]],
       ["shared", ["workspace:app/shared"]],
@@ -16377,6 +16382,30 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["note-tags", [
+        ["workspace:extensions/note-tags", {
+          "packageLocation": "./extensions/note-tags/",
+          "packageDependencies": [
+            ["note-tags", "workspace:extensions/note-tags"],
+            ["@bangle.dev/base-components", "virtual:4c08777938cf84b7d98a60c6e8acf394d5aaac4c0936e24641db1378d92b3d4dd97b23551c38743d03523eb9d13bda76d4d3fcd24448401bb686a4ce39ca42de#npm:0.26.5-alpha.1"],
+            ["@bangle.dev/core", "virtual:17cfb43339fffa22321413ca8a46970c42335bd849e6db790b2fb056a5c5b655f90cb656da8df8b946e4f21a22f2ead0d27efeb7969aa58c91d55eefdfe9250a#npm:0.26.5-alpha.1"],
+            ["@bangle.dev/pm", "npm:0.26.5-alpha.1"],
+            ["@bangle.dev/react", "virtual:57d9c1dbfa8ea9686b6b6e47e8f2e92c6763f6eb898e6d6d3946495b1a22ec36dfb910e73dbf279330a181f4f45e574f9e588ad8ea6aee865ffa42d1a86c7078#npm:0.26.5-alpha.1"],
+            ["@bangle.dev/utils", "virtual:17cfb43339fffa22321413ca8a46970c42335bd849e6db790b2fb056a5c5b655f90cb656da8df8b946e4f21a22f2ead0d27efeb7969aa58c91d55eefdfe9250a#npm:0.26.5-alpha.1"],
+            ["@testing-library/react", "virtual:732cfcce2d09e3fb8628fea864e2a236f8aa179614c01c796eb87b82f7db9d69296da3ed6f753886585e863950653547965ff141328054e31c71a3ba42824eb4#npm:12.0.0"],
+            ["@types/react", "npm:17.0.14"],
+            ["@types/react-dom", "npm:17.0.9"],
+            ["config", "workspace:lib/config"],
+            ["extension-registry", "workspace:lib/extension-registry"],
+            ["inline-palette", "workspace:js-lib/inline-palette"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
+            ["test-utils", "workspace:lib/test-utils"],
+            ["ui-components", "workspace:lib/ui-components"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["npm-run-path", [
         ["npm:2.0.2", {
           "packageLocation": "./.yarn/cache/npm-run-path-npm-2.0.2-96c8b48857-acd5ad8164.zip/node_modules/npm-run-path/",
@@ -19382,6 +19411,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["naukar-proxy", "workspace:worker/naukar-proxy"],
             ["naukar-worker", "workspace:worker/naukar-worker"],
             ["note-browser", "workspace:extensions/note-browser"],
+            ["note-tags", "workspace:extensions/note-tags"],
             ["object-sync", "workspace:js-lib/object-sync"],
             ["search-notes", "workspace:extensions/search-notes"]
           ],

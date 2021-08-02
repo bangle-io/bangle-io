@@ -13,6 +13,7 @@
     "core-palettes",
     "core-actions",
     "search-notes",
-    "note-browser"
+    "note-browser",
+    "note-tags"
   ]
 }
