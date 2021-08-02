@@ -2084,145 +2084,145 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.dev/all-base-components@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/all-base-components@npm:0.26.5-alpha.1"
+"@bangle.dev/all-base-components@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/all-base-components@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-  checksum: 20b6a1a0edd04c35ac66dad4675430a35ffccea44878034d0eb3cbedf23fcdef96a0a1d0ddfb39a7a8031572489241154cef10eff57bedbdd58d0ece5bf99bb8
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+  checksum: 98f05543dc6fe9d21ec222645d8c633436c68d7176cd5fd0a9e7f338124fffdea441fe07fa0008ee96d93b4ed3f3766f34c3bd00960ba8bce8464c1cdff9ceee
   languageName: node
   linkType: hard
 
-"@bangle.dev/base-components@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/base-components@npm:0.26.5-alpha.1"
+"@bangle.dev/base-components@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/base-components@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/pm-commands": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/pm-commands": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 08ebd6e10415ad457c8b448d23a66623dd9cc4ef360b1a07c3281c03b86f5da1a44acfc42aa987d8119d0cd2a30bd2a31742febeed0989cf20bd31d6038cc656
+  checksum: 88f61bdc2108c306c6ca76ffaac511675e452d0476f163fba3f88195bec810fe9d8825711d2ae2fe90c1d8ffdd152dba06c96495a78c449f365159c9f4c580bf
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-client@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/collab-client@npm:0.26.5-alpha.1"
+"@bangle.dev/collab-client@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/collab-client@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
     prosemirror-collab: ^1.2.2
   peerDependencies:
     "@bangle.dev/collab-server": "*"
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 2c484e21af28da1e26ba74bd0d22b567f36b7b1b697428b411914dbdf1470fb356babfc7d3fb27d378b8b951a6e1be4fb7c1fa47bb48f75ea59f49a66adf17c6
+  checksum: 761dca72832959ce83ea4df95267bf5c5e32dfdcda54f310dacaec28977fa07f78593d069a333cae3d930072f3455380cd9b2572dab6afdb05ecdaa2dd4edb07
   languageName: node
   linkType: hard
 
-"@bangle.dev/collab-server@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/collab-server@npm:0.26.5-alpha.1"
+"@bangle.dev/collab-server@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/collab-server@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/disk": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/disk": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     prosemirror-collab: ^1.2.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: f49e2f05eb0ec6d835724b504dcc8fbb7697f97c38ee6b1d0460144efa82cb4c1ad1525ebdb02849d9d52a6c9c34aba7ef390542b8d560434d63a4de4c83e3d9
+  checksum: 38f349b526c5ded9b632d22a8e0025f7e1b1161f457ac4345296861d73bd640ed68133e6819d61581d64f38aab54bf1ab30e2e73d515f75ffe29c62c3b708e2a
   languageName: node
   linkType: hard
 
-"@bangle.dev/core@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/core@npm:0.26.5-alpha.1"
+"@bangle.dev/core@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/core@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/pm-commands": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/pm-commands": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/pm": "*"
-  checksum: c6da0d0d30fb37bff901a4e07c2e3c0a7104a587c74d6c7e7903fd6bf3ba63b8f761774f8db7b30fa8652b92d9f368deb1d3c200f0d363bac1bd443c3108292e
+  checksum: 14b931bb1079d85549f8338c0a41ea131ee12fa21793a140335c2d860d6d08107356a6d32f45bac6ad0413d8dcba56b56660b98e739e35ae1361896c55b07de1
   languageName: node
   linkType: hard
 
-"@bangle.dev/disk@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/disk@npm:0.26.5-alpha.1"
+"@bangle.dev/disk@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/disk@npm:0.26.5-alpha.2"
   dependencies:
     debounce-fn: ^5.0.0
   peerDependencies:
     "@bangle.dev/pm": "*"
-  checksum: ead57cf1d64792d7708b2f5b762d5ad2151aafaf58e459ac72d3bd83e0974b9877593cb938b8386ca128e1ba7d60d72f1db63dee29e0128d87861c9bb1ecdea3
+  checksum: 90e92970072cc40949b2a895a9f25d7449a20bd0a38563672ee57e38903b4d4a21254875a4b32dee84c4e2a72690ba6570e27ddfe512dd8d7f545f2a7d850fb3
   languageName: node
   linkType: hard
 
-"@bangle.dev/emoji@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/emoji@npm:0.26.5-alpha.1"
+"@bangle.dev/emoji@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/emoji@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
     markdown-it-emoji: ^2.0.0
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 501bc1fbf43e3916ad86cf7adbbcc12682ec63b19166fdb2ff0bd0faf6a3da0d1af446ec035527986efe4e553a5be86c01fbc40dfbbb071d97c3850f96189fb7
+  checksum: 3bd5fdb4c79094551d2f50978a47377b565178bffb91bbe67d95ada448399e21f2dff45d74e5f4b23354b568271949d39947805d950baf0e830a4b9d784bba8c
   languageName: node
   linkType: hard
 
-"@bangle.dev/jest-utils@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/jest-utils@npm:0.26.5-alpha.1"
+"@bangle.dev/jest-utils@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/jest-utils@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/test-helpers": 0.26.5-alpha.1
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/test-helpers": 0.26.5-alpha.2
     prettier: ^2.3.2
-  checksum: 6de2fe915aa026033b053da3f3abbfe7e7cea5b6bbdc173e8afef91c105dd79b05d39590398d01900bd317065bf8cb5c918d05604b398f02ba4bdec19cb87e43
+  checksum: eacffe10e482f4326df7bcc26257edc6458c4f7a757a35a8946444024cce3c61574781c088f998a19a8d188b9bf337e269c5e62ea95395ea996b86a8a1ae18b3
   languageName: node
   linkType: hard
 
-"@bangle.dev/markdown-front-matter@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/markdown-front-matter@npm:0.26.5-alpha.1"
+"@bangle.dev/markdown-front-matter@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/markdown-front-matter@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 3b6a6d2f30ca9fb48731fb9816d7b437e1b56241fee874de6c1b428aeca946b7851e76c1b357b339ec2f51d7505701763a67b1f81277024f6fe69bb7b967da96
+  checksum: 9825c8ceacaccc60ebf5b949592fcaa70bf145101186e12f9f435402d5d2bde79f2ad1340f3616a113893b32978987266142637633ba1f6363eb908f80a8fdbb
   languageName: node
   linkType: hard
 
-"@bangle.dev/markdown@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/markdown@npm:0.26.5-alpha.1"
+"@bangle.dev/markdown@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/markdown@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
     markdown-it: ^10.0.0
     prosemirror-markdown: ^1.5.1
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 3f50cb5d5aee27448cc2cb8ff3c7196dee5e8790521989c8af968671c62fdf5b1c6160c526d31c03f6fe409984976faba45fa1c8e26a478f7cff6d28fea1bcbf
+  checksum: 54cdb6df5773514d845d6845c3ce009183e5c10eff56d0d548a273c17c76b57f2b7edf57b14a29ed4538a99c89168261af165400fa9b2b2bad5cc9e2ed93a3c6
   languageName: node
   linkType: hard
 
-"@bangle.dev/pm-commands@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/pm-commands@npm:0.26.5-alpha.1"
+"@bangle.dev/pm-commands@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/pm-commands@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/pm": "*"
-  checksum: 82ebfc17674fdac0c7c68e6ea58dd345ac53eb355e9ed3aec240fb03af26d25585c360276ec3f28015350b645b5e106d425fa27421b7a604f63f306f9facef1d
+  checksum: 530cfa25fcae40cba24170b8d04162ad3ee09ef4e678c8bf58514553e5390a4a229770a84cddebee13214a5deb33b0971892d98973077e8f97d5890eb7028b77
   languageName: node
   linkType: hard
 
-"@bangle.dev/pm@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/pm@npm:0.26.5-alpha.1"
+"@bangle.dev/pm@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/pm@npm:0.26.5-alpha.2"
   dependencies:
     "@types/prosemirror-commands": 1.x
     "@types/prosemirror-dropcursor": 1.x
@@ -2247,16 +2247,16 @@ __metadata:
     prosemirror-tables: ^1.1.1
     prosemirror-transform: ^1.1.0
     prosemirror-view: ^1.10.0
-  checksum: ada24aad86a23571f1b97648c33104c7a90da8d3dcc6bf5d14e4a222ea156af869cff4f840a9a4c69171be2ec000f0b8dc281c8c4e2e67a502d45520ca49294e
+  checksum: 6086ec6f6d8062c5a5e4d93e9e054e685e7852e30605c35cb2e83ea0e036063ce4ae5ad8bbd4f45c1b9fdc9aa2c5683c1f00f1d8336129157f29fa8c304e56c1
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-emoji-suggest@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/react-emoji-suggest@npm:0.26.5-alpha.1"
+"@bangle.dev/react-emoji-suggest@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/react-emoji-suggest@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/emoji": "*"
@@ -2264,16 +2264,16 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 0aba84013e4b79e498014e7ade2064b29f8f41f42255634f00d0541ca4169913df94cec129b4309ddc1a8e36359277d5a67358b5c8068f8b4f20d1661433028a
+  checksum: 35b3df173378ee6db185ba9fcdf470b398c77480069ceaed6bcec7b182135b0cf2d4502a0c190ae7c01a233de4a9d1b9ad9ddf017de4f0c9bcc9abad0257e7c5
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-menu@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/react-menu@npm:0.26.5-alpha.1"
+"@bangle.dev/react-menu@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/react-menu@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     prop-types: ^15.7.2
   peerDependencies:
     "@bangle.dev/core": "*"
@@ -2282,15 +2282,15 @@ __metadata:
     "@bangle.dev/tooltip": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: 96c9937e06f13a4743f8a89be81d3aa38e80fb808d1cc9655107e5ea780ffbffb24352596555ada0eddbe4bdc08ec8cff62ae8281ecdb218c989a6783fc17067
+  checksum: 3116602be51b3496c99eb31dd25fa6eb89ca33f504c2d8fb3b3f6e52b8c495c0fbc279dd133866cd691e7f17e2ab9034d35e4dd0f98ad4d34365b9c4f2c3a718
   languageName: node
   linkType: hard
 
-"@bangle.dev/react-stopwatch@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/react-stopwatch@npm:0.26.5-alpha.1"
+"@bangle.dev/react-stopwatch@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/react-stopwatch@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/markdown": "*"
@@ -2298,15 +2298,15 @@ __metadata:
     "@bangle.dev/react": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: f450224556440b351b5dd638a135f9fcc930278d7d1f78462b32b50d6b563e1540f99458e89fd2720147aa7f673b6e462e73f1349ec8677f260fb08815eaaebc
+  checksum: c94c91fa06e212c98c70b9a3656044d4bf24088a7d43742d0830c8ce9c078978d199b6c2ab03bb563f4fa045bc34a16286069e1e7aa8deec000fe1f38d71218e
   languageName: node
   linkType: hard
 
-"@bangle.dev/react@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/react@npm:0.26.5-alpha.1"
+"@bangle.dev/react@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/react@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
     prop-types: ^15.7.2
     punycode: ^2.1.1
   peerDependencies:
@@ -2314,41 +2314,41 @@ __metadata:
     "@bangle.dev/pm": "*"
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
-  checksum: b763ee6dae50679a7c9c42a9d177c8dbf11e1b98149e903d4272ce7e86b4ab52131d38b8312481caff0a89fa7b6cd2d139b0313a0e7e9e0297e5013ee78275a5
+  checksum: 441bfd2394079b1c2e40bf4be6eef5644de2d8e3a8dc9f44bc8709c0154469533d11a92db11a25966f800188b8715fafd1d07fd78efdb30abcfef360f19b12d3
   languageName: node
   linkType: hard
 
-"@bangle.dev/search@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/search@npm:0.26.5-alpha.1"
+"@bangle.dev/search@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/search@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 4b6f0397678a804f5a0629f47ee60ee8ee7b1243316990e7b09adf4930cebb939126079601928c9d6767e8b30a685fb6ef2a55ffe86841dea7eeb0024f5756b6
+  checksum: 368090ca0e37ba7d4523ba98650c3604c7f78431ef53ff3c4f8a07fced02c28f95b108a8e825791e03905dd58e300038adc41af82e1aa583e8ef0c16174683f9
   languageName: node
   linkType: hard
 
-"@bangle.dev/table@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/table@npm:0.26.5-alpha.1"
+"@bangle.dev/table@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/table@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 9fd7e7461b1225606c9c377a3ea22565366e76f6a1720d14340580abd6aab5044a72a32a178339d74bb31b19b513589bfea7f7fe2f2deabef8e51877ca128368
+  checksum: 775cb96964bf685b9674482f654159eda475c137ae5634bde30424f3ad418ed3b5b2e5a60787b3ea2c11098a2fe39a9f111c62dff92f3270c544b374d3421a1f
   languageName: node
   linkType: hard
 
-"@bangle.dev/test-helpers@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/test-helpers@npm:0.26.5-alpha.1"
+"@bangle.dev/test-helpers@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/test-helpers@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/jest": ^26.0.23
     "@types/markdown-it": ^12.0.3
     "@types/prettier": ^1.12.0
@@ -2356,69 +2356,69 @@ __metadata:
     markdown-it: ^10.0.0
     prettier: ^2.3.2
     prosemirror-markdown: ^1.5.1
-  checksum: 889db279a1c478dbd35943afe9d95e9acf4977908075669b4e2f3a7b6665f42a4df4287b39e6efeb5e53c1f6d33d04f561bd780f1fd74b8cc7750d37e1cdb5fb
+  checksum: 8a2eb85ac5ac2c3b2ae6027339b96abf18eaf09ec9c6d47b877a677d8d88c589cba2af39e187429dc3870b171bef1e3d2e12848f72a310f4d27cb1a206e8dc67
   languageName: node
   linkType: hard
 
-"@bangle.dev/timestamp@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/timestamp@npm:0.26.5-alpha.1"
+"@bangle.dev/timestamp@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/timestamp@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 5241c3e4ce9c09bd5b111c6dc26542ce57c0bc41fb88fe410034f886816fdcec9521c13f5b745595e3fbcbb5ca382768d1b90fde62ea3edb56b4be88dc089cc6
+  checksum: 9328bf340635ef959ea79de1474cde66a10cafd7b7a597594f4b7bd90a0cd56c3ec6c1e601ee2d1f46b1e70304abe04e26cfb75479ca09a2faeb745706058234
   languageName: node
   linkType: hard
 
-"@bangle.dev/tooltip@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/tooltip@npm:0.26.5-alpha.1"
+"@bangle.dev/tooltip@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/tooltip@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@popperjs/core": ^2.5.4
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 1d80ea0fc84f49137c5cc10ae3337cad10ef781bf1d317f6a5118af7fb55f4cdec60a51239db9a5f7797b83c325b9fc993da93bcd2005e45cd9b2934058b34a3
+  checksum: d4061729b2bd01a1957b5554b85eb033a4f7eea3832641df7b3dd6f6f49e8d28d6153b6f99a0f8e0b5d26d86f44ba6803cdd22a05205dc77d48b95da75027e45
   languageName: node
   linkType: hard
 
-"@bangle.dev/trailing-node@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/trailing-node@npm:0.26.5-alpha.1"
+"@bangle.dev/trailing-node@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/trailing-node@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: e6c43be581662ba7da1cfce81698f33b703c83f78f83471751b1522e37d07cdf8e3506a3a5f604214211158c58c768e9308e352e1edbdc0dc3aa2421ce18750f
+  checksum: 66dc56fdadf71f3493bffb90f7daac613f2099c2228e981416387e5170b2586481e6d054ea301b2d234dbbf7fe057b666e15e9fa5208d0e50f48530e10d9442e
   languageName: node
   linkType: hard
 
-"@bangle.dev/utils@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/utils@npm:0.26.5-alpha.1"
+"@bangle.dev/utils@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/utils@npm:0.26.5-alpha.2"
   dependencies:
     prosemirror-model: ^1.1.0
     prosemirror-state: ^1.0.1
     prosemirror-utils: 1.0.0-0
   peerDependencies:
     "@bangle.dev/pm": "*"
-  checksum: cdc4cbec4ea32ff580b2186fcedbd37e3b845e14f4ac36a4cf31aaf65c02ac768f3a1f1400b3d853b90f8d9b05ed396f0677f93548c0347a9b9e6723ba1ffdf1
+  checksum: 226e44c0fb31ef828e6307cc91f864b94f6bdd399fe8a98c01d7d2aa8d3f071ada2248fda850ea76fb7a36ac072eb535350930ee73b1437e77e3caa966bdd390
   languageName: node
   linkType: hard
 
-"@bangle.dev/wiki-link@npm:0.26.5-alpha.1":
-  version: 0.26.5-alpha.1
-  resolution: "@bangle.dev/wiki-link@npm:0.26.5-alpha.1"
+"@bangle.dev/wiki-link@npm:0.26.5-alpha.2":
+  version: 0.26.5-alpha.2
+  resolution: "@bangle.dev/wiki-link@npm:0.26.5-alpha.2"
   dependencies:
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/utils": 0.26.5-alpha.2
   peerDependencies:
     "@bangle.dev/core": "*"
     "@bangle.dev/pm": "*"
-  checksum: 376ad714055bbc8da1587b74362886719ea85345247f9bb257c22dd42808d0ad5534631764c9e5ec869b32683831ac24a838efe049e5807b405bf84f756d7701
+  checksum: 55390ef1ed8dd5361d78dac079931cd2251ae7bac92ea895e35102dd4b827bb7fb05a081d58ce122fd72eb88ac1cb497789712ecdc132419b8d1ce95e9ab3404
   languageName: node
   linkType: hard
 
@@ -4346,10 +4346,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "action-context@workspace:lib/action-context"
   dependencies:
-    "@bangle.dev/all-base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/all-base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^12.0.0
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
@@ -4550,14 +4550,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app-entry@workspace:app/app-entry"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/markdown": 0.26.5-alpha.1
-    "@bangle.dev/markdown-front-matter": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/table": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/markdown": 0.26.5-alpha.2
+    "@bangle.dev/markdown-front-matter": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/table": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@sentry/tracing": ^6.7.1
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^7.0.0
@@ -5154,7 +5154,7 @@ __metadata:
     "@babel/preset-env": ^7.13.15
     "@babel/preset-react": ^7.13.13
     "@babel/preset-typescript": ^7.14.5
-    "@bangle.dev/jest-utils": 0.26.5-alpha.1
+    "@bangle.dev/jest-utils": 0.26.5-alpha.2
     "@sentry/react": ^6.7.1
     "@sentry/tracing": ^6.7.1
     "@sentry/webpack-plugin": ^1.15.1
@@ -5982,12 +5982,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "collab-extension@workspace:extensions/collab-extension"
   dependencies:
-    "@bangle.dev/collab-client": 0.26.5-alpha.1
-    "@bangle.dev/collab-server": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/disk": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/collab-client": 0.26.5-alpha.2
+    "@bangle.dev/collab-server": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/disk": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     extension-registry: "workspace:*"
     naukar-proxy: "workspace:*"
   languageName: unknown
@@ -5997,10 +5997,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "collapsible-heading@workspace:extensions/collapsible-heading"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     extension-registry: "workspace:*"
     utils: "workspace:*"
   languageName: unknown
@@ -6321,9 +6321,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "core-actions@workspace:extensions/core-actions"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     action-context: "workspace:*"
@@ -6378,9 +6378,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "core-palettes@workspace:extensions/core-palettes"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^11.2.7
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
@@ -7098,21 +7098,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "editor-core@workspace:extensions/editor-core"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/emoji": 0.26.5-alpha.1
-    "@bangle.dev/markdown": 0.26.5-alpha.1
-    "@bangle.dev/markdown-front-matter": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/react-emoji-suggest": 0.26.5-alpha.1
-    "@bangle.dev/react-menu": 0.26.5-alpha.1
-    "@bangle.dev/react-stopwatch": 0.26.5-alpha.1
-    "@bangle.dev/table": 0.26.5-alpha.1
-    "@bangle.dev/timestamp": 0.26.5-alpha.1
-    "@bangle.dev/tooltip": 0.26.5-alpha.1
-    "@bangle.dev/trailing-node": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/emoji": 0.26.5-alpha.2
+    "@bangle.dev/markdown": 0.26.5-alpha.2
+    "@bangle.dev/markdown-front-matter": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/react-emoji-suggest": 0.26.5-alpha.2
+    "@bangle.dev/react-menu": 0.26.5-alpha.2
+    "@bangle.dev/react-stopwatch": 0.26.5-alpha.2
+    "@bangle.dev/table": 0.26.5-alpha.2
+    "@bangle.dev/timestamp": 0.26.5-alpha.2
+    "@bangle.dev/tooltip": 0.26.5-alpha.2
+    "@bangle.dev/trailing-node": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     editor-manager-context: "workspace:*"
@@ -7126,9 +7126,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "editor-manager-context@workspace:lib/editor-manager-context"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     config: "workspace:*"
@@ -7143,10 +7143,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "editor-scroll-extension@workspace:extensions/editor-scroll-extension"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     app-state-context: "workspace:*"
@@ -7162,11 +7162,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "editor-utils@workspace:lib/editor-utils"
   dependencies:
-    "@bangle.dev/all-base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/test-helpers": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/all-base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/test-helpers": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^12.0.0
     "@types/jest": ^26.0.23
     "@types/react": ^17.0.14
@@ -7902,9 +7902,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-extension@workspace:extensions/example-extension"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     extension-registry: "workspace:*"
     utils: "workspace:*"
   languageName: unknown
@@ -8115,10 +8115,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "extension-registry@workspace:lib/extension-registry"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     react: ^17.0.2
@@ -9423,13 +9423,13 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "image-extension@workspace:extensions/image-extension"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/react-menu": 0.26.5-alpha.1
-    "@bangle.dev/tooltip": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/react-menu": 0.26.5-alpha.2
+    "@bangle.dev/tooltip": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
     "@types/react": ^17.0.14
@@ -9534,12 +9534,12 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "inline-backlink@workspace:extensions/inline-backlink"
   dependencies:
-    "@bangle.dev/all-base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
-    "@bangle.dev/wiki-link": 0.26.5-alpha.1
+    "@bangle.dev/all-base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
+    "@bangle.dev/wiki-link": 0.26.5-alpha.2
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
     "@types/react": ^17.0.14
@@ -9560,11 +9560,11 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "inline-command-palette@workspace:extensions/inline-command-palette"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     chrono-node: ^2.2.6
@@ -9582,15 +9582,15 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "inline-emoji@workspace:extensions/inline-emoji"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/emoji": 0.26.5-alpha.1
-    "@bangle.dev/markdown": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/react-emoji-suggest": 0.26.5-alpha.1
-    "@bangle.dev/table": 0.26.5-alpha.1
-    "@bangle.dev/tooltip": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/emoji": 0.26.5-alpha.2
+    "@bangle.dev/markdown": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/react-emoji-suggest": 0.26.5-alpha.2
+    "@bangle.dev/table": 0.26.5-alpha.2
+    "@bangle.dev/tooltip": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^11.2.7
     "@testing-library/user-event": ^13.1.9
     "@types/react": ^17.0.14
@@ -9607,11 +9607,11 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "inline-palette@workspace:js-lib/inline-palette"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/tooltip": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/tooltip": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     react: 17.0.2
@@ -11928,13 +11928,13 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "markdown@workspace:lib/markdown"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/markdown": 0.26.5-alpha.1
-    "@bangle.dev/markdown-front-matter": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/table": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/markdown": 0.26.5-alpha.2
+    "@bangle.dev/markdown-front-matter": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/table": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
   languageName: unknown
   linkType: soft
 
@@ -12391,12 +12391,12 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "naukar-worker@workspace:worker/naukar-worker"
   dependencies:
-    "@bangle.dev/collab-client": 0.26.5-alpha.1
-    "@bangle.dev/collab-server": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/disk": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/collab-client": 0.26.5-alpha.2
+    "@bangle.dev/collab-server": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/disk": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     config: "workspace:*"
     idb-keyval: ^5.0.6
     object-sync: "workspace:*"
@@ -12600,11 +12600,11 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "note-tags@workspace:extensions/note-tags"
   dependencies:
-    "@bangle.dev/base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/react": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/react": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^12.0.0
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
@@ -14933,10 +14933,10 @@ resolve@^2.0.0-next.3:
   version: 0.0.0-use.local
   resolution: "search-notes@workspace:extensions/search-notes"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/search": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/search": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^12.0.0
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
@@ -15187,12 +15187,12 @@ resolve@^2.0.0-next.3:
   version: 0.0.0-use.local
   resolution: "shared@workspace:app/shared"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/markdown": 0.26.5-alpha.1
-    "@bangle.dev/markdown-front-matter": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/table": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/markdown": 0.26.5-alpha.2
+    "@bangle.dev/markdown-front-matter": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/table": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     collab-extension: "workspace:*"
     collapsible-heading: "workspace:*"
     comlink: ^4.3.1
@@ -16132,11 +16132,11 @@ resolve@^2.0.0-next.3:
   version: 0.0.0-use.local
   resolution: "test-utils@workspace:lib/test-utils"
   dependencies:
-    "@bangle.dev/all-base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/test-helpers": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/all-base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/test-helpers": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     baby-fs: "workspace:*"
@@ -16755,8 +16755,8 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "utils@workspace:lib/utils"
   dependencies:
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react-hooks": ^7.0.0
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
@@ -17325,9 +17325,9 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "workspace-context@workspace:lib/workspace-context"
   dependencies:
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^11.2.7
     "@testing-library/react-hooks": ^7.0.0
     "@types/history": ^4.7.8
@@ -17351,10 +17351,10 @@ typescript@4.2.4:
   version: 0.0.0-use.local
   resolution: "workspaces@workspace:lib/workspaces"
   dependencies:
-    "@bangle.dev/all-base-components": 0.26.5-alpha.1
-    "@bangle.dev/core": 0.26.5-alpha.1
-    "@bangle.dev/pm": 0.26.5-alpha.1
-    "@bangle.dev/utils": 0.26.5-alpha.1
+    "@bangle.dev/all-base-components": 0.26.5-alpha.2
+    "@bangle.dev/core": 0.26.5-alpha.2
+    "@bangle.dev/pm": 0.26.5-alpha.2
+    "@bangle.dev/utils": 0.26.5-alpha.2
     "@testing-library/react": ^11.2.7
     "@types/history": ^4.7.8
     "@types/react": ^17.0.14
