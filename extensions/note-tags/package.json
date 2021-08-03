@@ -19,11 +19,12 @@
   "module": "index.tsx",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/base-components": "0.26.5-alpha.2",
-    "@bangle.dev/core": "0.26.5-alpha.2",
-    "@bangle.dev/pm": "0.26.5-alpha.2",
-    "@bangle.dev/react": "0.26.5-alpha.2",
-    "@bangle.dev/utils": "0.26.5-alpha.2",
+    "@bangle.dev/base-components": "0.26.5-alpha.3",
+    "@bangle.dev/core": "0.26.5-alpha.3",
+    "@bangle.dev/markdown": "0.26.5-alpha.3",
+    "@bangle.dev/pm": "0.26.5-alpha.3",
+    "@bangle.dev/react": "0.26.5-alpha.3",
+    "@bangle.dev/utils": "0.26.5-alpha.3",
     "config": "workspace:*",
     "extension-registry": "workspace:*",
     "inline-palette": "workspace:*",
@@ -31,6 +32,8 @@
     "ui-components": "workspace:*"
   },
   "devDependencies": {
+    "@bangle.dev/all-base-components": "0.26.5-alpha.3",
+    "@bangle.dev/test-helpers": "0.26.5-alpha.3",
     "@testing-library/react": "^12.0.0",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",

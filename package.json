@@ -69,7 +69,7 @@
     "@babel/preset-env": "^7.13.15",
     "@babel/preset-react": "^7.13.13",
     "@babel/preset-typescript": "^7.14.5",
-    "@bangle.dev/jest-utils": "0.26.5-alpha.2",
+    "@bangle.dev/jest-utils": "0.26.5-alpha.3",
     "@sentry/react": "^6.7.1",
     "@sentry/tracing": "^6.7.1",
     "@sentry/webpack-plugin": "^1.15.1",
