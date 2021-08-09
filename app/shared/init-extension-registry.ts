@@ -1,5 +1,4 @@
 import collabExtension from 'collab-extension';
-import collapsibleHeading from 'collapsible-heading';
 import coreActions from 'core-actions';
 import corePalette from 'core-palettes';
 import editorCore from 'editor-core';
@@ -11,6 +10,7 @@ import inlineCommandPalette from 'inline-command-palette';
 import inlineEmoji from 'inline-emoji';
 import noteBrowser from 'note-browser';
 import searchNotes from 'search-notes';
+import noteTags from 'note-tags';
 
 // TODO move this async, i think a promise should be fine.
 export const initExtensionRegistry = () => {
@@ -20,6 +20,7 @@ export const initExtensionRegistry = () => {
     collabExtension,
     inlineCommandPalette,
     inlineBacklinkPalette,
+    noteTags,
     // collapsibleHeading,
     imageExtension,
     editorScrollExtension,
