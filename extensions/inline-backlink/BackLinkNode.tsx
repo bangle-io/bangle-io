@@ -1,6 +1,6 @@
 import { RenderReactNodeView } from 'extension-registry';
 import React, { useState } from 'react';
-import { conditionalSuffix } from 'utils/utility';
+import { conditionalSuffix } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import {
   filePathToWsPath,

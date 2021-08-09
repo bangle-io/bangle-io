@@ -80,7 +80,6 @@ function getItemsAndHints(
       }
       return a.group.localeCompare(b.group);
     });
-
   return { items, hintItems };
 }
 
