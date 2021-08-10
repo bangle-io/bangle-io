@@ -1,36 +1,21 @@
 import { Extension } from 'extension-registry';
 import { inlinePalette } from 'inline-palette';
-import { extensionName, paletteMarkName, palettePluginKey } from './config';
+import { extensionName, paletteMarkName } from './config';
 import { TagPickerInlinePalette } from './TagPickerInlinePalette';
 import {
   editorTagSpec,
   editorTagPlugins,
   noteTagsMarkdownItPlugin,
+  editorTagHighPriorityPlugins,
 } from './editor-tag';
 import { renderReactNodeView } from './render-node-view';
 
-const getScrollContainer = (view) => {
-  return view.dom.parentElement;
-};
-
-const trigger = '#';
 const extension = Extension.create({
   name: extensionName,
   editor: {
-    // ReactComponent: TagPickerInlinePalette,
-    specs: [
-      // inlinePalette.spec({ markName: paletteMarkName, trigger }),
-      editorTagSpec(),
-    ],
-    highPriorityPlugins: [
-      // inlinePalette.plugins({
-      //   key: palettePluginKey,
-      //   markName: paletteMarkName,
-      //   tooltipRenderOpts: {
-      //     getScrollContainer,
-      //   },
-      // }),
-    ],
+    ReactComponent: TagPickerInlinePalette,
+    specs: [editorTagSpec()],
+    highPriorityPlugins: [editorTagHighPriorityPlugins()],
     plugins: [editorTagPlugins()],
     renderReactNodeView: renderReactNodeView,
     markdownItPlugins: [noteTagsMarkdownItPlugin],

@@ -4,11 +4,10 @@ import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
 } from 'inline-palette';
-import React from 'react';
+import React, { useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { InlinePaletteRow } from 'ui-components';
-
-import { palettePluginKey, tagNodeName } from './config';
+import { BANNED_CHARS, palettePluginKey, tagNodeName } from './config';
 
 export const createTagNode = (tagValue: string): Command => {
   tagValue = tagValue.trim();
@@ -17,6 +16,14 @@ export const createTagNode = (tagValue: string): Command => {
     if (tagValue === '') {
       return false;
     }
+
+    if (BANNED_CHARS.split('').some((r) => tagValue.includes(r))) {
+      return replaceSuggestionMarkWith(
+        palettePluginKey,
+        state.schema.text(tagValue),
+      )(state, dispatch, view);
+    }
+
     return replaceSuggestionMarkWith(
       palettePluginKey,
       nodeType.create({
@@ -26,18 +33,25 @@ export const createTagNode = (tagValue: string): Command => {
   };
 };
 
-const items = Array.from({ length: 40 }, (_, j) => ({
-  description: 'Wow',
-  uid: j + '',
-  title: 'I am a tag ' + j,
-  editorExecuteCommand: ({ item }) => {
-    return createTagNode(item.title);
-  },
-}));
-
 export function TagPickerInlinePalette({ wsPath }) {
-  const { counter, tooltipContentDOM } =
+  const { query, counter, tooltipContentDOM } =
     useInlinePaletteQuery(palettePluginKey);
+
+  const items = useMemo(() => {
+    if (query.length > 0) {
+      return [
+        {
+          description: '',
+          uid: 'create-tag',
+          title: 'Create a tag "' + query + '"',
+          editorExecuteCommand: ({ item }) => {
+            return createTagNode(query);
+          },
+        },
+      ];
+    }
+    return [];
+  }, [query]);
 
   const { getItemProps } = useInlinePaletteItems(
     palettePluginKey,

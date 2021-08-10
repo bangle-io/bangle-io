@@ -8,7 +8,6 @@
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { markdownSerializer } from '@bangle.dev/markdown';
 import { psx } from '@bangle.dev/test-helpers';
-
 import { SpecRegistry } from '@bangle.dev/core';
 import {
   getDefaultMarkdownItTokenizer,
@@ -26,6 +25,7 @@ const serialize = async (doc) => {
   }
   return markdownSerializer(specRegistry).serialize(content);
 };
+
 const parse = async (md) =>
   markdownParser(
     specRegistry,
