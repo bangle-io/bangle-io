@@ -6,13 +6,14 @@
 /// <reference path="./missing-test-types.d.ts" />
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
-import { markdownSerializer } from '@bangle.dev/markdown';
-import { psx } from '@bangle.dev/test-helpers';
 import { SpecRegistry } from '@bangle.dev/core';
 import {
   getDefaultMarkdownItTokenizer,
   markdownParser,
-} from '@bangle.dev/markdown/markdown-parser';
+  markdownSerializer,
+} from '@bangle.dev/markdown';
+import { psx } from '@bangle.dev/test-helpers';
+import { MARKDOWN_REGEX } from '../config';
 import { editorTagSpec, noteTagsMarkdownItPlugin } from '../editor-tag';
 
 const specRegistry = new SpecRegistry([...defaultSpecs(), editorTagSpec()]);
@@ -93,13 +94,20 @@ describe('Parses markdown correctly', () => {
     expect(await parse(md)).toEqualDocument(doc);
   });
 
+  test('does not parse with ending with ?', async () => {
+    const md = `Hello #hi/hello?`;
+    const doc = (
+      <doc>
+        <para>Hello #hi/hello?</para>
+      </doc>
+    );
+    expect(await parse(md)).toEqualDocument(doc);
+  });
+
   test('not hashtag cases', async () => {
     expect(await parse(`Hello #hi#hello`)).toEqualDocument(
       <doc>
-        <para>
-          Hello <tag tagValue="hi" />
-          #hello
-        </para>
+        <para>Hello #hi#hello</para>
       </doc>,
     );
     expect(await parse(`Hello hi#hello`)).toEqualDocument(
@@ -164,12 +172,34 @@ describe('Parses markdown correctly', () => {
     },
   );
 
+  test.each(['`', '\\', ...`'"~!@#$%^&*(){}+=:;,<.>?`])(
+    'Case %# does not parse string followed by %s',
+    async (str) => {
+      expect(await parse(`I #test${str} hello`)).toEqualDocument(
+        <doc>
+          <para>I #test{str} hello</para>
+        </doc>,
+      );
+    },
+  );
+
+  test.each(['-', '/', '_'])(
+    'Case %# parses char with string followed by %s',
+    async (str) => {
+      expect(await parse(`I #test${str} hello`)).toEqualDocument(
+        <doc>
+          <para>
+            I <tag tagValue={`test${str}`} /> hello
+          </para>
+        </doc>,
+      );
+    },
+  );
+
   test('Case `', async () => {
     expect(await parse(`I #hello\` hello`)).toEqualDocument(
       <doc>
-        <para>
-          I <tag tagValue={'hello'} />` hello
-        </para>
+        <para>I #hello` hello</para>
       </doc>,
     );
   });
@@ -177,9 +207,7 @@ describe('Parses markdown correctly', () => {
   test("Case '", async () => {
     expect(await parse(`I #hello' hello`)).toEqualDocument(
       <doc>
-        <para>
-          I <tag tagValue={'hello'} />' hello
-        </para>
+        <para>I #hello' hello</para>
       </doc>,
     );
   });
@@ -187,9 +215,14 @@ describe('Parses markdown correctly', () => {
   test('Case #', async () => {
     expect(await parse(`I #hello# hello`)).toEqualDocument(
       <doc>
-        <para>
-          I <tag tagValue={'hello'} /># hello
-        </para>
+        <para>I #hello# hello</para>
+      </doc>,
+    );
+  });
+  test('Case ?', async () => {
+    expect(await parse(`test #tag? hi`)).toEqualDocument(
+      <doc>
+        <para>test #tag? hi</para>
       </doc>,
     );
   });
@@ -208,6 +241,14 @@ describe('Parses markdown correctly', () => {
         <heading>
           <tag tagValue="heading" />
         </heading>
+      </doc>,
+    );
+  });
+
+  test('Case double hashtag', async () => {
+    expect(await parse(`test ##tag hi`)).toEqualDocument(
+      <doc>
+        <para>test ##tag hi</para>
       </doc>,
     );
   });

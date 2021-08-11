@@ -1,5 +1,4 @@
 import {
-  BaseRawMarkSpec,
   BaseRawNodeSpec,
   domSerializationHelpers,
   NodeView,
@@ -11,6 +10,7 @@ import {
   inlinePalette,
   queryInlinePaletteActive,
   queryInlinePaletteText,
+  replaceSuggestionMarkWith,
 } from 'inline-palette';
 import {
   MARKDOWN_REGEX,
@@ -39,8 +39,10 @@ export function editorTagPlugins() {
       ],
     }),
     keymap({
-      Space: breakTag(),
-      ...Object.fromEntries(BANNED_CHARS.split('').map((r) => [r, breakTag()])),
+      Space: breakTag('Space'),
+      ...Object.fromEntries(
+        BANNED_CHARS.split('').map((r) => [r, breakTag(r)]),
+      ),
     }),
   ];
 }
@@ -57,11 +59,25 @@ export function editorTagHighPriorityPlugins() {
   ];
 }
 
-function breakTag() {
+function breakTag(key) {
   return (state, dispatch, view) => {
     if (queryInlinePaletteActive(palettePluginKey)(state)) {
       const text = queryInlinePaletteText(palettePluginKey)(state);
-      return createTagNode(text)(state, dispatch, view);
+
+      if (key === 'Space') {
+        if (text) {
+          return createTagNode(text)(state, dispatch, view);
+        }
+        // This is helpful to avoid messing up the
+        // `#` heading markdown shortcut.
+        // If there is no text and the person pressed space
+        // the intent is to trigger the heading shortcut.
+        return false;
+      }
+      return replaceSuggestionMarkWith(
+        palettePluginKey,
+        state.schema.text('#' + text + key),
+      )(state, dispatch, view);
     }
     return false;
   };
@@ -75,43 +91,42 @@ export function editorTagSpec(): RawSpecs {
     parsingPriority: 52,
   });
 
-  return [
-    inlinePalette.spec({ markName: paletteMarkName, trigger }),
-    {
-      type: 'node',
-      name: tagNodeName,
-      schema: {
-        attrs: {
-          tagValue: {
-            default: 'tag',
-          },
+  const spec: BaseRawNodeSpec = {
+    type: 'node',
+    name: tagNodeName,
+    schema: {
+      attrs: {
+        tagValue: {
+          default: 'tag',
         },
-        inline: true,
-        group: 'inline',
-        selectable: false,
-        draggable: true,
-        toDOM,
-        parseDOM,
       },
-      markdown: {
-        toMarkdown: (state, node) => {
-          const { tagValue } = node.attrs;
-          state.text('#' + tagValue, false);
-        },
-        parseMarkdown: {
-          note_tag: {
-            block: tagNodeName,
-            getAttrs: (tok: any) => {
-              if (typeof tok.payload === 'string') {
-                return { tagValue: tok.payload };
-              }
-            },
-            noCloseToken: true,
+      inline: true,
+      group: 'inline',
+      selectable: false,
+      draggable: true,
+      toDOM,
+      parseDOM,
+    },
+    markdown: {
+      toMarkdown: (state, node) => {
+        const { tagValue } = node.attrs;
+        state.text('#' + tagValue, false);
+      },
+      parseMarkdown: {
+        note_tag: {
+          block: tagNodeName,
+          getAttrs: (tok) => {
+            if (typeof tok.payload === 'string') {
+              return { tagValue: tok.payload };
+            }
+            return { tagValue: undefined };
           },
+          noCloseToken: true,
         },
       },
     },
-  ];
+  };
+  return [inlinePalette.spec({ markName: paletteMarkName, trigger }), spec];
 }
 
 export function noteTagsMarkdownItPlugin(md: any) {

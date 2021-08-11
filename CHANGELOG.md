@@ -1,6 +1,6 @@
 ### HEAD
 
-- Disabled collapsible heading for performance reasons.
+- **Tags:** You can now create tags by typing `#` followed by tag name.
 
 ### Jul 15, 2021
 

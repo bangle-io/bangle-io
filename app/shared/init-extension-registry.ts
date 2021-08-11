@@ -11,7 +11,6 @@ import inlineEmoji from 'inline-emoji';
 import noteBrowser from 'note-browser';
 import searchNotes from 'search-notes';
 import noteTags from 'note-tags';
-import collapsibleHeading from 'collapsible-heading';
 
 // TODO move this async, i think a promise should be fine.
 export const initExtensionRegistry = () => {

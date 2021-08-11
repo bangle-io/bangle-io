@@ -19,8 +19,8 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/pm": "0.26.5-alpha.3",
-    "@bangle.dev/utils": "0.26.5-alpha.3",
+    "@bangle.dev/pm": "0.27.1",
+    "@bangle.dev/utils": "0.27.1",
     "base-error": "workspace:*",
     "config": "workspace:*",
     "constants": "workspace:*",

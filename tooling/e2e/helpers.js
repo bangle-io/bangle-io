@@ -174,6 +174,12 @@ async function getPrimaryEditorDebugString(page) {
   );
 }
 
+async function getPrimaryEditorJSON(page) {
+  return page.evaluate(async () =>
+    window.primaryEditor?.view.state.doc.toJSON(),
+  );
+}
+
 async function getSecondaryEditorDebugString(page) {
   return page.evaluate(async () =>
     window.secondaryEditor?.view.state.doc.toString(),
@@ -242,4 +248,5 @@ module.exports = {
   sleep,
   url,
   uuid,
+  getPrimaryEditorJSON,
 };

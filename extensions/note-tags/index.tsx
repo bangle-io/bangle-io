@@ -1,6 +1,5 @@
 import { Extension } from 'extension-registry';
-import { inlinePalette } from 'inline-palette';
-import { extensionName, paletteMarkName } from './config';
+import { extensionName } from './config';
 import { TagPickerInlinePalette } from './TagPickerInlinePalette';
 import {
   editorTagSpec,
