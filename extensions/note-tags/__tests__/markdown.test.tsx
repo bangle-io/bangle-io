@@ -33,7 +33,7 @@ const parse = async (md) =>
   ).parse(md);
 
 describe('Parses markdown correctly', () => {
-  test('test 1', async () => {
+  test('parses correctly', async () => {
     const md = `Hello #hi`;
     const doc = (
       <doc>
