@@ -8,6 +8,7 @@ const {
   getEditorHTML,
   createWorkspace,
   newPage,
+  getPrimaryEditorDebugString,
 } = require('../helpers');
 jest.setTimeout(105 * 1000);
 
@@ -80,7 +81,7 @@ test('create a new page saved in browser', async () => {
   await editorHandle.type('[ ] list', { delay: 3 });
   await sleep();
 
-  expect(await getEditorHTML(editorHandle)).toMatchSnapshot();
+  expect(await getPrimaryEditorDebugString(editorHandle)).toMatchSnapshot();
 });
 
 test('inline action palette convert to bullet list', async () => {
