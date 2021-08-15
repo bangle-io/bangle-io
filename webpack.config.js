@@ -147,7 +147,7 @@ module.exports = (env, argv) => {
           ],
         },
         {
-          test: /\.worker\.(c|m)?js$/i,
+          test: /\.worker\.(c|m)?ts$/i,
           loader: 'worker-loader',
           // options: {
           //   worker: 'Worker',

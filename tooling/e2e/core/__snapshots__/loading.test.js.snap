@@ -1,40 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`create a new page saved in browser 1`] = `
-"<h1>
-  <span
-    class=\\"
-      deco-collapse-positioner
-      ProseMirror-widget
-    \\"
-    contenteditable=\\"false\\"
-    ><span class=\\"deco-collapse\\"
-      ><svg
-        viewBox=\\"0 0 24 24\\"
-        class=\\"deco-collapse-child\\"
-      >
-        <path
-          d=\\"M6.34317 7.75732L4.92896 9.17154L12 16.2426L19.0711 9.17157L17.6569 7.75735L12 13.4142L6.34317 7.75732Z\\"
-        ></path></svg></span></span
-  >Wow
-</h1>
-<ul>
-  <li
-    data-bangle-name=\\"listItem\\"
-    class=\\"bangle-nv-container\\"
-    data-bangle-is-todo=\\"\\"
-  >
-    <span contenteditable=\\"false\\"
-      ><input
-        type=\\"checkbox\\" /></span
-    ><span class=\\"bangle-nv-content\\"
-      ><p>list</p></span
-    >
-  </li>
-</ul>
-<p><br /></p>
-"
-`;
+exports[`create a new page saved in browser 1`] = `"doc(heading(\\"Wow\\"), bulletList(listItem(paragraph(\\"list\\"))), paragraph)"`;
 
 exports[`inline action palette convert to bullet list 1`] = `
 "<ul>

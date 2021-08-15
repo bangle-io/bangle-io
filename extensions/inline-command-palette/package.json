@@ -15,15 +15,15 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "main": "index.js",
-  "module": "index.js",
+  "main": "index.ts",
+  "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "@bangle.dev/base-components": "0.26.5-alpha.1",
-    "@bangle.dev/core": "0.26.5-alpha.1",
-    "@bangle.dev/pm": "0.26.5-alpha.1",
-    "@bangle.dev/react": "0.26.5-alpha.1",
-    "@bangle.dev/utils": "0.26.5-alpha.1",
+    "@bangle.dev/base-components": "0.27.1",
+    "@bangle.dev/core": "0.27.1",
+    "@bangle.dev/pm": "0.27.1",
+    "@bangle.dev/react": "0.27.1",
+    "@bangle.dev/utils": "0.27.1",
     "chrono-node": "^2.2.6",
     "config": "workspace:*",
     "extension-registry": "workspace:*",

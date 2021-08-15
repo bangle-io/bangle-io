@@ -31,7 +31,6 @@
     "useDefineForClassFields": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "paths": {}
   },
   "include": [
     "**/*.ts",
@@ -39,5 +38,13 @@
     "./lib/config/*.js",
     "./lib/utils/*.js",
     "./js-lib/base-error/*.js",
-  ]
+  ],
+  "exclude": [
+    ".yarn/__virtual__"
+  ],
+  "typeAcquisition": {
+    "include": [
+      "jest"
+    ]
+  }
 }

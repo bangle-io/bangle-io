@@ -1,0 +1,7 @@
+.inline-tag {
+  background-color: var(--note-tag-bg-color);
+  border-radius: 4rem;
+  padding: 0.125rem 0.5rem;
+  margin: 0 0.125rem;
+  color: var(--note-tag-font-color);
+}

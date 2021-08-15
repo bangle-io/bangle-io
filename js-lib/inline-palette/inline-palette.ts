@@ -134,3 +134,7 @@ export function replaceSuggestionMarkWith(key, replaceWith) {
 export function queryInlinePaletteActive(key) {
   return queryIsSuggestTooltipActive(getSuggestTooltipKey(key));
 }
+
+export function queryInlinePaletteText(key) {
+  return suggestTooltip.queryTriggerText(getSuggestTooltipKey(key));
+}

@@ -1,0 +1,46 @@
+{
+  "name": "note-tags",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle-io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.tsx",
+  "module": "index.tsx",
+  "scripts": {},
+  "dependencies": {
+    "@bangle.dev/base-components": "0.27.1",
+    "@bangle.dev/core": "0.27.1",
+    "@bangle.dev/markdown": "0.27.1",
+    "@bangle.dev/pm": "0.27.1",
+    "@bangle.dev/react": "0.27.1",
+    "@bangle.dev/utils": "0.27.1",
+    "config": "workspace:*",
+    "extension-registry": "workspace:*",
+    "inline-palette": "workspace:*",
+    "react": "^17.0.2",
+    "ui-components": "workspace:*"
+  },
+  "devDependencies": {
+    "@bangle.dev/all-base-components": "0.27.1",
+    "@bangle.dev/test-helpers": "0.27.1",
+    "@testing-library/react": "^12.0.0",
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9",
+    "react-dom": "^17.0.2",
+    "test-utils": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { suggestTooltip } from '@bangle.dev/tooltip';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import { getSuggestTooltipKey } from './inline-palette';
+import type { Command, PluginKey } from '@bangle.dev/pm';
 
 export function useInlinePaletteQuery(inlinePaletteKey) {
   // TODO show is a bad name
@@ -22,14 +23,14 @@ export function useInlinePaletteQuery(inlinePaletteKey) {
  * @param {*} param0
  * @returns
  */
-export function useInlinePaletteItems(
-  inlinePaletteKey,
-  items,
-  counter,
-  isItemDisabled,
+export function useInlinePaletteItems<T extends InlinePaletteItem>(
+  inlinePaletteKey: PluginKey,
+  items: T[],
+  counter: number,
+  isItemDisabled?: (item: T) => boolean,
 ): {
   getItemProps: (
-    item: any,
+    item: T,
     index: number,
   ) => {
     isActive: boolean;
@@ -58,7 +59,7 @@ export function useInlinePaletteItems(
         return suggestTooltip.removeSuggestMark(inlinePaletteKey);
       }
 
-      if (isItemDisabled(item)) {
+      if (isItemDisabled?.(item)) {
         // still handle the key
         return (state) => true;
       }
@@ -90,7 +91,7 @@ export function useInlinePaletteItems(
   }, [setExecuteItemCommand, executeHandler, items, counter]);
 
   const getItemProps = useCallback(
-    (item: any, index: number) => {
+    (item: T, index: number) => {
       return {
         isActive: activeIndex === index,
         onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -112,4 +113,11 @@ export function useInlinePaletteItems(
 function getActiveIndex(counter, size): number {
   const r = counter % size;
   return r < 0 ? r + size : r;
+}
+
+export interface InlinePaletteItem {
+  editorExecuteCommand: (arg: {
+    item: InlinePaletteItem;
+    itemIndex: number;
+  }) => Command;
 }
