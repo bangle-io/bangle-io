@@ -6,8 +6,8 @@ import {
   editorTagPlugins,
   noteTagsMarkdownItPlugin,
   editorTagHighPriorityPlugins,
+  renderReactNodeView,
 } from './editor-tag';
-import { renderReactNodeView } from './render-node-view';
 
 const extension = Extension.create({
   name: extensionName,

@@ -10,3 +10,4 @@ export const MARKDOWN_REGEX =
   // ALLOWED_CHARS are `\w`, `/ and `-`
   //  NOT  PRECEDED by ALLOWED_CHARS & BANNED_CHARS <MATCH> NOT FOLLOWED by ALLOWED_CHARS & BANNED_CHARS
   /(?<![\w-/#!$%^&*()+|~=`{}\[\]:";\'<>?,.\\@])#\w[\w-/]*(?![\w-/#!$%^&*()+|~=`{}\[\]:";\'<>?,.\\@])/g;
+export const TRIGGER = '#';

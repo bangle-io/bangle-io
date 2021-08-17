@@ -18,11 +18,16 @@ import {
   tagNodeName,
   BANNED_CHARS,
   paletteMarkName,
+  TRIGGER,
 } from './config';
 import { createTagNode } from './TagPickerInlinePalette';
+import React from 'react';
+import { RenderReactNodeView } from 'extension-registry';
+const MAX_MATCH = 500;
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };
+
 export function editorTagPlugins() {
   return () => [
     NodeView.createPlugin({
@@ -63,16 +68,37 @@ function breakTag(key) {
   return (state, dispatch, view) => {
     if (queryInlinePaletteActive(palettePluginKey)(state)) {
       const text = queryInlinePaletteText(palettePluginKey)(state);
+      const { $from } = state.selection;
+      let textBefore = $from.parent.textBetween(
+        Math.max(0, $from.parentOffset - MAX_MATCH),
+        $from.parentOffset,
+        null,
+        '\ufffc',
+      );
 
       if (key === 'Space') {
-        if (text) {
-          return createTagNode(text)(state, dispatch, view);
-        }
         // This is helpful to avoid messing up the
         // `#` heading markdown shortcut.
         // If there is no text and the person pressed space
         // the intent is to trigger the heading shortcut.
-        return false;
+        if (textBefore === '#') {
+          return false;
+        }
+        if (text === '') {
+          return replaceSuggestionMarkWith(
+            palettePluginKey,
+            state.schema.text('# '),
+          )(state, dispatch, view);
+        }
+        const nodeType = state.schema.nodes[tagNodeName];
+        return replaceSuggestionMarkWith(
+          palettePluginKey,
+          nodeType.create({
+            tagValue: text,
+          }),
+        )(state, dispatch, view);
+
+        // return false;
       }
       return replaceSuggestionMarkWith(
         palettePluginKey,
@@ -82,8 +108,6 @@ function breakTag(key) {
     return false;
   };
 }
-
-const trigger = '#';
 
 export function editorTagSpec(): RawSpecs {
   const { toDOM, parseDOM } = domSerializationHelpers(tagNodeName, {
@@ -126,7 +150,10 @@ export function editorTagSpec(): RawSpecs {
       },
     },
   };
-  return [inlinePalette.spec({ markName: paletteMarkName, trigger }), spec];
+  return [
+    inlinePalette.spec({ markName: paletteMarkName, trigger: TRIGGER }),
+    spec,
+  ];
 }
 
 export function noteTagsMarkdownItPlugin(md: any) {
@@ -138,3 +165,13 @@ export function noteTagsMarkdownItPlugin(md: any) {
     },
   });
 }
+
+export const renderReactNodeView: RenderReactNodeView = {
+  [tagNodeName]: ({ nodeViewRenderArg }) => {
+    return (
+      <span className="inline-tag">
+        #{nodeViewRenderArg.node.attrs.tagValue}
+      </span>
+    );
+  },
+};

@@ -159,6 +159,36 @@ describe('multiple keyboard cases', () => {
     });
   });
 
+  test('Inside a paragraph typing # followed space', async () => {
+    await sendCtrlABackspace(page);
+    await sleep();
+    await page.keyboard.type('start of para');
+    await sleep(10);
+
+    await page.keyboard.press('Space');
+
+    await page.keyboard.type('#');
+
+    await page.keyboard.press('Space');
+
+    await page.keyboard.press('c');
+
+    expect(await getPrimaryEditorJSON(page)).toEqual({
+      content: [
+        {
+          content: [
+            {
+              text: 'start of para # c',
+              type: 'text',
+            },
+          ],
+          type: 'paragraph',
+        },
+      ],
+      type: 'doc',
+    });
+  });
+
   test('Illegal tag creation in heading', async () => {
     await sendCtrlABackspace(page);
     await page.keyboard.type('#');
