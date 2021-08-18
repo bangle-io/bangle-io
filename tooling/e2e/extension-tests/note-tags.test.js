@@ -8,6 +8,7 @@ const {
   getPrimaryEditorDebugString,
   getPrimaryEditorJSON,
   sendCtrlABackspace,
+  longSleep,
 } = require('../helpers');
 jest.setTimeout(155 * 1000);
 
@@ -43,7 +44,8 @@ test('is able to create a tag using inline palette', async () => {
   await page.keyboard.press('Enter');
   await page.keyboard.type('#yellow');
 
-  await sleep(10);
+  await longSleep();
+
   expect(await getPrimaryEditorDebugString(page)).toContain(
     `heading(note-tags-paletteMark("#yellow")`,
   );
