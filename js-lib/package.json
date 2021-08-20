@@ -4,6 +4,7 @@
     "baby-fs",
     "inline-palette",
     "base-error",
-    "object-sync"
+    "object-sync",
+    "doc-search"
   ]
 }
