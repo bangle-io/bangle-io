@@ -26,6 +26,7 @@
     "@bangle.dev/react": "0.27.1",
     "@bangle.dev/utils": "0.27.1",
     "config": "workspace:*",
+    "doc-search": "workspace:*",
     "extension-registry": "workspace:*",
     "inline-palette": "workspace:*",
     "react": "^17.0.2",

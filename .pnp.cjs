@@ -127,6 +127,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/base-error"
       },
       {
+        "name": "doc-search",
+        "reference": "workspace:js-lib/doc-search"
+      },
+      {
         "name": "inline-palette",
         "reference": "workspace:js-lib/inline-palette"
       },
@@ -232,6 +236,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["constants", ["workspace:lib/constants"]],
       ["core-actions", ["workspace:extensions/core-actions"]],
       ["core-palettes", ["virtual:aa1c8d7944f8800bbdb7ca393d5db6f1afa86d22b62459627c785b9585f7ad9ee0ced3c3949bd5b23056b168fa0079e541f4a8be858a5d25f9eaa419021fdd0d#workspace:extensions/core-palettes", "workspace:extensions/core-palettes"]],
+      ["doc-search", ["workspace:js-lib/doc-search"]],
       ["e2e", ["workspace:tooling/e2e"]],
       ["editor-core", ["workspace:extensions/editor-core"]],
       ["editor-manager-context", ["workspace:lib/editor-manager-context"]],
@@ -10072,6 +10077,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["doc-search", [
+        ["workspace:js-lib/doc-search", {
+          "packageLocation": "./js-lib/doc-search/",
+          "packageDependencies": [
+            ["doc-search", "workspace:js-lib/doc-search"],
+            ["@bangle.dev/core", "virtual:15a4404d3975bbe4814a7401be82f5a18a0f6693ba9c0f75c64b7475193d9292f372a4970291640222160ec6d17b102d6e12014589d64db2cb40a217afd473e3#npm:0.27.1"],
+            ["@bangle.dev/pm", "npm:0.27.1"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["doctrine", [
         ["npm:2.1.0", {
           "packageLocation": "./.yarn/cache/doctrine-npm-2.1.0-ac15d049b7-a45e277f7f.zip/node_modules/doctrine/",
@@ -16400,6 +16416,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:17.0.14"],
             ["@types/react-dom", "npm:17.0.9"],
             ["config", "workspace:lib/config"],
+            ["doc-search", "workspace:js-lib/doc-search"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["inline-palette", "workspace:js-lib/inline-palette"],
             ["react", "npm:17.0.2"],
