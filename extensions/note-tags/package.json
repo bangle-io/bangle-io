@@ -39,7 +39,8 @@
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
     "react-dom": "^17.0.2",
-    "test-utils": "workspace:*"
+    "test-utils": "workspace:*",
+    "ws-path": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

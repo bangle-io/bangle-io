@@ -1,12 +1,13 @@
-import { WorkspaceContextType } from 'workspace-context';
 import { pMap } from './p-map';
 import { SearchResultItem } from './types';
+import type { Node } from '@bangle.dev/pm';
+
 export const CONCURRENCY = 10;
 
 export async function searchNotes(
   query: string,
   noteWsPaths: string[],
-  getNote: WorkspaceContextType['getNote'],
+  getNote: (wsPath: string) => Promise<Node<any>>,
   signal: AbortSignal,
   {
     caseSensitive = false,
