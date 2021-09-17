@@ -2,7 +2,7 @@ import { naukarWorkerProxy } from 'naukar-proxy';
 import { useState, useContext, useEffect } from 'react';
 import { AppStateContext } from 'app-state-context';
 import { useEditorManagerContext } from 'editor-manager-context';
-import { trimWhiteSpaceBeforeCursor } from 'editor-utils';
+import { trimEndWhiteSpaceBeforeCursor } from 'editor-utils';
 
 const pendingSymbol = Symbol('pending-tasks');
 
@@ -76,7 +76,13 @@ export function PageLifecycle() {
     else if (pageStateCurrent === 'passive' || pageStateCurrent === 'hidden') {
       forEachEditor((editor, i) => {
         if (editor.view.hasFocus()) {
-          trimWhiteSpaceBeforeCursor()(editor.view.state, editor.view.dispatch);
+          // To avoid cursor jumping across due markdown whitespace elimination
+          // this removes the white space to prevent cursor jumping.
+          // Not ideal though
+          trimEndWhiteSpaceBeforeCursor()(
+            editor.view.state,
+            editor.view.dispatch,
+          );
         }
       });
       naukarWorkerProxy.flushDisk();
