@@ -339,7 +339,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["style-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.0.0"],
             ["surge", "npm:0.23.0"],
             ["tailwindcss", "virtual:8955fde69cf9ca46a5b3b4b224e7cdcf294f2c37a451236cc308eb7e77c8a88e1a55cacf5deb7c618a66bcd42b5bc69f7719eb6e1ecf18cf4bce1d3e13c728e2#npm:2.1.4"],
-            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
+            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b"],
             ["vite", "npm:2.3.7"],
             ["vite-plugin-html", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.0.7"],
             ["webpack", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.39.0"],
@@ -6218,7 +6218,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexpp", "npm:3.1.0"],
             ["semver", "npm:7.3.5"],
             ["tsutils", "virtual:77dbb4c3f8e27ce380a4065a54703634cdd2ad671dbdc07c49a5a0b9851b2094aeaba925737c1d99397402d8dfd00dd4bcd7288919879710fde080cd0c8cf26f#npm:3.21.0"],
-            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"]
+            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b"]
           ],
           "packagePeers": [
             "@types/eslint",
@@ -6328,7 +6328,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/typescript-estree", "virtual:a9f58b1dc94cf97e91ed1f498dffbfae41a4f711482db0e1a4dd20f1f6f6e9bed895ab515f2d2359821468e31e46034f9c8c9e54fea748dbe55299e9bec130e8#npm:4.27.0"],
             ["debug", "virtual:bb5021588f7e5595fb57318130fbd71573bb1e56e36c52894c6ab92335cefc204411143fb343142c8264fb8b584b87ad650c627bf465ca1d60190627a49cbc6b#npm:4.3.2"],
             ["eslint", "npm:7.28.0"],
-            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"]
+            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b"]
           ],
           "packagePeers": [
             "@types/eslint",
@@ -6478,7 +6478,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["is-glob", "npm:4.0.1"],
             ["semver", "npm:7.3.5"],
             ["tsutils", "virtual:77dbb4c3f8e27ce380a4065a54703634cdd2ad671dbdc07c49a5a0b9851b2094aeaba925737c1d99397402d8dfd00dd4bcd7288919879710fde080cd0c8cf26f#npm:3.21.0"],
-            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"]
+            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b"]
           ],
           "packagePeers": [
             "typescript"
@@ -8090,7 +8090,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["style-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.0.0"],
             ["surge", "npm:0.23.0"],
             ["tailwindcss", "virtual:8955fde69cf9ca46a5b3b4b224e7cdcf294f2c37a451236cc308eb7e77c8a88e1a55cacf5deb7c618a66bcd42b5bc69f7719eb6e1ecf18cf4bce1d3e13c728e2#npm:2.1.4"],
-            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"],
+            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b"],
             ["vite", "npm:2.3.7"],
             ["vite-plugin-html", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:2.0.7"],
             ["webpack", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.39.0"],
@@ -20767,7 +20767,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tsutils", "virtual:77dbb4c3f8e27ce380a4065a54703634cdd2ad671dbdc07c49a5a0b9851b2094aeaba925737c1d99397402d8dfd00dd4bcd7288919879710fde080cd0c8cf26f#npm:3.21.0"],
             ["@types/typescript", null],
             ["tslib", "npm:1.14.1"],
-            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"]
+            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b"]
           ],
           "packagePeers": [
             "@types/typescript",
@@ -20902,10 +20902,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["typescript", [
-        ["patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7", {
-          "packageLocation": "./.yarn/cache/typescript-patch-bb3b548ba1-bc2c4fdf0f.zip/node_modules/typescript/",
+        ["patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b", {
+          "packageLocation": "./.yarn/cache/typescript-patch-6e3648db44-4e2edec3c9.zip/node_modules/typescript/",
           "packageDependencies": [
-            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"]
+            ["typescript", "patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b"]
           ],
           "linkType": "HARD",
         }]
@@ -27927,11 +27927,9 @@ class NodeFS extends BasePortableFakeFS {
     return this.realFs.readFileSync(fsNativePath, encoding);
   }
 
-  async readdirPromise(p, {
-    withFileTypes
-  } = {}) {
+  async readdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      if (withFileTypes) {
+      if (opts === null || opts === void 0 ? void 0 : opts.withFileTypes) {
         this.realFs.readdir(npath.fromPortablePath(p), {
           withFileTypes: true
         }, this.makeCallback(resolve, reject));
@@ -27941,10 +27939,8 @@ class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  readdirSync(p, {
-    withFileTypes
-  } = {}) {
-    if (withFileTypes) {
+  readdirSync(p, opts) {
+    if (opts === null || opts === void 0 ? void 0 : opts.withFileTypes) {
       return this.realFs.readdirSync(npath.fromPortablePath(p), {
         withFileTypes: true
       });
@@ -28245,20 +28241,12 @@ class ProxiedFS extends FakeFS {
     }
   }
 
-  async readdirPromise(p, {
-    withFileTypes
-  } = {}) {
-    return this.baseFs.readdirPromise(this.mapToBase(p), {
-      withFileTypes: withFileTypes
-    });
+  async readdirPromise(p, opts) {
+    return this.baseFs.readdirPromise(this.mapToBase(p), opts);
   }
 
-  readdirSync(p, {
-    withFileTypes
-  } = {}) {
-    return this.baseFs.readdirSync(this.mapToBase(p), {
-      withFileTypes: withFileTypes
-    });
+  readdirSync(p, opts) {
+    return this.baseFs.readdirSync(this.mapToBase(p), opts);
   }
 
   async readlinkPromise(p) {
@@ -28378,7 +28366,7 @@ class VirtualFS extends ProxiedFS {
     if (this.pathUtils.isAbsolute(p)) return VirtualFS.resolveVirtual(p);
     const resolvedRoot = VirtualFS.resolveVirtual(this.baseFs.resolve(PortablePath.dot));
     const resolvedP = VirtualFS.resolveVirtual(this.baseFs.resolve(p));
-    return ppath.relative(resolvedRoot, resolvedP);
+    return ppath.relative(resolvedRoot, resolvedP) || PortablePath.dot;
   }
 
   mapFromBase(p) {
@@ -30010,23 +29998,17 @@ class ZipFS extends BasePortableFakeFS {
     return this.getFileSource(entry, opts);
   }
 
-  async readdirPromise(p, {
-    withFileTypes
-  } = {}) {
-    return this.readdirSync(p, {
-      withFileTypes: withFileTypes
-    });
+  async readdirPromise(p, opts) {
+    return this.readdirSync(p, opts);
   }
 
-  readdirSync(p, {
-    withFileTypes
-  } = {}) {
+  readdirSync(p, opts) {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`scandir '${p}'`);
     const directoryListing = this.listings.get(resolvedP);
     if (!directoryListing) throw ENOTDIR(`scandir '${p}'`);
     const entries = [...directoryListing];
-    if (!withFileTypes) return entries;
+    if (!(opts === null || opts === void 0 ? void 0 : opts.withFileTypes)) return entries;
     return entries.map(name => {
       return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
         name
@@ -30901,37 +30883,25 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async readdirPromise(p, {
-    withFileTypes
-  } = {}) {
+  async readdirPromise(p, opts) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.readdirPromise(p, {
-        withFileTypes: withFileTypes
-      });
+      return await this.baseFs.readdirPromise(p, opts);
     }, async (zipFs, {
       subPath
     }) => {
-      return await zipFs.readdirPromise(subPath, {
-        withFileTypes: withFileTypes
-      });
+      return await zipFs.readdirPromise(subPath, opts);
     }, {
       requireSubpath: false
     });
   }
 
-  readdirSync(p, {
-    withFileTypes
-  } = {}) {
+  readdirSync(p, opts) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.readdirSync(p, {
-        withFileTypes: withFileTypes
-      });
+      return this.baseFs.readdirSync(p, opts);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.readdirSync(subPath, {
-        withFileTypes: withFileTypes
-      });
+      return zipFs.readdirSync(subPath, opts);
     }, {
       requireSubpath: false
     });

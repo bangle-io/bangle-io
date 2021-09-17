@@ -140,5 +140,6 @@
     "trailingComma": "all",
     "quoteProps": "consistent",
     "arrowParens": "always"
-  }
+  },
+  "packageManager": "yarn@3.0.2"
 }
