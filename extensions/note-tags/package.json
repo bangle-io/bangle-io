@@ -26,11 +26,11 @@
     "@bangle.dev/react": "0.27.1",
     "@bangle.dev/utils": "0.27.1",
     "config": "workspace:*",
-    "doc-search": "workspace:*",
     "extension-registry": "workspace:*",
     "inline-palette": "workspace:*",
     "react": "^17.0.2",
-    "ui-components": "workspace:*"
+    "ui-components": "workspace:*",
+    "workspace-context": "workspace:*"
   },
   "devDependencies": {
     "@bangle.dev/all-base-components": "0.27.1",

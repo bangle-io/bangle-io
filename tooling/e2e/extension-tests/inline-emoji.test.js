@@ -1,7 +1,7 @@
 const {
   url,
   createNewNote,
-  sendCtrlABackspace,
+  clearPrimaryEditor,
   getEditorHTML,
   createWorkspace,
   sleep,
@@ -24,7 +24,7 @@ test('Emoji works in heading', async () => {
   await longSleep();
 
   const editorHandle = await page.$('.bangle-editor');
-  await sendCtrlABackspace(page);
+  await clearPrimaryEditor(page);
   await sleep();
   await editorHandle.type('# Wow :', { delay: 3 });
   await editorHandle.press('ArrowDown');
@@ -44,7 +44,7 @@ test('Emoji works in para', async () => {
 
   const editorHandle = await page.$('.bangle-editor');
 
-  await sendCtrlABackspace(page);
+  await clearPrimaryEditor(page);
 
   await editorHandle.type('life is good :zeb', { delay: 1 });
   await editorHandle.press('Enter');
@@ -60,7 +60,7 @@ test('Emoji works in list', async () => {
 
   const editorHandle = await page.$('.bangle-editor');
 
-  await sendCtrlABackspace(page);
+  await clearPrimaryEditor(page);
 
   await editorHandle.type('- I am a list :zeb', { delay: 1 });
   await editorHandle.press('Enter');

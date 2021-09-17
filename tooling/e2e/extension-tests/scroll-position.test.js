@@ -1,7 +1,7 @@
 const {
   url,
   createNewNote,
-  sendCtrlABackspace,
+  clearPrimaryEditor,
   createWorkspace,
   setPageWidescreen,
   setPageSmallscreen,
@@ -58,7 +58,7 @@ const getTopAndLastElement = async (page) => {
 const typeScrollableThings = async (page) => {
   let primaryHandle = await getPrimaryEditorHandler(page, { focus: true });
   await longSleep();
-  await sendCtrlABackspace(page);
+  await clearPrimaryEditor(page);
   await page.keyboard.type('## top element');
   await page.keyboard.press('Enter');
   for (let i = 0; i < 15; i++) {

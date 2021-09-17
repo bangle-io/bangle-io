@@ -6933,15 +6933,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"doc-search@workspace:*, doc-search@workspace:js-lib/doc-search":
-  version: 0.0.0-use.local
-  resolution: "doc-search@workspace:js-lib/doc-search"
-  dependencies:
-    "@bangle.dev/core": 0.27.1
-    "@bangle.dev/pm": 0.27.1
-  languageName: unknown
-  linkType: soft
-
 "doctrine@npm:^2.1.0":
   version: 2.1.0
   resolution: "doctrine@npm:2.1.0"
@@ -12622,13 +12613,13 @@ fsevents@^2.1.2:
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     config: "workspace:*"
-    doc-search: "workspace:*"
     extension-registry: "workspace:*"
     inline-palette: "workspace:*"
     react: ^17.0.2
     react-dom: ^17.0.2
     test-utils: "workspace:*"
     ui-components: "workspace:*"
+    workspace-context: "workspace:*"
     ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
