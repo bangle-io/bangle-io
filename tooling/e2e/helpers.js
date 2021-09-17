@@ -90,6 +90,7 @@ async function createNewNote(page, wsName, noteName = 'new_file.md') {
   await longSleep();
   const wsPath = filePathToWsPath(wsName, noteName);
   expect(await page.url()).toMatch(url + resolvePath(wsPath).locationPath);
+  await waitForPrimaryEditorFocus(page);
 
   return wsPath;
 }
@@ -117,7 +118,6 @@ async function clickPaletteRow(page, id) {
 
 async function clearPrimaryEditor(page) {
   await getPrimaryEditorHandler(page);
-  // wait for editor to be focused
   await waitForPrimaryEditorFocus(page);
 
   await page.keyboard.down(ctrlKey);
@@ -129,7 +129,7 @@ async function clearPrimaryEditor(page) {
 
 async function waitForPrimaryEditorFocus(page) {
   await page.waitForSelector('.primary-editor .ProseMirror-focused', {
-    timeout: SELECTOR_TIMEOUT,
+    timeout: 2 * SELECTOR_TIMEOUT,
   });
 }
 
