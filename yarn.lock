@@ -12619,6 +12619,8 @@ fsevents@^2.1.2:
     react-dom: ^17.0.2
     test-utils: "workspace:*"
     ui-components: "workspace:*"
+    workspace-context: "workspace:*"
+    ws-path: "workspace:*"
   languageName: unknown
   linkType: soft
 

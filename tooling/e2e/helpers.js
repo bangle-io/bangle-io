@@ -90,6 +90,7 @@ async function createNewNote(page, wsName, noteName = 'new_file.md') {
   await longSleep();
   const wsPath = filePathToWsPath(wsName, noteName);
   expect(await page.url()).toMatch(url + resolvePath(wsPath).locationPath);
+  await waitForPrimaryEditorFocus(page);
 
   return wsPath;
 }
@@ -115,13 +116,21 @@ async function clickPaletteRow(page, id) {
   await result.click();
 }
 
-async function sendCtrlABackspace(page) {
-  await sleep();
+async function clearPrimaryEditor(page) {
+  await getPrimaryEditorHandler(page);
+  await waitForPrimaryEditorFocus(page);
+
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('a', { delay: 30 });
   await page.keyboard.up(ctrlKey);
   await page.keyboard.press('Backspace', { delay: 30 });
   await sleep();
+}
+
+async function waitForPrimaryEditorFocus(page) {
+  await page.waitForSelector('.primary-editor .ProseMirror-focused', {
+    timeout: 2 * SELECTOR_TIMEOUT,
+  });
 }
 
 async function getEditorHTML(editorHandle) {
@@ -146,6 +155,7 @@ async function getPrimaryEditorHandler(page, { focus = false } = {}) {
     await page.evaluate(async () => {
       window.primaryEditor.view.focus();
     });
+    await waitForPrimaryEditorFocus(page);
   }
 
   return handle;
@@ -242,7 +252,7 @@ module.exports = {
   newPage,
   runAction,
   SELECTOR_TIMEOUT,
-  sendCtrlABackspace,
+  clearPrimaryEditor,
   setPageSmallscreen,
   setPageWidescreen,
   sleep,

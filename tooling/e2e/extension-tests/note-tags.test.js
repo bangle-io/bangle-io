@@ -3,16 +3,16 @@ const {
   createNewNote,
   createWorkspace,
   sleep,
-  getPrimaryEditorHandler,
+  SELECTOR_TIMEOUT,
   newPage,
   getPrimaryEditorDebugString,
   getPrimaryEditorJSON,
-  sendCtrlABackspace,
+  clearPrimaryEditor,
   longSleep,
 } = require('../helpers');
 jest.setTimeout(155 * 1000);
 
-let page, destroyPage;
+let page, destroyPage, wsName;
 
 beforeEach(async () => {
   ({ page, destroyPage } = await newPage(browser, { widescreen: true }));
@@ -20,6 +20,11 @@ beforeEach(async () => {
   await page.goto(url, { waitUntil: 'networkidle2' });
   await page.evaluate(() => localStorage.clear());
   await page.goto(url, { waitUntil: 'networkidle2' });
+  wsName = await createWorkspace(page);
+  await createNewNote(page, wsName, 'test-one');
+
+  await clearPrimaryEditor(page);
+  await sleep();
 });
 
 afterEach(async () => {
@@ -36,18 +41,13 @@ async function getTagsFromDoc() {
 }
 
 test('is able to create a tag using inline palette', async () => {
-  const wsName = await createWorkspace(page);
-  await createNewNote(page, wsName, 'test-one');
-
-  await getPrimaryEditorHandler(page, { focus: true });
-
   await page.keyboard.press('Enter');
   await page.keyboard.type('#yellow');
 
   await longSleep();
 
   expect(await getPrimaryEditorDebugString(page)).toContain(
-    `heading(note-tags-paletteMark("#yellow")`,
+    `paragraph(note-tags-paletteMark("#yellow")`,
   );
 
   await page.keyboard.press('Enter');
@@ -65,13 +65,6 @@ test('is able to create a tag using inline palette', async () => {
 });
 
 describe('multiple keyboard cases', () => {
-  beforeEach(async () => {
-    const wsName = await createWorkspace(page);
-    await createNewNote(page, wsName, 'test-one');
-
-    await getPrimaryEditorHandler(page, { focus: true });
-  });
-
   test('is able to create a tag by typing and then pressing a space', async () => {
     await page.keyboard.press('Enter');
     await page.keyboard.type('#mellow');
@@ -93,8 +86,6 @@ describe('multiple keyboard cases', () => {
   });
 
   test('Typing # followed by space allows heading 1', async () => {
-    await sendCtrlABackspace(page);
-    await sleep();
     await page.keyboard.type('#');
 
     await sleep(10);
@@ -127,8 +118,6 @@ describe('multiple keyboard cases', () => {
   });
 
   test('Typing # twice followed by space allows heading 2', async () => {
-    await sendCtrlABackspace(page);
-    await sleep();
     await page.keyboard.type('#');
     await page.keyboard.type('#');
 
@@ -162,8 +151,6 @@ describe('multiple keyboard cases', () => {
   });
 
   test('Inside a paragraph typing # followed space', async () => {
-    await sendCtrlABackspace(page);
-    await sleep();
     await page.keyboard.type('start of para');
     await sleep(10);
 
@@ -192,7 +179,6 @@ describe('multiple keyboard cases', () => {
   });
 
   test('Illegal tag creation in heading', async () => {
-    await sendCtrlABackspace(page);
     await page.keyboard.type('#');
     await page.keyboard.press('Space');
 
@@ -204,5 +190,73 @@ describe('multiple keyboard cases', () => {
     expect(await getPrimaryEditorDebugString(page)).toEqual(
       `doc(heading("##bob"), paragraph)`,
     );
+  });
+
+  test('pressing / does not clear tag', async () => {
+    await page.keyboard.type('#');
+    await page.keyboard.type('hello');
+    await page.keyboard.type('/');
+    await page.keyboard.type('world');
+    await page.keyboard.press('Space');
+
+    await sleep(10);
+    expect(await getTagsFromDoc()).toEqual([
+      {
+        attrs: {
+          tagValue: 'hello/world',
+        },
+        type: 'tag',
+      },
+    ]);
+  });
+
+  test('pressing . clears tag', async () => {
+    await page.keyboard.type('#');
+    await page.keyboard.type('hello');
+    await page.keyboard.type('.');
+    await sleep(10);
+
+    expect(await getTagsFromDoc()).toEqual([]);
+    expect(await getPrimaryEditorDebugString(page)).toEqual(
+      `doc(paragraph("#hello."))`,
+    );
+  });
+});
+
+describe('auto complete', () => {
+  test('shows existing tags in auto complete', async () => {
+    await page.keyboard.type('#');
+    await page.keyboard.type('hello', { delay: 3 });
+    await page.keyboard.press('Space');
+
+    // we are creating a new note because currently newly created
+    // tags in the same page donot show up in auto complete
+    await createNewNote(page, wsName, 'test-two');
+    await clearPrimaryEditor(page);
+    await sleep();
+
+    await page.keyboard.type('#hel', { delay: 3 });
+
+    await page.waitForSelector('.tag-picker-inline-palette-item', {
+      timeout: SELECTOR_TIMEOUT,
+    });
+
+    expect(
+      await page.$$eval('.tag-picker-inline-palette-item', (nodes) =>
+        nodes.map((n) => n.innerText),
+      ),
+    ).toEqual(['Create a tag "hel"', 'hello']);
+
+    await page.keyboard.press('ArrowDown', { delay: 10 });
+    await page.keyboard.press('Enter', { delay: 10 });
+
+    expect(await getTagsFromDoc()).toMatchInlineSnapshot([
+      {
+        attrs: {
+          tagValue: 'hello',
+        },
+        type: 'tag',
+      },
+    ]);
   });
 });

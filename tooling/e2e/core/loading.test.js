@@ -4,7 +4,7 @@ const {
   ctrlKey,
   url,
   createNewNote,
-  sendCtrlABackspace,
+  clearPrimaryEditor,
   getEditorHTML,
   createWorkspace,
   newPage,
@@ -74,7 +74,7 @@ test('create a new page saved in browser', async () => {
 
   const editorHandle = await page.$('.bangle-editor');
 
-  await sendCtrlABackspace(page);
+  await clearPrimaryEditor(page);
 
   await editorHandle.type('# Wow', { delay: 3 });
   await editorHandle.press('Enter', { delay: 20 });
@@ -94,7 +94,7 @@ test('inline action palette convert to bullet list', async () => {
   const hasOneUnorderedListElement = () =>
     editorHandle.evaluate((node) => node.querySelectorAll('ul').length === 1);
 
-  await sendCtrlABackspace(page);
+  await clearPrimaryEditor(page);
 
   expect(await hasOneUnorderedListElement()).toBe(false);
 
@@ -116,7 +116,7 @@ test('inline action palette convert to heading 3', async () => {
   const hasOneH3Element = () =>
     editorHandle.evaluate((node) => node.querySelectorAll('h3').length === 1);
 
-  await sendCtrlABackspace(page);
+  await clearPrimaryEditor(page);
 
   expect(await hasOneH3Element()).toBe(false);
 
