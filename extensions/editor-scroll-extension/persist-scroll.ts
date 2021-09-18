@@ -13,7 +13,7 @@ const selectionKey = (editorId, wsPath) => key('selection', editorId, wsPath);
 
 export function getSavedScrollPos(wsPath, editorId) {
   const result = parseInt(
-    sessionStorage.getItem(scrollKey(wsPath, editorId)),
+    sessionStorage.getItem(scrollKey(wsPath, editorId)) || '',
     10,
   );
   log('getting', scrollKey(wsPath, editorId), result);
@@ -22,7 +22,7 @@ export function getSavedScrollPos(wsPath, editorId) {
 
 export function saveScrollPos(wsPath, editorId, value) {
   if (typeof value === 'number') {
-    sessionStorage.setItem(scrollKey(wsPath, editorId), value);
+    sessionStorage.setItem(scrollKey(wsPath, editorId), value.toString());
   }
 }
 
@@ -35,7 +35,7 @@ export function getSavedSelection(wsPath, editorId, doc) {
     log('getting', selectionKey(wsPath, editorId), stored);
 
     const rawSelection = JSON.parse(
-      sessionStorage.getItem(selectionKey(wsPath, editorId)),
+      sessionStorage.getItem(selectionKey(wsPath, editorId)) || '{}',
     );
 
     if (Math.max(rawSelection.anchor, rawSelection.head) >= doc.content.size) {
