@@ -1,8 +1,14 @@
 import { getDayJs } from 'utils/utility';
 import { resolvePath, updateFileName } from 'ws-path';
+import { matchAllPlus } from '@bangle.dev/utils';
 const dayFormat = 'YYYYMMDDHHmmssSSS';
 
-export function calcImageDimensions(blobUrl) {
+export interface Dimension {
+  width: number;
+  height: number;
+}
+
+export function calcImageDimensions(blobUrl): Promise<Dimension> {
   const image = new Image();
   image.src = blobUrl;
   return new Promise((res) => {
@@ -16,19 +22,19 @@ export function calcImageDimensions(blobUrl) {
  * Take hint about image dimensions from the wsPAth
  * example a file named my-pic-343x500.png means width = 343 and height = 500
  */
-export function imageDimensionFromWsPath(imageWsPath) {
+export function imageDimensionFromWsPath(imageWsPath): Dimension | undefined {
   const { fileName } = resolvePath(imageWsPath);
   const dimensionRegex = /.*-(\d+x\d+)\..*/;
   const result = dimensionRegex.exec(fileName);
-  if (result) {
+  if (result?.[1]) {
     const [width, height] = result[1].split('x').map((r) => parseInt(r, 10));
-    return { width, height };
+    return { width: width!, height: height! };
   }
   return undefined;
 }
 
-function stringifyDimensions(dimensions) {
-  return `${dimensions.width}x${dimensions.height}`;
+function stringifyDimension(dimension: Dimension) {
+  return `${dimension.width}x${dimension.height}`;
 }
 
 /**
@@ -36,7 +42,7 @@ function stringifyDimensions(dimensions) {
  * @param {*} fileName
  * @returns {name, ext} - Note ext will start with a `.`
  */
-export function parseFileName(fileName) {
+export function parseFileName(fileName: string) {
   const dotIndex = fileName.lastIndexOf('.');
   const name = dotIndex === -1 ? fileName : fileName.slice(0, dotIndex);
   const ext = dotIndex === -1 ? '' : fileName.slice(dotIndex);
@@ -44,26 +50,25 @@ export function parseFileName(fileName) {
 }
 
 export async function setImageMetadataInWsPath(
-  imageWsPath,
-  dimensions,
+  imageWsPath: string,
+  dimension: Dimension,
   addTimestamp = false,
 ) {
   const existingDimension = imageDimensionFromWsPath(imageWsPath);
   let { fileName } = resolvePath(imageWsPath);
-
   if (addTimestamp) {
-    const matches = Array.from(fileName.matchAll(/-\d{17}/g));
+    const matches = matchAllPlus(/-\d{17}/g, fileName).filter((r) => r.match); // Array.from(fileName.matchAll(/-\d{17}/g));
     for (const match of matches) {
-      const possibleTimestamp = match[0].slice(1);
-      if (validTimestamp(possibleTimestamp)) {
-        fileName = fileName.replace(match[0], '');
+      if (validTimestamp(match.subString.slice(1))) {
+        fileName = fileName.replace(match.subString, '');
       }
     }
   }
 
   if (existingDimension) {
-    fileName = fileName.replaceAll(
-      '-' + stringifyDimensions(existingDimension),
+    fileName = replaceAll(
+      fileName,
+      '-' + stringifyDimension(existingDimension),
       '',
     );
   }
@@ -75,7 +80,7 @@ export async function setImageMetadataInWsPath(
 
   const { name, ext } = parseFileName(fileName);
 
-  const newDimensions = '-' + stringifyDimensions(dimensions);
+  const newDimensions = '-' + stringifyDimension(dimension);
 
   const newName = [name, timestamp, newDimensions].filter(Boolean).join('');
 
@@ -134,7 +139,7 @@ export function getImageAltScaleFactor(alt) {
     alt = '';
   }
   const result = scaleRegex.exec(alt);
-  if (result) {
+  if (result?.[1]) {
     return parseFloat(result[1]);
   }
 
@@ -156,4 +161,8 @@ export function updateImageAltScaleFactor(alt, scaleFactor = 1) {
   }
 
   return alt + '-scale' + scaleFactor.toFixed(2);
+}
+
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, 'g'), replace);
 }

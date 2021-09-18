@@ -32,12 +32,16 @@ export function ImageComponent({ nodeAttrs }) {
       ? parseLocalFilePath(inputSrc, primaryWsPath)
       : undefined;
 
-  const [{ height, width }, updateDimensions] = useState(() => {
+  const [dim, updateDimensions] = useState(() => {
     if (imageWsPath) {
-      return imageDimensionFromWsPath(imageWsPath) ?? {};
+      return imageDimensionFromWsPath(imageWsPath);
     }
-    return {};
+    return undefined;
   });
+  let height: number | undefined, width: number | undefined;
+  if (dim) {
+    ({ height, width } = dim);
+  }
   const destroyRef = useDestroyRef();
 
   useEffect(() => {
@@ -51,28 +55,30 @@ export function ImageComponent({ nodeAttrs }) {
           throw new Error('Image source cannot be a wsPath');
         }
 
-        FileOps.getFile(imageWsPath)
-          .then((file) => {
-            if (!file) {
-              return;
-            }
-            objectUrl = window.URL.createObjectURL(file);
-            if (!width) {
-              calcImageDimensions(objectUrl).then((dim) => {
-                if (!destroyRef.current) {
-                  updateDimensions({ height: dim.height, width: dim.width });
-                }
-              });
-            }
+        if (imageWsPath) {
+          FileOps.getFile(imageWsPath)
+            .then((file) => {
+              if (!file) {
+                return;
+              }
+              objectUrl = window.URL.createObjectURL(file);
+              if (!width) {
+                calcImageDimensions(objectUrl).then((dim) => {
+                  if (!destroyRef.current) {
+                    updateDimensions({ height: dim.height, width: dim.width });
+                  }
+                });
+              }
 
-            if (!destroyRef.current) {
-              updateImageSrc(objectUrl);
-            }
-          })
-          .catch((error) => {
-            // silence the error in case we were not able
-            // to get the image
-          });
+              if (!destroyRef.current) {
+                updateImageSrc(objectUrl);
+              }
+            })
+            .catch((error) => {
+              // silence the error in case we were not able
+              // to get the image
+            });
+        }
       }
     }
     return () => {
@@ -84,7 +90,7 @@ export function ImageComponent({ nodeAttrs }) {
 
   let newWidth = width;
   let newHeight = height;
-  if (width && alt && /.*scale\d.\d\d$/.test(alt)) {
+  if (width && height && alt && /.*scale\d.\d\d$/.test(alt)) {
     const perc = parseFloat(alt.split('scale')[1]);
 
     newWidth = perc * width;

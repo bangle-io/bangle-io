@@ -23,8 +23,8 @@ function ScaleButton({ scaleFactor, view, isActive }) {
       hint={'Scale image ' + scaleDisplay + '%'}
       onMouseDown={(e) => {
         e.preventDefault();
-        updateImageNodeAttribute((existingAttrs = {}) => ({
-          alt: updateImageAltScaleFactor(existingAttrs.alt, scaleFactor),
+        updateImageNodeAttribute((existingAttrs: any = {}) => ({
+          alt: updateImageAltScaleFactor(existingAttrs?.alt, scaleFactor),
         }))(view.state, view.dispatch, view);
       }}
       isActive={isActive}
