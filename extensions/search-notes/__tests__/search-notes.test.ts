@@ -9,120 +9,126 @@ import {
   searchNotes,
   startStringWithWord,
 } from '../search-notes';
+import noteTags from 'note-tags';
 
-test('works with empty data', async () => {
-  const result = await searchNotes(
-    '',
-    [],
-    () => {
-      return undefined as any;
-    },
-    new AbortController().signal,
-  );
+describe('Plain text search', () => {
+  const createEditor = (md) => {
+    return createPMNode()(md);
+  };
 
-  expect(result).toMatchInlineSnapshot(`Array []`);
-});
-
-test('Maps large data', async () => {
-  const query = 'test';
-  const controller = new AbortController();
-  const fileData = Array.from({ length: 1000 }, () => ({
-    name: '1.md',
-    text: `- I am a list`,
-  }));
-
-  const mapper = jest.fn(async (wsPath) => {
-    return createPMNode(
-      fileData.find((r) => r.name === resolvePath(wsPath).fileName)?.text,
-    );
-  });
-  const res = searchNotes(
-    query,
-    fileData.map((f) => `test-ws:${f.name}`),
-    mapper,
-    controller.signal,
-  );
-
-  await res;
-
-  expect(mapper).toBeCalledTimes(1000);
-});
-
-test('Aborting stops the search', async () => {
-  const query = 'test';
-  const controller = new AbortController();
-  const fileData = Array.from({ length: 1000 }, () => ({
-    name: '1.md',
-    text: `- I am a list`,
-  }));
-
-  const mapper = jest.fn(async (wsPath) => {
-    await sleep(10);
-    return createPMNode(
-      fileData.find((r) => r.name === resolvePath(wsPath).fileName)?.text,
-    );
-  });
-  const res = searchNotes(
-    query,
-    fileData.map((f) => `test-ws:${f.name}`),
-    mapper,
-    controller.signal,
-  );
-
-  controller.abort();
-
-  await expect(res).rejects.toThrowError(`Aborted`);
-  // only the ones in flight would be called
-  expect(mapper).toBeCalledTimes(CONCURRENCY);
-});
-
-describe('Works with simple data', () => {
-  const getResult = async (query, fileData) =>
-    searchNotes(
-      query,
-      fileData.map((f) => `test-ws:${f.name}`),
-      async (wsPath) => {
-        return createPMNode(
-          fileData.find((r) => r.name === resolvePath(wsPath).fileName).text,
-        );
+  test('works with empty data', async () => {
+    const result = await searchNotes(
+      '',
+      [],
+      () => {
+        return undefined as any;
       },
       new AbortController().signal,
     );
 
-  test('empty query should return no data', async () => {
-    expect(
-      await getResult('', [{ name: '1.md', text: `- I am a list` }]),
-    ).toEqual([]);
+    expect(result).toMatchInlineSnapshot(`Array []`);
   });
 
-  test('if match is the first thing in the node match starts with empty string', async () => {
-    expect(
-      (
-        await getResult('Beauty', [
-          {
-            name: '1.md',
-            text: `- Beauty is a subjective matter\n - ugliness and beauty go hand in hand`,
-          },
-        ])
-      )?.[0]?.matches,
-    ).toEqual([
-      {
-        parent: 'listItem',
-        parentPos: 2,
-        match: ['', 'beauty', ' is a subjective matter'],
-      },
-      {
-        parent: 'listItem',
-        parentPos: 35,
-        match: ['ugliness and ', 'beauty', ' go hand in hand'],
-      },
-    ]);
+  test('Maps large data', async () => {
+    const query = 'test';
+    const controller = new AbortController();
+    const fileData = Array.from({ length: 1000 }, () => ({
+      name: '1.md',
+      text: `- I am a list`,
+    }));
+
+    const mapper = jest.fn(async (wsPath) => {
+      return createEditor(
+        fileData.find((r) => r.name === resolvePath(wsPath).fileName)?.text,
+      );
+    });
+    const res = searchNotes(
+      query,
+      fileData.map((f) => `test-ws:${f.name}`),
+      mapper,
+      controller.signal,
+    );
+
+    await res;
+
+    expect(mapper).toBeCalledTimes(1000);
   });
 
-  test('simple query', async () => {
-    expect(
-      await getResult('para', [{ name: '1.md', text: `I am a paragraph` }]),
-    ).toMatchInlineSnapshot(`
+  test('Aborting stops the search', async () => {
+    const query = 'test';
+    const controller = new AbortController();
+    const fileData = Array.from({ length: 1000 }, () => ({
+      name: '1.md',
+      text: `- I am a list`,
+    }));
+
+    const mapper = jest.fn(async (wsPath) => {
+      await sleep(10);
+      return createEditor(
+        fileData.find((r) => r.name === resolvePath(wsPath).fileName)?.text,
+      );
+    });
+    const res = searchNotes(
+      query,
+      fileData.map((f) => `test-ws:${f.name}`),
+      mapper,
+      controller.signal,
+    );
+
+    controller.abort();
+
+    await expect(res).rejects.toThrowError(`Aborted`);
+    // only the ones in flight would be called
+    expect(mapper).toBeCalledTimes(CONCURRENCY);
+  });
+
+  describe('Works with simple data', () => {
+    const getResult = async (query, fileData) =>
+      searchNotes(
+        query,
+        fileData.map((f) => `test-ws:${f.name}`),
+        async (wsPath) => {
+          return createEditor(
+            fileData.find((r) => r.name === resolvePath(wsPath).fileName).text,
+          );
+        },
+        new AbortController().signal,
+      );
+
+    test('empty query should return no data', async () => {
+      expect(
+        await getResult('', [{ name: '1.md', text: `- I am a list` }]),
+      ).toEqual([]);
+    });
+
+    test('if match is the first thing in the node match starts with empty string', async () => {
+      expect(
+        (
+          await getResult('Beauty', [
+            {
+              name: '1.md',
+              text: `- Beauty is a subjective matter\n - ugliness and beauty go hand in hand`,
+            },
+          ])
+        )?.[0]?.matches,
+      ).toEqual([
+        {
+          parent: 'listItem',
+          parentPos: 2,
+          match: ['', 'beauty', ' is a subjective matter'],
+        },
+        {
+          parent: 'listItem',
+          parentPos: 35,
+          match: ['ugliness and ', 'beauty', ' go hand in hand'],
+        },
+      ]);
+    });
+
+    test('simple query', async () => {
+      expect(
+        await getResult('para', [{ name: '1.md', text: `I am a paragraph` }]),
+      ).toMatchInlineSnapshot(`
       Array [
         Object {
           "matches": Array [
@@ -140,33 +146,33 @@ describe('Works with simple data', () => {
         },
       ]
     `);
-  });
+    });
 
-  test('no match', async () => {
-    expect(
-      await getResult('what', [{ name: '1.md', text: `I am a paragraph` }]),
-    ).toMatchInlineSnapshot(`Array []`);
-  });
+    test('no match', async () => {
+      expect(
+        await getResult('what', [{ name: '1.md', text: `I am a paragraph` }]),
+      ).toMatchInlineSnapshot(`Array []`);
+    });
 
-  test('works if no files', async () => {
-    expect(await getResult('what', [])).toMatchInlineSnapshot(`Array []`);
-  });
+    test('works if no files', async () => {
+      expect(await getResult('what', [])).toMatchInlineSnapshot(`Array []`);
+    });
 
-  test('works if file has no data', async () => {
-    expect(
-      await getResult('what', [{ name: '1.md', text: `` }]),
-    ).toMatchInlineSnapshot(`Array []`);
-  });
+    test('works if file has no data', async () => {
+      expect(
+        await getResult('what', [{ name: '1.md', text: `` }]),
+      ).toMatchInlineSnapshot(`Array []`);
+    });
 
-  test('multiple matches in a single file', async () => {
-    expect(
-      await getResult('what', [
-        {
-          name: '1.md',
-          text: `- what is what in real life?\n > what do you think about that question`,
-        },
-      ]),
-    ).toMatchInlineSnapshot(`
+    test('multiple matches in a single file', async () => {
+      expect(
+        await getResult('what', [
+          {
+            name: '1.md',
+            text: `- what is what in real life?\n > what do you think about that question`,
+          },
+        ]),
+      ).toMatchInlineSnapshot(`
       Array [
         Object {
           "matches": Array [
@@ -202,16 +208,16 @@ describe('Works with simple data', () => {
         },
       ]
     `);
-  });
+    });
 
-  test('multiple files where some files have no match', async () => {
-    expect(
-      await getResult('hunter', [
-        { name: '1.md', text: `bounty hunter` },
-        { name: '2.md', text: 'madness' },
-        { name: '3.md', text: 'booty hunter' },
-      ]),
-    ).toMatchInlineSnapshot(`
+    test('multiple files where some files have no match', async () => {
+      expect(
+        await getResult('hunter', [
+          { name: '1.md', text: `bounty hunter` },
+          { name: '2.md', text: 'madness' },
+          { name: '3.md', text: 'booty hunter' },
+        ]),
+      ).toMatchInlineSnapshot(`
       Array [
         Object {
           "matches": Array [
@@ -243,6 +249,7 @@ describe('Works with simple data', () => {
         },
       ]
     `);
+    });
   });
 });
 
@@ -455,5 +462,79 @@ describe('getMatchFragment', () => {
         " big…",
       ]
     `);
+  });
+});
+
+describe('understands tag searching', () => {
+  const createEditor = (md) => {
+    return createPMNode([noteTags])(md);
+  };
+
+  const getResult = async (query, fileData) =>
+    searchNotes(
+      query,
+      fileData.map((f) => `test-ws:${f.name}`),
+      async (wsPath) => {
+        return createEditor(
+          fileData.find((r) => r.name === resolvePath(wsPath).fileName).text,
+        );
+      },
+      new AbortController().signal,
+    );
+
+  test('list before tag does not show up', async () => {
+    const results = await getResult('tag:awesome-tag', [
+      {
+        name: '1.md',
+        text: `#sad
+
+- I am a list
+
+hello I am an #awesome-tag`,
+      },
+    ]);
+    expect(results).toHaveLength(1);
+    expect(results?.[0]?.matches).toEqual([
+      {
+        match: ['hello I am an  ', '#awesome-tag', ''],
+        parent: 'paragraph',
+        parentPos: 35,
+      },
+    ]);
+  });
+
+  test('soft break in list shows up as a white space', async () => {
+    const results = await getResult('tag:awesome-tag', [
+      {
+        name: '1.md',
+        text: `#sad
+- I am a list\nhello I am an #awesome-tag`,
+      },
+    ]);
+    expect(results).toHaveLength(1);
+    expect(results?.[0]?.matches).toEqual([
+      {
+        match: ['I am a list\nhello I am an  ', '#awesome-tag', ''],
+        parent: 'paragraph',
+        parentPos: 32,
+      },
+    ]);
+  });
+
+  test('text after shows up', async () => {
+    const results = await getResult('tag:awesome-tag', [
+      {
+        name: '1.md',
+        text: `I am an #awesome-tag in this small world`,
+      },
+    ]);
+    expect(results).toHaveLength(1);
+    expect(results?.[0]?.matches).toEqual([
+      {
+        match: ['I am an  ', '#awesome-tag', ' in this small world'],
+        parent: 'paragraph',
+        parentPos: 9,
+      },
+    ]);
   });
 });

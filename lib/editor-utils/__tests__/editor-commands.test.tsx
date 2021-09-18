@@ -8,10 +8,10 @@ import { SpecRegistry } from '@bangle.dev/core';
 import { defaultSpecs, defaultPlugins } from '@bangle.dev/all-base-components';
 
 import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
-import { trimWhiteSpaceBeforeCursor } from '../editor-commands';
+import { trimEndWhiteSpaceBeforeCursor } from '../editor-commands';
 const specRegistry = new SpecRegistry([...defaultSpecs()]);
 
-describe('trimWhiteSpaceBeforeCursor', () => {
+describe('trimEndWhiteSpaceBeforeCursor', () => {
   test('works with paragraph', async () => {
     const testEditor = renderTestEditor({
       specRegistry,
@@ -24,11 +24,32 @@ describe('trimWhiteSpaceBeforeCursor', () => {
       </doc>,
     );
 
-    trimWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
+    trimEndWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
 
     expect(view.state.doc).toEqualDocument(
       <doc>
         <para>hello[]</para>
+      </doc>,
+    );
+  });
+
+  test('does not trim inside of a paragraph', async () => {
+    const testEditor = renderTestEditor({
+      specRegistry,
+      plugins: defaultPlugins(),
+    });
+
+    const { container, view } = testEditor(
+      <doc>
+        <para>hello []world</para>
+      </doc>,
+    );
+
+    trimEndWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
+
+    expect(view.state.doc).toEqualDocument(
+      <doc>
+        <para>hello []world</para>
       </doc>,
     );
   });
@@ -45,7 +66,7 @@ describe('trimWhiteSpaceBeforeCursor', () => {
       </doc>,
     );
 
-    trimWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
+    trimEndWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
 
     expect(view.state.doc).toEqualDocument(
       <doc>
@@ -70,7 +91,7 @@ describe('trimWhiteSpaceBeforeCursor', () => {
       </doc>,
     );
 
-    trimWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
+    trimEndWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
 
     expect(view.state.doc).toEqualDocument(
       <doc>
@@ -97,7 +118,7 @@ describe('trimWhiteSpaceBeforeCursor', () => {
       </doc>,
     );
 
-    trimWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
+    trimEndWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
 
     expect(view.state.doc).toEqualDocument(
       <doc>
@@ -124,7 +145,7 @@ describe('trimWhiteSpaceBeforeCursor', () => {
       </doc>,
     );
 
-    trimWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
+    trimEndWhiteSpaceBeforeCursor()(view.state, view.dispatch, view);
 
     expect(view.state.doc).toEqualDocument(
       <doc>

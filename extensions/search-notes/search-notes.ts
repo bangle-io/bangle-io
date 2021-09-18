@@ -3,6 +3,9 @@ import { SearchResultItem } from './types';
 import type { Node } from '@bangle.dev/pm';
 
 export const CONCURRENCY = 10;
+const TEXT_SEARCH = 'TEXT_SEARCH';
+const TAG_SEARCH = 'TAG_SEARCH';
+type SearchType = typeof TEXT_SEARCH | typeof TAG_SEARCH;
 
 export async function searchNotes(
   query: string,
@@ -19,10 +22,21 @@ export async function searchNotes(
   if (query === '') {
     return [];
   }
-
+  // TODO move this to throw error
   query = query.slice(0, 500);
 
   query = caseSensitive ? query : query.toLocaleLowerCase();
+
+  let searchType: SearchType = TEXT_SEARCH;
+
+  if (
+    query.startsWith('tag:') &&
+    !query.startsWith('tag::') &&
+    query.length > 'tag:'.length
+  ) {
+    searchType = TAG_SEARCH;
+  }
+
   const docs = await pMap(
     noteWsPaths,
     (wsPath) => {
@@ -41,39 +55,91 @@ export async function searchNotes(
           if (perFileMatchCount > perFileMatchMax) {
             return false;
           }
-          if (node.isTextblock) {
-            const source = caseSensitive
-              ? node.textContent
-              : node.textContent.toLocaleLowerCase();
 
-            const includes = source.includes(query);
-
-            if (!includes) {
-              return true;
-            }
-
-            let parentName = parent.type.name;
-            if (parentName === 'doc') {
-              parentName = node.type.name;
-            }
-
-            let matchedResult = matchText(
-              query,
-              source,
-              maxChars,
-              perFileMatchMax,
-            );
-
-            perFileMatchCount += matchedResult.length;
-
-            results.matches.push(
-              ...matchedResult.map((m) => ({
-                parent: parentName,
-                parentPos: pos,
-                match: m,
-              })),
-            );
+          let parentName = parent.type.name;
+          if (parentName === 'doc') {
+            parentName = node.type.name;
           }
+          switch (searchType) {
+            case TEXT_SEARCH: {
+              if (node.isTextblock) {
+                const source = caseSensitive
+                  ? node.textContent
+                  : node.textContent.toLocaleLowerCase();
+
+                const includes = source.includes(query);
+
+                if (!includes) {
+                  return true;
+                }
+
+                let matchedResult = matchText(
+                  query,
+                  source,
+                  maxChars,
+                  perFileMatchMax,
+                );
+
+                perFileMatchCount += matchedResult.length;
+
+                results.matches.push(
+                  ...matchedResult.map((m) => ({
+                    parent: parentName,
+                    parentPos: pos,
+                    match: m,
+                  })),
+                );
+              }
+              break;
+            }
+
+            case TAG_SEARCH: {
+              // TODO this is coupled to the tag extension
+              if (
+                node.type.name === 'tag' &&
+                node.attrs.tagValue === query.split('tag:')[1]
+              ) {
+                // TODO move to something better
+                const UNIQUE_SEPARATOR = '_%$$%_';
+
+                const textBeforeArray = doc
+                  .textBetween(
+                    Math.max(pos - maxChars, 0),
+                    pos,
+                    UNIQUE_SEPARATOR,
+                    ' ',
+                  )
+                  .split(UNIQUE_SEPARATOR);
+
+                const textBefore = textBeforeArray[textBeforeArray.length - 1];
+                const textAfterArray = doc
+                  .textBetween(
+                    pos,
+                    Math.min(pos + maxChars, doc.content.size),
+                    UNIQUE_SEPARATOR,
+                  )
+                  .split(UNIQUE_SEPARATOR);
+
+                const textAfter = textAfterArray[0];
+
+                results.matches.push({
+                  parent: parentName,
+                  parentPos: pos,
+                  match: [
+                    (textBefore ? textBefore : '') + ' ',
+                    '#' + node.attrs.tagValue,
+                    textAfter ? textAfter : '',
+                  ],
+                });
+              }
+              break;
+            }
+
+            default: {
+              throw new Error('Unknown search type');
+            }
+          }
+
           return true;
         });
 
