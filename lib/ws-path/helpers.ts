@@ -167,7 +167,10 @@ export function resolvePath(wsPath: string) {
   validateFileWsPath(wsPath);
   const [wsName, filePath] = splitWsPath(wsPath);
   const filePathSplitted = filePath.split('/');
-  const fileName = getLast(filePathSplitted);
+  const fileName: string | undefined = getLast(filePathSplitted);
+  if (typeof fileName !== 'string') {
+    throw new Error('fileName undefined');
+  }
 
   const dirPath = filePathSplitted
     .slice(0, filePathSplitted.length - 1)

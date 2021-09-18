@@ -64,28 +64,26 @@ function usePreserveScroll(appState, wsPath, editorId) {
 }
 
 function useMonitorScrollEnd(wsPath, editorId) {
-  const ref = useRef(undefined);
+  const ref = useRef<number | null>(null);
 
   const queryPos = useCallback(
     (e) => {
       // save the scroll pos on every invocation
       const scrollParent = getScrollParentElement(editorId);
-      ref.current = scrollParent.scrollTop;
+      ref.current = scrollParent?.scrollTop || null;
     },
     [editorId],
   );
 
   useLayoutEffect(() => {
     const deb = rIdleDebounce(queryPos);
-    window.addEventListener('scroll', deb, {
+    const opts = {
       capture: true,
       passive: true,
-    });
+    };
+    window.addEventListener('scroll', deb, opts);
     return () => {
-      window.removeEventListener('scroll', deb, {
-        capture: true,
-        passive: true,
-      });
+      window.removeEventListener('scroll', deb, opts);
     };
   }, [queryPos]);
 

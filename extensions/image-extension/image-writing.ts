@@ -1,19 +1,24 @@
 import { filePathToWsPath, resolvePath } from 'ws-path';
 import { IMAGE_SAVE_DIR } from './config';
-import { setImageMetadataInWsPath } from './image-file-helpers';
+import { Dimension, setImageMetadataInWsPath } from './image-file-helpers';
 
 /**
  *
  * @param {*} fileName  - the filename name of the image
  * @param {*} wsName - the current wsName
- * @param {*} dimensions - the the widthxheight of the image
+ * @param {*} dimension - the the widthxheight of the image
  * @param {Boolean} timestamp - whether to add timestamp in the fileName for uniqueness. If fileName already has one it will be updated
  * @returns - a wsPath and srcUrl for the image
  */
-export async function createImage(fileName, wsName, dimensions, timestamp) {
+export async function createImage(
+  fileName: string,
+  wsName: string,
+  dimension: Dimension,
+  timestamp?: boolean,
+) {
   let imageWsPath = filePathToWsPath(wsName, IMAGE_SAVE_DIR + '/' + fileName);
 
-  imageWsPath = await setImageMetadataInWsPath(imageWsPath, dimensions, true);
+  imageWsPath = await setImageMetadataInWsPath(imageWsPath, dimension, true);
   // pre-pending a / to make it an absolute URL
   // since we are returning a web url we need to encode it
   return {
