@@ -12,13 +12,12 @@ const getScrollContainer = (view) => {
 const maxItems = 500;
 
 function getEmojis(queryText = '') {
-  // let result = aliasLookup;
   let result = aliasEmojiPair
-    .filter(([item]) => item.includes(queryText))
+    .filter(([item]) => item?.includes(queryText))
     .slice(0, maxItems);
   return [
     {
-      name: undefined,
+      name: '',
       emojis: result,
     },
   ];
@@ -27,7 +26,11 @@ const extension = Extension.create({
   name: extensionName,
   editor: {
     specs: [
-      emoji.spec({ getEmoji: (alias) => aliasToEmojiObj[alias] }),
+      emoji.spec({
+        getEmoji: (alias): string => {
+          return aliasToEmojiObj[alias] || '�';
+        },
+      }),
       emojiSuggest.spec({ markName: emojiSuggestMarkName }),
     ],
     plugins: [

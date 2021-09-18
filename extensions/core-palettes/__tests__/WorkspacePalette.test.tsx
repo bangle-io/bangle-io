@@ -30,7 +30,7 @@ beforeEach(async () => {
   deleteWorkspace = jest.fn();
   switchWorkspace = jest.fn();
   dismissPalette = jest.fn();
-  useWorkspaces.mockImplementation(() => ({
+  (useWorkspaces as jest.Mock).mockImplementation(() => ({
     workspaces,
     switchWorkspace,
     deleteWorkspace,
@@ -41,6 +41,11 @@ test('Component renders correctly', async () => {
   const result = render(
     <workspacePalette.ReactComponent
       query=""
+      paletteType={undefined}
+      paletteMetadata={{}}
+      updatePalette={() => {}}
+      counter={0}
+      updateCounter={() => {}}
       dismissPalette={dismissPalette}
       onSelect={onSelect}
       getActivePaletteItem={getActivePaletteItem}
