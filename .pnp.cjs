@@ -19146,6 +19146,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["config", "workspace:lib/config"],
             ["editor-manager-context", "workspace:lib/editor-manager-context"],
             ["extension-registry", "workspace:lib/extension-registry"],
+            ["note-tags", "workspace:extensions/note-tags"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
             ["react-router-dom", "virtual:3fa93f6291ee4cc6d025c9ace97bff5f2448de55279684eabeb26bdb25b6872c857c2ef689849876fc9a35e5ef2d883e817b5c9660b0c1e41f072cebda7fa2b9#npm:5.2.0"],

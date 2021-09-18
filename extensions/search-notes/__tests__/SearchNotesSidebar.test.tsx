@@ -80,7 +80,7 @@ test('show results if match', async () => {
   useWorkspaceContextReturn.wsName = 'test-ws';
   useWorkspaceContextReturn.noteWsPaths = ['test-ws:one.md'];
   useWorkspaceContextReturn.getNote = jest.fn(async () => {
-    return createPMNode('- hello world');
+    return createPMNode()('- hello world');
   });
   const renderResult = render(<SearchNotesSidebar />);
   const input = renderResult.getByLabelText('Search', { selector: 'input' });
@@ -115,13 +115,13 @@ test('if multiple matches', async () => {
   ];
   useWorkspaceContextReturn.getNote = jest.fn(async (wsPath) => {
     if (wsPath.endsWith('one.md')) {
-      return createPMNode('- hello world');
+      return createPMNode()('- hello world');
     }
     if (wsPath.endsWith('two.md')) {
-      return createPMNode('nice people\n in the world');
+      return createPMNode()('nice people\n in the world');
     }
     if (wsPath.endsWith('three.md')) {
-      return createPMNode('people say hello to greet');
+      return createPMNode()('people say hello to greet');
     }
   });
   const renderResult = render(<SearchNotesSidebar />);
@@ -151,7 +151,7 @@ test('no result if no match', async () => {
   useWorkspaceContextReturn.wsName = 'test-ws';
   useWorkspaceContextReturn.noteWsPaths = ['test-ws:one.md'];
   useWorkspaceContextReturn.getNote = jest.fn(async () => {
-    return createPMNode('- hello world');
+    return createPMNode()('- hello world');
   });
   const renderResult = render(<SearchNotesSidebar />);
   const input = renderResult.getByLabelText('Search', { selector: 'input' });

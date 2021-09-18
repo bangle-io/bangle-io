@@ -107,6 +107,7 @@ export async function searchNotes(
                     Math.max(pos - maxChars, 0),
                     pos,
                     UNIQUE_SEPARATOR,
+                    ' ',
                   )
                   .split(UNIQUE_SEPARATOR);
 
