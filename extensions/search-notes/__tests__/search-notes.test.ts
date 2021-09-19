@@ -2,7 +2,6 @@ import { createPMNode } from 'test-utils/create-pm-node';
 import { sleep } from 'utils';
 import { resolvePath } from 'ws-path';
 import {
-  CONCURRENCY,
   endStringWithWord,
   getMatchFragment,
   matchText,
@@ -10,6 +9,7 @@ import {
   startStringWithWord,
 } from '../search-notes';
 import noteTags from 'note-tags';
+import { CONCURRENCY } from '../constants';
 
 describe('Plain text search', () => {
   const createEditor = (md) => {

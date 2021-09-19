@@ -1,5 +1,5 @@
 import { search } from '@bangle.dev/search';
-import { searchPluginKey } from './plugin-key';
+import { searchPluginKey } from './constants';
 
 export function searchPlugin({ metadata: { wsPath } = {} }: { metadata: any }) {
   return search.plugins({
