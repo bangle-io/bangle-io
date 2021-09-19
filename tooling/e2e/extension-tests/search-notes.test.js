@@ -113,53 +113,6 @@ Array [
   ).toBe(1);
 });
 
-test('Is able to search note tags', async () => {
-  const wsName = await createWorkspace(page);
-  await createNewNote(page, wsName, 'test-one');
-
-  await page.keyboard.press('Enter');
-  await page.keyboard.type(
-    'i am a lovely planet from outer galaxy #cosmic #space .',
-  );
-
-  // creating new note because the data typed above might not have been flushed to disk
-  // resulting in 0 search results
-  await createNewNote(page, wsName, 'test-two');
-
-  await getPrimaryEditorHandler(page, { focus: true });
-
-  const searchButton = await page.waitForSelector(
-    'button[aria-label^="Search notes"]',
-    {
-      timeout: SELECTOR_TIMEOUT,
-    },
-  );
-
-  await searchButton.click();
-
-  const searchInput = await page.waitForSelector('input[aria-label="Search"]', {
-    timeout: SELECTOR_TIMEOUT,
-  });
-
-  await searchInput.type('tag:cosmic');
-
-  await page.waitForSelector('.search-notes .search-result-note-match', {
-    timeout: SELECTOR_TIMEOUT,
-  });
-
-  let noteMatches = await page.$$eval(
-    'div[data-id^="search-notes-result-"]',
-    (nodes) => nodes.map((n) => n.innerText),
-  );
-
-  expect(noteMatches.length).toBe(1);
-  expect(noteMatches).toMatchInlineSnapshot(`
-Array [
-  "test-one.md
-1",
-]
-`);
-});
 function countOcurrences(string, match) {
   return string.split(match).length - 1;
 }
