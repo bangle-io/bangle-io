@@ -25,6 +25,7 @@
     "@bangle.dev/pm": "0.27.1",
     "@bangle.dev/react": "0.27.1",
     "@bangle.dev/utils": "0.27.1",
+    "action-context": "workspace:*",
     "config": "workspace:*",
     "extension-registry": "workspace:*",
     "inline-palette": "workspace:*",
