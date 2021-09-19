@@ -1,8 +1,7 @@
 import { pMap } from './p-map';
-import { SearchResultItem } from './types';
+import { SearchResultItem, CONCURRENCY } from './constants';
 import type { Node } from '@bangle.dev/pm';
 
-export const CONCURRENCY = 10;
 const TEXT_SEARCH = 'TEXT_SEARCH';
 const TAG_SEARCH = 'TAG_SEARCH';
 type SearchType = typeof TEXT_SEARCH | typeof TAG_SEARCH;

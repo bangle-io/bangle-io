@@ -4,21 +4,30 @@ import { useEditorManagerContext } from 'editor-manager-context';
 import React, { useEffect, useState } from 'react';
 import { ButtonIcon, Sidebar, SpinnerIcon } from 'ui-components';
 import { useWorkspaceContext } from 'workspace-context';
-import { useSearchNotes } from './hooks';
-import { searchPluginKey } from './plugin-key';
+import { useSearchNotes, useSearchNotesState } from '../hooks';
+import { searchPluginKey } from '../constants';
 import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
 
 export function SearchNotesSidebar() {
   const { dispatchAction } = useActionContext();
   const { forEachEditor } = useEditorManagerContext();
-  const [query, updateQuery] = useState('');
+  const [searchNotesState] = useSearchNotesState();
+  const [query, updateQuery] = useState(searchNotesState.initialQuery);
+
   const { wsName } = useWorkspaceContext();
   const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
   const { results, pendingSearch } = useSearchNotes(query);
+
   useEffect(() => {
     updateCollapseAllCounter(0);
   }, [query, wsName]);
+
+  useEffect(() => {
+    // if initial query changes (externally someone sets the search query)
+    // update the current query
+    updateQuery(searchNotesState.initialQuery);
+  }, [searchNotesState.initialQuery]);
 
   useEffect(() => {
     if (results && results.length > 0 && query) {

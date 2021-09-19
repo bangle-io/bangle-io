@@ -16399,6 +16399,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:732cfcce2d09e3fb8628fea864e2a236f8aa179614c01c796eb87b82f7db9d69296da3ed6f753886585e863950653547965ff141328054e31c71a3ba42824eb4#npm:12.0.0"],
             ["@types/react", "npm:17.0.14"],
             ["@types/react-dom", "npm:17.0.9"],
+            ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],
             ["config", "workspace:lib/config"],
             ["extension-registry", "workspace:lib/extension-registry"],
             ["inline-palette", "workspace:js-lib/inline-palette"],

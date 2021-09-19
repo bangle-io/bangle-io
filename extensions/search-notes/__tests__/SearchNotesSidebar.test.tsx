@@ -4,7 +4,7 @@ import React from 'react';
 import { createPMNode } from 'test-utils/create-pm-node';
 import { sleep } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
-import { SearchNotesSidebar } from '../SearchNotesSidebar';
+import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
 
 jest.mock('react-router-dom', () => {
   return {
@@ -23,11 +23,21 @@ jest.mock('editor-manager-context', () => {
     useEditorManagerContext: jest.fn(),
   };
 });
-
-jest.mock('../debounce-config', () => {
+jest.mock('../constants', () => {
+  const actual = jest.requireActual('../constants');
   return {
+    ...actual,
     DEBOUNCE_WAIT: 0,
     DEBOUNCE_MAX_WAIT: 0,
+  };
+});
+
+jest.mock('../hooks', () => {
+  const actual = jest.requireActual('../hooks');
+
+  return {
+    ...actual,
+    useSearchNotesState: jest.fn(() => [{ initialQuery: '' }, jest.fn()]),
   };
 });
 

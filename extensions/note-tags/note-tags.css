@@ -4,4 +4,5 @@
   padding: 0.125rem 0.5rem;
   margin: 0 0.125rem;
   color: var(--note-tag-font-color);
+  cursor: pointer;
 }

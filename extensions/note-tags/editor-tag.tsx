@@ -6,6 +6,7 @@ import {
 } from '@bangle.dev/core';
 import { inlineNodeParser } from '@bangle.dev/markdown';
 import { keymap } from '@bangle.dev/pm';
+import { useActionContext } from 'action-context';
 import {
   inlinePalette,
   queryInlinePaletteActive,
@@ -20,8 +21,7 @@ import {
   paletteMarkName,
   TRIGGER,
 } from './config';
-import { createTagNode } from './TagPickerInlinePalette';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { RenderReactNodeView } from 'extension-registry';
 const MAX_MATCH = 500;
 const getScrollContainer = (view) => {
@@ -168,10 +168,23 @@ export function noteTagsMarkdownItPlugin(md: any) {
 
 export const renderReactNodeView: RenderReactNodeView = {
   [tagNodeName]: ({ nodeViewRenderArg }) => {
-    return (
-      <span className="inline-tag">
-        #{nodeViewRenderArg.node.attrs.tagValue}
-      </span>
-    );
+    return <TagComponent tagValue={nodeViewRenderArg.node.attrs.tagValue} />;
   },
 };
+
+function TagComponent({ tagValue }) {
+  const { dispatchAction } = useActionContext();
+
+  const onClick = useCallback(() => {
+    dispatchAction({
+      name: '@action/search-notes/execute-search',
+      value: `tag:${tagValue}`,
+    });
+  }, [tagValue, dispatchAction]);
+
+  return (
+    <span className="inline-tag" onClick={onClick}>
+      #{tagValue}
+    </span>
+  );
+}

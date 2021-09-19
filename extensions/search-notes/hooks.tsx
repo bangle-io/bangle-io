@@ -1,9 +1,19 @@
+import { useExtensionStateContext } from 'extension-registry';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { debounceFn } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
-import { DEBOUNCE_MAX_WAIT, DEBOUNCE_WAIT } from './debounce-config';
+import {
+  DEBOUNCE_MAX_WAIT,
+  DEBOUNCE_WAIT,
+  SearchResultItem,
+  extensionName,
+  SearchNotesExtensionState,
+} from './constants';
 import { searchNotes } from './search-notes';
-import { SearchResultItem } from './types';
+
+export function useSearchNotesState() {
+  return useExtensionStateContext<SearchNotesExtensionState>(extensionName);
+}
 
 export function useSearchNotes(query: string): {
   results: SearchResultItem[] | null;
