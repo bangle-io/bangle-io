@@ -39,7 +39,7 @@ export function editorTagPlugins() {
         'span',
         {
           style: 'display: inline-block; color: pink;',
-          class: 'inline-backlink',
+          class: 'note-tag-container',
         },
       ],
     }),
@@ -183,7 +183,7 @@ function TagComponent({ tagValue }) {
   }, [tagValue, dispatchAction]);
 
   return (
-    <span className="inline-tag" onClick={onClick}>
+    <span className="inline-note-tag" onClick={onClick}>
       #{tagValue}
     </span>
   );
