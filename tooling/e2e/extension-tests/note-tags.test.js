@@ -250,11 +250,12 @@ describe('auto complete', () => {
     await page.keyboard.press('ArrowDown', { delay: 10 });
     await page.keyboard.press('Enter', { delay: 10 });
 
-    expect(await getTagsFromDoc()).toMatchInlineSnapshot([
+    expect(await getTagsFromDoc()).toEqual([
       {
         attrs: {
           tagValue: 'hello',
         },
+
         type: 'tag',
       },
     ]);
