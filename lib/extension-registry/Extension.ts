@@ -72,27 +72,31 @@ export interface ApplicationConfig {
   }>;
 }
 
-interface Config {
+interface Config<T> {
   name: string;
   editor: EditorConfig;
   application: ApplicationConfig;
+  initialState?: any;
 }
 
-export class Extension {
+export class Extension<T = unknown> {
   name: string;
   editor: EditorConfig;
+  initialState?: any;
   application: ApplicationConfig;
 
-  constructor(ext: Config, check: typeof _check) {
+  constructor(ext: Config<T>, check: typeof _check) {
     if (check !== _check) {
       throw new Error('Instantiate class via `Extension.create({})`');
     }
     this.name = ext.name;
     this.editor = ext.editor;
+    this.initialState = ext.initialState;
     this.application = ext.application;
   }
-  static create(config: {
+  static create<ExtensionState = undefined>(config: {
     name: string;
+    initialState?: ExtensionState;
     editor?: Omit<EditorConfig, 'name'>;
     application?: Omit<ApplicationConfig, 'name'>;
   }) {
@@ -103,6 +107,7 @@ export class Extension {
 
     const editor = Object.assign({}, config.editor, { name });
     const application = Object.assign({}, config.application, { name });
+    const initialState = config.initialState;
 
     const {
       specs,
@@ -194,6 +199,9 @@ export class Extension {
       }
     }
 
-    return new Extension({ name, editor, application }, _check);
+    return new Extension<ExtensionState>(
+      { name, editor, application, initialState },
+      _check,
+    );
   }
 }

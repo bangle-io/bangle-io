@@ -109,6 +109,7 @@ class EditorHandlers {
     return undefined;
   };
 }
+
 export class ExtensionRegistry {
   specRegistry: SpecRegistry;
   // TODO move this to a method
@@ -129,12 +130,17 @@ export class ExtensionRegistry {
   private sidebars: any[];
   editor = new EditorHandlers(this.extensions);
 
+  public extensionsInitialState: { [name: string]: any };
   constructor(
     private extensions: Extension[] = [],
     // TODO move this to an extension
     _markdownItPlugins: any[] = [],
   ) {
     this.validate();
+
+    this.extensionsInitialState = Object.fromEntries(
+      extensions.map((r) => [r.name, r.initialState]),
+    );
 
     this.editorConfig = extensions.map((e) => e.editor);
     this.specRegistry = new SpecRegistry([

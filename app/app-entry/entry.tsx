@@ -1,6 +1,9 @@
 import { ActionContextProvider } from 'action-context';
 import { EditorManager } from 'editor-manager-context';
-import { ExtensionRegistryContextProvider } from 'extension-registry';
+import {
+  ExtensionRegistryContextProvider,
+  ExtensionStateContextProvider,
+} from 'extension-registry';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { initExtensionRegistry, polyfills } from 'shared';
@@ -40,19 +43,21 @@ export function Entry() {
               <ExtensionRegistryContextProvider
                 initExtensionRegistry={initExtensionRegistry}
               >
-                <WorkspaceContextProvider
-                  onNativefsAuthError={handleNativefsAuthError}
-                  onWorkspaceNotFound={handleWorkspaceNotFound}
-                >
-                  <WatchWorkspace />
-                  <WatchUI />
-                  <EditorManager>
-                    <PageLifecycle />
-                    <ActionContextProvider>
-                      <App />
-                    </ActionContextProvider>
-                  </EditorManager>
-                </WorkspaceContextProvider>
+                <ExtensionStateContextProvider>
+                  <WorkspaceContextProvider
+                    onNativefsAuthError={handleNativefsAuthError}
+                    onWorkspaceNotFound={handleWorkspaceNotFound}
+                  >
+                    <WatchWorkspace />
+                    <WatchUI />
+                    <EditorManager>
+                      <PageLifecycle />
+                      <ActionContextProvider>
+                        <App />
+                      </ActionContextProvider>
+                    </EditorManager>
+                  </WorkspaceContextProvider>
+                </ExtensionStateContextProvider>
               </ExtensionRegistryContextProvider>
             </UIManager>
           </AppStateProvider>
