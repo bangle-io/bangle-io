@@ -6,7 +6,7 @@ import {
   SHOW_SEARCH_SIDEBAR_ACTION,
   SIDEBAR_NAME,
 } from './constants';
-import { useSearchNotesState } from './hooks';
+import { useSearchNotes, useSearchNotesState } from './hooks';
 
 export function SearchNotesActionHandler({
   registerActionHandler,
@@ -14,7 +14,8 @@ export function SearchNotesActionHandler({
   registerActionHandler: RegisterActionHandlerType;
 }) {
   const { sidebar, dispatch } = useUIManagerContext();
-  const [, updateState] = useSearchNotesState();
+  const [searchNotesState, updateState] = useSearchNotesState();
+  useSearchNotes(searchNotesState.searchQuery);
 
   useEffect(() => {
     const deregister = registerActionHandler((actionObject) => {
@@ -28,7 +29,7 @@ export function SearchNotesActionHandler({
           requestAnimationFrame(() => {
             updateState((state) => ({
               ...state,
-              initialQuery: actionObject.value,
+              searchQuery: actionObject.value,
             }));
           });
           return true;

@@ -1,36 +1,43 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Input } from 'ui-components';
 
-export function SearchInput({ className = '', query, updateQuery }) {
+export const SearchInput = ({
+  searchQuery,
+  updateSearchQuery,
+}: {
+  searchQuery: string;
+  updateSearchQuery: (q: string) => void;
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
 
   const onClear = useCallback(
     (e) => {
       e.preventDefault();
-      updateQuery('');
+      updateSearchQuery('');
     },
-    [updateQuery],
+    [updateSearchQuery],
   );
 
   const onChange = useCallback(
     (e) => {
-      updateQuery(e.target.value);
+      updateSearchQuery(e.target.value);
     },
-    [updateQuery],
+    [updateSearchQuery],
   );
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <Input
       label="Search"
-      className={className}
       ref={inputRef}
       showClear
+      value={searchQuery}
       onClear={onClear}
-      value={query}
       onChange={onChange}
       placeholder="Search"
     />
   );
-}
+};

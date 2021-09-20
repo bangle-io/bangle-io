@@ -37,7 +37,7 @@ jest.mock('../hooks', () => {
 
   return {
     ...actual,
-    useSearchNotesState: jest.fn(() => [{ initialQuery: '' }, jest.fn()]),
+    useSearchNotesState: jest.fn(() => [{ searchQuery: '' }, jest.fn()]),
   };
 });
 

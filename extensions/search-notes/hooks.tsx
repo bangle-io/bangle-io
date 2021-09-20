@@ -1,30 +1,56 @@
+import { useEditorManagerContext } from 'editor-manager-context';
 import { useExtensionStateContext } from 'extension-registry';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { debounceFn } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
+import { search } from '@bangle.dev/search';
 import {
+  searchPluginKey,
   DEBOUNCE_MAX_WAIT,
   DEBOUNCE_WAIT,
-  SearchResultItem,
   extensionName,
   SearchNotesExtensionState,
 } from './constants';
 import { searchNotes } from './search-notes';
 
+/**
+ * Helpers hook for using the extension state.
+ */
 export function useSearchNotesState() {
   return useExtensionStateContext<SearchNotesExtensionState>(extensionName);
 }
 
-export function useSearchNotes(query: string): {
-  results: SearchResultItem[] | null;
-  pendingSearch: boolean;
-} {
+/**
+ * Performs search across the workspace and updates the extension state
+ * accordingly
+ */
+export function useSearchNotes(query: string) {
   const { wsName, noteWsPaths = [], getNote } = useWorkspaceContext();
-  const [results, updateResults] = useState<SearchResultItem[] | null>(null);
   const counterRef = useRef(0);
   const controllerRef = useRef<AbortController>();
   const destroyedRef = useRef<boolean>(false);
-  const [pendingSearch, updatePendingSearch] = useState(false);
+  const [, updateState] = useSearchNotesState();
+
+  const updatePendingSearch = useCallback(
+    (pendingSearch) => {
+      updateState((state) => ({
+        ...state,
+        pendingSearch,
+      }));
+    },
+    [updateState],
+  );
+
+  const updateResults = useCallback(
+    (results) => {
+      updateState((state) => ({
+        ...state,
+        searchResults: results,
+      }));
+    },
+    [updateState],
+  );
+
   const theFunc = useCallback(() => {
     if (destroyedRef.current) {
       return;
@@ -53,7 +79,7 @@ export function useSearchNotes(query: string): {
         }
         throw error;
       });
-  }, [query, noteWsPaths, getNote]);
+  }, [query, noteWsPaths, getNote, updateResults, updatePendingSearch]);
 
   const findTextRef = useRef(theFunc);
   findTextRef.current = theFunc;
@@ -79,6 +105,45 @@ export function useSearchNotes(query: string): {
       controllerRef.current?.abort();
     };
   }, []);
+}
 
-  return { results, pendingSearch };
+/**
+ * Highlights open editors based on the current search query
+ */
+export function useHighlightEditors() {
+  const { forEachEditor } = useEditorManagerContext();
+  const [{ searchResults, searchQuery }] = useSearchNotesState();
+  const hasResults = searchResults ? searchResults.length > 0 : false;
+
+  useEffect(() => {
+    if (hasResults && searchQuery) {
+      forEachEditor((editor) => {
+        if (editor?.destroyed === false) {
+          const queryRegex = searchQuery
+            ? new RegExp(
+                searchQuery.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'),
+                'i',
+              )
+            : undefined;
+          search.updateSearchQuery(searchPluginKey, queryRegex)(
+            editor.view.state,
+            editor.view.dispatch,
+          );
+        }
+      });
+    }
+  }, [forEachEditor, searchQuery, hasResults]);
+
+  useEffect(() => {
+    return () => {
+      forEachEditor((editor) => {
+        if (editor?.destroyed === false) {
+          search.updateSearchQuery(searchPluginKey, undefined)(
+            editor.view.state,
+            editor.view.dispatch,
+          );
+        }
+      });
+    };
+  }, [forEachEditor]);
 }
