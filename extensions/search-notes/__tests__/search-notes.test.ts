@@ -496,7 +496,7 @@ hello I am an #awesome-tag`,
     expect(results).toHaveLength(1);
     expect(results?.[0]?.matches).toEqual([
       {
-        match: ['hello I am an  ', '#awesome-tag', ''],
+        match: ['hello I am an ', '#awesome-tag', ''],
         parent: 'paragraph',
         parentPos: 35,
       },
@@ -514,7 +514,7 @@ hello I am an #awesome-tag`,
     expect(results).toHaveLength(1);
     expect(results?.[0]?.matches).toEqual([
       {
-        match: ['I am a list\nhello I am an  ', '#awesome-tag', ''],
+        match: ['I am a list\nhello I am an ', '#awesome-tag', ''],
         parent: 'paragraph',
         parentPos: 32,
       },
@@ -531,7 +531,7 @@ hello I am an #awesome-tag`,
     expect(results).toHaveLength(1);
     expect(results?.[0]?.matches).toEqual([
       {
-        match: ['I am an  ', '#awesome-tag', ' in this small world'],
+        match: ['I am an ', '#awesome-tag', ' in this small world'],
         parent: 'paragraph',
         parentPos: 9,
       },

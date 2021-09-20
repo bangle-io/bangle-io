@@ -42,7 +42,7 @@ exports[`renders correctly workspace is opened 1`] = `
 </div>
 `;
 
-exports[`show results if match 1`] = `
+exports[`show search results 1`] = `
 <div>
   <div
     class="flex flex-col h-full search-notes"
@@ -66,16 +66,11 @@ exports[`show results if match 1`] = `
           class="bangle-input "
           placeholder="Search"
           type="text"
-          value="hello"
+          value=""
         />
         <div
           style="position: relative; display: flex;"
-        >
-          <button
-            aria-label="Clear search"
-            class="bangle-search-clear"
-          />
-        </div>
+        />
       </div>
     </div>
     <div
@@ -185,9 +180,6 @@ exports[`show results if match 1`] = `
                 <div
                   class="highlight-text-container"
                 >
-                  <span
-                    class="highlight-text text-sm"
-                  />
                   <span
                     class="highlight-text text-sm"
                   >

@@ -5505,6 +5505,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
+        ["virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:7.0.0", {
+          "packageLocation": "./.yarn/__virtual__/@testing-library-react-hooks-virtual-a477e16f81/0/cache/@testing-library-react-hooks-npm-7.0.0-8a60caf055-3c5e91459b.zip/node_modules/@testing-library/react-hooks/",
+          "packageDependencies": [
+            ["@testing-library/react-hooks", "virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:7.0.0"],
+            ["@babel/runtime", "npm:7.12.5"],
+            ["@types/react", "npm:17.0.14"],
+            ["@types/react-dom", "npm:17.0.9"],
+            ["@types/react-test-renderer", "npm:17.0.1"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:63cd5ad8f76f9fdc1c8142151ab266224db27470eb4ca25651fe6418e2e705c40f207061bad54c0bcfc390d16e60f47d167780b46743633500a982ff60ae14cb#npm:17.0.2"],
+            ["react-error-boundary", "virtual:cdb2dda31dd3c0f17c4ce5d6847ab32260736606f5ebb66cb17a63f7c62032f61eb5aeca30d3d6e760e742525e2599b93e5156bbb8e005b507ae9d9daa2718ac#npm:3.1.1"],
+            ["react-test-renderer", null]
+          ],
+          "packagePeers": [
+            "@types/react-dom",
+            "@types/react",
+            "react-dom",
+            "react-test-renderer",
+            "react"
+          ],
+          "linkType": "HARD",
+        }],
         ["virtual:239b80bd553630a6a9614fa53c0522d27156cd18c649e60dfc8769b319cafd2ad350a0138f1d1283aebc9830e4d1c9744dc6538ec978274041a867a97eb8b892#npm:7.0.0", {
           "packageLocation": "./.yarn/__virtual__/@testing-library-react-hooks-virtual-cdb2dda31d/0/cache/@testing-library-react-hooks-npm-7.0.0-8a60caf055-3c5e91459b.zip/node_modules/@testing-library/react-hooks/",
           "packageDependencies": [
@@ -19141,6 +19163,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/search", "virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:0.27.1"],
             ["@bangle.dev/utils", "virtual:15a4404d3975bbe4814a7401be82f5a18a0f6693ba9c0f75c64b7475193d9292f372a4970291640222160ec6d17b102d6e12014589d64db2cb40a217afd473e3#npm:0.27.1"],
             ["@testing-library/react", "virtual:732cfcce2d09e3fb8628fea864e2a236f8aa179614c01c796eb87b82f7db9d69296da3ed6f753886585e863950653547965ff141328054e31c71a3ba42824eb4#npm:12.0.0"],
+            ["@testing-library/react-hooks", "virtual:1396b1be11bd993242bf255651c58c140029d71708386fb3feed6a06b4a3768dae4ff6a0bd0cbc30529dfbab82f39647888a1234d3c177ca5600d635c96b42cf#npm:7.0.0"],
             ["@types/react", "npm:17.0.14"],
             ["@types/react-dom", "npm:17.0.9"],
             ["action-context", "virtual:de265d6d034eea96e84dbeb4fb0760ac07045fc88bb7a5cf7e9a6806a206659db21cdc30bb381ff6913ad7d1c3ef4720a97c13d8a0346e8800d2eee480b216f3#workspace:lib/action-context"],

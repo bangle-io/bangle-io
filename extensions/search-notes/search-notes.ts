@@ -111,8 +111,13 @@ export async function searchNotes(
                     )
                     .split(UNIQUE_SEPARATOR);
 
-                  const textBefore =
-                    textBeforeArray[textBeforeArray.length - 1];
+                  let textBefore = (
+                    textBeforeArray[textBeforeArray.length - 1] || ''
+                  ).trim();
+                  if (textBefore.length > 0) {
+                    textBefore = textBefore + ' ';
+                  }
+
                   const textAfterArray = doc
                     .textBetween(
                       pos,
@@ -121,16 +126,15 @@ export async function searchNotes(
                     )
                     .split(UNIQUE_SEPARATOR);
 
-                  const textAfter = textAfterArray[0];
+                  let textAfter = (textAfterArray[0] || '').trim();
+                  if (textAfter.length > 0) {
+                    textAfter = ' ' + textAfter;
+                  }
 
                   results.matches.push({
                     parent: parentName,
                     parentPos: pos,
-                    match: [
-                      (textBefore ? textBefore : '') + ' ',
-                      '#' + node.attrs.tagValue,
-                      textAfter ? ' ' + textAfter : '',
-                    ],
+                    match: [textBefore, '#' + node.attrs.tagValue, textAfter],
                   });
                 }
               }

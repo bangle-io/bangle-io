@@ -14,8 +14,9 @@ export function SearchNotesActionHandler({
   registerActionHandler: RegisterActionHandlerType;
 }) {
   const { sidebar, dispatch } = useUIManagerContext();
-  const [searchNotesState, updateState] = useSearchNotesState();
-  useSearchNotes(searchNotesState.searchQuery);
+  const [, updateState] = useSearchNotesState();
+
+  useSearchNotes();
 
   useEffect(() => {
     const deregister = registerActionHandler((actionObject) => {
@@ -26,12 +27,10 @@ export function SearchNotesActionHandler({
         }
         case EXECUTE_SEARCH_ACTION: {
           showSidebar(sidebar, dispatch);
-          requestAnimationFrame(() => {
-            updateState((state) => ({
-              ...state,
-              searchQuery: actionObject.value,
-            }));
-          });
+          updateState((state) => ({
+            ...state,
+            searchQuery: actionObject.value,
+          }));
           return true;
         }
         default: {
