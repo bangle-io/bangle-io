@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { keybindingsHelper, rafSchedule } from './utility';
+import debounceFn from 'debounce-fn';
+import type { Options } from 'debounce-fn';
 
 export function useWindowSize() {
   const [windowSize, setWindowSize] = useState(() => ({
@@ -226,4 +228,36 @@ export function useBroadcastChannel<T>(
   );
 
   return [lastMessage, broadcastMessage];
+}
+
+/**
+ * Note: changing debounceOpts will not trigger an update to debounce options
+ * @param value - a value that changes frequently
+ * @param debounceOpts
+ * @returns a debounced value
+ */
+export function useDebouncedValue<T>(value: T, debounceOpts: Options) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  const debounceOptsRef = useRef(debounceOpts);
+
+  const valueRef = useRef(value);
+  valueRef.current = value;
+
+  const debouncedFunc = useMemo(() => {
+    return debounceFn(() => {
+      setDebouncedValue(valueRef.current);
+    }, debounceOptsRef.current);
+  }, []);
+
+  useEffect(() => {
+    debouncedFunc();
+  }, [value, debouncedFunc]);
+
+  useEffect(() => {
+    return () => {
+      debouncedFunc.cancel();
+    };
+  }, [debouncedFunc]);
+
+  return debouncedValue;
 }

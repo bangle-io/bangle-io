@@ -94,42 +94,49 @@ export async function searchNotes(
 
             case TAG_SEARCH: {
               // TODO this is coupled to the tag extension
-              if (
-                node.type.name === 'tag' &&
-                node.attrs.tagValue === query.split('tag:')[1]
-              ) {
-                // TODO move to something better
-                const UNIQUE_SEPARATOR = '_%$$%_';
+              if (node.type.name === 'tag') {
+                const tagValue = caseSensitive
+                  ? node.attrs.tagValue
+                  : node.attrs.tagValue.toLocaleLowerCase();
+                if (tagValue === query.split('tag:')[1]) {
+                  // TODO move to something better
+                  const UNIQUE_SEPARATOR = '_%$$%_';
 
-                const textBeforeArray = doc
-                  .textBetween(
-                    Math.max(pos - maxChars, 0),
-                    pos,
-                    UNIQUE_SEPARATOR,
-                    ' ',
-                  )
-                  .split(UNIQUE_SEPARATOR);
+                  const textBeforeArray = doc
+                    .textBetween(
+                      Math.max(pos - maxChars, 0),
+                      pos,
+                      UNIQUE_SEPARATOR,
+                      ' ',
+                    )
+                    .split(UNIQUE_SEPARATOR);
 
-                const textBefore = textBeforeArray[textBeforeArray.length - 1];
-                const textAfterArray = doc
-                  .textBetween(
-                    pos,
-                    Math.min(pos + maxChars, doc.content.size),
-                    UNIQUE_SEPARATOR,
-                  )
-                  .split(UNIQUE_SEPARATOR);
+                  let textBefore = (
+                    textBeforeArray[textBeforeArray.length - 1] || ''
+                  ).trim();
+                  if (textBefore.length > 0) {
+                    textBefore = textBefore + ' ';
+                  }
 
-                const textAfter = textAfterArray[0];
+                  const textAfterArray = doc
+                    .textBetween(
+                      pos,
+                      Math.min(pos + maxChars, doc.content.size),
+                      UNIQUE_SEPARATOR,
+                    )
+                    .split(UNIQUE_SEPARATOR);
 
-                results.matches.push({
-                  parent: parentName,
-                  parentPos: pos,
-                  match: [
-                    (textBefore ? textBefore : '') + ' ',
-                    '#' + node.attrs.tagValue,
-                    textAfter ? textAfter : '',
-                  ],
-                });
+                  let textAfter = (textAfterArray[0] || '').trim();
+                  if (textAfter.length > 0) {
+                    textAfter = ' ' + textAfter;
+                  }
+
+                  results.matches.push({
+                    parent: parentName,
+                    parentPos: pos,
+                    match: [textBefore, '#' + node.attrs.tagValue, textAfter],
+                  });
+                }
               }
               break;
             }

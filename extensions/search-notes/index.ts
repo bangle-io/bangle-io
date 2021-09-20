@@ -16,7 +16,7 @@ const key = 'Mod-F';
 
 const extension = Extension.create<SearchNotesExtensionState>({
   name: extensionName,
-  initialState: { initialQuery: '' },
+  initialState: { searchQuery: '', pendingSearch: false, searchResults: null },
   application: {
     ReactComponent: SearchNotesActionHandler,
     actions: [

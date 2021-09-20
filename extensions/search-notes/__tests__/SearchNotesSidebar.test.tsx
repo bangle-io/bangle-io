@@ -1,10 +1,11 @@
 import { act, fireEvent, render } from '@testing-library/react';
-import { useEditorManagerContext } from 'editor-manager-context';
 import React from 'react';
 import { createPMNode } from 'test-utils/create-pm-node';
 import { sleep } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
+import { SearchResultItem } from '../constants';
+import { useSearchNotesState } from '../hooks';
 
 jest.mock('react-router-dom', () => {
   return {
@@ -18,47 +19,33 @@ jest.mock('workspace-context', () => {
     useWorkspaceContext: jest.fn(),
   };
 });
-jest.mock('editor-manager-context', () => {
-  return {
-    useEditorManagerContext: jest.fn(),
-  };
-});
-jest.mock('../constants', () => {
-  const actual = jest.requireActual('../constants');
-  return {
-    ...actual,
-    DEBOUNCE_WAIT: 0,
-    DEBOUNCE_MAX_WAIT: 0,
-  };
-});
 
 jest.mock('../hooks', () => {
   const actual = jest.requireActual('../hooks');
 
   return {
     ...actual,
-    useSearchNotesState: jest.fn(() => [{ initialQuery: '' }, jest.fn()]),
+    useHighlightEditors: jest.fn(),
+    useSearchNotesState: jest.fn(),
   };
 });
 
 let useWorkspaceContextReturn;
-let useEditorManagerContextReturn;
 beforeEach(() => {
   useWorkspaceContextReturn = {
     wsName: undefined,
     noteWsPaths: [],
     getNote: jest.fn(),
   };
-  useEditorManagerContextReturn = {
-    forEachEditor: jest.fn(),
-  };
+
   (useWorkspaceContext as any).mockImplementation(() => {
     return useWorkspaceContextReturn;
   });
 
-  (useEditorManagerContext as any).mockImplementation(() => {
-    return useEditorManagerContextReturn;
-  });
+  (useSearchNotesState as any).mockImplementation(() => [
+    { searchQuery: '', searchResults: null, pendingSearch: false },
+    jest.fn(),
+  ]);
 });
 
 test('renders correctly is no workspace is opened', async () => {
@@ -86,19 +73,25 @@ test('renders correctly workspace is opened', async () => {
   expect(renderResult.container).toMatchSnapshot();
 });
 
-test('show results if match', async () => {
+test('show search results', async () => {
+  const searchResultItem: SearchResultItem = {
+    wsPath: 'test-ws:one.md',
+    matches: [{ parent: 'para', parentPos: 0, match: ['hello', ' world'] }],
+  };
   useWorkspaceContextReturn.wsName = 'test-ws';
   useWorkspaceContextReturn.noteWsPaths = ['test-ws:one.md'];
-  useWorkspaceContextReturn.getNote = jest.fn(async () => {
-    return createPMNode()('- hello world');
+  (useSearchNotesState as any).mockImplementation(() => {
+    return [
+      {
+        searchQuery: '',
+        searchResults: [searchResultItem],
+        pendingSearch: false,
+      },
+      jest.fn(),
+    ];
   });
-  const renderResult = render(<SearchNotesSidebar />);
-  const input = renderResult.getByLabelText('Search', { selector: 'input' });
 
-  await act(async () => {
-    fireEvent.change(input, { target: { value: 'hello' } });
-    await sleep();
-  });
+  const renderResult = render(<SearchNotesSidebar />);
 
   expect(
     Array.from(
@@ -113,27 +106,27 @@ test('show results if match', async () => {
   ).toBe(1);
 
   expect(renderResult.container).toMatchSnapshot();
-  expect(useWorkspaceContextReturn.getNote).toBeCalledTimes(1);
 });
 
-test('if multiple matches', async () => {
+test('typing in input triggers extension state update', async () => {
   useWorkspaceContextReturn.wsName = 'test-ws';
-  useWorkspaceContextReturn.noteWsPaths = [
-    'test-ws:one.md',
-    'test-ws:two.md',
-    'test-ws:three.md',
-  ];
-  useWorkspaceContextReturn.getNote = jest.fn(async (wsPath) => {
-    if (wsPath.endsWith('one.md')) {
-      return createPMNode()('- hello world');
-    }
-    if (wsPath.endsWith('two.md')) {
-      return createPMNode()('nice people\n in the world');
-    }
-    if (wsPath.endsWith('three.md')) {
-      return createPMNode()('people say hello to greet');
-    }
+  useWorkspaceContextReturn.noteWsPaths = ['test-ws:one.md'];
+  let updateStateCb: any;
+  const updateState = jest.fn((_cb) => {
+    updateStateCb = _cb;
   });
+
+  (useSearchNotesState as any).mockImplementation(() => {
+    return [
+      {
+        searchQuery: '',
+        searchResults: [],
+        pendingSearch: false,
+      },
+      updateState,
+    ];
+  });
+
   const renderResult = render(<SearchNotesSidebar />);
   const input = renderResult.getByLabelText('Search', { selector: 'input' });
 
@@ -142,49 +135,51 @@ test('if multiple matches', async () => {
     await sleep();
   });
 
-  expect(
-    Array.from(
-      renderResult.container.querySelectorAll('.search-result-note-match'),
-    ).length,
-  ).toBe(2);
-
-  expect(
-    Array.from(
-      renderResult.container.querySelectorAll('.search-result-text-match'),
-    ).length,
-  ).toBe(2);
-
-  expect(useWorkspaceContextReturn.getNote).toBeCalledTimes(3);
+  expect(updateState).toBeCalledTimes(1);
+  // passing a:1 to test if existing properties are retained or not
+  expect(updateStateCb({ a: 1 })).toEqual({ a: 1, searchQuery: 'hello' });
 });
 
-test('no result if no match', async () => {
+test('pendingSearch shows a spinner', async () => {
   useWorkspaceContextReturn.wsName = 'test-ws';
   useWorkspaceContextReturn.noteWsPaths = ['test-ws:one.md'];
-  useWorkspaceContextReturn.getNote = jest.fn(async () => {
-    return createPMNode()('- hello world');
+
+  (useSearchNotesState as any).mockImplementation(() => {
+    return [
+      {
+        searchQuery: '',
+        searchResults: [],
+        pendingSearch: true,
+      },
+      jest.fn(),
+    ];
   });
+
   const renderResult = render(<SearchNotesSidebar />);
-  const input = renderResult.getByLabelText('Search', { selector: 'input' });
 
-  await act(async () => {
-    fireEvent.change(input, { target: { value: 'bye' } });
-    await sleep();
-  });
-
-  expect(
-    Array.from(
-      renderResult.container.querySelectorAll('.search-result-note-match'),
-    ).length,
-  ).toBe(0);
-
-  expect(
-    Array.from(
-      renderResult.container.querySelectorAll('.search-result-text-match'),
-    ).length,
-  ).toBe(0);
-
-  expect(renderResult.container.innerHTML.includes('No match found')).toBe(
+  expect(Boolean(renderResult.container.querySelector('.spinner-icon'))).toBe(
     true,
   );
-  expect(useWorkspaceContextReturn.getNote).toBeCalledTimes(1);
+});
+
+test('pendingSearch=false does not show spinner', async () => {
+  useWorkspaceContextReturn.wsName = 'test-ws';
+  useWorkspaceContextReturn.noteWsPaths = ['test-ws:one.md'];
+
+  (useSearchNotesState as any).mockImplementation(() => {
+    return [
+      {
+        searchQuery: '',
+        searchResults: [],
+        pendingSearch: false,
+      },
+      jest.fn(),
+    ];
+  });
+
+  const renderResult = render(<SearchNotesSidebar />);
+
+  expect(Boolean(renderResult.container.querySelector('.spinner-icon'))).toBe(
+    false,
+  );
 });

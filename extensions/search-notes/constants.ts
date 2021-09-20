@@ -26,5 +26,7 @@ export const EXECUTE_SEARCH_ACTION = '@action/search-notes/execute-search';
 export const SIDEBAR_NAME = '@sidebar/search-notes/search-notes';
 export const extensionName = 'search-notes';
 export interface SearchNotesExtensionState {
-  initialQuery: string;
+  searchQuery: string;
+  pendingSearch: boolean;
+  searchResults: SearchResultItem[] | null;
 }

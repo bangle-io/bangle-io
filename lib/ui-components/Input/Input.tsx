@@ -7,7 +7,7 @@ export const Input = React.forwardRef<
     showClear?: boolean;
     onClear?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     className?: string;
-    value: string;
+    value?: string;
     label?: string;
     onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -36,6 +36,15 @@ export const Input = React.forwardRef<
     },
     ref,
   ) => {
+    let valueLength = 0;
+    // The following if else exists for cases we want to use uncontrolled
+    // input component i.e. `value` prop will be undefined
+    if (value) {
+      valueLength = value.length;
+    } else if (ref && typeof ref !== 'function' && ref.current?.value) {
+      valueLength = ref.current?.value.length;
+    }
+
     return (
       <div className="bangle-input-container">
         <input
@@ -54,7 +63,7 @@ export const Input = React.forwardRef<
           spellCheck={spellCheck}
         />
         <div style={{ position: 'relative', display: 'flex' }}>
-          {showClear && value?.length > 0 && (
+          {showClear && valueLength > 0 && (
             <button
               className="bangle-search-clear"
               aria-label="Clear search"
