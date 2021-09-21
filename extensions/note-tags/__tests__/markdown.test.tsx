@@ -253,3 +253,120 @@ describe('Parses markdown correctly', () => {
     );
   });
 });
+
+describe('seialization to markdown', () => {
+  test('serializes tag 1', async () => {
+    expect(
+      await serialize(
+        <doc>
+          <para>
+            <tag tagValue="hello" />
+          </para>
+        </doc>,
+      ),
+    ).toEqual(`#hello`);
+  });
+
+  test('serializes tag 2', async () => {
+    expect(
+      await serialize(
+        <doc>
+          <para>
+            <tag tagValue="hello" /> world
+          </para>
+        </doc>,
+      ),
+    ).toEqual(`#hello world`);
+  });
+
+  test('serializes two tags without space in between 1', async () => {
+    expect(
+      await serialize(
+        <doc>
+          <para>
+            <tag tagValue="hello" />
+            <tag tagValue="world" />
+          </para>
+        </doc>,
+      ),
+    ).toEqual('#hello #world');
+  });
+
+  test('serializes two tags without char in between them', async () => {
+    expect(
+      await serialize(
+        <doc>
+          <para>
+            <tag tagValue="hello" />
+            -
+            <tag tagValue="world" />
+          </para>
+        </doc>,
+      ),
+    ).toEqual('#hello- #world');
+  });
+
+  test('serializes two tags in list', async () => {
+    expect(
+      await serialize(
+        <doc>
+          <ul>
+            <li>
+              <para>hey</para>
+              <ul>
+                <li>
+                  <para>
+                    []
+                    <tag tagValue="hello" />
+                  </para>
+                </li>
+                <li>
+                  <para>
+                    <tag tagValue="world" />
+                  </para>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </doc>,
+      ),
+    ).toMatchInlineSnapshot(`
+      "- hey
+
+        - #hello
+
+        - #world"
+    `);
+  });
+
+  test('serializes two tags in list 2', async () => {
+    expect(
+      await serialize(
+        <doc>
+          <ul>
+            <li>
+              <para>hey</para>
+              <ul>
+                <li>
+                  <para>
+                    []
+                    <tag tagValue="hello" />
+                  </para>
+                  <para>
+                    <tag tagValue="world" />
+                  </para>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </doc>,
+      ),
+    ).toMatchInlineSnapshot(`
+      "- hey
+
+        - #hello 
+
+          #world"
+`);
+  });
+});
