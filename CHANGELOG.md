@@ -1,3 +1,9 @@
+### Sep 20, 2021
+
+- **Search, tags:** You can now search for tags by prefixing search queries with `tag:` followed by the tag name.
+
+- **Search, tags:** You can also click on a tag in the editor to search for it across your workspace.
+
 ### Aug 15, 2021
 
 - **Tags:** You can now create tags by typing `#` followed by tag name.
