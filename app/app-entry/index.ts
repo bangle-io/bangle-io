@@ -27,5 +27,9 @@ if (typeof window !== undefined) {
     // Back off, browser, I got this...
     window.history.scrollRestoration = 'manual';
   }
+
+  (window as any).simulateError = () => {
+    throw new Error('I am a simulated error');
+  };
 }
 ReactDOM.render(React.createElement(Entry, {}), root);

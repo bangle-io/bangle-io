@@ -93,6 +93,7 @@ export function EditorManager({ children }) {
 
   useEffect(() => {
     if (!config.isIntegration) {
+      // TODO: this setup should be done in app
       getIdleCallback(() => {
         if (
           new URLSearchParams(window.location.search).get('debug_pm') ===
