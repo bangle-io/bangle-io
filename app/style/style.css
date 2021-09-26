@@ -95,6 +95,7 @@ DONOT keep internal styles here.
 */
 .bangle-editor-inner-container {
   position: relative;
+  padding-bottom: 8px;
 }
 
 .main-content.has-secondary-editor {
