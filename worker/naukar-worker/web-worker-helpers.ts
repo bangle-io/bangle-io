@@ -1,3 +1,8 @@
+// TODO remove this
+declare global {
+  var WorkerGlobalScope: any;
+}
+
 export function isWorkerGlobalScope() {
   return (
     typeof WorkerGlobalScope !== 'undefined' &&

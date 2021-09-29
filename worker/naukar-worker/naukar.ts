@@ -1,7 +1,7 @@
 import { setupCollabManager } from './collab-manager';
 import { localDiskSetup } from './local-disk';
 import { objectSync } from 'object-sync';
-
+import type { Manager } from '@bangle.dev/collab-server';
 const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'naukar') : () => {};
@@ -24,15 +24,16 @@ export function createNaukar({ extensionRegistry, initialAppState }) {
   const diskSetup = localDiskSetup(extensionRegistry, appState);
   let manager = setupCollabManager(extensionRegistry, diskSetup.disk);
 
+  const handleCollabRequest: Manager['handleRequest'] = (...args) => {
+    return manager.handleRequest(...args);
+  };
   return {
     // app state
     updateWorkerAppState,
     registerUpdateMainAppStateCallback,
 
     // collab
-    handleCollabRequest: (...args) => {
-      return manager.handleRequest(...args);
-    },
+    handleCollabRequest,
     resetManager: () => {
       console.debug('destroying manager');
       manager.destroy();
@@ -45,8 +46,12 @@ export function createNaukar({ extensionRegistry, initialAppState }) {
   };
 }
 
-function setupAppState(initialAppState) {
-  const pendingEvents = [];
+function setupAppState<T>(initialAppState: T): {
+  appState: T;
+  updateWorkerAppState: any;
+  registerUpdateMainAppStateCallback: any;
+} {
+  const pendingEvents: any[] = [];
   let updateMainAppState;
   const updateWorkerAppState = (event) => {
     appState.applyForeignChange(event);
@@ -81,3 +86,5 @@ function setupAppState(initialAppState) {
     },
   };
 }
+
+export type WorkerAPI = ReturnType<typeof createNaukar>;

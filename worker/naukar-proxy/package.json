@@ -15,11 +15,14 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "main": "index.js",
-  "module": "index.js",
+  "main": "index.ts",
+  "module": "index.ts",
   "scripts": {},
   "dependencies": {
     "utils": "workspace:*"
+  },
+  "devDependencies": {
+    "naukar-worker": "workspace:*"
   },
   "publishConfig": {}
 }

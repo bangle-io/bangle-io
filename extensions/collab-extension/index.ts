@@ -1,5 +1,6 @@
 import { collabClient } from '@bangle.dev/collab-client';
-import { parseCollabResponse } from '@bangle.dev/collab-server';
+import { GetDocument, parseCollabResponse } from '@bangle.dev/collab-server';
+import { CollabRequestType } from '@bangle.dev/collab-server/dist/types';
 import { uuid } from '@bangle.dev/utils';
 import { Extension, PluginMetadata } from 'extension-registry';
 import { naukarWorkerProxy } from 'naukar-proxy';
@@ -14,7 +15,8 @@ const extension = Extension.create({
 });
 
 function collabPlugin({ metadata }: { metadata: PluginMetadata }) {
-  const sendRequest = (type, payload) =>
+  // TODO fix types of collab plugin
+  const sendRequest = (type: CollabRequestType, payload): any =>
     naukarWorkerProxy.handleCollabRequest(type, payload).then((obj) => {
       return parseCollabResponse(obj);
     });
