@@ -10,6 +10,7 @@ import {
 } from './Extension';
 import type { RawSpecs } from '@bangle.dev/core';
 import { ExtensionPaletteType } from './UniversalPaletteType';
+import type { Node } from '@bangle.dev/pm';
 
 function filterFlatMap<K>(
   array: any[],
@@ -36,45 +37,18 @@ class EditorHandlers {
     }
     return uniqueObj[extension.name];
   }
-  // deprecate this
-  beforeDestroy = ({
-    uniqueEditorObj,
-    wsPath,
-    editorId,
-  }: {
-    uniqueEditorObj: any;
-    wsPath: string;
-    editorId: number;
-  }) => {
-    for (const ext of this.extensions.filter((e) => e.editor?.beforeDestroy)) {
-      ext.editor.beforeDestroy?.({
-        wsPath,
-        editorId,
-        store: this._getExtensionStore(uniqueEditorObj, ext),
-      });
-    }
-  };
 
   initialScrollPos = ({
-    uniqueEditorObj,
     wsPath,
     editorId,
-    scrollParent,
-    doc,
   }: {
-    uniqueEditorObj: any;
     wsPath: string;
     editorId: number;
-    scrollParent: any;
-    doc: any;
   }) => {
     for (const ext of this.extensions) {
       const result = ext.editor?.initialScrollPos?.({
         wsPath,
         editorId,
-        scrollParent,
-        doc,
-        store: this._getExtensionStore(uniqueEditorObj, ext),
       });
       if (result != null) {
         return result;
@@ -85,22 +59,19 @@ class EditorHandlers {
   };
 
   initialSelection = ({
-    uniqueEditorObj,
     wsPath,
     editorId,
     doc,
   }: {
-    uniqueEditorObj: any;
     wsPath: string;
     editorId: number;
-    doc: any;
+    doc: Node;
   }) => {
     for (const ext of this.extensions) {
       const result = ext.editor?.initialSelection?.({
         wsPath,
         editorId,
         doc,
-        store: this._getExtensionStore(uniqueEditorObj, ext),
       });
       if (result != null) {
         return result;

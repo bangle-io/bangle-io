@@ -4,6 +4,7 @@ import React from 'react';
 import type { ExtensionRegistry } from './ExtensionRegistry';
 import { EditorPluginDefinition } from './PluginType';
 import { ExtensionPaletteType } from './UniversalPaletteType';
+import type { Node } from '@bangle.dev/pm';
 
 export type RenderReactNodeViewCb = (arg: {
   nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
@@ -30,10 +31,22 @@ export interface EditorConfig {
     editorId: number;
   }>;
   renderReactNodeView?: RenderReactNodeView;
-  initialScrollPos?: (arg: any) => any;
-  initialSelection?: (...args: any[]) => any;
-  // deprecate this
-  beforeDestroy?: (arg: any) => any;
+  initialScrollPos?: ({
+    wsPath,
+    editorId,
+  }: {
+    wsPath: string;
+    editorId: number;
+  }) => any;
+  initialSelection?: ({
+    wsPath,
+    editorId,
+    doc,
+  }: {
+    wsPath: string;
+    editorId: number;
+    doc: Node;
+  }) => any;
 }
 export interface ActionDefinitionType {
   name: string;

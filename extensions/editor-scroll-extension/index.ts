@@ -7,7 +7,7 @@ import { getSavedScrollPos, getSavedSelection } from './persist-scroll';
 const extension = Extension.create({
   name: extensionName,
   editor: {
-    initialScrollPos({ wsPath, editorId, store }) {
+    initialScrollPos({ wsPath, editorId }) {
       return getSavedScrollPos(wsPath, editorId);
     },
     initialSelection({ wsPath, editorId, doc }) {
