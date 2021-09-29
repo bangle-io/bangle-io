@@ -12384,6 +12384,7 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "naukar-proxy@workspace:worker/naukar-proxy"
   dependencies:
+    naukar-worker: "workspace:*"
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
