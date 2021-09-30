@@ -35,8 +35,6 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "./lib/config/*.js",
-    "./lib/utils/*.js",
     "./js-lib/base-error/*.js",
   ],
   "exclude": [

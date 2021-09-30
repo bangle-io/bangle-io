@@ -1,19 +1,22 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import { createPMNode } from 'test-utils/create-pm-node';
 import { sleep } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
 import { SearchResultItem } from '../constants';
 import { useSearchNotesState } from '../hooks';
 
-jest.mock('react-router-dom', () => {
+jest.mock('contextual-ui-components', () => {
+  const actual = jest.requireActual('contextual-ui-components');
+
   return {
-    Link: function Link({ children }) {
+    ...actual,
+    NoteLink: ({ children }) => {
       return <span>{children}</span>;
     },
   };
 });
+
 jest.mock('workspace-context', () => {
   return {
     useWorkspaceContext: jest.fn(),

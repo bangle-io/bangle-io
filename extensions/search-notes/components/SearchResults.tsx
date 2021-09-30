@@ -1,7 +1,6 @@
 import { Selection } from '@bangle.dev/pm';
 import { useEditorManagerContext } from 'editor-manager-context';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -11,6 +10,7 @@ import {
 import { resolvePath } from 'ws-path';
 import { HighlightText } from './HighlightText';
 import { SearchResultItem } from '../constants';
+import { NoteLink } from 'contextual-ui-components';
 
 function useCollapseMarker(
   results: SearchResultItem[],
@@ -112,8 +112,8 @@ export function SearchResults({
             />
             {!isCollapsed(r) &&
               r.matches.map((matchObj, j) => (
-                <Link
-                  to={resolvePath(r.wsPath).locationPath}
+                <NoteLink
+                  wsPath={r.wsPath}
                   onClick={() => {
                     if (primaryEditor && primaryEditor.destroyed !== true) {
                       requestAnimationFrame(() => {
@@ -152,7 +152,7 @@ export function SearchResults({
                       ),
                     }}
                   ></Sidebar.Row2>
-                </Link>
+                </NoteLink>
               ))}
           </React.Fragment>
         );
