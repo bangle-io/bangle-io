@@ -11,7 +11,8 @@ import { resolvePath } from 'ws-path';
 import { HighlightText } from './HighlightText';
 import { SearchResultItem } from '../constants';
 import { NoteLink } from 'contextual-ui-components';
-
+import { useWorkspaceContext } from 'workspace-context';
+type Unpacked<T> = T extends (infer U)[] ? U : T;
 function useCollapseMarker(
   results: SearchResultItem[],
   // collapses all results if counter is greater than zero integer
@@ -69,7 +70,45 @@ export function SearchResults({
     collapseAllCounter,
   );
   const { primaryEditor } = useEditorManagerContext();
+  const { primaryWsPath } = useWorkspaceContext();
+  const [currentlyClicked, updateCurrentlyClicked] = useState<null | {
+    wsPath: string;
+    match: Unpacked<SearchResultItem['matches']>;
+    matchIndex: number;
+  }>();
 
+  useEffect(() => {
+    let cancelled = false;
+    if (currentlyClicked && primaryWsPath === currentlyClicked.wsPath) {
+      // TODO this is a mess, we need a better api to know when the editor is ready
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          const editor = primaryEditor;
+          if (cancelled || !editor || editor.destroyed) {
+            return;
+          }
+          editor.focusView();
+          const { dispatch, state } = editor.view;
+          let tr = state.tr;
+
+          if (currentlyClicked.match.parentPos >= tr.doc.content.size) {
+            tr = tr.setSelection(Selection.atEnd(tr.doc));
+          } else {
+            tr = tr.setSelection(
+              Selection.near(tr.doc.resolve(currentlyClicked.match.parentPos)),
+            );
+          }
+
+          dispatch(tr.scrollIntoView());
+          updateCurrentlyClicked(null);
+        });
+      }, 50);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentlyClicked, primaryWsPath, primaryEditor]);
   return (
     <>
       {results.map((r, i) => {
@@ -116,22 +155,10 @@ export function SearchResults({
                   wsPath={r.wsPath}
                   onClick={() => {
                     if (primaryEditor && primaryEditor.destroyed !== true) {
-                      requestAnimationFrame(() => {
-                        if (!primaryEditor || primaryEditor.destroyed) {
-                          return;
-                        }
-                        primaryEditor.focusView();
-                        const { dispatch, state } = primaryEditor.view;
-                        let tr = state.tr;
-
-                        if (matchObj.parentPos >= tr.doc.content.size) {
-                          tr = tr.setSelection(Selection.atEnd(tr.doc));
-                        } else {
-                          tr = tr.setSelection(
-                            Selection.near(tr.doc.resolve(matchObj.parentPos)),
-                          );
-                        }
-                        dispatch(tr.scrollIntoView());
+                      updateCurrentlyClicked({
+                        wsPath: r.wsPath,
+                        match: matchObj,
+                        matchIndex: j,
                       });
                     }
                   }}
