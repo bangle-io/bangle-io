@@ -15,6 +15,7 @@
     "action-context",
     "extension-registry",
     "editor-utils",
-    "test-utils"
+    "test-utils",
+    "contextual-ui-components"
   ]
 }

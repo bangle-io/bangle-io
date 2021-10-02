@@ -1888,6 +1888,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.12.13":
+  version: 7.15.4
+  resolution: "@babel/runtime@npm:7.15.4"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: c40825430400e47c19b97e4142d5315d2910305b9714d44a711472587ee2fd4521fdba5f02ddd9df3902f5e988d9854fa83f4da1e0c091f70f6983fa52480606
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.10.4, @babel/template@npm:^7.12.7, @babel/template@npm:^7.3.3":
   version: 7.12.7
   resolution: "@babel/template@npm:7.12.7"
@@ -4587,7 +4596,7 @@ __metadata:
     prop-types: ^15.7.2
     react: 17.0.2
     react-dom: 17.0.2
-    react-router-dom: ^5.2.0
+    react-router-dom: ^5.3.0
     react-test-renderer: ^17.0.2
     react-virtual: ^2.7.1
     shared: "workspace:*"
@@ -6270,6 +6279,25 @@ __metadata:
   checksum: 3d93585fda985d1554eca5ebd251994327608d2e200978fdbfba21c0c679914d5faf266d17027de44b34a72c7b0745b18584ecccaa7e1fdfb6a68ac7114f12e0
   languageName: node
   linkType: hard
+
+"contextual-ui-components@workspace:*, contextual-ui-components@workspace:lib/contextual-ui-components":
+  version: 0.0.0-use.local
+  resolution: "contextual-ui-components@workspace:lib/contextual-ui-components"
+  dependencies:
+    "@testing-library/react": ^11.2.7
+    "@testing-library/user-event": ^13.1.9
+    "@types/react": ^17.0.14
+    "@types/react-dom": ^17.0.9
+    prop-types: ^15.7.2
+    react: 17.0.2
+    react-dom: 17.0.2
+    react-router-dom: ^5.3.0
+    utils: "workspace:*"
+    w3c-keyname: ^2.2.4
+    workspace-context: "workspace:*"
+    ws-path: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "convert-source-map@npm:^1.4.0, convert-source-map@npm:^1.6.0, convert-source-map@npm:^1.7.0":
   version: 1.7.0
@@ -14155,6 +14183,23 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "react-router-dom@npm:5.3.0"
+  dependencies:
+    "@babel/runtime": ^7.12.13
+    history: ^4.9.0
+    loose-envify: ^1.3.1
+    prop-types: ^15.6.2
+    react-router: 5.2.1
+    tiny-invariant: ^1.0.2
+    tiny-warning: ^1.0.0
+  peerDependencies:
+    react: ">=15"
+  checksum: 47584fd629ecca52398d7888cab193b8a74057cc99a7ef44410c405d4082f618c3c0399db5325bc3524f9c511404086169570013b61a94dfa6acdfdc850d7a1f
+  languageName: node
+  linkType: hard
+
 "react-router@npm:5.2.0":
   version: 5.2.0
   resolution: "react-router@npm:5.2.0"
@@ -14172,6 +14217,26 @@ fsevents@^2.1.2:
   peerDependencies:
     react: ">=15"
   checksum: 6fc908729110a65a5676a9e41333e0f511a3c0ff84c93c0dc704330cf3e02124c93aaeab8031b0e2c71712390d9278fff848eeebfbdda36dca3201142f309973
+  languageName: node
+  linkType: hard
+
+"react-router@npm:5.2.1":
+  version: 5.2.1
+  resolution: "react-router@npm:5.2.1"
+  dependencies:
+    "@babel/runtime": ^7.12.13
+    history: ^4.9.0
+    hoist-non-react-statics: ^3.1.0
+    loose-envify: ^1.3.1
+    mini-create-react-context: ^0.4.0
+    path-to-regexp: ^1.7.0
+    prop-types: ^15.6.2
+    react-is: ^16.6.0
+    tiny-invariant: ^1.0.2
+    tiny-warning: ^1.0.0
+  peerDependencies:
+    react: ">=15"
+  checksum: 7daae084bf64531eb619cc5f4cc40ce5ae0a541b64f71d74ec71a38cbf6130ebdbb7cf38f157303fad5846deec259401f96c4d6c7386466dcc989719e01f9aaa
   languageName: node
   linkType: hard
 
@@ -14951,12 +15016,12 @@ resolve@^2.0.0-next.3:
     "@types/react-dom": ^17.0.9
     action-context: "workspace:*"
     config: "workspace:*"
+    contextual-ui-components: "workspace:*"
     editor-manager-context: "workspace:*"
     extension-registry: "workspace:*"
     note-tags: "workspace:*"
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-router-dom: ^5.2.0
     test-utils: "workspace:*"
     ui-components: "workspace:*"
     ui-context: "workspace:*"
@@ -16156,7 +16221,7 @@ resolve@^2.0.0-next.3:
     markdown: "workspace:*"
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-router-dom: ^5.2.0
+    react-router-dom: ^5.3.0
     workspace-context: "workspace:*"
     ws-path: "workspace:*"
   languageName: unknown
@@ -17349,7 +17414,7 @@ typescript@4.3.5:
     extension-registry: "workspace:*"
     react: ^17.0.2
     react-dom: 17.0.2
-    react-router-dom: ^5.2.0
+    react-router-dom: ^5.3.0
     react-test-renderer: 17.0.2
     utils: "workspace:*"
     workspaces: "workspace:*"
@@ -17377,7 +17442,7 @@ typescript@4.3.5:
     markdown: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2
-    react-router-dom: ^5.2.0
+    react-router-dom: ^5.3.0
     test-utils: "workspace:*"
     utils: "workspace:*"
     ws-path: "workspace:*"
