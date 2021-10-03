@@ -3,7 +3,7 @@
   flex-direction: column;
   background-color: var(--bg-stronger-color);
   max-width: var(--inline-palette-max-width);
-  min-width: 200px;
+  min-width: var(--inline-palette-max-width);
 }
 
 .inline-palette-items-wrapper {

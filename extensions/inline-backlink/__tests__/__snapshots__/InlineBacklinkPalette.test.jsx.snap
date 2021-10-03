@@ -33,7 +33,7 @@ exports[`Initial render 1`] = `
         class="flex flex-row justify-center my-1 space"
       >
         <span
-          class="text-xs mr-3 font-light"
+          class="text-xs ml-2 mr-2 font-light"
         >
           <kbd
             class="font-normal"
@@ -43,7 +43,7 @@ exports[`Initial render 1`] = `
            Navigate
         </span>
         <span
-          class="text-xs mr-3 font-light"
+          class="text-xs ml-2 mr-2 font-light"
         >
           <kbd
             class="font-normal"
@@ -53,7 +53,7 @@ exports[`Initial render 1`] = `
            Create link
         </span>
         <span
-          class="text-xs mr-3 font-light"
+          class="text-xs ml-2 mr-2 font-light"
         >
           <kbd
             class="font-normal"

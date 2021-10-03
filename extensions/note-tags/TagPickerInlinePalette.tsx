@@ -85,35 +85,37 @@ export function TagPickerInlinePalette({ wsPath }) {
   return ReactDOM.createPortal(
     <div className="inline-palette-wrapper shadow-2xl">
       <div className="inline-palette-items-wrapper tag-picker-inline-palette">
-        {items.map((r, i) => {
-          return (
-            <InlinePaletteRow
-              dataId="blah"
-              key={r.uid}
-              {...getItemProps(r, i)}
-              className="palette-row tag-picker-inline-palette-item"
-              title={r.title}
-            />
-          );
-        })}
+        {query ? (
+          items.map((r, i) => {
+            return (
+              <InlinePaletteRow
+                dataId="blah"
+                key={r.uid}
+                {...getItemProps(r, i)}
+                className="palette-row tag-picker-inline-palette-item"
+                title={r.title}
+              />
+            );
+          })
+        ) : (
+          <InlinePaletteRow
+            dataId="searchNote"
+            className="palette-row"
+            title={'💡 Search for a tag'}
+          />
+        )}
       </div>
-      {query ? (
-        <UniversalPalette.PaletteInfo>
-          <UniversalPalette.PaletteInfoItem>
-            <kbd className="font-normal">↑↓</kbd> Navigate
-          </UniversalPalette.PaletteInfoItem>
-          <UniversalPalette.PaletteInfoItem>
-            <kbd className="font-normal">Enter</kbd> Add a tag
-          </UniversalPalette.PaletteInfoItem>
-          <UniversalPalette.PaletteInfoItem>
-            <kbd className="font-normal">Esc</kbd> Dismiss
-          </UniversalPalette.PaletteInfoItem>
-        </UniversalPalette.PaletteInfo>
-      ) : (
+      <UniversalPalette.PaletteInfo>
         <UniversalPalette.PaletteInfoItem>
-          Type a tag
+          <kbd className="font-normal">↑↓</kbd> Navigate
         </UniversalPalette.PaletteInfoItem>
-      )}
+        <UniversalPalette.PaletteInfoItem>
+          <kbd className="font-normal">Enter</kbd> Add a tag
+        </UniversalPalette.PaletteInfoItem>
+        <UniversalPalette.PaletteInfoItem>
+          <kbd className="font-normal">Esc</kbd> Dismiss
+        </UniversalPalette.PaletteInfoItem>
+      </UniversalPalette.PaletteInfo>
     </div>,
     tooltipContentDOM,
   );

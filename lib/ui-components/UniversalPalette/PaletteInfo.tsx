@@ -11,6 +11,8 @@ export function PaletteInfo({ children, className = '' }) {
 
 export function PaletteInfoItem({ children, className = '' }) {
   return (
-    <span className={cx('text-xs mr-3 font-light', className)}>{children}</span>
+    <span className={cx('text-xs ml-2 mr-2 font-light', className)}>
+      {children}
+    </span>
   );
 }
