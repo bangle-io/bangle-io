@@ -9628,6 +9628,7 @@ fsevents@^2.1.2:
     extension-registry: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2
+    ui-components: "workspace:*"
     utils: "workspace:*"
   languageName: unknown
   linkType: soft
