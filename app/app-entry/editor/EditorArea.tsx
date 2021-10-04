@@ -126,7 +126,7 @@ function Tab({ wsPath, onClose }) {
 }
 
 function BangleIOIcon(props) {
-  const { isDark, opacity } = props;
+  const { isDark, opacity, ...otherProps } = props;
 
   const outlineShade = isDark ? '#fff' : '#999';
 
@@ -170,7 +170,7 @@ function BangleIOIcon(props) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 320 320"
-      {...props}
+      {...otherProps}
     >
       <path
         strokeOpacity={opacity}
