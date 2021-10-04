@@ -13795,25 +13795,25 @@ fsevents@^2.1.2:
   linkType: hard
 
 "prosemirror-gapcursor@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "prosemirror-gapcursor@npm:1.1.5"
+  version: 1.2.0
+  resolution: "prosemirror-gapcursor@npm:1.2.0"
   dependencies:
     prosemirror-keymap: ^1.0.0
     prosemirror-model: ^1.0.0
     prosemirror-state: ^1.0.0
     prosemirror-view: ^1.0.0
-  checksum: 9b691e03f166ec3c411baa827cead7755dd2b7367f284596372f547669be1e09b28d30073b54c6cd7ccfd3a99a28cf7063e057888495f0721d45e5e37fdf933f
+  checksum: 0e05dde0620f68d436182648e0a2c6a21ce81a23a9df022db02d855d07b97cd0a9888b1b0ce6bc8dce6b646bc62effdc4519d966131d61e81da0d356430ba433
   languageName: node
   linkType: hard
 
 "prosemirror-history@npm:^1.1.0":
-  version: 1.1.3
-  resolution: "prosemirror-history@npm:1.1.3"
+  version: 1.2.0
+  resolution: "prosemirror-history@npm:1.2.0"
   dependencies:
     prosemirror-state: ^1.2.2
     prosemirror-transform: ^1.0.0
     rope-sequence: ^1.3.0
-  checksum: b89416c7f9770295800cb6bf9b1d258e659eb14fd4270a314a8d6574792505a431c4cdb705870873747b6878af2d8bb04b8539c00f7b56203c105c878429e387
+  checksum: 9d1bedfd6a39aa007e96abbb57fd14d1397f78f8266ff2863ed3e3e2d3861305765cf1a41b587aebb5c532eec4b17d2fbe1c0c8a27c9c71185226cc13cf942b9
   languageName: node
   linkType: hard
 
@@ -13847,22 +13847,22 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"prosemirror-model@npm:^1.0.0, prosemirror-model@npm:^1.1.0, prosemirror-model@npm:^1.8.1":
-  version: 1.14.2
-  resolution: "prosemirror-model@npm:1.14.2"
+"prosemirror-model@npm:^1.0.0, prosemirror-model@npm:^1.1.0, prosemirror-model@npm:^1.14.3, prosemirror-model@npm:^1.8.1":
+  version: 1.14.3
+  resolution: "prosemirror-model@npm:1.14.3"
   dependencies:
     orderedmap: ^1.1.0
-  checksum: 1e2c6623600f66179959e1820dc750793e339e9f3b8b8c7ed2f811edbe35ada82313665fc582f111ded059a8e74bfef392a1b98412258f178e2b4bb49e93edd6
+  checksum: fec7f91044244aff5ebd5df9878bfe833ee8f8a1aa6c0afb380905f8bb04f3ec30dbb4b4f9ff7138fc2c919cf284b0ed8c5e7155aaa7e2c27b5c8942a713a72f
   languageName: node
   linkType: hard
 
 "prosemirror-schema-list@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "prosemirror-schema-list@npm:1.1.5"
+  version: 1.1.6
+  resolution: "prosemirror-schema-list@npm:1.1.6"
   dependencies:
     prosemirror-model: ^1.0.0
     prosemirror-transform: ^1.0.0
-  checksum: c4e5d657f0d644b3ac4ddb5e742f11bae9a50592a56768f334e11362ba0685a9aa2a34a44b90f4a22619b044375726ab5c782c02e0a22d164fd28665112fda7a
+  checksum: 755314d9291859685a469683600590604c67953febc6f027a34cefd03352fe86b931cf4634ae105038c9c5a601b88776d88477a5b7f509a1d4a9efa8b2452131
   languageName: node
   linkType: hard
 
@@ -13890,11 +13890,11 @@ fsevents@^2.1.2:
   linkType: hard
 
 "prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.2.1":
-  version: 1.3.2
-  resolution: "prosemirror-transform@npm:1.3.2"
+  version: 1.3.3
+  resolution: "prosemirror-transform@npm:1.3.3"
   dependencies:
     prosemirror-model: ^1.0.0
-  checksum: 060804f64eb1eede48a2b9c1224369cf826feb4235d938dca1abd6e31d1cf3459a4784b4f95ab890e946664342d9a825ba0075222ea327edb4f532f1b31e11ce
+  checksum: 1f292a585034d366ea37263bccabba0aeb3acea1ac651e7d28c0cdc1843adb7bc706f5be3305201362868e5afaafc5158f18bcdcc8dfa135284ab698c4200519
   languageName: node
   linkType: hard
 
@@ -13909,13 +13909,13 @@ fsevents@^2.1.2:
   linkType: hard
 
 "prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.10.0, prosemirror-view@npm:^1.13.3":
-  version: 1.18.10
-  resolution: "prosemirror-view@npm:1.18.10"
+  version: 1.20.1
+  resolution: "prosemirror-view@npm:1.20.1"
   dependencies:
-    prosemirror-model: ^1.1.0
+    prosemirror-model: ^1.14.3
     prosemirror-state: ^1.0.0
     prosemirror-transform: ^1.1.0
-  checksum: ce79480e6194f4e678639632e9220d3123c26609e0b7abf069769e534d3c0ca5015e713034cba13201cdeccf8108da9b66f26b1153a4ad9ee99c900bd329fb3f
+  checksum: 905d7679acd49c6f766433a0341cac28095ff96ba4e89b40678aae20d8b2920505ab38f3cf398a57e01a90013ca3eecd4a764a41a7877ba48da8763e30a58fd6
   languageName: node
   linkType: hard
 
