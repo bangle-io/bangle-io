@@ -15,6 +15,7 @@ import {
 } from 'inline-palette';
 import {
   MARKDOWN_REGEX,
+  USING_INFERIOR_REGEX,
   palettePluginKey,
   tagNodeName,
   BANNED_CHARS,
@@ -168,6 +169,12 @@ export function noteTagsMarkdownItPlugin(md: any) {
     tokenName: 'note_tag',
     regex: MARKDOWN_REGEX,
     getTokenDetails: (match) => {
+      if (USING_INFERIOR_REGEX) {
+        // see the explanation in the source file of regex
+        // due to the inferior regex for safari we get an extra whitespace
+        // in the match
+        match = match.trim();
+      }
       return { payload: match.slice(1), markup: match.slice(1) };
     },
   });
