@@ -395,3 +395,11 @@ export async function requestNativeBrowserFSPermission(dirHandle) {
 
   return perms === 'granted';
 }
+
+export function supportsNativeBrowserFs() {
+  if ('showOpenFilePicker' in window) {
+    return true;
+  } else {
+    return false;
+  }
+}

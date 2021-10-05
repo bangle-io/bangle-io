@@ -1,4 +1,4 @@
-import { pickADirectory } from 'baby-fs';
+import { pickADirectory, supportsNativeBrowserFs } from 'baby-fs';
 import React, { useCallback, useState } from 'react';
 import { InputPalette, ListPalette, UniversalPalette } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
@@ -110,7 +110,7 @@ function NewWorkspaceStorageStage({
       placeholder="Select the storage type of your workspace"
       onDismiss={onDismiss}
       items={[
-        {
+        supportsNativeBrowserFs() && {
           uid: 'nativefs',
           title: 'Your computer',
           extraInfo: 'recommended',
@@ -123,7 +123,7 @@ function NewWorkspaceStorageStage({
           description:
             'Selecting this will make Bangle.io save notes in your browser storage.',
         },
-      ]}
+      ].filter(Boolean)}
       onSelectItem={async (item) => {
         if (item) {
           if (item.uid === 'nativefs') {
