@@ -103,9 +103,13 @@ export function SearchResults({
             //  - show a node selection .. ends up drawing a big rectangle
             //    outline on parent node
             //  - after some time set a text selection clearing the rectangle
-            tr = tr.setSelection(
-              NodeSelection.create(tr.doc, currentlyClicked.match.parentPos),
-            );
+
+            const parentNode = tr.doc.nodeAt(currentlyClicked.match.parentPos);
+            if (parentNode) {
+              tr = tr.setSelection(
+                NodeSelection.create(tr.doc, currentlyClicked.match.parentPos),
+              );
+            }
             setTimeout(() => {
               if (!editor.destroyed) {
                 const { dispatch, state } = editor.view;
@@ -120,8 +124,12 @@ export function SearchResults({
               }
             }, 300);
           }
-
-          dispatch(tr.scrollIntoView());
+          try {
+            dispatch(tr.scrollIntoView());
+          } catch (error) {
+            // ignore because of a bug where a user edits a note and clicks on the already searched
+            // resulting in dom error
+          }
 
           updateCurrentlyClicked(null);
         });
