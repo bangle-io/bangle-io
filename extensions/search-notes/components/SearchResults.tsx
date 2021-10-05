@@ -1,4 +1,4 @@
-import { Selection } from '@bangle.dev/pm';
+import { NodeSelection, Selection } from '@bangle.dev/pm';
 import { useEditorManagerContext } from 'editor-manager-context';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -94,12 +94,35 @@ export function SearchResults({
           if (currentlyClicked.match.parentPos >= tr.doc.content.size) {
             tr = tr.setSelection(Selection.atEnd(tr.doc));
           } else {
+            // The following is a hack which solves the purpose
+            // to grab the users attention. It is not great but
+            // it was easy to implement. In future we can move to a
+            // a more formal less hacky way to grab attention that
+            // doesn't involve messing with selections.
+            // its Working :-
+            //  - show a node selection .. ends up drawing a big rectangle
+            //    outline on parent node
+            //  - after some time set a text selection clearing the rectangle
             tr = tr.setSelection(
-              Selection.near(tr.doc.resolve(currentlyClicked.match.parentPos)),
+              NodeSelection.create(tr.doc, currentlyClicked.match.parentPos),
             );
+            setTimeout(() => {
+              if (!editor.destroyed) {
+                const { dispatch, state } = editor.view;
+                const tr = state.tr;
+                dispatch(
+                  tr.setSelection(
+                    Selection.near(
+                      tr.doc.resolve(currentlyClicked.match.parentPos),
+                    ),
+                  ),
+                );
+              }
+            }, 300);
           }
 
           dispatch(tr.scrollIntoView());
+
           updateCurrentlyClicked(null);
         });
       }, 50);
