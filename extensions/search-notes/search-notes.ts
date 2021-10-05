@@ -1,6 +1,7 @@
 import { pMap } from './p-map';
 import { SearchResultItem, CONCURRENCY } from './constants';
 import type { Node } from '@bangle.dev/pm';
+import { tagSearch } from './tag-search';
 const TEXT_SEARCH = 'TEXT_SEARCH';
 const TAG_SEARCH = 'TAG_SEARCH';
 type SearchType = typeof TEXT_SEARCH | typeof TAG_SEARCH;
@@ -93,65 +94,12 @@ export async function searchNotes(
 
             case TAG_SEARCH: {
               // TODO this is coupled to the tag extension
-              if (node.type.name === 'tag') {
-                const tagValue = caseSensitive
-                  ? node.attrs.tagValue
-                  : node.attrs.tagValue.toLocaleLowerCase();
-                if (tagValue === query.split('tag:')[1]) {
-                  // TODO move to something better
-                  const UNIQUE_SEPARATOR = '_%$$%_';
-
-                  const prevNode = doc.resolve(pos).nodeBefore;
-                  let textBefore = '';
-                  if (!prevNode) {
-                    textBefore = '';
-                  } else {
-                    const textBeforeArray = doc
-                      .textBetween(
-                        Math.max(pos - maxChars, 0),
-                        pos,
-                        UNIQUE_SEPARATOR,
-                        '⛰', // TODO stopgap until we find a better way to get text for non text leaf node
-                      )
-                      .split(UNIQUE_SEPARATOR);
-
-                    textBefore = (
-                      textBeforeArray[textBeforeArray.length - 1] || ''
-                    ).trim();
-
-                    if (textBefore.length > 0) {
-                      textBefore = textBefore + ' ';
-                    }
-                  }
-
-                  let textAfter = '';
-                  // adding 1 to position to skip past the tag node
-                  const nextNode = doc.resolve(pos + 1).nodeAfter;
-                  if (!nextNode) {
-                    textAfter = '';
-                  } else {
-                    const textAfterArray = doc
-                      .textBetween(
-                        pos + 1,
-                        Math.min(pos + maxChars, doc.content.size),
-                        UNIQUE_SEPARATOR,
-                        '⛰',
-                      )
-                      .split(UNIQUE_SEPARATOR);
-
-                    textAfter = (textAfterArray[0] || '').trim();
-
-                    if (textAfter.length > 0) {
-                      textAfter = ' ' + textAfter;
-                    }
-                  }
-
-                  results.matches.push({
-                    parent: parentName,
-                    parentPos: pos,
-                    match: [textBefore, '#' + node.attrs.tagValue, textAfter],
-                  });
-                }
+              const tagResult = tagSearch(doc, node, pos, parent, query, {
+                caseSensitive,
+                maxChars,
+              });
+              if (tagResult) {
+                results.matches.push(tagResult);
               }
               break;
             }

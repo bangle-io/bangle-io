@@ -537,4 +537,25 @@ hello I am an #awesome-tag`,
       },
     ]);
   });
+
+  test('shows ellipsis at start', async () => {
+    const results = await getResult('tag:awesome-tag', [
+      {
+        name: '1.md',
+        text: `sas once in the eyes of breath you helplessly want to compare to nobody you #awesome-tag in this small world`,
+      },
+    ]);
+    expect(results).toHaveLength(1);
+    expect(results?.[0]?.matches).toEqual([
+      {
+        match: [
+          '…as once in the eyes of breath you helplessly want to compare to nobody you ',
+          '#awesome-tag',
+          ' in this small world',
+        ],
+        parent: 'paragraph',
+        parentPos: 77,
+      },
+    ]);
+  });
 });

@@ -10,13 +10,15 @@ export const CONCURRENCY = 10;
 // for example ['aa', 'bb', 'cc'] , here 'bb' will be highlight in the search context
 export type HighlightTextType = Array<string>;
 
+export interface SearchMatch {
+  parent: string;
+  parentPos: number;
+  match: HighlightTextType;
+}
+
 export interface SearchResultItem {
   wsPath: string;
-  matches: Array<{
-    parent: string;
-    parentPos: number;
-    match: HighlightTextType;
-  }>;
+  matches: Array<SearchMatch>;
 }
 
 export const SHOW_SEARCH_SIDEBAR_ACTION =

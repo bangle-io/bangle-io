@@ -9,10 +9,10 @@ import {
 } from 'ui-components';
 import { resolvePath } from 'ws-path';
 import { HighlightText } from './HighlightText';
-import { SearchResultItem } from '../constants';
+import { SearchMatch, SearchResultItem } from '../constants';
 import { NoteLink } from 'contextual-ui-components';
 import { useWorkspaceContext } from 'workspace-context';
-type Unpacked<T> = T extends (infer U)[] ? U : T;
+
 function useCollapseMarker(
   results: SearchResultItem[],
   // collapses all results if counter is greater than zero integer
@@ -73,7 +73,7 @@ export function SearchResults({
   const { primaryWsPath } = useWorkspaceContext();
   const [currentlyClicked, updateCurrentlyClicked] = useState<null | {
     wsPath: string;
-    match: Unpacked<SearchResultItem['matches']>;
+    match: SearchMatch;
     matchIndex: number;
   }>();
 
