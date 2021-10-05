@@ -1,5 +1,5 @@
 import { replaceSuggestionMarkWith } from 'inline-palette';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getDayJs, useDestroyRef } from 'utils';
 import { palettePluginKey } from './config';
 import { PaletteItem, PALETTE_ITEM_HINT_TYPE } from './palette-item';
@@ -35,8 +35,12 @@ const baseItem = PaletteItem.create({
   },
 });
 
+interface ChronoLibrariesType {
+  chrono: any;
+  dayjs: any;
+}
 let _libraries;
-async function getTimeLibrary() {
+async function getTimeLibrary(): Promise<ChronoLibrariesType> {
   if (!_libraries) {
     let [chrono, dayjs] = (await Promise.all([
       import('chrono-node'),
@@ -59,6 +63,10 @@ export function useDateItems(query: string) {
         dayjs: any;
       }
   >(undefined);
+  const [chronoLoadStatus, updateChronoStatus] = useState<
+    'loaded' | 'loading' | 'not-started'
+  >('not-started');
+  const chronoRef = useRef<ChronoLibrariesType | undefined>();
   const destroyedRef = useDestroyRef();
 
   const items = useMemo(() => {
@@ -85,21 +93,37 @@ export function useDateItems(query: string) {
   }, [parsedDateObj]);
 
   useEffect(() => {
-    if (query) {
-      getTimeLibrary().then((obj) => {
-        if (destroyedRef.current) {
-          return;
-        }
-        const { chrono, dayjs } = obj;
-        const parsedDates = chrono.parse(query, dayjs().startOf('day'));
-        if (parsedDates.length > 0) {
-          updateParsedDate({ parsedDates, chrono, dayjs });
-        } else {
-          updateParsedDate(undefined);
-        }
-      });
+    if (query && chronoLoadStatus === 'not-started') {
+      updateChronoStatus('loading');
+      getTimeLibrary()
+        .then((obj) => {
+          if (destroyedRef.current) {
+            return;
+          }
+          chronoRef.current = obj;
+          updateChronoStatus('loaded');
+        })
+        .catch((error) => {
+          if (destroyedRef.current) {
+            return;
+          }
+          updateChronoStatus('not-started');
+          throw error;
+        });
     }
-  }, [query, destroyedRef]);
+  }, [query, chronoLoadStatus, updateChronoStatus, destroyedRef]);
+
+  useEffect(() => {
+    if (query && chronoLoadStatus === 'loaded' && chronoRef.current) {
+      const { chrono, dayjs } = chronoRef.current;
+      const parsedDates = chrono.parse(query, dayjs().startOf('day'));
+      if (parsedDates.length > 0) {
+        updateParsedDate({ parsedDates, chrono, dayjs });
+      } else {
+        updateParsedDate(undefined);
+      }
+    }
+  }, [query, chronoLoadStatus]);
 
   useEffect(() => {
     // reset state if query is undefined
