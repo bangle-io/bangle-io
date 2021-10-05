@@ -1,5 +1,5 @@
 import { useActionContext } from 'action-context';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 import {
   ButtonIcon,
@@ -132,109 +132,6 @@ export function GenericFileBrowser({
   );
 }
 
-function RenderRow({
-  virtualRow,
-  path,
-  isDir,
-  wsPath,
-  name,
-  depth,
-  isActive,
-  isCollapsed,
-  onClick,
-  createNewFile,
-  deleteNote,
-}: {
-  virtualRow;
-  path;
-  isDir;
-  wsPath;
-  name;
-  depth;
-  isActive;
-  isCollapsed;
-  onClick;
-  deleteNote?: WorkspaceContextType['deleteNote'];
-  createNewFile: (path?: string) => void;
-}) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: `${virtualRow.size}px`,
-        transform: `translateY(${virtualRow.start}px)`,
-      }}
-    >
-      <Sidebar.Row2
-        isActive={isActive}
-        onClick={onClick}
-        // before changing this look at estimateSize of virtual
-        titleClassName="text-base truncate select-none"
-        style={{
-          paddingLeft: depth * BASE_PADDING,
-          paddingRight: PADDING_OFFSET,
-        }}
-        item={{
-          uid: wsPath,
-          showDividerAbove: false,
-          title: name,
-          leftNode: (
-            <ButtonIcon onClick={async (e) => {}}>
-              {isDir ? (
-                isCollapsed ? (
-                  <ChevronRightIcon style={IconStyle} />
-                ) : (
-                  <ChevronDownIcon style={IconStyle} />
-                )
-              ) : (
-                <NullIcon style={IconStyle} />
-              )}
-            </ButtonIcon>
-          ),
-          rightHoverNode: isDir ? (
-            <ButtonIcon
-              hint="New file"
-              onClick={async (e) => {
-                e.stopPropagation();
-                if (depth === 0) {
-                  createNewFile();
-                } else {
-                  createNewFile(path + '/');
-                }
-              }}
-              hintPos="bottom-right"
-            >
-              <DocumentAddIcon style={IconStyle} />
-            </ButtonIcon>
-          ) : (
-            deleteNote && (
-              <ButtonIcon
-                hint="Delete file"
-                hintPos="bottom-right"
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  if (
-                    window.confirm(
-                      `Are you sure you want to delete "${name}"? `,
-                    )
-                  ) {
-                    deleteNote(wsPath);
-                  }
-                }}
-              >
-                <CloseIcon style={IconStyle} />
-              </ButtonIcon>
-            )
-          ),
-        }}
-      />
-    </div>
-  );
-}
-
 const RenderItems = React.memo(
   ({
     wsName,
@@ -255,7 +152,7 @@ const RenderItems = React.memo(
     closeSidebar: () => void;
     createNewFile: (path?: string) => void;
   }) => {
-    const [collapsed, toggleCollapse] = useLocalStorage(
+    const [collapsed, toggleCollapse] = useLocalStorage<string[]>(
       'RenderTree6261:' + wsName,
       () => {
         const result = filesAndDirList.filter(
@@ -265,6 +162,27 @@ const RenderItems = React.memo(
         return result;
       },
     );
+
+    // this exists as a ref so that we can use it later
+    // but without depending on it
+    const collapsedRef = useRef(collapsed);
+    useEffect(() => {
+      collapsedRef.current = collapsed;
+    }, [collapsed]);
+
+    // If there is an activeFilePath make sure that the file tree
+    // is uncollapsed
+    useEffect(() => {
+      if (activeFilePath) {
+        const parentsToKeep = collapsedRef.current.filter((r) => {
+          return !activeFilePath.startsWith(r + '/');
+        });
+        if (parentsToKeep.length < collapsedRef.current.length) {
+          toggleCollapse(parentsToKeep);
+        }
+      }
+    }, [activeFilePath, toggleCollapse]);
+
     const parentRef = React.useRef<HTMLDivElement>(null);
     const rows = useMemo(() => {
       return filesAndDirList.filter((path) => {
@@ -353,3 +271,121 @@ const RenderItems = React.memo(
     );
   },
 );
+
+function RenderRow({
+  virtualRow,
+  path,
+  isDir,
+  wsPath,
+  name,
+  depth,
+  isActive,
+  isCollapsed,
+  onClick,
+  createNewFile,
+  deleteNote,
+}: {
+  virtualRow;
+  path;
+  isDir;
+  wsPath;
+  name;
+  depth;
+  isActive;
+  isCollapsed;
+  onClick;
+  deleteNote?: WorkspaceContextType['deleteNote'];
+  createNewFile: (path?: string) => void;
+}) {
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isActive) {
+      if ('scrollIntoViewIfNeeded' in document.body) {
+        (elementRef.current as any)?.scrollIntoViewIfNeeded(false);
+      } else {
+        if (elementRef.current?.scrollIntoView) {
+          elementRef.current?.scrollIntoView(false);
+        }
+      }
+    }
+  }, [isActive]);
+
+  return (
+    <div
+      ref={elementRef}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: `${virtualRow.size}px`,
+        transform: `translateY(${virtualRow.start}px)`,
+      }}
+    >
+      <Sidebar.Row2
+        isActive={isActive}
+        onClick={onClick}
+        // before changing this look at estimateSize of virtual
+        titleClassName="text-base truncate select-none"
+        style={{
+          paddingLeft: depth * BASE_PADDING,
+          paddingRight: PADDING_OFFSET,
+        }}
+        item={{
+          uid: wsPath,
+          showDividerAbove: false,
+          title: name,
+          leftNode: (
+            <ButtonIcon onClick={async (e) => {}}>
+              {isDir ? (
+                isCollapsed ? (
+                  <ChevronRightIcon style={IconStyle} />
+                ) : (
+                  <ChevronDownIcon style={IconStyle} />
+                )
+              ) : (
+                <NullIcon style={IconStyle} />
+              )}
+            </ButtonIcon>
+          ),
+          rightHoverNode: isDir ? (
+            <ButtonIcon
+              hint="New file"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (depth === 0) {
+                  createNewFile();
+                } else {
+                  createNewFile(path + '/');
+                }
+              }}
+              hintPos="bottom-right"
+            >
+              <DocumentAddIcon style={IconStyle} />
+            </ButtonIcon>
+          ) : (
+            deleteNote && (
+              <ButtonIcon
+                hint="Delete file"
+                hintPos="bottom-right"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (
+                    window.confirm(
+                      `Are you sure you want to delete "${name}"? `,
+                    )
+                  ) {
+                    deleteNote(wsPath);
+                  }
+                }}
+              >
+                <CloseIcon style={IconStyle} />
+              </ButtonIcon>
+            )
+          ),
+        }}
+      />
+    </div>
+  );
+}

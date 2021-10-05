@@ -130,6 +130,7 @@ export function editorTagSpec(): RawSpecs {
       selectable: false,
       draggable: true,
       toDOM,
+      allowGapCursor: true,
       parseDOM,
     },
     markdown: {

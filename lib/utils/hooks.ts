@@ -97,13 +97,16 @@ export function useCatchRejection(callback) {
  *          lazy initialization. If an item exists in the localstorage it will be used
  *          else fallback to the initialValue.
  */
-export function useLocalStorage(key: string, initialValue) {
+export function useLocalStorage<S>(
+  key: string,
+  initialValue: S | (() => S),
+): [S, React.Dispatch<React.SetStateAction<S>>] {
   // TODO i think over time we might populate this with a ton of shit.
   // we should have a mechanism to kill some of values, for example having timestamp.
   // and then listing all keys and deleting anything which is old.
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
-  const [storedValue, setStoredValue] = useState(() => {
+  const [storedValue, setStoredValue] = useState<S>(() => {
     return getItemFromLocalStorage(key, initialValue);
   });
 
@@ -120,7 +123,7 @@ export function useLocalStorage(key: string, initialValue) {
     setStoredValue(getItemFromLocalStorage(key, initialValueRef.current));
   }, [key]);
 
-  const setValue = useCallback(
+  const setValue: React.Dispatch<React.SetStateAction<S>> = useCallback(
     (value) => {
       setStoredValue((storedValue) => {
         const valueToStore =
@@ -139,7 +142,10 @@ export function useLocalStorage(key: string, initialValue) {
   return [storedValue, setValue];
 }
 
-function getItemFromLocalStorage(key, _defaultValue) {
+function getItemFromLocalStorage<T>(
+  key: string,
+  _defaultValue: T | (() => T),
+): T {
   const getDefValue = () =>
     _defaultValue instanceof Function ? _defaultValue() : _defaultValue;
 
