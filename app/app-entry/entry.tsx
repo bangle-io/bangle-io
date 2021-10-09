@@ -15,6 +15,7 @@ import { AppStateProvider } from './AppStateProvider';
 import { moduleSupport } from './misc/module-support';
 import { handleNativefsAuthError, handleWorkspaceNotFound } from './Routes';
 import './style';
+import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
 import { PageLifecycle } from './watchers/PageLifecycle';
 import { WatchUI } from './watchers/WatchUI';
 import { WatchWorkspace } from './watchers/WatchWorkspace';
@@ -33,6 +34,25 @@ function LoadingBlock({ children }) {
 }
 
 export function Entry() {
+  useEffect(() => {
+    const installCallback = (event: BeforeInstallPromptEvent) => {
+      console.log(event);
+      // not show infobar on mobile
+      event.preventDefault();
+    };
+    window.addEventListener('beforeinstallprompt', installCallback);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', installCallback);
+    };
+  }, []);
+
+  useEffect(() => {
+    const appInstalledCb = () => {};
+    window.addEventListener('appinstalled', appInstalledCb);
+    return () => {
+      window.removeEventListener('appinstalled', appInstalledCb);
+    };
+  }, []);
   return (
     <React.StrictMode>
       <LoadingBlock>
@@ -40,6 +60,7 @@ export function Entry() {
           <AppStateProvider>
             <WorkerSetup loadWebworker={moduleSupport} />
             <UIManager>
+              <SWReloadPrompt />
               <ExtensionRegistryContextProvider
                 initExtensionRegistry={initExtensionRegistry}
               >

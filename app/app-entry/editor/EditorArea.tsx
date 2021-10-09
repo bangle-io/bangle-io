@@ -1,3 +1,4 @@
+import { FRIENDLY_ID } from 'config';
 import { useEditorManagerContext } from 'editor-manager-context';
 import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useEffect, useState } from 'react';
@@ -100,13 +101,21 @@ export function EditorArea({
         {editorId === 0 && (
           <div className="flex w-full flex-row-reverse pt-4 pb-4">
             <BangleIOIcon className="w-4 h-4" isDark={false} opacity={0.6} />
-            <a
-              href="https://bangle.io"
-              className="text-xs"
-              style={{ opacity: '0.3' }}
-            >
-              bangle.io
-            </a>
+            <div className="flex flex-col">
+              <a
+                href="https://bangle.io"
+                className="text-xs "
+                style={{ opacity: '0.3' }}
+              >
+                bangle.io
+              </a>
+              <span
+                className="italic"
+                style={{ opacity: '0.3', fontSize: '0.5rem' }}
+              >
+                {FRIENDLY_ID}
+              </span>
+            </div>
           </div>
         )}
       </div>

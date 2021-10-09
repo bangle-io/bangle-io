@@ -53,12 +53,33 @@ function getReleaseId(isProduction) {
   return releaseVersion + '#' + process.env.BUILD_ID;
 }
 
+function getFavicon(appEnv) {
+  if (appEnv === 'production') {
+    return `
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" type="image/png" sizes="48x48" />
+    <link rel="mask-icon" href="/favicon.svg" color="#FFFFFF" />`;
+  }
+  if (appEnv === 'staging') {
+    return `
+    <link rel="icon" href="/favicon-staging.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon-staging.ico" type="image/png" sizes="48x48" />
+    <link rel="mask-icon" href="/favicon-staging.svg" color="#00FF29" />`;
+  }
+
+  return `
+    <link rel="icon" href="/favicon-dev.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon-dev.ico" type="image/png" sizes="48x48" />
+    <link rel="mask-icon" href="/favicon-dev.svg" color="#FFF0F4" />`;
+}
+
 module.exports = ({ isProduction, isVite = false }) => {
   const appEnv = getAppEnv(isProduction);
   return {
     helpDocsVersion,
     appEnv,
     htmlInjections: {
+      favicon: getFavicon(appEnv),
       sentry: isProduction
         ? `<script
       src="https://js.sentry-cdn.com/f1a3d53e530e465e8f74f847370b594b.min.js"
@@ -105,6 +126,7 @@ module.exports = ({ isProduction, isVite = false }) => {
         process.env.BANGLE_HOT ? true : false,
       ),
       'process.env.CHANGELOG_TEXT': JSON.stringify(readChangelogText()),
+      'process.env.BUILD_TIME': JSON.stringify(new Date().toISOString()),
     },
   };
 };

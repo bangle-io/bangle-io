@@ -1,3 +1,4 @@
+import { APP_ENV, IS_PRODUCTION_APP_ENV } from 'config';
 import React, { useEffect, useState } from 'react';
 import { Redirect, Route, useHistory } from 'react-router-dom';
 import { useWorkspaceContext } from 'workspace-context';
@@ -67,6 +68,10 @@ function WorkspaceBlockade({ children }) {
         : `${wsName} - bangle.io`;
     } else {
       document.title = 'bangle.io';
+    }
+
+    if (!IS_PRODUCTION_APP_ENV) {
+      document.title = APP_ENV + ':' + document.title;
     }
   }, [primaryWsPath, wsName]);
 
