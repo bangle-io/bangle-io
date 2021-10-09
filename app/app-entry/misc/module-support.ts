@@ -1,4 +1,4 @@
-import { config } from 'config';
+import { BANGLE_HOT } from 'config';
 import { validateNonWorkerGlobalScope } from 'naukar-worker';
 validateNonWorkerGlobalScope();
 
@@ -6,7 +6,7 @@ export const moduleSupport = checkModuleWorkerSupport();
 
 function checkModuleWorkerSupport() {
   // hot module reload aint working with workers
-  if (config.BANGLE_HOT) {
+  if (BANGLE_HOT) {
     return false;
   }
 

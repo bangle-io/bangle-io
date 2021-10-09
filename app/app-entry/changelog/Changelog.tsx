@@ -21,7 +21,7 @@ import {
 } from '@bangle.dev/base-components';
 import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
-import { config } from 'config';
+import { CHANGELOG_TEXT } from 'config';
 import React, { useCallback, useEffect } from 'react';
 import { Modal } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
@@ -84,7 +84,7 @@ export function serializeMarkdown(editor) {
 }
 
 function getMarkdown() {
-  return config.changelogText || 'Error loading changelog';
+  return CHANGELOG_TEXT || 'Error loading changelog';
 }
 
 function ChangelogDisplay() {

@@ -1,0 +1,8 @@
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[build]
+  publish = "build"
+  command = "yarn build"

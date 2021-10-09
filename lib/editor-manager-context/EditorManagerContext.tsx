@@ -1,6 +1,5 @@
 import type { BangleEditor } from '@bangle.dev/core';
 import { getIdleCallback } from '@bangle.dev/utils';
-import { config } from 'config';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 const LOG = false;
@@ -92,22 +91,19 @@ export function EditorManager({ children }) {
   }, [secondaryEditor]);
 
   useEffect(() => {
-    if (!config.isIntegration) {
-      // TODO: this setup should be done in app
-      getIdleCallback(() => {
-        if (
-          new URLSearchParams(window.location.search).get('debug_pm') ===
-            'yes' &&
-          editors[0]
-        ) {
-          import(
-            /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
-          ).then((args) => {
-            args.applyDevTools(editors[0]!.view);
-          });
-        }
-      });
-    }
+    // TODO: this setup should be done in app
+    getIdleCallback(() => {
+      if (
+        new URLSearchParams(window.location.search).get('debug_pm') === 'yes' &&
+        editors[0]
+      ) {
+        import(
+          /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
+        ).then((args) => {
+          args.applyDevTools(editors[0]!.view);
+        });
+      }
+    });
   }, [editors]);
 
   return (

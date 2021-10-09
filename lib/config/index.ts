@@ -1,69 +1,58 @@
-let nodeEnv = undefined;
-let releaseId = undefined;
-let deployEnv = undefined;
-let helpDocsVersion = undefined;
-let bangleHot = undefined;
-let changelogText = undefined;
+let envVars: any = {};
 // Done this way to allow for bundlers
 // to do a string replace.
 try {
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
-  nodeEnv = process.env.NODE_ENV;
+  envVars.nodeEnv = process.env.NODE_ENV;
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
-  releaseId = process.env.RELEASE_ID;
+  envVars.releaseId = process.env.RELEASE_ID;
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
-  deployEnv = process.env.DEPLOY_ENV;
+  envVars.deployBranch = process.env.DEPLOY_BRANCH;
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
-  helpDocsVersion = process.env.HELP_DOCS_VERSION;
+  envVars.releaseVersion = process.env.RELEASE_VERSION;
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
-  bangleHot = process.env.BANGLE_HOT;
+  envVars.appEnv = process.env.APP_ENV;
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
-  changelogText = process.env.CHANGELOG_TEXT;
+  envVars.commitHash = process.env.COMMIT_HASH;
+  // @ts-ignore process is undefined unless we pull in @types/node
+  // eslint-disable-next-line no-process-env
+  envVars.helpDocsVersion = process.env.HELP_DOCS_VERSION;
+  // @ts-ignore process is undefined unless we pull in @types/node
+  // eslint-disable-next-line no-process-env
+  envVars.bangleHot = process.env.BANGLE_HOT;
+  // @ts-ignore process is undefined unless we pull in @types/node
+  // eslint-disable-next-line no-process-env
+  envVars.changelogText = process.env.CHANGELOG_TEXT;
+  // @ts-ignore process is undefined unless we pull in @types/node
+  // eslint-disable-next-line no-process-env
+  envVars.netlifyBuildContext = process.env.NETLIFY_BUILD_CONTEXT;
 } catch (err) {}
 
-export const APP_ENV = nodeEnv;
-export const RELEASE_ID = releaseId;
-export const DEPLOY_ENV = deployEnv;
-export const HELP_DOCS_VERSION = helpDocsVersion;
+export const RELEASE_ID: string = envVars.releaseId;
+export const RELEASE_VERSION: string = envVars.releaseVersion;
+// appEnv can be one of the following only `production`, `staging`,
+// `local` , `dev/*` where * is the branch name
+export const APP_ENV: string = envVars.appEnv;
+export const HELP_DOCS_VERSION: string = envVars.helpDocsVersion;
+export const TAB_ID: string = 'tab_' + randomStr(4);
+export const BANGLE_HOT: string = envVars.bangleHot;
+export const CHANGELOG_TEXT: string = envVars.changelogText;
+
+console.log(envVars.appEnv + ': using ' + RELEASE_ID);
+
+console.debug({
+  ...envVars,
+  tabId: TAB_ID,
+});
 
 if (!/^\d+\.\d+\.\d+/.test(HELP_DOCS_VERSION || '')) {
   throw new Error('Invalid HELP_DOCS_VERSION: ' + HELP_DOCS_VERSION);
-}
-
-export const TAB_ID = 'tab_' + randomStr(4);
-
-export const config: {
-  APP_ENV: string | undefined;
-  RELEASE_ID: string | undefined;
-  DEPLOY_ENV: string | undefined;
-  HELP_DOCS_VERSION: string | undefined;
-  isTest: boolean | undefined;
-  isProduction: boolean | undefined;
-  isIntegration: boolean | undefined;
-  TAB_ID: string | undefined;
-  BANGLE_HOT: boolean | undefined;
-  changelogText: string | undefined;
-} = {
-  APP_ENV,
-  RELEASE_ID,
-  DEPLOY_ENV,
-  HELP_DOCS_VERSION,
-  isTest: nodeEnv === 'test',
-  isProduction: nodeEnv === 'production',
-  isIntegration: nodeEnv === 'integration',
-  TAB_ID,
-  BANGLE_HOT: bangleHot,
-  changelogText,
-};
-
-if (!config.isTest) {
-  console.debug(config);
 }
 
 export const SPLIT_SCREEN_MIN_WIDTH =
