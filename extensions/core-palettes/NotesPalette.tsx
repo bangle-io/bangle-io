@@ -99,7 +99,6 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
     );
 
     const activeItem = getActivePaletteItem(items);
-
     return (
       <>
         <UniversalPalette.PaletteItemsContainer>

@@ -1,10 +1,12 @@
+/// <reference path="./missing-types.d.ts" />
+
 import { APP_ENV, RELEASE_ID } from 'config';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Entry } from './entry';
 const root = document.getElementById('root');
 
-if (typeof window !== undefined) {
+if (typeof window !== undefined && APP_ENV !== 'local') {
   (window as any).Sentry?.onLoad(function () {
     import(
       /* webpackChunkName: "@sentry/tracing" */

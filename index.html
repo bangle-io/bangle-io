@@ -2,14 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="manifest" href="/manifest.json" />
+    <%- favicon %>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#ffffff"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#000000"
+    />
     <meta
       name="viewport"
       content="width=device-width,minimum-scale=1,user-scalable=no"
     />
     <%- sentry %>
-    <meta name="theme-color" content="#000000" />
-    <%- bangleHelpPreload %>
+    <!--  -->
 
     <style>
       :root {

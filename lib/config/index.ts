@@ -4,6 +4,9 @@ let envVars: any = {};
 try {
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
+  envVars.buildTime = process.env.BUILD_TIME;
+  // @ts-ignore process is undefined unless we pull in @types/node
+  // eslint-disable-next-line no-process-env
   envVars.nodeEnv = process.env.NODE_ENV;
   // @ts-ignore process is undefined unless we pull in @types/node
   // eslint-disable-next-line no-process-env
@@ -33,12 +36,17 @@ try {
   // eslint-disable-next-line no-process-env
   envVars.netlifyBuildContext = process.env.NETLIFY_BUILD_CONTEXT;
 } catch (err) {}
-
-export const RELEASE_ID: string = envVars.releaseId;
-export const RELEASE_VERSION: string = envVars.releaseVersion;
 // appEnv can be one of the following only `production`, `staging`,
 // `local` , `dev/*` where * is the branch name
 export const APP_ENV: string = envVars.appEnv;
+export const IS_PRODUCTION_APP_ENV = APP_ENV === 'production';
+export const RELEASE_VERSION: string = envVars.releaseVersion;
+export const RELEASE_ID: string = envVars.releaseId;
+// a less intimidating thing that is shown in the UI
+// for production it is release version but for other env we show the whole thing
+// for better debugging
+export const FRIENDLY_ID = IS_PRODUCTION_APP_ENV ? RELEASE_VERSION : RELEASE_ID;
+
 export const HELP_DOCS_VERSION: string = envVars.helpDocsVersion;
 export const TAB_ID: string = 'tab_' + randomStr(4);
 export const BANGLE_HOT: string = envVars.bangleHot;
@@ -46,7 +54,7 @@ export const CHANGELOG_TEXT: string = envVars.changelogText;
 
 console.log(envVars.appEnv + ': using ' + RELEASE_ID);
 
-console.debug({
+console.table({
   ...envVars,
   tabId: TAB_ID,
 });
@@ -69,6 +77,9 @@ export * from './is-mac';
 export * from './keybindings';
 export const FILE_PALETTE_MAX_RECENT_FILES = 15;
 export const FILE_PALETTE_MAX_FILES = 200;
+export const SERVICE_WORKER_UPDATE_INTERVAL = IS_PRODUCTION_APP_ENV
+  ? 10 * 60 * 1000
+  : 20 * 1000;
 
 function randomStr(len = 10) {
   return Math.random().toString(36).substring(2, 15).slice(0, len);
