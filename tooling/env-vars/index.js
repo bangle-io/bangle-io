@@ -75,6 +75,10 @@ module.exports = ({ isProduction, isVite = false }) => {
       viteJsEntry: isVite
         ? '<script type="module" src="/app/app-entry/index.ts"></script>'
         : '',
+      fathom:
+        appEnv === 'production'
+          ? `<script defer src="https://cdn.usefathom.com/script.js" data-spa="auto" data-site="AOGIPUKY"></script>`
+          : '',
     },
     appEnvs: {
       'process.env.NODE_ENV': JSON.stringify(
