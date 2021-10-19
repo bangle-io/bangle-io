@@ -24,11 +24,15 @@ function getAppEnv(isProd) {
   if (!isProd || !process.env.NETLIFY) {
     return 'local';
   }
+  const branch = process.env.BRANCH;
 
   // comes from netlify
   switch (process.env.CONTEXT) {
     case 'production': {
-      return 'production';
+      if (branch === 'production') {
+        return 'production';
+      }
+      return branch;
     }
 
     case 'deploy-preview':
