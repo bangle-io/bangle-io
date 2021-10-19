@@ -1,49 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Landing page is correct 1`] = `
-"bangle.io
-
-(beta)
-
-A local note taking app for the rest of us 🐥
+"Getting Started
 
 Hello,
 
-Thanks for taking out the time to read about bangle.io. I know it is an insanely crowded market and every day a new note taking app pops up. Yet here I am, passionately working on this project for the past 3 years hoping people will like it.
+Thanks for taking out the time to read about bangle.io. Here is a short guide to get your started.
 
-(💡 yes you can edit this page!)
+Creating a workspace
 
-1. You own your notes
+Workspaces are collection of notes that you can open with Bangle.io. You can choose to have multiple workspaces or keep all your notes in one workspace.
 
-Local: Modify notes right from your computer. Think Notion, but local only.
+⚠️ Don't forget to backup before opening your data. If you are in hurry simply copy and paste all your notes to another location to create a backup.
 
-No data lock-in: bangle stores your notes in a human readable Markdown format.
+To start taking notes, let us first create a new Workspace.
 
-2. Not your usual note taking app
 
-WYSIWYG: Even though we save things in Markdown format, Bangle will enrich your eyes with rich text formatting.
 
-Modern rich text editor: Bangle uses its sister project bangle.dev which unlocks us to build a powerful editor like Notion or Dropbox paper and support real time collaboration.
 
-Extensibility: Even though it's a web app it was built ground up to be extended by awesome extensions. (We have bunch of community extensions coming out soon.)
+Click on the Action Palette icon at top right.
 
-3. Portability at its core
+Run the New workspace action as shown below:
 
-No Electron: ❤️ for web and speed, thats it.
 
-Performant: Throw thousands of notes at it and Bangle will chug along fine. (Try opening a heavy project like 10,000 Markdown Files.)
 
-Why try it out?
 
-The cost of trying it out is low as this is a web app, no installation is needed. Also, as mentioned above there is no data lock-in. You can open your existing Markdown notes try it out and still continue to use your favorite note taking app.
+Once executed select one of the following options:
 
-Bangle.io is in its early stages, so expect some important features missing and some stability issues. If you are already happy with your current setup, thats great, but if you think there is a potential here please help us spread the word, every bit counts 🙋‍♀️ !
+Your computer: This option allows bangle to open a directory in your computer, ideally have markdown notes. Note: It is currently only available in Chrome and Edge browsers.
 
-Head to 📗 [[Getting Started]] to create your workspace
+Browser: If you cannot use the above option you can save your notes in the browser storage. Though it has the drawback of not opening any of your existing notes.
 
-Follow the project on 🐦 Twitter.
+💡We recommend that you store the notes in your computer to fully take advantage of all the features.
 
-For thoughts or ❤️ please join us at our Discord channel.
+Next you will be shown a directory picker.
 
-For bugs 🐛, please open a ticket in Github."
+If you already have Markdown notes select that folder.
+
+Or create a new directory that Bangle will use to save your notes.
+
+Creating a note
+
+There are two ways to create a new note:
+
+Using an action: Execute the action New note from the Action Palette.
+
+Inline backlink: In an existing note create a backlink to a new note by typing[[ followed by the name of your note you wish to create.
+
+Using inline palette
+
+You can type / anywhere in your document or press Command-/ (mac) Ctrl-/ (win) to bring a handy toolbar for inserting things.
+
+
+
+
+Formatting text
+
+Bangle uses the following markdown shortcuts to format text:
+
+bold Cmd+B
+
+italic Cmd+I
+
+For link Cmd+K or select text and paste link on it.
+
+~strikethrough~
+
+For image drag or paste it directly.
+
+\`\`\`for code block
+
+\`inline code\`
+
+* followed by space for bullet point or Cmd-shift-8
+
+1. follow by space for numbered list or Cmd-shift-9
+
+[ ] followed by space for todo list or Cmd-shift-7
+
+You can also select text to bring up a floating menu to making formatting changes.
+
+
+"
 `;

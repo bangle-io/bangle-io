@@ -99,7 +99,6 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
     );
 
     const activeItem = getActivePaletteItem(items);
-    console.log(items[0]);
     return (
       <>
         <UniversalPalette.PaletteItemsContainer>
@@ -113,17 +112,6 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
               />
             );
           })}
-          {items.length === 0 && (
-            <UniversalPalette.PaletteItemUI
-              key="new-note"
-              item={{
-                uid: 'new-note',
-                title: 'Create a new note "' + query + '"',
-              }}
-              onClick={onSelect}
-              isActive={true}
-            />
-          )}
         </UniversalPalette.PaletteItemsContainer>
         <UniversalPalette.PaletteInfo>
           <UniversalPalette.PaletteInfoItem>
