@@ -28,13 +28,13 @@ const extension = Extension.create({
         ReactComponent: NoteBrowserSidebar,
       },
 
-      {
-        name: '@sidebar/note-browser/help-documents-browser',
-        iconPlacement: 'bottom',
-        hint: `Help`,
-        icon: React.createElement(QuestionIcon, {}),
-        ReactComponent: HelpDocuments,
-      },
+      // {
+      //   name: '@sidebar/note-browser/help-documents-browser',
+      //   iconPlacement: 'bottom',
+      //   hint: `Help`,
+      //   icon: React.createElement(QuestionIcon, {}),
+      //   ReactComponent: HelpDocuments,
+      // },
     ],
   },
 });
