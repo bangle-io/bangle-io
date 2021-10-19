@@ -6331,10 +6331,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bangle-io-help@npm:1.8.0":
-  version: 1.8.0
-  resolution: "bangle-io-help@npm:1.8.0"
-  checksum: af711bdc4f6dac4c3a40b3942dfdc63db99108d8dc0ff33d198b953a4daa464124c154e96726eda0cf227da16d67f7766d838ecc1e1beb3fe9e992d38c00c02e
+"bangle-io-help@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "bangle-io-help@npm:1.8.1"
+  checksum: a7647bf844f59aaa7a3f26c70bb72dfda2389425491023221ce6c64fc3d4e19288a33557f6a35c5f7e4bd8961fce8d3b01581843a48425874c1563bcf803c0b0
   languageName: node
   linkType: hard
 
@@ -6365,7 +6365,7 @@ __metadata:
     autoprefixer: ^10.2.6
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
-    bangle-io-help: 1.8.0
+    bangle-io-help: ^1.8.1
     case-sensitive-paths-webpack-plugin: ^2.4.0
     copy-webpack-plugin: ^8.1.1
     css-loader: ^5.2.6

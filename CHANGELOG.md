@@ -1,3 +1,11 @@
+### Oct 18, 2021
+
+- We have a new landing page.
+
+- The app now sits at `https://app.bangle.io` instead of `https://bangle.io`.
+
+- You can now install Bangle.io as a desktop app.
+
 ### Sep 20, 2021
 
 - **Search, tags:** You can now search for tags by prefixing search queries with `tag:` followed by the tag name.
