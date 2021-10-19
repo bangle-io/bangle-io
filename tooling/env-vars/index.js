@@ -89,7 +89,7 @@ module.exports = ({ isProduction, isVite = false }) => {
         : '',
       bangleHelpPreload: `<link
       rel="preload"
-      href="https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/landing.md"
+      href="https://unpkg.com/bangle-io-help@${helpDocsVersion}/docs/getting%20started.md"
       as="fetch"
       crossorigin
     />`,

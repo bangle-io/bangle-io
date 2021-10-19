@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDestroyRef } from 'utils';
 import { getWsName } from 'ws-path';
-import { WorkspaceInfo, WorkspaceType } from './types';
+import { HELP_FS_WORKSPACE_NAME, WorkspaceInfo, WorkspaceType } from './types';
 import {
   createWorkspace,
   deleteWorkspace,
@@ -62,7 +62,7 @@ export function useWorkspaces() {
     async (targetWsName: string) => {
       await deleteWorkspace(targetWsName);
       if (targetWsName === activeWsName) {
-        history.push(`/ws/`);
+        history.push(`/ws/` + HELP_FS_WORKSPACE_NAME);
       } else {
         refreshWorkspaces();
       }

@@ -24,7 +24,7 @@ afterEach(async () => {
 });
 
 test('Title check', async () => {
-  await expect(page.title()).resolves.toMatch('landing.md - bangle.io');
+  await expect(page.title()).resolves.toMatch('getting started.md - bangle.io');
 });
 
 test('Activity bar', async () => {

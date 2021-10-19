@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 import { Entry } from './entry';
 const root = document.getElementById('root');
 
-if (typeof window !== undefined) {
+if (typeof window !== undefined && APP_ENV !== 'local') {
   (window as any).Sentry?.onLoad(function () {
     import(
       /* webpackChunkName: "@sentry/tracing" */
