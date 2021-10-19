@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect } from 'react';
 import { useRegisterSW } from './use-sw';
-import './SWReloadPrompt.css';
 import { useUIManagerContext } from 'ui-context';
 import { TextButton } from 'ui-components';
 import { FRIENDLY_ID, RELEASE_ID } from 'config';
