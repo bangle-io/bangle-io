@@ -1,5 +1,5 @@
 import { NodeView } from '@bangle.dev/core';
-import { backLinkNodeName } from './config';
+import { backLinkNodeName } from '../config';
 
 export function inlineBackLinkPlugin() {
   return () => [
