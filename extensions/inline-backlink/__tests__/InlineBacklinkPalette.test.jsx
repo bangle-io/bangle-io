@@ -11,8 +11,8 @@ import {
 import React from 'react';
 import { sleep } from 'utils/utility';
 import { useWorkspaceContext } from 'workspace-context';
-import inlineBackLinkExtension from '..';
-import { filterItems, InlineBacklinkPalette } from '../InlineBacklinkPalette';
+import inlineBackLinkExtension from '../index';
+import { InlineBacklinkPalette } from '../editor/InlineBacklinkPalette';
 
 jest.mock('@bangle.dev/react', () => {
   return {
@@ -82,8 +82,10 @@ beforeEach(async () => {
 });
 
 test('Initial render', async () => {
+  const noteWsPaths = ['test-ws:my-file.md'];
+
   useWorkspaceContext.mockImplementation(() => ({
-    noteWsPaths: ['test-ws:hello.md'],
+    noteWsPaths,
   }));
 
   const result = render(<InlineBacklinkPalette />);
@@ -92,8 +94,10 @@ test('Initial render', async () => {
 });
 
 test('Renders palette rows correctly', async () => {
+  const noteWsPaths = ['test-ws:my-file.md'];
+
   useWorkspaceContext.mockImplementation(() => ({
-    noteWsPaths: ['test-ws:my-file.md'],
+    noteWsPaths,
   }));
   query = 'my';
 
@@ -114,9 +118,53 @@ test('Renders palette rows correctly', async () => {
   );
 });
 
-test('Handles malformed query', async () => {
+test('Renders filtering correct', async () => {
+  const noteWsPaths = ['test-ws:my-file.md', 'test-ws:my-other-file.md'];
+
   useWorkspaceContext.mockImplementation(() => ({
-    noteWsPaths: ['test-ws:my-file.md'],
+    noteWsPaths,
+  }));
+  query = 'my';
+
+  const result = render(<InlineBacklinkPalette />);
+
+  expect(
+    Array.from(tooltipContentDOM.querySelectorAll('.palette-row')).map(
+      (node) => node.textContent,
+    ),
+  ).toEqual(['my-file', 'Create: my', 'my-other-file']);
+
+  query = 'other';
+  result.rerender(<InlineBacklinkPalette />);
+  expect(
+    Array.from(tooltipContentDOM.querySelectorAll('.palette-row')).map(
+      (node) => node.textContent,
+    ),
+  ).toEqual(['my-other-file', 'Create: other']);
+});
+
+test('If exact match does not show create', async () => {
+  const noteWsPaths = ['test-ws:my-file.md', 'test-ws:my-other-file.md'];
+
+  useWorkspaceContext.mockImplementation(() => ({
+    noteWsPaths,
+  }));
+  query = 'my-file';
+
+  render(<InlineBacklinkPalette />);
+
+  expect(
+    Array.from(tooltipContentDOM.querySelectorAll('.palette-row')).map(
+      (node) => node.textContent,
+    ),
+  ).toEqual(['my-file', 'my-other-file']);
+});
+
+test('Handles malformed query', async () => {
+  const noteWsPaths = ['test-ws:my-file.md'];
+
+  useWorkspaceContext.mockImplementation(() => ({
+    noteWsPaths,
   }));
   query = ']]';
 
@@ -128,8 +176,9 @@ test('Handles malformed query', async () => {
 });
 
 test('Creates a backlink node when closed by typing ]]', async () => {
+  const noteWsPaths = ['test-ws:my-file.md'];
   useWorkspaceContext.mockImplementation(() => ({
-    noteWsPaths: ['test-ws:my-file.md'],
+    noteWsPaths,
   }));
   // NOTE: its not [[better]], because [[ is part of the suggest query mark
   query = 'better]]';
@@ -146,63 +195,5 @@ test('Creates a backlink node when closed by typing ]]', async () => {
   expect(replaceSuggestionMarkWith.mock.calls[0][1].attrs).toEqual({
     path: 'better',
     title: null,
-  });
-});
-
-describe('filterItems', () => {
-  test('shows create option', () => {
-    const items = filterItems('test-ws', 'file', ['test-ws:my-file.md']);
-
-    expect(items).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "editorExecuteCommand": [Function],
-          "title": "Create: file",
-          "uid": "create-test-ws:file.md",
-        },
-        Object {
-          "editorExecuteCommand": [Function],
-          "title": "my-file",
-          "uid": "test-ws:my-file.md",
-          "wsPath": "test-ws:my-file.md",
-        },
-      ]
-    `);
-  });
-
-  test('no create option when exact match', () => {
-    const items = filterItems('test-ws', 'my-file', ['test-ws:my-file.md']);
-
-    expect(items).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "editorExecuteCommand": [Function],
-          "title": "my-file",
-          "uid": "test-ws:my-file.md",
-          "wsPath": "test-ws:my-file.md",
-        },
-      ]
-    `);
-  });
-
-  test('creating works', () => {
-    const items = filterItems('test-ws', 'hello-world', ['test-ws:my-file.md']);
-
-    expect(items.length).toBe(1);
-    expect(items[0].title.includes('Create:')).toBe(true);
-    const mockDispatch = jest.fn();
-    items[0].editorExecuteCommand()(mockView.state, mockDispatch);
-    expect(replaceSuggestionMarkWith).toBeCalledTimes(1);
-
-    expect(replaceSuggestionMarkWith).nthCalledWith(
-      1,
-      expect.any(PluginKey),
-      expect.any(Node),
-    );
-
-    expect(replaceSuggestionMarkWith.mock.calls[0][1].attrs).toEqual({
-      path: 'hello-world',
-      title: null,
-    });
   });
 });

@@ -5,7 +5,7 @@ import React from 'react';
 import { sleep } from 'utils/utility';
 import { useWorkspaceContext } from 'workspace-context';
 import inlineBackLinkExtension from '..';
-import { BackLinkNode } from '../BackLinkNode';
+import { BackLinkNode } from '../editor/BackLinkNode';
 
 jest.mock('workspace-context/index', () => {
   return {

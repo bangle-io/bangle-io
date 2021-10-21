@@ -9999,6 +9999,13 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"fzf@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "fzf@npm:0.4.1"
+  checksum: 4e0a8ecdf8d00f028cab0ab89f4488bece9371e0e82970332e958dfed099a04a2fb78f14df9d72e34380913ed91cb0775182cc7b41ba8a1dd645c1c42d925c31
+  languageName: node
+  linkType: hard
+
 "gauge@npm:~2.7.3":
   version: 2.7.4
   resolution: "gauge@npm:2.7.4"
@@ -10885,6 +10892,7 @@ fsevents@^2.1.2:
     "@types/react-dom": ^17.0.9
     config: "workspace:*"
     extension-registry: "workspace:*"
+    fzf: ^0.4.1
     inline-palette: "workspace:*"
     react: 17.0.2
     react-dom: 17.0.2

@@ -1,4 +1,4 @@
-import { getBacklinkPath } from '../InlineBacklinkPalette';
+import { getBacklinkPath } from '../utils';
 
 describe('getBacklinkPath', () => {
   test('removes md extension', () => {

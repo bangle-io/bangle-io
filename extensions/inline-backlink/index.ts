@@ -1,10 +1,10 @@
 import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
 import { Extension } from 'extension-registry';
 import { inlinePalette } from 'inline-palette';
-import { renderReactNodeView } from './BackLinkNode';
+import { renderReactNodeView } from './editor/BackLinkNode';
 import { extensionName, paletteMark, palettePluginKey } from './config';
-import { inlineBackLinkPlugin } from './inline-backlink-plugin';
-import { InlineBacklinkPalette } from './InlineBacklinkPalette';
+import { inlineBackLinkPlugin } from './editor/inline-backlink-plugin';
+import { InlineBacklinkPalette } from './editor/InlineBacklinkPalette';
 
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
