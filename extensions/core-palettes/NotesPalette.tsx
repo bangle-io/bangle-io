@@ -17,6 +17,7 @@ import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
 import { extensionName } from './config';
 import { useRecencyWatcher } from './hooks';
+import { useFzfSearch, byLengthAsc } from 'fzf-search';
 
 const emptyArray = [];
 
@@ -30,43 +31,49 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
       noteWsPaths = emptyArray,
     } = useWorkspaceContext();
     const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
+
+    let filteredNotes = useFzfSearch(noteWsPaths, query, {
+      limit: 64,
+      selector: (item) => resolvePath(item).filePath,
+      tiebreakers: [byLengthAsc],
+    });
+
     const items = useMemo(() => {
       const _items = injectRecency(
-        noteWsPaths
-          .map((wsPath) => {
-            const { fileName, dirPath } = resolvePath(wsPath);
-            return {
-              uid: wsPath,
-              title: removeMdExtension(fileName),
-              extraInfo: dirPath,
-              data: {
-                wsPath,
-              },
-              rightHoverNode: (
-                <ButtonIcon
-                  hint={`Open in split screen`}
-                  hintPos="left"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    pushWsPath(wsPath, false, true);
-                    dismissPalette();
+        filteredNotes.map((item) => {
+          const wsPath = item.item;
+          const { fileName, dirPath } = resolvePath(wsPath);
+          return {
+            uid: wsPath,
+            title: removeMdExtension(fileName),
+            extraInfo: dirPath,
+            data: {
+              wsPath,
+            },
+            rightHoverNode: (
+              <ButtonIcon
+                hint={`Open in split screen`}
+                hintPos="left"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  pushWsPath(wsPath, false, true);
+                  dismissPalette();
+                }}
+              >
+                <SecondaryEditorIcon
+                  style={{
+                    height: 18,
+                    width: 18,
                   }}
-                >
-                  <SecondaryEditorIcon
-                    style={{
-                      height: 18,
-                      width: 18,
-                    }}
-                  />
-                </ButtonIcon>
-              ),
-            };
-          })
-          .filter((obj) => strMatch(obj.title, query)),
+                />
+              </ButtonIcon>
+            ),
+          };
+        }),
       );
 
-      return _items.slice(0, 100);
-    }, [noteWsPaths, injectRecency, pushWsPath, dismissPalette, query]);
+      return _items;
+    }, [filteredNotes, injectRecency, pushWsPath, dismissPalette]);
 
     const onExecuteItem = useCallback(
       (getUid, sourceInfo) => {

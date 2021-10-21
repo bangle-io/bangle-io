@@ -1,27 +1,10 @@
-import { Fzf, byLengthAsc, FzfOptions } from 'fzf';
 import {
   filePathToWsPath,
   resolvePath,
   sanitizeFilePath,
   validateWsPath,
 } from 'ws-path';
-import { useEffect, useState } from 'react';
 import { conditionalSuffix, removeMdExtension } from 'utils';
-
-const fzfOpts: FzfOptions<string> = {
-  limit: 12,
-  selector: (item) => resolvePath(item).filePath,
-  tiebreakers: [byLengthAsc],
-};
-
-export function useSearch(wsPaths: string[], query: string) {
-  const [fzf, updateFzf] = useState(() => new Fzf(wsPaths, fzfOpts));
-  useEffect(() => {
-    updateFzf(new Fzf(wsPaths, fzfOpts));
-  }, [wsPaths]);
-
-  return query ? fzf.find(query) : [];
-}
 
 export function wsPathFromQuery(query, wsName) {
   let filePath = query.split(']]').join('');
