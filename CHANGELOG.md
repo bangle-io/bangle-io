@@ -1,3 +1,7 @@
+### HEAD
+
+- **Backlinks** We have improved the searching for finding backlinks.
+
 ### Oct 18, 2021
 
 - We have a new landing page.
