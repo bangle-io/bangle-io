@@ -28,6 +28,7 @@
     "action-context": "workspace:*",
     "config": "workspace:*",
     "extension-registry": "workspace:*",
+    "fzf-search": "workspace:*",
     "inline-palette": "workspace:*",
     "react": "^17.0.2",
     "ui-components": "workspace:*",
