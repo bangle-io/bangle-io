@@ -45,32 +45,17 @@ const createPaletteObject = ({ wsPath, onClick }) => {
 };
 const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
-    const {
-      pushWsPath,
-      noteWsPaths = emptyArray,
-      recentWsPaths,
-    } = useWorkspaceContext();
+    const { pushWsPath } = useWorkspaceContext();
 
     // We are doing the following
     // 1. use fzf to shortlist the notes
     // 2. use fzf to shortlist recently used notes
     // 3. Merge them and show in palette
+    const { recent: recentWsPaths, other: otherWsPaths } =
+      useSearchWsPaths(query);
 
-    const recentFzfItems = useFzfSearch(recentWsPaths, query, {
-      limit: FZF_SEARCH_LIMIT,
-      selector: (item) => resolvePath(item).filePath,
-      tiebreakers: [byLengthAsc],
-    });
-
-    const filteredFzfItems = useFzfSearch(noteWsPaths, query, {
-      limit: FZF_SEARCH_LIMIT,
-      selector: (item) => resolvePath(item).filePath,
-      tiebreakers: [byLengthAsc],
-    });
-
-    const recentlyUsedItems = useMemo(() => {
-      return recentFzfItems.map((fzfItem, i) => {
-        const wsPath = fzfItem.item;
+    const items = useMemo(() => {
+      const recentlyUsedItems = recentWsPaths.map((wsPath, i) => {
         let obj = createPaletteObject({
           wsPath,
           onClick: (e) => {
@@ -85,35 +70,26 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
         }
         return obj;
       });
-    }, [recentFzfItems, pushWsPath, dismissPalette]);
 
-    const items = useMemo(() => {
-      const shownInRecentSet = new Set(
-        recentlyUsedItems.map((r) => r.data.wsPath),
-      );
       return [
         ...recentlyUsedItems,
-        ...filteredFzfItems
-          .filter((r) => !shownInRecentSet.has(r.item))
-          .map((fzfItem, i) => {
-            const wsPath = fzfItem.item;
-            let obj = createPaletteObject({
-              wsPath,
-              onClick: (e) => {
-                e.stopPropagation();
-                pushWsPath(wsPath, false, true);
-                dismissPalette();
-              },
-            });
+        ...otherWsPaths.map((wsPath, i) => {
+          let obj = createPaletteObject({
+            wsPath,
+            onClick: (e) => {
+              e.stopPropagation();
+              pushWsPath(wsPath, false, true);
+              dismissPalette();
+            },
+          });
 
-            if (i === 0 && shownInRecentSet.size > 0) {
-              (obj as any).showDividerAbove = true;
-            }
-
-            return obj;
-          }),
+          if (i === 0 && recentlyUsedItems.length > 0) {
+            (obj as any).showDividerAbove = true;
+          }
+          return obj;
+        }),
       ];
-    }, [filteredFzfItems, recentlyUsedItems, pushWsPath, dismissPalette]);
+    }, [otherWsPaths, recentWsPaths, pushWsPath, dismissPalette]);
 
     const onExecuteItem = useCallback(
       (getUid, sourceInfo) => {
@@ -183,3 +159,59 @@ export const notesPalette = {
   parseRawQuery: (rawQuery) => rawQuery,
   ReactComponent: NotesPalette,
 };
+
+/**
+ * Runs Fzf search on recent and all wsPaths.
+ * @param query
+ * @returns return.recent - filtered list of wsPath that were used recently
+ *          return.other - filtered list of wsPath that match the filter and are not part of `.recent`.
+ */
+export function useSearchWsPaths(query: string) {
+  const { noteWsPaths = emptyArray, recentWsPaths } = useWorkspaceContext();
+
+  // We are doing the following
+  // 1. use fzf to shortlist the notes
+  // 2. use fzf to shortlist recently used notes
+  // 3. Merge them and show in palette
+
+  const recentFzfItems = useFzfSearch(recentWsPaths, query, {
+    limit: FZF_SEARCH_LIMIT,
+    selector: (item) => resolvePath(item).filePath,
+    tiebreakers: [byLengthAsc],
+  });
+
+  const filteredFzfItems = useFzfSearch(noteWsPaths, query, {
+    limit: FZF_SEARCH_LIMIT,
+    selector: (item) => resolvePath(item).filePath,
+    tiebreakers: [byLengthAsc],
+  });
+
+  const filteredRecentWsPaths = useMemo(() => {
+    let wsPaths: string[];
+
+    // fzf search messes up with the order. When query is empty
+    // we want to preserve the order of recently used.
+    if (query === '') {
+      wsPaths = recentWsPaths;
+    } else {
+      wsPaths = recentFzfItems.map((fzfItem, i) => fzfItem.item);
+    }
+
+    return wsPaths;
+  }, [recentFzfItems, recentWsPaths, query]);
+
+  const filteredOtherWsPaths = useMemo(() => {
+    const shownInRecentSet = new Set(filteredRecentWsPaths);
+    return filteredFzfItems
+      .filter((r) => !shownInRecentSet.has(r.item))
+      .map((fzfItem, i) => {
+        const wsPath = fzfItem.item;
+        return wsPath;
+      });
+  }, [filteredFzfItems, filteredRecentWsPaths]);
+
+  return {
+    recent: filteredRecentWsPaths,
+    other: filteredOtherWsPaths,
+  };
+}

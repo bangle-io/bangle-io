@@ -13,7 +13,7 @@ import { resolvePath } from 'ws-path';
 import { backLinkNodeName, palettePluginKey } from '../config';
 import { getBacklinkPath, wsPathFromQuery } from '../utils';
 
-import { useFzfSearch, FzfOptions, byLengthAsc } from 'fzf-search';
+import { useFzfSearch, byLengthAsc } from 'fzf-search';
 
 // Creating this also closes the palette
 const createBackLinkNode = (wsPath, allNoteWsPaths) => {
