@@ -1,11 +1,6 @@
 import { keyDisplayValue } from 'config';
 import { ExtensionPaletteType } from 'extension-registry';
-import React, {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-} from 'react';
+import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import {
   ButtonIcon,
   FileDocumentIcon,
@@ -15,11 +10,38 @@ import {
 import { removeMdExtension } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
-import { extensionName } from './config';
 import { useFzfSearch, byLengthAsc } from 'fzf-search';
+import { extensionName } from './config';
 
 const emptyArray = [];
-
+const FZF_SEARCH_LIMIT = 64;
+const createObject = ({ wsPath, onClick }) => {
+  const { fileName, dirPath } = resolvePath(wsPath);
+  return {
+    uid: wsPath,
+    title: removeMdExtension(fileName),
+    rightNode: undefined,
+    showDividerAbove: false,
+    extraInfo: dirPath,
+    data: {
+      wsPath,
+    },
+    rightHoverNode: (
+      <ButtonIcon
+        hint={`Open in split screen`}
+        hintPos="left"
+        onClick={onClick}
+      >
+        <SecondaryEditorIcon
+          style={{
+            height: 18,
+            width: 18,
+          }}
+        />
+      </ButtonIcon>
+    ),
+  };
+};
 const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
     const {
@@ -29,51 +51,22 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
     } = useWorkspaceContext();
 
     let filteredNotes = useFzfSearch(noteWsPaths, query, {
-      limit: 64,
+      limit: FZF_SEARCH_LIMIT,
       selector: (item) => resolvePath(item).filePath,
       tiebreakers: [byLengthAsc],
     });
 
-    const items = useMemo(() => {
-      const createObject = ({ wsPath }) => {
-        const { fileName, dirPath } = resolvePath(wsPath);
-        return {
-          uid: wsPath,
-          title: removeMdExtension(fileName),
-          rightNode: undefined,
-          showDividerAbove: false,
-          extraInfo: dirPath,
-          data: {
-            wsPath,
-          },
-          rightHoverNode: (
-            <ButtonIcon
-              hint={`Open in split screen`}
-              hintPos="left"
-              onClick={async (e) => {
-                e.stopPropagation();
-                pushWsPath(wsPath, false, true);
-                dismissPalette();
-              }}
-            >
-              <SecondaryEditorIcon
-                style={{
-                  height: 18,
-                  width: 18,
-                }}
-              />
-            </ButtonIcon>
-          ),
-        };
-      };
-
-      let recentItems: any = [];
-      let recentFilteredWsPaths;
+    const recentItems = useMemo(() => {
       if (query === '') {
-        recentFilteredWsPaths = new Set(recentWsPaths);
-
-        recentItems = [...recentWsPaths].map((wsPath, i) => {
-          let obj = createObject({ wsPath });
+        return recentWsPaths.map((wsPath, i) => {
+          let obj = createObject({
+            wsPath,
+            onClick: (e) => {
+              e.stopPropagation();
+              pushWsPath(wsPath, false, true);
+              dismissPalette();
+            },
+          });
           if (i === 0) {
             (obj as any).rightNode = 'Recent';
           }
@@ -81,21 +74,34 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
         });
       }
 
-      const _items = filteredNotes
-        .filter((r) => !recentFilteredWsPaths?.has(r.item))
-        .map((item, i) => {
-          const wsPath = item.item;
-          let obj = createObject({ wsPath });
+      return [];
+    }, [query, recentWsPaths, pushWsPath, dismissPalette]);
 
-          if (i === 0 && recentFilteredWsPaths?.size > 0) {
-            (obj as any).showDividerAbove = true;
-          }
+    const items = useMemo(() => {
+      const shownInRecentSet = new Set(recentItems.map((r) => r.data.wsPath));
+      return [
+        ...recentItems,
+        ...filteredNotes
+          .filter((r) => !shownInRecentSet.has(r.item))
+          .map((item, i) => {
+            const wsPath = item.item;
+            let obj = createObject({
+              wsPath,
+              onClick: (e) => {
+                e.stopPropagation();
+                pushWsPath(wsPath, false, true);
+                dismissPalette();
+              },
+            });
 
-          return obj;
-        });
+            if (i === 0 && shownInRecentSet.size > 0) {
+              (obj as any).showDividerAbove = true;
+            }
 
-      return [...recentItems, ..._items];
-    }, [filteredNotes, recentWsPaths, query, pushWsPath, dismissPalette]);
+            return obj;
+          }),
+      ];
+    }, [filteredNotes, recentItems, pushWsPath, dismissPalette]);
 
     const onExecuteItem = useCallback(
       (getUid, sourceInfo) => {
