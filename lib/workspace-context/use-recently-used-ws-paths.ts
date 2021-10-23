@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { usePrevious, useRecencyMonitor } from 'utils';
 import { OpenedWsPaths } from 'ws-path';
 
+const MAX_ENTRIES = 5;
+const MAX_TIMESTAMPS_PER_ENTRY = 1;
 export function useRecentlyUsedWsPaths(
   wsName: string | undefined,
   openedPaths: OpenedWsPaths,
@@ -12,8 +14,8 @@ export function useRecentlyUsedWsPaths(
     // wsName can be undefined but it should be okay as we prevent
     // updating record when it is undefined
     uid: 'WorkspaceContextProvider/useRecentlyUsedWsPaths/1/' + (wsName || ''),
-    maxEntries: 5,
-    maxTimestampsPerEntry: 3,
+    maxEntries: MAX_ENTRIES,
+    maxTimestampsPerEntry: MAX_TIMESTAMPS_PER_ENTRY,
   });
 
   const updateRecord = useCallback(
