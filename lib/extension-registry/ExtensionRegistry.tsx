@@ -28,16 +28,6 @@ function filterFlatMap<K>(
 class EditorHandlers {
   constructor(private extensions: Extension[]) {}
 
-  private _getExtensionStore(
-    uniqueObj: Record<string, any>,
-    extension: Extension,
-  ) {
-    if (!uniqueObj[extension.name]) {
-      uniqueObj[extension.name] = {};
-    }
-    return uniqueObj[extension.name];
-  }
-
   initialScrollPos = ({
     wsPath,
     editorId,
@@ -99,7 +89,7 @@ export class ExtensionRegistry {
     undefined
   >;
   private sidebars: any[];
-  editor = new EditorHandlers(this.extensions);
+  public editor: EditorHandlers;
 
   public extensionsInitialState: { [name: string]: any };
   constructor(
@@ -108,6 +98,7 @@ export class ExtensionRegistry {
     _markdownItPlugins: any[] = [],
   ) {
     this.validate();
+    this.editor = new EditorHandlers(this.extensions);
 
     this.extensionsInitialState = Object.fromEntries(
       extensions.map((r) => [r.name, r.initialState]),
