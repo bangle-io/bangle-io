@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useLocalStorage } from '../hooks';
+import { useLocalStorage } from '../use-local-storage';
 
 describe('useLocalStorage', () => {
   let originalLocalStorage;
@@ -23,7 +23,7 @@ describe('useLocalStorage', () => {
   });
 
   afterEach(() => {
-    window.localStorage = originalLocalStorage;
+    (window as any).localStorage = originalLocalStorage;
   });
 
   test('should initialize', async () => {
