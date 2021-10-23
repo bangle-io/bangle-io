@@ -47,10 +47,6 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
     const { pushWsPath } = useWorkspaceContext();
 
-    // We are doing the following
-    // 1. use fzf to shortlist the notes
-    // 2. use fzf to shortlist recently used notes
-    // 3. Merge them and show in palette
     const { recent: recentWsPaths, other: otherWsPaths } =
       useSearchWsPaths(query);
 

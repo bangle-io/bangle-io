@@ -15,6 +15,8 @@ import { getBacklinkPath, wsPathFromQuery } from '../utils';
 
 import { useFzfSearch, byLengthAsc } from 'fzf-search';
 
+const FZF_SEARCH_LIMIT = 12;
+
 // Creating this also closes the palette
 const createBackLinkNode = (wsPath, allNoteWsPaths) => {
   return (state, dispatch, view) => {
@@ -56,6 +58,7 @@ export function InlineBacklinkPalette() {
 }
 
 const EMPTY_ARRAY = [];
+
 function InlineBacklinkPaletteInner({
   query,
   counter,
@@ -67,7 +70,7 @@ function InlineBacklinkPaletteInner({
   const { wsName, noteWsPaths = EMPTY_ARRAY } = useWorkspaceContext();
 
   const match = useFzfSearch<string>(noteWsPaths, query, {
-    limit: 12,
+    limit: FZF_SEARCH_LIMIT,
     selector: (item) => resolvePath(item).filePath,
     tiebreakers: [byLengthAsc],
   });
