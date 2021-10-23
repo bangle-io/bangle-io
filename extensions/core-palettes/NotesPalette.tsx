@@ -16,21 +16,17 @@ import { removeMdExtension } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
 import { extensionName } from './config';
-import { useRecencyWatcher } from './hooks';
 import { useFzfSearch, byLengthAsc } from 'fzf-search';
 
 const emptyArray = [];
-
-const storageKey = 'NotesPalette/1';
 
 const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
     const {
       pushWsPath,
-      primaryWsPath,
       noteWsPaths = emptyArray,
+      recentWsPaths,
     } = useWorkspaceContext();
-    const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
     let filteredNotes = useFzfSearch(noteWsPaths, query, {
       limit: 64,
@@ -39,41 +35,67 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
     });
 
     const items = useMemo(() => {
-      const _items = injectRecency(
-        filteredNotes.map((item) => {
-          const wsPath = item.item;
-          const { fileName, dirPath } = resolvePath(wsPath);
-          return {
-            uid: wsPath,
-            title: removeMdExtension(fileName),
-            extraInfo: dirPath,
-            data: {
-              wsPath,
-            },
-            rightHoverNode: (
-              <ButtonIcon
-                hint={`Open in split screen`}
-                hintPos="left"
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  pushWsPath(wsPath, false, true);
-                  dismissPalette();
+      const createObject = ({ wsPath }) => {
+        const { fileName, dirPath } = resolvePath(wsPath);
+        return {
+          uid: wsPath,
+          title: removeMdExtension(fileName),
+          rightNode: undefined,
+          showDividerAbove: false,
+          extraInfo: dirPath,
+          data: {
+            wsPath,
+          },
+          rightHoverNode: (
+            <ButtonIcon
+              hint={`Open in split screen`}
+              hintPos="left"
+              onClick={async (e) => {
+                e.stopPropagation();
+                pushWsPath(wsPath, false, true);
+                dismissPalette();
+              }}
+            >
+              <SecondaryEditorIcon
+                style={{
+                  height: 18,
+                  width: 18,
                 }}
-              >
-                <SecondaryEditorIcon
-                  style={{
-                    height: 18,
-                    width: 18,
-                  }}
-                />
-              </ButtonIcon>
-            ),
-          };
-        }),
-      );
+              />
+            </ButtonIcon>
+          ),
+        };
+      };
 
-      return _items;
-    }, [filteredNotes, injectRecency, pushWsPath, dismissPalette]);
+      let recentItems: any = [];
+      let recentFilteredWsPaths;
+      if (query === '') {
+        recentFilteredWsPaths = new Set(recentWsPaths);
+
+        recentItems = [...recentWsPaths].map((wsPath, i) => {
+          let obj = createObject({ wsPath });
+          if (i === 0) {
+            (obj as any).rightNode = 'Recent';
+          }
+          return obj;
+        });
+      }
+
+      const _items = filteredNotes
+        .filter((r) => !recentFilteredWsPaths?.has(r.item))
+        .map((item, i) => {
+          const wsPath = item.item;
+          let obj = createObject({ wsPath });
+
+          if (i === 0 && recentFilteredWsPaths?.size > 0) {
+            (obj as any).showDividerAbove = true;
+          }
+
+          return obj;
+        });
+
+      return [...recentItems, ..._items];
+    }, [filteredNotes, recentWsPaths, query, pushWsPath, dismissPalette]);
 
     const onExecuteItem = useCallback(
       (getUid, sourceInfo) => {
@@ -85,15 +107,6 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
       },
       [pushWsPath, items],
     );
-
-    useEffect(() => {
-      // doing it this way, instead of inside `onExecuteItem`
-      // so that we can monitor recency more widely, as there
-      // are external ways to open a note.
-      if (primaryWsPath) {
-        updateRecency(primaryWsPath);
-      }
-    }, [updateRecency, primaryWsPath]);
 
     // Expose onExecuteItem for the parent to call it
     // If we dont do this clicking or entering will not work
@@ -142,16 +155,6 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
     );
   },
 );
-
-function strMatch(a, b) {
-  b = b.toLocaleLowerCase();
-  if (Array.isArray(a)) {
-    return a.filter(Boolean).some((str) => strMatch(str, b));
-  }
-
-  a = a.toLocaleLowerCase();
-  return a.includes(b) || b.includes(a);
-}
 
 export const notesPalette = {
   type: extensionName + '/notes',

@@ -5,16 +5,15 @@ import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
 
 export function EmptyEditorPage() {
-  const { wsName, noteWsPaths = [] } = useWorkspaceContext();
+  const { wsName, recentWsPaths = [], noteWsPaths } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
-  const recentFiles = [];
   return (
     <>
-      <h3 className="text-xl sm:text-2xl lg:text-3xl leading-none">
+      <h3 className="text-xl leading-none sm:text-2xl lg:text-3xl">
         Recently opened files in "{wsName}"
       </h3>
-      <ul className="list-inside list-disc my-2">
-        {Array.from(new Set([...recentFiles, ...noteWsPaths.slice(0, 3)])).map(
+      <ul className="my-2 list-disc list-inside">
+        {Array.from([...recentWsPaths, ...(noteWsPaths || [])].slice(0, 5)).map(
           (r, i) => {
             return (
               <li key={i}>
@@ -35,7 +34,7 @@ export function EmptyEditorPage() {
             name: '@action/core-palettes/TOGGLE_NOTES_PALETTE',
           });
         }}
-        className="w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-gray-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
+        className="flex-none w-full px-6 py-3 mt-6 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent sm:w-auto hover:bg-gray-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none"
       >
         Open a note
       </button>
@@ -45,7 +44,7 @@ export function EmptyEditorPage() {
             name: '@action/core-actions/NEW_NOTE_ACTION',
           });
         }}
-        className="ml-3 w-full mt-6 sm:w-auto flex-none bg-gray-800 hover:bg-gray-600 text-white text-lg leading-6 font-semibold py-3 px-6 border border-transparent rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200"
+        className="flex-none w-full px-6 py-3 mt-6 ml-3 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent sm:w-auto hover:bg-gray-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none"
       >
         Create a note
       </button>

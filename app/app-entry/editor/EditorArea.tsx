@@ -92,14 +92,14 @@ export function EditorArea({
           </>
         )}
         {wsPath && fileExists === false && (
-          <h3 className="text-xl sm:text-3xl lg:text-3xl leading-none font-bold  mb-8">
+          <h3 className="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl">
             🕵️‍♀️‍ Note "{wsPath ? resolvePath(wsPath).fileName : ''}" was not
             found
           </h3>
         )}
         {showEmptyEditor && <EmptyEditorPage />}
         {editorId === 0 && (
-          <div className="flex w-full flex-row-reverse pt-4 pb-4">
+          <div className="flex flex-row-reverse w-full pt-4 pb-4">
             <BangleIOIcon className="w-4 h-4" isDark={false} opacity={0.6} />
             <div className="flex flex-col">
               <a
@@ -128,7 +128,7 @@ function Tab({ wsPath, onClose }) {
     <div className="editor-tab">
       <span>{resolvePath(wsPath).fileName}</span>
       <button type="button" onClick={onClose} className={`focus:outline-none`}>
-        <CloseIcon className="h-4 w-4" />
+        <CloseIcon className="w-4 h-4" />
       </button>
     </div>
   );
