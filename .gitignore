@@ -9,3 +9,5 @@ coverage
 dist
 # Local Netlify folder
 .netlify
+
+coverage-summary.json
