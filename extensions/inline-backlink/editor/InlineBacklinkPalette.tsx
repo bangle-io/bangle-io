@@ -11,7 +11,11 @@ import { conditionalSuffix, insertAt, removeMdExtension } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
 import { backLinkNodeName, palettePluginKey } from '../config';
-import { getBacklinkPath, useSearch, wsPathFromQuery } from '../utils';
+import { getBacklinkPath, wsPathFromQuery } from '../utils';
+
+import { useFzfSearch, byLengthAsc } from 'fzf-search';
+
+const FZF_SEARCH_LIMIT = 12;
 
 // Creating this also closes the palette
 const createBackLinkNode = (wsPath, allNoteWsPaths) => {
@@ -54,6 +58,7 @@ export function InlineBacklinkPalette() {
 }
 
 const EMPTY_ARRAY = [];
+
 function InlineBacklinkPaletteInner({
   query,
   counter,
@@ -64,7 +69,11 @@ function InlineBacklinkPaletteInner({
   const view = useEditorViewContext();
   const { wsName, noteWsPaths = EMPTY_ARRAY } = useWorkspaceContext();
 
-  const match = useSearch(noteWsPaths, query);
+  const match = useFzfSearch<string>(noteWsPaths, query, {
+    limit: FZF_SEARCH_LIMIT,
+    selector: (item) => resolvePath(item).filePath,
+    tiebreakers: [byLengthAsc],
+  });
 
   const items = useMemo(() => {
     let res = match.map((r) => {

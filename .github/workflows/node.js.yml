@@ -34,7 +34,8 @@ jobs:
       - run: yarn install --immutable --immutable-cache
       - run: yarn workspace bangle-io build
       - run: yarn build
-  runs-on: ubuntu-latest
+  coverage:
+    runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - uses: actions/checkout@v1
@@ -42,5 +43,4 @@ jobs:
         with:
           package-manager: yarn
           test-script: yarn test:coverage
-          github-token:
-            ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,11 +1,6 @@
 import { keyDisplayValue } from 'config';
 import { ExtensionPaletteType } from 'extension-registry';
-import React, {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-} from 'react';
+import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import {
   ButtonIcon,
   FileDocumentIcon,
@@ -15,58 +10,82 @@ import {
 import { removeMdExtension } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
+import { useFzfSearch, byLengthAsc } from 'fzf-search';
 import { extensionName } from './config';
-import { useRecencyWatcher } from './hooks';
 
 const emptyArray = [];
+const FZF_SEARCH_LIMIT = 64;
 
-const storageKey = 'NotesPalette/1';
-
+const createPaletteObject = ({ wsPath, onClick }) => {
+  const { fileName, dirPath } = resolvePath(wsPath);
+  return {
+    uid: wsPath,
+    title: removeMdExtension(fileName),
+    rightNode: undefined,
+    showDividerAbove: false,
+    extraInfo: dirPath,
+    data: {
+      wsPath,
+    },
+    rightHoverNode: (
+      <ButtonIcon
+        hint={`Open in split screen`}
+        hintPos="left"
+        onClick={onClick}
+      >
+        <SecondaryEditorIcon
+          style={{
+            height: 18,
+            width: 18,
+          }}
+        />
+      </ButtonIcon>
+    ),
+  };
+};
 const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
-    const {
-      pushWsPath,
-      primaryWsPath,
-      noteWsPaths = emptyArray,
-    } = useWorkspaceContext();
-    const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
-    const items = useMemo(() => {
-      const _items = injectRecency(
-        noteWsPaths
-          .map((wsPath) => {
-            const { fileName, dirPath } = resolvePath(wsPath);
-            return {
-              uid: wsPath,
-              title: removeMdExtension(fileName),
-              extraInfo: dirPath,
-              data: {
-                wsPath,
-              },
-              rightHoverNode: (
-                <ButtonIcon
-                  hint={`Open in split screen`}
-                  hintPos="left"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    pushWsPath(wsPath, false, true);
-                    dismissPalette();
-                  }}
-                >
-                  <SecondaryEditorIcon
-                    style={{
-                      height: 18,
-                      width: 18,
-                    }}
-                  />
-                </ButtonIcon>
-              ),
-            };
-          })
-          .filter((obj) => strMatch(obj.title, query)),
-      );
+    const { pushWsPath } = useWorkspaceContext();
 
-      return _items.slice(0, 100);
-    }, [noteWsPaths, injectRecency, pushWsPath, dismissPalette, query]);
+    const { recent: recentWsPaths, other: otherWsPaths } =
+      useSearchWsPaths(query);
+
+    const items = useMemo(() => {
+      const recentlyUsedItems = recentWsPaths.map((wsPath, i) => {
+        let obj = createPaletteObject({
+          wsPath,
+          onClick: (e) => {
+            e.stopPropagation();
+            pushWsPath(wsPath, false, true);
+            dismissPalette();
+          },
+        });
+
+        if (i === 0) {
+          (obj as any).rightNode = 'Recent';
+        }
+        return obj;
+      });
+
+      return [
+        ...recentlyUsedItems,
+        ...otherWsPaths.map((wsPath, i) => {
+          let obj = createPaletteObject({
+            wsPath,
+            onClick: (e) => {
+              e.stopPropagation();
+              pushWsPath(wsPath, false, true);
+              dismissPalette();
+            },
+          });
+
+          if (i === 0 && recentlyUsedItems.length > 0) {
+            (obj as any).showDividerAbove = true;
+          }
+          return obj;
+        }),
+      ];
+    }, [otherWsPaths, recentWsPaths, pushWsPath, dismissPalette]);
 
     const onExecuteItem = useCallback(
       (getUid, sourceInfo) => {
@@ -78,15 +97,6 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
       },
       [pushWsPath, items],
     );
-
-    useEffect(() => {
-      // doing it this way, instead of inside `onExecuteItem`
-      // so that we can monitor recency more widely, as there
-      // are external ways to open a note.
-      if (primaryWsPath) {
-        updateRecency(primaryWsPath);
-      }
-    }, [updateRecency, primaryWsPath]);
 
     // Expose onExecuteItem for the parent to call it
     // If we dont do this clicking or entering will not work
@@ -136,16 +146,6 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   },
 );
 
-function strMatch(a, b) {
-  b = b.toLocaleLowerCase();
-  if (Array.isArray(a)) {
-    return a.filter(Boolean).some((str) => strMatch(str, b));
-  }
-
-  a = a.toLocaleLowerCase();
-  return a.includes(b) || b.includes(a);
-}
-
 export const notesPalette = {
   type: extensionName + '/notes',
   icon: <FileDocumentIcon />,
@@ -155,3 +155,59 @@ export const notesPalette = {
   parseRawQuery: (rawQuery) => rawQuery,
   ReactComponent: NotesPalette,
 };
+
+/**
+ * Runs Fzf search on recent and all wsPaths.
+ * @param query
+ * @returns return.recent - filtered list of wsPath that were used recently
+ *          return.other - filtered list of wsPath that match the filter and are not part of `.recent`.
+ */
+export function useSearchWsPaths(query: string) {
+  const { noteWsPaths = emptyArray, recentWsPaths } = useWorkspaceContext();
+
+  // We are doing the following
+  // 1. use fzf to shortlist the notes
+  // 2. use fzf to shortlist recently used notes
+  // 3. Merge them and show in palette
+
+  const recentFzfItems = useFzfSearch(recentWsPaths, query, {
+    limit: FZF_SEARCH_LIMIT,
+    selector: (item) => resolvePath(item).filePath,
+    tiebreakers: [byLengthAsc],
+  });
+
+  const filteredFzfItems = useFzfSearch(noteWsPaths, query, {
+    limit: FZF_SEARCH_LIMIT,
+    selector: (item) => resolvePath(item).filePath,
+    tiebreakers: [byLengthAsc],
+  });
+
+  const filteredRecentWsPaths = useMemo(() => {
+    let wsPaths: string[];
+
+    // fzf search messes up with the order. When query is empty
+    // we want to preserve the order of recently used.
+    if (query === '') {
+      wsPaths = recentWsPaths;
+    } else {
+      wsPaths = recentFzfItems.map((fzfItem, i) => fzfItem.item);
+    }
+
+    return wsPaths;
+  }, [recentFzfItems, recentWsPaths, query]);
+
+  const filteredOtherWsPaths = useMemo(() => {
+    const shownInRecentSet = new Set(filteredRecentWsPaths);
+    return filteredFzfItems
+      .filter((r) => !shownInRecentSet.has(r.item))
+      .map((fzfItem, i) => {
+        const wsPath = fzfItem.item;
+        return wsPath;
+      });
+  }, [filteredFzfItems, filteredRecentWsPaths]);
+
+  return {
+    recent: filteredRecentWsPaths,
+    other: filteredOtherWsPaths,
+  };
+}

@@ -29,6 +29,14 @@ export class OpenedWsPaths {
     return this.wsPaths[1];
   }
 
+  forEachWsPath(cb: (wsPath: string, index: number) => void) {
+    this.wsPaths.forEach((p, i) => {
+      if (p) {
+        cb(p, i);
+      }
+    });
+  }
+
   updatePrimaryWsPath(wsPath: MaybeWsPath) {
     if (compare(wsPath, this.primaryWsPath)) {
       return this;

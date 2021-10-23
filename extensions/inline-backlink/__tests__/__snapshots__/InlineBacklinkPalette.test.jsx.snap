@@ -30,6 +30,27 @@ exports[`Initial render 1`] = `
         />
       </div>
       <div
+        class="flex flex-row items-center inline-palette-row cursor-pointer palette-row hover-allowed"
+        data-id="test-ws:my-file.md"
+        style="padding-left: 16px; padding-right: 16px;"
+      >
+        <span
+          class="flex flex-col"
+        >
+          <span
+            class="text-base font-bold truncate select-none"
+          />
+          <span
+            class="text-sm font-normal select-none"
+          >
+            my-file
+          </span>
+        </span>
+        <span
+          class="flex-1 flex "
+        />
+      </div>
+      <div
         class="flex flex-row justify-center my-1 space"
       >
         <span

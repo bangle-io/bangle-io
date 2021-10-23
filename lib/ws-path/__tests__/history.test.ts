@@ -74,6 +74,29 @@ describe('OpenedWsPaths', () => {
     expect(result.has(null)).toBe(false);
   });
 
+  test('forEach 1', () => {
+    let result = new OpenedWsPaths(['a', null]);
+    let called: [string, number][] = [];
+
+    result.forEachWsPath((wsPath, i) => {
+      called.push([wsPath, i]);
+    });
+    expect(called).toEqual([['a', 0]]);
+  });
+
+  test('forEach 2', () => {
+    let result = new OpenedWsPaths(['a', 'b']);
+    let called: [string, number][] = [];
+
+    result.forEachWsPath((wsPath, i) => {
+      called.push([wsPath, i]);
+    });
+    expect(called).toEqual([
+      ['a', 0],
+      ['b', 1],
+    ]);
+  });
+
   test('removeIfFound', () => {
     let result = new OpenedWsPaths(['a', null]);
     expect(result.removeIfFound('b')).toBe(result);

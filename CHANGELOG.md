@@ -2,6 +2,8 @@
 
 - **Backlinks** We have improved the searching for finding backlinks.
 
+- **Note palette**: We have improved our recently used notes algorithm.
+
 ### Oct 18, 2021
 
 - We have a new landing page.

@@ -25,7 +25,7 @@
     "@bangle.dev/utils": "0.27.3",
     "config": "workspace:*",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
-    "react": "17.0.2",
+    "react": "^17.0.2",
     "react-dom": "17.0.2",
     "ui-context": "workspace:*"
   },

@@ -33,6 +33,7 @@ import {
   resolvePath,
   validateNoteWsPath,
 } from 'ws-path';
+import { useRecentlyUsedWsPaths } from './use-recently-used-ws-paths';
 
 const LOG = false;
 
@@ -44,6 +45,9 @@ type RefreshWsPaths = ReturnType<typeof useFiles>['refreshWsPaths'];
 
 export interface WorkspaceContextType {
   wsName: string | undefined;
+  // descending order (first most recent, last least recent)
+  // wsPaths
+  recentWsPaths: string[];
   fileWsPaths: ReturnType<typeof useFiles>['fileWsPaths'];
   noteWsPaths: ReturnType<typeof useFiles>['noteWsPaths'];
   refreshWsPaths: RefreshWsPaths;
@@ -138,11 +142,17 @@ export function WorkspaceContextProvider({
 
   const getNote = useGetNote(extensionRegistry, fileOps);
   const pushWsPath = usePushWsPath(updateOpenedWsPaths);
-  const checkFileExists = fileOps.checkFileExists;
+  const recentWsPaths = useRecentlyUsedWsPaths(
+    wsName,
+    openedWsPaths,
+    noteWsPaths,
+  );
 
+  const checkFileExists = fileOps.checkFileExists;
   const value: WorkspaceContextType = useMemo(() => {
     return {
       wsName,
+      recentWsPaths,
       openedWsPaths,
       fileWsPaths,
       noteWsPaths,
@@ -159,6 +169,7 @@ export function WorkspaceContextProvider({
     };
   }, [
     wsName,
+    recentWsPaths,
     openedWsPaths,
     primaryWsPath,
     secondaryWsPath,
