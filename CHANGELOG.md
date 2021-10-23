@@ -1,6 +1,8 @@
 ### HEAD
 
-- **Backlinks** We have improved the searching for finding backlinks.
+- **Backlinks** We have improved the search.
+
+- **Tags** We have improved the search.
 
 - **Note palette**: We have improved our recently used notes algorithm.
 
