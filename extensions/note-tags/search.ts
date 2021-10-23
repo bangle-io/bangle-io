@@ -1,4 +1,9 @@
 import type { Node } from '@bangle.dev/pm';
+import { useEffect, useMemo, useState } from 'react';
+import { useWorkspaceContext } from 'workspace-context';
+import { useFzfSearch, byLengthAsc } from 'fzf-search';
+
+const FZF_SEARCH_LIMIT = 16;
 
 export function _listTags(doc: Node) {
   const results = new Set<string>();
@@ -38,4 +43,37 @@ export async function listAllTags(
   }
 
   return [...result];
+}
+
+export function useSearchAllTags(query: string, isVisible: boolean): string[] {
+  const { noteWsPaths = [], getNote } = useWorkspaceContext();
+  const [allTags, setAllTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    if (isVisible) {
+      listAllTags(noteWsPaths, getNote, controller.signal)
+        .then((tags) => {
+          setAllTags(tags);
+        })
+        .catch((error) => {
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            return;
+          }
+          throw error;
+        });
+    }
+    return () => {
+      controller.abort();
+    };
+  }, [getNote, noteWsPaths, isVisible]);
+
+  const fzfItems = useFzfSearch(allTags, query, {
+    limit: FZF_SEARCH_LIMIT,
+    tiebreakers: [byLengthAsc],
+  });
+
+  return useMemo(() => {
+    return fzfItems.map((r) => r.item);
+  }, [fzfItems]);
 }

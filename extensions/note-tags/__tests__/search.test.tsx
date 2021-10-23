@@ -9,9 +9,19 @@ import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 import { defaultSpecs, defaultPlugins } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';
 import { editorTagSpec } from '../editor-tag';
-import { listAllTags, _listTags } from '../search';
-import { resolvePath } from 'ws-path';
+import { listAllTags, useSearchAllTags, _listTags } from '../search';
+import { act, renderHook } from '@testing-library/react-hooks';
 import type { Node } from '@bangle.dev/pm';
+import { useWorkspaceContext } from 'workspace-context';
+import { sleep } from 'utils';
+
+jest.mock('workspace-context', () => {
+  const workspaceThings = jest.requireActual('workspace-context');
+  return {
+    ...workspaceThings,
+    useWorkspaceContext: jest.fn(),
+  };
+});
 
 const specRegistry = new SpecRegistry([...defaultSpecs(), editorTagSpec()]);
 const testEditor = renderTestEditor({
@@ -159,5 +169,126 @@ describe('search tag across wsPaths', () => {
 
     await expect(fun()).rejects.toThrowErrorMatchingInlineSnapshot(`"Aborted"`);
     expect(callback).toBeCalledTimes(2);
+  });
+});
+
+describe('useSearchAllTags', () => {
+  let getNote;
+  let abortSpy;
+  let delayGetNotes = false;
+
+  beforeEach(() => {
+    abortSpy = jest.spyOn(AbortController.prototype, 'abort');
+  });
+  afterEach(() => {
+    delayGetNotes = false;
+    abortSpy.mockRestore();
+  });
+
+  beforeEach(() => {
+    const { view: view1 } = testEditor(
+      <doc>
+        <para>
+          Hello <tag tagValue="hi" />
+        </para>
+      </doc>,
+    );
+
+    const { view: view2 } = testEditor(
+      <doc>
+        <para>
+          Hello <tag tagValue="second" /> <tag tagValue="third" />
+        </para>
+      </doc>,
+    );
+
+    const { view: view3 } = testEditor(
+      <doc>
+        <heading>
+          Hello <tag tagValue="fourth" /> brah <tag tagValue="fifth" />
+        </heading>
+      </doc>,
+    );
+    getNote = jest.fn(async (wsPath) => {
+      if (delayGetNotes) {
+        await sleep(20);
+      }
+      if (wsPath === 't:1') {
+        return view1.state.doc;
+      }
+      if (wsPath === 't:2') {
+        return view2.state.doc;
+      }
+      if (wsPath === 't:3') {
+        return view3.state.doc;
+      }
+      throw new Error('Unknown wsPath ' + wsPath);
+    });
+
+    const noteWsPaths = ['t:1', 't:2', 't:3'];
+    (useWorkspaceContext as any).mockImplementation(() => {
+      return { noteWsPaths: noteWsPaths, getNote };
+    });
+  });
+
+  test('works', async () => {
+    let result, waitForNextUpdate;
+    act(() => {
+      ({ result, waitForNextUpdate } = renderHook(() =>
+        useSearchAllTags('', true),
+      ));
+    });
+
+    await waitForNextUpdate();
+    expect(result.current).toEqual([
+      'hi',
+      'third',
+      'fifth',
+      'second',
+      'fourth',
+    ]);
+  });
+
+  test('no result when not visible', async () => {
+    let result;
+    act(() => {
+      ({ result } = renderHook(() => useSearchAllTags('', false)));
+    });
+
+    expect(result.current).toEqual([]);
+  });
+
+  test('filters correctly', async () => {
+    let result, waitForNextUpdate;
+    act(() => {
+      ({ result, waitForNextUpdate } = renderHook(() =>
+        useSearchAllTags('i', true),
+      ));
+    });
+
+    await waitForNextUpdate();
+
+    expect(abortSpy).toBeCalledTimes(0);
+
+    expect(result.current).toEqual(['hi', 'third', 'fifth']);
+  });
+
+  test('aborts correctly', async () => {
+    let result, rerender;
+    delayGetNotes = true;
+    act(() => {
+      ({ result, rerender } = renderHook(
+        ({ query, visible }) => useSearchAllTags(query, visible),
+        {
+          initialProps: { query: '', visible: true },
+        },
+      ));
+    });
+
+    rerender({ query: 'i', visible: false });
+
+    expect(abortSpy).toBeCalledTimes(1);
+
+    expect(result.current).toEqual([]);
   });
 });
