@@ -45,7 +45,7 @@ export async function listAllTags(
   return [...result];
 }
 
-export function useListAllTags(query: string, isVisible: boolean): string[] {
+export function useSearchAllTags(query: string, isVisible: boolean): string[] {
   const { noteWsPaths = [], getNote } = useWorkspaceContext();
   const [allTags, setAllTags] = useState<string[]>([]);
 

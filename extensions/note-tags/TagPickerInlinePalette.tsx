@@ -9,7 +9,7 @@ import { UniversalPalette, InlinePaletteRow } from 'ui-components';
 import ReactDOM from 'react-dom';
 import { useWorkspaceContext } from 'workspace-context';
 import { palettePluginKey, tagNodeName } from './config';
-import { listAllTags, useListAllTags as useSearchAllTags } from './search';
+import { listAllTags, useSearchAllTags as useSearchAllTags } from './search';
 
 export const createTagNode = (tagValue: string): Command => {
   tagValue = tagValue.trim();
