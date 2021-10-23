@@ -15,7 +15,8 @@ import { extensionName } from './config';
 
 const emptyArray = [];
 const FZF_SEARCH_LIMIT = 64;
-const createObject = ({ wsPath, onClick }) => {
+
+const createPaletteObject = ({ wsPath, onClick }) => {
   const { fileName, dirPath } = resolvePath(wsPath);
   return {
     uid: wsPath,
@@ -50,42 +51,53 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
       recentWsPaths,
     } = useWorkspaceContext();
 
-    let filteredNotes = useFzfSearch(noteWsPaths, query, {
+    // We are doing the following
+    // 1. use fzf to shortlist the notes
+    // 2. use fzf to shortlist recently used notes
+    // 3. Merge them and show in palette
+
+    const recentFzfItems = useFzfSearch(recentWsPaths, query, {
       limit: FZF_SEARCH_LIMIT,
       selector: (item) => resolvePath(item).filePath,
       tiebreakers: [byLengthAsc],
     });
 
-    const recentItems = useMemo(() => {
-      if (query === '') {
-        return recentWsPaths.map((wsPath, i) => {
-          let obj = createObject({
-            wsPath,
-            onClick: (e) => {
-              e.stopPropagation();
-              pushWsPath(wsPath, false, true);
-              dismissPalette();
-            },
-          });
-          if (i === 0) {
-            (obj as any).rightNode = 'Recent';
-          }
-          return obj;
-        });
-      }
+    const filteredFzfItems = useFzfSearch(noteWsPaths, query, {
+      limit: FZF_SEARCH_LIMIT,
+      selector: (item) => resolvePath(item).filePath,
+      tiebreakers: [byLengthAsc],
+    });
 
-      return [];
-    }, [query, recentWsPaths, pushWsPath, dismissPalette]);
+    const recentlyUsedItems = useMemo(() => {
+      return recentFzfItems.map((fzfItem, i) => {
+        const wsPath = fzfItem.item;
+        let obj = createPaletteObject({
+          wsPath,
+          onClick: (e) => {
+            e.stopPropagation();
+            pushWsPath(wsPath, false, true);
+            dismissPalette();
+          },
+        });
+
+        if (i === 0) {
+          (obj as any).rightNode = 'Recent';
+        }
+        return obj;
+      });
+    }, [recentFzfItems, pushWsPath, dismissPalette]);
 
     const items = useMemo(() => {
-      const shownInRecentSet = new Set(recentItems.map((r) => r.data.wsPath));
+      const shownInRecentSet = new Set(
+        recentlyUsedItems.map((r) => r.data.wsPath),
+      );
       return [
-        ...recentItems,
-        ...filteredNotes
+        ...recentlyUsedItems,
+        ...filteredFzfItems
           .filter((r) => !shownInRecentSet.has(r.item))
-          .map((item, i) => {
-            const wsPath = item.item;
-            let obj = createObject({
+          .map((fzfItem, i) => {
+            const wsPath = fzfItem.item;
+            let obj = createPaletteObject({
               wsPath,
               onClick: (e) => {
                 e.stopPropagation();
@@ -101,7 +113,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
             return obj;
           }),
       ];
-    }, [filteredNotes, recentItems, pushWsPath, dismissPalette]);
+    }, [filteredFzfItems, recentlyUsedItems, pushWsPath, dismissPalette]);
 
     const onExecuteItem = useCallback(
       (getUid, sourceInfo) => {
