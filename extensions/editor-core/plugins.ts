@@ -22,6 +22,7 @@ import { stopwatch } from '@bangle.dev/react-stopwatch';
 import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
+import { activeNode } from './active-node';
 
 export const menuKey = new PluginKey('menuKey');
 
@@ -88,5 +89,6 @@ export const getPlugins = () => {
         scrollMargin: Math.floor(window.innerHeight / 4),
       },
     }),
+    activeNode(),
   ];
 };

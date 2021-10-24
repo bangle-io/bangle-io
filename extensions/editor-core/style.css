@@ -10,3 +10,19 @@
 .bangle-editor li[data-bangle-is-todo] > span:first-child > input {
   margin-top: 0.45rem;
 }
+
+.bangle-editor .selected-node {
+  animation-duration: 0.75s;
+  animation-name: editorSelectedNode;
+  animation-timing-function: ease-out;
+}
+
+@keyframes editorSelectedNode {
+  from {
+    border-radius: 4px;
+    background-color: var(--bg-stronger-color);
+  }
+
+  to {
+  }
+}
