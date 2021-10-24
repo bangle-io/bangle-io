@@ -1,0 +1,20 @@
+diff --git a/dist/node/chunks/dep-be032392.js b/dist/node/chunks/dep-be032392.js
+index 933af8c95a4d38c2e731b1fd1b065522d944d257..db4bf65de0882a01f71afee667a1124e8e2ddafe 100644
+--- a/dist/node/chunks/dep-be032392.js
++++ b/dist/node/chunks/dep-be032392.js
+@@ -67758,12 +67758,13 @@ function webWorkerPlugin(config) {
+                     plugins: await resolvePlugins({ ...config }, [], [], []),
+                     onwarn(warning, warn) {
+                         onRollupWarning(warning, warn, config);
+-                    }
++                    },
++                    preserveEntrySignatures: false
+                 });
+                 let code;
+                 try {
+                     const { output } = await bundle.generate({
+-                        format: 'iife',
++                        format: 'es',
+                         sourcemap: config.build.sourcemap
+                     });
+                     code = output[0].code;

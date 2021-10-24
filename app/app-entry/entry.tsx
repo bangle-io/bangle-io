@@ -36,7 +36,6 @@ function LoadingBlock({ children }) {
 export function Entry() {
   useEffect(() => {
     const installCallback = (event: BeforeInstallPromptEvent) => {
-      console.log(event);
       // not show infobar on mobile
       event.preventDefault();
     };

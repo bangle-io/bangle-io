@@ -4,6 +4,7 @@
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+!.yarn/patches
 build
 coverage
 dist
