@@ -9,7 +9,7 @@ exports[`inline action palette convert to bullet list 1`] = `
     class=\\"bangle-nv-container\\"
   >
     <span class=\\"bangle-nv-content\\"
-      ><p>
+      ><p class=\\"selected-node\\">
         I should a bullet list
       </p></span
     >

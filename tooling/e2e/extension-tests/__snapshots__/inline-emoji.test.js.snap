@@ -9,7 +9,7 @@ exports[`Emoji works in list 1`] = `
     class=\\"bangle-nv-container\\"
   >
     <span class=\\"bangle-nv-content\\"
-      ><p>
+      ><p class=\\"selected-node\\">
         I am a list
         <span
           data-bangle-name=\\"emoji\\"
@@ -27,7 +27,7 @@ exports[`Emoji works in list 1`] = `
 `;
 
 exports[`Emoji works in para 1`] = `
-"<p>
+"<p class=\\"selected-node\\">
   life is good
   <span
     data-bangle-name=\\"emoji\\"
