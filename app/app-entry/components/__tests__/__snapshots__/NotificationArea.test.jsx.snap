@@ -16,7 +16,7 @@ exports[`NotificationArea renders with content 2`] = `
           class="mr-2"
         >
           <svg
-            class="h-6 w-6"
+            class="w-6 h-6"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -74,7 +74,7 @@ exports[`NotificationArea renders with content 2`] = `
           class="mr-2"
         >
           <svg
-            class="h-6 w-6"
+            class="w-6 h-6"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

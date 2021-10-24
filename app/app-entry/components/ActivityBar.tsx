@@ -6,8 +6,8 @@ import {
   ButtonIcon,
   FileDocumentIcon,
   GiftIcon,
-  HomeIcon,
   MenuIcon,
+  SingleCharIcon,
 } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
 import { cx } from 'utils';
@@ -115,9 +115,9 @@ export function ActivityBar() {
     });
 
   return (
-    <div id="activity-bar-area" className="widescreen flex">
+    <div id="activity-bar-area" className="flex widescreen">
       <div className="flex flex-col flex-grow">
-        <ButtonIcon
+        <CurrentWorkspaceButton
           onClick={() => {
             dispatch({
               type: 'UI/CHANGE_SIDEBAR',
@@ -125,13 +125,7 @@ export function ActivityBar() {
             });
             history.push('/');
           }}
-          hint={sidebar ? null : 'bangle.io'}
-          hintPos="right"
-          className={cx('flex justify-center pt-3 pb-3 mt-1 mb-1')}
-          style={{}}
-        >
-          <HomeIcon className="h-7 w-7 text-gray-100" />
-        </ButtonIcon>
+        />
         {topInjectedSidebars}
         <div className="flex-grow"></div>
         <ButtonIcon
@@ -147,7 +141,7 @@ export function ActivityBar() {
           style={{}}
         >
           <GiftIcon
-            className="h-7 w-7 text-gray-100"
+            className="text-gray-100 h-7 w-7"
             showDot={changelogHasUpdates}
           />
         </ButtonIcon>
@@ -167,7 +161,7 @@ function ActivityBarSmallscreen({
   return (
     <div
       id="activity-bar-area"
-      className="flex flex-row align-center text-gray-100"
+      className="flex flex-row text-gray-100 align-center"
     >
       <div className="flex flex-col justify-center mr-2">
         <ButtonIcon
@@ -175,7 +169,7 @@ function ActivityBarSmallscreen({
           removeFocus={false}
           className={cx(paletteType && 'bg-gray-600 rounded-sm', 'p-2')}
         >
-          <FileDocumentIcon className="h-5 w-5" />
+          <FileDocumentIcon className="w-5 h-5" />
         </ButtonIcon>
       </div>
       <div className="flex flex-col justify-center mr-2">
@@ -191,7 +185,7 @@ function ActivityBarSmallscreen({
             removeFocus={false}
             className={cx(sidebar && 'bg-gray-600 rounded-sm', 'p-2')}
           >
-            <MenuIcon className="h-5 w-5" />
+            <MenuIcon className="w-5 h-5" />
           </ButtonIcon>
         )}
       </div>
@@ -276,6 +270,23 @@ function ActivityBarButton({ sidebar, isActive, widescreen, toggleSidebar }) {
       >
         {sidebar.icon}
       </span>
+    </ButtonIcon>
+  );
+}
+
+function CurrentWorkspaceButton({ onClick }) {
+  const { wsName } = useWorkspaceContext();
+  return (
+    <ButtonIcon
+      onClick={onClick}
+      hint="Workspace Home"
+      hintPos="right"
+      className={cx('flex justify-center pt-3 pb-3 mt-1 mb-1')}
+    >
+      <SingleCharIcon
+        char={wsName?.[0]?.toLocaleUpperCase() || '?'}
+        className="w-8 h-8 text-gray-100"
+      />
     </ButtonIcon>
   );
 }
