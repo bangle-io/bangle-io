@@ -3,8 +3,9 @@
   text-decoration: underline;
 }
 
-.bangle-editor code {
-  color: var(--font-color);
+.bangle-editor p > code {
+  background-color: var(--bg-stronger-color);
+  color: var(--font-lighter-color);
 }
 .bangle-editor pre {
   background-color: var(--bg-stronger-color);
