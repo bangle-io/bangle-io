@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { usePrevious, useRecencyMonitor } from 'utils';
 import { OpenedWsPaths } from 'ws-path';
 
-const MAX_ENTRIES = 15;
-const MAX_TIMESTAMPS_PER_ENTRY = 1;
+const MAX_ENTRIES = 64;
+const MAX_TIMESTAMPS_PER_ENTRY = 5;
 
 export function useRecentlyUsedWsPaths(
   wsName: string | undefined,
