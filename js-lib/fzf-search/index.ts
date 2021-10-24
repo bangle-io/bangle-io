@@ -1,5 +1,5 @@
 import { Fzf, byLengthAsc, byStartAsc, FzfOptions, FzfResultItem } from 'fzf';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 
 export { byLengthAsc, byStartAsc };
 export type { FzfOptions };
@@ -22,5 +22,7 @@ export function useFzfSearch<T = string>(
     updateFzf(new Fzf(items, optionsRef.current));
   }, [items, optionsRef]);
 
-  return fzf.find(query);
+  return useMemo(() => {
+    return fzf.find(query);
+  }, [fzf, query]);
 }
