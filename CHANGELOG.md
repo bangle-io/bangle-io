@@ -1,10 +1,12 @@
-### HEAD
+### Oct 25, 2021
 
-- **Backlinks** We have improved the search.
-
-- **Tags** We have improved the search.
+- **Backlinks, Tags, Note palette:**  We have improved the search algorithm.
 
 - **Note palette**: We have improved our recently used notes algorithm.
+
+- **Editor:** The editor now give visual cues when you move cursor in and out of a block.
+
+- **Workspace:** Your workspace home page now shows recently opened notes.
 
 ### Oct 18, 2021
 

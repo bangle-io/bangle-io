@@ -1,6 +1,6 @@
 {
   "name": "bangle-io",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "homepage": "https://bangle.io",
   "workspaces": [
     "app",
@@ -128,7 +128,7 @@
     "surge": "^0.23.0",
     "tailwindcss": "^2.1.4",
     "typescript": "4.3.5",
-    "vite": "latest",
+    "vite": "^2.6.10",
     "vite-plugin-html": "^2.0.7",
     "vite-plugin-pwa": "^0.11.3",
     "webpack": "^5.39.0",
