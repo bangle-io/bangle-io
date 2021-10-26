@@ -22,7 +22,7 @@
     "@bangle.io/utils": "workspace:*"
   },
   "devDependencies": {
-    "@types/history": "^4.7.8",
+    "@types/history": "^4.7.9",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.1.8",

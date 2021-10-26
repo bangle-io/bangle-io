@@ -4279,7 +4279,7 @@ __metadata:
   dependencies:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/history": ^4.7.8
+    "@types/history": ^4.7.9
     "@types/react": ^17.0.14
     "@types/react-dom": ^17.0.9
     "@types/react-router-dom": ^5.1.8
@@ -5358,6 +5358,13 @@ __metadata:
   version: 4.7.8
   resolution: "@types/history@npm:4.7.8"
   checksum: 9c867532afd80f72a7101a5bb3c10c1ad7cc8c2c14e92fdbc54d5fed0ef8cdb6060c0f261a39884e243424636c6ff85d8aaffb984e2edaac348d2f216f9eedeb
+  languageName: node
+  linkType: hard
+
+"@types/history@npm:^4.7.9":
+  version: 4.7.9
+  resolution: "@types/history@npm:4.7.9"
+  checksum: 556b062adb92795839301965776b0418e9ca32798bd8a6031345a6a84d7512771107143a497b7e3ff826d0b0d4456e962c6450485dda6f55c7dd33371e840529
   languageName: node
   linkType: hard
 

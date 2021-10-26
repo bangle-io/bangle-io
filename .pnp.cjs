@@ -7527,7 +7527,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/utils", "workspace:lib/utils"],
-            ["@types/history", "npm:4.7.8"],
+            ["@types/history", "npm:4.7.9"],
             ["@types/react", "npm:17.0.14"],
             ["@types/react-dom", "npm:17.0.9"],
             ["@types/react-router-dom", "npm:5.1.8"],
@@ -8854,6 +8854,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-history-npm-4.7.8-53b2aef3de-9c867532af.zip/node_modules/@types/history/",
           "packageDependencies": [
             ["@types/history", "npm:4.7.8"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:4.7.9", {
+          "packageLocation": "./.yarn/cache/@types-history-npm-4.7.9-daa6588d04-556b062adb.zip/node_modules/@types/history/",
+          "packageDependencies": [
+            ["@types/history", "npm:4.7.9"]
           ],
           "linkType": "HARD",
         }]
