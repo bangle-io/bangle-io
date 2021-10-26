@@ -80,10 +80,30 @@ beforeEach(async () => {
     tooltipContentDOM,
     query,
     counter: 0,
+    isVisible: true,
   }));
 });
 
 test('Initial render', async () => {
+  const noteWsPaths = ['test-ws:my-file.md'];
+
+  useWorkspaceContext.mockImplementation(() => ({
+    noteWsPaths,
+  }));
+
+  const result = render(<InlineBacklinkPalette />);
+
+  expect(tooltipContentDOM).toMatchSnapshot();
+});
+
+test('Hides when isVisible is false', async () => {
+  useInlinePaletteQuery.mockImplementation(() => ({
+    tooltipContentDOM,
+    query,
+    counter: 0,
+    isVisible: false,
+  }));
+
   const noteWsPaths = ['test-ws:my-file.md'];
 
   useWorkspaceContext.mockImplementation(() => ({

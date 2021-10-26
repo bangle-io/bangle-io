@@ -33,14 +33,16 @@ const createBackLinkNode = (wsPath, allNoteWsPaths) => {
   };
 };
 export function InlineBacklinkPalette() {
-  const { query, counter, tooltipContentDOM } =
+  const { query, counter, tooltipContentDOM, isVisible } =
     useInlinePaletteQuery(palettePluginKey);
 
   return reactDOM.createPortal(
     <div className="inline-palette-wrapper shadow-2xl">
       <div className="inline-palette-items-wrapper">
         {/* TODO I am unable to hide inner when palette is invisible */}
-        <InlineBacklinkPaletteInner query={query} counter={counter} />
+        {isVisible && (
+          <InlineBacklinkPaletteInner query={query} counter={counter} />
+        )}
         <UniversalPalette.PaletteInfo>
           <UniversalPalette.PaletteInfoItem>
             <kbd className="font-normal">↑↓</kbd> Navigate
