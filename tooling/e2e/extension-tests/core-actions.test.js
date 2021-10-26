@@ -11,7 +11,7 @@ const {
   newPage,
 } = require('../helpers');
 
-const { resolvePath } = require('ws-path');
+const { resolvePath } = require('@bangle.io/ws-path');
 
 jest.setTimeout(105 * 1000);
 let page, destroyPage;

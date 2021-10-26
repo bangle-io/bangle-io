@@ -1,5 +1,6 @@
-import { setNaukarReady } from 'naukar-proxy';
 import { useEffect } from 'react';
+
+import { setNaukarReady } from '@bangle.io/naukar-proxy';
 
 export function WorkerSetup({ loadWebworker }) {
   useEffect(() => {

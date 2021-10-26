@@ -1,9 +1,13 @@
-import { useInlinePaletteItems, useInlinePaletteQuery } from 'inline-palette';
 import React, { useCallback, useEffect, useState } from 'react';
 import reactDOM from 'react-dom';
-import { InlinePaletteRow, UniversalPalette } from 'ui-components';
 
 import { useEditorViewContext } from '@bangle.dev/react';
+
+import {
+  useInlinePaletteItems,
+  useInlinePaletteQuery,
+} from '@bangle.io/inline-palette';
+import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
 
 import { palettePluginKey } from './config';
 import {

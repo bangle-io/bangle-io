@@ -1,11 +1,12 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-import { useWorkspaces } from 'workspaces';
+
+import { useWorkspaces } from '@bangle.io/workspaces';
 
 import { workspacePalette } from '../WorkspacePalette';
 
-jest.mock('workspaces', () => {
-  const workspaceThings = jest.requireActual('workspaces');
+jest.mock('@bangle.io/workspaces', () => {
+  const workspaceThings = jest.requireActual('@bangle.io/workspaces');
   return {
     ...workspaceThings,
     useWorkspaces: jest.fn(),

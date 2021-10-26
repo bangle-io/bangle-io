@@ -22,17 +22,17 @@
     "@bangle.dev/core": "0.27.6",
     "@bangle.dev/pm": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
-    "action-context": "workspace:*",
-    "config": "workspace:*",
-    "editor-manager-context": "workspace:*",
-    "extension-registry": "workspace:*",
-    "fzf-search": "workspace:*",
-    "ui-components": "workspace:*",
-    "ui-context": "workspace:*",
-    "utils": "workspace:*",
-    "workspace-context": "workspace:*",
-    "workspaces": "workspace:*",
-    "ws-path": "workspace:*"
+    "@bangle.io/action-context": "workspace:*",
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/editor-manager-context": "workspace:*",
+    "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/fzf-search": "workspace:*",
+    "@bangle.io/ui-components": "workspace:*",
+    "@bangle.io/ui-context": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
+    "@bangle.io/workspace-context": "workspace:*",
+    "@bangle.io/workspaces": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
   },
   "peerDependencies": {
     "react": "*"

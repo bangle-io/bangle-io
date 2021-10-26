@@ -1,7 +1,8 @@
-import { useEditorManagerContext } from 'editor-manager-context';
 import { useCallback, useEffect } from 'react';
 
 import { heading, listItem } from '@bangle.dev/base-components';
+
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 
 import { useDispatchPrimaryEditor } from './hooks';
 

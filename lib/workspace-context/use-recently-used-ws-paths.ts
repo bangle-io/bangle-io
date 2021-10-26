@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { usePrevious, useRecencyMonitor } from 'utils';
-import { OpenedWsPaths } from 'ws-path';
+
+import { usePrevious, useRecencyMonitor } from '@bangle.io/utils';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 64;
 const MAX_TIMESTAMPS_PER_ENTRY = 5;

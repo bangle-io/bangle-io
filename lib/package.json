@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/lib",
+  "name": "lib",
   "workspaces": [
     "editor-manager-context",
     "app-state-context",

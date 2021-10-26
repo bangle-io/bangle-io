@@ -1,5 +1,6 @@
 import * as idb from 'idb-keyval';
-import { validWsName } from 'ws-path';
+
+import { validWsName } from '@bangle.io/ws-path';
 
 import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
@@ -23,7 +24,7 @@ function listWorkspacesHigherOrder() {
   let workspaces: WorkspaceInfo[] = [];
   return async () => {
     let currentWorkspaces: WorkspaceInfo[] =
-      (await idb.get('workspaces/2')) || [];
+      (await idb.get('@bangle.io/workspace/2')) || [];
 
     currentWorkspaces = currentWorkspaces.map((cWsInfo) => {
       const existingWsInfo = workspaces.find(
@@ -138,7 +139,7 @@ export async function createWorkspace(
 
   workspaces.push(workspace);
 
-  await idb.set('workspaces/2', workspaces);
+  await idb.set('@bangle.io/workspace/2', workspaces);
 }
 
 export async function deleteWorkspace(wsName) {
@@ -154,5 +155,5 @@ export async function deleteWorkspace(wsName) {
   }
 
   workspaces = workspaces.filter((w) => w.name !== wsName);
-  await idb.set('workspaces/2', workspaces);
+  await idb.set('@bangle.io/workspace/2', workspaces);
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   ButtonIcon,
   CheckCircleIcon,
@@ -6,8 +7,8 @@ import {
   ExclamationCircleIcon,
   ExclamationIcon,
   InformationCircleIcon,
-} from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
+} from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 
 export function NotificationArea({}) {
   const { notifications, dispatch } = useUIManagerContext();

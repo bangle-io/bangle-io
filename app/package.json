@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/app",
+  "name": "app",
   "workspaces": [
     "app-entry",
     "style",

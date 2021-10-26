@@ -1,7 +1,8 @@
-import { keyDisplayValue } from 'config';
-import { Extension } from 'extension-registry';
 import React from 'react';
-import { FolderIcon, QuestionIcon } from 'ui-components';
+
+import { keyDisplayValue } from '@bangle.io/config';
+import { Extension } from '@bangle.io/extension-registry';
+import { FolderIcon, QuestionIcon } from '@bangle.io/ui-components';
 
 import { HelpDocuments } from './HelpDocuments';
 import { NoteBrowserActionHandler } from './NoteBrowserActionHandler';

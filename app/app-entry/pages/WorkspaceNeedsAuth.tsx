@@ -1,13 +1,14 @@
-import { requestNativeBrowserFSPermission } from 'baby-fs';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
-import { useUIManagerContext } from 'ui-context';
-import { keybindingsHelper } from 'utils';
+
+import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { keybindingsHelper } from '@bangle.io/utils';
 import {
   getWorkspaceInfo,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
-} from 'workspaces';
+} from '@bangle.io/workspaces';
 
 import { EditorWrapperUI } from '../components/EditorWrapperUI';
 

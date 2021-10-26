@@ -1,5 +1,6 @@
 import React from 'react';
-import { Sidebar } from 'ui-components';
+
+import { Sidebar } from '@bangle.io/ui-components';
 
 import { NotesTree } from './NotesTree';
 

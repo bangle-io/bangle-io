@@ -1,11 +1,12 @@
-import { FRIENDLY_ID } from 'config';
-import { useEditorManagerContext } from 'editor-manager-context';
-import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useEffect, useState } from 'react';
-import { CloseIcon } from 'ui-components';
-import { cx, sleep, useDestroyRef } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
+
+import { FRIENDLY_ID } from '@bangle.io/config';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { CloseIcon } from '@bangle.io/ui-components';
+import { cx, sleep, useDestroyRef } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
 
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';

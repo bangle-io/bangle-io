@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import reactDOM from 'react-dom';
-import { UniversalPalette } from 'ui-components';
 
 import type { EditorView } from '@bangle.dev/pm';
 import { PluginKey } from '@bangle.dev/pm';
@@ -15,6 +14,8 @@ import {
   resolveCounter,
 } from '@bangle.dev/react-emoji-suggest/dist/utils';
 import { suggestTooltip } from '@bangle.dev/tooltip';
+
+import { UniversalPalette } from '@bangle.io/ui-components';
 
 import { emojiSuggestKey } from './config';
 

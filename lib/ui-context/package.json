@@ -19,8 +19,8 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "react": "^17.0.2",
-    "utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*",
+    "react": "^17.0.2"
   },
   "devDependencies": {
     "@types/react": "^17.0.14",

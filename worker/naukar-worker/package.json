@@ -26,9 +26,9 @@
     "@bangle.dev/disk": "0.27.6",
     "@bangle.dev/pm": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
-    "config": "workspace:*",
-    "idb-keyval": "^5.0.6",
-    "object-sync": "workspace:*",
-    "workspaces": "workspace:*"
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/object-sync": "workspace:*",
+    "@bangle.io/workspaces": "workspace:*",
+    "idb-keyval": "^5.0.6"
   }
 }

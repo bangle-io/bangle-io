@@ -1,4 +1,4 @@
-export const extensionName = 'core-actions';
+export const extensionName = '@bangle.io/core-actions';
 
 export const TOGGLE_THEME_ACTION = '@action/core-actions/TOGGLE_THEME_ACTION';
 export const TOGGLE_FILE_SIDEBAR_ACTION =

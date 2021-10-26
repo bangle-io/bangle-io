@@ -1,17 +1,18 @@
 import './style';
 
-import { ActionContextProvider } from 'action-context';
-import { EditorManager } from 'editor-manager-context';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ActionContextProvider } from '@bangle.io/action-context';
+import { EditorManager } from '@bangle.io/editor-manager-context';
 import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,
-} from 'extension-registry';
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { initExtensionRegistry, polyfills } from 'shared';
-import { UIManager } from 'ui-context';
-import { WorkerSetup } from 'worker-setup';
-import { WorkspaceContextProvider } from 'workspace-context';
+} from '@bangle.io/extension-registry';
+import { initExtensionRegistry, polyfills } from '@bangle.io/shared';
+import { UIManager } from '@bangle.io/ui-context';
+import { WorkerSetup } from '@bangle.io/worker-setup';
+import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 
 import App from './App';
 import { AppStateProvider } from './AppStateProvider';

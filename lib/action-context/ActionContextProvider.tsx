@@ -1,6 +1,10 @@
-import { ActionType, useExtensionRegistryContext } from 'extension-registry';
 import React, { createContext, useCallback, useMemo } from 'react';
-import { useKeybindings } from 'utils';
+
+import {
+  ActionType,
+  useExtensionRegistryContext,
+} from '@bangle.io/extension-registry';
+import { useKeybindings } from '@bangle.io/utils';
 
 export const ActionContext = createContext<ContextType>({
   dispatchAction: () => {},

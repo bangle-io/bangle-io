@@ -1,6 +1,6 @@
-import 'collapsible-heading/style';
-import 'editor-core/style';
-import 'inline-backlink/style';
-import 'inline-emoji/style';
-import 'search-notes/style';
-import 'note-tags/style';
+import '@bangle.io/collapsible-heading/style';
+import '@bangle.io/editor-core/style';
+import '@bangle.io/inline-backlink/style';
+import '@bangle.io/inline-emoji/style';
+import '@bangle.io/search-notes/style';
+import '@bangle.io/note-tags/style';

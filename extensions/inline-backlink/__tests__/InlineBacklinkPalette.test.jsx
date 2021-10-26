@@ -1,17 +1,18 @@
 import { act, render } from '@testing-library/react';
-import { Extension, ExtensionRegistry } from 'extension-registry';
-import {
-  replaceSuggestionMarkWith,
-  useInlinePaletteItems,
-  useInlinePaletteQuery,
-} from 'inline-palette';
 import React from 'react';
-import { sleep } from 'utils/utility';
-import { useWorkspaceContext } from 'workspace-context';
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { Node, PluginKey } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
+
+import { Extension, ExtensionRegistry } from '@bangle.io/extension-registry';
+import {
+  replaceSuggestionMarkWith,
+  useInlinePaletteItems,
+  useInlinePaletteQuery,
+} from '@bangle.io/inline-palette';
+import { sleep } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { InlineBacklinkPalette } from '../editor/InlineBacklinkPalette';
 import inlineBackLinkExtension from '../index';
@@ -22,8 +23,8 @@ jest.mock('@bangle.dev/react', () => {
   };
 });
 
-jest.mock('inline-palette', () => {
-  const otherThings = jest.requireActual('inline-palette');
+jest.mock('@bangle.io/inline-palette', () => {
+  const otherThings = jest.requireActual('@bangle.io/inline-palette');
 
   return {
     ...otherThings,
@@ -33,9 +34,9 @@ jest.mock('inline-palette', () => {
   };
 });
 
-jest.mock('workspace-context/index', () => {
+jest.mock('@bangle.io/workspace-context', () => {
   return {
-    ...jest.requireActual('workspace-context/index'),
+    ...jest.requireActual('@bangle.io/workspace-context'),
     useWorkspaceContext: jest.fn(),
   };
 });

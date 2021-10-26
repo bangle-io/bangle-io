@@ -1,8 +1,8 @@
-import { Extension } from 'extension-registry';
-
 import { image } from '@bangle.dev/base-components';
 import { NodeSelection } from '@bangle.dev/pm';
 import { floatingMenu } from '@bangle.dev/react-menu';
+
+import { Extension } from '@bangle.io/extension-registry';
 
 import { menuKey } from './config';
 import { createImageNodes } from './create-image-nodes';
@@ -10,7 +10,7 @@ import { imageNodeViewPlugin } from './image-node-view-plugin';
 import { ImageEditorReactComponent } from './ImageEditorReactComponent';
 import { renderImageReactNodeView } from './render-image-react-node-view';
 
-const extensionName = 'image-extension';
+const extensionName = '@bangle.io/image-extension';
 
 const extension = Extension.create({
   name: extensionName,

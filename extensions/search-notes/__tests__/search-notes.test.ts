@@ -1,7 +1,7 @@
-import noteTags from 'note-tags';
-import { createPMNode } from 'test-utils/create-pm-node';
-import { sleep } from 'utils';
-import { resolvePath } from 'ws-path';
+import noteTags from '@bangle.io/note-tags';
+import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
+import { sleep } from '@bangle.io/utils';
+import { resolvePath } from '@bangle.io/ws-path';
 
 import { CONCURRENCY } from '../constants';
 import {

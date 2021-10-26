@@ -1,6 +1,6 @@
-import { objectSync } from 'object-sync';
-
 import type { Manager } from '@bangle.dev/collab-server';
+
+import { objectSync } from '@bangle.io/object-sync';
 
 import { setupCollabManager } from './collab-manager';
 import { localDiskSetup } from './local-disk';

@@ -1,11 +1,12 @@
+import React from 'react';
+
 import {
   PRIMARY_SCROLL_PARENT_ID,
   SECONDARY_SCROLL_PARENT_ID,
-} from 'constants';
-import React from 'react';
-import { useUIManagerContext } from 'ui-context';
-import { cx } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
+} from '@bangle.io/constants';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { cx } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { OptionsBar } from '../components/OptionsBar';
 import { EditorArea } from '../editor/EditorArea';

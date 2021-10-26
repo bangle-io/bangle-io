@@ -1,14 +1,15 @@
 import { act, render } from '@testing-library/react';
+import React, { useEffect, useState } from 'react';
+
+import { defaultSpecs } from '@bangle.dev/all-base-components';
+
 import {
   Extension,
   ExtensionRegistry,
   ExtensionRegistryContextProvider,
   RegisterActionHandlerType,
   useExtensionRegistryContext,
-} from 'extension-registry';
-import React, { useEffect, useState } from 'react';
-
-import { defaultSpecs } from '@bangle.dev/all-base-components';
+} from '@bangle.io/extension-registry';
 
 import { useActionContext } from '../ActionContext';
 import { ActionContextProvider } from '../ActionContextProvider';

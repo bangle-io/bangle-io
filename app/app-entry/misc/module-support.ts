@@ -1,5 +1,5 @@
-import { BANGLE_HOT } from 'config';
-import { validateNonWorkerGlobalScope } from 'naukar-worker';
+import { BANGLE_HOT } from '@bangle.io/config';
+import { validateNonWorkerGlobalScope } from '@bangle.io/naukar-worker';
 
 validateNonWorkerGlobalScope();
 

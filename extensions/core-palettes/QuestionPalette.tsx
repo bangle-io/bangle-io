@@ -1,9 +1,10 @@
+import React, { useCallback, useImperativeHandle } from 'react';
+
 import {
   ExtensionPaletteType,
   useExtensionRegistryContext,
-} from 'extension-registry';
-import React, { useCallback, useImperativeHandle } from 'react';
-import { NullIcon, UniversalPalette } from 'ui-components';
+} from '@bangle.io/extension-registry';
+import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 
 import { extensionName } from './config';
 

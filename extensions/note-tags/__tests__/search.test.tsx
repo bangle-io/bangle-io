@@ -6,19 +6,20 @@
 /// <reference path="./missing-test-types.d.ts" />
 
 import { act, renderHook } from '@testing-library/react-hooks';
-import { sleep } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 
+import { sleep } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+
 import { editorTagSpec } from '../editor-tag';
 import { _listTags, listAllTags, useSearchAllTags } from '../search';
 
-jest.mock('workspace-context', () => {
-  const workspaceThings = jest.requireActual('workspace-context');
+jest.mock('@bangle.io/workspace-context', () => {
+  const workspaceThings = jest.requireActual('@bangle.io/workspace-context');
   return {
     ...workspaceThings,
     useWorkspaceContext: jest.fn(),

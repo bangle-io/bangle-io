@@ -6,8 +6,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useDestroyRef } from 'utils';
-import { sleep } from 'utils/utility';
+
+import { sleep, useDestroyRef } from '@bangle.io/utils';
 
 import { NullIcon, SpinnerIcon } from '../Icons';
 import { UniversalPalette } from '../UniversalPalette';

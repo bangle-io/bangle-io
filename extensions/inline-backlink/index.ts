@@ -1,7 +1,7 @@
-import { Extension } from 'extension-registry';
-import { inlinePalette } from 'inline-palette';
-
 import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
+
+import { Extension } from '@bangle.io/extension-registry';
+import { inlinePalette } from '@bangle.io/inline-palette';
 
 import { extensionName, paletteMark, palettePluginKey } from './config';
 import { renderReactNodeView } from './editor/BackLinkNode';

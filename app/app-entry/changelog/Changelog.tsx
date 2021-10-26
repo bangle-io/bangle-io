@@ -1,10 +1,6 @@
 import './Changelog.css';
 
-import { CHANGELOG_TEXT } from 'config';
 import React, { useCallback, useEffect } from 'react';
-import { Modal } from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { useLocalStorage } from 'utils';
 
 import {
   blockquote,
@@ -29,6 +25,11 @@ import {
 import { SpecRegistry } from '@bangle.dev/core';
 import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
+
+import { CHANGELOG_TEXT } from '@bangle.io/config';
+import { Modal } from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useLocalStorage } from '@bangle.io/utils';
 
 const specRegistry = new SpecRegistry([
   blockquote.spec(),

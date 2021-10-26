@@ -1,8 +1,11 @@
-import { keybindings } from 'config/keybindings';
-import { Extension } from 'extension-registry';
-import { inlinePalette, queryInlinePaletteActive } from 'inline-palette';
-
 import { keymap } from '@bangle.dev/pm';
+
+import { keybindings } from '@bangle.io/config/keybindings';
+import { Extension } from '@bangle.io/extension-registry';
+import {
+  inlinePalette,
+  queryInlinePaletteActive,
+} from '@bangle.io/inline-palette';
 
 import { extensionName, paletteMarkName, palettePluginKey } from './config';
 import { InlineCommandPalette } from './InlineCommandPalette';

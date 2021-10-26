@@ -1,6 +1,6 @@
 const os = require('os');
 const prettier = require('prettier');
-const { filePathToWsPath, resolvePath } = require('ws-path');
+const { filePathToWsPath, resolvePath } = require('@bangle.io/ws-path');
 
 const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
 const url = 'http://localhost:1234';

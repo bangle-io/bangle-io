@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Sidebar } from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { useDestroyRef } from 'utils/hooks';
-import { useWorkspaceContext } from 'workspace-context';
-import { FileOps, HELP_FS_WORKSPACE_NAME } from 'workspaces';
-import { isValidNoteWsPath } from 'ws-path';
+
+import { Sidebar } from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useDestroyRef } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { FileOps, HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
+import { isValidNoteWsPath } from '@bangle.io/ws-path';
 
 import { GenericFileBrowser } from './NotesTree';
 

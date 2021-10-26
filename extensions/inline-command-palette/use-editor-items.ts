@@ -1,4 +1,3 @@
-import { replaceSuggestionMarkWith } from 'inline-palette';
 import { useMemo } from 'react';
 
 import {
@@ -9,6 +8,8 @@ import {
 } from '@bangle.dev/base-components';
 import { setBlockType } from '@bangle.dev/pm';
 import { rafCommandExec } from '@bangle.dev/utils';
+
+import { replaceSuggestionMarkWith } from '@bangle.io/inline-palette';
 
 import {
   chainedInsertParagraphAbove,

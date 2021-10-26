@@ -1,6 +1,7 @@
-import { Extension } from 'extension-registry';
 import React from 'react';
-import { NewNoteIcon } from 'ui-components';
+
+import { Extension } from '@bangle.io/extension-registry';
+import { NewNoteIcon } from '@bangle.io/ui-components';
 
 import {
   CLONE_WORKSPACE_ACTION,

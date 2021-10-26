@@ -1,10 +1,11 @@
-import { useEditorManagerContext } from 'editor-manager-context';
-import { useExtensionStateContext } from 'extension-registry';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useDebouncedValue } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
 
 import { search } from '@bangle.dev/search';
+
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useExtensionStateContext } from '@bangle.io/extension-registry';
+import { useDebouncedValue } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import {
   DEBOUNCE_MAX_WAIT,

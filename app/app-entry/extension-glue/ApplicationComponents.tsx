@@ -1,5 +1,6 @@
-import { useExtensionRegistryContext } from 'extension-registry';
 import React from 'react';
+
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 
 export function ApplicationComponents() {
   const extensionRegistry = useExtensionRegistryContext();

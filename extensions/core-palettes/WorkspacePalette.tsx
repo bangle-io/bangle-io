@@ -1,8 +1,13 @@
-import { keyDisplayValue } from 'config';
-import { ExtensionPaletteType } from 'extension-registry';
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
-import { AlbumIcon, CloseIcon, UniversalPalette } from 'ui-components';
-import { useWorkspaces } from 'workspaces';
+
+import { keyDisplayValue } from '@bangle.io/config';
+import { ExtensionPaletteType } from '@bangle.io/extension-registry';
+import {
+  AlbumIcon,
+  CloseIcon,
+  UniversalPalette,
+} from '@bangle.io/ui-components';
+import { useWorkspaces } from '@bangle.io/workspaces';
 
 import { extensionName } from './config';
 import { useRecencyWatcher } from './hooks';

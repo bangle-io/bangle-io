@@ -1,9 +1,14 @@
-import { useActionContext } from 'action-context';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ButtonIcon, ChevronDownIcon, NewNoteIcon } from 'ui-components';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
+
+import { useActionContext } from '@bangle.io/action-context';
+import {
+  ButtonIcon,
+  ChevronDownIcon,
+  NewNoteIcon,
+} from '@bangle.io/ui-components';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 32;
 export function EmptyEditorPage() {

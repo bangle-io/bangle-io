@@ -1,14 +1,15 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import { sleep } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { sleep } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
 import { SearchResultItem } from '../constants';
 import { useSearchNotesState } from '../hooks';
 
-jest.mock('contextual-ui-components', () => {
-  const actual = jest.requireActual('contextual-ui-components');
+jest.mock('@bangle.io/contextual-ui-components', () => {
+  const actual = jest.requireActual('@bangle.io/contextual-ui-components');
 
   return {
     ...actual,
@@ -18,7 +19,7 @@ jest.mock('contextual-ui-components', () => {
   };
 });
 
-jest.mock('workspace-context', () => {
+jest.mock('@bangle.io/workspace-context', () => {
   return {
     useWorkspaceContext: jest.fn(),
   };

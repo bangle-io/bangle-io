@@ -1,17 +1,22 @@
-import { byLengthAsc, useFzfSearch } from 'fzf-search';
+import React, { useEffect, useMemo } from 'react';
+import reactDOM from 'react-dom';
+
+import { useEditorViewContext } from '@bangle.dev/react';
+
+import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
-} from 'inline-palette';
-import React, { useEffect, useMemo } from 'react';
-import reactDOM from 'react-dom';
-import { InlinePaletteRow, UniversalPalette } from 'ui-components';
-import { conditionalSuffix, insertAt, removeMdExtension } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
-
-import { useEditorViewContext } from '@bangle.dev/react';
+} from '@bangle.io/inline-palette';
+import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
+import {
+  conditionalSuffix,
+  insertAt,
+  removeMdExtension,
+} from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
 
 import { backLinkNodeName, palettePluginKey } from '../config';
 import { getBacklinkPath, wsPathFromQuery } from '../utils';

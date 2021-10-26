@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/bangle-io",
+  "name": "bangle-io",
   "version": "0.1.16",
   "homepage": "https://bangle.io",
   "workspaces": [
@@ -71,6 +71,7 @@
     "@babel/preset-react": "^7.13.13",
     "@babel/preset-typescript": "^7.14.5",
     "@bangle.dev/jest-utils": "0.27.6",
+    "@bangle.io/env-vars": "workspace:*",
     "@sentry/react": "^6.7.1",
     "@sentry/tracing": "^6.7.1",
     "@sentry/webpack-plugin": "^1.15.1",
@@ -93,7 +94,6 @@
     "css-loader": "^5.2.6",
     "date-fns": "^2.22.1",
     "ejs": "^3.1.6",
-    "env-vars": "workspace:*",
     "eslint": "^7.28.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-import-resolver-node": "^0.3.4",
@@ -121,7 +121,6 @@
     "postcss-loader": "^6.1.0",
     "postcss-nested": "^5.0.5",
     "prettier": "^2.3.1",
-    "prettier-plugin-tailwind-css": "^1.5.0",
     "puppeteer": "^10.0.0",
     "react": "^17.0.2",
     "serve": "^12.0.0",
@@ -144,10 +143,7 @@
     "singleQuote": true,
     "trailingComma": "all",
     "quoteProps": "consistent",
-    "arrowParens": "always",
-    "plugins": [
-      "prettier-plugin-tailwind-css"
-    ]
+    "arrowParens": "always"
   },
   "packageManager": "yarn@3.0.2",
   "resolutions": {

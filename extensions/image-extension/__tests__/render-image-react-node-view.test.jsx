@@ -1,21 +1,22 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
-import { sleep } from 'utils/utility';
-import { useWorkspaceContext } from 'workspace-context';
-import { FileOps } from 'workspaces';
+
+import { sleep } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { FileOps } from '@bangle.io/workspaces';
 
 import { ImageComponent } from '../render-image-react-node-view';
 
-jest.mock('workspace-context/index', () => {
-  const other = jest.requireActual('workspace-context/index');
+jest.mock('@bangle.io/workspace-context', () => {
+  const other = jest.requireActual('@bangle.io/workspace-context');
 
   return {
     ...other,
     useWorkspaceContext: jest.fn(),
   };
 });
-jest.mock('workspaces/index', () => {
-  const workspaceThings = jest.requireActual('workspaces/index');
+jest.mock('@bangle.io/workspaces', () => {
+  const workspaceThings = jest.requireActual('@bangle.io/workspaces');
   return {
     ...workspaceThings,
     FileOps: {

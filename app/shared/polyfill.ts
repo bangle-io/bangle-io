@@ -1,4 +1,4 @@
-import { isWorkerGlobalScope } from 'naukar-worker';
+import { isWorkerGlobalScope } from '@bangle.io/naukar-worker';
 
 const polyfills: Promise<any>[] = [];
 

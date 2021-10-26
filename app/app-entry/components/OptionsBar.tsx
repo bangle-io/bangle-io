@@ -1,18 +1,19 @@
 import './OptionsBar.css';
 
-import { useActionContext } from 'action-context';
-import { keybindings, keyDisplayValue } from 'config';
-import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useCallback } from 'react';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { keybindings, keyDisplayValue } from '@bangle.io/config';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
   ButtonIcon,
   ChevronDoubleRightIcon,
   MoreAltIcon,
   SecondaryEditorIcon,
-} from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { cx, useKeybindings, useLocalStorage } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
+} from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { cx, useKeybindings, useLocalStorage } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 const localStoragePrefix = '0.3438144247845969';
 

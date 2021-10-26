@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { useDestroyRef } from 'utils';
-import { getWsName } from 'ws-path';
+
+import { useDestroyRef } from '@bangle.io/utils';
+import { getWsName } from '@bangle.io/ws-path';
 
 import { HELP_FS_WORKSPACE_NAME, WorkspaceInfo, WorkspaceType } from './types';
 import {

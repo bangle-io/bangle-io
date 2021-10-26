@@ -1,7 +1,8 @@
-import { useActionContext } from 'action-context';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ButtonIcon, Sidebar, SpinnerIcon } from 'ui-components';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { useHighlightEditors, useSearchNotesState } from '../hooks';
 import { SearchInput } from './SearchInput';

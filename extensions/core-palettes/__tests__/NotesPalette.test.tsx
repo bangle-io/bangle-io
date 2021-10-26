@@ -1,10 +1,11 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { useSearchWsPaths } from '../NotesPalette';
 
-jest.mock('workspace-context', () => {
-  const workspaceThings = jest.requireActual('workspace-context');
+jest.mock('@bangle.io/workspace-context', () => {
+  const workspaceThings = jest.requireActual('@bangle.io/workspace-context');
   return {
     ...workspaceThings,
     useWorkspaceContext: jest.fn(),

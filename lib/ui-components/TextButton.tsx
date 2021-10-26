@@ -1,5 +1,6 @@
 import React from 'react';
-import { cx } from 'utils/utility';
+
+import { cx } from '@bangle.io/utils';
 
 export function TextButton({
   className,

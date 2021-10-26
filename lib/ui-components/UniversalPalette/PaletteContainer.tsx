@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useRef } from 'react';
-import { cx, useWatchClickOutside } from 'utils';
+
+import { cx, useWatchClickOutside } from '@bangle.io/utils';
 
 export function PaletteContainer({
   onClickOutside,

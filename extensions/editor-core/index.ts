@@ -1,13 +1,13 @@
-import { Extension } from 'extension-registry';
-
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
+
+import { Extension } from '@bangle.io/extension-registry';
 
 import { EditorCore } from './EditorCore';
 import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
 
-const extensionName = 'editor-core';
+const extensionName = '@bangle.io/editor-core';
 
 const extension = Extension.create({
   name: extensionName,

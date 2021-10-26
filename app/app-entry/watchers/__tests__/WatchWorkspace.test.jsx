@@ -1,23 +1,24 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-import { useBroadcastChannel } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { OpenedWsPaths } from 'ws-path';
+
+import { useBroadcastChannel } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WatchWorkspace } from '../WatchWorkspace';
 
 const ourWsName = 'test-ws1';
 const ourFileWsPath = ourWsName + ':hi.md';
 
-jest.mock('utils/index', () => {
-  const actual = jest.requireActual('utils/index');
+jest.mock('@bangle.io/utils', () => {
+  const actual = jest.requireActual('@bangle.io/utils');
   return {
     ...actual,
     useBroadcastChannel: jest.fn(),
   };
 });
-jest.mock('workspace-context/index', () => {
-  const actual = jest.requireActual('workspace-context/index');
+jest.mock('@bangle.io/workspace-context', () => {
+  const actual = jest.requireActual('@bangle.io/workspace-context');
   return {
     ...actual,
     useWorkspaceContext: jest.fn(),

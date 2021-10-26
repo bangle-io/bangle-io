@@ -1,7 +1,8 @@
-import { TAB_ID } from 'config';
 import { useEffect, useRef } from 'react';
-import { useBroadcastChannel, weakCache } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { TAB_ID } from '@bangle.io/config';
+import { useBroadcastChannel, weakCache } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 const CHANNEL_NAME = 'watch_workspace';
 const FILE_TREE_CHANGED = 'FILE_TREE_CHANGED';

@@ -1,10 +1,10 @@
-import { conditionalSuffix, removeMdExtension } from 'utils';
+import { conditionalSuffix, removeMdExtension } from '@bangle.io/utils';
 import {
   filePathToWsPath,
   resolvePath,
   sanitizeFilePath,
   validateWsPath,
-} from 'ws-path';
+} from '@bangle.io/ws-path';
 
 export function wsPathFromQuery(query, wsName) {
   let filePath = query.split(']]').join('');

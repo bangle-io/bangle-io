@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { cx, isTouchDevice } from 'utils';
+
+import { cx, isTouchDevice } from '@bangle.io/utils';
 
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;

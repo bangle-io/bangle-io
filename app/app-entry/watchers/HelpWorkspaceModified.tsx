@@ -1,14 +1,15 @@
-import { useActionContext } from 'action-context';
 import React, { useContext, useEffect, useState } from 'react';
-import { TextButton } from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { TextButton } from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
   FileOps,
   getWorkspaceInfo,
   HELP_FS_WORKSPACE_NAME,
   HELP_FS_WORKSPACE_TYPE,
-} from 'workspaces';
-import { isValidNoteWsPath, resolvePath, toFSPath } from 'ws-path';
+} from '@bangle.io/workspaces';
+import { isValidNoteWsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
 
 export function HelpWorkspaceMonitor({ wsPath }) {
   const { dispatch } = useUIManagerContext();

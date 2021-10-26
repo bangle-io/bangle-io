@@ -62,7 +62,8 @@ module.exports = {
         groups: [
           ['^\\u0000'],
           ['^@?(?!bangle)\\w', '^'],
-          ['^@bangle?\\w'],
+          ['^@bangle\\.dev?\\w'],
+          ['^@bangle\\.io?\\w'],
           ['^\\.'],
         ],
       },

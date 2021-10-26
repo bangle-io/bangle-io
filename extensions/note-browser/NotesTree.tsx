@@ -1,6 +1,7 @@
-import { useActionContext } from 'action-context';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
+
+import { useActionContext } from '@bangle.io/action-context';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -9,11 +10,14 @@ import {
   DocumentAddIcon,
   NullIcon,
   Sidebar,
-} from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { removeMdExtension, useLocalStorage } from 'utils';
-import { useWorkspaceContext, WorkspaceContextType } from 'workspace-context';
-import { filePathToWsPath, resolvePath } from 'ws-path';
+} from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { removeMdExtension, useLocalStorage } from '@bangle.io/utils';
+import {
+  useWorkspaceContext,
+  WorkspaceContextType,
+} from '@bangle.io/workspace-context';
+import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 
@@ -64,7 +68,7 @@ export function NotesTree() {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <span
-          className="b-text-color-lighter text-sm font-extrabold cursor-pointer"
+          className="text-sm font-extrabold cursor-pointer b-text-color-lighter"
           onClick={() => {
             dispatchAction({
               name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',

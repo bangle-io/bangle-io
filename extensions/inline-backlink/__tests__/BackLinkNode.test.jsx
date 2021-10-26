@@ -1,17 +1,18 @@
 import { act, fireEvent, render } from '@testing-library/react';
-import { Extension, ExtensionRegistry } from 'extension-registry';
 import React from 'react';
-import { sleep } from 'utils/utility';
-import { useWorkspaceContext } from 'workspace-context';
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
+
+import { Extension, ExtensionRegistry } from '@bangle.io/extension-registry';
+import { sleep } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import inlineBackLinkExtension from '..';
 import { BackLinkNode } from '../editor/BackLinkNode';
 
-jest.mock('workspace-context/index', () => {
+jest.mock('@bangle.io/workspace-context', () => {
   return {
-    ...jest.requireActual('workspace-context/index'),
+    ...jest.requireActual('@bangle.io/workspace-context'),
     useWorkspaceContext: jest.fn(),
   };
 });

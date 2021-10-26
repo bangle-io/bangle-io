@@ -1,16 +1,17 @@
-import { NoteLink } from 'contextual-ui-components';
-import { useEditorManagerContext } from 'editor-manager-context';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { NodeSelection, Selection } from '@bangle.dev/pm';
+
+import { NoteLink } from '@bangle.io/contextual-ui-components';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import {
   ButtonIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   Sidebar,
-} from 'ui-components';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
-
-import { NodeSelection, Selection } from '@bangle.dev/pm';
+} from '@bangle.io/ui-components';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
 
 import { SearchMatch, SearchResultItem } from '../constants';
 import { HighlightText } from './HighlightText';

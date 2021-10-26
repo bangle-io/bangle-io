@@ -1,20 +1,21 @@
 import './ActivityBar.css';
 
-import { useActionContext } from 'action-context';
-import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
   ButtonIcon,
   FileDocumentIcon,
   GiftIcon,
   MenuIcon,
   SingleCharIcon,
-} from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { cx } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
+} from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { cx } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
 
 ActivityBar.propTypes = {};
 
@@ -116,7 +117,7 @@ export function ActivityBar() {
     });
 
   return (
-    <div id="activity-bar-area" className="widescreen flex">
+    <div id="activity-bar-area" className="flex widescreen">
       <div className="flex flex-col flex-grow">
         <CurrentWorkspaceButton
           onClick={() => {
@@ -142,7 +143,7 @@ export function ActivityBar() {
           style={{}}
         >
           <GiftIcon
-            className="h-7 w-7 text-gray-100"
+            className="text-gray-100 h-7 w-7"
             showDot={changelogHasUpdates}
           />
         </ButtonIcon>
@@ -162,7 +163,7 @@ function ActivityBarSmallscreen({
   return (
     <div
       id="activity-bar-area"
-      className="align-center flex flex-row text-gray-100"
+      className="flex flex-row text-gray-100 align-center"
     >
       <div className="flex flex-col justify-center mr-2">
         <ButtonIcon

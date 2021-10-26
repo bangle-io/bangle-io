@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { cx } from 'utils';
+
+import { cx } from '@bangle.io/utils';
 
 ButtonIcon.propTypes = {
   className: PropTypes.string,

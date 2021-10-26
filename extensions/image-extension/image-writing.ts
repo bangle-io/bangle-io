@@ -1,4 +1,4 @@
-import { filePathToWsPath, resolvePath } from 'ws-path';
+import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { IMAGE_SAVE_DIR } from './config';
 import { Dimension, setImageMetadataInWsPath } from './image-file-helpers';

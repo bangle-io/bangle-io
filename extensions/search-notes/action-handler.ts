@@ -1,6 +1,7 @@
-import { RegisterActionHandlerType } from 'extension-registry';
 import { useEffect } from 'react';
-import { useUIManagerContext } from 'ui-context';
+
+import { RegisterActionHandlerType } from '@bangle.io/extension-registry';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import {
   EXECUTE_SEARCH_ACTION,

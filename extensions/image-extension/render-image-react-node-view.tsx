@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useDestroyRef } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { FileOps } from 'workspaces';
-import { isValidFileWsPath, parseLocalFilePath } from 'ws-path';
+
+import { useDestroyRef } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { FileOps } from '@bangle.io/workspaces';
+import { isValidFileWsPath, parseLocalFilePath } from '@bangle.io/ws-path';
 
 import {
   calcImageDimensions,

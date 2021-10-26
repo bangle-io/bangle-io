@@ -1,6 +1,7 @@
-import { useActionContext } from 'action-context';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+
+import { useActionContext } from '@bangle.io/action-context';
 
 import { EditorWrapperUI } from '../components/EditorWrapperUI';
 

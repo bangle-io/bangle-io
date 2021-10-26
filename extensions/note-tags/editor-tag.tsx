@@ -1,11 +1,3 @@
-import { useActionContext } from 'action-context';
-import { RenderReactNodeView } from 'extension-registry';
-import {
-  inlinePalette,
-  queryInlinePaletteActive,
-  queryInlinePaletteText,
-  replaceSuggestionMarkWith,
-} from 'inline-palette';
 import React, { useCallback } from 'react';
 
 import {
@@ -16,6 +8,15 @@ import {
 } from '@bangle.dev/core';
 import { inlineNodeParser } from '@bangle.dev/markdown';
 import { keymap } from '@bangle.dev/pm';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { RenderReactNodeView } from '@bangle.io/extension-registry';
+import {
+  inlinePalette,
+  queryInlinePaletteActive,
+  queryInlinePaletteText,
+  replaceSuggestionMarkWith,
+} from '@bangle.io/inline-palette';
 
 import {
   BANNED_CHARS,

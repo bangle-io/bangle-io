@@ -1,6 +1,6 @@
-import { Extension } from 'extension-registry';
-
 import { Selection } from '@bangle.dev/pm';
+
+import { Extension } from '@bangle.io/extension-registry';
 
 import { extensionName } from './config';
 import { PreserveScroll } from './editor-scroll-extension';

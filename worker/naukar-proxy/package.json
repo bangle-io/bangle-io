@@ -19,10 +19,10 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
   },
   "devDependencies": {
-    "naukar-worker": "workspace:*"
+    "@bangle.io/naukar-worker": "workspace:*"
   },
   "publishConfig": {}
 }

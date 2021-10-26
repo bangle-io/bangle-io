@@ -22,8 +22,8 @@
     "@bangle.dev/core": "0.27.6",
     "@bangle.dev/pm": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
-    "extension-registry": "workspace:*",
-    "utils": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/utils": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

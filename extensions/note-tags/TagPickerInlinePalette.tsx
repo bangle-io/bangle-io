@@ -1,14 +1,15 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import ReactDOM from 'react-dom';
+
+import { Command } from '@bangle.dev/pm';
+
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
-} from 'inline-palette';
-import React, { useEffect, useMemo, useState } from 'react';
-import ReactDOM from 'react-dom';
-import { InlinePaletteRow, UniversalPalette } from 'ui-components';
-import { useWorkspaceContext } from 'workspace-context';
-
-import { Command } from '@bangle.dev/pm';
+} from '@bangle.io/inline-palette';
+import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { palettePluginKey, tagNodeName } from './config';
 import { listAllTags, useSearchAllTags } from './search';

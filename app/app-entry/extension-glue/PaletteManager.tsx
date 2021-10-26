@@ -1,13 +1,14 @@
-import { useActionContext } from 'action-context';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { useActionContext } from '@bangle.io/action-context';
 import type {
   PaletteManagerImperativeHandle,
   PaletteManagerReactComponentProps,
-} from 'extension-registry';
-import { useExtensionRegistryContext } from 'extension-registry';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { UniversalPalette } from 'ui-components';
-import { PaletteOnExecuteItem } from 'ui-components/UniversalPalette/hooks';
-import { useUIManagerContext } from 'ui-context';
+} from '@bangle.io/extension-registry';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { UniversalPalette } from '@bangle.io/ui-components';
+import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 
 export function PaletteManager() {
   const {

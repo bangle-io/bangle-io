@@ -1,7 +1,8 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import { UIManager, useUIManagerContext } from 'ui-context';
-import { sleep } from 'utils/utility';
+
+import { UIManager, useUIManagerContext } from '@bangle.io/ui-context';
+import { sleep } from '@bangle.io/utils';
 
 import { NotificationArea } from '../NotificationArea';
 

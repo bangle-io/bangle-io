@@ -1,7 +1,12 @@
-import { isFirefox } from 'config';
-import { Extension } from 'extension-registry';
 import React from 'react';
-import { AlbumIcon, FileDocumentIcon, TerminalIcon } from 'ui-components';
+
+import { isFirefox } from '@bangle.io/config';
+import { Extension } from '@bangle.io/extension-registry';
+import {
+  AlbumIcon,
+  FileDocumentIcon,
+  TerminalIcon,
+} from '@bangle.io/ui-components';
 
 import { ActionHandler } from './ActionHandler';
 import { actionPalette } from './ActionPalette';

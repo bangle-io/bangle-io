@@ -1,6 +1,6 @@
 // based on node's stat
 
-import { BaseError } from 'base-error';
+import { BaseError } from '@bangle.io/base-error';
 
 import { VALIDATION_ERROR } from './error-codes';
 

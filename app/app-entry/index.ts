@@ -1,8 +1,9 @@
 /// <reference path="./missing-types.d.ts" />
 
-import { APP_ENV, RELEASE_ID } from 'config';
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import { APP_ENV, RELEASE_ID } from '@bangle.io/config';
 
 import { Entry } from './entry';
 
