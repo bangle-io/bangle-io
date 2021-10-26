@@ -2,7 +2,7 @@ archive
 .cache
 node_modules
 .yarn
-.pnp.js
+.pnp.cjs
 coverage
 build
 dist

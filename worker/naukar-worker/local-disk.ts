@@ -1,5 +1,6 @@
-import { FileOps } from 'workspaces';
 import { DebouncedDisk } from '@bangle.dev/disk';
+
+import { FileOps } from '@bangle.io/workspaces';
 
 export function localDiskSetup(extensionRegistry, appState) {
   const getItem = async (wsPath) => {

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import {
   bulletList,
   listItem,
@@ -6,8 +8,9 @@ import {
 } from '@bangle.dev/base-components';
 import { setBlockType } from '@bangle.dev/pm';
 import { rafCommandExec } from '@bangle.dev/utils';
-import { replaceSuggestionMarkWith } from 'inline-palette';
-import { useMemo } from 'react';
+
+import { replaceSuggestionMarkWith } from '@bangle.io/inline-palette';
+
 import {
   chainedInsertParagraphAbove,
   chainedInsertParagraphBelow,

@@ -1,7 +1,9 @@
 import { render } from '@testing-library/react';
-import { ActionHandler } from 'extension-registry';
 import React from 'react';
-import { useUIManagerContext } from 'ui-context';
+
+import { ActionHandler } from '@bangle.io/extension-registry';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+
 import { SearchNotesActionHandler } from '../action-handler';
 import {
   EXECUTE_SEARCH_ACTION,
@@ -10,7 +12,7 @@ import {
 } from '../constants';
 import { useSearchNotes, useSearchNotesState } from '../hooks';
 
-jest.mock('ui-context', () => {
+jest.mock('@bangle.io/ui-context', () => {
   return {
     useUIManagerContext: jest.fn(),
   };

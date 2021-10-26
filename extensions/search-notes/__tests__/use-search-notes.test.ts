@@ -1,18 +1,20 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { useSearchNotes } from '../hooks';
-import { createPMNode } from 'test-utils/create-pm-node';
-import { sleep } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { useExtensionStateContext } from 'extension-registry';
 
-jest.mock('workspace-context', () => {
+import { useExtensionStateContext } from '@bangle.io/extension-registry';
+import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
+import { sleep } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+
+import { useSearchNotes } from '../hooks';
+
+jest.mock('@bangle.io/workspace-context', () => {
   return {
     useWorkspaceContext: jest.fn(),
   };
 });
 
-jest.mock('extension-registry', () => {
-  const actual = jest.requireActual('extension-registry');
+jest.mock('@bangle.io/extension-registry', () => {
+  const actual = jest.requireActual('@bangle.io/extension-registry');
   return { ...actual, useExtensionStateContext: jest.fn() };
 });
 

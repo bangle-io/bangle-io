@@ -1,6 +1,7 @@
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+
 import type { BangleEditor } from '@bangle.dev/core';
 import { getIdleCallback } from '@bangle.dev/utils';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
@@ -39,7 +40,7 @@ export function EditorManager({ children }) {
    * 2. That then becomes a wsPath derived from history.location
    * 3. A <Editor /> gets mounted with new wsPath
    * 4. At this point the editor is loaded with empty doc.
-   * 5. Collab-extension's collab-client sets up communication with worker thread.
+   * 5. @bangle.io/collab-extension's collab-client sets up communication with worker thread.
    * 6. Worker thread has a collab-manager instance running.
    * 7. When collab-client calls getDocument, it is passed on to worker thread's manager
    * 8. manager calls localDisk.getItem to get the document from indexdb.

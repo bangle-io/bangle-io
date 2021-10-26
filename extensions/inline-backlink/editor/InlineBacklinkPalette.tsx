@@ -1,19 +1,25 @@
+import React, { useEffect, useMemo } from 'react';
+import reactDOM from 'react-dom';
+
 import { useEditorViewContext } from '@bangle.dev/react';
+
+import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
-} from 'inline-palette';
-import React, { useEffect, useMemo } from 'react';
-import reactDOM from 'react-dom';
-import { InlinePaletteRow, UniversalPalette } from 'ui-components';
-import { conditionalSuffix, insertAt, removeMdExtension } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
+} from '@bangle.io/inline-palette';
+import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
+import {
+  conditionalSuffix,
+  insertAt,
+  removeMdExtension,
+} from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
+
 import { backLinkNodeName, palettePluginKey } from '../config';
 import { getBacklinkPath, wsPathFromQuery } from '../utils';
-
-import { useFzfSearch, byLengthAsc } from 'fzf-search';
 
 const FZF_SEARCH_LIMIT = 12;
 
@@ -36,7 +42,7 @@ export function InlineBacklinkPalette() {
     useInlinePaletteQuery(palettePluginKey);
 
   return reactDOM.createPortal(
-    <div className="shadow-2xl inline-palette-wrapper">
+    <div className="inline-palette-wrapper shadow-2xl">
       <div className="inline-palette-items-wrapper">
         {/* TODO I am unable to hide inner when palette is invisible */}
         {isVisible && (

@@ -25,8 +25,8 @@ const getPackageJSON = (name) =>
       module: 'index.js',
       scripts: {},
       dependencies: {
-        'extension-registry': 'workspace:*',
-        'utils': 'workspace:*',
+        '@bangle.io/extension-registry': 'workspace:*',
+        '@bangle.io/utils': 'workspace:*',
       },
       publishConfig: {
         access: 'restricted',
@@ -36,7 +36,7 @@ const getPackageJSON = (name) =>
     2,
   );
 const getIndexJS = (name) => `
-import { Extension } from 'extension-registry';
+import { Extension } from '@bangle.io/extension-registry';
 
 const extensionName = '${name}';
 

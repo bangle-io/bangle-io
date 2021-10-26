@@ -1,8 +1,9 @@
-import { keyDisplayValue } from 'config';
-import { Extension } from 'extension-registry';
 import React from 'react';
-import { SearchIcon } from 'ui-components';
-import { searchPlugin } from './editor-plugins';
+
+import { keyDisplayValue } from '@bangle.io/config';
+import { Extension } from '@bangle.io/extension-registry';
+import { SearchIcon } from '@bangle.io/ui-components';
+
 import { SearchNotesActionHandler } from './action-handler';
 import { SearchNotesSidebar } from './components/SearchNotesSidebar';
 import {
@@ -12,6 +13,8 @@ import {
   SHOW_SEARCH_SIDEBAR_ACTION,
   SIDEBAR_NAME,
 } from './constants';
+import { searchPlugin } from './editor-plugins';
+
 const key = 'Mod-F';
 
 const extension = Extension.create<SearchNotesExtensionState>({

@@ -1,6 +1,7 @@
 // based on node's stat
 
-import { BaseError } from 'base-error';
+import { BaseError } from '@bangle.io/base-error';
+
 import { VALIDATION_ERROR } from './error-codes';
 
 // ctimeMs is not supported by native browser fs, so only focusing on mTime

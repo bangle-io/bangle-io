@@ -7,6 +7,7 @@ const {
   getPrimaryEditorHandler,
   sleep,
 } = require('../helpers');
+
 jest.setTimeout(105 * 1000);
 
 beforeEach(async () => {

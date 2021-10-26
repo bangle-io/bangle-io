@@ -11,7 +11,8 @@ const {
   newPage,
 } = require('../helpers');
 
-const { resolvePath } = require('ws-path');
+const { resolvePath } = require('@bangle.io/ws-path');
+
 jest.setTimeout(105 * 1000);
 let page, destroyPage;
 
@@ -39,7 +40,10 @@ describe('clone workspace action', () => {
       [n2, n1].sort(),
     );
 
-    await runAction(page, '@action/core-actions/CLONE_WORKSPACE_ACTION');
+    await runAction(
+      page,
+      'action::@bangle.io/core-actions:CLONE_WORKSPACE_ACTION',
+    );
     const handle = await page.waitForSelector('.universal-palette-container', {
       timeout: SELECTOR_TIMEOUT,
     });

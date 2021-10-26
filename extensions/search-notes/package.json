@@ -1,5 +1,5 @@
 {
-  "name": "search-notes",
+  "name": "@bangle.io/search-notes",
   "version": "0.0.0",
   "authors": [
     {
@@ -23,26 +23,26 @@
     "@bangle.dev/pm": "0.27.6",
     "@bangle.dev/search": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
-    "action-context": "workspace:*",
-    "config": "workspace:*",
-    "contextual-ui-components": "workspace:*",
-    "editor-manager-context": "workspace:*",
-    "extension-registry": "workspace:*",
-    "react": "^17.0.2",
-    "ui-components": "workspace:*",
-    "ui-context": "workspace:*",
-    "utils": "workspace:*",
-    "workspace-context": "workspace:*",
-    "ws-path": "workspace:*"
+    "@bangle.io/action-context": "workspace:*",
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/contextual-ui-components": "workspace:*",
+    "@bangle.io/editor-manager-context": "workspace:*",
+    "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/ui-components": "workspace:*",
+    "@bangle.io/ui-context": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
+    "@bangle.io/workspace-context": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*",
+    "react": "^17.0.2"
   },
   "devDependencies": {
+    "@bangle.io/note-tags": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react": "^12.0.0",
     "@testing-library/react-hooks": "^7.0.0",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
-    "note-tags": "workspace:*",
-    "react-dom": "^17.0.2",
-    "test-utils": "workspace:*"
+    "react-dom": "^17.0.2"
   },
   "publishConfig": {
     "access": "restricted"

@@ -1,5 +1,5 @@
 {
-  "name": "ws-path",
+  "name": "@bangle.io/ws-path",
   "version": "0.0.0",
   "authors": [
     {
@@ -19,8 +19,8 @@
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "config": "workspace:*",
-    "utils": "workspace:*"
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/history": "^4.7.8",

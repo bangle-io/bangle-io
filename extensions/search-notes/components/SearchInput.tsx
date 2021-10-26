@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Input } from 'ui-components';
+
+import { Input } from '@bangle.io/ui-components';
 
 export const SearchInput = ({
   searchQuery,

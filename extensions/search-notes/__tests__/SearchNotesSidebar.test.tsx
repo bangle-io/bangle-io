@@ -1,13 +1,15 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import { sleep } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { sleep } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
 import { SearchResultItem } from '../constants';
 import { useSearchNotesState } from '../hooks';
 
-jest.mock('contextual-ui-components', () => {
-  const actual = jest.requireActual('contextual-ui-components');
+jest.mock('@bangle.io/contextual-ui-components', () => {
+  const actual = jest.requireActual('@bangle.io/contextual-ui-components');
 
   return {
     ...actual,
@@ -17,7 +19,7 @@ jest.mock('contextual-ui-components', () => {
   };
 });
 
-jest.mock('workspace-context', () => {
+jest.mock('@bangle.io/workspace-context', () => {
   return {
     useWorkspaceContext: jest.fn(),
   };
@@ -57,10 +59,10 @@ test('renders correctly is no workspace is opened', async () => {
   expect(renderResult.container).toMatchInlineSnapshot(`
     <div>
       <div
-        class="h-full flex flex-col items-center justify-center"
+        class="flex flex-col items-center justify-center h-full"
       >
         <span
-          class="text-sm font-extrabold b-text-color-lighter cursor-pointer"
+          class="b-text-color-lighter text-sm font-extrabold cursor-pointer"
         >
           Please open a workspace to search
         </span>

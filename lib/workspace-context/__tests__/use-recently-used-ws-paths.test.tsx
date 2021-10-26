@@ -1,11 +1,12 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
-import { RecencyRecords, useRecencyMonitor } from 'utils';
-import { OpenedWsPaths } from 'ws-path';
+import { RecencyRecords, useRecencyMonitor } from '@bangle.io/utils';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
+
 import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
 
-jest.mock('utils', () => {
-  const actual = jest.requireActual('utils');
+jest.mock('@bangle.io/utils', () => {
+  const actual = jest.requireActual('@bangle.io/utils');
   return {
     ...actual,
     useRecencyMonitor: jest.fn(),

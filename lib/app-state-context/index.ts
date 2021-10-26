@@ -1,4 +1,5 @@
 import React from 'react';
+
 export interface AppState {
   hasPendingWrites?: boolean;
   pageLifecycleState?: string;

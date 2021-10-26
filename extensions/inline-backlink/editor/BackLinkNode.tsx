@@ -1,14 +1,16 @@
-import { RenderReactNodeView } from 'extension-registry';
 import React, { useState } from 'react';
-import { conditionalSuffix } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { RenderReactNodeView } from '@bangle.io/extension-registry';
+import { conditionalSuffix } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
   filePathToWsPath,
   parseLocalFilePath,
   PathValidationError,
   resolvePath,
   validateNoteWsPath,
-} from 'ws-path';
+} from '@bangle.io/ws-path';
+
 import { backLinkNodeName, newNoteLocation } from '../config';
 
 export function BackLinkNode({ nodeAttrs, extensionRegistry }) {

@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { TextButton } from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { isValidNoteWsPath, resolvePath, toFSPath } from 'ws-path';
-import { useActionContext } from 'action-context';
+import React, { useContext, useEffect, useState } from 'react';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { TextButton } from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
   FileOps,
   getWorkspaceInfo,
   HELP_FS_WORKSPACE_NAME,
   HELP_FS_WORKSPACE_TYPE,
-} from 'workspaces';
+} from '@bangle.io/workspaces';
+import { isValidNoteWsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
 
 export function HelpWorkspaceMonitor({ wsPath }) {
   const { dispatch } = useUIManagerContext();
@@ -71,7 +72,7 @@ export function HelpWorkspaceMonitor({ wsPath }) {
             className="ml-3"
             onClick={() => {
               dispatchAction({
-                name: '@action/core-actions/CLONE_WORKSPACE_ACTION',
+                name: 'action::@bangle.io/core-actions:CLONE_WORKSPACE_ACTION',
                 value: {
                   resetWsName: HELP_FS_WORKSPACE_NAME,
                 },

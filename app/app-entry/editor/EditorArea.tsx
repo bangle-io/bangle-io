@@ -1,11 +1,13 @@
-import { FRIENDLY_ID } from 'config';
-import { useEditorManagerContext } from 'editor-manager-context';
-import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useEffect, useState } from 'react';
-import { CloseIcon } from 'ui-components';
-import { cx, sleep, useDestroyRef } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
+
+import { FRIENDLY_ID } from '@bangle.io/config';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { CloseIcon } from '@bangle.io/ui-components';
+import { cx, sleep, useDestroyRef } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
+
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';
 
@@ -92,7 +94,7 @@ export function EditorArea({
           </>
         )}
         {wsPath && fileExists === false && (
-          <h3 className="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl">
+          <h3 className="sm:text-3xl lg:text-3xl mb-8 text-xl font-bold leading-none">
             🕵️‍♀️‍ Note "{wsPath ? resolvePath(wsPath).fileName : ''}" was not
             found
           </h3>
@@ -104,7 +106,7 @@ export function EditorArea({
             <div className="flex flex-col">
               <a
                 href="https://bangle.io"
-                className="text-xs "
+                className=" text-xs"
                 style={{ opacity: '0.3' }}
               >
                 bangle.io

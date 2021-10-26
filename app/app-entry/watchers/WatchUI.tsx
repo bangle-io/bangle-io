@@ -1,7 +1,8 @@
-import { TAB_ID } from 'config';
 import { useEffect, useRef } from 'react';
-import { useUIManagerContext } from 'ui-context';
-import { useBroadcastChannel } from 'utils';
+
+import { TAB_ID } from '@bangle.io/config';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useBroadcastChannel } from '@bangle.io/utils';
 
 const CHANNEL_NAME = 'watch_ui';
 const UI_THEME_CHANGED = 'UI_THEME_CHANGED';

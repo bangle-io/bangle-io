@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { keybindingsHelper, rafSchedule } from './utility';
-import debounceFn from 'debounce-fn';
 import type { Options } from 'debounce-fn';
+import debounceFn from 'debounce-fn';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-export * from './use-recency-monitor';
+import { keybindingsHelper, rafSchedule } from './utility';
+
 export * from './use-local-storage';
+export * from './use-recency-monitor';
 
 export function useWindowSize() {
   const [windowSize, setWindowSize] = useState(() => ({

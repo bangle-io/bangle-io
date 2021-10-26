@@ -1,3 +1,5 @@
+import React, { useEffect } from 'react';
+
 import { NodeSelection } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 import {
@@ -6,8 +8,9 @@ import {
   MenuButton,
   MenuGroup,
 } from '@bangle.dev/react-menu';
-import React, { useEffect } from 'react';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+
 import { menuKey, wsNameViewWeakStore } from './config';
 import {
   getImageAltScaleFactor,

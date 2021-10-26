@@ -1,8 +1,9 @@
 import { act, renderHook } from '@testing-library/react-hooks';
+
 import {
   trimRecords,
-  updateTimestamps,
   updateRecords,
+  updateTimestamps,
   useRecencyMonitor,
 } from '../use-recency-monitor';
 

@@ -1,1 +1,1 @@
-export { BaseError } from 'base-error';
+export { BaseError } from '@bangle.io/base-error';

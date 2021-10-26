@@ -1,9 +1,11 @@
 /// <reference types="vite-plugin-pwa/client" />
 
-import { SERVICE_WORKER_UPDATE_INTERVAL } from 'config';
 import { useCallback, useState } from 'react';
 // eslint-disable-next-line
 import { registerSW } from 'virtual:pwa-register';
+
+import { SERVICE_WORKER_UPDATE_INTERVAL } from '@bangle.io/config';
+
 const LOG = false;
 const log = LOG ? console.log.bind(console, 'use-sw') : () => {};
 

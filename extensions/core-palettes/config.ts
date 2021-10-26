@@ -1,1 +1,1 @@
-export const extensionName = 'core-palettes';
+export const extensionName = '@bangle.io/core-palettes';

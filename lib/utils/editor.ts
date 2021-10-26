@@ -1,7 +1,7 @@
 import {
   PRIMARY_SCROLL_PARENT_ID,
   SECONDARY_SCROLL_PARENT_ID,
-} from 'constants';
+} from '@bangle.io/constants';
 
 export function getScrollParentElement(editorId: number) {
   let scrollParent: Element | undefined | null;

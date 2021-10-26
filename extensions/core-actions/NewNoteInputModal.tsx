@@ -1,16 +1,16 @@
-import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useCallback, useState } from 'react';
-import { InputPalette, UniversalPalette } from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { randomName } from 'utils';
-import { useDestroyRef } from 'utils/hooks';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { InputPalette, UniversalPalette } from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { randomName, useDestroyRef } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
   filePathToWsPath,
   isValidNoteWsPath,
   PathValidationError,
   resolvePath,
-} from 'ws-path';
+} from '@bangle.io/ws-path';
 
 export function NewNoteInputModal({ initialValue, onDismiss }) {
   const destroyedRef = useDestroyRef();

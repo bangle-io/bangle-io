@@ -1,16 +1,18 @@
-import { keyDisplayValue } from 'config';
-import { ExtensionPaletteType } from 'extension-registry';
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
+
+import { keyDisplayValue } from '@bangle.io/config';
+import { ExtensionPaletteType } from '@bangle.io/extension-registry';
+import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import {
   ButtonIcon,
   FileDocumentIcon,
   SecondaryEditorIcon,
   UniversalPalette,
-} from 'ui-components';
-import { removeMdExtension } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
-import { useFzfSearch, byLengthAsc } from 'fzf-search';
+} from '@bangle.io/ui-components';
+import { removeMdExtension } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
+
 import { extensionName } from './config';
 
 const emptyArray = [];

@@ -8,11 +8,12 @@ const CopyPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ejs = require('ejs');
 const fs = require('fs');
+
 process.env.WEBPACK = true;
 
 module.exports = (env, argv) => {
   const isProduction = env && env.production;
-  const envVars = require('env-vars')({ isProduction });
+  const envVars = require('@bangle.io/env-vars')({ isProduction });
 
   const mode = isProduction ? 'production' : 'development';
   const buildPath = path.resolve(__dirname, 'build');

@@ -1,4 +1,5 @@
 import type { Node } from '@bangle.dev/pm';
+
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
@@ -6,9 +7,9 @@ import {
   HelpFileSystem,
   IndexedDBFileSystem,
   NativeBrowserFileSystem,
-} from 'baby-fs';
-import { HELP_DOCS_VERSION } from 'config';
-import { markdownParser, markdownSerializer } from 'markdown';
+} from '@bangle.io/baby-fs';
+import { HELP_DOCS_VERSION } from '@bangle.io/config';
+import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
 import {
   filePathToWsPath,
   fromFsPath,
@@ -17,7 +18,8 @@ import {
   toFSPath,
   validateFileWsPath,
   validateNoteWsPath,
-} from 'ws-path';
+} from '@bangle.io/ws-path';
+
 import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './types';
 import { getWorkspaceInfo } from './workspaces-ops';
 

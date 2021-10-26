@@ -1,6 +1,7 @@
-import { useActionContext } from 'action-context';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
+
+import { useActionContext } from '@bangle.io/action-context';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -9,11 +10,15 @@ import {
   DocumentAddIcon,
   NullIcon,
   Sidebar,
-} from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { removeMdExtension, useLocalStorage } from 'utils';
-import { useWorkspaceContext, WorkspaceContextType } from 'workspace-context';
-import { filePathToWsPath, resolvePath } from 'ws-path';
+} from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { removeMdExtension, useLocalStorage } from '@bangle.io/utils';
+import {
+  useWorkspaceContext,
+  WorkspaceContextType,
+} from '@bangle.io/workspace-context';
+import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
+
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 
 const DEFAULT_FOLD_DEPTH = 2;
@@ -52,7 +57,7 @@ export function NotesTree() {
   const createNewFile = useCallback(
     (path) => {
       dispatchAction({
-        name: '@action/core-actions/NEW_NOTE_ACTION',
+        name: 'action::@bangle.io/core-actions:NEW_NOTE_ACTION',
         value: path,
       });
     },
@@ -61,12 +66,12 @@ export function NotesTree() {
 
   if (!wsName) {
     return (
-      <div className="h-full flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center h-full">
         <span
-          className="text-sm font-extrabold b-text-color-lighter cursor-pointer"
+          className="text-sm font-extrabold cursor-pointer b-text-color-lighter"
           onClick={() => {
             dispatchAction({
-              name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',
+              name: 'action::@bangle.io/core-palettes:TOGGLE_WORKSPACE_PALETTE',
             });
           }}
         >

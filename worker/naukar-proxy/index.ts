@@ -1,5 +1,5 @@
-import { Emitter } from 'utils';
-import type { WorkerAPI } from 'naukar-worker';
+import type { WorkerAPI } from '@bangle.io/naukar-worker';
+import { Emitter } from '@bangle.io/utils';
 
 let naukar;
 

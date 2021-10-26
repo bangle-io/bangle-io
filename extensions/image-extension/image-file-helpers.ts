@@ -1,6 +1,8 @@
-import { getDayJs } from 'utils/utility';
-import { resolvePath, updateFileName } from 'ws-path';
 import { matchAllPlus } from '@bangle.dev/utils';
+
+import { getDayJs } from '@bangle.io/utils';
+import { resolvePath, updateFileName } from '@bangle.io/ws-path';
+
 const dayFormat = 'YYYYMMDDHHmmssSSS';
 
 export interface Dimension {

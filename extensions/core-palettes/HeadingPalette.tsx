@@ -1,8 +1,11 @@
-import { Selection } from '@bangle.dev/pm';
-import { useEditorManagerContext } from 'editor-manager-context';
-import { ExtensionPaletteType } from 'extension-registry';
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
-import { NullIcon, UniversalPalette } from 'ui-components';
+
+import { Selection } from '@bangle.dev/pm';
+
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { ExtensionPaletteType } from '@bangle.io/extension-registry';
+import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
+
 import { extensionName } from './config';
 
 const identifierPrefix = '#';

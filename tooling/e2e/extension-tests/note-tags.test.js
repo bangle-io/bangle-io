@@ -10,6 +10,7 @@ const {
   clearPrimaryEditor,
   longSleep,
 } = require('../helpers');
+
 jest.setTimeout(155 * 1000);
 jest.retryTimes(2);
 
@@ -48,7 +49,7 @@ test('is able to create a tag using inline palette', async () => {
   await longSleep();
 
   expect(await getPrimaryEditorDebugString(page)).toContain(
-    `paragraph(note-tags-paletteMark("#yellow")`,
+    `paragraph(@bangle.io/note-tags-paletteMark("#yellow")`,
   );
 
   await page.keyboard.press('Enter');

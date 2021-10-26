@@ -3,7 +3,7 @@
 exports[`Hides when isVisible is false 1`] = `
 <div>
   <div
-    class="shadow-2xl inline-palette-wrapper"
+    class="inline-palette-wrapper shadow-2xl"
   >
     <div
       class="inline-palette-items-wrapper"
@@ -50,7 +50,7 @@ exports[`Hides when isVisible is false 1`] = `
 exports[`Initial render 1`] = `
 <div>
   <div
-    class="shadow-2xl inline-palette-wrapper"
+    class="inline-palette-wrapper shadow-2xl"
   >
     <div
       class="inline-palette-items-wrapper"
@@ -73,7 +73,7 @@ exports[`Initial render 1`] = `
           />
         </span>
         <span
-          class="flex-1 flex "
+          class=" flex flex-1"
         />
       </div>
       <div
@@ -94,7 +94,7 @@ exports[`Initial render 1`] = `
           </span>
         </span>
         <span
-          class="flex-1 flex "
+          class=" flex flex-1"
         />
       </div>
       <div

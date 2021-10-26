@@ -1,13 +1,14 @@
-import { useActionContext } from 'action-context';
-import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { UniversalPalette } from 'ui-components';
-import { PaletteOnExecuteItem } from 'ui-components/UniversalPalette/hooks';
-import { useUIManagerContext } from 'ui-context';
+
+import { useActionContext } from '@bangle.io/action-context';
 import type {
-  PaletteManagerReactComponentProps,
   PaletteManagerImperativeHandle,
-} from 'extension-registry';
+  PaletteManagerReactComponentProps,
+} from '@bangle.io/extension-registry';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { UniversalPalette } from '@bangle.io/ui-components';
+import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 
 export function PaletteManager() {
   const {
@@ -29,7 +30,9 @@ export function PaletteManager() {
         type: 'UI/RESET_PALETTE',
       });
       if (focusEditor) {
-        dispatchAction({ name: '@action/editor-core/focus-primary-editor' });
+        dispatchAction({
+          name: 'action::@bangle.io/editor-core:focus-primary-editor',
+        });
       }
     },
     [dispatch, dispatchAction],

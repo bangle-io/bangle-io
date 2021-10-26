@@ -1,4 +1,5 @@
-import { FileOps } from 'workspaces';
+import { FileOps } from '@bangle.io/workspaces';
+
 import { wsNameViewWeakStore } from './config';
 import { calcImageDimensions } from './image-file-helpers';
 import { createImage } from './image-writing';

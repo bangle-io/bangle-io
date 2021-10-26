@@ -1,4 +1,4 @@
-import { Extension } from 'extension-registry';
+import { Extension } from '@bangle.io/extension-registry';
 
 const extensionName = 'extension-example';
 

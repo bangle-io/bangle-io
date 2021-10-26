@@ -1,4 +1,4 @@
-import { BaseError } from 'utils';
+import { BaseError } from '@bangle.io/utils';
 
 const getLast = (arr) => arr[arr.length - 1];
 

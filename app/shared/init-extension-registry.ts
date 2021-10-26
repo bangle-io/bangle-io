@@ -1,17 +1,17 @@
-import collabExtension from 'collab-extension';
-import coreActions from 'core-actions';
-import corePalette from 'core-palettes';
-import editorCore from 'editor-core';
-import editorScrollExtension from 'editor-scroll-extension';
-import { ExtensionRegistry } from 'extension-registry';
-import imageExtension from 'image-extension';
-import inlineBacklinkPalette from 'inline-backlink';
-import inlineCommandPalette from 'inline-command-palette';
-import inlineEmoji from 'inline-emoji';
-import noteBrowser from 'note-browser';
-import searchNotes from 'search-notes';
-import noteTags from 'note-tags';
-import collapsibleHeading from 'collapsible-heading';
+import collabExtension from '@bangle.io/collab-extension';
+import collapsibleHeading from '@bangle.io/collapsible-heading';
+import coreActions from '@bangle.io/core-actions';
+import corePalette from '@bangle.io/core-palettes';
+import editorCore from '@bangle.io/editor-core';
+import editorScrollExtension from '@bangle.io/editor-scroll-extension';
+import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import imageExtension from '@bangle.io/image-extension';
+import inlineBacklinkPalette from '@bangle.io/inline-backlink';
+import inlineCommandPalette from '@bangle.io/inline-command-palette';
+import inlineEmoji from '@bangle.io/inline-emoji';
+import noteBrowser from '@bangle.io/note-browser';
+import noteTags from '@bangle.io/note-tags';
+import searchNotes from '@bangle.io/search-notes';
 
 const z = /^(1)[.)] $/;
 
@@ -35,21 +35,3 @@ export const initExtensionRegistry = () => {
     corePalette,
   ]);
 };
-// export const initExtensionRegistry = async () => {
-//   return new ExtensionRegistry(
-//     await Promise.all([
-//       import('editor-core/index').then((r) => r.default),
-//       import('inline-command-palette/index').then((r) => r.default),
-//       import('inline-backlink/index').then((r) => r.default),
-//       import('collapsible-heading/index').then((r) => r.default),
-//       import('image-extension/index').then((r) => r.default),
-//       import('inline-emoji/index').then((r) => r.default),
-//       import('collab-extension/index').then((r) => r.default),
-//       import('editor-scroll-extension').then((r) => r.default),
-//       import('core-palettes').then((r) => r.default),
-//       // NOTE: keep the core palette last
-//       // as it has note palette in it
-//       import('core-actions').then((r) => r.default),
-//     ]),
-//   );
-// };

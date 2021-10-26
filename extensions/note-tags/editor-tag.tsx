@@ -1,3 +1,5 @@
+import React, { useCallback } from 'react';
+
 import {
   BaseRawNodeSpec,
   domSerializationHelpers,
@@ -6,24 +8,26 @@ import {
 } from '@bangle.dev/core';
 import { inlineNodeParser } from '@bangle.dev/markdown';
 import { keymap } from '@bangle.dev/pm';
-import { useActionContext } from 'action-context';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { RenderReactNodeView } from '@bangle.io/extension-registry';
 import {
   inlinePalette,
   queryInlinePaletteActive,
   queryInlinePaletteText,
   replaceSuggestionMarkWith,
-} from 'inline-palette';
+} from '@bangle.io/inline-palette';
+
 import {
+  BANNED_CHARS,
   MARKDOWN_REGEX,
-  USING_INFERIOR_REGEX,
+  paletteMarkName,
   palettePluginKey,
   tagNodeName,
-  BANNED_CHARS,
-  paletteMarkName,
   TRIGGER,
+  USING_INFERIOR_REGEX,
 } from './config';
-import React, { useCallback } from 'react';
-import { RenderReactNodeView } from 'extension-registry';
+
 const MAX_MATCH = 500;
 const getScrollContainer = (view) => {
   return view.dom.parentElement;
@@ -192,7 +196,7 @@ function TagComponent({ tagValue }) {
 
   const onClick = useCallback(() => {
     dispatchAction({
-      name: '@action/search-notes/execute-search',
+      name: 'action::@bangle.io/search-notes:execute-search',
       value: `tag:${tagValue}`,
     });
   }, [tagValue, dispatchAction]);

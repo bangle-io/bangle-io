@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect } from 'react';
+
 import { Input } from '../Input';
 
 export const PaletteInput = React.forwardRef<
@@ -70,7 +71,7 @@ export const PaletteInput = React.forwardRef<
       >
         {leftNode && (
           <div className="b-left-node">
-            <span className="h-5 w-5">{leftNode}</span>
+            <span className="w-5 h-5">{leftNode}</span>
           </div>
         )}
         <Input

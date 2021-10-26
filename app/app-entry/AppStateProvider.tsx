@@ -1,10 +1,13 @@
-import { AppStateContext } from 'app-state-context';
 import * as Comlink from 'comlink';
-import { naukarWorkerProxy } from 'naukar-proxy';
-import { objectSync } from 'object-sync';
 import React, { useEffect, useMemo, useState } from 'react';
-import { initialAppState as _initialAppState } from 'shared';
+
+import { AppStateContext } from '@bangle.io/app-state-context';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import { objectSync } from '@bangle.io/object-sync';
+import { initialAppState as _initialAppState } from '@bangle.io/shared';
+
 import { moduleSupport } from './misc/module-support';
+
 const initialAppState = Object.assign({}, _initialAppState);
 
 const LOG = false;

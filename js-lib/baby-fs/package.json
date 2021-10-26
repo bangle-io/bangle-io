@@ -1,5 +1,5 @@
 {
-  "name": "baby-fs",
+  "name": "@bangle.io/baby-fs",
   "version": "0.0.0",
   "authors": [
     {
@@ -22,7 +22,7 @@
     "access": "public"
   },
   "dependencies": {
-    "base-error": "workspace:*",
+    "@bangle.io/base-error": "workspace:*",
     "idb-keyval": "^5.0.6"
   }
 }

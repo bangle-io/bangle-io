@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+
 import { useLocalStorage } from './use-local-storage';
 
 export type RecencyRecords = Array<{ key: string; timestamps: number[] }>;

@@ -1,9 +1,14 @@
-import { pickADirectory, supportsNativeBrowserFs } from 'baby-fs';
 import React, { useCallback, useState } from 'react';
-import { InputPalette, ListPalette, UniversalPalette } from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { useWorkspaceContext } from 'workspace-context';
-import { FileOps, useWorkspaces } from 'workspaces';
+
+import { pickADirectory, supportsNativeBrowserFs } from '@bangle.io/baby-fs';
+import {
+  InputPalette,
+  ListPalette,
+  UniversalPalette,
+} from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { FileOps, useWorkspaces } from '@bangle.io/workspaces';
 
 const deleteAllFiles = async (wsName) => {
   const files = await FileOps.listAllFiles(wsName);

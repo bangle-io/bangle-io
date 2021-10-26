@@ -5,7 +5,9 @@ import React, {
   useMemo,
   useReducer,
 } from 'react';
-import { checkWidescreen, useWindowSize } from 'utils';
+
+import { checkWidescreen, useWindowSize } from '@bangle.io/utils';
+
 import { applyTheme, ThemeType } from './apply-theme';
 
 const LOG = false;

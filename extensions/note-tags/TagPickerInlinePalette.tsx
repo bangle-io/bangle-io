@@ -1,15 +1,18 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import ReactDOM from 'react-dom';
+
 import { Command } from '@bangle.dev/pm';
+
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
-} from 'inline-palette';
-import React, { useEffect, useMemo, useState } from 'react';
-import { UniversalPalette, InlinePaletteRow } from 'ui-components';
-import ReactDOM from 'react-dom';
-import { useWorkspaceContext } from 'workspace-context';
+} from '@bangle.io/inline-palette';
+import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+
 import { palettePluginKey, tagNodeName } from './config';
-import { listAllTags, useSearchAllTags as useSearchAllTags } from './search';
+import { listAllTags, useSearchAllTags } from './search';
 
 export const createTagNode = (tagValue: string): Command => {
   tagValue = tagValue.trim();
@@ -71,7 +74,7 @@ export function TagPickerInlinePalette({ wsPath }) {
   );
 
   return ReactDOM.createPortal(
-    <div className="shadow-2xl inline-palette-wrapper">
+    <div className="inline-palette-wrapper shadow-2xl">
       <div className="inline-palette-items-wrapper tag-picker-inline-palette">
         {query ? (
           items.map((r, i) => {

@@ -1,8 +1,10 @@
-import { useActionContext } from 'action-context';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useUIManagerContext } from 'ui-context';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
+
 import {
   CLONE_WORKSPACE_ACTION,
   DELETE_ACTIVE_NOTE_ACTION,
@@ -198,7 +200,9 @@ export function CoreActionsHandler({ registerActionHandler }) {
     (focusEditor = true) => {
       updateInputModal({ type: undefined });
       if (focusEditor) {
-        dispatchAction({ name: '@action/editor-core/focus-primary-editor' });
+        dispatchAction({
+          name: 'action::@bangle.io/editor-core:focus-primary-editor',
+        });
       }
     },
     [dispatchAction],

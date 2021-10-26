@@ -6,6 +6,7 @@ import {
   codeBlock,
   hardBreak,
   heading,
+  history,
   horizontalRule,
   italic,
   link,
@@ -13,7 +14,6 @@ import {
   orderedList,
   paragraph,
   strike,
-  history,
   underline,
 } from '@bangle.dev/base-components';
 import { NodeSelection, Plugin, PluginKey } from '@bangle.dev/pm';
@@ -22,6 +22,7 @@ import { stopwatch } from '@bangle.dev/react-stopwatch';
 import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
+
 import { activeNode } from './active-node';
 
 export const menuKey = new PluginKey('menuKey');

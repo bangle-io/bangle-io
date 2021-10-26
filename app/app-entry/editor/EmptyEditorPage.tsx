@@ -1,9 +1,14 @@
-import { useActionContext } from 'action-context';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ButtonIcon, ChevronDownIcon, NewNoteIcon } from 'ui-components';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
+
+import { useActionContext } from '@bangle.io/action-context';
+import {
+  ButtonIcon,
+  ChevronDownIcon,
+  NewNoteIcon,
+} from '@bangle.io/ui-components';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 32;
 export function EmptyEditorPage() {
@@ -14,17 +19,17 @@ export function EmptyEditorPage() {
   );
   return (
     <>
-      <div className="px-2 py-4 mb-6 rounded-md b-bg-stronger-color">
+      <div className="b-bg-stronger-color px-2 py-4 mb-6 rounded-md">
         <div className="flex flex-row">
-          <h1 className="mr-1 text-3xl sm:text-2xl lg:text-3xl">{wsName}</h1>
+          <h1 className="sm:text-2xl lg:text-3xl mr-1 text-3xl">{wsName}</h1>
           <ButtonIcon
             hint="Switch workspace"
             onClick={() => {
               dispatchAction({
-                name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',
+                name: 'action::@bangle.io/core-palettes:TOGGLE_WORKSPACE_PALETTE',
               });
             }}
-            className="text-xs rounded-xl"
+            className="rounded-xl text-xs"
           >
             <ChevronDownIcon className="w-5 h-5" />
           </ButtonIcon>
@@ -33,7 +38,7 @@ export function EmptyEditorPage() {
         {paths.length > 0 && (
           <>
             <div className="flex flex-row mt-6">
-              <h3 className="mr-1 leading-none text-l sm:text-xl lg:text-xl">
+              <h3 className="text-l sm:text-xl lg:text-xl mr-1 leading-none">
                 Recent notes
               </h3>
             </div>
@@ -43,7 +48,7 @@ export function EmptyEditorPage() {
                   <li key={i}>
                     <Link
                       to={resolvePath(r).locationPath}
-                      className="py-1 hover:underline"
+                      className="hover:underline py-1"
                     >
                       {resolvePath(r).filePath}
                     </Link>
@@ -58,10 +63,10 @@ export function EmptyEditorPage() {
         <button
           onClick={() => {
             dispatchAction({
-              name: '@action/core-actions/NEW_NOTE_ACTION',
+              name: 'action::@bangle.io/core-actions:NEW_NOTE_ACTION',
             });
           }}
-          className="flex-none w-full px-6 py-3 mt-6 ml-3 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent sm:w-auto hover:bg-gray-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none"
+          className="sm:w-auto hover:bg-gray-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none flex-none w-full px-6 py-3 mt-6 ml-3 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent"
         >
           Create a note
         </button>

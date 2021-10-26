@@ -2,10 +2,11 @@ import { collabClient } from '@bangle.dev/collab-client';
 import { GetDocument, parseCollabResponse } from '@bangle.dev/collab-server';
 import { CollabRequestType } from '@bangle.dev/collab-server/dist/types';
 import { uuid } from '@bangle.dev/utils';
-import { Extension, PluginMetadata } from 'extension-registry';
-import { naukarWorkerProxy } from 'naukar-proxy';
 
-const extensionName = 'collab-extension';
+import { Extension, PluginMetadata } from '@bangle.io/extension-registry';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+
+const extensionName = '@bangle.io/collab-extension';
 
 const extension = Extension.create({
   name: extensionName,

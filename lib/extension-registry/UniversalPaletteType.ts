@@ -1,4 +1,4 @@
-import type { UniversalPalette } from 'ui-components';
+import type { UniversalPalette } from '@bangle.io/ui-components';
 
 export type PaletteReactComponent = React.ForwardRefExoticComponent<
   React.PropsWithoutRef<PaletteManagerReactComponentProps> &

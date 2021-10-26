@@ -1,1 +1,1 @@
-export const extensionName = 'editor-scroll-extension';
+export const extensionName = '@bangle.io/editor-scroll-extension';

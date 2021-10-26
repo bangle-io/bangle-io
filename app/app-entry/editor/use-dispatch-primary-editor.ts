@@ -1,5 +1,6 @@
-import { useEditorManagerContext } from 'editor-manager-context';
 import { useCallback } from 'react';
+
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 
 /**
  * Returns a callback which will accept a bangle editor command and ...params

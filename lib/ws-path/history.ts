@@ -1,5 +1,6 @@
 import type { History as _History } from 'history';
 import { matchPath } from 'react-router-dom';
+
 import { filePathToWsPath, resolvePath } from './helpers';
 
 type MaybeWsPath = string | undefined | null;

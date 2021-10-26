@@ -1,10 +1,12 @@
-import { PRIMARY_SCROLL_PARENT_ID } from 'constants';
-import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useMemo } from 'react';
-import { ErrorBoundary } from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { cx } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { PRIMARY_SCROLL_PARENT_ID } from '@bangle.io/constants';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { ErrorBoundary } from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { cx } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+
 import { Changelog } from './changelog/Changelog';
 import { ActivityBar } from './components/ActivityBar';
 import { NotificationArea } from './components/NotificationArea';

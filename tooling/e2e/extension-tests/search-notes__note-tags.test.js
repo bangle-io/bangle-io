@@ -7,6 +7,7 @@ const {
   SELECTOR_TIMEOUT,
   newPage,
 } = require('../helpers');
+
 jest.setTimeout(155 * 1000);
 
 let page, destroyPage;

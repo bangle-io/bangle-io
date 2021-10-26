@@ -22,11 +22,12 @@ export interface SearchResultItem {
 }
 
 export const SHOW_SEARCH_SIDEBAR_ACTION =
-  '@action/search-notes/show-search-sidebar';
+  'action::@bangle.io/search-notes:show-search-sidebar';
 
-export const EXECUTE_SEARCH_ACTION = '@action/search-notes/execute-search';
-export const SIDEBAR_NAME = '@sidebar/search-notes/search-notes';
-export const extensionName = 'search-notes';
+export const EXECUTE_SEARCH_ACTION =
+  'action::@bangle.io/search-notes:execute-search';
+export const SIDEBAR_NAME = 'sidebar::@bangle.io/search-notes:search-notes';
+export const extensionName = '@bangle.io/search-notes';
 export interface SearchNotesExtensionState {
   searchQuery: string;
   pendingSearch: boolean;

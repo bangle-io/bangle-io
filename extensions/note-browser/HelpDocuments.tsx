@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Sidebar } from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { useDestroyRef } from 'utils/hooks';
-import { useWorkspaceContext } from 'workspace-context';
-import { FileOps, HELP_FS_WORKSPACE_NAME } from 'workspaces';
-import { isValidNoteWsPath } from 'ws-path';
+
+import { Sidebar } from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useDestroyRef } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { FileOps, HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
+import { isValidNoteWsPath } from '@bangle.io/ws-path';
+
 import { GenericFileBrowser } from './NotesTree';
 
 export function HelpDocuments() {
@@ -36,8 +38,8 @@ export function HelpDocuments() {
 
   return (
     <Sidebar.Container className="help-documents">
-      <Sidebar.Title className="mt-2 px-2">Help documents</Sidebar.Title>
-      <Sidebar.ItemContainer className="flex flex-row justify-between my-1 px-2 text-xs">
+      <Sidebar.Title className="px-2 mt-2">Help documents</Sidebar.Title>
+      <Sidebar.ItemContainer className="flex flex-row justify-between px-2 my-1 text-xs">
         <></>
       </Sidebar.ItemContainer>
       <GenericFileBrowser

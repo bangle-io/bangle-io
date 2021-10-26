@@ -1,6 +1,7 @@
 import React from 'react';
-import { useUIManagerContext } from 'ui-context';
-import { cx } from 'utils/utility';
+
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { cx } from '@bangle.io/utils';
 
 /**
  * A component that provides the same markup

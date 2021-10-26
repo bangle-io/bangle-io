@@ -1,7 +1,9 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import { UIManager, useUIManagerContext } from 'ui-context';
-import { sleep } from 'utils/utility';
+
+import { UIManager, useUIManagerContext } from '@bangle.io/ui-context';
+import { sleep } from '@bangle.io/utils';
+
 import { NotificationArea } from '../NotificationArea';
 
 describe('NotificationArea', () => {
@@ -15,7 +17,7 @@ describe('NotificationArea', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="z-50 fixed bottom-0 right-0"
+          class="fixed bottom-0 right-0 z-50"
         />
       </div>
     `);
@@ -39,7 +41,7 @@ describe('NotificationArea', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="z-50 fixed bottom-0 right-0"
+          class="fixed bottom-0 right-0 z-50"
         />
       </div>
     `);

@@ -1,7 +1,8 @@
-import { Extension } from 'extension-registry';
+import { Extension } from '@bangle.io/extension-registry';
+
 import { pluginsFactory } from './collapsible-heading-deco';
 
-const extensionName = 'collapsible-heading';
+const extensionName = '@bangle.io/collapsible-heading';
 
 const extension = Extension.create({
   name: extensionName,

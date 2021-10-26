@@ -1,10 +1,9 @@
-import { emojiSuggestKey } from './config';
-import type { EditorView } from '@bangle.dev/pm';
-import { PluginKey } from '@bangle.dev/pm';
-import { UniversalPalette } from 'ui-components';
-import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import reactDOM from 'react-dom';
+
+import type { EditorView } from '@bangle.dev/pm';
+import { PluginKey } from '@bangle.dev/pm';
+import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import {
   GetEmojiGroupsType,
   getSuggestTooltipKey,
@@ -15,6 +14,10 @@ import {
   resolveCounter,
 } from '@bangle.dev/react-emoji-suggest/dist/utils';
 import { suggestTooltip } from '@bangle.dev/tooltip';
+
+import { UniversalPalette } from '@bangle.io/ui-components';
+
+import { emojiSuggestKey } from './config';
 
 export function EmojiSuggestComponent() {
   return <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />;
@@ -47,7 +50,7 @@ export function EmojiSuggest({
   } = usePluginState(emojiSuggestKey);
 
   return reactDOM.createPortal(
-    <div className="bangle-io-emoji-suggest-container  shadow-2xl">
+    <div className="bangle-io-emoji-suggest-container shadow-2xl">
       <div className="bangle-emoji-suggest" style={{ padding: palettePadding }}>
         <div
           style={{
@@ -88,7 +91,7 @@ export function EmojiSuggest({
   );
 }
 
-// WARNING DONOT MODIFY AS THIS IS A COPY read the TODO above
+// WARNING DONOT MODIFY AS THIS IS A COPY read the TODO abov
 export function EmojiSuggestContainer({
   view,
   rowWidth,
@@ -177,7 +180,7 @@ export function EmojiSuggestContainer({
   );
 }
 
-// WARNING DONOT MODIFY AS THIS IS A COPY read the TODO above
+// WARNING DONOT MODIFY AS THIS IS A COPY read the TODO abov
 function EmojiSquare({
   isSelected,
   emoji,

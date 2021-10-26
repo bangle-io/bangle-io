@@ -1,4 +1,5 @@
-import { resolvePath } from 'ws-path';
+import { resolvePath } from '@bangle.io/ws-path';
+
 import { fileWsPathsToFlatDirTree } from '../file-ws-paths-to-flat-dir-tree';
 
 /**

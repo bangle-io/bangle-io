@@ -1,10 +1,12 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect } from 'react';
+
+import { FRIENDLY_ID, RELEASE_ID } from '@bangle.io/config';
+import { TextButton } from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useLocalStorage } from '@bangle.io/utils';
+
 import { useRegisterSW } from './use-sw';
-import { useUIManagerContext } from 'ui-context';
-import { TextButton } from 'ui-components';
-import { FRIENDLY_ID, RELEASE_ID } from 'config';
-import { useLocalStorage } from 'utils';
 
 export function SWReloadPrompt() {
   // replaced dynamically

@@ -1,4 +1,4 @@
-import { BaseError } from 'utils';
+import { BaseError } from '@bangle.io/utils';
 
 export class WorkspaceError extends BaseError {}
 

@@ -1,5 +1,5 @@
 {
-  "name": "utils",
+  "name": "@bangle.io/utils",
   "version": "0.0.0",
   "authors": [
     {
@@ -21,9 +21,9 @@
   "dependencies": {
     "@bangle.dev/pm": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
-    "base-error": "workspace:*",
-    "config": "workspace:*",
-    "constants": "workspace:*",
+    "@bangle.io/base-error": "workspace:*",
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
     "dayjs": "^1.10.5",
     "debounce-fn": "^5.0.0",
     "react": "^17.0.2",

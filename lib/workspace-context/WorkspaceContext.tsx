@@ -1,9 +1,3 @@
-import { Node } from '@bangle.dev/pm';
-import { BaseFileSystemError, NATIVE_BROWSER_PERMISSION_ERROR } from 'baby-fs';
-import {
-  ExtensionRegistry,
-  useExtensionRegistryContext,
-} from 'extension-registry';
 import React, {
   useCallback,
   useContext,
@@ -12,14 +6,25 @@ import React, {
   useState,
 } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { removeMdExtension, shallowCompareArray } from 'utils';
+
+import { Node } from '@bangle.dev/pm';
+
+import {
+  BaseFileSystemError,
+  NATIVE_BROWSER_PERMISSION_ERROR,
+} from '@bangle.io/baby-fs';
+import {
+  ExtensionRegistry,
+  useExtensionRegistryContext,
+} from '@bangle.io/extension-registry';
+import { removeMdExtension, shallowCompareArray } from '@bangle.io/utils';
 import {
   FileOps,
   HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
-  WorkspaceError,
   WORKSPACE_NOT_FOUND_ERROR,
-} from 'workspaces';
+  WorkspaceError,
+} from '@bangle.io/workspaces';
 import {
   filePathToWsPath,
   getPrimaryWsPath,
@@ -32,7 +37,8 @@ import {
   PathValidationError,
   resolvePath,
   validateNoteWsPath,
-} from 'ws-path';
+} from '@bangle.io/ws-path';
+
 import { useRecentlyUsedWsPaths } from './use-recently-used-ws-paths';
 
 const LOG = false;

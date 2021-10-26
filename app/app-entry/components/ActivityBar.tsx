@@ -1,19 +1,21 @@
-import { useActionContext } from 'action-context';
-import { useExtensionRegistryContext } from 'extension-registry';
+import './ActivityBar.css';
+
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+
+import { useActionContext } from '@bangle.io/action-context';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
   ButtonIcon,
   FileDocumentIcon,
   GiftIcon,
   MenuIcon,
   SingleCharIcon,
-} from 'ui-components';
-import { useUIManagerContext } from 'ui-context';
-import { cx } from 'utils';
-import { useWorkspaceContext } from 'workspace-context';
-import { resolvePath } from 'ws-path';
-import './ActivityBar.css';
+} from '@bangle.io/ui-components';
+import { useUIManagerContext } from '@bangle.io/ui-context';
+import { cx } from '@bangle.io/utils';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
 
 ActivityBar.propTypes = {};
 
@@ -74,7 +76,7 @@ export function ActivityBar() {
         toggleSidebar={toggleSidebar('file-browser')}
         toggleNotesPalette={() => {
           dispatchAction({
-            name: '@action/core-palettes/TOGGLE_NOTES_PALETTE',
+            name: 'action::@bangle.io/core-palettes:TOGGLE_NOTES_PALETTE',
           });
         }}
         paletteType={paletteType}

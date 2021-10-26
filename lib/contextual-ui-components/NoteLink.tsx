@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { resolvePath } from 'ws-path';
-import { useWorkspaceContext } from 'workspace-context';
+
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { resolvePath } from '@bangle.io/ws-path';
 /**
  * Component for opening a note link
  */

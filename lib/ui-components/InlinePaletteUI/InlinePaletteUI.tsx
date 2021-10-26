@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { cx, isTouchDevice } from 'utils';
+
+import { cx, isTouchDevice } from '@bangle.io/utils';
 
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;
@@ -104,7 +105,7 @@ export function InlinePaletteRow({
           </span>
         </span>
 
-        <span className="flex-1 flex "></span>
+        <span className=" flex flex-1"></span>
         {rightIcon}
         {isHovered ? rightHoverIcon : null}
       </div>

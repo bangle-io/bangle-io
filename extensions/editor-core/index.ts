@@ -1,11 +1,13 @@
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
-import { Extension } from 'extension-registry';
+
+import { Extension } from '@bangle.io/extension-registry';
+
 import { EditorCore } from './EditorCore';
 import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
 
-const extensionName = 'editor-core';
+const extensionName = '@bangle.io/editor-core';
 
 const extension = Extension.create({
   name: extensionName,
@@ -19,23 +21,23 @@ const extension = Extension.create({
     ReactComponent: EditorCore,
     actions: [
       {
-        name: '@action/editor-core/focus-primary-editor',
+        name: 'action::@bangle.io/editor-core:focus-primary-editor',
         title: 'Editor: Focus on primary editor',
       },
       {
-        name: '@action/editor-core/collapse-heading',
+        name: 'action::@bangle.io/editor-core:collapse-heading',
         title: 'Editor: Collapse heading',
       },
       {
-        name: '@action/editor-core/uncollapse-all-heading',
+        name: 'action::@bangle.io/editor-core:uncollapse-all-heading',
         title: 'Editor: Uncollapse all headings',
       },
       {
-        name: '@action/editor-core/move-list-up',
+        name: 'action::@bangle.io/editor-core:move-list-up',
         title: 'Editor: Move list up',
       },
       {
-        name: '@action/editor-core/move-list-down',
+        name: 'action::@bangle.io/editor-core:move-list-down',
         title: 'Editor: Move list down',
       },
     ],
