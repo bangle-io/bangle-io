@@ -4,6 +4,7 @@ const {
   newPage,
   setPageWidescreen,
 } = require('../helpers');
+
 jest.setTimeout(105 * 1000);
 let page, destroyPage;
 

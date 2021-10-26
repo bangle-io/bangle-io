@@ -1,4 +1,3 @@
-import { defaultSpecs } from '@bangle.dev/all-base-components';
 import { act, render } from '@testing-library/react';
 import {
   Extension,
@@ -8,6 +7,9 @@ import {
   useExtensionRegistryContext,
 } from 'extension-registry';
 import React, { useEffect, useState } from 'react';
+
+import { defaultSpecs } from '@bangle.dev/all-base-components';
+
 import { useActionContext } from '../ActionContext';
 import { ActionContextProvider } from '../ActionContextProvider';
 

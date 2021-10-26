@@ -1,4 +1,3 @@
-import { Node } from '@bangle.dev/pm';
 import { BaseFileSystemError, NATIVE_BROWSER_PERMISSION_ERROR } from 'baby-fs';
 import {
   ExtensionRegistry,
@@ -17,8 +16,8 @@ import {
   FileOps,
   HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
-  WorkspaceError,
   WORKSPACE_NOT_FOUND_ERROR,
+  WorkspaceError,
 } from 'workspaces';
 import {
   filePathToWsPath,
@@ -33,6 +32,9 @@ import {
   resolvePath,
   validateNoteWsPath,
 } from 'ws-path';
+
+import { Node } from '@bangle.dev/pm';
+
 import { useRecentlyUsedWsPaths } from './use-recently-used-ws-paths';
 
 const LOG = false;

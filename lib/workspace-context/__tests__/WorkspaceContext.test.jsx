@@ -9,6 +9,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { FileOps } from 'workspaces';
+
 import { useDeleteNote, useFiles, useOpenedWsPaths } from '../WorkspaceContext';
 
 jest.mock('workspaces/index', () => {

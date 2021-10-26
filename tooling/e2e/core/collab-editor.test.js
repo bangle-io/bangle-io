@@ -11,6 +11,7 @@ const {
   sleep,
   newPage,
 } = require('../helpers');
+
 jest.retryTimes(2);
 jest.setTimeout(105 * 1000);
 

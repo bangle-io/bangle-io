@@ -8,6 +8,7 @@ const {
   longSleep,
   getPrimaryEditorDebugString,
 } = require('../helpers');
+
 jest.setTimeout(155 * 1000);
 
 beforeEach(async () => {

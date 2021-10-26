@@ -13,6 +13,7 @@ import {
   markdownSerializer,
 } from '@bangle.dev/markdown';
 import { psx } from '@bangle.dev/test-helpers';
+
 import { MARKDOWN_REGEX } from '../config';
 import { editorTagSpec, noteTagsMarkdownItPlugin } from '../editor-tag';
 

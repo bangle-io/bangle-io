@@ -9,6 +9,7 @@ import {
   resolvePath,
   validateNoteWsPath,
 } from 'ws-path';
+
 import { backLinkNodeName, newNoteLocation } from '../config';
 
 export function BackLinkNode({ nodeAttrs, extensionRegistry }) {

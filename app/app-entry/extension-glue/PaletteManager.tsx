@@ -1,13 +1,13 @@
 import { useActionContext } from 'action-context';
+import type {
+  PaletteManagerImperativeHandle,
+  PaletteManagerReactComponentProps,
+} from 'extension-registry';
 import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { UniversalPalette } from 'ui-components';
 import { PaletteOnExecuteItem } from 'ui-components/UniversalPalette/hooks';
 import { useUIManagerContext } from 'ui-context';
-import type {
-  PaletteManagerReactComponentProps,
-  PaletteManagerImperativeHandle,
-} from 'extension-registry';
 
 export function PaletteManager() {
   const {

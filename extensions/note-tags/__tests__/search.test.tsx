@@ -5,15 +5,17 @@
 /// <reference path="../../../missing-test-types.d.ts" />
 /// <reference path="./missing-test-types.d.ts" />
 
-import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
-import { defaultSpecs, defaultPlugins } from '@bangle.dev/all-base-components';
-import { SpecRegistry } from '@bangle.dev/core';
-import { editorTagSpec } from '../editor-tag';
-import { listAllTags, useSearchAllTags, _listTags } from '../search';
 import { act, renderHook } from '@testing-library/react-hooks';
-import type { Node } from '@bangle.dev/pm';
-import { useWorkspaceContext } from 'workspace-context';
 import { sleep } from 'utils';
+import { useWorkspaceContext } from 'workspace-context';
+
+import { defaultPlugins,defaultSpecs } from '@bangle.dev/all-base-components';
+import { SpecRegistry } from '@bangle.dev/core';
+import type { Node } from '@bangle.dev/pm';
+import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
+
+import { editorTagSpec } from '../editor-tag';
+import { _listTags,listAllTags, useSearchAllTags } from '../search';
 
 jest.mock('workspace-context', () => {
   const workspaceThings = jest.requireActual('workspace-context');

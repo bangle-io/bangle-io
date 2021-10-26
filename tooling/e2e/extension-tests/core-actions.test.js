@@ -12,6 +12,7 @@ const {
 } = require('../helpers');
 
 const { resolvePath } = require('ws-path');
+
 jest.setTimeout(105 * 1000);
 let page, destroyPage;
 

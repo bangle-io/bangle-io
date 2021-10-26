@@ -1,7 +1,9 @@
+import { Extension } from 'extension-registry';
+
 import { image } from '@bangle.dev/base-components';
 import { NodeSelection } from '@bangle.dev/pm';
 import { floatingMenu } from '@bangle.dev/react-menu';
-import { Extension } from 'extension-registry';
+
 import { menuKey } from './config';
 import { createImageNodes } from './create-image-nodes';
 import { imageNodeViewPlugin } from './image-node-view-plugin';

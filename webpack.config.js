@@ -8,6 +8,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ejs = require('ejs');
 const fs = require('fs');
+
 process.env.WEBPACK = true;
 
 module.exports = (env, argv) => {

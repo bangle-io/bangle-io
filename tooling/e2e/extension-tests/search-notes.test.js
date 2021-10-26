@@ -9,6 +9,7 @@ const {
   newPage,
   getPrimaryEditorHTML,
 } = require('../helpers');
+
 jest.setTimeout(155 * 1000);
 
 let page, destroyPage;

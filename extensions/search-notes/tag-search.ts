@@ -1,5 +1,6 @@
-import { SearchMatch } from './constants';
 import type { Node } from '@bangle.dev/pm';
+
+import { SearchMatch } from './constants';
 
 export function tagSearch(
   doc: Node<any>,

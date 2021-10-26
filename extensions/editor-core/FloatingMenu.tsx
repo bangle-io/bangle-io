@@ -1,3 +1,5 @@
+import React, { useCallback } from 'react';
+
 import {
   BoldButton,
   BulletListButton,
@@ -12,7 +14,7 @@ import {
   OrderedListButton,
   TodoListButton,
 } from '@bangle.dev/react-menu';
-import React, { useCallback } from 'react';
+
 import { menuKey } from './plugins';
 
 export function MenuComp() {

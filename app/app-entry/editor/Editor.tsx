@@ -1,15 +1,16 @@
-import {
-  BangleEditor,
-  useEditorState,
-  RenderNodeViewsFunction,
-} from '@bangle.dev/react';
-import { Node } from '@bangle.dev/pm';
+import { ExtensionRegistry } from 'extension-registry';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { getScrollParentElement } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
-import { ExtensionRegistry } from 'extension-registry';
+
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
+import { Node } from '@bangle.dev/pm';
+import {
+  BangleEditor,
+  RenderNodeViewsFunction,
+  useEditorState,
+} from '@bangle.dev/react';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { resolvePath } from 'ws-path';
 import { useWorkspaceContext } from 'workspace-context';
+import { resolvePath } from 'ws-path';
 /**
  * Component for opening a note link
  */

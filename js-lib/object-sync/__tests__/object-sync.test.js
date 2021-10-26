@@ -1,4 +1,5 @@
 import { objectSync } from '../object-sync';
+
 function sleep(t = 10) {
   return new Promise((res) => setTimeout(res, t));
 }

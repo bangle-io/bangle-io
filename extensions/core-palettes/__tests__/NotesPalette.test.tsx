@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { useWorkspaceContext } from 'workspace-context';
+
 import { useSearchWsPaths } from '../NotesPalette';
 
 jest.mock('workspace-context', () => {

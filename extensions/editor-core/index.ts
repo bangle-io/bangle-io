@@ -1,5 +1,7 @@
-import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 import { Extension } from 'extension-registry';
+
+import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
+
 import { EditorCore } from './EditorCore';
 import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';

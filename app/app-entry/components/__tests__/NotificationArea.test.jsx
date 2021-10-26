@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { UIManager, useUIManagerContext } from 'ui-context';
 import { sleep } from 'utils/utility';
+
 import { NotificationArea } from '../NotificationArea';
 
 describe('NotificationArea', () => {

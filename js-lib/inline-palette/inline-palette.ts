@@ -1,10 +1,11 @@
+import type { BaseRawMarkSpec, PluginKey } from '@bangle.dev/core';
 import {
   createTooltipDOM,
   suggestTooltip,
   SuggestTooltipRenderOpts,
 } from '@bangle.dev/tooltip';
 import { bangleWarn, pluginKeyStore, valuePlugin } from '@bangle.dev/utils';
-import type { BaseRawMarkSpec, PluginKey } from '@bangle.dev/core';
+
 const {
   decrementSuggestTooltipCounter,
   incrementSuggestTooltipCounter,

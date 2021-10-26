@@ -2,6 +2,7 @@ import { keyDisplayValue } from 'config';
 import { Extension } from 'extension-registry';
 import React from 'react';
 import { FolderIcon, QuestionIcon } from 'ui-components';
+
 import { HelpDocuments } from './HelpDocuments';
 import { NoteBrowserActionHandler } from './NoteBrowserActionHandler';
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';

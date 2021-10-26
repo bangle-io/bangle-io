@@ -1,4 +1,5 @@
 import { Selection } from '@bangle.dev/pm';
+
 import { extensionName } from './config';
 
 const LOG = false;

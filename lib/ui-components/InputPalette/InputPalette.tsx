@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useDestroyRef } from 'utils';
 import { sleep } from 'utils/utility';
+
 import { NullIcon, SpinnerIcon } from '../Icons';
 import { UniversalPalette } from '../UniversalPalette';
 

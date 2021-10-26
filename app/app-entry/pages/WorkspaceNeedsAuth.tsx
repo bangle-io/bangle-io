@@ -5,9 +5,10 @@ import { useUIManagerContext } from 'ui-context';
 import { keybindingsHelper } from 'utils';
 import {
   getWorkspaceInfo,
-  WorkspaceError,
   WORKSPACE_NOT_FOUND_ERROR,
+  WorkspaceError,
 } from 'workspaces';
+
 import { EditorWrapperUI } from '../components/EditorWrapperUI';
 
 export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {

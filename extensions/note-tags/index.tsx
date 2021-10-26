@@ -1,13 +1,14 @@
 import { Extension } from 'extension-registry';
+
 import { extensionName } from './config';
-import { TagPickerInlinePalette } from './TagPickerInlinePalette';
 import {
-  editorTagSpec,
-  editorTagPlugins,
-  noteTagsMarkdownItPlugin,
   editorTagHighPriorityPlugins,
+  editorTagPlugins,
+  editorTagSpec,
+  noteTagsMarkdownItPlugin,
   renderReactNodeView,
 } from './editor-tag';
+import { TagPickerInlinePalette } from './TagPickerInlinePalette';
 
 const extension = Extension.create({
   name: extensionName,

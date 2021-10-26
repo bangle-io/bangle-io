@@ -1,6 +1,7 @@
 const os = require('os');
 const prettier = require('prettier');
 const { filePathToWsPath, resolvePath } = require('ws-path');
+
 const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
 const url = 'http://localhost:1234';
 function sleep(t = 10) {

@@ -1,3 +1,4 @@
+import './ActivityBar.css';
 import { useActionContext } from 'action-context';
 import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useEffect } from 'react';
@@ -13,7 +14,6 @@ import { useUIManagerContext } from 'ui-context';
 import { cx } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
-import './ActivityBar.css';
 
 ActivityBar.propTypes = {};
 

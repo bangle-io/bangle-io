@@ -3,6 +3,7 @@ import React from 'react';
 import { sleep } from 'utils/utility';
 import { useWorkspaceContext } from 'workspace-context';
 import { FileOps } from 'workspaces';
+
 import { ImageComponent } from '../render-image-react-node-view';
 
 jest.mock('workspace-context/index', () => {

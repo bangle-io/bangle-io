@@ -1,3 +1,4 @@
+import './OptionsBar.css';
 import { useActionContext } from 'action-context';
 import { keybindings, keyDisplayValue } from 'config';
 import { useExtensionRegistryContext } from 'extension-registry';
@@ -11,7 +12,6 @@ import {
 import { useUIManagerContext } from 'ui-context';
 import { cx, useKeybindings, useLocalStorage } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
-import './OptionsBar.css';
 
 const localStoragePrefix = '0.3438144247845969';
 

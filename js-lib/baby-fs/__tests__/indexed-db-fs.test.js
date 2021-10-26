@@ -1,5 +1,6 @@
-import { IndexedDBFileSystem } from '../indexed-db-fs';
 import * as idb from 'idb-keyval';
+
+import { IndexedDBFileSystem } from '../indexed-db-fs';
 
 let mockStore = new Map();
 let mockMetaStore = new Map();

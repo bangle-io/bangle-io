@@ -1,9 +1,11 @@
-import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { act, fireEvent, render } from '@testing-library/react';
 import { Extension, ExtensionRegistry } from 'extension-registry';
 import React from 'react';
 import { sleep } from 'utils/utility';
 import { useWorkspaceContext } from 'workspace-context';
+
+import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
+
 import inlineBackLinkExtension from '..';
 import { BackLinkNode } from '../editor/BackLinkNode';
 

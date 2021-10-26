@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import { ActionHandler } from 'extension-registry';
 import React from 'react';
 import { useUIManagerContext } from 'ui-context';
+
 import { SearchNotesActionHandler } from '../action-handler';
 import {
   EXECUTE_SEARCH_ACTION,

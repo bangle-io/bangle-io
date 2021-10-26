@@ -6,6 +6,7 @@ import { CloseIcon } from 'ui-components';
 import { cx, sleep, useDestroyRef } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
+
 import { Editor } from './Editor';
 import { EmptyEditorPage } from './EmptyEditorPage';
 

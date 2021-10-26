@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react';
+
 import { useExtensionRegistryContext } from './ExtensionRegistryContext';
 
 /**

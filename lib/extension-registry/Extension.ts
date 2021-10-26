@@ -1,10 +1,12 @@
-import type { RawSpecs } from '@bangle.dev/core';
-import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 import React from 'react';
+
+import type { RawSpecs } from '@bangle.dev/core';
+import type { Node } from '@bangle.dev/pm';
+import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
+
 import type { ExtensionRegistry } from './ExtensionRegistry';
 import { EditorPluginDefinition } from './PluginType';
 import { ExtensionPaletteType } from './UniversalPaletteType';
-import type { Node } from '@bangle.dev/pm';
 
 export type RenderReactNodeViewCb = (arg: {
   nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];

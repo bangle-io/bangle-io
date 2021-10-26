@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-
 import { RecencyRecords, useRecencyMonitor } from 'utils';
 import { OpenedWsPaths } from 'ws-path';
+
 import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
 
 jest.mock('utils', () => {

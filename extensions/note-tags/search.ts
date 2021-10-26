@@ -1,7 +1,8 @@
-import type { Node } from '@bangle.dev/pm';
+import { byLengthAsc,useFzfSearch } from 'fzf-search';
 import { useEffect, useMemo, useState } from 'react';
 import { useWorkspaceContext } from 'workspace-context';
-import { useFzfSearch, byLengthAsc } from 'fzf-search';
+
+import type { Node } from '@bangle.dev/pm';
 
 const FZF_SEARCH_LIMIT = 16;
 

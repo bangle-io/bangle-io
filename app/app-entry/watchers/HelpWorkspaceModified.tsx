@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useActionContext } from 'action-context';
+import React, { useContext,useEffect, useState } from 'react';
 import { TextButton } from 'ui-components';
 import { useUIManagerContext } from 'ui-context';
-import { isValidNoteWsPath, resolvePath, toFSPath } from 'ws-path';
-import { useActionContext } from 'action-context';
 import {
   FileOps,
   getWorkspaceInfo,
   HELP_FS_WORKSPACE_NAME,
   HELP_FS_WORKSPACE_TYPE,
 } from 'workspaces';
+import { isValidNoteWsPath, resolvePath, toFSPath } from 'ws-path';
 
 export function HelpWorkspaceMonitor({ wsPath }) {
   const { dispatch } = useUIManagerContext();

@@ -1,6 +1,7 @@
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+
 import type { BangleEditor } from '@bangle.dev/core';
 import { getIdleCallback } from '@bangle.dev/utils';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};

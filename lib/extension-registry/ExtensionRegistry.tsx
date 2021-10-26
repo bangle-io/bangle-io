@@ -1,6 +1,10 @@
-import { SpecRegistry } from '@bangle.dev/core';
 import React from 'react';
+
+import type { RawSpecs } from '@bangle.dev/core';
+import { SpecRegistry } from '@bangle.dev/core';
+import type { Node } from '@bangle.dev/pm';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
+
 import {
   ActionDefinitionType,
   ActionHandler,
@@ -8,9 +12,7 @@ import {
   EditorConfig,
   Extension,
 } from './Extension';
-import type { RawSpecs } from '@bangle.dev/core';
 import { ExtensionPaletteType } from './UniversalPaletteType';
-import type { Node } from '@bangle.dev/pm';
 
 function filterFlatMap<K>(
   array: any[],

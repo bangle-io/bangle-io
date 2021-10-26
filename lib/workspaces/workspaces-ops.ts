@@ -1,13 +1,14 @@
 import * as idb from 'idb-keyval';
 import { validWsName } from 'ws-path';
+
 import {
-  WorkspaceError,
   WORKSPACE_ALREADY_EXISTS_ERROR,
   WORKSPACE_NOT_FOUND_ERROR,
+  WorkspaceError,
 } from './errors';
 import {
-  helpFSWorkspaceInfo,
   HELP_FS_WORKSPACE_TYPE,
+  helpFSWorkspaceInfo,
   WorkspaceInfo,
   WorkspaceType,
 } from './types';

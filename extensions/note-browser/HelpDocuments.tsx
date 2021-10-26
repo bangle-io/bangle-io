@@ -5,6 +5,7 @@ import { useDestroyRef } from 'utils/hooks';
 import { useWorkspaceContext } from 'workspace-context';
 import { FileOps, HELP_FS_WORKSPACE_NAME } from 'workspaces';
 import { isValidNoteWsPath } from 'ws-path';
+
 import { GenericFileBrowser } from './NotesTree';
 
 export function HelpDocuments() {

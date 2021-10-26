@@ -4,7 +4,9 @@ import { naukarWorkerProxy } from 'naukar-proxy';
 import { objectSync } from 'object-sync';
 import React, { useEffect, useMemo, useState } from 'react';
 import { initialAppState as _initialAppState } from 'shared';
+
 import { moduleSupport } from './misc/module-support';
+
 const initialAppState = Object.assign({}, _initialAppState);
 
 const LOG = false;

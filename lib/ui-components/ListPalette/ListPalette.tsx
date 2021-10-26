@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
 import { UniversalPalette } from '../UniversalPalette';
 import { ItemType } from '../UniversalPalette/PaletteItem';
 

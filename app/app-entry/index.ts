@@ -3,7 +3,9 @@
 import { APP_ENV, RELEASE_ID } from 'config';
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import { Entry } from './entry';
+
 const root = document.getElementById('root');
 
 if (typeof window !== undefined && APP_ENV !== 'local') {

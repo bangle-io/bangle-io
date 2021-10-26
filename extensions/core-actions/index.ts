@@ -1,6 +1,7 @@
 import { Extension } from 'extension-registry';
 import React from 'react';
 import { NewNoteIcon } from 'ui-components';
+
 import {
   CLONE_WORKSPACE_ACTION,
   DELETE_ACTIVE_NOTE_ACTION,

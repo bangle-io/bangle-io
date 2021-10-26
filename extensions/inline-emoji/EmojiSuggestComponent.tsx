@@ -1,10 +1,10 @@
-import { emojiSuggestKey } from './config';
-import type { EditorView } from '@bangle.dev/pm';
-import { PluginKey } from '@bangle.dev/pm';
-import { UniversalPalette } from 'ui-components';
-import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import reactDOM from 'react-dom';
+import { UniversalPalette } from 'ui-components';
+
+import type { EditorView } from '@bangle.dev/pm';
+import { PluginKey } from '@bangle.dev/pm';
+import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import {
   GetEmojiGroupsType,
   getSuggestTooltipKey,
@@ -15,6 +15,8 @@ import {
   resolveCounter,
 } from '@bangle.dev/react-emoji-suggest/dist/utils';
 import { suggestTooltip } from '@bangle.dev/tooltip';
+
+import { emojiSuggestKey } from './config';
 
 export function EmojiSuggestComponent() {
   return <EmojiSuggest emojiSuggestKey={emojiSuggestKey} />;

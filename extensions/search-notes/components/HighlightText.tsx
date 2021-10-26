@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { HighlightTextType } from '../constants';
 
 export function HighlightText({

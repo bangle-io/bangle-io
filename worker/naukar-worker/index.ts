@@ -1,2 +1,2 @@
-export * from './web-worker-helpers';
 export * from './naukar';
+export * from './web-worker-helpers';

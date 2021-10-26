@@ -3,6 +3,7 @@ import { ExtensionPaletteType } from 'extension-registry';
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import { AlbumIcon, CloseIcon, UniversalPalette } from 'ui-components';
 import { useWorkspaces } from 'workspaces';
+
 import { extensionName } from './config';
 import { useRecencyWatcher } from './hooks';
 

@@ -1,9 +1,10 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { useSearchNotes } from '../hooks';
+import { useExtensionStateContext } from 'extension-registry';
 import { createPMNode } from 'test-utils/create-pm-node';
 import { sleep } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
-import { useExtensionStateContext } from 'extension-registry';
+
+import { useSearchNotes } from '../hooks';
 
 jest.mock('workspace-context', () => {
   return {

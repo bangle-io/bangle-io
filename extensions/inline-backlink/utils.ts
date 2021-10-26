@@ -1,10 +1,10 @@
+import { conditionalSuffix, removeMdExtension } from 'utils';
 import {
   filePathToWsPath,
   resolvePath,
   sanitizeFilePath,
   validateWsPath,
 } from 'ws-path';
-import { conditionalSuffix, removeMdExtension } from 'utils';
 
 export function wsPathFromQuery(query, wsName) {
   let filePath = query.split(']]').join('');

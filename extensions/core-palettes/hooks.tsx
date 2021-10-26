@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useLocalStorage } from 'utils';
+
 const MAX_ENTRIES = 10;
 /**
  * WARNING this will modify items in place

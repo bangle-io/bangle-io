@@ -1,5 +1,6 @@
 import { keyDisplayValue } from 'config';
 import { ExtensionPaletteType } from 'extension-registry';
+import { byLengthAsc,useFzfSearch } from 'fzf-search';
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import {
   ButtonIcon,
@@ -10,7 +11,7 @@ import {
 import { removeMdExtension } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
-import { useFzfSearch, byLengthAsc } from 'fzf-search';
+
 import { extensionName } from './config';
 
 const emptyArray = [];

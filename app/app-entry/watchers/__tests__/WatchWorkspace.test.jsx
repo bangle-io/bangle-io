@@ -3,6 +3,7 @@ import React from 'react';
 import { useBroadcastChannel } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { OpenedWsPaths } from 'ws-path';
+
 import { WatchWorkspace } from '../WatchWorkspace';
 
 const ourWsName = 'test-ws1';

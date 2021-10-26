@@ -1,4 +1,5 @@
 import { PluginKey } from '@bangle.dev/pm';
+
 export const extensionName = 'note-tags';
 export const paletteMarkName = extensionName + '-paletteMark';
 export const palettePluginKey = new PluginKey(extensionName + '-key');

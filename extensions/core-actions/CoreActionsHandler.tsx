@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useUIManagerContext } from 'ui-context';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
+
 import {
   CLONE_WORKSPACE_ACTION,
   DELETE_ACTIVE_NOTE_ACTION,

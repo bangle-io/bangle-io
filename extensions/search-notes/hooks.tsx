@@ -3,13 +3,15 @@ import { useExtensionStateContext } from 'extension-registry';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDebouncedValue } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
+
 import { search } from '@bangle.dev/search';
+
 import {
-  searchPluginKey,
   DEBOUNCE_MAX_WAIT,
   DEBOUNCE_WAIT,
   extensionName,
   SearchNotesExtensionState,
+  searchPluginKey,
 } from './constants';
 import { searchNotes } from './search-notes';
 

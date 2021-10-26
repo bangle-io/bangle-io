@@ -1,17 +1,17 @@
 import { APP_ENV, IS_PRODUCTION_APP_ENV } from 'config';
 import React, { useEffect, useState } from 'react';
 import { Redirect, Route, useHistory } from 'react-router-dom';
-
 import { useWorkspaceContext } from 'workspace-context';
 import { getWorkspaceInfo, HELP_FS_WORKSPACE_NAME } from 'workspaces';
 import { resolvePath } from 'ws-path';
-import { WorkspacePage } from './pages/Workspace';
-import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
-import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
+
 import {
   getLastWorkspaceUsed,
   saveLastWorkspaceUsed,
 } from './misc/last-workspace-used';
+import { WorkspacePage } from './pages/Workspace';
+import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
+import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
 
 export function Routes() {
   return (

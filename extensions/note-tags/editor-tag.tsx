@@ -1,3 +1,13 @@
+import { useActionContext } from 'action-context';
+import { RenderReactNodeView } from 'extension-registry';
+import {
+  inlinePalette,
+  queryInlinePaletteActive,
+  queryInlinePaletteText,
+  replaceSuggestionMarkWith,
+} from 'inline-palette';
+import React, { useCallback } from 'react';
+
 import {
   BaseRawNodeSpec,
   domSerializationHelpers,
@@ -6,24 +16,17 @@ import {
 } from '@bangle.dev/core';
 import { inlineNodeParser } from '@bangle.dev/markdown';
 import { keymap } from '@bangle.dev/pm';
-import { useActionContext } from 'action-context';
+
 import {
-  inlinePalette,
-  queryInlinePaletteActive,
-  queryInlinePaletteText,
-  replaceSuggestionMarkWith,
-} from 'inline-palette';
-import {
+  BANNED_CHARS,
   MARKDOWN_REGEX,
-  USING_INFERIOR_REGEX,
+  paletteMarkName,
   palettePluginKey,
   tagNodeName,
-  BANNED_CHARS,
-  paletteMarkName,
   TRIGGER,
+  USING_INFERIOR_REGEX,
 } from './config';
-import React, { useCallback } from 'react';
-import { RenderReactNodeView } from 'extension-registry';
+
 const MAX_MATCH = 500;
 const getScrollContainer = (view) => {
   return view.dom.parentElement;

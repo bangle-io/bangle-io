@@ -1,5 +1,5 @@
-import { Emitter } from 'utils';
 import type { WorkerAPI } from 'naukar-worker';
+import { Emitter } from 'utils';
 
 let naukar;
 

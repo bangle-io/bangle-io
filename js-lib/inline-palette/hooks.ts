@@ -1,8 +1,10 @@
 import { useCallback, useEffect } from 'react';
-import { suggestTooltip } from '@bangle.dev/tooltip';
-import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
-import { getSuggestTooltipKey } from './inline-palette';
+
 import type { Command, PluginKey } from '@bangle.dev/pm';
+import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
+import { suggestTooltip } from '@bangle.dev/tooltip';
+
+import { getSuggestTooltipKey } from './inline-palette';
 
 export function useInlinePaletteQuery(inlinePaletteKey) {
   // TODO show is a bad name

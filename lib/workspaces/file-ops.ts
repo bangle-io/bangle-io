@@ -1,4 +1,3 @@
-import type { Node } from '@bangle.dev/pm';
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
@@ -18,6 +17,9 @@ import {
   validateFileWsPath,
   validateNoteWsPath,
 } from 'ws-path';
+
+import type { Node } from '@bangle.dev/pm';
+
 import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './types';
 import { getWorkspaceInfo } from './workspaces-ops';
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { cx, isTouchDevice } from 'utils';
+
 import { UniversalPalette } from '../UniversalPalette';
 import { ItemType } from '../UniversalPalette/PaletteItem';
 

@@ -5,19 +5,18 @@ import {
 } from './base-fs';
 import { DEFAULT_DIR_IGNORE_LIST } from './config';
 import {
-  FILE_NOT_FOUND_ERROR,
-  UPSTREAM_ERROR,
-  NOT_A_DIRECTORY_ERROR,
-  NATIVE_BROWSER_PERMISSION_ERROR,
   FILE_ALREADY_EXISTS_ERROR,
+  FILE_NOT_FOUND_ERROR,
+  NATIVE_BROWSER_PERMISSION_ERROR,
+  NOT_A_DIRECTORY_ERROR,
+  UPSTREAM_ERROR,
 } from './error-codes';
-
 import {
-  readFileAsText as readFileAsTextHelper,
   createFile,
-  writeFile,
   hasPermission,
+  readFileAsText as readFileAsTextHelper,
   recurseDirHandle,
+  writeFile,
 } from './native-browser-fs-helpers';
 
 const dirToChildMap = new WeakMap();

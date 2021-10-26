@@ -1,4 +1,4 @@
-import { useEditorViewContext } from '@bangle.dev/react';
+import { byLengthAsc,useFzfSearch } from 'fzf-search';
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
@@ -10,10 +10,11 @@ import { InlinePaletteRow, UniversalPalette } from 'ui-components';
 import { conditionalSuffix, insertAt, removeMdExtension } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { resolvePath } from 'ws-path';
+
+import { useEditorViewContext } from '@bangle.dev/react';
+
 import { backLinkNodeName, palettePluginKey } from '../config';
 import { getBacklinkPath, wsPathFromQuery } from '../utils';
-
-import { useFzfSearch, byLengthAsc } from 'fzf-search';
 
 const FZF_SEARCH_LIMIT = 12;
 

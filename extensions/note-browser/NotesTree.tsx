@@ -14,6 +14,7 @@ import { useUIManagerContext } from 'ui-context';
 import { removeMdExtension, useLocalStorage } from 'utils';
 import { useWorkspaceContext, WorkspaceContextType } from 'workspace-context';
 import { filePathToWsPath, resolvePath } from 'ws-path';
+
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 
 const DEFAULT_FOLD_DEPTH = 2;

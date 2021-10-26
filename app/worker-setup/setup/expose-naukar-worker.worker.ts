@@ -1,6 +1,7 @@
 import * as Comlink from 'comlink';
 import { validateWorkerGlobalScope } from 'naukar-worker';
 import { polyfills } from 'shared/polyfill';
+
 import naukar from './naukar-init';
 
 validateWorkerGlobalScope();

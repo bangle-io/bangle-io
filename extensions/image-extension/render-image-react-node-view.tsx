@@ -3,6 +3,7 @@ import { useDestroyRef } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
 import { FileOps } from 'workspaces';
 import { isValidFileWsPath, parseLocalFilePath } from 'ws-path';
+
 import {
   calcImageDimensions,
   imageDimensionFromWsPath,

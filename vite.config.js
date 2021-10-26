@@ -1,8 +1,9 @@
 /* eslint-disable no-process-env */
-import getEnvVars from 'env-vars';
-import { minifyHtml, injectHtml } from 'vite-plugin-html';
 import reactRefresh from '@vitejs/plugin-react-refresh';
+import getEnvVars from 'env-vars';
+import { injectHtml,minifyHtml } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
+
 const argv = require('minimist')(process.argv.slice(2));
 
 const config = ({ command, mode }) => {

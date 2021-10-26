@@ -1,15 +1,17 @@
-import { Command } from '@bangle.dev/pm';
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
 } from 'inline-palette';
 import React, { useEffect, useMemo, useState } from 'react';
-import { UniversalPalette, InlinePaletteRow } from 'ui-components';
 import ReactDOM from 'react-dom';
+import { InlinePaletteRow,UniversalPalette } from 'ui-components';
 import { useWorkspaceContext } from 'workspace-context';
+
+import { Command } from '@bangle.dev/pm';
+
 import { palettePluginKey, tagNodeName } from './config';
-import { listAllTags, useSearchAllTags as useSearchAllTags } from './search';
+import { listAllTags, useSearchAllTags } from './search';
 
 export const createTagNode = (tagValue: string): Command => {
   tagValue = tagValue.trim();

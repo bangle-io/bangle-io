@@ -1,4 +1,5 @@
 import collabExtension from 'collab-extension';
+import collapsibleHeading from 'collapsible-heading';
 import coreActions from 'core-actions';
 import corePalette from 'core-palettes';
 import editorCore from 'editor-core';
@@ -9,9 +10,8 @@ import inlineBacklinkPalette from 'inline-backlink';
 import inlineCommandPalette from 'inline-command-palette';
 import inlineEmoji from 'inline-emoji';
 import noteBrowser from 'note-browser';
-import searchNotes from 'search-notes';
 import noteTags from 'note-tags';
-import collapsibleHeading from 'collapsible-heading';
+import searchNotes from 'search-notes';
 
 const z = /^(1)[.)] $/;
 

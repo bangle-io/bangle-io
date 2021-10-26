@@ -1,6 +1,3 @@
-import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
-import { Node, PluginKey } from '@bangle.dev/pm';
-import { useEditorViewContext } from '@bangle.dev/react';
 import { act, render } from '@testing-library/react';
 import { Extension, ExtensionRegistry } from 'extension-registry';
 import {
@@ -11,8 +8,13 @@ import {
 import React from 'react';
 import { sleep } from 'utils/utility';
 import { useWorkspaceContext } from 'workspace-context';
-import inlineBackLinkExtension from '../index';
+
+import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
+import { Node, PluginKey } from '@bangle.dev/pm';
+import { useEditorViewContext } from '@bangle.dev/react';
+
 import { InlineBacklinkPalette } from '../editor/InlineBacklinkPalette';
+import inlineBackLinkExtension from '../index';
 
 jest.mock('@bangle.dev/react', () => {
   return {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sidebar } from 'ui-components';
+
 import { NotesTree } from './NotesTree';
 
 export function NoteBrowserSidebar({}) {

@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { sleep } from 'utils';
 import { useWorkspaceContext } from 'workspace-context';
+
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
 import { SearchResultItem } from '../constants';
 import { useSearchNotesState } from '../hooks';

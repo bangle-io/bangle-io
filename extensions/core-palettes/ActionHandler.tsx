@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useUIManagerContext } from 'ui-context';
+
 import { actionPalette } from './ActionPalette';
 import { notesPalette } from './NotesPalette';
 import { workspacePalette } from './WorkspacePalette';

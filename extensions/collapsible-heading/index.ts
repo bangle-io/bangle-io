@@ -1,4 +1,5 @@
 import { Extension } from 'extension-registry';
+
 import { pluginsFactory } from './collapsible-heading-deco';
 
 const extensionName = 'collapsible-heading';

@@ -2,6 +2,7 @@ import { isFirefox } from 'config';
 import { Extension } from 'extension-registry';
 import React from 'react';
 import { AlbumIcon, FileDocumentIcon, TerminalIcon } from 'ui-components';
+
 import { ActionHandler } from './ActionHandler';
 import { actionPalette } from './ActionPalette';
 import { extensionName } from './config';

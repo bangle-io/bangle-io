@@ -1,3 +1,4 @@
+import './style';
 import { ActionContextProvider } from 'action-context';
 import { EditorManager } from 'editor-manager-context';
 import {
@@ -10,11 +11,11 @@ import { initExtensionRegistry, polyfills } from 'shared';
 import { UIManager } from 'ui-context';
 import { WorkerSetup } from 'worker-setup';
 import { WorkspaceContextProvider } from 'workspace-context';
+
 import App from './App';
 import { AppStateProvider } from './AppStateProvider';
 import { moduleSupport } from './misc/module-support';
 import { handleNativefsAuthError, handleWorkspaceNotFound } from './Routes';
-import './style';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
 import { PageLifecycle } from './watchers/PageLifecycle';
 import { WatchUI } from './watchers/WatchUI';

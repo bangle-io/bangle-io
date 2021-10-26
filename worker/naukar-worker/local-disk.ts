@@ -1,4 +1,5 @@
 import { FileOps } from 'workspaces';
+
 import { DebouncedDisk } from '@bangle.dev/disk';
 
 export function localDiskSetup(extensionRegistry, appState) {

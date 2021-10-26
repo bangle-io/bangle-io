@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect } from 'react';
-import { useRegisterSW } from './use-sw';
-import { useUIManagerContext } from 'ui-context';
-import { TextButton } from 'ui-components';
 import { FRIENDLY_ID, RELEASE_ID } from 'config';
+import React, { useEffect } from 'react';
+import { TextButton } from 'ui-components';
+import { useUIManagerContext } from 'ui-context';
 import { useLocalStorage } from 'utils';
+
+import { useRegisterSW } from './use-sw';
 
 export function SWReloadPrompt() {
   // replaced dynamically

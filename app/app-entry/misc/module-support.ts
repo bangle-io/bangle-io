@@ -1,5 +1,6 @@
 import { BANGLE_HOT } from 'config';
 import { validateNonWorkerGlobalScope } from 'naukar-worker';
+
 validateNonWorkerGlobalScope();
 
 export const moduleSupport = checkModuleWorkerSupport();

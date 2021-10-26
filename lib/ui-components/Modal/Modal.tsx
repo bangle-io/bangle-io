@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { cx, useKeybindings, useWatchClickOutside } from 'utils';
+
 import { ButtonIcon } from '../ButtonIcon';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { CloseIcon } from '../Icons';

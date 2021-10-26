@@ -1,8 +1,9 @@
 import { replaceSuggestionMarkWith } from 'inline-palette';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getDayJs, useDestroyRef } from 'utils';
+
 import { palettePluginKey } from './config';
-import { PaletteItem, PALETTE_ITEM_HINT_TYPE } from './palette-item';
+import { PALETTE_ITEM_HINT_TYPE,PaletteItem } from './palette-item';
 
 const OneDayMilliseconds = 24 * 60 * 60 * 1000;
 

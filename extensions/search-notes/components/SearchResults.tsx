@@ -1,4 +1,4 @@
-import { NodeSelection, Selection } from '@bangle.dev/pm';
+import { NoteLink } from 'contextual-ui-components';
 import { useEditorManagerContext } from 'editor-manager-context';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -7,11 +7,13 @@ import {
   ChevronRightIcon,
   Sidebar,
 } from 'ui-components';
-import { resolvePath } from 'ws-path';
-import { HighlightText } from './HighlightText';
-import { SearchMatch, SearchResultItem } from '../constants';
-import { NoteLink } from 'contextual-ui-components';
 import { useWorkspaceContext } from 'workspace-context';
+import { resolvePath } from 'ws-path';
+
+import { NodeSelection, Selection } from '@bangle.dev/pm';
+
+import { SearchMatch, SearchResultItem } from '../constants';
+import { HighlightText } from './HighlightText';
 
 function useCollapseMarker(
   results: SearchResultItem[],

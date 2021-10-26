@@ -6,6 +6,7 @@ import React, {
   useReducer,
 } from 'react';
 import { checkWidescreen, useWindowSize } from 'utils';
+
 import { applyTheme, ThemeType } from './apply-theme';
 
 const LOG = false;

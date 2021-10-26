@@ -1,7 +1,9 @@
-import { keymap } from '@bangle.dev/pm';
 import { keybindings } from 'config/keybindings';
 import { Extension } from 'extension-registry';
 import { inlinePalette, queryInlinePaletteActive } from 'inline-palette';
+
+import { keymap } from '@bangle.dev/pm';
+
 import { extensionName, paletteMarkName, palettePluginKey } from './config';
 import { InlineCommandPalette } from './InlineCommandPalette';
 
