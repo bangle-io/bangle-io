@@ -1,4 +1,5 @@
 import './ActivityBar.css';
+
 import { useActionContext } from 'action-context';
 import { useExtensionRegistryContext } from 'extension-registry';
 import React, { useEffect } from 'react';

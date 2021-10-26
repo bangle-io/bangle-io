@@ -1,4 +1,5 @@
 import './Changelog.css';
+
 import { CHANGELOG_TEXT } from 'config';
 import React, { useCallback, useEffect } from 'react';
 import { Modal } from 'ui-components';

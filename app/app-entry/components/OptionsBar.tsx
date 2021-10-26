@@ -1,4 +1,5 @@
 import './OptionsBar.css';
+
 import { useActionContext } from 'action-context';
 import { keybindings, keyDisplayValue } from 'config';
 import { useExtensionRegistryContext } from 'extension-registry';
