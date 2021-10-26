@@ -37,8 +37,8 @@ export function HelpDocuments() {
 
   return (
     <Sidebar.Container className="help-documents">
-      <Sidebar.Title className="mt-2 px-2">Help documents</Sidebar.Title>
-      <Sidebar.ItemContainer className="flex flex-row justify-between my-1 px-2 text-xs">
+      <Sidebar.Title className="px-2 mt-2">Help documents</Sidebar.Title>
+      <Sidebar.ItemContainer className="flex flex-row justify-between px-2 my-1 text-xs">
         <></>
       </Sidebar.ItemContainer>
       <GenericFileBrowser

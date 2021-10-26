@@ -2,7 +2,7 @@ import { AppStateContext } from 'app-state-context';
 import { useEditorManagerContext } from 'editor-manager-context';
 import { trimEndWhiteSpaceBeforeCursor } from 'editor-utils';
 import { naukarWorkerProxy } from 'naukar-proxy';
-import { useContext, useEffect,useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 const pendingSymbol = Symbol('pending-tasks');
 

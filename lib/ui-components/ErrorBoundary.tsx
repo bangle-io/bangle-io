@@ -22,23 +22,23 @@ export class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       // You can render any custom fallback UI
       return (
-        <div style={{}} className="p-4 w-full ">
-          <div className="w-full bangle-error-boundary rounded-md p-4">
-            <div className="text-5xl text-center w-full">🤕</div>
+        <div style={{}} className=" w-full p-4">
+          <div className="bangle-error-boundary w-full p-4 rounded-md">
+            <div className="w-full text-5xl text-center">🤕</div>
 
-            <h1 className="text-center w-full my-4">Something went wrong!</h1>
+            <h1 className="w-full my-4 text-center">Something went wrong!</h1>
 
-            <div className="text-center w-full text-sm">
+            <div className="w-full text-sm text-center">
               Help improve Bangle.io by reporting this on{' '}
               <a
                 target="_blank"
                 rel="noreferrer"
-                className="underline font-extrabold"
+                className="font-extrabold underline"
                 href="https://github.com/bangle-io/bangle-io-issues/issues/new"
               >
                 Github
               </a>
-              <div className="text-center w-full text-sm italic">
+              <div className="w-full text-sm italic text-center">
                 Error:{' '}
                 {this.state.error?.displayMessage ||
                   this.state.error?.message ||

@@ -5,7 +5,7 @@ import {
 } from 'inline-palette';
 import React, { useEffect, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { InlinePaletteRow,UniversalPalette } from 'ui-components';
+import { InlinePaletteRow, UniversalPalette } from 'ui-components';
 import { useWorkspaceContext } from 'workspace-context';
 
 import { Command } from '@bangle.dev/pm';
@@ -73,7 +73,7 @@ export function TagPickerInlinePalette({ wsPath }) {
   );
 
   return ReactDOM.createPortal(
-    <div className="shadow-2xl inline-palette-wrapper">
+    <div className="inline-palette-wrapper shadow-2xl">
       <div className="inline-palette-items-wrapper tag-picker-inline-palette">
         {query ? (
           items.map((r, i) => {

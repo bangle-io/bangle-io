@@ -93,7 +93,7 @@ export function EditorArea({
           </>
         )}
         {wsPath && fileExists === false && (
-          <h3 className="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl">
+          <h3 className="sm:text-3xl lg:text-3xl mb-8 text-xl font-bold leading-none">
             🕵️‍♀️‍ Note "{wsPath ? resolvePath(wsPath).fileName : ''}" was not
             found
           </h3>
@@ -105,7 +105,7 @@ export function EditorArea({
             <div className="flex flex-col">
               <a
                 href="https://bangle.io"
-                className="text-xs "
+                className=" text-xs"
                 style={{ opacity: '0.3' }}
               >
                 bangle.io

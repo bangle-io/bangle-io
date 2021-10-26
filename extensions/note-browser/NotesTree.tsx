@@ -62,9 +62,9 @@ export function NotesTree() {
 
   if (!wsName) {
     return (
-      <div className="h-full flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center h-full">
         <span
-          className="text-sm font-extrabold b-text-color-lighter cursor-pointer"
+          className="b-text-color-lighter text-sm font-extrabold cursor-pointer"
           onClick={() => {
             dispatchAction({
               name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',

@@ -12,7 +12,7 @@ import { useUIManagerContext } from 'ui-context';
 export function NotificationArea({}) {
   const { notifications, dispatch } = useUIManagerContext();
   return (
-    <div className="z-50 fixed bottom-0 right-0">
+    <div className="fixed bottom-0 right-0 z-50">
       {notifications.map((n) => (
         <Notification
           key={n.uid}
@@ -51,13 +51,13 @@ const Severity = {
 export function Notification({ content = '', buttons, severity, onDismiss }) {
   return (
     <div
-      className="relative shadow my-4 mx-4 w-96 p-2 duration-100 ease-in-out transition"
+      className="w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
       style={{
         backgroundColor: 'var(--bg-stronger-color)',
         boxShadow: '0px 0px 4px 2px rgba(0, 0, 0, 0.15)',
       }}
     >
-      <div className="w-full flex flex-row ">
+      <div className=" flex flex-row w-full">
         <span className="mr-2">{Severity[severity]()}</span>
         <div className="w-full text-sm">
           {typeof content === 'string' ? <span>{content}</span> : content}
@@ -74,7 +74,7 @@ export function Notification({ content = '', buttons, severity, onDismiss }) {
           </ButtonIcon>
         </div>
       </div>
-      <div className="w-full flex flex-row-reverse mt-3">
+      <div className="flex flex-row-reverse w-full mt-3">
         {buttons &&
           buttons.map((b, i) => <React.Fragment key={i}>{b}</React.Fragment>)}
       </div>

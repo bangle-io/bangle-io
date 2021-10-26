@@ -1,5 +1,5 @@
 import { byLengthAsc, byStartAsc, Fzf, FzfOptions, FzfResultItem } from 'fzf';
-import { useEffect, useRef,useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export { byLengthAsc, byStartAsc };
 export type { FzfOptions };

@@ -1,4 +1,4 @@
-import { byLengthAsc,useFzfSearch } from 'fzf-search';
+import { byLengthAsc, useFzfSearch } from 'fzf-search';
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
@@ -37,7 +37,7 @@ export function InlineBacklinkPalette() {
     useInlinePaletteQuery(palettePluginKey);
 
   return reactDOM.createPortal(
-    <div className="shadow-2xl inline-palette-wrapper">
+    <div className="inline-palette-wrapper shadow-2xl">
       <div className="inline-palette-items-wrapper">
         {/* TODO I am unable to hide inner when palette is invisible */}
         <InlineBacklinkPaletteInner query={query} counter={counter} />

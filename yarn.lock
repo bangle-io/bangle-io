@@ -6421,6 +6421,7 @@ __metadata:
     postcss-loader: ^6.1.0
     postcss-nested: ^5.0.5
     prettier: ^2.3.1
+    prettier-plugin-tailwind-css: ^1.5.0
     punycode: ^2.1.1
     puppeteer: ^10.0.0
     react: ^17.0.2
@@ -15227,6 +15228,24 @@ fsevents@^1.2.7:
   version: 1.1.2
   resolution: "prelude-ls@npm:1.1.2"
   checksum: c4867c87488e4a0c233e158e4d0d5565b609b105d75e4c05dc760840475f06b731332eb93cc8c9cecb840aa8ec323ca3c9a56ad7820ad2e63f0261dadcb154e4
+  languageName: node
+  linkType: hard
+
+"prettier-plugin-tailwind-css@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "prettier-plugin-tailwind-css@npm:1.5.0"
+  dependencies:
+    prettier: ^2.0.5
+  checksum: 56a14191e0eb74170332f267076898d227f007658c1224ed6fa655a81f7d1181485bc1c2ebe6ff56fa65164aa08982ec9e11b93b2571c90e69e9f2365faa89e5
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.0.5":
+  version: 2.4.1
+  resolution: "prettier@npm:2.4.1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: cc6830588b401b0d742862fe9c46bc9118204fb307c3abe0e49e95b35ed23629573807ffdf9cdd65289c252a0bb51fc0171437f6626ee36378dea80f0ee80b91
   languageName: node
   linkType: hard
 

@@ -3,7 +3,7 @@ import React from 'react';
 export function LocationBreadCrumb({ filePath }) {
   const items = (filePath || '').split('/');
   return (
-    <div className="w-full z-10 pl-2 py-1">
+    <div className="z-10 w-full py-1 pl-2">
       {items.flatMap((r, i) => [
         <span key={i}>{r}</span>,
         i !== items.length - 1 ? (

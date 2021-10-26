@@ -1,6 +1,6 @@
 import type { Node } from '@bangle.dev/pm';
 
-import { CONCURRENCY,SearchResultItem } from './constants';
+import { CONCURRENCY, SearchResultItem } from './constants';
 import { pMap } from './p-map';
 import { tagSearch } from './tag-search';
 

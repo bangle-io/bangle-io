@@ -115,7 +115,7 @@ export function ActivityBar() {
     });
 
   return (
-    <div id="activity-bar-area" className="flex widescreen">
+    <div id="activity-bar-area" className="widescreen flex">
       <div className="flex flex-col flex-grow">
         <CurrentWorkspaceButton
           onClick={() => {
@@ -141,7 +141,7 @@ export function ActivityBar() {
           style={{}}
         >
           <GiftIcon
-            className="text-gray-100 h-7 w-7"
+            className="h-7 w-7 text-gray-100"
             showDot={changelogHasUpdates}
           />
         </ButtonIcon>
@@ -161,7 +161,7 @@ function ActivityBarSmallscreen({
   return (
     <div
       id="activity-bar-area"
-      className="flex flex-row text-gray-100 align-center"
+      className="align-center flex flex-row text-gray-100"
     >
       <div className="flex flex-col justify-center mr-2">
         <ButtonIcon

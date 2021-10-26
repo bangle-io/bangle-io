@@ -100,7 +100,7 @@ function ChangelogDisplay() {
     <BangleEditor
       state={editorState}
       focusOnInit={false}
-      className="px-5 changelog-container"
+      className="changelog-container px-5"
       renderNodeViews={() => {
         return null;
       }}

@@ -1,6 +1,6 @@
 import { keyDisplayValue } from 'config';
 import { ExtensionPaletteType } from 'extension-registry';
-import { byLengthAsc,useFzfSearch } from 'fzf-search';
+import { byLengthAsc, useFzfSearch } from 'fzf-search';
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import {
   ButtonIcon,

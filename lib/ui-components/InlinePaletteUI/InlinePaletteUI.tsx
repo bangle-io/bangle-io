@@ -104,7 +104,7 @@ export function InlinePaletteRow({
           </span>
         </span>
 
-        <span className="flex-1 flex "></span>
+        <span className=" flex flex-1"></span>
         {rightIcon}
         {isHovered ? rightHoverIcon : null}
       </div>

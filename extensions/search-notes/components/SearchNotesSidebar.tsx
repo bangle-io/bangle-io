@@ -34,9 +34,9 @@ export function SearchNotesSidebar() {
 
   if (!wsName) {
     return (
-      <div className="h-full flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center h-full">
         <span
-          className="text-sm font-extrabold b-text-color-lighter cursor-pointer"
+          className="b-text-color-lighter text-sm font-extrabold cursor-pointer"
           onClick={() => {
             dispatchAction({
               name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',
@@ -51,14 +51,14 @@ export function SearchNotesSidebar() {
 
   return (
     <Sidebar.Container className="search-notes">
-      <Sidebar.Title className="mt-2 px-2">🔍 Search notes</Sidebar.Title>
-      <Sidebar.ItemContainer className="mt-2 px-2">
+      <Sidebar.Title className="px-2 mt-2">🔍 Search notes</Sidebar.Title>
+      <Sidebar.ItemContainer className="px-2 mt-2">
         <SearchInput
           searchQuery={searchQuery}
           updateSearchQuery={updateSearchQuery}
         />
       </Sidebar.ItemContainer>
-      <Sidebar.ItemContainer className="flex flex-row justify-between my-1 px-2 text-xs">
+      <Sidebar.ItemContainer className="flex flex-row justify-between px-2 my-1 text-xs">
         {searchResults && (
           <span className="">
             {searchResults.length === 0
@@ -78,7 +78,7 @@ export function SearchNotesSidebar() {
         {pendingSearch && (
           <>
             <span className="">Searching </span>
-            <span className="h-3 w-3 mr-2">
+            <span className="w-3 h-3 mr-2">
               <SpinnerIcon />
             </span>
           </>
