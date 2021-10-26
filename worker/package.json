@@ -1,5 +1,5 @@
 {
-  "name": "worker",
+  "name": "@bangle.io/worker",
   "workspaces": [
     "naukar-worker",
     "naukar-proxy"

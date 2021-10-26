@@ -1,5 +1,5 @@
 {
-  "name": "js-lib",
+  "name": "@bangle.io/js-lib",
   "workspaces": [
     "baby-fs",
     "inline-palette",

@@ -1,5 +1,5 @@
 {
-  "name": "worker-setup",
+  "name": "@bangle.io/worker-setup",
   "version": "0.0.0",
   "authors": [
     {
@@ -23,7 +23,7 @@
     "naukar-proxy": "workspace:*",
     "naukar-worker": "workspace:*",
     "react": "^17.0.2",
-    "shared": "workspace:*"
+    "@bangle.io/shared": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted"

@@ -1,5 +1,5 @@
 {
-  "name": "extensions",
+  "name": "@bangle.io/extensions",
   "workspaces": [
     "collab-extension",
     "collapsible-heading",

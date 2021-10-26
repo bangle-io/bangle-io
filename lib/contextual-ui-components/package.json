@@ -1,5 +1,5 @@
 {
-  "name": "contextual-ui-components",
+  "name": "@bangle.io/contextual-ui-components",
   "description": "Independent UI components which are relying on context from *-context libraries",
   "version": "0.0.0",
   "authors": [

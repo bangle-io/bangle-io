@@ -1,5 +1,5 @@
 {
-  "name": "bangle-io",
+  "name": "@bangle.io/bangle-io",
   "version": "0.1.16",
   "homepage": "https://bangle.io",
   "workspaces": [
@@ -61,7 +61,7 @@
     ]
   },
   "dependencies": {
-    "app-entry": "workspace:*",
+    "@bangle.io/app-entry": "workspace:*",
     "punycode": "^2.1.1"
   },
   "devDependencies": {

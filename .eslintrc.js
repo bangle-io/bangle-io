@@ -60,7 +60,7 @@ module.exports = {
       'error',
       {
         groups: [
-          ["^\\u0000"],
+          ['^\\u0000'],
           ['^@?(?!bangle)\\w', '^'],
           ['^@bangle?\\w'],
           ['^\\.'],

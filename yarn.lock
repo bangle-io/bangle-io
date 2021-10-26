@@ -3475,6 +3475,72 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bangle.io/app-entry@workspace:*, @bangle.io/app-entry@workspace:app/app-entry":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/app-entry@workspace:app/app-entry"
+  dependencies:
+    "@bangle.dev/base-components": 0.27.6
+    "@bangle.dev/core": 0.27.6
+    "@bangle.dev/markdown": 0.27.6
+    "@bangle.dev/markdown-front-matter": 0.27.6
+    "@bangle.dev/pm": 0.27.6
+    "@bangle.dev/react": 0.27.6
+    "@bangle.dev/table": 0.27.6
+    "@bangle.dev/utils": 0.27.6
+    "@bangle.io/style": "workspace:*"
+    "@sentry/tracing": ^6.7.1
+    "@testing-library/react": ^11.2.7
+    "@testing-library/react-hooks": ^7.0.0
+    "@types/react": ^17.0.14
+    "@types/react-dom": ^17.0.9
+    action-context: "workspace:*"
+    app-state-context: "workspace:*"
+    baby-fs: "workspace:*"
+    collab-extension: "workspace:*"
+    collapsible-heading: "workspace:*"
+    comlink: ^4.3.1
+    config: "workspace:*"
+    constants: "workspace:*"
+    editor-core: "workspace:*"
+    editor-manager-context: "workspace:*"
+    editor-utils: "workspace:*"
+    extension-registry: "workspace:*"
+    image-extension: "workspace:*"
+    inline-backlink: "workspace:*"
+    inline-command-palette: "workspace:*"
+    inline-emoji: "workspace:*"
+    naukar-proxy: "workspace:*"
+    naukar-worker: "workspace:*"
+    object-sync: "workspace:*"
+    page-lifecycle: ^0.1.2
+    prop-types: ^15.7.2
+    react: ^17.0.2
+    react-dom: 17.0.2
+    react-router-dom: ^5.3.0
+    react-test-renderer: ^17.0.2
+    react-virtual: ^2.7.1
+    shared: "workspace:*"
+    ui-components: "workspace:*"
+    ui-context: "workspace:*"
+    utils: "workspace:*"
+    vite-plugin-pwa: ^0.11.3
+    worker-setup: "workspace:*"
+    workspace-context: "workspace:*"
+    workspaces: "workspace:*"
+    ws-path: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/style@workspace:*, @bangle.io/style@workspace:app/style":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/style@workspace:app/style"
+  dependencies:
+    autoprefixer: ^10.2.6
+    postcss: ^8.3.4
+    tailwindcss: ^2.1.4
+  languageName: unknown
+  linkType: soft
+
 "@bcoe/v8-coverage@npm:^0.2.3":
   version: 0.2.3
   resolution: "@bcoe/v8-coverage@npm:0.2.3"
@@ -5724,62 +5790,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app-entry@workspace:*, app-entry@workspace:app/app-entry":
-  version: 0.0.0-use.local
-  resolution: "app-entry@workspace:app/app-entry"
-  dependencies:
-    "@bangle.dev/base-components": 0.27.6
-    "@bangle.dev/core": 0.27.6
-    "@bangle.dev/markdown": 0.27.6
-    "@bangle.dev/markdown-front-matter": 0.27.6
-    "@bangle.dev/pm": 0.27.6
-    "@bangle.dev/react": 0.27.6
-    "@bangle.dev/table": 0.27.6
-    "@bangle.dev/utils": 0.27.6
-    "@sentry/tracing": ^6.7.1
-    "@testing-library/react": ^11.2.7
-    "@testing-library/react-hooks": ^7.0.0
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
-    action-context: "workspace:*"
-    app-state-context: "workspace:*"
-    baby-fs: "workspace:*"
-    collab-extension: "workspace:*"
-    collapsible-heading: "workspace:*"
-    comlink: ^4.3.1
-    config: "workspace:*"
-    constants: "workspace:*"
-    editor-core: "workspace:*"
-    editor-manager-context: "workspace:*"
-    editor-utils: "workspace:*"
-    extension-registry: "workspace:*"
-    image-extension: "workspace:*"
-    inline-backlink: "workspace:*"
-    inline-command-palette: "workspace:*"
-    inline-emoji: "workspace:*"
-    naukar-proxy: "workspace:*"
-    naukar-worker: "workspace:*"
-    object-sync: "workspace:*"
-    page-lifecycle: ^0.1.2
-    prop-types: ^15.7.2
-    react: ^17.0.2
-    react-dom: 17.0.2
-    react-router-dom: ^5.3.0
-    react-test-renderer: ^17.0.2
-    react-virtual: ^2.7.1
-    shared: "workspace:*"
-    style: "workspace:*"
-    ui-components: "workspace:*"
-    ui-context: "workspace:*"
-    utils: "workspace:*"
-    vite-plugin-pwa: ^0.11.3
-    worker-setup: "workspace:*"
-    workspace-context: "workspace:*"
-    workspaces: "workspace:*"
-    ws-path: "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "app-state-context@workspace:*, app-state-context@workspace:lib/app-state-context":
   version: 0.0.0-use.local
   resolution: "app-state-context@workspace:lib/app-state-context"
@@ -6370,6 +6380,7 @@ __metadata:
     "@babel/preset-react": ^7.13.13
     "@babel/preset-typescript": ^7.14.5
     "@bangle.dev/jest-utils": 0.27.6
+    "@bangle.io/app-entry": "workspace:*"
     "@sentry/react": ^6.7.1
     "@sentry/tracing": ^6.7.1
     "@sentry/webpack-plugin": ^1.15.1
@@ -6383,7 +6394,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^4.26.1
     "@typescript-eslint/parser": ^4.26.1
     "@vitejs/plugin-react-refresh": ^1.3.3
-    app-entry: "workspace:*"
     autoprefixer: ^10.2.6
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
@@ -17581,16 +17591,6 @@ resolve@^2.0.0-next.3:
   checksum: 21425246a5a8f14d1625a657a3a56f8a323193fa341a71af818a2ed2a429efa2385a328b4381cf2f12c2d0e6380801eb9e0427ed9c3a10ff95c86e383184d632
   languageName: node
   linkType: hard
-
-"style@workspace:*, style@workspace:app/style":
-  version: 0.0.0-use.local
-  resolution: "style@workspace:app/style"
-  dependencies:
-    autoprefixer: ^10.2.6
-    postcss: ^8.3.4
-    tailwindcss: ^2.1.4
-  languageName: unknown
-  linkType: soft
 
 "supports-color@npm:^5.3.0, supports-color@npm:^5.4.0":
   version: 5.5.0

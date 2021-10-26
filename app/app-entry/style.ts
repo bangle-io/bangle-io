@@ -1,3 +1,3 @@
 import 'shared/extensions-style';
-import 'style/style';
+import '@bangle.io/style/style';
 import 'ui-components/style';
