@@ -1,5 +1,6 @@
 // .eslintrc.js
 module.exports = {
+  plugins: ['simple-import-sort'],
   extends: [
     'react-app',
     'react-app/jest',
@@ -21,6 +22,8 @@ module.exports = {
     },
   ],
   env: {
+    browser: true,
+    es2020: true,
     jest: true,
   },
   globals: {
@@ -52,6 +55,18 @@ module.exports = {
     'consistent-return': ['warn'],
 
     'jest/no-disabled-tests': 'error',
+    'import/newline-after-import': ['error', { count: 1 }],
+    'simple-import-sort/imports': [
+      'error',
+      {
+        groups: [
+          ['^\\u0000', '^@?(?!bangle)\\w', '^'],
+          ['^@bangle?\\w'],
+          ['^\\.'],
+        ],
+      },
+    ],
+    'simple-import-sort/exports': 'error',
   },
   settings: {
     'jest': {
