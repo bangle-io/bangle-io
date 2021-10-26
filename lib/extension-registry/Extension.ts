@@ -116,6 +116,7 @@ export class Extension<T = unknown> {
     application?: Omit<ApplicationConfig, 'name'>;
   }) {
     const { name } = config;
+
     if (!name) {
       throw new Error('Extension: name is required');
     }

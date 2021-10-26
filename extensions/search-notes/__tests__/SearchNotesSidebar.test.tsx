@@ -59,10 +59,10 @@ test('renders correctly is no workspace is opened', async () => {
   expect(renderResult.container).toMatchInlineSnapshot(`
     <div>
       <div
-        class="h-full flex flex-col items-center justify-center"
+        class="flex flex-col items-center justify-center h-full"
       >
         <span
-          class="text-sm font-extrabold b-text-color-lighter cursor-pointer"
+          class="b-text-color-lighter text-sm font-extrabold cursor-pointer"
         >
           Please open a workspace to search
         </span>

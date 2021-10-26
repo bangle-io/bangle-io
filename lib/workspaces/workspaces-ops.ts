@@ -14,6 +14,8 @@ import {
   WorkspaceType,
 } from './types';
 
+const WORKSPACE_KEY = 'workspace/2';
+
 /**
  * This function exists to retain the instance of the wsInfo (in particular rootDirHandler)
  * We have a lot of caches that depend on uniqueness (a === b checks) of rootDirHandler
@@ -24,7 +26,7 @@ function listWorkspacesHigherOrder() {
   let workspaces: WorkspaceInfo[] = [];
   return async () => {
     let currentWorkspaces: WorkspaceInfo[] =
-      (await idb.get('@bangle.io/workspace/2')) || [];
+      (await idb.get(WORKSPACE_KEY)) || [];
 
     currentWorkspaces = currentWorkspaces.map((cWsInfo) => {
       const existingWsInfo = workspaces.find(
@@ -139,7 +141,7 @@ export async function createWorkspace(
 
   workspaces.push(workspace);
 
-  await idb.set('@bangle.io/workspace/2', workspaces);
+  await idb.set(WORKSPACE_KEY, workspaces);
 }
 
 export async function deleteWorkspace(wsName) {
@@ -155,5 +157,5 @@ export async function deleteWorkspace(wsName) {
   }
 
   workspaces = workspaces.filter((w) => w.name !== wsName);
-  await idb.set('@bangle.io/workspace/2', workspaces);
+  await idb.set(WORKSPACE_KEY, workspaces);
 }

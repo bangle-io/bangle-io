@@ -1,9 +1,11 @@
+// Need to disable sort to make the mocking run first.
+// eslint-disable-next-line simple-import-sort/imports
+import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
+
 import { act, render } from '@testing-library/react';
 import * as idb from 'idb-keyval';
 import React from 'react';
 import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
-
-import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
 
 import { useWorkspaces } from '../hooks';
 import { helpFSWorkspaceInfo } from '../types';
@@ -94,7 +96,7 @@ describe('useWorkspaces', () => {
     expect(testLocation.pathname).toBe('/ws/kujo1');
     // Note: for some reason MemoryRouter doesnt do urlParams
     // correctly
-    expect(idb.set).toBeCalledWith('@bangle.io/workspace/2', [
+    expect(idb.set).toBeCalledWith('workspace/2', [
       helpFSWorkspaceInfo,
       { metadata: {}, name: 'kujo1', type: 'browser' },
     ]);

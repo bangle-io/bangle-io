@@ -7,12 +7,12 @@ exports[`renders correctly workspace is opened 1`] = `
     style="overflow-y: auto;"
   >
     <div
-      class="b-item-container font-semibold text-sm uppercase mt-2 px-2"
+      class="b-item-container font-semibold text-sm uppercase px-2 mt-2"
     >
       🔍 Search notes
     </div>
     <div
-      class="b-item-container mt-2 px-2"
+      class="b-item-container px-2 mt-2"
     >
       <div
         class="bangle-input-container"
@@ -32,7 +32,7 @@ exports[`renders correctly workspace is opened 1`] = `
       </div>
     </div>
     <div
-      class="b-item-container flex flex-row justify-between my-1 px-2 text-xs"
+      class="b-item-container flex flex-row justify-between px-2 my-1 text-xs"
     />
     <div
       class="flex-grow"
@@ -49,12 +49,12 @@ exports[`show search results 1`] = `
     style="overflow-y: auto;"
   >
     <div
-      class="b-item-container font-semibold text-sm uppercase mt-2 px-2"
+      class="b-item-container font-semibold text-sm uppercase px-2 mt-2"
     >
       🔍 Search notes
     </div>
     <div
-      class="b-item-container mt-2 px-2"
+      class="b-item-container px-2 mt-2"
     >
       <div
         class="bangle-input-container"
@@ -74,7 +74,7 @@ exports[`show search results 1`] = `
       </div>
     </div>
     <div
-      class="b-item-container flex flex-row justify-between my-1 px-2 text-xs"
+      class="b-item-container flex flex-row justify-between px-2 my-1 text-xs"
     >
       <span
         class=""

@@ -3,14 +3,14 @@
 exports[`NotificationArea renders with content 2`] = `
 <div>
   <div
-    class="z-50 fixed bottom-0 right-0"
+    class="fixed bottom-0 right-0 z-50"
   >
     <div
-      class="relative shadow my-4 mx-4 w-96 p-2 duration-100 ease-in-out transition"
+      class="w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
       style="box-shadow: 0px 0px 4px 2px rgba(0, 0, 0, 0.15);"
     >
       <div
-        class="w-full flex flex-row "
+        class=" flex flex-row w-full"
       >
         <span
           class="mr-2"
@@ -60,15 +60,15 @@ exports[`NotificationArea renders with content 2`] = `
         </div>
       </div>
       <div
-        class="w-full flex flex-row-reverse mt-3"
+        class="flex flex-row-reverse w-full mt-3"
       />
     </div>
     <div
-      class="relative shadow my-4 mx-4 w-96 p-2 duration-100 ease-in-out transition"
+      class="w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
       style="box-shadow: 0px 0px 4px 2px rgba(0, 0, 0, 0.15);"
     >
       <div
-        class="w-full flex flex-row "
+        class=" flex flex-row w-full"
       >
         <span
           class="mr-2"
@@ -118,7 +118,7 @@ exports[`NotificationArea renders with content 2`] = `
         </div>
       </div>
       <div
-        class="w-full flex flex-row-reverse mt-3"
+        class="flex flex-row-reverse w-full mt-3"
       />
     </div>
   </div>

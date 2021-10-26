@@ -13,8 +13,8 @@ import { FileOps } from '@bangle.io/workspaces';
 
 import { useDeleteNote, useFiles, useOpenedWsPaths } from '../WorkspaceContext';
 
-jest.mock('@bangle.io/workspace', () => {
-  const actual = jest.requireActual('@bangle.io/workspace');
+jest.mock('@bangle.io/workspaces', () => {
+  const actual = jest.requireActual('@bangle.io/workspaces');
   return {
     ...actual,
     FileOps: {

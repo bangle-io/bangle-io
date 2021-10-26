@@ -17,7 +17,7 @@ describe('NotificationArea', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="z-50 fixed bottom-0 right-0"
+          class="fixed bottom-0 right-0 z-50"
         />
       </div>
     `);
@@ -41,7 +41,7 @@ describe('NotificationArea', () => {
     expect(result.container).toMatchInlineSnapshot(`
       <div>
         <div
-          class="z-50 fixed bottom-0 right-0"
+          class="fixed bottom-0 right-0 z-50"
         />
       </div>
     `);
