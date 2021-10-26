@@ -8,7 +8,7 @@ import { HelpDocuments } from './HelpDocuments';
 import { NoteBrowserActionHandler } from './NoteBrowserActionHandler';
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';
 
-const extensionName = 'note-browser';
+const extensionName = '@bangle.io/note-browser';
 const key = 'Mod-e';
 
 const extension = Extension.create({
@@ -17,21 +17,21 @@ const extension = Extension.create({
     ReactComponent: NoteBrowserActionHandler,
     actions: [
       {
-        name: '@action/note-browser/toggle-note-browser',
+        name: 'action::@bangle.io/note-browser:toggle-note-browser',
         title: 'Note Browser',
         keybinding: key,
       },
     ],
     sidebars: [
       {
-        name: '@sidebar/note-browser/note-browser',
+        name: 'sidebar::@bangle.io/note-browser:note-browser',
         hint: `Note browser\n` + keyDisplayValue(key),
         icon: React.createElement(FolderIcon, {}),
         ReactComponent: NoteBrowserSidebar,
       },
 
       // {
-      //   name: '@sidebar/note-browser/help-documents-browser',
+      //   name: 'sidebar::@bangle.io/note-browser:help-documents-browser',
       //   iconPlacement: 'bottom',
       //   hint: `Help`,
       //   icon: React.createElement(QuestionIcon, {}),

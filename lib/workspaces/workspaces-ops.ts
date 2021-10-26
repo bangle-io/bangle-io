@@ -14,7 +14,7 @@ import {
   WorkspaceType,
 } from './types';
 
-const WORKSPACE_KEY = 'workspace/2';
+const WORKSPACE_KEY = 'workspaces/2';
 
 /**
  * This function exists to retain the instance of the wsInfo (in particular rootDirHandler)

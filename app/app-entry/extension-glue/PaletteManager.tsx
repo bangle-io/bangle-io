@@ -30,7 +30,9 @@ export function PaletteManager() {
         type: 'UI/RESET_PALETTE',
       });
       if (focusEditor) {
-        dispatchAction({ name: '@action/editor-core/focus-primary-editor' });
+        dispatchAction({
+          name: 'action::@bangle.io/editor-core:focus-primary-editor',
+        });
       }
     },
     [dispatch, dispatchAction],

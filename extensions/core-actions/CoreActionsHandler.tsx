@@ -200,7 +200,9 @@ export function CoreActionsHandler({ registerActionHandler }) {
     (focusEditor = true) => {
       updateInputModal({ type: undefined });
       if (focusEditor) {
-        dispatchAction({ name: '@action/editor-core/focus-primary-editor' });
+        dispatchAction({
+          name: 'action::@bangle.io/editor-core:focus-primary-editor',
+        });
       }
     },
     [dispatchAction],

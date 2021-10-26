@@ -26,7 +26,7 @@ export function EmptyEditorPage() {
             hint="Switch workspace"
             onClick={() => {
               dispatchAction({
-                name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',
+                name: 'action::@bangle.io/core-palettes:TOGGLE_WORKSPACE_PALETTE',
               });
             }}
             className="rounded-xl text-xs"
@@ -63,7 +63,7 @@ export function EmptyEditorPage() {
         <button
           onClick={() => {
             dispatchAction({
-              name: '@action/core-actions/NEW_NOTE_ACTION',
+              name: 'action::@bangle.io/core-actions:NEW_NOTE_ACTION',
             });
           }}
           className="sm:w-auto hover:bg-gray-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none flex-none w-full px-6 py-3 mt-6 ml-3 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent"

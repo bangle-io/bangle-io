@@ -10,7 +10,7 @@ const originalFile = window.File;
 
 const extensionRegistry = new ExtensionRegistry([
   Extension.create({
-    name: 'core',
+    name: '@bangle.io/core',
     application: {},
     editor: {
       specs: [...defaultSpecs()],

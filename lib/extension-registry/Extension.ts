@@ -177,9 +177,12 @@ export class Extension<T = unknown> {
         );
       }
 
-      if (actions.some((a) => !a.name.startsWith('@action/' + name + '/'))) {
+      if (actions.some((a) => !a.name.startsWith('action::' + name + ':'))) {
+        console.log(
+          actions.find((a) => !a.name.startsWith('action::' + name + ':')),
+        );
         throw new Error(
-          `An action must have a name with the following schema @action/<extension_name/xyz. For example '@action/my-extension/hello-world'`,
+          `An action must have a name with the following schema action::<extension_pkg_name:xyz. For example 'action::@bangle.io/my-extension:hello-world'`,
         );
       }
       if (actions.length !== new Set(actions.map((r) => r.name)).size) {
@@ -202,7 +205,7 @@ export class Extension<T = unknown> {
         !sidebars.every((s) => {
           const validName =
             typeof s.name === 'string' &&
-            s.name.startsWith('@sidebar/' + name + '/');
+            s.name.startsWith('sidebar::' + name + ':');
           const validIcon = Boolean(s.icon);
           const validComponent = Boolean(s.ReactComponent);
           const validHint = typeof s.hint === 'string';

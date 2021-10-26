@@ -76,7 +76,7 @@ export function ActivityBar() {
         toggleSidebar={toggleSidebar('file-browser')}
         toggleNotesPalette={() => {
           dispatchAction({
-            name: '@action/core-palettes/TOGGLE_NOTES_PALETTE',
+            name: 'action::@bangle.io/core-palettes:TOGGLE_NOTES_PALETTE',
           });
         }}
         paletteType={paletteType}

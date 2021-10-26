@@ -13,14 +13,14 @@ export function NoteBrowserActionHandler({
   useEffect(() => {
     const deregister = registerActionHandler((actionObject) => {
       switch (actionObject.name) {
-        case '@action/note-browser/toggle-note-browser': {
+        case 'action::@bangle.io/note-browser:toggle-note-browser': {
           dispatch({
             type: 'UI/CHANGE_SIDEBAR',
             value: {
               type:
-                sidebar === '@sidebar/note-browser/note-browser'
+                sidebar === 'sidebar::@bangle.io/note-browser:note-browser'
                   ? undefined
-                  : '@sidebar/note-browser/note-browser',
+                  : 'sidebar::@bangle.io/note-browser:note-browser',
             },
           });
           return true;

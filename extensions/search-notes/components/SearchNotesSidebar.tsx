@@ -40,7 +40,7 @@ export function SearchNotesSidebar() {
           className="b-text-color-lighter text-sm font-extrabold cursor-pointer"
           onClick={() => {
             dispatchAction({
-              name: '@action/core-palettes/TOGGLE_WORKSPACE_PALETTE',
+              name: 'action::@bangle.io/core-palettes:TOGGLE_WORKSPACE_PALETTE',
             });
           }}
         >

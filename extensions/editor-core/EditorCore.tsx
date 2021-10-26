@@ -16,27 +16,27 @@ export function EditorCore({ registerActionHandler }) {
   const actionHandler = useCallback(
     (actionObject) => {
       switch (actionObject.name) {
-        case '@action/editor-core/focus-primary-editor': {
+        case 'action::@bangle.io/editor-core:focus-primary-editor': {
           primaryEditor?.focusView();
           return true;
         }
 
-        case '@action/editor-core/collapse-heading': {
+        case 'action::@bangle.io/editor-core:collapse-heading': {
           executeEditorCommand(toggleHeadingCollapse);
           return true;
         }
 
-        case '@action/editor-core/uncollapse-all-heading': {
+        case 'action::@bangle.io/editor-core:uncollapse-all-heading': {
           executeEditorCommand(uncollapseAllHeadings);
           return true;
         }
 
-        case '@action/editor-core/move-list-up': {
+        case 'action::@bangle.io/editor-core:move-list-up': {
           executeEditorCommand(moveListItemUp);
           return true;
         }
 
-        case '@action/editor-core/move-list-down': {
+        case 'action::@bangle.io/editor-core:move-list-down': {
           executeEditorCommand(moveListItemDown);
           return true;
         }

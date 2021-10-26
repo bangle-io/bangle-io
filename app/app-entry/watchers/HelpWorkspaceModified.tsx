@@ -72,7 +72,7 @@ export function HelpWorkspaceMonitor({ wsPath }) {
             className="ml-3"
             onClick={() => {
               dispatchAction({
-                name: '@action/core-actions/CLONE_WORKSPACE_ACTION',
+                name: 'action::@bangle.io/core-actions:CLONE_WORKSPACE_ACTION',
                 value: {
                   resetWsName: HELP_FS_WORKSPACE_NAME,
                 },

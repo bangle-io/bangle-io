@@ -96,7 +96,7 @@ describe('useWorkspaces', () => {
     expect(testLocation.pathname).toBe('/ws/kujo1');
     // Note: for some reason MemoryRouter doesnt do urlParams
     // correctly
-    expect(idb.set).toBeCalledWith('workspace/2', [
+    expect(idb.set).toBeCalledWith('workspaces/2', [
       helpFSWorkspaceInfo,
       { metadata: {}, name: 'kujo1', type: 'browser' },
     ]);

@@ -24,7 +24,7 @@ function frmtHTML(doc) {
 const SELECTOR_TIMEOUT = 500;
 
 async function createWorkspace(page, wsName = 'test' + uuid(4)) {
-  await runAction(page, '@action/core-actions/NEW_WORKSPACE_ACTION');
+  await runAction(page, 'action::@bangle.io/core-actions:NEW_WORKSPACE_ACTION');
   let handle = await page.waitForSelector('.universal-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
@@ -70,7 +70,7 @@ async function newPage(browser, { widescreen = false } = {}) {
   };
 }
 async function createNewNote(page, wsName, noteName = 'new_file.md') {
-  await runAction(page, '@action/core-actions/NEW_NOTE_ACTION');
+  await runAction(page, 'action::@bangle.io/core-actions:NEW_NOTE_ACTION');
   let handle = await page.waitForSelector('.universal-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
