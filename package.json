@@ -121,6 +121,7 @@
     "postcss-loader": "^6.1.0",
     "postcss-nested": "^5.0.5",
     "prettier": "^2.3.1",
+    "prettier-plugin-tailwind-css": "^1.5.0",
     "puppeteer": "^10.0.0",
     "react": "^17.0.2",
     "serve": "^12.0.0",
@@ -143,7 +144,10 @@
     "singleQuote": true,
     "trailingComma": "all",
     "quoteProps": "consistent",
-    "arrowParens": "always"
+    "arrowParens": "always",
+    "plugins": [
+      "prettier-plugin-tailwind-css"
+    ]
   },
   "packageManager": "yarn@3.0.2",
   "resolutions": {
