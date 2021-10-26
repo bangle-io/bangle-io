@@ -17,7 +17,6 @@
   },
   "main": "index.ts",
   "module": "index.ts",
-  "scripts": {},
   "peerDependencies": {
     "react": "*",
     "react-dom": "*",

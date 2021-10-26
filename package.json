@@ -145,7 +145,7 @@
     "quoteProps": "consistent",
     "arrowParens": "always"
   },
-  "packageManager": "yarn@3.0.2",
+  "packageManager": "yarn@3.1.0",
   "resolutions": {
     "vite": "patch:vite@npm:2.6.10#.yarn/patches/vite-npm-2.6.10-80d83a440f"
   }

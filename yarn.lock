@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 4
+  version: 5
   cacheKey: 8
 
 "@apideck/better-ajv-errors@npm:^0.2.4":
@@ -75,53 +75,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.13.16, @babel/core@npm:^7.12.13, @babel/core@npm:^7.13.16":
-  version: 7.13.16
-  resolution: "@babel/core@npm:7.13.16"
+"@babel/core@npm:^7.1.0, @babel/core@npm:^7.7.5":
+  version: 7.12.10
+  resolution: "@babel/core@npm:7.12.10"
   dependencies:
-    "@babel/code-frame": ^7.12.13
-    "@babel/generator": ^7.13.16
-    "@babel/helper-compilation-targets": ^7.13.16
-    "@babel/helper-module-transforms": ^7.13.14
-    "@babel/helpers": ^7.13.16
-    "@babel/parser": ^7.13.16
-    "@babel/template": ^7.12.13
-    "@babel/traverse": ^7.13.15
-    "@babel/types": ^7.13.16
+    "@babel/code-frame": ^7.10.4
+    "@babel/generator": ^7.12.10
+    "@babel/helper-module-transforms": ^7.12.1
+    "@babel/helpers": ^7.12.5
+    "@babel/parser": ^7.12.10
+    "@babel/template": ^7.12.7
+    "@babel/traverse": ^7.12.10
+    "@babel/types": ^7.12.10
     convert-source-map: ^1.7.0
     debug: ^4.1.0
-    gensync: ^1.0.0-beta.2
+    gensync: ^1.0.0-beta.1
     json5: ^2.1.2
-    semver: ^6.3.0
+    lodash: ^4.17.19
+    semver: ^5.4.1
     source-map: ^0.5.0
-  checksum: bb311e7acb4cfd9c4b0acceaf084824f895cd32124143147ca5a7febf597f5205dd7574e6ee19cc3de90b0b92b953dc50f5c344d4c7b2013ca33a68893841248
+  checksum: fc077c6dfcbf33d047743ab2562f9b6113ee9bd32921e268676aac75eed7caed80d6bea1d928aebb509cbd5cc146c15977e54249dcfec03c248ae828ad37331a
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.14.3, @babel/core@npm:^7.7.2":
-  version: 7.14.3
-  resolution: "@babel/core@npm:7.14.3"
-  dependencies:
-    "@babel/code-frame": ^7.12.13
-    "@babel/generator": ^7.14.3
-    "@babel/helper-compilation-targets": ^7.13.16
-    "@babel/helper-module-transforms": ^7.14.2
-    "@babel/helpers": ^7.14.0
-    "@babel/parser": ^7.14.3
-    "@babel/template": ^7.12.13
-    "@babel/traverse": ^7.14.2
-    "@babel/types": ^7.14.2
-    convert-source-map: ^1.7.0
-    debug: ^4.1.0
-    gensync: ^1.0.0-beta.2
-    json5: ^2.1.2
-    semver: ^6.3.0
-    source-map: ^0.5.0
-  checksum: b91ed6adc790428966e134b9b8bfa1f2d54d8867877057ed9f9fcc354475a26d267afd6b0c84ac1a7ac7805bffc7b3353fdd9d894e58ef52c7c7e06f17044fd0
-  languageName: node
-  linkType: hard
-
-"@babel/core@npm:7.15.8, @babel/core@npm:^7.11.1":
+"@babel/core@npm:^7.11.1":
   version: 7.15.8
   resolution: "@babel/core@npm:7.15.8"
   dependencies:
@@ -144,26 +121,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.1.0, @babel/core@npm:^7.7.5":
-  version: 7.12.10
-  resolution: "@babel/core@npm:7.12.10"
+"@babel/core@npm:^7.12.13, @babel/core@npm:^7.13.16":
+  version: 7.13.16
+  resolution: "@babel/core@npm:7.13.16"
   dependencies:
-    "@babel/code-frame": ^7.10.4
-    "@babel/generator": ^7.12.10
-    "@babel/helper-module-transforms": ^7.12.1
-    "@babel/helpers": ^7.12.5
-    "@babel/parser": ^7.12.10
-    "@babel/template": ^7.12.7
-    "@babel/traverse": ^7.12.10
-    "@babel/types": ^7.12.10
+    "@babel/code-frame": ^7.12.13
+    "@babel/generator": ^7.13.16
+    "@babel/helper-compilation-targets": ^7.13.16
+    "@babel/helper-module-transforms": ^7.13.14
+    "@babel/helpers": ^7.13.16
+    "@babel/parser": ^7.13.16
+    "@babel/template": ^7.12.13
+    "@babel/traverse": ^7.13.15
+    "@babel/types": ^7.13.16
     convert-source-map: ^1.7.0
     debug: ^4.1.0
-    gensync: ^1.0.0-beta.1
+    gensync: ^1.0.0-beta.2
     json5: ^2.1.2
-    lodash: ^4.17.19
-    semver: ^5.4.1
+    semver: ^6.3.0
     source-map: ^0.5.0
-  checksum: fc077c6dfcbf33d047743ab2562f9b6113ee9bd32921e268676aac75eed7caed80d6bea1d928aebb509cbd5cc146c15977e54249dcfec03c248ae828ad37331a
+  checksum: bb311e7acb4cfd9c4b0acceaf084824f895cd32124143147ca5a7febf597f5205dd7574e6ee19cc3de90b0b92b953dc50f5c344d4c7b2013ca33a68893841248
+  languageName: node
+  linkType: hard
+
+"@babel/core@npm:^7.7.2":
+  version: 7.14.3
+  resolution: "@babel/core@npm:7.14.3"
+  dependencies:
+    "@babel/code-frame": ^7.12.13
+    "@babel/generator": ^7.14.3
+    "@babel/helper-compilation-targets": ^7.13.16
+    "@babel/helper-module-transforms": ^7.14.2
+    "@babel/helpers": ^7.14.0
+    "@babel/parser": ^7.14.3
+    "@babel/template": ^7.12.13
+    "@babel/traverse": ^7.14.2
+    "@babel/types": ^7.14.2
+    convert-source-map: ^1.7.0
+    debug: ^4.1.0
+    gensync: ^1.0.0-beta.2
+    json5: ^2.1.2
+    semver: ^6.3.0
+    source-map: ^0.5.0
+  checksum: b91ed6adc790428966e134b9b8bfa1f2d54d8867877057ed9f9fcc354475a26d267afd6b0c84ac1a7ac7805bffc7b3353fdd9d894e58ef52c7c7e06f17044fd0
   languageName: node
   linkType: hard
 
@@ -9310,119 +9310,119 @@ __metadata:
 "esbuild-android-arm64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-android-arm64@npm:0.13.9"
-  checksum: 5ea0ee32ec649feb8e952a3d9c9df97527bb391475b093f719d1fff92c8a635ac4fb5961814a6c146503122ad6b15b5177d2af64ce23fc936bfc33c90a2734b3
+  conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
 "esbuild-darwin-64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-darwin-64@npm:0.13.9"
-  checksum: 7e82a09b4c0f1ceb744df9014b707ff3e93cf0d214faa800c6aec0034cca6f39a1f71da67c9b2ea1f802a0675597aa747bfca59b285290d312a2a2c06c2c4e29
+  conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
 "esbuild-darwin-arm64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-darwin-arm64@npm:0.13.9"
-  checksum: 10274d66129bd1031ed45aadc5c76cd7a8350c93aa6a91ce744dc56d0ce1ffe126dbacd8b80ebfa2e12a8605749b5aa2e7b34151a4a7a7ef3c8744fe254ee829
+  conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
 "esbuild-freebsd-64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-freebsd-64@npm:0.13.9"
-  checksum: 06cb476fa98e188820e24414bc73eedf01e79e4ce03d9f052b648e819d4e78e4bc92d8d36800bbb39450bc15ecfb194fa013f36f876f4789163762a6921c6ed1
+  conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
 "esbuild-freebsd-arm64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-freebsd-arm64@npm:0.13.9"
-  checksum: a2bd8e3ea74018883d9bd2a9b91217570aea0e48374d4e283f7b592097a7916a071054d7f0c4c30f181f2a5576fe050aa37d701502bc2a8f4afee6acebc8b636
+  conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
 
 "esbuild-linux-32@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-linux-32@npm:0.13.9"
-  checksum: 8a958ddc0b8b1b195ea0a17b99a5c36c703807cade320e8b8fdcab182943c7fb8697c76b43a2b535a631e531dd0974e2ba873a1667c1c2f18ea8a0b8d8d682a2
+  conditions: os=linux & cpu=ia32
   languageName: node
   linkType: hard
 
 "esbuild-linux-64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-linux-64@npm:0.13.9"
-  checksum: 7a724dbb6a2b38a53915a16a0ba69049548c99fc7195d92f5539aecdd7690b1e4cd5eb818753222a646f0fa88597793c9e5737ad58c9bfd9bd806b753f1e90d9
+  conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
 "esbuild-linux-arm64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-linux-arm64@npm:0.13.9"
-  checksum: f5c2e36e6d353fb3ac2701e9f91fd7b0fff1c4e6241e71cb8d98dcb21c95c6fe733afb29382c70fc53dbc0b536dc47c2b0b8401655503e9d01ad85ad32470dd6
+  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
 "esbuild-linux-arm@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-linux-arm@npm:0.13.9"
-  checksum: 9e0793d2fd6f6848bba9fb191e9e1927724a3eeb06e0af30cf0e10d0f02bb2ec679e447881bfeaaee7c16045760024b969950c897b564c171266631794dadc0f
+  conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
 "esbuild-linux-mips64le@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-linux-mips64le@npm:0.13.9"
-  checksum: 9e794ae570d98d50b48f157ad9e4de763cce4948c0ecc526cded09f5a2087c82371a2d20ff2da7e99b1471aa229bb75950ec0285a1ade4a5cb6b8549b45f52ac
+  conditions: os=linux & cpu=mips64el
   languageName: node
   linkType: hard
 
 "esbuild-linux-ppc64le@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-linux-ppc64le@npm:0.13.9"
-  checksum: 625fbcbe0e59c7815bff304f556343975364ded7789b14fe676b4fc4d59c1e87ae30ec36088b6345afa5b13585f1115709b95146e98f2a042de049e9a1d4871b
+  conditions: os=linux & cpu=ppc64
   languageName: node
   linkType: hard
 
 "esbuild-netbsd-64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-netbsd-64@npm:0.13.9"
-  checksum: 4dbf341719e3bb4a09e3413f51e7cd365581df1f578f942e5b20d500762552dfe7fa7ce210deb0fcfbf89f39fe8d8618ffbb51504b064a0a5872935217f87aba
+  conditions: os=netbsd & cpu=x64
   languageName: node
   linkType: hard
 
 "esbuild-openbsd-64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-openbsd-64@npm:0.13.9"
-  checksum: 0d0802461127766649b6715a20b767118799fe49264e51a61a44eaacd621eca7a8992cf6aed5d2762b85fa91c6ccccbc0fe2f8af9b8e8ba1c4322927aa5a4f7f
+  conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
 
 "esbuild-sunos-64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-sunos-64@npm:0.13.9"
-  checksum: 375bc3834bb1a5bb6d0989c193b7af6346897b85d602993df6ba63ac359ef4e9514586a0832080f37973ebd000c526a6bf5032b468d2a479abbdd7b81f7e3f46
+  conditions: os=sunos & cpu=x64
   languageName: node
   linkType: hard
 
 "esbuild-windows-32@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-windows-32@npm:0.13.9"
-  checksum: 55d3cc391b4409690f37b43d2c715e1e9d55f4a13249195fa242a713d2cf8d5c640a857e0bf4dc45f59712f7dd32a5e286d618088d25ae49a2d473888db1982c
+  conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
 "esbuild-windows-64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-windows-64@npm:0.13.9"
-  checksum: 4bd4350aadebdb79fa6053ee7f8a400200f81b71043607260880a8b1d50b965f33c2a879f91d526bd15179607c084602097c8918d663dc681e763f6e8eb30951
+  conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
 "esbuild-windows-arm64@npm:0.13.9":
   version: 0.13.9
   resolution: "esbuild-windows-arm64@npm:0.13.9"
-  checksum: 365cf21fbd75505af720edf3b11ef924495fb15a2c9874346e44832e515dcce51c95b311742079d5df5faf57e4fb4cbce7227894693848f4d3764b848bf02a34
+  conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
@@ -10621,6 +10621,7 @@ fsevents@^1.2.7:
     bindings: ^1.5.0
     nan: ^2.12.1
   checksum: ae855aa737aaa2f9167e9f70417cf6e45a5cd11918e1fee9923709a0149be52416d765433b4aeff56c789b1152e718cd1b13ddec6043b78cdda68260d86383c1
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
@@ -10630,25 +10631,26 @@ fsevents@^1.2.7:
   dependencies:
     node-gyp: latest
   checksum: 97ade64e75091afee5265e6956cb72ba34db7819b4c3e94c431d4be2b19b8bb7a2d4116da417950c3425f17c8fe693d25e20212cac583ac1521ad066b77ae31f
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
 "fsevents@patch:fsevents@^1.2.7#~builtin<compat/fsevents>":
   version: 1.2.13
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=1cc4b2"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=18f3a7"
   dependencies:
     bindings: ^1.5.0
     nan: ^2.12.1
-  checksum: b264407498db2cfdcc2a05287334a4160c985a88e4a989e2f2f8dcc6afc8b04a4fcd82c797266442452e11c1fb07d7747d138b078fe4bb1f8f4fd2a6f2484d7e
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
 "fsevents@patch:fsevents@^2.1.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@^2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.1#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=1cc4b2"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
   dependencies:
     node-gyp: latest
-  checksum: 78db9daf1f6526a49cefee3917cc988f62dc7f25b5dd80ad6de4ffc4af7f0cab7491ac737626ff53e482a111bc53aac9e411fe3602458eca36f6a003ecf69c16
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
@@ -12838,7 +12840,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest-resolve@npm:26.6.2, jest-resolve@npm:^26.6.2":
+"jest-resolve@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-resolve@npm:26.6.2"
   dependencies:
@@ -12854,7 +12856,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest-resolve@npm:27.0.4, jest-resolve@npm:^27.0.4":
+"jest-resolve@npm:^27.0.4":
   version: 27.0.4
   resolution: "jest-resolve@npm:27.0.4"
   dependencies:
@@ -16615,21 +16617,21 @@ resolve@^2.0.0-next.3:
 
 "resolve@patch:resolve@^1.1.7#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.12.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.13.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.18.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.20.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.9.0#~builtin<compat/resolve>":
   version: 1.20.0
-  resolution: "resolve@patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=00b1ff"
+  resolution: "resolve@patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"
   dependencies:
     is-core-module: ^2.2.0
     path-parse: ^1.0.6
-  checksum: bed00be983cd20a8af0e7840664f655c4b269786dbd9595c5f156cd9d8a0050e65cdbbbdafc30ee9b6245b230c78a2c8ab6447a52545b582f476c29adb188cc5
+  checksum: a0dd7d16a8e47af23afa9386df2dff10e3e0debb2c7299a42e581d9d9b04d7ad5d2c53f24f1e043f7b3c250cbdc71150063e53d0b6559683d37f790b7c8c3cd5
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@^2.0.0-next.3#~builtin<compat/resolve>":
   version: 2.0.0-next.3
-  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=00b1ff"
+  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"
   dependencies:
     is-core-module: ^2.2.0
     path-parse: ^1.0.6
-  checksum: eb88c5e53843bc022215744307a5f5664446c0fdb8f43c33456dce98d5ee6b3162d0cd0a177bb6f1c3d5c8bf01391ac7ab2de0e936e35318725fb40ba7efdaf6
+  checksum: 21684b4d99a4877337cdbd5484311c811b3e8910edb5d868eec85c6e6550b0f570d911f9a384f9e176172d6713f2715bd0b0887fa512cb8c6aeece018de6a9f8
   languageName: node
   linkType: hard
 
@@ -18438,11 +18440,11 @@ typescript@4.3.5:
 
 "typescript@patch:typescript@4.3.5#~builtin<compat/typescript>":
   version: 4.3.5
-  resolution: "typescript@patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=32657b"
+  resolution: "typescript@patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=ddd1e8"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 4e2edec3c9b7b9a22ad9cbf9371339d9e13bfe44731f0e2d6a5287f991c3b0e3e0ac0c0ebbf9bf6fc2051e30559c789bfc9cf572cd6b836a0222ae141fac1dba
+  checksum: 61fc1a2ca5037420de5bbe17c6ddc4cbcc0d52301ed94f0a7b5821c55ff9eb96307f0816f745ca8f0fc87ed92f3951cde6d97cd6fd6bc6920c02ea63b5b26259
   languageName: node
   linkType: hard
 
@@ -18813,7 +18815,7 @@ typescript@4.3.5:
 
 "vite@patch:vite@npm:2.6.10#.yarn/patches/vite-npm-2.6.10-80d83a440f::locator=bangle-io%40workspace%3A.":
   version: 2.6.10
-  resolution: "vite@patch:vite@npm%3A2.6.10#.yarn/patches/vite-npm-2.6.10-80d83a440f::version=2.6.10&hash=d606f5&locator=bangle-io%40workspace%3A."
+  resolution: "vite@patch:vite@npm%3A2.6.10#.yarn/patches/vite-npm-2.6.10-80d83a440f::version=2.6.10&hash=2963a9&locator=bangle-io%40workspace%3A."
   dependencies:
     esbuild: ^0.13.2
     fsevents: ~2.3.2
@@ -18836,7 +18838,7 @@ typescript@4.3.5:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: dc3df15fe72535ca8250d9aa76fbf7cb2c544839dbe6a57ab71237328aad039033979410bdce06763be0cda2e1f3c9dc0117322e87d029e799da07cc4863d7fe
+  checksum: c489a9ec758c1fdd39a8739ffb38047d10a5ee474ca2c877c08bfb67f15f0ad0ada8ba6027d4a6d949979c56a071df8145681b30c199e986443f10581124cd73
   languageName: node
   linkType: hard
 

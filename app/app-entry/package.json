@@ -19,7 +19,6 @@
   "private": true,
   "main": "index.ts",
   "module": "index.ts",
-  "scripts": {},
   "peerDependencies": {
     "vite": "*"
   },

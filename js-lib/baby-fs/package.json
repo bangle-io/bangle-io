@@ -17,7 +17,6 @@
   },
   "main": "index.js",
   "module": "index.js",
-  "scripts": {},
   "publishConfig": {
     "access": "public"
   },

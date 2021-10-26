@@ -15,7 +15,6 @@
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "scripts": {},
   "publishConfig": {
     "access": "public"
   },
