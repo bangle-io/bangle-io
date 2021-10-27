@@ -1,10 +1,4 @@
-const {
-  SELECTOR_TIMEOUT,
-  sleep,
-  url,
-  longSleep,
-  newPage,
-} = require('../helpers');
+const { SELECTOR_TIMEOUT, sleep, url, newPage } = require('../helpers');
 
 let page, destroyPage;
 beforeEach(async () => {
@@ -27,6 +21,5 @@ test('Landing page is correct', async () => {
   await sleep(100);
 
   const result = await handle.evaluate((node) => node.innerText);
-  expect(result.includes('bangle.io')).toBe(true);
   expect(result).toMatchSnapshot();
 });
