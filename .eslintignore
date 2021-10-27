@@ -3,6 +3,7 @@ archive
 node_modules
 .yarn
 .pnp.cjs
+.pnp.loader.mjs
 coverage
 build
 dist
