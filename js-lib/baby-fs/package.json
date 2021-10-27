@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "@bangle.io/base-error": "workspace:*",
-    "idb-keyval": "^5.0.6"
+    "idb-keyval": "^5.1.5"
   }
 }

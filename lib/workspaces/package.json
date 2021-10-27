@@ -30,7 +30,7 @@
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "idb-keyval": "^5.0.6"
+    "idb-keyval": "^5.1.5"
   },
   "publishConfig": {
     "access": "restricted",
@@ -45,10 +45,10 @@
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react": "^12.1.2",
-    "@types/history": "^4.7.8",
-    "@types/react": "^17.0.14",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-router-dom": "^5.1.8",
+    "@types/history": "^4.7.9",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
+    "@types/react-router-dom": "^5.3.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.3.0"

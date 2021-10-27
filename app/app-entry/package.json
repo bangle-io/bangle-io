@@ -54,7 +54,7 @@
     "@bangle.io/workspace-context": "workspace:*",
     "@bangle.io/workspaces": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@sentry/tracing": "^6.7.1",
+    "@sentry/tracing": "^6.13.3",
     "comlink": "^4.3.1",
     "page-lifecycle": "^0.1.2",
     "prop-types": "^15.7.2",
@@ -66,8 +66,8 @@
   "devDependencies": {
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
-    "@types/react": "^17.0.14",
-    "@types/react-dom": "^17.0.9",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
     "react-test-renderer": "^17.0.2",
     "vite-plugin-pwa": "^0.11.3"
   }

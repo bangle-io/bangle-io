@@ -1744,8 +1744,8 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.2
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   peerDependencies:
@@ -1794,11 +1794,11 @@ __metadata:
     "@bangle.io/workspace-context": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    "@sentry/tracing": ^6.7.1
+    "@sentry/tracing": ^6.13.3
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     comlink: ^4.3.1
     page-lifecycle: ^0.1.2
     prop-types: ^15.7.2
@@ -1817,8 +1817,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/app-state-context@workspace:lib/app-state-context"
   dependencies:
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -1829,7 +1829,7 @@ __metadata:
   resolution: "@bangle.io/baby-fs@workspace:js-lib/baby-fs"
   dependencies:
     "@bangle.io/base-error": "workspace:*"
-    idb-keyval: ^5.0.6
+    idb-keyval: ^5.1.5
   languageName: unknown
   linkType: soft
 
@@ -1889,8 +1889,8 @@ __metadata:
     "@testing-library/dom": ^8.10.1
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -1916,8 +1916,8 @@ __metadata:
     "@bangle.io/workspace-context": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
   languageName: unknown
   linkType: soft
@@ -1942,8 +1942,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   peerDependencies:
@@ -1964,8 +1964,8 @@ __metadata:
     jest-circus: ^26.6.3
     jest-environment-puppeteer: ^5.0.4
     jest-puppeteer: ^5.0.4
-    prettier: ^2.3.1
-    puppeteer: ^10.0.0
+    prettier: ^2.4.1
+    puppeteer: ^10.4.0
   languageName: unknown
   linkType: soft
 
@@ -1990,8 +1990,8 @@ __metadata:
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2007,8 +2007,8 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
     "@testing-library/dom": ^8.10.1
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2026,8 +2026,8 @@ __metadata:
     "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     debounce-fn: ^5.0.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2044,9 +2044,9 @@ __metadata:
     "@bangle.dev/test-helpers": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@testing-library/react": ^12.1.2
-    "@types/jest": ^26.0.23
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/jest": ^26.0.24
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2079,8 +2079,8 @@ __metadata:
     "@bangle.dev/react": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/ui-components": "workspace:*"
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2090,7 +2090,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/fzf-search@workspace:js-lib/fzf-search"
   dependencies:
-    "@types/react": ^17.0.14
+    "@types/react": ^17.0.33
     fzf: ^0.4.1
     react: ^17.0.2
   peerDependencies:
@@ -2117,8 +2117,8 @@ __metadata:
     "@testing-library/dom": ^8.10.1
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2145,8 +2145,8 @@ __metadata:
     "@testing-library/dom": ^8.10.1
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2166,9 +2166,9 @@ __metadata:
     "@bangle.io/inline-palette": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
-    chrono-node: ^2.2.6
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    chrono-node: ^2.3.2
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2193,8 +2193,8 @@ __metadata:
     "@testing-library/dom": ^8.10.1
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     emoji-lookup-data: ^1.3.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2211,8 +2211,8 @@ __metadata:
     "@bangle.dev/tooltip": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2254,7 +2254,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
-    idb-keyval: ^5.0.6
+    idb-keyval: ^5.1.5
   languageName: unknown
   linkType: soft
 
@@ -2273,8 +2273,8 @@ __metadata:
     "@bangle.io/workspaces": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.2
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
     react-virtual: ^2.8.2
@@ -2305,8 +2305,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2340,8 +2340,8 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2375,7 +2375,7 @@ __metadata:
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/search-notes": "workspace:*"
     comlink: ^4.3.1
-    core-js: ^3.14.0
+    core-js: ^3.19.0
   languageName: unknown
   linkType: soft
 
@@ -2383,9 +2383,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/style@workspace:app/style"
   dependencies:
-    autoprefixer: ^10.2.6
-    postcss: ^8.3.4
-    tailwindcss: ^2.1.4
+    autoprefixer: ^10.3.7
+    postcss: ^8.3.11
+    tailwindcss: ^2.2.17
   languageName: unknown
   linkType: soft
 
@@ -2404,9 +2404,9 @@ __metadata:
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
-    idb-keyval: ^5.0.6
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.3.0
@@ -2421,8 +2421,8 @@ __metadata:
     "@testing-library/dom": ^8.10.1
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2435,8 +2435,8 @@ __metadata:
   resolution: "@bangle.io/ui-context@workspace:lib/ui-context"
   dependencies:
     "@bangle.io/utils": "workspace:*"
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
     react: ^17.0.2
   languageName: unknown
   linkType: soft
@@ -2451,9 +2451,9 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@testing-library/react-hooks": ^7.0.2
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
-    dayjs: ^1.10.5
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    dayjs: ^1.10.7
     debounce-fn: ^5.0.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -2489,10 +2489,10 @@ __metadata:
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
-    "@types/history": ^4.7.8
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
-    "@types/react-router-dom": ^5.1.8
+    "@types/history": ^4.7.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    "@types/react-router-dom": ^5.3.2
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.3.0
@@ -2516,11 +2516,11 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.2
-    "@types/history": ^4.7.8
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
-    "@types/react-router-dom": ^5.1.8
-    idb-keyval: ^5.0.6
+    "@types/history": ^4.7.9
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    "@types/react-router-dom": ^5.3.2
+    idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.3.0
@@ -2538,9 +2538,9 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/history": ^4.7.9
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
-    "@types/react-router-dom": ^5.1.8
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    "@types/react-router-dom": ^5.3.2
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.3.0
@@ -3084,7 +3084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/react@npm:^6.7.1":
+"@sentry/react@npm:^6.13.3":
   version: 6.13.3
   resolution: "@sentry/react@npm:6.13.3"
   dependencies:
@@ -3100,7 +3100,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/tracing@npm:^6.7.1":
+"@sentry/tracing@npm:^6.13.3":
   version: 6.13.3
   resolution: "@sentry/tracing@npm:6.13.3"
   dependencies:
@@ -3130,7 +3130,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/webpack-plugin@npm:^1.15.1":
+"@sentry/webpack-plugin@npm:^1.18.3":
   version: 1.18.3
   resolution: "@sentry/webpack-plugin@npm:1.18.3"
   dependencies:
@@ -3386,7 +3386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/history@npm:*, @types/history@npm:^4.7.8, @types/history@npm:^4.7.9":
+"@types/history@npm:*, @types/history@npm:^4.7.9":
   version: 4.7.9
   resolution: "@types/history@npm:4.7.9"
   checksum: 556b062adb92795839301965776b0418e9ca32798bd8a6031345a6a84d7512771107143a497b7e3ff826d0b0d4456e962c6450485dda6f55c7dd33371e840529
@@ -3435,7 +3435,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^26.0.23":
+"@types/jest@npm:^26.0.23, @types/jest@npm:^26.0.24":
   version: 26.0.24
   resolution: "@types/jest@npm:26.0.24"
   dependencies:
@@ -3662,7 +3662,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:>=16.9.0, @types/react-dom@npm:^17.0.9":
+"@types/react-dom@npm:>=16.9.0, @types/react-dom@npm:^17.0.10":
   version: 17.0.10
   resolution: "@types/react-dom@npm:17.0.10"
   dependencies:
@@ -3671,7 +3671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-router-dom@npm:^5.1.8":
+"@types/react-router-dom@npm:^5.3.2":
   version: 5.3.2
   resolution: "@types/react-router-dom@npm:5.3.2"
   dependencies:
@@ -3701,7 +3701,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16.9.0, @types/react@npm:^17.0.14":
+"@types/react@npm:*, @types/react@npm:>=16.9.0, @types/react@npm:^17.0.33":
   version: 17.0.33
   resolution: "@types/react@npm:17.0.33"
   dependencies:
@@ -3785,7 +3785,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^4.26.1":
+"@typescript-eslint/eslint-plugin@npm:^4.33.0":
   version: 4.33.0
   resolution: "@typescript-eslint/eslint-plugin@npm:4.33.0"
   dependencies:
@@ -3823,7 +3823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^4.26.1":
+"@typescript-eslint/parser@npm:^4.33.0":
   version: 4.33.0
   resolution: "@typescript-eslint/parser@npm:4.33.0"
   dependencies:
@@ -3885,7 +3885,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react-refresh@npm:^1.3.3":
+"@vitejs/plugin-react-refresh@npm:^1.3.6":
   version: 1.3.6
   resolution: "@vitejs/plugin-react-refresh@npm:1.3.6"
   dependencies:
@@ -4651,7 +4651,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.2.6":
+"autoprefixer@npm:^10.3.7":
   version: 10.3.7
   resolution: "autoprefixer@npm:10.3.7"
   dependencies:
@@ -4740,7 +4740,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:^8.2.2":
+"babel-loader@npm:^8.2.3":
   version: 8.2.3
   resolution: "babel-loader@npm:8.2.3"
   dependencies:
@@ -4866,7 +4866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bangle-io-help@npm:^1.8.2":
+"bangle-io-help@npm:^1.8.3":
   version: 1.8.3
   resolution: "bangle-io-help@npm:1.8.3"
   checksum: e9e974839573ae8420fdf77377b20b147853230d021cee73dd45cc259e61761b3aaf9b36a744047a22d3a2f7a78e18357379f5d5705274151bd0b13371fe0621
@@ -4885,71 +4885,71 @@ __metadata:
     "@bangle.dev/jest-utils": 0.27.6
     "@bangle.io/app-entry": "workspace:*"
     "@bangle.io/env-vars": "workspace:*"
-    "@sentry/react": ^6.7.1
-    "@sentry/tracing": ^6.7.1
-    "@sentry/webpack-plugin": ^1.15.1
+    "@sentry/react": ^6.13.3
+    "@sentry/tracing": ^6.13.3
+    "@sentry/webpack-plugin": ^1.18.3
     "@testing-library/dom": ^8.10.1
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
-    "@types/jest": ^26.0.23
-    "@types/react": ^17.0.14
-    "@types/react-dom": ^17.0.9
-    "@typescript-eslint/eslint-plugin": ^4.26.1
-    "@typescript-eslint/parser": ^4.26.1
-    "@vitejs/plugin-react-refresh": ^1.3.3
-    autoprefixer: ^10.2.6
+    "@types/jest": ^26.0.24
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    "@typescript-eslint/eslint-plugin": ^4.33.0
+    "@typescript-eslint/parser": ^4.33.0
+    "@vitejs/plugin-react-refresh": ^1.3.6
+    autoprefixer: ^10.3.7
     babel-eslint: ^10.1.0
-    babel-loader: ^8.2.2
-    bangle-io-help: ^1.8.2
+    babel-loader: ^8.2.3
+    bangle-io-help: ^1.8.3
     case-sensitive-paths-webpack-plugin: ^2.4.0
     copy-webpack-plugin: ^8.1.1
-    css-loader: ^5.2.6
-    date-fns: ^2.22.1
+    css-loader: ^5.2.7
+    date-fns: ^2.25.0
     ejs: ^3.1.6
     esbuild-linux-64: ^0.13.9
-    eslint: ^7.28.0
+    eslint: ^7.32.0
     eslint-config-react-app: ^6.0.0
-    eslint-import-resolver-node: ^0.3.4
-    eslint-plugin-flowtype: ^5.7.2
-    eslint-plugin-import: ^2.23.4
-    eslint-plugin-jest: ^24.3.6
+    eslint-import-resolver-node: ^0.3.6
+    eslint-plugin-flowtype: ^5.10.0
+    eslint-plugin-import: ^2.25.2
+    eslint-plugin-jest: ^24.7.0
     eslint-plugin-jsx-a11y: ^6.4.1
-    eslint-plugin-react: ^7.24.0
+    eslint-plugin-react: ^7.26.1
     eslint-plugin-react-hooks: ^4.2.0
     eslint-plugin-simple-import-sort: ^7.0.0
-    eslint-plugin-testing-library: ^4.1.2
+    eslint-plugin-testing-library: ^4.12.4
     file-loader: ^6.2.0
     git-revision-webpack-plugin: ^3.0.6
-    html-webpack-plugin: ^5.3.1
+    html-webpack-plugin: ^5.5.0
     http-server: ^0.12.3
     jest: ^26.6.3
     jest-circus: ^26.6.3
     jest-puppeteer: ^5.0.4
-    mini-css-extract-plugin: ^1.6.0
+    mini-css-extract-plugin: ^1.6.2
     minimist: ^1.2.5
-    pnp-webpack-plugin: ^1.6.4
-    postcss: ^8.3.4
+    pnp-webpack-plugin: ^1.7.0
+    postcss: ^8.3.11
     postcss-custom-properties: ^11.0.0
     postcss-import: ^14.0.2
-    postcss-loader: ^6.1.0
-    postcss-nested: ^5.0.5
-    prettier: ^2.3.1
+    postcss-loader: ^6.2.0
+    postcss-nested: ^5.0.6
+    prettier: ^2.4.1
     punycode: ^2.1.1
-    puppeteer: ^10.0.0
+    puppeteer: ^10.4.0
     react: ^17.0.2
-    serve: ^12.0.0
+    serve: ^12.0.1
     servor: "github:kepta/servor#master"
     style-loader: ^2.0.0
     surge: ^0.23.0
-    tailwindcss: ^2.1.4
+    tailwindcss: ^2.2.17
     typescript: 4.3.5
-    vite: ^2.6.10
-    vite-plugin-html: ^2.0.7
+    vite: ^2.6.12
+    vite-plugin-html: ^2.1.1
     vite-plugin-pwa: ^0.11.3
-    webpack: ^5.39.0
-    webpack-bundle-analyzer: ^4.4.1
-    webpack-cli: ^4.7.2
+    webpack: ^5.60.0
+    webpack-bundle-analyzer: ^4.5.0
+    webpack-cli: ^4.9.1
     webpack-dev-server: ^3.11.2
     workbox-window: ^6.3.0
     worker-loader: ^3.0.8
@@ -5472,7 +5472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chrono-node@npm:^2.2.6":
+"chrono-node@npm:^2.3.2":
   version: 2.3.2
   resolution: "chrono-node@npm:2.3.2"
   dependencies:
@@ -5970,7 +5970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.14.0":
+"core-js@npm:^3.19.0":
   version: 3.19.0
   resolution: "core-js@npm:3.19.0"
   checksum: 9f03e72f01d9eeafb2724ee5787ab8d6e7dcf0e3b44c4dec23e6a0cfc9e2e0a76460b77ce7d1d0be09db918618b11595fad6838978ff97f2684270738898c5a2
@@ -6060,7 +6060,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^5.2.6":
+"css-loader@npm:^5.2.7":
   version: 5.2.7
   resolution: "css-loader@npm:5.2.7"
   dependencies:
@@ -6201,14 +6201,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:^2.22.1":
+"date-fns@npm:^2.25.0":
   version: 2.25.0
   resolution: "date-fns@npm:2.25.0"
   checksum: 8896dc1dde0ee5ef77616942423bfa11fa2017a5ac19457293b7aaedc8822ff94f0a14eaf93da573b09b601dc0149eb430988a046cc9f79a2eb15f8c66c9c50c
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.10.0, dayjs@npm:^1.10.5":
+"dayjs@npm:^1.10.0, dayjs@npm:^1.10.7":
   version: 1.10.7
   resolution: "dayjs@npm:1.10.7"
   checksum: a0a4ca95abaa03d0702161dc2c35d16121188e342f5052b9c61cdf784dab68af766f477c04f87f71c6af666fd4d13db9b9853b87265850d6093b7b04e1bb1cd7
@@ -7142,7 +7142,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-node@npm:^0.3.4, eslint-import-resolver-node@npm:^0.3.6":
+"eslint-import-resolver-node@npm:^0.3.6":
   version: 0.3.6
   resolution: "eslint-import-resolver-node@npm:0.3.6"
   dependencies:
@@ -7163,7 +7163,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-flowtype@npm:^5.7.2":
+"eslint-plugin-flowtype@npm:^5.10.0":
   version: 5.10.0
   resolution: "eslint-plugin-flowtype@npm:5.10.0"
   dependencies:
@@ -7175,7 +7175,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import@npm:^2.23.4":
+"eslint-plugin-import@npm:^2.25.2":
   version: 2.25.2
   resolution: "eslint-plugin-import@npm:2.25.2"
   dependencies:
@@ -7198,7 +7198,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jest@npm:^24.3.6":
+"eslint-plugin-jest@npm:^24.7.0":
   version: 24.7.0
   resolution: "eslint-plugin-jest@npm:24.7.0"
   dependencies:
@@ -7243,7 +7243,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.24.0":
+"eslint-plugin-react@npm:^7.26.1":
   version: 7.26.1
   resolution: "eslint-plugin-react@npm:7.26.1"
   dependencies:
@@ -7276,7 +7276,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-testing-library@npm:^4.1.2":
+"eslint-plugin-testing-library@npm:^4.12.4":
   version: 4.12.4
   resolution: "eslint-plugin-testing-library@npm:4.12.4"
   dependencies:
@@ -7331,7 +7331,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^7.28.0":
+"eslint@npm:^7.32.0":
   version: 7.32.0
   resolution: "eslint@npm:7.32.0"
   dependencies:
@@ -8728,7 +8728,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-webpack-plugin@npm:^5.3.1":
+"html-webpack-plugin@npm:^5.5.0":
   version: 5.5.0
   resolution: "html-webpack-plugin@npm:5.5.0"
   dependencies:
@@ -8940,7 +8940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"idb-keyval@npm:^5.0.6":
+"idb-keyval@npm:^5.1.5":
   version: 5.1.5
   resolution: "idb-keyval@npm:5.1.5"
   dependencies:
@@ -11161,7 +11161,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mini-css-extract-plugin@npm:^1.6.0":
+"mini-css-extract-plugin@npm:^1.6.2":
   version: 1.6.2
   resolution: "mini-css-extract-plugin@npm:1.6.2"
   dependencies:
@@ -12282,7 +12282,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pnp-webpack-plugin@npm:^1.6.4":
+"pnp-webpack-plugin@npm:^1.7.0":
   version: 1.7.0
   resolution: "pnp-webpack-plugin@npm:1.7.0"
   dependencies:
@@ -12359,7 +12359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-loader@npm:^6.1.0":
+"postcss-loader@npm:^6.2.0":
   version: 6.2.0
   resolution: "postcss-loader@npm:6.2.0"
   dependencies:
@@ -12417,7 +12417,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-nested@npm:5.0.6, postcss-nested@npm:^5.0.5":
+"postcss-nested@npm:5.0.6, postcss-nested@npm:^5.0.6":
   version: 5.0.6
   resolution: "postcss-nested@npm:5.0.6"
   dependencies:
@@ -12473,7 +12473,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.6, postcss@npm:^8.2.1, postcss@npm:^8.2.15, postcss@npm:^8.3.4, postcss@npm:^8.3.8":
+"postcss@npm:^8.1.6, postcss@npm:^8.2.1, postcss@npm:^8.2.15, postcss@npm:^8.3.11, postcss@npm:^8.3.8":
   version: 8.3.11
   resolution: "postcss@npm:8.3.11"
   dependencies:
@@ -12498,7 +12498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.3.1, prettier@npm:^2.3.2":
+"prettier@npm:^2.3.2, prettier@npm:^2.4.1":
   version: 2.4.1
   resolution: "prettier@npm:2.4.1"
   bin:
@@ -12856,7 +12856,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer@npm:^10.0.0":
+"puppeteer@npm:^10.4.0":
   version: 10.4.0
   resolution: "puppeteer@npm:10.4.0"
   dependencies:
@@ -13945,7 +13945,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serve@npm:^12.0.0":
+"serve@npm:^12.0.1":
   version: 12.0.1
   resolution: "serve@npm:12.0.1"
   dependencies:
@@ -14804,7 +14804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:^2.1.4":
+"tailwindcss@npm:^2.2.17":
   version: 2.2.17
   resolution: "tailwindcss@npm:2.2.17"
   dependencies:
@@ -15661,7 +15661,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-html@npm:^2.0.7":
+"vite-plugin-html@npm:^2.1.1":
   version: 2.1.1
   resolution: "vite-plugin-html@npm:2.1.1"
   dependencies:
@@ -15863,7 +15863,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:^4.4.1":
+"webpack-bundle-analyzer@npm:^4.5.0":
   version: 4.5.0
   resolution: "webpack-bundle-analyzer@npm:4.5.0"
   dependencies:
@@ -15882,7 +15882,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:^4.7.2":
+"webpack-cli@npm:^4.9.1":
   version: 4.9.1
   resolution: "webpack-cli@npm:4.9.1"
   dependencies:
@@ -16015,7 +16015,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.39.0":
+"webpack@npm:^5.60.0":
   version: 5.60.0
   resolution: "webpack@npm:5.60.0"
   dependencies:

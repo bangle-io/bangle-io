@@ -22,8 +22,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "autoprefixer": "^10.2.6",
-    "postcss": "^8.3.4",
-    "tailwindcss": "^2.1.4"
+    "autoprefixer": "^10.3.7",
+    "postcss": "^8.3.11",
+    "tailwindcss": "^2.2.17"
   }
 }

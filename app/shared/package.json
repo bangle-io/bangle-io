@@ -43,7 +43,7 @@
     "@bangle.io/object-sync": "workspace:*",
     "@bangle.io/search-notes": "workspace:*",
     "comlink": "^4.3.1",
-    "core-js": "^3.14.0"
+    "core-js": "^3.19.0"
   },
   "publishConfig": {
     "access": "restricted"

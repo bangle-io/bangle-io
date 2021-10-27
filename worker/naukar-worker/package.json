@@ -29,6 +29,6 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/object-sync": "workspace:*",
     "@bangle.io/workspaces": "workspace:*",
-    "idb-keyval": "^5.0.6"
+    "idb-keyval": "^5.1.5"
   }
 }
