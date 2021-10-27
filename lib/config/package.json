@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/config"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"

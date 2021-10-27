@@ -10,35 +10,107 @@ on:
     branches: [dev, staging, production]
 
 jobs:
+  prepare-yarn-cache:
+    name: Prepare Cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use Node.js latest
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '*'
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            yarn-
+      - name: 'Verify Yarn cache (fix w/ "yarn install")'
+        if: "github.actor != 'kepta'"
+        run: |
+          yarn install --immutable --immutable-cache --check-cache --mode=skip-build
+      - name: 'Check Yarn cache (fix w/ "yarn install")'
+        if: "github.actor == 'kepta'"
+        run: |
+          yarn install --immutable --immutable-cache --mode=skip-build
+
+  yarn-validate:
+    name: Validate Yarn dependencies and constraints
+    needs: prepare-yarn-cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Use Node.js latest
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '*'
+      - name: 'Check for unmet constraints (fix w/ "yarn constraints --fix")'
+        run: |
+          yarn constraints
+      - name: 'Check for duplicate dependencies (fix w/ "yarn dedupe")'
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: |
+          yarn dedupe --check
+
   tests:
     runs-on: ubuntu-latest
+    needs: prepare-yarn-cache
     strategy:
       matrix:
-        test-kind: ['test', 'g:e2e']
+        test-kind: ['lint', 'test', 'g:e2e']
     steps:
       - uses: actions/checkout@v2
       - name: Run test "${{ matrix.test-kind }}"
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn install --immutable --immutable-cache
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-${{ hashFiles('yarn.lock') }}
+      - run: yarn install
       - run: yarn ${{ matrix.test-kind }}
   build-bangle-io:
     runs-on: ubuntu-latest
+    needs: prepare-yarn-cache
     steps:
       - uses: actions/checkout@v2
       - name: Build
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn install --immutable --immutable-cache
-      - run: yarn workspace bangle-io build
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-${{ hashFiles('yarn.lock') }}
+      - run: yarn install
       - run: yarn build
   coverage:
     runs-on: ubuntu-latest
+    needs: prepare-yarn-cache
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - uses: actions/checkout@v1
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-${{ hashFiles('yarn.lock') }}
+      - run: yarn install
       - uses: artiomtr/jest-coverage-report-action@v2.0-rc.5
         with:
           package-manager: yarn

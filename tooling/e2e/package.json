@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "tooling/e2e"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -29,8 +30,8 @@
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-typescript": "^7.15.0",
     "@bangle.io/ws-path": "workspace:*",
-    "jest": "^27.0.4",
-    "jest-circus": "^27.0.4",
+    "jest": "^26.6.3",
+    "jest-circus": "^26.6.3",
     "jest-environment-puppeteer": "^5.0.4",
     "jest-puppeteer": "^5.0.4",
     "prettier": "^2.3.1",

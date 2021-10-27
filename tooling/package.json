@@ -4,5 +4,10 @@
     "env-vars",
     "e2e",
     "_scripts"
-  ]
+  ],
+  "repository": {
+    "directory": "tooling",
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git"
+  }
 }

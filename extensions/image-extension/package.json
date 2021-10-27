@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "extensions/image-extension"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -31,12 +32,12 @@
     "@bangle.io/workspaces": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "react": "^17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@testing-library/dom": "^8.10.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^13.1.9",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9"
   },

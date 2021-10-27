@@ -17,10 +17,6 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
-  },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
@@ -28,7 +24,7 @@
   "scripts": {
     "lint": "yarn g:package-patrol && yarn prettier --check . && yarn eslint . && yarn tsc-check",
     "update-jsconfig": "yarn node ./tooling/_scripts/create-jsconfig.js",
-    "test": "yarn lint && yarn jest",
+    "test": "yarn jest",
     "test:coverage": "yarn jest --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
     "hot-start": "BANGLE_HOT=yes yarn start",
@@ -75,10 +71,10 @@
     "@sentry/react": "^6.7.1",
     "@sentry/tracing": "^6.7.1",
     "@sentry/webpack-plugin": "^1.15.1",
-    "@testing-library/dom": "^7.31.2",
+    "@testing-library/dom": "^8.10.1",
     "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^13.1.9",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^26.0.23",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
