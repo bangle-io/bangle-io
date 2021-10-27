@@ -1,3 +1,5 @@
+// import type { History as _History } from 'history';
+// eslint-disable-next-line import/no-unresolved
 import type { History as _History } from 'history';
 import { matchPath } from 'react-router-dom';
 

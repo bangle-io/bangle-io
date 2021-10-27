@@ -17,7 +17,6 @@
   },
   "main": "index.ts",
   "module": "index.ts",
-  "scripts": {},
   "dependencies": {
     "@bangle.dev/pm": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
