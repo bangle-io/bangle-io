@@ -15,6 +15,12 @@ exports[`inline action palette convert to bullet list 1`] = `
     >
   </li>
 </ul>
-<p><br /></p>
+<p>
+  <br
+    class=\\"
+      ProseMirror-trailingBreak
+    \\"
+  />
+</p>
 "
 `;

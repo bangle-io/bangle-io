@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/test-utils"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -30,13 +31,13 @@
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "idb-keyval": "^5.0.6",
+    "idb-keyval": "^5.1.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.3.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.14",
-    "@types/react-dom": "^17.0.9"
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10"
   }
 }

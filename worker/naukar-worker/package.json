@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "worker/naukar-worker"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -28,6 +29,6 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/object-sync": "workspace:*",
     "@bangle.io/workspaces": "workspace:*",
-    "idb-keyval": "^5.0.6"
+    "idb-keyval": "^5.1.5"
   }
 }

@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/workspace-context"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -19,18 +20,17 @@
   "module": "index.ts",
   "devDependencies": {
     "@bangle.dev/core": "0.27.6",
-    "@bangle.dev/pm": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
     "@bangle.io/baby-fs": "workspace:*",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/react-hooks": "^7.0.0",
-    "@types/history": "^4.7.8",
-    "@types/react": "^17.0.14",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-router-dom": "^5.1.8",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/react-hooks": "^7.0.2",
+    "@types/history": "^4.7.9",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
+    "@types/react-router-dom": "^5.3.2",
     "react": "^17.0.2",
-    "react-dom": "17.0.2",
-    "react-test-renderer": "17.0.2"
+    "react-dom": "^17.0.2",
+    "react-test-renderer": "^17.0.2"
   },
   "dependencies": {
     "@bangle.dev/pm": "0.27.6",

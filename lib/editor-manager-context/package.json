@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/editor-manager-context"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -26,13 +27,11 @@
     "@bangle.io/ui-context": "workspace:*",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "^17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@testing-library/dom": "^8.10.1",
-    "@types/react": "^17.0.14",
-    "@types/react-dom": "^17.0.9",
-    "react": "^17.0.2",
-    "react-dom": "17.0.2"
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10"
   }
 }

@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/utils"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -23,7 +24,7 @@
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "dayjs": "^1.10.5",
+    "dayjs": "^1.10.7",
     "debounce-fn": "^5.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -33,9 +34,9 @@
     "access": "public"
   },
   "devDependencies": {
-    "@testing-library/react-hooks": "^7.0.0",
-    "@types/react": "^17.0.14",
-    "@types/react-dom": "^17.0.9",
+    "@testing-library/react-hooks": "^7.0.2",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
     "react-test-renderer": "^17.0.2"
   }
 }

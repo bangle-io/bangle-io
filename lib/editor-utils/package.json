@@ -10,7 +10,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle-io.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/editor-utils"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -26,11 +27,11 @@
   "devDependencies": {
     "@bangle.dev/all-base-components": "0.27.6",
     "@bangle.dev/test-helpers": "0.27.6",
-    "@testing-library/react": "^12.0.0",
-    "@types/jest": "^26.0.23",
-    "@types/react": "^17.0.14",
-    "@types/react-dom": "^17.0.9",
+    "@testing-library/react": "^12.1.2",
+    "@types/jest": "^26.0.24",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
     "react": "^17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "^17.0.2"
   }
 }

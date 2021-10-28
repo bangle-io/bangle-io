@@ -6,5 +6,10 @@
     "base-error",
     "fzf-search",
     "object-sync"
-  ]
+  ],
+  "repository": {
+    "directory": "js-lib",
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git"
+  }
 }
