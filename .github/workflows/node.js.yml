@@ -9,42 +9,48 @@ on:
   pull_request:
     branches: [dev, staging, production]
 
+env:
+  SENTRY_NO_PROGRESS_BAR: 1
+
 jobs:
   yarn-validate:
     name: Validate Yarn dependencies and constraints
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: 'Check Yarn cache (fix w/ "yarn install")'
-        if: "github.actor != 'kepta'"
-        run: |
-          yarn install --immutable --immutable-cache --check-cache
-      - run: yarn install --immutable --immutable-cache --immutable --immutable-cache
       - name: Use Node.js latest
         uses: actions/setup-node@v2-beta
         with:
-          node-version: '*'
-      - name: 'Check for unmet constraints (fix w/ "yarn constraints --fix")'
+          node-version: 16.x
+      - name: 'Check Yarn validate cache'
+        if: "github.actor != 'kepta'"
         run: |
-          yarn constraints
+          yarn install --immutable --immutable-cache --check-cache
+      - name: 'Check Yarn validate cache (fix w/ "yarn install")'
+        run: |
+          yarn install --immutable --immutable-cache --immutable
+      - name: 'Check for unmet constraints (fix w/ "yarn constraints --fix")'
+        run: yarn constraints
       - name: 'Check for duplicate dependencies (fix w/ "yarn dedupe")'
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: |
           yarn dedupe --check
 
-  tests:
+  tests-matrix:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-kind: ['lint', 'test-ci', 'g:e2e']
+        test-kind: ['lint', 'test-ci', 'g:e2e', 'build']
     steps:
       - uses: actions/checkout@v2
       - name: Run test "${{ matrix.test-kind }}"
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn install --immutable --immutable-cache
+      - name: yarn install
+        run: yarn install --immutable --immutable-cache
       - run: yarn ${{ matrix.test-kind }}
       - name: Upload coverage report
         if: matrix.test-kind == 'test-ci'
@@ -55,13 +61,3 @@ jobs:
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
 
-  build-bangle-io:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16.x
-      - run: yarn install --immutable --immutable-cache
-      - run: yarn build
