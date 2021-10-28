@@ -14,6 +14,12 @@ import { IndexedDBFileSystem, IndexedDBFileSystemError } from './indexed-db-fs';
  * read from raw github would it be okay?
  */
 export class GithubReadFileSystem extends IndexedDBFileSystem {
+  protected _token: string;
+  protected _owner: string;
+  protected _repo: string;
+  protected _branch: string;
+  protected _allowedFile: (f: string) => boolean;
+  protected _fetch: ReturnType<typeof fetchRawGithub>;
   constructor(opts) {
     super(opts);
     this._token = opts.githubToken;
@@ -178,13 +184,15 @@ export async function listOfFilesFromGithub({
 }
 
 async function apiGetFiles({ token, owner, repo, branch }) {
+  let requestHeaders = new Headers();
+  requestHeaders.set('accept', 'application/vnd.github.v3+json');
+  if (token) {
+    requestHeaders.set('authorization', `token ${token}`);
+  }
   const data = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=true`,
     {
-      headers: {
-        accept: 'application/vnd.github.v3+json',
-        authorization: token ? `token ${token}` : undefined,
-      },
+      headers: requestHeaders,
       method: 'GET',
     },
   ).then((r) => {

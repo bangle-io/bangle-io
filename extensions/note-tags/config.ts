@@ -19,14 +19,17 @@ try {
     '(?<![\\w-/#!$%^&*()+|~=`{}\\[\\]:";\\\'<>?,.\\\\@])#\\w[\\w-/]*(?![\\w-/#!$%^&*()+|~=`{}\\[\\]:";\\\'<>?,.\\\\@])',
     'g',
   );
-} catch (e) {
+} catch (error) {
+  if (!(error instanceof Error)) {
+    throw error;
+  }
   // this fails in safari since it doesn't support look-behinds
   if (
-    e.message === 'Invalid regular expression: invalid group specifier name'
+    error.message === 'Invalid regular expression: invalid group specifier name'
   ) {
     inferiorRegex = true;
   } else {
-    throw e;
+    throw error;
   }
 }
 

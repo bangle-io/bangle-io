@@ -10,6 +10,7 @@ import {
   HELP_FS_WORKSPACE_TYPE,
 } from '@bangle.io/workspaces';
 import { isValidNoteWsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
+import { HelpFileSystem } from '@bangle.io/baby-fs';
 
 export function HelpWorkspaceMonitor({ wsPath }) {
   const { dispatch } = useUIManagerContext();
@@ -166,8 +167,10 @@ async function isHelpFileModified(wsPath) {
   }
 
   const fs = FileOps.getFileSystemFromWsInfo(wsInfo);
-
-  const isModified = await fs.isFileModified(toFSPath(wsPath));
+  let isModified = false;
+  if (fs instanceof HelpFileSystem) {
+    isModified = await fs.isFileModified(toFSPath(wsPath));
+  }
 
   return isModified;
 }

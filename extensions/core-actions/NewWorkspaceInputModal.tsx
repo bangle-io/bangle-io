@@ -6,6 +6,7 @@ import {
   ListPalette,
   UniversalPalette,
 } from '@bangle.io/ui-components';
+import type { ItemType } from '@bangle.io/ui-components/UniversalPalette/PaletteItem';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { FileOps, useWorkspaces } from '@bangle.io/workspaces';
@@ -19,7 +20,7 @@ export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
   const [showLocalStorageOption, updateShowLocalStorage] = useState(false);
   const { createWorkspace } = useWorkspaces();
   const { dispatch } = useUIManagerContext();
-  const [error, updateError] = useState();
+  const [error, updateError] = useState<Error>();
   const { wsName } = useWorkspaceContext();
   const { widescreen } = useUIManagerContext();
 
@@ -61,6 +62,9 @@ export function NewWorkspaceInputModal({ resetWsName, onDismiss, clone }) {
 
         onDismiss();
       } catch (error) {
+        if (!(error instanceof Error)) {
+          throw error;
+        }
         updateError(error);
       }
     },
@@ -107,6 +111,25 @@ function NewWorkspaceStorageStage({
   updateError,
   widescreen,
 }) {
+  let items: ItemType[] = [
+    {
+      uid: 'browser',
+      title: 'Browser',
+      description:
+        'Selecting this will make Bangle.io save notes in your browser storage.',
+    },
+  ];
+
+  if (supportsNativeBrowserFs()) {
+    items.push({
+      uid: 'nativefs',
+      title: 'Your computer',
+      extraInfo: 'recommended',
+      description:
+        'You will be asked to select a folder from your filesystem where Bangle.io will save all your markdown notes.',
+    });
+  }
+
   return (
     <ListPalette
       widescreen={widescreen}
@@ -114,21 +137,7 @@ function NewWorkspaceStorageStage({
       updateError={updateError}
       placeholder="Select the storage type of your workspace"
       onDismiss={onDismiss}
-      items={[
-        supportsNativeBrowserFs() && {
-          uid: 'nativefs',
-          title: 'Your computer',
-          extraInfo: 'recommended',
-          description:
-            'You will be asked to select a folder from your filesystem where Bangle.io will save all your markdown notes.',
-        },
-        {
-          uid: 'browser',
-          title: 'Browser',
-          description:
-            'Selecting this will make Bangle.io save notes in your browser storage.',
-        },
-      ].filter(Boolean)}
+      items={items}
       onSelectItem={async (item) => {
         if (item) {
           if (item.uid === 'nativefs') {

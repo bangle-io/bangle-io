@@ -24,6 +24,8 @@ function catchUpstream(idbPromise, errorMessage) {
 }
 
 class FileMetadata {
+  private _customMetaStore: ReturnType<typeof idb.createStore>;
+
   constructor() {
     this._customMetaStore = idb.createStore(
       `${BASE_IDB_NAME_PREFIX}-meta-${idbSuffix}`,
@@ -32,7 +34,10 @@ class FileMetadata {
   }
   // get the metadata, if not exists
   // save the given `fallback` and return it
-  async get(filePath, fallback) {
+  async get(
+    filePath: string,
+    fallback: BaseFileMetadata,
+  ): Promise<BaseFileMetadata> {
     const result = await catchUpstream(
       idb.get(filePath, this._customMetaStore),
       'Error reading metadata',
@@ -45,20 +50,24 @@ class FileMetadata {
     return result;
   }
 
-  async set(filePath, metadata) {
+  async set(filePath: string, metadata: BaseFileMetadata) {
     await catchUpstream(
       idb.set(filePath, metadata, this._customMetaStore),
       'Error writing metadata',
     );
   }
 
-  async update(filePath, fallback, cb) {
+  async update(
+    filePath: string,
+    fallback: BaseFileMetadata,
+    cb: (r: BaseFileMetadata) => BaseFileMetadata,
+  ) {
     const existing = await this.get(filePath, fallback);
     const metadata = cb(existing);
     await this.set(filePath, metadata);
   }
 
-  async del(filePath) {
+  async del(filePath: string) {
     await catchUpstream(
       idb.del(filePath, this._customMetaStore),
       'Error deleting metadata',
@@ -67,10 +76,13 @@ class FileMetadata {
 }
 
 export class IndexedDBFileSystem extends BaseFileSystem {
-  constructor(opts = {}) {
-    super(opts);
+  protected _allowedFile: (f: string) => boolean;
+  protected _customStore: ReturnType<typeof idb.createStore>;
+  protected _fileMetadata: FileMetadata;
 
-    this._allowedFile = opts.allowedFile ?? ((filePath) => () => true);
+  constructor(opts: { allowedFile?: (f: string) => boolean } = {}) {
+    super();
+    this._allowedFile = opts.allowedFile ?? ((filePath) => true);
     this._customStore = idb.createStore(
       `${BASE_IDB_NAME_PREFIX}-db-${idbSuffix}`,
       `${BASE_IDB_NAME_PREFIX}-db-store-${idbSuffix}`,
@@ -79,7 +91,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     this._fileMetadata = new FileMetadata();
   }
 
-  async stat(filePath) {
+  async stat(filePath: string) {
     this._verifyFilePath(filePath);
     // read file so that if there is an error we throw it
     await this.readFile(filePath);
@@ -90,7 +102,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     return result;
   }
 
-  async readFileAsText(filePath) {
+  async readFileAsText(filePath: string): Promise<string> {
     this._verifyFilePath(filePath);
 
     const file = await this.readFile(filePath);
@@ -98,7 +110,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     return textContent;
   }
 
-  async readFile(filePath) {
+  async readFile(filePath: string) {
     this._verifyFilePath(filePath);
 
     let result = await catchUpstream(
@@ -117,7 +129,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     return result;
   }
 
-  async writeFile(filePath, data) {
+  async writeFile(filePath: string, data: File) {
     this._verifyFilePath(filePath);
     this._verifyFileType(data);
     await catchUpstream(
@@ -129,7 +141,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     });
   }
 
-  async unlink(filePath) {
+  async unlink(filePath: string) {
     this._verifyFilePath(filePath);
 
     await catchUpstream(
@@ -139,7 +151,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     await this._fileMetadata.del(filePath);
   }
 
-  async rename(oldFilePath, newFilePath) {
+  async rename(oldFilePath: string, newFilePath: string) {
     this._verifyFilePath(oldFilePath);
     this._verifyFilePath(newFilePath);
 
@@ -148,6 +160,9 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     try {
       existingFile = await this.readFile(newFilePath);
     } catch (error) {
+      if (!(error instanceof BaseFileSystemError)) {
+        throw error;
+      }
       if (error.code !== FILE_NOT_FOUND_ERROR) {
         throw error;
       }
@@ -164,7 +179,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     await this.unlink(oldFilePath);
   }
 
-  async opendirRecursive(dirPath) {
+  async opendirRecursive(dirPath: string) {
     if (!dirPath) {
       throw new Error('dirPath must be defined');
     }
@@ -172,9 +187,11 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       idb.keys(this._customStore),
       'Error listing files',
     );
-
     if (keys == null) {
       keys = [];
+    }
+    if (!isArrayOfStrings(keys)) {
+      throw new Error('Keys in opendirRecursive must be array');
     }
 
     if (dirPath && !dirPath.endsWith('/')) {
@@ -187,3 +204,15 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 }
 
 export class IndexedDBFileSystemError extends BaseFileSystemError {}
+
+function isArrayOfStrings(arr: any): arr is Array<string> {
+  if (!Array.isArray(arr)) {
+    return false;
+  }
+
+  if (!arr.every((elem) => typeof elem === 'string')) {
+    return false;
+  }
+
+  return true;
+}

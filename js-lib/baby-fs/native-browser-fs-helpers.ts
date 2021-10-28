@@ -1,3 +1,33 @@
+interface FSHandle {
+  readonly name: string;
+
+  isSameEntry: (other: FSHandle) => Promise<boolean>;
+
+  queryPermission: (
+    descriptor?: FileSystemHandlePermissionDescriptor,
+  ) => Promise<PermissionState>;
+  requestPermission: (
+    descriptor?: FileSystemHandlePermissionDescriptor,
+  ) => Promise<PermissionState>;
+}
+
+export interface FileTypeSystemHandle extends FSHandle {
+  readonly kind: 'file';
+  getFile(): Promise<File>;
+}
+
+export interface DirTypeSystemHandle extends FSHandle {
+  readonly kind: 'directory';
+  values(): FileSystemHandle[];
+  removeEntry(name: string): void;
+}
+
+type FileSystemHandle = FileTypeSystemHandle | DirTypeSystemHandle;
+
+export interface FileSystemHandlePermissionDescriptor {
+  mode?: 'read' | 'readwrite';
+}
+
 export async function createFile(rootDirHandle, path) {
   if (typeof path === 'string') {
     path = path.split('/');
@@ -49,7 +79,7 @@ export async function writeFile(fileHandle, contents) {
   await writable.close();
 }
 
-export function readFileAsText(file) {
+export function readFileAsText(file): Promise<string> {
   // If the new .text() reader is available, use it.
   if (file.text) {
     return file.text();
@@ -65,24 +95,29 @@ export function readFileAsText(file) {
  * @param {File} file
  * @return {Promise<string>} A promise that resolves to the parsed string.
  */
-function _readFileLegacy(file) {
+function _readFileLegacy(file): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.addEventListener('loadend', (e) => {
-      const text = e.srcElement.result;
+      const text = (e?.srcElement as any)?.result;
       resolve(text);
     });
     reader.readAsText(file);
   });
 }
 
-export async function hasPermission(dirHandle) {
-  const opts = {};
+export async function hasPermission(dirHandle): Promise<boolean> {
+  const opts: any = {};
   opts.writable = true;
   // For Chrome 86 and later...
   opts.mode = 'readwrite';
   return (await dirHandle.queryPermission(opts)) === 'granted';
 }
+
+export type RecurseDirResult = [
+  ...DirTypeSystemHandle[],
+  FileTypeSystemHandle,
+][];
 
 /**
  *
@@ -93,20 +128,22 @@ export async function hasPermission(dirHandle) {
  *           being the direct parent of file.
  */
 export async function recurseDirHandle(
-  rootDir,
+  rootDir: DirTypeSystemHandle,
   {
-    allowedFile = async (fileHandle) => true,
-    allowedDir = async (dirHandle) => true,
+    allowedFile = (fileHandle: FileTypeSystemHandle): boolean => true,
+    allowedDir = (dirHandle: DirTypeSystemHandle): boolean => true,
   } = {},
 ) {
-  const _recurse = async (dirHandle) => {
-    let result = [];
+  const _recurse = async (
+    dirHandle: DirTypeSystemHandle,
+  ): Promise<RecurseDirResult> => {
+    let result: RecurseDirResult = [];
     for await (const entry of dirHandle.values()) {
       if (entry.kind === 'file' && allowedFile(entry)) {
         result.push([dirHandle, entry]);
       }
       if (entry.kind === 'directory' && allowedDir(entry)) {
-        let children = await recurseDirHandle(entry, {
+        let children: RecurseDirResult = await recurseDirHandle(entry, {
           allowedDir,
           allowedFile,
         });
@@ -117,7 +154,6 @@ export async function recurseDirHandle(
     }
     return result.filter((r) => r.length > 0);
   };
-  const result = await _recurse(rootDir);
 
-  return result;
+  return _recurse(rootDir);
 }

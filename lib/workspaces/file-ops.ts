@@ -2,7 +2,9 @@ import type { Node } from '@bangle.dev/pm';
 
 import {
   BaseFileSystemError,
+  DirTypeSystemHandle,
   FILE_NOT_FOUND_ERROR,
+  FileTypeSystemHandle,
   GithubReadFileSystem,
   HelpFileSystem,
   IndexedDBFileSystem,
@@ -54,11 +56,10 @@ export async function checkFileExists(wsPath: string) {
     await getFileSystemFromWsInfo(workspaceInfo).stat(path);
     return true;
   } catch (error) {
-    if (
-      error instanceof BaseFileSystemError &&
-      error.code === FILE_NOT_FOUND_ERROR
-    ) {
-      return false;
+    if (error instanceof BaseFileSystemError) {
+      if (error.code === FILE_NOT_FOUND_ERROR) {
+        return false;
+      }
     }
     throw error;
   }
@@ -144,8 +145,10 @@ export async function saveFile(wsPath: string, fileBlob) {
     workspaceInfo.type === HELP_FS_WORKSPACE_TYPE &&
     isValidNoteWsPath(wsPath)
   ) {
-    if (!(await fs.isFileModified(toFSPath(wsPath), fileBlob))) {
-      return;
+    if (fs instanceof HelpFileSystem) {
+      if (!(await fs.isFileModified(toFSPath(wsPath), fileBlob))) {
+        return;
+      }
     }
   }
 
@@ -220,10 +223,11 @@ export const getFileSystemFromWsInfo = (wsInfo: WorkspaceInfo) => {
   }
 
   if (wsInfo.type === 'nativefs') {
-    const rootDirHandle = wsInfo.metadata.rootDirHandle;
+    const rootDirHandle: DirTypeSystemHandle = wsInfo.metadata.rootDirHandle;
     return new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
-      allowedFile: (fileHandle) => allowedFile(fileHandle.name),
+      allowedFile: (fileHandle: FileTypeSystemHandle) =>
+        allowedFile(fileHandle.name),
     });
   }
 

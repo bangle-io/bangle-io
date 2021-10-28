@@ -73,6 +73,9 @@ function defaultHelpers(helpDocsVersion) {
  * help files.
  */
 export class HelpFileSystem extends IndexedDBFileSystem {
+  _readFile;
+  _listFiles;
+  _allowLocalChanges;
   constructor(opts) {
     super(opts);
     this._allowedFile = opts.allowedFile ?? ((filePath) => () => true);
@@ -177,7 +180,7 @@ export class HelpFileSystem extends IndexedDBFileSystem {
 
   // miscellaneous function
   // check if a help file has modifications (existence of a local file indicates it)
-  async isFileModified(filePath, compareWithBlob) {
+  async isFileModified(filePath: string, compareWithBlob?: Blob) {
     const localFile = await this._readFromLocal(filePath);
     if (localFile) {
       return true;
