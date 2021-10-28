@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
+import { HelpFileSystem } from '@bangle.io/baby-fs';
 import { TextButton } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
@@ -10,7 +11,6 @@ import {
   HELP_FS_WORKSPACE_TYPE,
 } from '@bangle.io/workspaces';
 import { isValidNoteWsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
-import { HelpFileSystem } from '@bangle.io/baby-fs';
 
 export function HelpWorkspaceMonitor({ wsPath }) {
   const { dispatch } = useUIManagerContext();
