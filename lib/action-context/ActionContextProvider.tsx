@@ -10,7 +10,7 @@ export const ActionContext = createContext<ContextType>({
   dispatchAction: () => {},
 });
 
-interface ContextType {
+export interface ContextType {
   dispatchAction: (action: ActionType) => void;
 }
 
