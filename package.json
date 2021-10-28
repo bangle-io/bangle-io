@@ -25,7 +25,7 @@
     "lint": "yarn g:package-patrol && yarn prettier --check . && yarn eslint . && yarn tsc-check",
     "update-jsconfig": "yarn node ./tooling/_scripts/create-jsconfig.js",
     "test": "yarn jest",
-    "test:coverage": "yarn jest --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
+    "test-ci": "yarn jest --ci --coverage",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
     "hot-start": "BANGLE_HOT=yes yarn start",
     "webpack-start": "BROWSERSLIST_ENV=development yarn webpack serve --env development",
