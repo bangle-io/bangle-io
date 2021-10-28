@@ -10,42 +10,17 @@ on:
     branches: [dev, staging, production]
 
 jobs:
-  prepare-yarn-cache:
-    name: Prepare Cache
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Use Node.js latest
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: '*'
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: 'Verify Yarn cache (fix w/ "yarn install")'
-        if: "github.actor != 'kepta'"
-        run: |
-          yarn install --immutable --immutable-cache --check-cache --mode=skip-build
-      - name: 'Check Yarn cache (fix w/ "yarn install")'
-        if: "github.actor == 'kepta'"
-        run: |
-          yarn install --immutable --immutable-cache --mode=skip-build
-
   yarn-validate:
     name: Validate Yarn dependencies and constraints
-    needs: prepare-yarn-cache
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: 'Check Yarn cache (fix w/ "yarn install")'
+        if: "github.actor != 'kepta'"
+        run: |
+          yarn install --immutable --immutable-cache --check-cache
+      - run: yarn install --immutable --immutable-cache --immutable --immutable-cache
       - name: Use Node.js latest
         uses: actions/setup-node@v2-beta
         with:
@@ -67,7 +42,6 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    needs: prepare-yarn-cache
     strategy:
       matrix:
         test-kind: ['lint', 'test-ci', 'g:e2e']
@@ -84,7 +58,7 @@ jobs:
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: yarn install
+      - run: yarn install --immutable --immutable-cache
       - run: yarn ${{ matrix.test-kind }}
       - name: Upload coverage report
         if: matrix.test-kind == 'test-ci'
@@ -97,7 +71,6 @@ jobs:
 
   build-bangle-io:
     runs-on: ubuntu-latest
-    needs: prepare-yarn-cache
     steps:
       - uses: actions/checkout@v2
       - name: Build
@@ -111,5 +84,5 @@ jobs:
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: yarn install
+      - run: yarn install --immutable --immutable-cache
       - run: yarn build
