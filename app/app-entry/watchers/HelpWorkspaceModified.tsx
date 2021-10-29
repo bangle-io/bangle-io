@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
+import { HelpFileSystem } from '@bangle.io/baby-fs';
 import { TextButton } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
@@ -166,8 +167,10 @@ async function isHelpFileModified(wsPath) {
   }
 
   const fs = FileOps.getFileSystemFromWsInfo(wsInfo);
-
-  const isModified = await fs.isFileModified(toFSPath(wsPath));
+  let isModified = false;
+  if (fs instanceof HelpFileSystem) {
+    isModified = await fs.isFileModified(toFSPath(wsPath));
+  }
 
   return isModified;
 }

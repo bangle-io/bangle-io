@@ -273,10 +273,7 @@ test('opendirRecursive hits github api if no .bangle/files.json', async () => {
     2,
     'https://api.github.com/repos/fake-owner/fake-repo/git/trees/master?recursive=true',
     {
-      headers: {
-        accept: 'application/vnd.github.v3+json',
-        authorization: undefined,
-      },
+      headers: expect.any(Headers),
       method: 'GET',
     },
   );

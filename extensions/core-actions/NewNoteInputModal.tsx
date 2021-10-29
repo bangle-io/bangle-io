@@ -42,6 +42,9 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
         await createNote(extensionRegistry, newWsPath);
         onDismiss();
       } catch (error) {
+        if (!(error instanceof Error)) {
+          throw error;
+        }
         if (destroyedRef.current) {
           return;
         }
@@ -105,6 +108,10 @@ export function RenameNoteInputModal({ onDismiss }) {
         await renameNote(primaryWsPath, newWsPath);
         onDismiss();
       } catch (error) {
+        if (!(error instanceof Error)) {
+          throw error;
+        }
+
         if (destroyedRef.current) {
           return;
         }

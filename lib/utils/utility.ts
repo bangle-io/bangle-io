@@ -11,27 +11,6 @@ export function getLast(array) {
   return array[array.length - 1];
 }
 
-type RequestIdleCallbackHandle = any;
-type RequestIdleCallbackOptions = {
-  timeout: number;
-};
-type RequestIdleCallbackDeadline = {
-  readonly didTimeout: boolean;
-  timeRemaining: () => number;
-};
-
-type RequestIdleCallback = (
-  callback: (deadline: RequestIdleCallbackDeadline) => void,
-  opts?: RequestIdleCallbackOptions,
-) => RequestIdleCallbackHandle;
-
-declare global {
-  interface Window {
-    requestIdleCallback: RequestIdleCallback;
-    cancelIdleCallback: (handle: RequestIdleCallbackHandle) => void;
-  }
-}
-
 const requestIdleCallback =
   typeof window !== 'undefined' && window.requestIdleCallback
     ? window.requestIdleCallback

@@ -1,36 +1,33 @@
 {
   "compilerOptions": {
-    // danger
-    "noImplicitAny": false,
-    // 
+    "allowJs": false,
     "checkJs": false,
-    "allowJs": true,
-    "noEmit": true,
-    "module": "ES2020",
-    "target": "es2019",
-    "strict": true,
-    "declaration": true,
-    "moduleResolution": "node",
-    "declarationMap": true,
-    "removeComments": true,
-    "allowSyntheticDefaultImports": true,
     "composite": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": false,
     "jsx": "react",
+    "module": "ES2020",
+    "moduleResolution": "node",
     "newLine": "lf",
-    "pretty": true,
-    "stripInternal": true,
+    "noEmit": true,
     "noEmitOnError": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
     "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "useDefineForClassFields": true,
+    "pretty": true,
+    "removeComments": false,
+    "resolveJsonModule": false,
     "skipLibCheck": true,
-    "outDir": "dist",
+    "strict": true,
+    "stripInternal": true,
+    "target": "es2019",
+    "useDefineForClassFields": true
   },
   "include": [
     "**/*.ts",
@@ -44,5 +41,5 @@
     "include": [
       "jest"
     ]
-  }
+  },
 }
