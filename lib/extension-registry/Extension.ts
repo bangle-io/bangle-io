@@ -120,6 +120,11 @@ export class Extension<T = unknown> {
     if (!name) {
       throw new Error('Extension: name is required');
     }
+    if (!/^[a-z0-9-_]+$/.test(name)) {
+      throw new Error(
+        'Extension name only allows the following characters "a..z" "0..9" "-" and "_"',
+      );
+    }
 
     const editor = Object.assign({}, config.editor, { name });
     const application = Object.assign({}, config.application, { name });
@@ -182,7 +187,7 @@ export class Extension<T = unknown> {
           actions.find((a) => !a.name.startsWith('action::' + name + ':')),
         );
         throw new Error(
-          `An action must have a name with the following schema action::<extension_pkg_name:xyz. For example 'action::@bangle.io/my-extension:hello-world'`,
+          `An action must have a name with the following schema action::<extension_pkg_name:xyz. For example 'action::bangle-io-my-extension:hello-world'`,
         );
       }
       if (actions.length !== new Set(actions.map((r) => r.name)).size) {

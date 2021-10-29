@@ -42,7 +42,7 @@ jest.mock('@bangle.io/workspace-context', () => {
 });
 
 const coreExtension = Extension.create({
-  name: '@bangle.io/core',
+  name: 'bangle-io-core',
   editor: {
     specs: defaultSpecs(),
     plugins: defaultPlugins(),

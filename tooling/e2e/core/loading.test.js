@@ -65,7 +65,7 @@ test('shows action palette', async () => {
       await page.$$eval('.universal-palette-item', (nodes) =>
         nodes.map((n) => n.getAttribute('data-id')),
       )
-    ).includes('action::@bangle.io/core-actions:TOGGLE_THEME_ACTION'),
+    ).includes('action::bangle-io-core-actions:TOGGLE_THEME_ACTION'),
   ).toBe(true);
 });
 

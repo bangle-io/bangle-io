@@ -57,7 +57,7 @@ export function NotesTree() {
   const createNewFile = useCallback(
     (path) => {
       dispatchAction({
-        name: 'action::@bangle.io/core-actions:NEW_NOTE_ACTION',
+        name: 'action::bangle-io-core-actions:NEW_NOTE_ACTION',
         value: path,
       });
     },
@@ -71,7 +71,7 @@ export function NotesTree() {
           className="text-sm font-extrabold cursor-pointer b-text-color-lighter"
           onClick={() => {
             dispatchAction({
-              name: 'action::@bangle.io/core-palettes:TOGGLE_WORKSPACE_PALETTE',
+              name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',
             });
           }}
         >

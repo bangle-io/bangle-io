@@ -42,7 +42,7 @@ describe('clone workspace action', () => {
 
     await runAction(
       page,
-      'action::@bangle.io/core-actions:CLONE_WORKSPACE_ACTION',
+      'action::bangle-io-core-actions:CLONE_WORKSPACE_ACTION',
     );
     const handle = await page.waitForSelector('.universal-palette-container', {
       timeout: SELECTOR_TIMEOUT,

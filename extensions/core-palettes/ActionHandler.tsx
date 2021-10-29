@@ -23,17 +23,17 @@ export function ActionHandler({ registerActionHandler }) {
   const actionHandler = useCallback(
     (actionObject) => {
       switch (actionObject.name) {
-        case 'action::@bangle.io/core-palettes:TOGGLE_ACTION_PALETTE': {
+        case 'action::bangle-io-core-palettes:TOGGLE_ACTION_PALETTE': {
           updatePalette(actionPalette.type);
           return true;
         }
 
-        case 'action::@bangle.io/core-palettes:TOGGLE_WORKSPACE_PALETTE': {
+        case 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE': {
           updatePalette(workspacePalette.type);
           return true;
         }
 
-        case 'action::@bangle.io/core-palettes:TOGGLE_NOTES_PALETTE': {
+        case 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE': {
           updatePalette(notesPalette.type);
           return true;
         }
