@@ -1,6 +1,19 @@
-export function objectSync(
-  obj,
-  { emitChange = () => {}, objectName = 'proxy' } = {},
+export type ObjectSyncEventType<T> = {
+  type: 'UPDATE';
+  payload: {
+    key: string | Symbol;
+    value: T;
+  };
+};
+
+export type ObjectSyncCallback<T> = (param: {
+  counter: number;
+  appStateValue: { [key: string]: T };
+}) => void;
+
+export function objectSync<T>(
+  obj: { [key: string]: T },
+  { emitChange = (p: ObjectSyncEventType<T>) => {} } = {},
 ) {
   const allowedKeys = new Set(Object.keys(obj));
 
@@ -23,15 +36,20 @@ export function objectSync(
 
   let counter = 0;
 
-  let changeListeners = [];
+  let changeListeners: Array<ObjectSyncCallback<T>> = [];
 
-  const updateProp = (target, key, value) => {
+  const updateProp = (target, key: string | Symbol, value: T) => {
+    if (typeof key !== 'string') {
+      throw new Error('Key much be string type');
+    }
+
     valueCheck(value);
+
     if (!allowedKeys.has(key)) {
       throw new Error('Invalid key ' + key);
     }
 
-    const existingValue = Reflect.get(target, key);
+    const existingValue: T = Reflect.get(target, key);
     if (existingValue === value) {
       return true;
     }
@@ -59,7 +77,9 @@ export function objectSync(
   });
 
   let notifyListeners = () => {
-    changeListeners.forEach((fn) => fn({ counter, [objectName]: proxy }));
+    changeListeners.forEach((fn: ObjectSyncCallback<T>) =>
+      fn({ counter, appStateValue: proxy }),
+    );
   };
 
   return {
@@ -69,21 +89,24 @@ export function objectSync(
     },
     // callback that updates the current object to match
     // with the one you are syncing with.
-    applyForeignChange: ({ type, payload: { key, value } }) => {
+    applyForeignChange: ({
+      type,
+      payload: { key, value },
+    }: ObjectSyncEventType<T>) => {
       if (type === 'UPDATE') {
         updateProp(obj, key, value);
       } else {
         throw new Error('Unknown type of change');
       }
     },
-    [objectName]: proxy,
-    registerListener: (fn) => {
+    appStateValue: proxy,
+    registerListener: (fn: ObjectSyncCallback<T>) => {
       if (changeListeners.includes(fn)) {
         return;
       }
       changeListeners.push(fn);
     },
-    deregisterListener: (fn) => {
+    deregisterListener: (fn: ObjectSyncCallback<T>) => {
       changeListeners = changeListeners.filter((f) => f !== fn);
     },
   };

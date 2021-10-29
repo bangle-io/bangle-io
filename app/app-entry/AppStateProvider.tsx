@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { AppStateContext } from '@bangle.io/app-state-context';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
-import { objectSync } from '@bangle.io/object-sync';
+import { objectSync, ObjectSyncCallback } from '@bangle.io/object-sync';
 import { initialAppState as _initialAppState } from '@bangle.io/shared';
 
 import { moduleSupport } from './misc/module-support';
@@ -15,7 +15,6 @@ const LOG = false;
 const log = LOG ? console.log.bind(console, 'AppStateContext') : () => {};
 
 const appState = objectSync(initialAppState, {
-  objectName: 'appStateValue',
   emitChange: (event) => {
     naukarWorkerProxy.updateWorkerAppState(event);
   },
@@ -25,9 +24,9 @@ export function AppStateProvider({ children }) {
   const [appStateValue, updateAppStateValue] = useState(initialAppState);
 
   useEffect(() => {
-    const listener = ({ appStateValue }) => {
+    const listener: ObjectSyncCallback<any> = ({ appStateValue }) => {
       log('received appStateChange', appStateValue);
-      updateAppStateValue(Object.assign({}, appStateValue));
+      updateAppStateValue(Object.assign({}, appStateValue) as any);
     };
     appState.registerListener(listener);
     return () => {

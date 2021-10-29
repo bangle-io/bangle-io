@@ -22,17 +22,17 @@ test('syncing works', async () => {
     },
   });
 
-  a.proxy.test = 123;
+  a.appStateValue.test = 123;
   await sleep(20);
-  expect(b.proxy.test).toBe(123);
+  expect(b.appStateValue.test).toBe(123);
   expect(a.counter).toBe(1);
-  b.proxy.test = 124;
+  b.appStateValue.test = 124;
   await sleep(20);
 
   expect(b.counter).toBe(2);
   expect(a.counter).toBe(2);
 
-  expect(a.proxy.test).toBe(124);
+  expect(a.appStateValue.test).toBe(124);
 });
 
 test('throws error if not primitive type', async () => {
@@ -55,7 +55,7 @@ test('throws error if not primitive type', async () => {
   });
 
   expect(() => {
-    a.proxy.test = {};
+    a.appStateValue.test = {};
   }).toThrowErrorMatchingSnapshot();
 });
 
@@ -79,7 +79,7 @@ test('throws error if initial not primitive type', async () => {
   });
 
   expect(() => {
-    a.proxy.test = {};
+    a.appStateValue.test = {};
   }).toThrowErrorMatchingSnapshot();
 });
 
@@ -88,9 +88,9 @@ test('throws error if unknown key', async () => {
 
   let a = objectSync(objA);
   // this should be fine
-  a.proxy.b = 13;
+  a.appStateValue.b = 13;
 
   expect(() => {
-    a.proxy.c = 13;
+    a.appStateValue.c = 13;
   }).toThrowErrorMatchingSnapshot();
 });

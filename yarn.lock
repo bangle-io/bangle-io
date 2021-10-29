@@ -2252,6 +2252,7 @@ __metadata:
     "@bangle.dev/pm": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/config": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
     idb-keyval: ^5.1.5
