@@ -21,10 +21,46 @@ function frmtHTML(doc) {
   });
 }
 
+async function pressLeftKey(page, { times = 1, withShift = false } = {}) {
+  for (let t = 0; t < times; t++) {
+    if (withShift) {
+      await page.keyboard.down('Shift');
+    }
+    await page.keyboard.press('ArrowLeft', { delay: 5 });
+    if (withShift) {
+      await page.keyboard.up('Shift');
+    }
+  }
+}
+
+async function pressRightKey(page, { times = 1, withShift = false } = {}) {
+  for (let t = 0; t < times; t++) {
+    if (withShift) {
+      await page.keyboard.down('Shift');
+    }
+    await page.keyboard.press('ArrowRight');
+    if (withShift) {
+      await page.keyboard.up('Shift');
+    }
+  }
+}
+
+async function pressCopyKey(page) {
+  await page.keyboard.down(ctrlKey);
+  await page.keyboard.press('c');
+  await page.keyboard.up(ctrlKey);
+}
+
+async function pressPasteKey(page) {
+  await page.keyboard.down(ctrlKey);
+  await page.keyboard.press('v');
+  await page.keyboard.up(ctrlKey);
+}
+
 const SELECTOR_TIMEOUT = 500;
 
 async function createWorkspace(page, wsName = 'test' + uuid(4)) {
-  await runAction(page, 'action::@bangle.io/core-actions:NEW_WORKSPACE_ACTION');
+  await runAction(page, 'action::bangle-io-core-actions:NEW_WORKSPACE_ACTION');
   let handle = await page.waitForSelector('.universal-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
@@ -60,6 +96,7 @@ async function newPage(browser, { widescreen = false } = {}) {
   if (widescreen) {
     await setPageWidescreen(page);
   }
+
   return {
     page: page,
     destroyPage: async () => {
@@ -70,7 +107,7 @@ async function newPage(browser, { widescreen = false } = {}) {
   };
 }
 async function createNewNote(page, wsName, noteName = 'new_file.md') {
-  await runAction(page, 'action::@bangle.io/core-actions:NEW_NOTE_ACTION');
+  await runAction(page, 'action::bangle-io-core-actions:NEW_NOTE_ACTION');
   let handle = await page.waitForSelector('.universal-palette-container', {
     timeout: SELECTOR_TIMEOUT,
   });
@@ -260,4 +297,8 @@ module.exports = {
   url,
   uuid,
   getPrimaryEditorJSON,
+  pressLeftKey,
+  pressRightKey,
+  pressCopyKey,
+  pressPasteKey,
 };

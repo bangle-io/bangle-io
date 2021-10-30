@@ -1,0 +1,41 @@
+{
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "eslint.nodePath": ".yarn/sdks",
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "cSpell.words": [
+    "Unmount",
+    "Worktrees",
+    "naukar",
+    "worktree"
+  ],
+  "javascript.preferences.importModuleSpecifier": "project-relative",
+  "editor.formatOnSave": true,
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#aa336d",
+    "activityBar.activeBorder": "#6eac34",
+    "activityBar.background": "#aa336d",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#6eac34",
+    "activityBarBadge.foreground": "#15202b",
+    "editorGroup.border": "#aa336d",
+    "panel.border": "#aa336d",
+    "sash.hoverBorder": "#aa336d",
+    "sideBar.border": "#aa336d",
+    "statusBar.background": "#832754",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#aa336d",
+    "statusBarItem.remoteBackground": "#832754",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#832754",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#83275499",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#832754"
+}
