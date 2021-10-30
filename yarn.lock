@@ -1965,6 +1965,7 @@ __metadata:
     jest-environment-puppeteer: ^5.0.4
     jest-puppeteer: ^5.0.4
     prettier: ^2.4.1
+    prosemirror-view: ^1.20.3
     puppeteer: ^10.4.0
   languageName: unknown
   linkType: soft
@@ -12777,7 +12778,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.10.0, prosemirror-view@npm:^1.13.3":
+"prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.10.0, prosemirror-view@npm:^1.13.3, prosemirror-view@npm:^1.20.3":
   version: 1.20.3
   resolution: "prosemirror-view@npm:1.20.3"
   dependencies:

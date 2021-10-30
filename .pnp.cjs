@@ -3957,6 +3957,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-puppeteer", "npm:5.0.4"],
             ["jest-puppeteer", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.4"],
             ["prettier", "npm:2.4.1"],
+            ["prosemirror-view", "npm:1.20.3"],
             ["puppeteer", "npm:10.4.0"]
           ],
           "linkType": "SOFT",

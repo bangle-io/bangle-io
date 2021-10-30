@@ -1,16 +1,16 @@
 // jest-puppeteer.config.js
 module.exports = {
-  server: [
-    {
-      command: 'yarn g:build-prod-serve',
-      port: 1234,
-      launchTimeout: 120 * 1000,
-    },
-  ],
+  // server: [
+  //   {
+  //     command: 'yarn g:build-prod-serve',
+  //     port: 1234,
+  //     launchTimeout: 120 * 1000,
+  //   },
+  // ],
 
   launch: {
-    // slowMo: 50,
-    // headless: false,
+    slowMo: 10,
+    headless: false,
   },
 
   // To run on chrome
