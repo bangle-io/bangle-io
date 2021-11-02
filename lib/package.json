@@ -16,7 +16,8 @@
     "extension-registry",
     "editor-utils",
     "test-utils",
-    "contextual-ui-components"
+    "contextual-ui-components",
+    "ui-dhancha"
   ],
   "repository": {
     "directory": "lib",
