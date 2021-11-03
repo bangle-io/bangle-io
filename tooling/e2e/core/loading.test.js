@@ -31,7 +31,7 @@ test('Title check', async () => {
 });
 
 test('Activity bar', async () => {
-  const handle = await page.$('#activity-bar-area');
+  const handle = await page.$('.activitybar');
   expect(handle).not.toBe(null);
 });
 

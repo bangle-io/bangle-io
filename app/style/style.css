@@ -16,28 +16,6 @@ DONOT keep internal styles here.
   flex-flow: row nowrap;
 }
 
-/* the left most vertically  bar*/
-#activity-bar-area {
-  height: var(--activity-bar-width);
-  min-width: 100vw;
-  max-width: 100vw;
-  background-color: var(--activity-bar-color);
-  padding: 0 var(--editor-x-axis-padding);
-  z-index: 30;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-
-#activity-bar-area.widescreen {
-  height: 100vh;
-  min-width: var(--activity-bar-width);
-  max-width: var(--activity-bar-width);
-  position: static;
-  padding: 0.5rem 0 0.5rem 0;
-}
-
 .main-content {
   display: flex;
   flex-direction: row;
@@ -165,7 +143,7 @@ DONOT keep internal styles here.
 
 .left-sidebar-area.smallscreen {
   position: fixed;
-  top: var(--activity-bar-width);
+  top: var(--activitybar-width);
   left: 0;
   right: 0;
   height: 70vh;
@@ -174,12 +152,12 @@ DONOT keep internal styles here.
 .left-sidebar-area.widescreen {
   min-height: 100vh;
   max-height: 100vh;
-  min-width: var(--left-sidebar-area-width);
-  max-width: var(--left-sidebar-area-width);
+  min-width: var(--workspace-sidebar-width);
+  max-width: var(--workspace-sidebar-width);
 }
 
 .homepage {
-  margin-top: calc(1rem + var(--activity-bar-width));
+  margin-top: calc(1rem + var(--activitybar-width));
 }
 
 .homepage.widescreen {
