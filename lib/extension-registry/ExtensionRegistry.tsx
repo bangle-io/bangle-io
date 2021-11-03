@@ -90,7 +90,7 @@ export class ExtensionRegistry {
     ApplicationConfig['optionsBar'],
     undefined
   >;
-  private sidebars: any[];
+  private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
   public editor: EditorHandlers;
 
   public extensionsInitialState: { [name: string]: any };

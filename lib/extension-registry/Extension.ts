@@ -50,17 +50,16 @@ export interface EditorConfig {
     doc: Node;
   }) => any;
 }
+export interface ActionType {
+  name: `action::${string}`;
+  value?: any;
+}
 export interface ActionDefinitionType {
-  name: string;
+  name: ActionType['name'];
   title: string;
   keybinding?: string;
   // when true, will hide it from the user
   hidden?: boolean;
-}
-
-export interface ActionType {
-  name: string;
-  value?: any;
 }
 
 export type ActionHandler = (action: ActionType) => boolean;
@@ -76,15 +75,16 @@ export interface ApplicationConfig {
   optionsBar?: Array<{
     icon: JSX.Element;
     hint: string;
-    action: string;
+    action: ActionType['name'];
   }>;
-  sidebars?: Array<{
-    name: string;
-    icon: JSX.Element;
-    iconPlacement?: 'bottom' | 'top';
-    ReactComponent: React.ComponentType<{}>;
-    hint: string;
-  }>;
+  sidebars?: Array<SidebarType>;
+}
+
+export interface SidebarType {
+  name: `sidebar::${string}`;
+  icon: JSX.Element;
+  ReactComponent: React.ComponentType<{}>;
+  hint: string;
 }
 
 interface Config<T> {
