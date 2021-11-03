@@ -82,6 +82,7 @@ export interface ApplicationConfig {
 
 export interface SidebarType {
   name: `sidebar::${string}`;
+  title: string;
   icon: JSX.Element;
   ReactComponent: React.ComponentType<{}>;
   hint: string;

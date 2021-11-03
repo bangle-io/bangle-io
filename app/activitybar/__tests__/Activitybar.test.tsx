@@ -41,6 +41,7 @@ test('renders when there is sidebar', () => {
         sidebars={[
           {
             name: 'sidebar::test-123',
+            title: 'search notes',
             icon: <span>test-icon</span>,
             ReactComponent: () => null,
             hint: 'test-hint',
@@ -70,6 +71,7 @@ test('renders when sidebar is active', () => {
         sidebars={[
           {
             name: 'sidebar::test-123',
+            title: 'search notes',
             icon: <span>test-icon</span>,
             ReactComponent: () => null,
             hint: 'test-hint',
@@ -100,6 +102,7 @@ test('sidebar is toggled on correctly', () => {
         sidebars={[
           {
             name: 'sidebar::test-123',
+            title: 'search notes',
             icon: <span>test-icon</span>,
             ReactComponent: () => null,
             hint: 'test-hint',
