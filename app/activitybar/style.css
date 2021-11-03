@@ -1,0 +1,3 @@
+.activitybar button:active {
+  background-color: var(--font-lighter-color);
+}
