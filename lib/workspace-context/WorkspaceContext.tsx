@@ -61,8 +61,8 @@ export interface WorkspaceContextType {
   createNote: ReturnType<typeof useCreateNote>;
   deleteNote: ReturnType<typeof useDeleteNote>;
   renameNote: ReturnType<typeof useRenameNote>;
-  primaryWsPath: string | null | undefined;
-  secondaryWsPath: string | null | undefined;
+  primaryWsPath: string | undefined;
+  secondaryWsPath: string | undefined;
   openedWsPaths: OpenedWsPaths;
   updateOpenedWsPaths: ReturnType<
     typeof useOpenedWsPaths

@@ -12,7 +12,7 @@ export type History = _History<any>;
 /**
  * This exists to keep null and undefined value interchangeable
  */
-function compare<T, K extends T>(a: T, b: K) {
+function compare(a: any, b: any) {
   if (a == null && b == null) {
     return true;
   }
@@ -25,11 +25,11 @@ export class OpenedWsPaths {
     }
   }
   get primaryWsPath() {
-    return this.wsPaths[0];
+    return this.wsPaths[0] ?? undefined;
   }
 
   get secondaryWsPath() {
-    return this.wsPaths[1];
+    return this.wsPaths[1] ?? undefined;
   }
 
   forEachWsPath(cb: (wsPath: string, index: number) => void) {
