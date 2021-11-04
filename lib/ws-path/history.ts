@@ -88,6 +88,15 @@ export class OpenedWsPaths {
     return this.wsPaths.includes(wsPath);
   }
 
+  /**
+   * check if there are any wsPath in this
+   */
+  hasSomeWsPath() {
+    return this.wsPaths.some((r) => {
+      return r != null;
+    });
+  }
+
   removeIfFound(wsPath: MaybeWsPath): OpenedWsPaths {
     return this.updateIfFound(wsPath, null);
   }
