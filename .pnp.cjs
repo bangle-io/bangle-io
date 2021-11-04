@@ -47,6 +47,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:worker"
       },
       {
+        "name": "@bangle.io/activitybar",
+        "reference": "workspace:app/activitybar"
+      },
+      {
         "name": "@bangle.io/app-entry",
         "reference": "workspace:app/app-entry"
       },
@@ -61,6 +65,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "@bangle.io/worker-setup",
         "reference": "workspace:app/worker-setup"
+      },
+      {
+        "name": "@bangle.io/workspace-sidebar",
+        "reference": "workspace:app/workspace-sidebar"
       },
       {
         "name": "@bangle.io/collab-extension",
@@ -231,6 +239,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "ignorePatternData": "(^(?:\\.yarn\\/sdks(?:\\/(?!\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)|$))$)",
     "fallbackExclusionList": [
       ["@bangle.io/action-context", ["virtual:7bec521429ed396ddeb56aec83458819f709f9790f665de1a9c30efca2ec182d3a38e95ee555b7a5c2f95540dfbdb2d56a5de479f90054f10e189beb98c00dea#workspace:lib/action-context", "workspace:lib/action-context"]],
+      ["@bangle.io/activitybar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar", "workspace:app/activitybar"]],
       ["@bangle.io/app-entry", ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry", "workspace:app/app-entry"]],
       ["@bangle.io/app-state-context", ["workspace:lib/app-state-context"]],
       ["@bangle.io/baby-fs", ["workspace:js-lib/baby-fs"]],
@@ -272,6 +281,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/utils", ["workspace:lib/utils"]],
       ["@bangle.io/worker-setup", ["workspace:app/worker-setup"]],
       ["@bangle.io/workspace-context", ["workspace:lib/workspace-context"]],
+      ["@bangle.io/workspace-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar", "workspace:app/workspace-sidebar"]],
       ["@bangle.io/workspaces", ["virtual:0257b423965e856d3d495c7919b1f94910fb9a62c3ab5645727fc4602de2fe0acbd01d36b177b7d61c3642dcda165c481a8562bb6d479c9e6516629bfcf0e429#workspace:lib/workspaces", "virtual:6b006e3f7f0f7339a0dfec68d33528aa83e7109d484acfedeb7e753182ae1f0b71710a885979f347656eb219b331c64769da66ce29ce9e9570ea4b7582e7bee1#workspace:lib/workspaces", "virtual:adbd11a050dab6dd72c18a7c85c1c3b5186184cf3aaafb4066757cc4a2ca0b1a1351b9eaf88bdc8771c8eb721d66174e3cf83c5d2d19112cdf4cb4b5d704e289#workspace:lib/workspaces", "workspace:lib/workspaces"]],
       ["@bangle.io/ws-path", ["workspace:lib/ws-path"]],
       ["app", ["workspace:app"]],
@@ -3641,6 +3651,52 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["@bangle.io/activitybar", [
+        ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.io-activitybar-virtual-05d34a82c0/1/app/activitybar/",
+          "packageDependencies": [
+            ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],
+            ["@bangle.io/action-context", "virtual:7bec521429ed396ddeb56aec83458819f709f9790f665de1a9c30efca2ec182d3a38e95ee555b7a5c2f95540dfbdb2d56a5de479f90054f10e189beb98c00dea#workspace:lib/action-context"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/ui-components", "workspace:lib/ui-components"],
+            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"],
+            ["@testing-library/react", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:12.1.2"],
+            ["@testing-library/react-hooks", "virtual:8cbdeaa64da237dabe8784a9b60a2bc1a29e148adfd1c4bf67a77788877bd169031bb686c2141bceb78d1a0c02ae506aba5d488c985b237e1f51245af9207446#npm:7.0.2"],
+            ["@types/react", "npm:17.0.33"],
+            ["@types/react-dom", "npm:17.0.10"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:4d72015d803d5099dd883d7e24864b3774253e1ee9a25ef0f984f81e55bafae427ed117d22a0acb57da249792cecf239feb59e7dc588f154f4a45e937558620d#npm:17.0.2"],
+            ["react-router-dom", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:5.3.0"]
+          ],
+          "packagePeers": [
+            "@types/react",
+            "react"
+          ],
+          "linkType": "SOFT",
+        }],
+        ["workspace:app/activitybar", {
+          "packageLocation": "./app/activitybar/",
+          "packageDependencies": [
+            ["@bangle.io/activitybar", "workspace:app/activitybar"],
+            ["@bangle.io/action-context", "virtual:7bec521429ed396ddeb56aec83458819f709f9790f665de1a9c30efca2ec182d3a38e95ee555b7a5c2f95540dfbdb2d56a5de479f90054f10e189beb98c00dea#workspace:lib/action-context"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/ui-components", "workspace:lib/ui-components"],
+            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"],
+            ["@testing-library/react", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:12.1.2"],
+            ["@testing-library/react-hooks", "virtual:8cbdeaa64da237dabe8784a9b60a2bc1a29e148adfd1c4bf67a77788877bd169031bb686c2141bceb78d1a0c02ae506aba5d488c985b237e1f51245af9207446#npm:7.0.2"],
+            ["@types/react", "npm:17.0.33"],
+            ["@types/react-dom", "npm:17.0.10"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:4d72015d803d5099dd883d7e24864b3774253e1ee9a25ef0f984f81e55bafae427ed117d22a0acb57da249792cecf239feb59e7dc588f154f4a45e937558620d#npm:17.0.2"],
+            ["react-router-dom", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:5.3.0"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.io/app-entry", [
         ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry", {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-app-entry-virtual-d1b5e8020e/1/app/app-entry/",
@@ -3655,6 +3711,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.27.6"],
             ["@bangle.dev/utils", "virtual:fe3e02e0e7ec52a990ab7831757ff3768d8b97ab96d9e0221bd7f51cfd23ee4ab43f7cc3e94776ca10e0dcf3dcb5617a937596a3087e39a583058af463ffff3c#npm:0.27.6"],
             ["@bangle.io/action-context", "virtual:7bec521429ed396ddeb56aec83458819f709f9790f665de1a9c30efca2ec182d3a38e95ee555b7a5c2f95540dfbdb2d56a5de479f90054f10e189beb98c00dea#workspace:lib/action-context"],
+            ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],
             ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
@@ -3676,9 +3733,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/style", "workspace:app/style"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
+            ["@bangle.io/ui-dhancha", "workspace:lib/ui-dhancha"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],
             ["@bangle.io/workspace-context", "workspace:lib/workspace-context"],
+            ["@bangle.io/workspace-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar"],
             ["@bangle.io/workspaces", "virtual:0257b423965e856d3d495c7919b1f94910fb9a62c3ab5645727fc4602de2fe0acbd01d36b177b7d61c3642dcda165c481a8562bb6d479c9e6516629bfcf0e429#workspace:lib/workspaces"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["@sentry/tracing", "npm:6.13.3"],
@@ -3717,6 +3776,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.27.6"],
             ["@bangle.dev/utils", "virtual:fe3e02e0e7ec52a990ab7831757ff3768d8b97ab96d9e0221bd7f51cfd23ee4ab43f7cc3e94776ca10e0dcf3dcb5617a937596a3087e39a583058af463ffff3c#npm:0.27.6"],
             ["@bangle.io/action-context", "virtual:7bec521429ed396ddeb56aec83458819f709f9790f665de1a9c30efca2ec182d3a38e95ee555b7a5c2f95540dfbdb2d56a5de479f90054f10e189beb98c00dea#workspace:lib/action-context"],
+            ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],
             ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
@@ -3738,9 +3798,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/style", "workspace:app/style"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
+            ["@bangle.io/ui-dhancha", "workspace:lib/ui-dhancha"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],
             ["@bangle.io/workspace-context", "workspace:lib/workspace-context"],
+            ["@bangle.io/workspace-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar"],
             ["@bangle.io/workspaces", "virtual:0257b423965e856d3d495c7919b1f94910fb9a62c3ab5645727fc4602de2fe0acbd01d36b177b7d61c3642dcda165c481a8562bb6d479c9e6516629bfcf0e429#workspace:lib/workspaces"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["@sentry/tracing", "npm:6.13.3"],
@@ -4584,6 +4646,46 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:4d72015d803d5099dd883d7e24864b3774253e1ee9a25ef0f984f81e55bafae427ed117d22a0acb57da249792cecf239feb59e7dc588f154f4a45e937558620d#npm:17.0.2"],
             ["react-router-dom", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:5.3.0"],
             ["react-test-renderer", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:17.0.2"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/workspace-sidebar", [
+        ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar", {
+          "packageLocation": "./.yarn/__virtual__/@bangle.io-workspace-sidebar-virtual-368342be80/1/app/workspace-sidebar/",
+          "packageDependencies": [
+            ["@bangle.io/workspace-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/workspace-sidebar"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/ui-components", "workspace:lib/ui-components"],
+            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@testing-library/react", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:12.1.2"],
+            ["@testing-library/react-hooks", "virtual:8cbdeaa64da237dabe8784a9b60a2bc1a29e148adfd1c4bf67a77788877bd169031bb686c2141bceb78d1a0c02ae506aba5d488c985b237e1f51245af9207446#npm:7.0.2"],
+            ["@types/react", "npm:17.0.33"],
+            ["@types/react-dom", "npm:17.0.10"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:4d72015d803d5099dd883d7e24864b3774253e1ee9a25ef0f984f81e55bafae427ed117d22a0acb57da249792cecf239feb59e7dc588f154f4a45e937558620d#npm:17.0.2"]
+          ],
+          "packagePeers": [
+            "@types/react",
+            "react"
+          ],
+          "linkType": "SOFT",
+        }],
+        ["workspace:app/workspace-sidebar", {
+          "packageLocation": "./app/workspace-sidebar/",
+          "packageDependencies": [
+            ["@bangle.io/workspace-sidebar", "workspace:app/workspace-sidebar"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/ui-components", "workspace:lib/ui-components"],
+            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@testing-library/react", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:12.1.2"],
+            ["@testing-library/react-hooks", "virtual:8cbdeaa64da237dabe8784a9b60a2bc1a29e148adfd1c4bf67a77788877bd169031bb686c2141bceb78d1a0c02ae506aba5d488c985b237e1f51245af9207446#npm:7.0.2"],
+            ["@types/react", "npm:17.0.33"],
+            ["@types/react-dom", "npm:17.0.10"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:4d72015d803d5099dd883d7e24864b3774253e1ee9a25ef0f984f81e55bafae427ed117d22a0acb57da249792cecf239feb59e7dc588f154f4a45e937558620d#npm:17.0.2"]
           ],
           "linkType": "SOFT",
         }]
@@ -16363,10 +16465,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:0589f6fedf0c23be3bca11ce1c463ee6f2dc631878cf9d9c2c7606ed78d174e07726fb845656857bc95189f601e7f0781aeac919e9d710bb7be74d4bacc66bf9#npm:3.1.0", {
-          "packageLocation": "./.yarn/__virtual__/postcss-load-config-virtual-952c63ebe2/0/cache/postcss-load-config-npm-3.1.0-9e1e33c439-7fd62064ea.zip/node_modules/postcss-load-config/",
+        ["virtual:f787fd85259b2e948d3d637233ccde6a9b494d44390dd079fb6b31b07d86a6828fc269e91208f1ed0843f37227f0b80061db7e70e2c77e03dca0c42640ab1b9c#npm:3.1.0", {
+          "packageLocation": "./.yarn/__virtual__/postcss-load-config-virtual-2b37be57bc/0/cache/postcss-load-config-npm-3.1.0-9e1e33c439-7fd62064ea.zip/node_modules/postcss-load-config/",
           "packageDependencies": [
-            ["postcss-load-config", "virtual:0589f6fedf0c23be3bca11ce1c463ee6f2dc631878cf9d9c2c7606ed78d174e07726fb845656857bc95189f601e7f0781aeac919e9d710bb7be74d4bacc66bf9#npm:3.1.0"],
+            ["postcss-load-config", "virtual:f787fd85259b2e948d3d637233ccde6a9b494d44390dd079fb6b31b07d86a6828fc269e91208f1ed0843f37227f0b80061db7e70e2c77e03dca0c42640ab1b9c#npm:3.1.0"],
             ["@types/ts-node", null],
             ["import-cwd", "npm:3.0.0"],
             ["lilconfig", "npm:2.0.3"],
@@ -19270,7 +19372,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object-hash", "npm:2.2.0"],
             ["postcss", "npm:8.3.11"],
             ["postcss-js", "npm:3.0.3"],
-            ["postcss-load-config", "virtual:0589f6fedf0c23be3bca11ce1c463ee6f2dc631878cf9d9c2c7606ed78d174e07726fb845656857bc95189f601e7f0781aeac919e9d710bb7be74d4bacc66bf9#npm:3.1.0"],
+            ["postcss-load-config", "virtual:f787fd85259b2e948d3d637233ccde6a9b494d44390dd079fb6b31b07d86a6828fc269e91208f1ed0843f37227f0b80061db7e70e2c77e03dca0c42640ab1b9c#npm:3.1.0"],
             ["postcss-nested", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.6"],
             ["postcss-selector-parser", "npm:6.0.6"],
             ["postcss-value-parser", "npm:4.1.0"],
@@ -19319,7 +19421,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object-hash", "npm:2.2.0"],
             ["postcss", "npm:8.3.11"],
             ["postcss-js", "npm:3.0.3"],
-            ["postcss-load-config", "virtual:0589f6fedf0c23be3bca11ce1c463ee6f2dc631878cf9d9c2c7606ed78d174e07726fb845656857bc95189f601e7f0781aeac919e9d710bb7be74d4bacc66bf9#npm:3.1.0"],
+            ["postcss-load-config", "virtual:f787fd85259b2e948d3d637233ccde6a9b494d44390dd079fb6b31b07d86a6828fc269e91208f1ed0843f37227f0b80061db7e70e2c77e03dca0c42640ab1b9c#npm:3.1.0"],
             ["postcss-nested", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.6"],
             ["postcss-selector-parser", "npm:6.0.6"],
             ["postcss-value-parser", "npm:4.1.0"],

@@ -1755,6 +1755,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/activitybar@workspace:*, @bangle.io/activitybar@workspace:app/activitybar":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/activitybar@workspace:app/activitybar"
+  dependencies:
+    "@bangle.io/action-context": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*"
+    "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    "@testing-library/react": ^12.1.2
+    "@testing-library/react-hooks": ^7.0.2
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-router-dom: ^5.3.0
+  peerDependencies:
+    react: "*"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/app-entry@workspace:*, @bangle.io/app-entry@workspace:app/app-entry":
   version: 0.0.0-use.local
   resolution: "@bangle.io/app-entry@workspace:app/app-entry"
@@ -1768,6 +1790,7 @@ __metadata:
     "@bangle.dev/table": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/action-context": "workspace:*"
+    "@bangle.io/activitybar": "workspace:*"
     "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/collab-extension": "workspace:*"
@@ -1789,9 +1812,11 @@ __metadata:
     "@bangle.io/style": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/ui-dhancha": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
+    "@bangle.io/workspace-sidebar": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@sentry/tracing": ^6.13.3
@@ -2442,7 +2467,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/ui-dhancha@workspace:lib/ui-dhancha":
+"@bangle.io/ui-dhancha@workspace:*, @bangle.io/ui-dhancha@workspace:lib/ui-dhancha":
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-dhancha@workspace:lib/ui-dhancha"
   dependencies:
@@ -2515,6 +2540,25 @@ __metadata:
     react-dom: ^17.0.2
     react-router-dom: ^5.3.0
     react-test-renderer: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/workspace-sidebar@workspace:*, @bangle.io/workspace-sidebar@workspace:app/workspace-sidebar":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/workspace-sidebar@workspace:app/workspace-sidebar"
+  dependencies:
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*"
+    "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@testing-library/react": ^12.1.2
+    "@testing-library/react-hooks": ^7.0.2
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  peerDependencies:
+    react: "*"
   languageName: unknown
   linkType: soft
 
