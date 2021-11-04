@@ -26,7 +26,7 @@ const extension = Extension.create({
         name: 'sidebar::bangle-io-note-browser:note-browser',
         title: '🗒 Notes browser',
         hint: `Note browser\n` + keyDisplayValue(key),
-        icon: React.createElement(FolderIcon, {}),
+        activitybarIcon: React.createElement(FolderIcon, {}),
         ReactComponent: NoteBrowserSidebar,
       },
     ],

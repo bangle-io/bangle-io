@@ -42,7 +42,7 @@ test('renders when there is sidebar', () => {
           {
             name: 'sidebar::test-123',
             title: 'search notes',
-            icon: <span>test-icon</span>,
+            activitybarIcon: <span>test-icon</span>,
             ReactComponent: () => null,
             hint: 'test-hint',
           },
@@ -72,7 +72,7 @@ test('renders when sidebar is active', () => {
           {
             name: 'sidebar::test-123',
             title: 'search notes',
-            icon: <span>test-icon</span>,
+            activitybarIcon: <span>test-icon</span>,
             ReactComponent: () => null,
             hint: 'test-hint',
           },
@@ -103,7 +103,7 @@ test('inactive sidebar is dispatched correctly', () => {
           {
             name: 'sidebar::test-123',
             title: 'search notes',
-            icon: <span>test-icon</span>,
+            activitybarIcon: <span>test-icon</span>,
             ReactComponent: () => null,
             hint: 'test-hint',
           },
@@ -142,7 +142,7 @@ test('active sidebar is toggled off correctly', () => {
           {
             name: 'sidebar::test-123',
             title: 'search notes',
-            icon: <span>test-icon</span>,
+            activitybarIcon: <span>test-icon</span>,
             ReactComponent: () => null,
             hint: 'test-hint',
           },

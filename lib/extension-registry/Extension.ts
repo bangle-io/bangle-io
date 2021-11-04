@@ -81,18 +81,18 @@ export interface ApplicationConfig {
 }
 
 export interface SidebarType {
-  name: `sidebar::${string}`;
-  title: string;
-  icon: JSX.Element;
-  ReactComponent: React.ComponentType<{}>;
+  activitybarIcon: JSX.Element;
   hint: string;
+  name: `sidebar::${string}`;
+  ReactComponent: React.ComponentType<{}>;
+  title: string;
 }
 
 interface Config<T> {
-  name: string;
-  editor: EditorConfig;
   application: ApplicationConfig;
+  editor: EditorConfig;
   initialState?: any;
+  name: string;
 }
 
 export class Extension<T = unknown> {
@@ -212,7 +212,7 @@ export class Extension<T = unknown> {
           const validName =
             typeof s.name === 'string' &&
             s.name.startsWith('sidebar::' + name + ':');
-          const validIcon = Boolean(s.icon);
+          const validIcon = Boolean(s.activitybarIcon);
           const validComponent = Boolean(s.ReactComponent);
           const validHint = typeof s.hint === 'string';
           return (

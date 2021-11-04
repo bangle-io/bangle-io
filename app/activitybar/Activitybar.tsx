@@ -31,8 +31,8 @@ export function Activitybar({
       <ActivitybarButton
         active={active}
         hint={r.hint}
-        icon={React.cloneElement(r.icon, {
-          className: (r.icon.props.className || '') + ' w-7 h-7',
+        icon={React.cloneElement(r.activitybarIcon, {
+          className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
         })}
         key={r.name}
         widescreen={widescreen}

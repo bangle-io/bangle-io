@@ -1,5 +1,5 @@
-import { act, fireEvent, render } from '@testing-library/react';
-import React, { useEffect, useState } from 'react';
+import { render } from '@testing-library/react';
+import React from 'react';
 
 import { WorkspaceSidebar } from '../WorkspaceSidebar';
 
@@ -10,6 +10,7 @@ beforeEach(() => {
 });
 
 test('handles error', () => {
+  // silencing the error from polluting the logging
   console.error = jest.fn();
   let result = render(
     <div>
@@ -17,7 +18,7 @@ test('handles error', () => {
         sidebar={{
           name: 'sidebar::test-sidebar',
           title: 'search notes',
-          icon: <span>test-icon</span>,
+          activitybarIcon: <span>test-icon</span>,
           ReactComponent: () => {
             throw new Error('Blah blah');
             return <span>something</span>;
@@ -37,7 +38,7 @@ test('renders', () => {
         sidebar={{
           name: 'sidebar::test-sidebar',
           title: 'search notes',
-          icon: <span>test-icon</span>,
+          activitybarIcon: <span>test-icon</span>,
           ReactComponent: () => {
             return <span>something</span>;
           },
