@@ -1,42 +1,42 @@
 {
-    "name": "@bangle.io/ui-dhancha",
-    "description": "The skeleton (dhancha) of the application.",
-    "version": "0.0.0",
-    "scripts": {
-        "start": "vite --port 1231"
-    },
-    "authors": [
-        {
-            "name": "Kushan Joshi",
-            "email": "0o3ko0@gmail.com",
-            "web": "http://github.com/kepta"
-        }
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/bangle-io/bangle-io.git",
-        "directory": "lib/ui-context"
-    },
-    "bugs": {
-        "url": "https://github.com/bangle-io/bangle-io/issues"
-    },
-    "main": "index.ts",
-    "module": "index.ts",
-    "dependencies": {
-        "framer-motion": "^5.0.1",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2"
-    },
-    "devDependencies": {
-        "@types/react": "^17.0.33",
-        "@types/react-dom": "^17.0.10",
-        "autoprefixer": "latest",
-        "postcss": "latest",
-        "postcss-import": "^14.0.2",
-        "tailwindcss": "latest",
-        "vite": "^2.6.13"
-    },
-    "publishConfig": {
-        "access": "public"
+  "name": "@bangle.io/ui-dhancha",
+  "description": "The skeleton layout (hindi - dhancha) utility for bangle.",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "vite --port 1231"
+  },
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "lib/ui-context"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "dependencies": {
+    "framer-motion": "^5.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
+    "autoprefixer": "latest",
+    "postcss": "latest",
+    "postcss-import": "^14.0.2",
+    "tailwindcss": "latest",
+    "vite": "^2.6.13"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -48,18 +48,25 @@ export function AppContainer() {
             <WorkspaceSidebar wsName={wsName} sidebar={currentSidebar} />
           )
         }
-        mainContent={
-          <div
-            id={cx(widescreen && !secondaryEditor && PRIMARY_SCROLL_PARENT_ID)}
-            className={cx(
-              'main-content',
-              widescreen ? 'widescreen' : 'smallscreen',
-              secondaryEditor && 'has-secondary-editor',
-            )}
-          >
-            <Routes />
-          </div>
-        }
+        mainContent={[
+          {
+            key: 'first',
+            reactNode: (
+              <div
+                id={cx(
+                  widescreen && !secondaryEditor && PRIMARY_SCROLL_PARENT_ID,
+                )}
+                className={cx(
+                  'main-content',
+                  widescreen ? 'widescreen' : 'smallscreen',
+                  secondaryEditor && 'has-secondary-editor',
+                )}
+              >
+                <Routes />
+              </div>
+            ),
+          },
+        ]}
       />
       <NotificationArea />
     </>
