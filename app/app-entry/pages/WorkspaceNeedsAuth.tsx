@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
+import { Page } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { keybindingsHelper } from '@bangle.io/utils';
 import {
@@ -9,8 +10,6 @@ import {
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from '@bangle.io/workspaces';
-
-import { EditorWrapperUI } from '../components/EditorWrapperUI';
 
 export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {
   const [permissionDenied, updatePermissionDenied] = useState(false);
@@ -98,24 +97,22 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
   }, [requestFSPermission, isPaletteActive]);
 
   return (
-    <EditorWrapperUI>
-      <div className="flex flex-col justify-center flex-grow cursor-pointer">
-        <h3 className="sm:text-3xl lg:text-3xl mb-8 text-xl font-bold leading-none">
-          👩‍💻 Bangle.io needs your permission to read "{wsName}"
-        </h3>
-        <span className="sm:leading-10 sm:mb-1 flex-shrink mb-10 text-lg font-semibold">
-          {permissionDenied &&
-            'You have denied bangle.io permission to access your workspace.'}
-        </span>
-        <button
-          onClick={() => {
-            requestFSPermission();
-          }}
-          className="sm:w-auto hover:bg-purple-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none flex-none w-full px-6 py-3 mt-6 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent"
-        >
-          Press <kbd>Enter</kbd> or 👆click this grant permission.
-        </button>
-      </div>
-    </EditorWrapperUI>
+    <Page verticallyCenter={true} showBoxAround={true}>
+      <h3 className="sm:text-3xl lg:text-3xl mb-8 text-xl font-bold leading-none">
+        👩‍💻 Bangle.io needs your permission to read "{wsName}"
+      </h3>
+      <span className="sm:leading-10 sm:mb-1 flex-shrink mb-10 text-lg font-semibold">
+        {permissionDenied &&
+          'You have denied bangle.io permission to access your workspace.'}
+      </span>
+      <button
+        onClick={() => {
+          requestFSPermission();
+        }}
+        className="sm:w-auto hover:bg-purple-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none flex-none w-full px-6 py-3 mt-6 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent"
+      >
+        Press <kbd>Enter</kbd> or 👆click this grant permission.
+      </button>
+    </Page>
   );
 }

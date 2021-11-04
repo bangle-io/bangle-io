@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { ReactNode, useMemo } from 'react';
 
 import { Activitybar } from '@bangle.io/activitybar';
-import { PRIMARY_SCROLL_PARENT_ID } from '@bangle.io/constants';
+import { EditorContainer } from '@bangle.io/editor-container';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha } from '@bangle.io/ui-dhancha';
-import { cx } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
@@ -13,13 +13,14 @@ import { Changelog } from './changelog/Changelog';
 import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { PaletteManager } from './extension-glue/PaletteManager';
+import { EmptyEditorPage } from './pages/EmptyEditorPage';
 import { Routes } from './Routes';
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
-  const { wsName, primaryWsPath, secondaryWsPath } = useWorkspaceContext();
-  const secondaryEditor = widescreen && Boolean(secondaryWsPath);
+  const { wsName, primaryWsPath, openedWsPaths } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
+  const { setEditor } = useEditorManagerContext();
 
   const sidebars = extensionRegistry.getSidebars();
 
@@ -27,6 +28,33 @@ export function AppContainer() {
   const currentSidebar = sidebar
     ? sidebars.find((s) => s.name === sidebar)
     : null;
+
+  const mainContent = useMemo(() => {
+    const result: ReactNode[] = [];
+
+    if (!openedWsPaths.hasSomeWsPath()) {
+      return <EmptyEditorPage />;
+    }
+
+    openedWsPaths.forEachWsPath((wsPath, i) => {
+      // avoid split screen for small screens
+      if (!widescreen && i > 0) {
+        return;
+      }
+
+      result.push(
+        <EditorContainer
+          key={wsPath + i}
+          widescreen={widescreen}
+          editorId={i}
+          extensionRegistry={extensionRegistry}
+          setEditor={setEditor}
+          wsPath={wsPath}
+        />,
+      );
+    });
+    return result;
+  }, [openedWsPaths, setEditor, widescreen, extensionRegistry]);
 
   return (
     <>
@@ -48,25 +76,7 @@ export function AppContainer() {
             <WorkspaceSidebar wsName={wsName} sidebar={currentSidebar} />
           )
         }
-        mainContent={[
-          {
-            key: 'first',
-            reactNode: (
-              <div
-                id={cx(
-                  widescreen && !secondaryEditor && PRIMARY_SCROLL_PARENT_ID,
-                )}
-                className={cx(
-                  'main-content',
-                  widescreen ? 'widescreen' : 'smallscreen',
-                  secondaryEditor && 'has-secondary-editor',
-                )}
-              >
-                <Routes />
-              </div>
-            ),
-          },
-        ]}
+        mainContent={<Routes>{mainContent}</Routes>}
       />
       <NotificationArea />
     </>

@@ -13,11 +13,10 @@ import {
   getLastWorkspaceUsed,
   saveLastWorkspaceUsed,
 } from './misc/last-workspace-used';
-import { WorkspacePage } from './pages/Workspace';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
 
-export function Routes() {
+export function Routes({ children }) {
   return (
     <>
       <Route
@@ -44,9 +43,7 @@ export function Routes() {
         }}
       />
       <Route path="/ws/:wsName">
-        <WorkspaceBlockade>
-          <WorkspacePage />
-        </WorkspaceBlockade>
+        <WorkspaceSideEffects>{children}</WorkspaceSideEffects>
       </Route>
       <Route path="/ws-nativefs-auth/:wsName">
         <WorkspaceNativefsAuthBlockade
@@ -64,7 +61,7 @@ const LOG = true;
 let log = LOG ? console.log.bind(console, 'Routes') : () => {};
 type UnPromisify<T> = T extends Promise<infer U> ? U : T;
 
-function WorkspaceBlockade({ children }) {
+function WorkspaceSideEffects({ children }) {
   const { wsName, primaryWsPath } = useWorkspaceContext();
   const [workspaceInfo, updateWorkspaceInfo] = useState<
     UnPromisify<ReturnType<typeof getWorkspaceInfo>> | undefined
@@ -73,14 +70,14 @@ function WorkspaceBlockade({ children }) {
 
   // Persist workspaceInfo in the history to
   // prevent release of the native browser FS permission
-  useEffect(() => {
-    if (workspaceInfo?.type === 'nativefs') {
-      log('replace history state');
-      replaceHistoryState(history, {
-        workspaceInfo: workspaceInfo,
-      });
-    }
-  }, [workspaceInfo, history]);
+  // useEffect(() => {
+  //   if (workspaceInfo?.type === 'nativefs') {
+  //     log('replace history state');
+  //     replaceHistoryState(history, {
+  //       workspaceInfo: workspaceInfo,
+  //     });
+  //   }
+  // }, [workspaceInfo, history]);
 
   useEffect(() => {
     if (wsName) {
