@@ -85,12 +85,51 @@ test('renders when sidebar is active', () => {
   expect(result.container.innerHTML).toContain('active');
 });
 
-test('sidebar is toggled on correctly', () => {
+test('inactive sidebar is dispatched correctly', () => {
   let dispatch = jest.fn();
   (useUIManagerContext as any).mockImplementation(() => {
     return {
       changelogHasUpdates: false,
       sidebar: undefined,
+      dispatch,
+      widescreen: true,
+    };
+  });
+
+  let result = render(
+    <div>
+      <Activitybar
+        sidebars={[
+          {
+            name: 'sidebar::test-123',
+            title: 'search notes',
+            icon: <span>test-icon</span>,
+            ReactComponent: () => null,
+            hint: 'test-hint',
+          },
+        ]}
+      ></Activitybar>
+    </div>,
+  );
+  act(() => {
+    fireEvent.click(result.getByRole('button', { name: 'test-hint' }));
+  });
+
+  expect(dispatch).toBeCalledTimes(1);
+  expect(dispatch).nthCalledWith(1, {
+    type: 'UI/CHANGE_SIDEBAR',
+    value: {
+      type: 'sidebar::test-123',
+    },
+  });
+});
+
+test('active sidebar is toggled off correctly', () => {
+  let dispatch = jest.fn();
+  (useUIManagerContext as any).mockImplementation(() => {
+    return {
+      changelogHasUpdates: false,
+      sidebar: 'sidebar::test-123',
       dispatch,
       widescreen: true,
     };

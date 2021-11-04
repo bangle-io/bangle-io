@@ -26,9 +26,10 @@ export function Activitybar({
   }
 
   const sidebarItems = sidebars.map((r) => {
+    const active = sidebar === r.name;
     return (
       <ActivitybarButton
-        active={sidebar === r.name}
+        active={active}
         hint={r.hint}
         icon={React.cloneElement(r.icon, {
           className: (r.icon.props.className || '') + ' w-7 h-7',
@@ -36,10 +37,17 @@ export function Activitybar({
         key={r.name}
         widescreen={widescreen}
         onActivate={() => {
-          dispatch({
-            type: 'UI/TOGGLE_SIDEBAR',
-            value: { type: r.name },
-          });
+          if (active) {
+            dispatch({
+              type: 'UI/TOGGLE_SIDEBAR',
+              value: { type: r.name },
+            });
+          } else {
+            dispatch({
+              type: 'UI/CHANGE_SIDEBAR',
+              value: { type: r.name },
+            });
+          }
         }}
       />
     );
