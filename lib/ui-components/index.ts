@@ -7,6 +7,7 @@ export * from './InputPalette';
 export * from './ListPalette';
 export * from './LocationBreadCrumb';
 export * from './Modal';
+export * from './Page';
 export * from './Sidebar';
 export * from './TextButton';
 export * from './UniversalPalette';

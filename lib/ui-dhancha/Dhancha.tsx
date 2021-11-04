@@ -4,10 +4,6 @@ import React, { ReactNode, useEffect, useMemo, useRef } from 'react';
 
 import { setupStickyNavigation } from './use-sticky-navigation';
 
-export type DhanchaMainContentType = Array<{
-  reactNode: ReactNode;
-  key: string;
-}>;
 /**
  * Provides the base structure of the app.
  * Does not handle scrolling and setting max height, so it is recommended to set that up in child component.
