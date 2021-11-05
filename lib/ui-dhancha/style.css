@@ -83,6 +83,7 @@ body {
 
 .ui-dhancha_ws-sidebar {
   flex-shrink: 0;
+  height: 100vh;
   width: var(--ui-dhancha_ws-sidebar-width);
   z-index: 5;
   border-right: 1px solid var(--ui-dhancha_note-border-color);

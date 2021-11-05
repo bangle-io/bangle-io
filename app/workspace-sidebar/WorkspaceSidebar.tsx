@@ -11,7 +11,7 @@ export function WorkspaceSidebar({
   sidebar: SidebarType;
 }) {
   return (
-    <div className="flex flex-grow flex-col workspace-sidebar overflow-y-scroll h-screen">
+    <div className="flex flex-grow flex-col overflow-y-scroll h-full">
       <div className="px-2 mt-2 font-bold">{sidebar.title}</div>
       <ErrorBoundary>
         <sidebar.ReactComponent />
