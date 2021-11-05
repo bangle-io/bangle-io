@@ -4,7 +4,7 @@ exports[`basic renders 1`] = `
 <div>
   <div>
     <div
-      class="w-full h-full flex flex-col items-center overflow-y-scroll"
+      class="w-full h-full flex flex-col items-center overflow-auto"
     >
       <div
         class="w-full"
@@ -36,7 +36,7 @@ exports[`renders correctly when file does not exist 1`] = `
 <div>
   <div>
     <div
-      class="w-full h-full flex flex-col items-center overflow-y-scroll"
+      class="w-full h-full flex flex-col items-center overflow-auto"
     >
       <div
         class="w-full"
@@ -63,7 +63,7 @@ exports[`renders when no wsPath is provided 1`] = `
 <div>
   <div>
     <div
-      class="w-full h-full flex flex-col items-center overflow-y-scroll"
+      class="w-full h-full flex flex-col items-center overflow-auto"
     >
       <div
         class="w-full"
