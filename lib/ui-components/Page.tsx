@@ -34,13 +34,13 @@ export function Page({
     >
       <div
         className={cx(
-          'w-full ',
+          'w-full',
           childClassName,
           showBoxAround && 'rounded-md b-bg-stronger-color ',
         )}
         style={{
           maxWidth: 'min(var(--page-max-width), 100vw)',
-          padding: 'var(--page-box-padding)',
+          padding: showBoxAround ? 'var(--page-box-padding)' : undefined,
         }}
       >
         {children}

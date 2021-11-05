@@ -49,9 +49,7 @@ export function EditorContainer({
     );
   }
 
-  return (
-    <Page className={cx(widescreen && 'overflow-y-scroll')}>{children}</Page>
-  );
+  return <Page className={cx(widescreen && 'overflow-auto')}>{children}</Page>;
 }
 
 /**
