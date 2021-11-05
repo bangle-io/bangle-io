@@ -54,20 +54,14 @@ export function Dhancha({
         }
       >
         {mainContent}
-        {/* {actualMainContent?.map((r, i) => {
-          return (
-            <div
-              key={r.key}
-              className={`ui-dhancha_main-content-child ui-dhancha_main-content-child-${i}`}
-            >
-              {r.reactNode}
-            </div>
-          );
-        })} */}
       </main>
       {widescreen && noteSidebar && (
         <aside className="ui-dhancha_note-sidebar">{noteSidebar}</aside>
       )}
     </div>
   );
+}
+
+export function MultiColumnMainContent({ children }: { children: ReactNode }) {
+  return <div className="ui-dhancha_multi-column-main-content">{children}</div>;
 }
