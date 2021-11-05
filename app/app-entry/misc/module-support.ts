@@ -8,6 +8,7 @@ export const moduleSupport = checkModuleWorkerSupport();
 function checkModuleWorkerSupport() {
   // hot module reload aint working with workers
   if (BANGLE_HOT) {
+    console.debug('BANGLE_HOT is on, disabling worker');
     return false;
   }
 

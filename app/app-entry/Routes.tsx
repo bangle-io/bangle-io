@@ -70,14 +70,14 @@ function WorkspaceSideEffects({ children }) {
 
   // Persist workspaceInfo in the history to
   // prevent release of the native browser FS permission
-  // useEffect(() => {
-  //   if (workspaceInfo?.type === 'nativefs') {
-  //     log('replace history state');
-  //     replaceHistoryState(history, {
-  //       workspaceInfo: workspaceInfo,
-  //     });
-  //   }
-  // }, [workspaceInfo, history]);
+  useEffect(() => {
+    if (workspaceInfo?.type === 'nativefs') {
+      log('replace history state');
+      replaceHistoryState(history, {
+        workspaceInfo: workspaceInfo,
+      });
+    }
+  }, [workspaceInfo, history]);
 
   useEffect(() => {
     if (wsName) {

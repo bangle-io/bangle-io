@@ -6,7 +6,8 @@
     "worker-setup",
     "shared",
     "activitybar",
-    "workspace-sidebar"
+    "workspace-sidebar",
+    "editor-container"
   ],
   "repository": {
     "directory": "app",

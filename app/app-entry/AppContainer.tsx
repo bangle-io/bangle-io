@@ -5,7 +5,7 @@ import { EditorContainer } from '@bangle.io/editor-container';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { useUIManagerContext } from '@bangle.io/ui-context';
-import { Dhancha } from '@bangle.io/ui-dhancha';
+import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
@@ -41,10 +41,9 @@ export function AppContainer() {
       if (!widescreen && i > 0) {
         return;
       }
-
       result.push(
         <EditorContainer
-          key={wsPath + i}
+          key={i}
           widescreen={widescreen}
           editorId={i}
           extensionRegistry={extensionRegistry}
@@ -53,7 +52,8 @@ export function AppContainer() {
         />,
       );
     });
-    return result;
+
+    return <MultiColumnMainContent>{result}</MultiColumnMainContent>;
   }, [openedWsPaths, setEditor, widescreen, extensionRegistry]);
 
   return (
