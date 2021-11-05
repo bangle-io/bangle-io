@@ -14,10 +14,13 @@ import { UIManager } from '@bangle.io/ui-context';
 import { WorkerSetup } from '@bangle.io/worker-setup';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 
-import App from './App';
+import {
+  AppContainer,
+  handleNativefsAuthError,
+  handleWorkspaceNotFound,
+} from './AppContainer';
 import { AppStateProvider } from './AppStateProvider';
 import { moduleSupport } from './misc/module-support';
-import { handleNativefsAuthError, handleWorkspaceNotFound } from './Routes';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
 import { PageLifecycle } from './watchers/PageLifecycle';
 import { WatchUI } from './watchers/WatchUI';
@@ -76,7 +79,7 @@ export function Entry() {
                     <EditorManager>
                       <PageLifecycle />
                       <ActionContextProvider>
-                        <App />
+                        <AppContainer />
                       </ActionContextProvider>
                     </EditorManager>
                   </WorkspaceContextProvider>

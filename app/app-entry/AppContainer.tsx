@@ -1,4 +1,5 @@
 import React, { ReactNode, useMemo } from 'react';
+import { Redirect, Route } from 'react-router-dom';
 
 import { Activitybar } from '@bangle.io/activitybar';
 import { EditorContainer } from '@bangle.io/editor-container';
@@ -8,20 +9,25 @@ import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
+import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
 
 import { Changelog } from './changelog/Changelog';
 import { NotificationArea } from './components/NotificationArea';
 import { OptionsBar } from './components/OptionsBar';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { PaletteManager } from './extension-glue/PaletteManager';
+import { getLastWorkspaceUsed } from './misc/last-workspace-used';
+import { useWorkspaceSideEffects } from './misc/use-workspace-side-effects';
 import { EmptyEditorPage } from './pages/EmptyEditorPage';
-import { Routes } from './Routes';
+import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
+import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
   const { wsName, primaryWsPath, openedWsPaths } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
   const { setEditor } = useEditorManagerContext();
+  useWorkspaceSideEffects();
 
   const sidebars = extensionRegistry.getSidebars();
 
@@ -78,9 +84,59 @@ export function AppContainer() {
             <WorkspaceSidebar wsName={wsName} sidebar={currentSidebar} />
           )
         }
-        mainContent={<Routes>{mainContent}</Routes>}
+        mainContent={
+          <>
+            <Route
+              exact
+              path="/"
+              render={() => {
+                const lastWsName = getLastWorkspaceUsed();
+                return (
+                  <Redirect
+                    to={{
+                      pathname:
+                        '/ws/' +
+                        (lastWsName ? lastWsName : HELP_FS_WORKSPACE_NAME),
+                    }}
+                  />
+                );
+              }}
+            />
+            <Route path="/ws/:wsName">{mainContent}</Route>
+            <Route path="/ws-nativefs-auth/:wsName">
+              <WorkspaceNativefsAuthBlockade
+                onWorkspaceNotFound={handleWorkspaceNotFound}
+              />
+            </Route>
+            <Route path="/ws-not-found/:wsName">
+              <WorkspaceNotFound />
+            </Route>
+          </>
+        }
       />
       <NotificationArea />
     </>
   );
+}
+
+export function handleNativefsAuthError(wsName, history) {
+  if (history.location?.pathname?.startsWith('/ws-nativefs-auth/' + wsName)) {
+    return;
+  }
+  history.replace({
+    pathname: '/ws-nativefs-auth/' + wsName,
+    state: {
+      previousLocation: history.location,
+    },
+  });
+}
+
+export function handleWorkspaceNotFound(wsName, history) {
+  if (history.location?.pathname?.startsWith('/ws-not-found/' + wsName)) {
+    return;
+  }
+  history.replace({
+    pathname: '/ws-not-found/' + wsName,
+    state: {},
+  });
 }
