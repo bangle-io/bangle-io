@@ -2,7 +2,7 @@ import './style.css';
 
 import React, { ReactNode, useEffect, useMemo, useRef } from 'react';
 
-import { setupStickyNavigation } from './use-sticky-navigation';
+import { useStickyNavigation } from './use-sticky-navigation';
 
 /**
  * Provides the base structure of the app.
@@ -24,15 +24,7 @@ export function Dhancha({
 }) {
   const activitybarRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    let callback: undefined | (() => void);
-    if (!widescreen && activitybarRef.current) {
-      callback = setupStickyNavigation(activitybarRef.current);
-    }
-    return () => {
-      callback?.();
-    };
-  }, [widescreen]);
+  useStickyNavigation(widescreen, activitybarRef);
 
   return (
     <div className={'ui-dhancha_container' + (widescreen ? ' widescreen' : '')}>

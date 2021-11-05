@@ -28,11 +28,16 @@
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
+    "@bangle.io/extension-registry": "workspace:*",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
     "autoprefixer": "latest",
     "postcss": "latest",
     "postcss-import": "^14.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "tailwindcss": "latest",
     "vite": "^2.6.13"
   },

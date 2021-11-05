@@ -1,4 +1,21 @@
-export function setupStickyNavigation(element: HTMLElement) {
+import { MutableRefObject, useEffect } from 'react';
+
+export function useStickyNavigation(
+  widescreen: boolean,
+  activitybarRef: MutableRefObject<HTMLDivElement | null>,
+) {
+  useEffect(() => {
+    let callback: undefined | (() => void);
+    if (!widescreen && activitybarRef.current) {
+      callback = setupStickyNavigation(activitybarRef.current);
+    }
+    return () => {
+      callback?.();
+    };
+  }, [widescreen, activitybarRef]);
+}
+
+function setupStickyNavigation(element: HTMLElement) {
   const removeUp = () => {
     element?.classList.add('down');
     element?.classList.remove('up');
