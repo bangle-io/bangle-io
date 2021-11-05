@@ -15,7 +15,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/ui-context"
+    "directory": "lib/ui-dhancha"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -33,12 +33,10 @@
     "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
-    "autoprefixer": "latest",
-    "postcss": "latest",
+    "autoprefixer": "^10.3.7",
+    "postcss": "^8.3.11",
     "postcss-import": "^14.0.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "tailwindcss": "latest",
+    "tailwindcss": "^2.2.17",
     "vite": "^2.6.13"
   },
   "publishConfig": {

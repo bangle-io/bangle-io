@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "app/style"
+    "directory": "app/workspace-sidebar"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
