@@ -1797,6 +1797,7 @@ __metadata:
     "@bangle.io/collapsible-heading": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/editor-core": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/editor-utils": "workspace:*"
@@ -1991,6 +1992,30 @@ __metadata:
     jest-puppeteer: ^5.0.4
     prettier: ^2.4.1
     puppeteer: ^10.4.0
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/editor-container@workspace:*, @bangle.io/editor-container@workspace:app/editor-container":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/editor-container@workspace:app/editor-container"
+  dependencies:
+    "@bangle.dev/all-base-components": 0.27.6
+    "@bangle.dev/core": 0.27.6
+    "@bangle.dev/pm": 0.27.6
+    "@bangle.dev/react": 0.27.6
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-context": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    "@testing-library/react": ^12.1.2
+    "@testing-library/react-hooks": ^7.0.2
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  peerDependencies:
+    react: "*"
   languageName: unknown
   linkType: soft
 
