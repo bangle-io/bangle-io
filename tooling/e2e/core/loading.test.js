@@ -36,7 +36,7 @@ test('Activity bar', async () => {
 });
 
 test('Main content exists', async () => {
-  const handle = await page.$('.main-content');
+  const handle = await page.$('main');
   expect(handle).not.toBe(null);
 });
 

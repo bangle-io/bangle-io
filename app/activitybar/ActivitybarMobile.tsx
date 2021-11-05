@@ -16,7 +16,7 @@ export function ActivitybarMobile({
   const { dispatchAction } = useActionContext();
 
   return (
-    <div className="flex flex-row text-gray-100 align-center ml-3">
+    <div className="flex flex-row text-gray-100 align-center ml-3 activitybar">
       <div className="flex flex-col justify-center mr-2">
         <ActivitybarButton
           widescreen={false}

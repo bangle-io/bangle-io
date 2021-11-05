@@ -1,0 +1,7 @@
+/* The relative position is super important for absolutely positioned div inside
+  or else it will cause weird scrolling issues.
+*/
+.editor-container_editor {
+  position: relative;
+  width: 100%;
+}

@@ -3,7 +3,7 @@
   border-radius: 8px;
 }
 
-.bangle-editor-inner-container > .bangle-editor p {
+main .bangle-editor p {
   font-size: 1rem;
 }
 

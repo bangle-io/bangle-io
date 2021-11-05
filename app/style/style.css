@@ -32,13 +32,6 @@ DONOT keep internal styles here.
   overflow-y: unset;
 }
 
-.bangle-editor-area {
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-
 .options-bar-area {
   z-index: 20;
   padding: 1rem 1rem 0 0;
@@ -58,22 +51,6 @@ DONOT keep internal styles here.
   align-items: center;
   justify-content: flex-end;
   width: 100%;
-}
-
-.bangle-editor-container {
-  padding: 0 var(--editor-x-axis-padding);
-  padding-top: var(--editor-top-padding);
-  padding-bottom: var(--editor-bottom-padding);
-  max-width: min(var(--editor-max-width), 100vw);
-  width: 100%;
-}
-
-/* The relative position is super important for absolutely positioned div inside
-  or else it will cause weird scrolling issues.
-*/
-.bangle-editor-inner-container {
-  position: relative;
-  padding-bottom: 8px;
 }
 
 .main-content.has-secondary-editor {
@@ -99,21 +76,6 @@ DONOT keep internal styles here.
   grid-column-end: col-second;
   grid-row-start: row-first;
   grid-row-end: row-third;
-}
-
-/* 2nd child is gutter */
-.main-content.has-secondary-editor > .bangle-editor-area.secondary-editor {
-  grid-column-start: col-third;
-  grid-column-end: col-fourth;
-  background-color: var(--bg-stronger-color);
-  grid-row-start: row-first;
-  grid-row-end: row-third;
-}
-
-/* to make each editor independently scrollable */
-.main-content.has-secondary-editor .bangle-editor-area {
-  overflow-y: scroll;
-  height: 100vh;
 }
 
 .main-content.has-secondary-editor .bangle-editor-container.has-tabs {

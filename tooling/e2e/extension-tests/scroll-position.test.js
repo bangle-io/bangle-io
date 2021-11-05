@@ -41,14 +41,14 @@ const setupScreenSize = async (screenType) => {
 };
 
 const getTopAndLastElement = async (page) => {
-  let topElement = await page.waitForSelector('.primary-editor h2', {
+  let topElement = await page.waitForSelector('.editor-container_editor-0 h2', {
     timeout: SELECTOR_TIMEOUT,
   });
   expect(await topElement.evaluate((node) => node.innerText)).toEqual(
     'top element',
   );
 
-  let lastElement = await page.$('.primary-editor h3');
+  let lastElement = await page.$('.editor-container_editor-0 h3');
   expect(await lastElement.evaluate((node) => node.innerText)).toEqual(
     'last element',
   );
@@ -93,7 +93,7 @@ test.each(['regular', 'split-screen'])(
       await page.keyboard.up(ctrlKey);
       await sleep();
       // eslint-disable-next-line jest/no-conditional-expect
-      expect(await page.$('.secondary-editor')).not.toBeNull();
+      expect(await page.$('.editor-container_editor-1')).not.toBeNull();
     }
     await typeScrollableThings(page);
 
