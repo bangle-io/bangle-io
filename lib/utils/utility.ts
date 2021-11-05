@@ -323,3 +323,15 @@ export function insertAt<T>(arr: T[], index: number, newItem: T): T[] {
     ...arr.slice(index),
   ];
 }
+
+// Finds the nearest ancestor which is scrollable
+export function findWrappingScrollable(node: Element): Element | undefined {
+  for (let cur = node.parentNode; cur; cur = cur.parentNode) {
+    if (cur instanceof Element) {
+      if (cur.scrollHeight > cur.clientHeight) {
+        return cur;
+      }
+    }
+  }
+  return undefined;
+}

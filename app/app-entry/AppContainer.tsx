@@ -11,6 +11,7 @@ import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
 import { Changelog } from './changelog/Changelog';
 import { NotificationArea } from './components/NotificationArea';
+import { OptionsBar } from './components/OptionsBar';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { PaletteManager } from './extension-glue/PaletteManager';
 import { EmptyEditorPage } from './pages/EmptyEditorPage';
@@ -61,6 +62,7 @@ export function AppContainer() {
       <Changelog />
       <ApplicationComponents />
       <PaletteManager />
+      {widescreen && <OptionsBar />}
       <Dhancha
         widescreen={widescreen}
         activitybar={
