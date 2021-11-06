@@ -25,9 +25,6 @@ export function ActivitybarButton({
         'flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200',
         widescreen && 'border-l-2',
       )}
-      style={{
-        borderColor: active ? 'var(--accent-stronger-color)' : 'transparent',
-      }}
       onClick={(event) => {
         event.preventDefault();
         onActivate();

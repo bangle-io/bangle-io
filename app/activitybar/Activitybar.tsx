@@ -4,8 +4,9 @@ import { useHistory } from 'react-router-dom';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
+import { ToggleButton } from '@bangle.io/ui-menu-button';
+import { cx } from '@bangle.io/utils';
 
-import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarMobile } from './ActivitybarMobile';
 
 export function Activitybar({
@@ -28,15 +29,15 @@ export function Activitybar({
   const sidebarItems = sidebars.map((r) => {
     const active = sidebar === r.name;
     return (
-      <ActivitybarButton
-        active={active}
+      <Button
+        isActive={active}
         hint={r.hint}
         icon={React.cloneElement(r.activitybarIcon, {
           className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
         })}
         key={r.name}
         widescreen={widescreen}
-        onActivate={() => {
+        onPress={() => {
           if (active) {
             dispatch({
               type: 'UI/TOGGLE_SIDEBAR',
@@ -54,10 +55,11 @@ export function Activitybar({
   });
 
   return (
-    <div className="flex flex-grow flex-col activitybar">
-      <ActivitybarButton
+    <div className="flex flex-grow flex-col activitybar widescreen">
+      <Button
         widescreen={widescreen}
-        onActivate={() => {
+        isActive={false}
+        onPress={() => {
           dispatch({
             type: 'UI/CHANGE_SIDEBAR',
             value: { type: null },
@@ -75,22 +77,33 @@ export function Activitybar({
 
       {sidebarItems}
       <div className="flex-grow"></div>
-      <ActivitybarButton
+      <Button
+        isActive={false}
         widescreen={widescreen}
-        onActivate={() => {
+        icon={<GiftIcon className="h-7 w-7" showDot={changelogHasUpdates} />}
+        hint={"What's new"}
+        onPress={() => {
           dispatch({
             type: 'UI/SHOW_MODAL',
             value: { modal: '@modal/changelog' },
           });
         }}
-        hint={"What's new"}
-        icon={
-          <GiftIcon
-            className="text-gray-100 h-7 w-7"
-            showDot={changelogHasUpdates}
-          />
-        }
       />
     </div>
+  );
+}
+
+function Button({ isActive, widescreen, icon, hint, onPress }) {
+  return (
+    <ToggleButton
+      isActive={isActive}
+      className={cx(
+        'w-full py-3 rounded-sm flex justify-center action-bar_button',
+        widescreen && 'widescreen',
+      )}
+      onPress={onPress}
+    >
+      {icon}
+    </ToggleButton>
   );
 }

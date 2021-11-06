@@ -1,3 +1,23 @@
-.activitybar button:active {
-  background-color: var(--font-lighter-color);
+.action-bar_button {
+  box-sizing: border-box;
+  color: var(--activitybar-button-color);
+  border-left: 2px solid var(--ui-dhancha_activitybar-bg-color);
+}
+
+.action-bar_button.is-hovered {
+  color: var(--activitybar-button-active-color);
+}
+
+.action-bar_button.is-pressed {
+  background-color: var(--activitybar-button-pressed-bg-color);
+  transform: scale(0.96);
+}
+
+.action-bar_button.is-active {
+  color: var(--activitybar-button-active-color);
+  border-left: 2px solid var(--accent-stronger-color);
+}
+
+.activitybar.widescreen {
+  border-right: 1px solid var(--border-color);
 }
