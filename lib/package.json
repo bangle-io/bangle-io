@@ -17,7 +17,8 @@
     "editor-utils",
     "test-utils",
     "contextual-ui-components",
-    "ui-dhancha"
+    "ui-dhancha",
+    "ui-menu-button"
   ],
   "repository": {
     "directory": "lib",
