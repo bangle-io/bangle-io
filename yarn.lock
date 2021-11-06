@@ -2532,9 +2532,15 @@ __metadata:
   dependencies:
     "@bangle.io/utils": "workspace:*"
     "@react-aria/button": ^3.3.4
+    "@react-aria/focus": ^3.5.0
     "@react-aria/interactions": ^3.6.0
+    "@react-aria/listbox": ^3.3.1
+    "@react-aria/overlays": ^3.7.2
     "@react-aria/utils": ^3.9.0
+    "@react-stately/collections": ^3.3.4
+    "@react-stately/list": ^3.3.0
     "@react-stately/toggle": ^3.2.3
+    "@react-types/shared": ^3.9.0
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.33
@@ -3175,7 +3181,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/focus@npm:^3.5.0":
+"@react-aria/focus@npm:^3.4.1, @react-aria/focus@npm:^3.5.0":
   version: 3.5.0
   resolution: "@react-aria/focus@npm:3.5.0"
   dependencies:
@@ -3219,6 +3225,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-aria/label@npm:^3.1.3":
+  version: 3.2.0
+  resolution: "@react-aria/label@npm:3.2.0"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    "@react-aria/utils": ^3.9.0
+    "@react-types/label": ^3.5.0
+    "@react-types/shared": ^3.9.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 214ee6e24453086a7788506b0c11c29294c0f59d295d4766868026e5572d627c49fa207cf7e85565ae01a3c0e4bdb7cd6bd8e10e74fa481cc04d6b70b5920948
+  languageName: node
+  linkType: hard
+
+"@react-aria/listbox@npm:^3.3.1":
+  version: 3.3.1
+  resolution: "@react-aria/listbox@npm:3.3.1"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    "@react-aria/focus": ^3.4.1
+    "@react-aria/interactions": ^3.5.1
+    "@react-aria/label": ^3.1.3
+    "@react-aria/selection": ^3.5.1
+    "@react-aria/utils": ^3.8.2
+    "@react-stately/collections": ^3.3.3
+    "@react-stately/list": ^3.3.0
+    "@react-types/listbox": ^3.2.1
+    "@react-types/shared": ^3.8.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 71a6bd0469e998df156d1f49d98091e6928772d737bd791d530b87148c8880d4d0d471dd3f6706a22d199d1a280451e197c28bbfa2a09af82710b3c61a00c815
+  languageName: node
+  linkType: hard
+
 "@react-aria/overlays@npm:^3.7.2":
   version: 3.7.2
   resolution: "@react-aria/overlays@npm:3.7.2"
@@ -3236,6 +3276,24 @@ __metadata:
     react: ^16.8.0 || ^17.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1
   checksum: e9681409940ac092db616fb8e868cf480be3fdbea7f488c7e8a5de9f3a5c07174f00d715cc9691895ec74e8961efb91c5950c1d51502924499e3a2917480a5a2
+  languageName: node
+  linkType: hard
+
+"@react-aria/selection@npm:^3.5.1":
+  version: 3.6.0
+  resolution: "@react-aria/selection@npm:3.6.0"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    "@react-aria/focus": ^3.5.0
+    "@react-aria/i18n": ^3.3.2
+    "@react-aria/interactions": ^3.6.0
+    "@react-aria/utils": ^3.9.0
+    "@react-stately/collections": ^3.3.3
+    "@react-stately/selection": ^3.7.0
+    "@react-types/shared": ^3.9.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: f6c4efae9418ed83c817149269aeaf3cd32459935fa0df45a3947774b6621ad3fc02566ad42c954f38f2cdc8a92a5221a84f5e735f8fcbce7870904454d7f8b7
   languageName: node
   linkType: hard
 
@@ -3279,6 +3337,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-stately/collections@npm:^3.3.3, @react-stately/collections@npm:^3.3.4":
+  version: 3.3.4
+  resolution: "@react-stately/collections@npm:3.3.4"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    "@react-types/shared": ^3.8.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 6bb6af113c14e9d416972cbdd1c6351e0feb2452482c841ea3491659f3b47edaa19d52a3693751b334a53310cedb71fca5645c4ec5d8a19f48a9ec2e260f06aa
+  languageName: node
+  linkType: hard
+
+"@react-stately/list@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@react-stately/list@npm:3.3.0"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    "@react-stately/collections": ^3.3.3
+    "@react-stately/selection": ^3.7.0
+    "@react-stately/utils": ^3.2.2
+    "@react-types/shared": ^3.8.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 1997075cfa28b8ca70c6fd5472305efe5265ad5bc3e4ec3d4900d7dbbf0e3995a1acf2ba304b3208e1847ed518624efbb9dc08db6a55d3f5315f64f580c95aa0
+  languageName: node
+  linkType: hard
+
 "@react-stately/overlays@npm:^3.1.3":
   version: 3.1.3
   resolution: "@react-stately/overlays@npm:3.1.3"
@@ -3289,6 +3374,20 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1
   checksum: 7319502c2cfd9d86490145b314bb6c7505b8a4a18ba2db77d961d64e7885d3808b3f3079541a46dd1027bc1590e0dd2822245cc7acbcb31f2ad7e86929be81e4
+  languageName: node
+  linkType: hard
+
+"@react-stately/selection@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "@react-stately/selection@npm:3.7.0"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    "@react-stately/collections": ^3.3.3
+    "@react-stately/utils": ^3.2.2
+    "@react-types/shared": ^3.8.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 946496aab19259338275e49c3c849e05df14ab97019ab6f7181aeb8c32de211b6085a31b2722a2f797e6f1c3b52dd517581cc48d5e2021243c21eb7ec766e262
   languageName: node
   linkType: hard
 
@@ -3336,6 +3435,28 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1
   checksum: e9d4371fff8e4e9460346f7cc715df8f10051860b8b3f4bf0773267f653e6541ce50ca6548822742e43972682c9c0ff9d72ecb364ee62779e07dac85086157c5
+  languageName: node
+  linkType: hard
+
+"@react-types/label@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "@react-types/label@npm:3.5.0"
+  dependencies:
+    "@react-types/shared": ^3.9.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 04c9af07960583548f75980bdec3bc377f6e55507d3014abf55e27dab98cc80c4873a0583160b592a4dfda9dc3417a2222c4ff855723d48ccf89fd6aaeb4ab35
+  languageName: node
+  linkType: hard
+
+"@react-types/listbox@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "@react-types/listbox@npm:3.2.1"
+  dependencies:
+    "@react-types/shared": ^3.8.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 4685e4fb9bc70af03bf2bd5a42c15f893e6538be44ff738752fda36087de8169e41dabb0de94e5a98b3649aed5e76a91d71ebae361b8d153737c9a8457f287bd
   languageName: node
   linkType: hard
 

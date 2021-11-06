@@ -21,8 +21,14 @@
   "dependencies": {
     "@bangle.io/utils": "workspace:*",
     "@react-aria/button": "^3.3.4",
+    "@react-aria/focus": "^3.5.0",
     "@react-aria/interactions": "^3.6.0",
-    "@react-stately/toggle": "^3.2.3"
+    "@react-aria/listbox": "^3.3.1",
+    "@react-aria/overlays": "^3.7.2",
+    "@react-stately/collections": "^3.3.4",
+    "@react-stately/list": "^3.3.0",
+    "@react-stately/toggle": "^3.2.3",
+    "@react-types/shared": "^3.9.0"
   },
   "devDependencies": {
     "@react-aria/utils": "^3.9.0",
