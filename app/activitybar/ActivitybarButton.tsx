@@ -1,6 +1,9 @@
 import React, { ReactNode, useRef } from 'react';
 
-import { Button as ToggleButton } from '@bangle.io/ui-bangle-button';
+import {
+  Button as ToggleButton,
+  TooltipWrapper,
+} from '@bangle.io/ui-bangle-button';
 import { cx } from '@bangle.io/utils';
 
 export function ActivitybarButton({
@@ -11,7 +14,7 @@ export function ActivitybarButton({
   onPress,
 }: {
   widescreen: boolean;
-  hint?: string;
+  hint: string;
   isActive?: boolean;
   onPress: () => void;
   icon: ReactNode;
@@ -26,10 +29,14 @@ export function ActivitybarButton({
       )}
       onPress={onPress}
       ariaLabel={hint}
+      tooltip={<TooltipWrapper>{hint}</TooltipWrapper>}
+      tooltipDelay={250}
+      tooltipPlacement="right"
+      tooltipOffset={5}
       activeColor="var(--activitybar-button-active-color)"
       color="var(--activitybar-button-color)"
-      hoverBgColor="var(--activitybar-button-hover-color)"
-      hoverColor="var(--activitybar-button-hover-bgColor)"
+      hoverBgColor="var(--activitybar-button-hover-bgColor)"
+      hoverColor="var(--activitybar-button-hover-color)"
       pressedBgColor="var(--activitybar-button-pressed-bgColor)"
     >
       {icon}

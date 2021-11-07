@@ -27,9 +27,18 @@ function run() {
     return item;
   });
 
+  let newResult = [];
+
+  // dedupe the array and preserve the order
+  result.forEach((element) => {
+    if (!newResult.includes(element)) {
+      newResult.push(element);
+    }
+  });
+
   fs.writeFileSync(
     path.resolve(__dirname, '..', '..', 'lib', 'ui-context', 'css-vars.ts'),
-    `export const cssVars = ${JSON.stringify(result, null, 2).replaceAll(
+    `export const cssVars = ${JSON.stringify(newResult, null, 2).replaceAll(
       '"',
       `'`,
     )};`,

@@ -2,10 +2,8 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import type { SidebarType } from '@bangle.io/extension-registry';
-import { Button as ToggleButton } from '@bangle.io/ui-bangle-button';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
-import { cx } from '@bangle.io/utils';
 
 import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarMobile } from './ActivitybarMobile';

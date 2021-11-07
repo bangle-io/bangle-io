@@ -26,6 +26,7 @@ exports[`basic renders 1`] = `
             class="flex flex-row"
           >
             <button
+              aria-label="Close"
               class="ui-bangle-button_button p-1  transition-all duration-200"
               style="border-radius: var(--uiBangleButton-radius);"
               type="button"
@@ -100,6 +101,7 @@ exports[`renders correctly when file does not exist 1`] = `
             class="flex flex-row"
           >
             <button
+              aria-label="Close"
               class="ui-bangle-button_button p-1  transition-all duration-200"
               style="border-radius: var(--uiBangleButton-radius);"
               type="button"

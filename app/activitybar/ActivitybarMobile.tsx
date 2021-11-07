@@ -19,6 +19,7 @@ export function ActivitybarMobile({
     <div className="flex flex-row text-gray-100 align-center ml-3 activitybar">
       <div className="flex flex-col justify-center mr-2">
         <ActivitybarButton
+          hint="See files palette"
           widescreen={false}
           onPress={() => {
             dispatchAction({

@@ -10,6 +10,7 @@ exports[`renders mobile view 1`] = `
         class="flex flex-col justify-center mr-2"
       >
         <button
+          aria-label="See files palette"
           class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button"
           type="button"
         >
