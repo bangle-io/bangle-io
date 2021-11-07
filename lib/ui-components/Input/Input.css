@@ -8,7 +8,7 @@
   color: var(--textColor-0);
   background-color: var(--window-bgColor-0);
   padding: 0.25rem 0.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--window-border-color);
   border-radius: 0.125rem;
   outline-offset: 2px;
   width: 100%;

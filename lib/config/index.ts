@@ -70,7 +70,7 @@ export const SPLIT_SCREEN_MIN_WIDTH =
     ? 500
     : parseInt(
         getComputedStyle(document.documentElement).getPropertyValue(
-          '--widescreen-min-width',
+          '--window-widescreen-minWidth',
         ),
         10,
       );

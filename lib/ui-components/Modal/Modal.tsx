@@ -42,7 +42,7 @@ export function Modal({
     >
       <div className="sm:block sm:p-0 flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center">
         <div
-          className="b-modal-overlay-color fixed inset-0 transition-opacity bg-opacity-75"
+          className="b-window-modal-overlay-bgColor fixed inset-0 transition-opacity bg-opacity-75"
           aria-hidden="true"
         ></div>
 

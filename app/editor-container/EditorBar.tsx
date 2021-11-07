@@ -27,8 +27,8 @@ export function EditorBar({
     p.unshift('…');
   }
   return (
-    <div className="w-full editor-container_editor-bar flex flex-row justify-between">
-      <div className="editor-container_ws-path text-xs lg:text-sm overflow-ellipsis flex flex-row flex-wrap">
+    <div className="flex flex-row justify-between w-full editor-container_editor-bar">
+      <div className="flex flex-row flex-wrap text-xs editor-container_ws-path lg:text-sm overflow-ellipsis">
         {p.map((r, i) => (
           <React.Fragment key={i}>
             <span className="break-all">{r}</span>
@@ -50,7 +50,7 @@ export function EditorBar({
             ariaLabel="Split screen"
             isActive={isSplitEditorActive}
           >
-            {<SecondaryEditorIcon className="h-3 w-3 lg:h-4 lg:w-4" />}
+            {<SecondaryEditorIcon className="w-3 h-3 lg:h-4 lg:w-4" />}
           </Button>
         )}
         <Button
@@ -59,7 +59,7 @@ export function EditorBar({
           bgOnHover={true}
           isRounded={true}
         >
-          {<CloseIcon className="h-3 w-3 lg:h-4 lg:w-4" />}
+          {<CloseIcon className="w-3 h-3 lg:h-4 lg:w-4" />}
         </Button>
       </div>
     </div>

@@ -28,8 +28,7 @@ export function Page({
         verticallyCenter && 'justify-center',
       )}
       style={{
-        padding:
-          'var(--page-top-padding) var(--page-x-axis-padding) var(--page-bottom-padding) var(--page-x-axis-padding)',
+        padding: 'var(--window-page-padding)',
       }}
     >
       <div
@@ -39,8 +38,8 @@ export function Page({
           showBoxAround && 'rounded-md b-bg-stronger-color ',
         )}
         style={{
-          maxWidth: 'min(var(--page-max-width), 100vw)',
-          padding: showBoxAround ? 'var(--page-box-padding)' : undefined,
+          maxWidth: 'min(var(--page-maxWidth), 100vw)',
+          padding: showBoxAround ? 'var(--window-page-box-padding)' : undefined,
         }}
       >
         {children}

@@ -2,14 +2,14 @@
   display: flex;
   flex-direction: column;
   background-color: var(--window-bgColor-1);
-  max-width: var(--inline-palette-max-width);
-  min-width: var(--inline-palette-max-width);
+  max-width: var(--inlineUniversalPalette-maxWidth);
+  min-width: var(--inlineUniversalPalette-maxWidth);
 }
 
 .inline-palette-items-wrapper {
   display: flex;
   flex-direction: column;
-  max-height: var(--inline-palette-max-height);
+  max-height: var(--inlineUniversalPalette-maxHeight);
   overflow-y: scroll;
 }
 

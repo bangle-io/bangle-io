@@ -15,16 +15,16 @@
 }
 
 .b-border-color {
-  border-color: var(--border-color);
+  border-color: var(--window-border-color);
 }
 
-.b-modal-overlay-color {
-  background-color: var(--modal-overlay-color);
+.b-window-modal-overlay-bgColor {
+  background-color: var(--window-modal-overlay-bgColor);
 }
 
 .b-border-color {
-  border-color: var(--border-color);
+  border-color: var(--window-border-color);
 }
 .b-border-bottom-color {
-  border-bottom-color: var(--border-color);
+  border-bottom-color: var(--window-border-color);
 }

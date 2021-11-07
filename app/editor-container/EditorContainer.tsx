@@ -51,8 +51,8 @@ export function EditorContainer({
 
   if (noteExists === 'NOT_FOUND') {
     children = (
-      <div className="h-full flex flex-col justify-center align-middle px-3">
-        <h3 className="sm:text-3xl lg:text-3xl mb-8 text-xl font-bold leading-none">
+      <div className="flex flex-col justify-center h-full px-3 align-middle">
+        <h3 className="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl">
           🕵️‍♀️‍ Note "{wsPath ? resolvePath(wsPath).fileName : ''}" was not found
         </h3>
       </div>
@@ -80,7 +80,7 @@ export function EditorContainer({
     >
       {widescreen && wsPath && (
         <div
-          className="sticky top-0 w-full py-1 px-2 lg:px-4 z-10"
+          className="sticky top-0 z-10 w-full px-2 py-1 lg:px-4"
           style={{
             backgroundColor: 'var(--window-bgColor-0)',
             top: 0,
