@@ -37,7 +37,7 @@ export function SearchNotesSidebar() {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <span
-          className="b-text-color-lighter text-sm font-extrabold cursor-pointer"
+          className="b-textColor-lighter text-sm font-extrabold cursor-pointer"
           onClick={() => {
             dispatchAction({
               name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',

@@ -144,14 +144,14 @@ test('active sidebar is toggled off correctly', () => {
             title: 'search notes',
             activitybarIcon: <span>test-icon</span>,
             ReactComponent: () => null,
-            hint: 'test-hint',
+            hint: 'search the notes',
           },
         ]}
       ></Activitybar>
     </div>,
   );
   act(() => {
-    fireEvent.click(result.getByRole('button', { name: 'test-hint' }));
+    fireEvent.click(result.getByRole('button', { name: 'search the notes' }));
   });
 
   expect(dispatch).toBeCalledTimes(1);

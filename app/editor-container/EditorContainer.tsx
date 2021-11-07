@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
 
@@ -9,6 +9,7 @@ import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { Editor } from './Editor';
+import { EditorBar } from './EditorBar';
 
 export function EditorContainer({
   widescreen,
@@ -24,6 +25,27 @@ export function EditorContainer({
   setEditor: (editorId: number, editor: CoreBangleEditor) => void;
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
+  const { updateOpenedWsPaths, secondaryWsPath } = useWorkspaceContext();
+
+  const onClose = useCallback(() => {
+    updateOpenedWsPaths((openedWsPaths) =>
+      openedWsPaths.updateByIndex(editorId, undefined).shrink(),
+    );
+  }, [updateOpenedWsPaths, editorId]);
+
+  const isSplitEditorActive = Boolean(secondaryWsPath);
+
+  const onPressSecondaryEditor = useCallback(() => {
+    if (secondaryWsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateSecondaryWsPath(null),
+      );
+    } else if (wsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateSecondaryWsPath(wsPath),
+      );
+    }
+  }, [wsPath, updateOpenedWsPaths, secondaryWsPath]);
 
   let children;
 
@@ -49,7 +71,33 @@ export function EditorContainer({
     );
   }
 
-  return <Page className={cx(widescreen && 'overflow-auto')}>{children}</Page>;
+  return (
+    <div
+      className={cx(
+        widescreen && 'overflow-y-auto',
+        'h-full w-full flex flex-col',
+      )}
+    >
+      {widescreen && wsPath && (
+        <div
+          className="sticky top-0 w-full py-1 px-2 lg:px-4 z-10"
+          style={{
+            backgroundColor: 'var(--window-bgColor-0)',
+            top: 0,
+          }}
+        >
+          <EditorBar
+            wsPath={wsPath}
+            onClose={onClose}
+            showSplitEditor={editorId === 0}
+            onPressSecondaryEditor={onPressSecondaryEditor}
+            isSplitEditorActive={isSplitEditorActive}
+          />
+        </div>
+      )}
+      <Page>{children}</Page>
+    </div>
+  );
 }
 
 /**

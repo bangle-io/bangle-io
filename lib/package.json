@@ -18,7 +18,7 @@
     "test-utils",
     "contextual-ui-components",
     "ui-dhancha",
-    "ui-menu-button"
+    "ui-bangle-button"
   ],
   "repository": {
     "directory": "lib",

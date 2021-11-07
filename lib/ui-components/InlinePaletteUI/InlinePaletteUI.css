@@ -1,7 +1,7 @@
 .inline-palette-wrapper {
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
   max-width: var(--inline-palette-max-width);
   min-width: var(--inline-palette-max-width);
 }
@@ -18,17 +18,17 @@
 }
 
 .inline-palette-items-wrapper > .inline-palette-row.disabled {
-  background-color: var(--accent-2-color);
+  background-color: var(--accent-secondary);
 }
 
 .inline-palette-items-wrapper > .inline-palette-row.active.disabled {
-  background-color: var(--accent-2-color);
+  background-color: var(--accent-secondary);
 }
 
 .inline-palette-items-wrapper > .inline-palette-row.hover-allowed:hover {
-  background-color: var(--accent-2-color);
+  background-color: var(--accent-secondary);
 }
 
 .inline-palette-items-wrapper > .inline-palette-row.active {
-  background-color: var(--accent-color) !important;
+  background-color: var(--accent-primary-1) !important;
 }

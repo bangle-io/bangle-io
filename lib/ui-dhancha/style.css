@@ -1,10 +1,10 @@
 :root {
-  --ui-dhancha_ws-sidebar-width: var(--workspace-sidebar-width, 15rem);
+  --ui-dhancha_ws-sidebar-width: var(--workspaceSidebar-width, 15rem);
   --ui-dhancha_activitybar-width: var(--activitybar-width, 40px);
   --ui-dhancha_activitybar-mobile-width: var(--activitybar-mobile-height, 30px);
   --ui-dhancha_note-sidebar-width: 15rem;
   --ui-dhancha_note-border-color: var(--border-color, grey);
-  --ui-dhancha_activitybar-bg-color: var(--activitybar-color, magenta);
+  --ui-dhancha_activitybar-bgColor: var(--activitybar-bgColor, magenta);
 }
 
 body {
@@ -52,6 +52,7 @@ body {
 .ui-dhancha_multi-column-main-content > * {
   box-sizing: border-box;
   min-width: 100%;
+  border-right: 1px solid var(--ui-dhancha_note-border-color);
 }
 
 .ui-dhancha_multi-column-main-content {
@@ -66,7 +67,7 @@ body {
   flex-direction: row;
   flex-shrink: 0;
   height: var(--ui-dhancha_activitybar-mobile-width);
-  background-color: var(--ui-dhancha_activitybar-bg-color);
+  background-color: var(--ui-dhancha_activitybar-bgColor);
   position: sticky;
   top: 0;
   width: 100%;

@@ -5,3 +5,14 @@
   position: relative;
   width: 100%;
 }
+
+.editor-container_editor-bar {
+  color: var(--uiBangleButton-color);
+}
+
+.editor-container_ws-path {
+  color: var(--uiBangleButton-color);
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}

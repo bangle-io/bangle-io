@@ -2,11 +2,12 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import type { SidebarType } from '@bangle.io/extension-registry';
+import { Button as ToggleButton } from '@bangle.io/ui-bangle-button';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
-import { ToggleButton } from '@bangle.io/ui-menu-button';
 import { cx } from '@bangle.io/utils';
 
+import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarMobile } from './ActivitybarMobile';
 
 export function Activitybar({
@@ -29,7 +30,7 @@ export function Activitybar({
   const sidebarItems = sidebars.map((r) => {
     const active = sidebar === r.name;
     return (
-      <Button
+      <ActivitybarButton
         isActive={active}
         hint={r.hint}
         icon={React.cloneElement(r.activitybarIcon, {
@@ -56,7 +57,7 @@ export function Activitybar({
 
   return (
     <div className="flex flex-grow flex-col activitybar widescreen">
-      <Button
+      <ActivitybarButton
         widescreen={widescreen}
         isActive={false}
         onPress={() => {
@@ -77,7 +78,7 @@ export function Activitybar({
 
       {sidebarItems}
       <div className="flex-grow"></div>
-      <Button
+      <ActivitybarButton
         isActive={false}
         widescreen={widescreen}
         icon={<GiftIcon className="h-7 w-7" showDot={changelogHasUpdates} />}
@@ -90,20 +91,5 @@ export function Activitybar({
         }}
       />
     </div>
-  );
-}
-
-function Button({ isActive, widescreen, icon, hint, onPress }) {
-  return (
-    <ToggleButton
-      isActive={isActive}
-      className={cx(
-        'w-full py-3 rounded-sm flex justify-center action-bar_button',
-        widescreen && 'widescreen',
-      )}
-      onPress={onPress}
-    >
-      {icon}
-    </ToggleButton>
   );
 }

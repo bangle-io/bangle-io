@@ -1,5 +1,5 @@
 .bangle-heading-collapsed {
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
   border-radius: 8px;
 }
 
@@ -20,7 +20,7 @@ main .bangle-editor p {
 @keyframes editorSelectedNode {
   from {
     border-radius: 4px;
-    background-color: var(--bg-stronger-color);
+    background-color: var(--window-bgColor-1);
   }
 
   to {

@@ -68,7 +68,7 @@ export function NotesTree() {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <span
-          className="text-sm font-extrabold cursor-pointer b-text-color-lighter"
+          className="text-sm font-extrabold cursor-pointer b-textColor-lighter"
           onClick={() => {
             dispatchAction({
               name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',

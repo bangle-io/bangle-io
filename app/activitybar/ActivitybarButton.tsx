@@ -1,36 +1,38 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useRef } from 'react';
 
-import { ButtonIcon } from '@bangle.io/ui-components';
+import { Button as ToggleButton } from '@bangle.io/ui-bangle-button';
 import { cx } from '@bangle.io/utils';
 
 export function ActivitybarButton({
+  isActive,
   widescreen,
-  hint,
-  active,
-  onActivate,
   icon,
+  hint,
+  onPress,
 }: {
   widescreen: boolean;
   hint?: string;
-  active?: boolean;
-  onActivate: () => void;
+  isActive?: boolean;
+  onPress: () => void;
   icon: ReactNode;
 }) {
   return (
-    <ButtonIcon
-      hint={hint}
-      hintPos="right"
-      active={active}
+    <ToggleButton
+      isActive={isActive}
+      animateOnPress={true}
       className={cx(
-        'flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200',
-        widescreen && 'border-l-2',
+        'w-full py-3 rounded-sm flex justify-center activitybar_button',
+        widescreen && 'widescreen',
       )}
-      onClick={(event) => {
-        event.preventDefault();
-        onActivate();
-      }}
+      onPress={onPress}
+      ariaLabel={hint}
+      activeColor="var(--activitybar-button-active-color)"
+      color="var(--activitybar-button-color)"
+      hoverBgColor="var(--activitybar-button-hover-color)"
+      hoverColor="var(--activitybar-button-hover-bgColor)"
+      pressedBgColor="var(--activitybar-button-pressed-bgColor)"
     >
       {icon}
-    </ButtonIcon>
+    </ToggleButton>
   );
 }

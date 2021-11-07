@@ -24,12 +24,71 @@
 
     <style>
       :root {
-        --editor-tab-height: 30px;
-        --workspace-sidebar-width: 300px;
-        /* the line that divides the two editor */
-        --gutter-width: 2px;
+        /* variable syntax */
+        /* --<theme>-<pkgName>-<componentName>-<sorted asc pseudo class or modifiers?>-<type>-<strength?> */
+        /*  theme light / dark */
+        /*  prefer camel casing for naming */
+        /*  pseudo class or modifiers- things like hover active pressed etc */
+        /*    if multiple exist separate them by - */
+        /*  types - bgColor, color, scale etc */
+        /*  strength? - number 0 being strongest and weaker from their */
 
-        /* page is essentially the same wrapper that takes place instead of editor but without editable content */
+        /* alternate bg */
+        --dark-base-50: #252525;
+        --dark-base-75: #2f2f2f;
+        /* base bg */
+        --dark-base-100: #323232;
+        --dark-base-200: #3e3e3e;
+        --dark-base-300: #4a4a4a;
+        --dark-base-400: #5a5a5a;
+        --dark-base-500: #6e6e6e;
+        --dark-base-600: #909090;
+        --dark-base-700: #b9b9b9;
+        --dark-base-800: #e3e3e3;
+        --dark-base-900: #ffffff;
+
+        --light-base-50: #ffffff;
+        --light-base-75: #fafafa;
+        --light-base-100: #f5f5f5;
+        --light-base-200: #eaeaea;
+        --light-base-300: #e1e1e1;
+        --light-base-400: #cacaca;
+        --light-base-500: #b3b3b3;
+        --light-base-600: #8e8e8e;
+        --light-base-700: #6e6e6e;
+        --light-base-800: #4b4b4b;
+        --light-base-900: #2c2c2c;
+
+        --light-textColor-0: var(--base-900);
+        --light-textColor-1: var(--base-800);
+        --dark-textColor-0: var(--base-900);
+        --dark-textColor-1: var(--base-800);
+
+        --light-accent-primary-0: rgb(88, 204, 240);
+        --light-accent-primary-1: rgb(136, 223, 250);
+
+        --dark-accent-primary-0: rgb(223, 50, 130);
+        --dark-accent-primary-1: rgb(229, 92, 156);
+
+        --light-accent-secondary: rgb(232, 232, 232);
+        --dark-accent-secondary: rgb(57, 62, 63);
+
+        --light-window-bgColor-0: var(--base-50);
+        --dark-window-bgColor-0: rgb(27, 26, 26);
+
+        --light-window-bgColor-1: var(--base-100);
+        --dark-window-bgColor-1: rgb(37, 37, 38);
+
+        --light-window-link-color: #4299e1;
+        --dark-window-link-color: #4299e1;
+
+        --light-window-highlight-bgColor: yellow;
+        --dark-window-highlight-bgColor: rgba(255, 255, 0, 0.5);
+
+        /* layout dimensions */
+        --workspaceSidebar-width: 300px;
+
+        /* page is a wrapper that wraps around editor or similar content */
         --page-x-axis-padding: 30px;
         --page-top-padding: 4rem;
         --page-bottom-padding: 4rem;
@@ -42,23 +101,8 @@
         /* The minimum screen size needed to allow for split screen */
         --widescreen-min-width: 760px;
 
-        --light-link-color: #4299e1;
-        --dark-link-color: #4299e1;
-
-        --light-text-highlight-color: yellow;
-        --dark-text-highlight-color: rgba(255, 255, 0, 0.5);
-
-        --light-accent-color: rgb(136, 223, 250);
-        --dark-accent-color: rgb(229, 92, 156);
-
-        --light-accent-2-color: rgb(232, 232, 232);
-        --dark-accent-2-color: rgb(57, 62, 63);
-
-        --light-accent-stronger-color: rgb(88, 204, 240);
-        --dark-accent-stronger-color: rgb(223, 50, 130);
-
-        --light-error-bg-color: rgb(254, 241, 240);
-        --dark-error-bg-color: rgb(37, 2, 1);
+        --light-error-bgColor: rgb(254, 241, 240);
+        --dark-error-bgColor: rgb(37, 2, 1);
 
         --light-severity-error-color: #f44336;
         --dark-severity-error-color: #f44336;
@@ -69,51 +113,56 @@
         --light-severity-success-color: #4caf50;
         --dark-severity-success-color: #4caf50;
 
-        --light-font-color: black;
-        --light-font-lighter-color: rgb(66, 66, 66);
-        --dark-font-color: white;
-        --dark-font-lighter-color: rgb(205, 205, 205);
-
         /* Extension: Note tag */
-        --light-note-tag-font-color: rgb(226, 226, 226);
-        --dark-note-tag-font-color: rgb(66, 66, 66);
-        --light-note-tag-bg-color: rgb(105, 105, 105);
-        --dark-note-tag-bg-color: rgb(205, 205, 205);
-
-        --light-bg-color: #fff;
-        --dark-bg-color: rgb(27, 26, 26);
-
-        --light-bg-stronger-color: #f5f5f5;
-        --dark-bg-stronger-color: rgb(37, 37, 38);
+        --light-noteTags-text-color: rgb(226, 226, 226);
+        --light-noteTags-bgColor: rgb(105, 105, 105);
+        --dark-noteTags-text-color: rgb(66, 66, 66);
+        --dark-noteTags-bgColor: rgb(205, 205, 205);
 
         --light-border-color: rgb(232, 232, 232);
         --dark-border-color: rgb(61, 63, 67);
 
-        --light-button-active-bg-color: rgb(47, 47, 47);
-        --dark-button-active-bg-color: rgb(47, 47, 47);
-
+        /* activitybar */
         --activitybar-width: 50px;
         --activitybar-mobile-height: 30px;
-        --light-activitybar-color: rgb(26, 32, 44);
-        --dark-activitybar-color: rgb(31, 30, 30);
-        --light-activitybar-font-color: #fff;
-        --dark-activitybar-font-color: #fff;
-        --light-activitybar-button-color: rgb(162, 162, 162);
-        --dark-activitybar-button-color: rgb(162, 162, 162);
-        --light-activitybar-button-active-color: rgb(239, 239, 239);
-        --dark-activitybar-button-active-color: rgb(239, 239, 239);
-        --light-activitybar-button-active-bg-color: rgb(47, 47, 47);
-        --dark-activitybar-button-active-bg-color: rgb(47, 47, 47);
-        --light-activitybar-button-pressed-bg-color: rgb(40, 40, 40);
-        --dark-activitybar-button-pressed-bg-color: rgb(40, 40, 40);
+        --light-activitybar-bgColor: rgb(26, 32, 44);
+        --dark-activitybar-bgColor: rgb(31, 30, 30);
 
-        --light-workspace-sidebar-bg-color: rgb(245, 245, 245);
-        --dark-workspace-sidebar-bg-color: rgb(31, 30, 30);
+        --light-activitybar-button-active-color: var(--base-200);
+        --light-activitybar-button-hover-bgColor: var(--base-100);
+        --light-activitybar-button-hover-color: var(--base-200);
+        --light-activitybar-button-color: var(--base-300);
+        --light-activitybar-button-pressed-bgColor: var(--base-800);
+
+        --dark-activitybar-button-active-color: var(--base-800);
+        --dark-activitybar-button-hover-bgColor: var(--base-400);
+        --dark-activitybar-button-hover-color: var(--base-900);
+        --dark-activitybar-button-color: var(--base-700);
+        --dark-activitybar-button-pressed-bgColor: var(--base-100);
+
+        --light-workspace-sidebar-bgColor: rgb(245, 245, 245);
+        --dark-workspace-sidebar-bgColor: rgb(31, 30, 30);
 
         --light-modal-overlay-color: rgba(0, 0, 0, 0.6);
         --dark-modal-overlay-color: rgba(0, 0, 0, 0.6);
 
-        background-color: var(--bg-color);
+        /* ui */
+        --light-uiBangleButton-active-color: var(--base-800);
+        --light-uiBangleButton-hover-bgColor: var(--base-400);
+        --light-uiBangleButton-hover-color: var(--base-900);
+        --light-uiBangleButton-color: var(--base-700);
+        --light-uiBangleButton-pressed-bgColor: var(--base-200);
+
+        --dark-uiBangleButton-active-color: var(--base-800);
+        --dark-uiBangleButton-hover-bgColor: var(--base-400);
+        --dark-uiBangleButton-hover-color: var(--base-900);
+        --dark-uiBangleButton-color: var(--base-700);
+        --dark-uiBangleButton-pressed-bgColor: var(--base-200);
+
+        --uiBangleButton-depression: 0.96;
+        --uiBangleButton-radius: 0.225rem;
+
+        background-color: var(--window-bgColor-0);
       }
     </style>
     <title>Bangle App</title>

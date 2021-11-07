@@ -1,23 +1,23 @@
 /* sidebar row2 */
 .b-sidebar-row2.hover:hover {
-  background-color: var(--accent-2-color);
+  background-color: var(--accent-secondary);
 }
 .b-sidebar-row2.active {
-  background-color: var(--accent-color);
+  background-color: var(--accent-primary-1);
 }
 
 /* prevent hover overwriting allowed */
 .b-sidebar-row2.hover.active {
-  background-color: var(--accent-color);
+  background-color: var(--accent-primary-1);
 }
 
 .b-sidebar-row2.disable {
-  color: var(--font-lighter-color);
+  color: var(--textColor-1);
   cursor: not-allowed;
-  background-color: var(--universal-palette-item-disabled-bg-color);
+  background-color: var(--universal-palette-item-disabled-bgColor);
 }
 .b-sidebar-row2.disable.hover:hover {
-  background-color: var(--universal-palette-item-disabled-bg-color);
+  background-color: var(--universal-palette-item-disabled-bgColor);
 }
 
 /* node positioning */
@@ -47,9 +47,9 @@
 }
 
 .b-sidebar-row2 .b-extra-info {
-  color: var(--font-lighter-color);
+  color: var(--textColor-1);
 }
 
 .b-sidebar-row2 .b-description {
-  color: var(--font-lighter-color);
+  color: var(--textColor-1);
 }

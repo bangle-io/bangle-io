@@ -86,7 +86,7 @@ export function ListPalette({
             isActive={false}
             onClick={() => {}}
             style={{
-              backgroundColor: 'var(--error-bg-color)',
+              backgroundColor: 'var(--error-bgColor)',
             }}
           />
         )}

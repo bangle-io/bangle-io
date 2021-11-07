@@ -1,17 +1,17 @@
 .b-text-color {
-  color: var(--font-color);
+  color: var(--textColor-0);
 }
 
-.b-text-color-lighter {
-  color: var(--font-lighter-color);
+.b-textColor-lighter {
+  color: var(--textColor-1);
 }
 
-.hover\:b-accent-2-color:hover {
-  background-color: var(--accent-2-color);
+.hover\:b-accent-secondary:hover {
+  background-color: var(--accent-secondary);
 }
 
 .b-bg-stronger-color {
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
 }
 
 .b-border-color {

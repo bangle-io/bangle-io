@@ -1,5 +1,6 @@
 import './style';
 
+import { OverlayProvider } from '@react-aria/overlays';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -61,33 +62,35 @@ export function Entry() {
   return (
     <React.StrictMode>
       <LoadingBlock>
-        <Router>
-          <AppStateProvider>
-            <WorkerSetup loadWebworker={moduleSupport} />
-            <UIManager>
-              <SWReloadPrompt />
-              <ExtensionRegistryContextProvider
-                initExtensionRegistry={initExtensionRegistry}
-              >
-                <ExtensionStateContextProvider>
-                  <WorkspaceContextProvider
-                    onNativefsAuthError={handleNativefsAuthError}
-                    onWorkspaceNotFound={handleWorkspaceNotFound}
-                  >
-                    <WatchWorkspace />
-                    <WatchUI />
-                    <EditorManager>
-                      <PageLifecycle />
-                      <ActionContextProvider>
-                        <AppContainer />
-                      </ActionContextProvider>
-                    </EditorManager>
-                  </WorkspaceContextProvider>
-                </ExtensionStateContextProvider>
-              </ExtensionRegistryContextProvider>
-            </UIManager>
-          </AppStateProvider>
-        </Router>
+        <OverlayProvider className="w-full h-full">
+          <Router>
+            <AppStateProvider>
+              <WorkerSetup loadWebworker={moduleSupport} />
+              <UIManager>
+                <SWReloadPrompt />
+                <ExtensionRegistryContextProvider
+                  initExtensionRegistry={initExtensionRegistry}
+                >
+                  <ExtensionStateContextProvider>
+                    <WorkspaceContextProvider
+                      onNativefsAuthError={handleNativefsAuthError}
+                      onWorkspaceNotFound={handleWorkspaceNotFound}
+                    >
+                      <WatchWorkspace />
+                      <WatchUI />
+                      <EditorManager>
+                        <PageLifecycle />
+                        <ActionContextProvider>
+                          <AppContainer />
+                        </ActionContextProvider>
+                      </EditorManager>
+                    </WorkspaceContextProvider>
+                  </ExtensionStateContextProvider>
+                </ExtensionRegistryContextProvider>
+              </UIManager>
+            </AppStateProvider>
+          </Router>
+        </OverlayProvider>
       </LoadingBlock>
     </React.StrictMode>
   );

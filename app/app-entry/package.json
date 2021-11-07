@@ -49,6 +49,7 @@
     "@bangle.io/object-sync": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/style": "workspace:*",
+    "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
     "@bangle.io/ui-dhancha": "workspace:*",

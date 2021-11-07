@@ -20,7 +20,7 @@ button[aria-label][data-bangle-editor-pos] {
   font-style: normal;
   text-shadow: none;
   font-size: var(--bangle-balloon-font-size);
-  background: var(--bangle-floating-menu-bg-color);
+  background: var(--bangle-floating-menu-bgColor);
   border-radius: 2px;
   color: var(--bangle-floating-menu-text-color);
   border-radius: var(--bangle-balloon-border-radius);
@@ -34,7 +34,7 @@ button[aria-label][data-bangle-editor-pos] {
   width: 0;
   height: 0;
   border: 5px solid transparent;
-  border-top-color: var(--bangle-floating-menu-bg-color);
+  border-top-color: var(--bangle-floating-menu-bgColor);
   opacity: 0;
   pointer-events: none;
   /* transition: all 0.1s ease-in-out 0.1s; */
@@ -124,7 +124,7 @@ button[aria-label][data-bangle-editor-pos] {
   width: 0;
   height: 0;
   border: 5px solid transparent;
-  border-bottom-color: var(--bangle-floating-menu-bg-color);
+  border-bottom-color: var(--bangle-floating-menu-bgColor);
 }
 [aria-label][data-bangle-editor-pos][data-bangle-editor-pos='bottom']:after,
 [aria-label][data-bangle-editor-pos][data-bangle-editor-pos='bottom']:before {
@@ -156,7 +156,7 @@ button[aria-label][data-bangle-editor-pos] {
   width: 0;
   height: 0;
   border: 5px solid transparent;
-  border-left-color: var(--bangle-floating-menu-bg-color);
+  border-left-color: var(--bangle-floating-menu-bgColor);
 }
 
 [aria-label][data-bangle-editor-pos][data-bangle-editor-pos='right']:after,
@@ -172,6 +172,6 @@ button[aria-label][data-bangle-editor-pos] {
   width: 0;
   height: 0;
   border: 5px solid transparent;
-  border-right-color: var(--bangle-floating-menu-bg-color);
+  border-right-color: var(--bangle-floating-menu-bgColor);
 }
 /** TooltipHints End*/

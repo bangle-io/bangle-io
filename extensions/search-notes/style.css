@@ -3,9 +3,9 @@
 }
 
 .search-notes .highlight-text:nth-of-type(2n) {
-  background-color: var(--text-highlight-color);
+  background-color: var(--window-highlight-bgColor);
 }
 
 .bangle-search-match {
-  background-color: var(--text-highlight-color);
+  background-color: var(--window-highlight-bgColor);
 }

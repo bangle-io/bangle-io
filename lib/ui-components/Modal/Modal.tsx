@@ -65,7 +65,7 @@ export function Modal({
             <div className="b-border-bottom-color b-bg-stronger-color flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2">
               <span>{title}</span>
               <ButtonIcon onClick={onDismiss} removeFocus={true}>
-                <CloseIcon className="hover:b-accent-2-color w-6 h-6 rounded-sm" />
+                <CloseIcon className="hover:b-accent-secondary w-6 h-6 rounded-sm" />
               </ButtonIcon>
             </div>
           </div>

@@ -20,7 +20,7 @@ export function ActivitybarMobile({
       <div className="flex flex-col justify-center mr-2">
         <ActivitybarButton
           widescreen={false}
-          onActivate={() => {
+          onPress={() => {
             dispatchAction({
               name: 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE',
             });

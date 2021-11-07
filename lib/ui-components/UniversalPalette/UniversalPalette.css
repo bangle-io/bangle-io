@@ -1,6 +1,6 @@
 :root {
   --universal-palette-alignment-spacing: 0.5rem;
-  --universal-palette-item-disabled-bg-color: rgb(232, 232, 232);
+  --universal-palette-item-disabled-bgColor: rgb(232, 232, 232);
   --universal-palette-item-divider-width: 1px;
   --universal-palette-item-disabled-bg-text-color: rgb(161, 161, 161);
 }
@@ -35,7 +35,7 @@
 }
 
 .universal-palette-container {
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
   margin-left: auto;
   margin-right: auto;
   max-width: var(--palette-max-width);
@@ -85,24 +85,24 @@
 }
 
 .universal-palette-item:hover {
-  background-color: var(--accent-2-color);
+  background-color: var(--accent-secondary);
 }
 
 .universal-palette-item.active {
-  background-color: var(--accent-color);
+  background-color: var(--accent-primary-1);
 }
 
 .universal-palette-item.disabled {
-  color: var(--font-lighter-color);
+  color: var(--textColor-1);
   cursor: not-allowed;
 }
 
 .universal-palette-item.disabled.active {
-  background-color: var(--universal-palette-item-disabled-bg-color);
+  background-color: var(--universal-palette-item-disabled-bgColor);
 }
 
 .universal-palette-item.disabled:hover {
-  background-color: var(--universal-palette-item-disabled-bg-color);
+  background-color: var(--universal-palette-item-disabled-bgColor);
 }
 
 .universal-palette-item .b-left-node {
@@ -110,10 +110,10 @@
 }
 
 .universal-palette-item .b-extra-info {
-  color: var(--font-lighter-color);
+  color: var(--textColor-1);
   margin-left: var(--universal-palette-alignment-spacing);
 }
 
 .universal-palette-item .b-description {
-  color: var(--font-lighter-color);
+  color: var(--textColor-1);
 }

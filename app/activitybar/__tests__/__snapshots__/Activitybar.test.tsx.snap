@@ -4,14 +4,11 @@ exports[`renders when no sidebars 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-grow flex-col activitybar"
+      class="flex flex-grow flex-col activitybar widescreen"
     >
       <button
         aria-label="Workspace Home"
-        class="focus:outline-none flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200 border-l-2"
-        data-bangle-editor-break="true"
-        data-bangle-editor-pos="right"
-        style="border-color: transparent;"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
         type="button"
       >
         <svg
@@ -44,14 +41,11 @@ exports[`renders when no sidebars 1`] = `
       />
       <button
         aria-label="What's new"
-        class="focus:outline-none flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200 border-l-2"
-        data-bangle-editor-break="true"
-        data-bangle-editor-pos="right"
-        style="border-color: transparent;"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
         type="button"
       >
         <svg
-          class="text-gray-100 h-7 w-7"
+          class="h-7 w-7"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -74,14 +68,11 @@ exports[`renders when sidebar is active 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-grow flex-col activitybar"
+      class="flex flex-grow flex-col activitybar widescreen"
     >
       <button
         aria-label="Workspace Home"
-        class="focus:outline-none flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200 border-l-2"
-        data-bangle-editor-break="true"
-        data-bangle-editor-pos="right"
-        style="border-color: transparent;"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
         type="button"
       >
         <svg
@@ -111,9 +102,7 @@ exports[`renders when sidebar is active 1`] = `
       </button>
       <button
         aria-label="test-hint"
-        class="active focus:outline-none flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200 border-l-2"
-        data-bangle-editor-break="true"
-        data-bangle-editor-pos="right"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen is-active"
         type="button"
       >
         <span
@@ -127,14 +116,11 @@ exports[`renders when sidebar is active 1`] = `
       />
       <button
         aria-label="What's new"
-        class="focus:outline-none flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200 border-l-2"
-        data-bangle-editor-break="true"
-        data-bangle-editor-pos="right"
-        style="border-color: transparent;"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
         type="button"
       >
         <svg
-          class="text-gray-100 h-7 w-7"
+          class="h-7 w-7"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -157,14 +143,11 @@ exports[`renders when there is sidebar 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-grow flex-col activitybar"
+      class="flex flex-grow flex-col activitybar widescreen"
     >
       <button
         aria-label="Workspace Home"
-        class="focus:outline-none flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200 border-l-2"
-        data-bangle-editor-break="true"
-        data-bangle-editor-pos="right"
-        style="border-color: transparent;"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
         type="button"
       >
         <svg
@@ -194,10 +177,7 @@ exports[`renders when there is sidebar 1`] = `
       </button>
       <button
         aria-label="test-hint"
-        class="focus:outline-none flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200 border-l-2"
-        data-bangle-editor-break="true"
-        data-bangle-editor-pos="right"
-        style="border-color: transparent;"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
         type="button"
       >
         <span
@@ -211,14 +191,11 @@ exports[`renders when there is sidebar 1`] = `
       />
       <button
         aria-label="What's new"
-        class="focus:outline-none flex justify-center pt-3 pb-3 mt-1 mb-1 transition-colors duration-200 border-l-2"
-        data-bangle-editor-break="true"
-        data-bangle-editor-pos="right"
-        style="border-color: transparent;"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
         type="button"
       >
         <svg
-          class="text-gray-100 h-7 w-7"
+          class="h-7 w-7"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

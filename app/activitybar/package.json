@@ -27,9 +27,9 @@
   },
   "dependencies": {
     "@bangle.io/action-context": "workspace:*",
+    "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
-    "@bangle.io/ui-menu-button": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "react-router-dom": "^5.3.0"

@@ -8,7 +8,7 @@ DONOT keep internal styles here.
 */
 
 #root {
-  color: var(--font-color);
+  color: var(--textColor-0);
   display: flex;
   flex-direction: column;
 }
@@ -84,7 +84,7 @@ DONOT keep internal styles here.
 
 .editor-tab {
   width: 100%;
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
   height: var(--editor-tab-height);
   display: flex;
   flex-direction: row;
@@ -100,7 +100,7 @@ DONOT keep internal styles here.
   z-index: 20;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
 }
 
 .left-sidebar-area.smallscreen {
@@ -114,8 +114,8 @@ DONOT keep internal styles here.
 .left-sidebar-area.widescreen {
   min-height: 100vh;
   max-height: 100vh;
-  min-width: var(--workspace-sidebar-width);
-  max-width: var(--workspace-sidebar-width);
+  min-width: var(--workspaceSidebar-width);
+  max-width: var(--workspaceSidebar-width);
 }
 
 .homepage {
