@@ -15,9 +15,9 @@ export function EmptyEditorPage() {
     new Set([...recentWsPaths, ...(noteWsPaths || [])].slice(0, MAX_ENTRIES)),
   );
   return (
-    <Page showBoxAround={true} className="overflow-y-scroll">
+    <Page className="overflow-y-scroll">
       <div className="flex flex-row">
-        <h1 className="sm:text-2xl lg:text-3xl mr-1 text-3xl">{wsName}</h1>
+        <h1 className="mr-1 text-3xl sm:text-2xl lg:text-3xl">{wsName}</h1>
         <ButtonIcon
           hint="Switch workspace"
           onClick={() => {
@@ -25,7 +25,7 @@ export function EmptyEditorPage() {
               name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',
             });
           }}
-          className="rounded-xl text-xs"
+          className="text-xs rounded-xl"
         >
           <ChevronDownIcon className="w-5 h-5" />
         </ButtonIcon>
@@ -33,7 +33,7 @@ export function EmptyEditorPage() {
       {paths.length != 0 && (
         <>
           <div className="flex flex-row mt-6">
-            <h3 className="text-l sm:text-xl lg:text-xl mr-1 leading-none">
+            <h3 className="mr-1 leading-none text-l sm:text-xl lg:text-xl">
               Recent notes
             </h3>
           </div>
@@ -43,7 +43,7 @@ export function EmptyEditorPage() {
                 <li key={i}>
                   <Link
                     to={resolvePath(r).locationPath}
-                    className="hover:underline py-1"
+                    className="py-1 hover:underline"
                   >
                     {resolvePath(r).filePath}
                   </Link>
@@ -60,7 +60,7 @@ export function EmptyEditorPage() {
               name: 'action::bangle-io-core-actions:NEW_NOTE_ACTION',
             });
           }}
-          className=" mb-3 sm:w-auto hover:bg-gray-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none flex-none w-full px-6 py-3 mt-6 ml-3 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent"
+          className="flex-none w-full px-6 py-3 mt-6 mb-3 ml-3 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent  sm:w-auto hover:bg-gray-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none"
         >
           Create a note
         </button>

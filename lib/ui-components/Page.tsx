@@ -8,38 +8,46 @@ import { cx } from '@bangle.io/utils';
  *
  */
 export function Page({
+  childClassName,
   children,
   className,
-  childClassName,
-  verticallyCenter = false,
-  showBoxAround = false,
+  header,
+  headerBgColor = 'var(--window-bg-color-0)',
+  stickyHeader,
 }: {
+  childClassName?: string;
   children: ReactNode;
   className?: string;
-  childClassName?: string;
+  header?: ReactNode;
+  headerBgColor?: string;
+  stickyHeader?: boolean;
   verticallyCenter?: boolean;
-  showBoxAround?: boolean;
 }) {
   return (
     <div
       className={cx(
-        'w-full h-full flex flex-col items-center',
+        'w-full h-full flex flex-col items-center overflow-y-scroll',
         className,
-        verticallyCenter && 'justify-center',
       )}
-      style={{
-        padding: 'var(--window-page-padding)',
-      }}
     >
+      {header && (
+        <div
+          className={cx(
+            'w-full px-2 py-1 lg:px-4',
+            stickyHeader && 'sticky top-0 z-10',
+          )}
+          style={{
+            backgroundColor: headerBgColor,
+          }}
+        >
+          {header}
+        </div>
+      )}
       <div
-        className={cx(
-          'w-full',
-          childClassName,
-          showBoxAround && 'rounded-md b-bg-stronger-color ',
-        )}
+        className={cx('w-full', childClassName)}
         style={{
           maxWidth: 'min(var(--page-maxWidth), 100vw)',
-          padding: showBoxAround ? 'var(--window-page-box-padding)' : undefined,
+          padding: 'var(--window-page-padding)',
         }}
       >
         {children}

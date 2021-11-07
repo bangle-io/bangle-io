@@ -72,20 +72,12 @@ export function EditorContainer({
   }
 
   return (
-    <div
-      className={cx(
-        widescreen && 'overflow-y-auto',
-        'h-full w-full flex flex-col',
-      )}
-    >
-      {widescreen && wsPath && (
-        <div
-          className="sticky top-0 z-10 w-full px-2 py-1 lg:px-4"
-          style={{
-            backgroundColor: 'var(--window-bgColor-0)',
-            top: 0,
-          }}
-        >
+    <Page
+      headerBgColor="var(--window-bgColor-0)"
+      stickyHeader={Boolean(widescreen)}
+      header={
+        widescreen &&
+        wsPath && (
           <EditorBar
             wsPath={wsPath}
             onClose={onClose}
@@ -93,10 +85,12 @@ export function EditorContainer({
             onPressSecondaryEditor={onPressSecondaryEditor}
             isSplitEditorActive={isSplitEditorActive}
           />
-        </div>
-      )}
-      <Page>{children}</Page>
-    </div>
+        )
+      }
+      className={cx(widescreen && 'overflow-y-scroll')}
+    >
+      {children}
+    </Page>
   );
 }
 

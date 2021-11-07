@@ -97,22 +97,24 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
   }, [requestFSPermission, isPaletteActive]);
 
   return (
-    <Page verticallyCenter={true} showBoxAround={true}>
-      <h3 className="sm:text-3xl lg:text-3xl mb-8 text-xl font-bold leading-none">
-        👩‍💻 Bangle.io needs your permission to read "{wsName}"
-      </h3>
-      <span className="sm:leading-10 sm:mb-1 flex-shrink mb-10 text-lg font-semibold">
-        {permissionDenied &&
-          'You have denied bangle.io permission to access your workspace.'}
-      </span>
-      <button
-        onClick={() => {
-          requestFSPermission();
-        }}
-        className="sm:w-auto hover:bg-purple-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none flex-none w-full px-6 py-3 mt-6 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent"
-      >
-        Press <kbd>Enter</kbd> or 👆click this grant permission.
-      </button>
+    <Page>
+      <div className="">
+        <h3 className="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl">
+          👩‍💻 Bangle.io needs your permission to read "{wsName}"
+        </h3>
+        <span className="flex-shrink mb-10 text-lg font-semibold sm:leading-10 sm:mb-1">
+          {permissionDenied &&
+            'You have denied bangle.io permission to access your workspace.'}
+        </span>
+        <button
+          onClick={() => {
+            requestFSPermission();
+          }}
+          className="flex-none w-full px-6 py-3 mt-6 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent sm:w-auto hover:bg-purple-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none"
+        >
+          Press <kbd>Enter</kbd> or 👆click this grant permission.
+        </button>
+      </div>
     </Page>
   );
 }

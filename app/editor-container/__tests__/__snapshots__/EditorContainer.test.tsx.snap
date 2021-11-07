@@ -4,11 +4,10 @@ exports[`basic renders 1`] = `
 <div>
   <div>
     <div
-      class="overflow-y-auto h-full w-full flex flex-col"
+      class="w-full h-full flex flex-col items-center overflow-y-scroll overflow-y-scroll"
     >
       <div
-        class="sticky top-0 z-10 w-full px-2 py-1 lg:px-4"
-        style="top: 0px;"
+        class="w-full px-2 py-1 lg:px-4 sticky top-0 z-10"
       >
         <div
           class="flex flex-row justify-between w-full editor-container_editor-bar"
@@ -46,27 +45,23 @@ exports[`basic renders 1`] = `
         </div>
       </div>
       <div
-        class="w-full h-full flex flex-col items-center"
+        class="w-full"
+        style="max-width: min(var(--page-maxWidth), 100vw);"
       >
         <div
-          class="w-full"
-          style="max-width: min(var(--page-maxWidth), 100vw);"
+          class="editor-container_editor editor-container_editor-1"
         >
           <div
-            class="editor-container_editor editor-container_editor-1"
+            class="ProseMirror bangle-editor"
+            contenteditable="true"
+            translate="no"
           >
-            <div
-              class="ProseMirror bangle-editor"
-              contenteditable="true"
-              translate="no"
-            >
-              <h1>
-                Hola
-              </h1>
-              <p>
-                Hello world! I am a test
-              </p>
-            </div>
+            <h1>
+              Hola
+            </h1>
+            <p>
+              Hello world! I am a test
+            </p>
           </div>
         </div>
       </div>
@@ -79,11 +74,10 @@ exports[`renders correctly when file does not exist 1`] = `
 <div>
   <div>
     <div
-      class="overflow-y-auto h-full w-full flex flex-col"
+      class="w-full h-full flex flex-col items-center overflow-y-scroll overflow-y-scroll"
     >
       <div
-        class="sticky top-0 z-10 w-full px-2 py-1 lg:px-4"
-        style="top: 0px;"
+        class="w-full px-2 py-1 lg:px-4 sticky top-0 z-10"
       >
         <div
           class="flex flex-row justify-between w-full editor-container_editor-bar"
@@ -121,23 +115,19 @@ exports[`renders correctly when file does not exist 1`] = `
         </div>
       </div>
       <div
-        class="w-full h-full flex flex-col items-center"
+        class="w-full"
+        style="max-width: min(var(--page-maxWidth), 100vw);"
       >
         <div
-          class="w-full"
-          style="max-width: min(var(--page-maxWidth), 100vw);"
+          class="flex flex-col justify-center h-full px-3 align-middle"
         >
-          <div
-            class="flex flex-col justify-center h-full px-3 align-middle"
+          <h3
+            class="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl"
           >
-            <h3
-              class="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl"
-            >
-              🕵️‍♀️‍ Note "
-              blah.md
-              " was not found
-            </h3>
-          </div>
+            🕵️‍♀️‍ Note "
+            blah.md
+            " was not found
+          </h3>
         </div>
       </div>
     </div>
@@ -149,18 +139,14 @@ exports[`renders when no wsPath is provided 1`] = `
 <div>
   <div>
     <div
-      class="overflow-y-auto h-full w-full flex flex-col"
+      class="w-full h-full flex flex-col items-center overflow-y-scroll overflow-y-scroll"
     >
       <div
-        class="w-full h-full flex flex-col items-center"
+        class="w-full"
+        style="max-width: min(var(--page-maxWidth), 100vw);"
       >
-        <div
-          class="w-full"
-          style="max-width: min(var(--page-maxWidth), 100vw);"
-        >
-          <div>
-            Nothing was found here
-          </div>
+        <div>
+          Nothing was found here
         </div>
       </div>
     </div>
