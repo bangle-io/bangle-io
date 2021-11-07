@@ -166,9 +166,12 @@ async function clearPrimaryEditor(page) {
 }
 
 async function waitForPrimaryEditorFocus(page) {
-  await page.waitForSelector('.primary-editor .ProseMirror-focused', {
-    timeout: 2 * SELECTOR_TIMEOUT,
-  });
+  await page.waitForSelector(
+    '.editor-container_editor-0 .ProseMirror-focused',
+    {
+      timeout: 2 * SELECTOR_TIMEOUT,
+    },
+  );
 }
 
 async function getEditorHTML(editorHandle) {
@@ -181,11 +184,11 @@ async function getPrimaryEditorHTML(page) {
 }
 
 async function getPrimaryEditorHandler(page, { focus = false } = {}) {
-  const handle = await page.waitForSelector('.primary-editor', {
+  const handle = await page.waitForSelector('.editor-container_editor-0', {
     timeout: SELECTOR_TIMEOUT,
   });
 
-  await page.waitForSelector('.primary-editor .bangle-editor', {
+  await page.waitForSelector('.editor-container_editor-0 .bangle-editor', {
     timeout: SELECTOR_TIMEOUT,
   });
 
@@ -200,7 +203,7 @@ async function getPrimaryEditorHandler(page, { focus = false } = {}) {
 }
 
 async function getSecondaryEditorHandler(page, { focus = false } = {}) {
-  const handle = await page.waitForSelector('.secondary-editor', {
+  const handle = await page.waitForSelector('.editor-container_editor-1', {
     timeout: SELECTOR_TIMEOUT,
   });
 

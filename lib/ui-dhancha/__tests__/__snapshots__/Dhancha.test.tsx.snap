@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MultiColumnMainContent renders 1`] = `
+<div>
+  <div>
+    <div
+      class="ui-dhancha_multi-column-main-content"
+    >
+      Hello
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders 1`] = `
+<div>
+  <div>
+    <div
+      class="ui-dhancha_container widescreen"
+    >
+      <div
+        aria-label="Activity Bar"
+        class="ui-dhancha_activitybar widescreen"
+        role="navigation"
+      >
+        <div>
+          Activitybar
+        </div>
+      </div>
+      <header
+        class="ui-dhancha_ws-sidebar"
+      >
+        <div>
+          Workspace sidebar
+        </div>
+      </header>
+      <main
+        class="ui-dhancha_main-content widescreen"
+      >
+        <div>
+          Main content
+        </div>
+      </main>
+      <aside
+        class="ui-dhancha_note-sidebar"
+      >
+        <div>
+          Note sidebar
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders when widescreen=false 1`] = `
+<div>
+  <div>
+    <div
+      class="ui-dhancha_container"
+    >
+      <div
+        aria-label="Activity Bar"
+        class="ui-dhancha_activitybar"
+        role="navigation"
+      >
+        <div>
+          Activitybar
+        </div>
+      </div>
+      <main
+        class="ui-dhancha_main-content"
+      >
+        <div>
+          Main content
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+`;

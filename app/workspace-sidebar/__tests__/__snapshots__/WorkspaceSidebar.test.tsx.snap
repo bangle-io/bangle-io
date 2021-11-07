@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-grow flex-col overflow-y-scroll h-full workspace-sidebar"
+    >
+      <div
+        class="px-2 mt-2 font-bold"
+      >
+        search notes
+      </div>
+      <span>
+        something
+      </span>
+    </div>
+  </div>
+</div>
+`;

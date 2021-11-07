@@ -1,16 +1,16 @@
 .options-bar-content {
-  background-color: var(--bg-color);
+  background-color: var(--window-bgColor-0);
   border-radius: 999px;
   width: unset;
   display: flex;
 }
 
 .options-bar-content > button:hover {
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
 }
 
 .options-bar-content > button.active {
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
 }
 
 .options-bar-content > button {

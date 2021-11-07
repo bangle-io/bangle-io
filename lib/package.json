@@ -16,7 +16,9 @@
     "extension-registry",
     "editor-utils",
     "test-utils",
-    "contextual-ui-components"
+    "contextual-ui-components",
+    "ui-dhancha",
+    "ui-bangle-button"
   ],
   "repository": {
     "directory": "lib",

@@ -1,22 +1,22 @@
 .bangle-io-emoji-suggest-container {
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
 }
 
 .bangle-emoji-suggest {
-  color: var(--font-color);
-  background-color: var(--bg-stronger-color);
+  color: var(--textColor-0);
+  background-color: var(--window-bgColor-1);
   /* width: 500px; */
   border: 0;
 }
 
 .bangle-io-palette-info {
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
 }
 
 .bangle-emoji-suggest-container .bangle-emoji-square.bangle-is-selected {
-  background-color: var(--accent-color);
+  background-color: var(--accent-primary-1);
 }
 
 .bangle-emoji-suggest-container .bangle-emoji-square:hover {
-  background-color: var(--accent-2-color);
+  background-color: var(--accent-secondary);
 }

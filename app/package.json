@@ -4,7 +4,10 @@
     "app-entry",
     "style",
     "worker-setup",
-    "shared"
+    "shared",
+    "activitybar",
+    "workspace-sidebar",
+    "editor-container"
   ],
   "repository": {
     "directory": "app",

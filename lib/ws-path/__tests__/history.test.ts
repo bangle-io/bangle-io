@@ -74,6 +74,20 @@ describe('OpenedWsPaths', () => {
     expect(result.has(null)).toBe(false);
   });
 
+  test('hasSomeWsPath', () => {
+    let result = new OpenedWsPaths(['a', null]);
+    expect(result.hasSomeWsPath()).toBe(true);
+
+    result = new OpenedWsPaths(['a', 'a']);
+    expect(result.hasSomeWsPath()).toBe(true);
+
+    result = new OpenedWsPaths([null, null]);
+    expect(result.hasSomeWsPath()).toBe(false);
+
+    // result = new OpenedWsPaths([]);
+    // expect(result.hasSomeWsPath()).toBe(false);
+  });
+
   test('forEach 1', () => {
     let result = new OpenedWsPaths(['a', null]);
     let called: [string, number][] = [];

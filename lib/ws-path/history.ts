@@ -9,6 +9,8 @@ type MaybeWsPath = string | undefined | null;
 
 export type Location = _History<any>['location'];
 export type History = _History<any>;
+
+const MAX_SIZE = 2;
 /**
  * This exists to keep null and undefined value interchangeable
  */
@@ -20,7 +22,7 @@ function compare(a: any, b: any) {
 }
 export class OpenedWsPaths {
   constructor(private wsPaths: [MaybeWsPath, MaybeWsPath]) {
-    if (wsPaths.length !== 2) {
+    if (wsPaths.length !== MAX_SIZE) {
       throw new Error('Only support two editors opened at a time');
     }
   }
@@ -45,6 +47,29 @@ export class OpenedWsPaths {
       return this;
     }
     return new OpenedWsPaths([wsPath, this.secondaryWsPath]);
+  }
+
+  updateByIndex(index: number, wsPath: MaybeWsPath) {
+    if (index >= this.wsPaths.length) {
+      throw new Error('updateByIndex: Out of bound operation');
+    }
+
+    const items: [MaybeWsPath, MaybeWsPath] = [
+      this.wsPaths[0],
+      this.wsPaths[1],
+    ];
+    items[index] = wsPath;
+    return this.updateAllWsPaths(items);
+  }
+
+  shrink() {
+    const items = this.wsPaths.filter((r) => r);
+
+    const arr: any = Array.from({ length: MAX_SIZE }, (_, k) => {
+      return items[k] || undefined;
+    });
+
+    return this.updateAllWsPaths(arr);
   }
 
   updateSecondaryWsPath(wsPath: MaybeWsPath) {
@@ -86,6 +111,15 @@ export class OpenedWsPaths {
       return false;
     }
     return this.wsPaths.includes(wsPath);
+  }
+
+  /**
+   * check if there are any wsPath in this
+   */
+  hasSomeWsPath() {
+    return this.wsPaths.some((r) => {
+      return r != null;
+    });
   }
 
   removeIfFound(wsPath: MaybeWsPath): OpenedWsPaths {

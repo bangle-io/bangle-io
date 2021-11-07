@@ -1,0 +1,215 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders when no sidebars 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-grow flex-col activitybar widescreen"
+    >
+      <button
+        aria-label="Workspace Home"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
+        type="button"
+      >
+        <svg
+          class="w-8 h-8 text-gray-100"
+          fill="currentColor"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="11"
+            stroke-width="1"
+            style="fill: none;"
+          />
+          <text
+            alignment-baseline="central"
+            stroke-width="0"
+            text-anchor="middle"
+            x="50%"
+            y="50%"
+          >
+             
+          </text>
+        </svg>
+      </button>
+      <div
+        class="flex-grow"
+      />
+      <button
+        aria-label="What's new"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
+        type="button"
+      >
+        <svg
+          class="h-7 w-7"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders when sidebar is active 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-grow flex-col activitybar widescreen"
+    >
+      <button
+        aria-label="Workspace Home"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
+        type="button"
+      >
+        <svg
+          class="w-8 h-8 text-gray-100"
+          fill="currentColor"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="11"
+            stroke-width="1"
+            style="fill: none;"
+          />
+          <text
+            alignment-baseline="central"
+            stroke-width="0"
+            text-anchor="middle"
+            x="50%"
+            y="50%"
+          >
+             
+          </text>
+        </svg>
+      </button>
+      <button
+        aria-label="test-hint"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen is-active"
+        type="button"
+      >
+        <span
+          class=" w-7 h-7"
+        >
+          test-icon
+        </span>
+      </button>
+      <div
+        class="flex-grow"
+      />
+      <button
+        aria-label="What's new"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
+        type="button"
+      >
+        <svg
+          class="h-7 w-7"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders when there is sidebar 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-grow flex-col activitybar widescreen"
+    >
+      <button
+        aria-label="Workspace Home"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
+        type="button"
+      >
+        <svg
+          class="w-8 h-8 text-gray-100"
+          fill="currentColor"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="11"
+            stroke-width="1"
+            style="fill: none;"
+          />
+          <text
+            alignment-baseline="central"
+            stroke-width="0"
+            text-anchor="middle"
+            x="50%"
+            y="50%"
+          >
+             
+          </text>
+        </svg>
+      </button>
+      <button
+        aria-label="test-hint"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
+        type="button"
+      >
+        <span
+          class=" w-7 h-7"
+        >
+          test-icon
+        </span>
+      </button>
+      <div
+        class="flex-grow"
+      />
+      <button
+        aria-label="What's new"
+        class="ui-bangle-button_button p-1  transition-all duration-200 animate-on-press w-full py-3 rounded-sm flex justify-center activitybar_button widescreen"
+        type="button"
+      >
+        <svg
+          class="h-7 w-7"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+`;

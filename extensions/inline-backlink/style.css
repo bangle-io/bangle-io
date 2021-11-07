@@ -1,5 +1,5 @@
 .bangle-editor .back-link {
-  color: var(--link-color);
+  color: var(--window-link-color);
 }
 
 .bangle-editor .back-link:hover {

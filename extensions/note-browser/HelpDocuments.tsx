@@ -38,7 +38,6 @@ export function HelpDocuments() {
 
   return (
     <Sidebar.Container className="help-documents">
-      <Sidebar.Title className="px-2 mt-2">Help documents</Sidebar.Title>
       <Sidebar.ItemContainer className="flex flex-row justify-between px-2 my-1 text-xs">
         <></>
       </Sidebar.ItemContainer>

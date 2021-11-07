@@ -42,7 +42,7 @@ export function Modal({
     >
       <div className="sm:block sm:p-0 flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center">
         <div
-          className="b-modal-overlay-color fixed inset-0 transition-opacity bg-opacity-75"
+          className="b-window-modal-overlay-bgColor fixed inset-0 transition-opacity bg-opacity-75"
           aria-hidden="true"
         ></div>
 
@@ -65,7 +65,7 @@ export function Modal({
             <div className="b-border-bottom-color b-bg-stronger-color flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2">
               <span>{title}</span>
               <ButtonIcon onClick={onDismiss} removeFocus={true}>
-                <CloseIcon className="hover:b-accent-2-color w-6 h-6 rounded-sm" />
+                <CloseIcon className="hover:b-accent-secondary w-6 h-6 rounded-sm" />
               </ButtonIcon>
             </div>
           </div>

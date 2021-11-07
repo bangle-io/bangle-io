@@ -90,7 +90,7 @@ export function InlinePaletteRow({
           <span
             className={cx('text-base font-bold truncate select-none')}
             style={{
-              color: disabled ? 'var(--font-lighter-color)' : 'inherit',
+              color: disabled ? 'var(--textColor-1)' : 'inherit',
             }}
           >
             {title}
@@ -98,7 +98,7 @@ export function InlinePaletteRow({
           <span
             className={cx('text-sm font-normal select-none')}
             style={{
-              color: disabled ? 'var(--font-lighter-color)' : 'inherit',
+              color: disabled ? 'var(--textColor-1)' : 'inherit',
             }}
           >
             {description}

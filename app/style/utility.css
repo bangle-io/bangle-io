@@ -1,30 +1,30 @@
 .b-text-color {
-  color: var(--font-color);
+  color: var(--textColor-0);
 }
 
-.b-text-color-lighter {
-  color: var(--font-lighter-color);
+.b-textColor-lighter {
+  color: var(--textColor-1);
 }
 
-.hover\:b-accent-2-color:hover {
-  background-color: var(--accent-2-color);
+.hover\:b-accent-secondary:hover {
+  background-color: var(--accent-secondary);
 }
 
 .b-bg-stronger-color {
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
 }
 
 .b-border-color {
-  border-color: var(--border-color);
+  border-color: var(--window-border-color);
 }
 
-.b-modal-overlay-color {
-  background-color: var(--modal-overlay-color);
+.b-window-modal-overlay-bgColor {
+  background-color: var(--window-modal-overlay-bgColor);
 }
 
 .b-border-color {
-  border-color: var(--border-color);
+  border-color: var(--window-border-color);
 }
 .b-border-bottom-color {
-  border-bottom-color: var(--border-color);
+  border-bottom-color: var(--window-border-color);
 }

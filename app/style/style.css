@@ -8,34 +8,12 @@ DONOT keep internal styles here.
 */
 
 #root {
-  color: var(--font-color);
+  color: var(--textColor-0);
   display: flex;
   flex-direction: column;
 }
 #root.widescreen {
   flex-flow: row nowrap;
-}
-
-/* the left most vertically  bar*/
-#activity-bar-area {
-  height: var(--activity-bar-width);
-  min-width: 100vw;
-  max-width: 100vw;
-  background-color: var(--activity-bar-color);
-  padding: 0 var(--editor-x-axis-padding);
-  z-index: 30;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-
-#activity-bar-area.widescreen {
-  height: 100vh;
-  min-width: var(--activity-bar-width);
-  max-width: var(--activity-bar-width);
-  position: static;
-  padding: 0.5rem 0 0.5rem 0;
 }
 
 .main-content {
@@ -52,13 +30,6 @@ DONOT keep internal styles here.
 /* prevent two scroll bars */
 .main-content.widescreen.has-secondary-editor {
   overflow-y: unset;
-}
-
-.bangle-editor-area {
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
 }
 
 .options-bar-area {
@@ -80,22 +51,6 @@ DONOT keep internal styles here.
   align-items: center;
   justify-content: flex-end;
   width: 100%;
-}
-
-.bangle-editor-container {
-  padding: 0 var(--editor-x-axis-padding);
-  padding-top: var(--editor-top-padding);
-  padding-bottom: var(--editor-bottom-padding);
-  max-width: min(var(--editor-max-width), 100vw);
-  width: 100%;
-}
-
-/* The relative position is super important for absolutely positioned div inside
-  or else it will cause weird scrolling issues.
-*/
-.bangle-editor-inner-container {
-  position: relative;
-  padding-bottom: 8px;
 }
 
 .main-content.has-secondary-editor {
@@ -123,28 +78,13 @@ DONOT keep internal styles here.
   grid-row-end: row-third;
 }
 
-/* 2nd child is gutter */
-.main-content.has-secondary-editor > .bangle-editor-area.secondary-editor {
-  grid-column-start: col-third;
-  grid-column-end: col-fourth;
-  background-color: var(--bg-stronger-color);
-  grid-row-start: row-first;
-  grid-row-end: row-third;
-}
-
-/* to make each editor independently scrollable */
-.main-content.has-secondary-editor .bangle-editor-area {
-  overflow-y: scroll;
-  height: 100vh;
-}
-
 .main-content.has-secondary-editor .bangle-editor-container.has-tabs {
   height: calc(100vh - var(--editor-tab-height));
 }
 
 .editor-tab {
   width: 100%;
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
   height: var(--editor-tab-height);
   display: flex;
   flex-direction: row;
@@ -160,12 +100,12 @@ DONOT keep internal styles here.
   z-index: 20;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-stronger-color);
+  background-color: var(--window-bgColor-1);
 }
 
 .left-sidebar-area.smallscreen {
   position: fixed;
-  top: var(--activity-bar-width);
+  top: var(--activitybar-width);
   left: 0;
   right: 0;
   height: 70vh;
@@ -174,12 +114,12 @@ DONOT keep internal styles here.
 .left-sidebar-area.widescreen {
   min-height: 100vh;
   max-height: 100vh;
-  min-width: var(--left-sidebar-area-width);
-  max-width: var(--left-sidebar-area-width);
+  min-width: var(--workspaceSidebar-width);
+  max-width: var(--workspaceSidebar-width);
 }
 
 .homepage {
-  margin-top: calc(1rem + var(--activity-bar-width));
+  margin-top: calc(1rem + var(--activitybar-width));
 }
 
 .homepage.widescreen {

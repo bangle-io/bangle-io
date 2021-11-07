@@ -7,11 +7,6 @@ exports[`renders correctly workspace is opened 1`] = `
     style="overflow-y: auto;"
   >
     <div
-      class="b-item-container font-semibold text-sm uppercase px-2 mt-2"
-    >
-      🔍 Search notes
-    </div>
-    <div
       class="b-item-container px-2 mt-2"
     >
       <div
@@ -48,11 +43,6 @@ exports[`show search results 1`] = `
     class="flex flex-col h-full search-notes"
     style="overflow-y: auto;"
   >
-    <div
-      class="b-item-container font-semibold text-sm uppercase px-2 mt-2"
-    >
-      🔍 Search notes
-    </div>
     <div
       class="b-item-container px-2 mt-2"
     >

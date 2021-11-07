@@ -50,17 +50,16 @@ export interface EditorConfig {
     doc: Node;
   }) => any;
 }
+export interface ActionType {
+  name: `action::${string}`;
+  value?: any;
+}
 export interface ActionDefinitionType {
-  name: string;
+  name: ActionType['name'];
   title: string;
   keybinding?: string;
   // when true, will hide it from the user
   hidden?: boolean;
-}
-
-export interface ActionType {
-  name: string;
-  value?: any;
 }
 
 export type ActionHandler = (action: ActionType) => boolean;
@@ -76,22 +75,24 @@ export interface ApplicationConfig {
   optionsBar?: Array<{
     icon: JSX.Element;
     hint: string;
-    action: string;
+    action: ActionType['name'];
   }>;
-  sidebars?: Array<{
-    name: string;
-    icon: JSX.Element;
-    iconPlacement?: 'bottom' | 'top';
-    ReactComponent: React.ComponentType<{}>;
-    hint: string;
-  }>;
+  sidebars?: Array<SidebarType>;
+}
+
+export interface SidebarType {
+  activitybarIcon: JSX.Element;
+  hint: string;
+  name: `sidebar::${string}`;
+  ReactComponent: React.ComponentType<{}>;
+  title: string;
 }
 
 interface Config<T> {
-  name: string;
-  editor: EditorConfig;
   application: ApplicationConfig;
+  editor: EditorConfig;
   initialState?: any;
+  name: string;
 }
 
 export class Extension<T = unknown> {
@@ -211,7 +212,7 @@ export class Extension<T = unknown> {
           const validName =
             typeof s.name === 'string' &&
             s.name.startsWith('sidebar::' + name + ':');
-          const validIcon = Boolean(s.icon);
+          const validIcon = Boolean(s.activitybarIcon);
           const validComponent = Boolean(s.ReactComponent);
           const validHint = typeof s.hint === 'string';
           return (

@@ -1,71 +1,142 @@
-import React, { useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
+import { Redirect, Route } from 'react-router-dom';
 
-import { PRIMARY_SCROLL_PARENT_ID } from '@bangle.io/constants';
+import { Activitybar } from '@bangle.io/activitybar';
+import { EditorContainer } from '@bangle.io/editor-container';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import { ErrorBoundary } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
-import { cx } from '@bangle.io/utils';
+import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
+import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
 
 import { Changelog } from './changelog/Changelog';
-import { ActivityBar } from './components/ActivityBar';
 import { NotificationArea } from './components/NotificationArea';
+import { OptionsBar } from './components/OptionsBar';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { PaletteManager } from './extension-glue/PaletteManager';
-import { Routes } from './Routes';
+import { getLastWorkspaceUsed } from './misc/last-workspace-used';
+import { useWorkspaceSideEffects } from './misc/use-workspace-side-effects';
+import { EmptyEditorPage } from './pages/EmptyEditorPage';
+import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
+import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
-  const { secondaryWsPath } = useWorkspaceContext();
-  const secondaryEditor = widescreen && Boolean(secondaryWsPath);
+  const { wsName, primaryWsPath, openedWsPaths } = useWorkspaceContext();
+  const extensionRegistry = useExtensionRegistryContext();
+  const { setEditor } = useEditorManagerContext();
+  useWorkspaceSideEffects();
+
+  const sidebars = extensionRegistry.getSidebars();
+
+  const { sidebar } = useUIManagerContext();
+  const currentSidebar = sidebar
+    ? sidebars.find((s) => s.name === sidebar)
+    : null;
+
+  const mainContent = useMemo(() => {
+    const result: ReactNode[] = [];
+
+    if (!openedWsPaths.hasSomeWsPath()) {
+      return <EmptyEditorPage />;
+    }
+
+    openedWsPaths.forEachWsPath((wsPath, i) => {
+      // avoid split screen for small screens
+      if (!widescreen && i > 0) {
+        return;
+      }
+      result.push(
+        <EditorContainer
+          key={i}
+          widescreen={widescreen}
+          editorId={i}
+          extensionRegistry={extensionRegistry}
+          setEditor={setEditor}
+          wsPath={wsPath}
+        />,
+      );
+    });
+
+    return <MultiColumnMainContent>{result}</MultiColumnMainContent>;
+  }, [openedWsPaths, setEditor, widescreen, extensionRegistry]);
 
   return (
     <>
       <Changelog />
       <ApplicationComponents />
-      <ActivityBar />
       <PaletteManager />
-      <LeftSidebarArea />
-      <div
-        id={cx(widescreen && !secondaryEditor && PRIMARY_SCROLL_PARENT_ID)}
-        className={cx(
-          'main-content',
-          widescreen ? 'widescreen' : 'smallscreen',
-          secondaryEditor && 'has-secondary-editor',
-        )}
-      >
-        <Routes />
-      </div>
+      {widescreen && <OptionsBar />}
+      <Dhancha
+        widescreen={widescreen}
+        activitybar={
+          <Activitybar
+            wsName={wsName}
+            primaryWsPath={primaryWsPath}
+            sidebars={sidebars}
+          />
+        }
+        noteSidebar={undefined}
+        workspaceSidebar={
+          currentSidebar && (
+            <WorkspaceSidebar wsName={wsName} sidebar={currentSidebar} />
+          )
+        }
+        mainContent={
+          <>
+            <Route
+              exact
+              path="/"
+              render={() => {
+                const lastWsName = getLastWorkspaceUsed();
+                return (
+                  <Redirect
+                    to={{
+                      pathname:
+                        '/ws/' +
+                        (lastWsName ? lastWsName : HELP_FS_WORKSPACE_NAME),
+                    }}
+                  />
+                );
+              }}
+            />
+            <Route path="/ws/:wsName">{mainContent}</Route>
+            <Route path="/ws-nativefs-auth/:wsName">
+              <WorkspaceNativefsAuthBlockade
+                onWorkspaceNotFound={handleWorkspaceNotFound}
+              />
+            </Route>
+            <Route path="/ws-not-found/:wsName">
+              <WorkspaceNotFound />
+            </Route>
+          </>
+        }
+      />
       <NotificationArea />
     </>
   );
 }
 
-function LeftSidebarArea() {
-  const { widescreen, sidebar } = useUIManagerContext();
-  const extensionRegistry = useExtensionRegistryContext();
-
-  const extensionSidebars = useMemo(() => {
-    return Object.fromEntries(
-      extensionRegistry.getSidebars().map((r) => [r.name, r]),
-    );
-  }, [extensionRegistry]);
-
-  let component;
-  if (sidebar && extensionSidebars[sidebar]) {
-    const sidebarObj = extensionSidebars[sidebar];
-    component = <sidebarObj.ReactComponent />;
-  } else {
-    return null;
+export function handleNativefsAuthError(wsName, history) {
+  if (history.location?.pathname?.startsWith('/ws-nativefs-auth/' + wsName)) {
+    return;
   }
+  history.replace({
+    pathname: '/ws-nativefs-auth/' + wsName,
+    state: {
+      previousLocation: history.location,
+    },
+  });
+}
 
-  if (widescreen) {
-    return (
-      <div className="fadeInAnimation left-sidebar-area widescreen">
-        <ErrorBoundary>{component}</ErrorBoundary>
-      </div>
-    );
+export function handleWorkspaceNotFound(wsName, history) {
+  if (history.location?.pathname?.startsWith('/ws-not-found/' + wsName)) {
+    return;
   }
-
-  return null;
+  history.replace({
+    pathname: '/ws-not-found/' + wsName,
+    state: {},
+  });
 }

@@ -1,0 +1,5 @@
+.ui-bangle-button_tooltip {
+  background-color: var(--window-tooltip-bgColor);
+  color: var(--window-tooltip-color);
+  z-index: var(--tooltip-zIndex);
+}

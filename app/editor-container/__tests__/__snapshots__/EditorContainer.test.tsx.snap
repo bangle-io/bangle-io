@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic renders 1`] = `
+<div>
+  <div>
+    <div
+      class="w-full h-full flex flex-col items-center overflow-y-scroll overflow-y-scroll"
+    >
+      <div
+        class="w-full px-2 py-1 lg:px-4 sticky top-0 z-10"
+      >
+        <div
+          class="flex flex-row justify-between w-full editor-container_editor-bar"
+        >
+          <div
+            class="flex flex-row flex-wrap text-xs editor-container_ws-path lg:text-sm overflow-ellipsis"
+          >
+            <span
+              class="break-all"
+            >
+              blah
+            </span>
+          </div>
+          <div
+            class="flex flex-row"
+          >
+            <button
+              aria-label="Close"
+              class="ui-bangle-button_button p-1  transition-all duration-200"
+              style="border-radius: var(--uiBangleButton-radius);"
+              type="button"
+            >
+              <svg
+                class="fill-current  w-3 h-3 lg:h-4 lg:w-4"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="w-full"
+        style="max-width: min(var(--page-maxWidth), 100vw);"
+      >
+        <div
+          class="editor-container_editor editor-container_editor-1"
+        >
+          <div
+            class="ProseMirror bangle-editor"
+            contenteditable="true"
+            translate="no"
+          >
+            <h1>
+              Hola
+            </h1>
+            <p>
+              Hello world! I am a test
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly when file does not exist 1`] = `
+<div>
+  <div>
+    <div
+      class="w-full h-full flex flex-col items-center overflow-y-scroll overflow-y-scroll"
+    >
+      <div
+        class="w-full px-2 py-1 lg:px-4 sticky top-0 z-10"
+      >
+        <div
+          class="flex flex-row justify-between w-full editor-container_editor-bar"
+        >
+          <div
+            class="flex flex-row flex-wrap text-xs editor-container_ws-path lg:text-sm overflow-ellipsis"
+          >
+            <span
+              class="break-all"
+            >
+              blah
+            </span>
+          </div>
+          <div
+            class="flex flex-row"
+          >
+            <button
+              aria-label="Close"
+              class="ui-bangle-button_button p-1  transition-all duration-200"
+              style="border-radius: var(--uiBangleButton-radius);"
+              type="button"
+            >
+              <svg
+                class="fill-current  w-3 h-3 lg:h-4 lg:w-4"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="w-full"
+        style="max-width: min(var(--page-maxWidth), 100vw);"
+      >
+        <div
+          class="flex flex-col justify-center h-full px-3 align-middle"
+        >
+          <h3
+            class="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl"
+          >
+            🕵️‍♀️‍ Note "
+            blah.md
+            " was not found
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders when no wsPath is provided 1`] = `
+<div>
+  <div>
+    <div
+      class="w-full h-full flex flex-col items-center overflow-y-scroll overflow-y-scroll"
+    >
+      <div
+        class="w-full"
+        style="max-width: min(var(--page-maxWidth), 100vw);"
+      >
+        <div>
+          Nothing was found here
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

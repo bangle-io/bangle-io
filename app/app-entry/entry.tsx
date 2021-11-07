@@ -1,5 +1,6 @@
 import './style';
 
+import { OverlayProvider } from '@react-aria/overlays';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -14,10 +15,13 @@ import { UIManager } from '@bangle.io/ui-context';
 import { WorkerSetup } from '@bangle.io/worker-setup';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 
-import App from './App';
+import {
+  AppContainer,
+  handleNativefsAuthError,
+  handleWorkspaceNotFound,
+} from './AppContainer';
 import { AppStateProvider } from './AppStateProvider';
 import { moduleSupport } from './misc/module-support';
-import { handleNativefsAuthError, handleWorkspaceNotFound } from './Routes';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
 import { PageLifecycle } from './watchers/PageLifecycle';
 import { WatchUI } from './watchers/WatchUI';
@@ -58,33 +62,35 @@ export function Entry() {
   return (
     <React.StrictMode>
       <LoadingBlock>
-        <Router>
-          <AppStateProvider>
-            <WorkerSetup loadWebworker={moduleSupport} />
-            <UIManager>
-              <SWReloadPrompt />
-              <ExtensionRegistryContextProvider
-                initExtensionRegistry={initExtensionRegistry}
-              >
-                <ExtensionStateContextProvider>
-                  <WorkspaceContextProvider
-                    onNativefsAuthError={handleNativefsAuthError}
-                    onWorkspaceNotFound={handleWorkspaceNotFound}
-                  >
-                    <WatchWorkspace />
-                    <WatchUI />
-                    <EditorManager>
-                      <PageLifecycle />
-                      <ActionContextProvider>
-                        <App />
-                      </ActionContextProvider>
-                    </EditorManager>
-                  </WorkspaceContextProvider>
-                </ExtensionStateContextProvider>
-              </ExtensionRegistryContextProvider>
-            </UIManager>
-          </AppStateProvider>
-        </Router>
+        <OverlayProvider className="w-full h-full">
+          <Router>
+            <AppStateProvider>
+              <WorkerSetup loadWebworker={moduleSupport} />
+              <UIManager>
+                <SWReloadPrompt />
+                <ExtensionRegistryContextProvider
+                  initExtensionRegistry={initExtensionRegistry}
+                >
+                  <ExtensionStateContextProvider>
+                    <WorkspaceContextProvider
+                      onNativefsAuthError={handleNativefsAuthError}
+                      onWorkspaceNotFound={handleWorkspaceNotFound}
+                    >
+                      <WatchWorkspace />
+                      <WatchUI />
+                      <EditorManager>
+                        <PageLifecycle />
+                        <ActionContextProvider>
+                          <AppContainer />
+                        </ActionContextProvider>
+                      </EditorManager>
+                    </WorkspaceContextProvider>
+                  </ExtensionStateContextProvider>
+                </ExtensionRegistryContextProvider>
+              </UIManager>
+            </AppStateProvider>
+          </Router>
+        </OverlayProvider>
       </LoadingBlock>
     </React.StrictMode>
   );

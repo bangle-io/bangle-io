@@ -5,10 +5,10 @@
 }
 
 .bangle-input {
-  color: var(--font-color);
-  background-color: var(--bg-color);
+  color: var(--textColor-0);
+  background-color: var(--window-bgColor-0);
   padding: 0.25rem 0.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--window-border-color);
   border-radius: 0.125rem;
   outline-offset: 2px;
   width: 100%;
@@ -20,7 +20,7 @@
   border: 1px solid transparent;
   --bangle-ring-offset-width: 0px;
   --bangle-ring-offset-color: #fff;
-  --bangle-ring-color: var(--accent-stronger-color);
+  --bangle-ring-color: var(--accent-primary-0);
   --bangle-ring-offset-shadow: 0 0 0 var(--bangle-ring-offset-width)
     var(--bangle-ring-offset-color);
   --bangle-ring-shadow: 0 0 0 calc(1.5px + var(--bangle-ring-offset-width))
@@ -34,7 +34,7 @@
   position: absolute;
   left: -20px;
   cursor: pointer;
-  color: var(--font-lighter-color);
+  color: var(--textColor-1);
 }
 
 .bangle-search-clear:before {

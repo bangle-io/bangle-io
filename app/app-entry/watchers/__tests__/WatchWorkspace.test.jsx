@@ -110,7 +110,7 @@ test('if a deleted file is open it closed it', async () => {
     'ws:xyz/some-other-file',
   ]);
   const newOpenedWsPaths = updateOpenedWsPathsCallback(openedWsPaths);
-  expect(newOpenedWsPaths.primaryWsPath).toBe(null);
+  expect(newOpenedWsPaths.primaryWsPath).toBe(undefined);
   expect(newOpenedWsPaths.secondaryWsPath).toBe('ws:xyz/some-other-file');
 });
 
@@ -137,8 +137,8 @@ test('if a deleted file is open in both primary and secondary', async () => {
   expect(useWorkspaceContextReturn.updateOpenedWsPaths).toBeCalledTimes(1);
   const openedWsPaths = new OpenedWsPaths([ourFileWsPath, ourFileWsPath]);
   const newOpenedWsPaths = updateOpenedWsPathsCallback(openedWsPaths);
-  expect(newOpenedWsPaths.primaryWsPath).toBe(null);
-  expect(newOpenedWsPaths.secondaryWsPath).toBe(null);
+  expect(newOpenedWsPaths.primaryWsPath).toBe(undefined);
+  expect(newOpenedWsPaths.secondaryWsPath).toBe(undefined);
 });
 
 test('if a deleted file is open in secondary', async () => {
@@ -161,7 +161,7 @@ test('if a deleted file is open in secondary', async () => {
   expect(useWorkspaceContextReturn.updateOpenedWsPaths).toBeCalledTimes(1);
   const openedWsPaths = new OpenedWsPaths([null, ourFileWsPath]);
   const newOpenedWsPaths = updateOpenedWsPathsCallback(openedWsPaths);
-  expect(newOpenedWsPaths.secondaryWsPath).toBe(null);
+  expect(newOpenedWsPaths.secondaryWsPath).toBe(undefined);
 });
 
 test('does not refreshes for if file size and lame hash are the same', async () => {

@@ -52,12 +52,14 @@ export const TAB_ID: string = 'tab_' + randomStr(4);
 export const BANGLE_HOT: string = envVars.bangleHot;
 export const CHANGELOG_TEXT: string = envVars.changelogText;
 
-console.log(envVars.appEnv + ': using ' + RELEASE_ID);
+if (envVars.nodeEnv !== 'test') {
+  console.log(envVars.appEnv + ': using ' + RELEASE_ID);
 
-console.table({
-  ...envVars,
-  tabId: TAB_ID,
-});
+  console.table({
+    ...envVars,
+    tabId: TAB_ID,
+  });
+}
 
 if (!/^\d+\.\d+\.\d+/.test(HELP_DOCS_VERSION || '')) {
   throw new Error('Invalid HELP_DOCS_VERSION: ' + HELP_DOCS_VERSION);
@@ -68,7 +70,7 @@ export const SPLIT_SCREEN_MIN_WIDTH =
     ? 500
     : parseInt(
         getComputedStyle(document.documentElement).getPropertyValue(
-          '--widescreen-min-width',
+          '--window-widescreen-minWidth',
         ),
         10,
       );

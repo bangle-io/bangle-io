@@ -15,7 +15,7 @@ afterEach(async () => {
 });
 
 test('Landing page is correct', async () => {
-  const handle = await page.waitForSelector('.bangle-editor', {
+  const handle = await page.waitForSelector('.editor-container_editor-0', {
     timeout: SELECTOR_TIMEOUT,
   });
   await sleep(100);
