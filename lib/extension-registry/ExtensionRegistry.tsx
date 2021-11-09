@@ -86,10 +86,7 @@ export class ExtensionRegistry {
   private actionHandlers: Set<ActionHandler>;
   private registeredActions: ActionDefinitionType[];
   private editorConfig: EditorConfig[];
-  private optionsBarEntries: Exclude<
-    ApplicationConfig['optionsBar'],
-    undefined
-  >;
+
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
   public editor: EditorHandlers;
 
@@ -130,7 +127,6 @@ export class ExtensionRegistry {
 
     this.actionHandlers = new Set();
     this.registeredActions = filterFlatMap(applicationConfig, 'actions');
-    this.optionsBarEntries = filterFlatMap(applicationConfig, 'optionsBar');
     this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
   }
   private validate() {
@@ -178,10 +174,6 @@ export class ExtensionRegistry {
     return this.palettes.find(
       (palette) => palette.parseRawQuery(query) != null,
     );
-  }
-
-  getOptionsBarEntries() {
-    return this.optionsBarEntries;
   }
 
   getSidebars() {

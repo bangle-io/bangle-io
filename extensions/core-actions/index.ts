@@ -27,15 +27,6 @@ const extension = Extension.create({
       { name: RENAME_ACTIVE_NOTE_ACTION, title: 'Rename active note' },
       { name: DELETE_ACTIVE_NOTE_ACTION, title: 'Delete active note' },
     ],
-    optionsBar: [
-      {
-        icon: React.createElement(NewNoteIcon, {
-          transform: 'scale(0.94, 0.94)',
-        }),
-        hint: 'New Note\n',
-        action: NEW_NOTE_ACTION,
-      },
-    ],
     ReactComponent: CoreActionsHandler,
   },
 });

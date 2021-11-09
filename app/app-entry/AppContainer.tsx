@@ -13,7 +13,6 @@ import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
 
 import { Changelog } from './changelog/Changelog';
 import { NotificationArea } from './components/NotificationArea';
-import { OptionsBar } from './components/OptionsBar';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { PaletteManager } from './extension-glue/PaletteManager';
 import { getLastWorkspaceUsed } from './misc/last-workspace-used';
@@ -68,7 +67,6 @@ export function AppContainer() {
       <Changelog />
       <ApplicationComponents />
       <PaletteManager />
-      {widescreen && <OptionsBar />}
       <Dhancha
         widescreen={widescreen}
         activitybar={

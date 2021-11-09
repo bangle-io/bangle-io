@@ -2,10 +2,12 @@ import { Placement } from '@popperjs/core';
 import { useToggleButton } from '@react-aria/button';
 import { FocusScope } from '@react-aria/focus';
 import { useFocus, useHover } from '@react-aria/interactions';
-import { useMenu, useMenuItem } from '@react-aria/menu';
+import { useMenu, useMenuItem, useMenuSection } from '@react-aria/menu';
+import { useSeparator } from '@react-aria/separator';
 import { mergeProps } from '@react-aria/utils';
 import { useToggleState } from '@react-stately/toggle';
-import { useTreeState } from '@react-stately/tree';
+import { TreeState, useTreeState } from '@react-stately/tree';
+import type { Node } from '@react-types/shared';
 import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
 
 import { cx, useKeybindings, useWatchClickOutside } from '@bangle.io/utils';
@@ -13,7 +15,10 @@ import { cx, useKeybindings, useWatchClickOutside } from '@bangle.io/utils';
 import { BaseButton, StylingProps } from './BaseButton';
 import { useTooltipPositioner } from './use-positioner';
 
-export { Item as MenuItem } from '@react-stately/collections';
+export {
+  Item as MenuItem,
+  Section as MenuSection,
+} from '@react-stately/collections';
 
 export function DropdownMenu({
   ariaLabel,
@@ -33,7 +38,7 @@ export function DropdownMenu({
   buttonChildren: ReactNode;
   className?: string;
   isDisabled?: boolean;
-  children?: JSX.Element[];
+  children?: JSX.Element[] | JSX.Element;
   menuXOffset?: number;
   menuYOffset?: number;
   menuPlacement?: Placement;
@@ -101,7 +106,6 @@ export function DropdownMenu({
             <InternalDropdownMenu
               ariaLabel={ariaLabel}
               onAction={onAction}
-              domProps={{}}
               onClose={onClose}
               className={className}
             >
@@ -117,7 +121,6 @@ export function DropdownMenu({
 function InternalDropdownMenu({
   ariaLabel,
   onAction,
-  domProps,
   children,
   onClose,
   className,
@@ -127,7 +130,7 @@ function InternalDropdownMenu({
   onAction: (key: React.Key) => void;
   onClose: () => void;
   domProps: { [key: string]: any };
-  children: JSX.Element[];
+  children: JSX.Element[] | JSX.Element;
 }) {
   useKeybindings(() => {
     return {
@@ -160,17 +163,17 @@ function InternalDropdownMenu({
 
   return (
     <ul
-      {...mergeProps(menuProps, domProps)}
+      {...menuProps}
       ref={ref}
       className={cx(
         'flex flex-col ui-bangle-button_dropdown-menu p-1 py-2 shadow-lg rounded-md',
         className,
       )}
     >
-      {[...state.collection].map((item) => (
-        <MenuItemWrapper
-          key={item.key}
-          item={item}
+      {[...state.collection].map((section) => (
+        <MenuItemSection
+          key={section.key}
+          section={section}
           state={state}
           onAction={onAction}
           onClose={onClose}
@@ -180,13 +183,81 @@ function InternalDropdownMenu({
   );
 }
 
-function MenuItemWrapper({ item, state, onAction, onClose }) {
+function MenuItemSection({
+  section,
+  state,
+  onAction,
+  onClose,
+}: {
+  onAction: (key: React.Key) => void;
+  state: TreeState<object>;
+  section: Node<object>;
+  onClose: () => void;
+}) {
+  let { itemProps, headingProps, groupProps } = useMenuSection({
+    'heading': section.rendered,
+    'aria-label': section['aria-label'],
+  });
+
+  let { separatorProps } = useSeparator({
+    elementType: 'li',
+  });
+
+  // If the section is not the first, add a separator element.
+  // The heading is rendered inside an <li> element, which contains
+  // a <ul> with the child items.
+  return (
+    <>
+      {section.key !== state.collection.getFirstKey() && (
+        <li
+          {...separatorProps}
+          className="mx-1 my-2"
+          style={{
+            borderTop: '1px solid var(--window-border-color)',
+          }}
+        />
+      )}
+      <li {...itemProps}>
+        {section.rendered && (
+          <span {...headingProps} className="font-bold">
+            {section.rendered}
+          </span>
+        )}
+        <ul {...groupProps} className="p-0 list-outside">
+          {[...section.childNodes].map((node) => (
+            <MenuItemWrapper
+              key={node.key}
+              item={node}
+              state={state}
+              onAction={onAction}
+              onClose={onClose}
+            />
+          ))}
+        </ul>
+      </li>
+    </>
+  );
+}
+
+function MenuItemWrapper({
+  item,
+  state,
+  onAction,
+  onClose,
+}: {
+  onAction: (key: React.Key) => void;
+  state: TreeState<object>;
+  item: Node<object>;
+  onClose: () => void;
+}) {
   // Get props for the menu item element
   let ref = React.useRef<HTMLLIElement>(null);
+  let isDisabled = state.disabledKeys.has(item.key);
+
   let { menuItemProps } = useMenuItem(
     {
       key: item.key,
-      isDisabled: item.isDisabled,
+      isDisabled,
       onAction,
       onClose,
     },
@@ -204,7 +275,7 @@ function MenuItemWrapper({ item, state, onAction, onClose }) {
       {...mergeProps(menuItemProps, focusProps)}
       ref={ref}
       className={cx(
-        'ui-bangle-button_dropdown-menu-item outline-none cursor-pointer rounded-md px-2 py-1',
+        'ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1',
         isFocused && 'is-focused',
       )}
     >

@@ -4639,6 +4639,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@react-aria/focus", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.5.0"],
             ["@react-aria/interactions", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.6.0"],
             ["@react-aria/menu", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.2.3"],
+            ["@react-aria/separator", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.1.3"],
             ["@react-aria/tooltip", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.1.3"],
             ["@react-aria/utils", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.9.0"],
             ["@react-stately/collections", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.3.4"],
@@ -5689,6 +5690,31 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@react-aria/utils", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.9.0"],
             ["@react-stately/collections", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.3.4"],
             ["@react-stately/selection", "virtual:d63769fc589fd5056dd9e5884368dd3a5a733f5109aa4862da95a54d1ec6bbc2df3c60aeb42edd9a61e8f47ec67fce4e360c51237361c18c6d3582888e72508c#npm:3.7.0"],
+            ["@react-types/shared", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.9.0"],
+            ["@types/react", "npm:17.0.34"],
+            ["react", "npm:17.0.2"]
+          ],
+          "packagePeers": [
+            "@types/react",
+            "react"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@react-aria/separator", [
+        ["npm:3.1.3", {
+          "packageLocation": "./.yarn/cache/@react-aria-separator-npm-3.1.3-6cc50f3630-a7a8dd53c4.zip/node_modules/@react-aria/separator/",
+          "packageDependencies": [
+            ["@react-aria/separator", "npm:3.1.3"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.1.3", {
+          "packageLocation": "./.yarn/__virtual__/@react-aria-separator-virtual-ed5f877ee3/0/cache/@react-aria-separator-npm-3.1.3-6cc50f3630-a7a8dd53c4.zip/node_modules/@react-aria/separator/",
+          "packageDependencies": [
+            ["@react-aria/separator", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.1.3"],
+            ["@babel/runtime", "npm:7.16.0"],
+            ["@react-aria/utils", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.9.0"],
             ["@react-types/shared", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.9.0"],
             ["@types/react", "npm:17.0.34"],
             ["react", "npm:17.0.2"]

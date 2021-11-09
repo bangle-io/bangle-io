@@ -2,19 +2,12 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import type { SidebarType } from '@bangle.io/extension-registry';
-import { MenuItem } from '@bangle.io/ui-bangle-button';
-import {
-  GiftIcon,
-  SettingsIcon,
-  SingleCharIcon,
-} from '@bangle.io/ui-components';
+import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
-import {
-  ActivitybarButton,
-  ActivitybarSettingsDropdown,
-} from './ActivitybarButton';
+import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarMobile } from './ActivitybarMobile';
+import { ActivitybarSettingsDropdown } from './ActivitybarSettingsDropdown';
 
 export function Activitybar({
   wsName,
@@ -96,10 +89,7 @@ export function Activitybar({
           });
         }}
       />
-      <ActivitybarSettingsDropdown
-        widescreen={widescreen}
-        hint={'Configure'}
-      ></ActivitybarSettingsDropdown>
+      <ActivitybarSettingsDropdown widescreen={widescreen} />
     </div>
   );
 }

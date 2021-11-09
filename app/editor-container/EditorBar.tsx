@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from '@bangle.io/ui-bangle-button';
+import { Button, TooltipWrapper } from '@bangle.io/ui-bangle-button';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { removeMdExtension } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
@@ -48,6 +48,13 @@ export function EditorBar({
             className="lg:mr-1"
             ariaLabel="Split screen"
             isActive={isSplitEditorActive}
+            tooltip={
+              <TooltipWrapper>
+                {isSplitEditorActive ? 'Close split screen' : 'Split screen'}
+              </TooltipWrapper>
+            }
+            tooltipPlacement="bottom"
+            tooltipXOffset={10}
           >
             {<SecondaryEditorIcon className="w-3 h-3 lg:h-4 lg:w-4" />}
           </Button>

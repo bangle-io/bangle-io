@@ -72,7 +72,6 @@ export const BaseButton = ({
 
   const _onElementReady = useCallback(
     (el) => {
-      console.count('here');
       onElementReady?.(el);
     },
     [onElementReady],

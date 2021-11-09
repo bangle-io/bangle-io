@@ -72,11 +72,6 @@ export interface ApplicationConfig {
   }>;
   palettes?: Array<ExtensionPaletteType>;
   actions?: Array<ActionDefinitionType>;
-  optionsBar?: Array<{
-    icon: JSX.Element;
-    hint: string;
-    action: ActionType['name'];
-  }>;
   sidebars?: Array<SidebarType>;
 }
 
@@ -160,7 +155,7 @@ export class Extension<T = unknown> {
       );
     }
 
-    const { palettes, actions, optionsBar, sidebars } = application;
+    const { palettes, actions, sidebars } = application;
 
     if (palettes) {
       if (!Array.isArray(palettes)) {
@@ -193,12 +188,6 @@ export class Extension<T = unknown> {
       }
       if (actions.length !== new Set(actions.map((r) => r.name)).size) {
         throw new Error('Action name must be unique');
-      }
-    }
-
-    if (optionsBar) {
-      if (!Array.isArray(actions)) {
-        throw new Error('optionsBar must be an array');
       }
     }
 
