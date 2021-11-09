@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
+import { useActionContext } from '@bangle.io/action-context';
 import { Button, TooltipWrapper } from '@bangle.io/ui-bangle-button';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { removeMdExtension } from '@bangle.io/utils';
@@ -26,9 +27,20 @@ export function EditorBar({
     p = p.slice(-1 * MAX_ENTRIES);
     p.unshift('…');
   }
+  const { dispatchAction } = useActionContext();
+
+  const openNotesPalette = useCallback(() => {
+    dispatchAction({
+      name: 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE',
+    });
+  }, [dispatchAction]);
+
   return (
     <div className="flex flex-row justify-between w-full editor-container_editor-bar">
-      <div className="flex flex-row flex-wrap text-xs editor-container_ws-path lg:text-sm overflow-ellipsis">
+      <div
+        className="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+        onClick={openNotesPalette}
+      >
         {p.map((r, i) => (
           <React.Fragment key={i}>
             <span className="break-all">{r}</span>

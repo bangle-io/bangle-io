@@ -104,7 +104,7 @@ export function ActivitybarSettingsDropdown({
     >
       <MenuSection aria-label="misc">
         <MenuItem key={NewNoteKey}>New note</MenuItem>
-        <MenuItem key={NewWorkspaceKey}>New workspace</MenuItem>
+        <MenuItem key={NewWorkspaceKey}>New workspace </MenuItem>
         <MenuItem key={SwitchWorkspaceKey}>Switch workspace</MenuItem>
       </MenuSection>
       <MenuSection aria-label="ui">
