@@ -44,8 +44,7 @@ export function EditorBar({
         {showSplitEditor && (
           <Button
             onPress={onPressSecondaryEditor}
-            isRounded={true}
-            bgOnHover={true}
+            styling={{ bgOnHover: true, isRounded: true }}
             className="lg:mr-1"
             ariaLabel="Split screen"
             isActive={isSplitEditorActive}
@@ -56,8 +55,7 @@ export function EditorBar({
         <Button
           ariaLabel="Close"
           onPress={onClose}
-          bgOnHover={true}
-          isRounded={true}
+          styling={{ bgOnHover: true, isRounded: true }}
         >
           {<CloseIcon className="w-3 h-3 lg:h-4 lg:w-4" />}
         </Button>

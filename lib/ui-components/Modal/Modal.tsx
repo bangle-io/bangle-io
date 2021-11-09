@@ -15,7 +15,7 @@ export function Modal({
   style = {},
 }: {
   children: JSX.Element;
-  onDismiss: Function;
+  onDismiss: () => void;
   containerClassName?: string;
   title?: string;
   className?: string;
@@ -40,14 +40,14 @@ export function Modal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="sm:block sm:p-0 flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center">
+      <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div
-          className="b-window-modal-overlay-bgColor fixed inset-0 transition-opacity bg-opacity-75"
+          className="fixed inset-0 transition-opacity bg-opacity-75 b-window-modal-overlay-bgColor"
           aria-hidden="true"
         ></div>
 
         <span
-          className="sm:inline-block sm:align-middle sm:h-screen hidden"
+          className="hidden sm:inline-block sm:align-middle sm:h-screen"
           aria-hidden="true"
         >
           &#8203;
@@ -61,11 +61,11 @@ export function Modal({
             className,
           )}
         >
-          <div className=" w-full px-6 my-2 select-none">
-            <div className="b-border-bottom-color b-bg-stronger-color flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2">
+          <div className="w-full px-6 my-2 select-none ">
+            <div className="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 b-border-bottom-color b-bg-stronger-color">
               <span>{title}</span>
               <ButtonIcon onClick={onDismiss} removeFocus={true}>
-                <CloseIcon className="hover:b-accent-secondary w-6 h-6 rounded-sm" />
+                <CloseIcon className="w-6 h-6 rounded-sm hover:b-accent-secondary" />
               </ButtonIcon>
             </div>
           </div>

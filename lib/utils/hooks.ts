@@ -62,17 +62,27 @@ export function useKeybindings(cb, deps) {
   }, [memoCb]);
 }
 
-export function useWatchClickOutside(ref, onClickOutside, onClickInside) {
+export function useWatchClickOutside(
+  ref,
+  onClickOutside?: () => void,
+  onClickInside?: () => void,
+) {
   useEffect(() => {
     const handler = (e) => {
       if (!ref.current) {
         return;
       }
-      if (ref.current.contains(e.target)) {
-        onClickInside();
+
+      let inside =
+        typeof e.composedPath === 'function'
+          ? e.composedPath().includes(ref.current)
+          : ref.current.contains(e.target);
+
+      if (inside) {
+        onClickInside?.();
         return;
       }
-      onClickOutside();
+      onClickOutside?.();
       return;
     };
     document.addEventListener('click', handler);
