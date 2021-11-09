@@ -13,6 +13,7 @@ import { buttonStyling } from './ActivitybarButton';
 
 const ActionPaletteKey = 'ActionPalette';
 const NewNoteKey = 'NewNote';
+const NewWorkspaceKey = 'NewWorkspace';
 const NotesPaletteKey = 'NotesPalette';
 const ReportIssueKey = 'ReportIssue';
 const SwitchWorkspaceKey = 'SwitchWorkspace';
@@ -21,6 +22,7 @@ const ToggleThemeKey = 'ToggleTheme';
 type AllKeysType =
   | typeof ActionPaletteKey
   | typeof NewNoteKey
+  | typeof NewWorkspaceKey
   | typeof NotesPaletteKey
   | typeof ReportIssueKey
   | typeof SwitchWorkspaceKey
@@ -46,6 +48,12 @@ export function ActivitybarSettingsDropdown({
         case NewNoteKey: {
           dispatchAction({
             name: 'action::bangle-io-core-actions:NEW_NOTE_ACTION',
+          });
+          break;
+        }
+        case NewWorkspaceKey: {
+          dispatchAction({
+            name: 'action::bangle-io-core-actions:NEW_WORKSPACE_ACTION',
           });
           break;
         }
@@ -96,12 +104,15 @@ export function ActivitybarSettingsDropdown({
     >
       <MenuSection aria-label="misc">
         <MenuItem key={NewNoteKey}>New note</MenuItem>
+        <MenuItem key={NewWorkspaceKey}>New workspace</MenuItem>
+        <MenuItem key={SwitchWorkspaceKey}>Switch workspace</MenuItem>
+      </MenuSection>
+      <MenuSection aria-label="ui">
         <MenuItem key={ToggleThemeKey}>Toggle dark theme</MenuItem>
       </MenuSection>
       <MenuSection aria-label="palettes">
         <MenuItem key={NotesPaletteKey}>Notes palette</MenuItem>
         <MenuItem key={ActionPaletteKey}>Action palette</MenuItem>
-        <MenuItem key={SwitchWorkspaceKey}>Switch workspace</MenuItem>
       </MenuSection>
       <MenuSection aria-label="links">
         <MenuItem key={ReportIssueKey}>Report issue</MenuItem>
