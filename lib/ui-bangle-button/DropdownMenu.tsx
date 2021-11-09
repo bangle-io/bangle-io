@@ -129,7 +129,6 @@ function InternalDropdownMenu({
   className?: string;
   onAction: (key: React.Key) => void;
   onClose: () => void;
-  domProps: { [key: string]: any };
   children: JSX.Element[] | JSX.Element;
 }) {
   useKeybindings(() => {

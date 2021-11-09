@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
 
+import { useActionContext } from '@bangle.io/action-context';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
@@ -25,27 +26,23 @@ export function EditorContainer({
   setEditor: (editorId: number, editor: CoreBangleEditor) => void;
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
-  const { updateOpenedWsPaths, secondaryWsPath } = useWorkspaceContext();
-
-  const onClose = useCallback(() => {
-    updateOpenedWsPaths((openedWsPaths) =>
-      openedWsPaths.updateByIndex(editorId, undefined).shrink(),
-    );
-  }, [updateOpenedWsPaths, editorId]);
+  const { secondaryWsPath } = useWorkspaceContext();
+  const { dispatchAction } = useActionContext();
 
   const isSplitEditorActive = Boolean(secondaryWsPath);
 
   const onPressSecondaryEditor = useCallback(() => {
-    if (secondaryWsPath) {
-      updateOpenedWsPaths((openedWsPath) =>
-        openedWsPath.updateSecondaryWsPath(null),
-      );
-    } else if (wsPath) {
-      updateOpenedWsPaths((openedWsPath) =>
-        openedWsPath.updateSecondaryWsPath(wsPath),
-      );
-    }
-  }, [wsPath, updateOpenedWsPaths, secondaryWsPath]);
+    dispatchAction({
+      name: 'action::bangle-io-core-actions:TOGGLE_EDITOR_SPLIT_ACTION',
+    });
+  }, [dispatchAction]);
+
+  const onClose = useCallback(() => {
+    dispatchAction({
+      name: 'action::bangle-io-core-actions:CLOSE_EDITOR_ACTION',
+      value: editorId,
+    });
+  }, [dispatchAction, editorId]);
 
   let children;
 

@@ -126,6 +126,16 @@ export class OpenedWsPaths {
     return this.updateIfFound(wsPath, null);
   }
 
+  closeAll() {
+    let newObj = new OpenedWsPaths([null, null]);
+    // avoid changing instance
+    if (newObj.equal(this)) {
+      return this;
+    } else {
+      return newObj;
+    }
+  }
+
   updateIfFound(
     wsPath: MaybeWsPath,
     replaceWsPath: MaybeWsPath,
