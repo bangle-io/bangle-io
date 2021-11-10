@@ -24,7 +24,11 @@ const extension = Extension.create({
       { name: NEW_NOTE_ACTION, title: 'New note' },
       { name: NEW_WORKSPACE_ACTION, title: 'New workspace' },
       { name: RENAME_ACTIVE_NOTE_ACTION, title: 'Rename active note' },
-      { name: TOGGLE_EDITOR_SPLIT_ACTION, title: 'Toggle editor split screen' },
+      {
+        name: TOGGLE_EDITOR_SPLIT_ACTION,
+        title: 'Toggle editor split screen',
+        keybinding: 'Mod-\\',
+      },
       { name: TOGGLE_FILE_SIDEBAR_ACTION, title: 'Toggle file sidebar' },
       { name: TOGGLE_THEME_ACTION, title: 'Toggle theme' },
     ],
