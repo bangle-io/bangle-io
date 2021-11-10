@@ -1,5 +1,7 @@
 const { SELECTOR_TIMEOUT, sleep, url, newPage } = require('../helpers');
 
+jest.retryTimes(2);
+
 let page, destroyPage;
 beforeEach(async () => {
   ({ page, destroyPage } = await newPage(browser));

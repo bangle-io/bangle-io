@@ -111,24 +111,24 @@ function NewWorkspaceStorageStage({
   updateError,
   widescreen,
 }) {
-  let items: ItemType[] = [
-    {
-      uid: 'browser',
-      title: 'Browser',
-      description:
-        'Selecting this will make Bangle.io save notes in your browser storage.',
-    },
-  ];
+  let items: ItemType[] = [];
 
   if (supportsNativeBrowserFs()) {
     items.push({
       uid: 'nativefs',
       title: 'Your computer',
-      extraInfo: 'recommended',
+      extraInfo: 'recommended 👍',
       description:
         'You will be asked to select a folder from your filesystem where Bangle.io will save all your markdown notes.',
     });
   }
+
+  items.push({
+    uid: 'browser',
+    title: 'Browser',
+    description:
+      'Selecting this will make Bangle.io save notes in your browser storage.',
+  });
 
   return (
     <ListPalette
