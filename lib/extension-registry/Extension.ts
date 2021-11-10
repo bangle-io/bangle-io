@@ -50,8 +50,10 @@ export interface EditorConfig {
     doc: Node;
   }) => any;
 }
+
+export type ActionNameType = `action::${string}`;
 export interface ActionType {
-  name: `action::${string}`;
+  name: ActionNameType;
   value?: any;
 }
 export interface ActionDefinitionType {

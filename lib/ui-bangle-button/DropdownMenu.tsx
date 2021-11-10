@@ -22,6 +22,7 @@ export {
 
 export function DropdownMenu({
   ariaLabel,
+  buttonAriaLabel,
   className = '',
   isDisabled,
   buttonChildren,
@@ -35,6 +36,7 @@ export function DropdownMenu({
   onAction,
 }: {
   ariaLabel: string;
+  buttonAriaLabel: string;
   buttonChildren: ReactNode;
   className?: string;
   isDisabled?: boolean;
@@ -51,7 +53,7 @@ export function DropdownMenu({
 
   let state = useToggleState({});
   let { buttonProps, isPressed } = useToggleButton(
-    { 'aria-label': ariaLabel },
+    { 'aria-label': buttonAriaLabel },
     state,
     buttonRef,
   );

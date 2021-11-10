@@ -3,7 +3,7 @@ import { keyName } from 'w3c-keyname';
 
 import { Emitter } from '@bangle.dev/utils';
 
-import { isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
+import { isFirefox, isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
 export { Emitter };
 
@@ -334,4 +334,25 @@ export function findWrappingScrollable(node: Element): Element | undefined {
     }
   }
   return undefined;
+}
+
+export function keyDisplayValue(key) {
+  if (key.includes('Mod')) {
+    key = key.split('Mod').join(isMac ? '⌘' : 'Ctrl');
+  }
+
+  key = key
+    .split('-')
+    .map((r) => {
+      if (/^[A-Z]$/.test(r)) {
+        return `Shift-${r.toLocaleLowerCase()}`;
+      }
+      return r;
+    })
+    .join('-');
+
+  if (key.includes('Shift')) {
+    key = key.split('Shift').join('⇧');
+  }
+  return key;
 }

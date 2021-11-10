@@ -8,6 +8,7 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 import {
   ActionDefinitionType,
   ActionHandler,
+  ActionNameType,
   ApplicationConfig,
   EditorConfig,
   Extension,
@@ -201,12 +202,12 @@ export class ExtensionRegistry {
     return result;
   };
 
-  getRegisteredActions() {
+  getRegisteredActions(): Readonly<ActionDefinitionType[]> {
     return this.registeredActions;
   }
 
-  getRegisteredAction(name: string) {
-    return this.registeredActions.find((a) => a.name === name);
+  getRegisteredActionKeybinding(name: ActionNameType): string | undefined {
+    return this.registeredActions.find((a) => a.name === name)?.keybinding;
   }
 
   getActionHandlers() {

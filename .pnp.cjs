@@ -4249,6 +4249,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#npm:0.27.6"],
             ["@bangle.dev/utils", "virtual:fe3e02e0e7ec52a990ab7831757ff3768d8b97ab96d9e0221bd7f51cfd23ee4ab43f7cc3e94776ca10e0dcf3dcb5617a937596a3087e39a583058af463ffff3c#npm:0.27.6"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
             ["react", "npm:17.0.2"],

@@ -28,7 +28,7 @@ type AllKeysType =
   | typeof SwitchWorkspaceKey
   | typeof ToggleThemeKey;
 
-export function ActivitybarSettingsDropdown({
+export function ActivitybarOptionsDropdown({
   widescreen,
 }: {
   widescreen: boolean;
@@ -93,7 +93,8 @@ export function ActivitybarSettingsDropdown({
   return (
     <DropdownMenu
       menuPlacement="right-start"
-      ariaLabel={'Options'}
+      ariaLabel={'Options dropdown'}
+      buttonAriaLabel={'Options'}
       buttonStyling={buttonStyling}
       buttonClassName={cx(
         'w-full py-3 rounded-sm flex justify-center activitybar_button',
@@ -103,8 +104,10 @@ export function ActivitybarSettingsDropdown({
       onAction={onAction}
     >
       <MenuSection aria-label="misc">
-        <MenuItem key={NewNoteKey}>New note</MenuItem>
-        <MenuItem key={NewWorkspaceKey}>New workspace </MenuItem>
+        <MenuItem aria-label="new note" key={NewNoteKey}>
+          New note
+        </MenuItem>
+        <MenuItem key={NewWorkspaceKey}>New workspace</MenuItem>
         <MenuItem key={SwitchWorkspaceKey}>Switch workspace</MenuItem>
       </MenuSection>
       <MenuSection aria-label="ui">

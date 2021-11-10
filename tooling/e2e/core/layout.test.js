@@ -3,16 +3,14 @@ const {
   ctrlKey,
   url,
   createNewNote,
-  clearPrimaryEditor,
   setPageWidescreen,
-  getEditorHTML,
   createWorkspace,
   newPage,
-  getPrimaryEditorDebugString,
   getPrimaryEditorHandler,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
+jest.retryTimes(2);
 
 let page, destroyPage;
 describe('widescreen', () => {
@@ -38,7 +36,6 @@ describe('widescreen', () => {
     await page.keyboard.press('\\');
     await page.keyboard.up(ctrlKey);
     await sleep();
-    // eslint-disable-next-line jest/no-conditional-expect
     expect(await page.$('.editor-container_editor-1')).not.toBeNull();
   });
 });

@@ -7,7 +7,7 @@ import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarMobile } from './ActivitybarMobile';
-import { ActivitybarSettingsDropdown } from './ActivitybarSettingsDropdown';
+import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 
 export function Activitybar({
   wsName,
@@ -89,7 +89,7 @@ export function Activitybar({
           });
         }}
       />
-      <ActivitybarSettingsDropdown widescreen={widescreen} />
+      <ActivitybarOptionsDropdown widescreen={widescreen} />
     </div>
   );
 }
