@@ -81,6 +81,16 @@ export function NotesTree() {
     );
   }
 
+  if (noteWsPaths.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <span className="text-sm font-extrabold b-textColor-lighter">
+          No notes found
+        </span>
+      </div>
+    );
+  }
+
   return (
     <GenericFileBrowser
       wsName={wsName}
