@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
-import { Button } from '@bangle.io/ui-bangle-button';
+import { useActionContext } from '@bangle.io/action-context';
+import { Button, TooltipWrapper } from '@bangle.io/ui-bangle-button';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { removeMdExtension } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
@@ -26,9 +27,20 @@ export function EditorBar({
     p = p.slice(-1 * MAX_ENTRIES);
     p.unshift('…');
   }
+  const { dispatchAction } = useActionContext();
+
+  const openNotesPalette = useCallback(() => {
+    dispatchAction({
+      name: 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE',
+    });
+  }, [dispatchAction]);
+
   return (
     <div className="flex flex-row justify-between w-full editor-container_editor-bar">
-      <div className="flex flex-row flex-wrap text-xs editor-container_ws-path lg:text-sm overflow-ellipsis">
+      <div
+        className="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+        onClick={openNotesPalette}
+      >
         {p.map((r, i) => (
           <React.Fragment key={i}>
             <span className="break-all">{r}</span>
@@ -44,11 +56,17 @@ export function EditorBar({
         {showSplitEditor && (
           <Button
             onPress={onPressSecondaryEditor}
-            isRounded={true}
-            bgOnHover={true}
+            styling={{ bgOnHover: true, isRounded: true }}
             className="lg:mr-1"
             ariaLabel="Split screen"
             isActive={isSplitEditorActive}
+            tooltip={
+              <TooltipWrapper>
+                {isSplitEditorActive ? 'Close split screen' : 'Split screen'}
+              </TooltipWrapper>
+            }
+            tooltipPlacement="bottom"
+            tooltipXOffset={10}
           >
             {<SecondaryEditorIcon className="w-3 h-3 lg:h-4 lg:w-4" />}
           </Button>
@@ -56,8 +74,7 @@ export function EditorBar({
         <Button
           ariaLabel="Close"
           onPress={onClose}
-          bgOnHover={true}
-          isRounded={true}
+          styling={{ bgOnHover: true, isRounded: true }}
         >
           {<CloseIcon className="w-3 h-3 lg:h-4 lg:w-4" />}
         </Button>

@@ -3,3 +3,14 @@
   color: var(--window-tooltip-color);
   z-index: var(--tooltip-zIndex);
 }
+
+.ui-bangle-button_dropdown-menu {
+  min-width: 300px;
+  background-color: var(--window-tooltip-bgColor);
+  color: var(--window-tooltip-color);
+  z-index: var(--tooltip-zIndex);
+}
+
+.ui-bangle-button_dropdown-menu-item.is-focused {
+  background-color: var(--accent-secondary);
+}

@@ -1,9 +1,5 @@
 import { isMac } from './is-mac';
 
-export const isFirefox =
-  typeof navigator != 'undefined'
-    ? navigator.userAgent?.toLocaleLowerCase()?.indexOf('firefox') > -1
-    : false;
 const altInMac = '⌥'; // option
 
 export function keyDisplayValue(key) {

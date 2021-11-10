@@ -7,6 +7,7 @@ import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarMobile } from './ActivitybarMobile';
+import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 
 export function Activitybar({
   wsName,
@@ -54,7 +55,7 @@ export function Activitybar({
   });
 
   return (
-    <div className="flex flex-grow flex-col activitybar widescreen">
+    <div className="flex flex-col flex-grow pt-2 pb-3 activitybar widescreen">
       <ActivitybarButton
         widescreen={widescreen}
         isActive={false}
@@ -88,6 +89,7 @@ export function Activitybar({
           });
         }}
       />
+      <ActivitybarOptionsDropdown widescreen={widescreen} />
     </div>
   );
 }

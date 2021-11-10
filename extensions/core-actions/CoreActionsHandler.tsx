@@ -7,10 +7,12 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 import {
   CLONE_WORKSPACE_ACTION,
+  CLOSE_EDITOR_ACTION,
   DELETE_ACTIVE_NOTE_ACTION,
   NEW_NOTE_ACTION,
   NEW_WORKSPACE_ACTION,
   RENAME_ACTIVE_NOTE_ACTION,
+  TOGGLE_EDITOR_SPLIT_ACTION,
   TOGGLE_FILE_SIDEBAR_ACTION,
   TOGGLE_THEME_ACTION,
 } from './config';
@@ -20,7 +22,13 @@ import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
 export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch } = useUIManagerContext();
   const { dispatchAction } = useActionContext();
-  const { wsName, primaryWsPath, deleteNote } = useWorkspaceContext();
+  const {
+    wsName,
+    primaryWsPath,
+    secondaryWsPath,
+    deleteNote,
+    updateOpenedWsPaths,
+  } = useWorkspaceContext();
 
   const [inputModal, updateInputModal] = useState<{
     type: string | undefined;
@@ -179,12 +187,45 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
+        case TOGGLE_EDITOR_SPLIT_ACTION: {
+          if (secondaryWsPath) {
+            updateOpenedWsPaths((openedWsPath) =>
+              openedWsPath.updateSecondaryWsPath(null),
+            );
+          } else if (primaryWsPath) {
+            updateOpenedWsPaths((openedWsPath) =>
+              openedWsPath.updateSecondaryWsPath(primaryWsPath),
+            );
+          }
+          return true;
+        }
+
+        case CLOSE_EDITOR_ACTION: {
+          const editorId = actionObject.value;
+          if (editorId) {
+            updateOpenedWsPaths((openedWsPaths) =>
+              openedWsPaths.updateByIndex(editorId, undefined).shrink(),
+            );
+          } else {
+            updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll());
+          }
+
+          return true;
+        }
+
         default: {
           return false;
         }
       }
     },
-    [dispatch, deleteNote, wsName, primaryWsPath],
+    [
+      dispatch,
+      deleteNote,
+      wsName,
+      primaryWsPath,
+      secondaryWsPath,
+      updateOpenedWsPaths,
+    ],
   );
 
   useEffect(() => {

@@ -6,6 +6,9 @@ import {
 } from '@bangle.io/extension-registry';
 import { useKeybindings } from '@bangle.io/utils';
 
+const LOG = false;
+let log = LOG ? console.log.bind(console, 'ActionCotext') : () => {};
+
 export const ActionContext = createContext<ContextType>({
   dispatchAction: () => {},
 });
@@ -24,7 +27,7 @@ export function ActionContextProvider({ children }) {
   const dispatchAction = useCallback<ContextType['dispatchAction']>(
     (action) => {
       const { name, value, ...others } = action;
-
+      log({ name, value });
       if (!name) {
         throw new Error('Action must have a name');
       }

@@ -13,7 +13,7 @@ exports[`basic renders 1`] = `
           class="flex flex-row justify-between w-full editor-container_editor-bar"
         >
           <div
-            class="flex flex-row flex-wrap text-xs editor-container_ws-path lg:text-sm overflow-ellipsis"
+            class="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
           >
             <span
               class="break-all"
@@ -83,7 +83,7 @@ exports[`renders correctly when file does not exist 1`] = `
           class="flex flex-row justify-between w-full editor-container_editor-bar"
         >
           <div
-            class="flex flex-row flex-wrap text-xs editor-container_ws-path lg:text-sm overflow-ellipsis"
+            class="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
           >
             <span
               class="break-all"

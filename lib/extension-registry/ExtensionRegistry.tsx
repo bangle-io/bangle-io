@@ -8,6 +8,7 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 import {
   ActionDefinitionType,
   ActionHandler,
+  ActionNameType,
   ApplicationConfig,
   EditorConfig,
   Extension,
@@ -86,10 +87,7 @@ export class ExtensionRegistry {
   private actionHandlers: Set<ActionHandler>;
   private registeredActions: ActionDefinitionType[];
   private editorConfig: EditorConfig[];
-  private optionsBarEntries: Exclude<
-    ApplicationConfig['optionsBar'],
-    undefined
-  >;
+
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
   public editor: EditorHandlers;
 
@@ -130,7 +128,6 @@ export class ExtensionRegistry {
 
     this.actionHandlers = new Set();
     this.registeredActions = filterFlatMap(applicationConfig, 'actions');
-    this.optionsBarEntries = filterFlatMap(applicationConfig, 'optionsBar');
     this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
   }
   private validate() {
@@ -180,10 +177,6 @@ export class ExtensionRegistry {
     );
   }
 
-  getOptionsBarEntries() {
-    return this.optionsBarEntries;
-  }
-
   getSidebars() {
     return this.sidebars;
   }
@@ -209,12 +202,12 @@ export class ExtensionRegistry {
     return result;
   };
 
-  getRegisteredActions() {
+  getRegisteredActions(): Readonly<ActionDefinitionType[]> {
     return this.registeredActions;
   }
 
-  getRegisteredAction(name: string) {
-    return this.registeredActions.find((a) => a.name === name);
+  getRegisteredActionKeybinding(name: ActionNameType): string | undefined {
+    return this.registeredActions.find((a) => a.name === name)?.keybinding;
   }
 
   getActionHandlers() {

@@ -1,10 +1,16 @@
-import React, { ReactNode, useRef } from 'react';
+import React, { ReactNode } from 'react';
 
-import {
-  Button as ToggleButton,
-  TooltipWrapper,
-} from '@bangle.io/ui-bangle-button';
+import { Button, TooltipWrapper } from '@bangle.io/ui-bangle-button';
 import { cx } from '@bangle.io/utils';
+
+export const buttonStyling = {
+  animateOnPress: true,
+  activeColor: 'var(--activitybar-button-active-color)',
+  color: 'var(--activitybar-button-color)',
+  hoverBgColor: 'var(--activitybar-button-hover-bgColor)',
+  hoverColor: 'var(--activitybar-button-hover-color)',
+  pressedBgColor: 'var(--activitybar-button-pressed-bgColor)',
+};
 
 export function ActivitybarButton({
   isActive,
@@ -13,16 +19,18 @@ export function ActivitybarButton({
   hint,
   onPress,
 }: {
+  menu?: boolean;
   widescreen: boolean;
   hint: string;
   isActive?: boolean;
-  onPress: () => void;
+  // key if used in dropdowndow menu
+  onPress: (k?: React.Key) => void;
   icon: ReactNode;
 }) {
   return (
-    <ToggleButton
+    <Button
       isActive={isActive}
-      animateOnPress={true}
+      styling={buttonStyling}
       className={cx(
         'w-full py-3 rounded-sm flex justify-center activitybar_button',
         widescreen && 'widescreen',
@@ -32,14 +40,8 @@ export function ActivitybarButton({
       tooltip={<TooltipWrapper>{hint}</TooltipWrapper>}
       tooltipDelay={250}
       tooltipPlacement="right"
-      tooltipOffset={5}
-      activeColor="var(--activitybar-button-active-color)"
-      color="var(--activitybar-button-color)"
-      hoverBgColor="var(--activitybar-button-hover-bgColor)"
-      hoverColor="var(--activitybar-button-hover-color)"
-      pressedBgColor="var(--activitybar-button-pressed-bgColor)"
     >
       {icon}
-    </ToggleButton>
+    </Button>
   );
 }
