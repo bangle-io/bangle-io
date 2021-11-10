@@ -1,4 +1,5 @@
 export * from './ButtonIcon';
+export * from './CenteredPage';
 export * from './ErrorBoundary';
 export * from './Icons';
 export * from './InlinePaletteUI/InlinePaletteUI';
