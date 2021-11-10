@@ -68,7 +68,7 @@ export function NotesTree() {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <span
-          className="text-sm font-extrabold cursor-pointer b-textColor-lighter"
+          className="text-sm font-extrabold cursor-pointer bangle-io_textColorLighter"
           onClick={() => {
             dispatchAction({
               name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',
@@ -84,7 +84,7 @@ export function NotesTree() {
   if (noteWsPaths.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <span className="text-sm font-extrabold b-textColor-lighter">
+        <span className="text-sm font-extrabold bangle-io_textColorLighter">
           No notes found
         </span>
       </div>

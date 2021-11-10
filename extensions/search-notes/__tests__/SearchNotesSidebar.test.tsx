@@ -62,7 +62,7 @@ test('renders correctly is no workspace is opened', async () => {
         class="flex flex-col items-center justify-center h-full"
       >
         <span
-          class="b-textColor-lighter text-sm font-extrabold cursor-pointer"
+          class="text-sm font-extrabold cursor-pointer textColor-1"
         >
           Please open a workspace to search
         </span>
