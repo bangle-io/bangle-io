@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import type { DispatchActionType } from '@bangle.io/action-context';
 import { Button, TooltipWrapper } from '@bangle.io/ui-bangle-button';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { removeMdExtension } from '@bangle.io/utils';
@@ -8,12 +8,14 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 3;
 export function EditorBar({
+  dispatchAction,
   showSplitEditor = false,
   wsPath,
   onClose,
   onPressSecondaryEditor,
   isSplitEditorActive,
 }: {
+  dispatchAction: DispatchActionType;
   showSplitEditor?: boolean;
   wsPath: string;
   onClose: () => void;
@@ -27,7 +29,6 @@ export function EditorBar({
     p = p.slice(-1 * MAX_ENTRIES);
     p.unshift('…');
   }
-  const { dispatchAction } = useActionContext();
 
   const openNotesPalette = useCallback(() => {
     dispatchAction({
@@ -38,6 +39,7 @@ export function EditorBar({
   return (
     <div className="flex flex-row justify-between w-full editor-container_editor-bar">
       <div
+        aria-label="note path"
         className="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
         onClick={openNotesPalette}
       >

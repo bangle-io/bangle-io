@@ -38,7 +38,7 @@ export function AppContainer() {
   const mainContent = useMemo(() => {
     const result: ReactNode[] = [];
 
-    if (!openedWsPaths.hasSomeWsPath()) {
+    if (!openedWsPaths.hasSomeOpenedWsPaths()) {
       return <EmptyEditorPage />;
     }
 

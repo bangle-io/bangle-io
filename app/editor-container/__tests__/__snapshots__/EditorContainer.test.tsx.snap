@@ -13,6 +13,7 @@ exports[`basic renders 1`] = `
           class="flex flex-row justify-between w-full editor-container_editor-bar"
         >
           <div
+            aria-label="note path"
             class="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
           >
             <span
@@ -83,6 +84,7 @@ exports[`renders correctly when file does not exist 1`] = `
           class="flex flex-row justify-between w-full editor-container_editor-bar"
         >
           <div
+            aria-label="note path"
             class="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
           >
             <span

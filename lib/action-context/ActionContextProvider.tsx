@@ -13,8 +13,10 @@ export const ActionContext = createContext<ContextType>({
   dispatchAction: () => {},
 });
 
+export type DispatchActionType = (action: ActionType) => void;
+
 export interface ContextType {
-  dispatchAction: (action: ActionType) => void;
+  dispatchAction: DispatchActionType;
 }
 
 export function ActionContextProvider({ children }) {

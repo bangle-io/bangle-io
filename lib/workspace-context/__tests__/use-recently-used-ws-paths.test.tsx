@@ -23,7 +23,7 @@ test('returns wsPaths correctly', () => {
   const { result } = renderHook(() =>
     useRecentlyUsedWsPaths(
       'test-ws',
-      new OpenedWsPaths(['test-ws:note1.md', null]),
+      new OpenedWsPaths(['test-ws:note1.md', undefined]),
       ['test-ws:note1.md'],
     ),
   );
@@ -40,7 +40,7 @@ test('removes non existent wsPaths', () => {
   const { result } = renderHook(() =>
     useRecentlyUsedWsPaths(
       'test-ws',
-      new OpenedWsPaths(['test-ws:note1.md', null]),
+      new OpenedWsPaths(['test-ws:note1.md', undefined]),
       ['test-ws:note1.md'],
     ),
   );
@@ -57,7 +57,7 @@ test('works', async () => {
   const { result } = renderHook(() =>
     useRecentlyUsedWsPaths(
       'test-ws',
-      new OpenedWsPaths(['test-ws:note1.md', null]),
+      new OpenedWsPaths(['test-ws:note1.md', undefined]),
       ['test-ws:note1.md'],
     ),
   );
@@ -78,7 +78,7 @@ test('works when no wsName', async () => {
   const { result } = renderHook(() =>
     useRecentlyUsedWsPaths(
       undefined,
-      new OpenedWsPaths(['test-ws:note1.md', null]),
+      new OpenedWsPaths(['test-ws:note1.md', undefined]),
       ['test-ws:note1.md'],
     ),
   );
@@ -101,7 +101,7 @@ test('updates the newly opened ws path only', async () => {
     {
       initialProps: {
         wsName: 'test-ws',
-        openedWsPaths: new OpenedWsPaths(['test-ws:note1.md', null]),
+        openedWsPaths: new OpenedWsPaths(['test-ws:note1.md', undefined]),
         wsPaths: ['test-ws:note1.md', 'test-ws:note2.md'],
       },
     },

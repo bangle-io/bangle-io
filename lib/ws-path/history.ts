@@ -5,7 +5,7 @@ import { matchPath } from 'react-router-dom';
 
 import { filePathToWsPath, resolvePath } from './helpers';
 
-type MaybeWsPath = string | undefined | null;
+type MaybeWsPath = string | undefined;
 
 export type Location = _History<any>['location'];
 export type History = _History<any>;
@@ -14,16 +14,22 @@ const MAX_SIZE = 2;
 /**
  * This exists to keep null and undefined value interchangeable
  */
-function compare(a: any, b: any) {
-  if (a == null && b == null) {
-    return true;
-  }
-  return a === b;
+function compare<T>(a: T[], b: T[]): boolean {
+  return (
+    a.length === b.length &&
+    a.every((value, index) => {
+      if (value == null && b[index] == null) {
+        return true;
+      }
+      return value === b[index];
+    })
+  );
 }
+
 export class OpenedWsPaths {
-  constructor(private wsPaths: [MaybeWsPath, MaybeWsPath]) {
+  constructor(private wsPaths: MaybeWsPath[]) {
     if (wsPaths.length !== MAX_SIZE) {
-      throw new Error('Only support two editors opened at a time');
+      throw new Error(`Only support ${MAX_SIZE} editors opened at a time`);
     }
   }
   get primaryWsPath() {
@@ -34,7 +40,7 @@ export class OpenedWsPaths {
     return this.wsPaths[1] ?? undefined;
   }
 
-  forEachWsPath(cb: (wsPath: string, index: number) => void) {
+  forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
     this.wsPaths.forEach((p, i) => {
       if (p) {
         cb(p, i);
@@ -43,10 +49,11 @@ export class OpenedWsPaths {
   }
 
   updatePrimaryWsPath(wsPath: MaybeWsPath) {
-    if (compare(wsPath, this.primaryWsPath)) {
-      return this;
-    }
-    return new OpenedWsPaths([wsPath, this.secondaryWsPath]);
+    return this.updateByIndex(0, wsPath);
+  }
+
+  updateSecondaryWsPath(wsPath: MaybeWsPath) {
+    return this.updateByIndex(1, wsPath);
   }
 
   updateByIndex(index: number, wsPath: MaybeWsPath) {
@@ -54,14 +61,13 @@ export class OpenedWsPaths {
       throw new Error('updateByIndex: Out of bound operation');
     }
 
-    const items: [MaybeWsPath, MaybeWsPath] = [
-      this.wsPaths[0],
-      this.wsPaths[1],
-    ];
+    const items = this.wsPaths.slice(0);
     items[index] = wsPath;
     return this.updateAllWsPaths(items);
   }
 
+  // does not shrink the size but filters out
+  // starting undefined wsPaths
   shrink() {
     const items = this.wsPaths.filter((r) => r);
 
@@ -72,14 +78,7 @@ export class OpenedWsPaths {
     return this.updateAllWsPaths(arr);
   }
 
-  updateSecondaryWsPath(wsPath: MaybeWsPath) {
-    if (compare(wsPath, this.secondaryWsPath)) {
-      return this;
-    }
-    return new OpenedWsPaths([this.primaryWsPath, wsPath]);
-  }
-
-  updateAllWsPaths(wsPaths: [MaybeWsPath, MaybeWsPath]) {
+  updateAllWsPaths(wsPaths: MaybeWsPath[]) {
     const result = new OpenedWsPaths(wsPaths);
     // avoid changing instance
     if (result.equal(this)) {
@@ -89,10 +88,7 @@ export class OpenedWsPaths {
   }
 
   equal(compareWith: OpenedWsPaths) {
-    if (
-      compare(this.primaryWsPath, compareWith.primaryWsPath) &&
-      compare(this.secondaryWsPath, compareWith.secondaryWsPath)
-    ) {
+    if (compare(this.wsPaths, compareWith.wsPaths)) {
       return true;
     }
     return false;
@@ -116,18 +112,20 @@ export class OpenedWsPaths {
   /**
    * check if there are any wsPath in this
    */
-  hasSomeWsPath() {
+  hasSomeOpenedWsPaths() {
     return this.wsPaths.some((r) => {
       return r != null;
     });
   }
 
-  removeIfFound(wsPath: MaybeWsPath): OpenedWsPaths {
-    return this.updateIfFound(wsPath, null);
+  closeIfFound(wsPath: MaybeWsPath): OpenedWsPaths {
+    return this.updateIfFound(wsPath, undefined);
   }
 
   closeAll() {
-    let newObj = new OpenedWsPaths([null, null]);
+    let newObj = new OpenedWsPaths(
+      Array.from({ length: MAX_SIZE }, () => undefined),
+    );
     // avoid changing instance
     if (newObj.equal(this)) {
       return this;
@@ -142,13 +140,11 @@ export class OpenedWsPaths {
   ): OpenedWsPaths {
     let ret: OpenedWsPaths = this;
 
-    if (compare(ret.primaryWsPath, wsPath)) {
-      ret = ret.updatePrimaryWsPath(replaceWsPath);
-    }
-    if (compare(ret.secondaryWsPath, wsPath)) {
-      ret = ret.updateSecondaryWsPath(replaceWsPath);
-    }
-
+    this.forEachWsPath((_wsPath, i) => {
+      if (wsPath === _wsPath) {
+        ret = ret.updateByIndex(i, replaceWsPath);
+      }
+    });
     return ret;
   }
 }

@@ -1,5 +1,5 @@
 import { act, fireEvent, render } from '@testing-library/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
