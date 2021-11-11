@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { useActionContext } from '@bangle.io/action-context';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
@@ -21,6 +22,7 @@ export function Activitybar({
   const { changelogHasUpdates, sidebar, dispatch, widescreen } =
     useUIManagerContext();
   const history = useHistory();
+  const { dispatchAction } = useActionContext();
 
   if (!widescreen) {
     return <ActivitybarMobile wsName={wsName} primaryWsPath={primaryWsPath} />;
@@ -89,7 +91,10 @@ export function Activitybar({
           });
         }}
       />
-      <ActivitybarOptionsDropdown widescreen={widescreen} />
+      <ActivitybarOptionsDropdown
+        widescreen={widescreen}
+        dispatchAction={dispatchAction}
+      />
     </div>
   );
 }

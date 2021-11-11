@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import type { DispatchActionType } from '@bangle.io/action-context';
 import {
   DropdownMenu,
   MenuItem,
@@ -11,13 +11,13 @@ import { cx } from '@bangle.io/utils';
 
 import { buttonStyling } from './ActivitybarButton';
 
-const ActionPaletteKey = 'ActionPalette';
-const NewNoteKey = 'NewNote';
-const NewWorkspaceKey = 'NewWorkspace';
-const NotesPaletteKey = 'NotesPalette';
-const ReportIssueKey = 'ReportIssue';
-const SwitchWorkspaceKey = 'SwitchWorkspace';
-const ToggleThemeKey = 'ToggleTheme';
+export const ActionPaletteKey = 'ActionPalette';
+export const NewNoteKey = 'NewNote';
+export const NewWorkspaceKey = 'NewWorkspace';
+export const NotesPaletteKey = 'NotesPalette';
+export const ReportIssueKey = 'ReportIssue';
+export const SwitchWorkspaceKey = 'SwitchWorkspace';
+export const ToggleThemeKey = 'ToggleTheme';
 
 type AllKeysType =
   | typeof ActionPaletteKey
@@ -30,11 +30,11 @@ type AllKeysType =
 
 export function ActivitybarOptionsDropdown({
   widescreen,
+  dispatchAction,
 }: {
   widescreen: boolean;
+  dispatchAction: DispatchActionType;
 }) {
-  const { dispatchAction } = useActionContext();
-
   const onAction = useCallback(
     (k: any) => {
       let key: AllKeysType = k;
