@@ -9,10 +9,7 @@ import {
 test('renders correctly', () => {
   let result = render(
     <div>
-      <ActivitybarOptionsDropdown
-        widescreen={true}
-        dispatchAction={() => {}}
-      ></ActivitybarOptionsDropdown>
+      <ActivitybarOptionsDropdown widescreen={true} dispatchAction={() => {}} />
     </div>,
   );
 
@@ -22,16 +19,14 @@ test('renders correctly', () => {
 test('clicking the button shows dropdown', async () => {
   let result = render(
     <div>
-      <ActivitybarOptionsDropdown
-        widescreen={true}
-        dispatchAction={() => {}}
-      ></ActivitybarOptionsDropdown>
+      <ActivitybarOptionsDropdown widescreen={true} dispatchAction={() => {}} />
     </div>,
   );
 
   act(() => {
     fireEvent.click(result.getByLabelText('Options'));
   });
+
   let targetOption;
   await waitFor(() => {
     targetOption = result.container.querySelectorAll('li li[data-key]');
