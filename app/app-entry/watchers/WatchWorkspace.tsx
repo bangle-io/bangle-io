@@ -84,10 +84,10 @@ export function WatchWorkspace() {
           let newOpenedWsPaths = openedWsPaths;
 
           if (primaryWsPath && !fileWsPaths.includes(primaryWsPath)) {
-            newOpenedWsPaths = newOpenedWsPaths.removeIfFound(primaryWsPath);
+            newOpenedWsPaths = newOpenedWsPaths.closeIfFound(primaryWsPath);
           }
           if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
-            newOpenedWsPaths = newOpenedWsPaths.removeIfFound(secondaryWsPath);
+            newOpenedWsPaths = newOpenedWsPaths.closeIfFound(secondaryWsPath);
           }
 
           return newOpenedWsPaths;

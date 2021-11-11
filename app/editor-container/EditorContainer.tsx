@@ -76,6 +76,7 @@ export function EditorContainer({
         widescreen &&
         wsPath && (
           <EditorBar
+            dispatchAction={dispatchAction}
             wsPath={wsPath}
             onClose={onClose}
             showSplitEditor={editorId === 0}

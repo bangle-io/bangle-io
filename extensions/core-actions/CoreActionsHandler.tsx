@@ -190,7 +190,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
         case TOGGLE_EDITOR_SPLIT_ACTION: {
           if (secondaryWsPath) {
             updateOpenedWsPaths((openedWsPath) =>
-              openedWsPath.updateSecondaryWsPath(null),
+              openedWsPath.updateSecondaryWsPath(undefined),
             );
           } else if (primaryWsPath) {
             updateOpenedWsPaths((openedWsPath) =>

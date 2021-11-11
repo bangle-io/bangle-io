@@ -273,16 +273,7 @@ function MenuItemWrapper({
 
   return (
     <li
-      {...mergeProps(
-        {
-          ...menuItemProps,
-          onClick: (...args) => {
-            debugger;
-            menuItemProps.onClick(...args);
-          },
-        },
-        focusProps,
-      )}
+      {...mergeProps(menuItemProps, focusProps)}
       ref={ref}
       className={cx(
         'ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1',

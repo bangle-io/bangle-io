@@ -46,51 +46,51 @@ describe('OpenedWsPaths', () => {
     expect(result.equal(result)).toBe(true);
   });
 
-  test('null undefined result same value', () => {
-    let result = new OpenedWsPaths(['a', null]);
+  test('undefined undefined result same value', () => {
+    let result = new OpenedWsPaths(['a', undefined]);
 
     expect(result.equal(new OpenedWsPaths(['a', undefined as any]))).toBe(true);
     expect(
       new OpenedWsPaths(['a', undefined as any]).equal(
-        new OpenedWsPaths(['a', null as any]),
+        new OpenedWsPaths(['a', undefined as any]),
       ),
     ).toBe(true);
 
     expect(
       new OpenedWsPaths([undefined as any, undefined as any]).equal(
-        new OpenedWsPaths([null as any, null as any]),
+        new OpenedWsPaths([undefined as any, undefined as any]),
       ),
     ).toBe(true);
 
     expect(
       new OpenedWsPaths([undefined as any, undefined as any]).equal(
-        new OpenedWsPaths(['a', null as any]),
+        new OpenedWsPaths(['a', undefined as any]),
       ),
     ).toBe(false);
   });
 
   test('has', () => {
-    let result = new OpenedWsPaths(['a', null]);
-    expect(result.has(null)).toBe(false);
+    let result = new OpenedWsPaths(['a', undefined]);
+    expect(result.has(undefined)).toBe(false);
   });
 
-  test('hasSomeWsPath', () => {
-    let result = new OpenedWsPaths(['a', null]);
-    expect(result.hasSomeWsPath()).toBe(true);
+  test('hasSomeOpenedWsPaths', () => {
+    let result = new OpenedWsPaths(['a', undefined]);
+    expect(result.hasSomeOpenedWsPaths()).toBe(true);
 
     result = new OpenedWsPaths(['a', 'a']);
-    expect(result.hasSomeWsPath()).toBe(true);
+    expect(result.hasSomeOpenedWsPaths()).toBe(true);
 
-    result = new OpenedWsPaths([null, null]);
-    expect(result.hasSomeWsPath()).toBe(false);
+    result = new OpenedWsPaths([undefined, undefined]);
+    expect(result.hasSomeOpenedWsPaths()).toBe(false);
 
     // result = new OpenedWsPaths([]);
-    // expect(result.hasSomeWsPath()).toBe(false);
+    // expect(result.hasSomeOpenedWsPaths()).toBe(false);
   });
 
   test('forEach 1', () => {
-    let result = new OpenedWsPaths(['a', null]);
-    let called: [string, number][] = [];
+    let result = new OpenedWsPaths(['a', undefined]);
+    let called: any = [];
 
     result.forEachWsPath((wsPath, i) => {
       called.push([wsPath, i]);
@@ -100,7 +100,7 @@ describe('OpenedWsPaths', () => {
 
   test('forEach 2', () => {
     let result = new OpenedWsPaths(['a', 'b']);
-    let called: [string, number][] = [];
+    let called: any = [];
 
     result.forEachWsPath((wsPath, i) => {
       called.push([wsPath, i]);
@@ -111,35 +111,69 @@ describe('OpenedWsPaths', () => {
     ]);
   });
 
-  test('removeIfFound', () => {
-    let result = new OpenedWsPaths(['a', null]);
-    expect(result.removeIfFound('b')).toBe(result);
-    expect(result.removeIfFound('a')).not.toBe(result);
+  test('closeIfFound', () => {
+    let result = new OpenedWsPaths(['a', undefined]);
+    expect(result.closeIfFound('b')).toBe(result);
+    expect(result.closeIfFound('a')).not.toBe(result);
 
     expect(
-      result.removeIfFound('a').equal(new OpenedWsPaths([null, null])),
+      result.closeIfFound('a').equal(new OpenedWsPaths([undefined, undefined])),
     ).toBe(true);
 
     expect(
       new OpenedWsPaths(['x', 'x'])
-        .removeIfFound('x')
-        .equal(new OpenedWsPaths([null, null])),
+        .closeIfFound('x')
+        .equal(new OpenedWsPaths([undefined, undefined])),
     ).toBe(true);
   });
 
   test('updateIfFound', () => {
-    let result = new OpenedWsPaths(['a', null]);
+    let result = new OpenedWsPaths(['a', undefined]);
     expect(result.updateIfFound('b', 'c')).toBe(result);
     expect(result.updateIfFound('a', 'c')).not.toBe(result);
 
     expect(
-      result.updateIfFound('a', 'c').equal(new OpenedWsPaths(['c', null])),
+      result.updateIfFound('a', 'c').equal(new OpenedWsPaths(['c', undefined])),
     ).toBe(true);
 
     expect(
       new OpenedWsPaths(['x', 'x'])
         .updateIfFound('x', 'c')
         .equal(new OpenedWsPaths(['c', 'c'])),
+    ).toBe(true);
+  });
+
+  test('shrink', () => {
+    let result = new OpenedWsPaths([undefined, 'a']);
+
+    expect(result.shrink().equal(new OpenedWsPaths(['a', undefined]))).toBe(
+      true,
+    );
+
+    result = new OpenedWsPaths([undefined, undefined]);
+
+    expect(
+      result.shrink().equal(new OpenedWsPaths([undefined, undefined])),
+    ).toBe(true);
+  });
+
+  test('close all', () => {
+    let result = new OpenedWsPaths([undefined, 'a']);
+
+    expect(
+      result.closeAll().equal(new OpenedWsPaths([undefined, undefined])),
+    ).toBe(true);
+  });
+
+  test('updateByIndex', () => {
+    let result = new OpenedWsPaths([undefined, 'a']);
+
+    expect(
+      result.updateByIndex(0, 'b').equal(new OpenedWsPaths(['b', 'a'])),
+    ).toBe(true);
+
+    expect(
+      result.updateByIndex(1, 'c').equal(new OpenedWsPaths([undefined, 'c'])),
     ).toBe(true);
   });
 });

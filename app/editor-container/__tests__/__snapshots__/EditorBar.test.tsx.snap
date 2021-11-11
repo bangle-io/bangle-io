@@ -7,6 +7,7 @@ exports[`renders correctly 1`] = `
       class="flex flex-row justify-between w-full editor-container_editor-bar"
     >
       <div
+        aria-label="note path"
         class="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
       >
         <span
@@ -49,5 +50,51 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
   </div>
+</div>
+`;
+
+exports[`truncates large wsPath 1`] = `
+<div
+  aria-label="note path"
+  class="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+>
+  <span
+    class="break-all"
+  >
+    …
+  </span>
+  <span
+    class="select-none"
+    style="padding: 0px 1px;"
+  >
+    /
+  </span>
+  <span
+    class="break-all"
+  >
+    wow
+  </span>
+  <span
+    class="select-none"
+    style="padding: 0px 1px;"
+  >
+    /
+  </span>
+  <span
+    class="break-all"
+  >
+    last
+  </span>
+  <span
+    class="select-none"
+    style="padding: 0px 1px;"
+  >
+    /
+  </span>
+  <span
+    class="break-all"
+  >
+    two
+  </span>
 </div>
 `;

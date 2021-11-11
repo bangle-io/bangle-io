@@ -454,7 +454,7 @@ export function useDeleteNote(
 
       wsPathToDelete.forEach((w) => {
         validateNoteWsPath(w);
-        newOpenedWsPaths = newOpenedWsPaths.removeIfFound(w);
+        newOpenedWsPaths = newOpenedWsPaths.closeIfFound(w);
       });
 
       updateOpenedWsPaths(newOpenedWsPaths, { replaceHistory: true });
