@@ -7,3 +7,4 @@ import './Input/Input.css';
 import './Sidebar/Sidebar.css';
 import './TextButton.css';
 import './UniversalPalette/UniversalPalette.css';
+import './Modal/style.css';

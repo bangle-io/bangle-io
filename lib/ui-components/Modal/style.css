@@ -1,0 +1,12 @@
+.ui-components_modal-container {
+  background-color: var(--window-bgColor-1);
+  overscroll-behavior-y: contain;
+}
+
+.ui-components_modal-header {
+  border-bottom: 2px solid var(--window-border-color);
+}
+
+.ui-components_modal-overlay {
+  background-color: var(--window-modal-overlay-bgColor);
+}
