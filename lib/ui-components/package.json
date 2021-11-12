@@ -19,6 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",

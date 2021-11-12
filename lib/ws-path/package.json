@@ -20,6 +20,7 @@
   "module": "index.ts",
   "dependencies": {
     "@bangle.io/config": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*"
   },
   "devDependencies": {

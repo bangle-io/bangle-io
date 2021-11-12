@@ -8,5 +8,8 @@
     "directory": "worker",
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git"
+  },
+  "dependencies": {
+    "@bangle.io/shared-types": "workspace:*"
   }
 }

@@ -25,6 +25,7 @@
     "react": "*"
   },
   "dependencies": {
+    "@bangle.io/shared-types": "workspace:*",
     "fzf": "^0.4.1"
   },
   "devDependencies": {

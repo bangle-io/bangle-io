@@ -29,6 +29,7 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/object-sync": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/workspaces": "workspace:*",
     "idb-keyval": "^5.1.5"
   }

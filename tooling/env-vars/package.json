@@ -22,5 +22,8 @@
   },
   "main": "index.js",
   "module": "index.js",
-  "publishConfig": {}
+  "publishConfig": {},
+  "dependencies": {
+    "@bangle.io/shared-types": "workspace:*"
+  }
 }

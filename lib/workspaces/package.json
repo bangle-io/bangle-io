@@ -28,6 +28,7 @@
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "idb-keyval": "^5.1.5"

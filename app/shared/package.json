@@ -42,6 +42,7 @@
     "@bangle.io/note-tags": "workspace:*",
     "@bangle.io/object-sync": "workspace:*",
     "@bangle.io/search-notes": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "comlink": "^4.3.1",
     "core-js": "^3.19.0"
   },

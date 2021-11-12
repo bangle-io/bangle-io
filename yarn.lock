@@ -1754,6 +1754,7 @@ __metadata:
     "@bangle.dev/pm": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@types/react": ^17.0.33
@@ -1773,6 +1774,7 @@ __metadata:
   dependencies:
     "@bangle.io/action-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
@@ -1823,6 +1825,7 @@ __metadata:
     "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/shared": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/style": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
@@ -1858,6 +1861,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/app-state-context@workspace:lib/app-state-context"
   dependencies:
+    "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
@@ -1870,6 +1874,7 @@ __metadata:
   resolution: "@bangle.io/baby-fs@workspace:js-lib/baby-fs"
   dependencies:
     "@bangle.io/base-error": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     idb-keyval: ^5.1.5
   languageName: unknown
   linkType: soft
@@ -1877,6 +1882,8 @@ __metadata:
 "@bangle.io/base-error@workspace:*, @bangle.io/base-error@workspace:js-lib/base-error":
   version: 0.0.0-use.local
   resolution: "@bangle.io/base-error@workspace:js-lib/base-error"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1892,6 +1899,7 @@ __metadata:
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1904,6 +1912,7 @@ __metadata:
     "@bangle.dev/pm": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1911,12 +1920,16 @@ __metadata:
 "@bangle.io/config@workspace:*, @bangle.io/config@workspace:lib/config":
   version: 0.0.0-use.local
   resolution: "@bangle.io/config@workspace:lib/config"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
 "@bangle.io/constants@workspace:*, @bangle.io/constants@workspace:lib/constants":
   version: 0.0.0-use.local
   resolution: "@bangle.io/constants@workspace:lib/constants"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1924,6 +1937,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/contextual-ui-components@workspace:lib/contextual-ui-components"
   dependencies:
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -1951,6 +1965,7 @@ __metadata:
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -1975,6 +1990,7 @@ __metadata:
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -1999,6 +2015,7 @@ __metadata:
     "@babel/core": ^7.15.8
     "@babel/preset-env": ^7.15.8
     "@babel/preset-typescript": ^7.15.0
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     http-server: ^0.12.3
     jest: ^26.6.3
@@ -2020,6 +2037,7 @@ __metadata:
     "@bangle.dev/react": 0.27.6
     "@bangle.io/action-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2057,6 +2075,7 @@ __metadata:
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
@@ -2072,6 +2091,7 @@ __metadata:
     "@bangle.dev/pm": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/config": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
     "@testing-library/dom": ^8.10.1
     "@types/react": ^17.0.33
@@ -2092,6 +2112,7 @@ __metadata:
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2110,6 +2131,7 @@ __metadata:
     "@bangle.dev/pm": 0.27.6
     "@bangle.dev/test-helpers": 0.27.6
     "@bangle.dev/utils": 0.27.6
+    "@bangle.io/shared-types": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@types/jest": ^26.0.24
     "@types/react": ^17.0.33
@@ -2122,6 +2144,8 @@ __metadata:
 "@bangle.io/env-vars@workspace:*, @bangle.io/env-vars@workspace:tooling/env-vars":
   version: 0.0.0-use.local
   resolution: "@bangle.io/env-vars@workspace:tooling/env-vars"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2133,6 +2157,7 @@ __metadata:
     "@bangle.dev/pm": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -2145,6 +2170,7 @@ __metadata:
     "@bangle.dev/pm": 0.27.6
     "@bangle.dev/react": 0.27.6
     "@bangle.dev/utils": 0.27.6
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
@@ -2158,6 +2184,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/fzf-search@workspace:js-lib/fzf-search"
   dependencies:
+    "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.33
     fzf: ^0.4.1
     react: ^17.0.2
@@ -2178,6 +2205,7 @@ __metadata:
     "@bangle.dev/tooltip": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
@@ -2206,6 +2234,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
@@ -2232,6 +2261,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
@@ -2256,6 +2286,7 @@ __metadata:
     "@bangle.dev/tooltip": 0.27.6
     "@bangle.dev/utils": 0.27.6
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/dom": ^8.10.1
@@ -2278,6 +2309,7 @@ __metadata:
     "@bangle.dev/react": 0.27.6
     "@bangle.dev/tooltip": 0.27.6
     "@bangle.dev/utils": 0.27.6
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2297,6 +2329,7 @@ __metadata:
     "@bangle.dev/pm": 0.27.6
     "@bangle.dev/table": 0.27.6
     "@bangle.dev/utils": 0.27.6
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2305,6 +2338,7 @@ __metadata:
   resolution: "@bangle.io/naukar-proxy@workspace:worker/naukar-proxy"
   dependencies:
     "@bangle.io/naukar-worker": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -2322,6 +2356,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
     idb-keyval: ^5.1.5
   languageName: unknown
@@ -2334,6 +2369,7 @@ __metadata:
     "@bangle.io/action-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
@@ -2367,6 +2403,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2384,6 +2421,8 @@ __metadata:
 "@bangle.io/object-sync@workspace:*, @bangle.io/object-sync@workspace:js-lib/object-sync":
   version: 0.0.0-use.local
   resolution: "@bangle.io/object-sync@workspace:js-lib/object-sync"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2401,6 +2440,7 @@ __metadata:
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/note-tags": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
@@ -2413,6 +2453,12 @@ __metadata:
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/shared-types@workspace:*, @bangle.io/shared-types@workspace:lib/shared-types":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/shared-types@workspace:lib/shared-types"
   languageName: unknown
   linkType: soft
 
@@ -2443,6 +2489,7 @@ __metadata:
     "@bangle.io/note-tags": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/search-notes": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     comlink: ^4.3.1
     core-js: ^3.19.0
   languageName: unknown
@@ -2452,6 +2499,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/style@workspace:app/style"
   dependencies:
+    "@bangle.io/shared-types": "workspace:*"
     autoprefixer: ^10.3.7
     postcss: ^8.3.11
     tailwindcss: ^2.2.17
@@ -2471,6 +2519,7 @@ __metadata:
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@types/react": ^17.0.33
@@ -2486,6 +2535,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-bangle-button@workspace:lib/ui-bangle-button"
   dependencies:
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@popperjs/core": ^2.10.2
     "@react-aria/button": ^3.3.4
@@ -2514,6 +2564,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-components@workspace:lib/ui-components"
   dependencies:
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@testing-library/dom": ^8.10.1
     "@testing-library/react": ^12.1.2
@@ -2531,6 +2582,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-context@workspace:lib/ui-context"
   dependencies:
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2543,6 +2595,7 @@ __metadata:
   resolution: "@bangle.io/ui-dhancha@workspace:lib/ui-dhancha"
   dependencies:
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.33
@@ -2567,6 +2620,7 @@ __metadata:
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2586,6 +2640,7 @@ __metadata:
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/shared": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     comlink: ^4.3.1
     react: ^17.0.2
   languageName: unknown
@@ -2601,6 +2656,7 @@ __metadata:
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2622,6 +2678,7 @@ __metadata:
   resolution: "@bangle.io/workspace-sidebar@workspace:app/workspace-sidebar"
   dependencies:
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2648,6 +2705,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2672,6 +2730,7 @@ __metadata:
   resolution: "@bangle.io/ws-path@workspace:lib/ws-path"
   dependencies:
     "@bangle.io/config": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/history": ^4.7.9
     "@types/react": ^17.0.33
@@ -4980,6 +5039,8 @@ __metadata:
 "app@workspace:app":
   version: 0.0.0-use.local
   resolution: "app@workspace:app"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5471,6 +5532,7 @@ __metadata:
     "@bangle.dev/jest-utils": 0.27.6
     "@bangle.io/app-entry": "workspace:*"
     "@bangle.io/env-vars": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@sentry/react": ^6.13.3
     "@sentry/tracing": ^6.13.3
     "@sentry/webpack-plugin": ^1.18.3
@@ -8270,6 +8332,8 @@ __metadata:
 "extensions@workspace:extensions":
   version: 0.0.0-use.local
   resolution: "extensions@workspace:extensions"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -11005,6 +11069,8 @@ __metadata:
 "js-lib@workspace:js-lib":
   version: 0.0.0-use.local
   resolution: "js-lib@workspace:js-lib"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -11341,6 +11407,8 @@ __metadata:
 "lib@workspace:lib":
   version: 0.0.0-use.local
   resolution: "lib@workspace:lib"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -14457,6 +14525,8 @@ __metadata:
 "scripts@workspace:tooling/_scripts":
   version: 0.0.0-use.local
   resolution: "scripts@workspace:tooling/_scripts"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -15805,6 +15875,8 @@ __metadata:
 "tooling@workspace:tooling":
   version: 0.0.0-use.local
   resolution: "tooling@workspace:tooling"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -17083,6 +17155,8 @@ __metadata:
 "worker@workspace:worker":
   version: 0.0.0-use.local
   resolution: "worker@workspace:worker"
+  dependencies:
+    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 

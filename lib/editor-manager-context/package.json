@@ -24,6 +24,7 @@
     "@bangle.dev/pm": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
     "@bangle.io/config": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "^17.0.2",

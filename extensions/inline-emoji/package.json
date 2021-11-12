@@ -29,6 +29,7 @@
     "@bangle.dev/tooltip": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "emoji-lookup-data": "^1.3.0",

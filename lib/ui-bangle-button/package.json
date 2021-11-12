@@ -19,6 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@popperjs/core": "^2.10.2",
     "@react-aria/button": "^3.3.4",

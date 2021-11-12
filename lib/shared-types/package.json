@@ -1,5 +1,5 @@
 {
-  "name": "scripts",
+  "name": "@bangle.io/shared-types",
   "version": "0.0.0",
   "authors": [
     {
@@ -8,25 +8,17 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "engines": {
-    "node": ">=14"
-  },
-  "engineStrict": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "tooling/_scripts"
+    "directory": "lib/extension-registry"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "main": "index.js",
-  "module": "index.js",
-  "scripts": {
-    "g:package-patrol": "yarn node package-patrol"
-  },
-  "publishConfig": {},
-  "dependencies": {
-    "@bangle.io/shared-types": "workspace:*"
+  "types": "index.ts",
+  "publishConfig": {
+    "access": "restricted",
+    "types": "./dist/index.d.ts"
   }
 }
