@@ -2,11 +2,20 @@ import React, { useCallback } from 'react';
 
 import type { DispatchActionType } from '@bangle.io/action-context';
 import {
+  CORE_ACTIONS_NEW_NOTE,
+  CORE_ACTIONS_NEW_WORKSPACE,
+  CORE_ACTIONS_TOGGLE_THEME,
+  CORE_PALETTES_TOGGLE_ACTION_PALETTE,
+  CORE_PALETTES_TOGGLE_NOTES_PALETTE,
+  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+} from '@bangle.io/constants';
+import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
+import {
   DropdownMenu,
   MenuItem,
   MenuSection,
 } from '@bangle.io/ui-bangle-button';
-import { SettingsIcon } from '@bangle.io/ui-components';
+import { PrettyKeybinding, SettingsIcon } from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 
 import { buttonStyling } from './ActivitybarButton';
@@ -31,9 +40,11 @@ type AllKeysType =
 export function ActivitybarOptionsDropdown({
   widescreen,
   dispatchAction,
+  actionKeybindings,
 }: {
   widescreen: boolean;
   dispatchAction: DispatchActionType;
+  actionKeybindings: ActionKeybindingMapping;
 }) {
   const onAction = useCallback(
     (k: any) => {
@@ -41,25 +52,25 @@ export function ActivitybarOptionsDropdown({
       switch (key) {
         case ActionPaletteKey: {
           dispatchAction({
-            name: 'action::bangle-io-core-palettes:TOGGLE_ACTION_PALETTE',
+            name: CORE_PALETTES_TOGGLE_ACTION_PALETTE,
           });
           break;
         }
         case NewNoteKey: {
           dispatchAction({
-            name: 'action::bangle-io-core-actions:NEW_NOTE_ACTION',
+            name: CORE_ACTIONS_NEW_NOTE,
           });
           break;
         }
         case NewWorkspaceKey: {
           dispatchAction({
-            name: 'action::bangle-io-core-actions:NEW_WORKSPACE_ACTION',
+            name: CORE_ACTIONS_NEW_WORKSPACE,
           });
           break;
         }
         case NotesPaletteKey: {
           dispatchAction({
-            name: 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE',
+            name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
           });
           break;
         }
@@ -72,13 +83,13 @@ export function ActivitybarOptionsDropdown({
         }
         case SwitchWorkspaceKey: {
           dispatchAction({
-            name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',
+            name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
           });
           break;
         }
         case ToggleThemeKey: {
           dispatchAction({
-            name: 'action::bangle-io-core-actions:TOGGLE_THEME_ACTION',
+            name: CORE_ACTIONS_TOGGLE_THEME,
           });
           break;
         }
@@ -90,6 +101,10 @@ export function ActivitybarOptionsDropdown({
     [dispatchAction],
   );
 
+  console.log(
+    actionKeybindings,
+    actionKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] || '',
+  );
   return (
     <DropdownMenu
       isButtonQuiet
@@ -109,14 +124,33 @@ export function ActivitybarOptionsDropdown({
           New note
         </MenuItem>
         <MenuItem key={NewWorkspaceKey}>New workspace</MenuItem>
-        <MenuItem key={SwitchWorkspaceKey}>Switch workspace</MenuItem>
+        <MenuItem key={SwitchWorkspaceKey} textValue="switch workspace">
+          <span>Switch workspace</span>
+          <PrettyKeybinding
+            rawKey={
+              actionKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] || ''
+            }
+          />
+        </MenuItem>
       </MenuSection>
       <MenuSection aria-label="ui">
         <MenuItem key={ToggleThemeKey}>Toggle dark theme</MenuItem>
       </MenuSection>
       <MenuSection aria-label="palettes">
-        <MenuItem key={NotesPaletteKey}>Notes palette</MenuItem>
-        <MenuItem key={ActionPaletteKey}>Action palette</MenuItem>
+        <MenuItem key={NotesPaletteKey} textValue="notes palette">
+          <span>Notes palette</span>
+          <PrettyKeybinding
+            rawKey={actionKeybindings[CORE_PALETTES_TOGGLE_NOTES_PALETTE] || ''}
+          />
+        </MenuItem>
+        <MenuItem key={ActionPaletteKey} textValue="action palette">
+          <span>Action palette</span>
+          <PrettyKeybinding
+            rawKey={
+              actionKeybindings[CORE_PALETTES_TOGGLE_ACTION_PALETTE] || ''
+            }
+          />
+        </MenuItem>
       </MenuSection>
       <MenuSection aria-label="links">
         <MenuItem key={ReportIssueKey}>Report issue</MenuItem>

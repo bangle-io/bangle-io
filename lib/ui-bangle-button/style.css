@@ -6,9 +6,10 @@
 
 .ui-bangle-button_dropdown-menu {
   min-width: 300px;
-  background-color: var(--window-tooltip-bgColor);
-  color: var(--window-tooltip-color);
+  background-color: var(--window-dropdown-bgColor);
+  color: var(--window-dropdown-color);
   z-index: var(--window-tooltip-zIndex);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 28px;
 }
 
 .ui-bangle-button_dropdown-menu-item.is-focused {

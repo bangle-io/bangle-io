@@ -40,10 +40,13 @@ describe('Options', () => {
       Array [
         "New note",
         "New workspace",
-        "Switch workspace",
+        "Switch workspace
+      CtrlR",
         "Toggle dark theme",
-        "Notes palette",
-        "Action palette",
+        "Notes palette
+      ⌘P",
+        "Action palette
+      ⌘⇧P",
         "Report issue",
       ]
     `);

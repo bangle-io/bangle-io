@@ -8,12 +8,6 @@ import reactDOM from 'react-dom';
 import { BaseButton, BaseButtonProps, StylingProps } from './BaseButton';
 import { useTooltipPositioner } from './use-positioner';
 
-if (typeof window !== undefined) {
-  if (!document.getElementById('tooltip-container')) {
-    throw new Error('element with id tooltip-container needs to exist');
-  }
-}
-
 export function ActionButton({
   ariaLabel,
   children,

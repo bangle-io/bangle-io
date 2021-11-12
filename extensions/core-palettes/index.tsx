@@ -1,6 +1,11 @@
 import React from 'react';
 
 import { isFirefox } from '@bangle.io/config';
+import {
+  CORE_PALETTES_TOGGLE_ACTION_PALETTE,
+  CORE_PALETTES_TOGGLE_NOTES_PALETTE,
+  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+} from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 
 import { ActionHandler } from './ActionHandler';
@@ -25,19 +30,19 @@ const extension = Extension.create({
     ],
     actions: [
       {
-        name: 'action::bangle-io-core-palettes:TOGGLE_ACTION_PALETTE',
+        name: CORE_PALETTES_TOGGLE_ACTION_PALETTE,
         title: 'Action Palette',
         hidden: true,
         keybinding: isFirefox ? 'Mod-o' : 'Mod-P',
       },
       {
-        name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',
+        name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
         title: 'Workspace Palette',
         hidden: true,
         keybinding: 'Ctrl-r',
       },
       {
-        name: 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE',
+        name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
         title: 'Notes Palette',
         hidden: true,
         keybinding: 'Mod-p',

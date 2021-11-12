@@ -4,15 +4,15 @@
 }
 
 .bangle-editor p > code {
-  background-color: var(--window-bgColor-2);
+  background-color: var(--base-300);
   color: var(--textColor-1);
 }
 .bangle-editor pre {
-  background-color: var(--window-bgColor-2);
+  background-color: var(--base-300);
 }
 
 .bangle-editor blockquote {
-  background-color: var(--window-bgColor-2);
+  background-color: var(--base-300);
   color: var(--textColor-1);
 }
 

@@ -9,7 +9,11 @@ NodeList [
     role="menuitem"
     tabindex="-1"
   >
-    New note
+    <span
+      class="inline-flex justify-between w-full"
+    >
+      New note
+    </span>
   </li>,
   <li
     aria-disabled="false"
@@ -18,7 +22,11 @@ NodeList [
     role="menuitem"
     tabindex="-1"
   >
-    New workspace
+    <span
+      class="inline-flex justify-between w-full"
+    >
+      New workspace
+    </span>
   </li>,
   <li
     aria-disabled="false"
@@ -27,7 +35,32 @@ NodeList [
     role="menuitem"
     tabindex="-1"
   >
-    Switch workspace
+    <span
+      class="inline-flex justify-between w-full"
+    >
+      <span>
+        Switch workspace
+      </span>
+      <span
+        class="inline ui-components_pretty-keybinding"
+      >
+        <kbd
+          class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+        >
+          Ctrl
+        </kbd>
+        <kbd
+          class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+        >
+          ⇧
+        </kbd>
+        <kbd
+          class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+        >
+          p
+        </kbd>
+      </span>
+    </span>
   </li>,
   <li
     aria-disabled="false"
@@ -36,7 +69,11 @@ NodeList [
     role="menuitem"
     tabindex="-1"
   >
-    Toggle dark theme
+    <span
+      class="inline-flex justify-between w-full"
+    >
+      Toggle dark theme
+    </span>
   </li>,
   <li
     aria-disabled="false"
@@ -45,7 +82,20 @@ NodeList [
     role="menuitem"
     tabindex="-1"
   >
-    Notes palette
+    <span
+      class="inline-flex justify-between w-full"
+    >
+      <span>
+        Notes palette
+      </span>
+      <span
+        class="inline ui-components_pretty-keybinding"
+      >
+        <kbd
+          class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+        />
+      </span>
+    </span>
   </li>,
   <li
     aria-disabled="false"
@@ -54,7 +104,20 @@ NodeList [
     role="menuitem"
     tabindex="-1"
   >
-    Action palette
+    <span
+      class="inline-flex justify-between w-full"
+    >
+      <span>
+        Action palette
+      </span>
+      <span
+        class="inline ui-components_pretty-keybinding"
+      >
+        <kbd
+          class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+        />
+      </span>
+    </span>
   </li>,
   <li
     aria-disabled="false"
@@ -63,7 +126,11 @@ NodeList [
     role="menuitem"
     tabindex="-1"
   >
-    Report issue
+    <span
+      class="inline-flex justify-between w-full"
+    >
+      Report issue
+    </span>
   </li>,
 ]
 `;

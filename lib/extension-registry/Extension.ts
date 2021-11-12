@@ -4,9 +4,16 @@ import type { RawSpecs } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
+import type {
+  ActionDefinitionType,
+  ActionHandler,
+} from '@bangle.io/shared-types';
+
 import type { ExtensionRegistry } from './ExtensionRegistry';
 import { EditorPluginDefinition } from './PluginType';
 import { ExtensionPaletteType } from './UniversalPaletteType';
+
+const _check = Symbol();
 
 export type RenderReactNodeViewCb = (arg: {
   nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
@@ -18,8 +25,6 @@ export type RenderReactNodeViewCb = (arg: {
 export type RenderReactNodeView = {
   [k: string]: RenderReactNodeViewCb;
 };
-
-const _check = Symbol();
 
 export interface EditorConfig {
   name: string;
@@ -51,20 +56,6 @@ export interface EditorConfig {
   }) => any;
 }
 
-export type ActionNameType = `action::${string}`;
-export interface ActionType {
-  name: ActionNameType;
-  value?: any;
-}
-export interface ActionDefinitionType {
-  name: ActionType['name'];
-  title: string;
-  keybinding?: string;
-  // when true, will hide it from the user
-  hidden?: boolean;
-}
-
-export type ActionHandler = (action: ActionType) => boolean;
 export type RegisterActionHandlerType = (cb: ActionHandler) => () => void;
 export interface ApplicationConfig {
   name: string;

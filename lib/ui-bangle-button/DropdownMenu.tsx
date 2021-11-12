@@ -283,7 +283,9 @@ function MenuItemWrapper({
         isFocused && 'is-focused',
       )}
     >
-      {item.rendered}
+      <span className="inline-flex justify-between w-full">
+        {item.rendered}
+      </span>
     </li>
   );
 }

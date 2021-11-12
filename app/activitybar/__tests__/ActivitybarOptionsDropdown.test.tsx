@@ -2,14 +2,26 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import {
+  CORE_ACTIONS_NEW_NOTE,
+  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+} from '@bangle.io/constants';
+
+import {
   ActivitybarOptionsDropdown,
   NewNoteKey,
 } from '../ActivitybarOptionsDropdown';
 
+const actionKeybindings = {
+  [CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE]: 'Ctrl-P',
+};
 test('renders correctly', () => {
   let result = render(
     <div>
-      <ActivitybarOptionsDropdown widescreen={true} dispatchAction={() => {}} />
+      <ActivitybarOptionsDropdown
+        actionKeybindings={actionKeybindings}
+        widescreen={true}
+        dispatchAction={() => {}}
+      />
     </div>,
   );
 
@@ -19,7 +31,11 @@ test('renders correctly', () => {
 test('clicking the button shows dropdown', async () => {
   let result = render(
     <div>
-      <ActivitybarOptionsDropdown widescreen={true} dispatchAction={() => {}} />
+      <ActivitybarOptionsDropdown
+        actionKeybindings={actionKeybindings}
+        widescreen={true}
+        dispatchAction={() => {}}
+      />
     </div>,
   );
 
@@ -33,6 +49,10 @@ test('clicking the button shows dropdown', async () => {
     expect(targetOption).toBeTruthy();
   });
 
+  // check if keyboard shortcut is hsown
+  // note: kbd utility prettifies 'Ctrl-P' to 'Ctrl-⇧'
+  expect([...targetOption].find((t) => t.innerHTML.includes('⇧'))).toBeTruthy();
+
   expect(targetOption).toMatchSnapshot();
 });
 
@@ -41,6 +61,7 @@ test('clicking items in dropdown dispatches event', async () => {
   let result = render(
     <div>
       <ActivitybarOptionsDropdown
+        actionKeybindings={actionKeybindings}
         widescreen={true}
         dispatchAction={dispatch}
       ></ActivitybarOptionsDropdown>
@@ -64,6 +85,6 @@ test('clicking items in dropdown dispatches event', async () => {
 
   expect(dispatch).toBeCalledTimes(1);
   expect(dispatch).nthCalledWith(1, {
-    name: 'action::bangle-io-core-actions:NEW_NOTE_ACTION',
+    name: CORE_ACTIONS_NEW_NOTE,
   });
 });

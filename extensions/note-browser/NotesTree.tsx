@@ -3,6 +3,10 @@ import { useVirtual } from 'react-virtual';
 
 import { useActionContext } from '@bangle.io/action-context';
 import {
+  CORE_ACTIONS_NEW_NOTE,
+  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+} from '@bangle.io/constants';
+import {
   ButtonIcon,
   ChevronDownIcon,
   ChevronRightIcon,
@@ -57,7 +61,7 @@ export function NotesTree() {
   const createNewFile = useCallback(
     (path) => {
       dispatchAction({
-        name: 'action::bangle-io-core-actions:NEW_NOTE_ACTION',
+        name: CORE_ACTIONS_NEW_NOTE,
         value: path,
       });
     },
@@ -71,7 +75,7 @@ export function NotesTree() {
           className="text-sm font-extrabold cursor-pointer bangle-io_textColorLighter"
           onClick={() => {
             dispatchAction({
-              name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',
+              name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
             });
           }}
         >

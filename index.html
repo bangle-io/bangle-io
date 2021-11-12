@@ -34,22 +34,28 @@
         /*  strength? - number 0 being strongest and weaker from their */
 
         /* alternate bg */
-        --dark-base-50: #252525;
-        --dark-base-75: #2f2f2f;
+        --dark-base-50: #080808;
+        --dark-base-75: #1a1a1a;
         /* base bg */
-        --dark-base-100: #323232;
-        --dark-base-200: #3e3e3e;
-        --dark-base-300: #4a4a4a;
-        --dark-base-400: #5a5a5a;
-        --dark-base-500: #6e6e6e;
-        --dark-base-600: #909090;
-        --dark-base-700: #b9b9b9;
-        --dark-base-800: #e3e3e3;
-        --dark-base-900: #ffffff;
+        --dark-base-100: #1e1e1e;
+        /* base bg sidebar */
+        --dark-base-150: #252525;
+        --dark-base-200: #2c2c2c;
+        --dark-base-300: #393939;
+        --dark-base-400: #494949;
+        /* disabled text */
+        --dark-base-500: #5c5c5c;
+        /* placeholder text */
+        --dark-base-600: #7c7c7c;
+        /* text content */
+        --dark-base-700: #a2a2a2;
+        --dark-base-800: #c8c8c8;
+        --dark-base-900: #efefef;
 
         --light-base-50: #ffffff;
         --light-base-75: #fafafa;
         --light-base-100: #f5f5f5;
+        --light-base-150: #f0f0f0;
         --light-base-200: #eaeaea;
         --light-base-300: #e1e1e1;
         --light-base-400: #cacaca;
@@ -91,14 +97,14 @@
         --window-tooltip-zIndex: 1000;
         --window-modal-zIndex: 500;
 
-        --light-window-bgColor-0: rgb(251, 251, 251);
-        --dark-window-bgColor-0: rgb(27, 26, 26);
+        --light-window-bgColor-0: var(--base-100);
+        --dark-window-bgColor-0: var(--base-100);
 
-        --light-window-bgColor-1: rgb(247, 247, 248);
-        --dark-window-bgColor-1: rgb(31, 30, 30);
+        --light-window-bgColor-1: var(--base-75);
+        --dark-window-bgColor-1: var(--base-75);
 
-        --light-window-bgColor-2: rgb(241, 243, 242);
-        --dark-window-bgColor-2: rgb(43, 45, 47);
+        --light-window-bgColor-2: var(--base-50);
+        --dark-window-bgColor-2: var(--base-50);
 
         --light-window-link-color: #4299e1;
         --dark-window-link-color: #4299e1;
@@ -107,15 +113,25 @@
         --dark-window-highlight-bgColor: rgba(255, 255, 0, 0.5);
 
         --light-window-tooltip-bgColor: var(--base-50);
-        --dark-window-tooltip-bgColor: rgb(40, 41, 45);
+        --dark-window-tooltip-bgColor: var(--base-50);
         --light-window-tooltip-color: var(--textColor-1);
         --dark-window-tooltip-color: var(--textColor-0);
 
-        --light-window-borderColor-0: rgb(232, 232, 232);
-        --dark-window-borderColor-0: rgb(61, 63, 67);
+        --light-window-dropdown-bgColor: var(--base-75);
+        --dark-window-dropdown-bgColor: var(--base-75);
+        --light-window-dropdown-color: var(--textColor-1);
+        --dark-window-dropdown-color: var(--textColor-1);
 
-        --light-window-borderColor-1: rgb(241, 243, 244);
-        --dark-window-borderColor-1: rgb(49, 48, 49);
+        --light-window-kbd-bgColor: var(--base-300);
+        --light-window-kbd-color: var(--textColor-1);
+        --dark-window-kbd-bgColor: var(--base-400);
+        --dark-window-kbd-color: var(--textColor-1);
+
+        --light-window-borderColor-0: var(--base-300);
+        --dark-window-borderColor-0: var(--base-400);
+
+        --light-window-borderColor-1: var(--base-300);
+        --dark-window-borderColor-1: var(--base-400);
 
         --light-window-modal-overlay-bgColor: rgba(0, 0, 0, 0.6);
         --dark-window-modal-overlay-bgColor: rgba(0, 0, 0, 0.6);
@@ -128,20 +144,20 @@
 
         /* workspace-sidebar */
         --workspaceSidebar-width: 300px;
-        --light-workspaceSidebar-bgColor: var(--window-bgColor-1);
-        --dark-workspaceSidebar-bgColor: var(--window-bgColor-1);
+        --light-workspaceSidebar-bgColor: var(--base-150);
+        --dark-workspaceSidebar-bgColor: var(--base-150);
 
         --universalPalette-maxWidth: 620px;
-        --light-universalPalette-bgColor: var(--window-bgColor-2);
-        --dark-universalPalette-bgColor: var(--window-bgColor-2);
+        --light-universalPalette-bgColor: var(--window-bgColor-1);
+        --dark-universalPalette-bgColor: var(--window-bgColor-1);
 
         --inlineUniversalPalette-maxWidth: 350px;
         --inlineUniversalPalette-maxHeight: 33vh;
 
         /* Extension: Note tag */
-        --light-noteTags-text-color: rgb(226, 226, 226);
+        --light-noteTags-color: rgb(226, 226, 226);
         --light-noteTags-bgColor: rgb(105, 105, 105);
-        --dark-noteTags-text-color: rgb(66, 66, 66);
+        --dark-noteTags-color: rgb(66, 66, 66);
         --dark-noteTags-bgColor: rgb(205, 205, 205);
 
         /* activitybar */

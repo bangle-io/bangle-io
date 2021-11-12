@@ -2,6 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { useActionContext } from '@bangle.io/action-context';
+import {
+  CORE_ACTIONS_NEW_NOTE,
+  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+} from '@bangle.io/constants';
 import { ActionButton, TooltipWrapper } from '@bangle.io/ui-bangle-button';
 import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
 import {
@@ -57,7 +61,7 @@ export function EmptyEditorPage() {
           tooltip={<TooltipWrapper>Switch workspace</TooltipWrapper>}
           onPress={() => {
             dispatchAction({
-              name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',
+              name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
             });
           }}
         >
@@ -75,7 +79,7 @@ export function EmptyEditorPage() {
         ariaLabel="create note"
         onPress={() => {
           dispatchAction({
-            name: 'action::bangle-io-core-actions:NEW_NOTE_ACTION',
+            name: CORE_ACTIONS_NEW_NOTE,
           });
         }}
       >

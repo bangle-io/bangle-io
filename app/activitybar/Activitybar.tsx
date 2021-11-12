@@ -3,7 +3,12 @@ import { useHistory } from 'react-router-dom';
 
 import { useActionContext } from '@bangle.io/action-context';
 import type { SidebarType } from '@bangle.io/extension-registry';
-import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
+import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
+import {
+  GiftIcon,
+  PrettyKeybinding,
+  SingleCharIcon,
+} from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { ActivitybarButton } from './ActivitybarButton';
@@ -14,10 +19,12 @@ export function Activitybar({
   wsName,
   sidebars,
   primaryWsPath,
+  actionKeybindings,
 }: {
   wsName?: string;
   primaryWsPath?: string;
   sidebars: SidebarType[];
+  actionKeybindings: ActionKeybindingMapping;
 }) {
   const { changelogHasUpdates, sidebar, dispatch, widescreen } =
     useUIManagerContext();
@@ -92,6 +99,7 @@ export function Activitybar({
         }}
       />
       <ActivitybarOptionsDropdown
+        actionKeybindings={actionKeybindings}
         widescreen={widescreen}
         dispatchAction={dispatchAction}
       />

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 
 import type { DispatchActionType } from '@bangle.io/action-context';
+import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
 import { ActionButton, TooltipWrapper } from '@bangle.io/ui-bangle-button';
 import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
@@ -33,7 +34,7 @@ export function EditorBar({
 
   const openNotesPalette = useCallback(() => {
     dispatchAction({
-      name: 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE',
+      name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
     });
   }, [dispatchAction]);
 

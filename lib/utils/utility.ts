@@ -336,7 +336,7 @@ export function findWrappingScrollable(node: Element): Element | undefined {
   return undefined;
 }
 
-export function keyDisplayValue(key) {
+export function keyDisplayValue(key: string): string {
   if (key.includes('Mod')) {
     key = key.split('Mod').join(isMac ? '⌘' : 'Ctrl');
   }

@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import { ActionHandler } from '@bangle.io/extension-registry';
+import type { ActionHandler } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { SearchNotesActionHandler } from '../action-handler';

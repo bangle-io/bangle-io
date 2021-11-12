@@ -1,36 +1,36 @@
+import {
+  CORE_ACTIONS_CLONE_WORKSPACE,
+  CORE_ACTIONS_CLOSE_EDITOR,
+  CORE_ACTIONS_DELETE_ACTIVE_NOTE,
+  CORE_ACTIONS_NEW_NOTE,
+  CORE_ACTIONS_NEW_WORKSPACE,
+  CORE_ACTIONS_RENAME_ACTIVE_NOTE,
+  CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
+  CORE_ACTIONS_TOGGLE_FILE_SIDEBAR,
+  CORE_ACTIONS_TOGGLE_THEME,
+} from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 
-import {
-  CLONE_WORKSPACE_ACTION,
-  CLOSE_EDITOR_ACTION,
-  DELETE_ACTIVE_NOTE_ACTION,
-  extensionName,
-  NEW_NOTE_ACTION,
-  NEW_WORKSPACE_ACTION,
-  RENAME_ACTIVE_NOTE_ACTION,
-  TOGGLE_EDITOR_SPLIT_ACTION,
-  TOGGLE_FILE_SIDEBAR_ACTION,
-  TOGGLE_THEME_ACTION,
-} from './config';
+import { extensionName } from './config';
 import { CoreActionsHandler } from './CoreActionsHandler';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
     actions: [
-      { name: CLONE_WORKSPACE_ACTION, title: 'Clone current workspace' },
-      { name: CLOSE_EDITOR_ACTION, title: 'Close editor/s' },
-      { name: DELETE_ACTIVE_NOTE_ACTION, title: 'Delete active note' },
-      { name: NEW_NOTE_ACTION, title: 'New note' },
-      { name: NEW_WORKSPACE_ACTION, title: 'New workspace' },
-      { name: RENAME_ACTIVE_NOTE_ACTION, title: 'Rename active note' },
+      { name: CORE_ACTIONS_CLONE_WORKSPACE, title: 'Clone current workspace' },
+      { name: CORE_ACTIONS_CLOSE_EDITOR, title: 'Close editor/s' },
+      { name: CORE_ACTIONS_DELETE_ACTIVE_NOTE, title: 'Delete active note' },
+      { name: CORE_ACTIONS_NEW_NOTE, title: 'New note' },
+      { name: CORE_ACTIONS_NEW_WORKSPACE, title: 'New workspace' },
+      { name: CORE_ACTIONS_RENAME_ACTIVE_NOTE, title: 'Rename active note' },
       {
-        name: TOGGLE_EDITOR_SPLIT_ACTION,
+        name: CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
         title: 'Toggle editor split screen',
         keybinding: 'Mod-\\',
       },
-      { name: TOGGLE_FILE_SIDEBAR_ACTION, title: 'Toggle file sidebar' },
-      { name: TOGGLE_THEME_ACTION, title: 'Toggle theme' },
+      { name: CORE_ACTIONS_TOGGLE_FILE_SIDEBAR, title: 'Toggle file sidebar' },
+      { name: CORE_ACTIONS_TOGGLE_THEME, title: 'Toggle theme' },
     ],
     ReactComponent: CoreActionsHandler,
   },
