@@ -1,21 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
+import {
+  CORE_ACTIONS_CLONE_WORKSPACE,
+  CORE_ACTIONS_CLOSE_EDITOR,
+  CORE_ACTIONS_DELETE_ACTIVE_NOTE,
+  CORE_ACTIONS_NEW_NOTE,
+  CORE_ACTIONS_NEW_WORKSPACE,
+  CORE_ACTIONS_RENAME_ACTIVE_NOTE,
+  CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
+  CORE_ACTIONS_TOGGLE_FILE_SIDEBAR,
+  CORE_ACTIONS_TOGGLE_THEME,
+} from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import {
-  CLONE_WORKSPACE_ACTION,
-  CLOSE_EDITOR_ACTION,
-  DELETE_ACTIVE_NOTE_ACTION,
-  NEW_NOTE_ACTION,
-  NEW_WORKSPACE_ACTION,
-  RENAME_ACTIVE_NOTE_ACTION,
-  TOGGLE_EDITOR_SPLIT_ACTION,
-  TOGGLE_FILE_SIDEBAR_ACTION,
-  TOGGLE_THEME_ACTION,
-} from './config';
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
 
@@ -40,20 +40,20 @@ export function CoreActionsHandler({ registerActionHandler }) {
   const actionHandler = useCallback(
     (actionObject) => {
       switch (actionObject.name) {
-        case TOGGLE_THEME_ACTION: {
+        case CORE_ACTIONS_TOGGLE_THEME: {
           dispatch({
             type: 'UI/TOGGLE_THEME',
           });
           return true;
         }
-        case TOGGLE_FILE_SIDEBAR_ACTION: {
+        case CORE_ACTIONS_TOGGLE_FILE_SIDEBAR: {
           dispatch({
             type: 'UI/TOGGLE_SIDEBAR',
             value: { type: 'file-browser' },
           });
           return true;
         }
-        case NEW_NOTE_ACTION: {
+        case CORE_ACTIONS_NEW_NOTE: {
           if (!wsName) {
             dispatch({
               type: 'UI/SHOW_NOTIFICATION',
@@ -78,7 +78,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
-        case NEW_WORKSPACE_ACTION: {
+        case CORE_ACTIONS_NEW_WORKSPACE: {
           // To avoid overlapping
           dispatch({
             type: 'UI/UPDATE_PALETTE',
@@ -88,7 +88,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
-        case CLONE_WORKSPACE_ACTION: {
+        case CORE_ACTIONS_CLONE_WORKSPACE: {
           // no point clone if there is no active workspace
           if (!wsName) {
             dispatch({
@@ -115,7 +115,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
-        case RENAME_ACTIVE_NOTE_ACTION: {
+        case CORE_ACTIONS_RENAME_ACTIVE_NOTE: {
           if (!primaryWsPath) {
             dispatch({
               type: 'UI/SHOW_NOTIFICATION',
@@ -137,7 +137,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
-        case DELETE_ACTIVE_NOTE_ACTION: {
+        case CORE_ACTIONS_DELETE_ACTIVE_NOTE: {
           if (!primaryWsPath) {
             dispatch({
               type: 'UI/SHOW_NOTIFICATION',
@@ -187,7 +187,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
-        case TOGGLE_EDITOR_SPLIT_ACTION: {
+        case CORE_ACTIONS_TOGGLE_EDITOR_SPLIT: {
           if (secondaryWsPath) {
             updateOpenedWsPaths((openedWsPath) =>
               openedWsPath.updateSecondaryWsPath(undefined),
@@ -200,7 +200,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
-        case CLOSE_EDITOR_ACTION: {
+        case CORE_ACTIONS_CLOSE_EDITOR: {
           const editorId = actionObject.value;
           if (editorId) {
             updateOpenedWsPaths((openedWsPaths) =>

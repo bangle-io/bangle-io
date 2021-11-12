@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
+import { CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE } from '@bangle.io/constants';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -40,7 +41,7 @@ export function SearchNotesSidebar() {
           className="text-sm font-extrabold cursor-pointer textColor-1"
           onClick={() => {
             dispatchAction({
-              name: 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE',
+              name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
             });
           }}
         >

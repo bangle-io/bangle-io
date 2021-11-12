@@ -25,5 +25,9 @@
   "scripts": {
     "g:package-patrol": "yarn node package-patrol"
   },
-  "publishConfig": {}
+  "publishConfig": {},
+  "dependencies": {
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*"
+  }
 }

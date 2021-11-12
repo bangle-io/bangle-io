@@ -32,19 +32,28 @@ describe('Options', () => {
     expect(Boolean(optionsHandle)).toBe(true);
 
     expect(
-      await page.$$eval(
-        '[aria-label^="Options dropdown"] li[data-key]',
-        (nodes) => nodes.map((n) => n.innerText),
-      ),
+      [
+        ...(await page.$$eval(
+          '[aria-label^="Options dropdown"] li[data-key]',
+          (nodes) => nodes.map((n) => n.innerText),
+        )),
+      ]
+        // to consistify with mac and linux
+        .map((r) => r.split('⌘').join('Ctrl')),
     ).toMatchInlineSnapshot(`
       Array [
         "New note",
         "New workspace",
-        "Switch workspace",
+        "Switch workspace
+      CtrlR",
         "Toggle dark theme",
-        "Notes palette",
-        "Action palette",
+        "Notes palette
+      CtrlP",
+        "Action palette
+      Ctrl⇧P",
         "Report issue",
+        "Twitter",
+        "Discord",
       ]
     `);
   });

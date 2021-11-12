@@ -1,6 +1,8 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
+import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
+
 import { EditorBar } from '../EditorBar';
 
 test('renders correctly', () => {
@@ -60,7 +62,7 @@ test('dispatches action on clicking wsPath', () => {
 
   expect(dispatchAction).toBeCalledTimes(1);
   expect(dispatchAction).nthCalledWith(1, {
-    name: 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE',
+    name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
   });
 });
 

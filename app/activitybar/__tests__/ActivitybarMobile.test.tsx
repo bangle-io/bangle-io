@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React, { useEffect, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
+import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { Activitybar } from '../Activitybar';
@@ -39,7 +40,7 @@ beforeEach(() => {
 test('renders mobile view', () => {
   let result = render(
     <div>
-      <Activitybar sidebars={[]}></Activitybar>
+      <Activitybar actionKeybindings={{}} sidebars={[]}></Activitybar>
     </div>,
   );
 
@@ -50,6 +51,7 @@ test('renders primaryWsPath', () => {
   let result = render(
     <div>
       <Activitybar
+        actionKeybindings={{}}
         sidebars={[]}
         primaryWsPath={'my-thing:wow.md'}
       ></Activitybar>
@@ -68,6 +70,7 @@ test('dispatches action', () => {
   let result = render(
     <div>
       <Activitybar
+        actionKeybindings={{}}
         sidebars={[]}
         primaryWsPath={'my-thing:wow.md'}
       ></Activitybar>
@@ -78,6 +81,6 @@ test('dispatches action', () => {
   });
   expect(dispatchAction).toBeCalledTimes(1);
   expect(dispatchAction).nthCalledWith(1, {
-    name: 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE',
+    name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
   });
 });

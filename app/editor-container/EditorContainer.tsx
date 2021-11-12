@@ -3,6 +3,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
 
 import { useActionContext } from '@bangle.io/action-context';
+import {
+  CORE_ACTIONS_CLOSE_EDITOR,
+  CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
+} from '@bangle.io/constants';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
@@ -33,13 +37,13 @@ export function EditorContainer({
 
   const onPressSecondaryEditor = useCallback(() => {
     dispatchAction({
-      name: 'action::bangle-io-core-actions:TOGGLE_EDITOR_SPLIT_ACTION',
+      name: CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
     });
   }, [dispatchAction]);
 
   const onClose = useCallback(() => {
     dispatchAction({
-      name: 'action::bangle-io-core-actions:CLOSE_EDITOR_ACTION',
+      name: CORE_ACTIONS_CLOSE_EDITOR,
       value: editorId,
     });
   }, [dispatchAction, editorId]);

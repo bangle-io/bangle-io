@@ -20,5 +20,9 @@
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*"
   }
 }

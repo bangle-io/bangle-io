@@ -22,7 +22,9 @@
   "dependencies": {
     "@bangle.dev/core": "0.27.6",
     "@bangle.dev/pm": "0.27.6",
-    "@bangle.dev/utils": "0.27.6"
+    "@bangle.dev/utils": "0.27.6",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*"
   },
   "devDependencies": {
     "@bangle.dev/all-base-components": "0.27.6",

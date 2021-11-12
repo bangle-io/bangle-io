@@ -1,5 +1,10 @@
 import { useCallback, useEffect } from 'react';
 
+import {
+  CORE_PALETTES_TOGGLE_ACTION_PALETTE,
+  CORE_PALETTES_TOGGLE_NOTES_PALETTE,
+  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+} from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { actionPalette } from './ActionPalette';
@@ -23,17 +28,17 @@ export function ActionHandler({ registerActionHandler }) {
   const actionHandler = useCallback(
     (actionObject) => {
       switch (actionObject.name) {
-        case 'action::bangle-io-core-palettes:TOGGLE_ACTION_PALETTE': {
+        case CORE_PALETTES_TOGGLE_ACTION_PALETTE: {
           updatePalette(actionPalette.type);
           return true;
         }
 
-        case 'action::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE': {
+        case CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE: {
           updatePalette(workspacePalette.type);
           return true;
         }
 
-        case 'action::bangle-io-core-palettes:TOGGLE_NOTES_PALETTE': {
+        case CORE_PALETTES_TOGGLE_NOTES_PALETTE: {
           updatePalette(notesPalette.type);
           return true;
         }

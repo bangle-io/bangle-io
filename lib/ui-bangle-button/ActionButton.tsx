@@ -3,6 +3,7 @@ import { useButton } from '@react-aria/button';
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
 import React, { ReactNode, useRef } from 'react';
+import reactDOM from 'react-dom';
 
 import { BaseButton, BaseButtonProps, StylingProps } from './BaseButton';
 import { useTooltipPositioner } from './use-positioner';
@@ -75,15 +76,18 @@ export function ActionButton({
       >
         {children}
       </BaseButton>
-      {tooltip && isTooltipVisible && (
-        <div
-          ref={setTooltipElement}
-          style={tooltipProps.style}
-          {...tooltipProps.attributes}
-        >
-          {tooltip}
-        </div>
-      )}
+      {tooltip &&
+        isTooltipVisible &&
+        reactDOM.createPortal(
+          <div
+            ref={setTooltipElement}
+            style={tooltipProps.style}
+            {...tooltipProps.attributes}
+          >
+            {tooltip}
+          </div>,
+          document.getElementById('tooltip-container')!,
+        )}
     </>
   );
 }

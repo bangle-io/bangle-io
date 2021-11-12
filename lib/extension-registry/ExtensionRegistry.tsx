@@ -5,14 +5,14 @@ import { SpecRegistry } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
-import {
+import type {
   ActionDefinitionType,
   ActionHandler,
+  ActionKeybindingMapping,
   ActionNameType,
-  ApplicationConfig,
-  EditorConfig,
-  Extension,
-} from './Extension';
+} from '@bangle.io/shared-types';
+
+import { ApplicationConfig, EditorConfig, Extension } from './Extension';
 import { ExtensionPaletteType } from './UniversalPaletteType';
 
 function filterFlatMap<K>(
@@ -87,7 +87,7 @@ export class ExtensionRegistry {
   private actionHandlers: Set<ActionHandler>;
   private registeredActions: ActionDefinitionType[];
   private editorConfig: EditorConfig[];
-
+  private actionKeybindingMapping: ActionKeybindingMapping;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
   public editor: EditorHandlers;
 
@@ -129,6 +129,8 @@ export class ExtensionRegistry {
     this.actionHandlers = new Set();
     this.registeredActions = filterFlatMap(applicationConfig, 'actions');
     this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
+
+    this.actionKeybindingMapping = this._getActionKeybindingMapping();
   }
   private validate() {
     if (
@@ -137,6 +139,14 @@ export class ExtensionRegistry {
     ) {
       throw new Error('Extension name must be unique');
     }
+  }
+
+  private _getActionKeybindingMapping(): ActionKeybindingMapping {
+    const actions = this.getRegisteredActions()
+      .filter((r) => typeof r.keybinding === 'string')
+      .map((r): [ActionNameType, string] => [r.name, r.keybinding!]);
+
+    return Object.fromEntries(actions);
   }
 
   renderReactNodeViews({
@@ -179,6 +189,10 @@ export class ExtensionRegistry {
 
   getSidebars() {
     return this.sidebars;
+  }
+
+  getActionKeybindingMapping() {
+    return this.actionKeybindingMapping;
   }
 
   renderExtensionEditorComponents = ({

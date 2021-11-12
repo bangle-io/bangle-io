@@ -18,11 +18,16 @@
     "test-utils",
     "contextual-ui-components",
     "ui-dhancha",
-    "ui-bangle-button"
+    "ui-bangle-button",
+    "shared-types"
   ],
   "repository": {
     "directory": "lib",
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git"
+  },
+  "dependencies": {
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*"
   }
 }

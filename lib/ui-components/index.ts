@@ -9,6 +9,7 @@ export * from './ListPalette';
 export * from './LocationBreadCrumb';
 export * from './Modal';
 export * from './Page';
+export * from './PrettyKeybinding';
 export * from './Sidebar';
 export * from './TextButton';
 export * from './UniversalPalette';

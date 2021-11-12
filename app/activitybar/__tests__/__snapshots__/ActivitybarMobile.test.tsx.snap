@@ -4,7 +4,7 @@ exports[`renders mobile view 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row text-gray-100 align-center ml-3 activitybar"
+      class="flex flex-row ml-3 text-gray-100 align-center activitybar"
     >
       <div
         class="flex flex-col justify-center mr-2"

@@ -1,9 +1,7 @@
 import React, { createContext, useCallback, useMemo } from 'react';
 
-import {
-  ActionType,
-  useExtensionRegistryContext,
-} from '@bangle.io/extension-registry';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import type { ActionType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
 
 const LOG = false;

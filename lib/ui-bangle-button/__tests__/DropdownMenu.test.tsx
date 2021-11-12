@@ -86,7 +86,11 @@ test('button clicks', async () => {
             role="menuitem"
             tabindex="-1"
           >
-            New note
+            <span
+              class="inline-flex justify-between w-full"
+            >
+              New note
+            </span>
           </li>
           <li
             aria-disabled="false"
@@ -95,7 +99,11 @@ test('button clicks', async () => {
             role="menuitem"
             tabindex="-1"
           >
-            New workspace
+            <span
+              class="inline-flex justify-between w-full"
+            >
+              New workspace
+            </span>
           </li>
           <li
             aria-disabled="false"
@@ -104,7 +112,11 @@ test('button clicks', async () => {
             role="menuitem"
             tabindex="-1"
           >
-            Switch workspace
+            <span
+              class="inline-flex justify-between w-full"
+            >
+              Switch workspace
+            </span>
           </li>
         </ul>
       </li>

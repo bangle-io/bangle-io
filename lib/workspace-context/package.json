@@ -35,7 +35,9 @@
   "dependencies": {
     "@bangle.dev/pm": "0.27.6",
     "@bangle.io/config": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspaces": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",

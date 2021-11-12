@@ -3,6 +3,6 @@
   border-radius: 4rem;
   padding: 0.125rem 0.5rem;
   margin: 0 0.125rem;
-  color: var(--noteTags-text-color);
+  color: var(--noteTags-color);
   cursor: pointer;
 }

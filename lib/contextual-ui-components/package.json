@@ -20,6 +20,8 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",

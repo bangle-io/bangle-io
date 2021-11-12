@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
 import { HelpFileSystem } from '@bangle.io/baby-fs';
+import { CORE_ACTIONS_CLONE_WORKSPACE } from '@bangle.io/constants';
 import { TextButton } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
@@ -73,7 +74,7 @@ export function HelpWorkspaceMonitor({ wsPath }) {
             className="ml-3"
             onClick={() => {
               dispatchAction({
-                name: 'action::bangle-io-core-actions:CLONE_WORKSPACE_ACTION',
+                name: CORE_ACTIONS_CLONE_WORKSPACE,
                 value: {
                   resetWsName: HELP_FS_WORKSPACE_NAME,
                 },
