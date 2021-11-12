@@ -34,6 +34,7 @@
     "react-dom": "^17.0.2"
   },
   "dependencies": {
+    "@bangle.io/constants": "workspace:^",
     "@bangle.io/shared-types": "workspace:*"
   }
 }

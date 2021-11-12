@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@bangle.io/action-context": "workspace:*",
+    "@bangle.io/constants": "workspace:^",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",

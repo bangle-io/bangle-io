@@ -27,6 +27,7 @@
     "@bangle.dev/utils": "0.27.6",
     "@bangle.io/collab-extension": "workspace:*",
     "@bangle.io/collapsible-heading": "workspace:*",
+    "@bangle.io/constants": "workspace:^",
     "@bangle.io/core-actions": "workspace:*",
     "@bangle.io/core-palettes": "workspace:*",
     "@bangle.io/editor-core": "workspace:*",

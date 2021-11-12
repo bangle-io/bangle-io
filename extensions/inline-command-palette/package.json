@@ -25,6 +25,7 @@
     "@bangle.dev/react": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
     "@bangle.io/config": "workspace:*",
+    "@bangle.io/constants": "workspace:^",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/inline-palette": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",

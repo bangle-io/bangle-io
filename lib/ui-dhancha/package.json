@@ -23,6 +23,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
+    "@bangle.io/constants": "workspace:^",
     "@bangle.io/shared-types": "workspace:*",
     "framer-motion": "^5.0.1",
     "react": "^17.0.2",

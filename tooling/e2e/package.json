@@ -29,6 +29,7 @@
     "@babel/core": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-typescript": "^7.15.0",
+    "@bangle.io/constants": "workspace:^",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "jest": "^26.6.3",

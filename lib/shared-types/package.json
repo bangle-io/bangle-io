@@ -20,5 +20,8 @@
   "publishConfig": {
     "access": "restricted",
     "types": "./dist/index.d.ts"
+  },
+  "dependencies": {
+    "@bangle.io/constants": "workspace:^"
   }
 }

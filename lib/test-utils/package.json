@@ -27,6 +27,7 @@
     "@bangle.dev/utils": "0.27.6",
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/base-error": "workspace:*",
+    "@bangle.io/constants": "workspace:^",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
