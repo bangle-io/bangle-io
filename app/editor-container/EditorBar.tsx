@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 
 import type { DispatchActionType } from '@bangle.io/action-context';
-import { Button, TooltipWrapper } from '@bangle.io/ui-bangle-button';
+import { ActionButton, TooltipWrapper } from '@bangle.io/ui-bangle-button';
+import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { removeMdExtension } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
@@ -56,9 +57,10 @@ export function EditorBar({
       </div>
       <div className="flex flex-row">
         {showSplitEditor && (
-          <Button
+          <ActionButton
+            isQuiet="hoverBg"
             onPress={onPressSecondaryEditor}
-            styling={{ bgOnHover: true, isRounded: true }}
+            styling={{}}
             className="lg:mr-1"
             ariaLabel="Split screen"
             isActive={isSplitEditorActive}
@@ -70,16 +72,17 @@ export function EditorBar({
             tooltipPlacement="bottom"
             tooltipXOffset={10}
           >
-            {<SecondaryEditorIcon className="w-3 h-3 lg:h-4 lg:w-4" />}
-          </Button>
+            <ButtonContent size="small" icon={<SecondaryEditorIcon />} />
+          </ActionButton>
         )}
-        <Button
+        <ActionButton
+          isQuiet="hoverBg"
           ariaLabel="Close"
           onPress={onClose}
-          styling={{ bgOnHover: true, isRounded: true }}
+          styling={{}}
         >
-          {<CloseIcon className="w-3 h-3 lg:h-4 lg:w-4" />}
-        </Button>
+          <ButtonContent size="small" icon={<CloseIcon />} />
+        </ActionButton>
       </div>
     </div>
   );

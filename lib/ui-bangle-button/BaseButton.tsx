@@ -6,6 +6,7 @@ export type StylingProps = {
   activeColor?: string;
   animateOnPress?: boolean;
   bgOnHover?: boolean;
+  buttonBgColor?: string;
   color?: string;
   hoverBgColor?: string;
   hoverColor?: string;
@@ -18,6 +19,7 @@ export type BaseButtonProps = {
   children: ReactNode;
   className: string;
   isActive: boolean | undefined;
+  isQuiet: 'hoverBg' | boolean | undefined;
   isDisabled: boolean | undefined;
   isHovered: boolean;
   isPressed: boolean;
@@ -33,16 +35,16 @@ export const BaseButton = ({
   isDisabled,
   isHovered,
   isPressed,
+  isQuiet,
   style,
   onElementReady,
   ...otherProps
 }: BaseButtonProps) => {
   const {
-    isRounded = false,
     animateOnPress = false,
-    bgOnHover = false,
     activeColor = 'var(--uiBangleButton-active-color)',
     color = 'var(--uiBangleButton-color)',
+    buttonBgColor = 'var(--uiBangleButton-bgColor)',
     hoverBgColor = 'var(--uiBangleButton-hover-bgColor)',
     hoverColor = 'var(--uiBangleButton-hover-color)',
     pressedBgColor = 'var(--uiBangleButton-pressed-bgColor)',
@@ -54,20 +56,22 @@ export const BaseButton = ({
     style.color = activeColor;
   }
 
+  if (!isQuiet) {
+    style.backgroundColor = buttonBgColor;
+  }
+
   if (isHovered) {
     style.color = hoverColor;
-    if (bgOnHover) {
+    if (!isQuiet || isQuiet === 'hoverBg') {
       style.backgroundColor = hoverBgColor;
     }
   }
 
-  if (animateOnPress && isPressed) {
+  if (isPressed) {
     style.backgroundColor = pressedBgColor;
-    style.transform = 'scale(var(--uiBangleButton-depression))';
-  }
-
-  if (isRounded) {
-    style.borderRadius = 'var(--uiBangleButton-radius)';
+    if (animateOnPress) {
+      style.transform = 'scale(var(--uiBangleButton-depression))';
+    }
   }
 
   const _onElementReady = useCallback(
@@ -82,14 +86,15 @@ export const BaseButton = ({
       className={cx(
         className,
         'ui-bangle-button_button p-1 ',
-        'transition-all duration-200',
+        'transition-all duration-100',
         animateOnPress && 'animate-on-press',
         isActive && 'is-active',
         isDisabled && 'is-disabled',
         isDisabled && 'cursor-not-allowed',
         isHovered && 'is-hovered',
         isPressed && 'is-pressed',
-        isHovered && bgOnHover && 'bg-on-hover',
+        isHovered && 'bg-on-hover',
+        isQuiet && 'is-quiet',
       )}
       style={style}
       ref={_onElementReady}

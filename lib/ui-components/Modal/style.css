@@ -4,7 +4,7 @@
 }
 
 .ui-components_modal-header {
-  border-bottom: 2px solid var(--window-border-color);
+  border-bottom: 2px solid var(--window-borderColor-0);
 }
 
 .ui-components_modal-overlay {

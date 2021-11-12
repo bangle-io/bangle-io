@@ -21,7 +21,7 @@ export function CenteredBoxedPage({
   return (
     <div
       className={cx(
-        'w-full h-full flex flex-col p-0 m-0 justify-center items-center',
+        'w-full h-full flex flex-col px-8 mt-6 lg:p-0 lg:m-0 justify-center items-center',
         className,
       )}
     >
@@ -31,6 +31,7 @@ export function CenteredBoxedPage({
           padding: 'var(--window-page-box-padding)',
           backgroundColor: 'var(--window-bgColor-1)',
           maxWidth: 'min(var(--page-maxWidth), 100vw)',
+          border: '1px solid var(--window-borderColor-1)',
         }}
       >
         <div

@@ -24,12 +24,7 @@ export function Page({
   verticallyCenter?: boolean;
 }) {
   return (
-    <div
-      className={cx(
-        'w-full h-full flex flex-col items-center overflow-y-scroll',
-        className,
-      )}
-    >
+    <div className={cx('w-full h-full flex flex-col items-center', className)}>
       {header && (
         <div
           className={cx(

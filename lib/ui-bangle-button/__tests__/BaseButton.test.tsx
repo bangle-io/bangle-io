@@ -7,6 +7,7 @@ test('renders correctly', () => {
   let result = render(
     <div>
       <BaseButton
+        isQuiet={false}
         styling={{}}
         className={'test-class'}
         isActive={true}
@@ -25,7 +26,7 @@ test('renders correctly', () => {
     <div>
       <div>
         <button
-          class="test-class ui-bangle-button_button p-1  transition-all duration-200 is-active is-hovered is-pressed"
+          class="test-class ui-bangle-button_button p-1  transition-all duration-100 is-active is-hovered is-pressed bg-on-hover"
         >
           Hello world
         </button>

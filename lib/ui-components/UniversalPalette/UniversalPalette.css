@@ -35,7 +35,7 @@
 }
 
 .universal-palette-container {
-  background-color: var(--window-bgColor-1);
+  background-color: var(--universalPalette-bgColor);
   margin-left: auto;
   margin-right: auto;
   max-width: var(--universalPalette-maxWidth);
@@ -55,7 +55,7 @@
 
 .universal-palette-input-wrapper {
   padding: var(--universal-palette-alignment-spacing);
-  border-bottom: 1px solid var(--window-border-color);
+  border-bottom: 1px solid var(--window-borderColor-0);
   min-height: 3.2rem;
 }
 
@@ -81,7 +81,7 @@
 
 .universal-palette-item.b-divider {
   border-top: var(--universal-palette-item-divider-width) solid
-    var(--window-border-color);
+    var(--window-borderColor-0);
 }
 
 .universal-palette-item:hover {

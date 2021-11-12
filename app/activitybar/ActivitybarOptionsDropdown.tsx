@@ -92,6 +92,7 @@ export function ActivitybarOptionsDropdown({
 
   return (
     <DropdownMenu
+      isButtonQuiet
       menuPlacement="right-start"
       ariaLabel={'Options dropdown'}
       buttonAriaLabel={'Options'}

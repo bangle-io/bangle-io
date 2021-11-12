@@ -23,6 +23,7 @@ export {
 export function DropdownMenu({
   ariaLabel,
   buttonAriaLabel,
+  isButtonQuiet,
   className = '',
   isDisabled,
   buttonChildren,
@@ -37,6 +38,7 @@ export function DropdownMenu({
 }: {
   ariaLabel: string;
   buttonAriaLabel: string;
+  isButtonQuiet?: boolean;
   buttonChildren: ReactNode;
   className?: string;
   isDisabled?: boolean;
@@ -87,6 +89,7 @@ export function DropdownMenu({
     <>
       <BaseButton
         {...mergedProps}
+        isQuiet={isButtonQuiet}
         className={buttonClassName}
         styling={buttonStyling}
         isActive={state.isSelected}
@@ -214,7 +217,7 @@ function MenuItemSection({
           {...separatorProps}
           className="mx-1 my-2"
           style={{
-            borderTop: '1px solid var(--window-border-color)',
+            borderTop: '1px solid var(--window-borderColor-0)',
           }}
         />
       )}

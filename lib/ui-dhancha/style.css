@@ -3,7 +3,7 @@
   --ui-dhancha_activitybar-width: var(--activitybar-width, 40px);
   --ui-dhancha_activitybar-mobile-width: var(--activitybar-mobile-height, 30px);
   --ui-dhancha_note-sidebar-width: 15rem;
-  --ui-dhancha_note-border-color: var(--window-border-color, grey);
+  --ui-dhancha_note-border-color: var(--window-borderColor-0, grey);
   --ui-dhancha_activitybar-bgColor: var(--activitybar-bgColor, magenta);
 }
 

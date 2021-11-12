@@ -7,6 +7,13 @@ DONOT keep internal styles here.
 ---------------------------
 */
 
+body.widescreen {
+  /* this prevents the spring bounciness which moves the entire app
+   when on mac laptops */
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 #root {
   color: var(--textColor-0);
   display: flex;

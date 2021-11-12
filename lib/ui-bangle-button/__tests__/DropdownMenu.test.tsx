@@ -45,7 +45,7 @@ test('renders correctly', () => {
         <button
           aria-label=""
           aria-pressed="false"
-          class="test-button-class ui-bangle-button_button p-1  transition-all duration-200"
+          class="test-button-class ui-bangle-button_button p-1  transition-all duration-100"
           type="button"
         >
           <span>

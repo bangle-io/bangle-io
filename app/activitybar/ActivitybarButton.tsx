@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 
-import { Button, TooltipWrapper } from '@bangle.io/ui-bangle-button';
+import { ActionButton, TooltipWrapper } from '@bangle.io/ui-bangle-button';
+import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
 import { cx } from '@bangle.io/utils';
 
 export const buttonStyling = {
@@ -25,10 +26,11 @@ export function ActivitybarButton({
   isActive?: boolean;
   // key if used in dropdowndow menu
   onPress: (k?: React.Key) => void;
-  icon: ReactNode;
+  icon: any;
 }) {
   return (
-    <Button
+    <ActionButton
+      isQuiet
       isActive={isActive}
       styling={buttonStyling}
       className={cx(
@@ -41,7 +43,7 @@ export function ActivitybarButton({
       tooltipDelay={250}
       tooltipPlacement="right"
     >
-      {icon}
-    </Button>
+      <ButtonContent size="custom" icon={icon}></ButtonContent>
+    </ActionButton>
   );
 }

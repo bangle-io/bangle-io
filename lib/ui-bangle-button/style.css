@@ -14,3 +14,24 @@
 .ui-bangle-button_dropdown-menu-item.is-focused {
   background-color: var(--accent-secondary);
 }
+
+.ui-bangle-button_button {
+  border-radius: var(--uiBangleButton-radius);
+  flex-shrink: 0;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.ui-bangle-button_button span {
+  padding: 0 0.25rem;
+  display: block;
+}
+
+.ui-bangle-button_button svg {
+  display: block;
+}
+
+.ui-bangle-button_button svg.has-text {
+  margin-left: 0.125rem;
+}

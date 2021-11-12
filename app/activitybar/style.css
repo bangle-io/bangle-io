@@ -7,7 +7,7 @@
 }
 
 .activitybar.widescreen {
-  border-right: 1px solid var(--window-border-color);
+  border-right: 1px solid var(--window-borderColor-0);
 }
 
 .activitybar {

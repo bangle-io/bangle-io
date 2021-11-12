@@ -32,12 +32,11 @@ exports[`renders correctly 1`] = `
       >
         <button
           aria-label="Close"
-          class="ui-bangle-button_button p-1  transition-all duration-200"
-          style="border-radius: var(--uiBangleButton-radius);"
+          class="ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
           type="button"
         >
           <svg
-            class="fill-current  w-3 h-3 lg:h-4 lg:w-4"
+            class="fill-current  w-4 h-4"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >

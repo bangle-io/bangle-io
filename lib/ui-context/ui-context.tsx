@@ -22,16 +22,16 @@ interface NotificationType {
 }
 
 interface UIStateObj {
-  sidebar: string | undefined;
-  widescreen: boolean;
-  paletteType: string | undefined;
-  paletteInitialQuery: string | undefined;
-  paletteMetadata: any | undefined;
-  theme: ThemeType;
-  notifications: NotificationType[];
+  changelogHasUpdates: boolean;
   dispatch: Function;
   modal: string | undefined;
-  changelogHasUpdates: boolean;
+  notifications: NotificationType[];
+  paletteInitialQuery: string | undefined;
+  paletteMetadata: any | undefined;
+  paletteType: string | undefined;
+  sidebar: string | undefined;
+  theme: ThemeType;
+  widescreen: boolean;
 }
 function getThemePreference() {
   if (typeof window === 'undefined') {
@@ -64,10 +64,13 @@ export function useUIManagerContext() {
 
 function setRootWidescreenClass(widescreen) {
   const root = document.getElementById('root');
+  const body = document.body;
   if (widescreen) {
     root?.classList.add('widescreen');
+    body?.classList.add('widescreen');
   } else {
     root?.classList.remove('widescreen');
+    body?.classList.remove('widescreen');
   }
 }
 

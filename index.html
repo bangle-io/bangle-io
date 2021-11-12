@@ -89,11 +89,14 @@
         /* The minimum screen size needed to allow for split screen */
         --window-widescreen-minWidth: 760px;
 
-        --light-window-bgColor-0: var(--base-50);
+        --light-window-bgColor-0: rgb(251, 251, 251);
         --dark-window-bgColor-0: rgb(27, 26, 26);
 
-        --light-window-bgColor-1: var(--base-100);
-        --dark-window-bgColor-1: rgb(37, 37, 38);
+        --light-window-bgColor-1: rgb(247, 247, 248);
+        --dark-window-bgColor-1: rgb(31, 30, 30);
+
+        --light-window-bgColor-2: rgb(241, 243, 242);
+        --dark-window-bgColor-2: rgb(43, 45, 47);
 
         --light-window-link-color: #4299e1;
         --dark-window-link-color: #4299e1;
@@ -107,8 +110,11 @@
         --dark-window-tooltip-color: var(--textColor-0);
         --window-tooltip-zIndex: 20;
 
-        --light-window-border-color: rgb(232, 232, 232);
-        --dark-window-border-color: rgb(61, 63, 67);
+        --light-window-borderColor-0: rgb(232, 232, 232);
+        --dark-window-borderColor-0: rgb(61, 63, 67);
+
+        --light-window-borderColor-1: rgb(241, 243, 244);
+        --dark-window-borderColor-1: rgb(49, 48, 49);
 
         --light-window-modal-overlay-bgColor: rgba(0, 0, 0, 0.6);
         --dark-window-modal-overlay-bgColor: rgba(0, 0, 0, 0.6);
@@ -121,10 +127,13 @@
 
         /* workspace-sidebar */
         --workspaceSidebar-width: 300px;
-        --light-workspaceSidebar-bgColor: rgb(245, 245, 245);
-        --dark-workspaceSidebar-bgColor: rgb(31, 30, 30);
+        --light-workspaceSidebar-bgColor: var(--window-bgColor-1);
+        --dark-workspaceSidebar-bgColor: var(--window-bgColor-1);
 
         --universalPalette-maxWidth: 620px;
+        --light-universalPalette-bgColor: var(--window-bgColor-2);
+        --dark-universalPalette-bgColor: var(--window-bgColor-2);
+
         --inlineUniversalPalette-maxWidth: 350px;
         --inlineUniversalPalette-maxHeight: 33vh;
 
@@ -154,19 +163,21 @@
 
         /* ui-bangle-button */
         --uiBangleButton-depression: 0.96;
-        --uiBangleButton-radius: 0.225rem;
+        --uiBangleButton-radius: 0.25rem;
 
-        --light-uiBangleButton-active-color: var(--base-800);
+        --light-uiBangleButton-active-color: var(--base-900);
+        --light-uiBangleButton-bgColor: var(--base-300);
+        --light-uiBangleButton-pressed-bgColor: var(--base-400);
         --light-uiBangleButton-hover-bgColor: var(--base-400);
+        --light-uiBangleButton-color: var(--base-800);
         --light-uiBangleButton-hover-color: var(--base-900);
-        --light-uiBangleButton-color: var(--base-700);
-        --light-uiBangleButton-pressed-bgColor: var(--base-200);
 
-        --dark-uiBangleButton-active-color: var(--base-800);
+        --dark-uiBangleButton-active-color: var(--base-900);
+        --dark-uiBangleButton-bgColor: var(--base-200);
         --dark-uiBangleButton-hover-bgColor: var(--base-400);
+        --dark-uiBangleButton-pressed-bgColor: var(--base-400);
+        --dark-uiBangleButton-color: var(--base-800);
         --dark-uiBangleButton-hover-color: var(--base-900);
-        --dark-uiBangleButton-color: var(--base-700);
-        --dark-uiBangleButton-pressed-bgColor: var(--base-200);
 
         background-color: var(--window-bgColor-0);
       }
