@@ -13,7 +13,7 @@
     "url": "https://github.com/bangle-io/bangle-io.git"
   },
   "dependencies": {
-    "@bangle.io/constants": "workspace:^",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*"
   }
 }

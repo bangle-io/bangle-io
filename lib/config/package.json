@@ -22,7 +22,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@bangle.io/constants": "workspace:^",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*"
   }
 }

@@ -1877,8 +1877,6 @@ __metadata:
   resolution: "@bangle.io/baby-fs@workspace:js-lib/baby-fs"
   dependencies:
     "@bangle.io/base-error": "workspace:*"
-    "@bangle.io/constants": "workspace:^"
-    "@bangle.io/shared-types": "workspace:*"
     idb-keyval: ^5.1.5
   languageName: unknown
   linkType: soft
@@ -1886,9 +1884,6 @@ __metadata:
 "@bangle.io/base-error@workspace:*, @bangle.io/base-error@workspace:js-lib/base-error":
   version: 0.0.0-use.local
   resolution: "@bangle.io/base-error@workspace:js-lib/base-error"
-  dependencies:
-    "@bangle.io/constants": "workspace:^"
-    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2204,8 +2199,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/fzf-search@workspace:js-lib/fzf-search"
   dependencies:
-    "@bangle.io/constants": "workspace:^"
-    "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.33
     fzf: ^0.4.1
     react: ^17.0.2
@@ -2334,8 +2327,6 @@ __metadata:
     "@bangle.dev/react": 0.27.6
     "@bangle.dev/tooltip": 0.27.6
     "@bangle.dev/utils": 0.27.6
-    "@bangle.io/constants": "workspace:^"
-    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2452,9 +2443,6 @@ __metadata:
 "@bangle.io/object-sync@workspace:*, @bangle.io/object-sync@workspace:js-lib/object-sync":
   version: 0.0.0-use.local
   resolution: "@bangle.io/object-sync@workspace:js-lib/object-sync"
-  dependencies:
-    "@bangle.io/constants": "workspace:^"
-    "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
 

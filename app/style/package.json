@@ -27,7 +27,7 @@
     "tailwindcss": "^2.2.17"
   },
   "dependencies": {
-    "@bangle.io/constants": "workspace:^",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*"
   }
 }

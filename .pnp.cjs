@@ -3903,8 +3903,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["idb-keyval", "npm:5.1.5"]
           ],
           "linkType": "SOFT",
@@ -3914,9 +3912,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["workspace:js-lib/base-error", {
           "packageLocation": "./js-lib/base-error/",
           "packageDependencies": [
-            ["@bangle.io/base-error", "workspace:js-lib/base-error"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"]
+            ["@bangle.io/base-error", "workspace:js-lib/base-error"]
           ],
           "linkType": "SOFT",
         }]
@@ -4321,8 +4317,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-fzf-search-virtual-523297bc02/1/js-lib/fzf-search/",
           "packageDependencies": [
             ["@bangle.io/fzf-search", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#workspace:js-lib/fzf-search"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@types/react", "npm:17.0.34"],
             ["fzf", "npm:0.4.1"],
             ["react", "npm:17.0.2"]
@@ -4337,8 +4331,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/fzf-search/",
           "packageDependencies": [
             ["@bangle.io/fzf-search", "workspace:js-lib/fzf-search"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@types/react", "npm:17.0.34"],
             ["fzf", "npm:0.4.1"],
             ["react", "npm:17.0.2"]
@@ -4475,8 +4467,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/react", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#npm:0.27.6"],
             ["@bangle.dev/tooltip", "virtual:0facc4e856f3d3f6101eb7d375127dfddfca1dc9acecf1651953e0e09ad1f6044e06cfedcfee94d226858a87c9ac43254927b5e2d303015909cfe68323a6cdf7#npm:0.27.6"],
             ["@bangle.dev/utils", "virtual:fe3e02e0e7ec52a990ab7831757ff3768d8b97ab96d9e0221bd7f51cfd23ee4ab43f7cc3e94776ca10e0dcf3dcb5617a937596a3087e39a583058af463ffff3c#npm:0.27.6"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
@@ -4605,9 +4595,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["workspace:js-lib/object-sync", {
           "packageLocation": "./js-lib/object-sync/",
           "packageDependencies": [
-            ["@bangle.io/object-sync", "workspace:js-lib/object-sync"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"]
+            ["@bangle.io/object-sync", "workspace:js-lib/object-sync"]
           ],
           "linkType": "SOFT",
         }]

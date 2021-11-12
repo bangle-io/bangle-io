@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "@bangle.io/app-entry": "workspace:*",
-    "@bangle.io/constants": "workspace:^",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "punycode": "^2.1.1"
   },

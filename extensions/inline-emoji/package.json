@@ -28,7 +28,7 @@
     "@bangle.dev/table": "0.27.6",
     "@bangle.dev/tooltip": "0.27.6",
     "@bangle.dev/utils": "0.27.6",
-    "@bangle.io/constants": "workspace:^",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",

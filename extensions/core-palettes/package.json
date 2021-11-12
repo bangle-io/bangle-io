@@ -24,7 +24,7 @@
     "@bangle.dev/utils": "0.27.6",
     "@bangle.io/action-context": "workspace:*",
     "@bangle.io/config": "workspace:*",
-    "@bangle.io/constants": "workspace:^",
+    "@bangle.io/constants": "workspace:*",
     "@bangle.io/editor-manager-context": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/fzf-search": "workspace:*",
