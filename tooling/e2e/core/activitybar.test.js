@@ -32,10 +32,14 @@ describe('Options', () => {
     expect(Boolean(optionsHandle)).toBe(true);
 
     expect(
-      await page.$$eval(
-        '[aria-label^="Options dropdown"] li[data-key]',
-        (nodes) => nodes.map((n) => n.innerText),
-      ),
+      [
+        ...(await page.$$eval(
+          '[aria-label^="Options dropdown"] li[data-key]',
+          (nodes) => nodes.map((n) => n.innerText),
+        )),
+      ]
+        // to consistify with mac and linux
+        .map((r) => r.split('⌘').join('Ctrl')),
     ).toMatchInlineSnapshot(`
       Array [
         "New note",
@@ -44,9 +48,9 @@ describe('Options', () => {
       CtrlR",
         "Toggle dark theme",
         "Notes palette
-      ⌘P",
+      CtrlP",
         "Action palette
-      ⌘⇧P",
+      Ctrl⇧P",
         "Report issue",
         "Twitter",
         "Discord",
