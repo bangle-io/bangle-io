@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Landing page is correct 1`] = `
-"Hello ✍️
+"r3g5Hello ✍️
 
 
 Here is a short guide to get you started.
@@ -14,7 +14,7 @@ Notes palette (cmd-p mac or ctrl-p win): You can use palette to quickly jump to 
 
 Opening workspace
 
-📖  Workspaces are collection of notes that you can open with Bangle.io.
+📖 Workspace is a place where bangle saves all of your notes.
 
 Open an action palette by pressing cmd-shift-p(mac) or ctrl-shift-p(win)
 
