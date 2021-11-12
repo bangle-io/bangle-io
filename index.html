@@ -88,6 +88,8 @@
         /* window */
         /* The minimum screen size needed to allow for split screen */
         --window-widescreen-minWidth: 760px;
+        --window-tooltip-zIndex: 1000;
+        --window-modal-zIndex: 500;
 
         --light-window-bgColor-0: rgb(251, 251, 251);
         --dark-window-bgColor-0: rgb(27, 26, 26);
@@ -108,7 +110,6 @@
         --dark-window-tooltip-bgColor: rgb(40, 41, 45);
         --light-window-tooltip-color: var(--textColor-1);
         --dark-window-tooltip-color: var(--textColor-0);
-        --window-tooltip-zIndex: 20;
 
         --light-window-borderColor-0: rgb(232, 232, 232);
         --dark-window-borderColor-0: rgb(61, 63, 67);
@@ -187,6 +188,7 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <div id="tooltip-container" style="position: fixed; z-index: 1000"></div>
     <%- viteJsEntry %>
     <!--  -->
     <%- fathom %>
