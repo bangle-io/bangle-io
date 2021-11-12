@@ -15,7 +15,13 @@ import {
   MenuItem,
   MenuSection,
 } from '@bangle.io/ui-bangle-button';
-import { PrettyKeybinding, SettingsIcon } from '@bangle.io/ui-components';
+import {
+  BangleIcon,
+  DiscordIcon,
+  PrettyKeybinding,
+  SettingsIcon,
+  TwitterIcon,
+} from '@bangle.io/ui-components';
 import { cx } from '@bangle.io/utils';
 
 import { buttonStyling } from './ActivitybarButton';
@@ -27,6 +33,8 @@ export const NotesPaletteKey = 'NotesPalette';
 export const ReportIssueKey = 'ReportIssue';
 export const SwitchWorkspaceKey = 'SwitchWorkspace';
 export const ToggleThemeKey = 'ToggleTheme';
+export const TwitterKey = 'Twitter';
+export const DiscordKey = 'Discord';
 
 type AllKeysType =
   | typeof ActionPaletteKey
@@ -35,7 +43,9 @@ type AllKeysType =
   | typeof NotesPaletteKey
   | typeof ReportIssueKey
   | typeof SwitchWorkspaceKey
-  | typeof ToggleThemeKey;
+  | typeof ToggleThemeKey
+  | typeof TwitterKey
+  | typeof DiscordKey;
 
 export function ActivitybarOptionsDropdown({
   widescreen,
@@ -93,8 +103,18 @@ export function ActivitybarOptionsDropdown({
           });
           break;
         }
+        case DiscordKey: {
+          window?.open('https://discord.gg/GvvbWJrVQY', '_blank');
+          break;
+        }
+        case TwitterKey: {
+          window?.open('https://twitter.com/bangle_io', '_blank');
+          break;
+        }
         default: {
-          throw new Error('Unknown menu key type ' + key);
+          // hack to catch switch slipping
+          let val: never = key;
+          throw new Error('Unknown menu key type ' + val);
         }
       }
     },
@@ -153,7 +173,18 @@ export function ActivitybarOptionsDropdown({
         </MenuItem>
       </MenuSection>
       <MenuSection aria-label="links">
-        <MenuItem key={ReportIssueKey}>Report issue</MenuItem>
+        <MenuItem key={ReportIssueKey} textValue="report issue">
+          <span>Report issue</span>
+          <BangleIcon className="w-5 h-5" />
+        </MenuItem>
+        <MenuItem key={TwitterKey} textValue="follow twitter">
+          <span>Twitter</span>
+          <TwitterIcon className="w-5 h-5" />
+        </MenuItem>
+        <MenuItem key={DiscordKey} textValue="join discord">
+          <span>Discord</span>
+          <DiscordIcon className="w-5 h-5" />
+        </MenuItem>
       </MenuSection>
     </DropdownMenu>
   );

@@ -48,6 +48,8 @@ describe('Options', () => {
         "Action palette
       ⌘⇧P",
         "Report issue",
+        "Twitter",
+        "Discord",
       ]
     `);
   });
