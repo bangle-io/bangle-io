@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
-import { Page } from '@bangle.io/ui-components';
+import { ActionButton } from '@bangle.io/ui-bangle-button';
+import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
+import { CenteredBoxedPage, Page } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { keybindingsHelper } from '@bangle.io/utils';
 import {
@@ -97,24 +99,54 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
   }, [requestFSPermission, isPaletteActive]);
 
   return (
-    <Page>
-      <div className="">
-        <h3 className="mb-8 text-xl font-bold leading-none sm:text-3xl lg:text-3xl">
-          👩‍💻 Bangle.io needs your permission to read "{wsName}"
-        </h3>
-        <span className="flex-shrink mb-10 text-lg font-semibold sm:leading-10 sm:mb-1">
-          {permissionDenied &&
-            'You have denied bangle.io permission to access your workspace.'}
+    <CenteredBoxedPage
+      title={
+        <span className="font-normal">
+          <WorkspaceSpan
+            wsName={wsName}
+            emoji={permissionDenied ? '❌' : '📖'}
+          />
+          <span className="pl-1">
+            {permissionDenied ? 'permission denied' : 'requires permission'}
+          </span>
         </span>
-        <button
-          onClick={() => {
+      }
+      actions={
+        <ActionButton
+          ariaLabel="grant disk read permission"
+          onPress={() => {
             requestFSPermission();
           }}
-          className="flex-none w-full px-6 py-3 mt-6 text-lg font-semibold leading-6 text-white transition-colors duration-200 bg-gray-800 border border-transparent sm:w-auto hover:bg-purple-600 rounded-xl focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none"
         >
-          Press <kbd>Enter</kbd> or 👆click this grant permission.
-        </button>
-      </div>
-    </Page>
+          <ButtonContent
+            text={
+              <>
+                <span>Grant permission {'[Enter]'}</span>
+              </>
+            }
+          />
+        </ActionButton>
+      }
+    >
+      <span>
+        Bangle.io needs permission to access your locally saved notes.
+      </span>
+    </CenteredBoxedPage>
+  );
+}
+
+export function WorkspaceSpan({
+  wsName,
+  emoji = '📖',
+}: {
+  wsName: string;
+  emoji?: string;
+}) {
+  return (
+    <>
+      <span className="font-normal">
+        {emoji} Workspace <span className="font-bold">{wsName}</span>
+      </span>
+    </>
   );
 }

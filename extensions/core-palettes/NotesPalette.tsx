@@ -115,6 +115,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
       <>
         <UniversalPalette.PaletteItemsContainer>
           {items.map((item) => {
+            console.log(item);
             return (
               <UniversalPalette.PaletteItemUI
                 key={item.uid}

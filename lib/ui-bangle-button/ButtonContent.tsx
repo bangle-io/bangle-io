@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { cx } from '@bangle.io/utils';
 
@@ -8,7 +8,7 @@ export function ButtonContent({
   size = 'medium',
 }: {
   icon?: React.ReactElement<{ className?: string }>;
-  text?: string;
+  text?: string | ReactNode;
   size?: 'small' | 'medium' | 'custom';
 }) {
   const hasText = Boolean(text);

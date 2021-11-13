@@ -170,7 +170,7 @@ function InternalDropdownMenu({
       {...menuProps}
       ref={ref}
       className={cx(
-        'flex flex-col ui-bangle-button_dropdown-menu p-1 py-2 shadow-lg rounded-md',
+        'flex flex-col ui-bangle-button_dropdown-menu p-1 py-2 rounded-md',
         className,
       )}
     >

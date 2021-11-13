@@ -121,10 +121,6 @@ export function ActivitybarOptionsDropdown({
     [dispatchAction],
   );
 
-  console.log(
-    actionKeybindings,
-    actionKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] || '',
-  );
   return (
     <DropdownMenu
       isButtonQuiet
