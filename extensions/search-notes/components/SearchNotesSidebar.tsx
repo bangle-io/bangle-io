@@ -38,7 +38,8 @@ export function SearchNotesSidebar() {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <span
-          className="text-sm font-extrabold cursor-pointer textColor-1"
+          className="text-sm font-extrabold cursor-pointer"
+          style={{ color: 'var(--textColor-1)' }}
           onClick={() => {
             dispatchAction({
               name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,

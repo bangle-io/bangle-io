@@ -247,16 +247,6 @@ NodeList [
             fill="#5865F2"
           />
         </g>
-        <defs>
-          <clippath
-            id="a"
-          >
-            <path
-              d="M0 0h71v55H0z"
-              fill="#fff"
-            />
-          </clippath>
-        </defs>
       </svg>
     </span>
   </li>,

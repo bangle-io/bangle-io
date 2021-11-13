@@ -20,7 +20,7 @@ main .bangle-editor p {
 @keyframes editorSelectedNode {
   from {
     border-radius: 4px;
-    background-color: var(--window-bgColor-2);
+    background-color: var(--editorCore-selectionChange-bgColor);
   }
 
   to {

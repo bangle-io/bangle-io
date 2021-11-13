@@ -37,6 +37,7 @@ export const cssVars = [
   'window-modal-overlay-bgColor',
   'workspaceSidebar-bgColor',
   'universalPalette-bgColor',
+  'editorCore-selectionChange-bgColor',
   'noteTags-color',
   'noteTags-bgColor',
   'activitybar-bgColor',

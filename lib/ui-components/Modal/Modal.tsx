@@ -57,7 +57,7 @@ export function Modal({
           ref={containerRef}
           style={style}
           className={cx(
-            'ui-components_modal-container fadeInScaleAnimation inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full',
+            'ui-components_modal-container ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full',
             className,
           )}
         >
