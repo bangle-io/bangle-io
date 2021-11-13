@@ -19,7 +19,7 @@ export function WorkspaceNotFound({}) {
   return (
     <CenteredBoxedPage
       title={
-        <span>
+        <span className="font-normal">
           <WorkspaceSpan wsName={wsName} emoji={'🕵️‍♀️'} />{' '}
           <span className="pl-1">not found</span>
         </span>

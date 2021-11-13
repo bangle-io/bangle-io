@@ -129,7 +129,7 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
       }
     >
       <span>
-        Bangle.io needs permission to access to your locally saved workspace.
+        Bangle.io needs permission to access your locally saved notes.
       </span>
     </CenteredBoxedPage>
   );
@@ -144,7 +144,9 @@ export function WorkspaceSpan({
 }) {
   return (
     <>
-      {emoji} Workspace <span className="font-bold">{wsName}</span>
+      <span className="font-normal">
+        {emoji} Workspace <span className="font-bold">{wsName}</span>
+      </span>
     </>
   );
 }
