@@ -1,3 +1,7 @@
+### Nov 13, 2021
+
+- **UI Redesign**: Bangle.io now has a more polished and consistent UI.
+
 ### Oct 25, 2021
 
 - **Backlinks, Tags, Note palette:**  We have improved the search algorithm.

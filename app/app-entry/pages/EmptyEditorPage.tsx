@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useActionContext } from '@bangle.io/action-context';
@@ -13,12 +13,20 @@ import {
   ChevronDownIcon,
   NewNoteIcon,
 } from '@bangle.io/ui-components';
+import { removeMdExtension } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
+import { WorkspaceSpan } from './WorkspaceNeedsAuth';
+
 const MAX_ENTRIES = 8;
 
-function RecentNotes({ paths }: { paths: string[] }) {
+function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
+  const formattedPaths = useMemo(() => {
+    return wsPaths.map((wsPath) => {
+      return resolvePath(wsPath);
+    });
+  }, [wsPaths]);
   return (
     <div className="mb-3">
       <div className="flex flex-row mt-6">
@@ -27,14 +35,19 @@ function RecentNotes({ paths }: { paths: string[] }) {
         </h3>
       </div>
       <ul className="my-2 ml-2 list-disc list-inside">
-        {paths.map((r, i) => {
+        {formattedPaths.map((r, i) => {
           return (
             <li key={i}>
-              <Link
-                to={resolvePath(r).locationPath}
-                className="py-1 hover:underline"
-              >
-                {resolvePath(r).filePath}
+              <Link to={r.locationPath} className="py-1 hover:underline">
+                <span>{removeMdExtension(r.fileName)} </span>
+                {r.dirPath && (
+                  <span
+                    className="font-light"
+                    style={{ color: 'var(--textColor-1)' }}
+                  >
+                    {r.dirPath}
+                  </span>
+                )}
               </Link>
             </li>
           );
@@ -51,43 +64,47 @@ export function EmptyEditorPage() {
     new Set([...recentWsPaths, ...(noteWsPaths || [])].slice(0, MAX_ENTRIES)),
   );
   return (
-    <CenteredBoxedPage className="">
-      <div className="flex flex-row mb-3">
-        <h1 className="mr-1 text-3xl sm:text-2xl lg:text-3xl">{wsName}</h1>
-        <ActionButton
-          isQuiet="hoverBg"
-          ariaLabel={'Switch workspace'}
-          tooltipPlacement="right"
-          tooltip={<TooltipWrapper>Switch workspace</TooltipWrapper>}
-          onPress={() => {
-            dispatchAction({
-              name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-            });
-          }}
-        >
-          <ChevronDownIcon className="w-5 h-5" />
-        </ActionButton>
-      </div>
-
+    <CenteredBoxedPage
+      title={
+        wsName && (
+          <>
+            <WorkspaceSpan wsName={wsName} />
+            <ActionButton
+              isQuiet="hoverBg"
+              ariaLabel={'Switch workspace'}
+              tooltipPlacement="right"
+              tooltip={<TooltipWrapper>Switch workspace</TooltipWrapper>}
+              onPress={() => {
+                dispatchAction({
+                  name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+                });
+              }}
+            >
+              <ChevronDownIcon className="w-5 h-5" />
+            </ActionButton>
+          </>
+        )
+      }
+      actions={
+        <>
+          <ActionButton
+            ariaLabel="create note"
+            onPress={() => {
+              dispatchAction({
+                name: CORE_ACTIONS_NEW_NOTE,
+              });
+            }}
+          >
+            <ButtonContent text="Create note" icon={<NewNoteIcon />} />
+          </ActionButton>
+        </>
+      }
+    >
       {paths.length !== 0 ? (
-        <RecentNotes paths={paths} />
+        <RecentNotes wsPaths={paths} />
       ) : (
         <div className="mb-3">You do not have any notes in this workspace</div>
       )}
-
-      <ActionButton
-        ariaLabel="create note"
-        onPress={() => {
-          dispatchAction({
-            name: CORE_ACTIONS_NEW_NOTE,
-          });
-        }}
-      >
-        <ButtonContent
-          text="Create note"
-          icon={<NewNoteIcon />}
-        ></ButtonContent>
-      </ActionButton>
     </CenteredBoxedPage>
   );
 }
