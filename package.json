@@ -1,6 +1,6 @@
 {
   "name": "bangle-io",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "homepage": "https://bangle.io",
   "workspaces": [
     "app",

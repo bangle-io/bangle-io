@@ -4,11 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { useActionContext } from '@bangle.io/action-context';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
-import {
-  GiftIcon,
-  PrettyKeybinding,
-  SingleCharIcon,
-} from '@bangle.io/ui-components';
+import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { ActivitybarButton } from './ActivitybarButton';
