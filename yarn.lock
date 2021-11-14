@@ -14568,6 +14568,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    date-fns: ^2.25.0
   languageName: unknown
   linkType: soft
 

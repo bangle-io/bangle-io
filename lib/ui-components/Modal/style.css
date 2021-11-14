@@ -9,6 +9,8 @@
 
 .ui-components_modal-overlay {
   background-color: var(--window-modal-overlay-bgColor);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
 }
 
 @keyframes fadeInScale {

@@ -19255,7 +19255,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["scripts", "workspace:tooling/_scripts"],
             ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"]
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["date-fns", "npm:2.25.0"]
           ],
           "linkType": "SOFT",
         }]
