@@ -245,7 +245,7 @@ describe('NewWorkspaceModalContainer', () => {
 
         expect(dropdown).toBeTruthy();
 
-        fireEvent.click(result.getByLabelText('browser'));
+        fireEvent.click(result.getByLabelText('browser storage type'));
       });
 
       expect(result.getByLabelText('select storage type').innerHTML).toContain(

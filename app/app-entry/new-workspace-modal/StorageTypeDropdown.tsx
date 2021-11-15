@@ -63,11 +63,11 @@ export function StorageTypeDropdown({
       }}
     >
       <MenuSection aria-label="misc-test">
-        <MenuItem aria-label="file system" key="file-system">
+        <MenuItem aria-label="file system storage type" key="file-system">
           File System{' '}
           {!supportsNativeBrowserFs() && '(Only on Chromium browsers)'}
         </MenuItem>
-        <MenuItem aria-label="browser" key="browser">
+        <MenuItem aria-label="browser storage type" key="browser">
           Browser
           {supportsNativeBrowserFs() && ' (Not recommended)'}
         </MenuItem>
