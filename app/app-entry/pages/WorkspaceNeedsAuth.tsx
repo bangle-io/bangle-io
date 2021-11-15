@@ -80,12 +80,12 @@ export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {
 }
 
 function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
-  const { paletteType } = useUIManagerContext();
+  const { paletteType, modal } = useUIManagerContext();
   const isPaletteActive = Boolean(paletteType);
   useEffect(() => {
     let callback = keybindingsHelper({
       Enter: () => {
-        if (isPaletteActive) {
+        if (isPaletteActive || modal) {
           return false;
         }
         requestFSPermission();
@@ -96,7 +96,7 @@ function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
     return () => {
       document.removeEventListener('keydown', callback);
     };
-  }, [requestFSPermission, isPaletteActive]);
+  }, [requestFSPermission, isPaletteActive, modal]);
 
   return (
     <CenteredBoxedPage

@@ -1,0 +1,335 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NewWorkspaceModalContainer browsers storage type renders correctly 1`] = `
+<div>
+  <div>
+    <div
+      aria-labelledby="modal-title"
+      aria-modal="true"
+      class="fixed z-50 inset-0 overflow-y-auto"
+      role="dialog"
+    >
+      <div
+        class="flex justify-center min-h-screen pb-20 text-center sm:block sm:p-0"
+      >
+        <div
+          aria-hidden="true"
+          class="fixed w-full h-full transition-opacity ui-components_modal-overlay"
+        />
+        <span
+          aria-hidden="true"
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+        >
+          ​
+        </span>
+        <div
+          class="ui-components_modal-container h-full ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl "
+          style="width: 30rem; max-width: 30rem;"
+        >
+          <div
+            class="w-full px-6 my-2 select-none "
+          >
+            <div
+              class="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 ui-components_modal-header "
+            >
+              <span>
+                New Workspace
+              </span>
+              <button
+                class="focus:outline-none"
+                data-bangle-editor-break="true"
+                data-bangle-editor-pos="bottom"
+                type="button"
+              >
+                <svg
+                  class="fill-current  w-6 h-6 rounded-sm hover:bangle-io_accentSecondary"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="px-6 py-4 select-none"
+            >
+              <div
+                class="flex flex-col mb-5"
+              >
+                <div
+                  class="mb-2"
+                >
+                  <h2
+                    class="text-lg font-medium"
+                  >
+                    Storage type
+                  </h2>
+                  <span
+                    class="text-sm"
+                  >
+                    Bangle.io strongly recommends you choose 
+                    <b>
+                      File system
+                    </b>
+                     
+                    storage because it is safer and portable. Read more at
+                     
+                    <a
+                      class="underline"
+                      href="https://bangle.io/"
+                    >
+                      https://bangle.io
+                    </a>
+                    .
+                  </span>
+                </div>
+                <div>
+                  <button
+                    aria-label="select storage type"
+                    aria-pressed="false"
+                    class="test-button-class  ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+                    type="button"
+                  >
+                    <span
+                      class="has-icon"
+                    >
+                      Browser
+                    </span>
+                    <svg
+                      class="fill-current  has-text mr-1 w-4 h-4"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M6.343 7.757L4.93 9.172 12 16.242l7.071-7.07-1.414-1.415L12 13.414 6.343 7.757z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="flex flex-col mb-5"
+              >
+                <div
+                  class="mb-2"
+                >
+                  <h2
+                    class="text-lg font-medium"
+                  >
+                    Workspace name
+                  </h2>
+                  <div
+                    class="mt-2 text-lg"
+                  >
+                    <input
+                      aria-label="workspace name input"
+                      class="pl-2"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="flex flex-row justify-center"
+              >
+                <button
+                  aria-label="create workspace"
+                  class="px-4 ui-bangle-button_button p-1  transition-all duration-100 is-disabled cursor-not-allowed focus:outline-none focus:ring focus:border-blue-300"
+                  disabled=""
+                  id="new-workspace-modal_create-button"
+                  type="button"
+                >
+                  <span
+                    class=""
+                  >
+                    Create Workspace
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`NewWorkspaceModalContainer file-system storage type renders correctly 1`] = `
+<div>
+  <div>
+    <div
+      aria-labelledby="modal-title"
+      aria-modal="true"
+      class="fixed z-50 inset-0 overflow-y-auto"
+      role="dialog"
+    >
+      <div
+        class="flex justify-center min-h-screen pb-20 text-center sm:block sm:p-0"
+      >
+        <div
+          aria-hidden="true"
+          class="fixed w-full h-full transition-opacity ui-components_modal-overlay"
+        />
+        <span
+          aria-hidden="true"
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+        >
+          ​
+        </span>
+        <div
+          class="ui-components_modal-container h-full ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl "
+          style="width: 30rem; max-width: 30rem;"
+        >
+          <div
+            class="w-full px-6 my-2 select-none "
+          >
+            <div
+              class="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 ui-components_modal-header "
+            >
+              <span>
+                New Workspace
+              </span>
+              <button
+                class="focus:outline-none"
+                data-bangle-editor-break="true"
+                data-bangle-editor-pos="bottom"
+                type="button"
+              >
+                <svg
+                  class="fill-current  w-6 h-6 rounded-sm hover:bangle-io_accentSecondary"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div
+            class=""
+          >
+            <div
+              class="px-6 py-4 select-none"
+            >
+              <div
+                class="flex flex-col mb-5"
+              >
+                <div
+                  class="mb-2"
+                >
+                  <h2
+                    class="text-lg font-medium"
+                  >
+                    Storage type
+                  </h2>
+                  <span
+                    class="text-sm"
+                  >
+                    Bangle.io strongly recommends you choose 
+                    <b>
+                      File system
+                    </b>
+                     
+                    storage because it is safer and portable. Read more at
+                     
+                    <a
+                      class="underline"
+                      href="https://bangle.io/"
+                    >
+                      https://bangle.io
+                    </a>
+                    .
+                  </span>
+                </div>
+                <div>
+                  <button
+                    aria-label="select storage type"
+                    aria-pressed="false"
+                    class="test-button-class  ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+                    type="button"
+                  >
+                    <span
+                      class="has-icon"
+                    >
+                      File system
+                    </span>
+                    <svg
+                      class="fill-current  has-text mr-1 w-4 h-4"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M6.343 7.757L4.93 9.172 12 16.242l7.071-7.07-1.414-1.415L12 13.414 6.343 7.757z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="flex flex-col mb-5"
+              >
+                <div
+                  class="mb-2"
+                >
+                  <h2
+                    class="text-lg font-medium"
+                  >
+                    Location
+                  </h2>
+                  <span
+                    class="text-sm"
+                  >
+                    Select a folder where Bangle.io will put all your notes. You can use an existing folder which has Markdown notes or create a new folder.
+                  </span>
+                </div>
+                <div>
+                  <button
+                    aria-label="pick directory"
+                    class="ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+                    id="new-workspace-modal_browse-button"
+                    type="button"
+                  >
+                    <span
+                      class=""
+                    >
+                      Browse
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="flex flex-row justify-center"
+              >
+                <button
+                  aria-label="create workspace"
+                  class="px-4 ui-bangle-button_button p-1  transition-all duration-100 is-disabled cursor-not-allowed focus:outline-none focus:ring focus:border-blue-300"
+                  disabled=""
+                  id="new-workspace-modal_create-button"
+                  type="button"
+                >
+                  <span
+                    class=""
+                  >
+                    Create Workspace
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

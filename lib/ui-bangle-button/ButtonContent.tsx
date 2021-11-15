@@ -5,10 +5,12 @@ import { cx } from '@bangle.io/utils';
 export function ButtonContent({
   text,
   icon,
+  iconPos = 'left',
   size = 'medium',
 }: {
   icon?: React.ReactElement<{ className?: string }>;
   text?: string | ReactNode;
+  iconPos?: 'left' | 'right';
   size?: 'small' | 'medium' | 'custom';
 }) {
   const hasText = Boolean(text);
@@ -20,14 +22,27 @@ export function ButtonContent({
     iconSize = 'w-5 h-5';
   }
 
+  const isLeft = iconPos === 'left';
+  const isRight = iconPos === 'right';
+  const iconComp =
+    icon &&
+    React.isValidElement(icon) &&
+    React.cloneElement(icon, {
+      className: cx(
+        icon.props.className,
+        hasText && 'has-text',
+
+        hasText && isLeft && 'ml-1',
+        hasText && isRight && 'mr-1',
+        iconSize,
+      ),
+    });
+
   return (
     <>
-      {icon &&
-        React.isValidElement(icon) &&
-        React.cloneElement(icon, {
-          className: cx(icon.props.className, hasText && 'has-text', iconSize),
-        })}
+      {iconPos === 'left' && iconComp}
       {text && <span className={cx(hasIcon && 'has-icon')}>{text}</span>}
+      {iconPos === 'right' && iconComp}
     </>
   );
 }

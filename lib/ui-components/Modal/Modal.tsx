@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import ReactDOM from 'react-dom';
 
 import { cx, useKeybindings, useWatchClickOutside } from '@bangle.io/utils';
 
@@ -13,8 +14,10 @@ export function Modal({
   className = '',
   title = '',
   style = {},
+  onPressEnter,
 }: {
   children: JSX.Element;
+  onPressEnter?: () => void;
   onDismiss: () => void;
   containerClassName?: string;
   title?: string;
@@ -30,17 +33,24 @@ export function Modal({
         onDismiss();
         return true;
       },
+      Enter: () => {
+        if (onPressEnter) {
+          onPressEnter();
+          return true;
+        }
+        return false;
+      },
     };
-  }, [onDismiss]);
+  }, [onDismiss, onPressEnter]);
 
-  return (
+  return ReactDOM.createPortal(
     <div
       className={cx('fixed z-50 inset-0 overflow-y-auto', containerClassName)}
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
     >
-      <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div className="flex justify-center min-h-screen pb-20 text-center sm:block sm:p-0">
         <div
           className="fixed w-full h-full transition-opacity ui-components_modal-overlay"
           aria-hidden="true"
@@ -57,7 +67,7 @@ export function Modal({
           ref={containerRef}
           style={style}
           className={cx(
-            'ui-components_modal-container ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full',
+            'ui-components_modal-container h-full ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl ',
             className,
           )}
         >
@@ -75,6 +85,7 @@ export function Modal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.getElementById('dropdown-container')!,
   );
 }

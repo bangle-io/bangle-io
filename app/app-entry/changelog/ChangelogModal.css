@@ -1,0 +1,8 @@
+.changelog-modal_container img {
+  border: 0px;
+  border-radius: 6px;
+}
+
+.changelog-modal_container p {
+  font-size: 1rem;
+}

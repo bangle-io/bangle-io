@@ -125,8 +125,8 @@ export function ActivitybarOptionsDropdown({
     <DropdownMenu
       isButtonQuiet
       menuPlacement="right-start"
-      ariaLabel={'Options dropdown'}
-      buttonAriaLabel={'Options'}
+      ariaLabel={'options dropdown'}
+      buttonAriaLabel={'options menu'}
       buttonStyling={buttonStyling}
       buttonClassName={cx(
         'w-full py-3 rounded-sm flex justify-center activitybar_button',
@@ -135,12 +135,18 @@ export function ActivitybarOptionsDropdown({
       buttonChildren={<SettingsIcon className="h-7 w-7" />}
       onAction={onAction}
     >
-      <MenuSection aria-label="misc">
+      <MenuSection aria-label="misc section">
         <MenuItem aria-label="new note" key={NewNoteKey}>
           New note
         </MenuItem>
-        <MenuItem key={NewWorkspaceKey}>New workspace</MenuItem>
-        <MenuItem key={SwitchWorkspaceKey} textValue="switch workspace">
+        <MenuItem aria-label="new workspace" key={NewWorkspaceKey}>
+          New workspace
+        </MenuItem>
+        <MenuItem
+          aria-label="switch workspace"
+          key={SwitchWorkspaceKey}
+          textValue="switch workspace"
+        >
           <span>Switch workspace</span>
           <PrettyKeybinding
             rawKey={
@@ -149,17 +155,27 @@ export function ActivitybarOptionsDropdown({
           />
         </MenuItem>
       </MenuSection>
-      <MenuSection aria-label="ui">
-        <MenuItem key={ToggleThemeKey}>Toggle dark theme</MenuItem>
+      <MenuSection aria-label="ui section">
+        <MenuItem aria-label="toggle dark theme" key={ToggleThemeKey}>
+          Toggle dark theme
+        </MenuItem>
       </MenuSection>
       <MenuSection aria-label="palettes">
-        <MenuItem key={NotesPaletteKey} textValue="notes palette">
+        <MenuItem
+          key={NotesPaletteKey}
+          textValue="notes palette"
+          aria-label="notes palette"
+        >
           <span>Notes palette</span>
           <PrettyKeybinding
             rawKey={actionKeybindings[CORE_PALETTES_TOGGLE_NOTES_PALETTE] || ''}
           />
         </MenuItem>
-        <MenuItem key={ActionPaletteKey} textValue="action palette">
+        <MenuItem
+          key={ActionPaletteKey}
+          textValue="action palette"
+          aria-label="action palette"
+        >
           <span>Action palette</span>
           <PrettyKeybinding
             rawKey={
@@ -168,16 +184,28 @@ export function ActivitybarOptionsDropdown({
           />
         </MenuItem>
       </MenuSection>
-      <MenuSection aria-label="links">
-        <MenuItem key={ReportIssueKey} textValue="report issue">
+      <MenuSection aria-label="links section">
+        <MenuItem
+          key={ReportIssueKey}
+          textValue="report issue"
+          aria-label="report issue"
+        >
           <span>Report issue</span>
           <BangleIcon className="w-5 h-5" />
         </MenuItem>
-        <MenuItem key={TwitterKey} textValue="follow twitter">
+        <MenuItem
+          key={TwitterKey}
+          textValue="follow twitter"
+          aria-label="follow twitter"
+        >
           <span>Twitter</span>
           <TwitterIcon className="w-5 h-5" />
         </MenuItem>
-        <MenuItem key={DiscordKey} textValue="join discord">
+        <MenuItem
+          key={DiscordKey}
+          textValue="join discord"
+          aria-label="join discord"
+        >
           <span>Discord</span>
           <DiscordIcon className="w-5 h-5" />
         </MenuItem>

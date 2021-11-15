@@ -1,3 +1,4 @@
+import { NATIVE_BROWSER_USER_ABORTED_ERROR } from '.';
 import {
   BaseFileMetadata,
   BaseFileSystem,
@@ -398,8 +399,14 @@ export async function pickADirectory() {
     return dirHandle;
   } catch (err) {
     if (err instanceof Error) {
-      console.error(err);
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        throw new NativeBrowserFileSystemError(
+          'The user aborted.',
+          NATIVE_BROWSER_USER_ABORTED_ERROR,
+        );
+      }
       throw new Error(err.message);
+      console.error(err);
     }
     throw err;
   }
@@ -418,7 +425,7 @@ export async function requestNativeBrowserFSPermission(
 }
 
 export function supportsNativeBrowserFs() {
-  if ('showOpenFilePicker' in window) {
+  if (typeof window !== 'undefined' && 'showOpenFilePicker' in window) {
     return true;
   } else {
     return false;

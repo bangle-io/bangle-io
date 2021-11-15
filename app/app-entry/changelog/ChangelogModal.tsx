@@ -1,4 +1,4 @@
-import './Changelog.css';
+import './ChangelogModal.css';
 
 import React, { useCallback, useEffect } from 'react';
 
@@ -52,7 +52,7 @@ const specRegistry = new SpecRegistry([
   underline.spec(),
 ]);
 
-export function Changelog() {
+export function ChangelogModal() {
   const { modal, dispatch } = useUIManagerContext();
 
   const showChangelog = modal === '@modal/changelog';
@@ -66,7 +66,11 @@ export function Changelog() {
   }, [dispatch]);
 
   return showChangelog ? (
-    <Modal title="🎁 What's new?" onDismiss={onDismiss}>
+    <Modal
+      title="🎁 What's new?"
+      onDismiss={onDismiss}
+      className="w-full md:max-w-2xl"
+    >
       <div
         className="overflow-y-scroll"
         style={{
@@ -102,7 +106,7 @@ function ChangelogDisplay() {
     <BangleEditor
       state={editorState}
       focusOnInit={false}
-      className="changelog-container px-5"
+      className="px-5 changelog-modal_container"
       renderNodeViews={() => {
         return null;
       }}

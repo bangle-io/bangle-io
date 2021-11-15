@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly ERROR_PICKING_DIRECTORY_ERROR 1`] = `
+<div>
+  <div>
+    <div
+      class="w-full px-4 text-center"
+      data-testid="ERROR_PICKING_DIRECTORY"
+      style="color: white;"
+    >
+      <span>
+        There was an error opening your notes folder. Please make sure your notes folder inside a common location like Documents or Desktop.
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly INVALID_WORKSPACE_NAME_ERROR 1`] = `
+<div>
+  <div>
+    <div
+      class="w-full px-4 text-center"
+      data-testid="INVALID_WORKSPACE_NAME"
+      style="color: white;"
+    >
+      <span>
+        Invalid workspace name.
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly UNKNOWN_ERROR 1`] = `
+<div>
+  <div>
+    <div
+      class="w-full px-4 text-center"
+      data-testid="UNKNOWN_ERROR"
+      style="color: white;"
+    >
+      <span>
+        An unknown error occurred. Please reload window and try again. If the problem still persists open an issue at
+         
+        <a
+          class="underline"
+          href="https://github.com/bangle-io/bangle-io-issues"
+        >
+          Github
+        </a>
+         
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly WORKSPACE_AUTH_REJECTED_ERROR 1`] = `
+<div>
+  <div>
+    <div
+      class="w-full px-4 text-center"
+      data-testid="WORKSPACE_AUTH_REJECTED"
+      style="color: white;"
+    >
+      <span>
+        Bangle.io was denied access to your notes. Please try again and press allow Bangle.io access to your locally saved notes.
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly WORKSPACE_NAME_ALREADY_EXISTS_ERROR 1`] = `
+<div>
+  <div>
+    <div
+      class="w-full px-4 text-center"
+      data-testid="WORKSPACE_NAME_ALREADY_EXISTS"
+      style="color: white;"
+    >
+      <span>
+        A workspace with the same name already exists.
+         
+        <button
+          class="underline"
+        >
+          Click here
+        </button>
+         
+        to open it
+      </span>
+    </div>
+  </div>
+</div>
+`;

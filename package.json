@@ -85,7 +85,7 @@
     "autoprefixer": "^10.3.7",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.3",
-    "bangle-io-help": "^1.9.1",
+    "bangle-io-help": "^1.10.0",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.7",

@@ -11,12 +11,13 @@ import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
 
-import { Changelog } from './changelog/Changelog';
+import { ChangelogModal } from './changelog/ChangelogModal';
 import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { PaletteManager } from './extension-glue/PaletteManager';
 import { getLastWorkspaceUsed } from './misc/last-workspace-used';
 import { useWorkspaceSideEffects } from './misc/use-workspace-side-effects';
+import { NewWorkspaceModal } from './new-workspace-modal/NewWorkspaceModal';
 import { EmptyEditorPage } from './pages/EmptyEditorPage';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
@@ -65,7 +66,8 @@ export function AppContainer() {
 
   return (
     <>
-      <Changelog />
+      <ChangelogModal />
+      <NewWorkspaceModal />
       <ApplicationComponents />
       <PaletteManager />
       <Dhancha

@@ -6,10 +6,17 @@ import {
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
 } from '@bangle.io/constants';
 
-import {
-  ActivitybarOptionsDropdown,
-  NewNoteKey,
-} from '../ActivitybarOptionsDropdown';
+import { ActivitybarOptionsDropdown } from '../ActivitybarOptionsDropdown';
+
+jest.mock('react-dom', () => {
+  const otherThings = jest.requireActual('react-dom');
+  return {
+    ...otherThings,
+    createPortal: jest.fn((element, node) => {
+      return element;
+    }),
+  };
+});
 
 const actionKeybindings = {
   [CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE]: 'Ctrl-P',
@@ -40,18 +47,22 @@ test('clicking the button shows dropdown', async () => {
   );
 
   act(() => {
-    fireEvent.click(result.getByLabelText('Options'));
+    fireEvent.click(result.getByLabelText('options menu'));
   });
 
   let targetOption;
   await waitFor(() => {
-    targetOption = result.container.querySelectorAll('li li[data-key]');
+    targetOption = result.getByLabelText('options dropdown');
     expect(targetOption).toBeTruthy();
   });
 
-  // check if keyboard shortcut is hsown
+  // check if keyboard shortcut is shown
   // note: kbd utility prettifies 'Ctrl-P' to 'Ctrl-⇧'
-  expect([...targetOption].find((t) => t.innerHTML.includes('⇧'))).toBeTruthy();
+  expect(
+    [...targetOption.querySelectorAll('li[data-key]')].find((t) =>
+      t.innerHTML.includes('⇧'),
+    ),
+  ).toBeTruthy();
 
   expect(targetOption).toMatchSnapshot();
 });
@@ -69,15 +80,13 @@ test('clicking items in dropdown dispatches event', async () => {
   );
 
   act(() => {
-    fireEvent.click(result.getByLabelText('Options'));
+    fireEvent.click(result.getByLabelText('options menu'));
   });
 
   let targetOption;
 
   await waitFor(() => {
-    targetOption = result.container.querySelector(
-      `li li[data-key="${NewNoteKey}"]`,
-    );
+    targetOption = result.getByLabelText('new note');
     expect(targetOption).toBeTruthy();
 
     fireEvent.click(targetOption);

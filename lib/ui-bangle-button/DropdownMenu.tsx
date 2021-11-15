@@ -6,9 +6,10 @@ import { useMenu, useMenuItem, useMenuSection } from '@react-aria/menu';
 import { useSeparator } from '@react-aria/separator';
 import { mergeProps } from '@react-aria/utils';
 import { useToggleState } from '@react-stately/toggle';
-import { TreeState, useTreeState } from '@react-stately/tree';
+import { TreeProps, TreeState, useTreeState } from '@react-stately/tree';
 import type { Node } from '@react-types/shared';
 import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
+import reactDOM from 'react-dom';
 
 import { cx, useKeybindings, useWatchClickOutside } from '@bangle.io/utils';
 
@@ -22,38 +23,50 @@ export {
 
 export function DropdownMenu({
   ariaLabel,
+  buttonAllowFocus,
   buttonAriaLabel,
-  isButtonQuiet,
-  className = '',
-  isDisabled,
   buttonChildren,
-  children,
+  buttonAutoFocus,
   buttonClassName = '',
+  buttonStyle = {},
+  buttonStyling = {},
+  children,
+  className = '',
+  disabledKeys,
+  isButtonQuiet,
+  isDisabled,
+  menuPlacement = 'bottom',
   menuXOffset = 5,
   menuYOffset = 5,
-  menuPlacement = 'bottom',
-  style = {},
-  buttonStyling = {},
   onAction,
+  onSelectedChange,
+  style,
+  variant,
 }: {
   ariaLabel: string;
+  buttonAllowFocus?: boolean;
   buttonAriaLabel: string;
-  isButtonQuiet?: boolean;
+  buttonAutoFocus?: boolean;
   buttonChildren: ReactNode;
-  className?: string;
-  isDisabled?: boolean;
+  buttonClassName?: string;
+  buttonStyle?: React.CSSProperties;
+  buttonStyling?: StylingProps;
   children?: JSX.Element[] | JSX.Element;
+  className?: string;
+  disabledKeys?: TreeProps<typeof children>['disabledKeys'];
+  isButtonQuiet?: boolean;
+  isDisabled?: boolean;
+  menuPlacement?: Placement;
   menuXOffset?: number;
   menuYOffset?: number;
-  menuPlacement?: Placement;
-  style?: React.CSSProperties;
-  buttonStyling?: StylingProps;
   onAction: (key: React.Key) => void;
-  buttonClassName?: string;
+  onSelectedChange?: (isSelected: boolean) => void;
+  style?: React.CSSProperties;
+  variant?: 'primary' | 'secondary';
 }) {
   const buttonRef = useRef<any>(null);
 
-  let state = useToggleState({});
+  let state = useToggleState({ onChange: onSelectedChange });
   let { buttonProps, isPressed } = useToggleButton(
     { 'aria-label': buttonAriaLabel },
     state,
@@ -89,7 +102,10 @@ export function DropdownMenu({
     <>
       <BaseButton
         {...mergedProps}
+        variant={variant}
         isQuiet={isButtonQuiet}
+        allowFocus={buttonAllowFocus}
+        autoFocus={buttonAutoFocus}
         className={buttonClassName}
         styling={buttonStyling}
         isActive={state.isSelected}
@@ -97,28 +113,33 @@ export function DropdownMenu({
         isHovered={isHovered}
         isPressed={isPressed}
         onElementReady={setTriggerElement}
-        style={{ ...style, ...((mergedProps as any).style || {}) }}
+        style={{ ...buttonStyle, ...((mergedProps as any).style || {}) }}
       >
         {buttonChildren}
       </BaseButton>
-      {children && isTooltipVisible && (
-        <div
-          ref={setTooltipElement}
-          style={tooltipProps.style}
-          {...tooltipProps.attributes}
-        >
-          <FocusScope autoFocus>
-            <InternalDropdownMenu
-              ariaLabel={ariaLabel}
-              onAction={onAction}
-              onClose={onClose}
-              className={className}
-            >
-              {children}
-            </InternalDropdownMenu>
-          </FocusScope>
-        </div>
-      )}
+      {children &&
+        isTooltipVisible &&
+        reactDOM.createPortal(
+          <div
+            ref={setTooltipElement}
+            style={tooltipProps.style}
+            {...tooltipProps.attributes}
+          >
+            <FocusScope autoFocus>
+              <InternalDropdownMenu
+                ariaLabel={ariaLabel}
+                onAction={onAction}
+                onClose={onClose}
+                disabledKeys={disabledKeys}
+                className={className}
+                style={style}
+              >
+                {children}
+              </InternalDropdownMenu>
+            </FocusScope>
+          </div>,
+          document.getElementById('tooltip-container')!,
+        )}
     </>
   );
 }
@@ -129,12 +150,16 @@ function InternalDropdownMenu({
   children,
   onClose,
   className,
+  style,
+  disabledKeys,
 }: {
+  disabledKeys?: TreeProps<typeof children>['disabledKeys'];
   ariaLabel: string;
   className?: string;
   onAction: (key: React.Key) => void;
   onClose: () => void;
   children: JSX.Element[] | JSX.Element;
+  style?: React.CSSProperties;
 }) {
   useKeybindings(() => {
     return {
@@ -146,7 +171,7 @@ function InternalDropdownMenu({
   }, [onClose]);
 
   // Create menu state based on the incoming props
-  let state = useTreeState({ children, selectionMode: 'none' });
+  let state = useTreeState({ children, selectionMode: 'none', disabledKeys });
 
   // Get props for the menu element
   let ref = React.useRef<HTMLUListElement>(null);
@@ -173,6 +198,7 @@ function InternalDropdownMenu({
         'flex flex-col ui-bangle-button_dropdown-menu p-1 py-2 rounded-md',
         className,
       )}
+      style={style}
     >
       {[...state.collection].map((section) => (
         <MenuItemSection
@@ -260,10 +286,11 @@ function MenuItemWrapper({
 
   let { menuItemProps } = useMenuItem(
     {
-      key: item.key,
+      'key': item.key,
       isDisabled,
       onAction,
       onClose,
+      'aria-label': item['aria-label'],
     },
     state,
     ref,
