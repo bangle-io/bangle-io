@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const prettier = require('prettier');
 
 function run() {
   const indexHtml = fs.readFileSync(
@@ -38,10 +39,17 @@ function run() {
 
   fs.writeFileSync(
     path.resolve(__dirname, '..', '..', 'lib', 'ui-context', 'css-vars.ts'),
-    `export const cssVars = ${JSON.stringify(newResult, null, 2).replaceAll(
-      '"',
-      `'`,
-    )};`,
+    prettier.format(
+      `export const cssVars = ${JSON.stringify(newResult, null, 2).replaceAll(
+        '"',
+        `'`,
+      )};`,
+      {
+        parser: 'typescript',
+        trailingComma: 'all',
+        singleQuote: true,
+      },
+    ),
     'utf-8',
   );
 }

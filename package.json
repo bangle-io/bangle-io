@@ -1,6 +1,6 @@
 {
   "name": "bangle-io",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "homepage": "https://bangle.io",
   "workspaces": [
     "app",
@@ -42,6 +42,7 @@
     "g:vite-serve": "vite preview",
     "tsc-check": "yarn tsc -b",
     "tsc-watch": "yarn tsc -b -w",
+    "update-css-vars": "yarn node tooling/_scripts/generate-apply-theme.js",
     "g:tsc": "yarn tsc"
   },
   "browserslist": {

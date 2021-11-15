@@ -28,6 +28,7 @@ import {
   BROWSER,
   CREATE_BUTTON_ID,
   FILE_SYSTEM,
+  INVALID_WORKSPACE_NAME_ERROR,
   WORKSPACE_NAME_ALREADY_EXISTS_ERROR,
   WorkspaceCreateErrorTypes,
   WorkspaceStorageType,
@@ -126,6 +127,16 @@ export function NewWorkspaceModalContainer({
       setError(undefined);
     }
   }, [newWorkspaceName, workspaces, errorType, setError]);
+
+  useEffect(() => {
+    if (newWorkspaceName) {
+      if (newWorkspaceName.includes(':')) {
+        setError(INVALID_WORKSPACE_NAME_ERROR);
+      } else if (errorType === INVALID_WORKSPACE_NAME_ERROR) {
+        setError(undefined);
+      }
+    }
+  }, [newWorkspaceName, errorType]);
 
   // Reset state on storageType change
   useEffect(() => {

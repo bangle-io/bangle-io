@@ -60,7 +60,12 @@ export function ShowError({
       break;
     }
     case INVALID_WORKSPACE_NAME_ERROR: {
-      content = <span>Invalid workspace name.</span>;
+      content = (
+        <span>
+          Invalid workspace name. Workspace cannot have <code>:</code> in its
+          name.
+        </span>
+      );
       break;
     }
     case WORKSPACE_AUTH_REJECTED_ERROR: {

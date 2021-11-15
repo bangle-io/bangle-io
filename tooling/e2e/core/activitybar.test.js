@@ -22,19 +22,22 @@ afterEach(async () => {
 
 describe('Options', () => {
   test('lists options', async () => {
-    const handle = await page.waitForSelector('button[aria-label^="Options"]', {
-      timeout: SELECTOR_TIMEOUT,
-    });
+    const handle = await page.waitForSelector(
+      'button[aria-label="options menu"]',
+      {
+        timeout: SELECTOR_TIMEOUT,
+      },
+    );
 
     await handle.click();
 
-    let optionsHandle = await page.$('[aria-label^="Options dropdown"]');
+    let optionsHandle = await page.$('[aria-label^="options dropdown"]');
     expect(Boolean(optionsHandle)).toBe(true);
 
     expect(
       [
         ...(await page.$$eval(
-          '[aria-label^="Options dropdown"] li[data-key]',
+          '[aria-label="options dropdown"] li[data-key]',
           (nodes) => nodes.map((n) => n.innerText),
         )),
       ]
@@ -59,19 +62,24 @@ describe('Options', () => {
   });
 
   test('clicking on new workspace', async () => {
-    const handle = await page.waitForSelector('button[aria-label^="Options"]', {
-      timeout: SELECTOR_TIMEOUT,
-    });
+    const handle = await page.waitForSelector(
+      'button[aria-label="options menu"]',
+      {
+        timeout: SELECTOR_TIMEOUT,
+      },
+    );
 
     await handle.click();
 
     await page.click(
-      '[aria-label^="Options dropdown"] li[data-key="NewWorkspace"]',
+      '[aria-label="options dropdown"] li[data-key="NewWorkspace"]',
     );
 
-    await page.waitForSelector('.universal-palette-input-wrapper', {
+    await page.waitForSelector('.ui-components_modal-container', {
       timeout: SELECTOR_TIMEOUT,
     });
-    expect(Boolean(await page.$('.universal-palette-item'))).toBe(true);
+    expect(Boolean(await page.$('[aria-label="select storage type"]'))).toBe(
+      true,
+    );
   });
 });

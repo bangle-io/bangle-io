@@ -25,7 +25,11 @@ exports[`renders correctly INVALID_WORKSPACE_NAME_ERROR 1`] = `
       style="color: white;"
     >
       <span>
-        Invalid workspace name.
+        Invalid workspace name. Workspace cannot have 
+        <code>
+          :
+        </code>
+         in its name.
       </span>
     </div>
   </div>

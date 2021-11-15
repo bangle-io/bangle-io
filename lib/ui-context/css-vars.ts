@@ -60,5 +60,5 @@ export const cssVars = [
   'uiBangleButton-primary-color',
   'uiBangleButton-primary-hover-bgColor',
   'uiBangleButton-primary-hover-color',
-  'uiBangleButton-primary-pressed-bgColor'
+  'uiBangleButton-primary-pressed-bgColor',
 ];

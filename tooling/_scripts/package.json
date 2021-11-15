@@ -29,6 +29,7 @@
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "date-fns": "^2.25.0"
+    "date-fns": "^2.25.0",
+    "prettier": "^2.4.1"
   }
 }
