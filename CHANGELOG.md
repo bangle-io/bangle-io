@@ -1,6 +1,6 @@
 ### Nov 14, 2021
 
-- **New workspace:** We have refined the new workspace UI.
+- **UI improvements:** We have refined the new workspace UI.
 
 ### Nov 13, 2021
 
