@@ -228,6 +228,10 @@ async function getSecondaryEditorHandler(page, { focus = false } = {}) {
     timeout: SELECTOR_TIMEOUT,
   });
 
+  await page.waitForSelector('.editor-container_editor-1 .bangle-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+
   if (focus) {
     await page.evaluate(async () => {
       window.primaryEditor.view.focus();

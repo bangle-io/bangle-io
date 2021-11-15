@@ -1,4 +1,3 @@
-import { NATIVE_BROWSER_USER_ABORTED_ERROR } from '.';
 import {
   BaseFileMetadata,
   BaseFileSystem,
@@ -9,6 +8,7 @@ import {
   FILE_ALREADY_EXISTS_ERROR,
   FILE_NOT_FOUND_ERROR,
   NATIVE_BROWSER_PERMISSION_ERROR,
+  NATIVE_BROWSER_USER_ABORTED_ERROR,
   NOT_A_DIRECTORY_ERROR,
   UPSTREAM_ERROR,
 } from './error-codes';

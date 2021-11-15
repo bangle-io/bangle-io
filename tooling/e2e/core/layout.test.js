@@ -7,6 +7,7 @@ const {
   createWorkspace,
   newPage,
   getPrimaryEditorHandler,
+  getSecondaryEditorHandler,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
@@ -36,6 +37,8 @@ describe('widescreen', () => {
     await page.keyboard.press('\\');
     await page.keyboard.up(ctrlKey);
     await sleep();
+
+    await getSecondaryEditorHandler(page);
     expect(await page.$('.editor-container_editor-1')).not.toBeNull();
   });
 });
