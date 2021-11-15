@@ -30,6 +30,7 @@ export function ActivitybarButton({
 }) {
   return (
     <ActionButton
+      allowFocus={false}
       isQuiet
       isActive={isActive}
       styling={buttonStyling}

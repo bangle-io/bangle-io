@@ -12,6 +12,7 @@ import { Node } from '@bangle.dev/pm';
 import {
   BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
+  NATIVE_BROWSER_USER_ABORTED_ERROR,
 } from '@bangle.io/baby-fs';
 import {
   ExtensionRegistry,
@@ -513,7 +514,8 @@ function handleErrors<T extends (...args: any[]) => any>(
     return cb(...args).catch((error) => {
       if (
         error instanceof BaseFileSystemError &&
-        error.code === NATIVE_BROWSER_PERMISSION_ERROR
+        (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
+          error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
       ) {
         onAuthNeeded();
       }

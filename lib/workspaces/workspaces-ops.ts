@@ -93,7 +93,7 @@ export async function createWorkspace(
   let workspace: WorkspaceInfo;
 
   switch (type) {
-    case 'browser': {
+    case WorkspaceType.browser: {
       workspace = {
         name: wsName,
         type,
@@ -116,7 +116,7 @@ export async function createWorkspace(
       break;
     }
 
-    case 'nativefs': {
+    case WorkspaceType.nativefs: {
       const { rootDirHandle } = opts;
       if (!rootDirHandle) {
         throw new Error(

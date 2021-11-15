@@ -61,23 +61,44 @@ const SELECTOR_TIMEOUT = 500;
 
 async function createWorkspace(page, wsName = 'test' + uuid(4)) {
   await runAction(page, 'action::bangle-io-core-actions:NEW_WORKSPACE_ACTION');
-  let handle = await page.waitForSelector('.universal-palette-container', {
+  let handle = await page.waitForSelector('.ui-components_modal-container', {
     timeout: SELECTOR_TIMEOUT,
   });
 
-  await clickPaletteRow(page, 'browser');
+  const storageSelectButton = await page.$(
+    '[aria-label="select storage type"]',
+  );
+  await storageSelectButton.click();
 
-  const input = await handle.$('input');
-  await input.type(wsName, { delay: 10 });
+  let item = await page.waitForSelector('[aria-label="browser storage type"]', {
+    timeout: SELECTOR_TIMEOUT,
+  });
 
-  await longSleep();
+  await item.click();
+
+  const input = await handle.$('input[aria-label="workspace name input"]');
+
+  await input.type(wsName);
+
+  await page.waitForFunction(
+    (wsName) =>
+      document.querySelector(
+        '.ui-components_modal-container input[aria-label="workspace name input"]',
+      ).value === wsName,
+    {
+      timeout: SELECTOR_TIMEOUT,
+    },
+    wsName,
+  );
 
   await Promise.all([
     page.waitForNavigation({
       timeout: 5000,
       waitUntil: 'networkidle0',
     }), // The promise resolves after navigation has finished
-    clickPaletteRow(page, 'input-confirm'),
+    page.click(
+      '.ui-components_modal-container button[aria-label="create workspace"]',
+    ),
   ]);
 
   expect(await page.url()).toMatch(url + '/ws/' + wsName);
@@ -125,10 +146,10 @@ async function createNewNote(page, wsName, noteName = 'new_file.md') {
     clickPaletteRow(page, 'input-confirm'),
   ]);
 
-  await longSleep();
+  await waitForPrimaryEditorFocus(page);
+
   const wsPath = filePathToWsPath(wsName, noteName);
   expect(await page.url()).toMatch(url + resolvePath(wsPath).locationPath);
-  await waitForPrimaryEditorFocus(page);
 
   return wsPath;
 }
@@ -204,6 +225,10 @@ async function getPrimaryEditorHandler(page, { focus = false } = {}) {
 
 async function getSecondaryEditorHandler(page, { focus = false } = {}) {
   const handle = await page.waitForSelector('.editor-container_editor-1', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+
+  await page.waitForSelector('.editor-container_editor-1 .bangle-editor', {
     timeout: SELECTOR_TIMEOUT,
   });
 

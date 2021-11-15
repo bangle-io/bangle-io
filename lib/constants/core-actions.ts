@@ -10,6 +10,12 @@ export const CORE_ACTIONS_NEW_NOTE =
 export const CORE_ACTIONS_NEW_WORKSPACE =
   'action::bangle-io-core-actions:NEW_WORKSPACE_ACTION';
 
+export const CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE =
+  'action::bangle-io-core-actions:CREATE_NATIVE_FS_WORKSPACE_ACTION';
+
+export const CORE_ACTIONS_CREATE_BROWSER_WORKSPACE =
+  'action::bangle-io-core-actions:CREATE_BROWSER_WORKSPACE_ACTION';
+
 export const CORE_ACTIONS_CLONE_WORKSPACE =
   'action::bangle-io-core-actions:CLONE_WORKSPACE_ACTION';
 

@@ -4,6 +4,8 @@ import { useActionContext } from '@bangle.io/action-context';
 import {
   CORE_ACTIONS_CLONE_WORKSPACE,
   CORE_ACTIONS_CLOSE_EDITOR,
+  CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
+  CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
   CORE_ACTIONS_DELETE_ACTIVE_NOTE,
   CORE_ACTIONS_NEW_NOTE,
   CORE_ACTIONS_NEW_WORKSPACE,
@@ -14,6 +16,7 @@ import {
 } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
@@ -22,6 +25,8 @@ import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
 export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch } = useUIManagerContext();
   const { dispatchAction } = useActionContext();
+  const { createWorkspace } = useWorkspaces();
+
   const {
     wsName,
     primaryWsPath,
@@ -81,10 +86,9 @@ export function CoreActionsHandler({ registerActionHandler }) {
         case CORE_ACTIONS_NEW_WORKSPACE: {
           // To avoid overlapping
           dispatch({
-            type: 'UI/UPDATE_PALETTE',
-            value: { type: null },
+            type: 'UI/SHOW_MODAL',
+            value: { modal: '@modal/new-workspace' },
           });
-          updateInputModal({ type: 'new-workspace' });
           return true;
         }
 
@@ -213,6 +217,63 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
+        case CORE_ACTIONS_CREATE_BROWSER_WORKSPACE: {
+          const { wsName } = actionObject.value || {};
+          if (typeof wsName === 'string') {
+            createWorkspace(wsName, WorkspaceType.browser, {})
+              .then((r) => {
+                (window as any).fathom?.trackGoal('AISLCLRF', 0);
+              })
+              .catch((error) => {
+                dispatch({
+                  type: 'UI/SHOW_NOTIFICATION',
+                  value: {
+                    severity: 'error',
+                    uid: 'error-create-workspace-' + wsName,
+                    content: 'Unable to create workspace ' + wsName,
+                  },
+                });
+                throw error;
+              });
+          } else {
+            throw new Error(
+              'Incorrect parameters for ' +
+                CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
+            );
+          }
+          return true;
+        }
+
+        case CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE: {
+          const { rootDirHandle } = actionObject.value || {};
+          if (typeof rootDirHandle?.name === 'string') {
+            createWorkspace(rootDirHandle.name, WorkspaceType.nativefs, {
+              rootDirHandle,
+            })
+              .then(() => {
+                (window as any).fathom?.trackGoal('K3NFTGWX', 0);
+              })
+              .catch((error) => {
+                dispatch({
+                  type: 'UI/SHOW_NOTIFICATION',
+                  value: {
+                    severity: 'error',
+                    uid: 'error-create-workspace-' + rootDirHandle?.name,
+                    content:
+                      'Unable to create workspace ' + rootDirHandle?.name,
+                  },
+                });
+                throw error;
+              });
+          } else {
+            throw new Error(
+              'Incorrect parameters for ' +
+                CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
+            );
+          }
+          return true;
+        }
+
         default: {
           return false;
         }
@@ -224,6 +285,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
       wsName,
       primaryWsPath,
       secondaryWsPath,
+      createWorkspace,
       updateOpenedWsPaths,
     ],
   );

@@ -117,10 +117,12 @@
         --light-window-tooltip-color: var(--textColor-1);
         --dark-window-tooltip-color: var(--textColor-0);
 
-        --light-window-dropdown-bgColor: var(--base-75);
-        --dark-window-dropdown-bgColor: var(--base-75);
-        --light-window-dropdown-color: var(--textColor-1);
+        --dark-window-dropdown-bgColor-0: var(--base-75);
+        --dark-window-dropdown-bgColor-1: var(--base-50);
         --dark-window-dropdown-color: var(--textColor-1);
+        --light-window-dropdown-bgColor-0: var(--base-75);
+        --light-window-dropdown-bgColor-1: var(--base-50);
+        --light-window-dropdown-color: var(--textColor-1);
 
         --light-window-kbd-bgColor: var(--base-300);
         --light-window-kbd-color: var(--textColor-1);
@@ -189,17 +191,35 @@
 
         --light-uiBangleButton-active-color: var(--base-900);
         --light-uiBangleButton-bgColor: var(--base-300);
-        --light-uiBangleButton-pressed-bgColor: var(--base-400);
-        --light-uiBangleButton-hover-bgColor: var(--base-400);
         --light-uiBangleButton-color: var(--base-800);
+        --light-uiBangleButton-disabled-bgColor: var(--base-100);
+        --light-uiBangleButton-disabled-color: var(--base-700);
+        --light-uiBangleButton-hover-bgColor: var(--base-400);
         --light-uiBangleButton-hover-color: var(--base-900);
+        --light-uiBangleButton-pressed-bgColor: var(--base-400);
 
         --dark-uiBangleButton-active-color: var(--base-900);
         --dark-uiBangleButton-bgColor: var(--base-200);
-        --dark-uiBangleButton-hover-bgColor: var(--base-400);
-        --dark-uiBangleButton-pressed-bgColor: var(--base-400);
         --dark-uiBangleButton-color: var(--base-800);
+        --dark-uiBangleButton-disabled-bgColor: var(--base-100);
+        --dark-uiBangleButton-disabled-color: var(--base-700);
+        --dark-uiBangleButton-hover-bgColor: var(--base-400);
         --dark-uiBangleButton-hover-color: var(--base-900);
+        --dark-uiBangleButton-pressed-bgColor: var(--base-400);
+
+        --light-uiBangleButton-primary-active-color: var(--base-900);
+        --light-uiBangleButton-primary-bgColor: var(--accent-primary-0);
+        --light-uiBangleButton-primary-color: var(--base-800);
+        --light-uiBangleButton-primary-hover-bgColor: var(--accent-primary-1);
+        --light-uiBangleButton-primary-hover-color: var(--base-900);
+        --light-uiBangleButton-primary-pressed-bgColor: var(--base-400);
+
+        --dark-uiBangleButton-primary-active-color: var(--base-900);
+        --dark-uiBangleButton-primary-bgColor: var(--accent-primary-0);
+        --dark-uiBangleButton-primary-color: var(--base-800);
+        --dark-uiBangleButton-primary-hover-bgColor: var(--accent-primary-1);
+        --dark-uiBangleButton-primary-hover-color: var(--base-900);
+        --dark-uiBangleButton-primary-pressed-bgColor: var(--base-400);
 
         background-color: var(--window-bgColor-0);
       }
@@ -209,7 +229,9 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <div id="tooltip-container" style="position: fixed; z-index: 1000"></div>
+    <div id="tooltip-container" style="position: fixed; z-index: 1500"></div>
+    <div id="dropdown-container" style="position: fixed; z-index: 1200"></div>
+    <div id="modal-container" style="position: fixed; z-index: 1000"></div>
     <%- viteJsEntry %>
     <!--  -->
     <%- fathom %>

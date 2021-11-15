@@ -6,7 +6,7 @@
 
 .ui-bangle-button_dropdown-menu {
   min-width: 300px;
-  background-color: var(--window-dropdown-bgColor);
+  background-color: var(--window-dropdown-bgColor-0);
   color: var(--window-dropdown-color);
   z-index: var(--window-tooltip-zIndex);
   box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 28px;

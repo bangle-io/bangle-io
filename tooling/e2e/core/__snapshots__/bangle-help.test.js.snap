@@ -20,9 +20,9 @@ Open an action palette by pressing cmd-shift-p(mac) or ctrl-shift-p(win)
 
 Run the New workspace action.
 
-🎖️ We strongly recommend that you save notes in Your computer to take full advantage of bangle.
+🎖️ We strongly recommend that you save notes in File system to take full advantage of bangle.
 
-Once you select Your computer, you will be shown a directory picker. You can open your existing markdown notes directory or create a new one.
+Next click Browse and you will be shown a directory picker. You can open your existing markdown notes directory or create a new one 💖.
 
 ⚠️ Don't forget to backup before opening your data. If you are in hurry simply copy and paste all your notes to another location to create a backup.
 
@@ -37,6 +37,10 @@ Inline backlink: In an existing note create a backlink to a new note by typing[[
 Using inline palette
 
 You can type / anywhere in your note or press Command-/ (mac) Ctrl-/ (win) to bring a handy toolbar for inserting things.
+
+Emoji
+
+Press : to bring the Emoji picker 🙈.
 
 Formatting text
 

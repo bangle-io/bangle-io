@@ -11,6 +11,16 @@ import { sleep } from '@bangle.io/utils';
 
 import { DropdownMenu, MenuItem, MenuSection } from '../DropdownMenu';
 
+jest.mock('react-dom', () => {
+  const otherThings = jest.requireActual('react-dom');
+  return {
+    ...otherThings,
+    createPortal: jest.fn((element, node) => {
+      return element;
+    }),
+  };
+});
+
 let result, onAction;
 beforeEach(() => {
   onAction = jest.fn();
@@ -45,7 +55,7 @@ test('renders correctly', () => {
         <button
           aria-label=""
           aria-pressed="false"
-          class="test-button-class ui-bangle-button_button p-1  transition-all duration-100"
+          class="test-button-class ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
           type="button"
         >
           <span>
@@ -81,6 +91,7 @@ test('button clicks', async () => {
         >
           <li
             aria-disabled="false"
+            aria-label="new note"
             class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
             data-key="test-k-1"
             role="menuitem"

@@ -5549,10 +5549,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bangle-io-help@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "bangle-io-help@npm:1.9.1"
-  checksum: 642df4292cf0fd2def4856ffeadf394681668b9a24ee3c13fa08f547a60213669bdff5b15acd8dba540cef6be242151dc9dcac1f23d2d7076b46c06b166a9ab5
+"bangle-io-help@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "bangle-io-help@npm:1.10.0"
+  checksum: e8bb812f8b9357284e960fc5ee3171fb6f3ecd633d233a54e3201e66f1ff6568d321296e58add048aa197fa8c61eca0458fa672f07dc727ca0978ce0dea0b657
   languageName: node
   linkType: hard
 
@@ -5586,7 +5586,7 @@ __metadata:
     autoprefixer: ^10.3.7
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.3
-    bangle-io-help: ^1.9.1
+    bangle-io-help: ^1.10.0
     case-sensitive-paths-webpack-plugin: ^2.4.0
     copy-webpack-plugin: ^8.1.1
     css-loader: ^5.2.7
@@ -14568,6 +14568,8 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    date-fns: ^2.25.0
+    prettier: ^2.4.1
   languageName: unknown
   linkType: soft
 

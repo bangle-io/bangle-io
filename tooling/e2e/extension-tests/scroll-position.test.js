@@ -12,6 +12,7 @@ const {
   SELECTOR_TIMEOUT,
   newPage,
   ctrlKey,
+  getSecondaryEditorHandler,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
@@ -91,7 +92,7 @@ test.each(['regular', 'split-screen'])(
       await page.keyboard.down(ctrlKey);
       await page.keyboard.press('\\');
       await page.keyboard.up(ctrlKey);
-      await sleep();
+      await getSecondaryEditorHandler(page);
       // eslint-disable-next-line jest/no-conditional-expect
       expect(await page.$('.editor-container_editor-1')).not.toBeNull();
     }
@@ -100,23 +101,27 @@ test.each(['regular', 'split-screen'])(
     const selectionJSON = await page.evaluate(async () =>
       window.primaryEditor?.view.state.selection.toJSON(),
     );
+
     let { topElement, lastElement } = await getTopAndLastElement(page);
     // check that the last element is in view port
     expect(await topElement.isIntersectingViewport()).toBe(false);
     expect(await lastElement.isIntersectingViewport()).toBe(true);
 
     await createNewNote(page, wsName, 'other-note-1');
+
+    await getPrimaryEditorHandler(page);
+
     await longSleep();
     await expect(page.title()).resolves.toMatch('other-note-1');
     expect(await getPrimaryEditorDebugString(page)).toMatchInlineSnapshot(
       `"doc(heading(\\"other-note-1\\"), paragraph(\\"Hello world!\\"))"`,
     );
-    await longSleep();
 
     await page.goBack({ waitUntil: 'networkidle2' });
 
     // make sure we are back to our previous page
     await expect(page.title()).resolves.toMatch('test123');
+    await longSleep();
 
     ({ topElement, lastElement } = await getTopAndLastElement(page));
     // check if the scroll state is preserved
