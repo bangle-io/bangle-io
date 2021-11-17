@@ -159,11 +159,7 @@ export function SearchResults({
                 title: resolvePath(r.wsPath).fileName,
                 extraInfo: resolvePath(r.wsPath).dirPath,
                 leftNode: (
-                  <ButtonIcon
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                    }}
-                  >
+                  <ButtonIcon>
                     {isCollapsed(r) ? (
                       <ChevronRightIcon style={IconStyle} />
                     ) : (
