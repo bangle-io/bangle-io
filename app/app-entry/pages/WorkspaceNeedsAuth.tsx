@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
-import { ActionButton } from '@bangle.io/ui-bangle-button';
-import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
+import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage, Page } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { keybindingsHelper } from '@bangle.io/utils';

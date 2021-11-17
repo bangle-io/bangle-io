@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { WorkspaceSidebar } from '../WorkspaceSidebar';
@@ -15,6 +15,7 @@ test('handles error', () => {
   let result = render(
     <div>
       <WorkspaceSidebar
+        onDismiss={jest.fn()}
         sidebar={{
           name: 'sidebar::test-sidebar',
           title: 'search notes',
@@ -35,6 +36,7 @@ test('renders', () => {
   let result = render(
     <div>
       <WorkspaceSidebar
+        onDismiss={jest.fn()}
         sidebar={{
           name: 'sidebar::test-sidebar',
           title: 'search notes',
@@ -50,4 +52,30 @@ test('renders', () => {
 
   expect(result.container.innerHTML).toContain('something');
   expect(result.container).toMatchSnapshot();
+});
+
+test('calls the dismiss button', () => {
+  const onDismiss = jest.fn();
+  let result = render(
+    <div>
+      <WorkspaceSidebar
+        onDismiss={onDismiss}
+        sidebar={{
+          name: 'sidebar::test-sidebar',
+          title: 'search notes',
+          activitybarIcon: <span>test-icon</span>,
+          ReactComponent: () => {
+            return <span>something</span>;
+          },
+          hint: 'test-hint',
+        }}
+      ></WorkspaceSidebar>
+    </div>,
+  );
+
+  act(() => {
+    fireEvent.click(result.getByLabelText('hide search notes'));
+  });
+
+  expect(onDismiss).toBeCalledTimes(1);
 });

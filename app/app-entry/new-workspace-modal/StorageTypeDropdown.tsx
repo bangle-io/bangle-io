@@ -2,11 +2,11 @@ import React from 'react';
 
 import { supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import {
+  ButtonContent,
   DropdownMenu,
   MenuItem,
   MenuSection,
 } from '@bangle.io/ui-bangle-button';
-import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
 import { ChevronDownIcon } from '@bangle.io/ui-components';
 
 import {

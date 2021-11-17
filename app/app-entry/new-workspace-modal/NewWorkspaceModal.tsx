@@ -17,8 +17,7 @@ import {
   CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
   CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
-import { ActionButton } from '@bangle.io/ui-bangle-button';
-import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
+import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useWorkspaces } from '@bangle.io/workspaces';

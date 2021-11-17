@@ -2,8 +2,11 @@ import React, { useCallback } from 'react';
 
 import type { DispatchActionType } from '@bangle.io/action-context';
 import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
-import { ActionButton, TooltipWrapper } from '@bangle.io/ui-bangle-button';
-import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
+import {
+  ActionButton,
+  ButtonContent,
+  TooltipWrapper,
+} from '@bangle.io/ui-bangle-button';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
 import { removeMdExtension } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
