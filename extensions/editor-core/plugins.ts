@@ -16,7 +16,13 @@ import {
   strike,
   underline,
 } from '@bangle.dev/base-components';
-import { NodeSelection, Plugin, PluginKey } from '@bangle.dev/pm';
+import {
+  EditorView,
+  keymap,
+  NodeSelection,
+  Plugin,
+  PluginKey,
+} from '@bangle.dev/pm';
 import { floatingMenu } from '@bangle.dev/react-menu';
 import { stopwatch } from '@bangle.dev/react-stopwatch';
 import { tablePlugins } from '@bangle.dev/table';
@@ -27,8 +33,8 @@ import { activeNode } from './active-node';
 
 export const menuKey = new PluginKey('menuKey');
 
-const getScrollContainer = (view) => {
-  return view.dom.parentElement;
+const getScrollContainer = (view: EditorView) => {
+  return view.dom.parentElement!;
 };
 
 const { queryIsSelectionAroundLink, queryIsLinkActive } = link;
@@ -91,5 +97,19 @@ export const getPlugins = () => {
       },
     }),
     activeNode(),
+
+    // must be at end
+    blockTabPress(),
   ];
 };
+
+/**
+ * Prevents tab presses going out of editor
+ */
+export function blockTabPress() {
+  return keymap({
+    Tab: (state) => {
+      return true;
+    },
+  });
+}
