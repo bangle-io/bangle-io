@@ -56,10 +56,27 @@ describe('BackLinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="back-link"
+          class="inline-backlink_banklink-node"
           draggable="false"
         >
-          [[some/path]]
+          <svg
+            class="inline-block"
+            stroke="currentColor"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+            />
+            <path
+              d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+            />
+          </svg>
+          <span
+            class="inline-block"
+          >
+            some/path
+          </span>
         </button>
       </div>
     `);
@@ -76,10 +93,27 @@ describe('BackLinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="back-link"
+          class="inline-backlink_banklink-node"
           draggable="false"
         >
-          [[monako]]
+          <svg
+            class="inline-block"
+            stroke="currentColor"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+            />
+            <path
+              d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+            />
+          </svg>
+          <span
+            class="inline-block"
+          >
+            monako
+          </span>
         </button>
       </div>
     `);
@@ -420,10 +454,27 @@ describe('BackLinkNode', () => {
       expect(renderResult.container).toMatchInlineSnapshot(`
         <div>
           <button
-            class="back-link"
+            class="inline-backlink_banklink-node"
             draggable="false"
           >
-            [[Invalid link!monako]]
+            <svg
+              class="inline-block"
+              stroke="currentColor"
+              viewBox="0 0 18 18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+              />
+              <path
+                d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+              />
+            </svg>
+            <span
+              class="inline-block"
+            >
+              Invalid link!monako
+            </span>
           </button>
         </div>
       `);

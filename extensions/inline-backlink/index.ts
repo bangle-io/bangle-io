@@ -12,11 +12,16 @@ const getScrollContainer = (view) => {
   return view.dom.parentElement;
 };
 
+// TODO there is a bug in firefox https://github.com/ProseMirror/prosemirror/issues/1220
+// to avoid that make we can set selectable = true, but then that slows down clicking
+// of wiki links
+const wikiSpec = wikiLink.spec();
+
 const extension = Extension.create({
   name: extensionName,
   editor: {
     specs: [
-      wikiLink.spec(),
+      wikiSpec,
       inlinePalette.spec({
         markName: paletteMark,
         trigger: '[[',

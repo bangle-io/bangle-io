@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { RenderReactNodeView } from '@bangle.io/extension-registry';
+import { NewNoteIcon, NoteIcon } from '@bangle.io/ui-components';
 import { conditionalSuffix } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
@@ -33,7 +34,7 @@ export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
 
   return (
     <button
-      className="back-link"
+      className="inline-backlink_banklink-node"
       // prevent the a-href from being dragged, which messes up our system
       // we want the node view to be dragged to the dom serializers can kick in
       draggable={false}
@@ -75,7 +76,8 @@ export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
         );
       }}
     >
-      {`[[${title}]]`}
+      <NoteIcon className="inline-block" />
+      <span className="inline-block">{title}</span>
     </button>
   );
 }

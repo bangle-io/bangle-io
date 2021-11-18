@@ -1,7 +1,21 @@
-.bangle-editor .back-link {
-  color: var(--window-link-color);
+.inline-backlink_banklink-node {
+  padding: 0 0.4rem;
+  border-radius: var(--window-pill-borderRadius);
+  background-color: var(--backLink-backLinkNode-bgColor);
 }
 
-.bangle-editor .back-link:hover {
+.inline-backlink_banklink-node:hover {
   text-decoration: underline;
+  background-color: var(--backLink-backLinkNode-hover-bgColor);
+}
+
+.inline-backlink_banklink-node > svg {
+  color: var(--window-link-color);
+  fill: var(--backLink-backLinkNode-bgColor);
+  height: 1.2em;
+  width: 1.2em;
+  /* adding a bit of padding to just align this thing well */
+  padding-bottom: 0.15em;
+  vertical-align: middle;
+  position: relative;
 }

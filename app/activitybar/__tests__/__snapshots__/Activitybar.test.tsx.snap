@@ -72,7 +72,6 @@ exports[`renders when no sidebars 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
-            fill="#ff13dc"
             height="18"
             opacity="0"
             width="18"
@@ -170,7 +169,6 @@ exports[`renders when sidebar is active 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
-            fill="#ff13dc"
             height="18"
             opacity="0"
             width="18"
@@ -268,7 +266,6 @@ exports[`renders when there is sidebar 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
-            fill="#ff13dc"
             height="18"
             opacity="0"
             width="18"
