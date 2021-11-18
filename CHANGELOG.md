@@ -1,3 +1,7 @@
+### Nov 17, 2021
+
+- **UI improvements:** Updated the look of Backlinks.
+
 ### Nov 14, 2021
 
 - **UI improvements:** We have refined the new workspace UI.
