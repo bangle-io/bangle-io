@@ -2,6 +2,7 @@
   padding: 0 0.4rem;
   border-radius: var(--window-pill-borderRadius);
   background-color: var(--backLink-backLinkNode-bgColor);
+  margin: 0 0.2rem;
 }
 
 .inline-backlink_banklink-node:hover {
