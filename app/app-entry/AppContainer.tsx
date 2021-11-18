@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactNode, useCallback, useMemo } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 import { Activitybar } from '@bangle.io/activitybar';
@@ -32,10 +32,19 @@ export function AppContainer() {
   const sidebars = extensionRegistry.getSidebars();
   const actionKeybindings = extensionRegistry.getActionKeybindingMapping();
 
-  const { sidebar } = useUIManagerContext();
+  const { sidebar, dispatch } = useUIManagerContext();
   const currentSidebar = sidebar
     ? sidebars.find((s) => s.name === sidebar)
     : null;
+
+  const onDismissSidebar = useCallback(() => {
+    dispatch({
+      type: 'UI/CHANGE_SIDEBAR',
+      value: {
+        type: undefined,
+      },
+    });
+  }, [dispatch]);
 
   const mainContent = useMemo(() => {
     const result: ReactNode[] = [];
@@ -83,7 +92,11 @@ export function AppContainer() {
         noteSidebar={undefined}
         workspaceSidebar={
           currentSidebar && (
-            <WorkspaceSidebar wsName={wsName} sidebar={currentSidebar} />
+            <WorkspaceSidebar
+              onDismiss={onDismissSidebar}
+              wsName={wsName}
+              sidebar={currentSidebar}
+            />
           )
         }
         mainContent={

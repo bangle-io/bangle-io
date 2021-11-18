@@ -6,8 +6,7 @@ import {
   CORE_ACTIONS_NEW_WORKSPACE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
 } from '@bangle.io/constants';
-import { ActionButton } from '@bangle.io/ui-bangle-button';
-import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
+import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage, Page } from '@bangle.io/ui-components';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';

@@ -1,7 +1,10 @@
 import React, { ReactNode } from 'react';
 
-import { ActionButton, TooltipWrapper } from '@bangle.io/ui-bangle-button';
-import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
+import {
+  ActionButton,
+  ButtonContent,
+  TooltipWrapper,
+} from '@bangle.io/ui-bangle-button';
 import { cx } from '@bangle.io/utils';
 
 export const buttonStyling = {

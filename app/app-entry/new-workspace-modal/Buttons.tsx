@@ -7,8 +7,7 @@ import {
   NATIVE_BROWSER_USER_ABORTED_ERROR,
   pickADirectory,
 } from '@bangle.io/baby-fs';
-import { ActionButton } from '@bangle.io/ui-bangle-button';
-import { ButtonContent } from '@bangle.io/ui-bangle-button/ButtonContent';
+import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CloseIcon } from '@bangle.io/ui-components';
 
 import {
