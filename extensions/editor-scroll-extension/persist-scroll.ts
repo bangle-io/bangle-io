@@ -1,4 +1,4 @@
-import { Selection } from '@bangle.dev/pm';
+import { Node, Selection } from '@bangle.dev/pm';
 
 import { extensionName } from './config';
 
@@ -6,37 +6,40 @@ const LOG = false;
 
 const log = LOG ? console.log.bind(console, extensionName) : () => {};
 
-const key = (type, editorId, wsPath) =>
+const key = (type: string, editorId: number, wsPath: string) =>
   extensionName + ':' + editorId + ':' + type + '::' + wsPath;
 
-const scrollKey = (editorId, wsPath) => key('scroll', editorId, wsPath);
-const selectionKey = (editorId, wsPath) => key('selection', editorId, wsPath);
+const scrollKey = (editorId: number, wsPath: string) =>
+  key('scroll', editorId, wsPath);
 
-export function getSavedScrollPos(wsPath, editorId) {
+const selectionKey = (editorId: number, wsPath: string) =>
+  key('selection', editorId, wsPath);
+
+export function getSavedScrollPos(wsPath: string, editorId: number) {
   const result = parseInt(
-    sessionStorage.getItem(scrollKey(wsPath, editorId)) || '',
+    sessionStorage.getItem(scrollKey(editorId, wsPath)) || '',
     10,
   );
-  log('getting', scrollKey(wsPath, editorId), result);
+  log('getting', scrollKey(editorId, wsPath), result);
   return Number.isNaN(result) ? undefined : result;
 }
 
-export function saveScrollPos(wsPath, editorId, value) {
+export function saveScrollPos(wsPath: string, editorId: number, value) {
   if (typeof value === 'number') {
-    sessionStorage.setItem(scrollKey(wsPath, editorId), value.toString());
+    sessionStorage.setItem(scrollKey(editorId, wsPath), value.toString());
   }
 }
 
-export function getSavedSelection(wsPath, editorId, doc) {
-  const stored = sessionStorage.getItem(selectionKey(wsPath, editorId));
+export function getSavedSelection(wsPath: string, editorId: number, doc: Node) {
+  const stored = sessionStorage.getItem(selectionKey(editorId, wsPath));
   if (stored == null) {
     return undefined;
   }
   try {
-    log('getting', selectionKey(wsPath, editorId), stored);
+    log('getting', selectionKey(editorId, wsPath), stored);
 
     const rawSelection = JSON.parse(
-      sessionStorage.getItem(selectionKey(wsPath, editorId)) || '{}',
+      sessionStorage.getItem(selectionKey(editorId, wsPath)) || '{}',
     );
 
     if (Math.max(rawSelection.anchor, rawSelection.head) >= doc.content.size) {
@@ -51,9 +54,13 @@ export function getSavedSelection(wsPath, editorId, doc) {
   }
 }
 
-export function saveSelection(wsPath, editorId, selection) {
+export function saveSelection(
+  wsPath: string,
+  editorId: number,
+  selection: Selection,
+) {
   const json = selection.toJSON();
-  log('saveSelection', selectionKey(wsPath, editorId), json);
+  log('saveSelection', selectionKey(editorId, wsPath), json);
 
-  sessionStorage.setItem(selectionKey(wsPath, editorId), JSON.stringify(json));
+  sessionStorage.setItem(selectionKey(editorId, wsPath), JSON.stringify(json));
 }

@@ -34,8 +34,6 @@ export interface EditorConfig {
   markdownItPlugins?: any[];
   ReactComponent?: React.ComponentType<{
     key: string;
-    wsPath: string;
-    editorId: number;
   }>;
   renderReactNodeView?: RenderReactNodeView;
   initialScrollPos?: ({

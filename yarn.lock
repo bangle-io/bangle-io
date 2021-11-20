@@ -1932,6 +1932,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/constants@workspace:lib/constants"
   dependencies:
+    "@bangle.dev/pm": 0.28.0
     "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -2163,8 +2164,11 @@ __metadata:
     "@bangle.dev/core": 0.28.0
     "@bangle.dev/pm": 0.28.0
     "@bangle.dev/react": 0.28.0
+    "@bangle.dev/utils": 0.28.0
+    "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
     "@testing-library/react": ^12.1.2
@@ -2673,6 +2677,7 @@ __metadata:
   resolution: "@bangle.io/utils@workspace:lib/utils"
   dependencies:
     "@bangle.dev/pm": 0.28.0
+    "@bangle.dev/react": 0.28.0
     "@bangle.dev/utils": 0.28.0
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
