@@ -8,7 +8,6 @@ import {
 } from '@bangle.dev/pm';
 
 const name = 'collapsible_heading_deco';
-const leftOffset = 24;
 // TODO even after optimizations, this is far for perfect
 // every keystroke triggers a redundant layout shift of
 // collapsibles.

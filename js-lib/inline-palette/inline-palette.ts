@@ -1,16 +1,18 @@
-import type { BaseRawMarkSpec, PluginKey } from '@bangle.dev/core';
+import { BaseRawMarkSpec, PluginKey } from '@bangle.dev/core';
+import type { Command, EditorState, EditorView } from '@bangle.dev/pm';
 import {
   createTooltipDOM,
   suggestTooltip,
   SuggestTooltipRenderOpts,
 } from '@bangle.dev/tooltip';
-import { bangleWarn, pluginKeyStore, valuePlugin } from '@bangle.dev/utils';
+import { bangleWarn, valuePlugin } from '@bangle.dev/utils';
 
 const {
   decrementSuggestTooltipCounter,
   incrementSuggestTooltipCounter,
   queryIsSuggestTooltipActive,
 } = suggestTooltip;
+
 export const spec = specFactory;
 export const plugins = pluginsFactory;
 export const commands = {};
@@ -33,8 +35,6 @@ function specFactory({
   };
 }
 
-const keyStore = pluginKeyStore();
-
 function pluginsFactory({
   key,
   markName,
@@ -46,7 +46,7 @@ function pluginsFactory({
 }) {
   return ({ schema, specRegistry }) => {
     const { trigger } = specRegistry.options[markName];
-    const suggestTooltipKey = keyStore.create(key, 'suggestTooltipKey');
+    const suggestTooltipKey = new PluginKey('suggestTooltipKey');
 
     // We are converting to DOM elements so that their instances
     // can be shared across plugins.
@@ -98,6 +98,7 @@ function pluginsFactory({
         },
         tooltipContentDOM: tooltipDOMSpec.contentDOM,
         markName,
+        suggestTooltipKey,
       }),
       suggestTooltip.plugins({
         key: suggestTooltipKey,
@@ -118,13 +119,15 @@ function pluginsFactory({
   };
 }
 
-export function getSuggestTooltipKey(key) {
-  return keyStore.get(key, 'suggestTooltipKey');
+export function getSuggestTooltipKey(key: PluginKey) {
+  return (state: EditorState) => {
+    return key.getState(state).suggestTooltipKey as PluginKey;
+  };
 }
 
-export function replaceSuggestionMarkWith(key, replaceWith) {
+export function replaceSuggestionMarkWith(key, replaceWith): Command {
   return (state, dispatch, view) => {
-    const suggestTooltipKey = getSuggestTooltipKey(key);
+    const suggestTooltipKey = getSuggestTooltipKey(key)(state);
     return suggestTooltip.replaceSuggestMarkWith(
       suggestTooltipKey,
       replaceWith,
@@ -133,9 +136,15 @@ export function replaceSuggestionMarkWith(key, replaceWith) {
 }
 
 export function queryInlinePaletteActive(key) {
-  return queryIsSuggestTooltipActive(getSuggestTooltipKey(key));
+  return (state: EditorState) => {
+    const suggestTooltipKey = getSuggestTooltipKey(key)(state);
+    return queryIsSuggestTooltipActive(suggestTooltipKey)(state);
+  };
 }
 
 export function queryInlinePaletteText(key) {
-  return suggestTooltip.queryTriggerText(getSuggestTooltipKey(key));
+  return (state: EditorState) => {
+    const suggestTooltipKey = getSuggestTooltipKey(key)(state);
+    return suggestTooltip.queryTriggerText(suggestTooltipKey)(state);
+  };
 }

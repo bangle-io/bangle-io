@@ -7,12 +7,13 @@ import { suggestTooltip } from '@bangle.dev/tooltip';
 import { getSuggestTooltipKey } from './inline-palette';
 
 export function useInlinePaletteQuery(inlinePaletteKey) {
+  const view = useEditorViewContext();
   // TODO show is a bad name
   const {
     triggerText: query,
     counter,
     show: isVisible,
-  } = usePluginState(getSuggestTooltipKey(inlinePaletteKey), true);
+  } = usePluginState(getSuggestTooltipKey(inlinePaletteKey)(view.state), true);
   const { tooltipContentDOM } = usePluginState(inlinePaletteKey);
 
   return { query, counter, isVisible, tooltipContentDOM };
