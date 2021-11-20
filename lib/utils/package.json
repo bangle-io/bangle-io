@@ -20,6 +20,7 @@
   "module": "index.ts",
   "dependencies": {
     "@bangle.dev/pm": "0.28.0",
+    "@bangle.dev/react": "0.28.0",
     "@bangle.dev/utils": "0.28.0",
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/config": "workspace:*",

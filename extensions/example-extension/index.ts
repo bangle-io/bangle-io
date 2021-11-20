@@ -29,15 +29,9 @@ const extension = Extension.create({
   },
 });
 
-function collabPlugin({
-  // coming from pluginMetadata in Editor.jsx
-  // props:
-  // - `wsPath`
-  // - `editorId`
-  metadata,
-}) {}
+function collabPlugin({}) {}
 
-function EditorReactComponent({ wsPath, editorId }) {
+function EditorReactComponent() {
   return null;
 }
 

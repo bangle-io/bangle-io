@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
@@ -7,15 +7,18 @@ import {
   RenderNodeViewsFunction,
   useEditorState,
 } from '@bangle.dev/react';
+import { valuePlugin } from '@bangle.dev/utils';
 
+import { EditorPluginMetadataKey } from '@bangle.io/constants';
 import {
   ExtensionRegistry,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
+import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 import { getScrollParentElement } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
-const LOG = true;
+const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 interface EditorProps {
   className?: string;
@@ -101,9 +104,20 @@ function EditorInner2({
     };
   }, []);
 
+  const pluginMetadata: EditorPluginMetadata = useMemo(
+    () => ({
+      wsPath,
+      editorId,
+    }),
+    [editorId, wsPath],
+  );
+
   const plugins = useCallback(() => {
-    return extensionRegistry.getPlugins();
-  }, [extensionRegistry]);
+    return [
+      valuePlugin(EditorPluginMetadataKey, pluginMetadata),
+      ...extensionRegistry.getPlugins(),
+    ];
+  }, [extensionRegistry, pluginMetadata]);
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
     (nodeViewRenderArg) => {
@@ -115,12 +129,10 @@ function EditorInner2({
     },
     [extensionRegistry, wsPath, editorId],
   );
+
   const editorState = useEditorState({
-    plugins: plugins,
-    pluginMetadata: {
-      wsPath,
-      editorId,
-    },
+    plugins,
+    pluginMetadata,
     specRegistry: extensionRegistry.specRegistry,
     initialValue: initialValue,
     pmStateOpts: {

@@ -22,6 +22,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@bangle.dev/pm": "0.28.0",
     "@bangle.io/shared-types": "workspace:*"
   }
 }
