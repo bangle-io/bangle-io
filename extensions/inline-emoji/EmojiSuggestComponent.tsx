@@ -32,11 +32,6 @@ export function EmojiSuggest({
 }: {
   emojiSuggestKey: PluginKey;
 }) {
-  const {
-    counter,
-    triggerText,
-    show: isVisible,
-  } = usePluginState(getSuggestTooltipKey(emojiSuggestKey));
   const view = useEditorViewContext();
   const {
     tooltipContentDOM,
@@ -47,10 +42,17 @@ export function EmojiSuggest({
     rowWidth,
     palettePadding,
     selectedEmojiSquareId,
+    suggestTooltipKey,
   } = usePluginState(emojiSuggestKey);
 
+  const {
+    counter,
+    triggerText,
+    show: isVisible,
+  } = usePluginState(suggestTooltipKey);
+
   return reactDOM.createPortal(
-    <div className="bangle-io-emoji-suggest-container shadow-2xl">
+    <div className="shadow-2xl bangle-io-emoji-suggest-container">
       <div className="bangle-emoji-suggest" style={{ padding: palettePadding }}>
         <div
           style={{

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { Command } from '@bangle.dev/pm';
+import type { Command } from '@bangle.dev/pm';
 
 import {
   replaceSuggestionMarkWith,
@@ -74,7 +74,7 @@ export function TagPickerInlinePalette({ wsPath }) {
   );
 
   return ReactDOM.createPortal(
-    <div className="inline-palette-wrapper shadow-2xl">
+    <div className="shadow-2xl inline-palette-wrapper">
       <div className="inline-palette-items-wrapper tag-picker-inline-palette">
         {query ? (
           items.map((r, i) => {

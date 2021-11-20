@@ -126,6 +126,10 @@ function EditorInner({
       }),
     },
     editorProps: {},
+    dropCursorOpts: {
+      color: 'var(--accent-primary-0)',
+      width: 2,
+    },
   });
 
   return (
