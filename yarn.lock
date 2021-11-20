@@ -2044,6 +2044,7 @@ __metadata:
     "@bangle.dev/react": 0.28.0
     "@bangle.io/action-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
@@ -2150,6 +2151,30 @@ __metadata:
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/editor@workspace:*, @bangle.io/editor@workspace:lib/editor":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/editor@workspace:lib/editor"
+  dependencies:
+    "@bangle.dev/core": 0.28.0
+    "@bangle.dev/pm": 0.28.0
+    "@bangle.dev/react": 0.28.0
+    "@bangle.io/editor-manager-context": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-context": "workspace:*"
+    "@testing-library/react": ^12.1.2
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    "@types/react-router-dom": ^5.3.2
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-router-dom: ^5.3.0
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
   languageName: unknown
   linkType: soft
 

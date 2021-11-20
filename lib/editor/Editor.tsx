@@ -1,14 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
-import { Node } from '@bangle.dev/pm';
+import type { Node } from '@bangle.dev/pm';
 import {
   BangleEditor,
   RenderNodeViewsFunction,
   useEditorState,
 } from '@bangle.dev/react';
 
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import {
+  ExtensionRegistry,
+  useExtensionRegistryContext,
+} from '@bangle.io/extension-registry';
 import { getScrollParentElement } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -16,22 +19,23 @@ const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
 export function Editor({
+  className,
   editorId,
+  onEditorReady,
   wsPath,
-  extensionRegistry,
-  setEditor,
 }: {
-  extensionRegistry: ExtensionRegistry;
+  className?: string;
   editorId: number;
+  onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
-  setEditor: (editorId: number, editor: CoreBangleEditor) => void;
 }) {
   const { getNote } = useWorkspaceContext();
-
+  const extensionRegistry = useExtensionRegistryContext();
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
   // in handy when loading editor with a given scroll position.
   const [initialValue, setInitialDoc] = useState<Node | undefined>();
+
   useEffect(() => {
     let destroyed = false;
     getNote(wsPath).then((doc) => {
@@ -59,27 +63,30 @@ export function Editor({
 
   return initialValue ? (
     <EditorInner
+      className={className}
       editorId={editorId}
-      wsPath={wsPath}
-      setEditor={setEditor}
       extensionRegistry={extensionRegistry}
       initialValue={initialValue}
+      onEditorReady={onEditorReady}
+      wsPath={wsPath}
     />
   ) : null;
 }
 
 function EditorInner({
+  className,
   editorId,
-  wsPath,
   extensionRegistry,
-  setEditor,
   initialValue,
+  onEditorReady,
+  wsPath,
 }: {
-  extensionRegistry: ExtensionRegistry;
+  className?: string;
   editorId: number;
-  wsPath: string;
-  setEditor: (editorId: number, editor: CoreBangleEditor) => void;
+  extensionRegistry: ExtensionRegistry;
   initialValue: any;
+  onEditorReady?: (editor: CoreBangleEditor) => void;
+  wsPath: string;
 }) {
   useEffect(() => {
     log('mounting editor', editorId, wsPath);
@@ -91,14 +98,6 @@ function EditorInner({
   const plugins = useCallback(() => {
     return extensionRegistry.getPlugins();
   }, [extensionRegistry]);
-
-  const onEditorReady = useCallback(
-    (editor) => {
-      setEditor(editorId, editor);
-      editor.focusView();
-    },
-    [setEditor, editorId],
-  );
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
     (nodeViewRenderArg) => {
@@ -134,11 +133,11 @@ function EditorInner({
 
   return (
     <BangleEditor
-      state={editorState}
+      className={className}
+      focusOnInit={false}
       onReady={onEditorReady}
       renderNodeViews={renderNodeViews}
-      focusOnInit={false}
-      className={`editor-container_editor editor-container_editor-${editorId}`}
+      state={editorState}
     >
       {extensionRegistry.renderExtensionEditorComponents({ wsPath, editorId })}
     </BangleEditor>
