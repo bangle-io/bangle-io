@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { RawSpecs } from '@bangle.dev/core';
-import type { Node } from '@bangle.dev/pm';
+import type { Node, Selection } from '@bangle.dev/pm';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
 import type {
@@ -47,7 +47,7 @@ export interface EditorConfig {
     wsPath: string;
     editorId: number;
     doc: Node;
-  }) => any;
+  }) => Selection | undefined;
 }
 
 export type RegisterActionHandlerType = (cb: ActionHandler) => () => void;

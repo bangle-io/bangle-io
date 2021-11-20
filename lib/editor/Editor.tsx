@@ -20,12 +20,14 @@ import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
+
 interface EditorProps {
   className?: string;
-  editorId: number;
+  editorId?: number;
   onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
 }
+
 export function Editor(props: EditorProps) {
   // using key=wsPath to force unmount and mount the editor
   // with fresh values
@@ -58,7 +60,7 @@ function EditorInner({
   }, [getNote, wsPath]);
 
   useEffect(() => {
-    if (initialValue) {
+    if (initialValue && editorId != null) {
       const scrollParent = getScrollParentElement(editorId);
       const pos = extensionRegistry.editor.initialScrollPos({
         wsPath,
@@ -91,7 +93,7 @@ function EditorInner2({
   wsPath,
 }: {
   className?: string;
-  editorId: number;
+  editorId?: number;
   extensionRegistry: ExtensionRegistry;
   initialValue: any;
   onEditorReady?: (editor: CoreBangleEditor) => void;
@@ -104,6 +106,46 @@ function EditorInner2({
     };
   }, []);
 
+  const editorState = useGetEditorState({
+    editorId,
+    extensionRegistry,
+    initialValue,
+    wsPath,
+  });
+
+  const renderNodeViews: RenderNodeViewsFunction = useCallback(
+    (nodeViewRenderArg) => {
+      return extensionRegistry.renderReactNodeViews({
+        nodeViewRenderArg,
+      });
+    },
+    [extensionRegistry],
+  );
+
+  return (
+    <BangleEditor
+      className={className}
+      focusOnInit={false}
+      onReady={onEditorReady}
+      renderNodeViews={renderNodeViews}
+      state={editorState}
+    >
+      {extensionRegistry.renderExtensionEditorComponents()}
+    </BangleEditor>
+  );
+}
+
+export function useGetEditorState({
+  editorId,
+  extensionRegistry,
+  initialValue,
+  wsPath,
+}: {
+  editorId?: number;
+  extensionRegistry: ExtensionRegistry;
+  initialValue: any;
+  wsPath: string;
+}) {
   const pluginMetadata: EditorPluginMetadata = useMemo(
     () => ({
       wsPath,
@@ -119,26 +161,22 @@ function EditorInner2({
     ];
   }, [extensionRegistry, pluginMetadata]);
 
-  const renderNodeViews: RenderNodeViewsFunction = useCallback(
-    (nodeViewRenderArg) => {
-      return extensionRegistry.renderReactNodeViews({
-        nodeViewRenderArg,
-      });
-    },
-    [extensionRegistry],
-  );
+  const initialSelection =
+    editorId == null
+      ? undefined
+      : extensionRegistry.editor.initialSelection({
+          wsPath,
+          editorId,
+          doc: initialValue,
+        });
 
   const editorState = useEditorState({
     plugins,
     pluginMetadata,
     specRegistry: extensionRegistry.specRegistry,
-    initialValue: initialValue,
+    initialValue,
     pmStateOpts: {
-      selection: extensionRegistry.editor.initialSelection({
-        wsPath,
-        editorId,
-        doc: initialValue,
-      }),
+      selection: initialSelection,
     },
     editorProps: {},
     dropCursorOpts: {
@@ -147,15 +185,5 @@ function EditorInner2({
     },
   });
 
-  return (
-    <BangleEditor
-      className={className}
-      focusOnInit={false}
-      onReady={onEditorReady}
-      renderNodeViews={renderNodeViews}
-      state={editorState}
-    >
-      {extensionRegistry.renderExtensionEditorComponents()}
-    </BangleEditor>
-  );
+  return editorState;
 }

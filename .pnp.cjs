@@ -4130,12 +4130,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/workspace-context", "workspace:lib/workspace-context"],
             ["@testing-library/react", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:12.1.2"],
+            ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
             ["@types/react-router-dom", "npm:5.3.2"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:4d72015d803d5099dd883d7e24864b3774253e1ee9a25ef0f984f81e55bafae427ed117d22a0acb57da249792cecf239feb59e7dc588f154f4a45e937558620d#npm:17.0.2"],
-            ["react-router-dom", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:5.3.0"]
+            ["react-router-dom", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:5.3.0"],
+            ["react-test-renderer", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:17.0.2"]
           ],
           "packagePeers": [
             "@types/react-dom",
@@ -4161,12 +4163,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/workspace-context", "workspace:lib/workspace-context"],
             ["@testing-library/react", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:12.1.2"],
+            ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
             ["@types/react-router-dom", "npm:5.3.2"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:4d72015d803d5099dd883d7e24864b3774253e1ee9a25ef0f984f81e55bafae427ed117d22a0acb57da249792cecf239feb59e7dc588f154f4a45e937558620d#npm:17.0.2"],
-            ["react-router-dom", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:5.3.0"]
+            ["react-router-dom", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:5.3.0"],
+            ["react-test-renderer", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:17.0.2"]
           ],
           "linkType": "SOFT",
         }]

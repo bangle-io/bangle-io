@@ -1,4 +1,5 @@
 import { act, render, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
@@ -11,6 +12,7 @@ import {
 } from '@bangle.io/extension-registry';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
+import { useGetEditorState } from '..';
 import { Editor } from '../Editor';
 
 const coreExtension = Extension.create({
@@ -107,6 +109,29 @@ test('basic renders', async () => {
   expect(result!.container).toMatchSnapshot();
 });
 
+test('works without editorId', async () => {
+  let onEditorReady = jest.fn();
+  act(() => {
+    result = render(
+      <div>
+        <Editor
+          onEditorReady={onEditorReady}
+          wsPath="something:blah.md"
+          className="test-class"
+        />
+      </div>,
+    );
+  });
+
+  await waitFor(() => {
+    expect(result.container.innerHTML).toContain('class="test-class');
+  });
+
+  expect(onEditorReady).toBeCalledTimes(1);
+  expect(result!.container.innerHTML).toContain('Hello world! I am a test');
+  expect(result!.container).toMatchSnapshot();
+});
+
 test('changing of wsPath works', async () => {
   let onEditorReady = jest.fn();
   getNote = jest.fn(async (wsPath) => {
@@ -159,4 +184,36 @@ test('changing of wsPath works', async () => {
   expect(getNote).toBeCalledTimes(2);
 
   expect(result!.container.innerHTML).toContain('two note');
+});
+
+describe('useGetEditorState', () => {
+  test('generates correct state', () => {
+    const { result } = renderHook(() =>
+      useGetEditorState({
+        editorId: 0,
+        extensionRegistry,
+        initialValue: '',
+        wsPath: 'something:one.md',
+      }),
+    );
+    expect(result.current?.pmState.toJSON()).toMatchInlineSnapshot(`
+      Object {
+        "doc": Object {
+          "content": Array [
+            Object {
+              "type": "paragraph",
+            },
+          ],
+          "type": "doc",
+        },
+        "selection": Object {
+          "anchor": 1,
+          "head": 1,
+          "type": "text",
+        },
+      }
+    `);
+
+    expect(result.current?.specRegistry).toBeTruthy();
+  });
 });
