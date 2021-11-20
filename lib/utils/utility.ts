@@ -155,7 +155,7 @@ export function cx(...args: any[]) {
   return classes.join(' ');
 }
 
-export function sleep(t = 20) {
+export function sleep(t = 20): Promise<void> {
   return new Promise((res) => setTimeout(res, t));
 }
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-import { RenderReactNodeView } from '@bangle.io/extension-registry';
-import { NewNoteIcon, NoteIcon } from '@bangle.io/ui-components';
+import type { RenderReactNodeView } from '@bangle.io/extension-registry';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { NoteIcon } from '@bangle.io/ui-components';
 import { conditionalSuffix } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
@@ -14,7 +15,9 @@ import {
 
 import { backLinkNodeName, newNoteLocation } from '../config';
 
-export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
+export function BackLinkNode({ nodeAttrs }) {
+  const extensionRegistry = useExtensionRegistryContext();
+
   let { path, title } = nodeAttrs;
   const {
     primaryWsPath,
@@ -36,7 +39,7 @@ export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
     <button
       className="inline-backlink_banklink-node"
       // prevent the a-href from being dragged, which messes up our system
-      // we want the node view to be dragged to the dom serializers can kick in
+      // we want the node view to be dragged so the dom serializers can kick in
       draggable={false}
       onClick={(event) => {
         event.preventDefault();
@@ -130,14 +133,8 @@ async function handleClick({
 }
 
 export const renderReactNodeView: RenderReactNodeView = {
-  // TODO move to using param wsPath
-  [backLinkNodeName]: ({ nodeViewRenderArg, wsPath, extensionRegistry }) => {
-    return (
-      <BackLinkNode
-        nodeAttrs={nodeViewRenderArg.node.attrs}
-        extensionRegistry={extensionRegistry}
-      />
-    );
+  [backLinkNodeName]: ({ nodeViewRenderArg }) => {
+    return <BackLinkNode nodeAttrs={nodeViewRenderArg.node.attrs} />;
   },
 };
 

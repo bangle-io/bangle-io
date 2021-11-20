@@ -165,6 +165,6 @@ export function updateImageAltScaleFactor(alt, scaleFactor = 1) {
   return alt + '-scale' + scaleFactor.toFixed(2);
 }
 
-function replaceAll(str, find, replace) {
+function replaceAll(str: string, find: string, replace: string) {
   return str.replace(new RegExp(find, 'g'), replace);
 }

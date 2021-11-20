@@ -123,11 +123,9 @@ function EditorInner2({
     (nodeViewRenderArg) => {
       return extensionRegistry.renderReactNodeViews({
         nodeViewRenderArg,
-        wsPath,
-        editorId,
       });
     },
-    [extensionRegistry, wsPath, editorId],
+    [extensionRegistry],
   );
 
   const editorState = useEditorState({
@@ -157,7 +155,7 @@ function EditorInner2({
       renderNodeViews={renderNodeViews}
       state={editorState}
     >
-      {extensionRegistry.renderExtensionEditorComponents({ wsPath, editorId })}
+      {extensionRegistry.renderExtensionEditorComponents()}
     </BangleEditor>
   );
 }

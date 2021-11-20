@@ -9,7 +9,6 @@ import type {
   ActionHandler,
 } from '@bangle.io/shared-types';
 
-import type { ExtensionRegistry } from './ExtensionRegistry';
 import { EditorPluginDefinition } from './PluginType';
 import { ExtensionPaletteType } from './UniversalPaletteType';
 
@@ -17,9 +16,6 @@ const _check = Symbol();
 
 export type RenderReactNodeViewCb = (arg: {
   nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
-  wsPath: string;
-  editorId: number;
-  extensionRegistry: ExtensionRegistry;
 }) => React.ReactNode;
 
 export type RenderReactNodeView = {

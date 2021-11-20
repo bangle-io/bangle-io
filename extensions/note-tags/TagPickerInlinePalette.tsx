@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
 import type { Command } from '@bangle.dev/pm';
@@ -9,10 +9,9 @@ import {
   useInlinePaletteQuery,
 } from '@bangle.io/inline-palette';
 import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { palettePluginKey, tagNodeName } from './config';
-import { listAllTags, useSearchAllTags } from './search';
+import { useSearchAllTags } from './search';
 
 export const createTagNode = (tagValue: string): Command => {
   tagValue = tagValue.trim();
@@ -31,7 +30,7 @@ export const createTagNode = (tagValue: string): Command => {
   };
 };
 
-export function TagPickerInlinePalette({ wsPath }) {
+export function TagPickerInlinePalette() {
   const { query, counter, tooltipContentDOM, isVisible } =
     useInlinePaletteQuery(palettePluginKey);
   const filteredTags = useSearchAllTags(query, isVisible);

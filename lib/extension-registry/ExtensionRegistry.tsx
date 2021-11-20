@@ -151,18 +151,11 @@ export class ExtensionRegistry {
 
   renderReactNodeViews({
     nodeViewRenderArg,
-    wsPath,
-    editorId,
   }: {
     nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
-    wsPath: string;
-    editorId: number;
   }): React.ReactNode {
     return this.renderReactNodeViewLookup[nodeViewRenderArg.node.type.name]?.({
       nodeViewRenderArg,
-      wsPath,
-      editorId,
-      extensionRegistry: this,
     });
   }
 
@@ -195,20 +188,13 @@ export class ExtensionRegistry {
     return this.actionKeybindingMapping;
   }
 
-  renderExtensionEditorComponents = ({
-    wsPath,
-    editorId,
-  }: {
-    wsPath: string;
-    editorId: number;
-  }) => {
+  renderExtensionEditorComponents = () => {
     const result = this.editorConfig
       .map((e) => {
         const { ReactComponent } = e;
         if (ReactComponent) {
-          return (
-            <ReactComponent key={e.name} wsPath={wsPath} editorId={editorId} />
-          );
+          console.log(e.name);
+          return <ReactComponent key={e.name} />;
         }
         return undefined;
       })

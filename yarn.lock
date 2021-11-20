@@ -2676,6 +2676,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/utils@workspace:lib/utils"
   dependencies:
+    "@bangle.dev/core": 0.28.0
     "@bangle.dev/pm": 0.28.0
     "@bangle.dev/react": 0.28.0
     "@bangle.dev/utils": 0.28.0
