@@ -2,7 +2,7 @@ import type { Placement } from '@popperjs/core';
 import { useButton } from '@react-aria/button';
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
-import React, { ReactNode, useRef } from 'react';
+import React, { MutableRefObject, ReactNode, useCallback, useRef } from 'react';
 import reactDOM from 'react-dom';
 
 import { BaseButton, BaseButtonProps, StylingProps } from './BaseButton';
@@ -47,7 +47,10 @@ export function ActionButton({
   tooltipYOffset?: number;
   tooltipPlacement?: Placement;
 }) {
-  const ref = useRef<HTMLButtonElement>(null);
+  // Because tooltip doesn't use the vanilla `useRef` and aria uses that
+  // we have to override the type and also manually set the buttonElement
+  // to current.
+  const ref: MutableRefObject<HTMLButtonElement | null> = useRef(null);
   const { hoverProps, isHovered } = useHover({ isDisabled });
 
   const { buttonProps, isPressed } = useButton(
@@ -68,6 +71,14 @@ export function ActionButton({
     placement: tooltipPlacement,
   });
   const mergedProps: any = mergeProps(buttonProps, hoverProps);
+
+  const setButtonElement = useCallback(
+    (el) => {
+      setTriggerElement(el);
+      ref.current = el;
+    },
+    [setTriggerElement],
+  );
   return (
     <>
       <BaseButton
@@ -83,7 +94,7 @@ export function ActionButton({
         isPressed={isPressed}
         allowFocus={allowFocus}
         autoFocus={autoFocus}
-        onElementReady={setTriggerElement}
+        onElementReady={setButtonElement}
         style={{ ...style, ...buttonProps.style, ...hoverProps.style }}
       >
         {children}
