@@ -3,7 +3,6 @@ import { Redirect, Route } from 'react-router-dom';
 
 import { Activitybar } from '@bangle.io/activitybar';
 import { EditorContainer } from '@bangle.io/editor-container';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
@@ -26,7 +25,6 @@ export function AppContainer() {
   const { widescreen } = useUIManagerContext();
   const { wsName, primaryWsPath, openedWsPaths } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
-  const { setEditor } = useEditorManagerContext();
   useWorkspaceSideEffects();
 
   const sidebars = extensionRegistry.getSidebars();
@@ -63,15 +61,13 @@ export function AppContainer() {
           key={i}
           widescreen={widescreen}
           editorId={i}
-          extensionRegistry={extensionRegistry}
-          setEditor={setEditor}
           wsPath={wsPath}
         />,
       );
     });
 
     return <MultiColumnMainContent>{result}</MultiColumnMainContent>;
-  }, [openedWsPaths, setEditor, widescreen, extensionRegistry]);
+  }, [openedWsPaths, widescreen]);
 
   return (
     <>

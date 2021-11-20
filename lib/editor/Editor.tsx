@@ -15,20 +15,26 @@ import {
 import { getScrollParentElement } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
-const LOG = false;
+const LOG = true;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
-
-export function Editor({
-  className,
-  editorId,
-  onEditorReady,
-  wsPath,
-}: {
+interface EditorProps {
   className?: string;
   editorId: number;
   onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
-}) {
+}
+export function Editor(props: EditorProps) {
+  // using key=wsPath to force unmount and mount the editor
+  // with fresh values
+  return <EditorInner key={props.wsPath} {...props} />;
+}
+
+function EditorInner({
+  className,
+  editorId,
+  onEditorReady,
+  wsPath,
+}: EditorProps) {
   const { getNote } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
   // Even though the collab extension will reset the content to its convenience
@@ -62,7 +68,7 @@ export function Editor({
   }, [editorId, wsPath, extensionRegistry, initialValue]);
 
   return initialValue ? (
-    <EditorInner
+    <EditorInner2
       className={className}
       editorId={editorId}
       extensionRegistry={extensionRegistry}
@@ -73,7 +79,7 @@ export function Editor({
   ) : null;
 }
 
-function EditorInner({
+function EditorInner2({
   className,
   editorId,
   extensionRegistry,
@@ -89,11 +95,11 @@ function EditorInner({
   wsPath: string;
 }) {
   useEffect(() => {
-    log('mounting editor', editorId, wsPath);
+    log('mounting editor');
     return () => {
-      log('unmounting editor', editorId, wsPath);
+      log('unmounting editor');
     };
-  }, [wsPath, editorId]);
+  }, []);
 
   const plugins = useCallback(() => {
     return extensionRegistry.getPlugins();

@@ -49,20 +49,9 @@ exports[`basic renders 1`] = `
         style="max-width: min(var(--page-maxWidth), 100vw);"
       >
         <div
-          class="editor-container_editor editor-container_editor-1"
+          data-testid="mock-editor"
         >
-          <div
-            class="ProseMirror bangle-editor"
-            contenteditable="true"
-            translate="no"
-          >
-            <h1>
-              Hola
-            </h1>
-            <p>
-              Hello world! I am a test
-            </p>
-          </div>
+          MOCK_EDITOR
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import {
   CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
@@ -19,16 +20,15 @@ export function EditorContainer({
   widescreen,
   editorId,
   wsPath: incomingWsPath,
-  setEditor,
 }: {
   widescreen: boolean;
   editorId: number;
   wsPath: string | undefined;
-  setEditor: (editorId: number, editor: CoreBangleEditor) => void;
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { secondaryWsPath } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
+  const { setEditor } = useEditorManagerContext();
 
   const isSplitEditorActive = Boolean(secondaryWsPath);
 

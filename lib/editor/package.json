@@ -38,6 +38,7 @@
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
+    "@bangle.dev/all-base-components": "0.28.0",
     "@bangle.io/extension-registry": "workspace:*",
     "@testing-library/react": "^12.1.2",
     "@types/react": "^17.0.33",
