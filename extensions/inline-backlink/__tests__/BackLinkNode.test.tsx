@@ -82,6 +82,15 @@ describe('BackLinkNode', () => {
   });
 
   test('renders correctly', async () => {
+    (useWorkspaceContext as any).mockImplementation(() => {
+      return {
+        wsName: 'test-ws',
+        pushWsPath: pushWsPathMock,
+        noteWsPaths: ['test-ws:some/path.md'],
+        createNote,
+      };
+    });
+
     const renderResult = render(
       <BackLinkNode
         nodeAttrs={{ path: 'some/path', title: undefined }}
@@ -92,7 +101,7 @@ describe('BackLinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="inline-backlink_backlink-node"
+          class="inline-backlink_backlink"
           draggable="false"
         >
           <svg
@@ -119,6 +128,15 @@ describe('BackLinkNode', () => {
   });
 
   test('renders title if it exists', async () => {
+    (useWorkspaceContext as any).mockImplementation(() => {
+      return {
+        wsName: 'test-ws',
+        pushWsPath: pushWsPathMock,
+        noteWsPaths: ['test-ws:some/path.md'],
+        createNote,
+      };
+    });
+
     const renderResult = render(
       <BackLinkNode
         nodeAttrs={{ path: 'some/path', title: 'monako' }}
@@ -129,7 +147,57 @@ describe('BackLinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="inline-backlink_backlink-node"
+          class="inline-backlink_backlink"
+          draggable="false"
+        >
+          <svg
+            class="inline-block"
+            stroke="currentColor"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+            />
+            <path
+              d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+            />
+          </svg>
+          <span
+            class="inline-block"
+          >
+            monako
+          </span>
+        </button>
+      </div>
+    `);
+  });
+
+  test('styles not found notes differently', async () => {
+    (useWorkspaceContext as any).mockImplementation(() => {
+      return {
+        wsName: 'test-ws',
+        pushWsPath: pushWsPathMock,
+        noteWsPaths: [],
+        createNote,
+      };
+    });
+
+    const renderResult = render(
+      <BackLinkNode
+        nodeAttrs={{ path: 'some/path', title: 'monako' }}
+        view={editorView}
+      />,
+    );
+
+    expect(renderResult.container.innerHTML).toContain(
+      'inline-backlink_backlinkNotFound',
+    );
+
+    expect(renderResult.container).toMatchInlineSnapshot(`
+      <div>
+        <button
+          class="inline-backlink_backlink inline-backlink_backlinkNotFound"
           draggable="false"
         >
           <svg

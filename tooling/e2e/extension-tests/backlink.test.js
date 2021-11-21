@@ -47,17 +47,17 @@ test('Creating and clicking Backlinks works', async () => {
   await page.keyboard.type('[[0', { delay: 3 });
   await page.keyboard.press('Enter', { delay: 30 });
 
-  await page.waitForSelector('.inline-backlink_backlink-node', {
+  await page.waitForSelector('.inline-backlink_backlink', {
     timeout: 2 * SELECTOR_TIMEOUT,
   });
 
   // make sure the backlink created is for note-0
   expect(
-    await page.$eval('.inline-backlink_backlink-node', (n) => n.innerText),
+    await page.$eval('.inline-backlink_backlink', (n) => n.innerText),
   ).toEqual('note-0');
 
   // // Hover to see if it is correctly shown
-  await page.hover('.inline-backlink_backlink-node');
+  await page.hover('.inline-backlink_backlink');
 
   await page.waitForSelector('.editor_editor-display-popup', {
     timeout: SELECTOR_TIMEOUT,
@@ -94,7 +94,7 @@ async function clickBacklinkHandle(page, text) {
       waitUntil: 'networkidle0',
     }),
     editorHandle.$$eval(
-      '.inline-backlink_backlink-node',
+      '.inline-backlink_backlink',
       (nodes, text) => [...nodes].find((n) => n.innerText === text).click(),
       text,
     ),

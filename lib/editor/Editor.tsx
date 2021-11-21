@@ -24,7 +24,7 @@ import { useWorkspaceContext } from '@bangle.io/workspace-context';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
-interface EditorProps {
+export interface EditorProps {
   className?: string;
   editorId?: number;
   onEditorReady?: (editor: CoreBangleEditor) => void;

@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import reactDOM from 'react-dom';
 
 import { EditorView } from '@bangle.dev/pm';
 
 import { EditorDisplayType } from '@bangle.io/constants';
-import { Editor } from '@bangle.io/editor';
+import { PopupEditor } from '@bangle.io/editor';
 import type {
   ExtensionRegistry,
   RenderReactNodeView,
@@ -12,7 +11,11 @@ import type {
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { useHover, useTooltipPositioner } from '@bangle.io/ui-bangle-button';
 import { NoteIcon } from '@bangle.io/ui-components';
-import { conditionalSuffix, getEditorPluginMetadata } from '@bangle.io/utils';
+import {
+  conditionalSuffix,
+  cx,
+  getEditorPluginMetadata,
+} from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
   filePathToWsPath,
@@ -32,15 +35,12 @@ export function BackLinkNode({
   view: EditorView;
 }) {
   const extensionRegistry = useExtensionRegistryContext();
-
   // TODO currently bangle.dev doesn't pass editorview context so we are
   // unable to use `useEditorPluginMetadata` which itself uses `useEditorViewContext`
   // which will be undefined for react nodeviews.
   const { wsPath: primaryWsPath, editorDisplayType } = getEditorPluginMetadata(
     view.state,
   );
-
-  const disablePopup = editorDisplayType === EditorDisplayType.Popup;
 
   const { wsName, noteWsPaths, createNote, pushWsPath } = useWorkspaceContext();
 
@@ -49,6 +49,7 @@ export function BackLinkNode({
   title = title || path;
 
   const backLinkPath = conditionalSuffix(path, '.md');
+
   if (invalidLink) {
     title = 'Invalid link (' + title + ')';
   }
@@ -102,6 +103,13 @@ export function BackLinkNode({
     ],
   );
 
+  const backlinksWsPath =
+    wsName &&
+    noteWsPaths &&
+    getMatchingWsPath(wsName, backLinkPath, noteWsPaths);
+
+  const disablePopup = editorDisplayType === EditorDisplayType.Popup;
+
   const { hoverProps, isHovered } = useHover({ isDisabled: disablePopup });
   const { hoverProps: tooltipHoverProps, isHovered: isTooltipHovered } =
     useHover({ isDisabled: disablePopup });
@@ -114,25 +122,25 @@ export function BackLinkNode({
   } = useTooltipPositioner({
     isDisabled: disablePopup,
     isActive: !disablePopup && (isHovered || isTooltipHovered),
-    xOffset: 0,
+    xOffset: 10,
     yOffset: 0,
+    // TODO we can optimize where we position based on where empty
+    // space exists
     placement: 'right',
     delay: 350,
     immediateClose: false,
   });
-
-  const backlinksWsPath =
-    wsName &&
-    noteWsPaths &&
-    getMatchingWsPath(wsName, backLinkPath, noteWsPaths);
 
   return (
     <>
       <button
         ref={setTriggerElement}
         {...hoverProps}
-        className="inline-backlink_backlink-node"
-        // prevent the a-href from being dragged, which messes up our system
+        className={cx(
+          'inline-backlink_backlink',
+          !backlinksWsPath && `inline-backlink_backlinkNotFound`,
+        )}
+        // prevent the button from being dragged, which messes up our system
         // we want the node view to be dragged so the dom serializers can kick in
         draggable={false}
         onClick={onClick}
@@ -140,27 +148,21 @@ export function BackLinkNode({
         <NoteIcon className="inline-block" />
         <span className="inline-block">{title}</span>
       </button>
-      {isTooltipVisible &&
-        reactDOM.createPortal(
-          <div
-            ref={setTooltipElement}
-            style={tooltipProps.style}
-            className="py-4 pl-6 overflow-y-auto rounded-md inline-backlink_popup-editor"
-            {...tooltipHoverProps}
-            {...tooltipProps.attributes}
-          >
-            {backlinksWsPath ? (
-              <Editor
-                wsPath={backlinksWsPath}
-                className=""
-                editorDisplayType={EditorDisplayType.Popup}
-              />
-            ) : (
-              <span>Note not created yet.</span>
-            )}
-          </div>,
-          document.getElementById('tooltip-container')!,
-        )}
+
+      {isTooltipVisible && backlinksWsPath && (
+        <PopupEditor
+          ref={setTooltipElement}
+          editorProps={{ wsPath: backlinksWsPath }}
+          popupContainerProps={{
+            style: tooltipProps.style,
+            className: 'inline-backlink_popup-editor',
+            positionProps: {
+              ...tooltipHoverProps,
+              ...tooltipProps.attributes,
+            },
+          }}
+        />
+      )}
     </>
   );
 }
