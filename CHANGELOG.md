@@ -1,3 +1,7 @@
+### Nov 21, 2021
+
+- **Popup backlinks**: You can now hover over any _Backlink_ to see whats inside them. 
+
 ### Nov 17, 2021
 
 - **UI improvements:** Updated the look of Backlinks.
