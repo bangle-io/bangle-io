@@ -131,14 +131,14 @@ function EditorInner2({
     [extensionRegistry],
   );
 
-  let displayClass = 'editor-display-page';
+  let displayClass = 'editor_editor-display-page';
   switch (editorDisplayType) {
     case EditorDisplayType.Page: {
-      displayClass = 'editor-display-page';
+      displayClass = 'editor_editor-display-page';
       break;
     }
     case EditorDisplayType.Popup: {
-      displayClass = 'editor-display-popup';
+      displayClass = 'editor_editor-display-popup';
       break;
     }
   }

@@ -131,7 +131,7 @@ export function BackLinkNode({
       <button
         ref={setTriggerElement}
         {...hoverProps}
-        className="inline-backlink_banklink-node"
+        className="inline-backlink_backlink-node"
         // prevent the a-href from being dragged, which messes up our system
         // we want the node view to be dragged so the dom serializers can kick in
         draggable={false}

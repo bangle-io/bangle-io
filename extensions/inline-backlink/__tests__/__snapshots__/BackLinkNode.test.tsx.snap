@@ -3,7 +3,7 @@
 exports[`BackLinkNode clicking no click if path validation fails 1`] = `
 <div>
   <button
-    class="inline-backlink_banklink-node"
+    class="inline-backlink_backlink-node"
     draggable="false"
   >
     <svg

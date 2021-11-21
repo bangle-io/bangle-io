@@ -1,16 +1,16 @@
-.inline-backlink_banklink-node {
+.inline-backlink_backlink-node {
   padding: 0 0.4rem;
   border-radius: var(--window-pill-borderRadius);
   background-color: var(--backLink-backLinkNode-bgColor);
   margin: 0 0.2rem;
 }
 
-.inline-backlink_banklink-node:hover {
+.inline-backlink_backlink-node:hover {
   text-decoration: underline;
   background-color: var(--backLink-backLinkNode-hover-bgColor);
 }
 
-.inline-backlink_banklink-node > svg {
+.inline-backlink_backlink-node > svg {
   color: var(--window-link-color);
   fill: var(--backLink-backLinkNode-bgColor);
   height: 1.2em;

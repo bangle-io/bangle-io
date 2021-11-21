@@ -92,7 +92,7 @@ describe('BackLinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="inline-backlink_banklink-node"
+          class="inline-backlink_backlink-node"
           draggable="false"
         >
           <svg
@@ -129,7 +129,7 @@ describe('BackLinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="inline-backlink_banklink-node"
+          class="inline-backlink_backlink-node"
           draggable="false"
         >
           <svg
