@@ -197,6 +197,10 @@ async function clearPrimaryEditor(page) {
 
 // Wait until primary edits innerText contains the arg `text
 async function waitForPrimaryEditorTextToContain(page, text) {
+  await page.waitForSelector('.editor-container_editor-0 .bangle-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+
   await page.waitForFunction(
     (text) =>
       document
@@ -204,7 +208,7 @@ async function waitForPrimaryEditorTextToContain(page, text) {
         ?.innerText.trim()
         .includes(text),
     {
-      timeout: 2 * SELECTOR_TIMEOUT,
+      timeout: 3 * SELECTOR_TIMEOUT,
     },
     text,
   );
