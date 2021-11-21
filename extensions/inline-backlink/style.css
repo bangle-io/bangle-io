@@ -20,3 +20,16 @@
   vertical-align: middle;
   position: relative;
 }
+
+.inline-backlink_popup-editor {
+  background-color: var(--window-popupEditor-bgColor);
+  color: var(--window-popupEditor-color);
+  /* setting width and height are important otherwise
+    tippy confuses and causes issue with scroll
+  */
+  width: 400px;
+  height: 400px;
+  z-index: var(--window-popupEditor-zIndex);
+  border: 1px solid var(--window-borderColor-0);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 28px;
+}

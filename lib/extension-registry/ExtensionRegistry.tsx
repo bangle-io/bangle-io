@@ -193,7 +193,6 @@ export class ExtensionRegistry {
       .map((e) => {
         const { ReactComponent } = e;
         if (ReactComponent) {
-          console.log(e.name);
           return <ReactComponent key={e.name} />;
         }
         return undefined;

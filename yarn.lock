@@ -2218,6 +2218,7 @@ __metadata:
     "@bangle.dev/react": 0.28.0
     "@bangle.dev/utils": 0.28.0
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2280,10 +2281,12 @@ __metadata:
     "@bangle.dev/wiki-link": 0.28.0
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"

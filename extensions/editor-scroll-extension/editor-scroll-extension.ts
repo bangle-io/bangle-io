@@ -25,7 +25,6 @@ const log = LOG ? console.log.bind(console, extensionName) : () => {};
 export function PreserveScroll() {
   const { appState } = useContext(AppStateContext);
   const { wsPath, editorId } = useEditorPluginMetadata();
-
   usePreserveScroll(appState, wsPath, editorId);
   useMonitorScrollEnd(wsPath, editorId);
   return null;

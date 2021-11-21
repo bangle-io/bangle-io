@@ -31,6 +31,8 @@ export const cssVars = [
   'window-dropdown-bgColor-0',
   'window-dropdown-bgColor-1',
   'window-dropdown-color',
+  'window-popupEditor-bgColor',
+  'window-popupEditor-color',
   'window-kbd-bgColor',
   'window-kbd-color',
   'window-borderColor-0',

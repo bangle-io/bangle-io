@@ -5,6 +5,7 @@ import React from 'react';
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { Node } from '@bangle.dev/pm';
 
+import { EditorDisplayType } from '@bangle.io/constants';
 import {
   Extension,
   ExtensionRegistry,
@@ -194,6 +195,7 @@ describe('useGetEditorState', () => {
         extensionRegistry,
         initialValue: '',
         wsPath: 'something:one.md',
+        editorDisplayType: EditorDisplayType.Page,
       }),
     );
     expect(result.current?.pmState.toJSON()).toMatchInlineSnapshot(`

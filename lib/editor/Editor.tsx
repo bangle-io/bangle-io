@@ -9,13 +9,16 @@ import {
 } from '@bangle.dev/react';
 import { valuePlugin } from '@bangle.dev/utils';
 
-import { EditorPluginMetadataKey } from '@bangle.io/constants';
+import {
+  EditorDisplayType,
+  EditorPluginMetadataKey,
+} from '@bangle.io/constants';
 import {
   ExtensionRegistry,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
-import { getScrollParentElement } from '@bangle.io/utils';
+import { cx, getScrollParentElement } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 const LOG = false;
@@ -26,6 +29,7 @@ interface EditorProps {
   editorId?: number;
   onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
+  editorDisplayType?: EditorDisplayType;
 }
 
 export function Editor(props: EditorProps) {
@@ -39,6 +43,7 @@ function EditorInner({
   editorId,
   onEditorReady,
   wsPath,
+  editorDisplayType = EditorDisplayType.Page,
 }: EditorProps) {
   const { getNote } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
@@ -80,6 +85,7 @@ function EditorInner({
       initialValue={initialValue}
       onEditorReady={onEditorReady}
       wsPath={wsPath}
+      editorDisplayType={editorDisplayType}
     />
   ) : null;
 }
@@ -91,6 +97,7 @@ function EditorInner2({
   initialValue,
   onEditorReady,
   wsPath,
+  editorDisplayType,
 }: {
   className?: string;
   editorId?: number;
@@ -98,6 +105,7 @@ function EditorInner2({
   initialValue: any;
   onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
+  editorDisplayType: EditorDisplayType;
 }) {
   useEffect(() => {
     log('mounting editor');
@@ -111,6 +119,7 @@ function EditorInner2({
     extensionRegistry,
     initialValue,
     wsPath,
+    editorDisplayType,
   });
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
@@ -122,9 +131,21 @@ function EditorInner2({
     [extensionRegistry],
   );
 
+  let displayClass = 'editor-display-page';
+  switch (editorDisplayType) {
+    case EditorDisplayType.Page: {
+      displayClass = 'editor-display-page';
+      break;
+    }
+    case EditorDisplayType.Popup: {
+      displayClass = 'editor-display-popup';
+      break;
+    }
+  }
+
   return (
     <BangleEditor
-      className={className}
+      className={cx(className, displayClass)}
       focusOnInit={false}
       onReady={onEditorReady}
       renderNodeViews={renderNodeViews}
@@ -140,18 +161,21 @@ export function useGetEditorState({
   extensionRegistry,
   initialValue,
   wsPath,
+  editorDisplayType,
 }: {
   editorId?: number;
   extensionRegistry: ExtensionRegistry;
   initialValue: any;
   wsPath: string;
+  editorDisplayType: EditorDisplayType;
 }) {
   const pluginMetadata: EditorPluginMetadata = useMemo(
     () => ({
       wsPath,
       editorId,
+      editorDisplayType,
     }),
-    [editorId, wsPath],
+    [editorId, wsPath, editorDisplayType],
   );
 
   const plugins = useCallback(() => {
