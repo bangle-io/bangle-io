@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { RawSpecs } from '@bangle.dev/core';
-import type { Node } from '@bangle.dev/pm';
+import type { Node, Selection } from '@bangle.dev/pm';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
 import type {
@@ -9,7 +9,6 @@ import type {
   ActionHandler,
 } from '@bangle.io/shared-types';
 
-import type { ExtensionRegistry } from './ExtensionRegistry';
 import { EditorPluginDefinition } from './PluginType';
 import { ExtensionPaletteType } from './UniversalPaletteType';
 
@@ -17,9 +16,6 @@ const _check = Symbol();
 
 export type RenderReactNodeViewCb = (arg: {
   nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
-  wsPath: string;
-  editorId: number;
-  extensionRegistry: ExtensionRegistry;
 }) => React.ReactNode;
 
 export type RenderReactNodeView = {
@@ -34,8 +30,6 @@ export interface EditorConfig {
   markdownItPlugins?: any[];
   ReactComponent?: React.ComponentType<{
     key: string;
-    wsPath: string;
-    editorId: number;
   }>;
   renderReactNodeView?: RenderReactNodeView;
   initialScrollPos?: ({
@@ -53,7 +47,7 @@ export interface EditorConfig {
     wsPath: string;
     editorId: number;
     doc: Node;
-  }) => any;
+  }) => Selection | undefined;
 }
 
 export type RegisterActionHandlerType = (cb: ActionHandler) => () => void;

@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/utils",
+  "name": "@bangle.io/editor",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,35 +11,45 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/utils"
+    "directory": "lib/editor"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
   "main": "index.ts",
   "module": "index.ts",
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*"
+  },
   "dependencies": {
     "@bangle.dev/core": "0.28.0",
     "@bangle.dev/pm": "0.28.0",
     "@bangle.dev/react": "0.28.0",
     "@bangle.dev/utils": "0.28.0",
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
-    "dayjs": "^1.10.7",
-    "debounce-fn": "^5.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "w3c-keyname": "^2.2.4"
+    "@bangle.io/editor-manager-context": "workspace:*",
+    "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
+    "@bangle.io/workspace-context": "workspace:*"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
   "devDependencies": {
+    "@bangle.dev/all-base-components": "0.28.0",
+    "@bangle.io/shared-types": "workspace:*",
+    "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
+    "@types/react-router-dom": "^5.3.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.3.0",
     "react-test-renderer": "^17.0.2"
   }
 }

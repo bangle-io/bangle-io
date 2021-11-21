@@ -180,10 +180,38 @@ async function clearPrimaryEditor(page) {
   await waitForPrimaryEditorFocus(page);
 
   await page.keyboard.down(ctrlKey);
-  await page.keyboard.press('a', { delay: 30 });
+  await page.keyboard.press('a', { delay: 10 });
   await page.keyboard.up(ctrlKey);
-  await page.keyboard.press('Backspace', { delay: 30 });
-  await sleep();
+  await page.keyboard.press('Backspace', { delay: 10 });
+
+  await page.waitForFunction(
+    () =>
+      document
+        .querySelector('.editor-container_editor-0 .bangle-editor')
+        .innerText.trim() === '',
+    {
+      timeout: SELECTOR_TIMEOUT,
+    },
+  );
+}
+
+// Wait until primary edits innerText contains the arg `text
+async function waitForPrimaryEditorTextToContain(page, text) {
+  await page.waitForSelector('.editor-container_editor-0 .bangle-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
+
+  await page.waitForFunction(
+    (text) =>
+      document
+        .querySelector('.editor-container_editor-0 .bangle-editor')
+        ?.innerText.trim()
+        .includes(text),
+    {
+      timeout: 3 * SELECTOR_TIMEOUT,
+    },
+    text,
+  );
 }
 
 async function waitForPrimaryEditorFocus(page) {
@@ -300,33 +328,34 @@ async function jestDebug() {
 }
 
 module.exports = {
+  clearPrimaryEditor,
   clickPaletteRow,
   createNewNote,
   createWorkspace,
   ctrlKey,
-  jestDebug,
   frmtHTML,
   getEditorHTML,
-  getPrimaryEditorHTML,
   getPrimaryEditorDebugString,
   getPrimaryEditorHandler,
+  getPrimaryEditorHTML,
+  getPrimaryEditorJSON,
   getSecondaryEditorDebugString,
   getSecondaryEditorHandler,
   getSecondaryEditorHTML,
   getWsPathsShownInFilePalette,
+  jestDebug,
   longSleep,
   newPage,
+  pressCopyKey,
+  pressLeftKey,
+  pressPasteKey,
+  pressRightKey,
   runAction,
   SELECTOR_TIMEOUT,
-  clearPrimaryEditor,
   setPageSmallscreen,
   setPageWidescreen,
   sleep,
   url,
   uuid,
-  getPrimaryEditorJSON,
-  pressLeftKey,
-  pressRightKey,
-  pressCopyKey,
-  pressPasteKey,
+  waitForPrimaryEditorTextToContain,
 };

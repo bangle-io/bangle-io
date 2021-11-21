@@ -3,8 +3,13 @@ import React from 'react';
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 
-import { Extension, ExtensionRegistry } from '@bangle.io/extension-registry';
-import { sleep } from '@bangle.io/utils';
+import { EditorDisplayType } from '@bangle.io/constants';
+import {
+  Extension,
+  ExtensionRegistry,
+  useExtensionRegistryContext,
+} from '@bangle.io/extension-registry';
+import { getEditorPluginMetadata, sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import inlineBackLinkExtension from '..';
@@ -14,6 +19,21 @@ jest.mock('@bangle.io/workspace-context', () => {
   return {
     ...jest.requireActual('@bangle.io/workspace-context'),
     useWorkspaceContext: jest.fn(),
+  };
+});
+
+jest.mock('@bangle.io/utils', () => {
+  return {
+    ...jest.requireActual('@bangle.io/utils'),
+    getEditorPluginMetadata: jest.fn(),
+  };
+});
+
+jest.mock('@bangle.io/extension-registry', () => {
+  const actual = jest.requireActual('@bangle.io/extension-registry');
+  return {
+    ...actual,
+    useExtensionRegistryContext: jest.fn(),
   };
 });
 
@@ -30,6 +50,13 @@ const extensionRegistry = new ExtensionRegistry([
   inlineBackLinkExtension,
 ]);
 
+let editorView: any = { state: {} };
+
+const getEditorPluginMetadataMock =
+  getEditorPluginMetadata as jest.MockedFunction<
+    typeof getEditorPluginMetadata
+  >;
+
 describe('BackLinkNode', () => {
   let pushWsPathMock = jest.fn();
   let createNote;
@@ -37,26 +64,44 @@ describe('BackLinkNode', () => {
   beforeEach(() => {
     createNote = jest.fn(async () => {});
     pushWsPathMock = jest.fn();
-    useWorkspaceContext.mockImplementation(() => ({
+    (useWorkspaceContext as any).mockImplementation(() => ({
       wsName: 'test-ws',
       pushWsPath: pushWsPathMock,
       noteWsPaths: [],
       createNote,
     }));
+
+    (useExtensionRegistryContext as any).mockImplementation(() => {
+      return extensionRegistry;
+    });
+
+    getEditorPluginMetadataMock.mockImplementation(() => ({
+      wsPath: 'test-ws:my-current-note.md',
+      editorDisplayType: EditorDisplayType.Page,
+    }));
   });
 
   test('renders correctly', async () => {
+    (useWorkspaceContext as any).mockImplementation(() => {
+      return {
+        wsName: 'test-ws',
+        pushWsPath: pushWsPathMock,
+        noteWsPaths: ['test-ws:some/path.md'],
+        createNote,
+      };
+    });
+
     const renderResult = render(
       <BackLinkNode
         nodeAttrs={{ path: 'some/path', title: undefined }}
-        extensionRegistry={extensionRegistry}
+        view={editorView}
       />,
     );
 
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="inline-backlink_banklink-node"
+          class="inline-backlink_backlink"
           draggable="false"
         >
           <svg
@@ -83,17 +128,76 @@ describe('BackLinkNode', () => {
   });
 
   test('renders title if it exists', async () => {
+    (useWorkspaceContext as any).mockImplementation(() => {
+      return {
+        wsName: 'test-ws',
+        pushWsPath: pushWsPathMock,
+        noteWsPaths: ['test-ws:some/path.md'],
+        createNote,
+      };
+    });
+
     const renderResult = render(
       <BackLinkNode
         nodeAttrs={{ path: 'some/path', title: 'monako' }}
-        extensionRegistry={extensionRegistry}
+        view={editorView}
       />,
     );
 
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="inline-backlink_banklink-node"
+          class="inline-backlink_backlink"
+          draggable="false"
+        >
+          <svg
+            class="inline-block"
+            stroke="currentColor"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
+            />
+            <path
+              d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
+            />
+          </svg>
+          <span
+            class="inline-block"
+          >
+            monako
+          </span>
+        </button>
+      </div>
+    `);
+  });
+
+  test('styles not found notes differently', async () => {
+    (useWorkspaceContext as any).mockImplementation(() => {
+      return {
+        wsName: 'test-ws',
+        pushWsPath: pushWsPathMock,
+        noteWsPaths: [],
+        createNote,
+      };
+    });
+
+    const renderResult = render(
+      <BackLinkNode
+        nodeAttrs={{ path: 'some/path', title: 'monako' }}
+        view={editorView}
+      />,
+    );
+
+    expect(renderResult.container.innerHTML).toContain(
+      'inline-backlink_backlinkNotFound',
+    );
+
+    expect(renderResult.container).toMatchInlineSnapshot(`
+      <div>
+        <button
+          class="inline-backlink_backlink inline-backlink_backlinkNotFound"
           draggable="false"
         >
           <svg
@@ -120,11 +224,14 @@ describe('BackLinkNode', () => {
   });
 
   describe('clicking', () => {
-    const clickSetup = async ({ path, title = 'monako' }, clickOpts) => {
+    const clickSetup = async (
+      { path, title = 'monako' }: { path: string; title?: string },
+      clickOpts?: Parameters<typeof fireEvent.click>[1],
+    ) => {
       const renderResult = render(
         <BackLinkNode
           nodeAttrs={{ path, title: 'monako' }}
-          extensionRegistry={extensionRegistry}
+          view={editorView}
         />,
       );
       const prom = sleep();
@@ -136,7 +243,7 @@ describe('BackLinkNode', () => {
     };
 
     test('clicks correctly when there is a match', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -160,7 +267,7 @@ describe('BackLinkNode', () => {
     });
 
     test('picks the top most when there are two matches match', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -185,7 +292,7 @@ describe('BackLinkNode', () => {
     });
 
     test('doesnt add md if already there', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -209,7 +316,7 @@ describe('BackLinkNode', () => {
     });
 
     test('picks the least nested when there are three matches match', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -235,7 +342,7 @@ describe('BackLinkNode', () => {
     });
 
     test('fall backs to  case insensitive if no case sensitive match', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -257,7 +364,7 @@ describe('BackLinkNode', () => {
     });
 
     test('Get the exact match if it exists', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -278,7 +385,7 @@ describe('BackLinkNode', () => {
     });
 
     test("doesn't confuse if match ends with same", async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -297,7 +404,7 @@ describe('BackLinkNode', () => {
     });
 
     test('doesnt confuse if a subdirectory path match partially matches 1', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -322,7 +429,7 @@ describe('BackLinkNode', () => {
     });
 
     test('doesnt confuse if a subdirectory path match partially matches 2', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -346,7 +453,7 @@ describe('BackLinkNode', () => {
     });
 
     test('matches file name', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -370,7 +477,7 @@ describe('BackLinkNode', () => {
     });
 
     test('if no file name match', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -389,7 +496,7 @@ describe('BackLinkNode', () => {
     });
 
     test('opens sidebar on shift click', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -414,7 +521,7 @@ describe('BackLinkNode', () => {
     });
 
     test('opens new tab on shift click', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -439,7 +546,7 @@ describe('BackLinkNode', () => {
     });
 
     test('no click if path validation fails', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -448,40 +555,16 @@ describe('BackLinkNode', () => {
         };
       });
 
-      const renderResult = await clickSetup({ path: 'note:1' });
+      const renderResult = await clickSetup({ path: 'note:#:.s2:1' });
 
       expect(pushWsPathMock).toBeCalledTimes(0);
-      expect(renderResult.container).toMatchInlineSnapshot(`
-        <div>
-          <button
-            class="inline-backlink_banklink-node"
-            draggable="false"
-          >
-            <svg
-              class="inline-block"
-              stroke="currentColor"
-              viewBox="0 0 18 18"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
-              />
-              <path
-                d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
-              />
-            </svg>
-            <span
-              class="inline-block"
-            >
-              Invalid link!monako
-            </span>
-          </button>
-        </div>
-      `);
+      expect(renderResult.container.innerHTML).toContain(
+        `Invalid link (monako)`,
+      );
+      expect(renderResult.container).toMatchSnapshot();
     });
-
     test('if no match still clicks', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -501,7 +584,7 @@ describe('BackLinkNode', () => {
     });
 
     test('if no match still clicks 2', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
@@ -526,13 +609,17 @@ describe('BackLinkNode', () => {
     });
 
     test('matches if path follows local file system style', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      getEditorPluginMetadataMock.mockImplementation(() => {
+        return {
+          wsPath: 'test-ws:magic/hello/beautiful/world.md',
+          editorDisplayType: EditorDisplayType.Popup,
+        };
+      });
+
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,
-          wsName: 'test-ws',
-          pushWsPath: pushWsPathMock,
-          primaryWsPath: 'test-ws:magic/hello/beautiful/world.md',
           createNote,
           noteWsPaths: [
             'test-ws:magic/some-place/hotel/note1.md',
@@ -557,7 +644,7 @@ describe('BackLinkNode', () => {
     });
 
     test('if no match creates note', async () => {
-      useWorkspaceContext.mockImplementation(() => {
+      (useWorkspaceContext as any).mockImplementation(() => {
         return {
           wsName: 'test-ws',
           pushWsPath: pushWsPathMock,

@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { RenderReactNodeView } from '@bangle.io/extension-registry';
-import { NewNoteIcon, NoteIcon } from '@bangle.io/ui-components';
-import { conditionalSuffix } from '@bangle.io/utils';
+import { EditorView } from '@bangle.dev/pm';
+
+import { EditorDisplayType } from '@bangle.io/constants';
+import { PopupEditor } from '@bangle.io/editor';
+import type {
+  ExtensionRegistry,
+  RenderReactNodeView,
+} from '@bangle.io/extension-registry';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { useHover, useTooltipPositioner } from '@bangle.io/ui-bangle-button';
+import { NoteIcon } from '@bangle.io/ui-components';
+import {
+  conditionalSuffix,
+  cx,
+  getEditorPluginMetadata,
+} from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
   filePathToWsPath,
@@ -14,71 +27,143 @@ import {
 
 import { backLinkNodeName, newNoteLocation } from '../config';
 
-export function BackLinkNode({ nodeAttrs, extensionRegistry }) {
-  let { path, title } = nodeAttrs;
-  const {
-    primaryWsPath,
-    wsName,
-    noteWsPaths = [],
-    createNote,
-    pushWsPath,
-  } = useWorkspaceContext();
+export function BackLinkNode({
+  nodeAttrs,
+  view,
+}: {
+  nodeAttrs: { path: string; title?: string };
+  view: EditorView;
+}) {
+  const extensionRegistry = useExtensionRegistryContext();
+  // TODO currently bangle.dev doesn't pass editorview context so we are
+  // unable to use `useEditorPluginMetadata` which itself uses `useEditorViewContext`
+  // which will be undefined for react nodeviews.
+  const { wsPath: primaryWsPath, editorDisplayType } = getEditorPluginMetadata(
+    view.state,
+  );
 
+  const { wsName, noteWsPaths, createNote, pushWsPath } = useWorkspaceContext();
+
+  let { path, title } = nodeAttrs;
   const [invalidLink, updatedInvalidLink] = useState(false);
   title = title || path;
 
   const backLinkPath = conditionalSuffix(path, '.md');
+
   if (invalidLink) {
-    title = 'Invalid link!' + title;
+    title = 'Invalid link (' + title + ')';
   }
 
-  return (
-    <button
-      className="inline-backlink_banklink-node"
-      // prevent the a-href from being dragged, which messes up our system
-      // we want the node view to be dragged to the dom serializers can kick in
-      draggable={false}
-      onClick={(event) => {
-        event.preventDefault();
-        if (!wsName) {
-          return;
-        }
-        let newTab = false;
-        let shift = false;
-        if (
-          event.ctrlKey ||
-          event.metaKey || // apple
-          (event.button && event.button === 1) // middle click, >IE9 + everyone else
-        ) {
-          newTab = true;
-        } else if (event.shiftKey) {
-          shift = true;
-        }
+  const onClick = useCallback(
+    (event) => {
+      event.preventDefault();
+      if (!wsName || !noteWsPaths) {
+        return;
+      }
+      let newTab = false;
+      let shift = false;
+      if (
+        event.ctrlKey ||
+        event.metaKey || // apple
+        (event.button && event.button === 1) // middle click, >IE9 + everyone else
+      ) {
+        newTab = true;
+      } else if (event.shiftKey) {
+        shift = true;
+      }
 
-        handleClick({
-          backLinkPath,
-          currentWsPath: primaryWsPath,
-          wsName,
-          noteWsPaths,
-          extensionRegistry,
-          createNote,
-        }).then(
-          (matchedWsPath) => {
-            pushWsPath(matchedWsPath, newTab, shift);
-          },
-          (error) => {
-            if (error instanceof PathValidationError) {
-              updatedInvalidLink(true);
-              return;
-            }
-            throw error;
-          },
-        );
-      }}
-    >
-      <NoteIcon className="inline-block" />
-      <span className="inline-block">{title}</span>
-    </button>
+      handleClick({
+        backLinkPath,
+        currentWsPath: primaryWsPath,
+        wsName,
+        noteWsPaths,
+        extensionRegistry,
+        createNote,
+      }).then(
+        (matchedWsPath) => {
+          pushWsPath(matchedWsPath, newTab, shift);
+        },
+        (error) => {
+          if (error instanceof PathValidationError) {
+            updatedInvalidLink(true);
+            return;
+          }
+          throw error;
+        },
+      );
+    },
+    [
+      backLinkPath,
+      createNote,
+      extensionRegistry,
+      noteWsPaths,
+      primaryWsPath,
+      pushWsPath,
+      wsName,
+    ],
+  );
+
+  const backlinksWsPath =
+    wsName &&
+    noteWsPaths &&
+    getMatchingWsPath(wsName, backLinkPath, noteWsPaths);
+
+  const disablePopup = editorDisplayType === EditorDisplayType.Popup;
+
+  const { hoverProps, isHovered } = useHover({ isDisabled: disablePopup });
+  const { hoverProps: tooltipHoverProps, isHovered: isTooltipHovered } =
+    useHover({ isDisabled: disablePopup });
+
+  const {
+    isTooltipVisible,
+    setTooltipElement,
+    setTriggerElement,
+    tooltipProps,
+  } = useTooltipPositioner({
+    isDisabled: disablePopup,
+    isActive: !disablePopup && (isHovered || isTooltipHovered),
+    xOffset: 10,
+    yOffset: 0,
+    // TODO we can optimize where we position based on where empty
+    // space exists
+    placement: 'right',
+    delay: 350,
+    immediateClose: false,
+  });
+
+  return (
+    <>
+      <button
+        ref={setTriggerElement}
+        {...hoverProps}
+        className={cx(
+          'inline-backlink_backlink',
+          !backlinksWsPath && `inline-backlink_backlinkNotFound`,
+        )}
+        // prevent the button from being dragged, which messes up our system
+        // we want the node view to be dragged so the dom serializers can kick in
+        draggable={false}
+        onClick={onClick}
+      >
+        <NoteIcon className="inline-block" />
+        <span className="inline-block">{title}</span>
+      </button>
+
+      {isTooltipVisible && backlinksWsPath && (
+        <PopupEditor
+          ref={setTooltipElement}
+          editorProps={{ wsPath: backlinksWsPath }}
+          popupContainerProps={{
+            style: tooltipProps.style,
+            className: 'inline-backlink_popup-editor',
+            positionProps: {
+              ...tooltipHoverProps,
+              ...tooltipProps.attributes,
+            },
+          }}
+        />
+      )}
+    </>
   );
 }
 
@@ -89,6 +174,13 @@ async function handleClick({
   noteWsPaths,
   extensionRegistry,
   createNote,
+}: {
+  backLinkPath: string;
+  currentWsPath: string;
+  wsName: string;
+  noteWsPaths: string[];
+  extensionRegistry: ExtensionRegistry;
+  createNote: ReturnType<typeof useWorkspaceContext>['createNote'];
 }) {
   const existingWsPathMatch = getMatchingWsPath(
     wsName,
@@ -130,23 +222,23 @@ async function handleClick({
 }
 
 export const renderReactNodeView: RenderReactNodeView = {
-  // TODO move to using param wsPath
-  [backLinkNodeName]: ({ nodeViewRenderArg, wsPath, extensionRegistry }) => {
+  [backLinkNodeName]: ({ nodeViewRenderArg }) => {
+    const { path, title } = nodeViewRenderArg.node.attrs;
+    if (typeof path !== 'string') {
+      return <span>Invalid Path</span>;
+    }
     return (
-      <BackLinkNode
-        nodeAttrs={nodeViewRenderArg.node.attrs}
-        extensionRegistry={extensionRegistry}
-      />
+      <BackLinkNode nodeAttrs={{ path, title }} view={nodeViewRenderArg.view} />
     );
   },
 };
 
-function getMatchingWsPath(wsName, path, allWsPaths) {
+function getMatchingWsPath(wsName: string, path: string, allWsPaths: string[]) {
   function _findMatch(
-    wsName,
-    path,
-    allWsPaths,
-    comparator = (a, b) => a === b,
+    wsName: string,
+    path: string,
+    allWsPaths: string[],
+    comparator = (a: string, b: string) => a === b,
   ) {
     path = conditionalSuffix(path, '.md');
     const tentativeWsPath = filePathToWsPath(wsName, path);

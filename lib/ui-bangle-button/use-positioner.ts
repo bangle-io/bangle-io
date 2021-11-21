@@ -12,11 +12,12 @@ import { usePopper } from 'react-popper';
  */
 export function useTooltipPositioner({
   isActive = false,
-  delay = 100,
+  delay = 0,
   placement = 'bottom',
   xOffset = 0,
   yOffset = 0,
   isDisabled,
+  immediateClose = true,
 }: {
   xOffset?: number;
   yOffset?: number;
@@ -24,6 +25,7 @@ export function useTooltipPositioner({
   isActive: boolean;
   isDisabled?: boolean;
   delay?: number;
+  immediateClose?: boolean;
 }) {
   const [triggerElement, setTriggerElement] =
     React.useState<HTMLElement | null>(null);
@@ -47,12 +49,16 @@ export function useTooltipPositioner({
   );
 
   const hideTooltip = React.useCallback(() => {
-    state.close(true);
-  }, [state]);
+    if (immediateClose) {
+      state.close(true);
+      return;
+    }
+    state.close(delay === 0 ? true : false);
+  }, [state, delay, immediateClose]);
 
   const showTooltip = React.useCallback(() => {
-    state.open(true);
-  }, [state]);
+    state.open(delay === 0 ? true : false);
+  }, [state, delay]);
 
   React.useEffect(() => {
     if (isActive) {

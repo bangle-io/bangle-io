@@ -44,7 +44,7 @@ export function ActivitybarButton({
       onPress={onPress}
       ariaLabel={hint}
       tooltip={<TooltipWrapper>{hint}</TooltipWrapper>}
-      tooltipDelay={250}
+      tooltipDelay={150}
       tooltipPlacement="right"
     >
       <ButtonContent size="custom" icon={icon}></ButtonContent>

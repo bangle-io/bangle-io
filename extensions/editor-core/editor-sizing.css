@@ -1,0 +1,37 @@
+.editor_editor-display-page > .bangle-editor {
+  font-size: 1rem;
+}
+
+.editor_editor-display-popup > .bangle-editor {
+  font-size: 0.84rem;
+}
+
+/* Overrides */
+
+.bangle-editor p {
+  font-size: 1em !important;
+}
+
+.bangle-editor h1 {
+  font-size: 3em !important;
+}
+
+.bangle-editor h2 {
+  font-size: 1.875em !important;
+}
+
+.bangle-editor h3 {
+  font-size: 1.25em !important;
+}
+
+.bangle-editor h4 {
+  font-size: 1.125em !important;
+}
+
+.bangle-editor h5 {
+  font-size: 1em !important;
+}
+
+.bangle-editor h6 {
+  font-size: 0.75em !important;
+}

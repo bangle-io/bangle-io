@@ -1,22 +1,43 @@
-.inline-backlink_banklink-node {
+.inline-backlink_backlink {
   padding: 0 0.4rem;
   border-radius: var(--window-pill-borderRadius);
-  background-color: var(--backLink-backLinkNode-bgColor);
+  background-color: var(--backLink-backLink-bgColor);
   margin: 0 0.2rem;
 }
 
-.inline-backlink_banklink-node:hover {
+.inline-backlink_backlink:hover {
   text-decoration: underline;
-  background-color: var(--backLink-backLinkNode-hover-bgColor);
+  background-color: var(--backLink-backLink-hover-bgColor);
 }
 
-.inline-backlink_banklink-node > svg {
+.inline-backlink_backlinkNotFound {
+  background-color: var(--backLink-backLinkNotFound-bgColor);
+}
+
+.inline-backlink_backlinkNotFound:hover {
+  background-color: var(--backLink-backLinkNotFound-hover-bgColor);
+}
+
+.inline-backlink_backlink > svg {
   color: var(--window-link-color);
-  fill: var(--backLink-backLinkNode-bgColor);
+  fill: var(--backLink-backLink-bgColor);
   height: 1.2em;
   width: 1.2em;
   /* adding a bit of padding to just align this thing well */
   padding-bottom: 0.15em;
   vertical-align: middle;
   position: relative;
+}
+
+.inline-backlink_popup-editor {
+  background-color: var(--window-popupEditor-bgColor);
+  color: var(--window-popupEditor-color);
+  /* setting width and height are important otherwise
+    tippy confuses and causes issue with scroll
+  */
+  width: 400px;
+  height: 400px;
+  z-index: var(--window-popupEditor-zIndex);
+  border: 1px solid var(--window-borderColor-0);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 28px;
 }

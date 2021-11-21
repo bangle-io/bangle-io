@@ -9,7 +9,11 @@ import {
 import { useEditorViewContext } from '@bangle.dev/react';
 
 import { AppStateContext } from '@bangle.io/app-state-context';
-import { getScrollParentElement, rIdleDebounce } from '@bangle.io/utils';
+import {
+  getScrollParentElement,
+  rIdleDebounce,
+  useEditorPluginMetadata,
+} from '@bangle.io/utils';
 
 import { extensionName } from './config';
 import { saveScrollPos, saveSelection } from './persist-scroll';
@@ -18,21 +22,24 @@ const LOG = false;
 
 const log = LOG ? console.log.bind(console, extensionName) : () => {};
 
-export function PreserveScroll({ wsPath, editorId }) {
+export function PreserveScroll() {
   const { appState } = useContext(AppStateContext);
+  const { wsPath, editorId } = useEditorPluginMetadata();
   usePreserveScroll(appState, wsPath, editorId);
   useMonitorScrollEnd(wsPath, editorId);
   return null;
 }
 
-function usePreserveScroll(appState, wsPath, editorId) {
+function usePreserveScroll(appState, wsPath: string, editorId?: number) {
   const view = useEditorViewContext();
 
   // watch page lifecycle
   useEffect(() => {
     return () => {
       const { selection } = view.state;
-      saveSelection(wsPath, editorId, selection);
+      if (typeof editorId === 'number') {
+        saveSelection(wsPath, editorId, selection);
+      }
     };
   }, [view, wsPath, editorId]);
 
@@ -47,13 +54,15 @@ function usePreserveScroll(appState, wsPath, editorId) {
             appStateValue.pageLifecycleState,
           )
         ) {
-          // immediately as the user might be closing the tab
-          saveScrollPos(
-            wsPath,
-            editorId,
-            getScrollParentElement(editorId)?.scrollTop,
-          );
-          saveSelection(wsPath, editorId, view.state.selection);
+          if (typeof editorId === 'number') {
+            // immediately as the user might be closing the tab
+            saveScrollPos(
+              wsPath,
+              editorId,
+              getScrollParentElement(editorId)?.scrollTop,
+            );
+            saveSelection(wsPath, editorId, view.state.selection);
+          }
         }
       }
     };
@@ -66,14 +75,16 @@ function usePreserveScroll(appState, wsPath, editorId) {
   }, [appState, wsPath, editorId, view]);
 }
 
-function useMonitorScrollEnd(wsPath, editorId) {
+function useMonitorScrollEnd(wsPath: string, editorId?: number) {
   const ref = useRef<number | null>(null);
 
   const queryPos = useCallback(
     (e) => {
-      // save the scroll pos on every invocation
-      const scrollParent = getScrollParentElement(editorId);
-      ref.current = scrollParent?.scrollTop || null;
+      if (typeof editorId === 'number') {
+        // save the scroll pos on every invocation
+        const scrollParent = getScrollParentElement(editorId);
+        ref.current = scrollParent?.scrollTop || null;
+      }
     },
     [editorId],
   );
@@ -92,7 +103,7 @@ function useMonitorScrollEnd(wsPath, editorId) {
 
   useEffect(() => {
     return () => {
-      if (ref.current !== null) {
+      if (ref.current !== null && typeof editorId === 'number') {
         saveScrollPos(wsPath, editorId, ref.current);
       }
     };

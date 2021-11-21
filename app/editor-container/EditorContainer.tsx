@@ -7,31 +7,28 @@ import {
   CORE_ACTIONS_CLOSE_EDITOR,
   CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
 } from '@bangle.io/constants';
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { Editor } from '@bangle.io/editor';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { Editor } from './Editor';
 import { EditorBar } from './EditorBar';
 
 export function EditorContainer({
   widescreen,
   editorId,
   wsPath: incomingWsPath,
-  extensionRegistry,
-  setEditor,
 }: {
   widescreen: boolean;
-  extensionRegistry: ExtensionRegistry;
   editorId: number;
   wsPath: string | undefined;
-  setEditor: (editorId: number, editor: CoreBangleEditor) => void;
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { secondaryWsPath } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
+  const { setEditor } = useEditorManagerContext();
 
   const isSplitEditorActive = Boolean(secondaryWsPath);
 
@@ -47,6 +44,14 @@ export function EditorContainer({
       value: editorId,
     });
   }, [dispatchAction, editorId]);
+
+  const onEditorReady = useCallback(
+    (editor: CoreBangleEditor) => {
+      setEditor(editorId, editor);
+      editor.focusView();
+    },
+    [editorId, setEditor],
+  );
 
   let children;
 
@@ -64,10 +69,10 @@ export function EditorContainer({
     children = (
       <Editor
         key={wsPath}
-        extensionRegistry={extensionRegistry}
         editorId={editorId}
         wsPath={wsPath}
-        setEditor={setEditor}
+        onEditorReady={onEditorReady}
+        className={`editor-container_editor editor-container_editor-${editorId}`}
       />
     );
   }

@@ -31,6 +31,8 @@
     "@bangle.dev/react": "0.28.0",
     "@bangle.io/action-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/editor": "workspace:*",
+    "@bangle.io/editor-manager-context": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",

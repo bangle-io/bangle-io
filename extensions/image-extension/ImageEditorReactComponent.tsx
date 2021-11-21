@@ -11,7 +11,7 @@ import {
 
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
-import { menuKey, wsNameViewWeakStore } from './config';
+import { menuKey } from './config';
 import {
   getImageAltScaleFactor,
   updateImageAltScaleFactor,
@@ -50,7 +50,6 @@ function ScaleButton({ scaleFactor, view, isActive }) {
 
 export function ImageEditorReactComponent() {
   const view = useEditorViewContext();
-  useAssociateViewWsName(view);
   return (
     <>
       <FloatingMenu
@@ -91,21 +90,6 @@ export function ImageEditorReactComponent() {
       />
     </>
   );
-}
-
-function useAssociateViewWsName(view) {
-  const { wsName } = useWorkspaceContext();
-  useEffect(() => {
-    if (wsName) {
-      wsNameViewWeakStore.set(view, wsName);
-    }
-    return () => {
-      // I know weakmap will automatically clean it
-      // but still :shrug
-      wsNameViewWeakStore.delete(view);
-    };
-  }, [view, wsName]);
-  return null;
 }
 
 // TODO move this to bangle.dev, the only change here is that attr can be a function

@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic renders 1`] = `
+<div>
+  <div>
+    <div
+      class="test-class editor_editor-display-page"
+    >
+      <div
+        class="ProseMirror bangle-editor"
+        contenteditable="true"
+        translate="no"
+      >
+        <h1>
+          Hola
+        </h1>
+        <p>
+          Hello world! I am a test
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`works without editorId 1`] = `
+<div>
+  <div>
+    <div
+      class="test-class editor_editor-display-page"
+    >
+      <div
+        class="ProseMirror bangle-editor"
+        contenteditable="true"
+        translate="no"
+      >
+        <h1>
+          Hola
+        </h1>
+        <p>
+          Hello world! I am a test
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

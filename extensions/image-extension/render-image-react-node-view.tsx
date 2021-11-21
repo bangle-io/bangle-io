@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import type { RenderReactNodeView } from '@bangle.io/extension-registry';
 import { useDestroyRef } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { FileOps } from '@bangle.io/workspaces';
@@ -10,7 +11,7 @@ import {
   imageDimensionFromWsPath,
 } from './image-file-helpers';
 
-export const renderImageReactNodeView = {
+export const renderImageReactNodeView: RenderReactNodeView = {
   image: ({ nodeViewRenderArg }) => {
     return <ImageComponent nodeAttrs={nodeViewRenderArg.node.attrs} />;
   },
