@@ -11,15 +11,16 @@ jest.mock('@bangle.io/ui-context', () => {
   };
 });
 
+const dirName = 'test-handle';
+
 test('renders correctly', () => {
   let updateRootDirHandle = jest.fn();
-  let rootDirHandle: any = { name: 'test-handle' };
 
   let result = render(
     <div>
       <PickStorageDirectory
         setError={jest.fn() as any}
-        rootDirHandle={rootDirHandle}
+        dirName={dirName}
         updateRootDirHandle={updateRootDirHandle}
       ></PickStorageDirectory>
     </div>,
@@ -30,13 +31,12 @@ test('renders correctly', () => {
 
 test('clear rootDirHandle', async () => {
   let updateRootDirHandle = jest.fn();
-  let rootDirHandle: any = { name: 'test-handle' };
 
   let result = render(
     <div>
       <PickStorageDirectory
         setError={jest.fn() as any}
-        rootDirHandle={rootDirHandle}
+        dirName={dirName}
         updateRootDirHandle={updateRootDirHandle}
       />
     </div>,
