@@ -1,6 +1,6 @@
 export const FILE_SYSTEM = 'file-system';
 export const BROWSER = 'browser';
-export type WorkspaceStorageType = 'file-system' | 'browser';
+export type WorkspaceStorageType = typeof FILE_SYSTEM | typeof BROWSER;
 
 export const ERROR_PICKING_DIRECTORY_ERROR = 'ERROR_PICKING_DIRECTORY';
 export const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
@@ -21,10 +21,10 @@ export const CREATE_BUTTON_ID = 'new-workspace-modal_create-button';
 
 export function getStorageDescription(storageType: WorkspaceStorageType) {
   switch (storageType) {
-    case 'file-system': {
+    case FILE_SYSTEM: {
       return 'File system';
     }
-    case 'browser': {
+    case BROWSER: {
       return 'Browser';
     }
     default: {

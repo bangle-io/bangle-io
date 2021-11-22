@@ -1,6 +1,6 @@
 ### Nov 21, 2021
 
-- **Popup backlinks**: You can now hover over any _Backlink_ to see whats inside them. 
+- **Popup backlinks**: You can now hover over any _Backlink_ to view and edit them directly. 
 
 ### Nov 17, 2021
 

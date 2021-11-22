@@ -21,11 +21,11 @@ import {
 export function PickStorageDirectory({
   setError,
   updateRootDirHandle,
-  rootDirHandle,
+  dirName,
 }: {
   setError: (error: WorkspaceCreateErrorTypes) => void;
   updateRootDirHandle: (fileStorage: DirTypeSystemHandle | undefined) => void;
-  rootDirHandle: DirTypeSystemHandle | undefined;
+  dirName: string | undefined;
 }) {
   const handlePickDirectory = useCallback(async () => {
     try {
@@ -59,7 +59,7 @@ export function PickStorageDirectory({
         </span>
       </div>
       <div>
-        {rootDirHandle ? (
+        {dirName ? (
           <ActionButton
             autoFocus={true}
             ariaLabel="pick directory"
@@ -69,7 +69,7 @@ export function PickStorageDirectory({
             id={BROWSE_BUTTON_ID}
           >
             <ButtonContent
-              text={rootDirHandle.name}
+              text={dirName}
               icon={<CloseIcon />}
               iconPos="right"
               size="small"

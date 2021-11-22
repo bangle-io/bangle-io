@@ -346,5 +346,57 @@ describe('NewWorkspaceModalContainer', () => {
         result.getByLabelText('create workspace')?.hasAttribute('disabled'),
       ).toBe(true);
     });
+
+    test('is able to resume after fs error', async () => {
+      let dispatchAction = jest.fn();
+      (useActionContext as any).mockImplementation(() => {
+        return { dispatchAction };
+      });
+
+      let error = new BaseFileSystemError(
+        `Permission rejected `,
+        NATIVE_BROWSER_PERMISSION_ERROR,
+      );
+
+      (pickADirectory as any)
+        .mockRejectedValueOnce(error)
+        .mockResolvedValueOnce({ name: 'test-dir-name' });
+
+      let result = render(
+        <div>
+          <NewWorkspaceModalContainer />
+        </div>,
+      );
+
+      act(() => {
+        fireEvent.click(result.getByLabelText('pick directory'));
+      });
+
+      await waitFor(() => {
+        return result.getByTestId(WORKSPACE_AUTH_REJECTED_ERROR);
+      });
+
+      expect(pickADirectory).toBeCalledTimes(1);
+
+      expect(
+        result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+      ).toBe(true);
+
+      act(() => {
+        fireEvent.click(result.getByLabelText('pick directory'));
+      });
+
+      await waitFor(() => {
+        return result
+          .getByLabelText('pick directory')
+          .innerHTML.includes('test-dir-name');
+      });
+
+      expect(pickADirectory).toBeCalledTimes(2);
+
+      expect(
+        result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+      ).toBe(false);
+    });
   });
 });

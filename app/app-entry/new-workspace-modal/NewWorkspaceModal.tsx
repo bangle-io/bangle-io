@@ -1,12 +1,6 @@
 import './NewWorkspaceModal.css';
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
 import {
@@ -42,63 +36,132 @@ export function NewWorkspaceModal() {
   return showModal ? <NewWorkspaceModalContainer /> : null;
 }
 
+interface ModalState {
+  defaultStorageType: WorkspaceStorageType;
+  error: WorkspaceCreateErrorTypes | undefined;
+  workspace: WorkspaceType;
+}
+
+type WorkspaceType =
+  | { type: typeof FILE_SYSTEM; rootDir?: DirTypeSystemHandle }
+  | { type: typeof BROWSER; wsName?: string };
+
+type ModalStateAction =
+  | { type: 'update_storage_type'; storageType: WorkspaceStorageType }
+  | { type: 'update_workspace'; workspace: WorkspaceType }
+  | { type: 'update_error'; error: WorkspaceCreateErrorTypes | undefined }
+  | { type: 'reset' };
+
+const modalReducer = (
+  state: ModalState,
+  action: ModalStateAction,
+): ModalState => {
+  switch (action.type) {
+    case 'update_storage_type':
+      return {
+        ...state,
+        error: undefined,
+        workspace: { type: action.storageType },
+      };
+    case 'update_workspace':
+      return { ...state, workspace: action.workspace, error: undefined };
+    case 'update_error':
+      return { ...state, error: action.error };
+
+    case 'reset':
+      return {
+        error: undefined,
+        defaultStorageType: state.defaultStorageType,
+        workspace: {
+          type: state.defaultStorageType,
+        },
+      };
+  }
+};
+
 export function NewWorkspaceModalContainer({
   defaultStorageType = supportsNativeBrowserFs() ? FILE_SYSTEM : BROWSER,
 }: {
   defaultStorageType?: WorkspaceStorageType;
 }) {
+  const [modalState, updateModalState] = useReducer(modalReducer, {
+    error: undefined,
+    defaultStorageType: defaultStorageType,
+    workspace: {
+      type: defaultStorageType,
+    },
+  });
+
   const { workspaces } = useWorkspaces();
 
   const { dispatch } = useUIManagerContext();
   const { dispatchAction } = useActionContext();
 
   const isDropdownOpenRef = useRef(false);
-  const [storageType, updateStorageType] =
-    useState<WorkspaceStorageType>(defaultStorageType);
-  const [inputWorkspaceName, updateInputWorkspaceName] = useState<string>();
-  const [errorType, setError] = useState<WorkspaceCreateErrorTypes>();
 
-  const [rootDirHandle, updateRootDirHandle] = useState<DirTypeSystemHandle>();
+  const storageType = modalState.workspace.type;
 
-  const newWorkspaceName = rootDirHandle?.name || inputWorkspaceName;
+  const updateStorageType = useCallback((val: WorkspaceStorageType) => {
+    updateModalState({ type: 'update_storage_type', storageType: val });
+  }, []);
 
-  const isCreateWorkspaceDisabled = useMemo((): boolean => {
-    if (errorType) {
-      return true;
-    }
-    if (storageType === FILE_SYSTEM) {
-      return !Boolean(rootDirHandle);
-    }
-    if (storageType === BROWSER) {
-      return !Boolean(inputWorkspaceName);
-    }
-    return true;
-  }, [storageType, rootDirHandle, inputWorkspaceName, errorType]);
+  const updateInputWorkspaceName = useCallback((value) => {
+    updateModalState({
+      type: 'update_workspace',
+      workspace: { type: BROWSER, wsName: value },
+    });
+  }, []);
+
+  const errorType = modalState.error;
+
+  const setError = useCallback((value?: WorkspaceCreateErrorTypes) => {
+    updateModalState({
+      type: 'update_error',
+      error: value,
+    });
+  }, []);
+
+  const updateRootDirHandle = useCallback(
+    (value: DirTypeSystemHandle | undefined) => {
+      updateModalState({
+        type: 'update_workspace',
+        workspace: { type: FILE_SYSTEM, rootDir: value },
+      });
+    },
+    [],
+  );
+
+  const newWorkspaceName = getWorkspaceName(modalState);
 
   const createWorkspace = useCallback(() => {
-    if (storageType === FILE_SYSTEM && rootDirHandle) {
-      dispatchAction({
-        name: CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
-        value: { rootDirHandle },
-      });
-    } else if (storageType === BROWSER && inputWorkspaceName) {
-      dispatchAction({
-        name: CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
-        value: { wsName: inputWorkspaceName },
-      });
+    if (isCreateDisabled(modalState)) {
+      return;
+    }
+    const newWorkspaceName = getWorkspaceName(modalState);
+
+    switch (modalState.workspace.type) {
+      case FILE_SYSTEM: {
+        dispatchAction({
+          name: CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
+          value: { rootDirHandle: modalState.workspace.rootDir },
+        });
+        break;
+      }
+
+      case BROWSER: {
+        dispatchAction({
+          name: CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
+          value: { wsName: modalState.workspace.wsName },
+        });
+        break;
+      }
     }
 
     dispatch({
       type: 'UI/DISMISS_MODAL',
-      value: { wsName: inputWorkspaceName },
+      value: { wsName: newWorkspaceName },
     });
-  }, [
-    dispatchAction,
-    inputWorkspaceName,
-    storageType,
-    rootDirHandle,
-    dispatch,
-  ]);
+  }, [dispatchAction, modalState, dispatch]);
 
   const onDismiss = useCallback(() => {
     if (!isDropdownOpenRef.current) {
@@ -110,10 +173,14 @@ export function NewWorkspaceModalContainer({
 
   // focus on create button
   useEffect(() => {
-    if (rootDirHandle && !errorType) {
+    if (
+      modalState.workspace.type === FILE_SYSTEM &&
+      modalState.workspace.rootDir &&
+      !isCreateDisabled(modalState)
+    ) {
       document?.getElementById(CREATE_BUTTON_ID)?.focus();
     }
-  }, [rootDirHandle, errorType]);
+  }, [modalState]);
 
   // set error if wsName already exists
   useEffect(() => {
@@ -135,14 +202,7 @@ export function NewWorkspaceModalContainer({
         setError(undefined);
       }
     }
-  }, [newWorkspaceName, errorType]);
-
-  // Reset state on storageType change
-  useEffect(() => {
-    updateRootDirHandle(undefined);
-    updateInputWorkspaceName(undefined);
-    setError(undefined);
-  }, [storageType]);
+  }, [newWorkspaceName, setError, errorType]);
 
   return (
     <Modal
@@ -184,7 +244,7 @@ export function NewWorkspaceModalContainer({
           <div className="flex flex-col mb-5">
             <PickStorageDirectory
               setError={setError}
-              rootDirHandle={rootDirHandle}
+              dirName={modalState.workspace.rootDir?.name}
               updateRootDirHandle={updateRootDirHandle}
             />
           </div>
@@ -192,12 +252,12 @@ export function NewWorkspaceModalContainer({
         {storageType === BROWSER && (
           <div className="flex flex-col mb-5">
             <WorkspaceNameInput
-              // prevent changing the name when using native file system
-              isDisabled={Boolean(rootDirHandle?.name)}
+              // prevent changing the name when using other name browser
+              isDisabled={modalState.workspace.type !== BROWSER}
               value={newWorkspaceName}
               updateValue={updateInputWorkspaceName}
               onPressEnter={
-                isCreateWorkspaceDisabled ? undefined : createWorkspace
+                isCreateDisabled(modalState) ? undefined : createWorkspace
               }
             />
           </div>
@@ -208,7 +268,7 @@ export function NewWorkspaceModalContainer({
             ariaLabel="create workspace"
             className="px-4"
             variant="primary"
-            isDisabled={isCreateWorkspaceDisabled}
+            isDisabled={isCreateDisabled(modalState)}
             onPress={() => {
               createWorkspace();
             }}
@@ -219,4 +279,33 @@ export function NewWorkspaceModalContainer({
       </div>
     </Modal>
   );
+}
+
+function getWorkspaceName(modal: ModalState): string | undefined {
+  switch (modal.workspace.type) {
+    case FILE_SYSTEM: {
+      return modal.workspace.rootDir?.name;
+    }
+    case BROWSER: {
+      return modal.workspace.wsName;
+    }
+  }
+  return undefined;
+}
+
+function isCreateDisabled(modal: ModalState): boolean {
+  if (modal.error) {
+    return true;
+  }
+
+  switch (modal.workspace.type) {
+    case FILE_SYSTEM: {
+      return !Boolean(modal.workspace.rootDir);
+    }
+    case BROWSER: {
+      return !Boolean(modal.workspace.wsName);
+    }
+  }
+
+  return true;
 }
