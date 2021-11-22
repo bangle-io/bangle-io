@@ -10,6 +10,7 @@ export interface ActionDefinitionType {
   // when true, will hide it from the user
   hidden?: boolean;
 }
+export type DispatchActionType = (action: ActionType) => void;
 
 export type ActionHandler = (action: ActionType) => boolean;
 

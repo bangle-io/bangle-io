@@ -17,7 +17,7 @@ const extension = Extension.create({
     actions: [
       {
         name: 'action::bangle-io-note-browser:toggle-note-browser',
-        title: 'Note Browser',
+        title: 'Toggle Notes Browser',
         keybinding: key,
       },
     ],

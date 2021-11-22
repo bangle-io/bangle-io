@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 
-import type { DispatchActionType } from '@bangle.io/action-context';
 import {
   CORE_ACTIONS_NEW_NOTE,
   CORE_ACTIONS_NEW_WORKSPACE,
@@ -9,7 +8,10 @@ import {
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
 } from '@bangle.io/constants';
-import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
+import type {
+  ActionKeybindingMapping,
+  DispatchActionType,
+} from '@bangle.io/shared-types';
 import {
   DropdownMenu,
   MenuItem,

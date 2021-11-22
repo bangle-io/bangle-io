@@ -10,12 +10,13 @@ test('renders correctly', () => {
   let result = render(
     <div>
       <EditorBar
+        isActive={false}
         dispatchAction={dispatchAction}
         showSplitEditor={false}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
-        isSplitEditorActive={false}
+        isSplitEditorOpen={false}
       ></EditorBar>
     </div>,
   );
@@ -29,12 +30,13 @@ test('truncates large wsPath', () => {
   let result = render(
     <div>
       <EditorBar
+        isActive={false}
         dispatchAction={dispatchAction}
         showSplitEditor={false}
         wsPath={'mojo:test-dir/magic/wow/last/two.md'}
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
-        isSplitEditorActive={false}
+        isSplitEditorOpen={false}
       ></EditorBar>
     </div>,
   );
@@ -48,12 +50,13 @@ test('dispatches action on clicking wsPath', () => {
   let result = render(
     <div>
       <EditorBar
+        isActive={false}
         dispatchAction={dispatchAction}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
-        isSplitEditorActive={true}
+        isSplitEditorOpen={true}
       ></EditorBar>
     </div>,
   );
@@ -72,12 +75,13 @@ test('renders splitscreen', () => {
   let result = render(
     <div>
       <EditorBar
+        isActive={false}
         dispatchAction={dispatchAction}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
-        isSplitEditorActive={true}
+        isSplitEditorOpen={true}
       ></EditorBar>
     </div>,
   );
@@ -89,12 +93,13 @@ test('renders splitscreen', () => {
   result.rerender(
     <div>
       <EditorBar
+        isActive={false}
         dispatchAction={dispatchAction}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
-        isSplitEditorActive={false}
+        isSplitEditorOpen={false}
       ></EditorBar>
     </div>,
   );

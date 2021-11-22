@@ -13,14 +13,18 @@ interface EditorManagerContextValue {
   primaryEditor: BangleEditor | undefined;
   getEditor: (editorId: number) => BangleEditor | undefined;
   forEachEditor: (cb: (editor: BangleEditor, index: number) => void) => void;
+  focusedEditorId: number | undefined;
+  updateFocusedEditor: (editorId: number | undefined) => void;
 }
 
 type EditorsType = [BangleEditor | undefined, BangleEditor | undefined];
 const EditorManagerContext = React.createContext<EditorManagerContextValue>({
   setEditor: () => {},
   primaryEditor: undefined,
+  focusedEditorId: undefined,
   getEditor: () => undefined,
   forEachEditor: () => {},
+  updateFocusedEditor: () => {},
 });
 
 export function useEditorManagerContext() {
@@ -47,6 +51,9 @@ export function EditorManager({ children }) {
    * 9. Collab-client plugin refreshes the editor with correct content
    */
   const [editors, _setEditor] = useState<EditorsType>([undefined, undefined]);
+  const [focusedEditorId, updateFocusedEditorId] = useState<
+    number | undefined
+  >();
   const [primaryEditor, secondaryEditor] = editors;
   const value = useMemo(() => {
     const setEditor: EditorManagerContextValue['setEditor'] = (
@@ -76,13 +83,19 @@ export function EditorManager({ children }) {
       });
     };
 
+    const updateFocusedEditor = (editorId: number | undefined) => {
+      updateFocusedEditorId(editorId);
+    };
+
     return {
       setEditor,
       primaryEditor,
       getEditor,
       forEachEditor,
+      focusedEditorId,
+      updateFocusedEditor,
     };
-  }, [_setEditor, editors]);
+  }, [_setEditor, focusedEditorId, editors]);
 
   useEffect(() => {
     (window as any).primaryEditor = primaryEditor;

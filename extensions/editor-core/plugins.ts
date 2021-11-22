@@ -30,6 +30,7 @@ import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
 
 import { activeNode } from './active-node';
+import { watchEditorFocus } from './watch-editor-focus';
 
 export const menuKey = new PluginKey('menuKey');
 
@@ -97,6 +98,7 @@ export const getPlugins = () => {
       },
     }),
     activeNode(),
+    watchEditorFocus,
 
     // must be at end
     blockTabPress(),
