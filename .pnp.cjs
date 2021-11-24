@@ -3087,21 +3087,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:91048a0e995b2875bfee56af853ae88020194260aa502637692febc1a9d6b9b0cec6bafbd9475a1979314e78918cc9574cfd19eca2922333677498d996a71164#npm:0.28.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-core-virtual-2922ebd899/0/cache/@bangle.dev-core-npm-0.28.0-465060560d-3f1bcc61dd.zip/node_modules/@bangle.dev/core/",
-          "packageDependencies": [
-            ["@bangle.dev/core", "virtual:91048a0e995b2875bfee56af853ae88020194260aa502637692febc1a9d6b9b0cec6bafbd9475a1979314e78918cc9574cfd19eca2922333677498d996a71164#npm:0.28.0"],
-            ["@bangle.dev/pm", null],
-            ["@bangle.dev/pm-commands", "virtual:2922ebd8997364dfb972f935417715cf4c9ea966681610ef477fe155c8b995547cdc1481dd7a63ed54ea2331e5010e68ffd4fa856832143c47b04ea3bff36570#npm:0.28.0"],
-            ["@bangle.dev/utils", "virtual:2922ebd8997364dfb972f935417715cf4c9ea966681610ef477fe155c8b995547cdc1481dd7a63ed54ea2331e5010e68ffd4fa856832143c47b04ea3bff36570#npm:0.28.0"],
-            ["@types/bangle.dev__pm", null]
-          ],
-          "packagePeers": [
-            "@bangle.dev/pm",
-            "@types/bangle.dev__pm"
-          ],
-          "linkType": "HARD",
-        }],
         ["virtual:c33b7cde1c40fe2ee4034f6bd3ade840db33ed0da748d2d184582d9f437c95a21234be3dceeb2ddfa23fec9c76140cb994577159fbbb62e0c6b4002f6706d608#npm:0.28.0", {
           "packageLocation": "./.yarn/__virtual__/@bangle.dev-core-virtual-a6d4de63bd/0/cache/@bangle.dev-core-npm-0.28.0-465060560d-3f1bcc61dd.zip/node_modules/@bangle.dev/core/",
           "packageDependencies": [
@@ -3276,20 +3261,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm-commands", "npm:0.28.0"]
           ],
           "linkType": "SOFT",
-        }],
-        ["virtual:2922ebd8997364dfb972f935417715cf4c9ea966681610ef477fe155c8b995547cdc1481dd7a63ed54ea2331e5010e68ffd4fa856832143c47b04ea3bff36570#npm:0.28.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-pm-commands-virtual-8d59aca60a/0/cache/@bangle.dev-pm-commands-npm-0.28.0-172a7b20d3-af126ffda3.zip/node_modules/@bangle.dev/pm-commands/",
-          "packageDependencies": [
-            ["@bangle.dev/pm-commands", "virtual:2922ebd8997364dfb972f935417715cf4c9ea966681610ef477fe155c8b995547cdc1481dd7a63ed54ea2331e5010e68ffd4fa856832143c47b04ea3bff36570#npm:0.28.0"],
-            ["@bangle.dev/pm", null],
-            ["@bangle.dev/utils", "virtual:2922ebd8997364dfb972f935417715cf4c9ea966681610ef477fe155c8b995547cdc1481dd7a63ed54ea2331e5010e68ffd4fa856832143c47b04ea3bff36570#npm:0.28.0"],
-            ["@types/bangle.dev__pm", null]
-          ],
-          "packagePeers": [
-            "@bangle.dev/pm",
-            "@types/bangle.dev__pm"
-          ],
-          "linkType": "HARD",
         }],
         ["virtual:a6d4de63bdc5dd1bf288f4cfac41f8a6d42ef4cd04ec187e91a2b66cef579e93c4fac3356cc2db3c917ea0accceaa5d9f44eb6a74a6e1855881dff8f51b7b80a#npm:0.28.0", {
           "packageLocation": "./.yarn/__virtual__/@bangle.dev-pm-commands-virtual-36141472a8/0/cache/@bangle.dev-pm-commands-npm-0.28.0-172a7b20d3-af126ffda3.zip/node_modules/@bangle.dev/pm-commands/",
@@ -3637,22 +3608,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/utils", "npm:0.28.0"]
           ],
           "linkType": "SOFT",
-        }],
-        ["virtual:2922ebd8997364dfb972f935417715cf4c9ea966681610ef477fe155c8b995547cdc1481dd7a63ed54ea2331e5010e68ffd4fa856832143c47b04ea3bff36570#npm:0.28.0", {
-          "packageLocation": "./.yarn/__virtual__/@bangle.dev-utils-virtual-890b3d556b/0/cache/@bangle.dev-utils-npm-0.28.0-393961972e-5b99a7f33b.zip/node_modules/@bangle.dev/utils/",
-          "packageDependencies": [
-            ["@bangle.dev/utils", "virtual:2922ebd8997364dfb972f935417715cf4c9ea966681610ef477fe155c8b995547cdc1481dd7a63ed54ea2331e5010e68ffd4fa856832143c47b04ea3bff36570#npm:0.28.0"],
-            ["@bangle.dev/pm", null],
-            ["@types/bangle.dev__pm", null],
-            ["prosemirror-model", "npm:1.15.0"],
-            ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-utils", "virtual:f1b8084362d47654e0ebbf3aadf01800182c810b477c882630a817d774e907f6285a1a3bc9ab4d395a15d9952aca8dc05f2a1103c9f02407759321745f3e5f0c#npm:1.0.0-0"]
-          ],
-          "packagePeers": [
-            "@bangle.dev/pm",
-            "@types/bangle.dev__pm"
-          ],
-          "linkType": "HARD",
         }],
         ["virtual:c33b7cde1c40fe2ee4034f6bd3ade840db33ed0da748d2d184582d9f437c95a21234be3dceeb2ddfa23fec9c76140cb994577159fbbb62e0c6b4002f6706d608#npm:0.28.0", {
           "packageLocation": "./.yarn/__virtual__/@bangle.dev-utils-virtual-f1b8084362/0/cache/@bangle.dev-utils-npm-0.28.0-393961972e-5b99a7f33b.zip/node_modules/@bangle.dev/utils/",
@@ -4692,7 +4647,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-note-sidebar-virtual-91048a0e99/1/app/note-sidebar/",
           "packageDependencies": [
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],
-            ["@bangle.dev/core", "virtual:91048a0e995b2875bfee56af853ae88020194260aa502637692febc1a9d6b9b0cec6bafbd9475a1979314e78918cc9574cfd19eca2922333677498d996a71164#npm:0.28.0"],
+            ["@bangle.dev/core", "virtual:c33b7cde1c40fe2ee4034f6bd3ade840db33ed0da748d2d184582d9f437c95a21234be3dceeb2ddfa23fec9c76140cb994577159fbbb62e0c6b4002f6706d608#npm:0.28.0"],
+            ["@bangle.dev/pm", "npm:0.28.0"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
@@ -4718,7 +4674,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/note-sidebar/",
           "packageDependencies": [
             ["@bangle.io/note-sidebar", "workspace:app/note-sidebar"],
-            ["@bangle.dev/core", "virtual:91048a0e995b2875bfee56af853ae88020194260aa502637692febc1a9d6b9b0cec6bafbd9475a1979314e78918cc9574cfd19eca2922333677498d996a71164#npm:0.28.0"],
+            ["@bangle.dev/core", "virtual:c33b7cde1c40fe2ee4034f6bd3ade840db33ed0da748d2d184582d9f437c95a21234be3dceeb2ddfa23fec9c76140cb994577159fbbb62e0c6b4002f6706d608#npm:0.28.0"],
+            ["@bangle.dev/pm", "npm:0.28.0"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],

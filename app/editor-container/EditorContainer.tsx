@@ -94,7 +94,11 @@ export function EditorContainer({
           />
         )
       }
-      className={cx(widescreen && 'overflow-y-scroll')}
+      className={cx(
+        'editor-container_editor-container',
+        'editor-container_editor-container-' + editorId,
+        widescreen && 'overflow-y-scroll',
+      )}
     >
       {children}
     </Page>

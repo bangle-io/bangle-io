@@ -2452,6 +2452,7 @@ __metadata:
   resolution: "@bangle.io/note-sidebar@workspace:app/note-sidebar"
   dependencies:
     "@bangle.dev/core": 0.28.0
+    "@bangle.dev/pm": 0.28.0
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
