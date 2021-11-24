@@ -208,7 +208,7 @@ async function waitForPrimaryEditorTextToContain(page, text) {
         ?.innerText.trim()
         .includes(text),
     {
-      timeout: 3 * SELECTOR_TIMEOUT,
+      timeout: 4 * SELECTOR_TIMEOUT,
     },
     text,
   );
@@ -218,7 +218,16 @@ async function waitForPrimaryEditorFocus(page) {
   await page.waitForSelector(
     '.editor-container_editor-0 .ProseMirror-focused',
     {
-      timeout: 2 * SELECTOR_TIMEOUT,
+      timeout: 4 * SELECTOR_TIMEOUT,
+    },
+  );
+}
+
+async function waitForSecondaryEditorFocus(page) {
+  await page.waitForSelector(
+    '.editor-container_editor-1 .ProseMirror-focused',
+    {
+      timeout: 4 * SELECTOR_TIMEOUT,
     },
   );
 }
@@ -357,5 +366,7 @@ module.exports = {
   sleep,
   url,
   uuid,
+  waitForPrimaryEditorFocus,
   waitForPrimaryEditorTextToContain,
+  waitForSecondaryEditorFocus,
 };

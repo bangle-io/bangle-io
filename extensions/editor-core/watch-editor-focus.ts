@@ -16,7 +16,9 @@ export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {
             value: { editorId },
           });
 
-          return true;
+          // This is important to return false so that
+          // we dont interfere with PM's focus setting.
+          return false;
         },
       },
     },
