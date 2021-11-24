@@ -2,24 +2,29 @@ const {
   url,
   createNewNote,
   clearPrimaryEditor,
-  getEditorHTML,
   createWorkspace,
   sleep,
-  longSleep,
   getPrimaryEditorHandler,
-  getPrimaryEditorDebugString,
   waitForPrimaryEditorTextToContain,
-  jestDebug,
+  newPage,
   SELECTOR_TIMEOUT,
+  longSleep,
 } = require('../helpers');
 
 jest.setTimeout(155 * 1000);
+jest.retryTimes(2);
+let page, destroyPage;
 
 beforeEach(async () => {
-  await jestPuppeteer.resetPage();
-  await page.goto(url, { waitUntil: 'networkidle2' });
+  ({ page, destroyPage } = await newPage(browser));
 
+  await page.goto(url, { waitUntil: 'networkidle2' });
   await page.evaluate(() => localStorage.clear());
+  await page.goto(url, { waitUntil: 'networkidle2' });
+});
+
+afterEach(async () => {
+  await destroyPage();
 });
 
 test('Creating and clicking Backlinks works', async () => {
@@ -46,9 +51,10 @@ test('Creating and clicking Backlinks works', async () => {
   await clearPrimaryEditor(page);
   await page.keyboard.type('[[0', { delay: 3 });
   await page.keyboard.press('Enter', { delay: 30 });
+  await longSleep();
 
   await page.waitForSelector('.inline-backlink_backlink', {
-    timeout: 2 * SELECTOR_TIMEOUT,
+    timeout: 4 * SELECTOR_TIMEOUT,
   });
 
   // make sure the backlink created is for note-0

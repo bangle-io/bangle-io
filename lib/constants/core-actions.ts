@@ -1,9 +1,6 @@
 export const CORE_ACTIONS_TOGGLE_THEME =
   'action::bangle-io-core-actions:TOGGLE_THEME_ACTION';
 
-export const CORE_ACTIONS_TOGGLE_FILE_SIDEBAR =
-  'action::bangle-io-core-actions:TOGGLE_FILE_SIDEBAR_COMMAND';
-
 export const CORE_ACTIONS_NEW_NOTE =
   'action::bangle-io-core-actions:NEW_NOTE_ACTION';
 
@@ -30,3 +27,6 @@ export const CORE_ACTIONS_TOGGLE_EDITOR_SPLIT =
 
 export const CORE_ACTIONS_CLOSE_EDITOR =
   'action::bangle-io-core-actions:CLOSE_EDITOR_ACTION';
+
+export const CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR =
+  'action::bangle-io-core-actions:NOTE_TOGGLE_SIDEBAR_ACTION';

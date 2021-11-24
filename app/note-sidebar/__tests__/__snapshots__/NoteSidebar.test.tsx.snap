@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders 1`] = `
+exports[`renders correctly 1`] = `
 <div>
   <div>
     <div
@@ -12,11 +12,11 @@ exports[`renders 1`] = `
         <div
           class="font-bold"
         >
-          search notes
+          Widgets
         </div>
         <div>
           <button
-            aria-label="hide search notes"
+            aria-label="hide"
             class="ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
             type="button"
           >
@@ -33,15 +33,13 @@ exports[`renders 1`] = `
                 width="18"
               />
               <path
-                d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z"
+                d="M12,9a.994.994,0,0,1-.2925.7045l-3.9915,3.99a1,1,0,1,1-1.4355-1.386l.0245-.0245L9.5905,9,6.3045,5.715A1,1,0,0,1,7.691,4.28l.0245.0245,3.9915,3.99A.994.994,0,0,1,12,9Z"
               />
             </svg>
           </button>
         </div>
       </div>
-      <span>
-        something
-      </span>
+      <div />
     </div>
   </div>
 </div>

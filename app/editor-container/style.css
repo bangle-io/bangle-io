@@ -16,3 +16,7 @@
   display: flex;
   align-items: center;
 }
+
+.editor-container_ws-path.active {
+  background-color: var(--base-300);
+}

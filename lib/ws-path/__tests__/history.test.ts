@@ -88,6 +88,12 @@ describe('OpenedWsPaths', () => {
     // expect(result.hasSomeOpenedWsPaths()).toBe(false);
   });
 
+  test('getByIndex', () => {
+    let result = new OpenedWsPaths(['a', undefined]);
+    expect(result.getByIndex(0)).toBe('a');
+    expect(result.getByIndex(1)).toBe(undefined);
+  });
+
   test('forEach 1', () => {
     let result = new OpenedWsPaths(['a', undefined]);
     let called: any = [];

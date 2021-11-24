@@ -1,14 +1,14 @@
 import React, { useCallback } from 'react';
 
-import type { DispatchActionType } from '@bangle.io/action-context';
 import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
+import type { DispatchActionType } from '@bangle.io/shared-types';
 import {
   ActionButton,
   ButtonContent,
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
-import { removeMdExtension } from '@bangle.io/utils';
+import { cx, removeMdExtension } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 3;
@@ -18,14 +18,16 @@ export function EditorBar({
   wsPath,
   onClose,
   onPressSecondaryEditor,
-  isSplitEditorActive,
+  isSplitEditorOpen,
+  isActive,
 }: {
+  isActive: boolean;
   dispatchAction: DispatchActionType;
   showSplitEditor?: boolean;
   wsPath: string;
   onClose: () => void;
   onPressSecondaryEditor: () => void;
-  isSplitEditorActive: boolean;
+  isSplitEditorOpen: boolean;
 }) {
   let path = removeMdExtension(resolvePath(wsPath).filePath);
 
@@ -45,7 +47,10 @@ export function EditorBar({
     <div className="flex flex-row justify-between w-full editor-container_editor-bar">
       <div
         aria-label="note path"
-        className="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+        className={cx(
+          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline',
+          isActive && 'active',
+        )}
         onClick={openNotesPalette}
       >
         {p.map((r, i) => (
@@ -68,10 +73,10 @@ export function EditorBar({
             styling={{}}
             className="lg:mr-1"
             ariaLabel="Split screen"
-            isActive={isSplitEditorActive}
+            isActive={isSplitEditorOpen}
             tooltip={
               <TooltipWrapper>
-                {isSplitEditorActive ? 'Close split screen' : 'Split screen'}
+                {isSplitEditorOpen ? 'Close split screen' : 'Split screen'}
               </TooltipWrapper>
             }
             tooltipPlacement="bottom"

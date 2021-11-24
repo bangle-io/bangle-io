@@ -196,6 +196,7 @@ describe('useGetEditorState', () => {
         initialValue: '',
         wsPath: 'something:one.md',
         editorDisplayType: EditorDisplayType.Page,
+        dispatchAction: jest.fn(),
       }),
     );
     expect(result.current?.pmState.toJSON()).toMatchInlineSnapshot(`

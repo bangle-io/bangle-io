@@ -24,12 +24,6 @@ export const ChevronDownIcon = (props) => (
   </Svg>
 );
 
-export const ChevronRightIcon = (props) => (
-  <Svg {...props}>
-    <path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" />
-  </Svg>
-);
-
 export const CloseIcon = (props) => (
   <Svg {...props}>
     <path
@@ -169,20 +163,6 @@ export function ChevronDoubleRightIcon(props) {
   );
 }
 
-export function ChevronDoubleleftNode(props) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none">
-      <path
-        d="M18.3639 7.75735L16.9497 6.34314L11.2929 12L16.9497 17.6568L18.3639 16.2426L14.1213 12L18.3639 7.75735Z"
-        fill="currentColor"
-      />
-      <path
-        d="M11.2929 6.34314L12.7071 7.75735L8.46447 12L12.7071 16.2426L11.2929 17.6568L5.63605 12L11.2929 6.34314Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
 export function NullIcon(props) {
   return (
     <svg
@@ -518,12 +498,38 @@ export function ChevronLeftIcon(props: any) {
       fill="currentColor"
       {...props}
     >
-      <title>S ChevronLeft 18 N</title>
       <rect fill="#ff13dc" opacity="0" width="18" height="18" />
       <path d="M6,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L8.4095,9l3.286-3.285A1,1,0,0,0,10.309,4.28l-.0245.0245L6.293,8.2945A.994.994,0,0,0,6,9Z" />
     </svg>
   );
 }
+export function ChevronRightIcon(props: any) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 18 18"
+      fill="currentColor"
+      {...props}
+    >
+      <rect fill="#ff13dc" opacity="0" width="18" height="18" />
+      <path d="M12,9a.994.994,0,0,1-.2925.7045l-3.9915,3.99a1,1,0,1,1-1.4355-1.386l.0245-.0245L9.5905,9,6.3045,5.715A1,1,0,0,1,7.691,4.28l.0245.0245,3.9915,3.99A.994.994,0,0,1,12,9Z" />
+    </svg>
+  );
+}
+export function ChevronDoubleLeftIcon(props: any) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 18 18"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M3,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386L8.695,12.284,5.4095,9l3.286-3.285A1,1,0,0,0,7.309,4.28l-.0245.0245L3.293,8.2945A.994.994,0,0,0,3,9Z" />
+      <path d="M9,9a.994.994,0,0,0,.2925.7045l3.9915,3.99a1,1,0,1,0,1.4355-1.386l-.0245-.0245L11.4095,9l3.286-3.285A1,1,0,0,0,13.309,4.28l-.0245.0245L9.293,8.2945A.994.994,0,0,0,9,9Z" />
+    </svg>
+  );
+}
+
 export function MoreIcon(props: any) {
   return (
     <svg

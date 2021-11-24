@@ -10,7 +10,7 @@ const { toggleHeadingCollapse, uncollapseAllHeadings } = heading;
 const { moveListItemUp, moveListItemDown } = listItem;
 
 export function EditorCore({ registerActionHandler }) {
-  const { primaryEditor } = useEditorManagerContext();
+  const { primaryEditor, updateFocusedEditor } = useEditorManagerContext();
   const executeEditorCommand = useDispatchPrimaryEditor(false);
 
   const actionHandler = useCallback(
@@ -41,12 +41,17 @@ export function EditorCore({ registerActionHandler }) {
           return true;
         }
 
+        case 'action::bangle-io-editor-core:on-focus-update': {
+          updateFocusedEditor(actionObject.value.editorId);
+          return true;
+        }
+
         default: {
           return false;
         }
       }
     },
-    [primaryEditor, executeEditorCommand],
+    [primaryEditor, updateFocusedEditor, executeEditorCommand],
   );
 
   useEffect(() => {

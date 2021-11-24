@@ -28,9 +28,9 @@ export function EditorContainer({
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { secondaryWsPath } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
-  const { setEditor } = useEditorManagerContext();
+  const { setEditor, focusedEditorId } = useEditorManagerContext();
 
-  const isSplitEditorActive = Boolean(secondaryWsPath);
+  const isSplitEditorOpen = Boolean(secondaryWsPath);
 
   const onPressSecondaryEditor = useCallback(() => {
     dispatchAction({
@@ -68,7 +68,6 @@ export function EditorContainer({
   } else if (wsPath) {
     children = (
       <Editor
-        key={wsPath}
         editorId={editorId}
         wsPath={wsPath}
         onEditorReady={onEditorReady}
@@ -85,16 +84,21 @@ export function EditorContainer({
         widescreen &&
         wsPath && (
           <EditorBar
+            isActive={focusedEditorId === editorId}
             dispatchAction={dispatchAction}
             wsPath={wsPath}
             onClose={onClose}
             showSplitEditor={editorId === 0}
             onPressSecondaryEditor={onPressSecondaryEditor}
-            isSplitEditorActive={isSplitEditorActive}
+            isSplitEditorOpen={isSplitEditorOpen}
           />
         )
       }
-      className={cx(widescreen && 'overflow-y-scroll')}
+      className={cx(
+        'editor-container_editor-container',
+        'editor-container_editor-container-' + editorId,
+        widescreen && 'overflow-y-scroll',
+      )}
     >
       {children}
     </Page>

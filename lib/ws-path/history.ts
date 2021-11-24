@@ -56,6 +56,14 @@ export class OpenedWsPaths {
     return this.updateByIndex(1, wsPath);
   }
 
+  getByIndex(index: number) {
+    if (index >= this.wsPaths.length) {
+      throw new Error('getByIndex: Out of bound operation');
+    }
+
+    return this.wsPaths[index];
+  }
+
   updateByIndex(index: number, wsPath: MaybeWsPath) {
     if (index >= this.wsPaths.length) {
       throw new Error('updateByIndex: Out of bound operation');

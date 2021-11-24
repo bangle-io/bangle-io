@@ -9,6 +9,7 @@ import {
 } from '@bangle.dev/react';
 import { valuePlugin } from '@bangle.dev/utils';
 
+import { useActionContext } from '@bangle.io/action-context';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,
@@ -17,7 +18,10 @@ import {
   ExtensionRegistry,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
-import type { EditorPluginMetadata } from '@bangle.io/shared-types';
+import type {
+  DispatchActionType,
+  EditorPluginMetadata,
+} from '@bangle.io/shared-types';
 import { cx, getScrollParentElement } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -47,6 +51,8 @@ function EditorInner({
 }: EditorProps) {
   const { getNote } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
+  const { dispatchAction } = useActionContext();
+
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
   // in handy when loading editor with a given scroll position.
@@ -79,6 +85,7 @@ function EditorInner({
 
   return initialValue ? (
     <EditorInner2
+      dispatchAction={dispatchAction}
       className={className}
       editorId={editorId}
       extensionRegistry={extensionRegistry}
@@ -98,7 +105,9 @@ function EditorInner2({
   onEditorReady,
   wsPath,
   editorDisplayType,
+  dispatchAction,
 }: {
+  dispatchAction: DispatchActionType;
   className?: string;
   editorId?: number;
   extensionRegistry: ExtensionRegistry;
@@ -120,6 +129,7 @@ function EditorInner2({
     initialValue,
     wsPath,
     editorDisplayType,
+    dispatchAction,
   });
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
@@ -162,20 +172,23 @@ export function useGetEditorState({
   initialValue,
   wsPath,
   editorDisplayType,
+  dispatchAction,
 }: {
   editorId?: number;
   extensionRegistry: ExtensionRegistry;
   initialValue: any;
   wsPath: string;
   editorDisplayType: EditorDisplayType;
+  dispatchAction: DispatchActionType;
 }) {
   const pluginMetadata: EditorPluginMetadata = useMemo(
     () => ({
       wsPath,
       editorId,
       editorDisplayType,
+      dispatchAction,
     }),
-    [editorId, wsPath, editorDisplayType],
+    [editorId, wsPath, dispatchAction, editorDisplayType],
   );
 
   const plugins = useCallback(() => {

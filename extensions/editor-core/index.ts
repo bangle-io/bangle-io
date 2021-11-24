@@ -40,6 +40,11 @@ const extension = Extension.create({
         name: 'action::bangle-io-editor-core:move-list-down',
         title: 'Editor: Move list down',
       },
+      {
+        name: 'action::bangle-io-editor-core:on-focus-update',
+        title: 'Editor: Record focus change',
+        hidden: true,
+      },
     ],
   },
 });
