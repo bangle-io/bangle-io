@@ -3,7 +3,9 @@ import { Redirect, Route } from 'react-router-dom';
 
 import { Activitybar } from '@bangle.io/activitybar';
 import { EditorContainer } from '@bangle.io/editor-container';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
@@ -29,8 +31,9 @@ export function AppContainer() {
 
   const sidebars = extensionRegistry.getSidebars();
   const actionKeybindings = extensionRegistry.getActionKeybindingMapping();
+  const { focusedEditorId, getEditor } = useEditorManagerContext();
 
-  const { sidebar, dispatch } = useUIManagerContext();
+  const { sidebar, dispatch, noteSidebar } = useUIManagerContext();
   const currentSidebar = sidebar
     ? sidebars.find((s) => s.name === sidebar)
     : null;
@@ -43,6 +46,31 @@ export function AppContainer() {
       },
     });
   }, [dispatch]);
+
+  const onDismissNoteSidebar = useCallback(() => {
+    dispatch({
+      type: 'UI/UPDATE_NOTE_SIDEBAR',
+      value: false,
+    });
+  }, [dispatch]);
+
+  const showNoteSidebar = useCallback(() => {
+    dispatch({
+      type: 'UI/UPDATE_NOTE_SIDEBAR',
+      value: true,
+    });
+  }, [dispatch]);
+
+  const focusedEditor = useMemo(() => {
+    if (typeof focusedEditorId === 'number') {
+      const editor = getEditor(focusedEditorId);
+      const wsPath = openedWsPaths.getByIndex(focusedEditorId);
+      if (editor && wsPath) {
+        return { wsPath, editor: editor };
+      }
+    }
+    return undefined;
+  }, [openedWsPaths, getEditor, focusedEditorId]);
 
   const mainContent = useMemo(() => {
     const result: ReactNode[] = [];
@@ -75,6 +103,11 @@ export function AppContainer() {
       <NewWorkspaceModal />
       <ApplicationComponents />
       <PaletteManager />
+      <NoteSidebarShowButton
+        isNoteSidebarShown={Boolean(noteSidebar)}
+        widescreen={widescreen}
+        showNoteSidebar={showNoteSidebar}
+      />
       <Dhancha
         widescreen={widescreen}
         activitybar={
@@ -85,12 +118,18 @@ export function AppContainer() {
             sidebars={sidebars}
           />
         }
-        noteSidebar={undefined}
+        noteSidebar={
+          noteSidebar && (
+            <NoteSidebar
+              focusedEditor={focusedEditor}
+              onDismiss={onDismissNoteSidebar}
+            />
+          )
+        }
         workspaceSidebar={
           currentSidebar && (
             <WorkspaceSidebar
               onDismiss={onDismissSidebar}
-              wsName={wsName}
               sidebar={currentSidebar}
             />
           )

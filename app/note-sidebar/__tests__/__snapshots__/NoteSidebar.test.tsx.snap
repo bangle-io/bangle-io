@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <div>
+    <div
+      class="flex flex-col flex-grow h-full overflow-y-scroll workspace-sidebar"
+    >
+      <div
+        class="flex flex-row justify-between px-2 mt-2"
+      >
+        <div
+          class="font-bold"
+        >
+          Widgets
+        </div>
+        <div>
+          <button
+            aria-label="hide"
+            class="ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
+            type="button"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 18 18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                fill="#ff13dc"
+                height="18"
+                opacity="0"
+                width="18"
+              />
+              <path
+                d="M12,9a.994.994,0,0,1-.2925.7045l-3.9915,3.99a1,1,0,1,1-1.4355-1.386l.0245-.0245L9.5905,9,6.3045,5.715A1,1,0,0,1,7.691,4.28l.0245.0245,3.9915,3.99A.994.994,0,0,1,12,9Z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div />
+    </div>
+  </div>
+</div>
+`;
