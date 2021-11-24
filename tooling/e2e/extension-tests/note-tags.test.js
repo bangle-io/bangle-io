@@ -12,7 +12,7 @@ const {
 } = require('../helpers');
 
 jest.setTimeout(155 * 1000);
-jest.retryTimes(2);
+jest.retryTimes(1);
 
 let page, destroyPage, wsName;
 
@@ -237,17 +237,24 @@ describe('auto complete', () => {
     await clearPrimaryEditor(page);
     await sleep();
 
-    await page.keyboard.type('#hel', { delay: 3 });
+    await page.keyboard.type('#hel', { delay: 20 });
 
     await page.waitForSelector('.tag-picker-inline-palette-item', {
       timeout: SELECTOR_TIMEOUT,
     });
 
-    expect(
-      await page.$$eval('.tag-picker-inline-palette-item', (nodes) =>
-        nodes.map((n) => n.innerText),
-      ),
-    ).toEqual(['Create a tag "hel"', 'hello']);
+    await page.waitForFunction(
+      () => {
+        const [firstItem, secondItem] = [
+          ...document.querySelectorAll('.tag-picker-inline-palette-item'),
+        ].map((n) => n.innerText);
+
+        return firstItem === 'Create a tag "hel"' && secondItem === 'hello';
+      },
+      {
+        timeout: SELECTOR_TIMEOUT,
+      },
+    );
 
     await page.keyboard.press('ArrowDown', { delay: 10 });
     await page.keyboard.press('Enter', { delay: 10 });

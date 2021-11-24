@@ -13,6 +13,7 @@ const {
   newPage,
   ctrlKey,
   getSecondaryEditorHandler,
+  waitForPrimaryEditorTextToContain,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
@@ -111,8 +112,9 @@ test.each(['regular', 'split-screen'])(
 
     await getPrimaryEditorHandler(page);
 
-    await longSleep();
     await expect(page.title()).resolves.toMatch('other-note-1');
+
+    await waitForPrimaryEditorTextToContain(page, 'other-note-1');
     expect(await getPrimaryEditorDebugString(page)).toMatchInlineSnapshot(
       `"doc(heading(\\"other-note-1\\"), paragraph(\\"Hello world!\\"))"`,
     );

@@ -47,7 +47,9 @@ const config = ({ command, mode }) => {
       sourcemap: sourcemap,
       emptyOutDir: true,
       outDir: './build',
+      chunkSizeWarningLimit: 3000,
     },
+
     plugins: [
       minifyHtml(),
       injectHtml({
