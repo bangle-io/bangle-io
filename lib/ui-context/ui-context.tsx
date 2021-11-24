@@ -92,7 +92,11 @@ export function UIManager({ children }) {
   );
 
   useEffect(() => {
-    persistState({ sidebar: state.sidebar, theme: state.theme });
+    persistState({
+      sidebar: state.sidebar,
+      theme: state.theme,
+      noteSidebar: state.noteSidebar,
+    });
   }, [state]);
 
   // Does not give semantic guarantee, but we are fine
