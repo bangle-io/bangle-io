@@ -25,6 +25,7 @@ interface UIStateObj {
   changelogHasUpdates: boolean;
   dispatch: Function;
   modal: string | undefined;
+  noteSidebar: boolean;
   notifications: NotificationType[];
   paletteInitialQuery: string | undefined;
   paletteMetadata: any | undefined;
@@ -44,16 +45,17 @@ function getThemePreference() {
 
 const initialState: UIStateObj = {
   // UI
-  sidebar: undefined,
-  widescreen: checkWidescreen(),
-  paletteType: undefined,
-  paletteInitialQuery: undefined,
-  paletteMetadata: undefined,
-  theme: getThemePreference(),
-  notifications: [],
+  changelogHasUpdates: false,
   dispatch: () => {},
   modal: undefined,
-  changelogHasUpdates: false,
+  noteSidebar: false,
+  notifications: [],
+  paletteInitialQuery: undefined,
+  paletteMetadata: undefined,
+  paletteType: undefined,
+  sidebar: undefined,
+  theme: getThemePreference(),
+  widescreen: checkWidescreen(),
 };
 
 export const UIManagerContext = createContext(initialState);
@@ -244,6 +246,19 @@ const reducer = (
       return {
         ...state,
         changelogHasUpdates: action.value,
+      };
+    }
+
+    case 'UI/UPDATE_NOTE_SIDEBAR': {
+      return {
+        ...state,
+        noteSidebar: action.value,
+      };
+    }
+    case 'UI/TOGGLE_NOTE_SIDEBAR': {
+      return {
+        ...state,
+        noteSidebar: !state.noteSidebar,
       };
     }
 

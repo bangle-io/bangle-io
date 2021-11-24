@@ -17,9 +17,32 @@ test('renders correctly', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
-      ></EditorBar>
+      />
     </div>,
   );
+
+  expect(result.getByLabelText('note path').className).not.toContain('active');
+
+  expect(result.container).toMatchSnapshot();
+});
+
+test('renders correctly when active', () => {
+  let dispatchAction = jest.fn();
+  let result = render(
+    <div>
+      <EditorBar
+        isActive={true}
+        dispatchAction={dispatchAction}
+        showSplitEditor={false}
+        wsPath={'mojo:test-dir/magic.md'}
+        onClose={jest.fn()}
+        onPressSecondaryEditor={jest.fn()}
+        isSplitEditorOpen={false}
+      />
+    </div>,
+  );
+
+  expect(result.getByLabelText('note path').className).toContain('active');
 
   expect(result.container).toMatchSnapshot();
 });
@@ -37,7 +60,7 @@ test('truncates large wsPath', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
-      ></EditorBar>
+      />
     </div>,
   );
 
@@ -57,7 +80,7 @@ test('dispatches action on clicking wsPath', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={true}
-      ></EditorBar>
+      />
     </div>,
   );
 
@@ -82,7 +105,7 @@ test('renders splitscreen', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={true}
-      ></EditorBar>
+      />
     </div>,
   );
 
@@ -100,7 +123,7 @@ test('renders splitscreen', () => {
         onClose={jest.fn()}
         onPressSecondaryEditor={jest.fn()}
         isSplitEditorOpen={false}
-      ></EditorBar>
+      />
     </div>,
   );
 

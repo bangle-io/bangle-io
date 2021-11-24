@@ -19,6 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*",
     "@testing-library/dom": "^8.10.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",

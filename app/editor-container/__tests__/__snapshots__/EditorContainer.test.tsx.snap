@@ -14,7 +14,7 @@ exports[`basic renders 1`] = `
         >
           <div
             aria-label="note path"
-            class="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+            class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
           >
             <span
               class="break-all"
@@ -73,7 +73,7 @@ exports[`renders correctly when file does not exist 1`] = `
         >
           <div
             aria-label="note path"
-            class="flex flex-row flex-wrap text-xs cursor-pointer editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+            class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
           >
             <span
               class="break-all"

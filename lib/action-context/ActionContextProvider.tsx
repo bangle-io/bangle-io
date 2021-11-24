@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useMemo } from 'react';
 
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import type { ActionType } from '@bangle.io/shared-types';
+import type { DispatchActionType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
 
 const LOG = false;
@@ -10,8 +10,6 @@ let log = LOG ? console.log.bind(console, 'ActionCotext') : () => {};
 export const ActionContext = createContext<ContextType>({
   dispatchAction: () => {},
 });
-
-export type DispatchActionType = (action: ActionType) => void;
 
 export interface ContextType {
   dispatchAction: DispatchActionType;

@@ -6,18 +6,13 @@ import {
   ButtonContent,
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
-import {
-  ChevronLeftIcon,
-  ErrorBoundary,
-  MoreIcon,
-} from '@bangle.io/ui-components';
+import { ChevronLeftIcon, ErrorBoundary } from '@bangle.io/ui-components';
 
 export function WorkspaceSidebar({
   onDismiss,
   sidebar,
 }: {
   onDismiss: () => void;
-  wsName?: string;
   sidebar: SidebarType;
 }) {
   return (

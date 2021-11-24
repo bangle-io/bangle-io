@@ -9,6 +9,7 @@ import {
   ExtensionRegistry,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
+import { getEditorPluginMetadataReturn } from '@bangle.io/test-utils/function-mock-return';
 import { getEditorPluginMetadata, sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -76,6 +77,7 @@ describe('BackLinkNode', () => {
     });
 
     getEditorPluginMetadataMock.mockImplementation(() => ({
+      ...getEditorPluginMetadataReturn,
       wsPath: 'test-ws:my-current-note.md',
       editorDisplayType: EditorDisplayType.Page,
     }));
@@ -611,6 +613,7 @@ describe('BackLinkNode', () => {
     test('matches if path follows local file system style', async () => {
       getEditorPluginMetadataMock.mockImplementation(() => {
         return {
+          ...getEditorPluginMetadataReturn,
           wsPath: 'test-ws:magic/hello/beautiful/world.md',
           editorDisplayType: EditorDisplayType.Popup,
         };

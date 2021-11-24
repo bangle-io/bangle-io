@@ -1825,6 +1825,7 @@ __metadata:
     "@bangle.io/inline-emoji": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
+    "@bangle.io/note-sidebar": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2088,6 +2089,7 @@ __metadata:
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
@@ -2165,6 +2167,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.0
     "@bangle.dev/react": 0.28.0
     "@bangle.dev/utils": 0.28.0
+    "@bangle.io/action-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2286,6 +2289,7 @@ __metadata:
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2443,6 +2447,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/note-sidebar@workspace:*, @bangle.io/note-sidebar@workspace:app/note-sidebar":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/note-sidebar@workspace:app/note-sidebar"
+  dependencies:
+    "@bangle.dev/core": 0.28.0
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/ui-bangle-button": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*"
+    "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    "@testing-library/react": ^12.1.2
+    "@testing-library/react-hooks": ^7.0.2
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  peerDependencies:
+    react: "*"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/note-tags@workspace:*, @bangle.io/note-tags@workspace:extensions/note-tags":
   version: 0.0.0-use.local
   resolution: "@bangle.io/note-tags@workspace:extensions/note-tags"
@@ -2517,6 +2545,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/shared-types@workspace:lib/shared-types"
   dependencies:
+    "@bangle.dev/pm": 0.28.0
     "@bangle.io/constants": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -2582,6 +2611,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@types/react": ^17.0.33

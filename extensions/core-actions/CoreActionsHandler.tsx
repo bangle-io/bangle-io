@@ -11,7 +11,7 @@ import {
   CORE_ACTIONS_NEW_WORKSPACE,
   CORE_ACTIONS_RENAME_ACTIVE_NOTE,
   CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
-  CORE_ACTIONS_TOGGLE_FILE_SIDEBAR,
+  CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_ACTIONS_TOGGLE_THEME,
 } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/ui-context';
@@ -51,13 +51,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           });
           return true;
         }
-        case CORE_ACTIONS_TOGGLE_FILE_SIDEBAR: {
-          dispatch({
-            type: 'UI/TOGGLE_SIDEBAR',
-            value: { type: 'file-browser' },
-          });
-          return true;
-        }
+
         case CORE_ACTIONS_NEW_NOTE: {
           if (!wsName) {
             dispatch({
@@ -138,6 +132,13 @@ export function CoreActionsHandler({ registerActionHandler }) {
             value: { type: null },
           });
           updateInputModal({ type: 'rename-note' });
+          return true;
+        }
+
+        case CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR: {
+          dispatch({
+            type: 'UI/TOGGLE_NOTE_SIDEBAR',
+          });
           return true;
         }
 

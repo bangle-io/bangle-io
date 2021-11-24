@@ -8,7 +8,7 @@ import {
   CORE_ACTIONS_NEW_WORKSPACE,
   CORE_ACTIONS_RENAME_ACTIVE_NOTE,
   CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
-  CORE_ACTIONS_TOGGLE_FILE_SIDEBAR,
+  CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_ACTIONS_TOGGLE_THEME,
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
@@ -26,12 +26,12 @@ const extension = Extension.create({
       { name: CORE_ACTIONS_NEW_NOTE, title: 'New note' },
       { name: CORE_ACTIONS_NEW_WORKSPACE, title: 'New workspace' },
       { name: CORE_ACTIONS_RENAME_ACTIVE_NOTE, title: 'Rename active note' },
+      { name: CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR, title: 'Toggle Note sidebar' },
       {
         name: CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
         title: 'Toggle editor split screen',
         keybinding: 'Mod-\\',
       },
-      { name: CORE_ACTIONS_TOGGLE_FILE_SIDEBAR, title: 'Toggle file sidebar' },
       { name: CORE_ACTIONS_TOGGLE_THEME, title: 'Toggle theme' },
       {
         name: CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,

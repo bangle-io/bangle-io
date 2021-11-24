@@ -46,6 +46,7 @@
     "@bangle.io/inline-emoji": "workspace:*",
     "@bangle.io/naukar-proxy": "workspace:*",
     "@bangle.io/naukar-worker": "workspace:*",
+    "@bangle.io/note-sidebar": "workspace:*",
     "@bangle.io/object-sync": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
