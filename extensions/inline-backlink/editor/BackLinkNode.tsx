@@ -146,7 +146,7 @@ export function BackLinkNode({
         onClick={onClick}
       >
         <NoteIcon className="inline-block" />
-        <span className="inline-block">{title}</span>
+        <span className="inline">{title}</span>
       </button>
 
       {isTooltipVisible && backlinksWsPath && (

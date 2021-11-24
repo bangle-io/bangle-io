@@ -20,7 +20,7 @@ exports[`BackLinkNode clicking no click if path validation fails 1`] = `
       />
     </svg>
     <span
-      class="inline-block"
+      class="inline"
     >
       Invalid link (monako)
     </span>

@@ -120,7 +120,7 @@ describe('BackLinkNode', () => {
             />
           </svg>
           <span
-            class="inline-block"
+            class="inline"
           >
             some/path
           </span>
@@ -166,7 +166,7 @@ describe('BackLinkNode', () => {
             />
           </svg>
           <span
-            class="inline-block"
+            class="inline"
           >
             monako
           </span>
@@ -216,7 +216,7 @@ describe('BackLinkNode', () => {
             />
           </svg>
           <span
-            class="inline-block"
+            class="inline"
           >
             monako
           </span>
