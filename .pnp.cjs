@@ -3249,7 +3249,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-state", "npm:1.3.4"],
             ["prosemirror-tables", "npm:1.1.1"],
             ["prosemirror-transform", "npm:1.3.3"],
-            ["prosemirror-view", "npm:1.21.0"]
+            ["prosemirror-view", "npm:1.23.2"]
           ],
           "linkType": "HARD",
         }]
@@ -18030,7 +18030,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-dropcursor", "npm:1.3.5"],
             ["prosemirror-state", "npm:1.3.4"],
             ["prosemirror-transform", "npm:1.3.3"],
-            ["prosemirror-view", "npm:1.21.0"]
+            ["prosemirror-view", "npm:1.23.2"]
           ],
           "linkType": "HARD",
         }]
@@ -18043,7 +18043,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-keymap", "npm:1.1.5"],
             ["prosemirror-model", "npm:1.15.0"],
             ["prosemirror-state", "npm:1.3.4"],
-            ["prosemirror-view", "npm:1.21.0"]
+            ["prosemirror-view", "npm:1.23.2"]
           ],
           "linkType": "HARD",
         }]
@@ -18134,7 +18134,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prosemirror-model", "npm:1.15.0"],
             ["prosemirror-state", "npm:1.3.4"],
             ["prosemirror-transform", "npm:1.3.3"],
-            ["prosemirror-view", "npm:1.21.0"]
+            ["prosemirror-view", "npm:1.23.2"]
           ],
           "linkType": "HARD",
         }]
@@ -18176,10 +18176,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["prosemirror-view", [
-        ["npm:1.21.0", {
-          "packageLocation": "./.yarn/cache/prosemirror-view-npm-1.21.0-f820ac8566-ff048bc03b.zip/node_modules/prosemirror-view/",
+        ["npm:1.23.2", {
+          "packageLocation": "./.yarn/cache/prosemirror-view-npm-1.23.2-47eeb83caf-3f96f82d57.zip/node_modules/prosemirror-view/",
           "packageDependencies": [
-            ["prosemirror-view", "npm:1.21.0"],
+            ["prosemirror-view", "npm:1.23.2"],
             ["prosemirror-model", "npm:1.15.0"],
             ["prosemirror-state", "npm:1.3.4"],
             ["prosemirror-transform", "npm:1.3.3"]
