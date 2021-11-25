@@ -154,6 +154,9 @@ async function createNewNote(page, wsName, noteName = 'new_file.md') {
   return wsPath;
 }
 
+/**
+ * Only runs actions visible in the palette
+ */
 async function runAction(page, actionId) {
   await page.keyboard.press('Escape');
   await page.keyboard.down(ctrlKey);

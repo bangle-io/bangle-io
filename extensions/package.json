@@ -3,18 +3,19 @@
   "workspaces": [
     "collab-extension",
     "collapsible-heading",
+    "core-actions",
+    "core-palettes",
     "editor-core",
+    "editor-scroll-extension",
+    "example-extension",
     "image-extension",
     "inline-backlink",
     "inline-command-palette",
     "inline-emoji",
-    "example-extension",
-    "editor-scroll-extension",
-    "core-palettes",
-    "core-actions",
-    "search-notes",
     "note-browser",
-    "note-tags"
+    "note-outline",
+    "note-tags",
+    "search-notes"
   ],
   "repository": {
     "directory": "extensions",
