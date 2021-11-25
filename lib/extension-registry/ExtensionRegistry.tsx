@@ -90,10 +90,7 @@ export class ExtensionRegistry {
   private editorConfig: EditorConfig[];
   private actionKeybindingMapping: ActionKeybindingMapping;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
-  private noteSidebarWidgets: Exclude<
-    ApplicationConfig['noteSidebarWidgets'],
-    undefined
-  >;
+
   private editorWatchPluginStates: Exclude<
     EditorConfig['watchPluginStates'],
     undefined

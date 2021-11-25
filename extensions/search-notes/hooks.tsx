@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { search } from '@bangle.dev/search';
 
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
-import { useExtensionStateContext } from '@bangle.io/extension-registry';
+import { useExtensionState } from '@bangle.io/extension-registry';
 import { useDebouncedValue } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -20,7 +20,7 @@ import { searchNotes } from './search-notes';
  * Helpers hook for using the extension state.
  */
 export function useSearchNotesState() {
-  return useExtensionStateContext<SearchNotesExtensionState>(extensionName);
+  return useExtensionState<SearchNotesExtensionState>(extensionName);
 }
 
 /**

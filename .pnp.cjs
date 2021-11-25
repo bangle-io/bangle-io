@@ -4389,6 +4389,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
             ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@testing-library/react", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:12.1.2"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
             ["react", "npm:17.0.2"],

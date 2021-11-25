@@ -1,8 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
-import { useExtensionStateContext } from '@bangle.io/extension-registry';
+import { useExtensionState } from '@bangle.io/extension-registry';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
-import { sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { useSearchNotes } from '../hooks';
@@ -15,7 +14,7 @@ jest.mock('@bangle.io/workspace-context', () => {
 
 jest.mock('@bangle.io/extension-registry', () => {
   const actual = jest.requireActual('@bangle.io/extension-registry');
-  return { ...actual, useExtensionStateContext: jest.fn() };
+  return { ...actual, useExtensionState: jest.fn() };
 });
 
 jest.mock('../constants', () => {
@@ -27,7 +26,7 @@ jest.mock('../constants', () => {
   };
 });
 
-let useWorkspaceContextReturn, useExtensionStateContextReturn;
+let useWorkspaceContextReturn, useExtensionStateReturn;
 
 // let abortSpy;
 
@@ -45,7 +44,7 @@ beforeEach(() => {
     getNote: jest.fn(),
   };
 
-  useExtensionStateContextReturn = [
+  useExtensionStateReturn = [
     { searchQuery: '', searchResults: null, pendingSearch: false },
     jest.fn(),
   ];
@@ -53,8 +52,8 @@ beforeEach(() => {
   (useWorkspaceContext as any).mockImplementation(() => {
     return useWorkspaceContextReturn;
   });
-  (useExtensionStateContext as any).mockImplementation(() => {
-    return useExtensionStateContextReturn;
+  (useExtensionState as any).mockImplementation(() => {
+    return useExtensionStateReturn;
   });
 });
 
@@ -69,7 +68,7 @@ test('works with empty search query', async () => {
     updateStateCalls.push(_cb({}));
   });
 
-  useExtensionStateContextReturn = [
+  useExtensionStateReturn = [
     { searchQuery: '', searchResults: null, pendingSearch: false },
     updateState,
   ];
@@ -89,7 +88,7 @@ test('works with existing search query', async () => {
     updateStateCalls.push(_cb({}));
   });
 
-  useExtensionStateContextReturn = [
+  useExtensionStateReturn = [
     { searchQuery: 'hello', searchResults: null, pendingSearch: false },
     updateState,
   ];

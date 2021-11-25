@@ -13,8 +13,7 @@ import {
 } from '@bangle.io/extension-registry';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
-import { useGetEditorState } from '..';
-import { Editor } from '../Editor';
+import { Editor, useGetEditorState } from '../Editor';
 
 const coreExtension = Extension.create({
   name: 'bangle-io-core',

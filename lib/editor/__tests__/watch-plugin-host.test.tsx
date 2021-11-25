@@ -12,7 +12,7 @@ import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { psx, renderTestEditor, typeText } from '@bangle.dev/test-helpers';
 
 import { EditorDisplayType } from '@bangle.io/constants';
-import { EditorWatchPluginState } from '@bangle.io/shared-types';
+import type { EditorWatchPluginState } from '@bangle.io/shared-types';
 
 import { watchPluginHost } from '../watch-plugin-host';
 
