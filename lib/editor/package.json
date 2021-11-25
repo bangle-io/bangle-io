@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@bangle.dev/all-base-components": "0.28.0",
+    "@bangle.dev/test-helpers": "0.28.0",
     "@bangle.io/shared-types": "workspace:*",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",

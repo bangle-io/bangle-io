@@ -2,6 +2,27 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { useExtensionRegistryContext } from './ExtensionRegistryContext';
 
+class AllExtensionStore {
+  private store: { [key: string]: any };
+
+  constructor(initialValues: { [key: string]: any }) {
+    this.store = Object.assign({}, initialValues);
+  }
+
+  public updateExtensionState<T>(key: string, value: T) {
+    let newValue =
+      typeof value === 'function' ? value(this.getExtensionState(key)) : value;
+
+    return new AllExtensionStore(
+      Object.assign({}, this.store, { [key]: newValue }),
+    );
+  }
+
+  public getExtensionState<T>(key: string): T {
+    return this.store[key];
+  }
+}
+
 /**
  * This context stores the state of each extension in a global context
  * object with the schema { [ExtensionName: string]:  ExtensionsState }
@@ -12,31 +33,43 @@ import { useExtensionRegistryContext } from './ExtensionRegistryContext';
  * state -- a pattern we do not want to allow.
  */
 
-const ExtensionStateContext = React.createContext<{
-  state: any;
-  updatePartialState: (state: any) => any;
-}>({
-  state: {},
-  updatePartialState: (state) => state,
-});
+const ExtensionStateContext = React.createContext<
+  [
+    AllExtensionStore,
+    (
+      state:
+        | AllExtensionStore
+        | ((oldState: AllExtensionStore) => AllExtensionStore),
+    ) => void,
+  ]
+>([new AllExtensionStore({}), (state) => {}]);
 
 type Updater<ExtensionState> = (
   update: ExtensionState | ((oldState: ExtensionState) => ExtensionState),
 ) => void;
 
-/**
- * Allows reading and updating of an extensions state
- * @param extensionName - the extension's name
- */
-export function useExtensionStateContext<ExtensionState>(
-  extensionName,
+export function useExtensionState<ExtensionState>(
+  extensionName: string,
 ): [ExtensionState, Updater<ExtensionState>] {
-  const { state, updatePartialState } = useContext(ExtensionStateContext);
+  const [globalState, updateGlobalState] = useContext(ExtensionStateContext);
 
-  return useMemo(() => {
-    const extensionState: ExtensionState = state[extensionName];
-    return [extensionState, updatePartialState(extensionName)];
-  }, [state, updatePartialState, extensionName]);
+  const updater: Updater<ExtensionState> = useCallback(
+    (extensionState) => {
+      updateGlobalState((allExtensionState) => {
+        return allExtensionState.updateExtensionState(
+          extensionName,
+          extensionState,
+        );
+      });
+    },
+    [extensionName, updateGlobalState],
+  );
+
+  const state = useMemo(() => {
+    return globalState.getExtensionState<ExtensionState>(extensionName);
+  }, [extensionName, globalState]);
+
+  return [state, updater];
 }
 
 export function ExtensionStateContextProvider({
@@ -46,24 +79,14 @@ export function ExtensionStateContextProvider({
 }) {
   const extensionRegistry = useExtensionRegistryContext();
 
-  const [state, setState] = useState(extensionRegistry.extensionsInitialState);
-  type UpdatePartialState<T> = (extensionName: string) => Updater<T>;
+  const [allExtensionState, updateAllExtensionState] = useState(() => {
+    return new AllExtensionStore(extensionRegistry.extensionsInitialState);
+  });
 
-  const updatePartialState: UpdatePartialState<string> = useCallback((name) => {
-    return (updater) => {
-      setState((oldState) => {
-        return {
-          ...oldState,
-          [name]:
-            typeof updater === 'function' ? updater(oldState[name]) : updater,
-        };
-      });
-    };
-  }, []);
-
-  const value = useMemo(() => {
-    return { state, updatePartialState };
-  }, [state, updatePartialState]);
+  const value: [AllExtensionStore, typeof updateAllExtensionState] =
+    useMemo(() => {
+      return [allExtensionState, updateAllExtensionState];
+    }, [allExtensionState, updateAllExtensionState]);
 
   return (
     <ExtensionStateContext.Provider value={value}>

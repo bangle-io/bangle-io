@@ -77,6 +77,7 @@ test('works', async () => {
     dispatchAction = obj.dispatchAction;
     return null;
   }
+
   act(() => {
     result = render(
       <ExtensionRegistryContextProvider
