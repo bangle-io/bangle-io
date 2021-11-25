@@ -96,6 +96,11 @@ export class ExtensionRegistry {
     undefined
   >;
 
+  private noteSidebarWidgets: Exclude<
+    ApplicationConfig['noteSidebarWidgets'],
+    undefined
+  >;
+
   public editor: EditorHandlers;
 
   public extensionsInitialState: { [name: string]: any };
@@ -140,6 +145,10 @@ export class ExtensionRegistry {
     );
     this.registeredActions = filterFlatMap(applicationConfig, 'actions');
     this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
+    this.noteSidebarWidgets = filterFlatMap(
+      applicationConfig,
+      'noteSidebarWidgets',
+    );
 
     this.actionKeybindingMapping = this._getActionKeybindingMapping();
   }
@@ -193,6 +202,10 @@ export class ExtensionRegistry {
 
   getSidebars() {
     return this.sidebars;
+  }
+
+  getNoteSidebarWidgets() {
+    return this.noteSidebarWidgets;
   }
 
   getActionKeybindingMapping() {

@@ -547,6 +547,22 @@ export function MoreIcon(props: any) {
     </svg>
   );
 }
+export function MoreSmallListIcon(props: any) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="18"
+      viewBox="0 0 18 18"
+      width="18"
+      fill="currentColor"
+      {...props}
+    >
+      <circle cx="4.5" cy="9" r="1.425" />
+      <circle cx="9" cy="9" r="1.425" />
+      <circle cx="13.5" cy="9" r="1.425" />
+    </svg>
+  );
+}
 
 export function TwitterIcon(props: any) {
   return (

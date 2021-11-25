@@ -1825,6 +1825,7 @@ __metadata:
     "@bangle.io/inline-emoji": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
+    "@bangle.io/note-outline": "workspace:*"
     "@bangle.io/note-sidebar": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/shared": "workspace:*"
@@ -2449,6 +2450,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/note-outline@workspace:*, @bangle.io/note-outline@workspace:extensions/note-outline":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/note-outline@workspace:extensions/note-outline"
+  dependencies:
+    "@bangle.dev/all-base-components": 0.28.0
+    "@bangle.dev/pm": 0.28.0
+    "@bangle.dev/test-helpers": 0.28.0
+    "@bangle.io/action-context": "workspace:*"
+    "@bangle.io/config": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/editor-manager-context": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/ui-bangle-button": "workspace:*"
+    "@bangle.io/ui-components": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-context": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
+    "@testing-library/react": ^12.1.2
+    "@testing-library/react-hooks": ^7.0.2
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/note-sidebar@workspace:*, @bangle.io/note-sidebar@workspace:app/note-sidebar":
   version: 0.0.0-use.local
   resolution: "@bangle.io/note-sidebar@workspace:app/note-sidebar"
@@ -2578,6 +2607,7 @@ __metadata:
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/note-browser": "workspace:*"
+    "@bangle.io/note-outline": "workspace:*"
     "@bangle.io/note-tags": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/search-notes": "workspace:*"
