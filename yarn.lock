@@ -2166,6 +2166,7 @@ __metadata:
     "@bangle.dev/core": 0.28.0
     "@bangle.dev/pm": 0.28.0
     "@bangle.dev/react": 0.28.0
+    "@bangle.dev/test-helpers": 0.28.0
     "@bangle.dev/utils": 0.28.0
     "@bangle.io/action-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"

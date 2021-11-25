@@ -25,6 +25,8 @@ import type {
 import { cx, getScrollParentElement } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
+import { watchPluginHost } from './watch-plugin-host';
+
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 
@@ -195,6 +197,10 @@ export function useGetEditorState({
     return [
       valuePlugin(EditorPluginMetadataKey, pluginMetadata),
       ...extensionRegistry.getPlugins(),
+      watchPluginHost(
+        pluginMetadata,
+        extensionRegistry.getEditorWatchPluginStates(),
+      ),
     ];
   }, [extensionRegistry, pluginMetadata]);
 

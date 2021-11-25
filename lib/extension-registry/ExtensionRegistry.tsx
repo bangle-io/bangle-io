@@ -10,6 +10,7 @@ import type {
   ActionHandler,
   ActionKeybindingMapping,
   ActionNameType,
+  EditorWatchPluginState,
 } from '@bangle.io/shared-types';
 
 import { ApplicationConfig, EditorConfig, Extension } from './Extension';
@@ -89,6 +90,15 @@ export class ExtensionRegistry {
   private editorConfig: EditorConfig[];
   private actionKeybindingMapping: ActionKeybindingMapping;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
+  private noteSidebarWidgets: Exclude<
+    ApplicationConfig['noteSidebarWidgets'],
+    undefined
+  >;
+  private editorWatchPluginStates: Exclude<
+    EditorConfig['watchPluginStates'],
+    undefined
+  >;
+
   public editor: EditorHandlers;
 
   public extensionsInitialState: { [name: string]: any };
@@ -127,6 +137,10 @@ export class ExtensionRegistry {
     );
 
     this.actionHandlers = new Set();
+    this.editorWatchPluginStates = filterFlatMap(
+      this.editorConfig,
+      'watchPluginStates',
+    );
     this.registeredActions = filterFlatMap(applicationConfig, 'actions');
     this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
 
@@ -186,6 +200,10 @@ export class ExtensionRegistry {
 
   getActionKeybindingMapping() {
     return this.actionKeybindingMapping;
+  }
+
+  getEditorWatchPluginStates(): EditorWatchPluginState[] {
+    return this.editorWatchPluginStates;
   }
 
   renderExtensionEditorComponents = () => {

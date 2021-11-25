@@ -7,6 +7,8 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 import type {
   ActionDefinitionType,
   ActionHandler,
+  EditorWatchPluginState,
+  NoteSidebarWidget,
 } from '@bangle.io/shared-types';
 
 import { EditorPluginDefinition } from './PluginType';
@@ -48,6 +50,7 @@ export interface EditorConfig {
     editorId: number;
     doc: Node;
   }) => Selection | undefined;
+  watchPluginStates?: EditorWatchPluginState[];
 }
 
 export type RegisterActionHandlerType = (cb: ActionHandler) => () => void;
