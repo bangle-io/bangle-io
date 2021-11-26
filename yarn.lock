@@ -1817,7 +1817,6 @@ __metadata:
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/editor-core": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
-    "@bangle.io/editor-utils": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/image-extension": "workspace:*"
     "@bangle.io/inline-backlink": "workspace:*"
@@ -2133,26 +2132,6 @@ __metadata:
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
     debounce-fn: ^5.0.0
-    react: ^17.0.2
-    react-dom: ^17.0.2
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/editor-utils@workspace:*, @bangle.io/editor-utils@workspace:lib/editor-utils":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/editor-utils@workspace:lib/editor-utils"
-  dependencies:
-    "@bangle.dev/all-base-components": 0.28.0
-    "@bangle.dev/core": 0.28.0
-    "@bangle.dev/pm": 0.28.0
-    "@bangle.dev/test-helpers": 0.28.0
-    "@bangle.dev/utils": 0.28.0
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@testing-library/react": ^12.1.2
-    "@types/jest": ^26.0.24
-    "@types/react": ^17.0.33
-    "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -2743,9 +2722,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/utils@workspace:lib/utils"
   dependencies:
+    "@bangle.dev/all-base-components": 0.28.0
     "@bangle.dev/core": 0.28.0
     "@bangle.dev/pm": 0.28.0
     "@bangle.dev/react": 0.28.0
+    "@bangle.dev/test-helpers": 0.28.0
     "@bangle.dev/utils": 0.28.0
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"

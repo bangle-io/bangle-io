@@ -249,7 +249,7 @@ export class ExtensionRegistry {
           return (
             <ReactComponent
               key={extension.name}
-              registerActionHandler={this._registerActionHandler}
+              registerActionHandler={this.registerActionHandler}
             />
           );
         }
@@ -260,7 +260,7 @@ export class ExtensionRegistry {
     return result;
   };
 
-  private _registerActionHandler = (cb: ActionHandler) => {
+  registerActionHandler = (cb: ActionHandler) => {
     this.actionHandlers.add(cb);
     return () => {
       this.actionHandlers.delete(cb);

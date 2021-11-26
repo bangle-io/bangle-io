@@ -277,6 +277,19 @@ export function shallowCompareArray(array1, array2) {
   return array1.every((item) => array2Set.has(item));
 }
 
+export function shallowOrderedArrayCompare<T>(
+  array1: T[],
+  array2: T[],
+): boolean {
+  if (array1.length !== array2.length) {
+    return false;
+  }
+
+  return array1.every((item, index) => {
+    return item === array2[index];
+  });
+}
+
 export function randomStr(len = 10) {
   return Math.random().toString(36).substring(2, 15).slice(0, len);
 }

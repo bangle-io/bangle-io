@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 
 import { AppStateContext } from '@bangle.io/app-state-context';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
-import { trimEndWhiteSpaceBeforeCursor } from '@bangle.io/editor-utils';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import { trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
 const pendingSymbol = Symbol('pending-tasks');
 
