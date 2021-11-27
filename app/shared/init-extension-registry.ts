@@ -10,6 +10,7 @@ import inlineBacklinkPalette from '@bangle.io/inline-backlink';
 import inlineCommandPalette from '@bangle.io/inline-command-palette';
 import inlineEmoji from '@bangle.io/inline-emoji';
 import noteBrowser from '@bangle.io/note-browser';
+import noteOutline from '@bangle.io/note-outline';
 import noteTags from '@bangle.io/note-tags';
 import searchNotes from '@bangle.io/search-notes';
 
@@ -30,6 +31,7 @@ export const initExtensionRegistry = () => {
     coreActions,
     noteBrowser,
     searchNotes,
+    noteOutline,
     // NOTE: keep the core palette last
     // as it has note palette in it
     corePalette,

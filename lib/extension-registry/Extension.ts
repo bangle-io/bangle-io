@@ -63,6 +63,7 @@ export interface ApplicationConfig {
   palettes?: Array<ExtensionPaletteType>;
   actions?: Array<ActionDefinitionType>;
   sidebars?: Array<SidebarType>;
+  noteSidebarWidgets?: Array<NoteSidebarWidget>;
 }
 
 export interface SidebarType {

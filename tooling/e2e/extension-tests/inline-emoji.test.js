@@ -11,6 +11,8 @@ const {
 
 jest.setTimeout(155 * 1000);
 
+jest.retryTimes(2);
+
 beforeEach(async () => {
   await jestPuppeteer.resetPage();
   await page.goto(url, { waitUntil: 'networkidle2' });

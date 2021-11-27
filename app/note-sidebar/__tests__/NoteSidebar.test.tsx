@@ -7,7 +7,7 @@ test('renders correctly', () => {
   let onDismiss = jest.fn();
   let result = render(
     <div>
-      <NoteSidebar onDismiss={onDismiss} />
+      <NoteSidebar onDismiss={onDismiss} widgets={[]} />
     </div>,
   );
 

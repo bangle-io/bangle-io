@@ -6,3 +6,4 @@ import '@bangle.io/ui-bangle-button/style';
 import '@bangle.io/activitybar/style';
 import '@bangle.io/workspace-sidebar/style';
 import '@bangle.io/editor-container/style';
+import '@bangle.io/note-sidebar/style';

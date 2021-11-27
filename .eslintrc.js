@@ -48,7 +48,8 @@ module.exports = {
     'react-hooks/exhaustive-deps': [
       'error',
       {
-        additionalHooks: '(useKeybindings|useMyOtherCustomHook)',
+        additionalHooks:
+          '(useKeybindings|useActionHandler|useMyOtherCustomHook)',
       },
     ],
 

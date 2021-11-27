@@ -2,59 +2,31 @@ import React, { useMemo } from 'react';
 
 import type { BangleEditor } from '@bangle.dev/core';
 
+import type { NoteSidebarWidget } from '@bangle.io/shared-types';
 import {
   ActionButton,
   ButtonContent,
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
-import { ChevronRightIcon } from '@bangle.io/ui-components';
+import { ChevronRightIcon, MoreSmallListIcon } from '@bangle.io/ui-components';
 
 export function NoteSidebar({
   onDismiss,
   focusedEditor,
+  widgets,
 }: {
   onDismiss: () => void;
   focusedEditor?: {
     editor: BangleEditor;
     wsPath: string;
   };
+  widgets: NoteSidebarWidget[];
 }) {
-  const items = useMemo(() => {
-    if (!focusedEditor || focusedEditor.editor.destroyed) {
-      return [];
-    }
-    const editor = focusedEditor.editor;
-
-    const headingNodes: Array<{
-      offset: number;
-      level: number;
-      title: string;
-    }> = [];
-    editor.view.state.doc.forEach((node, offset, i) => {
-      if (node.type.name === 'heading') {
-        headingNodes.push({
-          offset,
-          level: node.attrs.level,
-          title: node.textContent,
-        });
-      }
-    });
-
-    return headingNodes.map((r, i) => {
-      return {
-        uid: i + 'heading',
-        title: r.title,
-        extraInfo: '#' + r.level,
-        data: r,
-      };
-    });
-  }, [focusedEditor]);
-
   return (
-    <div className="flex flex-col flex-grow h-full overflow-y-scroll workspace-sidebar">
+    <div className="flex flex-col flex-grow h-full overflow-y-scroll note-sidebar">
       <div className="flex flex-row justify-between px-2 mt-2">
-        <div className="font-bold">Widgets</div>
-        <div>
+        <span className="font-bold self-center">Widgets</span>
+        <span>
           <ActionButton
             isQuiet="hoverBg"
             onPress={onDismiss}
@@ -65,12 +37,28 @@ export function NoteSidebar({
           >
             <ButtonContent icon={<ChevronRightIcon />}></ButtonContent>
           </ActionButton>
-        </div>
+        </span>
       </div>
 
       <div>
-        {items.map((r) => (
-          <div key={r.uid}>{r.title}</div>
+        {widgets.map((r) => (
+          <div key={r.name} className="note-sidebar_widget-container">
+            <div className="note-sidebar_widget-titlebar flex flex-row justify-between px-2 mt-2">
+              <span className="ml-1 font-semibold">{r.title}</span>
+              <div>
+                {/* <ActionButton
+                  isQuiet="hoverBg"
+                  onPress={() => {}}
+                  ariaLabel={'options'}
+                >
+                  <ButtonContent icon={<MoreSmallListIcon />}></ButtonContent>
+                </ActionButton> */}
+              </div>
+            </div>
+            <div className="note-sidebar_widget-content flex flex-col rounded-md p-1 mx-2 mt-1 overflow-y-auto">
+              <r.ReactComponent />
+            </div>
+          </div>
         ))}
       </div>
     </div>

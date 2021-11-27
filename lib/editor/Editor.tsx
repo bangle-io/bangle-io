@@ -195,8 +195,12 @@ export function useGetEditorState({
 
   const plugins = useCallback(() => {
     return [
+      // needs to be at top so that other plugins get depend on this
       valuePlugin(EditorPluginMetadataKey, pluginMetadata),
       ...extensionRegistry.getPlugins(),
+
+      // Needs to be at bottom so that it can dispatch
+      // actions for any plugin state updates before it
       watchPluginHost(
         pluginMetadata,
         extensionRegistry.getEditorWatchPluginStates(),

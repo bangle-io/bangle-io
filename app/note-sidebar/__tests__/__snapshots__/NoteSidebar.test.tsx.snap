@@ -4,17 +4,17 @@ exports[`renders correctly 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow h-full overflow-y-scroll workspace-sidebar"
+      class="flex flex-col flex-grow h-full overflow-y-scroll note-sidebar"
     >
       <div
         class="flex flex-row justify-between px-2 mt-2"
       >
-        <div
-          class="font-bold"
+        <span
+          class="font-bold self-center"
         >
           Widgets
-        </div>
-        <div>
+        </span>
+        <span>
           <button
             aria-label="hide"
             class="ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
@@ -37,7 +37,7 @@ exports[`renders correctly 1`] = `
               />
             </svg>
           </button>
-        </div>
+        </span>
       </div>
       <div />
     </div>

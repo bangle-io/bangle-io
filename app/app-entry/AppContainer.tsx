@@ -30,6 +30,7 @@ export function AppContainer() {
   useWorkspaceSideEffects();
 
   const sidebars = extensionRegistry.getSidebars();
+  const noteSidebarWidgets = extensionRegistry.getNoteSidebarWidgets();
   const actionKeybindings = extensionRegistry.getActionKeybindingMapping();
   const { focusedEditorId, getEditor } = useEditorManagerContext();
 
@@ -123,6 +124,7 @@ export function AppContainer() {
             <NoteSidebar
               focusedEditor={focusedEditor}
               onDismiss={onDismissNoteSidebar}
+              widgets={noteSidebarWidgets}
             />
           )
         }

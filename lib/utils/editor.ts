@@ -1,5 +1,4 @@
 import { EditorState } from '@bangle.dev/pm';
-import { useEditorViewContext } from '@bangle.dev/react';
 
 import { EditorPluginMetadataKey } from '@bangle.io/constants';
 
@@ -21,9 +20,4 @@ export function getEditorPluginMetadata(state: EditorState) {
     throw new Error('EditorPluginMetadata cannot be undefined');
   }
   return result;
-}
-
-export function useEditorPluginMetadata() {
-  const view = useEditorViewContext();
-  return getEditorPluginMetadata(view.state);
 }

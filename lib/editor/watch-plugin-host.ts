@@ -6,6 +6,8 @@ import type {
   EditorWatchPluginState,
 } from '@bangle.io/shared-types';
 
+import { EDITOR_WATCH_PLUGIN_HOST_ACTION_WAIT_TIME } from './config';
+
 /**
  * Connects the rest of the app by monitor provided plugins state changes
  * and dispatching action when that happens.
@@ -18,7 +20,7 @@ export function watchPluginHost(
   watchPluginStates: EditorWatchPluginState[],
 ) {
   return new Plugin({
-    key: new PluginKey('editor_watchPluginHost'),
+    key: new PluginKey<undefined>('editor_watchPluginHost'),
     view() {
       let actionsToDispatch = new Set<ActionNameType>();
 
@@ -32,21 +34,26 @@ export function watchPluginHost(
         update(view, lastState) {
           const { state } = view;
 
-          if (lastState === state || lastState.doc.eq(state.doc)) {
+          if (lastState === state) {
+            return;
+          }
+
+          for (const { pluginKey, action } of watchPluginStates) {
+            const newState = pluginKey.getState(state);
+            const oldState = pluginKey.getState(lastState);
+            if (newState !== oldState) {
+              actionsToDispatch.add(action);
+            }
+          }
+
+          if (actionsToDispatch.size === 0) {
             return;
           }
 
           clearTimeout(pendingTimer);
 
-          for (const watchPluginState of watchPluginStates) {
-            const newState = watchPluginState.pluginKey.getState(state);
-            const oldState = watchPluginState.pluginKey.getState(lastState);
-            if (newState !== oldState) {
-              actionsToDispatch.add(watchPluginState.action);
-            }
-          }
-
           // Avoid dispatching immediately to let editor do its thing
+          // and debounce a bit
           pendingTimer = setTimeout(() => {
             actionsToDispatch.forEach((action) => {
               // Avoid sending any thing related to editor instance
@@ -59,7 +66,7 @@ export function watchPluginHost(
               });
             });
             actionsToDispatch.clear();
-          }, 10);
+          }, EDITOR_WATCH_PLUGIN_HOST_ACTION_WAIT_TIME);
         },
       };
     },

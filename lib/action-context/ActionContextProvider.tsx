@@ -7,11 +7,11 @@ import { useKeybindings } from '@bangle.io/utils';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'ActionCotext') : () => {};
 
-export const ActionContext = createContext<ContextType>({
+export const ActionContext = createContext<ActionContextType>({
   dispatchAction: () => {},
 });
 
-export interface ContextType {
+export interface ActionContextType {
   dispatchAction: DispatchActionType;
 }
 
@@ -22,7 +22,7 @@ export function ActionContextProvider({ children }) {
     return new Set(extensionRegistry.getRegisteredActions().map((r) => r.name));
   }, [extensionRegistry]);
 
-  const dispatchAction = useCallback<ContextType['dispatchAction']>(
+  const dispatchAction = useCallback<ActionContextType['dispatchAction']>(
     (action) => {
       const { name, value, ...others } = action;
       log({ name, value });
@@ -37,7 +37,6 @@ export function ActionContextProvider({ children }) {
           'Unknown keys in action : ' + Object.keys(others).join(','),
         );
       }
-
       // Converting to array so that we have a fixed action handlers for the current action
       // because there are cases which add or remove handler (react hooks) resulting in double execution
       for (const handler of Array.from(extensionRegistry.getActionHandlers())) {
@@ -48,7 +47,7 @@ export function ActionContextProvider({ children }) {
   );
 
   const value = useMemo(() => {
-    const val: ContextType = {
+    const val: ActionContextType = {
       dispatchAction,
     };
     return val;

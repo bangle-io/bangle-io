@@ -7,7 +7,6 @@
     "constants",
     "contextual-ui-components",
     "editor-manager-context",
-    "editor-utils",
     "editor",
     "extension-registry",
     "markdown",

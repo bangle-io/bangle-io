@@ -40,6 +40,7 @@
     "@bangle.io/naukar-proxy": "workspace:*",
     "@bangle.io/naukar-worker": "workspace:*",
     "@bangle.io/note-browser": "workspace:*",
+    "@bangle.io/note-outline": "workspace:*",
     "@bangle.io/note-tags": "workspace:*",
     "@bangle.io/object-sync": "workspace:*",
     "@bangle.io/search-notes": "workspace:*",

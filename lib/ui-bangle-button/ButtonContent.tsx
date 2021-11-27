@@ -7,11 +7,13 @@ export function ButtonContent({
   icon,
   iconPos = 'left',
   size = 'medium',
+  textClassName,
 }: {
   icon?: React.ReactElement<{ className?: string }>;
   text?: string | ReactNode;
   iconPos?: 'left' | 'right';
   size?: 'small' | 'medium' | 'custom';
+  textClassName?: string;
 }) {
   const hasText = Boolean(text);
   const hasIcon = Boolean(icon);
@@ -41,7 +43,9 @@ export function ButtonContent({
   return (
     <>
       {iconPos === 'left' && iconComp}
-      {text && <span className={cx(hasIcon && 'has-icon')}>{text}</span>}
+      {text && (
+        <span className={cx(textClassName, hasIcon && 'has-icon')}>{text}</span>
+      )}
       {iconPos === 'right' && iconComp}
     </>
   );

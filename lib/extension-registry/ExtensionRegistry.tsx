@@ -96,6 +96,11 @@ export class ExtensionRegistry {
     undefined
   >;
 
+  private noteSidebarWidgets: Exclude<
+    ApplicationConfig['noteSidebarWidgets'],
+    undefined
+  >;
+
   public editor: EditorHandlers;
 
   public extensionsInitialState: { [name: string]: any };
@@ -140,6 +145,10 @@ export class ExtensionRegistry {
     );
     this.registeredActions = filterFlatMap(applicationConfig, 'actions');
     this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
+    this.noteSidebarWidgets = filterFlatMap(
+      applicationConfig,
+      'noteSidebarWidgets',
+    );
 
     this.actionKeybindingMapping = this._getActionKeybindingMapping();
   }
@@ -195,6 +204,10 @@ export class ExtensionRegistry {
     return this.sidebars;
   }
 
+  getNoteSidebarWidgets() {
+    return this.noteSidebarWidgets;
+  }
+
   getActionKeybindingMapping() {
     return this.actionKeybindingMapping;
   }
@@ -236,7 +249,7 @@ export class ExtensionRegistry {
           return (
             <ReactComponent
               key={extension.name}
-              registerActionHandler={this._registerActionHandler}
+              registerActionHandler={this.registerActionHandler}
             />
           );
         }
@@ -247,7 +260,7 @@ export class ExtensionRegistry {
     return result;
   };
 
-  private _registerActionHandler = (cb: ActionHandler) => {
+  registerActionHandler = (cb: ActionHandler) => {
     this.actionHandlers.add(cb);
     return () => {
       this.actionHandlers.delete(cb);

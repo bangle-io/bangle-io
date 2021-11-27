@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import type { BangleEditor } from '@bangle.dev/core';
+import type { EditorState, EditorView } from '@bangle.dev/pm';
 import { getIdleCallback } from '@bangle.dev/utils';
 
 const LOG = false;
@@ -9,21 +10,25 @@ let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 const MAX_EDITOR = 2;
 
 interface EditorManagerContextValue {
-  setEditor: (editorId: number, editor: BangleEditor) => void;
-  primaryEditor: BangleEditor | undefined;
-  getEditor: (editorId: number) => BangleEditor | undefined;
-  forEachEditor: (cb: (editor: BangleEditor, index: number) => void) => void;
   focusedEditorId: number | undefined;
+  forEachEditor: (cb: (editor: BangleEditor, index: number) => void) => void;
+  getEditor: (editorId: number) => BangleEditor | undefined;
+  getEditorState: (editorId: number) => EditorState | undefined;
+  getEditorView: (editorId: number) => EditorView | undefined;
+  primaryEditor: BangleEditor | undefined;
+  setEditor: (editorId: number, editor: BangleEditor) => void;
   updateFocusedEditor: (editorId: number | undefined) => void;
 }
 
 type EditorsType = [BangleEditor | undefined, BangleEditor | undefined];
 const EditorManagerContext = React.createContext<EditorManagerContextValue>({
-  setEditor: () => {},
-  primaryEditor: undefined,
   focusedEditorId: undefined,
-  getEditor: () => undefined,
   forEachEditor: () => {},
+  getEditor: () => undefined,
+  getEditorState: () => undefined,
+  getEditorView: () => undefined,
+  primaryEditor: undefined,
+  setEditor: () => {},
   updateFocusedEditor: () => {},
 });
 
@@ -55,7 +60,8 @@ export function EditorManager({ children }) {
     number | undefined
   >();
   const [primaryEditor, secondaryEditor] = editors;
-  const value = useMemo(() => {
+
+  const value: EditorManagerContextValue = useMemo(() => {
     const setEditor: EditorManagerContextValue['setEditor'] = (
       editorId,
       editor,
@@ -70,7 +76,6 @@ export function EditorManager({ children }) {
       });
     };
 
-    const [primaryEditor] = editors;
     const getEditor: EditorManagerContextValue['getEditor'] = (editorId) => {
       return editors[editorId];
     };
@@ -83,16 +88,34 @@ export function EditorManager({ children }) {
       });
     };
 
-    const updateFocusedEditor = (editorId: number | undefined) => {
-      updateFocusedEditorId(editorId);
+    const updateFocusedEditor: EditorManagerContextValue['updateFocusedEditor'] =
+      (editorId: number | undefined) => {
+        updateFocusedEditorId(editorId);
+      };
+
+    const getEditorView: EditorManagerContextValue['getEditorView'] = (
+      editorId: number,
+    ): EditorView | undefined => {
+      if (editorId == null) {
+        return undefined;
+      }
+      let editor = editors[editorId];
+      if (!editor || editor.destroyed) {
+        return undefined;
+      }
+      return editor.view;
     };
 
     return {
-      setEditor,
-      primaryEditor,
-      getEditor,
-      forEachEditor,
       focusedEditorId,
+      forEachEditor,
+      getEditor,
+      getEditorState: (editorId: number): EditorState | undefined => {
+        return getEditorView(editorId)?.state;
+      },
+      getEditorView,
+      primaryEditor: editors[0],
+      setEditor,
       updateFocusedEditor,
     };
   }, [_setEditor, focusedEditorId, editors]);

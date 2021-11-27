@@ -18,8 +18,8 @@ export function WorkspaceSidebar({
   return (
     <div className="flex flex-col flex-grow h-full overflow-y-scroll workspace-sidebar">
       <div className="flex flex-row justify-between px-2 mt-2">
-        <div className="font-bold">{sidebar.title}</div>
-        <div>
+        <span className="font-bold self-center">{sidebar.title}</span>
+        <span>
           <ActionButton
             isQuiet="hoverBg"
             onPress={onDismiss}
@@ -40,7 +40,7 @@ export function WorkspaceSidebar({
           >
             <ButtonContent icon={<MoreIcon />}></ButtonContent>
           </ActionButton> */}
-        </div>
+        </span>
       </div>
       <ErrorBoundary>
         <sidebar.ReactComponent />
