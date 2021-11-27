@@ -47,9 +47,15 @@ test('shows note sidebar correctly', async () => {
     'action::bangle-io-core-actions:NOTE_TOGGLE_SIDEBAR_ACTION',
   );
 
-  await page.waitForSelector('.note-outline_container button', {
-    timeout: SELECTOR_TIMEOUT,
-  });
+  await page.waitForFunction(
+    () =>
+      document
+        .querySelector('.note-outline_container button')
+        .innerText.includes('top heading'),
+    {
+      timeout: 2 * SELECTOR_TIMEOUT,
+    },
+  );
 
   const result = await page.$$eval(
     '.note-outline_container button',

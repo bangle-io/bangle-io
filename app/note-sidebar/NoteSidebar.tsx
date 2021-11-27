@@ -46,13 +46,13 @@ export function NoteSidebar({
             <div className="note-sidebar_widget-titlebar flex flex-row justify-between px-2 mt-2">
               <span className="ml-1 font-semibold">{r.title}</span>
               <div>
-                <ActionButton
+                {/* <ActionButton
                   isQuiet="hoverBg"
                   onPress={() => {}}
                   ariaLabel={'options'}
                 >
                   <ButtonContent icon={<MoreSmallListIcon />}></ButtonContent>
-                </ActionButton>
+                </ActionButton> */}
               </div>
             </div>
             <div className="note-sidebar_widget-content flex flex-col rounded-md p-1 mx-2 mt-1 overflow-y-auto">

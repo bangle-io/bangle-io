@@ -57,7 +57,7 @@ async function pressPasteKey(page) {
   await page.keyboard.up(ctrlKey);
 }
 
-const SELECTOR_TIMEOUT = 500;
+const SELECTOR_TIMEOUT = 1000;
 
 async function createWorkspace(page, wsName = 'test' + uuid(4)) {
   await runAction(page, 'action::bangle-io-core-actions:NEW_WORKSPACE_ACTION');
@@ -193,7 +193,7 @@ async function clearPrimaryEditor(page) {
         .querySelector('.editor-container_editor-0 .bangle-editor')
         .innerText.trim() === '',
     {
-      timeout: SELECTOR_TIMEOUT,
+      timeout: 2 * SELECTOR_TIMEOUT,
     },
   );
 }

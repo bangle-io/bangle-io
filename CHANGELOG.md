@@ -1,6 +1,10 @@
+### Nov 26, 2021
+
+- **Outline:** Bangle now shows you outline of your document in a new note sidebar. To activate press the `Show note sidebar` button on your top right.
+
 ### Nov 21, 2021
 
-- **Popup backlinks**: You can now hover over any _Backlink_ to view and edit them directly. 
+- **Popup backlinks**: You can now hover over any _Backlink_ to view and edit them directly.
 
 ### Nov 17, 2021
 

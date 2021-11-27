@@ -21,8 +21,10 @@ export function watchHeadingsPlugin() {
     apply(tr, old, oldState, newState) {
       const meta = tr.getMeta(watchHeadingsPluginKey);
       if (meta) {
-        console.count('state updated');
-        return { ...old, headings: getHeadings(newState) };
+        return {
+          ...old,
+          headings: getHeadings(newState),
+        };
       }
       return old;
     },
@@ -48,7 +50,13 @@ export function watchHeadingsPlugin() {
         update(view, lastState) {
           const { state } = view;
 
-          if (lastState === state || lastState.doc.eq(state.doc)) {
+          if (lastState === state) {
+            return;
+          }
+          if (
+            state.doc.eq(lastState.doc) &&
+            state.selection.eq(lastState.selection)
+          ) {
             return;
           }
 
@@ -64,8 +72,15 @@ export function watchHeadingsPlugin() {
 
 function getHeadings(state: EditorState) {
   let headingNodes: HeadingNodes = [];
+  let closestHeadingDiff = Infinity;
+  const { from } = state.selection;
+
   state.doc.forEach((node, offset, i) => {
     if (node.type.name === 'heading') {
+      let diff = from - offset;
+      if (diff >= 0 && diff < closestHeadingDiff) {
+        closestHeadingDiff = diff;
+      }
       headingNodes.push({
         offset,
         level: node.attrs.level,
@@ -74,6 +89,15 @@ function getHeadings(state: EditorState) {
       });
     }
   });
+
+  if (closestHeadingDiff !== Infinity) {
+    const closestHeading = headingNodes.find(
+      (h) => closestHeadingDiff === from - h.offset,
+    );
+    if (closestHeading) {
+      closestHeading.isActive = true;
+    }
+  }
 
   return headingNodes;
 }

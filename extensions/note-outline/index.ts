@@ -4,7 +4,7 @@ import {
   WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION,
   watchHeadingsPluginKey,
 } from './config';
-import { Outline } from './Outline';
+import { NoteOutline } from './NoteOutline';
 import { watchHeadingsPlugin } from './watch-headings-plugin';
 
 const extensionName = 'note-outline';
@@ -32,7 +32,7 @@ const extension = Extension.create({
     noteSidebarWidgets: [
       {
         name: 'note-sidebar-widget:outline',
-        ReactComponent: Outline,
+        ReactComponent: NoteOutline,
         title: 'Outline',
       },
     ],

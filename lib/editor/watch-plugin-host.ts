@@ -20,7 +20,7 @@ export function watchPluginHost(
   watchPluginStates: EditorWatchPluginState[],
 ) {
   return new Plugin({
-    key: new PluginKey('editor_watchPluginHost'),
+    key: new PluginKey<undefined>('editor_watchPluginHost'),
     view() {
       let actionsToDispatch = new Set<ActionNameType>();
 
