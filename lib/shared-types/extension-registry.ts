@@ -19,7 +19,7 @@ export type ActionHandler = (action: ActionType) => boolean;
 export type ActionKeybindingMapping = Record<ActionNameType, string>;
 
 export interface NoteSidebarWidget {
-  name: `note-sidebar-widget:${string}`;
+  name: `note-sidebar-widget::${string}`;
   ReactComponent: React.ComponentType<{}>;
   title: string;
 }

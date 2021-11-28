@@ -31,7 +31,7 @@ const extension = Extension.create({
     ],
     noteSidebarWidgets: [
       {
-        name: 'note-sidebar-widget:outline',
+        name: 'note-sidebar-widget::outline',
         ReactComponent: NoteOutline,
         title: 'Outline',
       },
