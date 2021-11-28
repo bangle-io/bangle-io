@@ -50,6 +50,7 @@ export const getUseEditorManagerContextReturn: ReturnType<
   getEditorState: () => undefined,
   getEditorView: () => undefined,
   primaryEditor: undefined,
+  secondaryEditor: undefined,
   setEditor: () => {},
   updateFocusedEditor: () => {},
 };

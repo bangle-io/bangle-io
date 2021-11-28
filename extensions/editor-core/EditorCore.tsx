@@ -10,7 +10,8 @@ const { toggleHeadingCollapse, uncollapseAllHeadings } = heading;
 const { moveListItemUp, moveListItemDown } = listItem;
 
 export function EditorCore({ registerActionHandler }) {
-  const { primaryEditor, updateFocusedEditor } = useEditorManagerContext();
+  const { primaryEditor, secondaryEditor, updateFocusedEditor } =
+    useEditorManagerContext();
   const executeEditorCommand = useDispatchPrimaryEditor(false);
 
   const actionHandler = useCallback(
@@ -18,6 +19,11 @@ export function EditorCore({ registerActionHandler }) {
       switch (actionObject.name) {
         case 'action::bangle-io-editor-core:focus-primary-editor': {
           primaryEditor?.focusView();
+          return true;
+        }
+
+        case 'action::bangle-io-editor-core:focus-secondary-editor': {
+          secondaryEditor?.focusView();
           return true;
         }
 
@@ -51,7 +57,7 @@ export function EditorCore({ registerActionHandler }) {
         }
       }
     },
-    [primaryEditor, updateFocusedEditor, executeEditorCommand],
+    [primaryEditor, secondaryEditor, updateFocusedEditor, executeEditorCommand],
   );
 
   useEffect(() => {

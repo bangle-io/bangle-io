@@ -16,6 +16,7 @@ interface EditorManagerContextValue {
   getEditorState: (editorId: number) => EditorState | undefined;
   getEditorView: (editorId: number) => EditorView | undefined;
   primaryEditor: BangleEditor | undefined;
+  secondaryEditor: BangleEditor | undefined;
   setEditor: (editorId: number, editor: BangleEditor) => void;
   updateFocusedEditor: (editorId: number | undefined) => void;
 }
@@ -28,6 +29,7 @@ const EditorManagerContext = React.createContext<EditorManagerContextValue>({
   getEditorState: () => undefined,
   getEditorView: () => undefined,
   primaryEditor: undefined,
+  secondaryEditor: undefined,
   setEditor: () => {},
   updateFocusedEditor: () => {},
 });
@@ -115,6 +117,7 @@ export function EditorManager({ children }) {
       },
       getEditorView,
       primaryEditor: editors[0],
+      secondaryEditor: editors[1],
       setEditor,
       updateFocusedEditor,
     };

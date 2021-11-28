@@ -25,6 +25,10 @@ const extension = Extension.create({
         title: 'Editor: Focus on primary editor',
       },
       {
+        name: 'action::bangle-io-editor-core:focus-secondary-editor',
+        title: 'Editor: Focus on secondary editor',
+      },
+      {
         name: 'action::bangle-io-editor-core:collapse-heading',
         title: 'Editor: Collapse heading',
       },
