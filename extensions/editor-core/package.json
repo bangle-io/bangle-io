@@ -37,6 +37,7 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/editor-manager-context": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/pm-plugins": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "react": "^17.0.2",

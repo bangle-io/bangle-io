@@ -130,10 +130,8 @@ export function EditorManager({ children }) {
   useEffect(() => {
     // TODO: this setup should be done in app
     getIdleCallback(() => {
-      if (
-        new URLSearchParams(window.location.search).get('debug_pm') === 'yes' &&
-        editors[0]
-      ) {
+      if (window.location?.hash?.includes('debug_pm') && editors[0]) {
+        console.log('debugging pm');
         import(
           /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
         ).then((args) => {
