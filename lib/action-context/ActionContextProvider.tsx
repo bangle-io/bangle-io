@@ -4,7 +4,7 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchActionType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
 
-const LOG = true;
+const LOG = false;
 let log = LOG ? console.log.bind(console, 'ActionCotext') : () => {};
 
 export const ActionContext = createContext<ActionContextType>({
