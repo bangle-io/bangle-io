@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
 import { CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE } from '@bangle.io/constants';
+import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import {
   ERROR_PICKING_DIRECTORY_ERROR,
@@ -35,7 +36,7 @@ export function ShowError({
             className="underline"
             onClick={() => {
               closeModal();
-              requestAnimationFrame(() => {
+              safeRequestAnimationFrame(() => {
                 dispatchAction({
                   name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
                 });

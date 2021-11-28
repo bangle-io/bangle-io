@@ -3,13 +3,35 @@ import { keyName } from 'w3c-keyname';
 
 import { Emitter } from '@bangle.dev/utils';
 
-import { isFirefox, isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
+import { isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
 export { Emitter };
 
 export function getLast(array) {
   return array[array.length - 1];
 }
+
+let lastTime = 0;
+
+export const safeRequestAnimationFrame =
+  typeof window !== 'undefined' && window.requestAnimationFrame
+    ? window.requestAnimationFrame
+    : function (callback) {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function () {
+          callback(currTime + timeToCall);
+        }, timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+      };
+
+export const safeCancelAnimationFrame =
+  typeof window !== 'undefined' && window.cancelAnimationFrame
+    ? window.cancelAnimationFrame
+    : function (id) {
+        clearTimeout(id);
+      };
 
 const requestIdleCallback =
   typeof window !== 'undefined' && window.requestIdleCallback
@@ -35,7 +57,7 @@ export function rafSchedule(fn) {
     }
 
     // Schedule a new frame
-    frameId = requestAnimationFrame(() => {
+    frameId = safeRequestAnimationFrame(() => {
       frameId = null;
       fn(...lastArgs);
     });
@@ -46,7 +68,7 @@ export function rafSchedule(fn) {
     if (!frameId) {
       return;
     } else {
-      cancelAnimationFrame(frameId);
+      safeCancelAnimationFrame(frameId);
       frameId = null;
     }
   };

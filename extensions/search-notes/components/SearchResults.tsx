@@ -10,6 +10,7 @@ import {
   ChevronRightIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
+import { safeRequestAnimationFrame } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -85,7 +86,7 @@ export function SearchResults({
     if (currentlyClicked && primaryWsPath === currentlyClicked.wsPath) {
       // TODO this is a mess, we need a better api to know when the editor is ready
       setTimeout(() => {
-        requestAnimationFrame(() => {
+        safeRequestAnimationFrame(() => {
           const editor = primaryEditor;
           if (cancelled || !editor || editor.destroyed) {
             return;

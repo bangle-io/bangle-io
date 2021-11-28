@@ -5,6 +5,7 @@ import { Selection } from '@bangle.dev/pm';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { ExtensionPaletteType } from '@bangle.io/extension-registry';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
+import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import { extensionName } from './config';
 
@@ -61,7 +62,7 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
         const item = items.find((item) => item.uid === uid);
         if (item) {
           // Using this to wait for editor to get focused
-          requestAnimationFrame(() => {
+          safeRequestAnimationFrame(() => {
             if (!primaryEditor || primaryEditor.destroyed) {
               return;
             }
