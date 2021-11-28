@@ -25,6 +25,6 @@
     "@bangle.io/constants": "workspace:*"
   },
   "devDependencies": {
-    "@bangle.dev/pm": "0.28.0"
+    "@bangle.dev/pm": "0.28.1"
   }
 }

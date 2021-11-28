@@ -19,8 +19,8 @@
   "main": "index.ts",
   "module": "index.ts",
   "devDependencies": {
-    "@bangle.dev/core": "0.28.0",
-    "@bangle.dev/utils": "0.28.0",
+    "@bangle.dev/core": "0.28.1",
+    "@bangle.dev/utils": "0.28.1",
     "@bangle.io/baby-fs": "workspace:*",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
@@ -33,7 +33,7 @@
     "react-test-renderer": "^17.0.2"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.28.0",
+    "@bangle.dev/pm": "0.28.1",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
