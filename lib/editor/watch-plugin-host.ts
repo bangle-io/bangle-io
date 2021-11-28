@@ -5,6 +5,11 @@ import type {
   EditorPluginMetadata,
   EditorWatchPluginState,
 } from '@bangle.io/shared-types';
+import {
+  hasPluginStateChanged,
+  safeCancelIdleCallback,
+  safeRequestIdleCallback,
+} from '@bangle.io/utils';
 
 import { EDITOR_WATCH_PLUGIN_HOST_ACTION_WAIT_TIME } from './config';
 
@@ -19,18 +24,31 @@ export function watchPluginHost(
   editorPluginMetadata: EditorPluginMetadata,
   watchPluginStates: EditorWatchPluginState[],
 ) {
+  const key = new PluginKey<Set<ActionNameType>>('editor_watchPluginHost');
   return new Plugin({
-    key: new PluginKey<undefined>('editor_watchPluginHost'),
-    view() {
-      let actionsToDispatch = new Set<ActionNameType>();
+    key,
+    state: {
+      init() {
+        return new Set<ActionNameType>();
+      },
+      apply(tr, old, oldState, newState) {
+        // We only care about plugin state
+        for (const { pluginKey, action } of watchPluginStates) {
+          if (hasPluginStateChanged(pluginKey, newState, oldState)) {
+            old.add(action);
+          }
+        }
 
-      let pendingTimer: number | undefined;
+        return old;
+      },
+    },
+    view() {
+      let pendingTimer = 0;
 
       return {
-        // we do not need to clear any pending timer
-        // as we donot send any editor instance information (if we did would have caused memory leaks)
-        // and expect the other side to read the state on their own.
-        destroy() {},
+        destroy() {
+          safeCancelIdleCallback(pendingTimer);
+        },
         update(view, lastState) {
           const { state } = view;
 
@@ -38,35 +56,28 @@ export function watchPluginHost(
             return;
           }
 
-          for (const { pluginKey, action } of watchPluginStates) {
-            const newState = pluginKey.getState(state);
-            const oldState = pluginKey.getState(lastState);
-            if (newState !== oldState) {
-              actionsToDispatch.add(action);
-            }
-          }
-
-          if (actionsToDispatch.size === 0) {
-            return;
-          }
-
-          clearTimeout(pendingTimer);
-
           // Avoid dispatching immediately to let editor do its thing
           // and debounce a bit
-          pendingTimer = setTimeout(() => {
-            actionsToDispatch.forEach((action) => {
-              // Avoid sending any thing related to editor instance
-              // which can cause memory leak, only send primitives
-              editorPluginMetadata.dispatchAction({
-                name: action,
-                value: {
-                  editorId: editorPluginMetadata.editorId,
-                },
-              });
-            });
-            actionsToDispatch.clear();
-          }, EDITOR_WATCH_PLUGIN_HOST_ACTION_WAIT_TIME);
+          safeCancelIdleCallback(pendingTimer);
+          pendingTimer = safeRequestIdleCallback(
+            () => {
+              const pluginState = key.getState(state);
+              if (pluginState && pluginState?.size > 0) {
+                pluginState.forEach((action) => {
+                  // Avoid sending any thing related to editor instance
+                  // which can cause memory leak, only send primitives
+                  editorPluginMetadata.dispatchAction({
+                    name: action,
+                    value: {
+                      editorId: editorPluginMetadata.editorId,
+                    },
+                  });
+                });
+                pluginState.clear();
+              }
+            },
+            { timeout: EDITOR_WATCH_PLUGIN_HOST_ACTION_WAIT_TIME },
+          );
         },
       };
     },

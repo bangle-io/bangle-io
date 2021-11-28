@@ -2,7 +2,8 @@ import type { Options } from 'debounce-fn';
 import debounceFn from 'debounce-fn';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { keybindingsHelper, rafSchedule } from './utility';
+import { rafSchedule } from './safe-js-callbacks';
+import { keybindingsHelper } from './utility';
 
 export * from './use-local-storage';
 export * from './use-recency-monitor';

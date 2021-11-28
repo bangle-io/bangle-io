@@ -5,75 +5,12 @@ import { Emitter } from '@bangle.dev/utils';
 
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
+import { safeRequestIdleCallback } from './safe-js-callbacks';
+
 export { Emitter };
 
 export function getLast(array) {
   return array[array.length - 1];
-}
-
-let lastTime = 0;
-
-export const safeRequestAnimationFrame =
-  typeof window !== 'undefined' && window.requestAnimationFrame
-    ? window.requestAnimationFrame
-    : function (callback) {
-        var currTime = new Date().getTime();
-        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        var id = window.setTimeout(function () {
-          callback(currTime + timeToCall);
-        }, timeToCall);
-        lastTime = currTime + timeToCall;
-        return id;
-      };
-
-export const safeCancelAnimationFrame =
-  typeof window !== 'undefined' && window.cancelAnimationFrame
-    ? window.cancelAnimationFrame
-    : function (id) {
-        clearTimeout(id);
-      };
-
-const requestIdleCallback =
-  typeof window !== 'undefined' && window.requestIdleCallback
-    ? window.requestIdleCallback
-    : undefined;
-
-/**
- * Based on idea from https://github.com/alexreardon/raf-schd
- * Throttles the function and calls it with the latest argument
- * @param {Function} fn
- */
-export function rafSchedule(fn) {
-  let lastArgs: any[] = [];
-  let frameId: null | number = null;
-
-  const wrapperFn = (...args) => {
-    // Always capture the latest value
-    lastArgs = args;
-
-    // There is already a frame queued
-    if (frameId) {
-      return;
-    }
-
-    // Schedule a new frame
-    frameId = safeRequestAnimationFrame(() => {
-      frameId = null;
-      fn(...lastArgs);
-    });
-  };
-
-  // Adding cancel property to result function
-  wrapperFn.cancel = () => {
-    if (!frameId) {
-      return;
-    } else {
-      safeCancelAnimationFrame(frameId);
-      frameId = null;
-    }
-  };
-
-  return wrapperFn;
 }
 
 export const checkWidescreen = (
@@ -331,8 +268,8 @@ export function rIdleDebounce(func) {
     if (last < wait) {
       setTimeout(later, wait - last);
     } else {
-      if (requestIdleCallback) {
-        requestIdleCallback(run);
+      if (safeRequestIdleCallback) {
+        safeRequestIdleCallback(run);
       } else {
         run();
       }

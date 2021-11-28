@@ -4,4 +4,5 @@ export * from './editor-commands';
 export * from './editor-hooks';
 export * from './hooks';
 export * from './random-name';
+export * from './safe-js-callbacks';
 export * from './utility';
