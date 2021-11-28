@@ -70,7 +70,6 @@ export function Entry() {
     'entry-dau-2',
     0,
   );
-  console.debug({ d: dauCount });
 
   useEffect(() => {
     if (dauCount === 3) {
@@ -88,8 +87,7 @@ export function Entry() {
       updateLastOpened(Date.now());
     }
 
-    if (lastOpened && Date.now() - lastOpened > 60 * 1000) {
-      console.debug('updated');
+    if (lastOpened && Date.now() - lastOpened > 60 * 60 * 24 * 1000) {
       updateLastOpened(Date.now());
       updateDauCount((dauCount = 0) => dauCount + 1);
 

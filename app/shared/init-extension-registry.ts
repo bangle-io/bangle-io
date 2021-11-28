@@ -14,8 +14,6 @@ import noteOutline from '@bangle.io/note-outline';
 import noteTags from '@bangle.io/note-tags';
 import searchNotes from '@bangle.io/search-notes';
 
-const z = /^(1)[.)] $/;
-
 // TODO move this async, i think a promise should be fine.
 export const initExtensionRegistry = () => {
   return new ExtensionRegistry([
