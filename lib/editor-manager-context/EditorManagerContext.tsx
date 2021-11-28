@@ -18,6 +18,11 @@ interface EditorManagerContextValue {
   primaryEditor: BangleEditor | undefined;
   setEditor: (editorId: number, editor: BangleEditor) => void;
   updateFocusedEditor: (editorId: number | undefined) => void;
+  isFocusedEditorScrolling: boolean;
+  updateIsEditorScrolling: (
+    editorId: number | undefined,
+    isScrolling: boolean,
+  ) => void;
 }
 
 type EditorsType = [BangleEditor | undefined, BangleEditor | undefined];
@@ -30,6 +35,8 @@ const EditorManagerContext = React.createContext<EditorManagerContextValue>({
   primaryEditor: undefined,
   setEditor: () => {},
   updateFocusedEditor: () => {},
+  isFocusedEditorScrolling: false,
+  updateIsEditorScrolling: (editorId, isScrolling) => {},
 });
 
 export function useEditorManagerContext() {
@@ -56,6 +63,11 @@ export function EditorManager({ children }) {
    * 9. Collab-client plugin refreshes the editor with correct content
    */
   const [editors, _setEditor] = useState<EditorsType>([undefined, undefined]);
+  const [editorScrollingState, updateEditorScrollingState] = useState([
+    false,
+    false,
+  ]);
+
   const [focusedEditorId, updateFocusedEditorId] = useState<
     number | undefined
   >();
@@ -93,6 +105,17 @@ export function EditorManager({ children }) {
         updateFocusedEditorId(editorId);
       };
 
+    const updateIsEditorScrolling: EditorManagerContextValue['updateIsEditorScrolling'] =
+      (editorId: number | undefined, isScrolling: boolean) => {
+        if (editorId != null) {
+          updateEditorScrollingState((existing) => {
+            const newArray = [...existing];
+            newArray[editorId] = isScrolling;
+            return newArray;
+          });
+        }
+      };
+
     const getEditorView: EditorManagerContextValue['getEditorView'] = (
       editorId: number,
     ): EditorView | undefined => {
@@ -106,6 +129,9 @@ export function EditorManager({ children }) {
       return editor.view;
     };
 
+    const isFocusedEditorScrolling =
+      focusedEditorId != null ? editorScrollingState[focusedEditorId] : false;
+
     return {
       focusedEditorId,
       forEachEditor,
@@ -117,8 +143,10 @@ export function EditorManager({ children }) {
       primaryEditor: editors[0],
       setEditor,
       updateFocusedEditor,
+      isFocusedEditorScrolling,
+      updateIsEditorScrolling,
     };
-  }, [_setEditor, focusedEditorId, editors]);
+  }, [_setEditor, focusedEditorId, editorScrollingState, editors]);
 
   useEffect(() => {
     (window as any).primaryEditor = primaryEditor;

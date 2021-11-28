@@ -2,7 +2,9 @@ import { useCallback, useEffect } from 'react';
 
 import { heading, listItem } from '@bangle.dev/base-components';
 
+import { watchIsScrollingPluginKey } from '@bangle.io/constants';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { watchIsScrollingPlugin } from '@bangle.io/pm-plugins';
 
 import { useDispatchPrimaryEditor } from './hooks';
 
@@ -10,7 +12,12 @@ const { toggleHeadingCollapse, uncollapseAllHeadings } = heading;
 const { moveListItemUp, moveListItemDown } = listItem;
 
 export function EditorCore({ registerActionHandler }) {
-  const { primaryEditor, updateFocusedEditor } = useEditorManagerContext();
+  const {
+    primaryEditor,
+    updateFocusedEditor,
+    updateIsEditorScrolling,
+    getEditorState,
+  } = useEditorManagerContext();
   const executeEditorCommand = useDispatchPrimaryEditor(false);
 
   const actionHandler = useCallback(
@@ -46,12 +53,32 @@ export function EditorCore({ registerActionHandler }) {
           return true;
         }
 
+        case 'action::bangle-io-editor-core:on-scroll-update': {
+          const editorId = actionObject.value.editorId;
+          if (editorId != null) {
+            const state = getEditorState(editorId);
+            if (state) {
+              const value = watchIsScrollingPluginKey.getState(state);
+              if (value) {
+                updateIsEditorScrolling(editorId, value.isScrolling);
+              }
+            }
+          }
+          return true;
+        }
+
         default: {
           return false;
         }
       }
     },
-    [primaryEditor, updateFocusedEditor, executeEditorCommand],
+    [
+      primaryEditor,
+      updateFocusedEditor,
+      updateIsEditorScrolling,
+      executeEditorCommand,
+      getEditorState,
+    ],
   );
 
   useEffect(() => {
@@ -59,6 +86,7 @@ export function EditorCore({ registerActionHandler }) {
       actionHandler(obj);
     });
     return () => {
+      console.count('deregsitering');
       deregister();
     };
   }, [actionHandler, registerActionHandler]);

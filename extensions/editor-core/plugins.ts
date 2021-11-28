@@ -29,8 +29,15 @@ import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
 
-import { intersectionObserverPluginKey } from '@bangle.io/constants';
-import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
+import {
+  intersectionObserverPluginKey,
+  watchIsScrollingPluginKey,
+} from '@bangle.io/constants';
+import {
+  intersectionObserverPlugin,
+  watchIsScrollingPlugin,
+} from '@bangle.io/pm-plugins';
+import { findWrappingScrollable } from '@bangle.io/utils';
 
 import { activeNode } from './active-node';
 import { watchEditorFocus } from './watch-editor-focus';
@@ -53,6 +60,12 @@ export const getPlugins = () => {
           threshold: 0,
         },
       }),
+    watchIsScrollingPlugin({
+      pluginKey: watchIsScrollingPluginKey,
+      getScrollParent: (view) => {
+        return findWrappingScrollable(view.dom);
+      },
+    }),
     floatingMenu.plugins({
       key: menuKey,
       tooltipRenderOpts: {

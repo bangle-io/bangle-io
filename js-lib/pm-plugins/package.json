@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "@bangle.dev/core": "0.28.0",
-    "@bangle.dev/pm": "0.28.0"
+    "@bangle.dev/pm": "0.28.0",
+    "debounce-fn": "^5.0.0"
   },
   "devDependencies": {
     "@bangle.dev/all-base-components": "0.28.0",

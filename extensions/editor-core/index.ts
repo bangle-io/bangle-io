@@ -1,5 +1,6 @@
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 
+import { watchIsScrollingPluginKey } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 
 import { EditorCore } from './EditorCore';
@@ -16,6 +17,12 @@ const extension = Extension.create({
     plugins: [getPlugins],
     ReactComponent: MenuComp,
     markdownItPlugins: [frontMatterMarkdownItPlugin],
+    watchPluginStates: [
+      {
+        pluginKey: watchIsScrollingPluginKey,
+        action: 'action::bangle-io-editor-core:on-scroll-update',
+      },
+    ],
   },
   application: {
     ReactComponent: EditorCore,
@@ -43,6 +50,11 @@ const extension = Extension.create({
       {
         name: 'action::bangle-io-editor-core:on-focus-update',
         title: 'Editor: Record focus change',
+        hidden: true,
+      },
+      {
+        name: 'action::bangle-io-editor-core:on-scroll-update',
+        title: 'Editor: Record scroll update',
         hidden: true,
       },
     ],

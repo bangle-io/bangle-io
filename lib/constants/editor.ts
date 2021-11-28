@@ -1,6 +1,9 @@
 import { PluginKey } from '@bangle.dev/pm';
 
-import type { IntersectionObserverPluginState } from '@bangle.io/pm-plugins';
+import type {
+  IntersectionObserverPluginState,
+  WatchIsScrollingPluginState,
+} from '@bangle.io/pm-plugins';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 
 export const EditorPluginMetadataKey = new PluginKey<EditorPluginMetadata>(
@@ -9,6 +12,10 @@ export const EditorPluginMetadataKey = new PluginKey<EditorPluginMetadata>(
 export const intersectionObserverPluginKey =
   new PluginKey<IntersectionObserverPluginState>(
     'editor-core_intersectionObserverPlugin',
+  );
+export const watchIsScrollingPluginKey =
+  new PluginKey<WatchIsScrollingPluginState>(
+    'editor-core_watchIsScrollingPlugin',
   );
 
 export enum EditorDisplayType {

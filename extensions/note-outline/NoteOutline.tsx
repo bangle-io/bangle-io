@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Selection } from '@bangle.dev/pm';
 
@@ -14,9 +14,16 @@ import {
   watchHeadingsPluginKey,
 } from './config';
 
+const CLICK_COOLDOWN_TIME = 1500;
+
 export function NoteOutline() {
-  const { focusedEditorId, getEditor, getEditorState } =
-    useEditorManagerContext();
+  const {
+    focusedEditorId,
+    getEditor,
+    getEditorState,
+    isFocusedEditorScrolling,
+  } = useEditorManagerContext();
+  const lastClickedRef = useRef<number>(0);
 
   const { wsName } = useWorkspaceContext();
 
@@ -88,9 +95,22 @@ export function NoteOutline() {
     [focusedEditorId, getEditor],
   );
 
-  const firstNodeInViewPort = headingNodes?.find(
+  const firstNodeInViewport = headingNodes?.find(
     (r) => r.hasContentInsideViewport,
   );
+
+  useEffect(() => {
+    if (Date.now() - lastClickedRef.current > CLICK_COOLDOWN_TIME) {
+      const element = document.querySelector(
+        '.note-outline_container .note-outline_first-node-in-viewport',
+      );
+      if (element) {
+        requestAnimationFrame(() => {
+          (element as any).scrollIntoViewIfNeeded();
+        });
+      }
+    }
+  }, [isFocusedEditorScrolling]);
 
   return (
     <div className="note-outline_container flex flex-col">
@@ -99,8 +119,10 @@ export function NoteOutline() {
       )}
       {headingNodes?.map((r, i) => {
         let isQuiet: Parameters<typeof ActionButton>[0]['isQuiet'] = 'hoverBg';
-        if (firstNodeInViewPort === r) {
+        let className = '';
+        if (firstNodeInViewport === r) {
           isQuiet = false;
+          className = 'note-outline_first-node-in-viewport';
         }
         if (r.isActive) {
           isQuiet = false;
@@ -112,8 +134,10 @@ export function NoteOutline() {
             variant={r.isActive ? 'primary' : 'secondary'}
             ariaLabel={r.title}
             key={r.title + i}
+            className={className}
             onPress={() => {
               onExecuteItem(r);
+              lastClickedRef.current = Date.now();
             }}
             style={{
               paddingLeft: 12 * (r.level - 1),

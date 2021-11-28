@@ -2535,6 +2535,7 @@ __metadata:
     "@bangle.dev/utils": 0.28.0
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
+    debounce-fn: ^5.0.0
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown

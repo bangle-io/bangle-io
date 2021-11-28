@@ -1,4 +1,4 @@
-import { Selection } from '@bangle.dev/pm';
+import { Plugin, Selection } from '@bangle.dev/pm';
 
 import { Extension } from '@bangle.io/extension-registry';
 
@@ -9,6 +9,7 @@ import { getSavedScrollPos, getSavedSelection } from './persist-scroll';
 const extension = Extension.create({
   name: extensionName,
   editor: {
+    plugins: [],
     initialScrollPos({ wsPath, editorId }) {
       return getSavedScrollPos(wsPath, editorId);
     },
