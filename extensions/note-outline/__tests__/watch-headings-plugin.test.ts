@@ -197,4 +197,28 @@ magic
       ]);
     });
   });
+
+  describe('works when no intersection state', () => {
+    const editor = createEditorFromMd(`
+lab
+
+magic
+
+# Apex
+`);
+
+    test('works', () => {
+      const result = getHeadings(editor.view.state);
+
+      expect(result).toEqual([
+        {
+          isActive: false,
+          hasContentInsideViewport: false,
+          level: 1,
+          offset: 12,
+          title: 'Apex',
+        },
+      ]);
+    });
+  });
 });

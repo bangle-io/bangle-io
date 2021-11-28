@@ -18,6 +18,11 @@ export function watchHeadingsPlugin() {
   let state: StateField<WatchPluginState> = {
     init(_, state) {
       const intersectionState = getEditorIntersectionObserverPluginState(state);
+      if (!intersectionState) {
+        console.warn(
+          'note-outline expects editorIntersectionObserverPluginState',
+        );
+      }
       return {
         headings: getHeadings(state, intersectionState),
       };
@@ -87,13 +92,7 @@ export function getHeadings(
     typeof getEditorIntersectionObserverPluginState
   >,
 ): HeadingNodes {
-  let headingNodes: HeadingNodes = [];
-
-  if (!intersectionState) {
-    return [];
-  }
-
-  const { from } = state.selection;
+  const headingNodes: HeadingNodes = [];
 
   state.doc.forEach((node, offset, i) => {
     if (node.type.name === 'heading') {
@@ -114,26 +113,33 @@ export function getHeadings(
     }
   });
 
-  const hasIntersecting = headingNodes.some((r) => r.hasContentInsideViewport);
-
-  // if no intersections we have to approximate the best
-  // available heading
-  if (!hasIntersecting) {
-    // find the closest heading before the minStartPosition
-    const nearestNode = findLeftNearestHeading(
-      intersectionState.minStartPosition,
-      headingNodes,
-    );
-    if (nearestNode) {
-      nearestNode.hasContentInsideViewport = true;
-    }
-  }
-
-  const nearestActiveHeading = findLeftNearestHeading(from, headingNodes);
+  // Set active heading based on selection
+  const nearestActiveHeading = findLeftNearestHeading(
+    state.selection.from,
+    headingNodes,
+  );
   if (nearestActiveHeading) {
     nearestActiveHeading.isActive = true;
   }
 
+  if (intersectionState) {
+    const hasIntersecting = headingNodes.some(
+      (r) => r.hasContentInsideViewport,
+    );
+
+    // if no intersections we have to approximate the best
+    // available heading
+    if (!hasIntersecting) {
+      // find the closest heading before the minStartPosition
+      const nearestNode = findLeftNearestHeading(
+        intersectionState.minStartPosition,
+        headingNodes,
+      );
+      if (nearestNode) {
+        nearestNode.hasContentInsideViewport = true;
+      }
+    }
+  }
   return headingNodes;
 }
 

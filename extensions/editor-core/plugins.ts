@@ -44,14 +44,15 @@ const getScrollContainer = (view: EditorView) => {
 const { queryIsSelectionAroundLink, queryIsLinkActive } = link;
 export const getPlugins = () => {
   return [
-    intersectionObserverPlugin({
-      pluginKey: intersectionObserverPluginKey,
-      intersectionObserverOpts: {
-        root: window.document.body,
-        rootMargin: '0px',
-        threshold: 0,
-      },
-    }),
+    typeof window !== 'undefined' &&
+      intersectionObserverPlugin({
+        pluginKey: intersectionObserverPluginKey,
+        intersectionObserverOpts: {
+          root: window.document.body,
+          rootMargin: '0px',
+          threshold: 0,
+        },
+      }),
     floatingMenu.plugins({
       key: menuKey,
       tooltipRenderOpts: {

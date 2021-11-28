@@ -42,14 +42,19 @@ export function NoteOutline() {
   // Calculate headings on initial mount
   useEffect(() => {
     updateHeadingNodes();
-  }, [wsName, updateHeadingNodes]);
+  }, [
+    // update heading nodes when wsName changes too
+    wsName,
+    updateHeadingNodes,
+  ]);
 
   useActionHandler(
     (action) => {
       if (action.name === WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION) {
         const editorId: unknown = action.value?.editorId;
+        // change is from an editor which doesnt have id or the action
+        // is for a different editorId
         if (typeof editorId !== 'number' || editorId !== focusedEditorId) {
-          // change is from an editor which doesnt have id
           return false;
         }
         updateHeadingNodes();
