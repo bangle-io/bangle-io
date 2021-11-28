@@ -1,7 +1,10 @@
 import type { EditorState, StateField } from '@bangle.dev/pm';
 import { Plugin } from '@bangle.dev/pm';
 
-import { debounceFn } from '@bangle.io/utils';
+import {
+  debounceFn,
+  getEditorIntersectionObserverPluginState,
+} from '@bangle.io/utils';
 
 import {
   HeadingNodes,
@@ -14,16 +17,24 @@ import {
 export function watchHeadingsPlugin() {
   let state: StateField<WatchPluginState> = {
     init(_, state) {
+      const intersectionState = getEditorIntersectionObserverPluginState(state);
       return {
-        headings: getHeadings(state),
+        headings: getHeadings(state, intersectionState),
       };
     },
     apply(tr, old, oldState, newState) {
       const meta = tr.getMeta(watchHeadingsPluginKey);
-      if (meta) {
+      const intersectionState =
+        getEditorIntersectionObserverPluginState(newState);
+
+      const intersectionChanged =
+        intersectionState !==
+        getEditorIntersectionObserverPluginState(oldState);
+
+      if (meta || intersectionChanged) {
         return {
           ...old,
-          headings: getHeadings(newState),
+          headings: getHeadings(newState, intersectionState),
         };
       }
       return old;
@@ -70,34 +81,105 @@ export function watchHeadingsPlugin() {
   });
 }
 
-function getHeadings(state: EditorState) {
+export function getHeadings(
+  state: EditorState,
+  intersectionState?: ReturnType<
+    typeof getEditorIntersectionObserverPluginState
+  >,
+): HeadingNodes {
   let headingNodes: HeadingNodes = [];
-  let closestHeadingDiff = Infinity;
+
+  if (!intersectionState) {
+    return [];
+  }
+
   const { from } = state.selection;
 
   state.doc.forEach((node, offset, i) => {
     if (node.type.name === 'heading') {
-      let diff = from - offset;
-      if (diff >= 0 && diff < closestHeadingDiff) {
-        closestHeadingDiff = diff;
-      }
-      headingNodes.push({
+      const intersecting = isPositionInsideIntersection(
+        offset,
+        intersectionState,
+      );
+
+      const result = {
         offset,
         level: node.attrs.level,
         title: node.textContent,
         isActive: false,
-      });
+        hasContentInsideViewport: intersecting,
+      };
+
+      headingNodes.push(result);
     }
   });
 
-  if (closestHeadingDiff !== Infinity) {
-    const closestHeading = headingNodes.find(
-      (h) => closestHeadingDiff === from - h.offset,
+  const hasIntersecting = headingNodes.some((r) => r.hasContentInsideViewport);
+
+  // if no intersections we have to approximate the best
+  // available heading
+  if (!hasIntersecting) {
+    // find the closest heading before the minStartPosition
+    const nearestNode = findLeftNearestHeading(
+      intersectionState.minStartPosition,
+      headingNodes,
     );
-    if (closestHeading) {
-      closestHeading.isActive = true;
+    if (nearestNode) {
+      nearestNode.hasContentInsideViewport = true;
     }
   }
 
+  const nearestActiveHeading = findLeftNearestHeading(from, headingNodes);
+  if (nearestActiveHeading) {
+    nearestActiveHeading.isActive = true;
+  }
+
   return headingNodes;
+}
+
+/**
+ * Finds the nearest heading (from left aka before) from the given position
+ */
+function findLeftNearestHeading(
+  position: number,
+  headingNodes: HeadingNodes,
+): HeadingNodes[0] | undefined {
+  let closestHeadingDiff = Infinity;
+  // this is the heading that is the nearest (before)
+  // the where the current selection from is.
+  // If its a paragraph its first heading appearing before it
+  // if it is a heading it is itself
+  let closestHeading: HeadingNodes[0] | undefined = undefined;
+
+  for (const heading of headingNodes) {
+    let diff = position - heading.offset;
+    if (diff >= 0 && diff < closestHeadingDiff) {
+      closestHeadingDiff = diff;
+      closestHeading = heading;
+    }
+
+    // no point in going through headings
+    // that are after the given position as
+    // we only care about headings before it.
+    if (diff < 0) {
+      break;
+    }
+  }
+
+  return closestHeading;
+}
+
+function isPositionInsideIntersection(
+  pos: number,
+  intersectionState: ReturnType<
+    typeof getEditorIntersectionObserverPluginState
+  >,
+) {
+  if (!intersectionState) {
+    return false;
+  }
+  return (
+    pos >= intersectionState.minStartPosition &&
+    pos <= intersectionState.maxStartPosition
+  );
 }

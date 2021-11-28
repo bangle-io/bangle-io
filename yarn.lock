@@ -2526,9 +2526,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/pm-plugins@workspace:js-lib/pm-plugins"
   dependencies:
+    "@bangle.dev/all-base-components": 0.28.0
     "@bangle.dev/core": 0.28.0
     "@bangle.dev/pm": 0.28.0
     "@bangle.dev/react": 0.28.0
+    "@bangle.dev/test-helpers": 0.28.0
     "@bangle.dev/tooltip": 0.28.0
     "@bangle.dev/utils": 0.28.0
     "@types/react": ^17.0.33

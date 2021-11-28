@@ -83,32 +83,46 @@ export function NoteOutline() {
     [focusedEditorId, getEditor],
   );
 
+  const firstNodeInViewPort = headingNodes?.find(
+    (r) => r.hasContentInsideViewport,
+  );
+
   return (
     <div className="note-outline_container flex flex-col">
       {(!headingNodes || headingNodes.length === 0) && (
         <span className="font-light">{'<No headings found>'}</span>
       )}
-      {headingNodes?.map((r, i) => (
-        <ActionButton
-          isQuiet={r.isActive ? false : 'hoverBg'}
-          variant={r.isActive ? 'primary' : 'secondary'}
-          ariaLabel={r.title}
-          key={r.title + i}
-          onPress={() => {
-            onExecuteItem(r);
-          }}
-          style={{
-            paddingLeft: 12 * (r.level - 1),
-            paddingTop: 4,
-            paddingBottom: 4,
-          }}
-        >
-          <ButtonContent
-            text={r.title || `<Empty heading-${r.level}>`}
-            textClassName={cx('text-sm truncate', !r.title && 'font-light')}
-          />
-        </ActionButton>
-      ))}
+      {headingNodes?.map((r, i) => {
+        let isQuiet: Parameters<typeof ActionButton>[0]['isQuiet'] = 'hoverBg';
+        if (firstNodeInViewPort === r) {
+          isQuiet = false;
+        }
+        if (r.isActive) {
+          isQuiet = false;
+        }
+
+        return (
+          <ActionButton
+            isQuiet={isQuiet}
+            variant={r.isActive ? 'primary' : 'secondary'}
+            ariaLabel={r.title}
+            key={r.title + i}
+            onPress={() => {
+              onExecuteItem(r);
+            }}
+            style={{
+              paddingLeft: 12 * (r.level - 1),
+              paddingTop: 4,
+              paddingBottom: 4,
+            }}
+          >
+            <ButtonContent
+              text={r.title || `<Empty heading-${r.level}>`}
+              textClassName={cx('text-sm truncate', !r.title && 'font-light')}
+            />
+          </ActionButton>
+        );
+      })}
     </div>
   );
 }
