@@ -256,8 +256,8 @@ describe('auto complete', () => {
       },
     );
 
-    await page.keyboard.press('ArrowDown', { delay: 10 });
-    await page.keyboard.press('Enter', { delay: 10 });
+    await page.keyboard.press('ArrowDown', { delay: 20 });
+    await page.keyboard.press('Enter', { delay: 20 });
 
     expect(await getTagsFromDoc()).toEqual([
       {

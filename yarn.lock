@@ -1933,6 +1933,7 @@ __metadata:
   resolution: "@bangle.io/constants@workspace:lib/constants"
   dependencies:
     "@bangle.dev/pm": 0.28.0
+    "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -2087,6 +2088,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
@@ -2517,6 +2519,24 @@ __metadata:
 "@bangle.io/object-sync@workspace:*, @bangle.io/object-sync@workspace:js-lib/object-sync":
   version: 0.0.0-use.local
   resolution: "@bangle.io/object-sync@workspace:js-lib/object-sync"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/pm-plugins@workspace:*, @bangle.io/pm-plugins@workspace:js-lib/pm-plugins":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/pm-plugins@workspace:js-lib/pm-plugins"
+  dependencies:
+    "@bangle.dev/all-base-components": 0.28.0
+    "@bangle.dev/core": 0.28.0
+    "@bangle.dev/pm": 0.28.0
+    "@bangle.dev/react": 0.28.0
+    "@bangle.dev/test-helpers": 0.28.0
+    "@bangle.dev/tooltip": 0.28.0
+    "@bangle.dev/utils": 0.28.0
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    react: ^17.0.2
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 

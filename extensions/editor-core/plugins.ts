@@ -29,6 +29,9 @@ import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
 
+import { intersectionObserverPluginKey } from '@bangle.io/constants';
+import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
+
 import { activeNode } from './active-node';
 import { watchEditorFocus } from './watch-editor-focus';
 
@@ -41,6 +44,15 @@ const getScrollContainer = (view: EditorView) => {
 const { queryIsSelectionAroundLink, queryIsLinkActive } = link;
 export const getPlugins = () => {
   return [
+    typeof window !== 'undefined' &&
+      intersectionObserverPlugin({
+        pluginKey: intersectionObserverPluginKey,
+        intersectionObserverOpts: {
+          root: window.document.body,
+          rootMargin: '0px',
+          threshold: 0,
+        },
+      }),
     floatingMenu.plugins({
       key: menuKey,
       tooltipRenderOpts: {
@@ -99,8 +111,6 @@ export const getPlugins = () => {
     }),
     activeNode(),
     watchEditorFocus,
-
-    // must be at end
     blockTabPress(),
   ];
 };

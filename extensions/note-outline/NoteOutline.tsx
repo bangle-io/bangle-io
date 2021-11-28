@@ -42,14 +42,19 @@ export function NoteOutline() {
   // Calculate headings on initial mount
   useEffect(() => {
     updateHeadingNodes();
-  }, [wsName, updateHeadingNodes]);
+  }, [
+    // update heading nodes when wsName changes too
+    wsName,
+    updateHeadingNodes,
+  ]);
 
   useActionHandler(
     (action) => {
       if (action.name === WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION) {
         const editorId: unknown = action.value?.editorId;
+        // change is from an editor which doesnt have id or the action
+        // is for a different editorId
         if (typeof editorId !== 'number' || editorId !== focusedEditorId) {
-          // change is from an editor which doesnt have id
           return false;
         }
         updateHeadingNodes();
@@ -83,32 +88,46 @@ export function NoteOutline() {
     [focusedEditorId, getEditor],
   );
 
+  const firstNodeInViewPort = headingNodes?.find(
+    (r) => r.hasContentInsideViewport,
+  );
+
   return (
     <div className="note-outline_container flex flex-col">
       {(!headingNodes || headingNodes.length === 0) && (
         <span className="font-light">{'<No headings found>'}</span>
       )}
-      {headingNodes?.map((r, i) => (
-        <ActionButton
-          isQuiet={r.isActive ? false : 'hoverBg'}
-          variant={r.isActive ? 'primary' : 'secondary'}
-          ariaLabel={r.title}
-          key={r.title + i}
-          onPress={() => {
-            onExecuteItem(r);
-          }}
-          style={{
-            paddingLeft: 12 * (r.level - 1),
-            paddingTop: 4,
-            paddingBottom: 4,
-          }}
-        >
-          <ButtonContent
-            text={r.title || `<Empty heading-${r.level}>`}
-            textClassName={cx('text-sm truncate', !r.title && 'font-light')}
-          />
-        </ActionButton>
-      ))}
+      {headingNodes?.map((r, i) => {
+        let isQuiet: Parameters<typeof ActionButton>[0]['isQuiet'] = 'hoverBg';
+        if (firstNodeInViewPort === r) {
+          isQuiet = false;
+        }
+        if (r.isActive) {
+          isQuiet = false;
+        }
+
+        return (
+          <ActionButton
+            isQuiet={isQuiet}
+            variant={r.isActive ? 'primary' : 'secondary'}
+            ariaLabel={r.title}
+            key={r.title + i}
+            onPress={() => {
+              onExecuteItem(r);
+            }}
+            style={{
+              paddingLeft: 12 * (r.level - 1),
+              paddingTop: 4,
+              paddingBottom: 4,
+            }}
+          >
+            <ButtonContent
+              text={r.title || `<Empty heading-${r.level}>`}
+              textClassName={cx('text-sm truncate', !r.title && 'font-light')}
+            />
+          </ActionButton>
+        );
+      })}
     </div>
   );
 }

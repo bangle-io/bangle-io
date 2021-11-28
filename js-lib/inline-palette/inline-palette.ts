@@ -1,11 +1,13 @@
 import { BaseRawMarkSpec, PluginKey } from '@bangle.dev/core';
-import type { Command, EditorState, EditorView } from '@bangle.dev/pm';
+import type { Command, EditorState } from '@bangle.dev/pm';
 import {
   createTooltipDOM,
   suggestTooltip,
   SuggestTooltipRenderOpts,
 } from '@bangle.dev/tooltip';
 import { bangleWarn, valuePlugin } from '@bangle.dev/utils';
+
+import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 const {
   decrementSuggestTooltipCounter,
@@ -64,7 +66,7 @@ function pluginsFactory({
 
     const updateCounter = (key = 'UP') => {
       return (state, dispatch, view) => {
-        requestAnimationFrame(() => {
+        safeRequestAnimationFrame(() => {
           view.focus();
         });
         if (key === 'UP' ? !getIsTop() : getIsTop()) {

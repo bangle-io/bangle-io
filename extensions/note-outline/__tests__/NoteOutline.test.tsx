@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import React from 'react';
 
 import { useActionHandler } from '@bangle.io/action-context';
@@ -9,6 +9,7 @@ import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
+import { getEditorIntersectionObserverPluginState } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import noteOutlineExtension from '..';
@@ -18,6 +19,15 @@ import { NoteOutline } from '../NoteOutline';
 jest.mock('@bangle.io/workspace-context');
 jest.mock('@bangle.io/action-context');
 jest.mock('@bangle.io/editor-manager-context');
+
+jest.mock('@bangle.io/utils', () => {
+  const utils = jest.requireActual('@bangle.io/utils');
+
+  return {
+    ...utils,
+    getEditorIntersectionObserverPluginState: jest.fn(),
+  };
+});
 
 let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
   typeof useWorkspaceContext
@@ -32,6 +42,11 @@ let useActionHandlerMock = useActionHandler as jest.MockedFunction<
   typeof useActionHandler
 >;
 
+let getEditorIntersectionObserverPluginStateMock =
+  getEditorIntersectionObserverPluginState as jest.MockedFunction<
+    typeof getEditorIntersectionObserverPluginState
+  >;
+
 beforeEach(() => {
   useWorkspaceContextMock.mockImplementation(() => {
     return {
@@ -45,6 +60,13 @@ beforeEach(() => {
   });
 
   useActionHandlerMock.mockImplementation((cb) => {});
+
+  getEditorIntersectionObserverPluginStateMock.mockImplementation(() => {
+    return {
+      minStartPosition: 0,
+      maxStartPosition: 0,
+    };
+  });
 });
 
 test('renders when no headings found', async () => {

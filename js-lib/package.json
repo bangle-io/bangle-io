@@ -2,10 +2,11 @@
   "name": "js-lib",
   "workspaces": [
     "baby-fs",
-    "inline-palette",
     "base-error",
     "fzf-search",
-    "object-sync"
+    "inline-palette",
+    "object-sync",
+    "pm-plugins"
   ],
   "repository": {
     "directory": "js-lib",

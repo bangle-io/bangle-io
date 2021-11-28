@@ -5,6 +5,9 @@ import { markdownParser } from '@bangle.io/markdown';
 
 import { createExtensionRegistry } from './extension-registry';
 
+/**
+ * Creates an editor from markdown string
+ */
 export function createEditorFromMd(
   md: string,
   {
