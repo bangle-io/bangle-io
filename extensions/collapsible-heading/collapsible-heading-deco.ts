@@ -2,10 +2,14 @@ import { heading } from '@bangle.dev/base-components';
 import {
   Decoration,
   DecorationSet,
+  EditorState,
   Plugin,
   PluginKey,
   Selection,
 } from '@bangle.dev/pm';
+
+import { intersectionObserverPluginKey } from '@bangle.io/constants';
+import { hasPluginStateChanged } from '@bangle.io/utils';
 
 const name = 'collapsible_heading_deco';
 // TODO even after optimizations, this is far for perfect
@@ -23,8 +27,14 @@ export function pluginsFactory() {
           return buildDeco(state);
         },
         apply(tr, old, oldState, newState) {
-          // console.log(old, old.map(tr.mapping, tr.doc));
-          if (!tr.docChanged) {
+          if (
+            !tr.docChanged &&
+            !hasPluginStateChanged(
+              intersectionObserverPluginKey,
+              newState,
+              oldState,
+            )
+          ) {
             return old;
           }
 
@@ -40,12 +50,32 @@ export function pluginsFactory() {
   ];
 }
 
+function filterOutsideIntersection(
+  headings: ReturnType<typeof heading.listCollapsibleHeading>,
+  state: EditorState,
+) {
+  const intersectionState = intersectionObserverPluginKey.getState(state);
+  if (!intersectionState) {
+    return headings;
+  }
+  const result = headings.filter(
+    (r) =>
+      r.pos >= intersectionState.minStartPosition &&
+      r.pos <= intersectionState.maxStartPosition,
+  );
+  return result;
+}
+
 function buildDeco(state) {
   const collapsedHeadingSet = new Set(
-    heading.listCollapsedHeading(state).map((r) => r.node),
+    filterOutsideIntersection(heading.listCollapsedHeading(state), state).map(
+      (r) => r.node,
+    ),
   );
-  const headings = heading
-    .listCollapsibleHeading(state)
+  const headings = filterOutsideIntersection(
+    heading.listCollapsibleHeading(state),
+    state,
+  )
     .filter((r) => {
       return r.node.content.size > 0;
     })

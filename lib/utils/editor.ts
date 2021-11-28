@@ -1,4 +1,4 @@
-import { EditorState } from '@bangle.dev/pm';
+import type { EditorState, PluginKey } from '@bangle.dev/pm';
 
 import {
   EditorPluginMetadataKey,
@@ -28,4 +28,12 @@ export function getEditorPluginMetadata(state: EditorState) {
 export function getEditorIntersectionObserverPluginState(state: EditorState) {
   const result = intersectionObserverPluginKey.getState(state);
   return result;
+}
+
+export function hasPluginStateChanged<T>(
+  pluginKey: PluginKey<T>,
+  newState: EditorState,
+  oldState: EditorState,
+) {
+  return pluginKey.getState(newState) !== pluginKey.getState(oldState);
 }
