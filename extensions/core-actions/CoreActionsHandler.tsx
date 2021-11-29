@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
 import {
-  CORE_ACTIONS_CLONE_WORKSPACE,
   CORE_ACTIONS_CLOSE_EDITOR,
   CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
   CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
@@ -20,7 +19,6 @@ import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
-import { NewWorkspaceInputModal } from './NewWorkspaceInputModal';
 
 export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch } = useUIManagerContext();
@@ -82,33 +80,6 @@ export function CoreActionsHandler({ registerActionHandler }) {
           dispatch({
             type: 'UI/SHOW_MODAL',
             value: { modal: '@modal/new-workspace' },
-          });
-          return true;
-        }
-
-        case CORE_ACTIONS_CLONE_WORKSPACE: {
-          // no point clone if there is no active workspace
-          if (!wsName) {
-            dispatch({
-              type: 'UI/SHOW_NOTIFICATION',
-              value: {
-                severity: 'error',
-                uid: 'clone-workspace-no-active-workspace',
-                content: 'No active workspace',
-              },
-            });
-            return true;
-          }
-          // To avoid overlapping
-          dispatch({
-            type: 'UI/UPDATE_PALETTE',
-            value: { type: undefined },
-          });
-          updateInputModal({
-            type: 'new-workspace',
-            clone: true,
-            // used with help workspace to reset its content
-            resetWsName: actionObject.value?.resetWsName,
           });
           return true;
         }
@@ -323,14 +294,6 @@ export function CoreActionsHandler({ registerActionHandler }) {
   if (inputModal.type === 'rename-note') {
     return <RenameNoteInputModal onDismiss={onDismiss} />;
   }
-  if (inputModal.type === 'new-workspace') {
-    return (
-      <NewWorkspaceInputModal
-        onDismiss={onDismiss}
-        clone={inputModal.clone}
-        resetWsName={inputModal.resetWsName}
-      />
-    );
-  }
+
   return null;
 }

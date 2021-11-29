@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
 import { HelpFileSystem } from '@bangle.io/baby-fs';
-import { CORE_ACTIONS_CLONE_WORKSPACE } from '@bangle.io/constants';
 import { TextButton } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
@@ -68,27 +67,6 @@ export function HelpWorkspaceMonitor({ wsPath }) {
             hint={`Delete current modifications\nand reset the help pages to their original content`}
           >
             Reset
-          </TextButton>,
-          <TextButton
-            hintPos="left"
-            className="ml-3"
-            onClick={() => {
-              dispatchAction({
-                name: CORE_ACTIONS_CLONE_WORKSPACE,
-                value: {
-                  resetWsName: HELP_FS_WORKSPACE_NAME,
-                },
-              });
-              dispatch({
-                type: 'UI/DISMISS_NOTIFICATION',
-                value: {
-                  uid,
-                },
-              });
-            }}
-            hint={`Save the modifications to a new workspace\nand reset the help pages to their original content`}
-          >
-            Fork
           </TextButton>,
         ],
       },
