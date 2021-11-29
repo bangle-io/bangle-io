@@ -6,10 +6,10 @@ export function createExtensionRegistry(
   extensions: Extension[] = [],
   { editorCore = false } = {},
 ) {
-  extensions = [...extensions];
+  let newExtensions: Extension[] = [];
 
   if (editorCore) {
-    extensions.push(
+    newExtensions.push(
       Extension.create({
         name: 'bangle-io-core',
         editor: {
@@ -20,7 +20,10 @@ export function createExtensionRegistry(
     );
   }
 
-  const extensionRegistry = new ExtensionRegistry(extensions);
+  const extensionRegistry = new ExtensionRegistry([
+    ...newExtensions,
+    ...extensions,
+  ]);
 
   return extensionRegistry;
 }

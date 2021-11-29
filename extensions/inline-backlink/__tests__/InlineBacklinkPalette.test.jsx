@@ -1,16 +1,15 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { Node, PluginKey } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 
-import { Extension, ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   replaceSuggestionMarkWith,
   useInlinePaletteItems,
   useInlinePaletteQuery,
 } from '@bangle.io/inline-palette';
+import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 import { sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -41,18 +40,9 @@ jest.mock('@bangle.io/workspace-context', () => {
   };
 });
 
-const coreExtension = Extension.create({
-  name: 'bangle-io-core',
-  editor: {
-    specs: defaultSpecs(),
-    plugins: defaultPlugins(),
-  },
+const extensionRegistry = createExtensionRegistry([inlineBackLinkExtension], {
+  editorCore: true,
 });
-
-const extensionRegistry = new ExtensionRegistry([
-  coreExtension,
-  inlineBackLinkExtension,
-]);
 
 const schema = extensionRegistry.specRegistry.schema;
 const mockView = {

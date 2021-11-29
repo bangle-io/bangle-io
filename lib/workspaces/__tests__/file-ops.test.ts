@@ -1,22 +1,13 @@
-import { defaultSpecs } from '@bangle.dev/all-base-components';
 import { Node } from '@bangle.dev/pm';
 
-import { Extension, ExtensionRegistry } from '@bangle.io/extension-registry';
 import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
+import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 
 import { copyWorkspace, deleteFile, listAllFiles, saveDoc } from '../file-ops';
 
 const originalFile = window.File;
 
-const extensionRegistry = new ExtensionRegistry([
-  Extension.create({
-    name: 'bangle-io-core',
-    application: {},
-    editor: {
-      specs: [...defaultSpecs()],
-    },
-  }),
-]);
+const extensionRegistry = createExtensionRegistry([], { editorCore: true });
 
 beforeEach(() => {
   (window as any).File = class File {

@@ -1,14 +1,9 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
-
 import { EditorDisplayType } from '@bangle.io/constants';
-import {
-  Extension,
-  ExtensionRegistry,
-  useExtensionRegistryContext,
-} from '@bangle.io/extension-registry';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 import { getEditorPluginMetadataReturn } from '@bangle.io/test-utils/function-mock-return';
 import { getEditorPluginMetadata, sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
@@ -38,18 +33,9 @@ jest.mock('@bangle.io/extension-registry', () => {
   };
 });
 
-const coreExtension = Extension.create({
-  name: 'bangle-io-core',
-  editor: {
-    specs: defaultSpecs(),
-    plugins: defaultPlugins(),
-  },
+const extensionRegistry = createExtensionRegistry([inlineBackLinkExtension], {
+  editorCore: true,
 });
-
-const extensionRegistry = new ExtensionRegistry([
-  coreExtension,
-  inlineBackLinkExtension,
-]);
 
 let editorView: any = { state: {} };
 

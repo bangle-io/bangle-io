@@ -2,28 +2,18 @@ import { act, render, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
 
-import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { Node } from '@bangle.dev/pm';
 
 import { EditorDisplayType } from '@bangle.io/constants';
-import {
-  Extension,
-  ExtensionRegistry,
-  useExtensionRegistryContext,
-} from '@bangle.io/extension-registry';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { Editor, useGetEditorState } from '../Editor';
 
-const coreExtension = Extension.create({
-  name: 'bangle-io-core',
-  editor: {
-    specs: defaultSpecs(),
-    plugins: defaultPlugins(),
-  },
+const extensionRegistry = createExtensionRegistry([], {
+  editorCore: true,
 });
-
-const extensionRegistry = new ExtensionRegistry([coreExtension]);
 
 jest.mock('@bangle.io/workspace-context', () => {
   const actual = jest.requireActual('@bangle.io/workspace-context');
