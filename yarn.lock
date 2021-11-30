@@ -2556,6 +2556,7 @@ __metadata:
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/note-tags": "workspace:*"
+    "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
@@ -2569,6 +2570,18 @@ __metadata:
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/search-pm-node@workspace:*, @bangle.io/search-pm-node@workspace:js-lib/search-pm-node":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/search-pm-node@workspace:js-lib/search-pm-node"
+  dependencies:
+    "@bangle.dev/all-base-components": 0.28.1
+    "@bangle.dev/core": 0.28.1
+    "@bangle.dev/pm": 0.28.1
+    "@bangle.dev/test-helpers": 0.28.1
+    "@bangle.dev/utils": 0.28.1
   languageName: unknown
   linkType: soft
 

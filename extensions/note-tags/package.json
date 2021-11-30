@@ -35,6 +35,7 @@
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",
+    "@bangle.io/search-pm-node": "workspace:*",
     "react": "^17.0.2"
   },
   "devDependencies": {

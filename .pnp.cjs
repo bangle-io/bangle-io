@@ -163,6 +163,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/pm-plugins"
       },
       {
+        "name": "@bangle.io/search-pm-node",
+        "reference": "workspace:js-lib/search-pm-node"
+      },
+      {
         "name": "@bangle.io/action-context",
         "reference": "workspace:lib/action-context"
       },
@@ -300,6 +304,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/object-sync", ["workspace:js-lib/object-sync"]],
       ["@bangle.io/pm-plugins", ["workspace:js-lib/pm-plugins"]],
       ["@bangle.io/search-notes", ["workspace:extensions/search-notes"]],
+      ["@bangle.io/search-pm-node", ["workspace:js-lib/search-pm-node"]],
       ["@bangle.io/shared", ["workspace:app/shared"]],
       ["@bangle.io/shared-types", ["workspace:lib/shared-types"]],
       ["@bangle.io/style", ["workspace:app/style"]],
@@ -4792,6 +4797,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/note-tags", "workspace:extensions/note-tags"],
+            ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
@@ -4805,6 +4811,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.11"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:17.0.2"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/search-pm-node", [
+        ["workspace:js-lib/search-pm-node", {
+          "packageLocation": "./js-lib/search-pm-node/",
+          "packageDependencies": [
+            ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],
+            ["@bangle.dev/all-base-components", "npm:0.28.1"],
+            ["@bangle.dev/core", "virtual:8e89f4af6f1d7453bda294bd8cc23c627ea194432edaa7f0a6fc4df33822b8ed438394de7cf4473a99ab800c85f3cf651b097a9791cc8ac91e8f23c0552bc692#npm:0.28.1"],
+            ["@bangle.dev/pm", "npm:0.28.1"],
+            ["@bangle.dev/test-helpers", "npm:0.28.1"],
+            ["@bangle.dev/utils", "virtual:8e89f4af6f1d7453bda294bd8cc23c627ea194432edaa7f0a6fc4df33822b8ed438394de7cf4473a99ab800c85f3cf651b097a9791cc8ac91e8f23c0552bc692#npm:0.28.1"]
           ],
           "linkType": "SOFT",
         }]
