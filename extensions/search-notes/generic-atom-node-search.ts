@@ -2,22 +2,37 @@ import type { Node } from '@bangle.dev/pm';
 
 import { SearchMatch } from './constants';
 
-export function tagSearch(
+export function genericAtomNodeSearch(
   doc: Node<any>,
   node: Node<any>,
   pos: number,
   parent: Node<any>,
   query: string,
-  { caseSensitive, maxChars }: { caseSensitive: boolean; maxChars: number },
+  {
+    caseSensitive,
+    maxChars,
+    nodeName,
+    dataAttrName,
+    queryIdentifier,
+    printStyle,
+  }: {
+    caseSensitive: boolean;
+    maxChars: number;
+    nodeName: string;
+    dataAttrName: string;
+    queryIdentifier: string;
+    // if its a string it gets prefixed
+    printStyle: string | ((str: string) => string);
+  },
 ): undefined | SearchMatch {
-  if (node.type.name !== 'tag') {
+  if (node.type.name !== nodeName) {
     return undefined;
   }
 
-  const tagValue = caseSensitive
-    ? node.attrs.tagValue
-    : node.attrs.tagValue.toLocaleLowerCase();
-  if (tagValue !== query.split('tag:')[1]) {
+  const dataValue = caseSensitive
+    ? node.attrs[dataAttrName]
+    : node.attrs[dataAttrName].toLocaleLowerCase();
+  if (dataValue !== query.split(queryIdentifier)[1]) {
     return undefined;
   }
 
@@ -43,7 +58,7 @@ export function tagSearch(
   }
 
   let textAfter = '';
-  // adding 1 to position to skip past the tag node
+  // adding 1 to position to skip past the node
   const nextNode = doc.resolve(pos + 1).nodeAfter;
   if (!nextNode) {
     textAfter = '';
@@ -62,7 +77,13 @@ export function tagSearch(
   return {
     parent: parentName,
     parentPos: pos,
-    match: [textBefore, '#' + node.attrs.tagValue, textAfter],
+    match: [
+      textBefore,
+      typeof printStyle === 'function'
+        ? printStyle(node.attrs[dataAttrName])
+        : printStyle + node.attrs[dataAttrName],
+      textAfter,
+    ],
   };
 }
 // TODO move to something better

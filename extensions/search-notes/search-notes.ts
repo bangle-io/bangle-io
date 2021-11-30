@@ -1,13 +1,37 @@
 import type { Node } from '@bangle.dev/pm';
 
 import { CONCURRENCY, SearchResultItem } from './constants';
+import { genericAtomNodeSearch } from './generic-atom-node-search';
 import { pMap } from './p-map';
-import { tagSearch } from './tag-search';
 
-const TEXT_SEARCH = 'TEXT_SEARCH';
-const TAG_SEARCH = 'TAG_SEARCH';
-type SearchType = typeof TEXT_SEARCH | typeof TAG_SEARCH;
+const TEXT_SEARCH = 'TEXT_SEARCH' as const;
+const TAG_SEARCH = 'TAG_SEARCH' as const;
+const BACKLINK_SEARCH = 'BACKLINK_SEARCH' as const;
 
+const TagSearch = { name: TAG_SEARCH, identifier: 'tag:' };
+const BacklinkSearch = {
+  name: BACKLINK_SEARCH,
+  identifier: 'backlink:',
+};
+
+type SearchType =
+  | typeof TEXT_SEARCH
+  | typeof TAG_SEARCH
+  | typeof BACKLINK_SEARCH;
+
+function getSearchType(query): SearchType {
+  for (const { name, identifier } of [TagSearch, BacklinkSearch]) {
+    if (
+      query.startsWith(identifier) &&
+      !query.startsWith(identifier + ':') &&
+      query.length > identifier.length
+    ) {
+      return name;
+    }
+  }
+
+  return TEXT_SEARCH;
+}
 export async function searchNotes(
   query: string,
   noteWsPaths: string[],
@@ -28,15 +52,7 @@ export async function searchNotes(
 
   query = caseSensitive ? query : query.toLocaleLowerCase();
 
-  let searchType: SearchType = TEXT_SEARCH;
-
-  if (
-    query.startsWith('tag:') &&
-    !query.startsWith('tag::') &&
-    query.length > 'tag:'.length
-  ) {
-    searchType = TAG_SEARCH;
-  }
+  let searchType = getSearchType(query);
 
   const docs = await pMap(
     noteWsPaths,
@@ -95,13 +111,44 @@ export async function searchNotes(
             }
 
             case TAG_SEARCH: {
-              // TODO this is coupled to the tag extension
-              const tagResult = tagSearch(doc, node, pos, parent, query, {
-                caseSensitive,
-                maxChars,
-              });
+              const tagResult = genericAtomNodeSearch(
+                doc,
+                node,
+                pos,
+                parent,
+                query,
+                {
+                  caseSensitive,
+                  maxChars,
+                  dataAttrName: 'tagValue',
+                  nodeName: 'tag',
+                  queryIdentifier: TagSearch.identifier,
+                  printStyle: '#',
+                },
+              );
               if (tagResult) {
                 results.matches.push(tagResult);
+              }
+              break;
+            }
+            case BACKLINK_SEARCH: {
+              const result = genericAtomNodeSearch(
+                doc,
+                node,
+                pos,
+                parent,
+                query,
+                {
+                  caseSensitive,
+                  maxChars,
+                  dataAttrName: 'path',
+                  nodeName: 'wikiLink',
+                  queryIdentifier: BacklinkSearch.identifier,
+                  printStyle: (s) => `[[${s}]]`,
+                },
+              );
+              if (result) {
+                results.matches.push(result);
               }
               break;
             }
