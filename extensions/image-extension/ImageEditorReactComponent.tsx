@@ -9,8 +9,6 @@ import {
   MenuGroup,
 } from '@bangle.dev/react-menu';
 
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
-
 import { menuKey } from './config';
 import {
   getImageAltScaleFactor,

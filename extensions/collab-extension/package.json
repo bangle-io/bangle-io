@@ -1,6 +1,7 @@
 {
   "name": "@bangle.io/collab-extension",
   "version": "0.0.0",
+  "description": "Extension to provide collaboration powers to a bangle editor",
   "authors": [
     {
       "name": "Kushan Joshi",

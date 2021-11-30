@@ -291,6 +291,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
       />
     );
   }
+
   if (inputModal.type === 'rename-note') {
     return <RenameNoteInputModal onDismiss={onDismiss} />;
   }

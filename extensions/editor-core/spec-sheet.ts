@@ -60,6 +60,6 @@ export const rawSpecs: RawSpecs[] = [
   strike.spec(),
   link.spec(),
   underline.spec(),
-  stopwatch.spec(),
+  // stopwatch.spec(),
   markdownFrontMatter.spec(),
 ];

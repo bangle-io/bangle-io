@@ -25,6 +25,8 @@ import { extensionName } from './config';
 
 const FZF_SEARCH_LIMIT = 64;
 const RECENT_SHOW_LIMIT = 6;
+const MAX_RECENTLY_USED_ITEMS = 3;
+const MAX_RECENTLY_USED_ITEMS_NO_QUERY = 10;
 
 const createPaletteObject = ({ wsPath, onClick }) => {
   const { fileName, dirPath } = resolvePath(wsPath);
@@ -78,7 +80,10 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
       });
 
       return [
-        ...recentlyUsedItems,
+        ...recentlyUsedItems.slice(
+          0,
+          query ? MAX_RECENTLY_USED_ITEMS : MAX_RECENTLY_USED_ITEMS_NO_QUERY,
+        ),
         ...otherWsPaths.map((wsPath, i) => {
           let obj = createPaletteObject({
             wsPath,
@@ -95,7 +100,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
           return obj;
         }),
       ];
-    }, [otherWsPaths, recentWsPaths, pushWsPath, dismissPalette]);
+    }, [otherWsPaths, recentWsPaths, query, pushWsPath, dismissPalette]);
 
     const onExecuteItem = useCallback(
       (getUid, sourceInfo) => {
