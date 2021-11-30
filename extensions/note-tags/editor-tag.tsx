@@ -132,6 +132,7 @@ export function editorTagSpec(): RawSpecs {
       inline: true,
       group: 'inline',
       selectable: false,
+      atom: true,
       draggable: true,
       toDOM,
       allowGapCursor: true,
