@@ -153,7 +153,7 @@ export function NoteOutline() {
   );
 }
 
-function useAutomaticScrollNodeIntoView(
+export function useAutomaticScrollNodeIntoView(
   firstNodeInViewPort: HeadingNodes[0] | undefined,
   lastClickedOnHeading: React.MutableRefObject<number>,
 ) {

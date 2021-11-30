@@ -137,39 +137,39 @@ para 2
     expect(button2?.style.paddingLeft).toBe('12px');
 
     expect(renderResult.container).toMatchInlineSnapshot(`
-          <div>
-            <div>
-              <div
-                class="note-outline_container flex flex-col"
+      <div>
+        <div>
+          <div
+            class="note-outline_container flex flex-col"
+          >
+            <button
+              aria-label="hello 1"
+              class="note-outline_first-node-in-viewport ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+              style="padding-left: 0px; padding-top: 4px; padding-bottom: 4px;"
+              type="button"
+            >
+              <span
+                class="text-sm truncate"
               >
-                <button
-                  aria-label="hello 1"
-                  class="ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
-                  style="padding-left: 0px; padding-top: 4px; padding-bottom: 4px;"
-                  type="button"
-                >
-                  <span
-                    class="text-sm truncate"
-                  >
-                    hello 1
-                  </span>
-                </button>
-                <button
-                  aria-label="hello 2"
-                  class="ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
-                  style="padding-left: 12px; padding-top: 4px; padding-bottom: 4px;"
-                  type="button"
-                >
-                  <span
-                    class="text-sm truncate"
-                  >
-                    hello 2
-                  </span>
-                </button>
-              </div>
-            </div>
+                hello 1
+              </span>
+            </button>
+            <button
+              aria-label="hello 2"
+              class="ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
+              style="padding-left: 12px; padding-top: 4px; padding-bottom: 4px;"
+              type="button"
+            >
+              <span
+                class="text-sm truncate"
+              >
+                hello 2
+              </span>
+            </button>
           </div>
-      `);
+        </div>
+      </div>
+    `);
   });
 
   test('renders headings when no focused editor', () => {
