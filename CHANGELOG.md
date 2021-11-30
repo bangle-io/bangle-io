@@ -1,6 +1,8 @@
-### HEAD
+### Nov 29, 2021
 
 - **Search, Backlink:** You can now search for Backlinks by prefixing search queries with `backlink:` followed by the path to the backlink.
+
+- **Outline:** The widget now auto scrolls to the current heading that you are viewing.
 
 ### Nov 26, 2021
 
