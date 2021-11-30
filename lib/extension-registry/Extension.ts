@@ -146,7 +146,7 @@ export class Extension<T = unknown> {
       );
     }
 
-    const { palettes, actions, sidebars } = application;
+    const { palettes, actions, sidebars, noteSidebarWidgets } = application;
 
     if (palettes) {
       if (!Array.isArray(palettes)) {
@@ -202,6 +202,17 @@ export class Extension<T = unknown> {
       ) {
         throw new Error('Extension: Invalid sidebars config.');
       }
+    }
+
+    if (
+      noteSidebarWidgets &&
+      !noteSidebarWidgets.every((s) => {
+        const validName =
+          typeof s.name === 'string' &&
+          s.name.startsWith('note-sidebar-widget::' + name + ':');
+        return validName;
+      })
+    ) {
     }
 
     return new Extension<ExtensionState>(

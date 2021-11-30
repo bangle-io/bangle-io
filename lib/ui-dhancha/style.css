@@ -96,6 +96,7 @@ body {
 
 .ui-dhancha_note-sidebar {
   flex-shrink: 0;
+  height: 100vh;
   width: var(--ui-dhancha_note-sidebar-width);
   z-index: 5;
   border-left: 1px solid var(--ui-dhancha_note-border-color);
