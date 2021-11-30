@@ -1,3 +1,7 @@
+### HEAD
+
+- **Search, Backlink:** You can now search for Backlinks by prefixing search queries with `backlink:` followed by the path to the backlink.
+
 ### Nov 26, 2021
 
 - **Outline:** Bangle now shows you outline of your document in a new note sidebar. To activate press the `Show note sidebar` button on your top right.
