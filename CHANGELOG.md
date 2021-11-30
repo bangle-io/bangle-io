@@ -1,3 +1,7 @@
+### Nov 29, 2021
+
+- **Outline:** The widget now auto scrolls to the current heading that you are viewing.
+
 ### Nov 26, 2021
 
 - **Outline:** Bangle now shows you outline of your document in a new note sidebar. To activate press the `Show note sidebar` button on your top right.

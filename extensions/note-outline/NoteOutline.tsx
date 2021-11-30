@@ -1,11 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Selection } from '@bangle.dev/pm';
 
 import { useActionHandler } from '@bangle.io/action-context';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { cx } from '@bangle.io/utils';
+import {
+  cx,
+  safeCancelIdleCallback,
+  safeRequestAnimationFrame,
+  safeRequestIdleCallback,
+} from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import {
@@ -14,15 +25,25 @@ import {
   watchHeadingsPluginKey,
 } from './config';
 
+// Time to wait after a click to
+// scroll to currently viewing heading.
+const HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN = 1000;
+
 export function NoteOutline() {
   const { focusedEditorId, getEditor, getEditorState } =
     useEditorManagerContext();
-
   const { wsName } = useWorkspaceContext();
-
   const [headingNodes, updateHeadingsState] = useState<
     HeadingNodes | undefined
   >();
+
+  const lastClickedOnHeading = useRef(0);
+
+  const firstNodeInViewPort = useMemo(() => {
+    return headingNodes?.find((r) => r.hasContentInsideViewport);
+  }, [headingNodes]);
+
+  useAutomaticScrollNodeIntoView(firstNodeInViewPort, lastClickedOnHeading);
 
   const updateHeadingNodes = useCallback(() => {
     const state = focusedEditorId != null && getEditorState(focusedEditorId);
@@ -38,15 +59,6 @@ export function NoteOutline() {
     updateHeadingsState(watchHeadingsPluginState.headings);
     return;
   }, [focusedEditorId, getEditorState]);
-
-  // Calculate headings on initial mount
-  useEffect(() => {
-    updateHeadingNodes();
-  }, [
-    // update heading nodes when wsName changes too
-    wsName,
-    updateHeadingNodes,
-  ]);
 
   useActionHandler(
     (action) => {
@@ -78,6 +90,7 @@ export function NoteOutline() {
         focusedEditor.focusView();
         const { dispatch, state } = focusedEditor.view;
         const tr = state.tr;
+        lastClickedOnHeading.current = Date.now();
         dispatch(
           tr
             .setSelection(Selection.near(tr.doc.resolve(item.offset)))
@@ -88,9 +101,14 @@ export function NoteOutline() {
     [focusedEditorId, getEditor],
   );
 
-  const firstNodeInViewPort = headingNodes?.find(
-    (r) => r.hasContentInsideViewport,
-  );
+  // Calculate headings on initial mount
+  useEffect(() => {
+    updateHeadingNodes();
+  }, [
+    // update heading nodes when wsName changes too
+    wsName,
+    updateHeadingNodes,
+  ]);
 
   return (
     <div className="note-outline_container flex flex-col">
@@ -99,8 +117,10 @@ export function NoteOutline() {
       )}
       {headingNodes?.map((r, i) => {
         let isQuiet: Parameters<typeof ActionButton>[0]['isQuiet'] = 'hoverBg';
+        let className = '';
         if (firstNodeInViewPort === r) {
           isQuiet = false;
+          className = 'note-outline_first-node-in-viewport';
         }
         if (r.isActive) {
           isQuiet = false;
@@ -111,6 +131,7 @@ export function NoteOutline() {
             isQuiet={isQuiet}
             variant={r.isActive ? 'primary' : 'secondary'}
             ariaLabel={r.title}
+            className={className}
             key={r.title + i}
             onPress={() => {
               onExecuteItem(r);
@@ -130,4 +151,40 @@ export function NoteOutline() {
       })}
     </div>
   );
+}
+
+export function useAutomaticScrollNodeIntoView(
+  firstNodeInViewPort: HeadingNodes[0] | undefined,
+  lastClickedOnHeading: React.MutableRefObject<number>,
+) {
+  const scrollIntoViewInProgress = useRef(false);
+
+  const scrollHeadingNodeIntoView = useCallback(() => {
+    if (
+      Date.now() - lastClickedOnHeading.current <
+      HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN
+    ) {
+      return;
+    }
+    const node = document.querySelector(
+      '.note-outline_container .note-outline_first-node-in-viewport',
+    );
+
+    safeRequestAnimationFrame(() => (node as any)?.scrollIntoViewIfNeeded());
+    scrollIntoViewInProgress.current = false;
+  }, [lastClickedOnHeading]);
+
+  useEffect(() => {
+    let callbackId;
+    if (!scrollIntoViewInProgress.current) {
+      scrollIntoViewInProgress.current = true;
+      callbackId = safeRequestIdleCallback(scrollHeadingNodeIntoView);
+    }
+    return () => {
+      if (callbackId != null) {
+        safeCancelIdleCallback(callbackId);
+      }
+      scrollIntoViewInProgress.current = false;
+    };
+  }, [firstNodeInViewPort, scrollHeadingNodeIntoView]);
 }
