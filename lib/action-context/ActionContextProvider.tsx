@@ -26,9 +26,17 @@ export function ActionContextProvider({ children }) {
     (action) => {
       const { name, value, ...others } = action;
       log({ name, value });
+
+      (window as any).Sentry?.addBreadcrumb?.({
+        type: 'action',
+        message: name,
+        timestamp: Date.now(),
+      });
+
       if (!name) {
         throw new Error('Action must have a name');
       }
+
       if (!actionNameSet.has(name)) {
         throw new Error('Unknown action ' + name);
       }
