@@ -31,7 +31,13 @@ export function genericAtomNodeSearch(
   const dataValue = caseSensitive
     ? node.attrs[dataAttrName]
     : node.attrs[dataAttrName].toLocaleLowerCase();
-  if (dataValue !== query.split(queryIdentifier)[1]) {
+  const parsedQuery = query.split(queryIdentifier)[1];
+
+  if (
+    dataValue !== parsedQuery &&
+    // allow for search xyz:*
+    parsedQuery !== '*'
+  ) {
     return undefined;
   }
 

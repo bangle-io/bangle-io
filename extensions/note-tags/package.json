@@ -31,11 +31,11 @@
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/inline-palette": "workspace:*",
+    "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",
-    "@bangle.io/search-pm-node": "workspace:*",
     "react": "^17.0.2"
   },
   "devDependencies": {
