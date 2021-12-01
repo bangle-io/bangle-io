@@ -5,7 +5,7 @@ import { inlinePalette } from '@bangle.io/inline-palette';
 
 import { BacklinkWidget } from './BacklinkWidget';
 import { extensionName, paletteMark, palettePluginKey } from './config';
-import { renderReactNodeView } from './editor/BackLinkNode';
+import { renderReactNodeView } from './editor/BacklinkNode';
 import { inlineBackLinkPlugin } from './editor/inline-backlink-plugin';
 import { InlineBacklinkPalette } from './editor/InlineBacklinkPalette';
 

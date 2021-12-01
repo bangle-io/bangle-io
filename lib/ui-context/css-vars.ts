@@ -63,8 +63,8 @@ export const cssVars = [
   'uiBangleButton-primary-hover-bgColor',
   'uiBangleButton-primary-hover-color',
   'uiBangleButton-primary-pressed-bgColor',
-  'backLink-backLink-bgColor',
-  'backLink-backLink-hover-bgColor',
-  'backLink-backLinkNotFound-bgColor',
-  'backLink-backLinkNotFound-hover-bgColor',
+  'backlink-backlink-bgColor',
+  'backlink-backlink-hover-bgColor',
+  'backlink-backlinkNotFound-bgColor',
+  'backlink-backlinkNotFound-hover-bgColor',
 ];

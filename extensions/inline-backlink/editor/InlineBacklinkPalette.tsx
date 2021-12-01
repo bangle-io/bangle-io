@@ -18,21 +18,21 @@ import {
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { backLinkNodeName, palettePluginKey } from '../config';
+import { backlinkNodeName, palettePluginKey } from '../config';
 import { getBacklinkPath, wsPathFromQuery } from '../utils';
 
 const FZF_SEARCH_LIMIT = 12;
 
 // Creating this also closes the palette
-const createBackLinkNode = (wsPath, allNoteWsPaths) => {
+const createBacklinkNode = (wsPath, allNoteWsPaths) => {
   return (state, dispatch, view) => {
-    const nodeType = state.schema.nodes[backLinkNodeName];
-    const backLinkPath = getBacklinkPath(wsPath, allNoteWsPaths);
+    const nodeType = state.schema.nodes[backlinkNodeName];
+    const backlinkPath = getBacklinkPath(wsPath, allNoteWsPaths);
 
     return replaceSuggestionMarkWith(
       palettePluginKey,
       nodeType.create({
-        path: backLinkPath,
+        path: backlinkPath,
       }),
     )(state, dispatch, view);
   };
@@ -91,7 +91,7 @@ function InlineBacklinkPaletteInner({
         uid: wsPath,
         title: removeMdExtension(resolvePath(wsPath).filePath),
         editorExecuteCommand: () => {
-          return createBackLinkNode(wsPath, noteWsPaths);
+          return createBacklinkNode(wsPath, noteWsPaths);
         },
       };
     });
@@ -110,7 +110,7 @@ function InlineBacklinkPaletteInner({
         wsPath: wsPath,
         title: 'Create: ' + removeMdExtension(resolvePath(wsPath).filePath),
         editorExecuteCommand: () => {
-          return createBackLinkNode(wsPath, noteWsPaths);
+          return createBacklinkNode(wsPath, noteWsPaths);
         },
       };
       res = insertAt(res, 1, createItem);
@@ -134,7 +134,7 @@ function InlineBacklinkPaletteInner({
         view,
       );
     } else if (query.endsWith(']]')) {
-      createBackLinkNode(wsPathFromQuery(query, wsName), noteWsPaths)(
+      createBacklinkNode(wsPathFromQuery(query, wsName), noteWsPaths)(
         view.state,
         view.dispatch,
         view,
