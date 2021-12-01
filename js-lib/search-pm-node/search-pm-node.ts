@@ -1,5 +1,6 @@
 import type { Node } from '@bangle.dev/pm';
 
+import { DEFAULT_CONCURRENCY } from './config';
 import { genericAtomNodeSearch } from './generic-atom-node-search';
 import { pMap } from './p-map';
 import type { SearchResultItem } from './types';
@@ -28,7 +29,7 @@ export async function searchPmNode(
   signal: AbortSignal,
   atomSearchTypes: AtomSearchTypes[] = [],
   {
-    concurrency = 10,
+    concurrency = DEFAULT_CONCURRENCY,
     caseSensitive = false,
     maxChars = 75,
     perFileMatchMax = 200,

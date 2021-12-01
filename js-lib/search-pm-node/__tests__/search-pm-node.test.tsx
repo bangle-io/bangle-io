@@ -1,24 +1,48 @@
-import noteTags from '@bangle.io/note-tags';
-import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
-import { sleep } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+/**
+ * @jest-environment jsdom
+ */
 
-import { CONCURRENCY } from '../constants';
+/** @jsx psx */
+/// <reference path="../../../missing-test-types.d.ts" />
+/// <reference path="./missing-test-types.d.ts" />
+
+import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
+import { SpecRegistry } from '@bangle.dev/core';
+import { PluginKey } from '@bangle.dev/pm';
+import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
+import { wikiLink } from '@bangle.dev/wiki-link';
+
+import { DEFAULT_CONCURRENCY } from '../config';
 import {
+  AtomSearchTypes,
   endStringWithWord,
   getMatchFragment,
   matchText,
-  searchNotes,
+  searchPmNode,
   startStringWithWord,
-} from '../search-notes';
+} from '../search-pm-node';
+
+test.todo('Can search by *');
+
+function sleep(t = 20) {
+  return new Promise((res) => setTimeout(res, t));
+}
 
 describe('Plain text search', () => {
-  const createEditor = (md) => {
-    return createPMNode()(md);
+  const specRegistry = new SpecRegistry([...defaultSpecs()]);
+  const plugins = [...defaultPlugins()];
+
+  const testEditor = renderTestEditor({
+    specRegistry,
+    plugins,
+  });
+
+  const makeDoc = (doc) => {
+    return testEditor(doc).view.state.doc;
   };
 
-  test('works with empty data', async () => {
-    const result = await searchNotes(
+  test('works with undefined data', async () => {
+    const result = await searchPmNode(
       '',
       [],
       () => {
@@ -29,23 +53,51 @@ describe('Plain text search', () => {
 
     expect(result).toMatchInlineSnapshot(`Array []`);
   });
+  test('works with empty data', async () => {
+    const doc = makeDoc(
+      <doc>
+        <para></para>
+      </doc>,
+    );
+
+    const cb = jest.fn(async () => {
+      return doc;
+    });
+
+    const result = await searchPmNode(
+      's',
+      ['uid-1'],
+      cb,
+      new AbortController().signal,
+    );
+
+    expect(result).toMatchInlineSnapshot(`Array []`);
+    expect(cb).toBeCalledTimes(1);
+  });
 
   test('Maps large data', async () => {
     const query = 'test';
     const controller = new AbortController();
     const fileData = Array.from({ length: 1000 }, () => ({
       name: '1.md',
-      text: `- I am a list`,
+      node: makeDoc(
+        <doc>
+          <ul>
+            <li>
+              <para>I am a list</para>
+            </li>
+          </ul>
+        </doc>,
+      ),
     }));
 
-    const mapper = jest.fn(async (wsPath) => {
-      return createEditor(
-        fileData.find((r) => r.name === resolvePath(wsPath).fileName)?.text,
-      );
+    const mapper = jest.fn(async (uid) => {
+      return fileData.find((r) => r.name === uid)?.node!;
     });
-    const res = searchNotes(
+
+    const res = searchPmNode(
       query,
-      fileData.map((f) => `test-ws:${f.name}`),
+      fileData.map((f) => f.name),
       mapper,
       controller.signal,
     );
@@ -60,18 +112,24 @@ describe('Plain text search', () => {
     const controller = new AbortController();
     const fileData = Array.from({ length: 1000 }, () => ({
       name: '1.md',
-      text: `- I am a list`,
+      node: makeDoc(
+        <doc>
+          <ul>
+            <li>
+              <para>I am a list</para>
+            </li>
+          </ul>
+        </doc>,
+      ),
     }));
 
-    const mapper = jest.fn(async (wsPath) => {
-      await sleep(10);
-      return createEditor(
-        fileData.find((r) => r.name === resolvePath(wsPath).fileName)?.text,
-      );
+    const mapper = jest.fn(async (uid) => {
+      return fileData.find((r) => r.name === uid)?.node!;
     });
-    const res = searchNotes(
+
+    const res = searchPmNode(
       query,
-      fileData.map((f) => `test-ws:${f.name}`),
+      fileData.map((f) => f.name),
       mapper,
       controller.signal,
     );
@@ -80,25 +138,39 @@ describe('Plain text search', () => {
 
     await expect(res).rejects.toThrowError(`Aborted`);
     // only the ones in flight would be called
-    expect(mapper).toBeCalledTimes(CONCURRENCY);
+    expect(mapper).toBeCalledTimes(DEFAULT_CONCURRENCY);
   });
 
   describe('Works with simple data', () => {
-    const getResult = async (query, fileData) =>
-      searchNotes(
+    const getResult = async (
+      query,
+      fileData: Array<{ name: string; node: any }>,
+    ) => {
+      return searchPmNode(
         query,
-        fileData.map((f) => `test-ws:${f.name}`),
-        async (wsPath) => {
-          return createEditor(
-            fileData.find((r) => r.name === resolvePath(wsPath).fileName).text,
-          );
+        fileData.map((f) => f.name),
+        async (uid) => {
+          return fileData.find((r) => r.name === uid)?.node!;
         },
         new AbortController().signal,
       );
-
+    };
     test('empty query should return no data', async () => {
       expect(
-        await getResult('', [{ name: '1.md', text: `- I am a list` }]),
+        await getResult('', [
+          {
+            name: '1.md',
+            node: makeDoc(
+              <doc>
+                <ul>
+                  <li>
+                    <para>I am a list</para>
+                  </li>
+                </ul>
+              </doc>,
+            ),
+          },
+        ]),
       ).toEqual([]);
     });
 
@@ -108,7 +180,18 @@ describe('Plain text search', () => {
           await getResult('Beauty', [
             {
               name: '1.md',
-              text: `- Beauty is a subjective matter\n - ugliness and beauty go hand in hand`,
+              node: makeDoc(
+                <doc>
+                  <ul>
+                    <li>
+                      <para>Beauty is a subjective matter</para>
+                    </li>
+                    <li>
+                      <para>ugliness and beauty go hand in hand</para>
+                    </li>
+                  </ul>
+                </doc>,
+              ),
             },
           ])
         )?.[0]?.matches,
@@ -128,7 +211,16 @@ describe('Plain text search', () => {
 
     test('simple query', async () => {
       expect(
-        await getResult('para', [{ name: '1.md', text: `I am a paragraph` }]),
+        await getResult('para', [
+          {
+            name: '1.md',
+            node: makeDoc(
+              <doc>
+                <para>I am a paragraph</para>
+              </doc>,
+            ),
+          },
+        ]),
       ).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -143,7 +235,7 @@ describe('Plain text search', () => {
               "parentPos": 0,
             },
           ],
-          "wsPath": "test-ws:1.md",
+          "uid": "1.md",
         },
       ]
     `);
@@ -151,7 +243,16 @@ describe('Plain text search', () => {
 
     test('no match', async () => {
       expect(
-        await getResult('what', [{ name: '1.md', text: `I am a paragraph` }]),
+        await getResult('what', [
+          {
+            name: '1.md',
+            node: makeDoc(
+              <doc>
+                <para>I am a paragraph</para>
+              </doc>,
+            ),
+          },
+        ]),
       ).toMatchInlineSnapshot(`Array []`);
     });
 
@@ -161,7 +262,16 @@ describe('Plain text search', () => {
 
     test('works if file has no data', async () => {
       expect(
-        await getResult('what', [{ name: '1.md', text: `` }]),
+        await getResult('what', [
+          {
+            name: '1.md',
+            node: makeDoc(
+              <doc>
+                <para></para>
+              </doc>,
+            ),
+          },
+        ]),
       ).toMatchInlineSnapshot(`Array []`);
     });
 
@@ -170,7 +280,18 @@ describe('Plain text search', () => {
         await getResult('what', [
           {
             name: '1.md',
-            text: `- what is what in real life?\n > what do you think about that question`,
+            node: makeDoc(
+              <doc>
+                <ul>
+                  <li>
+                    <para>what is what in real life?</para>
+                  </li>
+                </ul>
+                <blockquote>
+                  <para>what do you think about that question</para>
+                </blockquote>
+              </doc>,
+            ),
           },
         ]),
       ).toMatchInlineSnapshot(`
@@ -205,7 +326,7 @@ describe('Plain text search', () => {
               "parentPos": 33,
             },
           ],
-          "wsPath": "test-ws:1.md",
+          "uid": "1.md",
         },
       ]
     `);
@@ -214,9 +335,30 @@ describe('Plain text search', () => {
     test('multiple files where some files have no match', async () => {
       expect(
         await getResult('hunter', [
-          { name: '1.md', text: `bounty hunter` },
-          { name: '2.md', text: 'madness' },
-          { name: '3.md', text: 'booty hunter' },
+          {
+            name: '1.md',
+            node: makeDoc(
+              <doc>
+                <para>bounty hunter</para>
+              </doc>,
+            ),
+          },
+          {
+            name: '2.md',
+            node: makeDoc(
+              <doc>
+                <para>madness</para>
+              </doc>,
+            ),
+          },
+          {
+            name: '3.md',
+            node: makeDoc(
+              <doc>
+                <para>booty hunter</para>
+              </doc>,
+            ),
+          },
         ]),
       ).toMatchInlineSnapshot(`
       Array [
@@ -232,7 +374,7 @@ describe('Plain text search', () => {
               "parentPos": 0,
             },
           ],
-          "wsPath": "test-ws:1.md",
+          "uid": "1.md",
         },
         Object {
           "matches": Array [
@@ -246,7 +388,7 @@ describe('Plain text search', () => {
               "parentPos": 0,
             },
           ],
-          "wsPath": "test-ws:3.md",
+          "uid": "3.md",
         },
       ]
     `);
@@ -466,96 +608,180 @@ describe('getMatchFragment', () => {
   });
 });
 
-describe('understands tag searching', () => {
-  const createEditor = (md) => {
-    return createPMNode([noteTags])(md);
+describe('understands atom node searching', () => {
+  const specRegistry = new SpecRegistry([...defaultSpecs(), wikiLink.spec()]);
+
+  const testEditor = renderTestEditor({
+    specRegistry,
+    plugins: [],
+  });
+
+  const makeDoc = (doc) => {
+    return testEditor(doc).view.state.doc;
   };
 
-  const getResult = async (query, fileData) =>
-    searchNotes(
+  const getResult = async (
+    query,
+    fileData: Array<{ name: string; node: any }>,
+  ) => {
+    return searchPmNode(
       query,
-      fileData.map((f) => `test-ws:${f.name}`),
-      async (wsPath) => {
-        return createEditor(
-          fileData.find((r) => r.name === resolvePath(wsPath).fileName).text,
-        );
+      fileData.map((f) => f.name),
+      async (uid) => {
+        return fileData.find((r) => r.name === uid)?.node!;
       },
       new AbortController().signal,
+      [
+        {
+          nodeName: 'wikiLink',
+          dataAttrName: 'path',
+          printStyle: (str) => '[[' + str + ']]',
+          queryIdentifier: 'backlink:',
+        },
+      ],
     );
+  };
 
   test('list before tag does not show up', async () => {
-    const results = await getResult('tag:awesome-tag', [
+    const results = await getResult('backlink:awesome-wikiLink', [
       {
         name: '1.md',
-        text: `#sad
-
-- I am a list
-
-hello I am an #awesome-tag`,
+        node: makeDoc(
+          <doc>
+            <para>
+              <wikiLink path="sad" />
+            </para>
+            <ul>
+              <li>
+                <para>I am a list</para>
+              </li>
+            </ul>
+            <para>
+              hello I am a <wikiLink path="awesome-wikiLink" />
+            </para>
+          </doc>,
+        ),
       },
     ]);
+
     expect(results).toHaveLength(1);
     expect(results?.[0]?.matches).toEqual([
       {
-        match: ['hello I am an ', '#awesome-tag', ''],
+        match: ['hello I am a ', '[[awesome-wikiLink]]', ''],
         parent: 'paragraph',
-        parentPos: 35,
+        parentPos: 34,
       },
     ]);
   });
 
   test('soft break in list shows up as a white space', async () => {
-    const results = await getResult('tag:awesome-tag', [
+    const results = await getResult('backlink:awesome-wikiLink', [
       {
         name: '1.md',
-        text: `#sad
-- I am a list\nhello I am an #awesome-tag`,
+
+        node: makeDoc(
+          <doc>
+            <para>
+              <wikiLink path="sad" />
+            </para>
+            <ul>
+              <li>
+                <para>
+                  I am a list{'\n'}
+                  hello I am a <wikiLink path="awesome-wikiLink" />{' '}
+                </para>
+              </li>
+            </ul>
+          </doc>,
+        ),
       },
     ]);
+
     expect(results).toHaveLength(1);
     expect(results?.[0]?.matches).toEqual([
       {
-        match: ['I am a list\nhello I am an ', '#awesome-tag', ''],
+        match: ['I am a list\nhello I am a ', '[[awesome-wikiLink]]', ''],
         parent: 'paragraph',
-        parentPos: 32,
+        parentPos: 31,
       },
     ]);
   });
 
   test('text after shows up', async () => {
-    const results = await getResult('tag:awesome-tag', [
+    const results = await getResult('backlink:awesome-wikiLink', [
       {
         name: '1.md',
-        text: `I am an #awesome-tag in this small world`,
+        node: makeDoc(
+          <doc>
+            <para>
+              I am a <wikiLink path="awesome-wikiLink" /> in this small world
+            </para>
+          </doc>,
+        ),
       },
     ]);
+
     expect(results).toHaveLength(1);
     expect(results?.[0]?.matches).toEqual([
       {
-        match: ['I am an ', '#awesome-tag', ' in this small world'],
+        match: ['I am a ', '[[awesome-wikiLink]]', ' in this small world'],
         parent: 'paragraph',
-        parentPos: 9,
+        parentPos: 8,
       },
     ]);
   });
 
   test('shows ellipsis at start', async () => {
-    const results = await getResult('tag:awesome-tag', [
+    const results = await getResult('backlink:awesome-wikiLink', [
       {
         name: '1.md',
-        text: `sas once in the eyes of breath you helplessly want to compare to nobody you #awesome-tag in this small world`,
+        node: makeDoc(
+          <doc>
+            <para>
+              sas once in the eyes of breath you helplessly want to compare to
+              nobody you <wikiLink path="awesome-wikiLink" /> in this small
+              world
+            </para>
+          </doc>,
+        ),
       },
     ]);
+
     expect(results).toHaveLength(1);
     expect(results?.[0]?.matches).toEqual([
       {
         match: [
           '…as once in the eyes of breath you helplessly want to compare to nobody you ',
-          '#awesome-tag',
+          '[[awesome-wikiLink]]',
           ' in this small world',
         ],
         parent: 'paragraph',
         parentPos: 77,
+      },
+    ]);
+  });
+
+  test('renders nearby atom nodes correctly', async () => {
+    const results = await getResult('backlink:awesome-wikiLink', [
+      {
+        name: '1.md',
+        node: makeDoc(
+          <doc>
+            <para>
+              I am
+              <br /> a <wikiLink path="awesome-wikiLink" /> in this small world
+            </para>
+          </doc>,
+        ),
+      },
+    ]);
+
+    expect(results).toHaveLength(1);
+    expect(results?.[0]?.matches).toEqual([
+      {
+        match: ['I am🖼️ a ', '[[awesome-wikiLink]]', ' in this small world'],
+        parent: 'paragraph',
+        parentPos: 9,
       },
     ]);
   });

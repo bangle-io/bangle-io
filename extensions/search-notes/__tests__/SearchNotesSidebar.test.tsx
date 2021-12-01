@@ -80,7 +80,7 @@ test('renders correctly workspace is opened', async () => {
 
 test('show search results', async () => {
   const searchResultItem: SearchResultItem = {
-    wsPath: 'test-ws:one.md',
+    uid: 'test-ws:one.md',
     matches: [{ parent: 'para', parentPos: 0, match: ['hello', ' world'] }],
   };
   useWorkspaceContextReturn.wsName = 'test-ws';

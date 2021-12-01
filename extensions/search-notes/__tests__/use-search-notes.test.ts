@@ -28,15 +28,6 @@ jest.mock('../constants', () => {
 
 let useWorkspaceContextReturn, useExtensionStateReturn;
 
-// let abortSpy;
-
-// beforeEach(() => {
-//   abortSpy = jest.spyOn(AbortController.prototype, 'abort');
-// });
-// afterEach(() => {
-//   abortSpy.mockRestore();
-// });
-
 beforeEach(() => {
   useWorkspaceContextReturn = {
     wsName: undefined,
@@ -119,7 +110,7 @@ test('works with existing search query', async () => {
             parentPos: 2,
           },
         ],
-        wsPath: 'test-ws:one.md',
+        uid: 'test-ws:one.md',
       },
     ],
   });

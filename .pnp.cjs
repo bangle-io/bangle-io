@@ -4825,7 +4825,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/core", "virtual:8e89f4af6f1d7453bda294bd8cc23c627ea194432edaa7f0a6fc4df33822b8ed438394de7cf4473a99ab800c85f3cf651b097a9791cc8ac91e8f23c0552bc692#npm:0.28.1"],
             ["@bangle.dev/pm", "npm:0.28.1"],
             ["@bangle.dev/test-helpers", "npm:0.28.1"],
-            ["@bangle.dev/utils", "virtual:8e89f4af6f1d7453bda294bd8cc23c627ea194432edaa7f0a6fc4df33822b8ed438394de7cf4473a99ab800c85f3cf651b097a9791cc8ac91e8f23c0552bc692#npm:0.28.1"]
+            ["@bangle.dev/utils", "virtual:8e89f4af6f1d7453bda294bd8cc23c627ea194432edaa7f0a6fc4df33822b8ed438394de7cf4473a99ab800c85f3cf651b097a9791cc8ac91e8f23c0552bc692#npm:0.28.1"],
+            ["@bangle.dev/wiki-link", "virtual:fa413344bbe81c2b78a3b0b5eaf673e3ce3285c432e9716808f7c5d91cf78785fc0fa98a318486f44e691670d68a4532afb32886d68cf7bee14af8e64c63c510#npm:0.28.1"]
           ],
           "linkType": "SOFT",
         }]
