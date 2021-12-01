@@ -10,7 +10,6 @@ const {
   sleep,
   url,
   waitForSecondaryEditorFocus,
-  jestDebug,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);

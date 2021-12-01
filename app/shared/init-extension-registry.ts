@@ -21,6 +21,7 @@ export const initExtensionRegistry = () => {
     editorCore,
     collabExtension,
     inlineCommandPalette,
+    noteOutline,
     inlineBacklinkPalette,
     noteTags,
     collapsibleHeading,
@@ -29,7 +30,6 @@ export const initExtensionRegistry = () => {
     coreActions,
     noteBrowser,
     searchNotes,
-    noteOutline,
     // NOTE: keep the core palette last
     // as it has note palette in it
     corePalette,

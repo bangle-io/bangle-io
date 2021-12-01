@@ -42,3 +42,12 @@
   border: 1px solid var(--window-borderColor-0);
   box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 28px;
 }
+
+.inline-backlink_widget-container .highlight-text:nth-of-type(2n) {
+  background-color: var(--window-highlight-bgColor);
+}
+
+.inline-backlink_widget-container .inline-backlink_widget-occurrence-count {
+  background-color: var(--window-bgColor-2);
+  padding: 0.125rem;
+}

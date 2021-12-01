@@ -87,6 +87,7 @@ exports[`show search results 1`] = `
       <div
         class="b-sidebar-row2 hover search-result-note-match pl-1 pr-3  select-none"
         data-id="search-notes-result-0"
+        role="button"
         style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
       >
         <div
@@ -155,6 +156,7 @@ exports[`show search results 1`] = `
         <div
           class="b-sidebar-row2 hover search-result-text-match ml-1 pl-3 rounded-sm mt-3"
           data-id="search-result-text-match-0"
+          role="button"
           style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
         >
           <div

@@ -44,6 +44,7 @@ export function Row2({
 
   return (
     <div
+      role="button"
       data-id={item.uid}
       onClick={onClick}
       className={cx(
