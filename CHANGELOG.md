@@ -1,3 +1,7 @@
+### Dec 1, 2021
+
+- **Backlink:** You can now see Backlinks to your focused note in the note sidebar.
+
 ### Nov 29, 2021
 
 - **Search, Backlink:** You can now search for Backlinks by prefixing search queries with `backlink:` followed by the path to the backlink.
