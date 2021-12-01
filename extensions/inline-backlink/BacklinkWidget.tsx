@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import type { HighlightTextType, SearchMatch } from '@bangle.io/search-pm-node';
-import { searchPmNode, SearchResultItem } from '@bangle.io/search-pm-node';
+import { searchPmNode } from '@bangle.io/search-pm-node';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -34,8 +34,8 @@ export function BacklinkWidget() {
   const makeOnClick = useClickToNote(pushWsPath);
   const [openedItems, updateOpenedItems] = useState(new Set<string>());
   const isCollapsed = useCallback(
-    (r: SearchResultItem) => {
-      return !openedItems.has(r.uid);
+    (r: BacklinkSearchResult) => {
+      return !openedItems.has(r.wsPath);
     },
     [openedItems],
   );
@@ -96,7 +96,7 @@ export function BacklinkWidget() {
               />
               {!isCollapsed(r) &&
                 r.matches.map((matchObj, j) => (
-                  <button key={j} onClick={makeOnClick(r.uid)}>
+                  <button key={j} onClick={makeOnClick(r.wsPath)}>
                     <Sidebar.Row2
                       className={
                         'search-result-text-match ml-1 pl-3 rounded ' +
