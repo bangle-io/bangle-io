@@ -20,14 +20,11 @@ import {
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import {
+  HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN,
   HeadingNodes,
   WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION,
   watchHeadingsPluginKey,
 } from './config';
-
-// Time to wait after a click to
-// scroll to currently viewing heading.
-const HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN = 1000;
 
 export function NoteOutline() {
   const { focusedEditorId, getEditor, getEditorState } =

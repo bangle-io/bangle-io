@@ -1,4 +1,4 @@
-import { BaseError } from '@bangle.io/utils';
+import { BaseError, removeMdExtension } from '@bangle.io/utils';
 
 const getLast = (arr) => arr[arr.length - 1];
 
@@ -181,6 +181,7 @@ export function resolvePath(wsPath: string) {
     filePath, // wsName:filePath
     dirPath, // wsName:dirPath/fileName
     fileName,
+    fileNameWithoutExt: removeMdExtension(fileName),
     locationPath: '/ws/' + wsName + '/' + filePath,
   };
 }

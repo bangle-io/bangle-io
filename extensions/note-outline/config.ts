@@ -29,3 +29,6 @@ export const WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION =
 export function getWatchPluginState(state: EditorState) {
   return watchHeadingsPluginKey.getState(state);
 }
+// Time to wait after a click to
+// scroll to currently viewing heading.
+export const HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN = 2500;
