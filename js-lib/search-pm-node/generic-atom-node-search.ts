@@ -1,6 +1,6 @@
 import type { Node } from '@bangle.dev/pm';
 
-import { SearchMatch } from './constants';
+import type { SearchMatch } from './types';
 
 export function genericAtomNodeSearch(
   doc: Node<any>,
@@ -21,10 +21,9 @@ export function genericAtomNodeSearch(
     nodeName: string;
     dataAttrName: string;
     queryIdentifier: string;
-    // if its a string it gets prefixed
-    printStyle: string | ((str: string) => string);
+    printStyle: (str: string) => string;
   },
-): undefined | SearchMatch {
+): SearchMatch | undefined {
   if (node.type.name !== nodeName) {
     return undefined;
   }
@@ -32,7 +31,13 @@ export function genericAtomNodeSearch(
   const dataValue = caseSensitive
     ? node.attrs[dataAttrName]
     : node.attrs[dataAttrName].toLocaleLowerCase();
-  if (dataValue !== query.split(queryIdentifier)[1]) {
+  const parsedQuery = query.split(queryIdentifier)[1];
+
+  if (
+    dataValue !== parsedQuery &&
+    // allow for search xyz:*
+    parsedQuery !== '*'
+  ) {
     return undefined;
   }
 
@@ -77,13 +82,7 @@ export function genericAtomNodeSearch(
   return {
     parent: parentName,
     parentPos: pos,
-    match: [
-      textBefore,
-      typeof printStyle === 'function'
-        ? printStyle(node.attrs[dataAttrName])
-        : printStyle + node.attrs[dataAttrName],
-      textAfter,
-    ],
+    match: [textBefore, printStyle(node.attrs[dataAttrName]), textAfter],
   };
 }
 // TODO move to something better

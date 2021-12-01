@@ -3,6 +3,7 @@ import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
 import { Extension } from '@bangle.io/extension-registry';
 import { inlinePalette } from '@bangle.io/inline-palette';
 
+import { BacklinkWidget } from './BacklinkWidget';
 import { extensionName, paletteMark, palettePluginKey } from './config';
 import { renderReactNodeView } from './editor/BackLinkNode';
 import { inlineBackLinkPlugin } from './editor/inline-backlink-plugin';
@@ -40,6 +41,15 @@ const extension = Extension.create({
     markdownItPlugins: [wikiLinkMarkdownItPlugin],
     ReactComponent: InlineBacklinkPalette,
     renderReactNodeView: renderReactNodeView,
+  },
+  application: {
+    noteSidebarWidgets: [
+      {
+        name: 'note-sidebar-widget::bangle-io-inline-backlink',
+        ReactComponent: BacklinkWidget,
+        title: 'Backlink references',
+      },
+    ],
   },
 });
 

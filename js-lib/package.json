@@ -6,7 +6,8 @@
     "fzf-search",
     "inline-palette",
     "object-sync",
-    "pm-plugins"
+    "pm-plugins",
+    "search-pm-node"
   ],
   "repository": {
     "directory": "js-lib",

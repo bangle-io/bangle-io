@@ -8,12 +8,7 @@
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';
 import { PluginKey } from '@bangle.dev/pm';
-import {
-  psx,
-  renderTestEditor,
-  sendKeyToPm,
-  typeText,
-} from '@bangle.dev/test-helpers';
+import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 
 import { getDocsChildren } from '..';
 import { intersectionObserverPlugin } from '../intersection-observer-plugin';

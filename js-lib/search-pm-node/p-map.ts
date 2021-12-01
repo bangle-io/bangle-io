@@ -1,4 +1,4 @@
-type Mapper<Element, NewElement> = (
+export type Mapper<Element, NewElement> = (
   element: Element,
   index: number,
 ) => NewElement | Promise<NewElement>;

@@ -4,6 +4,7 @@ import { NodeSelection, Selection } from '@bangle.dev/pm';
 
 import { NoteLink } from '@bangle.io/contextual-ui-components';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import type { SearchMatch, SearchResultItem } from '@bangle.io/search-pm-node';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -14,7 +15,6 @@ import { safeRequestAnimationFrame } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { SearchMatch, SearchResultItem } from '../constants';
 import { HighlightText } from './HighlightText';
 
 function useCollapseMarker(
@@ -157,8 +157,8 @@ export function SearchResults({
               item={{
                 uid: 'search-notes-result-' + i,
                 showDividerAbove: false,
-                title: resolvePath(r.wsPath).fileName,
-                extraInfo: resolvePath(r.wsPath).dirPath,
+                title: resolvePath(r.uid).fileName,
+                extraInfo: resolvePath(r.uid).dirPath,
                 leftNode: (
                   <ButtonIcon>
                     {isCollapsed(r) ? (
@@ -183,11 +183,11 @@ export function SearchResults({
             {!isCollapsed(r) &&
               r.matches.map((matchObj, j) => (
                 <NoteLink
-                  wsPath={r.wsPath}
+                  wsPath={r.uid}
                   onClick={() => {
                     if (primaryEditor && primaryEditor.destroyed !== true) {
                       updateCurrentlyClicked({
-                        wsPath: r.wsPath,
+                        wsPath: r.uid,
                         match: matchObj,
                         matchIndex: j,
                       });

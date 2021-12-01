@@ -38,7 +38,7 @@ test('Creating and clicking Backlinks works', async () => {
   // create note-1
   await page.keyboard.type('this is the zeroth note ');
 
-  await page.keyboard.type('[[note-1]]', { delay: 10 });
+  await page.keyboard.type('[[note-1]]', { delay: 30 });
 
   await waitForPrimaryEditorTextToContain(page, 'note-1');
 

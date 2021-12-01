@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { HighlightTextType } from '../constants';
+import type { HighlightTextType } from '@bangle.io/search-pm-node';
 
 export function HighlightText({
   highlightText,
