@@ -32,7 +32,7 @@ export function BacklinkWidget() {
   const backlinkSearchResult = useBacklinkSearch();
   const { pushWsPath } = useWorkspaceContext();
   const makeOnClick = useClickToNote(pushWsPath);
-  const [openedItems, updateOpenedItems] = useState(new Set<string>());
+  const [openedItems, updateOpenedItems] = useState(() => new Set<string>());
   const isCollapsed = useCallback(
     (r: BacklinkSearchResult) => {
       return !openedItems.has(r.wsPath);

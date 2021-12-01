@@ -91,28 +91,49 @@ test('renders with blank data', async () => {
 });
 
 test('renders backlinks', async () => {
+  // We have opened note-1
+  // which is referenced by note-2
   const noteWsPaths = [
-    'test-back-ws:other-note.md',
-    'test-back-ws:my-backlinked-note.md',
+    'test-back-ws:my-linked-note-2.md',
+    'test-back-ws:my-linked-note-1.md',
   ];
   const openedWsPaths = new OpenedWsPaths([
-    'test-back-ws:my-backlinked-note.md',
+    'test-back-ws:my-linked-note-1.md',
     undefined,
   ]);
 
-  let editor = createEditorFromMd(
+  let editor2 = createEditorFromMd(
     `
-# hello 1
+# This is note 2
 
-Hello here is a [[my-backlinked-note]]
+Hello here is a [[my-linked-note-1]]
 
-## hello 2 
 `,
     {
       extensions: [dummyBacklinkExt],
     },
   );
-  const getNote = jest.fn(async () => editor.view.state.doc);
+
+  let editor1 = createEditorFromMd(
+    `
+# This is note 1
+`,
+    {
+      extensions: [dummyBacklinkExt],
+    },
+  );
+
+  const getNote = jest.fn(async (wsPath) => {
+    if (wsPath.endsWith('-2.md')) {
+      return editor2.view.state.doc;
+    }
+    if (wsPath.endsWith('-1.md')) {
+      return editor1.view.state.doc;
+    }
+    throw new Error('Unknown wsPath sent ' + wsPath);
+  });
+
+  const pushWsPath = jest.fn();
 
   useWorkspaceContextMock.mockImplementation(() => {
     return {
@@ -121,6 +142,7 @@ Hello here is a [[my-backlinked-note]]
       noteWsPaths,
       openedWsPaths,
       getNote,
+      pushWsPath,
     };
   });
 
@@ -140,11 +162,51 @@ Hello here is a [[my-backlinked-note]]
   let targetOption;
   await waitFor(() => {
     targetOption = renderResult.container.querySelector(
-      '[data-id="test-back-ws:my-backlinked-note.md"]',
+      '[data-id="test-back-ws:my-linked-note-2.md"]',
     );
     expect(targetOption).toBeTruthy();
   });
 
-  expect(renderResult.container.innerHTML).toContain(`my-backlinked-note`);
+  expect(renderResult.container.innerHTML).toContain(`my-linked-note-2`);
   expect(renderResult.container).toMatchSnapshot();
+
+  const backlinkedPage = renderResult.container.querySelector(
+    '[data-id="test-back-ws:my-linked-note-2.md"]',
+  );
+
+  await fireEvent.click(backlinkedPage!);
+
+  expect(pushWsPath).toBeCalledTimes(1);
+  expect(pushWsPath).nthCalledWith(
+    1,
+    'test-back-ws:my-linked-note-2.md',
+    false,
+    false,
+  );
+
+  const expandButton = renderResult.container.querySelector(
+    '[data-id="test-back-ws:my-linked-note-2.md"] button',
+  );
+
+  await fireEvent.click(expandButton!);
+
+  expect(pushWsPath).toBeCalledTimes(1);
+
+  expect(renderResult.container.innerHTML).toContain('Hello here is a ');
+  expect(renderResult.container.innerHTML).toContain('[[my-linked-note-1]]');
+
+  expect(
+    renderResult.container.querySelector('.highlight-text-container'),
+  ).toMatchSnapshot();
+
+  await fireEvent.click(
+    renderResult.container.querySelector('.highlight-text-container')!,
+  );
+  expect(pushWsPath).toBeCalledTimes(2);
+  expect(pushWsPath).nthCalledWith(
+    2,
+    'test-back-ws:my-linked-note-2.md',
+    false,
+    false,
+  );
 });
