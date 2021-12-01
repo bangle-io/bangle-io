@@ -23,8 +23,13 @@ const IconStyle = {
   width: 16,
 };
 
+interface BacklinkSearchResult {
+  wsPath: string;
+  matches: Array<SearchMatch>;
+}
+
 export function BacklinkWidget() {
-  const backlinks = useBacklinkSearch();
+  const backlinkSearchResult = useBacklinkSearch();
   const { pushWsPath } = useWorkspaceContext();
   const makeOnClick = useClickToNote(pushWsPath);
   const [openedItems, updateOpenedItems] = useState(new Set<string>());
@@ -37,32 +42,32 @@ export function BacklinkWidget() {
 
   return (
     <div className="inline-backlink_widget-container flex flex-col">
-      {!backlinks || backlinks.length === 0 ? (
+      {!backlinkSearchResult || backlinkSearchResult.length === 0 ? (
         <span className="font-light">{'<No backlinks found>'}</span>
       ) : (
-        backlinks.map((r, i) => {
+        backlinkSearchResult.map((r, i) => {
           return (
             <React.Fragment key={i}>
               <Sidebar.Row2
                 titleClassName=""
                 className={'rounded text-sm truncate py-1 select-none'}
                 extraInfoClassName="ml-1 text-sm"
-                onClick={makeOnClick(r.uid)}
+                onClick={makeOnClick(r.wsPath)}
                 item={{
-                  uid: 'backlink-search-result-' + i,
+                  uid: r.wsPath,
                   showDividerAbove: false,
-                  title: resolvePath(r.uid).fileNameWithoutExt,
+                  title: resolvePath(r.wsPath).fileNameWithoutExt,
                   leftNode: (
                     <ButtonIcon
                       onClick={(e) => {
                         updateOpenedItems((items) => {
-                          if (items.has(r.uid)) {
+                          if (items.has(r.wsPath)) {
                             const clone = new Set(items);
-                            clone.delete(r.uid);
+                            clone.delete(r.wsPath);
                             return clone;
                           } else {
                             const clone = new Set(items);
-                            clone.add(r.uid);
+                            clone.add(r.wsPath);
                             return clone;
                           }
                         });
@@ -113,10 +118,10 @@ export function BacklinkWidget() {
   );
 }
 
-function useBacklinkSearch() {
+function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
   const { focusedEditorId } = useEditorManagerContext();
   const { wsName, noteWsPaths, openedWsPaths, getNote } = useWorkspaceContext();
-  const [results, updateResults] = useState<SearchResultItem[] | undefined>(
+  const [results, updateResults] = useState<BacklinkSearchResult[] | undefined>(
     undefined,
   );
 
@@ -148,8 +153,9 @@ function useBacklinkSearch() {
                 }
                 return false;
               });
+
               return {
-                ...r,
+                wsPath: r.uid,
                 matches: newMatches,
               };
             })
