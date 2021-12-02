@@ -139,6 +139,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/search-notes"
       },
       {
+        "name": "@bangle.io/abortable-worker",
+        "reference": "workspace:js-lib/abortable-worker"
+      },
+      {
         "name": "@bangle.io/baby-fs",
         "reference": "workspace:js-lib/baby-fs"
       },
@@ -157,6 +161,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "@bangle.io/object-sync",
         "reference": "workspace:js-lib/object-sync"
+      },
+      {
+        "name": "@bangle.io/object-uid",
+        "reference": "workspace:js-lib/object-uid"
       },
       {
         "name": "@bangle.io/pm-plugins",
@@ -266,6 +274,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "enableTopLevelFallback": true,
     "ignorePatternData": "(^(?:\\.yarn\\/sdks(?:\\/(?!\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)|$))$)",
     "fallbackExclusionList": [
+      ["@bangle.io/abortable-worker", ["workspace:js-lib/abortable-worker"]],
       ["@bangle.io/action-context", ["virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context", "workspace:lib/action-context"]],
       ["@bangle.io/activitybar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar", "workspace:app/activitybar"]],
       ["@bangle.io/app-entry", ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry", "workspace:app/app-entry"]],
@@ -302,6 +311,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/note-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar", "workspace:app/note-sidebar"]],
       ["@bangle.io/note-tags", ["workspace:extensions/note-tags"]],
       ["@bangle.io/object-sync", ["workspace:js-lib/object-sync"]],
+      ["@bangle.io/object-uid", ["workspace:js-lib/object-uid"]],
       ["@bangle.io/pm-plugins", ["workspace:js-lib/pm-plugins"]],
       ["@bangle.io/search-notes", ["workspace:extensions/search-notes"]],
       ["@bangle.io/search-pm-node", ["workspace:js-lib/search-pm-node"]],
@@ -3664,6 +3674,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@bangle.io/abortable-worker", [
+        ["workspace:js-lib/abortable-worker", {
+          "packageLocation": "./js-lib/abortable-worker/",
+          "packageDependencies": [
+            ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],
+            ["@bangle.io/object-uid", "workspace:js-lib/object-uid"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.io/action-context", [
         ["virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context", {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-action-context-virtual-6491d23686/1/lib/action-context/",
@@ -4762,6 +4782,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/object-sync/",
           "packageDependencies": [
             ["@bangle.io/object-sync", "workspace:js-lib/object-sync"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/object-uid", [
+        ["workspace:js-lib/object-uid", {
+          "packageLocation": "./js-lib/object-uid/",
+          "packageDependencies": [
+            ["@bangle.io/object-uid", "workspace:js-lib/object-uid"]
           ],
           "linkType": "SOFT",
         }]
