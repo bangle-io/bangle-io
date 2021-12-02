@@ -16,7 +16,11 @@ import {
   Sidebar,
 } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
-import { removeMdExtension, useLocalStorage } from '@bangle.io/utils';
+import {
+  removeMdExtension,
+  safeScrollIntoViewIfNeeded,
+  useLocalStorage,
+} from '@bangle.io/utils';
 import {
   useWorkspaceContext,
   WorkspaceContextType,
@@ -320,13 +324,8 @@ function RenderRow({
 
   useEffect(() => {
     if (isActive) {
-      if ('scrollIntoViewIfNeeded' in document.body) {
-        (elementRef.current as any)?.scrollIntoViewIfNeeded(false);
-      } else {
-        if (elementRef.current?.scrollIntoView) {
-          elementRef.current?.scrollIntoView(false);
-        }
-      }
+      elementRef.current &&
+        safeScrollIntoViewIfNeeded(elementRef.current, false);
     }
   }, [isActive]);
 

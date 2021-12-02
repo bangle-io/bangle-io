@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { cx, isTouchDevice } from '@bangle.io/utils';
+import {
+  cx,
+  isTouchDevice,
+  safeScrollIntoViewIfNeeded,
+} from '@bangle.io/utils';
 
 const PADDING_OFFSET = 16;
 const BASE_PADDING = 16;
@@ -46,13 +50,7 @@ export function InlinePaletteRow({
 
   useEffect(() => {
     if (scrollIntoViewIfNeeded && isActive) {
-      if ('scrollIntoViewIfNeeded' in document.body) {
-        (ref.current as any)?.scrollIntoViewIfNeeded(false);
-      } else {
-        if (ref.current?.scrollIntoView) {
-          ref.current?.scrollIntoView(false);
-        }
-      }
+      ref.current && safeScrollIntoViewIfNeeded(ref.current, false);
     }
   }, [scrollIntoViewIfNeeded, isActive]);
   const mouseEnter = useCallback(() => {

@@ -1,3 +1,15 @@
+export const safeScrollIntoViewIfNeeded = (
+  element: HTMLElement,
+  centerIfNeeded?: boolean,
+) => {
+  if (typeof window !== 'undefined') {
+    return 'scrollIntoViewIfNeeded' in document.body
+      ? (element as any).scrollIntoViewIfNeeded(centerIfNeeded)
+      : scrollIntoViewIfNeededPolyfill(element, centerIfNeeded);
+  }
+  return () => {};
+};
+
 let lastTime = 0;
 
 export const safeRequestAnimationFrame =
@@ -78,4 +90,57 @@ export function rafSchedule(fn) {
   };
 
   return wrapperFn;
+}
+
+function scrollIntoViewIfNeededPolyfill(
+  element: HTMLElement,
+  centerIfNeeded?: boolean,
+) {
+  centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
+
+  var parent = element.parentNode! as HTMLElement,
+    parentComputedStyle = window.getComputedStyle(parent, null),
+    parentBorderTopWidth = parseInt(
+      parentComputedStyle.getPropertyValue('border-top-width'),
+    ),
+    parentBorderLeftWidth = parseInt(
+      parentComputedStyle.getPropertyValue('border-left-width'),
+    ),
+    overTop = element.offsetTop - parent.offsetTop < parent.scrollTop,
+    overBottom =
+      element.offsetTop -
+        parent.offsetTop +
+        element.clientHeight -
+        parentBorderTopWidth >
+      parent.scrollTop + parent.clientHeight,
+    overLeft = element.offsetLeft - parent.offsetLeft < parent.scrollLeft,
+    overRight =
+      element.offsetLeft -
+        parent.offsetLeft +
+        element.clientWidth -
+        parentBorderLeftWidth >
+      parent.scrollLeft + parent.clientWidth,
+    alignWithTop = overTop && !overBottom;
+
+  if ((overTop || overBottom) && centerIfNeeded) {
+    parent.scrollTop =
+      element.offsetTop -
+      parent.offsetTop -
+      parent.clientHeight / 2 -
+      parentBorderTopWidth +
+      element.clientHeight / 2;
+  }
+
+  if ((overLeft || overRight) && centerIfNeeded) {
+    parent.scrollLeft =
+      element.offsetLeft -
+      parent.offsetLeft -
+      parent.clientWidth / 2 -
+      parentBorderLeftWidth +
+      element.clientWidth / 2;
+  }
+
+  if ((overTop || overBottom || overLeft || overRight) && !centerIfNeeded) {
+    element.scrollIntoView(alignWithTop);
+  }
 }

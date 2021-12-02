@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { ReactNode, useEffect, useRef } from 'react';
 
+import { safeScrollIntoViewIfNeeded } from '@bangle.io/utils';
+
 export interface ItemType {
   uid: string;
   title: ReactNode;
@@ -55,13 +57,7 @@ export function PaletteItemUI({
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (scrollIntoViewIfNeeded && isActive) {
-      if ('scrollIntoViewIfNeeded' in document.body) {
-        (ref.current as any)?.scrollIntoViewIfNeeded(false);
-      } else {
-        if (ref.current?.scrollIntoView) {
-          ref.current?.scrollIntoView(false);
-        }
-      }
+      ref.current && safeScrollIntoViewIfNeeded(ref.current, false);
     }
   }, [scrollIntoViewIfNeeded, isActive]);
 

@@ -16,6 +16,7 @@ import {
   safeCancelIdleCallback,
   safeRequestAnimationFrame,
   safeRequestIdleCallback,
+  safeScrollIntoViewIfNeeded,
 } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -167,7 +168,8 @@ export function useAutomaticScrollNodeIntoView(
       '.note-outline_container .note-outline_first-node-in-viewport',
     );
 
-    safeRequestAnimationFrame(() => (node as any)?.scrollIntoViewIfNeeded());
+    node instanceof HTMLElement &&
+      safeRequestAnimationFrame(() => safeScrollIntoViewIfNeeded(node, false));
     scrollIntoViewInProgress.current = false;
   }, [lastClickedOnHeading]);
 
