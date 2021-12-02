@@ -26,12 +26,19 @@
     "@bangle.dev/disk": "0.28.1",
     "@bangle.dev/pm": "0.28.1",
     "@bangle.dev/utils": "0.28.1",
+    "@bangle.io/abortable-worker": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/object-sync": "workspace:*",
+    "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspaces": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*",
     "idb-keyval": "^5.1.5"
+  },
+  "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*"
   }
 }

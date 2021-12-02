@@ -1,3 +1,4 @@
+import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
 import type { WorkerAPI } from '@bangle.io/naukar-worker';
 import { Emitter } from '@bangle.io/utils';
 
@@ -10,26 +11,36 @@ export const setNaukarReady = (_naukar) => {
   emitter.emit('ready', undefined);
 };
 
-export const naukarWorkerProxy = new Proxy<WorkerAPI>({} as any, {
-  get(_target, prop) {
-    if (naukar) {
-      return Reflect.get(naukar, prop);
-    }
-    return (...args) => {
-      return new Promise((res, rej) => {
-        const callback = () => {
-          try {
-            // curently only supports callable
-            let value = Reflect.apply(Reflect.get(naukar, prop), null, args);
-            res(value);
+const injectWaitOnWorkerReadyProxy: WorkerAPI = new Proxy<WorkerAPI>(
+  {} as any,
+  {
+    get(_target, prop) {
+      if (naukar) {
+        return Reflect.get(naukar, prop);
+      }
+
+      // untill naukar is not ready
+      // wrap the it in a promise which resolves
+      // when it is ready.
+      return (...args) => {
+        return new Promise((res, rej) => {
+          const callback = () => {
             emitter.off('ready', callback);
-          } catch (error) {
-            rej(error);
-            emitter.off('ready', callback);
-          }
-        };
-        emitter.on('ready', callback);
-      });
-    };
+            try {
+              // curently only supports callable
+              let value = Reflect.apply(Reflect.get(naukar, prop), null, args);
+              res(value);
+            } catch (error) {
+              rej(error);
+            }
+          };
+          emitter.on('ready', callback);
+        });
+      };
+    },
   },
-});
+);
+
+const injectAbortable = mainInjectAbortableProxy(injectWaitOnWorkerReadyProxy);
+
+export const naukarWorkerProxy = injectAbortable;
