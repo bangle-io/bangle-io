@@ -1,2 +1,2 @@
-export * from './main-abortable-proxy';
+export { mainInjectAbortableProxy } from './main-inject-abortable-proxy';
 export { workerAbortable } from './worker-abortable';

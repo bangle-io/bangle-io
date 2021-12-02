@@ -10,9 +10,9 @@ type Callback<T> = ({
   abortWrapper: <R extends any[], X>(
     abortableFunc: AbortableFunc<R, X>,
     // the return part is a lie
-    // because we wrap the function to take the first parameter
-    // as a string, but we want to keep to the types same
-    // as we expect the user to use proxy for accessing the function
+    // because we actually wrap the function to take the first parameter
+    // as a string (this is what allows from cross thread abortion), but since
+    //  we want to keep the types same as we expect the user to use proxy for accessing the function
   ) => AbortableFunc<R, X>;
 }) => T;
 
