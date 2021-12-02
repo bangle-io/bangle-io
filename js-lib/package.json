@@ -1,11 +1,13 @@
 {
   "name": "js-lib",
   "workspaces": [
+    "abortable-worker",
     "baby-fs",
     "base-error",
     "fzf-search",
     "inline-palette",
     "object-sync",
+    "object-uid",
     "pm-plugins",
     "search-pm-node"
   ],

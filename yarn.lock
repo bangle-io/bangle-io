@@ -1745,6 +1745,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bangle.io/abortable-worker@workspace:js-lib/abortable-worker":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/abortable-worker@workspace:js-lib/abortable-worker"
+  dependencies:
+    "@bangle.io/object-uid": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/action-context@workspace:*, @bangle.io/action-context@workspace:lib/action-context":
   version: 0.0.0-use.local
   resolution: "@bangle.io/action-context@workspace:lib/action-context"
@@ -2525,6 +2533,12 @@ __metadata:
 "@bangle.io/object-sync@workspace:*, @bangle.io/object-sync@workspace:js-lib/object-sync":
   version: 0.0.0-use.local
   resolution: "@bangle.io/object-sync@workspace:js-lib/object-sync"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/object-uid@workspace:*, @bangle.io/object-uid@workspace:js-lib/object-uid":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/object-uid@workspace:js-lib/object-uid"
   languageName: unknown
   linkType: soft
 
