@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { search } from '@bangle.dev/search';
 
@@ -28,7 +28,7 @@ export function useSearchNotesState() {
  * accordingly
  */
 export function useSearchNotes() {
-  const { wsName, noteWsPaths = [], getNote } = useWorkspaceContext();
+  const { wsName } = useWorkspaceContext();
   const counterRef = useRef(0);
   const controllerRef = useRef<AbortController>();
   const destroyedRef = useRef<boolean>(false);
@@ -75,15 +75,19 @@ export function useSearchNotes() {
     if (debouncedSearchQuery.length === 0) {
       return;
     }
+    if (!wsName) {
+      return;
+    }
     counterRef.current++;
     const startCounter = counterRef.current;
     const controller = new AbortController();
+    controllerRef.current?.abort();
     controllerRef.current = controller;
 
     updateResults(null);
     updatePendingSearch(true);
     updateLastSearchedFor(debouncedSearchQuery);
-    searchNotes(debouncedSearchQuery, noteWsPaths, getNote, controller.signal)
+    searchNotes(controller.signal, debouncedSearchQuery, wsName)
       .then((result) => {
         if (startCounter === counterRef.current) {
           updatePendingSearch(false);
@@ -102,10 +106,9 @@ export function useSearchNotes() {
         throw error;
       });
   }, [
+    wsName,
     lastSearchedFor,
     debouncedSearchQuery,
-    noteWsPaths,
-    getNote,
     updateResults,
     updatePendingSearch,
   ]);

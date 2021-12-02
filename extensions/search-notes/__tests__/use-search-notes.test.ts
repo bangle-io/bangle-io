@@ -1,10 +1,16 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import { useExtensionState } from '@bangle.io/extension-registry';
-import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { useSearchNotes } from '../hooks';
+
+jest.mock('@bangle.io/naukar-proxy', () => {
+  return {
+    naukarWorkerProxy: {},
+  };
+});
 
 jest.mock('@bangle.io/workspace-context', () => {
   return {
@@ -28,11 +34,15 @@ jest.mock('../constants', () => {
 
 let useWorkspaceContextReturn, useExtensionStateReturn;
 
+let abortableSearchWsForPmNodeMock: jest.MockedFunction<
+  typeof naukarWorkerProxy.abortableSearchWsForPmNode
+> = jest.fn();
+
 beforeEach(() => {
+  naukarWorkerProxy.abortableSearchWsForPmNode = abortableSearchWsForPmNodeMock;
+
   useWorkspaceContextReturn = {
     wsName: undefined,
-    noteWsPaths: [],
-    getNote: jest.fn(),
   };
 
   useExtensionStateReturn = [
@@ -50,10 +60,7 @@ beforeEach(() => {
 
 test('works with empty search query', async () => {
   useWorkspaceContextReturn.wsName = 'test-ws';
-  useWorkspaceContextReturn.noteWsPaths = ['test-ws:one.md'];
-  useWorkspaceContextReturn.getNote = jest.fn(async () => {
-    return createPMNode()('- hello world');
-  });
+
   let updateStateCalls: any[] = [];
   const updateState = jest.fn((_cb: any) => {
     updateStateCalls.push(_cb({}));
@@ -66,14 +73,26 @@ test('works with empty search query', async () => {
 
   renderHook(() => useSearchNotes());
   expect(updateState).toBeCalledTimes(0);
+  expect(abortableSearchWsForPmNodeMock).toBeCalledTimes(0);
 });
 
 test('works with existing search query', async () => {
-  useWorkspaceContextReturn.wsName = 'test-ws';
-  useWorkspaceContextReturn.noteWsPaths = ['test-ws:one.md'];
-  useWorkspaceContextReturn.getNote = jest.fn(async () => {
-    return createPMNode()('- hello world');
+  abortableSearchWsForPmNodeMock.mockImplementation(async () => {
+    return [
+      {
+        matches: [
+          {
+            match: ['', 'hello', ' world'],
+            parent: 'listItem',
+            parentPos: 2,
+          },
+        ],
+        uid: 'test-ws:one.md',
+      },
+    ];
   });
+
+  useWorkspaceContextReturn.wsName = 'test-ws';
   let updateStateCalls: any[] = [];
   const updateState = jest.fn((_cb: any) => {
     updateStateCalls.push(_cb({}));
@@ -88,6 +107,36 @@ test('works with existing search query', async () => {
 
   // let debounce happen
   await waitForNextUpdate();
+
+  expect(abortableSearchWsForPmNodeMock).toBeCalledTimes(1);
+  expect(abortableSearchWsForPmNodeMock).nthCalledWith(
+    1,
+    expect.any(AbortSignal),
+    'test-ws',
+    'hello',
+    [
+      {
+        dataAttrName: 'tagValue',
+        nodeName: 'tag',
+        printBefore: '#',
+        queryIdentifier: 'tag:',
+      },
+      {
+        dataAttrName: 'path',
+        nodeName: 'wikiLink',
+        printAfter: ']]',
+        printBefore: '[[',
+        queryIdentifier: 'backlink:',
+      },
+    ],
+    {
+      caseSensitive: false,
+      concurrency: 10,
+      maxChars: 75,
+      perFileMatchMax: 200,
+      totalMatchMax: 5000,
+    },
+  );
 
   expect(result.current).toBe(undefined);
   expect(updateState).toBeCalledTimes(4);

@@ -2,8 +2,6 @@ import { PluginKey } from '@bangle.dev/core';
 
 import type { SearchResultItem } from '@bangle.io/search-pm-node';
 
-export type { SearchResultItem } from '@bangle.io/search-pm-node';
-
 export const searchPluginKey = new PluginKey('search-plugin');
 export const DEBOUNCE_WAIT = 250;
 export const DEBOUNCE_MAX_WAIT = 2000;
