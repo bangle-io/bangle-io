@@ -1,6 +1,10 @@
 import { assertSignal } from './assert-signal';
 import { AbortControllers, WORKER_ABORTABLE_SERVICE_ABORTED } from './util';
 
+export type AbortableFunc<R extends any[], X> = (
+  abort: AbortSignal,
+  ...args: R
+) => Promise<X>;
 /**
  * ! Must be run in worker thread
  * This method wraps the abortable method and provides it with an AbortSignal
@@ -9,14 +13,16 @@ import { AbortControllers, WORKER_ABORTABLE_SERVICE_ABORTED } from './util';
  * @param abortableFunc - The abortable function to expose to main thread,
  *                       first parameter must be an 'AbortSignal'
  */
-export function workerAbortableMethodWrapper<T extends any[], X>(
+export function workerAbortableMethodWrapper(
   abortControllers: AbortControllers,
 ) {
-  return (abortableFunc: (abort: AbortSignal, ...args: T) => Promise<X>) =>
+  return <T extends any[], X>(
+      abortableFunc: (abort: AbortSignal, ...args: T) => Promise<X>,
+    ) =>
     async (uniqueAbortId: any, ...args: T): Promise<X> => {
       if (typeof uniqueAbortId !== 'string') {
         console.warn(
-          'You are probably calling this method incorrectly, please make sure to use the provided proxy',
+          'You are probably calling this method incorrectly, please make sure to use the provided prox  y',
         );
         throw new Error('Cannot execute: uniqueAbortId must be string');
       }

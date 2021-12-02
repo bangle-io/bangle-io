@@ -14,14 +14,16 @@ export function genericAtomNodeSearch(
     nodeName,
     dataAttrName,
     queryIdentifier,
-    printStyle,
+    printBefore,
+    printAfter,
   }: {
     caseSensitive: boolean;
     maxChars: number;
     nodeName: string;
     dataAttrName: string;
     queryIdentifier: string;
-    printStyle: (str: string) => string;
+    printBefore?: string;
+    printAfter?: string;
   },
 ): SearchMatch | undefined {
   if (node.type.name !== nodeName) {
@@ -82,7 +84,11 @@ export function genericAtomNodeSearch(
   return {
     parent: parentName,
     parentPos: pos,
-    match: [textBefore, printStyle(node.attrs[dataAttrName]), textAfter],
+    match: [
+      textBefore,
+      printBefore + node.attrs[dataAttrName] + printAfter,
+      textAfter,
+    ],
   };
 }
 // TODO move to something better

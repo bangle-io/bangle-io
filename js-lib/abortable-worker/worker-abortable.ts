@@ -1,13 +1,22 @@
 import { AbortControllers } from './util';
-import { workerAbortableMethodWrapper } from './worker-abortable-function-wrapper';
+import {
+  AbortableFunc,
+  workerAbortableMethodWrapper,
+} from './worker-abortable-function-wrapper';
 
-export function workerAbortable<T>(
-  cb: ({
-    abortWrapper,
-  }: {
-    abortWrapper: ReturnType<typeof workerAbortableMethodWrapper>;
-  }) => T,
-) {
+type Callback<T> = ({
+  abortWrapper,
+}: {
+  abortWrapper: <R extends any[], X>(
+    abortableFunc: AbortableFunc<R, X>,
+    // the return part is a lie
+    // because we wrap the function to take the first parameter
+    // as a string, but we want to keep to the types same
+    // as we expect the user to use proxy for accessing the function
+  ) => AbortableFunc<R, X>;
+}) => T;
+
+export function workerAbortable<T>(cb: Callback<T>) {
   let abortControllers: AbortControllers = new Map();
 
   return workerAbortHandler(
