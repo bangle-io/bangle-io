@@ -339,3 +339,10 @@ export function assertSignal(signal: AbortSignal) {
     throw new DOMException('AbortError', 'AbortError');
   }
 }
+
+export function isAbortError(error: unknown): boolean {
+  if (error instanceof DOMException && error.name === 'AbortError') {
+    return true;
+  }
+  return false;
+}

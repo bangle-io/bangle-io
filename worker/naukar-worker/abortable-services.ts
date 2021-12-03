@@ -1,8 +1,8 @@
 import { workerAbortable } from '@bangle.io/abortable-worker';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { searchPmNode } from '@bangle.io/search-pm-node';
-import { FileOps } from '@bangle.io/workspaces';
-import { isValidNoteWsPath } from '@bangle.io/ws-path';
+import { assertSignal } from '@bangle.io/utils';
+import { FileOps, fzfSearchNoteWsPaths } from '@bangle.io/workspaces';
 
 export function abortableServices({
   extensionRegistry,
@@ -14,6 +14,7 @@ export function abortableServices({
       abortableSearchWsForPmNode: abortWrapper(
         searchWsForPmNode(extensionRegistry),
       ),
+      abortableFzfSearchNoteWsPaths: abortWrapper(fzfSearchNoteWsPaths),
     };
   });
 
@@ -28,9 +29,8 @@ function searchWsForPmNode(extensionRegistry: ExtensionRegistry) {
     atomSearchTypes: Parameters<typeof searchPmNode>[4],
     opts?: Parameters<typeof searchPmNode>[5],
   ) => {
-    const wsPaths = (await FileOps.listAllFiles(wsName)).filter((wsPath) =>
-      isValidNoteWsPath(wsPath),
-    );
+    const wsPaths = await FileOps.listAllNotes(wsName);
+    assertSignal(abortSignal);
 
     const getDoc = async (wsPath: string) =>
       FileOps.getDoc(

@@ -25,6 +25,11 @@ import {
 import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './types';
 import { getWorkspaceInfo } from './workspaces-ops';
 
+export function listAllNotes(wsName: string): Promise<string[]> {
+  return listAllFiles(wsName).then((wsPaths) =>
+    wsPaths.filter((wsPath) => isValidNoteWsPath(wsPath)),
+  );
+}
 export async function listAllFiles(wsName: string) {
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
