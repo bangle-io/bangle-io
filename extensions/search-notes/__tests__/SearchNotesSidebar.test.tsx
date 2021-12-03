@@ -1,11 +1,11 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
+import type { SearchResultItem } from '@bangle.io/search-pm-node';
 import { sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
-import { SearchResultItem } from '../constants';
 import { useSearchNotesState } from '../hooks';
 
 jest.mock('@bangle.io/contextual-ui-components', () => {

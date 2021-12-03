@@ -12,7 +12,7 @@ const {
 } = require('../helpers');
 
 jest.setTimeout(155 * 1000);
-jest.retryTimes(1);
+jest.retryTimes(2);
 
 let page, destroyPage, wsName;
 

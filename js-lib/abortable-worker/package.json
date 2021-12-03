@@ -1,5 +1,6 @@
 {
-  "name": "@bangle.io/naukar-proxy",
+  "name": "@bangle.io/abortable-worker",
+  "description": "Provides tool to use methods across workers which accept AbortSignal in parameter",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "worker/naukar-proxy"
+    "directory": "js-lib/abortable-worker"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -19,13 +20,13 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.io/abortable-worker": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/object-uid": "workspace:*"
   },
   "devDependencies": {
-    "@bangle.io/naukar-worker": "workspace:*"
+    "@bangle.dev/pm": "0.28.1",
+    "@bangle.dev/utils": "0.28.1"
   },
-  "publishConfig": {}
+  "publishConfig": {
+    "access": "public"
+  }
 }

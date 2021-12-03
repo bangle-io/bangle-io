@@ -10,8 +10,9 @@ export async function pMap<Element, NewElement>(
   {
     concurrency = Number.POSITIVE_INFINITY,
     abortSignal,
-  }: { concurrency?: number; abortSignal?: AbortSignal } = {},
+  }: { concurrency?: number; abortSignal: AbortSignal },
 ): Promise<NewElement[]> {
+  assertSignal(abortSignal);
   return new Promise((resolve, reject) => {
     if (typeof mapper !== 'function') {
       throw new TypeError('Mapper function is required');
@@ -27,6 +28,7 @@ export async function pMap<Element, NewElement>(
         `Expected \`concurrency\` to be an integer from 1 and up or \`Infinity\`, got \`${concurrency}\` (${typeof concurrency})`,
       );
     }
+    assertSignal(abortSignal);
 
     const result: Array<NewElement> = [];
     const iterator = iterable[Symbol.iterator]();
@@ -82,4 +84,10 @@ export async function pMap<Element, NewElement>(
       }
     }
   });
+}
+
+export function assertSignal(signal: AbortSignal) {
+  if (signal.aborted) {
+    throw new DOMException('AbortError', 'AbortError');
+  }
 }

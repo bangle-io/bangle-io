@@ -1,14 +1,11 @@
-import type { Node } from '@bangle.dev/pm';
-
-import { searchPmNode } from '@bangle.io/search-pm-node';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 
 import { CONCURRENCY } from './constants';
 
 export async function searchNotes(
-  query: string,
-  noteWsPaths: string[],
-  getNote: (wsPath: string) => Promise<Node<any>>,
   signal: AbortSignal,
+  query: string,
+  wsName: string,
   {
     caseSensitive = false,
     maxChars = 75,
@@ -16,22 +13,22 @@ export async function searchNotes(
     totalMatchMax = 5000,
   } = {},
 ) {
-  return searchPmNode(
-    query,
-    noteWsPaths,
-    getNote,
+  return naukarWorkerProxy.abortableSearchWsForPmNode(
     signal,
+    wsName,
+    query,
     [
       {
         nodeName: 'tag',
         dataAttrName: 'tagValue',
-        printStyle: (str) => '#' + str,
+        printBefore: '#',
         queryIdentifier: 'tag:',
       },
       {
         nodeName: 'wikiLink',
         dataAttrName: 'path',
-        printStyle: (str) => '[[' + str + ']]',
+        printBefore: '[[',
+        printAfter: ']]',
         queryIdentifier: 'backlink:',
       },
     ],

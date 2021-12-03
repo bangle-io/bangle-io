@@ -1,5 +1,6 @@
 {
-  "name": "@bangle.io/naukar-proxy",
+  "name": "@bangle.io/object-uid",
+  "description": "A utility which generates a unique id for an object",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,21 +12,14 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "worker/naukar-proxy"
+    "directory": "js-lib/object-uid"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
   "main": "index.ts",
   "module": "index.ts",
-  "dependencies": {
-    "@bangle.io/abortable-worker": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/utils": "workspace:*"
-  },
-  "devDependencies": {
-    "@bangle.io/naukar-worker": "workspace:*"
-  },
-  "publishConfig": {}
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -8,7 +8,11 @@ import type { SearchResultItem } from './types';
 export interface AtomSearchTypes {
   nodeName: string;
   queryIdentifier: string;
-  printStyle: (str: string) => string;
+  // what to print before atom node
+  // for example you want to show '[[' before and  ']]' after
+  // if the node is backlink
+  printBefore?: string;
+  printAfter?: string;
   dataAttrName: string;
 }
 
@@ -23,10 +27,10 @@ function getAtomSearchType(
   );
 }
 export async function searchPmNode(
+  signal: AbortSignal,
   query: string,
   docUids: string[],
   getDoc: (uid: string) => Promise<Node<any>>,
-  signal: AbortSignal,
   atomSearchTypes: AtomSearchTypes[] = [],
   {
     concurrency = DEFAULT_CONCURRENCY,
@@ -113,7 +117,8 @@ export async function searchPmNode(
                 dataAttrName: atomSearchType.dataAttrName,
                 nodeName: atomSearchType.nodeName,
                 queryIdentifier: atomSearchType.queryIdentifier,
-                printStyle: atomSearchType.printStyle,
+                printBefore: atomSearchType.printBefore,
+                printAfter: atomSearchType.printAfter,
               },
             );
             if (result) {

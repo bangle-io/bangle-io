@@ -5,6 +5,7 @@ import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { objectSync, ObjectSyncEventType } from '@bangle.io/object-sync';
 import { FileOps } from '@bangle.io/workspaces';
 
+import { abortableServices } from './abortable-services';
 import { setupCollabManager } from './collab-manager';
 
 const LOG = false;
@@ -51,6 +52,8 @@ export function createNaukar(
       await diskSetup.disk.flushAll();
       console.debug('flushed everything');
     },
+
+    ...abortableServices({ extensionRegistry }),
   };
 }
 

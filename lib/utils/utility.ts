@@ -328,3 +328,14 @@ export function keyDisplayValue(key: string): string {
   }
   return key;
 }
+
+export function generateUid(len = 10) {
+  return Math.random().toString(36).substring(2, 15).slice(0, len);
+}
+
+// Throws an abort error if a signal is already aborted.
+export function assertSignal(signal: AbortSignal) {
+  if (signal.aborted) {
+    throw new DOMException('AbortError', 'AbortError');
+  }
+}

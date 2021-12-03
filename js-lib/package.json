@@ -1,11 +1,14 @@
 {
   "name": "js-lib",
+  "description": "Home for package that is oblivious to bangle's existence essentially an independent javascript package.",
   "workspaces": [
+    "abortable-worker",
     "baby-fs",
     "base-error",
     "fzf-search",
     "inline-palette",
     "object-sync",
+    "object-uid",
     "pm-plugins",
     "search-pm-node"
   ],

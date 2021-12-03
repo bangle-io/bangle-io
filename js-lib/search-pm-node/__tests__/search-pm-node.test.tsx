@@ -8,13 +8,11 @@
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';
-import { PluginKey } from '@bangle.dev/pm';
 import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 import { wikiLink } from '@bangle.dev/wiki-link';
 
 import { DEFAULT_CONCURRENCY } from '../config';
 import {
-  AtomSearchTypes,
   endStringWithWord,
   getMatchFragment,
   matchText,
@@ -23,10 +21,6 @@ import {
 } from '../search-pm-node';
 
 test.todo('Can search by *');
-
-function sleep(t = 20) {
-  return new Promise((res) => setTimeout(res, t));
-}
 
 describe('Plain text search', () => {
   const specRegistry = new SpecRegistry([...defaultSpecs()]);
@@ -43,12 +37,12 @@ describe('Plain text search', () => {
 
   test('works with undefined data', async () => {
     const result = await searchPmNode(
+      new AbortController().signal,
       '',
       [],
       () => {
         return undefined as any;
       },
-      new AbortController().signal,
     );
 
     expect(result).toMatchInlineSnapshot(`Array []`);
@@ -65,10 +59,10 @@ describe('Plain text search', () => {
     });
 
     const result = await searchPmNode(
+      new AbortController().signal,
       's',
       ['uid-1'],
       cb,
-      new AbortController().signal,
     );
 
     expect(result).toMatchInlineSnapshot(`Array []`);
@@ -96,10 +90,10 @@ describe('Plain text search', () => {
     });
 
     const res = searchPmNode(
+      controller.signal,
       query,
       fileData.map((f) => f.name),
       mapper,
-      controller.signal,
     );
 
     await res;
@@ -128,10 +122,10 @@ describe('Plain text search', () => {
     });
 
     const res = searchPmNode(
+      controller.signal,
       query,
       fileData.map((f) => f.name),
       mapper,
-      controller.signal,
     );
 
     controller.abort();
@@ -147,12 +141,12 @@ describe('Plain text search', () => {
       fileData: Array<{ name: string; node: any }>,
     ) => {
       return searchPmNode(
+        new AbortController().signal,
         query,
         fileData.map((f) => f.name),
         async (uid) => {
           return fileData.find((r) => r.name === uid)?.node!;
         },
-        new AbortController().signal,
       );
     };
     test('empty query should return no data', async () => {
@@ -625,17 +619,18 @@ describe('understands atom node searching', () => {
     fileData: Array<{ name: string; node: any }>,
   ) => {
     return searchPmNode(
+      new AbortController().signal,
       query,
       fileData.map((f) => f.name),
       async (uid) => {
         return fileData.find((r) => r.name === uid)?.node!;
       },
-      new AbortController().signal,
       [
         {
           nodeName: 'wikiLink',
           dataAttrName: 'path',
-          printStyle: (str) => '[[' + str + ']]',
+          printBefore: '[[',
+          printAfter: ']]',
           queryIdentifier: 'backlink:',
         },
       ],
