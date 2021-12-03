@@ -7,6 +7,7 @@ import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
+import { sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -60,6 +61,60 @@ test('renders with blank data', async () => {
     </div>,
   );
 
+  expect(renderResult.container.innerHTML).toContain(`No backlinks found`);
+  expect(renderResult.container).toMatchInlineSnapshot(`
+    <div>
+      <div>
+        <div
+          class="inline-backlink_widget-container flex flex-col"
+        >
+          <span
+            class="font-light"
+          >
+            &lt;No backlinks found&gt;
+          </span>
+        </div>
+      </div>
+    </div>
+  `);
+});
+
+test('handles abort error', async () => {
+  abortableSearchWsForPmNodeMock.mockImplementation(async () => {
+    throw new DOMException('Aborted', 'AbortError');
+  });
+  const openedWsPaths = new OpenedWsPaths([
+    'test-back-ws:my-linked-note-1.md',
+    undefined,
+  ]);
+
+  const pushWsPath = jest.fn();
+
+  useWorkspaceContextMock.mockImplementation(() => {
+    return {
+      ...getUseWorkspaceContextReturn,
+      wsName: 'test-back-ws',
+      openedWsPaths,
+      pushWsPath,
+    };
+  });
+
+  useEditorManagerContextMock.mockImplementation(() => {
+    return {
+      ...getUseEditorManagerContextReturn,
+      focusedEditorId: 0,
+    };
+  });
+
+  const renderResult = render(
+    <div>
+      <BacklinkWidget />
+    </div>,
+  );
+
+  await sleep(15);
+
+  expect(abortableSearchWsForPmNodeMock).toBeCalledTimes(1);
   expect(renderResult.container.innerHTML).toContain(`No backlinks found`);
   expect(renderResult.container).toMatchInlineSnapshot(`
     <div>
@@ -141,6 +196,7 @@ test('renders backlinks', async () => {
   const backlinkedPage = renderResult.container.querySelector(
     '[data-id="test-back-ws:my-linked-note-2.md"]',
   );
+  expect(abortableSearchWsForPmNodeMock).toBeCalledTimes(1);
 
   await fireEvent.click(backlinkedPage!);
 
