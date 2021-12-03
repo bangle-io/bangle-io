@@ -1,11 +1,8 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
-
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
-import { Extension } from '@bangle.io/extension-registry';
-import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
@@ -18,6 +15,14 @@ import { BacklinkWidget } from '../BacklinkWidget';
 jest.mock('@bangle.io/workspace-context');
 jest.mock('@bangle.io/editor-manager-context');
 
+jest.mock('@bangle.io/naukar-proxy', () => {
+  return {
+    naukarWorkerProxy: {
+      abortableSearchWsForPmNode: jest.fn(),
+    },
+  };
+});
+
 let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
   typeof useWorkspaceContext
 >;
@@ -27,35 +32,18 @@ let useEditorManagerContextMock =
     typeof useEditorManagerContext
   >;
 
-let dummyBacklinkExt = Extension.create({
-  name: 'dummy-backlink',
-  editor: {
-    specs: [wikiLink.spec()],
-    markdownItPlugins: [wikiLinkMarkdownItPlugin],
-  },
-});
+let abortableSearchWsForPmNodeMock =
+  naukarWorkerProxy.abortableSearchWsForPmNode as jest.MockedFunction<
+    typeof naukarWorkerProxy.abortableSearchWsForPmNode
+  >;
 
 beforeEach(() => {
+  abortableSearchWsForPmNodeMock.mockImplementation(async () => []);
+
   useWorkspaceContextMock.mockImplementation(() => {
-    let editor = createEditorFromMd(
-      `
-  # hello 1
-  
-  para 1
-  
-  ## hello 2 
-  
-  para 2
-      `,
-      {
-        extensions: [dummyBacklinkExt],
-      },
-    );
     return {
       ...getUseWorkspaceContextReturn,
       wsName: 'test-back-ws',
-      noteWsPaths: [],
-      getNote: jest.fn(async () => editor.view.state.doc),
     };
   });
   useEditorManagerContextMock.mockImplementation(() => {
@@ -93,45 +81,11 @@ test('renders with blank data', async () => {
 test('renders backlinks', async () => {
   // We have opened note-1
   // which is referenced by note-2
-  const noteWsPaths = [
-    'test-back-ws:my-linked-note-2.md',
-    'test-back-ws:my-linked-note-1.md',
-  ];
+
   const openedWsPaths = new OpenedWsPaths([
     'test-back-ws:my-linked-note-1.md',
     undefined,
   ]);
-
-  let editor2 = createEditorFromMd(
-    `
-# This is note 2
-
-Hello here is a [[my-linked-note-1]]
-
-`,
-    {
-      extensions: [dummyBacklinkExt],
-    },
-  );
-
-  let editor1 = createEditorFromMd(
-    `
-# This is note 1
-`,
-    {
-      extensions: [dummyBacklinkExt],
-    },
-  );
-
-  const getNote = jest.fn(async (wsPath) => {
-    if (wsPath.endsWith('-2.md')) {
-      return editor2.view.state.doc;
-    }
-    if (wsPath.endsWith('-1.md')) {
-      return editor1.view.state.doc;
-    }
-    throw new Error('Unknown wsPath sent ' + wsPath);
-  });
 
   const pushWsPath = jest.fn();
 
@@ -139,9 +93,7 @@ Hello here is a [[my-linked-note-1]]
     return {
       ...getUseWorkspaceContextReturn,
       wsName: 'test-back-ws',
-      noteWsPaths,
       openedWsPaths,
-      getNote,
       pushWsPath,
     };
   });
@@ -151,6 +103,22 @@ Hello here is a [[my-linked-note-1]]
       ...getUseEditorManagerContextReturn,
       focusedEditorId: 0,
     };
+  });
+
+  abortableSearchWsForPmNodeMock.mockImplementation(async () => {
+    return [
+      {
+        matches: [
+          {
+            match: ['', '[[my-linked-note-1]]', ' some content'],
+            parent: 'doc',
+            parentPos: 2,
+          },
+        ],
+        // reference to 'note-1' in 'note-2' note
+        uid: 'test-back-ws:my-linked-note-2.md',
+      },
+    ];
   });
 
   const renderResult = render(
@@ -192,7 +160,6 @@ Hello here is a [[my-linked-note-1]]
 
   expect(pushWsPath).toBeCalledTimes(1);
 
-  expect(renderResult.container.innerHTML).toContain('Hello here is a ');
   expect(renderResult.container.innerHTML).toContain('[[my-linked-note-1]]');
 
   expect(

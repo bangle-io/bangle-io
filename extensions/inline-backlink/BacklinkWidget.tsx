@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import type { HighlightTextType, SearchMatch } from '@bangle.io/search-pm-node';
-import { searchPmNode } from '@bangle.io/search-pm-node';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -120,50 +120,53 @@ export function BacklinkWidget() {
 
 function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
   const { focusedEditorId } = useEditorManagerContext();
-  const { wsName, noteWsPaths, openedWsPaths, getNote } = useWorkspaceContext();
+  const { wsName, openedWsPaths } = useWorkspaceContext();
   const [results, updateResults] = useState<BacklinkSearchResult[] | undefined>(
     undefined,
   );
 
   const calculateResult = useCallback(
     (focusedWsPath: string, controller: AbortController) => {
-      searchPmNode(
-        'backlink:*',
-        noteWsPaths ?? [],
-        getNote,
-        controller.signal,
-        [
+      if (!wsName) {
+        return;
+      }
+
+      naukarWorkerProxy
+        .abortableSearchWsForPmNode(controller.signal, wsName, 'backlink:*', [
           {
             nodeName: 'wikiLink',
             dataAttrName: 'path',
-            printStyle: (str) => '[[' + str + ']]',
+            printBefore: '[[',
+            printAfter: ']]',
             queryIdentifier: 'backlink:',
           },
-        ],
-      ).then((result) => {
-        const fileName = removeMdExtension(resolvePath(focusedWsPath).fileName);
+        ])
+        .then((result) => {
+          const fileName = removeMdExtension(
+            resolvePath(focusedWsPath).fileName,
+          );
 
-        updateResults(
-          result
-            .map((r) => {
-              const newMatches: SearchMatch[] = r.matches.filter((match) => {
-                const [, highlightTextMatch] = match.match;
-                if (highlightTextMatch) {
-                  return highlightTextMatch.includes(fileName);
-                }
-                return false;
-              });
+          updateResults(
+            result
+              .map((r) => {
+                const newMatches: SearchMatch[] = r.matches.filter((match) => {
+                  const [, highlightTextMatch] = match.match;
+                  if (highlightTextMatch) {
+                    return highlightTextMatch.includes(fileName);
+                  }
+                  return false;
+                });
 
-              return {
-                wsPath: r.uid,
-                matches: newMatches,
-              };
-            })
-            .filter((r) => r.matches.length > 0),
-        );
-      });
+                return {
+                  wsPath: r.uid,
+                  matches: newMatches,
+                };
+              })
+              .filter((r) => r.matches.length > 0),
+          );
+        });
     },
-    [noteWsPaths, getNote],
+    [wsName],
   );
 
   const focusedWsPath = useMemo(() => {

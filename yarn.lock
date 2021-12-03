@@ -1745,10 +1745,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bangle.io/abortable-worker@workspace:js-lib/abortable-worker":
+"@bangle.io/abortable-worker@workspace:*, @bangle.io/abortable-worker@workspace:js-lib/abortable-worker":
   version: 0.0.0-use.local
   resolution: "@bangle.io/abortable-worker@workspace:js-lib/abortable-worker"
   dependencies:
+    "@bangle.dev/pm": 0.28.1
+    "@bangle.dev/utils": 0.28.1
     "@bangle.io/object-uid": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -2283,6 +2285,8 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
+    "@bangle.io/naukar-proxy": "workspace:*"
+    "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2391,6 +2395,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/naukar-proxy@workspace:worker/naukar-proxy"
   dependencies:
+    "@bangle.io/abortable-worker": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2408,12 +2413,17 @@ __metadata:
     "@bangle.dev/disk": 0.28.1
     "@bangle.dev/pm": 0.28.1
     "@bangle.dev/utils": 0.28.1
+    "@bangle.io/abortable-worker": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
+    "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
     idb-keyval: ^5.1.5
   languageName: unknown
   linkType: soft
@@ -2574,6 +2584,7 @@ __metadata:
     "@bangle.io/contextual-ui-components": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/note-tags": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"

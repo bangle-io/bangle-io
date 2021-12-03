@@ -90,9 +90,7 @@ exports[`renders backlinks 2`] = `
 >
   <span
     class="highlight-text text-sm"
-  >
-    Hello here is a 
-  </span>
+  />
   <span
     class="highlight-text text-sm"
   >
@@ -100,6 +98,8 @@ exports[`renders backlinks 2`] = `
   </span>
   <span
     class="highlight-text text-sm"
-  />
+  >
+     some content
+  </span>
 </div>
 `;
