@@ -1,8 +1,8 @@
 import { byLengthAsc, byStartAsc, Fzf, FzfOptions, FzfResultItem } from 'fzf';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-export { byLengthAsc, byStartAsc };
-export type { FzfOptions };
+export type { FzfOptions, FzfResultItem };
+export { byLengthAsc, byStartAsc, Fzf };
 /**
  *
  * @param items - The items to search on

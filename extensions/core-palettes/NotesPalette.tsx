@@ -1,22 +1,30 @@
-import React, { useCallback, useImperativeHandle, useMemo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
 
 import { keyDisplayValue } from '@bangle.io/config';
 import { ExtensionPaletteType } from '@bangle.io/extension-registry';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import type { UnPromisify } from '@bangle.io/shared-types';
 import {
   ButtonIcon,
   FileDocumentIcon,
   SecondaryEditorIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
-import { removeMdExtension } from '@bangle.io/utils';
+import { isAbortError, removeMdExtension } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { extensionName } from './config';
 
-const emptyArray = [];
 const FZF_SEARCH_LIMIT = 64;
+const RECENT_SHOW_LIMIT = 6;
 
 const createPaletteObject = ({ wsPath, onClick }) => {
   const { fileName, dirPath } = resolvePath(wsPath);
@@ -165,7 +173,7 @@ export const notesPalette = {
  *          return.other - filtered list of wsPath that match the filter and are not part of `.recent`.
  */
 export function useSearchWsPaths(query: string) {
-  const { noteWsPaths = emptyArray, recentWsPaths } = useWorkspaceContext();
+  const { recentWsPaths, wsName } = useWorkspaceContext();
 
   // We are doing the following
   // 1. use fzf to shortlist the notes
@@ -178,11 +186,7 @@ export function useSearchWsPaths(query: string) {
     tiebreakers: [byLengthAsc],
   });
 
-  const filteredFzfItems = useFzfSearch(noteWsPaths, query, {
-    limit: FZF_SEARCH_LIMIT,
-    selector: (item) => resolvePath(item).filePath,
-    tiebreakers: [byLengthAsc],
-  });
+  const filteredFzfItems = useSearchNotePaths(query, wsName);
 
   const filteredRecentWsPaths = useMemo(() => {
     let wsPaths: string[];
@@ -192,7 +196,9 @@ export function useSearchWsPaths(query: string) {
     if (query === '') {
       wsPaths = recentWsPaths;
     } else {
-      wsPaths = recentFzfItems.map((fzfItem, i) => fzfItem.item);
+      wsPaths = recentFzfItems
+        .map((fzfItem, i) => fzfItem.item)
+        .slice(0, RECENT_SHOW_LIMIT);
     }
 
     return wsPaths;
@@ -200,6 +206,9 @@ export function useSearchWsPaths(query: string) {
 
   const filteredOtherWsPaths = useMemo(() => {
     const shownInRecentSet = new Set(filteredRecentWsPaths);
+    if (!filteredFzfItems) {
+      return [];
+    }
     return filteredFzfItems
       .filter((r) => !shownInRecentSet.has(r.item))
       .map((fzfItem, i) => {
@@ -212,4 +221,45 @@ export function useSearchWsPaths(query: string) {
     recent: filteredRecentWsPaths,
     other: filteredOtherWsPaths,
   };
+}
+
+function useSearchNotePaths(query: string, wsName: string | undefined) {
+  const [result, updateResult] = useState<
+    | UnPromisify<
+        ReturnType<typeof naukarWorkerProxy.abortableFzfSearchNoteWsPaths>
+      >
+    | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let destroyed = false;
+    if (wsName) {
+      naukarWorkerProxy
+        .abortableFzfSearchNoteWsPaths(
+          controller.signal,
+          wsName,
+          query,
+          FZF_SEARCH_LIMIT,
+        )
+        .then((res) => {
+          if (destroyed) {
+            return;
+          }
+          updateResult(res);
+        })
+        .catch((error) => {
+          if (isAbortError(error)) {
+            return;
+          }
+          throw error;
+        });
+    }
+    return () => {
+      destroyed = true;
+      controller.abort();
+    };
+  }, [query, wsName]);
+
+  return result;
 }

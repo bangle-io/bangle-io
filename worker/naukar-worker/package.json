@@ -30,6 +30,7 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/object-sync": "workspace:*",
     "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
