@@ -144,6 +144,28 @@ export function EditorManager({ children }) {
     });
   }, [editors]);
 
+  useEffect(() => {
+    let editor = primaryEditor;
+    return () => {
+      if (editor) {
+        if (!editor.destroyed) {
+          editor.destroy();
+        }
+        (editor as any).view = null;
+      }
+    };
+  }, [primaryEditor]);
+  useEffect(() => {
+    let editor = secondaryEditor;
+    return () => {
+      if (editor) {
+        if (!editor.destroyed) {
+          editor.destroy();
+        }
+        (editor as any).view = null;
+      }
+    };
+  }, [secondaryEditor]);
   return (
     <EditorManagerContext.Provider value={value}>
       {children}
