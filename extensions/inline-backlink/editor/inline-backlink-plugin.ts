@@ -2,7 +2,7 @@ import { NodeView } from '@bangle.dev/core';
 
 import { backlinkNodeName } from '../config';
 
-export function inlineBackLinkPlugin() {
+export function inlineBacklinkPlugin() {
   return () => [
     NodeView.createPlugin({
       name: backlinkNodeName,

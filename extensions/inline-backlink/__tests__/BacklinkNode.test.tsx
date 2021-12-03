@@ -8,7 +8,7 @@ import { getEditorPluginMetadataReturn } from '@bangle.io/test-utils/function-mo
 import { getEditorPluginMetadata, sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
-import inlineBackLinkExtension from '..';
+import inlineBacklinkExtension from '..';
 import { BacklinkNode } from '../editor/BacklinkNode';
 
 jest.mock('@bangle.io/workspace-context', () => {
@@ -33,7 +33,7 @@ jest.mock('@bangle.io/extension-registry', () => {
   };
 });
 
-const extensionRegistry = createExtensionRegistry([inlineBackLinkExtension], {
+const extensionRegistry = createExtensionRegistry([inlineBacklinkExtension], {
   editorCore: true,
 });
 
