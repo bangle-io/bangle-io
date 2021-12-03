@@ -67,11 +67,15 @@ export function PageLifecycle() {
   }, [lifecycle, mutableAppStateValue]);
 
   useEffect(() => {
+    let hookChanged = false;
     // if there was some previous state (obv not active)
     // and the current become active
     if (pageStateCurrent === 'active' && pageStatePrevious) {
-      // TODO move this to only reseting if file modified has changed
-      naukarWorkerProxy.resetManager();
+      naukarWorkerProxy.flushDisk().then(() => {
+        if (!hookChanged) {
+          naukarWorkerProxy.resetManager();
+        }
+      });
     }
     // save things immediately when we lose focus
     else if (pageStateCurrent === 'passive' || pageStateCurrent === 'hidden') {
@@ -88,6 +92,9 @@ export function PageLifecycle() {
       });
       naukarWorkerProxy.flushDisk();
     }
+    return () => {
+      hookChanged = true;
+    };
   }, [pageStateCurrent, pageStatePrevious, forEachEditor]);
 
   return null;
