@@ -141,30 +141,38 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
             queryIdentifier: 'backlink:',
           },
         ])
-        .then((result) => {
-          const fileName = removeMdExtension(
-            resolvePath(focusedWsPath).fileName,
-          );
+        .then(
+          (result) => {
+            const fileName = removeMdExtension(
+              resolvePath(focusedWsPath).fileName,
+            );
 
-          updateResults(
-            result
-              .map((r) => {
-                const newMatches: SearchMatch[] = r.matches.filter((match) => {
-                  const [, highlightTextMatch] = match.match;
-                  if (highlightTextMatch) {
-                    return highlightTextMatch.includes(fileName);
-                  }
-                  return false;
-                });
+            updateResults(
+              result
+                .map((r) => {
+                  const newMatches = r.matches.filter((match) => {
+                    const [, highlightTextMatch] = match.match;
+                    if (highlightTextMatch) {
+                      return highlightTextMatch.includes(fileName);
+                    }
+                    return false;
+                  });
 
-                return {
-                  wsPath: r.uid,
-                  matches: newMatches,
-                };
-              })
-              .filter((r) => r.matches.length > 0),
-          );
-        });
+                  return {
+                    wsPath: r.uid,
+                    matches: newMatches,
+                  };
+                })
+                .filter((r) => r.matches.length > 0),
+            );
+          },
+          (error) => {
+            if (error instanceof DOMException && error.name === 'AbortError') {
+              return;
+            }
+            throw error;
+          },
+        );
     },
     [wsName],
   );

@@ -1,4 +1,3 @@
-import { assertSignal } from './assert-signal';
 import { AbortControllers, WORKER_ABORTABLE_SERVICE_ABORTED } from './util';
 
 export type AbortableFunc<R extends any[], X> = (
@@ -36,8 +35,6 @@ export function workerAbortableMethodWrapper(
       } else {
         console.debug('reusing controller');
       }
-
-      assertSignal(abortController.signal);
 
       console.debug(uniqueAbortId + ' about to start');
       return abortableFunc(abortController.signal, ...args).then(
