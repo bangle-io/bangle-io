@@ -56,7 +56,7 @@ function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
       console.log('received fatal error');
       // TODO show a user notification
       console.error(error);
-      return false;
+      return true;
     },
   });
 }
