@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script>
+      console.debug('parent', parent);
+      window.addEventListener('message', (event) => {
+        console.debug('received event', event);
+        const innerFrameElement = document.getElementById(
+          'bangle-io-extension-iframe',
+        );
+        if (
+          innerFrameElement &&
+          event.source === innerFrameElement.contentWindow
+        ) {
+          parent.postMessage(
+            { origin: event.origin, data: event.data },
+            window.location.origin,
+          );
+        }
+      });
+    </script>
+  </head>
+  <body></body>
+</html>
