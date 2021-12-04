@@ -14,7 +14,7 @@ import { sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { InlineBacklinkPalette } from '../editor/InlineBacklinkPalette';
-import inlineBackLinkExtension from '../index';
+import inlineBacklinkExtension from '../index';
 
 jest.mock('@bangle.dev/react', () => {
   return {
@@ -40,7 +40,7 @@ jest.mock('@bangle.io/workspace-context', () => {
   };
 });
 
-const extensionRegistry = createExtensionRegistry([inlineBackLinkExtension], {
+const extensionRegistry = createExtensionRegistry([inlineBacklinkExtension], {
   editorCore: true,
 });
 

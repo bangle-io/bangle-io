@@ -20,7 +20,7 @@ import { useEditorItems } from './use-editor-items';
 
 const staticHints = [
   PaletteItem.create({
-    uid: 'useBackLink',
+    uid: 'useBacklink',
     type: PALETTE_ITEM_HINT_TYPE,
     title: 'Linking a note',
     description: `Type [[ and then name of the note to create a link to it`,

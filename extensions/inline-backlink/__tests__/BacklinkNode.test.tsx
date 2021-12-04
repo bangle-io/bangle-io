@@ -8,8 +8,8 @@ import { getEditorPluginMetadataReturn } from '@bangle.io/test-utils/function-mo
 import { getEditorPluginMetadata, sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
-import inlineBackLinkExtension from '..';
-import { BackLinkNode } from '../editor/BackLinkNode';
+import inlineBacklinkExtension from '..';
+import { BacklinkNode } from '../editor/BacklinkNode';
 
 jest.mock('@bangle.io/workspace-context', () => {
   return {
@@ -33,7 +33,7 @@ jest.mock('@bangle.io/extension-registry', () => {
   };
 });
 
-const extensionRegistry = createExtensionRegistry([inlineBackLinkExtension], {
+const extensionRegistry = createExtensionRegistry([inlineBacklinkExtension], {
   editorCore: true,
 });
 
@@ -44,7 +44,7 @@ const getEditorPluginMetadataMock =
     typeof getEditorPluginMetadata
   >;
 
-describe('BackLinkNode', () => {
+describe('BacklinkNode', () => {
   let pushWsPathMock = jest.fn();
   let createNote;
 
@@ -80,7 +80,7 @@ describe('BackLinkNode', () => {
     });
 
     const renderResult = render(
-      <BackLinkNode
+      <BacklinkNode
         nodeAttrs={{ path: 'some/path', title: undefined }}
         view={editorView}
       />,
@@ -126,7 +126,7 @@ describe('BackLinkNode', () => {
     });
 
     const renderResult = render(
-      <BackLinkNode
+      <BacklinkNode
         nodeAttrs={{ path: 'some/path', title: 'monako' }}
         view={editorView}
       />,
@@ -172,7 +172,7 @@ describe('BackLinkNode', () => {
     });
 
     const renderResult = render(
-      <BackLinkNode
+      <BacklinkNode
         nodeAttrs={{ path: 'some/path', title: 'monako' }}
         view={editorView}
       />,
@@ -217,7 +217,7 @@ describe('BackLinkNode', () => {
       clickOpts?: Parameters<typeof fireEvent.click>[1],
     ) => {
       const renderResult = render(
-        <BackLinkNode
+        <BacklinkNode
           nodeAttrs={{ path, title: 'monako' }}
           view={editorView}
         />,

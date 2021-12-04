@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BackLinkNode clicking no click if path validation fails 1`] = `
+exports[`BacklinkNode clicking no click if path validation fails 1`] = `
 <div>
   <button
     class="inline-backlink_backlink inline-backlink_backlinkNotFound"

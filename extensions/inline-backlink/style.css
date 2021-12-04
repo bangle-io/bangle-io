@@ -1,27 +1,27 @@
 .inline-backlink_backlink {
   padding: 0 0.4rem;
   border-radius: var(--window-pill-borderRadius);
-  background-color: var(--backLink-backLink-bgColor);
+  background-color: var(--backlink-backlink-bgColor);
   margin: 0 0.2rem;
   text-align: start;
 }
 
 .inline-backlink_backlink:hover {
   text-decoration: underline;
-  background-color: var(--backLink-backLink-hover-bgColor);
+  background-color: var(--backlink-backlink-hover-bgColor);
 }
 
 .inline-backlink_backlinkNotFound {
-  background-color: var(--backLink-backLinkNotFound-bgColor);
+  background-color: var(--backlink-backlinkNotFound-bgColor);
 }
 
 .inline-backlink_backlinkNotFound:hover {
-  background-color: var(--backLink-backLinkNotFound-hover-bgColor);
+  background-color: var(--backlink-backlinkNotFound-hover-bgColor);
 }
 
 .inline-backlink_backlink > svg {
   color: var(--window-link-color);
-  fill: var(--backLink-backLink-bgColor);
+  fill: var(--backlink-backlink-bgColor);
   height: 1.2em;
   width: 1.2em;
   /* adding a bit of padding to just align this thing well */

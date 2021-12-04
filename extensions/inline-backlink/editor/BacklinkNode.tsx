@@ -25,9 +25,9 @@ import {
   validateNoteWsPath,
 } from '@bangle.io/ws-path';
 
-import { backLinkNodeName, newNoteLocation } from '../config';
+import { backlinkNodeName, newNoteLocation } from '../config';
 
-export function BackLinkNode({
+export function BacklinkNode({
   nodeAttrs,
   view,
 }: {
@@ -48,7 +48,7 @@ export function BackLinkNode({
   const [invalidLink, updatedInvalidLink] = useState(false);
   title = title || path;
 
-  const backLinkPath = conditionalSuffix(path, '.md');
+  const backlinkPath = conditionalSuffix(path, '.md');
 
   if (invalidLink) {
     title = 'Invalid link (' + title + ')';
@@ -73,7 +73,7 @@ export function BackLinkNode({
       }
 
       handleClick({
-        backLinkPath,
+        backlinkPath,
         currentWsPath: primaryWsPath,
         wsName,
         noteWsPaths,
@@ -93,7 +93,7 @@ export function BackLinkNode({
       );
     },
     [
-      backLinkPath,
+      backlinkPath,
       createNote,
       extensionRegistry,
       noteWsPaths,
@@ -106,7 +106,7 @@ export function BackLinkNode({
   const backlinksWsPath =
     wsName &&
     noteWsPaths &&
-    getMatchingWsPath(wsName, backLinkPath, noteWsPaths);
+    getMatchingWsPath(wsName, backlinkPath, noteWsPaths);
 
   const disablePopup = editorDisplayType === EditorDisplayType.Popup;
 
@@ -168,14 +168,14 @@ export function BackLinkNode({
 }
 
 async function handleClick({
-  backLinkPath,
+  backlinkPath,
   currentWsPath,
   wsName,
   noteWsPaths,
   extensionRegistry,
   createNote,
 }: {
-  backLinkPath: string;
+  backlinkPath: string;
   currentWsPath: string;
   wsName: string;
   noteWsPaths: string[];
@@ -184,7 +184,7 @@ async function handleClick({
 }) {
   const existingWsPathMatch = getMatchingWsPath(
     wsName,
-    backLinkPath,
+    backlinkPath,
     noteWsPaths,
   );
 
@@ -195,23 +195,23 @@ async function handleClick({
   // deal with the case if the path is a local file system style path
   if (
     currentWsPath &&
-    (backLinkPath.startsWith('./') || backLinkPath.startsWith('../'))
+    (backlinkPath.startsWith('./') || backlinkPath.startsWith('../'))
   ) {
-    const matchedWsPath = parseLocalFilePath(backLinkPath, currentWsPath);
+    const matchedWsPath = parseLocalFilePath(backlinkPath, currentWsPath);
     validateNoteWsPath(matchedWsPath);
     return matchedWsPath;
   }
 
   // create a new note as no existing wsPaths match
-  let newWsPath = filePathToWsPath(wsName, backLinkPath);
+  let newWsPath = filePathToWsPath(wsName, backlinkPath);
 
   // Check if the user wants to create a new note in the same dir
   if (
     newNoteLocation === 'CURRENT_DIR' &&
     currentWsPath &&
-    !backLinkPath.includes('/')
+    !backlinkPath.includes('/')
   ) {
-    newWsPath = parseLocalFilePath(backLinkPath, currentWsPath);
+    newWsPath = parseLocalFilePath(backlinkPath, currentWsPath);
   }
 
   validateNoteWsPath(newWsPath);
@@ -222,13 +222,13 @@ async function handleClick({
 }
 
 export const renderReactNodeView: RenderReactNodeView = {
-  [backLinkNodeName]: ({ nodeViewRenderArg }) => {
+  [backlinkNodeName]: ({ nodeViewRenderArg }) => {
     const { path, title } = nodeViewRenderArg.node.attrs;
     if (typeof path !== 'string') {
       return <span>Invalid Path</span>;
     }
     return (
-      <BackLinkNode nodeAttrs={{ path, title }} view={nodeViewRenderArg.view} />
+      <BacklinkNode nodeAttrs={{ path, title }} view={nodeViewRenderArg.view} />
     );
   },
 };

@@ -5,8 +5,8 @@ import { inlinePalette } from '@bangle.io/inline-palette';
 
 import { BacklinkWidget } from './BacklinkWidget';
 import { extensionName, paletteMark, palettePluginKey } from './config';
-import { renderReactNodeView } from './editor/BackLinkNode';
-import { inlineBackLinkPlugin } from './editor/inline-backlink-plugin';
+import { renderReactNodeView } from './editor/BacklinkNode';
+import { inlineBacklinkPlugin } from './editor/inline-backlink-plugin';
 import { InlineBacklinkPalette } from './editor/InlineBacklinkPalette';
 
 const getScrollContainer = (view) => {
@@ -37,7 +37,7 @@ const extension = Extension.create({
         },
       }),
     ],
-    plugins: [inlineBackLinkPlugin()],
+    plugins: [inlineBacklinkPlugin()],
     markdownItPlugins: [wikiLinkMarkdownItPlugin],
     ReactComponent: InlineBacklinkPalette,
     renderReactNodeView: renderReactNodeView,
