@@ -11,5 +11,5 @@ validateNonWorkerGlobalScope();
 
 // TODO fix me
 const worker = new (Worker as any)();
-
+window.Wworker = worker;
 export default Comlink.wrap(worker);

@@ -24,9 +24,13 @@
           parent.postMessage(event.data, window.location.origin);
         } else if (innerFrameElement && event.source === parent) {
           console.log('parent sent a message', event.data);
+          document
+            .getElementById('bangle-io-extension-iframe')
+            ?.contentWindow.postMessage(event.data, '*');
         } else {
           console.warn('untrusted event');
         }
+        console.log('frame', document.getElementsByTagName('iframe')?.[0]);
       });
     </script>
   </head>

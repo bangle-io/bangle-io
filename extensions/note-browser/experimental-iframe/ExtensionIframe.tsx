@@ -39,12 +39,15 @@ export function ExtensionIframe({
 
   const onMessage = useCallback(
     (event: WindowEventMap['message']) => {
+      console.debug('received message');
       if (event.source && event.source === wrapperIframe?.contentWindow) {
-        console.debug('received message');
-        console.log(event.data);
+        console.debug('received message from wrapper');
+      }
+      if (event.source && extensionIframe?.contentWindow === event.source) {
+        console.debug('received message from extension !!');
       }
     },
-    [wrapperIframe],
+    [wrapperIframe, extensionIframe],
   );
 
   useEffect(() => {
@@ -53,6 +56,21 @@ export function ExtensionIframe({
       window.removeEventListener('message', onMessage);
     };
   }, [onMessage]);
+
+  useEffect(() => {
+    const channel = new MessageChannel();
+    if (extensionIframe) {
+      setTimeout(() => {
+        console.log('sending message');
+        (window.Wworker as Worker).postMessage('iframe-setup', [channel.port1]);
+        extensionIframe?.contentWindow.postMessage('message-channel', '*', [
+          channel.port2,
+        ]);
+        channel.port1.postMessage('hello');
+      }, 500);
+    }
+    // sendingWorker.postMessage({ port: channel.port2 }, [channel.port2]);
+  }, [extensionIframe]);
 
   return <div className="w-full h-full" ref={setDivElement}></div>;
 }
@@ -134,20 +152,24 @@ function createIframe({
 }
 
 function getExtensionIframeSource() {
-  return (
+  const innerJS = `\ndocument.close();\nconsole.log('preparing extension iframe');`;
+
+  const result =
     'data:text/html;base64,' +
     btoa(
-      `<script>
-      onmessage = (event) => {
-        if (event.source === self.parent.parent && event.origin === "${
+      `
+<script>
+    onmessage = (event) => {
+        if (event.source === parent.parent && event.origin === "${
           window.location.origin
         }") {
-          document.write("<script>" + ${JSON.stringify(
-            'document.close()',
-          )} + "</" + "script>" + event.data);
+            document.write("<script>" + ${JSON.stringify(
+              innerJS,
+            )} + "</" + "script>" + event.data);
         }
-      };
-      </script>`,
-    )
-  );
+    }
+</script>`.trim(),
+    );
+
+  return result;
 }

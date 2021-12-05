@@ -12,6 +12,16 @@ const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'naukar') : () => {};
 
+self.addEventListener('message', function (e) {
+  if (e.data === 'iframe-setup') {
+    console.debug('worker: setup done');
+    const port = e.ports[0];
+    port.onmessage = function (e) {
+      console.warn('receiving message in worker');
+      console.log(e.data);
+    };
+  }
+});
 // Things to remember about the return type
 // 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
 // 2. Keep the return type simple and flat. Ie. an object whose values are not object.
