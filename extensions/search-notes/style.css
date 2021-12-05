@@ -9,3 +9,7 @@
 .bangle-search-match {
   background-color: var(--window-highlight-bgColor);
 }
+
+.search-notes .search-result-note-match.active {
+  background-color: var(--window-accent-primary-0);
+}
