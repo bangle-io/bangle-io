@@ -96,19 +96,19 @@ export function BacklinkWidget() {
               />
               {!isCollapsed(r) &&
                 r.matches.map((matchObj, j) => (
-                  <button key={j} onClick={makeOnClick(r.wsPath)}>
-                    <Sidebar.Row2
-                      className={
-                        'search-result-text-match ml-1 pl-3 rounded ' +
-                        (j === 0 ? 'mt-0' : 'mt-1')
-                      }
-                      titleClassName="text-sm "
-                      item={{
-                        uid: 'search-result-text-match-' + j,
-                        title: <HighlightText highlightText={matchObj.match} />,
-                      }}
-                    ></Sidebar.Row2>
-                  </button>
+                  <Sidebar.Row2
+                    key={j}
+                    className={
+                      'search-result-text-match ml-1 pl-3 rounded ' +
+                      (j === 0 ? 'mt-0' : 'mt-1')
+                    }
+                    onClick={makeOnClick(r.wsPath)}
+                    titleClassName="text-sm "
+                    item={{
+                      uid: 'search-result-text-match-' + j,
+                      title: <HighlightText highlightText={matchObj.match} />,
+                    }}
+                  ></Sidebar.Row2>
                 ))}
             </React.Fragment>
           );
