@@ -1,4 +1,4 @@
-import { BANGLE_HOT } from '@bangle.io/config';
+import { BANGLE_HOT, isSafari } from '@bangle.io/config';
 import { validateNonWorkerGlobalScope } from '@bangle.io/naukar-worker';
 
 validateNonWorkerGlobalScope();
@@ -20,7 +20,13 @@ function checkModuleWorkerSupport() {
     },
   };
   try {
-    new Worker('data:', options);
+    if (isSafari) {
+      // this is a browser specific hack to detect
+      // module support
+      new Worker('data:,', options).terminate();
+    } else {
+      new Worker('data:', options).terminate();
+    }
   } catch (err) {
     supportsModuleWorker = false;
     // Hope the worker didn't throw for some other reason, or filter out the error
