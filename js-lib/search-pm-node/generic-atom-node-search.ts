@@ -14,8 +14,8 @@ export function genericAtomNodeSearch(
     nodeName,
     dataAttrName,
     queryIdentifier,
-    printBefore,
-    printAfter,
+    printBefore = '',
+    printAfter = '',
   }: {
     caseSensitive: boolean;
     maxChars: number;
