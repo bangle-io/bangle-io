@@ -4667,6 +4667,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:12.1.2"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
+            ["comlink", "npm:4.3.1"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:17.0.2"],
             ["react-virtual", "virtual:c046cba72c38dcf6273340648e0766fdbab75a254cf95e673b931a25e0584849b5b707dba06246595407ed085c2ab27bc3ed8ada1ab98ed196937bbe4d4c69bc#npm:2.8.2"]

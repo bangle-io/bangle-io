@@ -12,7 +12,6 @@
       }
     </style>
     <script>
-      console.debug('parent', parent);
       window.addEventListener('message', (event) => {
         console.debug('received event', event);
         const innerFrameElement = document.getElementById(
@@ -22,10 +21,11 @@
           innerFrameElement &&
           event.source === innerFrameElement.contentWindow
         ) {
-          parent.postMessage(
-            { origin: event.origin, data: event.data },
-            window.location.origin,
-          );
+          parent.postMessage(event.data, window.location.origin);
+        } else if (innerFrameElement && event.source === parent) {
+          console.log('parent sent a message', event.data);
+        } else {
+          console.warn('untrusted event');
         }
       });
     </script>

@@ -91,6 +91,8 @@ export async function getFileLastModified(wsPath: string) {
 }
 
 export async function getDoc(wsPath: string, specRegistry, markdownItPlugins) {
+  validateNoteWsPath(wsPath);
+
   const fileText = await getFileAsText(wsPath);
 
   const doc: Node = markdownParser(fileText, specRegistry, markdownItPlugins);
@@ -101,8 +103,6 @@ export async function getDoc(wsPath: string, specRegistry, markdownItPlugins) {
 export async function getFileAsText(wsPath: string) {
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
-
-  validateNoteWsPath(wsPath);
 
   const path = toFSPath(wsPath);
 
