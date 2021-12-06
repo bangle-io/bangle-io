@@ -154,7 +154,7 @@ exports[`show search results 1`] = `
       </div>
       <span>
         <div
-          class="b-sidebar-row2 hover search-result-text-match ml-1 pl-3 rounded-sm mt-3"
+          class="b-sidebar-row2 hover"
           data-id="search-result-text-match-0"
           role="button"
           style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"

@@ -187,6 +187,12 @@ export function SearchResults({
               r.matches.map((matchObj, j) => (
                 <NoteLink
                   wsPath={r.uid}
+                  className={cx(
+                    'pl-3 rounded-sm block search-result-text-match',
+                    primaryWsPath === r.uid && 'active',
+                    j === 0 ? 'mt-3' : 'mt-4',
+                    j === r.matches.length - 1 ? 'last-item' : '',
+                  )}
                   onClick={() => {
                     if (primaryEditor && primaryEditor.destroyed !== true) {
                       updateCurrentlyClicked({
@@ -199,10 +205,7 @@ export function SearchResults({
                   key={j}
                 >
                   <Sidebar.Row2
-                    className={
-                      'search-result-text-match ml-1 pl-3 rounded-sm ' +
-                      (j === 0 ? 'mt-3' : 'mt-4')
-                    }
+                    className=""
                     titleClassName="text-sm "
                     item={{
                       uid: 'search-result-text-match-' + j,
