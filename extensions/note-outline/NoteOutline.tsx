@@ -111,7 +111,13 @@ export function NoteOutline() {
   return (
     <div className="note-outline_container flex flex-col">
       {(!headingNodes || headingNodes.length === 0) && (
-        <span className="font-light">{'<No headings found>'}</span>
+        <span>
+          🐒 No headings found!
+          <br />
+          <span className="font-light">
+            Create heading by typing # followed by a space.
+          </span>
+        </span>
       )}
       {headingNodes?.map((r, i) => {
         let isQuiet: Parameters<typeof ActionButton>[0]['isQuiet'] = 'hoverBg';

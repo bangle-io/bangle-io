@@ -82,10 +82,14 @@ test('renders when no headings found', async () => {
         <div
           class="note-outline_container flex flex-col"
         >
-          <span
-            class="font-light"
-          >
-            &lt;No headings found&gt;
+          <span>
+            🐒 No headings found!
+            <br />
+            <span
+              class="font-light"
+            >
+              Create heading by typing # followed by a space.
+            </span>
           </span>
         </div>
       </div>

@@ -68,18 +68,20 @@ test('renders with blank data', async () => {
         <div
           class="inline-backlink_widget-container flex flex-col"
         >
-          <span
-            class="font-light"
-          >
-            🐒 No backlinks found
+          <span>
+            🐒 No backlinks found!
             <br />
-            Create one by typing 
-            <kbd
-              class="font-normal"
+            <span
+              class="font-light"
             >
-              [[
-            </kbd>
-             followed by the name of the note.
+              Create one by typing 
+              <kbd
+                class="font-normal"
+              >
+                [[
+              </kbd>
+               followed by the name of the note.
+            </span>
           </span>
         </div>
       </div>
@@ -130,18 +132,20 @@ test('handles abort error', async () => {
         <div
           class="inline-backlink_widget-container flex flex-col"
         >
-          <span
-            class="font-light"
-          >
-            🐒 No backlinks found
+          <span>
+            🐒 No backlinks found!
             <br />
-            Create one by typing 
-            <kbd
-              class="font-normal"
+            <span
+              class="font-light"
             >
-              [[
-            </kbd>
-             followed by the name of the note.
+              Create one by typing 
+              <kbd
+                class="font-normal"
+              >
+                [[
+              </kbd>
+               followed by the name of the note.
+            </span>
           </span>
         </div>
       </div>
