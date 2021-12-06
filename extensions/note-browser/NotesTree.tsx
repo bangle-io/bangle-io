@@ -56,8 +56,8 @@ export function NotesTree() {
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
       dispatch({
-        type: 'UI/TOGGLE_SIDEBAR',
-        value: { type: null },
+        type: 'UI/CHANGE_SIDEBAR',
+        value: { type: undefined },
       });
     }
   }, [dispatch, widescreen]);

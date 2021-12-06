@@ -11,7 +11,7 @@ import {
   ChevronRightIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
-import { safeRequestAnimationFrame } from '@bangle.io/utils';
+import { cx, safeRequestAnimationFrame } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -151,7 +151,10 @@ export function SearchResults({
           <React.Fragment key={i}>
             <Sidebar.Row2
               titleClassName="text-sm font-bold"
-              className={'search-result-note-match pl-1 pr-3  select-none'}
+              className={cx(
+                `search-result-note-match pl-1 pr-3  select-none`,
+                primaryWsPath === r.uid && 'active',
+              )}
               extraInfoClassName="ml-1 text-sm"
               onClick={onClicks[i]}
               item={{

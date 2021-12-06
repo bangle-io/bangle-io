@@ -1,6 +1,6 @@
-import { cssVars } from './css-vars';
+import type { ThemeType } from '@bangle.io/shared-types';
 
-export type ThemeType = 'dark' | 'light';
+import { cssVars } from './css-vars';
 
 export function applyTheme(theme: ThemeType) {
   const element = document.documentElement;

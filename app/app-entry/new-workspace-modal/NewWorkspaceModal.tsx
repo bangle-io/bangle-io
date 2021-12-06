@@ -159,7 +159,6 @@ export function NewWorkspaceModalContainer({
 
     dispatch({
       type: 'UI/DISMISS_MODAL',
-      value: { wsName: newWorkspaceName },
     });
   }, [dispatchAction, modalState, dispatch]);
 
