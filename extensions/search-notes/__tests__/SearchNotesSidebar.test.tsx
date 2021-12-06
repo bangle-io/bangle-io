@@ -106,7 +106,9 @@ test('show search results', async () => {
 
   expect(
     Array.from(
-      renderResult.container.querySelectorAll('.search-result-text-match'),
+      renderResult.container.querySelectorAll(
+        '[data-id="search-result-text-match-0"]',
+      ),
     ).length,
   ).toBe(1);
 

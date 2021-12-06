@@ -13,3 +13,11 @@
 .search-notes .search-result-note-match.active {
   background-color: var(--window-accent-primary-0);
 }
+
+.search-notes .search-result-text-match.last-item {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--window-borderColor-0);
+}
+.search-notes .search-result-text-match.previously-clicked {
+  background-color: var(--accent-secondary);
+}

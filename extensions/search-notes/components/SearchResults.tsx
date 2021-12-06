@@ -11,7 +11,7 @@ import {
   ChevronRightIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
-import { cx, safeRequestAnimationFrame } from '@bangle.io/utils';
+import { cx, safeRequestAnimationFrame, usePrevious } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -144,6 +144,11 @@ export function SearchResults({
       cancelled = true;
     };
   }, [currentlyClicked, primaryWsPath, primaryEditor]);
+
+  // cannot used currently clicked because it gets set to null
+  // right after focusing
+  const prevClicked = usePrevious(currentlyClicked);
+
   return (
     <>
       {results.map((r, i) => {
@@ -155,12 +160,13 @@ export function SearchResults({
                 `search-result-note-match pl-1 pr-3  select-none`,
                 primaryWsPath === r.uid && 'active',
               )}
-              extraInfoClassName="ml-1 text-sm"
+              extraInfoClassName="text-sm"
+              extraInfoOnNewLine
               onClick={onClicks[i]}
               item={{
                 uid: 'search-notes-result-' + i,
                 showDividerAbove: false,
-                title: resolvePath(r.uid).fileName,
+                title: resolvePath(r.uid).fileNameWithoutExt,
                 extraInfo: resolvePath(r.uid).dirPath,
                 leftNode: (
                   <ButtonIcon>
@@ -184,37 +190,44 @@ export function SearchResults({
               }}
             />
             {!isCollapsed(r) &&
-              r.matches.map((matchObj, j) => (
-                <NoteLink
-                  wsPath={r.uid}
-                  onClick={() => {
-                    if (primaryEditor && primaryEditor.destroyed !== true) {
-                      updateCurrentlyClicked({
-                        wsPath: r.uid,
-                        match: matchObj,
-                        matchIndex: j,
-                      });
-                    }
-                  }}
-                  key={j}
-                >
-                  <Sidebar.Row2
-                    className={
-                      'search-result-text-match ml-1 pl-3 rounded-sm ' +
-                      (j === 0 ? 'mt-3' : 'mt-4')
-                    }
-                    titleClassName="text-sm "
-                    item={{
-                      uid: 'search-result-text-match-' + j,
-                      title: (
-                        <HighlightText
-                          highlightText={matchObj.match}
-                        ></HighlightText>
-                      ),
+              r.matches.map((matchObj, j) => {
+                return (
+                  <NoteLink
+                    wsPath={r.uid}
+                    className={cx(
+                      'rounded-sm block search-result-text-match ',
+                      primaryWsPath === r.uid &&
+                        prevClicked?.matchIndex === j &&
+                        'previously-clicked',
+                      j === 0 ? 'mt-3' : 'mt-4',
+                      j === r.matches.length - 1 ? 'last-item' : '',
+                    )}
+                    onClick={() => {
+                      if (primaryEditor && primaryEditor.destroyed !== true) {
+                        updateCurrentlyClicked({
+                          wsPath: r.uid,
+                          match: matchObj,
+                          matchIndex: j,
+                        });
+                      }
                     }}
-                  ></Sidebar.Row2>
-                </NoteLink>
-              ))}
+                    key={j}
+                  >
+                    <Sidebar.Row2
+                      className="pl-3"
+                      titleClassName="text-sm "
+                      item={{
+                        uid: 'search-result-text-match-' + j,
+                        title: (
+                          <HighlightText
+                            highlightText={matchObj.match}
+                          ></HighlightText>
+                        ),
+                      }}
+                    ></Sidebar.Row2>
+                  </NoteLink>
+                );
+              })}
           </React.Fragment>
         );
       })}

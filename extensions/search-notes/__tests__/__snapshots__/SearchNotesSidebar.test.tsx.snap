@@ -114,11 +114,13 @@ exports[`show search results 1`] = `
               </svg>
             </button>
           </div>
-          <span>
+          <span
+            class="flex flex-col"
+          >
             <span
               class="b-title text-sm font-bold"
             >
-              one.md
+              one
             </span>
             
           </span>
@@ -154,7 +156,7 @@ exports[`show search results 1`] = `
       </div>
       <span>
         <div
-          class="b-sidebar-row2 hover search-result-text-match ml-1 pl-3 rounded-sm mt-3"
+          class="b-sidebar-row2 hover pl-3"
           data-id="search-result-text-match-0"
           role="button"
           style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
@@ -165,7 +167,9 @@ exports[`show search results 1`] = `
             <div
               class="b-left-node"
             />
-            <span>
+            <span
+              class=""
+            >
               <span
                 class="b-title text-sm "
               >

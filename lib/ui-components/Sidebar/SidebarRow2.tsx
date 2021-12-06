@@ -20,6 +20,7 @@ export function Row2({
   style,
   // on touch devices having :hover forces you to click twice
   allowHover = !isTouchDevice(),
+  extraInfoOnNewLine = false,
 }: {
   item: ItemType;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -30,12 +31,18 @@ export function Row2({
   isActive?: boolean;
   style?: any;
   allowHover?: boolean;
+  extraInfoOnNewLine?: boolean;
 }) {
   const titleElement = (
-    <span>
+    <span className={cx(extraInfoOnNewLine && 'flex flex-col')}>
       <span className={'b-title ' + titleClassName}>{item.title}</span>
       {item.extraInfo && (
-        <span className={'b-extra-info ' + extraInfoClassName}>
+        <span
+          className={cx(
+            'b-extra-info ' + extraInfoClassName,
+            extraInfoOnNewLine && 'extra-info-on-new-line',
+          )}
+        >
           {item.extraInfo}
         </span>
       )}

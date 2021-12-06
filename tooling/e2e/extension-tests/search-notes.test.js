@@ -71,7 +71,7 @@ test('Is able to search for a note', async () => {
     (nodes) => nodes.map((n) => n.innerText),
   );
   expect(noteMatches.length).toBe(1);
-  expect(noteMatches[0].includes('test-one.md')).toBe(true);
+  expect(noteMatches[0].includes('test-one')).toBe(true);
 
   const clearButton = await page.waitForSelector(
     'button[aria-label="Clear search"]',
@@ -101,9 +101,9 @@ test('Is able to search for a note', async () => {
   expect(noteMatches.length).toBe(2);
   expect(noteMatches).toMatchInlineSnapshot(`
 Array [
-  "test-one.md
+  "test-one
 1",
-  "test-two.md
+  "test-two
 1",
 ]
 `);
