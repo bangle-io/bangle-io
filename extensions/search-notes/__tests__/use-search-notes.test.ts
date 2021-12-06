@@ -132,10 +132,10 @@ test('works with existing search query', async () => {
     ],
     {
       caseSensitive: false,
-      concurrency: 10,
-      maxChars: 75,
-      perFileMatchMax: 200,
-      totalMatchMax: 5000,
+      concurrency: expect.any(Number),
+      maxChars: expect.any(Number),
+      perFileMatchMax: expect.any(Number),
+      totalMatchMax: expect.any(Number),
     },
   );
 

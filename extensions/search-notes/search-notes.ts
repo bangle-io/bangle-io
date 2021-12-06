@@ -10,7 +10,7 @@ export async function searchNotes(
     caseSensitive = false,
     maxChars = 75,
     perFileMatchMax = 200,
-    totalMatchMax = 5000,
+    totalMatchMax = 2000,
   } = {},
 ) {
   return naukarWorkerProxy.abortableSearchWsForPmNode(
