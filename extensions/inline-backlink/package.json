@@ -19,7 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "devDependencies": {
-    "@bangle.dev/test-helpers": "0.28.1",
+    "@bangle.dev/test-helpers": "0.28.3",
     "@bangle.io/naukar-worker": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/dom": "^8.10.1",
@@ -29,12 +29,12 @@
     "@types/react-dom": "^17.0.10"
   },
   "dependencies": {
-    "@bangle.dev/all-base-components": "0.28.1",
-    "@bangle.dev/core": "0.28.1",
-    "@bangle.dev/pm": "0.28.1",
-    "@bangle.dev/react": "0.28.1",
-    "@bangle.dev/utils": "0.28.1",
-    "@bangle.dev/wiki-link": "0.28.1",
+    "@bangle.dev/all-base-components": "0.28.3",
+    "@bangle.dev/core": "0.28.3",
+    "@bangle.dev/pm": "0.28.3",
+    "@bangle.dev/react": "0.28.3",
+    "@bangle.dev/utils": "0.28.3",
+    "@bangle.dev/wiki-link": "0.28.3",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/contextual-ui-components": "workspace:*",

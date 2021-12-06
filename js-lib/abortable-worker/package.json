@@ -23,8 +23,8 @@
     "@bangle.io/object-uid": "workspace:*"
   },
   "devDependencies": {
-    "@bangle.dev/pm": "0.28.1",
-    "@bangle.dev/utils": "0.28.1"
+    "@bangle.dev/pm": "0.28.3",
+    "@bangle.dev/utils": "0.28.3"
   },
   "publishConfig": {
     "access": "public"
