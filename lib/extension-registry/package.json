@@ -25,10 +25,10 @@
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.28.1",
-    "@bangle.dev/pm": "0.28.1",
-    "@bangle.dev/react": "0.28.1",
-    "@bangle.dev/utils": "0.28.1",
+    "@bangle.dev/core": "0.28.3",
+    "@bangle.dev/pm": "0.28.3",
+    "@bangle.dev/react": "0.28.3",
+    "@bangle.dev/utils": "0.28.3",
     "@bangle.io/editor": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",

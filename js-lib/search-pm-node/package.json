@@ -23,13 +23,13 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.28.1",
-    "@bangle.dev/pm": "0.28.1"
+    "@bangle.dev/core": "0.28.3",
+    "@bangle.dev/pm": "0.28.3"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.28.1",
-    "@bangle.dev/test-helpers": "0.28.1",
-    "@bangle.dev/utils": "0.28.1",
-    "@bangle.dev/wiki-link": "0.28.1"
+    "@bangle.dev/all-base-components": "0.28.3",
+    "@bangle.dev/test-helpers": "0.28.3",
+    "@bangle.dev/utils": "0.28.3",
+    "@bangle.dev/wiki-link": "0.28.3"
   }
 }
