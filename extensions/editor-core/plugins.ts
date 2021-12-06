@@ -24,7 +24,6 @@ import {
   PluginKey,
 } from '@bangle.dev/pm';
 import { floatingMenu } from '@bangle.dev/react-menu';
-import { stopwatch } from '@bangle.dev/react-stopwatch';
 import { tablePlugins } from '@bangle.dev/table';
 import { timestamp } from '@bangle.dev/timestamp';
 import { trailingNode } from '@bangle.dev/trailing-node';
@@ -97,7 +96,7 @@ export const getPlugins = () => {
     orderedList.plugins(),
     history.plugins(),
     tablePlugins(),
-    stopwatch.plugins(),
+    // stopwatch.plugins(),
     trailingNode.plugins(),
     timestamp.plugins(),
     new Plugin({

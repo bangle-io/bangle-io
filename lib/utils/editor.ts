@@ -35,5 +35,8 @@ export function hasPluginStateChanged<T>(
   newState: EditorState,
   oldState: EditorState,
 ) {
-  return pluginKey.getState(newState) !== pluginKey.getState(oldState);
+  const newP = pluginKey.getState(newState);
+  const oldP = pluginKey.getState(oldState);
+
+  return newP !== oldP;
 }

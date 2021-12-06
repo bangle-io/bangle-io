@@ -21,7 +21,6 @@ export function pluginsFactory() {
   return [
     new Plugin<DecorationSet>({
       key: plugin,
-      view: () => ({}),
       state: {
         init(_, state) {
           return buildDeco(state);
@@ -29,6 +28,7 @@ export function pluginsFactory() {
         apply(tr, old, oldState, newState) {
           if (
             !tr.docChanged &&
+            // watch for changes in intersection
             !hasPluginStateChanged(
               intersectionObserverPluginKey,
               newState,
@@ -139,6 +139,9 @@ function buildDeco(state) {
         return wrapper;
       },
       {
+        // the identity of collapsible heading depends on just
+        // two things the position and whether its collapsible or not
+        // this is used to decide whether to redraw the node or reuse it.
         key: match.pos + (match.collapsed ? 'true' : 'false'),
       },
     );

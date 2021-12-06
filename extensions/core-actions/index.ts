@@ -1,5 +1,4 @@
 import {
-  CORE_ACTIONS_CLONE_WORKSPACE,
   CORE_ACTIONS_CLOSE_EDITOR,
   CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
   CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
@@ -20,7 +19,6 @@ const extension = Extension.create({
   name: extensionName,
   application: {
     actions: [
-      { name: CORE_ACTIONS_CLONE_WORKSPACE, title: 'Clone current workspace' },
       { name: CORE_ACTIONS_CLOSE_EDITOR, title: 'Close editor/s' },
       { name: CORE_ACTIONS_DELETE_ACTIVE_NOTE, title: 'Delete active note' },
       { name: CORE_ACTIONS_NEW_NOTE, title: 'New note' },

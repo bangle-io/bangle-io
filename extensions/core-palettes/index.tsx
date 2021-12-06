@@ -37,14 +37,14 @@ const extension = Extension.create({
       },
       {
         name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-        title: 'Workspace Palette',
-        hidden: true,
+        title: 'Switch Workspace',
+        hidden: false,
         keybinding: 'Ctrl-r',
       },
       {
         name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
-        title: 'Notes Palette',
-        hidden: true,
+        title: 'Open a Note',
+        hidden: false,
         keybinding: 'Mod-p',
       },
     ],
