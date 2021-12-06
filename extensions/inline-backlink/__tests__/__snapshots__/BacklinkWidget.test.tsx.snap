@@ -42,7 +42,9 @@ exports[`renders backlinks 1`] = `
               </svg>
             </button>
           </div>
-          <span>
+          <span
+            class=""
+          >
             <span
               class="b-title "
             >

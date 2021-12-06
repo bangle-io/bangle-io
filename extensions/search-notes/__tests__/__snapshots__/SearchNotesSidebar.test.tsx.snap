@@ -114,11 +114,13 @@ exports[`show search results 1`] = `
               </svg>
             </button>
           </div>
-          <span>
+          <span
+            class="flex flex-col"
+          >
             <span
               class="b-title text-sm font-bold"
             >
-              one.md
+              one
             </span>
             
           </span>
@@ -165,7 +167,9 @@ exports[`show search results 1`] = `
             <div
               class="b-left-node"
             />
-            <span>
+            <span
+              class=""
+            >
               <span
                 class="b-title text-sm "
               >

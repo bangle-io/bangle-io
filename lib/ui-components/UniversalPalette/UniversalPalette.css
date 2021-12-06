@@ -110,8 +110,12 @@
 }
 
 .universal-palette-item .b-extra-info {
-  color: var(--textColor-1);
   margin-left: var(--universal-palette-alignment-spacing);
+  color: var(--textColor-1);
+}
+
+.universal-palette-item .b-extra-info.extra-info-on-new-line {
+  margin-left: 0;
 }
 
 .universal-palette-item .b-description {

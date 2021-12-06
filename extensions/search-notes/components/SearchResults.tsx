@@ -160,12 +160,13 @@ export function SearchResults({
                 `search-result-note-match pl-1 pr-3  select-none`,
                 primaryWsPath === r.uid && 'active',
               )}
-              extraInfoClassName="ml-1 text-sm"
+              extraInfoClassName="text-sm"
+              extraInfoOnNewLine
               onClick={onClicks[i]}
               item={{
                 uid: 'search-notes-result-' + i,
                 showDividerAbove: false,
-                title: resolvePath(r.uid).fileName,
+                title: resolvePath(r.uid).fileNameWithoutExt,
                 extraInfo: resolvePath(r.uid).dirPath,
                 leftNode: (
                   <ButtonIcon>
