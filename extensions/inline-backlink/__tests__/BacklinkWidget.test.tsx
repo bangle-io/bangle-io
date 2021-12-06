@@ -71,7 +71,15 @@ test('renders with blank data', async () => {
           <span
             class="font-light"
           >
-            &lt;No backlinks found&gt;
+            🐒 No backlinks found
+            <br />
+            Create one by typing 
+            <kbd
+              class="font-normal"
+            >
+              [[
+            </kbd>
+             followed by the name of the note.
           </span>
         </div>
       </div>
@@ -125,7 +133,15 @@ test('handles abort error', async () => {
           <span
             class="font-light"
           >
-            &lt;No backlinks found&gt;
+            🐒 No backlinks found
+            <br />
+            Create one by typing 
+            <kbd
+              class="font-normal"
+            >
+              [[
+            </kbd>
+             followed by the name of the note.
           </span>
         </div>
       </div>
