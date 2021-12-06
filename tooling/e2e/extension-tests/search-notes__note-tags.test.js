@@ -70,7 +70,7 @@ describe('Create #cosmic and #space tags', () => {
     expect(noteMatches.length).toBe(1);
     expect(noteMatches).toMatchInlineSnapshot(`
         Array [
-          "test-one.md
+          "test-one
         1",
         ]
         `);
