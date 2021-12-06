@@ -6,9 +6,10 @@ import React, {
   useReducer,
 } from 'react';
 
+import type { ThemeType } from '@bangle.io/shared-types';
 import { checkWidescreen, useWindowSize } from '@bangle.io/utils';
 
-import { applyTheme, ThemeType } from './apply-theme';
+import { applyTheme } from './apply-theme';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
@@ -16,14 +17,45 @@ const persistKey = 'UIManager0.724';
 
 interface NotificationType {
   uid: string;
-  content: string;
-  buttons: any[];
-  severity?: string;
+  content: React.ReactNode;
+  buttons?: any[];
+  severity?: 'error' | 'warning' | 'info' | 'success' | undefined;
 }
+
+type UiContextAction =
+  | { type: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
+  | { type: 'UI/CHANGE_SIDEBAR'; value: { type: string | undefined } }
+  | { type: 'UI/SHOW_NOTIFICATION'; value: NotificationType }
+  | { type: 'UI/DISMISS_NOTIFICATION'; value: { uid: string } }
+  | {
+      type: 'UI/UPDATE_PALETTE';
+      value: {
+        type: string | undefined;
+        initialQuery?: string;
+        metadata?: any;
+      };
+    }
+  | { type: 'UI/RESET_PALETTE' }
+  | { type: 'UI/TOGGLE_THEME' }
+  | { type: 'UI/UPDATE_THEME'; value: { theme: ThemeType } }
+  | {
+      type: 'UI/UPDATE_WINDOW_SIZE';
+      value: { windowSize: ReturnType<typeof useWindowSize> };
+    }
+  | {
+      type: 'UI/SHOW_MODAL';
+      value: { modal: string | undefined };
+    }
+  | {
+      type: 'UI/DISMISS_MODAL';
+    }
+  | { type: 'UI/UPDATE_NEW_CHANGELOG'; value: boolean }
+  | { type: 'UI/UPDATE_NOTE_SIDEBAR'; value: boolean }
+  | { type: 'UI/TOGGLE_NOTE_SIDEBAR' };
 
 interface UIStateObj {
   changelogHasUpdates: boolean;
-  dispatch: Function;
+  dispatch: React.Dispatch<UiContextAction>;
   modal: string | undefined;
   noteSidebar: boolean;
   notifications: NotificationType[];
@@ -80,7 +112,7 @@ export function UIManager({ children }) {
   const windowSize = useWindowSize();
 
   const [state, dispatch] = useReducer(
-    (state, action) => reducer(state, action),
+    (state: UIStateObj, action: UiContextAction) => reducer(state, action),
     initialState,
     (store) => {
       store = Object.assign({}, store, retrievePersistedState());
@@ -127,14 +159,11 @@ export function UIManager({ children }) {
  * @param {UIState} state
  * @param {*} action
  */
-const reducer = (
-  state: UIStateObj,
-  action: { type: string; value: any },
-): UIStateObj => {
+const reducer = (state: UIStateObj, action: UiContextAction): UIStateObj => {
   log('Received', action.type, { action });
   switch (action.type) {
     case 'UI/TOGGLE_SIDEBAR': {
-      const sidebar = Boolean(state.sidebar) ? null : action.value.type;
+      const sidebar = Boolean(state.sidebar) ? undefined : action.value.type;
       return {
         ...state,
         sidebar,
@@ -259,6 +288,7 @@ const reducer = (
         noteSidebar: action.value,
       };
     }
+
     case 'UI/TOGGLE_NOTE_SIDEBAR': {
       return {
         ...state,
@@ -266,8 +296,11 @@ const reducer = (
       };
     }
 
-    default:
-      throw new Error(`Unrecognized action "${action.type}"`);
+    default: {
+      // hack to catch slipping
+      let val: never = action;
+      throw new Error(`Unrecognized action "${(val as any).type}"`);
+    }
   }
 };
 

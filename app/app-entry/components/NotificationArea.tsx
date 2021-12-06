@@ -49,7 +49,17 @@ const Severity = {
   ),
 };
 
-export function Notification({ content = '', buttons, severity, onDismiss }) {
+export function Notification({
+  content = '',
+  buttons,
+  severity = 'info',
+  onDismiss,
+}: {
+  content: React.ReactNode;
+  buttons?: React.ReactNode[];
+  severity?: keyof typeof Severity;
+  onDismiss: () => void;
+}) {
   return (
     <div
       className="w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
