@@ -43,7 +43,14 @@ export function BacklinkWidget() {
   return (
     <div className="inline-backlink_widget-container flex flex-col">
       {!backlinkSearchResult || backlinkSearchResult.length === 0 ? (
-        <span className="font-light">{'<No backlinks found>'}</span>
+        <span>
+          🐒 No backlinks found!
+          <br />
+          <span className="font-light">
+            Create one by typing <kbd className="font-normal">[[</kbd> followed
+            by the name of the note.
+          </span>
+        </span>
       ) : (
         backlinkSearchResult.map((r, i) => {
           return (
