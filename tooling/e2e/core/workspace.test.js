@@ -5,15 +5,21 @@ const {
   createWorkspace,
   getWsPathsShownInFilePalette,
   getPrimaryEditorHandler,
-  sleep,
+  newPage,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
 
+let page, destroyPage;
+
 beforeEach(async () => {
-  await jestPuppeteer.resetPage();
+  ({ page, destroyPage } = await newPage(browser));
   await page.goto(url, { waitUntil: 'networkidle2' });
   await page.evaluate(() => localStorage.clear());
+});
+
+afterEach(async () => {
+  await destroyPage();
 });
 
 test('Create a new workspace when already in a workspace', async () => {
@@ -56,7 +62,6 @@ test('Create a new workspace when already in a workspace and go back', async () 
 });
 
 test('Create a new workspace from home page', async () => {
-  await longSleep();
   const wsName1 = await createWorkspace(page);
 
   const wsPathsOfWsName2 = await getWsPathsShownInFilePalette(page);
@@ -65,4 +70,46 @@ test('Create a new workspace from home page', async () => {
 
   const n1 = await createNewNote(page, wsName1, 'file-1');
   expect(await getWsPathsShownInFilePalette(page)).toEqual([n1]);
+});
+
+test('Opening an unknown workspace', async () => {
+  await Promise.all([
+    page.waitForNavigation({
+      timeout: 5000,
+      waitUntil: 'networkidle0',
+    }),
+    page.goto(url + '/ws/random-wrong-wsname', {
+      waitUntil: 'networkidle2',
+    }),
+  ]);
+
+  expect(await page.url()).toBe(
+    `http://localhost:1234/ws-not-found/random-wrong-wsname`,
+  );
+
+  expect(await page.$eval('body', (el) => el.innerText)).toContain(
+    `Workspace random-wrong-wsname not found`,
+  );
+});
+
+test('Opening an invalid file name', async () => {
+  const wsName1 = await createWorkspace(page);
+
+  await Promise.all([
+    page.waitForNavigation({
+      timeout: 5000,
+      waitUntil: 'networkidle0',
+    }),
+    page.goto(url + `/ws/${wsName1}/wrong-ws-path`, {
+      waitUntil: 'networkidle2',
+    }),
+  ]);
+
+  expect(await page.url()).toBe(
+    `http://localhost:1234/ws-invalid-path/${wsName1}`,
+  );
+
+  expect(await page.$eval('body', (el) => el.innerText)).toContain(
+    `🙈 Invalid path`,
+  );
 });

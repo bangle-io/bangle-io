@@ -32,6 +32,7 @@ import {
   getSecondaryWsPath,
   getWsName,
   History,
+  isValidFileWsPath,
   isValidNoteWsPath,
   Location,
   OpenedWsPaths,
@@ -80,6 +81,12 @@ export function useWorkspaceContext() {
   return useContext(WorkspaceHooksContext);
 }
 
+export type OnInvalidPath = (
+  wsName: string | undefined,
+  history: History,
+  invalidPath: string,
+) => void;
+
 /**
  *
  * @param {*} param0
@@ -90,10 +97,12 @@ export function WorkspaceContextProvider({
   children,
   onNativefsAuthError,
   onWorkspaceNotFound,
+  onInvalidPath,
 }: {
   children: React.ReactNode;
   onNativefsAuthError: (wsName: string | undefined, history: History) => void;
   onWorkspaceNotFound: (wsName: string | undefined, history: History) => void;
+  onInvalidPath: OnInvalidPath;
 }) {
   const extensionRegistry = useExtensionRegistryContext();
   const history = useHistory();
@@ -116,6 +125,7 @@ export function WorkspaceContextProvider({
     wsName,
     history,
     location,
+    onInvalidPath,
   );
   const { primaryWsPath, secondaryWsPath } = openedWsPaths;
   const { fileWsPaths, noteWsPaths, refreshWsPaths } = useFiles(
@@ -209,12 +219,21 @@ export function useOpenedWsPaths(
   wsName: string | undefined,
   history: History,
   location: Location,
+  onInvalidPath: OnInvalidPath,
 ) {
   let primaryWsPath = getPrimaryWsPath(location);
-  const secondaryWsPath = getSecondaryWsPath(location);
+  let secondaryWsPath = getSecondaryWsPath(location);
 
   if (wsName === HELP_FS_WORKSPACE_NAME && !primaryWsPath) {
     primaryWsPath = filePathToWsPath(wsName, HELP_FS_INDEX_FILE_NAME);
+  }
+
+  if (primaryWsPath && !isValidFileWsPath(primaryWsPath)) {
+    onInvalidPath(wsName, history, primaryWsPath);
+    primaryWsPath = undefined;
+  } else if (secondaryWsPath && !isValidFileWsPath(secondaryWsPath)) {
+    onInvalidPath(wsName, history, secondaryWsPath);
+    secondaryWsPath = undefined;
   }
 
   const openedWsPaths = useMemo(
@@ -227,7 +246,7 @@ export function useOpenedWsPaths(
       newOpened:
         | OpenedWsPaths
         | ((currentOpened: OpenedWsPaths) => OpenedWsPaths),
-      { replaceHistory = false } = {},
+      { replaceHistory = false }: { replaceHistory?: boolean } = {},
     ): boolean => {
       if (!wsName) {
         return false;
@@ -250,6 +269,7 @@ export function useOpenedWsPaths(
     },
     [wsName, history, openedWsPaths, location],
   );
+
   return { openedWsPaths, updateOpenedWsPaths };
 }
 

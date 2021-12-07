@@ -18,6 +18,7 @@ import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 import {
   AppContainer,
   handleNativefsAuthError,
+  handleOnInvalidPath,
   handleWorkspaceNotFound,
 } from './AppContainer';
 import { AppStateProvider } from './AppStateProvider';
@@ -82,6 +83,7 @@ export function Entry() {
                     <WorkspaceContextProvider
                       onNativefsAuthError={handleNativefsAuthError}
                       onWorkspaceNotFound={handleWorkspaceNotFound}
+                      onInvalidPath={handleOnInvalidPath}
                     >
                       <WatchWorkspace />
                       <WatchUI />
