@@ -91,3 +91,25 @@ test('Opening an unknown workspace', async () => {
     `Workspace random-wrong-wsname not found`,
   );
 });
+
+test('Opening an invalid file name', async () => {
+  const wsName1 = await createWorkspace(page);
+
+  await Promise.all([
+    page.waitForNavigation({
+      timeout: 5000,
+      waitUntil: 'networkidle0',
+    }),
+    page.goto(url + `/ws/${wsName1}/wrong-ws-path`, {
+      waitUntil: 'networkidle2',
+    }),
+  ]);
+
+  expect(await page.url()).toBe(
+    `http://localhost:1234/ws-invalid-path/${wsName1}`,
+  );
+
+  expect(await page.$eval('body', (el) => el.innerText)).toContain(
+    `🙈 Invalid path`,
+  );
+});
