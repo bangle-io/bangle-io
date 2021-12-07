@@ -103,5 +103,5 @@ function localStorageGetItem<T>(key: string): T | undefined {
     return undefined;
   }
 
-  return parsedValue['payload'];
+  return parsedValue['payload'] as T;
 }
