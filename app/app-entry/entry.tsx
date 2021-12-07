@@ -12,7 +12,6 @@ import {
 } from '@bangle.io/extension-registry';
 import { initExtensionRegistry, polyfills } from '@bangle.io/shared';
 import { UIManager } from '@bangle.io/ui-context';
-import { useLocalStorage } from '@bangle.io/utils';
 import { WorkerSetup } from '@bangle.io/worker-setup';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 
@@ -22,6 +21,7 @@ import {
   handleWorkspaceNotFound,
 } from './AppContainer';
 import { AppStateProvider } from './AppStateProvider';
+import { useUsageAnalytics } from './hooks/use-usage-analytics';
 import { moduleSupport } from './misc/module-support';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
 import { PageLifecycle } from './watchers/PageLifecycle';
@@ -44,6 +44,7 @@ function LoadingBlock({ children }) {
 export function Entry() {
   useEffect(() => {
     const installCallback = (event: BeforeInstallPromptEvent) => {
+      console.debug('before install prompt');
       // not show infobar on mobile
       event.preventDefault();
     };
@@ -54,46 +55,16 @@ export function Entry() {
   }, []);
 
   useEffect(() => {
-    const appInstalledCb = () => {};
+    const appInstalledCb = () => {
+      console.debug('appinstalled ');
+    };
     window.addEventListener('appinstalled', appInstalledCb);
     return () => {
       window.removeEventListener('appinstalled', appInstalledCb);
     };
   }, []);
 
-  const [lastOpened, updateLastOpened] = useLocalStorage<number | undefined>(
-    'entry-lao-2',
-    undefined,
-  );
-
-  const [dauCount, updateDauCount] = useLocalStorage<number | undefined>(
-    'entry-dau-2',
-    0,
-  );
-
-  useEffect(() => {
-    if (dauCount === 3) {
-      (window as any).fathom?.trackGoal('9MRJUARY', 1);
-    }
-    if (dauCount === 5) {
-      (window as any).fathom?.trackGoal('EWFOWT8V', 1);
-    }
-  }, [dauCount, updateDauCount]);
-
-  useEffect(() => {
-    // use local storage bug where it doesnt save
-    // info in storage initially
-    if (lastOpened === undefined) {
-      updateLastOpened(Date.now());
-    }
-
-    if (lastOpened && Date.now() - lastOpened > 60 * 60 * 24 * 1000) {
-      updateLastOpened(Date.now());
-      updateDauCount((dauCount = 0) => dauCount + 1);
-
-      (window as any).fathom?.trackGoal('EC54OGMM', 1);
-    }
-  }, [lastOpened, updateDauCount, updateLastOpened]);
+  useUsageAnalytics();
 
   return (
     <React.StrictMode>
