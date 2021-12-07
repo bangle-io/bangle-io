@@ -2495,7 +2495,9 @@ __metadata:
     copy-webpack-plugin: ^9.1.0
     css-loader: ^6.5.1
     generate-file-webpack-plugin: ^1.0.1
+    html-inline-css-webpack-plugin: ^1.11.1
     html-webpack-plugin: ^5.5.0
+    mini-css-extract-plugin: ^2.4.5
     react: ^17.0.2
     react-dev-utils: ^11.0.4
     react-dom: ^17.0.2
@@ -9960,6 +9962,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html-inline-css-webpack-plugin@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "html-inline-css-webpack-plugin@npm:1.11.1"
+  dependencies:
+    lodash: ^4.17.15
+    tslib: ^1.9.3
+  peerDependencies:
+    html-webpack-plugin: ^3.0.0 || ^4.0.0 || ^5.0.0
+  checksum: a234f455bab6886136ba04c532481b57303edd2ebd70eaf30d902882420f8acd3f5726a1885e31ac50c802182daac0c67051b76fd5fa939e6481b4de36e6f7a9
+  languageName: node
+  linkType: hard
+
 "html-minifier-terser@npm:^5.1.1":
   version: 5.1.1
   resolution: "html-minifier-terser@npm:5.1.1"
@@ -12547,6 +12561,17 @@ __metadata:
   peerDependencies:
     webpack: ^4.4.0 || ^5.0.0
   checksum: c2c1f3d7e5bc206b5bece0f37b65467ee58e0bb0b61d5e031bb818682b02db2552b296f5018af9058b18eb7127e00f6462fb718712a3d4432079dfa848b510cc
+  languageName: node
+  linkType: hard
+
+"mini-css-extract-plugin@npm:^2.4.5":
+  version: 2.4.5
+  resolution: "mini-css-extract-plugin@npm:2.4.5"
+  dependencies:
+    schema-utils: ^4.0.0
+  peerDependencies:
+    webpack: ^5.0.0
+  checksum: 09ad56ac33fd960c6a645a2a18b0fee22c34c8e48e91fc48acc5ac3b9c101a5e9ea50d168b94c9fcdf571265271f6e4dd4fea835b2242907d4311b170aff322f
   languageName: node
   linkType: hard
 

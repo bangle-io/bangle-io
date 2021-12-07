@@ -9,7 +9,7 @@ export function IframeNoteBrowserSidebar() {
   const { wsName } = useWorkspaceContext();
   const [html, updateHtml] = useState<Promise<string> | null>(null);
   useEffect(() => {
-    FileOps.getFileAsText(`${wsName}:.bangle/test-extension.html`).then(
+    FileOps.getFileAsText(`${wsName}:dist/index.html`).then(
       (file) => {
         updateHtml(Promise.resolve(file));
       },

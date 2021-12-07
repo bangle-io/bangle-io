@@ -1,3 +1,5 @@
+import '@bangle.io/ui-components/style';
+
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
@@ -28,6 +30,7 @@ import {
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
+import { wsName, wsPaths } from './fixture';
 
 const DEFAULT_FOLD_DEPTH = 2;
 const PADDING_OFFSET = 16;
@@ -43,13 +46,14 @@ const rowHeight = 1.5 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function NotesTree() {
-  const { pushWsPath, noteWsPaths = [], deleteNote } = useWorkspaceContext();
+  const { pushWsPath, deleteNote } = useWorkspaceContext();
+
+  const noteWsPaths = wsPaths;
 
   const { dispatch, widescreen } = useUIManagerContext();
-  const { wsName, primaryWsPath } = useWorkspaceContext();
+  const { primaryWsPath } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
 
-  console.log({ noteWsPaths, wsName });
   const activeFilePath = primaryWsPath
     ? resolvePath(primaryWsPath).filePath
     : undefined;
@@ -176,16 +180,18 @@ const RenderItems = React.memo(
     closeSidebar: () => void;
     createNewFile: (path?: string) => void;
   }) => {
-    const [collapsed, toggleCollapse] = useLocalStorage<string[]>(
-      'RenderTree6261:' + wsName,
-      () => {
-        const result = filesAndDirList.filter(
-          (path) =>
-            dirSet.has(path) && path.split('/').length === DEFAULT_FOLD_DEPTH,
-        );
-        return result;
-      },
-    );
+    const [collapsed, toggleCollapse] = [[], (s: any) => {}];
+
+    // useLocalStorage<string[]>(
+    //   'RenderTree6261:' + wsName,
+    //   () => {
+    //     const result = filesAndDirList.filter(
+    //       (path) =>
+    //         dirSet.has(path) && path.split('/').length === DEFAULT_FOLD_DEPTH,
+    //     );
+    //     return result;
+    //   },
+    // );
 
     // this exists as a ref so that we can use it later
     // but without depending on it
