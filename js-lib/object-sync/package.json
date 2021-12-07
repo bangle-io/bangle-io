@@ -18,5 +18,8 @@
   },
   "main": "index.ts",
   "module": "index.ts",
-  "publishConfig": {}
+  "publishConfig": {},
+  "dependencies": {
+    "tslib": "^2.3.1"
+  }
 }

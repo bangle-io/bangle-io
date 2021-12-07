@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "jsx": "react",
+        "module": "ES2020",
+        "target": "es6",
+        "strict": false,
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "importHelpers": true,
+        "noEmitOnError": false,
+        "noEmit": false,
+        "allowSyntheticDefaultImports": true,
+        "lib": [
+            "dom",
+            "esnext"
+        ],
+        "typeRoots": []
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

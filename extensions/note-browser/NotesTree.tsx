@@ -49,6 +49,7 @@ export function NotesTree() {
   const { wsName, primaryWsPath } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
 
+  console.log({ noteWsPaths, wsName });
   const activeFilePath = primaryWsPath
     ? resolvePath(primaryWsPath).filePath
     : undefined;

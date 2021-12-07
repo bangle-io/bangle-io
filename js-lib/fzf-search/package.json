@@ -25,7 +25,8 @@
     "react": "*"
   },
   "dependencies": {
-    "fzf": "^0.4.1"
+    "fzf": "^0.4.1",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.33",

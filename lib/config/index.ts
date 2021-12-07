@@ -61,10 +61,6 @@ if (envVars.nodeEnv !== 'test') {
   });
 }
 
-if (!/^\d+\.\d+\.\d+/.test(HELP_DOCS_VERSION || '')) {
-  throw new Error('Invalid HELP_DOCS_VERSION: ' + HELP_DOCS_VERSION);
-}
-
 export const SPLIT_SCREEN_MIN_WIDTH =
   typeof document === 'undefined'
     ? 500

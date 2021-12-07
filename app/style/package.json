@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*",
+    "tslib": "^2.3.1"
   }
 }

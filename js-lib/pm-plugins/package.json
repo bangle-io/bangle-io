@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "@bangle.dev/core": "0.28.3",
-    "@bangle.dev/pm": "0.28.3"
+    "@bangle.dev/pm": "0.28.3",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@bangle.dev/all-base-components": "0.28.3",

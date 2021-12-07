@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      :root {
+        /* variable syntax */
+        /* --<theme>-<pkgName>-<componentName>-<sorted asc pseudo class or modifiers?>-<type>-<strength?> */
+        /*  theme light / dark */
+        /*  prefer camel casing for naming */
+        /*  pseudo class or modifiers- things like hover active pressed etc */
+        /*    if multiple exist separate them by - */
+        /*  types - bgColor, color, scale etc */
+        /*  strength? - number 0 being strongest and weaker from their */
+
+        /* alternate bg */
+        --dark-base-50: #080808;
+        --dark-base-75: #1a1a1a;
+        /* base bg */
+        --dark-base-100: #1e1e1e;
+        /* base bg sidebar */
+        --dark-base-150: #252525;
+        --dark-base-200: #2c2c2c;
+        --dark-base-300: #393939;
+        --dark-base-400: #494949;
+        /* disabled text */
+        --dark-base-500: #5c5c5c;
+        /* placeholder text */
+        --dark-base-600: #7c7c7c;
+        /* text content */
+        --dark-base-700: #a2a2a2;
+        --dark-base-800: #c8c8c8;
+        --dark-base-900: #efefef;
+
+        --light-base-50: #ffffff;
+        --light-base-75: #fafafa;
+        --light-base-100: #f5f5f5;
+        --light-base-150: #f0f0f0;
+        --light-base-200: #eaeaea;
+        --light-base-300: #e1e1e1;
+        --light-base-400: #cacaca;
+        --light-base-500: #b3b3b3;
+        --light-base-600: #8e8e8e;
+        --light-base-700: #6e6e6e;
+        --light-base-800: #4b4b4b;
+        --light-base-900: #2c2c2c;
+
+        --light-textColor-0: var(--base-900);
+        --light-textColor-1: var(--base-800);
+        --dark-textColor-0: var(--base-900);
+        --dark-textColor-1: var(--base-800);
+
+        --light-accent-primary-0: rgb(88, 204, 240);
+        --light-accent-primary-1: rgb(136, 223, 250);
+
+        --dark-accent-primary-0: rgb(223, 50, 130);
+        --dark-accent-primary-1: rgb(229, 92, 156);
+
+        --light-accent-secondary: rgb(232, 232, 232);
+        --dark-accent-secondary: rgb(57, 62, 63);
+
+        --light-severity-error-color: #f44336;
+        --dark-severity-error-color: #f44336;
+        --light-severity-warning-color: #ff9800;
+        --dark-severity-warning-color: #ff9800;
+        --light-severity-info-color: #2196f3;
+        --dark-severity-info-color: #2196f3;
+        --light-severity-success-color: #4caf50;
+        --dark-severity-success-color: #4caf50;
+
+        --light-error-bgColor: rgb(254, 241, 240);
+        --dark-error-bgColor: rgb(37, 2, 1);
+
+        /* window */
+        /* The minimum screen size needed to allow for split screen */
+        --window-widescreen-minWidth: 760px;
+        --window-pill-borderRadius: 5px;
+
+        --window-modal-zIndex: 500;
+        --window-popupEditor-zIndex: 300;
+        --window-tooltip-zIndex: 1000;
+
+        --light-window-bgColor-0: var(--base-100);
+        --dark-window-bgColor-0: var(--base-100);
+
+        --light-window-bgColor-1: var(--base-75);
+        --dark-window-bgColor-1: var(--base-75);
+
+        --light-window-bgColor-2: var(--base-50);
+        --dark-window-bgColor-2: var(--base-50);
+
+        --light-window-link-color: #4299e1;
+        --dark-window-link-color: #4299e1;
+
+        --light-window-highlight-bgColor: yellow;
+        --dark-window-highlight-bgColor: rgba(255, 255, 0, 0.5);
+
+        --light-window-tooltip-bgColor: var(--base-50);
+        --dark-window-tooltip-bgColor: var(--base-50);
+        --light-window-tooltip-color: var(--textColor-1);
+        --dark-window-tooltip-color: var(--textColor-0);
+
+        --dark-window-dropdown-bgColor-0: var(--base-75);
+        --dark-window-dropdown-bgColor-1: var(--base-50);
+        --dark-window-dropdown-color: var(--textColor-1);
+        --light-window-dropdown-bgColor-0: var(--base-75);
+        --light-window-dropdown-bgColor-1: var(--base-50);
+        --light-window-dropdown-color: var(--textColor-1);
+
+        --light-window-popupEditor-bgColor: var(--base-75);
+        --light-window-popupEditor-color: var(--textColor-1);
+        --dark-window-popupEditor-bgColor: var(--base-75);
+        --dark-window-popupEditor-color: var(--textColor-1);
+
+        --light-window-kbd-bgColor: var(--base-300);
+        --light-window-kbd-color: var(--textColor-1);
+        --dark-window-kbd-bgColor: var(--base-400);
+        --dark-window-kbd-color: var(--textColor-1);
+
+        --light-window-borderColor-0: var(--base-300);
+        --dark-window-borderColor-0: var(--base-400);
+
+        --light-window-borderColor-1: var(--base-300);
+        --dark-window-borderColor-1: var(--base-400);
+
+        --light-window-modal-overlay-bgColor: rgba(0, 0, 0, 0.6);
+        --dark-window-modal-overlay-bgColor: rgba(0, 0, 0, 0.6);
+
+        /* page is a wrapper that wraps around editor or similar content */
+        --window-page-padding: 4rem 30px 4rem 30px;
+
+        --page-maxWidth: 700px;
+        --window-page-box-padding: 2rem;
+
+        /* workspace-sidebar */
+        --workspaceSidebar-width: 300px;
+        --light-workspaceSidebar-bgColor: var(--base-150);
+        --dark-workspaceSidebar-bgColor: var(--base-150);
+        --noteSidebar-width: 300px;
+
+        --universalPalette-maxWidth: 620px;
+        --light-universalPalette-bgColor: var(--window-bgColor-1);
+        --dark-universalPalette-bgColor: var(--window-bgColor-1);
+
+        --inlineUniversalPalette-maxWidth: 350px;
+        --inlineUniversalPalette-maxHeight: 33vh;
+
+        /* Extension: Editor core */
+        /* the background that fades away when you select a block */
+        --light-editorCore-selectionChange-bgColor: var(--base-300);
+        --dark-editorCore-selectionChange-bgColor: var(--base-300);
+
+        /* Extension: Note tag */
+        --light-noteTags-color: rgb(226, 226, 226);
+        --light-noteTags-bgColor: rgb(105, 105, 105);
+        --dark-noteTags-color: rgb(66, 66, 66);
+        --dark-noteTags-bgColor: rgb(205, 205, 205);
+
+        /* activitybar */
+        --activitybar-width: 50px;
+        --activitybar-mobile-height: 30px;
+        --light-activitybar-bgColor: rgb(26, 32, 44);
+        --dark-activitybar-bgColor: rgb(31, 30, 30);
+
+        --light-activitybar-button-active-color: var(--base-200);
+        --light-activitybar-button-hover-bgColor: var(--base-100);
+        --light-activitybar-button-hover-color: var(--base-200);
+        --light-activitybar-button-color: var(--base-300);
+        --light-activitybar-button-pressed-bgColor: var(--base-800);
+
+        --dark-activitybar-button-active-color: var(--base-800);
+        --dark-activitybar-button-hover-bgColor: var(--base-400);
+        --dark-activitybar-button-hover-color: var(--base-900);
+        --dark-activitybar-button-color: var(--base-700);
+        --dark-activitybar-button-pressed-bgColor: var(--base-100);
+
+        /* ui-bangle-button */
+        --uiBangleButton-depression: 0.96;
+        --uiBangleButton-radius: 0.25rem;
+
+        --light-uiBangleButton-active-color: var(--base-900);
+        --light-uiBangleButton-bgColor: var(--base-300);
+        --light-uiBangleButton-color: var(--base-800);
+        --light-uiBangleButton-disabled-bgColor: var(--base-100);
+        --light-uiBangleButton-disabled-color: var(--base-700);
+        --light-uiBangleButton-hover-bgColor: var(--base-400);
+        --light-uiBangleButton-hover-color: var(--base-900);
+        --light-uiBangleButton-pressed-bgColor: var(--base-400);
+
+        --dark-uiBangleButton-active-color: var(--base-900);
+        --dark-uiBangleButton-bgColor: var(--base-200);
+        --dark-uiBangleButton-color: var(--base-800);
+        --dark-uiBangleButton-disabled-bgColor: var(--base-100);
+        --dark-uiBangleButton-disabled-color: var(--base-700);
+        --dark-uiBangleButton-hover-bgColor: var(--base-400);
+        --dark-uiBangleButton-hover-color: var(--base-900);
+        --dark-uiBangleButton-pressed-bgColor: var(--base-400);
+
+        --light-uiBangleButton-primary-active-color: var(--base-900);
+        --light-uiBangleButton-primary-bgColor: var(--accent-primary-0);
+        --light-uiBangleButton-primary-color: var(--base-800);
+        --light-uiBangleButton-primary-hover-bgColor: var(--accent-primary-1);
+        --light-uiBangleButton-primary-hover-color: var(--base-900);
+        --light-uiBangleButton-primary-pressed-bgColor: var(--base-400);
+
+        --dark-uiBangleButton-primary-active-color: var(--base-900);
+        --dark-uiBangleButton-primary-bgColor: var(--accent-primary-0);
+        --dark-uiBangleButton-primary-color: var(--base-800);
+        --dark-uiBangleButton-primary-hover-bgColor: var(--accent-primary-1);
+        --dark-uiBangleButton-primary-hover-color: var(--base-900);
+        --dark-uiBangleButton-primary-pressed-bgColor: var(--base-400);
+
+        --light-backlink-backlink-bgColor: rgb(208, 238, 252);
+        --dark-backlink-backlink-bgColor: rgba(56, 139, 253, 0.15);
+        --light-backlink-backlink-hover-bgColor: rgb(225, 242, 250);
+        --dark-backlink-backlink-hover-bgColor: rgba(56, 139, 253, 0.4);
+
+        --light-backlink-backlinkNotFound-bgColor: var(--base-300);
+        --dark-backlink-backlinkNotFound-bgColor: var(--base-300);
+        --light-backlink-backlinkNotFound-hover-bgColor: var(--base-400);
+        --dark-backlink-backlinkNotFound-hover-bgColor: var(--base-400);
+
+        background-color: var(--window-bgColor-0);
+      }
+      body {
+        color: var(--textColor-0);
+      }
+    </style>
+    <script>
+      const cssVars = [
+        'base-50',
+        'base-75',
+        'base-100',
+        'base-150',
+        'base-200',
+        'base-300',
+        'base-400',
+        'base-500',
+        'base-600',
+        'base-700',
+        'base-800',
+        'base-900',
+        'textColor-0',
+        'textColor-1',
+        'accent-primary-0',
+        'accent-primary-1',
+        'accent-secondary',
+        'severity-error-color',
+        'severity-warning-color',
+        'severity-info-color',
+        'severity-success-color',
+        'error-bgColor',
+        'window-bgColor-0',
+        'window-bgColor-1',
+        'window-bgColor-2',
+        'window-link-color',
+        'window-highlight-bgColor',
+        'window-tooltip-bgColor',
+        'window-tooltip-color',
+        'window-dropdown-bgColor-0',
+        'window-dropdown-bgColor-1',
+        'window-dropdown-color',
+        'window-popupEditor-bgColor',
+        'window-popupEditor-color',
+        'window-kbd-bgColor',
+        'window-kbd-color',
+        'window-borderColor-0',
+        'window-borderColor-1',
+        'window-modal-overlay-bgColor',
+        'workspaceSidebar-bgColor',
+        'universalPalette-bgColor',
+        'editorCore-selectionChange-bgColor',
+        'noteTags-color',
+        'noteTags-bgColor',
+        'activitybar-bgColor',
+        'activitybar-button-active-color',
+        'activitybar-button-hover-bgColor',
+        'activitybar-button-hover-color',
+        'activitybar-button-color',
+        'activitybar-button-pressed-bgColor',
+        'uiBangleButton-active-color',
+        'uiBangleButton-bgColor',
+        'uiBangleButton-color',
+        'uiBangleButton-disabled-bgColor',
+        'uiBangleButton-disabled-color',
+        'uiBangleButton-hover-bgColor',
+        'uiBangleButton-hover-color',
+        'uiBangleButton-pressed-bgColor',
+        'uiBangleButton-primary-active-color',
+        'uiBangleButton-primary-bgColor',
+        'uiBangleButton-primary-color',
+        'uiBangleButton-primary-hover-bgColor',
+        'uiBangleButton-primary-hover-color',
+        'uiBangleButton-primary-pressed-bgColor',
+        'backlink-backlink-bgColor',
+        'backlink-backlink-hover-bgColor',
+        'backlink-backlinkNotFound-bgColor',
+        'backlink-backlinkNotFound-hover-bgColor',
+      ];
+
+      applyTheme('dark');
+      function applyTheme(theme) {
+        const element = document.documentElement;
+        for (const cssVar of cssVars) {
+          updateStyleHelper(theme, cssVar, element);
+        }
+      }
+
+      function updateStyleHelper(theme, cssVar, element) {
+        element.style.setProperty(`--${cssVar}`, `var(--${theme}-${cssVar})`);
+      }
+    </script>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+  </head>
+  <link
+    href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
+
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

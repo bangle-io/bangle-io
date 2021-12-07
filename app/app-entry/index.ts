@@ -3,9 +3,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { APP_ENV, RELEASE_ID } from '@bangle.io/config';
+import { APP_ENV, HELP_DOCS_VERSION, RELEASE_ID } from '@bangle.io/config';
 
 import { Entry } from './entry';
+
+if (!/^\d+\.\d+\.\d+/.test(HELP_DOCS_VERSION || '')) {
+  throw new Error('Invalid HELP_DOCS_VERSION: ' + HELP_DOCS_VERSION);
+}
 
 const root = document.getElementById('root');
 
