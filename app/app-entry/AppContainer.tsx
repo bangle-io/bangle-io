@@ -23,9 +23,9 @@ import { getLastWorkspaceUsed } from './misc/last-workspace-used';
 import { useWorkspaceSideEffects } from './misc/use-workspace-side-effects';
 import { NewWorkspaceModal } from './new-workspace-modal/NewWorkspaceModal';
 import { EmptyEditorPage } from './pages/EmptyEditorPage';
+import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
-import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();

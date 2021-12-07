@@ -25,6 +25,14 @@ jest.mock('@bangle.io/workspaces', () => {
   };
 });
 
+const listAllFilesMock = FileOps.listAllFiles as jest.MockedFunction<
+  typeof FileOps.listAllFiles
+>;
+
+const deleteFileMock = FileOps.deleteFile as jest.MockedFunction<
+  typeof FileOps.deleteFile
+>;
+
 describe('useFiles', () => {
   function Comp({ children }) {
     return (
@@ -61,8 +69,8 @@ describe('useFiles', () => {
       noteWsPaths: [],
       refreshWsPaths: expect.any(Function),
     });
-    expect(FileOps.listAllFiles).toBeCalledTimes(1);
-    expect(FileOps.listAllFiles).nthCalledWith(1, 'test-ws1');
+    expect(listAllFilesMock).toBeCalledTimes(1);
+    expect(listAllFilesMock).nthCalledWith(1, 'test-ws1');
   });
 
   test('refreshes and preserves instance correctly', async () => {
@@ -86,7 +94,7 @@ describe('useFiles', () => {
     });
 
     const filesInstance = ['test-ws1:hi.md', 'test-ws1:img.png'];
-    FileOps.listAllFiles.mockImplementation(async () => {
+    listAllFilesMock.mockImplementation(async () => {
       return filesInstance;
     });
     await act(async () => {
@@ -102,7 +110,7 @@ describe('useFiles', () => {
     });
 
     // the same thing to check if the `===` instance is preserved
-    FileOps.listAllFiles.mockImplementation(async () => {
+    listAllFilesMock.mockImplementation(async () => {
       return ['test-ws1:hi.md', 'test-ws1:img.png'];
     });
     await act(async () => {
@@ -174,8 +182,8 @@ describe('useDeleteNote', () => {
     // should remove it from the current path
     expect(testLocation.pathname).toBe('/ws/kujo');
 
-    expect(FileOps.deleteFile).toBeCalledTimes(1);
-    expect(FileOps.deleteFile).toBeCalledWith('kujo:one.md');
+    expect(deleteFileMock).toBeCalledTimes(1);
+    expect(deleteFileMock).toBeCalledWith('kujo:one.md');
     expect(refreshWsPaths).toBeCalledTimes(1);
   });
 
