@@ -35,7 +35,8 @@
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",
     "@bangle.io/workspaces": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "tslib": "^2.3.1"
   },
   "peerDependencies": {
     "react": "*"

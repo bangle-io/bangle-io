@@ -1,0 +1,63 @@
+{
+  "name": "@bangle.io/note-browser-2",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "sandboxed-extensions/note-browser-2"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "start": "webpack serve --mode=development"
+  },
+  "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "copy-webpack-plugin": "^9.1.0",
+    "css-loader": "^6.5.1",
+    "generate-file-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^5.5.0",
+    "react-dev-utils": "^11.0.4",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.2.6",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.4",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.62.2",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.4.0"
+  },
+  "dependencies": {
+    "@bangle.io/action-context": "workspace:*",
+    "@bangle.io/config": "workspace:*",
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/ui-components": "workspace:*",
+    "@bangle.io/ui-context": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
+    "@bangle.io/workspace-context": "workspace:*",
+    "@bangle.io/workspaces": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*",
+    "comlink": "^4.3.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-virtual": "^2.10.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

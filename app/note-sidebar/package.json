@@ -32,7 +32,8 @@
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@bangle.dev/core": "0.28.3",

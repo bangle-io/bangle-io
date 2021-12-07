@@ -20,7 +20,8 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.io/object-uid": "workspace:*"
+    "@bangle.io/object-uid": "workspace:*",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@bangle.dev/pm": "0.28.3",
