@@ -21,6 +21,7 @@ import {
   handleWorkspaceNotFound,
 } from './AppContainer';
 import { AppStateProvider } from './AppStateProvider';
+import { useUsageAnalytics } from './hooks/use-usage-analytics';
 import { moduleSupport } from './misc/module-support';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
 import { PageLifecycle } from './watchers/PageLifecycle';
@@ -62,6 +63,8 @@ export function Entry() {
       window.removeEventListener('appinstalled', appInstalledCb);
     };
   }, []);
+
+  useUsageAnalytics();
 
   return (
     <React.StrictMode>

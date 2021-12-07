@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useLocalStorage } from '@bangle.io/utils';
 
 const LoadDate = Date.now();
+const OneDayMilliseconds = 24 * 60 * 60 * 1000;
 
 export function useUsageAnalytics() {
   const [lastOpened, updateLastOpened] = useLocalStorage<number | undefined>(
@@ -10,10 +11,7 @@ export function useUsageAnalytics() {
     LoadDate,
   );
 
-  const [dauCount, updateDauCount] = useLocalStorage<number | undefined>(
-    'entry-dau-2',
-    0,
-  );
+  const [dauCount, updateDauCount] = useLocalStorage<number>('entry-dau-2', 0);
 
   useEffect(() => {
     if (dauCount === 3) {
@@ -25,15 +23,9 @@ export function useUsageAnalytics() {
   }, [dauCount, updateDauCount]);
 
   useEffect(() => {
-    // use local storage bug where it doesnt save
-    // info in storage initially
-    if (lastOpened === undefined) {
+    if (lastOpened && LoadDate - lastOpened > OneDayMilliseconds) {
       updateLastOpened(LoadDate);
-    }
-
-    if (lastOpened && LoadDate - lastOpened > 60 * 60 * 24 * 1000) {
-      updateLastOpened(LoadDate);
-      updateDauCount((dauCount = 0) => dauCount + 1);
+      updateDauCount((dauCount) => dauCount + 1);
 
       (window as any).fathom?.trackGoal('EC54OGMM', 1);
     }
