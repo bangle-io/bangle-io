@@ -1,3 +1,15 @@
+### HEAD
+
+- **Search:** Improve the UI.
+
+- **Backlink, Outline widgets:** Show helpful information when their value is empty.
+
+- **Bug fixes**
+
+  - **Editor:** Typing a link as a file name no long breaks Backlink suggestions.
+
+  - **Workspace**: Application no longer crashes when invalid url is opened.
+
 ### Dec 1, 2021
 
 - **Backlink:** You can now see Backlinks to your focused note in the note sidebar.
