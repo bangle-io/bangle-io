@@ -155,6 +155,10 @@ export class OpenedWsPaths {
     });
     return ret;
   }
+
+  toArray() {
+    return Array.from(this.wsPaths);
+  }
 }
 
 export function getWsName(location: Location) {

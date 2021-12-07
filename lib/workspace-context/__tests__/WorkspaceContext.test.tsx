@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 
 import { FileOps } from '@bangle.io/workspaces';
+import { Location, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { useDeleteNote, useFiles, useOpenedWsPaths } from '../WorkspaceContext';
 
@@ -21,15 +22,6 @@ jest.mock('@bangle.io/workspaces', () => {
       deleteFile: jest.fn(async () => {}),
       listAllFiles: jest.fn(async () => []),
     },
-  };
-});
-
-let fileOps = {};
-
-beforeEach(() => {
-  fileOps = {
-    listAllFiles: FileOps.listAllFiles,
-    deleteFile: FileOps.deleteFile,
   };
 });
 
@@ -54,7 +46,7 @@ describe('useFiles', () => {
     let render;
 
     act(() => {
-      render = renderHook(() => useFiles('test-ws1', fileOps), {
+      render = renderHook(() => useFiles('test-ws1', FileOps), {
         wrapper: Comp,
       });
     });
@@ -77,7 +69,7 @@ describe('useFiles', () => {
     let render;
 
     act(() => {
-      render = renderHook(() => useFiles('test-ws1', fileOps), {
+      render = renderHook(() => useFiles('test-ws1', FileOps), {
         wrapper: Comp,
       });
     });
@@ -156,13 +148,14 @@ describe('useDeleteNote', () => {
         'kujo',
         history,
         location,
+        jest.fn(),
       );
       callback = useDeleteNote(
         'kujo',
         openedWsPaths,
         refreshWsPaths,
         updateOpenedWsPaths,
-        fileOps,
+        FileOps,
       );
       return <div>Hello</div>;
     }
@@ -195,13 +188,14 @@ describe('useDeleteNote', () => {
         'kujo',
         history,
         location,
+        jest.fn(),
       );
       callback = useDeleteNote(
         'kujo',
         openedWsPaths,
         refreshWsPaths,
         updateOpenedWsPaths,
-        fileOps,
+        FileOps,
       );
       return <div>Hello</div>;
     }
@@ -225,13 +219,14 @@ describe('useDeleteNote', () => {
         'kujo',
         history,
         location,
+        jest.fn(),
       );
       callback = useDeleteNote(
         'kujo',
         openedWsPaths,
         refreshWsPaths,
         updateOpenedWsPaths,
-        fileOps,
+        FileOps,
       );
       return <div>Hello</div>;
     }
@@ -255,13 +250,14 @@ describe('useDeleteNote', () => {
         'kujo',
         history,
         location,
+        jest.fn(),
       );
       callback = useDeleteNote(
         'kujo',
         openedWsPaths,
         refreshWsPaths,
         updateOpenedWsPaths,
-        fileOps,
+        FileOps,
       );
       return <div>Hello</div>;
     }
@@ -277,5 +273,153 @@ describe('useDeleteNote', () => {
 
     expect(testLocation.search).toBe('');
     expect(testLocation.pathname).toBe('/ws/kujo');
+  });
+});
+
+describe('useOpenedWsPaths', () => {
+  let onInvalidPath = jest.fn();
+  let openedWsPaths: OpenedWsPaths | undefined;
+  let updateOpenedWsPaths:
+    | undefined
+    | ReturnType<typeof useOpenedWsPaths>['updateOpenedWsPaths'];
+  let testLocation: Location | undefined;
+  let historyReplaceSpy;
+  let historyPushSpy;
+
+  const renderIt = async (initialEntry) => {
+    function Comp() {
+      const history = useHistory();
+      const location = useLocation();
+      historyReplaceSpy = jest.spyOn(history, 'replace');
+      historyPushSpy = jest.spyOn(history, 'push');
+
+      const result = useOpenedWsPaths('kujo', history, location, onInvalidPath);
+      openedWsPaths = result.openedWsPaths;
+      updateOpenedWsPaths = result.updateOpenedWsPaths;
+      return <div>Hello</div>;
+    }
+
+    await render(
+      <Router initialEntries={[initialEntry]}>
+        <Switch>
+          <Route path={['/ws/:wsName']}>
+            <Comp />
+          </Route>
+        </Switch>
+        <Route
+          path="*"
+          render={({ history, location }) => {
+            testLocation = location;
+            return null;
+          }}
+        />
+      </Router>,
+    );
+  };
+
+  beforeEach(() => {
+    onInvalidPath = jest.fn();
+    openedWsPaths = undefined;
+    updateOpenedWsPaths = undefined;
+    historyPushSpy = undefined;
+    historyReplaceSpy = undefined;
+    testLocation = undefined;
+  });
+
+  test('works', async () => {
+    await renderIt('/ws/kujo/one.md');
+
+    expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
+
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+    expect(updateOpenedWsPaths).toBeInstanceOf(Function);
+  });
+
+  test('works with secondary', async () => {
+    await renderIt('/ws/kujo/one.md?secondary=kujo:two.md');
+
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', 'kujo:two.md']);
+    expect(updateOpenedWsPaths).toBeInstanceOf(Function);
+  });
+
+  test('calls updateOpenedWsPaths correctly 1', async () => {
+    await renderIt('/ws/kujo/one.md');
+
+    expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
+
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+
+    act(() => {
+      updateOpenedWsPaths?.((openedWsPaths) =>
+        openedWsPaths.updateByIndex(0, 'kujo:two.md'),
+      );
+    });
+
+    expect(historyReplaceSpy).toBeCalledTimes(0);
+    expect(historyPushSpy).toBeCalledTimes(1);
+
+    expect(testLocation?.pathname).toBe('/ws/kujo/two.md');
+  });
+
+  test('calls updateOpenedWsPaths correctly 2', async () => {
+    await renderIt('/ws/kujo/one.md');
+
+    expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
+
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+
+    act(() => {
+      updateOpenedWsPaths?.(new OpenedWsPaths(['kujo:two.md', undefined]));
+    });
+
+    expect(historyReplaceSpy).toBeCalledTimes(0);
+    expect(historyPushSpy).toBeCalledTimes(1);
+    expect(testLocation?.pathname).toBe('/ws/kujo/two.md');
+  });
+
+  test('calls updateOpenedWsPaths correctly with replace', async () => {
+    await renderIt('/ws/kujo/one.md');
+
+    expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
+
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+
+    act(() => {
+      updateOpenedWsPaths?.(
+        (openedWsPaths) => openedWsPaths.updateByIndex(0, 'kujo:two.md'),
+        {
+          replaceHistory: true,
+        },
+      );
+    });
+
+    expect(historyReplaceSpy).toBeCalledTimes(1);
+    expect(historyPushSpy).toBeCalledTimes(0);
+
+    expect(testLocation?.pathname).toBe('/ws/kujo/two.md');
+  });
+
+  test('calls onInvalidPath correctly when invalid primary path', async () => {
+    await renderIt('/ws/kujo/i-am-invalid-path');
+
+    expect(onInvalidPath).toBeCalledTimes(1);
+
+    expect(testLocation?.pathname).toBe('/ws/kujo/i-am-invalid-path');
+
+    expect(openedWsPaths?.toArray()).toEqual([undefined, undefined]);
+
+    expect(historyReplaceSpy).toBeCalledTimes(0);
+    expect(historyPushSpy).toBeCalledTimes(0);
+  });
+
+  test('calls onInvalidPath correctly when invalid secondary path', async () => {
+    await renderIt('/ws/kujo/one.md?secondary=kujo:two');
+
+    expect(onInvalidPath).toBeCalledTimes(1);
+
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+
+    expect(historyReplaceSpy).toBeCalledTimes(0);
+    expect(historyPushSpy).toBeCalledTimes(0);
   });
 });

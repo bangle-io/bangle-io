@@ -8,7 +8,10 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  OnInvalidPath,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
 
@@ -22,6 +25,7 @@ import { NewWorkspaceModal } from './new-workspace-modal/NewWorkspaceModal';
 import { EmptyEditorPage } from './pages/EmptyEditorPage';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
+import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
@@ -163,6 +167,9 @@ export function AppContainer() {
             <Route path="/ws-not-found/:wsName">
               <WorkspaceNotFound />
             </Route>
+            <Route path="/ws-invalid-path/:wsName">
+              <WorkspaceInvalidPath />
+            </Route>
           </>
         }
       />
@@ -192,3 +199,18 @@ export function handleWorkspaceNotFound(wsName, history) {
     state: {},
   });
 }
+
+export const handleOnInvalidPath: OnInvalidPath = (
+  wsName,
+  history,
+  invalidPath,
+) => {
+  console.debug('received invalid path', invalidPath);
+  if (history.location?.pathname?.startsWith('/ws-invalid-path/' + wsName)) {
+    return;
+  }
+  history.replace({
+    pathname: '/ws-invalid-path/' + wsName,
+    state: {},
+  });
+};
