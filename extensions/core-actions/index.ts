@@ -6,6 +6,7 @@ import {
   CORE_ACTIONS_NEW_NOTE,
   CORE_ACTIONS_NEW_WORKSPACE,
   CORE_ACTIONS_RENAME_ACTIVE_NOTE,
+  CORE_ACTIONS_SHOW_ONBOARDING_MODAL,
   CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
   CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_ACTIONS_TOGGLE_THEME,
@@ -25,6 +26,11 @@ const extension = Extension.create({
       { name: CORE_ACTIONS_NEW_WORKSPACE, title: 'New workspace' },
       { name: CORE_ACTIONS_RENAME_ACTIVE_NOTE, title: 'Rename active note' },
       { name: CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR, title: 'Toggle Note sidebar' },
+      {
+        name: CORE_ACTIONS_SHOW_ONBOARDING_MODAL,
+        title: 'Start onboarding tutorial',
+        hidden: true,
+      },
       {
         name: CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
         title: 'Toggle editor split screen',

@@ -22,6 +22,7 @@ import { PaletteManager } from './extension-glue/PaletteManager';
 import { getLastWorkspaceUsed } from './misc/last-workspace-used';
 import { useWorkspaceSideEffects } from './misc/use-workspace-side-effects';
 import { NewWorkspaceModal } from './new-workspace-modal/NewWorkspaceModal';
+import { OnboardingModal } from './onboarding-modal/OnboardingModal';
 import { EmptyEditorPage } from './pages/EmptyEditorPage';
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
@@ -106,6 +107,7 @@ export function AppContainer() {
     <>
       <ChangelogModal />
       <NewWorkspaceModal />
+      <OnboardingModal />
       <ApplicationComponents />
       <PaletteManager />
       <NoteSidebarShowButton

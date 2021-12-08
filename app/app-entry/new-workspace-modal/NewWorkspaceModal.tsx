@@ -137,7 +137,6 @@ export function NewWorkspaceModalContainer({
     if (isCreateDisabled(modalState)) {
       return;
     }
-    const newWorkspaceName = getWorkspaceName(modalState);
 
     switch (modalState.workspace.type) {
       case FILE_SYSTEM: {
@@ -204,11 +203,7 @@ export function NewWorkspaceModalContainer({
   }, [newWorkspaceName, setError, errorType]);
 
   return (
-    <Modal
-      title="New Workspace"
-      onDismiss={onDismiss}
-      style={{ width: '30rem', maxWidth: '30rem' }}
-    >
+    <Modal title="New Workspace" onDismiss={onDismiss}>
       <div className="px-6 py-4 select-none">
         {errorType && (
           <div className="mb-5">

@@ -66,20 +66,8 @@ export function ChangelogModal() {
   }, [dispatch]);
 
   return showChangelog ? (
-    <Modal
-      title="🎁 What's new?"
-      onDismiss={onDismiss}
-      className="w-full md:max-w-2xl"
-    >
-      <div
-        className="overflow-y-scroll"
-        style={{
-          maxHeight: '60vh',
-          minHeight: '60vh',
-        }}
-      >
-        <ChangelogDisplay />
-      </div>
+    <Modal title="🎁 What's new?" onDismiss={onDismiss}>
+      <ChangelogDisplay />
     </Modal>
   ) : null;
 }

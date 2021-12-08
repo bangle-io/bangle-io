@@ -41,7 +41,7 @@ export function Page({
       <div
         className={cx('w-full', childClassName)}
         style={{
-          maxWidth: 'min(var(--page-maxWidth), 100vw)',
+          maxWidth: 'min(var(--window-page-maxWidth), 100vw)',
           padding: 'var(--window-page-padding)',
         }}
       >
