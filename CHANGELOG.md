@@ -1,6 +1,6 @@
-### HEAD
+### Dec 8, 2021
 
-- **Search:** Improve the UI.
+- **Search:** Improved the UI.
 
 - **Backlink, Outline widgets:** Show helpful information when their value is empty.
 
