@@ -34,14 +34,14 @@ export function CenteredBoxedPage({
         style={{
           padding: 'var(--window-page-box-padding)',
           backgroundColor: 'var(--window-bgColor-1)',
-          maxWidth: 'min(var(--page-maxWidth), 100vw)',
+          maxWidth: 'min(var(--window-page-maxWidth), 100vw)',
           border: '1px solid var(--window-borderColor-1)',
         }}
       >
         <div
           className={cx('w-full', childClassName)}
           style={{
-            maxWidth: 'min(var(--page-maxWidth), 100vw)',
+            maxWidth: 'min(var(--window-page-maxWidth), 100vw)',
           }}
         >
           {title && (

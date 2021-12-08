@@ -9,6 +9,7 @@ import {
   CORE_ACTIONS_NEW_NOTE,
   CORE_ACTIONS_NEW_WORKSPACE,
   CORE_ACTIONS_RENAME_ACTIVE_NOTE,
+  CORE_ACTIONS_SHOW_ONBOARDING_MODAL,
   CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
   CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_ACTIONS_TOGGLE_THEME,
@@ -80,6 +81,15 @@ export function CoreActionsHandler({ registerActionHandler }) {
           dispatch({
             type: 'UI/SHOW_MODAL',
             value: { modal: '@modal/new-workspace' },
+          });
+          return true;
+        }
+
+        case CORE_ACTIONS_SHOW_ONBOARDING_MODAL: {
+          // To avoid overlapping
+          dispatch({
+            type: 'UI/SHOW_MODAL',
+            value: { modal: '@modal/onboarding' },
           });
           return true;
         }

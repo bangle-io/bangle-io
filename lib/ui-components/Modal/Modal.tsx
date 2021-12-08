@@ -11,18 +11,16 @@ export function Modal({
   children,
   onDismiss,
   containerClassName = '',
-  className = '',
   title = '',
-  style = {},
   onPressEnter,
+  width = 'small',
 }: {
   children: JSX.Element;
   onPressEnter?: () => void;
   onDismiss: () => void;
   containerClassName?: string;
   title?: string;
-  className?: string;
-  style?: any;
+  width?: 'small' | 'large';
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   useWatchClickOutside(containerRef, onDismiss, () => {});
@@ -50,40 +48,47 @@ export function Modal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="flex justify-center min-h-screen pb-20 text-center sm:block sm:p-0">
-        <div
-          className="fixed w-full h-full transition-opacity ui-components_modal-overlay"
-          aria-hidden="true"
-        ></div>
+      <div
+        className="fixed w-full h-full transition-opacity ui-components_modal-overlay"
+        aria-hidden="true"
+      ></div>
 
-        <span
-          className="hidden sm:inline-block sm:align-middle sm:h-screen"
-          aria-hidden="true"
-        >
-          &#8203;
-        </span>
-
+      <span
+        className="hidden sm:inline-block sm:align-middle sm:h-screen"
+        aria-hidden="true"
+      >
+        &#8203;
+      </span>
+      <div className="fixed inset-0 flex flex-col items-center">
+        <div className="flex-grow pointer-events-none"></div>
         <div
           ref={containerRef}
-          style={style}
           className={cx(
-            'ui-components_modal-container h-full ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl ',
-            className,
+            'ui-components_modal-container rounded transition-all ui-components_modal-fadeInScaleAnimation',
+            width === 'small' && 'md:max-w-lg',
+            width === 'large' && 'md:max-w-xl',
           )}
         >
-          <div className="w-full px-6 my-2 select-none ">
-            <div className="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 ui-components_modal-header ">
-              <span>{title}</span>
-              <ButtonIcon onClick={onDismiss} removeFocus={true}>
-                <CloseIcon className="w-6 h-6 rounded-sm hover:bangle-io_accentSecondary" />
-              </ButtonIcon>
+          {!title ? null : (
+            <div className="w-full px-6 my-2 select-none ">
+              <div className="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 ui-components_modal-header ">
+                <span>{title}</span>
+                <ButtonIcon onClick={onDismiss} removeFocus={true}>
+                  <CloseIcon className="w-6 h-6 rounded-sm hover:bangle-io_accentSecondary" />
+                </ButtonIcon>
+              </div>
             </div>
-          </div>
-
-          <div className="">
+          )}
+          <div
+            className="overflow-y-auto"
+            style={{
+              maxHeight: 'var(--window-modal-maxHeight)',
+            }}
+          >
             <ErrorBoundary>{children}</ErrorBoundary>
           </div>
         </div>
+        <div className="flex-grow pointer-events-none"></div>
       </div>
     </div>,
     document.getElementById('dropdown-container')!,
