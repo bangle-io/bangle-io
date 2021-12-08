@@ -1,3 +1,4 @@
+import type { SpecRegistry } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 
 import {
@@ -90,7 +91,11 @@ export async function getFileLastModified(wsPath: string) {
   }
 }
 
-export async function getDoc(wsPath: string, specRegistry, markdownItPlugins) {
+export async function getDoc(
+  wsPath: string,
+  specRegistry: SpecRegistry,
+  markdownItPlugins: any[],
+) {
   const fileText = await getFileAsText(wsPath);
 
   const doc: Node = markdownParser(fileText, specRegistry, markdownItPlugins);

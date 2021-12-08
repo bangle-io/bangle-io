@@ -1,6 +1,7 @@
 import { heading } from '@bangle.dev/base-components';
+import type { SpecRegistry } from '@bangle.dev/core';
 import * as markdown from '@bangle.dev/markdown';
-import { Fragment, Slice } from '@bangle.dev/pm';
+import { Fragment, Node, Slice } from '@bangle.dev/pm';
 import { findChildren } from '@bangle.dev/utils';
 
 const { flattenFragmentJSON } = heading;
@@ -54,14 +55,14 @@ const getParser = setupGetParser();
 const getSerializer = setupSerializer();
 
 export const markdownParser = (
-  markdownStr,
-  specRegistry,
-  markdownItPlugins,
+  markdownStr: string,
+  specRegistry: SpecRegistry,
+  markdownItPlugins: any[],
 ) => {
   return getParser(specRegistry, markdownItPlugins).parse(markdownStr);
 };
 
-export const markdownSerializer = (doc, specRegistry) => {
+export const markdownSerializer = (doc: Node, specRegistry: SpecRegistry) => {
   doc = uncollapseHeadings(doc, specRegistry);
 
   const text = getSerializer(specRegistry).serialize(doc);
@@ -80,7 +81,7 @@ function listCollapsedHeading(doc, specRegistry) {
   );
 }
 
-function uncollapseHeadings(doc, specRegistry) {
+function uncollapseHeadings(doc: Node, specRegistry: SpecRegistry) {
   const collapsedHeadingSet = new Set(
     listCollapsedHeading(doc, specRegistry).map((r) => r.node),
   );
@@ -100,7 +101,7 @@ function uncollapseHeadings(doc, specRegistry) {
     frag = frag
       .append(
         Fragment.from(
-          specRegistry.schema.nodes.heading.createChecked(
+          specRegistry.schema.nodes.heading!.createChecked(
             {
               ...node.attrs,
               collapseContent: null,

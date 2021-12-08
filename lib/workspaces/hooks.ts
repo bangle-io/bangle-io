@@ -42,24 +42,6 @@ export function useWorkspaces() {
     [history],
   );
 
-  const importWorkspaceFromGithubCb = useCallback(
-    // can pass alternate wsName in the options
-    async (extensionRegistry, url, wsType, opts = {}) => {
-      // const wsName = await importGithubWorkspace(
-      //   extensionRegistry,
-      //   url,
-      //   wsType,
-      //   opts.wsName,
-      //   opts.token,
-      // );
-      // await refreshWorkspaces();
-      // history.push(`/ws/${wsName}`);
-    },
-    [
-      // history, refreshWorkspaces
-    ],
-  );
-
   const deleteWorkspaceCb = useCallback(
     async (targetWsName: string) => {
       await deleteWorkspace(targetWsName);
@@ -93,6 +75,5 @@ export function useWorkspaces() {
     createWorkspace: createWorkspaceCb,
     deleteWorkspace: deleteWorkspaceCb,
     switchWorkspace: switchWorkspaceCb,
-    importWorkspaceFromGithub: importWorkspaceFromGithubCb,
   };
 }

@@ -1,15 +1,24 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { usePrevious, useRecencyMonitor } from '@bangle.io/utils';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
+import { Location } from '@bangle.io/ws-path';
 
 import { MAX_ENTRIES, MAX_TIMESTAMPS_PER_ENTRY } from './config';
+import { Selectors, WorkspaceDispatch, WorkspaceStore } from './WorkspaceStore';
 
 export function useRecentlyUsedWsPaths(
-  wsName: string | undefined,
-  openedPaths: OpenedWsPaths,
-  noteWsPaths: string[] | undefined,
+  workspaceStore: WorkspaceStore,
+  storeDispatch: WorkspaceDispatch,
+  location: Location,
 ) {
+  const { wsName, openedWsPaths: openedPaths } = useMemo(
+    () => ({
+      wsName: Selectors.wsName(location),
+      openedWsPaths: Selectors.openedWsPaths(location),
+    }),
+    [location],
+  );
+
   const prevOpenedPaths = usePrevious(openedPaths);
   const { records, updateRecord: _updateRecord } = useRecencyMonitor({
     // wsName can be undefined but it should be okay as we prevent
@@ -47,9 +56,14 @@ export function useRecentlyUsedWsPaths(
         updateRecord(wsPath);
       });
     }
-  }, [wsName, openedPaths, noteWsPaths, updateRecord, prevOpenedPaths]);
+  }, [wsName, openedPaths, updateRecord, prevOpenedPaths]);
 
-  return useMemo(() => {
-    return records.map((r) => r.key).filter((r) => noteWsPaths?.includes(r));
-  }, [records, noteWsPaths]);
+  useEffect(() => {
+    storeDispatch({
+      type: '@UPDATE_RECENTLY_USED_WS_PATHS',
+      value: records
+        .map((r) => r.key)
+        .filter((r) => Selectors.noteWsPaths(workspaceStore)?.includes(r)),
+    });
+  }, [storeDispatch, workspaceStore, records]);
 }

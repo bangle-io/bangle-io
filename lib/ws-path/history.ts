@@ -10,7 +10,7 @@ import { filePathToWsPath, resolvePath } from './helpers';
 
 export { matchPath };
 
-type MaybeWsPath = string | undefined;
+export type MaybeWsPath = string | undefined;
 
 export type Location = _History<any>['location'];
 export type History = _History<any>;
@@ -184,6 +184,22 @@ export class OpenedWsPaths {
 
 export function getWsName(location: Location) {
   const match = matchPath<{ wsName: string }>(location.pathname, {
+    path: '/ws/:wsName',
+    exact: false,
+    strict: false,
+  });
+
+  const { wsName } = match?.params ?? {};
+
+  return wsName;
+}
+
+export function getWsNameFromPathname(pathname?: Location['pathname']) {
+  if (!pathname) {
+    return undefined;
+  }
+
+  const match = matchPath<{ wsName: string }>(pathname, {
     path: '/ws/:wsName',
     exact: false,
     strict: false,
