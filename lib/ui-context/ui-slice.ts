@@ -77,15 +77,15 @@ export const uiSliceKey = new SliceKey<_UIStateObj, UiContextAction>(
   'ui-slice',
 );
 
-export const uiSlice = () =>
-  new Slice({
+export function uiSlice<T = any>(): Slice<_UIStateObj, UiContextAction, T> {
+  return new Slice({
     key: uiSliceKey,
     state: {
       init: () => {
         let store = Object.assign({}, initialState, retrievePersistedState());
         applyTheme(store.theme);
         setRootWidescreenClass(store.widescreen);
-        return initialState;
+        return store;
       },
       apply: (action, state) => {
         log({ action, state });
@@ -254,7 +254,7 @@ export const uiSlice = () =>
           handleResize.cancel();
           window.removeEventListener('resize', handleResize);
         },
-        deferredUpdate(store, signal) {
+        deferredUpdate(store) {
           const state = uiSliceKey.getSliceState(store.state);
           if (!state) {
             return;
@@ -269,6 +269,7 @@ export const uiSlice = () =>
       };
     },
   });
+}
 
 function getThemePreference() {
   if (typeof window === 'undefined') {

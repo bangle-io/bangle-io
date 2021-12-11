@@ -1,16 +1,11 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 
-import { ApplicationStore, AppState, Slice } from '@bangle.io/create-store';
-import {
-  safeCancelIdleCallback,
-  safeRequestIdleCallback,
-} from '@bangle.io/utils';
+import { useSliceState } from '@bangle.io/app-state-context';
 
 import {
   _UIStateObj,
   initialState,
   UiContextAction,
-  uiSlice,
   uiSliceKey,
 } from './ui-slice';
 
@@ -31,46 +26,17 @@ export function useUIManagerContext() {
 }
 
 export function UIManager({ children }) {
-  const [counter, updateCounter] = useState(0);
-
-  const [store] = useState(() => {
-    let state = AppState.create({
-      slices: [
-        uiSlice(),
-        new Slice({
-          sideEffect() {
-            return {
-              deferredUpdate() {
-                updateCounter((r) => r + 1);
-              },
-            };
-          },
-        }),
-      ],
-    });
-    return new ApplicationStore(
-      state,
-      (store, action) => {
-        let newState = store.state.applyAction(action);
-        store.updateState(newState);
-      },
-      (cb) => {
-        let id = safeRequestIdleCallback(cb);
-        return () => {
-          safeCancelIdleCallback(id);
-        };
-      },
-    );
-  });
+  const { sliceState: uiState, store } = useSliceState<
+    _UIStateObj,
+    UiContextAction
+  >(uiSliceKey, initialState);
 
   const value = useMemo(() => {
-    log(counter);
-    const state = uiSliceKey.getSliceState(store.state) || initialState;
     return {
-      ...state,
+      ...uiState,
       dispatch: store.dispatch,
     };
-  }, [store, counter]);
+  }, [store, uiState]);
 
   return (
     <UIManagerContext.Provider value={value}>
