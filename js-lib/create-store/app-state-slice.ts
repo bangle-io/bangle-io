@@ -40,7 +40,7 @@ export type SliceSideEffect<S, A> = (store: ApplicationStore<S, A>) => {
   ) => void;
 };
 
-export class Slice<SL, A = any, S = any> {
+export class Slice<SL, A = any, S = SL> {
   key: string;
 
   constructor(

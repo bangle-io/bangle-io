@@ -293,7 +293,7 @@ describe('AppState', () => {
 
     expect(sliceKeyA.getSliceState(appState)).toBe(1);
 
-    let newAppState = appState.applyAction<ActionType>({
+    let newAppState = appState.applyAction({
       type: 'for-a',
       value: 99,
     });
@@ -307,7 +307,7 @@ describe('AppState', () => {
     expect(sliceKeyA.getSliceState(appState)).toBe(1);
     expect(sliceKeyB.getSliceState(appState)).toBe(2);
 
-    newAppState = newAppState.applyAction<ActionType>({
+    newAppState = newAppState.applyAction({
       type: 'for-b',
       value: 77,
     });

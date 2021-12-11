@@ -11,7 +11,7 @@ export function createKey(name) {
   return name + '$';
 }
 
-export class SliceKey<SL = any, A = any, S = any> {
+export class SliceKey<SL = any, A = any, S = SL> {
   key: string;
 
   constructor(public name: string) {
