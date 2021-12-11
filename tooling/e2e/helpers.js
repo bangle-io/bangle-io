@@ -57,7 +57,7 @@ async function pressPasteKey(page) {
   await page.keyboard.up(ctrlKey);
 }
 
-const SELECTOR_TIMEOUT = 1000;
+const SELECTOR_TIMEOUT = 2000;
 
 async function createWorkspace(page, wsName = 'test' + uuid(4)) {
   await runAction(page, 'action::bangle-io-core-actions:NEW_WORKSPACE_ACTION');

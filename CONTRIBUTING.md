@@ -1,6 +1,6 @@
-_This is [bangle.io](http://bangle.io) ._
+# Contributing
 
-Hey there, this document will cover how to setup [bangle.io](http://bangle.io) locally and also a brief overview of its architecture.
+This document covers how to setup [bangle.io](http://bangle.io) locally and also a brief overview of its architecture.
 
 ## Setup
 
@@ -18,7 +18,9 @@ More commands in the `package.json`.
 
 > If you are wondering about `g:` in `yarn g:e2e`, it is a yarn thing which allows to run a packages command from anywhere.
 
-# Fledgling Architecture :grinning:
+# Architecture
+
+The repository is divided into multiple smaller packages. There are some constraints that each top level directory enforces on its packages.
 
 ### File structure
 
@@ -65,7 +67,7 @@ You are expected to write your own css and not rely on any of the css classes av
 
 ## Actions
 
-Action is a syncronous fire and forget system. The dispatcher of action is not expected to handle the failure. If while handling the action a failure occurs, its up to the handler to show a popup notification to the user or not.
+Action is a synchronous fire and forget system. The dispatcher of action is not expected to handle the failure. If while handling the action a failure occurs, its up to the handler to show a popup notification to the user or not.
 
 Every handler in the application will be called in the order of their setup, untill one of them returns true. The handler returning true will be considered as the true handler of the action. This mechanism exists for other extensions to passively watch an action being dispatced, though they do need to be defined before the true handler extension.
 

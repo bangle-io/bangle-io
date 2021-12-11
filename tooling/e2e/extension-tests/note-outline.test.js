@@ -3,12 +3,8 @@ const {
   createNewNote,
   clearPrimaryEditor,
   createWorkspace,
-  sleep,
-  getPrimaryEditorHandler,
-  waitForPrimaryEditorTextToContain,
   newPage,
   SELECTOR_TIMEOUT,
-  longSleep,
   waitForPrimaryEditorFocus,
   runAction,
   setPageWidescreen,
@@ -51,9 +47,9 @@ test('shows note sidebar correctly', async () => {
     () =>
       document
         .querySelector('.note-outline_container button')
-        .innerText.includes('top heading'),
+        ?.innerText?.includes('top heading'),
     {
-      timeout: 2 * SELECTOR_TIMEOUT,
+      timeout: 4 * SELECTOR_TIMEOUT,
     },
   );
 
