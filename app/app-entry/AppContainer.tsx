@@ -47,7 +47,7 @@ export function AppContainer() {
     dispatch({
       type: 'UI/CHANGE_SIDEBAR',
       value: {
-        type: undefined,
+        type: null,
       },
     });
   }, [dispatch]);

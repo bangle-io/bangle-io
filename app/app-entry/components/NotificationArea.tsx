@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useActionContext } from '@bangle.io/action-context';
+import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import {
   ButtonIcon,
   CheckCircleIcon,
@@ -7,6 +9,7 @@ import {
   ExclamationCircleIcon,
   ExclamationIcon,
   InformationCircleIcon,
+  TextButton,
 } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
@@ -26,15 +29,18 @@ export function NotificationArea({}) {
             });
           }}
           content={n.content}
-          buttons={n.buttons}
           severity={n.severity}
+          buttons={n.buttons}
         />
       ))}
     </div>
   );
 }
 
-const Severity = {
+const Severity: Record<
+  Exclude<NotificationPayloadType['severity'], undefined>,
+  () => React.ReactNode
+> = {
   error: () => (
     <ExclamationCircleIcon style={{ color: 'var(--severity-error-color)' }} />
   ),
@@ -56,10 +62,12 @@ export function Notification({
   onDismiss,
 }: {
   content: React.ReactNode;
-  buttons?: React.ReactNode[];
-  severity?: keyof typeof Severity;
+  severity?: NotificationPayloadType['severity'];
+  buttons?: NotificationPayloadType['buttons'];
   onDismiss: () => void;
 }) {
+  const { dispatchAction } = useActionContext();
+
   return (
     <div
       className="w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
@@ -87,7 +95,19 @@ export function Notification({
       </div>
       <div className="flex flex-row-reverse w-full mt-3">
         {buttons &&
-          buttons.map((b, i) => <React.Fragment key={i}>{b}</React.Fragment>)}
+          buttons.map((b, i) => (
+            <TextButton
+              key={i}
+              hintPos="left"
+              className="ml-3"
+              onClick={async () => {
+                dispatchAction({ name: b.action });
+              }}
+              hint={b.hint}
+            >
+              {b.title}
+            </TextButton>
+          ))}
       </div>
     </div>
   );

@@ -1874,6 +1874,7 @@ __metadata:
   resolution: "@bangle.io/app-state-context@workspace:lib/app-state-context"
   dependencies:
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2025,6 +2026,20 @@ __metadata:
     react-dom: ^17.0.2
   peerDependencies:
     react: "*"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/create-store@workspace:*, @bangle.io/create-store@workspace:js-lib/create-store":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/create-store@workspace:js-lib/create-store"
+  dependencies:
+    "@testing-library/react": ^12.1.2
+    "@testing-library/react-hooks": ^7.0.2
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    type-fest: ^2.8.0
   languageName: unknown
   linkType: soft
 
@@ -2625,6 +2640,7 @@ __metadata:
   dependencies:
     "@bangle.dev/pm": 0.28.3
     "@bangle.io/constants": "workspace:*"
+    type-fest: ^2.8.0
   languageName: unknown
   linkType: soft
 
@@ -2643,6 +2659,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-actions": "workspace:*"
     "@bangle.io/core-palettes": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor-core": "workspace:*"
     "@bangle.io/editor-scroll-extension": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2658,8 +2675,11 @@ __metadata:
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/search-notes": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
     comlink: ^4.3.1
     core-js: ^3.19.0
+    fast-deep-equal: ^3.1.3
   languageName: unknown
   linkType: soft
 
@@ -2756,7 +2776,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-context@workspace:lib/ui-context"
   dependencies:
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
@@ -16258,6 +16280,13 @@ __metadata:
   version: 0.8.1
   resolution: "type-fest@npm:0.8.1"
   checksum: d61c4b2eba24009033ae4500d7d818a94fd6d1b481a8111612ee141400d5f1db46f199c014766b9fa9b31a6a7374d96fc748c6d688a78a3ce5a33123839becb7
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "type-fest@npm:2.8.0"
+  checksum: 9f5afbe9d2ec8daeae4b9002ea320eac78487bef71f3d6937810ac6066cdaeaeec2dd1c4bb785edd12fd8b73412ab6beced2d81c5edd113e6c6bcb76bbe1c5bf
   languageName: node
   linkType: hard
 

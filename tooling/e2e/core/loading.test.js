@@ -9,6 +9,7 @@ const {
   createWorkspace,
   newPage,
   getPrimaryEditorDebugString,
+  SELECTOR_TIMEOUT,
 } = require('../helpers');
 
 jest.retryTimes(2);
@@ -47,7 +48,9 @@ test('shows file palette', async () => {
   await page.keyboard.down(ctrlKey);
   await page.keyboard.press('p');
   await page.keyboard.up(ctrlKey);
-  handle = await page.$('.universal-palette-container');
+  handle = await page.waitForSelector('.universal-palette-container', {
+    timeout: 2 * SELECTOR_TIMEOUT,
+  });
   expect(handle).not.toBe(null);
 });
 
@@ -58,7 +61,9 @@ test('shows action palette', async () => {
   await page.keyboard.up('Shift');
   await page.keyboard.up(ctrlKey);
 
-  let handle = await page.$('.universal-palette-container');
+  let handle = await page.waitForSelector('.universal-palette-container', {
+    timeout: 2 * SELECTOR_TIMEOUT,
+  });
   expect(handle).not.toBe(null);
   expect(
     (
@@ -75,8 +80,9 @@ test('create a new page saved in browser', async () => {
 
   await createNewNote(page, wsName, newFileName);
 
-  const editorHandle = await page.$('.bangle-editor');
-
+  const editorHandle = await page.waitForSelector('.bangle-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
   await clearPrimaryEditor(page);
 
   await editorHandle.type('# Wow', { delay: 3 });
@@ -93,7 +99,9 @@ test('inline action palette convert to bullet list', async () => {
 
   await createNewNote(page, wsName, newFileName);
 
-  const editorHandle = await page.$('.bangle-editor');
+  const editorHandle = await await page.waitForSelector('.bangle-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
   const hasOneUnorderedListElement = () =>
     editorHandle.evaluate((node) => node.querySelectorAll('ul').length === 1);
 
@@ -115,7 +123,9 @@ test('inline action palette convert to heading 3', async () => {
 
   await createNewNote(page, wsName, newFileName);
 
-  const editorHandle = await page.$('.bangle-editor');
+  const editorHandle = await await page.waitForSelector('.bangle-editor', {
+    timeout: SELECTOR_TIMEOUT,
+  });
   const hasOneH3Element = () =>
     editorHandle.evaluate((node) => node.querySelectorAll('h3').length === 1);
 

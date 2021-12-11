@@ -1,0 +1,259 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`store basic tests destroys 1`] = `
+ApplicationStore {
+  "_dispatchAction": [Function],
+  "_state": AppState {
+    "config": AppStateConfig {
+      "fields": Array [
+        FieldDesc {
+          "apply": [Function],
+          "init": [Function],
+          "name": "one$",
+        },
+        FieldDesc {
+          "apply": [Function],
+          "init": [Function],
+          "name": "two$",
+        },
+      ],
+      "opts": undefined,
+      "slices": Array [
+        Slice {
+          "key": "one$",
+          "spec": Object {
+            "key": SliceKey {
+              "key": "one$",
+              "name": "one",
+            },
+            "state": Object {
+              "apply": [Function],
+              "init": [Function],
+            },
+          },
+        },
+        Slice {
+          "key": "two$",
+          "spec": Object {
+            "key": SliceKey {
+              "key": "two$",
+              "name": "two",
+            },
+            "state": Object {
+              "apply": [Function],
+              "init": [Function],
+            },
+          },
+        },
+      ],
+      "slicesByKey": Object {
+        "one$": Slice {
+          "key": "one$",
+          "spec": Object {
+            "key": SliceKey {
+              "key": "one$",
+              "name": "one",
+            },
+            "state": Object {
+              "apply": [Function],
+              "init": [Function],
+            },
+          },
+        },
+        "two$": Slice {
+          "key": "two$",
+          "spec": Object {
+            "key": SliceKey {
+              "key": "two$",
+              "name": "two",
+            },
+            "state": Object {
+              "apply": [Function],
+              "init": [Function],
+            },
+          },
+        },
+      },
+    },
+    "slicesCurrentState": Object {
+      "one$": 1,
+      "two$": 2,
+    },
+  },
+  "destroyed": true,
+  "dispatch": [Function],
+  "scheduler": undefined,
+  "sideEffects": Array [],
+}
+`;
+
+exports[`store basic tests sets up properly 1`] = `
+ApplicationStore {
+  "_dispatchAction": [Function],
+  "_state": AppState {
+    "config": AppStateConfig {
+      "fields": Array [
+        FieldDesc {
+          "apply": [Function],
+          "init": [Function],
+          "name": "one$",
+        },
+        FieldDesc {
+          "apply": [Function],
+          "init": [Function],
+          "name": "two$",
+        },
+      ],
+      "opts": undefined,
+      "slices": Array [
+        Slice {
+          "key": "one$",
+          "spec": Object {
+            "key": SliceKey {
+              "key": "one$",
+              "name": "one",
+            },
+            "state": Object {
+              "apply": [Function],
+              "init": [Function],
+            },
+          },
+        },
+        Slice {
+          "key": "two$",
+          "spec": Object {
+            "key": SliceKey {
+              "key": "two$",
+              "name": "two",
+            },
+            "state": Object {
+              "apply": [Function],
+              "init": [Function],
+            },
+          },
+        },
+      ],
+      "slicesByKey": Object {
+        "one$": Slice {
+          "key": "one$",
+          "spec": Object {
+            "key": SliceKey {
+              "key": "one$",
+              "name": "one",
+            },
+            "state": Object {
+              "apply": [Function],
+              "init": [Function],
+            },
+          },
+        },
+        "two$": Slice {
+          "key": "two$",
+          "spec": Object {
+            "key": SliceKey {
+              "key": "two$",
+              "name": "two",
+            },
+            "state": Object {
+              "apply": [Function],
+              "init": [Function],
+            },
+          },
+        },
+      },
+    },
+    "slicesCurrentState": Object {
+      "one$": 1,
+      "two$": 2,
+    },
+  },
+  "destroyed": false,
+  "dispatch": [Function],
+  "scheduler": undefined,
+  "sideEffects": Array [],
+}
+`;
+
+exports[`store deferred side effects does not call deferred update when scheduler is not provided 1`] = `
+ApplicationStore {
+  "_dispatchAction": [Function],
+  "_state": AppState {
+    "config": AppStateConfig {
+      "fields": Array [],
+      "opts": undefined,
+      "slices": Array [
+        Slice {
+          "key": "slice$2",
+          "spec": Object {
+            "sideEffect": [MockFunction] {
+              "calls": Array [
+                Array [
+                  [Circular],
+                ],
+              ],
+              "results": Array [
+                Object {
+                  "type": "return",
+                  "value": Object {
+                    "deferredUpdate": [MockFunction],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
+      "slicesByKey": Object {
+        "slice$2": Slice {
+          "key": "slice$2",
+          "spec": Object {
+            "sideEffect": [MockFunction] {
+              "calls": Array [
+                Array [
+                  [Circular],
+                ],
+              ],
+              "results": Array [
+                Object {
+                  "type": "return",
+                  "value": Object {
+                    "deferredUpdate": [MockFunction],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    "slicesCurrentState": Object {},
+  },
+  "destroyed": false,
+  "dispatch": [Function],
+  "scheduler": [Function],
+  "sideEffects": Array [
+    Object {
+      "deferredUpdate": [MockFunction],
+    },
+  ],
+}
+`;
+
+exports[`store empty store 1`] = `
+ApplicationStore {
+  "_dispatchAction": [Function],
+  "_state": AppState {
+    "config": AppStateConfig {
+      "fields": Array [],
+      "opts": undefined,
+      "slices": Array [],
+      "slicesByKey": Object {},
+    },
+    "slicesCurrentState": Object {},
+  },
+  "destroyed": false,
+  "dispatch": [Function],
+  "scheduler": undefined,
+  "sideEffects": Array [],
+}
+`;

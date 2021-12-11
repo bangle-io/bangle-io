@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppState with a slice 1`] = `
+AppState {
+  "config": AppStateConfig {
+    "fields": Array [
+      FieldDesc {
+        "init": [Function],
+        "name": "slice$",
+      },
+    ],
+    "opts": undefined,
+    "slices": Array [
+      Slice {
+        "key": "slice$",
+        "spec": Object {
+          "state": Object {
+            "init": [Function],
+          },
+        },
+      },
+    ],
+    "slicesByKey": Object {
+      "slice$": Slice {
+        "key": "slice$",
+        "spec": Object {
+          "state": Object {
+            "init": [Function],
+          },
+        },
+      },
+    },
+  },
+  "slicesCurrentState": Object {
+    "slice$": null,
+  },
+}
+`;
+
+exports[`AppState with multiple slices 1`] = `
+AppState {
+  "config": AppStateConfig {
+    "fields": Array [
+      FieldDesc {
+        "init": [Function],
+        "name": "one$5",
+      },
+      FieldDesc {
+        "init": [Function],
+        "name": "two$",
+      },
+    ],
+    "opts": undefined,
+    "slices": Array [
+      Slice {
+        "key": "one$5",
+        "spec": Object {
+          "key": SliceKey {
+            "key": "one$5",
+            "name": "one",
+          },
+          "state": Object {
+            "init": [Function],
+          },
+        },
+      },
+      Slice {
+        "key": "two$",
+        "spec": Object {
+          "key": SliceKey {
+            "key": "two$",
+            "name": "two",
+          },
+          "state": Object {
+            "init": [Function],
+          },
+        },
+      },
+    ],
+    "slicesByKey": Object {
+      "one$5": Slice {
+        "key": "one$5",
+        "spec": Object {
+          "key": SliceKey {
+            "key": "one$5",
+            "name": "one",
+          },
+          "state": Object {
+            "init": [Function],
+          },
+        },
+      },
+      "two$": Slice {
+        "key": "two$",
+        "spec": Object {
+          "key": SliceKey {
+            "key": "two$",
+            "name": "two",
+          },
+          "state": Object {
+            "init": [Function],
+          },
+        },
+      },
+    },
+  },
+  "slicesCurrentState": Object {
+    "one$5": 1,
+    "two$": 2,
+  },
+}
+`;

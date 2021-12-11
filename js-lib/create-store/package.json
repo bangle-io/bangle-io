@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/ui-context",
+  "name": "@bangle.io/create-store",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,26 +11,25 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/ui-context"
+    "directory": "js-lib/create-store"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
   "main": "index.ts",
   "module": "index.ts",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
-    "@bangle.io/app-state-context": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
-    "@bangle.io/create-store": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/utils": "workspace:*",
-    "react": "^17.0.2"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "type-fest": "^2.8.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

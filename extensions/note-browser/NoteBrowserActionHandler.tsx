@@ -19,7 +19,7 @@ export function NoteBrowserActionHandler({
             value: {
               type:
                 sidebar === 'sidebar::bangle-io-note-browser:note-browser'
-                  ? undefined
+                  ? null
                   : 'sidebar::bangle-io-note-browser:note-browser',
             },
           });

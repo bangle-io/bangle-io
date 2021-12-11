@@ -1,18 +1,25 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { UIManager, useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 import { sleep } from '@bangle.io/utils';
 
 import { NotificationArea } from '../NotificationArea';
 
+jest.mock('@bangle.io/ui-context', () => {
+  return { useUIManagerContext: jest.fn() };
+});
+
+beforeEach(() => {
+  useUIManagerContext.mockImplementation(() => ({
+    dispatch: jest.fn(),
+    notifications: [],
+  }));
+});
+
 describe('NotificationArea', () => {
   test('renders empty', async () => {
-    const result = await render(
-      <UIManager>
-        <NotificationArea />
-      </UIManager>,
-    );
+    const result = await render(<NotificationArea />);
 
     expect(result.container).toMatchInlineSnapshot(`
       <div>
@@ -24,19 +31,14 @@ describe('NotificationArea', () => {
   });
 
   test('renders with content', async () => {
-    let _dispatch;
-    function DummyComp() {
-      const { dispatch } = useUIManagerContext();
-      _dispatch = dispatch;
-      return null;
-    }
+    const uiDispatchMock = jest.fn();
+    let notificationsObj = { notifications: [] };
+    useUIManagerContext.mockImplementation(() => ({
+      dispatch: uiDispatchMock,
+      notifications: notificationsObj.notifications,
+    }));
 
-    const result = await render(
-      <UIManager>
-        <DummyComp />
-        <NotificationArea />
-      </UIManager>,
-    );
+    const result = await render(<NotificationArea />);
 
     expect(result.container).toMatchInlineSnapshot(`
       <div>
@@ -46,27 +48,25 @@ describe('NotificationArea', () => {
       </div>
     `);
 
-    await act(async () => {
-      _dispatch({
-        type: 'UI/SHOW_NOTIFICATION',
-        value: {
-          uid: 'one',
-          content: 'hello you!',
-        },
-      });
-    });
+    notificationsObj.notifications = [{ uid: 'one', content: 'hello you!' }];
 
+    expect(useUIManagerContext).toBeCalledTimes(1);
+
+    await result.rerender(<NotificationArea />);
+
+    expect(useUIManagerContext).toBeCalledTimes(2);
     expect(result.container.innerHTML.includes('hello you')).toBe(true);
 
-    await act(async () => {
-      _dispatch({
-        type: 'UI/SHOW_NOTIFICATION',
-        value: {
-          uid: 'second',
-          content: 'second!',
-        },
-      });
-    });
+    notificationsObj.notifications = [
+      { uid: 'one', content: 'hello you!' },
+      {
+        uid: 'second',
+        content: 'second!',
+      },
+    ];
+
+    await result.rerender(<NotificationArea />);
+    expect(useUIManagerContext).toBeCalledTimes(3);
 
     expect(result.container.innerHTML.includes('hello you')).toBe(true);
     expect(result.container.innerHTML.includes('second!')).toBe(true);
@@ -75,29 +75,18 @@ describe('NotificationArea', () => {
   });
 
   test('removes notification on clicking', async () => {
-    let _dispatch;
-    function DummyComp() {
-      const { dispatch } = useUIManagerContext();
-      _dispatch = dispatch;
-      return null;
-    }
+    const uiDispatchMock = jest.fn();
+    let notificationsObj = { notifications: [] };
+    useUIManagerContext.mockImplementation(() => ({
+      dispatch: uiDispatchMock,
+      notifications: notificationsObj.notifications,
+    }));
+    const result = await render(<NotificationArea />);
 
-    const result = await render(
-      <UIManager>
-        <DummyComp />
-        <NotificationArea />
-      </UIManager>,
-    );
+    notificationsObj.notifications = [{ uid: 'one', content: 'hello you!' }];
 
-    await act(async () => {
-      _dispatch({
-        type: 'UI/SHOW_NOTIFICATION',
-        value: {
-          uid: 'one',
-          content: 'hello you!',
-        },
-      });
-    });
+    await result.rerender(<NotificationArea />);
+    expect(useUIManagerContext).toBeCalledTimes(2);
 
     expect(result.container.innerHTML.includes('hello you')).toBe(true);
 
@@ -105,35 +94,12 @@ describe('NotificationArea', () => {
     fireEvent.click(result.getByLabelText('dismiss'));
     await act(() => prom);
 
-    expect(result.container.innerHTML.includes('hello you')).toBe(false);
-  });
-
-  test('shows buttons', async () => {
-    let _dispatch;
-    function DummyComp() {
-      const { dispatch } = useUIManagerContext();
-      _dispatch = dispatch;
-      return null;
-    }
-
-    const result = await render(
-      <UIManager>
-        <DummyComp />
-        <NotificationArea />
-      </UIManager>,
-    );
-
-    await act(async () => {
-      _dispatch({
-        type: 'UI/SHOW_NOTIFICATION',
-        value: {
-          uid: 'one',
-          content: 'hello you!',
-          buttons: [<span>wow!</span>],
-        },
-      });
+    expect(uiDispatchMock).toBeCalledTimes(1);
+    expect(uiDispatchMock).nthCalledWith(1, {
+      type: 'UI/DISMISS_NOTIFICATION',
+      value: {
+        uid: 'one',
+      },
     });
-
-    expect(result.container.innerHTML.includes('wow!')).toBe(true);
   });
 });

@@ -51,10 +51,10 @@ export function PaletteManager() {
   const updatePalette = useCallback<
     PaletteManagerReactComponentProps['updatePalette']
   >(
-    (type, initialQuery = '', metadata = {}) => {
+    (type, initialQuery = '') => {
       dispatch({
         type: 'UI/UPDATE_PALETTE',
-        value: { type, initialQuery, metadata },
+        value: { type, initialQuery },
       });
       if (type) {
         document
