@@ -1,4 +1,4 @@
-import { validateNonWorkerGlobalScope } from '@bangle.io/naukar-worker';
+import { validateNonWorkerGlobalScope } from '@bangle.io/utils';
 
 import { WorkerSetup } from './WorkerSetup';
 

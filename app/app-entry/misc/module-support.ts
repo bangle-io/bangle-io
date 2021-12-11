@@ -1,5 +1,5 @@
 import { BANGLE_HOT, isSafari } from '@bangle.io/config';
-import { validateNonWorkerGlobalScope } from '@bangle.io/naukar-worker';
+import { validateNonWorkerGlobalScope } from '@bangle.io/utils';
 
 validateNonWorkerGlobalScope();
 

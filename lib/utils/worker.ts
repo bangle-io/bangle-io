@@ -11,6 +11,13 @@ export function isWorkerGlobalScope() {
   );
 }
 
+export function getSelfType(): 'worker' | 'window' {
+  return typeof WorkerGlobalScope !== 'undefined' &&
+    // eslint-disable-next-line no-restricted-globals, no-undef
+    self instanceof WorkerGlobalScope
+    ? 'worker'
+    : 'window';
+}
 /**
  * throws an error in not in a web worker environment
  */

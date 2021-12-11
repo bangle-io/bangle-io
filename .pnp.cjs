@@ -4655,6 +4655,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/fzf-search", "virtual:1c653abd95d17b80460966d88f9155bf37447d2b0ac69dac46281807b79335757fd742efe819137ca9ed88e005544d9ea162e2b4451163803b19eeb4563013ba#workspace:js-lib/fzf-search"],
             ["@bangle.io/object-sync", "workspace:js-lib/object-sync"],
@@ -4664,6 +4665,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/workspaces", "virtual:adbd11a050dab6dd72c18a7c85c1c3b5186184cf3aaafb4066757cc4a2ca0b1a1351b9eaf88bdc8771c8eb721d66174e3cf83c5d2d19112cdf4cb4b5d704e289#workspace:lib/workspaces"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
+            ["fast-deep-equal", "npm:3.1.3"],
             ["idb-keyval", "npm:5.1.5"]
           ],
           "linkType": "SOFT",
@@ -5131,6 +5133,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
             ["comlink", "npm:4.3.1"],
             ["react", "npm:17.0.2"]
           ],

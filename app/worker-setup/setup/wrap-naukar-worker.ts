@@ -2,7 +2,7 @@
 
 import * as Comlink from 'comlink';
 
-import { validateNonWorkerGlobalScope } from '@bangle.io/naukar-worker';
+import { validateNonWorkerGlobalScope } from '@bangle.io/utils';
 
 // eslint-disable-next-line import/no-unresolved
 import Worker from './expose-naukar-worker.worker?worker';
