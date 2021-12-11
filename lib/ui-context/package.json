@@ -20,6 +20,7 @@
   "module": "index.ts",
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/create-store": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "react": "^17.0.2"
