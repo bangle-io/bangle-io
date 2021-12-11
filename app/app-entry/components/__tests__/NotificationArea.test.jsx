@@ -102,23 +102,4 @@ describe('NotificationArea', () => {
       },
     });
   });
-
-  test('shows buttons', async () => {
-    const uiDispatchMock = jest.fn();
-
-    useUIManagerContext.mockImplementation(() => ({
-      dispatch: uiDispatchMock,
-      notifications: [
-        {
-          uid: 'one',
-          content: 'hello you!',
-          buttons: [<span>wow!</span>],
-        },
-      ],
-    }));
-
-    const result = await render(<NotificationArea />);
-
-    expect(result.container.innerHTML.includes('wow!')).toBe(true);
-  });
 });

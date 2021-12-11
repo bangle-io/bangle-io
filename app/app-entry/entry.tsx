@@ -75,7 +75,6 @@ export function Entry() {
             <AppStateProvider>
               <WorkerSetup loadWebworker={moduleSupport} />
               <UIManager>
-                <SWReloadPrompt />
                 <ExtensionRegistryContextProvider
                   initExtensionRegistry={initExtensionRegistry}
                 >
@@ -85,6 +84,7 @@ export function Entry() {
                       onWorkspaceNotFound={handleWorkspaceNotFound}
                       onInvalidPath={handleOnInvalidPath}
                     >
+                      <SWReloadPrompt />
                       <WatchWorkspace />
                       <WatchUI />
                       <EditorManager>

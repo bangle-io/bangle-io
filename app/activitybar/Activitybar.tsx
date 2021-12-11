@@ -67,7 +67,7 @@ export function Activitybar({
         onPress={() => {
           dispatch({
             type: 'UI/CHANGE_SIDEBAR',
-            value: { type: undefined },
+            value: { type: null },
           });
           history.push('/');
         }}

@@ -2640,6 +2640,7 @@ __metadata:
   dependencies:
     "@bangle.dev/pm": 0.28.3
     "@bangle.io/constants": "workspace:*"
+    type-fest: ^2.8.0
   languageName: unknown
   linkType: soft
 
@@ -2678,6 +2679,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     comlink: ^4.3.1
     core-js: ^3.19.0
+    fast-deep-equal: ^3.1.3
   languageName: unknown
   linkType: soft
 

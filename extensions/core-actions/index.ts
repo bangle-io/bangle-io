@@ -6,6 +6,8 @@ import {
   CORE_ACTIONS_NEW_NOTE,
   CORE_ACTIONS_NEW_WORKSPACE,
   CORE_ACTIONS_RENAME_ACTIVE_NOTE,
+  CORE_ACTIONS_SERVICE_WORKER_DISMISS_UPDATE,
+  CORE_ACTIONS_SERVICE_WORKER_RELOAD,
   CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
   CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_ACTIONS_TOGGLE_THEME,
@@ -39,6 +41,16 @@ const extension = Extension.create({
       {
         name: CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
         title: 'Create browser workspace',
+        hidden: true,
+      },
+      {
+        name: CORE_ACTIONS_SERVICE_WORKER_RELOAD,
+        title: 'Reload page in response to a service worker update',
+        hidden: true,
+      },
+      {
+        name: CORE_ACTIONS_SERVICE_WORKER_DISMISS_UPDATE,
+        title: 'Dismiss prompt from service worker to update',
         hidden: true,
       },
     ],

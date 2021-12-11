@@ -57,7 +57,7 @@ export function NotesTree() {
     if (!widescreen) {
       dispatch({
         type: 'UI/CHANGE_SIDEBAR',
-        value: { type: undefined },
+        value: { type: null },
       });
     }
   }, [dispatch, widescreen]);

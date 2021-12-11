@@ -30,3 +30,8 @@ export const CORE_ACTIONS_CLOSE_EDITOR =
 
 export const CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR =
   'action::bangle-io-core-actions:NOTE_TOGGLE_SIDEBAR_ACTION';
+
+export const CORE_ACTIONS_SERVICE_WORKER_RELOAD =
+  'action::bangle-io-core-actions:CORE_ACTIONS_SERVICE_WORKER_RELOAD_ACTION';
+export const CORE_ACTIONS_SERVICE_WORKER_DISMISS_UPDATE =
+  'action::bangle-io-core-actions:CORE_ACTIONS_SERVICE_WORKER_DISMISS_UPDATE_ACTION';

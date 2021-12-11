@@ -65,7 +65,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           // To avoid overlapping
           dispatch({
             type: 'UI/UPDATE_PALETTE',
-            value: { type: undefined },
+            value: { type: null },
           });
           updateInputModal({
             type: 'new-note',
@@ -100,7 +100,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           // To avoid overlapping
           dispatch({
             type: 'UI/UPDATE_PALETTE',
-            value: { type: undefined },
+            value: { type: null },
           });
           updateInputModal({ type: 'rename-note' });
           return true;
@@ -128,7 +128,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
 
           dispatch({
             type: 'UI/UPDATE_PALETTE',
-            value: { type: undefined },
+            value: { type: null },
           });
 
           if (

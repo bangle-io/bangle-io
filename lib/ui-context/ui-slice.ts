@@ -1,5 +1,8 @@
 import { Slice, SliceKey } from '@bangle.io/create-store';
-import type { ThemeType } from '@bangle.io/shared-types';
+import type {
+  NotificationPayloadType,
+  ThemeType,
+} from '@bangle.io/shared-types';
 import { checkWidescreen, rafSchedule, useWindowSize } from '@bangle.io/utils';
 
 import { applyTheme } from './apply-theme';
@@ -8,35 +11,28 @@ const persistKey = 'UIManager0.724';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UISlice') : () => {};
 
-export interface NotificationType {
-  uid: string;
-  content: React.ReactNode;
-  buttons?: any[];
-  severity?: 'error' | 'warning' | 'info' | 'success' | undefined;
-}
-
 export interface UISliceState {
   changelogHasUpdates: boolean;
-  modal: string | undefined;
+  modal?: string | null;
   noteSidebar: boolean;
-  notifications: NotificationType[];
-  paletteInitialQuery: string | undefined;
-  paletteMetadata: any | undefined;
-  paletteType: string | undefined;
-  sidebar: string | undefined;
+  notifications: NotificationPayloadType[];
+  paletteInitialQuery?: string | null;
+  paletteMetadata?: any | null;
+  paletteType?: string | null;
+  sidebar?: string | null;
   theme: ThemeType;
   widescreen: boolean;
 }
 
 export type UiContextAction =
   | { type: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
-  | { type: 'UI/CHANGE_SIDEBAR'; value: { type: string | undefined } }
-  | { type: 'UI/SHOW_NOTIFICATION'; value: NotificationType }
+  | { type: 'UI/CHANGE_SIDEBAR'; value: { type: string | null } }
+  | { type: 'UI/SHOW_NOTIFICATION'; value: NotificationPayloadType }
   | { type: 'UI/DISMISS_NOTIFICATION'; value: { uid: string } }
   | {
       type: 'UI/UPDATE_PALETTE';
       value: {
-        type: string | undefined;
+        type: string | null;
         initialQuery?: string;
         metadata?: any;
       };
@@ -50,7 +46,7 @@ export type UiContextAction =
     }
   | {
       type: 'UI/SHOW_MODAL';
-      value: { modal: string | undefined };
+      value: { modal: string | null };
     }
   | {
       type: 'UI/DISMISS_MODAL';
@@ -108,18 +104,8 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
           }
 
           case 'UI/SHOW_NOTIFICATION': {
-            const {
-              uid,
-              content,
-              buttons,
-              severity = 'info',
-            } = action.value as NotificationType;
-            if (!['error', 'warning', 'info', 'success'].includes(severity)) {
-              throw new Error('Unknown severity value: ' + severity);
-            }
-            if (!content) {
-              throw new Error('Must provide content for notification');
-            }
+            const { uid } = action.value;
+
             // Prevent repeat firing of notifications
             if (state.notifications.find((n) => n.uid === uid)) {
               return state;
@@ -127,10 +113,7 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
 
             return {
               ...state,
-              notifications: [
-                ...state.notifications,
-                { uid, content, buttons, severity },
-              ],
+              notifications: [...state.notifications, action.value],
             };
           }
 

@@ -4937,7 +4937,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["comlink", "npm:4.3.1"],
-            ["core-js", "npm:3.19.1"]
+            ["core-js", "npm:3.19.1"],
+            ["fast-deep-equal", "npm:3.1.3"]
           ],
           "linkType": "SOFT",
         }]
@@ -4948,7 +4949,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.dev/pm", "npm:0.28.3"],
-            ["@bangle.io/constants", "workspace:lib/constants"]
+            ["@bangle.io/constants", "workspace:lib/constants"],
+            ["type-fest", "npm:2.8.0"]
           ],
           "linkType": "SOFT",
         }]

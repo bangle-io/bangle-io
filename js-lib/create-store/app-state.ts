@@ -45,7 +45,7 @@ export class AppState<S, A> {
 
   constructor(public config: AppStateConfig<S, A>) {}
 
-  applyAction(action: A & JsonValue): AppState<S, A> {
+  applyAction(action: A): AppState<S, A> {
     let newInstance = new AppState(this.config);
 
     this.config.fields.forEach((field) => {

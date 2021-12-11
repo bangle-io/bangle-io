@@ -3,8 +3,6 @@ import type { JsonValue } from 'type-fest';
 import type { AppState } from './app-state';
 import type { SliceSideEffect } from './app-state-slice';
 
-export type ActionType<A> = (action: A & JsonValue) => void;
-
 export type SchedulerType = (cb: () => void) => () => void;
 
 export class ApplicationStore<S = any, A = any> {
@@ -17,7 +15,7 @@ export class ApplicationStore<S = any, A = any> {
     private _state: AppState<S, A>,
     private _dispatchAction: (
       store: ApplicationStore<S, A>,
-      action: A & JsonValue,
+      action: A,
     ) => void = (store, action) => {
       let newState = store.state.applyAction(action);
       this.updateState(newState);
@@ -42,7 +40,7 @@ export class ApplicationStore<S = any, A = any> {
     return this._state;
   }
 
-  dispatch: ActionType<A> = (action: A & JsonValue) => {
+  dispatch = (action: A & JsonValue) => {
     if (this.destroyed) {
       return;
     }
