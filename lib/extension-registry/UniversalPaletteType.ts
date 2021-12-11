@@ -9,7 +9,7 @@ export interface PaletteManagerReactComponentProps {
   query: string;
   paletteType?: string | null;
   paletteMetadata: any;
-  updatePalette: (type: string, initialQuery?: string, metadata?: any) => void;
+  updatePalette: (type: string, initialQuery?: string) => void;
   dismissPalette: (focusEditor?: boolean) => void;
   onSelect: ReturnType<typeof UniversalPalette.usePaletteDriver>['onSelect'];
   counter: number;

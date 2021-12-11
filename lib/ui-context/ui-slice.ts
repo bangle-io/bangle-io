@@ -34,7 +34,6 @@ export type UiContextAction =
       value: {
         type: string | null;
         initialQuery?: string;
-        metadata?: any;
       };
     }
   | { type: 'UI/RESET_PALETTE' }
@@ -134,7 +133,6 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
               ...state,
               paletteType: action.value.type,
               paletteInitialQuery: action.value.initialQuery,
-              paletteMetadata: action.value.metadata,
             };
           }
 
