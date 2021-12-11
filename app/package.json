@@ -8,7 +8,8 @@
     "activitybar",
     "workspace-sidebar",
     "editor-container",
-    "note-sidebar"
+    "note-sidebar",
+    "bangle-store"
   ],
   "repository": {
     "directory": "app",

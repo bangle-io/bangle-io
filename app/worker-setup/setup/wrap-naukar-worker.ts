@@ -2,14 +2,21 @@
 
 import * as Comlink from 'comlink';
 
-import { validateNonWorkerGlobalScope } from '@bangle.io/utils';
+import { assertNonWorkerGlobalScope, sleep } from '@bangle.io/utils';
 
 // eslint-disable-next-line import/no-unresolved
 import Worker from './expose-naukar-worker.worker?worker';
 
-validateNonWorkerGlobalScope();
+assertNonWorkerGlobalScope();
 
 // TODO fix me
 const worker = new (Worker as any)();
 
-export default Comlink.wrap(worker);
+export const wrapper = Comlink.wrap(worker);
+export const terminate = async () => {
+  wrapper[Comlink.releaseProxy]();
+  // wait for comlink to release proxy
+  // if we terminate immediately proxy is not released
+  await sleep(100);
+  worker.terminate();
+};

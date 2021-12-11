@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/worker-setup",
+  "name": "@bangle.io/bangle-store",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "app/worker-setup"
+    "directory": "app/bangle-store"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -19,16 +19,11 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.io/config": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
-    "@bangle.io/naukar-proxy": "workspace:*",
-    "@bangle.io/naukar-worker": "workspace:*",
-    "@bangle.io/shared": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/ui-context": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "comlink": "^4.3.1",
-    "react": "^17.0.2"
+    "@bangle.io/worker-setup": "workspace:*",
+    "fast-deep-equal": "^3.1.3"
   },
   "publishConfig": {
     "access": "restricted"

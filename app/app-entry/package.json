@@ -31,6 +31,7 @@
     "@bangle.io/activitybar": "workspace:*",
     "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
+    "@bangle.io/bangle-store": "workspace:*",
     "@bangle.io/collab-extension": "workspace:*",
     "@bangle.io/collapsible-heading": "workspace:*",
     "@bangle.io/config": "workspace:*",

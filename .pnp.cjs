@@ -55,6 +55,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app/app-entry"
       },
       {
+        "name": "@bangle.io/bangle-store",
+        "reference": "workspace:app/bangle-store"
+      },
+      {
         "name": "@bangle.io/editor-container",
         "reference": "workspace:app/editor-container"
       },
@@ -284,6 +288,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/app-entry", ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry", "workspace:app/app-entry"]],
       ["@bangle.io/app-state-context", ["workspace:lib/app-state-context"]],
       ["@bangle.io/baby-fs", ["workspace:js-lib/baby-fs"]],
+      ["@bangle.io/bangle-store", ["workspace:app/bangle-store"]],
       ["@bangle.io/base-error", ["workspace:js-lib/base-error"]],
       ["@bangle.io/collab-extension", ["workspace:extensions/collab-extension"]],
       ["@bangle.io/collapsible-heading", ["workspace:extensions/collapsible-heading"]],
@@ -3812,6 +3817,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],
             ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
+            ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
             ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.io/config", "workspace:lib/config"],
@@ -3881,6 +3887,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],
             ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
+            ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
             ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.io/config", "workspace:lib/config"],
@@ -3952,6 +3959,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],
             ["idb-keyval", "npm:5.1.5"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/bangle-store", [
+        ["workspace:app/bangle-store", {
+          "packageLocation": "./app/bangle-store/",
+          "packageDependencies": [
+            ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@bangle.io/worker-setup", "workspace:app/worker-setup"],
+            ["fast-deep-equal", "npm:3.1.3"]
           ],
           "linkType": "SOFT",
         }]
@@ -4928,19 +4949,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],
             ["@bangle.io/inline-command-palette", "workspace:extensions/inline-command-palette"],
             ["@bangle.io/inline-emoji", "workspace:extensions/inline-emoji"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
-            ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/note-browser", "workspace:extensions/note-browser"],
             ["@bangle.io/note-outline", "workspace:extensions/note-outline"],
             ["@bangle.io/note-tags", "workspace:extensions/note-tags"],
-            ["@bangle.io/object-sync", "workspace:js-lib/object-sync"],
             ["@bangle.io/search-notes", "workspace:extensions/search-notes"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
-            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
             ["@bangle.io/utils", "workspace:lib/utils"],
-            ["comlink", "npm:4.3.1"],
-            ["core-js", "npm:3.19.1"],
-            ["fast-deep-equal", "npm:3.1.3"]
+            ["core-js", "npm:3.19.1"]
           ],
           "linkType": "SOFT",
         }]
@@ -5128,7 +5143,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/worker-setup/",
           "packageDependencies": [
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],
+            ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/shared", "workspace:app/shared"],

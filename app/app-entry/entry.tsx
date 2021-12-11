@@ -12,7 +12,6 @@ import {
 } from '@bangle.io/extension-registry';
 import { initExtensionRegistry, polyfills } from '@bangle.io/shared';
 import { UIManager } from '@bangle.io/ui-context';
-import { WorkerSetup } from '@bangle.io/worker-setup';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 
 import {
@@ -73,7 +72,6 @@ export function Entry() {
         <OverlayProvider className="w-full h-full">
           <Router>
             <AppStateProvider>
-              <WorkerSetup loadWebworker={moduleSupport} />
               <UIManager>
                 <ExtensionRegistryContextProvider
                   initExtensionRegistry={initExtensionRegistry}

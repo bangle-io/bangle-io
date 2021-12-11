@@ -2,12 +2,10 @@ import * as Comlink from 'comlink';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { AppStateContext } from '@bangle.io/app-state-context';
+import { initializeBangleStore } from '@bangle.io/bangle-store';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { objectSync, ObjectSyncCallback } from '@bangle.io/object-sync';
-import {
-  initialAppState as _initialAppState,
-  initializeBangleStore,
-} from '@bangle.io/shared';
+import { initialAppState as _initialAppState } from '@bangle.io/shared';
 
 import { moduleSupport } from './misc/module-support';
 

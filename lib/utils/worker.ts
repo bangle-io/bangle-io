@@ -21,14 +21,14 @@ export function getSelfType(): 'worker' | 'window' {
 /**
  * throws an error in not in a web worker environment
  */
-export function validateWorkerGlobalScope() {
+export function assertWorkerGlobalScope() {
   if (isWorkerGlobalScope()) {
     return;
   }
   throw new Error('Script can only run in worker environment');
 }
 
-export function validateNonWorkerGlobalScope() {
+export function assertNonWorkerGlobalScope() {
   if (
     typeof WorkerGlobalScope !== 'undefined' &&
     // eslint-disable-next-line no-restricted-globals, no-undef
