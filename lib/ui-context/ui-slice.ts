@@ -15,7 +15,7 @@ export interface NotificationType {
   severity?: 'error' | 'warning' | 'info' | 'success' | undefined;
 }
 
-export interface _UIStateObj {
+export interface UISliceState {
   changelogHasUpdates: boolean;
   modal: string | undefined;
   noteSidebar: boolean;
@@ -59,7 +59,7 @@ export type UiContextAction =
   | { type: 'UI/UPDATE_NOTE_SIDEBAR'; value: boolean }
   | { type: 'UI/TOGGLE_NOTE_SIDEBAR' };
 
-export const initialState: _UIStateObj = {
+export const initialState: UISliceState = {
   // UI
   changelogHasUpdates: false,
   modal: undefined,
@@ -73,11 +73,11 @@ export const initialState: _UIStateObj = {
   widescreen: checkWidescreen(),
 };
 
-export const uiSliceKey = new SliceKey<_UIStateObj, UiContextAction>(
+export const uiSliceKey = new SliceKey<UISliceState, UiContextAction>(
   'ui-slice',
 );
 
-export function uiSlice<T = any>(): Slice<_UIStateObj, UiContextAction, T> {
+export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
   return new Slice({
     key: uiSliceKey,
     state: {
@@ -292,11 +292,11 @@ function setRootWidescreenClass(widescreen) {
   }
 }
 
-function persistState(obj: Partial<_UIStateObj>) {
+function persistState(obj: Partial<UISliceState>) {
   localStorage.setItem(persistKey, JSON.stringify(obj));
 }
 
-function retrievePersistedState(): Partial<_UIStateObj> {
+function retrievePersistedState(): Partial<UISliceState> {
   try {
     const item = localStorage.getItem(persistKey);
     if (typeof item === 'string') {

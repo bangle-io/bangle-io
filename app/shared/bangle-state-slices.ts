@@ -1,5 +1,8 @@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
-import { uiSlice } from '@bangle.io/ui-context';
+import { UiContextAction, uiSlice, UISliceState } from '@bangle.io/ui-context';
+
+export type BangleActionTypes = UiContextAction;
+export type BangleSliceTypes = UISliceState;
 
 export function bangleStateSlices({
   onUpdate,

@@ -4,7 +4,11 @@ import {
   safeRequestIdleCallback,
 } from '@bangle.io/utils';
 
-import { bangleStateSlices } from './bangle-state-slices';
+import {
+  BangleActionTypes,
+  BangleSliceTypes,
+  bangleStateSlices,
+} from './bangle-state-slices';
 
 const LOG = true;
 let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};
@@ -14,9 +18,10 @@ export function initializeBangleStore({
 }: {
   onUpdate?: (store: ApplicationStore) => void;
 }) {
-  const store = new ApplicationStore(
+  const store = new ApplicationStore<BangleSliceTypes, BangleActionTypes>(
     AppState.create({ slices: bangleStateSlices({ onUpdate }) }),
     (store, action) => {
+      action = JSON.parse(JSON.stringify(action));
       log(action);
       let newState = store.state.applyAction(action);
       store.updateState(newState);

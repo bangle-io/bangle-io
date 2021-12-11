@@ -3,16 +3,16 @@ import React, { createContext, useContext, useMemo } from 'react';
 import { useSliceState } from '@bangle.io/app-state-context';
 
 import {
-  _UIStateObj,
   initialState,
   UiContextAction,
   uiSliceKey,
+  UISliceState,
 } from './ui-slice';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
 
-export type UIStateObj = _UIStateObj & {
+export type UIStateObj = UISliceState & {
   dispatch: (action: UiContextAction) => void;
 };
 
@@ -27,7 +27,7 @@ export function useUIManagerContext() {
 
 export function UIManager({ children }) {
   const { sliceState: uiState, store } = useSliceState<
-    _UIStateObj,
+    UISliceState,
     UiContextAction
   >(uiSliceKey, initialState);
 
