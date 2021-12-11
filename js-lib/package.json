@@ -10,7 +10,8 @@
     "object-sync",
     "object-uid",
     "pm-plugins",
-    "search-pm-node"
+    "search-pm-node",
+    "create-store"
   ],
   "repository": {
     "directory": "js-lib",

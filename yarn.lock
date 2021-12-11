@@ -2028,6 +2028,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/create-store@workspace:js-lib/create-store":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/create-store@workspace:js-lib/create-store"
+  dependencies:
+    "@testing-library/react": ^12.1.2
+    "@testing-library/react-hooks": ^7.0.2
+    "@types/react": ^17.0.33
+    "@types/react-dom": ^17.0.10
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/e2e@workspace:tooling/e2e":
   version: 0.0.0-use.local
   resolution: "@bangle.io/e2e@workspace:tooling/e2e"
