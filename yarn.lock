@@ -1874,6 +1874,7 @@ __metadata:
   resolution: "@bangle.io/app-state-context@workspace:lib/app-state-context"
   dependencies:
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2028,7 +2029,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/create-store@workspace:js-lib/create-store":
+"@bangle.io/create-store@workspace:*, @bangle.io/create-store@workspace:js-lib/create-store":
   version: 0.0.0-use.local
   resolution: "@bangle.io/create-store@workspace:js-lib/create-store"
   dependencies:
@@ -2656,6 +2657,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-actions": "workspace:*"
     "@bangle.io/core-palettes": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor-core": "workspace:*"
     "@bangle.io/editor-scroll-extension": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2671,6 +2673,8 @@ __metadata:
     "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/search-notes": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
     comlink: ^4.3.1
     core-js: ^3.19.0
   languageName: unknown
@@ -2769,7 +2773,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/ui-context@workspace:lib/ui-context"
   dependencies:
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@types/react": ^17.0.33
