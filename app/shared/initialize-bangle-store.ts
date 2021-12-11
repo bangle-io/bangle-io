@@ -15,6 +15,8 @@ import {
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};
 
+const MAX_DEFERRED_WAIT_TIME = 400;
+
 export function initializeBangleStore({
   onUpdate,
 }: {
@@ -40,7 +42,9 @@ export function initializeBangleStore({
       store.updateState(newState);
     },
     (cb) => {
-      const id = safeRequestIdleCallback(cb);
+      const id = safeRequestIdleCallback(cb, {
+        timeout: MAX_DEFERRED_WAIT_TIME,
+      });
       return () => {
         safeCancelIdleCallback(id);
       };
