@@ -30,9 +30,9 @@ export function useBangleStoreContext() {
 
 export function useSliceState<SL, A, S = SL>(
   sliceKey: SliceKey<SL, A, S>,
-  initialState: SL,
+  initialState?: SL,
 ) {
-  const [sliceState, updateSliceState] = useState<SL>(initialState);
+  const [sliceState, updateSliceState] = useState<SL | undefined>(initialState);
   const { store, storeChanged } = useBangleStoreContext();
 
   useEffect(() => {

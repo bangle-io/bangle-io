@@ -1,10 +1,11 @@
+import { PageSliceAction } from '@bangle.io/constants';
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
-import { UiContextAction, uiSlice, UISliceState } from '@bangle.io/ui-context';
+import { UiContextAction, uiSlice } from '@bangle.io/ui-context';
 import { workerSlice } from '@bangle.io/worker-setup';
 
-import { PageAction, pageSlice } from './page-slice';
+import { pageSlice } from './page-slice';
 
-export type BangleActionTypes = UiContextAction | PageAction;
+export type BangleActionTypes = UiContextAction | PageSliceAction;
 export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
 export function bangleStateSlices({

@@ -2,35 +2,15 @@ import lifecycle from 'page-lifecycle';
 
 import {
   PAGE_BLOCK_RELOAD_ACTION_NAME,
-  PAGE_BLOCK_RELOAD_ACTION_TYPE,
+  PageSliceAction,
+  pageSliceKey,
+  PageSliceStateType,
 } from '@bangle.io/constants';
-import { Slice, SliceKey, SliceSideEffect } from '@bangle.io/create-store';
+import { Slice, SliceSideEffect } from '@bangle.io/create-store';
 
 const pendingSymbol = Symbol('pending-tasks');
 
-type PageLifeCycleStates =
-  | 'active'
-  | 'passive'
-  | 'hidden'
-  | 'frozen'
-  | 'terminated';
-
-export interface PageStateType {
-  blockReload: boolean;
-  lifeCycleState: {
-    current?: PageLifeCycleStates;
-    previous?: PageLifeCycleStates;
-  };
-}
-
-export type PageAction =
-  | {
-      type: 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE';
-      value: { current?: PageLifeCycleStates; previous?: PageLifeCycleStates };
-    }
-  | PAGE_BLOCK_RELOAD_ACTION_TYPE;
-
-export const pageSliceInitialState: PageStateType = {
+export const pageSliceInitialState: PageSliceStateType = {
   blockReload: false,
   lifeCycleState: {
     current: lifecycle.state,
@@ -38,11 +18,11 @@ export const pageSliceInitialState: PageStateType = {
   },
 };
 
-export const pageSliceKey = new SliceKey<PageStateType, PageAction>(
-  'page-slice',
-);
-
-export function pageSlice<T = any>(): Slice<PageStateType, PageAction, T> {
+export function pageSlice<T = any>(): Slice<
+  PageSliceStateType,
+  PageSliceAction,
+  T
+> {
   return new Slice({
     key: pageSliceKey,
     state: {
@@ -97,22 +77,24 @@ export function pageSlice<T = any>(): Slice<PageStateType, PageAction, T> {
   });
 }
 
-const blockReloadSideEffect: SliceSideEffect<PageStateType, PageAction> =
-  () => {
-    return {
-      update(_, __, pageState, prevPageState) {
-        if (pageState === prevPageState) {
-          return;
-        }
-        const blockReload = pageState?.blockReload;
-        const prevBlockReload = prevPageState?.blockReload;
+const blockReloadSideEffect: SliceSideEffect<
+  PageSliceStateType,
+  PageSliceAction
+> = () => {
+  return {
+    update(_, __, pageState, prevPageState) {
+      if (pageState === prevPageState) {
+        return;
+      }
+      const blockReload = pageState?.blockReload;
+      const prevBlockReload = prevPageState?.blockReload;
 
-        if (blockReload && !prevBlockReload) {
-          lifecycle.addUnsavedChanges(pendingSymbol);
-        }
-        if (!blockReload && prevBlockReload) {
-          lifecycle.removeUnsavedChanges(pendingSymbol);
-        }
-      },
-    };
+      if (blockReload && !prevBlockReload) {
+        lifecycle.addUnsavedChanges(pendingSymbol);
+      }
+      if (!blockReload && prevBlockReload) {
+        lifecycle.removeUnsavedChanges(pendingSymbol);
+      }
+    },
   };
+};

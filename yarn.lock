@@ -1959,6 +1959,7 @@ __metadata:
   resolution: "@bangle.io/constants@workspace:lib/constants"
   dependencies:
     "@bangle.dev/pm": 0.28.3
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
@@ -2147,6 +2148,7 @@ __metadata:
     "@bangle.dev/core": 0.28.3
     "@bangle.dev/pm": 0.28.3
     "@bangle.dev/utils": 0.28.3
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"

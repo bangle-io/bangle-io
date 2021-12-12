@@ -34,7 +34,7 @@ export function UIManager({ children }) {
 
   const value = useMemo(() => {
     return {
-      ...uiState,
+      ...(uiState || initialState),
       dispatch: store.dispatch,
     };
   }, [store, uiState]);
