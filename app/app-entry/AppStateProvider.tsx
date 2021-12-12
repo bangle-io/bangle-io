@@ -21,21 +21,15 @@ const appState = objectSync(initialAppState, {
   },
 });
 
-export function AppStateProvider({ children }) {
-  const [bangleStoreChanged, _setBangleStoreCounter] = useState(0);
-
-  const [bangleStore] = useState(() => {
-    return initializeBangleStore({
-      onUpdate: () => _setBangleStoreCounter((c) => c + 1),
-    });
-  });
-
-  useEffect(() => {
-    return () => {
-      bangleStore.destroy();
-    };
-  }, [bangleStore]);
-
+export function AppStateProvider({
+  bangleStore,
+  bangleStoreChanged,
+  children,
+}: {
+  bangleStoreChanged: number;
+  bangleStore: ReturnType<typeof initializeBangleStore>;
+  children: React.ReactNode;
+}) {
   const [appStateValue, updateAppStateValue] = useState(initialAppState);
 
   useEffect(() => {

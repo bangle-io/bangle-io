@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import { ActionContextProvider } from '@bangle.io/action-context';
+import { initializeBangleStore } from '@bangle.io/bangle-store';
 import { EditorManager } from '@bangle.io/editor-manager-context';
 import {
   ExtensionRegistryContextProvider,
@@ -41,7 +42,25 @@ function LoadingBlock({ children }) {
   return loaded ? children : null;
 }
 
+let mountCount = 0;
 export function Entry() {
+  const [bangleStoreChanged, _setBangleStoreCounter] = useState(0);
+  const [bangleStore] = useState(() => {
+    mountCount++;
+    if (mountCount > 1) {
+      throw new Error('Entry component cannot be remounted');
+    }
+    // TODO the store is not ready for destroying and recreation yet.
+    return initializeBangleStore({
+      onUpdate: () => _setBangleStoreCounter((c) => c + 1),
+    });
+  });
+  useEffect(() => {
+    return () => {
+      bangleStore.destroy();
+    };
+  }, [bangleStore]);
+
   useEffect(() => {
     const installCallback = (event: BeforeInstallPromptEvent) => {
       console.debug('before install prompt');
@@ -71,7 +90,10 @@ export function Entry() {
       <LoadingBlock>
         <OverlayProvider className="w-full h-full">
           <Router>
-            <AppStateProvider>
+            <AppStateProvider
+              bangleStore={bangleStore}
+              bangleStoreChanged={bangleStoreChanged}
+            >
               <UIManager>
                 <ExtensionRegistryContextProvider
                   initExtensionRegistry={initExtensionRegistry}

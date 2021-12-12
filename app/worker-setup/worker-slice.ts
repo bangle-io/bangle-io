@@ -14,7 +14,8 @@ export function workerSlice() {
     sideEffect() {
       let terminate: (() => void) | undefined;
       let destroyed = false;
-      workerSetup(loadWebworker).then((result) => {
+
+      workerSetup(loadWebworker).then(async (result) => {
         if (destroyed) {
           return;
         }

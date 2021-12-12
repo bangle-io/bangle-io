@@ -35,7 +35,9 @@ export function createNaukar(
     return manager.handleRequest(...args);
   };
 
-  const store = initializeNaukarStore({});
+  let store: ReturnType<typeof initializeNaukarStore> | undefined =
+    initializeNaukarStore({});
+
   return {
     // app state
     updateWorkerAppState,
