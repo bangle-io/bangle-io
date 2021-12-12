@@ -27,5 +27,6 @@
   "devDependencies": {
     "@bangle.io/naukar-worker": "workspace:*"
   },
-  "publishConfig": {}
+  "publishConfig": {},
+  "license": "AGPL-3.0-or-later"
 }

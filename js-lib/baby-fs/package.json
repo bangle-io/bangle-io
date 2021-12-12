@@ -24,5 +24,6 @@
   "dependencies": {
     "@bangle.io/base-error": "workspace:*",
     "idb-keyval": "^5.1.5"
-  }
+  },
+  "license": "AGPL-3.0-or-later"
 }

@@ -1,5 +1,8 @@
 
 
+% This rule will enforce that all packages must have a "AGPL-3.0-or-later" license field
+gen_enforced_field(WorkspaceCwd, 'license', 'AGPL-3.0-or-later').
+
 % Enforces the repository field for all public workspaces while removing it from private workspaces
 gen_enforced_field(WorkspaceCwd, 'repository.type', 'git') :-
   \+ workspace_field(WorkspaceCwd, 'private', true).
@@ -31,3 +34,4 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange2, Depende
       ;
         true
     ).
+

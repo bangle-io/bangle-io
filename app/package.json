@@ -19,5 +19,6 @@
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*"
-  }
+  },
+  "license": "AGPL-3.0-or-later"
 }

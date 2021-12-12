@@ -31,5 +31,6 @@
     "@bangle.io/shared-types": "workspace:*",
     "date-fns": "^2.25.0",
     "prettier": "^2.4.1"
-  }
+  },
+  "license": "AGPL-3.0-or-later"
 }
