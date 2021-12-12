@@ -12,7 +12,7 @@ assertNonWorkerGlobalScope();
 const loadWebworker = checkModuleWorkerSupport();
 
 export function workerSlice() {
-  return new Slice<undefined, undefined>({
+  return new Slice({
     sideEffect(store) {
       let terminate: (() => void) | undefined;
       let destroyed = false;

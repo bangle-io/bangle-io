@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
 import { useSliceState } from '@bangle.io/app-state-context';
-import type { JsonValue } from '@bangle.io/shared-types';
+import { ApplicationStore } from '@bangle.io/create-store';
 
 import {
   initialState,
@@ -14,14 +14,13 @@ const LOG = false;
 let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
 
 export type UIStateObj = UISliceState & {
-  dispatch: (action: UiContextAction & JsonValue) => void;
+  dispatch: ApplicationStore<UISliceState, UiContextAction>['dispatch'];
 };
 
 export const UIManagerContext = createContext<UIStateObj>({
   ...initialState,
   dispatch: () => {},
 });
-
 export function useUIManagerContext() {
   return useContext(UIManagerContext);
 }

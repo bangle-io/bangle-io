@@ -3,10 +3,16 @@ import type { ApplicationStore } from './app-store';
 import type { SliceKey } from './slice-key';
 import { createKey } from './slice-key';
 
+export type BaseAction =
+  | undefined
+  | {
+      name: string;
+    };
+
 // A - action
 // SL - Slice's state
 // S - AppState
-export interface SliceStateField<SL, A, S> {
+export interface SliceStateField<SL, A extends BaseAction, S> {
   init(
     this: Slice<SL, A, S>,
     config: { [key: string]: any },
@@ -31,7 +37,7 @@ export interface SliceStateField<SL, A, S> {
     | undefined;
 }
 
-export type SliceSideEffect<SL, A, S = SL> = (
+export type SliceSideEffect<SL, A extends BaseAction, S = SL> = (
   store: ApplicationStore<S, A>,
 ) => {
   update?: (
@@ -47,7 +53,7 @@ export type SliceSideEffect<SL, A, S = SL> = (
   ) => void;
 };
 
-export class Slice<SL, A = any, S = SL> {
+export class Slice<SL, A extends BaseAction = any, S = SL> {
   key: string;
 
   constructor(

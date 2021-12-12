@@ -27,7 +27,7 @@ export function PaletteManager() {
     (focusEditor = true) => {
       updateQuery('');
       dispatch({
-        type: 'UI/RESET_PALETTE',
+        name: 'UI/RESET_PALETTE',
       });
       if (focusEditor) {
         dispatchAction({
@@ -53,7 +53,7 @@ export function PaletteManager() {
   >(
     (type, initialQuery = '') => {
       dispatch({
-        type: 'UI/UPDATE_PALETTE',
+        name: 'UI/UPDATE_PALETTE',
         value: { type, initialQuery },
       });
       if (type) {

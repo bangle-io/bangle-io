@@ -25,34 +25,34 @@ export interface UISliceState {
 }
 
 export type UiContextAction =
-  | { type: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
-  | { type: 'UI/CHANGE_SIDEBAR'; value: { type: string | null } }
-  | { type: 'UI/SHOW_NOTIFICATION'; value: NotificationPayloadType }
-  | { type: 'UI/DISMISS_NOTIFICATION'; value: { uid: string } }
+  | { name: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
+  | { name: 'UI/CHANGE_SIDEBAR'; value: { type: string | null } }
+  | { name: 'UI/SHOW_NOTIFICATION'; value: NotificationPayloadType }
+  | { name: 'UI/DISMISS_NOTIFICATION'; value: { uid: string } }
   | {
-      type: 'UI/UPDATE_PALETTE';
+      name: 'UI/UPDATE_PALETTE';
       value: {
         type: string | null;
         initialQuery?: string;
       };
     }
-  | { type: 'UI/RESET_PALETTE' }
-  | { type: 'UI/TOGGLE_THEME' }
-  | { type: 'UI/UPDATE_THEME'; value: { theme: ThemeType } }
+  | { name: 'UI/RESET_PALETTE' }
+  | { name: 'UI/TOGGLE_THEME' }
+  | { name: 'UI/UPDATE_THEME'; value: { theme: ThemeType } }
   | {
-      type: 'UI/UPDATE_WINDOW_SIZE';
+      name: 'UI/UPDATE_WINDOW_SIZE';
       value: { windowSize: ReturnType<typeof useWindowSize> };
     }
   | {
-      type: 'UI/SHOW_MODAL';
+      name: 'UI/SHOW_MODAL';
       value: { modal: string | null };
     }
   | {
-      type: 'UI/DISMISS_MODAL';
+      name: 'UI/DISMISS_MODAL';
     }
-  | { type: 'UI/UPDATE_NEW_CHANGELOG'; value: boolean }
-  | { type: 'UI/UPDATE_NOTE_SIDEBAR'; value: boolean }
-  | { type: 'UI/TOGGLE_NOTE_SIDEBAR' };
+  | { name: 'UI/UPDATE_NEW_CHANGELOG'; value: boolean }
+  | { name: 'UI/UPDATE_NOTE_SIDEBAR'; value: boolean }
+  | { name: 'UI/TOGGLE_NOTE_SIDEBAR' };
 
 export const initialState: UISliceState = {
   // UI
@@ -84,7 +84,7 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
       },
       apply: (action, state) => {
         log({ action, state });
-        switch (action.type) {
+        switch (action.name) {
           case 'UI/TOGGLE_SIDEBAR': {
             const sidebar = Boolean(state.sidebar)
               ? undefined
@@ -217,7 +217,7 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
       // Handler to call on window resize
       const handleResize = rafSchedule(() => {
         store.dispatch({
-          type: 'UI/UPDATE_WINDOW_SIZE',
+          name: 'UI/UPDATE_WINDOW_SIZE',
           value: {
             windowSize: {
               width: window.innerWidth,

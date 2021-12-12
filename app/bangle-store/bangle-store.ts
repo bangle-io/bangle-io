@@ -1,5 +1,6 @@
 import deepEqual from 'fast-deep-equal';
 
+import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import {
   safeCancelIdleCallback,
@@ -23,9 +24,10 @@ export function initializeBangleStore({
   onUpdate?: (store: ApplicationStore) => void;
 }) {
   const makeStore = () =>
-    new ApplicationStore<BangleSliceTypes, BangleActionTypes>(
-      AppState.create({ slices: bangleStateSlices({ onUpdate }) }),
-      (store, _action) => {
+    ApplicationStore.create<BangleSliceTypes, BangleActionTypes>({
+      storeName: MAIN_STORE_NAME,
+      state: AppState.create({ slices: bangleStateSlices({ onUpdate }) }),
+      dispatchAction: (store, _action) => {
         let action: typeof _action = JSON.parse(JSON.stringify(_action));
 
         // We want to ensure that all actions are serializable so that
@@ -35,7 +37,7 @@ export function initializeBangleStore({
         // when an objects value is undefined. This is because `{key: undefined}`
         // is serialized as `{}`.
         if (!deepEqual(action, _action)) {
-          console.warn('Faulty action "' + _action.type + '":', _action);
+          console.warn('Faulty action "' + _action.name + '":', _action);
         }
 
         log(action);
@@ -43,7 +45,7 @@ export function initializeBangleStore({
         const newState = store.state.applyAction(action);
         store.updateState(newState);
       },
-      (cb) => {
+      scheduler: (cb) => {
         const id = safeRequestIdleCallback(cb, {
           timeout: MAX_DEFERRED_WAIT_TIME,
         });
@@ -51,10 +53,9 @@ export function initializeBangleStore({
           safeCancelIdleCallback(id);
         };
       },
-    );
+    });
 
   let store = makeStore();
-  store.destroy();
-  store = makeStore();
+
   return store;
 }

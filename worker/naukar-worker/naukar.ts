@@ -103,7 +103,7 @@ function localDiskSetup(
       debounceMaxWait: 1000,
       onPendingWrites: (size) => {
         mainDispatch({
-          type: PAGE_BLOCK_RELOAD_ACTION_NAME,
+          name: PAGE_BLOCK_RELOAD_ACTION_NAME,
           value: size !== 0,
         });
       },

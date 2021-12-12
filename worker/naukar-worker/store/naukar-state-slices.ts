@@ -1,7 +1,7 @@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
 
 export type NaukarActionTypes = {
-  type: string;
+  name: string;
 };
 export type NaukarSliceTypes = {};
 

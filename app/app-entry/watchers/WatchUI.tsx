@@ -33,7 +33,7 @@ export function WatchUI() {
   useEffect(() => {
     if (lastMessage) {
       dispatch({
-        type: 'UI/UPDATE_THEME',
+        name: 'UI/UPDATE_THEME',
         value: { theme: lastMessage.payload.theme },
       });
     }

@@ -1,30 +1,47 @@
 import type { JsonValue } from 'type-fest';
 
 import type { AppState } from './app-state';
-import type { SliceSideEffect } from './app-state-slice';
+import type { BaseAction, SliceSideEffect } from './app-state-slice';
 
 export type SchedulerType = (cb: () => void) => () => void;
 
-type StoreSideEffectType<SL, A, S> = {
+type StoreSideEffectType<SL, A extends BaseAction, S> = {
   key: string;
   effect: ReturnType<SliceSideEffect<SL, A, S>>;
 };
 
-export class ApplicationStore<S = any, A = any> {
+type DispatchActionType<S, A extends BaseAction> = (
+  store: ApplicationStore<S, A>,
+  action: A & { id: string },
+) => void;
+
+export class ApplicationStore<S = any, A extends BaseAction = any> {
   private sideEffects: StoreSideEffectType<any, A, S>[] = [];
   private destroyed = false;
 
   private deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
 
+  static create<S = any, A extends BaseAction = any>({
+    storeName,
+    state,
+    scheduler,
+    dispatchAction = (store, action) => {
+      let newState = store.state.applyAction(action);
+      store.updateState(newState);
+    },
+  }: {
+    state: AppState<S, A>;
+    dispatchAction?: DispatchActionType<S, A>;
+    scheduler?: SchedulerType;
+    storeName: string;
+  }) {
+    return new ApplicationStore(state, dispatchAction, storeName, scheduler);
+  }
+
   constructor(
     private _state: AppState<S, A>,
-    private _dispatchAction: (
-      store: ApplicationStore<S, A>,
-      action: A,
-    ) => void = (store, action) => {
-      let newState = store.state.applyAction(action);
-      this.updateState(newState);
-    },
+    private _dispatchAction: DispatchActionType<S, A>,
+    public storeName: string,
     private scheduler?: SchedulerType,
   ) {
     this.setupSideEffects();
@@ -49,7 +66,10 @@ export class ApplicationStore<S = any, A = any> {
     if (this.destroyed) {
       return;
     }
-    this._dispatchAction(this, action);
+
+    (action as any).id = this.storeName + '-' + incrementalId();
+
+    this._dispatchAction(this, action as any);
   };
 
   destroy() {
@@ -114,7 +134,7 @@ export class ApplicationStore<S = any, A = any> {
   }
 }
 
-export class DeferredSideEffectsRunner<S, A> {
+export class DeferredSideEffectsRunner<S, A extends BaseAction> {
   private scheduledCallback: ReturnType<SchedulerType> | undefined;
 
   private abortController = new AbortController();
@@ -156,4 +176,9 @@ export class DeferredSideEffectsRunner<S, A> {
       }
     });
   }
+}
+
+let counter = 0;
+function incrementalId() {
+  return counter++;
 }

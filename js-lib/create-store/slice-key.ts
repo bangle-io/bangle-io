@@ -1,5 +1,5 @@
 import type { AppState } from './app-state';
-import type { Slice } from './app-state-slice';
+import type { BaseAction, Slice } from './app-state-slice';
 
 const keys: { [k: string]: number } = Object.create(null);
 
@@ -11,7 +11,7 @@ export function createKey(name) {
   return name + '$';
 }
 
-export class SliceKey<SL = any, A = any, S = SL> {
+export class SliceKey<SL = any, A extends BaseAction = any, S = SL> {
   key: string;
 
   constructor(public name: string) {

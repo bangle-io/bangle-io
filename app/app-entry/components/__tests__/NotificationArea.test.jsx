@@ -96,7 +96,7 @@ describe('NotificationArea', () => {
 
     expect(uiDispatchMock).toBeCalledTimes(1);
     expect(uiDispatchMock).nthCalledWith(1, {
-      type: 'UI/DISMISS_NOTIFICATION',
+      name: 'UI/DISMISS_NOTIFICATION',
       value: {
         uid: 'one',
       },

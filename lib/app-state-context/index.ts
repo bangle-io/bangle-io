@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 
+import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import {
   ApplicationStore,
   AppState as ApplicationState,
+  BaseAction,
   SliceKey,
 } from '@bangle.io/create-store';
 
@@ -12,14 +14,17 @@ export const AppStateContext = React.createContext<{
   store: ApplicationStore;
 }>({
   storeChanged: 0,
-  store: new ApplicationStore(ApplicationState.create({ slices: [] })),
+  store: ApplicationStore.create({
+    storeName: MAIN_STORE_NAME,
+    state: ApplicationState.create({ slices: [] }),
+  }),
 });
 
 export function useBangleStoreContext() {
   return useContext(AppStateContext);
 }
 
-export function useSliceState<SL, A, S = SL>(
+export function useSliceState<SL, A extends BaseAction, S = SL>(
   sliceKey: SliceKey<SL, A, S>,
   initialState?: SL,
 ) {

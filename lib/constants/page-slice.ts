@@ -3,7 +3,7 @@ import { SliceKey } from '@bangle.io/create-store';
 export const PAGE_BLOCK_RELOAD_ACTION_NAME = 'PAGE/BLOCK_RELOAD';
 
 export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
-  type: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
+  name: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
   value: boolean;
 };
 
@@ -24,7 +24,7 @@ export interface PageSliceStateType {
 
 export type PageSliceAction =
   | {
-      type: 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE';
+      name: 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE';
       value: { current?: PageLifeCycleStates; previous?: PageLifeCycleStates };
     }
   | PAGE_BLOCK_RELOAD_ACTION_TYPE;

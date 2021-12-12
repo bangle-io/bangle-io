@@ -1,15 +1,15 @@
 import type { JsonValue } from 'type-fest';
 
-import type { Slice, SliceStateField } from './app-state-slice';
+import type { BaseAction, Slice, SliceStateField } from './app-state-slice';
 
-class AppStateConfig<S, A> {
-  slices: SliceArray<S> = [];
-  slicesByKey: { [k: string]: Slice<unknown, unknown, S> } =
+class AppStateConfig<S, A extends BaseAction> {
+  slices: SliceArray<S, A> = [];
+  slicesByKey: { [k: string]: Slice<unknown, BaseAction, S> } =
     Object.create(null);
   fields: FieldDesc<S, A>[] = [];
   opts: undefined;
 
-  constructor(slices: SliceArray<S>, opts?: undefined) {
+  constructor(slices: SliceArray<S, A>, opts?: undefined) {
     this.opts = opts;
 
     slices.forEach((slice) => {
@@ -29,8 +29,12 @@ class AppStateConfig<S, A> {
   }
 }
 
-export class AppState<S, A> {
-  static create<S, A>({ slices }: { slices: SliceArray<S> }): AppState<S, A> {
+export class AppState<S, A extends BaseAction> {
+  static create<S, A extends BaseAction>({
+    slices,
+  }: {
+    slices: SliceArray<S, A>;
+  }): AppState<S, A> {
     const config = new AppStateConfig<S, A>(slices);
     const instance = new AppState(config);
 
@@ -69,7 +73,9 @@ export class AppState<S, A> {
     return this.config.slices;
   }
 
-  getSliceByKey<SL, A, S>(key: string): Slice<SL, A, S> | undefined {
+  getSliceByKey<SL, A extends BaseAction, S>(
+    key: string,
+  ): Slice<SL, A, S> | undefined {
     return this.config.slicesByKey[key] as any;
   }
 
@@ -82,9 +88,9 @@ function bind(f?: Function, self?: object) {
   return !self || !f ? f : f.bind(self);
 }
 
-type SliceArray<S> = Array<Slice<any, any, S>>;
+type SliceArray<S, A extends BaseAction> = Array<Slice<any, A, S>>;
 
-class FieldDesc<S, A> {
+class FieldDesc<S, A extends BaseAction> {
   init: (config: { [key: string]: any }, appState: AppState<S, A>) => any;
   apply?: (action: any, value: any, appState: AppState<S, A>) => any;
 
@@ -94,7 +100,7 @@ class FieldDesc<S, A> {
       init: SliceStateField<any, any, S>['init'];
       apply?: SliceStateField<any, any, S>['apply'];
     },
-    self: SliceArray<S>[0],
+    self: SliceArray<S, A>[0],
   ) {
     this.init = bind(desc.init, self);
 

@@ -84,6 +84,7 @@ ApplicationStore {
   "dispatch": [Function],
   "scheduler": undefined,
   "sideEffects": Array [],
+  "storeName": "test-store",
 }
 `;
 
@@ -171,6 +172,7 @@ ApplicationStore {
   "dispatch": [Function],
   "scheduler": undefined,
   "sideEffects": Array [],
+  "storeName": "test-store",
 }
 `;
 
@@ -239,6 +241,7 @@ ApplicationStore {
       "key": "slice$2",
     },
   ],
+  "storeName": "test-store",
 }
 `;
 
@@ -258,5 +261,6 @@ ApplicationStore {
   "dispatch": [Function],
   "scheduler": undefined,
   "sideEffects": Array [],
+  "storeName": "test-store",
 }
 `;

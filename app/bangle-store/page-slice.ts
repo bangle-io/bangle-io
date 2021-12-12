@@ -33,7 +33,7 @@ export function pageSlice<T = any>(): Slice<
         };
       },
       apply: (action, state) => {
-        switch (action.type) {
+        switch (action.name) {
           case 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE': {
             return {
               ...state,
@@ -57,7 +57,7 @@ export function pageSlice<T = any>(): Slice<
       (store) => {
         const handler = (event) => {
           store.dispatch({
-            type: 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE',
+            name: 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE',
             value: {
               current: event.newState,
               previous: event.oldState,

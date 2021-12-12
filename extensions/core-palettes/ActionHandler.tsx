@@ -16,7 +16,7 @@ export function ActionHandler({ registerActionHandler }) {
   const updatePalette = useCallback(
     (type) => {
       dispatch({
-        type: 'UI/UPDATE_PALETTE',
+        name: 'UI/UPDATE_PALETTE',
         value: {
           type: paletteType === type ? null : type,
         },
