@@ -1820,6 +1820,7 @@ __metadata:
     "@bangle.io/activitybar": "workspace:*"
     "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
+    "@bangle.io/bangle-store": "workspace:*"
     "@bangle.io/collab-extension": "workspace:*"
     "@bangle.io/collapsible-heading": "workspace:*"
     "@bangle.io/config": "workspace:*"
@@ -1889,6 +1890,18 @@ __metadata:
   dependencies:
     "@bangle.io/base-error": "workspace:*"
     idb-keyval: ^5.1.5
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/bangle-store@workspace:*, @bangle.io/bangle-store@workspace:app/bangle-store":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/bangle-store@workspace:app/bangle-store"
+  dependencies:
+    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-setup": "workspace:*"
+    fast-deep-equal: ^3.1.3
   languageName: unknown
   linkType: soft
 
@@ -2433,6 +2446,7 @@ __metadata:
     "@bangle.io/abortable-worker": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/object-sync": "workspace:*"
@@ -2442,6 +2456,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
+    fast-deep-equal: ^3.1.3
     idb-keyval: ^5.1.5
   languageName: unknown
   linkType: soft
@@ -2667,19 +2682,13 @@ __metadata:
     "@bangle.io/inline-backlink": "workspace:*"
     "@bangle.io/inline-command-palette": "workspace:*"
     "@bangle.io/inline-emoji": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
-    "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/note-browser": "workspace:*"
     "@bangle.io/note-outline": "workspace:*"
     "@bangle.io/note-tags": "workspace:*"
-    "@bangle.io/object-sync": "workspace:*"
     "@bangle.io/search-notes": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/ui-context": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    comlink: ^4.3.1
     core-js: ^3.19.0
-    fast-deep-equal: ^3.1.3
   languageName: unknown
   linkType: soft
 
@@ -2839,11 +2848,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/worker-setup@workspace:app/worker-setup"
   dependencies:
+    "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
     comlink: ^4.3.1
     react: ^17.0.2
   languageName: unknown

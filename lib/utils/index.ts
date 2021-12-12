@@ -6,3 +6,4 @@ export * from './hooks';
 export * from './random-name';
 export * from './safe-js-callbacks';
 export * from './utility';
+export * from './worker';

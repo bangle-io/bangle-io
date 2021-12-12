@@ -1,17 +1,16 @@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
-import { UiContextAction, uiSlice, UISliceState } from '@bangle.io/ui-context';
 
-export type BangleActionTypes = UiContextAction;
-export type BangleSliceTypes = UISliceState;
+export type NaukarActionTypes = {
+  type: string;
+};
+export type NaukarSliceTypes = {};
 
-export function bangleStateSlices({
+export function naukarStateSlices({
   onUpdate,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
 }) {
   return [
-    uiSlice(),
-
     // keep this at the end
     new Slice({
       sideEffect() {

@@ -10,7 +10,7 @@ import {
   BangleActionTypes,
   BangleSliceTypes,
   bangleStateSlices,
-} from './bangle-state-slices';
+} from './bangle-slices';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};
@@ -38,7 +38,8 @@ export function initializeBangleStore({
       }
 
       log(action);
-      let newState = store.state.applyAction(action);
+
+      const newState = store.state.applyAction(action);
       store.updateState(newState);
     },
     (cb) => {

@@ -1,7 +1,7 @@
-import { validateNonWorkerGlobalScope } from '@bangle.io/naukar-worker';
+import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
-import { WorkerSetup } from './WorkerSetup';
+import { workerSlice } from './worker-slice';
 
-validateNonWorkerGlobalScope();
+assertNonWorkerGlobalScope();
 
-export { WorkerSetup };
+export { workerSlice };

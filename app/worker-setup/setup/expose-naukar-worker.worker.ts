@@ -1,11 +1,12 @@
 import * as Comlink from 'comlink';
 
-import { validateWorkerGlobalScope } from '@bangle.io/naukar-worker';
 import { polyfills } from '@bangle.io/shared/polyfill';
+import { assertWorkerGlobalScope } from '@bangle.io/utils';
 
 import naukar from './naukar-init';
 
-validateWorkerGlobalScope();
+assertWorkerGlobalScope();
+
 workerInitialSetup();
 
 /**

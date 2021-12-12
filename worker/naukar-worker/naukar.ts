@@ -3,10 +3,12 @@ import { DebouncedDisk } from '@bangle.dev/disk';
 
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { objectSync, ObjectSyncEventType } from '@bangle.io/object-sync';
+import { getSelfType } from '@bangle.io/utils';
 import { FileOps } from '@bangle.io/workspaces';
 
 import { abortableServices } from './abortable-services';
 import { setupCollabManager } from './collab-manager';
+import { initializeNaukarStore } from './store/initialize-naukar-store';
 
 const LOG = false;
 
@@ -19,12 +21,8 @@ export function createNaukar(
   extensionRegistry: ExtensionRegistry,
   initialAppState: { [key: string]: any },
 ) {
-  const envType =
-    typeof WorkerGlobalScope !== 'undefined' &&
-    // eslint-disable-next-line no-restricted-globals, no-undef
-    self instanceof WorkerGlobalScope
-      ? 'worker'
-      : 'window';
+  const envType = getSelfType();
+
   console.debug('Naukar running in ', envType);
 
   const { appState, updateWorkerAppState, registerUpdateMainAppStateCallback } =
@@ -36,6 +34,10 @@ export function createNaukar(
   const handleCollabRequest: Manager['handleRequest'] = (...args) => {
     return manager.handleRequest(...args);
   };
+
+  let store: ReturnType<typeof initializeNaukarStore> | undefined =
+    initializeNaukarStore({});
+
   return {
     // app state
     updateWorkerAppState,
