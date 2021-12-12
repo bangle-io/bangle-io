@@ -49,7 +49,7 @@ exports[`renders correctly UNKNOWN_ERROR 1`] = `
          
         <a
           class="underline"
-          href="https://github.com/bangle-io/bangle-io-issues"
+          href="https://github.com/bangle-io/bangle-io/issues"
         >
           Github
         </a>

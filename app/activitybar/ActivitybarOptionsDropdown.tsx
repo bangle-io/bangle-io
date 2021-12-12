@@ -88,7 +88,7 @@ export function ActivitybarOptionsDropdown({
         }
         case ReportIssueKey: {
           window?.open(
-            'https://github.com/bangle-io/bangle-io-issues',
+            'https://github.com/bangle-io/bangle-io/issues',
             '_blank',
           );
           break;

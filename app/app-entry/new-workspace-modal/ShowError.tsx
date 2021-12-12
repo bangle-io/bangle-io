@@ -84,7 +84,7 @@ export function ShowError({
           An unknown error occurred. Please reload window and try again. If the
           problem still persists open an issue at{' '}
           <a
-            href="https://github.com/bangle-io/bangle-io-issues"
+            href="https://github.com/bangle-io/bangle-io/issues"
             className="underline"
           >
             Github
