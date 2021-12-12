@@ -36,7 +36,7 @@
     "vite-build": "NODE_ENV=production yarn g:vite-build",
     "build-serve": "yarn build && yarn run serve build",
     "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
-    "add-portals": "yarn link -A -r /Users/kushanjoshi/code/bangle/bangle-play",
+    "add-portals": "yarn link -A -r ../bangle/bangle-play",
     "remove-portals": "yarn node ./tooling/_scripts/remove-portals && yarn install",
     "g:vite-build": "vite build",
     "g:vite-serve": "vite preview",
