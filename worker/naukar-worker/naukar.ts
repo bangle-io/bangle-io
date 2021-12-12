@@ -6,7 +6,6 @@ import {
   PAGE_BLOCK_RELOAD_ACTION_TYPE,
 } from '@bangle.io/constants';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import { objectSync, ObjectSyncEventType } from '@bangle.io/object-sync';
 import { getSelfType } from '@bangle.io/utils';
 import { FileOps } from '@bangle.io/workspaces';
 
@@ -23,16 +22,10 @@ type MainDispatchType = (action: MainActions) => void;
 // Things to remember about the return type
 // 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
 // 2. Keep the return type simple and flat. Ie. an object whose values are not object.
-export function createNaukar(
-  extensionRegistry: ExtensionRegistry,
-  initialAppState: { [key: string]: any },
-) {
+export function createNaukar(extensionRegistry: ExtensionRegistry) {
   const envType = getSelfType();
 
   console.debug('Naukar running in ', envType);
-
-  const { updateWorkerAppState, registerUpdateMainAppStateCallback } =
-    setupAppState(initialAppState);
 
   // main-dispatch
   let _mainDispatch;
@@ -69,8 +62,6 @@ export function createNaukar(
     },
 
     // app state
-    updateWorkerAppState,
-    registerUpdateMainAppStateCallback,
 
     // collab
     handleCollabRequest,
@@ -85,47 +76,6 @@ export function createNaukar(
     },
 
     ...abortableServices({ extensionRegistry }),
-  };
-}
-
-function setupAppState<T>(initialAppState: { [key: string]: T }) {
-  const pendingEvents: ObjectSyncEventType<T>[] = [];
-  let updateMainAppState: undefined | ((event: ObjectSyncEventType<T>) => void);
-  const updateWorkerAppState = (event: ObjectSyncEventType<T>) => {
-    appState.applyForeignChange(event);
-  };
-
-  const appState = objectSync(initialAppState, {
-    emitChange: (event) => {
-      if (updateMainAppState) {
-        updateMainAppState(event);
-        return;
-      }
-      // since we dynamically inject updateMainState cb,
-      // it might take a while for it to be injected, so till then
-      // save the events.
-      pendingEvents.push(event);
-    },
-  });
-
-  appState.registerListener(({ appStateValue }) => {
-    log('appStateValue', appStateValue);
-  });
-
-  return {
-    appState,
-    updateWorkerAppState,
-    registerUpdateMainAppStateCallback: (
-      cb: (event: ObjectSyncEventType<T>) => void,
-    ) => {
-      updateMainAppState = cb;
-      while (pendingEvents.length > 0) {
-        const value = pendingEvents.pop();
-        if (value) {
-          cb(value);
-        }
-      }
-    },
   };
 }
 
