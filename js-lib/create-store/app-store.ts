@@ -5,8 +5,13 @@ import type { SliceSideEffect } from './app-state-slice';
 
 export type SchedulerType = (cb: () => void) => () => void;
 
+type StoreSideEffectType<SL, A, S> = {
+  key: string;
+  effect: ReturnType<SliceSideEffect<SL, A, S>>;
+};
+
 export class ApplicationStore<S = any, A = any> {
-  private sideEffects: Array<ReturnType<SliceSideEffect<S, A>>> = [];
+  private sideEffects: StoreSideEffectType<any, A, S>[] = [];
   private destroyed = false;
 
   private deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
@@ -57,8 +62,13 @@ export class ApplicationStore<S = any, A = any> {
       this.setupSideEffects();
     }
 
-    this.sideEffects.forEach((effect) => {
-      effect.update?.(this, prevState);
+    this.sideEffects.forEach(({ effect, key }) => {
+      effect.update?.(
+        this,
+        prevState,
+        this.state.getSliceState(key),
+        prevState.getSliceState(key),
+      );
     });
 
     if (this.scheduler) {
@@ -73,7 +83,7 @@ export class ApplicationStore<S = any, A = any> {
 
   private destroySideEffects() {
     this.deferredRunner?.abort();
-    this.sideEffects.forEach((effect) => {
+    this.sideEffects.forEach(({ effect }) => {
       effect.destroy?.();
     });
     this.sideEffects = [];
@@ -81,16 +91,24 @@ export class ApplicationStore<S = any, A = any> {
 
   private setupSideEffects() {
     this.destroySideEffects();
-    this._state.getSlices().forEach((slice) => {
-      let result = slice.spec.sideEffect?.(this);
-      if (!this.scheduler && result?.deferredUpdate) {
-        throw new RangeError(
-          "Scheduler needs to be defined for using Slice's deferredUpdate",
-        );
-      }
 
-      if (result) {
-        this.sideEffects.push(result);
+    this._state.getSlices().forEach((slice) => {
+      if (slice.spec.sideEffect) {
+        // since sideEffect can be an array or single
+        // flatten it for further use
+        ([] as SliceSideEffect<any, A, S>[])
+          .concat(slice.spec.sideEffect)
+          .forEach((sideEffect) => {
+            let result = sideEffect?.(this);
+            if (!this.scheduler && result?.deferredUpdate) {
+              throw new RangeError(
+                "Scheduler needs to be defined for using Slice's deferredUpdate",
+              );
+            }
+            if (result) {
+              this.sideEffects.push({ effect: result, key: slice.key });
+            }
+          });
       }
     });
   }
@@ -102,7 +120,7 @@ export class DeferredSideEffectsRunner<S, A> {
   private abortController = new AbortController();
 
   constructor(
-    private sideEffects: Array<ReturnType<SliceSideEffect<S, A>>>,
+    private sideEffects: Array<StoreSideEffectType<any, A, S>>,
     private scheduler: SchedulerType,
   ) {
     this.abortController.signal.addEventListener('abort', () => {
@@ -131,7 +149,7 @@ export class DeferredSideEffectsRunner<S, A> {
       if (this.isAborted) {
         return;
       }
-      for await (const effect of this.sideEffects) {
+      for await (const { effect } of this.sideEffects) {
         if (!this.isAborted) {
           effect.deferredUpdate?.(store, this.abortController.signal);
         }

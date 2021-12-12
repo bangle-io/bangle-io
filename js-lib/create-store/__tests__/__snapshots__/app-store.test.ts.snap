@@ -233,7 +233,10 @@ ApplicationStore {
   "scheduler": [Function],
   "sideEffects": Array [
     Object {
-      "deferredUpdate": [MockFunction],
+      "effect": Object {
+        "deferredUpdate": [MockFunction],
+      },
+      "key": "slice$2",
     },
   ],
 }

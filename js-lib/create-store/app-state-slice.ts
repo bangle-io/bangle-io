@@ -31,8 +31,13 @@ export interface SliceStateField<SL, A, S> {
     | undefined;
 }
 
-export type SliceSideEffect<S, A> = (store: ApplicationStore<S, A>) => {
-  update?: (store: ApplicationStore<S, A>, prevState: AppState<S, A>) => void;
+export type SliceSideEffect<SL, A, S> = (store: ApplicationStore<S, A>) => {
+  update?: (
+    store: ApplicationStore<S, A>,
+    prevState: AppState<S, A>,
+    sliceState: SL,
+    prevSliceState: SL,
+  ) => void;
   destroy?: () => void;
   deferredUpdate?: (
     store: ApplicationStore<S, A>,
@@ -47,7 +52,7 @@ export class Slice<SL, A = any, S = SL> {
     public spec: {
       key?: SliceKey<SL, A, S>;
       state?: SliceStateField<SL, A, S>;
-      sideEffect?: SliceSideEffect<S, A>;
+      sideEffect?: SliceSideEffect<SL, A, S> | SliceSideEffect<SL, A, S>[];
     },
   ) {
     this.key = spec.key ? spec.key.key : createKey('slice');

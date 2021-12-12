@@ -184,7 +184,7 @@ describe('store', () => {
 
       expect(update).toBeCalledTimes(1);
 
-      expect(update).nthCalledWith(1, store, originalState);
+      expect(update).nthCalledWith(1, store, originalState, 100, 1);
       expect(key1.getSliceState(originalState)).toBe(1);
       expect(key1.getSliceState(store.state)).toBe(100);
 
@@ -249,10 +249,10 @@ describe('store', () => {
       store.dispatch({ type: 'for-a', value: 100 });
 
       expect(sideEffect2Update).toBeCalledTimes(1);
-      expect(sideEffect2Update).nthCalledWith(1, store, prevState);
+      expect(sideEffect2Update).nthCalledWith(1, store, prevState, 2, 2);
 
       expect(sideEffect1Update).toBeCalledTimes(1);
-      expect(sideEffect1Update).nthCalledWith(1, store, prevState);
+      expect(sideEffect1Update).nthCalledWith(1, store, prevState, 100, 1);
 
       expect(sideEffect2Value).toMatchInlineSnapshot(`
         Object {
@@ -309,10 +309,76 @@ describe('store', () => {
       expect(sideEffect2).nthCalledWith(1, store);
       expect(destroy2).toBeCalledTimes(0);
       expect(update2).toBeCalledTimes(1);
-      expect(update2).nthCalledWith(1, store, prevState);
+      expect(update2).nthCalledWith(1, store, prevState, undefined, undefined);
     });
   });
 
+  describe('multiple side effects in a singel slice', () => {
+    const key1 = new SliceKey<number>('one');
+    const key2 = new SliceKey<number>('two');
+
+    const sideEffect1 = jest.fn();
+    const update1 = jest.fn();
+    const update2 = jest.fn();
+    const destroy1 = jest.fn();
+    const destroy2 = jest.fn();
+    test('works correctly', () => {
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => 1,
+          apply: (action, value, appState) => {
+            if (action.type === 'for-a') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect: sideEffect1,
+      });
+
+      const slice2 = new Slice({
+        key: key2,
+        state: {
+          init: () => 2,
+          apply: (action, value, appState) => {
+            if (action.type === 'for-b') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect: [
+          () => {
+            return {
+              update: update1,
+              destroy: destroy1,
+            };
+          },
+          () => {
+            return {
+              update: update2,
+              destroy: destroy2,
+            };
+          },
+        ],
+      });
+
+      let originalState = AppState.create({ slices: [slice1, slice2] });
+      let store = new ApplicationStore(originalState);
+
+      store.dispatch({
+        type: 'for-b',
+        value: 77,
+      });
+      expect(update1).nthCalledWith(1, store, originalState, 77, 2);
+      expect(update2).nthCalledWith(1, store, originalState, 77, 2);
+
+      store.destroy();
+      expect(destroy2).toBeCalledTimes(1);
+      expect(destroy1).toBeCalledTimes(1);
+    });
+  });
   describe('deferred side effects', () => {
     test('does not call deferred update when scheduler is not provided', () => {
       const deferredUpdate = jest.fn(() => {});
@@ -340,7 +406,9 @@ describe('store', () => {
     describe('deferred for single slice', () => {
       const setup = (
         scheduler: SchedulerType,
-        deferredUpdate: ReturnType<SliceSideEffect<any, any>>['deferredUpdate'],
+        deferredUpdate: ReturnType<
+          SliceSideEffect<any, any, any>
+        >['deferredUpdate'],
       ) => {
         const sideEffect = jest.fn(() => ({
           deferredUpdate,
@@ -654,7 +722,8 @@ describe('DeferredSideEffectsRunner', () => {
     const runner = new DeferredSideEffectsRunner(
       [
         {
-          deferredUpdate: deferredUpdate,
+          key: 'some-key',
+          effect: { deferredUpdate: deferredUpdate },
         },
       ],
       scheduler,
@@ -676,7 +745,8 @@ describe('DeferredSideEffectsRunner', () => {
     const runner = new DeferredSideEffectsRunner(
       [
         {
-          deferredUpdate: deferredUpdate,
+          key: 'some-key',
+          effect: { deferredUpdate: deferredUpdate },
         },
       ],
       scheduler,
