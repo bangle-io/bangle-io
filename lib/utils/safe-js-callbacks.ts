@@ -35,19 +35,16 @@ export const safeCancelAnimationFrame =
 export const safeRequestIdleCallback: typeof requestIdleCallback =
   typeof window !== 'undefined' && window.requestIdleCallback
     ? window.requestIdleCallback
-    : function (cb, options) {
+    : function (cb) {
         var start = Date.now();
-        return setTimeout(
-          function () {
-            cb({
-              didTimeout: false,
-              timeRemaining: function () {
-                return Math.max(0, 50 - (Date.now() - start));
-              },
-            });
-          },
-          typeof options?.timeout === 'number' ? options.timeout : 50,
-        );
+        return setTimeout(function () {
+          cb({
+            didTimeout: false,
+            timeRemaining: function () {
+              return Math.max(0, 50 - (Date.now() - start));
+            },
+          });
+        }, 1);
       };
 
 export const safeCancelIdleCallback: typeof cancelIdleCallback =
