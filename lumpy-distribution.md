@@ -1,3 +1,0 @@
-# lumpy-distribution
-
-Hello world!
