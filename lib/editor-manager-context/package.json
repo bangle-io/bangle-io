@@ -25,6 +25,7 @@
     "@bangle.dev/utils": "0.28.3",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/create-store": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",

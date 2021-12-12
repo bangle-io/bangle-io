@@ -4368,6 +4368,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/utils", "virtual:f3a4c749317f3ab1ce44a69ae0e5e44a4ed0cddc8e6e39a0543be0caad26fa52e65dfd4bd93b040d3d7ed1fd50aeeee1580673303a94da14a55edf91750656e0#npm:0.28.3"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
             ["@testing-library/dom", "npm:8.11.0"],

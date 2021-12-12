@@ -2149,6 +2149,7 @@ __metadata:
     "@bangle.dev/utils": 0.28.3
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
     "@testing-library/dom": ^8.10.1
