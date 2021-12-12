@@ -167,10 +167,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/inline-palette"
       },
       {
-        "name": "@bangle.io/object-sync",
-        "reference": "workspace:js-lib/object-sync"
-      },
-      {
         "name": "@bangle.io/object-uid",
         "reference": "workspace:js-lib/object-uid"
       },
@@ -320,7 +316,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/note-outline", ["workspace:extensions/note-outline"]],
       ["@bangle.io/note-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar", "workspace:app/note-sidebar"]],
       ["@bangle.io/note-tags", ["workspace:extensions/note-tags"]],
-      ["@bangle.io/object-sync", ["workspace:js-lib/object-sync"]],
       ["@bangle.io/object-uid", ["workspace:js-lib/object-uid"]],
       ["@bangle.io/pm-plugins", ["workspace:js-lib/pm-plugins"]],
       ["@bangle.io/search-notes", ["workspace:extensions/search-notes"]],
@@ -3833,7 +3828,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],
-            ["@bangle.io/object-sync", "workspace:js-lib/object-sync"],
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/style", "workspace:app/style"],
@@ -3903,7 +3897,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],
-            ["@bangle.io/object-sync", "workspace:js-lib/object-sync"],
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/style", "workspace:app/style"],
@@ -4682,7 +4675,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/fzf-search", "virtual:1c653abd95d17b80460966d88f9155bf37447d2b0ac69dac46281807b79335757fd742efe819137ca9ed88e005544d9ea162e2b4451163803b19eeb4563013ba#workspace:js-lib/fzf-search"],
-            ["@bangle.io/object-sync", "workspace:js-lib/object-sync"],
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
@@ -4836,15 +4828,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.11"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"]
-          ],
-          "linkType": "SOFT",
-        }]
-      ]],
-      ["@bangle.io/object-sync", [
-        ["workspace:js-lib/object-sync", {
-          "packageLocation": "./js-lib/object-sync/",
-          "packageDependencies": [
-            ["@bangle.io/object-sync", "workspace:js-lib/object-sync"]
           ],
           "linkType": "SOFT",
         }]
