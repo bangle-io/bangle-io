@@ -2,8 +2,10 @@ import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import { UiContextAction, uiSlice, UISliceState } from '@bangle.io/ui-context';
 import { workerSlice } from '@bangle.io/worker-setup';
 
-export type BangleActionTypes = UiContextAction;
-export type BangleSliceTypes = UISliceState;
+import { PageAction, pageSlice } from './page-slice';
+
+export type BangleActionTypes = UiContextAction | PageAction;
+export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
 export function bangleStateSlices({
   onUpdate,
@@ -12,6 +14,7 @@ export function bangleStateSlices({
 }) {
   return [
     workerSlice(),
+    pageSlice(),
     uiSlice(),
 
     // keep this at the end

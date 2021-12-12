@@ -31,7 +31,9 @@ export interface SliceStateField<SL, A, S> {
     | undefined;
 }
 
-export type SliceSideEffect<SL, A, S> = (store: ApplicationStore<S, A>) => {
+export type SliceSideEffect<SL, A, S = SL> = (
+  store: ApplicationStore<S, A>,
+) => {
   update?: (
     store: ApplicationStore<S, A>,
     prevState: AppState<S, A>,

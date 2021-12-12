@@ -3968,11 +3968,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/bangle-store/",
           "packageDependencies": [
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
+            ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],
-            ["fast-deep-equal", "npm:3.1.3"]
+            ["fast-deep-equal", "npm:3.1.3"],
+            ["page-lifecycle", "npm:0.1.2"]
           ],
           "linkType": "SOFT",
         }]
