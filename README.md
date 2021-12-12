@@ -33,3 +33,7 @@ Head to <https://bangle.io> to use the app.
 - `yarn start` to start a development instance on `localhost:4000`
 
 Please read [Contributing.md](./CONTRIBUTING.md) for more details. 
+
+### Coming soon
+
+- Roadmap 
