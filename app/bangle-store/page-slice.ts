@@ -18,13 +18,10 @@ export const pageSliceInitialState: PageSliceStateType = {
   },
 };
 
-export function pageSlice<T = any>(): Slice<
-  PageSliceStateType,
-  PageSliceAction,
-  T
-> {
+export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
   return new Slice({
     key: pageSliceKey,
+
     state: {
       init: () => {
         return {

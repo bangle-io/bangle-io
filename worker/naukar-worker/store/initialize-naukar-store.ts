@@ -22,12 +22,7 @@ export function initializeNaukarStore({
   const store = ApplicationStore.create<NaukarSliceTypes, NaukarActionTypes>({
     storeName: WORKER_STORE_NAME,
     state: AppState.create({ slices: naukarStateSlices({ onUpdate }) }),
-    dispatchAction: (store, _action) => {
-      let action: typeof _action = JSON.parse(JSON.stringify(_action));
-
-      if (!deepEqual(action, _action)) {
-        console.warn('Faulty action "' + _action.name + '":', _action);
-      }
+    dispatchAction: (store, action) => {
       log(action);
       let newState = store.state.applyAction(action);
       store.updateState(newState);

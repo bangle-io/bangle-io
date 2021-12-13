@@ -3963,6 +3963,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],

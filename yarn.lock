@@ -1898,6 +1898,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-setup": "workspace:*"

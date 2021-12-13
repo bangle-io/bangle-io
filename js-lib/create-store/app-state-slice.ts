@@ -60,6 +60,9 @@ export class Slice<SL, A extends BaseAction = any, S = SL> {
     public spec: {
       key?: SliceKey<SL, A, S>;
       state?: SliceStateField<SL, A, S>;
+      // false if it cannot be serialized
+      actionToJSON?: (action: A & { id: string }) => string | false;
+      actionFromJSON?: (jsonAction: string) => A;
       sideEffect?: SliceSideEffect<SL, A, S> | SliceSideEffect<SL, A, S>[];
     },
   ) {

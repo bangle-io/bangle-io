@@ -1,11 +1,8 @@
-import type { JsonValue } from 'type-fest';
-
 import type { BaseAction, Slice, SliceStateField } from './app-state-slice';
 
 class AppStateConfig<S, A extends BaseAction> {
   slices: SliceArray<S, A> = [];
-  slicesByKey: { [k: string]: Slice<unknown, BaseAction, S> } =
-    Object.create(null);
+  slicesByKey: { [k: string]: Slice<any, A, S> } = Object.create(null);
   fields: FieldDesc<S, A>[] = [];
   opts: undefined;
 
