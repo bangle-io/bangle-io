@@ -169,7 +169,11 @@ export class Extension<T = unknown> {
         );
       }
 
-      if (actions.some((a) => !a.name.startsWith('action::' + name + ':'))) {
+      if (
+        // TODO for now we are housing all core actions in this extension
+        name !== 'bangle-io-core-actions' &&
+        actions.some((a) => !a.name.startsWith('action::' + name + ':'))
+      ) {
         console.log(
           actions.find((a) => !a.name.startsWith('action::' + name + ':')),
         );

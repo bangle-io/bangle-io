@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useMemo } from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchActionType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
@@ -17,6 +18,7 @@ export interface ActionContextType {
 
 export function ActionContextProvider({ children }) {
   const extensionRegistry = useExtensionRegistryContext();
+  const store = useBangleStoreContext();
 
   const actionNameSet = useMemo(() => {
     return new Set(extensionRegistry.getRegisteredActions().map((r) => r.name));
@@ -50,8 +52,11 @@ export function ActionContextProvider({ children }) {
       for (const handler of Array.from(extensionRegistry.getActionHandlers())) {
         handler(action);
       }
+
+      // TODO for now also send to the store until we consolidate the two.
+      store.dispatch(action);
     },
-    [extensionRegistry, actionNameSet],
+    [extensionRegistry, actionNameSet, store],
   );
 
   const value = useMemo(() => {

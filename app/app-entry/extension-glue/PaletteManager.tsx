@@ -31,7 +31,7 @@ export function PaletteManager() {
       });
       if (focusEditor) {
         dispatchAction({
-          name: 'action::bangle-io-editor-core:focus-primary-editor',
+          name: 'action::editor-manager-context:focus-primary-editor',
         });
       }
     },

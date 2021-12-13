@@ -28,7 +28,7 @@ export function EditorContainer({
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { secondaryWsPath } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
-  const { setEditor, focusedEditorId } = useEditorManagerContext();
+  const { focusedEditorId, dispatch } = useEditorManagerContext();
 
   const isSplitEditorOpen = Boolean(secondaryWsPath);
 
@@ -47,10 +47,16 @@ export function EditorContainer({
 
   const onEditorReady = useCallback(
     (editor: CoreBangleEditor) => {
-      setEditor(editorId, editor);
+      dispatch({
+        name: 'action::editor-manager-context:set-editor',
+        value: {
+          editor,
+          editorId,
+        },
+      });
       editor.focusView();
     },
-    [editorId, setEditor],
+    [editorId, dispatch],
   );
 
   let children;

@@ -8,20 +8,25 @@ import {
   SliceKey,
 } from '@bangle.io/create-store';
 
+const initStore = ApplicationStore.create({
+  storeName: MAIN_STORE_NAME,
+  state: ApplicationState.create({ slices: [] }),
+});
+
+export const BangleStoreContext =
+  React.createContext<ApplicationStore>(initStore);
+
 export const AppStateContext = React.createContext<{
   // store
   storeChanged: number;
   store: ApplicationStore;
 }>({
   storeChanged: 0,
-  store: ApplicationStore.create({
-    storeName: MAIN_STORE_NAME,
-    state: ApplicationState.create({ slices: [] }),
-  }),
+  store: initStore,
 });
 
 export function useBangleStoreContext() {
-  return useContext(AppStateContext);
+  return useContext(BangleStoreContext);
 }
 
 export function useSliceState<SL, A extends BaseAction, S = SL>(
@@ -29,7 +34,8 @@ export function useSliceState<SL, A extends BaseAction, S = SL>(
   initialState?: SL,
 ) {
   const [sliceState, updateSliceState] = useState<SL | undefined>(initialState);
-  const { store, storeChanged } = useBangleStoreContext();
+  const store = useBangleStoreContext();
+  const { storeChanged } = useContext(AppStateContext);
 
   useEffect(() => {
     const newState = sliceKey.getSliceState(store.state);

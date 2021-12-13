@@ -44,13 +44,9 @@ export const getUseWorkspaceContextReturn: ReturnType<
 export const getUseEditorManagerContextReturn: ReturnType<
   typeof useEditorManagerContext
 > = {
-  focusedEditorId: undefined,
-  forEachEditor: () => {},
-  getEditor: () => undefined,
-  getEditorState: () => undefined,
-  getEditorView: () => undefined,
   primaryEditor: undefined,
   secondaryEditor: undefined,
-  setEditor: () => {},
-  updateFocusedEditor: () => {},
+  focusedEditorId: undefined,
+  editors: [undefined, undefined],
+  dispatch: () => {},
 };

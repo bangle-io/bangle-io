@@ -5,6 +5,11 @@ import type { BaseAction, SliceSideEffect } from './app-state-slice';
 
 export type SchedulerType = (cb: () => void) => () => void;
 
+export type DispatchType<S, A extends BaseAction> = ApplicationStore<
+  S,
+  A
+>['dispatch'];
+
 type StoreSideEffectType<SL, A extends BaseAction, S> = {
   key: string;
   effect: ReturnType<SliceSideEffect<SL, A, S>>;
@@ -62,7 +67,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     return this._state;
   }
 
-  dispatch = (action: A & JsonValue) => {
+  dispatch = (action: A) => {
     if (this.destroyed) {
       return;
     }

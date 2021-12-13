@@ -35,6 +35,7 @@
     "@bangle.io/editor-manager-context": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",

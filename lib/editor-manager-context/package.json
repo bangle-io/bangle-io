@@ -23,11 +23,13 @@
     "@bangle.dev/core": "0.28.3",
     "@bangle.dev/pm": "0.28.3",
     "@bangle.dev/utils": "0.28.3",
+    "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
+    "@bangle.io/utils": "workspace:*",
     "prosemirror-dev-tools": "github:kepta/prosemirror-dev-tools#v3.3.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"

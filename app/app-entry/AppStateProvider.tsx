@@ -1,7 +1,10 @@
 import * as Comlink from 'comlink';
 import React, { useMemo } from 'react';
 
-import { AppStateContext } from '@bangle.io/app-state-context';
+import {
+  AppStateContext,
+  BangleStoreContext,
+} from '@bangle.io/app-state-context';
 import { initializeBangleStore } from '@bangle.io/bangle-store';
 
 const LOG = false;
@@ -26,8 +29,10 @@ export function AppStateProvider({
   }, [bangleStore, bangleStoreChanged]);
 
   return (
-    <AppStateContext.Provider value={value}>
-      {children}
-    </AppStateContext.Provider>
+    <BangleStoreContext.Provider value={bangleStore}>
+      <AppStateContext.Provider value={value}>
+        {children}
+      </AppStateContext.Provider>
+    </BangleStoreContext.Provider>
   );
 }

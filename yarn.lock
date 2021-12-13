@@ -1763,6 +1763,7 @@ __metadata:
     "@bangle.dev/core": 0.28.3
     "@bangle.dev/pm": 0.28.3
     "@bangle.dev/utils": 0.28.3
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -1898,6 +1899,7 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2093,6 +2095,7 @@ __metadata:
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2128,6 +2131,7 @@ __metadata:
     "@bangle.dev/tooltip": 0.28.3
     "@bangle.dev/trailing-node": 0.28.3
     "@bangle.dev/utils": 0.28.3
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2148,11 +2152,13 @@ __metadata:
     "@bangle.dev/core": 0.28.3
     "@bangle.dev/pm": 0.28.3
     "@bangle.dev/utils": 0.28.3
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
     "@testing-library/dom": ^8.10.1
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2497,6 +2503,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.3
     "@bangle.dev/test-helpers": 0.28.3
     "@bangle.io/action-context": "workspace:*"
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
@@ -2609,6 +2616,7 @@ __metadata:
     "@bangle.dev/search": 0.28.3
     "@bangle.dev/utils": 0.28.3
     "@bangle.io/action-context": "workspace:*"
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
@@ -2652,6 +2660,7 @@ __metadata:
   dependencies:
     "@bangle.dev/pm": 0.28.3
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     type-fest: ^2.8.0
   languageName: unknown
   linkType: soft

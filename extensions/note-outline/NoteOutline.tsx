@@ -9,7 +9,12 @@ import React, {
 import { Selection } from '@bangle.dev/pm';
 
 import { useActionHandler } from '@bangle.io/action-context';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import {
+  getEditor,
+  getEditorState,
+  useEditorManagerContext,
+} from '@bangle.io/editor-manager-context';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import {
   cx,
@@ -28,12 +33,12 @@ import {
 } from './config';
 
 export function NoteOutline() {
-  const { focusedEditorId, getEditor, getEditorState } =
-    useEditorManagerContext();
+  const { focusedEditorId } = useEditorManagerContext();
   const { wsName } = useWorkspaceContext();
   const [headingNodes, updateHeadingsState] = useState<
     HeadingNodes | undefined
   >();
+  const store = useBangleStoreContext();
 
   const lastClickedOnHeading = useRef(0);
 
@@ -44,7 +49,8 @@ export function NoteOutline() {
   useAutomaticScrollNodeIntoView(firstNodeInViewPort, lastClickedOnHeading);
 
   const updateHeadingNodes = useCallback(() => {
-    const state = focusedEditorId != null && getEditorState(focusedEditorId);
+    const state =
+      focusedEditorId != null && getEditorState(focusedEditorId)(store.state);
     if (!state) {
       updateHeadingsState(undefined);
       return;
@@ -56,7 +62,7 @@ export function NoteOutline() {
     }
     updateHeadingsState(watchHeadingsPluginState.headings);
     return;
-  }, [focusedEditorId, getEditorState]);
+  }, [focusedEditorId, store]);
 
   useActionHandler(
     (action) => {
@@ -79,7 +85,7 @@ export function NoteOutline() {
   const onExecuteItem = useCallback(
     (item: HeadingNodes[0]) => {
       const focusedEditor =
-        focusedEditorId != null && getEditor(focusedEditorId);
+        focusedEditorId != null && getEditor(focusedEditorId)(store.state);
       if (focusedEditor) {
         if (!focusedEditor || focusedEditor.destroyed) {
           return;
@@ -96,7 +102,7 @@ export function NoteOutline() {
         );
       }
     },
-    [focusedEditorId, getEditor],
+    [focusedEditorId, store],
   );
 
   // Calculate headings on initial mount

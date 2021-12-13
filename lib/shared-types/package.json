@@ -22,7 +22,8 @@
     "types": "./dist/index.d.ts"
   },
   "dependencies": {
-    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/constants": "workspace:*",
+    "@bangle.io/create-store": "workspace:*"
   },
   "devDependencies": {
     "@bangle.dev/pm": "0.28.3",

@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { search } from '@bangle.dev/search';
 
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { forEachEditor } from '@bangle.io/editor-manager-context';
 import { useExtensionState } from '@bangle.io/extension-registry';
 import { useDebouncedValue } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
@@ -126,9 +127,9 @@ export function useSearchNotes() {
  * Highlights open editors based on the current search query
  */
 export function useHighlightEditors() {
-  const { forEachEditor } = useEditorManagerContext();
   const [{ searchResults, searchQuery }] = useSearchNotesState();
   const hasResults = searchResults ? searchResults.length > 0 : false;
+  const store = useBangleStoreContext();
 
   useEffect(() => {
     if (hasResults && searchQuery) {
@@ -145,9 +146,9 @@ export function useHighlightEditors() {
             editor.view.dispatch,
           );
         }
-      });
+      })(store.state);
     }
-  }, [forEachEditor, searchQuery, hasResults]);
+  }, [store, searchQuery, hasResults]);
 
   useEffect(() => {
     return () => {

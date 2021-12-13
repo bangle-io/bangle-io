@@ -21,14 +21,6 @@ const extension = Extension.create({
     ReactComponent: EditorCore,
     actions: [
       {
-        name: 'action::bangle-io-editor-core:focus-primary-editor',
-        title: 'Editor: Focus on primary editor',
-      },
-      {
-        name: 'action::bangle-io-editor-core:focus-secondary-editor',
-        title: 'Editor: Focus on secondary editor',
-      },
-      {
         name: 'action::bangle-io-editor-core:collapse-heading',
         title: 'Editor: Collapse heading',
       },
@@ -43,11 +35,6 @@ const extension = Extension.create({
       {
         name: 'action::bangle-io-editor-core:move-list-down',
         title: 'Editor: Move list down',
-      },
-      {
-        name: 'action::bangle-io-editor-core:on-focus-update',
-        title: 'Editor: Record focus change',
-        hidden: true,
       },
     ],
   },

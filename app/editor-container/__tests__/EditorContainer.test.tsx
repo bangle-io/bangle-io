@@ -3,9 +3,15 @@ import React from 'react';
 
 import { Editor } from '@bangle.io/editor';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { getUseEditorManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { EditorContainer } from '../EditorContainer';
+
+let useEditorManagerContextMock =
+  useEditorManagerContext as jest.MockedFunction<
+    typeof useEditorManagerContext
+  >;
 
 jest.mock('@bangle.io/workspace-context', () => {
   const actual = jest.requireActual('@bangle.io/workspace-context');
@@ -14,6 +20,7 @@ jest.mock('@bangle.io/workspace-context', () => {
     useWorkspaceContext: jest.fn(),
   };
 });
+
 jest.mock('@bangle.io/editor-manager-context', () => {
   const actual = jest.requireActual('@bangle.io/editor-manager-context');
   return {
@@ -38,12 +45,10 @@ jest.mock('../config', () => {
   };
 });
 
-let checkFileExists, result: ReturnType<typeof render>, setEditor;
+let checkFileExists, result: ReturnType<typeof render>;
 
 beforeEach(() => {
   checkFileExists = jest.fn().mockResolvedValue(true);
-  setEditor = jest.fn();
-
   (Editor as any).mockImplementation(() => {
     return <div data-testid="mock-editor">MOCK_EDITOR</div>;
   });
@@ -54,9 +59,9 @@ beforeEach(() => {
     };
   });
 
-  (useEditorManagerContext as any).mockImplementation(() => {
+  useEditorManagerContextMock.mockImplementation(() => {
     return {
-      setEditor,
+      ...getUseEditorManagerContextReturn,
     };
   });
 });

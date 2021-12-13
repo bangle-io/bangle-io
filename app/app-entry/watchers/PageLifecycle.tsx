@@ -1,15 +1,17 @@
 import { useEffect } from 'react';
 
-import { useSliceState } from '@bangle.io/app-state-context';
+import {
+  useBangleStoreContext,
+  useSliceState,
+} from '@bangle.io/app-state-context';
 import { pageSliceKey } from '@bangle.io/constants';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { forEachEditor } from '@bangle.io/editor-manager-context';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
 export function PageLifecycle() {
-  const { forEachEditor } = useEditorManagerContext();
   const { sliceState: pageState } = useSliceState(pageSliceKey);
-
+  const store = useBangleStoreContext();
   const lifeCycleState = pageState?.lifeCycleState;
 
   useEffect(() => {
@@ -41,14 +43,14 @@ export function PageLifecycle() {
               editor.view.dispatch,
             );
           }
-        });
+        })(store.state);
         naukarWorkerProxy.flushDisk();
       }
     }
     return () => {
       hookChanged = true;
     };
-  }, [lifeCycleState, forEachEditor]);
+  }, [lifeCycleState, store]);
 
   return null;
 }
