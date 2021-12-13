@@ -1,4 +1,4 @@
-import { JsonValue } from 'type-fest';
+import type { JsonValue } from 'type-fest';
 
 import type { AppState } from './app-state';
 import type { ApplicationStore } from './app-store';

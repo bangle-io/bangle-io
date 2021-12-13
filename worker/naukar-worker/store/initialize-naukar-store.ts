@@ -1,5 +1,3 @@
-import deepEqual from 'fast-deep-equal';
-
 import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
@@ -19,7 +17,7 @@ export function initializeNaukarStore({
 }: {
   onUpdate?: (store: ApplicationStore) => void;
 }) {
-  const store = ApplicationStore.create<NaukarSliceTypes, NaukarActionTypes>({
+  const store = ApplicationStore.create({
     storeName: WORKER_STORE_NAME,
     state: AppState.create({ slices: naukarStateSlices({ onUpdate }) }),
     dispatchAction: (store, action) => {

@@ -42,7 +42,7 @@ export function EditorCore({ registerActionHandler }) {
         }
       }
     },
-    [primaryEditor, secondaryEditor, executeEditorCommand],
+    [executeEditorCommand],
   );
 
   useEffect(() => {

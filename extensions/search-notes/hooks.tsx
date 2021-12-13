@@ -161,5 +161,5 @@ export function useHighlightEditors() {
         }
       });
     };
-  }, [forEachEditor]);
+  }, []);
 }

@@ -109,8 +109,39 @@ export function editorManagerSlice(): Slice<
         }
       },
     },
-    sideEffect(store) {
+    sideEffect() {
       return {
+        update(store, prevState, { editors }) {
+          // TODO wait until location is in slice
+          //
+          // const pageState = pageSliceKey.getSliceState(store.state as any);
+          // const prevPageState = pageSliceKey.getSliceState(prevState as any);
+          // const pageLifeCycleState = pageState?.lifeCycleState?.current;
+          // const prevPageLifeCycleState = prevPageState?.lifeCycleState?.current;
+          // console.log({ pageLifeCycleState, prevPageLifeCycleState });
+          // if (
+          //   pageLifeCycleState &&
+          //   pageLifeCycleState !== prevPageLifeCycleState
+          // ) {
+          //   if (
+          //     ['active', 'passive', 'terminated', 'hidden'].includes(
+          //       pageLifeCycleState,
+          //     )
+          //   ) {
+          //     editors.forEach((editor, i) => {
+          //       if (editor) {
+          //         // immediately as the user might be closing the tab
+          //         saveScrollPos(
+          //           wsPath,
+          //           i,
+          //           getScrollParentElement(editorId)?.scrollTop,
+          //         );
+          //         saveSelection(wsPath, editorId, view.state.selection);
+          //       }
+          //     });
+          //   }
+          // }
+        },
         deferredUpdate(store) {
           // TODO: this setup should be done in app
           safeRequestIdleCallback(() => {

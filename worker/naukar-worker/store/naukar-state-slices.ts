@@ -3,7 +3,7 @@ import { ApplicationStore, Slice } from '@bangle.io/create-store';
 export type NaukarActionTypes = {
   name: string;
 };
-export type NaukarSliceTypes = {};
+export type NaukarSliceTypes = ReturnType<typeof naukarStateSlices>;
 
 export function naukarStateSlices({
   onUpdate,
