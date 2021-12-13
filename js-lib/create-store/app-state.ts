@@ -1,3 +1,5 @@
+import type { JsonObject, JsonValue } from 'type-fest';
+
 import type { BaseAction, Slice, SliceStateField } from './app-state-slice';
 
 class AppStateConfig<S, A extends BaseAction> {
@@ -40,6 +42,68 @@ export class AppState<S, A extends BaseAction> {
     });
 
     return instance;
+  }
+
+  static stateFromJSON<S, A extends BaseAction>({
+    slices,
+    json,
+    // an object with a unique name for each
+    // slice used from uniquely identifying a
+    // slices data.
+    sliceFields,
+  }: {
+    slices: SliceArray<S, A>;
+    json: JsonValue;
+    sliceFields: { [key: string]: Slice<S, A> };
+  }) {
+    const config = new AppStateConfig<S, A>(slices);
+    const instance = new AppState(config);
+
+    config.fields.forEach((f) => {
+      for (var prop in sliceFields) {
+        const slice = sliceFields[prop];
+        const state = slice?.spec.state;
+        if (
+          slice &&
+          slice.key === f.name &&
+          state &&
+          state.stateFromJSON &&
+          Object.prototype.hasOwnProperty.call(json, prop)
+        ) {
+          // This field belongs to a plugin mapped to a JSON field, read it from there.
+          instance.slicesCurrentState[f.name] = state.stateFromJSON.call(
+            slice,
+            config,
+            json![prop],
+            instance,
+          );
+          return;
+        }
+      }
+      instance.slicesCurrentState[f.name] = f.init(config, instance);
+    });
+
+    return instance;
+  }
+
+  stateToJSON({
+    sliceFields,
+  }: {
+    sliceFields?: { [key: string]: Slice<S, A> };
+  }): JsonObject {
+    let result = {};
+    for (var prop in sliceFields) {
+      const slice = sliceFields[prop];
+      const state = slice?.spec.state;
+      if (state && state.stateToJSON) {
+        result[prop] = state.stateToJSON.call(
+          slice,
+          this.getSliceState(slice.key)!,
+        );
+      }
+    }
+
+    return result;
   }
 
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);

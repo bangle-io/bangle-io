@@ -315,4 +315,73 @@ describe('AppState', () => {
     expect(sliceKeyA.getSliceState(newAppState)).toBe(99);
     expect(sliceKeyB.getSliceState(newAppState)).toBe(77);
   });
+
+  describe('serialization', () => {
+    test('serializes correctly', () => {
+      const key1 = new SliceKey<any>('one');
+
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => ({ number: 3 }),
+          stateToJSON: (val) => val.number,
+          stateFromJSON: (config, val, appState) => ({ number: val }),
+        },
+      });
+
+      const slice2 = new Slice({
+        state: {
+          init: () => 4,
+        },
+      });
+
+      let state = AppState.create({
+        slices: [slice1, slice2],
+      });
+
+      const sliceFields = { myslice1: slice1, myslice2: slice2 };
+      const json = state.stateToJSON({ sliceFields: sliceFields });
+      expect(json).toMatchInlineSnapshot(`
+        Object {
+          "myslice1": 3,
+        }
+      `);
+
+      const parsedState = AppState.stateFromJSON({
+        slices: [slice1, slice2],
+        json,
+        sliceFields,
+      });
+      expect(slice1.getSliceState(parsedState)).toEqual({ number: 3 });
+      expect(slice2.getSliceState(parsedState)).toBe(4);
+    });
+
+    test('skips serialization if no field name provided', () => {
+      const key1 = new SliceKey<any>('one');
+
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => ({ number: 3 }),
+          stateToJSON: (val) => val.number,
+          stateFromJSON: (config, val, appState) => ({ number: val }),
+        },
+      });
+
+      let state = AppState.create({
+        slices: [slice1],
+      });
+
+      const sliceFields = {};
+      const json = state.stateToJSON({ sliceFields: sliceFields });
+      expect(json).toMatchInlineSnapshot(`Object {}`);
+
+      const parsedState = AppState.stateFromJSON({
+        slices: [slice1],
+        json,
+        sliceFields,
+      });
+      expect(slice1.getSliceState(parsedState)).toEqual({ number: 3 });
+    });
+  });
 });

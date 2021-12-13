@@ -1,3 +1,5 @@
+import { JsonValue } from 'type-fest';
+
 import type { AppState } from './app-state';
 import type { ApplicationStore } from './app-store';
 import type { SliceKey } from './slice-key';
@@ -25,16 +27,13 @@ export interface SliceStateField<SL, A extends BaseAction, S> {
     appState: AppState<S, A>,
   ): SL;
 
-  toJSON?: ((this: Slice<SL, A, S>, value: SL) => any) | null | undefined;
-  fromJSON?:
-    | ((
-        this: Slice<SL, A, S>,
-        config: { [key: string]: any },
-        value: SL,
-        appState: AppState<S, A>,
-      ) => any)
-    | null
-    | undefined;
+  stateToJSON?: (this: Slice<SL, A, S>, value: SL) => JsonValue;
+  stateFromJSON?: (
+    this: Slice<SL, A, S>,
+    config: { [key: string]: any },
+    value: JsonValue,
+    appState: AppState<S, A>,
+  ) => SL;
 }
 
 export type SliceSideEffect<SL, A extends BaseAction, S = SL> = (
