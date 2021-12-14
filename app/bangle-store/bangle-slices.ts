@@ -11,7 +11,7 @@ import {
   workspaceContextSlice,
 } from '@bangle.io/workspace-context';
 
-import { pageSlice } from './page-slice';
+import { getPageLifeCycle, pageSlice } from './page-slice';
 
 export type BangleActionTypes =
   | UiContextAction
@@ -23,8 +23,10 @@ export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
 export function bangleStateSlices({
   onUpdate,
+  onPageInactive,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
+  onPageInactive: () => void;
 }) {
   return [
     workerSlice(),
@@ -35,13 +37,34 @@ export function bangleStateSlices({
 
     // keep this at the end
     new Slice({
-      sideEffect() {
-        return {
-          deferredUpdate(store) {
-            onUpdate?.(store);
-          },
-        };
-      },
+      sideEffect: [
+        () => {
+          return {
+            deferredUpdate(store) {
+              onUpdate?.(store);
+            },
+          };
+        },
+
+        // monitor page life cycle
+        () => {
+          return {
+            update(store, prevState) {
+              const pageLifeCycle = getPageLifeCycle()(store.state);
+              if (
+                pageLifeCycle &&
+                pageLifeCycle !== getPageLifeCycle()(prevState)
+              ) {
+                if (
+                  ['passive', 'terminated', 'hidden'].includes(pageLifeCycle)
+                ) {
+                  onPageInactive();
+                }
+              }
+            },
+          };
+        },
+      ],
     }),
   ];
 }

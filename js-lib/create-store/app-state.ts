@@ -28,7 +28,7 @@ class AppStateConfig<S, A extends BaseAction, Op> {
   }
 }
 
-export class AppState<S, A extends BaseAction, Op = any> {
+export class AppState<S = any, A extends BaseAction = any, Op = any> {
   static create<S, A extends BaseAction, Op = any>({
     slices,
     opts,

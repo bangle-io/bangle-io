@@ -6,7 +6,7 @@ import {
   pageSliceKey,
   PageSliceStateType,
 } from '@bangle.io/constants';
-import { Slice, SliceSideEffect } from '@bangle.io/create-store';
+import { AppState, Slice, SliceSideEffect } from '@bangle.io/create-store';
 
 const pendingSymbol = Symbol('pending-tasks');
 
@@ -18,6 +18,8 @@ export const pageSliceInitialState: PageSliceStateType = {
   },
 };
 
+// Monitors the page's lifecycle
+// See https://developers.google.com/web/updates/2018/07/page-lifecycle-api
 export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
   return new Slice({
     key: pageSliceKey,
@@ -95,3 +97,9 @@ const blockReloadSideEffect: SliceSideEffect<
     },
   };
 };
+
+export function getPageLifeCycle() {
+  return (state: AppState) => {
+    return pageSliceKey.getSliceState(state)?.lifeCycleState?.current;
+  };
+}

@@ -7,7 +7,6 @@ import { checkWidescreen, rafSchedule, useWindowSize } from '@bangle.io/utils';
 
 import { applyTheme } from './apply-theme';
 
-const persistKey = 'UIManager0.724';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UISlice') : () => {};
 
@@ -77,10 +76,7 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
     key: uiSliceKey,
     state: {
       init: () => {
-        let store = Object.assign({}, initialState, retrievePersistedState());
-        applyTheme(store.theme);
-        setRootWidescreenClass(store.widescreen);
-        return store;
+        return Object.assign({}, initialState);
       },
       apply: (action, state) => {
         log({ action, state });
@@ -212,8 +208,36 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
           }
         }
       },
+
+      stateToJSON(value) {
+        //
+        return {
+          ...initialState,
+          notifications: [],
+          sidebar: value.sidebar,
+          theme: value.theme,
+          noteSidebar: value.noteSidebar,
+        };
+      },
+
+      stateFromJSON(_, value: any) {
+        const state: UISliceState = Object.assign({}, initialState, {
+          sidebar: value.sidebar,
+          theme: value.theme || getThemePreference(),
+          noteSidebar: value.noteSidebar,
+          widescreen: checkWidescreen(),
+        });
+        return state;
+      },
     },
     sideEffect(store) {
+      const state = uiSliceKey.getSliceState(store.state);
+
+      if (state) {
+        applyTheme(state.theme);
+        setRootWidescreenClass(state.widescreen);
+      }
+
       // Handler to call on window resize
       const handleResize = rafSchedule(() => {
         store.dispatch({
@@ -234,18 +258,6 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
         destroy() {
           handleResize.cancel();
           window.removeEventListener('resize', handleResize);
-        },
-        deferredUpdate(store) {
-          const state = uiSliceKey.getSliceState(store.state);
-          if (!state) {
-            return;
-          }
-
-          persistState({
-            sidebar: state.sidebar,
-            theme: state.theme,
-            noteSidebar: state.noteSidebar,
-          });
         },
       };
     },
@@ -271,20 +283,4 @@ function setRootWidescreenClass(widescreen) {
     root?.classList.remove('widescreen');
     body?.classList.remove('widescreen');
   }
-}
-
-function persistState(obj: Partial<UISliceState>) {
-  localStorage.setItem(persistKey, JSON.stringify(obj));
-}
-
-function retrievePersistedState(): Partial<UISliceState> {
-  try {
-    const item = localStorage.getItem(persistKey);
-    if (typeof item === 'string') {
-      return JSON.parse(item);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-  return {};
 }
