@@ -1,8 +1,8 @@
-import * as Comlink from 'comlink';
-import React, { useMemo } from 'react';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import {
-  AppStateContext,
+  BangleStoreChanged,
   BangleStoreContext,
 } from '@bangle.io/app-state-context';
 import { initializeBangleStore } from '@bangle.io/bangle-store';
@@ -20,19 +20,30 @@ export function AppStateProvider({
   bangleStore: ReturnType<typeof initializeBangleStore>;
   children: React.ReactNode;
 }) {
-  const value = useMemo(() => {
-    return {
-      storeChanged: bangleStoreChanged,
-      store: bangleStore,
-      //
+  const history = useHistory();
+
+  useEffect(() => {
+    // TODO there is a possibility that we miss a location
+    // update before this is initialized
+    const unlisten = history.listen((location) => {
+      bangleStore.dispatch({
+        name: 'action::workspace-context:update-location',
+        value: {
+          locationSearchQuery: location.search,
+          locationPathname: location.pathname,
+        },
+      });
+    });
+    return () => {
+      unlisten();
     };
-  }, [bangleStore, bangleStoreChanged]);
+  }, [bangleStore, history]);
 
   return (
     <BangleStoreContext.Provider value={bangleStore}>
-      <AppStateContext.Provider value={value}>
+      <BangleStoreChanged.Provider value={bangleStoreChanged}>
         {children}
-      </AppStateContext.Provider>
+      </BangleStoreChanged.Provider>
     </BangleStoreContext.Provider>
   );
 }

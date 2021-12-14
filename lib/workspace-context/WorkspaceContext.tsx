@@ -237,7 +237,7 @@ export function useOpenedWsPaths(
   }
 
   const openedWsPaths = useMemo(
-    () => new OpenedWsPaths([primaryWsPath, secondaryWsPath]),
+    () => OpenedWsPaths.createFromArray([primaryWsPath, secondaryWsPath]),
     [primaryWsPath, secondaryWsPath],
   );
 

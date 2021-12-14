@@ -16,14 +16,7 @@ const initStore = ApplicationStore.create({
 export const BangleStoreContext =
   React.createContext<ApplicationStore>(initStore);
 
-export const AppStateContext = React.createContext<{
-  // store
-  storeChanged: number;
-  store: ApplicationStore;
-}>({
-  storeChanged: 0,
-  store: initStore,
-});
+export const BangleStoreChanged = React.createContext<number>(-1);
 
 export function useBangleStoreContext() {
   return useContext(BangleStoreContext);
@@ -35,7 +28,7 @@ export function useSliceState<SL, A extends BaseAction, S = SL>(
 ) {
   const [sliceState, updateSliceState] = useState<SL | undefined>(initialState);
   const store = useBangleStoreContext();
-  const { storeChanged } = useContext(AppStateContext);
+  const storeChanged = useContext(BangleStoreChanged);
 
   useEffect(() => {
     const newState = sliceKey.getSliceState(store.state);
