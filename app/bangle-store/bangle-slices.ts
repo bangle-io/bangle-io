@@ -6,13 +6,18 @@ import {
 } from '@bangle.io/editor-manager-context';
 import { UiContextAction, uiSlice } from '@bangle.io/ui-context';
 import { workerSlice } from '@bangle.io/worker-setup';
+import {
+  WorkspaceContextAction,
+  workspaceContextSlice,
+} from '@bangle.io/workspace-context';
 
 import { pageSlice } from './page-slice';
 
 export type BangleActionTypes =
   | UiContextAction
   | PageSliceAction
-  | EditorManagerAction;
+  | EditorManagerAction
+  | WorkspaceContextAction;
 
 export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
@@ -24,6 +29,7 @@ export function bangleStateSlices({
   return [
     workerSlice(),
     pageSlice(),
+    workspaceContextSlice(),
     uiSlice(),
     editorManagerSlice(),
 

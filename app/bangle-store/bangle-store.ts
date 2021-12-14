@@ -1,5 +1,3 @@
-import deepEqual from 'fast-deep-equal';
-
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import {
@@ -26,7 +24,9 @@ export function initializeBangleStore({
   const makeStore = () =>
     ApplicationStore.create<BangleSliceTypes, BangleActionTypes>({
       storeName: MAIN_STORE_NAME,
-      state: AppState.create({ slices: bangleStateSlices({ onUpdate }) }),
+      state: AppState.create({
+        slices: bangleStateSlices({ onUpdate }),
+      }),
       dispatchAction: (store, action) => {
         log(action);
         const newState = store.state.applyAction(action);

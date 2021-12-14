@@ -71,6 +71,11 @@ const extension = Extension.create({
         title: 'Sets the editor instance in the store on editor load',
         hidden: true,
       },
+      {
+        name: 'action::workspace-context:update-location',
+        title: "Update the store's browser history location ",
+        hidden: true,
+      },
     ],
     ReactComponent: CoreActionsHandler,
   },

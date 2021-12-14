@@ -5,6 +5,8 @@ import { matchPath } from 'react-router-dom';
 
 import { filePathToWsPath, resolvePath } from './helpers';
 
+export { matchPath };
+
 type MaybeWsPath = string | undefined;
 
 export type Location = _History<any>['location'];
@@ -32,6 +34,23 @@ export class OpenedWsPaths {
       throw new Error(`Only support ${MAX_SIZE} editors opened at a time`);
     }
   }
+
+  static createFromArray(array: (string | null | undefined)[]) {
+    let safeArray = Array.from({ length: MAX_SIZE }, (_, k) => {
+      return array[k] || undefined;
+    });
+
+    return new OpenedWsPaths(safeArray);
+  }
+
+  static createEmpty() {
+    const wsPaths = Array.from({ length: MAX_SIZE }, () => {
+      return undefined;
+    });
+
+    return new OpenedWsPaths(wsPaths);
+  }
+
   get primaryWsPath() {
     return this.wsPaths[0] ?? undefined;
   }
@@ -131,9 +150,8 @@ export class OpenedWsPaths {
   }
 
   closeAll() {
-    let newObj = new OpenedWsPaths(
-      Array.from({ length: MAX_SIZE }, () => undefined),
-    );
+    let newObj = OpenedWsPaths.createEmpty();
+
     // avoid changing instance
     if (newObj.equal(this)) {
       return this;
@@ -157,7 +175,8 @@ export class OpenedWsPaths {
   }
 
   toArray() {
-    return Array.from(this.wsPaths);
+    // mapping undefined to null since undefined is not serializable
+    return Array.from(this.wsPaths).map((r) => (r ? r : null));
   }
 }
 
@@ -177,7 +196,7 @@ function getPrimaryFilePath(location: Location) {
   if (location) {
     return location.pathname.split('/').slice(3).join('/');
   }
-  return null;
+  return undefined;
 }
 
 export function getPrimaryWsPath(location: Location) {
