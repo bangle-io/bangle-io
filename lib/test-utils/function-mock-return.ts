@@ -35,7 +35,7 @@ export const getUseWorkspaceContextReturn: ReturnType<
   renameNote: jest.fn().mockResolvedValue(undefined),
   primaryWsPath: undefined,
   secondaryWsPath: undefined,
-  openedWsPaths: new OpenedWsPaths([undefined, undefined]),
+  openedWsPaths: OpenedWsPaths.createEmpty(),
   updateOpenedWsPaths: jest.fn(),
   pushWsPath: jest.fn(),
   checkFileExists: jest.fn().mockResolvedValue(undefined),

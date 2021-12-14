@@ -71,7 +71,7 @@ const selectWsName = createSelector(selectPathname, (pathName) => {
 const selectOpenedWsPaths = createSelector(
   [selectPathname, selectSearchQuery],
   (pathName, searchQuery) => {
-    return new OpenedWsPaths([
+    return OpenedWsPaths.createFromArray([
       getPrimaryWsPath(pathName),
       getSecondaryWsPath(searchQuery),
     ]);
