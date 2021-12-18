@@ -10,8 +10,6 @@ const { toggleHeadingCollapse, uncollapseAllHeadings } = heading;
 const { moveListItemUp, moveListItemDown } = listItem;
 
 export function EditorCore({ registerActionHandler }) {
-  const { primaryEditor, secondaryEditor, dispatch } =
-    useEditorManagerContext();
   const executeEditorCommand = useDispatchPrimaryEditor(false);
 
   const actionHandler = useCallback(

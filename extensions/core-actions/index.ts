@@ -54,16 +54,27 @@ const extension = Extension.create({
         hidden: true,
       },
       {
-        name: 'action::editor-manager-context:focus-primary-editor',
+        name: 'action::bangle-io-core-actions:focus-primary-editor',
         title: 'Editor: Focus on primary editor',
       },
       {
-        name: 'action::editor-manager-context:focus-secondary-editor',
+        name: 'action::bangle-io-core-actions:focus-secondary-editor',
         title: 'Editor: Focus on secondary editor',
       },
       {
         name: 'action::editor-manager-context:on-focus-update',
         title: 'Editor: Record focus change',
+        hidden: true,
+      },
+      {
+        name: 'action::editor-manager-context:update-scroll-position',
+        title: 'Editor: update the editors scroll position',
+        hidden: true,
+      },
+      {
+        name: 'action::editor-manager-context:update-initial-selection-json',
+        title:
+          'Editor: save the selection to be used to put back the cursor on reload',
         hidden: true,
       },
       {

@@ -7,8 +7,12 @@
 //  // override things
 //  wsPath: 'xyz:sys.md'
 // }
+import { initialBangleStore } from '@bangle.io/app-state-context';
 import { EditorDisplayType } from '@bangle.io/constants';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import {
+  initialEditorSliceState,
+  useEditorManagerContext,
+} from '@bangle.io/editor-manager-context';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import type { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -44,9 +48,6 @@ export const getUseWorkspaceContextReturn: ReturnType<
 export const getUseEditorManagerContextReturn: ReturnType<
   typeof useEditorManagerContext
 > = {
-  primaryEditor: undefined,
-  secondaryEditor: undefined,
-  focusedEditorId: undefined,
-  editors: [undefined, undefined],
-  dispatch: () => {},
+  ...initialEditorSliceState,
+  bangleStore: initialBangleStore,
 };

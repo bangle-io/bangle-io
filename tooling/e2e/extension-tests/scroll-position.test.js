@@ -14,6 +14,9 @@ const {
   ctrlKey,
   getSecondaryEditorHandler,
   waitForPrimaryEditorTextToContain,
+  runAction,
+  waitForSecondaryEditorFocus,
+  waitForPrimaryEditorFocus,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
@@ -152,7 +155,7 @@ test('reloading preserves scroll & selection', async () => {
   expect(await topElement.isIntersectingViewport()).toBe(false);
   expect(await lastElement.isIntersectingViewport()).toBe(true);
   // let editor flush out changes or it will block reload
-  await sleep(500);
+  await longSleep(300);
 
   await page.reload({ timeout: 8000, waitUntil: 'networkidle0' });
 
@@ -178,4 +181,54 @@ test('reloading preserves scroll & selection', async () => {
   expect(await getPrimaryEditorDebugString(page)).toMatchInlineSnapshot(
     `"doc(heading(\\"top element\\"), heading(\\"0\\"), heading(\\"1\\"), heading(\\"2\\"), heading(\\"3\\"), heading(\\"4\\"), heading(\\"5\\"), heading(\\"6\\"), heading(\\"7\\"), heading(\\"8\\"), heading(\\"9\\"), heading(\\"10\\"), heading(\\"11\\"), heading(\\"12\\"), heading(\\"13\\"), heading(\\"14\\"), heading(\\"last element\\"), heading(\\"My existence at the bottom proves that I was spared from a reload.\\"), paragraph)"`,
   );
+});
+
+test('on reload preserves selection on secondary in a splitscreen', async () => {
+  await setupScreenSize('regular');
+
+  const wsName = await createWorkspace(page);
+  await createNewNote(page, wsName, 'test123');
+
+  await runAction(
+    page,
+    'action::bangle-io-core-actions:TOGGLE_EDITOR_SPLIT_ACTION',
+  );
+
+  await waitForSecondaryEditorFocus(page);
+
+  // let editor flush out changes or it will block reload
+  await longSleep(300);
+
+  await page.reload({ timeout: 8000, waitUntil: 'networkidle2' });
+
+  await waitForSecondaryEditorFocus(page);
+
+  expect(true).toBe(true);
+});
+
+test('on reload preserves selection on primary in a splitscreen', async () => {
+  await setupScreenSize('regular');
+
+  const wsName = await createWorkspace(page);
+  await createNewNote(page, wsName, 'test123');
+
+  await runAction(
+    page,
+    'action::bangle-io-core-actions:TOGGLE_EDITOR_SPLIT_ACTION',
+  );
+
+  await sleep();
+
+  await runAction(page, 'action::bangle-io-core-actions:focus-primary-editor');
+
+  await waitForPrimaryEditorFocus(page);
+
+  // let editor flush out changes or it will block reload
+  await longSleep(300);
+
+  await page.reload({ timeout: 8000, waitUntil: 'networkidle2' });
+
+  await waitForPrimaryEditorFocus(page);
+
+  expect(true).toBe(true);
 });

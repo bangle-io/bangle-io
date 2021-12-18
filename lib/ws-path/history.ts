@@ -3,6 +3,9 @@
 import type { History as _History } from 'history';
 import { matchPath } from 'react-router-dom';
 
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import { createEmptyArray } from '@bangle.io/utils';
+
 import { filePathToWsPath, resolvePath } from './helpers';
 
 export { matchPath };
@@ -12,7 +15,6 @@ type MaybeWsPath = string | undefined;
 export type Location = _History<any>['location'];
 export type History = _History<any>;
 
-const MAX_SIZE = 2;
 /**
  * This exists to keep null and undefined value interchangeable
  */
@@ -30,13 +32,15 @@ function compare<T>(a: T[], b: T[]): boolean {
 
 export class OpenedWsPaths {
   constructor(private wsPaths: MaybeWsPath[]) {
-    if (wsPaths.length !== MAX_SIZE) {
-      throw new Error(`Only support ${MAX_SIZE} editors opened at a time`);
+    if (wsPaths.length !== MAX_OPEN_EDITORS) {
+      throw new Error(
+        `Only support ${MAX_OPEN_EDITORS} editors opened at a time`,
+      );
     }
   }
 
   static createFromArray(array: (string | null | undefined)[]) {
-    let safeArray = Array.from({ length: MAX_SIZE }, (_, k) => {
+    let safeArray = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
       return array[k] || undefined;
     });
 
@@ -44,9 +48,7 @@ export class OpenedWsPaths {
   }
 
   static createEmpty() {
-    const wsPaths = Array.from({ length: MAX_SIZE }, () => {
-      return undefined;
-    });
+    const wsPaths = createEmptyArray(MAX_OPEN_EDITORS);
 
     return new OpenedWsPaths(wsPaths);
   }
@@ -98,7 +100,7 @@ export class OpenedWsPaths {
   shrink() {
     const items = this.wsPaths.filter((r) => r);
 
-    const arr: any = Array.from({ length: MAX_SIZE }, (_, k) => {
+    const arr: any = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
       return items[k] || undefined;
     });
 

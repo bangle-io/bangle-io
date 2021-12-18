@@ -1,6 +1,8 @@
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { editorManagerSlice } from '@bangle.io/editor-manager-context';
 import type { JsonValue } from '@bangle.io/shared-types';
+import { uiSlice } from '@bangle.io/ui-context';
 import {
   safeCancelIdleCallback,
   safeRequestIdleCallback,
@@ -11,10 +13,10 @@ import {
   BangleSliceTypes,
   bangleStateSlices,
 } from './bangle-slices';
-import { persistedSlices } from './persisted-slices';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};
+
 const persistKey = 'bangle-store-0.124';
 
 const MAX_DEFERRED_WAIT_TIME = 400;
@@ -25,17 +27,38 @@ export function initializeBangleStore({
   onUpdate?: (store: ApplicationStore) => void;
 }) {
   const makeStore = () => {
-    const state = AppState.stateFromJSON({
+    const stateJson = {
+      ...retrieveLocalStorage(),
+      ...retrieveSessionStorage(),
+    };
+
+    const onPageInactive = () => {
+      toLocalStorage(
+        store.state.stateToJSON({
+          sliceFields: {
+            uiSlice: uiSlice(),
+          },
+        }),
+      );
+      toSessionStorage(
+        store.state.stateToJSON({
+          sliceFields: {
+            editorManagerSlice: editorManagerSlice(),
+          },
+        }),
+      );
+    };
+
+    let state = AppState.stateFromJSON({
       slices: bangleStateSlices({
         onUpdate,
-        onPageInactive: () => {
-          persistState(
-            store.state.stateToJSON({ sliceFields: persistedSlices }),
-          );
-        },
+        onPageInactive,
       }),
-      json: retrievePersistedState(),
-      sliceFields: persistedSlices,
+      json: stateJson,
+      sliceFields: {
+        uiSlice: uiSlice(),
+        editorManagerSlice: editorManagerSlice(),
+      },
     });
 
     return ApplicationStore.create<BangleSliceTypes, BangleActionTypes>({
@@ -58,17 +81,34 @@ export function initializeBangleStore({
   };
 
   let store = makeStore();
+  (window as any).appStore = store;
 
   return store;
 }
 
-function persistState(obj: JsonValue) {
+function toLocalStorage(obj: JsonValue) {
   localStorage.setItem(persistKey, JSON.stringify(obj));
 }
 
-function retrievePersistedState(): JsonValue {
+function toSessionStorage(obj: JsonValue) {
+  sessionStorage.setItem(persistKey, JSON.stringify(obj));
+}
+
+function retrieveLocalStorage(): any {
   try {
     const item = localStorage.getItem(persistKey);
+    if (typeof item === 'string') {
+      return JSON.parse(item);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  return {};
+}
+
+function retrieveSessionStorage(): any {
+  try {
+    const item = sessionStorage.getItem(persistKey);
     if (typeof item === 'string') {
       return JSON.parse(item);
     }

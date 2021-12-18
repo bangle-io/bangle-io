@@ -34,7 +34,7 @@ export function PageLifecycle() {
         pageStateCurrent === 'hidden'
       ) {
         forEachEditor((editor, i) => {
-          if (editor.view.hasFocus()) {
+          if (editor && editor.view.hasFocus()) {
             // To avoid cursor jumping across due markdown whitespace elimination
             // this removes the white space to prevent cursor jumping.
             // Not ideal though

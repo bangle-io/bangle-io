@@ -8,13 +8,13 @@ import {
   SliceKey,
 } from '@bangle.io/create-store';
 
-const initStore = ApplicationStore.create({
+export const initialBangleStore = ApplicationStore.create({
   storeName: MAIN_STORE_NAME,
   state: ApplicationState.create({ slices: [] }),
 });
 
 export const BangleStoreContext =
-  React.createContext<ApplicationStore>(initStore);
+  React.createContext<ApplicationStore>(initialBangleStore);
 
 export const BangleStoreChanged = React.createContext<number>(-1);
 

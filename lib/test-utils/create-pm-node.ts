@@ -10,7 +10,8 @@ if (typeof jest === 'undefined') {
 
 export function createPMNode(
   extensions: Extension[] = [],
-): (str: string) => Node {
+  mdText: string,
+): Node {
   const extensionRegistry = new ExtensionRegistry([
     Extension.create({
       name: 'bangle-io-core',
@@ -21,14 +22,11 @@ export function createPMNode(
     }),
     ...extensions,
   ]);
+  const doc = markdownParser(
+    mdText,
+    extensionRegistry.specRegistry,
+    extensionRegistry.markdownItPlugins,
+  );
 
-  return (mdText) => {
-    const doc = markdownParser(
-      mdText,
-      extensionRegistry.specRegistry,
-      extensionRegistry.markdownItPlugins,
-    );
-
-    return doc;
-  };
+  return doc;
 }
