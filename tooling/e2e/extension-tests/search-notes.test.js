@@ -11,6 +11,7 @@ const {
 } = require('../helpers');
 
 jest.setTimeout(155 * 1000);
+jest.retryTimes(2);
 
 let page, destroyPage;
 
@@ -33,7 +34,9 @@ test('Is able to search for a note', async () => {
   let primaryHandle = await getPrimaryEditorHandler(page, { focus: true });
 
   await page.keyboard.press('Enter');
-  await page.keyboard.type('i am a lovely planet from outer galaxy');
+  await page.keyboard.type('i am a lovely planet from outer galaxy', {
+    delay: 20,
+  });
 
   await createNewNote(page, wsName, 'test-two');
 
@@ -42,6 +45,7 @@ test('Is able to search for a note', async () => {
   await page.keyboard.press('Enter');
   await page.keyboard.type(
     'here galaxies are a collection of stars held together by gravity',
+    { delay: 20 },
   );
 
   await sleep();
@@ -60,10 +64,10 @@ test('Is able to search for a note', async () => {
     timeout: SELECTOR_TIMEOUT,
   });
 
-  await searchInput.type('galaxy');
+  await searchInput.type('galaxy', { delay: 10 });
 
   await page.waitForSelector('.search-notes .search-result-note-match', {
-    timeout: SELECTOR_TIMEOUT,
+    timeout: 4 * SELECTOR_TIMEOUT,
   });
 
   let noteMatches = await page.$$eval(
@@ -84,14 +88,14 @@ test('Is able to search for a note', async () => {
 
   expect(await searchInput.evaluate((node) => node.value)).toBe('');
 
-  await searchInput.type('galax');
+  await searchInput.type('galax', { delay: 10 });
   expect(await searchInput.evaluate((node) => node.value)).toBe('galax');
 
   // the input debounce slows us down
   await longSleep(300);
 
   await page.waitForSelector('.search-notes .search-result-note-match', {
-    timeout: SELECTOR_TIMEOUT,
+    timeout: 4 * SELECTOR_TIMEOUT,
   });
 
   noteMatches = await page.$$eval(

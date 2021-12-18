@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
-
 import { useActionContext } from '@bangle.io/action-context';
 import {
   CORE_ACTIONS_CLOSE_EDITOR,
@@ -28,7 +26,7 @@ export function EditorContainer({
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { secondaryWsPath } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
-  const { focusedEditorId, dispatch } = useEditorManagerContext();
+  const { focusedEditorId } = useEditorManagerContext();
 
   const isSplitEditorOpen = Boolean(secondaryWsPath);
 
@@ -44,20 +42,6 @@ export function EditorContainer({
       value: editorId,
     });
   }, [dispatchAction, editorId]);
-
-  const onEditorReady = useCallback(
-    (editor: CoreBangleEditor) => {
-      dispatch({
-        name: 'action::editor-manager-context:set-editor',
-        value: {
-          editor,
-          editorId,
-        },
-      });
-      editor.focusView();
-    },
-    [editorId, dispatch],
-  );
 
   let children;
 
@@ -76,7 +60,6 @@ export function EditorContainer({
       <Editor
         editorId={editorId}
         wsPath={wsPath}
-        onEditorReady={onEditorReady}
         className={`editor-container_editor editor-container_editor-${editorId}`}
       />
     );

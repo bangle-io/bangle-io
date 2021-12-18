@@ -19,7 +19,7 @@ export class SliceKey<SL = any, A extends BaseAction = any, S = SL> {
   }
 
   getSliceState(
-    state: AppState<S, A> | Readonly<AppState<S, A>>,
+    state: AppState<any, any> | Readonly<AppState<any, any>>,
   ): SL | undefined {
     return state.getSliceState(this.key);
   }

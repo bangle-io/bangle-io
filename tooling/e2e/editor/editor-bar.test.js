@@ -10,6 +10,8 @@ const {
   sleep,
   url,
   waitForSecondaryEditorFocus,
+  longSleep,
+  jestDebug,
 } = require('../helpers');
 
 jest.setTimeout(105 * 1000);
@@ -38,6 +40,20 @@ describe('editor bar', () => {
     }, editorId);
   };
 
+  const waitForEditorBarFocused = (editorId) => {
+    return page.waitForFunction(
+      (editorId) => {
+        return Boolean(
+          document
+            .querySelector('.editor-container_editor-container-' + editorId)
+            .querySelector('.editor-container_editor-bar > .active'),
+        );
+      },
+      { timeout: 2 * SELECTOR_TIMEOUT },
+      editorId,
+    );
+  };
+
   test('shows currerntly focused editor', async () => {
     const wsName = await createWorkspace(page);
     await createNewNote(page, wsName, 'test123');
@@ -46,16 +62,21 @@ describe('editor bar', () => {
     await page.keyboard.down(ctrlKey);
     await page.keyboard.press('\\');
     await page.keyboard.up(ctrlKey);
-    await sleep();
 
     // split screen auto focuses on the second (secondary) editor
     await waitForSecondaryEditorFocus(page);
+
+    // wait for the focus action to be dispatched
+
+    await waitForEditorBarFocused(1);
 
     expect(await isEditorBarFocused(0)).toBe(false);
     expect(await isEditorBarFocused(1)).toBe(true);
 
     // Focus on first editor
     await getPrimaryEditorHandler(page, { focus: true });
+
+    await waitForEditorBarFocused(0);
 
     expect(await isEditorBarFocused(0)).toBe(true);
     expect(await isEditorBarFocused(1)).toBe(false);

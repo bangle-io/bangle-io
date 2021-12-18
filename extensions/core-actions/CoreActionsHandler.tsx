@@ -13,6 +13,7 @@ import {
   CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_ACTIONS_TOGGLE_THEME,
 } from '@bangle.io/constants';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
@@ -24,7 +25,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch } = useUIManagerContext();
   const { dispatchAction } = useActionContext();
   const { createWorkspace } = useWorkspaces();
-
+  const { primaryEditor, secondaryEditor } = useEditorManagerContext();
   const {
     wsName,
     primaryWsPath,
@@ -246,6 +247,15 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
+        case 'action::bangle-io-core-actions:focus-primary-editor': {
+          primaryEditor?.focusView();
+          return true;
+        }
+
+        case 'action::bangle-io-core-actions:focus-secondary-editor': {
+          secondaryEditor?.focusView();
+          return true;
+        }
         default: {
           return false;
         }
@@ -259,6 +269,8 @@ export function CoreActionsHandler({ registerActionHandler }) {
       secondaryWsPath,
       createWorkspace,
       updateOpenedWsPaths,
+      primaryEditor,
+      secondaryEditor,
     ],
   );
 
@@ -276,7 +288,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
       updateInputModal({ type: undefined });
       if (focusEditor) {
         dispatchAction({
-          name: 'action::editor-manager-context:focus-primary-editor',
+          name: 'action::bangle-io-core-actions:focus-primary-editor',
         });
       }
     },

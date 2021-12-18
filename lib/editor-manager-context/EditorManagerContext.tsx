@@ -1,25 +1,26 @@
 import React, { useContext, useMemo } from 'react';
 
-import { useSliceState } from '@bangle.io/app-state-context';
-
 import {
-  EditorDispatchType,
-  editorManagerSliceKey,
-  EditorSliceState,
-  initialEditorSliceState,
-} from './editor-slice';
+  initialBangleStore,
+  useSliceState,
+} from '@bangle.io/app-state-context';
+import { ApplicationStore } from '@bangle.io/create-store';
+
+import { editorManagerSliceKey } from './constants';
+import { initialEditorSliceState } from './editor-manager-slice';
+import type { EditorDispatchType, EditorSliceState } from './types';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
 export type EditorManagerContextValue = EditorSliceState & {
-  dispatch: EditorDispatchType;
+  bangleStore: ApplicationStore;
 };
 
 // type EditorsType = [BangleEditor | undefined, BangleEditor | undefined];
 const EditorManagerContext = React.createContext<EditorManagerContextValue>({
   ...initialEditorSliceState,
-  dispatch: () => {},
+  bangleStore: initialBangleStore,
 });
 
 export function useEditorManagerContext() {
@@ -53,7 +54,7 @@ export function EditorManager({ children }) {
   const value = useMemo(() => {
     return {
       ...(editorManager || initialEditorSliceState),
-      dispatch: store.dispatch,
+      bangleStore: store,
     };
   }, [store, editorManager]);
 

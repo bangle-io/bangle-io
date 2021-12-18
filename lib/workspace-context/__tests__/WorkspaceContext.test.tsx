@@ -339,7 +339,7 @@ describe('useOpenedWsPaths', () => {
 
     expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
 
-    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', null]);
     expect(updateOpenedWsPaths).toBeInstanceOf(Function);
   });
 
@@ -355,7 +355,7 @@ describe('useOpenedWsPaths', () => {
 
     expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
 
-    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', null]);
 
     act(() => {
       updateOpenedWsPaths?.((openedWsPaths) =>
@@ -374,7 +374,7 @@ describe('useOpenedWsPaths', () => {
 
     expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
 
-    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', null]);
 
     act(() => {
       updateOpenedWsPaths?.(new OpenedWsPaths(['kujo:two.md', undefined]));
@@ -390,7 +390,7 @@ describe('useOpenedWsPaths', () => {
 
     expect(testLocation?.pathname).toBe('/ws/kujo/one.md');
 
-    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', null]);
 
     act(() => {
       updateOpenedWsPaths?.(
@@ -414,7 +414,7 @@ describe('useOpenedWsPaths', () => {
 
     expect(testLocation?.pathname).toBe('/ws/kujo/i-am-invalid-path');
 
-    expect(openedWsPaths?.toArray()).toEqual([undefined, undefined]);
+    expect(openedWsPaths?.toArray()).toEqual([null, null]);
 
     expect(historyReplaceSpy).toBeCalledTimes(0);
     expect(historyPushSpy).toBeCalledTimes(0);
@@ -425,7 +425,7 @@ describe('useOpenedWsPaths', () => {
 
     expect(onInvalidPath).toBeCalledTimes(1);
 
-    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', undefined]);
+    expect(openedWsPaths?.toArray()).toEqual(['kujo:one.md', null]);
 
     expect(historyReplaceSpy).toBeCalledTimes(0);
     expect(historyPushSpy).toBeCalledTimes(0);
