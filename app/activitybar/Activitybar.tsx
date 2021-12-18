@@ -45,12 +45,12 @@ export function Activitybar({
         onPress={() => {
           if (active) {
             dispatch({
-              type: 'UI/TOGGLE_SIDEBAR',
+              name: 'UI/TOGGLE_SIDEBAR',
               value: { type: r.name },
             });
           } else {
             dispatch({
-              type: 'UI/CHANGE_SIDEBAR',
+              name: 'UI/CHANGE_SIDEBAR',
               value: { type: r.name },
             });
           }
@@ -66,7 +66,7 @@ export function Activitybar({
         isActive={false}
         onPress={() => {
           dispatch({
-            type: 'UI/CHANGE_SIDEBAR',
+            name: 'UI/CHANGE_SIDEBAR',
             value: { type: null },
           });
           history.push('/');
@@ -89,7 +89,7 @@ export function Activitybar({
         hint={"What's new"}
         onPress={() => {
           dispatch({
-            type: 'UI/SHOW_MODAL',
+            name: 'UI/SHOW_MODAL',
             value: { modal: '@modal/changelog' },
           });
         }}

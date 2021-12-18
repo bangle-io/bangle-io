@@ -10,15 +10,42 @@ import { SliceKey } from '../slice-key';
 function sleep(t = 20): Promise<void> {
   return new Promise((res) => setTimeout(res, t));
 }
-afterEach(() => {
-  jest.useRealTimers();
-});
 
 describe('store', () => {
   test('empty store', () => {
     const state = AppState.create({ slices: [] });
-    const store = new ApplicationStore(state);
+    const store = ApplicationStore.create({ storeName: 'test-store', state });
     expect(store).toMatchSnapshot();
+  });
+
+  test('adds id to action', () => {
+    let dispatchedAction: any[] = [];
+    const state = AppState.create({ slices: [] });
+    const store = ApplicationStore.create({
+      storeName: 'test-store',
+      state,
+      dispatchAction: (store, action) => {
+        dispatchedAction.push(action);
+      },
+    });
+
+    store.dispatch({
+      name: 'for-x',
+    });
+
+    expect(dispatchedAction).toHaveLength(1);
+    expect(dispatchedAction[0].id).toEqual(expect.any(String));
+    expect(dispatchedAction[0].id.startsWith('test-store-')).toBe(true);
+    expect(dispatchedAction[0].id.split('test-store-')[1]).toMatch(/^\d+$/);
+
+    store.dispatch({
+      name: 'for-y',
+    });
+
+    expect(dispatchedAction[1].id.split('test-store-')[1]).toMatch(/^\d+$/);
+
+    // each id is unique
+    expect(dispatchedAction[0].id).not.toEqual(dispatchedAction[1].id);
   });
 
   test('throws error when deferredUpdate is used without scheduler', () => {
@@ -28,8 +55,8 @@ describe('store', () => {
       ],
     });
 
-    expect(
-      () => new ApplicationStore(state),
+    expect(() =>
+      ApplicationStore.create({ storeName: 'test-store', state }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Scheduler needs to be defined for using Slice's deferredUpdate"`,
     );
@@ -41,11 +68,11 @@ describe('store', () => {
     let state: AppState<any, any>, store: ApplicationStore<any>;
     type ActionType =
       | {
-          type: 'for-a';
+          name: 'for-a';
           value: number;
         }
       | {
-          type: 'for-b';
+          name: 'for-b';
           value: number;
         };
 
@@ -55,7 +82,7 @@ describe('store', () => {
         state: {
           init: () => 1,
           apply: (action, value, appState) => {
-            if (action.type === 'for-a') {
+            if (action.name === 'for-a') {
               return action.value;
             }
             return value;
@@ -68,7 +95,7 @@ describe('store', () => {
         state: {
           init: () => 2,
           apply: (action, value, appState) => {
-            if (action.type === 'for-b') {
+            if (action.name === 'for-b') {
               return action.value;
             }
             return value;
@@ -77,7 +104,7 @@ describe('store', () => {
       });
 
       state = AppState.create({ slices: [slice1, slice2] });
-      store = new ApplicationStore(state);
+      store = ApplicationStore.create({ storeName: 'test-store', state });
     });
 
     test('sets up properly', () => {
@@ -85,21 +112,21 @@ describe('store', () => {
     });
 
     test('updates', () => {
-      store.dispatch({ type: 'for-a', value: 77 });
+      store.dispatch({ name: 'for-a', value: 77 });
       expect(key1.getSliceState(store.state)).toBe(77);
       expect(key2.getSliceState(store.state)).toBe(2);
     });
 
     test('updates 1', () => {
-      store.dispatch({ type: 'for-a', value: 99 });
-      store.dispatch({ type: 'for-b', value: 88 });
+      store.dispatch({ name: 'for-a', value: 99 });
+      store.dispatch({ name: 'for-b', value: 88 });
       expect(key1.getSliceState(store.state)).toBe(99);
       expect(key2.getSliceState(store.state)).toBe(88);
     });
 
     test('dispatch is binded', () => {
       const dispatch = store.dispatch;
-      dispatch({ type: 'for-a', value: 99 });
+      dispatch({ name: 'for-a', value: 99 });
       expect(key1.getSliceState(store.state)).toBe(99);
     });
 
@@ -114,13 +141,13 @@ describe('store', () => {
     });
 
     test('after destroying prevent updates', () => {
-      store.dispatch({ type: 'for-a', value: 99 });
+      store.dispatch({ name: 'for-a', value: 99 });
       expect(key1.getSliceState(store.state)).toBe(99);
       store.destroy();
-      store.dispatch({ type: 'for-a', value: 100 });
+      store.dispatch({ name: 'for-a', value: 100 });
       expect(key1.getSliceState(store.state)).toBe(99);
 
-      store.dispatch({ type: 'for-b', value: 88 });
+      store.dispatch({ name: 'for-b', value: 88 });
       expect(key2.getSliceState(store.state)).toBe(2);
     });
   });
@@ -137,7 +164,7 @@ describe('store', () => {
         state: {
           init: () => 1,
           apply: (action, value, appState) => {
-            if (action.type === 'for-a') {
+            if (action.name === 'for-a') {
               return action.value;
             }
             return value;
@@ -151,7 +178,7 @@ describe('store', () => {
         state: {
           init: () => 2,
           apply: (action, value, appState) => {
-            if (action.type === 'for-b') {
+            if (action.name === 'for-b') {
               return action.value;
             }
             return value;
@@ -160,7 +187,7 @@ describe('store', () => {
       });
 
       state = AppState.create({ slices: [slice1, slice2] });
-      store = new ApplicationStore(state);
+      store = ApplicationStore.create({ storeName: 'test-store', state });
 
       return store;
     };
@@ -180,11 +207,11 @@ describe('store', () => {
       expect(destroy).toBeCalledTimes(0);
       expect(update).toBeCalledTimes(0);
       let originalState = store.state;
-      store.dispatch({ type: 'for-a', value: 100 });
+      store.dispatch({ name: 'for-a', value: 100 });
 
       expect(update).toBeCalledTimes(1);
 
-      expect(update).nthCalledWith(1, store, originalState);
+      expect(update).nthCalledWith(1, store, originalState, 100, 1);
       expect(key1.getSliceState(originalState)).toBe(1);
       expect(key1.getSliceState(store.state)).toBe(100);
 
@@ -215,7 +242,7 @@ describe('store', () => {
         state: {
           init: () => 1,
           apply: (action, value, appState) => {
-            if (action.type === 'for-a') {
+            if (action.name === 'for-a') {
               return action.value;
             }
             return value;
@@ -240,19 +267,20 @@ describe('store', () => {
         },
       });
 
-      let store = new ApplicationStore(
-        AppState.create({ slices: [slice1, slice2] }),
-      );
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state: AppState.create({ slices: [slice1, slice2] }),
+      });
 
       let prevState = store.state;
 
-      store.dispatch({ type: 'for-a', value: 100 });
+      store.dispatch({ name: 'for-a', value: 100 });
 
       expect(sideEffect2Update).toBeCalledTimes(1);
-      expect(sideEffect2Update).nthCalledWith(1, store, prevState);
+      expect(sideEffect2Update).nthCalledWith(1, store, prevState, 2, 2);
 
       expect(sideEffect1Update).toBeCalledTimes(1);
-      expect(sideEffect1Update).nthCalledWith(1, store, prevState);
+      expect(sideEffect1Update).nthCalledWith(1, store, prevState, 100, 1);
 
       expect(sideEffect2Value).toMatchInlineSnapshot(`
         Object {
@@ -277,7 +305,7 @@ describe('store', () => {
       }));
       let store = setup(sideEffect1);
 
-      store.dispatch({ type: 'for-a', value: 100 });
+      store.dispatch({ name: 'for-a', value: 100 });
       expect(sideEffect1).toBeCalledTimes(1);
 
       expect(sideEffect1).toBeCalledTimes(1);
@@ -309,10 +337,79 @@ describe('store', () => {
       expect(sideEffect2).nthCalledWith(1, store);
       expect(destroy2).toBeCalledTimes(0);
       expect(update2).toBeCalledTimes(1);
-      expect(update2).nthCalledWith(1, store, prevState);
+      expect(update2).nthCalledWith(1, store, prevState, undefined, undefined);
     });
   });
 
+  describe('multiple side effects in a singel slice', () => {
+    const key1 = new SliceKey<number>('one');
+    const key2 = new SliceKey<number>('two');
+
+    const sideEffect1 = jest.fn();
+    const update1 = jest.fn();
+    const update2 = jest.fn();
+    const destroy1 = jest.fn();
+    const destroy2 = jest.fn();
+    test('works correctly', () => {
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => 1,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-a') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect: sideEffect1,
+      });
+
+      const slice2 = new Slice({
+        key: key2,
+        state: {
+          init: () => 2,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-b') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect: [
+          () => {
+            return {
+              update: update1,
+              destroy: destroy1,
+            };
+          },
+          () => {
+            return {
+              update: update2,
+              destroy: destroy2,
+            };
+          },
+        ],
+      });
+
+      let originalState = AppState.create({ slices: [slice1, slice2] });
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state: originalState,
+      });
+
+      store.dispatch({
+        name: 'for-b',
+        value: 77,
+      });
+      expect(update1).nthCalledWith(1, store, originalState, 77, 2);
+      expect(update2).nthCalledWith(1, store, originalState, 77, 2);
+
+      store.destroy();
+      expect(destroy2).toBeCalledTimes(1);
+      expect(destroy1).toBeCalledTimes(1);
+    });
+  });
   describe('deferred side effects', () => {
     test('does not call deferred update when scheduler is not provided', () => {
       const deferredUpdate = jest.fn(() => {});
@@ -326,13 +423,17 @@ describe('store', () => {
           }),
         ],
       });
-      const store = new ApplicationStore(state, undefined, () => {
-        return () => {};
+      const store = ApplicationStore.create({
+        storeName: 'test-store',
+        state,
+        scheduler: () => {
+          return () => {};
+        },
       });
       expect(store).toMatchSnapshot();
       expect(sideEffect).toBeCalledTimes(1);
       store.dispatch({
-        type: 'hello',
+        name: 'hello',
       });
       expect(deferredUpdate).toBeCalledTimes(0);
     });
@@ -340,7 +441,9 @@ describe('store', () => {
     describe('deferred for single slice', () => {
       const setup = (
         scheduler: SchedulerType,
-        deferredUpdate: ReturnType<SliceSideEffect<any, any>>['deferredUpdate'],
+        deferredUpdate: ReturnType<
+          SliceSideEffect<any, any, any>
+        >['deferredUpdate'],
       ) => {
         const sideEffect = jest.fn(() => ({
           deferredUpdate,
@@ -363,7 +466,11 @@ describe('store', () => {
           ],
         });
 
-        const store = new ApplicationStore(state, undefined, scheduler);
+        const store = ApplicationStore.create({
+          storeName: 'test-store',
+          state: state,
+          scheduler,
+        });
         return {
           counterKey,
           store,
@@ -384,7 +491,7 @@ describe('store', () => {
         const { store } = setup(scheduler, deferredUpdate);
 
         store.dispatch({
-          type: 'hello',
+          name: 'hello',
         });
 
         // since there is no prior scheduled action
@@ -393,7 +500,7 @@ describe('store', () => {
 
         for (let i = 0; i < 5; i++) {
           store.dispatch({
-            type: 'hello',
+            name: 'hello',
           });
         }
 
@@ -417,7 +524,7 @@ describe('store', () => {
         });
 
         store.dispatch({
-          type: 'hello',
+          name: 'hello',
         });
 
         // wait for the scheduler async-ness to finish
@@ -427,10 +534,10 @@ describe('store', () => {
         expect(signals[0]?.aborted).toBe(false);
 
         store.dispatch({
-          type: 'hello2',
+          name: 'hello2',
         });
         store.dispatch({
-          type: 'hello3',
+          name: 'hello3',
         });
         await sleep(10);
         expect(signals).toHaveLength(2);
@@ -458,13 +565,13 @@ describe('store', () => {
         expect(sideEffect).toBeCalledTimes(1);
         expect(scheduler).toBeCalledTimes(0);
         store.dispatch({
-          type: 'hello',
+          name: 'hello',
         });
 
         expect(scheduler).toBeCalledTimes(1);
 
         store.dispatch({
-          type: 'hello',
+          name: 'hello',
         });
 
         expect(counterKey.getSliceState(store.state)).toBe(2);
@@ -549,18 +656,22 @@ describe('store', () => {
           ],
         });
 
-        const store = new ApplicationStore(state, undefined, (cb) => {
-          let destroyed = false;
-          Promise.resolve().then(() => {
-            if (!destroyed) {
-              cb();
-            }
-          });
-          return () => {
-            destroyed = true;
-          };
+        const store = ApplicationStore.create({
+          storeName: 'test-store',
+          state,
+          scheduler: (cb) => {
+            let destroyed = false;
+            Promise.resolve().then(() => {
+              if (!destroyed) {
+                cb();
+              }
+            });
+            return () => {
+              destroyed = true;
+            };
+          },
         });
-        store.dispatch({ type: 'something' });
+        store.dispatch({ name: 'something' });
 
         await sleep(10);
         expect(deferredCounters).toEqual({
@@ -606,19 +717,23 @@ describe('store', () => {
         ],
       });
 
-      const store = new ApplicationStore(state, undefined, (cb) => {
-        let destroyed = false;
-        Promise.resolve().then(() => {
-          if (!destroyed) {
-            cb();
-          }
-        });
-        return () => {
-          destroyed = true;
-        };
+      const store = ApplicationStore.create({
+        storeName: 'test-store',
+        state,
+        scheduler: (cb) => {
+          let destroyed = false;
+          Promise.resolve().then(() => {
+            if (!destroyed) {
+              cb();
+            }
+          });
+          return () => {
+            destroyed = true;
+          };
+        },
       });
 
-      store.dispatch({ type: 'something' });
+      store.dispatch({ name: 'something' });
       store.destroy();
 
       expect(destroy1).toBeCalledTimes(1);
@@ -654,7 +769,8 @@ describe('DeferredSideEffectsRunner', () => {
     const runner = new DeferredSideEffectsRunner(
       [
         {
-          deferredUpdate: deferredUpdate,
+          key: 'some-key',
+          effect: { deferredUpdate: deferredUpdate },
         },
       ],
       scheduler,
@@ -676,7 +792,8 @@ describe('DeferredSideEffectsRunner', () => {
     const runner = new DeferredSideEffectsRunner(
       [
         {
-          deferredUpdate: deferredUpdate,
+          key: 'some-key',
+          effect: { deferredUpdate: deferredUpdate },
         },
       ],
       scheduler,

@@ -1,14 +1,9 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
 import { useEditorViewContext } from '@bangle.dev/react';
 
-import { AppStateContext } from '@bangle.io/app-state-context';
+import { useSliceState } from '@bangle.io/app-state-context';
+import { pageSliceKey } from '@bangle.io/constants';
 import {
   getScrollParentElement,
   rIdleDebounce,
@@ -23,15 +18,16 @@ const LOG = false;
 const log = LOG ? console.log.bind(console, extensionName) : () => {};
 
 export function PreserveScroll() {
-  const { appState } = useContext(AppStateContext);
   const { wsPath, editorId } = useEditorPluginMetadata();
-  usePreserveScroll(appState, wsPath, editorId);
+  usePreserveScroll(wsPath, editorId);
   useMonitorScrollEnd(wsPath, editorId);
   return null;
 }
 
-function usePreserveScroll(appState, wsPath: string, editorId?: number) {
+function usePreserveScroll(wsPath: string, editorId?: number) {
   const view = useEditorViewContext();
+  const { sliceState: pageState } = useSliceState(pageSliceKey);
+  const pageLifeCycleState = pageState?.lifeCycleState?.current;
 
   // watch page lifecycle
   useEffect(() => {
@@ -44,35 +40,24 @@ function usePreserveScroll(appState, wsPath: string, editorId?: number) {
   }, [view, wsPath, editorId]);
 
   useEffect(() => {
-    const listener = ({ appStateValue }) => {
+    if (pageLifeCycleState) {
       if (
-        appStateValue.prevPageLifecycleState !==
-        appStateValue.pageLifecycleState
+        ['active', 'passive', 'terminated', 'hidden'].includes(
+          pageLifeCycleState,
+        )
       ) {
-        if (
-          ['active', 'passive', 'terminated', 'hidden'].includes(
-            appStateValue.pageLifecycleState,
-          )
-        ) {
-          if (typeof editorId === 'number') {
-            // immediately as the user might be closing the tab
-            saveScrollPos(
-              wsPath,
-              editorId,
-              getScrollParentElement(editorId)?.scrollTop,
-            );
-            saveSelection(wsPath, editorId, view.state.selection);
-          }
+        if (typeof editorId === 'number') {
+          // immediately as the user might be closing the tab
+          saveScrollPos(
+            wsPath,
+            editorId,
+            getScrollParentElement(editorId)?.scrollTop,
+          );
+          saveSelection(wsPath, editorId, view.state.selection);
         }
       }
-    };
-
-    appState.registerListener(listener);
-
-    return () => {
-      appState.deregisterListener(listener);
-    };
-  }, [appState, wsPath, editorId, view]);
+    }
+  }, [pageLifeCycleState, wsPath, editorId, view]);
 }
 
 function useMonitorScrollEnd(wsPath: string, editorId?: number) {

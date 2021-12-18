@@ -13,6 +13,7 @@ import {
   CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_ACTIONS_TOGGLE_THEME,
 } from '@bangle.io/constants';
+import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
@@ -24,7 +25,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch } = useUIManagerContext();
   const { dispatchAction } = useActionContext();
   const { createWorkspace } = useWorkspaces();
-
+  const { primaryEditor, secondaryEditor } = useEditorManagerContext();
   const {
     wsName,
     primaryWsPath,
@@ -45,7 +46,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
       switch (actionObject.name) {
         case CORE_ACTIONS_TOGGLE_THEME: {
           dispatch({
-            type: 'UI/TOGGLE_THEME',
+            name: 'UI/TOGGLE_THEME',
           });
           return true;
         }
@@ -53,7 +54,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
         case CORE_ACTIONS_NEW_NOTE: {
           if (!wsName) {
             dispatch({
-              type: 'UI/SHOW_NOTIFICATION',
+              name: 'UI/SHOW_NOTIFICATION',
               value: {
                 severity: 'error',
                 uid: 'new-note-not-no-workspace',
@@ -64,7 +65,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           }
           // To avoid overlapping
           dispatch({
-            type: 'UI/UPDATE_PALETTE',
+            name: 'UI/UPDATE_PALETTE',
             value: { type: null },
           });
           updateInputModal({
@@ -78,7 +79,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
         case CORE_ACTIONS_NEW_WORKSPACE: {
           // To avoid overlapping
           dispatch({
-            type: 'UI/SHOW_MODAL',
+            name: 'UI/SHOW_MODAL',
             value: { modal: '@modal/new-workspace' },
           });
           return true;
@@ -87,7 +88,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
         case CORE_ACTIONS_RENAME_ACTIVE_NOTE: {
           if (!primaryWsPath) {
             dispatch({
-              type: 'UI/SHOW_NOTIFICATION',
+              name: 'UI/SHOW_NOTIFICATION',
               value: {
                 severity: 'error',
                 uid: 'rename-wsPath-not-found',
@@ -99,7 +100,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
 
           // To avoid overlapping
           dispatch({
-            type: 'UI/UPDATE_PALETTE',
+            name: 'UI/UPDATE_PALETTE',
             value: { type: null },
           });
           updateInputModal({ type: 'rename-note' });
@@ -108,7 +109,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
 
         case CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR: {
           dispatch({
-            type: 'UI/TOGGLE_NOTE_SIDEBAR',
+            name: 'UI/TOGGLE_NOTE_SIDEBAR',
           });
           return true;
         }
@@ -116,7 +117,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
         case CORE_ACTIONS_DELETE_ACTIVE_NOTE: {
           if (!primaryWsPath) {
             dispatch({
-              type: 'UI/SHOW_NOTIFICATION',
+              name: 'UI/SHOW_NOTIFICATION',
               value: {
                 severity: 'error',
                 uid: 'delete-wsPath-not-found',
@@ -127,7 +128,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
           }
 
           dispatch({
-            type: 'UI/UPDATE_PALETTE',
+            name: 'UI/UPDATE_PALETTE',
             value: { type: null },
           });
 
@@ -141,7 +142,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
             deleteNote(primaryWsPath)
               .then((error) => {
                 dispatch({
-                  type: 'UI/SHOW_NOTIFICATION',
+                  name: 'UI/SHOW_NOTIFICATION',
                   value: {
                     severity: 'success',
                     uid: 'success-delete-' + primaryWsPath,
@@ -151,7 +152,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
               })
               .catch((error) => {
                 dispatch({
-                  type: 'UI/SHOW_NOTIFICATION',
+                  name: 'UI/SHOW_NOTIFICATION',
                   value: {
                     severity: 'error',
                     uid: 'delete-' + primaryWsPath,
@@ -198,7 +199,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
               })
               .catch((error) => {
                 dispatch({
-                  type: 'UI/SHOW_NOTIFICATION',
+                  name: 'UI/SHOW_NOTIFICATION',
                   value: {
                     severity: 'error',
                     uid: 'error-create-workspace-' + wsName,
@@ -227,7 +228,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
               })
               .catch((error) => {
                 dispatch({
-                  type: 'UI/SHOW_NOTIFICATION',
+                  name: 'UI/SHOW_NOTIFICATION',
                   value: {
                     severity: 'error',
                     uid: 'error-create-workspace-' + rootDirHandle?.name,
@@ -246,6 +247,15 @@ export function CoreActionsHandler({ registerActionHandler }) {
           return true;
         }
 
+        case 'action::bangle-io-core-actions:focus-primary-editor': {
+          primaryEditor?.focusView();
+          return true;
+        }
+
+        case 'action::bangle-io-core-actions:focus-secondary-editor': {
+          secondaryEditor?.focusView();
+          return true;
+        }
         default: {
           return false;
         }
@@ -259,6 +269,8 @@ export function CoreActionsHandler({ registerActionHandler }) {
       secondaryWsPath,
       createWorkspace,
       updateOpenedWsPaths,
+      primaryEditor,
+      secondaryEditor,
     ],
   );
 
@@ -276,7 +288,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
       updateInputModal({ type: undefined });
       if (focusEditor) {
         dispatchAction({
-          name: 'action::bangle-io-editor-core:focus-primary-editor',
+          name: 'action::bangle-io-core-actions:focus-primary-editor',
         });
       }
     },

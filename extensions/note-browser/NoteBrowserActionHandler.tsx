@@ -15,7 +15,7 @@ export function NoteBrowserActionHandler({
       switch (actionObject.name) {
         case 'action::bangle-io-note-browser:toggle-note-browser': {
           dispatch({
-            type: 'UI/CHANGE_SIDEBAR',
+            name: 'UI/CHANGE_SIDEBAR',
             value: {
               type:
                 sidebar === 'sidebar::bangle-io-note-browser:note-browser'

@@ -11,6 +11,7 @@ const {
 jest.setTimeout(155 * 1000);
 
 let page, destroyPage;
+jest.retryTimes(2);
 
 describe('Create #cosmic and #space tags', () => {
   beforeEach(async () => {
@@ -26,7 +27,10 @@ describe('Create #cosmic and #space tags', () => {
     await page.keyboard.press('Enter');
     await page.keyboard.type(
       'i am a lovely planet from outer galaxy #cosmic #space .',
+      { delay: 20 },
     );
+
+    await sleep();
 
     // creating new note because the data typed above might not have been flushed to disk
     // resulting in 0 search results
@@ -56,10 +60,10 @@ describe('Create #cosmic and #space tags', () => {
       },
     );
 
-    await searchInput.type('tag:cosmic');
+    await searchInput.type('tag:cosmic', { delay: 10 });
 
     await page.waitForSelector('.search-notes .search-result-note-match', {
-      timeout: SELECTOR_TIMEOUT,
+      timeout: 4 * SELECTOR_TIMEOUT,
     });
 
     let noteMatches = await page.$$eval(
@@ -77,11 +81,11 @@ describe('Create #cosmic and #space tags', () => {
   });
 
   test('clicking on a note tag in editor searches for it', async () => {
-    await page.keyboard.type(' #cosmic .');
+    await page.keyboard.type(' #cosmic .', { delay: 10 });
     await sleep();
 
     const tag = await page.waitForSelector('.inline-note-tag', {
-      timeout: SELECTOR_TIMEOUT,
+      timeout: 2 * SELECTOR_TIMEOUT,
     });
 
     await tag.click();

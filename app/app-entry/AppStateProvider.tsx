@@ -1,25 +1,17 @@
-import * as Comlink from 'comlink';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
-import { AppStateContext } from '@bangle.io/app-state-context';
+import {
+  BangleStoreChanged,
+  BangleStoreContext,
+} from '@bangle.io/app-state-context';
 import { initializeBangleStore } from '@bangle.io/bangle-store';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
-import { objectSync, ObjectSyncCallback } from '@bangle.io/object-sync';
-import { initialAppState as _initialAppState } from '@bangle.io/shared';
-
-import { moduleSupport } from './misc/module-support';
-
-const initialAppState = Object.assign({}, _initialAppState);
+import { editorManagerSliceKey } from '@bangle.io/editor-manager-context';
+import { safeRequestIdleCallback } from '@bangle.io/utils';
 
 const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'AppStateContext') : () => {};
-
-const appState = objectSync(initialAppState, {
-  emitChange: (event) => {
-    naukarWorkerProxy.updateWorkerAppState(event);
-  },
-});
 
 export function AppStateProvider({
   bangleStore,
@@ -30,41 +22,52 @@ export function AppStateProvider({
   bangleStore: ReturnType<typeof initializeBangleStore>;
   children: React.ReactNode;
 }) {
-  const [appStateValue, updateAppStateValue] = useState(initialAppState);
+  const history = useHistory();
 
   useEffect(() => {
-    const listener: ObjectSyncCallback<any> = ({ appStateValue }) => {
-      log('received appStateChange', appStateValue);
-      updateAppStateValue(Object.assign({}, appStateValue) as any);
-    };
-    appState.registerListener(listener);
+    // TODO there is a possibility that we miss a location
+    // update before this is initialized
+    const unlisten = history.listen((location) => {
+      bangleStore.dispatch({
+        name: 'action::workspace-context:update-location',
+        value: {
+          locationSearchQuery: location.search,
+          locationPathname: location.pathname,
+        },
+      });
+    });
     return () => {
-      appState.deregisterListener(listener);
+      unlisten();
     };
-  }, []);
+  }, [bangleStore, history]);
 
   useEffect(() => {
-    let receiveWorkerChanges = (event) => appState.applyForeignChange(event);
-    if (moduleSupport) {
-      receiveWorkerChanges = Comlink.proxy(receiveWorkerChanges);
-    }
-
-    naukarWorkerProxy.registerUpdateMainAppStateCallback(receiveWorkerChanges);
-  }, []);
-
-  const value = useMemo(() => {
-    return {
-      storeChanged: bangleStoreChanged,
-      store: bangleStore,
-      mutableAppStateValue: appState.appStateValue,
-      appStateValue,
-      appState,
-    };
-  }, [appStateValue, bangleStore, bangleStoreChanged]);
+    // TODO: this setup should be done in app
+    safeRequestIdleCallback(() => {
+      if (
+        typeof window !== 'undefined' &&
+        window.location?.hash?.includes('debug_pm')
+      ) {
+        const primaryEditor = editorManagerSliceKey.getSliceState(
+          bangleStore.state,
+        )?.primaryEditor;
+        if (primaryEditor) {
+          console.log('debugging pm');
+          import(
+            /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
+          ).then((args) => {
+            args.applyDevTools(primaryEditor!.view);
+          });
+        }
+      }
+    });
+  }, [bangleStore.state]);
 
   return (
-    <AppStateContext.Provider value={value}>
-      {children}
-    </AppStateContext.Provider>
+    <BangleStoreContext.Provider value={bangleStore}>
+      <BangleStoreChanged.Provider value={bangleStoreChanged}>
+        {children}
+      </BangleStoreChanged.Provider>
+    </BangleStoreContext.Provider>
   );
 }

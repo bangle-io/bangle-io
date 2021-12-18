@@ -3,14 +3,18 @@
 import type { History as _History } from 'history';
 import { matchPath } from 'react-router-dom';
 
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import { createEmptyArray } from '@bangle.io/utils';
+
 import { filePathToWsPath, resolvePath } from './helpers';
+
+export { matchPath };
 
 type MaybeWsPath = string | undefined;
 
 export type Location = _History<any>['location'];
 export type History = _History<any>;
 
-const MAX_SIZE = 2;
 /**
  * This exists to keep null and undefined value interchangeable
  */
@@ -28,10 +32,27 @@ function compare<T>(a: T[], b: T[]): boolean {
 
 export class OpenedWsPaths {
   constructor(private wsPaths: MaybeWsPath[]) {
-    if (wsPaths.length !== MAX_SIZE) {
-      throw new Error(`Only support ${MAX_SIZE} editors opened at a time`);
+    if (wsPaths.length !== MAX_OPEN_EDITORS) {
+      throw new Error(
+        `Only support ${MAX_OPEN_EDITORS} editors opened at a time`,
+      );
     }
   }
+
+  static createFromArray(array: (string | null | undefined)[]) {
+    let safeArray = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
+      return array[k] || undefined;
+    });
+
+    return new OpenedWsPaths(safeArray);
+  }
+
+  static createEmpty() {
+    const wsPaths = createEmptyArray(MAX_OPEN_EDITORS);
+
+    return new OpenedWsPaths(wsPaths);
+  }
+
   get primaryWsPath() {
     return this.wsPaths[0] ?? undefined;
   }
@@ -79,7 +100,7 @@ export class OpenedWsPaths {
   shrink() {
     const items = this.wsPaths.filter((r) => r);
 
-    const arr: any = Array.from({ length: MAX_SIZE }, (_, k) => {
+    const arr: any = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
       return items[k] || undefined;
     });
 
@@ -131,9 +152,8 @@ export class OpenedWsPaths {
   }
 
   closeAll() {
-    let newObj = new OpenedWsPaths(
-      Array.from({ length: MAX_SIZE }, () => undefined),
-    );
+    let newObj = OpenedWsPaths.createEmpty();
+
     // avoid changing instance
     if (newObj.equal(this)) {
       return this;
@@ -157,7 +177,8 @@ export class OpenedWsPaths {
   }
 
   toArray() {
-    return Array.from(this.wsPaths);
+    // mapping undefined to null since undefined is not serializable
+    return Array.from(this.wsPaths).map((r) => (r ? r : null));
   }
 }
 
@@ -177,7 +198,7 @@ function getPrimaryFilePath(location: Location) {
   if (location) {
     return location.pathname.split('/').slice(3).join('/');
   }
-  return null;
+  return undefined;
 }
 
 export function getPrimaryWsPath(location: Location) {

@@ -2,8 +2,12 @@ import React, { ReactNode, useCallback, useMemo } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 import { Activitybar } from '@bangle.io/activitybar';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { EditorContainer } from '@bangle.io/editor-container';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import {
+  getEditor,
+  useEditorManagerContext,
+} from '@bangle.io/editor-manager-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import { useUIManagerContext } from '@bangle.io/ui-context';
@@ -36,7 +40,9 @@ export function AppContainer() {
   const sidebars = extensionRegistry.getSidebars();
   const noteSidebarWidgets = extensionRegistry.getNoteSidebarWidgets();
   const actionKeybindings = extensionRegistry.getActionKeybindingMapping();
-  const { focusedEditorId, getEditor } = useEditorManagerContext();
+
+  const store = useBangleStoreContext();
+  const { focusedEditorId } = useEditorManagerContext();
 
   const { sidebar, dispatch, noteSidebar } = useUIManagerContext();
   const currentSidebar = sidebar
@@ -45,7 +51,7 @@ export function AppContainer() {
 
   const onDismissSidebar = useCallback(() => {
     dispatch({
-      type: 'UI/CHANGE_SIDEBAR',
+      name: 'UI/CHANGE_SIDEBAR',
       value: {
         type: null,
       },
@@ -54,28 +60,28 @@ export function AppContainer() {
 
   const onDismissNoteSidebar = useCallback(() => {
     dispatch({
-      type: 'UI/UPDATE_NOTE_SIDEBAR',
+      name: 'UI/UPDATE_NOTE_SIDEBAR',
       value: false,
     });
   }, [dispatch]);
 
   const showNoteSidebar = useCallback(() => {
     dispatch({
-      type: 'UI/UPDATE_NOTE_SIDEBAR',
+      name: 'UI/UPDATE_NOTE_SIDEBAR',
       value: true,
     });
   }, [dispatch]);
 
   const focusedEditor = useMemo(() => {
     if (typeof focusedEditorId === 'number') {
-      const editor = getEditor(focusedEditorId);
+      const editor = getEditor(focusedEditorId)(store.state);
       const wsPath = openedWsPaths.getByIndex(focusedEditorId);
       if (editor && wsPath) {
         return { wsPath, editor: editor };
       }
     }
     return undefined;
-  }, [openedWsPaths, getEditor, focusedEditorId]);
+  }, [openedWsPaths, store.state, focusedEditorId]);
 
   const mainContent = useMemo(() => {
     const result: ReactNode[] = [];

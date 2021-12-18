@@ -1,37 +1,26 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 
-import type { BangleEditor } from '@bangle.dev/core';
-import type { EditorState, EditorView } from '@bangle.dev/pm';
-import { getIdleCallback } from '@bangle.dev/utils';
+import {
+  initialBangleStore,
+  useSliceState,
+} from '@bangle.io/app-state-context';
+import { ApplicationStore } from '@bangle.io/create-store';
+
+import { editorManagerSliceKey } from './constants';
+import { initialEditorSliceState } from './editor-manager-slice';
+import type { EditorDispatchType, EditorSliceState } from './types';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'EditorManager') : () => {};
 
-const MAX_EDITOR = 2;
+export type EditorManagerContextValue = EditorSliceState & {
+  bangleStore: ApplicationStore;
+};
 
-interface EditorManagerContextValue {
-  focusedEditorId: number | undefined;
-  forEachEditor: (cb: (editor: BangleEditor, index: number) => void) => void;
-  getEditor: (editorId: number) => BangleEditor | undefined;
-  getEditorState: (editorId: number) => EditorState | undefined;
-  getEditorView: (editorId: number) => EditorView | undefined;
-  primaryEditor: BangleEditor | undefined;
-  secondaryEditor: BangleEditor | undefined;
-  setEditor: (editorId: number, editor: BangleEditor) => void;
-  updateFocusedEditor: (editorId: number | undefined) => void;
-}
-
-type EditorsType = [BangleEditor | undefined, BangleEditor | undefined];
+// type EditorsType = [BangleEditor | undefined, BangleEditor | undefined];
 const EditorManagerContext = React.createContext<EditorManagerContextValue>({
-  focusedEditorId: undefined,
-  forEachEditor: () => {},
-  getEditor: () => undefined,
-  getEditorState: () => undefined,
-  getEditorView: () => undefined,
-  primaryEditor: undefined,
-  secondaryEditor: undefined,
-  setEditor: () => {},
-  updateFocusedEditor: () => {},
+  ...initialEditorSliceState,
+  bangleStore: initialBangleStore,
 });
 
 export function useEditorManagerContext() {
@@ -57,92 +46,17 @@ export function EditorManager({ children }) {
    * 8. manager calls localDisk.getItem to get the document from indexdb.
    * 9. Collab-client plugin refreshes the editor with correct content
    */
-  const [editors, _setEditor] = useState<EditorsType>([undefined, undefined]);
-  const [focusedEditorId, updateFocusedEditorId] = useState<
-    number | undefined
-  >();
-  const [primaryEditor, secondaryEditor] = editors;
+  const { sliceState: editorManager, store } = useSliceState(
+    editorManagerSliceKey,
+    initialEditorSliceState,
+  );
 
-  const value: EditorManagerContextValue = useMemo(() => {
-    const setEditor: EditorManagerContextValue['setEditor'] = (
-      editorId,
-      editor,
-    ) => {
-      _setEditor((array) => {
-        if (editorId > MAX_EDITOR) {
-          throw new Error(`Only ${MAX_EDITOR + 1} allowed`);
-        }
-        const newArray = array.slice(0) as EditorsType;
-        newArray[editorId] = editor;
-        return newArray;
-      });
-    };
-
-    const getEditor: EditorManagerContextValue['getEditor'] = (editorId) => {
-      return editors[editorId];
-    };
-
-    const forEachEditor: EditorManagerContextValue['forEachEditor'] = (cb) => {
-      editors.forEach((editor, index) => {
-        if (editor) {
-          cb(editor, index);
-        }
-      });
-    };
-
-    const updateFocusedEditor: EditorManagerContextValue['updateFocusedEditor'] =
-      (editorId: number | undefined) => {
-        updateFocusedEditorId(editorId);
-      };
-
-    const getEditorView: EditorManagerContextValue['getEditorView'] = (
-      editorId: number,
-    ): EditorView | undefined => {
-      if (editorId == null) {
-        return undefined;
-      }
-      let editor = editors[editorId];
-      if (!editor || editor.destroyed) {
-        return undefined;
-      }
-      return editor.view;
-    };
-
+  const value = useMemo(() => {
     return {
-      focusedEditorId,
-      forEachEditor,
-      getEditor,
-      getEditorState: (editorId: number): EditorState | undefined => {
-        return getEditorView(editorId)?.state;
-      },
-      getEditorView,
-      primaryEditor: editors[0],
-      secondaryEditor: editors[1],
-      setEditor,
-      updateFocusedEditor,
+      ...(editorManager || initialEditorSliceState),
+      bangleStore: store,
     };
-  }, [_setEditor, focusedEditorId, editors]);
-
-  useEffect(() => {
-    (window as any).primaryEditor = primaryEditor;
-  }, [primaryEditor]);
-  useEffect(() => {
-    (window as any).secondaryEditor = secondaryEditor;
-  }, [secondaryEditor]);
-
-  useEffect(() => {
-    // TODO: this setup should be done in app
-    getIdleCallback(() => {
-      if (window.location?.hash?.includes('debug_pm') && editors[0]) {
-        console.log('debugging pm');
-        import(
-          /* webpackChunkName: "prosemirror-dev-tools" */ 'prosemirror-dev-tools'
-        ).then((args) => {
-          args.applyDevTools(editors[0]!.view);
-        });
-      }
-    });
-  }, [editors]);
+  }, [store, editorManager]);
 
   return (
     <EditorManagerContext.Provider value={value}>

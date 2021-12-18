@@ -1,12 +1,20 @@
+import type { JsonValue } from 'type-fest';
+
 import type { AppState } from './app-state';
 import type { ApplicationStore } from './app-store';
 import type { SliceKey } from './slice-key';
 import { createKey } from './slice-key';
 
+export type BaseAction =
+  | undefined
+  | {
+      name: string;
+    };
+
 // A - action
 // SL - Slice's state
 // S - AppState
-export interface SliceStateField<SL, A, S> {
+export interface SliceStateField<SL, A extends BaseAction, S> {
   init(
     this: Slice<SL, A, S>,
     config: { [key: string]: any },
@@ -19,20 +27,24 @@ export interface SliceStateField<SL, A, S> {
     appState: AppState<S, A>,
   ): SL;
 
-  toJSON?: ((this: Slice<SL, A, S>, value: SL) => any) | null | undefined;
-  fromJSON?:
-    | ((
-        this: Slice<SL, A, S>,
-        config: { [key: string]: any },
-        value: SL,
-        appState: AppState<S, A>,
-      ) => any)
-    | null
-    | undefined;
+  stateToJSON?: (this: Slice<SL, A, S>, value: SL) => JsonValue;
+  stateFromJSON?: (
+    this: Slice<SL, A, S>,
+    config: { [key: string]: any },
+    value: JsonValue,
+    appState: AppState<S, A>,
+  ) => SL;
 }
 
-export type SliceSideEffect<S, A> = (store: ApplicationStore<S, A>) => {
-  update?: (store: ApplicationStore<S, A>, prevState: AppState<S, A>) => void;
+export type SliceSideEffect<SL, A extends BaseAction, S = SL> = (
+  store: ApplicationStore<S, A>,
+) => {
+  update?: (
+    store: ApplicationStore<S, A>,
+    prevState: AppState<S, A>,
+    sliceState: SL,
+    prevSliceState: SL,
+  ) => void;
   destroy?: () => void;
   deferredUpdate?: (
     store: ApplicationStore<S, A>,
@@ -40,14 +52,17 @@ export type SliceSideEffect<S, A> = (store: ApplicationStore<S, A>) => {
   ) => void;
 };
 
-export class Slice<SL, A = any, S = SL> {
+export class Slice<SL, A extends BaseAction = any, S = SL> {
   key: string;
 
   constructor(
     public spec: {
       key?: SliceKey<SL, A, S>;
       state?: SliceStateField<SL, A, S>;
-      sideEffect?: SliceSideEffect<S, A>;
+      // false if it cannot be serialized
+      actionToJSON?: (action: A & { id: string }) => string | false;
+      actionFromJSON?: (jsonAction: string) => A;
+      sideEffect?: SliceSideEffect<SL, A, S> | SliceSideEffect<SL, A, S>[];
     },
   ) {
     this.key = spec.key ? spec.key.key : createKey('slice');

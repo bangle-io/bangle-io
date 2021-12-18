@@ -1,39 +1,34 @@
 import React, { useContext, useEffect, useState } from 'react';
 
+import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import {
   ApplicationStore,
   AppState as ApplicationState,
+  BaseAction,
   SliceKey,
 } from '@bangle.io/create-store';
 
-export interface AppState {
-  hasPendingWrites?: boolean;
-  pageLifecycleState?: string;
-  prevPageLifecycleState?: string;
-}
-export const AppStateContext = React.createContext<{
-  mutableAppStateValue?: AppState;
-  appStateValue?: Readonly<AppState>;
-  appState?: unknown;
-
-  // store
-  storeChanged: number;
-  store: ApplicationStore;
-}>({
-  storeChanged: 0,
-  store: new ApplicationStore(ApplicationState.create({ slices: [] })),
+export const initialBangleStore = ApplicationStore.create({
+  storeName: MAIN_STORE_NAME,
+  state: ApplicationState.create({ slices: [] }),
 });
 
+export const BangleStoreContext =
+  React.createContext<ApplicationStore>(initialBangleStore);
+
+export const BangleStoreChanged = React.createContext<number>(-1);
+
 export function useBangleStoreContext() {
-  return useContext(AppStateContext);
+  return useContext(BangleStoreContext);
 }
 
-export function useSliceState<SL, A, S = SL>(
+export function useSliceState<SL, A extends BaseAction, S = SL>(
   sliceKey: SliceKey<SL, A, S>,
-  initialState: SL,
+  initialState?: SL,
 ) {
-  const [sliceState, updateSliceState] = useState<SL>(initialState);
-  const { store, storeChanged } = useBangleStoreContext();
+  const [sliceState, updateSliceState] = useState<SL | undefined>(initialState);
+  const store = useBangleStoreContext();
+  const storeChanged = useContext(BangleStoreChanged);
 
   useEffect(() => {
     const newState = sliceKey.getSliceState(store.state);

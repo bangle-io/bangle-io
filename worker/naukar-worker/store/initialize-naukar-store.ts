@@ -1,5 +1,4 @@
-import deepEqual from 'fast-deep-equal';
-
+import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
 import {
@@ -18,25 +17,21 @@ export function initializeNaukarStore({
 }: {
   onUpdate?: (store: ApplicationStore) => void;
 }) {
-  const store = new ApplicationStore<NaukarSliceTypes, NaukarActionTypes>(
-    AppState.create({ slices: naukarStateSlices({ onUpdate }) }),
-    (store, _action) => {
-      let action: typeof _action = JSON.parse(JSON.stringify(_action));
-
-      if (!deepEqual(action, _action)) {
-        console.warn('Faulty action "' + _action.type + '":', _action);
-      }
+  const store = ApplicationStore.create({
+    storeName: WORKER_STORE_NAME,
+    state: AppState.create({ slices: naukarStateSlices({ onUpdate }) }),
+    dispatchAction: (store, action) => {
       log(action);
       let newState = store.state.applyAction(action);
       store.updateState(newState);
     },
-    (cb) => {
+    scheduler: (cb) => {
       const id = setTimeout(cb, MAX_DEFERRED_WAIT_TIME);
       return () => {
         clearTimeout(id);
       };
     },
-  );
+  });
 
   return store;
 }

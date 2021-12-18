@@ -3,6 +3,8 @@ import { PluginKey } from '@bangle.dev/pm';
 import type { IntersectionObserverPluginState } from '@bangle.io/pm-plugins';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 
+export const MAX_OPEN_EDITORS = 2;
+
 export const EditorPluginMetadataKey = new PluginKey<EditorPluginMetadata>(
   'EditorPluginMetadataKey',
 );

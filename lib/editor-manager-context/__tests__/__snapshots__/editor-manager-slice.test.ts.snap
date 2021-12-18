@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`serializing state selection is serialized correctly 1`] = `
+Object {
+  "editorManagerSlice": Object {
+    "data": Object {
+      "editorConfig": Object {
+        "scrollPositions": Array [
+          null,
+          null,
+        ],
+        "selections": Array [
+          Object {
+            "test:one.md": Object {
+              "anchor": 5,
+              "head": 5,
+              "type": "text",
+            },
+          },
+          null,
+        ],
+      },
+      "editors": Array [],
+      "focusedEditorId": undefined,
+      "primaryEditor": undefined,
+      "secondaryEditor": undefined,
+    },
+    "version": "editor-slice/2",
+  },
+}
+`;

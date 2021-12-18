@@ -7,7 +7,6 @@ import { checkWidescreen, rafSchedule, useWindowSize } from '@bangle.io/utils';
 
 import { applyTheme } from './apply-theme';
 
-const persistKey = 'UIManager0.724';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UISlice') : () => {};
 
@@ -25,34 +24,34 @@ export interface UISliceState {
 }
 
 export type UiContextAction =
-  | { type: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
-  | { type: 'UI/CHANGE_SIDEBAR'; value: { type: string | null } }
-  | { type: 'UI/SHOW_NOTIFICATION'; value: NotificationPayloadType }
-  | { type: 'UI/DISMISS_NOTIFICATION'; value: { uid: string } }
+  | { name: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
+  | { name: 'UI/CHANGE_SIDEBAR'; value: { type: string | null } }
+  | { name: 'UI/SHOW_NOTIFICATION'; value: NotificationPayloadType }
+  | { name: 'UI/DISMISS_NOTIFICATION'; value: { uid: string } }
   | {
-      type: 'UI/UPDATE_PALETTE';
+      name: 'UI/UPDATE_PALETTE';
       value: {
         type: string | null;
         initialQuery?: string;
       };
     }
-  | { type: 'UI/RESET_PALETTE' }
-  | { type: 'UI/TOGGLE_THEME' }
-  | { type: 'UI/UPDATE_THEME'; value: { theme: ThemeType } }
+  | { name: 'UI/RESET_PALETTE' }
+  | { name: 'UI/TOGGLE_THEME' }
+  | { name: 'UI/UPDATE_THEME'; value: { theme: ThemeType } }
   | {
-      type: 'UI/UPDATE_WINDOW_SIZE';
+      name: 'UI/UPDATE_WINDOW_SIZE';
       value: { windowSize: ReturnType<typeof useWindowSize> };
     }
   | {
-      type: 'UI/SHOW_MODAL';
+      name: 'UI/SHOW_MODAL';
       value: { modal: string | null };
     }
   | {
-      type: 'UI/DISMISS_MODAL';
+      name: 'UI/DISMISS_MODAL';
     }
-  | { type: 'UI/UPDATE_NEW_CHANGELOG'; value: boolean }
-  | { type: 'UI/UPDATE_NOTE_SIDEBAR'; value: boolean }
-  | { type: 'UI/TOGGLE_NOTE_SIDEBAR' };
+  | { name: 'UI/UPDATE_NEW_CHANGELOG'; value: boolean }
+  | { name: 'UI/UPDATE_NOTE_SIDEBAR'; value: boolean }
+  | { name: 'UI/TOGGLE_NOTE_SIDEBAR' };
 
 export const initialState: UISliceState = {
   // UI
@@ -77,14 +76,11 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
     key: uiSliceKey,
     state: {
       init: () => {
-        let store = Object.assign({}, initialState, retrievePersistedState());
-        applyTheme(store.theme);
-        setRootWidescreenClass(store.widescreen);
-        return store;
+        return Object.assign({}, initialState);
       },
       apply: (action, state) => {
         log({ action, state });
-        switch (action.type) {
+        switch (action.name) {
           case 'UI/TOGGLE_SIDEBAR': {
             const sidebar = Boolean(state.sidebar)
               ? undefined
@@ -212,12 +208,40 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
           }
         }
       },
+
+      stateToJSON(value) {
+        //
+        return {
+          ...initialState,
+          notifications: [],
+          sidebar: value.sidebar,
+          theme: value.theme,
+          noteSidebar: value.noteSidebar,
+        };
+      },
+
+      stateFromJSON(_, value: any) {
+        const state: UISliceState = Object.assign({}, initialState, {
+          sidebar: value.sidebar,
+          theme: value.theme || getThemePreference(),
+          noteSidebar: value.noteSidebar,
+          widescreen: checkWidescreen(),
+        });
+        return state;
+      },
     },
     sideEffect(store) {
+      const state = uiSliceKey.getSliceState(store.state);
+
+      if (state) {
+        applyTheme(state.theme);
+        setRootWidescreenClass(state.widescreen);
+      }
+
       // Handler to call on window resize
       const handleResize = rafSchedule(() => {
         store.dispatch({
-          type: 'UI/UPDATE_WINDOW_SIZE',
+          name: 'UI/UPDATE_WINDOW_SIZE',
           value: {
             windowSize: {
               width: window.innerWidth,
@@ -234,18 +258,6 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
         destroy() {
           handleResize.cancel();
           window.removeEventListener('resize', handleResize);
-        },
-        deferredUpdate(store) {
-          const state = uiSliceKey.getSliceState(store.state);
-          if (!state) {
-            return;
-          }
-
-          persistState({
-            sidebar: state.sidebar,
-            theme: state.theme,
-            noteSidebar: state.noteSidebar,
-          });
         },
       };
     },
@@ -271,20 +283,4 @@ function setRootWidescreenClass(widescreen) {
     root?.classList.remove('widescreen');
     body?.classList.remove('widescreen');
   }
-}
-
-function persistState(obj: Partial<UISliceState>) {
-  localStorage.setItem(persistKey, JSON.stringify(obj));
-}
-
-function retrievePersistedState(): Partial<UISliceState> {
-  try {
-    const item = localStorage.getItem(persistKey);
-    if (typeof item === 'string') {
-      return JSON.parse(item);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-  return {};
 }

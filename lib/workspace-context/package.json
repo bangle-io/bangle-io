@@ -22,6 +22,7 @@
     "@bangle.dev/core": "0.28.3",
     "@bangle.dev/utils": "0.28.3",
     "@bangle.io/baby-fs": "workspace:*",
+    "@bangle.io/create-store": "workspace:*",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/history": "^4.7.9",
@@ -41,7 +42,8 @@
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspaces": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "react-router-dom": "^5.3.0"
+    "react-router-dom": "^5.3.0",
+    "reselect": "^4.1.5"
   },
   "publishConfig": {
     "access": "public"

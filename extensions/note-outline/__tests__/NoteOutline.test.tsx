@@ -2,7 +2,11 @@ import { act, render } from '@testing-library/react';
 import React from 'react';
 
 import { useActionHandler } from '@bangle.io/action-context';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import {
+  getEditor,
+  getEditorState,
+  useEditorManagerContext,
+} from '@bangle.io/editor-manager-context';
 import type { ActionHandler } from '@bangle.io/shared-types';
 import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
 import {
@@ -18,7 +22,13 @@ import { NoteOutline } from '../NoteOutline';
 
 jest.mock('@bangle.io/workspace-context');
 jest.mock('@bangle.io/action-context');
-jest.mock('@bangle.io/editor-manager-context');
+jest.mock('@bangle.io/editor-manager-context', () => {
+  return {
+    useEditorManagerContext: jest.fn(),
+    getEditor: jest.fn(),
+    getEditorState: jest.fn(),
+  };
+});
 
 jest.mock('@bangle.io/utils', () => {
   const utils = jest.requireActual('@bangle.io/utils');
@@ -117,12 +127,13 @@ para 2
   });
 
   test('renders headings when focused with editor', () => {
+    (getEditorState as any).mockImplementation(() => () => editor.view.state);
+    (getEditor as any).mockImplementation(() => () => editor);
+
     useEditorManagerContextMock.mockImplementation(() => {
       return {
         ...getUseEditorManagerContextReturn,
         focusedEditorId: 0,
-        getEditor: jest.fn(() => editor),
-        getEditorState: jest.fn(() => editor.view.state),
       };
     });
     const renderResult = render(
@@ -177,12 +188,12 @@ para 2
   });
 
   test('renders headings when no focused editor', () => {
+    (getEditorState as any).mockImplementation(() => () => editor.view.state);
+    (getEditor as any).mockImplementation(() => () => editor);
     useEditorManagerContextMock.mockImplementation(() => {
       return {
         ...getUseEditorManagerContextReturn,
         focusedEditorId: undefined,
-        getEditor: jest.fn(() => editor),
-        getEditorState: jest.fn(() => editor.view.state),
       };
     });
     const renderResult = render(
@@ -196,10 +207,11 @@ para 2
 
   describe('actions', () => {
     let dispatchActionCb: ActionHandler | undefined;
-    let getEditorState;
+
     beforeEach(() => {
       dispatchActionCb = undefined;
-      getEditorState = jest.fn(() => editor.view.state);
+      (getEditorState as any).mockImplementation(() => () => editor.view.state);
+      (getEditor as any).mockImplementation(() => () => editor);
       useActionHandlerMock.mockImplementation((cb) => {
         dispatchActionCb = cb;
       });
@@ -210,8 +222,6 @@ para 2
         return {
           ...getUseEditorManagerContextReturn,
           focusedEditorId: 0,
-          getEditor: jest.fn(() => editor),
-          getEditorState: getEditorState,
         };
       });
       render(
@@ -238,8 +248,6 @@ para 2
         return {
           ...getUseEditorManagerContextReturn,
           focusedEditorId: 0,
-          getEditor: jest.fn(() => editor),
-          getEditorState: getEditorState,
         };
       });
       render(
@@ -266,8 +274,6 @@ para 2
         return {
           ...getUseEditorManagerContextReturn,
           focusedEditorId: 0,
-          getEditor: jest.fn(() => editor),
-          getEditorState: getEditorState,
         };
       });
       render(

@@ -7,8 +7,12 @@
 //  // override things
 //  wsPath: 'xyz:sys.md'
 // }
+import { initialBangleStore } from '@bangle.io/app-state-context';
 import { EditorDisplayType } from '@bangle.io/constants';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import {
+  initialEditorSliceState,
+  useEditorManagerContext,
+} from '@bangle.io/editor-manager-context';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import type { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -35,7 +39,7 @@ export const getUseWorkspaceContextReturn: ReturnType<
   renameNote: jest.fn().mockResolvedValue(undefined),
   primaryWsPath: undefined,
   secondaryWsPath: undefined,
-  openedWsPaths: new OpenedWsPaths([undefined, undefined]),
+  openedWsPaths: OpenedWsPaths.createEmpty(),
   updateOpenedWsPaths: jest.fn(),
   pushWsPath: jest.fn(),
   checkFileExists: jest.fn().mockResolvedValue(undefined),
@@ -44,13 +48,6 @@ export const getUseWorkspaceContextReturn: ReturnType<
 export const getUseEditorManagerContextReturn: ReturnType<
   typeof useEditorManagerContext
 > = {
-  focusedEditorId: undefined,
-  forEachEditor: () => {},
-  getEditor: () => undefined,
-  getEditorState: () => undefined,
-  getEditorView: () => undefined,
-  primaryEditor: undefined,
-  secondaryEditor: undefined,
-  setEditor: () => {},
-  updateFocusedEditor: () => {},
+  ...initialEditorSliceState,
+  bangleStore: initialBangleStore,
 };

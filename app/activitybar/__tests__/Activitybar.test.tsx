@@ -120,7 +120,7 @@ test('inactive sidebar is dispatched correctly', () => {
 
   expect(dispatch).toBeCalledTimes(1);
   expect(dispatch).nthCalledWith(1, {
-    type: 'UI/CHANGE_SIDEBAR',
+    name: 'UI/CHANGE_SIDEBAR',
     value: {
       type: 'sidebar::test-123',
     },
@@ -160,7 +160,7 @@ test('active sidebar is toggled off correctly', () => {
 
   expect(dispatch).toBeCalledTimes(1);
   expect(dispatch).nthCalledWith(1, {
-    type: 'UI/TOGGLE_SIDEBAR',
+    name: 'UI/TOGGLE_SIDEBAR',
     value: {
       type: 'sidebar::test-123',
     },

@@ -1,25 +1,52 @@
 import type { JsonValue } from 'type-fest';
 
 import type { AppState } from './app-state';
-import type { SliceSideEffect } from './app-state-slice';
+import type { BaseAction, SliceSideEffect } from './app-state-slice';
 
 export type SchedulerType = (cb: () => void) => () => void;
 
-export class ApplicationStore<S = any, A = any> {
-  private sideEffects: Array<ReturnType<SliceSideEffect<S, A>>> = [];
+export type DispatchType<S, A extends BaseAction> = ApplicationStore<
+  S,
+  A
+>['dispatch'];
+
+type StoreSideEffectType<SL, A extends BaseAction, S> = {
+  key: string;
+  effect: ReturnType<SliceSideEffect<SL, A, S>>;
+};
+
+type DispatchActionType<S, A extends BaseAction> = (
+  store: ApplicationStore<S, A>,
+  action: A & { id: string },
+) => void;
+
+export class ApplicationStore<S = any, A extends BaseAction = any> {
+  private sideEffects: StoreSideEffectType<any, A, S>[] = [];
   private destroyed = false;
 
   private deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
 
+  static create<S = any, A extends BaseAction = any>({
+    storeName,
+    state,
+    scheduler,
+    dispatchAction = (store, action) => {
+      let newState = store.state.applyAction(action);
+      store.updateState(newState);
+    },
+  }: {
+    state: AppState<S, A>;
+    dispatchAction?: DispatchActionType<S, A>;
+    scheduler?: SchedulerType;
+    storeName: string;
+  }) {
+    return new ApplicationStore(state, dispatchAction, storeName, scheduler);
+  }
+
   constructor(
     private _state: AppState<S, A>,
-    private _dispatchAction: (
-      store: ApplicationStore<S, A>,
-      action: A,
-    ) => void = (store, action) => {
-      let newState = store.state.applyAction(action);
-      this.updateState(newState);
-    },
+    private _dispatchAction: DispatchActionType<S, A>,
+    public storeName: string,
     private scheduler?: SchedulerType,
   ) {
     this.setupSideEffects();
@@ -40,11 +67,14 @@ export class ApplicationStore<S = any, A = any> {
     return this._state;
   }
 
-  dispatch = (action: A & JsonValue) => {
+  dispatch = (action: A) => {
     if (this.destroyed) {
       return;
     }
-    this._dispatchAction(this, action);
+
+    (action as any).id = this.storeName + '-' + incrementalId();
+
+    this._dispatchAction(this, action as any);
   };
 
   destroy() {
@@ -57,8 +87,13 @@ export class ApplicationStore<S = any, A = any> {
       this.setupSideEffects();
     }
 
-    this.sideEffects.forEach((effect) => {
-      effect.update?.(this, prevState);
+    this.sideEffects.forEach(({ effect, key }) => {
+      effect.update?.(
+        this,
+        prevState,
+        this.state.getSliceState(key),
+        prevState.getSliceState(key),
+      );
     });
 
     if (this.scheduler) {
@@ -73,7 +108,7 @@ export class ApplicationStore<S = any, A = any> {
 
   private destroySideEffects() {
     this.deferredRunner?.abort();
-    this.sideEffects.forEach((effect) => {
+    this.sideEffects.forEach(({ effect }) => {
       effect.destroy?.();
     });
     this.sideEffects = [];
@@ -81,28 +116,36 @@ export class ApplicationStore<S = any, A = any> {
 
   private setupSideEffects() {
     this.destroySideEffects();
-    this._state.getSlices().forEach((slice) => {
-      let result = slice.spec.sideEffect?.(this);
-      if (!this.scheduler && result?.deferredUpdate) {
-        throw new RangeError(
-          "Scheduler needs to be defined for using Slice's deferredUpdate",
-        );
-      }
 
-      if (result) {
-        this.sideEffects.push(result);
+    this._state.getSlices().forEach((slice) => {
+      if (slice.spec.sideEffect) {
+        // since sideEffect can be an array or single
+        // flatten it for further use
+        ([] as SliceSideEffect<any, A, S>[])
+          .concat(slice.spec.sideEffect)
+          .forEach((sideEffect) => {
+            let result = sideEffect?.(this);
+            if (!this.scheduler && result?.deferredUpdate) {
+              throw new RangeError(
+                "Scheduler needs to be defined for using Slice's deferredUpdate",
+              );
+            }
+            if (result) {
+              this.sideEffects.push({ effect: result, key: slice.key });
+            }
+          });
       }
     });
   }
 }
 
-export class DeferredSideEffectsRunner<S, A> {
+export class DeferredSideEffectsRunner<S, A extends BaseAction> {
   private scheduledCallback: ReturnType<SchedulerType> | undefined;
 
   private abortController = new AbortController();
 
   constructor(
-    private sideEffects: Array<ReturnType<SliceSideEffect<S, A>>>,
+    private sideEffects: Array<StoreSideEffectType<any, A, S>>,
     private scheduler: SchedulerType,
   ) {
     this.abortController.signal.addEventListener('abort', () => {
@@ -131,11 +174,16 @@ export class DeferredSideEffectsRunner<S, A> {
       if (this.isAborted) {
         return;
       }
-      for await (const effect of this.sideEffects) {
+      for await (const { effect } of this.sideEffects) {
         if (!this.isAborted) {
           effect.deferredUpdate?.(store, this.abortController.signal);
         }
       }
     });
   }
+}
+
+let counter = 0;
+function incrementalId() {
+  return counter++;
 }

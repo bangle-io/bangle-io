@@ -71,7 +71,7 @@ describe('AppState', () => {
     const appState = AppState.create({ slices: [slice] });
     expect(key1.getSliceState(appState)).toBe(0);
 
-    let newAppState = appState.applyAction({ type: 'my-action' });
+    let newAppState = appState.applyAction({ name: 'my-action' });
     expect(key1.getSliceState(newAppState)).toBe(0);
   });
 
@@ -90,7 +90,7 @@ describe('AppState', () => {
     const appState = AppState.create({ slices: [slice] });
     expect(key1.getSliceState(appState)).toBe(initialValue);
 
-    let newAppState = appState.applyAction({ type: 'my-action' });
+    let newAppState = appState.applyAction({ name: 'my-action' });
     expect(key1.getSliceState(newAppState)).toBe(initialValue);
   });
 
@@ -115,7 +115,7 @@ describe('AppState', () => {
     expect(init).nthCalledWith(1, appState.config, appState);
 
     let action = {
-      type: 'for-b',
+      name: 'for-b',
       value: 77,
     };
     let newAppState = appState.applyAction(action);
@@ -135,7 +135,7 @@ describe('AppState', () => {
       state: {
         init: () => 1,
         apply: (action, value, appState) => {
-          if (action.type === 'for-a') {
+          if (action.name === 'for-a') {
             return action.value;
           }
           return value;
@@ -157,7 +157,7 @@ describe('AppState', () => {
     const appState = AppState.create({ slices: [sliceA, sliceB] });
 
     let action = {
-      type: 'for-a',
+      name: 'for-a',
       value: 77,
     };
     appState.applyAction(action);
@@ -186,7 +186,7 @@ describe('AppState', () => {
     const appState = AppState.create({ slices: [slice] });
 
     let action = {
-      type: 'for-b',
+      name: 'for-b',
       value: 77,
     };
     let newAppState = appState.applyAction(action);
@@ -241,7 +241,7 @@ describe('AppState', () => {
 
     expect(sliceKey.getSliceState(appState)).toBe(1);
 
-    let newAppState = appState.applyAction({});
+    let newAppState = appState.applyAction({ name: 'hi' });
 
     expect(newAppState).not.toBe(appState);
 
@@ -255,11 +255,11 @@ describe('AppState', () => {
 
     type ActionType =
       | {
-          type: 'for-a';
+          name: 'for-a';
           value: number;
         }
       | {
-          type: 'for-b';
+          name: 'for-b';
           value: number;
         };
 
@@ -268,7 +268,7 @@ describe('AppState', () => {
       state: {
         init: () => 1,
         apply: (action, value, appState) => {
-          if (action.type === 'for-a') {
+          if (action.name === 'for-a') {
             return action.value;
           }
           return value;
@@ -281,7 +281,7 @@ describe('AppState', () => {
       state: {
         init: () => 2,
         apply: (action, value, appState) => {
-          if (action.type === 'for-b') {
+          if (action.name === 'for-b') {
             return action.value;
           }
           return value;
@@ -294,7 +294,7 @@ describe('AppState', () => {
     expect(sliceKeyA.getSliceState(appState)).toBe(1);
 
     let newAppState = appState.applyAction({
-      type: 'for-a',
+      name: 'for-a',
       value: 99,
     });
 
@@ -308,11 +308,80 @@ describe('AppState', () => {
     expect(sliceKeyB.getSliceState(appState)).toBe(2);
 
     newAppState = newAppState.applyAction({
-      type: 'for-b',
+      name: 'for-b',
       value: 77,
     });
 
     expect(sliceKeyA.getSliceState(newAppState)).toBe(99);
     expect(sliceKeyB.getSliceState(newAppState)).toBe(77);
+  });
+
+  describe('serialization', () => {
+    test('serializes correctly', () => {
+      const key1 = new SliceKey<any>('one');
+
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => ({ number: 3 }),
+          stateToJSON: (val) => val.number,
+          stateFromJSON: (config, val, appState) => ({ number: val }),
+        },
+      });
+
+      const slice2 = new Slice({
+        state: {
+          init: () => 4,
+        },
+      });
+
+      let state = AppState.create({
+        slices: [slice1, slice2],
+      });
+
+      const sliceFields = { myslice1: slice1, myslice2: slice2 };
+      const json = state.stateToJSON({ sliceFields: sliceFields });
+      expect(json).toMatchInlineSnapshot(`
+        Object {
+          "myslice1": 3,
+        }
+      `);
+
+      const parsedState = AppState.stateFromJSON({
+        slices: [slice1, slice2],
+        json,
+        sliceFields,
+      });
+      expect(slice1.getSliceState(parsedState)).toEqual({ number: 3 });
+      expect(slice2.getSliceState(parsedState)).toBe(4);
+    });
+
+    test('skips serialization if no field name provided', () => {
+      const key1 = new SliceKey<any>('one');
+
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => ({ number: 3 }),
+          stateToJSON: (val) => val.number,
+          stateFromJSON: (config, val, appState) => ({ number: val }),
+        },
+      });
+
+      let state = AppState.create({
+        slices: [slice1],
+      });
+
+      const sliceFields = {};
+      const json = state.stateToJSON({ sliceFields: sliceFields });
+      expect(json).toMatchInlineSnapshot(`Object {}`);
+
+      const parsedState = AppState.stateFromJSON({
+        slices: [slice1],
+        json,
+        sliceFields,
+      });
+      expect(slice1.getSliceState(parsedState)).toEqual({ number: 3 });
+    });
   });
 });

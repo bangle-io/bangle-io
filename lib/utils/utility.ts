@@ -346,3 +346,13 @@ export function isAbortError(error: unknown): boolean {
   }
   return false;
 }
+
+export function cloneMap<K, V>(map: Map<K, V>) {
+  return new Map(map.entries());
+}
+
+export function createEmptyArray(size: number) {
+  return Array.from({ length: size }, () => {
+    return undefined;
+  });
+}

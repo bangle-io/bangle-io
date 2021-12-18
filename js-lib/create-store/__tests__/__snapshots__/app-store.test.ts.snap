@@ -84,6 +84,7 @@ ApplicationStore {
   "dispatch": [Function],
   "scheduler": undefined,
   "sideEffects": Array [],
+  "storeName": "test-store",
 }
 `;
 
@@ -171,6 +172,7 @@ ApplicationStore {
   "dispatch": [Function],
   "scheduler": undefined,
   "sideEffects": Array [],
+  "storeName": "test-store",
 }
 `;
 
@@ -233,9 +235,13 @@ ApplicationStore {
   "scheduler": [Function],
   "sideEffects": Array [
     Object {
-      "deferredUpdate": [MockFunction],
+      "effect": Object {
+        "deferredUpdate": [MockFunction],
+      },
+      "key": "slice$2",
     },
   ],
+  "storeName": "test-store",
 }
 `;
 
@@ -255,5 +261,6 @@ ApplicationStore {
   "dispatch": [Function],
   "scheduler": undefined,
   "sideEffects": Array [],
+  "storeName": "test-store",
 }
 `;

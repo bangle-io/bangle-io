@@ -1,5 +1,7 @@
+import * as Comlink from 'comlink';
+
 import { Slice } from '@bangle.io/create-store';
-import { setNaukarReady } from '@bangle.io/naukar-proxy';
+import { naukarWorkerProxy, setNaukarReady } from '@bangle.io/naukar-proxy';
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 import { checkModuleWorkerSupport } from './module-support';
@@ -11,10 +13,11 @@ const loadWebworker = checkModuleWorkerSupport();
 
 export function workerSlice() {
   return new Slice({
-    sideEffect() {
+    sideEffect(store) {
       let terminate: (() => void) | undefined;
       let destroyed = false;
 
+      let proxyDispatch = Comlink.proxy(store.dispatch);
       workerSetup(loadWebworker).then(async (result) => {
         if (destroyed) {
           return;
@@ -25,6 +28,7 @@ export function workerSlice() {
         // accessing naukar methods
         // setNaukarReady(naukar);
         setNaukarReady(result.naukar);
+        naukarWorkerProxy.registerMainActionDispatch(proxyDispatch);
       });
 
       return {

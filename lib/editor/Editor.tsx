@@ -1,9 +1,15 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
-import type { Node } from '@bangle.dev/pm';
+import type { Node, Selection } from '@bangle.dev/pm';
 import {
-  BangleEditor,
+  BangleEditor as ReactBangleEditor,
   RenderNodeViewsFunction,
   useEditorState,
 } from '@bangle.dev/react';
@@ -15,6 +21,12 @@ import {
   EditorPluginMetadataKey,
 } from '@bangle.io/constants';
 import {
+  editorUnmountOp,
+  getInitialSelection,
+  onEditorReadyOp,
+  useEditorManagerContext,
+} from '@bangle.io/editor-manager-context';
+import {
   ExtensionRegistry,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
@@ -22,7 +34,7 @@ import type {
   DispatchActionType,
   EditorPluginMetadata,
 } from '@bangle.io/shared-types';
-import { cx, getScrollParentElement } from '@bangle.io/utils';
+import { cx } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { watchPluginHost } from './watch-plugin-host';
@@ -33,7 +45,6 @@ let log = LOG ? console.log.bind(console, 'play/Editor') : () => {};
 export interface EditorProps {
   className?: string;
   editorId?: number;
-  onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
   editorDisplayType?: EditorDisplayType;
 }
@@ -47,13 +58,13 @@ export function Editor(props: EditorProps) {
 function EditorInner({
   className,
   editorId,
-  onEditorReady,
   wsPath,
   editorDisplayType = EditorDisplayType.Page,
 }: EditorProps) {
   const { getNote } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
   const { dispatchAction } = useActionContext();
+  const { bangleStore } = useEditorManagerContext();
 
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
@@ -72,28 +83,46 @@ function EditorInner({
     };
   }, [getNote, wsPath]);
 
-  useEffect(() => {
-    if (initialValue && editorId != null) {
-      const scrollParent = getScrollParentElement(editorId);
-      const pos = extensionRegistry.editor.initialScrollPos({
-        wsPath,
+  const editorRef = useRef<CoreBangleEditor | null>(null);
+
+  const onEditorReady = useCallback(
+    (editor) => {
+      editorRef.current = editor;
+      onEditorReadyOp(
         editorId,
-      });
-      if (typeof pos === 'number' && scrollParent) {
-        scrollParent.scrollTop = pos;
+        wsPath,
+        editor,
+      )(bangleStore.state, bangleStore.dispatch);
+    },
+    [bangleStore, editorId, wsPath],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (editorRef.current) {
+        editorUnmountOp(editorId, editorRef.current)(
+          bangleStore.state,
+          bangleStore.dispatch,
+        );
       }
-    }
-  }, [editorId, wsPath, extensionRegistry, initialValue]);
+    };
+  }, [editorId, wsPath, bangleStore]);
+
+  const initialSelection =
+    editorId != null && initialValue
+      ? getInitialSelection(editorId, wsPath, initialValue)(bangleStore.state)
+      : undefined;
 
   return initialValue ? (
     <EditorInner2
+      initialSelection={initialSelection}
       dispatchAction={dispatchAction}
       className={className}
       editorId={editorId}
       extensionRegistry={extensionRegistry}
       initialValue={initialValue}
-      onEditorReady={onEditorReady}
       wsPath={wsPath}
+      onEditorReady={onEditorReady}
       editorDisplayType={editorDisplayType}
     />
   ) : null;
@@ -101,37 +130,33 @@ function EditorInner({
 
 function EditorInner2({
   className,
+  dispatchAction,
+  editorDisplayType,
   editorId,
   extensionRegistry,
   initialValue,
   onEditorReady,
+  initialSelection,
   wsPath,
-  editorDisplayType,
-  dispatchAction,
 }: {
-  dispatchAction: DispatchActionType;
   className?: string;
+  dispatchAction: DispatchActionType;
+  editorDisplayType: EditorDisplayType;
   editorId?: number;
   extensionRegistry: ExtensionRegistry;
   initialValue: any;
+  initialSelection: Selection | undefined;
   onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
-  editorDisplayType: EditorDisplayType;
 }) {
-  useEffect(() => {
-    log('mounting editor');
-    return () => {
-      log('unmounting editor');
-    };
-  }, []);
-
   const editorState = useGetEditorState({
+    dispatchAction,
+    editorDisplayType,
     editorId,
     extensionRegistry,
+    initialSelection,
     initialValue,
     wsPath,
-    editorDisplayType,
-    dispatchAction,
   });
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
@@ -156,7 +181,7 @@ function EditorInner2({
   }
 
   return (
-    <BangleEditor
+    <ReactBangleEditor
       className={cx(className, displayClass)}
       focusOnInit={false}
       onReady={onEditorReady}
@@ -164,24 +189,26 @@ function EditorInner2({
       state={editorState}
     >
       {extensionRegistry.renderExtensionEditorComponents()}
-    </BangleEditor>
+    </ReactBangleEditor>
   );
 }
 
 export function useGetEditorState({
+  dispatchAction,
+  editorDisplayType,
   editorId,
   extensionRegistry,
+  initialSelection,
   initialValue,
   wsPath,
-  editorDisplayType,
-  dispatchAction,
 }: {
+  dispatchAction: DispatchActionType;
+  editorDisplayType: EditorDisplayType;
   editorId?: number;
   extensionRegistry: ExtensionRegistry;
+  initialSelection: Selection | undefined;
   initialValue: any;
   wsPath: string;
-  editorDisplayType: EditorDisplayType;
-  dispatchAction: DispatchActionType;
 }) {
   const pluginMetadata: EditorPluginMetadata = useMemo(
     () => ({
@@ -207,15 +234,6 @@ export function useGetEditorState({
       ),
     ];
   }, [extensionRegistry, pluginMetadata]);
-
-  const initialSelection =
-    editorId == null
-      ? undefined
-      : extensionRegistry.editor.initialSelection({
-          wsPath,
-          editorId,
-          doc: initialValue,
-        });
 
   const editorState = useEditorState({
     plugins,

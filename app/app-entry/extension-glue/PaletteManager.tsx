@@ -27,11 +27,11 @@ export function PaletteManager() {
     (focusEditor = true) => {
       updateQuery('');
       dispatch({
-        type: 'UI/RESET_PALETTE',
+        name: 'UI/RESET_PALETTE',
       });
       if (focusEditor) {
         dispatchAction({
-          name: 'action::bangle-io-editor-core:focus-primary-editor',
+          name: 'action::bangle-io-core-actions:focus-primary-editor',
         });
       }
     },
@@ -53,7 +53,7 @@ export function PaletteManager() {
   >(
     (type, initialQuery = '') => {
       dispatch({
-        type: 'UI/UPDATE_PALETTE',
+        name: 'UI/UPDATE_PALETTE',
         value: { type, initialQuery },
       });
       if (type) {
