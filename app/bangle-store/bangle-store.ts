@@ -19,6 +19,8 @@ let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};
 
 const persistKey = 'bangle-store-0.124';
 
+const SCHEMA_VERSION = 'bangle-store/1';
+
 const MAX_DEFERRED_WAIT_TIME = 400;
 
 export function initializeBangleStore({
@@ -87,18 +89,28 @@ export function initializeBangleStore({
 }
 
 function toLocalStorage(obj: JsonValue) {
-  localStorage.setItem(persistKey, JSON.stringify(obj));
+  localStorage.setItem(
+    persistKey,
+    JSON.stringify({ data: obj, schema: SCHEMA_VERSION }),
+  );
 }
 
 function toSessionStorage(obj: JsonValue) {
-  sessionStorage.setItem(persistKey, JSON.stringify(obj));
+  sessionStorage.setItem(
+    persistKey,
+    JSON.stringify({ data: obj, schema: SCHEMA_VERSION }),
+  );
 }
 
 function retrieveLocalStorage(): any {
   try {
     const item = localStorage.getItem(persistKey);
     if (typeof item === 'string') {
-      return JSON.parse(item);
+      const val = JSON.parse(item);
+      if (val.schema === SCHEMA_VERSION) {
+        return val.data;
+      }
+      return {};
     }
   } catch (error) {
     console.error(error);
@@ -110,7 +122,11 @@ function retrieveSessionStorage(): any {
   try {
     const item = sessionStorage.getItem(persistKey);
     if (typeof item === 'string') {
-      return JSON.parse(item);
+      const val = JSON.parse(item);
+      if (val.schema === SCHEMA_VERSION) {
+        return val.data;
+      }
+      return {};
     }
   } catch (error) {
     console.error(error);

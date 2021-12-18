@@ -38,13 +38,13 @@ export const initialSelectionEffect: SideEffect = () => {
 // 2. Automatically focus on any new mounted editor thereafter.
 // 3. If no current editor has any focus, focus on one automatically.
 //
-// We have a bit of complicated logic for the time period referred to as COOLDOWN.
+// We have a bit of complicated logic for the time period referred to as cooldown period.
 // This is the time right after we mount the effect and lasts until `FOCUS_EDITOR_ON_LOAD_COOLDOWN`.
 // During this time we want to only focus on the editorId mentioned in `focusedEditorId`
 // and avoid focusing any other editor.
 // Since we do not know when will the action for setting the editor
-// at `focusedEditorId` will be dispatched we pause auto focusing on any new editorId
-// other than the `focusedEditorId` for `FOCUS_EDITOR_ON_LOAD_COOLDOWN` milliseconds.
+// at `focusedEditorId` will be dispatched we pause auto focusing on any other editorId
+// for the cooldown period.
 export const focusEditorEffect: SideEffect = (store) => {
   const initialSliceState = editorManagerSliceKey.getSliceState(store.state);
 
@@ -79,8 +79,7 @@ export const focusEditorEffect: SideEffect = (store) => {
           return;
         }
 
-        // We have a black out time in which we
-        // do not attempt to focus on any newly mounted editor.
+        // do not attempt to focus on any newly mounted editor, if conditions do not match
         // This is so as to avoid competing with the `editorNeedsFocusOnPageLoad`.
         if (!editorNeedsFocusOnPageLoad && isNewEditor && !cooldown) {
           currentEditor.focusView();
