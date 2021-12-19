@@ -24,7 +24,6 @@ import {
 import { AppStateProvider } from './AppStateProvider';
 import { useUsageAnalytics } from './hooks/use-usage-analytics';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
-import { PageLifecycle } from './watchers/PageLifecycle';
 import { WatchUI } from './watchers/WatchUI';
 import { WatchWorkspace } from './watchers/WatchWorkspace';
 
@@ -47,7 +46,7 @@ export function Entry() {
   const [bangleStore] = useState(() => {
     mountCount++;
     if (mountCount > 1) {
-      throw new Error('Entry component cannot be remounted');
+      console.warn('entry comp remounted');
     }
     // TODO the store is not ready for destroying and recreation yet.
     return initializeBangleStore({
@@ -107,7 +106,6 @@ export function Entry() {
                       <WatchWorkspace />
                       <WatchUI />
                       <EditorManager>
-                        <PageLifecycle />
                         <ActionContextProvider>
                           <AppContainer />
                         </ActionContextProvider>

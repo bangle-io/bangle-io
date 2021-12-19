@@ -24,7 +24,6 @@
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "page-lifecycle": "^0.1.2",
     "react": "^17.0.2"
   },
   "devDependencies": {

@@ -27,6 +27,7 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
+    "@bangle.io/page-context": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",
@@ -36,6 +37,8 @@
     "type-fest": "^2.8.0"
   },
   "devDependencies": {
+    "@bangle.dev/all-base-components": "0.28.3",
+    "@bangle.dev/test-helpers": "0.28.3",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/dom": "^8.10.1",
     "@types/react": "^17.0.33",

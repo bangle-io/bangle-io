@@ -1,20 +1,21 @@
-import lifecycle from 'page-lifecycle';
-
 import { AppState, Slice, SliceSideEffect } from '@bangle.io/create-store';
+import type { BangleStateOpts } from '@bangle.io/shared-types';
 
 import {
   PAGE_BLOCK_RELOAD_ACTION_NAME,
+  PageLifeCycleStates,
   PageSliceAction,
   pageSliceKey,
   PageSliceStateType,
 } from './common';
 
 const pendingSymbol = Symbol('pending-tasks');
+const LifeCycle = Symbol('lifecycle');
 
 export const pageSliceInitialState: PageSliceStateType = {
   blockReload: false,
   lifeCycleState: {
-    current: lifecycle.state,
+    current: undefined,
     previous: undefined,
   },
 };
@@ -24,12 +25,16 @@ export const pageSliceInitialState: PageSliceStateType = {
 export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
   return new Slice({
     key: pageSliceKey,
-
     state: {
-      init: () => {
+      init: (opts: BangleStateOpts) => {
+        if (!opts.lifecycle) {
+          throw new Error('PageSlice expects page lifecycle in opts');
+        }
+
         return {
           ...pageSliceInitialState,
-          lifeCycleState: { current: lifecycle.state },
+          [LifeCycle]: opts.lifecycle,
+          lifeCycleState: { current: opts.lifecycle.state },
         };
       },
       apply: (action, state) => {
@@ -64,10 +69,17 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
             },
           });
         };
-        lifecycle?.addEventListener('statechange', handler);
+
+        getPageLifeCycleObject(store.state)?.addEventListener(
+          'statechange',
+          handler,
+        );
         return {
           destroy() {
-            lifecycle?.removeEventListener('statechange', handler);
+            getPageLifeCycleObject(store.state)?.removeEventListener(
+              'statechange',
+              handler,
+            );
           },
         };
       },
@@ -82,7 +94,7 @@ const blockReloadSideEffect: SliceSideEffect<
   PageSliceAction
 > = () => {
   return {
-    update(_, __, pageState, prevPageState) {
+    update(store, __, pageState, prevPageState) {
       if (pageState === prevPageState) {
         return;
       }
@@ -90,17 +102,65 @@ const blockReloadSideEffect: SliceSideEffect<
       const prevBlockReload = prevPageState?.blockReload;
 
       if (blockReload && !prevBlockReload) {
-        lifecycle.addUnsavedChanges(pendingSymbol);
+        getPageLifeCycleObject(store.state)?.addUnsavedChanges(pendingSymbol);
       }
+
       if (!blockReload && prevBlockReload) {
-        lifecycle.removeUnsavedChanges(pendingSymbol);
+        getPageLifeCycleObject(store.state)?.removeUnsavedChanges(
+          pendingSymbol,
+        );
       }
     },
   };
 };
 
-export function getPageLifeCycle() {
+function getPageLifeCycleObject(state: AppState):
+  | {
+      addUnsavedChanges: (s: Symbol) => void;
+      removeUnsavedChanges: (s: Symbol) => void;
+      addEventListener: (type: string, cb: (event: any) => void) => void;
+      removeEventListener: (type: string, cb: (event: any) => void) => void;
+    }
+  | undefined {
+  return pageSliceKey.getSliceState(state)?.[LifeCycle];
+}
+
+export function getCurrentPageLifeCycle() {
   return (state: AppState) => {
     return pageSliceKey.getSliceState(state)?.lifeCycleState?.current;
+  };
+}
+
+// Returns true when the lifecycle changes to the one in param
+// use prevState to determine the transition to
+export function pageLifeCycleTransitionedTo(
+  lifeCycle: PageLifeCycleStates | PageLifeCycleStates[],
+  prevState: AppState,
+) {
+  return (state: AppState): boolean => {
+    const current = getCurrentPageLifeCycle()(state);
+    const prev = getCurrentPageLifeCycle()(prevState);
+
+    if (current === prev) {
+      return false;
+    }
+
+    if (!current) {
+      return false;
+    }
+
+    if (Array.isArray(lifeCycle)) {
+      return lifeCycle.includes(current);
+    }
+
+    return current === lifeCycle;
+  };
+}
+
+export function isPageLifeCycleOneOf(lifeCycles: PageLifeCycleStates[]) {
+  return (state: AppState) => {
+    const lf = getCurrentPageLifeCycle()(state);
+
+    return lf ? lifeCycles.includes(lf) : false;
   };
 }

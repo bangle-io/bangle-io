@@ -1,10 +1,15 @@
-import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import {
+  ApplicationStore,
+  Slice,
+  SliceSideEffect,
+} from '@bangle.io/create-store';
 import {
   EditorManagerAction,
   editorManagerSlice,
 } from '@bangle.io/editor-manager-context';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {
-  getPageLifeCycle,
+  pageLifeCycleTransitionedTo,
   pageSlice,
   PageSliceAction,
 } from '@bangle.io/page-context';
@@ -40,6 +45,8 @@ export function bangleStateSlices({
     // keep this at the end
     new Slice({
       sideEffect: [
+        flushNaukarEffect,
+
         () => {
           return {
             deferredUpdate(store) {
@@ -52,16 +59,13 @@ export function bangleStateSlices({
         () => {
           return {
             update(store, prevState) {
-              const pageLifeCycle = getPageLifeCycle()(store.state);
-              if (
-                pageLifeCycle &&
-                pageLifeCycle !== getPageLifeCycle()(prevState)
-              ) {
-                if (
-                  ['passive', 'terminated', 'hidden'].includes(pageLifeCycle)
-                ) {
-                  onPageInactive();
-                }
+              const didChange = pageLifeCycleTransitionedTo(
+                ['passive', 'terminated', 'hidden'],
+                prevState,
+              )(store.state);
+
+              if (didChange) {
+                onPageInactive();
               }
             },
           };
@@ -70,3 +74,25 @@ export function bangleStateSlices({
     }),
   ];
 }
+
+// TODO this can move to the worker's store
+export const flushNaukarEffect: SliceSideEffect<any, any> = () => {
+  return {
+    update: (store, prevState) => {
+      if (pageLifeCycleTransitionedTo('active', prevState)(store.state)) {
+        naukarWorkerProxy.resetManager();
+        return;
+      }
+
+      const pageTransitionedToInactive = pageLifeCycleTransitionedTo(
+        ['passive', 'terminated', 'frozen', 'hidden'],
+        prevState,
+      )(store.state);
+
+      if (pageTransitionedToInactive) {
+        naukarWorkerProxy.flushDisk();
+        return;
+      }
+    },
+  };
+};

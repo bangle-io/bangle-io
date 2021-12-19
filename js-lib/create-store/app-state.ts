@@ -40,7 +40,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     const instance = new AppState(config);
 
     config.fields.forEach((f) => {
-      instance.slicesCurrentState[f.name] = f.init(config, instance);
+      instance.slicesCurrentState[f.name] = f.init(config.opts, instance);
     });
 
     return instance;
@@ -84,7 +84,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
           return;
         }
       }
-      instance.slicesCurrentState[f.name] = f.init(config, instance);
+      instance.slicesCurrentState[f.name] = f.init(config.opts, instance);
     });
 
     return instance;
@@ -156,7 +156,10 @@ function bind(f?: Function, self?: object) {
 type SliceArray<S, A extends BaseAction> = Array<Slice<any, A, S>>;
 
 class FieldDesc<S, A extends BaseAction, Op> {
-  init: (config: { [key: string]: any }, appState: AppState<S, A, Op>) => any;
+  init: (
+    config: undefined | { [key: string]: any },
+    appState: AppState<S, A, Op>,
+  ) => any;
   apply?: (action: any, value: any, appState: AppState<S, A, Op>) => any;
 
   constructor(
