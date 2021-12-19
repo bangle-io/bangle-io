@@ -2,7 +2,6 @@ import React from 'react';
 
 import type { RawSpecs } from '@bangle.dev/core';
 import { SpecRegistry } from '@bangle.dev/core';
-import type { Node } from '@bangle.dev/pm';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
 import type {
@@ -27,52 +26,6 @@ function filterFlatMap<K>(
   }
 
   return items.map((item) => item[field]);
-}
-
-class EditorHandlers {
-  constructor(private extensions: Extension[]) {}
-
-  initialScrollPos = ({
-    wsPath,
-    editorId,
-  }: {
-    wsPath: string;
-    editorId: number;
-  }) => {
-    for (const ext of this.extensions) {
-      const result = ext.editor?.initialScrollPos?.({
-        wsPath,
-        editorId,
-      });
-      if (result != null) {
-        return result;
-      }
-    }
-
-    return undefined;
-  };
-
-  initialSelection = ({
-    wsPath,
-    editorId,
-    doc,
-  }: {
-    wsPath: string;
-    editorId: number;
-    doc: Node;
-  }) => {
-    for (const ext of this.extensions) {
-      const result = ext.editor?.initialSelection?.({
-        wsPath,
-        editorId,
-        doc,
-      });
-      if (result != null) {
-        return result;
-      }
-    }
-    return undefined;
-  };
 }
 
 export class ExtensionRegistry {
@@ -101,8 +54,6 @@ export class ExtensionRegistry {
     undefined
   >;
 
-  public editor: EditorHandlers;
-
   public extensionsInitialState: { [name: string]: any };
   constructor(
     private extensions: Extension[] = [],
@@ -110,7 +61,6 @@ export class ExtensionRegistry {
     _markdownItPlugins: any[] = [],
   ) {
     this.validate();
-    this.editor = new EditorHandlers(this.extensions);
 
     this.extensionsInitialState = Object.fromEntries(
       extensions.map((r) => [r.name, r.initialState]),

@@ -103,10 +103,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/editor-core"
       },
       {
-        "name": "@bangle.io/editor-scroll-extension",
-        "reference": "workspace:extensions/editor-scroll-extension"
-      },
-      {
         "name": "@bangle.io/example-extension",
         "reference": "workspace:extensions/example-extension"
       },
@@ -299,7 +295,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/editor-container", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container", "workspace:app/editor-container"]],
       ["@bangle.io/editor-core", ["workspace:extensions/editor-core"]],
       ["@bangle.io/editor-manager-context", ["workspace:lib/editor-manager-context"]],
-      ["@bangle.io/editor-scroll-extension", ["workspace:extensions/editor-scroll-extension"]],
       ["@bangle.io/env-vars", ["workspace:tooling/env-vars"]],
       ["@bangle.io/example-extension", ["workspace:extensions/example-extension"]],
       ["@bangle.io/extension-registry", ["workspace:lib/extension-registry"]],
@@ -4388,7 +4383,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
-            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/workspace-context", "workspace:lib/workspace-context"],
             ["@testing-library/dom", "npm:8.11.0"],
@@ -4398,29 +4392,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
             ["reselect", "npm:4.1.5"],
             ["type-fest", "npm:2.8.0"]
-          ],
-          "linkType": "SOFT",
-        }]
-      ]],
-      ["@bangle.io/editor-scroll-extension", [
-        ["workspace:extensions/editor-scroll-extension", {
-          "packageLocation": "./extensions/editor-scroll-extension/",
-          "packageDependencies": [
-            ["@bangle.io/editor-scroll-extension", "workspace:extensions/editor-scroll-extension"],
-            ["@bangle.dev/core", "virtual:f3a4c749317f3ab1ce44a69ae0e5e44a4ed0cddc8e6e39a0543be0caad26fa52e65dfd4bd93b040d3d7ed1fd50aeeee1580673303a94da14a55edf91750656e0#npm:0.28.3"],
-            ["@bangle.dev/pm", "npm:0.28.3"],
-            ["@bangle.dev/react", "virtual:5461fcd5e5207ef5be9a1fe42597d02b3568b5fa1e697e49a31e65a6b6e5a840db9340195e357868806a8b5333e6bd4f2209106cc3e80b1e0ac373f644baf24d#npm:0.28.3"],
-            ["@bangle.dev/utils", "virtual:f3a4c749317f3ab1ce44a69ae0e5e44a4ed0cddc8e6e39a0543be0caad26fa52e65dfd4bd93b040d3d7ed1fd50aeeee1580673303a94da14a55edf91750656e0#npm:0.28.3"],
-            ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
-            ["@bangle.io/utils", "workspace:lib/utils"],
-            ["@types/react", "npm:17.0.34"],
-            ["@types/react-dom", "npm:17.0.11"],
-            ["debounce-fn", "npm:5.0.0"],
-            ["react", "npm:17.0.2"],
-            ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"]
           ],
           "linkType": "SOFT",
         }]
@@ -4953,7 +4924,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/core-palettes", "virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/editor-core", "workspace:extensions/editor-core"],
-            ["@bangle.io/editor-scroll-extension", "workspace:extensions/editor-scroll-extension"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/image-extension", "workspace:extensions/image-extension"],
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],

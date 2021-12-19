@@ -1,18 +1,16 @@
 import { BangleEditor } from '@bangle.dev/core';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import { AppState } from '@bangle.io/create-store';
 import { debounceFn } from '@bangle.io/utils';
-import { workspaceContextKey } from '@bangle.io/workspace-context';
 
 import {
   editorManagerSliceKey,
   FOCUS_EDITOR_ON_LOAD_COOLDOWN,
 } from './constants';
 import {
+  didSomeEditorChange,
   forEachEditor,
   getEditor,
-  someEditorChanged,
   updateInitialSelection,
   updateScrollPosition,
 } from './operations';
@@ -58,7 +56,7 @@ export const focusEditorEffect: SideEffect = (store) => {
   return {
     update(store, prevState) {
       // Only continue if an editor has been created or destroyed
-      if (!someEditorChanged(prevState)(store.state)) {
+      if (!didSomeEditorChange(prevState)(store.state)) {
         return;
       }
 

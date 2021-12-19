@@ -157,13 +157,11 @@ export function editorManagerSlice(): Slice<
             );
 
             const scroll = calculateScrollPosition(i, editor)?.scrollPosition;
-
             newEditorConfig = newEditorConfig.updateSelection(
               selectionJson,
               wsPath,
               editorId,
             );
-
             newEditorConfig = newEditorConfig.updateScrollPosition(
               scroll,
               wsPath,

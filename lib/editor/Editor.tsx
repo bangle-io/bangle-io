@@ -21,9 +21,9 @@ import {
   EditorPluginMetadataKey,
 } from '@bangle.io/constants';
 import {
-  editorUnmountOp,
   getInitialSelection,
-  onEditorReadyOp,
+  setEditorReady,
+  setEditorUnmounted,
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
 import {
@@ -88,7 +88,7 @@ function EditorInner({
   const onEditorReady = useCallback(
     (editor) => {
       editorRef.current = editor;
-      onEditorReadyOp(
+      setEditorReady(
         editorId,
         wsPath,
         editor,
@@ -100,7 +100,7 @@ function EditorInner({
   useEffect(() => {
     return () => {
       if (editorRef.current) {
-        editorUnmountOp(editorId, editorRef.current)(
+        setEditorUnmounted(editorId, editorRef.current)(
           bangleStore.state,
           bangleStore.dispatch,
         );

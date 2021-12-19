@@ -3,7 +3,6 @@ import collapsibleHeading from '@bangle.io/collapsible-heading';
 import coreActions from '@bangle.io/core-actions';
 import corePalette from '@bangle.io/core-palettes';
 import editorCore from '@bangle.io/editor-core';
-import editorScrollExtension from '@bangle.io/editor-scroll-extension';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import imageExtension from '@bangle.io/image-extension';
 import inlineBacklinkPalette from '@bangle.io/inline-backlink';
@@ -26,7 +25,6 @@ export const initExtensionRegistry = () => {
     noteTags,
     collapsibleHeading,
     imageExtension,
-    editorScrollExtension,
     coreActions,
     noteBrowser,
     searchNotes,

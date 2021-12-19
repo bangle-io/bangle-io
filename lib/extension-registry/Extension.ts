@@ -1,7 +1,6 @@
 import React from 'react';
 
 import type { RawSpecs } from '@bangle.dev/core';
-import type { Node, Selection } from '@bangle.dev/pm';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
 import type {
@@ -34,22 +33,6 @@ export interface EditorConfig {
     key: string;
   }>;
   renderReactNodeView?: RenderReactNodeView;
-  initialScrollPos?: ({
-    wsPath,
-    editorId,
-  }: {
-    wsPath: string;
-    editorId: number;
-  }) => any;
-  initialSelection?: ({
-    wsPath,
-    editorId,
-    doc,
-  }: {
-    wsPath: string;
-    editorId: number;
-    doc: Node;
-  }) => Selection | undefined;
   watchPluginStates?: EditorWatchPluginState[];
 }
 
