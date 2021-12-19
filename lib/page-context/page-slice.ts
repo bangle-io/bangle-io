@@ -1,12 +1,13 @@
 import lifecycle from 'page-lifecycle';
 
+import { AppState, Slice, SliceSideEffect } from '@bangle.io/create-store';
+
 import {
   PAGE_BLOCK_RELOAD_ACTION_NAME,
   PageSliceAction,
   pageSliceKey,
   PageSliceStateType,
-} from '@bangle.io/constants';
-import { AppState, Slice, SliceSideEffect } from '@bangle.io/create-store';
+} from './common';
 
 const pendingSymbol = Symbol('pending-tasks');
 

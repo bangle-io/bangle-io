@@ -1,17 +1,19 @@
-import { PageSliceAction } from '@bangle.io/constants';
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import {
   EditorManagerAction,
   editorManagerSlice,
 } from '@bangle.io/editor-manager-context';
+import {
+  getPageLifeCycle,
+  pageSlice,
+  PageSliceAction,
+} from '@bangle.io/page-context';
 import { UiContextAction, uiSlice } from '@bangle.io/ui-context';
 import { workerSlice } from '@bangle.io/worker-setup';
 import {
   WorkspaceContextAction,
   workspaceContextSlice,
 } from '@bangle.io/workspace-context';
-
-import { getPageLifeCycle, pageSlice } from './page-slice';
 
 export type BangleActionTypes =
   | UiContextAction

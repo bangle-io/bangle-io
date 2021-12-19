@@ -1,11 +1,11 @@
 import type { Manager } from '@bangle.dev/collab-server';
 import { DebouncedDisk } from '@bangle.dev/disk';
 
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   PAGE_BLOCK_RELOAD_ACTION_NAME,
   PAGE_BLOCK_RELOAD_ACTION_TYPE,
-} from '@bangle.io/constants';
-import type { ExtensionRegistry } from '@bangle.io/extension-registry';
+} from '@bangle.io/page-context';
 import { getSelfType } from '@bangle.io/utils';
 import { FileOps } from '@bangle.io/workspaces';
 

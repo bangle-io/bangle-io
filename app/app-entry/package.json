@@ -47,6 +47,7 @@
     "@bangle.io/naukar-proxy": "workspace:*",
     "@bangle.io/naukar-worker": "workspace:*",
     "@bangle.io/note-sidebar": "workspace:*",
+    "@bangle.io/page-context": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/style": "workspace:*",

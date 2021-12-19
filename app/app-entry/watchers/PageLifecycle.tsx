@@ -4,9 +4,9 @@ import {
   useBangleStoreContext,
   useSliceState,
 } from '@bangle.io/app-state-context';
-import { pageSliceKey } from '@bangle.io/constants';
 import { forEachEditor } from '@bangle.io/editor-manager-context';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import { pageSliceKey } from '@bangle.io/page-context';
 import { trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
 export function PageLifecycle() {
