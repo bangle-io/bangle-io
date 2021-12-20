@@ -5,15 +5,15 @@ import { AppState } from '@bangle.io/create-store';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
 import { getScrollParentElement } from '@bangle.io/utils';
 
-import { editorUnmountOp } from '..';
+import { setEditorUnmounted } from '..';
 import { editorManagerSlice } from '../editor-manager-slice';
 import {
+  didSomeEditorChange,
   forEachEditor,
   getEditor,
   getEditorState,
   getInitialSelection,
-  onEditorReadyOp,
-  someEditorChanged,
+  setEditorReady,
 } from '../operations';
 
 const getScrollParentElementMock =
@@ -111,7 +111,7 @@ describe('operations: getEditorState', () => {
   });
 });
 
-describe('onEditorReadyOp', () => {
+describe('setEditorReady', () => {
   let scrollParent = {};
   beforeEach(() => {
     scrollParent = {};
@@ -123,7 +123,7 @@ describe('onEditorReadyOp', () => {
     let mockEditor = {} as BangleEditor;
 
     const dispatch = jest.fn();
-    onEditorReadyOp(undefined, 'test:one.md', mockEditor)(state, dispatch);
+    setEditorReady(undefined, 'test:one.md', mockEditor)(state, dispatch);
 
     expect(scrollParent).toEqual({});
     expect(dispatch).toHaveBeenCalledTimes(0);
@@ -141,7 +141,7 @@ describe('onEditorReadyOp', () => {
 
     const dispatch = jest.fn();
 
-    onEditorReadyOp(0, 'test:one.md', mockEditor)(state, dispatch);
+    setEditorReady(0, 'test:one.md', mockEditor)(state, dispatch);
     expect(scrollParent).toEqual({
       scrollTop: 9,
     });
@@ -193,7 +193,7 @@ describe('getInitialSelection', () => {
   });
 });
 
-describe('editorUnmountOp', () => {
+describe('setEditorUnmounted', () => {
   test('works 1', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
     const editorA = {} as BangleEditor;
@@ -208,7 +208,7 @@ describe('editorUnmountOp', () => {
 
     const dispatch = jest.fn();
 
-    editorUnmountOp(0, editorA)(stateA, dispatch);
+    setEditorUnmounted(0, editorA)(stateA, dispatch);
 
     expect(dispatch).toBeCalledTimes(1);
     expect(dispatch).nthCalledWith(1, {
@@ -235,12 +235,12 @@ describe('editorUnmountOp', () => {
 
     const dispatch = jest.fn();
 
-    editorUnmountOp(0, editorB)(stateA, dispatch);
+    setEditorUnmounted(0, editorB)(stateA, dispatch);
 
     expect(dispatch).toBeCalledTimes(0);
   });
 });
-describe('someEditorChanged', () => {
+describe('didSomeEditorChange', () => {
   test('works 1', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
     const editorA = {} as BangleEditor;
@@ -261,8 +261,8 @@ describe('someEditorChanged', () => {
       },
     });
 
-    expect(someEditorChanged(stateA)(stateB)).toBe(true);
-    expect(someEditorChanged(stateA)(stateA)).toBe(false);
+    expect(didSomeEditorChange(stateA)(stateB)).toBe(true);
+    expect(didSomeEditorChange(stateA)(stateA)).toBe(false);
   });
 
   test('works 2', () => {
@@ -293,8 +293,8 @@ describe('someEditorChanged', () => {
       },
     });
 
-    expect(someEditorChanged(stateB)(stateC)).toBe(true);
-    expect(someEditorChanged(stateA)(stateC)).toBe(false);
+    expect(didSomeEditorChange(stateB)(stateC)).toBe(true);
+    expect(didSomeEditorChange(stateA)(stateC)).toBe(false);
   });
 
   test('works 3', () => {
@@ -308,7 +308,7 @@ describe('someEditorChanged', () => {
       },
     });
 
-    expect(someEditorChanged(state)(stateA)).toBe(false);
-    expect(someEditorChanged(stateA)(state)).toBe(false);
+    expect(didSomeEditorChange(state)(stateA)).toBe(false);
+    expect(didSomeEditorChange(stateA)(state)).toBe(false);
   });
 });

@@ -1,7 +1,11 @@
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { pageLifeCycleTransitionedTo } from '@bangle.io/page-context';
 import type { JsonObject, JsonPrimitive } from '@bangle.io/shared-types';
 import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
-import { getScrollParentElement } from '@bangle.io/utils';
+import {
+  getScrollParentElement,
+  trimEndWhiteSpaceBeforeCursor,
+} from '@bangle.io/utils';
 
 import { FOCUS_EDITOR_ON_LOAD_COOLDOWN } from '../constants';
 import {
@@ -17,11 +21,22 @@ import {
 const getScrollParentElementMock =
   getScrollParentElement as jest.MockedFunction<typeof getScrollParentElement>;
 
+jest.mock('@bangle.io/page-context', () => {
+  const actual = jest.requireActual('@bangle.io/page-context');
+  return {
+    ...actual,
+    pageLifeCycleTransitionedTo: jest.fn(() => {
+      return () => false;
+    }),
+  };
+});
+
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
   return {
     ...actual,
     getScrollParentElement: jest.fn(),
+    trimEndWhiteSpaceBeforeCursor: jest.fn(() => () => {}),
     debounceFn: jest.fn((cb) => {
       const foo = () => {
         cb();
@@ -32,8 +47,14 @@ jest.mock('@bangle.io/utils', () => {
   };
 });
 
+const pageLifeCycleTransitionedToMock =
+  pageLifeCycleTransitionedTo as jest.MockedFunction<
+    typeof pageLifeCycleTransitionedTo
+  >;
+
 beforeEach(() => {
   getScrollParentElementMock.mockImplementation(() => undefined);
+  pageLifeCycleTransitionedToMock.mockImplementation(() => () => false);
 });
 
 const createStore = (jsonData?: {
@@ -469,5 +490,48 @@ describe('watchEditorScrollEffect', () => {
 
     expect(window.addEventListener).toBeCalledTimes(1);
     expect(window.removeEventListener).toBeCalledTimes(1);
+  });
+});
+
+describe('trimWhiteSpaceEffect', () => {
+  test('works', () => {
+    const pageLifeMock = jest.fn(() => true);
+    pageLifeCycleTransitionedToMock.mockImplementation((lifecycle) => {
+      if (lifecycle[0] === 'passive' && lifecycle[1] === 'hidden') {
+        return pageLifeMock;
+      }
+      return () => false;
+    });
+
+    const trimMock = jest.fn();
+    (trimEndWhiteSpaceBeforeCursor as any).mockImplementation(() => trimMock);
+
+    let { store } = createStore();
+    let mockEditor = createTestEditor();
+
+    mockEditor.focusView();
+
+    jest.spyOn(mockEditor?.view, 'hasFocus').mockImplementation(() => true);
+
+    store.dispatch({
+      name: 'action::editor-manager-context:set-editor',
+      value: {
+        editor: mockEditor,
+        editorId: 0,
+      },
+    });
+
+    expect(pageLifeMock).toHaveBeenCalled();
+    expect(pageLifeCycleTransitionedToMock).toHaveBeenCalledWith(
+      ['passive', 'hidden'],
+      expect.anything(),
+    );
+    expect(trimEndWhiteSpaceBeforeCursor).toBeCalledTimes(1);
+    expect(trimMock).toBeCalledTimes(1);
+    expect(trimMock).nthCalledWith(
+      1,
+      mockEditor.view.state,
+      mockEditor.view.dispatch,
+    );
   });
 });

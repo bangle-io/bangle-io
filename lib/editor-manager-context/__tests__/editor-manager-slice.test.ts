@@ -2,12 +2,23 @@ import { Selection } from '@bangle.dev/pm';
 
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
+import { getScrollParentElement } from '@bangle.io/utils';
 
 import { geEditorScrollPosition, getInitialSelection } from '..';
 import { editorManagerSliceKey } from '../constants';
 import { editorManagerSlice } from '../editor-manager-slice';
 import { getEditor } from '../operations';
 import { createTestEditor } from './test-utils';
+
+jest.mock('@bangle.io/utils', () => {
+  const actual = jest.requireActual('@bangle.io/utils');
+  return {
+    ...actual,
+    getScrollParentElement: jest.fn(() => {
+      return undefined;
+    }),
+  };
+});
 
 let createStore = () =>
   ApplicationStore.create({
@@ -434,6 +445,47 @@ describe('serializing state', () => {
           null,
         ]
       `);
+  });
+
+  test('overwrites pre-existing scroll position when serializing', () => {
+    let mockEditor = createTestEditor('test:one.md', `# hello world`);
+
+    (getScrollParentElement as any).mockImplementation((): any => ({
+      scrollTop: 5,
+    }));
+
+    const store = createStore();
+    store.dispatch({
+      name: 'action::editor-manager-context:set-editor',
+      value: {
+        editor: mockEditor,
+        editorId: 0,
+      },
+    });
+
+    store.dispatch({
+      name: 'action::editor-manager-context:update-scroll-position',
+      value: {
+        wsPath: 'test:one.md',
+        editorId: 0,
+        scrollPosition: 2,
+      },
+    });
+
+    expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toEqual(2);
+
+    const json: any = store.state.stateToJSON({
+      sliceFields: { editorManagerSlice: editorManagerSlice() },
+    });
+
+    const newState = AppState.stateFromJSON({
+      slices: [editorManagerSlice()],
+      json,
+      sliceFields: { editorManagerSlice: editorManagerSlice() },
+    });
+
+    // should pick up the latest position
+    expect(geEditorScrollPosition(0, 'test:one.md')(newState)).toEqual(5);
   });
 
   test('overwrites pre-existing selections when serializing', () => {

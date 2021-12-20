@@ -6,6 +6,7 @@ import { editorManagerSliceKey } from './constants';
 import {
   focusEditorEffect,
   initialSelectionEffect,
+  trimWhiteSpaceEffect,
   watchEditorScrollEffect,
 } from './effects';
 import { OpenedEditorsConfig } from './opened-editors-config';
@@ -157,13 +158,11 @@ export function editorManagerSlice(): Slice<
             );
 
             const scroll = calculateScrollPosition(i, editor)?.scrollPosition;
-
             newEditorConfig = newEditorConfig.updateSelection(
               selectionJson,
               wsPath,
               editorId,
             );
-
             newEditorConfig = newEditorConfig.updateScrollPosition(
               scroll,
               wsPath,
@@ -189,6 +188,7 @@ export function editorManagerSlice(): Slice<
       initialSelectionEffect,
       focusEditorEffect,
       watchEditorScrollEffect,
+      trimWhiteSpaceEffect,
     ],
   });
 }

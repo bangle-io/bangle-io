@@ -1,7 +1,9 @@
+import lifecycle from 'page-lifecycle';
+
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { editorManagerSlice } from '@bangle.io/editor-manager-context';
-import type { JsonValue } from '@bangle.io/shared-types';
+import type { BangleStateOpts, JsonValue } from '@bangle.io/shared-types';
 import { uiSlice } from '@bangle.io/ui-context';
 import {
   safeCancelIdleCallback,
@@ -28,6 +30,9 @@ export function initializeBangleStore({
 }: {
   onUpdate?: (store: ApplicationStore) => void;
 }) {
+  const stateOpts: BangleStateOpts = {
+    lifecycle,
+  };
   const makeStore = () => {
     const stateJson = {
       ...retrieveLocalStorage(),
@@ -61,6 +66,7 @@ export function initializeBangleStore({
         uiSlice: uiSlice(),
         editorManagerSlice: editorManagerSlice(),
       },
+      opts: stateOpts,
     });
 
     return ApplicationStore.create<BangleSliceTypes, BangleActionTypes>({

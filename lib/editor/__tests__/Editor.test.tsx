@@ -7,9 +7,9 @@ import { Node, Selection } from '@bangle.dev/pm';
 
 import { EditorDisplayType } from '@bangle.io/constants';
 import {
-  editorUnmountOp,
   getInitialSelection,
-  onEditorReadyOp,
+  setEditorReady,
+  setEditorUnmounted,
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
@@ -37,8 +37,8 @@ jest.mock('@bangle.io/editor-manager-context', () => {
   return {
     ...actual,
     getInitialSelection: jest.fn(() => () => {}),
-    onEditorReadyOp: jest.fn(() => () => {}),
-    editorUnmountOp: jest.fn(() => () => {}),
+    setEditorReady: jest.fn(() => () => {}),
+    setEditorUnmounted: jest.fn(() => () => {}),
     useEditorManagerContext: jest.fn(),
   };
 });
@@ -170,25 +170,25 @@ test('mounting unmounting calls the correct action', async () => {
     expect(result.container.innerHTML).toContain('class="test-class');
   });
 
-  expect(onEditorReadyOp).toBeCalledTimes(1);
-  expect(onEditorReadyOp).nthCalledWith(
+  expect(setEditorReady).toBeCalledTimes(1);
+  expect(setEditorReady).nthCalledWith(
     1,
     1,
     'something:blah.md',
     expect.any(BangleEditor),
   );
 
-  expect(editorUnmountOp).toBeCalledTimes(0);
+  expect(setEditorUnmounted).toBeCalledTimes(0);
 
-  const editorRef = (onEditorReadyOp as any).mock.calls[0][2];
+  const editorRef = (setEditorReady as any).mock.calls[0][2];
   expect(editorRef).not.toBeFalsy();
 
   result.unmount();
 
-  expect(onEditorReadyOp).toBeCalledTimes(1);
-  expect(editorUnmountOp).toBeCalledTimes(1);
-  expect(editorUnmountOp).nthCalledWith(1, 1, expect.any(BangleEditor));
-  expect((editorUnmountOp as any).mock.calls[0][1]).toBe(editorRef);
+  expect(setEditorReady).toBeCalledTimes(1);
+  expect(setEditorUnmounted).toBeCalledTimes(1);
+  expect(setEditorUnmounted).nthCalledWith(1, 1, expect.any(BangleEditor));
+  expect((setEditorUnmounted as any).mock.calls[0][1]).toBe(editorRef);
 });
 
 test('works without editorId', async () => {

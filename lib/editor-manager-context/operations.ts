@@ -115,7 +115,7 @@ export function updateScrollPosition(editorId: EditorIdType) {
   };
 }
 
-export function onEditorReadyOp(
+export function setEditorReady(
   editorId: EditorIdType,
   wsPath: string,
   editor: BangleEditor,
@@ -144,7 +144,10 @@ export function onEditorReadyOp(
   };
 }
 
-export function editorUnmountOp(editorId: EditorIdType, editor: BangleEditor) {
+export function setEditorUnmounted(
+  editorId: EditorIdType,
+  editor: BangleEditor,
+) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
     if (typeof editorId !== 'number') {
       return false;
@@ -201,7 +204,9 @@ export function getInitialSelection(
   };
 }
 
-export function someEditorChanged(prevState: AppState) {
+// Returns true or false if a new editor was added
+// or an editor was removed.
+export function didSomeEditorChange(prevState: AppState) {
   return (state: AppState): boolean => {
     for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
       const currentEditor = getEditor(i)(state);

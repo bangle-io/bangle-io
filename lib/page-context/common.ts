@@ -7,7 +7,7 @@ export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
   value: boolean;
 };
 
-type PageLifeCycleStates =
+export type PageLifeCycleStates =
   | 'active'
   | 'passive'
   | 'hidden'

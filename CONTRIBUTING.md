@@ -89,3 +89,15 @@ A file path in Bangle is denoted by a string with the following syntax:
 - `wsPath`: A unique string representing a file and its workspace. `hello:foo/bar.md`.
 
 - `wsName`: Workspace name, in `hello:foo/bar.md` `hello` is the workspace name.
+
+## How editor opens a file?
+
+1. User somehow clicks on a file and triggers pushWsPath
+2. That then becomes a wsPath derived from history.location
+3. An `<Editor />` gets mounted with new wsPath
+4. At this point the editor is loaded with empty doc.
+5. `@bangle.dev/collab-extension`'s collab-client sets up communication with worker thread.
+6. Worker thread has a collab-manager instance running.
+7. When collab-client calls getDocument, it is passed on to worker thread's manager
+8. manager calls localDisk.getItem to get the document from indexdb.
+9. Collab-client plugin refreshes the editor with correct content.

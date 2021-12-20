@@ -6,7 +6,6 @@
     "core-actions",
     "core-palettes",
     "editor-core",
-    "editor-scroll-extension",
     "example-extension",
     "image-extension",
     "inline-backlink",

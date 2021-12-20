@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
 
-import type { BangleEditor } from '@bangle.dev/core';
-
 import type { NoteSidebarWidget } from '@bangle.io/shared-types';
 import {
   ActionButton,
@@ -12,14 +10,9 @@ import { ChevronRightIcon, MoreSmallListIcon } from '@bangle.io/ui-components';
 
 export function NoteSidebar({
   onDismiss,
-  focusedEditor,
   widgets,
 }: {
   onDismiss: () => void;
-  focusedEditor?: {
-    editor: BangleEditor;
-    wsPath: string;
-  };
   widgets: NoteSidebarWidget[];
 }) {
   return (

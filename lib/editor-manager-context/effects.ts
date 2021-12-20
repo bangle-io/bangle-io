@@ -1,18 +1,17 @@
 import { BangleEditor } from '@bangle.dev/core';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import { AppState } from '@bangle.io/create-store';
-import { debounceFn } from '@bangle.io/utils';
-import { workspaceContextKey } from '@bangle.io/workspace-context';
+import { pageLifeCycleTransitionedTo } from '@bangle.io/page-context';
+import { debounceFn, trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
 import {
   editorManagerSliceKey,
   FOCUS_EDITOR_ON_LOAD_COOLDOWN,
 } from './constants';
 import {
+  didSomeEditorChange,
   forEachEditor,
   getEditor,
-  someEditorChanged,
   updateInitialSelection,
   updateScrollPosition,
 } from './operations';
@@ -58,7 +57,7 @@ export const focusEditorEffect: SideEffect = (store) => {
   return {
     update(store, prevState) {
       // Only continue if an editor has been created or destroyed
-      if (!someEditorChanged(prevState)(store.state)) {
+      if (!didSomeEditorChange(prevState)(store.state)) {
         return;
       }
 
@@ -146,6 +145,31 @@ export const watchEditorScrollEffect: SideEffect = (store) => {
       deb.cancel();
       if (isWindow) {
         window.removeEventListener('scroll', deb, opts);
+      }
+    },
+  };
+};
+
+export const trimWhiteSpaceEffect: SideEffect = () => {
+  return {
+    update: (store, prevState) => {
+      const pageTransitioned = pageLifeCycleTransitionedTo(
+        ['passive', 'hidden'],
+        prevState,
+      )(store.state);
+
+      if (pageTransitioned) {
+        forEachEditor((editor) => {
+          if (!editor?.destroyed && editor?.view.hasFocus()) {
+            // To avoid cursor jumping across due markdown whitespace elimination
+            // this removes the white space to prevent cursor jumping.
+            // Not ideal though
+            trimEndWhiteSpaceBeforeCursor()(
+              editor.view.state,
+              editor.view.dispatch,
+            );
+          }
+        })(store.state);
       }
     },
   };

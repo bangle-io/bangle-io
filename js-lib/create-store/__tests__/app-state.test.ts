@@ -109,10 +109,10 @@ describe('AppState', () => {
       },
     });
 
-    const appState = AppState.create({ slices: [slice] });
+    const appState = AppState.create({ slices: [slice], opts: { kj: true } });
     expect(init).toBeCalledTimes(1);
     expect(apply).toBeCalledTimes(0);
-    expect(init).nthCalledWith(1, appState.config, appState);
+    expect(init).nthCalledWith(1, { kj: true }, appState);
 
     let action = {
       name: 'for-b',
