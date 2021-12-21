@@ -34,7 +34,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
     <div className="mb-3">
       <div className="flex flex-row mt-6">
         <h3 className="mr-1 leading-none text-l sm:text-xl lg:text-xl">
-          Recent notes
+          最近浏览的
         </h3>
       </div>
       <ul className="my-2 ml-2 list-disc list-inside">
@@ -91,14 +91,14 @@ export function EmptyEditorPage() {
       actions={
         <>
           <ActionButton
-            ariaLabel="create note"
+            ariaLabel="创建笔记"
             onPress={() => {
               dispatchAction({
                 name: CORE_ACTIONS_NEW_NOTE,
               });
             }}
           >
-            <ButtonContent text="Create note" icon={<NewNoteIcon />} />
+            <ButtonContent text="创建笔记" icon={<NewNoteIcon />} />
           </ActionButton>
         </>
       }

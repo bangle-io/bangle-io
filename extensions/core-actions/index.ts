@@ -21,8 +21,8 @@ const extension = Extension.create({
   name: extensionName,
   application: {
     actions: [
-      { name: CORE_ACTIONS_CLOSE_EDITOR, title: 'Close editor/s' },
-      { name: CORE_ACTIONS_DELETE_ACTIVE_NOTE, title: 'Delete active note' },
+      { name: CORE_ACTIONS_CLOSE_EDITOR, title: '关闭当前笔记/s' },
+      { name: CORE_ACTIONS_DELETE_ACTIVE_NOTE, title: '删除当前笔记' },
       { name: CORE_ACTIONS_NEW_NOTE, title: 'New note' },
       { name: CORE_ACTIONS_NEW_WORKSPACE, title: 'New workspace' },
       { name: CORE_ACTIONS_RENAME_ACTIVE_NOTE, title: 'Rename active note' },
