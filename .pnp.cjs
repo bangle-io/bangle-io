@@ -4975,6 +4975,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm", "npm:0.28.3"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["type-fest", "npm:2.8.0"]
           ],
           "linkType": "SOFT",
