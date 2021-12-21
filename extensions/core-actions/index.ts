@@ -102,6 +102,16 @@ const extension = Extension.create({
         title: 'Save the history object in the slice state',
         hidden: true,
       },
+      {
+        name: 'action::bangle-store:history-update-opened-ws-paths',
+        title: 'Update history to reflect opened ws paths',
+        hidden: true,
+      },
+      {
+        name: 'action::bangle-store:history-on-invalid-path',
+        title: 'Action when there is an invalid path',
+        hidden: true,
+      },
     ],
     ReactComponent: CoreActionsHandler,
   },

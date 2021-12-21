@@ -64,6 +64,7 @@ export function AppContainer() {
     });
   }, [dispatch]);
 
+  console.log(openedWsPaths.toArray());
   const mainContent = useMemo(() => {
     const result: ReactNode[] = [];
 

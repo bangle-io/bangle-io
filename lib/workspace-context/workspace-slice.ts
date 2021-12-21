@@ -1,179 +1,170 @@
-import { createSelector } from 'reselect';
-
-import { ApplicationStore, Slice, SliceKey } from '@bangle.io/create-store';
+import { Slice } from '@bangle.io/create-store';
 import type { JsonValue } from '@bangle.io/shared-types';
-import { filePathToWsPath, matchPath, OpenedWsPaths } from '@bangle.io/ws-path';
+import {
+  HELP_FS_INDEX_FILE_NAME,
+  HELP_FS_WORKSPACE_NAME,
+} from '@bangle.io/workspaces';
+import { filePathToWsPath, isValidFileWsPath } from '@bangle.io/ws-path';
 
-type TAppStore = ApplicationStore<
-  WorkspaceContextState,
-  WorkspaceContextAction
->;
+import { WorkspaceSliceAction, workspaceSliceKey } from './common';
+import { historyOnInvalidPath, updateWsPaths } from './operations';
+import {
+  UpdateState,
+  WorkspaceSliceState,
+  WorkspaceStateKeys,
+} from './slice-state';
 
-type AppState = TAppStore['state'];
+export const JSON_SCHEMA_VERSION = 'workspace-slice/1';
 
-export type DispatchType = TAppStore['dispatch'];
+const LOG = true;
+let log = LOG ? console.log.bind(console, 'workspaceSlice') : () => {};
 
-export type WorkspaceContextAction = {
-  name: 'action::workspace-context:update-location';
-  value: {
-    locationSearchQuery: string | undefined;
-    locationPathname: string | undefined;
-  };
-};
+const initialPathName =
+  typeof window !== 'undefined' ? window.location.pathname : undefined;
+const initialQuery =
+  typeof window !== 'undefined' ? window.location.search : undefined;
 
-export interface WorkspaceContextState {
-  locationPathname?: string;
-  locationSearchQuery?: string;
-  wsName?: string;
-  openedWsPaths: OpenedWsPaths;
-}
-
-export const workspaceContextKey = new SliceKey<
-  WorkspaceContextState,
-  WorkspaceContextAction
->('workspace-context-slice');
-
-export const workspaceContextInitialState: WorkspaceContextState = {
-  locationPathname:
-    typeof window !== 'undefined' ? window.location.pathname : undefined,
-  locationSearchQuery:
-    typeof window !== 'undefined' ? window.location.search : undefined,
-  wsName: undefined,
-  openedWsPaths: OpenedWsPaths.createEmpty(),
-};
+export const workspaceSliceInitialState: WorkspaceSliceState =
+  new WorkspaceSliceState({
+    locationPathname: initialPathName,
+    locationSearchQuery: initialQuery,
+    recentlyUsedWsPaths: undefined,
+    wsPaths: undefined,
+  });
 
 const applyState = (
-  action: WorkspaceContextAction,
-  state: WorkspaceContextState,
-): WorkspaceContextState => {
+  action: WorkspaceSliceAction,
+  state: WorkspaceSliceState,
+): WorkspaceSliceState => {
   switch (action.name) {
     case 'action::workspace-context:update-location': {
-      return {
-        ...state,
+      return state[UpdateState]({
         locationPathname: action.value.locationPathname,
         locationSearchQuery: action.value.locationSearchQuery,
-      };
+      });
     }
+
+    case 'action::workspace-context:update-recently-used-ws-paths': {
+      return state[UpdateState]({
+        recentlyUsedWsPaths: action.value,
+      });
+    }
+
+    case 'action::workspace-context:update-ws-paths': {
+      return state[UpdateState]({
+        wsPaths: action.value,
+      });
+    }
+
     default: {
       return state;
     }
   }
 };
 
-const selectPathname = (state: WorkspaceContextState) => state.locationPathname;
-const selectSearchQuery = (state: WorkspaceContextState) =>
-  state.locationSearchQuery;
-
-const selectWsName = createSelector(selectPathname, (pathName) => {
-  return getWsNameFromPathname(pathName);
-});
-
-const selectOpenedWsPaths = createSelector(
-  [selectPathname, selectSearchQuery],
-  (pathName, searchQuery) => {
-    return OpenedWsPaths.createFromArray([
-      getPrimaryWsPath(pathName),
-      getSecondaryWsPath(searchQuery),
-    ]);
-  },
-);
-
-export function workspaceContextSlice() {
+export function workspaceSlice() {
   return new Slice({
-    key: workspaceContextKey,
+    key: workspaceSliceKey,
     state: {
       init() {
-        return workspaceContextInitialState;
+        return workspaceSliceInitialState;
       },
+
       apply(action, state) {
         const newState = applyState(action, state);
+
         if (newState === state) {
           return state;
         }
-        // update derived state
-        newState.wsName = selectWsName(newState);
-        newState.openedWsPaths = selectOpenedWsPaths(newState);
+
+        if (action.name.startsWith('action::workspace-context:')) {
+          log(action, newState.openedWsPaths.primaryWsPath);
+        }
 
         return newState;
       },
 
       stateToJSON(val) {
-        const result: { [key in keyof typeof val]: JsonValue } = {
+        const obj: { [K in WorkspaceStateKeys]: any } = {
           locationPathname: val.locationPathname,
           locationSearchQuery: val.locationSearchQuery,
-          openedWsPaths: val.openedWsPaths.toArray().map((r) => (r ? r : null)),
-          wsName: val.wsName,
+          recentlyUsedWsPaths: val.recentlyUsedWsPaths,
+          wsPaths: val.wsPaths,
         };
 
-        return result;
+        const result = Object.fromEntries(
+          Object.entries(obj).map(([key, val]): [string, JsonValue] => {
+            if (val === undefined) {
+              // convert to null since JSON likes it
+              return [key, null];
+            }
+            if (Array.isArray(val)) {
+              return [key, val.map((r) => (r == null ? null : r))];
+            }
+            return [key, val];
+          }),
+        );
+
+        return {
+          version: JSON_SCHEMA_VERSION,
+          data: result,
+        };
       },
 
       stateFromJSON(_, value: any) {
-        const state: WorkspaceContextState = Object.assign(
-          {},
-          workspaceContextInitialState,
-          {},
-        );
-
-        if (value.locationPathname) {
-          state.locationPathname = value.locationPathname;
+        if (!value || value.version !== JSON_SCHEMA_VERSION) {
+          return workspaceSliceInitialState;
         }
+        const data = value.data;
 
-        if (value.locationSearchQuery) {
-          state.locationSearchQuery = value.locationSearchQuery;
-        }
-
-        if (Array.isArray(value.openedWsPaths)) {
-          state.openedWsPaths = OpenedWsPaths.createFromArray(
-            value.openedWsPaths,
-          );
-        }
-
-        if (value.wsName) {
-          state.wsName = value.wsName;
-        }
-
-        return state;
+        return workspaceSliceInitialState[UpdateState]({
+          locationPathname: data.locationPathname,
+          locationSearchQuery: data.locationSearchQuery,
+          recentlyUsedWsPaths: data.recentlyUsedWsPaths,
+          wsPaths: data.wsPaths,
+        });
       },
     },
+    sideEffect(store) {
+      updateWsPaths()(store.state, store.dispatch, store);
+      return {
+        update(store, __, sliceState, prevSliceState) {
+          if (sliceState.wsName !== prevSliceState.wsName) {
+            store.dispatch({
+              name: 'action::workspace-context:update-ws-paths',
+              value: undefined,
+            });
+            updateWsPaths()(store.state, store.dispatch, store);
+          }
+
+          const { wsName, openedWsPaths } = sliceState;
+
+          if (!openedWsPaths.equal(prevSliceState.openedWsPaths)) {
+            // TODO fix this weird ness of openedWsPaths not reflecting the true state
+            let { primaryWsPath, secondaryWsPath } = openedWsPaths;
+            if (wsName === HELP_FS_WORKSPACE_NAME && !primaryWsPath) {
+              primaryWsPath = filePathToWsPath(wsName, HELP_FS_INDEX_FILE_NAME);
+            }
+            if (wsName && primaryWsPath && !isValidFileWsPath(primaryWsPath)) {
+              historyOnInvalidPath(wsName, primaryWsPath)(
+                store.state,
+                store.dispatch,
+              );
+            } else if (
+              wsName &&
+              secondaryWsPath &&
+              !isValidFileWsPath(secondaryWsPath)
+            ) {
+              historyOnInvalidPath(wsName, secondaryWsPath)(
+                store.state,
+                store.dispatch,
+              );
+            }
+            // END_WEIRDNESS
+          }
+        },
+        deferredUpdate() {},
+      };
+    },
   });
-}
-
-function getPrimaryFilePath(pathname?: string) {
-  if (pathname) {
-    return pathname.split('/').slice(3).join('/');
-  }
-  return undefined;
-}
-
-function getPrimaryWsPath(pathname?: string) {
-  const wsName = getWsNameFromPathname(pathname);
-  const filePath = getPrimaryFilePath(pathname);
-  if (!wsName || !filePath) {
-    return undefined;
-  }
-  return filePathToWsPath(wsName, filePath);
-}
-
-function getSecondaryWsPath(search?: string) {
-  const searchParams = new URLSearchParams(search);
-  const secondaryWsPath = searchParams.get('secondary') ?? undefined;
-
-  return secondaryWsPath;
-}
-
-function getWsNameFromPathname(pathname?: string) {
-  if (!pathname) {
-    return undefined;
-  }
-
-  const match = matchPath<{ wsName: string }>(pathname, {
-    path: '/ws/:wsName',
-    exact: false,
-    strict: false,
-  });
-
-  const { wsName } = match?.params ?? {};
-
-  return wsName;
 }

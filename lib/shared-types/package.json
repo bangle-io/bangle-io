@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@bangle.dev/pm": "0.28.3",
+    "@bangle.io/ws-path": "workspace:*",
     "type-fest": "^2.8.0"
   },
   "license": "AGPL-3.0-or-later"

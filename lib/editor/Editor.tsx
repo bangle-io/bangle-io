@@ -73,7 +73,7 @@ function EditorInner({
 
   useEffect(() => {
     let destroyed = false;
-    getNote(wsPath).then((doc) => {
+    getNote(extensionRegistry, wsPath).then((doc) => {
       if (!destroyed) {
         setInitialDoc(doc);
       }
@@ -81,7 +81,7 @@ function EditorInner({
     return () => {
       destroyed = true;
     };
-  }, [getNote, wsPath]);
+  }, [getNote, extensionRegistry, wsPath]);
 
   const editorRef = useRef<CoreBangleEditor | null>(null);
 

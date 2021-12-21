@@ -2882,6 +2882,7 @@ __metadata:
     "@bangle.dev/core": 0.28.3
     "@bangle.dev/pm": 0.28.3
     "@bangle.dev/utils": 0.28.3
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"

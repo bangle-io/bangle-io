@@ -1,135 +1,169 @@
 import { AppState } from '@bangle.io/create-store';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { workspaceContextKey, workspaceContextSlice } from '..';
+import { JSON_SCHEMA_VERSION, workspaceSlice } from '..';
+import { workspaceSliceKey } from '../common';
+import { createState } from './test-utils';
+
+const fileOps = {
+  onNativefsAuthError: jest.fn(),
+  onWorkspaceNotFound: jest.fn(),
+  onInvalidPath: jest.fn(),
+};
 
 describe('serialization works', () => {
   test('serialization works', () => {
-    let state = AppState.create({ slices: [workspaceContextSlice()] });
+    let state = AppState.create({ slices: [workspaceSlice(fileOps)] });
 
     expect(
       state.stateToJSON({
-        sliceFields: { workspace: workspaceContextSlice() },
+        sliceFields: { workspace: workspaceSlice(fileOps) },
       }),
     ).toMatchInlineSnapshot(`
       Object {
         "workspace": Object {
+          "data": Object {
+            "locationPathname": "/",
+            "locationSearchQuery": "",
+            "recentlyUsedWsPaths": null,
+            "wsPaths": null,
+          },
+          "version": "workspace-slice/1",
+        },
+      }
+    `);
+  });
+
+  test("doesn't parse incorrect schema", () => {
+    let state = AppState.stateFromJSON({
+      slices: [workspaceSlice(fileOps)],
+      json: {
+        workspace: {
+          version: 'wrong-version',
+          data: { locationPathname: '/test-123' },
+        },
+      },
+      sliceFields: { workspace: workspaceSlice(fileOps) },
+    });
+
+    expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
+      WorkspaceSliceState {
+        "mainFields": Object {
           "locationPathname": "/",
           "locationSearchQuery": "",
-          "openedWsPaths": Array [
-            null,
-            null,
-          ],
-          "wsName": undefined,
+          "recentlyUsedWsPaths": undefined,
+          "wsPaths": undefined,
         },
+        "opts": Object {},
       }
     `);
   });
 
-  test('parsing works 1', () => {
+  test('parsing wsPaths', () => {
     let state = AppState.stateFromJSON({
-      slices: [workspaceContextSlice()],
+      slices: [workspaceSlice(fileOps)],
       json: {
-        workspace: { locationPathname: '/test', locationSearchQuery: 'query' },
+        workspace: {
+          version: JSON_SCHEMA_VERSION,
+          data: { wsPaths: ['test:one.md', 'test:from.md'] },
+        },
       },
-      sliceFields: { workspace: workspaceContextSlice() },
+      sliceFields: { workspace: workspaceSlice(fileOps) },
     });
 
-    expect(workspaceContextKey.getSliceState(state)).toMatchInlineSnapshot(`
-      Object {
-        "locationPathname": "/test",
-        "locationSearchQuery": "query",
-        "openedWsPaths": OpenedWsPaths {
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toEqual([
+      'test:one.md',
+      'test:from.md',
+    ]);
+
+    expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
+      WorkspaceSliceState {
+        "mainFields": Object {
+          "locationPathname": undefined,
+          "locationSearchQuery": undefined,
+          "recentlyUsedWsPaths": undefined,
           "wsPaths": Array [
-            undefined,
-            undefined,
+            "test:one.md",
+            "test:from.md",
           ],
         },
-        "wsName": undefined,
+        "opts": Object {},
       }
     `);
 
     expect(
       state.stateToJSON({
-        sliceFields: { workspace: workspaceContextSlice() },
+        sliceFields: { workspace: workspaceSlice(fileOps) },
       }),
     ).toMatchInlineSnapshot(`
       Object {
         "workspace": Object {
-          "locationPathname": "/test",
-          "locationSearchQuery": "query",
-          "openedWsPaths": Array [
-            null,
-            null,
-          ],
-          "wsName": undefined,
+          "data": Object {
+            "locationPathname": null,
+            "locationSearchQuery": null,
+            "recentlyUsedWsPaths": null,
+            "wsPaths": Array [
+              "test:one.md",
+              "test:from.md",
+            ],
+          },
+          "version": "workspace-slice/1",
         },
       }
     `);
   });
 
-  test('parsing openedWsPaths', () => {
+  test('parsing recentlyUsedWsPaths', () => {
     let state = AppState.stateFromJSON({
-      slices: [workspaceContextSlice()],
+      slices: [workspaceSlice(fileOps)],
       json: {
-        workspace: { openedWsPaths: [null, 'test:one.md'] },
+        workspace: {
+          version: JSON_SCHEMA_VERSION,
+          data: {
+            locationPathname: '/ws/bangle-help/test-path/k.md',
+            locationSearchQuery: 'secondary=bangle-help%3Agetting+started.md',
+          },
+        },
       },
-      sliceFields: { workspace: workspaceContextSlice() },
+      sliceFields: { workspace: workspaceSlice(fileOps) },
     });
 
+    expect(workspaceSliceKey.getSliceState(state)?.wsName).toBe('bangle-help');
+
     expect(
-      workspaceContextKey
+      workspaceSliceKey
         .getSliceState(state)
         ?.openedWsPaths.equal(
-          OpenedWsPaths.createFromArray([null, 'test:one.md']),
+          OpenedWsPaths.createFromArray([
+            'bangle-help:test-path/k.md',
+            'bangle-help:getting started.md',
+          ]),
         ),
     ).toBe(true);
 
     expect(
       state.stateToJSON({
-        sliceFields: { workspace: workspaceContextSlice() },
+        sliceFields: { workspace: workspaceSlice(fileOps) },
       }),
     ).toMatchInlineSnapshot(`
       Object {
         "workspace": Object {
-          "locationPathname": "/",
-          "locationSearchQuery": "",
-          "openedWsPaths": Array [
-            null,
-            "test:one.md",
-          ],
-          "wsName": undefined,
+          "data": Object {
+            "locationPathname": "/ws/bangle-help/test-path/k.md",
+            "locationSearchQuery": "secondary=bangle-help%3Agetting+started.md",
+            "recentlyUsedWsPaths": null,
+            "wsPaths": null,
+          },
+          "version": "workspace-slice/1",
         },
       }
     `);
   });
-
-  test('parsing wsName', () => {
-    let state = AppState.stateFromJSON({
-      slices: [workspaceContextSlice()],
-      json: {
-        workspace: { wsName: 'test' },
-      },
-      sliceFields: { workspace: workspaceContextSlice() },
-    });
-
-    expect(workspaceContextKey.getSliceState(state)?.wsName).toBe('test');
-  });
 });
 
 describe('state', () => {
-  const createState = (initialJsonState: any = {}) => {
-    return AppState.stateFromJSON({
-      slices: [workspaceContextSlice()],
-      json: {
-        workspace: initialJsonState,
-      },
-      sliceFields: { workspace: workspaceContextSlice() },
-    });
-  };
-
   test('updates location', () => {
-    let state = createState({ wsName: 'abcd' });
+    let state = createState();
 
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
@@ -139,16 +173,60 @@ describe('state', () => {
       },
     });
 
-    expect(workspaceContextKey.getSliceState(state)?.locationPathname).toBe(
+    expect(workspaceSliceKey.getSliceState(state)?.locationPathname).toBe(
       'test-path',
     );
-    expect(workspaceContextKey.getSliceState(state)?.locationSearchQuery).toBe(
+    expect(workspaceSliceKey.getSliceState(state)?.locationSearchQuery).toBe(
       'test-query',
     );
   });
 
+  test('updating wsPaths', () => {
+    let state = createState();
+
+    const wsPaths = ['test:one.md'];
+    state = state.applyAction({
+      name: 'action::workspace-context:update-ws-paths',
+      value: wsPaths,
+    });
+
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toBe(wsPaths);
+  });
+
+  test('updating recentlyUsedWsPaths', () => {
+    let state = createState();
+
+    const recent = ['test:one.md'];
+    state = state.applyAction({
+      name: 'action::workspace-context:update-recently-used-ws-paths',
+      value: recent,
+    });
+
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toBe(undefined);
+    expect(workspaceSliceKey.getSliceState(state)?.recentlyUsedWsPaths).toBe(
+      recent,
+    );
+  });
+
+  test('dispatching other action should not affect existing state', () => {
+    let state = createState({ locationPathname: '/ws/test-workspace/k.md' });
+
+    let state2 = state.applyAction({
+      name: 'action::some-other-action',
+    } as any);
+
+    expect(workspaceSliceKey.getSliceState(state2)?.wsName).toBe(
+      'test-workspace',
+    );
+    expect(workspaceSliceKey.getSliceState(state2)).toBe(
+      workspaceSliceKey.getSliceState(state2),
+    );
+  });
+});
+
+describe('derived state', () => {
   test('updating location changes wsName', () => {
-    let state = createState({ wsName: 'abcd' });
+    let state = createState();
 
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
@@ -158,14 +236,14 @@ describe('state', () => {
       },
     });
 
-    expect(workspaceContextKey.getSliceState(state)?.wsName).toBe('test-path');
+    expect(workspaceSliceKey.getSliceState(state)?.wsName).toBe('test-path');
     expect(
-      workspaceContextKey.getSliceState(state)?.openedWsPaths.toArray(),
+      workspaceSliceKey.getSliceState(state)?.openedWsPaths.toArray(),
     ).toEqual(['test-path:k.md', null]);
   });
 
-  test('wsPath', () => {
-    let state = createState({ wsName: 'abcd' });
+  test('derives wsPath', () => {
+    let state = createState();
 
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
@@ -176,16 +254,16 @@ describe('state', () => {
     });
 
     expect(
-      workspaceContextKey.getSliceState(state)?.openedWsPaths.getByIndex(0),
+      workspaceSliceKey.getSliceState(state)?.openedWsPaths.getByIndex(0),
     ).toBe(undefined);
 
     expect(
-      workspaceContextKey.getSliceState(state)?.openedWsPaths.getByIndex(1),
+      workspaceSliceKey.getSliceState(state)?.openedWsPaths.getByIndex(1),
     ).toBe('bangle-help:getting started.md');
   });
 
-  test('should preserve openedWsPath', () => {
-    let state = createState({ wsName: 'abcd' });
+  test('should preserve openedWsPath properly', () => {
+    let state = createState();
 
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
@@ -203,17 +281,23 @@ describe('state', () => {
       },
     });
 
-    expect(workspaceContextKey.getSliceState(state)?.openedWsPaths).toBe(
-      workspaceContextKey.getSliceState(state2)?.openedWsPaths,
+    expect(workspaceSliceKey.getSliceState(state)?.openedWsPaths).toBe(
+      workspaceSliceKey.getSliceState(state2)?.openedWsPaths,
     );
   });
 
-  test('dispatching other action should not affect existing state', () => {
-    let state = createState({ wsName: 'abcd' });
+  test('updating noteWsPaths', () => {
+    let state = createState();
 
+    const wsPaths = ['test:one.md', 'test:some-other.text'];
     state = state.applyAction({
-      name: 'action::some-other-action',
-    } as any);
-    expect(workspaceContextKey.getSliceState(state)?.wsName).toBe('abcd');
+      name: 'action::workspace-context:update-ws-paths',
+      value: wsPaths,
+    });
+
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toBe(wsPaths);
+    expect(workspaceSliceKey.getSliceState(state)?.noteWsPaths).toEqual([
+      wsPaths[0],
+    ]);
   });
 });

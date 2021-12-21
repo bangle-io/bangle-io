@@ -3,11 +3,17 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import { Node } from '@bangle.dev/pm';
 
+import { useSliceState } from '@bangle.io/app-state-context';
 import { BaseFileSystemError } from '@bangle.io/baby-fs';
 import {
   ExtensionRegistry,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
+import type {
+  OnInvalidPathType,
+  OnNativefsAuthErrorType,
+  OnWorkspaceNotFoundType,
+} from '@bangle.io/shared-types';
 import {
   HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
@@ -25,15 +31,13 @@ import {
   validateNoteWsPath,
 } from '@bangle.io/ws-path';
 
+import { workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
+import * as Operations from './operations';
 import { fileOpsPlus, FileOpsType } from './use-get-file-ops';
 import { useRecentlyUsedWsPaths } from './use-recently-used-ws-paths';
-import {
-  Selectors,
-  useWorkspaceStore,
-  WorkspaceDispatch,
-  WorkspaceStore,
-} from './WorkspaceStore';
+import { workspaceSliceInitialState } from './workspace-slice';
+import { Selectors, WorkspaceDispatch, WorkspaceStore } from './WorkspaceStore';
 
 const LOG = true;
 
@@ -74,12 +78,6 @@ export function useWorkspaceContext() {
   return useContext(WorkspaceHooksContext);
 }
 
-export type OnInvalidPath = (
-  wsName: string | undefined,
-  history: History,
-  invalidPath: string,
-) => void;
-
 /**
  *
  * @param {*} param0
@@ -93,148 +91,102 @@ export function WorkspaceContextProvider({
   onInvalidPath,
 }: {
   children: React.ReactNode;
-  onNativefsAuthError: (wsName: string | undefined, history: History) => void;
-  onWorkspaceNotFound: (wsName: string | undefined, history: History) => void;
-  onInvalidPath: OnInvalidPath;
+  onNativefsAuthError: OnNativefsAuthErrorType;
+  onWorkspaceNotFound: OnWorkspaceNotFoundType;
+  onInvalidPath: OnInvalidPathType;
 }) {
-  const [workspaceStore, storeDispatch] = useWorkspaceStore();
-  const extensionRegistry = useExtensionRegistryContext();
-  const history = useHistory();
   const location = useLocation<any>();
-
-  const { wsName, openedWsPaths } = useMemo(
-    () => ({
-      wsName: Selectors.wsName(location),
-      openedWsPaths: Selectors.openedWsPaths(location),
-    }),
-    [location],
-  );
-  const noteWsPaths = useMemo(() => {
-    return Selectors.noteWsPaths(workspaceStore);
-  }, [workspaceStore]);
-
-  const onAuthError = useCallback(() => {
-    if (wsName) {
-      onNativefsAuthError(wsName, history);
-    }
-  }, [history, wsName, onNativefsAuthError]);
-
-  const _onWorkspaceNoteFound = useCallback(() => {
-    if (wsName) {
-      onWorkspaceNotFound(wsName, history);
-    }
-  }, [wsName, history, onWorkspaceNotFound]);
-
-  useRecentlyUsedWsPaths(workspaceStore, storeDispatch, location);
-
-  const effects = useMemo(() => {
-    return Effects({
-      onAuthError,
-      onInvalidPath,
-      onWorkspaceNotFound: _onWorkspaceNoteFound,
-    });
-  }, [onAuthError, onInvalidPath, _onWorkspaceNoteFound]);
-
-  const fileOps = useMemo(() => {
-    return effects.getFileOps()();
-  }, [effects]);
-
-  const updateOpenedWsPaths = useMemo(() => {
-    return effects.updateOpenedWsPaths(location, history);
-  }, [effects, location, history]);
-
-  const getNote = useMemo(() => {
-    return effects.getNote(extensionRegistry, fileOps);
-  }, [extensionRegistry, effects, fileOps]);
-
-  const refreshWsPaths = useMemo(
-    () => effects.refreshWsPaths(storeDispatch, wsName, fileOps),
-    [storeDispatch, effects, wsName, fileOps],
+  const { sliceState: workspaceState, store } = useSliceState(
+    workspaceSliceKey,
+    workspaceSliceInitialState,
   );
 
-  const renameNote = useMemo(() => {
-    return effects.renameNote(location, fileOps, history, refreshWsPaths);
-  }, [location, fileOps, history, refreshWsPaths, effects]);
+  console.log(workspaceState);
+  // useRecentlyUsedWsPaths();
 
-  const createNote = useMemo(() => {
-    return effects.createNote(location, fileOps, refreshWsPaths, history);
-  }, [effects, location, fileOps, refreshWsPaths, history]);
+  const fileOps = useCallback(
+    (...args: Parameters<typeof Operations.getFileOps>) => {
+      const res = Operations.getFileOps(...args);
+      const p = res(store.state, store.dispatch, store);
+      return p;
+    },
+    [store],
+  );
 
-  const pushWsPath = useMemo(() => {
-    return effects.pushWsPath(updateOpenedWsPaths);
-  }, [effects, updateOpenedWsPaths]);
+  const updateOpenedWsPaths = useCallback(
+    (...args: Parameters<typeof Operations.updateOpenedWsPaths>) =>
+      Operations.updateOpenedWsPaths(...args)(store.state, store.dispatch),
+    [store],
+  );
 
-  const deleteNote = useMemo(() => {
-    return effects.deleteNote(
-      location,
-      fileOps,
-      updateOpenedWsPaths,
-      refreshWsPaths,
-    );
-  }, [effects, location, fileOps, updateOpenedWsPaths, refreshWsPaths]);
+  const getNote = useCallback(
+    (...args: Parameters<typeof Operations.getNote>) =>
+      Operations.getNote(...args)(store.state, store.dispatch, store),
+    [store],
+  );
 
-  useEffect(() => {
-    storeDispatch({
-      type: '@UPDATE_WS_PATHS',
-      value: undefined,
-    });
-    // load the wsPaths on mount
-    refreshWsPaths();
-  }, [
-    storeDispatch,
-    refreshWsPaths,
-    wsName,
-    // when user grants permission to read file
-    location?.state?.workspaceStatus,
-  ]);
+  const refreshWsPaths = useCallback(
+    (...args: Parameters<typeof Operations.updateWsPaths>) =>
+      Operations.updateWsPaths(...args)(store.state, store.dispatch, store),
+    [store],
+  );
 
-  // TODO fix this weird ness of openedWsPaths not reflecting the true state
-  let { primaryWsPath, secondaryWsPath } = openedWsPaths;
-  if (wsName === HELP_FS_WORKSPACE_NAME && !primaryWsPath) {
-    primaryWsPath = filePathToWsPath(wsName, HELP_FS_INDEX_FILE_NAME);
-  }
-  if (primaryWsPath && !isValidFileWsPath(primaryWsPath)) {
-    onInvalidPath(wsName, history, primaryWsPath);
-    primaryWsPath = undefined;
-  } else if (secondaryWsPath && !isValidFileWsPath(secondaryWsPath)) {
-    onInvalidPath(wsName, history, secondaryWsPath);
-    secondaryWsPath = undefined;
-  }
-  // END_WEIRDNESS
+  const renameNote = useCallback(
+    (...args: Parameters<typeof Operations.renameNote>) =>
+      Operations.renameNote(...args)(store.state, store.dispatch, store),
+    [store],
+  );
+
+  const createNote = useCallback(
+    (...args: Parameters<typeof Operations.createNote>) =>
+      Operations.createNote(...args)(store.state, store.dispatch, store),
+    [store],
+  );
+
+  const pushWsPath = useCallback(
+    (...args: Parameters<typeof Operations.pushWsPath>) =>
+      Operations.pushWsPath(...args)(store.state, store.dispatch, store),
+    [store],
+  );
+
+  const deleteNote = useCallback(
+    (...args: Parameters<typeof Operations.deleteNote>) => {
+      return Operations.deleteNote(...args)(store.state, store.dispatch, store);
+    },
+    [store],
+  );
+
+  const primaryWsPath = workspaceState?.openedWsPaths.getByIndex(1);
 
   const value: WorkspaceContextType = useMemo(() => {
     return {
-      checkFileExists: fileOps.checkFileExists,
+      checkFileExists: fileOps()?.checkFileExists,
       createNote,
       deleteNote,
-      fileWsPaths: workspaceStore.wsPaths,
+      fileWsPaths: workspaceState?.wsPaths,
       getNote,
-      noteWsPaths,
-      openedWsPaths,
-      primaryWsPath,
+      noteWsPaths: workspaceState?.noteWsPaths,
+      openedWsPaths: workspaceState?.openedWsPaths,
+      primaryWsPath: primaryWsPath,
       pushWsPath: pushWsPath,
-      recentWsPaths: workspaceStore.recentlyUsedWsPaths,
+      recentWsPaths: workspaceState?.recentlyUsedWsPaths,
       refreshWsPaths,
       renameNote,
-      secondaryWsPath,
+      secondaryWsPath: workspaceState?.openedWsPaths.getByIndex(1),
       updateOpenedWsPaths,
-      wsName,
+      wsName: workspaceState?.wsName,
     };
   }, [
     primaryWsPath,
-    secondaryWsPath,
-    pushWsPath,
-    getNote,
-    createNote,
+    workspaceState,
     fileOps,
-    workspaceStore,
-    wsName,
-    openedWsPaths,
-    noteWsPaths,
-    renameNote,
-    refreshWsPaths,
-    deleteNote,
     updateOpenedWsPaths,
+    getNote,
+    refreshWsPaths,
+    renameNote,
+    createNote,
+    pushWsPath,
+    deleteNote,
   ]);
 
   return (
@@ -251,7 +203,7 @@ export const Effects = ({
 }: {
   onAuthError: () => void;
   onWorkspaceNotFound: () => void;
-  onInvalidPath: OnInvalidPath;
+  onInvalidPath: OnInvalidPathType;
 }) => {
   const _Effects = {
     getFileOps: () => {
@@ -359,6 +311,7 @@ export const Effects = ({
         }
 
         await fileOps.renameFile(oldWsPath, newWsPath);
+
         if (updateLocation) {
           const newLocation = openedWsPaths
             .updateIfFound(oldWsPath, newWsPath)

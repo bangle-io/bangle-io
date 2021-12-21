@@ -6,11 +6,7 @@ import { Location } from '@bangle.io/ws-path';
 import { MAX_ENTRIES, MAX_TIMESTAMPS_PER_ENTRY } from './config';
 import { Selectors, WorkspaceDispatch, WorkspaceStore } from './WorkspaceStore';
 
-export function useRecentlyUsedWsPaths(
-  workspaceStore: WorkspaceStore,
-  storeDispatch: WorkspaceDispatch,
-  location: Location,
-) {
+export function useRecentlyUsedWsPaths() {
   const { wsName, openedWsPaths: openedPaths } = useMemo(
     () => ({
       wsName: Selectors.wsName(location),

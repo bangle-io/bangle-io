@@ -87,7 +87,6 @@ export function geEditorScrollPosition(editorId: EditorIdType, wsPath: string) {
     if (!sliceState) {
       return undefined;
     }
-
     return sliceState.editorConfig.getScrollPosition(wsPath, editorId);
   };
 }

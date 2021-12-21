@@ -2,7 +2,6 @@
  * This whole thing exists so that we can tap into auth errors
  * and do the necessary.
  */
-import { useMemo } from 'react';
 
 import {
   BaseFileSystemError,
