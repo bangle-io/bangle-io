@@ -5,14 +5,11 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import type { HistoryAction } from '@bangle.io/shared-types';
 import {
-  HELP_FS_INDEX_FILE_NAME,
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from '@bangle.io/workspaces';
 import {
-  filePathToWsPath,
-  isValidFileWsPath,
   OpenedWsPaths,
   PathValidationError,
   resolvePath,
@@ -25,10 +22,11 @@ import {
   workspaceSliceKey,
 } from './common';
 import { defaultDoc } from './default-doc';
+import { validateOpenedWsPaths } from './helpers';
 import type { WorkspaceSliceState } from './slice-state';
 import { fileOpsPlus, FileOpsType } from './use-get-file-ops';
 
-const LOG = true;
+const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};
 
 export function updateLocation({
@@ -49,7 +47,7 @@ export function updateLocation({
   };
 }
 
-export const historyOnInvalidPath = (wsName: string, invalidPath: string) => {
+export const historyOnInvalidPath = (wsName: string, invalidWsPath: string) => {
   return (state: AppState, dispatch: WorkspaceDispatchType): void => {
     let _dispatch = dispatch as ApplicationStore<
       WorkspaceSliceState,
@@ -57,8 +55,27 @@ export const historyOnInvalidPath = (wsName: string, invalidPath: string) => {
     >['dispatch'];
     _dispatch({
       name: 'action::bangle-store:history-on-invalid-path',
-      value: { wsName: wsName, invalidPath },
+      value: { wsName: wsName, invalidWsPath },
     });
+  };
+};
+
+export const historyUpdatePrimaryWsPath = (
+  wsPath: string,
+  replace: boolean,
+  wsName: string,
+) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType): void => {
+    const sliceState = workspaceSliceKey.getSliceState(state);
+    if (sliceState) {
+      let openedWsPath = sliceState.openedWsPaths;
+      openedWsPath = openedWsPath.updateByIndex(0, wsPath);
+      historyUpdateOpenedWsPaths(
+        openedWsPath.toArray(),
+        replace,
+        wsName,
+      )(state, dispatch);
+    }
   };
 };
 
@@ -84,16 +101,16 @@ export const getFileOps = () => {
   return (
     state: AppState,
     dispatch: WorkspaceDispatchType,
-    store: ApplicationStore,
   ): FileOpsType | undefined => {
     let _dispatch = dispatch as ApplicationStore<
       WorkspaceSliceState,
       WorkspaceSliceAction | HistoryAction
     >['dispatch'];
 
+    const sliceState = workspaceSliceKey.getSliceState(state);
+
     return fileOpsPlus(
       () => {
-        const sliceState = workspaceSliceKey.getSliceState(store.state);
         if (sliceState?.wsName) {
           _dispatch({
             name: 'action::bangle-store:history-auth-error',
@@ -102,7 +119,6 @@ export const getFileOps = () => {
         }
       },
       () => {
-        const sliceState = workspaceSliceKey.getSliceState(store.state);
         if (sliceState?.wsName) {
           _dispatch({
             name: 'action::bangle-store:history-ws-not-found',
@@ -123,52 +139,40 @@ export const isCurrentWsName = (wsName: string) => {
   };
 };
 
-export const updateWsPaths = () => {
-  return (
-    state: AppState,
-    dispatch: WorkspaceDispatchType,
-    store: ApplicationStore,
-  ) => {
-    let wsName = workspaceSliceKey.getSliceState(state)?.wsName;
+export const refreshWsPaths = () => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
 
     if (!wsName) {
-      return;
+      return false;
     }
 
     log('refreshing wsPaths', wsName);
 
-    const fileOps = getFileOps()(state, dispatch, store);
+    const fileOps = getFileOps()(state, dispatch);
 
     fileOps
       ?.listAllFiles(wsName)
       .then((items) => {
-        if (!wsName) {
-          return;
-        }
         log('received files for wsName', wsName, 'file count', items.length);
-
-        if (!isCurrentWsName(wsName)(store.state)) {
-          log('not current wsName', wsName);
-          return;
-        }
 
         dispatch({
           name: 'action::workspace-context:update-ws-paths',
-          value: items,
+          value: {
+            wsName,
+            wsPaths: items,
+          },
         });
         return;
       })
       .catch((error) => {
-        if (!wsName) {
-          return;
-        }
-
-        if (isCurrentWsName(wsName)(store.state)) {
-          dispatch({
-            name: 'action::workspace-context:update-ws-paths',
-            value: undefined,
-          });
-        }
+        dispatch({
+          name: 'action::workspace-context:update-ws-paths',
+          value: {
+            wsName,
+            wsPaths: undefined,
+          },
+        });
 
         // ignore file system error here as other parts of the
         // application should have handled it
@@ -181,6 +185,8 @@ export const updateWsPaths = () => {
           throw error;
         }
       });
+
+    return true;
   };
 };
 
@@ -195,30 +201,20 @@ export const updateOpenedWsPaths = (
       return false;
     }
 
-    const { wsName, openedWsPaths } = sliceState;
-
-    let primaryWsPath = openedWsPaths.getByIndex(0);
-    let secondaryWsPath = openedWsPaths.getByIndex(1);
-
-    if (wsName === HELP_FS_WORKSPACE_NAME && !primaryWsPath) {
-      primaryWsPath = filePathToWsPath(wsName, HELP_FS_INDEX_FILE_NAME);
-    }
-
-    if (primaryWsPath && !isValidFileWsPath(primaryWsPath)) {
-      historyOnInvalidPath(wsName, primaryWsPath)(state, dispatch);
-      primaryWsPath = undefined;
-      return false;
-    } else if (secondaryWsPath && !isValidFileWsPath(secondaryWsPath)) {
-      historyOnInvalidPath(wsName, secondaryWsPath);
-      secondaryWsPath = undefined;
-      return false;
-    }
+    const { wsName } = sliceState;
 
     if (newOpened instanceof Function) {
-      newOpened = newOpened(openedWsPaths);
+      newOpened = newOpened(sliceState.openedWsPaths);
     }
 
-    if (newOpened.equal(openedWsPaths)) {
+    if (newOpened.equal(sliceState.openedWsPaths)) {
+      return false;
+    }
+
+    const validity = validateOpenedWsPaths(newOpened);
+
+    if (!validity.valid) {
+      historyOnInvalidPath(wsName, validity.invalidWsPath)(state, dispatch);
       return false;
     }
 
@@ -232,44 +228,64 @@ export const updateOpenedWsPaths = (
   };
 };
 
-export const renameNote = (
-  oldWsPath: string,
-  newWsPath: string,
-  { updateLocation = true } = {},
-) => {
+export const renameNote = (targetWsPath: string, newWsPath: string) => {
   return (
     state: AppState,
     dispatch: WorkspaceDispatchType,
     store: ApplicationStore,
-  ) => {
-    const fileOps = getFileOps()(state, dispatch, store);
+  ): boolean => {
+    const fileOps = getFileOps()(state, dispatch);
 
     const sliceState = workspaceSliceKey.getSliceState(state);
     const wsName = sliceState?.wsName;
 
     if (!wsName || !sliceState || !fileOps) {
-      return;
+      return false;
     }
-
-    const { openedWsPaths } = sliceState;
 
     if (wsName === HELP_FS_WORKSPACE_NAME) {
       throw new PathValidationError('Cannot rename a help document');
     }
 
-    fileOps.renameFile(oldWsPath, newWsPath).then(() => {
-      if (updateLocation) {
-        const newOpened = openedWsPaths.updateIfFound(oldWsPath, newWsPath);
+    fileOps.renameFile(targetWsPath, newWsPath).then(() => {
+      replaceAnyMatchingOpenedWsPath(targetWsPath, newWsPath)(
+        store.state,
+        store.dispatch,
+      );
+      refreshWsPaths()(store.state, store.dispatch);
+    });
 
+    return true;
+  };
+};
+
+// replaces a targetWsPath with `newWsPath` if found in one of the wsPaths
+// in openedWsPaths
+export const replaceAnyMatchingOpenedWsPath = (
+  targetWsPath: string,
+  newWsPath: string,
+) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
+    const sliceState = workspaceSliceKey.getSliceState(state);
+
+    if (!sliceState) {
+      return false;
+    }
+
+    const { openedWsPaths, wsName } = sliceState;
+    if (wsName && updateLocation) {
+      const newOpened = openedWsPaths.updateIfFound(targetWsPath, newWsPath);
+      if (!newOpened.equal(openedWsPaths)) {
         historyUpdateOpenedWsPaths(
           newOpened.toArray(),
           true,
           wsName,
         )(state, dispatch);
+        return true;
       }
+    }
 
-      updateWsPaths()(store.state, dispatch, store);
-    });
+    return false;
   };
 };
 
@@ -277,25 +293,23 @@ export const getNote = (
   extensionRegistry: ExtensionRegistry,
   wsPath: string,
 ) => {
-  return async (
-    state: AppState,
-    dispatch: WorkspaceDispatchType,
-    store: ApplicationStore,
-  ) => {
-    const fileOps = getFileOps()(state, dispatch, store);
-    if (fileOps) {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    const fileOps = getFileOps()(state, dispatch);
+
+    const sliceState = workspaceSliceKey.getSliceState(state);
+
+    if (fileOps && sliceState?.wsName) {
       return fileOps.getDoc(
         wsPath,
         extensionRegistry.specRegistry,
         extensionRegistry.markdownItPlugins,
       );
     }
-    return undefined;
+    return Promise.resolve(undefined);
   };
 };
 
 export const createNote = (
-  // TODO extension registry need not be provided
   extensionRegistry: ExtensionRegistry,
   wsPath: string,
   {
@@ -307,24 +321,16 @@ export const createNote = (
   } = {},
 ) => {
   return async (
-    state: AppState,
+    _: AppState,
     dispatch: WorkspaceDispatchType,
     store: ApplicationStore,
   ) => {
-    const fileOps = getFileOps()(state, dispatch, store);
-    const sliceState = workspaceSliceKey.getSliceState(state);
+    const fileOps = getFileOps()(store.state, store.dispatch);
+    const sliceState = workspaceSliceKey.getSliceState(store.state);
 
-    if (!fileOps || !sliceState) {
-      return;
+    if (!fileOps || !sliceState?.wsName) {
+      return false;
     }
-
-    const wsName = sliceState.wsName;
-
-    if (!wsName) {
-      return;
-    }
-
-    const { openedWsPaths } = sliceState;
 
     if (doc == null) {
       doc = defaultDoc(wsPath, extensionRegistry);
@@ -335,40 +341,32 @@ export const createNote = (
       await fileOps.saveDoc(wsPath, doc, extensionRegistry.specRegistry);
     }
 
-    updateWsPaths()(store.state, dispatch, store);
-
     if (open) {
-      const newOpened = openedWsPaths.updatePrimaryWsPath(wsPath);
-
-      historyUpdateOpenedWsPaths(
-        newOpened.toArray(),
+      historyUpdatePrimaryWsPath(
+        wsPath,
         false,
-        wsName,
-      )(state, dispatch);
+        sliceState.wsName,
+      )(store.state, store.dispatch);
     }
+
+    return refreshWsPaths()(store.state, store.dispatch);
   };
 };
 
 export const deleteNote = (wsPathToDelete: Array<string> | string) => {
   return async (
-    state: AppState,
+    _: AppState,
     dispatch: WorkspaceDispatchType,
     store: ApplicationStore,
-  ) => {
-    const fileOps = getFileOps()(state, dispatch, store);
-    const sliceState = workspaceSliceKey.getSliceState(state);
+  ): Promise<boolean> => {
+    const fileOps = getFileOps()(store.state, dispatch);
+    const sliceState = workspaceSliceKey.getSliceState(store.state);
 
-    if (!fileOps || !sliceState) {
-      return;
+    if (!fileOps || !sliceState?.wsName) {
+      return false;
     }
 
-    const wsName = sliceState.wsName;
-
-    if (!wsName) {
-      return;
-    }
-
-    if (wsName === HELP_FS_WORKSPACE_NAME) {
+    if (sliceState.wsName === HELP_FS_WORKSPACE_NAME) {
       // TODO move this to a notification
       throw new PathValidationError('Cannot delete a help document');
     }
@@ -385,7 +383,7 @@ export const deleteNote = (wsPathToDelete: Array<string> | string) => {
     });
 
     updateOpenedWsPaths(newOpenedWsPaths, { replaceHistory: true })(
-      state,
+      store.state,
       dispatch,
     );
 
@@ -393,23 +391,19 @@ export const deleteNote = (wsPathToDelete: Array<string> | string) => {
       await fileOps.deleteFile(wsPath);
     }
 
-    updateWsPaths()(store.state, dispatch, store);
+    return refreshWsPaths()(store.state, dispatch);
   };
 };
 
 export const pushWsPath = (wsPath, newTab = false, secondary = false) => {
-  return async (
-    state: AppState,
-    dispatch: WorkspaceDispatchType,
-    store: ApplicationStore,
-  ) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
     if (newTab) {
       if (typeof window !== 'undefined') {
         window.open(encodeURI(resolvePath(wsPath).locationPath));
       }
-      return;
+      return true;
     }
-    updateOpenedWsPaths((openedWsPath) => {
+    return updateOpenedWsPaths((openedWsPath) => {
       if (secondary) {
         return openedWsPath.updateSecondaryWsPath(wsPath);
       }
