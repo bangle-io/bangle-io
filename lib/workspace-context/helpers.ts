@@ -1,6 +1,7 @@
 import {
   filePathToWsPath,
   isValidFileWsPath,
+  isValidNoteWsPath,
   matchPath,
   OpenedWsPaths,
 } from '@bangle.io/ws-path';
@@ -59,7 +60,7 @@ export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
       return;
     }
 
-    if (!isValidFileWsPath(path)) {
+    if (!isValidNoteWsPath(path)) {
       invalidWsPath = path;
     }
   });
@@ -72,3 +73,29 @@ export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
     valid: true,
   };
 }
+
+export const findInvalidLocation = (
+  locationPathname?: string,
+  locationSearchQuery?: string,
+) => {
+  // primary
+  if (locationPathname && locationPathname.length > 0) {
+    const primaryWsPath = getPrimaryWsPath(locationPathname);
+    if (primaryWsPath && !isValidNoteWsPath(primaryWsPath)) {
+      return primaryWsPath;
+    }
+  }
+
+  // secondary
+  if (locationSearchQuery) {
+    const secondaryWsPath = getSecondaryWsPath(locationSearchQuery);
+    if (secondaryWsPath && !isValidNoteWsPath(secondaryWsPath)) {
+      return secondaryWsPath;
+    }
+
+    // since there can be other things in the search query we can not
+    // mark the whole thing as invalid
+  }
+
+  return undefined;
+};

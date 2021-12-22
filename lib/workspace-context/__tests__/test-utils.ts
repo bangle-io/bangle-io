@@ -3,11 +3,6 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '..';
 import { WorkspaceStateKeys } from '../slice-state';
 
-const args = {
-  onNativefsAuthError: jest.fn(),
-  onWorkspaceNotFound: jest.fn(),
-  onInvalidPath: jest.fn(),
-};
 export const createState = (
   data: Partial<{ [K in WorkspaceStateKeys]: any }> = {},
 ) => {

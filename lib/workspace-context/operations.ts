@@ -47,7 +47,7 @@ export function updateLocation({
   };
 }
 
-export const historyOnInvalidPath = (wsName: string, invalidWsPath: string) => {
+export const historyOnInvalidPath = (wsName: string, invalidPath: string) => {
   return (state: AppState, dispatch: WorkspaceDispatchType): void => {
     let _dispatch = dispatch as ApplicationStore<
       WorkspaceSliceState,
@@ -55,7 +55,7 @@ export const historyOnInvalidPath = (wsName: string, invalidWsPath: string) => {
     >['dispatch'];
     _dispatch({
       name: 'action::bangle-store:history-on-invalid-path',
-      value: { wsName: wsName, invalidWsPath },
+      value: { wsName: wsName, invalidPath },
     });
   };
 };
@@ -395,7 +395,11 @@ export const deleteNote = (wsPathToDelete: Array<string> | string) => {
   };
 };
 
-export const pushWsPath = (wsPath, newTab = false, secondary = false) => {
+export const pushWsPath = (
+  wsPath: string,
+  newTab = false,
+  secondary = false,
+) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
     if (newTab) {
       if (typeof window !== 'undefined') {
@@ -409,5 +413,16 @@ export const pushWsPath = (wsPath, newTab = false, secondary = false) => {
       }
       return openedWsPath.updatePrimaryWsPath(wsPath);
     })(state, dispatch);
+  };
+};
+
+export const checkFileExists = (wsPath: string) => {
+  return (
+    state: AppState,
+    dispatch: WorkspaceDispatchType,
+  ): Promise<boolean> => {
+    const fileOps = getFileOps()(state, dispatch);
+
+    return fileOps?.checkFileExists(wsPath) || Promise.resolve(false);
   };
 };

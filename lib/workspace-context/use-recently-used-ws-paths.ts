@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useSliceState } from '@bangle.io/app-state-context';
 import { usePrevious, useRecencyMonitor } from '@bangle.io/utils';
@@ -17,7 +17,7 @@ export function useRecentlyUsedWsPaths() {
     throw new Error('Slice state cannot be undefined');
   }
 
-  const { openedWsPaths, wsName } = sliceState;
+  const { openedWsPaths, wsName, noteWsPaths } = sliceState;
 
   const prevOpenedPaths = usePrevious(openedWsPaths);
   const { records, updateRecord: _updateRecord } = useRecencyMonitor({
@@ -59,9 +59,6 @@ export function useRecentlyUsedWsPaths() {
   }, [wsName, openedWsPaths, updateRecord, prevOpenedPaths]);
 
   useEffect(() => {
-    const data = workspaceSliceKey.getSliceState(bangleStore.state);
-    const noteWsPaths = data?.noteWsPaths;
-
     if (wsName && Array.isArray(noteWsPaths)) {
       bangleStore.dispatch({
         name: 'action::workspace-context:update-recently-used-ws-paths',
@@ -73,5 +70,5 @@ export function useRecentlyUsedWsPaths() {
         },
       });
     }
-  }, [bangleStore, wsName, records]);
+  }, [noteWsPaths, bangleStore, wsName, records]);
 }

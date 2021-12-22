@@ -17,8 +17,8 @@ describe('serialization works', () => {
       Object {
         "workspace": Object {
           "data": Object {
-            "locationPathname": "/",
-            "locationSearchQuery": "",
+            "locationPathname": null,
+            "locationSearchQuery": null,
             "recentlyUsedWsPaths": null,
             "wsPaths": null,
           },
@@ -41,10 +41,10 @@ describe('serialization works', () => {
     });
 
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
-      WorkspaceSliceStateConstructor {
+      WorkspaceSliceState {
         "mainFields": Object {
-          "locationPathname": "/",
-          "locationSearchQuery": "",
+          "locationPathname": undefined,
+          "locationSearchQuery": undefined,
           "recentlyUsedWsPaths": undefined,
           "wsPaths": undefined,
         },
@@ -71,7 +71,7 @@ describe('serialization works', () => {
     ]);
 
     expect(workspaceSliceKey.getSliceState(state)).toMatchInlineSnapshot(`
-      WorkspaceSliceStateConstructor {
+      WorkspaceSliceState {
         "mainFields": Object {
           "locationPathname": undefined,
           "locationSearchQuery": undefined,
@@ -176,6 +176,31 @@ describe('state', () => {
     );
   });
 
+  test('updates location resets wsPath and recentlyUsedWsPaths', () => {
+    let state = createState({ wsPaths: [], recentlyUsedWsPaths: [] });
+
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toEqual([]);
+    expect(workspaceSliceKey.getSliceState(state)?.recentlyUsedWsPaths).toEqual(
+      [],
+    );
+
+    state = state.applyAction({
+      name: 'action::workspace-context:update-location',
+      value: {
+        locationPathname: '/ws/test-path',
+        locationSearchQuery: 'test-query',
+      },
+    });
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toEqual(undefined);
+    expect(workspaceSliceKey.getSliceState(state)?.recentlyUsedWsPaths).toEqual(
+      undefined,
+    );
+
+    expect(workspaceSliceKey.getSliceState(state)?.locationPathname).toBe(
+      '/ws/test-path',
+    );
+  });
+
   test('parsing invalid wsName', () => {
     let state = createState();
 
@@ -205,6 +230,18 @@ describe('state', () => {
     expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toBe(wsPaths);
   });
 
+  test('updating wsPaths of different wsName', () => {
+    let state = createStateWithWsName('test');
+
+    const wsPaths = ['test:one.md'];
+    state = state.applyAction({
+      name: 'action::workspace-context:update-ws-paths',
+      value: { wsName: 'test-other', wsPaths },
+    });
+
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toBe(undefined);
+  });
+
   test('updating recentlyUsedWsPaths', () => {
     let state = createStateWithWsName('test');
 
@@ -220,6 +257,24 @@ describe('state', () => {
     expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toBe(undefined);
     expect(workspaceSliceKey.getSliceState(state)?.recentlyUsedWsPaths).toBe(
       recent,
+    );
+  });
+
+  test('updating recentlyUsedWsPaths of different wsName', () => {
+    let state = createStateWithWsName('test');
+
+    const recent = ['test:one.md'];
+    state = state.applyAction({
+      name: 'action::workspace-context:update-recently-used-ws-paths',
+      value: {
+        wsName: 'test-2',
+        recentlyUsedWsPaths: recent,
+      },
+    });
+
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toBe(undefined);
+    expect(workspaceSliceKey.getSliceState(state)?.recentlyUsedWsPaths).toBe(
+      undefined,
     );
   });
 

@@ -1,9 +1,20 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
-import { RecencyRecords, useRecencyMonitor } from '@bangle.io/utils';
+import {
+  initialBangleStore,
+  useSliceState,
+} from '@bangle.io/app-state-context';
+import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
+import {
+  WorkspaceSliceAction,
+  workspaceSliceInitialState,
+  WorkspaceSliceState,
+} from '..';
+import { workspaceSliceKey } from '../common';
 import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
+import { createStore } from './test-utils';
 
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
@@ -13,116 +24,145 @@ jest.mock('@bangle.io/utils', () => {
   };
 });
 
-test.skip('returns wsPaths correctly', () => {
+jest.mock('@bangle.io/app-state-context', () => {
+  const actual = jest.requireActual('@bangle.io/app-state-context');
+  return {
+    ...actual,
+    useSliceState: jest.fn(),
+  };
+});
+
+beforeEach(() => {
+  (useSliceState as any).mockImplementation(() => ({
+    sliceState: workspaceSliceInitialState,
+    store: initialBangleStore,
+  }));
+});
+
+test('returns wsPaths correctly', async () => {
   let records: RecencyRecords = [{ key: 'test-ws:note1.md', timestamps: [1] }],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
   });
 
-  const { result } = renderHook(() =>
-    useRecentlyUsedWsPaths(
-      'test-ws',
-      new OpenedWsPaths(['test-ws:note1.md', undefined]),
-      ['test-ws:note1.md'],
-    ),
-  );
-  expect(result.current).toEqual(['test-ws:note1.md']);
+  const { store, dispatchSpy } = createStore({
+    locationPathname: '/ws/test-ws/note1.md',
+    wsPaths: ['test-ws:note1.md'],
+  });
+  (useSliceState as any).mockImplementation(() => {
+    return {
+      store,
+      sliceState: workspaceSliceKey.getSliceState(store.state),
+    };
+  });
+
+  renderHook(() => useRecentlyUsedWsPaths());
+
+  expect(dispatchSpy).toBeCalledTimes(1);
+  expect(dispatchSpy).nthCalledWith(1, {
+    id: expect.any(String),
+    name: 'action::workspace-context:update-recently-used-ws-paths',
+    value: {
+      recentlyUsedWsPaths: ['test-ws:note1.md'],
+      wsName: 'test-ws',
+    },
+  });
 });
 
-test.skip('removes non existent wsPaths', () => {
+test('removes non existent wsPaths', () => {
   let records: RecencyRecords = [{ key: 'test-ws:note2.md', timestamps: [1] }],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
   });
 
-  const { result } = renderHook(() =>
-    useRecentlyUsedWsPaths(
-      'test-ws',
-      new OpenedWsPaths(['test-ws:note1.md', undefined]),
-      ['test-ws:note1.md'],
-    ),
-  );
-  expect(result.current).toEqual([]);
+  const { store, dispatchSpy } = createStore({
+    locationPathname: '/ws/test-ws/note1.md',
+    wsPaths: ['test-ws:note1.md'],
+  });
+  (useSliceState as any).mockImplementation(() => {
+    return {
+      store,
+      sliceState: workspaceSliceKey.getSliceState(store.state),
+    };
+  });
+
+  renderHook(() => useRecentlyUsedWsPaths());
+
+  expect(dispatchSpy).toBeCalledTimes(1);
+  expect(dispatchSpy).nthCalledWith(1, {
+    id: expect.any(String),
+    name: 'action::workspace-context:update-recently-used-ws-paths',
+    value: {
+      recentlyUsedWsPaths: [],
+      wsName: 'test-ws',
+    },
+  });
 });
 
-test.skip('works', async () => {
+test('works when no wsName', async () => {
   let records = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
   });
 
-  const { result } = renderHook(() =>
-    useRecentlyUsedWsPaths(
-      'test-ws',
-      new OpenedWsPaths(['test-ws:note1.md', undefined]),
-      ['test-ws:note1.md'],
-    ),
-  );
-
-  expect(updateRecord).toHaveBeenCalledTimes(1);
-  expect(updateRecord).nthCalledWith(1, 'test-ws:note1.md');
-
-  expect(result.current).toEqual([]);
-});
-
-test.skip('works when no wsName', async () => {
-  let records = [],
-    updateRecord = jest.fn();
-  (useRecencyMonitor as any).mockImplementation(() => {
-    return { records, updateRecord };
+  const { store, dispatchSpy } = createStore({
+    locationPathname: '',
+    wsPaths: ['test-ws:note1.md'],
+  });
+  (useSliceState as any).mockImplementation(() => {
+    return {
+      store,
+      sliceState: workspaceSliceKey.getSliceState(store.state),
+    };
   });
 
-  const { result } = renderHook(() =>
-    useRecentlyUsedWsPaths(
-      undefined,
-      new OpenedWsPaths(['test-ws:note1.md', undefined]),
-      ['test-ws:note1.md'],
-    ),
-  );
+  renderHook(() => useRecentlyUsedWsPaths());
 
   expect(updateRecord).toHaveBeenCalledTimes(0);
-
-  expect(result.current).toEqual([]);
+  expect(dispatchSpy).toBeCalledTimes(0);
 });
 
-test.skip('updates the newly opened ws path only', async () => {
+test('updates the newly opened ws path only', async () => {
   let records = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
   });
 
-  const { result, rerender } = renderHook(
-    ({ wsName, openedWsPaths, wsPaths }) =>
-      useRecentlyUsedWsPaths(wsName, openedWsPaths, wsPaths),
-    {
-      initialProps: {
-        wsName: 'test-ws',
-        openedWsPaths: new OpenedWsPaths(['test-ws:note1.md', undefined]),
-        wsPaths: ['test-ws:note1.md', 'test-ws:note2.md'],
-      },
-    },
-  );
+  const { store } = createStore({
+    locationPathname: '/ws/test-ws/note1.md',
+    wsPaths: ['test-ws:note1.md', 'test-ws:note2.md'],
+  });
+
+  (useSliceState as any).mockImplementation(() => {
+    return {
+      store,
+      sliceState: workspaceSliceKey.getSliceState(store.state),
+    };
+  });
+
+  const { rerender } = renderHook(() => useRecentlyUsedWsPaths());
 
   expect(updateRecord).toHaveBeenCalledTimes(1);
   expect(updateRecord).nthCalledWith(1, 'test-ws:note1.md');
 
+  store.dispatch({
+    name: 'action::workspace-context:update-location',
+    value: {
+      locationPathname: '/ws/test-ws/note1.md',
+      locationSearchQuery: 'secondary=test-ws%3Anote2.md',
+    },
+  });
+
+  await sleep(0);
+
   act(() => {
-    rerender({
-      wsName: 'test-ws',
-      openedWsPaths: new OpenedWsPaths([
-        'test-ws:note1.md',
-        'test-ws:note2.md',
-      ]),
-      wsPaths: ['test-ws:note1.md'],
-    });
+    rerender();
   });
 
   expect(updateRecord).toHaveBeenCalledTimes(2);
   expect(updateRecord).nthCalledWith(2, 'test-ws:note2.md');
-
-  expect(result.current).toEqual([]);
 });

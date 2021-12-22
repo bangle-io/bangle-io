@@ -13,6 +13,7 @@ import {
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import {
+  checkFileExists,
   createNote,
   deleteNote,
   getFileOps,
@@ -101,7 +102,7 @@ describe('updateWsPaths', () => {
       locationPathname: '/ws/my-ws',
     });
 
-    refreshWsPaths()(store.state, store.dispatch, store);
+    refreshWsPaths()(store.state, store.dispatch);
 
     expect(listAllFilesMock).toBeCalledTimes(1);
     expect(listAllFilesMock).toBeCalledWith('my-ws');
@@ -370,7 +371,7 @@ describe('updateOpenedWsPaths', () => {
       id: expect.any(String),
       name: 'action::bangle-store:history-on-invalid-path',
       value: {
-        invalidWsPath: 'my-ws-hello',
+        invalidPath: 'my-ws-hello',
         wsName: 'my-ws',
       },
     });
@@ -771,7 +772,7 @@ describe('deleteNote', () => {
       ),
     ).toEqual([
       {
-        id: 'editor-store-23',
+        id: expect.any(String),
         name: 'action::bangle-store:history-update-opened-ws-paths',
         value: {
           openedWsPathsArray: [null, null],
@@ -853,5 +854,37 @@ describe('pushWsPath', () => {
     ]);
 
     expect(window.open).toBeCalledTimes(0);
+  });
+});
+
+describe('checkFileExists', () => {
+  test('works', async () => {
+    checkFileExistsMock.mockResolvedValue(true);
+    let { store, dispatchSpy } = noDispatchStore({});
+
+    const result = await checkFileExists('my-ws:test-note.md')(
+      store.state,
+      store.dispatch,
+    );
+
+    expect(getActionNamesDispatched(dispatchSpy)).toEqual([]);
+
+    expect(result).toBe(true);
+  });
+
+  test('false when file does not exists', async () => {
+    checkFileExistsMock.mockResolvedValue(false);
+    let { store, dispatchSpy } = noDispatchStore({});
+
+    const result = await checkFileExists('my-ws:test-note.md')(
+      store.state,
+      store.dispatch,
+    );
+
+    expect(checkFileExistsMock).toBeCalledTimes(1);
+    expect(checkFileExistsMock).nthCalledWith(1, 'my-ws:test-note.md');
+    expect(getActionNamesDispatched(dispatchSpy)).toEqual([]);
+
+    expect(result).toBe(false);
   });
 });

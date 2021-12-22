@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import type { Simplify } from 'type-fest';
 
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -7,41 +6,29 @@ import {
   getPrimaryWsPath,
   getSecondaryWsPath,
   getWsNameFromPathname,
+  validateOpenedWsPaths,
 } from './helpers';
 
-export const UpdateState = Symbol('workspace-state');
-
 export type WorkspaceStateKeys = keyof ConstructorParameters<
-  typeof WorkspaceSliceStateConstructor
+  typeof WorkspaceSliceState
 >[0];
 
-// This exists because we want to treat the instance of
-// WorkspaceSliceStateConstructor as a simple object
-// and typescript revolts if we directly use the class type.
-export type WorkspaceSliceState = Simplify<
-  Omit<WorkspaceSliceStateConstructor, typeof UpdateState>
->;
-
-export class WorkspaceSliceStateConstructor {
+export class WorkspaceSliceState {
   constructor(
-    private mainFields: {
-      wsPaths: WorkspaceSliceStateConstructor['wsPaths'];
-      recentlyUsedWsPaths: WorkspaceSliceStateConstructor['recentlyUsedWsPaths'];
-      locationPathname: WorkspaceSliceStateConstructor['locationPathname'];
-      locationSearchQuery: WorkspaceSliceStateConstructor['locationSearchQuery'];
+    protected mainFields: {
+      wsPaths: WorkspaceSliceState['wsPaths'];
+      recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
+      locationPathname: WorkspaceSliceState['locationPathname'];
+      locationSearchQuery: WorkspaceSliceState['locationSearchQuery'];
     },
-    private opts: any = {},
+    protected opts: any = {},
   ) {}
 
-  [UpdateState](
-    obj: Partial<
-      ConstructorParameters<typeof WorkspaceSliceStateConstructor>[0]
-    >,
-  ): WorkspaceSliceStateConstructor {
-    return new WorkspaceSliceStateConstructor(
-      Object.assign({}, this.mainFields, obj),
-      this.opts,
-    );
+  static update(
+    existing: WorkspaceSliceState,
+    obj: Partial<ConstructorParameters<typeof WorkspaceSliceState>[0]>,
+  ) {
+    return new WorkspaceSliceState(Object.assign({}, existing.mainFields, obj));
   }
 
   // mainFields
@@ -70,28 +57,32 @@ export class WorkspaceSliceStateConstructor {
   }
 }
 
-const selectPathname = (state: WorkspaceSliceStateConstructor) =>
-  state.locationPathname;
-const selectSearchQuery = (state: WorkspaceSliceStateConstructor) =>
+const selectPathname = (state: WorkspaceSliceState) => state.locationPathname;
+const selectSearchQuery = (state: WorkspaceSliceState) =>
   state.locationSearchQuery;
 
 const selectNoteWsPaths = createSelector(
-  (state: WorkspaceSliceStateConstructor) => state.wsPaths,
+  (state: WorkspaceSliceState) => state.wsPaths,
   (wsPaths) => {
     return wsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
   },
 );
 
-const selectWsName = createSelector(selectPathname, (pathName) => {
+export const selectWsName = createSelector(selectPathname, (pathName) => {
   return getWsNameFromPathname(pathName);
 });
 
 const selectOpenedWsPaths = createSelector(
   [selectPathname, selectSearchQuery],
   (pathName, searchQuery) => {
-    return OpenedWsPaths.createFromArray([
+    const openedWsPaths = OpenedWsPaths.createFromArray([
       getPrimaryWsPath(pathName),
       getSecondaryWsPath(searchQuery),
     ]);
+
+    if (validateOpenedWsPaths(openedWsPaths).valid) {
+      return openedWsPaths;
+    }
+    return OpenedWsPaths.createEmpty();
   },
 );
