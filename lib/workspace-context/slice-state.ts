@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import type { Simplify } from 'type-fest';
 
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -11,24 +12,33 @@ import {
 export const UpdateState = Symbol('workspace-state');
 
 export type WorkspaceStateKeys = keyof ConstructorParameters<
-  typeof WorkspaceSliceState
+  typeof WorkspaceSliceStateConstructor
 >[0];
 
-export class WorkspaceSliceState {
+// This exists because we want to treat the instance of
+// WorkspaceSliceStateConstructor as a simple object
+// and typescript revolts if we directly use the class type.
+export type WorkspaceSliceState = Simplify<
+  Omit<WorkspaceSliceStateConstructor, typeof UpdateState>
+>;
+
+export class WorkspaceSliceStateConstructor {
   constructor(
     private mainFields: {
-      wsPaths: WorkspaceSliceState['wsPaths'];
-      recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
-      locationPathname: WorkspaceSliceState['locationPathname'];
-      locationSearchQuery: WorkspaceSliceState['locationSearchQuery'];
+      wsPaths: WorkspaceSliceStateConstructor['wsPaths'];
+      recentlyUsedWsPaths: WorkspaceSliceStateConstructor['recentlyUsedWsPaths'];
+      locationPathname: WorkspaceSliceStateConstructor['locationPathname'];
+      locationSearchQuery: WorkspaceSliceStateConstructor['locationSearchQuery'];
     },
     private opts: any = {},
   ) {}
 
   [UpdateState](
-    obj: Partial<ConstructorParameters<typeof WorkspaceSliceState>[0]>,
-  ): WorkspaceSliceState {
-    return new WorkspaceSliceState(
+    obj: Partial<
+      ConstructorParameters<typeof WorkspaceSliceStateConstructor>[0]
+    >,
+  ): WorkspaceSliceStateConstructor {
+    return new WorkspaceSliceStateConstructor(
       Object.assign({}, this.mainFields, obj),
       this.opts,
     );
@@ -39,7 +49,7 @@ export class WorkspaceSliceState {
     return this.mainFields.wsPaths;
   }
   get recentlyUsedWsPaths(): string[] | undefined {
-    return this.mainFields.recentlyUsedWsPaths || [];
+    return this.mainFields.recentlyUsedWsPaths;
   }
   get locationPathname(): string | undefined {
     return this.mainFields.locationPathname;
@@ -60,12 +70,13 @@ export class WorkspaceSliceState {
   }
 }
 
-const selectPathname = (state: WorkspaceSliceState) => state.locationPathname;
-const selectSearchQuery = (state: WorkspaceSliceState) =>
+const selectPathname = (state: WorkspaceSliceStateConstructor) =>
+  state.locationPathname;
+const selectSearchQuery = (state: WorkspaceSliceStateConstructor) =>
   state.locationSearchQuery;
 
 const selectNoteWsPaths = createSelector(
-  (state: WorkspaceSliceState) => state.wsPaths,
+  (state: WorkspaceSliceStateConstructor) => state.wsPaths,
   (wsPaths) => {
     return wsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
   },

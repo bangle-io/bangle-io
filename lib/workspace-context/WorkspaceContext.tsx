@@ -9,6 +9,7 @@ import { ApplicationStore } from '@bangle.io/create-store';
 
 import { workspaceSliceKey } from './common';
 import type { WorkspaceSliceState } from './slice-state';
+import { useRecentlyUsedWsPaths } from './use-recently-used-ws-paths';
 import { workspaceSliceInitialState } from './workspace-slice';
 
 export type WorkspaceContextType = Merge<
@@ -40,6 +41,8 @@ export function WorkspaceContextProvider({
   if (!sliceState) {
     throw new Error('Slice state cannot be undefined');
   }
+
+  useRecentlyUsedWsPaths();
 
   const value: WorkspaceContextType = useMemo(() => {
     return {

@@ -7,16 +7,17 @@ import {
 import { filePathToWsPath, isValidFileWsPath } from '@bangle.io/ws-path';
 
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
-import { historyOnInvalidPath, updateWsPaths } from './operations';
+import { historyOnInvalidPath, refreshWsPaths } from './operations';
 import {
   UpdateState,
   WorkspaceSliceState,
+  WorkspaceSliceStateConstructor,
   WorkspaceStateKeys,
 } from './slice-state';
 
 export const JSON_SCHEMA_VERSION = 'workspace-slice/1';
 
-const LOG = true;
+const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceSlice') : () => {};
 
 const initialPathName =
@@ -25,7 +26,7 @@ const initialQuery =
   typeof window !== 'undefined' ? window.location.search : undefined;
 
 export const workspaceSliceInitialState: WorkspaceSliceState =
-  new WorkspaceSliceState({
+  new WorkspaceSliceStateConstructor({
     locationPathname: initialPathName,
     locationSearchQuery: initialQuery,
     recentlyUsedWsPaths: undefined,
@@ -45,15 +46,27 @@ const applyState = (
     }
 
     case 'action::workspace-context:update-recently-used-ws-paths': {
-      return state[UpdateState]({
-        recentlyUsedWsPaths: action.value,
-      });
+      const { wsName, recentlyUsedWsPaths } = action.value;
+
+      if (wsName === state.wsName) {
+        return state[UpdateState]({
+          recentlyUsedWsPaths,
+        });
+      }
+
+      return state;
     }
 
     case 'action::workspace-context:update-ws-paths': {
-      return state[UpdateState]({
-        wsPaths: action.value,
-      });
+      const { wsName, wsPaths } = action.value;
+
+      if (wsName === state.wsName) {
+        return state[UpdateState]({
+          wsPaths,
+        });
+      }
+
+      return state;
     }
 
     default: {
@@ -125,16 +138,22 @@ export function workspaceSlice() {
         });
       },
     },
-    sideEffect(store) {
-      updateWsPaths()(store.state, store.dispatch, store);
+    sideEffect() {
+      let loadWsPathsOnMount = true;
       return {
+        deferredUpdate(store) {
+          if (
+            loadWsPathsOnMount &&
+            workspaceSliceKey.getSliceState(store.state)?.wsPaths == null
+          ) {
+            loadWsPathsOnMount = false;
+            refreshWsPaths()(store.state, store.dispatch);
+          }
+        },
         update(store, __, sliceState, prevSliceState) {
+          // update wsPaths on workspace change
           if (sliceState.wsName !== prevSliceState.wsName) {
-            store.dispatch({
-              name: 'action::workspace-context:update-ws-paths',
-              value: undefined,
-            });
-            updateWsPaths()(store.state, store.dispatch, store);
+            refreshWsPaths()(store.state, store.dispatch);
           }
 
           const { wsName, openedWsPaths } = sliceState;
@@ -163,7 +182,6 @@ export function workspaceSlice() {
             // END_WEIRDNESS
           }
         },
-        deferredUpdate() {},
       };
     },
   });

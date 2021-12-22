@@ -26,11 +26,19 @@ export type WorkspaceSliceAction =
     }
   | {
       name: 'action::workspace-context:update-recently-used-ws-paths';
-      value: string[] | undefined;
+      value: {
+        // the workspace corresponding to the wsPaths
+        wsName: string;
+        recentlyUsedWsPaths: string[] | undefined;
+      };
     }
   | {
       name: 'action::workspace-context:update-ws-paths';
-      value: string[] | undefined;
+      value: {
+        // the workspace corresponding to the wsPaths
+        wsName: string;
+        wsPaths: string[] | undefined;
+      };
     };
 
 export type WorkspaceDispatchType = ApplicationStore<

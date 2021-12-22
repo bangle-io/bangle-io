@@ -13,7 +13,7 @@ jest.mock('@bangle.io/utils', () => {
   };
 });
 
-test('returns wsPaths correctly', () => {
+test.skip('returns wsPaths correctly', () => {
   let records: RecencyRecords = [{ key: 'test-ws:note1.md', timestamps: [1] }],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
@@ -30,7 +30,7 @@ test('returns wsPaths correctly', () => {
   expect(result.current).toEqual(['test-ws:note1.md']);
 });
 
-test('removes non existent wsPaths', () => {
+test.skip('removes non existent wsPaths', () => {
   let records: RecencyRecords = [{ key: 'test-ws:note2.md', timestamps: [1] }],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
@@ -47,7 +47,7 @@ test('removes non existent wsPaths', () => {
   expect(result.current).toEqual([]);
 });
 
-test('works', async () => {
+test.skip('works', async () => {
   let records = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
@@ -68,7 +68,7 @@ test('works', async () => {
   expect(result.current).toEqual([]);
 });
 
-test('works when no wsName', async () => {
+test.skip('works when no wsName', async () => {
   let records = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
@@ -88,7 +88,7 @@ test('works when no wsName', async () => {
   expect(result.current).toEqual([]);
 });
 
-test('updates the newly opened ws path only', async () => {
+test.skip('updates the newly opened ws path only', async () => {
   let records = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
