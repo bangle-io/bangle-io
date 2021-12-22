@@ -7,10 +7,7 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
-import {
-  OnInvalidPath,
-  useWorkspaceContext,
-} from '@bangle.io/workspace-context';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
 

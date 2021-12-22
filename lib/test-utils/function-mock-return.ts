@@ -32,17 +32,10 @@ export const getUseWorkspaceContextReturn: ReturnType<
   recentWsPaths: [],
   fileWsPaths: [],
   noteWsPaths: [],
-  refreshWsPaths: jest.fn(),
-  getNote: jest.fn().mockResolvedValue(undefined),
-  createNote: jest.fn().mockResolvedValue(undefined),
-  deleteNote: jest.fn().mockResolvedValue(undefined),
-  renameNote: jest.fn().mockResolvedValue(undefined),
   primaryWsPath: undefined,
   secondaryWsPath: undefined,
   openedWsPaths: OpenedWsPaths.createEmpty(),
-  updateOpenedWsPaths: jest.fn(),
-  pushWsPath: jest.fn(),
-  checkFileExists: jest.fn().mockResolvedValue(undefined),
+  bangleStore: initialBangleStore,
 };
 
 export const getUseEditorManagerContextReturn: ReturnType<

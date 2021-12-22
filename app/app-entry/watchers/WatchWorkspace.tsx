@@ -2,7 +2,10 @@ import { useEffect, useRef } from 'react';
 
 import { TAB_ID } from '@bangle.io/config';
 import { useBroadcastChannel, weakCache } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  refreshWsPaths,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 
 const CHANNEL_NAME = 'watch_workspace';
 const FILE_TREE_CHANGED = 'FILE_TREE_CHANGED';
@@ -29,7 +32,6 @@ export function WatchWorkspace() {
   const {
     wsName,
     fileWsPaths,
-    refreshWsPaths,
     primaryWsPath,
     secondaryWsPath,
     updateOpenedWsPaths,
@@ -38,6 +40,7 @@ export function WatchWorkspace() {
     useBroadcastChannel<MessageType>(CHANNEL_NAME);
   const isFirstMountRef = useRef(true);
   const checkCurrentEditors = useRef(false);
+  const { bangleStore } = useWorkspaceContext();
 
   useEffect(() => {
     if (lastMessage) {
@@ -58,7 +61,7 @@ export function WatchWorkspace() {
             payload.lameHash !== weakComputeLameHash(fileWsPaths)
           ) {
             log('refreshing wsPaths');
-            refreshWsPaths();
+            refreshWsPaths()(bangleStore.state, bangleStore.dispatch);
             checkCurrentEditors.current = true;
           }
           break;
@@ -68,7 +71,7 @@ export function WatchWorkspace() {
         }
       }
     }
-  }, [lastMessage, refreshWsPaths, wsName, fileWsPaths]);
+  }, [lastMessage, bangleStore, wsName, fileWsPaths]);
 
   // close any tabs that might have been deleted or renamed
   // NOTE: We are doing this rectification here and not

@@ -35,7 +35,7 @@ import type {
   EditorPluginMetadata,
 } from '@bangle.io/shared-types';
 import { cx } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { watchPluginHost } from './watch-plugin-host';
 
@@ -61,7 +61,6 @@ function EditorInner({
   wsPath,
   editorDisplayType = EditorDisplayType.Page,
 }: EditorProps) {
-  const { getNote } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
   const { dispatchAction } = useActionContext();
   const { bangleStore } = useEditorManagerContext();
@@ -73,7 +72,11 @@ function EditorInner({
 
   useEffect(() => {
     let destroyed = false;
-    getNote(extensionRegistry, wsPath).then((doc) => {
+
+    getNote(extensionRegistry, wsPath)(
+      bangleStore.state,
+      bangleStore.dispatch,
+    ).then((doc) => {
       if (!destroyed) {
         setInitialDoc(doc);
       }
@@ -81,7 +84,7 @@ function EditorInner({
     return () => {
       destroyed = true;
     };
-  }, [getNote, extensionRegistry, wsPath]);
+  }, [extensionRegistry, bangleStore, wsPath]);
 
   const editorRef = useRef<CoreBangleEditor | null>(null);
 
