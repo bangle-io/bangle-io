@@ -20,6 +20,12 @@ module.exports = {
     {
       files: '*.ts',
     },
+    {
+      files: ['tooling/**/*.test.ts'],
+      rules: {
+        'jest/no-done-callback': 'off',
+      },
+    },
   ],
   env: {
     browser: true,

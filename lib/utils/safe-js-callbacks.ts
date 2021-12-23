@@ -44,7 +44,7 @@ export const safeRequestIdleCallback: typeof requestIdleCallback =
               return Math.max(0, 50 - (Date.now() - start));
             },
           });
-        }, 1);
+        }, 1) as any;
       };
 
 export const safeCancelIdleCallback: typeof cancelIdleCallback =
