@@ -1,4 +1,3 @@
-import { getWsNameFromPathname } from '..';
 import { getWsName, OpenedWsPaths } from '../history';
 
 const createLocationObject = ({ pathname = '' }) => {
@@ -13,13 +12,6 @@ const createLocationObject = ({ pathname = '' }) => {
 
 test('getWsName, works 1', () => {
   const result = getWsName(createLocationObject({ pathname: '/ws/mojo' }));
-  expect(result).toBe('mojo');
-});
-
-test('getWsNameFromPathname, works 1', () => {
-  const result = getWsNameFromPathname(
-    createLocationObject({ pathname: '/ws/mojo' }).pathname,
-  );
   expect(result).toBe('mojo');
 });
 

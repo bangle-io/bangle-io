@@ -204,7 +204,7 @@ export function getWsName(location: Location) {
   return wsName;
 }
 
-export function getWsNameFromPathname(pathname?: Location['pathname']) {
+function getWsNameFromPathname(pathname?: Location['pathname']) {
   if (!pathname) {
     return undefined;
   }

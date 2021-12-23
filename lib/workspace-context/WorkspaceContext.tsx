@@ -8,9 +8,9 @@ import {
 import { ApplicationStore } from '@bangle.io/create-store';
 
 import { workspaceSliceKey } from './common';
-import type { WorkspaceSliceState } from './workspace-slice-state';
 import { useRecentlyUsedWsPaths } from './use-recently-used-ws-paths';
 import { workspaceSliceInitialState } from './workspace-slice';
+import type { WorkspaceSliceState } from './workspace-slice-state';
 
 export type WorkspaceContextType = Merge<
   WorkspaceSliceState,
