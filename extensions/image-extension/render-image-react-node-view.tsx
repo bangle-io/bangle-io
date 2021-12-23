@@ -29,7 +29,9 @@ const isOtherSources = (src) => {
 export function ImageComponent({ nodeAttrs }) {
   const { src: inputSrc, alt } = nodeAttrs;
   const [imageSrc, updateImageSrc] = useState(null);
-  const { primaryWsPath } = useWorkspaceContext();
+  const {
+    openedWsPaths: { primaryWsPath },
+  } = useWorkspaceContext();
   const imageWsPath =
     primaryWsPath && !isOtherSources(inputSrc)
       ? parseLocalFilePath(inputSrc, primaryWsPath)

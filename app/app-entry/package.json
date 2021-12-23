@@ -51,6 +51,7 @@
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/style": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",

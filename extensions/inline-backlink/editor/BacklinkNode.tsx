@@ -16,7 +16,11 @@ import {
   cx,
   getEditorPluginMetadata,
 } from '@bangle.io/utils';
-import { createNote, useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  createNote,
+  pushWsPath,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 import {
   filePathToWsPath,
   parseLocalFilePath,
@@ -42,8 +46,7 @@ export function BacklinkNode({
     view.state,
   );
 
-  const { wsName, noteWsPaths, pushWsPath, bangleStore } =
-    useWorkspaceContext();
+  const { wsName, noteWsPaths, bangleStore } = useWorkspaceContext();
 
   let { path, title } = nodeAttrs;
   const [invalidLink, updatedInvalidLink] = useState(false);
@@ -82,7 +85,11 @@ export function BacklinkNode({
         bangleStore,
       }).then(
         (matchedWsPath) => {
-          pushWsPath(matchedWsPath, newTab, shift);
+          pushWsPath(
+            matchedWsPath,
+            newTab,
+            shift,
+          )(bangleStore.state, bangleStore.dispatch);
         },
         (error) => {
           if (error instanceof PathValidationError) {
@@ -98,7 +105,6 @@ export function BacklinkNode({
       extensionRegistry,
       noteWsPaths,
       primaryWsPath,
-      pushWsPath,
       wsName,
       bangleStore,
     ],

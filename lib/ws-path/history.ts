@@ -61,6 +61,16 @@ export class OpenedWsPaths {
     return this.wsPaths[1] ?? undefined;
   }
 
+  get openCount() {
+    let count = 0;
+    this.forEachWsPath((wsPath) => {
+      if (wsPath) {
+        count++;
+      }
+    });
+    return count;
+  }
+
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
     this.wsPaths.forEach((p, i) => {
       if (p) {

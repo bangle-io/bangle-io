@@ -60,11 +60,21 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
   );
 }
 
+const EMPTY_ARRAY = [];
 export function EmptyEditorPage() {
-  const { wsName, recentWsPaths = [], noteWsPaths } = useWorkspaceContext();
+  const {
+    wsName,
+    recentlyUsedWsPaths = EMPTY_ARRAY,
+    noteWsPaths,
+  } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
   const paths = Array.from(
-    new Set([...recentWsPaths, ...(noteWsPaths || [])].slice(0, MAX_ENTRIES)),
+    new Set(
+      [...recentlyUsedWsPaths, ...(noteWsPaths || EMPTY_ARRAY)].slice(
+        0,
+        MAX_ENTRIES,
+      ),
+    ),
   );
   return (
     <CenteredBoxedPage

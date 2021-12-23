@@ -3,20 +3,22 @@ import React from 'react';
 
 import { Editor } from '@bangle.io/editor';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
-import { getUseEditorManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  getUseEditorManagerContextReturn,
+  getUseWorkspaceContextReturn,
+} from '@bangle.io/test-utils/function-mock-return';
+import {
+  checkFileExists,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 
 import { EditorContainer } from '../EditorContainer';
-
-let useEditorManagerContextMock =
-  useEditorManagerContext as jest.MockedFunction<
-    typeof useEditorManagerContext
-  >;
 
 jest.mock('@bangle.io/workspace-context', () => {
   const actual = jest.requireActual('@bangle.io/workspace-context');
   return {
     ...actual,
+    checkFileExists: jest.fn(() => () => Promise.resolve(true)),
     useWorkspaceContext: jest.fn(),
   };
 });
@@ -45,18 +47,24 @@ jest.mock('../config', () => {
   };
 });
 
-let checkFileExists, result: ReturnType<typeof render>;
+let useEditorManagerContextMock =
+  useEditorManagerContext as jest.MockedFunction<
+    typeof useEditorManagerContext
+  >;
+
+let checkFileExistsMock = checkFileExists as jest.MockedFunction<
+  typeof checkFileExists
+>;
+
+let result: ReturnType<typeof render>;
 
 beforeEach(() => {
-  checkFileExists = jest.fn().mockResolvedValue(true);
   (Editor as any).mockImplementation(() => {
     return <div data-testid="mock-editor">MOCK_EDITOR</div>;
   });
 
   (useWorkspaceContext as any).mockImplementation(() => {
-    return {
-      checkFileExists,
-    };
+    return { ...getUseWorkspaceContextReturn };
   });
 
   useEditorManagerContextMock.mockImplementation(() => {
@@ -64,6 +72,7 @@ beforeEach(() => {
       ...getUseEditorManagerContextReturn,
     };
   });
+  checkFileExistsMock.mockImplementation(() => async () => true);
 });
 
 test('basic renders', async () => {
@@ -97,7 +106,7 @@ test('basic renders', async () => {
 });
 
 test('renders correctly when file does not exist', async () => {
-  checkFileExists = jest.fn().mockResolvedValue(false);
+  checkFileExistsMock.mockImplementation(() => async () => false);
 
   act(() => {
     result = render(

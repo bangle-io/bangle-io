@@ -21,11 +21,11 @@ export function historySlice() {
         switch (action.name) {
           case 'action::bangle-store:history-auth-error': {
             const { wsName } = action.value;
-
+            // TODO check if wsName is current
             if (!state.pathname?.startsWith('/ws-nativefs-auth/' + wsName)) {
               return state[HistoryReplace]({
                 pathname: '/ws-nativefs-auth/' + wsName,
-                historyState: {
+                state: {
                   previousLocation: state.location,
                 },
               });
@@ -40,9 +40,10 @@ export function historySlice() {
                 '/ws-not-found/' + action.value.wsName,
               )
             ) {
+              // TODO check if wsName is current
               return state[HistoryReplace]({
                 pathname: '/ws-not-found/' + action.value.wsName,
-                historyState: {},
+                state: {},
               });
             }
 
@@ -51,11 +52,12 @@ export function historySlice() {
 
           case 'action::bangle-store:history-on-invalid-path': {
             const { invalidPath, wsName } = action.value;
+            // TODO check if wsName is current
+
             console.debug('received invalid path', invalidPath);
             if (!state.pathname?.startsWith('/ws-invalid-path/' + wsName)) {
               return state[HistoryReplace]({
                 pathname: '/ws-invalid-path/' + wsName,
-                historyState: {},
               });
             }
 
@@ -116,14 +118,23 @@ export class HistoryState {
     return new HistoryState(Object.assign({}, this.mainFields, obj), this.opts);
   }
 
-  [HistoryReplace](newLocation: History['location']) {
-    this.history.replace(newLocation);
+  [HistoryReplace](newLocation: Parameters<History['replace']>[0]) {
+    // TODO if I remove the setTimeouts
+    // very very very strange things happen
+    // magically the current call goes silent event though it is not async
+    // and next things in event loop run and after that
+    // this line continues, causing problems with action dispatches.
+    setTimeout(() => {
+      this.history?.replace(newLocation);
+    }, 0);
 
     return new HistoryState(Object.assign({}, this.mainFields), this.opts);
   }
 
-  [HistoryPush](newLocation: History['location']) {
-    this.history.push(newLocation);
+  [HistoryPush](newLocation: Parameters<History['push']>[0]) {
+    setTimeout(() => {
+      this.history?.push(newLocation);
+    }, 0);
 
     return new HistoryState(Object.assign({}, this.mainFields), this.opts);
   }

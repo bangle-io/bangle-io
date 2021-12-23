@@ -7,6 +7,8 @@
 //  // override things
 //  wsPath: 'xyz:sys.md'
 // }
+import type { Mutable } from 'type-fest';
+
 import { initialBangleStore } from '@bangle.io/app-state-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import {
@@ -25,17 +27,17 @@ export const getEditorPluginMetadataReturn: ReturnType<
   wsPath: 'test-workspace:my-test-note.md',
 };
 
-export const getUseWorkspaceContextReturn: ReturnType<
-  typeof useWorkspaceContext
+export const getUseWorkspaceContextReturn: Mutable<
+  ReturnType<typeof useWorkspaceContext>
 > = {
   wsName: 'test-ws',
-  recentWsPaths: [],
-  fileWsPaths: [],
+  recentlyUsedWsPaths: [],
+  wsPaths: [],
   noteWsPaths: [],
-  primaryWsPath: undefined,
-  secondaryWsPath: undefined,
   openedWsPaths: OpenedWsPaths.createEmpty(),
   bangleStore: initialBangleStore,
+  locationPathname: '',
+  locationSearchQuery: '',
 };
 
 export const getUseEditorManagerContextReturn: ReturnType<

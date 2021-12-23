@@ -30,6 +30,11 @@ export function AppStateProvider({
       name: 'action::bangle-store:history-set-history',
       value: { history },
     });
+    updateLocation({
+      search: history.location.search,
+      pathname: history.location.pathname,
+    })(bangleStore.state, bangleStore.dispatch);
+
     // TODO there is a possibility that we miss a location
     // update before this is initialized
     const unlisten = history.listen((location) => {

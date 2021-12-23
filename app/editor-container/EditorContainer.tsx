@@ -9,7 +9,10 @@ import { Editor } from '@bangle.io/editor';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  checkFileExists,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { EditorBar } from './EditorBar';
@@ -24,11 +27,11 @@ export function EditorContainer({
   wsPath: string | undefined;
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
-  const { secondaryWsPath } = useWorkspaceContext();
+  const { openedWsPaths } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
   const { focusedEditorId } = useEditorManagerContext();
 
-  const isSplitEditorOpen = Boolean(secondaryWsPath);
+  const isSplitEditorOpen = openedWsPaths.openCount > 0;
 
   const onPressSecondaryEditor = useCallback(() => {
     dispatchAction({
@@ -108,13 +111,16 @@ export function useHandleWsPath(incomingWsPath) {
     'LOADING' | 'FOUND' | 'NOT_FOUND' | 'NO_WS_PATH'
   >(incomingWsPath ? 'LOADING' : 'NO_WS_PATH');
 
-  const { checkFileExists } = useWorkspaceContext();
+  const { bangleStore } = useWorkspaceContext();
   const destroyedRef = useDestroyRef();
 
   useEffect(() => {
     if (incomingWsPath) {
       updateFileExists('LOADING');
-      checkFileExists(incomingWsPath).then((r) => {
+      checkFileExists(incomingWsPath)(
+        bangleStore.state,
+        bangleStore.dispatch,
+      ).then((r) => {
         if (!destroyedRef.current) {
           if (r === true) {
             updateFileExists('FOUND');
@@ -129,7 +135,7 @@ export function useHandleWsPath(incomingWsPath) {
       updateFileExists('NO_WS_PATH');
       updateWsPath(undefined);
     }
-  }, [incomingWsPath, checkFileExists, wsPath, destroyedRef]);
+  }, [incomingWsPath, bangleStore, wsPath, destroyedRef]);
 
   return { noteExists, wsPath };
 }
