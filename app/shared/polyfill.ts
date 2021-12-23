@@ -20,7 +20,7 @@ if (!isWorkerGlobalScope()) {
           });
         },
         typeof options?.timeout === 'number' ? options.timeout : 50,
-      );
+      ) as any;
     };
     window.cancelIdleCallback = function (id) {
       clearTimeout(id);
