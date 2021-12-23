@@ -53,7 +53,7 @@ jobs:
         run: yarn install --immutable --immutable-cache
       - name: Install playwright dependencies
         if: matrix.test-kind == 'g:e2e-playwright'
-        run: yarn playwright install-deps
+        run: yarn g:playwright-dep
       - run: yarn ${{ matrix.test-kind }}
       - name: Upload coverage report
         if: matrix.test-kind == 'test-ci'

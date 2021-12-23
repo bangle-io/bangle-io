@@ -19,7 +19,8 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "g:e2e-playwright": "yarn playwright test"
+    "g:e2e-playwright": "yarn playwright test",
+    "g:playwright-dep": "yarn playwright install-deps"
   },
   "publishConfig": {
     "access": "public"
