@@ -110,16 +110,19 @@ export const getPlugins = () => {
     }),
     activeNode(),
     watchEditorFocus,
-    blockTabPress(),
+    blockKeyPresses(),
   ];
 };
 
 /**
  * Prevents tab presses going out of editor
  */
-export function blockTabPress() {
+export function blockKeyPresses() {
   return keymap({
-    Tab: (state) => {
+    'Tab': (state) => {
+      return true;
+    },
+    'Meta-s': (state) => {
       return true;
     },
   });
