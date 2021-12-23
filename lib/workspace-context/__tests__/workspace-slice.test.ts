@@ -3,6 +3,7 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '..';
 import { workspaceSliceKey } from '../common';
+import { wsNameToPathname, wsPathToPathname } from '../helpers';
 import { createState, createStateWithWsName } from './test-utils';
 
 describe('serialization works', () => {
@@ -114,7 +115,7 @@ describe('serialization works', () => {
         workspace: {
           version: JSON_SCHEMA_VERSION,
           data: {
-            locationPathname: '/ws/bangle-help/test-path/k.md',
+            locationPathname: wsPathToPathname('bangle-help:test-path/k.md'),
             locationSearchQuery: 'secondary=bangle-help%3Agetting+started.md',
           },
         },
@@ -162,7 +163,7 @@ describe('state', () => {
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test-path',
+        locationPathname: wsNameToPathname('test-path'),
         locationSearchQuery: 'test-query',
       },
     });
@@ -179,7 +180,7 @@ describe('state', () => {
   test('change of location does not reset wsPath', () => {
     const wsPaths = ['test-ws:hello-world'];
     let state = createState({
-      locationPathname: '/ws/test-ws',
+      locationPathname: wsNameToPathname('test-ws'),
       wsPaths: wsPaths,
       recentlyUsedWsPaths: wsPaths,
     });
@@ -187,7 +188,7 @@ describe('state', () => {
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test-ws',
+        locationPathname: wsNameToPathname('test-ws'),
         locationSearchQuery: '',
       },
     });
@@ -197,7 +198,7 @@ describe('state', () => {
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test-ws/some-path.md',
+        locationPathname: wsPathToPathname('test-ws:some-path.md'),
         locationSearchQuery: '',
       },
     });
@@ -222,7 +223,7 @@ describe('state', () => {
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test-path',
+        locationPathname: wsNameToPathname('test-path'),
         locationSearchQuery: 'test-query',
       },
     });
@@ -242,14 +243,14 @@ describe('state', () => {
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: 'test-path',
+        locationPathname: 'invalid-path',
         locationSearchQuery: 'test-query',
       },
     });
 
     expect(workspaceSliceKey.getSliceState(state)?.wsName).toBe(undefined);
     expect(workspaceSliceKey.getSliceState(state)?.locationPathname).toBe(
-      'test-path',
+      'invalid-path',
     );
   });
 
@@ -314,7 +315,9 @@ describe('state', () => {
   });
 
   test('dispatching other action should not affect existing state', () => {
-    let state = createState({ locationPathname: '/ws/test-workspace/k.md' });
+    let state = createState({
+      locationPathname: wsPathToPathname('test-workspace:k.md'),
+    });
 
     let state2 = state.applyAction({
       name: 'action::some-other-action',
@@ -336,7 +339,7 @@ describe('derived state', () => {
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test/k.md',
+        locationPathname: wsPathToPathname('test:k.md'),
         locationSearchQuery: 'test-query',
       },
     });
@@ -353,7 +356,7 @@ describe('derived state', () => {
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test',
+        locationPathname: wsNameToPathname('test'),
         locationSearchQuery: 'secondary=bangle-help%3Agetting+started.md',
       },
     });
@@ -373,7 +376,7 @@ describe('derived state', () => {
     state = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test/k.md',
+        locationPathname: wsPathToPathname('test:k.md'),
         locationSearchQuery: 'test-query',
       },
     });
@@ -381,7 +384,7 @@ describe('derived state', () => {
     let state2 = state.applyAction({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test/k.md',
+        locationPathname: wsPathToPathname('test:k.md'),
         locationSearchQuery: 'test-query',
       },
     });

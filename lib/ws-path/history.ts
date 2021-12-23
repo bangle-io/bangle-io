@@ -227,20 +227,13 @@ function getPrimaryFilePath(location: Location) {
   return undefined;
 }
 
-export function getPrimaryWsPath(location: Location) {
+function getPrimaryWsPath(location: Location) {
   const wsName = getWsName(location);
   const filePath = getPrimaryFilePath(location);
   if (!wsName || !filePath) {
     return undefined;
   }
   return filePathToWsPath(wsName, filePath);
-}
-
-export function getSecondaryWsPath(location: Location) {
-  const search = new URLSearchParams(location?.search);
-  const secondaryWsPath = search.get('secondary') ?? undefined;
-
-  return secondaryWsPath;
 }
 
 /**

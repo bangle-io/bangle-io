@@ -1,9 +1,9 @@
 import {
   filePathToWsPath,
-  isValidFileWsPath,
   isValidNoteWsPath,
   matchPath,
   OpenedWsPaths,
+  resolvePath,
 } from '@bangle.io/ws-path';
 
 export function getPrimaryFilePath(pathname?: string) {
@@ -27,6 +27,15 @@ export function getSecondaryWsPath(search?: string) {
   const secondaryWsPath = searchParams.get('secondary') ?? undefined;
 
   return secondaryWsPath;
+}
+
+export function wsPathToPathname(wsPath: string) {
+  const { wsName, filePath } = resolvePath(wsPath);
+  return encodeURI(`/ws/${wsName}/${filePath}`);
+}
+
+export function wsNameToPathname(wsName: string) {
+  return encodeURI(`/ws/${wsName}`);
 }
 
 export function getWsNameFromPathname(pathname?: string) {

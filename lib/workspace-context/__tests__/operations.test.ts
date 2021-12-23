@@ -24,6 +24,7 @@ import {
   renameNote,
   updateOpenedWsPaths,
 } from '..';
+import { wsNameToPathname, wsPathToPathname } from '../helpers';
 import { updateLocation } from '../operations';
 import {
   createState,
@@ -99,7 +100,7 @@ describe('updateWsPaths', () => {
       return ['my-ws:one.md'];
     });
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws',
+      locationPathname: wsNameToPathname('my-ws'),
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -140,7 +141,7 @@ describe('updateWsPaths', () => {
   test('handles error', async () => {
     listAllFilesMock.mockRejectedValue(new BaseFileSystemError('test-error'));
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws',
+      locationPathname: wsNameToPathname('my-ws'),
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -166,7 +167,7 @@ describe('updateWsPaths', () => {
       new BaseFileSystemError('test-error', NATIVE_BROWSER_PERMISSION_ERROR),
     );
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws',
+      locationPathname: wsNameToPathname('my-ws'),
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -203,7 +204,7 @@ describe('updateWsPaths', () => {
       new WorkspaceError('test-error', WORKSPACE_NOT_FOUND_ERROR),
     );
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws',
+      locationPathname: wsNameToPathname('my-ws'),
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -239,7 +240,7 @@ describe('updateWsPaths', () => {
 test('getFileOps', async () => {
   listAllFilesMock.mockResolvedValue(['my-ws:one.md']);
   let { store } = createStore({
-    locationPathname: '/ws/my-ws',
+    locationPathname: wsNameToPathname('my-ws'),
   });
 
   const fileOps = getFileOps()(store.state, store.dispatch);
@@ -264,7 +265,7 @@ describe('updateOpenedWsPaths', () => {
 
   test('works when provided with openedWsPaths', () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws',
+      locationPathname: wsNameToPathname('my-ws'),
     });
 
     const res = updateOpenedWsPaths(
@@ -286,7 +287,7 @@ describe('updateOpenedWsPaths', () => {
 
   test('respects replace param', () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws',
+      locationPathname: wsNameToPathname('my-ws'),
     });
 
     const res = updateOpenedWsPaths(
@@ -311,7 +312,7 @@ describe('updateOpenedWsPaths', () => {
 
   test('works when provided with openedWsPaths as a function', () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
     let existingOpenedWsPaths: OpenedWsPaths | undefined;
@@ -353,7 +354,7 @@ describe('updateOpenedWsPaths', () => {
 
   test('handles invalid path in secondary', () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
     const res = updateOpenedWsPaths((r) => {
@@ -396,7 +397,7 @@ describe('renameNote', () => {
 
   test('works when the file to be renamed is opened', async () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
     renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
@@ -442,7 +443,7 @@ describe('renameNote', () => {
     newSearch.set('secondary', 'my-ws:test-note.md');
 
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws',
+      locationPathname: wsNameToPathname('my-ws'),
       locationSearchQuery: newSearch.toString(),
     });
 
@@ -481,7 +482,7 @@ describe('renameNote', () => {
 
   test('works when the file to be renamed is not opened', async () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/my-other-file.md',
+      locationPathname: wsPathToPathname('my-ws:my-other-file.md'),
     });
 
     renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
@@ -506,7 +507,7 @@ describe('renameNote', () => {
 
   test('renaming the same file', async () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
     renameNote('my-ws:test-note.md', 'my-ws:test-note.md')(
@@ -534,7 +535,7 @@ describe('renameNote', () => {
     newSearch.set('secondary', 'my-ws:test-note.md');
 
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
       locationSearchQuery: newSearch,
     });
 
@@ -581,7 +582,7 @@ describe('renameNote', () => {
 
   test('throws error when renaming a help doc', () => {
     let { store } = noDispatchStore({
-      locationPathname: '/ws/' + HELP_FS_WORKSPACE_NAME,
+      locationPathname: wsNameToPathname(HELP_FS_WORKSPACE_NAME),
     });
 
     expect(() =>
@@ -601,7 +602,7 @@ describe('getNote', () => {
     const extensionRegistry: ExtensionRegistry = {} as any;
     const wsPath: string = 'my-ws:new-test-note.md';
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws',
+      locationPathname: wsNameToPathname('my-ws'),
     });
 
     expect(
@@ -639,7 +640,7 @@ describe('createNote', () => {
     const doc: any = {};
 
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
     createNote(extensionRegistry, wsPath, { doc })(
@@ -675,7 +676,7 @@ describe('createNote', () => {
     const doc: any = {};
 
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
     createNote(extensionRegistry, wsPath, { doc })(
@@ -727,7 +728,7 @@ describe('createNote', () => {
     const doc: any = {};
 
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
     createNote(extensionRegistry, wsPath, { doc, open: false })(
@@ -751,7 +752,7 @@ describe('createNote', () => {
 describe('deleteNote', () => {
   test('deletes when the file is opened', async () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/test-note.md',
+      locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
     deleteNote('my-ws:test-note.md')(store.state, store.dispatch, store);
@@ -785,7 +786,7 @@ describe('deleteNote', () => {
 
   test('deletes when the file is not opened', async () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/some-other-test-note.md',
+      locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
     });
 
     deleteNote('my-ws:test-note.md')(store.state, store.dispatch, store);
@@ -801,7 +802,7 @@ describe('deleteNote', () => {
 
   test('deletes multiple files', async () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/some-other-test-note.md',
+      locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
     });
 
     deleteNote(['my-ws:test-note1.md', 'my-ws:test-note2.md'])(
@@ -833,7 +834,7 @@ describe('pushWsPath', () => {
 
   test('works with new tab', () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/some-other-test-note.md',
+      locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
     });
     pushWsPath('my-ws:test-note.md', true)(store.state, store.dispatch);
 
@@ -845,7 +846,7 @@ describe('pushWsPath', () => {
 
   test('works when tab is false', () => {
     let { store, dispatchSpy } = noDispatchStore({
-      locationPathname: '/ws/my-ws/some-other-test-note.md',
+      locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
     });
     pushWsPath('my-ws:test-note.md')(store.state, store.dispatch);
 

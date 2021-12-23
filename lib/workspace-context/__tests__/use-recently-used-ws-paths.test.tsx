@@ -5,14 +5,10 @@ import {
   useSliceState,
 } from '@bangle.io/app-state-context';
 import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import {
-  WorkspaceSliceAction,
-  workspaceSliceInitialState,
-  WorkspaceSliceState,
-} from '..';
+import { workspaceSliceInitialState } from '..';
 import { workspaceSliceKey } from '../common';
+import { wsPathToPathname } from '../helpers';
 import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
 import { createStore } from './test-utils';
 
@@ -47,7 +43,7 @@ test('returns wsPaths correctly', async () => {
   });
 
   const { store, dispatchSpy } = createStore({
-    locationPathname: '/ws/test-ws/note1.md',
+    locationPathname: wsPathToPathname('test-ws:note1.md'),
     wsPaths: ['test-ws:note1.md'],
   });
   (useSliceState as any).mockImplementation(() => {
@@ -78,7 +74,7 @@ test('removes non existent wsPaths', () => {
   });
 
   const { store, dispatchSpy } = createStore({
-    locationPathname: '/ws/test-ws/note1.md',
+    locationPathname: wsPathToPathname('test-ws:note1.md'),
     wsPaths: ['test-ws:note1.md'],
   });
   (useSliceState as any).mockImplementation(() => {
@@ -133,7 +129,7 @@ test('updates the newly opened ws path only', async () => {
   });
 
   const { store } = createStore({
-    locationPathname: '/ws/test-ws/note1.md',
+    locationPathname: wsPathToPathname('test-ws:note1.md'),
     wsPaths: ['test-ws:note1.md', 'test-ws:note2.md'],
   });
 
@@ -152,7 +148,7 @@ test('updates the newly opened ws path only', async () => {
   store.dispatch({
     name: 'action::workspace-context:update-location',
     value: {
-      locationPathname: '/ws/test-ws/note1.md',
+      locationPathname: wsPathToPathname('test-ws:note1.md'),
       locationSearchQuery: 'secondary=test-ws%3Anote2.md',
     },
   });

@@ -9,8 +9,12 @@ import type { OnInvalidPathType } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  wsNameToPathname,
+  wsPathToPathname,
+} from '@bangle.io/workspace-context/helpers';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
-import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
+import { HELP_FS_INDEX_WS_PATH } from '@bangle.io/workspaces';
 
 import { ChangelogModal } from './changelog/ChangelogModal';
 import { NotificationArea } from './components/NotificationArea';
@@ -131,12 +135,15 @@ export function AppContainer() {
               path="/"
               render={() => {
                 const lastWsName = getLastWorkspaceUsed();
+
+                const pathname = lastWsName
+                  ? wsNameToPathname(lastWsName)
+                  : wsPathToPathname(HELP_FS_INDEX_WS_PATH);
+
                 return (
                   <Redirect
                     to={{
-                      pathname:
-                        '/ws/' +
-                        (lastWsName ? lastWsName : HELP_FS_WORKSPACE_NAME),
+                      pathname,
                     }}
                   />
                 );

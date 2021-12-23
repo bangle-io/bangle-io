@@ -1,5 +1,5 @@
 import { getWsNameFromPathname } from '..';
-import { getPrimaryWsPath, getWsName, OpenedWsPaths } from '../history';
+import { getWsName, OpenedWsPaths } from '../history';
 
 const createLocationObject = ({ pathname = '' }) => {
   return {
@@ -10,20 +10,6 @@ const createLocationObject = ({ pathname = '' }) => {
     state: '',
   };
 };
-
-test('getPrimaryWsPath, works 1', () => {
-  const result = getPrimaryWsPath(
-    createLocationObject({ pathname: '/ws/mojo/blah' }),
-  );
-  expect(result).toBe('mojo:blah');
-});
-
-test('getPrimaryWsPath, works 2', () => {
-  const result = getPrimaryWsPath(
-    createLocationObject({ pathname: '/ws/mojo' }),
-  );
-  expect(result).toBe(undefined);
-});
 
 test('getWsName, works 1', () => {
   const result = getWsName(createLocationObject({ pathname: '/ws/mojo' }));

@@ -1,7 +1,8 @@
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '..';
-import { WorkspaceStateKeys } from '../slice-state';
+import { wsNameToPathname } from '../helpers';
+import { WorkspaceStateKeys } from '../workspace-slice-state';
 
 export const createState = (
   data: Partial<{ [K in WorkspaceStateKeys]: any }> = {},
@@ -20,7 +21,7 @@ export const createStateWithWsName = (
   data: Parameters<typeof createState>[0] = {},
 ) => {
   return createState({
-    locationPathname: '/ws/' + wsName,
+    locationPathname: wsNameToPathname(wsName),
     ...data,
   });
 };

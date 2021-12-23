@@ -1,7 +1,7 @@
 import { sleep } from '@bangle.dev/utils';
 
 import { historyOnInvalidPath } from '..';
-import { validateLocationEffect } from '../effects';
+import { wsNameToPathname } from '../helpers';
 import { refreshWsPaths } from '../operations';
 import { createStore } from './test-utils';
 
@@ -70,7 +70,7 @@ describe('refreshWsPathsEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test-ws',
+        locationPathname: wsNameToPathname('test-ws'),
         locationSearchQuery: '',
       },
     });
@@ -82,7 +82,7 @@ describe('refreshWsPathsEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test-ws-2',
+        locationPathname: wsNameToPathname('test-ws-2'),
         locationSearchQuery: '',
       },
     });
@@ -93,7 +93,7 @@ describe('refreshWsPathsEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test-ws-2',
+        locationPathname: wsNameToPathname('test-ws-2'),
         locationSearchQuery: 'change',
       },
     });
@@ -120,7 +120,7 @@ describe('validateLocationEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: '/ws/test-ws/my-path',
+        locationPathname: wsNameToPathname('test-ws/my-path'),
         locationSearchQuery: '',
       },
     });

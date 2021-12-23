@@ -23,8 +23,8 @@ import {
 } from './common';
 import { defaultDoc } from './default-doc';
 import { validateOpenedWsPaths } from './helpers';
-import type { WorkspaceSliceState } from './slice-state';
 import { fileOpsPlus, FileOpsType } from './use-get-file-ops';
+import type { WorkspaceSliceState } from './workspace-slice-state';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};

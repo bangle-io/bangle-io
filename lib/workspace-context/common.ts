@@ -4,7 +4,7 @@ import {
   SliceSideEffect,
 } from '@bangle.io/create-store';
 
-import type { WorkspaceSliceState } from './slice-state';
+import type { WorkspaceSliceState } from './workspace-slice-state';
 
 export const workspaceSliceKey = new SliceKey<
   WorkspaceSliceState,

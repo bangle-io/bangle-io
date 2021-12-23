@@ -3,7 +3,10 @@ import type { JsonValue } from '@bangle.io/shared-types';
 
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
 import { refreshWsPathsEffect, validateLocationEffect } from './effects';
-import { WorkspaceSliceState, WorkspaceStateKeys } from './slice-state';
+import {
+  WorkspaceSliceState,
+  WorkspaceStateKeys,
+} from './workspace-slice-state';
 
 export const JSON_SCHEMA_VERSION = 'workspace-slice/1';
 
