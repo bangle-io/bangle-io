@@ -15,7 +15,7 @@ import {
   safeRequestIdleCallback,
   useClickToNote,
 } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 const IconStyle = {
@@ -30,8 +30,19 @@ interface BacklinkSearchResult {
 
 export function BacklinkWidget() {
   const backlinkSearchResult = useBacklinkSearch();
-  const { pushWsPath } = useWorkspaceContext();
-  const makeOnClick = useClickToNote(pushWsPath);
+  const { bangleStore } = useWorkspaceContext();
+  const _pushWsPath: (...args: Parameters<typeof pushWsPath>) => void =
+    useCallback(
+      (wsPath, newTab, secondary) => {
+        pushWsPath(
+          wsPath,
+          newTab,
+          secondary,
+        )(bangleStore.state, bangleStore.dispatch);
+      },
+      [bangleStore],
+    );
+  const makeOnClick = useClickToNote(_pushWsPath);
   const [openedItems, updateOpenedItems] = useState(() => new Set<string>());
   const isCollapsed = useCallback(
     (r: BacklinkSearchResult) => {

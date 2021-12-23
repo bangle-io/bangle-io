@@ -23,7 +23,6 @@
     "@bangle.dev/utils": "0.28.3",
     "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
-    "@bangle.io/create-store": "workspace:*",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/history": "^4.7.9",

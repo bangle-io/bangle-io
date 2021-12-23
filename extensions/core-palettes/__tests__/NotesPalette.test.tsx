@@ -50,7 +50,7 @@ describe('useSearchWsPaths', () => {
     useWorkspaceContextMock.mockImplementation(() => {
       return {
         ...getUseWorkspaceContextReturn,
-        recentWsPaths: EMPTY_ARRAY,
+        recentlyUsedWsPaths: EMPTY_ARRAY,
       };
     });
 
@@ -75,7 +75,7 @@ describe('useSearchWsPaths', () => {
     useWorkspaceContextMock.mockImplementation(() => {
       return {
         ...getUseWorkspaceContextReturn,
-        recentWsPaths,
+        recentlyUsedWsPaths: recentWsPaths,
       };
     });
 
@@ -108,7 +108,7 @@ describe('useSearchWsPaths', () => {
     useWorkspaceContextMock.mockImplementation(() => {
       return {
         ...getUseWorkspaceContextReturn,
-        recentWsPaths: recentWsPaths,
+        recentlyUsedWsPaths: recentWsPaths,
       };
     });
 
@@ -149,10 +149,10 @@ describe('useSearchWsPaths', () => {
       return noteWsPaths.map((r) => ({ item: r } as any));
     });
 
-    (useWorkspaceContext as any).mockImplementation(() => {
+    useWorkspaceContextMock.mockImplementation(() => {
       return {
         ...getUseWorkspaceContextReturn,
-        recentWsPaths,
+        recentlyUsedWsPaths: recentWsPaths,
       };
     });
 

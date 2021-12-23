@@ -74,11 +74,8 @@ export function initializeBangleStore({
       state: state,
       dispatchAction: (store, action) => {
         const newState = store.state.applyAction(action);
+        log(action, newState);
         store.updateState(newState);
-        log(
-          action,
-          newState.slicesCurrentState['workspace-slice$'].locationPathname,
-        );
       },
       scheduler: (cb) => {
         const id = safeRequestIdleCallback(cb, {

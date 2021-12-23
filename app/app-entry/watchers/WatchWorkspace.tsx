@@ -4,6 +4,7 @@ import { TAB_ID } from '@bangle.io/config';
 import { useBroadcastChannel, weakCache } from '@bangle.io/utils';
 import {
   refreshWsPaths,
+  updateOpenedWsPaths,
   useWorkspaceContext,
 } from '@bangle.io/workspace-context';
 
@@ -31,16 +32,14 @@ interface MessageType {
 export function WatchWorkspace() {
   const {
     wsName,
-    fileWsPaths,
-    primaryWsPath,
-    secondaryWsPath,
-    updateOpenedWsPaths,
+    wsPaths: fileWsPaths,
+    bangleStore,
+    openedWsPaths,
   } = useWorkspaceContext();
   const [lastMessage, broadcastMessage] =
     useBroadcastChannel<MessageType>(CHANNEL_NAME);
   const isFirstMountRef = useRef(true);
   const checkCurrentEditors = useRef(false);
-  const { bangleStore } = useWorkspaceContext();
 
   useEffect(() => {
     if (lastMessage) {
@@ -81,24 +80,22 @@ export function WatchWorkspace() {
   useEffect(() => {
     if (fileWsPaths && checkCurrentEditors.current === true) {
       checkCurrentEditors.current = false;
-
       updateOpenedWsPaths(
         (openedWsPaths) => {
           let newOpenedWsPaths = openedWsPaths;
 
-          if (primaryWsPath && !fileWsPaths.includes(primaryWsPath)) {
-            newOpenedWsPaths = newOpenedWsPaths.closeIfFound(primaryWsPath);
-          }
-          if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
-            newOpenedWsPaths = newOpenedWsPaths.closeIfFound(secondaryWsPath);
-          }
+          openedWsPaths.forEachWsPath((wsPath) => {
+            if (wsPath && !fileWsPaths.includes(wsPath)) {
+              newOpenedWsPaths = newOpenedWsPaths.closeIfFound(wsPath);
+            }
+          });
 
-          return newOpenedWsPaths;
+          return newOpenedWsPaths.shrink();
         },
         { replaceHistory: true },
-      );
+      )(bangleStore.state, bangleStore.dispatch);
     }
-  }, [fileWsPaths, primaryWsPath, secondaryWsPath, updateOpenedWsPaths]);
+  }, [fileWsPaths, bangleStore, openedWsPaths]);
 
   useEffect(() => {
     // fileWsPaths is undefined when its loading

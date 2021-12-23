@@ -97,11 +97,7 @@ export function Entry() {
                   initExtensionRegistry={initExtensionRegistry}
                 >
                   <ExtensionStateContextProvider>
-                    <WorkspaceContextProvider
-                      onNativefsAuthError={handleNativefsAuthError}
-                      onWorkspaceNotFound={handleWorkspaceNotFound}
-                      onInvalidPath={handleOnInvalidPath}
-                    >
+                    <WorkspaceContextProvider>
                       <SWReloadPrompt />
                       <WatchWorkspace />
                       <WatchUI />

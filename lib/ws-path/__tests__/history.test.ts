@@ -54,6 +54,17 @@ describe('OpenedWsPaths', () => {
     expect(result.equal(result)).toBe(true);
   });
 
+  test('getCount', () => {
+    let result = new OpenedWsPaths(['a', undefined]);
+    expect(result.openCount).toBe(1);
+
+    result = new OpenedWsPaths([undefined, undefined]);
+    expect(result.openCount).toBe(0);
+
+    result = new OpenedWsPaths(['a', 'n']);
+    expect(result.openCount).toBe(2);
+  });
+
   test('undefined undefined result same value', () => {
     let result = new OpenedWsPaths(['a', undefined]);
 

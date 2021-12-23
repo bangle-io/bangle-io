@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import type { SearchResultItem } from '@bangle.io/search-pm-node';
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -19,11 +20,7 @@ jest.mock('@bangle.io/contextual-ui-components', () => {
   };
 });
 
-jest.mock('@bangle.io/workspace-context', () => {
-  return {
-    useWorkspaceContext: jest.fn(),
-  };
-});
+jest.mock('@bangle.io/workspace-context');
 
 jest.mock('../hooks', () => {
   const actual = jest.requireActual('../hooks');
@@ -35,16 +32,22 @@ jest.mock('../hooks', () => {
   };
 });
 
-let useWorkspaceContextReturn;
+let useWorkspaceContextReturn: Partial<typeof getUseWorkspaceContextReturn>;
+
+const useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
+  typeof useWorkspaceContext
+>;
 beforeEach(() => {
   useWorkspaceContextReturn = {
     wsName: undefined,
     noteWsPaths: [],
-    getNote: jest.fn(),
   };
 
-  (useWorkspaceContext as any).mockImplementation(() => {
-    return useWorkspaceContextReturn;
+  useWorkspaceContextMock.mockImplementation(() => {
+    return {
+      ...getUseWorkspaceContextReturn,
+      ...useWorkspaceContextReturn,
+    };
   });
 
   (useSearchNotesState as any).mockImplementation(() => [

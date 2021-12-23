@@ -1,9 +1,11 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { FileOps } from '@bangle.io/workspaces';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ImageComponent } from '../render-image-react-node-view';
 
@@ -15,6 +17,7 @@ jest.mock('@bangle.io/workspace-context', () => {
     useWorkspaceContext: jest.fn(),
   };
 });
+
 jest.mock('@bangle.io/workspaces', () => {
   const workspaceThings = jest.requireActual('@bangle.io/workspaces');
   return {
@@ -26,19 +29,27 @@ jest.mock('@bangle.io/workspaces', () => {
 });
 
 class File {
-  constructor(content, fileName, opts) {
-    this.content = content;
-    this.fileName = fileName;
-    this.opts = opts;
-  }
+  constructor(public content, public fileName, public opts) {}
 }
+
+let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
+  typeof useWorkspaceContext
+>;
+
+beforeEach(() => {
+  useWorkspaceContextMock.mockImplementation(() => ({
+    ...getUseWorkspaceContextReturn,
+  }));
+});
+
 describe('ImageComponent', () => {
   const globalImage = window.Image;
   beforeEach(() => {
-    window.Image = class Image {
+    (window as any).Image = class Image {
+      height = 300;
+      width = 200;
+      onload;
       constructor() {
-        this.height = 300;
-        this.width = 200;
         setTimeout(() => {
           this.onload();
         }, 15);
@@ -51,7 +62,6 @@ describe('ImageComponent', () => {
     window.Image = globalImage;
   });
   test('first pass renders a 404', async () => {
-    useWorkspaceContext.mockImplementation(() => ({}));
     const renderResult = render(
       <ImageComponent nodeAttrs={{ src: './google.png', alt: undefined }} />,
     );
@@ -68,12 +78,17 @@ describe('ImageComponent', () => {
   });
 
   test('loads the file blob', async () => {
-    useWorkspaceContext.mockImplementation(() => ({
-      primaryWsPath: 'test-ws:my-file.md',
-    }));
-    FileOps.getFile.mockImplementation(async () => {
+    useWorkspaceContextMock.mockImplementation(() => {
+      return {
+        ...getUseWorkspaceContextReturn,
+        openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:my-file.md']),
+      };
+    });
+
+    (FileOps.getFile as any).mockImplementation(async () => {
       return new File('I am the content of image', 'google.png', {});
     });
+
     const renderResult = render(
       <ImageComponent nodeAttrs={{ src: './google.png', alt: undefined }} />,
     );
@@ -97,9 +112,13 @@ describe('ImageComponent', () => {
   });
 
   test('handles http urls as image src', async () => {
-    useWorkspaceContext.mockImplementation(() => ({
-      primaryWsPath: 'test-ws:my-file.md',
-    }));
+    useWorkspaceContextMock.mockImplementation(() => {
+      return {
+        ...getUseWorkspaceContextReturn,
+        openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:my-file.md']),
+      };
+    });
+
     const renderResult = render(
       <ImageComponent
         nodeAttrs={{
@@ -121,10 +140,14 @@ describe('ImageComponent', () => {
   });
 
   test('handles image dimensions that are statically set in the name', async () => {
-    useWorkspaceContext.mockImplementation(() => ({
-      primaryWsPath: 'test-ws:my-file.md',
-    }));
-    FileOps.getFile.mockImplementation(async () => {
+    useWorkspaceContextMock.mockImplementation(() => {
+      return {
+        ...getUseWorkspaceContextReturn,
+        openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:my-file.md']),
+      };
+    });
+
+    (FileOps.getFile as any).mockImplementation(async () => {
       return new File('I am the content of image', 'google.png', {});
     });
     const renderResult = render(

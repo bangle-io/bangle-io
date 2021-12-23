@@ -8,12 +8,13 @@ import {
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { BacklinkWidget } from '../BacklinkWidget';
 
 jest.mock('@bangle.io/workspace-context');
+
 jest.mock('@bangle.io/editor-manager-context');
 
 jest.mock('@bangle.io/naukar-proxy', () => {
@@ -23,6 +24,8 @@ jest.mock('@bangle.io/naukar-proxy', () => {
     },
   };
 });
+
+const pushWsPathMock = pushWsPath as jest.MockedFunction<typeof pushWsPath>;
 
 let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
   typeof useWorkspaceContext
@@ -47,6 +50,9 @@ beforeEach(() => {
       wsName: 'test-back-ws',
     };
   });
+
+  pushWsPathMock.mockImplementation(() => () => true);
+
   useEditorManagerContextMock.mockImplementation(() => {
     return {
       ...getUseEditorManagerContextReturn,
@@ -162,14 +168,11 @@ test('renders backlinks', async () => {
     undefined,
   ]);
 
-  const pushWsPath = jest.fn();
-
   useWorkspaceContextMock.mockImplementation(() => {
     return {
       ...getUseWorkspaceContextReturn,
       wsName: 'test-back-ws',
       openedWsPaths,
-      pushWsPath,
     };
   });
 
