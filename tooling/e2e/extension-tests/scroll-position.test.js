@@ -124,6 +124,7 @@ test.each(['regular', 'split-screen'])(
 
     await page.goBack({ waitUntil: 'networkidle2' });
 
+    await longSleep();
     // make sure we are back to our previous page
     await expect(page.title()).resolves.toMatch('test123');
     await longSleep();

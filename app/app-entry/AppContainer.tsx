@@ -5,14 +5,16 @@ import { Activitybar } from '@bangle.io/activitybar';
 import { EditorContainer } from '@bangle.io/editor-container';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
+import type { OnInvalidPathType } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
-  OnInvalidPath,
-  useWorkspaceContext,
-} from '@bangle.io/workspace-context';
+  wsNameToPathname,
+  wsPathToPathname,
+} from '@bangle.io/workspace-context/helpers';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
-import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
+import { HELP_FS_INDEX_WS_PATH } from '@bangle.io/workspaces';
 
 import { ChangelogModal } from './changelog/ChangelogModal';
 import { NotificationArea } from './components/NotificationArea';
@@ -28,7 +30,7 @@ import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
 
 export function AppContainer() {
   const { widescreen } = useUIManagerContext();
-  const { wsName, primaryWsPath, openedWsPaths } = useWorkspaceContext();
+  const { wsName, openedWsPaths } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
   useWorkspaceSideEffects();
 
@@ -106,7 +108,7 @@ export function AppContainer() {
           <Activitybar
             actionKeybindings={actionKeybindings}
             wsName={wsName}
-            primaryWsPath={primaryWsPath}
+            primaryWsPath={openedWsPaths.primaryWsPath}
             sidebars={sidebars}
           />
         }
@@ -133,12 +135,15 @@ export function AppContainer() {
               path="/"
               render={() => {
                 const lastWsName = getLastWorkspaceUsed();
+
+                const pathname = lastWsName
+                  ? wsNameToPathname(lastWsName)
+                  : wsPathToPathname(HELP_FS_INDEX_WS_PATH);
+
                 return (
                   <Redirect
                     to={{
-                      pathname:
-                        '/ws/' +
-                        (lastWsName ? lastWsName : HELP_FS_WORKSPACE_NAME),
+                      pathname,
                     }}
                   />
                 );
@@ -186,7 +191,7 @@ export function handleWorkspaceNotFound(wsName, history) {
   });
 }
 
-export const handleOnInvalidPath: OnInvalidPath = (
+export const handleOnInvalidPath: OnInvalidPathType = (
   wsName,
   history,
   invalidPath,

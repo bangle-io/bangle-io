@@ -1,4 +1,4 @@
-import { getPrimaryWsPath, getWsName, OpenedWsPaths } from '../history';
+import { getWsName, OpenedWsPaths } from '../history';
 
 const createLocationObject = ({ pathname = '' }) => {
   return {
@@ -9,20 +9,6 @@ const createLocationObject = ({ pathname = '' }) => {
     state: '',
   };
 };
-
-test('getPrimaryWsPath, works 1', () => {
-  const result = getPrimaryWsPath(
-    createLocationObject({ pathname: '/ws/mojo/blah' }),
-  );
-  expect(result).toBe('mojo:blah');
-});
-
-test('getPrimaryWsPath, works 2', () => {
-  const result = getPrimaryWsPath(
-    createLocationObject({ pathname: '/ws/mojo' }),
-  );
-  expect(result).toBe(undefined);
-});
 
 test('getWsName, works 1', () => {
   const result = getWsName(createLocationObject({ pathname: '/ws/mojo' }));
@@ -44,6 +30,17 @@ describe('OpenedWsPaths', () => {
 
     let result = new OpenedWsPaths(['a', 'b']);
     expect(result.equal(result)).toBe(true);
+  });
+
+  test('getCount', () => {
+    let result = new OpenedWsPaths(['a', undefined]);
+    expect(result.openCount).toBe(1);
+
+    result = new OpenedWsPaths([undefined, undefined]);
+    expect(result.openCount).toBe(0);
+
+    result = new OpenedWsPaths(['a', 'n']);
+    expect(result.openCount).toBe(2);
   });
 
   test('undefined undefined result same value', () => {

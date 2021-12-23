@@ -2,7 +2,11 @@ import { useEffect, useRef } from 'react';
 
 import { TAB_ID } from '@bangle.io/config';
 import { useBroadcastChannel, weakCache } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  refreshWsPaths,
+  updateOpenedWsPaths,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 
 const CHANNEL_NAME = 'watch_workspace';
 const FILE_TREE_CHANGED = 'FILE_TREE_CHANGED';
@@ -28,11 +32,9 @@ interface MessageType {
 export function WatchWorkspace() {
   const {
     wsName,
-    fileWsPaths,
-    refreshWsPaths,
-    primaryWsPath,
-    secondaryWsPath,
-    updateOpenedWsPaths,
+    wsPaths: fileWsPaths,
+    bangleStore,
+    openedWsPaths,
   } = useWorkspaceContext();
   const [lastMessage, broadcastMessage] =
     useBroadcastChannel<MessageType>(CHANNEL_NAME);
@@ -58,7 +60,7 @@ export function WatchWorkspace() {
             payload.lameHash !== weakComputeLameHash(fileWsPaths)
           ) {
             log('refreshing wsPaths');
-            refreshWsPaths();
+            refreshWsPaths()(bangleStore.state, bangleStore.dispatch);
             checkCurrentEditors.current = true;
           }
           break;
@@ -68,7 +70,7 @@ export function WatchWorkspace() {
         }
       }
     }
-  }, [lastMessage, refreshWsPaths, wsName, fileWsPaths]);
+  }, [lastMessage, bangleStore, wsName, fileWsPaths]);
 
   // close any tabs that might have been deleted or renamed
   // NOTE: We are doing this rectification here and not
@@ -78,24 +80,22 @@ export function WatchWorkspace() {
   useEffect(() => {
     if (fileWsPaths && checkCurrentEditors.current === true) {
       checkCurrentEditors.current = false;
-
       updateOpenedWsPaths(
         (openedWsPaths) => {
           let newOpenedWsPaths = openedWsPaths;
 
-          if (primaryWsPath && !fileWsPaths.includes(primaryWsPath)) {
-            newOpenedWsPaths = newOpenedWsPaths.closeIfFound(primaryWsPath);
-          }
-          if (secondaryWsPath && !fileWsPaths.includes(secondaryWsPath)) {
-            newOpenedWsPaths = newOpenedWsPaths.closeIfFound(secondaryWsPath);
-          }
+          openedWsPaths.forEachWsPath((wsPath) => {
+            if (wsPath && !fileWsPaths.includes(wsPath)) {
+              newOpenedWsPaths = newOpenedWsPaths.closeIfFound(wsPath);
+            }
+          });
 
-          return newOpenedWsPaths;
+          return newOpenedWsPaths.shrink();
         },
         { replaceHistory: true },
-      );
+      )(bangleStore.state, bangleStore.dispatch);
     }
-  }, [fileWsPaths, primaryWsPath, secondaryWsPath, updateOpenedWsPaths]);
+  }, [fileWsPaths, bangleStore, openedWsPaths]);
 
   useEffect(() => {
     // fileWsPaths is undefined when its loading

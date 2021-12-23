@@ -13,7 +13,8 @@ let log = LOG ? console.log.bind(console, 'Routes') : () => {};
 type UnPromisify<T> = T extends Promise<infer U> ? U : T;
 
 export function useWorkspaceSideEffects() {
-  const { wsName, primaryWsPath } = useWorkspaceContext();
+  const { wsName, openedWsPaths } = useWorkspaceContext();
+  const { primaryWsPath } = openedWsPaths;
   const [workspaceInfo, updateWorkspaceInfo] = useState<
     UnPromisify<ReturnType<typeof getWorkspaceInfo>> | undefined
   >();

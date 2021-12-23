@@ -87,6 +87,31 @@ const extension = Extension.create({
         title: "Update the store's browser history location ",
         hidden: true,
       },
+      {
+        name: 'action::bangle-store:history-auth-error',
+        title: 'Action for signaling an auth error',
+        hidden: true,
+      },
+      {
+        name: 'action::bangle-store:history-ws-not-found',
+        title: 'Action for signaling a workspace not found',
+        hidden: true,
+      },
+      {
+        name: 'action::bangle-store:history-set-history',
+        title: 'Save the history object in the slice state',
+        hidden: true,
+      },
+      {
+        name: 'action::bangle-store:history-update-opened-ws-paths',
+        title: 'Update history to reflect opened ws paths',
+        hidden: true,
+      },
+      {
+        name: 'action::bangle-store:history-on-invalid-path',
+        title: 'Action when there is an invalid path',
+        hidden: true,
+      },
     ],
     ReactComponent: CoreActionsHandler,
   },

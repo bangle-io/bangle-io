@@ -22,6 +22,8 @@ import {
   useLocalStorage,
 } from '@bangle.io/utils';
 import {
+  deleteNote,
+  pushWsPath,
   useWorkspaceContext,
   WorkspaceContextType,
 } from '@bangle.io/workspace-context';
@@ -43,12 +45,16 @@ const rowHeight = 1.5 * rem; // 1.75rem line height of text-lg
 // TODO the current design just ignores empty directory
 // TODO check if in widescreen sidebar is closed
 export function NotesTree() {
-  const { pushWsPath, noteWsPaths = [], deleteNote } = useWorkspaceContext();
-
   const { dispatch, widescreen } = useUIManagerContext();
-  const { wsName, primaryWsPath } = useWorkspaceContext();
+  const {
+    wsName,
+    openedWsPaths,
+    bangleStore,
+    noteWsPaths = [],
+  } = useWorkspaceContext();
   const { dispatchAction } = useActionContext();
 
+  const { primaryWsPath } = openedWsPaths;
   const activeFilePath = primaryWsPath
     ? resolvePath(primaryWsPath).filePath
     : undefined;
@@ -103,8 +109,7 @@ export function NotesTree() {
     <GenericFileBrowser
       wsName={wsName}
       files={noteWsPaths}
-      deleteNote={deleteNote}
-      pushWsPath={pushWsPath}
+      bangleStore={bangleStore}
       activeFilePath={activeFilePath}
       closeSidebar={closeSidebar}
       createNewFile={createNewFile}
@@ -119,16 +124,14 @@ const IconStyle = {
 export function GenericFileBrowser({
   wsName,
   files,
-  deleteNote,
-  pushWsPath,
+  bangleStore,
   activeFilePath,
   closeSidebar,
   createNewFile,
 }: {
   wsName: string;
   files: string[];
-  deleteNote?: WorkspaceContextType['deleteNote'];
-  pushWsPath: WorkspaceContextType['pushWsPath'];
+  bangleStore: WorkspaceContextType['bangleStore'];
   activeFilePath?: string;
   closeSidebar: () => void;
   createNewFile: (path?: string) => void;
@@ -146,8 +149,7 @@ export function GenericFileBrowser({
       wsName={wsName}
       filesAndDirList={filesAndDirList}
       dirSet={dirSet}
-      deleteNote={deleteNote}
-      pushWsPath={pushWsPath}
+      bangleStore={bangleStore}
       activeFilePath={activeFilePath}
       closeSidebar={closeSidebar}
       createNewFile={createNewFile}
@@ -160,8 +162,7 @@ const RenderItems = React.memo(
     wsName,
     filesAndDirList,
     dirSet,
-    deleteNote,
-    pushWsPath,
+    bangleStore,
     activeFilePath,
     closeSidebar,
     createNewFile,
@@ -169,8 +170,7 @@ const RenderItems = React.memo(
     wsName: string;
     filesAndDirList: string[];
     dirSet: Set<string>;
-    deleteNote?: WorkspaceContextType['deleteNote'];
-    pushWsPath: WorkspaceContextType['pushWsPath'];
+    bangleStore: WorkspaceContextType['bangleStore'];
     activeFilePath?: string;
     closeSidebar: () => void;
     createNewFile: (path?: string) => void;
@@ -252,11 +252,15 @@ const RenderItems = React.memo(
           return;
         }
         if (event.metaKey) {
-          pushWsPath(wsPath, true);
+          pushWsPath(wsPath, true)(bangleStore.state, bangleStore.dispatch);
         } else if (event.shiftKey) {
-          pushWsPath(wsPath, false, true);
+          pushWsPath(
+            wsPath,
+            false,
+            true,
+          )(bangleStore.state, bangleStore.dispatch);
         } else {
-          pushWsPath(wsPath);
+          pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
         }
         closeSidebar();
       };
@@ -273,7 +277,7 @@ const RenderItems = React.memo(
           isActive={activeFilePath === path}
           isCollapsed={collapsed.includes(path)}
           createNewFile={createNewFile}
-          deleteNote={deleteNote}
+          bangleStore={bangleStore}
           onClick={onClick}
         />
       );
@@ -304,9 +308,9 @@ function RenderRow({
   depth,
   isActive,
   isCollapsed,
+  bangleStore,
   onClick,
   createNewFile,
-  deleteNote,
 }: {
   virtualRow;
   path;
@@ -316,8 +320,8 @@ function RenderRow({
   depth;
   isActive;
   isCollapsed;
+  bangleStore: WorkspaceContextType['bangleStore'];
   onClick;
-  deleteNote?: WorkspaceContextType['deleteNote'];
   createNewFile: (path?: string) => void;
 }) {
   const elementRef = useRef<HTMLDivElement>(null);
@@ -383,24 +387,24 @@ function RenderRow({
               <DocumentAddIcon style={IconStyle} />
             </ButtonIcon>
           ) : (
-            deleteNote && (
-              <ButtonIcon
-                hint="Delete file"
-                hintPos="bottom-right"
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  if (
-                    window.confirm(
-                      `Are you sure you want to delete "${name}"? `,
-                    )
-                  ) {
-                    deleteNote(wsPath);
-                  }
-                }}
-              >
-                <CloseIcon style={IconStyle} />
-              </ButtonIcon>
-            )
+            <ButtonIcon
+              hint="Delete file"
+              hintPos="bottom-right"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (
+                  window.confirm(`Are you sure you want to delete "${name}"? `)
+                ) {
+                  deleteNote(wsPath)(
+                    bangleStore.state,
+                    bangleStore.dispatch,
+                    bangleStore,
+                  );
+                }
+              }}
+            >
+              <CloseIcon style={IconStyle} />
+            </ButtonIcon>
           ),
         }}
       />

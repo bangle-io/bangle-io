@@ -15,12 +15,7 @@ import { initExtensionRegistry, polyfills } from '@bangle.io/shared';
 import { UIManager } from '@bangle.io/ui-context';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 
-import {
-  AppContainer,
-  handleNativefsAuthError,
-  handleOnInvalidPath,
-  handleWorkspaceNotFound,
-} from './AppContainer';
+import { AppContainer } from './AppContainer';
 import { AppStateProvider } from './AppStateProvider';
 import { useUsageAnalytics } from './hooks/use-usage-analytics';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
@@ -97,11 +92,7 @@ export function Entry() {
                   initExtensionRegistry={initExtensionRegistry}
                 >
                   <ExtensionStateContextProvider>
-                    <WorkspaceContextProvider
-                      onNativefsAuthError={handleNativefsAuthError}
-                      onWorkspaceNotFound={handleWorkspaceNotFound}
-                      onInvalidPath={handleOnInvalidPath}
-                    >
+                    <WorkspaceContextProvider>
                       <SWReloadPrompt />
                       <WatchWorkspace />
                       <WatchUI />

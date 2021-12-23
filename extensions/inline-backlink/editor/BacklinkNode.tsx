@@ -16,7 +16,11 @@ import {
   cx,
   getEditorPluginMetadata,
 } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  createNote,
+  pushWsPath,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 import {
   filePathToWsPath,
   parseLocalFilePath,
@@ -42,7 +46,7 @@ export function BacklinkNode({
     view.state,
   );
 
-  const { wsName, noteWsPaths, createNote, pushWsPath } = useWorkspaceContext();
+  const { wsName, noteWsPaths, bangleStore } = useWorkspaceContext();
 
   let { path, title } = nodeAttrs;
   const [invalidLink, updatedInvalidLink] = useState(false);
@@ -78,10 +82,14 @@ export function BacklinkNode({
         wsName,
         noteWsPaths,
         extensionRegistry,
-        createNote,
+        bangleStore,
       }).then(
         (matchedWsPath) => {
-          pushWsPath(matchedWsPath, newTab, shift);
+          pushWsPath(
+            matchedWsPath,
+            newTab,
+            shift,
+          )(bangleStore.state, bangleStore.dispatch);
         },
         (error) => {
           if (error instanceof PathValidationError) {
@@ -94,12 +102,11 @@ export function BacklinkNode({
     },
     [
       backlinkPath,
-      createNote,
       extensionRegistry,
       noteWsPaths,
       primaryWsPath,
-      pushWsPath,
       wsName,
+      bangleStore,
     ],
   );
 
@@ -173,14 +180,14 @@ async function handleClick({
   wsName,
   noteWsPaths,
   extensionRegistry,
-  createNote,
+  bangleStore,
 }: {
   backlinkPath: string;
   currentWsPath: string;
   wsName: string;
   noteWsPaths: string[];
   extensionRegistry: ExtensionRegistry;
-  createNote: ReturnType<typeof useWorkspaceContext>['createNote'];
+  bangleStore: ReturnType<typeof useWorkspaceContext>['bangleStore'];
 }) {
   const existingWsPathMatch = getMatchingWsPath(
     wsName,
@@ -216,8 +223,11 @@ async function handleClick({
 
   validateNoteWsPath(newWsPath);
 
-  await createNote(extensionRegistry, newWsPath, { open: false });
-
+  await createNote(extensionRegistry, newWsPath, { open: false })(
+    bangleStore.state,
+    bangleStore.dispatch,
+    bangleStore,
+  );
   return newWsPath;
 }
 

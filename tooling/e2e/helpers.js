@@ -339,6 +339,15 @@ async function jestDebug() {
   return jestPuppeteer.debug();
 }
 
+async function waitForPageTitleMatch(titleMatch) {
+  await page.waitForFunction(
+    (titleMatch) => document.title.includes(titleMatch),
+    {
+      timeout: SELECTOR_TIMEOUT,
+    },
+    titleMatch,
+  );
+}
 module.exports = {
   clearPrimaryEditor,
   clickPaletteRow,
@@ -369,6 +378,7 @@ module.exports = {
   sleep,
   url,
   uuid,
+  waitForPageTitleMatch,
   waitForPrimaryEditorFocus,
   waitForPrimaryEditorTextToContain,
   waitForSecondaryEditorFocus,

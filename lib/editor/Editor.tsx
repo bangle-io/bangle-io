@@ -35,7 +35,7 @@ import type {
   EditorPluginMetadata,
 } from '@bangle.io/shared-types';
 import { cx } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { getNote } from '@bangle.io/workspace-context';
 
 import { watchPluginHost } from './watch-plugin-host';
 
@@ -61,11 +61,9 @@ function EditorInner({
   wsPath,
   editorDisplayType = EditorDisplayType.Page,
 }: EditorProps) {
-  const { getNote } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
   const { dispatchAction } = useActionContext();
   const { bangleStore } = useEditorManagerContext();
-
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
   // in handy when loading editor with a given scroll position.
@@ -73,7 +71,11 @@ function EditorInner({
 
   useEffect(() => {
     let destroyed = false;
-    getNote(wsPath).then((doc) => {
+
+    getNote(extensionRegistry, wsPath)(
+      bangleStore.state,
+      bangleStore.dispatch,
+    ).then((doc) => {
       if (!destroyed) {
         setInitialDoc(doc);
       }
@@ -81,7 +83,7 @@ function EditorInner({
     return () => {
       destroyed = true;
     };
-  }, [getNote, wsPath]);
+  }, [extensionRegistry, bangleStore, wsPath]);
 
   const editorRef = useRef<CoreBangleEditor | null>(null);
 

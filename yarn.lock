@@ -1841,6 +1841,7 @@ __metadata:
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/style": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
@@ -2284,6 +2285,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
@@ -2668,6 +2670,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.3
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
     type-fest: ^2.8.0
   languageName: unknown
   linkType: soft
@@ -2742,6 +2745,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.3.0
+    type-fest: ^2.8.0
   languageName: unknown
   linkType: soft
 
@@ -2844,6 +2848,7 @@ __metadata:
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.33
@@ -2881,6 +2886,7 @@ __metadata:
     "@bangle.dev/core": 0.28.3
     "@bangle.dev/pm": 0.28.3
     "@bangle.dev/utils": 0.28.3
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
@@ -2901,6 +2907,7 @@ __metadata:
     react-router-dom: ^5.3.0
     react-test-renderer: ^17.0.2
     reselect: ^4.1.5
+    type-fest: ^2.8.0
   languageName: unknown
   linkType: soft
 

@@ -27,7 +27,9 @@ export function NoteLink({
     }),
     [pathname],
   );
-  const { primaryWsPath } = useWorkspaceContext();
+  const {
+    openedWsPaths: { primaryWsPath },
+  } = useWorkspaceContext();
 
   return (
     <NavLink

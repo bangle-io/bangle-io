@@ -4,7 +4,11 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { InputPalette, UniversalPalette } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { randomName, useDestroyRef } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  createNote,
+  renameNote,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 import {
   filePathToWsPath,
   isValidNoteWsPath,
@@ -15,7 +19,7 @@ import {
 export function NewNoteInputModal({ initialValue, onDismiss }) {
   const destroyedRef = useDestroyRef();
   const extensionRegistry = useExtensionRegistryContext();
-  const { wsName, createNote } = useWorkspaceContext();
+  const { wsName, bangleStore } = useWorkspaceContext();
   const [error, updateError] = useState<Error | undefined>();
   const { widescreen } = useUIManagerContext();
 
@@ -39,7 +43,11 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
         newWsPath += '.md';
       }
       try {
-        await createNote(extensionRegistry, newWsPath);
+        await createNote(extensionRegistry, newWsPath)(
+          bangleStore.state,
+          bangleStore.dispatch,
+          bangleStore,
+        );
         onDismiss();
       } catch (error) {
         if (!(error instanceof Error)) {
@@ -54,7 +62,7 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
         }
       }
     },
-    [extensionRegistry, onDismiss, createNote, destroyedRef, wsName],
+    [extensionRegistry, onDismiss, bangleStore, destroyedRef, wsName],
   );
 
   return (
@@ -81,7 +89,10 @@ export function RenameNoteInputModal({ onDismiss }) {
   const destroyedRef = useDestroyRef();
   const { widescreen } = useUIManagerContext();
 
-  const { wsName, renameNote, primaryWsPath } = useWorkspaceContext();
+  const { wsName, bangleStore, openedWsPaths } = useWorkspaceContext();
+  const { primaryWsPath } = openedWsPaths;
+
+  const targetWsPath = primaryWsPath;
   const [error, updateError] = useState<Error | undefined>();
   const onExecute = useCallback(
     async (inputValue) => {
@@ -99,13 +110,22 @@ export function RenameNoteInputModal({ onDismiss }) {
         return;
       }
 
+      if (!targetWsPath) {
+        updateError(new Error('No note active'));
+        return;
+      }
+
       let newWsPath = filePathToWsPath(wsName, inputValue);
 
       if (!isValidNoteWsPath(newWsPath)) {
         newWsPath += '.md';
       }
       try {
-        await renameNote(primaryWsPath, newWsPath);
+        await renameNote(targetWsPath, newWsPath)(
+          bangleStore.state,
+          bangleStore.dispatch,
+          bangleStore,
+        );
         onDismiss();
       } catch (error) {
         if (!(error instanceof Error)) {
@@ -121,7 +141,7 @@ export function RenameNoteInputModal({ onDismiss }) {
         }
       }
     },
-    [primaryWsPath, onDismiss, renameNote, destroyedRef, wsName],
+    [targetWsPath, onDismiss, bangleStore, destroyedRef, wsName],
   );
 
   const initialValue = primaryWsPath ? resolvePath(primaryWsPath).filePath : '';

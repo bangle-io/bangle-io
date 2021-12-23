@@ -12,16 +12,24 @@ import { SpecRegistry } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { editorTagSpec } from '../editor-tag';
 import { _listTags, listAllTags, useSearchAllTags } from '../search';
+
+let getNoteMock = getNote as jest.MockedFunction<typeof getNote>;
 
 jest.mock('@bangle.io/workspace-context', () => {
   const workspaceThings = jest.requireActual('@bangle.io/workspace-context');
   return {
     ...workspaceThings,
+    bangleStore: {
+      state: {},
+      dispatch: {},
+    },
+    getNote: jest.fn(() => async () => {}),
     useWorkspaceContext: jest.fn(),
   };
 });
@@ -30,6 +38,20 @@ const specRegistry = new SpecRegistry([...defaultSpecs(), editorTagSpec()]);
 const testEditor = renderTestEditor({
   specRegistry,
   plugins: defaultPlugins(),
+});
+
+let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
+  typeof useWorkspaceContext
+>;
+
+beforeEach(() => {
+  getNoteMock.mockImplementation(() => async () => undefined);
+
+  useWorkspaceContextMock.mockImplementation(() => {
+    return {
+      ...getUseWorkspaceContextReturn,
+    };
+  });
 });
 
 describe('search tag in a doc', () => {
@@ -176,7 +198,6 @@ describe('search tag across wsPaths', () => {
 });
 
 describe('useSearchAllTags', () => {
-  let getNote;
   let abortSpy;
   let delayGetNotes = false;
 
@@ -212,7 +233,7 @@ describe('useSearchAllTags', () => {
         </heading>
       </doc>,
     );
-    getNote = jest.fn(async (wsPath) => {
+    getNoteMock.mockImplementation((_, wsPath) => async () => {
       if (delayGetNotes) {
         await sleep(20);
       }
@@ -229,8 +250,11 @@ describe('useSearchAllTags', () => {
     });
 
     const noteWsPaths = ['t:1', 't:2', 't:3'];
-    (useWorkspaceContext as any).mockImplementation(() => {
-      return { noteWsPaths: noteWsPaths, getNote };
+    useWorkspaceContextMock.mockImplementation(() => {
+      return {
+        ...getUseWorkspaceContextReturn,
+        noteWsPaths: noteWsPaths,
+      };
     });
   });
 

@@ -16,7 +16,7 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 import { getUseEditorManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { Editor, useGetEditorState } from '../Editor';
 
@@ -29,6 +29,7 @@ jest.mock('@bangle.io/workspace-context', () => {
   return {
     ...actual,
     useWorkspaceContext: jest.fn(),
+    getNote: jest.fn(() => async () => {}),
   };
 });
 
@@ -84,14 +85,17 @@ const generateDoc = (text = 'Hello world! I am a test') =>
     ],
   });
 
-let getNote, result: ReturnType<typeof render>;
+let getNoteMock, result: ReturnType<typeof render>;
 
+const testDocNode = generateDoc();
 beforeEach(() => {
-  getNote = jest.fn().mockResolvedValue(generateDoc());
+  getNoteMock = (getNote as any).mockImplementation(
+    () => async () => testDocNode,
+  );
 
   (useWorkspaceContext as any).mockImplementation(() => {
     return {
-      getNote,
+      bangleStore: { state: {}, dispatch: jest.fn() },
     };
   });
 
@@ -149,7 +153,7 @@ test('calls getInitialSelection correctly', async () => {
     1,
     1,
     'something:blah.md',
-    await getNote(),
+    testDocNode,
   );
 });
 
@@ -209,7 +213,7 @@ test('works without editorId', async () => {
 });
 
 test('changing of wsPath works', async () => {
-  getNote = jest.fn(async (wsPath) => {
+  getNoteMock.mockImplementation((_, wsPath) => async () => {
     if (wsPath.endsWith('one.md')) {
       return generateDoc('one note');
     }

@@ -10,7 +10,7 @@ import { filePathToWsPath, resolvePath } from './helpers';
 
 export { matchPath };
 
-type MaybeWsPath = string | undefined;
+export type MaybeWsPath = string | undefined;
 
 export type Location = _History<any>['location'];
 export type History = _History<any>;
@@ -59,6 +59,16 @@ export class OpenedWsPaths {
 
   get secondaryWsPath() {
     return this.wsPaths[1] ?? undefined;
+  }
+
+  get openCount() {
+    let count = 0;
+    this.forEachWsPath((wsPath) => {
+      if (wsPath) {
+        count++;
+      }
+    });
+    return count;
   }
 
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
@@ -194,6 +204,22 @@ export function getWsName(location: Location) {
   return wsName;
 }
 
+function getWsNameFromPathname(pathname?: Location['pathname']) {
+  if (!pathname) {
+    return undefined;
+  }
+
+  const match = matchPath<{ wsName: string }>(pathname, {
+    path: '/ws/:wsName',
+    exact: false,
+    strict: false,
+  });
+
+  const { wsName } = match?.params ?? {};
+
+  return wsName;
+}
+
 function getPrimaryFilePath(location: Location) {
   if (location) {
     return location.pathname.split('/').slice(3).join('/');
@@ -201,20 +227,13 @@ function getPrimaryFilePath(location: Location) {
   return undefined;
 }
 
-export function getPrimaryWsPath(location: Location) {
+function getPrimaryWsPath(location: Location) {
   const wsName = getWsName(location);
   const filePath = getPrimaryFilePath(location);
   if (!wsName || !filePath) {
     return undefined;
   }
   return filePathToWsPath(wsName, filePath);
-}
-
-export function getSecondaryWsPath(location: Location) {
-  const search = new URLSearchParams(location?.search);
-  const secondaryWsPath = search.get('secondary') ?? undefined;
-
-  return secondaryWsPath;
 }
 
 /**

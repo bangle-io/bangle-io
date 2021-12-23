@@ -76,13 +76,17 @@ class FileMetadata {
 }
 
 export class IndexedDBFileSystem extends BaseFileSystem {
-  protected _allowedFile: (f: string) => boolean;
+  protected _allowedFile = (filePath: string) => true;
   protected _customStore: ReturnType<typeof idb.createStore>;
   protected _fileMetadata: FileMetadata;
 
   constructor(opts: { allowedFile?: (f: string) => boolean } = {}) {
     super();
-    this._allowedFile = opts.allowedFile ?? ((filePath) => true);
+
+    if (opts.allowedFile) {
+      this._allowedFile = opts.allowedFile;
+    }
+
     this._customStore = idb.createStore(
       `${BASE_IDB_NAME_PREFIX}-db-${idbSuffix}`,
       `${BASE_IDB_NAME_PREFIX}-db-store-${idbSuffix}`,
@@ -136,9 +140,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       idb.set(filePath, data, this._customStore),
       'Error writing data',
     );
-    await this._fileMetadata.update(filePath, new BaseFileMetadata(), () => {
-      return new BaseFileMetadata();
-    });
+    await this._fileMetadata.set(filePath, new BaseFileMetadata());
   }
 
   async unlink(filePath: string) {

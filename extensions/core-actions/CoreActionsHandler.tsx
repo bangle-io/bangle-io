@@ -15,7 +15,11 @@ import {
 } from '@bangle.io/constants';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useUIManagerContext } from '@bangle.io/ui-context';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import {
+  deleteNote,
+  updateOpenedWsPaths,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -26,13 +30,8 @@ export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatchAction } = useActionContext();
   const { createWorkspace } = useWorkspaces();
   const { primaryEditor, secondaryEditor } = useEditorManagerContext();
-  const {
-    wsName,
-    primaryWsPath,
-    secondaryWsPath,
-    deleteNote,
-    updateOpenedWsPaths,
-  } = useWorkspaceContext();
+  const { wsName, openedWsPaths, bangleStore } = useWorkspaceContext();
+  const { primaryWsPath, secondaryWsPath } = openedWsPaths;
 
   const [inputModal, updateInputModal] = useState<{
     type: string | undefined;
@@ -139,7 +138,11 @@ export function CoreActionsHandler({ registerActionHandler }) {
               }"? It cannot be undone.`,
             )
           ) {
-            deleteNote(primaryWsPath)
+            deleteNote(primaryWsPath)(
+              bangleStore.state,
+              bangleStore.dispatch,
+              bangleStore,
+            )
               .then((error) => {
                 dispatch({
                   name: 'UI/SHOW_NOTIFICATION',
@@ -168,23 +171,26 @@ export function CoreActionsHandler({ registerActionHandler }) {
           if (secondaryWsPath) {
             updateOpenedWsPaths((openedWsPath) =>
               openedWsPath.updateSecondaryWsPath(undefined),
-            );
+            )(bangleStore.state, bangleStore.dispatch);
           } else if (primaryWsPath) {
             updateOpenedWsPaths((openedWsPath) =>
               openedWsPath.updateSecondaryWsPath(primaryWsPath),
-            );
+            )(bangleStore.state, bangleStore.dispatch);
           }
           return true;
         }
 
         case CORE_ACTIONS_CLOSE_EDITOR: {
           const editorId = actionObject.value;
-          if (editorId) {
+          if (typeof editorId === 'number') {
             updateOpenedWsPaths((openedWsPaths) =>
               openedWsPaths.updateByIndex(editorId, undefined).shrink(),
-            );
+            )(bangleStore.state, bangleStore.dispatch);
           } else {
-            updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll());
+            updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll())(
+              bangleStore.state,
+              bangleStore.dispatch,
+            );
           }
 
           return true;
@@ -263,12 +269,11 @@ export function CoreActionsHandler({ registerActionHandler }) {
     },
     [
       dispatch,
-      deleteNote,
+      bangleStore,
       wsName,
       primaryWsPath,
       secondaryWsPath,
       createWorkspace,
-      updateOpenedWsPaths,
       primaryEditor,
       secondaryEditor,
     ],

@@ -26,6 +26,7 @@
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/create-store": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "dayjs": "^1.10.7",
     "debounce-fn": "^5.0.0",

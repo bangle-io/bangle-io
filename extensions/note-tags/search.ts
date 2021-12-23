@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { Node } from '@bangle.dev/pm';
 
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
 
 const FZF_SEARCH_LIMIT = 16;
 
@@ -22,7 +23,7 @@ export function _listTags(doc: Node) {
  */
 export async function listAllTags(
   wsPaths: string[],
-  getDoc: (wsPath: string) => Promise<Node<any>>,
+  getDoc: (wsPath: string) => Promise<Node<any> | undefined>,
   signal?: AbortSignal,
 ): Promise<string[]> {
   let destroyed = false;
@@ -40,21 +41,34 @@ export async function listAllTags(
     if (destroyed) {
       throw new DOMException('Aborted', 'AbortError');
     }
-    const tagSet = _listTags(doc);
-    tagSet.forEach((t) => result.add(t));
+    if (doc) {
+      const tagSet = _listTags(doc);
+      tagSet.forEach((t) => result.add(t));
+    }
   }
 
   return [...result];
 }
 
 export function useSearchAllTags(query: string, isVisible: boolean): string[] {
-  const { noteWsPaths = [], getNote } = useWorkspaceContext();
+  const { noteWsPaths = [], bangleStore } = useWorkspaceContext();
   const [allTags, setAllTags] = useState<string[]>([]);
+  const extensionRegistry = useExtensionRegistryContext();
+
+  const getNoteForTags = useCallback(
+    (wsPath: string) => {
+      return getNote(extensionRegistry, wsPath)(
+        bangleStore.state,
+        bangleStore.dispatch,
+      );
+    },
+    [extensionRegistry, bangleStore],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
     if (isVisible) {
-      listAllTags(noteWsPaths, getNote, controller.signal)
+      listAllTags(noteWsPaths, getNoteForTags, controller.signal)
         .then((tags) => {
           setAllTags(tags);
         })
@@ -68,7 +82,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
     return () => {
       controller.abort();
     };
-  }, [getNote, noteWsPaths, isVisible]);
+  }, [noteWsPaths, getNoteForTags, isVisible]);
 
   const fzfItems = useFzfSearch(allTags, query, {
     limit: FZF_SEARCH_LIMIT,

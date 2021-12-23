@@ -74,7 +74,9 @@ export function SearchResults({
     collapseAllCounter,
   );
   const { primaryEditor } = useEditorManagerContext();
-  const { primaryWsPath } = useWorkspaceContext();
+  const {
+    openedWsPaths: { primaryWsPath },
+  } = useWorkspaceContext();
   const [currentlyClicked, updateCurrentlyClicked] = useState<null | {
     wsPath: string;
     match: SearchMatch;

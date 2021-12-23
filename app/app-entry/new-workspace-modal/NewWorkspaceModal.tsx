@@ -137,7 +137,6 @@ export function NewWorkspaceModalContainer({
     if (isCreateDisabled(modalState)) {
       return;
     }
-    const newWorkspaceName = getWorkspaceName(modalState);
 
     switch (modalState.workspace.type) {
       case FILE_SYSTEM: {

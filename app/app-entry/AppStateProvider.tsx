@@ -8,6 +8,7 @@ import {
 import { initializeBangleStore } from '@bangle.io/bangle-store';
 import { editorManagerSliceKey } from '@bangle.io/editor-manager-context';
 import { safeRequestIdleCallback } from '@bangle.io/utils';
+import { updateLocation } from '@bangle.io/workspace-context';
 
 const LOG = false;
 
@@ -25,16 +26,22 @@ export function AppStateProvider({
   const history = useHistory();
 
   useEffect(() => {
+    bangleStore.dispatch({
+      name: 'action::bangle-store:history-set-history',
+      value: { history },
+    });
+    updateLocation({
+      search: history.location.search,
+      pathname: history.location.pathname,
+    })(bangleStore.state, bangleStore.dispatch);
+
     // TODO there is a possibility that we miss a location
     // update before this is initialized
     const unlisten = history.listen((location) => {
-      bangleStore.dispatch({
-        name: 'action::workspace-context:update-location',
-        value: {
-          locationSearchQuery: location.search,
-          locationPathname: location.pathname,
-        },
-      });
+      updateLocation({ search: location.search, pathname: location.pathname })(
+        bangleStore.state,
+        bangleStore.dispatch,
+      );
     });
     return () => {
       unlisten();

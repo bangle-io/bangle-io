@@ -4,6 +4,7 @@
   "workspaces": [
     "abortable-worker",
     "baby-fs",
+    "create-store",
     "base-error",
     "fzf-search",
     "inline-palette",
