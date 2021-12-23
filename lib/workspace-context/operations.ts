@@ -273,7 +273,7 @@ export const replaceAnyMatchingOpenedWsPath = (
     }
 
     const { openedWsPaths, wsName } = sliceState;
-    if (wsName && updateLocation) {
+    if (wsName) {
       const newOpened = openedWsPaths.updateIfFound(targetWsPath, newWsPath);
       if (!newOpened.equal(openedWsPaths)) {
         historyUpdateOpenedWsPaths(

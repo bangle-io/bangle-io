@@ -27,6 +27,7 @@ const applyState = (
         locationPathname: action.value.locationPathname,
         locationSearchQuery: action.value.locationSearchQuery,
       });
+
       if (newState.wsName !== state.wsName) {
         return WorkspaceSliceState.update(newState, {
           wsPaths: undefined,
@@ -82,7 +83,7 @@ export function workspaceSlice() {
         }
 
         if (action.name.startsWith('action::workspace-context:')) {
-          log(action, newState.openedWsPaths.primaryWsPath);
+          log(action, newState);
         }
 
         return newState;

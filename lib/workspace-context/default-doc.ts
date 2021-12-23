@@ -4,7 +4,10 @@ import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { removeMdExtension } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
-export function defaultDoc(wsPath: string, extensionRegistry: ExtensionRegistry) {
+export function defaultDoc(
+  wsPath: string,
+  extensionRegistry: ExtensionRegistry,
+) {
   return Node.fromJSON(extensionRegistry.specRegistry.schema, {
     type: 'doc',
     content: [

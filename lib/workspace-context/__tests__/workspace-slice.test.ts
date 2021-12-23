@@ -176,7 +176,42 @@ describe('state', () => {
     );
   });
 
-  test('updates location resets wsPath and recentlyUsedWsPaths', () => {
+  test('change of location does not reset wsPath', () => {
+    const wsPaths = ['test-ws:hello-world'];
+    let state = createState({
+      locationPathname: '/ws/test-ws',
+      wsPaths: wsPaths,
+      recentlyUsedWsPaths: wsPaths,
+    });
+
+    state = state.applyAction({
+      name: 'action::workspace-context:update-location',
+      value: {
+        locationPathname: '/ws/test-ws',
+        locationSearchQuery: '',
+      },
+    });
+
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toEqual(wsPaths);
+
+    state = state.applyAction({
+      name: 'action::workspace-context:update-location',
+      value: {
+        locationPathname: '/ws/test-ws/some-path.md',
+        locationSearchQuery: '',
+      },
+    });
+
+    expect(
+      workspaceSliceKey.getSliceState(state)?.openedWsPaths.primaryWsPath,
+    ).toEqual('test-ws:some-path.md');
+    expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toEqual(wsPaths);
+    expect(workspaceSliceKey.getSliceState(state)?.recentlyUsedWsPaths).toEqual(
+      wsPaths,
+    );
+  });
+
+  test('wsName change resets wsPath and recentlyUsedWsPaths', () => {
     let state = createState({ wsPaths: [], recentlyUsedWsPaths: [] });
 
     expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toEqual([]);

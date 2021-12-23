@@ -69,7 +69,8 @@ const selectNoteWsPaths = createSelector(
 );
 
 export const selectWsName = createSelector(selectPathname, (pathName) => {
-  return getWsNameFromPathname(pathName);
+  const wsName = getWsNameFromPathname(pathName);
+  return wsName;
 });
 
 const selectOpenedWsPaths = createSelector(
