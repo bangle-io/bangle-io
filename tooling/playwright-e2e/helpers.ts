@@ -1,4 +1,4 @@
-import { ElementHandle, Page } from '@playwright/test';
+import { ElementHandle, Locator, Page } from '@playwright/test';
 import os from 'os';
 import prettier from 'prettier';
 
@@ -157,7 +157,10 @@ export async function clearPrimaryEditor(page: Page) {
   );
 }
 
-async function getPrimaryEditorHandler(page: Page, { focus = false } = {}) {
+export async function getPrimaryEditorHandler(
+  page: Page,
+  { focus = false } = {},
+) {
   const handle = await page.waitForSelector('.editor-container_editor-0', {
     timeout: SELECTOR_TIMEOUT,
   });
@@ -184,8 +187,9 @@ export function longSleep(t = 50) {
   return new Promise((res) => setTimeout(res, t));
 }
 
-export async function getPrimaryEditorDebugString(el: ElementHandle) {
-  return el.evaluate(async () =>
+export async function getPrimaryEditorDebugString(el: any) {
+  // TODO fix the as any
+  return (el as any).evaluate(async () =>
     (window as any).primaryEditor?.view.state.doc.toString(),
   );
 }
@@ -201,4 +205,10 @@ function frmtHTML(doc) {
     printWidth: 36,
     singleQuote: true,
   });
+}
+
+export async function getSecondaryEditorDebugString(page: Page) {
+  return (page as any).evaluate(async () =>
+    (window as any).secondaryEditor?.view.state.doc.toString(),
+  );
 }
