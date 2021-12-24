@@ -15,7 +15,7 @@ function uuid(len = 10) {
 /**
  * Only runs actions visible in the palette
  */
-async function runAction(page, actionId) {
+export async function runAction(page, actionId) {
   await page.keyboard.press('Escape');
   await page.keyboard.down(ctrlKey);
   await page.keyboard.down('Shift');
@@ -33,11 +33,7 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
     timeout: SELECTOR_TIMEOUT,
   });
 
-  const storageSelectButton = await page.$(
-    '[aria-label="select storage type"]',
-  );
-
-  await storageSelectButton?.click();
+  await page.click('[aria-label="select storage type"]');
 
   let item = await page.waitForSelector('[aria-label="browser storage type"]', {
     timeout: SELECTOR_TIMEOUT,
@@ -127,56 +123,68 @@ export async function createNewNote(
 }
 
 async function waitForPrimaryEditorFocus(page: Page) {
-  await page.waitForSelector(
+  const locator = page.locator(
     '.editor-container_editor-0 .ProseMirror-focused',
-    {
-      timeout: 4 * SELECTOR_TIMEOUT,
-    },
   );
+
+  await locator.waitFor({
+    state: 'visible',
+    timeout: 4 * SELECTOR_TIMEOUT,
+  });
 }
 
 export async function clearPrimaryEditor(page: Page) {
-  await getPrimaryEditorHandler(page);
+  await getPrimaryEditorHandler(page, { focus: true });
   await waitForPrimaryEditorFocus(page);
 
-  await page.keyboard.down(ctrlKey);
-  await page.keyboard.press('a', { delay: 10 });
-  await page.keyboard.up(ctrlKey);
-  await page.keyboard.press('Backspace', { delay: 10 });
+  let text: string | undefined;
+  let cleared = false;
+  for (let i = 0; i < 4; i++) {
+    await sleep();
 
-  await page.waitForFunction(
-    () =>
-      (
-        document.querySelector(
-          '.editor-container_editor-0 .bangle-editor',
-        ) as any
-      ).innerText.trim() === '',
-    {
-      timeout: 2 * SELECTOR_TIMEOUT,
-    },
-  );
+    await page.keyboard.down(ctrlKey);
+    await page.keyboard.press('a', { delay: 10 });
+    await page.keyboard.up(ctrlKey);
+    await sleep();
+
+    await page.keyboard.press('Backspace', { delay: 10 });
+
+    await sleep();
+
+    text = await page
+      .locator('.editor-container_editor-0 .bangle-editor')
+      .innerText({ timeout: 2 * SELECTOR_TIMEOUT });
+    if (text.trim() === '') {
+      cleared = true;
+      break;
+    }
+  }
+  console.log('trim', cleared, text?.trim());
+
+  if (!cleared) {
+    throw new Error('Couldnt clear editor');
+  }
 }
 
 export async function getPrimaryEditorHandler(
   page: Page,
   { focus = false } = {},
 ) {
-  const handle = await page.waitForSelector('.editor-container_editor-0', {
-    timeout: SELECTOR_TIMEOUT,
-  });
+  const locator = page.locator('.editor-container_editor-0 .bangle-editor');
 
-  await page.waitForSelector('.editor-container_editor-0 .bangle-editor', {
+  await locator.waitFor({
+    state: 'visible',
     timeout: SELECTOR_TIMEOUT,
   });
 
   if (focus) {
     await page.evaluate(async () => {
-      (window as any).primaryEditor.view.focus();
+      (window as any).primaryEditor?.view?.focus();
     });
     await waitForPrimaryEditorFocus(page);
   }
 
-  return handle;
+  return page.$('.editor-container_editor-0 .bangle-editor');
 }
 
 export function sleep(t = 10) {
@@ -190,7 +198,7 @@ export function longSleep(t = 50) {
 export async function getPrimaryEditorDebugString(el: any) {
   // TODO fix the as any
   return (el as any).evaluate(async () =>
-    (window as any).primaryEditor?.view.state.doc.toString(),
+    (window as any).primaryEditor?.view?.state.doc.toString(),
   );
 }
 
@@ -209,6 +217,32 @@ function frmtHTML(doc) {
 
 export async function getSecondaryEditorDebugString(page: Page) {
   return (page as any).evaluate(async () =>
-    (window as any).secondaryEditor?.view.state.doc.toString(),
+    (window as any).secondaryEditor?.view?.state.doc.toString(),
+  );
+}
+
+// Wait until primary edits innerText contains the arg `text
+export async function waitForPrimaryEditorTextToContain(
+  page: Page,
+  text: string,
+) {
+  await page.locator('.editor-container_editor-0 .bangle-editor').waitFor({
+    state: 'visible',
+    timeout: 4 * SELECTOR_TIMEOUT,
+  });
+
+  await page.waitForFunction(
+    (text) =>
+      (
+        document.querySelector(
+          '.editor-container_editor-0 .bangle-editor',
+        ) as any
+      )?.innerText
+        .trim()
+        .includes(text),
+    text,
+    {
+      timeout: 4 * SELECTOR_TIMEOUT,
+    },
   );
 }

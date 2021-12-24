@@ -7,7 +7,9 @@ const isCI = (process.env as any).CI;
 const config: PlaywrightTestConfig = {
   forbidOnly: !!isCI,
   retries: isCI ? 2 : 0,
+
   use: {
+    // headless: false,
     trace: 'on-first-retry',
   },
   webServer: {
@@ -19,6 +21,7 @@ const config: PlaywrightTestConfig = {
   projects: [
     {
       name: 'chromium',
+
       use: { ...devices['Desktop Chrome'] },
     },
     // {
