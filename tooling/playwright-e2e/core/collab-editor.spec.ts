@@ -8,6 +8,7 @@ import {
   getEditorLocator,
   longSleep,
   sleep,
+  splitScreen,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -16,50 +17,42 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 test.describe.parallel('collab', () => {
   test('Split screen and typing in secondary works', async ({ page }) => {
     const wsName = await createWorkspace(page);
-    await createNewNote(page, wsName, 'test123');
+    const wsPath = await createNewNote(page, wsName, 'test123');
 
-    await page.keyboard.down(ctrlKey);
+    await splitScreen(page);
 
-    await page.keyboard.press('\\');
-    await page.keyboard.up(ctrlKey);
+    let primaryText = await getEditorDebugString(page, 0, { wsPath });
 
-    await page.pause();
-
-    let primaryText = await getEditorDebugString(page, 0);
-    await longSleep();
-
-    let secondaryText = await getEditorDebugString(page, 1);
+    let secondaryText = await getEditorDebugString(page, 1, { wsPath });
 
     expect(primaryText).toMatchSnapshot({
       name: 'Split screen and typing in secondary works',
     });
     expect(secondaryText).toBe(primaryText);
 
-    await longSleep();
-
     await page.keyboard.press('Enter');
 
     await page.keyboard.type('manthanoy', { delay: 10 });
+
     await longSleep();
 
-    secondaryText = await getEditorDebugString(page, 1);
+    secondaryText = await getEditorDebugString(page, 1, { wsPath });
     expect(secondaryText).toMatch(/manthanoy/);
-    primaryText = await getEditorDebugString(page, 0);
+    primaryText = await getEditorDebugString(page, 0, { wsPath });
     expect(primaryText).toBe(secondaryText);
   });
 
   test('Split screen and typing in primary works', async ({ page }) => {
     const wsName = await createWorkspace(page);
-    await createNewNote(page, wsName, 'test123');
+    const wsPath = await createNewNote(page, wsName, 'test123');
 
-    await page.keyboard.down(ctrlKey);
-    await page.keyboard.press('\\');
-    await page.keyboard.up(ctrlKey);
+    await splitScreen(page);
 
-    const primary = await getEditorLocator(page, 0, { focus: true });
+    await getEditorLocator(page, 1, { focus: true, wsPath });
+
+    const primary = await getEditorLocator(page, 0, { focus: true, wsPath });
 
     await primary.press('Enter', { delay: 10 });
-    await sleep();
 
     await primary.type('manthanoy', { delay: 10 });
 

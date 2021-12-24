@@ -11,7 +11,7 @@ const config: PlaywrightTestConfig = {
   expect: {
     timeout: 2000,
   },
-  workers: process.env.CI ? 2 : undefined,
+  workers: isCI ? 2 : 8,
   use: {
     // headless: false,
     trace: 'on-first-retry',

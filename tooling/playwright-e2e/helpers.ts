@@ -96,6 +96,8 @@ export async function createNewNote(
     { editorId, wsPath },
   );
 
+  await sleep();
+
   return wsPath;
 }
 
@@ -168,20 +170,30 @@ export async function getPrimaryEditorHandler(
 export async function getEditorLocator(
   page: Page,
   editorId: number,
-  { focus = false } = {},
+  { focus = false, wsPath }: { focus?: boolean; wsPath?: string } = {},
 ) {
   const loc = page.locator(`.editor-container_editor-${0} .bangle-editor`);
 
   await loc.waitFor();
 
-  await page.waitForFunction((editorId) => {
-    return (window as any)[`editor-${editorId}`]?.editor?.destroyed === false;
-  }, editorId);
+  await page.waitForFunction(
+    ([editorId, wsPath]) => {
+      const editorInfo = (window as any)[`editor-${editorId}`] || {};
+      if (wsPath && editorInfo.wsPath !== wsPath) {
+        return false;
+      }
+      return editorInfo.editor?.destroyed === false;
+    },
+    [editorId, wsPath],
+  );
 
   if (focus) {
-    await page.evaluate(async (editorId) => {
-      (window as any)[`editor-${editorId}`]?.editor?.view.focus();
-    }, editorId);
+    await page.evaluate(
+      async ([editorId, wsPath]) => {
+        (window as any)[`editor-${editorId}`]?.editor?.view.focus();
+      },
+      [editorId, wsPath],
+    );
     await waitForEditorFocus(page, editorId);
   }
 
@@ -196,8 +208,12 @@ export function longSleep(t = 50) {
   return new Promise((res) => setTimeout(res, t));
 }
 
-export async function getEditorDebugString(page: Page, editorId: number) {
-  await getEditorLocator(page, editorId);
+export async function getEditorDebugString(
+  page: Page,
+  editorId: number,
+  { wsPath }: { wsPath?: string } = {},
+) {
+  await getEditorLocator(page, editorId, { wsPath });
   // TODO fix the as any
   return page.evaluate(
     async (editorId) =>
@@ -286,4 +302,11 @@ export async function getEditorJSON(page: Page, editorId: number) {
       window[`editor-${editorId}`]?.editor.view.state.doc.toJSON(),
     editorId,
   );
+}
+
+export async function splitScreen(page: Page) {
+  await Promise.all([
+    page.waitForNavigation(),
+    page.press('.bangle-editor', ctrlKey + '+\\'),
+  ]);
 }
