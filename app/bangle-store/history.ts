@@ -52,9 +52,7 @@ export function historySlice() {
 
           case 'action::bangle-store:history-on-invalid-path': {
             const { invalidPath, wsName } = action.value;
-            // TODO check if wsName is current
 
-            console.debug('received invalid path', invalidPath);
             if (!state.pathname?.startsWith('/ws-invalid-path/' + wsName)) {
               return state[HistoryReplace]({
                 pathname: '/ws-invalid-path/' + wsName,
@@ -66,6 +64,12 @@ export function historySlice() {
 
           case 'action::bangle-store:history-set-history': {
             return state[UpdateState]({ history: action.value.history });
+          }
+
+          case 'action::bangle-store:history-go-to-path': {
+            return state[HistoryPush]({
+              pathname: action.value.pathname,
+            });
           }
 
           case 'action::bangle-store:history-update-opened-ws-paths': {
@@ -81,8 +85,6 @@ export function historySlice() {
               state.history?.location,
               wsName,
             );
-
-            console.log({ newLocation });
 
             if (replace) {
               return state[HistoryReplace](newLocation);

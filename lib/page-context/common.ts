@@ -1,11 +1,18 @@
-import { SliceKey } from '@bangle.io/create-store';
+import { ApplicationStore, AppState, SliceKey } from '@bangle.io/create-store';
 
-export const PAGE_BLOCK_RELOAD_ACTION_NAME = 'PAGE/BLOCK_RELOAD';
+export const PAGE_BLOCK_RELOAD_ACTION_NAME = 'action::page-slice:BLOCK_RELOAD';
 
 export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
   name: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
   value: boolean;
 };
+
+export const LifeCycle = Symbol('lifecycle');
+
+export type PageDispatchType = ApplicationStore<
+  PageSliceStateType,
+  PageSliceAction
+>['dispatch'];
 
 export type PageLifeCycleStates =
   | 'active'
@@ -24,7 +31,7 @@ export interface PageSliceStateType {
 
 export type PageSliceAction =
   | {
-      name: 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE';
+      name: 'action::page-slice:UPDATE_PAGE_LIFE_CYCLE_STATE';
       value: { current?: PageLifeCycleStates; previous?: PageLifeCycleStates };
     }
   | PAGE_BLOCK_RELOAD_ACTION_TYPE;
@@ -32,3 +39,14 @@ export type PageSliceAction =
 export const pageSliceKey = new SliceKey<PageSliceStateType, PageSliceAction>(
   'page-slice',
 );
+
+export function getPageLifeCycleObject(state: AppState):
+  | {
+      addUnsavedChanges: (s: Symbol) => void;
+      removeUnsavedChanges: (s: Symbol) => void;
+      addEventListener: (type: string, cb: (event: any) => void) => void;
+      removeEventListener: (type: string, cb: (event: any) => void) => void;
+    }
+  | undefined {
+  return pageSliceKey.getSliceState(state)?.[LifeCycle];
+}

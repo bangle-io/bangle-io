@@ -53,4 +53,10 @@ export type HistoryAction =
         replace: boolean;
         wsName: string;
       };
+    }
+  | {
+      name: 'action::bangle-store:history-go-to-path';
+      value: {
+        pathname: string;
+      };
     };
