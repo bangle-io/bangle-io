@@ -1,7 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
 import {
-  clearPrimaryEditor,
+  clearEditor,
   createNewNote,
   createWorkspace,
   getPrimaryEditorHandler,
@@ -21,7 +21,7 @@ test.describe('backlink workflow', () => {
     await createNewNote(page, wsName, 'note-0');
 
     await getPrimaryEditorHandler(page, { focus: true });
-    await clearPrimaryEditor(page);
+    await clearEditor(page, 0);
 
     // create note-1
     await page.keyboard.type('this is the zeroth note ');
@@ -36,7 +36,7 @@ test.describe('backlink workflow', () => {
 
     // now in note-1
     // lets create backlink to note-0
-    await clearPrimaryEditor(page);
+    await clearEditor(page, 0);
     await page.keyboard.type('[[0', { delay: 30 });
     await page.keyboard.press('Enter', { delay: 30 });
 

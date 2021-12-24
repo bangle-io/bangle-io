@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import {
-  clearPrimaryEditor,
+  clearEditor,
   createNewNote,
   createWorkspace,
   ctrlKey,
@@ -73,7 +73,7 @@ test.describe.parallel('loading', () => {
     const editorHandle = await page.waitForSelector('.bangle-editor', {
       timeout: SELECTOR_TIMEOUT,
     });
-    await clearPrimaryEditor(page);
+    await clearEditor(page, 0);
 
     await editorHandle.type('# Wow', { delay: 3 });
     await editorHandle.press('Enter', { delay: 20 });
@@ -98,8 +98,7 @@ test.describe.parallel('loading', () => {
     const hasOneUnorderedListElement = () =>
       editorHandle.evaluate((node) => node.querySelectorAll('ul').length === 1);
 
-    await clearPrimaryEditor(page);
-
+    await clearEditor(page, 0);
     expect(await hasOneUnorderedListElement()).toBe(false);
 
     await editorHandle.type('/bullet list', { delay: 3 });
@@ -124,7 +123,7 @@ test.describe.parallel('loading', () => {
     const hasOneH3Element = () =>
       editorHandle.evaluate((node) => node.querySelectorAll('h3').length === 1);
 
-    await clearPrimaryEditor(page);
+    await clearEditor(page, 0);
 
     expect(await hasOneH3Element()).toBe(false);
 

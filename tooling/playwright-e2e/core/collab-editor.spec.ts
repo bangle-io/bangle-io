@@ -4,30 +4,31 @@ import {
   createNewNote,
   createWorkspace,
   ctrlKey,
-  getPrimaryEditorDebugString,
-  getPrimaryEditorHandler,
-  getSecondaryEditorDebugString,
+  getEditorLocator,
   longSleep,
   sleep,
+  getEditorDebugString,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
-
 test.describe.parallel('collab', () => {
   test('Split screen and typing in secondary works', async ({ page }) => {
     const wsName = await createWorkspace(page);
     await createNewNote(page, wsName, 'test123');
 
     await page.keyboard.down(ctrlKey);
+
     await page.keyboard.press('\\');
     await page.keyboard.up(ctrlKey);
 
+    await page.pause();
+
+    let primaryText = await getEditorDebugString(page, 0);
     await longSleep();
 
-    let primaryText = await getPrimaryEditorDebugString(page);
-    let secondaryText = await getSecondaryEditorDebugString(page);
+    let secondaryText = await getEditorDebugString(page, 1);
 
     expect(primaryText).toMatchSnapshot({
       name: 'Split screen and typing in secondary works',
@@ -41,9 +42,9 @@ test.describe.parallel('collab', () => {
     await page.keyboard.type('manthanoy', { delay: 10 });
     await longSleep();
 
-    secondaryText = await getSecondaryEditorDebugString(page);
+    secondaryText = await getEditorDebugString(page, 1);
     expect(secondaryText).toMatch(/manthanoy/);
-    primaryText = await getPrimaryEditorDebugString(page);
+    primaryText = await getEditorDebugString(page, 0);
     expect(primaryText).toBe(secondaryText);
   });
 
@@ -55,20 +56,21 @@ test.describe.parallel('collab', () => {
     await page.keyboard.press('\\');
     await page.keyboard.up(ctrlKey);
 
-    const primaryHandle = await getPrimaryEditorHandler(page, { focus: true });
+    const primary = await getEditorLocator(page, 0, { focus: true });
+
+    await primary.press('Enter', { delay: 10 });
+    await sleep();
+
+    await primary.type('manthanoy', { delay: 10 });
+
     await longSleep();
-    await primaryHandle.press('Enter');
 
-    await primaryHandle.type('manthanoy', { delay: 10 });
-
-    await longSleep();
-
-    let primaryText = await getPrimaryEditorDebugString(page);
+    let primaryText = await getEditorDebugString(page, 0);
     expect(primaryText).toMatch(/manthanoy/);
 
-    let secondaryText = await getSecondaryEditorDebugString(page);
+    let secondaryText = await getEditorDebugString(page, 1);
     expect(secondaryText).toMatch(/manthanoy/);
-    primaryText = await getPrimaryEditorDebugString(page);
+    primaryText = await getEditorDebugString(page, 0);
     expect(primaryText).toBe(secondaryText);
   });
 });
