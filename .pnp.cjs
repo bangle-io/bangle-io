@@ -259,7 +259,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:tooling/_scripts"
       },
       {
-        "name": "@bangle.io/e2e",
+        "name": "@bangle.io/e2e-legacy",
         "reference": "workspace:tooling/e2e"
       },
       {
@@ -298,7 +298,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/core-actions", ["workspace:extensions/core-actions"]],
       ["@bangle.io/core-palettes", ["virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes", "workspace:extensions/core-palettes"]],
       ["@bangle.io/create-store", ["workspace:js-lib/create-store"]],
-      ["@bangle.io/e2e", ["workspace:tooling/e2e"]],
+      ["@bangle.io/e2e-legacy", ["workspace:tooling/e2e"]],
       ["@bangle.io/editor", ["virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor", "workspace:lib/editor"]],
       ["@bangle.io/editor-container", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container", "workspace:app/editor-container"]],
       ["@bangle.io/editor-core", ["workspace:extensions/editor-core"]],
@@ -4203,11 +4203,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
-      ["@bangle.io/e2e", [
+      ["@bangle.io/e2e-legacy", [
         ["workspace:tooling/e2e", {
           "packageLocation": "./tooling/e2e/",
           "packageDependencies": [
-            ["@bangle.io/e2e", "workspace:tooling/e2e"],
+            ["@bangle.io/e2e-legacy", "workspace:tooling/e2e"],
             ["@babel/core", "npm:7.16.0"],
             ["@babel/preset-env", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.16.0"],
             ["@babel/preset-typescript", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.16.5"],

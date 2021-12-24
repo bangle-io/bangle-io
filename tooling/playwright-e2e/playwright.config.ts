@@ -11,11 +11,15 @@ const config: PlaywrightTestConfig = {
   expect: {
     timeout: 2000,
   },
-  workers: isCI ? 2 : 8,
+  workers: isCI ? 2 : undefined,
+
   use: {
     // headless: false,
     trace: 'on-first-retry',
     navigationTimeout: 10000,
+    // launchOptions: {
+    //   slowMo: 50,
+    // },
   },
   webServer: {
     command: 'yarn g:build-prod-serve',
