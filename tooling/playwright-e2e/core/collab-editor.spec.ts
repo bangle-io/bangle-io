@@ -4,10 +4,10 @@ import {
   createNewNote,
   createWorkspace,
   ctrlKey,
+  getEditorDebugString,
   getEditorLocator,
   longSleep,
   sleep,
-  getEditorDebugString,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {

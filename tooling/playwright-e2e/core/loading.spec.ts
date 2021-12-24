@@ -6,6 +6,7 @@ import {
   createWorkspace,
   ctrlKey,
   getEditorHTML,
+  getEditorLocator,
   getPrimaryEditorDebugString,
   longSleep,
   SELECTOR_TIMEOUT,
@@ -92,21 +93,22 @@ test.describe.parallel('loading', () => {
 
     await createNewNote(page, wsName, newFileName);
 
-    const editorHandle = await await page.waitForSelector('.bangle-editor', {
-      timeout: SELECTOR_TIMEOUT,
-    });
+    const editorLocator = await getEditorLocator(page, 0);
+
     const hasOneUnorderedListElement = () =>
-      editorHandle.evaluate((node) => node.querySelectorAll('ul').length === 1);
+      editorLocator.evaluate(
+        (node) => node.querySelectorAll('ul').length === 1,
+      );
 
     await clearEditor(page, 0);
     expect(await hasOneUnorderedListElement()).toBe(false);
 
-    await editorHandle.type('/bullet list', { delay: 3 });
+    await editorLocator.type('/bullet list', { delay: 3 });
     await page.keyboard.press('Enter');
     await sleep(30);
     expect(await hasOneUnorderedListElement()).toBe(true);
-    await editorHandle.type('I should a bullet list', { delay: 1 });
-    expect(await getEditorHTML(editorHandle)).toMatchSnapshot({
+    await editorLocator.type('I should a bullet list', { delay: 1 });
+    expect(await getEditorHTML(editorLocator)).toMatchSnapshot({
       name: 'inline action palette convert to bullet list',
     });
   });
@@ -117,23 +119,24 @@ test.describe.parallel('loading', () => {
 
     await createNewNote(page, wsName, newFileName);
 
-    const editorHandle = await await page.waitForSelector('.bangle-editor', {
-      timeout: SELECTOR_TIMEOUT,
-    });
+    const editorLocator = await getEditorLocator(page, 0);
+
     const hasOneH3Element = () =>
-      editorHandle.evaluate((node) => node.querySelectorAll('h3').length === 1);
+      editorLocator.evaluate(
+        (node) => node.querySelectorAll('h3').length === 1,
+      );
 
     await clearEditor(page, 0);
 
     expect(await hasOneH3Element()).toBe(false);
 
-    await editorHandle.type('/h3', { delay: 10 });
+    await editorLocator.type('/h3', { delay: 10 });
     await sleep();
     await page.keyboard.press('Enter');
     await longSleep();
 
     expect(await hasOneH3Element()).toBe(true);
-    await editorHandle.type('I am a heading', { delay: 1 });
-    expect(await getEditorHTML(editorHandle)).toContain('I am a heading');
+    await editorLocator.type('I am a heading', { delay: 1 });
+    expect(await getEditorHTML(editorLocator)).toContain('I am a heading');
   });
 });

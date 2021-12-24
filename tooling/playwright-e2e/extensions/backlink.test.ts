@@ -7,14 +7,14 @@ import {
   getPrimaryEditorHandler,
   runAction,
   SELECTOR_TIMEOUT,
-  waitForPrimaryEditorTextToContain,
+  waitForEditorTextToContain,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-test.describe('backlink workflow', () => {
+test.describe.parallel('backlink workflow', () => {
   const setup = async (page: Page): Promise<string> => {
     let wsName = await createWorkspace(page);
 
@@ -28,11 +28,11 @@ test.describe('backlink workflow', () => {
 
     await page.keyboard.type('[[note-1]]', { delay: 30 });
 
-    await waitForPrimaryEditorTextToContain(page, 'note-1');
+    await waitForEditorTextToContain(page, 0, 'note-1');
 
     await clickBacklinkHandle(page, 'note-1');
 
-    await waitForPrimaryEditorTextToContain(page, 'note-1');
+    await waitForEditorTextToContain(page, 0, 'note-1');
 
     // now in note-1
     // lets create backlink to note-0
@@ -95,8 +95,9 @@ test.describe('backlink workflow', () => {
     await page.keyboard.type('AWESOME ', { delay: 5 });
 
     await clickBacklinkHandle(page, 'note-0');
-    await waitForPrimaryEditorTextToContain(
+    await waitForEditorTextToContain(
       page,
+      0,
       'AWESOME this is the zeroth note',
     );
     expect(await page.url()).toContain('note-0');

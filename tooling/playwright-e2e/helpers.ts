@@ -1,6 +1,4 @@
-import { expect } from '@playwright/test';
-
-import { ElementHandle, Locator, Page } from '@playwright/test';
+import { ElementHandle, expect, Locator, Page } from '@playwright/test';
 import os from 'os';
 import prettier from 'prettier';
 
@@ -104,7 +102,11 @@ export async function createNewNote(
 async function waitForPrimaryEditorFocus(page: Page) {
   await page.isVisible('.editor-container_editor-0 .ProseMirror-focused');
 }
-async function waitForEditorFocus(page: Page, editorId: number) {
+export async function waitForEditorFocus(page: Page, editorId: number) {
+  await page
+    .locator(`.editor-container_editor-${editorId} .ProseMirror-focused`)
+    .waitFor();
+
   await page.isVisible(
     `.editor-container_editor-${editorId} .ProseMirror-focused`,
   );
@@ -211,7 +213,7 @@ export async function getPrimaryEditorDebugString(el: any) {
   );
 }
 
-export async function getEditorHTML(editorHandle) {
+export async function getEditorHTML(editorHandle: Locator) {
   return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
 }
 
@@ -230,15 +232,19 @@ export async function getSecondaryEditorDebugString(page: Page) {
   );
 }
 
-// Wait until primary edits innerText contains the arg `text
-export async function waitForPrimaryEditorTextToContain(
+// Wait until  edittor innerText contains the arg `text
+
+export async function waitForEditorTextToContain(
   page: Page,
+  editorId: number,
   text: string,
   attempt = 0,
 ) {
   if (
     (
-      await page.innerText('.editor-container_editor-0 .bangle-editor')
+      await page.innerText(
+        `.editor-container_editor-${editorId} .bangle-editor`,
+      )
     ).includes(text)
   ) {
     return true;
@@ -246,8 +252,38 @@ export async function waitForPrimaryEditorTextToContain(
 
   if (attempt < RECURSIVE_RETRY_MAX) {
     await sleep();
-    return waitForPrimaryEditorTextToContain(page, text, attempt + 1);
+    return waitForEditorTextToContain(page, editorId, text, attempt + 1);
   }
 
-  throw new Error('failed waitForPrimaryEditorTextToContain');
+  throw new Error('failed waitForEditorTextToContain');
+}
+
+export async function getWsPathsShownInFilePalette(page: Page) {
+  await page.keyboard.press('Escape');
+  await page.keyboard.down(ctrlKey);
+  await page.keyboard.press('p');
+  await page.keyboard.up(ctrlKey);
+
+  await page.locator('.universal-palette-container').waitFor();
+
+  const locator = page.locator('.universal-palette-item[data-id]');
+
+  await sleep();
+
+  const wsPaths = await locator.evaluateAll((nodes) =>
+    [...nodes].map((n) => n.getAttribute('data-id')),
+  );
+
+  await page.keyboard.press('Escape');
+
+  return wsPaths;
+}
+
+export async function getEditorJSON(page: Page, editorId: number) {
+  await getEditorLocator(page, editorId);
+  return page.evaluate(
+    async (editorId) =>
+      window[`editor-${editorId}`]?.editor.view.state.doc.toJSON(),
+    editorId,
+  );
 }

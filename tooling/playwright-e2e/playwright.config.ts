@@ -7,10 +7,15 @@ const isCI = (process.env as any).CI;
 const config: PlaywrightTestConfig = {
   forbidOnly: !!isCI,
   retries: isCI ? 2 : 0,
-
+  timeout: 20000,
+  expect: {
+    timeout: 2000,
+  },
+  workers: process.env.CI ? 2 : undefined,
   use: {
     // headless: false,
     trace: 'on-first-retry',
+    navigationTimeout: 10000,
   },
   webServer: {
     command: 'yarn g:build-prod-serve',

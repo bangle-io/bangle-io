@@ -1,7 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Landing page is correct 1`] = `
-"Hello ✍️
+Hello ✍️
 
 
 Here is a short guide to get you started.
@@ -56,9 +53,9 @@ For link Cmd+K or select text and paste link on it.
 
 For image drag or paste it directly.
 
-\`\`\`for code block
+```for code block
 
-\`inline code\`
+`inline code`
 
 * followed by space for bullet point or Cmd-shift-8
 
@@ -71,5 +68,3 @@ You can also select text to bring up a floating menu to making formatting change
 Follow us on Twitter or Discord
 
 
-"
-`;

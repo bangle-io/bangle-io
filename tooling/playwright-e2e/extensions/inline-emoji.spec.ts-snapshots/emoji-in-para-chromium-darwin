@@ -1,0 +1,10 @@
+<p class="selected-node">
+  life is good
+  <span
+    data-bangle-name="emoji"
+    data-bangle-attrs='{"emojiAlias":"zebra"}'
+    contenteditable="false"
+    draggable="true"
+    >🦓</span
+  >
+</p>
