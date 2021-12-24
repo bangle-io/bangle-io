@@ -5,7 +5,7 @@ module.exports = {
     'react-app',
     'react-app/jest',
 
-    'plugin:jest/recommended',
+    // 'plugin:jest/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
@@ -19,6 +19,12 @@ module.exports = {
     },
     {
       files: '*.ts',
+    },
+    {
+      files: ['tooling/**/*.spec.ts'],
+      rules: {
+        'jest/no-done-callback': 'off',
+      },
     },
   ],
   env: {

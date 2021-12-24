@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-kind: ['lint', 'test-ci', 'g:e2e', 'build']
+        test-kind: ['lint', 'test-ci', 'g:e2e-playwright', 'build']
     steps:
       - uses: actions/checkout@v2
       - name: Run test "${{ matrix.test-kind }}"
@@ -51,6 +51,9 @@ jobs:
           node-version: 16.x
       - name: yarn install
         run: yarn install --immutable --immutable-cache
+      - name: Install playwright dependencies
+        if: matrix.test-kind == 'g:e2e-playwright'
+        run: yarn g:playwright-dep
       - run: yarn ${{ matrix.test-kind }}
       - name: Upload coverage report
         if: matrix.test-kind == 'test-ci'

@@ -90,11 +90,18 @@ function EditorInner({
   const onEditorReady = useCallback(
     (editor) => {
       editorRef.current = editor;
+
       setEditorReady(
         editorId,
         wsPath,
         editor,
       )(bangleStore.state, bangleStore.dispatch);
+
+      // TODO this is currently used by the integration tests
+      // we need a better way to do this
+      if (typeof window !== 'undefined') {
+        (window as any)[`editor-${editorId}`] = { editor, wsPath };
+      }
     },
     [bangleStore, editorId, wsPath],
   );

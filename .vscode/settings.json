@@ -18,7 +18,6 @@
     "Worktrees"
   ],
   "javascript.preferences.importModuleSpecifier": "project-relative",
-  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
@@ -41,5 +40,6 @@
     "titleBar.inactiveBackground": "#6b234799",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#6b2347"
+  "peacock.color": "#6b2347",
+  "editor.formatOnSave": true
 }
