@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/e2e",
+  "name": "@bangle.io/e2e-legacy",
   "version": "0.0.0",
   "authors": [
     {
@@ -19,8 +19,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
-    "g:e2e": "yarn jest --runInBand",
-    "g:e2e-parallel": "yarn jest"
+    "g:e2e-legacy": "yarn jest --runInBand"
   },
   "publishConfig": {
     "access": "public"

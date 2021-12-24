@@ -2080,9 +2080,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/e2e@workspace:tooling/e2e":
+"@bangle.io/e2e-legacy@workspace:tooling/e2e":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/e2e@workspace:tooling/e2e"
+  resolution: "@bangle.io/e2e-legacy@workspace:tooling/e2e"
   dependencies:
     "@babel/core": ^7.15.8
     "@babel/preset-env": ^7.15.8

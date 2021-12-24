@@ -20,7 +20,9 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 - `yarn jest` to run the tests
 
-- `yarn g:e2e` to run the integration tests
+- `yarn g:playwright-dep` to install playwright dependencies if you want to run integration testing.
+
+- `yarn g:e2e` to run the integration tests.
 
 More commands in the `package.json`.
 

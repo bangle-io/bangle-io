@@ -89,12 +89,8 @@ export async function createNewNote(
 
   // currently new notes are created in editorId==0
   const editorId = 0;
-  await page.waitForFunction(
-    ({ editorId, wsPath }) => {
-      return (window as any)[`editor-${editorId}`]?.wsPath === wsPath;
-    },
-    { editorId, wsPath },
-  );
+
+  await waitForWsPathToLoad(page, editorId, { wsPath });
 
   await sleep();
 
@@ -104,10 +100,18 @@ export async function createNewNote(
 async function waitForPrimaryEditorFocus(page: Page) {
   await page.isVisible('.editor-container_editor-0 .ProseMirror-focused');
 }
-export async function waitForEditorFocus(page: Page, editorId: number) {
+export async function waitForEditorFocus(
+  page: Page,
+  editorId: number,
+  { wsPath }: { wsPath?: string } = {},
+) {
   await page
     .locator(`.editor-container_editor-${editorId} .ProseMirror-focused`)
     .waitFor();
+
+  if (wsPath) {
+    await waitForWsPathToLoad(page, editorId, { wsPath });
+  }
 
   await page.isVisible(
     `.editor-container_editor-${editorId} .ProseMirror-focused`,
@@ -151,7 +155,9 @@ export async function getPrimaryEditorHandler(
   page: Page,
   { focus = false } = {},
 ) {
-  await page.isVisible('.editor-container_editor-0 .bangle-editor');
+  await page.isVisible(`.editor-container_editor-0 .bangle-editor`);
+
+  await waitForEditorIdToLoad(page, 0);
 
   await page.waitForFunction(() => {
     return (window as any).primaryEditor?.destroyed === false;
@@ -176,16 +182,11 @@ export async function getEditorLocator(
 
   await loc.waitFor();
 
-  await page.waitForFunction(
-    ([editorId, wsPath]) => {
-      const editorInfo = (window as any)[`editor-${editorId}`] || {};
-      if (wsPath && editorInfo.wsPath !== wsPath) {
-        return false;
-      }
-      return editorInfo.editor?.destroyed === false;
-    },
-    [editorId, wsPath],
-  );
+  if (wsPath) {
+    await waitForWsPathToLoad(page, editorId, { wsPath });
+  }
+
+  await waitForEditorIdToLoad(page, editorId);
 
   if (focus) {
     await page.evaluate(
@@ -219,6 +220,14 @@ export async function getEditorDebugString(
     async (editorId) =>
       (window as any)[`editor-${editorId}`]?.editor?.view.state.doc.toString(),
     editorId,
+  );
+}
+
+export async function getEditorSelectionJson(page: Page, editorId: number) {
+  return await page.evaluate(
+    async ([editorId]) =>
+      window[`editor-${editorId}`]?.editor?.view.state.selection.toJSON(),
+    [editorId],
   );
 }
 
@@ -309,4 +318,42 @@ export async function splitScreen(page: Page) {
     page.waitForNavigation(),
     page.press('.bangle-editor', ctrlKey + '+\\'),
   ]);
+}
+
+export async function isIntersectingViewport(loc: Locator) {
+  return loc.evaluate(async (element) => {
+    const visibleRatio: number = await new Promise((resolve) => {
+      const observer = new IntersectionObserver((entries: any[]) => {
+        resolve(entries[0].intersectionRatio);
+        observer.disconnect();
+      });
+      observer.observe(element);
+      // Firefox doesn't call IntersectionObserver callback unless
+      // there are rafs.
+      requestAnimationFrame(() => {});
+    });
+    return visibleRatio > 0;
+  });
+}
+
+export async function waitForWsPathToLoad(
+  page: Page,
+  editorId: number,
+  { wsPath }: { wsPath: string },
+) {
+  return page.waitForFunction(
+    ({ editorId, wsPath }) => {
+      return (window as any)[`editor-${editorId}`]?.wsPath === wsPath;
+    },
+    { editorId, wsPath },
+  );
+}
+
+export async function waitForEditorIdToLoad(page: Page, editorId: number) {
+  return page.waitForFunction(
+    ({ editorId }) => {
+      return (window as any)[`editor-${editorId}`]?.editor?.destroyed === false;
+    },
+    { editorId },
+  );
 }
