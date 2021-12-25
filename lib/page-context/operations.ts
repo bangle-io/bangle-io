@@ -67,11 +67,20 @@ export function getPageLocation() {
 }
 
 export function goToPathname(pathname: string) {
-  return (state: AppState): void => {
+  return (state: AppState, dispatch: PageDispatchType): void => {
     const sliceState = pageSliceKey.getSliceState(state);
 
     sliceState?.history.push({
       pathname: pathname,
+    });
+  };
+}
+
+export function saveToHistoryState(key: string, value: any) {
+  return (state: AppState, dispatch: PageDispatchType): void => {
+    const sliceState = pageSliceKey.getSliceState(state);
+    sliceState?.history.updateHistoryState({
+      [key]: value,
     });
   };
 }

@@ -3,6 +3,7 @@ import { Node } from '@bangle.dev/pm';
 import { BaseFileSystemError } from '@bangle.io/baby-fs';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { goToPathname } from '@bangle.io/page-context';
 import type { HistoryAction } from '@bangle.io/shared-types';
 import {
   HELP_FS_WORKSPACE_NAME,
@@ -417,7 +418,13 @@ export const pushWsPath = (
 };
 
 export const goToWorkspaceHome = () => {
-  return (state: AppState, dispatch: WorkspaceDispatchType) => {};
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    goToPathname('/')(
+      state,
+      dispatch as ApplicationStore<any, any>['dispatch'],
+    );
+    return true;
+  };
 };
 
 export const checkFileExists = (wsPath: string) => {

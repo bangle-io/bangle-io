@@ -110,13 +110,6 @@ export function isValidNoteWsPath(wsPath: string) {
   return NOTE_WS_PATH_EXTENSION.test(wsPath);
 }
 
-export function locationToFilePath(location) {
-  if (location) {
-    return location.pathname.split('/').slice(3).join('/');
-  }
-  return null;
-}
-
 export function sanitizeFilePath(filePath: string) {
   return filePath.replace(/[^\w\s-\.]/g, '');
 }

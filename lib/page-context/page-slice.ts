@@ -29,6 +29,22 @@ export const pageSliceInitialState: PageSliceStateType = {
   },
 };
 
+function calculateLocation(
+  currentLocation: PageSliceStateType['location'],
+  history: HistoryState,
+): PageSliceStateType['location'] {
+  if (
+    currentLocation.pathname === history.pathname &&
+    currentLocation.search === history.search
+  ) {
+    return currentLocation;
+  }
+  return {
+    pathname: history.pathname,
+    search: history.search,
+  };
+}
+
 // Monitors the page's lifecycle
 // See https://developers.google.com/web/updates/2018/07/page-lifecycle-api
 export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
@@ -64,10 +80,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
           case 'action::page-slice:history-changed': {
             return {
               ...state,
-              location: {
-                pathname: state.history.pathname,
-                search: state.history.search,
-              },
+              location: calculateLocation(state.location, state.history),
               historyChangedCounter: state.historyChangedCounter + 1,
             };
           }
@@ -81,10 +94,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
               ...state,
               history,
               historyChangedCounter: state.historyChangedCounter + 1,
-              location: {
-                pathname: history.pathname,
-                search: history.search,
-              },
+              location: calculateLocation(state.location, history),
             };
           }
 

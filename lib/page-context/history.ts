@@ -37,6 +37,21 @@ export class HistoryState {
     return new HistoryState(Object.assign({}, this.mainFields), this.opts);
   }
 
+  updateHistoryState(obj) {
+    if (!this.history) {
+      return;
+    }
+    const loc = this.history.location;
+    const locState = this.history.location.state as any;
+    this.history?.replace({
+      ...loc,
+      state: {
+        ...locState,
+        ...obj,
+      },
+    });
+  }
+
   // mainFields
   get history(): History | undefined {
     return this.mainFields.history;

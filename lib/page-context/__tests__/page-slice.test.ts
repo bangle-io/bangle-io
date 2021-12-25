@@ -35,8 +35,13 @@ test('sets up', () => {
         "mainFields": Object {},
         "opts": Object {},
       },
+      "historyChangedCounter": 0,
       "lifeCycleState": Object {
         "current": undefined,
+      },
+      "location": Object {
+        "pathname": undefined,
+        "search": undefined,
       },
       Symbol(lifecycle): Object {
         "addEventListener": [MockFunction] {

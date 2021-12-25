@@ -283,6 +283,19 @@ export async function waitForEditorTextToContain(
   throw new Error('failed waitForEditorTextToContain');
 }
 
+// export async function getItemsInPalette(page: Page) {
+//   await page.locator('.universal-palette-container').waitFor();
+
+//   const locator = page.locator('.universal-palette-item[data-id]');
+
+//   await locator.first().waitFor();
+
+//   await sleep();
+
+//   return await locator.evaluateAll((nodes) =>
+//     [...nodes].map((n) => n.getAttribute('data-id')),
+//   );
+// }
 export async function getWsPathsShownInFilePalette(page: Page) {
   await page.keyboard.press('Escape');
   await page.keyboard.down(ctrlKey);

@@ -1,8 +1,6 @@
 import React, { useCallback } from 'react';
-import { NavLink } from 'react-router-dom';
 
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
-import { resolvePath } from '@bangle.io/ws-path';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 /**
  * Component for opening a note link
  */
@@ -10,39 +8,28 @@ export function NoteLink({
   wsPath,
   children,
   className,
-  activeClassName,
   onClick,
 }: {
   wsPath: string;
   children: JSX.Element;
   className?: string;
-  activeClassName?: string;
-  onClick?: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+  onClick?: () => void;
 }) {
-  const pathname = resolvePath(wsPath).locationPath;
-  const toCallback = useCallback(
-    (location) => ({
-      ...location,
-      pathname,
-    }),
-    [pathname],
-  );
-  const {
-    openedWsPaths: { primaryWsPath },
-  } = useWorkspaceContext();
+  const { bangleStore } = useWorkspaceContext();
+  const _onClick = useCallback(() => {
+    pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
+    onClick?.();
+  }, [wsPath, onClick, bangleStore]);
 
   return (
-    <NavLink
+    <a
       className={className}
-      to={toCallback}
-      activeClassName={activeClassName}
       // to prevent same wsPath clogging the history
       // TODO in future when we allow shift click we need to
       // update this replace check
-      replace={primaryWsPath === wsPath}
-      onClick={onClick}
+      onClick={_onClick}
     >
       {children}
-    </NavLink>
+    </a>
   );
 }

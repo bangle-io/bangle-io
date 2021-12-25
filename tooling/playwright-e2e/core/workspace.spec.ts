@@ -3,6 +3,8 @@ import { expect, test } from '@playwright/test';
 import {
   createNewNote,
   createWorkspace,
+  ctrlKey,
+  getItemsInPalette,
   getPrimaryEditorHandler,
   getWsPathsShownInFilePalette,
 } from '../helpers';
@@ -53,6 +55,19 @@ test.describe.parallel('workspace', () => {
     expect((await getWsPathsShownInFilePalette(page)).sort()).toEqual(
       [n2, n1].sort(),
     );
+  });
+
+  test('switching a workspace using the palette', async ({ page }) => {
+    const wsName1 = await createWorkspace(page);
+    const n1 = await createNewNote(page, wsName1, 'file-1');
+
+    const wsName2 = await createWorkspace(page);
+
+    await page.press('.bangle-editor', ctrlKey + '+r');
+
+    const result = await getItemsInPalette(page);
+
+    expect(result).toEqual([wsName1, wsName2]);
   });
 
   test('Create a new workspace from home page', async ({ page }) => {

@@ -4,6 +4,8 @@ import type { JsonValue } from '@bangle.io/shared-types';
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
 import {
   refreshWsPathsEffect,
+  saveLastUsedWorkspace,
+  saveWorkspaceInfo,
   updateLocationEffect,
   validateLocationEffect,
 } from './effects';
@@ -142,6 +144,8 @@ export function workspaceSlice() {
       updateLocationEffect,
       refreshWsPathsEffect,
       validateLocationEffect,
+      saveWorkspaceInfo,
+      saveLastUsedWorkspace,
     ],
   });
 }

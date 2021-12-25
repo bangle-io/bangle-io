@@ -1,5 +1,3 @@
-import type { JsonValue } from 'type-fest';
-
 import type { AppState } from './app-state';
 import type { BaseAction, SliceSideEffect } from './app-state-slice';
 
@@ -87,14 +85,14 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       this.setupSideEffects();
     }
 
-    this.sideEffects.forEach(({ effect, key }) => {
+    for (const { effect, key } of this.sideEffects) {
       effect.update?.(
         this,
         prevState,
         this.state.getSliceState(key),
         prevState.getSliceState(key),
       );
-    });
+    }
 
     if (this.scheduler) {
       this.deferredRunner?.abort();
