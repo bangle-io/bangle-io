@@ -1,8 +1,7 @@
 import { sleep } from '@bangle.dev/utils';
 
-import { historyOnInvalidPath } from '..';
 import { wsNameToPathname } from '../helpers';
-import { refreshWsPaths } from '../operations';
+import { historyOnInvalidPath, refreshWsPaths } from '../operations';
 import { createStore } from './test-utils';
 
 jest.mock('../operations', () => {

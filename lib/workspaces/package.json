@@ -25,11 +25,13 @@
   },
   "dependencies": {
     "@bangle.dev/pm": "0.28.3",
+    "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
+    "@bangle.io/page-context": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",

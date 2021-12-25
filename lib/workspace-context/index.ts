@@ -1,5 +1,18 @@
 export type { WorkspaceSliceAction } from './common';
-export * from './operations';
-export * from './workspace-slice';
+export {
+  checkFileExists,
+  createNote,
+  deleteNote,
+  getNote,
+  pushWsPath,
+  refreshWsPaths,
+  renameNote,
+  updateOpenedWsPaths,
+} from './operations';
+export { workspaceSlice } from './workspace-slice';
 export type { WorkspaceSliceState } from './workspace-slice-state';
-export * from './WorkspaceContext';
+export {
+  useWorkspaceContext,
+  WorkspaceContextProvider,
+  WorkspaceContextType,
+} from './WorkspaceContext';

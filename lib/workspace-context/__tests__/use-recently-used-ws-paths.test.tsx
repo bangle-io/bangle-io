@@ -6,10 +6,10 @@ import {
 } from '@bangle.io/app-state-context';
 import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
 
-import { workspaceSliceInitialState } from '..';
 import { workspaceSliceKey } from '../common';
 import { wsPathToPathname } from '../helpers';
 import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
+import { workspaceSliceInitialState } from '../workspace-slice';
 import { createStore } from './test-utils';
 
 jest.mock('@bangle.io/utils', () => {

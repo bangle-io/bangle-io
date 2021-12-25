@@ -1,6 +1,12 @@
+import { getPageLocation } from '@bangle.io/page-context';
+
 import { SideEffect, workspaceSliceKey } from './common';
 import { findInvalidLocation } from './helpers';
-import { historyOnInvalidPath, refreshWsPaths } from './operations';
+import {
+  historyOnInvalidPath,
+  refreshWsPaths,
+  updateLocation,
+} from './operations';
 
 export const refreshWsPathsEffect: SideEffect = () => {
   let loadWsPathsOnMount = true;
@@ -56,6 +62,20 @@ export const validateLocationEffect: SideEffect = (store) => {
         if (invalid) {
           historyOnInvalidPath(wsName, invalid)(store.state, store.dispatch);
         }
+      }
+    },
+  };
+};
+
+export const updateLocationEffect: SideEffect = () => {
+  return {
+    update(store, prevState) {
+      const location = getPageLocation()(store.state);
+      if (location !== getPageLocation()(prevState)) {
+        updateLocation({
+          search: location?.search,
+          pathname: location?.pathname,
+        })(store.state, store.dispatch);
       }
     },
   };
