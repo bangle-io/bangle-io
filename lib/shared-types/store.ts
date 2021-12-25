@@ -22,32 +22,32 @@ export type OnInvalidPathType = (
 
 export type HistoryAction =
   | {
-      name: 'action::bangle-store:history-auth-error';
+      name: 'action::page-slice:history-auth-error';
       value: {
         wsName: string;
       };
     }
   | {
-      name: 'action::bangle-store:history-ws-not-found';
+      name: 'action::page-slice:history-ws-not-found';
       value: {
         wsName: string;
       };
     }
   | {
-      name: 'action::bangle-store:history-on-invalid-path';
+      name: 'action::page-slice:history-on-invalid-path';
       value: {
         wsName: string;
         invalidPath: string;
       };
     }
   | {
-      name: 'action::bangle-store:history-set-history';
+      name: 'action::page-slice:history-set-history';
       value: {
         history: History;
       };
     }
   | {
-      name: 'action::bangle-store:history-update-opened-ws-paths';
+      name: 'action::page-slice:history-update-opened-ws-paths';
       value: {
         openedWsPathsArray: (string | null)[];
         replace: boolean;
@@ -55,7 +55,7 @@ export type HistoryAction =
       };
     }
   | {
-      name: 'action::bangle-store:history-go-to-path';
+      name: 'action::page-slice:history-go-to-path';
       value: {
         pathname: string;
       };

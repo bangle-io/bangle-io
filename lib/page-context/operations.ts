@@ -1,6 +1,7 @@
 import type { AppState } from '@bangle.io/create-store';
 
 import { PageDispatchType, PageLifeCycleStates, pageSliceKey } from './common';
+import { History } from './history';
 
 export function blockReload(block: boolean) {
   return (_: AppState, dispatch: PageDispatchType) => {
@@ -45,5 +46,32 @@ export function isPageLifeCycleOneOf(lifeCycles: PageLifeCycleStates[]) {
     const lf = getCurrentPageLifeCycle()(state);
 
     return lf ? lifeCycles.includes(lf) : false;
+  };
+}
+
+export function setHistoryObject(history: History) {
+  return (_: AppState, dispatch: PageDispatchType) => {
+    dispatch({
+      name: 'action::page-slice:history-set-history',
+      value: { history },
+    });
+  };
+}
+
+export function getPageLocation() {
+  return (state: AppState) => {
+    const sliceState = pageSliceKey.getSliceState(state);
+
+    return sliceState?.location;
+  };
+}
+
+export function goToPathname(pathname: string) {
+  return (state: AppState): void => {
+    const sliceState = pageSliceKey.getSliceState(state);
+
+    sliceState?.history.push({
+      pathname: pathname,
+    });
   };
 }

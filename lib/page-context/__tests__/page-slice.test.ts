@@ -31,6 +31,10 @@ test('sets up', () => {
   expect(pageSliceKey.getSliceState(store.state)).toMatchInlineSnapshot(`
     Object {
       "blockReload": false,
+      "history": HistoryState {
+        "mainFields": Object {},
+        "opts": Object {},
+      },
       "lifeCycleState": Object {
         "current": undefined,
       },

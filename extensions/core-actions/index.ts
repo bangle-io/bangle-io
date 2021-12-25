@@ -88,27 +88,27 @@ const extension = Extension.create({
         hidden: true,
       },
       {
-        name: 'action::bangle-store:history-auth-error',
+        name: 'action::page-slice:history-auth-error',
         title: 'Action for signaling an auth error',
         hidden: true,
       },
       {
-        name: 'action::bangle-store:history-ws-not-found',
+        name: 'action::page-slice:history-ws-not-found',
         title: 'Action for signaling a workspace not found',
         hidden: true,
       },
       {
-        name: 'action::bangle-store:history-set-history',
+        name: 'action::page-slice:history-set-history',
         title: 'Save the history object in the slice state',
         hidden: true,
       },
       {
-        name: 'action::bangle-store:history-update-opened-ws-paths',
+        name: 'action::page-slice:history-update-opened-ws-paths',
         title: 'Update history to reflect opened ws paths',
         hidden: true,
       },
       {
-        name: 'action::bangle-store:history-on-invalid-path',
+        name: 'action::page-slice:history-on-invalid-path',
         title: 'Action when there is an invalid path',
         hidden: true,
       },

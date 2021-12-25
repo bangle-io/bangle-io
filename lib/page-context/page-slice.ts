@@ -1,5 +1,6 @@
 import { Slice } from '@bangle.io/create-store';
 import type { BangleStateOpts } from '@bangle.io/shared-types';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import {
   LifeCycle,
@@ -7,10 +8,21 @@ import {
   pageSliceKey,
   PageSliceStateType,
 } from './common';
-import { blockReloadEffect, watchPageLifeCycleEffect } from './effects';
+import {
+  blockReloadEffect,
+  watchHistoryEffect,
+  watchPageLifeCycleEffect,
+} from './effects';
+import { HistoryState } from './history';
 
 export const pageSliceInitialState: PageSliceStateType = {
   blockReload: false,
+  location: {
+    pathname: undefined,
+    search: undefined,
+  },
+  history: new HistoryState({}),
+  historyChangedCounter: 0,
   lifeCycleState: {
     current: undefined,
     previous: undefined,
@@ -48,6 +60,131 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
               blockReload: action.value,
             };
           }
+
+          case 'action::page-slice:history-changed': {
+            return {
+              ...state,
+              location: {
+                pathname: state.history.pathname,
+                search: state.history.search,
+              },
+              historyChangedCounter: state.historyChangedCounter + 1,
+            };
+          }
+
+          case 'action::page-slice:history-set-history': {
+            const history = state.history.updateState({
+              history: action.value.history,
+            });
+
+            return {
+              ...state,
+              history,
+              historyChangedCounter: state.historyChangedCounter + 1,
+              location: {
+                pathname: history.pathname,
+                search: history.search,
+              },
+            };
+          }
+
+          case 'action::page-slice:history-auth-error': {
+            const { wsName } = action.value;
+            // TODO check if wsName is current
+            if (
+              !state.history.pathname?.startsWith('/ws-nativefs-auth/' + wsName)
+            ) {
+              let { history } = state;
+              history = history.push({
+                pathname: '/ws-nativefs-auth/' + wsName,
+                state: {
+                  previousLocation: history.location,
+                },
+              });
+              return {
+                ...state,
+                history,
+              };
+            }
+
+            return state;
+          }
+
+          case 'action::page-slice:history-ws-not-found': {
+            if (
+              !state.history.pathname?.startsWith(
+                '/ws-not-found/' + action.value.wsName,
+              )
+            ) {
+              // TODO check if wsName is current
+              const history = state.history.replace({
+                pathname: '/ws-not-found/' + action.value.wsName,
+                state: {},
+              });
+
+              return {
+                ...state,
+                history,
+              };
+            }
+
+            return state;
+          }
+
+          case 'action::page-slice:history-on-invalid-path': {
+            const { invalidPath, wsName } = action.value;
+
+            if (
+              !state.history.pathname?.startsWith('/ws-invalid-path/' + wsName)
+            ) {
+              const history = state.history.replace({
+                pathname: '/ws-invalid-path/' + wsName,
+              });
+
+              return {
+                ...state,
+                history,
+              };
+            }
+
+            return state;
+          }
+
+          case 'action::page-slice:history-go-to-path': {
+            const history = state.history.push({
+              pathname: action.value.pathname,
+            });
+
+            return {
+              ...state,
+              history,
+            };
+          }
+
+          case 'action::page-slice:history-update-opened-ws-paths': {
+            if (!state.history?.location) {
+              return state;
+            }
+            const { openedWsPathsArray, wsName, replace } = action.value;
+
+            const openedWsPaths =
+              OpenedWsPaths.createFromArray(openedWsPathsArray);
+
+            const newLocation = openedWsPaths.getLocation(
+              state.history?.location,
+              wsName,
+            );
+
+            const history = replace
+              ? state.history.replace(newLocation)
+              : state.history.push(newLocation);
+
+            return {
+              ...state,
+              history,
+            };
+          }
+
           default: {
             return state;
           }
@@ -55,6 +192,10 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
       },
     },
 
-    sideEffect: [watchPageLifeCycleEffect, blockReloadEffect],
+    sideEffect: [
+      watchPageLifeCycleEffect,
+      blockReloadEffect,
+      watchHistoryEffect,
+    ],
   });
 }

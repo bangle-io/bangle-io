@@ -54,3 +54,28 @@ export const watchPageLifeCycleEffect: SliceSideEffect<
     },
   };
 };
+
+export const watchHistoryEffect: SliceSideEffect<
+  PageSliceStateType,
+  PageSliceAction
+> = () => {
+  // TODO there is a possibility that we miss a location
+  // update before this is initialized
+  let unlisten: (() => void) | undefined;
+
+  return {
+    destroy() {
+      unlisten?.();
+    },
+    update(store, __, sliceState, prevSliceState) {
+      const history = sliceState.history.history;
+      if (history && history !== prevSliceState.history.history) {
+        unlisten = history.listen(() => {
+          store.dispatch({
+            name: 'action::page-slice:history-changed',
+          });
+        });
+      }
+    },
+  };
+};
