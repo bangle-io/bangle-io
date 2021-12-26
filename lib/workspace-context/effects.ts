@@ -90,25 +90,24 @@ export const updateLocationEffect: SideEffect = () => {
 // prevents release of the native browser FS permission
 export const saveWorkspaceInfoEffect: SideEffect = () => {
   let destroyed = false;
-  let pendingReq = false;
+  let pendingReqFor: string | undefined;
 
   return {
     destroy() {
       destroyed = true;
-      pendingReq = false;
     },
+
     update(store, __, sliceState, prevSliceState) {
       if (sliceState.wsName && sliceState.wsName !== prevSliceState.wsName) {
-        if (pendingReq) {
+        if (pendingReqFor === sliceState.wsName) {
           return;
         }
 
-        pendingReq = true;
+        pendingReqFor = sliceState.wsName;
 
-        getWorkspaceInfo(sliceState.wsName).then(
+        getWorkspaceInfo(pendingReqFor).then(
           (_workspaceInfo) => {
-            pendingReq = true;
-            if (!destroyed) {
+            if (!destroyed && _workspaceInfo.name === pendingReqFor) {
               saveToHistoryState('workspaceInfo', _workspaceInfo)(
                 store.state,
                 store.dispatch as ApplicationStore['dispatch'],
@@ -117,7 +116,7 @@ export const saveWorkspaceInfoEffect: SideEffect = () => {
           },
           (error) => {
             console.error(error);
-            pendingReq = true;
+            pendingReqFor = undefined;
           },
         );
       }

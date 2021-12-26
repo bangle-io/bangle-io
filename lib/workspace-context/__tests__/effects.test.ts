@@ -1,6 +1,7 @@
 import { sleep } from '@bangle.dev/utils';
 
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
+import type { UnPromisify } from '@bangle.io/shared-types';
 import { getWorkspaceInfo, WorkspaceType } from '@bangle.io/workspaces';
 
 import { wsNameToPathname } from '../helpers';
@@ -259,6 +260,90 @@ describe('saveWorkspaceInfoEffect', () => {
     });
 
     expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
+  });
+
+  test('destroying should not dispatch action', async () => {
+    let res;
+    getWorkspaceInfoMock.mockImplementation(
+      () =>
+        new Promise((_res) => {
+          res = _res;
+        }),
+    );
+    const { store } = createStore();
+
+    store.dispatch({
+      name: 'action::workspace-context:update-location',
+      value: {
+        locationPathname: wsNameToPathname('test-ws'),
+        locationSearchQuery: '',
+      },
+    });
+
+    expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
+    store.destroy();
+
+    res();
+    await sleep(0);
+
+    expect(saveToHistoryState).toBeCalledTimes(0);
+  });
+
+  test('check the current wsName before dispatching action', async () => {
+    let res: Array<
+      (cb: UnPromisify<ReturnType<typeof getWorkspaceInfoMock>>) => void
+    > = [];
+    getWorkspaceInfoMock.mockImplementation(
+      () =>
+        new Promise((_res) => {
+          res.push(_res);
+        }),
+    );
+    const { store } = createStore();
+
+    store.dispatch({
+      name: 'action::workspace-context:update-location',
+      value: {
+        locationPathname: wsNameToPathname('test-ws'),
+        locationSearchQuery: '',
+      },
+    });
+
+    expect(getWorkspaceInfoMock).toBeCalledTimes(1);
+    expect(getWorkspaceInfoMock).nthCalledWith(1, 'test-ws');
+
+    // change the wsName while the request is to get info is in flight
+    store.dispatch({
+      name: 'action::workspace-context:update-location',
+      value: {
+        locationPathname: wsNameToPathname('test-ws2'),
+        locationSearchQuery: '',
+      },
+    });
+
+    expect(getWorkspaceInfoMock).nthCalledWith(2, 'test-ws2');
+
+    const firstResponse = {
+      name: 'test-ws',
+      type: WorkspaceType.browser,
+      metadata: {},
+    };
+    const secondResponse = {
+      name: 'test-ws2',
+      type: WorkspaceType.browser,
+      metadata: {},
+    };
+    res[0]!(firstResponse);
+    res[1]!(secondResponse);
+    await sleep(0);
+
+    expect(saveToHistoryState).toBeCalledTimes(1);
+    // should only dispatch for the current wsName
+    expect(saveToHistoryState).nthCalledWith(
+      1,
+      'workspaceInfo',
+      secondResponse,
+    );
   });
 });
 
