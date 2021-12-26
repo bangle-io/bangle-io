@@ -33,8 +33,8 @@
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "react-router-dom": "^5.3.0"
+    "@bangle.io/workspace-context": "workspace:*",
+    "@bangle.io/ws-path": "workspace:*"
   },
   "devDependencies": {
     "@bangle.io/extension-registry": "workspace:*",

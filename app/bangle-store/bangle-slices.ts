@@ -13,20 +13,16 @@ import {
   pageSlice,
   PageSliceAction,
 } from '@bangle.io/page-context';
-import type { HistoryAction } from '@bangle.io/shared-types';
 import { UiContextAction, uiSlice } from '@bangle.io/ui-context';
 import { workerSlice } from '@bangle.io/worker-setup';
 import type { WorkspaceSliceAction } from '@bangle.io/workspace-context';
 import { workspaceSlice } from '@bangle.io/workspace-context';
 
-import { historySlice } from './history';
-
 export type BangleActionTypes =
   | UiContextAction
   | PageSliceAction
   | EditorManagerAction
-  | WorkspaceSliceAction
-  | HistoryAction;
+  | WorkspaceSliceAction;
 
 export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
@@ -38,7 +34,6 @@ export function bangleStateSlices({
   onPageInactive: () => void;
 }) {
   return [
-    historySlice(),
     pageSlice(),
     workerSlice(),
     workspaceSlice(),

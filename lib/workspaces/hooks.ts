@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { getPageLocation, goToPathname } from '@bangle.io/page-context';
 import { useDestroyRef } from '@bangle.io/utils';
-import { getWsName } from '@bangle.io/ws-path';
+import { getWsNameFromPathname } from '@bangle.io/ws-path';
 
 import { HELP_FS_WORKSPACE_NAME, WorkspaceInfo, WorkspaceType } from './types';
 import {
@@ -12,12 +13,13 @@ import {
 } from './workspaces-ops';
 
 export function useWorkspaces() {
+  const store = useBangleStoreContext();
   const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
-  // history doesn't change when location changes
-  // so it is a good idea to use useLocation instead of location
-  const location = useLocation();
-  const history = useHistory();
-  const activeWsName = getWsName(location);
+  // We cannot use workspace-context for getting wsName
+  // as it will cause cyclic dependency
+  const activeWsName = getWsNameFromPathname(
+    getPageLocation()(store.state)?.pathname,
+  );
 
   const destroyedRef = useDestroyRef();
 
@@ -37,21 +39,24 @@ export function useWorkspaces() {
       if (opts.beforeHistoryChange) {
         await opts.beforeHistoryChange();
       }
-      history.push(`/ws/${wsName}`);
+      goToPathname(`/ws/${wsName}`)(store.state, store.dispatch);
     },
-    [history],
+    [store],
   );
 
   const deleteWorkspaceCb = useCallback(
     async (targetWsName: string) => {
       await deleteWorkspace(targetWsName);
       if (targetWsName === activeWsName) {
-        history.push(`/ws/` + HELP_FS_WORKSPACE_NAME);
+        goToPathname(`/ws/${HELP_FS_WORKSPACE_NAME}`)(
+          store.state,
+          store.dispatch,
+        );
       } else {
         refreshWorkspaces();
       }
     },
-    [history, activeWsName, refreshWorkspaces],
+    [store, activeWsName, refreshWorkspaces],
   );
 
   useEffect(() => {
@@ -65,9 +70,9 @@ export function useWorkspaces() {
         window.open(newPath);
         return;
       }
-      history.push(newPath);
+      goToPathname(newPath)(store.state, store.dispatch);
     },
-    [history],
+    [store],
   );
 
   return {

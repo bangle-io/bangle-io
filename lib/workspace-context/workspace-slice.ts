@@ -2,7 +2,13 @@ import { Slice } from '@bangle.io/create-store';
 import type { JsonValue } from '@bangle.io/shared-types';
 
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
-import { refreshWsPathsEffect, validateLocationEffect } from './effects';
+import {
+  refreshWsPathsEffect,
+  saveLastUsedWorkspace,
+  saveWorkspaceInfoEffect,
+  updateLocationEffect,
+  validateLocationEffect,
+} from './effects';
 import {
   WorkspaceSliceState,
   WorkspaceStateKeys,
@@ -134,6 +140,12 @@ export function workspaceSlice() {
         });
       },
     },
-    sideEffect: [refreshWsPathsEffect, validateLocationEffect],
+    sideEffect: [
+      updateLocationEffect,
+      refreshWsPathsEffect,
+      validateLocationEffect,
+      saveWorkspaceInfoEffect,
+      saveLastUsedWorkspace,
+    ],
   });
 }

@@ -139,10 +139,7 @@ async function createNewNote(page, wsName, noteName = 'new_file.md') {
   await input.type(noteName);
 
   await Promise.all([
-    page.waitForNavigation({
-      timeout: 5000,
-      waitUntil: 'networkidle0',
-    }),
+    page.waitForNavigation(),
     clickPaletteRow(page, 'input-confirm'),
   ]);
 

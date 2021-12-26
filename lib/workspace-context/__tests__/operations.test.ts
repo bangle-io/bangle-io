@@ -12,6 +12,7 @@ import {
 } from '@bangle.io/workspaces';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
+import { wsNameToPathname, wsPathToPathname } from '../helpers';
 import {
   checkFileExists,
   createNote,
@@ -22,10 +23,9 @@ import {
   pushWsPath,
   refreshWsPaths,
   renameNote,
+  updateLocation,
   updateOpenedWsPaths,
-} from '..';
-import { wsNameToPathname, wsPathToPathname } from '../helpers';
-import { updateLocation } from '../operations';
+} from '../operations';
 import {
   createState,
   createStateWithWsName,
@@ -177,13 +177,13 @@ describe('updateWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-auth-error',
+      'action::page-slice:history-auth-error',
       'action::workspace-context:update-ws-paths',
     ]);
 
     expect(dispatchSpy).nthCalledWith(1, {
       id: expect.any(String),
-      name: 'action::bangle-store:history-auth-error',
+      name: 'action::page-slice:history-auth-error',
       value: {
         wsName: 'my-ws',
       },
@@ -214,13 +214,13 @@ describe('updateWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-ws-not-found',
+      'action::page-slice:history-ws-not-found',
       'action::workspace-context:update-ws-paths',
     ]);
 
     expect(dispatchSpy).nthCalledWith(1, {
       id: expect.any(String),
-      name: 'action::bangle-store:history-ws-not-found',
+      name: 'action::page-slice:history-ws-not-found',
       value: {
         wsName: 'my-ws',
       },
@@ -276,7 +276,7 @@ describe('updateOpenedWsPaths', () => {
     expect(dispatchSpy).toBeCalledTimes(1);
     expect(dispatchSpy).nthCalledWith(1, {
       id: expect.any(String),
-      name: 'action::bangle-store:history-update-opened-ws-paths',
+      name: 'action::page-slice:history-update-opened-ws-paths',
       value: {
         openedWsPathsArray: ['my-ws:one.md', null],
         replace: false,
@@ -301,7 +301,7 @@ describe('updateOpenedWsPaths', () => {
     expect(dispatchSpy).toBeCalledTimes(1);
     expect(dispatchSpy).nthCalledWith(1, {
       id: expect.any(String),
-      name: 'action::bangle-store:history-update-opened-ws-paths',
+      name: 'action::page-slice:history-update-opened-ws-paths',
       value: {
         openedWsPathsArray: ['my-ws:one.md', null],
         replace: true,
@@ -330,7 +330,7 @@ describe('updateOpenedWsPaths', () => {
     expect(dispatchSpy).toBeCalledTimes(1);
     expect(dispatchSpy).nthCalledWith(1, {
       id: expect.any(String),
-      name: 'action::bangle-store:history-update-opened-ws-paths',
+      name: 'action::page-slice:history-update-opened-ws-paths',
       value: {
         openedWsPathsArray: ['my-ws:two.md', null],
         replace: false,
@@ -364,13 +364,13 @@ describe('updateOpenedWsPaths', () => {
     expect(res).toBe(false);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-on-invalid-path',
+      'action::page-slice:history-on-invalid-path',
     ]);
 
     // expect(dispatchSpy).toBeCalledTimes(1);
     expect(dispatchSpy).nthCalledWith(1, {
       id: expect.any(String),
-      name: 'action::bangle-store:history-on-invalid-path',
+      name: 'action::page-slice:history-on-invalid-path',
       value: {
         invalidPath: 'my-ws-hello',
         wsName: 'my-ws',
@@ -416,19 +416,19 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-update-opened-ws-paths',
+      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
 
     expect(
       getActionsDispatched(
         dispatchSpy,
-        'action::bangle-store:history-update-opened-ws-paths',
+        'action::page-slice:history-update-opened-ws-paths',
       ),
     ).toEqual([
       {
         id: expect.any(String),
-        name: 'action::bangle-store:history-update-opened-ws-paths',
+        name: 'action::page-slice:history-update-opened-ws-paths',
         value: {
           openedWsPathsArray: ['my-ws:new-test-note.md', null],
           replace: true,
@@ -465,12 +465,12 @@ describe('renameNote', () => {
     expect(
       getActionsDispatched(
         dispatchSpy,
-        'action::bangle-store:history-update-opened-ws-paths',
+        'action::page-slice:history-update-opened-ws-paths',
       ),
     ).toEqual([
       {
         id: expect.any(String),
-        name: 'action::bangle-store:history-update-opened-ws-paths',
+        name: 'action::page-slice:history-update-opened-ws-paths',
         value: {
           openedWsPathsArray: [null, 'my-ws:new-test-note.md'],
           replace: true,
@@ -555,19 +555,19 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-update-opened-ws-paths',
+      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
 
     expect(
       getActionsDispatched(
         dispatchSpy,
-        'action::bangle-store:history-update-opened-ws-paths',
+        'action::page-slice:history-update-opened-ws-paths',
       ),
     ).toEqual([
       {
         id: expect.any(String),
-        name: 'action::bangle-store:history-update-opened-ws-paths',
+        name: 'action::page-slice:history-update-opened-ws-paths',
         value: {
           openedWsPathsArray: [
             'my-ws:new-test-note.md',
@@ -662,7 +662,7 @@ describe('createNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-update-opened-ws-paths',
+      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
   });
@@ -692,7 +692,7 @@ describe('createNote', () => {
     expect(saveDocMock).toBeCalledTimes(0);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-update-opened-ws-paths',
+      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
   });
@@ -762,19 +762,19 @@ describe('deleteNote', () => {
     expect(deleteFileMock).nthCalledWith(1, 'my-ws:test-note.md');
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-update-opened-ws-paths',
+      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
 
     expect(
       getActionsDispatched(
         dispatchSpy,
-        'action::bangle-store:history-update-opened-ws-paths',
+        'action::page-slice:history-update-opened-ws-paths',
       ),
     ).toEqual([
       {
         id: expect.any(String),
-        name: 'action::bangle-store:history-update-opened-ws-paths',
+        name: 'action::page-slice:history-update-opened-ws-paths',
         value: {
           openedWsPathsArray: [null, null],
           replace: true,
@@ -851,7 +851,7 @@ describe('pushWsPath', () => {
     pushWsPath('my-ws:test-note.md')(store.state, store.dispatch);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::bangle-store:history-update-opened-ws-paths',
+      'action::page-slice:history-update-opened-ws-paths',
     ]);
 
     expect(window.open).toBeCalledTimes(0);

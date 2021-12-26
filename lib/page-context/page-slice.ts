@@ -1,24 +1,49 @@
-import { AppState, Slice, SliceSideEffect } from '@bangle.io/create-store';
+import { Slice } from '@bangle.io/create-store';
 import type { BangleStateOpts } from '@bangle.io/shared-types';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import {
-  PAGE_BLOCK_RELOAD_ACTION_NAME,
-  PageLifeCycleStates,
+  LifeCycle,
   PageSliceAction,
   pageSliceKey,
   PageSliceStateType,
 } from './common';
-
-const pendingSymbol = Symbol('pending-tasks');
-const LifeCycle = Symbol('lifecycle');
+import {
+  blockReloadEffect,
+  watchHistoryEffect,
+  watchPageLifeCycleEffect,
+} from './effects';
+import { HistoryState } from './history';
 
 export const pageSliceInitialState: PageSliceStateType = {
   blockReload: false,
+  location: {
+    pathname: undefined,
+    search: undefined,
+  },
+  history: new HistoryState({}),
+  historyChangedCounter: 0,
   lifeCycleState: {
     current: undefined,
     previous: undefined,
   },
 };
+
+function calculateLocation(
+  currentLocation: PageSliceStateType['location'],
+  history: HistoryState,
+): PageSliceStateType['location'] {
+  if (
+    currentLocation.pathname === history.pathname &&
+    currentLocation.search === history.search
+  ) {
+    return currentLocation;
+  }
+  return {
+    pathname: history.pathname,
+    search: history.search,
+  };
+}
 
 // Monitors the page's lifecycle
 // See https://developers.google.com/web/updates/2018/07/page-lifecycle-api
@@ -39,18 +64,137 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
       },
       apply: (action, state) => {
         switch (action.name) {
-          case 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE': {
+          case 'action::page-slice:UPDATE_PAGE_LIFE_CYCLE_STATE': {
             return {
               ...state,
               lifeCycleState: action.value,
             };
           }
-          case PAGE_BLOCK_RELOAD_ACTION_NAME: {
+          case 'action::page-slice:BLOCK_RELOAD': {
             return {
               ...state,
               blockReload: action.value,
             };
           }
+
+          case 'action::page-slice:history-changed': {
+            return {
+              ...state,
+              location: calculateLocation(state.location, state.history),
+              historyChangedCounter: state.historyChangedCounter + 1,
+            };
+          }
+
+          case 'action::page-slice:history-set-history': {
+            const history = state.history.updateState({
+              history: action.value.history,
+            });
+
+            return {
+              ...state,
+              history,
+              historyChangedCounter: state.historyChangedCounter + 1,
+              location: calculateLocation(state.location, history),
+            };
+          }
+
+          case 'action::page-slice:history-auth-error': {
+            const { wsName } = action.value;
+            // TODO check if wsName is current
+            if (
+              !state.history.pathname?.startsWith('/ws-nativefs-auth/' + wsName)
+            ) {
+              let { history } = state;
+              history = history.push({
+                pathname: '/ws-nativefs-auth/' + wsName,
+                state: {
+                  previousLocation: history.location,
+                },
+              });
+              return {
+                ...state,
+                history,
+              };
+            }
+
+            return state;
+          }
+
+          case 'action::page-slice:history-ws-not-found': {
+            if (
+              !state.history.pathname?.startsWith(
+                '/ws-not-found/' + action.value.wsName,
+              )
+            ) {
+              // TODO check if wsName is current
+              const history = state.history.replace({
+                pathname: '/ws-not-found/' + action.value.wsName,
+                state: {},
+              });
+
+              return {
+                ...state,
+                history,
+              };
+            }
+
+            return state;
+          }
+
+          case 'action::page-slice:history-on-invalid-path': {
+            const { invalidPath, wsName } = action.value;
+
+            if (
+              !state.history.pathname?.startsWith('/ws-invalid-path/' + wsName)
+            ) {
+              const history = state.history.replace({
+                pathname: '/ws-invalid-path/' + wsName,
+              });
+
+              return {
+                ...state,
+                history,
+              };
+            }
+
+            return state;
+          }
+
+          case 'action::page-slice:history-go-to-path': {
+            const history = state.history.push({
+              pathname: action.value.pathname,
+            });
+
+            return {
+              ...state,
+              history,
+            };
+          }
+
+          case 'action::page-slice:history-update-opened-ws-paths': {
+            if (!state.history?.location) {
+              return state;
+            }
+            const { openedWsPathsArray, wsName, replace } = action.value;
+
+            const openedWsPaths =
+              OpenedWsPaths.createFromArray(openedWsPathsArray);
+
+            const newLocation = openedWsPaths.getLocation(
+              state.history?.location,
+              wsName,
+            );
+
+            const history = replace
+              ? state.history.replace(newLocation)
+              : state.history.push(newLocation);
+
+            return {
+              ...state,
+              history,
+            };
+          }
+
           default: {
             return state;
           }
@@ -59,108 +203,9 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
     },
 
     sideEffect: [
-      (store) => {
-        const handler = (event) => {
-          store.dispatch({
-            name: 'PAGE/UPDATE_PAGE_LIFE_CYCLE_STATE',
-            value: {
-              current: event.newState,
-              previous: event.oldState,
-            },
-          });
-        };
-
-        getPageLifeCycleObject(store.state)?.addEventListener(
-          'statechange',
-          handler,
-        );
-        return {
-          destroy() {
-            getPageLifeCycleObject(store.state)?.removeEventListener(
-              'statechange',
-              handler,
-            );
-          },
-        };
-      },
-
-      blockReloadSideEffect,
+      watchPageLifeCycleEffect,
+      blockReloadEffect,
+      watchHistoryEffect,
     ],
   });
-}
-
-const blockReloadSideEffect: SliceSideEffect<
-  PageSliceStateType,
-  PageSliceAction
-> = () => {
-  return {
-    update(store, __, pageState, prevPageState) {
-      if (pageState === prevPageState) {
-        return;
-      }
-      const blockReload = pageState?.blockReload;
-      const prevBlockReload = prevPageState?.blockReload;
-
-      if (blockReload && !prevBlockReload) {
-        getPageLifeCycleObject(store.state)?.addUnsavedChanges(pendingSymbol);
-      }
-
-      if (!blockReload && prevBlockReload) {
-        getPageLifeCycleObject(store.state)?.removeUnsavedChanges(
-          pendingSymbol,
-        );
-      }
-    },
-  };
-};
-
-function getPageLifeCycleObject(state: AppState):
-  | {
-      addUnsavedChanges: (s: Symbol) => void;
-      removeUnsavedChanges: (s: Symbol) => void;
-      addEventListener: (type: string, cb: (event: any) => void) => void;
-      removeEventListener: (type: string, cb: (event: any) => void) => void;
-    }
-  | undefined {
-  return pageSliceKey.getSliceState(state)?.[LifeCycle];
-}
-
-export function getCurrentPageLifeCycle() {
-  return (state: AppState) => {
-    return pageSliceKey.getSliceState(state)?.lifeCycleState?.current;
-  };
-}
-
-// Returns true when the lifecycle changes to the one in param
-// use prevState to determine the transition to
-export function pageLifeCycleTransitionedTo(
-  lifeCycle: PageLifeCycleStates | PageLifeCycleStates[],
-  prevState: AppState,
-) {
-  return (state: AppState): boolean => {
-    const current = getCurrentPageLifeCycle()(state);
-    const prev = getCurrentPageLifeCycle()(prevState);
-
-    if (current === prev) {
-      return false;
-    }
-
-    if (!current) {
-      return false;
-    }
-
-    if (Array.isArray(lifeCycle)) {
-      return lifeCycle.includes(current);
-    }
-
-    return current === lifeCycle;
-  };
-}
-
-export function isPageLifeCycleOneOf(lifeCycles: PageLifeCycleStates[]) {
-  return (state: AppState) => {
-    const lf = getCurrentPageLifeCycle()(state);
-
-    return lf ? lifeCycles.includes(lf) : false;
-  };
 }

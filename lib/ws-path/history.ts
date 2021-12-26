@@ -8,8 +8,6 @@ import { createEmptyArray } from '@bangle.io/utils';
 
 import { filePathToWsPath, resolvePath } from './helpers';
 
-export { matchPath };
-
 export type MaybeWsPath = string | undefined;
 
 export type Location = _History<any>['location'];
@@ -192,8 +190,12 @@ export class OpenedWsPaths {
   }
 }
 
-export function getWsName(location: Location) {
-  const match = matchPath<{ wsName: string }>(location.pathname, {
+export function getWsNameFromPathname(pathname?: string) {
+  if (!pathname) {
+    return undefined;
+  }
+
+  const match = matchPath<{ wsName: string }>(pathname, {
     path: '/ws/:wsName',
     exact: false,
     strict: false,
@@ -204,12 +206,8 @@ export function getWsName(location: Location) {
   return wsName;
 }
 
-function getWsNameFromPathname(pathname?: Location['pathname']) {
-  if (!pathname) {
-    return undefined;
-  }
-
-  const match = matchPath<{ wsName: string }>(pathname, {
+export function getWsName(location: Location) {
+  const match = matchPath<{ wsName: string }>(location.pathname, {
     path: '/ws/:wsName',
     exact: false,
     strict: false,

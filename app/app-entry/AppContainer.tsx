@@ -8,11 +8,12 @@ import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
 import type { OnInvalidPathType } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
+  getLastWorkspaceUsed,
+  useWorkspaceContext,
   wsNameToPathname,
   wsPathToPathname,
-} from '@bangle.io/workspace-context/helpers';
+} from '@bangle.io/workspace-context';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 import { HELP_FS_INDEX_WS_PATH } from '@bangle.io/workspaces';
 
@@ -20,8 +21,7 @@ import { ChangelogModal } from './changelog/ChangelogModal';
 import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { PaletteManager } from './extension-glue/PaletteManager';
-import { getLastWorkspaceUsed } from './misc/last-workspace-used';
-import { useWorkspaceSideEffects } from './misc/use-workspace-side-effects';
+import { useSetDocumentTitle } from './misc/use-set-document-title';
 import { NewWorkspaceModal } from './new-workspace-modal/NewWorkspaceModal';
 import { EmptyEditorPage } from './pages/EmptyEditorPage';
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
@@ -32,7 +32,7 @@ export function AppContainer() {
   const { widescreen } = useUIManagerContext();
   const { wsName, openedWsPaths } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
-  useWorkspaceSideEffects();
+  useSetDocumentTitle();
 
   const sidebars = extensionRegistry.getSidebars();
   const noteSidebarWidgets = extensionRegistry.getNoteSidebarWidgets();
@@ -135,7 +135,6 @@ export function AppContainer() {
               path="/"
               render={() => {
                 const lastWsName = getLastWorkspaceUsed();
-
                 const pathname = lastWsName
                   ? wsNameToPathname(lastWsName)
                   : wsPathToPathname(HELP_FS_INDEX_WS_PATH);

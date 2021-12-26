@@ -6,7 +6,6 @@ import {
   DirTypeSystemHandle,
   FILE_NOT_FOUND_ERROR,
   FileTypeSystemHandle,
-  GithubReadFileSystem,
   HelpFileSystem,
   IndexedDBFileSystem,
   NativeBrowserFileSystem,
@@ -218,18 +217,6 @@ const allowedFile = (name: string) => {
 export const getFileSystemFromWsInfo = (wsInfo: WorkspaceInfo) => {
   if (wsInfo.type === 'browser') {
     return new IndexedDBFileSystem();
-  }
-
-  if (wsInfo.type === 'github-read-fs') {
-    return new GithubReadFileSystem({
-      githubToken:
-        new URLSearchParams(window.location.search).get('github_token') ||
-        localStorage.getItem('github_token'),
-      githubOwner: wsInfo.metadata.githubOwner,
-      githubRepo: wsInfo.metadata.githubRepo,
-      githubBranch: wsInfo.metadata.githubBranch,
-      allowedFile,
-    });
   }
 
   if (wsInfo.type === 'nativefs') {

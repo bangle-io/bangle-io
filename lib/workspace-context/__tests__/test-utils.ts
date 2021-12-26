@@ -1,7 +1,7 @@
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
-import { JSON_SCHEMA_VERSION, workspaceSlice } from '..';
 import { wsNameToPathname } from '../helpers';
+import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
 import { WorkspaceStateKeys } from '../workspace-slice-state';
 
 export const createState = (

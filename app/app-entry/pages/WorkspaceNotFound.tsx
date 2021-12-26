@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 
 import { useActionContext } from '@bangle.io/action-context';
 import {
@@ -7,19 +6,20 @@ import {
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
 } from '@bangle.io/constants';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { CenteredBoxedPage, Page } from '@bangle.io/ui-components';
+import { CenteredBoxedPage } from '@bangle.io/ui-components';
+import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 
 export function WorkspaceNotFound({}) {
-  const { wsName } = useParams();
+  // TODO wsNamae can't be read here
   const { dispatchAction } = useActionContext();
 
   return (
     <CenteredBoxedPage
       title={
         <span className="font-normal">
-          <WorkspaceSpan wsName={wsName} emoji={'🕵️‍♀️'} />{' '}
+          <WorkspaceSpan wsName={''} emoji={'🕵️‍♀️'} />{' '}
           <span className="pl-1">not found</span>
         </span>
       }

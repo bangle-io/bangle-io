@@ -3,7 +3,7 @@ import { Redirect, useHistory, useParams } from 'react-router-dom';
 
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { CenteredBoxedPage, Page } from '@bangle.io/ui-components';
+import { CenteredBoxedPage } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { keybindingsHelper } from '@bangle.io/utils';
 import {

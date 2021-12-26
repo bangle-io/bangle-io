@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import { cx, useWatchClickOutside } from '@bangle.io/utils';
 
 export function PaletteContainer({
+  paletteType,
   onClickOutside,
   onClickInside,
   children,
@@ -15,6 +16,7 @@ export function PaletteContainer({
   useWatchClickOutside(containerRef, onClickOutside, onClickInside);
   return (
     <div
+      data-palette-type={paletteType}
       ref={containerRef}
       className={
         'universal-palette-container ' +
@@ -27,6 +29,7 @@ export function PaletteContainer({
 }
 
 PaletteContainer.propTypes = {
+  paletteType: PropTypes.string.isRequired,
   onClickOutside: PropTypes.func.isRequired,
   onClickInside: PropTypes.func.isRequired,
   widescreen: PropTypes.bool.isRequired,

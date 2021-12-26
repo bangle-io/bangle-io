@@ -1,11 +1,14 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 import { useActionContext } from '@bangle.io/action-context';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
+import {
+  goToWorkspaceHome,
+  useWorkspaceContext,
+} from '@bangle.io/workspace-context';
 
 import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarMobile } from './ActivitybarMobile';
@@ -24,8 +27,8 @@ export function Activitybar({
 }) {
   const { changelogHasUpdates, sidebar, dispatch, widescreen } =
     useUIManagerContext();
-  const history = useHistory();
   const { dispatchAction } = useActionContext();
+  const { bangleStore } = useWorkspaceContext();
 
   if (!widescreen) {
     return <ActivitybarMobile wsName={wsName} primaryWsPath={primaryWsPath} />;
@@ -69,7 +72,7 @@ export function Activitybar({
             name: 'UI/CHANGE_SIDEBAR',
             value: { type: null },
           });
-          history.push('/');
+          goToWorkspaceHome()(bangleStore.state, bangleStore.dispatch);
         }}
         hint="Workspace Home"
         icon={

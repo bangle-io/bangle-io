@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 
 import { useActionContext } from '@bangle.io/action-context';
 import {
@@ -17,7 +16,7 @@ import {
   NewNoteIcon,
 } from '@bangle.io/ui-components';
 import { removeMdExtension } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
@@ -25,6 +24,7 @@ import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 const MAX_ENTRIES = 8;
 
 function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
+  const { bangleStore } = useWorkspaceContext();
   const formattedPaths = useMemo(() => {
     return wsPaths.map((wsPath) => {
       return resolvePath(wsPath);
@@ -41,7 +41,13 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
         {formattedPaths.map((r, i) => {
           return (
             <li key={i}>
-              <Link to={r.locationPath} className="py-1 hover:underline">
+              <button
+                role="link"
+                onClick={(e) => {
+                  pushWsPath(r.wsPath)(bangleStore.state, bangleStore.dispatch);
+                }}
+                className="py-1 hover:underline"
+              >
                 <span>{removeMdExtension(r.fileName)} </span>
                 {r.dirPath && (
                   <span
@@ -51,7 +57,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
                     {r.dirPath}
                   </span>
                 )}
-              </Link>
+              </button>
             </li>
           );
         })}

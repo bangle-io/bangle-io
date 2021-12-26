@@ -1,7 +1,7 @@
 import {
   filePathToWsPath,
+  getWsNameFromPathname,
   isValidNoteWsPath,
-  matchPath,
   OpenedWsPaths,
   resolvePath,
 } from '@bangle.io/ws-path';
@@ -36,22 +36,6 @@ export function wsPathToPathname(wsPath: string) {
 
 export function wsNameToPathname(wsName: string) {
   return encodeURI(`/ws/${wsName}`);
-}
-
-export function getWsNameFromPathname(pathname?: string) {
-  if (!pathname) {
-    return undefined;
-  }
-
-  const match = matchPath<{ wsName: string }>(pathname, {
-    path: '/ws/:wsName',
-    exact: false,
-    strict: false,
-  });
-
-  const { wsName } = match?.params ?? {};
-
-  return wsName;
 }
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):

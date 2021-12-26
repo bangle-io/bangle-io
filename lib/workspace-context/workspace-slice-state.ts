@@ -1,11 +1,14 @@
 import { createSelector } from 'reselect';
 
-import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
+import {
+  getWsNameFromPathname,
+  isValidNoteWsPath,
+  OpenedWsPaths,
+} from '@bangle.io/ws-path';
 
 import {
   getPrimaryWsPath,
   getSecondaryWsPath,
-  getWsNameFromPathname,
   validateOpenedWsPaths,
 } from './helpers';
 

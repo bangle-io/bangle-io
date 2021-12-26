@@ -5,9 +5,6 @@ import {
   createWorkspace,
   ctrlKey,
   getPrimaryEditorHandler,
-  getWsPathsShownInFilePalette,
-  longSleep,
-  SELECTOR_TIMEOUT,
   waitForEditorFocus,
 } from '../helpers';
 

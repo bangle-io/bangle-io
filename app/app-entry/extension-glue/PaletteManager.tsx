@@ -126,6 +126,7 @@ export function PaletteManager() {
 
   return (
     <UniversalPalette.PaletteContainer
+      paletteType={paletteType}
       widescreen={widescreen}
       onClickOutside={dismissPalette}
       onClickInside={() => {

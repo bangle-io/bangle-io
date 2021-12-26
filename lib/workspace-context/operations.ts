@@ -3,6 +3,7 @@ import { Node } from '@bangle.dev/pm';
 import { BaseFileSystemError } from '@bangle.io/baby-fs';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { goToPathname } from '@bangle.io/page-context';
 import type { HistoryAction } from '@bangle.io/shared-types';
 import {
   HELP_FS_WORKSPACE_NAME,
@@ -54,7 +55,7 @@ export const historyOnInvalidPath = (wsName: string, invalidPath: string) => {
       WorkspaceSliceAction | HistoryAction
     >['dispatch'];
     _dispatch({
-      name: 'action::bangle-store:history-on-invalid-path',
+      name: 'action::page-slice:history-on-invalid-path',
       value: { wsName: wsName, invalidPath },
     });
   };
@@ -91,7 +92,7 @@ export const historyUpdateOpenedWsPaths = (
     >['dispatch'];
 
     _dispatch({
-      name: 'action::bangle-store:history-update-opened-ws-paths',
+      name: 'action::page-slice:history-update-opened-ws-paths',
       value: { openedWsPathsArray, replace, wsName },
     });
   };
@@ -113,7 +114,7 @@ export const getFileOps = () => {
       () => {
         if (sliceState?.wsName) {
           _dispatch({
-            name: 'action::bangle-store:history-auth-error',
+            name: 'action::page-slice:history-auth-error',
             value: { wsName: sliceState.wsName },
           });
         }
@@ -121,7 +122,7 @@ export const getFileOps = () => {
       () => {
         if (sliceState?.wsName) {
           _dispatch({
-            name: 'action::bangle-store:history-ws-not-found',
+            name: 'action::page-slice:history-ws-not-found',
             value: { wsName: sliceState?.wsName },
           });
         }
@@ -413,6 +414,16 @@ export const pushWsPath = (
       }
       return openedWsPath.updatePrimaryWsPath(wsPath);
     })(state, dispatch);
+  };
+};
+
+export const goToWorkspaceHome = () => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    goToPathname('/')(
+      state,
+      dispatch as ApplicationStore<any, any>['dispatch'],
+    );
+    return true;
   };
 };
 

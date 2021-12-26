@@ -1,10 +1,16 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  clickItemInPalette,
   createNewNote,
   createWorkspace,
+  ctrlKey,
+  getEditorLocator,
+  getItemsInPalette,
   getPrimaryEditorHandler,
   getWsPathsShownInFilePalette,
+  openWorkspacePalette,
+  sleep,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -55,6 +61,37 @@ test.describe.parallel('workspace', () => {
     );
   });
 
+  test('switching a workspace using the palette', async ({ page, baseURL }) => {
+    test.slow();
+    const wsName1 = await createWorkspace(page);
+    const n1 = await createNewNote(page, wsName1, 'file-1');
+
+    const wsName2 = await createWorkspace(page);
+
+    expect(await page.url()).toMatch(new RegExp(wsName2));
+
+    await sleep();
+
+    await openWorkspacePalette(page);
+
+    const result = (await getItemsInPalette(page, { hasItems: true })).sort();
+
+    expect(result).toEqual(
+      [
+        `bangle-help-(helpfs)`,
+        wsName2 + '-(browser)',
+        wsName1 + '-(browser)',
+      ].sort(),
+    );
+
+    await Promise.all([
+      page.waitForNavigation(),
+      clickItemInPalette(page, wsName2 + '-(browser)'),
+    ]);
+
+    expect(await page.url()).toMatch(new RegExp(wsName2));
+  });
+
   test('Create a new workspace from home page', async ({ page }) => {
     const wsName1 = await createWorkspace(page);
 
@@ -82,7 +119,7 @@ test.describe.parallel('workspace', () => {
     );
 
     expect(await page.$eval('body', (el) => el.innerText)).toContain(
-      `Workspace random-wrong-wsname not found`,
+      `not found`,
     );
   });
 

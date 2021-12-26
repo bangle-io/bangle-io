@@ -29,6 +29,7 @@ if (typeof window !== undefined && APP_ENV !== 'local') {
       });
     });
   });
+
   if ('scrollRestoration' in window.history) {
     // Back off, browser, I got this...
     window.history.scrollRestoration = 'manual';

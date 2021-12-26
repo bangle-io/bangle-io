@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { isFirefox } from '@bangle.io/config';
+import { isFirefox, isMac } from '@bangle.io/config';
 import {
   CORE_PALETTES_TOGGLE_ACTION_PALETTE,
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
@@ -39,7 +39,7 @@ const extension = Extension.create({
         name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
         title: 'Switch Workspace',
         hidden: false,
-        keybinding: 'Ctrl-r',
+        keybinding: isMac ? 'Ctrl-r' : 'Ctrl-h',
       },
       {
         name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
