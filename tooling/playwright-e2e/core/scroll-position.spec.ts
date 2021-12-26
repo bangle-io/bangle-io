@@ -13,7 +13,9 @@ import {
   sleep,
   splitScreen,
   waitForEditorFocus,
+  waitForEditorIdToLoad,
   waitForEditorTextToContain,
+  waitForWsPathToLoad,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -186,6 +188,8 @@ test.describe.parallel('scroll', () => {
     );
 
     await sleep();
+
+    await waitForWsPathToLoad(page, 1, { wsPath });
 
     await runAction(
       page,

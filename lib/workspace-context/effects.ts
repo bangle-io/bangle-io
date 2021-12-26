@@ -70,6 +70,8 @@ export const validateLocationEffect: SideEffect = (store) => {
   };
 };
 
+// This keeps a copy of location changes within the workspace slice
+// to derive fields like wsName.
 export const updateLocationEffect: SideEffect = () => {
   return {
     update(store, prevState) {
@@ -86,9 +88,10 @@ export const updateLocationEffect: SideEffect = () => {
 
 // Persist workspaceInfo in the history to
 // prevents release of the native browser FS permission
-export const saveWorkspaceInfo: SideEffect = () => {
+export const saveWorkspaceInfoEffect: SideEffect = () => {
   let destroyed = false;
   let pendingReq = false;
+
   return {
     destroy() {
       destroyed = true;

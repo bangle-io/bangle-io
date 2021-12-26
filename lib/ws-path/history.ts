@@ -8,8 +8,6 @@ import { createEmptyArray } from '@bangle.io/utils';
 
 import { filePathToWsPath, resolvePath } from './helpers';
 
-export { matchPath };
-
 export type MaybeWsPath = string | undefined;
 
 export type Location = _History<any>['location'];

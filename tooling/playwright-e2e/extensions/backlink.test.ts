@@ -5,8 +5,10 @@ import {
   createNewNote,
   createWorkspace,
   getEditorLocator,
+  longSleep,
   runAction,
   SELECTOR_TIMEOUT,
+  sleep,
   waitForEditorTextToContain,
 } from '../helpers';
 
@@ -28,19 +30,24 @@ test.describe.parallel('backlink workflow', () => {
     await clearEditor(page, 0);
 
     // create note-1
-    await page.keyboard.type('this is the zeroth note ', { delay: 10 });
-    await page.keyboard.type('[[note-1]]', { delay: 30 });
+    await page.keyboard.type('this is the zeroth note ', { delay: 35 });
+    await page.keyboard.type('[[note-1]]', { delay: 55 });
+
+    await sleep();
 
     await waitForEditorTextToContain(page, 0, 'note-1');
 
     await clickBacklinkHandle(page, 'note-1');
+
+    await sleep();
 
     await waitForEditorTextToContain(page, 0, 'note-1');
 
     // now in note-1
     // lets create backlink to note-0
     await clearEditor(page, 0);
-    await page.keyboard.type('[[0', { delay: 30 });
+    await page.keyboard.type('[[0', { delay: 55 });
+
     await page.keyboard.press('Enter', { delay: 30 });
 
     await page.waitForSelector('.inline-backlink_backlink', {
@@ -61,6 +68,7 @@ test.describe.parallel('backlink workflow', () => {
   });
 
   test('Hovering and clicking works', async ({ page }) => {
+    test.slow();
     const wsName = await setup(page);
     // make sure we are on note-1's page
     expect(await page.url()).toContain('note-1');
@@ -99,7 +107,7 @@ test.describe.parallel('backlink workflow', () => {
   });
 
   test('note widget shows backlinks', async ({ page }) => {
-    // test.slow();
+    test.slow();
 
     const wsName = await setup(page);
     // make sure we are on note-1's page

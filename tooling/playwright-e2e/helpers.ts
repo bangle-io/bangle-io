@@ -4,6 +4,7 @@ import prettier from 'prettier';
 
 import { filePathToWsPath, resolvePath } from './bangle-helpers';
 
+export const isDarwin = os.platform() === 'darwin';
 export const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
 
 export const SELECTOR_TIMEOUT = 2000;
@@ -52,6 +53,19 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
   await expect(page).toHaveURL(new RegExp('/ws/' + wsName));
 
   return wsName;
+}
+
+export async function openWorkspacePalette(page: Page) {
+  await page.keyboard.press(ctrlKey + '+p');
+
+  await page.locator('.universal-palette-container').waitFor();
+  await page.type('.universal-palette-input', 'ws:');
+
+  await page
+    .locator('[data-palette-type="bangle-io-core-palettes/workspace"]')
+    .waitFor();
+
+  await sleep();
 }
 
 export async function clickPaletteRow(page: Page, id: string) {
@@ -201,11 +215,11 @@ export async function getEditorLocator(
   return page.locator(`.editor-container_editor-${editorId} .bangle-editor`);
 }
 
-export function sleep(t = 10) {
+export function sleep(t = 20) {
   return new Promise((res) => setTimeout(res, t));
 }
 
-export function longSleep(t = 50) {
+export function longSleep(t = 70) {
   return new Promise((res) => setTimeout(res, t));
 }
 
@@ -283,19 +297,42 @@ export async function waitForEditorTextToContain(
   throw new Error('failed waitForEditorTextToContain');
 }
 
-// export async function getItemsInPalette(page: Page) {
-//   await page.locator('.universal-palette-container').waitFor();
+export async function getItemsInPalette(
+  page: Page,
+  { hasItems = false }: { hasItems?: boolean } = {},
+) {
+  await page.locator('.universal-palette-container').waitFor();
 
-//   const locator = page.locator('.universal-palette-item[data-id]');
+  const locator = page.locator('.universal-palette-item[data-id]');
 
-//   await locator.first().waitFor();
+  if (hasItems) {
+    await locator.first().waitFor();
+  }
+  await sleep();
 
-//   await sleep();
+  let result = await locator.evaluateAll((nodes) =>
+    [...nodes].map((n) => n.getAttribute('data-id')),
+  );
 
-//   return await locator.evaluateAll((nodes) =>
-//     [...nodes].map((n) => n.getAttribute('data-id')),
-//   );
-// }
+  // wait a little more if items are not showing up
+  if (result.length === 0) {
+    await longSleep();
+    return locator.evaluateAll((nodes) =>
+      [...nodes].map((n) => n.getAttribute('data-id')),
+    );
+  }
+
+  return result;
+}
+
+export async function clickItemInPalette(page: Page, dataId: string) {
+  await page.locator('.universal-palette-container').waitFor();
+
+  const locator = page.locator(`.universal-palette-item[data-id="${dataId}"]`);
+
+  return locator.click();
+}
+
 export async function getWsPathsShownInFilePalette(page: Page) {
   await page.keyboard.press('Escape');
   await page.keyboard.down(ctrlKey);

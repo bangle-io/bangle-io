@@ -55,6 +55,12 @@ jobs:
         if: matrix.test-kind == 'g:e2e'
         run: yarn g:playwright-dep
       - run: yarn ${{ matrix.test-kind }}
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: playwright trace
+          path: tooling/playwright-e2e/
+          retention-days: 3
       - name: Upload coverage report
         if: matrix.test-kind == 'test-ci'
         uses: codecov/codecov-action@v2

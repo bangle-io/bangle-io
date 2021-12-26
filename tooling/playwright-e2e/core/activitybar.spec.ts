@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { SELECTOR_TIMEOUT } from '../helpers';
+import { isDarwin, SELECTOR_TIMEOUT } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
@@ -24,7 +24,7 @@ test('lists options', async ({ page }) => {
     JSON.stringify([
       'New note',
       'New workspace',
-      'Switch workspace\nCtrlR',
+      isDarwin ? 'Switch workspace\nCtrlR' : 'Switch workspace\nCtrlH',
       'Toggle dark theme',
       'Notes palette\nCtrlP',
       'Action palette\nCtrl⇧P',

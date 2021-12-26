@@ -1,8 +1,16 @@
 import { sleep } from '@bangle.dev/utils';
 
+import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
+import { getWorkspaceInfo, WorkspaceType } from '@bangle.io/workspaces';
+
 import { wsNameToPathname } from '../helpers';
-import { historyOnInvalidPath, refreshWsPaths } from '../operations';
-import { createStore } from './test-utils';
+import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
+import {
+  historyOnInvalidPath,
+  refreshWsPaths,
+  updateLocation,
+} from '../operations';
+import { createStore, getActionNamesDispatched } from './test-utils';
 
 jest.mock('../operations', () => {
   const ops = jest.requireActual('../operations');
@@ -10,6 +18,32 @@ jest.mock('../operations', () => {
     ...ops,
     refreshWsPaths: jest.fn(),
     historyOnInvalidPath: jest.fn(),
+    updateLocation: jest.fn(),
+  };
+});
+jest.mock('../last-seen-ws-name', () => {
+  const ops = jest.requireActual('../last-seen-ws-name');
+  return {
+    ...ops,
+    saveLastWorkspaceUsed: jest.fn(),
+  };
+});
+
+jest.mock('@bangle.io/page-context', () => {
+  const ops = jest.requireActual('@bangle.io/page-context');
+  return {
+    ...ops,
+    getPageLocation: jest.fn(),
+    saveToHistoryState: jest.fn(),
+  };
+});
+
+jest.mock('@bangle.io/workspaces', () => {
+  const ops = jest.requireActual('@bangle.io/workspaces');
+
+  return {
+    ...ops,
+    getWorkspaceInfo: jest.fn(),
   };
 });
 
@@ -19,10 +53,35 @@ const refreshWsPathsMock = refreshWsPaths as jest.MockedFunction<
 const historyOnInvalidPathMock = historyOnInvalidPath as jest.MockedFunction<
   typeof historyOnInvalidPath
 >;
+const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
+  typeof getWorkspaceInfo
+>;
+const saveToHistoryStateMock = saveToHistoryState as jest.MockedFunction<
+  typeof saveToHistoryState
+>;
+const getPageLocationMock = getPageLocation as jest.MockedFunction<
+  typeof getPageLocation
+>;
+const updateLocationMock = updateLocation as jest.MockedFunction<
+  typeof updateLocation
+>;
 
 beforeEach(() => {
   refreshWsPathsMock.mockImplementation(() => () => true);
+  updateLocationMock.mockImplementation(() => () => true);
   historyOnInvalidPathMock.mockImplementation(() => () => {});
+  saveToHistoryStateMock.mockImplementation(() => () => {});
+  getWorkspaceInfoMock.mockImplementation(async () => ({
+    name: 'test-ws',
+    type: WorkspaceType.browser,
+    metadata: {},
+  }));
+
+  const location = {
+    search: '',
+    pathname: '',
+  };
+  getPageLocationMock.mockImplementation(() => () => location);
 });
 
 describe('refreshWsPathsEffect', () => {
@@ -132,5 +191,92 @@ describe('validateLocationEffect', () => {
       'test-ws',
       'test-ws:my-path',
     );
+  });
+});
+
+describe('updateLocationEffect', () => {
+  test('works', async () => {
+    const location1 = {
+      search: '',
+      pathname: wsNameToPathname('test-ws'),
+    };
+
+    const location2 = {
+      search: '',
+      pathname: wsNameToPathname('test-ws-2'),
+    };
+
+    getPageLocationMock
+      .mockImplementationOnce(() => () => location1)
+      .mockImplementationOnce(() => () => location2);
+
+    const { store } = createStore();
+
+    store.dispatch({
+      name: 'action::some-action',
+    } as any);
+
+    expect(updateLocation).toBeCalledTimes(1);
+    expect(updateLocation).nthCalledWith(1, location1);
+  });
+});
+
+describe('saveWorkspaceInfoEffect', () => {
+  test('works', async () => {
+    const { store, dispatchSpy } = createStore();
+
+    store.dispatch({
+      name: 'action::workspace-context:update-location',
+      value: {
+        locationPathname: wsNameToPathname('test-ws'),
+        locationSearchQuery: '',
+      },
+    });
+
+    expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
+    expect(getWorkspaceInfo).nthCalledWith(1, 'test-ws');
+
+    await sleep(0);
+
+    expect(saveToHistoryState).toBeCalledTimes(1);
+    expect(saveToHistoryState).nthCalledWith(1, 'workspaceInfo', {
+      metadata: {},
+      name: 'test-ws',
+      type: 'browser',
+    });
+
+    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+      'action::workspace-context:update-location',
+    ]);
+
+    // an other action doesn't trigger the hook
+    store.dispatch({
+      name: 'action::workspace-context:update-recently-used-ws-paths',
+      value: {
+        wsName: 'test-ws',
+        recentlyUsedWsPaths: ['hello:world.md'],
+      },
+    });
+
+    expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('saveLastUsedWorkspace', () => {
+  test('works', async () => {
+    const { store, dispatchSpy } = createStore();
+
+    store.dispatch({
+      name: 'action::workspace-context:update-location',
+      value: {
+        locationPathname: wsNameToPathname('test-ws'),
+        locationSearchQuery: '',
+      },
+    });
+
+    await sleep(0);
+
+    expect(saveLastWorkspaceUsed).toBeCalledTimes(1);
+    expect(saveLastWorkspaceUsed).nthCalledWith(1, 'test-ws');
   });
 });

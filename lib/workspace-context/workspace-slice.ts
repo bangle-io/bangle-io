@@ -5,7 +5,7 @@ import { WorkspaceSliceAction, workspaceSliceKey } from './common';
 import {
   refreshWsPathsEffect,
   saveLastUsedWorkspace,
-  saveWorkspaceInfo,
+  saveWorkspaceInfoEffect,
   updateLocationEffect,
   validateLocationEffect,
 } from './effects';
@@ -144,7 +144,7 @@ export function workspaceSlice() {
       updateLocationEffect,
       refreshWsPathsEffect,
       validateLocationEffect,
-      saveWorkspaceInfo,
+      saveWorkspaceInfoEffect,
       saveLastUsedWorkspace,
     ],
   });

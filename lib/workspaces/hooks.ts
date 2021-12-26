@@ -15,7 +15,8 @@ import {
 export function useWorkspaces() {
   const store = useBangleStoreContext();
   const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
-
+  // We cannot use workspace-context for getting wsName
+  // as it will cause cyclic dependency
   const activeWsName = getWsNameFromPathname(
     getPageLocation()(store.state)?.pathname,
   );

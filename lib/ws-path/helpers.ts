@@ -164,12 +164,12 @@ export function resolvePath(wsPath: string) {
   if (typeof fileName !== 'string') {
     throw new Error('fileName undefined');
   }
-
   const dirPath = filePathSplitted
     .slice(0, filePathSplitted.length - 1)
     .filter(Boolean)
     .join('/');
   return {
+    wsPath,
     wsName,
     filePath, // wsName:filePath
     dirPath, // wsName:dirPath/fileName
