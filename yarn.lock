@@ -1875,10 +1875,10 @@ __metadata:
     prosemirror-dev-tools: "github:kepta/prosemirror-dev-tools#v3.3.4"
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-router-dom: ^5.3.0
     react-test-renderer: ^17.0.2
     react-virtual: ^2.8.2
     vite-plugin-pwa: ^0.11.3
+    wouter: ^2.8.0-alpha.2
   peerDependencies:
     vite: "*"
   languageName: unknown
@@ -2606,7 +2606,6 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
-    "@types/history": ^4.7.9
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
@@ -3009,13 +3008,12 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@types/history": ^4.7.9
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
-    "@types/react-router-dom": ^5.3.2
+    path-to-regexp: ^6.2.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-router-dom: ^5.3.0
+    wouter: ^2.8.0-alpha.2
   languageName: unknown
   linkType: soft
 
@@ -13274,6 +13272,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path-to-regexp@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "path-to-regexp@npm:6.2.0"
+  checksum: a6aca74d2d6e2e7594d812f653cf85e9cb5054d3a8d80f099722a44ef6ad22639b02078e5ea83d11db16321c3e4359e3f1ab0274fa78dad0754a6e53f630b0fc
+  languageName: node
+  linkType: hard
+
 "path-type@npm:^4.0.0":
   version: 4.0.0
   resolution: "path-type@npm:4.0.0"
@@ -17646,6 +17651,15 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
   languageName: unknown
   linkType: soft
+
+"wouter@npm:^2.8.0-alpha.2":
+  version: 2.8.0-alpha.2
+  resolution: "wouter@npm:2.8.0-alpha.2"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 748002712b6511ec2b93bd18966ae85ac99e66aa344b672c92f972bf4332d809d6466e831017bdf3030f4163d5cdb04a6993b27dea68993f2a3d845ed08f2b02
+  languageName: node
+  linkType: hard
 
 "wrap-ansi@npm:^5.1.0":
   version: 5.1.0

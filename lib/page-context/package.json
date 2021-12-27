@@ -25,7 +25,6 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@types/history": "^4.7.9",
     "react": "^17.0.2"
   },
   "devDependencies": {
