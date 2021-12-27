@@ -1,17 +1,13 @@
-// import type { History as _History } from 'history';
-// eslint-disable-next-line import/no-unresolved
-import type { History as _History } from 'history';
-import { matchPath } from 'react-router-dom';
-
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
-import { filePathToWsPath, resolvePath } from './helpers';
+import { MaybeWsPath } from './helpers';
+import { locationSetWsPath } from './pathname-helpers';
 
-export type MaybeWsPath = string | undefined;
-
-export type Location = _History<any>['location'];
-export type History = _History<any>;
+export interface Location {
+  pathname?: string;
+  search?: string;
+}
 
 /**
  * This exists to keep null and undefined value interchangeable
@@ -188,109 +184,4 @@ export class OpenedWsPaths {
     // mapping undefined to null since undefined is not serializable
     return Array.from(this.wsPaths).map((r) => (r ? r : null));
   }
-}
-
-export function getWsNameFromPathname(pathname?: string) {
-  if (!pathname) {
-    return undefined;
-  }
-
-  const match = matchPath<{ wsName: string }>(pathname, {
-    path: '/ws/:wsName',
-    exact: false,
-    strict: false,
-  });
-
-  const { wsName } = match?.params ?? {};
-
-  return wsName;
-}
-
-export function getWsName(location: Location) {
-  const match = matchPath<{ wsName: string }>(location.pathname, {
-    path: '/ws/:wsName',
-    exact: false,
-    strict: false,
-  });
-
-  const { wsName } = match?.params ?? {};
-
-  return wsName;
-}
-
-function getPrimaryFilePath(location: Location) {
-  if (location) {
-    return location.pathname.split('/').slice(3).join('/');
-  }
-  return undefined;
-}
-
-function getPrimaryWsPath(location: Location) {
-  const wsName = getWsName(location);
-  const filePath = getPrimaryFilePath(location);
-  if (!wsName || !filePath) {
-    return undefined;
-  }
-  return filePathToWsPath(wsName, filePath);
-}
-
-/**
- * sets a set of wsPaths to the location.
- * @param location
- * @param openedWsPaths
- * @param param2
- * @returns
- */
-function locationSetWsPath(
-  location: Location,
-  wsName,
-  openedWsPaths: OpenedWsPaths,
-) {
-  if (openedWsPaths.primaryWsPath) {
-    const { wsName, filePath } = resolvePath(openedWsPaths.primaryWsPath);
-    const newPath = encodeURI(`/ws/${wsName}/${filePath}`);
-
-    if (newPath !== location.pathname) {
-      location = {
-        ...location,
-        pathname: newPath,
-      };
-    }
-  }
-
-  if (openedWsPaths.primaryWsPath == null) {
-    const existing = getPrimaryWsPath(location);
-    if (existing) {
-      location = {
-        ...location,
-        pathname: encodeURI(`/ws/${wsName}`),
-      };
-    }
-  }
-
-  if (openedWsPaths.secondaryWsPath) {
-    const newSearch = new URLSearchParams(location.search);
-    newSearch.set('secondary', openedWsPaths.secondaryWsPath);
-
-    if (newSearch.toString() !== location.search) {
-      location = {
-        ...location,
-        search: newSearch.toString(),
-      };
-    }
-  }
-
-  if (openedWsPaths.secondaryWsPath == null) {
-    const newSearch = new URLSearchParams(location.search);
-    newSearch.delete('secondary');
-
-    if (newSearch.toString() !== location.search) {
-      location = {
-        ...location,
-        search: newSearch.toString(),
-      };
-    }
-  }
-
-  return location;
 }

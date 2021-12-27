@@ -1,6 +1,8 @@
-import { BaseError, removeMdExtension } from '@bangle.io/utils';
+import { BaseError, getLast, removeMdExtension } from '@bangle.io/utils';
 
-const getLast = (arr) => arr[arr.length - 1];
+export const NOTE_WS_PATH_EXTENSION = /.+\.md$/;
+
+export type MaybeWsPath = string | undefined;
 
 /**
  * Types of paths
@@ -8,8 +10,32 @@ const getLast = (arr) => arr[arr.length - 1];
  * wsPath - <wsName>:<filePath>
  * fsPath - /<wsName>/<filePath> - this is what is used internally by the fs module
  * locationPath - /ws/<wsName>/<filePath> - used in browser's location
- * localFilePath - a vanilla relative path like ./xys or ../sysd/sds.md
  */
+// TODO add test where wsPath has `//`
+export function resolvePath(wsPath: string) {
+  validateWsPath(wsPath);
+  // TODO currently this only works for fileWsPaths
+  validateFileWsPath(wsPath);
+  const [wsName, filePath] = splitWsPath(wsPath);
+  const filePathSplitted = filePath.split('/');
+  const fileName: string | undefined = getLast(filePathSplitted);
+  if (typeof fileName !== 'string') {
+    throw new Error('fileName undefined');
+  }
+  const dirPath = filePathSplitted
+    .slice(0, filePathSplitted.length - 1)
+    .filter(Boolean)
+    .join('/');
+  return {
+    wsPath,
+    wsName,
+    filePath, // wsName:filePath
+    dirPath, // wsName:dirPath/fileName
+    fileName,
+    fileNameWithoutExt: removeMdExtension(fileName),
+    locationPath: '/ws/' + wsName + '/' + filePath,
+  };
+}
 
 export class PathValidationError extends BaseError {}
 
@@ -31,8 +57,6 @@ export function validWsName(wsName: string) {
     );
   }
 }
-
-export const NOTE_WS_PATH_EXTENSION = /.+\.md$/;
 
 export function isWsPath(wsPath: string) {
   if (!wsPath || typeof wsPath !== 'string') {
@@ -151,32 +175,6 @@ export function fromFsPath(fsPath: string) {
   }
 
   return filePathToWsPath(_wsName, f.join('/'));
-}
-
-// TODO add test where wsPath has `//`
-export function resolvePath(wsPath: string) {
-  validateWsPath(wsPath);
-  // TODO currently this only works for fileWsPaths
-  validateFileWsPath(wsPath);
-  const [wsName, filePath] = splitWsPath(wsPath);
-  const filePathSplitted = filePath.split('/');
-  const fileName: string | undefined = getLast(filePathSplitted);
-  if (typeof fileName !== 'string') {
-    throw new Error('fileName undefined');
-  }
-  const dirPath = filePathSplitted
-    .slice(0, filePathSplitted.length - 1)
-    .filter(Boolean)
-    .join('/');
-  return {
-    wsPath,
-    wsName,
-    filePath, // wsName:filePath
-    dirPath, // wsName:dirPath/fileName
-    fileName,
-    fileNameWithoutExt: removeMdExtension(fileName),
-    locationPath: '/ws/' + wsName + '/' + filePath,
-  };
 }
 
 export function splitWsPath(wsPath: string): [string, string] {
