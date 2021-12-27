@@ -5,6 +5,8 @@ import { pageSlice, pageSliceKey } from '..';
 const lifeCycleMock = {
   addEventListener: jest.fn(),
   removeEventListener: jest.fn(),
+  removeUnsavedChanges: jest.fn(),
+  addUnsavedChanges: jest.fn(),
 };
 
 beforeEach(() => {
@@ -31,17 +33,23 @@ test('sets up', () => {
   expect(pageSliceKey.getSliceState(store.state)).toMatchInlineSnapshot(`
     Object {
       "blockReload": false,
-      "history": HistoryState {
-        "mainFields": Object {},
-        "opts": Object {},
+      "history": BrowserHistory {
+        "base": "",
+        "checkForUpdates": [Function],
+        "currentLoc": Object {
+          "pathname": "/",
+          "search": "",
+        },
+        "host": [Window],
+        "onChange": [Function],
       },
       "historyChangedCounter": 0,
       "lifeCycleState": Object {
         "current": undefined,
       },
       "location": Object {
-        "pathname": undefined,
-        "search": undefined,
+        "pathname": "/",
+        "search": "",
       },
       Symbol(lifecycle): Object {
         "addEventListener": [MockFunction] {
@@ -58,7 +66,21 @@ test('sets up', () => {
             },
           ],
         },
+        "addUnsavedChanges": [MockFunction],
         "removeEventListener": [MockFunction],
+        "removeUnsavedChanges": [MockFunction] {
+          "calls": Array [
+            Array [
+              Symbol(pending),
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
       },
     }
   `);

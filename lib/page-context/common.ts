@@ -1,6 +1,7 @@
 import { ApplicationStore, AppState, SliceKey } from '@bangle.io/create-store';
 
-import type { History, HistoryState } from './history';
+import { BaseHistory } from './history/base-history';
+import { Location } from './history/types';
 
 export const PAGE_BLOCK_RELOAD_ACTION_NAME = 'action::page-slice:BLOCK_RELOAD';
 
@@ -25,11 +26,8 @@ export type PageLifeCycleStates =
 
 export interface PageSliceStateType {
   blockReload: boolean;
-  history: HistoryState;
-  location: {
-    pathname: string | undefined;
-    search: string | undefined;
-  };
+  history: BaseHistory | undefined;
+  location: Location;
   historyChangedCounter: number;
   lifeCycleState: {
     current?: PageLifeCycleStates;
@@ -56,9 +54,6 @@ export type PageSliceAction =
       };
     }
   | {
-      name: 'action::page-slice:history-changed';
-    }
-  | {
       name: 'action::page-slice:history-on-invalid-path';
       value: {
         wsName: string;
@@ -68,22 +63,12 @@ export type PageSliceAction =
   | {
       name: 'action::page-slice:history-set-history';
       value: {
-        history: History;
+        history: BaseHistory;
       };
     }
   | {
-      name: 'action::page-slice:history-update-opened-ws-paths';
-      value: {
-        openedWsPathsArray: (string | null)[];
-        replace: boolean;
-        wsName: string;
-      };
-    }
-  | {
-      name: 'action::page-slice:history-go-to-path';
-      value: {
-        pathname: string;
-      };
+      name: 'action::page-slice:history-update-location';
+      value: { location: Location };
     };
 
 export const pageSliceKey = new SliceKey<PageSliceStateType, PageSliceAction>(
