@@ -1,32 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { Redirect, useHistory, useParams } from 'react-router-dom';
 
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { keybindingsHelper } from '@bangle.io/utils';
 import {
+  goToWorkspaceHome,
+  goToWsName,
+  goToWsNameNotFound,
+} from '@bangle.io/workspace-context';
+import {
   getWorkspaceInfo,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from '@bangle.io/workspaces';
 
-export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {
+export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   const [permissionDenied, updatePermissionDenied] = useState(false);
-  const history = useHistory();
-  const { wsName } = useParams();
+  const store = useBangleStoreContext();
 
   const onGranted = () => {
-    const previousLocation = history.location?.state?.previousLocation;
+    const previousLocation = undefined; //history.location?.state?.previousLocation;
+    // TODO previous
     if (previousLocation) {
-      history.replace(previousLocation);
+      // history.replace(previousLocation);
     } else {
-      history.replace({
-        pathname: '/ws/' + wsName,
-      });
+      goToWsName(wsName)(store.state);
     }
   };
+
   const requestFSPermission = async () => {
     let workspace;
     try {
@@ -36,7 +40,7 @@ export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {
         error instanceof WorkspaceError &&
         error.code === WORKSPACE_NOT_FOUND_ERROR
       ) {
-        onWorkspaceNotFound(wsName, history);
+        goToWsNameNotFound(wsName)(store.state);
       }
       throw error;
     }
@@ -59,14 +63,14 @@ export function WorkspaceNativefsAuthBlockade({ onWorkspaceNotFound }) {
     }
   };
 
+  useEffect(() => {
+    if (!wsName) {
+      goToWorkspaceHome()(store.state);
+    }
+  }, [store, wsName]);
+
   if (!wsName) {
-    return (
-      <Redirect
-        to={{
-          pathname: '/',
-        }}
-      />
-    );
+    return null;
   }
 
   return (

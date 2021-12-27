@@ -76,7 +76,7 @@ export function initializeBangleStore({
         log(action);
         const newState = store.state.applyAction(action);
         store.updateState(newState);
-        log('newState', newState);
+        log('newState', action, newState);
       },
       scheduler: (cb) => {
         const id = safeRequestIdleCallback(cb, {

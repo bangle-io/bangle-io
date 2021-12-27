@@ -199,7 +199,7 @@ test.describe.parallel('scroll', () => {
     await waitForEditorFocus(page, 0, { wsPath });
 
     // let editor flush out changes or it will block reload
-    await longSleep(300);
+    await longSleep(700);
 
     await page.reload({ waitUntil: 'networkidle' });
 
