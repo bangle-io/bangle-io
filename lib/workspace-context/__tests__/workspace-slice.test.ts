@@ -1,9 +1,12 @@
 import { AppState } from '@bangle.io/create-store';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
+import {
+  OpenedWsPaths,
+  wsNameToPathname,
+  wsPathToPathname,
+} from '@bangle.io/ws-path';
 
 import { workspaceSlice } from '..';
 import { workspaceSliceKey } from '../common';
-import { wsNameToPathname, wsPathToPathname } from '../helpers';
 import { JSON_SCHEMA_VERSION } from '../workspace-slice';
 import { createState, createStateWithWsName } from './test-utils';
 

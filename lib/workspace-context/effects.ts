@@ -74,14 +74,19 @@ export const validateLocationEffect: SideEffect = (store) => {
 // to derive fields like wsName.
 export const updateLocationEffect: SideEffect = () => {
   return {
-    update(store, prevState) {
+    update(store, prevState, sliceState) {
       const location = getPageLocation()(store.state);
-      if (location !== getPageLocation()(prevState)) {
-        updateLocation({
-          search: location?.search,
-          pathname: location?.pathname,
-        })(store.state, store.dispatch);
+      if (
+        location?.pathname === sliceState.locationPathname &&
+        location?.search === sliceState.locationSearchQuery
+      ) {
+        return;
       }
+
+      updateLocation({
+        search: location?.search,
+        pathname: location?.pathname,
+      })(store.state, store.dispatch);
     },
   };
 };

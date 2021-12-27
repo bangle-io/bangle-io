@@ -1,16 +1,14 @@
 import { createSelector } from 'reselect';
 
 import {
-  getWsNameFromPathname,
   isValidNoteWsPath,
   OpenedWsPaths,
+  pathnameToWsName,
+  pathnameToWsPath,
+  searchToWsPath,
 } from '@bangle.io/ws-path';
 
-import {
-  getPrimaryWsPath,
-  getSecondaryWsPath,
-  validateOpenedWsPaths,
-} from './helpers';
+import { validateOpenedWsPaths } from './helpers';
 
 export type WorkspaceStateKeys = keyof ConstructorParameters<
   typeof WorkspaceSliceState
@@ -72,16 +70,16 @@ const selectNoteWsPaths = createSelector(
 );
 
 export const selectWsName = createSelector(selectPathname, (pathName) => {
-  const wsName = getWsNameFromPathname(pathName);
+  const wsName = pathnameToWsName(pathName);
   return wsName;
 });
 
 const selectOpenedWsPaths = createSelector(
   [selectPathname, selectSearchQuery],
-  (pathName, searchQuery) => {
+  (pathName, searchQuery = '') => {
     const openedWsPaths = OpenedWsPaths.createFromArray([
-      getPrimaryWsPath(pathName),
-      getSecondaryWsPath(searchQuery),
+      pathnameToWsPath(pathName),
+      searchToWsPath(searchQuery),
     ]);
 
     if (validateOpenedWsPaths(openedWsPaths).valid) {

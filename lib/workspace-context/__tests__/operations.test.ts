@@ -3,6 +3,7 @@ import {
   NATIVE_BROWSER_PERMISSION_ERROR,
 } from '@bangle.io/baby-fs';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { historyUpdateOpenedWsPaths } from '@bangle.io/page-context';
 import { sleep } from '@bangle.io/utils';
 import {
   FileOps,
@@ -10,9 +11,12 @@ import {
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from '@bangle.io/workspaces';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
+import {
+  OpenedWsPaths,
+  wsNameToPathname,
+  wsPathToPathname,
+} from '@bangle.io/ws-path';
 
-import { wsNameToPathname, wsPathToPathname } from '../helpers';
 import {
   checkFileExists,
   createNote,
@@ -32,7 +36,7 @@ import {
   createStore,
   getActionNamesDispatched,
   getActionsDispatched,
-  noDispatchStore,
+  noSideEffectsStore,
 } from './test-utils';
 
 jest.mock('@bangle.io/workspaces', () => {
@@ -47,6 +51,14 @@ jest.mock('@bangle.io/workspaces', () => {
       listAllFiles: jest.fn(),
       checkFileExists: jest.fn(),
     },
+  };
+});
+
+jest.mock('@bangle.io/page-context', () => {
+  const ops = jest.requireActual('@bangle.io/page-context');
+  return {
+    ...ops,
+    historyUpdateOpenedWsPaths: jest.fn(),
   };
 });
 
@@ -65,6 +77,10 @@ let saveDocMock = FileOps.saveDoc as jest.MockedFunction<
 let deleteFileMock = FileOps.deleteFile as jest.MockedFunction<
   typeof FileOps.deleteFile
 >;
+let historyUpdateOpenedWsPathsMock =
+  historyUpdateOpenedWsPaths as jest.MockedFunction<
+    typeof historyUpdateOpenedWsPaths
+  >;
 
 beforeEach(() => {
   listAllFilesMock.mockResolvedValue([]);
@@ -72,6 +88,7 @@ beforeEach(() => {
   checkFileExistsMock.mockResolvedValue(false);
   saveDocMock.mockResolvedValue(undefined);
   deleteFileMock.mockResolvedValue(undefined);
+  historyUpdateOpenedWsPathsMock.mockImplementation(() => () => {});
 });
 
 test('updateLocation', () => {
@@ -94,12 +111,12 @@ test('isCurrentWsName', () => {
   expect(isCurrentWsName('not')(state)).toBe(false);
 });
 
-describe('updateWsPaths', () => {
-  test('updateWsPaths 1', async () => {
+describe('refreshWsPaths', () => {
+  test('refreshWsPaths 1', async () => {
     listAllFilesMock.mockImplementation(async () => {
       return ['my-ws:one.md'];
     });
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsNameToPathname('my-ws'),
     });
 
@@ -126,7 +143,7 @@ describe('updateWsPaths', () => {
       return ['my-ws:one.md'];
     });
 
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: '',
     });
 
@@ -140,7 +157,7 @@ describe('updateWsPaths', () => {
 
   test('handles error', async () => {
     listAllFilesMock.mockRejectedValue(new BaseFileSystemError('test-error'));
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsNameToPathname('my-ws'),
     });
 
@@ -166,7 +183,7 @@ describe('updateWsPaths', () => {
     listAllFilesMock.mockRejectedValue(
       new BaseFileSystemError('test-error', NATIVE_BROWSER_PERMISSION_ERROR),
     );
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsNameToPathname('my-ws'),
     });
 
@@ -203,7 +220,7 @@ describe('updateWsPaths', () => {
     listAllFilesMock.mockRejectedValue(
       new WorkspaceError('test-error', WORKSPACE_NOT_FOUND_ERROR),
     );
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsNameToPathname('my-ws'),
     });
 
@@ -253,18 +270,18 @@ test('getFileOps', async () => {
 
 describe('updateOpenedWsPaths', () => {
   test('no dispatch if wsName is undefined', () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store } = noSideEffectsStore({
       locationPathname: '',
     });
 
     const res = updateOpenedWsPaths((r) => r)(store.state, store.dispatch);
 
     expect(res).toBe(false);
-    expect(dispatchSpy).toBeCalledTimes(0);
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
 
   test('works when provided with openedWsPaths', () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsNameToPathname('my-ws'),
     });
 
@@ -273,20 +290,21 @@ describe('updateOpenedWsPaths', () => {
     )(store.state, store.dispatch);
 
     expect(res).toBe(true);
-    expect(dispatchSpy).toBeCalledTimes(1);
-    expect(dispatchSpy).nthCalledWith(1, {
-      id: expect.any(String),
-      name: 'action::page-slice:history-update-opened-ws-paths',
-      value: {
-        openedWsPathsArray: ['my-ws:one.md', null],
-        replace: false,
-        wsName: 'my-ws',
-      },
-    });
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
+    expect(
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
+    ).toEqual(['my-ws:one.md', null]);
+
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      { replace: false },
+    );
   });
 
   test('respects replace param', () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store } = noSideEffectsStore({
       locationPathname: wsNameToPathname('my-ws'),
     });
 
@@ -298,20 +316,17 @@ describe('updateOpenedWsPaths', () => {
     )(store.state, store.dispatch);
 
     expect(res).toBe(true);
-    expect(dispatchSpy).toBeCalledTimes(1);
-    expect(dispatchSpy).nthCalledWith(1, {
-      id: expect.any(String),
-      name: 'action::page-slice:history-update-opened-ws-paths',
-      value: {
-        openedWsPathsArray: ['my-ws:one.md', null],
-        replace: true,
-        wsName: 'my-ws',
-      },
-    });
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      { replace: true },
+    );
   });
 
   test('works when provided with openedWsPaths as a function', () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -327,20 +342,20 @@ describe('updateOpenedWsPaths', () => {
     ]);
 
     expect(res).toBe(true);
-    expect(dispatchSpy).toBeCalledTimes(1);
-    expect(dispatchSpy).nthCalledWith(1, {
-      id: expect.any(String),
-      name: 'action::page-slice:history-update-opened-ws-paths',
-      value: {
-        openedWsPathsArray: ['my-ws:two.md', null],
-        replace: false,
-        wsName: 'my-ws',
-      },
-    });
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
+    expect(
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
+    ).toEqual(['my-ws:two.md', null]);
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      { replace: false },
+    );
   });
 
   test('does not attempt to fix existing (in the slice state) broken paths', () => {
-    const { store, dispatchSpy } = noDispatchStore({
+    const { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: '/ws/my-ws/test-notemd',
     });
     const res = updateOpenedWsPaths((r) => {
@@ -353,7 +368,7 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('handles invalid path in secondary', () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -381,7 +396,7 @@ describe('updateOpenedWsPaths', () => {
 
 describe('renameNote', () => {
   test('returns false when wsName is not defined', () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: '',
     });
 
@@ -396,7 +411,7 @@ describe('renameNote', () => {
   });
 
   test('works when the file to be renamed is opened', async () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -416,33 +431,27 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
 
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(
-      getActionsDispatched(
-        dispatchSpy,
-        'action::page-slice:history-update-opened-ws-paths',
-      ),
-    ).toEqual([
-      {
-        id: expect.any(String),
-        name: 'action::page-slice:history-update-opened-ws-paths',
-        value: {
-          openedWsPathsArray: ['my-ws:new-test-note.md', null],
-          replace: true,
-          wsName: 'my-ws',
-        },
-      },
-    ]);
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
+    ).toEqual(['my-ws:new-test-note.md', null]);
+
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      { replace: true },
+    );
   });
 
   test('works when the file to be renamed is opened in secondary', async () => {
     const newSearch = new URLSearchParams('');
     newSearch.set('secondary', 'my-ws:test-note.md');
 
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store } = noSideEffectsStore({
       locationPathname: wsNameToPathname('my-ws'),
       locationSearchQuery: newSearch.toString(),
     });
@@ -462,26 +471,21 @@ describe('renameNote', () => {
       'my-ws:new-test-note.md',
     );
 
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(
-      getActionsDispatched(
-        dispatchSpy,
-        'action::page-slice:history-update-opened-ws-paths',
-      ),
-    ).toEqual([
-      {
-        id: expect.any(String),
-        name: 'action::page-slice:history-update-opened-ws-paths',
-        value: {
-          openedWsPathsArray: [null, 'my-ws:new-test-note.md'],
-          replace: true,
-          wsName: 'my-ws',
-        },
-      },
-    ]);
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
+    ).toEqual([null, 'my-ws:new-test-note.md']);
+
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      { replace: true },
+    );
   });
 
   test('works when the file to be renamed is not opened', async () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:my-other-file.md'),
     });
 
@@ -503,10 +507,11 @@ describe('renameNote', () => {
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
       'action::workspace-context:update-ws-paths',
     ]);
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
 
   test('renaming the same file', async () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -528,13 +533,14 @@ describe('renameNote', () => {
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
       'action::workspace-context:update-ws-paths',
     ]);
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
 
-  test('renaming the when primary and secondary are same', async () => {
+  test('renaming  when primary and secondary are same', async () => {
     const newSearch = new URLSearchParams('');
     newSearch.set('secondary', 'my-ws:test-note.md');
 
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
       locationSearchQuery: newSearch,
     });
@@ -555,33 +561,23 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
 
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(
-      getActionsDispatched(
-        dispatchSpy,
-        'action::page-slice:history-update-opened-ws-paths',
-      ),
-    ).toEqual([
-      {
-        id: expect.any(String),
-        name: 'action::page-slice:history-update-opened-ws-paths',
-        value: {
-          openedWsPathsArray: [
-            'my-ws:new-test-note.md',
-            'my-ws:new-test-note.md',
-          ],
-          replace: true,
-          wsName: 'my-ws',
-        },
-      },
-    ]);
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
+    ).toEqual(['my-ws:new-test-note.md', 'my-ws:new-test-note.md']);
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      { replace: true },
+    );
   });
 
   test('throws error when renaming a help doc', () => {
-    let { store } = noDispatchStore({
+    let { store } = noSideEffectsStore({
       locationPathname: wsNameToPathname(HELP_FS_WORKSPACE_NAME),
     });
 
@@ -592,6 +588,8 @@ describe('renameNote', () => {
         store,
       ),
     ).toThrowErrorMatchingInlineSnapshot(`"Cannot rename a help document"`);
+
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
 });
 
@@ -601,7 +599,7 @@ describe('getNote', () => {
     (FileOps.getDoc as any).mockResolvedValue(result);
     const extensionRegistry: ExtensionRegistry = {} as any;
     const wsPath: string = 'my-ws:new-test-note.md';
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsNameToPathname('my-ws'),
     });
 
@@ -618,7 +616,7 @@ describe('getNote', () => {
     (FileOps.getDoc as any).mockResolvedValue(result);
     const extensionRegistry: ExtensionRegistry = {} as any;
     const wsPath: string = 'my-ws:new-test-note.md';
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: '',
     });
 
@@ -639,7 +637,7 @@ describe('createNote', () => {
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -662,9 +660,10 @@ describe('createNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
+
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
   });
 
   test('works when file exists', async () => {
@@ -675,7 +674,7 @@ describe('createNote', () => {
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -692,9 +691,9 @@ describe('createNote', () => {
     expect(saveDocMock).toBeCalledTimes(0);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
   });
 
   test('does not create when no workspace', async () => {
@@ -705,7 +704,7 @@ describe('createNote', () => {
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: '',
     });
 
@@ -727,7 +726,7 @@ describe('createNote', () => {
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -751,7 +750,7 @@ describe('createNote', () => {
 
 describe('deleteNote', () => {
   test('deletes when the file is opened', async () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -762,30 +761,26 @@ describe('deleteNote', () => {
     expect(deleteFileMock).nthCalledWith(1, 'my-ws:test-note.md');
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-update-opened-ws-paths',
       'action::workspace-context:update-ws-paths',
     ]);
 
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(
-      getActionsDispatched(
-        dispatchSpy,
-        'action::page-slice:history-update-opened-ws-paths',
-      ),
-    ).toEqual([
-      {
-        id: expect.any(String),
-        name: 'action::page-slice:history-update-opened-ws-paths',
-        value: {
-          openedWsPathsArray: [null, null],
-          replace: true,
-          wsName: 'my-ws',
-        },
-      },
-    ]);
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
+    ).toEqual([null, null]);
+
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      { replace: true },
+    );
+
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
   });
 
   test('deletes when the file is not opened', async () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
     });
 
@@ -801,7 +796,7 @@ describe('deleteNote', () => {
   });
 
   test('deletes multiple files', async () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
     });
 
@@ -833,7 +828,7 @@ describe('pushWsPath', () => {
   });
 
   test('works with new tab', () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
     });
     pushWsPath('my-ws:test-note.md', true)(store.state, store.dispatch);
@@ -842,17 +837,27 @@ describe('pushWsPath', () => {
 
     expect(window.open).toBeCalledTimes(1);
     expect(window.open).nthCalledWith(1, '/ws/my-ws/test-note.md');
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
 
   test('works when tab is false', () => {
-    let { store, dispatchSpy } = noDispatchStore({
+    let { store, dispatchSpy } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
     });
     pushWsPath('my-ws:test-note.md')(store.state, store.dispatch);
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-update-opened-ws-paths',
-    ]);
+    expect(getActionNamesDispatched(dispatchSpy)).toEqual([]);
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
+    expect(
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
+    ).toEqual(['my-ws:test-note.md', null]);
+
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      { replace: false },
+    );
 
     expect(window.open).toBeCalledTimes(0);
   });
@@ -861,7 +866,7 @@ describe('pushWsPath', () => {
 describe('checkFileExists', () => {
   test('works', async () => {
     checkFileExistsMock.mockResolvedValue(true);
-    let { store, dispatchSpy } = noDispatchStore({});
+    let { store, dispatchSpy } = noSideEffectsStore({});
 
     const result = await checkFileExists('my-ws:test-note.md')(
       store.state,
@@ -875,7 +880,8 @@ describe('checkFileExists', () => {
 
   test('false when file does not exists', async () => {
     checkFileExistsMock.mockResolvedValue(false);
-    let { store, dispatchSpy } = noDispatchStore({});
+    let { store, dispatchSpy } = noSideEffectsStore({});
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
 
     const result = await checkFileExists('my-ws:test-note.md')(
       store.state,

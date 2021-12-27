@@ -1,42 +1,9 @@
 import {
-  filePathToWsPath,
-  getWsNameFromPathname,
   isValidNoteWsPath,
   OpenedWsPaths,
-  resolvePath,
+  pathnameToWsPath,
+  searchToWsPath,
 } from '@bangle.io/ws-path';
-
-export function getPrimaryFilePath(pathname?: string) {
-  if (pathname) {
-    return pathname.split('/').slice(3).join('/');
-  }
-  return undefined;
-}
-
-export function getPrimaryWsPath(pathname?: string) {
-  const wsName = getWsNameFromPathname(pathname);
-  const filePath = getPrimaryFilePath(pathname);
-  if (!wsName || !filePath) {
-    return undefined;
-  }
-  return filePathToWsPath(wsName, filePath);
-}
-
-export function getSecondaryWsPath(search?: string) {
-  const searchParams = new URLSearchParams(search);
-  const secondaryWsPath = searchParams.get('secondary') ?? undefined;
-
-  return secondaryWsPath;
-}
-
-export function wsPathToPathname(wsPath: string) {
-  const { wsName, filePath } = resolvePath(wsPath);
-  return encodeURI(`/ws/${wsName}/${filePath}`);
-}
-
-export function wsNameToPathname(wsName: string) {
-  return encodeURI(`/ws/${wsName}`);
-}
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {
@@ -73,7 +40,7 @@ export const findInvalidLocation = (
 ) => {
   // primary
   if (locationPathname && locationPathname.length > 0) {
-    const primaryWsPath = getPrimaryWsPath(locationPathname);
+    const primaryWsPath = pathnameToWsPath(locationPathname);
     if (primaryWsPath && !isValidNoteWsPath(primaryWsPath)) {
       return primaryWsPath;
     }
@@ -81,7 +48,7 @@ export const findInvalidLocation = (
 
   // secondary
   if (locationSearchQuery) {
-    const secondaryWsPath = getSecondaryWsPath(locationSearchQuery);
+    const secondaryWsPath = searchToWsPath(locationSearchQuery);
     if (secondaryWsPath && !isValidNoteWsPath(secondaryWsPath)) {
       return secondaryWsPath;
     }

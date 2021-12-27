@@ -1,5 +1,7 @@
-import { getLastWorkspaceUsed } from '..';
-import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
+import {
+  getLastWorkspaceUsed,
+  saveLastWorkspaceUsed,
+} from '../last-seen-ws-name';
 
 let originalLocalStorage;
 

@@ -4,14 +4,25 @@ import {
   initialBangleStore,
   useSliceState,
 } from '@bangle.io/app-state-context';
+import { getPageLocation } from '@bangle.io/page-context';
 import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
+import { wsPathToPathname, wsPathToSearch } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
-import { wsPathToPathname } from '../helpers';
 import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
 import { workspaceSliceInitialState } from '../workspace-slice';
 import { createStore } from './test-utils';
 
+jest.mock('@bangle.io/page-context', () => {
+  const ops = jest.requireActual('@bangle.io/page-context');
+  return {
+    ...ops,
+    getPageLocation: jest.fn(),
+  };
+});
+const getPageLocationMock = getPageLocation as jest.MockedFunction<
+  typeof getPageLocation
+>;
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
   return {
@@ -55,8 +66,7 @@ test('returns wsPaths correctly', async () => {
 
   renderHook(() => useRecentlyUsedWsPaths());
 
-  expect(dispatchSpy).toBeCalledTimes(1);
-  expect(dispatchSpy).nthCalledWith(1, {
+  expect(dispatchSpy).toBeCalledWith({
     id: expect.any(String),
     name: 'action::workspace-context:update-recently-used-ws-paths',
     value: {
@@ -86,8 +96,7 @@ test('removes non existent wsPaths', () => {
 
   renderHook(() => useRecentlyUsedWsPaths());
 
-  expect(dispatchSpy).toBeCalledTimes(1);
-  expect(dispatchSpy).nthCalledWith(1, {
+  expect(dispatchSpy).toBeCalledWith({
     id: expect.any(String),
     name: 'action::workspace-context:update-recently-used-ws-paths',
     value: {
@@ -122,6 +131,9 @@ test('works when no wsName', async () => {
 });
 
 test('updates the newly opened ws path only', async () => {
+  getPageLocationMock.mockImplementation(() => () => ({
+    pathname: wsPathToPathname('test-ws:note1.md'),
+  }));
   let records = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
@@ -145,13 +157,12 @@ test('updates the newly opened ws path only', async () => {
   expect(updateRecord).toHaveBeenCalledTimes(1);
   expect(updateRecord).nthCalledWith(1, 'test-ws:note1.md');
 
-  store.dispatch({
-    name: 'action::workspace-context:update-location',
-    value: {
-      locationPathname: wsPathToPathname('test-ws:note1.md'),
-      locationSearchQuery: 'secondary=test-ws%3Anote2.md',
-    },
-  });
+  getPageLocationMock.mockImplementation(() => () => ({
+    pathname: wsPathToPathname('test-ws:note1.md'),
+    search: wsPathToSearch('test-ws:note2.md', ''),
+  }));
+  // to trigger the effect that sync location
+  store.dispatch({ name: 'anyaction' } as any);
 
   await sleep(0);
 

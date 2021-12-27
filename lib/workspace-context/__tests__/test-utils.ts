@@ -1,6 +1,6 @@
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { wsNameToPathname } from '@bangle.io/ws-path';
 
-import { wsNameToPathname } from '../helpers';
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
 import { WorkspaceStateKeys } from '../workspace-slice-state';
 
@@ -32,12 +32,21 @@ export const noDispatchStore = (data?: Parameters<typeof createState>[0]) => {
   return createStore(data, jest.fn());
 };
 
+// A store where no actions are actually dispatched
+// useful for testing operations
+export const noSideEffectsStore = (
+  data?: Parameters<typeof createState>[0],
+) => {
+  return createStore(data, undefined, true);
+};
+
 export const createStore = (
   data?: Parameters<typeof createState>[0],
   scheduler = (cb) => {
     cb();
     return () => {};
   },
+  disableSideEffects = false,
 ) => {
   const store = ApplicationStore.create({
     scheduler: scheduler,
@@ -45,6 +54,7 @@ export const createStore = (
     state: data
       ? createState(data)
       : AppState.create({ slices: [workspaceSlice()] }),
+    disableSideEffects,
   });
 
   const dispatchSpy = jest.spyOn(store, 'dispatch');
