@@ -16,7 +16,7 @@ import {
   bangleStateSlices,
 } from './bangle-slices';
 
-const LOG = false;
+const LOG = true;
 let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};
 
 const persistKey = 'bangle-store-0.124';
