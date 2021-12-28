@@ -90,6 +90,7 @@ export function initializeBangleStore({
   };
 
   let store = makeStore();
+  // using the following for debugging and e2e tests
   (window as any).appStore = store;
 
   return store;

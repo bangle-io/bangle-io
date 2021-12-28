@@ -166,11 +166,12 @@ export function useBroadcastChannel<T>(
         } else {
           infiniteRecurseRef.current = 0;
         }
+
         if (infiniteRecurseRef.current < INFINITE_RECURSION_SEND_COUNT) {
           bChannel?.postMessage(data);
           lastSentRef.current = Date.now();
         } else {
-          throw new Error('Avoiding possible infinite recursion');
+          console.error(new Error('Avoiding possible infinite recursion'));
         }
       }
     },

@@ -1,0 +1,54 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:1234",
+      "localStorage": [
+        {
+          "name": "useLocalStorage/1/entry-dau-2",
+          "value": "{\"payload\":0,\"time\":1640673046797}"
+        },
+        {
+          "name": "useLocalStorage/1/WorkspacePaletteUIComponent/1",
+          "value": "{\"payload\":{},\"time\":1640673052930}"
+        },
+        {
+          "name": "useLocalStorage/1/RenderTree6261:bangle-help",
+          "value": "{\"payload\":[],\"time\":1640673050489}"
+        },
+        {
+          "name": "useLocalStorage/1/app/changelog-last-seen1",
+          "value": "{\"payload\":\"\",\"time\":1640673046801}"
+        },
+        {
+          "name": "workspace-context/last-workspace-used",
+          "value": "test-123"
+        },
+        {
+          "name": "useLocalStorage/1/utils/useRecencyMonitor-1/WorkspaceContextProvider/useRecentlyUsedWsPaths/1/bangle-help",
+          "value": "{\"payload\":[{\"key\":\"bangle-help:getting started.md\",\"timestamps\":[1640673046938]}],\"time\":1640673046939}"
+        },
+        {
+          "name": "useLocalStorage/1/utils/useRecencyMonitor-1/WorkspaceContextProvider/useRecentlyUsedWsPaths/1/",
+          "value": "{\"payload\":[],\"time\":1640673046799}"
+        },
+        {
+          "name": "useLocalStorage/1/utils/useRecencyMonitor-1/WorkspaceContextProvider/useRecentlyUsedWsPaths/1/test-123",
+          "value": "{\"payload\":[{\"key\":\"test-123:folder/slimy-process.md\",\"timestamps\":[1640673100704]},{\"key\":\"test-123:ordinary-group.md\",\"timestamps\":[1640673095220]},{\"key\":\"test-123:outstanding-arrival.md\",\"timestamps\":[1640673085837]}],\"time\":1640673100704}"
+        },
+        {
+          "name": "useLocalStorage/1/sw-show-offline",
+          "value": "{\"payload\":true,\"time\":1640673047100}"
+        },
+        {
+          "name": "useLocalStorage/1/ActionPaletteUIComponent/1",
+          "value": "{\"payload\":{\"action::bangle-io-core-actions:NEW_NOTE_ACTION\":1640673096582,\"action::bangle-io-core-actions:NEW_WORKSPACE_ACTION\":1640673055546},\"time\":1640673096582}"
+        },
+        {
+          "name": "useLocalStorage/1/entry-lao-2",
+          "value": "{\"payload\":1640673046790,\"time\":1640673046797}"
+        }
+      ]
+    }
+  ]
+}

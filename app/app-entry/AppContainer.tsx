@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 import { Activitybar } from '@bangle.io/activitybar';
@@ -9,6 +9,7 @@ import type { OnInvalidPathType } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { Dhancha, MultiColumnMainContent } from '@bangle.io/ui-dhancha';
 import {
+  createNote,
   getLastWorkspaceUsed,
   useWorkspaceContext,
   wsNameToPathname,
@@ -28,9 +29,11 @@ import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
 import { WorkspaceNotFound } from './pages/WorkspaceNotFound';
 
+import { markdownParser } from '@bangle.io/markdown';
+
 export function AppContainer() {
-  const { widescreen } = useUIManagerContext();
-  const { wsName, openedWsPaths } = useWorkspaceContext();
+  const { sidebar, dispatch, noteSidebar, widescreen } = useUIManagerContext();
+  const { wsName, openedWsPaths, bangleStore } = useWorkspaceContext();
   const extensionRegistry = useExtensionRegistryContext();
   useSetDocumentTitle();
 
@@ -38,7 +41,6 @@ export function AppContainer() {
   const noteSidebarWidgets = extensionRegistry.getNoteSidebarWidgets();
   const actionKeybindings = extensionRegistry.getActionKeybindingMapping();
 
-  const { sidebar, dispatch, noteSidebar } = useUIManagerContext();
   const currentSidebar = sidebar
     ? sidebars.find((s) => s.name === sidebar)
     : null;
@@ -90,6 +92,22 @@ export function AppContainer() {
 
     return <MultiColumnMainContent>{result}</MultiColumnMainContent>;
   }, [openedWsPaths, widescreen]);
+
+  // for e2e
+  useEffect(() => {
+    (window as any).__testCreateNote = (newWsPath, text) => {
+      const doc = markdownParser(
+        text,
+        extensionRegistry.specRegistry,
+        extensionRegistry.markdownItPlugins,
+      );
+      return createNote(extensionRegistry, newWsPath, { open: false, doc })(
+        bangleStore.state,
+        bangleStore.dispatch,
+        bangleStore,
+      );
+    };
+  }, [extensionRegistry, bangleStore]);
 
   return (
     <>
