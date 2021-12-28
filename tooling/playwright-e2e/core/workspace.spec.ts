@@ -144,4 +144,33 @@ test.describe.parallel('workspace', () => {
       `🙈 Invalid path`,
     );
   });
+
+  test('Opening an invalid file name in secondary', async ({
+    page,
+    baseURL,
+  }) => {
+    const wsName1 = await createWorkspace(page);
+
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 5000,
+        waitUntil: 'networkidle',
+      }),
+      page.goto(
+        baseURL +
+          `/ws/${wsName1}/wrong-ws-path?secondary=bangle-help%253Agetting%2520started`,
+        {
+          waitUntil: 'networkidle',
+        },
+      ),
+    ]);
+
+    expect(await page.url()).toBe(
+      `http://localhost:1234/ws-invalid-path/${wsName1}`,
+    );
+
+    expect(await page.$eval('body', (el) => el.innerText)).toContain(
+      `🙈 Invalid path`,
+    );
+  });
 });

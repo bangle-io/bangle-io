@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
-import { getPageLocation, goToPathname } from '@bangle.io/page-context';
+import { getPageLocation, goToLocation } from '@bangle.io/page-context';
 import { useDestroyRef } from '@bangle.io/utils';
-import { getWsNameFromPathname } from '@bangle.io/ws-path';
+import { pathnameToWsName, wsNameToPathname } from '@bangle.io/ws-path';
 
 import { HELP_FS_WORKSPACE_NAME, WorkspaceInfo, WorkspaceType } from './types';
 import {
@@ -17,7 +17,7 @@ export function useWorkspaces() {
   const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
   // We cannot use workspace-context for getting wsName
   // as it will cause cyclic dependency
-  const activeWsName = getWsNameFromPathname(
+  const activeWsName = pathnameToWsName(
     getPageLocation()(store.state)?.pathname,
   );
 
@@ -39,7 +39,7 @@ export function useWorkspaces() {
       if (opts.beforeHistoryChange) {
         await opts.beforeHistoryChange();
       }
-      goToPathname(`/ws/${wsName}`)(store.state, store.dispatch);
+      goToLocation(wsNameToPathname(wsName))(store.state);
     },
     [store],
   );
@@ -48,10 +48,7 @@ export function useWorkspaces() {
     async (targetWsName: string) => {
       await deleteWorkspace(targetWsName);
       if (targetWsName === activeWsName) {
-        goToPathname(`/ws/${HELP_FS_WORKSPACE_NAME}`)(
-          store.state,
-          store.dispatch,
-        );
+        goToLocation(wsNameToPathname(HELP_FS_WORKSPACE_NAME))(store.state);
       } else {
         refreshWorkspaces();
       }
@@ -65,12 +62,11 @@ export function useWorkspaces() {
 
   const switchWorkspaceCb = useCallback(
     async (wsName: string, newTab?: boolean) => {
-      const newPath = '/ws/' + wsName;
       if (newTab) {
-        window.open(newPath);
+        window.open(wsNameToPathname(wsName));
         return;
       }
-      goToPathname(newPath)(store.state, store.dispatch);
+      goToLocation(wsNameToPathname(wsName))(store.state);
     },
     [store],
   );

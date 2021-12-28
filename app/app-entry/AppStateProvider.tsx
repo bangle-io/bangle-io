@@ -1,5 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 import {
   BangleStoreChanged,
@@ -7,7 +6,6 @@ import {
 } from '@bangle.io/app-state-context';
 import { initializeBangleStore } from '@bangle.io/bangle-store';
 import { editorManagerSliceKey } from '@bangle.io/editor-manager-context';
-import { setHistoryObject } from '@bangle.io/page-context';
 import { safeRequestIdleCallback } from '@bangle.io/utils';
 
 const LOG = false;
@@ -23,12 +21,6 @@ export function AppStateProvider({
   bangleStore: ReturnType<typeof initializeBangleStore>;
   children: React.ReactNode;
 }) {
-  const history = useHistory();
-
-  useLayoutEffect(() => {
-    setHistoryObject(history)(bangleStore.state, bangleStore.dispatch);
-  }, [bangleStore, history]);
-
   useEffect(() => {
     // TODO: this setup should be done in app
     safeRequestIdleCallback(() => {

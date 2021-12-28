@@ -1,47 +1,35 @@
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
-
 import { pageSlice, pageSliceKey } from '..';
-
-const lifeCycleMock = {
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
-};
+import { createStore, lifeCycleMock } from './test-utils';
 
 beforeEach(() => {
   lifeCycleMock.addEventListener.mockImplementation(() => {});
   lifeCycleMock.removeEventListener.mockImplementation(() => {});
 });
 
-let createStore = () =>
-  ApplicationStore.create({
-    scheduler: (cb) => {
-      cb();
-      return () => {};
-    },
-    storeName: 'editor-store',
-    state: AppState.create({
-      opts: { lifecycle: lifeCycleMock },
-      slices: [pageSlice()],
-    }),
-  });
-
 test('sets up', () => {
-  const store = createStore();
+  const { store } = createStore();
 
   expect(pageSliceKey.getSliceState(store.state)).toMatchInlineSnapshot(`
     Object {
       "blockReload": false,
-      "history": HistoryState {
-        "mainFields": Object {},
-        "opts": Object {},
+      "history": BrowserHistory {
+        "base": "",
+        "checkForUpdates": [Function],
+        "currentLoc": Object {
+          "pathname": "/",
+          "search": "",
+        },
+        "historyCounter": 0,
+        "host": [Window],
+        "onChange": [Function],
       },
       "historyChangedCounter": 0,
       "lifeCycleState": Object {
         "current": undefined,
       },
       "location": Object {
-        "pathname": undefined,
-        "search": undefined,
+        "pathname": "/",
+        "search": "",
       },
       Symbol(lifecycle): Object {
         "addEventListener": [MockFunction] {
@@ -58,7 +46,21 @@ test('sets up', () => {
             },
           ],
         },
+        "addUnsavedChanges": [MockFunction],
         "removeEventListener": [MockFunction],
+        "removeUnsavedChanges": [MockFunction] {
+          "calls": Array [
+            Array [
+              Symbol(pending),
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
       },
     }
   `);
@@ -66,7 +68,7 @@ test('sets up', () => {
 
 describe('updating state', () => {
   test('upload lifecycle', () => {
-    const store = createStore();
+    const { store } = createStore();
     let state = store.state;
 
     state = state.applyAction({
@@ -91,7 +93,7 @@ describe('updating state', () => {
   });
 
   test('blocking reload', () => {
-    const store = createStore();
+    const { store } = createStore();
     let state = store.state;
 
     state = state.applyAction({

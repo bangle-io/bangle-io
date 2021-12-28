@@ -1,5 +1,4 @@
 export type { WorkspaceSliceAction } from './common';
-export { wsNameToPathname, wsPathToPathname } from './helpers';
 export { getLastWorkspaceUsed } from './last-seen-ws-name';
 export {
   checkFileExists,
@@ -7,6 +6,8 @@ export {
   deleteNote,
   getNote,
   goToWorkspaceHome,
+  goToWsName,
+  goToWsNameNotFound,
   pushWsPath,
   refreshWsPaths,
   renameNote,

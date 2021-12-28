@@ -24,6 +24,8 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
   private deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
 
+  private currentRunId = 0;
+
   static create<S = any, A extends BaseAction = any>({
     storeName,
     state,
@@ -32,13 +34,21 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       let newState = store.state.applyAction(action);
       store.updateState(newState);
     },
+    disableSideEffects = false,
   }: {
     state: AppState<S, A>;
     dispatchAction?: DispatchActionType<S, A>;
     scheduler?: SchedulerType;
     storeName: string;
+    disableSideEffects?: boolean;
   }) {
-    return new ApplicationStore(state, dispatchAction, storeName, scheduler);
+    return new ApplicationStore(
+      state,
+      dispatchAction,
+      storeName,
+      scheduler,
+      disableSideEffects,
+    );
   }
 
   constructor(
@@ -46,6 +56,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     private _dispatchAction: DispatchActionType<S, A>,
     public storeName: string,
     private scheduler?: SchedulerType,
+    private disableSideEffects = false,
   ) {
     this.setupSideEffects();
   }
@@ -58,7 +69,9 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     let prevState = this._state;
     this._state = state;
 
-    this.runSideEffects(prevState);
+    if (!this.disableSideEffects) {
+      this.runSideEffects(prevState, ++this.currentRunId);
+    }
   }
 
   get state(): AppState<S, A> {
@@ -80,12 +93,16 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     this.destroyed = true;
   }
 
-  private runSideEffects(prevState: AppState<S, A>) {
+  private runSideEffects(prevState: AppState<S, A>, runId: number) {
     if (prevState.config !== this._state.config) {
       this.setupSideEffects();
     }
 
     for (const { effect, key } of this.sideEffects) {
+      if (runId !== this.currentRunId) {
+        return;
+      }
+
       effect.update?.(
         this,
         prevState,
@@ -113,6 +130,10 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   }
 
   private setupSideEffects() {
+    if (this.disableSideEffects) {
+      return;
+    }
+
     this.destroySideEffects();
 
     this._state.getSlices().forEach((slice) => {

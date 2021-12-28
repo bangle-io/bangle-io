@@ -6,7 +6,7 @@ import { act, render } from '@testing-library/react';
 import * as idb from 'idb-keyval';
 import React from 'react';
 import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
-import { goToPathname } from '@bangle.io/page-context';
+import { goToLocation } from '@bangle.io/page-context';
 
 import { useWorkspaces } from '../hooks';
 import { helpFSWorkspaceInfo } from '../types';
@@ -14,7 +14,7 @@ import { helpFSWorkspaceInfo } from '../types';
 jest.mock('@bangle.io/page-context', () => {
   return {
     getPageLocation: jest.fn(() => () => {}),
-    goToPathname: jest.fn(() => () => {}),
+    goToLocation: jest.fn(() => () => {}),
   };
 });
 
@@ -101,8 +101,8 @@ describe('useWorkspaces', () => {
 
     await act(() => createWorkspace('kujo1'));
 
-    expect(goToPathname).toBeCalledTimes(1);
-    expect(goToPathname).nthCalledWith(1, '/ws/kujo1');
+    expect(goToLocation).toBeCalledTimes(1);
+    expect(goToLocation).nthCalledWith(1, '/ws/kujo1');
 
     // Note: for some reason MemoryRouter doesnt do urlParams
     // correctly
@@ -146,7 +146,7 @@ describe('useWorkspaces', () => {
 
     await act(() => switchWorkspace('switched-ws'));
 
-    expect(goToPathname).toBeCalledTimes(1);
-    expect(goToPathname).nthCalledWith(1, '/ws/switched-ws');
+    expect(goToLocation).toBeCalledTimes(1);
+    expect(goToLocation).nthCalledWith(1, '/ws/switched-ws');
   });
 });

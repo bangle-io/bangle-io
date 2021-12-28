@@ -3,8 +3,8 @@ import { sleep } from '@bangle.dev/utils';
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
 import type { UnPromisify } from '@bangle.io/shared-types';
 import { getWorkspaceInfo, WorkspaceType } from '@bangle.io/workspaces';
+import { wsNameToPathname } from '@bangle.io/ws-path';
 
-import { wsNameToPathname } from '../helpers';
 import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
 import {
   historyOnInvalidPath,
@@ -173,13 +173,15 @@ describe('refreshWsPathsEffect', () => {
 
 describe('validateLocationEffect', () => {
   test('works', async () => {
-    const { store } = createStore();
+    const { store } = createStore({
+      locationPathname: '/ws/my-ws',
+    });
 
     // send any action to triggerd the deferred hook
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws/my-path'),
+        locationPathname: '/ws/my-ws/fo',
         locationSearchQuery: '',
       },
     });
@@ -187,11 +189,7 @@ describe('validateLocationEffect', () => {
     await sleep(0);
 
     expect(historyOnInvalidPathMock).toBeCalledTimes(1);
-    expect(historyOnInvalidPathMock).nthCalledWith(
-      1,
-      'test-ws',
-      'test-ws:my-path',
-    );
+    expect(historyOnInvalidPathMock).nthCalledWith(1, 'my-ws', 'my-ws:fo');
   });
 });
 
@@ -233,6 +231,7 @@ describe('saveWorkspaceInfoEffect', () => {
         locationSearchQuery: '',
       },
     });
+    await sleep(0);
 
     expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
     expect(getWorkspaceInfo).nthCalledWith(1, 'test-ws');
@@ -279,6 +278,7 @@ describe('saveWorkspaceInfoEffect', () => {
         locationSearchQuery: '',
       },
     });
+    await sleep(0);
 
     expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
     store.destroy();
@@ -308,6 +308,7 @@ describe('saveWorkspaceInfoEffect', () => {
         locationSearchQuery: '',
       },
     });
+    await sleep(0);
 
     expect(getWorkspaceInfoMock).toBeCalledTimes(1);
     expect(getWorkspaceInfoMock).nthCalledWith(1, 'test-ws');
@@ -320,6 +321,7 @@ describe('saveWorkspaceInfoEffect', () => {
         locationSearchQuery: '',
       },
     });
+    await sleep(0);
 
     expect(getWorkspaceInfoMock).nthCalledWith(2, 'test-ws2');
 

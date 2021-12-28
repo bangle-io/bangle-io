@@ -2,6 +2,7 @@ import { SliceSideEffect } from '@bangle.io/create-store';
 
 import type { PageSliceAction, PageSliceStateType } from './common';
 import { getPageLifeCycleObject } from './common';
+import { BrowserHistory } from './history/browser-histroy';
 
 const pendingSymbol = Symbol('pending');
 
@@ -9,23 +10,26 @@ export const blockReloadEffect: SliceSideEffect<
   PageSliceStateType,
   PageSliceAction
 > = () => {
+  let prevValue: undefined | PageSliceStateType['blockReload'];
   return {
-    update(store, __, pageState, prevPageState) {
-      if (pageState === prevPageState) {
+    update(store, __, pageState) {
+      const blockReload = pageState?.blockReload;
+
+      if (blockReload === prevValue) {
         return;
       }
-      const blockReload = pageState?.blockReload;
-      const prevBlockReload = prevPageState?.blockReload;
 
-      if (blockReload && !prevBlockReload) {
+      if (blockReload) {
         getPageLifeCycleObject(store.state)?.addUnsavedChanges(pendingSymbol);
       }
 
-      if (!blockReload && prevBlockReload) {
+      if (!blockReload) {
         getPageLifeCycleObject(store.state)?.removeUnsavedChanges(
           pendingSymbol,
         );
       }
+
+      prevValue = blockReload;
     },
   };
 };
@@ -45,6 +49,7 @@ export const watchPageLifeCycleEffect: SliceSideEffect<
   };
 
   getPageLifeCycleObject(store.state)?.addEventListener('statechange', handler);
+
   return {
     destroy() {
       getPageLifeCycleObject(store.state)?.removeEventListener(
@@ -55,27 +60,30 @@ export const watchPageLifeCycleEffect: SliceSideEffect<
   };
 };
 
+// sets up history and watches for any changes in it
 export const watchHistoryEffect: SliceSideEffect<
   PageSliceStateType,
   PageSliceAction
-> = () => {
-  // TODO there is a possibility that we miss a location
-  // update before this is initialized
-  let unlisten: (() => void) | undefined;
+> = (store) => {
+  if (typeof window === 'undefined' || typeof window.history === 'undefined') {
+    return {};
+  }
+
+  const browserHistory = new BrowserHistory('', (location) => {
+    store.dispatch({
+      name: 'action::page-slice:history-update-location',
+      value: { location },
+    });
+  });
+
+  store.dispatch({
+    name: 'action::page-slice:history-set-history',
+    value: { history: browserHistory },
+  });
 
   return {
     destroy() {
-      unlisten?.();
-    },
-    update(store, __, sliceState, prevSliceState) {
-      const history = sliceState.history.history;
-      if (history && history !== prevSliceState.history.history) {
-        unlisten = history.listen(() => {
-          store.dispatch({
-            name: 'action::page-slice:history-changed',
-          });
-        });
-      }
+      browserHistory.destroy();
     },
   };
 };

@@ -1,19 +1,4 @@
-import { getWsName, OpenedWsPaths } from '../history';
-
-const createLocationObject = ({ pathname = '' }) => {
-  return {
-    hash: '',
-    pathname: pathname,
-    search: '',
-    key: '',
-    state: '',
-  };
-};
-
-test('getWsName, works 1', () => {
-  const result = getWsName(createLocationObject({ pathname: '/ws/mojo' }));
-  expect(result).toBe('mojo');
-});
+import { OpenedWsPaths } from '../history';
 
 describe('OpenedWsPaths', () => {
   test('works', () => {

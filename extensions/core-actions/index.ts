@@ -103,11 +103,6 @@ const extension = Extension.create({
         hidden: true,
       },
       {
-        name: 'action::page-slice:history-update-opened-ws-paths',
-        title: 'Update history to reflect opened ws paths',
-        hidden: true,
-      },
-      {
         name: 'action::page-slice:history-on-invalid-path',
         title: 'Action when there is an invalid path',
         hidden: true,

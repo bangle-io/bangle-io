@@ -1,6 +1,7 @@
 import { BangleEditor } from '@bangle.dev/core';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import { AppState, savePreviousValue } from '@bangle.io/create-store';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/page-context';
 import { debounceFn, trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
@@ -54,10 +55,13 @@ export const focusEditorEffect: SideEffect = (store) => {
       : 0;
 
   let mounted = Date.now();
+
+  let getPrev = savePreviousValue<AppState>();
   return {
-    update(store, prevState) {
-      // Only continue if an editor has been created or destroyed
-      if (!didSomeEditorChange(prevState)(store.state)) {
+    update(store) {
+      const prevState = getPrev(store.state);
+      // // Only continue if an editor has been created or destroyed
+      if (prevState && !didSomeEditorChange(prevState)(store.state)) {
         return;
       }
 
@@ -65,7 +69,7 @@ export const focusEditorEffect: SideEffect = (store) => {
 
       for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
         const currentEditor = getEditor(i)(store.state);
-        const prevEditor = getEditor(i)(prevState);
+        const prevEditor = prevState && getEditor(i)(prevState);
 
         const isNewEditor =
           currentEditor &&

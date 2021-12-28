@@ -1,4 +1,8 @@
-import { ApplicationStore } from '@bangle.io/create-store';
+import {
+  ApplicationStore,
+  AppState,
+  savePreviousValue,
+} from '@bangle.io/create-store';
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
 import { getWorkspaceInfo } from '@bangle.io/workspaces';
 
@@ -74,14 +78,19 @@ export const validateLocationEffect: SideEffect = (store) => {
 // to derive fields like wsName.
 export const updateLocationEffect: SideEffect = () => {
   return {
-    update(store, prevState) {
+    update(store, prevState, sliceState) {
       const location = getPageLocation()(store.state);
-      if (location !== getPageLocation()(prevState)) {
-        updateLocation({
-          search: location?.search,
-          pathname: location?.pathname,
-        })(store.state, store.dispatch);
+      if (
+        location?.pathname === sliceState.locationPathname &&
+        location?.search === sliceState.locationSearchQuery
+      ) {
+        return;
       }
+
+      updateLocation({
+        search: location?.search,
+        pathname: location?.pathname,
+      })(store.state, store.dispatch);
     },
   };
 };
@@ -89,29 +98,23 @@ export const updateLocationEffect: SideEffect = () => {
 // Persist workspaceInfo in the history to
 // prevents release of the native browser FS permission
 export const saveWorkspaceInfoEffect: SideEffect = () => {
-  let destroyed = false;
   let pendingReqFor: string | undefined;
 
   return {
-    destroy() {
-      destroyed = true;
-    },
+    deferredUpdate(store, abortSignal) {
+      const sliceState = workspaceSliceKey.getSliceState(store.state);
 
-    update(store, __, sliceState, prevSliceState) {
-      if (sliceState.wsName && sliceState.wsName !== prevSliceState.wsName) {
-        if (pendingReqFor === sliceState.wsName) {
-          return;
-        }
+      if (pendingReqFor === sliceState?.wsName) {
+        return;
+      }
 
+      if (sliceState?.wsName) {
         pendingReqFor = sliceState.wsName;
 
         getWorkspaceInfo(pendingReqFor).then(
           (_workspaceInfo) => {
-            if (!destroyed && _workspaceInfo.name === pendingReqFor) {
-              saveToHistoryState('workspaceInfo', _workspaceInfo)(
-                store.state,
-                store.dispatch as ApplicationStore['dispatch'],
-              );
+            if (!abortSignal.aborted && _workspaceInfo.name === pendingReqFor) {
+              saveToHistoryState('workspaceInfo', _workspaceInfo)(store.state);
             }
           },
           (error) => {

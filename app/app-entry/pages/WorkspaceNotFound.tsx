@@ -7,7 +7,6 @@ import {
 } from '@bangle.io/constants';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 
