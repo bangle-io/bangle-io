@@ -60,7 +60,7 @@ export function getPageLocation() {
   };
 }
 
-export function getLocationEncoded() {
+export function getLocationTo() {
   return (state: AppState) => {
     const sliceState = pageSliceKey.getSliceState(state);
     if (sliceState?.location && sliceState?.history) {

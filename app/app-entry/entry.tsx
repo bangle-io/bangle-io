@@ -11,7 +11,7 @@ import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,
 } from '@bangle.io/extension-registry';
-import { getLocationEncoded, usePageContext } from '@bangle.io/page-context';
+import { getLocationTo, usePageContext } from '@bangle.io/page-context';
 import { initExtensionRegistry, polyfills } from '@bangle.io/shared';
 import { UIManager } from '@bangle.io/ui-context';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
@@ -42,13 +42,13 @@ let mountCount = 0;
 const useRouterHook: BaseLocationHook = () => {
   const { pageState, store } = usePageContext();
 
-  const location = getLocationEncoded()(store.state) || '';
+  const to = getLocationTo()(store.state) || '';
 
   const navigate = pageState?.history
     ? pageState.history.navigate.bind(pageState.history)
     : () => {};
 
-  return [location, navigate];
+  return [to, navigate];
 };
 
 export function Entry() {
