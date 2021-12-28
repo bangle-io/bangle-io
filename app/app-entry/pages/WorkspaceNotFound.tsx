@@ -10,16 +10,18 @@ import { CenteredBoxedPage } from '@bangle.io/ui-components';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 
-export function WorkspaceNotFound({}) {
+export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
   // TODO wsNamae can't be read here
   const { dispatchAction } = useActionContext();
+
+  wsName = decodeURIComponent(wsName || '');
 
   return (
     <CenteredBoxedPage
       title={
         <span className="font-normal">
-          <WorkspaceSpan wsName={''} emoji={'🕵️‍♀️'} />{' '}
-          <span className="pl-1">not found</span>
+          <WorkspaceSpan wsName={wsName || ''} emoji={'🕵️‍♀️'} />{' '}
+          <span className="pl-1"> not found</span>
         </span>
       }
       actions={

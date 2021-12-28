@@ -42,25 +42,6 @@ export type PageSliceAction =
       value: { current?: PageLifeCycleStates; previous?: PageLifeCycleStates };
     }
   | {
-      name: 'action::page-slice:history-auth-error';
-      value: {
-        wsName: string;
-      };
-    }
-  | {
-      name: 'action::page-slice:history-ws-not-found';
-      value: {
-        wsName: string;
-      };
-    }
-  | {
-      name: 'action::page-slice:history-on-invalid-path';
-      value: {
-        wsName: string;
-        invalidPath: string;
-      };
-    }
-  | {
       name: 'action::page-slice:history-set-history';
       value: {
         history: BaseHistory;

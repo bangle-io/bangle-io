@@ -21,6 +21,8 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   const [permissionDenied, updatePermissionDenied] = useState(false);
   const store = useBangleStoreContext();
 
+  wsName = decodeURIComponent(wsName || '');
+
   const onGranted = () => {
     const previousLocation = undefined; //history.location?.state?.previousLocation;
     // TODO previous

@@ -1,12 +1,15 @@
 import { Node } from '@bangle.dev/pm';
 
-import { BaseFileSystemError } from '@bangle.io/baby-fs';
+import {
+  BaseFileSystemError,
+  NATIVE_BROWSER_PERMISSION_ERROR,
+  NATIVE_BROWSER_USER_ABORTED_ERROR,
+} from '@bangle.io/baby-fs';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   goToLocation,
   historyUpdateOpenedWsPaths,
-  PageSliceAction,
 } from '@bangle.io/page-context';
 import {
   HELP_FS_WORKSPACE_NAME,
@@ -21,15 +24,10 @@ import {
   wsPathToPathname,
 } from '@bangle.io/ws-path';
 
-import {
-  WorkspaceDispatchType,
-  WorkspaceSliceAction,
-  workspaceSliceKey,
-} from './common';
+import { WorkspaceDispatchType, workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
 import { validateOpenedWsPaths } from './helpers';
 import { fileOpsPlus, FileOpsType } from './use-get-file-ops';
-import type { WorkspaceSliceState } from './workspace-slice-state';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};
@@ -52,19 +50,6 @@ export function updateLocation({
   };
 }
 
-export const historyOnInvalidPath = (wsName: string, invalidPath: string) => {
-  return (state: AppState, dispatch: WorkspaceDispatchType): void => {
-    let _dispatch = dispatch as ApplicationStore<
-      WorkspaceSliceState,
-      WorkspaceSliceAction | PageSliceAction
-    >['dispatch'];
-    _dispatch({
-      name: 'action::page-slice:history-on-invalid-path',
-      value: { wsName: wsName, invalidPath },
-    });
-  };
-};
-
 export const historyUpdatePrimaryWsPath = (
   wsPath: string,
   replace: boolean,
@@ -85,31 +70,12 @@ export const getFileOps = () => {
     state: AppState,
     dispatch: WorkspaceDispatchType,
   ): FileOpsType | undefined => {
-    let _dispatch = dispatch as ApplicationStore<
-      WorkspaceSliceState,
-      WorkspaceSliceAction | PageSliceAction
-    >['dispatch'];
-
     const sliceState = workspaceSliceKey.getSliceState(state);
-
-    return fileOpsPlus(
-      () => {
-        if (sliceState?.wsName) {
-          _dispatch({
-            name: 'action::page-slice:history-auth-error',
-            value: { wsName: sliceState.wsName },
-          });
-        }
-      },
-      () => {
-        if (sliceState?.wsName) {
-          _dispatch({
-            name: 'action::page-slice:history-ws-not-found',
-            value: { wsName: sliceState?.wsName },
-          });
-        }
-      },
-    );
+    return fileOpsPlus((error) => {
+      if (sliceState?.wsName) {
+        workspaceHandleError(sliceState.wsName, error)(state, dispatch);
+      }
+    });
   };
 };
 
@@ -197,7 +163,7 @@ export const updateOpenedWsPaths = (
     const validity = validateOpenedWsPaths(newOpened);
 
     if (!validity.valid) {
-      historyOnInvalidPath(wsName, validity.invalidWsPath)(state, dispatch);
+      historyOnInvalidPath(wsName, validity.invalidWsPath)(state);
       return false;
     }
 
@@ -423,5 +389,42 @@ export const checkFileExists = (wsPath: string) => {
     const fileOps = getFileOps()(state, dispatch);
 
     return fileOps?.checkFileExists(wsPath) || Promise.resolve(false);
+  };
+};
+
+export function workspaceHandleError(wsName: string, error: Error) {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    if (
+      error instanceof BaseFileSystemError &&
+      (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
+        error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
+    ) {
+      return goToLocation(
+        `/ws-auth/${encodeURIComponent(
+          wsName,
+        )}?code=${NATIVE_BROWSER_USER_ABORTED_ERROR}`,
+        {
+          replace: true,
+        },
+      )(state);
+    }
+    if (
+      error instanceof WorkspaceError &&
+      error.code === WORKSPACE_NOT_FOUND_ERROR
+    ) {
+      return goToLocation('/ws-not-found/' + encodeURIComponent(wsName), {
+        replace: true,
+      })(state);
+    }
+
+    return undefined;
+  };
+}
+
+export const historyOnInvalidPath = (wsName: string, invalidPath: string) => {
+  return (state: AppState): void => {
+    return goToLocation('/ws-invalid-path/' + encodeURIComponent(wsName), {
+      replace: true,
+    })(state);
   };
 };

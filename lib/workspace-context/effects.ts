@@ -1,8 +1,3 @@
-import {
-  ApplicationStore,
-  AppState,
-  savePreviousValue,
-} from '@bangle.io/create-store';
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
 import { getWorkspaceInfo } from '@bangle.io/workspaces';
 
@@ -45,7 +40,7 @@ export const validateLocationEffect: SideEffect = (store) => {
     const { locationPathname, locationSearchQuery, wsName } = initialState;
     const invalid = findInvalidLocation(locationPathname, locationSearchQuery);
     if (invalid) {
-      historyOnInvalidPath(wsName, invalid)(store.state, store.dispatch);
+      historyOnInvalidPath(wsName, invalid)(store.state);
     }
   }
 
@@ -67,7 +62,7 @@ export const validateLocationEffect: SideEffect = (store) => {
         );
 
         if (invalid) {
-          historyOnInvalidPath(wsName, invalid)(store.state, store.dispatch);
+          historyOnInvalidPath(wsName, invalid)(store.state);
         }
       }
     },
@@ -78,7 +73,7 @@ export const validateLocationEffect: SideEffect = (store) => {
 // to derive fields like wsName.
 export const updateLocationEffect: SideEffect = () => {
   return {
-    update(store, prevState, sliceState) {
+    update(store, _, sliceState) {
       const location = getPageLocation()(store.state);
       if (
         location?.pathname === sliceState.locationPathname &&
