@@ -1,6 +1,6 @@
 ### Dec 28, 2021
 
-- **Feature:** Notes now remember you last scroll and selection positions.
+- **Feature:** Notes now remember your last scroll and selection positions.
 
 - **Performance:** Bangle now uses a more performant internal state management.
 
