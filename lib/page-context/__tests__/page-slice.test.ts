@@ -1,34 +1,13 @@
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
-
 import { pageSlice, pageSliceKey } from '..';
-
-const lifeCycleMock = {
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
-  removeUnsavedChanges: jest.fn(),
-  addUnsavedChanges: jest.fn(),
-};
+import { createStore, lifeCycleMock } from './test-utils';
 
 beforeEach(() => {
   lifeCycleMock.addEventListener.mockImplementation(() => {});
   lifeCycleMock.removeEventListener.mockImplementation(() => {});
 });
 
-let createStore = () =>
-  ApplicationStore.create({
-    scheduler: (cb) => {
-      cb();
-      return () => {};
-    },
-    storeName: 'editor-store',
-    state: AppState.create({
-      opts: { lifecycle: lifeCycleMock },
-      slices: [pageSlice()],
-    }),
-  });
-
 test('sets up', () => {
-  const store = createStore();
+  const { store } = createStore();
 
   expect(pageSliceKey.getSliceState(store.state)).toMatchInlineSnapshot(`
     Object {
@@ -89,7 +68,7 @@ test('sets up', () => {
 
 describe('updating state', () => {
   test('upload lifecycle', () => {
-    const store = createStore();
+    const { store } = createStore();
     let state = store.state;
 
     state = state.applyAction({
@@ -114,7 +93,7 @@ describe('updating state', () => {
   });
 
   test('blocking reload', () => {
-    const store = createStore();
+    const { store } = createStore();
     let state = store.state;
 
     state = state.applyAction({

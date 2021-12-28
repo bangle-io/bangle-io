@@ -12,11 +12,7 @@ export const blockReloadEffect: SliceSideEffect<
 > = () => {
   let prevValue: undefined | PageSliceStateType['blockReload'];
   return {
-    update(store, __, pageState, prevPageState) {
-      if (pageState === prevPageState) {
-        return;
-      }
-
+    update(store, __, pageState) {
       const blockReload = pageState?.blockReload;
 
       if (blockReload === prevValue) {

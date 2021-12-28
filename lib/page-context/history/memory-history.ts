@@ -20,7 +20,9 @@ export class MemoryHistory extends BaseHistory {
     const parsed = new URL('http://bangle.io' + to);
     const newLoc = {
       pathname: parsed.pathname,
-      search: parsed.search,
+      search: parsed.search?.startsWith('?')
+        ? parsed.search.slice(1)
+        : parsed.search,
     };
 
     if (!isLocationEqual(newLoc, this.currentLoc)) {
