@@ -15,10 +15,10 @@ export function useUsageAnalytics() {
 
   useEffect(() => {
     if (dauCount === 3) {
-      (window as any).fathom?.trackGoal('9MRJUARY', 1);
+      (window as any).fathom?.trackGoal('9MRJUARY', 0);
     }
     if (dauCount === 5) {
-      (window as any).fathom?.trackGoal('EWFOWT8V', 1);
+      (window as any).fathom?.trackGoal('EWFOWT8V', 0);
     }
   }, [dauCount, updateDauCount]);
 
@@ -27,7 +27,7 @@ export function useUsageAnalytics() {
       updateLastOpened(LoadDate);
       updateDauCount((dauCount) => dauCount + 1);
 
-      (window as any).fathom?.trackGoal('EC54OGMM', 1);
+      (window as any).fathom?.trackGoal('EC54OGMM', 0);
     }
   }, [lastOpened, updateDauCount, updateLastOpened]);
 }
