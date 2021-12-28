@@ -18,10 +18,10 @@ import {
 } from '@bangle.io/workspaces';
 
 export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
+  wsName = decodeURIComponent(wsName || '');
+
   const [permissionDenied, updatePermissionDenied] = useState(false);
   const store = useBangleStoreContext();
-
-  wsName = decodeURIComponent(wsName || '');
 
   const onGranted = () => {
     const previousLocation = undefined; //history.location?.state?.previousLocation;

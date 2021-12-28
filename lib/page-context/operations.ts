@@ -60,6 +60,8 @@ export function getPageLocation() {
   };
 }
 
+// returns a string that can be used to to navigate
+// for example /ws/hello?something
 export function getLocationTo() {
   return (state: AppState) => {
     const sliceState = pageSliceKey.getSliceState(state);

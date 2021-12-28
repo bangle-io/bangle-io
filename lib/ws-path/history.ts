@@ -2,7 +2,6 @@ import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import { MaybeWsPath } from './helpers';
-import { locationSetWsPath } from './pathname-helpers';
 
 export interface Location {
   pathname?: string;
@@ -125,10 +124,6 @@ export class OpenedWsPaths {
       return true;
     }
     return false;
-  }
-
-  getLocation(location: Location, wsName: string) {
-    return locationSetWsPath(location, wsName, this);
   }
 
   /**

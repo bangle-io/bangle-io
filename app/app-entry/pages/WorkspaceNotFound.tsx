@@ -11,7 +11,7 @@ import { CenteredBoxedPage } from '@bangle.io/ui-components';
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 
 export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
-  // TODO wsNamae can't be read here
+  // wsName can't be read here from the store because it is not found
   const { dispatchAction } = useActionContext();
 
   wsName = decodeURIComponent(wsName || '');

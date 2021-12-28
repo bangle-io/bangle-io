@@ -71,7 +71,6 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
               },
             };
           }
-
           case 'action::page-slice:history-update-location': {
             return {
               ...state,
