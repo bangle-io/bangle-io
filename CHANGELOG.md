@@ -1,3 +1,9 @@
+### Dec 28, 2021
+
+- **Feature:** Notes now remember you last scroll and selection positions.
+
+- **Performance:** Bangle now uses a more performant internal state management.
+
 ### Dec 8, 2021
 
 - **Search:** Improved the UI.
