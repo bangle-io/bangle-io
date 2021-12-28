@@ -40,6 +40,7 @@ test('sets up', () => {
           "pathname": "/",
           "search": "",
         },
+        "historyCounter": 0,
         "host": [Window],
         "onChange": [Function],
       },

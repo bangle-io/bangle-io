@@ -11,6 +11,7 @@ import {
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
 } from '@bangle.io/workspaces';
+import { wsNameToPathname } from '@bangle.io/ws-path';
 
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';
@@ -23,10 +24,12 @@ export function Routes() {
   useEffect(() => {
     if (location === '/') {
       const lastWsName = getLastWorkspaceUsed();
-      goToWsName(lastWsName || HELP_FS_WORKSPACE_NAME)(bangleStore.state);
+      goToWsName(lastWsName || HELP_FS_WORKSPACE_NAME, { replace: true })(
+        bangleStore.state,
+      );
     }
 
-    if (location === `/ws/${HELP_FS_WORKSPACE_NAME}`) {
+    if (location === wsNameToPathname(HELP_FS_WORKSPACE_NAME)) {
       pushWsPath(HELP_FS_INDEX_WS_PATH)(
         bangleStore.state,
         bangleStore.dispatch,

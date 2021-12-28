@@ -1,4 +1,4 @@
-export function savePrevState<T>() {
+export function savePreviousValue<T>() {
   let prev: T | undefined;
 
   return (val: T) => {

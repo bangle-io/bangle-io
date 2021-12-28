@@ -2,7 +2,8 @@ import type { AppState } from '@bangle.io/create-store';
 import { locationSetWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { PageDispatchType, PageLifeCycleStates, pageSliceKey } from './common';
-import { createTo, historyPush, historyStateUpdate } from './history/helpers';
+import { createTo } from './history/create-to';
+import { historyPush, historyStateUpdate } from './history/helpers';
 import { Location } from './history/types';
 
 export function blockReload(block: boolean) {
@@ -109,7 +110,7 @@ export function historyUpdateOpenedWsPaths(
 }
 
 export function saveToHistoryState(key: string, value: any) {
-  return (state: AppState, dispatch: PageDispatchType): void => {
+  return (state: AppState): void => {
     const sliceState = pageSliceKey.getSliceState(state);
 
     if (sliceState?.history) {

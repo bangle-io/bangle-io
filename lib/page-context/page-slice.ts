@@ -88,7 +88,9 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
               )
             ) {
               let { history } = state;
-              history?.navigate('/ws-nativefs-auth/' + wsName);
+              history?.navigate('/ws-nativefs-auth/' + wsName, {
+                replace: true,
+              });
 
               return {
                 ...state,

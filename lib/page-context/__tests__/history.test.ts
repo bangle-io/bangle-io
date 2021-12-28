@@ -54,6 +54,55 @@ describe('browser-history', () => {
     expect(onChange).toBeCalledTimes(2);
   });
 
+  test('historyState refresh happens on change', () => {
+    jest.useFakeTimers();
+    const onChange = jest.fn();
+    const bh = new BrowserHistory('', onChange);
+
+    const refreshSpy = jest.spyOn(bh, 'refreshHistoryState');
+
+    window.history.pushState({ hello: '123' }, '', '/foo');
+
+    jest.runAllTimers();
+
+    expect(refreshSpy).toBeCalledTimes(1);
+
+    expect(onChange).toBeCalledTimes(1);
+  });
+
+  test('history state is set and preserved on pop & push', () => {
+    jest.useFakeTimers();
+    const onChange = jest.fn();
+    const bh = new BrowserHistory('', onChange);
+
+    bh.updateHistoryState('test-state');
+
+    jest.runAllTimers();
+
+    expect(window.history.state).toEqual({
+      key: expect.any(Number),
+      value: 'test-state',
+    });
+
+    bh.navigate('/foo-1');
+
+    jest.runAllTimers();
+
+    expect(window.history.state).toEqual({
+      key: expect.any(Number),
+      value: 'test-state',
+    });
+
+    window.history.back();
+
+    jest.runAllTimers();
+
+    expect(window.history.state).toEqual({
+      key: expect.any(Number),
+      value: 'test-state',
+    });
+  });
+
   test('returns a pathname without a basepath', () => {
     const bh = new BrowserHistory('/app', jest.fn());
 
@@ -68,15 +117,6 @@ describe('browser-history', () => {
     window.history.pushState(null, '', '/myAPP/users/JohnDoe');
 
     expect(bh.pathname).toBe('/users/JohnDoe');
-  });
-
-  test('returns an absolute path in case of unmatched base path', () => {
-    const onChange = jest.fn();
-
-    const bh = new BrowserHistory('/MyApp', onChange);
-
-    window.history.pushState(null, '', '/MyOtherApp/users/JohnDoe');
-    expect(bh.pathname).toBe('~/MyOtherApp/users/JohnDoe');
   });
 
   test('supports search url', () => {

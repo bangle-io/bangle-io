@@ -27,7 +27,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     if (previousLocation) {
       // history.replace(previousLocation);
     } else {
-      goToWsName(wsName)(store.state);
+      goToWsName(wsName, { replace: true })(store.state);
     }
   };
 

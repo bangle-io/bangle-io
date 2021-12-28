@@ -1,7 +1,7 @@
 import { BangleEditor } from '@bangle.dev/core';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import { AppState, savePrevState } from '@bangle.io/create-store';
+import { AppState, savePreviousValue } from '@bangle.io/create-store';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/page-context';
 import { debounceFn, trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
@@ -56,7 +56,7 @@ export const focusEditorEffect: SideEffect = (store) => {
 
   let mounted = Date.now();
 
-  let getPrev = savePrevState<AppState>();
+  let getPrev = savePreviousValue<AppState>();
   return {
     update(store) {
       const prevState = getPrev(store.state);

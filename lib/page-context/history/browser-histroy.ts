@@ -1,4 +1,5 @@
 import { BaseHistory } from './base-history';
+import { createTo } from './create-to';
 import {
   eventPushState,
   eventReplaceState,
@@ -9,6 +10,9 @@ import { Location } from './types';
 export class BrowserHistory extends BaseHistory {
   private host = typeof window !== 'undefined' ? window : undefined;
   private currentLoc: Location;
+
+  private historyState: any;
+  private historyCounter = 0;
 
   constructor(base = '', onChange: (location: Location) => void) {
     super(base, onChange);
@@ -33,12 +37,42 @@ export class BrowserHistory extends BaseHistory {
     // this loop resume, causing problems elsewhere action dispatches.
     setTimeout(() => {
       window.history[replace ? eventReplaceState : eventPushState](
-        null,
+        this.createHistoryState(),
         '',
-        // handle nested routers and absolute paths
-        to[0] === '~' ? to.slice(1) : this.base + to,
+        this.base + to,
       );
     }, 0);
+  }
+  // we do a simple managed history state, where we assume
+  // any state added to history is by us.
+  refreshHistoryState() {
+    // In certain cases like historyPop, the job of this function is
+    // to set it back to the value it last held.
+    if (window.history.state == null && this.historyState) {
+      this.updateHistoryState(this.historyState);
+    }
+  }
+
+  updateHistoryState(hState: any) {
+    this.historyState = hState;
+    setTimeout(() => {
+      const to = createTo(
+        {
+          pathname: this.pathname,
+          search: this.search,
+        },
+        this,
+      );
+      window.history[eventReplaceState](
+        this.createHistoryState(),
+        '',
+        this.base + to,
+      );
+    }, 0);
+  }
+
+  private createHistoryState() {
+    return { key: this.historyCounter++, value: this.historyState || null };
   }
 
   get pathname() {
@@ -56,6 +90,7 @@ export class BrowserHistory extends BaseHistory {
       this.currentLoc = current;
       this.onChange(current);
     }
+    this.refreshHistoryState();
   };
 }
 
@@ -64,9 +99,7 @@ const getCurrentPathname = (): string => {
 };
 
 const currentPathname = (base: string, path = getCurrentPathname()) =>
-  !path.toLowerCase().indexOf(base.toLowerCase())
-    ? path.slice(base.length) || '/'
-    : '~' + path;
+  path.slice(base.length) || '/';
 
 const getDocumentLocation = (): Document['location'] => {
   if (typeof window !== 'undefined') {
@@ -77,7 +110,11 @@ const getDocumentLocation = (): Document['location'] => {
 
 const calcLocation = (base: string): Location => {
   const pathname = currentPathname(base);
-  const search = getDocumentLocation().search;
+  let search = getDocumentLocation().search;
+  // keep search free of `?`
+  if (search.startsWith('?')) {
+    search = search.slice(1);
+  }
   return { pathname, search };
 };
 

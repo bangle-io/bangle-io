@@ -231,6 +231,7 @@ describe('saveWorkspaceInfoEffect', () => {
         locationSearchQuery: '',
       },
     });
+    await sleep(0);
 
     expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
     expect(getWorkspaceInfo).nthCalledWith(1, 'test-ws');
@@ -277,6 +278,7 @@ describe('saveWorkspaceInfoEffect', () => {
         locationSearchQuery: '',
       },
     });
+    await sleep(0);
 
     expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
     store.destroy();
@@ -306,6 +308,7 @@ describe('saveWorkspaceInfoEffect', () => {
         locationSearchQuery: '',
       },
     });
+    await sleep(0);
 
     expect(getWorkspaceInfoMock).toBeCalledTimes(1);
     expect(getWorkspaceInfoMock).nthCalledWith(1, 'test-ws');
@@ -318,6 +321,7 @@ describe('saveWorkspaceInfoEffect', () => {
         locationSearchQuery: '',
       },
     });
+    await sleep(0);
 
     expect(getWorkspaceInfoMock).nthCalledWith(2, 'test-ws2');
 

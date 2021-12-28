@@ -1,4 +1,8 @@
+import { Location } from '@bangle.io/ws-path';
+
 import { BaseHistory } from './base-history';
+import { BrowserHistory } from './browser-histroy';
+import { createTo } from './create-to';
 
 export function historyPush(
   history: BaseHistory,
@@ -10,13 +14,8 @@ export function historyPush(
   }, 0);
 }
 
-export function historyStateUpdate(history: BaseHistory, state: any) {}
-
-export function createTo(loc: Partial<Location>, history: BaseHistory) {
-  const path =
-    typeof loc.pathname === 'string' ? loc.pathname : history?.pathname;
-
-  const search = typeof loc.search === 'string' ? loc.search : history?.search;
-
-  return path + (search ? '?' + search : '');
+export function historyStateUpdate(history: BaseHistory, state: any) {
+  if (history instanceof BrowserHistory) {
+    history.updateHistoryState(state);
+  }
 }
