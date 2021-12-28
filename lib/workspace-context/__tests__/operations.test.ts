@@ -3,7 +3,10 @@ import {
   NATIVE_BROWSER_PERMISSION_ERROR,
 } from '@bangle.io/baby-fs';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
-import { historyUpdateOpenedWsPaths } from '@bangle.io/page-context';
+import {
+  goToLocation,
+  historyUpdateOpenedWsPaths,
+} from '@bangle.io/page-context';
 import { sleep } from '@bangle.io/utils';
 import {
   FileOps,
@@ -35,7 +38,6 @@ import {
   createStateWithWsName,
   createStore,
   getActionNamesDispatched,
-  getActionsDispatched,
   noSideEffectsStore,
 } from './test-utils';
 
@@ -59,6 +61,7 @@ jest.mock('@bangle.io/page-context', () => {
   return {
     ...ops,
     historyUpdateOpenedWsPaths: jest.fn(),
+    goToLocation: jest.fn(),
   };
 });
 
@@ -81,6 +84,7 @@ let historyUpdateOpenedWsPathsMock =
   historyUpdateOpenedWsPaths as jest.MockedFunction<
     typeof historyUpdateOpenedWsPaths
   >;
+let goToLocationMock = goToLocation as jest.MockedFunction<typeof goToLocation>;
 
 beforeEach(() => {
   listAllFilesMock.mockResolvedValue([]);
@@ -89,6 +93,7 @@ beforeEach(() => {
   saveDocMock.mockResolvedValue(undefined);
   deleteFileMock.mockResolvedValue(undefined);
   historyUpdateOpenedWsPathsMock.mockImplementation(() => () => {});
+  goToLocationMock.mockImplementation(() => () => {});
 });
 
 test('updateLocation', () => {
@@ -194,19 +199,19 @@ describe('refreshWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-auth-error',
       'action::workspace-context:update-ws-paths',
     ]);
 
-    expect(dispatchSpy).nthCalledWith(1, {
-      id: expect.any(String),
-      name: 'action::page-slice:history-auth-error',
-      value: {
-        wsName: 'my-ws',
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(
+      1,
+      '/ws-auth/my-ws?code=BABY_FS_NATIVE_BROWSER_USER_ABORTED_ERROR',
+      {
+        replace: true,
       },
-    });
+    );
 
-    expect(dispatchSpy).nthCalledWith(2, {
+    expect(dispatchSpy).nthCalledWith(1, {
       id: expect.any(String),
       name: 'action::workspace-context:update-ws-paths',
       value: {
@@ -231,19 +236,15 @@ describe('refreshWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-ws-not-found',
       'action::workspace-context:update-ws-paths',
     ]);
 
-    expect(dispatchSpy).nthCalledWith(1, {
-      id: expect.any(String),
-      name: 'action::page-slice:history-ws-not-found',
-      value: {
-        wsName: 'my-ws',
-      },
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, '/ws-not-found/my-ws', {
+      replace: true,
     });
 
-    expect(dispatchSpy).nthCalledWith(2, {
+    expect(dispatchSpy).nthCalledWith(1, {
       id: expect.any(String),
       name: 'action::workspace-context:update-ws-paths',
       value: {
@@ -368,7 +369,7 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('handles invalid path in secondary', () => {
-    let { store, dispatchSpy } = noSideEffectsStore({
+    let { store } = noSideEffectsStore({
       locationPathname: wsPathToPathname('my-ws:test-note.md'),
     });
 
@@ -378,18 +379,9 @@ describe('updateOpenedWsPaths', () => {
 
     expect(res).toBe(false);
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::page-slice:history-on-invalid-path',
-    ]);
-
-    // expect(dispatchSpy).toBeCalledTimes(1);
-    expect(dispatchSpy).nthCalledWith(1, {
-      id: expect.any(String),
-      name: 'action::page-slice:history-on-invalid-path',
-      value: {
-        invalidPath: 'my-ws-hello',
-        wsName: 'my-ws',
-      },
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, `/ws-invalid-path/my-ws`, {
+      replace: true,
     });
   });
 });

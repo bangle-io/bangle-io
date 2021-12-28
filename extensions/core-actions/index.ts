@@ -88,23 +88,8 @@ const extension = Extension.create({
         hidden: true,
       },
       {
-        name: 'action::page-slice:history-auth-error',
-        title: 'Action for signaling an auth error',
-        hidden: true,
-      },
-      {
-        name: 'action::page-slice:history-ws-not-found',
-        title: 'Action for signaling a workspace not found',
-        hidden: true,
-      },
-      {
         name: 'action::page-slice:history-set-history',
         title: 'Save the history object in the slice state',
-        hidden: true,
-      },
-      {
-        name: 'action::page-slice:history-on-invalid-path',
-        title: 'Action when there is an invalid path',
         hidden: true,
       },
     ],

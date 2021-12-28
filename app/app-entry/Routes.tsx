@@ -42,11 +42,11 @@ export function Routes() {
       <Route path="/ws/:wsName">
         <WsNamePage />
       </Route>
-      <Route path="/ws-nativefs-auth/:wsName">
+      <Route path="/ws-auth/:wsName">
         {(params) => <WorkspaceNativefsAuthBlockade wsName={params.wsName} />}
       </Route>
       <Route path="/ws-not-found/:wsName">
-        <WorkspaceNotFound />
+        {(params) => <WorkspaceNotFound wsName={params.wsName} />}
       </Route>
       <Route path="/ws-invalid-path/:wsName">
         <WorkspaceInvalidPath />

@@ -79,67 +79,6 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
             };
           }
 
-          // TODO move to op
-          case 'action::page-slice:history-auth-error': {
-            const { wsName } = action.value;
-            if (
-              !state.location.pathname?.startsWith(
-                '/ws-nativefs-auth/' + wsName,
-              )
-            ) {
-              let { history } = state;
-              history?.navigate('/ws-nativefs-auth/' + wsName, {
-                replace: true,
-              });
-
-              return {
-                ...state,
-              };
-            }
-
-            return state;
-          }
-
-          // TODO move to op
-          case 'action::page-slice:history-ws-not-found': {
-            if (!state.history) {
-              return state;
-            }
-
-            if (
-              !state.history.pathname?.startsWith(
-                '/ws-not-found/' + action.value.wsName,
-              )
-            ) {
-              // TODO check if wsName is current
-              state.history.navigate('/ws-not-found/' + action.value.wsName);
-
-              return {
-                ...state,
-              };
-            }
-
-            return state;
-          }
-
-          // TODO move to op
-          case 'action::page-slice:history-on-invalid-path': {
-            if (!state.history) {
-              return state;
-            }
-            const { invalidPath, wsName } = action.value;
-            if (
-              !state.history.pathname?.startsWith('/ws-invalid-path/' + wsName)
-            ) {
-              state.history.navigate('/ws-invalid-path/' + wsName);
-              return {
-                ...state,
-              };
-            }
-
-            return state;
-          }
-
           default: {
             return state;
           }
