@@ -24,7 +24,7 @@
     "react-router-dom": "*"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.28.3",
+    "@bangle.dev/pm": "0.28.4",
     "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/config": "workspace:*",
@@ -44,9 +44,9 @@
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.28.3",
-    "@bangle.dev/core": "0.28.3",
-    "@bangle.dev/utils": "0.28.3",
+    "@bangle.dev/all-base-components": "0.28.4",
+    "@bangle.dev/core": "0.28.4",
+    "@bangle.dev/utils": "0.28.4",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react": "^12.1.2",

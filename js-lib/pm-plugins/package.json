@@ -22,15 +22,15 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.28.3",
-    "@bangle.dev/pm": "0.28.3"
+    "@bangle.dev/core": "0.28.4",
+    "@bangle.dev/pm": "0.28.4"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.28.3",
-    "@bangle.dev/react": "0.28.3",
-    "@bangle.dev/test-helpers": "0.28.3",
-    "@bangle.dev/tooltip": "0.28.3",
-    "@bangle.dev/utils": "0.28.3",
+    "@bangle.dev/all-base-components": "0.28.4",
+    "@bangle.dev/react": "0.28.4",
+    "@bangle.dev/test-helpers": "0.28.4",
+    "@bangle.dev/tooltip": "0.28.4",
+    "@bangle.dev/utils": "0.28.4",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
     "react": "^17.0.2",

@@ -7,9 +7,9 @@ import { CenteredBoxedPage } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { keybindingsHelper } from '@bangle.io/utils';
 import {
-  goToWorkspaceHome,
-  goToWsName,
-  goToWsNameNotFound,
+  goToWorkspaceHomeRoute,
+  goToWsNameRoute,
+  goToWsNameRouteNotFoundRoute,
 } from '@bangle.io/workspace-context';
 import {
   getWorkspaceInfo,
@@ -29,7 +29,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     if (previousLocation) {
       // history.replace(previousLocation);
     } else {
-      goToWsName(wsName, { replace: true })(store.state);
+      goToWsNameRoute(wsName, { replace: true })(store.state);
     }
   };
 
@@ -42,7 +42,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
         error instanceof WorkspaceError &&
         error.code === WORKSPACE_NOT_FOUND_ERROR
       ) {
-        goToWsNameNotFound(wsName)(store.state);
+        goToWsNameRouteNotFoundRoute(wsName)(store.state);
       }
       throw error;
     }
@@ -67,7 +67,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
 
   useEffect(() => {
     if (!wsName) {
-      goToWorkspaceHome()(store.state);
+      goToWorkspaceHomeRoute()(store.state);
     }
   }, [store, wsName]);
 

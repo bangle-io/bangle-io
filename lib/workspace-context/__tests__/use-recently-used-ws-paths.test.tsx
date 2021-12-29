@@ -6,6 +6,7 @@ import {
 } from '@bangle.io/app-state-context';
 import { getPageLocation } from '@bangle.io/page-context';
 import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
+import { getWorkspaceInfo, WorkspaceType } from '@bangle.io/workspaces';
 import { wsPathToPathname, wsPathToSearch } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
@@ -20,9 +21,7 @@ jest.mock('@bangle.io/page-context', () => {
     getPageLocation: jest.fn(),
   };
 });
-const getPageLocationMock = getPageLocation as jest.MockedFunction<
-  typeof getPageLocation
->;
+
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
   return {
@@ -38,8 +37,28 @@ jest.mock('@bangle.io/app-state-context', () => {
     useSliceState: jest.fn(),
   };
 });
+jest.mock('@bangle.io/workspaces', () => {
+  const ops = jest.requireActual('@bangle.io/workspaces');
+
+  return {
+    ...ops,
+    getWorkspaceInfo: jest.fn(() => {}),
+  };
+});
+const getPageLocationMock = getPageLocation as jest.MockedFunction<
+  typeof getPageLocation
+>;
+
+const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
+  typeof getWorkspaceInfo
+>;
 
 beforeEach(() => {
+  getWorkspaceInfoMock.mockImplementation(async () => ({
+    name: 'test-ws',
+    type: WorkspaceType.browser,
+    metadata: {},
+  }));
   (useSliceState as any).mockImplementation(() => ({
     sliceState: workspaceSliceInitialState,
     store: initialBangleStore,
@@ -54,7 +73,8 @@ test('returns wsPaths correctly', async () => {
   });
 
   const { store, dispatchSpy } = createStore({
-    locationPathname: wsPathToPathname('test-ws:note1.md'),
+    wsName: 'test-ws',
+    openedWsPaths: ['test-ws:note1.md'],
     wsPaths: ['test-ws:note1.md'],
   });
   (useSliceState as any).mockImplementation(() => {
@@ -84,7 +104,8 @@ test('removes non existent wsPaths', () => {
   });
 
   const { store, dispatchSpy } = createStore({
-    locationPathname: wsPathToPathname('test-ws:note1.md'),
+    wsName: 'test-ws',
+    openedWsPaths: ['test-ws:note1.md'],
     wsPaths: ['test-ws:note1.md'],
   });
   (useSliceState as any).mockImplementation(() => {
@@ -114,7 +135,7 @@ test('works when no wsName', async () => {
   });
 
   const { store, dispatchSpy } = createStore({
-    locationPathname: '',
+    wsName: undefined,
     wsPaths: ['test-ws:note1.md'],
   });
   (useSliceState as any).mockImplementation(() => {
@@ -141,7 +162,8 @@ test('updates the newly opened ws path only', async () => {
   });
 
   const { store } = createStore({
-    locationPathname: wsPathToPathname('test-ws:note1.md'),
+    wsName: 'test-ws',
+    openedWsPaths: ['test-ws:note1.md'],
     wsPaths: ['test-ws:note1.md', 'test-ws:note2.md'],
   });
 

@@ -118,6 +118,6 @@ const calcLocation = (base: string): Location => {
   return { pathname, search };
 };
 
-const isLocationEqual = (a: Location, b: Location) => {
+export const isLocationEqual = (a: Location, b: Location) => {
   return a.pathname === b.pathname && a.search === b.search;
 };

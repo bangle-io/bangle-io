@@ -20,9 +20,9 @@
   "module": "index.ts",
   "publishConfig": {},
   "dependencies": {
-    "@bangle.dev/core": "0.28.3",
-    "@bangle.dev/pm": "0.28.3",
-    "@bangle.dev/utils": "0.28.3",
+    "@bangle.dev/core": "0.28.4",
+    "@bangle.dev/pm": "0.28.4",
+    "@bangle.dev/utils": "0.28.4",
     "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
@@ -37,8 +37,8 @@
     "type-fest": "^2.8.0"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.28.3",
-    "@bangle.dev/test-helpers": "0.28.3",
+    "@bangle.dev/all-base-components": "0.28.4",
+    "@bangle.dev/test-helpers": "0.28.4",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/dom": "^8.10.1",
     "@types/react": "^17.0.33",

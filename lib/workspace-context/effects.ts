@@ -1,14 +1,12 @@
+import { savePreviousValue } from '@bangle.io/create-store';
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
+import { isLocationEqual } from '@bangle.io/page-context/history/browser-histroy';
+import type { ReturnReturnType } from '@bangle.io/shared-types';
 import { getWorkspaceInfo } from '@bangle.io/workspaces';
 
 import { SideEffect, workspaceSliceKey } from './common';
-import { findInvalidLocation } from './helpers';
 import { saveLastWorkspaceUsed } from './last-seen-ws-name';
-import {
-  historyOnInvalidPath,
-  refreshWsPaths,
-  updateLocation,
-} from './operations';
+import { refreshWsPaths, updateLocation } from './operations';
 
 export const refreshWsPathsEffect: SideEffect = () => {
   let loadWsPathsOnMount = true;
@@ -31,54 +29,20 @@ export const refreshWsPathsEffect: SideEffect = () => {
   };
 };
 
-// an effect to see if the location has some invalid wsPath
-// if it does, dispatch an action.
-export const validateLocationEffect: SideEffect = (store) => {
-  const initialState = workspaceSliceKey.getSliceState(store.state);
-
-  if (initialState?.wsName) {
-    const { locationPathname, locationSearchQuery, wsName } = initialState;
-    const invalid = findInvalidLocation(locationPathname, locationSearchQuery);
-    if (invalid) {
-      historyOnInvalidPath(wsName, invalid)(store.state);
-    }
-  }
-
-  return {
-    update(store, __, sliceState, prevSliceState): void {
-      const { wsName, locationPathname, locationSearchQuery } = sliceState;
-
-      if (!wsName) {
-        return;
-      }
-
-      if (
-        locationPathname !== prevSliceState.locationPathname ||
-        locationSearchQuery !== prevSliceState.locationSearchQuery
-      ) {
-        const invalid = findInvalidLocation(
-          locationPathname,
-          locationSearchQuery,
-        );
-
-        if (invalid) {
-          historyOnInvalidPath(wsName, invalid)(store.state);
-        }
-      }
-    },
-  };
-};
-
 // This keeps a copy of location changes within the workspace slice
 // to derive fields like wsName.
 export const updateLocationEffect: SideEffect = () => {
+  const prevVal = savePreviousValue<ReturnReturnType<typeof getPageLocation>>();
+
   return {
-    update(store, _, sliceState) {
+    update(store, _) {
       const location = getPageLocation()(store.state);
-      if (
-        location?.pathname === sliceState.locationPathname &&
-        location?.search === sliceState.locationSearchQuery
-      ) {
+      const prevLocation = prevVal(location);
+      if (!location) {
+        return;
+      }
+
+      if (prevLocation && isLocationEqual(location, prevLocation)) {
         return;
       }
 

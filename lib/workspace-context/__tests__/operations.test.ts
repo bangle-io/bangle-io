@@ -10,15 +10,12 @@ import {
 import { sleep } from '@bangle.io/utils';
 import {
   FileOps,
+  getWorkspaceInfo,
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from '@bangle.io/workspaces';
-import {
-  OpenedWsPaths,
-  wsNameToPathname,
-  wsPathToPathname,
-} from '@bangle.io/ws-path';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import {
   checkFileExists,
@@ -26,7 +23,6 @@ import {
   deleteNote,
   getFileOps,
   getNote,
-  isCurrentWsName,
   pushWsPath,
   refreshWsPaths,
   renameNote,
@@ -64,7 +60,9 @@ jest.mock('@bangle.io/page-context', () => {
     goToLocation: jest.fn(),
   };
 });
-
+const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
+  typeof getWorkspaceInfo
+>;
 let listAllFilesMock = FileOps.listAllFiles as jest.MockedFunction<
   typeof FileOps.listAllFiles
 >;
@@ -109,20 +107,13 @@ test('updateLocation', () => {
   expect(dispatch).toBeCalledTimes(1);
 });
 
-test('isCurrentWsName', () => {
-  let state = createStateWithWsName('my-workspace');
-
-  expect(isCurrentWsName('my-workspace')(state)).toBe(true);
-  expect(isCurrentWsName('not')(state)).toBe(false);
-});
-
 describe('refreshWsPaths', () => {
   test('refreshWsPaths 1', async () => {
     listAllFilesMock.mockImplementation(async () => {
       return ['my-ws:one.md'];
     });
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsNameToPathname('my-ws'),
+      wsName: 'my-ws',
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -149,7 +140,7 @@ describe('refreshWsPaths', () => {
     });
 
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: '',
+      wsName: undefined,
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -163,7 +154,7 @@ describe('refreshWsPaths', () => {
   test('handles error', async () => {
     listAllFilesMock.mockRejectedValue(new BaseFileSystemError('test-error'));
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsNameToPathname('my-ws'),
+      wsName: 'my-ws',
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -189,7 +180,7 @@ describe('refreshWsPaths', () => {
       new BaseFileSystemError('test-error', NATIVE_BROWSER_PERMISSION_ERROR),
     );
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsNameToPathname('my-ws'),
+      wsName: 'my-ws',
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -205,7 +196,7 @@ describe('refreshWsPaths', () => {
     expect(goToLocationMock).toBeCalledTimes(1);
     expect(goToLocationMock).nthCalledWith(
       1,
-      '/ws-auth/my-ws?code=BABY_FS_NATIVE_BROWSER_USER_ABORTED_ERROR',
+      '/ws-auth/my-ws?code=' + NATIVE_BROWSER_PERMISSION_ERROR,
       {
         replace: true,
       },
@@ -226,7 +217,7 @@ describe('refreshWsPaths', () => {
       new WorkspaceError('test-error', WORKSPACE_NOT_FOUND_ERROR),
     );
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsNameToPathname('my-ws'),
+      wsName: 'my-ws',
     });
 
     refreshWsPaths()(store.state, store.dispatch);
@@ -258,7 +249,7 @@ describe('refreshWsPaths', () => {
 test('getFileOps', async () => {
   listAllFilesMock.mockResolvedValue(['my-ws:one.md']);
   let { store } = createStore({
-    locationPathname: wsNameToPathname('my-ws'),
+    wsName: 'my-ws',
   });
 
   const fileOps = getFileOps()(store.state, store.dispatch);
@@ -272,7 +263,7 @@ test('getFileOps', async () => {
 describe('updateOpenedWsPaths', () => {
   test('no dispatch if wsName is undefined', () => {
     let { store } = noSideEffectsStore({
-      locationPathname: '',
+      wsName: undefined,
     });
 
     const res = updateOpenedWsPaths((r) => r)(store.state, store.dispatch);
@@ -283,7 +274,7 @@ describe('updateOpenedWsPaths', () => {
 
   test('works when provided with openedWsPaths', () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsNameToPathname('my-ws'),
+      wsName: 'my-ws',
     });
 
     const res = updateOpenedWsPaths(
@@ -306,7 +297,7 @@ describe('updateOpenedWsPaths', () => {
 
   test('respects replace param', () => {
     let { store } = noSideEffectsStore({
-      locationPathname: wsNameToPathname('my-ws'),
+      wsName: 'my-ws',
     });
 
     const res = updateOpenedWsPaths(
@@ -327,8 +318,9 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('works when provided with openedWsPaths as a function', () => {
-    let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
+    let { store } = noSideEffectsStore({
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md'],
     });
 
     let existingOpenedWsPaths: OpenedWsPaths | undefined;
@@ -357,8 +349,10 @@ describe('updateOpenedWsPaths', () => {
 
   test('does not attempt to fix existing (in the slice state) broken paths', () => {
     const { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: '/ws/my-ws/test-notemd',
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-notemd'],
     });
+
     const res = updateOpenedWsPaths((r) => {
       return r;
     })(store.state, store.dispatch);
@@ -370,7 +364,8 @@ describe('updateOpenedWsPaths', () => {
 
   test('handles invalid path in secondary', () => {
     let { store } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md'],
     });
 
     const res = updateOpenedWsPaths((r) => {
@@ -389,7 +384,7 @@ describe('updateOpenedWsPaths', () => {
 describe('renameNote', () => {
   test('returns false when wsName is not defined', () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: '',
+      wsName: undefined,
     });
 
     const res = renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
@@ -404,7 +399,8 @@ describe('renameNote', () => {
 
   test('works when the file to be renamed is opened', async () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md'],
     });
 
     renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
@@ -440,12 +436,9 @@ describe('renameNote', () => {
   });
 
   test('works when the file to be renamed is opened in secondary', async () => {
-    const newSearch = new URLSearchParams('');
-    newSearch.set('secondary', 'my-ws:test-note.md');
-
     let { store } = noSideEffectsStore({
-      locationPathname: wsNameToPathname('my-ws'),
-      locationSearchQuery: newSearch.toString(),
+      wsName: 'my-ws',
+      openedWsPaths: [null, 'my-ws:test-note.md'],
     });
 
     renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
@@ -478,7 +471,8 @@ describe('renameNote', () => {
 
   test('works when the file to be renamed is not opened', async () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:my-other-file.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:my-other-file.md'],
     });
 
     renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
@@ -504,7 +498,8 @@ describe('renameNote', () => {
 
   test('renaming the same file', async () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md'],
     });
 
     renameNote('my-ws:test-note.md', 'my-ws:test-note.md')(
@@ -533,8 +528,8 @@ describe('renameNote', () => {
     newSearch.set('secondary', 'my-ws:test-note.md');
 
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
-      locationSearchQuery: newSearch,
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md', 'my-ws:test-note.md'],
     });
 
     renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
@@ -570,7 +565,7 @@ describe('renameNote', () => {
 
   test('throws error when renaming a help doc', () => {
     let { store } = noSideEffectsStore({
-      locationPathname: wsNameToPathname(HELP_FS_WORKSPACE_NAME),
+      wsName: HELP_FS_WORKSPACE_NAME,
     });
 
     expect(() =>
@@ -592,7 +587,7 @@ describe('getNote', () => {
     const extensionRegistry: ExtensionRegistry = {} as any;
     const wsPath: string = 'my-ws:new-test-note.md';
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsNameToPathname('my-ws'),
+      wsName: 'my-ws',
     });
 
     expect(
@@ -609,7 +604,7 @@ describe('getNote', () => {
     const extensionRegistry: ExtensionRegistry = {} as any;
     const wsPath: string = 'my-ws:new-test-note.md';
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: '',
+      wsName: undefined,
     });
 
     expect(
@@ -630,7 +625,8 @@ describe('createNote', () => {
     const doc: any = {};
 
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md'],
     });
 
     createNote(extensionRegistry, wsPath, { doc })(
@@ -667,7 +663,8 @@ describe('createNote', () => {
     const doc: any = {};
 
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md'],
     });
 
     createNote(extensionRegistry, wsPath, { doc })(
@@ -697,7 +694,7 @@ describe('createNote', () => {
     const doc: any = {};
 
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: '',
+      wsName: undefined,
     });
 
     createNote(extensionRegistry, wsPath, { doc, open: false })(
@@ -719,7 +716,8 @@ describe('createNote', () => {
     const doc: any = {};
 
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md'],
     });
 
     createNote(extensionRegistry, wsPath, { doc, open: false })(
@@ -743,7 +741,8 @@ describe('createNote', () => {
 describe('deleteNote', () => {
   test('deletes when the file is opened', async () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:test-note.md'],
     });
 
     deleteNote('my-ws:test-note.md')(store.state, store.dispatch, store);
@@ -773,7 +772,8 @@ describe('deleteNote', () => {
 
   test('deletes when the file is not opened', async () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:some-other-test-note.md'],
     });
 
     deleteNote('my-ws:test-note.md')(store.state, store.dispatch, store);
@@ -789,7 +789,8 @@ describe('deleteNote', () => {
 
   test('deletes multiple files', async () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:some-other-test-note.md'],
     });
 
     deleteNote(['my-ws:test-note1.md', 'my-ws:test-note2.md'])(
@@ -821,7 +822,8 @@ describe('pushWsPath', () => {
 
   test('works with new tab', () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:some-other-test-note.md'],
     });
     pushWsPath('my-ws:test-note.md', true)(store.state, store.dispatch);
 
@@ -834,7 +836,8 @@ describe('pushWsPath', () => {
 
   test('works when tab is false', () => {
     let { store, dispatchSpy } = noSideEffectsStore({
-      locationPathname: wsPathToPathname('my-ws:some-other-test-note.md'),
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:some-other-test-note.md'],
     });
     pushWsPath('my-ws:test-note.md')(store.state, store.dispatch);
 

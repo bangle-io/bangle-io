@@ -3,6 +3,14 @@ import {
   saveLastWorkspaceUsed,
 } from '../last-seen-ws-name';
 
+jest.mock('@bangle.io/workspaces', () => {
+  const rest = jest.requireActual('@bangle.io/workspaces');
+  return {
+    ...rest,
+    getWorkspaceInfo: jest.fn(),
+  };
+});
+
 let originalLocalStorage;
 
 beforeEach(() => {

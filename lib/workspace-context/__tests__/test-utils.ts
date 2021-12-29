@@ -1,11 +1,16 @@
+import type { JsonArray } from 'type-fest';
+
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { wsNameToPathname } from '@bangle.io/ws-path';
+import type { JsonPrimitive } from '@bangle.io/shared-types';
 
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
 import { WorkspaceStateKeys } from '../workspace-slice-state';
 
 export const createState = (
-  data: Partial<{ [K in WorkspaceStateKeys]: any }> = {},
+  // we are adding JsonPrimitive since we this data to restore state
+  data: Partial<{
+    [K in WorkspaceStateKeys]: JsonPrimitive | JsonArray | undefined;
+  }> = {},
 ) => {
   return AppState.stateFromJSON({
     slices: [workspaceSlice()],
@@ -21,7 +26,7 @@ export const createStateWithWsName = (
   data: Parameters<typeof createState>[0] = {},
 ) => {
   return createState({
-    locationPathname: wsNameToPathname(wsName),
+    wsName: wsName,
     ...data,
   });
 };

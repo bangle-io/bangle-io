@@ -3,7 +3,7 @@ import { Route, Switch, useLocation } from 'wouter';
 
 import {
   getLastWorkspaceUsed,
-  goToWsName,
+  goToWsNameRoute,
   pushWsPath,
   useWorkspaceContext,
 } from '@bangle.io/workspace-context';
@@ -24,7 +24,7 @@ export function Routes() {
   useEffect(() => {
     if (location === '/') {
       const lastWsName = getLastWorkspaceUsed();
-      goToWsName(lastWsName || HELP_FS_WORKSPACE_NAME, { replace: true })(
+      goToWsNameRoute(lastWsName || HELP_FS_WORKSPACE_NAME, { replace: true })(
         bangleStore.state,
       );
     }
