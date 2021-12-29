@@ -23,14 +23,14 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.28.3",
-    "@bangle.dev/pm": "0.28.3"
+    "@bangle.dev/core": "0.28.4",
+    "@bangle.dev/pm": "0.28.4"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.28.3",
-    "@bangle.dev/test-helpers": "0.28.3",
-    "@bangle.dev/utils": "0.28.3",
-    "@bangle.dev/wiki-link": "0.28.3"
+    "@bangle.dev/all-base-components": "0.28.4",
+    "@bangle.dev/test-helpers": "0.28.4",
+    "@bangle.dev/utils": "0.28.4",
+    "@bangle.dev/wiki-link": "0.28.4"
   },
   "license": "AGPL-3.0-or-later"
 }
