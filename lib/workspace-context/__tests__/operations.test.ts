@@ -196,7 +196,7 @@ describe('refreshWsPaths', () => {
     expect(goToLocationMock).toBeCalledTimes(1);
     expect(goToLocationMock).nthCalledWith(
       1,
-      '/ws-auth/my-ws?code=BABY_FS_NATIVE_BROWSER_USER_ABORTED_ERROR',
+      '/ws-auth/my-ws?code=' + NATIVE_BROWSER_PERMISSION_ERROR,
       {
         replace: true,
       },
