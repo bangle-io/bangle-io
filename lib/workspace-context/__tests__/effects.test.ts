@@ -3,11 +3,11 @@ import { sleep } from '@bangle.dev/utils';
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
 import type { UnPromisify } from '@bangle.io/shared-types';
 import { getWorkspaceInfo, WorkspaceType } from '@bangle.io/workspaces';
-import { wsNameToPathname } from '@bangle.io/ws-path';
+import { OpenedWsPaths, wsNameToPathname } from '@bangle.io/ws-path';
 
 import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
 import {
-  historyOnInvalidPath,
+  goToInvalidPathRoute,
   refreshWsPaths,
   updateLocation,
 } from '../operations';
@@ -18,7 +18,7 @@ jest.mock('../operations', () => {
   return {
     ...ops,
     refreshWsPaths: jest.fn(),
-    historyOnInvalidPath: jest.fn(),
+    goToInvalidPathRoute: jest.fn(),
     updateLocation: jest.fn(),
   };
 });
@@ -44,15 +44,15 @@ jest.mock('@bangle.io/workspaces', () => {
 
   return {
     ...ops,
-    getWorkspaceInfo: jest.fn(),
+    getWorkspaceInfo: jest.fn(() => {}),
   };
 });
 
 const refreshWsPathsMock = refreshWsPaths as jest.MockedFunction<
   typeof refreshWsPaths
 >;
-const historyOnInvalidPathMock = historyOnInvalidPath as jest.MockedFunction<
-  typeof historyOnInvalidPath
+const goToInvalidPathRouteMock = goToInvalidPathRoute as jest.MockedFunction<
+  typeof goToInvalidPathRoute
 >;
 const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
   typeof getWorkspaceInfo
@@ -70,7 +70,7 @@ const updateLocationMock = updateLocation as jest.MockedFunction<
 beforeEach(() => {
   refreshWsPathsMock.mockImplementation(() => () => true);
   updateLocationMock.mockImplementation(() => () => true);
-  historyOnInvalidPathMock.mockImplementation(() => () => {});
+  goToInvalidPathRouteMock.mockImplementation(() => () => {});
   saveToHistoryStateMock.mockImplementation(() => () => {});
   getWorkspaceInfoMock.mockImplementation(async () => ({
     name: 'test-ws',
@@ -129,8 +129,8 @@ describe('refreshWsPathsEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws'),
-        locationSearchQuery: '',
+        wsName: 'test-ws',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
 
@@ -141,19 +141,19 @@ describe('refreshWsPathsEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws-2'),
-        locationSearchQuery: '',
+        wsName: 'test-ws-2',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
 
     expect(refreshWsPathsMock).toBeCalledTimes(3);
 
-    // changing query should not call refresh
+    // changing openedWsPaths should not call refresh
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws-2'),
-        locationSearchQuery: 'change',
+        wsName: 'test-ws-2',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
 
@@ -163,33 +163,11 @@ describe('refreshWsPathsEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: undefined,
-        locationSearchQuery: undefined,
+        wsName: undefined,
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
     expect(refreshWsPathsMock).toBeCalledTimes(3);
-  });
-});
-
-describe('validateLocationEffect', () => {
-  test('works', async () => {
-    const { store } = createStore({
-      locationPathname: '/ws/my-ws',
-    });
-
-    // send any action to triggerd the deferred hook
-    store.dispatch({
-      name: 'action::workspace-context:update-location',
-      value: {
-        locationPathname: '/ws/my-ws/fo',
-        locationSearchQuery: '',
-      },
-    });
-
-    await sleep(0);
-
-    expect(historyOnInvalidPathMock).toBeCalledTimes(1);
-    expect(historyOnInvalidPathMock).nthCalledWith(1, 'my-ws', 'my-ws:fo');
   });
 });
 
@@ -227,8 +205,8 @@ describe('saveWorkspaceInfoEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws'),
-        locationSearchQuery: '',
+        wsName: 'test-ws',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
     await sleep(0);
@@ -274,8 +252,8 @@ describe('saveWorkspaceInfoEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws'),
-        locationSearchQuery: '',
+        wsName: 'test-ws',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
     await sleep(0);
@@ -304,8 +282,8 @@ describe('saveWorkspaceInfoEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws'),
-        locationSearchQuery: '',
+        wsName: 'test-ws',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
     await sleep(0);
@@ -317,8 +295,8 @@ describe('saveWorkspaceInfoEffect', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws2'),
-        locationSearchQuery: '',
+        wsName: 'test-ws2',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
     await sleep(0);
@@ -356,8 +334,8 @@ describe('saveLastUsedWorkspace', () => {
     store.dispatch({
       name: 'action::workspace-context:update-location',
       value: {
-        locationPathname: wsNameToPathname('test-ws'),
-        locationSearchQuery: '',
+        wsName: 'test-ws',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
       },
     });
 

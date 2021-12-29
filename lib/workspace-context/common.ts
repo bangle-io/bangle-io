@@ -3,6 +3,7 @@ import {
   SliceKey,
   SliceSideEffect,
 } from '@bangle.io/create-store';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import type { WorkspaceSliceState } from './workspace-slice-state';
 
@@ -20,8 +21,8 @@ export type WorkspaceSliceAction =
   | {
       name: 'action::workspace-context:update-location';
       value: {
-        locationSearchQuery: string | undefined;
-        locationPathname: string | undefined;
+        wsName: string | undefined;
+        openedWsPaths: OpenedWsPaths;
       };
     }
   | {

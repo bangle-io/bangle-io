@@ -6,7 +6,7 @@ import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
-  goToWorkspaceHome,
+  goToWorkspaceHomeRoute,
   useWorkspaceContext,
 } from '@bangle.io/workspace-context';
 
@@ -72,7 +72,7 @@ export function Activitybar({
             name: 'UI/CHANGE_SIDEBAR',
             value: { type: null },
           });
-          goToWorkspaceHome()(bangleStore.state);
+          goToWorkspaceHomeRoute()(bangleStore.state);
         }}
         hint="Workspace Home"
         icon={

@@ -1,14 +1,6 @@
 import { createSelector } from 'reselect';
 
-import {
-  isValidNoteWsPath,
-  OpenedWsPaths,
-  pathnameToWsName,
-  pathnameToWsPath,
-  searchToWsPath,
-} from '@bangle.io/ws-path';
-
-import { validateOpenedWsPaths } from './helpers';
+import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 export type WorkspaceStateKeys = keyof ConstructorParameters<
   typeof WorkspaceSliceState
@@ -19,8 +11,8 @@ export class WorkspaceSliceState {
     protected mainFields: {
       wsPaths: WorkspaceSliceState['wsPaths'];
       recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
-      locationPathname: WorkspaceSliceState['locationPathname'];
-      locationSearchQuery: WorkspaceSliceState['locationSearchQuery'];
+      wsName: WorkspaceSliceState['wsName'];
+      openedWsPaths: WorkspaceSliceState['openedWsPaths'];
     },
     protected opts: any = {},
   ) {}
@@ -39,52 +31,22 @@ export class WorkspaceSliceState {
   get recentlyUsedWsPaths(): string[] | undefined {
     return this.mainFields.recentlyUsedWsPaths;
   }
-  get locationPathname(): string | undefined {
-    return this.mainFields.locationPathname;
+  get wsName(): string | undefined {
+    return this.mainFields.wsName;
   }
-  get locationSearchQuery(): string | undefined {
-    return this.mainFields.locationSearchQuery;
+  get openedWsPaths(): OpenedWsPaths {
+    return this.mainFields.openedWsPaths;
   }
 
   // derived
   get noteWsPaths(): string[] | undefined {
     return selectNoteWsPaths(this);
   }
-  get wsName(): string | undefined {
-    return selectWsName(this);
-  }
-  get openedWsPaths(): OpenedWsPaths {
-    return selectOpenedWsPaths(this);
-  }
 }
-
-const selectPathname = (state: WorkspaceSliceState) => state.locationPathname;
-const selectSearchQuery = (state: WorkspaceSliceState) =>
-  state.locationSearchQuery;
 
 const selectNoteWsPaths = createSelector(
   (state: WorkspaceSliceState) => state.wsPaths,
   (wsPaths) => {
     return wsPaths?.filter((wsPath) => isValidNoteWsPath(wsPath));
-  },
-);
-
-export const selectWsName = createSelector(selectPathname, (pathName) => {
-  const wsName = pathnameToWsName(pathName);
-  return wsName;
-});
-
-const selectOpenedWsPaths = createSelector(
-  [selectPathname, selectSearchQuery],
-  (pathName, searchQuery = '') => {
-    const openedWsPaths = OpenedWsPaths.createFromArray([
-      pathnameToWsPath(pathName),
-      searchToWsPath(searchQuery),
-    ]);
-
-    if (validateOpenedWsPaths(openedWsPaths).valid) {
-      return openedWsPaths;
-    }
-    return OpenedWsPaths.createEmpty();
   },
 );

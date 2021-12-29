@@ -1,5 +1,6 @@
 import { Slice } from '@bangle.io/create-store';
 import type { JsonValue } from '@bangle.io/shared-types';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
 import {
@@ -7,21 +8,20 @@ import {
   saveLastUsedWorkspace,
   saveWorkspaceInfoEffect,
   updateLocationEffect,
-  validateLocationEffect,
 } from './effects';
 import {
   WorkspaceSliceState,
   WorkspaceStateKeys,
 } from './workspace-slice-state';
 
-export const JSON_SCHEMA_VERSION = 'workspace-slice/1';
+export const JSON_SCHEMA_VERSION = 'workspace-slice/2';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceSlice') : () => {};
 
 export const workspaceSliceInitialState = new WorkspaceSliceState({
-  locationPathname: undefined,
-  locationSearchQuery: undefined,
+  wsName: undefined,
+  openedWsPaths: OpenedWsPaths.createEmpty(),
   recentlyUsedWsPaths: undefined,
   wsPaths: undefined,
 });
@@ -33,8 +33,8 @@ const applyState = (
   switch (action.name) {
     case 'action::workspace-context:update-location': {
       const newState = WorkspaceSliceState.update(state, {
-        locationPathname: action.value.locationPathname,
-        locationSearchQuery: action.value.locationSearchQuery,
+        wsName: action.value.wsName,
+        openedWsPaths: action.value.openedWsPaths,
       });
 
       if (newState.wsName !== state.wsName) {
@@ -43,6 +43,15 @@ const applyState = (
           recentlyUsedWsPaths: undefined,
         });
       }
+
+      if (
+        newState.wsName &&
+        newState.wsName === state.wsName &&
+        newState.openedWsPaths.equal(state.openedWsPaths)
+      ) {
+        return state;
+      }
+
       return newState;
     }
 
@@ -100,8 +109,8 @@ export function workspaceSlice() {
 
       stateToJSON(val) {
         const obj: { [K in WorkspaceStateKeys]: any } = {
-          locationPathname: val.locationPathname,
-          locationSearchQuery: val.locationSearchQuery,
+          wsName: val.wsName,
+          openedWsPaths: val.openedWsPaths.toArray(),
           recentlyUsedWsPaths: val.recentlyUsedWsPaths,
           wsPaths: val.wsPaths,
         };
@@ -133,17 +142,18 @@ export function workspaceSlice() {
         const data = value.data;
 
         return WorkspaceSliceState.update(workspaceSliceInitialState, {
-          locationPathname: data.locationPathname,
-          locationSearchQuery: data.locationSearchQuery,
-          recentlyUsedWsPaths: data.recentlyUsedWsPaths,
-          wsPaths: data.wsPaths,
+          openedWsPaths: OpenedWsPaths.createFromArray(
+            Array.isArray(data.openedWsPaths) ? data.openedWsPaths : [],
+          ),
+          wsName: data.wsName || undefined,
+          recentlyUsedWsPaths: data.recentlyUsedWsPaths || undefined,
+          wsPaths: data.wsPaths || undefined,
         });
       },
     },
     sideEffect: [
       updateLocationEffect,
       refreshWsPathsEffect,
-      validateLocationEffect,
       saveWorkspaceInfoEffect,
       saveLastUsedWorkspace,
     ],

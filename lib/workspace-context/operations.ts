@@ -18,7 +18,10 @@ import {
 } from '@bangle.io/workspaces';
 import {
   OpenedWsPaths,
+  pathnameToWsName,
+  pathnameToWsPath,
   PathValidationError,
+  searchToWsPath,
   validateNoteWsPath,
   wsNameToPathname,
   wsPathToPathname,
@@ -32,39 +35,6 @@ import { fileOpsPlus, FileOpsType } from './use-get-file-ops';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};
 
-export function updateLocation({
-  search,
-  pathname,
-}: {
-  search?: string;
-  pathname?: string;
-}) {
-  return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    dispatch({
-      name: 'action::workspace-context:update-location',
-      value: {
-        locationSearchQuery: search,
-        locationPathname: pathname,
-      },
-    });
-  };
-}
-
-export const historyUpdatePrimaryWsPath = (
-  wsPath: string,
-  replace: boolean,
-  wsName: string,
-) => {
-  return (state: AppState, dispatch: WorkspaceDispatchType): void => {
-    const sliceState = workspaceSliceKey.getSliceState(state);
-    if (sliceState) {
-      let openedWsPath = sliceState.openedWsPaths;
-      openedWsPath = openedWsPath.updateByIndex(0, wsPath);
-      historyUpdateOpenedWsPaths(openedWsPath, wsName, { replace })(state);
-    }
-  };
-};
-
 export const getFileOps = () => {
   return (
     state: AppState,
@@ -76,15 +46,6 @@ export const getFileOps = () => {
         workspaceHandleError(sliceState.wsName, error)(state, dispatch);
       }
     });
-  };
-};
-
-// returns true or false if the current wsName matches
-// the one provided in the parameter.
-export const isCurrentWsName = (wsName: string) => {
-  return (state: AppState): boolean => {
-    const sliceState = workspaceSliceKey.getSliceState(state);
-    return sliceState?.wsName === wsName;
   };
 };
 
@@ -139,42 +100,6 @@ export const refreshWsPaths = () => {
   };
 };
 
-export const updateOpenedWsPaths = (
-  newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),
-  { replaceHistory = false }: { replaceHistory?: boolean } = {},
-) => {
-  return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    const sliceState = workspaceSliceKey.getSliceState(state);
-
-    if (!sliceState?.wsName) {
-      return false;
-    }
-
-    const { wsName } = sliceState;
-
-    if (newOpened instanceof Function) {
-      newOpened = newOpened(sliceState.openedWsPaths);
-    }
-
-    if (newOpened.equal(sliceState.openedWsPaths)) {
-      return false;
-    }
-
-    const validity = validateOpenedWsPaths(newOpened);
-
-    if (!validity.valid) {
-      historyOnInvalidPath(wsName, validity.invalidWsPath)(state);
-      return false;
-    }
-
-    historyUpdateOpenedWsPaths(newOpened, wsName, { replace: replaceHistory })(
-      state,
-    );
-
-    return true;
-  };
-};
-
 export const renameNote = (targetWsPath: string, newWsPath: string) => {
   return (
     state: AppState,
@@ -203,32 +128,6 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
     });
 
     return true;
-  };
-};
-
-// replaces a targetWsPath with `newWsPath` if found in one of the wsPaths
-// in openedWsPaths
-export const replaceAnyMatchingOpenedWsPath = (
-  targetWsPath: string,
-  newWsPath: string,
-) => {
-  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
-    const sliceState = workspaceSliceKey.getSliceState(state);
-
-    if (!sliceState) {
-      return false;
-    }
-
-    const { openedWsPaths, wsName } = sliceState;
-    if (wsName) {
-      const newOpened = openedWsPaths.updateIfFound(targetWsPath, newWsPath);
-      if (!newOpened.equal(openedWsPaths)) {
-        historyUpdateOpenedWsPaths(newOpened, wsName, { replace: true })(state);
-        return true;
-      }
-    }
-
-    return false;
   };
 };
 
@@ -285,11 +184,9 @@ export const createNote = (
     }
 
     if (open) {
-      historyUpdatePrimaryWsPath(
-        wsPath,
-        false,
-        sliceState.wsName,
-      )(store.state, store.dispatch);
+      updateOpenedWsPaths((openedWsPath) => {
+        return openedWsPath.updateByIndex(0, wsPath);
+      })(store.state, store.dispatch);
     }
 
     return refreshWsPaths()(store.state, store.dispatch);
@@ -338,6 +235,144 @@ export const deleteNote = (wsPathToDelete: Array<string> | string) => {
   };
 };
 
+export const checkFileExists = (wsPath: string) => {
+  return (
+    state: AppState,
+    dispatch: WorkspaceDispatchType,
+  ): Promise<boolean> => {
+    const fileOps = getFileOps()(state, dispatch);
+
+    return fileOps?.checkFileExists(wsPath) || Promise.resolve(false);
+  };
+};
+
+export function workspaceHandleError(wsName: string, error: Error) {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    if (
+      error instanceof BaseFileSystemError &&
+      (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
+        error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
+    ) {
+      return goToWorkspaceAuthRoute(wsName, error.code)(state);
+    }
+    if (
+      error instanceof WorkspaceError &&
+      error.code === WORKSPACE_NOT_FOUND_ERROR
+    ) {
+      return goToWsNameRouteNotFoundRoute(wsName)(state);
+    }
+
+    return undefined;
+  };
+}
+
+// Navigation ops
+export const updateLocation = ({
+  search,
+  pathname,
+}: {
+  search?: string;
+  pathname?: string;
+}) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    // validate
+    const wsName = pathnameToWsName(pathname);
+
+    if (!wsName) {
+      dispatch({
+        name: 'action::workspace-context:update-location',
+        value: {
+          wsName: undefined,
+          openedWsPaths: OpenedWsPaths.createEmpty(),
+        },
+      });
+      return;
+    }
+
+    const openedWsPaths = OpenedWsPaths.createFromArray([
+      pathnameToWsPath(pathname),
+      searchToWsPath(search),
+    ]);
+
+    const validOpenedWsPaths = validateOpenedWsPaths(openedWsPaths);
+
+    if (!validOpenedWsPaths.valid) {
+      goToInvalidPathRoute(wsName, validOpenedWsPaths.invalidWsPath)(state);
+      return;
+    }
+
+    dispatch({
+      name: 'action::workspace-context:update-location',
+      value: {
+        wsName: wsName,
+        openedWsPaths: openedWsPaths,
+      },
+    });
+  };
+};
+
+export const updateOpenedWsPaths = (
+  newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),
+  { replaceHistory = false }: { replaceHistory?: boolean } = {},
+) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    const sliceState = workspaceSliceKey.getSliceState(state);
+
+    if (!sliceState?.wsName) {
+      return false;
+    }
+
+    const { wsName } = sliceState;
+
+    if (newOpened instanceof Function) {
+      newOpened = newOpened(sliceState.openedWsPaths);
+    }
+
+    if (newOpened.equal(sliceState.openedWsPaths)) {
+      return false;
+    }
+
+    const validity = validateOpenedWsPaths(newOpened);
+
+    if (!validity.valid) {
+      goToInvalidPathRoute(wsName, validity.invalidWsPath)(state);
+      return false;
+    }
+
+    historyUpdateOpenedWsPaths(newOpened, wsName, { replace: replaceHistory })(
+      state,
+    );
+
+    return true;
+  };
+};
+
+// replaces a targetWsPath with `newWsPath` if found in one of the wsPaths
+// in openedWsPaths
+export const replaceAnyMatchingOpenedWsPath = (
+  targetWsPath: string,
+  newWsPath: string,
+) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
+    const sliceState = workspaceSliceKey.getSliceState(state);
+
+    if (!sliceState) {
+      return false;
+    }
+
+    const { openedWsPaths, wsName } = sliceState;
+    if (wsName) {
+      const newOpened = openedWsPaths.updateIfFound(targetWsPath, newWsPath);
+      if (!newOpened.equal(openedWsPaths)) {
+        historyUpdateOpenedWsPaths(newOpened, wsName, { replace: true })(state);
+        return true;
+      }
+    }
+
+    return false;
+  };
+};
+
 export const pushWsPath = (
   wsPath: string,
   newTab = false,
@@ -359,14 +394,14 @@ export const pushWsPath = (
   };
 };
 
-export const goToWorkspaceHome = () => {
+export const goToWorkspaceHomeRoute = () => {
   return (state: AppState) => {
     goToLocation('/')(state);
     return true;
   };
 };
 
-export function goToWsName(
+export function goToWsNameRoute(
   wsName: string,
   { replace = false }: { replace?: boolean } = {},
 ) {
@@ -375,56 +410,29 @@ export function goToWsName(
   };
 }
 
-export function goToWsNameNotFound(wsName: string) {
-  return (state: AppState) => {
-    goToLocation(`/ws-not-found/${wsName}`, {})(state);
-  };
-}
-
-export const checkFileExists = (wsPath: string) => {
-  return (
-    state: AppState,
-    dispatch: WorkspaceDispatchType,
-  ): Promise<boolean> => {
-    const fileOps = getFileOps()(state, dispatch);
-
-    return fileOps?.checkFileExists(wsPath) || Promise.resolve(false);
+export const goToWorkspaceAuthRoute = (wsName: string, errorCode: string) => {
+  return (state: AppState): void => {
+    return goToLocation(
+      `/ws-auth/${encodeURIComponent(wsName)}?code=${errorCode}`,
+      {
+        replace: true,
+      },
+    )(state);
   };
 };
 
-export function workspaceHandleError(wsName: string, error: Error) {
-  return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    if (
-      error instanceof BaseFileSystemError &&
-      (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
-        error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
-    ) {
-      return goToLocation(
-        `/ws-auth/${encodeURIComponent(
-          wsName,
-        )}?code=${NATIVE_BROWSER_USER_ABORTED_ERROR}`,
-        {
-          replace: true,
-        },
-      )(state);
-    }
-    if (
-      error instanceof WorkspaceError &&
-      error.code === WORKSPACE_NOT_FOUND_ERROR
-    ) {
-      return goToLocation('/ws-not-found/' + encodeURIComponent(wsName), {
-        replace: true,
-      })(state);
-    }
-
-    return undefined;
-  };
-}
-
-export const historyOnInvalidPath = (wsName: string, invalidPath: string) => {
+export const goToInvalidPathRoute = (wsName: string, invalidPath: string) => {
   return (state: AppState): void => {
-    return goToLocation('/ws-invalid-path/' + encodeURIComponent(wsName), {
+    return goToLocation(`/ws-invalid-path/${encodeURIComponent(wsName)}`, {
       replace: true,
     })(state);
   };
 };
+
+export function goToWsNameRouteNotFoundRoute(wsName: string) {
+  return (state: AppState) => {
+    goToLocation(`/ws-not-found/${encodeURIComponent(wsName)}`, {
+      replace: true,
+    })(state);
+  };
+}

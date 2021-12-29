@@ -20,8 +20,6 @@ export type WorkspaceContextType = Merge<
 >;
 
 const WorkspaceHooksContext = React.createContext<WorkspaceContextType>({
-  locationPathname: workspaceSliceInitialState.locationPathname,
-  locationSearchQuery: workspaceSliceInitialState.locationSearchQuery,
   noteWsPaths: workspaceSliceInitialState.noteWsPaths,
   openedWsPaths: workspaceSliceInitialState.openedWsPaths,
   recentlyUsedWsPaths: workspaceSliceInitialState.recentlyUsedWsPaths,
@@ -52,8 +50,6 @@ export function WorkspaceContextProvider({
 
   const value: WorkspaceContextType = useMemo(() => {
     return {
-      locationPathname: sliceState.locationPathname,
-      locationSearchQuery: sliceState.locationSearchQuery,
       noteWsPaths: sliceState.noteWsPaths,
       openedWsPaths: sliceState.openedWsPaths,
       recentlyUsedWsPaths: sliceState.recentlyUsedWsPaths,
