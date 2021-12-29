@@ -9,6 +9,7 @@ import {
   getItemsInPalette,
   getPrimaryEditorHandler,
   getWsPathsShownInFilePalette,
+  longSleep,
   openWorkspacePalette,
   sleep,
 } from '../helpers';
@@ -172,5 +173,24 @@ test.describe.parallel('workspace', () => {
     expect(await page.$eval('body', (el) => el.innerText)).toContain(
       `🙈 Invalid path`,
     );
+  });
+
+  test('Opens the last known workspace', async ({ browser, baseURL }) => {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    await page.goto(baseURL!, { waitUntil: 'networkidle' });
+
+    const wsName1 = await createWorkspace(page);
+
+    await longSleep(700);
+
+    await page.close();
+
+    const page2 = await context.newPage();
+
+    await page2.goto(baseURL!, { waitUntil: 'networkidle' });
+
+    await expect(page2).toHaveURL(new RegExp(wsName1));
   });
 });

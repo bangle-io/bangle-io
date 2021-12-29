@@ -1,7 +1,7 @@
 import './style';
 
 import { OverlayProvider } from '@react-aria/overlays';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
 import { ActionContextProvider } from '@bangle.io/action-context';
@@ -11,7 +11,11 @@ import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,
 } from '@bangle.io/extension-registry';
-import { getLocationTo, usePageContext } from '@bangle.io/page-context';
+import {
+  BaseHistory,
+  getLocationTo,
+  usePageContext,
+} from '@bangle.io/page-context';
 import { initExtensionRegistry, polyfills } from '@bangle.io/shared';
 import { UIManager } from '@bangle.io/ui-context';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
@@ -41,12 +45,23 @@ let mountCount = 0;
 
 const useRouterHook: BaseLocationHook = () => {
   const { pageState, store } = usePageContext();
-
   const to = getLocationTo()(store.state) || '';
+  const pendingCalls = useRef<Parameters<BaseHistory['navigate']>[]>([]);
 
   const navigate = pageState?.history
     ? pageState.history.navigate.bind(pageState.history)
-    : () => {};
+    : (...args: Parameters<BaseHistory['navigate']>) => {
+        pendingCalls.current?.push(args);
+      };
+
+  // apply any navigation calls that we might have missed during the
+  // state loading
+  if (pendingCalls.current.length > 0 && pageState?.history) {
+    for (const call of pendingCalls.current) {
+      navigate(...call);
+    }
+    pendingCalls.current = [];
+  }
 
   return [to, navigate];
 };

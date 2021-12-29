@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { Route, Switch, useLocation } from 'wouter';
+import { Redirect, Route, Switch, useLocation } from 'wouter';
 
 import {
   getLastWorkspaceUsed,
-  goToWsNameRoute,
   pushWsPath,
   useWorkspaceContext,
 } from '@bangle.io/workspace-context';
@@ -22,13 +21,6 @@ export function Routes() {
   const [location] = useLocation();
   const { bangleStore } = useWorkspaceContext();
   useEffect(() => {
-    if (location === '/') {
-      const lastWsName = getLastWorkspaceUsed();
-      goToWsNameRoute(lastWsName || HELP_FS_WORKSPACE_NAME, { replace: true })(
-        bangleStore.state,
-      );
-    }
-
     if (location === wsNameToPathname(HELP_FS_WORKSPACE_NAME)) {
       pushWsPath(HELP_FS_INDEX_WS_PATH)(
         bangleStore.state,
@@ -50,6 +42,14 @@ export function Routes() {
       </Route>
       <Route path="/ws-invalid-path/:wsName">
         <WorkspaceInvalidPath />
+      </Route>
+      <Route path="/">
+        {() => {
+          const lastWsName = getLastWorkspaceUsed();
+          return (
+            <Redirect to={'/ws/' + lastWsName || HELP_FS_WORKSPACE_NAME} />
+          );
+        }}
       </Route>
     </Switch>
   );
