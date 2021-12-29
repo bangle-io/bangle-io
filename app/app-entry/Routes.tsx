@@ -45,10 +45,8 @@ export function Routes() {
       </Route>
       <Route path="/">
         {() => {
-          const lastWsName = getLastWorkspaceUsed();
-          return (
-            <Redirect to={'/ws/' + lastWsName || HELP_FS_WORKSPACE_NAME} />
-          );
+          const lastWsName = getLastWorkspaceUsed() || HELP_FS_WORKSPACE_NAME;
+          return <Redirect to={'/ws/' + lastWsName} />;
         }}
       </Route>
     </Switch>
