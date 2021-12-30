@@ -10,7 +10,9 @@ jest.mock('@bangle.io/workspaces', () => {
   return {
     FileOps: {
       listAllNotes: jest.fn(async () => []),
+      listAllFiles: jest.fn(async () => []),
       getDoc: jest.fn(async () => {}),
+      getFile: jest.fn(async () => {}),
     },
     fzfSearchNoteWsPaths: jest.fn(async () => {}),
   };
@@ -27,10 +29,24 @@ let setup = () => {
 let listAllNotesMock = FileOps.listAllNotes as jest.MockedFunction<
   typeof FileOps.listAllNotes
 >;
+let listAllFilesMock = FileOps.listAllFiles as jest.MockedFunction<
+  typeof FileOps.listAllFiles
+>;
 let getDocMock = FileOps.getDoc as jest.MockedFunction<typeof FileOps.getDoc>;
+
+let getFileMock = FileOps.getFile as jest.MockedFunction<
+  typeof FileOps.getFile
+>;
+
+const textToFile = (str = 'hello world', fileName = 'foo.txt') => {
+  var file = new File([str], fileName, { type: 'text/plain' });
+  return file;
+};
 
 beforeEach(() => {
   listAllNotesMock.mockImplementation(async () => []);
+  listAllFilesMock.mockImplementation(async () => []);
+  getFileMock.mockImplementation(async () => textToFile());
   getDocMock.mockImplementation(async () => {
     return {} as any;
   });
@@ -82,5 +98,19 @@ describe('abortableFzfSearchNoteWsPaths', () => {
       'test-ws',
       'my-file',
     );
+  });
+});
+
+describe('abortableBackupAllFiles', () => {
+  test('works', async () => {
+    listAllNotesMock.mockResolvedValue([
+      'test-ws:my-file.md',
+      'test-ws:rando.md',
+    ]);
+    getFileMock.mockResolvedValue(textToFile('hi', 'file.md'));
+
+    let { services } = setup();
+    const controller = new AbortController();
+    await services.abortableBackupAllFiles(controller.signal, 'test-ws');
   });
 });

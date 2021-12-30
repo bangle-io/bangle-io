@@ -117,7 +117,7 @@ export async function getFileAsText(wsPath: string) {
   return fileText;
 }
 
-export async function getFile(wsPath: string) {
+export async function getFile(wsPath: string): Promise<File> {
   const { wsName } = resolvePath(wsPath);
   const workspaceInfo = await getWorkspaceInfo(wsName);
 
@@ -141,7 +141,7 @@ export async function saveDoc(wsPath: string, doc: any, specRegistry) {
   );
 }
 
-export async function saveFile(wsPath: string, fileBlob) {
+export async function saveFile(wsPath: string, fileBlob: File) {
   validateFileWsPath(wsPath);
 
   const { wsName } = resolvePath(wsPath);
