@@ -13,9 +13,10 @@ const identifierPrefix = '#';
 
 const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   ({ query, onSelect, getActivePaletteItem }, ref) => {
-    const { primaryEditor } = useEditorManagerContext();
+    const editorContext = useEditorManagerContext();
 
     const items = useMemo(() => {
+      const { primaryEditor } = editorContext;
       if (!primaryEditor || primaryEditor.destroyed) {
         return [];
       }
@@ -54,10 +55,12 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
             data: r,
           };
         });
-    }, [query, primaryEditor]);
+    }, [query, editorContext]);
 
     const onExecuteItem = useCallback(
       (getUid, sourceInfo) => {
+        const { primaryEditor } = editorContext;
+
         const uid = getUid(items);
         const item = items.find((item) => item.uid === uid);
         if (item) {
@@ -77,7 +80,7 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
           });
         }
       },
-      [primaryEditor, items],
+      [editorContext, items],
     );
 
     // Expose onExecuteItem for the parent to call it

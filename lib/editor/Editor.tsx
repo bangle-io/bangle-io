@@ -85,16 +85,17 @@ function EditorInner({
     };
   }, [extensionRegistry, bangleStore, wsPath]);
 
-  const editorRef = useRef<CoreBangleEditor | null>(null);
+  const editorRef = useRef<ReturnType<typeof Proxy.revocable> | null>(null);
 
   const onEditorReady = useCallback(
     (editor) => {
-      editorRef.current = editor;
+      // See the code below for explaination on why this exist.
+      editorRef.current = Proxy.revocable(editor, {});
 
       setEditorReady(
         editorId,
         wsPath,
-        editor,
+        editorRef.current.proxy as any,
       )(bangleStore.state, bangleStore.dispatch);
 
       // TODO this is currently used by the integration tests
@@ -109,10 +110,26 @@ function EditorInner({
   useEffect(() => {
     return () => {
       if (editorRef.current) {
-        setEditorUnmounted(editorId, editorRef.current)(
+        setEditorUnmounted(editorId, editorRef.current.proxy as any)(
           bangleStore.state,
           bangleStore.dispatch,
         );
+        // Avoiding MEMORY LEAK
+        // Editor object is a pretty massive object and writing idiomatic react
+        // makes you use caching interfaces like useMemo, React.Memo etc, which
+        // cache their dependencies. Caching majority of the things is fine, but
+        // inadvertently caching an object like Editor causes major memory leaks.
+        // There are various ways to avoid this problem like avoiding the usage of
+        // editor in React components, or just being extra careful.
+        // For the scope of this project, being careful is prone to errors, so a quick
+        // and dirty approach is to put a revocable proxy in between rest of application
+        // and the Editor instance.This works because we know for sure if an Editor has
+        // been destroyed, we will never be reusing it, so we severe the reference by calling
+        // `.revoke()` and let GC collect the Editor once it is destroyed. The timeout exists
+        // just to give other places some time before the proxy is revoked.
+        setTimeout(() => {
+          editorRef.current!.revoke();
+        }, 10);
       }
     };
   }, [editorId, wsPath, bangleStore]);

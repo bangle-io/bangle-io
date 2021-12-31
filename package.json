@@ -22,7 +22,7 @@
   },
   "private": true,
   "scripts": {
-    "add-portals": "yarn link -A -r ../bangle/bangle-play",
+    "add-portals": "yarn link -A -r ../bangle-play",
     "build-serve": "yarn build && yarn run serve build",
     "build": "yarn vite-build",
     "g:build-dev-serve": "NODE_ENV=development yarn g:vite-build -m development && yarn g:e2e-serve",

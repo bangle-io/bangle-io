@@ -3,9 +3,6 @@ import fs from 'fs/promises';
 import path from 'path';
 
 import {
-  clickItemInPalette,
-  createNewNote,
-  createWorkspace,
   createWorkspaceFromBackup,
   ctrlKey,
   getAllWsPaths,
@@ -29,7 +26,6 @@ const getHeapSize = async (page: Page) =>
 
 test('Openning a lot of notes should not leak', async ({ baseURL }) => {
   test.slow();
-
   const browser = await chromium.launch({
     // this is needed to run `window.gc()`
     args: ['--js-flags=--expose-gc'],
