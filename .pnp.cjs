@@ -4109,6 +4109,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
@@ -4694,6 +4695,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm", "npm:0.28.4"],
             ["@bangle.dev/utils", "virtual:a0b0d16eced9ee2bca4e7554a9dec130a551ce3057513ca1b00defdf71b3a0623e9a31a301bf44892ff277f92b24ce1a3cb8eb2b609ec05b0a303d05a0743050#npm:0.28.4"],
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],
+            ["@bangle.io/base-error", "workspace:js-lib/base-error"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
@@ -4706,6 +4708,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/workspaces", "virtual:adbd11a050dab6dd72c18a7c85c1c3b5186184cf3aaafb4066757cc4a2ca0b1a1351b9eaf88bdc8771c8eb721d66174e3cf83c5d2d19112cdf4cb4b5d704e289#workspace:lib/workspaces"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
+            ["@zip.js/zip.js", "npm:2.3.23"],
             ["fast-deep-equal", "npm:3.1.3"],
             ["idb-keyval", "npm:5.1.5"]
           ],
@@ -5196,6 +5199,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/worker-setup/",
           "packageDependencies": [
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],
+            ["@bangle.io/base-error", "workspace:js-lib/base-error"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
@@ -8231,6 +8235,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@zeit-schemas-npm-2.6.0-b51feae8eb-7f2175ee34.zip/node_modules/@zeit/schemas/",
           "packageDependencies": [
             ["@zeit/schemas", "npm:2.6.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@zip.js/zip.js", [
+        ["npm:2.3.23", {
+          "packageLocation": "./.yarn/cache/@zip.js-zip.js-npm-2.3.23-1c37d20735-07659e3aea.zip/node_modules/@zip.js/zip.js/",
+          "packageDependencies": [
+            ["@zip.js/zip.js", "npm:2.3.23"]
           ],
           "linkType": "HARD",
         }]

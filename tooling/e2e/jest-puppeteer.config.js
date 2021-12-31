@@ -10,7 +10,8 @@ module.exports = {
 
   launch: {
     slowMo: 5,
-    // headless: false,
+    args: ['--js-flags=--expose-gc'],
+    headless: false,
   },
 
   // To run on chrome

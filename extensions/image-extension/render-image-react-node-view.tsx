@@ -103,12 +103,13 @@ export function ImageComponent({ nodeAttrs }) {
   }
 
   return (
+    // DONOT make this img `lazy` as it causes memory leak where
+    // editor is persisted forever.
     <img
       src={imageSrc || '/404.png'}
       alt={alt || inputSrc}
       width={newWidth}
       height={newHeight}
-      loading="lazy"
     />
   );
 }

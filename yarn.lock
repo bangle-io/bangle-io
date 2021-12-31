@@ -2020,6 +2020,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
@@ -2460,6 +2461,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.4
     "@bangle.dev/utils": 0.28.4
     "@bangle.io/abortable-worker": "workspace:*"
+    "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2472,6 +2474,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspaces": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
+    "@zip.js/zip.js": ^2.3.23
     fast-deep-equal: ^3.1.3
     idb-keyval: ^5.1.5
   languageName: unknown
@@ -2896,6 +2899,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/worker-setup@workspace:app/worker-setup"
   dependencies:
+    "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -5065,6 +5069,13 @@ __metadata:
   version: 2.6.0
   resolution: "@zeit/schemas@npm:2.6.0"
   checksum: 7f2175ee34fad1a37da20882f9cda038ebb43a99ceaf30877f1676044669adde714ee56de6f1fcb57214dfa4479995a63fb2d053fe9f877b6852cdc1e4da574c
+  languageName: node
+  linkType: hard
+
+"@zip.js/zip.js@npm:^2.3.23":
+  version: 2.3.23
+  resolution: "@zip.js/zip.js@npm:2.3.23"
+  checksum: 07659e3aeabd50811f250eca32ff5dbfa92926e64a8980ce765fc99f9413afd7fd17a0a67cc35121156be4ddefe3a141646d67dbb9d5f2ee64723043804107dc
   languageName: node
   linkType: hard
 

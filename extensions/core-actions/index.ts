@@ -3,8 +3,10 @@ import {
   CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
   CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
   CORE_ACTIONS_DELETE_ACTIVE_NOTE,
+  CORE_ACTIONS_DOWNLOAD_WORKSPACE_COPY,
   CORE_ACTIONS_NEW_NOTE,
   CORE_ACTIONS_NEW_WORKSPACE,
+  CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP,
   CORE_ACTIONS_RENAME_ACTIVE_NOTE,
   CORE_ACTIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_ACTIONS_SERVICE_WORKER_RELOAD,
@@ -52,6 +54,14 @@ const extension = Extension.create({
         name: CORE_ACTIONS_SERVICE_WORKER_DISMISS_UPDATE,
         title: 'Dismiss prompt from service worker to update',
         hidden: true,
+      },
+      {
+        name: CORE_ACTIONS_DOWNLOAD_WORKSPACE_COPY,
+        title: 'Download a backup copy of workspace',
+      },
+      {
+        name: CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP,
+        title: 'Restore this workspace from a backup file',
       },
       {
         name: 'action::bangle-io-core-actions:focus-primary-editor',

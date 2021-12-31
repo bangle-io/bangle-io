@@ -6,23 +6,30 @@ import {
   CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
   CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
   CORE_ACTIONS_DELETE_ACTIVE_NOTE,
+  CORE_ACTIONS_DOWNLOAD_WORKSPACE_COPY,
   CORE_ACTIONS_NEW_NOTE,
   CORE_ACTIONS_NEW_WORKSPACE,
+  CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP,
   CORE_ACTIONS_RENAME_ACTIVE_NOTE,
   CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
   CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_ACTIONS_TOGGLE_THEME,
+  WorkerErrorCode,
 } from '@bangle.io/constants';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { useUIManagerContext } from '@bangle.io/ui-context';
+import { sleep } from '@bangle.io/utils';
 import {
   deleteNote,
+  refreshWsPaths,
   updateOpenedWsPaths,
   useWorkspaceContext,
 } from '@bangle.io/workspace-context';
 import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
 import { resolvePath } from '@bangle.io/ws-path';
 
+import { downloadBlob, filePicker } from './backup';
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 
 export function CoreActionsHandler({ registerActionHandler }) {
@@ -250,6 +257,109 @@ export function CoreActionsHandler({ registerActionHandler }) {
                 CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
             );
           }
+          return true;
+        }
+
+        case CORE_ACTIONS_DOWNLOAD_WORKSPACE_COPY: {
+          if (!wsName) {
+            dispatch({
+              name: 'UI/SHOW_NOTIFICATION',
+              value: {
+                severity: 'error',
+                uid: CORE_ACTIONS_DOWNLOAD_WORKSPACE_COPY + 'no-workspace',
+                content: 'Please open a workspace first',
+              },
+            });
+            return false;
+          }
+          const abortController = new AbortController();
+          dispatch({
+            name: 'UI/SHOW_NOTIFICATION',
+            value: {
+              severity: 'info',
+              uid: 'downloading-ws-copy' + wsName,
+              content:
+                'Hang tight! your backup zip will be downloaded momentarily.',
+            },
+          });
+          naukarWorkerProxy
+            .abortableBackupAllFiles(abortController.signal, wsName)
+            .then((blob: File) => {
+              downloadBlob(blob, blob.name);
+            });
+          return true;
+        }
+
+        case CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP: {
+          if (!wsName) {
+            dispatch({
+              name: 'UI/SHOW_NOTIFICATION',
+              value: {
+                severity: 'error',
+                uid: CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP + 'no-workspace',
+                content: 'Please create an empty workspace first',
+              },
+            });
+
+            return false;
+          }
+
+          filePicker()
+            .then((file) => {
+              const abortController = new AbortController();
+              dispatch({
+                name: 'UI/SHOW_NOTIFICATION',
+                value: {
+                  severity: 'info',
+                  uid: 'recovery-started' + wsName,
+                  content:
+                    'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
+                },
+              });
+
+              return naukarWorkerProxy.abortableCreateWorkspaceFromBackup(
+                abortController.signal,
+                wsName,
+                file,
+              );
+            })
+            .then(() => {
+              return sleep(100);
+            })
+            .then(
+              () => {
+                refreshWsPaths()(bangleStore.state, bangleStore.dispatch);
+                dispatch({
+                  name: 'UI/SHOW_NOTIFICATION',
+                  value: {
+                    severity: 'success',
+                    uid: 'recovery-finished' + wsName,
+                    content: 'Your notes have successfully restored.',
+                  },
+                });
+              },
+              (error) => {
+                // comlink is unable to understand custom errors
+                if (
+                  error?.message?.includes(
+                    WorkerErrorCode.EMPTY_WORKSPACE_NEEDED,
+                  )
+                ) {
+                  dispatch({
+                    name: 'UI/SHOW_NOTIFICATION',
+                    value: {
+                      severity: 'error',
+                      uid:
+                        CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP +
+                        'workspace-has-things',
+                      content: 'This action requires an empty workspace.',
+                    },
+                  });
+                  return;
+                }
+              },
+            );
+
           return true;
         }
 

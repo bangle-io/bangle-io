@@ -114,7 +114,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     return textContent;
   }
 
-  async readFile(filePath: string) {
+  async readFile(filePath: string): Promise<File> {
     this._verifyFilePath(filePath);
 
     let result = await catchUpstream(

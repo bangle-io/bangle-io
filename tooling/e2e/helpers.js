@@ -33,6 +33,34 @@ async function pressLeftKey(page, { times = 1, withShift = false } = {}) {
   }
 }
 
+export async function createWorkspaceFromBackup(
+  page,
+  file: {
+    buffer: Buffer,
+    mimeType: string,
+    name: string,
+  },
+  wsName = 'test' + uuid(4),
+) {
+  await createWorkspace(page, wsName);
+
+  const [fileChooser] = await Promise.all([
+    page.waitForEvent('filechooser'),
+    runAction(
+      page,
+      'action::bangle-io-core-actions:CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP',
+    ),
+  ]);
+
+  await fileChooser.setFiles({
+    name: file.name,
+    mimeType: file.mimeType,
+    buffer: file.buffer,
+  });
+
+  return wsName;
+}
+
 async function pressRightKey(page, { times = 1, withShift = false } = {}) {
   for (let t = 0; t < times; t++) {
     if (withShift) {

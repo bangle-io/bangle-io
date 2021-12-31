@@ -117,7 +117,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     return textContent;
   }
 
-  async readFile(filePath: string) {
+  async readFile(filePath: string): Promise<File> {
     this._verifyFilePath(filePath);
 
     await verifyPermission(this._rootDirHandle, filePath);
