@@ -3,26 +3,32 @@ import fs from 'fs/promises';
 import path from 'path';
 
 import {
+  createNewNote,
+  createWorkspace,
   createWorkspaceFromBackup,
-  ctrlKey,
   getAllWsPaths,
-  getEditorLocator,
-  getItemsInPalette,
-  getPrimaryEditorHandler,
-  getWsPathsShownInFilePalette,
   longSleep,
-  openWorkspacePalette,
   pushWsPathToPrimary,
   sleep,
-  uuid,
+  waitForEditorIdToLoad,
 } from '../helpers';
 
 const getHeapSize = async (page: Page) =>
   JSON.parse(
     await page.evaluate(() =>
-      JSON.stringify((window.performance as any).memory),
+      JSON.stringify((window.performance as any).memory.usedJSHeapSize),
     ),
   );
+
+// TODO waiting for measureUserAgentSpecificMemory
+// test('heap size', async ({ page, baseURL }) => {
+//   await page.goto(baseURL!, { waitUntil: 'networkidle' });
+//   const wsName = await createWorkspace(page);
+//   const note = await createNewNote(page, wsName, 'test.md');
+
+//   await waitForEditorIdToLoad(page, 0);
+//   expect(await getHeapSize(page)).toEqual(10000);
+// });
 
 test('Openning a lot of notes should not leak', async ({ baseURL }) => {
   test.slow();
