@@ -18,6 +18,11 @@ export type EditorDispatchType = ApplicationStore<
 export type SideEffect = SliceSideEffect<EditorSliceState, EditorManagerAction>;
 
 export interface EditorSliceState {
+  // WARNING: avoid using editor in the useMemo or any React Hooks or React.memo or React.PureComponent
+  // dependency array as it causes memory leak due to react caching the editor for future use
+  // but an editor will never reused once it is detroyed.
+  // Please see https://github.com/bangle-io/bangle-io/blob/dev/lib/editor/Editor.tsx for
+  // an indepth explaination.
   focusedEditorId: number | undefined;
   editors: (BangleEditor | undefined)[];
   editorConfig: OpenedEditorsConfig;

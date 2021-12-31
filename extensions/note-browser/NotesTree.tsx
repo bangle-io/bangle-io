@@ -157,147 +157,145 @@ export function GenericFileBrowser({
   );
 }
 
-const RenderItems = React.memo(
-  ({
-    wsName,
-    filesAndDirList,
-    dirSet,
-    bangleStore,
-    activeFilePath,
-    closeSidebar,
-    createNewFile,
-  }: {
-    wsName: string;
-    filesAndDirList: string[];
-    dirSet: Set<string>;
-    bangleStore: WorkspaceContextType['bangleStore'];
-    activeFilePath?: string;
-    closeSidebar: () => void;
-    createNewFile: (path?: string) => void;
-  }) => {
-    const [collapsed, toggleCollapse] = useLocalStorage<string[]>(
-      'RenderTree6261:' + wsName,
-      () => {
-        const result = filesAndDirList.filter(
-          (path) =>
-            dirSet.has(path) && path.split('/').length === DEFAULT_FOLD_DEPTH,
-        );
-        return result;
-      },
-    );
-
-    // this exists as a ref so that we can use it later
-    // but without depending on it
-    const collapsedRef = useRef(collapsed);
-    useEffect(() => {
-      collapsedRef.current = collapsed;
-    }, [collapsed]);
-
-    // If there is an activeFilePath make sure that the file tree
-    // is uncollapsed
-    useEffect(() => {
-      if (activeFilePath) {
-        const parentsToKeep = collapsedRef.current.filter((r) => {
-          return !activeFilePath.startsWith(r + '/');
-        });
-        if (parentsToKeep.length < collapsedRef.current.length) {
-          toggleCollapse(parentsToKeep);
-        }
-      }
-    }, [activeFilePath, toggleCollapse]);
-
-    const parentRef = React.useRef<HTMLDivElement>(null);
-    const rows = useMemo(() => {
-      return filesAndDirList.filter((path) => {
-        if (
-          collapsed.some((collapseDirPath) =>
-            path.startsWith(collapseDirPath + '/'),
-          )
-        ) {
-          return false;
-        }
-        return true;
-      });
-    }, [filesAndDirList, collapsed]);
-
-    const rowVirtualizer = useVirtual({
-      size: rows.length,
-      parentRef,
-      overscan: 60,
-      estimateSize: React.useCallback(() => {
-        // NOTE its easy to trip this and make it run on every render
-
-        return rowHeight;
-      }, []),
-      keyExtractor: useCallback((i: number) => rows[i]!, [rows]),
-    });
-
-    const result = rowVirtualizer.virtualItems.map((virtualRow) => {
-      const path = rows[virtualRow.index]!;
-      const isDir = dirSet.has(path);
-      const wsPath = filePathToWsPath(wsName, path);
-      const splittedPath = path.split('/');
-      const depth = splittedPath.length;
-      const name = removeMdExtension(splittedPath.pop() || 'Unknown file name');
-
-      const onClick = (event) => {
-        if (isDir) {
-          toggleCollapse((array) => {
-            if (array.includes(path)) {
-              return array.filter((p) => p !== path);
-            } else {
-              return [...array, path];
-            }
-          });
-          return;
-        }
-        if (event.metaKey) {
-          pushWsPath(wsPath, true)(bangleStore.state, bangleStore.dispatch);
-        } else if (event.shiftKey) {
-          pushWsPath(
-            wsPath,
-            false,
-            true,
-          )(bangleStore.state, bangleStore.dispatch);
-        } else {
-          pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
-        }
-        closeSidebar();
-      };
-
-      return (
-        <RenderRow
-          key={path}
-          virtualRow={virtualRow}
-          path={path}
-          isDir={isDir}
-          wsPath={wsPath}
-          name={name}
-          depth={depth}
-          isActive={activeFilePath === path}
-          isCollapsed={collapsed.includes(path)}
-          createNewFile={createNewFile}
-          bangleStore={bangleStore}
-          onClick={onClick}
-        />
+const RenderItems = ({
+  wsName,
+  filesAndDirList,
+  dirSet,
+  bangleStore,
+  activeFilePath,
+  closeSidebar,
+  createNewFile,
+}: {
+  wsName: string;
+  filesAndDirList: string[];
+  dirSet: Set<string>;
+  bangleStore: WorkspaceContextType['bangleStore'];
+  activeFilePath?: string;
+  closeSidebar: () => void;
+  createNewFile: (path?: string) => void;
+}) => {
+  const [collapsed, toggleCollapse] = useLocalStorage<string[]>(
+    'RenderTree6261:' + wsName,
+    () => {
+      const result = filesAndDirList.filter(
+        (path) =>
+          dirSet.has(path) && path.split('/').length === DEFAULT_FOLD_DEPTH,
       );
+      return result;
+    },
+  );
+
+  // this exists as a ref so that we can use it later
+  // but without depending on it
+  const collapsedRef = useRef(collapsed);
+  useEffect(() => {
+    collapsedRef.current = collapsed;
+  }, [collapsed]);
+
+  // If there is an activeFilePath make sure that the file tree
+  // is uncollapsed
+  useEffect(() => {
+    if (activeFilePath) {
+      const parentsToKeep = collapsedRef.current.filter((r) => {
+        return !activeFilePath.startsWith(r + '/');
+      });
+      if (parentsToKeep.length < collapsedRef.current.length) {
+        toggleCollapse(parentsToKeep);
+      }
+    }
+  }, [activeFilePath, toggleCollapse]);
+
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  const rows = useMemo(() => {
+    return filesAndDirList.filter((path) => {
+      if (
+        collapsed.some((collapseDirPath) =>
+          path.startsWith(collapseDirPath + '/'),
+        )
+      ) {
+        return false;
+      }
+      return true;
     });
+  }, [filesAndDirList, collapsed]);
+
+  const rowVirtualizer = useVirtual({
+    size: rows.length,
+    parentRef,
+    overscan: 60,
+    estimateSize: React.useCallback(() => {
+      // NOTE its easy to trip this and make it run on every render
+
+      return rowHeight;
+    }, []),
+    keyExtractor: useCallback((i: number) => rows[i]!, [rows]),
+  });
+
+  const result = rowVirtualizer.virtualItems.map((virtualRow) => {
+    const path = rows[virtualRow.index]!;
+    const isDir = dirSet.has(path);
+    const wsPath = filePathToWsPath(wsName, path);
+    const splittedPath = path.split('/');
+    const depth = splittedPath.length;
+    const name = removeMdExtension(splittedPath.pop() || 'Unknown file name');
+
+    const onClick = (event) => {
+      if (isDir) {
+        toggleCollapse((array) => {
+          if (array.includes(path)) {
+            return array.filter((p) => p !== path);
+          } else {
+            return [...array, path];
+          }
+        });
+        return;
+      }
+      if (event.metaKey) {
+        pushWsPath(wsPath, true)(bangleStore.state, bangleStore.dispatch);
+      } else if (event.shiftKey) {
+        pushWsPath(
+          wsPath,
+          false,
+          true,
+        )(bangleStore.state, bangleStore.dispatch);
+      } else {
+        pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
+      }
+      closeSidebar();
+    };
 
     return (
-      <div ref={parentRef} style={{ height: '100%', overflow: 'auto' }}>
-        <div
-          style={{
-            height: `${rowVirtualizer.totalSize}px`,
-            width: '100%',
-            position: 'relative',
-          }}
-        >
-          {result}
-        </div>
-      </div>
+      <RenderRow
+        key={path}
+        virtualRow={virtualRow}
+        path={path}
+        isDir={isDir}
+        wsPath={wsPath}
+        name={name}
+        depth={depth}
+        isActive={activeFilePath === path}
+        isCollapsed={collapsed.includes(path)}
+        createNewFile={createNewFile}
+        bangleStore={bangleStore}
+        onClick={onClick}
+      />
     );
-  },
-);
+  });
+
+  return (
+    <div ref={parentRef} style={{ height: '100%', overflow: 'auto' }}>
+      <div
+        style={{
+          height: `${rowVirtualizer.totalSize}px`,
+          width: '100%',
+          position: 'relative',
+        }}
+      >
+        {result}
+      </div>
+    </div>
+  );
+};
 
 function RenderRow({
   virtualRow,
