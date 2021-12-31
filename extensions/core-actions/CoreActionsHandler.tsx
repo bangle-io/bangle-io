@@ -17,7 +17,9 @@ import {
   WorkerErrorCode,
 } from '@bangle.io/constants';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { useUIManagerContext } from '@bangle.io/ui-context';
+import { sleep } from '@bangle.io/utils';
 import {
   deleteNote,
   refreshWsPaths,
@@ -26,11 +28,9 @@ import {
 } from '@bangle.io/workspace-context';
 import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
 import { resolvePath } from '@bangle.io/ws-path';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 
-import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
-import { sleep } from '@bangle.io/utils';
 import { downloadBlob, filePicker } from './backup';
+import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 
 export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch } = useUIManagerContext();
@@ -313,7 +313,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
                   severity: 'info',
                   uid: 'recovery-started' + wsName,
                   content:
-                    'Hang tight! Bangle is processing your notes. Please donot reload or close the tab.',
+                    'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
                 },
               });
 
@@ -334,7 +334,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
                   value: {
                     severity: 'success',
                     uid: 'recovery-finished' + wsName,
-                    content: 'Your notes have successfully recovered.',
+                    content: 'Your notes have successfully restored.',
                   },
                 });
               },

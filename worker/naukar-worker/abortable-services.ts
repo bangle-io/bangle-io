@@ -1,12 +1,13 @@
+import * as zip from '@zip.js/zip.js/dist/zip-no-worker.min.js';
+
 import { workerAbortable } from '@bangle.io/abortable-worker';
+import { BaseError } from '@bangle.io/base-error';
+import { WorkerErrorCode } from '@bangle.io/constants';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { searchPmNode } from '@bangle.io/search-pm-node';
 import { assertSignal } from '@bangle.io/utils';
 import { FileOps, fzfSearchNoteWsPaths } from '@bangle.io/workspaces';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
-import { BaseError } from '@bangle.io/base-error';
-import * as zip from '@zip.js/zip.js/dist/zip-no-worker.min.js';
-import { WorkerErrorCode } from '@bangle.io/constants';
 
 export function abortableServices({
   extensionRegistry,

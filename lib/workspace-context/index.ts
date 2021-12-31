@@ -1,4 +1,5 @@
 export type { WorkspaceSliceAction } from './common';
+export { workspaceSliceKey } from './common';
 export { getLastWorkspaceUsed } from './last-seen-ws-name';
 export {
   checkFileExists,

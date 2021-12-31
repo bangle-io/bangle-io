@@ -10,7 +10,8 @@ export const ctrlKey = os.platform() === 'darwin' ? 'Meta' : 'Control';
 export const SELECTOR_TIMEOUT = 2000;
 
 const RECURSIVE_RETRY_MAX = 3;
-function uuid(len = 10) {
+
+export function uuid(len = 10) {
   return Math.random().toString(36).substring(2, 15).slice(0, len);
 }
 
@@ -53,6 +54,60 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
   await expect(page).toHaveURL(new RegExp('/ws/' + wsName));
 
   return wsName;
+}
+
+export async function createWorkspaceFromBackup(
+  page: Page,
+  file: {
+    buffer: Buffer;
+    mimeType: string;
+    name: string;
+  },
+  wsName = 'test' + uuid(4),
+) {
+  await createWorkspace(page, wsName);
+  await longSleep();
+
+  const [fileChooser] = await Promise.all([
+    page.waitForEvent('filechooser'),
+    runAction(
+      page,
+      'action::bangle-io-core-actions:CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP',
+    ),
+  ]);
+
+  await fileChooser.setFiles({
+    name: file.name,
+    mimeType: file.mimeType,
+    buffer: file.buffer,
+  });
+
+  return wsName;
+}
+
+export async function getAllWsPaths(page: Page, attempt = 0) {
+  if (!(await page.$('.note-browser'))) {
+    await runAction(page, 'action::bangle-io-note-browser:toggle-note-browser');
+  }
+
+  const result = JSON.parse(
+    await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
+  );
+
+  if (result.length === 0) {
+    await sleep();
+    return getAllWsPaths(page, attempt + 1);
+  }
+  if (attempt > 2) {
+    return result;
+  }
+}
+
+export async function pushWsPathToPrimary(page: Page, wsPath: string) {
+  await page.evaluate(
+    ([wsPath]) => (window as any)._pushWsPath(wsPath),
+    [wsPath],
+  );
 }
 
 export async function openWorkspacePalette(page: Page) {

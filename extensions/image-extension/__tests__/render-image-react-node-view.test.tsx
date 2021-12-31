@@ -70,7 +70,6 @@ describe('ImageComponent', () => {
       <div>
         <img
           alt="./google.png"
-          loading="lazy"
           src="/404.png"
         />
       </div>
@@ -103,7 +102,6 @@ describe('ImageComponent', () => {
         <img
           alt="./google.png"
           height="300"
-          loading="lazy"
           src="blob:I am the content of image"
           width="200"
         />
@@ -132,7 +130,6 @@ describe('ImageComponent', () => {
       <div>
         <img
           alt="https://abcd.google.png"
-          loading="lazy"
           src="https://abcd.google.png"
         />
       </div>
@@ -166,7 +163,6 @@ describe('ImageComponent', () => {
         <img
           alt="google-4x3.png"
           height="3"
-          loading="lazy"
           src="blob:I am the content of image"
           width="4"
         />

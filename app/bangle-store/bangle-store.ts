@@ -3,12 +3,15 @@ import lifecycle from 'page-lifecycle';
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { editorManagerSlice } from '@bangle.io/editor-manager-context';
+import * as editorManagerContext from '@bangle.io/editor-manager-context';
 import type { BangleStateOpts, JsonValue } from '@bangle.io/shared-types';
 import { uiSlice } from '@bangle.io/ui-context';
 import {
+  getEditorPluginMetadata,
   safeCancelIdleCallback,
   safeRequestIdleCallback,
 } from '@bangle.io/utils';
+import * as workspaceContext from '@bangle.io/workspace-context';
 
 import {
   BangleActionTypes,
@@ -90,7 +93,18 @@ export function initializeBangleStore({
   };
 
   let store = makeStore();
+  // for e2e testing
   (window as any).appStore = store;
+  (window as any)._getWsPaths = () =>
+    workspaceContext.workspaceSliceKey.getSliceState(store.state)?.wsPaths;
+  (window as any)._pushWsPath = (wsPath: string) =>
+    workspaceContext.pushWsPath(wsPath)(store.state, store.dispatch);
+
+  (window as any)._getEditorPluginMetadata = getEditorPluginMetadata;
+
+  (window as any)._getEditors = () =>
+    editorManagerContext.editorManagerSliceKey.getSliceState(store.state)
+      ?.editors;
 
   return store;
 }
