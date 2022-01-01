@@ -346,7 +346,7 @@ describe('store', () => {
     });
   });
 
-  describe('multiple side effects in a singel slice', () => {
+  describe('multiple side effects in a single slice', () => {
     const key1 = new SliceKey<number>('one');
     const key2 = new SliceKey<number>('two');
 
@@ -415,6 +415,109 @@ describe('store', () => {
       expect(destroy1).toBeCalledTimes(1);
     });
   });
+
+  describe('previous state', () => {
+    test('works well', async () => {
+      const key1 = new SliceKey<string>('one');
+      const key2 = new SliceKey<number>('two');
+
+      const firstEffect = jest.fn(
+        (store, prevState, sliceState, prevSliceState) => {
+          if (sliceState === 'value-a') {
+            store.dispatch({
+              name: 'for-a',
+              value: 'value-b',
+            });
+          }
+        },
+      );
+
+      const secondEffect = jest.fn(
+        (store, prevState, sliceState, prevSliceState) => {},
+      );
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => '',
+          apply: (action, value, appState) => {
+            if (action.name === 'for-a') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            update: firstEffect,
+          };
+        },
+      });
+
+      const slice2 = new Slice({
+        key: key2,
+        state: {
+          init: () => 0,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-b') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            update: secondEffect,
+          };
+        },
+      });
+
+      let originalState = AppState.create({ slices: [slice1, slice2] });
+
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state: originalState,
+      });
+
+      // Dispatch a normal action where both effects
+      // should update
+      store.dispatch({
+        name: 'for-a',
+        value: 'value-prep',
+      });
+
+      const state1 = store.state;
+
+      expect(key1.getSliceState(store.state)).toBe('value-prep');
+      expect(firstEffect).toBeCalledTimes(1);
+      expect(secondEffect).toBeCalledTimes(1);
+      expect(secondEffect).nthCalledWith(
+        1,
+        store,
+        originalState,
+        key2.getSliceState(store.state),
+        key2.getSliceState(originalState),
+      );
+
+      store.dispatch({
+        name: 'for-a',
+        value: 'value-a',
+      });
+
+      expect(key1.getSliceState(store.state)).toBe('value-b');
+      // called one extra because the first effect dispatches an action
+      // essentially early exiting the update for all of the remaining effects
+      expect(firstEffect).toBeCalledTimes(3);
+      expect(secondEffect).toBeCalledTimes(2);
+      expect(secondEffect).nthCalledWith(
+        2,
+        store,
+        state1,
+        key2.getSliceState(store.state),
+        key2.getSliceState(state1),
+      );
+    });
+  });
+
   describe('deferred side effects', () => {
     test('does not call deferred update when scheduler is not provided', () => {
       const deferredUpdate = jest.fn(() => {});
