@@ -56,10 +56,8 @@ export const focusEditorEffect: SideEffect = (store) => {
 
   let mounted = Date.now();
 
-  let getPrev = savePreviousValue<AppState>();
   return {
-    update(store) {
-      const prevState = getPrev(store.state);
+    update(store, prevState) {
       // // Only continue if an editor has been created or destroyed
       if (prevState && !didSomeEditorChange(prevState)(store.state)) {
         return;
