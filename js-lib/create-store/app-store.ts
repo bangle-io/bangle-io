@@ -10,6 +10,7 @@ export type DispatchType<S, A extends BaseAction> = ApplicationStore<
 
 type StoreSideEffectType<SL, A extends BaseAction, S> = {
   key: string;
+  previouslySeenState: AppState<S, A>;
   effect: ReturnType<SliceSideEffect<SL, A, S>>;
 };
 
@@ -66,11 +67,15 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       return;
     }
 
-    let prevState = this._state;
+    const prevState = this._state;
+
     this._state = state;
 
     if (!this.disableSideEffects) {
-      this.runSideEffects(prevState, ++this.currentRunId);
+      if (prevState.config !== this._state.config) {
+        this.setupSideEffects();
+      }
+      this.runSideEffects(++this.currentRunId);
     }
   }
 
@@ -93,21 +98,28 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     this.destroyed = true;
   }
 
-  private runSideEffects(prevState: AppState<S, A>, runId: number) {
-    if (prevState.config !== this._state.config) {
-      this.setupSideEffects();
-    }
-
-    for (const { effect, key } of this.sideEffects) {
+  private runSideEffects(runId: number) {
+    for (const sideEffect of this.sideEffects) {
+      // make sure the runId is the currentRunId
       if (runId !== this.currentRunId) {
         return;
       }
+      // pass the previous state that the effect has processed
+      // previously. Some effects can lag behind a couple of state transitions
+      // if an effect before them dispatches an action.
+      // Note: if it is the first time an effect is running
+      // the previouslySeenState would be the initial state
+      const previouslySeenState = sideEffect.previouslySeenState;
 
-      effect.update?.(
+      // update it before instead of after execution, as the update can end up
+      // dispatching action which can can incorrect previouslySeenState.
+      sideEffect.previouslySeenState = this.state;
+
+      sideEffect.effect.update?.(
         this,
-        prevState,
-        this.state.getSliceState(key),
-        prevState.getSliceState(key),
+        previouslySeenState,
+        this.state.getSliceState(sideEffect.key),
+        previouslySeenState.getSliceState(sideEffect.key),
       );
     }
 
@@ -150,7 +162,11 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
               );
             }
             if (result) {
-              this.sideEffects.push({ effect: result, key: slice.key });
+              this.sideEffects.push({
+                effect: result,
+                key: slice.key,
+                previouslySeenState: this._state,
+              });
             }
           });
       }

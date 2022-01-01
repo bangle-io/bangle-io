@@ -326,7 +326,6 @@ describe('store', () => {
         ],
       });
 
-      let prevState = store.state;
       store.updateState(differentState);
 
       expect(destroy1).toBeCalledTimes(1);
@@ -337,7 +336,13 @@ describe('store', () => {
       expect(sideEffect2).nthCalledWith(1, store);
       expect(destroy2).toBeCalledTimes(0);
       expect(update2).toBeCalledTimes(1);
-      expect(update2).nthCalledWith(1, store, prevState, undefined, undefined);
+      expect(update2).nthCalledWith(
+        1,
+        store,
+        differentState,
+        undefined,
+        undefined,
+      );
     });
   });
 

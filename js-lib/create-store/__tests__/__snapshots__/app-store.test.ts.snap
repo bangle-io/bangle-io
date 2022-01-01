@@ -245,6 +245,57 @@ ApplicationStore {
         "deferredUpdate": [MockFunction],
       },
       "key": "slice$2",
+      "previouslySeenState": AppState {
+        "config": AppStateConfig {
+          "fields": Array [],
+          "opts": undefined,
+          "slices": Array [
+            Slice {
+              "key": "slice$2",
+              "spec": Object {
+                "sideEffect": [MockFunction] {
+                  "calls": Array [
+                    Array [
+                      [Circular],
+                    ],
+                  ],
+                  "results": Array [
+                    Object {
+                      "type": "return",
+                      "value": Object {
+                        "deferredUpdate": [MockFunction],
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          "slicesByKey": Object {
+            "slice$2": Slice {
+              "key": "slice$2",
+              "spec": Object {
+                "sideEffect": [MockFunction] {
+                  "calls": Array [
+                    Array [
+                      [Circular],
+                    ],
+                  ],
+                  "results": Array [
+                    Object {
+                      "type": "return",
+                      "value": Object {
+                        "deferredUpdate": [MockFunction],
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        "slicesCurrentState": Object {},
+      },
     },
   ],
   "storeName": "test-store",
