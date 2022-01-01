@@ -9,4 +9,4 @@ export const editorManagerSliceKey = new SliceKey<
 
 // The time to wait before auto focusing any newly
 // mounted editor
-export const FOCUS_EDITOR_ON_LOAD_COOLDOWN = 400;
+export const FOCUS_EDITOR_ON_LOAD_COOLDOWN = 1500;

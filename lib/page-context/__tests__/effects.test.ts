@@ -1,4 +1,3 @@
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { sleep } from '@bangle.io/utils';
 
 import { blockReload, pageSlice } from '..';
@@ -13,27 +12,25 @@ beforeEach(() => {
 describe('blockReloadEffect', () => {
   test('blocks', async () => {
     const { store } = createStore();
-
-    // any action during init will trigger removeUnsavedChanges
-    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(1);
+    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(0);
+    expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(0);
 
     blockReload(true)(store.state, store.dispatch);
     await sleep(0);
 
+    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(0);
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(1);
 
     blockReload(false)(store.state, store.dispatch);
     await sleep(0);
 
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(1);
-    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(2);
+    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(1);
   });
 
   test('repeat calling does not affect', async () => {
     const { store } = createStore();
 
-    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(1);
-
     blockReload(true)(store.state, store.dispatch);
     blockReload(true)(store.state, store.dispatch);
     blockReload(true)(store.state, store.dispatch);
@@ -41,13 +38,21 @@ describe('blockReloadEffect', () => {
     await sleep(0);
 
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(1);
-    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(1);
+    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(0);
 
     blockReload(false)(store.state, store.dispatch);
     blockReload(false)(store.state, store.dispatch);
 
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(1);
-    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(2);
+    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(1);
+
+    blockReload(true)(store.state, store.dispatch);
+    blockReload(false)(store.state, store.dispatch);
+    blockReload(true)(store.state, store.dispatch);
+    blockReload(false)(store.state, store.dispatch);
+
+    expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(3);
+    expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(3);
   });
 });
 

@@ -48,19 +48,7 @@ test('sets up', () => {
         },
         "addUnsavedChanges": [MockFunction],
         "removeEventListener": [MockFunction],
-        "removeUnsavedChanges": [MockFunction] {
-          "calls": Array [
-            Array [
-              Symbol(pending),
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        },
+        "removeUnsavedChanges": [MockFunction],
       },
     }
   `);

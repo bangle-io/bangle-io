@@ -10,28 +10,11 @@ import {
   longSleep,
   pushWsPathToPrimary,
   sleep,
-  waitForEditorIdToLoad,
 } from '../helpers';
-
-const getHeapSize = async (page: Page) =>
-  JSON.parse(
-    await page.evaluate(() =>
-      JSON.stringify((window.performance as any).memory.usedJSHeapSize),
-    ),
-  );
-
-// TODO waiting for measureUserAgentSpecificMemory
-// test('heap size', async ({ page, baseURL }) => {
-//   await page.goto(baseURL!, { waitUntil: 'networkidle' });
-//   const wsName = await createWorkspace(page);
-//   const note = await createNewNote(page, wsName, 'test.md');
-
-//   await waitForEditorIdToLoad(page, 0);
-//   expect(await getHeapSize(page)).toEqual(10000);
-// });
 
 test('Openning a lot of notes should not leak', async ({ baseURL }) => {
   test.slow();
+  test.setTimeout(2 * 60000);
   const browser = await chromium.launch({
     // this is needed to run `window.gc()`
     args: ['--js-flags=--expose-gc'],

@@ -10,10 +10,10 @@ export const blockReloadEffect: SliceSideEffect<
   PageSliceStateType,
   PageSliceAction
 > = () => {
-  let prevValue: undefined | PageSliceStateType['blockReload'];
   return {
-    update(store, __, pageState) {
-      const blockReload = pageState?.blockReload;
+    update(store, __, pageState, prevState) {
+      const blockReload = pageState.blockReload;
+      const prevValue = prevState.blockReload;
 
       if (blockReload === prevValue) {
         return;
@@ -28,8 +28,6 @@ export const blockReloadEffect: SliceSideEffect<
           pendingSymbol,
         );
       }
-
-      prevValue = blockReload;
     },
   };
 };
