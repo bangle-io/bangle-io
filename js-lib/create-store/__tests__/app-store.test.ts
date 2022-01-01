@@ -776,6 +776,7 @@ describe('DeferredSideEffectsRunner', () => {
         {
           key: 'some-key',
           effect: { deferredUpdate: deferredUpdate },
+          previouslySeenState: {} as any,
         },
       ],
       scheduler,
@@ -799,6 +800,7 @@ describe('DeferredSideEffectsRunner', () => {
         {
           key: 'some-key',
           effect: { deferredUpdate: deferredUpdate },
+          previouslySeenState: {} as any,
         },
       ],
       scheduler,
