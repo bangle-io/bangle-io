@@ -9,6 +9,7 @@ import { uiSlice } from '@bangle.io/ui-context';
 import {
   getEditorPluginMetadata,
   safeCancelIdleCallback,
+  safeRequestAnimationFrame,
   safeRequestIdleCallback,
 } from '@bangle.io/utils';
 import * as workspaceContext from '@bangle.io/workspace-context';
@@ -81,14 +82,7 @@ export function initializeBangleStore({
         store.updateState(newState);
         log('finished', action.name, action.id);
       },
-      scheduler: (cb) => {
-        const id = safeRequestIdleCallback(cb, {
-          timeout: MAX_DEFERRED_WAIT_TIME,
-        });
-        return () => {
-          safeCancelIdleCallback(id);
-        };
-      },
+      scheduler: scheduler(),
     });
   };
 
@@ -153,4 +147,27 @@ function retrieveSessionStorage(): any {
     console.error(error);
   }
   return {};
+}
+
+function scheduler() {
+  return (cb: () => void) => {
+    let destroyed = false;
+
+    const id = safeRequestIdleCallback(
+      () => {
+        safeRequestAnimationFrame(() => {
+          if (!destroyed) {
+            cb();
+          }
+        });
+      },
+      {
+        timeout: MAX_DEFERRED_WAIT_TIME,
+      },
+    );
+    return () => {
+      destroyed = true;
+      safeCancelIdleCallback(id);
+    };
+  };
 }
