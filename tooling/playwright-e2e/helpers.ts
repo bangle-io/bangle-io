@@ -152,7 +152,7 @@ export async function createNewNote(
 
   const wsPath = filePathToWsPath(wsName, noteName);
 
-  if (!(await page.url()).includes(resolvePath(wsPath).locationPath)) {
+  if (!(await page.url()).includes(resolvePath(wsPath).filePath)) {
     throw new Error('unable to create note');
   }
 
