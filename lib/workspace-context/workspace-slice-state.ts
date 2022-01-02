@@ -13,6 +13,7 @@ export class WorkspaceSliceState {
       recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
       wsName: WorkspaceSliceState['wsName'];
       openedWsPaths: WorkspaceSliceState['openedWsPaths'];
+      pendingRefreshWsPaths: WorkspaceSliceState['pendingRefreshWsPaths'];
     },
     protected opts: any = {},
   ) {}
@@ -36,6 +37,10 @@ export class WorkspaceSliceState {
   }
   get openedWsPaths(): OpenedWsPaths {
     return this.mainFields.openedWsPaths;
+  }
+  // returns the current wsName refreshing for
+  get pendingRefreshWsPaths(): string | undefined {
+    return this.mainFields.pendingRefreshWsPaths;
   }
 
   // derived

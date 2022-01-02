@@ -51,7 +51,7 @@ function listWorkspacesHigherOrder() {
 
 export const listWorkspaces = listWorkspacesHigherOrder();
 
-export async function getWorkspaceInfo(wsName) {
+export async function getWorkspaceInfo(wsName): Promise<WorkspaceInfo> {
   const workspaces = await listWorkspaces();
   const workspaceInfo = workspaces.find(({ name }) => name === wsName);
 

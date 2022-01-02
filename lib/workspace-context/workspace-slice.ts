@@ -24,6 +24,7 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   openedWsPaths: OpenedWsPaths.createEmpty(),
   recentlyUsedWsPaths: undefined,
   wsPaths: undefined,
+  pendingRefreshWsPaths: undefined,
 });
 
 const applyState = (
@@ -79,6 +80,12 @@ const applyState = (
       return state;
     }
 
+    case 'action::workspace-context:set-pending-refresh-ws-paths': {
+      return WorkspaceSliceState.update(state, {
+        pendingRefreshWsPaths: action.value.pendingRefreshWsPaths,
+      });
+    }
+
     default: {
       return state;
     }
@@ -113,6 +120,7 @@ export function workspaceSlice() {
           openedWsPaths: val.openedWsPaths.toArray(),
           recentlyUsedWsPaths: val.recentlyUsedWsPaths,
           wsPaths: val.wsPaths,
+          pendingRefreshWsPaths: undefined,
         };
 
         const result = Object.fromEntries(
@@ -148,6 +156,7 @@ export function workspaceSlice() {
           wsName: data.wsName || undefined,
           recentlyUsedWsPaths: data.recentlyUsedWsPaths || undefined,
           wsPaths: data.wsPaths || undefined,
+          pendingRefreshWsPaths: undefined,
         });
       },
     },

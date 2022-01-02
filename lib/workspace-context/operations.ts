@@ -57,6 +57,20 @@ export const refreshWsPaths = () => {
       return false;
     }
 
+    if (
+      workspaceSliceKey.getSliceState(state)?.pendingRefreshWsPaths === wsName
+    ) {
+      console.count('refreshWsPaths already going on');
+      return false;
+    }
+
+    dispatch({
+      name: 'action::workspace-context:set-pending-refresh-ws-paths',
+      value: {
+        pendingRefreshWsPaths: wsName,
+      },
+    });
+
     log('refreshing wsPaths', wsName);
 
     const fileOps = getFileOps()(state, dispatch);
@@ -73,6 +87,13 @@ export const refreshWsPaths = () => {
             wsPaths: items,
           },
         });
+        dispatch({
+          name: 'action::workspace-context:set-pending-refresh-ws-paths',
+          value: {
+            pendingRefreshWsPaths: undefined,
+          },
+        });
+
         return;
       })
       .catch((error) => {
@@ -81,6 +102,12 @@ export const refreshWsPaths = () => {
           value: {
             wsName,
             wsPaths: undefined,
+          },
+        });
+        dispatch({
+          name: 'action::workspace-context:set-pending-refresh-ws-paths',
+          value: {
+            pendingRefreshWsPaths: undefined,
           },
         });
 
