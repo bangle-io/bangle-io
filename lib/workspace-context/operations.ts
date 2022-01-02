@@ -60,7 +60,6 @@ export const refreshWsPaths = () => {
     if (
       workspaceSliceKey.getSliceState(state)?.pendingRefreshWsPaths === wsName
     ) {
-      console.count('refreshWsPaths already going on');
       return false;
     }
 
