@@ -31,7 +31,6 @@ import {
 } from '../operations';
 import {
   createState,
-  createStateWithWsName,
   createStore,
   getActionNamesDispatched,
   noSideEffectsStore,
@@ -123,7 +122,7 @@ describe('refreshWsPaths', () => {
 
     await sleep(5);
 
-    expect(dispatchSpy).toBeCalledTimes(1);
+    expect(dispatchSpy).toBeCalledTimes(3);
     expect(dispatchSpy).toHaveBeenCalledWith({
       id: expect.any(String),
       name: 'action::workspace-context:update-ws-paths',
@@ -151,6 +150,58 @@ describe('refreshWsPaths', () => {
     expect(listAllFilesMock).toBeCalledTimes(0);
   });
 
+  test('does not dispatch if already pending refresh of same wsName', async () => {
+    listAllFilesMock.mockImplementation(async () => {
+      return ['my-ws:one.md'];
+    });
+
+    let { store, dispatchSpy } = noSideEffectsStore({
+      wsName: 'my-ws',
+    });
+
+    store.dispatch({
+      name: 'action::workspace-context:set-pending-refresh-ws-paths',
+      value: {
+        pendingRefreshWsPaths: 'my-ws',
+      },
+    });
+
+    refreshWsPaths()(store.state, store.dispatch);
+
+    await sleep(5);
+
+    expect(getActionNamesDispatched(dispatchSpy)).not.toContain(
+      'action::workspace-context:update-ws-paths',
+    );
+    expect(listAllFilesMock).toBeCalledTimes(0);
+  });
+
+  test('dispatch if already pending refresh of different wsName', async () => {
+    listAllFilesMock.mockImplementation(async () => {
+      return ['my-ws:one.md'];
+    });
+
+    let { store, dispatchSpy } = noSideEffectsStore({
+      wsName: 'my-ws',
+    });
+
+    store.dispatch({
+      name: 'action::workspace-context:set-pending-refresh-ws-paths',
+      value: {
+        pendingRefreshWsPaths: 'some-other-ws',
+      },
+    });
+
+    refreshWsPaths()(store.state, store.dispatch);
+
+    await sleep(5);
+
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
+      'action::workspace-context:update-ws-paths',
+    );
+    expect(listAllFilesMock).toBeCalledTimes(1);
+  });
+
   test('handles error', async () => {
     listAllFilesMock.mockRejectedValue(new BaseFileSystemError('test-error'));
     let { store, dispatchSpy } = noSideEffectsStore({
@@ -163,9 +214,9 @@ describe('refreshWsPaths', () => {
 
     await sleep(5);
 
-    expect(dispatchSpy).toBeCalledTimes(1);
+    expect(dispatchSpy).toBeCalledTimes(3);
 
-    expect(dispatchSpy).nthCalledWith(1, {
+    expect(dispatchSpy).nthCalledWith(2, {
       id: expect.any(String),
       name: 'action::workspace-context:update-ws-paths',
       value: {
@@ -190,7 +241,9 @@ describe('refreshWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+      'action::workspace-context:set-pending-refresh-ws-paths',
       'action::workspace-context:update-ws-paths',
+      'action::workspace-context:set-pending-refresh-ws-paths',
     ]);
 
     expect(goToLocationMock).toBeCalledTimes(1);
@@ -202,7 +255,7 @@ describe('refreshWsPaths', () => {
       },
     );
 
-    expect(dispatchSpy).nthCalledWith(1, {
+    expect(dispatchSpy).nthCalledWith(2, {
       id: expect.any(String),
       name: 'action::workspace-context:update-ws-paths',
       value: {
@@ -226,16 +279,16 @@ describe('refreshWsPaths', () => {
 
     await sleep(5);
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
       'action::workspace-context:update-ws-paths',
-    ]);
+    );
 
     expect(goToLocationMock).toBeCalledTimes(1);
     expect(goToLocationMock).nthCalledWith(1, '/ws-not-found/my-ws', {
       replace: true,
     });
 
-    expect(dispatchSpy).nthCalledWith(1, {
+    expect(dispatchSpy).toBeCalledWith({
       id: expect.any(String),
       name: 'action::workspace-context:update-ws-paths',
       value: {
@@ -419,7 +472,9 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+      'action::workspace-context:set-pending-refresh-ws-paths',
       'action::workspace-context:update-ws-paths',
+      'action::workspace-context:set-pending-refresh-ws-paths',
     ]);
 
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
@@ -491,7 +546,9 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+      'action::workspace-context:set-pending-refresh-ws-paths',
       'action::workspace-context:update-ws-paths',
+      'action::workspace-context:set-pending-refresh-ws-paths',
     ]);
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
@@ -518,7 +575,9 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+      'action::workspace-context:set-pending-refresh-ws-paths',
       'action::workspace-context:update-ws-paths',
+      'action::workspace-context:set-pending-refresh-ws-paths',
     ]);
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
@@ -548,7 +607,9 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+      'action::workspace-context:set-pending-refresh-ws-paths',
       'action::workspace-context:update-ws-paths',
+      'action::workspace-context:set-pending-refresh-ws-paths',
     ]);
 
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
@@ -647,9 +708,9 @@ describe('createNote', () => {
       extensionRegistry.specRegistry,
     );
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
       'action::workspace-context:update-ws-paths',
-    ]);
+    );
 
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
   });
@@ -679,9 +740,9 @@ describe('createNote', () => {
 
     expect(saveDocMock).toBeCalledTimes(0);
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
       'action::workspace-context:update-ws-paths',
-    ]);
+    );
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
   });
 
@@ -732,9 +793,9 @@ describe('createNote', () => {
 
     expect(saveDocMock).toBeCalledTimes(1);
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
       'action::workspace-context:update-ws-paths',
-    ]);
+    );
   });
 });
 
@@ -751,9 +812,9 @@ describe('deleteNote', () => {
     expect(deleteFileMock).toBeCalledTimes(1);
     expect(deleteFileMock).nthCalledWith(1, 'my-ws:test-note.md');
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
       'action::workspace-context:update-ws-paths',
-    ]);
+    );
 
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
     expect(
@@ -782,9 +843,9 @@ describe('deleteNote', () => {
     expect(deleteFileMock).toBeCalledTimes(1);
     expect(deleteFileMock).nthCalledWith(1, 'my-ws:test-note.md');
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
       'action::workspace-context:update-ws-paths',
-    ]);
+    );
   });
 
   test('deletes multiple files', async () => {
@@ -805,9 +866,9 @@ describe('deleteNote', () => {
     expect(deleteFileMock).nthCalledWith(1, 'my-ws:test-note1.md');
     expect(deleteFileMock).nthCalledWith(2, 'my-ws:test-note2.md');
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
       'action::workspace-context:update-ws-paths',
-    ]);
+    );
   });
 });
 

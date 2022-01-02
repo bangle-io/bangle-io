@@ -43,7 +43,6 @@ export function resolvePath(wsPath: string) {
     dirPath, // wsName:dirPath/fileName
     fileName,
     fileNameWithoutExt: removeMdExtension(fileName),
-    locationPath: '/ws/' + wsName + '/' + filePath,
   };
 }
 

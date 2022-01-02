@@ -15,6 +15,7 @@ import {
   getWorkspaceInfo,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
+  WorkspaceInfo,
 } from '@bangle.io/workspaces';
 
 export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
@@ -22,6 +23,35 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
 
   const [permissionDenied, updatePermissionDenied] = useState(false);
   const store = useBangleStoreContext();
+  const [wsInfo, updateWsInfo] = useState<WorkspaceInfo>();
+
+  useEffect(() => {
+    let destroyed = false;
+    getWorkspaceInfo(wsName).then(
+      (wsInfo) => {
+        if (destroyed) {
+          return;
+        }
+        updateWsInfo(wsInfo);
+      },
+      (error) => {
+        if (destroyed) {
+          return;
+        }
+        if (
+          error instanceof WorkspaceError &&
+          error.code === WORKSPACE_NOT_FOUND_ERROR
+        ) {
+          goToWsNameRouteNotFoundRoute(wsName)(store.state);
+        }
+        throw error;
+      },
+    );
+
+    return () => {
+      destroyed = true;
+    };
+  }, [wsName, store]);
 
   const onGranted = () => {
     const previousLocation = undefined; //history.location?.state?.previousLocation;
@@ -34,27 +64,15 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   };
 
   const requestFSPermission = async () => {
-    let workspace;
-    try {
-      workspace = await getWorkspaceInfo(wsName);
-    } catch (error) {
-      if (
-        error instanceof WorkspaceError &&
-        error.code === WORKSPACE_NOT_FOUND_ERROR
-      ) {
-        goToWsNameRouteNotFoundRoute(wsName)(store.state);
-      }
-      throw error;
-    }
-    if (!workspace) {
+    if (!wsInfo) {
       throw new Error('workspace not found');
     }
-    if (workspace.type !== 'nativefs') {
+    if (wsInfo.type !== 'nativefs') {
       onGranted();
       return true;
     }
     const result = await requestNativeBrowserFSPermission(
-      workspace.metadata.rootDirHandle,
+      wsInfo.metadata.rootDirHandle,
     );
     if (result) {
       onGranted();
@@ -71,7 +89,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     }
   }, [store, wsName]);
 
-  if (!wsName) {
+  if (!wsName || !wsInfo) {
     return null;
   }
 

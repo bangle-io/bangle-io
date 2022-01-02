@@ -36,6 +36,7 @@ export const getUseWorkspaceContextReturn: Mutable<
   noteWsPaths: [],
   openedWsPaths: OpenedWsPaths.createEmpty(),
   bangleStore: initialBangleStore,
+  pendingRefreshWsPaths: undefined,
 };
 
 export const getUseEditorManagerContextReturn: ReturnType<

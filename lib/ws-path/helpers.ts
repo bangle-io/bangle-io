@@ -9,7 +9,6 @@ export type MaybeWsPath = string | undefined;
  * filePath - /a/b/c.md simple file path
  * wsPath - <wsName>:<filePath>
  * fsPath - /<wsName>/<filePath> - this is what is used internally by the fs module
- * locationPath - /ws/<wsName>/<filePath> - used in browser's location
  */
 // TODO add test where wsPath has `//`
 export function resolvePath(wsPath: string) {
@@ -33,7 +32,6 @@ export function resolvePath(wsPath: string) {
     dirPath, // wsName:dirPath/fileName
     fileName,
     fileNameWithoutExt: removeMdExtension(fileName),
-    locationPath: '/ws/' + wsName + '/' + filePath,
   };
 }
 

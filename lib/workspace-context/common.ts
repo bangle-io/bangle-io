@@ -40,6 +40,12 @@ export type WorkspaceSliceAction =
         wsName: string;
         wsPaths: string[] | undefined;
       };
+    }
+  | {
+      name: 'action::workspace-context:set-pending-refresh-ws-paths';
+      value: {
+        pendingRefreshWsPaths: string | undefined;
+      };
     };
 
 export type WorkspaceDispatchType = ApplicationStore<
