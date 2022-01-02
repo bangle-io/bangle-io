@@ -43,14 +43,14 @@ export function AppContainer() {
   const onDismissNoteSidebar = useCallback(() => {
     dispatch({
       name: 'UI/UPDATE_NOTE_SIDEBAR',
-      value: false,
+      value: { visible: false },
     });
   }, [dispatch]);
 
   const showNoteSidebar = useCallback(() => {
     dispatch({
       name: 'UI/UPDATE_NOTE_SIDEBAR',
-      value: true,
+      value: { visible: true },
     });
   }, [dispatch]);
 

@@ -7,7 +7,7 @@ import { createKey } from './slice-key';
 
 type BaseBaseAction = {
   name: string;
-  value: { [k: string]: any };
+  // value?: { [k: string]: any };
 };
 
 export interface BaseAction extends BaseBaseAction {}

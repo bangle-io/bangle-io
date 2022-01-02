@@ -144,7 +144,7 @@ function useLastSeenChangelog(showChangelog: boolean) {
     if (hasUpdates !== changelogHasUpdates) {
       dispatch({
         name: 'UI/UPDATE_NEW_CHANGELOG',
-        value: hasUpdates,
+        value: { hasUpdates },
       });
     }
   }, [dispatch, changelogHasUpdates, lastSeenHeading]);
