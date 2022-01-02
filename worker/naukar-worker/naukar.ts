@@ -104,7 +104,7 @@ function localDiskSetup(
       onPendingWrites: (size) => {
         mainDispatch({
           name: PAGE_BLOCK_RELOAD_ACTION_NAME,
-          value: size !== 0,
+          value: { block: size !== 0 },
         });
       },
     }),

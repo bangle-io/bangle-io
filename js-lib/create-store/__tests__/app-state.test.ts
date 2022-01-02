@@ -256,11 +256,11 @@ describe('AppState', () => {
     type ActionType =
       | {
           name: 'for-a';
-          value: number;
+          value: { n: number };
         }
       | {
           name: 'for-b';
-          value: number;
+          value: { n: number };
         };
 
     const sliceA = new Slice({
@@ -269,7 +269,7 @@ describe('AppState', () => {
         init: () => 1,
         apply: (action, value, appState) => {
           if (action.name === 'for-a') {
-            return action.value;
+            return action.value.n;
           }
           return value;
         },
@@ -282,7 +282,7 @@ describe('AppState', () => {
         init: () => 2,
         apply: (action, value, appState) => {
           if (action.name === 'for-b') {
-            return action.value;
+            return action.value.n;
           }
           return value;
         },
@@ -295,7 +295,7 @@ describe('AppState', () => {
 
     let newAppState = appState.applyAction({
       name: 'for-a',
-      value: 99,
+      value: { n: 99 },
     });
 
     expect(newAppState).not.toBe(appState);
@@ -309,7 +309,7 @@ describe('AppState', () => {
 
     newAppState = newAppState.applyAction({
       name: 'for-b',
-      value: 77,
+      value: { n: 77 },
     });
 
     expect(sliceKeyA.getSliceState(newAppState)).toBe(99);

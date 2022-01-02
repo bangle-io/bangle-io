@@ -65,16 +65,17 @@ describe('store', () => {
   describe('basic tests', () => {
     const key1 = new SliceKey<number, ActionType>('one');
     const key2 = new SliceKey<number, ActionType>('two');
-    let state: AppState<any, any>, store: ApplicationStore<any>;
     type ActionType =
       | {
           name: 'for-a';
-          value: number;
+          value: { n: number };
         }
       | {
           name: 'for-b';
-          value: number;
+          value: { n: number };
         };
+
+    let state: AppState<any, any>, store: ApplicationStore<any, ActionType>;
 
     beforeEach(() => {
       const slice1 = new Slice({
@@ -83,7 +84,7 @@ describe('store', () => {
           init: () => 1,
           apply: (action, value, appState) => {
             if (action.name === 'for-a') {
-              return action.value;
+              return action.value.n;
             }
             return value;
           },
@@ -96,7 +97,7 @@ describe('store', () => {
           init: () => 2,
           apply: (action, value, appState) => {
             if (action.name === 'for-b') {
-              return action.value;
+              return action.value.n;
             }
             return value;
           },
@@ -112,21 +113,21 @@ describe('store', () => {
     });
 
     test('updates', () => {
-      store.dispatch({ name: 'for-a', value: 77 });
+      store.dispatch({ name: 'for-a', value: { n: 77 } });
       expect(key1.getSliceState(store.state)).toBe(77);
       expect(key2.getSliceState(store.state)).toBe(2);
     });
 
     test('updates 1', () => {
-      store.dispatch({ name: 'for-a', value: 99 });
-      store.dispatch({ name: 'for-b', value: 88 });
+      store.dispatch({ name: 'for-a', value: { n: 99 } });
+      store.dispatch({ name: 'for-b', value: { n: 88 } });
       expect(key1.getSliceState(store.state)).toBe(99);
       expect(key2.getSliceState(store.state)).toBe(88);
     });
 
     test('dispatch is binded', () => {
       const dispatch = store.dispatch;
-      dispatch({ name: 'for-a', value: 99 });
+      dispatch({ name: 'for-a', value: { n: 99 } });
       expect(key1.getSliceState(store.state)).toBe(99);
     });
 
@@ -135,19 +136,19 @@ describe('store', () => {
       expect((store as any).destroyed).toBe(true);
       expect(store).toMatchSnapshot();
 
-      let newState = AppState.create({ slices: [] });
+      let newState = AppState.create<any, ActionType>({ slices: [] });
       store.updateState(newState);
       expect(store).not.toBe(newState);
     });
 
     test('after destroying prevent updates', () => {
-      store.dispatch({ name: 'for-a', value: 99 });
+      store.dispatch({ name: 'for-a', value: { n: 99 } });
       expect(key1.getSliceState(store.state)).toBe(99);
       store.destroy();
-      store.dispatch({ name: 'for-a', value: 100 });
+      store.dispatch({ name: 'for-a', value: { n: 100 } });
       expect(key1.getSliceState(store.state)).toBe(99);
 
-      store.dispatch({ name: 'for-b', value: 88 });
+      store.dispatch({ name: 'for-b', value: { n: 88 } });
       expect(key2.getSliceState(store.state)).toBe(2);
     });
   });

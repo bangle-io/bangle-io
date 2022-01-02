@@ -7,7 +7,7 @@ export const PAGE_BLOCK_RELOAD_ACTION_NAME = 'action::page-slice:BLOCK_RELOAD';
 
 export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
   name: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
-  value: boolean;
+  value: { block: boolean };
 };
 
 export const LifeCycle = Symbol('lifecycle');

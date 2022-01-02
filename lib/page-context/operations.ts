@@ -8,7 +8,10 @@ import { Location } from './history/types';
 
 export function blockReload(block: boolean) {
   return (_: AppState, dispatch: PageDispatchType) => {
-    dispatch({ name: 'action::page-slice:BLOCK_RELOAD', value: block });
+    dispatch({
+      name: 'action::page-slice:BLOCK_RELOAD',
+      value: { block: block },
+    });
   };
 }
 

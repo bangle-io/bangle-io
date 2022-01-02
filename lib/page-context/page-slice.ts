@@ -55,7 +55,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
           case 'action::page-slice:BLOCK_RELOAD': {
             return {
               ...state,
-              blockReload: action.value,
+              blockReload: action.value.block,
             };
           }
 
