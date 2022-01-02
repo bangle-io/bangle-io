@@ -1,15 +1,16 @@
-import type { JsonValue } from 'type-fest';
+import type { JsonObject, JsonValue } from 'type-fest';
 
 import type { AppState } from './app-state';
 import type { ApplicationStore } from './app-store';
 import type { SliceKey } from './slice-key';
 import { createKey } from './slice-key';
 
-export type BaseAction =
-  | undefined
-  | {
-      name: string;
-    };
+type BaseBaseAction = {
+  name: string;
+  value: { [k: string]: any };
+};
+
+export interface BaseAction extends BaseBaseAction {}
 
 // A - action
 // SL - Slice's state
@@ -60,8 +61,16 @@ export class Slice<SL, A extends BaseAction = any, S = SL> {
       key?: SliceKey<SL, A, S>;
       state?: SliceStateField<SL, A, S>;
       // false if it cannot be serialized
-      actionToJSON?: (action: A & { id: string }) => string | false;
-      actionFromJSON?: (jsonAction: string) => A;
+      actions?: {
+        [K in A['name']]: {
+          description?: string;
+          toJson: (action: A extends { name: K } ? A : never) => JsonValue;
+          fromJson: (
+            name: K,
+            serializedVal: JsonObject,
+          ) => A extends { name: K } ? A : never;
+        };
+      };
       sideEffect?: SliceSideEffect<SL, A, S> | SliceSideEffect<SL, A, S>[];
     },
   ) {
