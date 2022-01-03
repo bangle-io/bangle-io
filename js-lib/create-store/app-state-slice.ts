@@ -1,4 +1,4 @@
-import type { JsonObject, JsonValue } from 'type-fest';
+import type { JsonValue } from 'type-fest';
 
 import type { AppState } from './app-state';
 import type { ApplicationStore } from './app-store';
@@ -8,6 +8,8 @@ import { createKey } from './slice-key';
 type BaseBaseAction = {
   name: string;
   value?: { [k: string]: any };
+  readonly id?: string;
+  readonly fromStore?: string;
 };
 
 export interface BaseAction extends BaseBaseAction {}
@@ -61,16 +63,7 @@ export class Slice<SL, A extends BaseAction = any, S = SL> {
       key?: SliceKey<SL, A, S>;
       state?: SliceStateField<SL, A, S>;
       // false if it cannot be serialized
-      actions?: {
-        [K in A['name']]: {
-          description?: string;
-          toJson: (action: A extends { name: K } ? A : never) => JsonValue;
-          fromJson: (
-            name: K,
-            serializedVal: JsonObject,
-          ) => A extends { name: K } ? A : never;
-        };
-      };
+      actions?: ActionsSerializersType<A>;
       sideEffect?: SliceSideEffect<SL, A, S> | SliceSideEffect<SL, A, S>[];
     },
   ) {
@@ -81,3 +74,30 @@ export class Slice<SL, A extends BaseAction = any, S = SL> {
     return state.getSliceState(this.key);
   }
 }
+
+export type ActionsSerializersType<A extends BaseAction> = {
+  [K in A['name']]: (act: K) => {
+    description?: string;
+    // Some TS ugliness ahead
+    // To modify heres a cheat sheet
+    // `A extends { name: K } ? A : never` - to get the correct action, where K is the action.name
+    // `A['value'] extends undefined` - exists to avoid action which have undefined value
+    toJSON: (action: A extends { name: K } ? A : never) =>
+      | false // false if action cannot be serialized
+      | (A extends {
+          name: K;
+        }
+          ? A['value'] extends undefined
+            ? undefined
+            : {
+                [KK in keyof A['value']]: JsonValue;
+              }
+          : never);
+
+    fromJSON: (
+      serializedVal: any,
+    ) => false | (A extends { name: K } ? A['value'] : never);
+  };
+};
+
+export type ExtractAction<A, R> = Extract<A, { name: R }>;

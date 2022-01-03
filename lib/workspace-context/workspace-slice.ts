@@ -2,6 +2,7 @@ import { Slice } from '@bangle.io/create-store';
 import type { JsonValue } from '@bangle.io/shared-types';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
+import { ActionSerializers } from './action-serializers';
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
 import {
   refreshWsPathsEffect,
@@ -160,6 +161,8 @@ export function workspaceSlice() {
         });
       },
     },
+    actions: ActionSerializers,
+
     sideEffect: [
       updateLocationEffect,
       refreshWsPathsEffect,

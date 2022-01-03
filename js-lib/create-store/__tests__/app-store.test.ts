@@ -849,6 +849,170 @@ describe('store', () => {
       expect(destroy2).toBeCalledTimes(1);
     });
   });
+
+  describe('serializing actions', () => {
+    test('works', () => {
+      const key1 = new SliceKey<number, ActionType>('one');
+      const key2 = new SliceKey<number, ActionType>('two');
+      type ActionType =
+        | {
+            name: 'for-a';
+            value: { n: number };
+          }
+        | {
+            name: 'for-b';
+            value: { z: { i: number } };
+          };
+
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => 1,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-a') {
+              return action.value.n;
+            }
+            return value;
+          },
+        },
+        actions: {
+          'for-a': () => ({
+            toJSON: (action) => {
+              return {
+                n: JSON.stringify(action.value.n),
+              };
+            },
+            fromJSON: (obj) => {
+              return {
+                n: JSON.parse(obj.n),
+              };
+            },
+          }),
+          'for-b': () => ({
+            toJSON: (action) => {
+              return {
+                z: action.value.z.i,
+              };
+            },
+            fromJSON: (obj) => {
+              return {
+                z: { i: obj.z },
+              };
+            },
+          }),
+        },
+      });
+
+      const slice2 = new Slice({
+        key: key2,
+        state: {
+          init: () => 2,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-b') {
+              return action.value.z.i;
+            }
+            return value;
+          },
+        },
+      });
+
+      const store = ApplicationStore.create({
+        storeName: 'test-store',
+        state: AppState.create({ slices: [slice1, slice2] }),
+      });
+
+      const action: ActionType = {
+        name: 'for-a',
+        value: {
+          n: 12,
+        },
+      };
+
+      expect(store.serializeAction(action)).toEqual({
+        name: 'for-a',
+        serializedValue: {
+          n: '12',
+        },
+        storeName: 'test-store',
+      });
+
+      expect(store.parseAction(store.serializeAction(action) as any)).toEqual({
+        fromStore: 'test-store',
+        name: 'for-a',
+        value: {
+          n: 12,
+        },
+      });
+    });
+
+    test('multipe slices', () => {
+      const key1 = new SliceKey('one');
+      const key2 = new SliceKey('two');
+
+      const slice1 = new Slice({
+        key: key1,
+        actions: {
+          'for-a': () => ({
+            toJSON: (action) => {
+              return {
+                foo: 1,
+              };
+            },
+            fromJSON: (obj) => {
+              return {
+                foo: 1,
+              };
+            },
+          }),
+        },
+      });
+      const slice2 = new Slice({
+        key: key2,
+        actions: {
+          'for-b': () => ({
+            toJSON: (action) => {
+              return {
+                z: action.value.z.i,
+              };
+            },
+            fromJSON: (obj) => {
+              return {
+                z: { i: obj.z },
+              };
+            },
+          }),
+        },
+      });
+
+      const store = ApplicationStore.create({
+        storeName: 'test-store',
+        state: AppState.create({ slices: [slice1, slice2] }),
+      });
+
+      const action = {
+        name: 'for-a',
+        value: {
+          n: 12,
+        },
+      };
+
+      expect(store.serializeAction(action)).toEqual({
+        name: 'for-a',
+        serializedValue: {
+          n: '12',
+        },
+        storeName: 'test-store',
+      });
+
+      expect(store.parseAction(store.serializeAction(action) as any)).toEqual({
+        fromStore: 'test-store',
+        name: 'for-a',
+        value: {
+          n: 12,
+        },
+      });
+    });
+  });
 });
 
 describe('DeferredSideEffectsRunner', () => {
