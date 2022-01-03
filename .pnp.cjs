@@ -4451,6 +4451,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
             ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
             ["react", "npm:17.0.2"],
