@@ -90,28 +90,18 @@ export function intersectionObserverPlugin({
       }
       let observingSet = new Set<Element>();
 
-      const intersectionCallback: IntersectionObserverCallback = (
-        entries,
-        observer,
-      ) => {
-        if ((editorView as any).isDestroyed) {
-          return;
-        }
-
-        entries.forEach((entry) => {
-          intersectionMap.set(entry.target, entry.intersectionRatio);
-        });
-
+      let prevDispatched: IntersectionObserverPluginState | undefined;
+      const calcPosition = () => {
         let state: IntersectionObserverPluginState = {
           minStartPosition: editorView.state.doc.content.size,
           maxStartPosition: 0,
         };
-
         let intersection = 0;
 
         observingSet.forEach((element) => {
           const pos = positionMap.get(element);
           const ratio = intersectionMap.get(element);
+
           if (typeof ratio === 'number' && ratio > 0) {
             intersection++;
             if (typeof pos === 'number') {
@@ -125,9 +115,29 @@ export function intersectionObserverPlugin({
           }
         });
 
-        if (intersection > 0) {
+        const stateSame =
+          prevDispatched?.maxStartPosition === state.maxStartPosition &&
+          prevDispatched?.minStartPosition === state.minStartPosition;
+
+        if (intersection > 0 && !stateSame) {
           editorView.dispatch(editorView.state.tr.setMeta(pluginKey, state));
+          prevDispatched = state;
         }
+      };
+
+      const intersectionCallback: IntersectionObserverCallback = (
+        entries,
+        observer,
+      ) => {
+        if ((editorView as any).isDestroyed) {
+          return;
+        }
+
+        entries.forEach((entry) => {
+          intersectionMap.set(entry.target, entry.intersectionRatio);
+        });
+
+        calcPosition();
       };
 
       let observer: IntersectionObserver | undefined =
@@ -156,6 +166,7 @@ export function intersectionObserverPlugin({
         });
 
         observingSet = newObserving;
+        calcPosition();
       };
 
       let raf;
@@ -164,6 +175,7 @@ export function intersectionObserverPlugin({
         destroy() {
           cancelAnimationFrame(raf);
           observer?.disconnect();
+          observingSet.clear();
         },
         update(view, lastState) {
           const { state } = view;
@@ -192,12 +204,6 @@ export function getDocsChildren(view: EditorView): Set<Element> {
     const node = child.nodeDOM;
     if (node instanceof Element) {
       positionMap.set(node, offset);
-      // TODO remove this as this is costly and slows us down
-      // was added to make sure the function is identical the the provided
-      // api
-      if (view.nodeDOM(offset) !== node) {
-        throw new Error('DOM Position Assertion violated');
-      }
       list1.add(node);
     }
     offset = offset + child.size;
