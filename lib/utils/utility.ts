@@ -346,7 +346,7 @@ export function asssertNotUndefined(
   message: string,
 ): asserts value {
   if (value === undefined) {
-    throw new Error(`Undefined assertion: ${message}`);
+    throw new Error(`assertion failed: ${message}`);
   }
 }
 

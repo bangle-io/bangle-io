@@ -233,7 +233,7 @@ describe('useSearchAllTags', () => {
         </heading>
       </doc>,
     );
-    getNoteMock.mockImplementation((_, wsPath) => async () => {
+    getNoteMock.mockImplementation((wsPath) => async () => {
       if (delayGetNotes) {
         await sleep(20);
       }

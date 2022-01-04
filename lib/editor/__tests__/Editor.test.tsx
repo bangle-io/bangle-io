@@ -213,7 +213,7 @@ test('works without editorId', async () => {
 });
 
 test('changing of wsPath works', async () => {
-  getNoteMock.mockImplementation((_, wsPath) => async () => {
+  getNoteMock.mockImplementation((wsPath) => async () => {
     if (wsPath.endsWith('one.md')) {
       return generateDoc('one note');
     }

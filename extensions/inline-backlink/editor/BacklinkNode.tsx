@@ -4,11 +4,7 @@ import { EditorView } from '@bangle.dev/pm';
 
 import { EditorDisplayType } from '@bangle.io/constants';
 import { PopupEditor } from '@bangle.io/editor';
-import type {
-  ExtensionRegistry,
-  RenderReactNodeView,
-} from '@bangle.io/extension-registry';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import type { RenderReactNodeView } from '@bangle.io/extension-registry';
 import { useHover, useTooltipPositioner } from '@bangle.io/ui-bangle-button';
 import { NoteIcon } from '@bangle.io/ui-components';
 import {
@@ -38,7 +34,6 @@ export function BacklinkNode({
   nodeAttrs: { path: string; title?: string };
   view: EditorView;
 }) {
-  const extensionRegistry = useExtensionRegistryContext();
   // TODO currently bangle.dev doesn't pass editorview context so we are
   // unable to use `useEditorPluginMetadata` which itself uses `useEditorViewContext`
   // which will be undefined for react nodeviews.
@@ -81,7 +76,6 @@ export function BacklinkNode({
         currentWsPath: primaryWsPath,
         wsName,
         noteWsPaths,
-        extensionRegistry,
         bangleStore,
       }).then(
         (matchedWsPath) => {
@@ -100,14 +94,7 @@ export function BacklinkNode({
         },
       );
     },
-    [
-      backlinkPath,
-      extensionRegistry,
-      noteWsPaths,
-      primaryWsPath,
-      wsName,
-      bangleStore,
-    ],
+    [backlinkPath, noteWsPaths, primaryWsPath, wsName, bangleStore],
   );
 
   const backlinksWsPath =
@@ -179,14 +166,12 @@ async function handleClick({
   currentWsPath,
   wsName,
   noteWsPaths,
-  extensionRegistry,
   bangleStore,
 }: {
   backlinkPath: string;
   currentWsPath: string;
   wsName: string;
   noteWsPaths: string[];
-  extensionRegistry: ExtensionRegistry;
   bangleStore: ReturnType<typeof useWorkspaceContext>['bangleStore'];
 }) {
   const existingWsPathMatch = getMatchingWsPath(
@@ -223,7 +208,7 @@ async function handleClick({
 
   validateNoteWsPath(newWsPath);
 
-  await createNote(extensionRegistry, newWsPath, { open: false })(
+  await createNote(newWsPath, { open: false })(
     bangleStore.state,
     bangleStore.dispatch,
     bangleStore,
