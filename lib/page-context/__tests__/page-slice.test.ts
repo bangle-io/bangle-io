@@ -86,14 +86,14 @@ describe('updating state', () => {
 
     state = state.applyAction({
       name: 'action::page-slice:BLOCK_RELOAD',
-      value: true,
+      value: { block: true },
     });
 
     expect(pageSliceKey.getSliceState(state)?.blockReload).toBe(true);
 
     state = state.applyAction({
       name: 'action::page-slice:BLOCK_RELOAD',
-      value: false,
+      value: { block: false },
     });
 
     expect(pageSliceKey.getSliceState(state)?.blockReload).toBe(false);

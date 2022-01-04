@@ -80,7 +80,7 @@ export function initializeBangleStore({
         log(action);
         const newState = store.state.applyAction(action);
         store.updateState(newState);
-        log('finished', action.name, action.id);
+        log('finished', action.name, (action as any).id);
       },
       scheduler: scheduler(),
     });

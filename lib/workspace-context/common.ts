@@ -1,5 +1,6 @@
 import {
   ApplicationStore,
+  ExtractAction,
   SliceKey,
   SliceSideEffect,
 } from '@bangle.io/create-store';
@@ -47,6 +48,10 @@ export type WorkspaceSliceAction =
         pendingRefreshWsPaths: string | undefined;
       };
     };
+
+export type ExtractWorkspaceSliceAction<
+  ActionName extends WorkspaceSliceAction['name'],
+> = ExtractAction<WorkspaceSliceAction, ActionName>;
 
 export type WorkspaceDispatchType = ApplicationStore<
   WorkspaceSliceState,

@@ -1,7 +1,7 @@
 import { savePreviousValue } from '@bangle.io/create-store';
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
-import { isLocationEqual } from '@bangle.io/page-context/history/browser-histroy';
 import type { ReturnReturnType } from '@bangle.io/shared-types';
+import { shallowEqual } from '@bangle.io/utils';
 import { getWorkspaceInfo } from '@bangle.io/workspaces';
 
 import { SideEffect, workspaceSliceKey } from './common';
@@ -42,7 +42,7 @@ export const updateLocationEffect: SideEffect = () => {
         return;
       }
 
-      if (prevLocation && isLocationEqual(location, prevLocation)) {
+      if (prevLocation && shallowEqual(location, prevLocation)) {
         return;
       }
 

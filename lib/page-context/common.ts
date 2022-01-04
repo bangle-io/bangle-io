@@ -1,4 +1,9 @@
-import { ApplicationStore, AppState, SliceKey } from '@bangle.io/create-store';
+import {
+  ApplicationStore,
+  AppState,
+  ExtractAction,
+  SliceKey,
+} from '@bangle.io/create-store';
 
 import { BaseHistory } from './history/base-history';
 import { Location } from './history/types';
@@ -7,7 +12,7 @@ export const PAGE_BLOCK_RELOAD_ACTION_NAME = 'action::page-slice:BLOCK_RELOAD';
 
 export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
   name: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
-  value: boolean;
+  value: { block: boolean };
 };
 
 export const LifeCycle = Symbol('lifecycle');
@@ -66,3 +71,6 @@ export function getPageLifeCycleObject(state: AppState):
   | undefined {
   return pageSliceKey.getSliceState(state)?.[LifeCycle];
 }
+
+export type ExtractPageSliceAction<ActionName extends PageSliceAction['name']> =
+  ExtractAction<PageSliceAction, ActionName>;

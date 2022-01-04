@@ -2,6 +2,7 @@ import { Slice } from '@bangle.io/create-store';
 import type { BangleStateOpts } from '@bangle.io/shared-types';
 
 import {
+  ExtractPageSliceAction,
   LifeCycle,
   PageSliceAction,
   pageSliceKey,
@@ -55,7 +56,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
           case 'action::page-slice:BLOCK_RELOAD': {
             return {
               ...state,
-              blockReload: action.value,
+              blockReload: action.value.block,
             };
           }
 
@@ -82,6 +83,73 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
             return state;
           }
         }
+      },
+    },
+    actions: {
+      'action::page-slice:BLOCK_RELOAD': (actionName) => {
+        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
+          return action.value;
+        };
+        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+          return obj;
+        };
+
+        return {
+          toJSON,
+          fromJSON,
+        };
+      },
+
+      'action::page-slice:UPDATE_PAGE_LIFE_CYCLE_STATE': (actionName) => {
+        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
+          return action.value;
+        };
+        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+          return obj;
+        };
+
+        return {
+          toJSON,
+          fromJSON,
+        };
+      },
+
+      'action::page-slice:history-set-history': (actionName) => {
+        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
+          return false as const;
+        };
+        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+          return false as const;
+        };
+
+        return {
+          toJSON,
+          fromJSON,
+        };
+      },
+
+      'action::page-slice:history-update-location': (actionName) => {
+        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
+          return {
+            location: {
+              pathname: action.value.location.pathname ?? null,
+              search: action.value.location.search ?? null,
+            },
+          };
+        };
+        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+          return {
+            location: {
+              pathname: obj.location.pathname ?? undefined,
+              search: obj.location.search ?? undefined,
+            },
+          };
+        };
+
+        return {
+          toJSON,
+          fromJSON,
+        };
       },
     },
 

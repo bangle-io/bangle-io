@@ -49,8 +49,8 @@ export type UiContextAction =
   | {
       name: 'UI/DISMISS_MODAL';
     }
-  | { name: 'UI/UPDATE_NEW_CHANGELOG'; value: boolean }
-  | { name: 'UI/UPDATE_NOTE_SIDEBAR'; value: boolean }
+  | { name: 'UI/UPDATE_NEW_CHANGELOG'; value: { hasUpdates: boolean } }
+  | { name: 'UI/UPDATE_NOTE_SIDEBAR'; value: { visible: boolean } }
   | { name: 'UI/TOGGLE_NOTE_SIDEBAR' };
 
 export const initialState: UISliceState = {
@@ -71,7 +71,7 @@ export const uiSliceKey = new SliceKey<UISliceState, UiContextAction>(
   'ui-slice',
 );
 
-export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
+export function uiSlice(): Slice<UISliceState, UiContextAction> {
   return new Slice({
     key: uiSliceKey,
     state: {
@@ -185,14 +185,14 @@ export function uiSlice<T = any>(): Slice<UISliceState, UiContextAction, T> {
           case 'UI/UPDATE_NEW_CHANGELOG': {
             return {
               ...state,
-              changelogHasUpdates: action.value,
+              changelogHasUpdates: action.value.hasUpdates,
             };
           }
 
           case 'UI/UPDATE_NOTE_SIDEBAR': {
             return {
               ...state,
-              noteSidebar: action.value,
+              noteSidebar: action.value.visible,
             };
           }
 
