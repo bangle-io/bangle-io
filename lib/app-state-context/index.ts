@@ -26,8 +26,10 @@ export function useSliceState<SL, A extends BaseAction, S = SL>(
   sliceKey: SliceKey<SL, A, S>,
   initialState?: SL,
 ) {
-  const [sliceState, updateSliceState] = useState<SL | undefined>(initialState);
   const store = useBangleStoreContext();
+  const [sliceState, updateSliceState] = useState<SL | undefined>(() => {
+    return initialState ?? sliceKey.getSliceState(store.state);
+  });
   const storeChanged = useContext(BangleStoreChanged);
 
   useEffect(() => {

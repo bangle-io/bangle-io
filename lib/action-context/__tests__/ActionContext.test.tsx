@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import { defaultSpecs } from '@bangle.dev/all-base-components';
 
+import { useSliceState } from '@bangle.io/app-state-context';
 import {
   Extension,
   ExtensionRegistry,
@@ -13,6 +14,14 @@ import {
 
 import { useActionContext } from '../ActionContext';
 import { ActionContextProvider } from '../ActionContextProvider';
+
+jest.mock('@bangle.io/app-state-context', () => {
+  const obj = jest.requireActual('@bangle.io/app-state-context');
+  return {
+    ...obj,
+    useSliceState: jest.fn(),
+  };
+});
 
 function ApplicationComponents() {
   const extensionRegistry = useExtensionRegistryContext();
@@ -45,6 +54,14 @@ function TestActionHandler({
   return <span>{`result-${sidebarCounter}`}</span>;
 }
 
+const useSliceStateMock = useSliceState as jest.MockedFunction<
+  typeof useSliceState
+>;
+
+beforeEach(() => {
+  useSliceStateMock.mockImplementation(() => ({} as any));
+});
+
 test('works', async () => {
   const initExtensionRegistry = () =>
     new ExtensionRegistry([
@@ -69,6 +86,11 @@ test('works', async () => {
       }),
     ]);
 
+  useSliceStateMock.mockImplementation(() => ({
+    sliceState: { extensionRegistry: initExtensionRegistry() },
+    store: {} as any,
+  }));
+
   let result,
     dispatchAction: ReturnType<typeof useActionContext>['dispatchAction'];
 
@@ -80,9 +102,7 @@ test('works', async () => {
 
   act(() => {
     result = render(
-      <ExtensionRegistryContextProvider
-        initExtensionRegistry={initExtensionRegistry}
-      >
+      <ExtensionRegistryContextProvider>
         <ActionContextProvider>
           <DispatchAction />
           <ApplicationComponents />

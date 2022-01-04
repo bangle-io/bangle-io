@@ -16,7 +16,7 @@ import {
   getLocationTo,
   usePageContext,
 } from '@bangle.io/page-context';
-import { initExtensionRegistry, polyfills } from '@bangle.io/shared';
+import { polyfills } from '@bangle.io/shared';
 import { UIManager } from '@bangle.io/ui-context';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 import { pathMatcher } from '@bangle.io/ws-path';
@@ -118,9 +118,7 @@ export function Entry() {
               bangleStoreChanged={bangleStoreChanged}
             >
               <UIManager>
-                <ExtensionRegistryContextProvider
-                  initExtensionRegistry={initExtensionRegistry}
-                >
+                <ExtensionRegistryContextProvider>
                   <ExtensionStateContextProvider>
                     <WorkspaceContextProvider>
                       <SWReloadPrompt />
