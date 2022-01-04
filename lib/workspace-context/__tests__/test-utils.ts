@@ -55,7 +55,7 @@ export const createStore = (
 ) => {
   const store = ApplicationStore.create({
     scheduler: scheduler,
-    storeName: 'editor-store',
+    storeName: 'workspace-store',
     state: data
       ? createState(data)
       : AppState.create({ slices: [workspaceSlice()] }),

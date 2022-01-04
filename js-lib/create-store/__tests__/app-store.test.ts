@@ -972,12 +972,12 @@ describe('store', () => {
           'for-b': () => ({
             toJSON: (action) => {
               return {
-                z: action.value.z.i,
+                boo: 1,
               };
             },
             fromJSON: (obj) => {
               return {
-                z: { i: obj.z },
+                boo: 1,
               };
             },
           }),
@@ -991,15 +991,13 @@ describe('store', () => {
 
       const action = {
         name: 'for-a',
-        value: {
-          n: 12,
-        },
+        value: {},
       };
 
       expect(store.serializeAction(action)).toEqual({
         name: 'for-a',
         serializedValue: {
-          n: '12',
+          foo: 1,
         },
         storeName: 'test-store',
       });
@@ -1008,8 +1006,64 @@ describe('store', () => {
         fromStore: 'test-store',
         name: 'for-a',
         value: {
-          n: 12,
+          foo: 1,
         },
+      });
+
+      expect(
+        store.parseAction(
+          store.serializeAction({
+            name: 'for-b',
+          }) as any,
+        ),
+      ).toEqual({
+        name: 'for-b',
+        value: {
+          boo: 1,
+        },
+        fromStore: 'test-store',
+      });
+    });
+
+    test('action with no value', () => {
+      const slice1 = new Slice({
+        actions: {
+          'for-a': () => ({
+            toJSON: (action) => {
+              return undefined;
+            },
+            fromJSON: (obj) => {
+              return undefined;
+            },
+          }),
+        },
+      });
+
+      const store = ApplicationStore.create({
+        storeName: 'test-store',
+        state: AppState.create({ slices: [slice1] }),
+      });
+
+      expect(
+        store.serializeAction({
+          name: 'for-a',
+        }),
+      ).toEqual({
+        name: 'for-a',
+        serializedValue: undefined,
+        storeName: 'test-store',
+      });
+
+      expect(
+        store.parseAction(
+          store.serializeAction({
+            name: 'for-a',
+          }) as any,
+        ),
+      ).toEqual({
+        name: 'for-a',
+        fromStore: 'test-store',
+        value: undefined,
       });
     });
   });
