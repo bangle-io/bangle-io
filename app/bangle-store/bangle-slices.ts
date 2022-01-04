@@ -37,10 +37,10 @@ export function bangleStateSlices({
   return [
     pageSlice(),
     workerSlice(),
+    extensionRegistrySlice(),
     workspaceSlice(),
     uiSlice(),
     editorManagerSlice(),
-    extensionRegistrySlice(),
 
     // keep this at the end
     new Slice({

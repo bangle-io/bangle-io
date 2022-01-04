@@ -6,11 +6,12 @@ import {
   NATIVE_BROWSER_USER_ABORTED_ERROR,
 } from '@bangle.io/baby-fs';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import {
   goToLocation,
   historyUpdateOpenedWsPaths,
 } from '@bangle.io/page-context';
+import { asssertNotUndefined } from '@bangle.io/utils';
 import {
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,
@@ -157,14 +158,17 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
   };
 };
 
-export const getNote = (
-  extensionRegistry: ExtensionRegistry,
-  wsPath: string,
-) => {
+export const getNote = (wsPath: string) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
     const fileOps = getFileOps()(state, dispatch);
 
     const sliceState = workspaceSliceKey.getSliceState(state);
+    const extensionRegistry =
+      extensionRegistrySliceKey.getSliceState(state)?.extensionRegistry;
+    asssertNotUndefined(
+      extensionRegistry,
+      'extensionRegistry needs to be defined',
+    );
 
     if (fileOps && sliceState?.wsName) {
       return fileOps.getDoc(
@@ -178,7 +182,6 @@ export const getNote = (
 };
 
 export const createNote = (
-  extensionRegistry: ExtensionRegistry,
   wsPath: string,
   {
     open = true,
@@ -195,6 +198,15 @@ export const createNote = (
   ) => {
     const fileOps = getFileOps()(store.state, store.dispatch);
     const sliceState = workspaceSliceKey.getSliceState(store.state);
+
+    const extensionRegistry = extensionRegistrySliceKey.getSliceState(
+      store.state,
+    )?.extensionRegistry;
+
+    asssertNotUndefined(
+      extensionRegistry,
+      'extensionRegistry needs to be defined',
+    );
 
     if (!fileOps || !sliceState?.wsName) {
       return false;
