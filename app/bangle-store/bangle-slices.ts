@@ -7,6 +7,7 @@ import {
   EditorManagerAction,
   editorManagerSlice,
 } from '@bangle.io/editor-manager-context';
+import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {
   pageLifeCycleTransitionedTo,
@@ -39,6 +40,7 @@ export function bangleStateSlices({
     workspaceSlice(),
     uiSlice(),
     editorManagerSlice(),
+    extensionRegistrySlice(),
 
     // keep this at the end
     new Slice({

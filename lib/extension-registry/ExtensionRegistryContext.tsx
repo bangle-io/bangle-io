@@ -1,5 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 
+import { useSliceState } from '@bangle.io/app-state-context';
+
+import { extensionRegistrySliceKey } from './common';
 import { ExtensionRegistry } from './ExtensionRegistry';
 
 export const ExtensionRegistryContext = React.createContext<ExtensionRegistry>(
@@ -11,16 +14,14 @@ export function useExtensionRegistryContext() {
 }
 
 export function ExtensionRegistryContextProvider({
-  initExtensionRegistry,
   children,
 }: {
-  initExtensionRegistry: () => ExtensionRegistry;
   children: JSX.Element;
 }) {
-  const [value] = useState(() => initExtensionRegistry());
+  const { sliceState } = useSliceState(extensionRegistrySliceKey);
 
   return (
-    <ExtensionRegistryContext.Provider value={value}>
+    <ExtensionRegistryContext.Provider value={sliceState?.extensionRegistry!}>
       {children}
     </ExtensionRegistryContext.Provider>
   );
