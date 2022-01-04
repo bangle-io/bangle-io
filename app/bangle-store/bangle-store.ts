@@ -80,13 +80,7 @@ export function initializeBangleStore({
         log(action);
         const newState = store.state.applyAction(action);
         store.updateState(newState);
-        log('finished', action.name, action.id);
-
-        const ser = store.serializeAction(action);
-
-        if (ser !== false) {
-          console.debug({ ser, parsed: store.parseAction(ser) });
-        }
+        log('finished', action.name, (action as any).id);
       },
       scheduler: scheduler(),
     });

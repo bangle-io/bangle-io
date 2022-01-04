@@ -15,5 +15,5 @@ const { store } = createStore();
 test.each(testFixtures)(`%# workspace actions serialization`, (action) => {
   const res = store.parseAction(store.serializeAction(action) as any);
 
-  expect(res).toEqual({ ...action, fromStore: 'workspace-store' });
+  expect(res).toEqual({ ...action, fromStore: 'test-store' });
 });

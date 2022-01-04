@@ -20,7 +20,7 @@ export const createStore = () => {
       cb();
       return () => {};
     },
-    storeName: 'editor-store',
+    storeName: 'test-store',
     dispatchAction: (store, action) => {
       let newState = store.state.applyAction(action);
       store.updateState(newState);
