@@ -8,7 +8,7 @@ export const extensionRegistrySliceKey = new SliceKey<
 >('editor-manager-slice');
 
 export interface ExtensionRegistryState {
-  extensionRegistry: ExtensionRegistry | undefined;
+  extensionRegistry: ExtensionRegistry;
 }
 
 export type ExtensionRegistryAction = {

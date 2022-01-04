@@ -340,6 +340,16 @@ export function assertSignal(signal: AbortSignal) {
   }
 }
 
+// Throws an abort error if a signal is already aborted.
+export function asssertNotUndefined(
+  value: unknown,
+  message: string,
+): asserts value {
+  if (value === undefined) {
+    throw new Error(`Undefined assertion: ${message}`);
+  }
+}
+
 export function isAbortError(error: unknown): boolean {
   if (error instanceof DOMException && error.name === 'AbortError') {
     return true;
