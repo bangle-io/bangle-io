@@ -2,8 +2,6 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { EditorDisplayType } from '@bangle.io/constants';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 import {
   getEditorPluginMetadataReturn,
   getUseWorkspaceContextReturn,
@@ -15,7 +13,6 @@ import {
   useWorkspaceContext,
 } from '@bangle.io/workspace-context';
 
-import inlineBacklinkExtension from '..';
 import { BacklinkNode } from '../editor/BacklinkNode';
 
 jest.mock('@bangle.io/workspace-context', () => {
@@ -32,18 +29,6 @@ jest.mock('@bangle.io/utils', () => {
     ...jest.requireActual('@bangle.io/utils'),
     getEditorPluginMetadata: jest.fn(),
   };
-});
-
-jest.mock('@bangle.io/extension-registry', () => {
-  const actual = jest.requireActual('@bangle.io/extension-registry');
-  return {
-    ...actual,
-    useExtensionRegistryContext: jest.fn(),
-  };
-});
-
-const extensionRegistry = createExtensionRegistry([inlineBacklinkExtension], {
-  editorCore: true,
 });
 
 let editorView: any = { state: {} };
@@ -64,10 +49,6 @@ describe('BacklinkNode', () => {
     useWorkspaceContextMock.mockImplementation(() => ({
       ...getUseWorkspaceContextReturn,
     }));
-
-    (useExtensionRegistryContext as any).mockImplementation(() => {
-      return extensionRegistry;
-    });
 
     pushWsPathMock.mockImplementation(() => () => true);
     createNoteMock.mockImplementation(() => async () => true);
@@ -638,14 +619,9 @@ describe('BacklinkNode', () => {
       await clickSetup({ path: 'note2' });
 
       expect(createNoteMock).toBeCalledTimes(1);
-      expect(createNoteMock).nthCalledWith(
-        1,
-        extensionRegistry,
-        'test-ws:note2.md',
-        {
-          open: false,
-        },
-      );
+      expect(createNoteMock).nthCalledWith(1, 'test-ws:note2.md', {
+        open: false,
+      });
       expect(pushWsPathMock).toBeCalledTimes(1);
       expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note2.md', false, false);
     });

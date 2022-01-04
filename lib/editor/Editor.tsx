@@ -72,10 +72,7 @@ function EditorInner({
   useEffect(() => {
     let destroyed = false;
 
-    getNote(extensionRegistry, wsPath)(
-      bangleStore.state,
-      bangleStore.dispatch,
-    ).then((doc) => {
+    getNote(wsPath)(bangleStore.state, bangleStore.dispatch).then((doc) => {
       if (!destroyed) {
         setInitialDoc(doc);
       }
@@ -83,7 +80,7 @@ function EditorInner({
     return () => {
       destroyed = true;
     };
-  }, [extensionRegistry, bangleStore, wsPath]);
+  }, [bangleStore, wsPath]);
 
   const editorRef = useRef<ReturnType<typeof Proxy.revocable> | null>(null);
 

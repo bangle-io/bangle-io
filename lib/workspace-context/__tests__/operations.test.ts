@@ -2,7 +2,10 @@ import {
   BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
 } from '@bangle.io/baby-fs';
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import {
+  ExtensionRegistry,
+  extensionRegistrySliceKey,
+} from '@bangle.io/extension-registry';
 import {
   goToLocation,
   historyUpdateOpenedWsPaths,
@@ -59,6 +62,25 @@ jest.mock('@bangle.io/page-context', () => {
     goToLocation: jest.fn(),
   };
 });
+jest.mock('@bangle.io/page-context', () => {
+  const ops = jest.requireActual('@bangle.io/page-context');
+  return {
+    ...ops,
+    historyUpdateOpenedWsPaths: jest.fn(),
+    goToLocation: jest.fn(),
+  };
+});
+
+jest.mock('@bangle.io/extension-registry', () => {
+  const other = jest.requireActual('@bangle.io/extension-registry');
+  return {
+    ...other,
+    extensionRegistrySliceKey: {
+      getSliceState: jest.fn(),
+    },
+  };
+});
+
 const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
   typeof getWorkspaceInfo
 >;
@@ -83,6 +105,11 @@ let historyUpdateOpenedWsPathsMock =
   >;
 let goToLocationMock = goToLocation as jest.MockedFunction<typeof goToLocation>;
 
+let extensionRegistrySliceKeyGetSliceStateMock =
+  extensionRegistrySliceKey.getSliceState as jest.MockedFunction<
+    typeof extensionRegistrySliceKey.getSliceState
+  >;
+
 beforeEach(() => {
   listAllFilesMock.mockResolvedValue([]);
   renameFileMock.mockResolvedValue(undefined);
@@ -91,6 +118,14 @@ beforeEach(() => {
   deleteFileMock.mockResolvedValue(undefined);
   historyUpdateOpenedWsPathsMock.mockImplementation(() => () => {});
   goToLocationMock.mockImplementation(() => () => {});
+
+  const extensionRegistry: ExtensionRegistry = {
+    specRegistry: {},
+  } as any;
+
+  extensionRegistrySliceKeyGetSliceStateMock.mockImplementation(() => ({
+    extensionRegistry,
+  }));
 });
 
 test('updateLocation', () => {
@@ -645,15 +680,12 @@ describe('getNote', () => {
   test('works', async () => {
     const result = {};
     (FileOps.getDoc as any).mockResolvedValue(result);
-    const extensionRegistry: ExtensionRegistry = {} as any;
     const wsPath: string = 'my-ws:new-test-note.md';
     let { store, dispatchSpy } = noSideEffectsStore({
       wsName: 'my-ws',
     });
 
-    expect(
-      await getNote(extensionRegistry, wsPath)(store.state, store.dispatch),
-    ).toBe(result);
+    expect(await getNote(wsPath)(store.state, store.dispatch)).toBe(result);
 
     expect(FileOps.getDoc).toBeCalledTimes(1);
     expect(dispatchSpy).toBeCalledTimes(0);
@@ -662,15 +694,12 @@ describe('getNote', () => {
   test('does not return result when no wsName', async () => {
     const result = {};
     (FileOps.getDoc as any).mockResolvedValue(result);
-    const extensionRegistry: ExtensionRegistry = {} as any;
     const wsPath: string = 'my-ws:new-test-note.md';
     let { store, dispatchSpy } = noSideEffectsStore({
       wsName: undefined,
     });
 
-    expect(
-      await getNote(extensionRegistry, wsPath)(store.state, store.dispatch),
-    ).toBe(undefined);
+    expect(await getNote(wsPath)(store.state, store.dispatch)).toBe(undefined);
     expect(FileOps.getDoc).toBeCalledTimes(0);
     expect(dispatchSpy).toBeCalledTimes(0);
   });
@@ -679,9 +708,15 @@ describe('getNote', () => {
 describe('createNote', () => {
   test('works when file does not exist', async () => {
     checkFileExistsMock.mockResolvedValue(false);
+
     const extensionRegistry: ExtensionRegistry = {
       specRegistry: {},
     } as any;
+
+    extensionRegistrySliceKeyGetSliceStateMock.mockImplementation(() => ({
+      extensionRegistry,
+    }));
+
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
@@ -690,11 +725,7 @@ describe('createNote', () => {
       openedWsPaths: ['my-ws:test-note.md'],
     });
 
-    createNote(extensionRegistry, wsPath, { doc })(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
     await sleep(0);
     expect(checkFileExistsMock).toBeCalledTimes(1);
@@ -717,9 +748,7 @@ describe('createNote', () => {
 
   test('works when file exists', async () => {
     checkFileExistsMock.mockResolvedValue(true);
-    const extensionRegistry: ExtensionRegistry = {
-      specRegistry: {},
-    } as any;
+
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
@@ -728,11 +757,7 @@ describe('createNote', () => {
       openedWsPaths: ['my-ws:test-note.md'],
     });
 
-    createNote(extensionRegistry, wsPath, { doc })(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
     await sleep(0);
     expect(checkFileExistsMock).toBeCalledTimes(1);
@@ -758,7 +783,7 @@ describe('createNote', () => {
       wsName: undefined,
     });
 
-    createNote(extensionRegistry, wsPath, { doc, open: false })(
+    createNote(wsPath, { doc, open: false })(
       store.state,
       store.dispatch,
       store,
@@ -770,9 +795,6 @@ describe('createNote', () => {
 
   test('when open is false', async () => {
     checkFileExistsMock.mockResolvedValue(false);
-    const extensionRegistry: ExtensionRegistry = {
-      specRegistry: {},
-    } as any;
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
@@ -781,7 +803,7 @@ describe('createNote', () => {
       openedWsPaths: ['my-ws:test-note.md'],
     });
 
-    createNote(extensionRegistry, wsPath, { doc, open: false })(
+    createNote(wsPath, { doc, open: false })(
       store.state,
       store.dispatch,
       store,
