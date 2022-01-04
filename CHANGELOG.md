@@ -1,4 +1,4 @@
-### HEAD
+### Jan 3, 2022
 
 - **Feature:** Bangle now has new actions that allows the ability to export notes and restore notes.
 
