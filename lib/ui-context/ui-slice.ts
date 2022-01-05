@@ -1,4 +1,5 @@
-import { Slice, SliceKey } from '@bangle.io/create-store';
+import { CorePalette } from '@bangle.io/constants';
+import { ApplicationStore, Slice, SliceKey } from '@bangle.io/create-store';
 import type {
   NotificationPayloadType,
   ThemeType,
@@ -10,6 +11,11 @@ import { applyTheme } from './apply-theme';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UISlice') : () => {};
 
+export type UiContextDispatchType = ApplicationStore<
+  UISliceState,
+  UiContextAction
+>['dispatch'];
+
 export interface UISliceState {
   changelogHasUpdates: boolean;
   modal?: string | null;
@@ -17,7 +23,7 @@ export interface UISliceState {
   notifications: NotificationPayloadType[];
   paletteInitialQuery?: string | null;
   paletteMetadata?: any | null;
-  paletteType?: string | null;
+  paletteType?: CorePalette | null;
   sidebar?: string | null;
   theme: ThemeType;
   widescreen: boolean;
@@ -31,7 +37,7 @@ export type UiContextAction =
   | {
       name: 'UI/UPDATE_PALETTE';
       value: {
-        type: string | null;
+        type: CorePalette | null;
         initialQuery?: string;
       };
     }

@@ -46,7 +46,7 @@ export interface ApplicationConfig {
   actions?: Array<ActionDefinitionType>;
   sidebars?: Array<SidebarType>;
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
-  slices?: Array<Slice<any, BaseAction>>;
+  slices?: Array<Slice<any>>;
 }
 
 export interface SidebarType {
