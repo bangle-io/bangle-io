@@ -14,7 +14,6 @@ import type {
 } from '@bangle.io/shared-types';
 
 import { ApplicationConfig, EditorConfig, Extension } from './Extension';
-import { ExtensionPaletteType } from './UniversalPaletteType';
 
 function filterFlatMap<K>(
   array: any[],
@@ -37,8 +36,6 @@ export class ExtensionRegistry {
     EditorConfig['renderReactNodeView'],
     undefined
   >;
-  private palettes: ExtensionPaletteType[];
-  private palettesLookup: Record<string, ExtensionPaletteType>;
   private actionHandlers: Set<ActionHandler>;
   private registeredActions: ActionDefinitionType[];
   private editorConfig: EditorConfig[];
@@ -85,10 +82,6 @@ export class ExtensionRegistry {
     );
 
     const applicationConfig = extensions.map((e) => e.application);
-    this.palettes = filterFlatMap(applicationConfig, 'palettes');
-    this.palettesLookup = Object.fromEntries(
-      this.palettes.map((obj) => [obj.type, obj]),
-    );
 
     this.actionHandlers = new Set();
     this.editorWatchPluginStates = filterFlatMap(
@@ -138,20 +131,6 @@ export class ExtensionRegistry {
       ...filterFlatMap(this.editorConfig, 'highPriorityPlugins'),
       ...filterFlatMap(this.editorConfig, 'plugins'),
     ];
-  }
-
-  getPalette(type: string) {
-    return this.palettesLookup[type];
-  }
-
-  getAllPalettes() {
-    return this.palettes;
-  }
-
-  paletteParseRawQuery(query: string) {
-    return this.palettes.find(
-      (palette) => palette.parseRawQuery(query) != null,
-    );
   }
 
   getSidebars() {

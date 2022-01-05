@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
-import type {
-  PaletteManagerImperativeHandle,
-  PaletteManagerReactComponentProps,
-} from '@bangle.io/extension-registry';
 import { UniversalPalette } from '@bangle.io/ui-components';
 import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { actionPalette } from './ActionPalette';
+import {
+  PaletteManagerImperativeHandle,
+  PaletteManagerReactComponentProps,
+} from './config';
 import { headingPalette } from './HeadingPalette';
 import { notesPalette } from './NotesPalette';
 import { questionPalette } from './QuestionPalette';
@@ -165,6 +165,7 @@ export function PaletteManager() {
         counter={counter}
         getActivePaletteItem={getActivePaletteItem}
         updateCounter={updateCounter}
+        allPalettes={palettes}
       />
     </UniversalPalette.PaletteContainer>
   );

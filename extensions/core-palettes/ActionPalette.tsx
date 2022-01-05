@@ -1,13 +1,10 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
-import {
-  ExtensionPaletteType,
-  useExtensionRegistryContext,
-} from '@bangle.io/extension-registry';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { TerminalIcon, UniversalPalette } from '@bangle.io/ui-components';
 
-import { extensionName } from './config';
+import { extensionName, ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
 
 const identifierPrefix = '>';

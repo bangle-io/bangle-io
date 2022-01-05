@@ -1,22 +1,18 @@
 import React, { useCallback, useImperativeHandle } from 'react';
 
-import {
-  ExtensionPaletteType,
-  useExtensionRegistryContext,
-} from '@bangle.io/extension-registry';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 
-import { extensionName } from './config';
+import { extensionName, ExtensionPaletteType } from './config';
 
 const identifierPrefix = '?';
 
 const QuestionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
   React.forwardRef(
-    ({ query, updatePalette, onSelect, getActivePaletteItem }, ref) => {
-      const extensionRegistry = useExtensionRegistryContext();
-
-      const items = extensionRegistry
-        .getAllPalettes()
+    (
+      { query, updatePalette, onSelect, getActivePaletteItem, allPalettes },
+      ref,
+    ) => {
+      const items = allPalettes
         .map((r) => {
           return {
             uid: r.type,

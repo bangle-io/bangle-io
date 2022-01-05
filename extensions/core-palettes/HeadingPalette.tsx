@@ -3,11 +3,10 @@ import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import { Selection } from '@bangle.dev/pm';
 
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
-import { ExtensionPaletteType } from '@bangle.io/extension-registry';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
-import { extensionName } from './config';
+import { extensionName, ExtensionPaletteType } from './config';
 
 const identifierPrefix = '#';
 

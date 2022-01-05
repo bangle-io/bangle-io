@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 
 import { keyDisplayValue } from '@bangle.io/config';
-import { ExtensionPaletteType } from '@bangle.io/extension-registry';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import type { UnPromisify } from '@bangle.io/shared-types';
@@ -21,7 +20,7 @@ import { isAbortError, removeMdExtension } from '@bangle.io/utils';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { extensionName } from './config';
+import { extensionName, ExtensionPaletteType } from './config';
 
 const FZF_SEARCH_LIMIT = 64;
 const RECENT_SHOW_LIMIT = 6;

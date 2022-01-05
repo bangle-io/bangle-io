@@ -12,7 +12,6 @@ import type {
 } from '@bangle.io/shared-types';
 
 import { EditorPluginDefinition } from './PluginType';
-import { ExtensionPaletteType } from './UniversalPaletteType';
 
 const _check = Symbol();
 
@@ -44,7 +43,6 @@ export interface ApplicationConfig {
     key: string;
     registerActionHandler: RegisterActionHandlerType;
   }>;
-  palettes?: Array<ExtensionPaletteType>;
   actions?: Array<ActionDefinitionType>;
   sidebars?: Array<SidebarType>;
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
@@ -131,19 +129,7 @@ export class Extension<T = unknown> {
       );
     }
 
-    const { palettes, actions, sidebars, noteSidebarWidgets, slices } =
-      application;
-
-    if (palettes) {
-      if (!Array.isArray(palettes)) {
-        throw new Error('Extension: palettes must be an array');
-      }
-      if (!palettes.every((r) => r.type.startsWith(name + '/'))) {
-        throw new Error(
-          "Extension: palette's type must start with extension's name followed by '/'. Example 'my-extension-name/my-palette-type' ",
-        );
-      }
-    }
+    const { actions, sidebars, noteSidebarWidgets, slices } = application;
 
     if (actions) {
       if (

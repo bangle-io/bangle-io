@@ -1,7 +1,6 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
 import { keyDisplayValue } from '@bangle.io/config';
-import { ExtensionPaletteType } from '@bangle.io/extension-registry';
 import {
   AlbumIcon,
   CloseIcon,
@@ -9,7 +8,7 @@ import {
 } from '@bangle.io/ui-components';
 import { useWorkspaces } from '@bangle.io/workspaces';
 
-import { extensionName } from './config';
+import { extensionName, ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
 
 const LOG = false;
