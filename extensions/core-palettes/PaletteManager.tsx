@@ -5,10 +5,29 @@ import type {
   PaletteManagerImperativeHandle,
   PaletteManagerReactComponentProps,
 } from '@bangle.io/extension-registry';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { UniversalPalette } from '@bangle.io/ui-components';
 import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
 import { useUIManagerContext } from '@bangle.io/ui-context';
+
+import { actionPalette } from './ActionPalette';
+import { headingPalette } from './HeadingPalette';
+import { notesPalette } from './NotesPalette';
+import { questionPalette } from './QuestionPalette';
+import { workspacePalette } from './WorkspacePalette';
+
+const palettes = [
+  headingPalette,
+  workspacePalette,
+  questionPalette,
+  actionPalette,
+  // // should always be the last palette
+  // // TODO: add constraints to make sure it always is
+  notesPalette,
+];
+
+const paletteByType = Object.fromEntries(
+  palettes.map((obj) => [obj.type, obj]),
+);
 
 export function PaletteManager() {
   const {
@@ -21,7 +40,6 @@ export function PaletteManager() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const { dispatchAction } = useActionContext();
-  const extensionRegistry = useExtensionRegistryContext();
 
   const dismissPalette = useCallback(
     (focusEditor = true) => {
@@ -83,7 +101,9 @@ export function PaletteManager() {
   // Note: that we are passing this callback to the children and they are free to override it.
   const updateRawInputValue = useCallback(
     (rawQuery) => {
-      const match = extensionRegistry.paletteParseRawQuery(rawQuery);
+      const match = palettes.find(
+        (palette) => palette.parseRawQuery(rawQuery) != null,
+      );
 
       resetCounter();
       if (!match) {
@@ -99,19 +119,10 @@ export function PaletteManager() {
         updateQuery(query || '');
       }
     },
-    [
-      resetCounter,
-      dismissPalette,
-      extensionRegistry,
-      paletteType,
-      updatePalette,
-      updateQuery,
-    ],
+    [resetCounter, dismissPalette, paletteType, updatePalette, updateQuery],
   );
 
-  const Palette = paletteType
-    ? extensionRegistry.getPalette(paletteType)
-    : undefined;
+  const Palette = paletteType ? paletteByType[paletteType] : undefined;
 
   const getActivePaletteItem = useCallback(
     (items) => {

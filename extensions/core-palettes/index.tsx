@@ -9,25 +9,11 @@ import {
 import { Extension } from '@bangle.io/extension-registry';
 
 import { ActionHandler } from './ActionHandler';
-import { actionPalette } from './ActionPalette';
 import { extensionName } from './config';
-import { headingPalette } from './HeadingPalette';
-import { notesPalette } from './NotesPalette';
-import { questionPalette } from './QuestionPalette';
-import { workspacePalette } from './WorkspacePalette';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
-    palettes: [
-      headingPalette,
-      workspacePalette,
-      questionPalette,
-      actionPalette,
-      // // should always be the last palette
-      // // TODO: add constraints to make sure it always is
-      notesPalette,
-    ],
     actions: [
       {
         name: CORE_PALETTES_TOGGLE_ACTION_PALETTE,

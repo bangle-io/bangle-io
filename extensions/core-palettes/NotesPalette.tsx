@@ -173,7 +173,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   },
 );
 
-export const notesPalette = {
+export const notesPalette: ExtensionPaletteType = {
   type: extensionName + '/notes',
   icon: <FileDocumentIcon />,
   identifierPrefix: '',

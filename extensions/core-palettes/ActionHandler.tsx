@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import {
   CORE_PALETTES_TOGGLE_ACTION_PALETTE,
@@ -9,6 +9,7 @@ import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { actionPalette } from './ActionPalette';
 import { notesPalette } from './NotesPalette';
+import { PaletteManager } from './PaletteManager';
 import { workspacePalette } from './WorkspacePalette';
 
 export function ActionHandler({ registerActionHandler }) {
@@ -60,5 +61,5 @@ export function ActionHandler({ registerActionHandler }) {
     };
   }, [actionHandler, registerActionHandler]);
 
-  return null;
+  return <PaletteManager />;
 }
