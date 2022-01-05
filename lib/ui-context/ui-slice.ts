@@ -30,6 +30,8 @@ export interface UISliceState {
   widescreen: boolean;
 }
 
+export const UI_CONTEXT_TOGGLE_THEME = 'action::ui-context/TOGGLE_THEME';
+
 export type UiContextAction =
   | { name: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
   | { name: 'UI/CHANGE_SIDEBAR'; value: { type: string | null } }
@@ -43,7 +45,7 @@ export type UiContextAction =
       };
     }
   | { name: 'UI/RESET_PALETTE' }
-  | { name: 'UI/TOGGLE_THEME' }
+  | { name: typeof UI_CONTEXT_TOGGLE_THEME }
   | { name: 'UI/UPDATE_THEME'; value: { theme: ThemeType } }
   | {
       name: 'UI/UPDATE_WINDOW_SIZE';
@@ -152,7 +154,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/TOGGLE_THEME': {
+          case UI_CONTEXT_TOGGLE_THEME: {
             const theme: ThemeType = state.theme === 'dark' ? 'light' : 'dark';
             applyTheme(theme);
             return {
