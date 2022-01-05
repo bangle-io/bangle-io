@@ -19,6 +19,7 @@ export type UiContextDispatchType = ApplicationStore<
 export interface UISliceState {
   changelogHasUpdates: boolean;
   modal?: string | null;
+  modalValue?: undefined | { [key: string]: any };
   noteSidebar: boolean;
   notifications: NotificationPayloadType[];
   paletteInitialQuery?: string | null;
@@ -50,7 +51,10 @@ export type UiContextAction =
     }
   | {
       name: 'UI/SHOW_MODAL';
-      value: { modal: string | null };
+      value: {
+        modal: string | null;
+        modalValue?: undefined | { [key: string]: any };
+      };
     }
   | {
       name: 'UI/DISMISS_MODAL';
@@ -63,6 +67,7 @@ export const initialState: UISliceState = {
   // UI
   changelogHasUpdates: false,
   modal: undefined,
+  modalValue: undefined,
   noteSidebar: false,
   notifications: [],
   paletteInitialQuery: undefined,
@@ -178,6 +183,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             return {
               ...state,
               modal: action.value.modal,
+              modalValue: action.value.modalValue,
             };
           }
 
@@ -185,6 +191,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             return {
               ...state,
               modal: undefined,
+              modalValue: undefined,
             };
           }
 

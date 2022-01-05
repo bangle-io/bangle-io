@@ -33,19 +33,12 @@ import { downloadBlob, filePicker } from './backup';
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 
 export function CoreActionsHandler({ registerActionHandler }) {
-  const { dispatch } = useUIManagerContext();
+  const { dispatch, modal, modalValue } = useUIManagerContext();
   const { dispatchAction } = useActionContext();
   const { createWorkspace } = useWorkspaces();
   const { primaryEditor, secondaryEditor } = useEditorManagerContext();
   const { wsName, openedWsPaths, bangleStore } = useWorkspaceContext();
   const { primaryWsPath, secondaryWsPath } = openedWsPaths;
-
-  const [inputModal, updateInputModal] = useState<{
-    type: string | undefined;
-    clone?: boolean;
-    initialValue?: string;
-    resetWsName?: string;
-  }>({ type: undefined });
 
   const actionHandler = useCallback(
     (actionObject) => {
@@ -74,9 +67,14 @@ export function CoreActionsHandler({ registerActionHandler }) {
             name: 'UI/UPDATE_PALETTE',
             value: { type: null },
           });
-          updateInputModal({
-            type: 'new-note',
-            initialValue: actionObject.value,
+          dispatch({
+            name: 'UI/SHOW_MODAL',
+            value: {
+              modal: 'new-note',
+              modalValue: {
+                initialValue: actionObject.value,
+              },
+            },
           });
 
           return true;
@@ -88,6 +86,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
             name: 'UI/SHOW_MODAL',
             value: { modal: '@modal/new-workspace' },
           });
+
           return true;
         }
 
@@ -109,7 +108,13 @@ export function CoreActionsHandler({ registerActionHandler }) {
             name: 'UI/UPDATE_PALETTE',
             value: { type: null },
           });
-          updateInputModal({ type: 'rename-note' });
+
+          dispatch({
+            name: 'UI/SHOW_MODAL',
+            value: {
+              modal: 'rename-note',
+            },
+          });
           return true;
         }
 
@@ -400,26 +405,28 @@ export function CoreActionsHandler({ registerActionHandler }) {
 
   const onDismiss = useCallback(
     (focusEditor = true) => {
-      updateInputModal({ type: undefined });
+      dispatch({
+        name: 'UI/DISMISS_MODAL',
+      });
       if (focusEditor) {
         dispatchAction({
           name: 'action::bangle-io-core-actions:focus-primary-editor',
         });
       }
     },
-    [dispatchAction],
+    [dispatchAction, dispatch],
   );
 
-  if (inputModal.type === 'new-note') {
+  if (modal === 'new-note') {
     return (
       <NewNoteInputModal
         onDismiss={onDismiss}
-        initialValue={inputModal.initialValue}
+        initialValue={modalValue?.initialValue}
       />
     );
   }
 
-  if (inputModal.type === 'rename-note') {
+  if (modal === 'rename-note') {
     return <RenameNoteInputModal onDismiss={onDismiss} />;
   }
 
