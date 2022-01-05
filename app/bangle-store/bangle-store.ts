@@ -35,9 +35,10 @@ export function initializeBangleStore({
 }: {
   onUpdate?: (store: ApplicationStore) => void;
 }) {
+  const extensionRegistry = initExtensionRegistry();
   const stateOpts: BangleStateOpts = {
     lifecycle,
-    initExtensionRegistry,
+    extensionRegistry,
   };
   const makeStore = () => {
     const stateJson = {
