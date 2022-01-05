@@ -30,9 +30,11 @@ export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 export function bangleStateSlices({
   onUpdate,
   onPageInactive,
+  extensionSlices,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
   onPageInactive: () => void;
+  extensionSlices: Slice<any>[];
 }) {
   return [
     pageSlice(),
@@ -41,6 +43,8 @@ export function bangleStateSlices({
     workspaceSlice(),
     uiSlice(),
     editorManagerSlice(),
+
+    ...extensionSlices,
 
     // keep this at the end
     new Slice({

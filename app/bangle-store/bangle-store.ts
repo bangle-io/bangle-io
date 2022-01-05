@@ -36,6 +36,8 @@ export function initializeBangleStore({
   onUpdate?: (store: ApplicationStore) => void;
 }) {
   const extensionRegistry = initExtensionRegistry();
+  const extensionSlices = extensionRegistry.getSlices();
+
   const stateOpts: BangleStateOpts = {
     lifecycle,
     extensionRegistry,
@@ -67,6 +69,7 @@ export function initializeBangleStore({
       slices: bangleStateSlices({
         onUpdate,
         onPageInactive,
+        extensionSlices,
       }),
       json: stateJson,
       sliceFields: {

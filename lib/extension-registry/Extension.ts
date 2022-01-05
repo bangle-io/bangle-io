@@ -3,6 +3,7 @@ import React from 'react';
 import type { RawSpecs } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
+import { BaseAction, Slice } from '@bangle.io/create-store';
 import type {
   ActionDefinitionType,
   ActionHandler,
@@ -47,6 +48,7 @@ export interface ApplicationConfig {
   actions?: Array<ActionDefinitionType>;
   sidebars?: Array<SidebarType>;
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
+  slices?: Array<Slice<any, BaseAction>>;
 }
 
 export interface SidebarType {
@@ -129,7 +131,8 @@ export class Extension<T = unknown> {
       );
     }
 
-    const { palettes, actions, sidebars, noteSidebarWidgets } = application;
+    const { palettes, actions, sidebars, noteSidebarWidgets, slices } =
+      application;
 
     if (palettes) {
       if (!Array.isArray(palettes)) {
@@ -188,6 +191,21 @@ export class Extension<T = unknown> {
         })
       ) {
         throw new Error('Extension: Invalid sidebars config.');
+      }
+    }
+
+    if (slices) {
+      if (!Array.isArray(slices)) {
+        throw new Error('Extension: slices must be an array');
+      }
+      if (!slices.every((slice) => slice instanceof Slice)) {
+        throw new Error('Extension: invalid slice');
+      }
+
+      if (!slices.every((slice) => slice.key.startsWith(name + ':'))) {
+        throw new Error(
+          `Extension: invalid slice. Slice key must be prefixed with extension name followed by a semicolon (:). For example, "new SliceKey(\'my-extension-name:slice\')"`,
+        );
       }
     }
 

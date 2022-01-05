@@ -4,6 +4,7 @@ import type { RawSpecs } from '@bangle.dev/core';
 import { SpecRegistry } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
+import { Slice } from '@bangle.io/create-store';
 import type {
   ActionDefinitionType,
   ActionHandler,
@@ -43,6 +44,7 @@ export class ExtensionRegistry {
   private editorConfig: EditorConfig[];
   private actionKeybindingMapping: ActionKeybindingMapping;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
+  private slices: Slice<any, any>[];
 
   private editorWatchPluginStates: Exclude<
     EditorConfig['watchPluginStates'],
@@ -99,6 +101,8 @@ export class ExtensionRegistry {
       applicationConfig,
       'noteSidebarWidgets',
     );
+
+    this.slices = filterFlatMap(applicationConfig, 'slices');
 
     this.actionKeybindingMapping = this._getActionKeybindingMapping();
   }
@@ -164,6 +168,10 @@ export class ExtensionRegistry {
 
   getEditorWatchPluginStates(): EditorWatchPluginState[] {
     return this.editorWatchPluginStates;
+  }
+
+  getSlices() {
+    return this.slices;
   }
 
   renderExtensionEditorComponents = () => {
