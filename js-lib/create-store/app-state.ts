@@ -114,7 +114,58 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
 
   constructor(public config: AppStateConfig<S, A, Op>) {}
 
-  applyAction(action: A): AppState<S, A, Op> {
+  applyAction(rootAction: A): AppState<S, A, Op> {
+    let newInstance = this.applyInner(rootAction);
+
+    let actions: A[] = [rootAction];
+    let seen: { state: AppState; n: number }[] | null = null;
+
+    for (;;) {
+      let haveNew = false;
+      let i = -1;
+      for (const slice of this.config.slices) {
+        i++;
+        if (!slice.spec.appendAction) {
+          continue;
+        }
+
+        let n = seen ? seen[i]!.n : 0;
+        let newAction =
+          n < actions.length &&
+          slice.spec.appendAction.call(
+            slice,
+            n ? actions.slice(n) : actions,
+            newInstance,
+          );
+        if (newAction) {
+          newAction.appendedFrom = rootAction.name;
+
+          if (!seen) {
+            seen = [];
+            for (let j = 0; j < this.config.slices.length; j++) {
+              seen.push(
+                j < i
+                  ? { state: newInstance, n: actions.length }
+                  : { state: this, n: 0 },
+              );
+            }
+          }
+          actions.push(newAction);
+          newInstance = newInstance.applyInner(newAction);
+          haveNew = true;
+        }
+        if (seen) {
+          seen[i] = { state: newInstance, n: actions.length };
+        }
+      }
+
+      if (!haveNew) {
+        return newInstance;
+      }
+    }
+  }
+
+  private applyInner(action: A): AppState<S, A, Op> {
     let newInstance = new AppState(this.config);
 
     this.config.fields.forEach((field) => {

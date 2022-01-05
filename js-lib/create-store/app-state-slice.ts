@@ -8,8 +8,9 @@ import { createKey } from './slice-key';
 type BaseBaseAction = {
   name: string;
   value?: { [k: string]: any };
-  readonly id?: string;
-  readonly fromStore?: string;
+  id?: string;
+  fromStore?: string;
+  appendedFrom?: string;
 };
 
 export interface BaseAction extends BaseBaseAction {}
@@ -62,6 +63,7 @@ export class Slice<SL, A extends BaseAction = any, S = SL> {
     public spec: {
       key?: SliceKey<SL, A, S>;
       state?: SliceStateField<SL, A, S>;
+      appendAction?: (actions: A[], state: AppState<S, A>) => A | undefined;
       // false if it cannot be serialized
       actions?: ActionsSerializersType<A>;
       sideEffect?: SliceSideEffect<SL, A, S> | SliceSideEffect<SL, A, S>[];
