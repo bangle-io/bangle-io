@@ -1,6 +1,7 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
+import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { TerminalIcon, UniversalPalette } from '@bangle.io/ui-components';
 
@@ -89,7 +90,7 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
   });
 
 export const actionPalette: ExtensionPaletteType = {
-  type: extensionName + '/action',
+  type: CorePalette.Action,
   icon: <TerminalIcon />,
   identifierPrefix,
   placeholder: 'Actions',

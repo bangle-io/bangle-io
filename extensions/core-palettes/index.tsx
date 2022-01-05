@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { isFirefox, isMac } from '@bangle.io/config';
 import {
   CORE_PALETTES_TOGGLE_ACTION_PALETTE,
@@ -8,8 +6,14 @@ import {
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 
-import { ActionHandler } from './ActionHandler';
+import { actionPalette } from './ActionPalette';
 import { extensionName } from './config';
+import { corePaletteSlice } from './core-palette-slice';
+import { headingPalette } from './HeadingPalette';
+import { notesPalette } from './NotesPalette';
+import { PaletteManager } from './PaletteManager';
+import { questionPalette } from './QuestionPalette';
+import { workspacePalette } from './WorkspacePalette';
 
 const extension = Extension.create({
   name: extensionName,
@@ -34,7 +38,8 @@ const extension = Extension.create({
         keybinding: 'Mod-p',
       },
     ],
-    ReactComponent: ActionHandler,
+    slices: [corePaletteSlice()],
+    ReactComponent: PaletteManager,
   },
 });
 

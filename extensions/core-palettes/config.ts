@@ -1,12 +1,15 @@
+import { CorePalette } from '@bangle.io/constants';
+import { SliceKey } from '@bangle.io/create-store';
 import { UniversalPalette } from '@bangle.io/ui-components';
 
 export const extensionName = 'bangle-io-core-palettes';
+export const sliceKey = new SliceKey(extensionName + ':');
 
 export interface PaletteManagerReactComponentProps {
   query: string;
   paletteType?: string | null;
   paletteMetadata: any;
-  updatePalette: (type: string, initialQuery?: string) => void;
+  updatePalette: (type: CorePalette | null, initialQuery?: string) => void;
   dismissPalette: (focusEditor?: boolean) => void;
   onSelect: ReturnType<typeof UniversalPalette.usePaletteDriver>['onSelect'];
   counter: number;
@@ -27,7 +30,7 @@ export type PaletteManagerImperativeHandle = {
 };
 
 export interface ExtensionPaletteType {
-  type: string;
+  type: CorePalette;
   icon: JSX.Element;
   identifierPrefix: string;
   placeholder: string;

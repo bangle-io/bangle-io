@@ -2,6 +2,7 @@ import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
 import { Selection } from '@bangle.dev/pm';
 
+import { CorePalette } from '@bangle.io/constants';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
@@ -135,7 +136,7 @@ function strMatch(a, b) {
 }
 
 export const headingPalette: ExtensionPaletteType = {
-  type: extensionName + '/heading',
+  type: CorePalette.Heading,
   icon: <NullIcon />,
   identifierPrefix,
   placeholder: 'Jump to a heading.',

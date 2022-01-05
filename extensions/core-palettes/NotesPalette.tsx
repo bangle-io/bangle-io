@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 
 import { keyDisplayValue } from '@bangle.io/config';
+import { CorePalette } from '@bangle.io/constants';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import type { UnPromisify } from '@bangle.io/shared-types';
@@ -20,7 +21,7 @@ import { isAbortError, removeMdExtension } from '@bangle.io/utils';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { extensionName, ExtensionPaletteType } from './config';
+import { ExtensionPaletteType } from './config';
 
 const FZF_SEARCH_LIMIT = 64;
 const RECENT_SHOW_LIMIT = 6;
@@ -173,7 +174,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
 );
 
 export const notesPalette: ExtensionPaletteType = {
-  type: extensionName + '/notes',
+  type: CorePalette.Notes,
   icon: <FileDocumentIcon />,
   identifierPrefix: '',
   placeholder: "Enter a file name or type '?' to see other palettes.",

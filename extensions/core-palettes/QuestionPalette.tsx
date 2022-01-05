@@ -1,8 +1,9 @@
 import React, { useCallback, useImperativeHandle } from 'react';
 
+import { CorePalette } from '@bangle.io/constants';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 
-import { extensionName, ExtensionPaletteType } from './config';
+import { ExtensionPaletteType } from './config';
 
 const identifierPrefix = '?';
 
@@ -80,7 +81,7 @@ const QuestionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
   );
 
 export const questionPalette: ExtensionPaletteType = {
-  type: extensionName + '/question',
+  type: CorePalette.Question,
   icon: <NullIcon />,
   identifierPrefix,
   placeholder: 'Available palettes',
