@@ -150,7 +150,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
               );
             }
           }
-          actions.push(newAction);
+          actions.push(newAction as A);
           newInstance = newInstance.applyInner(newAction);
           haveNew = true;
         }
@@ -165,7 +165,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     }
   }
 
-  private applyInner(action: A): AppState<S, A, Op> {
+  private applyInner<AA extends BaseAction>(action: AA): AppState<S, A, Op> {
     let newInstance = new AppState(this.config);
 
     this.config.fields.forEach((field) => {

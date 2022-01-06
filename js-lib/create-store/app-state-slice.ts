@@ -63,7 +63,10 @@ export class Slice<SL, A extends BaseAction = any, S = SL> {
     public spec: {
       key?: SliceKey<SL, A, S>;
       state?: SliceStateField<SL, A, S>;
-      appendAction?: (actions: A[], state: AppState<S, A>) => A | undefined;
+      appendAction?: (
+        actions: A[],
+        state: AppState<S, A>,
+      ) => BaseAction | undefined;
       // false if it cannot be serialized
       actions?: ActionsSerializersType<A>;
       sideEffect?: SliceSideEffect<SL, A, S> | SliceSideEffect<SL, A, S>[];
