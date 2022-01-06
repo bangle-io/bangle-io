@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
-import {
-  CORE_ACTIONS_CLOSE_EDITOR,
-  CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
-} from '@bangle.io/constants';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { closeEditor, splitEditor } from '@bangle.io/core-operations';
 import { Editor } from '@bangle.io/editor';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { Page } from '@bangle.io/ui-components';
@@ -28,23 +25,18 @@ export function EditorContainer({
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { openedWsPaths } = useWorkspaceContext();
-  const { dispatchAction } = useActionContext();
   const { focusedEditorId } = useEditorManagerContext();
+  const bangleStore = useBangleStoreContext();
 
   const isSplitEditorOpen = openedWsPaths.openCount > 0;
 
   const onPressSecondaryEditor = useCallback(() => {
-    dispatchAction({
-      name: CORE_ACTIONS_TOGGLE_EDITOR_SPLIT,
-    });
-  }, [dispatchAction]);
+    splitEditor()(bangleStore.state, bangleStore.dispatch);
+  }, [bangleStore]);
 
   const onClose = useCallback(() => {
-    dispatchAction({
-      name: CORE_ACTIONS_CLOSE_EDITOR,
-      value: editorId,
-    });
-  }, [dispatchAction, editorId]);
+    closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
+  }, [bangleStore, editorId]);
 
   let children;
 
@@ -77,7 +69,6 @@ export function EditorContainer({
         wsPath && (
           <EditorBar
             isActive={focusedEditorId === editorId}
-            dispatchAction={dispatchAction}
             wsPath={wsPath}
             onClose={onClose}
             showSplitEditor={editorId === 0}

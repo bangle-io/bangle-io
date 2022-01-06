@@ -1,17 +1,43 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
+import { useBangleStoreDispatch } from '@bangle.io/app-state-context';
 import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
+import { toggleNotesPalette } from '@bangle.io/core-operations';
 
 import { EditorBar } from '../EditorBar';
 
+jest.mock('@bangle.io/app-state-context', () => {
+  const obj = jest.requireActual('@bangle.io/app-state-context');
+  return {
+    ...obj,
+    useBangleStoreDispatch: jest.fn(() => () => {}),
+  };
+});
+
+jest.mock('@bangle.io/core-operations', () => {
+  const operations = jest.requireActual('@bangle.io/core-operations');
+
+  return {
+    ...operations,
+    toggleNotesPalette: jest.fn(() => () => {}),
+  };
+});
+
+const toggleNotesPaletteMock = toggleNotesPalette as jest.MockedFunction<
+  typeof toggleNotesPalette
+>;
+
+beforeEach(() => {
+  (useBangleStoreDispatch as any).mockImplementation(() => () => {});
+  toggleNotesPaletteMock.mockImplementation(() => () => {});
+});
+
 test('renders correctly', () => {
-  let dispatchAction = jest.fn();
   let result = render(
     <div>
       <EditorBar
         isActive={false}
-        dispatchAction={dispatchAction}
         showSplitEditor={false}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
@@ -27,12 +53,10 @@ test('renders correctly', () => {
 });
 
 test('renders correctly when active', () => {
-  let dispatchAction = jest.fn();
   let result = render(
     <div>
       <EditorBar
         isActive={true}
-        dispatchAction={dispatchAction}
         showSplitEditor={false}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
@@ -48,13 +72,10 @@ test('renders correctly when active', () => {
 });
 
 test('truncates large wsPath', () => {
-  let dispatchAction = jest.fn();
-
   let result = render(
     <div>
       <EditorBar
         isActive={false}
-        dispatchAction={dispatchAction}
         showSplitEditor={false}
         wsPath={'mojo:test-dir/magic/wow/last/two.md'}
         onClose={jest.fn()}
@@ -68,13 +89,10 @@ test('truncates large wsPath', () => {
 });
 
 test('dispatches action on clicking wsPath', () => {
-  let dispatchAction = jest.fn();
-
   let result = render(
     <div>
       <EditorBar
         isActive={false}
-        dispatchAction={dispatchAction}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
@@ -86,20 +104,14 @@ test('dispatches action on clicking wsPath', () => {
 
   fireEvent.click(result.getByLabelText('note path'));
 
-  expect(dispatchAction).toBeCalledTimes(1);
-  expect(dispatchAction).nthCalledWith(1, {
-    name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
-  });
+  expect(toggleNotesPaletteMock).toBeCalledTimes(1);
 });
 
 test('renders splitscreen', () => {
-  let dispatchAction = jest.fn();
-
   let result = render(
     <div>
       <EditorBar
         isActive={false}
-        dispatchAction={dispatchAction}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
@@ -117,7 +129,6 @@ test('renders splitscreen', () => {
     <div>
       <EditorBar
         isActive={false}
-        dispatchAction={dispatchAction}
         showSplitEditor={true}
         wsPath={'mojo:test-dir/magic.md'}
         onClose={jest.fn()}
