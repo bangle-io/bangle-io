@@ -1,17 +1,5 @@
 import type { Command } from '@bangle.dev/pm';
 
-import type { ActionType } from '@bangle.io/shared-types';
-
-import { getEditorPluginMetadata } from './editor';
-
-export function dispatchActionCommand(action: ActionType): Command {
-  return (state) => {
-    const metadata = getEditorPluginMetadata(state);
-    metadata.dispatchAction(action);
-    return true;
-  };
-}
-
 /**
  * Trims any whitespace before the cursor
  */

@@ -22,6 +22,12 @@ export function useBangleStoreContext() {
   return useContext(BangleStoreContext);
 }
 
+export function useBangleStoreDispatch<
+  T extends BaseAction,
+>(): ApplicationStore<any, T>['dispatch'] {
+  return useContext(BangleStoreContext).dispatch;
+}
+
 export function useSliceState<SL, A extends BaseAction, S = SL>(
   sliceKey: SliceKey<SL, A, S>,
   initialState?: SL,

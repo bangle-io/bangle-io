@@ -20,6 +20,17 @@ export function getEditor(editorId: EditorIdType) {
   };
 }
 
+export function focusEditor(editorId: EditorIdType = 0) {
+  return (state: AppState): boolean => {
+    const editor = getEditor(editorId)(state);
+    if (editor) {
+      editor?.focusView();
+      return true;
+    }
+    return false;
+  };
+}
+
 export function updateInitialSelection(editorId: EditorIdType) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
     const editor = getEditor(editorId)(state);
