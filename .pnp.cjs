@@ -195,6 +195,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/contextual-ui-components"
       },
       {
+        "name": "@bangle.io/core-operations",
+        "reference": "workspace:lib/core-operations"
+      },
+      {
         "name": "@bangle.io/editor",
         "reference": "workspace:lib/editor"
       },
@@ -296,6 +300,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/constants", ["workspace:lib/constants"]],
       ["@bangle.io/contextual-ui-components", ["workspace:lib/contextual-ui-components"]],
       ["@bangle.io/core-actions", ["workspace:extensions/core-actions"]],
+      ["@bangle.io/core-operations", ["workspace:lib/core-operations"]],
       ["@bangle.io/core-palettes", ["virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes", "workspace:extensions/core-palettes"]],
       ["@bangle.io/create-store", ["workspace:js-lib/create-store"]],
       ["@bangle.io/e2e-legacy", ["workspace:tooling/e2e"]],
@@ -3768,8 +3773,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-activitybar-virtual-05d34a82c0/1/app/activitybar/",
           "packageDependencies": [
             ["@bangle.io/activitybar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar"],
-            ["@bangle.io/action-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context"],
+            ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],
@@ -3795,8 +3801,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/activitybar/",
           "packageDependencies": [
             ["@bangle.io/activitybar", "workspace:app/activitybar"],
-            ["@bangle.io/action-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context"],
+            ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],
@@ -3837,6 +3844,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
             ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],
             ["@bangle.io/editor-core", "workspace:extensions/editor-core"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
@@ -3908,6 +3916,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
             ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],
             ["@bangle.io/editor-core", "workspace:extensions/editor-core"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
@@ -4109,6 +4118,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
@@ -4126,6 +4137,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["@bangle.io/core-operations", [
+        ["workspace:lib/core-operations", {
+          "packageLocation": "./lib/core-operations/",
+          "packageDependencies": [
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
+            ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
+            ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
+            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@bangle.io/workspace-context", "workspace:lib/workspace-context"],
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.io/core-palettes", [
         ["virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes", {
           "packageLocation": "./.yarn/__virtual__/@bangle.io-core-palettes-virtual-0abd1a1f9c/1/extensions/core-palettes/",
@@ -4137,6 +4166,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/action-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/fzf-search", "virtual:1c653abd95d17b80460966d88f9155bf37447d2b0ac69dac46281807b79335757fd742efe819137ca9ed88e005544d9ea162e2b4451163803b19eeb4563013ba#workspace:js-lib/fzf-search"],
@@ -4168,6 +4198,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/action-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/fzf-search", "virtual:1c653abd95d17b80460966d88f9155bf37447d2b0ac69dac46281807b79335757fd742efe819137ca9ed88e005544d9ea162e2b4451163803b19eeb4563013ba#workspace:js-lib/fzf-search"],
@@ -4310,6 +4341,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/action-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context"],
             ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
@@ -4344,6 +4376,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/action-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context"],
             ["@bangle.io/app-state-context", "workspace:lib/app-state-context"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
             ["@bangle.io/editor", "virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
@@ -4727,6 +4760,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/action-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/action-context"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
@@ -4944,6 +4978,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/contextual-ui-components", "workspace:lib/contextual-ui-components"],
+            ["@bangle.io/core-operations", "workspace:lib/core-operations"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],

@@ -11,7 +11,6 @@ import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 import { ChangelogModal } from './changelog/ChangelogModal';
 import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
-import { PaletteManager } from './extension-glue/PaletteManager';
 import { useSetDocumentTitle } from './misc/use-set-document-title';
 import { NewWorkspaceModal } from './new-workspace-modal/NewWorkspaceModal';
 import { Routes } from './Routes';
@@ -59,7 +58,6 @@ export function AppContainer() {
       <ChangelogModal />
       <NewWorkspaceModal />
       <ApplicationComponents />
-      <PaletteManager />
       <NoteSidebarShowButton
         isNoteSidebarShown={Boolean(noteSidebar)}
         widescreen={widescreen}

@@ -75,7 +75,6 @@ This is called when the store is destroyed. Use it for any cleanup.
 ## Effects Example
 
 ```js
-
 const counterSlice = new Slice({
   key: counterSliceKey,
   state: {
@@ -136,6 +135,40 @@ function incrementCounter() {
 incrementCounter()(store.state, store.dispatch, store);
 ```
 
-## Best practices for async Operations 
+### Best practices for async Operations 
 
 When creating an async operation it is vital to make sure to use `store.state` after an async operation to get the latest state. It is a good idea to break down your async operation into smaller preferably sync operations and then orchestrating the calls in one big master async operation.
+
+## Appending an action after actions
+
+Allows slice to append an action after the provided actions and produced a new state. If any other slice appends an action, this is called again with the new state and new actions - but only the new actions and not the ones it has already seen or returned before. This works similar to PM's [appendAction](https://prosemirror.net/docs/ref/#state.PluginSpec.appendTransaction).
+
+```js
+const key1 = new SliceKey<string>('one');
+const slice1 = new Slice({
+  key: key1,
+  state: {
+    init: () => '👻',
+    apply: (action, value) => value + action.value.emoji,
+  },
+  appendAction(actions, state) {
+    if (actions.some((a) => a.name.startsWith('interesting-action'))) {
+      return {
+        name: 'appended-action',
+        value: { emoji: '💩' },
+      };
+    }
+    return undefined;
+  },
+});
+
+const state = AppState.create({ slices: [slice1] });
+const newState = state.applyAction({
+  name: 'interesting-action',
+  value: {
+    emoji: '🐔',
+  },
+});
+
+console.log(key1.getSliceState(newState)) // "👻💩🐔"
+```

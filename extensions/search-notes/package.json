@@ -28,6 +28,7 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/contextual-ui-components": "workspace:*",
+    "@bangle.io/core-operations": "workspace:*",
     "@bangle.io/editor-manager-context": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/naukar-proxy": "workspace:*",

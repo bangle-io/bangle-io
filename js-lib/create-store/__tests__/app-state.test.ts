@@ -384,4 +384,222 @@ describe('AppState', () => {
       expect(slice1.getSliceState(parsedState)).toEqual({ number: 3 });
     });
   });
+
+  describe('append action', () => {
+    test('calls apply correctly', () => {
+      const key1 = new SliceKey<number>('one');
+
+      let apply = jest.fn((_, val) => val + 1);
+
+      const slice = new Slice({
+        key: key1,
+        state: {
+          init: () => 0,
+          apply: apply,
+        },
+        appendAction(actions) {
+          if (actions.some((a) => a.name === 'for-b')) {
+            return {
+              name: 'for-b-appended',
+            };
+          }
+          return undefined;
+        },
+      });
+
+      const appState = AppState.create({ slices: [slice] });
+      expect(apply).toBeCalledTimes(0);
+
+      let action = {
+        name: 'for-b',
+        value: 77,
+      };
+
+      let newAppState = appState.applyAction(action);
+
+      expect(apply).toBeCalledTimes(2);
+
+      expect(apply).nthCalledWith(1, action, 0, expect.any(AppState));
+      expect(apply.mock.calls[1]?.[0]).toEqual({
+        appendedFrom: 'for-b',
+        name: 'for-b-appended',
+      });
+      expect(apply.mock.calls[1]?.[1]).toEqual(1);
+
+      // should not have any effect
+      appState.applyAction({
+        name: 'something-else',
+        value: 77,
+      });
+
+      expect(key1.getSliceState(newAppState)).toEqual(2);
+      expect(apply).toBeCalledTimes(3);
+    });
+
+    test('fund test', () => {
+      const key1 = new SliceKey<string>('one');
+
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => '👻',
+          apply: (action, value) => value + action.value.emoji,
+        },
+        appendAction(actions, state) {
+          if (actions.some((a) => a.name.startsWith('interesting-action'))) {
+            return {
+              name: 'appended-action',
+              value: { emoji: '💩' },
+            };
+          }
+          return undefined;
+        },
+      });
+
+      const state = AppState.create({ slices: [slice1] });
+      const newState = state.applyAction({
+        name: 'interesting-action',
+        value: {
+          emoji: '🐔',
+        },
+      });
+
+      expect(key1.getSliceState(newState)).toMatchInlineSnapshot(`"👻🐔💩"`);
+    });
+
+    test('multiple appends', () => {
+      const key1 = new SliceKey<string>('one');
+      const key2 = new SliceKey<string>('two');
+      const slice1Actions: any[] = [];
+
+      const slice1 = new Slice({
+        key: key1,
+        state: {
+          init: () => 'Slice1:',
+          apply: (action, value) => value + action.value,
+        },
+        appendAction(actions): any {
+          slice1Actions.push([...actions]);
+          if (actions.some((a) => a.name.startsWith('2-'))) {
+            return {
+              name: '1-appended',
+              value: '1 ',
+            };
+          }
+          return undefined;
+        },
+      });
+
+      let times = 0;
+
+      const slice2Actions: any[] = [];
+      const slice2 = new Slice({
+        key: key2,
+        state: {
+          init: () => 'Slice2:',
+          apply: (action, value) => value + action.value,
+        },
+        appendAction(actions): any {
+          slice2Actions.push([...actions]);
+          if (
+            (actions.some((a) => a.name.startsWith('1-')) && times < 4) ||
+            actions[0].name === 'start'
+          ) {
+            times++;
+            return {
+              name: '2-appended-' + times,
+              value: '2 ',
+            };
+          }
+          return undefined;
+        },
+      });
+
+      const appState = AppState.create({ slices: [slice1, slice2] });
+      let newState = appState.applyAction({
+        name: 'start',
+        value: 'start ',
+      });
+
+      expect(key1.getSliceState(newState)).toEqual(
+        'Slice1:start 2 1 2 1 2 1 2 1 ',
+      );
+      expect(key2.getSliceState(newState)).toEqual(
+        'Slice2:start 2 1 2 1 2 1 2 1 ',
+      );
+
+      expect(slice1Actions).toEqual([
+        [
+          {
+            name: 'start',
+            value: 'start ',
+          },
+        ],
+        [
+          {
+            appendedFrom: 'start',
+            name: '2-appended-1',
+            value: '2 ',
+          },
+        ],
+        [
+          {
+            appendedFrom: 'start',
+            name: '2-appended-2',
+            value: '2 ',
+          },
+        ],
+        [
+          {
+            appendedFrom: 'start',
+            name: '2-appended-3',
+            value: '2 ',
+          },
+        ],
+        [
+          {
+            appendedFrom: 'start',
+            name: '2-appended-4',
+            value: '2 ',
+          },
+        ],
+      ]);
+      expect(slice2Actions).toEqual([
+        [
+          {
+            name: 'start',
+            value: 'start ',
+          },
+        ],
+        [
+          {
+            appendedFrom: 'start',
+            name: '1-appended',
+            value: '1 ',
+          },
+        ],
+        [
+          {
+            appendedFrom: 'start',
+            name: '1-appended',
+            value: '1 ',
+          },
+        ],
+        [
+          {
+            appendedFrom: 'start',
+            name: '1-appended',
+            value: '1 ',
+          },
+        ],
+        [
+          {
+            appendedFrom: 'start',
+            name: '1-appended',
+            value: '1 ',
+          },
+        ],
+      ]);
+    });
+  });
 });

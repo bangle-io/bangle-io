@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
-import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
-import type { DispatchActionType } from '@bangle.io/shared-types';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { toggleNotesPalette } from '@bangle.io/core-operations';
 import {
   ActionButton,
   ButtonContent,
@@ -13,7 +13,6 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 3;
 export function EditorBar({
-  dispatchAction,
   showSplitEditor = false,
   wsPath,
   onClose,
@@ -22,7 +21,6 @@ export function EditorBar({
   isActive,
 }: {
   isActive: boolean;
-  dispatchAction: DispatchActionType;
   showSplitEditor?: boolean;
   wsPath: string;
   onClose: () => void;
@@ -30,7 +28,7 @@ export function EditorBar({
   isSplitEditorOpen: boolean;
 }) {
   let path = removeMdExtension(resolvePath(wsPath).filePath);
-
+  const bangleStore = useBangleStoreContext();
   let p = path.split('/');
   if (p.length > MAX_ENTRIES) {
     p = p.slice(-1 * MAX_ENTRIES);
@@ -38,10 +36,8 @@ export function EditorBar({
   }
 
   const openNotesPalette = useCallback(() => {
-    dispatchAction({
-      name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
-    });
-  }, [dispatchAction]);
+    toggleNotesPalette()(bangleStore.state, bangleStore.dispatch);
+  }, [bangleStore]);
 
   return (
     <div className="flex flex-row justify-between w-full editor-container_editor-bar">

@@ -3,6 +3,7 @@ import React from 'react';
 import type { RawSpecs } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
+import { BaseAction, Slice } from '@bangle.io/create-store';
 import type {
   ActionDefinitionType,
   ActionHandler,
@@ -11,7 +12,6 @@ import type {
 } from '@bangle.io/shared-types';
 
 import { EditorPluginDefinition } from './PluginType';
-import { ExtensionPaletteType } from './UniversalPaletteType';
 
 const _check = Symbol();
 
@@ -43,10 +43,10 @@ export interface ApplicationConfig {
     key: string;
     registerActionHandler: RegisterActionHandlerType;
   }>;
-  palettes?: Array<ExtensionPaletteType>;
   actions?: Array<ActionDefinitionType>;
   sidebars?: Array<SidebarType>;
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
+  slices?: Array<Slice<any>>;
 }
 
 export interface SidebarType {
@@ -129,18 +129,7 @@ export class Extension<T = unknown> {
       );
     }
 
-    const { palettes, actions, sidebars, noteSidebarWidgets } = application;
-
-    if (palettes) {
-      if (!Array.isArray(palettes)) {
-        throw new Error('Extension: palettes must be an array');
-      }
-      if (!palettes.every((r) => r.type.startsWith(name + '/'))) {
-        throw new Error(
-          "Extension: palette's type must start with extension's name followed by '/'. Example 'my-extension-name/my-palette-type' ",
-        );
-      }
-    }
+    const { actions, sidebars, noteSidebarWidgets, slices } = application;
 
     if (actions) {
       if (
@@ -188,6 +177,21 @@ export class Extension<T = unknown> {
         })
       ) {
         throw new Error('Extension: Invalid sidebars config.');
+      }
+    }
+
+    if (slices) {
+      if (!Array.isArray(slices)) {
+        throw new Error('Extension: slices must be an array');
+      }
+      if (!slices.every((slice) => slice instanceof Slice)) {
+        throw new Error('Extension: invalid slice');
+      }
+
+      if (!slices.every((slice) => slice.key.startsWith(name + ':'))) {
+        throw new Error(
+          `Extension: invalid slice. Slice key must be prefixed with extension name followed by a semicolon (:). For example, "new SliceKey(\'my-extension-name:slice\')"`,
+        );
       }
     }
 

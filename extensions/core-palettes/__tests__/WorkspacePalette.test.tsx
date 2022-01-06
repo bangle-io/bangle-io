@@ -51,6 +51,7 @@ test('Component renders correctly', async () => {
       dismissPalette={dismissPalette}
       onSelect={onSelect}
       getActivePaletteItem={getActivePaletteItem}
+      allPalettes={[]}
     />,
   );
 

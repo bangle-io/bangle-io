@@ -1,17 +1,19 @@
 import React, { useCallback } from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
-  CORE_ACTIONS_NEW_NOTE,
-  CORE_ACTIONS_NEW_WORKSPACE,
-  CORE_ACTIONS_TOGGLE_THEME,
   CORE_PALETTES_TOGGLE_ACTION_PALETTE,
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
 } from '@bangle.io/constants';
-import type {
-  ActionKeybindingMapping,
-  DispatchActionType,
-} from '@bangle.io/shared-types';
+import {
+  newNote,
+  newWorkspace,
+  toggleActionPalette,
+  toggleNotesPalette,
+  toggleWorkspacePalette,
+} from '@bangle.io/core-operations';
+import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
 import {
   DropdownMenu,
   MenuItem,
@@ -24,6 +26,10 @@ import {
   SettingsIcon,
   TwitterIcon,
 } from '@bangle.io/ui-components';
+import {
+  UI_CONTEXT_TOGGLE_THEME,
+  useUIManagerContext,
+} from '@bangle.io/ui-context';
 import { cx } from '@bangle.io/utils';
 
 import { buttonStyling } from './ActivitybarButton';
@@ -51,39 +57,32 @@ type AllKeysType =
 
 export function ActivitybarOptionsDropdown({
   widescreen,
-  dispatchAction,
   actionKeybindings,
 }: {
   widescreen: boolean;
-  dispatchAction: DispatchActionType;
   actionKeybindings: ActionKeybindingMapping;
 }) {
-  const onAction = useCallback(
+  const store = useBangleStoreContext();
+  const { dispatch: dispatchUiAction } = useUIManagerContext();
+
+  const handleDropdown = useCallback(
     (k: any) => {
       let key: AllKeysType = k;
       switch (key) {
         case ActionPaletteKey: {
-          dispatchAction({
-            name: CORE_PALETTES_TOGGLE_ACTION_PALETTE,
-          });
+          toggleActionPalette()(store.state, store.dispatch);
           break;
         }
         case NewNoteKey: {
-          dispatchAction({
-            name: CORE_ACTIONS_NEW_NOTE,
-          });
+          newNote()(store.state, store.dispatch);
           break;
         }
         case NewWorkspaceKey: {
-          dispatchAction({
-            name: CORE_ACTIONS_NEW_WORKSPACE,
-          });
+          newWorkspace()(store.state, store.dispatch);
           break;
         }
         case NotesPaletteKey: {
-          dispatchAction({
-            name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
-          });
+          toggleNotesPalette()(store.state, store.dispatch);
           break;
         }
         case ReportIssueKey: {
@@ -94,14 +93,12 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case SwitchWorkspaceKey: {
-          dispatchAction({
-            name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-          });
+          toggleWorkspacePalette()(store.state, store.dispatch);
           break;
         }
         case ToggleThemeKey: {
-          dispatchAction({
-            name: CORE_ACTIONS_TOGGLE_THEME,
+          dispatchUiAction({
+            name: UI_CONTEXT_TOGGLE_THEME,
           });
           break;
         }
@@ -120,7 +117,7 @@ export function ActivitybarOptionsDropdown({
         }
       }
     },
-    [dispatchAction],
+    [dispatchUiAction, store],
   );
 
   return (
@@ -135,7 +132,7 @@ export function ActivitybarOptionsDropdown({
         widescreen && 'widescreen',
       )}
       buttonChildren={<SettingsIcon className="h-7 w-7" />}
-      onAction={onAction}
+      onAction={handleDropdown}
     >
       <MenuSection aria-label="misc section">
         <MenuItem aria-label="new note" key={NewNoteKey}>

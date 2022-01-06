@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
-  CORE_ACTIONS_NEW_WORKSPACE,
-  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-} from '@bangle.io/constants';
+  newWorkspace,
+  toggleWorkspacePalette,
+} from '@bangle.io/core-operations';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 
 export function WorkspaceInvalidPath() {
-  const { dispatchAction } = useActionContext();
+  const bangleStore = useBangleStoreContext();
 
   return (
     <CenteredBoxedPage
@@ -23,9 +23,7 @@ export function WorkspaceInvalidPath() {
           <ActionButton
             ariaLabel="open another workspace"
             onPress={() => {
-              dispatchAction({
-                name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-              });
+              toggleWorkspacePalette()(bangleStore.state, bangleStore.dispatch);
             }}
           >
             <ButtonContent text="Switch workspace" />
@@ -33,9 +31,7 @@ export function WorkspaceInvalidPath() {
           <ActionButton
             ariaLabel="new workspace"
             onPress={() => {
-              dispatchAction({
-                name: CORE_ACTIONS_NEW_WORKSPACE,
-              });
+              newWorkspace()(bangleStore.state, bangleStore.dispatch);
             }}
           >
             <ButtonContent text="New workspace" />
