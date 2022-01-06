@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
-import { CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE } from '@bangle.io/constants';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { toggleWorkspacePalette } from '@bangle.io/core-operations';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -10,14 +10,13 @@ import { SearchInput } from './SearchInput';
 import { SearchResults } from './SearchResults';
 
 export function SearchNotesSidebar() {
-  const { dispatchAction } = useActionContext();
   const [
     { pendingSearch, searchResults, searchQuery },
     updateSearchNotesState,
   ] = useSearchNotesState();
   const { wsName } = useWorkspaceContext();
   const [collapseAllCounter, updateCollapseAllCounter] = useState(0);
-
+  const bangleStore = useBangleStoreContext();
   useEffect(() => {
     updateCollapseAllCounter(0);
   }, [searchQuery, wsName]);
@@ -41,9 +40,7 @@ export function SearchNotesSidebar() {
           className="text-sm font-extrabold cursor-pointer"
           style={{ color: 'var(--textColor-1)' }}
           onClick={() => {
-            dispatchAction({
-              name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-            });
+            toggleWorkspacePalette()(bangleStore.state, bangleStore.dispatch);
           }}
         >
           Please open a workspace to search

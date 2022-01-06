@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import {
+  focusEditor,
+  useEditorManagerContext,
+} from '@bangle.io/editor-manager-context';
 import { UniversalPalette } from '@bangle.io/ui-components';
 import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
 import { useUIManagerContext } from '@bangle.io/ui-context';
+import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import { actionPalette } from './ActionPalette';
 import {
@@ -39,21 +43,21 @@ export function PaletteManager() {
   } = useUIManagerContext();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, updateQuery] = useState(paletteInitialQuery || '');
-  const { dispatchAction } = useActionContext();
+  const { bangleStore } = useEditorManagerContext();
 
   const dismissPalette = useCallback(
-    (focusEditor = true) => {
+    (focus = true) => {
       updateQuery('');
       dispatch({
         name: 'UI/RESET_PALETTE',
       });
-      if (focusEditor) {
-        dispatchAction({
-          name: 'action::bangle-io-core-actions:focus-primary-editor',
+      if (focus) {
+        safeRequestAnimationFrame(() => {
+          focusEditor()(bangleStore.state);
         });
       }
     },
-    [dispatch, dispatchAction],
+    [dispatch, bangleStore],
   );
 
   const paletteRef = useRef<PaletteManagerImperativeHandle>(null);

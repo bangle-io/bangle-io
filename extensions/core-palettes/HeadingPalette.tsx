@@ -7,7 +7,7 @@ import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
-import { extensionName, ExtensionPaletteType } from './config';
+import { ExtensionPaletteType } from './config';
 
 const identifierPrefix = '#';
 

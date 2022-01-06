@@ -1796,8 +1796,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/activitybar@workspace:app/activitybar"
   dependencies:
-    "@bangle.io/action-context": "workspace:*"
+    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
@@ -1838,6 +1839,7 @@ __metadata:
     "@bangle.io/collapsible-heading": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/editor-core": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
@@ -2020,6 +2022,7 @@ __metadata:
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
@@ -2033,6 +2036,22 @@ __metadata:
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/core-operations@workspace:*, @bangle.io/core-operations@workspace:lib/core-operations":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/core-operations@workspace:lib/core-operations"
+  dependencies:
+    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/editor-manager-context": "workspace:*"
+    "@bangle.io/naukar-proxy": "workspace:*"
+    "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-context": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2115,6 +2134,7 @@ __metadata:
     "@bangle.io/action-context": "workspace:*"
     "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2492,6 +2512,7 @@ __metadata:
     "@bangle.io/action-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -2667,6 +2688,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
+    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"

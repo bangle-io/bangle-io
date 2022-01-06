@@ -33,6 +33,8 @@ export function corePaletteSlice() {
     key: sliceKey,
     appendAction(actions, state): UiContextAction | undefined {
       for (const action of actions) {
+        // TODO get core-palette state out of ui-context and manage
+        // it inside this extension
         switch (action.name) {
           case CORE_PALETTES_TOGGLE_ACTION_PALETTE: {
             return {

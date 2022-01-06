@@ -6,14 +6,9 @@ import {
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 
-import { actionPalette } from './ActionPalette';
 import { extensionName } from './config';
 import { corePaletteSlice } from './core-palette-slice';
-import { headingPalette } from './HeadingPalette';
-import { notesPalette } from './NotesPalette';
 import { PaletteManager } from './PaletteManager';
-import { questionPalette } from './QuestionPalette';
-import { workspacePalette } from './WorkspacePalette';
 
 const extension = Extension.create({
   name: extensionName,
@@ -25,12 +20,14 @@ const extension = Extension.create({
         hidden: true,
         keybinding: isFirefox ? 'Mod-o' : 'Mod-P',
       },
+
       {
         name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
         title: 'Switch Workspace',
         hidden: false,
         keybinding: isMac ? 'Ctrl-r' : 'Ctrl-h',
       },
+
       {
         name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
         title: 'Open a Note',
