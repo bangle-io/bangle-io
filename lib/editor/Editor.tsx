@@ -105,9 +105,10 @@ function EditorInner({
   );
 
   useEffect(() => {
+    const editorProxy = editorRef.current;
     return () => {
-      if (editorRef.current) {
-        setEditorUnmounted(editorId, editorRef.current.proxy as any)(
+      if (editorProxy) {
+        setEditorUnmounted(editorId, editorProxy.proxy as any)(
           bangleStore.state,
           bangleStore.dispatch,
         );
@@ -125,8 +126,8 @@ function EditorInner({
         // `.revoke()` and let GC collect the Editor once it is destroyed. The timeout exists
         // just to give other places some time before the proxy is revoked.
         setTimeout(() => {
-          editorRef.current!.revoke();
-        }, 10);
+          editorProxy.revoke();
+        }, 100);
       }
     };
   }, [editorId, wsPath, bangleStore]);

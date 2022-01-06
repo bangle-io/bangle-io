@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/editor"
+    "directory": "lib/core-operations"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -23,7 +23,6 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/editor-manager-context": "workspace:*",
-    "@bangle.io/naukar-proxy": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",

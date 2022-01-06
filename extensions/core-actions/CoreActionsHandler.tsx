@@ -7,11 +7,9 @@ import {
 import {
   closeEditor,
   deleteActiveNote,
-  downloadWorkspace,
   newNote,
   newWorkspace,
   renameNote,
-  restoreWorkspaceFromBackup,
   splitEditor,
 } from '@bangle.io/core-operations';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
@@ -31,6 +29,7 @@ import {
   CORE_ACTIONS_TOGGLE_NOTE_SIDEBAR,
 } from './config';
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
+import { downloadWorkspace, restoreWorkspaceFromBackup } from './operations';
 
 export function CoreActionsHandler({ registerActionHandler }) {
   const { dispatch, modal, modalValue } = useUIManagerContext();
