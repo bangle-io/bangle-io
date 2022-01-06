@@ -62,7 +62,7 @@ test.describe.parallel('loading', () => {
         await page.$$eval('.universal-palette-item', (nodes) =>
           nodes.map((n) => n.getAttribute('data-id')),
         )
-      ).includes('action::bangle-io-core-actions:TOGGLE_THEME_ACTION'),
+      ).includes('action::ui-context/TOGGLE_THEME'),
     ).toBe(true);
   });
 

@@ -5,7 +5,6 @@ import {
   createWorkspace,
   ctrlKey,
   getEditorLocator,
-  getPrimaryEditorHandler,
   runAction,
   SELECTOR_TIMEOUT,
   sleep,

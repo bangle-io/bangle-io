@@ -478,7 +478,7 @@ describe('AppState', () => {
           init: () => 'Slice1:',
           apply: (action, value) => value + action.value,
         },
-        appendAction(actions) {
+        appendAction(actions): any {
           slice1Actions.push([...actions]);
           if (actions.some((a) => a.name.startsWith('2-'))) {
             return {
@@ -499,7 +499,7 @@ describe('AppState', () => {
           init: () => 'Slice2:',
           apply: (action, value) => value + action.value,
         },
-        appendAction(actions) {
+        appendAction(actions): any {
           slice2Actions.push([...actions]);
           if (
             (actions.some((a) => a.name.startsWith('1-')) && times < 4) ||
