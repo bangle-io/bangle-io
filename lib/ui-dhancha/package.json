@@ -39,7 +39,7 @@
     "postcss": "^8.3.11",
     "postcss-import": "^14.0.2",
     "tailwindcss": "^2.2.17",
-    "vite": "^2.6.13"
+    "vite": "v2.8.0-beta.0"
   },
   "publishConfig": {
     "access": "public"
