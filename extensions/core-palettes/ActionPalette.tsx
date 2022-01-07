@@ -1,13 +1,11 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
 import { useActionContext } from '@bangle.io/action-context';
-import {
-  ExtensionPaletteType,
-  useExtensionRegistryContext,
-} from '@bangle.io/extension-registry';
+import { CorePalette } from '@bangle.io/constants';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { TerminalIcon, UniversalPalette } from '@bangle.io/ui-components';
 
-import { extensionName } from './config';
+import { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
 
 const identifierPrefix = '>';
@@ -92,7 +90,7 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
   });
 
 export const actionPalette: ExtensionPaletteType = {
-  type: extensionName + '/action',
+  type: CorePalette.Action,
   icon: <TerminalIcon />,
   identifierPrefix,
   placeholder: 'Actions',

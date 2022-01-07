@@ -7,6 +7,7 @@ import {
   EditorManagerAction,
   editorManagerSlice,
 } from '@bangle.io/editor-manager-context';
+import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {
   pageLifeCycleTransitionedTo,
@@ -29,16 +30,21 @@ export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 export function bangleStateSlices({
   onUpdate,
   onPageInactive,
+  extensionSlices,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
   onPageInactive: () => void;
+  extensionSlices: Slice<any>[];
 }) {
   return [
     pageSlice(),
     workerSlice(),
+    extensionRegistrySlice(),
     workspaceSlice(),
     uiSlice(),
     editorManagerSlice(),
+
+    ...extensionSlices,
 
     // keep this at the end
     new Slice({

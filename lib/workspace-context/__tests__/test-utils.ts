@@ -17,7 +17,9 @@ export const createState = (
     json: {
       workspace: { version: JSON_SCHEMA_VERSION, data: data },
     },
-    sliceFields: { workspace: workspaceSlice() },
+    sliceFields: {
+      workspace: workspaceSlice(),
+    },
   });
 };
 

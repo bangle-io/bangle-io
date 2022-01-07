@@ -1,10 +1,7 @@
 import React, { useMemo } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
-import {
-  CORE_ACTIONS_NEW_NOTE,
-  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-} from '@bangle.io/constants';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { newNote, toggleWorkspacePalette } from '@bangle.io/core-operations';
 import {
   ActionButton,
   ButtonContent,
@@ -73,7 +70,7 @@ export function EmptyEditorPage() {
     recentlyUsedWsPaths = EMPTY_ARRAY,
     noteWsPaths,
   } = useWorkspaceContext();
-  const { dispatchAction } = useActionContext();
+  const bangleStore = useBangleStoreContext();
   const paths = Array.from(
     new Set(
       [...recentlyUsedWsPaths, ...(noteWsPaths || EMPTY_ARRAY)].slice(
@@ -94,9 +91,10 @@ export function EmptyEditorPage() {
               tooltipPlacement="right"
               tooltip={<TooltipWrapper>Switch workspace</TooltipWrapper>}
               onPress={() => {
-                dispatchAction({
-                  name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-                });
+                toggleWorkspacePalette()(
+                  bangleStore.state,
+                  bangleStore.dispatch,
+                );
               }}
             >
               <ChevronDownIcon className="w-5 h-5" />
@@ -109,9 +107,7 @@ export function EmptyEditorPage() {
           <ActionButton
             ariaLabel="create note"
             onPress={() => {
-              dispatchAction({
-                name: CORE_ACTIONS_NEW_NOTE,
-              });
+              newNote()(bangleStore.state, bangleStore.dispatch);
             }}
           >
             <ButtonContent text="Create note" icon={<NewNoteIcon />} />

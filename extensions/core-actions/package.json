@@ -26,6 +26,8 @@
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/core-operations": "workspace:*",
+    "@bangle.io/create-store": "workspace:*",
     "@bangle.io/editor-manager-context": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/naukar-proxy": "workspace:*",

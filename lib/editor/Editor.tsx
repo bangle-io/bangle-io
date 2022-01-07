@@ -72,10 +72,7 @@ function EditorInner({
   useEffect(() => {
     let destroyed = false;
 
-    getNote(extensionRegistry, wsPath)(
-      bangleStore.state,
-      bangleStore.dispatch,
-    ).then((doc) => {
+    getNote(wsPath)(bangleStore.state, bangleStore.dispatch).then((doc) => {
       if (!destroyed) {
         setInitialDoc(doc);
       }
@@ -83,7 +80,7 @@ function EditorInner({
     return () => {
       destroyed = true;
     };
-  }, [extensionRegistry, bangleStore, wsPath]);
+  }, [bangleStore, wsPath]);
 
   const editorRef = useRef<ReturnType<typeof Proxy.revocable> | null>(null);
 
@@ -109,8 +106,9 @@ function EditorInner({
 
   useEffect(() => {
     return () => {
-      if (editorRef.current) {
-        setEditorUnmounted(editorId, editorRef.current.proxy as any)(
+      const editorProxy = editorRef.current;
+      if (editorProxy) {
+        setEditorUnmounted(editorId, editorProxy.proxy as any)(
           bangleStore.state,
           bangleStore.dispatch,
         );
@@ -128,8 +126,8 @@ function EditorInner({
         // `.revoke()` and let GC collect the Editor once it is destroyed. The timeout exists
         // just to give other places some time before the proxy is revoked.
         setTimeout(() => {
-          editorRef.current!.revoke();
-        }, 10);
+          editorProxy.revoke();
+        }, 100);
       }
     };
   }, [editorId, wsPath, bangleStore]);

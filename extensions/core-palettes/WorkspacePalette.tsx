@@ -1,7 +1,7 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
 import { keyDisplayValue } from '@bangle.io/config';
-import { ExtensionPaletteType } from '@bangle.io/extension-registry';
+import { CorePalette } from '@bangle.io/constants';
 import {
   AlbumIcon,
   CloseIcon,
@@ -9,7 +9,7 @@ import {
 } from '@bangle.io/ui-components';
 import { useWorkspaces } from '@bangle.io/workspaces';
 
-import { extensionName } from './config';
+import { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
 
 const LOG = false;
@@ -131,7 +131,7 @@ function strMatch(a, b) {
 }
 
 export const workspacePalette: ExtensionPaletteType = {
-  type: extensionName + '/workspace',
+  type: CorePalette.Workspace,
   icon: <AlbumIcon />,
   identifierPrefix,
   placeholder: 'Select a workspace to open',

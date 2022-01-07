@@ -1,13 +1,19 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import {
-  CORE_ACTIONS_NEW_NOTE,
-  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-} from '@bangle.io/constants';
+import { CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE } from '@bangle.io/constants';
+import { newNote } from '@bangle.io/core-operations';
 
 import { ActivitybarOptionsDropdown } from '../ActivitybarOptionsDropdown';
 
+jest.mock('@bangle.io/core-operations', () => {
+  const operations = jest.requireActual('@bangle.io/core-operations');
+
+  return {
+    ...operations,
+    newNote: jest.fn(() => () => {}),
+  };
+});
 jest.mock('react-dom', () => {
   const otherThings = jest.requireActual('react-dom');
   return {
@@ -21,13 +27,19 @@ jest.mock('react-dom', () => {
 const actionKeybindings = {
   [CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE]: 'Ctrl-P',
 };
+
+let newNoteMock = newNote as jest.MockedFunction<typeof newNote>;
+
+beforeEach(() => {
+  newNoteMock.mockImplementation(() => () => {});
+});
+
 test('renders correctly', () => {
   let result = render(
     <div>
       <ActivitybarOptionsDropdown
         actionKeybindings={actionKeybindings}
         widescreen={true}
-        dispatchAction={() => {}}
       />
     </div>,
   );
@@ -41,7 +53,6 @@ test('clicking the button shows dropdown', async () => {
       <ActivitybarOptionsDropdown
         actionKeybindings={actionKeybindings}
         widescreen={true}
-        dispatchAction={() => {}}
       />
     </div>,
   );
@@ -69,12 +80,14 @@ test('clicking the button shows dropdown', async () => {
 
 test('clicking items in dropdown dispatches event', async () => {
   const dispatch = jest.fn();
+
+  newNoteMock.mockImplementation(() => dispatch);
+
   let result = render(
     <div>
       <ActivitybarOptionsDropdown
         actionKeybindings={actionKeybindings}
         widescreen={true}
-        dispatchAction={dispatch}
       ></ActivitybarOptionsDropdown>
     </div>,
   );
@@ -93,7 +106,4 @@ test('clicking items in dropdown dispatches event', async () => {
   });
 
   expect(dispatch).toBeCalledTimes(1);
-  expect(dispatch).nthCalledWith(1, {
-    name: CORE_ACTIONS_NEW_NOTE,
-  });
 });

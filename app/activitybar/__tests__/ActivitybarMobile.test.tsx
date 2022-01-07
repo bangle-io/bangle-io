@@ -1,8 +1,7 @@
 import { act, fireEvent, render } from '@testing-library/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
-import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
+import { toggleNotesPalette } from '@bangle.io/core-operations';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { Activitybar } from '../Activitybar';
@@ -15,13 +14,18 @@ jest.mock('@bangle.io/ui-context', () => {
   };
 });
 
-jest.mock('@bangle.io/action-context', () => {
-  const otherThings = jest.requireActual('@bangle.io/action-context');
+jest.mock('@bangle.io/core-operations', () => {
+  const operations = jest.requireActual('@bangle.io/core-operations');
+
   return {
-    ...otherThings,
-    useActionContext: jest.fn(() => ({})),
+    ...operations,
+    toggleNotesPalette: jest.fn(() => () => {}),
   };
 });
+
+let toggleNotesPaletteMock = toggleNotesPalette as jest.MockedFunction<
+  typeof toggleNotesPalette
+>;
 
 beforeEach(() => {
   (useUIManagerContext as any).mockImplementation(() => {
@@ -32,9 +36,7 @@ beforeEach(() => {
       widescreen: false,
     };
   });
-  (useActionContext as any).mockImplementation(() => {
-    return { dispatchAction: jest.fn() };
-  });
+  toggleNotesPaletteMock.mockImplementation(() => () => {});
 });
 
 test('renders mobile view', () => {
@@ -62,10 +64,8 @@ test('renders primaryWsPath', () => {
 });
 
 test('dispatches action', () => {
-  let dispatchAction = jest.fn();
-  (useActionContext as any).mockImplementation(() => {
-    return { dispatchAction };
-  });
+  const dispatch = jest.fn();
+  toggleNotesPaletteMock.mockImplementation(() => dispatch);
 
   let result = render(
     <div>
@@ -73,14 +73,11 @@ test('dispatches action', () => {
         actionKeybindings={{}}
         sidebars={[]}
         primaryWsPath={'my-thing:wow.md'}
-      ></Activitybar>
+      />
     </div>,
   );
   act(() => {
     fireEvent.click(result.getByRole('button'));
   });
-  expect(dispatchAction).toBeCalledTimes(1);
-  expect(dispatchAction).nthCalledWith(1, {
-    name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
-  });
+  expect(dispatch).toBeCalledTimes(1);
 });

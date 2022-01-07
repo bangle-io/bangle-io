@@ -1,14 +1,37 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
-import type {
-  PaletteManagerImperativeHandle,
-  PaletteManagerReactComponentProps,
-} from '@bangle.io/extension-registry';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import {
+  focusEditor,
+  useEditorManagerContext,
+} from '@bangle.io/editor-manager-context';
 import { UniversalPalette } from '@bangle.io/ui-components';
 import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
 import { useUIManagerContext } from '@bangle.io/ui-context';
+import { safeRequestAnimationFrame } from '@bangle.io/utils';
+
+import { actionPalette } from './ActionPalette';
+import {
+  PaletteManagerImperativeHandle,
+  PaletteManagerReactComponentProps,
+} from './config';
+import { headingPalette } from './HeadingPalette';
+import { notesPalette } from './NotesPalette';
+import { questionPalette } from './QuestionPalette';
+import { workspacePalette } from './WorkspacePalette';
+
+const palettes = [
+  headingPalette,
+  workspacePalette,
+  questionPalette,
+  actionPalette,
+  // // should always be the last palette
+  // // TODO: add constraints to make sure it always is
+  notesPalette,
+];
+
+const paletteByType = Object.fromEntries(
+  palettes.map((obj) => [obj.type, obj]),
+);
 
 export function PaletteManager() {
   const {
@@ -20,22 +43,21 @@ export function PaletteManager() {
   } = useUIManagerContext();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, updateQuery] = useState(paletteInitialQuery || '');
-  const { dispatchAction } = useActionContext();
-  const extensionRegistry = useExtensionRegistryContext();
+  const { bangleStore } = useEditorManagerContext();
 
   const dismissPalette = useCallback(
-    (focusEditor = true) => {
+    (focus = true) => {
       updateQuery('');
       dispatch({
         name: 'UI/RESET_PALETTE',
       });
-      if (focusEditor) {
-        dispatchAction({
-          name: 'action::bangle-io-core-actions:focus-primary-editor',
+      if (focus) {
+        safeRequestAnimationFrame(() => {
+          focusEditor()(bangleStore.state);
         });
       }
     },
-    [dispatch, dispatchAction],
+    [dispatch, bangleStore],
   );
 
   const paletteRef = useRef<PaletteManagerImperativeHandle>(null);
@@ -83,7 +105,9 @@ export function PaletteManager() {
   // Note: that we are passing this callback to the children and they are free to override it.
   const updateRawInputValue = useCallback(
     (rawQuery) => {
-      const match = extensionRegistry.paletteParseRawQuery(rawQuery);
+      const match = palettes.find(
+        (palette) => palette.parseRawQuery(rawQuery) != null,
+      );
 
       resetCounter();
       if (!match) {
@@ -99,19 +123,10 @@ export function PaletteManager() {
         updateQuery(query || '');
       }
     },
-    [
-      resetCounter,
-      dismissPalette,
-      extensionRegistry,
-      paletteType,
-      updatePalette,
-      updateQuery,
-    ],
+    [resetCounter, dismissPalette, paletteType, updatePalette, updateQuery],
   );
 
-  const Palette = paletteType
-    ? extensionRegistry.getPalette(paletteType)
-    : undefined;
+  const Palette = paletteType ? paletteByType[paletteType] : undefined;
 
   const getActivePaletteItem = useCallback(
     (items) => {
@@ -154,6 +169,7 @@ export function PaletteManager() {
         counter={counter}
         getActivePaletteItem={getActivePaletteItem}
         updateCounter={updateCounter}
+        allPalettes={palettes}
       />
     </UniversalPalette.PaletteContainer>
   );

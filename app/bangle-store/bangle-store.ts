@@ -4,6 +4,7 @@ import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { editorManagerSlice } from '@bangle.io/editor-manager-context';
 import * as editorManagerContext from '@bangle.io/editor-manager-context';
+import { initExtensionRegistry } from '@bangle.io/shared';
 import type { BangleStateOpts, JsonValue } from '@bangle.io/shared-types';
 import { uiSlice } from '@bangle.io/ui-context';
 import {
@@ -34,8 +35,12 @@ export function initializeBangleStore({
 }: {
   onUpdate?: (store: ApplicationStore) => void;
 }) {
+  const extensionRegistry = initExtensionRegistry();
+  const extensionSlices = extensionRegistry.getSlices();
+
   const stateOpts: BangleStateOpts = {
     lifecycle,
+    extensionRegistry,
   };
   const makeStore = () => {
     const stateJson = {
@@ -64,6 +69,7 @@ export function initializeBangleStore({
       slices: bangleStateSlices({
         onUpdate,
         onPageInactive,
+        extensionSlices,
       }),
       json: stateJson,
       sliceFields: {

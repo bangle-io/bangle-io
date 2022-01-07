@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { InputPalette, UniversalPalette } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { randomName, useDestroyRef } from '@bangle.io/utils';
@@ -18,7 +17,6 @@ import {
 
 export function NewNoteInputModal({ initialValue, onDismiss }) {
   const destroyedRef = useDestroyRef();
-  const extensionRegistry = useExtensionRegistryContext();
   const { wsName, bangleStore } = useWorkspaceContext();
   const [error, updateError] = useState<Error | undefined>();
   const { widescreen } = useUIManagerContext();
@@ -43,7 +41,7 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
         newWsPath += '.md';
       }
       try {
-        await createNote(extensionRegistry, newWsPath)(
+        await createNote(newWsPath)(
           bangleStore.state,
           bangleStore.dispatch,
           bangleStore,
@@ -62,7 +60,7 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
         }
       }
     },
-    [extensionRegistry, onDismiss, bangleStore, destroyedRef, wsName],
+    [onDismiss, bangleStore, destroyedRef, wsName],
   );
 
   return (

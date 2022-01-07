@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { Node } from '@bangle.dev/pm';
 
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
 
@@ -53,16 +52,12 @@ export async function listAllTags(
 export function useSearchAllTags(query: string, isVisible: boolean): string[] {
   const { noteWsPaths = [], bangleStore } = useWorkspaceContext();
   const [allTags, setAllTags] = useState<string[]>([]);
-  const extensionRegistry = useExtensionRegistryContext();
 
   const getNoteForTags = useCallback(
     (wsPath: string) => {
-      return getNote(extensionRegistry, wsPath)(
-        bangleStore.state,
-        bangleStore.dispatch,
-      );
+      return getNote(wsPath)(bangleStore.state, bangleStore.dispatch);
     },
-    [extensionRegistry, bangleStore],
+    [bangleStore],
   );
 
   useEffect(() => {

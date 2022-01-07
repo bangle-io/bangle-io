@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
-import { CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE } from '@bangle.io/constants';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { toggleWorkspacePalette } from '@bangle.io/core-operations';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import {
@@ -20,7 +20,7 @@ export function ShowError({
   errorType: WorkspaceCreateErrorTypes | undefined;
   closeModal: () => void;
 }) {
-  const { dispatchAction } = useActionContext();
+  const bangleStore = useBangleStoreContext();
   if (!errorType) {
     return null;
   }
@@ -37,9 +37,10 @@ export function ShowError({
             onClick={() => {
               closeModal();
               safeRequestAnimationFrame(() => {
-                dispatchAction({
-                  name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-                });
+                toggleWorkspacePalette()(
+                  bangleStore.state,
+                  bangleStore.dispatch,
+                );
               });
             }}
           >

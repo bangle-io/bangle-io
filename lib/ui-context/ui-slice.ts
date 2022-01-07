@@ -1,4 +1,5 @@
-import { Slice, SliceKey } from '@bangle.io/create-store';
+import { CorePalette } from '@bangle.io/constants';
+import { ApplicationStore, Slice, SliceKey } from '@bangle.io/create-store';
 import type {
   NotificationPayloadType,
   ThemeType,
@@ -10,18 +11,26 @@ import { applyTheme } from './apply-theme';
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'UISlice') : () => {};
 
+export type UiContextDispatchType = ApplicationStore<
+  UISliceState,
+  UiContextAction
+>['dispatch'];
+
 export interface UISliceState {
   changelogHasUpdates: boolean;
   modal?: string | null;
+  modalValue?: undefined | { [key: string]: any };
   noteSidebar: boolean;
   notifications: NotificationPayloadType[];
   paletteInitialQuery?: string | null;
   paletteMetadata?: any | null;
-  paletteType?: string | null;
+  paletteType?: CorePalette | null;
   sidebar?: string | null;
   theme: ThemeType;
   widescreen: boolean;
 }
+
+export const UI_CONTEXT_TOGGLE_THEME = 'action::ui-context/TOGGLE_THEME';
 
 export type UiContextAction =
   | { name: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
@@ -31,12 +40,12 @@ export type UiContextAction =
   | {
       name: 'UI/UPDATE_PALETTE';
       value: {
-        type: string | null;
+        type: CorePalette | null;
         initialQuery?: string;
       };
     }
   | { name: 'UI/RESET_PALETTE' }
-  | { name: 'UI/TOGGLE_THEME' }
+  | { name: typeof UI_CONTEXT_TOGGLE_THEME }
   | { name: 'UI/UPDATE_THEME'; value: { theme: ThemeType } }
   | {
       name: 'UI/UPDATE_WINDOW_SIZE';
@@ -44,7 +53,10 @@ export type UiContextAction =
     }
   | {
       name: 'UI/SHOW_MODAL';
-      value: { modal: string | null };
+      value: {
+        modal: string | null;
+        modalValue?: undefined | { [key: string]: any };
+      };
     }
   | {
       name: 'UI/DISMISS_MODAL';
@@ -57,6 +69,7 @@ export const initialState: UISliceState = {
   // UI
   changelogHasUpdates: false,
   modal: undefined,
+  modalValue: undefined,
   noteSidebar: false,
   notifications: [],
   paletteInitialQuery: undefined,
@@ -141,7 +154,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/TOGGLE_THEME': {
+          case UI_CONTEXT_TOGGLE_THEME: {
             const theme: ThemeType = state.theme === 'dark' ? 'light' : 'dark';
             applyTheme(theme);
             return {
@@ -172,6 +185,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             return {
               ...state,
               modal: action.value.modal,
+              modalValue: action.value.modalValue,
             };
           }
 
@@ -179,6 +193,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             return {
               ...state,
               modal: undefined,
+              modalValue: undefined,
             };
           }
 

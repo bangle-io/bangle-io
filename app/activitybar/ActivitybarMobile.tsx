@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
-import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { toggleNotesPalette } from '@bangle.io/core-operations';
 import { FileDocumentIcon } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -14,7 +14,7 @@ export function ActivitybarMobile({
   primaryWsPath?: string;
   wsName?: string;
 }) {
-  const { dispatchAction } = useActionContext();
+  const bangleStore = useBangleStoreContext();
 
   return (
     <div className="flex flex-row ml-3 text-gray-100 align-center activitybar">
@@ -23,9 +23,7 @@ export function ActivitybarMobile({
           hint="See files palette"
           widescreen={false}
           onPress={() => {
-            dispatchAction({
-              name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
-            });
+            toggleNotesPalette()(bangleStore.state, bangleStore.dispatch);
           }}
           icon={<FileDocumentIcon className="w-5 h-5" />}
         />

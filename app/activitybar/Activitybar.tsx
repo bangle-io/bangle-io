@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
@@ -27,7 +26,6 @@ export function Activitybar({
 }) {
   const { changelogHasUpdates, sidebar, dispatch, widescreen } =
     useUIManagerContext();
-  const { dispatchAction } = useActionContext();
   const { bangleStore } = useWorkspaceContext();
 
   if (!widescreen) {
@@ -100,7 +98,6 @@ export function Activitybar({
       <ActivitybarOptionsDropdown
         actionKeybindings={actionKeybindings}
         widescreen={widescreen}
-        dispatchAction={dispatchAction}
       />
     </div>
   );

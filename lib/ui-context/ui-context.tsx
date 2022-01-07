@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
-import { useSliceState } from '@bangle.io/app-state-context';
+import {
+  initialBangleStore,
+  useSliceState,
+} from '@bangle.io/app-state-context';
 import { ApplicationStore } from '@bangle.io/create-store';
 
 import {
@@ -15,12 +18,15 @@ let log = LOG ? console.log.bind(console, 'UIManager') : () => {};
 
 export type UIStateObj = UISliceState & {
   dispatch: ApplicationStore<UISliceState, UiContextAction>['dispatch'];
+  bangleStore: ApplicationStore;
 };
 
 export const UIManagerContext = createContext<UIStateObj>({
   ...initialState,
   dispatch: () => {},
+  bangleStore: initialBangleStore,
 });
+
 export function useUIManagerContext() {
   return useContext(UIManagerContext);
 }
@@ -35,6 +41,7 @@ export function UIManager({ children }) {
     return {
       ...(uiState || initialState),
       dispatch: store.dispatch,
+      bangleStore: store,
     };
   }, [store, uiState]);
 

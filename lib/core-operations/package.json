@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/bangle-store",
+  "name": "@bangle.io/core-operations",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "app/bangle-store"
+    "directory": "lib/core-operations"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -19,24 +19,20 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
+    "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/editor-manager-context": "workspace:*",
-    "@bangle.io/extension-registry": "workspace:*",
-    "@bangle.io/naukar-proxy": "workspace:*",
-    "@bangle.io/page-context": "workspace:*",
-    "@bangle.io/shared": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/worker-setup": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "fast-deep-equal": "^3.1.3",
-    "page-lifecycle": "^0.1.2"
+    "@bangle.io/ws-path": "workspace:*"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "restricted",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
   "license": "AGPL-3.0-or-later"
 }

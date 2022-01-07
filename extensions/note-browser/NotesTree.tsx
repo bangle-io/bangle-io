@@ -2,10 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
 import { useActionContext } from '@bangle.io/action-context';
-import {
-  CORE_ACTIONS_NEW_NOTE,
-  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-} from '@bangle.io/constants';
+import { isFirefox } from '@bangle.io/config';
+import { newNote, toggleWorkspacePalette } from '@bangle.io/core-operations';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -70,12 +68,9 @@ export function NotesTree() {
 
   const createNewFile = useCallback(
     (path) => {
-      dispatchAction({
-        name: CORE_ACTIONS_NEW_NOTE,
-        value: path,
-      });
+      newNote(path)(bangleStore.state, bangleStore.dispatch);
     },
-    [dispatchAction],
+    [bangleStore],
   );
 
   if (!wsName) {
@@ -84,9 +79,7 @@ export function NotesTree() {
         <span
           className="text-sm font-extrabold cursor-pointer bangle-io_textColorLighter"
           onClick={() => {
-            dispatchAction({
-              name: CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-            });
+            toggleWorkspacePalette()(bangleStore.state, bangleStore.dispatch);
           }}
         >
           Please open a workspace
@@ -326,8 +319,11 @@ function RenderRow({
 
   useEffect(() => {
     if (isActive) {
-      elementRef.current &&
-        safeScrollIntoViewIfNeeded(elementRef.current, false);
+      // scrolling into view is broken in firefox
+      if (!isFirefox) {
+        elementRef.current &&
+          safeScrollIntoViewIfNeeded(elementRef.current, false);
+      }
     }
   }, [isActive]);
 

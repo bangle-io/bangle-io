@@ -4,6 +4,7 @@ import type { RawSpecs } from '@bangle.dev/core';
 import { SpecRegistry } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
+import { Slice } from '@bangle.io/create-store';
 import type {
   ActionDefinitionType,
   ActionHandler,
@@ -13,7 +14,6 @@ import type {
 } from '@bangle.io/shared-types';
 
 import { ApplicationConfig, EditorConfig, Extension } from './Extension';
-import { ExtensionPaletteType } from './UniversalPaletteType';
 
 function filterFlatMap<K>(
   array: any[],
@@ -36,13 +36,12 @@ export class ExtensionRegistry {
     EditorConfig['renderReactNodeView'],
     undefined
   >;
-  private palettes: ExtensionPaletteType[];
-  private palettesLookup: Record<string, ExtensionPaletteType>;
   private actionHandlers: Set<ActionHandler>;
   private registeredActions: ActionDefinitionType[];
   private editorConfig: EditorConfig[];
   private actionKeybindingMapping: ActionKeybindingMapping;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
+  private slices: Slice<any, any>[];
 
   private editorWatchPluginStates: Exclude<
     EditorConfig['watchPluginStates'],
@@ -83,10 +82,6 @@ export class ExtensionRegistry {
     );
 
     const applicationConfig = extensions.map((e) => e.application);
-    this.palettes = filterFlatMap(applicationConfig, 'palettes');
-    this.palettesLookup = Object.fromEntries(
-      this.palettes.map((obj) => [obj.type, obj]),
-    );
 
     this.actionHandlers = new Set();
     this.editorWatchPluginStates = filterFlatMap(
@@ -99,6 +94,8 @@ export class ExtensionRegistry {
       applicationConfig,
       'noteSidebarWidgets',
     );
+
+    this.slices = filterFlatMap(applicationConfig, 'slices');
 
     this.actionKeybindingMapping = this._getActionKeybindingMapping();
   }
@@ -136,20 +133,6 @@ export class ExtensionRegistry {
     ];
   }
 
-  getPalette(type: string) {
-    return this.palettesLookup[type];
-  }
-
-  getAllPalettes() {
-    return this.palettes;
-  }
-
-  paletteParseRawQuery(query: string) {
-    return this.palettes.find(
-      (palette) => palette.parseRawQuery(query) != null,
-    );
-  }
-
   getSidebars() {
     return this.sidebars;
   }
@@ -164,6 +147,10 @@ export class ExtensionRegistry {
 
   getEditorWatchPluginStates(): EditorWatchPluginState[] {
     return this.editorWatchPluginStates;
+  }
+
+  getSlices() {
+    return this.slices;
   }
 
   renderExtensionEditorComponents = () => {

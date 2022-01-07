@@ -58,6 +58,10 @@ if (envVars.nodeEnv !== 'test') {
   console.table({
     ...envVars,
     tabId: TAB_ID,
+    isWorkerContext:
+      typeof WorkerGlobalScope !== 'undefined' &&
+      // eslint-disable-next-line no-restricted-globals, no-undef
+      self instanceof WorkerGlobalScope,
   });
 }
 
