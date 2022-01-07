@@ -96,6 +96,10 @@ export async function getAllWsPaths(
     attempt?: number;
   } = {},
 ): Promise<undefined | string[]> {
+  if (!(await page.$('.note-browser'))) {
+    await runAction(page, 'action::bangle-io-note-browser:toggle-note-browser');
+  }
+
   const result = JSON.parse(
     await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
   );
