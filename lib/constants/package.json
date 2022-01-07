@@ -22,7 +22,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@bangle.dev/pm": "0.28.4",
+    "@bangle.dev/pm": "0.28.5",
     "@bangle.io/create-store": "workspace:*"
   },
   "devDependencies": {

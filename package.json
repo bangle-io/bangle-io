@@ -68,7 +68,7 @@
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.15.0",
-    "@bangle.dev/jest-utils": "0.28.4",
+    "@bangle.dev/jest-utils": "0.28.5",
     "@bangle.io/env-vars": "workspace:*",
     "@sentry/react": "^6.13.3",
     "@sentry/tracing": "^6.13.3",
