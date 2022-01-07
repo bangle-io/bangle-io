@@ -25,7 +25,7 @@ type MainDispatchType = (action: MainActions) => void;
 export function createNaukar(extensionRegistry: ExtensionRegistry) {
   const envType = getSelfType();
 
-  console.debug('Naukar running in ', envType);
+  console.debug('Naukar runnings in ', envType);
 
   // main-dispatch
   let _mainDispatch;
