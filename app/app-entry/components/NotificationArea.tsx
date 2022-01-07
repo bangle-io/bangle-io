@@ -70,7 +70,7 @@ export function Notification({
 
   return (
     <div
-      className="w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
+      className="app-entry_notification w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
       style={{
         backgroundColor: 'var(--window-bgColor-1)',
         boxShadow: '0px 0px 4px 2px rgba(0, 0, 0, 0.15)',

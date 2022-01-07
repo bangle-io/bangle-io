@@ -104,7 +104,7 @@ export async function getAllWsPaths(
     await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
   );
 
-  if (attempt > 5) {
+  if (attempt > 3) {
     return result;
   }
 
@@ -494,4 +494,8 @@ export async function waitForEditorIdToLoad(page: Page, editorId: number) {
     },
     { editorId },
   );
+}
+
+export async function waitForNotification(page: Page, text: string) {
+  await page.locator(`text=${text}`).waitFor();
 }

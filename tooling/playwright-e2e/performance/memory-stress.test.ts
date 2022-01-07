@@ -8,6 +8,7 @@ import {
   longSleep,
   pushWsPathToPrimary,
   sleep,
+  waitForNotification,
 } from '../helpers';
 
 test('Openning a lot of notes should not leak', async ({ baseURL }) => {
@@ -33,7 +34,8 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     buffer: f,
   });
 
-  await longSleep(500);
+  await waitForNotification(page, 'Your notes have successfully restored.');
+
   const wsPaths = await getAllWsPaths(page, { lowerBound: 111 });
   // the fixture's asset count
   expect(wsPaths).toHaveLength(111);
