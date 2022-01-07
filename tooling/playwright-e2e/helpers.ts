@@ -89,7 +89,7 @@ export async function getAllWsPaths(
   page: Page,
   attempt = 0,
 ): Promise<string[] | undefined> {
-  if (attempt > 3) {
+  if (attempt > 4) {
     return undefined;
   }
 
