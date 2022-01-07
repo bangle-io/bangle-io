@@ -86,6 +86,24 @@ export async function createWorkspaceFromBackup(
 }
 
 export async function getAllWsPaths(page: Page, attempt = 0) {
+  if (!(await page.$('.note-browser'))) {
+    await runAction(page, 'action::bangle-io-note-browser:toggle-note-browser');
+  }
+
+  const result = JSON.parse(
+    await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
+  );
+
+  if (result.length === 0) {
+    await sleep();
+    return getAllWsPaths(page, attempt + 1);
+  }
+  if (attempt > 2) {
+    return result;
+  }
+}
+
+export async function getAllWsPaths2(page: Page, attempt = 0) {
   const result = JSON.parse(
     await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
   );
