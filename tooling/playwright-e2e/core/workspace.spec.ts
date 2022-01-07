@@ -197,6 +197,7 @@ test.describe.parallel('workspace', () => {
 
     await expect(page).toHaveURL(new RegExp(resolvePath(n1).fileName));
 
+    await longSleep(100);
     expect(await getAllWsPaths(page)).toContain(n1);
     page.on('dialog', (dialog) => dialog.accept());
 
@@ -209,8 +210,8 @@ test.describe.parallel('workspace', () => {
     ]);
 
     await expect(page).toHaveURL(new RegExp('/ws/' + wsName1));
-
-    expect(await getAllWsPaths(page)).toBe(undefined);
+    await longSleep(100);
+    expect(await getAllWsPaths(page)).toEqual([]);
   });
 
   test('deleting secondary note in split screen', async ({ page, baseURL }) => {
@@ -240,7 +241,7 @@ test.describe.parallel('workspace', () => {
     await expect(page).toHaveURL(
       new RegExp('/ws/' + wsName1 + '/' + resolvePath(n2).filePath),
     );
-
+    await longSleep(100);
     expect(await getAllWsPaths(page)).toEqual([n2]);
   });
 
@@ -269,7 +270,7 @@ test.describe.parallel('workspace', () => {
     await expect(page).toHaveURL(
       new RegExp('/ws/' + wsName1 + '/' + resolvePath(n1).filePath),
     );
-
+    await longSleep(100);
     expect(await getAllWsPaths(page)).toEqual([n1]);
   });
 });

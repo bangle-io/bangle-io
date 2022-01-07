@@ -85,36 +85,28 @@ export async function createWorkspaceFromBackup(
   return wsName;
 }
 
-export async function getAllWsPaths(page: Page, attempt = 0) {
-  if (!(await page.$('.note-browser'))) {
-    await runAction(page, 'action::bangle-io-note-browser:toggle-note-browser');
-  }
-
+export async function getAllWsPaths(
+  page: Page,
+  {
+    // number of items you at minimum expect that should be there
+    lowerBound = 1,
+    attempt = 0,
+  }: {
+    lowerBound?: number;
+    attempt?: number;
+  } = {},
+): Promise<undefined | string[]> {
   const result = JSON.parse(
     await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
   );
 
-  if (result.length === 0) {
-    await sleep();
-    return getAllWsPaths(page, attempt + 1);
-  }
-  if (attempt > 2) {
-    return result;
-  }
-}
-
-export async function getAllWsPaths2(page: Page, attempt = 0) {
-  const result = JSON.parse(
-    await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
-  );
-
-  if (attempt > 3) {
+  if (attempt > 5) {
     return result;
   }
 
-  if (result.length === 0) {
-    await sleep();
-    return getAllWsPaths(page, attempt + 1);
+  if (result == null || (Array.isArray(result) && result.length < lowerBound)) {
+    await longSleep();
+    return getAllWsPaths(page, { lowerBound, attempt: attempt + 1 });
   }
 
   return result;

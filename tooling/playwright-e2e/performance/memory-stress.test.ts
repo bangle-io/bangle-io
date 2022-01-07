@@ -33,8 +33,8 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     buffer: f,
   });
 
-  await longSleep(100);
-  const wsPaths = await getAllWsPaths(page);
+  await longSleep(500);
+  const wsPaths = await getAllWsPaths(page, { lowerBound: 111 });
   // the fixture's asset count
   expect(wsPaths).toHaveLength(111);
 
