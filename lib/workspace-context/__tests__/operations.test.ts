@@ -68,14 +68,6 @@ jest.mock('@bangle.io/page-context', () => {
     getPageLocation: jest.fn(),
   };
 });
-jest.mock('@bangle.io/page-context', () => {
-  const ops = jest.requireActual('@bangle.io/page-context');
-  return {
-    ...ops,
-    historyUpdateOpenedWsPaths: jest.fn(),
-    goToLocation: jest.fn(),
-  };
-});
 
 jest.mock('@bangle.io/extension-registry', () => {
   const other = jest.requireActual('@bangle.io/extension-registry');
