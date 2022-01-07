@@ -255,7 +255,6 @@ test.describe.parallel('workspace', () => {
     await expect(page).toHaveURL(new RegExp(resolvePath(n2).fileName));
 
     await pushWsPathToSecondary(page, n1);
-
     await getEditorLocator(page, 0, { focus: true, wsPath: n2 });
 
     page.on('dialog', (dialog) => dialog.accept());
@@ -267,7 +266,6 @@ test.describe.parallel('workspace', () => {
         'action::bangle-io-core-actions:DELETE_ACTIVE_NOTE_ACTION',
       ),
     ]);
-
     await expect(page).toHaveURL(
       new RegExp('/ws/' + wsName1 + '/' + resolvePath(n1).filePath),
     );

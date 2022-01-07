@@ -16,6 +16,7 @@ const config: PlaywrightTestConfig = {
   use: {
     // headless: false,
     trace: 'on-first-retry',
+    // trace: 'retain-on-failure',
     navigationTimeout: 10000,
     // launchOptions: {
     //   slowMo: 50,
@@ -24,6 +25,7 @@ const config: PlaywrightTestConfig = {
   webServer: {
     command: 'yarn g:build-prod-serve',
     port: 1234,
+    // port: 4000,
     timeout: 120 * 1000,
     reuseExistingServer: !isCI,
   },

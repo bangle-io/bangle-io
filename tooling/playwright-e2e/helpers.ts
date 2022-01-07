@@ -109,17 +109,31 @@ export async function getAllWsPaths(
   return result;
 }
 
-export async function pushWsPathToPrimary(page: Page, wsPath: string) {
+export async function pushWsPathToPrimary(
+  page: Page,
+  wsPath: string,
+  { waitForEditorToLoad = true } = {},
+) {
   await page.evaluate(
     ([wsPath]) => (window as any)._pushWsPath(wsPath),
     [wsPath],
   );
+  if (waitForEditorToLoad) {
+    await waitForEditorIdToLoad(page, 0);
+  }
 }
-export async function pushWsPathToSecondary(page: Page, wsPath: string) {
+export async function pushWsPathToSecondary(
+  page: Page,
+  wsPath: string,
+  { waitForEditorToLoad = true } = {},
+) {
   await page.evaluate(
     ([wsPath]) => (window as any)._pushWsPath(wsPath, true),
     [wsPath],
   );
+  if (waitForEditorToLoad) {
+    await waitForEditorIdToLoad(page, 1);
+  }
 }
 
 export async function openWorkspacePalette(page: Page) {

@@ -3,8 +3,6 @@ import fs from 'fs/promises';
 import path from 'path';
 
 import {
-  createNewNote,
-  createWorkspace,
   createWorkspaceFromBackup,
   getAllWsPaths,
   longSleep,
@@ -51,7 +49,10 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
 
   for (const w of noteWsPaths.slice(0, EDITORS_TO_OPEN)) {
     // open every editor in list
-    await Promise.all([page.waitForNavigation(), pushWsPathToPrimary(page, w)]);
+    await Promise.all([
+      page.waitForNavigation(),
+      pushWsPathToPrimary(page, w, { waitForEditorToLoad: false }),
+    ]);
 
     // Make sure the editor instance is for the currently opened editor
     await page.waitForFunction(
