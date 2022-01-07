@@ -90,7 +90,7 @@ export async function getAllWsPaths(page: Page, attempt = 0) {
     await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
   );
 
-  if (attempt > 2) {
+  if (attempt > 3) {
     return result;
   }
 
