@@ -49,7 +49,9 @@ const config = ({ command, mode }) => {
       outDir: './build',
       chunkSizeWarningLimit: 3000,
     },
-
+    worker: {
+      format: 'es',
+    },
     plugins: [
       minifyHtml(),
       injectHtml({
