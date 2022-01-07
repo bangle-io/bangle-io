@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
 import { useActionContext } from '@bangle.io/action-context';
+import { isFirefox } from '@bangle.io/config';
 import { newNote, toggleWorkspacePalette } from '@bangle.io/core-operations';
 import {
   ButtonIcon,
@@ -318,8 +319,11 @@ function RenderRow({
 
   useEffect(() => {
     if (isActive) {
-      elementRef.current &&
-        safeScrollIntoViewIfNeeded(elementRef.current, false);
+      // scrolling into view is broken in firefox
+      if (!isFirefox) {
+        elementRef.current &&
+          safeScrollIntoViewIfNeeded(elementRef.current, false);
+      }
     }
   }, [isActive]);
 

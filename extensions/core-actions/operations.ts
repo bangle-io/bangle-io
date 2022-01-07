@@ -18,7 +18,6 @@ export function downloadWorkspace() {
     >['dispatch'],
   ) => {
     const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
-
     if (!wsName) {
       dispatch({
         name: 'UI/SHOW_NOTIFICATION',
@@ -72,7 +71,7 @@ export function restoreWorkspaceFromBackup() {
           name: 'UI/SHOW_NOTIFICATION',
           value: {
             severity: 'info',
-            uid: 'recovery-started-' + wsName,
+            uid: 'restoreWorkspaceFromBackup-' + wsName,
             content:
               'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
           },
