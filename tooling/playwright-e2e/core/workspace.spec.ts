@@ -1,17 +1,21 @@
 import { expect, test } from '@playwright/test';
 
+import { resolvePath } from '../bangle-helpers';
 import {
   clickItemInPalette,
   createNewNote,
   createWorkspace,
-  ctrlKey,
+  getAllWsPaths,
   getEditorLocator,
   getItemsInPalette,
   getPrimaryEditorHandler,
   getWsPathsShownInFilePalette,
   longSleep,
   openWorkspacePalette,
+  pushWsPathToSecondary,
+  runAction,
   sleep,
+  waitForEditorFocus,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -116,7 +120,7 @@ test.describe.parallel('workspace', () => {
     ]);
 
     expect(await page.url()).toBe(
-      `http://localhost:1234/ws-not-found/random-wrong-wsname`,
+      `${baseURL}/ws-not-found/random-wrong-wsname`,
     );
 
     expect(await page.$eval('body', (el) => el.innerText)).toContain(
@@ -137,9 +141,7 @@ test.describe.parallel('workspace', () => {
       }),
     ]);
 
-    expect(await page.url()).toBe(
-      `http://localhost:1234/ws-invalid-path/${wsName1}`,
-    );
+    expect(await page.url()).toBe(`${baseURL}/ws-invalid-path/${wsName1}`);
 
     expect(await page.$eval('body', (el) => el.innerText)).toContain(
       `🙈 Invalid path`,
@@ -153,10 +155,7 @@ test.describe.parallel('workspace', () => {
     const wsName1 = await createWorkspace(page);
 
     await Promise.all([
-      page.waitForNavigation({
-        timeout: 5000,
-        waitUntil: 'networkidle',
-      }),
+      page.waitForNavigation(),
       page.goto(
         baseURL +
           `/ws/${wsName1}/wrong-ws-path?secondary=bangle-help%253Agetting%2520started`,
@@ -166,9 +165,7 @@ test.describe.parallel('workspace', () => {
       ),
     ]);
 
-    expect(await page.url()).toBe(
-      `http://localhost:1234/ws-invalid-path/${wsName1}`,
-    );
+    expect(await page.url()).toBe(`${baseURL}/ws-invalid-path/${wsName1}`);
 
     expect(await page.$eval('body', (el) => el.innerText)).toContain(
       `🙈 Invalid path`,
@@ -192,5 +189,89 @@ test.describe.parallel('workspace', () => {
     await page2.goto(baseURL!, { waitUntil: 'networkidle' });
 
     await expect(page2).toHaveURL(new RegExp(wsName1));
+  });
+
+  test('deleting a note', async ({ page, baseURL }) => {
+    const wsName1 = await createWorkspace(page);
+    const n1 = await createNewNote(page, wsName1, 'file-1');
+
+    await expect(page).toHaveURL(new RegExp(resolvePath(n1).fileName));
+
+    expect(await getAllWsPaths(page)).toContain(n1);
+    page.on('dialog', (dialog) => dialog.accept());
+
+    await Promise.all([
+      page.waitForNavigation(),
+      runAction(
+        page,
+        'action::bangle-io-core-actions:DELETE_ACTIVE_NOTE_ACTION',
+      ),
+    ]);
+
+    await expect(page).toHaveURL(new RegExp('/ws/' + wsName1));
+
+    expect(await getAllWsPaths(page)).toBe(undefined);
+  });
+
+  test('deleting secondary note in split screen', async ({ page, baseURL }) => {
+    // n2 as primary
+    // n1 as secondary
+    const wsName1 = await createWorkspace(page);
+
+    const n1 = await createNewNote(page, wsName1, 'file-1');
+    const n2 = await createNewNote(page, wsName1, 'file-2');
+
+    await expect(page).toHaveURL(new RegExp(resolvePath(n2).fileName));
+
+    await pushWsPathToSecondary(page, n1);
+
+    await waitForEditorFocus(page, 1, { wsPath: n1 });
+
+    page.on('dialog', (dialog) => dialog.accept());
+
+    await Promise.all([
+      page.waitForNavigation(),
+      runAction(
+        page,
+        'action::bangle-io-core-actions:DELETE_ACTIVE_NOTE_ACTION',
+      ),
+    ]);
+
+    await expect(page).toHaveURL(
+      new RegExp('/ws/' + wsName1 + '/' + resolvePath(n2).filePath),
+    );
+
+    expect(await getAllWsPaths(page)).toEqual([n2]);
+  });
+
+  test('deleting primary note in split screen', async ({ page, baseURL }) => {
+    // n2 as primary
+    // n1 as secondary
+    const wsName1 = await createWorkspace(page);
+
+    const n1 = await createNewNote(page, wsName1, 'file-1');
+    const n2 = await createNewNote(page, wsName1, 'file-2');
+
+    await expect(page).toHaveURL(new RegExp(resolvePath(n2).fileName));
+
+    await pushWsPathToSecondary(page, n1);
+
+    await getEditorLocator(page, 0, { focus: true, wsPath: n2 });
+
+    page.on('dialog', (dialog) => dialog.accept());
+
+    await Promise.all([
+      page.waitForNavigation(),
+      runAction(
+        page,
+        'action::bangle-io-core-actions:DELETE_ACTIVE_NOTE_ACTION',
+      ),
+    ]);
+
+    await expect(page).toHaveURL(
+      new RegExp('/ws/' + wsName1 + '/' + resolvePath(n1).filePath),
+    );
+
+    expect(await getAllWsPaths(page)).toEqual([n1]);
   });
 });

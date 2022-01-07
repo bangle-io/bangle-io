@@ -8,6 +8,7 @@ import {
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import {
+  getPageLocation,
   goToLocation,
   historyUpdateOpenedWsPaths,
 } from '@bangle.io/page-context';
@@ -30,7 +31,12 @@ import {
 
 import { WorkspaceDispatchType, workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
-import { validateOpenedWsPaths } from './helpers';
+import {
+  getPrevOpenedWsPathsFromSearch,
+  savePrevOpenedWsPathsToSearch,
+  validateOpenedWsPaths,
+} from './helpers';
+import { getLastWorkspaceUsed } from './last-seen-ws-name';
 import { fileOpsPlus, FileOpsType } from './use-get-file-ops';
 
 const LOG = false;
@@ -257,10 +263,10 @@ export const deleteNote = (wsPathToDelete: Array<string> | string) => {
 
     wsPathToDelete.forEach((w) => {
       validateNoteWsPath(w);
-      newOpenedWsPaths = newOpenedWsPaths.closeIfFound(w);
+      newOpenedWsPaths = newOpenedWsPaths.closeIfFound(w).shrink();
     });
 
-    updateOpenedWsPaths(newOpenedWsPaths, { replaceHistory: true })(
+    updateOpenedWsPaths(newOpenedWsPaths, { replace: true })(
       store.state,
       dispatch,
     );
@@ -351,16 +357,14 @@ export const updateLocation = ({
 
 export const updateOpenedWsPaths = (
   newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),
-  { replaceHistory = false }: { replaceHistory?: boolean } = {},
+  opts?: Parameters<typeof historyUpdateOpenedWsPaths>[2],
 ) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
     const sliceState = workspaceSliceKey.getSliceState(state);
 
-    if (!sliceState?.wsName) {
+    if (!sliceState) {
       return false;
     }
-
-    const { wsName } = sliceState;
 
     if (newOpened instanceof Function) {
       newOpened = newOpened(sliceState.openedWsPaths);
@@ -373,13 +377,33 @@ export const updateOpenedWsPaths = (
     const validity = validateOpenedWsPaths(newOpened);
 
     if (!validity.valid) {
-      goToInvalidPathRoute(wsName, validity.invalidWsPath)(state);
+      goToInvalidPathRoute(
+        sliceState.wsName || 'unknown-ws',
+        validity.invalidWsPath,
+      )(state);
       return false;
     }
 
-    historyUpdateOpenedWsPaths(newOpened, wsName, { replace: replaceHistory })(
-      state,
-    );
+    // get wsName from newOpened so as to cover if we opened a new wName than what is in the state.
+    const wsName = newOpened.getWsNames()[0];
+
+    if (!wsName) {
+      if (sliceState.wsName) {
+        goToWsNameRoute(sliceState.wsName, opts)(state, dispatch);
+        return true;
+      }
+
+      goToWorkspaceHomeRoute(opts)(state, dispatch);
+      return true;
+    }
+
+    if (!newOpened.allBelongToSameWsName(wsName)) {
+      console.error('Cannot have different wsNames');
+      goToInvalidPathRoute(wsName)(state);
+      return false;
+    }
+
+    historyUpdateOpenedWsPaths(newOpened, wsName, opts)(state);
 
     return true;
   };
@@ -425,33 +449,67 @@ export const pushWsPath = (
     }
     return updateOpenedWsPaths((openedWsPath) => {
       if (secondary) {
-        return openedWsPath.updateSecondaryWsPath(wsPath);
+        return openedWsPath.updateByIndex(1, wsPath);
       }
-      return openedWsPath.updatePrimaryWsPath(wsPath);
+      return openedWsPath.updateByIndex(0, wsPath);
     })(state, dispatch);
   };
 };
 
-export const goToWorkspaceHomeRoute = () => {
-  return (state: AppState) => {
-    goToLocation('/')(state);
-    return true;
+export const goToWorkspaceHomeRoute = ({
+  replace = false,
+}: { replace?: boolean } = {}) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    const lastWsName = getLastWorkspaceUsed() || HELP_FS_WORKSPACE_NAME;
+    if (lastWsName) {
+      goToWsNameRoute(lastWsName, { replace })(state, dispatch);
+      return;
+    }
+    goToLocation('/', { replace })(state);
+    return;
   };
 };
 
 export function goToWsNameRoute(
   wsName: string,
-  { replace = false }: { replace?: boolean } = {},
+  {
+    replace = false,
+    // If false will not open previously opened editors that are saved in the URL search params
+    reopenPreviousEditors = true,
+  }: { replace?: boolean; reopenPreviousEditors?: boolean } = {},
 ) {
-  return (state: AppState) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    if (reopenPreviousEditors) {
+      const location = getPageLocation()(state);
+      const openedWsPaths = getPrevOpenedWsPathsFromSearch(location?.search);
+
+      if (openedWsPaths?.allBelongToSameWsName(wsName)) {
+        updateOpenedWsPaths(openedWsPaths, { replace: replace })(
+          state,
+          dispatch,
+        );
+        return;
+      }
+    }
+
     goToLocation(wsNameToPathname(wsName), { replace })(state);
   };
 }
 
 export const goToWorkspaceAuthRoute = (wsName: string, errorCode: string) => {
   return (state: AppState): void => {
+    const sliceState = workspaceSliceKey.getSliceState(state);
+
+    const search = new URLSearchParams([['error_code', errorCode]]);
+
+    const openedWsPaths = sliceState?.openedWsPaths;
+
+    if (openedWsPaths) {
+      savePrevOpenedWsPathsToSearch(openedWsPaths, search);
+    }
+
     return goToLocation(
-      `/ws-auth/${encodeURIComponent(wsName)}?code=${errorCode}`,
+      `/ws-auth/${encodeURIComponent(wsName)}?${search.toString()}`,
       {
         replace: true,
       },
@@ -459,7 +517,7 @@ export const goToWorkspaceAuthRoute = (wsName: string, errorCode: string) => {
   };
 };
 
-export const goToInvalidPathRoute = (wsName: string, invalidPath: string) => {
+export const goToInvalidPathRoute = (wsName: string, invalidPath?: string) => {
   return (state: AppState): void => {
     return goToLocation(`/ws-invalid-path/${encodeURIComponent(wsName)}`, {
       replace: true,

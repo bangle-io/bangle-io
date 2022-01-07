@@ -97,8 +97,12 @@ export function initializeBangleStore({
   (window as any).appStore = store;
   (window as any)._getWsPaths = () =>
     workspaceContext.workspaceSliceKey.getSliceState(store.state)?.wsPaths;
-  (window as any)._pushWsPath = (wsPath: string) =>
-    workspaceContext.pushWsPath(wsPath)(store.state, store.dispatch);
+  (window as any)._pushWsPath = (wsPath: string, secondary: boolean) =>
+    workspaceContext.pushWsPath(
+      wsPath,
+      undefined,
+      secondary,
+    )(store.state, store.dispatch);
 
   (window as any)._getEditorPluginMetadata = getEditorPluginMetadata;
 

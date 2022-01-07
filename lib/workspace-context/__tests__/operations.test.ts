@@ -7,6 +7,7 @@ import {
   extensionRegistrySliceKey,
 } from '@bangle.io/extension-registry';
 import {
+  getPageLocation,
   goToLocation,
   historyUpdateOpenedWsPaths,
 } from '@bangle.io/page-context';
@@ -20,12 +21,16 @@ import {
 } from '@bangle.io/workspaces';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
+import { goToWorkspaceHomeRoute } from '..';
+import { savePrevOpenedWsPathsToSearch } from '../helpers';
+import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
 import {
   checkFileExists,
   createNote,
   deleteNote,
   getFileOps,
   getNote,
+  goToWsNameRoute,
   pushWsPath,
   refreshWsPaths,
   renameNote,
@@ -60,6 +65,7 @@ jest.mock('@bangle.io/page-context', () => {
     ...ops,
     historyUpdateOpenedWsPaths: jest.fn(),
     goToLocation: jest.fn(),
+    getPageLocation: jest.fn(),
   };
 });
 jest.mock('@bangle.io/page-context', () => {
@@ -99,6 +105,9 @@ let saveDocMock = FileOps.saveDoc as jest.MockedFunction<
 let deleteFileMock = FileOps.deleteFile as jest.MockedFunction<
   typeof FileOps.deleteFile
 >;
+const getPageLocationMock = getPageLocation as jest.MockedFunction<
+  typeof getPageLocation
+>;
 let historyUpdateOpenedWsPathsMock =
   historyUpdateOpenedWsPaths as jest.MockedFunction<
     typeof historyUpdateOpenedWsPaths
@@ -126,19 +135,42 @@ beforeEach(() => {
   extensionRegistrySliceKeyGetSliceStateMock.mockImplementation(() => ({
     extensionRegistry,
   }));
+  const location = {
+    search: '',
+    pathname: '',
+  };
+  getPageLocationMock.mockImplementation(() => () => location);
 });
 
-test('updateLocation', () => {
-  let state = createState();
+describe('updateLocation', () => {
+  test('works', () => {
+    let state = createState();
 
-  const dispatch = jest.fn();
+    const dispatch = jest.fn();
 
-  updateLocation({ search: 'test-search', pathname: 'test-pathname' })(
-    state,
-    dispatch,
-  );
+    updateLocation({ search: 'test-search', pathname: 'test-pathname' })(
+      state,
+      dispatch,
+    );
 
-  expect(dispatch).toBeCalledTimes(1);
+    expect(dispatch).toBeCalledTimes(1);
+  });
+
+  test('with incorrect path', () => {
+    let state = createState();
+
+    const dispatch = jest.fn();
+
+    updateLocation({
+      search: 'secondary=bangle-help%253Agetting%2520started',
+      pathname: '/ws/bangle-help',
+    })(state, dispatch);
+
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, '/ws-invalid-path/bangle-help', {
+      replace: true,
+    });
+  });
 });
 
 describe('refreshWsPaths', () => {
@@ -284,7 +316,7 @@ describe('refreshWsPaths', () => {
     expect(goToLocationMock).toBeCalledTimes(1);
     expect(goToLocationMock).nthCalledWith(
       1,
-      '/ws-auth/my-ws?code=' + NATIVE_BROWSER_PERMISSION_ERROR,
+      '/ws-auth/my-ws?error_code=' + NATIVE_BROWSER_PERMISSION_ERROR,
       {
         replace: true,
       },
@@ -379,7 +411,7 @@ describe('updateOpenedWsPaths', () => {
       1,
       expect.any(OpenedWsPaths),
       'my-ws',
-      { replace: false },
+      undefined,
     );
   });
 
@@ -391,7 +423,7 @@ describe('updateOpenedWsPaths', () => {
     const res = updateOpenedWsPaths(
       OpenedWsPaths.createFromArray(['my-ws:one.md']),
       {
-        replaceHistory: true,
+        replace: true,
       },
     )(store.state, store.dispatch);
 
@@ -431,7 +463,7 @@ describe('updateOpenedWsPaths', () => {
       1,
       expect.any(OpenedWsPaths),
       'my-ws',
-      { replace: false },
+      undefined,
     );
   });
 
@@ -838,19 +870,8 @@ describe('deleteNote', () => {
       'action::workspace-context:update-ws-paths',
     );
 
-    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
-    expect(
-      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
-    ).toEqual([null, null]);
-
-    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
-      1,
-      expect.any(OpenedWsPaths),
-      'my-ws',
-      { replace: true },
-    );
-
-    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, '/ws/my-ws', { replace: true });
   });
 
   test('deletes when the file is not opened', async () => {
@@ -934,8 +955,32 @@ describe('pushWsPath', () => {
       1,
       expect.any(OpenedWsPaths),
       'my-ws',
-      { replace: false },
+      undefined,
     );
+
+    expect(window.open).toBeCalledTimes(0);
+  });
+
+  test('works when secondary is true', () => {
+    let { store, dispatchSpy } = noSideEffectsStore({
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:some-other-test-note.md'],
+    });
+    pushWsPath('my-ws:test-note.md', false, true)(store.state, store.dispatch);
+
+    expect(getActionNamesDispatched(dispatchSpy)).toEqual([]);
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
+
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      expect.any(OpenedWsPaths),
+      'my-ws',
+      undefined,
+    );
+
+    expect(
+      historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
+    ).toEqual(['my-ws:some-other-test-note.md', 'my-ws:test-note.md']);
 
     expect(window.open).toBeCalledTimes(0);
   });
@@ -971,5 +1016,128 @@ describe('checkFileExists', () => {
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([]);
 
     expect(result).toBe(false);
+  });
+});
+
+describe('goToWsNameRoute', () => {
+  test('works', () => {
+    let searchParams = new URLSearchParams();
+
+    savePrevOpenedWsPathsToSearch(
+      OpenedWsPaths.createFromArray(['my-ws:hello.md']),
+      searchParams,
+    );
+    getPageLocationMock.mockImplementation(() => () => ({
+      location: '',
+      search: searchParams.toString(),
+    }));
+
+    let { store } = noSideEffectsStore({
+      wsName: 'old-ws',
+      openedWsPaths: ['old-ws:some-other-test-note.md'],
+    });
+
+    goToWsNameRoute('my-ws')(store.state, store.dispatch);
+
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
+    expect(historyUpdateOpenedWsPathsMock).nthCalledWith(
+      1,
+      { wsPaths: ['my-ws:hello.md', undefined] },
+      'my-ws',
+      { replace: false },
+    );
+  });
+
+  test('if search has something else', () => {
+    getPageLocationMock.mockImplementation(() => () => ({
+      location: '',
+      search: 'some_garbage',
+    }));
+
+    let { store } = noSideEffectsStore({
+      wsName: 'old-ws',
+      openedWsPaths: ['old-ws:some-other-test-note.md'],
+    });
+
+    goToWsNameRoute('my-ws')(store.state, store.dispatch);
+
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, '/ws/my-ws', { replace: false });
+  });
+
+  test('if wsName donot match', () => {
+    let searchParams = new URLSearchParams();
+
+    savePrevOpenedWsPathsToSearch(
+      OpenedWsPaths.createFromArray(['ws-2:hello.md']),
+      searchParams,
+    );
+    getPageLocationMock.mockImplementation(() => () => ({
+      location: '',
+      search: searchParams.toString(),
+    }));
+
+    let { store } = noSideEffectsStore({
+      wsName: 'old-ws',
+      openedWsPaths: [],
+    });
+
+    goToWsNameRoute('my-ws')(store.state, store.dispatch);
+
+    expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, '/ws/my-ws', { replace: false });
+  });
+});
+
+describe('goToWorkspaceHomeRoute', () => {
+  let originalLocalStorage = window.localStorage;
+  beforeEach(() => {
+    let store = {};
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn((key) => {
+          return store[key] || null;
+        }),
+        setItem: jest.fn((key, value) => {
+          store[key] = value.toString();
+        }),
+        clear() {
+          store = {};
+        },
+      },
+      writable: true,
+    });
+  });
+  afterEach(() => {
+    (window as any).localStorage = originalLocalStorage;
+  });
+
+  test('works', () => {
+    saveLastWorkspaceUsed('my-ws');
+    let { store } = noSideEffectsStore({
+      wsName: undefined,
+      openedWsPaths: [],
+    });
+
+    goToWorkspaceHomeRoute()(store.state, store.dispatch);
+
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, '/ws/my-ws', { replace: false });
+  });
+
+  test('when no saved ws', () => {
+    let { store } = noSideEffectsStore({
+      wsName: undefined,
+      openedWsPaths: [],
+    });
+
+    goToWorkspaceHomeRoute()(store.state, store.dispatch);
+
+    expect(goToLocationMock).toBeCalledTimes(1);
+    expect(goToLocationMock).nthCalledWith(1, '/ws/bangle-help', {
+      replace: false,
+    });
   });
 });

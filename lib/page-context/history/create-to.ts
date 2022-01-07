@@ -6,7 +6,6 @@ export function createTo(loc: Partial<Location>, history: BaseHistory) {
   if (loc.search?.startsWith('?')) {
     throw new Error('Location search cannot start with ?');
   }
-
   const path =
     typeof loc.pathname === 'string' ? loc.pathname : history?.pathname;
 

@@ -1,7 +1,7 @@
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
-import { MaybeWsPath } from './helpers';
+import { MaybeWsPath, resolvePath } from './helpers';
 
 export interface Location {
   pathname?: string;
@@ -62,6 +62,34 @@ export class OpenedWsPaths {
       }
     });
     return count;
+  }
+
+  // check  opened editors (if any) belong to the same workspace
+  // in case there no opened editors, returns true.
+  // if no wsName is provided, will match against the internal wsName
+  allBelongToSameWsName(wsName?: string) {
+    if (!this.hasSomeOpenedWsPaths()) {
+      return true;
+    }
+    const wsNames = this.getWsNames();
+
+    if (wsName == null) {
+      return wsNames.length === 1;
+    }
+
+    return wsNames.length === 1 && wsName === wsNames[0];
+  }
+
+  // Returns the unique wsName (workspace name) of all the paths.
+  getWsNames(): string[] {
+    let wsNames: Set<string> = new Set();
+    this.forEachWsPath((wsPath) => {
+      if (wsPath) {
+        wsNames.add(resolvePath(wsPath).wsName);
+      }
+    });
+
+    return [...wsNames];
   }
 
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {

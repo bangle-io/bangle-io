@@ -59,3 +59,29 @@ export const findInvalidLocation = (
 
   return undefined;
 };
+
+export function getPrevOpenedWsPathsFromSearch(
+  search?: string,
+): OpenedWsPaths | undefined {
+  let searchParams = new URLSearchParams(search);
+  let prev = searchParams.get('ws_paths');
+  if (prev) {
+    try {
+      let openedWsPaths = OpenedWsPaths.createFromArray(JSON.parse(prev));
+      return openedWsPaths;
+    } catch (err) {
+      return undefined;
+    }
+  }
+
+  return undefined;
+}
+
+export function savePrevOpenedWsPathsToSearch(
+  openedWsPaths: OpenedWsPaths,
+  searchParams: URLSearchParams,
+) {
+  if (openedWsPaths.hasSomeOpenedWsPaths()) {
+    searchParams.append('ws_paths', JSON.stringify(openedWsPaths.toArray()));
+  }
+}

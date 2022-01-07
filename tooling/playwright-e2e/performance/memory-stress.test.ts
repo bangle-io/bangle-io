@@ -40,7 +40,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
   // the fixture's asset count
   expect(wsPaths).toHaveLength(111);
 
-  const noteWsPaths = wsPaths.filter((r) => r.endsWith('.md'));
+  const noteWsPaths = wsPaths?.filter((r) => r.endsWith('.md')) || [];
 
   await page.evaluate(() => {
     (window as any).refs = [];

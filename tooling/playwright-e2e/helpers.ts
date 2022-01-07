@@ -85,7 +85,14 @@ export async function createWorkspaceFromBackup(
   return wsName;
 }
 
-export async function getAllWsPaths(page: Page, attempt = 0) {
+export async function getAllWsPaths(
+  page: Page,
+  attempt = 0,
+): Promise<string[] | undefined> {
+  if (attempt > 3) {
+    return undefined;
+  }
+
   if (!(await page.$('.note-browser'))) {
     await runAction(page, 'action::bangle-io-note-browser:toggle-note-browser');
   }
@@ -98,14 +105,19 @@ export async function getAllWsPaths(page: Page, attempt = 0) {
     await sleep();
     return getAllWsPaths(page, attempt + 1);
   }
-  if (attempt > 2) {
-    return result;
-  }
+
+  return result;
 }
 
 export async function pushWsPathToPrimary(page: Page, wsPath: string) {
   await page.evaluate(
     ([wsPath]) => (window as any)._pushWsPath(wsPath),
+    [wsPath],
+  );
+}
+export async function pushWsPathToSecondary(page: Page, wsPath: string) {
+  await page.evaluate(
+    ([wsPath]) => (window as any)._pushWsPath(wsPath, true),
     [wsPath],
   );
 }

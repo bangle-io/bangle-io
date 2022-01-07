@@ -54,13 +54,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   }, [wsName, store]);
 
   const onGranted = () => {
-    const previousLocation = undefined; //history.location?.state?.previousLocation;
-    // TODO previous
-    if (previousLocation) {
-      // history.replace(previousLocation);
-    } else {
-      goToWsNameRoute(wsName, { replace: true })(store.state);
-    }
+    goToWsNameRoute(wsName, { replace: true })(store.state, store.dispatch);
   };
 
   const requestFSPermission = async () => {
@@ -85,7 +79,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
 
   useEffect(() => {
     if (!wsName) {
-      goToWorkspaceHomeRoute()(store.state);
+      goToWorkspaceHomeRoute()(store.state, store.dispatch);
     }
   }, [store, wsName]);
 
