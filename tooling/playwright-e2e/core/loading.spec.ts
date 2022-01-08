@@ -46,7 +46,7 @@ test.describe.parallel('loading', () => {
     expect(await locator.textContent()).toMatch('NavigateEnter');
   });
 
-  test('shows action palette', async ({ page }) => {
+  test('shows operation palette', async ({ page }) => {
     await page.keyboard.down(ctrlKey);
     await page.keyboard.down('Shift');
     await page.keyboard.press('P');

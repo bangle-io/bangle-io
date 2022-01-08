@@ -2,6 +2,8 @@
 
 - **Bug:** Fixed a bug when doing a File system authorization, bangle will forget the opened opened editors.
 
+- **Improvement:** Action palette is now called Operation palette.
+
 ### Jan 3, 2022
 
 - **Feature:** Bangle now has new actions that allows the ability to export notes and restore notes.

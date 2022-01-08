@@ -174,10 +174,10 @@ export function ActivitybarOptionsDropdown({
         </MenuItem>
         <MenuItem
           key={ActionPaletteKey}
-          textValue="command palette"
-          aria-label="command palette"
+          textValue="operation palette"
+          aria-label="operation palette"
         >
-          <span>Command palette</span>
+          <span>Operation palette</span>
           <PrettyKeybinding
             rawKey={
               operationKeybindings[CORE_PALETTES_TOGGLE_ACTION_PALETTE] || ''
