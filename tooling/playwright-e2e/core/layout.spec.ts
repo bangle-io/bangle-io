@@ -5,7 +5,7 @@ import {
   createWorkspace,
   ctrlKey,
   getEditorLocator,
-  runAction,
+  runOperation,
   SELECTOR_TIMEOUT,
   sleep,
 } from '../helpers';
@@ -32,9 +32,9 @@ test('shows note sidebar correctly', async ({ page }) => {
 
   await createNewNote(page, wsName, 'test123');
 
-  await runAction(
+  await runOperation(
     page,
-    'action::bangle-io-core-actions:NOTE_TOGGLE_SIDEBAR_ACTION',
+    'operation::bangle-io-core-operations:NOTE_TOGGLE_SIDEBAR',
   );
 
   await page.waitForSelector('.ui-dhancha_note-sidebar', {

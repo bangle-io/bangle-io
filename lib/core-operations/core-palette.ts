@@ -16,7 +16,7 @@ export function toggleCorePaletteType(type: CorePalette | null) {
 }
 
 export function toggleActionPalette() {
-  return toggleCorePaletteType(CorePalette.Action);
+  return toggleCorePaletteType(CorePalette.Operation);
 }
 
 export function toggleWorkspacePalette() {

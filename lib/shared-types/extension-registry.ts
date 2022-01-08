@@ -1,22 +1,29 @@
 import type { PluginKey } from '@bangle.dev/pm';
 
-export type ActionNameType = `action::${string}`;
-export interface ActionType {
-  name: ActionNameType;
+export type SerialOperationNameType = `operation::${string}`;
+export interface SerialOperationType {
+  name: SerialOperationNameType;
   value?: any;
 }
-export interface ActionDefinitionType {
-  name: ActionType['name'];
+export interface SerialOperationDefinitionType {
+  name: SerialOperationType['name'];
   title: string;
   keybinding?: string;
   // when true, will hide it from the user
   hidden?: boolean;
 }
-export type DispatchActionType = (action: ActionType) => void;
+export type DispatchSerialOperationType = (
+  sOperation: SerialOperationType,
+) => void;
 
-export type ActionHandler = (action: ActionType) => boolean;
+export type SerialOperationHandler = (
+  sOperation: SerialOperationType,
+) => boolean | undefined;
 
-export type ActionKeybindingMapping = Record<ActionNameType, string>;
+export type SerialOperationKeybindingMapping = Record<
+  SerialOperationNameType,
+  string
+>;
 
 export interface NoteSidebarWidget {
   name: `note-sidebar-widget::${string}`;
@@ -25,10 +32,10 @@ export interface NoteSidebarWidget {
 }
 
 export interface EditorWatchPluginState {
-  // The action to dispatch when state changes
-  // Bangle.io will passe an editorId when dispatching this action
+  // The operation to dispatch when state changes
+  // Bangle.io will passe an editorId when dispatching this sOperation
   // to help identify which editors plugin state changed.
-  action: ActionNameType;
+  operation: SerialOperationNameType;
   // The pluginKey of the plugin's state to watch
   pluginKey: PluginKey;
 }

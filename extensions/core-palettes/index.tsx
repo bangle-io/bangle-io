@@ -1,22 +1,21 @@
 import { isFirefox, isMac } from '@bangle.io/config';
 import {
-  CORE_PALETTES_TOGGLE_ACTION_PALETTE,
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
+  CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 
 import { extensionName } from './config';
-import { corePaletteSlice } from './core-palette-slice';
 import { PaletteManager } from './PaletteManager';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
-    actions: [
+    operations: [
       {
-        name: CORE_PALETTES_TOGGLE_ACTION_PALETTE,
-        title: 'Action Palette',
+        name: CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
+        title: 'Operation Palette',
         hidden: true,
         keybinding: isFirefox ? 'Mod-o' : 'Mod-P',
       },
@@ -35,7 +34,6 @@ const extension = Extension.create({
         keybinding: 'Mod-p',
       },
     ],
-    slices: [corePaletteSlice()],
     ReactComponent: PaletteManager,
   },
 });

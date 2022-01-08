@@ -23,7 +23,8 @@ export function AppContainer() {
 
   const sidebars = extensionRegistry.getSidebars();
   const noteSidebarWidgets = extensionRegistry.getNoteSidebarWidgets();
-  const actionKeybindings = extensionRegistry.getActionKeybindingMapping();
+  const operationKeybindings =
+    extensionRegistry.getSerialOperationKeybindingMapping();
 
   const { sidebar, dispatch, noteSidebar } = useUIManagerContext();
   const currentSidebar = sidebar
@@ -67,7 +68,7 @@ export function AppContainer() {
         widescreen={widescreen}
         activitybar={
           <Activitybar
-            actionKeybindings={actionKeybindings}
+            operationKeybindings={operationKeybindings}
             wsName={wsName}
             primaryWsPath={openedWsPaths.primaryWsPath}
             sidebars={sidebars}

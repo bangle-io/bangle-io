@@ -1,7 +1,7 @@
 import { Extension } from '@bangle.io/extension-registry';
 
 import {
-  WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION,
+  WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
   watchHeadingsPluginKey,
 } from './config';
 import { NoteOutline } from './NoteOutline';
@@ -15,16 +15,16 @@ const extension = Extension.create({
     plugins: [watchHeadingsPlugin()],
     watchPluginStates: [
       {
-        action: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION,
+        operation: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
         pluginKey: watchHeadingsPluginKey,
       },
     ],
   },
 
   application: {
-    actions: [
+    operations: [
       {
-        name: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION,
+        name: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
         title: 'headings plugin state has updated',
         hidden: true,
       },

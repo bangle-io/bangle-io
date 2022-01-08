@@ -1,19 +1,19 @@
 import { useEffect } from 'react';
 
-import { RegisterActionHandlerType } from '@bangle.io/extension-registry';
+import { RegisterSerialOperationHandlerType } from '@bangle.io/extension-registry';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import {
-  EXECUTE_SEARCH_ACTION,
-  SHOW_SEARCH_SIDEBAR_ACTION,
+  EXECUTE_SEARCH_OPERATION,
+  SHOW_SEARCH_SIDEBAR_OPERATION,
   SIDEBAR_NAME,
 } from './constants';
 import { useSearchNotes, useSearchNotesState } from './hooks';
 
-export function SearchNotesActionHandler({
-  registerActionHandler,
+export function SearchNotesOperationHandler({
+  registerSerialOperationHandler,
 }: {
-  registerActionHandler: RegisterActionHandlerType;
+  registerSerialOperationHandler: RegisterSerialOperationHandlerType;
 }) {
   const { sidebar, dispatch } = useUIManagerContext();
   const [, updateState] = useSearchNotesState();
@@ -21,17 +21,17 @@ export function SearchNotesActionHandler({
   useSearchNotes();
 
   useEffect(() => {
-    const deregister = registerActionHandler((actionObject) => {
-      switch (actionObject.name) {
-        case SHOW_SEARCH_SIDEBAR_ACTION: {
+    const deregister = registerSerialOperationHandler((operation) => {
+      switch (operation.name) {
+        case SHOW_SEARCH_SIDEBAR_OPERATION: {
           showSidebar(sidebar, dispatch);
           return true;
         }
-        case EXECUTE_SEARCH_ACTION: {
+        case EXECUTE_SEARCH_OPERATION: {
           showSidebar(sidebar, dispatch);
           updateState((state) => ({
             ...state,
-            searchQuery: actionObject.value,
+            searchQuery: operation.value,
           }));
           return true;
         }
@@ -43,7 +43,7 @@ export function SearchNotesActionHandler({
     return () => {
       deregister();
     };
-  }, [dispatch, sidebar, updateState, registerActionHandler]);
+  }, [dispatch, sidebar, updateState, registerSerialOperationHandler]);
   return null;
 }
 

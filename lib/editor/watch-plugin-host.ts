@@ -1,9 +1,9 @@
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 
 import type {
-  ActionNameType,
   EditorPluginMetadata,
   EditorWatchPluginState,
+  SerialOperationNameType,
 } from '@bangle.io/shared-types';
 import {
   hasPluginStateChanged,
@@ -11,31 +11,33 @@ import {
   safeRequestIdleCallback,
 } from '@bangle.io/utils';
 
-import { EDITOR_WATCH_PLUGIN_HOST_ACTION_WAIT_TIME } from './config';
+import { EDITOR_WATCH_PLUGIN_HOST_WAIT_TIME } from './config';
 
 /**
  * Connects the rest of the app by monitor provided plugins state changes
- * and dispatching action when that happens.
+ * and dispatching operation when that happens.
  *
- * Does not guarantee an action dispatch for every single plugin state.
- * Consecutive state updates can be batched resulting in a single action dispatch.
+ * Does not guarantee an operation dispatch for every single plugin state.
+ * Consecutive state updates can be batched resulting in a single operation dispatch.
  */
 export function watchPluginHost(
   editorPluginMetadata: EditorPluginMetadata,
   watchPluginStates: EditorWatchPluginState[],
 ) {
-  const key = new PluginKey<Set<ActionNameType>>('editor_watchPluginHost');
+  const key = new PluginKey<Set<SerialOperationNameType>>(
+    'editor_watchPluginHost',
+  );
   return new Plugin({
     key,
     state: {
       init() {
-        return new Set<ActionNameType>();
+        return new Set<SerialOperationNameType>();
       },
       apply(tr, old, oldState, newState) {
         // We only care about plugin state
-        for (const { pluginKey, action } of watchPluginStates) {
+        for (const { pluginKey, operation } of watchPluginStates) {
           if (hasPluginStateChanged(pluginKey, newState, oldState)) {
-            old.add(action);
+            old.add(operation);
           }
         }
 
@@ -63,11 +65,11 @@ export function watchPluginHost(
             () => {
               const pluginState = key.getState(state);
               if (pluginState && pluginState?.size > 0) {
-                pluginState.forEach((action) => {
+                pluginState.forEach((operation) => {
                   // Avoid sending any thing related to editor instance
                   // which can cause memory leak, only send primitives
-                  editorPluginMetadata.dispatchAction({
-                    name: action,
+                  editorPluginMetadata.dispatchSerialOperation({
+                    name: operation,
                     value: {
                       editorId: editorPluginMetadata.editorId,
                     },
@@ -76,7 +78,7 @@ export function watchPluginHost(
                 pluginState.clear();
               }
             },
-            { timeout: EDITOR_WATCH_PLUGIN_HOST_ACTION_WAIT_TIME },
+            { timeout: EDITOR_WATCH_PLUGIN_HOST_WAIT_TIME },
           );
         },
       };

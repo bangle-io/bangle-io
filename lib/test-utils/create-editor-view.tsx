@@ -1,6 +1,7 @@
 import { BangleEditor, BangleEditorState } from '@bangle.dev/core';
 import { valuePlugin } from '@bangle.dev/utils';
 
+import { initialBangleStore } from '@bangle.io/app-state-context';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,
@@ -44,7 +45,8 @@ export function createEditorFromMd(
           wsPath: 'test:my-test.md',
           editorDisplayType: EditorDisplayType.Page,
           editorId: 0,
-          dispatchAction: () => {},
+          bangleStore: initialBangleStore,
+          dispatchSerialOperation: () => {},
           ...pluginMetadata,
         }),
         ...registry.getPlugins(),

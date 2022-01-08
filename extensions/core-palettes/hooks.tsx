@@ -13,14 +13,14 @@ export function useRecencyWatcher(
   uniqueStoreId,
   { maxEntries = MAX_ENTRIES } = {},
 ) {
-  const [actionHistory, updateActionHistory] = useLocalStorage(
+  const [operationHistory, updateOperationHistory] = useLocalStorage(
     uniqueStoreId,
     {},
   );
 
   const updateRecency = useCallback(
     (uid) => {
-      updateActionHistory((obj) => {
+      updateOperationHistory((obj) => {
         const entries = Object.entries(obj || {}).sort((a, b) => {
           if (typeof a[1] === 'number' && typeof b[1] === 'number') {
             return b[1] - a[1];
@@ -33,14 +33,14 @@ export function useRecencyWatcher(
         return newObj;
       });
     },
-    [updateActionHistory, maxEntries],
+    [updateOperationHistory, maxEntries],
   );
 
   const injectRecency = useCallback(
     (items) => {
       const newItems = items.sort((a, b) => {
-        const aRank = actionHistory[a.uid];
-        const bRank = actionHistory[b.uid];
+        const aRank = operationHistory[a.uid];
+        const bRank = operationHistory[b.uid];
         if (aRank && bRank) {
           return bRank - aRank;
         }
@@ -59,10 +59,10 @@ export function useRecencyWatcher(
 
       // check if top one is recently used, if it is
       // add some juicy UI hints
-      if (newItems[0] && actionHistory[newItems[0].uid]) {
+      if (newItems[0] && operationHistory[newItems[0].uid]) {
         newItems[0].rightNode = 'Recent';
         const firstNotRecent = newItems.find(
-          (a) => actionHistory[a.uid] == null,
+          (a) => operationHistory[a.uid] == null,
         );
         if (firstNotRecent) {
           firstNotRecent.showDividerAbove = true;
@@ -71,7 +71,7 @@ export function useRecencyWatcher(
 
       return newItems;
     },
-    [actionHistory],
+    [operationHistory],
   );
 
   return {

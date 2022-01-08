@@ -24,7 +24,7 @@ jest.mock('react-dom', () => {
   };
 });
 
-const actionKeybindings = {
+const operationKeybindings = {
   [CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE]: 'Ctrl-P',
 };
 
@@ -38,7 +38,7 @@ test('renders correctly', () => {
   let result = render(
     <div>
       <ActivitybarOptionsDropdown
-        actionKeybindings={actionKeybindings}
+        operationKeybindings={operationKeybindings}
         widescreen={true}
       />
     </div>,
@@ -51,7 +51,7 @@ test('clicking the button shows dropdown', async () => {
   let result = render(
     <div>
       <ActivitybarOptionsDropdown
-        actionKeybindings={actionKeybindings}
+        operationKeybindings={operationKeybindings}
         widescreen={true}
       />
     </div>,
@@ -86,7 +86,7 @@ test('clicking items in dropdown dispatches event', async () => {
   let result = render(
     <div>
       <ActivitybarOptionsDropdown
-        actionKeybindings={actionKeybindings}
+        operationKeybindings={operationKeybindings}
         widescreen={true}
       ></ActivitybarOptionsDropdown>
     </div>,

@@ -9,7 +9,7 @@ import {
 import { inlineNodeParser } from '@bangle.dev/markdown';
 import { keymap } from '@bangle.dev/pm';
 
-import { useActionContext } from '@bangle.io/action-context';
+import { useSerialOperationContext } from '@bangle.io/action-context';
 import { RenderReactNodeView } from '@bangle.io/extension-registry';
 import {
   inlinePalette,
@@ -193,14 +193,14 @@ export const renderReactNodeView: RenderReactNodeView = {
 };
 
 function TagComponent({ tagValue }) {
-  const { dispatchAction } = useActionContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
 
   const onClick = useCallback(() => {
-    dispatchAction({
-      name: 'action::bangle-io-search-notes:execute-search',
+    dispatchSerialOperation({
+      name: 'operation::bangle-io-search-notes:execute-search',
       value: `tag:${tagValue}`,
     });
-  }, [tagValue, dispatchAction]);
+  }, [tagValue, dispatchSerialOperation]);
 
   return (
     <span className="inline-note-tag" onClick={onClick}>

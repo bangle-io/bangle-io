@@ -15,7 +15,7 @@ import {
 } from '@bangle.dev/react';
 import { valuePlugin } from '@bangle.dev/utils';
 
-import { useActionContext } from '@bangle.io/action-context';
+import { useSerialOperationContext } from '@bangle.io/action-context';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,
@@ -31,7 +31,7 @@ import {
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
 import type {
-  DispatchActionType,
+  DispatchSerialOperationType,
   EditorPluginMetadata,
 } from '@bangle.io/shared-types';
 import { cx } from '@bangle.io/utils';
@@ -62,7 +62,7 @@ function EditorInner({
   editorDisplayType = EditorDisplayType.Page,
 }: EditorProps) {
   const extensionRegistry = useExtensionRegistryContext();
-  const { dispatchAction } = useActionContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
   const { bangleStore } = useEditorManagerContext();
   // Even though the collab extension will reset the content to its convenience
   // preloading the content will give us the benefit of static height, which comes
@@ -140,7 +140,7 @@ function EditorInner({
   return initialValue ? (
     <EditorInner2
       initialSelection={initialSelection}
-      dispatchAction={dispatchAction}
+      dispatchSerialOperation={dispatchSerialOperation}
       className={className}
       editorId={editorId}
       extensionRegistry={extensionRegistry}
@@ -148,13 +148,14 @@ function EditorInner({
       wsPath={wsPath}
       onEditorReady={onEditorReady}
       editorDisplayType={editorDisplayType}
+      bangleStore={bangleStore}
     />
   ) : null;
 }
 
 function EditorInner2({
   className,
-  dispatchAction,
+  dispatchSerialOperation,
   editorDisplayType,
   editorId,
   extensionRegistry,
@@ -162,9 +163,10 @@ function EditorInner2({
   onEditorReady,
   initialSelection,
   wsPath,
+  bangleStore,
 }: {
   className?: string;
-  dispatchAction: DispatchActionType;
+  dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
   editorId?: number;
   extensionRegistry: ExtensionRegistry;
@@ -172,15 +174,17 @@ function EditorInner2({
   initialSelection: Selection | undefined;
   onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
+  bangleStore: ReturnType<typeof useEditorManagerContext>['bangleStore'];
 }) {
   const editorState = useGetEditorState({
-    dispatchAction,
+    dispatchSerialOperation,
     editorDisplayType,
     editorId,
     extensionRegistry,
     initialSelection,
     initialValue,
     wsPath,
+    bangleStore,
   });
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
@@ -218,30 +222,33 @@ function EditorInner2({
 }
 
 export function useGetEditorState({
-  dispatchAction,
+  dispatchSerialOperation,
   editorDisplayType,
   editorId,
   extensionRegistry,
   initialSelection,
   initialValue,
   wsPath,
+  bangleStore,
 }: {
-  dispatchAction: DispatchActionType;
+  dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
   editorId?: number;
   extensionRegistry: ExtensionRegistry;
   initialSelection: Selection | undefined;
   initialValue: any;
   wsPath: string;
+  bangleStore: ReturnType<typeof useEditorManagerContext>['bangleStore'];
 }) {
   const pluginMetadata: EditorPluginMetadata = useMemo(
     () => ({
       wsPath,
       editorId,
       editorDisplayType,
-      dispatchAction,
+      dispatchSerialOperation,
+      bangleStore,
     }),
-    [editorId, wsPath, dispatchAction, editorDisplayType],
+    [editorId, wsPath, dispatchSerialOperation, bangleStore, editorDisplayType],
   );
 
   const plugins = useCallback(() => {
@@ -251,7 +258,7 @@ export function useGetEditorState({
       ...extensionRegistry.getPlugins(),
 
       // Needs to be at bottom so that it can dispatch
-      // actions for any plugin state updates before it
+      // operations for any plugin state updates before it
       watchPluginHost(
         pluginMetadata,
         extensionRegistry.getEditorWatchPluginStates(),

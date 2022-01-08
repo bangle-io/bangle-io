@@ -4,7 +4,7 @@ import { OverlayProvider } from '@react-aria/overlays';
 import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
-import { ActionContextProvider } from '@bangle.io/action-context';
+import { SerialOperationContextProvider } from '@bangle.io/action-context';
 import { initializeBangleStore } from '@bangle.io/bangle-store';
 import { EditorManager } from '@bangle.io/editor-manager-context';
 import {
@@ -125,9 +125,9 @@ export function Entry() {
                       <WatchWorkspace />
                       <WatchUI />
                       <EditorManager>
-                        <ActionContextProvider>
+                        <SerialOperationContextProvider>
                           <AppContainer />
-                        </ActionContextProvider>
+                        </SerialOperationContextProvider>
                       </EditorManager>
                     </WorkspaceContextProvider>
                   </ExtensionStateContextProvider>

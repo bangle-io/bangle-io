@@ -8,12 +8,12 @@ import {
   Extension,
   ExtensionRegistry,
   ExtensionRegistryContextProvider,
-  RegisterActionHandlerType,
+  RegisterSerialOperationHandlerType,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
 
-import { useActionContext } from '../ActionContext';
-import { ActionContextProvider } from '../ActionContextProvider';
+import { useSerialOperationContext } from '../SerialOperationContext';
+import { SerialOperationContextProvider } from '../SerialOperationContextProvider';
 
 jest.mock('@bangle.io/app-state-context', () => {
   const obj = jest.requireActual('@bangle.io/app-state-context');
@@ -28,16 +28,16 @@ function ApplicationComponents() {
   return <>{extensionRegistry.renderApplicationComponents()}</>;
 }
 
-function TestActionHandler({
-  registerActionHandler,
+function TestHandler({
+  registerSerialOperationHandler,
 }: {
-  registerActionHandler: RegisterActionHandlerType;
+  registerSerialOperationHandler: RegisterSerialOperationHandlerType;
 }) {
   const [sidebarCounter, updateSidebar] = useState(0);
   useEffect(() => {
-    const deregister = registerActionHandler((actionObject) => {
-      switch (actionObject.name) {
-        case 'action::bangle-io-core:show-search-sidebar': {
+    const deregister = registerSerialOperationHandler((operation) => {
+      switch (operation.name) {
+        case 'operation::bangle-io-core:show-search-sidebar': {
           updateSidebar((c) => c + 1);
           return true;
         }
@@ -49,7 +49,7 @@ function TestActionHandler({
     return () => {
       deregister();
     };
-  }, [registerActionHandler]);
+  }, [registerSerialOperationHandler]);
 
   return <span>{`result-${sidebarCounter}`}</span>;
 }
@@ -68,14 +68,14 @@ test('works', async () => {
       Extension.create({
         name: 'bangle-io-core',
         application: {
-          ReactComponent: TestActionHandler,
-          actions: [
+          ReactComponent: TestHandler,
+          operations: [
             {
-              name: 'action::bangle-io-core:show-search-sidebar',
+              name: 'operation::bangle-io-core:show-search-sidebar',
               title: 'show title bar',
             },
             {
-              name: 'action::bangle-io-core:show-search-sidebar2',
+              name: 'operation::bangle-io-core:show-search-sidebar2',
               title: 'show title bar',
             },
           ],
@@ -92,21 +92,23 @@ test('works', async () => {
   }));
 
   let result,
-    dispatchAction: ReturnType<typeof useActionContext>['dispatchAction'];
+    dispatchSOp: ReturnType<
+      typeof useSerialOperationContext
+    >['dispatchSerialOperation'];
 
-  function DispatchAction() {
-    let obj = useActionContext();
-    dispatchAction = obj.dispatchAction;
+  function DispatchSOp() {
+    let obj = useSerialOperationContext();
+    dispatchSOp = obj.dispatchSerialOperation;
     return null;
   }
 
   act(() => {
     result = render(
       <ExtensionRegistryContextProvider>
-        <ActionContextProvider>
-          <DispatchAction />
+        <SerialOperationContextProvider>
+          <DispatchSOp />
           <ApplicationComponents />
-        </ActionContextProvider>
+        </SerialOperationContextProvider>
       </ExtensionRegistryContextProvider>,
     );
   });
@@ -114,13 +116,13 @@ test('works', async () => {
   expect(result.container.innerHTML.includes('result-0')).toBe(true);
 
   act(() => {
-    dispatchAction({ name: 'action::bangle-io-core:show-search-sidebar' });
+    dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar' });
   });
 
   expect(result.container.innerHTML.includes('result-1')).toBe(true);
 
   act(() => {
-    dispatchAction({ name: 'action::bangle-io-core:show-search-sidebar2' });
+    dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar2' });
   });
 
   expect(result.container.innerHTML.includes('result-1')).toBe(true);

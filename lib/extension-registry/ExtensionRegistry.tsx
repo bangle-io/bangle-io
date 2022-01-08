@@ -6,11 +6,11 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 
 import { Slice } from '@bangle.io/create-store';
 import type {
-  ActionDefinitionType,
-  ActionHandler,
-  ActionKeybindingMapping,
-  ActionNameType,
   EditorWatchPluginState,
+  SerialOperationDefinitionType,
+  SerialOperationHandler,
+  SerialOperationKeybindingMapping,
+  SerialOperationNameType,
 } from '@bangle.io/shared-types';
 
 import { ApplicationConfig, EditorConfig, Extension } from './Extension';
@@ -36,10 +36,10 @@ export class ExtensionRegistry {
     EditorConfig['renderReactNodeView'],
     undefined
   >;
-  private actionHandlers: Set<ActionHandler>;
-  private registeredActions: ActionDefinitionType[];
+  private serialOperationHandlers: Set<SerialOperationHandler>;
+  private registeredSerialOperations: SerialOperationDefinitionType[];
   private editorConfig: EditorConfig[];
-  private actionKeybindingMapping: ActionKeybindingMapping;
+  private operationKeybindingMapping: SerialOperationKeybindingMapping;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
   private slices: Slice<any, any>[];
 
@@ -83,12 +83,15 @@ export class ExtensionRegistry {
 
     const applicationConfig = extensions.map((e) => e.application);
 
-    this.actionHandlers = new Set();
+    this.serialOperationHandlers = new Set();
     this.editorWatchPluginStates = filterFlatMap(
       this.editorConfig,
       'watchPluginStates',
     );
-    this.registeredActions = filterFlatMap(applicationConfig, 'actions');
+    this.registeredSerialOperations = filterFlatMap(
+      applicationConfig,
+      'operations',
+    );
     this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
     this.noteSidebarWidgets = filterFlatMap(
       applicationConfig,
@@ -97,7 +100,8 @@ export class ExtensionRegistry {
 
     this.slices = filterFlatMap(applicationConfig, 'slices');
 
-    this.actionKeybindingMapping = this._getActionKeybindingMapping();
+    this.operationKeybindingMapping =
+      this._getSerialOperationKeybindingMapping();
   }
   private validate() {
     if (
@@ -108,12 +112,12 @@ export class ExtensionRegistry {
     }
   }
 
-  private _getActionKeybindingMapping(): ActionKeybindingMapping {
-    const actions = this.getRegisteredActions()
+  private _getSerialOperationKeybindingMapping(): SerialOperationKeybindingMapping {
+    const operations = this.getRegisteredOperations()
       .filter((r) => typeof r.keybinding === 'string')
-      .map((r): [ActionNameType, string] => [r.name, r.keybinding!]);
+      .map((r): [SerialOperationNameType, string] => [r.name, r.keybinding!]);
 
-    return Object.fromEntries(actions);
+    return Object.fromEntries(operations);
   }
 
   renderReactNodeViews({
@@ -141,8 +145,8 @@ export class ExtensionRegistry {
     return this.noteSidebarWidgets;
   }
 
-  getActionKeybindingMapping() {
-    return this.actionKeybindingMapping;
+  getSerialOperationKeybindingMapping() {
+    return this.operationKeybindingMapping;
   }
 
   getEditorWatchPluginStates(): EditorWatchPluginState[] {
@@ -166,16 +170,19 @@ export class ExtensionRegistry {
     return result;
   };
 
-  getRegisteredActions(): Readonly<ActionDefinitionType[]> {
-    return this.registeredActions;
+  getRegisteredOperations(): Readonly<SerialOperationDefinitionType[]> {
+    return this.registeredSerialOperations;
   }
 
-  getRegisteredActionKeybinding(name: ActionNameType): string | undefined {
-    return this.registeredActions.find((a) => a.name === name)?.keybinding;
+  getRegisteredOperationKeybinding(
+    name: SerialOperationNameType,
+  ): string | undefined {
+    return this.registeredSerialOperations.find((a) => a.name === name)
+      ?.keybinding;
   }
 
-  getActionHandlers() {
-    return this.actionHandlers;
+  getSerialOperationHandlers() {
+    return this.serialOperationHandlers;
   }
 
   renderApplicationComponents = () => {
@@ -186,7 +193,9 @@ export class ExtensionRegistry {
           return (
             <ReactComponent
               key={extension.name}
-              registerActionHandler={this.registerActionHandler}
+              registerSerialOperationHandler={
+                this.registerSerialOperationHandler
+              }
             />
           );
         }
@@ -197,10 +206,10 @@ export class ExtensionRegistry {
     return result;
   };
 
-  registerActionHandler = (cb: ActionHandler) => {
-    this.actionHandlers.add(cb);
+  registerSerialOperationHandler = (cb: SerialOperationHandler) => {
+    this.serialOperationHandlers.add(cb);
     return () => {
-      this.actionHandlers.delete(cb);
+      this.serialOperationHandlers.delete(cb);
     };
   };
 }

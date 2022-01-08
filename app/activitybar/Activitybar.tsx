@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { SidebarType } from '@bangle.io/extension-registry';
-import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
+import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
@@ -17,12 +17,12 @@ export function Activitybar({
   wsName,
   sidebars,
   primaryWsPath,
-  actionKeybindings,
+  operationKeybindings,
 }: {
   wsName?: string;
   primaryWsPath?: string;
   sidebars: SidebarType[];
-  actionKeybindings: ActionKeybindingMapping;
+  operationKeybindings: SerialOperationKeybindingMapping;
 }) {
   const { changelogHasUpdates, sidebar, dispatch, widescreen } =
     useUIManagerContext();
@@ -96,7 +96,7 @@ export function Activitybar({
         }}
       />
       <ActivitybarOptionsDropdown
-        actionKeybindings={actionKeybindings}
+        operationKeybindings={operationKeybindings}
         widescreen={widescreen}
       />
     </div>

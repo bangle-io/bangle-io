@@ -2792,6 +2792,7 @@ __metadata:
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/markdown": "workspace:*"
@@ -5872,10 +5873,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bangle-io-help@npm:^1.10.0":
-  version: 1.10.0
-  resolution: "bangle-io-help@npm:1.10.0"
-  checksum: e8bb812f8b9357284e960fc5ee3171fb6f3ecd633d233a54e3201e66f1ff6568d321296e58add048aa197fa8c61eca0458fa672f07dc727ca0978ce0dea0b657
+"bangle-io-help@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "bangle-io-help@npm:1.11.0"
+  checksum: 0eb190515b189bda48ac464609ed39add68533f2667a9e3cf156450d91e273c423d5b41b9e04ac5b4f537c875c53f53358e4ea1e88e8926f0b4bff7f513f36e5
   languageName: node
   linkType: hard
 
@@ -5909,7 +5910,7 @@ __metadata:
     autoprefixer: ^10.3.7
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.3
-    bangle-io-help: ^1.10.0
+    bangle-io-help: ^1.11.0
     case-sensitive-paths-webpack-plugin: ^2.4.0
     copy-webpack-plugin: ^8.1.1
     css-loader: ^5.2.7

@@ -5,6 +5,7 @@ import React from 'react';
 import { BangleEditor } from '@bangle.dev/core';
 import { Node, Selection } from '@bangle.dev/pm';
 
+import { initialBangleStore } from '@bangle.io/app-state-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import {
   getInitialSelection,
@@ -157,7 +158,7 @@ test('calls getInitialSelection correctly', async () => {
   );
 });
 
-test('mounting unmounting calls the correct action', async () => {
+test('mounting unmounting calls setEditorUnmounted', async () => {
   act(() => {
     result = render(
       <div>
@@ -263,7 +264,8 @@ describe('useGetEditorState', () => {
         initialValue: '',
         wsPath: 'something:one.md',
         editorDisplayType: EditorDisplayType.Page,
-        dispatchAction: jest.fn(),
+        dispatchSerialOperation: jest.fn(),
+        bangleStore: initialBangleStore,
         initialSelection: undefined,
       }),
     );
@@ -298,7 +300,8 @@ describe('useGetEditorState', () => {
         initialValue: pmNode,
         wsPath: 'something:one.md',
         editorDisplayType: EditorDisplayType.Page,
-        dispatchAction: jest.fn(),
+        dispatchSerialOperation: jest.fn(),
+        bangleStore: initialBangleStore,
         initialSelection: Selection.fromJSON(pmNode, {
           anchor: 5,
           head: 5,

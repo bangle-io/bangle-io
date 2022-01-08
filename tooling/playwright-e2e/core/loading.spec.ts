@@ -46,7 +46,7 @@ test.describe.parallel('loading', () => {
     expect(await locator.textContent()).toMatch('NavigateEnter');
   });
 
-  test('shows action palette', async ({ page }) => {
+  test('shows operation palette', async ({ page }) => {
     await page.keyboard.down(ctrlKey);
     await page.keyboard.down('Shift');
     await page.keyboard.press('P');
@@ -62,7 +62,7 @@ test.describe.parallel('loading', () => {
         await page.$$eval('.universal-palette-item', (nodes) =>
           nodes.map((n) => n.getAttribute('data-id')),
         )
-      ).includes('action::ui-context/TOGGLE_THEME'),
+      ).includes('operation::bangle-io-core-operations:TOGGLE_UI_THEME'),
     ).toBe(true);
   });
 

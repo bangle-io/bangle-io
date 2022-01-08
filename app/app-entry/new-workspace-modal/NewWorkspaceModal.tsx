@@ -2,14 +2,14 @@ import './NewWorkspaceModal.css';
 
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import { useSerialOperationContext } from '@bangle.io/action-context';
 import {
   DirTypeSystemHandle,
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
 import {
-  CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
-  CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
+  CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+  CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
@@ -95,7 +95,7 @@ export function NewWorkspaceModalContainer({
   const { workspaces } = useWorkspaces();
 
   const { dispatch } = useUIManagerContext();
-  const { dispatchAction } = useActionContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
 
   const isDropdownOpenRef = useRef(false);
 
@@ -140,16 +140,16 @@ export function NewWorkspaceModalContainer({
 
     switch (modalState.workspace.type) {
       case FILE_SYSTEM: {
-        dispatchAction({
-          name: CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
+        dispatchSerialOperation({
+          name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
           value: { rootDirHandle: modalState.workspace.rootDir },
         });
         break;
       }
 
       case BROWSER: {
-        dispatchAction({
-          name: CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
+        dispatchSerialOperation({
+          name: CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
           value: { wsName: modalState.workspace.wsName },
         });
         break;
@@ -159,7 +159,7 @@ export function NewWorkspaceModalContainer({
     dispatch({
       name: 'UI/DISMISS_MODAL',
     });
-  }, [dispatchAction, modalState, dispatch]);
+  }, [dispatchSerialOperation, modalState, dispatch]);
 
   const onDismiss = useCallback(() => {
     if (!isDropdownOpenRef.current) {

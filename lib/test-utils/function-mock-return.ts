@@ -22,8 +22,9 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 export const getEditorPluginMetadataReturn: ReturnType<
   typeof getEditorPluginMetadata
 > = {
-  dispatchAction: jest.fn(),
+  dispatchSerialOperation: jest.fn(),
   editorDisplayType: EditorDisplayType.Page,
+  bangleStore: initialBangleStore,
   wsPath: 'test-workspace:my-test-note.md',
 };
 

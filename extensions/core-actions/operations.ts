@@ -108,7 +108,7 @@ export function restoreWorkspaceFromBackup() {
               value: {
                 severity: 'error',
                 uid: 'restoreWorkspaceFromBackup-workspace-has-things',
-                content: 'This action requires an empty workspace.',
+                content: 'This operation requires an empty workspace.',
               },
             });
             return;

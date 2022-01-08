@@ -1,13 +1,13 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { useActionHandler } from '@bangle.io/action-context';
+import { useSerialOperationHandler } from '@bangle.io/action-context';
 import {
   getEditor,
   getEditorState,
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
-import type { ActionHandler } from '@bangle.io/shared-types';
+import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
 import {
   getUseEditorManagerContextReturn,
@@ -17,7 +17,7 @@ import { getEditorIntersectionObserverPluginState } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import noteOutlineExtension from '..';
-import { WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION } from '../config';
+import { WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP } from '../config';
 import { NoteOutline } from '../NoteOutline';
 
 jest.mock('@bangle.io/workspace-context');
@@ -48,9 +48,10 @@ let useEditorManagerContextMock =
     typeof useEditorManagerContext
   >;
 
-let useActionHandlerMock = useActionHandler as jest.MockedFunction<
-  typeof useActionHandler
->;
+let useSerialOperationHandlerMock =
+  useSerialOperationHandler as jest.MockedFunction<
+    typeof useSerialOperationHandler
+  >;
 
 let getEditorIntersectionObserverPluginStateMock =
   getEditorIntersectionObserverPluginState as jest.MockedFunction<
@@ -69,7 +70,7 @@ beforeEach(() => {
     };
   });
 
-  useActionHandlerMock.mockImplementation((cb) => {});
+  useSerialOperationHandlerMock.mockImplementation((cb) => {});
 
   getEditorIntersectionObserverPluginStateMock.mockImplementation(() => {
     return {
@@ -205,19 +206,19 @@ para 2
     expect(renderResult.container.innerHTML).toContain('No headings found');
   });
 
-  describe('actions', () => {
-    let dispatchActionCb: ActionHandler | undefined;
+  describe('operations', () => {
+    let dispatchSOpCb: DispatchSerialOperationType | undefined;
 
     beforeEach(() => {
-      dispatchActionCb = undefined;
+      dispatchSOpCb = undefined;
       (getEditorState as any).mockImplementation(() => () => editor.view.state);
       (getEditor as any).mockImplementation(() => () => editor);
-      useActionHandlerMock.mockImplementation((cb) => {
-        dispatchActionCb = cb;
+      useSerialOperationHandlerMock.mockImplementation((cb) => {
+        dispatchSOpCb = cb;
       });
     });
 
-    test('updates on action handler dispatch', () => {
+    test('updates on operation handler dispatch', () => {
       useEditorManagerContextMock.mockImplementation(() => {
         return {
           ...getUseEditorManagerContextReturn,
@@ -233,8 +234,8 @@ para 2
       expect(getEditorState).toBeCalledTimes(1);
 
       act(() => {
-        dispatchActionCb?.({
-          name: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION,
+        dispatchSOpCb?.({
+          name: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
           value: {
             editorId: 0,
           },
@@ -259,8 +260,8 @@ para 2
       expect(getEditorState).toBeCalledTimes(1);
 
       act(() => {
-        dispatchActionCb?.({
-          name: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION,
+        dispatchSOpCb?.({
+          name: WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
           value: {
             editorId: 1,
           },
@@ -285,8 +286,8 @@ para 2
       expect(getEditorState).toBeCalledTimes(1);
 
       act(() => {
-        dispatchActionCb?.({
-          name: 'action::random',
+        dispatchSOpCb?.({
+          name: 'operation::random',
           value: {
             editorId: 1,
           },

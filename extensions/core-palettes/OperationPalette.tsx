@@ -1,6 +1,6 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import { useSerialOperationContext } from '@bangle.io/action-context';
 import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { TerminalIcon, UniversalPalette } from '@bangle.io/ui-components';
@@ -15,25 +15,25 @@ const storageKey = 'ActionPaletteUIComponent/1';
 const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
   React.forwardRef(({ query, onSelect, getActivePaletteItem }, ref) => {
     const extensionRegistry = useExtensionRegistryContext();
-    const { dispatchAction } = useActionContext();
+    const { dispatchSerialOperation } = useSerialOperationContext();
     const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
     const items = useMemo(() => {
-      let actions = injectRecency(
+      let operations = injectRecency(
         extensionRegistry
-          .getRegisteredActions()
+          .getRegisteredOperations()
           .filter((obj) => !obj.hidden)
-          .map((actionDefinition) => {
+          .map((operationDefinition) => {
             return {
-              uid: actionDefinition.name,
-              title: actionDefinition.title || actionDefinition.name,
-              data: actionDefinition,
+              uid: operationDefinition.name,
+              title: operationDefinition.title || operationDefinition.name,
+              data: operationDefinition,
             };
           })
           .filter((obj) => strMatch(obj.title, query)),
       );
 
-      return actions.slice(0, 50);
+      return operations.slice(0, 50);
     }, [extensionRegistry, injectRecency, query]);
 
     const onExecuteItem = useCallback(
@@ -41,11 +41,11 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
         const uid = getUid(items);
         const item = items.find((item) => item.uid === uid);
         if (item) {
-          dispatchAction({ name: item.data.name });
+          dispatchSerialOperation({ name: item.data.name });
           updateRecency(uid);
         }
       },
-      [dispatchAction, updateRecency, items],
+      [dispatchSerialOperation, updateRecency, items],
     );
 
     // Expose onExecuteItem for the parent to call it
@@ -82,18 +82,18 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
             <kbd className="font-normal">↑↓</kbd> Navigate
           </UniversalPalette.PaletteInfoItem>
           <UniversalPalette.PaletteInfoItem>
-            <kbd className="font-normal">Enter</kbd> Select a Palette
+            <kbd className="font-normal">Enter</kbd> Execute
           </UniversalPalette.PaletteInfoItem>
         </UniversalPalette.PaletteInfo>
       </>
     );
   });
 
-export const actionPalette: ExtensionPaletteType = {
-  type: CorePalette.Action,
+export const operationPalette: ExtensionPaletteType = {
+  type: CorePalette.Operation,
   icon: <TerminalIcon />,
   identifierPrefix,
-  placeholder: 'Actions',
+  placeholder: 'Operations',
   parseRawQuery: (rawQuery) => {
     if (identifierPrefix && rawQuery.startsWith(identifierPrefix)) {
       return rawQuery.slice(1);

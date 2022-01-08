@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect } from 'react';
 
-import { useActionHandler } from '@bangle.io/action-context';
+import { useSerialOperationHandler } from '@bangle.io/action-context';
 import { RELEASE_ID } from '@bangle.io/config';
 import {
-  CORE_ACTIONS_SERVICE_WORKER_DISMISS_UPDATE,
-  CORE_ACTIONS_SERVICE_WORKER_RELOAD,
+  CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
+  CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useLocalStorage } from '@bangle.io/utils';
@@ -37,9 +37,9 @@ export function SWReloadPrompt() {
     }
   }, [shownOfflineReady, offlineReady, dispatch, updateShownOfflineReady]);
 
-  useActionHandler(
-    (action) => {
-      if (action.name === CORE_ACTIONS_SERVICE_WORKER_RELOAD) {
+  useSerialOperationHandler(
+    (sOperation) => {
+      if (sOperation.name === CORE_OPERATIONS_SERVICE_WORKER_RELOAD) {
         dispatch({
           name: 'UI/DISMISS_NOTIFICATION',
           value: {
@@ -50,7 +50,7 @@ export function SWReloadPrompt() {
 
         return true;
       }
-      if (action.name === CORE_ACTIONS_SERVICE_WORKER_DISMISS_UPDATE) {
+      if (sOperation.name === CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE) {
         dispatch({
           name: 'UI/DISMISS_NOTIFICATION',
           value: {
@@ -78,12 +78,12 @@ export function SWReloadPrompt() {
             {
               title: 'Update',
               hint: `Will reload the page with the newer version`,
-              action: CORE_ACTIONS_SERVICE_WORKER_RELOAD,
+              operation: CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
             },
             {
               title: 'Later',
               hint: `Will reload the page with the newer version`,
-              action: CORE_ACTIONS_SERVICE_WORKER_RELOAD,
+              operation: CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
             },
           ],
         },

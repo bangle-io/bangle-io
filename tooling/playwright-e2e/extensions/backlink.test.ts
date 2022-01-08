@@ -6,7 +6,7 @@ import {
   createWorkspace,
   getEditorLocator,
   longSleep,
-  runAction,
+  runOperation,
   SELECTOR_TIMEOUT,
   sleep,
   waitForEditorTextToContain,
@@ -113,9 +113,9 @@ test.describe.parallel('backlink workflow', () => {
     // make sure we are on note-1's page
     expect(await page.url()).toContain('note-1');
 
-    await runAction(
+    await runOperation(
       page,
-      'action::bangle-io-core-actions:NOTE_TOGGLE_SIDEBAR_ACTION',
+      'operation::bangle-io-core-operations:NOTE_TOGGLE_SIDEBAR',
     );
 
     await Promise.all([

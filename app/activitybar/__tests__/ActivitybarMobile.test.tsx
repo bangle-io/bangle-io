@@ -42,7 +42,7 @@ beforeEach(() => {
 test('renders mobile view', () => {
   let result = render(
     <div>
-      <Activitybar actionKeybindings={{}} sidebars={[]}></Activitybar>
+      <Activitybar operationKeybindings={{}} sidebars={[]}></Activitybar>
     </div>,
   );
 
@@ -53,7 +53,7 @@ test('renders primaryWsPath', () => {
   let result = render(
     <div>
       <Activitybar
-        actionKeybindings={{}}
+        operationKeybindings={{}}
         sidebars={[]}
         primaryWsPath={'my-thing:wow.md'}
       ></Activitybar>
@@ -63,14 +63,14 @@ test('renders primaryWsPath', () => {
   expect(result.container.innerHTML).toContain('wow.md');
 });
 
-test('dispatches action', () => {
+test('dispatches operation', () => {
   const dispatch = jest.fn();
   toggleNotesPaletteMock.mockImplementation(() => dispatch);
 
   let result = render(
     <div>
       <Activitybar
-        actionKeybindings={{}}
+        operationKeybindings={{}}
         sidebars={[]}
         primaryWsPath={'my-thing:wow.md'}
       />

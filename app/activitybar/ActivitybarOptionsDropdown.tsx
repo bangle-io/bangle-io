@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
-  CORE_PALETTES_TOGGLE_ACTION_PALETTE,
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
+  CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
 } from '@bangle.io/constants';
 import {
@@ -13,7 +13,7 @@ import {
   toggleNotesPalette,
   toggleWorkspacePalette,
 } from '@bangle.io/core-operations';
-import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
+import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import {
   DropdownMenu,
   MenuItem,
@@ -26,10 +26,7 @@ import {
   SettingsIcon,
   TwitterIcon,
 } from '@bangle.io/ui-components';
-import {
-  UI_CONTEXT_TOGGLE_THEME,
-  useUIManagerContext,
-} from '@bangle.io/ui-context';
+import { toggleTheme, useUIManagerContext } from '@bangle.io/ui-context';
 import { cx } from '@bangle.io/utils';
 
 import { buttonStyling } from './ActivitybarButton';
@@ -57,10 +54,10 @@ type AllKeysType =
 
 export function ActivitybarOptionsDropdown({
   widescreen,
-  actionKeybindings,
+  operationKeybindings,
 }: {
   widescreen: boolean;
-  actionKeybindings: ActionKeybindingMapping;
+  operationKeybindings: SerialOperationKeybindingMapping;
 }) {
   const store = useBangleStoreContext();
   const { dispatch: dispatchUiAction } = useUIManagerContext();
@@ -97,9 +94,7 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case ToggleThemeKey: {
-          dispatchUiAction({
-            name: UI_CONTEXT_TOGGLE_THEME,
-          });
+          toggleTheme()(store.state, store.dispatch);
           break;
         }
         case DiscordKey: {
@@ -117,7 +112,7 @@ export function ActivitybarOptionsDropdown({
         }
       }
     },
-    [dispatchUiAction, store],
+    [store],
   );
 
   return (
@@ -149,7 +144,7 @@ export function ActivitybarOptionsDropdown({
           <span>Switch workspace</span>
           <PrettyKeybinding
             rawKey={
-              actionKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] || ''
+              operationKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] || ''
             }
           />
         </MenuItem>
@@ -167,18 +162,20 @@ export function ActivitybarOptionsDropdown({
         >
           <span>Notes palette</span>
           <PrettyKeybinding
-            rawKey={actionKeybindings[CORE_PALETTES_TOGGLE_NOTES_PALETTE] || ''}
+            rawKey={
+              operationKeybindings[CORE_PALETTES_TOGGLE_NOTES_PALETTE] || ''
+            }
           />
         </MenuItem>
         <MenuItem
           key={ActionPaletteKey}
-          textValue="action palette"
-          aria-label="action palette"
+          textValue="operation palette"
+          aria-label="operation palette"
         >
-          <span>Action palette</span>
+          <span>Operation palette</span>
           <PrettyKeybinding
             rawKey={
-              actionKeybindings[CORE_PALETTES_TOGGLE_ACTION_PALETTE] || ''
+              operationKeybindings[CORE_PALETTES_TOGGLE_OPERATION_PALETTE] || ''
             }
           />
         </MenuItem>

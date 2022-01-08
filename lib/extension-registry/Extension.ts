@@ -3,12 +3,12 @@ import React from 'react';
 import type { RawSpecs } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
-import { BaseAction, Slice } from '@bangle.io/create-store';
+import { Slice } from '@bangle.io/create-store';
 import type {
-  ActionDefinitionType,
-  ActionHandler,
   EditorWatchPluginState,
   NoteSidebarWidget,
+  SerialOperationDefinitionType,
+  SerialOperationHandler,
 } from '@bangle.io/shared-types';
 
 import { EditorPluginDefinition } from './PluginType';
@@ -36,14 +36,16 @@ export interface EditorConfig {
   watchPluginStates?: EditorWatchPluginState[];
 }
 
-export type RegisterActionHandlerType = (cb: ActionHandler) => () => void;
+export type RegisterSerialOperationHandlerType = (
+  cb: SerialOperationHandler,
+) => () => void;
 export interface ApplicationConfig {
   name: string;
   ReactComponent?: React.ComponentType<{
     key: string;
-    registerActionHandler: RegisterActionHandlerType;
+    registerSerialOperationHandler: RegisterSerialOperationHandlerType;
   }>;
-  actions?: Array<ActionDefinitionType>;
+  operations?: Array<SerialOperationDefinitionType>;
   sidebars?: Array<SidebarType>;
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
   slices?: Array<Slice<any>>;
@@ -129,32 +131,34 @@ export class Extension<T = unknown> {
       );
     }
 
-    const { actions, sidebars, noteSidebarWidgets, slices } = application;
+    const { operations, sidebars, noteSidebarWidgets, slices } = application;
 
-    if (actions) {
+    if (operations) {
       if (
-        !Array.isArray(actions) ||
-        actions.some((a) => typeof a.name !== 'string')
+        !Array.isArray(operations) ||
+        operations.some((a) => typeof a.name !== 'string')
       ) {
         throw new Error(
-          'Actions must be an array of object, where each item has a name field',
+          'Operations must be an array of object, where each item has a name field',
         );
       }
 
       if (
-        // TODO for now we are housing all core actions in this extension
-        name !== 'bangle-io-core-actions' &&
-        actions.some((a) => !a.name.startsWith('action::' + name + ':'))
+        // TODO for now we are housing all core ops in this extension
+        name !== 'bangle-io-core-operations' &&
+        operations.some((a) => !a.name.startsWith('operation::' + name + ':'))
       ) {
         console.log(
-          actions.find((a) => !a.name.startsWith('action::' + name + ':')),
+          operations.find(
+            (a) => !a.name.startsWith('operation::' + name + ':'),
+          ),
         );
         throw new Error(
-          `An action must have a name with the following schema action::<extension_pkg_name:xyz. For example 'action::bangle-io-my-extension:hello-world'`,
+          `An operation must have a name with the following schema operation::<extension_pkg_name:xyz. For example 'operation::bangle-io-my-extension:hello-world'`,
         );
       }
-      if (actions.length !== new Set(actions.map((r) => r.name)).size) {
-        throw new Error('Action name must be unique');
+      if (operations.length !== new Set(operations.map((r) => r.name)).size) {
+        throw new Error('Operation name must be unique');
       }
     }
 
