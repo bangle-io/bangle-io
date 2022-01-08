@@ -46,12 +46,12 @@ export function Activitybar({
         onPress={() => {
           if (active) {
             dispatch({
-              name: 'UI/TOGGLE_SIDEBAR',
+              name: 'action::ui-context:TOGGLE_SIDEBAR',
               value: { type: r.name },
             });
           } else {
             dispatch({
-              name: 'UI/CHANGE_SIDEBAR',
+              name: 'action::ui-context:CHANGE_SIDEBAR',
               value: { type: r.name },
             });
           }
@@ -67,7 +67,7 @@ export function Activitybar({
         isActive={false}
         onPress={() => {
           dispatch({
-            name: 'UI/CHANGE_SIDEBAR',
+            name: 'action::ui-context:CHANGE_SIDEBAR',
             value: { type: null },
           });
           goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
@@ -90,7 +90,7 @@ export function Activitybar({
         hint={"What's new"}
         onPress={() => {
           dispatch({
-            name: 'UI/SHOW_MODAL',
+            name: 'action::ui-context:SHOW_MODAL',
             value: { modal: '@modal/changelog' },
           });
         }}

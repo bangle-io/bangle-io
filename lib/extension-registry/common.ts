@@ -1,4 +1,5 @@
 import { SliceKey } from '@bangle.io/create-store';
+import { assertActionType } from '@bangle.io/utils';
 
 import { ExtensionRegistry } from './ExtensionRegistry';
 
@@ -11,6 +12,8 @@ export interface ExtensionRegistryState {
   extensionRegistry: ExtensionRegistry;
 }
 
+assertActionType('extension-registry', {} as ExtensionRegistryAction);
+
 export type ExtensionRegistryAction = {
-  name: 'action::extension-registry:';
+  name: 'action::extension-registry:dummy';
 };

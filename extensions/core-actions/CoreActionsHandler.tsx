@@ -58,7 +58,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
 
         case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
           dispatch({
-            name: 'UI/TOGGLE_NOTE_SIDEBAR',
+            name: 'action::ui-context:TOGGLE_NOTE_SIDEBAR',
           });
           return true;
         }
@@ -97,12 +97,12 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
           return true;
         }
 
-        case 'operation::bangle-io-core-operations:focus-primary-editor': {
+        case 'operation::@bangle.io/core-actions:focus-primary-editor': {
           primaryEditor?.focusView();
           return true;
         }
 
-        case 'operation::bangle-io-core-operations:focus-secondary-editor': {
+        case 'operation::@bangle.io/core-actions:focus-secondary-editor': {
           secondaryEditor?.focusView();
           return true;
         }
@@ -122,7 +122,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
               })
               .catch((error) => {
                 dispatch({
-                  name: 'UI/SHOW_NOTIFICATION',
+                  name: 'action::ui-context:SHOW_NOTIFICATION',
                   value: {
                     severity: 'error',
                     uid: 'error-create-workspace-' + wsName,
@@ -151,7 +151,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
               })
               .catch((error) => {
                 dispatch({
-                  name: 'UI/SHOW_NOTIFICATION',
+                  name: 'action::ui-context:SHOW_NOTIFICATION',
                   value: {
                     severity: 'error',
                     uid: 'error-create-workspace-' + rootDirHandle?.name,
@@ -190,7 +190,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
   const onDismiss = useCallback(
     (focusEditor = true) => {
       dispatch({
-        name: 'UI/DISMISS_MODAL',
+        name: 'action::ui-context:DISMISS_MODAL',
       });
       if (focusEditor) {
         primaryEditor?.focusView();

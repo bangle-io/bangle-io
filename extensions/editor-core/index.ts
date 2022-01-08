@@ -7,7 +7,7 @@ import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
 
-const extensionName = 'bangle-io-editor-core';
+const extensionName = '@bangle.io/editor-core';
 
 const extension = Extension.create({
   name: extensionName,
@@ -21,19 +21,19 @@ const extension = Extension.create({
     ReactComponent: EditorCore,
     operations: [
       {
-        name: 'operation::bangle-io-editor-core:collapse-heading',
+        name: 'operation::@bangle.io/editor-core:collapse-heading',
         title: 'Editor: Collapse heading',
       },
       {
-        name: 'operation::bangle-io-editor-core:uncollapse-all-heading',
+        name: 'operation::@bangle.io/editor-core:uncollapse-all-heading',
         title: 'Editor: Uncollapse all headings',
       },
       {
-        name: 'operation::bangle-io-editor-core:move-list-up',
+        name: 'operation::@bangle.io/editor-core:move-list-up',
         title: 'Editor: Move list up',
       },
       {
-        name: 'operation::bangle-io-editor-core:move-list-down',
+        name: 'operation::@bangle.io/editor-core:move-list-down',
         title: 'Editor: Move list down',
       },
     ],

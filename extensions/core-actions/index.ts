@@ -69,11 +69,11 @@ const extension = Extension.create({
         title: 'Restore this workspace from a backup file',
       },
       {
-        name: 'operation::bangle-io-core-operations:focus-primary-editor',
+        name: 'operation::@bangle.io/core-actions:focus-primary-editor',
         title: 'Editor: Focus on primary editor',
       },
       {
-        name: 'operation::bangle-io-core-operations:focus-secondary-editor',
+        name: 'operation::@bangle.io/core-actions:focus-secondary-editor',
         title: 'Editor: Focus on secondary editor',
       },
     ],

@@ -8,12 +8,12 @@ export const DEBOUNCE_MAX_WAIT = 2000;
 export const CONCURRENCY = 10;
 
 export const SHOW_SEARCH_SIDEBAR_OPERATION =
-  'operation::bangle-io-search-notes:show-search-sidebar';
+  'operation::@bangle.io/search-notes:show-search-sidebar';
 
 export const EXECUTE_SEARCH_OPERATION =
-  'operation::bangle-io-search-notes:execute-search';
-export const SIDEBAR_NAME = 'sidebar::bangle-io-search-notes:search-notes';
-export const extensionName = 'bangle-io-search-notes';
+  'operation::@bangle.io/search-notes:execute-search';
+export const SIDEBAR_NAME = 'sidebar::@bangle.io/search-notes:search-notes';
+export const extensionName = '@bangle.io/search-notes';
 export interface SearchNotesExtensionState {
   searchQuery: string;
   pendingSearch: boolean;

@@ -1,6 +1,6 @@
 import { Slice } from '@bangle.io/create-store';
 import type { BangleStateOpts } from '@bangle.io/shared-types';
-import { asssertNotUndefined } from '@bangle.io/utils';
+import { assertActionType, asssertNotUndefined } from '@bangle.io/utils';
 
 import {
   ExtensionRegistryAction,
@@ -12,6 +12,8 @@ export function extensionRegistrySlice(): Slice<
   ExtensionRegistryState,
   ExtensionRegistryAction
 > {
+  assertActionType('extension-registry', {} as ExtensionRegistryAction);
+
   return new Slice({
     key: extensionRegistrySliceKey,
     state: {

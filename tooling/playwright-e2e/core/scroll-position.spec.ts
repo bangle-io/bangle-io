@@ -161,7 +161,7 @@ test.describe.parallel('scroll', () => {
 
     await runOperation(
       page,
-      'operation::bangle-io-core-operations:TOGGLE_EDITOR_SPLIT',
+      'operation::@bangle.io/core-actions:TOGGLE_EDITOR_SPLIT',
     );
 
     await getEditorLocator(page, 1, { wsPath });
@@ -184,7 +184,7 @@ test.describe.parallel('scroll', () => {
 
     await runOperation(
       page,
-      'operation::bangle-io-core-operations:TOGGLE_EDITOR_SPLIT',
+      'operation::@bangle.io/core-actions:TOGGLE_EDITOR_SPLIT',
     );
 
     await sleep();
@@ -193,7 +193,7 @@ test.describe.parallel('scroll', () => {
 
     await runOperation(
       page,
-      'operation::bangle-io-core-operations:focus-primary-editor',
+      'operation::@bangle.io/core-actions:focus-primary-editor',
     );
 
     await waitForEditorFocus(page, 0, { wsPath });

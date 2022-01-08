@@ -7,7 +7,7 @@ import { Extension } from '@bangle.io/extension-registry';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 
-const extensionName = 'bangle-io-collab-extension';
+const extensionName = '@bangle.io/collab-extension';
 
 const extension = Extension.create({
   name: extensionName,

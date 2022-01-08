@@ -27,7 +27,7 @@ export function SWReloadPrompt() {
     if (offlineReady && !shownOfflineReady) {
       updateShownOfflineReady(true);
       dispatch({
-        name: 'UI/SHOW_NOTIFICATION',
+        name: 'action::ui-context:SHOW_NOTIFICATION',
         value: {
           uid: 'offline-' + RELEASE_ID,
           severity: 'info',
@@ -41,7 +41,7 @@ export function SWReloadPrompt() {
     (sOperation) => {
       if (sOperation.name === CORE_OPERATIONS_SERVICE_WORKER_RELOAD) {
         dispatch({
-          name: 'UI/DISMISS_NOTIFICATION',
+          name: 'action::ui-context:DISMISS_NOTIFICATION',
           value: {
             uid,
           },
@@ -52,7 +52,7 @@ export function SWReloadPrompt() {
       }
       if (sOperation.name === CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE) {
         dispatch({
-          name: 'UI/DISMISS_NOTIFICATION',
+          name: 'action::ui-context:DISMISS_NOTIFICATION',
           value: {
             uid,
           },
@@ -69,7 +69,7 @@ export function SWReloadPrompt() {
   useEffect(() => {
     if (needRefresh) {
       dispatch({
-        name: 'UI/SHOW_NOTIFICATION',
+        name: 'action::ui-context:SHOW_NOTIFICATION',
         value: {
           severity: 'info',
           uid,

@@ -22,7 +22,7 @@ export function NotificationArea({}) {
           key={n.uid}
           onDismiss={() => {
             dispatch({
-              name: 'UI/DISMISS_NOTIFICATION',
+              name: 'action::ui-context:DISMISS_NOTIFICATION',
               value: {
                 uid: n.uid,
               },

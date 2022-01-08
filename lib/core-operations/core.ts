@@ -19,7 +19,7 @@ export function newNote(initialValue?: string) {
 
     if (!wsName) {
       dispatch({
-        name: 'UI/SHOW_NOTIFICATION',
+        name: 'action::ui-context:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'new-note-not-no-workspace',
@@ -31,12 +31,12 @@ export function newNote(initialValue?: string) {
 
     // To avoid overlapping
     dispatch({
-      name: 'UI/UPDATE_PALETTE',
+      name: 'action::ui-context:UPDATE_PALETTE',
       value: { type: null },
     });
 
     dispatch({
-      name: 'UI/SHOW_MODAL',
+      name: 'action::ui-context:SHOW_MODAL',
       value: {
         modal: 'new-note',
         modalValue: {
@@ -57,7 +57,7 @@ export function renameNote() {
 
     if (!primaryWsPath) {
       dispatch({
-        name: 'UI/SHOW_NOTIFICATION',
+        name: 'action::ui-context:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'rename-wsPath-not-found',
@@ -69,12 +69,12 @@ export function renameNote() {
 
     // To avoid overlapping
     dispatch({
-      name: 'UI/UPDATE_PALETTE',
+      name: 'action::ui-context:UPDATE_PALETTE',
       value: { type: null },
     });
 
     dispatch({
-      name: 'UI/SHOW_MODAL',
+      name: 'action::ui-context:SHOW_MODAL',
       value: {
         modal: 'rename-note',
       },
@@ -109,7 +109,7 @@ export function deleteActiveNote() {
 
     if (!focusedWsPath) {
       dispatch({
-        name: 'UI/SHOW_NOTIFICATION',
+        name: 'action::ui-context:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'delete-wsPath-not-found',
@@ -120,7 +120,7 @@ export function deleteActiveNote() {
     }
 
     dispatch({
-      name: 'UI/UPDATE_PALETTE',
+      name: 'action::ui-context:UPDATE_PALETTE',
       value: { type: null },
     });
 
@@ -135,7 +135,7 @@ export function deleteActiveNote() {
       deleteNote(focusedWsPath)(state, dispatch, store)
         .then((error) => {
           dispatch({
-            name: 'UI/SHOW_NOTIFICATION',
+            name: 'action::ui-context:SHOW_NOTIFICATION',
             value: {
               severity: 'success',
               uid: 'success-delete-' + focusedWsPath,
@@ -145,7 +145,7 @@ export function deleteActiveNote() {
         })
         .catch((error) => {
           dispatch({
-            name: 'UI/SHOW_NOTIFICATION',
+            name: 'action::ui-context:SHOW_NOTIFICATION',
             value: {
               severity: 'error',
               uid: 'delete-' + deleteActiveNote,
@@ -161,7 +161,7 @@ export function deleteActiveNote() {
 export function newWorkspace() {
   return (state: AppState, dispatch: UiContextDispatchType) => {
     dispatch({
-      name: 'UI/SHOW_MODAL',
+      name: 'action::ui-context:SHOW_MODAL',
       value: { modal: '@modal/new-workspace' },
     });
   };

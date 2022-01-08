@@ -45,7 +45,7 @@ const extension = Extension.create({
   application: {
     noteSidebarWidgets: [
       {
-        name: 'note-sidebar-widget::bangle-io-inline-backlink',
+        name: 'note-sidebar-widget::@bangle.io/inline-backlink',
         ReactComponent: BacklinkWidget,
         title: 'Backlink references',
       },

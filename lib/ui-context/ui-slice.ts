@@ -4,7 +4,12 @@ import type {
   NotificationPayloadType,
   ThemeType,
 } from '@bangle.io/shared-types';
-import { checkWidescreen, rafSchedule, useWindowSize } from '@bangle.io/utils';
+import {
+  assertActionType,
+  checkWidescreen,
+  rafSchedule,
+  useWindowSize,
+} from '@bangle.io/utils';
 
 import { applyTheme } from './apply-theme';
 
@@ -30,40 +35,52 @@ export interface UISliceState {
   widescreen: boolean;
 }
 
-export const UI_CONTEXT_TOGGLE_THEME = 'action::ui-context/TOGGLE_THEME';
+export const UI_CONTEXT_TOGGLE_THEME = 'action::ui-context:TOGGLE_THEME';
 
 export type UiContextAction =
-  | { name: 'UI/TOGGLE_SIDEBAR'; value: { type: string } }
-  | { name: 'UI/CHANGE_SIDEBAR'; value: { type: string | null } }
-  | { name: 'UI/SHOW_NOTIFICATION'; value: NotificationPayloadType }
-  | { name: 'UI/DISMISS_NOTIFICATION'; value: { uid: string } }
+  | { name: 'action::ui-context:TOGGLE_SIDEBAR'; value: { type: string } }
   | {
-      name: 'UI/UPDATE_PALETTE';
+      name: 'action::ui-context:CHANGE_SIDEBAR';
+      value: { type: string | null };
+    }
+  | {
+      name: 'action::ui-context:SHOW_NOTIFICATION';
+      value: NotificationPayloadType;
+    }
+  | { name: 'action::ui-context:DISMISS_NOTIFICATION'; value: { uid: string } }
+  | {
+      name: 'action::ui-context:UPDATE_PALETTE';
       value: {
         type: CorePalette | null;
         initialQuery?: string;
       };
     }
-  | { name: 'UI/RESET_PALETTE' }
+  | { name: 'action::ui-context:RESET_PALETTE' }
   | { name: typeof UI_CONTEXT_TOGGLE_THEME }
-  | { name: 'UI/UPDATE_THEME'; value: { theme: ThemeType } }
+  | { name: 'action::ui-context:UPDATE_THEME'; value: { theme: ThemeType } }
   | {
-      name: 'UI/UPDATE_WINDOW_SIZE';
+      name: 'action::ui-context:UPDATE_WINDOW_SIZE';
       value: { windowSize: ReturnType<typeof useWindowSize> };
     }
   | {
-      name: 'UI/SHOW_MODAL';
+      name: 'action::ui-context:SHOW_MODAL';
       value: {
         modal: string | null;
         modalValue?: undefined | { [key: string]: any };
       };
     }
   | {
-      name: 'UI/DISMISS_MODAL';
+      name: 'action::ui-context:DISMISS_MODAL';
     }
-  | { name: 'UI/UPDATE_NEW_CHANGELOG'; value: { hasUpdates: boolean } }
-  | { name: 'UI/UPDATE_NOTE_SIDEBAR'; value: { visible: boolean } }
-  | { name: 'UI/TOGGLE_NOTE_SIDEBAR' };
+  | {
+      name: 'action::ui-context:UPDATE_NEW_CHANGELOG';
+      value: { hasUpdates: boolean };
+    }
+  | {
+      name: 'action::ui-context:UPDATE_NOTE_SIDEBAR';
+      value: { visible: boolean };
+    }
+  | { name: 'action::ui-context:TOGGLE_NOTE_SIDEBAR' };
 
 export const initialState: UISliceState = {
   // UI
@@ -85,6 +102,8 @@ export const uiSliceKey = new SliceKey<UISliceState, UiContextAction>(
 );
 
 export function uiSlice(): Slice<UISliceState, UiContextAction> {
+  assertActionType('ui-context', {} as UiContextAction);
+
   return new Slice({
     key: uiSliceKey,
     state: {
@@ -94,7 +113,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
       apply: (action, state) => {
         log({ action, state });
         switch (action.name) {
-          case 'UI/TOGGLE_SIDEBAR': {
+          case 'action::ui-context:TOGGLE_SIDEBAR': {
             const sidebar = Boolean(state.sidebar)
               ? undefined
               : action.value.type;
@@ -104,14 +123,14 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/CHANGE_SIDEBAR': {
+          case 'action::ui-context:CHANGE_SIDEBAR': {
             return {
               ...state,
               sidebar: action.value.type,
             };
           }
 
-          case 'UI/SHOW_NOTIFICATION': {
+          case 'action::ui-context:SHOW_NOTIFICATION': {
             const { uid } = action.value;
 
             // Prevent repeat firing of notifications
@@ -125,7 +144,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/DISMISS_NOTIFICATION': {
+          case 'action::ui-context:DISMISS_NOTIFICATION': {
             const { uid } = action.value;
             if (state.notifications.some((n) => n.uid === uid)) {
               return {
@@ -137,7 +156,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             return state;
           }
 
-          case 'UI/UPDATE_PALETTE': {
+          case 'action::ui-context:UPDATE_PALETTE': {
             return {
               ...state,
               paletteType: action.value.type,
@@ -145,7 +164,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/RESET_PALETTE': {
+          case 'action::ui-context:RESET_PALETTE': {
             return {
               ...state,
               paletteType: undefined,
@@ -163,7 +182,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/UPDATE_THEME': {
+          case 'action::ui-context:UPDATE_THEME': {
             applyTheme(action.value.theme);
             return {
               ...state,
@@ -171,7 +190,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/UPDATE_WINDOW_SIZE': {
+          case 'action::ui-context:UPDATE_WINDOW_SIZE': {
             const { windowSize } = action.value;
             const widescreen = checkWidescreen(windowSize.width);
             setRootWidescreenClass(widescreen);
@@ -181,7 +200,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/SHOW_MODAL': {
+          case 'action::ui-context:SHOW_MODAL': {
             return {
               ...state,
               modal: action.value.modal,
@@ -189,7 +208,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/DISMISS_MODAL': {
+          case 'action::ui-context:DISMISS_MODAL': {
             return {
               ...state,
               modal: undefined,
@@ -197,21 +216,21 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'UI/UPDATE_NEW_CHANGELOG': {
+          case 'action::ui-context:UPDATE_NEW_CHANGELOG': {
             return {
               ...state,
               changelogHasUpdates: action.value.hasUpdates,
             };
           }
 
-          case 'UI/UPDATE_NOTE_SIDEBAR': {
+          case 'action::ui-context:UPDATE_NOTE_SIDEBAR': {
             return {
               ...state,
               noteSidebar: action.value.visible,
             };
           }
 
-          case 'UI/TOGGLE_NOTE_SIDEBAR': {
+          case 'action::ui-context:TOGGLE_NOTE_SIDEBAR': {
             return {
               ...state,
               noteSidebar: !state.noteSidebar,
@@ -256,7 +275,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
       // Handler to call on window resize
       const handleResize = rafSchedule(() => {
         store.dispatch({
-          name: 'UI/UPDATE_WINDOW_SIZE',
+          name: 'action::ui-context:UPDATE_WINDOW_SIZE',
           value: {
             windowSize: {
               width: window.innerWidth,

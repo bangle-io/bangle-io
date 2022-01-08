@@ -30,10 +30,7 @@ export async function runOperation(page, actionId) {
 }
 
 export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
-  await runOperation(
-    page,
-    'operation::bangle-io-core-operations:NEW_WORKSPACE',
-  );
+  await runOperation(page, 'operation::@bangle.io/core-actions:NEW_WORKSPACE');
 
   await page.click('[aria-label="select storage type"]');
 
@@ -75,7 +72,7 @@ export async function createWorkspaceFromBackup(
     page.waitForEvent('filechooser'),
     runOperation(
       page,
-      'operation::bangle-io-core-operations:NEW_WORKSPACE_FROM_BACKUP',
+      'operation::@bangle.io/core-actions:NEW_WORKSPACE_FROM_BACKUP',
     ),
   ]);
 
@@ -102,7 +99,7 @@ export async function getAllWsPaths(
   if (!(await page.$('.note-browser'))) {
     await runOperation(
       page,
-      'operation::bangle-io-note-browser:toggle-note-browser',
+      'operation::@bangle.io/note-browser:toggle-note-browser',
     );
   }
 
@@ -171,7 +168,7 @@ export async function createNewNote(
   wsName: string,
   noteName = 'new_file.md',
 ) {
-  await runOperation(page, 'operation::bangle-io-core-operations:NEW_NOTE');
+  await runOperation(page, 'operation::@bangle.io/core-actions:NEW_NOTE');
 
   if (!noteName.endsWith('.md')) {
     noteName += '.md';

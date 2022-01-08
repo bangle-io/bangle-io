@@ -5,6 +5,7 @@ import type {
   SliceSideEffect,
 } from '@bangle.io/create-store';
 import type { JsonObject } from '@bangle.io/shared-types';
+import { assertActionType } from '@bangle.io/utils';
 
 import type { OpenedEditorsConfig } from './opened-editors-config';
 
@@ -29,6 +30,8 @@ export interface EditorSliceState {
   primaryEditor: BangleEditor | undefined;
   secondaryEditor: BangleEditor | undefined;
 }
+
+assertActionType('editor-manager-context', {} as EditorManagerAction);
 
 export type EditorManagerAction =
   | {

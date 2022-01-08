@@ -92,9 +92,10 @@ export class Extension<T = unknown> {
     if (!name) {
       throw new Error('Extension: name is required');
     }
-    if (!/^[a-z0-9-_]+$/.test(name)) {
+
+    if (!/^[a-z0-9-_@/\.]+$/.test(name)) {
       throw new Error(
-        'Extension name only allows the following characters "a..z" "0..9" "-" and "_"',
+        'Extension name must be npm package name which can only have the follow characters "a..z" "0..9" "@" "." "-" and "_"',
       );
     }
 
@@ -135,28 +136,17 @@ export class Extension<T = unknown> {
 
     if (operations) {
       if (
-        !Array.isArray(operations) ||
-        operations.some((a) => typeof a.name !== 'string')
+        !operations.every(
+          (a) =>
+            hasCorrectScheme('operation', a.name) &&
+            hasCorrectPackageName(name, a.name),
+        )
       ) {
         throw new Error(
-          'Operations must be an array of object, where each item has a name field',
+          `An operation must have a name with the following schema operation::<extension_pkg_name:xyz. For example 'operation::@bangle.io/example:hello-world'`,
         );
       }
 
-      if (
-        // TODO for now we are housing all core ops in this extension
-        name !== 'bangle-io-core-operations' &&
-        operations.some((a) => !a.name.startsWith('operation::' + name + ':'))
-      ) {
-        console.log(
-          operations.find(
-            (a) => !a.name.startsWith('operation::' + name + ':'),
-          ),
-        );
-        throw new Error(
-          `An operation must have a name with the following schema operation::<extension_pkg_name:xyz. For example 'operation::bangle-io-my-extension:hello-world'`,
-        );
-      }
       if (operations.length !== new Set(operations.map((r) => r.name)).size) {
         throw new Error('Operation name must be unique');
       }
@@ -170,8 +160,9 @@ export class Extension<T = unknown> {
       if (
         !sidebars.every((s) => {
           const validName =
-            typeof s.name === 'string' &&
-            s.name.startsWith('sidebar::' + name + ':');
+            hasCorrectScheme('sidebar', s.name) &&
+            hasCorrectPackageName(name, s.name);
+
           const validIcon = Boolean(s.activitybarIcon);
           const validComponent = Boolean(s.ReactComponent);
           const validHint = typeof s.hint === 'string';
@@ -185,16 +176,16 @@ export class Extension<T = unknown> {
     }
 
     if (slices) {
-      if (!Array.isArray(slices)) {
-        throw new Error('Extension: slices must be an array');
-      }
-      if (!slices.every((slice) => slice instanceof Slice)) {
-        throw new Error('Extension: invalid slice');
-      }
-
-      if (!slices.every((slice) => slice.key.startsWith(name + ':'))) {
+      if (
+        !slices.every(
+          (slice) =>
+            slice instanceof Slice &&
+            hasCorrectScheme('slice', slice.key) &&
+            hasCorrectPackageName(name, slice.key),
+        )
+      ) {
         throw new Error(
-          `Extension: invalid slice. Slice key must be prefixed with extension name followed by a semicolon (:). For example, "new SliceKey(\'my-extension-name:slice\')"`,
+          `Extension: invalid slice. Slice key must be prefixed with extension name followed by a semicolon (:). For example, "new SliceKey(\'slice::my-extension-name:xyz\')"`,
         );
       }
     }
@@ -203,11 +194,15 @@ export class Extension<T = unknown> {
       noteSidebarWidgets &&
       !noteSidebarWidgets.every((s) => {
         const validName =
-          typeof s.name === 'string' &&
-          s.name.startsWith('note-sidebar-widget::' + name + ':');
+          hasCorrectScheme('note-sidebar-widget', s.name) &&
+          hasCorrectPackageName(name, s.name);
+
         return validName;
       })
     ) {
+      throw new Error(
+        'Extension: Invalid ntoe sidebar widget name. Example: "note-sidebar-widget::my-extension-name:xyz"',
+      );
     }
 
     return new Extension<ExtensionState>(
@@ -215,4 +210,22 @@ export class Extension<T = unknown> {
       _check,
     );
   }
+}
+
+function hasCorrectScheme(scheme: string, slug: string) {
+  return scheme === resolveSlug(slug).scheme;
+}
+
+function hasCorrectPackageName(pkgName: string, slug: string) {
+  return pkgName === resolveSlug(slug).pkgName;
+}
+
+function resolveSlug(slug: string) {
+  const [scheme, restString] = slug.split('::');
+  const [pkgName, localSlug] = restString?.split(':') || [];
+  return {
+    scheme,
+    pkgName,
+    path: localSlug,
+  };
 }

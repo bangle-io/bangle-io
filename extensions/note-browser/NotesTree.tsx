@@ -58,7 +58,7 @@ export function NotesTree() {
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
       dispatch({
-        name: 'UI/CHANGE_SIDEBAR',
+        name: 'action::ui-context:CHANGE_SIDEBAR',
         value: { type: null },
       });
     }

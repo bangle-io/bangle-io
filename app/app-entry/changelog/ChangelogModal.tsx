@@ -61,7 +61,7 @@ export function ChangelogModal() {
 
   const onDismiss = useCallback(() => {
     dispatch({
-      name: 'UI/DISMISS_MODAL',
+      name: 'action::ui-context:DISMISS_MODAL',
     });
   }, [dispatch]);
 
@@ -143,7 +143,7 @@ function useLastSeenChangelog(showChangelog: boolean) {
     const hasUpdates = lastSeenHeading !== getTopHeading();
     if (hasUpdates !== changelogHasUpdates) {
       dispatch({
-        name: 'UI/UPDATE_NEW_CHANGELOG',
+        name: 'action::ui-context:UPDATE_NEW_CHANGELOG',
         value: { hasUpdates },
       });
     }
