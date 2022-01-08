@@ -145,7 +145,7 @@ exports[`clicking the button shows dropdown 1`] = `
       </li>
       <li
         aria-disabled="false"
-        aria-label="action palette"
+        aria-label="command palette"
         class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="ActionPalette"
         role="menuitem"
@@ -155,7 +155,7 @@ exports[`clicking the button shows dropdown 1`] = `
           class="inline-flex justify-between w-full"
         >
           <span>
-            Action palette
+            Command palette
           </span>
           <span
             class="inline ui-components_pretty-keybinding"

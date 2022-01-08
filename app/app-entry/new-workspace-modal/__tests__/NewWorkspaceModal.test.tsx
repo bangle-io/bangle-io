@@ -1,7 +1,7 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import { useSerialOperationContext } from '@bangle.io/action-context';
 import {
   BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
@@ -61,13 +61,13 @@ jest.mock('@bangle.io/action-context', () => {
   const otherThings = jest.requireActual('@bangle.io/action-context');
   return {
     ...otherThings,
-    useActionContext: jest.fn(() => ({})),
+    useSerialOperationContext: jest.fn(() => ({})),
   };
 });
 
 beforeEach(() => {
   const emptyWorkspaces = [];
-  let dispatchAction = jest.fn();
+  let dispatchSerialOperation = jest.fn();
   (useWorkspaces as any).mockReturnValue({ workspaces: emptyWorkspaces });
 
   (useUIManagerContext as any).mockImplementation(() => {
@@ -83,8 +83,8 @@ beforeEach(() => {
 
   (pickADirectory as any).mockResolvedValue({});
 
-  (useActionContext as any).mockImplementation(() => {
-    return { dispatchAction };
+  (useSerialOperationContext as any).mockImplementation(() => {
+    return { dispatchSerialOperation };
   });
 });
 
@@ -112,9 +112,9 @@ describe('NewWorkspaceModalContainer', () => {
     });
 
     test('is able create a workspace', async () => {
-      let dispatchAction = jest.fn();
-      (useActionContext as any).mockImplementation(() => {
-        return { dispatchAction };
+      let dispatchSerialOperation = jest.fn();
+      (useSerialOperationContext as any).mockImplementation(() => {
+        return { dispatchSerialOperation };
       });
 
       let result = render(
@@ -142,8 +142,8 @@ describe('NewWorkspaceModalContainer', () => {
         fireEvent.click(result.getByLabelText('create workspace'));
       });
 
-      expect(dispatchAction).toBeCalledTimes(1);
-      expect(dispatchAction).nthCalledWith(1, {
+      expect(dispatchSerialOperation).toBeCalledTimes(1);
+      expect(dispatchSerialOperation).nthCalledWith(1, {
         name: CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
         value: {
           wsName: 'my-test-ws',
@@ -254,9 +254,9 @@ describe('NewWorkspaceModalContainer', () => {
     });
 
     test('is able create a workspace', async () => {
-      let dispatchAction = jest.fn();
-      (useActionContext as any).mockImplementation(() => {
-        return { dispatchAction };
+      let dispatchSerialOperation = jest.fn();
+      (useSerialOperationContext as any).mockImplementation(() => {
+        return { dispatchSerialOperation };
       });
 
       (pickADirectory as any).mockResolvedValue({ name: 'test-dir-name' });
@@ -291,8 +291,8 @@ describe('NewWorkspaceModalContainer', () => {
         fireEvent.click(result.getByLabelText('create workspace'));
       });
 
-      expect(dispatchAction).toBeCalledTimes(1);
-      expect(dispatchAction).nthCalledWith(1, {
+      expect(dispatchSerialOperation).toBeCalledTimes(1);
+      expect(dispatchSerialOperation).nthCalledWith(1, {
         name: CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
         value: {
           rootDirHandle: {
@@ -303,9 +303,9 @@ describe('NewWorkspaceModalContainer', () => {
     });
 
     test('handles when fs throws error', async () => {
-      let dispatchAction = jest.fn();
-      (useActionContext as any).mockImplementation(() => {
-        return { dispatchAction };
+      let dispatchSerialOperation = jest.fn();
+      (useSerialOperationContext as any).mockImplementation(() => {
+        return { dispatchSerialOperation };
       });
 
       let error = new BaseFileSystemError(
@@ -348,9 +348,9 @@ describe('NewWorkspaceModalContainer', () => {
     });
 
     test('is able to resume after fs error', async () => {
-      let dispatchAction = jest.fn();
-      (useActionContext as any).mockImplementation(() => {
-        return { dispatchAction };
+      let dispatchSerialOperation = jest.fn();
+      (useSerialOperationContext as any).mockImplementation(() => {
+        return { dispatchSerialOperation };
       });
 
       let error = new BaseFileSystemError(

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import { useSerialOperationContext } from '@bangle.io/action-context';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import {
   ButtonIcon,
@@ -66,7 +66,7 @@ export function Notification({
   buttons?: NotificationPayloadType['buttons'];
   onDismiss: () => void;
 }) {
-  const { dispatchAction } = useActionContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
 
   return (
     <div
@@ -101,7 +101,7 @@ export function Notification({
               hintPos="left"
               className="ml-3"
               onClick={async () => {
-                dispatchAction({ name: b.action });
+                dispatchSerialOperation({ name: b.operation });
               }}
               hint={b.hint}
             >

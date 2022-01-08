@@ -27,7 +27,7 @@ beforeEach(() => {
 test('renders when no sidebars', () => {
   let result = render(
     <div>
-      <Activitybar actionKeybindings={{}} sidebars={[]}></Activitybar>
+      <Activitybar operationKeybindings={{}} sidebars={[]}></Activitybar>
     </div>,
   );
 
@@ -38,7 +38,7 @@ test('renders when there is sidebar', () => {
   let result = render(
     <div>
       <Activitybar
-        actionKeybindings={{}}
+        operationKeybindings={{}}
         sidebars={[
           {
             name: 'sidebar::test-123',
@@ -69,7 +69,7 @@ test('renders when sidebar is active', () => {
   let result = render(
     <div>
       <Activitybar
-        actionKeybindings={{}}
+        operationKeybindings={{}}
         sidebars={[
           {
             name: 'sidebar::test-123',
@@ -101,7 +101,7 @@ test('inactive sidebar is dispatched correctly', () => {
   let result = render(
     <div>
       <Activitybar
-        actionKeybindings={{}}
+        operationKeybindings={{}}
         sidebars={[
           {
             name: 'sidebar::test-123',
@@ -141,7 +141,7 @@ test('active sidebar is toggled off correctly', () => {
   let result = render(
     <div>
       <Activitybar
-        actionKeybindings={{}}
+        operationKeybindings={{}}
         sidebars={[
           {
             name: 'sidebar::test-123',

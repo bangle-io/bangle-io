@@ -13,7 +13,7 @@ import {
   toggleNotesPalette,
   toggleWorkspacePalette,
 } from '@bangle.io/core-operations';
-import type { ActionKeybindingMapping } from '@bangle.io/shared-types';
+import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import {
   DropdownMenu,
   MenuItem,
@@ -57,10 +57,10 @@ type AllKeysType =
 
 export function ActivitybarOptionsDropdown({
   widescreen,
-  actionKeybindings,
+  operationKeybindings,
 }: {
   widescreen: boolean;
-  actionKeybindings: ActionKeybindingMapping;
+  operationKeybindings: SerialOperationKeybindingMapping;
 }) {
   const store = useBangleStoreContext();
   const { dispatch: dispatchUiAction } = useUIManagerContext();
@@ -149,7 +149,7 @@ export function ActivitybarOptionsDropdown({
           <span>Switch workspace</span>
           <PrettyKeybinding
             rawKey={
-              actionKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] || ''
+              operationKeybindings[CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE] || ''
             }
           />
         </MenuItem>
@@ -167,18 +167,20 @@ export function ActivitybarOptionsDropdown({
         >
           <span>Notes palette</span>
           <PrettyKeybinding
-            rawKey={actionKeybindings[CORE_PALETTES_TOGGLE_NOTES_PALETTE] || ''}
+            rawKey={
+              operationKeybindings[CORE_PALETTES_TOGGLE_NOTES_PALETTE] || ''
+            }
           />
         </MenuItem>
         <MenuItem
           key={ActionPaletteKey}
-          textValue="action palette"
-          aria-label="action palette"
+          textValue="command palette"
+          aria-label="command palette"
         >
-          <span>Action palette</span>
+          <span>Command palette</span>
           <PrettyKeybinding
             rawKey={
-              actionKeybindings[CORE_PALETTES_TOGGLE_ACTION_PALETTE] || ''
+              operationKeybindings[CORE_PALETTES_TOGGLE_ACTION_PALETTE] || ''
             }
           />
         </MenuItem>

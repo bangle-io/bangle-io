@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useActionContext } from '@bangle.io/action-context';
+import { useSerialOperationContext } from '@bangle.io/action-context';
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   newWorkspace,

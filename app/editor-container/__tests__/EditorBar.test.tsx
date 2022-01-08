@@ -88,7 +88,7 @@ test('truncates large wsPath', () => {
   expect(result.getByLabelText('note path')).toMatchSnapshot();
 });
 
-test('dispatches action on clicking wsPath', () => {
+test('dispatches toggleNotesPalette on clicking wsPath', () => {
   let result = render(
     <div>
       <EditorBar
