@@ -82,7 +82,7 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
             <kbd className="font-normal">↑↓</kbd> Navigate
           </UniversalPalette.PaletteInfoItem>
           <UniversalPalette.PaletteInfoItem>
-            <kbd className="font-normal">Enter</kbd> Select a Palette
+            <kbd className="font-normal">Enter</kbd> Execute
           </UniversalPalette.PaletteInfoItem>
         </UniversalPalette.PaletteInfo>
       </>

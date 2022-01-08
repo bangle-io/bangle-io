@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useSerialOperationHandler } from '@bangle.io/action-context';
 import {
-  CORE_PALETTES_TOGGLE_ACTION_PALETTE,
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
+  CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
   CorePalette,
 } from '@bangle.io/constants';
@@ -61,7 +61,7 @@ export function PaletteManager() {
   useSerialOperationHandler(
     (operation) => {
       switch (operation.name) {
-        case CORE_PALETTES_TOGGLE_ACTION_PALETTE: {
+        case CORE_PALETTES_TOGGLE_OPERATION_PALETTE: {
           bangleStore.dispatch({
             name: 'UI/UPDATE_PALETTE',
             value: {

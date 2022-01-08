@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
-  CORE_PALETTES_TOGGLE_ACTION_PALETTE,
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
+  CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
 } from '@bangle.io/constants';
 import {
@@ -175,7 +175,7 @@ export function ActivitybarOptionsDropdown({
           <span>Operation palette</span>
           <PrettyKeybinding
             rawKey={
-              operationKeybindings[CORE_PALETTES_TOGGLE_ACTION_PALETTE] || ''
+              operationKeybindings[CORE_PALETTES_TOGGLE_OPERATION_PALETTE] || ''
             }
           />
         </MenuItem>

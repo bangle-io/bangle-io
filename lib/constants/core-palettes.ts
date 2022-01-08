@@ -1,5 +1,5 @@
-export const CORE_PALETTES_TOGGLE_ACTION_PALETTE =
-  'operation::bangle-io-core-palettes:TOGGLE_ACTION_PALETTE';
+export const CORE_PALETTES_TOGGLE_OPERATION_PALETTE =
+  'operation::bangle-io-core-palettes:TOGGLE_OPERATION_PALETTE';
 
 export const CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE =
   'operation::bangle-io-core-palettes:TOGGLE_WORKSPACE_PALETTE';
