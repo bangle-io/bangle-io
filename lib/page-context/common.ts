@@ -8,7 +8,8 @@ import {
 import { BaseHistory } from './history/base-history';
 import { Location } from './history/types';
 
-export const PAGE_BLOCK_RELOAD_ACTION_NAME = 'action::page-slice:BLOCK_RELOAD';
+export const PAGE_BLOCK_RELOAD_ACTION_NAME =
+  'action::page-context:BLOCK_RELOAD';
 
 export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
   name: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
@@ -43,17 +44,17 @@ export interface PageSliceStateType {
 export type PageSliceAction =
   | PAGE_BLOCK_RELOAD_ACTION_TYPE
   | {
-      name: 'action::page-slice:UPDATE_PAGE_LIFE_CYCLE_STATE';
+      name: 'action::page-context:UPDATE_PAGE_LIFE_CYCLE_STATE';
       value: { current?: PageLifeCycleStates; previous?: PageLifeCycleStates };
     }
   | {
-      name: 'action::page-slice:history-set-history';
+      name: 'action::page-context:history-set-history';
       value: {
         history: BaseHistory;
       };
     }
   | {
-      name: 'action::page-slice:history-update-location';
+      name: 'action::page-context:history-update-location';
       value: { location: Location };
     };
 

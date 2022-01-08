@@ -157,14 +157,14 @@ export function NewWorkspaceModalContainer({
     }
 
     dispatch({
-      name: 'UI/DISMISS_MODAL',
+      name: 'action::ui-context:DISMISS_MODAL',
     });
   }, [dispatchSerialOperation, modalState, dispatch]);
 
   const onDismiss = useCallback(() => {
     if (!isDropdownOpenRef.current) {
       dispatch({
-        name: 'UI/DISMISS_MODAL',
+        name: 'action::ui-context:DISMISS_MODAL',
       });
     }
   }, [dispatch]);

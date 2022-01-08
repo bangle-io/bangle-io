@@ -33,7 +33,7 @@ export function AppContainer() {
 
   const onDismissSidebar = useCallback(() => {
     dispatch({
-      name: 'UI/CHANGE_SIDEBAR',
+      name: 'action::ui-context:CHANGE_SIDEBAR',
       value: {
         type: null,
       },
@@ -42,14 +42,14 @@ export function AppContainer() {
 
   const onDismissNoteSidebar = useCallback(() => {
     dispatch({
-      name: 'UI/UPDATE_NOTE_SIDEBAR',
+      name: 'action::ui-context:UPDATE_NOTE_SIDEBAR',
       value: { visible: false },
     });
   }, [dispatch]);
 
   const showNoteSidebar = useCallback(() => {
     dispatch({
-      name: 'UI/UPDATE_NOTE_SIDEBAR',
+      name: 'action::ui-context:UPDATE_NOTE_SIDEBAR',
       value: { visible: true },
     });
   }, [dispatch]);

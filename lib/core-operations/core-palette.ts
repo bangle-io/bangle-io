@@ -7,7 +7,7 @@ export function toggleCorePaletteType(type: CorePalette | null) {
     const uiState = uiSliceKey.getSliceState(state);
 
     dispatch({
-      name: 'UI/UPDATE_PALETTE',
+      name: 'action::ui-context:UPDATE_PALETTE',
       value: {
         type: uiState?.paletteType === type ? null : type,
       },

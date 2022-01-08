@@ -56,7 +56,7 @@ function showSidebar(sidebar, dispatch) {
     inputEl?.select();
   }
   dispatch({
-    name: 'UI/CHANGE_SIDEBAR',
+    name: 'action::ui-context:CHANGE_SIDEBAR',
     value: {
       type: SIDEBAR_NAME,
     },

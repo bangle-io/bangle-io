@@ -3,7 +3,7 @@ import { createStore } from './test-utils';
 
 const testFixtures: Array<PageSliceAction> = [
   {
-    name: 'action::page-slice:BLOCK_RELOAD',
+    name: 'action::page-context:BLOCK_RELOAD',
     value: {
       block: true,
     },

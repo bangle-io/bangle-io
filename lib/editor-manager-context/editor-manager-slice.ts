@@ -1,6 +1,6 @@
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { Slice } from '@bangle.io/create-store';
-import { createEmptyArray } from '@bangle.io/utils';
+import { assertActionType, createEmptyArray } from '@bangle.io/utils';
 
 import { editorManagerSliceKey } from './constants';
 import {
@@ -104,6 +104,8 @@ export function editorManagerSlice(): Slice<
   EditorSliceState,
   EditorManagerAction
 > {
+  assertActionType('editor-manager-context', {} as EditorManagerAction);
+
   return new Slice({
     key: editorManagerSliceKey,
     state: {

@@ -60,7 +60,7 @@ describe('updating state', () => {
     let state = store.state;
 
     state = state.applyAction({
-      name: 'action::page-slice:UPDATE_PAGE_LIFE_CYCLE_STATE',
+      name: 'action::page-context:UPDATE_PAGE_LIFE_CYCLE_STATE',
       value: { current: 'active', previous: 'frozen' },
     });
 
@@ -70,7 +70,7 @@ describe('updating state', () => {
     });
 
     state = state.applyAction({
-      name: 'action::page-slice:UPDATE_PAGE_LIFE_CYCLE_STATE',
+      name: 'action::page-context:UPDATE_PAGE_LIFE_CYCLE_STATE',
       value: { current: 'frozen', previous: 'active' },
     });
 
@@ -85,14 +85,14 @@ describe('updating state', () => {
     let state = store.state;
 
     state = state.applyAction({
-      name: 'action::page-slice:BLOCK_RELOAD',
+      name: 'action::page-context:BLOCK_RELOAD',
       value: { block: true },
     });
 
     expect(pageSliceKey.getSliceState(state)?.blockReload).toBe(true);
 
     state = state.applyAction({
-      name: 'action::page-slice:BLOCK_RELOAD',
+      name: 'action::page-context:BLOCK_RELOAD',
       value: { block: false },
     });
 
