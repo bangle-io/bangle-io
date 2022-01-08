@@ -1,11 +1,10 @@
 import React, { createContext, useCallback, useMemo } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
 
-const LOG = true;
+const LOG = false;
 let log = LOG ? console.log.bind(console, 'SerialOperationCotext') : () => {};
 
 export const SerialOperationContext = createContext<SerialOperationContextType>(
