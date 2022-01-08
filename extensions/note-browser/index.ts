@@ -4,7 +4,7 @@ import { keyDisplayValue } from '@bangle.io/config';
 import { Extension } from '@bangle.io/extension-registry';
 import { FolderIcon } from '@bangle.io/ui-components';
 
-import { NoteBrowserActionHandler } from './NoteBrowserActionHandler';
+import { NoteBrowserOpHandler } from './NoteBrowserActionHandler';
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';
 
 const extensionName = 'bangle-io-note-browser';
@@ -13,8 +13,8 @@ const key = 'Mod-e';
 const extension = Extension.create({
   name: extensionName,
   application: {
-    ReactComponent: NoteBrowserActionHandler,
-    actions: [
+    ReactComponent: NoteBrowserOpHandler,
+    operations: [
       {
         name: 'action::bangle-io-note-browser:toggle-note-browser',
         title: 'Toggle Notes Browser',

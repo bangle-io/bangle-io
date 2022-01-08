@@ -13,7 +13,7 @@ import { PaletteManager } from './PaletteManager';
 const extension = Extension.create({
   name: extensionName,
   application: {
-    actions: [
+    operations: [
       {
         name: CORE_PALETTES_TOGGLE_ACTION_PALETTE,
         title: 'Action Palette',

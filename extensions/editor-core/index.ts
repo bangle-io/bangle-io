@@ -19,7 +19,7 @@ const extension = Extension.create({
   },
   application: {
     ReactComponent: EditorCore,
-    actions: [
+    operations: [
       {
         name: 'action::bangle-io-editor-core:collapse-heading',
         title: 'Editor: Collapse heading',

@@ -1,18 +1,18 @@
 import { useEffect } from 'react';
 
-import { RegisterActionHandlerType } from '@bangle.io/extension-registry';
+import { RegisterSerialOperationHandlerType } from '@bangle.io/extension-registry';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
-export function NoteBrowserActionHandler({
-  registerActionHandler,
+export function NoteBrowserOpHandler({
+  registerSerialOperationHandler,
 }: {
-  registerActionHandler: RegisterActionHandlerType;
+  registerSerialOperationHandler: RegisterSerialOperationHandlerType;
 }) {
   const { sidebar, dispatch } = useUIManagerContext();
 
   useEffect(() => {
-    const deregister = registerActionHandler((actionObject) => {
-      switch (actionObject.name) {
+    const deregister = registerSerialOperationHandler((operation) => {
+      switch (operation.name) {
         case 'action::bangle-io-note-browser:toggle-note-browser': {
           dispatch({
             name: 'UI/CHANGE_SIDEBAR',
@@ -33,6 +33,6 @@ export function NoteBrowserActionHandler({
     return () => {
       deregister();
     };
-  }, [dispatch, sidebar, registerActionHandler]);
+  }, [dispatch, sidebar, registerSerialOperationHandler]);
   return null;
 }

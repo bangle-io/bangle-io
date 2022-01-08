@@ -7,7 +7,7 @@ import {
 import { AppState, Slice } from '@bangle.io/create-store';
 import { UiContextAction, uiSliceKey } from '@bangle.io/ui-context';
 
-import { actionPalette } from './ActionPalette';
+import { operationPalette } from './ActionPalette';
 import { sliceKey } from './config';
 import { notesPalette } from './NotesPalette';
 import { workspacePalette } from './WorkspacePalette';
@@ -40,7 +40,7 @@ export function corePaletteSlice() {
             return {
               name: 'UI/UPDATE_PALETTE',
               value: {
-                type: getType(state, actionPalette.type),
+                type: getType(state, operationPalette.type),
               },
             };
           }

@@ -1,16 +1,16 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import type { ActionHandler } from '@bangle.io/shared-types';
+import type { SerialOperationHandler } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
-import { SearchNotesActionHandler } from '../action-handler';
 import {
-  EXECUTE_SEARCH_ACTION,
-  SHOW_SEARCH_SIDEBAR_ACTION,
+  EXECUTE_SEARCH_ACTION as EXECUTE_SEARCH_OP,
+  SHOW_SEARCH_SIDEBAR_ACTION as SHOW_SEARCH_SIDEBAR_OP,
   SIDEBAR_NAME,
 } from '../constants';
 import { useSearchNotes, useSearchNotesState } from '../hooks';
+import { SearchNotesOperationHandler } from '../operation-handler';
 
 jest.mock('@bangle.io/ui-context', () => {
   return {
@@ -47,11 +47,11 @@ afterEach(() => {
   document.querySelector = originalQuerySelector;
 });
 
-test('deregisters action handler', async () => {
+test('deregisters handler', async () => {
   let deregister = jest.fn();
   const renderResult = render(
-    <SearchNotesActionHandler
-      registerActionHandler={(_handler) => {
+    <SearchNotesOperationHandler
+      registerSerialOperationHandler={(_handler) => {
         return deregister;
       }}
     />,
@@ -61,14 +61,14 @@ test('deregisters action handler', async () => {
   expect(deregister).toBeCalledTimes(1);
 });
 
-describe('actions', () => {
-  let dispatchAction: ActionHandler;
-  let registerActionHandler;
+describe('operations', () => {
+  let dispatchSOp: SerialOperationHandler;
+  let registerSerialOperationHandler;
 
   beforeEach(async () => {
     let deregister = jest.fn();
-    registerActionHandler = (_handler) => {
-      dispatchAction = _handler;
+    registerSerialOperationHandler = (_handler) => {
+      dispatchSOp = _handler;
       return deregister;
     };
   });
@@ -80,16 +80,16 @@ describe('actions', () => {
     };
     document.querySelector = jest.fn(() => inputElement);
     const renderResult = render(
-      <SearchNotesActionHandler
-        registerActionHandler={registerActionHandler}
+      <SearchNotesOperationHandler
+        registerSerialOperationHandler={registerSerialOperationHandler}
       />,
     );
 
     expect(useSearchNotes).toBeCalledTimes(1);
 
     expect(renderResult.container).toMatchInlineSnapshot(`<div />`);
-    dispatchAction!({
-      name: SHOW_SEARCH_SIDEBAR_ACTION,
+    dispatchSOp!({
+      name: SHOW_SEARCH_SIDEBAR_OP,
     });
 
     expect(useUIManagerContextReturn.dispatch).toBeCalledTimes(1);
@@ -98,13 +98,13 @@ describe('actions', () => {
     expect(document.querySelector).toBeCalledTimes(0);
 
     renderResult.rerender(
-      <SearchNotesActionHandler
-        registerActionHandler={registerActionHandler}
+      <SearchNotesOperationHandler
+        registerSerialOperationHandler={registerSerialOperationHandler}
       />,
     );
 
-    dispatchAction!({
-      name: SHOW_SEARCH_SIDEBAR_ACTION,
+    dispatchSOp!({
+      name: SHOW_SEARCH_SIDEBAR_OP,
     });
 
     expect(useUIManagerContextReturn.dispatch).toBeCalledTimes(2);
@@ -117,7 +117,7 @@ describe('actions', () => {
     expect(inputElement.select).toBeCalledTimes(1);
   });
 
-  test('execute search action updates extension state correctly', async () => {
+  test('execute search operation updates extension state correctly', async () => {
     let updateStateCb: any;
     const updateState = jest.fn((_cb) => {
       updateStateCb = _cb;
@@ -128,13 +128,13 @@ describe('actions', () => {
     ]);
 
     const renderResult = render(
-      <SearchNotesActionHandler
-        registerActionHandler={registerActionHandler}
+      <SearchNotesOperationHandler
+        registerSerialOperationHandler={registerSerialOperationHandler}
       />,
     );
     expect(renderResult.container).toMatchInlineSnapshot(`<div />`);
-    dispatchAction!({
-      name: EXECUTE_SEARCH_ACTION,
+    dispatchSOp!({
+      name: EXECUTE_SEARCH_OP,
       value: 'hello world',
     });
 
@@ -156,8 +156,8 @@ test('passes searchQuery correct to search notes', async () => {
   ]);
 
   render(
-    <SearchNotesActionHandler
-      registerActionHandler={(_handler) => {
+    <SearchNotesOperationHandler
+      registerSerialOperationHandler={(_handler) => {
         return jest.fn();
       }}
     />,

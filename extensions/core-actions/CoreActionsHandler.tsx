@@ -31,15 +31,15 @@ import {
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 import { downloadWorkspace, restoreWorkspaceFromBackup } from './operations';
 
-export function CoreActionsHandler({ registerActionHandler }) {
+export function CoreActionsHandler({ registerSerialOperationHandler }) {
   const { dispatch, modal, modalValue } = useUIManagerContext();
   const { createWorkspace } = useWorkspaces();
   const { primaryEditor, secondaryEditor } = useEditorManagerContext();
   const { bangleStore } = useWorkspaceContext();
 
-  const actionHandler = useCallback(
-    (actionObject) => {
-      switch (actionObject.name) {
+  const handler = useCallback(
+    (operation) => {
+      switch (operation.name) {
         case CORE_ACTIONS_NEW_NOTE: {
           newNote()(bangleStore.state, bangleStore.dispatch);
           return true;
@@ -77,7 +77,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
         }
 
         case CORE_ACTIONS_CLOSE_EDITOR: {
-          const editorId = actionObject.value;
+          const editorId = operation.value;
           closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
           return true;
         }
@@ -107,7 +107,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
         }
 
         case CORE_ACTIONS_CREATE_BROWSER_WORKSPACE: {
-          const { wsName } = actionObject.value || {};
+          const { wsName } = operation.value || {};
 
           if (typeof wsName === 'string') {
             createWorkspace(wsName, WorkspaceType.browser, {})
@@ -135,7 +135,7 @@ export function CoreActionsHandler({ registerActionHandler }) {
         }
 
         case CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE: {
-          const { rootDirHandle } = actionObject.value || {};
+          const { rootDirHandle } = operation.value || {};
           if (typeof rootDirHandle?.name === 'string') {
             createWorkspace(rootDirHandle.name, WorkspaceType.nativefs, {
               rootDirHandle,
@@ -173,13 +173,13 @@ export function CoreActionsHandler({ registerActionHandler }) {
   );
 
   useEffect(() => {
-    const deregister = registerActionHandler((obj) => {
-      actionHandler(obj);
+    const deregister = registerSerialOperationHandler((obj) => {
+      handler(obj);
     });
     return () => {
       deregister();
     };
-  }, [actionHandler, registerActionHandler]);
+  }, [handler, registerSerialOperationHandler]);
 
   const onDismiss = useCallback(
     (focusEditor = true) => {

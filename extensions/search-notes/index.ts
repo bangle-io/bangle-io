@@ -4,7 +4,6 @@ import { keyDisplayValue } from '@bangle.io/config';
 import { Extension } from '@bangle.io/extension-registry';
 import { SearchIcon } from '@bangle.io/ui-components';
 
-import { SearchNotesActionHandler } from './action-handler';
 import { SearchNotesSidebar } from './components/SearchNotesSidebar';
 import {
   EXECUTE_SEARCH_ACTION,
@@ -14,6 +13,7 @@ import {
   SIDEBAR_NAME,
 } from './constants';
 import { searchPlugin } from './editor-plugins';
+import { SearchNotesOperationHandler } from './operation-handler';
 
 const key = 'Mod-F';
 
@@ -21,8 +21,8 @@ const extension = Extension.create<SearchNotesExtensionState>({
   name: extensionName,
   initialState: { searchQuery: '', pendingSearch: false, searchResults: null },
   application: {
-    ReactComponent: SearchNotesActionHandler,
-    actions: [
+    ReactComponent: SearchNotesOperationHandler,
+    operations: [
       {
         name: SHOW_SEARCH_SIDEBAR_ACTION,
         title: 'Open search sidebar',

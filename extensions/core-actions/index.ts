@@ -24,7 +24,7 @@ import { CoreActionsHandler } from './CoreActionsHandler';
 const extension = Extension.create({
   name: extensionName,
   application: {
-    actions: [
+    operations: [
       { name: CORE_ACTIONS_CLOSE_EDITOR, title: 'Close all open editor/s' },
       { name: CORE_ACTIONS_DELETE_ACTIVE_NOTE, title: 'Delete active note' },
       { name: CORE_ACTIONS_NEW_NOTE, title: 'New note' },

@@ -9,7 +9,7 @@ import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
-import { actionPalette } from './ActionPalette';
+import { operationPalette } from './ActionPalette';
 import {
   PaletteManagerImperativeHandle,
   PaletteManagerReactComponentProps,
@@ -23,7 +23,7 @@ const palettes = [
   headingPalette,
   workspacePalette,
   questionPalette,
-  actionPalette,
+  operationPalette,
   // // should always be the last palette
   // // TODO: add constraints to make sure it always is
   notesPalette,

@@ -2,19 +2,17 @@ import { useCallback, useEffect } from 'react';
 
 import { heading, listItem } from '@bangle.dev/base-components';
 
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
-
 import { useDispatchPrimaryEditor } from './hooks';
 
 const { toggleHeadingCollapse, uncollapseAllHeadings } = heading;
 const { moveListItemUp, moveListItemDown } = listItem;
 
-export function EditorCore({ registerActionHandler }) {
+export function EditorCore({ registerSerialOperationHandler }) {
   const executeEditorCommand = useDispatchPrimaryEditor(false);
 
-  const actionHandler = useCallback(
-    (actionObject) => {
-      switch (actionObject.name) {
+  const handler = useCallback(
+    (operation) => {
+      switch (operation.name) {
         case 'action::bangle-io-editor-core:collapse-heading': {
           executeEditorCommand(toggleHeadingCollapse);
           return true;
@@ -44,13 +42,13 @@ export function EditorCore({ registerActionHandler }) {
   );
 
   useEffect(() => {
-    const deregister = registerActionHandler((obj) => {
-      actionHandler(obj);
+    const deregister = registerSerialOperationHandler((obj) => {
+      handler(obj);
     });
     return () => {
       deregister();
     };
-  }, [actionHandler, registerActionHandler]);
+  }, [handler, registerSerialOperationHandler]);
 
   return null;
 }

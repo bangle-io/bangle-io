@@ -9,14 +9,14 @@ export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {
     props: {
       handleDOMEvents: {
         focus: (view, event) => {
-          const { dispatchAction, editorId } = getEditorPluginMetadata(
+          const { dispatchSerialOperation, editorId } = getEditorPluginMetadata(
             view.state,
           );
-          const action: EditorManagerAction = {
+          const operation: EditorManagerAction = {
             name: 'action::editor-manager-context:on-focus-update',
             value: { editorId },
           };
-          dispatchAction(action);
+          dispatchSerialOperation(operation);
 
           // This is important to return false so that
           // we dont interfere with PM's focus setting.

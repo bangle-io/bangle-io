@@ -8,7 +8,7 @@ import React, {
 
 import { Selection } from '@bangle.dev/pm';
 
-import { useActionHandler } from '@bangle.io/action-context';
+import { useSerialOperationHandler } from '@bangle.io/action-context';
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   getEditor,
@@ -28,7 +28,7 @@ import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import {
   HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN,
   HeadingNodes,
-  WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION,
+  WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
   watchHeadingsPluginKey,
 } from './config';
 
@@ -64,11 +64,11 @@ export function NoteOutline() {
     return;
   }, [focusedEditorId, store]);
 
-  useActionHandler(
-    (action) => {
-      if (action.name === WATCH_HEADINGS_PLUGIN_STATE_UPDATE_ACTION) {
-        const editorId: unknown = action.value?.editorId;
-        // change is from an editor which doesnt have id or the action
+  useSerialOperationHandler(
+    (sOperation) => {
+      if (sOperation.name === WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP) {
+        const editorId: unknown = sOperation.value?.editorId;
+        // change is from an editor which doesnt have id or the operation
         // is for a different editorId
         if (typeof editorId !== 'number' || editorId !== focusedEditorId) {
           return false;
