@@ -148,6 +148,7 @@ function EditorInner({
       wsPath={wsPath}
       onEditorReady={onEditorReady}
       editorDisplayType={editorDisplayType}
+      bangleStore={bangleStore}
     />
   ) : null;
 }
@@ -162,6 +163,7 @@ function EditorInner2({
   onEditorReady,
   initialSelection,
   wsPath,
+  bangleStore,
 }: {
   className?: string;
   dispatchSerialOperation: DispatchSerialOperationType;
@@ -172,6 +174,7 @@ function EditorInner2({
   initialSelection: Selection | undefined;
   onEditorReady?: (editor: CoreBangleEditor) => void;
   wsPath: string;
+  bangleStore: ReturnType<typeof useEditorManagerContext>['bangleStore'];
 }) {
   const editorState = useGetEditorState({
     dispatchSerialOperation,
@@ -181,6 +184,7 @@ function EditorInner2({
     initialSelection,
     initialValue,
     wsPath,
+    bangleStore,
   });
 
   const renderNodeViews: RenderNodeViewsFunction = useCallback(
@@ -225,6 +229,7 @@ export function useGetEditorState({
   initialSelection,
   initialValue,
   wsPath,
+  bangleStore,
 }: {
   dispatchSerialOperation: DispatchSerialOperationType;
   editorDisplayType: EditorDisplayType;
@@ -233,6 +238,7 @@ export function useGetEditorState({
   initialSelection: Selection | undefined;
   initialValue: any;
   wsPath: string;
+  bangleStore: ReturnType<typeof useEditorManagerContext>['bangleStore'];
 }) {
   const pluginMetadata: EditorPluginMetadata = useMemo(
     () => ({
@@ -240,8 +246,9 @@ export function useGetEditorState({
       editorId,
       editorDisplayType,
       dispatchSerialOperation,
+      bangleStore,
     }),
-    [editorId, wsPath, dispatchSerialOperation, editorDisplayType],
+    [editorId, wsPath, dispatchSerialOperation, bangleStore, editorDisplayType],
   );
 
   const plugins = useCallback(() => {

@@ -26,10 +26,7 @@ import {
   SettingsIcon,
   TwitterIcon,
 } from '@bangle.io/ui-components';
-import {
-  UI_CONTEXT_TOGGLE_THEME,
-  useUIManagerContext,
-} from '@bangle.io/ui-context';
+import { toggleTheme, useUIManagerContext } from '@bangle.io/ui-context';
 import { cx } from '@bangle.io/utils';
 
 import { buttonStyling } from './ActivitybarButton';
@@ -97,9 +94,7 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case ToggleThemeKey: {
-          dispatchUiAction({
-            name: UI_CONTEXT_TOGGLE_THEME,
-          });
+          toggleTheme()(store.state, store.dispatch);
           break;
         }
         case DiscordKey: {
@@ -117,7 +112,7 @@ export function ActivitybarOptionsDropdown({
         }
       }
     },
-    [dispatchUiAction, store],
+    [store],
   );
 
   return (

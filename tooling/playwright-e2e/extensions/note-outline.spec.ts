@@ -7,7 +7,7 @@ import {
   getEditorDebugString,
   getEditorHTML,
   longSleep,
-  runAction,
+  runOperation,
   SELECTOR_TIMEOUT,
   sleep,
   waitForEditorFocus,
@@ -29,9 +29,9 @@ test('shows note sidebar correctly', async ({ page }) => {
   await page.keyboard.type('### child heading');
   await page.keyboard.press('Enter');
 
-  await runAction(
+  await runOperation(
     page,
-    'action::bangle-io-core-actions:NOTE_TOGGLE_SIDEBAR_ACTION',
+    'operation::bangle-io-core-operations:NOTE_TOGGLE_SIDEBAR',
   );
 
   await expect(

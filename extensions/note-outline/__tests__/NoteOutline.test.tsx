@@ -287,7 +287,7 @@ para 2
 
       act(() => {
         dispatchSOpCb?.({
-          name: 'action::random',
+          name: 'operation::random',
           value: {
             editorId: 1,
           },

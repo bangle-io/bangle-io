@@ -21,19 +21,19 @@ const extension = Extension.create({
     ReactComponent: EditorCore,
     operations: [
       {
-        name: 'action::bangle-io-editor-core:collapse-heading',
+        name: 'operation::bangle-io-editor-core:collapse-heading',
         title: 'Editor: Collapse heading',
       },
       {
-        name: 'action::bangle-io-editor-core:uncollapse-all-heading',
+        name: 'operation::bangle-io-editor-core:uncollapse-all-heading',
         title: 'Editor: Uncollapse all headings',
       },
       {
-        name: 'action::bangle-io-editor-core:move-list-up',
+        name: 'operation::bangle-io-editor-core:move-list-up',
         title: 'Editor: Move list up',
       },
       {
-        name: 'action::bangle-io-editor-core:move-list-down',
+        name: 'operation::bangle-io-editor-core:move-list-down',
         title: 'Editor: Move list down',
       },
     ],

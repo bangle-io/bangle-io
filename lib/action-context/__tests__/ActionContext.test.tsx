@@ -37,7 +37,7 @@ function TestHandler({
   useEffect(() => {
     const deregister = registerSerialOperationHandler((operation) => {
       switch (operation.name) {
-        case 'action::bangle-io-core:show-search-sidebar': {
+        case 'operation::bangle-io-core:show-search-sidebar': {
           updateSidebar((c) => c + 1);
           return true;
         }
@@ -71,11 +71,11 @@ test('works', async () => {
           ReactComponent: TestHandler,
           operations: [
             {
-              name: 'action::bangle-io-core:show-search-sidebar',
+              name: 'operation::bangle-io-core:show-search-sidebar',
               title: 'show title bar',
             },
             {
-              name: 'action::bangle-io-core:show-search-sidebar2',
+              name: 'operation::bangle-io-core:show-search-sidebar2',
               title: 'show title bar',
             },
           ],
@@ -116,13 +116,13 @@ test('works', async () => {
   expect(result.container.innerHTML.includes('result-0')).toBe(true);
 
   act(() => {
-    dispatchSOp({ name: 'action::bangle-io-core:show-search-sidebar' });
+    dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar' });
   });
 
   expect(result.container.innerHTML.includes('result-1')).toBe(true);
 
   act(() => {
-    dispatchSOp({ name: 'action::bangle-io-core:show-search-sidebar2' });
+    dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar2' });
   });
 
   expect(result.container.innerHTML.includes('result-1')).toBe(true);

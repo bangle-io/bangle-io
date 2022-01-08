@@ -35,7 +35,6 @@ const extension = Extension.create({
         keybinding: 'Mod-p',
       },
     ],
-    slices: [corePaletteSlice()],
     ReactComponent: PaletteManager,
   },
 });

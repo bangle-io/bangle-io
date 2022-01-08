@@ -5,7 +5,7 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
 
-const LOG = false;
+const LOG = true;
 let log = LOG ? console.log.bind(console, 'SerialOperationCotext') : () => {};
 
 export const SerialOperationContext = createContext<SerialOperationContextType>(
@@ -20,7 +20,6 @@ export interface SerialOperationContextType {
 
 export function SerialOperationContextProvider({ children }) {
   const extensionRegistry = useExtensionRegistryContext();
-  const store = useBangleStoreContext();
 
   const operationNameSet = useMemo(() => {
     return new Set(
@@ -61,11 +60,8 @@ export function SerialOperationContextProvider({ children }) {
       )) {
         handler(operation);
       }
-
-      // TODO for now also send to the store until we consolidate the two.
-      store.dispatch(operation);
     },
-    [extensionRegistry, operationNameSet, store],
+    [extensionRegistry, operationNameSet],
   );
 
   const value = useMemo(() => {
@@ -77,12 +73,14 @@ export function SerialOperationContextProvider({ children }) {
 
   useKeybindings(() => {
     const operations = extensionRegistry.getRegisteredOperations();
+    console.log({ operations });
     const keys = Object.fromEntries(
       operations
         .filter((r) => r.keybinding)
         .map((r) => [
           r.keybinding,
           () => {
+            console.log(r.name);
             dispatchSerialOperation({
               name: r.name,
             });

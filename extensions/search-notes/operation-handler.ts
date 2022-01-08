@@ -4,8 +4,8 @@ import { RegisterSerialOperationHandlerType } from '@bangle.io/extension-registr
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import {
-  EXECUTE_SEARCH_ACTION,
-  SHOW_SEARCH_SIDEBAR_ACTION,
+  EXECUTE_SEARCH_OPERATION,
+  SHOW_SEARCH_SIDEBAR_OPERATION,
   SIDEBAR_NAME,
 } from './constants';
 import { useSearchNotes, useSearchNotesState } from './hooks';
@@ -23,11 +23,11 @@ export function SearchNotesOperationHandler({
   useEffect(() => {
     const deregister = registerSerialOperationHandler((operation) => {
       switch (operation.name) {
-        case SHOW_SEARCH_SIDEBAR_ACTION: {
+        case SHOW_SEARCH_SIDEBAR_OPERATION: {
           showSidebar(sidebar, dispatch);
           return true;
         }
-        case EXECUTE_SEARCH_ACTION: {
+        case EXECUTE_SEARCH_OPERATION: {
           showSidebar(sidebar, dispatch);
           updateState((state) => ({
             ...state,

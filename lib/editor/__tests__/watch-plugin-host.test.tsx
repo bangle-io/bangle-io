@@ -11,6 +11,7 @@ import type { EditorState } from '@bangle.dev/pm';
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { psx, renderTestEditor, typeText } from '@bangle.dev/test-helpers';
 
+import { initialBangleStore } from '@bangle.io/app-state-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import type { EditorWatchPluginState } from '@bangle.io/shared-types';
 
@@ -41,6 +42,7 @@ test('works', async () => {
         editorDisplayType: EditorDisplayType.Page,
         wsPath: 'test:my-path.md',
         editorId: 0,
+        bangleStore: initialBangleStore,
       },
       [],
     ),
@@ -80,6 +82,7 @@ describe('plugin state assertions', () => {
             editorDisplayType: EditorDisplayType.Page,
             wsPath: 'test:my-path.md',
             editorId: 0,
+            bangleStore: initialBangleStore,
           },
           watchPluginStates,
         ),
@@ -109,7 +112,7 @@ describe('plugin state assertions', () => {
       }),
       [
         {
-          operation: 'action::my-action:watch',
+          operation: 'operation::my-op:watch',
           pluginKey: myPluginKey,
         },
       ],
@@ -121,7 +124,7 @@ describe('plugin state assertions', () => {
 
     expect(dispatchSerialOperation).toBeCalledTimes(1);
     expect(dispatchSerialOperation).nthCalledWith(1, {
-      name: 'action::my-action:watch',
+      name: 'operation::my-op:watch',
       value: { editorId: 0 },
     });
 
@@ -131,7 +134,7 @@ describe('plugin state assertions', () => {
 
     expect(dispatchSerialOperation).toBeCalledTimes(2);
     expect(dispatchSerialOperation).nthCalledWith(2, {
-      name: 'action::my-action:watch',
+      name: 'operation::my-op:watch',
       value: { editorId: 0 },
     });
   });
@@ -172,11 +175,11 @@ describe('plugin state assertions', () => {
       ],
       [
         {
-          operation: 'action::plugin-1:watch',
+          operation: 'operation::plugin-1:watch',
           pluginKey: myPlugin1Key,
         },
         {
-          operation: 'action::plugin-2:watch',
+          operation: 'operation::plugin-2:watch',
           pluginKey: myPlugin2Key,
         },
       ],
@@ -188,11 +191,11 @@ describe('plugin state assertions', () => {
 
     expect(dispatchSerialOperation).toBeCalledTimes(2);
     expect(dispatchSerialOperation).nthCalledWith(1, {
-      name: 'action::plugin-1:watch',
+      name: 'operation::plugin-1:watch',
       value: { editorId: 0 },
     });
     expect(dispatchSerialOperation).nthCalledWith(2, {
-      name: 'action::plugin-2:watch',
+      name: 'operation::plugin-2:watch',
       value: { editorId: 0 },
     });
 
@@ -204,7 +207,7 @@ describe('plugin state assertions', () => {
 
     expect(dispatchSerialOperation).toBeCalledTimes(3);
     expect(dispatchSerialOperation).nthCalledWith(3, {
-      name: 'action::plugin-1:watch',
+      name: 'operation::plugin-1:watch',
       value: { editorId: 0 },
     });
   });

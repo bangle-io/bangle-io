@@ -18,7 +18,7 @@ export function uuid(len = 10) {
 /**
  * Only runs actions visible in the palette
  */
-export async function runAction(page, actionId) {
+export async function runOperation(page, actionId) {
   await page.keyboard.press('Escape');
   await page.keyboard.down(ctrlKey);
   await page.keyboard.down('Shift');
@@ -30,7 +30,10 @@ export async function runAction(page, actionId) {
 }
 
 export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
-  await runAction(page, 'action::bangle-io-core-actions:NEW_WORKSPACE_ACTION');
+  await runOperation(
+    page,
+    'operation::bangle-io-core-operations:NEW_WORKSPACE',
+  );
 
   await page.click('[aria-label="select storage type"]');
 
@@ -70,9 +73,9 @@ export async function createWorkspaceFromBackup(
 
   const [fileChooser] = await Promise.all([
     page.waitForEvent('filechooser'),
-    runAction(
+    runOperation(
       page,
-      'action::bangle-io-core-actions:CORE_ACTIONS_NEW_WORKSPACE_FROM_BACKUP',
+      'operation::bangle-io-core-operations:NEW_WORKSPACE_FROM_BACKUP',
     ),
   ]);
 
@@ -97,7 +100,10 @@ export async function getAllWsPaths(
   } = {},
 ): Promise<undefined | string[]> {
   if (!(await page.$('.note-browser'))) {
-    await runAction(page, 'action::bangle-io-note-browser:toggle-note-browser');
+    await runOperation(
+      page,
+      'operation::bangle-io-note-browser:toggle-note-browser',
+    );
   }
 
   const result = JSON.parse(
@@ -165,7 +171,7 @@ export async function createNewNote(
   wsName: string,
   noteName = 'new_file.md',
 ) {
-  await runAction(page, 'action::bangle-io-core-actions:NEW_NOTE_ACTION');
+  await runOperation(page, 'operation::bangle-io-core-operations:NEW_NOTE');
 
   if (!noteName.endsWith('.md')) {
     noteName += '.md';

@@ -8,8 +8,8 @@ import {
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
 import {
-  CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
-  CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
+  CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+  CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
@@ -141,7 +141,7 @@ export function NewWorkspaceModalContainer({
     switch (modalState.workspace.type) {
       case FILE_SYSTEM: {
         dispatchSerialOperation({
-          name: CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
+          name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
           value: { rootDirHandle: modalState.workspace.rootDir },
         });
         break;
@@ -149,7 +149,7 @@ export function NewWorkspaceModalContainer({
 
       case BROWSER: {
         dispatchSerialOperation({
-          name: CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
+          name: CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
           value: { wsName: modalState.workspace.wsName },
         });
         break;

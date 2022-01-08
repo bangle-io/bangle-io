@@ -30,6 +30,17 @@ export function focusEditor(editorId: EditorIdType = 0) {
     return false;
   };
 }
+export function updateFocusedEditor(editorId: EditorIdType = 0) {
+  return (state: AppState, dispatch: EditorDispatchType): boolean => {
+    dispatch({
+      name: 'action::editor-manager-context:on-focus-update',
+      value: {
+        editorId,
+      },
+    });
+    return true;
+  };
+}
 
 export function updateInitialSelection(editorId: EditorIdType) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {

@@ -6,10 +6,10 @@ import { SearchIcon } from '@bangle.io/ui-components';
 
 import { SearchNotesSidebar } from './components/SearchNotesSidebar';
 import {
-  EXECUTE_SEARCH_ACTION,
+  EXECUTE_SEARCH_OPERATION,
   extensionName,
   SearchNotesExtensionState,
-  SHOW_SEARCH_SIDEBAR_ACTION,
+  SHOW_SEARCH_SIDEBAR_OPERATION,
   SIDEBAR_NAME,
 } from './constants';
 import { searchPlugin } from './editor-plugins';
@@ -24,12 +24,12 @@ const extension = Extension.create<SearchNotesExtensionState>({
     ReactComponent: SearchNotesOperationHandler,
     operations: [
       {
-        name: SHOW_SEARCH_SIDEBAR_ACTION,
+        name: SHOW_SEARCH_SIDEBAR_OPERATION,
         title: 'Open search sidebar',
         keybinding: key,
       },
       {
-        name: EXECUTE_SEARCH_ACTION,
+        name: EXECUTE_SEARCH_OPERATION,
         title: 'Execute search',
         hidden: true,
       },

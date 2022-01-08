@@ -13,7 +13,7 @@ export function NoteBrowserOpHandler({
   useEffect(() => {
     const deregister = registerSerialOperationHandler((operation) => {
       switch (operation.name) {
-        case 'action::bangle-io-note-browser:toggle-note-browser': {
+        case 'operation::bangle-io-note-browser:toggle-note-browser': {
           dispatch({
             name: 'UI/CHANGE_SIDEBAR',
             value: {

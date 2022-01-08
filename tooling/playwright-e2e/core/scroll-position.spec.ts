@@ -9,7 +9,7 @@ import {
   getEditorSelectionJson,
   isIntersectingViewport,
   longSleep,
-  runAction,
+  runOperation,
   sleep,
   splitScreen,
   waitForEditorFocus,
@@ -159,9 +159,9 @@ test.describe.parallel('scroll', () => {
     const wsName = await createWorkspace(page);
     const wsPath = await createNewNote(page, wsName, 'test123');
 
-    await runAction(
+    await runOperation(
       page,
-      'action::bangle-io-core-actions:TOGGLE_EDITOR_SPLIT_ACTION',
+      'operation::bangle-io-core-operations:TOGGLE_EDITOR_SPLIT',
     );
 
     await getEditorLocator(page, 1, { wsPath });
@@ -182,18 +182,18 @@ test.describe.parallel('scroll', () => {
     const wsName = await createWorkspace(page);
     const wsPath = await createNewNote(page, wsName, 'test123');
 
-    await runAction(
+    await runOperation(
       page,
-      'action::bangle-io-core-actions:TOGGLE_EDITOR_SPLIT_ACTION',
+      'operation::bangle-io-core-operations:TOGGLE_EDITOR_SPLIT',
     );
 
     await sleep();
 
     await waitForWsPathToLoad(page, 1, { wsPath });
 
-    await runAction(
+    await runOperation(
       page,
-      'action::bangle-io-core-actions:focus-primary-editor',
+      'operation::bangle-io-core-operations:focus-primary-editor',
     );
 
     await waitForEditorFocus(page, 0, { wsPath });

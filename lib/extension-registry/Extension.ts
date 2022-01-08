@@ -146,10 +146,12 @@ export class Extension<T = unknown> {
       if (
         // TODO for now we are housing all core ops in this extension
         name !== 'bangle-io-core-operations' &&
-        operations.some((a) => !a.name.startsWith('action::' + name + ':'))
+        operations.some((a) => !a.name.startsWith('operation::' + name + ':'))
       ) {
         console.log(
-          operations.find((a) => !a.name.startsWith('action::' + name + ':')),
+          operations.find(
+            (a) => !a.name.startsWith('operation::' + name + ':'),
+          ),
         );
         throw new Error(
           `An operation must have a name with the following schema operation::<extension_pkg_name:xyz. For example 'operation::bangle-io-my-extension:hello-world'`,

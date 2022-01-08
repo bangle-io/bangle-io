@@ -9,8 +9,8 @@ import {
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
 import {
-  CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
-  CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
+  CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+  CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { sleep } from '@bangle.io/utils';
@@ -144,7 +144,7 @@ describe('NewWorkspaceModalContainer', () => {
 
       expect(dispatchSerialOperation).toBeCalledTimes(1);
       expect(dispatchSerialOperation).nthCalledWith(1, {
-        name: CORE_ACTIONS_CREATE_BROWSER_WORKSPACE,
+        name: CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
         value: {
           wsName: 'my-test-ws',
         },
@@ -293,7 +293,7 @@ describe('NewWorkspaceModalContainer', () => {
 
       expect(dispatchSerialOperation).toBeCalledTimes(1);
       expect(dispatchSerialOperation).nthCalledWith(1, {
-        name: CORE_ACTIONS_CREATE_NATIVE_FS_WORKSPACE,
+        name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
         value: {
           rootDirHandle: {
             name: 'test-dir-name',

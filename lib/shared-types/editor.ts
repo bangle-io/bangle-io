@@ -3,6 +3,7 @@
 import type { Plugin } from '@bangle.dev/pm';
 
 import type { EditorDisplayType } from '@bangle.io/constants';
+import { ApplicationStore } from '@bangle.io/create-store';
 
 import type { DispatchSerialOperationType } from './extension-registry';
 
@@ -12,6 +13,7 @@ export interface EditorPluginMetadata {
   editorDisplayType: EditorDisplayType;
   editorId?: number;
   dispatchSerialOperation: DispatchSerialOperationType;
+  bangleStore: ApplicationStore;
 }
 
 export type EditorPlugin = ({

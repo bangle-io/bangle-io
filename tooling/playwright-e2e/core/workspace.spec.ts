@@ -13,7 +13,7 @@ import {
   longSleep,
   openWorkspacePalette,
   pushWsPathToSecondary,
-  runAction,
+  runOperation,
   sleep,
   waitForEditorFocus,
 } from '../helpers';
@@ -203,9 +203,9 @@ test.describe.parallel('workspace', () => {
 
     await Promise.all([
       page.waitForNavigation(),
-      runAction(
+      runOperation(
         page,
-        'action::bangle-io-core-actions:DELETE_ACTIVE_NOTE_ACTION',
+        'operation::bangle-io-core-operations:DELETE_ACTIVE_NOTE',
       ),
     ]);
 
@@ -232,9 +232,9 @@ test.describe.parallel('workspace', () => {
 
     await Promise.all([
       page.waitForNavigation(),
-      runAction(
+      runOperation(
         page,
-        'action::bangle-io-core-actions:DELETE_ACTIVE_NOTE_ACTION',
+        'operation::bangle-io-core-operations:DELETE_ACTIVE_NOTE',
       ),
     ]);
 
@@ -262,9 +262,9 @@ test.describe.parallel('workspace', () => {
 
     await Promise.all([
       page.waitForNavigation(),
-      runAction(
+      runOperation(
         page,
-        'action::bangle-io-core-actions:DELETE_ACTIVE_NOTE_ACTION',
+        'operation::bangle-io-core-operations:DELETE_ACTIVE_NOTE',
       ),
     ]);
     await expect(page).toHaveURL(

@@ -24,7 +24,7 @@ export interface WatchPluginState {
 export const WATCH_HEADINGS_PLUGIN_DEBOUNCE_WAIT = 100;
 export const WATCH_HEADINGS_PLUGIN_DEBOUNCE_MAX_WAIT = 250;
 export const WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP =
-  'action::note-outline:watch-headings-plugin-state-update';
+  'operation::note-outline:watch-headings-plugin-state-update';
 
 export function getWatchPluginState(state: EditorState) {
   return watchHeadingsPluginKey.getState(state);

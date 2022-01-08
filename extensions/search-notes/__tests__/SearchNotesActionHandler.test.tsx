@@ -5,8 +5,8 @@ import type { SerialOperationHandler } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import {
-  EXECUTE_SEARCH_ACTION as EXECUTE_SEARCH_OP,
-  SHOW_SEARCH_SIDEBAR_ACTION as SHOW_SEARCH_SIDEBAR_OP,
+  EXECUTE_SEARCH_OPERATION as EXECUTE_SEARCH_OP,
+  SHOW_SEARCH_SIDEBAR_OPERATION as SHOW_SEARCH_SIDEBAR_OP,
   SIDEBAR_NAME,
 } from '../constants';
 import { useSearchNotes, useSearchNotesState } from '../hooks';

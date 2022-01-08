@@ -1,6 +1,6 @@
 import type { PluginKey } from '@bangle.dev/pm';
 
-export type SerialOperationNameType = `action::${string}`;
+export type SerialOperationNameType = `operation::${string}`;
 export interface SerialOperationType {
   name: SerialOperationNameType;
   value?: any;
@@ -18,7 +18,7 @@ export type DispatchSerialOperationType = (
 
 export type SerialOperationHandler = (
   sOperation: SerialOperationType,
-) => boolean;
+) => boolean | undefined;
 
 export type SerialOperationKeybindingMapping = Record<
   SerialOperationNameType,

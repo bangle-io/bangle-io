@@ -24,6 +24,7 @@ export const getEditorPluginMetadataReturn: ReturnType<
 > = {
   dispatchSerialOperation: jest.fn(),
   editorDisplayType: EditorDisplayType.Page,
+  bangleStore: initialBangleStore,
   wsPath: 'test-workspace:my-test-note.md',
 };
 

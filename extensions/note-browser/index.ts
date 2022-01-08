@@ -16,7 +16,7 @@ const extension = Extension.create({
     ReactComponent: NoteBrowserOpHandler,
     operations: [
       {
-        name: 'action::bangle-io-note-browser:toggle-note-browser',
+        name: 'operation::bangle-io-note-browser:toggle-note-browser',
         title: 'Toggle Notes Browser',
         keybinding: key,
       },

@@ -5,6 +5,7 @@ import React from 'react';
 import { BangleEditor } from '@bangle.dev/core';
 import { Node, Selection } from '@bangle.dev/pm';
 
+import { initialBangleStore } from '@bangle.io/app-state-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import {
   getInitialSelection,
@@ -264,6 +265,7 @@ describe('useGetEditorState', () => {
         wsPath: 'something:one.md',
         editorDisplayType: EditorDisplayType.Page,
         dispatchSerialOperation: jest.fn(),
+        bangleStore: initialBangleStore,
         initialSelection: undefined,
       }),
     );
@@ -299,6 +301,7 @@ describe('useGetEditorState', () => {
         wsPath: 'something:one.md',
         editorDisplayType: EditorDisplayType.Page,
         dispatchSerialOperation: jest.fn(),
+        bangleStore: initialBangleStore,
         initialSelection: Selection.fromJSON(pmNode, {
           anchor: 5,
           head: 5,

@@ -29,6 +29,7 @@
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/base-error": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/create-store": "workspace:*",
     "@bangle.io/editor-manager-context": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
