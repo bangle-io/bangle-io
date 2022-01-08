@@ -10,7 +10,7 @@ import { imageNodeViewPlugin } from './image-node-view-plugin';
 import { ImageEditorReactComponent } from './ImageEditorReactComponent';
 import { renderImageReactNodeView } from './render-image-react-node-view';
 
-const extensionName = 'bangle-io-image-extension';
+const extensionName = '@bangle.io/image-extension';
 
 const extension = Extension.create({
   name: extensionName,
