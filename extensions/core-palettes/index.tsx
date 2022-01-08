@@ -16,7 +16,7 @@ const extension = Extension.create({
     operations: [
       {
         name: CORE_PALETTES_TOGGLE_ACTION_PALETTE,
-        title: 'Action Palette',
+        title: 'Operation Palette',
         hidden: true,
         keybinding: isFirefox ? 'Mod-o' : 'Mod-P',
       },
