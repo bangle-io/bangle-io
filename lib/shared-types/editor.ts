@@ -4,14 +4,14 @@ import type { Plugin } from '@bangle.dev/pm';
 
 import type { EditorDisplayType } from '@bangle.io/constants';
 
-import type { DispatchActionType } from './extension-registry';
+import type { DispatchSerialOperationType } from './extension-registry';
 
 // as pluginMetadata field by bangle.dev
 export interface EditorPluginMetadata {
   wsPath: string;
   editorDisplayType: EditorDisplayType;
   editorId?: number;
-  dispatchAction: DispatchActionType;
+  dispatchSerialOperation: DispatchSerialOperationType;
 }
 
 export type EditorPlugin = ({

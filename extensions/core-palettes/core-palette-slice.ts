@@ -7,9 +7,9 @@ import {
 import { AppState, Slice } from '@bangle.io/create-store';
 import { UiContextAction, uiSliceKey } from '@bangle.io/ui-context';
 
-import { operationPalette } from './ActionPalette';
 import { sliceKey } from './config';
 import { notesPalette } from './NotesPalette';
+import { operationPalette } from './OperationPalette';
 import { workspacePalette } from './WorkspacePalette';
 
 type ActionsHandled =

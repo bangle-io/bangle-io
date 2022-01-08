@@ -90,10 +90,10 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
   });
 
 export const operationPalette: ExtensionPaletteType = {
-  type: CorePalette.Action,
+  type: CorePalette.Operation,
   icon: <TerminalIcon />,
   identifierPrefix,
-  placeholder: 'Actions',
+  placeholder: 'Operations',
   parseRawQuery: (rawQuery) => {
     if (identifierPrefix && rawQuery.startsWith(identifierPrefix)) {
       return rawQuery.slice(1);

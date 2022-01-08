@@ -11,6 +11,6 @@ export enum CorePalette {
   Heading = 'bangle-io-core-palettes/heading',
   Workspace = 'bangle-io-core-palettes/workspace',
   Question = 'bangle-io-core-palettes/question',
-  Action = 'bangle-io-core-palettes/action',
+  Operation = 'bangle-io-core-palettes/operation',
   Notes = 'bangle-io-core-palettes/notes',
 }

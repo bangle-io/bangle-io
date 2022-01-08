@@ -9,13 +9,13 @@ import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
-import { operationPalette } from './ActionPalette';
 import {
   PaletteManagerImperativeHandle,
   PaletteManagerReactComponentProps,
 } from './config';
 import { headingPalette } from './HeadingPalette';
 import { notesPalette } from './NotesPalette';
+import { operationPalette } from './OperationPalette';
 import { questionPalette } from './QuestionPalette';
 import { workspacePalette } from './WorkspacePalette';
 

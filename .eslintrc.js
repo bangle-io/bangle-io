@@ -55,7 +55,7 @@ module.exports = {
       'error',
       {
         additionalHooks:
-          '(useKeybindings|useActionHandler|useMyOtherCustomHook)',
+          '(useKeybindings|useSerialOperationHandler|useMyOtherCustomHook)',
       },
     ],
 

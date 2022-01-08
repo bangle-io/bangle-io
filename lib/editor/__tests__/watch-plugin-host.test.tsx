@@ -37,7 +37,7 @@ test('works', async () => {
   const testEditor = render(
     watchPluginHost(
       {
-        dispatchAction: jest.fn(),
+        dispatchSerialOperation: jest.fn(),
         editorDisplayType: EditorDisplayType.Page,
         wsPath: 'test:my-path.md',
         editorId: 0,
@@ -66,17 +66,17 @@ describe('plugin state assertions', () => {
     customPlugins: Plugin | Plugin[],
     watchPluginStates: EditorWatchPluginState[],
   ) => void;
-  let dispatchAction, view;
+  let dispatchSerialOperation, view;
 
   beforeEach(() => {
-    dispatchAction = jest.fn();
+    dispatchSerialOperation = jest.fn();
 
     setup = async (customPlugins, watchPluginStates) => {
       const testEditor = render([
         customPlugins,
         watchPluginHost(
           {
-            dispatchAction,
+            dispatchSerialOperation,
             editorDisplayType: EditorDisplayType.Page,
             wsPath: 'test:my-path.md',
             editorId: 0,
@@ -93,7 +93,7 @@ describe('plugin state assertions', () => {
     };
   });
 
-  test('dispatches action on plugins state change', async () => {
+  test('dispatches operation on plugins state change', async () => {
     const myPluginKey = new PluginKey();
     await setup(
       new Plugin({
@@ -109,7 +109,7 @@ describe('plugin state assertions', () => {
       }),
       [
         {
-          action: 'action::my-action:watch',
+          operation: 'action::my-action:watch',
           pluginKey: myPluginKey,
         },
       ],
@@ -119,8 +119,8 @@ describe('plugin state assertions', () => {
 
     jest.runOnlyPendingTimers();
 
-    expect(dispatchAction).toBeCalledTimes(1);
-    expect(dispatchAction).nthCalledWith(1, {
+    expect(dispatchSerialOperation).toBeCalledTimes(1);
+    expect(dispatchSerialOperation).nthCalledWith(1, {
       name: 'action::my-action:watch',
       value: { editorId: 0 },
     });
@@ -129,14 +129,14 @@ describe('plugin state assertions', () => {
     typeText(view, 'second');
     jest.runOnlyPendingTimers();
 
-    expect(dispatchAction).toBeCalledTimes(2);
-    expect(dispatchAction).nthCalledWith(2, {
+    expect(dispatchSerialOperation).toBeCalledTimes(2);
+    expect(dispatchSerialOperation).nthCalledWith(2, {
       name: 'action::my-action:watch',
       value: { editorId: 0 },
     });
   });
 
-  test('dispatches action on when multiple plugin state changes', async () => {
+  test('dispatches operation on when multiple plugin state changes', async () => {
     const myPlugin1Key = new PluginKey();
     const myPlugin2Key = new PluginKey();
 
@@ -172,11 +172,11 @@ describe('plugin state assertions', () => {
       ],
       [
         {
-          action: 'action::plugin-1:watch',
+          operation: 'action::plugin-1:watch',
           pluginKey: myPlugin1Key,
         },
         {
-          action: 'action::plugin-2:watch',
+          operation: 'action::plugin-2:watch',
           pluginKey: myPlugin2Key,
         },
       ],
@@ -186,24 +186,24 @@ describe('plugin state assertions', () => {
 
     jest.runOnlyPendingTimers();
 
-    expect(dispatchAction).toBeCalledTimes(2);
-    expect(dispatchAction).nthCalledWith(1, {
+    expect(dispatchSerialOperation).toBeCalledTimes(2);
+    expect(dispatchSerialOperation).nthCalledWith(1, {
       name: 'action::plugin-1:watch',
       value: { editorId: 0 },
     });
-    expect(dispatchAction).nthCalledWith(2, {
+    expect(dispatchSerialOperation).nthCalledWith(2, {
       name: 'action::plugin-2:watch',
       value: { editorId: 0 },
     });
 
     stopPlugin2StateUpdates = true;
 
-    // new updates now should only trigger plugin 1 actions
+    // new updates now should only trigger plugin 1 operation
     typeText(view, 'second');
     jest.runOnlyPendingTimers();
 
-    expect(dispatchAction).toBeCalledTimes(3);
-    expect(dispatchAction).nthCalledWith(3, {
+    expect(dispatchSerialOperation).toBeCalledTimes(3);
+    expect(dispatchSerialOperation).nthCalledWith(3, {
       name: 'action::plugin-1:watch',
       value: { editorId: 0 },
     });

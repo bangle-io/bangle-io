@@ -1,4 +1,4 @@
-export const extensionName = 'bangle-io-core-actions';
+export const extensionName = 'bangle-io-core-operations';
 
 export const CORE_ACTIONS_NEW_NOTE =
   'action::bangle-io-core-actions:NEW_NOTE_ACTION';

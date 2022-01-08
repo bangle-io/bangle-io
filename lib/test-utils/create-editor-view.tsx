@@ -44,7 +44,7 @@ export function createEditorFromMd(
           wsPath: 'test:my-test.md',
           editorDisplayType: EditorDisplayType.Page,
           editorId: 0,
-          dispatchAction: () => {},
+          dispatchSerialOperation: () => {},
           ...pluginMetadata,
         }),
         ...registry.getPlugins(),

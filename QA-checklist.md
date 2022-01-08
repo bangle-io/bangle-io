@@ -1,6 +1,10 @@
 # QA-checklist.md
 
-This is the checklist to do things.
+For QA ideally we should have tests in the e2e, but for things which are hard to test we have manual testing.
+
+## Service Worker
+
+- [ ] When a new update clicking on update reloads the application.
 
 ## Editor Tooltip
 
