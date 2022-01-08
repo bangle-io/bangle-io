@@ -44,7 +44,6 @@ export function SerialOperationContextProvider({ children }) {
       }
 
       if (!operationNameSet.has(name)) {
-        console.log(operationNameSet, name);
         throw new Error('Unknown operation ' + name);
       }
       if (Object.keys(others).length > 0) {
@@ -72,14 +71,12 @@ export function SerialOperationContextProvider({ children }) {
 
   useKeybindings(() => {
     const operations = extensionRegistry.getRegisteredOperations();
-    console.log({ operations });
     const keys = Object.fromEntries(
       operations
         .filter((r) => r.keybinding)
         .map((r) => [
           r.keybinding,
           () => {
-            console.log(r.name);
             dispatchSerialOperation({
               name: r.name,
             });
