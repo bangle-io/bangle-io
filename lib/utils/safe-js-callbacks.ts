@@ -144,3 +144,14 @@ function scrollIntoViewIfNeededPolyfill(
     element.scrollIntoView(alignWithTop);
   }
 }
+
+export function safeIdleRefCallback(cb: () => void, timeout?: number) {
+  safeRequestIdleCallback(
+    () => {
+      safeRequestAnimationFrame(() => {
+        cb();
+      });
+    },
+    { timeout },
+  );
+}

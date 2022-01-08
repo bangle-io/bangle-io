@@ -56,6 +56,61 @@ describe('OpenedWsPaths', () => {
     expect(result.has(undefined)).toBe(false);
   });
 
+  test('allBelongToSameWsName', () => {
+    let result = new OpenedWsPaths(['hello:one.md', undefined]);
+    expect(result.allBelongToSameWsName('hello')).toBe(true);
+
+    result = new OpenedWsPaths(['hello:one.md', undefined]);
+    expect(result.allBelongToSameWsName()).toBe(true);
+
+    result = new OpenedWsPaths(['hello:one.md', 'bye:one.md']);
+    expect(result.allBelongToSameWsName()).toBe(false);
+
+    result = new OpenedWsPaths(['hello:one.md', 'bye:one.md']);
+    expect(result.allBelongToSameWsName('bye')).toBe(false);
+
+    result = new OpenedWsPaths(['hello:one.md', 'hello:one.md']);
+    expect(result.allBelongToSameWsName('bye')).toBe(false);
+
+    result = new OpenedWsPaths(['hello:one.md', 'hello:one.md']);
+    expect(result.allBelongToSameWsName('hello')).toBe(true);
+
+    result = OpenedWsPaths.createEmpty();
+    expect(result.allBelongToSameWsName('bye')).toBe(true);
+  });
+
+  test('getWsNames', () => {
+    let result = new OpenedWsPaths(['hello:one.md', undefined]);
+    expect(result.getWsNames()).toEqual(['hello']);
+
+    result = new OpenedWsPaths(['hello:one.md', 'hello:two/two.md']);
+    expect(result.getWsNames()).toEqual(['hello']);
+
+    result = new OpenedWsPaths(['hello:one.md', 'bye:two/two.md']);
+    expect(result.getWsNames()).toEqual(['hello', 'bye']);
+  });
+
+  test('createFromArray', () => {
+    expect(OpenedWsPaths.createFromArray([])).toMatchInlineSnapshot(`
+      OpenedWsPaths {
+        "wsPaths": Array [
+          undefined,
+          undefined,
+        ],
+      }
+    `);
+
+    expect(OpenedWsPaths.createFromArray(['hello:one.md']))
+      .toMatchInlineSnapshot(`
+      OpenedWsPaths {
+        "wsPaths": Array [
+          "hello:one.md",
+          undefined,
+        ],
+      }
+    `);
+  });
+
   test('hasSomeOpenedWsPaths', () => {
     let result = new OpenedWsPaths(['a', undefined]);
     expect(result.hasSomeOpenedWsPaths()).toBe(true);
@@ -65,9 +120,6 @@ describe('OpenedWsPaths', () => {
 
     result = new OpenedWsPaths([undefined, undefined]);
     expect(result.hasSomeOpenedWsPaths()).toBe(false);
-
-    // result = new OpenedWsPaths([]);
-    // expect(result.hasSomeOpenedWsPaths()).toBe(false);
   });
 
   test('getByIndex', () => {

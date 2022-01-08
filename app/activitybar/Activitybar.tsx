@@ -70,7 +70,7 @@ export function Activitybar({
             name: 'UI/CHANGE_SIDEBAR',
             value: { type: null },
           });
-          goToWorkspaceHomeRoute()(bangleStore.state);
+          goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
         }}
         hint="Workspace Home"
         icon={

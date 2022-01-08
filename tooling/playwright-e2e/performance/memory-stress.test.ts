@@ -3,13 +3,12 @@ import fs from 'fs/promises';
 import path from 'path';
 
 import {
-  createNewNote,
-  createWorkspace,
   createWorkspaceFromBackup,
   getAllWsPaths,
   longSleep,
   pushWsPathToPrimary,
   sleep,
+  waitForNotification,
 } from '../helpers';
 
 test('Openning a lot of notes should not leak', async ({ baseURL }) => {
@@ -35,12 +34,13 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     buffer: f,
   });
 
-  await longSleep();
-  const wsPaths = await getAllWsPaths(page);
+  await waitForNotification(page, 'Your notes have successfully restored.');
+
+  const wsPaths = await getAllWsPaths(page, { lowerBound: 111 });
   // the fixture's asset count
   expect(wsPaths).toHaveLength(111);
 
-  const noteWsPaths = wsPaths.filter((r) => r.endsWith('.md'));
+  const noteWsPaths = wsPaths?.filter((r) => r.endsWith('.md')) || [];
 
   await page.evaluate(() => {
     (window as any).refs = [];
@@ -51,7 +51,10 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
 
   for (const w of noteWsPaths.slice(0, EDITORS_TO_OPEN)) {
     // open every editor in list
-    await Promise.all([page.waitForNavigation(), pushWsPathToPrimary(page, w)]);
+    await Promise.all([
+      page.waitForNavigation(),
+      pushWsPathToPrimary(page, w, { waitForEditorToLoad: false }),
+    ]);
 
     // Make sure the editor instance is for the currently opened editor
     await page.waitForFunction(

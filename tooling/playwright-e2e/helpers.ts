@@ -85,7 +85,17 @@ export async function createWorkspaceFromBackup(
   return wsName;
 }
 
-export async function getAllWsPaths(page: Page, attempt = 0) {
+export async function getAllWsPaths(
+  page: Page,
+  {
+    // number of items you at minimum expect that should be there
+    lowerBound = 1,
+    attempt = 0,
+  }: {
+    lowerBound?: number;
+    attempt?: number;
+  } = {},
+): Promise<undefined | string[]> {
   if (!(await page.$('.note-browser'))) {
     await runAction(page, 'action::bangle-io-note-browser:toggle-note-browser');
   }
@@ -94,20 +104,43 @@ export async function getAllWsPaths(page: Page, attempt = 0) {
     await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
   );
 
-  if (result.length === 0) {
-    await sleep();
-    return getAllWsPaths(page, attempt + 1);
-  }
-  if (attempt > 2) {
+  if (attempt > 3) {
     return result;
   }
+
+  if (result == null || (Array.isArray(result) && result.length < lowerBound)) {
+    await longSleep();
+    return getAllWsPaths(page, { lowerBound, attempt: attempt + 1 });
+  }
+
+  return result;
 }
 
-export async function pushWsPathToPrimary(page: Page, wsPath: string) {
+export async function pushWsPathToPrimary(
+  page: Page,
+  wsPath: string,
+  { waitForEditorToLoad = true } = {},
+) {
   await page.evaluate(
     ([wsPath]) => (window as any)._pushWsPath(wsPath),
     [wsPath],
   );
+  if (waitForEditorToLoad) {
+    await waitForEditorIdToLoad(page, 0);
+  }
+}
+export async function pushWsPathToSecondary(
+  page: Page,
+  wsPath: string,
+  { waitForEditorToLoad = true } = {},
+) {
+  await page.evaluate(
+    ([wsPath]) => (window as any)._pushWsPath(wsPath, true),
+    [wsPath],
+  );
+  if (waitForEditorToLoad) {
+    await waitForEditorIdToLoad(page, 1);
+  }
 }
 
 export async function openWorkspacePalette(page: Page) {
@@ -461,4 +494,8 @@ export async function waitForEditorIdToLoad(page: Page, editorId: number) {
     },
     { editorId },
   );
+}
+
+export async function waitForNotification(page: Page, text: string) {
+  await page.locator(`text=${text}`).waitFor();
 }

@@ -1,5 +1,8 @@
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { EditorIdType } from '@bangle.io/editor-manager-context';
+import {
+  EditorIdType,
+  editorManagerSliceKey,
+} from '@bangle.io/editor-manager-context';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/ui-context';
 import {
   deleteNote,
@@ -91,14 +94,20 @@ export function deleteActiveNote() {
     store: ApplicationStore,
   ): boolean => {
     const workspaceSliceState = workspaceSliceKey.getSliceState(state);
+    const editorSliceState = editorManagerSliceKey.getSliceState(state);
 
-    if (!workspaceSliceState) {
+    if (!workspaceSliceState || !editorSliceState) {
       return false;
     }
 
-    const { primaryWsPath } = workspaceSliceState.openedWsPaths;
+    const { focusedEditorId } = editorSliceState;
+    const { openedWsPaths } = workspaceSliceState;
 
-    if (!primaryWsPath) {
+    const focusedWsPath =
+      typeof focusedEditorId === 'number' &&
+      openedWsPaths.getByIndex(focusedEditorId);
+
+    if (!focusedWsPath) {
       dispatch({
         name: 'UI/SHOW_NOTIFICATION',
         value: {
@@ -119,18 +128,18 @@ export function deleteActiveNote() {
       typeof window !== 'undefined' &&
       window.confirm(
         `Are you sure you want to remove "${
-          resolvePath(primaryWsPath).filePath
+          resolvePath(focusedWsPath).filePath
         }"? It cannot be undone.`,
       )
     ) {
-      deleteNote(primaryWsPath)(state, dispatch, store)
+      deleteNote(focusedWsPath)(state, dispatch, store)
         .then((error) => {
           dispatch({
             name: 'UI/SHOW_NOTIFICATION',
             value: {
               severity: 'success',
-              uid: 'success-delete-' + primaryWsPath,
-              content: 'Successfully deleted ' + primaryWsPath,
+              uid: 'success-delete-' + focusedWsPath,
+              content: 'Successfully deleted ' + focusedWsPath,
             },
           });
         })
@@ -139,7 +148,7 @@ export function deleteActiveNote() {
             name: 'UI/SHOW_NOTIFICATION',
             value: {
               severity: 'error',
-              uid: 'delete-' + primaryWsPath,
+              uid: 'delete-' + deleteActiveNote,
               content: error.displayMessage || error.message,
             },
           });

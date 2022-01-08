@@ -92,7 +92,7 @@ export function WatchWorkspace() {
 
           return newOpenedWsPaths.shrink();
         },
-        { replaceHistory: true },
+        { replace: true },
       )(bangleStore.state, bangleStore.dispatch);
     }
   }, [fileWsPaths, bangleStore, openedWsPaths]);

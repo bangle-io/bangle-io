@@ -98,17 +98,24 @@ export function goToLocation(
 export function historyUpdateOpenedWsPaths(
   openedWsPath: OpenedWsPaths,
   wsName: string,
-  { replace = false }: { replace?: boolean } = {},
+  {
+    replace = false,
+    clearSearch = true,
+  }: { replace?: boolean; clearSearch?: boolean } = {},
 ) {
   return (state: AppState): void => {
     const sliceState = pageSliceKey.getSliceState(state);
-
     if (sliceState?.history) {
-      const location = locationSetWsPath(
-        sliceState.location,
-        wsName,
-        openedWsPath,
-      );
+      const existingLoc = {
+        ...sliceState.location,
+      };
+
+      if (clearSearch) {
+        existingLoc.search = '';
+      }
+
+      const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
+
       historyPush(sliceState?.history, location, { replace });
     }
   };
