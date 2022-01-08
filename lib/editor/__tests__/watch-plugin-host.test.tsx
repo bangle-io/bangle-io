@@ -34,6 +34,20 @@ afterEach(() => {
   jest.useRealTimers();
 });
 
+jest.mock('@bangle.io/utils', () => {
+  const actual = jest.requireActual('@bangle.io/utils');
+  return {
+    ...actual,
+    debounceFn: jest.fn((cb, opts) => {
+      const fn = jest.fn(() => {
+        cb();
+      });
+      (fn as any).cancel = jest.fn();
+      return fn;
+    }),
+  };
+});
+
 test('works', async () => {
   const testEditor = render(
     watchPluginHost(

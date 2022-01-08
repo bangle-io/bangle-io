@@ -6,6 +6,7 @@ import type {
   SerialOperationNameType,
 } from '@bangle.io/shared-types';
 import {
+  debounceFn,
   hasPluginStateChanged,
   safeCancelIdleCallback,
   safeRequestIdleCallback,
@@ -44,25 +45,15 @@ export function watchPluginHost(
         return old;
       },
     },
-    view() {
+    view(view) {
       let pendingTimer = 0;
 
-      return {
-        destroy() {
-          safeCancelIdleCallback(pendingTimer);
-        },
-        update(view, lastState) {
-          const { state } = view;
-
-          if (lastState === state) {
-            return;
-          }
-
-          // Avoid dispatching immediately to let editor do its thing
-          // and debounce a bit
+      const runner = debounceFn(
+        () => {
           safeCancelIdleCallback(pendingTimer);
           pendingTimer = safeRequestIdleCallback(
             () => {
+              const state = view.state;
               const pluginState = key.getState(state);
               if (pluginState && pluginState?.size > 0) {
                 pluginState.forEach((operation) => {
@@ -78,8 +69,28 @@ export function watchPluginHost(
                 pluginState.clear();
               }
             },
-            { timeout: EDITOR_WATCH_PLUGIN_HOST_WAIT_TIME },
+            { timeout: 2 * EDITOR_WATCH_PLUGIN_HOST_WAIT_TIME },
           );
+        },
+        {
+          wait: EDITOR_WATCH_PLUGIN_HOST_WAIT_TIME,
+          maxWait: 2 * EDITOR_WATCH_PLUGIN_HOST_WAIT_TIME,
+        },
+      );
+
+      return {
+        destroy() {
+          runner.cancel();
+          safeCancelIdleCallback(pendingTimer);
+        },
+        update(view, lastState) {
+          const { state } = view;
+
+          if (lastState === state) {
+            return;
+          }
+
+          runner();
         },
       };
     },

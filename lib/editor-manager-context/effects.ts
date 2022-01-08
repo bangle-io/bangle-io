@@ -127,8 +127,8 @@ export const watchEditorScrollEffect: SideEffect = (store) => {
   };
 
   const deb = debounceFn(updateScrollPos, {
-    wait: 100,
-    maxWait: 300,
+    wait: 300,
+    maxWait: 600,
   });
 
   const opts = {

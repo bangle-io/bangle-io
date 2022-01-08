@@ -62,7 +62,7 @@ test.describe.parallel('link', () => {
     await sleep();
     await page.keyboard.type('google.com ', { delay: 15 });
     expect(await getEditorDebugString(page, 0)).toBe(
-      `doc(paragraph("Hello ", bangle-io-inline-backlink-paletteMark("[[google.com ")))`,
+      `doc(paragraph("Hello ", @bangle.io/inline-backlink:paletteMark("[[google.com ")))`,
     );
   });
 });
