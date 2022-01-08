@@ -92,9 +92,9 @@ export class Extension<T = unknown> {
     if (!name) {
       throw new Error('Extension: name is required');
     }
-    if (!/^[a-z0-9-_]+$/.test(name)) {
+    if (!/^[a-z0-9-_@/\.]+$/.test(name)) {
       throw new Error(
-        'Extension name only allows the following characters "a..z" "0..9" "-" and "_"',
+        'Extension name must be npm package name which can only have the follow characters "a..z" "0..9" "@" "." "-" and "_"',
       );
     }
 
@@ -144,8 +144,6 @@ export class Extension<T = unknown> {
       }
 
       if (
-        // TODO for now we are housing all core ops in this extension
-        name !== 'bangle-io-core-operations' &&
         operations.some((a) => !a.name.startsWith('operation::' + name + ':'))
       ) {
         console.log(
@@ -154,7 +152,7 @@ export class Extension<T = unknown> {
           ),
         );
         throw new Error(
-          `An operation must have a name with the following schema operation::<extension_pkg_name:xyz. For example 'operation::bangle-io-my-extension:hello-world'`,
+          `An operation must have a name with the following schema operation::<extension_pkg_name:xyz. For example 'operation::@bangle.io/example:hello-world'`,
         );
       }
       if (operations.length !== new Set(operations.map((r) => r.name)).size) {

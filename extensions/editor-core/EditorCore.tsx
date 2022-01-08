@@ -13,22 +13,22 @@ export function EditorCore({ registerSerialOperationHandler }) {
   const handler = useCallback(
     (operation) => {
       switch (operation.name) {
-        case 'operation::bangle-io-editor-core:collapse-heading': {
+        case 'operation::@bangle.io/editor-core:collapse-heading': {
           executeEditorCommand(toggleHeadingCollapse);
           return true;
         }
 
-        case 'operation::bangle-io-editor-core:uncollapse-all-heading': {
+        case 'operation::@bangle.io/editor-core:uncollapse-all-heading': {
           executeEditorCommand(uncollapseAllHeadings);
           return true;
         }
 
-        case 'operation::bangle-io-editor-core:move-list-up': {
+        case 'operation::@bangle.io/editor-core:move-list-up': {
           executeEditorCommand(moveListItemUp);
           return true;
         }
 
-        case 'operation::bangle-io-editor-core:move-list-down': {
+        case 'operation::@bangle.io/editor-core:move-list-down': {
           executeEditorCommand(moveListItemDown);
           return true;
         }

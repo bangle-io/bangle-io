@@ -97,12 +97,12 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
           return true;
         }
 
-        case 'operation::bangle-io-core-operations:focus-primary-editor': {
+        case 'operation::@bangle.io/core-actions:focus-primary-editor': {
           primaryEditor?.focusView();
           return true;
         }
 
-        case 'operation::bangle-io-core-operations:focus-secondary-editor': {
+        case 'operation::@bangle.io/core-actions:focus-secondary-editor': {
           secondaryEditor?.focusView();
           return true;
         }

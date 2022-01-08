@@ -7,7 +7,7 @@ import { FolderIcon } from '@bangle.io/ui-components';
 import { NoteBrowserOpHandler } from './NoteBrowserActionHandler';
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';
 
-const extensionName = 'bangle-io-note-browser';
+const extensionName = '@bangle.io/note-browser';
 const key = 'Mod-e';
 
 const extension = Extension.create({
@@ -16,14 +16,14 @@ const extension = Extension.create({
     ReactComponent: NoteBrowserOpHandler,
     operations: [
       {
-        name: 'operation::bangle-io-note-browser:toggle-note-browser',
+        name: 'operation::@bangle.io/note-browser:toggle-note-browser',
         title: 'Toggle Notes Browser',
         keybinding: key,
       },
     ],
     sidebars: [
       {
-        name: 'sidebar::bangle-io-note-browser:note-browser',
+        name: 'sidebar::@bangle.io/note-browser:note-browser',
         title: '🗒 Notes browser',
         hint: `Note browser\n` + keyDisplayValue(key),
         activitybarIcon: React.createElement(FolderIcon, {}),

@@ -197,7 +197,7 @@ function TagComponent({ tagValue }) {
 
   const onClick = useCallback(() => {
     dispatchSerialOperation({
-      name: 'operation::bangle-io-search-notes:execute-search',
+      name: 'operation::@bangle.io/search-notes:execute-search',
       value: `tag:${tagValue}`,
     });
   }, [tagValue, dispatchSerialOperation]);

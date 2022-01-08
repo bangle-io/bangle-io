@@ -7,7 +7,7 @@ import {
 import { NoteOutline } from './NoteOutline';
 import { watchHeadingsPlugin } from './watch-headings-plugin';
 
-const extensionName = 'note-outline';
+const extensionName = '@bangle.io/note-outline';
 
 const extension = Extension.create({
   name: extensionName,
@@ -31,7 +31,7 @@ const extension = Extension.create({
     ],
     noteSidebarWidgets: [
       {
-        name: 'note-sidebar-widget::outline',
+        name: `note-sidebar-widget::${extensionName}`,
         ReactComponent: NoteOutline,
         title: 'Outline',
       },

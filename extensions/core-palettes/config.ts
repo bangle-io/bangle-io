@@ -1,9 +1,7 @@
 import { CorePalette } from '@bangle.io/constants';
-import { SliceKey } from '@bangle.io/create-store';
 import { UniversalPalette } from '@bangle.io/ui-components';
 
-export const extensionName = 'bangle-io-core-palettes';
-export const sliceKey = new SliceKey(extensionName + ':');
+export const extensionName = '@bangle.io/core-palettes';
 
 export interface PaletteManagerReactComponentProps {
   query: string;
