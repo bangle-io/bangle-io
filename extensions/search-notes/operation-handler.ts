@@ -56,7 +56,7 @@ function showSidebar(sidebar, dispatch) {
     inputEl?.select();
   }
   dispatch({
-    name: 'action::ui-context:CHANGE_SIDEBAR',
+    name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
     value: {
       type: SIDEBAR_NAME,
     },

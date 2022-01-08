@@ -31,19 +31,17 @@ export interface EditorSliceState {
   secondaryEditor: BangleEditor | undefined;
 }
 
-assertActionType('editor-manager-context', {} as EditorManagerAction);
-
 export type EditorManagerAction =
   | {
-      name: 'action::editor-manager-context:set-editor';
+      name: 'action::@bangle.io/editor-manager-context:set-editor';
       value: { editor: BangleEditor | undefined; editorId: number };
     }
   | {
-      name: 'action::editor-manager-context:on-focus-update';
+      name: 'action::@bangle.io/editor-manager-context:on-focus-update';
       value: { editorId: number | undefined };
     }
   | {
-      name: 'action::editor-manager-context:update-scroll-position';
+      name: 'action::@bangle.io/editor-manager-context:update-scroll-position';
       value: {
         editorId: number;
         wsPath: string;
@@ -51,7 +49,7 @@ export type EditorManagerAction =
       };
     }
   | {
-      name: 'action::editor-manager-context:update-initial-selection-json';
+      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json';
       value: {
         editorId: number;
         wsPath: string;

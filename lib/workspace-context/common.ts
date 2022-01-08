@@ -20,14 +20,14 @@ export type SideEffect = SliceSideEffect<
 
 export type WorkspaceSliceAction =
   | {
-      name: 'action::workspace-context:update-location';
+      name: 'action::@bangle.io/workspace-context:update-location';
       value: {
         wsName: string | undefined;
         openedWsPaths: OpenedWsPaths;
       };
     }
   | {
-      name: 'action::workspace-context:update-recently-used-ws-paths';
+      name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths';
       value: {
         // the workspace corresponding to the wsPaths
         wsName: string;
@@ -35,7 +35,7 @@ export type WorkspaceSliceAction =
       };
     }
   | {
-      name: 'action::workspace-context:update-ws-paths';
+      name: 'action::@bangle.io/workspace-context:update-ws-paths';
       value: {
         // the workspace corresponding to the wsPaths
         wsName: string;
@@ -43,7 +43,7 @@ export type WorkspaceSliceAction =
       };
     }
   | {
-      name: 'action::workspace-context:set-pending-refresh-ws-paths';
+      name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths';
       value: {
         pendingRefreshWsPaths: string | undefined;
       };

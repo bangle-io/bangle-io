@@ -109,7 +109,7 @@ describe('focusEditorEffect', () => {
     );
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editor1,
         editorId: 0,
@@ -127,7 +127,7 @@ describe('focusEditorEffect', () => {
     let editor2 = createTestEditor();
     const focusSpy2 = jest.spyOn(editor2, 'focusView');
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editor2,
         editorId: 1,
@@ -143,7 +143,7 @@ describe('focusEditorEffect', () => {
     const { store } = createStore();
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editor1,
         editorId: 0,
@@ -161,7 +161,7 @@ describe('focusEditorEffect', () => {
     const { store } = createStore();
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editor1,
         editorId: 1,
@@ -171,7 +171,7 @@ describe('focusEditorEffect', () => {
     expect(focusSpy1).toBeCalledTimes(0);
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editor2,
         editorId: 0,
@@ -197,7 +197,7 @@ describe('focusEditorEffect', () => {
     );
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editor1,
         editorId: 0,
@@ -206,7 +206,7 @@ describe('focusEditorEffect', () => {
     expect(focusSpy1).toBeCalledTimes(1);
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editor2,
         editorId: 1,
@@ -216,7 +216,7 @@ describe('focusEditorEffect', () => {
 
     // now try closing the second editor
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: undefined,
         editorId: 1,
@@ -244,14 +244,14 @@ describe('focusEditorEffect', () => {
 
     for (let i = 0; i < 5; i++) {
       store.dispatch({
-        name: 'action::editor-manager-context:set-editor',
+        name: 'action::@bangle.io/editor-manager-context:set-editor',
         value: {
           editor: editor1,
           editorId: 0,
         },
       });
       store.dispatch({
-        name: 'action::editor-manager-context:set-editor',
+        name: 'action::@bangle.io/editor-manager-context:set-editor',
         value: {
           editor: editor2,
           editorId: 1,
@@ -277,7 +277,7 @@ describe('focusEditorEffect', () => {
     });
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditorFirst,
         editorId: 0,
@@ -290,7 +290,7 @@ describe('focusEditorEffect', () => {
     expect(focusSpy2).toBeCalledTimes(0);
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditorSecond,
         editorId: 1,
@@ -307,7 +307,7 @@ describe('focusEditorEffect', () => {
     const focusSpy3 = jest.spyOn(mockEditor3, 'focusView');
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditor3,
         editorId: 1,
@@ -329,7 +329,7 @@ describe('focusEditorEffect', () => {
     const focusSpy4 = jest.spyOn(mockEditor4, 'focusView');
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditor4,
         editorId: 1,
@@ -344,7 +344,7 @@ describe('focusEditorEffect', () => {
     expect(focusSpy4).toBeCalledTimes(1);
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: undefined,
         editorId: 1,
@@ -369,7 +369,7 @@ describe('initialSelectionEffect', () => {
     let { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,
@@ -379,7 +379,7 @@ describe('initialSelectionEffect', () => {
     expect(dispatchSpy).toBeCalledTimes(1);
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditor2,
         editorId: 0,
@@ -388,7 +388,7 @@ describe('initialSelectionEffect', () => {
 
     expect(dispatchSpy).toHaveBeenCalledWith({
       id: expect.any(String),
-      name: 'action::editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
       value: {
         wsPath: 'test:first.md',
         editorId: 0,
@@ -397,7 +397,7 @@ describe('initialSelectionEffect', () => {
     });
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditor2,
         editorId: 0,
@@ -408,7 +408,7 @@ describe('initialSelectionEffect', () => {
     expect(
       getDispatchedAction(
         dispatchSpy,
-        'action::editor-manager-context:update-initial-selection-json',
+        'action::@bangle.io/editor-manager-context:update-initial-selection-json',
       ),
     ).toHaveLength(1);
   });
@@ -440,7 +440,7 @@ describe('watchEditorScrollEffect', () => {
     });
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,
@@ -464,20 +464,20 @@ describe('watchEditorScrollEffect', () => {
 
     expect(getActionsDispatched(dispatchSpy)).toMatchInlineSnapshot(`
       Array [
-        "action::editor-manager-context:set-editor",
-        "action::editor-manager-context:update-scroll-position",
+        "action::@bangle.io/editor-manager-context:set-editor",
+        "action::@bangle.io/editor-manager-context:update-scroll-position",
       ]
     `);
 
     expect(
       getDispatchedAction(
         dispatchSpy,
-        'action::editor-manager-context:update-scroll-position',
+        'action::@bangle.io/editor-manager-context:update-scroll-position',
       ),
     ).toEqual([
       {
         id: expect.any(String),
-        name: 'action::editor-manager-context:update-scroll-position',
+        name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
         value: {
           editorId: 0,
           scrollPosition: 5,
@@ -514,7 +514,7 @@ describe('trimWhiteSpaceEffect', () => {
     jest.spyOn(mockEditor?.view, 'hasFocus').mockImplementation(() => true);
 
     store.dispatch({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,

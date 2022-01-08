@@ -9,7 +9,7 @@ import { Location } from './history/types';
 export function blockReload(block: boolean) {
   return (_: AppState, dispatch: PageDispatchType) => {
     dispatch({
-      name: 'action::page-context:BLOCK_RELOAD',
+      name: 'action::@bangle.io/page-context:BLOCK_RELOAD',
       value: { block: block },
     });
   };

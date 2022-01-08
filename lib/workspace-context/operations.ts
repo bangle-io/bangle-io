@@ -71,7 +71,7 @@ export const refreshWsPaths = () => {
     }
 
     dispatch({
-      name: 'action::workspace-context:set-pending-refresh-ws-paths',
+      name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
       value: {
         pendingRefreshWsPaths: wsName,
       },
@@ -87,14 +87,14 @@ export const refreshWsPaths = () => {
         log('received files for wsName', wsName, 'file count', items.length);
 
         dispatch({
-          name: 'action::workspace-context:update-ws-paths',
+          name: 'action::@bangle.io/workspace-context:update-ws-paths',
           value: {
             wsName,
             wsPaths: items,
           },
         });
         dispatch({
-          name: 'action::workspace-context:set-pending-refresh-ws-paths',
+          name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
           value: {
             pendingRefreshWsPaths: undefined,
           },
@@ -104,14 +104,14 @@ export const refreshWsPaths = () => {
       })
       .catch((error) => {
         dispatch({
-          name: 'action::workspace-context:update-ws-paths',
+          name: 'action::@bangle.io/workspace-context:update-ws-paths',
           value: {
             wsName,
             wsPaths: undefined,
           },
         });
         dispatch({
-          name: 'action::workspace-context:set-pending-refresh-ws-paths',
+          name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
           value: {
             pendingRefreshWsPaths: undefined,
           },
@@ -324,7 +324,7 @@ export const updateLocation = ({
 
     if (!wsName) {
       dispatch({
-        name: 'action::workspace-context:update-location',
+        name: 'action::@bangle.io/workspace-context:update-location',
         value: {
           wsName: undefined,
           openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -346,7 +346,7 @@ export const updateLocation = ({
     }
 
     dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: wsName,
         openedWsPaths: openedWsPaths,

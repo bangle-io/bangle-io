@@ -96,7 +96,7 @@ describe('NotificationArea', () => {
 
     expect(uiDispatchMock).toBeCalledTimes(1);
     expect(uiDispatchMock).nthCalledWith(1, {
-      name: 'action::ui-context:DISMISS_NOTIFICATION',
+      name: 'action::@bangle.io/ui-context:DISMISS_NOTIFICATION',
       value: {
         uid: 'one',
       },

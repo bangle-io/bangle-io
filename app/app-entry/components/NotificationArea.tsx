@@ -22,7 +22,7 @@ export function NotificationArea({}) {
           key={n.uid}
           onDismiss={() => {
             dispatch({
-              name: 'action::ui-context:DISMISS_NOTIFICATION',
+              name: 'action::@bangle.io/ui-context:DISMISS_NOTIFICATION',
               value: {
                 uid: n.uid,
               },

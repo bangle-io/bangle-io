@@ -33,7 +33,7 @@ export function AppContainer() {
 
   const onDismissSidebar = useCallback(() => {
     dispatch({
-      name: 'action::ui-context:CHANGE_SIDEBAR',
+      name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
       value: {
         type: null,
       },
@@ -42,14 +42,14 @@ export function AppContainer() {
 
   const onDismissNoteSidebar = useCallback(() => {
     dispatch({
-      name: 'action::ui-context:UPDATE_NOTE_SIDEBAR',
+      name: 'action::@bangle.io/ui-context:UPDATE_NOTE_SIDEBAR',
       value: { visible: false },
     });
   }, [dispatch]);
 
   const showNoteSidebar = useCallback(() => {
     dispatch({
-      name: 'action::ui-context:UPDATE_NOTE_SIDEBAR',
+      name: 'action::@bangle.io/ui-context:UPDATE_NOTE_SIDEBAR',
       value: { visible: true },
     });
   }, [dispatch]);

@@ -58,7 +58,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
 
         case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
           dispatch({
-            name: 'action::ui-context:TOGGLE_NOTE_SIDEBAR',
+            name: 'action::@bangle.io/ui-context:TOGGLE_NOTE_SIDEBAR',
           });
           return true;
         }
@@ -122,7 +122,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
               })
               .catch((error) => {
                 dispatch({
-                  name: 'action::ui-context:SHOW_NOTIFICATION',
+                  name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
                   value: {
                     severity: 'error',
                     uid: 'error-create-workspace-' + wsName,
@@ -151,7 +151,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
               })
               .catch((error) => {
                 dispatch({
-                  name: 'action::ui-context:SHOW_NOTIFICATION',
+                  name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
                   value: {
                     severity: 'error',
                     uid: 'error-create-workspace-' + rootDirHandle?.name,
@@ -190,7 +190,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
   const onDismiss = useCallback(
     (focusEditor = true) => {
       dispatch({
-        name: 'action::ui-context:DISMISS_MODAL',
+        name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
       });
       if (focusEditor) {
         primaryEditor?.focusView();

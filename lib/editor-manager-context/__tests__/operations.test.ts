@@ -38,14 +38,14 @@ describe('operations: forEachEditor', () => {
     const editorB = {} as BangleEditor;
 
     state = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorA,
         editorId: 0,
       },
     });
     state = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorB,
         editorId: 1,
@@ -70,7 +70,7 @@ describe('operations: forEachEditor', () => {
     const editorA = {} as BangleEditor;
 
     state = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorA,
         editorId: 0,
@@ -93,7 +93,7 @@ describe('operations: getEditorState', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
     let value = {};
     state = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: { view: { state: value } } as BangleEditor,
         editorId: 1,
@@ -133,7 +133,7 @@ describe('setEditorReady', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
 
     state = state.applyAction({
-      name: 'action::editor-manager-context:update-scroll-position',
+      name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
       value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 9 },
     });
 
@@ -148,7 +148,7 @@ describe('setEditorReady', () => {
 
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch).nthCalledWith(1, {
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,
@@ -176,7 +176,7 @@ describe('getInitialSelection', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
 
     state = state.applyAction({
-      name: 'action::editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
         editorId: 0,
@@ -199,7 +199,7 @@ describe('setEditorUnmounted', () => {
     const editorA = {} as BangleEditor;
 
     let stateA = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorA,
         editorId: 0,
@@ -212,7 +212,7 @@ describe('setEditorUnmounted', () => {
 
     expect(dispatch).toBeCalledTimes(1);
     expect(dispatch).nthCalledWith(1, {
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: undefined,
         editorId: 0,
@@ -226,7 +226,7 @@ describe('setEditorUnmounted', () => {
     const editorB = {} as BangleEditor;
 
     let stateA = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorA,
         editorId: 0,
@@ -247,14 +247,14 @@ describe('didSomeEditorChange', () => {
     const editorB = {} as BangleEditor;
 
     let stateA = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorA,
         editorId: 0,
       },
     });
     let stateB = stateA.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorB,
         editorId: 1,
@@ -271,14 +271,14 @@ describe('didSomeEditorChange', () => {
     const editorB = {} as BangleEditor;
 
     let stateA = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorA,
         editorId: 0,
       },
     });
     let stateB = stateA.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorB,
         editorId: 0,
@@ -286,7 +286,7 @@ describe('didSomeEditorChange', () => {
     });
 
     let stateC = stateB.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: editorA,
         editorId: 0,
@@ -301,7 +301,7 @@ describe('didSomeEditorChange', () => {
     let state = AppState.create({ slices: [editorManagerSlice()] });
 
     let stateA = state.applyAction({
-      name: 'action::editor-manager-context:set-editor',
+      name: 'action::@bangle.io/editor-manager-context:set-editor',
       value: {
         editor: undefined,
         editorId: 0,

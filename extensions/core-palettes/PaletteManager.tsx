@@ -63,7 +63,7 @@ export function PaletteManager() {
       switch (operation.name) {
         case CORE_PALETTES_TOGGLE_OPERATION_PALETTE: {
           bangleStore.dispatch({
-            name: 'action::ui-context:UPDATE_PALETTE',
+            name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
             value: {
               type: getType(bangleStore.state, operationPalette.type),
             },
@@ -73,7 +73,7 @@ export function PaletteManager() {
 
         case CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE: {
           bangleStore.dispatch({
-            name: 'action::ui-context:UPDATE_PALETTE',
+            name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
             value: {
               type: getType(bangleStore.state, workspacePalette.type),
             },
@@ -83,7 +83,7 @@ export function PaletteManager() {
 
         case CORE_PALETTES_TOGGLE_NOTES_PALETTE: {
           bangleStore.dispatch({
-            name: 'action::ui-context:UPDATE_PALETTE',
+            name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
             value: {
               type: getType(bangleStore.state, notesPalette.type),
             },
@@ -100,7 +100,7 @@ export function PaletteManager() {
     (focus = true) => {
       updateQuery('');
       dispatch({
-        name: 'action::ui-context:RESET_PALETTE',
+        name: 'action::@bangle.io/ui-context:RESET_PALETTE',
       });
       if (focus) {
         safeRequestAnimationFrame(() => {
@@ -126,7 +126,7 @@ export function PaletteManager() {
   >(
     (type, initialQuery = '') => {
       dispatch({
-        name: 'action::ui-context:UPDATE_PALETTE',
+        name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
         value: { type, initialQuery },
       });
       if (type) {

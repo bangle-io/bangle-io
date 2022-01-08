@@ -87,7 +87,7 @@ describe('watchPageLifeCycleEffect', () => {
     expect(dispatchSpy).toBeCalled();
     expect(dispatchSpy).toBeCalledWith({
       id: expect.anything(),
-      name: 'action::page-context:UPDATE_PAGE_LIFE_CYCLE_STATE',
+      name: 'action::@bangle.io/page-context:UPDATE_PAGE_LIFE_CYCLE_STATE',
       value: {
         current: 'active',
         previous: 'passive',
@@ -106,7 +106,7 @@ describe('watchHistoryEffect', () => {
     expect(actionsDispatched).toEqual([
       {
         id: expect.anything(),
-        name: 'action::page-context:history-set-history',
+        name: 'action::@bangle.io/page-context:history-set-history',
         value: {
           history: expect.any(BrowserHistory),
         },
@@ -120,7 +120,7 @@ describe('watchHistoryEffect', () => {
     expect(actionsDispatched).toHaveLength(2);
     expect(actionsDispatched[1]).toEqual({
       id: expect.anything(),
-      name: 'action::page-context:history-update-location',
+      name: 'action::@bangle.io/page-context:history-update-location',
       value: {
         location: {
           pathname: '/ws/foo',

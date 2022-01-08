@@ -127,7 +127,7 @@ describe('refreshWsPathsEffect', () => {
     expect(refreshWsPathsMock).toBeCalledTimes(1);
 
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -139,7 +139,7 @@ describe('refreshWsPathsEffect', () => {
     expect(refreshWsPathsMock).toBeCalledTimes(2);
 
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: 'test-ws-2',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -150,7 +150,7 @@ describe('refreshWsPathsEffect', () => {
 
     // changing openedWsPaths should not call refresh
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: 'test-ws-2',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -161,7 +161,7 @@ describe('refreshWsPathsEffect', () => {
 
     // setting to undefined should not call refresh
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: undefined,
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -203,7 +203,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -224,12 +224,12 @@ describe('saveWorkspaceInfoEffect', () => {
     });
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::workspace-context:update-location',
+      'action::@bangle.io/workspace-context:update-location',
     ]);
 
     // an other action doesn't trigger the hook
     store.dispatch({
-      name: 'action::workspace-context:update-recently-used-ws-paths',
+      name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths',
       value: {
         wsName: 'test-ws',
         recentlyUsedWsPaths: ['hello:world.md'],
@@ -250,7 +250,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store } = createStore();
 
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -280,7 +280,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store } = createStore();
 
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -293,7 +293,7 @@ describe('saveWorkspaceInfoEffect', () => {
 
     // change the wsName while the request is to get info is in flight
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: 'test-ws2',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -332,7 +332,7 @@ describe('saveLastUsedWorkspace', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:update-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),

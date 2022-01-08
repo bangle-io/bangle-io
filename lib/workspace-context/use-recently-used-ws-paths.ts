@@ -61,7 +61,7 @@ export function useRecentlyUsedWsPaths() {
   useEffect(() => {
     if (wsName && Array.isArray(noteWsPaths)) {
       bangleStore.dispatch({
-        name: 'action::workspace-context:update-recently-used-ws-paths',
+        name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths',
         value: {
           wsName,
           recentlyUsedWsPaths: records

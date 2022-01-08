@@ -157,14 +157,14 @@ export function NewWorkspaceModalContainer({
     }
 
     dispatch({
-      name: 'action::ui-context:DISMISS_MODAL',
+      name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
     });
   }, [dispatchSerialOperation, modalState, dispatch]);
 
   const onDismiss = useCallback(() => {
     if (!isDropdownOpenRef.current) {
       dispatch({
-        name: 'action::ui-context:DISMISS_MODAL',
+        name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
       });
     }
   }, [dispatch]);

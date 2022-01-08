@@ -33,7 +33,7 @@ export function WatchUI() {
   useEffect(() => {
     if (lastMessage) {
       dispatch({
-        name: 'action::ui-context:UPDATE_THEME',
+        name: 'action::@bangle.io/ui-context:UPDATE_THEME',
         value: { theme: lastMessage.payload.theme },
       });
     }

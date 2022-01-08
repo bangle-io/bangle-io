@@ -12,7 +12,10 @@ export function extensionRegistrySlice(): Slice<
   ExtensionRegistryState,
   ExtensionRegistryAction
 > {
-  assertActionType('extension-registry', {} as ExtensionRegistryAction);
+  assertActionType(
+    '@bangle.io/extension-registry',
+    {} as ExtensionRegistryAction,
+  );
 
   return new Slice({
     key: extensionRegistrySliceKey,

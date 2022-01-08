@@ -12,8 +12,11 @@ export interface ExtensionRegistryState {
   extensionRegistry: ExtensionRegistry;
 }
 
-assertActionType('extension-registry', {} as ExtensionRegistryAction);
+assertActionType(
+  '@bangle.io/extension-registry',
+  {} as ExtensionRegistryAction,
+);
 
 export type ExtensionRegistryAction = {
-  name: 'action::extension-registry:dummy';
+  name: 'action::@bangle.io/extension-registry:dummy';
 };

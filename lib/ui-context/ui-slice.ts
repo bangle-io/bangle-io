@@ -35,52 +35,62 @@ export interface UISliceState {
   widescreen: boolean;
 }
 
-export const UI_CONTEXT_TOGGLE_THEME = 'action::ui-context:TOGGLE_THEME';
+export const UI_CONTEXT_TOGGLE_THEME =
+  'action::@bangle.io/ui-context:TOGGLE_THEME';
 
 export type UiContextAction =
-  | { name: 'action::ui-context:TOGGLE_SIDEBAR'; value: { type: string } }
   | {
-      name: 'action::ui-context:CHANGE_SIDEBAR';
+      name: 'action::@bangle.io/ui-context:TOGGLE_SIDEBAR';
+      value: { type: string };
+    }
+  | {
+      name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR';
       value: { type: string | null };
     }
   | {
-      name: 'action::ui-context:SHOW_NOTIFICATION';
+      name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION';
       value: NotificationPayloadType;
     }
-  | { name: 'action::ui-context:DISMISS_NOTIFICATION'; value: { uid: string } }
   | {
-      name: 'action::ui-context:UPDATE_PALETTE';
+      name: 'action::@bangle.io/ui-context:DISMISS_NOTIFICATION';
+      value: { uid: string };
+    }
+  | {
+      name: 'action::@bangle.io/ui-context:UPDATE_PALETTE';
       value: {
         type: CorePalette | null;
         initialQuery?: string;
       };
     }
-  | { name: 'action::ui-context:RESET_PALETTE' }
+  | { name: 'action::@bangle.io/ui-context:RESET_PALETTE' }
   | { name: typeof UI_CONTEXT_TOGGLE_THEME }
-  | { name: 'action::ui-context:UPDATE_THEME'; value: { theme: ThemeType } }
   | {
-      name: 'action::ui-context:UPDATE_WINDOW_SIZE';
+      name: 'action::@bangle.io/ui-context:UPDATE_THEME';
+      value: { theme: ThemeType };
+    }
+  | {
+      name: 'action::@bangle.io/ui-context:UPDATE_WINDOW_SIZE';
       value: { windowSize: ReturnType<typeof useWindowSize> };
     }
   | {
-      name: 'action::ui-context:SHOW_MODAL';
+      name: 'action::@bangle.io/ui-context:SHOW_MODAL';
       value: {
         modal: string | null;
         modalValue?: undefined | { [key: string]: any };
       };
     }
   | {
-      name: 'action::ui-context:DISMISS_MODAL';
+      name: 'action::@bangle.io/ui-context:DISMISS_MODAL';
     }
   | {
-      name: 'action::ui-context:UPDATE_NEW_CHANGELOG';
+      name: 'action::@bangle.io/ui-context:UPDATE_NEW_CHANGELOG';
       value: { hasUpdates: boolean };
     }
   | {
-      name: 'action::ui-context:UPDATE_NOTE_SIDEBAR';
+      name: 'action::@bangle.io/ui-context:UPDATE_NOTE_SIDEBAR';
       value: { visible: boolean };
     }
-  | { name: 'action::ui-context:TOGGLE_NOTE_SIDEBAR' };
+  | { name: 'action::@bangle.io/ui-context:TOGGLE_NOTE_SIDEBAR' };
 
 export const initialState: UISliceState = {
   // UI
@@ -102,7 +112,7 @@ export const uiSliceKey = new SliceKey<UISliceState, UiContextAction>(
 );
 
 export function uiSlice(): Slice<UISliceState, UiContextAction> {
-  assertActionType('ui-context', {} as UiContextAction);
+  assertActionType('@bangle.io/ui-context', {} as UiContextAction);
 
   return new Slice({
     key: uiSliceKey,
@@ -113,7 +123,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
       apply: (action, state) => {
         log({ action, state });
         switch (action.name) {
-          case 'action::ui-context:TOGGLE_SIDEBAR': {
+          case 'action::@bangle.io/ui-context:TOGGLE_SIDEBAR': {
             const sidebar = Boolean(state.sidebar)
               ? undefined
               : action.value.type;
@@ -123,14 +133,14 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'action::ui-context:CHANGE_SIDEBAR': {
+          case 'action::@bangle.io/ui-context:CHANGE_SIDEBAR': {
             return {
               ...state,
               sidebar: action.value.type,
             };
           }
 
-          case 'action::ui-context:SHOW_NOTIFICATION': {
+          case 'action::@bangle.io/ui-context:SHOW_NOTIFICATION': {
             const { uid } = action.value;
 
             // Prevent repeat firing of notifications
@@ -144,7 +154,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'action::ui-context:DISMISS_NOTIFICATION': {
+          case 'action::@bangle.io/ui-context:DISMISS_NOTIFICATION': {
             const { uid } = action.value;
             if (state.notifications.some((n) => n.uid === uid)) {
               return {
@@ -156,7 +166,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             return state;
           }
 
-          case 'action::ui-context:UPDATE_PALETTE': {
+          case 'action::@bangle.io/ui-context:UPDATE_PALETTE': {
             return {
               ...state,
               paletteType: action.value.type,
@@ -164,7 +174,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'action::ui-context:RESET_PALETTE': {
+          case 'action::@bangle.io/ui-context:RESET_PALETTE': {
             return {
               ...state,
               paletteType: undefined,
@@ -182,7 +192,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'action::ui-context:UPDATE_THEME': {
+          case 'action::@bangle.io/ui-context:UPDATE_THEME': {
             applyTheme(action.value.theme);
             return {
               ...state,
@@ -190,7 +200,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'action::ui-context:UPDATE_WINDOW_SIZE': {
+          case 'action::@bangle.io/ui-context:UPDATE_WINDOW_SIZE': {
             const { windowSize } = action.value;
             const widescreen = checkWidescreen(windowSize.width);
             setRootWidescreenClass(widescreen);
@@ -200,7 +210,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'action::ui-context:SHOW_MODAL': {
+          case 'action::@bangle.io/ui-context:SHOW_MODAL': {
             return {
               ...state,
               modal: action.value.modal,
@@ -208,7 +218,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'action::ui-context:DISMISS_MODAL': {
+          case 'action::@bangle.io/ui-context:DISMISS_MODAL': {
             return {
               ...state,
               modal: undefined,
@@ -216,21 +226,21 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             };
           }
 
-          case 'action::ui-context:UPDATE_NEW_CHANGELOG': {
+          case 'action::@bangle.io/ui-context:UPDATE_NEW_CHANGELOG': {
             return {
               ...state,
               changelogHasUpdates: action.value.hasUpdates,
             };
           }
 
-          case 'action::ui-context:UPDATE_NOTE_SIDEBAR': {
+          case 'action::@bangle.io/ui-context:UPDATE_NOTE_SIDEBAR': {
             return {
               ...state,
               noteSidebar: action.value.visible,
             };
           }
 
-          case 'action::ui-context:TOGGLE_NOTE_SIDEBAR': {
+          case 'action::@bangle.io/ui-context:TOGGLE_NOTE_SIDEBAR': {
             return {
               ...state,
               noteSidebar: !state.noteSidebar,
@@ -275,7 +285,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
       // Handler to call on window resize
       const handleResize = rafSchedule(() => {
         store.dispatch({
-          name: 'action::ui-context:UPDATE_WINDOW_SIZE',
+          name: 'action::@bangle.io/ui-context:UPDATE_WINDOW_SIZE',
           value: {
             windowSize: {
               width: window.innerWidth,
