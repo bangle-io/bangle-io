@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/core-actions",
+  "name": "@bangle.io/core-operations",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "extensions/core-actions"
+    "directory": "extensions/core-operations"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"

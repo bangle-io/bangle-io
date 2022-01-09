@@ -1,6 +1,6 @@
 import collabExtension from '@bangle.io/collab-extension';
 import collapsibleHeading from '@bangle.io/collapsible-heading';
-import coreActions from '@bangle.io/core-actions';
+import coreActions from '@bangle.io/core-operations';
 import corePalette from '@bangle.io/core-palettes';
 import editorCore from '@bangle.io/editor-core';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';

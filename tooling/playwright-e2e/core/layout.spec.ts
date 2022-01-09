@@ -34,7 +34,7 @@ test('shows note sidebar correctly', async ({ page }) => {
 
   await runOperation(
     page,
-    'operation::@bangle.io/core-actions:NOTE_TOGGLE_SIDEBAR',
+    'operation::@bangle.io/core-operations:NOTE_TOGGLE_SIDEBAR',
   );
 
   await page.waitForSelector('.ui-dhancha_note-sidebar', {

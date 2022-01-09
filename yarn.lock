@@ -1986,9 +1986,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/core-actions@workspace:*, @bangle.io/core-actions@workspace:extensions/core-actions":
+"@bangle.io/core-operations@workspace:*, @bangle.io/core-operations@workspace:extensions/core-operations":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/core-actions@workspace:extensions/core-actions"
+  resolution: "@bangle.io/core-operations@workspace:extensions/core-operations"
   dependencies:
     "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
@@ -2748,7 +2748,7 @@ __metadata:
     "@bangle.io/collab-extension": "workspace:*"
     "@bangle.io/collapsible-heading": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-actions": "workspace:*"
+    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/core-palettes": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor-core": "workspace:*"
