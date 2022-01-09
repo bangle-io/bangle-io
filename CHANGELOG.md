@@ -1,4 +1,4 @@
-### HEAD
+### Jan 9, 2022
 
 - **Bug:** Fixed a bug when doing a File system authorization, bangle will forget the opened opened editors.
 
