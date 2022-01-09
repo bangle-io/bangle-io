@@ -64,6 +64,7 @@ export function ListPalette({
 
   return (
     <UniversalPalette.PaletteContainer
+      paletteType="list-palette"
       widescreen={widescreen}
       onClickOutside={() => {
         onDismiss();

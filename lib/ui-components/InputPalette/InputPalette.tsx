@@ -119,6 +119,7 @@ export function InputPalette({
 
   return (
     <UniversalPalette.PaletteContainer
+      paletteType="input-palette"
       onClickOutside={() => {
         onDismiss();
       }}
