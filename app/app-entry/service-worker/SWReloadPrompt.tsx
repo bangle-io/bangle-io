@@ -1,12 +1,12 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect } from 'react';
 
-import { useSerialOperationHandler } from '@bangle.io/action-context';
 import { RELEASE_ID } from '@bangle.io/config';
 import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useLocalStorage } from '@bangle.io/utils';
 

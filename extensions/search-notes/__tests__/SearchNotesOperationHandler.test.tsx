@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import { useSerialOperationHandler } from '@bangle.io/action-context';
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import type { SerialOperationHandler } from '@bangle.io/shared-types';
 import { getUseUIManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/ui-context';
@@ -24,7 +24,7 @@ jest.mock('@bangle.io/ui-context', () => {
   };
 });
 
-jest.mock('@bangle.io/action-context', () => {
+jest.mock('@bangle.io/serial-operation-context', () => {
   return {
     useSerialOperationHandler: jest.fn(),
   };

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/action-context';
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   newWorkspace,
   toggleWorkspacePalette,
 } from '@bangle.io/core-operations';
+import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 

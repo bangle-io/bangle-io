@@ -1,4 +1,4 @@
-import { useSerialOperationHandler } from '@bangle.io/action-context';
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/ui-context';
 
 import {

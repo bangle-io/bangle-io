@@ -1,12 +1,12 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { useSerialOperationHandler } from '@bangle.io/action-context';
 import {
   getEditor,
   getEditorState,
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
 import {
@@ -21,7 +21,7 @@ import { WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP } from '../config';
 import { NoteOutline } from '../NoteOutline';
 
 jest.mock('@bangle.io/workspace-context');
-jest.mock('@bangle.io/action-context');
+jest.mock('@bangle.io/serial-operation-context');
 jest.mock('@bangle.io/editor-manager-context', () => {
   return {
     useEditorManagerContext: jest.fn(),

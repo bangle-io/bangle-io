@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 
-import { useSerialOperationHandler } from '@bangle.io/action-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
 

@@ -84,6 +84,10 @@ Action is a synchronous fire and forget system. If you have used [Redux](https:/
 
 Every handler in the application will be called in the order of their setup. This mechanism exists for other extensions to passively watch an action being dispatched.
 
+## Operations
+
+Functions that have the signature `(...parms) => (state, dispatch, store?) => {}` are called operations. They are used to orchestrate a state change by dispatching action. Extensions can define serial operation which are defined by a slug `operation::<pkgName>:<identifier>`, this can be shown in the Operation palette to the user to execute. See this [extension's code](https://github.com/bangle-io/bangle-io/blob/dev/extensions/core-actions/index.ts) to get an idea.
+
 ## WsPaths
 
 A file path in Bangle is denoted by a string with the following syntax:
