@@ -10,7 +10,7 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 - [Nodejs](https://nodejs.org/en/download/) > 16.0
 
-- [Yarn](https://yarnpkg.com/) v2
+- [Yarn](https://yarnpkg.com/) v3
 
 ### Local development
 
@@ -24,6 +24,8 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 - `yarn g:e2e` to run the integration tests.
 
+- `yarn g:build-prod-serve` to start a production optimized version of bangle on `localhost:1234`.
+
 More commands in the `package.json`.
 
 > Sometimes when running locally, the app might get stuck on loading, this is a known issue, try reloading the page a few times.
@@ -36,13 +38,13 @@ The repository is divided into multiple smaller node packages which are linked t
 
 Bangle has the following top level directories containing smaller packages.
 
-- `extensions:`All of the first party extensions sit here. If you are fixing a bug or extending a feature, you would likely be editing here.
+- `extensions:`All of the first party extensions sit here. If you are fixing a bug or extending a feature, you will most likely start here.
 
 - `lib:` The packages that are shared across the app.
 
 - `js-lib:` Independent packages that have no awareness of bangle and have no dependency on any other part of the code.
 
-- `app:`The core app that bootstraps everything sits here.
+- `app:` The core app that bootstraps everything sits here.
 
 - `worker:` Separate directory for any code that will be run the web worker.
 
@@ -66,27 +68,22 @@ You are expected to write your own css and not rely on any of the css classes av
 
 Bangle uses a concept of context for sharing state across the extensions.
 
-- `action-context` for dispatching actions.
-
-- `app-state-context` for pending writes, page lifecycle etc.
-
 - `editor-manager-context` exposes the Editors.
-
-- `ui-context` provides the UI state information, like sidebars, palettes etc.
-
-- `workspace-context`: place for centralized workspace ops like fole creation,  and deletion etc.
-
 - `extension-registry-context`: the glue code for the extension. If you are developing an extension you can ignore this.
-
-## Dispatching Actions
-
-Action is a synchronous fire and forget system. If you have used [Redux](https://redux.js.org/), this is similar to that. If while handling the action a failure occurs, it's up to the handler of the action to show a popup notification to the user or not.
-
-Every handler in the application will be called in the order of their setup. This mechanism exists for other extensions to passively watch an action being dispatched.
+- `page-context` for pending writes, page lifecycle, navigation etc.
+- `serial-operation-context` for dispatching serial Operations.
+- `ui-context` provides the UI state information, like sidebars, palettes etc.
+- `workspace-context`: place for centralized workspace ops like note creation, renaming, deletion etc.
 
 ## Operations
 
-Functions that have the signature `(...parms) => (state, dispatch, store?) => {}` are called operations. They are used to orchestrate a state change by dispatching action. Extensions can define serial operation which are defined by a slug `operation::<pkgName>:<identifier>`, this can be shown in the Operation palette to the user to execute. See this [extension's code](https://github.com/bangle-io/bangle-io/blob/dev/extensions/core-actions/index.ts) to get an idea.
+Operations are used across bangle to dispatch complex state changes with the help of actions.
+
+Operations exist in two different forms:
+
+- Functional operations have the signature `(...parms) => (state, dispatch, store?) => {}`. 
+- Serial operations, similar to functional operation but have a serializable notation so that they can be executed in contexts where functions are not possible, for example the `Operation Palette` UI. See this [extension's code](https://github.com/bangle-io/bangle-io/blob/dev/extensions/core-actions/index.ts) to get a rough idea.
+
 
 ## WsPaths
 
