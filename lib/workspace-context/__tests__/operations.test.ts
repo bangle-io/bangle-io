@@ -34,7 +34,7 @@ import {
   pushWsPath,
   refreshWsPaths,
   renameNote,
-  updateLocation,
+  syncPageLocation,
   updateOpenedWsPaths,
 } from '../operations';
 import {
@@ -140,7 +140,7 @@ describe('updateLocation', () => {
 
     const dispatch = jest.fn();
 
-    updateLocation({ search: 'test-search', pathname: 'test-pathname' })(
+    syncPageLocation({ search: 'test-search', pathname: 'test-pathname' })(
       state,
       dispatch,
     );
@@ -153,7 +153,7 @@ describe('updateLocation', () => {
 
     const dispatch = jest.fn();
 
-    updateLocation({
+    syncPageLocation({
       search: 'secondary=bangle-help%253Agetting%2520started',
       pathname: '/ws/bangle-help',
     })(state, dispatch);

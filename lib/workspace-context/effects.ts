@@ -6,7 +6,7 @@ import { getWorkspaceInfo } from '@bangle.io/workspaces';
 
 import { SideEffect, workspaceSliceKey } from './common';
 import { saveLastWorkspaceUsed } from './last-seen-ws-name';
-import { refreshWsPaths, updateLocation } from './operations';
+import { refreshWsPaths, syncPageLocation } from './operations';
 
 export const refreshWsPathsEffect: SideEffect = () => {
   let loadWsPathsOnMount = true;
@@ -46,7 +46,7 @@ export const updateLocationEffect: SideEffect = () => {
         return;
       }
 
-      updateLocation({
+      syncPageLocation({
         search: location?.search,
         pathname: location?.pathname,
       })(store.state, store.dispatch);

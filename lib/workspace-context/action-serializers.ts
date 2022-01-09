@@ -4,7 +4,7 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 import { ExtractWorkspaceSliceAction, WorkspaceSliceAction } from './common';
 
 export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
-  'action::@bangle.io/workspace-context:update-location': (actionName) => {
+  'action::@bangle.io/workspace-context:sync-page-location': (actionName) => {
     const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
       return {
         openedWsPaths: action.value.openedWsPaths.toArray(),

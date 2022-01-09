@@ -311,7 +311,7 @@ export function workspaceHandleError(wsName: string, error: Error) {
 }
 
 // Navigation ops
-export const updateLocation = ({
+export const syncPageLocation = ({
   search,
   pathname,
 }: {
@@ -324,7 +324,7 @@ export const updateLocation = ({
 
     if (!wsName) {
       dispatch({
-        name: 'action::@bangle.io/workspace-context:update-location',
+        name: 'action::@bangle.io/workspace-context:sync-page-location',
         value: {
           wsName: undefined,
           openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -346,7 +346,7 @@ export const updateLocation = ({
     }
 
     dispatch({
-      name: 'action::@bangle.io/workspace-context:update-location',
+      name: 'action::@bangle.io/workspace-context:sync-page-location',
       value: {
         wsName: wsName,
         openedWsPaths: openedWsPaths,

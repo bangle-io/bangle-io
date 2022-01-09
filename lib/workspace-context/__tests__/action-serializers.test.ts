@@ -18,7 +18,7 @@ const testFixtures: Array<WorkspaceSliceAction> = [
   },
 
   {
-    name: 'action::@bangle.io/workspace-context:update-location',
+    name: 'action::@bangle.io/workspace-context:sync-page-location',
     value: {
       openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:one.md']),
       wsName: 'test-ws',
@@ -26,7 +26,7 @@ const testFixtures: Array<WorkspaceSliceAction> = [
   },
 
   {
-    name: 'action::@bangle.io/workspace-context:update-location',
+    name: 'action::@bangle.io/workspace-context:sync-page-location',
     value: {
       openedWsPaths: OpenedWsPaths.createEmpty(),
       wsName: 'test-ws',
@@ -34,7 +34,7 @@ const testFixtures: Array<WorkspaceSliceAction> = [
   },
 
   {
-    name: 'action::@bangle.io/workspace-context:update-location',
+    name: 'action::@bangle.io/workspace-context:sync-page-location',
     value: {
       openedWsPaths: OpenedWsPaths.createEmpty(),
       wsName: undefined,
