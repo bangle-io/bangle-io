@@ -4,10 +4,9 @@ import {
   clearEditor,
   createNewNote,
   createWorkspace,
-  ctrlKey,
   getEditorDebugString,
+  getEditorJSON,
   getEditorLocator,
-  sleep,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -16,21 +15,220 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   const noteName = 'my-mark-test-123';
   await createNewNote(page, wsName, noteName);
   await clearEditor(page, 0);
+  await getEditorLocator(page, 0, { focus: true });
 });
 
-test.describe.parallel('Italics markdown shortcut', () => {
-  test('typing _ triggers italics', async ({ page, context }) => {
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-    const z = await page.evaluate(async (text) => {
-      await navigator.clipboard.writeText(text);
-      const clipText = await navigator.clipboard.readText();
+const pasteSliceJson = async (page: Page, sliceJson: object) => {
+  await page.evaluate(async (sliceJson) => {
+    const h = (window as any)._e2eHelpers;
+    h._sliceManualPaste(
+      h._primaryEditor.view,
+      h._EditorSlice.fromJSON(h._editorSchema, sliceJson),
+    );
+  }, sliceJson);
+};
 
-      return clipText;
-    }, '123');
-    await getEditorLocator(page, 0, { focus: true });
+test.describe.parallel('Pasting rich test', () => {
+  test('heading', async ({ page, context }) => {
+    await pasteSliceJson(page, {
+      content: [
+        {
+          type: 'heading',
+          attrs: {
+            level: 2,
+          },
+          content: [
+            {
+              type: 'text',
+              text: 'Hello',
+            },
+          ],
+        },
+      ],
+      openStart: 1,
+      openEnd: 1,
+    });
+    expect(await getEditorDebugString(page, 0)).toEqual(
+      `doc(heading(\"Hello\"), paragraph)`,
+    );
+  });
 
-    await page.keyboard.press('Meta+v');
-    await page.pause();
-    console.log({ z });
+  test('paragraph', async ({ page, context }) => {
+    await pasteSliceJson(page, {
+      content: [
+        {
+          type: 'paragraph',
+          attrs: {
+            level: 2,
+          },
+          content: [
+            {
+              type: 'text',
+              text: 'Hello',
+            },
+          ],
+        },
+      ],
+      openStart: 1,
+      openEnd: 1,
+    });
+    expect(await getEditorDebugString(page, 0)).toEqual(
+      `doc(paragraph(\"Hello\"))`,
+    );
+  });
+
+  test('todo list', async ({ page }) => {
+    let sliceJson = {
+      content: [
+        {
+          type: 'bulletList',
+          attrs: {
+            tight: false,
+          },
+          content: [
+            {
+              type: 'listItem',
+              attrs: {
+                todoChecked: false,
+              },
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [
+                    {
+                      type: 'text',
+                      text: 'Test in the house',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      openStart: 1,
+      openEnd: 1,
+    };
+
+    await pasteSliceJson(page, sliceJson);
+
+    expect(await getEditorDebugString(page, 0)).toEqual(
+      'doc(bulletList(listItem(paragraph("Test in the house"))), paragraph)',
+    );
+  });
+
+  test('todo list checked', async ({ page }) => {
+    let sliceJson = {
+      content: [
+        {
+          type: 'bulletList',
+          attrs: {
+            tight: false,
+          },
+          content: [
+            {
+              type: 'listItem',
+              attrs: {
+                todoChecked: true,
+              },
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [
+                    {
+                      type: 'text',
+                      text: 'Test in the house',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      openStart: 1,
+      openEnd: 1,
+    };
+
+    await pasteSliceJson(page, sliceJson);
+
+    expect(await getEditorJSON(page, 0)).toEqual({
+      content: [
+        {
+          attrs: {
+            tight: false,
+          },
+          content: [
+            {
+              attrs: {
+                todoChecked: true,
+              },
+              content: [
+                {
+                  content: [
+                    {
+                      text: 'Test in the house',
+                      type: 'text',
+                    },
+                  ],
+                  type: 'paragraph',
+                },
+              ],
+              type: 'listItem',
+            },
+          ],
+          type: 'bulletList',
+        },
+        {
+          type: 'paragraph',
+        },
+      ],
+      type: 'doc',
+    });
+  });
+
+  test('emoji', async ({ page }) => {
+    const sliceJson = {
+      content: [
+        {
+          type: 'heading',
+          attrs: {
+            level: 2,
+            collapseContent: null,
+          },
+          content: [
+            {
+              type: 'text',
+              text: 'Hello ',
+            },
+            {
+              type: 'emoji',
+              attrs: {
+                emojiAlias: 'writing_hand',
+              },
+            },
+          ],
+        },
+      ],
+      openStart: 1,
+      openEnd: 1,
+    };
+
+    await pasteSliceJson(page, sliceJson);
+
+    expect(await getEditorJSON(page, 0)).toEqual({
+      content: [
+        {
+          attrs: { collapseContent: null, level: 2 },
+          content: [
+            { text: 'Hello ', type: 'text' },
+            { attrs: { emojiAlias: 'writing_hand' }, type: 'emoji' },
+          ],
+          type: 'heading',
+        },
+        { type: 'paragraph' },
+      ],
+      type: 'doc',
+    });
   });
 });

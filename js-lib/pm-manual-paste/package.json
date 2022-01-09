@@ -1,0 +1,40 @@
+{
+  "name": "@bangle.io/pm-manual-paste",
+  "description": "A helper library to simulate a paste event in prosemirror for testing purposes",
+  "version": "0.28.5",
+  "homepage": "https://bangle.dev",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bangle-io/bangle.dev.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle.dev/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts"
+  },
+  "scripts": {
+    "compile-ts": "yarn g:tsc --build $INIT_CWD",
+    "watch-ts": "yarn g:tsc -p $INIT_CWD -w",
+    "prepack": "yarn compile-ts"
+  },
+  "dependencies": {
+    "@bangle.dev/pm": "0.28.5",
+    "prosemirror-view": "^1.10.0"
+  },
+  "type": "module"
+}
