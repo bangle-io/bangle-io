@@ -1,7 +1,8 @@
 import { PluginKey } from '@bangle.dev/pm';
+import { makeSafeForCSS } from '@bangle.io/utils';
 
 export const extensionName = '@bangle.io/note-tags';
-export const paletteMarkName = extensionName + ':paletteMark';
+export const paletteMarkName = makeSafeForCSS(extensionName + '-paletteMark');
 export const palettePluginKey = new PluginKey(extensionName + '-key');
 export const tagNodeName = 'tag';
 export const BANNED_CHARS = '#!$%^&*()+|~=`{}[]:";\'<>?,.@\\';
