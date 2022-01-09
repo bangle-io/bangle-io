@@ -1,4 +1,5 @@
 import { PluginKey } from '@bangle.dev/pm';
+
 import { makeSafeForCSS } from '@bangle.io/utils';
 
 export const extensionName = '@bangle.io/inline-backlink';

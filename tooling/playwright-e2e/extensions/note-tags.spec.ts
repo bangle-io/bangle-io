@@ -37,7 +37,7 @@ test('is able to create a tag using inline palette', async ({ page }) => {
   await longSleep();
 
   expect(await getEditorDebugString(page, 0)).toContain(
-    `doc(paragraph, paragraph(@bangle.io/note-tags:paletteMark("#yellow")`,
+    `doc(paragraph, paragraph(__bangle__io__note__tags__palette_mark("#yellow")`,
   );
 
   await page.keyboard.press('Enter');
