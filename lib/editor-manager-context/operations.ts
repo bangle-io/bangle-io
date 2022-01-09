@@ -1,6 +1,6 @@
 import { BangleEditor } from '@bangle.dev/core';
 import type { EditorState, EditorView, Node } from '@bangle.dev/pm';
-import { Selection } from '@bangle.dev/pm';
+import { Selection, Transaction } from '@bangle.dev/pm';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
@@ -241,5 +241,24 @@ export function didSomeEditorChange(prevState: AppState) {
     }
 
     return false;
+  };
+}
+
+export function dispatchEditorCommand<T>(
+  editorId: EditorIdType,
+  cmdCallback: (
+    state: EditorState,
+    dispatch?: (tr: Transaction) => void,
+    view?: EditorView,
+  ) => T,
+) {
+  return (state: AppState): T | false => {
+    const currentEditor = getEditor(editorId)(state);
+    if (!currentEditor) {
+      return false;
+    }
+
+    const view = currentEditor.view;
+    return cmdCallback(view.state, view.dispatch, view);
   };
 }

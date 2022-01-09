@@ -1,20 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useSerialOperationHandler } from '@bangle.io/action-context';
-import {
-  CORE_PALETTES_TOGGLE_NOTES_PALETTE,
-  CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
-  CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
-  CorePalette,
-} from '@bangle.io/constants';
-import { AppState } from '@bangle.io/create-store';
 import {
   focusEditor,
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
 import { UniversalPalette } from '@bangle.io/ui-components';
 import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
-import { uiSliceKey, useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import {
@@ -41,11 +33,6 @@ const paletteByType = Object.fromEntries(
   palettes.map((obj) => [obj.type, obj]),
 );
 
-const getType = (state: AppState, type: CorePalette) => {
-  const uiState = uiSliceKey.getSliceState(state);
-  return uiState?.paletteType === type ? null : type;
-};
-
 export function PaletteManager() {
   const {
     paletteMetadata,
@@ -57,44 +44,6 @@ export function PaletteManager() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const { bangleStore } = useEditorManagerContext();
-
-  useSerialOperationHandler(
-    (operation) => {
-      switch (operation.name) {
-        case CORE_PALETTES_TOGGLE_OPERATION_PALETTE: {
-          bangleStore.dispatch({
-            name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
-            value: {
-              type: getType(bangleStore.state, operationPalette.type),
-            },
-          });
-          return true;
-        }
-
-        case CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE: {
-          bangleStore.dispatch({
-            name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
-            value: {
-              type: getType(bangleStore.state, workspacePalette.type),
-            },
-          });
-          return true;
-        }
-
-        case CORE_PALETTES_TOGGLE_NOTES_PALETTE: {
-          bangleStore.dispatch({
-            name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
-            value: {
-              type: getType(bangleStore.state, notesPalette.type),
-            },
-          });
-          return true;
-        }
-      }
-      return undefined;
-    },
-    [bangleStore],
-  );
 
   const dismissPalette = useCallback(
     (focus = true) => {

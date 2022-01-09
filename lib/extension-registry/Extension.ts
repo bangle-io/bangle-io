@@ -47,7 +47,11 @@ export type SerialOperationHandler2<
   abortSignal: AbortSignal,
 ) => {
   destroy?: () => void;
-  handle: (op: OpType, payload: any, store: ApplicationStore) => boolean | void;
+  handle: (
+    serialOperation: OpType,
+    payload: any,
+    store: ApplicationStore,
+  ) => boolean | void;
 };
 export interface ApplicationConfig<
   T = any,

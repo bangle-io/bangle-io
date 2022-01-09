@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { RegisterSerialOperationHandlerType } from '@bangle.io/extension-registry';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { changeSidebar, useUIManagerContext } from '@bangle.io/ui-context';
 
 import {
   EXECUTE_SEARCH_OPERATION,
@@ -15,7 +15,7 @@ export function SearchNotesOperationHandler({
 }: {
   registerSerialOperationHandler: RegisterSerialOperationHandlerType;
 }) {
-  const { sidebar, dispatch } = useUIManagerContext();
+  const { sidebar, bangleStore } = useUIManagerContext();
   const [, updateState] = useSearchNotesState();
 
   useSearchNotes();
@@ -24,11 +24,11 @@ export function SearchNotesOperationHandler({
     const deregister = registerSerialOperationHandler((operation) => {
       switch (operation.name) {
         case SHOW_SEARCH_SIDEBAR_OPERATION: {
-          showSidebar(sidebar, dispatch);
+          showSidebar(sidebar, bangleStore);
           return true;
         }
         case EXECUTE_SEARCH_OPERATION: {
-          showSidebar(sidebar, dispatch);
+          showSidebar(sidebar, bangleStore);
           updateState((state) => ({
             ...state,
             searchQuery: operation.value,
@@ -43,11 +43,14 @@ export function SearchNotesOperationHandler({
     return () => {
       deregister();
     };
-  }, [dispatch, sidebar, updateState, registerSerialOperationHandler]);
+  }, [sidebar, updateState, bangleStore, registerSerialOperationHandler]);
   return null;
 }
 
-function showSidebar(sidebar, dispatch) {
+function showSidebar(
+  sidebar,
+  bangleStore: ReturnType<typeof useUIManagerContext>['bangleStore'],
+) {
   if (sidebar === SIDEBAR_NAME) {
     const inputEl = document.querySelector<HTMLInputElement>(
       'input[aria-label="Search"]',
@@ -55,10 +58,6 @@ function showSidebar(sidebar, dispatch) {
     inputEl?.focus();
     inputEl?.select();
   }
-  dispatch({
-    name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
-    value: {
-      type: SIDEBAR_NAME,
-    },
-  });
+
+  changeSidebar(SIDEBAR_NAME)(bangleStore.state, bangleStore.dispatch);
 }
