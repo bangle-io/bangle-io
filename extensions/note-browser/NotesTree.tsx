@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
 import { isFirefox } from '@bangle.io/config';
-import { newNote, toggleWorkspacePalette } from '@bangle.io/core-operations';
+import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
 import {
   ButtonIcon,
   ChevronDownIcon,

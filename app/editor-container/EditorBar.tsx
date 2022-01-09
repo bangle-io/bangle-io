@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
-import { toggleNotesPalette } from '@bangle.io/core-operations';
+import { toggleNotesPalette } from '@bangle.io/shared-operations';
 import {
   ActionButton,
   ButtonContent,

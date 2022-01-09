@@ -1773,8 +1773,8 @@ __metadata:
   dependencies:
     "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
@@ -1813,7 +1813,6 @@ __metadata:
     "@bangle.io/collapsible-heading": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/editor-core": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
@@ -1828,6 +1827,7 @@ __metadata:
     "@bangle.io/page-context": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
     "@bangle.io/shared": "workspace:*"
+    "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/style": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -1996,12 +1996,12 @@ __metadata:
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
+    "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
@@ -2012,21 +2012,6 @@ __metadata:
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/core-operations@workspace:*, @bangle.io/core-operations@workspace:lib/core-operations":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/core-operations@workspace:lib/core-operations"
-  dependencies:
-    "@bangle.io/app-state-context": "workspace:*"
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/editor-manager-context": "workspace:*"
-    "@bangle.io/ui-context": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@bangle.io/workspace-context": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2108,11 +2093,11 @@ __metadata:
     "@bangle.dev/react": 0.28.5
     "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
+    "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
@@ -2486,9 +2471,9 @@ __metadata:
   dependencies:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
-    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
+    "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
@@ -2662,13 +2647,13 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
-    "@bangle.io/core-operations": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/note-tags": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
+    "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
@@ -2720,6 +2705,21 @@ __metadata:
     "@bangle.io/extension-registry": "*"
     "@bangle.io/utils": "*"
     react: "*"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/shared-operations@workspace:*, @bangle.io/shared-operations@workspace:lib/shared-operations":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/shared-operations@workspace:lib/shared-operations"
+  dependencies:
+    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/editor-manager-context": "workspace:*"
+    "@bangle.io/ui-context": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/workspace-context": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
   languageName: unknown
   linkType: soft
 

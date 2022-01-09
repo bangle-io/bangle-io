@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
-import { toggleWorkspacePalette } from '@bangle.io/core-operations';
+import { toggleWorkspacePalette } from '@bangle.io/shared-operations';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import {

@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
-import { closeEditor, splitEditor } from '@bangle.io/core-operations';
 import { Editor } from '@bangle.io/editor';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { closeEditor, splitEditor } from '@bangle.io/shared-operations';
 import { Page } from '@bangle.io/ui-components';
 import { cx, useDestroyRef } from '@bangle.io/utils';
 import {
