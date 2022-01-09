@@ -60,11 +60,14 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     await page.waitForFunction(
       ([w]) => {
         const win: any = window;
-        const editor = win._getEditors()?.[0];
+        const editor = win._e2eHelpers._getEditors()?.[0];
         if (!editor) {
           return false;
         }
-        return win._getEditorPluginMetadata(editor.view.state)?.wsPath === w;
+        return (
+          win._e2eHelpers._getEditorPluginMetadata(editor.view.state)
+            ?.wsPath === w
+        );
       },
       [w],
     );
@@ -74,7 +77,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     await page.evaluate(
       ([w]) => {
         const win: any = window;
-        win.refs.push(new win.WeakRef(win.primaryEditor.view));
+        win.refs.push(new win.WeakRef(win._e2eHelpers._primaryEditor.view));
       },
       [w],
     );

@@ -205,7 +205,7 @@ test.describe.parallel('workspace', () => {
       page.waitForNavigation(),
       runOperation(
         page,
-        'operation::@bangle.io/core-actions:DELETE_ACTIVE_NOTE',
+        'operation::@bangle.io/core-operations:DELETE_ACTIVE_NOTE',
       ),
     ]);
 
@@ -234,7 +234,7 @@ test.describe.parallel('workspace', () => {
       page.waitForNavigation(),
       runOperation(
         page,
-        'operation::@bangle.io/core-actions:DELETE_ACTIVE_NOTE',
+        'operation::@bangle.io/core-operations:DELETE_ACTIVE_NOTE',
       ),
     ]);
 
@@ -264,7 +264,7 @@ test.describe.parallel('workspace', () => {
       page.waitForNavigation(),
       runOperation(
         page,
-        'operation::@bangle.io/core-actions:DELETE_ACTIVE_NOTE',
+        'operation::@bangle.io/core-operations:DELETE_ACTIVE_NOTE',
       ),
     ]);
     await expect(page).toHaveURL(

@@ -3,8 +3,8 @@ import React from 'react';
 import { keyDisplayValue } from '@bangle.io/config';
 import { Extension } from '@bangle.io/extension-registry';
 import { FolderIcon } from '@bangle.io/ui-components';
+import { changeSidebar } from '@bangle.io/ui-context';
 
-import { NoteBrowserOpHandler } from './NoteBrowserActionHandler';
 import { NoteBrowserSidebar } from './NoteBrowserSidebar';
 
 const extensionName = '@bangle.io/note-browser';
@@ -13,7 +13,6 @@ const key = 'Mod-e';
 const extension = Extension.create({
   name: extensionName,
   application: {
-    ReactComponent: NoteBrowserOpHandler,
     operations: [
       {
         name: 'operation::@bangle.io/note-browser:toggle-note-browser',
@@ -30,6 +29,24 @@ const extension = Extension.create({
         ReactComponent: NoteBrowserSidebar,
       },
     ],
+    operationHandler() {
+      return {
+        handle(operation, _, bangleStore) {
+          switch (operation.name) {
+            case 'operation::@bangle.io/note-browser:toggle-note-browser': {
+              changeSidebar('sidebar::@bangle.io/note-browser:note-browser')(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
+              return true;
+            }
+            default: {
+              return false;
+            }
+          }
+        },
+      };
+    },
   },
 });
 

@@ -3,7 +3,7 @@ import React from 'react';
 
 import { useBangleStoreDispatch } from '@bangle.io/app-state-context';
 import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
-import { toggleNotesPalette } from '@bangle.io/core-operations';
+import { toggleNotesPalette } from '@bangle.io/shared-operations';
 
 import { EditorBar } from '../EditorBar';
 
@@ -15,8 +15,8 @@ jest.mock('@bangle.io/app-state-context', () => {
   };
 });
 
-jest.mock('@bangle.io/core-operations', () => {
-  const operations = jest.requireActual('@bangle.io/core-operations');
+jest.mock('@bangle.io/shared-operations', () => {
+  const operations = jest.requireActual('@bangle.io/shared-operations');
 
   return {
     ...operations,

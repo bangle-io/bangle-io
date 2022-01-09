@@ -1,7 +1,7 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { toggleNotesPalette } from '@bangle.io/core-operations';
+import { toggleNotesPalette } from '@bangle.io/shared-operations';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 
 import { Activitybar } from '../Activitybar';
@@ -14,8 +14,8 @@ jest.mock('@bangle.io/ui-context', () => {
   };
 });
 
-jest.mock('@bangle.io/core-operations', () => {
-  const operations = jest.requireActual('@bangle.io/core-operations');
+jest.mock('@bangle.io/shared-operations', () => {
+  const operations = jest.requireActual('@bangle.io/shared-operations');
 
   return {
     ...operations,

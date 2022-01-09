@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
+import { getFocusedWsPath } from '@bangle.io/shared-operations';
 import { InputPalette, UniversalPalette } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { randomName, useDestroyRef } from '@bangle.io/utils';
@@ -87,10 +88,10 @@ export function RenameNoteInputModal({ onDismiss }) {
   const destroyedRef = useDestroyRef();
   const { widescreen } = useUIManagerContext();
 
-  const { wsName, bangleStore, openedWsPaths } = useWorkspaceContext();
-  const { primaryWsPath } = openedWsPaths;
+  const { wsName, bangleStore } = useWorkspaceContext();
 
-  const targetWsPath = primaryWsPath;
+  const targetWsPath = getFocusedWsPath()(bangleStore.state);
+
   const [error, updateError] = useState<Error | undefined>();
   const onExecute = useCallback(
     async (inputValue) => {
@@ -142,7 +143,7 @@ export function RenameNoteInputModal({ onDismiss }) {
     [targetWsPath, onDismiss, bangleStore, destroyedRef, wsName],
   );
 
-  const initialValue = primaryWsPath ? resolvePath(primaryWsPath).filePath : '';
+  const initialValue = targetWsPath ? resolvePath(targetWsPath).filePath : '';
   return (
     <InputPalette
       placeholder="Enter the new name"

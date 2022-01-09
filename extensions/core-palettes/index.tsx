@@ -3,11 +3,17 @@ import {
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
   CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+  CorePalette,
 } from '@bangle.io/constants';
+import { AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
+import { uiSliceKey } from '@bangle.io/ui-context';
 
 import { extensionName } from './config';
+import { notesPalette } from './NotesPalette';
+import { operationPalette } from './OperationPalette';
 import { PaletteManager } from './PaletteManager';
+import { workspacePalette } from './WorkspacePalette';
 
 const extension = Extension.create({
   name: extensionName,
@@ -35,6 +41,52 @@ const extension = Extension.create({
       },
     ],
     ReactComponent: PaletteManager,
+
+    operationHandler() {
+      const getType = (state: AppState, type: CorePalette) => {
+        const uiState = uiSliceKey.getSliceState(state);
+        return uiState?.paletteType === type ? null : type;
+      };
+
+      return {
+        handle(operation, _, bangleStore) {
+          switch (operation.name) {
+            case CORE_PALETTES_TOGGLE_OPERATION_PALETTE: {
+              bangleStore.dispatch({
+                name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+                value: {
+                  type: getType(bangleStore.state, operationPalette.type),
+                },
+              });
+              return true;
+            }
+
+            case CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE: {
+              bangleStore.dispatch({
+                name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+                value: {
+                  type: getType(bangleStore.state, workspacePalette.type),
+                },
+              });
+              return true;
+            }
+
+            case CORE_PALETTES_TOGGLE_NOTES_PALETTE: {
+              bangleStore.dispatch({
+                name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+                value: {
+                  type: getType(bangleStore.state, notesPalette.type),
+                },
+              });
+              return true;
+            }
+            default: {
+              return undefined;
+            }
+          }
+        },
+      };
+    },
   },
 });
 

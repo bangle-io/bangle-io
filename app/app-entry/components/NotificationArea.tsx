@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/action-context';
+import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import {
   ButtonIcon,

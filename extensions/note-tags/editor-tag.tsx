@@ -9,7 +9,6 @@ import {
 import { inlineNodeParser } from '@bangle.dev/markdown';
 import { keymap } from '@bangle.dev/pm';
 
-import { useSerialOperationContext } from '@bangle.io/action-context';
 import { RenderReactNodeView } from '@bangle.io/extension-registry';
 import {
   inlinePalette,
@@ -17,6 +16,7 @@ import {
   queryInlinePaletteText,
   replaceSuggestionMarkWith,
 } from '@bangle.io/inline-palette';
+import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 
 import {
   BANNED_CHARS,

@@ -30,7 +30,10 @@ export async function runOperation(page, actionId) {
 }
 
 export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
-  await runOperation(page, 'operation::@bangle.io/core-actions:NEW_WORKSPACE');
+  await runOperation(
+    page,
+    'operation::@bangle.io/core-operations:NEW_WORKSPACE',
+  );
 
   await page.click('[aria-label="select storage type"]');
 
@@ -72,7 +75,7 @@ export async function createWorkspaceFromBackup(
     page.waitForEvent('filechooser'),
     runOperation(
       page,
-      'operation::@bangle.io/core-actions:NEW_WORKSPACE_FROM_BACKUP',
+      'operation::@bangle.io/core-operations:NEW_WORKSPACE_FROM_BACKUP',
     ),
   ]);
 
@@ -104,7 +107,9 @@ export async function getAllWsPaths(
   }
 
   const result = JSON.parse(
-    await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
+    await page.evaluate(() =>
+      JSON.stringify((window as any)._e2eHelpers._getWsPaths()),
+    ),
   );
 
   if (attempt > 3) {
@@ -125,7 +130,7 @@ export async function pushWsPathToPrimary(
   { waitForEditorToLoad = true } = {},
 ) {
   await page.evaluate(
-    ([wsPath]) => (window as any)._pushWsPath(wsPath),
+    ([wsPath]) => (window as any)._e2eHelpers._pushWsPath(wsPath),
     [wsPath],
   );
   if (waitForEditorToLoad) {
@@ -138,7 +143,7 @@ export async function pushWsPathToSecondary(
   { waitForEditorToLoad = true } = {},
 ) {
   await page.evaluate(
-    ([wsPath]) => (window as any)._pushWsPath(wsPath, true),
+    ([wsPath]) => (window as any)._e2eHelpers._pushWsPath(wsPath, true),
     [wsPath],
   );
   if (waitForEditorToLoad) {
@@ -168,7 +173,7 @@ export async function createNewNote(
   wsName: string,
   noteName = 'new_file.md',
 ) {
-  await runOperation(page, 'operation::@bangle.io/core-actions:NEW_NOTE');
+  await runOperation(page, 'operation::@bangle.io/core-operations:NEW_NOTE');
 
   if (!noteName.endsWith('.md')) {
     noteName += '.md';
@@ -265,12 +270,12 @@ export async function getPrimaryEditorHandler(
   await waitForEditorIdToLoad(page, 0);
 
   await page.waitForFunction(() => {
-    return (window as any).primaryEditor?.destroyed === false;
+    return (window as any)._e2eHelpers._primaryEditor?.destroyed === false;
   });
 
   if (focus) {
     await page.evaluate(async () => {
-      (window as any).primaryEditor?.view?.focus();
+      (window as any)._e2eHelpers._primaryEditor?.view?.focus();
     });
     await waitForPrimaryEditorFocus(page);
   }
@@ -339,7 +344,7 @@ export async function getEditorSelectionJson(page: Page, editorId: number) {
 export async function getPrimaryEditorDebugString(el: any) {
   // TODO fix the as any
   return (el as any).evaluate(async () =>
-    (window as any).primaryEditor?.view?.state.doc.toString(),
+    (window as any)._e2eHelpers._primaryEditor?.view?.state.doc.toString(),
   );
 }
 
@@ -358,7 +363,7 @@ function frmtHTML(doc) {
 
 export async function getSecondaryEditorDebugString(page: Page) {
   return (page as any).evaluate(async () =>
-    (window as any).secondaryEditor?.view?.state.doc.toString(),
+    (window as any)._e2eHelpers._secondaryEditor?.view?.state.doc.toString(),
   );
 }
 

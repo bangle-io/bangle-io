@@ -3,7 +3,7 @@ import React from 'react';
 import type { RawSpecs } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
-import { Slice } from '@bangle.io/create-store';
+import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import type {
   EditorWatchPluginState,
   NoteSidebarWidget,
@@ -39,14 +39,31 @@ export interface EditorConfig {
 export type RegisterSerialOperationHandlerType = (
   cb: SerialOperationHandler,
 ) => () => void;
-export interface ApplicationConfig {
+
+export type SerialOperationHandler2<
+  OpType extends SerialOperationDefinitionType,
+> = (
+  bangleStore: ApplicationStore,
+  abortSignal: AbortSignal,
+) => {
+  destroy?: () => void;
+  handle: (
+    serialOperation: OpType,
+    payload: any,
+    store: ApplicationStore,
+  ) => boolean | void;
+};
+export interface ApplicationConfig<
+  T = any,
+  OpType extends SerialOperationDefinitionType = any,
+> {
   name: string;
   ReactComponent?: React.ComponentType<{
     key: string;
-    registerSerialOperationHandler: RegisterSerialOperationHandlerType;
   }>;
-  operations?: Array<SerialOperationDefinitionType>;
+  operations?: Array<OpType>;
   sidebars?: Array<SidebarType>;
+  operationHandler?: SerialOperationHandler2<OpType>;
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
   slices?: Array<Slice<any>>;
 }
@@ -59,20 +76,23 @@ export interface SidebarType {
   title: string;
 }
 
-interface Config<T> {
-  application: ApplicationConfig;
+interface Config<T, OpType extends SerialOperationDefinitionType> {
+  application: ApplicationConfig<T, OpType>;
   editor: EditorConfig;
   initialState?: any;
   name: string;
 }
 
-export class Extension<T = unknown> {
+export class Extension<
+  T = unknown,
+  OpType extends SerialOperationDefinitionType = any,
+> {
   name: string;
   editor: EditorConfig;
   initialState?: any;
-  application: ApplicationConfig;
+  application: ApplicationConfig<T, OpType>;
 
-  constructor(ext: Config<T>, check: typeof _check) {
+  constructor(ext: Config<T, OpType>, check: typeof _check) {
     if (check !== _check) {
       throw new Error('Instantiate class via `Extension.create({})`');
     }
@@ -81,11 +101,14 @@ export class Extension<T = unknown> {
     this.initialState = ext.initialState;
     this.application = ext.application;
   }
-  static create<ExtensionState = undefined>(config: {
+  static create<
+    T = undefined,
+    OpType extends SerialOperationDefinitionType = any,
+  >(config: {
     name: string;
-    initialState?: ExtensionState;
+    initialState?: T;
     editor?: Omit<EditorConfig, 'name'>;
-    application?: Omit<ApplicationConfig, 'name'>;
+    application?: Omit<ApplicationConfig<T, OpType>, 'name'>;
   }) {
     const { name } = config;
 
@@ -132,7 +155,19 @@ export class Extension<T = unknown> {
       );
     }
 
-    const { operations, sidebars, noteSidebarWidgets, slices } = application;
+    const {
+      operations,
+      sidebars,
+      noteSidebarWidgets,
+      slices,
+      operationHandler,
+    } = application;
+
+    if (operationHandler && !operations) {
+      throw new Error(
+        'Extension: operationHandler is required when defining operations',
+      );
+    }
 
     if (operations) {
       if (
@@ -205,7 +240,7 @@ export class Extension<T = unknown> {
       );
     }
 
-    return new Extension<ExtensionState>(
+    return new Extension<T, OpType>(
       { name, editor, application, initialState },
       _check,
     );
@@ -221,6 +256,10 @@ function hasCorrectPackageName(pkgName: string, slug: string) {
 }
 
 function resolveSlug(slug: string) {
+  if (slug.includes('?')) {
+    throw new Error('Cannot have ? in the slug');
+  }
+
   const [scheme, restString] = slug.split('::');
   const [pkgName, localSlug] = restString?.split(':') || [];
   return {

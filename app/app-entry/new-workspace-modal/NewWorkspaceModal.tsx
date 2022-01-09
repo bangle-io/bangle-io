@@ -2,7 +2,6 @@ import './NewWorkspaceModal.css';
 
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/action-context';
 import {
   DirTypeSystemHandle,
   supportsNativeBrowserFs,
@@ -11,6 +10,7 @@ import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
+import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';

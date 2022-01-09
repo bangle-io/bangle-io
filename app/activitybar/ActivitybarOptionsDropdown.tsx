@@ -12,7 +12,7 @@ import {
   toggleActionPalette,
   toggleNotesPalette,
   toggleWorkspacePalette,
-} from '@bangle.io/core-operations';
+} from '@bangle.io/shared-operations';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import {
   DropdownMenu,

@@ -15,6 +15,7 @@ import {
   initialEditorSliceState,
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
+import { initialState, useUIManagerContext } from '@bangle.io/ui-context';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import type { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -26,6 +27,14 @@ export const getEditorPluginMetadataReturn: ReturnType<
   editorDisplayType: EditorDisplayType.Page,
   bangleStore: initialBangleStore,
   wsPath: 'test-workspace:my-test-note.md',
+};
+
+export const getUseUIManagerContextReturn: Mutable<
+  ReturnType<typeof useUIManagerContext>
+> = {
+  ...initialState,
+  dispatch: jest.fn(() => {}),
+  bangleStore: initialBangleStore,
 };
 
 export const getUseWorkspaceContextReturn: Mutable<

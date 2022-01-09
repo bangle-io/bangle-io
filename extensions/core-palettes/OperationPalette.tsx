@@ -1,8 +1,8 @@
 import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/action-context';
 import { CorePalette } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { TerminalIcon, UniversalPalette } from '@bangle.io/ui-components';
 
 import { ExtensionPaletteType } from './config';

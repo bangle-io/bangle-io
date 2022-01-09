@@ -8,13 +8,13 @@ import React, {
 
 import { Selection } from '@bangle.dev/pm';
 
-import { useSerialOperationHandler } from '@bangle.io/action-context';
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   getEditor,
   getEditorState,
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import {
   cx,

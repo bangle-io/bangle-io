@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
-import { newNote, toggleWorkspacePalette } from '@bangle.io/core-operations';
+import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
 import {
   ActionButton,
   ButtonContent,

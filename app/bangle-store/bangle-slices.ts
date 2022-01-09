@@ -19,6 +19,8 @@ import { workerSlice } from '@bangle.io/worker-setup';
 import type { WorkspaceSliceAction } from '@bangle.io/workspace-context';
 import { workspaceSlice } from '@bangle.io/workspace-context';
 
+import { e2eHelpers } from './e2e-helpers';
+
 export type BangleActionTypes =
   | UiContextAction
   | PageSliceAction
@@ -46,6 +48,7 @@ export function bangleStateSlices({
 
     ...extensionSlices,
 
+    e2eHelpers(),
     // keep this at the end
     new Slice({
       sideEffect: [

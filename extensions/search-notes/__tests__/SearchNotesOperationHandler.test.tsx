@@ -1,8 +1,10 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import type { SerialOperationHandler } from '@bangle.io/shared-types';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { getUseUIManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import { changeSidebar, useUIManagerContext } from '@bangle.io/ui-context';
 
 import {
   EXECUTE_SEARCH_OPERATION as EXECUTE_SEARCH_OP,
@@ -10,13 +12,24 @@ import {
   SIDEBAR_NAME,
 } from '../constants';
 import { useSearchNotes, useSearchNotesState } from '../hooks';
-import { SearchNotesOperationHandler } from '../operation-handler';
+import { SearchNotesOperationHandler } from '../SearchNotesOperationHandler';
 
 jest.mock('@bangle.io/ui-context', () => {
+  const actual = jest.requireActual('@bangle.io/ui-context');
+
   return {
+    ...actual,
+    changeSidebar: jest.fn(() => () => {}),
     useUIManagerContext: jest.fn(),
   };
 });
+
+jest.mock('@bangle.io/serial-operation-context', () => {
+  return {
+    useSerialOperationHandler: jest.fn(),
+  };
+});
+
 jest.mock('../hooks', () => {
   const actual = jest.requireActual('../hooks');
   return {
@@ -26,51 +39,51 @@ jest.mock('../hooks', () => {
   };
 });
 
-let useUIManagerContextReturn;
+let useUIManagerContextReturn: typeof getUseUIManagerContextReturn;
+
+let useSerialOperationHandlerMock =
+  useSerialOperationHandler as jest.MockedFunction<
+    typeof useSerialOperationHandler
+  >;
+let useUIManagerContextMock = useUIManagerContext as jest.MockedFunction<
+  typeof useUIManagerContext
+>;
+
+let changeSidebarMock = changeSidebar as jest.MockedFunction<
+  typeof changeSidebar
+>;
+
 let originalQuerySelector = document.querySelector;
 beforeEach(() => {
   document.querySelector = originalQuerySelector;
   useUIManagerContextReturn = {
+    ...getUseUIManagerContextReturn,
     sidebar: null,
     dispatch: jest.fn(),
   };
-  (useUIManagerContext as any).mockImplementation(() => {
-    return useUIManagerContextReturn;
+  useUIManagerContextMock.mockImplementation(() => {
+    return { ...useUIManagerContextReturn };
   });
   (useSearchNotesState as any).mockImplementation(() => [
     { searchQuery: '', searchResults: null, pendingSearch: false },
     jest.fn(),
   ]);
+
+  const changeSidebarRet = jest.fn();
+  changeSidebarMock.mockImplementation(() => changeSidebarRet);
 });
 
 afterEach(() => {
   document.querySelector = originalQuerySelector;
 });
 
-test('deregisters handler', async () => {
-  let deregister = jest.fn();
-  const renderResult = render(
-    <SearchNotesOperationHandler
-      registerSerialOperationHandler={(_handler) => {
-        return deregister;
-      }}
-    />,
-  );
-
-  renderResult.unmount();
-  expect(deregister).toBeCalledTimes(1);
-});
-
 describe('operations', () => {
   let dispatchSOp: SerialOperationHandler;
-  let registerSerialOperationHandler;
 
   beforeEach(async () => {
-    let deregister = jest.fn();
-    registerSerialOperationHandler = (_handler) => {
+    useSerialOperationHandlerMock.mockImplementation((_handler) => {
       dispatchSOp = _handler;
-      return deregister;
-    };
+    });
   });
 
   test('focuses correctly on input if sidebar is already open', async () => {
@@ -79,11 +92,7 @@ describe('operations', () => {
       select: jest.fn(),
     };
     document.querySelector = jest.fn(() => inputElement);
-    const renderResult = render(
-      <SearchNotesOperationHandler
-        registerSerialOperationHandler={registerSerialOperationHandler}
-      />,
-    );
+    const renderResult = render(<SearchNotesOperationHandler />);
 
     expect(useSearchNotes).toBeCalledTimes(1);
 
@@ -92,22 +101,26 @@ describe('operations', () => {
       name: SHOW_SEARCH_SIDEBAR_OP,
     });
 
-    expect(useUIManagerContextReturn.dispatch).toBeCalledTimes(1);
+    expect(changeSidebarMock).toBeCalledTimes(1);
+    expect(changeSidebarMock).nthCalledWith(
+      1,
+      'sidebar::@bangle.io/search-notes:search-notes',
+    );
 
     useUIManagerContextReturn.sidebar = SIDEBAR_NAME;
     expect(document.querySelector).toBeCalledTimes(0);
 
-    renderResult.rerender(
-      <SearchNotesOperationHandler
-        registerSerialOperationHandler={registerSerialOperationHandler}
-      />,
-    );
+    renderResult.rerender(<SearchNotesOperationHandler />);
 
     dispatchSOp!({
       name: SHOW_SEARCH_SIDEBAR_OP,
     });
 
-    expect(useUIManagerContextReturn.dispatch).toBeCalledTimes(2);
+    expect(changeSidebarMock).toBeCalledTimes(2);
+    expect(changeSidebarMock).nthCalledWith(
+      2,
+      'sidebar::@bangle.io/search-notes:search-notes',
+    );
     expect(document.querySelector).toBeCalledTimes(1);
     expect(document.querySelector).nthCalledWith(
       1,
@@ -127,11 +140,7 @@ describe('operations', () => {
       updateState,
     ]);
 
-    const renderResult = render(
-      <SearchNotesOperationHandler
-        registerSerialOperationHandler={registerSerialOperationHandler}
-      />,
-    );
+    const renderResult = render(<SearchNotesOperationHandler />);
     expect(renderResult.container).toMatchInlineSnapshot(`<div />`);
     dispatchSOp!({
       name: EXECUTE_SEARCH_OP,
@@ -155,13 +164,7 @@ test('passes searchQuery correct to search notes', async () => {
     jest.fn(),
   ]);
 
-  render(
-    <SearchNotesOperationHandler
-      registerSerialOperationHandler={(_handler) => {
-        return jest.fn();
-      }}
-    />,
-  );
+  render(<SearchNotesOperationHandler />);
   expect(useSearchNotes).toBeCalledTimes(1);
   expect(useSearchNotes).nthCalledWith(1);
 });

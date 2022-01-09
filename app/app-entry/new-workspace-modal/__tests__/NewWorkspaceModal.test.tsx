@@ -1,7 +1,6 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { useSerialOperationContext } from '@bangle.io/action-context';
 import {
   BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
@@ -12,6 +11,7 @@ import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
+import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { sleep } from '@bangle.io/utils';
 import { useWorkspaces } from '@bangle.io/workspaces';
@@ -57,8 +57,8 @@ jest.mock('@bangle.io/workspaces', () => {
   };
 });
 
-jest.mock('@bangle.io/action-context', () => {
-  const otherThings = jest.requireActual('@bangle.io/action-context');
+jest.mock('@bangle.io/serial-operation-context', () => {
+  const otherThings = jest.requireActual('@bangle.io/serial-operation-context');
   return {
     ...otherThings,
     useSerialOperationContext: jest.fn(() => ({})),

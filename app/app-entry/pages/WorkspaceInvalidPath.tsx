@@ -4,7 +4,7 @@ import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   newWorkspace,
   toggleWorkspacePalette,
-} from '@bangle.io/core-operations';
+} from '@bangle.io/shared-operations';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 

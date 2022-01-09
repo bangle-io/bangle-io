@@ -20,7 +20,6 @@ const extension = Extension.create({
       },
     ],
   },
-
   application: {
     operations: [
       {

@@ -2,12 +2,12 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE } from '@bangle.io/constants';
-import { newNote } from '@bangle.io/core-operations';
+import { newNote } from '@bangle.io/shared-operations';
 
 import { ActivitybarOptionsDropdown } from '../ActivitybarOptionsDropdown';
 
-jest.mock('@bangle.io/core-operations', () => {
-  const operations = jest.requireActual('@bangle.io/core-operations');
+jest.mock('@bangle.io/shared-operations', () => {
+  const operations = jest.requireActual('@bangle.io/shared-operations');
 
   return {
     ...operations,

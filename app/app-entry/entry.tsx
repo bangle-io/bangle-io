@@ -4,7 +4,6 @@ import { OverlayProvider } from '@react-aria/overlays';
 import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
-import { SerialOperationContextProvider } from '@bangle.io/action-context';
 import { initializeBangleStore } from '@bangle.io/bangle-store';
 import { EditorManager } from '@bangle.io/editor-manager-context';
 import {
@@ -16,6 +15,7 @@ import {
   getLocationTo,
   usePageContext,
 } from '@bangle.io/page-context';
+import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
 import { polyfills } from '@bangle.io/shared';
 import { UIManager } from '@bangle.io/ui-context';
 import { WorkspaceContextProvider } from '@bangle.io/workspace-context';

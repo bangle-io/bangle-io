@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
-import { toggleNotesPalette } from '@bangle.io/core-operations';
+import { toggleNotesPalette } from '@bangle.io/shared-operations';
 import { FileDocumentIcon } from '@bangle.io/ui-components';
 import { resolvePath } from '@bangle.io/ws-path';
 
