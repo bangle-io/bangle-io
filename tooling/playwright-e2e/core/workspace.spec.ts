@@ -41,6 +41,29 @@ test.describe.parallel('workspace', () => {
     expect(await getWsPathsShownInFilePalette(page)).toEqual([nA]);
   });
 
+  test('Rename note', async ({ page, baseURL }) => {
+    const wsName1 = await createWorkspace(page);
+    const n1 = await createNewNote(page, wsName1, 'file-1');
+
+    await runOperation(
+      page,
+      'operation::@bangle.io/core-operations:RENAME_ACTIVE_NOTE',
+    );
+
+    await expect(
+      page.locator('.universal-palette-container input[aria-label]'),
+    ).toHaveValue(resolvePath(n1).filePath);
+
+    await page.fill(
+      '.universal-palette-container input[aria-label]',
+      'file-1-renamed',
+    );
+
+    await Promise.all([page.waitForNavigation(), page.keyboard.press('Enter')]);
+
+    await expect(page).toHaveURL(new RegExp('file-1-renamed'));
+  });
+
   test('Create a new workspace when already in a workspace and go back', async ({
     page,
     baseURL,
