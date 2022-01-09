@@ -80,11 +80,11 @@ const extension = Extension.create({
         title: 'Restore this workspace from a backup file',
       },
       {
-        name: 'operation::@bangle.io/core-actions:focus-primary-editor',
+        name: 'operation::@bangle.io/core-operations:focus-primary-editor',
         title: 'Editor: Focus on primary editor',
       },
       {
-        name: 'operation::@bangle.io/core-actions:focus-secondary-editor',
+        name: 'operation::@bangle.io/core-operations:focus-secondary-editor',
         title: 'Editor: Focus on secondary editor',
       },
     ],
@@ -150,12 +150,12 @@ const extension = Extension.create({
               return true;
             }
 
-            case 'operation::@bangle.io/core-actions:focus-primary-editor': {
+            case 'operation::@bangle.io/core-operations:focus-primary-editor': {
               focusEditor(0)(bangleStore.state);
               return true;
             }
 
-            case 'operation::@bangle.io/core-actions:focus-secondary-editor': {
+            case 'operation::@bangle.io/core-operations:focus-secondary-editor': {
               focusEditor(1)(bangleStore.state);
               return true;
             }

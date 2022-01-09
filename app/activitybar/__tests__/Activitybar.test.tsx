@@ -1,7 +1,7 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { changeSidebar, useUIManagerContext } from '@bangle.io/ui-context';
 
 import { Activitybar } from '../Activitybar';
 
@@ -9,9 +9,14 @@ jest.mock('@bangle.io/ui-context', () => {
   const otherThings = jest.requireActual('@bangle.io/ui-context');
   return {
     ...otherThings,
+    changeSidebar: jest.fn(() => () => {}),
     useUIManagerContext: jest.fn(() => ({})),
   };
 });
+
+let changeSidebarMock = changeSidebar as jest.MockedFunction<
+  typeof changeSidebar
+>;
 
 beforeEach(() => {
   (useUIManagerContext as any).mockImplementation(() => {
@@ -22,6 +27,9 @@ beforeEach(() => {
       widescreen: true,
     };
   });
+
+  const changeSidebarRet = jest.fn();
+  changeSidebarMock.mockImplementation(() => changeSidebarRet);
 });
 
 test('renders when no sidebars', () => {
@@ -118,13 +126,8 @@ test('inactive sidebar is dispatched correctly', () => {
     fireEvent.click(result.getByRole('button', { name: 'test-hint' }));
   });
 
-  expect(dispatch).toBeCalledTimes(1);
-  expect(dispatch).nthCalledWith(1, {
-    name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
-    value: {
-      type: 'sidebar::test-123',
-    },
-  });
+  expect(changeSidebarMock).toBeCalledTimes(1);
+  expect(changeSidebarMock).nthCalledWith(1, 'sidebar::test-123');
 });
 
 test('active sidebar is toggled off correctly', () => {
@@ -158,11 +161,6 @@ test('active sidebar is toggled off correctly', () => {
     fireEvent.click(result.getByRole('button', { name: 'search the notes' }));
   });
 
-  expect(dispatch).toBeCalledTimes(1);
-  expect(dispatch).nthCalledWith(1, {
-    name: 'action::@bangle.io/ui-context:TOGGLE_SIDEBAR',
-    value: {
-      type: 'sidebar::test-123',
-    },
-  });
+  expect(changeSidebarMock).toBeCalledTimes(1);
+  expect(changeSidebarMock).nthCalledWith(1, 'sidebar::test-123');
 });

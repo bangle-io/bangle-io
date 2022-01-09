@@ -3,7 +3,7 @@ import React from 'react';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { changeSidebar, useUIManagerContext } from '@bangle.io/ui-context';
 import {
   goToWorkspaceHomeRoute,
   useWorkspaceContext,
@@ -44,17 +44,7 @@ export function Activitybar({
         key={r.name}
         widescreen={widescreen}
         onPress={() => {
-          if (active) {
-            dispatch({
-              name: 'action::@bangle.io/ui-context:TOGGLE_SIDEBAR',
-              value: { type: r.name },
-            });
-          } else {
-            dispatch({
-              name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
-              value: { type: r.name },
-            });
-          }
+          changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
         }}
       />
     );
@@ -66,10 +56,7 @@ export function Activitybar({
         widescreen={widescreen}
         isActive={false}
         onPress={() => {
-          dispatch({
-            name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
-            value: { type: null },
-          });
+          changeSidebar(null)(bangleStore.state, bangleStore.dispatch);
           goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
         }}
         hint="Workspace Home"
