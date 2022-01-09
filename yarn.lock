@@ -1888,12 +1888,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/bangle-store@workspace:app/bangle-store"
   dependencies:
+    "@bangle.dev/pm": 0.28.5
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor-manager-context": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/page-context": "workspace:*"
+    "@bangle.io/pm-manual-paste": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-context": "workspace:*"
@@ -2614,6 +2616,15 @@ __metadata:
     "@playwright/test": ^1.17.1
     http-server: ^0.12.3
     prettier: ^2.4.1
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/pm-manual-paste@workspace:*, @bangle.io/pm-manual-paste@workspace:js-lib/pm-manual-paste":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/pm-manual-paste@workspace:js-lib/pm-manual-paste"
+  dependencies:
+    "@bangle.dev/pm": 0.28.5
+    prosemirror-view: ^1.10.0
   languageName: unknown
   linkType: soft
 

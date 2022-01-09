@@ -167,6 +167,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/object-uid"
       },
       {
+        "name": "@bangle.io/pm-manual-paste",
+        "reference": "workspace:js-lib/pm-manual-paste"
+      },
+      {
         "name": "@bangle.io/pm-plugins",
         "reference": "workspace:js-lib/pm-plugins"
       },
@@ -325,6 +329,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/object-uid", ["workspace:js-lib/object-uid"]],
       ["@bangle.io/page-context", ["workspace:lib/page-context"]],
       ["@bangle.io/playwright-e2e", ["workspace:tooling/playwright-e2e"]],
+      ["@bangle.io/pm-manual-paste", ["workspace:js-lib/pm-manual-paste"]],
       ["@bangle.io/pm-plugins", ["workspace:js-lib/pm-plugins"]],
       ["@bangle.io/search-notes", ["workspace:extensions/search-notes"]],
       ["@bangle.io/search-pm-node", ["workspace:js-lib/search-pm-node"]],
@@ -3940,12 +3945,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./app/bangle-store/",
           "packageDependencies": [
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
+            ["@bangle.dev/pm", "npm:0.28.5"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/editor-manager-context", "workspace:lib/editor-manager-context"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
             ["@bangle.io/page-context", "workspace:lib/page-context"],
+            ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
@@ -4868,6 +4875,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@playwright/test", "npm:1.17.1"],
             ["http-server", "npm:0.12.3"],
             ["prettier", "npm:2.4.1"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/pm-manual-paste", [
+        ["workspace:js-lib/pm-manual-paste", {
+          "packageLocation": "./js-lib/pm-manual-paste/",
+          "packageDependencies": [
+            ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],
+            ["@bangle.dev/pm", "npm:0.28.5"],
+            ["prosemirror-view", "npm:1.23.2"]
           ],
           "linkType": "SOFT",
         }]

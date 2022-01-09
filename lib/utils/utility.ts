@@ -408,3 +408,16 @@ export function shallowEqual<T extends {}>(objA: T, objB: T): boolean {
 
   return true;
 }
+
+export function makeSafeForCSS(name) {
+  return name.replace(/[^a-z0-9]/g, function (s: string) {
+    let c = s.charCodeAt(0);
+    if (c === 32) {
+      return '-';
+    }
+    if (c >= 65 && c <= 90) {
+      return '_' + s.toLowerCase();
+    }
+    return '__';
+  });
+}
