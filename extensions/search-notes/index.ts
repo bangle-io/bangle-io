@@ -13,7 +13,7 @@ import {
   SIDEBAR_NAME,
 } from './constants';
 import { searchPlugin } from './editor-plugins';
-import { SearchNotesOperationHandler } from './operation-handler';
+import { SearchNotesOperationHandler } from './SearchNotesOperationHandler';
 
 const key = 'Mod-F';
 

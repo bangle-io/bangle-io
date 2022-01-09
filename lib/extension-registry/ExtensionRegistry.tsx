@@ -207,14 +207,7 @@ export class ExtensionRegistry {
       .map((extension) => {
         const { ReactComponent } = extension.application;
         if (ReactComponent) {
-          return (
-            <ReactComponent
-              key={extension.name}
-              registerSerialOperationHandler={
-                this.registerSerialOperationHandler
-              }
-            />
-          );
+          return <ReactComponent key={extension.name} />;
         }
         return undefined;
       })

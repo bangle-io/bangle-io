@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
+import { useSerialOperationHandler } from '@bangle.io/action-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
@@ -10,12 +11,12 @@ import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
 
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 
-export function CoreActionsHandler({ registerSerialOperationHandler }) {
+export function CoreActionsHandler() {
   const { dispatch, modal, modalValue } = useUIManagerContext();
   const { createWorkspace } = useWorkspaces();
   const { primaryEditor } = useEditorManagerContext();
 
-  const handler = useCallback(
+  useSerialOperationHandler(
     (operation) => {
       switch (operation.name) {
         case CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE: {
@@ -83,15 +84,6 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
     },
     [dispatch, createWorkspace],
   );
-
-  useEffect(() => {
-    const deregister = registerSerialOperationHandler((obj) => {
-      handler(obj);
-    });
-    return () => {
-      deregister();
-    };
-  }, [handler, registerSerialOperationHandler]);
 
   const onDismiss = useCallback(
     (focusEditor = true) => {

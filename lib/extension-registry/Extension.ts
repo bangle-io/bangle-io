@@ -60,7 +60,6 @@ export interface ApplicationConfig<
   name: string;
   ReactComponent?: React.ComponentType<{
     key: string;
-    registerSerialOperationHandler: RegisterSerialOperationHandlerType;
   }>;
   operations?: Array<OpType>;
   sidebars?: Array<SidebarType>;

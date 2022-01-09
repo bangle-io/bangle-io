@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
-
-import { RegisterSerialOperationHandlerType } from '@bangle.io/extension-registry';
+import { useSerialOperationHandler } from '@bangle.io/action-context';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/ui-context';
 
 import {
@@ -10,18 +8,14 @@ import {
 } from './constants';
 import { useSearchNotes, useSearchNotesState } from './hooks';
 
-export function SearchNotesOperationHandler({
-  registerSerialOperationHandler,
-}: {
-  registerSerialOperationHandler: RegisterSerialOperationHandlerType;
-}) {
+export function SearchNotesOperationHandler() {
   const { sidebar, bangleStore } = useUIManagerContext();
   const [, updateState] = useSearchNotesState();
 
   useSearchNotes();
 
-  useEffect(() => {
-    const deregister = registerSerialOperationHandler((operation) => {
+  useSerialOperationHandler(
+    (operation) => {
       switch (operation.name) {
         case SHOW_SEARCH_SIDEBAR_OPERATION: {
           showSidebar(sidebar, bangleStore);
@@ -39,11 +33,10 @@ export function SearchNotesOperationHandler({
           return false;
         }
       }
-    });
-    return () => {
-      deregister();
-    };
-  }, [sidebar, updateState, bangleStore, registerSerialOperationHandler]);
+    },
+    [bangleStore, sidebar, updateState],
+  );
+
   return null;
 }
 

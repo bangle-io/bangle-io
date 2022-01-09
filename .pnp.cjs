@@ -5096,6 +5096,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/markdown", "workspace:lib/markdown"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/ui-context", "workspace:lib/ui-context"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/workspace-context", "workspace:lib/workspace-context"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
