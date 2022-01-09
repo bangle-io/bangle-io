@@ -10,10 +10,11 @@
       "web": "http://github.com/kepta"
     }
   ],
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bangle-io/bangle.dev.git"
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "js-lib/pm-manual-paste"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle.dev/issues"

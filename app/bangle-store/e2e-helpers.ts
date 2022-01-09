@@ -36,7 +36,6 @@ export function e2eHelpers() {
       return {
         update(store, prevState) {
           if (prevState && !didSomeEditorChange(prevState)(store.state)) {
-            console.count('same');
             return;
           }
           const editors = editorManagerSliceKey.getSliceState(
