@@ -4,114 +4,20 @@ import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
-import {
-  closeEditor,
-  deleteActiveNote,
-  newNote,
-  newWorkspace,
-  renameNote,
-  splitEditor,
-} from '@bangle.io/core-operations';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
-import { toggleTheme, useUIManagerContext } from '@bangle.io/ui-context';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { useUIManagerContext } from '@bangle.io/ui-context';
 import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
 
-import {
-  CORE_OPERATIONS_CLOSE_EDITOR,
-  CORE_OPERATIONS_DELETE_ACTIVE_NOTE,
-  CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY,
-  CORE_OPERATIONS_NEW_NOTE,
-  CORE_OPERATIONS_NEW_WORKSPACE,
-  CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP,
-  CORE_OPERATIONS_RENAME_ACTIVE_NOTE,
-  CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
-  CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
-  CORE_OPERATIONS_TOGGLE_UI_THEME,
-} from './config';
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
-import { downloadWorkspace, restoreWorkspaceFromBackup } from './operations';
 
 export function CoreActionsHandler({ registerSerialOperationHandler }) {
   const { dispatch, modal, modalValue } = useUIManagerContext();
   const { createWorkspace } = useWorkspaces();
-  const { primaryEditor, secondaryEditor } = useEditorManagerContext();
-  const { bangleStore } = useWorkspaceContext();
+  const { primaryEditor } = useEditorManagerContext();
 
   const handler = useCallback(
     (operation) => {
       switch (operation.name) {
-        case CORE_OPERATIONS_NEW_NOTE: {
-          newNote()(bangleStore.state, bangleStore.dispatch);
-          return true;
-        }
-
-        case CORE_OPERATIONS_NEW_WORKSPACE: {
-          newWorkspace()(bangleStore.state, bangleStore.dispatch);
-          return true;
-        }
-
-        case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
-          renameNote()(bangleStore.state, bangleStore.dispatch);
-          return true;
-        }
-
-        case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
-          dispatch({
-            name: 'action::@bangle.io/ui-context:TOGGLE_NOTE_SIDEBAR',
-          });
-          return true;
-        }
-
-        case CORE_OPERATIONS_DELETE_ACTIVE_NOTE: {
-          deleteActiveNote()(
-            bangleStore.state,
-            bangleStore.dispatch,
-            bangleStore,
-          );
-          return true;
-        }
-
-        case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
-          splitEditor()(bangleStore.state, bangleStore.dispatch);
-          return true;
-        }
-
-        case CORE_OPERATIONS_CLOSE_EDITOR: {
-          const editorId = operation.value;
-          closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
-          return true;
-        }
-
-        case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {
-          downloadWorkspace()(bangleStore.state, bangleStore.dispatch);
-          return true;
-        }
-
-        case CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP: {
-          restoreWorkspaceFromBackup()(
-            bangleStore.state,
-            bangleStore.dispatch,
-            bangleStore,
-          );
-          return true;
-        }
-
-        case 'operation::@bangle.io/core-actions:focus-primary-editor': {
-          primaryEditor?.focusView();
-          return true;
-        }
-
-        case 'operation::@bangle.io/core-actions:focus-secondary-editor': {
-          secondaryEditor?.focusView();
-          return true;
-        }
-
-        case CORE_OPERATIONS_TOGGLE_UI_THEME: {
-          toggleTheme()(bangleStore.state, bangleStore.dispatch);
-          return true;
-        }
-
         case CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE: {
           const { wsName } = operation.value || {};
 
@@ -175,7 +81,7 @@ export function CoreActionsHandler({ registerSerialOperationHandler }) {
         }
       }
     },
-    [dispatch, bangleStore, createWorkspace, primaryEditor, secondaryEditor],
+    [dispatch, createWorkspace],
   );
 
   useEffect(() => {

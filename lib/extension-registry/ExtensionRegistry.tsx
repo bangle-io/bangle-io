@@ -40,6 +40,9 @@ export class ExtensionRegistry {
   private registeredSerialOperations: SerialOperationDefinitionType[];
   private editorConfig: EditorConfig[];
   private operationKeybindingMapping: SerialOperationKeybindingMapping;
+  private operationHandlers: Array<
+    Exclude<ApplicationConfig['operationHandler'], undefined>
+  >;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
   private slices: Slice<any, any>[];
 
@@ -99,6 +102,16 @@ export class ExtensionRegistry {
     );
 
     this.slices = filterFlatMap(applicationConfig, 'slices');
+    this.operationHandlers = extensions
+      .map((e) => e.application.operationHandler)
+      .filter(
+        (
+          operationHandler,
+        ): operationHandler is Exclude<
+          ApplicationConfig['operationHandler'],
+          undefined
+        > => operationHandler != null,
+      );
 
     this.operationKeybindingMapping =
       this._getSerialOperationKeybindingMapping();
@@ -179,6 +192,10 @@ export class ExtensionRegistry {
   ): string | undefined {
     return this.registeredSerialOperations.find((a) => a.name === name)
       ?.keybinding;
+  }
+
+  getOperationHandlers() {
+    return this.operationHandlers;
   }
 
   getSerialOperationHandlers() {

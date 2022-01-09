@@ -1,5 +1,13 @@
-import React, { createContext, useCallback, useMemo } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
@@ -18,6 +26,7 @@ export interface SerialOperationContextType {
 }
 
 export function SerialOperationContextProvider({ children }) {
+  const bangleStore = useBangleStoreContext();
   const extensionRegistry = useExtensionRegistryContext();
 
   const operationNameSet = useMemo(() => {
@@ -25,6 +34,23 @@ export function SerialOperationContextProvider({ children }) {
       extensionRegistry.getRegisteredOperations().map((r) => r.name),
     );
   }, [extensionRegistry]);
+
+  const [abort] = useState(() => new AbortController());
+
+  const [operationHandlers] = useState(() => {
+    return extensionRegistry
+      .getOperationHandlers()
+      .map((r) => r(bangleStore, abort.signal));
+  });
+
+  useEffect(() => {
+    return () => {
+      abort.abort();
+      operationHandlers.forEach((o) => {
+        o.destroy?.();
+      });
+    };
+  }, [abort, operationHandlers]);
 
   const dispatchSerialOperation = useCallback<
     SerialOperationContextType['dispatchSerialOperation']
@@ -51,6 +77,11 @@ export function SerialOperationContextProvider({ children }) {
           'Unknown keys in operation : ' + Object.keys(others).join(','),
         );
       }
+
+      for (const handler of operationHandlers) {
+        handler.handle(operation, value, bangleStore);
+      }
+
       // Converting to array so that we have a fixed operation handlers for the current operation
       // because there are cases which add or remove handler (react hooks) resulting in double execution
       for (const handler of Array.from(
@@ -59,7 +90,7 @@ export function SerialOperationContextProvider({ children }) {
         handler(operation);
       }
     },
-    [extensionRegistry, operationNameSet],
+    [extensionRegistry, operationNameSet, operationHandlers, bangleStore],
   );
 
   const value = useMemo(() => {

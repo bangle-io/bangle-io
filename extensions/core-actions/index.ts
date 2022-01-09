@@ -4,7 +4,17 @@ import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
+import {
+  closeEditor,
+  deleteActiveNote,
+  newNote,
+  newWorkspace,
+  renameNote,
+  splitEditor,
+} from '@bangle.io/core-operations';
+import { focusEditor } from '@bangle.io/editor-manager-context';
 import { Extension } from '@bangle.io/extension-registry';
+import { toggleTheme } from '@bangle.io/ui-context';
 
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -20,6 +30,7 @@ import {
   extensionName,
 } from './config';
 import { CoreActionsHandler } from './CoreActionsHandler';
+import { downloadWorkspace, restoreWorkspaceFromBackup } from './operations';
 
 const extension = Extension.create({
   name: extensionName,
@@ -78,6 +89,89 @@ const extension = Extension.create({
       },
     ],
     ReactComponent: CoreActionsHandler,
+
+    operationHandler() {
+      return {
+        handle(operation, payload, bangleStore) {
+          switch (operation.name) {
+            case CORE_OPERATIONS_NEW_NOTE: {
+              newNote()(bangleStore.state, bangleStore.dispatch);
+              return true;
+            }
+
+            case CORE_OPERATIONS_NEW_WORKSPACE: {
+              newWorkspace()(bangleStore.state, bangleStore.dispatch);
+              return true;
+            }
+
+            case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
+              renameNote()(bangleStore.state, bangleStore.dispatch);
+              return true;
+            }
+
+            case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
+              bangleStore.dispatch({
+                name: 'action::@bangle.io/ui-context:TOGGLE_NOTE_SIDEBAR',
+              });
+              return true;
+            }
+
+            case CORE_OPERATIONS_DELETE_ACTIVE_NOTE: {
+              deleteActiveNote()(
+                bangleStore.state,
+                bangleStore.dispatch,
+                bangleStore,
+              );
+              return true;
+            }
+
+            case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
+              splitEditor()(bangleStore.state, bangleStore.dispatch);
+              return true;
+            }
+
+            case CORE_OPERATIONS_CLOSE_EDITOR: {
+              const editorId = payload;
+              closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
+              return true;
+            }
+
+            case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {
+              downloadWorkspace()(bangleStore.state, bangleStore.dispatch);
+              return true;
+            }
+
+            case CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP: {
+              restoreWorkspaceFromBackup()(
+                bangleStore.state,
+                bangleStore.dispatch,
+                bangleStore,
+              );
+              return true;
+            }
+
+            case 'operation::@bangle.io/core-actions:focus-primary-editor': {
+              focusEditor(0)(bangleStore.state);
+              return true;
+            }
+
+            case 'operation::@bangle.io/core-actions:focus-secondary-editor': {
+              focusEditor(1)(bangleStore.state);
+              return true;
+            }
+
+            case CORE_OPERATIONS_TOGGLE_UI_THEME: {
+              toggleTheme()(bangleStore.state, bangleStore.dispatch);
+              return true;
+            }
+
+            default: {
+              return false;
+            }
+          }
+        },
+      };
+    },
   },
 });
 
