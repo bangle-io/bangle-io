@@ -13,6 +13,25 @@ import {
 } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
+export function getFocusedWsPath() {
+  return (state: AppState) => {
+    const workspaceSliceState = workspaceSliceKey.getSliceState(state);
+    const editorSliceState = editorManagerSliceKey.getSliceState(state);
+
+    if (!workspaceSliceState || !editorSliceState) {
+      return false;
+    }
+
+    const { focusedEditorId } = editorSliceState;
+    const { openedWsPaths } = workspaceSliceState;
+
+    const focusedWsPath =
+      typeof focusedEditorId === 'number' &&
+      openedWsPaths.getByIndex(focusedEditorId);
+
+    return focusedWsPath;
+  };
+}
 export function newNote(initialValue?: string) {
   return (state: AppState, dispatch: UiContextDispatchType) => {
     const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
@@ -47,20 +66,16 @@ export function newNote(initialValue?: string) {
   };
 }
 
-export function renameNote() {
+export function renameActiveNote() {
   return (state: AppState, dispatch: UiContextDispatchType): boolean => {
-    const openedWsPaths = workspaceSliceKey.getSliceState(state)?.openedWsPaths;
-    if (!openedWsPaths) {
-      return false;
-    }
-    const { primaryWsPath } = openedWsPaths;
+    const focusedWsPath = getFocusedWsPath()(state);
 
-    if (!primaryWsPath) {
+    if (!focusedWsPath) {
       dispatch({
         name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
-          uid: 'rename-wsPath-not-found',
+          uid: 'delete-wsPath-not-found',
           content: 'Cannot rename because there is no active note',
         },
       });
@@ -93,19 +108,7 @@ export function deleteActiveNote() {
     >['dispatch'],
     store: ApplicationStore,
   ): boolean => {
-    const workspaceSliceState = workspaceSliceKey.getSliceState(state);
-    const editorSliceState = editorManagerSliceKey.getSliceState(state);
-
-    if (!workspaceSliceState || !editorSliceState) {
-      return false;
-    }
-
-    const { focusedEditorId } = editorSliceState;
-    const { openedWsPaths } = workspaceSliceState;
-
-    const focusedWsPath =
-      typeof focusedEditorId === 'number' &&
-      openedWsPaths.getByIndex(focusedEditorId);
+    const focusedWsPath = getFocusedWsPath()(state);
 
     if (!focusedWsPath) {
       dispatch({

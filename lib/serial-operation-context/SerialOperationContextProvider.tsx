@@ -3,7 +3,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -57,7 +56,7 @@ export function SerialOperationContextProvider({ children }) {
   >(
     (operation) => {
       const { name, value, ...others } = operation;
-      log({ name, value });
+      log(name);
 
       (window as any).Sentry?.addBreadcrumb?.({
         type: 'operation',

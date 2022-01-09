@@ -11,7 +11,7 @@ import {
   deleteActiveNote,
   newNote,
   newWorkspace,
-  renameNote,
+  renameActiveNote,
   splitEditor,
 } from '@bangle.io/shared-operations';
 import { toggleTheme } from '@bangle.io/ui-context';
@@ -105,7 +105,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
-              renameNote()(bangleStore.state, bangleStore.dispatch);
+              renameActiveNote()(bangleStore.state, bangleStore.dispatch);
               return true;
             }
 
