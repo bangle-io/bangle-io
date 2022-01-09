@@ -1,11 +1,11 @@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
-import { getEditorPluginMetadata } from '@bangle.io/utils';
-import * as workspaceContext from '@bangle.io/workspace-context';
 import * as editorManagerContext from '@bangle.io/editor-manager-context';
 import {
   didSomeEditorChange,
   editorManagerSliceKey,
 } from '@bangle.io/editor-manager-context';
+import { getEditorPluginMetadata } from '@bangle.io/utils';
+import * as workspaceContext from '@bangle.io/workspace-context';
 
 // makes life easier by adding some helpers for e2e tests
 export function e2eHelpers() {
