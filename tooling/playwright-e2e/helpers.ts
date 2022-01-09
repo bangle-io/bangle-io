@@ -107,7 +107,9 @@ export async function getAllWsPaths(
   }
 
   const result = JSON.parse(
-    await page.evaluate(() => JSON.stringify((window as any)._getWsPaths())),
+    await page.evaluate(() =>
+      JSON.stringify((window as any)._e2eHelpers._getWsPaths()),
+    ),
   );
 
   if (attempt > 3) {
@@ -128,7 +130,7 @@ export async function pushWsPathToPrimary(
   { waitForEditorToLoad = true } = {},
 ) {
   await page.evaluate(
-    ([wsPath]) => (window as any)._pushWsPath(wsPath),
+    ([wsPath]) => (window as any)._e2eHelpers._pushWsPath(wsPath),
     [wsPath],
   );
   if (waitForEditorToLoad) {
@@ -141,7 +143,7 @@ export async function pushWsPathToSecondary(
   { waitForEditorToLoad = true } = {},
 ) {
   await page.evaluate(
-    ([wsPath]) => (window as any)._pushWsPath(wsPath, true),
+    ([wsPath]) => (window as any)._e2eHelpers._pushWsPath(wsPath, true),
     [wsPath],
   );
   if (waitForEditorToLoad) {
@@ -268,12 +270,12 @@ export async function getPrimaryEditorHandler(
   await waitForEditorIdToLoad(page, 0);
 
   await page.waitForFunction(() => {
-    return (window as any).primaryEditor?.destroyed === false;
+    return (window as any)._e2eHelpers._primaryEditor?.destroyed === false;
   });
 
   if (focus) {
     await page.evaluate(async () => {
-      (window as any).primaryEditor?.view?.focus();
+      (window as any)._e2eHelpers._primaryEditor?.view?.focus();
     });
     await waitForPrimaryEditorFocus(page);
   }
@@ -342,7 +344,7 @@ export async function getEditorSelectionJson(page: Page, editorId: number) {
 export async function getPrimaryEditorDebugString(el: any) {
   // TODO fix the as any
   return (el as any).evaluate(async () =>
-    (window as any).primaryEditor?.view?.state.doc.toString(),
+    (window as any)._e2eHelpers._primaryEditor?.view?.state.doc.toString(),
   );
 }
 
@@ -361,7 +363,7 @@ function frmtHTML(doc) {
 
 export async function getSecondaryEditorDebugString(page: Page) {
   return (page as any).evaluate(async () =>
-    (window as any).secondaryEditor?.view?.state.doc.toString(),
+    (window as any)._e2eHelpers._secondaryEditor?.view?.state.doc.toString(),
   );
 }
 

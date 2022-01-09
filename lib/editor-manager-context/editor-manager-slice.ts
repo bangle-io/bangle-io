@@ -125,13 +125,6 @@ export function editorManagerSlice(): Slice<
         newState.primaryEditor = newState.editors[0];
         newState.secondaryEditor = newState.editors[1];
 
-        // TODO this is currently used by the integration tests
-        // we need a better way to do this
-        if (typeof window !== 'undefined') {
-          (window as any).primaryEditor = newState.primaryEditor;
-          (window as any).secondaryEditor = newState.secondaryEditor;
-        }
-
         return newState;
       },
       stateFromJSON(_, value: any) {
