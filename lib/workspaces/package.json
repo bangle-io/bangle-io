@@ -18,24 +18,22 @@
   },
   "main": "index.ts",
   "module": "index.ts",
-  "peerDependencies": {
-    "react": "*",
-    "react-dom": "*",
-    "react-router-dom": "*"
-  },
   "dependencies": {
     "@bangle.dev/pm": "0.28.5",
     "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
+    "@bangle.io/create-store": "workspace:*",
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/markdown": "workspace:*",
     "@bangle.io/page-context": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "idb-keyval": "^5.1.5"
+    "idb-keyval": "^5.1.5",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "publishConfig": {
     "access": "restricted",
@@ -52,11 +50,7 @@
     "@testing-library/react": "^12.1.2",
     "@types/history": "^4.7.9",
     "@types/react": "^17.0.33",
-    "@types/react-dom": "^17.0.10",
-    "@types/react-router-dom": "^5.3.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^5.3.0"
+    "@types/react-dom": "^17.0.10"
   },
   "license": "AGPL-3.0-or-later"
 }
