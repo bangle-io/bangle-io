@@ -6,7 +6,7 @@ import { ExtensionRegistry } from './ExtensionRegistry';
 export const extensionRegistrySliceKey = new SliceKey<
   ExtensionRegistryState,
   ExtensionRegistryAction
->('editor-manager-slice');
+>('extension-registry-slice');
 
 export interface ExtensionRegistryState {
   extensionRegistry: ExtensionRegistry;
