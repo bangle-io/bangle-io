@@ -2034,6 +2034,7 @@ __metadata:
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
+    "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
@@ -2730,6 +2731,7 @@ __metadata:
     "@bangle.io/ui-context": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/workspace-context": "workspace:*"
+    "@bangle.io/workspaces": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
   languageName: unknown
   linkType: soft

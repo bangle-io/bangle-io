@@ -64,62 +64,6 @@ test.describe.parallel('workspace', () => {
     await expect(page).toHaveURL(new RegExp('file-1-renamed'));
   });
 
-  test('Create a new workspace when already in a workspace and go back', async ({
-    page,
-    baseURL,
-  }) => {
-    const wsName1 = await createWorkspace(page);
-    const n1 = await createNewNote(page, wsName1, 'file-1');
-    const n2 = await createNewNote(page, wsName1, 'file-2');
-
-    const wsPathsOfWsName1 = await getWsPathsShownInFilePalette(page);
-    expect(wsPathsOfWsName1).toEqual([n2, n1]);
-
-    const wsName2 = await createWorkspace(page);
-
-    const wsPathsOfWsName2 = await getWsPathsShownInFilePalette(page);
-    expect(wsPathsOfWsName2).toEqual([]);
-    await page.goBack({ waitUntil: 'networkidle' });
-
-    expect(await page.url()).toMatch(baseURL + '/ws/' + wsName1);
-    await getPrimaryEditorHandler(page);
-
-    expect((await getWsPathsShownInFilePalette(page)).sort()).toEqual(
-      [n2, n1].sort(),
-    );
-  });
-
-  test('switching a workspace using the palette', async ({ page, baseURL }) => {
-    test.slow();
-    const wsName1 = await createWorkspace(page);
-    const n1 = await createNewNote(page, wsName1, 'file-1');
-
-    const wsName2 = await createWorkspace(page);
-
-    expect(await page.url()).toMatch(new RegExp(wsName2));
-
-    await sleep();
-
-    await openWorkspacePalette(page);
-
-    const result = (await getItemsInPalette(page, { hasItems: true })).sort();
-
-    expect(result).toEqual(
-      [
-        `bangle-help-(helpfs)`,
-        wsName2 + '-(browser)',
-        wsName1 + '-(browser)',
-      ].sort(),
-    );
-
-    await Promise.all([
-      page.waitForNavigation(),
-      clickItemInPalette(page, wsName2 + '-(browser)'),
-    ]);
-
-    expect(await page.url()).toMatch(new RegExp(wsName2));
-  });
-
   test('Create a new workspace from home page', async ({ page }) => {
     const wsName1 = await createWorkspace(page);
 

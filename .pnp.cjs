@@ -4108,6 +4108,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/fzf-search", "virtual:1d85fdb5cea56e8f8ccaecfaf8ee3415eafe6cb4121cfb37f99b67c659fec91bbf880088ebedd5190c640d959f5fe4b7a570c630e00c505bfd45cf30b22d4294#workspace:js-lib/fzf-search"],
             ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
+            ["@bangle.io/shared-operations", "workspace:lib/shared-operations"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
@@ -4141,6 +4142,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/fzf-search", "virtual:1d85fdb5cea56e8f8ccaecfaf8ee3415eafe6cb4121cfb37f99b67c659fec91bbf880088ebedd5190c640d959f5fe4b7a570c630e00c505bfd45cf30b22d4294#workspace:js-lib/fzf-search"],
             ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
+            ["@bangle.io/shared-operations", "workspace:lib/shared-operations"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
@@ -5061,6 +5063,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ui-context", "workspace:lib/ui-context"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/workspace-context", "workspace:lib/workspace-context"],
+            ["@bangle.io/workspaces", "workspace:lib/workspaces"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"]
           ],
           "linkType": "SOFT",
