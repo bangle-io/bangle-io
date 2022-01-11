@@ -8,6 +8,7 @@ export interface SerialOperationType {
 export interface SerialOperationDefinitionType {
   name: SerialOperationType['name'];
   title: string;
+  keywords?: string[];
   keybinding?: string;
   // when true, will hide it from the user
   hidden?: boolean;

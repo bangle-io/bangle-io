@@ -226,6 +226,8 @@ export function removeMdExtension(str: string) {
   return str;
 }
 
+// Shallow compares array in an out of order fashion.
+// For example [1,2] and [2,1] will be equal.
 export function shallowCompareArray(array1, array2) {
   if (array1.length !== array2.length) {
     return false;

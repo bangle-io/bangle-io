@@ -12,6 +12,7 @@ import {
   workspaceSliceKey,
 } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
+import { deleteWorkspace, HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
 
 export function getFocusedWsPath() {
   return (state: AppState) => {
@@ -167,6 +168,48 @@ export function newWorkspace() {
       name: 'action::@bangle.io/ui-context:SHOW_MODAL',
       value: { modal: '@modal/new-workspace' },
     });
+  };
+}
+
+export function removeWorkspace(wsName?: string) {
+  return async (
+    state: AppState,
+    dispatch: ApplicationStore['dispatch'],
+    store: ApplicationStore,
+  ) => {
+    wsName = wsName || workspaceSliceKey.getSliceState(state)?.wsName;
+
+    if (!wsName) {
+      dispatch({
+        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        value: {
+          severity: 'error',
+          uid: 'removeWorkspace-no-workspace',
+          content: 'Please open a workspace first',
+        },
+      });
+      return;
+    }
+
+    if (wsName === HELP_FS_WORKSPACE_NAME) {
+      dispatch({
+        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        value: {
+          severity: 'error',
+          uid: 'removeWorkspace-not-allowed',
+          content: 'Cannot remove help workspace',
+        },
+      });
+      return;
+    }
+
+    if (
+      window.confirm(
+        `Are you sure you want to remove "${wsName}"? Removing a workspace does not delete any files inside it.`,
+      )
+    ) {
+      await deleteWorkspace(wsName)(state, dispatch, store);
+    }
   };
 }
 

@@ -26,6 +26,7 @@
     "@bangle.io/ui-context": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/workspace-context": "workspace:*",
+    "@bangle.io/workspaces": "workspace:*",
     "@bangle.io/ws-path": "workspace:*"
   },
   "publishConfig": {
