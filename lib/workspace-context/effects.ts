@@ -2,7 +2,7 @@ import { savePreviousValue } from '@bangle.io/create-store';
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
 import type { ReturnReturnType } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
-import { getWorkspaceInfo } from '@bangle.io/workspaces';
+import { getWorkspaceInfo, workspacesSliceKey } from '@bangle.io/workspaces';
 
 import { SideEffect, workspaceSliceKey } from './common';
 import { saveLastWorkspaceUsed } from './last-seen-ws-name';
@@ -57,28 +57,33 @@ export const updateLocationEffect: SideEffect = () => {
 // Persist workspaceInfo in the history to
 // prevents release of the native browser FS permission
 export const saveWorkspaceInfoEffect: SideEffect = () => {
-  let pendingReqFor: string | undefined;
+  let lastWsName: string | undefined;
 
   return {
     deferredUpdate(store, abortSignal) {
       const sliceState = workspaceSliceKey.getSliceState(store.state);
 
-      if (pendingReqFor === sliceState?.wsName) {
+      if (lastWsName === sliceState?.wsName) {
         return;
       }
 
       if (sliceState?.wsName) {
-        pendingReqFor = sliceState.wsName;
+        lastWsName = sliceState.wsName;
 
-        getWorkspaceInfo(pendingReqFor).then(
+        const workspacesStore = workspacesSliceKey.getStore(store);
+
+        getWorkspaceInfo(lastWsName)(
+          workspacesStore.state,
+          workspacesStore.dispatch,
+          workspacesStore,
+        ).then(
           (_workspaceInfo) => {
-            if (!abortSignal.aborted && _workspaceInfo.name === pendingReqFor) {
+            if (!abortSignal.aborted && _workspaceInfo?.name === lastWsName) {
               saveToHistoryState('workspaceInfo', _workspaceInfo)(store.state);
             }
           },
           (error) => {
             console.error(error);
-            pendingReqFor = undefined;
           },
         );
       }

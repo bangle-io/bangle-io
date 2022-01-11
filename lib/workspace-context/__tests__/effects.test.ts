@@ -1,8 +1,12 @@
 import { sleep } from '@bangle.dev/utils';
 
 import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
-import type { UnPromisify } from '@bangle.io/shared-types';
-import { getWorkspaceInfo, WorkspaceType } from '@bangle.io/workspaces';
+import type { ReturnReturnType, UnPromisify } from '@bangle.io/shared-types';
+import {
+  getWorkspaceInfo,
+  WorkspaceInfo,
+  WorkspaceType,
+} from '@bangle.io/workspaces';
 import { OpenedWsPaths, wsNameToPathname } from '@bangle.io/ws-path';
 
 import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
@@ -44,7 +48,7 @@ jest.mock('@bangle.io/workspaces', () => {
 
   return {
     ...ops,
-    getWorkspaceInfo: jest.fn(() => {}),
+    getWorkspaceInfo: jest.fn(() => () => {}),
   };
 });
 
@@ -72,10 +76,11 @@ beforeEach(() => {
   updateLocationMock.mockImplementation(() => () => true);
   goToInvalidPathRouteMock.mockImplementation(() => () => {});
   saveToHistoryStateMock.mockImplementation(() => () => {});
-  getWorkspaceInfoMock.mockImplementation(async () => ({
+  getWorkspaceInfoMock.mockImplementation(() => async () => ({
     name: 'test-ws',
     type: WorkspaceType.browser,
     metadata: {},
+    lastModified: 1,
   }));
 
   const location = {
@@ -221,6 +226,7 @@ describe('saveWorkspaceInfoEffect', () => {
       metadata: {},
       name: 'test-ws',
       type: 'browser',
+      lastModified: 1,
     });
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
@@ -242,7 +248,7 @@ describe('saveWorkspaceInfoEffect', () => {
   test('destroying should not dispatch action', async () => {
     let res;
     getWorkspaceInfoMock.mockImplementation(
-      () =>
+      () => () =>
         new Promise((_res) => {
           res = _res;
         }),
@@ -269,10 +275,11 @@ describe('saveWorkspaceInfoEffect', () => {
 
   test('check the current wsName before dispatching action', async () => {
     let res: Array<
-      (cb: UnPromisify<ReturnType<typeof getWorkspaceInfoMock>>) => void
+      (cb: UnPromisify<ReturnReturnType<typeof getWorkspaceInfoMock>>) => void
     > = [];
+
     getWorkspaceInfoMock.mockImplementation(
-      () =>
+      () => () =>
         new Promise((_res) => {
           res.push(_res);
         }),
@@ -303,15 +310,17 @@ describe('saveWorkspaceInfoEffect', () => {
 
     expect(getWorkspaceInfoMock).nthCalledWith(2, 'test-ws2');
 
-    const firstResponse = {
+    const firstResponse: WorkspaceInfo = {
       name: 'test-ws',
       type: WorkspaceType.browser,
       metadata: {},
+      lastModified: 3,
     };
-    const secondResponse = {
+    const secondResponse: WorkspaceInfo = {
       name: 'test-ws2',
       type: WorkspaceType.browser,
       metadata: {},
+      lastModified: 3,
     };
     res[0]!(firstResponse);
     res[1]!(secondResponse);

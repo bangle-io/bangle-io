@@ -54,10 +54,11 @@ const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
 >;
 
 beforeEach(() => {
-  getWorkspaceInfoMock.mockImplementation(async () => ({
+  getWorkspaceInfoMock.mockImplementation(() => async () => ({
     name: 'test-ws',
     type: WorkspaceType.browser,
     metadata: {},
+    lastModified: 1,
   }));
   (useSliceState as any).mockImplementation(() => ({
     sliceState: workspaceSliceInitialState,

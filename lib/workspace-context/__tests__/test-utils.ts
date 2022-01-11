@@ -33,14 +33,10 @@ export const createStateWithWsName = (
   });
 };
 
-// A store where no actions are actually dispatched
-// useful for testing operations
 export const noDispatchStore = (data?: Parameters<typeof createState>[0]) => {
   return createStore(data, jest.fn());
 };
 
-// A store where no actions are actually dispatched
-// useful for testing operations
 export const noSideEffectsStore = (
   data?: Parameters<typeof createState>[0],
 ) => {
