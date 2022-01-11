@@ -14,7 +14,7 @@ import {
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { sleep } from '@bangle.io/utils';
-import { useWorkspaces } from '@bangle.io/workspaces';
+import { hasWorkspace } from '@bangle.io/workspaces';
 
 import {
   WORKSPACE_AUTH_REJECTED_ERROR,
@@ -53,7 +53,7 @@ jest.mock('@bangle.io/workspaces', () => {
   const workspaceThings = jest.requireActual('@bangle.io/workspaces');
   return {
     ...workspaceThings,
-    useWorkspaces: jest.fn(() => []),
+    hasWorkspace: jest.fn(() => () => {}),
   };
 });
 
@@ -65,10 +65,14 @@ jest.mock('@bangle.io/serial-operation-context', () => {
   };
 });
 
+const hasWorkspaceMock = hasWorkspace as jest.MockedFunction<
+  typeof hasWorkspace
+>;
+
 beforeEach(() => {
-  const emptyWorkspaces = [];
   let dispatchSerialOperation = jest.fn();
-  (useWorkspaces as any).mockReturnValue({ workspaces: emptyWorkspaces });
+
+  hasWorkspaceMock.mockImplementation(() => async () => false);
 
   (useUIManagerContext as any).mockImplementation(() => {
     const dispatch = jest.fn();
@@ -152,9 +156,7 @@ describe('NewWorkspaceModalContainer', () => {
     });
 
     test('shows error if name already exists', async () => {
-      (useWorkspaces as any).mockReturnValue({
-        workspaces: [{ name: 'my-existing-ws' }],
-      });
+      hasWorkspaceMock.mockImplementation(() => async () => true);
 
       let result = render(
         <div>

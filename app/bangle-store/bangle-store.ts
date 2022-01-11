@@ -7,7 +7,6 @@ import { initExtensionRegistry } from '@bangle.io/shared';
 import type { BangleStateOpts, JsonValue } from '@bangle.io/shared-types';
 import { uiSlice } from '@bangle.io/ui-context';
 import {
-  getEditorPluginMetadata,
   safeCancelIdleCallback,
   safeRequestAnimationFrame,
   safeRequestIdleCallback,
@@ -18,7 +17,6 @@ import {
   BangleSliceTypes,
   bangleStateSlices,
 } from './bangle-slices';
-import { e2eHelpers } from './e2e-helpers';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};

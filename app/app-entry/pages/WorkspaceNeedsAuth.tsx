@@ -22,12 +22,17 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   wsName = decodeURIComponent(wsName || '');
 
   const [permissionDenied, updatePermissionDenied] = useState(false);
-  const store = useBangleStoreContext();
+  const bangleStore = useBangleStoreContext();
   const [wsInfo, updateWsInfo] = useState<WorkspaceInfo>();
 
   useEffect(() => {
     let destroyed = false;
-    getWorkspaceInfo(wsName).then(
+
+    getWorkspaceInfo(wsName)(
+      bangleStore.state,
+      bangleStore.dispatch,
+      bangleStore,
+    ).then(
       (wsInfo) => {
         if (destroyed) {
           return;
@@ -42,7 +47,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
           error instanceof WorkspaceError &&
           error.code === WORKSPACE_NOT_FOUND_ERROR
         ) {
-          goToWsNameRouteNotFoundRoute(wsName)(store.state);
+          goToWsNameRouteNotFoundRoute(wsName)(bangleStore.state);
         }
         throw error;
       },
@@ -51,10 +56,13 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     return () => {
       destroyed = true;
     };
-  }, [wsName, store]);
+  }, [wsName, bangleStore]);
 
   const onGranted = () => {
-    goToWsNameRoute(wsName, { replace: true })(store.state, store.dispatch);
+    goToWsNameRoute(wsName, { replace: true })(
+      bangleStore.state,
+      bangleStore.dispatch,
+    );
   };
 
   const requestFSPermission = async () => {
@@ -79,9 +87,9 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
 
   useEffect(() => {
     if (!wsName) {
-      goToWorkspaceHomeRoute()(store.state, store.dispatch);
+      goToWorkspaceHomeRoute()(bangleStore.state, bangleStore.dispatch);
     }
-  }, [store, wsName]);
+  }, [bangleStore, wsName]);
 
   if (!wsName || !wsInfo) {
     return null;
