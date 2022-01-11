@@ -16,6 +16,7 @@ import {
   splitEditor,
 } from '@bangle.io/shared-operations';
 import { toggleTheme } from '@bangle.io/ui-context';
+import { createWorkspace, WorkspaceType } from '@bangle.io/workspaces';
 
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -195,6 +196,67 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_TOGGLE_UI_THEME: {
               toggleTheme()(bangleStore.state, bangleStore.dispatch);
+              return true;
+            }
+
+            case CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE: {
+              const { wsName } = payload || {};
+
+              if (typeof wsName === 'string') {
+                try {
+                  createWorkspace(wsName, WorkspaceType.browser, {})(
+                    bangleStore.state,
+                    bangleStore.dispatch,
+                    bangleStore,
+                  );
+                  (window as any).fathom?.trackGoal('AISLCLRF', 0);
+                } catch (error) {
+                  bangleStore.dispatch({
+                    name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+                    value: {
+                      severity: 'error',
+                      uid: 'error-create-workspace-' + wsName,
+                      content: 'Unable to create workspace ' + wsName,
+                    },
+                  });
+                  throw error;
+                }
+              } else {
+                throw new Error(
+                  'Incorrect parameters for ' +
+                    CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+                );
+              }
+              return true;
+            }
+
+            case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
+              const { rootDirHandle } = payload || {};
+              if (typeof rootDirHandle?.name === 'string') {
+                try {
+                  createWorkspace(rootDirHandle.name, WorkspaceType.nativefs, {
+                    rootDirHandle,
+                  })(bangleStore.state, bangleStore.dispatch, bangleStore);
+
+                  (window as any).fathom?.trackGoal('K3NFTGWX', 0);
+                } catch (error) {
+                  bangleStore.dispatch({
+                    name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+                    value: {
+                      severity: 'error',
+                      uid: 'error-create-workspace-' + rootDirHandle?.name,
+                      content:
+                        'Unable to create workspace ' + rootDirHandle?.name,
+                    },
+                  });
+                  throw error;
+                }
+              } else {
+                throw new Error(
+                  'Incorrect parameters for ' +
+                    CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+                );
+              }
               return true;
             }
 
