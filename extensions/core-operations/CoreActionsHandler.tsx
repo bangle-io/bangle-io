@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
@@ -7,14 +8,14 @@ import {
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/ui-context';
-import { useWorkspaces, WorkspaceType } from '@bangle.io/workspaces';
+import { createWorkspace, WorkspaceType } from '@bangle.io/workspaces';
 
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 
 export function CoreActionsHandler() {
   const { dispatch, modal, modalValue } = useUIManagerContext();
-  const { createWorkspace } = useWorkspaces();
   const { primaryEditor } = useEditorManagerContext();
+  const bangleStore = useBangleStoreContext();
 
   useSerialOperationHandler(
     (operation) => {
@@ -23,21 +24,24 @@ export function CoreActionsHandler() {
           const { wsName } = operation.value || {};
 
           if (typeof wsName === 'string') {
-            createWorkspace(wsName, WorkspaceType.browser, {})
-              .then((r) => {
-                (window as any).fathom?.trackGoal('AISLCLRF', 0);
-              })
-              .catch((error) => {
-                dispatch({
-                  name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
-                  value: {
-                    severity: 'error',
-                    uid: 'error-create-workspace-' + wsName,
-                    content: 'Unable to create workspace ' + wsName,
-                  },
-                });
-                throw error;
+            try {
+              createWorkspace(wsName, WorkspaceType.browser, {})(
+                bangleStore.state,
+                bangleStore.dispatch,
+                bangleStore,
+              );
+              (window as any).fathom?.trackGoal('AISLCLRF', 0);
+            } catch (error) {
+              dispatch({
+                name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+                value: {
+                  severity: 'error',
+                  uid: 'error-create-workspace-' + wsName,
+                  content: 'Unable to create workspace ' + wsName,
+                },
               });
+              throw error;
+            }
           } else {
             throw new Error(
               'Incorrect parameters for ' +
@@ -50,24 +54,23 @@ export function CoreActionsHandler() {
         case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
           const { rootDirHandle } = operation.value || {};
           if (typeof rootDirHandle?.name === 'string') {
-            createWorkspace(rootDirHandle.name, WorkspaceType.nativefs, {
-              rootDirHandle,
-            })
-              .then(() => {
-                (window as any).fathom?.trackGoal('K3NFTGWX', 0);
-              })
-              .catch((error) => {
-                dispatch({
-                  name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
-                  value: {
-                    severity: 'error',
-                    uid: 'error-create-workspace-' + rootDirHandle?.name,
-                    content:
-                      'Unable to create workspace ' + rootDirHandle?.name,
-                  },
-                });
-                throw error;
+            try {
+              createWorkspace(rootDirHandle.name, WorkspaceType.nativefs, {
+                rootDirHandle,
+              })(bangleStore.state, bangleStore.dispatch, bangleStore);
+
+              (window as any).fathom?.trackGoal('K3NFTGWX', 0);
+            } catch (error) {
+              dispatch({
+                name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+                value: {
+                  severity: 'error',
+                  uid: 'error-create-workspace-' + rootDirHandle?.name,
+                  content: 'Unable to create workspace ' + rootDirHandle?.name,
+                },
               });
+              throw error;
+            }
           } else {
             throw new Error(
               'Incorrect parameters for ' +
@@ -82,7 +85,7 @@ export function CoreActionsHandler() {
         }
       }
     },
-    [dispatch, createWorkspace],
+    [dispatch, bangleStore],
   );
 
   const onDismiss = useCallback(

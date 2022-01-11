@@ -11,6 +11,7 @@ import {
   deleteActiveNote,
   newNote,
   newWorkspace,
+  removeWorkspace,
   renameActiveNote,
   splitEditor,
 } from '@bangle.io/shared-operations';
@@ -23,6 +24,7 @@ import {
   CORE_OPERATIONS_NEW_NOTE,
   CORE_OPERATIONS_NEW_WORKSPACE,
   CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP,
+  CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CORE_OPERATIONS_RENAME_ACTIVE_NOTE,
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
   CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
@@ -36,19 +38,42 @@ const extension = Extension.create({
   name: extensionName,
   application: {
     operations: [
-      { name: CORE_OPERATIONS_CLOSE_EDITOR, title: 'Close all open editor/s' },
-      { name: CORE_OPERATIONS_DELETE_ACTIVE_NOTE, title: 'Delete active note' },
-      { name: CORE_OPERATIONS_NEW_NOTE, title: 'New note' },
-      { name: CORE_OPERATIONS_NEW_WORKSPACE, title: 'New workspace' },
+      {
+        name: CORE_OPERATIONS_CLOSE_EDITOR,
+        title: 'Close all open editor/s',
+        keywords: ['dismiss', 'hide'],
+      },
+      {
+        name: CORE_OPERATIONS_DELETE_ACTIVE_NOTE,
+        title: 'Delete active note',
+        keywords: ['remove'],
+      },
+      {
+        name: CORE_OPERATIONS_NEW_NOTE,
+        title: 'New note',
+        keywords: ['create'],
+      },
+      {
+        name: CORE_OPERATIONS_NEW_WORKSPACE,
+        title: 'New workspace',
+        keywords: ['create'],
+      },
+      {
+        name: CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
+        title: 'Remove active workspace',
+        keywords: ['delete'],
+      },
       { name: CORE_OPERATIONS_RENAME_ACTIVE_NOTE, title: 'Rename active note' },
       {
         name: CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
         title: 'Toggle Note sidebar',
+        keywords: ['hide'],
       },
       {
         name: CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
         title: 'Toggle editor split screen',
         keybinding: 'Mod-\\',
+        keywords: ['hide'],
       },
       { name: CORE_OPERATIONS_TOGGLE_UI_THEME, title: 'Toggle theme' },
       {
@@ -150,6 +175,14 @@ const extension = Extension.create({
               return true;
             }
 
+            case CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE: {
+              removeWorkspace()(
+                bangleStore.state,
+                bangleStore.dispatch,
+                bangleStore,
+              );
+              return true;
+            }
             case 'operation::@bangle.io/core-operations:focus-primary-editor': {
               focusEditor(0)(bangleStore.state);
               return true;

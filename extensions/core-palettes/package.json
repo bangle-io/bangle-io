@@ -31,6 +31,7 @@
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/naukar-proxy": "workspace:*",
     "@bangle.io/serial-operation-context": "workspace:*",
+    "@bangle.io/shared-operations": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/ui-context": "workspace:*",

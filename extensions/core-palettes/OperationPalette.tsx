@@ -28,9 +28,19 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
               uid: operationDefinition.name,
               title: operationDefinition.title || operationDefinition.name,
               data: operationDefinition,
+              keywords: operationDefinition.keywords,
             };
           })
-          .filter((obj) => strMatch(obj.title, query)),
+          .filter((obj) => {
+            if (strMatch(obj.title, query)) {
+              return true;
+            }
+            if (obj.keywords) {
+              return strMatch(obj.keywords, query);
+            }
+
+            return false;
+          }),
       );
 
       return operations.slice(0, 50);
