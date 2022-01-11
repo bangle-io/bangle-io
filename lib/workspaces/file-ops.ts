@@ -22,8 +22,23 @@ import {
   validateNoteWsPath,
 } from '@bangle.io/ws-path';
 
-import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './types';
-import { getWorkspaceInfo } from './workspaces-ops';
+import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './common';
+import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
+import { readWorkspacesInfoReg } from './helpers';
+
+const getWorkspaceInfoFromIdb = async (wsName) => {
+  const wsInfo = (await readWorkspacesInfoReg())[wsName];
+  if (!wsInfo) {
+    throw new WorkspaceError(
+      `Workspace ${wsName} not found`,
+      WORKSPACE_NOT_FOUND_ERROR,
+      `Cannot find the workspace ${wsName}`,
+      undefined,
+    );
+  }
+
+  return wsInfo;
+};
 
 export function listAllNotes(wsName: string): Promise<string[]> {
   return listAllFiles(wsName).then((wsPaths) =>
@@ -31,7 +46,7 @@ export function listAllNotes(wsName: string): Promise<string[]> {
   );
 }
 export async function listAllFiles(wsName: string) {
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
 
   let files: string[] = [];
 
@@ -54,7 +69,7 @@ export async function listAllFiles(wsName: string) {
 export async function checkFileExists(wsPath: string) {
   validateFileWsPath(wsPath);
   const { wsName } = resolvePath(wsPath);
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
 
   const path = toFSPath(wsPath);
   try {
@@ -73,7 +88,7 @@ export async function checkFileExists(wsPath: string) {
 export async function getFileLastModified(wsPath: string) {
   validateFileWsPath(wsPath);
   const { wsName } = resolvePath(wsPath);
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
 
   const path = toFSPath(wsPath);
   try {
@@ -104,7 +119,7 @@ export async function getDoc(
 
 export async function getFileAsText(wsPath: string) {
   const { wsName } = resolvePath(wsPath);
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
 
   validateNoteWsPath(wsPath);
 
@@ -119,7 +134,7 @@ export async function getFileAsText(wsPath: string) {
 
 export async function getFile(wsPath: string): Promise<File> {
   const { wsName } = resolvePath(wsPath);
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
 
   validateFileWsPath(wsPath);
 
@@ -145,7 +160,7 @@ export async function saveFile(wsPath: string, fileBlob: File) {
   validateFileWsPath(wsPath);
 
   const { wsName } = resolvePath(wsPath);
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
   const path = toFSPath(wsPath);
 
   const fs = getFileSystemFromWsInfo(workspaceInfo);
@@ -167,7 +182,7 @@ export async function saveFile(wsPath: string, fileBlob: File) {
 export async function deleteFile(wsPath: string) {
   validateFileWsPath(wsPath);
   const { wsName } = resolvePath(wsPath);
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
   await getFileSystemFromWsInfo(workspaceInfo).unlink(toFSPath(wsPath));
 }
 
@@ -181,7 +196,7 @@ export async function renameFile(wsPath: string, newWsPath: string) {
     throw new Error('Workspace name must be the same');
   }
 
-  const workspaceInfo = await getWorkspaceInfo(wsName);
+  const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
 
   await getFileSystemFromWsInfo(workspaceInfo).rename(
     toFSPath(wsPath),
@@ -207,7 +222,7 @@ export async function copyWorkspace(wsNameFrom: string, wsNameTo: string) {
       await saveFile(newWsPath, file);
     }),
   );
-  await getWorkspaceInfo(wsNameTo);
+  await getWorkspaceInfoFromIdb(wsNameTo);
 }
 
 const allowedFile = (name: string) => {
