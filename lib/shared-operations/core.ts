@@ -11,8 +11,8 @@ import {
   WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/workspace-context';
-import { resolvePath } from '@bangle.io/ws-path';
 import { deleteWorkspace, HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
+import { resolvePath } from '@bangle.io/ws-path';
 
 export function getFocusedWsPath() {
   return (state: AppState) => {

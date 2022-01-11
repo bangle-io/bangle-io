@@ -9,6 +9,7 @@ import React, {
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
+import { removeWorkspace } from '@bangle.io/shared-operations';
 import {
   AlbumIcon,
   CloseIcon,
@@ -20,7 +21,6 @@ import {
   listWorkspaces,
   WorkspaceInfo,
 } from '@bangle.io/workspaces';
-import { removeWorkspace } from '@bangle.io/shared-operations';
 
 import { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
