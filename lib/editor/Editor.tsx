@@ -34,8 +34,8 @@ import type {
   DispatchSerialOperationType,
   EditorPluginMetadata,
 } from '@bangle.io/shared-types';
+import { getNote } from '@bangle.io/slice-workspace';
 import { cx } from '@bangle.io/utils';
-import { getNote } from '@bangle.io/workspace-context';
 
 import { watchPluginHost } from './watch-plugin-host';
 

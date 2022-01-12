@@ -181,7 +181,7 @@ describe('refreshWsPaths', () => {
     expect(dispatchSpy).toBeCalledTimes(3);
     expect(dispatchSpy).toHaveBeenCalledWith({
       id: expect.any(String),
-      name: 'action::@bangle.io/workspace-context:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
       value: {
         wsName: 'my-ws',
         wsPaths: ['my-ws:one.md'],
@@ -216,7 +216,7 @@ describe('refreshWsPaths', () => {
     });
 
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
       value: {
         pendingRefreshWsPaths: 'my-ws',
       },
@@ -227,7 +227,7 @@ describe('refreshWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).not.toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
     expect(listAllFilesMock).toBeCalledTimes(0);
   });
@@ -242,7 +242,7 @@ describe('refreshWsPaths', () => {
     });
 
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
       value: {
         pendingRefreshWsPaths: 'some-other-ws',
       },
@@ -253,7 +253,7 @@ describe('refreshWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
     expect(listAllFilesMock).toBeCalledTimes(1);
   });
@@ -274,7 +274,7 @@ describe('refreshWsPaths', () => {
 
     expect(dispatchSpy).nthCalledWith(2, {
       id: expect.any(String),
-      name: 'action::@bangle.io/workspace-context:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
       value: {
         wsName: 'my-ws',
         wsPaths: undefined,
@@ -297,9 +297,9 @@ describe('refreshWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
-      'action::@bangle.io/workspace-context:update-ws-paths',
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
     ]);
 
     expect(goToLocationMock).toBeCalledTimes(1);
@@ -313,7 +313,7 @@ describe('refreshWsPaths', () => {
 
     expect(dispatchSpy).nthCalledWith(2, {
       id: expect.any(String),
-      name: 'action::@bangle.io/workspace-context:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
       value: {
         wsName: 'my-ws',
         wsPaths: undefined,
@@ -336,7 +336,7 @@ describe('refreshWsPaths', () => {
     await sleep(5);
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
 
     expect(goToLocationMock).toBeCalledTimes(1);
@@ -346,7 +346,7 @@ describe('refreshWsPaths', () => {
 
     expect(dispatchSpy).toBeCalledWith({
       id: expect.any(String),
-      name: 'action::@bangle.io/workspace-context:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
       value: {
         wsName: 'my-ws',
         wsPaths: undefined,
@@ -528,9 +528,9 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
-      'action::@bangle.io/workspace-context:update-ws-paths',
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
     ]);
 
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
@@ -602,9 +602,9 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
-      'action::@bangle.io/workspace-context:update-ws-paths',
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
     ]);
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
@@ -631,9 +631,9 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
-      'action::@bangle.io/workspace-context:update-ws-paths',
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
     ]);
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
@@ -663,9 +663,9 @@ describe('renameNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
-      'action::@bangle.io/workspace-context:update-ws-paths',
-      'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
+      'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
     ]);
 
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
@@ -761,7 +761,7 @@ describe('createNote', () => {
     );
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
 
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
@@ -787,7 +787,7 @@ describe('createNote', () => {
     expect(saveDocMock).toBeCalledTimes(0);
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(1);
   });
@@ -837,7 +837,7 @@ describe('createNote', () => {
     expect(saveDocMock).toBeCalledTimes(1);
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
   });
 });
@@ -856,7 +856,7 @@ describe('deleteNote', () => {
     expect(deleteFileMock).nthCalledWith(1, 'my-ws:test-note.md');
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
 
     expect(goToLocationMock).toBeCalledTimes(1);
@@ -876,7 +876,7 @@ describe('deleteNote', () => {
     expect(deleteFileMock).nthCalledWith(1, 'my-ws:test-note.md');
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
   });
 
@@ -899,7 +899,7 @@ describe('deleteNote', () => {
     expect(deleteFileMock).nthCalledWith(2, 'my-ws:test-note2.md');
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/workspace-context:update-ws-paths',
+      'action::@bangle.io/slice-workspace:update-ws-paths',
     );
   });
 });

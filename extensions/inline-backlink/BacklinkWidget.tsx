@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import type { HighlightTextType, SearchMatch } from '@bangle.io/search-pm-node';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -15,7 +16,6 @@ import {
   safeRequestIdleCallback,
   useClickToNote,
 } from '@bangle.io/utils';
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 const IconStyle = {

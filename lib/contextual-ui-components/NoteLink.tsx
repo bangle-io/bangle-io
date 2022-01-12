@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 /**
  * Component for opening a note link
  */

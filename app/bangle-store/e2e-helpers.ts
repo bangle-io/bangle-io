@@ -7,8 +7,8 @@ import {
   editorManagerSliceKey,
 } from '@bangle.io/editor-manager-context';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
+import * as workspaceContext from '@bangle.io/slice-workspace';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
-import * as workspaceContext from '@bangle.io/workspace-context';
 // makes life easier by adding some helpers for e2e tests
 export function e2eHelpers() {
   return new Slice({

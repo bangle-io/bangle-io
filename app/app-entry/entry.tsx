@@ -17,8 +17,8 @@ import {
 } from '@bangle.io/page-context';
 import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
 import { polyfills } from '@bangle.io/shared';
+import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 import { UIManager } from '@bangle.io/ui-context';
-import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
 import { pathMatcher } from '@bangle.io/ws-path';
 
 import { AppContainer } from './AppContainer';

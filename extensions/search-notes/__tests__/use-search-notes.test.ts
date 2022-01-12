@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import { useExtensionState } from '@bangle.io/extension-registry';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 
 import { useSearchNotes } from '../hooks';
 
@@ -14,7 +14,7 @@ jest.mock('@bangle.io/naukar-proxy', () => {
   };
 });
 
-jest.mock('@bangle.io/workspace-context', () => {
+jest.mock('@bangle.io/slice-workspace', () => {
   return {
     useWorkspaceContext: jest.fn(),
   };

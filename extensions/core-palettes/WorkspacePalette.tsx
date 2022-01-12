@@ -10,6 +10,7 @@ import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
 import { removeWorkspace } from '@bangle.io/shared-operations';
+import { goToWsNameRoute } from '@bangle.io/slice-workspace';
 import {
   deleteWorkspace,
   listWorkspaces,
@@ -20,7 +21,6 @@ import {
   CloseIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
-import { goToWsNameRoute } from '@bangle.io/workspace-context';
 
 import { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';

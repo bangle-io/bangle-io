@@ -128,7 +128,7 @@ describe('refreshWsPathsEffect', () => {
     expect(refreshWsPathsMock).toBeCalledTimes(1);
 
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -140,7 +140,7 @@ describe('refreshWsPathsEffect', () => {
     expect(refreshWsPathsMock).toBeCalledTimes(2);
 
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws-2',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -151,7 +151,7 @@ describe('refreshWsPathsEffect', () => {
 
     // changing openedWsPaths should not call refresh
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws-2',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -162,7 +162,7 @@ describe('refreshWsPathsEffect', () => {
 
     // setting to undefined should not call refresh
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: undefined,
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -204,7 +204,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -213,12 +213,12 @@ describe('saveWorkspaceInfoEffect', () => {
     await sleep(0);
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
-      'action::@bangle.io/workspace-context:sync-page-location',
+      'action::@bangle.io/slice-workspace:sync-page-location',
     ]);
 
     // an other action doesn't trigger the hook
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
       value: {
         wsName: 'test-ws',
         recentlyUsedWsPaths: ['hello:world.md'],
@@ -230,7 +230,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -247,7 +247,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -257,7 +257,7 @@ describe('saveWorkspaceInfoEffect', () => {
 
     // change the wsName while the request is to get info is in flight
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws2',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -272,7 +272,7 @@ describe('saveLastUsedWorkspace', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),

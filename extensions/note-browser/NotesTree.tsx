@@ -4,6 +4,12 @@ import { useVirtual } from 'react-virtual';
 import { isFirefox } from '@bangle.io/config';
 import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
 import {
+  deleteNote,
+  pushWsPath,
+  useWorkspaceContext,
+  WorkspaceContextType,
+} from '@bangle.io/slice-workspace';
+import {
   ButtonIcon,
   ChevronDownIcon,
   ChevronRightIcon,
@@ -18,12 +24,6 @@ import {
   safeScrollIntoViewIfNeeded,
   useLocalStorage,
 } from '@bangle.io/utils';
-import {
-  deleteNote,
-  pushWsPath,
-  useWorkspaceContext,
-  WorkspaceContextType,
-} from '@bangle.io/workspace-context';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';

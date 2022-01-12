@@ -1,13 +1,13 @@
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
-import { UiContextAction, UiContextDispatchType } from '@bangle.io/ui-context';
-import { sleep } from '@bangle.io/utils';
 import {
   refreshWsPaths,
   WorkspaceSliceAction,
   workspaceSliceKey,
-} from '@bangle.io/workspace-context';
+} from '@bangle.io/slice-workspace';
+import { UiContextAction, UiContextDispatchType } from '@bangle.io/ui-context';
+import { sleep } from '@bangle.io/utils';
 
 export function downloadWorkspace() {
   return (

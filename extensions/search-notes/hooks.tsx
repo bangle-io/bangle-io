@@ -5,8 +5,8 @@ import { search } from '@bangle.dev/search';
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { forEachEditor } from '@bangle.io/editor-manager-context';
 import { useExtensionState } from '@bangle.io/extension-registry';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { useDebouncedValue } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import {
   DEBOUNCE_MAX_WAIT,

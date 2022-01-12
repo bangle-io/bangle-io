@@ -71,7 +71,7 @@ export const refreshWsPaths = () => {
     }
 
     dispatch({
-      name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
       value: {
         pendingRefreshWsPaths: wsName,
       },
@@ -87,14 +87,14 @@ export const refreshWsPaths = () => {
         log('received files for wsName', wsName, 'file count', items.length);
 
         dispatch({
-          name: 'action::@bangle.io/workspace-context:update-ws-paths',
+          name: 'action::@bangle.io/slice-workspace:update-ws-paths',
           value: {
             wsName,
             wsPaths: items,
           },
         });
         dispatch({
-          name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+          name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
           value: {
             pendingRefreshWsPaths: undefined,
           },
@@ -104,14 +104,14 @@ export const refreshWsPaths = () => {
       })
       .catch((error) => {
         dispatch({
-          name: 'action::@bangle.io/workspace-context:update-ws-paths',
+          name: 'action::@bangle.io/slice-workspace:update-ws-paths',
           value: {
             wsName,
             wsPaths: undefined,
           },
         });
         dispatch({
-          name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths',
+          name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
           value: {
             pendingRefreshWsPaths: undefined,
           },
@@ -324,7 +324,7 @@ export const syncPageLocation = ({
 
     if (!wsName) {
       dispatch({
-        name: 'action::@bangle.io/workspace-context:sync-page-location',
+        name: 'action::@bangle.io/slice-workspace:sync-page-location',
         value: {
           wsName: undefined,
           openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -346,7 +346,7 @@ export const syncPageLocation = ({
     }
 
     dispatch({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: wsName,
         openedWsPaths: openedWsPaths,

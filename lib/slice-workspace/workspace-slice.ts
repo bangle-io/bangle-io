@@ -33,7 +33,7 @@ const applyState = (
   state: WorkspaceSliceState,
 ): WorkspaceSliceState => {
   switch (action.name) {
-    case 'action::@bangle.io/workspace-context:sync-page-location': {
+    case 'action::@bangle.io/slice-workspace:sync-page-location': {
       const newState = WorkspaceSliceState.update(state, {
         wsName: action.value.wsName,
         openedWsPaths: action.value.openedWsPaths,
@@ -57,7 +57,7 @@ const applyState = (
       return newState;
     }
 
-    case 'action::@bangle.io/workspace-context:update-recently-used-ws-paths': {
+    case 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths': {
       const { wsName, recentlyUsedWsPaths } = action.value;
 
       if (wsName === state.wsName) {
@@ -69,7 +69,7 @@ const applyState = (
       return state;
     }
 
-    case 'action::@bangle.io/workspace-context:update-ws-paths': {
+    case 'action::@bangle.io/slice-workspace:update-ws-paths': {
       const { wsName, wsPaths } = action.value;
 
       if (wsName === state.wsName) {
@@ -81,7 +81,7 @@ const applyState = (
       return state;
     }
 
-    case 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths': {
+    case 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths': {
       return WorkspaceSliceState.update(state, {
         pendingRefreshWsPaths: action.value.pendingRefreshWsPaths,
       });
@@ -94,7 +94,7 @@ const applyState = (
 };
 
 export function workspaceSlice() {
-  assertActionType('@bangle.io/workspace-context', {} as WorkspaceSliceAction);
+  assertActionType('@bangle.io/slice-workspace', {} as WorkspaceSliceAction);
 
   return new Slice({
     key: workspaceSliceKey,
@@ -110,7 +110,7 @@ export function workspaceSlice() {
           return state;
         }
 
-        if (action.name.startsWith('action::@bangle.io/workspace-context:')) {
+        if (action.name.startsWith('action::@bangle.io/slice-workspace:')) {
           log(action, newState);
         }
 

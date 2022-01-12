@@ -22,8 +22,8 @@
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/workspace-context": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",

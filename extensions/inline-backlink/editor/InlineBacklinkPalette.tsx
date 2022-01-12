@@ -9,13 +9,13 @@ import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
 } from '@bangle.io/inline-palette';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
 import {
   conditionalSuffix,
   insertAt,
   removeMdExtension,
 } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { backlinkNodeName, palettePluginKey } from '../config';

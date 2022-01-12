@@ -3,21 +3,21 @@ import React from 'react';
 
 import { EditorDisplayType } from '@bangle.io/constants';
 import {
+  createNote,
+  pushWsPath,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
+import {
   getEditorPluginMetadataReturn,
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
 import { getEditorPluginMetadata, sleep } from '@bangle.io/utils';
-import {
-  createNote,
-  pushWsPath,
-  useWorkspaceContext,
-} from '@bangle.io/workspace-context';
 
 import { BacklinkNode } from '../editor/BacklinkNode';
 
-jest.mock('@bangle.io/workspace-context', () => {
+jest.mock('@bangle.io/slice-workspace', () => {
   return {
-    ...jest.requireActual('@bangle.io/workspace-context'),
+    ...jest.requireActual('@bangle.io/slice-workspace'),
     pushWsPath: jest.fn(),
     createNote: jest.fn(),
     useWorkspaceContext: jest.fn(),

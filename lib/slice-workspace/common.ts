@@ -11,7 +11,7 @@ import type { WorkspaceSliceState } from './workspace-slice-state';
 export const workspaceSliceKey = new SliceKey<
   WorkspaceSliceState,
   WorkspaceSliceAction
->('workspace-slice');
+>('slice-workspace');
 
 export type SideEffect = SliceSideEffect<
   WorkspaceSliceState,
@@ -20,14 +20,14 @@ export type SideEffect = SliceSideEffect<
 
 export type WorkspaceSliceAction =
   | {
-      name: 'action::@bangle.io/workspace-context:sync-page-location';
+      name: 'action::@bangle.io/slice-workspace:sync-page-location';
       value: {
         wsName: string | undefined;
         openedWsPaths: OpenedWsPaths;
       };
     }
   | {
-      name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths';
+      name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths';
       value: {
         // the workspace corresponding to the wsPaths
         wsName: string;
@@ -35,7 +35,7 @@ export type WorkspaceSliceAction =
       };
     }
   | {
-      name: 'action::@bangle.io/workspace-context:update-ws-paths';
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths';
       value: {
         // the workspace corresponding to the wsPaths
         wsName: string;
@@ -43,7 +43,7 @@ export type WorkspaceSliceAction =
       };
     }
   | {
-      name: 'action::@bangle.io/workspace-context:set-pending-refresh-ws-paths';
+      name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths';
       value: {
         pendingRefreshWsPaths: string | undefined;
       };

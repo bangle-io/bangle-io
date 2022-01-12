@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 
 import { EditorContainer } from '@bangle.io/editor-container';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { MultiColumnMainContent } from '@bangle.io/ui-dhancha';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { EmptyEditorPage } from './EmptyEditorPage';
 

@@ -1,13 +1,13 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
-import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
-import { useBroadcastChannel } from '@bangle.io/utils';
 import {
   refreshWsPaths,
   updateOpenedWsPaths,
   useWorkspaceContext,
-} from '@bangle.io/workspace-context';
+} from '@bangle.io/slice-workspace';
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import { useBroadcastChannel } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WatchWorkspace } from '../WatchWorkspace';
@@ -22,8 +22,8 @@ jest.mock('@bangle.io/utils', () => {
     useBroadcastChannel: jest.fn(),
   };
 });
-jest.mock('@bangle.io/workspace-context', () => {
-  const actual = jest.requireActual('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace', () => {
+  const actual = jest.requireActual('@bangle.io/slice-workspace');
   return {
     ...actual,
     refreshWsPaths: jest.fn(),

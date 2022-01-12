@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ActionButton,
   ButtonContent,
@@ -13,7 +14,6 @@ import {
   NewNoteIcon,
 } from '@bangle.io/ui-components';
 import { removeMdExtension } from '@bangle.io/utils';
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';

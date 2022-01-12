@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { toggleWorkspacePalette } from '@bangle.io/shared-operations';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { useHighlightEditors, useSearchNotesState } from '../hooks';
 import { SearchInput } from './SearchInput';

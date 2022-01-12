@@ -185,7 +185,7 @@ describe('state', () => {
     let state = createState();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-path',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -207,7 +207,7 @@ describe('state', () => {
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -217,7 +217,7 @@ describe('state', () => {
     expect(workspaceSliceKey.getSliceState(state)?.wsPaths).toEqual(wsPaths);
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:some-path.md']),
         wsName: 'test-ws',
@@ -242,7 +242,7 @@ describe('state', () => {
     );
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test-path',
         openedWsPaths: OpenedWsPaths.createFromArray([]),
@@ -261,7 +261,7 @@ describe('state', () => {
 
     const wsPaths = ['test:one.md'];
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
       value: { wsName: 'test', wsPaths },
     });
 
@@ -273,7 +273,7 @@ describe('state', () => {
 
     const wsPaths = ['test:one.md'];
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
       value: { wsName: 'test-other', wsPaths },
     });
 
@@ -285,7 +285,7 @@ describe('state', () => {
 
     const recent = ['test:one.md'];
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
       value: {
         wsName: 'test',
         recentlyUsedWsPaths: recent,
@@ -303,7 +303,7 @@ describe('state', () => {
 
     const recent = ['test:one.md'];
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
       value: {
         wsName: 'test-2',
         recentlyUsedWsPaths: recent,
@@ -339,7 +339,7 @@ describe('derived state', () => {
     let state = createState();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'test',
         openedWsPaths: OpenedWsPaths.createFromArray(['test:k.md']),
@@ -356,7 +356,7 @@ describe('derived state', () => {
     let state = createStateWithWsName('test');
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         wsName: 'bangle-help',
         openedWsPaths: OpenedWsPaths.createFromArray([
@@ -379,7 +379,7 @@ describe('derived state', () => {
     let state = createStateWithWsName('test');
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         openedWsPaths: OpenedWsPaths.createFromArray(['test:k.md']),
         wsName: 'test',
@@ -387,7 +387,7 @@ describe('derived state', () => {
     });
 
     let state2 = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:sync-page-location',
       value: {
         openedWsPaths: OpenedWsPaths.createFromArray(['test:k.md']),
         wsName: 'test',
@@ -404,7 +404,7 @@ describe('derived state', () => {
 
     const wsPaths = ['test:one.md', 'test:some-other.text'];
     state = state.applyAction({
-      name: 'action::@bangle.io/workspace-context:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
       value: { wsName: 'test', wsPaths },
     });
 

@@ -14,10 +14,10 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 import { getUseEditorManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
-import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { Editor, useGetEditorState } from '../Editor';
 
@@ -25,8 +25,8 @@ const extensionRegistry = createExtensionRegistry([], {
   editorCore: true,
 });
 
-jest.mock('@bangle.io/workspace-context', () => {
-  const actual = jest.requireActual('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace', () => {
+  const actual = jest.requireActual('@bangle.io/slice-workspace');
   return {
     ...actual,
     useWorkspaceContext: jest.fn(),

@@ -1,16 +1,16 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { FileSystem } from '@bangle.io/slice-workspaces-manager';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ImageComponent } from '../render-image-react-node-view';
 
-jest.mock('@bangle.io/workspace-context', () => {
-  const other = jest.requireActual('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace', () => {
+  const other = jest.requireActual('@bangle.io/slice-workspace');
 
   return {
     ...other,

@@ -3,6 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
 import {
+  goToWorkspaceHomeRoute,
+  goToWsNameRoute,
+  goToWsNameRouteNotFoundRoute,
+} from '@bangle.io/slice-workspace';
+import {
   getWorkspaceInfo,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
@@ -12,11 +17,6 @@ import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
 import { keybindingsHelper } from '@bangle.io/utils';
-import {
-  goToWorkspaceHomeRoute,
-  goToWsNameRoute,
-  goToWsNameRouteNotFoundRoute,
-} from '@bangle.io/workspace-context';
 
 export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   wsName = decodeURIComponent(wsName || '');

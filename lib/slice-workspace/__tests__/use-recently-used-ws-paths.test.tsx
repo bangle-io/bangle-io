@@ -92,7 +92,7 @@ test('returns wsPaths correctly', async () => {
 
   expect(dispatchSpy).toBeCalledWith({
     id: expect.any(String),
-    name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths',
+    name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
     value: {
       recentlyUsedWsPaths: ['test-ws:note1.md'],
       wsName: 'test-ws',
@@ -123,7 +123,7 @@ test('removes non existent wsPaths', () => {
 
   expect(dispatchSpy).toBeCalledWith({
     id: expect.any(String),
-    name: 'action::@bangle.io/workspace-context:update-recently-used-ws-paths',
+    name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
     value: {
       recentlyUsedWsPaths: [],
       wsName: 'test-ws',

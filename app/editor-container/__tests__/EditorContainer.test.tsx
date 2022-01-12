@@ -4,18 +4,18 @@ import React from 'react';
 import { Editor } from '@bangle.io/editor';
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import {
+  checkFileExists,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
+import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
-import {
-  checkFileExists,
-  useWorkspaceContext,
-} from '@bangle.io/workspace-context';
 
 import { EditorContainer } from '../EditorContainer';
 
-jest.mock('@bangle.io/workspace-context', () => {
-  const actual = jest.requireActual('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace', () => {
+  const actual = jest.requireActual('@bangle.io/slice-workspace');
   return {
     ...actual,
     checkFileExists: jest.fn(() => () => Promise.resolve(true)),

@@ -15,6 +15,7 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import {
   cx,
@@ -23,7 +24,6 @@ import {
   safeRequestIdleCallback,
   safeScrollIntoViewIfNeeded,
 } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import {
   HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN,

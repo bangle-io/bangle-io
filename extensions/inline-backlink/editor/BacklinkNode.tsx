@@ -5,6 +5,11 @@ import { EditorView } from '@bangle.dev/pm';
 import { EditorDisplayType } from '@bangle.io/constants';
 import { PopupEditor } from '@bangle.io/editor';
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
+import {
+  createNote,
+  pushWsPath,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
 import { useHover, useTooltipPositioner } from '@bangle.io/ui-bangle-button';
 import { NoteIcon } from '@bangle.io/ui-components';
 import {
@@ -12,11 +17,6 @@ import {
   cx,
   getEditorPluginMetadata,
 } from '@bangle.io/utils';
-import {
-  createNote,
-  pushWsPath,
-  useWorkspaceContext,
-} from '@bangle.io/workspace-context';
 import {
   filePathToWsPath,
   parseLocalFilePath,

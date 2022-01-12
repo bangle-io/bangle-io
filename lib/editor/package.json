@@ -32,8 +32,8 @@
     "@bangle.io/editor-manager-context": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/serial-operation-context": "workspace:*",
-    "@bangle.io/utils": "workspace:*",
-    "@bangle.io/workspace-context": "workspace:*"
+    "@bangle.io/slice-workspace": "workspace:*",
+    "@bangle.io/utils": "workspace:*"
   },
   "publishConfig": {
     "access": "restricted",

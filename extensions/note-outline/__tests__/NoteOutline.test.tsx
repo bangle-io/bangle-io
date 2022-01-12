@@ -8,19 +8,19 @@ import {
 } from '@bangle.io/editor-manager-context';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
 import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
 import { getEditorIntersectionObserverPluginState } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import noteOutlineExtension from '..';
 import { WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP } from '../config';
 import { NoteOutline } from '../NoteOutline';
 
-jest.mock('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace');
 jest.mock('@bangle.io/serial-operation-context');
 jest.mock('@bangle.io/editor-manager-context', () => {
   return {
