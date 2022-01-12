@@ -1,7 +1,7 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 
 import {
   ERROR_PICKING_DIRECTORY_ERROR,
@@ -12,8 +12,8 @@ import {
 } from '../common';
 import { ShowError } from '../ShowError';
 
-jest.mock('@bangle.io/ui-context', () => {
-  const otherThings = jest.requireActual('@bangle.io/ui-context');
+jest.mock('@bangle.io/slice-ui', () => {
+  const otherThings = jest.requireActual('@bangle.io/slice-ui');
   return {
     ...otherThings,
     useUIManagerContext: jest.fn(() => ({})),

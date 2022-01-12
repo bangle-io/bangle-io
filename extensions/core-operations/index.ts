@@ -21,7 +21,7 @@ import {
   createWorkspace,
   WorkspaceType,
 } from '@bangle.io/slice-workspaces-manager';
-import { toggleTheme } from '@bangle.io/ui-context';
+import { toggleTheme } from '@bangle.io/slice-ui';
 
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -142,7 +142,7 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
               bangleStore.dispatch({
-                name: 'action::@bangle.io/ui-context:TOGGLE_NOTE_SIDEBAR',
+                name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR',
               });
               return true;
             }

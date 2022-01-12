@@ -13,12 +13,12 @@
     "serial-operation-context",
     "shared-operations",
     "shared-types",
+    "slice-ui",
     "slice-workspace",
     "slice-workspaces-manager",
     "test-utils",
     "ui-bangle-button",
     "ui-components",
-    "ui-context",
     "ui-dhancha",
     "utils",
     "ws-path"

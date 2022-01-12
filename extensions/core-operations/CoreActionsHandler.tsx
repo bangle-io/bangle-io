@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 
@@ -12,7 +12,7 @@ export function CoreActionsHandler() {
   const onDismiss = useCallback(
     (focusEditor = true) => {
       dispatch({
-        name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
+        name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
       });
       if (focusEditor) {
         primaryEditor?.focusView();

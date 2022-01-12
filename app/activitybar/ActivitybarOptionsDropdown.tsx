@@ -26,7 +26,7 @@ import {
   SettingsIcon,
   TwitterIcon,
 } from '@bangle.io/ui-components';
-import { toggleTheme, useUIManagerContext } from '@bangle.io/ui-context';
+import { toggleTheme, useUIManagerContext } from '@bangle.io/slice-ui';
 import { cx } from '@bangle.io/utils';
 
 import { buttonStyling } from './ActivitybarButton';

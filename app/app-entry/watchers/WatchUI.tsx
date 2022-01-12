@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { TAB_ID } from '@bangle.io/config';
 import type { ThemeType } from '@bangle.io/shared-types';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { useBroadcastChannel } from '@bangle.io/utils';
 
 const CHANNEL_NAME = 'watch_ui';
@@ -33,7 +33,7 @@ export function WatchUI() {
   useEffect(() => {
     if (lastMessage) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:UPDATE_THEME',
+        name: 'action::@bangle.io/slice-ui:UPDATE_THEME',
         value: { theme: lastMessage.payload.theme },
       });
     }

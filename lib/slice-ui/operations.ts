@@ -21,7 +21,7 @@ export function changeSidebar(sidebar: string | null) {
       return;
     }
     dispatch({
-      name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
+      name: 'action::@bangle.io/slice-ui:CHANGE_SIDEBAR',
       value: {
         type: currentSidebar === sidebar ? null : sidebar,
       },

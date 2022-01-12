@@ -6,7 +6,7 @@ import {
 } from '@bangle.io/editor-manager-context';
 import { UniversalPalette } from '@bangle.io/ui-components';
 import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import {
@@ -49,7 +49,7 @@ export function PaletteManager() {
     (focus = true) => {
       updateQuery('');
       dispatch({
-        name: 'action::@bangle.io/ui-context:RESET_PALETTE',
+        name: 'action::@bangle.io/slice-ui:RESET_PALETTE',
       });
       if (focus) {
         safeRequestAnimationFrame(() => {
@@ -75,7 +75,7 @@ export function PaletteManager() {
   >(
     (type, initialQuery = '') => {
       dispatch({
-        name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+        name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
         value: { type, initialQuery },
       });
       if (type) {

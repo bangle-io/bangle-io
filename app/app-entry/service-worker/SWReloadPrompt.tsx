@@ -7,7 +7,7 @@ import {
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { useLocalStorage } from '@bangle.io/utils';
 
 import { useRegisterSW } from './use-sw';
@@ -27,7 +27,7 @@ export function SWReloadPrompt() {
     if (offlineReady && !shownOfflineReady) {
       updateShownOfflineReady(true);
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           uid: 'offline-' + RELEASE_ID,
           severity: 'info',
@@ -41,7 +41,7 @@ export function SWReloadPrompt() {
     (sOperation) => {
       if (sOperation.name === CORE_OPERATIONS_SERVICE_WORKER_RELOAD) {
         dispatch({
-          name: 'action::@bangle.io/ui-context:DISMISS_NOTIFICATION',
+          name: 'action::@bangle.io/slice-ui:DISMISS_NOTIFICATION',
           value: {
             uid,
           },
@@ -52,7 +52,7 @@ export function SWReloadPrompt() {
       }
       if (sOperation.name === CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE) {
         dispatch({
-          name: 'action::@bangle.io/ui-context:DISMISS_NOTIFICATION',
+          name: 'action::@bangle.io/slice-ui:DISMISS_NOTIFICATION',
           value: {
             uid,
           },
@@ -69,7 +69,7 @@ export function SWReloadPrompt() {
   useEffect(() => {
     if (needRefresh) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'info',
           uid,

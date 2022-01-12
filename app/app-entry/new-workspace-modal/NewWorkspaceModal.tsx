@@ -15,7 +15,7 @@ import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { hasWorkspace } from '@bangle.io/slice-workspaces-manager';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 
 import { PickStorageDirectory, WorkspaceNameInput } from './Buttons';
 import {
@@ -158,14 +158,14 @@ export function NewWorkspaceModalContainer({
     }
 
     dispatch({
-      name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
+      name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
     });
   }, [dispatchSerialOperation, modalState, dispatch]);
 
   const onDismiss = useCallback(() => {
     if (!isDropdownOpenRef.current) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
+        name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
       });
     }
   }, [dispatch]);

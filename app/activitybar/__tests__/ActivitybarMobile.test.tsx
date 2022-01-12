@@ -2,12 +2,12 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { toggleNotesPalette } from '@bangle.io/shared-operations';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 
 import { Activitybar } from '../Activitybar';
 
-jest.mock('@bangle.io/ui-context', () => {
-  const otherThings = jest.requireActual('@bangle.io/ui-context');
+jest.mock('@bangle.io/slice-ui', () => {
+  const otherThings = jest.requireActual('@bangle.io/slice-ui');
   return {
     ...otherThings,
     useUIManagerContext: jest.fn(() => ({})),

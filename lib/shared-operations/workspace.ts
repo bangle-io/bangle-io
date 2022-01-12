@@ -3,6 +3,7 @@ import {
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
   deleteNote,
   WorkspaceSliceAction,
@@ -15,7 +16,6 @@ import {
   WorkspaceType,
 } from '@bangle.io/slice-workspaces-manager';
 import { WorkspacesSliceAction } from '@bangle.io/slice-workspaces-manager/common';
-import { UiContextAction, UiContextDispatchType } from '@bangle.io/ui-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { getFocusedWsPath } from './core';
@@ -26,7 +26,7 @@ export function newNote(initialValue?: string) {
 
     if (!wsName) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'new-note-not-no-workspace',
@@ -38,12 +38,12 @@ export function newNote(initialValue?: string) {
 
     // To avoid overlapping
     dispatch({
-      name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+      name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
       value: { type: null },
     });
 
     dispatch({
-      name: 'action::@bangle.io/ui-context:SHOW_MODAL',
+      name: 'action::@bangle.io/slice-ui:SHOW_MODAL',
       value: {
         modal: 'new-note',
         modalValue: {
@@ -60,7 +60,7 @@ export function renameActiveNote() {
 
     if (!focusedWsPath) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'delete-wsPath-not-found',
@@ -72,12 +72,12 @@ export function renameActiveNote() {
 
     // To avoid overlapping
     dispatch({
-      name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+      name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
       value: { type: null },
     });
 
     dispatch({
-      name: 'action::@bangle.io/ui-context:SHOW_MODAL',
+      name: 'action::@bangle.io/slice-ui:SHOW_MODAL',
       value: {
         modal: 'rename-note',
       },
@@ -100,7 +100,7 @@ export function deleteActiveNote() {
 
     if (!focusedWsPath) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'delete-wsPath-not-found',
@@ -111,7 +111,7 @@ export function deleteActiveNote() {
     }
 
     dispatch({
-      name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+      name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
       value: { type: null },
     });
 
@@ -126,7 +126,7 @@ export function deleteActiveNote() {
       deleteNote(focusedWsPath)(state, dispatch, store)
         .then((error) => {
           dispatch({
-            name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+            name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
             value: {
               severity: 'success',
               uid: 'success-delete-' + focusedWsPath,
@@ -136,7 +136,7 @@ export function deleteActiveNote() {
         })
         .catch((error) => {
           dispatch({
-            name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+            name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
             value: {
               severity: 'error',
               uid: 'delete-' + deleteActiveNote,
@@ -152,7 +152,7 @@ export function deleteActiveNote() {
 export function newWorkspace() {
   return (state: AppState, dispatch: UiContextDispatchType) => {
     dispatch({
-      name: 'action::@bangle.io/ui-context:SHOW_MODAL',
+      name: 'action::@bangle.io/slice-ui:SHOW_MODAL',
       value: { modal: '@modal/new-workspace' },
     });
   };
@@ -168,7 +168,7 @@ export function removeWorkspace(wsName?: string) {
 
     if (!wsName) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'removeWorkspace-no-workspace',
@@ -180,7 +180,7 @@ export function removeWorkspace(wsName?: string) {
 
     if (wsName === HELP_FS_WORKSPACE_NAME) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'removeWorkspace-not-allowed',
@@ -198,7 +198,7 @@ export function removeWorkspace(wsName?: string) {
       await _deletedWorkspace(wsName)(state, dispatch, store);
 
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'success',
           uid: 'success-removed-' + wsName,
@@ -233,7 +233,7 @@ export function createBrowserWorkspace(wsName: string) {
       (window as any).fathom?.trackGoal('AISLCLRF', 0);
     } catch (error) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'error-create-workspace-' + wsName,
@@ -265,7 +265,7 @@ export function createNativeFsWorkpsace(rootDirHandle) {
         (window as any).fathom?.trackGoal('K3NFTGWX', 0);
       } catch (error) {
         store.dispatch({
-          name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+          name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
           value: {
             severity: 'error',
             uid: 'error-create-workspace-' + rootDirHandle?.name,

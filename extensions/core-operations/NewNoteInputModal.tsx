@@ -7,7 +7,7 @@ import {
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
 import { InputPalette, UniversalPalette } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { randomName, useDestroyRef } from '@bangle.io/utils';
 import {
   filePathToWsPath,

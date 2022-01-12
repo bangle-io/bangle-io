@@ -18,7 +18,7 @@ import {
   NullIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   removeMdExtension,
   safeScrollIntoViewIfNeeded,
@@ -58,7 +58,7 @@ export function NotesTree() {
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
+        name: 'action::@bangle.io/slice-ui:CHANGE_SIDEBAR',
         value: { type: null },
       });
     }

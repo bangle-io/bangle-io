@@ -13,7 +13,7 @@ import {
 } from '@bangle.io/constants';
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { hasWorkspace } from '@bangle.io/slice-workspaces-manager';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { sleep } from '@bangle.io/utils';
 
 import {
@@ -22,8 +22,8 @@ import {
 } from '../common';
 import { NewWorkspaceModalContainer } from '../NewWorkspaceModal';
 
-jest.mock('@bangle.io/ui-context', () => {
-  const otherThings = jest.requireActual('@bangle.io/ui-context');
+jest.mock('@bangle.io/slice-ui', () => {
+  const otherThings = jest.requireActual('@bangle.io/slice-ui');
   return {
     ...otherThings,
     useUIManagerContext: jest.fn(() => ({})),

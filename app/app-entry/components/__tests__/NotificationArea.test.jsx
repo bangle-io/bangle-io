@@ -1,12 +1,12 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { sleep } from '@bangle.io/utils';
 
 import { NotificationArea } from '../NotificationArea';
 
-jest.mock('@bangle.io/ui-context', () => {
+jest.mock('@bangle.io/slice-ui', () => {
   return { useUIManagerContext: jest.fn() };
 });
 
@@ -96,7 +96,7 @@ describe('NotificationArea', () => {
 
     expect(uiDispatchMock).toBeCalledTimes(1);
     expect(uiDispatchMock).nthCalledWith(1, {
-      name: 'action::@bangle.io/ui-context:DISMISS_NOTIFICATION',
+      name: 'action::@bangle.io/slice-ui:DISMISS_NOTIFICATION',
       value: {
         uid: 'one',
       },

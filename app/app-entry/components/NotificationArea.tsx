@@ -11,7 +11,7 @@ import {
   InformationCircleIcon,
   TextButton,
 } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 
 export function NotificationArea({}) {
   const { notifications, dispatch } = useUIManagerContext();
@@ -22,7 +22,7 @@ export function NotificationArea({}) {
           key={n.uid}
           onDismiss={() => {
             dispatch({
-              name: 'action::@bangle.io/ui-context:DISMISS_NOTIFICATION',
+              name: 'action::@bangle.io/slice-ui:DISMISS_NOTIFICATION',
               value: {
                 uid: n.uid,
               },

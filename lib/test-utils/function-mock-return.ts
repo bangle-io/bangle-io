@@ -15,8 +15,8 @@ import {
   initialEditorSliceState,
   useEditorManagerContext,
 } from '@bangle.io/editor-manager-context';
+import { initialState, useUIManagerContext } from '@bangle.io/slice-ui';
 import type { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { initialState, useUIManagerContext } from '@bangle.io/ui-context';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 

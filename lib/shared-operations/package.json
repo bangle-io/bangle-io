@@ -23,9 +23,9 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/editor-manager-context": "workspace:*",
+    "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/slice-workspaces-manager": "workspace:*",
-    "@bangle.io/ui-context": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*"
   },

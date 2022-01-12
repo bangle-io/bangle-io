@@ -15,7 +15,7 @@ import {
 } from '@bangle.io/slice-workspaces-manager';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { keybindingsHelper } from '@bangle.io/utils';
 
 export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {

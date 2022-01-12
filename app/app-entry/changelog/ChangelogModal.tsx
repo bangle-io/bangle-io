@@ -28,7 +28,7 @@ import { BangleEditor, useEditorState } from '@bangle.dev/react';
 
 import { CHANGELOG_TEXT } from '@bangle.io/config';
 import { Modal } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { useLocalStorage } from '@bangle.io/utils';
 
 const specRegistry = new SpecRegistry([
@@ -61,7 +61,7 @@ export function ChangelogModal() {
 
   const onDismiss = useCallback(() => {
     dispatch({
-      name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
+      name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
     });
   }, [dispatch]);
 
@@ -143,7 +143,7 @@ function useLastSeenChangelog(showChangelog: boolean) {
     const hasUpdates = lastSeenHeading !== getTopHeading();
     if (hasUpdates !== changelogHasUpdates) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:UPDATE_NEW_CHANGELOG',
+        name: 'action::@bangle.io/slice-ui:UPDATE_NEW_CHANGELOG',
         value: { hasUpdates },
       });
     }
