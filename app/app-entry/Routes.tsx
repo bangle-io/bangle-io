@@ -5,11 +5,11 @@ import {
   getLastWorkspaceUsed,
   pushWsPath,
   useWorkspaceContext,
-} from '@bangle.io/workspace-context';
+} from '@bangle.io/slice-workspace';
 import {
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
-} from '@bangle.io/workspaces';
+} from '@bangle.io/slice-workspaces-manager';
 import { wsNameToPathname } from '@bangle.io/ws-path';
 
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';

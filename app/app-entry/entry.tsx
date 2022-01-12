@@ -5,20 +5,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
 import { initializeBangleStore } from '@bangle.io/bangle-store';
-import { EditorManager } from '@bangle.io/editor-manager-context';
 import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,
 } from '@bangle.io/extension-registry';
+import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
+import { polyfills } from '@bangle.io/shared';
+import { EditorManager } from '@bangle.io/slice-editor-manager';
 import {
   BaseHistory,
   getLocationTo,
   usePageContext,
-} from '@bangle.io/page-context';
-import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
-import { polyfills } from '@bangle.io/shared';
-import { UIManager } from '@bangle.io/ui-context';
-import { WorkspaceContextProvider } from '@bangle.io/workspace-context';
+} from '@bangle.io/slice-page';
+import { UIManager } from '@bangle.io/slice-ui';
+import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 import { pathMatcher } from '@bangle.io/ws-path';
 
 import { AppContainer } from './AppContainer';

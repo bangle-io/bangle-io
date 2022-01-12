@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { APP_ENV, IS_PRODUCTION_APP_ENV } from '@bangle.io/config';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { resolvePath } from '@bangle.io/ws-path';
 
 export function useSetDocumentTitle() {

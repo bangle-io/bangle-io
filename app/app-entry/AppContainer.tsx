@@ -3,9 +3,9 @@ import React, { useCallback } from 'react';
 import { Activitybar } from '@bangle.io/activitybar';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { Dhancha } from '@bangle.io/ui-dhancha';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
 import { ChangelogModal } from './changelog/ChangelogModal';
@@ -33,7 +33,7 @@ export function AppContainer() {
 
   const onDismissSidebar = useCallback(() => {
     dispatch({
-      name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
+      name: 'action::@bangle.io/slice-ui:CHANGE_SIDEBAR',
       value: {
         type: null,
       },
@@ -42,14 +42,14 @@ export function AppContainer() {
 
   const onDismissNoteSidebar = useCallback(() => {
     dispatch({
-      name: 'action::@bangle.io/ui-context:UPDATE_NOTE_SIDEBAR',
+      name: 'action::@bangle.io/slice-ui:UPDATE_NOTE_SIDEBAR',
       value: { visible: false },
     });
   }, [dispatch]);
 
   const showNoteSidebar = useCallback(() => {
     dispatch({
-      name: 'action::@bangle.io/ui-context:UPDATE_NOTE_SIDEBAR',
+      name: 'action::@bangle.io/slice-ui:UPDATE_NOTE_SIDEBAR',
       value: { visible: true },
     });
   }, [dispatch]);

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 
 export function useDispatchPrimaryEditor(dry = true) {
   const { primaryEditor } = useEditorManagerContext();

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 
 import { TAB_ID } from '@bangle.io/config';
-import { useBroadcastChannel, weakCache } from '@bangle.io/utils';
 import {
   refreshWsPaths,
   updateOpenedWsPaths,
   useWorkspaceContext,
-} from '@bangle.io/workspace-context';
+} from '@bangle.io/slice-workspace';
+import { useBroadcastChannel, weakCache } from '@bangle.io/utils';
 
 const CHANNEL_NAME = 'watch_workspace';
 const FILE_TREE_CHANGED = 'FILE_TREE_CHANGED';

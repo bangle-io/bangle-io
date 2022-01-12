@@ -1,17 +1,19 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { sleep } from '@bangle.io/utils';
 import {
   listWorkspaces,
   WorkspaceInfo,
   WorkspaceType,
-} from '@bangle.io/workspaces';
+} from '@bangle.io/slice-workspaces-manager';
+import { sleep } from '@bangle.io/utils';
 
 import { workspacePalette } from '../WorkspacePalette';
 
-jest.mock('@bangle.io/workspaces', () => {
-  const workspaceThings = jest.requireActual('@bangle.io/workspaces');
+jest.mock('@bangle.io/slice-workspaces-manager', () => {
+  const workspaceThings = jest.requireActual(
+    '@bangle.io/slice-workspaces-manager',
+  );
   return {
     ...workspaceThings,
     deleteWorkspace: jest.fn(() => () => {}),

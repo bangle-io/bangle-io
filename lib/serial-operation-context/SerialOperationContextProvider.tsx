@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';

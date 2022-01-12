@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { useSearchWsPaths } from '../NotesPalette';
 
@@ -15,8 +15,8 @@ jest.mock('@bangle.io/naukar-proxy', () => {
   };
 });
 
-jest.mock('@bangle.io/workspace-context', () => {
-  const workspaceThings = jest.requireActual('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace', () => {
+  const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
   return {
     ...workspaceThings,
     useWorkspaceContext: jest.fn(),

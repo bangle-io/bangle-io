@@ -3,6 +3,13 @@ import { useVirtual } from 'react-virtual';
 
 import { isFirefox } from '@bangle.io/config';
 import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
+import {
+  deleteNote,
+  pushWsPath,
+  useWorkspaceContext,
+  WorkspaceContextType,
+} from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -12,18 +19,11 @@ import {
   NullIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
 import {
   removeMdExtension,
   safeScrollIntoViewIfNeeded,
   useLocalStorage,
 } from '@bangle.io/utils';
-import {
-  deleteNote,
-  pushWsPath,
-  useWorkspaceContext,
-  WorkspaceContextType,
-} from '@bangle.io/workspace-context';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
@@ -58,7 +58,7 @@ export function NotesTree() {
   const closeSidebar = useCallback(() => {
     if (!widescreen) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:CHANGE_SIDEBAR',
+        name: 'action::@bangle.io/slice-ui:CHANGE_SIDEBAR',
         value: { type: null },
       });
     }

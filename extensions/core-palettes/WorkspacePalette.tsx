@@ -6,21 +6,21 @@ import React, {
   useState,
 } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
 import { removeWorkspace } from '@bangle.io/shared-operations';
+import { goToWsNameRoute } from '@bangle.io/slice-workspace';
+import {
+  deleteWorkspace,
+  listWorkspaces,
+  WorkspaceInfo,
+} from '@bangle.io/slice-workspaces-manager';
 import {
   AlbumIcon,
   CloseIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
-import { goToWsNameRoute } from '@bangle.io/workspace-context';
-import {
-  deleteWorkspace,
-  listWorkspaces,
-  WorkspaceInfo,
-} from '@bangle.io/workspaces';
 
 import { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';

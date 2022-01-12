@@ -5,7 +5,7 @@ import {
   SliceSideEffect,
 } from '@bangle.io/create-store';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
-import { pageLifeCycleTransitionedTo } from '@bangle.io/page-context';
+import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
 import { shallowOrderedArrayCompare } from '@bangle.io/utils';
 
 import { flushNaukarEffect } from '../bangle-slices';
@@ -15,8 +15,8 @@ jest.mock('@bangle.io/naukar-proxy', () => {
     naukarWorkerProxy: { resetManager: jest.fn(), flushDisk: jest.fn() },
   };
 });
-jest.mock('@bangle.io/page-context', () => {
-  const actual = jest.requireActual('@bangle.io/page-context');
+jest.mock('@bangle.io/slice-page', () => {
+  const actual = jest.requireActual('@bangle.io/slice-page');
   return {
     ...actual,
     pageLifeCycleTransitionedTo: jest.fn(() => {

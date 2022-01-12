@@ -3,8 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { NodeSelection, Selection } from '@bangle.dev/pm';
 
 import { NoteLink } from '@bangle.io/contextual-ui-components';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import type { SearchMatch, SearchResultItem } from '@bangle.io/search-pm-node';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -12,7 +13,6 @@ import {
   Sidebar,
 } from '@bangle.io/ui-components';
 import { cx, safeRequestAnimationFrame, usePrevious } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { HighlightText } from './HighlightText';

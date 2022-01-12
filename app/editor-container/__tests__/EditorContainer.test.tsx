@@ -2,20 +2,20 @@ import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { Editor } from '@bangle.io/editor';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import {
+  checkFileExists,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
 import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
-import {
-  checkFileExists,
-  useWorkspaceContext,
-} from '@bangle.io/workspace-context';
 
 import { EditorContainer } from '../EditorContainer';
 
-jest.mock('@bangle.io/workspace-context', () => {
-  const actual = jest.requireActual('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace', () => {
+  const actual = jest.requireActual('@bangle.io/slice-workspace');
   return {
     ...actual,
     checkFileExists: jest.fn(() => () => Promise.resolve(true)),
@@ -23,8 +23,8 @@ jest.mock('@bangle.io/workspace-context', () => {
   };
 });
 
-jest.mock('@bangle.io/editor-manager-context', () => {
-  const actual = jest.requireActual('@bangle.io/editor-manager-context');
+jest.mock('@bangle.io/slice-editor-manager', () => {
+  const actual = jest.requireActual('@bangle.io/slice-editor-manager');
   return {
     ...actual,
     useEditorManagerContext: jest.fn(),

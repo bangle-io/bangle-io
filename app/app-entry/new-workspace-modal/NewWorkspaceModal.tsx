@@ -2,20 +2,20 @@ import './NewWorkspaceModal.css';
 
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   DirTypeSystemHandle,
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { hasWorkspace } from '@bangle.io/slice-workspaces-manager';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/ui-context';
-import { hasWorkspace } from '@bangle.io/workspaces';
 
 import { PickStorageDirectory, WorkspaceNameInput } from './Buttons';
 import {
@@ -158,14 +158,14 @@ export function NewWorkspaceModalContainer({
     }
 
     dispatch({
-      name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
+      name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
     });
   }, [dispatchSerialOperation, modalState, dispatch]);
 
   const onDismiss = useCallback(() => {
     if (!isDropdownOpenRef.current) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:DISMISS_MODAL',
+        name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
       });
     }
   }, [dispatch]);

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import { defaultSpecs } from '@bangle.dev/all-base-components';
 
-import { useSliceState } from '@bangle.io/app-state-context';
+import { useSliceState } from '@bangle.io/bangle-store-context';
 import {
   Extension,
   ExtensionRegistry,
@@ -15,8 +15,8 @@ import { useSerialOperationHandler } from '..';
 import { useSerialOperationContext } from '../SerialOperationContext';
 import { SerialOperationContextProvider } from '../SerialOperationContextProvider';
 
-jest.mock('@bangle.io/app-state-context', () => {
-  const obj = jest.requireActual('@bangle.io/app-state-context');
+jest.mock('@bangle.io/bangle-store-context', () => {
+  const obj = jest.requireActual('@bangle.io/bangle-store-context');
   return {
     ...obj,
     useSliceState: jest.fn(),

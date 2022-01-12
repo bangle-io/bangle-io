@@ -1,21 +1,21 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { BacklinkWidget } from '../BacklinkWidget';
 
-jest.mock('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace');
 
-jest.mock('@bangle.io/editor-manager-context');
+jest.mock('@bangle.io/slice-editor-manager');
 
 jest.mock('@bangle.io/naukar-proxy', () => {
   return {

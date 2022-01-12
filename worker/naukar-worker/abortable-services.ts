@@ -5,8 +5,11 @@ import { BaseError } from '@bangle.io/base-error';
 import { WorkerErrorCode } from '@bangle.io/constants';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { searchPmNode } from '@bangle.io/search-pm-node';
+import {
+  FileSystem,
+  fzfSearchNoteWsPaths,
+} from '@bangle.io/slice-workspaces-manager';
 import { assertSignal } from '@bangle.io/utils';
-import { FileSystem, fzfSearchNoteWsPaths } from '@bangle.io/workspaces';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
 export function abortableServices({

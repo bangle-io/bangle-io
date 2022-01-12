@@ -12,17 +12,17 @@ import { SpecRegistry } from '@bangle.dev/core';
 import type { Node } from '@bangle.dev/pm';
 import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 
+import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { editorTagSpec } from '../editor-tag';
 import { _listTags, listAllTags, useSearchAllTags } from '../search';
 
 let getNoteMock = getNote as jest.MockedFunction<typeof getNote>;
 
-jest.mock('@bangle.io/workspace-context', () => {
-  const workspaceThings = jest.requireActual('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace', () => {
+  const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
   return {
     ...workspaceThings,
     bangleStore: {

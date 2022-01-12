@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 
+import { initializeBangleStore } from '@bangle.io/bangle-store';
 import {
   BangleStoreChanged,
   BangleStoreContext,
-} from '@bangle.io/app-state-context';
-import { initializeBangleStore } from '@bangle.io/bangle-store';
-import { editorManagerSliceKey } from '@bangle.io/editor-manager-context';
+} from '@bangle.io/bangle-store-context';
+import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { safeRequestIdleCallback } from '@bangle.io/utils';
 
 const LOG = false;

@@ -19,14 +19,14 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.io/app-state-context": "workspace:*",
+    "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
-    "@bangle.io/editor-manager-context": "workspace:*",
-    "@bangle.io/ui-context": "workspace:*",
+    "@bangle.io/slice-editor-manager": "workspace:*",
+    "@bangle.io/slice-ui": "workspace:*",
+    "@bangle.io/slice-workspace": "workspace:*",
+    "@bangle.io/slice-workspaces-manager": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/workspace-context": "workspace:*",
-    "@bangle.io/workspaces": "workspace:*",
     "@bangle.io/ws-path": "workspace:*"
   },
   "publishConfig": {

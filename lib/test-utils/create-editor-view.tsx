@@ -1,7 +1,7 @@
 import { BangleEditor, BangleEditorState } from '@bangle.dev/core';
 import { valuePlugin } from '@bangle.dev/utils';
 
-import { initialBangleStore } from '@bangle.io/app-state-context';
+import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,

@@ -1,14 +1,14 @@
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
-import * as editorManagerContext from '@bangle.io/editor-manager-context';
+import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
+import * as editorManagerContext from '@bangle.io/slice-editor-manager';
 import {
   didSomeEditorChange,
   editorManagerSliceKey,
-} from '@bangle.io/editor-manager-context';
-import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
+} from '@bangle.io/slice-editor-manager';
+import * as workspaceContext from '@bangle.io/slice-workspace';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
-import * as workspaceContext from '@bangle.io/workspace-context';
 // makes life easier by adding some helpers for e2e tests
 export function e2eHelpers() {
   return new Slice({

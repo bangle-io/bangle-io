@@ -5,19 +5,19 @@ import React from 'react';
 import { BangleEditor } from '@bangle.dev/core';
 import { Node, Selection } from '@bangle.dev/pm';
 
-import { initialBangleStore } from '@bangle.io/app-state-context';
+import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {
   getInitialSelection,
   setEditorReady,
   setEditorUnmounted,
   useEditorManagerContext,
-} from '@bangle.io/editor-manager-context';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+} from '@bangle.io/slice-editor-manager';
+import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 import { getUseEditorManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
-import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { Editor, useGetEditorState } from '../Editor';
 
@@ -25,8 +25,8 @@ const extensionRegistry = createExtensionRegistry([], {
   editorCore: true,
 });
 
-jest.mock('@bangle.io/workspace-context', () => {
-  const actual = jest.requireActual('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace', () => {
+  const actual = jest.requireActual('@bangle.io/slice-workspace');
   return {
     ...actual,
     useWorkspaceContext: jest.fn(),
@@ -34,8 +34,8 @@ jest.mock('@bangle.io/workspace-context', () => {
   };
 });
 
-jest.mock('@bangle.io/editor-manager-context', () => {
-  const actual = jest.requireActual('@bangle.io/editor-manager-context');
+jest.mock('@bangle.io/slice-editor-manager', () => {
+  const actual = jest.requireActual('@bangle.io/slice-editor-manager');
   return {
     ...actual,
     getInitialSelection: jest.fn(() => () => {}),

@@ -9,9 +9,9 @@ import {
   useInlinePaletteItems,
   useInlinePaletteQuery,
 } from '@bangle.io/inline-palette';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 import { sleep } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { InlineBacklinkPalette } from '../editor/InlineBacklinkPalette';
 import inlineBacklinkExtension from '../index';
@@ -33,9 +33,9 @@ jest.mock('@bangle.io/inline-palette', () => {
   };
 });
 
-jest.mock('@bangle.io/workspace-context', () => {
+jest.mock('@bangle.io/slice-workspace', () => {
   return {
-    ...jest.requireActual('@bangle.io/workspace-context'),
+    ...jest.requireActual('@bangle.io/slice-workspace'),
     useWorkspaceContext: jest.fn(),
   };
 });

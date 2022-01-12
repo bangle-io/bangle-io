@@ -2,9 +2,9 @@ import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import type { SearchResultItem } from '@bangle.io/search-pm-node';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';
 import { useSearchNotesState } from '../hooks';
@@ -20,7 +20,7 @@ jest.mock('@bangle.io/contextual-ui-components', () => {
   };
 });
 
-jest.mock('@bangle.io/workspace-context');
+jest.mock('@bangle.io/slice-workspace');
 
 jest.mock('../hooks', () => {
   const actual = jest.requireActual('../hooks');

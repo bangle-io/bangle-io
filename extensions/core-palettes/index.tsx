@@ -7,7 +7,7 @@ import {
 } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
-import { uiSliceKey } from '@bangle.io/ui-context';
+import { uiSliceKey } from '@bangle.io/slice-ui';
 
 import { extensionName } from './config';
 import { notesPalette } from './NotesPalette';
@@ -53,7 +53,7 @@ const extension = Extension.create({
           switch (operation.name) {
             case CORE_PALETTES_TOGGLE_OPERATION_PALETTE: {
               bangleStore.dispatch({
-                name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+                name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
                 value: {
                   type: getType(bangleStore.state, operationPalette.type),
                 },
@@ -63,7 +63,7 @@ const extension = Extension.create({
 
             case CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE: {
               bangleStore.dispatch({
-                name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+                name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
                 value: {
                   type: getType(bangleStore.state, workspacePalette.type),
                 },
@@ -73,7 +73,7 @@ const extension = Extension.create({
 
             case CORE_PALETTES_TOGGLE_NOTES_PALETTE: {
               bangleStore.dispatch({
-                name: 'action::@bangle.io/ui-context:UPDATE_PALETTE',
+                name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
                 value: {
                   type: getType(bangleStore.state, notesPalette.type),
                 },

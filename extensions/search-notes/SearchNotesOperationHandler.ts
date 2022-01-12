@@ -1,5 +1,5 @@
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
-import { changeSidebar, useUIManagerContext } from '@bangle.io/ui-context';
+import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
 
 import {
   EXECUTE_SEARCH_OPERATION,

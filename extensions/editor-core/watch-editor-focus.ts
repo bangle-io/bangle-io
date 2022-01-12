@@ -1,7 +1,7 @@
 import { Plugin } from '@bangle.dev/pm';
 
-import { updateFocusedEditor } from '@bangle.io/editor-manager-context';
 import type { EditorPlugin } from '@bangle.io/shared-types';
+import { updateFocusedEditor } from '@bangle.io/slice-editor-manager';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 
 export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {

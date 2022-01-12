@@ -5,9 +5,9 @@ import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   PAGE_BLOCK_RELOAD_ACTION_NAME,
   PAGE_BLOCK_RELOAD_ACTION_TYPE,
-} from '@bangle.io/page-context';
+} from '@bangle.io/slice-page';
+import { FileSystem } from '@bangle.io/slice-workspaces-manager';
 import { getSelfType } from '@bangle.io/utils';
-import { FileSystem } from '@bangle.io/workspaces';
 
 import { abortableServices } from './abortable-services';
 import { setupCollabManager } from './collab-manager';

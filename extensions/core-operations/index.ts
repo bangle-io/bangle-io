@@ -4,7 +4,6 @@ import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
-import { focusEditor } from '@bangle.io/editor-manager-context';
 import { Extension } from '@bangle.io/extension-registry';
 import {
   closeEditor,
@@ -17,8 +16,12 @@ import {
   renameActiveNote,
   splitEditor,
 } from '@bangle.io/shared-operations';
-import { toggleTheme } from '@bangle.io/ui-context';
-import { createWorkspace, WorkspaceType } from '@bangle.io/workspaces';
+import { focusEditor } from '@bangle.io/slice-editor-manager';
+import { toggleTheme } from '@bangle.io/slice-ui';
+import {
+  createWorkspace,
+  WorkspaceType,
+} from '@bangle.io/slice-workspaces-manager';
 
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -139,7 +142,7 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR: {
               bangleStore.dispatch({
-                name: 'action::@bangle.io/ui-context:TOGGLE_NOTE_SIDEBAR',
+                name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR',
               });
               return true;
             }

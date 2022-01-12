@@ -33,9 +33,9 @@
     "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/serial-operation-context": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/workspace-context": "workspace:*",
     "react": "^17.0.2"
   },
   "devDependencies": {

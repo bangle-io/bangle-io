@@ -1,13 +1,13 @@
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
-import { UiContextAction, UiContextDispatchType } from '@bangle.io/ui-context';
-import { sleep } from '@bangle.io/utils';
+import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
   refreshWsPaths,
   WorkspaceSliceAction,
   workspaceSliceKey,
-} from '@bangle.io/workspace-context';
+} from '@bangle.io/slice-workspace';
+import { sleep } from '@bangle.io/utils';
 
 export function downloadWorkspace() {
   return (
@@ -20,7 +20,7 @@ export function downloadWorkspace() {
     const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
     if (!wsName) {
       dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'new-note-not-no-workspace',
@@ -32,7 +32,7 @@ export function downloadWorkspace() {
 
     const abortController = new AbortController();
     dispatch({
-      name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+      name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
       value: {
         severity: 'info',
         uid: 'downloading-ws-copy' + wsName,
@@ -54,7 +54,7 @@ export function restoreWorkspaceFromBackup() {
 
     if (!wsName) {
       store.dispatch({
-        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
         value: {
           severity: 'error',
           uid: 'restoreWorkspaceFromBackup-no-workspace',
@@ -68,7 +68,7 @@ export function restoreWorkspaceFromBackup() {
       .then((file) => {
         const abortController = new AbortController();
         store.dispatch({
-          name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+          name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
           value: {
             severity: 'info',
             uid: 'restoreWorkspaceFromBackup-' + wsName,
@@ -90,7 +90,7 @@ export function restoreWorkspaceFromBackup() {
         () => {
           refreshWsPaths()(store.state, store.dispatch);
           store.dispatch({
-            name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+            name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
             value: {
               severity: 'success',
               uid: 'recovery-finished-' + wsName,
@@ -104,7 +104,7 @@ export function restoreWorkspaceFromBackup() {
             error?.message?.includes(WorkerErrorCode.EMPTY_WORKSPACE_NEEDED)
           ) {
             store.dispatch({
-              name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+              name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
               value: {
                 severity: 'error',
                 uid: 'restoreWorkspaceFromBackup-workspace-has-things',

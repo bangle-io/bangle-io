@@ -9,15 +9,15 @@
 // }
 import type { Mutable } from 'type-fest';
 
-import { initialBangleStore } from '@bangle.io/app-state-context';
+import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import {
   initialEditorSliceState,
   useEditorManagerContext,
-} from '@bangle.io/editor-manager-context';
-import { initialState, useUIManagerContext } from '@bangle.io/ui-context';
+} from '@bangle.io/slice-editor-manager';
+import { initialState, useUIManagerContext } from '@bangle.io/slice-ui';
+import type { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
-import type { useWorkspaceContext } from '@bangle.io/workspace-context';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 export const getEditorPluginMetadataReturn: ReturnType<

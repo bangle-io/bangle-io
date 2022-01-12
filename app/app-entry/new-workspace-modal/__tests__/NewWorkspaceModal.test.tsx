@@ -12,9 +12,9 @@ import {
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
-import { useUIManagerContext } from '@bangle.io/ui-context';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { hasWorkspace } from '@bangle.io/slice-workspaces-manager';
 import { sleep } from '@bangle.io/utils';
-import { hasWorkspace } from '@bangle.io/workspaces';
 
 import {
   WORKSPACE_AUTH_REJECTED_ERROR,
@@ -22,8 +22,8 @@ import {
 } from '../common';
 import { NewWorkspaceModalContainer } from '../NewWorkspaceModal';
 
-jest.mock('@bangle.io/ui-context', () => {
-  const otherThings = jest.requireActual('@bangle.io/ui-context');
+jest.mock('@bangle.io/slice-ui', () => {
+  const otherThings = jest.requireActual('@bangle.io/slice-ui');
   return {
     ...otherThings,
     useUIManagerContext: jest.fn(() => ({})),
@@ -49,8 +49,10 @@ jest.mock('react-dom', () => {
   };
 });
 
-jest.mock('@bangle.io/workspaces', () => {
-  const workspaceThings = jest.requireActual('@bangle.io/workspaces');
+jest.mock('@bangle.io/slice-workspaces-manager', () => {
+  const workspaceThings = jest.requireActual(
+    '@bangle.io/slice-workspaces-manager',
+  );
   return {
     ...workspaceThings,
     hasWorkspace: jest.fn(() => () => {}),

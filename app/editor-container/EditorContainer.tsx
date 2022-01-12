@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { Editor } from '@bangle.io/editor';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
 import { closeEditor, splitEditor } from '@bangle.io/shared-operations';
-import { Page } from '@bangle.io/ui-components';
-import { cx, useDestroyRef } from '@bangle.io/utils';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import {
   checkFileExists,
   useWorkspaceContext,
-} from '@bangle.io/workspace-context';
+} from '@bangle.io/slice-workspace';
+import { Page } from '@bangle.io/ui-components';
+import { cx, useDestroyRef } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { EditorBar } from './EditorBar';

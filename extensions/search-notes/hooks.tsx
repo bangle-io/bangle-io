@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { search } from '@bangle.dev/search';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
-import { forEachEditor } from '@bangle.io/editor-manager-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionState } from '@bangle.io/extension-registry';
+import { forEachEditor } from '@bangle.io/slice-editor-manager';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { useDebouncedValue } from '@bangle.io/utils';
-import { useWorkspaceContext } from '@bangle.io/workspace-context';
 
 import {
   DEBOUNCE_MAX_WAIT,

@@ -11,6 +11,7 @@ import { CorePalette } from '@bangle.io/constants';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import type { UnPromisify } from '@bangle.io/shared-types';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
   FileDocumentIcon,
@@ -18,7 +19,6 @@ import {
   UniversalPalette,
 } from '@bangle.io/ui-components';
 import { isAbortError, removeMdExtension } from '@bangle.io/utils';
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/workspace-context';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ExtensionPaletteType } from './config';

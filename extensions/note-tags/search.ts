@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Node } from '@bangle.dev/pm';
 
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
-import { getNote, useWorkspaceContext } from '@bangle.io/workspace-context';
+import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
 
 const FZF_SEARCH_LIMIT = 16;
 
