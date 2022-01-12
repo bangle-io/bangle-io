@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { NodeSelection, Selection } from '@bangle.dev/pm';
 
 import { NoteLink } from '@bangle.io/contextual-ui-components';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import type { SearchMatch, SearchResultItem } from '@bangle.io/search-pm-node';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,

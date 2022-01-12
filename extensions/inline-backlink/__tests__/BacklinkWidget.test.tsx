@@ -1,8 +1,8 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   getUseEditorManagerContextReturn,

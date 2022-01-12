@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 
 import { getFocusedWsPath } from '@bangle.io/shared-operations';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   createNote,
   renameNote,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
 import { InputPalette, UniversalPalette } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { randomName, useDestroyRef } from '@bangle.io/utils';
 import {
   filePathToWsPath,

@@ -3,8 +3,8 @@ import React, { useCallback } from 'react';
 import { Activitybar } from '@bangle.io/activitybar';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import { NoteSidebar, NoteSidebarShowButton } from '@bangle.io/note-sidebar';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { Dhancha } from '@bangle.io/ui-dhancha';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 

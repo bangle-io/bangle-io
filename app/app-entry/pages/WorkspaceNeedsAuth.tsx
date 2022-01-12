@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
@@ -15,7 +16,6 @@ import {
 } from '@bangle.io/slice-workspaces-manager';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { keybindingsHelper } from '@bangle.io/utils';
 
 export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {

@@ -1,13 +1,13 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
+import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import {
   getEditor,
   getEditorState,
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
-import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
-import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
 import {

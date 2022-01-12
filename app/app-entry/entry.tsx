@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
 import { initializeBangleStore } from '@bangle.io/bangle-store';
-import { EditorManager } from '@bangle.io/slice-editor-manager';
 import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,
@@ -17,8 +16,9 @@ import {
 } from '@bangle.io/page-context';
 import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
 import { polyfills } from '@bangle.io/shared';
-import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
+import { EditorManager } from '@bangle.io/slice-editor-manager';
 import { UIManager } from '@bangle.io/slice-ui';
+import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 import { pathMatcher } from '@bangle.io/ws-path';
 
 import { AppContainer } from './AppContainer';

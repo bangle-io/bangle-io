@@ -9,12 +9,12 @@ import React, {
 import { Selection } from '@bangle.dev/pm';
 
 import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import {
   getEditor,
   getEditorState,
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
-import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import {

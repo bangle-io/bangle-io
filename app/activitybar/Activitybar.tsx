@@ -2,12 +2,12 @@ import React from 'react';
 
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
+import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   goToWorkspaceHomeRoute,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
 import { GiftIcon, SingleCharIcon } from '@bangle.io/ui-components';
-import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
 
 import { ActivitybarButton } from './ActivitybarButton';
 import { ActivitybarMobile } from './ActivitybarMobile';

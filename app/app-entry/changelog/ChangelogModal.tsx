@@ -27,8 +27,8 @@ import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 
 import { CHANGELOG_TEXT } from '@bangle.io/config';
-import { Modal } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { Modal } from '@bangle.io/ui-components';
 import { useLocalStorage } from '@bangle.io/utils';
 
 const specRegistry = new SpecRegistry([

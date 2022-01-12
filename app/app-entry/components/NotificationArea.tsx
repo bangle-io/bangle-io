@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   ButtonIcon,
   CheckCircleIcon,
@@ -11,7 +12,6 @@ import {
   InformationCircleIcon,
   TextButton,
 } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 
 export function NotificationArea({}) {
   const { notifications, dispatch } = useUIManagerContext();

@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import type { HighlightTextType, SearchMatch } from '@bangle.io/search-pm-node';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,

@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/workspace-context"
+    "directory": "lib/slice-workspace"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"

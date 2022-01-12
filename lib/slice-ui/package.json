@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/ui-context"
+    "directory": "lib/slice-ui"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"

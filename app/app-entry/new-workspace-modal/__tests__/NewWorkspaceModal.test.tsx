@@ -12,8 +12,8 @@ import {
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
-import { hasWorkspace } from '@bangle.io/slice-workspaces-manager';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { hasWorkspace } from '@bangle.io/slice-workspaces-manager';
 import { sleep } from '@bangle.io/utils';
 
 import {

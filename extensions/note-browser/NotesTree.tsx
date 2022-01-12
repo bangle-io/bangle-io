@@ -3,6 +3,7 @@ import { useVirtual } from 'react-virtual';
 
 import { isFirefox } from '@bangle.io/config';
 import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
+import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   deleteNote,
   pushWsPath,
@@ -18,7 +19,6 @@ import {
   NullIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   removeMdExtension,
   safeScrollIntoViewIfNeeded,
