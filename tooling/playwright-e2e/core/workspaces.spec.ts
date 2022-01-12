@@ -16,6 +16,7 @@ import {
   runOperation,
   sleep,
   waitForEditorFocus,
+  waitForNotification,
 } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
@@ -117,8 +118,10 @@ test.describe.parallel('workspaces', () => {
       ),
     ]);
 
-    expect(await page.url()).toMatch(new RegExp('help'));
+    await waitForNotification(page, `Successfully removed ${wsName2}`);
 
+    expect(await page.url()).toMatch(new RegExp('help'));
+    await sleep();
     await openWorkspacePalette(page);
 
     const result = (await getItemsInPalette(page, { hasItems: true })).sort();

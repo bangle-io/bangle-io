@@ -1,20 +1,21 @@
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import {
-  EditorIdType,
-  editorManagerSliceKey,
-} from '@bangle.io/editor-manager-context';
+  CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+  CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+} from '@bangle.io/constants';
+import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/ui-context';
 import {
   deleteNote,
-  updateOpenedWsPaths,
-  WorkspaceDispatchType,
   WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/workspace-context';
 import {
+  createWorkspace,
   deleteWorkspace as _deletedWorkspace,
   HELP_FS_WORKSPACE_NAME,
+  WorkspaceType,
 } from '@bangle.io/workspaces';
+import { WorkspacesSliceAction } from '@bangle.io/workspaces/common';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { getFocusedWsPath } from './core';
@@ -195,6 +196,90 @@ export function removeWorkspace(wsName?: string) {
       )
     ) {
       await _deletedWorkspace(wsName)(state, dispatch, store);
+
+      dispatch({
+        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        value: {
+          severity: 'success',
+          uid: 'success-removed-' + wsName,
+          content: 'Successfully removed ' + wsName,
+        },
+      });
     }
+  };
+}
+
+export function createBrowserWorkspace(wsName: string) {
+  return async (
+    state: AppState,
+    dispatch: ApplicationStore<
+      any,
+      WorkspacesSliceAction | UiContextAction
+    >['dispatch'],
+    store: ApplicationStore,
+  ) => {
+    if (typeof wsName !== 'string') {
+      throw new Error(
+        'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+      );
+    }
+
+    try {
+      await createWorkspace(wsName, WorkspaceType.browser, {})(
+        state,
+        dispatch,
+        store,
+      );
+      (window as any).fathom?.trackGoal('AISLCLRF', 0);
+    } catch (error) {
+      dispatch({
+        name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+        value: {
+          severity: 'error',
+          uid: 'error-create-workspace-' + wsName,
+          content: 'Unable to create workspace ' + wsName,
+        },
+      });
+      throw error;
+    }
+
+    return true;
+  };
+}
+
+export function createNativeFsWorkpsace(rootDirHandle) {
+  return async (
+    state: AppState,
+    dispatch: ApplicationStore<
+      any,
+      WorkspacesSliceAction | UiContextAction
+    >['dispatch'],
+    store: ApplicationStore,
+  ) => {
+    if (typeof rootDirHandle?.name === 'string') {
+      try {
+        await createWorkspace(rootDirHandle.name, WorkspaceType.nativefs, {
+          rootDirHandle,
+        })(state, dispatch, store);
+
+        (window as any).fathom?.trackGoal('K3NFTGWX', 0);
+      } catch (error) {
+        store.dispatch({
+          name: 'action::@bangle.io/ui-context:SHOW_NOTIFICATION',
+          value: {
+            severity: 'error',
+            uid: 'error-create-workspace-' + rootDirHandle?.name,
+            content: 'Unable to create workspace ' + rootDirHandle?.name,
+          },
+        });
+        throw error;
+      }
+    } else {
+      throw new Error(
+        'Incorrect parameters for ' +
+          CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+      );
+    }
+    return true;
   };
 }
