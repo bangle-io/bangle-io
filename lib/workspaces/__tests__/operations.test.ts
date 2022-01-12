@@ -17,6 +17,7 @@ const dateNow = Date.now;
 jest.mock('@bangle.io/page-context', () => {
   return {
     getPageLocation: jest.fn(() => () => {}),
+    saveToHistoryState: jest.fn(() => () => {}),
     goToLocation: jest.fn(() => () => {}),
   };
 });

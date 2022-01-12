@@ -1,7 +1,7 @@
 export type {
   WorkspaceInfo,
-  WorkspacesDispatchType,
   WorkspacesAppStore,
+  WorkspacesDispatchType,
 } from './common';
 export {
   HELP_FS_INDEX_WS_PATH,

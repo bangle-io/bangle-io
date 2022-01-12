@@ -8,7 +8,10 @@ import {
   WorkspacesSliceState,
 } from './common';
 import { mergeWsInfoRegistries } from './helpers';
-import { refreshWorkspacesEffect } from './side-effects';
+import {
+  refreshWorkspacesEffect,
+  saveWorkspaceInfoEffect,
+} from './side-effects';
 
 export function workspacesSlice() {
   assertActionType('@bangle.io/workspaces', {} as WorkspacesSliceAction);
@@ -40,6 +43,6 @@ export function workspacesSlice() {
         }
       },
     },
-    sideEffect: [refreshWorkspacesEffect],
+    sideEffect: [refreshWorkspacesEffect, saveWorkspaceInfoEffect],
   });
 }

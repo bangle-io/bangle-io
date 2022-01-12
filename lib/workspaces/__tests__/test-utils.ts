@@ -1,5 +1,6 @@
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 
+import { WorkspaceInfo, WorkspaceType } from '../common';
 import { workspacesSlice } from '../workspaces-slice';
 
 export const createState = () => {
@@ -47,4 +48,14 @@ export const getActionsDispatched = (mockDispatch, name) => {
   }
 
   return actions;
+};
+
+export const createWsInfo = (obj: Partial<WorkspaceInfo>): WorkspaceInfo => {
+  return {
+    name: 'test-ws-info',
+    type: WorkspaceType['browser'],
+    lastModified: 0,
+    metadata: {},
+    ...obj,
+  };
 };

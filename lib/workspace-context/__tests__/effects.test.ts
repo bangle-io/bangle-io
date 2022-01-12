@@ -1,6 +1,6 @@
 import { sleep } from '@bangle.dev/utils';
 
-import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
+import { getPageLocation } from '@bangle.io/page-context';
 import type { ReturnReturnType, UnPromisify } from '@bangle.io/shared-types';
 import {
   getWorkspaceInfo,
@@ -39,7 +39,6 @@ jest.mock('@bangle.io/page-context', () => {
   return {
     ...ops,
     getPageLocation: jest.fn(),
-    saveToHistoryState: jest.fn(),
   };
 });
 
@@ -61,9 +60,7 @@ const goToInvalidPathRouteMock = goToInvalidPathRoute as jest.MockedFunction<
 const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
   typeof getWorkspaceInfo
 >;
-const saveToHistoryStateMock = saveToHistoryState as jest.MockedFunction<
-  typeof saveToHistoryState
->;
+
 const getPageLocationMock = getPageLocation as jest.MockedFunction<
   typeof getPageLocation
 >;
@@ -75,7 +72,6 @@ beforeEach(() => {
   refreshWsPathsMock.mockImplementation(() => () => true);
   updateLocationMock.mockImplementation(() => () => true);
   goToInvalidPathRouteMock.mockImplementation(() => () => {});
-  saveToHistoryStateMock.mockImplementation(() => () => {});
   getWorkspaceInfoMock.mockImplementation(() => async () => ({
     name: 'test-ws',
     type: WorkspaceType.browser,
@@ -216,19 +212,6 @@ describe('saveWorkspaceInfoEffect', () => {
     });
     await sleep(0);
 
-    expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
-    expect(getWorkspaceInfo).nthCalledWith(1, 'test-ws');
-
-    await sleep(0);
-
-    expect(saveToHistoryState).toBeCalledTimes(1);
-    expect(saveToHistoryState).nthCalledWith(1, 'workspaceInfo', {
-      metadata: {},
-      name: 'test-ws',
-      type: 'browser',
-      lastModified: 1,
-    });
-
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([
       'action::@bangle.io/workspace-context:sync-page-location',
     ]);
@@ -241,18 +224,9 @@ describe('saveWorkspaceInfoEffect', () => {
         recentlyUsedWsPaths: ['hello:world.md'],
       },
     });
-
-    expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
   });
 
   test('destroying should not dispatch action', async () => {
-    let res;
-    getWorkspaceInfoMock.mockImplementation(
-      () => () =>
-        new Promise((_res) => {
-          res = _res;
-        }),
-    );
     const { store } = createStore();
 
     store.dispatch({
@@ -264,26 +238,12 @@ describe('saveWorkspaceInfoEffect', () => {
     });
     await sleep(0);
 
-    expect(getWorkspaceInfo).toHaveBeenCalledTimes(1);
     store.destroy();
 
-    res();
     await sleep(0);
-
-    expect(saveToHistoryState).toBeCalledTimes(0);
   });
 
   test('check the current wsName before dispatching action', async () => {
-    let res: Array<
-      (cb: UnPromisify<ReturnReturnType<typeof getWorkspaceInfoMock>>) => void
-    > = [];
-
-    getWorkspaceInfoMock.mockImplementation(
-      () => () =>
-        new Promise((_res) => {
-          res.push(_res);
-        }),
-    );
     const { store } = createStore();
 
     store.dispatch({
@@ -294,9 +254,6 @@ describe('saveWorkspaceInfoEffect', () => {
       },
     });
     await sleep(0);
-
-    expect(getWorkspaceInfoMock).toBeCalledTimes(1);
-    expect(getWorkspaceInfoMock).nthCalledWith(1, 'test-ws');
 
     // change the wsName while the request is to get info is in flight
     store.dispatch({
@@ -307,32 +264,6 @@ describe('saveWorkspaceInfoEffect', () => {
       },
     });
     await sleep(0);
-
-    expect(getWorkspaceInfoMock).nthCalledWith(2, 'test-ws2');
-
-    const firstResponse: WorkspaceInfo = {
-      name: 'test-ws',
-      type: WorkspaceType.browser,
-      metadata: {},
-      lastModified: 3,
-    };
-    const secondResponse: WorkspaceInfo = {
-      name: 'test-ws2',
-      type: WorkspaceType.browser,
-      metadata: {},
-      lastModified: 3,
-    };
-    res[0]!(firstResponse);
-    res[1]!(secondResponse);
-    await sleep(0);
-
-    expect(saveToHistoryState).toBeCalledTimes(1);
-    // should only dispatch for the current wsName
-    expect(saveToHistoryState).nthCalledWith(
-      1,
-      'workspaceInfo',
-      secondResponse,
-    );
   });
 });
 

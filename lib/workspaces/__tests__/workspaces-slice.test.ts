@@ -1,16 +1,5 @@
-import { WorkspaceType } from '..';
-import { WorkspaceInfo, workspacesSliceKey } from '../common';
-import { createState } from './test-utils';
-
-const createWsInfo = (obj: Partial<WorkspaceInfo>): WorkspaceInfo => {
-  return {
-    name: 'test-ws-info',
-    type: WorkspaceType['browser'],
-    lastModified: 0,
-    metadata: {},
-    ...obj,
-  };
-};
+import { workspacesSliceKey } from '../common';
+import { createState, createWsInfo } from './test-utils';
 
 describe('state', () => {
   test('works on blank', () => {
