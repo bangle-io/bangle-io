@@ -1771,7 +1771,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/activitybar@workspace:app/activitybar"
   dependencies:
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-operations": "workspace:*"
@@ -1806,9 +1806,9 @@ __metadata:
     "@bangle.dev/table": 0.28.5
     "@bangle.dev/utils": 0.28.5
     "@bangle.io/activitybar": "workspace:*"
-    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/bangle-store": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/collab-extension": "workspace:*"
     "@bangle.io/collapsible-heading": "workspace:*"
     "@bangle.io/config": "workspace:*"
@@ -1861,9 +1861,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/app-state-context@workspace:*, @bangle.io/app-state-context@workspace:lib/app-state-context":
+"@bangle.io/baby-fs@workspace:*, @bangle.io/baby-fs@workspace:js-lib/baby-fs":
   version: 0.0.0-use.local
-  resolution: "@bangle.io/app-state-context@workspace:lib/app-state-context"
+  resolution: "@bangle.io/baby-fs@workspace:js-lib/baby-fs"
+  dependencies:
+    "@bangle.io/base-error": "workspace:*"
+    idb-keyval: ^5.1.5
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/bangle-store-context@workspace:*, @bangle.io/bangle-store-context@workspace:lib/bangle-store-context":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/bangle-store-context@workspace:lib/bangle-store-context"
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -1872,15 +1881,6 @@ __metadata:
     "@types/react-dom": ^17.0.10
     react: ^17.0.2
     react-dom: ^17.0.2
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/baby-fs@workspace:*, @bangle.io/baby-fs@workspace:js-lib/baby-fs":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/baby-fs@workspace:js-lib/baby-fs"
-  dependencies:
-    "@bangle.io/base-error": "workspace:*"
-    idb-keyval: ^5.1.5
   languageName: unknown
   linkType: soft
 
@@ -1995,8 +1995,8 @@ __metadata:
     "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2025,7 +2025,7 @@ __metadata:
     "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2096,7 +2096,7 @@ __metadata:
     "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/react": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/editor": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2140,7 +2140,7 @@ __metadata:
     "@bangle.dev/tooltip": 0.28.5
     "@bangle.dev/trailing-node": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/pm-plugins": "workspace:*"
@@ -2164,7 +2164,7 @@ __metadata:
     "@bangle.dev/react": 0.28.5
     "@bangle.dev/test-helpers": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
@@ -2217,7 +2217,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/react": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/editor": "workspace:*"
@@ -2473,7 +2473,7 @@ __metadata:
     "@bangle.dev/all-base-components": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/test-helpers": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
@@ -2611,7 +2611,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/search": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
@@ -2659,7 +2659,7 @@ __metadata:
     "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2680,7 +2680,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/shared-operations@workspace:lib/shared-operations"
   dependencies:
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
@@ -2745,7 +2745,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/test-helpers": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2768,7 +2768,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-page@workspace:lib/slice-page"
   dependencies:
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2784,7 +2784,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-ui@workspace:lib/slice-ui"
   dependencies:
-    "@bangle.io/app-state-context": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2802,8 +2802,8 @@ __metadata:
     "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2834,8 +2834,8 @@ __metadata:
     "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -2878,8 +2878,8 @@ __metadata:
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/test-helpers": 0.28.5
     "@bangle.dev/utils": 0.28.5
-    "@bangle.io/app-state-context": "workspace:*"
     "@bangle.io/baby-fs": "workspace:*"
+    "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"

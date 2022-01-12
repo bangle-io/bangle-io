@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import { useSliceState } from '@bangle.io/app-state-context';
+import { useSliceState } from '@bangle.io/bangle-store-context';
 
 import { extensionRegistrySliceKey } from './common';
 import { ExtensionRegistry } from './ExtensionRegistry';

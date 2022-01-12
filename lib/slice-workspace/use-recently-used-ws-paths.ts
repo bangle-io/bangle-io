@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
-import { useSliceState } from '@bangle.io/app-state-context';
+import { useSliceState } from '@bangle.io/bangle-store-context';
 import { usePrevious, useRecencyMonitor } from '@bangle.io/utils';
 
 import { workspaceSliceKey } from './common';

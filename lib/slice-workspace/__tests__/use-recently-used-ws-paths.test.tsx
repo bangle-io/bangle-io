@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import {
   initialBangleStore,
   useSliceState,
-} from '@bangle.io/app-state-context';
+} from '@bangle.io/bangle-store-context';
 import { getPageLocation } from '@bangle.io/slice-page';
 import {
   getWorkspaceInfo,
@@ -33,8 +33,8 @@ jest.mock('@bangle.io/utils', () => {
   };
 });
 
-jest.mock('@bangle.io/app-state-context', () => {
-  const actual = jest.requireActual('@bangle.io/app-state-context');
+jest.mock('@bangle.io/bangle-store-context', () => {
+  const actual = jest.requireActual('@bangle.io/bangle-store-context');
   return {
     ...actual,
     useSliceState: jest.fn(),

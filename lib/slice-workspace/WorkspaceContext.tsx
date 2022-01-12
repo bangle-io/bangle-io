@@ -4,7 +4,7 @@ import type { Merge } from 'type-fest';
 import {
   initialBangleStore,
   useSliceState,
-} from '@bangle.io/app-state-context';
+} from '@bangle.io/bangle-store-context';
 import { ApplicationStore } from '@bangle.io/create-store';
 
 import { workspaceSliceKey } from './common';

@@ -9,7 +9,7 @@
 // }
 import type { Mutable } from 'type-fest';
 
-import { initialBangleStore } from '@bangle.io/app-state-context';
+import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import {
   initialEditorSliceState,

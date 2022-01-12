@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { Editor } from '@bangle.io/editor';
 import { closeEditor, splitEditor } from '@bangle.io/shared-operations';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';

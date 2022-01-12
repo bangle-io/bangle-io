@@ -3,7 +3,7 @@ import React, { useContext, useMemo } from 'react';
 import {
   initialBangleStore,
   useSliceState,
-} from '@bangle.io/app-state-context';
+} from '@bangle.io/bangle-store-context';
 import { ApplicationStore } from '@bangle.io/create-store';
 
 import { editorManagerSliceKey } from './constants';

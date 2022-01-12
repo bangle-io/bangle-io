@@ -1,7 +1,7 @@
 {
   "name": "lib",
   "workspaces": [
-    "app-state-context",
+    "bangle-store-context",
     "config",
     "constants",
     "contextual-ui-components",

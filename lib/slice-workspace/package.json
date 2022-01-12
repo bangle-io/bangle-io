@@ -21,8 +21,8 @@
   "devDependencies": {
     "@bangle.dev/core": "0.28.5",
     "@bangle.dev/utils": "0.28.5",
-    "@bangle.io/app-state-context": "workspace:*",
     "@bangle.io/baby-fs": "workspace:*",
+    "@bangle.io/bangle-store-context": "workspace:*",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/history": "^4.7.9",

@@ -5,7 +5,7 @@ import React from 'react';
 import { BangleEditor } from '@bangle.dev/core';
 import { Node, Selection } from '@bangle.dev/pm';
 
-import { initialBangleStore } from '@bangle.io/app-state-context';
+import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import {

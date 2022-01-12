@@ -11,7 +11,7 @@ import type { EditorState } from '@bangle.dev/pm';
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { psx, renderTestEditor, typeText } from '@bangle.dev/test-helpers';
 
-import { initialBangleStore } from '@bangle.io/app-state-context';
+import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import type { EditorWatchPluginState } from '@bangle.io/shared-types';
 

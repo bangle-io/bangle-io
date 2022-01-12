@@ -27,7 +27,7 @@
     "@bangle.dev/pm": "0.28.5",
     "@bangle.dev/react": "0.28.5",
     "@bangle.dev/utils": "0.28.5",
-    "@bangle.io/app-state-context": "workspace:*",
+    "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/serial-operation-context": "workspace:*",

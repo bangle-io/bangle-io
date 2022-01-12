@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/page-context"
+    "directory": "lib/slice-page"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -19,7 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.io/app-state-context": "workspace:*",
+    "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   goToWorkspaceHomeRoute,

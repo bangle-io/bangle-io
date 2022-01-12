@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
 import { removeWorkspace } from '@bangle.io/shared-operations';

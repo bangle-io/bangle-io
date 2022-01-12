@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { toggleWorkspacePalette } from '@bangle.io/shared-operations';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';

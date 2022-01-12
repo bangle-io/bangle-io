@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
   CORE_PALETTES_TOGGLE_OPERATION_PALETTE,

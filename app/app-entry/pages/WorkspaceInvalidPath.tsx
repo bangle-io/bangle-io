@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   newWorkspace,
   toggleWorkspacePalette,

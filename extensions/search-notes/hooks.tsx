@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { search } from '@bangle.dev/search';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionState } from '@bangle.io/extension-registry';
 import { forEachEditor } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';

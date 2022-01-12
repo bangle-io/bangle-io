@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {

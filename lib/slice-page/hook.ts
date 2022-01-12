@@ -1,4 +1,4 @@
-import { useSliceState } from '@bangle.io/app-state-context';
+import { useSliceState } from '@bangle.io/bangle-store-context';
 
 import {
   PageDispatchType,

@@ -2,11 +2,11 @@ import './NewWorkspaceModal.css';
 
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   DirTypeSystemHandle,
   supportsNativeBrowserFs,
 } from '@bangle.io/baby-fs';
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
