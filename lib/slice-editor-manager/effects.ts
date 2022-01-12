@@ -1,7 +1,7 @@
 import { BangleEditor } from '@bangle.dev/core';
 
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
-import { pageLifeCycleTransitionedTo } from '@bangle.io/page-context';
+import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
 import { debounceFn, trimEndWhiteSpaceBeforeCursor } from '@bangle.io/utils';
 
 import {

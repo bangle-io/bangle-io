@@ -9,7 +9,7 @@ import { BaseHistory } from './history/base-history';
 import { Location } from './history/types';
 
 export const PAGE_BLOCK_RELOAD_ACTION_NAME =
-  'action::@bangle.io/page-context:BLOCK_RELOAD';
+  'action::@bangle.io/slice-page:BLOCK_RELOAD';
 
 export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
   name: typeof PAGE_BLOCK_RELOAD_ACTION_NAME;
@@ -44,17 +44,17 @@ export interface PageSliceStateType {
 export type PageSliceAction =
   | PAGE_BLOCK_RELOAD_ACTION_TYPE
   | {
-      name: 'action::@bangle.io/page-context:UPDATE_PAGE_LIFE_CYCLE_STATE';
+      name: 'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE';
       value: { current?: PageLifeCycleStates; previous?: PageLifeCycleStates };
     }
   | {
-      name: 'action::@bangle.io/page-context:history-set-history';
+      name: 'action::@bangle.io/slice-page:history-set-history';
       value: {
         history: BaseHistory;
       };
     }
   | {
-      name: 'action::@bangle.io/page-context:history-update-location';
+      name: 'action::@bangle.io/slice-page:history-update-location';
       value: { location: Location };
     };
 

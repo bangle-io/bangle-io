@@ -1,6 +1,6 @@
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { pageLifeCycleTransitionedTo } from '@bangle.io/page-context';
 import type { JsonObject, JsonPrimitive } from '@bangle.io/shared-types';
+import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
 import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
 import {
   getScrollParentElement,
@@ -21,8 +21,8 @@ import {
 const getScrollParentElementMock =
   getScrollParentElement as jest.MockedFunction<typeof getScrollParentElement>;
 
-jest.mock('@bangle.io/page-context', () => {
-  const actual = jest.requireActual('@bangle.io/page-context');
+jest.mock('@bangle.io/slice-page', () => {
+  const actual = jest.requireActual('@bangle.io/slice-page');
   return {
     ...actual,
     pageLifeCycleTransitionedTo: jest.fn(() => {

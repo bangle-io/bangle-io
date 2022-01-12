@@ -3,7 +3,7 @@ import { createStore } from './test-utils';
 
 const testFixtures: Array<PageSliceAction> = [
   {
-    name: 'action::@bangle.io/page-context:BLOCK_RELOAD',
+    name: 'action::@bangle.io/slice-page:BLOCK_RELOAD',
     value: {
       block: true,
     },

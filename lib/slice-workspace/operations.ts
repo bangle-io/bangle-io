@@ -11,7 +11,7 @@ import {
   getPageLocation,
   goToLocation,
   historyUpdateOpenedWsPaths,
-} from '@bangle.io/page-context';
+} from '@bangle.io/slice-page';
 import {
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,

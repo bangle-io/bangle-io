@@ -1,7 +1,7 @@
 import { sleep } from '@bangle.dev/utils';
 
-import { getPageLocation } from '@bangle.io/page-context';
 import type { ReturnReturnType, UnPromisify } from '@bangle.io/shared-types';
+import { getPageLocation } from '@bangle.io/slice-page';
 import {
   getWorkspaceInfo,
   WorkspaceInfo,
@@ -34,8 +34,8 @@ jest.mock('../last-seen-ws-name', () => {
   };
 });
 
-jest.mock('@bangle.io/page-context', () => {
-  const ops = jest.requireActual('@bangle.io/page-context');
+jest.mock('@bangle.io/slice-page', () => {
+  const ops = jest.requireActual('@bangle.io/slice-page');
   return {
     ...ops,
     getPageLocation: jest.fn(),

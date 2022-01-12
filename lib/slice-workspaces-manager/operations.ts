@@ -1,5 +1,5 @@
 import { AppState } from '@bangle.io/create-store';
-import { getPageLocation, goToLocation } from '@bangle.io/page-context';
+import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
 import { asssertNotUndefined } from '@bangle.io/utils';
 import {
   pathnameToWsName,

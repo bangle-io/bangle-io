@@ -1,6 +1,6 @@
 import * as idb from 'idb-keyval';
 
-import { saveToHistoryState } from '@bangle.io/page-context';
+import { saveToHistoryState } from '@bangle.io/slice-page';
 
 import {
   SideEffect,

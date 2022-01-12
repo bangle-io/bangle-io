@@ -4,7 +4,7 @@ import {
   initialBangleStore,
   useSliceState,
 } from '@bangle.io/app-state-context';
-import { getPageLocation } from '@bangle.io/page-context';
+import { getPageLocation } from '@bangle.io/slice-page';
 import {
   getWorkspaceInfo,
   WorkspaceType,
@@ -17,8 +17,8 @@ import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
 import { workspaceSliceInitialState } from '../workspace-slice';
 import { createStore } from './test-utils';
 
-jest.mock('@bangle.io/page-context', () => {
-  const ops = jest.requireActual('@bangle.io/page-context');
+jest.mock('@bangle.io/slice-page', () => {
+  const ops = jest.requireActual('@bangle.io/slice-page');
   return {
     ...ops,
     getPageLocation: jest.fn(),

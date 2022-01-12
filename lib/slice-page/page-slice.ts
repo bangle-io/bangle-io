@@ -32,7 +32,7 @@ export const pageSliceInitialState: PageSliceStateType = {
 // Monitors the page's lifecycle and navigation
 // See https://developers.google.com/web/updates/2018/07/page-lifecycle-api
 export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
-  assertActionType('@bangle.io/page-context', {} as PageSliceAction);
+  assertActionType('@bangle.io/slice-page', {} as PageSliceAction);
 
   return new Slice({
     key: pageSliceKey,
@@ -50,20 +50,20 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
       },
       apply: (action, state) => {
         switch (action.name) {
-          case 'action::@bangle.io/page-context:UPDATE_PAGE_LIFE_CYCLE_STATE': {
+          case 'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE': {
             return {
               ...state,
               lifeCycleState: action.value,
             };
           }
-          case 'action::@bangle.io/page-context:BLOCK_RELOAD': {
+          case 'action::@bangle.io/slice-page:BLOCK_RELOAD': {
             return {
               ...state,
               blockReload: action.value.block,
             };
           }
 
-          case 'action::@bangle.io/page-context:history-set-history': {
+          case 'action::@bangle.io/slice-page:history-set-history': {
             const history = action.value.history;
 
             return {
@@ -75,7 +75,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
               },
             };
           }
-          case 'action::@bangle.io/page-context:history-update-location': {
+          case 'action::@bangle.io/slice-page:history-update-location': {
             return {
               ...state,
               location: action.value.location,
@@ -89,7 +89,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
       },
     },
     actions: {
-      'action::@bangle.io/page-context:BLOCK_RELOAD': (actionName) => {
+      'action::@bangle.io/slice-page:BLOCK_RELOAD': (actionName) => {
         const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
           return action.value;
         };
@@ -103,7 +103,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
         };
       },
 
-      'action::@bangle.io/page-context:UPDATE_PAGE_LIFE_CYCLE_STATE': (
+      'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE': (
         actionName,
       ) => {
         const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
@@ -119,7 +119,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
         };
       },
 
-      'action::@bangle.io/page-context:history-set-history': (actionName) => {
+      'action::@bangle.io/slice-page:history-set-history': (actionName) => {
         const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
           return false as const;
         };
@@ -133,9 +133,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
         };
       },
 
-      'action::@bangle.io/page-context:history-update-location': (
-        actionName,
-      ) => {
+      'action::@bangle.io/slice-page:history-update-location': (actionName) => {
         const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
           return {
             location: {

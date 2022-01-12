@@ -6,14 +6,14 @@ import {
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {
-  pageLifeCycleTransitionedTo,
-  pageSlice,
-  PageSliceAction,
-} from '@bangle.io/page-context';
-import {
   EditorManagerAction,
   editorManagerSlice,
 } from '@bangle.io/slice-editor-manager';
+import {
+  pageLifeCycleTransitionedTo,
+  pageSlice,
+  PageSliceAction,
+} from '@bangle.io/slice-page';
 import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';

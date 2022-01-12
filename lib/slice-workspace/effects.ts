@@ -1,6 +1,6 @@
 import { savePreviousValue } from '@bangle.io/create-store';
-import { getPageLocation } from '@bangle.io/page-context';
 import type { ReturnReturnType } from '@bangle.io/shared-types';
+import { getPageLocation } from '@bangle.io/slice-page';
 import { shallowEqual } from '@bangle.io/utils';
 
 import { SideEffect, workspaceSliceKey } from './common';

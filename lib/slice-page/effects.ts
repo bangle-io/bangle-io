@@ -38,7 +38,7 @@ export const watchPageLifeCycleEffect: SliceSideEffect<
 > = (store) => {
   const handler = (event) => {
     store.dispatch({
-      name: 'action::@bangle.io/page-context:UPDATE_PAGE_LIFE_CYCLE_STATE',
+      name: 'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE',
       value: {
         current: event.newState,
         previous: event.oldState,
@@ -69,13 +69,13 @@ export const watchHistoryEffect: SliceSideEffect<
 
   const browserHistory = new BrowserHistory('', (location) => {
     store.dispatch({
-      name: 'action::@bangle.io/page-context:history-update-location',
+      name: 'action::@bangle.io/slice-page:history-update-location',
       value: { location },
     });
   });
 
   store.dispatch({
-    name: 'action::@bangle.io/page-context:history-set-history',
+    name: 'action::@bangle.io/slice-page:history-set-history',
     value: { history: browserHistory },
   });
 

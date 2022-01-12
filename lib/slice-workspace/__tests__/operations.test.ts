@@ -10,7 +10,7 @@ import {
   getPageLocation,
   goToLocation,
   historyUpdateOpenedWsPaths,
-} from '@bangle.io/page-context';
+} from '@bangle.io/slice-page';
 import {
   FileSystem,
   getWorkspaceInfo,
@@ -59,8 +59,8 @@ jest.mock('@bangle.io/slice-workspaces-manager', () => {
   };
 });
 
-jest.mock('@bangle.io/page-context', () => {
-  const ops = jest.requireActual('@bangle.io/page-context');
+jest.mock('@bangle.io/slice-page', () => {
+  const ops = jest.requireActual('@bangle.io/slice-page');
   return {
     ...ops,
     historyUpdateOpenedWsPaths: jest.fn(),

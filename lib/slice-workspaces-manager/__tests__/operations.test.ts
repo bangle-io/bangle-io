@@ -10,11 +10,11 @@ import {
   listWorkspaces,
 } from '../operations';
 import { createStore } from './test-utils';
-import { goToLocation } from '@bangle.io/page-context';
+import { goToLocation } from '@bangle.io/slice-page';
 
 const dateNow = Date.now;
 
-jest.mock('@bangle.io/page-context', () => {
+jest.mock('@bangle.io/slice-page', () => {
   return {
     getPageLocation: jest.fn(() => () => {}),
     saveToHistoryState: jest.fn(() => () => {}),

@@ -2,13 +2,13 @@
 // eslint-disable-next-line simple-import-sort/imports
 import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
 
-import { saveToHistoryState } from '@bangle.io/page-context';
+import { saveToHistoryState } from '@bangle.io/slice-page';
 import { sleep } from '@bangle.io/utils';
 import { createStore, createWsInfo } from './test-utils';
 import { WorkspaceType } from '..';
 
-jest.mock('@bangle.io/page-context', () => {
-  const ops = jest.requireActual('@bangle.io/page-context');
+jest.mock('@bangle.io/slice-page', () => {
+  const ops = jest.requireActual('@bangle.io/slice-page');
   return {
     ...ops,
     saveToHistoryState: jest.fn(() => () => {}),
