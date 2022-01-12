@@ -12,12 +12,12 @@ import {
   goToLocation,
   historyUpdateOpenedWsPaths,
 } from '@bangle.io/page-context';
-import { asssertNotUndefined } from '@bangle.io/utils';
 import {
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
-} from '@bangle.io/workspaces';
+} from '@bangle.io/slice-workspaces-manager';
+import { asssertNotUndefined } from '@bangle.io/utils';
 import {
   OpenedWsPaths,
   pathnameToWsName,

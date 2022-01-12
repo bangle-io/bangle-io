@@ -3,7 +3,7 @@
  * and do the necessary.
  */
 
-import { FileSystem } from '@bangle.io/workspaces';
+import { FileSystem } from '@bangle.io/slice-workspaces-manager';
 
 export type FileSystemType = ReturnType<typeof fileSystemPlus>;
 

@@ -32,7 +32,7 @@ export function listWorkspaces() {
     const wsInfosInDb = await readWorkspacesInfoReg();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: wsInfosInDb,
       },
@@ -131,7 +131,7 @@ export function createWorkspace(
     }
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsName]: workspace,
@@ -160,7 +160,7 @@ export function deleteWorkspace(targetWsName: string) {
     );
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [targetWsName]: {

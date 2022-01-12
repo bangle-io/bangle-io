@@ -63,7 +63,7 @@ export interface WorkspacesSliceState {
 }
 
 export type WorkspacesSliceAction = {
-  name: 'action::@bangle.io/workspaces:set-workspace-infos';
+  name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos';
   value: { workspaceInfos: WorkspaceInfoReg };
 };
 

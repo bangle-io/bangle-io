@@ -14,7 +14,10 @@ import {
 } from './side-effects';
 
 export function workspacesSlice() {
-  assertActionType('@bangle.io/workspaces', {} as WorkspacesSliceAction);
+  assertActionType(
+    '@bangle.io/slice-workspaces-manager',
+    {} as WorkspacesSliceAction,
+  );
   return new Slice<WorkspacesSliceState, WorkspacesSliceAction>({
     key: workspacesSliceKey,
     state: {
@@ -23,7 +26,7 @@ export function workspacesSlice() {
       },
       apply(action, state) {
         switch (action.name) {
-          case 'action::@bangle.io/workspaces:set-workspace-infos': {
+          case 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos': {
             const existingWsInfos = state.workspaceInfos || {};
 
             const newWsInfos = mergeWsInfoRegistries(

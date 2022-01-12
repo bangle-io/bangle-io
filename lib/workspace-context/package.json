@@ -41,8 +41,8 @@
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/page-context": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-workspaces-manager": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/workspaces": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "reselect": "^4.1.5"
   },

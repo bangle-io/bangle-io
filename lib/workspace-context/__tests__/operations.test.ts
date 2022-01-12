@@ -11,14 +11,14 @@ import {
   goToLocation,
   historyUpdateOpenedWsPaths,
 } from '@bangle.io/page-context';
-import { sleep } from '@bangle.io/utils';
 import {
   FileSystem,
   getWorkspaceInfo,
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
-} from '@bangle.io/workspaces';
+} from '@bangle.io/slice-workspaces-manager';
+import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { goToWorkspaceHomeRoute } from '..';
@@ -44,8 +44,8 @@ import {
   noSideEffectsStore,
 } from './test-utils';
 
-jest.mock('@bangle.io/workspaces', () => {
-  const rest = jest.requireActual('@bangle.io/workspaces');
+jest.mock('@bangle.io/slice-workspaces-manager', () => {
+  const rest = jest.requireActual('@bangle.io/slice-workspaces-manager');
   return {
     ...rest,
     FileSystem: {

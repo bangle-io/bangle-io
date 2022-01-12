@@ -3,19 +3,19 @@ import {
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import {
+  createWorkspace,
+  deleteWorkspace as _deletedWorkspace,
+  HELP_FS_WORKSPACE_NAME,
+  WorkspaceType,
+} from '@bangle.io/slice-workspaces-manager';
+import { WorkspacesSliceAction } from '@bangle.io/slice-workspaces-manager/common';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/ui-context';
 import {
   deleteNote,
   WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/workspace-context';
-import {
-  createWorkspace,
-  deleteWorkspace as _deletedWorkspace,
-  HELP_FS_WORKSPACE_NAME,
-  WorkspaceType,
-} from '@bangle.io/workspaces';
-import { WorkspacesSliceAction } from '@bangle.io/workspaces/common';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { getFocusedWsPath } from './core';

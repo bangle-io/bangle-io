@@ -1,12 +1,15 @@
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
 import { searchPmNode } from '@bangle.io/search-pm-node';
+import {
+  FileSystem,
+  fzfSearchNoteWsPaths,
+} from '@bangle.io/slice-workspaces-manager';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
-import { FileSystem, fzfSearchNoteWsPaths } from '@bangle.io/workspaces';
 
 import { abortableServices } from '../abortable-services';
 
 jest.mock('@bangle.io/search-pm-node');
-jest.mock('@bangle.io/workspaces', () => {
+jest.mock('@bangle.io/slice-workspaces-manager', () => {
   return {
     FileSystem: {
       listAllNotes: jest.fn(async () => []),

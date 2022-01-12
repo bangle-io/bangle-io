@@ -6,7 +6,7 @@ import {
   getWorkspaceInfo,
   WorkspaceInfo,
   WorkspaceType,
-} from '@bangle.io/workspaces';
+} from '@bangle.io/slice-workspaces-manager';
 import { OpenedWsPaths, wsNameToPathname } from '@bangle.io/ws-path';
 
 import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
@@ -42,8 +42,8 @@ jest.mock('@bangle.io/page-context', () => {
   };
 });
 
-jest.mock('@bangle.io/workspaces', () => {
-  const ops = jest.requireActual('@bangle.io/workspaces');
+jest.mock('@bangle.io/slice-workspaces-manager', () => {
+  const ops = jest.requireActual('@bangle.io/slice-workspaces-manager');
 
   return {
     ...ops,

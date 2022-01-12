@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
+import { FileSystem } from '@bangle.io/slice-workspaces-manager';
 import { useDestroyRef } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
-import { FileSystem } from '@bangle.io/workspaces';
 import { isValidFileWsPath, parseLocalFilePath } from '@bangle.io/ws-path';
 
 import {

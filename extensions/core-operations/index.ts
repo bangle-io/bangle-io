@@ -17,8 +17,11 @@ import {
   renameActiveNote,
   splitEditor,
 } from '@bangle.io/shared-operations';
+import {
+  createWorkspace,
+  WorkspaceType,
+} from '@bangle.io/slice-workspaces-manager';
 import { toggleTheme } from '@bangle.io/ui-context';
-import { createWorkspace, WorkspaceType } from '@bangle.io/workspaces';
 
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,

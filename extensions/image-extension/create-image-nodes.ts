@@ -1,7 +1,7 @@
 import type { EditorView } from '@bangle.dev/pm';
 
+import { FileSystem } from '@bangle.io/slice-workspaces-manager';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
-import { FileSystem } from '@bangle.io/workspaces';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { calcImageDimensions } from './image-file-helpers';

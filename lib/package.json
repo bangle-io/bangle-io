@@ -20,7 +20,7 @@
     "ui-dhancha",
     "utils",
     "workspace-context",
-    "workspaces",
+    "slice-workspaces-manager",
     "ws-path"
   ],
   "repository": {

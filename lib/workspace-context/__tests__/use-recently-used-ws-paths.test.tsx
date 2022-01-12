@@ -5,8 +5,11 @@ import {
   useSliceState,
 } from '@bangle.io/app-state-context';
 import { getPageLocation } from '@bangle.io/page-context';
+import {
+  getWorkspaceInfo,
+  WorkspaceType,
+} from '@bangle.io/slice-workspaces-manager';
 import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
-import { getWorkspaceInfo, WorkspaceType } from '@bangle.io/workspaces';
 import { wsPathToPathname, wsPathToSearch } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
@@ -37,8 +40,8 @@ jest.mock('@bangle.io/app-state-context', () => {
     useSliceState: jest.fn(),
   };
 });
-jest.mock('@bangle.io/workspaces', () => {
-  const ops = jest.requireActual('@bangle.io/workspaces');
+jest.mock('@bangle.io/slice-workspaces-manager', () => {
+  const ops = jest.requireActual('@bangle.io/slice-workspaces-manager');
 
   return {
     ...ops,

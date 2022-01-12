@@ -29,7 +29,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({ name: 'testWs' }),
@@ -46,7 +46,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({
@@ -70,7 +70,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({
@@ -95,7 +95,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({
@@ -115,7 +115,7 @@ describe('saveWorkspaceInfoEffect', () => {
     ]);
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({
@@ -133,7 +133,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({

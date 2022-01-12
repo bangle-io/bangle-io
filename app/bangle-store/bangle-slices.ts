@@ -14,11 +14,11 @@ import {
   pageSlice,
   PageSliceAction,
 } from '@bangle.io/page-context';
+import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 import { UiContextAction, uiSlice } from '@bangle.io/ui-context';
 import { workerSlice } from '@bangle.io/worker-setup';
 import type { WorkspaceSliceAction } from '@bangle.io/workspace-context';
 import { workspaceSlice } from '@bangle.io/workspace-context';
-import { workspacesSlice } from '@bangle.io/workspaces';
 
 import { e2eHelpers } from './e2e-helpers';
 

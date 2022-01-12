@@ -3,6 +3,10 @@ import {
   EditorIdType,
   editorManagerSliceKey,
 } from '@bangle.io/editor-manager-context';
+import {
+  deleteWorkspace,
+  HELP_FS_WORKSPACE_NAME,
+} from '@bangle.io/slice-workspaces-manager';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/ui-context';
 import {
   deleteNote,
@@ -11,7 +15,6 @@ import {
   WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/workspace-context';
-import { deleteWorkspace, HELP_FS_WORKSPACE_NAME } from '@bangle.io/workspaces';
 import { resolvePath } from '@bangle.io/ws-path';
 
 export function getFocusedWsPath() {

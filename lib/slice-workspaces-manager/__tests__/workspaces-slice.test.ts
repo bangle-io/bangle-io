@@ -6,7 +6,7 @@ describe('state', () => {
     let state = createState();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {},
       },
@@ -23,7 +23,7 @@ describe('state', () => {
     const wsInfo = createWsInfo({ name: 'testWs' });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({ name: 'testWs' }),
@@ -40,7 +40,7 @@ describe('state', () => {
     let state = createState();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({ name: 'testWs' }),
@@ -59,7 +59,7 @@ describe('state', () => {
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           testWs: createWsInfo({ name: 'testWs' }),
@@ -84,7 +84,7 @@ describe('state', () => {
     const wsInfo2 = createWsInfo({ name: 'testWs2' });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsInfo.name]: wsInfo,
@@ -93,7 +93,7 @@ describe('state', () => {
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsInfo2.name]: wsInfo2,
@@ -118,7 +118,7 @@ describe('same wsName', () => {
     const wsInfo2 = createWsInfo({ name: 'testWs', lastModified: 3 });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsInfo.name]: wsInfo,
@@ -127,7 +127,7 @@ describe('same wsName', () => {
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsInfo2.name]: wsInfo2,
@@ -149,7 +149,7 @@ describe('same wsName', () => {
     const wsInfo2 = createWsInfo({ name: 'testWs', lastModified: 7 });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsInfo.name]: wsInfo,
@@ -158,7 +158,7 @@ describe('same wsName', () => {
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsInfo2.name]: wsInfo2,
@@ -189,7 +189,7 @@ describe('same wsName', () => {
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsInfo.name]: wsInfo,
@@ -198,7 +198,7 @@ describe('same wsName', () => {
     });
 
     let newState = state.applyAction({
-      name: 'action::@bangle.io/workspaces:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
       value: {
         workspaceInfos: {
           [wsInfo2.name]: wsInfo2,

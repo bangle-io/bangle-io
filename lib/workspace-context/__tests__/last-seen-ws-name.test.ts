@@ -3,8 +3,8 @@ import {
   saveLastWorkspaceUsed,
 } from '../last-seen-ws-name';
 
-jest.mock('@bangle.io/workspaces', () => {
-  const rest = jest.requireActual('@bangle.io/workspaces');
+jest.mock('@bangle.io/slice-workspaces-manager', () => {
+  const rest = jest.requireActual('@bangle.io/slice-workspaces-manager');
   return {
     ...rest,
     getWorkspaceInfo: jest.fn(),
