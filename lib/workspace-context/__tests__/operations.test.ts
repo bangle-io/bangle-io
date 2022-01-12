@@ -13,7 +13,7 @@ import {
 } from '@bangle.io/page-context';
 import { sleep } from '@bangle.io/utils';
 import {
-  FileOps,
+  FileSystem,
   getWorkspaceInfo,
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,
@@ -28,7 +28,6 @@ import {
   checkFileExists,
   createNote,
   deleteNote,
-  getFileOps,
   getNote,
   goToWsNameRoute,
   pushWsPath,
@@ -36,6 +35,7 @@ import {
   renameNote,
   syncPageLocation,
   updateOpenedWsPaths,
+  wrapFileMethod,
 } from '../operations';
 import {
   createState,
@@ -48,7 +48,7 @@ jest.mock('@bangle.io/workspaces', () => {
   const rest = jest.requireActual('@bangle.io/workspaces');
   return {
     ...rest,
-    FileOps: {
+    FileSystem: {
       renameFile: jest.fn(),
       deleteFile: jest.fn(),
       getDoc: jest.fn(),
@@ -79,23 +79,20 @@ jest.mock('@bangle.io/extension-registry', () => {
   };
 });
 
-const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
-  typeof getWorkspaceInfo
+let listAllFilesMock = FileSystem.listAllFiles as jest.MockedFunction<
+  typeof FileSystem.listAllFiles
 >;
-let listAllFilesMock = FileOps.listAllFiles as jest.MockedFunction<
-  typeof FileOps.listAllFiles
+let renameFileMock = FileSystem.renameFile as jest.MockedFunction<
+  typeof FileSystem.renameFile
 >;
-let renameFileMock = FileOps.renameFile as jest.MockedFunction<
-  typeof FileOps.renameFile
+let checkFileExistsMock = FileSystem.checkFileExists as jest.MockedFunction<
+  typeof FileSystem.checkFileExists
 >;
-let checkFileExistsMock = FileOps.checkFileExists as jest.MockedFunction<
-  typeof FileOps.checkFileExists
+let saveDocMock = FileSystem.saveDoc as jest.MockedFunction<
+  typeof FileSystem.saveDoc
 >;
-let saveDocMock = FileOps.saveDoc as jest.MockedFunction<
-  typeof FileOps.saveDoc
->;
-let deleteFileMock = FileOps.deleteFile as jest.MockedFunction<
-  typeof FileOps.deleteFile
+let deleteFileMock = FileSystem.deleteFile as jest.MockedFunction<
+  typeof FileSystem.deleteFile
 >;
 const getPageLocationMock = getPageLocation as jest.MockedFunction<
   typeof getPageLocation
@@ -364,7 +361,7 @@ test('getFileOps', async () => {
     wsName: 'my-ws',
   });
 
-  const fileOps = getFileOps()(store.state, store.dispatch);
+  const fileOps = wrapFileMethod()(store.state, store.dispatch);
   expect(await fileOps?.listAllFiles('my-ws')).toMatchInlineSnapshot(`
     Array [
       "my-ws:one.md",
@@ -703,7 +700,7 @@ describe('renameNote', () => {
 describe('getNote', () => {
   test('works', async () => {
     const result = {};
-    (FileOps.getDoc as any).mockResolvedValue(result);
+    (FileSystem.getDoc as any).mockResolvedValue(result);
     const wsPath: string = 'my-ws:new-test-note.md';
     let { store, dispatchSpy } = noSideEffectsStore({
       wsName: 'my-ws',
@@ -711,20 +708,20 @@ describe('getNote', () => {
 
     expect(await getNote(wsPath)(store.state, store.dispatch)).toBe(result);
 
-    expect(FileOps.getDoc).toBeCalledTimes(1);
+    expect(FileSystem.getDoc).toBeCalledTimes(1);
     expect(dispatchSpy).toBeCalledTimes(0);
   });
 
   test('does not return result when no wsName', async () => {
     const result = {};
-    (FileOps.getDoc as any).mockResolvedValue(result);
+    (FileSystem.getDoc as any).mockResolvedValue(result);
     const wsPath: string = 'my-ws:new-test-note.md';
     let { store, dispatchSpy } = noSideEffectsStore({
       wsName: undefined,
     });
 
     expect(await getNote(wsPath)(store.state, store.dispatch)).toBe(undefined);
-    expect(FileOps.getDoc).toBeCalledTimes(0);
+    expect(FileSystem.getDoc).toBeCalledTimes(0);
     expect(dispatchSpy).toBeCalledTimes(0);
   });
 });

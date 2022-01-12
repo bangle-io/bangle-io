@@ -1,7 +1,7 @@
-import { listAllNotes } from '../file-ops';
+import { listAllNotes } from '../file-system';
 import { fzfSearchNoteWsPaths } from '../fzf-search-notes-ws-path';
 
-jest.mock('../file-ops', () => {
+jest.mock('../file-system', () => {
   return {
     listAllNotes: jest.fn(async () => []),
   };

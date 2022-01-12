@@ -3,7 +3,12 @@ import { Node } from '@bangle.dev/pm';
 import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
 
-import { copyWorkspace, deleteFile, listAllFiles, saveDoc } from '../file-ops';
+import {
+  copyWorkspace,
+  deleteFile,
+  listAllFiles,
+  saveDoc,
+} from '../file-system';
 
 const originalFile = window.File;
 

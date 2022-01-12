@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
 import { useDestroyRef } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
-import { FileOps } from '@bangle.io/workspaces';
+import { FileSystem } from '@bangle.io/workspaces';
 import { isValidFileWsPath, parseLocalFilePath } from '@bangle.io/ws-path';
 
 import {
@@ -61,7 +61,7 @@ export function ImageComponent({ nodeAttrs }) {
         }
 
         if (imageWsPath) {
-          FileOps.getFile(imageWsPath)
+          FileSystem.getFile(imageWsPath)
             .then((file) => {
               if (!file) {
                 return;

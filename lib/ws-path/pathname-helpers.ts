@@ -3,7 +3,7 @@ import { pathToRegexp } from 'path-to-regexp';
 import makeMatcher from 'wouter/matcher';
 
 import { resolvePath } from './helpers';
-import type { Location, OpenedWsPaths } from './history';
+import type { Location, OpenedWsPaths } from './opened-ws-paths';
 
 const convertPathToRegexp = (path) => {
   let keys = [];

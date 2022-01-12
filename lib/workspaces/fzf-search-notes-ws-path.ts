@@ -3,7 +3,7 @@ import { byLengthAsc, Fzf } from '@bangle.io/fzf-search';
 import { assertSignal, sleep } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { listAllNotes } from './file-ops';
+import { listAllNotes } from './file-system';
 
 const NOTE_WS_PATH_CHUNK_SIZE = 1000;
 

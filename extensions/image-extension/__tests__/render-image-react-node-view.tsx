@@ -4,7 +4,7 @@ import React from 'react';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
 import { useWorkspaceContext } from '@bangle.io/workspace-context';
-import { FileOps } from '@bangle.io/workspaces';
+import { FileSystem } from '@bangle.io/workspaces';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ImageComponent } from '../render-image-react-node-view';
@@ -22,7 +22,7 @@ jest.mock('@bangle.io/workspaces', () => {
   const workspaceThings = jest.requireActual('@bangle.io/workspaces');
   return {
     ...workspaceThings,
-    FileOps: {
+    FileSystem: {
       getFile: jest.fn(),
     },
   };
@@ -84,7 +84,7 @@ describe('ImageComponent', () => {
       };
     });
 
-    (FileOps.getFile as any).mockImplementation(async () => {
+    (FileSystem.getFile as any).mockImplementation(async () => {
       return new File('I am the content of image', 'google.png', {});
     });
 
@@ -144,7 +144,7 @@ describe('ImageComponent', () => {
       };
     });
 
-    (FileOps.getFile as any).mockImplementation(async () => {
+    (FileSystem.getFile as any).mockImplementation(async () => {
       return new File('I am the content of image', 'google.png', {});
     });
     const renderResult = render(

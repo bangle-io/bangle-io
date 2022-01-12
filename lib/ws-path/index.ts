@@ -1,3 +1,3 @@
 export * from './helpers';
-export * from './history';
+export * from './opened-ws-paths';
 export * from './pathname-helpers';

@@ -1,7 +1,7 @@
 import type { EditorView } from '@bangle.dev/pm';
 
 import { getEditorPluginMetadata } from '@bangle.io/utils';
-import { FileOps } from '@bangle.io/workspaces';
+import { FileSystem } from '@bangle.io/workspaces';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { calcImageDimensions } from './image-file-helpers';
@@ -22,7 +22,7 @@ export async function createImageNodes(files, imageType, view: EditorView) {
         dimensions,
       );
 
-      await FileOps.saveFile(wsPath, file);
+      await FileSystem.saveFile(wsPath, file);
 
       return srcUrl;
     }),

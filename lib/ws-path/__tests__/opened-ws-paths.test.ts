@@ -1,4 +1,4 @@
-import { OpenedWsPaths } from '../history';
+import { OpenedWsPaths } from '../opened-ws-paths';
 
 describe('OpenedWsPaths', () => {
   test('works', () => {

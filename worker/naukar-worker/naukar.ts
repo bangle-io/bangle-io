@@ -7,7 +7,7 @@ import {
   PAGE_BLOCK_RELOAD_ACTION_TYPE,
 } from '@bangle.io/page-context';
 import { getSelfType } from '@bangle.io/utils';
-import { FileOps } from '@bangle.io/workspaces';
+import { FileSystem } from '@bangle.io/workspaces';
 
 import { abortableServices } from './abortable-services';
 import { setupCollabManager } from './collab-manager';
@@ -86,7 +86,7 @@ function localDiskSetup(
   mainDispatch: MainDispatchType,
 ) {
   const getItem = async (wsPath) => {
-    const doc = await FileOps.getDoc(
+    const doc = await FileSystem.getDoc(
       wsPath,
       extensionRegistry.specRegistry,
       extensionRegistry.markdownItPlugins,
@@ -94,7 +94,7 @@ function localDiskSetup(
     return doc;
   };
   const setItem = async (wsPath, doc, version) => {
-    await FileOps.saveDoc(wsPath, doc, extensionRegistry.specRegistry);
+    await FileSystem.saveDoc(wsPath, doc, extensionRegistry.specRegistry);
   };
 
   return {

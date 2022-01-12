@@ -6,7 +6,7 @@ import { WorkerErrorCode } from '@bangle.io/constants';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { searchPmNode } from '@bangle.io/search-pm-node';
 import { assertSignal } from '@bangle.io/utils';
-import { FileOps, fzfSearchNoteWsPaths } from '@bangle.io/workspaces';
+import { FileSystem, fzfSearchNoteWsPaths } from '@bangle.io/workspaces';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
 export function abortableServices({
@@ -39,11 +39,11 @@ function searchWsForPmNode(extensionRegistry: ExtensionRegistry) {
     atomSearchTypes: Parameters<typeof searchPmNode>[4],
     opts?: Parameters<typeof searchPmNode>[5],
   ) => {
-    const wsPaths = await FileOps.listAllNotes(wsName);
+    const wsPaths = await FileSystem.listAllNotes(wsName);
     assertSignal(abortSignal);
 
     const getDoc = async (wsPath: string) =>
-      FileOps.getDoc(
+      FileSystem.getDoc(
         wsPath,
         extensionRegistry.specRegistry,
         extensionRegistry.markdownItPlugins,
@@ -62,13 +62,13 @@ function searchWsForPmNode(extensionRegistry: ExtensionRegistry) {
 
 function backupAllFiles() {
   return async (abortSignal: AbortSignal, wsName: string): Promise<File> => {
-    const wsPaths = await FileOps.listAllFiles(wsName);
+    const wsPaths = await FileSystem.listAllFiles(wsName);
     let zipWriter = new zip.ZipWriter(new zip.BlobWriter('application/zip'), {
       useWebWorkers: false,
     });
 
     for (const path of wsPaths) {
-      const fileBlob = await FileOps.getFile(path);
+      const fileBlob = await FileSystem.getFile(path);
 
       await zipWriter.add(
         encodeURIComponent(path),
@@ -128,7 +128,7 @@ function createWorkspaceFromBackup() {
     wsName: string,
     backupFile: File,
   ): Promise<void> => {
-    const wsPaths = await FileOps.listAllFiles(wsName);
+    const wsPaths = await FileSystem.listAllFiles(wsName);
     if (wsPaths.length > 0) {
       throw new BaseError(
         'Can only use backup files on an empty workspace',
@@ -141,7 +141,7 @@ function createWorkspaceFromBackup() {
     for (const file of files) {
       const { filePath } = resolvePath(decodeURIComponent(file.name));
       const newWsPath = filePathToWsPath(wsName, filePath);
-      await FileOps.saveFile(newWsPath, file);
+      await FileSystem.saveFile(newWsPath, file);
     }
   };
 }

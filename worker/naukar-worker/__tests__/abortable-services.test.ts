@@ -1,14 +1,14 @@
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
 import { searchPmNode } from '@bangle.io/search-pm-node';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
-import { FileOps, fzfSearchNoteWsPaths } from '@bangle.io/workspaces';
+import { FileSystem, fzfSearchNoteWsPaths } from '@bangle.io/workspaces';
 
 import { abortableServices } from '../abortable-services';
 
 jest.mock('@bangle.io/search-pm-node');
 jest.mock('@bangle.io/workspaces', () => {
   return {
-    FileOps: {
+    FileSystem: {
       listAllNotes: jest.fn(async () => []),
       listAllFiles: jest.fn(async () => []),
       getDoc: jest.fn(async () => {}),
@@ -26,16 +26,18 @@ let setup = () => {
   return { registry, services };
 };
 
-let listAllNotesMock = FileOps.listAllNotes as jest.MockedFunction<
-  typeof FileOps.listAllNotes
+let listAllNotesMock = FileSystem.listAllNotes as jest.MockedFunction<
+  typeof FileSystem.listAllNotes
 >;
-let listAllFilesMock = FileOps.listAllFiles as jest.MockedFunction<
-  typeof FileOps.listAllFiles
+let listAllFilesMock = FileSystem.listAllFiles as jest.MockedFunction<
+  typeof FileSystem.listAllFiles
 >;
-let getDocMock = FileOps.getDoc as jest.MockedFunction<typeof FileOps.getDoc>;
+let getDocMock = FileSystem.getDoc as jest.MockedFunction<
+  typeof FileSystem.getDoc
+>;
 
-let getFileMock = FileOps.getFile as jest.MockedFunction<
-  typeof FileOps.getFile
+let getFileMock = FileSystem.getFile as jest.MockedFunction<
+  typeof FileSystem.getFile
 >;
 
 const textToFile = (str = 'hello world', fileName = 'foo.txt') => {

@@ -31,24 +31,24 @@ import {
 
 import { WorkspaceDispatchType, workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
+import { fileSystemPlus, FileSystemType } from './file-system-plus';
 import {
   getPrevOpenedWsPathsFromSearch,
   savePrevOpenedWsPathsToSearch,
   validateOpenedWsPaths,
 } from './helpers';
 import { getLastWorkspaceUsed } from './last-seen-ws-name';
-import { fileOpsPlus, FileOpsType } from './use-get-file-ops';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};
 
-export const getFileOps = () => {
+export const wrapFileMethod = () => {
   return (
     state: AppState,
     dispatch: WorkspaceDispatchType,
-  ): FileOpsType | undefined => {
+  ): FileSystemType | undefined => {
     const sliceState = workspaceSliceKey.getSliceState(state);
-    return fileOpsPlus((error) => {
+    return fileSystemPlus((error) => {
       if (sliceState?.wsName) {
         workspaceHandleError(sliceState.wsName, error)(state, dispatch);
       }
@@ -79,7 +79,7 @@ export const refreshWsPaths = () => {
 
     log('refreshing wsPaths', wsName);
 
-    const fileOps = getFileOps()(state, dispatch);
+    const fileOps = wrapFileMethod()(state, dispatch);
 
     fileOps
       ?.listAllFiles(wsName)
@@ -139,7 +139,7 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
     dispatch: WorkspaceDispatchType,
     store: ApplicationStore,
   ): boolean => {
-    const fileOps = getFileOps()(state, dispatch);
+    const fileOps = wrapFileMethod()(state, dispatch);
 
     const sliceState = workspaceSliceKey.getSliceState(state);
     const wsName = sliceState?.wsName;
@@ -166,7 +166,7 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
 
 export const getNote = (wsPath: string) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    const fileOps = getFileOps()(state, dispatch);
+    const fileOps = wrapFileMethod()(state, dispatch);
 
     const sliceState = workspaceSliceKey.getSliceState(state);
     const extensionRegistry =
@@ -202,7 +202,7 @@ export const createNote = (
     dispatch: WorkspaceDispatchType,
     store: ApplicationStore,
   ) => {
-    const fileOps = getFileOps()(store.state, store.dispatch);
+    const fileOps = wrapFileMethod()(store.state, store.dispatch);
     const sliceState = workspaceSliceKey.getSliceState(store.state);
 
     const extensionRegistry = extensionRegistrySliceKey.getSliceState(
@@ -243,7 +243,7 @@ export const deleteNote = (wsPathToDelete: Array<string> | string) => {
     dispatch: WorkspaceDispatchType,
     store: ApplicationStore,
   ): Promise<boolean> => {
-    const fileOps = getFileOps()(store.state, dispatch);
+    const fileOps = wrapFileMethod()(store.state, dispatch);
     const sliceState = workspaceSliceKey.getSliceState(store.state);
 
     if (!fileOps || !sliceState?.wsName) {
@@ -284,7 +284,7 @@ export const checkFileExists = (wsPath: string) => {
     state: AppState,
     dispatch: WorkspaceDispatchType,
   ): Promise<boolean> => {
-    const fileOps = getFileOps()(state, dispatch);
+    const fileOps = wrapFileMethod()(state, dispatch);
 
     return fileOps?.checkFileExists(wsPath) || Promise.resolve(false);
   };

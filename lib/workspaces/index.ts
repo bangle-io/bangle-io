@@ -10,7 +10,7 @@ export {
   WorkspaceType,
 } from './common';
 export * from './errors';
-export * as FileOps from './file-ops';
+export * as FileSystem from './file-system';
 export * from './fzf-search-notes-ws-path';
 export {
   createWorkspace,
