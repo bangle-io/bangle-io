@@ -27,6 +27,7 @@ export const ItemPropTypes = PropTypes.exact({
   description: PropTypes.node,
   extraInfo: PropTypes.node,
   isDisabled: PropTypes.bool,
+  keywords: PropTypes.array,
 });
 
 PaletteItemUI.propTypes = {

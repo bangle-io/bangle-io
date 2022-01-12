@@ -1,8 +1,7 @@
 import { savePreviousValue } from '@bangle.io/create-store';
-import { getPageLocation, saveToHistoryState } from '@bangle.io/page-context';
+import { getPageLocation } from '@bangle.io/page-context';
 import type { ReturnReturnType } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
-import { getWorkspaceInfo } from '@bangle.io/workspaces';
 
 import { SideEffect, workspaceSliceKey } from './common';
 import { saveLastWorkspaceUsed } from './last-seen-ws-name';
@@ -50,38 +49,6 @@ export const updateLocationEffect: SideEffect = () => {
         search: location?.search,
         pathname: location?.pathname,
       })(store.state, store.dispatch);
-    },
-  };
-};
-
-// Persist workspaceInfo in the history to
-// prevents release of the native browser FS permission
-export const saveWorkspaceInfoEffect: SideEffect = () => {
-  let pendingReqFor: string | undefined;
-
-  return {
-    deferredUpdate(store, abortSignal) {
-      const sliceState = workspaceSliceKey.getSliceState(store.state);
-
-      if (pendingReqFor === sliceState?.wsName) {
-        return;
-      }
-
-      if (sliceState?.wsName) {
-        pendingReqFor = sliceState.wsName;
-
-        getWorkspaceInfo(pendingReqFor).then(
-          (_workspaceInfo) => {
-            if (!abortSignal.aborted && _workspaceInfo.name === pendingReqFor) {
-              saveToHistoryState('workspaceInfo', _workspaceInfo)(store.state);
-            }
-          },
-          (error) => {
-            console.error(error);
-            pendingReqFor = undefined;
-          },
-        );
-      }
     },
   };
 };

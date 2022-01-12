@@ -1,7 +1,12 @@
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { useWorkspaces } from '@bangle.io/workspaces';
+import { sleep } from '@bangle.io/utils';
+import {
+  listWorkspaces,
+  WorkspaceInfo,
+  WorkspaceType,
+} from '@bangle.io/workspaces';
 
 import { workspacePalette } from '../WorkspacePalette';
 
@@ -9,34 +14,32 @@ jest.mock('@bangle.io/workspaces', () => {
   const workspaceThings = jest.requireActual('@bangle.io/workspaces');
   return {
     ...workspaceThings,
-    useWorkspaces: jest.fn(),
+    deleteWorkspace: jest.fn(() => () => {}),
+    listWorkspaces: jest.fn(() => () => {}),
   };
 });
 
-let workspaces = [
+let workspaces: WorkspaceInfo[] = [
   {
     name: 'test-ws1',
-    type: 'nativefs',
+    type: WorkspaceType['nativefs'],
+    lastModified: 0,
+    metadata: {},
   },
 ];
 
-let switchWorkspace,
-  deleteWorkspace,
-  dismissPalette,
-  onSelect,
-  getActivePaletteItem;
+let listWorkspacesMock = listWorkspaces as jest.MockedFunction<
+  typeof listWorkspaces
+>;
+
+let dismissPalette, onSelect, getActivePaletteItem;
+
 beforeEach(async () => {
   onSelect = jest.fn();
   getActivePaletteItem = jest.fn();
 
-  deleteWorkspace = jest.fn();
-  switchWorkspace = jest.fn();
+  listWorkspacesMock.mockImplementation(() => async () => workspaces);
   dismissPalette = jest.fn();
-  (useWorkspaces as jest.Mock).mockImplementation(() => ({
-    workspaces,
-    switchWorkspace,
-    deleteWorkspace,
-  }));
 });
 
 test('Component renders correctly', async () => {
@@ -54,6 +57,10 @@ test('Component renders correctly', async () => {
       allPalettes={[]}
     />,
   );
+
+  const prom = sleep(5);
+
+  await act(() => prom);
 
   expect(result.container).toMatchSnapshot();
   expect(result.container.innerHTML.includes('test-ws1')).toBe(true);

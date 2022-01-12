@@ -6,6 +6,9 @@ export const CORE_OPERATIONS_NEW_NOTE =
 export const CORE_OPERATIONS_NEW_WORKSPACE =
   'operation::@bangle.io/core-operations:NEW_WORKSPACE';
 
+export const CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE =
+  'operation::@bangle.io/core-operations:REMOVE_ACTIVE_WORKSPACE';
+
 export const CORE_OPERATIONS_RENAME_ACTIVE_NOTE =
   'operation::@bangle.io/core-operations:RENAME_ACTIVE_NOTE';
 

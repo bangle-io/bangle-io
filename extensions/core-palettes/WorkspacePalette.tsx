@@ -1,13 +1,26 @@
-import React, { useCallback, useImperativeHandle, useMemo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
+import { removeWorkspace } from '@bangle.io/shared-operations';
 import {
   AlbumIcon,
   CloseIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
-import { useWorkspaces } from '@bangle.io/workspaces';
+import { goToWsNameRoute } from '@bangle.io/workspace-context';
+import {
+  deleteWorkspace,
+  listWorkspaces,
+  WorkspaceInfo,
+} from '@bangle.io/workspaces';
 
 import { ExtensionPaletteType } from './config';
 import { useRecencyWatcher } from './hooks';
@@ -23,8 +36,22 @@ const storageKey = 'WorkspacePaletteUIComponent/1';
 const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
   React.forwardRef(
     ({ query, dismissPalette, onSelect, getActivePaletteItem }, ref) => {
-      const { workspaces, switchWorkspace, deleteWorkspace } = useWorkspaces();
       const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
+
+      const bangleStore = useBangleStoreContext();
+
+      const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
+
+      useEffect(() => {
+        console.log('loading workspaces');
+        listWorkspaces()(
+          bangleStore.state,
+          bangleStore.dispatch,
+          bangleStore,
+        ).then((wsInfo) => {
+          updateWorkspaces(wsInfo);
+        });
+      }, [bangleStore]);
 
       const items = useMemo(() => {
         const _items = injectRecency(
@@ -46,14 +73,12 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
                     }}
                     onClick={async (e) => {
                       e.stopPropagation();
-                      if (
-                        window.confirm(
-                          `Are you sure you want to remove "${workspace.name}"? Removing a workspace does not delete any files inside it.`,
-                        )
-                      ) {
-                        await deleteWorkspace(workspace.name);
-                        dismissPalette();
-                      }
+                      await removeWorkspace(workspace.name)(
+                        bangleStore.state,
+                        bangleStore.dispatch,
+                        bangleStore,
+                      );
+                      dismissPalette();
                     }}
                   />
                 ),
@@ -62,7 +87,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
         );
 
         return _items;
-      }, [query, workspaces, dismissPalette, deleteWorkspace, injectRecency]);
+      }, [bangleStore, query, dismissPalette, workspaces, injectRecency]);
 
       const activeItem = getActivePaletteItem(items);
 
@@ -71,11 +96,15 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
           const uid = getUid(items);
           const item = items.find((item) => item.uid === uid);
           if (item) {
-            switchWorkspace(item.data.workspace.name, sourceInfo.metaKey);
+            goToWsNameRoute(item.data.workspace.name, {
+              newTab: sourceInfo.metaKey,
+              reopenPreviousEditors: false,
+            })(bangleStore.state, bangleStore.dispatch);
+
             updateRecency(uid);
           }
         },
-        [switchWorkspace, updateRecency, items],
+        [bangleStore, updateRecency, items],
       );
 
       useImperativeHandle(

@@ -2,6 +2,7 @@ import './NewWorkspaceModal.css';
 
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/app-state-context';
 import {
   DirTypeSystemHandle,
   supportsNativeBrowserFs,
@@ -14,7 +15,7 @@ import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
 import { useUIManagerContext } from '@bangle.io/ui-context';
-import { useWorkspaces } from '@bangle.io/workspaces';
+import { hasWorkspace } from '@bangle.io/workspaces';
 
 import { PickStorageDirectory, WorkspaceNameInput } from './Buttons';
 import {
@@ -92,7 +93,7 @@ export function NewWorkspaceModalContainer({
     },
   });
 
-  const { workspaces } = useWorkspaces();
+  const bangleStore = useBangleStoreContext();
 
   const { dispatch } = useUIManagerContext();
   const { dispatchSerialOperation } = useSerialOperationContext();
@@ -182,15 +183,22 @@ export function NewWorkspaceModalContainer({
 
   // set error if wsName already exists
   useEffect(() => {
-    const existingWorkspace =
-      newWorkspaceName && workspaces.find((r) => newWorkspaceName === r.name);
+    if (newWorkspaceName) {
+      (async () => {
+        const existingWorkspace = await hasWorkspace(newWorkspaceName)(
+          bangleStore.state,
+          bangleStore.dispatch,
+          bangleStore,
+        );
 
-    if (existingWorkspace) {
-      setError(WORKSPACE_NAME_ALREADY_EXISTS_ERROR);
-    } else if (errorType === WORKSPACE_NAME_ALREADY_EXISTS_ERROR) {
-      setError(undefined);
+        if (existingWorkspace) {
+          setError(WORKSPACE_NAME_ALREADY_EXISTS_ERROR);
+        } else if (errorType === WORKSPACE_NAME_ALREADY_EXISTS_ERROR) {
+          setError(undefined);
+        }
+      })();
     }
-  }, [newWorkspaceName, workspaces, errorType, setError]);
+  }, [bangleStore, newWorkspaceName, errorType, setError]);
 
   useEffect(() => {
     if (newWorkspaceName) {

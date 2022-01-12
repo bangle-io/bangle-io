@@ -473,12 +473,24 @@ export const goToWorkspaceHomeRoute = ({
 export function goToWsNameRoute(
   wsName: string,
   {
+    newTab = false,
     replace = false,
     // If false will not open previously opened editors that are saved in the URL search params
     reopenPreviousEditors = true,
-  }: { replace?: boolean; reopenPreviousEditors?: boolean } = {},
+  }: {
+    newTab?: boolean;
+    replace?: boolean;
+    reopenPreviousEditors?: boolean;
+  } = {},
 ) {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
+    if (newTab) {
+      if (typeof window !== 'undefined') {
+        window.open(wsNameToPathname(wsName));
+      }
+      return;
+    }
+
     if (reopenPreviousEditors) {
       const location = getPageLocation()(state);
       const openedWsPaths = getPrevOpenedWsPathsFromSearch(location?.search);

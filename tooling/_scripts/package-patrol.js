@@ -94,6 +94,7 @@ function checkMultipleInstances() {
     .map((r) => JSON.parse(r))
     .filter(
       (r) =>
+        r.value.startsWith('@bangle.io/') ||
         r.value.startsWith('@bangle.dev/') ||
         r.value.startsWith('prosemirror-') ||
         r.value.startsWith('react-router-dom@') ||

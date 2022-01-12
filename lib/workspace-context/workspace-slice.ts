@@ -8,7 +8,6 @@ import { WorkspaceSliceAction, workspaceSliceKey } from './common';
 import {
   refreshWsPathsEffect,
   saveLastUsedWorkspace,
-  saveWorkspaceInfoEffect,
   updateLocationEffect,
 } from './effects';
 import {
@@ -169,7 +168,6 @@ export function workspaceSlice() {
     sideEffect: [
       updateLocationEffect,
       refreshWsPathsEffect,
-      saveWorkspaceInfoEffect,
       saveLastUsedWorkspace,
     ],
   });
