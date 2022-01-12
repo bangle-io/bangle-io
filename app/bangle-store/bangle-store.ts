@@ -2,7 +2,7 @@ import lifecycle from 'page-lifecycle';
 
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { editorManagerSlice } from '@bangle.io/editor-manager-context';
+import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { initExtensionRegistry } from '@bangle.io/shared';
 import type { BangleStateOpts, JsonValue } from '@bangle.io/shared-types';
 import { uiSlice } from '@bangle.io/slice-ui';

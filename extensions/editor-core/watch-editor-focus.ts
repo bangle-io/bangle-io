@@ -1,6 +1,6 @@
 import { Plugin } from '@bangle.dev/pm';
 
-import { updateFocusedEditor } from '@bangle.io/editor-manager-context';
+import { updateFocusedEditor } from '@bangle.io/slice-editor-manager';
 import type { EditorPlugin } from '@bangle.io/shared-types';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 

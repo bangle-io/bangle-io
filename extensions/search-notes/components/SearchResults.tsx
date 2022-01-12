@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { NodeSelection, Selection } from '@bangle.dev/pm';
 
 import { NoteLink } from '@bangle.io/contextual-ui-components';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import type { SearchMatch, SearchResultItem } from '@bangle.io/search-pm-node';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {

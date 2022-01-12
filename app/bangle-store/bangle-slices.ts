@@ -6,7 +6,7 @@ import {
 import {
   EditorManagerAction,
   editorManagerSlice,
-} from '@bangle.io/editor-manager-context';
+} from '@bangle.io/slice-editor-manager';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {

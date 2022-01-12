@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';

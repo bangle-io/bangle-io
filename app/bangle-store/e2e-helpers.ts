@@ -1,11 +1,11 @@
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
-import * as editorManagerContext from '@bangle.io/editor-manager-context';
+import * as editorManagerContext from '@bangle.io/slice-editor-manager';
 import {
   didSomeEditorChange,
   editorManagerSliceKey,
-} from '@bangle.io/editor-manager-context';
+} from '@bangle.io/slice-editor-manager';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
 import * as workspaceContext from '@bangle.io/slice-workspace';
 import { getEditorPluginMetadata } from '@bangle.io/utils';

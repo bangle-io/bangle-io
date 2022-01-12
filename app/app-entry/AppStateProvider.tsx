@@ -5,7 +5,7 @@ import {
   BangleStoreContext,
 } from '@bangle.io/app-state-context';
 import { initializeBangleStore } from '@bangle.io/bangle-store';
-import { editorManagerSliceKey } from '@bangle.io/editor-manager-context';
+import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { safeRequestIdleCallback } from '@bangle.io/utils';
 
 const LOG = false;

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   focusEditor,
   useEditorManagerContext,
-} from '@bangle.io/editor-manager-context';
+} from '@bangle.io/slice-editor-manager';
 import { UniversalPalette } from '@bangle.io/ui-components';
 import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
 import { useUIManagerContext } from '@bangle.io/slice-ui';

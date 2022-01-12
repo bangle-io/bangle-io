@@ -33,7 +33,7 @@ export function focusEditor(editorId: EditorIdType = 0) {
 export function updateFocusedEditor(editorId: EditorIdType = 0) {
   return (state: AppState, dispatch: EditorDispatchType): boolean => {
     dispatch({
-      name: 'action::@bangle.io/editor-manager-context:on-focus-update',
+      name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
       value: {
         editorId,
       },
@@ -54,7 +54,7 @@ export function updateInitialSelection(editorId: EditorIdType) {
 
     if (value) {
       dispatch({
-        name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
+        name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
         value: value,
       });
       return true;
@@ -125,7 +125,7 @@ export function updateScrollPosition(editorId: EditorIdType) {
 
     if (result) {
       dispatch({
-        name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
+        name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
         value: result,
       });
 
@@ -154,7 +154,7 @@ export function setEditorReady(
     }
 
     dispatch({
-      name: 'action::@bangle.io/editor-manager-context:set-editor',
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor,
         editorId,
@@ -177,7 +177,7 @@ export function setEditorUnmounted(
     // make sure we are unsetting the correct editor
     if (getEditor(editorId)(state) === editor) {
       dispatch({
-        name: 'action::@bangle.io/editor-manager-context:set-editor',
+        name: 'action::@bangle.io/slice-editor-manager:set-editor',
         value: {
           editor: undefined,
           editorId,

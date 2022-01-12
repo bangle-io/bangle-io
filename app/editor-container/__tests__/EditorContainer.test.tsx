@@ -2,7 +2,7 @@ import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { Editor } from '@bangle.io/editor';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import {
   checkFileExists,
   useWorkspaceContext,
@@ -23,8 +23,8 @@ jest.mock('@bangle.io/slice-workspace', () => {
   };
 });
 
-jest.mock('@bangle.io/editor-manager-context', () => {
-  const actual = jest.requireActual('@bangle.io/editor-manager-context');
+jest.mock('@bangle.io/slice-editor-manager', () => {
+  const actual = jest.requireActual('@bangle.io/slice-editor-manager');
   return {
     ...actual,
     useEditorManagerContext: jest.fn(),

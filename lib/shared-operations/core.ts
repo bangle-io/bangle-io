@@ -2,7 +2,7 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import {
   EditorIdType,
   editorManagerSliceKey,
-} from '@bangle.io/editor-manager-context';
+} from '@bangle.io/slice-editor-manager';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
   deleteNote,

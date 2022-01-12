@@ -35,7 +35,7 @@ describe('set editor action', () => {
     let mockEditor = createTestEditor();
     let store = createStore();
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:set-editor',
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,
@@ -58,7 +58,7 @@ describe('set editor action', () => {
     let store = createStore();
     expect(() =>
       store.dispatch({
-        name: 'action::@bangle.io/editor-manager-context:set-editor',
+        name: 'action::@bangle.io/slice-editor-manager:set-editor',
         value: {
           editor: mockEditor,
           editorId: 10000,
@@ -74,7 +74,7 @@ describe('set editor action', () => {
     let store = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:set-editor',
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,
@@ -82,7 +82,7 @@ describe('set editor action', () => {
     });
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:set-editor',
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor2,
         editorId: 0,
@@ -94,7 +94,7 @@ describe('set editor action', () => {
     let mockEditor3 = createTestEditor('test:third.md');
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:set-editor',
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor3,
         editorId: 1,
@@ -114,7 +114,7 @@ describe('update focus action', () => {
   test('works', () => {
     let store = createStore();
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:on-focus-update',
+      name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
       value: { editorId: 0 },
     });
 
@@ -123,7 +123,7 @@ describe('update focus action', () => {
     ).toBe(0);
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:on-focus-update',
+      name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
       value: { editorId: 1 },
     });
 
@@ -136,7 +136,7 @@ describe('update focus action', () => {
     let store = createStore();
     expect(() => {
       store.dispatch({
-        name: 'action::@bangle.io/editor-manager-context:on-focus-update',
+        name: 'action::@bangle.io/slice-editor-manager:on-focus-update',
         value: { editorId: 1000000 },
       });
     }).toThrowError('editorId is out of range');
@@ -147,14 +147,14 @@ describe('setting scroll position', () => {
   test('works', () => {
     let store = createStore();
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
+      name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
       value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 9 },
     });
 
     expect(geEditorScrollPosition(0, 'test:one.md')(store.state)).toBe(9);
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
+      name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
       value: { wsPath: 'test:one.md', editorId: 1, scrollPosition: 199 },
     });
 
@@ -162,7 +162,7 @@ describe('setting scroll position', () => {
     expect(geEditorScrollPosition(1, 'test:one.md')(store.state)).toBe(199);
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
+      name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
       value: { wsPath: 'test:two.md', editorId: 1, scrollPosition: 299 },
     });
 
@@ -171,7 +171,7 @@ describe('setting scroll position', () => {
     expect(geEditorScrollPosition(1, 'test:two.md')(store.state)).toBe(299);
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
+      name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
       value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 8 },
     });
 
@@ -188,7 +188,7 @@ describe('setting scroll position', () => {
     );
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
+      name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
       value: { wsPath: 'test:one.md', editorId: 0, scrollPosition: 9 },
     });
 
@@ -214,7 +214,7 @@ describe('setting selectionJson', () => {
   test('works', () => {
     let store = createStore();
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
         editorId: 0,
@@ -240,7 +240,7 @@ describe('setting selectionJson', () => {
     ).toBe(true);
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
         editorId: 0,
@@ -257,7 +257,7 @@ describe('setting selectionJson', () => {
     ).toBe(true);
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:two.md',
         editorId: 0,
@@ -282,7 +282,7 @@ describe('setting selectionJson', () => {
     );
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
         editorId: 0,
@@ -331,7 +331,7 @@ describe('serializing state', () => {
   test('selection is serialized correctly', () => {
     let store = createStore();
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
         editorId: 0,
@@ -376,7 +376,7 @@ describe('serializing state', () => {
   test('handles schema version mismatch', () => {
     let store = createStore();
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
         editorId: 0,
@@ -421,7 +421,7 @@ describe('serializing state', () => {
     const store = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:set-editor',
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,
@@ -456,7 +456,7 @@ describe('serializing state', () => {
 
     const store = createStore();
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:set-editor',
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,
@@ -464,7 +464,7 @@ describe('serializing state', () => {
     });
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-scroll-position',
+      name: 'action::@bangle.io/slice-editor-manager:update-scroll-position',
       value: {
         wsPath: 'test:one.md',
         editorId: 0,
@@ -492,7 +492,7 @@ describe('serializing state', () => {
     let mockEditor = createTestEditor('test:one.md', `# hello world`);
     const store = createStore();
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json',
+      name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
       value: {
         wsPath: 'test:one.md',
         editorId: 0,
@@ -515,7 +515,7 @@ describe('serializing state', () => {
     );
 
     store.dispatch({
-      name: 'action::@bangle.io/editor-manager-context:set-editor',
+      name: 'action::@bangle.io/slice-editor-manager:set-editor',
       value: {
         editor: mockEditor,
         editorId: 0,

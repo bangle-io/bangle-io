@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
 import { initializeBangleStore } from '@bangle.io/bangle-store';
-import { EditorManager } from '@bangle.io/editor-manager-context';
+import { EditorManager } from '@bangle.io/slice-editor-manager';
 import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,

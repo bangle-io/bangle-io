@@ -20,12 +20,6 @@ import {
   EditorPluginMetadataKey,
 } from '@bangle.io/constants';
 import {
-  getInitialSelection,
-  setEditorReady,
-  setEditorUnmounted,
-  useEditorManagerContext,
-} from '@bangle.io/editor-manager-context';
-import {
   ExtensionRegistry,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
@@ -34,6 +28,12 @@ import type {
   DispatchSerialOperationType,
   EditorPluginMetadata,
 } from '@bangle.io/shared-types';
+import {
+  getInitialSelection,
+  setEditorReady,
+  setEditorUnmounted,
+  useEditorManagerContext,
+} from '@bangle.io/slice-editor-manager';
 import { getNote } from '@bangle.io/slice-workspace';
 import { cx } from '@bangle.io/utils';
 

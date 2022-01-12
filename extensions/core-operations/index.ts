@@ -4,7 +4,7 @@ import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
-import { focusEditor } from '@bangle.io/editor-manager-context';
+import { focusEditor } from '@bangle.io/slice-editor-manager';
 import { Extension } from '@bangle.io/extension-registry';
 import {
   closeEditor,

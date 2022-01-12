@@ -33,15 +33,15 @@ export interface EditorSliceState {
 
 export type EditorManagerAction =
   | {
-      name: 'action::@bangle.io/editor-manager-context:set-editor';
+      name: 'action::@bangle.io/slice-editor-manager:set-editor';
       value: { editor: BangleEditor | undefined; editorId: number };
     }
   | {
-      name: 'action::@bangle.io/editor-manager-context:on-focus-update';
+      name: 'action::@bangle.io/slice-editor-manager:on-focus-update';
       value: { editorId: number | undefined };
     }
   | {
-      name: 'action::@bangle.io/editor-manager-context:update-scroll-position';
+      name: 'action::@bangle.io/slice-editor-manager:update-scroll-position';
       value: {
         editorId: number;
         wsPath: string;
@@ -49,7 +49,7 @@ export type EditorManagerAction =
       };
     }
   | {
-      name: 'action::@bangle.io/editor-manager-context:update-initial-selection-json';
+      name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json';
       value: {
         editorId: number;
         wsPath: string;

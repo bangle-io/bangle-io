@@ -3,7 +3,7 @@ import React, { useCallback, useImperativeHandle, useMemo } from 'react';
 import { Selection } from '@bangle.dev/pm';
 
 import { CorePalette } from '@bangle.io/constants';
-import { useEditorManagerContext } from '@bangle.io/editor-manager-context';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { NullIcon, UniversalPalette } from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 

@@ -33,11 +33,11 @@ const applyState = (
   action: EditorManagerAction,
   state: EditorSliceState,
 ): EditorSliceState => {
-  if (action.name.startsWith('action::@bangle.io/editor-manager-context:')) {
+  if (action.name.startsWith('action::@bangle.io/slice-editor-manager:')) {
     log(action.name, action.value);
   }
   switch (action.name) {
-    case 'action::@bangle.io/editor-manager-context:set-editor': {
+    case 'action::@bangle.io/slice-editor-manager:set-editor': {
       const { editorId, editor } = action.value;
       if (editorId >= MAX_OPEN_EDITORS) {
         throw new Error('editorId is out of range');
@@ -53,7 +53,7 @@ const applyState = (
       };
     }
 
-    case 'action::@bangle.io/editor-manager-context:on-focus-update': {
+    case 'action::@bangle.io/slice-editor-manager:on-focus-update': {
       const editorId = action.value.editorId;
       if (typeof editorId === 'number' && editorId >= MAX_OPEN_EDITORS) {
         throw new Error('editorId is out of range');
@@ -65,7 +65,7 @@ const applyState = (
       };
     }
 
-    case 'action::@bangle.io/editor-manager-context:update-scroll-position': {
+    case 'action::@bangle.io/slice-editor-manager:update-scroll-position': {
       const { editorId, wsPath, scrollPosition } = action.value;
 
       const newEditorConfig = state.editorConfig.updateScrollPosition(
@@ -80,7 +80,7 @@ const applyState = (
       };
     }
 
-    case 'action::@bangle.io/editor-manager-context:update-initial-selection-json': {
+    case 'action::@bangle.io/slice-editor-manager:update-initial-selection-json': {
       const { editorId, wsPath, selectionJson } = action.value;
 
       const newEditorConfig = state.editorConfig.updateSelection(
@@ -105,7 +105,7 @@ export function editorManagerSlice(): Slice<
   EditorManagerAction
 > {
   assertActionType(
-    '@bangle.io/editor-manager-context',
+    '@bangle.io/slice-editor-manager',
     {} as EditorManagerAction,
   );
 

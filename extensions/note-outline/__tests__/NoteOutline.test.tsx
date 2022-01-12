@@ -5,7 +5,7 @@ import {
   getEditor,
   getEditorState,
   useEditorManagerContext,
-} from '@bangle.io/editor-manager-context';
+} from '@bangle.io/slice-editor-manager';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
@@ -22,7 +22,7 @@ import { NoteOutline } from '../NoteOutline';
 
 jest.mock('@bangle.io/slice-workspace');
 jest.mock('@bangle.io/serial-operation-context');
-jest.mock('@bangle.io/editor-manager-context', () => {
+jest.mock('@bangle.io/slice-editor-manager', () => {
   return {
     useEditorManagerContext: jest.fn(),
     getEditor: jest.fn(),

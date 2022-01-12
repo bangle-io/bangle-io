@@ -13,7 +13,7 @@ import {
   getEditor,
   getEditorState,
   useEditorManagerContext,
-} from '@bangle.io/editor-manager-context';
+} from '@bangle.io/slice-editor-manager';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';

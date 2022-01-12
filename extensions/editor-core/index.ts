@@ -1,7 +1,7 @@
 import { heading, listItem } from '@bangle.dev/base-components';
 import { frontMatterMarkdownItPlugin } from '@bangle.dev/markdown-front-matter';
 
-import { dispatchEditorCommand } from '@bangle.io/editor-manager-context';
+import { dispatchEditorCommand } from '@bangle.io/slice-editor-manager';
 import { Extension } from '@bangle.io/extension-registry';
 
 import { MenuComp } from './FloatingMenu';

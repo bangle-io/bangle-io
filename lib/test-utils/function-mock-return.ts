@@ -14,7 +14,7 @@ import { EditorDisplayType } from '@bangle.io/constants';
 import {
   initialEditorSliceState,
   useEditorManagerContext,
-} from '@bangle.io/editor-manager-context';
+} from '@bangle.io/slice-editor-manager';
 import { initialState, useUIManagerContext } from '@bangle.io/slice-ui';
 import type { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import type { getEditorPluginMetadata } from '@bangle.io/utils';
