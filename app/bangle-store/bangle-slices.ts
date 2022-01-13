@@ -23,7 +23,8 @@ import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 import { workerSlice } from '@bangle.io/worker-setup';
 
 import { e2eHelpers } from './e2e-helpers';
-import { pageLifeCycleSlice } from './slices/page-lifecycle';
+import { historySlice } from './slices/history-slice';
+import { pageLifeCycleSlice } from './slices/page-lifecycle-slice';
 
 export type BangleActionTypes =
   | UiContextAction
@@ -42,9 +43,14 @@ export function bangleStateSlices({
   onPageInactive: () => void;
   extensionSlices: Slice<any>[];
 }) {
-  return [
+  const pageBlock = [
     pageSlice(),
+    historySlice(),
     pageLifeCycleSlice(lifecycle),
+  ];
+
+  return [
+    ...pageBlock,
     workspacesSlice(),
     workerSlice(),
     extensionRegistrySlice(),

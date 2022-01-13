@@ -5,6 +5,7 @@ import type { BangleStateOpts, JsonValue } from '@bangle.io/shared-types';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { uiSlice } from '@bangle.io/slice-ui';
 import {
+  assertNonWorkerGlobalScope,
   safeCancelIdleCallback,
   safeRequestAnimationFrame,
   safeRequestIdleCallback,
@@ -15,6 +16,8 @@ import {
   BangleSliceTypes,
   bangleStateSlices,
 } from './bangle-slices';
+
+assertNonWorkerGlobalScope();
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};

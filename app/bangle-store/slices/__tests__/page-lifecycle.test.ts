@@ -2,7 +2,7 @@ import { blockReload, pageSlice, PageSliceAction } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 
-import { pageLifeCycleSlice } from '../page-lifecycle';
+import { pageLifeCycleSlice } from '../page-lifecycle-slice';
 
 export const lifeCycleMock = {
   state: 'active' as const,

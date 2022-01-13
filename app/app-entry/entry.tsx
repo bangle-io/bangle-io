@@ -4,16 +4,20 @@ import { OverlayProvider } from '@react-aria/overlays';
 import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
-import { initializeBangleStore } from '@bangle.io/bangle-store';
+import {
+  historySliceKey,
+  initializeBangleStore,
+} from '@bangle.io/bangle-store';
+import { useSliceState } from '@bangle.io/bangle-store-context';
 import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,
 } from '@bangle.io/extension-registry';
-import { BaseHistory } from '@bangle.io/history';
+import { BaseHistory, createTo } from '@bangle.io/history';
 import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
 import { polyfills } from '@bangle.io/shared';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
-import { getLocationTo, usePageContext } from '@bangle.io/slice-page';
+import { usePageContext } from '@bangle.io/slice-page';
 import { UIManager } from '@bangle.io/slice-ui';
 import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 import { pathMatcher } from '@bangle.io/ws-path';
@@ -41,19 +45,24 @@ function LoadingBlock({ children }) {
 let mountCount = 0;
 
 const useRouterHook: BaseLocationHook = () => {
-  const { pageState, store } = usePageContext();
-  const to = getLocationTo()(store.state) || '';
+  const { pageState } = usePageContext();
+
+  const { sliceState } = useSliceState(historySliceKey);
+  const history = sliceState?.history;
+
+  const to =
+    history && pageState ? createTo(pageState.location, history) || '' : '';
   const pendingCalls = useRef<Parameters<BaseHistory['navigate']>[]>([]);
 
-  const navigate = pageState?.history
-    ? pageState.history.navigate.bind(pageState.history)
+  const navigate = history
+    ? history.navigate.bind(history)
     : (...args: Parameters<BaseHistory['navigate']>) => {
         pendingCalls.current?.push(args);
       };
 
   // apply any navigation calls that we might have missed during the
   // state loading
-  if (pendingCalls.current.length > 0 && pageState?.history) {
+  if (pendingCalls.current.length > 0 && history) {
     for (const call of pendingCalls.current) {
       navigate(...call);
     }
