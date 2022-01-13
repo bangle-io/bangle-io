@@ -7,7 +7,6 @@ import {
   pageSliceKey,
   PageSliceStateType,
 } from './common';
-import { watchHistoryEffect } from './effects';
 
 export const pageSliceInitialState: PageSliceStateType = {
   blockReload: false,
@@ -16,7 +15,6 @@ export const pageSliceInitialState: PageSliceStateType = {
     pathname: undefined,
     search: undefined,
   },
-  history: undefined,
   lifeCycleState: {
     current: undefined,
     previous: undefined,
@@ -65,12 +63,6 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
             };
           }
 
-          case 'action::@bangle.io/slice-page:history-set-history': {
-            return {
-              ...state,
-              history: action.value.history,
-            };
-          }
           default: {
             return state;
           }
@@ -100,20 +92,6 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
         };
         const fromJSON = (obj: ReturnType<typeof toJSON>) => {
           return obj;
-        };
-
-        return {
-          toJSON,
-          fromJSON,
-        };
-      },
-
-      'action::@bangle.io/slice-page:history-set-history': (actionName) => {
-        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
-          return false as const;
-        };
-        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-          return false as const;
         };
 
         return {
@@ -187,6 +165,6 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
       },
     },
 
-    sideEffect: [watchHistoryEffect],
+    sideEffect: [],
   });
 }

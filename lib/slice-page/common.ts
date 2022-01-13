@@ -3,7 +3,6 @@ import {
   ExtractAction,
   SliceKey,
 } from '@bangle.io/create-store';
-import { BaseHistory } from '@bangle.io/history';
 import type { Location } from '@bangle.io/ws-path';
 
 export const PAGE_BLOCK_RELOAD_ACTION_NAME =
@@ -29,7 +28,6 @@ export type PageLifeCycleState =
 
 export interface PageSliceStateType {
   blockReload: boolean;
-  history: BaseHistory | undefined;
   location: Location;
   pendingNavigation:
     | undefined
@@ -57,12 +55,6 @@ export type PageSliceAction =
   | {
       name: 'action::@bangle.io/slice-page:history-update-pending-navigation';
       value: { pendingNavigation: PageSliceStateType['pendingNavigation'] };
-    }
-  | {
-      name: 'action::@bangle.io/slice-page:history-set-history';
-      value: {
-        history: BaseHistory;
-      };
     };
 
 export const pageSliceKey = new SliceKey<PageSliceStateType, PageSliceAction>(

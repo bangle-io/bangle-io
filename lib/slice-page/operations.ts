@@ -1,5 +1,4 @@
 import type { AppState } from '@bangle.io/create-store';
-import { createTo } from '@bangle.io/history';
 import { Location, locationSetWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { PageDispatchType, PageLifeCycleState, pageSliceKey } from './common';
@@ -23,6 +22,18 @@ export function setPageLifeCycleState(
       value: {
         current: current,
         previous: previous,
+      },
+    });
+  };
+}
+
+// to be called when history has navigated to in store pending change
+export function syncPageLocation(location: Location) {
+  return (_: AppState, dispatch: PageDispatchType) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-page:history-update-location',
+      value: {
+        location,
       },
     });
   };
@@ -76,50 +87,34 @@ export function getPageLocation() {
   };
 }
 
-// returns a string that can be used to to navigate
-// for example /ws/hello?something
-export function getLocationTo() {
-  return (state: AppState) => {
-    const sliceState = pageSliceKey.getSliceState(state);
-    if (sliceState?.location && sliceState?.history) {
-      return createTo(sliceState.location, sliceState.history);
-    }
-
-    return undefined;
-  };
-}
-
 export function goToLocation(
   location: Partial<Location> | string,
   { replace = false }: { replace?: boolean } = {},
 ) {
   return (state: AppState, dispatch: PageDispatchType): void => {
-    const sliceState = pageSliceKey.getSliceState(state);
-    if (sliceState?.history) {
-      if (typeof location === 'string') {
-        const [pathname, search] = location.split('?');
-        dispatch({
-          name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
-          value: {
-            pendingNavigation: {
-              location: { pathname, search },
-              replaceHistory: replace,
-              preserve: false,
-            },
+    if (typeof location === 'string') {
+      const [pathname, search] = location.split('?');
+      dispatch({
+        name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+        value: {
+          pendingNavigation: {
+            location: { pathname, search },
+            replaceHistory: replace,
+            preserve: false,
           },
-        });
-      } else {
-        dispatch({
-          name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
-          value: {
-            pendingNavigation: {
-              location,
-              replaceHistory: replace,
-              preserve: true,
-            },
+        },
+      });
+    } else {
+      dispatch({
+        name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+        value: {
+          pendingNavigation: {
+            location,
+            replaceHistory: replace,
+            preserve: true,
           },
-        });
-      }
+        },
+      });
     }
   };
 }
@@ -133,29 +128,27 @@ export function historyUpdateOpenedWsPaths(
   }: { replace?: boolean; clearSearch?: boolean } = {},
 ) {
   return (state: AppState, dispatch: PageDispatchType): void => {
-    const sliceState = pageSliceKey.getSliceState(state);
-    if (sliceState?.history) {
-      const existingLoc = {
-        ...sliceState.location,
-      };
+    const sliceState = pageSliceKey.getSliceStateAsserted(state);
+    const existingLoc = {
+      ...sliceState.location,
+    };
 
-      if (clearSearch) {
-        existingLoc.search = '';
-      }
-
-      const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
-
-      dispatch({
-        name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
-        value: {
-          pendingNavigation: {
-            location,
-            replaceHistory: replace,
-            preserve: false,
-          },
-        },
-      });
+    if (clearSearch) {
+      existingLoc.search = '';
     }
+
+    const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
+
+    dispatch({
+      name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+      value: {
+        pendingNavigation: {
+          location,
+          replaceHistory: replace,
+          preserve: false,
+        },
+      },
+    });
   };
 }
 

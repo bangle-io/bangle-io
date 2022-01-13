@@ -12,24 +12,13 @@ test('sets up', () => {
   expect(pageSliceKey.getSliceState(store.state)).toMatchInlineSnapshot(`
     Object {
       "blockReload": false,
-      "history": BrowserHistory {
-        "base": "",
-        "checkForUpdates": [Function],
-        "currentLoc": Object {
-          "pathname": "/",
-          "search": "",
-        },
-        "historyCounter": 0,
-        "host": [Window],
-        "onChange": [Function],
-      },
       "lifeCycleState": Object {
         "current": undefined,
         "previous": undefined,
       },
       "location": Object {
-        "pathname": "/",
-        "search": "",
+        "pathname": undefined,
+        "search": undefined,
       },
       "pendingNavigation": undefined,
     }
