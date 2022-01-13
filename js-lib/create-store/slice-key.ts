@@ -25,8 +25,10 @@ export class SliceKey<SL = any, A extends BaseAction = any, S = SL> {
     return store as ApplicationStore<SL, A>;
   }
 
-  getDispatch(store: ApplicationStore): ApplicationStore<SL, A>['dispatch'] {
-    return this.getStore(store)['dispatch'];
+  getDispatch(
+    dispatch: ApplicationStore<any, any>['dispatch'],
+  ): ApplicationStore<SL, A>['dispatch'] {
+    return dispatch as ApplicationStore<SL, A>['dispatch'];
   }
 
   getSliceState(

@@ -15,7 +15,9 @@ import { goToLocation } from '@bangle.io/slice-page';
 const dateNow = Date.now;
 
 jest.mock('@bangle.io/slice-page', () => {
+  const remaining = jest.requireActual('@bangle.io/slice-page');
   return {
+    ...remaining,
     getPageLocation: jest.fn(() => () => {}),
     saveToHistoryState: jest.fn(() => () => {}),
     goToLocation: jest.fn(() => () => {}),

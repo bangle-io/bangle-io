@@ -47,7 +47,10 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
           error instanceof WorkspaceError &&
           error.code === WORKSPACE_NOT_FOUND_ERROR
         ) {
-          goToWsNameRouteNotFoundRoute(wsName)(bangleStore.state);
+          goToWsNameRouteNotFoundRoute(wsName)(
+            bangleStore.state,
+            bangleStore.dispatch,
+          );
         }
         throw error;
       },

@@ -23,7 +23,6 @@ test('sets up', () => {
         "host": [Window],
         "onChange": [Function],
       },
-      "historyChangedCounter": 0,
       "lifeCycleState": Object {
         "current": undefined,
         "previous": undefined,
@@ -32,6 +31,7 @@ test('sets up', () => {
         "pathname": "/",
         "search": "",
       },
+      "pendingNavigation": undefined,
     }
   `);
 });

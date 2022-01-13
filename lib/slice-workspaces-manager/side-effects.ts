@@ -1,6 +1,6 @@
 import * as idb from 'idb-keyval';
 
-import { saveToHistoryState } from '@bangle.io/slice-page';
+import { pageSliceKey, saveToHistoryState } from '@bangle.io/slice-page';
 
 import {
   SideEffect,
@@ -49,7 +49,10 @@ export const saveWorkspaceInfoEffect: SideEffect = () => {
           })
           .filter((r) => r);
 
-        saveToHistoryState('workspacesRootDir', result)(store.state);
+        saveToHistoryState('workspacesRootDir', result)(
+          store.state,
+          pageSliceKey.getDispatch(store.dispatch),
+        );
         lastWorkspaceInfos = workspaceInfos;
       }
     },

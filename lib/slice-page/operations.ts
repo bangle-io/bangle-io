@@ -3,7 +3,6 @@ import { locationSetWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { PageDispatchType, PageLifeCycleState, pageSliceKey } from './common';
 import { createTo } from './history/create-to';
-import { historyPush, historyStateUpdate } from './history/helpers';
 import { Location } from './history/types';
 
 export function blockReload(block: boolean) {
@@ -95,16 +94,32 @@ export function goToLocation(
   location: Partial<Location> | string,
   { replace = false }: { replace?: boolean } = {},
 ) {
-  return (state: AppState): void => {
+  return (state: AppState, dispatch: PageDispatchType): void => {
     const sliceState = pageSliceKey.getSliceState(state);
-
     if (sliceState?.history) {
       if (typeof location === 'string') {
-        sliceState.history?.navigate(location, {
-          replace: replace,
+        const [pathname, search] = location.split('?');
+        dispatch({
+          name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+          value: {
+            pendingNavigation: {
+              location: { pathname, search },
+              replaceHistory: replace,
+              preserve: false,
+            },
+          },
         });
       } else {
-        historyPush(sliceState?.history, location, { replace });
+        dispatch({
+          name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+          value: {
+            pendingNavigation: {
+              location,
+              replaceHistory: replace,
+              preserve: true,
+            },
+          },
+        });
       }
     }
   };
@@ -118,7 +133,7 @@ export function historyUpdateOpenedWsPaths(
     clearSearch = true,
   }: { replace?: boolean; clearSearch?: boolean } = {},
 ) {
-  return (state: AppState): void => {
+  return (state: AppState, dispatch: PageDispatchType): void => {
     const sliceState = pageSliceKey.getSliceState(state);
     if (sliceState?.history) {
       const existingLoc = {
@@ -131,19 +146,38 @@ export function historyUpdateOpenedWsPaths(
 
       const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
 
-      historyPush(sliceState?.history, location, { replace });
+      dispatch({
+        name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+        value: {
+          pendingNavigation: {
+            location,
+            replaceHistory: replace,
+            preserve: false,
+          },
+        },
+      });
     }
   };
 }
 
 export function saveToHistoryState(key: string, value: any) {
-  return (state: AppState): void => {
+  return (state: AppState, dispatch: PageDispatchType): void => {
     const sliceState = pageSliceKey.getSliceState(state);
-
-    if (sliceState?.history) {
-      historyStateUpdate(sliceState?.history, {
-        [key]: value,
-      });
-    }
+    console.log('NOT IMPLEMEENTED');
+    // if (sliceState?.history) {
+    //   dispatch({
+    //     name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+    //     value: {
+    //       pendingNavigation: {
+    //         preserve: true,
+    //         location: sliceState.location,
+    //         historyState: {
+    //           [key]: value,
+    //         },
+    //         replaceHistory: true,
+    //       },
+    //     },
+    //   });
+    // }
   };
 }

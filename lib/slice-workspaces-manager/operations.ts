@@ -1,5 +1,9 @@
 import { AppState } from '@bangle.io/create-store';
-import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
+import {
+  getPageLocation,
+  goToLocation,
+  pageSliceKey,
+} from '@bangle.io/slice-page';
 import { asssertNotUndefined } from '@bangle.io/utils';
 import {
   pathnameToWsName,
@@ -141,7 +145,10 @@ export function createWorkspace(
 
     await saveWorkspacesInfo(store.state);
 
-    goToLocation(wsNameToPathname(wsName))(store.state);
+    goToLocation(wsNameToPathname(wsName))(
+      store.state,
+      pageSliceKey.getDispatch(store.dispatch),
+    );
 
     return true;
   };
@@ -181,7 +188,10 @@ export function deleteWorkspace(targetWsName: string) {
     );
 
     if (targetWsName === activeWsName) {
-      goToLocation(wsNameToPathname(HELP_FS_WORKSPACE_NAME))(store.state);
+      goToLocation(wsNameToPathname(HELP_FS_WORKSPACE_NAME))(
+        store.state,
+        pageSliceKey.getDispatch(store.dispatch),
+      );
     }
 
     return true;

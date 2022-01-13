@@ -1,12 +1,11 @@
 import {
   ApplicationStore,
-  AppState,
   ExtractAction,
   SliceKey,
 } from '@bangle.io/create-store';
+import type { Location } from '@bangle.io/ws-path';
 
 import { BaseHistory } from './history/base-history';
-import { Location } from './history/types';
 
 export const PAGE_BLOCK_RELOAD_ACTION_NAME =
   'action::@bangle.io/slice-page:BLOCK_RELOAD';
@@ -33,7 +32,13 @@ export interface PageSliceStateType {
   blockReload: boolean;
   history: BaseHistory | undefined;
   location: Location;
-  historyChangedCounter: number;
+  pendingNavigation:
+    | undefined
+    | {
+        location: Location;
+        replaceHistory?: boolean;
+        preserve?: boolean;
+      };
   lifeCycleState: {
     current?: PageLifeCycleState;
     previous?: PageLifeCycleState;
@@ -47,14 +52,18 @@ export type PageSliceAction =
       value: { current?: PageLifeCycleState; previous?: PageLifeCycleState };
     }
   | {
+      name: 'action::@bangle.io/slice-page:history-update-location';
+      value: { location: Location };
+    }
+  | {
+      name: 'action::@bangle.io/slice-page:history-update-pending-navigation';
+      value: { pendingNavigation: PageSliceStateType['pendingNavigation'] };
+    }
+  | {
       name: 'action::@bangle.io/slice-page:history-set-history';
       value: {
         history: BaseHistory;
       };
-    }
-  | {
-      name: 'action::@bangle.io/slice-page:history-update-location';
-      value: { location: Location };
     };
 
 export const pageSliceKey = new SliceKey<PageSliceStateType, PageSliceAction>(
