@@ -5,6 +5,11 @@ import {
   PageSliceStateType,
   syncPageLocation,
 } from '@bangle.io/slice-page';
+import {
+  workspacesSliceKey,
+  WorkspacesSliceState,
+  WorkspaceType,
+} from '@bangle.io/slice-workspaces-manager';
 import { assertActionType, assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();
@@ -54,7 +59,11 @@ export function historySlice() {
         }
       },
     },
-    sideEffect: [watchHistoryEffect, applyPendingNavigation],
+    sideEffect: [
+      watchHistoryEffect,
+      applyPendingNavigation,
+      saveWorkspaceInfoEffect,
+    ],
   });
 }
 
@@ -83,21 +92,17 @@ const applyPendingNavigation: SliceSideEffect<
 
       lastProcessed = pendingNavigation;
       if (pendingNavigation.preserve) {
-        setTimeout(() => {
-          history?.navigate(createTo(pendingNavigation.location, history), {
-            replace: pendingNavigation.replaceHistory,
-          });
-        }, 0);
+        history?.navigate(createTo(pendingNavigation.location, history), {
+          replace: pendingNavigation.replaceHistory,
+        });
       } else {
         let to = pendingNavigation.location.pathname || '';
         if (pendingNavigation.location.search) {
           to += '?' + pendingNavigation.location.search;
         }
-        setTimeout(() => {
-          history?.navigate(to, {
-            replace: pendingNavigation.replaceHistory,
-          });
-        }, 0);
+        history?.navigate(to, {
+          replace: pendingNavigation.replaceHistory,
+        });
       }
     },
   };
@@ -128,6 +133,48 @@ const watchHistoryEffect: SliceSideEffect<
   return {
     destroy() {
       browserHistory.destroy();
+    },
+  };
+};
+
+// Persist rootDirectory handle in the browser history to
+// prevent release of the authorized native browser FS permission on reload
+export const saveWorkspaceInfoEffect: SliceSideEffect<
+  HistoryStateType,
+  HistorySliceAction
+> = () => {
+  let lastWorkspaceInfos: WorkspacesSliceState['workspaceInfos'] | undefined =
+    undefined;
+
+  return {
+    deferredUpdate(store) {
+      const { workspaceInfos } = workspacesSliceKey.getSliceStateAsserted(
+        store.state,
+      );
+
+      if (workspaceInfos && lastWorkspaceInfos !== workspaceInfos) {
+        const { history } = historySliceKey.getSliceStateAsserted(store.state);
+
+        if (!history || !(history instanceof BrowserHistory)) {
+          return;
+        }
+
+        const result = Object.values(workspaceInfos)
+          .filter((r) => !r.deleted)
+          .map((r) => {
+            if (r.type === WorkspaceType['nativefs']) {
+              return r?.metadata?.rootDirHandle;
+            }
+            return undefined;
+          })
+          .filter((r) => r);
+
+        history.updateHistoryState({
+          workspacesRootDir: result,
+        });
+
+        lastWorkspaceInfos = workspaceInfos;
+      }
     },
   };
 };

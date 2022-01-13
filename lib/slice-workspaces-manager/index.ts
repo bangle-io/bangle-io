@@ -2,10 +2,13 @@ export type {
   WorkspaceInfo,
   WorkspacesAppStore,
   WorkspacesDispatchType,
+  WorkspacesSliceAction,
+  WorkspacesSliceState,
 } from './common';
 export {
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
+  workspacesSliceInitialState,
   workspacesSliceKey,
   WorkspaceType,
 } from './common';

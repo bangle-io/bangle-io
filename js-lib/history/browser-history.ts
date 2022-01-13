@@ -1,11 +1,11 @@
 import { BaseHistory } from './base-history';
 import { createTo } from './create-to';
-import { Location } from './types';
 import {
   eventPushState,
   eventReplaceState,
   historyEvents,
 } from './patch-history';
+import { Location } from './types';
 
 export class BrowserHistory extends BaseHistory {
   private host = typeof window !== 'undefined' ? window : undefined;

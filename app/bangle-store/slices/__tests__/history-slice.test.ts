@@ -4,14 +4,52 @@ import {
   pageSlice,
   PageSliceAction,
 } from '@bangle.io/slice-page';
+import {
+  workspacesSliceInitialState,
+  workspacesSliceKey,
+} from '@bangle.io/slice-workspaces-manager';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
-import { sleep } from '@bangle.io/utils';
 
 import { historySlice } from '../history-slice';
 
+jest.mock('@bangle.io/slice-workspaces-manager', () => {
+  const other = jest.requireActual('@bangle.io/slice-workspaces-manager');
+  const workspacesSliceKey = other.workspacesSliceKey;
+  workspacesSliceKey.getSliceStateAsserted = jest.fn();
+  return {
+    ...other,
+    workspacesSliceKey,
+  };
+});
+
+const workspacesSliceStateMock = workspacesSliceKey[
+  'getSliceStateAsserted'
+] as jest.MockedFunction<typeof workspacesSliceKey['getSliceStateAsserted']>;
+
+let historyPushSpy, historyReplaceSpy;
+
+beforeAll(() => {
+  jest.useFakeTimers();
+});
+
+beforeEach(() => {
+  workspacesSliceStateMock.mockImplementation(
+    () => workspacesSliceInitialState,
+  );
+  window.history.replaceState(null, '', '/');
+
+  jest.clearAllMocks();
+
+  historyPushSpy = jest.spyOn(window.history, 'pushState');
+  historyReplaceSpy = jest.spyOn(window.history, 'replaceState');
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
-    jest.useFakeTimers();
     const { store, actionsDispatched } = createTestStore<PageSliceAction>([
       pageSlice(),
       historySlice(),
@@ -43,15 +81,8 @@ describe('watchHistoryEffect', () => {
 });
 
 describe('applyPendingNavigation', () => {
-  let historyPushSpy, historyReplaceSpy;
-
-  beforeEach(() => {
-    historyPushSpy = jest.spyOn(window.history, 'pushState');
-    historyReplaceSpy = jest.spyOn(window.history, 'replaceState');
-  });
   test('works', async () => {
     jest.useFakeTimers();
-
     const { store } = createTestStore<PageSliceAction>([
       pageSlice(),
       historySlice(),
@@ -71,8 +102,6 @@ describe('applyPendingNavigation', () => {
   });
 
   test('respects replace', async () => {
-    jest.useFakeTimers();
-
     const { store } = createTestStore<PageSliceAction>([
       pageSlice(),
       historySlice(),
@@ -92,8 +121,6 @@ describe('applyPendingNavigation', () => {
   });
 
   test('works with object location and replace=true', async () => {
-    jest.useFakeTimers();
-
     const { store } = createTestStore<PageSliceAction>([
       pageSlice(),
       historySlice(),
@@ -118,8 +145,6 @@ describe('applyPendingNavigation', () => {
     expect(historyPushSpy).toBeCalledTimes(0);
   });
   test('works with object location', async () => {
-    jest.useFakeTimers();
-
     const { store } = createTestStore<PageSliceAction>([
       pageSlice(),
       historySlice(),
