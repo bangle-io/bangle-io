@@ -1,6 +1,5 @@
-import { Location } from '@bangle.io/ws-path';
-
 import { BaseHistory } from './base-history';
+import { Location } from './types';
 
 export function createTo(loc: Partial<Location>, history: BaseHistory) {
   if (loc.search?.startsWith('?')) {

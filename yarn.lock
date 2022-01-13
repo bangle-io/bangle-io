@@ -1816,6 +1816,7 @@ __metadata:
     "@bangle.io/editor-container": "workspace:*"
     "@bangle.io/editor-core": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/history": "workspace:*"
     "@bangle.io/image-extension": "workspace:*"
     "@bangle.io/inline-backlink": "workspace:*"
     "@bangle.io/inline-command-palette": "workspace:*"
@@ -2242,6 +2243,12 @@ __metadata:
     react: ^17.0.2
   peerDependencies:
     react: "*"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/history@workspace:*, @bangle.io/history@workspace:js-lib/history":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/history@workspace:js-lib/history"
   languageName: unknown
   linkType: soft
 
@@ -2772,6 +2779,7 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/history": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"

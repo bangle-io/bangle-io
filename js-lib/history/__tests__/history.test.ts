@@ -1,4 +1,4 @@
-import { BrowserHistory } from '../history/browser-histroy';
+import { BrowserHistory } from '../browser-history';
 
 describe('browser-history', () => {
   beforeEach(() => {

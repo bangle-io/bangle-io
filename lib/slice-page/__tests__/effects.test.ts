@@ -1,6 +1,6 @@
+import { BrowserHistory } from '@bangle.io/history';
 import { sleep } from '@bangle.io/utils';
 
-import { BrowserHistory } from '../history/browser-histroy';
 import { createStore, lifeCycleMock } from './test-utils';
 
 beforeEach(() => {

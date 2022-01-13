@@ -1,8 +1,7 @@
 import { SliceSideEffect } from '@bangle.io/create-store';
+import { BrowserHistory, createTo } from '@bangle.io/history';
 
 import { PageSliceAction, pageSliceKey, PageSliceStateType } from './common';
-import { BrowserHistory } from './history/browser-histroy';
-import { createTo } from './history/create-to';
 
 // sets up history and watches for any changes in it
 export const watchHistoryEffect: SliceSideEffect<

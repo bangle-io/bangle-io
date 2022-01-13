@@ -1,4 +1,4 @@
-import type { Location } from '@bangle.io/ws-path';
+import { Location } from './types';
 
 export abstract class BaseHistory {
   constructor(

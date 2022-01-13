@@ -1,9 +1,8 @@
 import type { AppState } from '@bangle.io/create-store';
-import { locationSetWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
+import { createTo } from '@bangle.io/history';
+import { Location, locationSetWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { PageDispatchType, PageLifeCycleState, pageSliceKey } from './common';
-import { createTo } from './history/create-to';
-import { Location } from './history/types';
 
 export function blockReload(block: boolean) {
   return (_: AppState, dispatch: PageDispatchType) => {

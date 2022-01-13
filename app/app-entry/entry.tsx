@@ -9,14 +9,11 @@ import {
   ExtensionRegistryContextProvider,
   ExtensionStateContextProvider,
 } from '@bangle.io/extension-registry';
+import { BaseHistory } from '@bangle.io/history';
 import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
 import { polyfills } from '@bangle.io/shared';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
-import {
-  BaseHistory,
-  getLocationTo,
-  usePageContext,
-} from '@bangle.io/slice-page';
+import { getLocationTo, usePageContext } from '@bangle.io/slice-page';
 import { UIManager } from '@bangle.io/slice-ui';
 import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 import { pathMatcher } from '@bangle.io/ws-path';

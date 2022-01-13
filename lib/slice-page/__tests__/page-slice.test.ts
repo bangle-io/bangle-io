@@ -1,4 +1,4 @@
-import { pageSlice, pageSliceKey } from '..';
+import { pageSliceKey } from '../common';
 import { createStore, lifeCycleMock } from './test-utils';
 
 beforeEach(() => {

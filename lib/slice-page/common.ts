@@ -3,9 +3,8 @@ import {
   ExtractAction,
   SliceKey,
 } from '@bangle.io/create-store';
+import { BaseHistory } from '@bangle.io/history';
 import type { Location } from '@bangle.io/ws-path';
-
-import { BaseHistory } from './history/base-history';
 
 export const PAGE_BLOCK_RELOAD_ACTION_NAME =
   'action::@bangle.io/slice-page:BLOCK_RELOAD';

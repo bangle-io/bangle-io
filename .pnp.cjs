@@ -159,6 +159,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/fzf-search"
       },
       {
+        "name": "@bangle.io/history",
+        "reference": "workspace:js-lib/history"
+      },
+      {
         "name": "@bangle.io/inline-palette",
         "reference": "workspace:js-lib/inline-palette"
       },
@@ -313,6 +317,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/example-extension", ["workspace:extensions/example-extension"]],
       ["@bangle.io/extension-registry", ["workspace:lib/extension-registry"]],
       ["@bangle.io/fzf-search", ["virtual:b54cdb4c6b042c95d927e384930d91a5009a044e1d3ad93f30d44051a29bc860a2800d453323a8c2830c87ca5a6f98af8f5e2e55330ad98f95cc96086059406e#workspace:js-lib/fzf-search", "workspace:js-lib/fzf-search"]],
+      ["@bangle.io/history", ["workspace:js-lib/history"]],
       ["@bangle.io/image-extension", ["workspace:extensions/image-extension"]],
       ["@bangle.io/inline-backlink", ["workspace:extensions/inline-backlink"]],
       ["@bangle.io/inline-command-palette", ["workspace:extensions/inline-command-palette"]],
@@ -3797,6 +3802,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],
             ["@bangle.io/editor-core", "workspace:extensions/editor-core"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/history", "workspace:js-lib/history"],
             ["@bangle.io/image-extension", "workspace:extensions/image-extension"],
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],
             ["@bangle.io/inline-command-palette", "workspace:extensions/inline-command-palette"],
@@ -3869,6 +3875,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/editor-container", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/editor-container"],
             ["@bangle.io/editor-core", "workspace:extensions/editor-core"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/history", "workspace:js-lib/history"],
             ["@bangle.io/image-extension", "workspace:extensions/image-extension"],
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],
             ["@bangle.io/inline-command-palette", "workspace:extensions/inline-command-palette"],
@@ -4443,6 +4450,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:17.0.34"],
             ["fzf", "npm:0.4.1"],
             ["react", "npm:17.0.2"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/history", [
+        ["workspace:js-lib/history", {
+          "packageLocation": "./js-lib/history/",
+          "packageDependencies": [
+            ["@bangle.io/history", "workspace:js-lib/history"]
           ],
           "linkType": "SOFT",
         }]
@@ -5074,6 +5090,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/history", "workspace:js-lib/history"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
