@@ -497,7 +497,7 @@ describe('trimWhiteSpaceEffect', () => {
   test('works', () => {
     const pageLifeMock = jest.fn(() => true);
     pageLifeCycleTransitionedToMock.mockImplementation((lifecycle) => {
-      if (lifecycle[0] === 'passive' && lifecycle[1] === 'hidden') {
+      if (lifecycle?.[0] === 'passive' && lifecycle[1] === 'hidden') {
         return pageLifeMock;
       }
       return () => false;

@@ -1,3 +1,5 @@
+import lifecycle from 'page-lifecycle';
+
 import {
   ApplicationStore,
   Slice,
@@ -21,6 +23,7 @@ import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 import { workerSlice } from '@bangle.io/worker-setup';
 
 import { e2eHelpers } from './e2e-helpers';
+import { pageLifeCycleSlice } from './slices/page-lifecycle';
 
 export type BangleActionTypes =
   | UiContextAction
@@ -41,6 +44,7 @@ export function bangleStateSlices({
 }) {
   return [
     pageSlice(),
+    pageLifeCycleSlice(lifecycle),
     workspacesSlice(),
     workerSlice(),
     extensionRegistrySlice(),

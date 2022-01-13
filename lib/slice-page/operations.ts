@@ -1,7 +1,7 @@
 import type { AppState } from '@bangle.io/create-store';
 import { locationSetWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { PageDispatchType, PageLifeCycleStates, pageSliceKey } from './common';
+import { PageDispatchType, PageLifeCycleState, pageSliceKey } from './common';
 import { createTo } from './history/create-to';
 import { historyPush, historyStateUpdate } from './history/helpers';
 import { Location } from './history/types';
@@ -15,10 +15,25 @@ export function blockReload(block: boolean) {
   };
 }
 
+export function setPageLifeCycleState(
+  current: PageLifeCycleState,
+  previous: PageLifeCycleState,
+) {
+  return (_: AppState, dispatch: PageDispatchType) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE',
+      value: {
+        current: current,
+        previous: previous,
+      },
+    });
+  };
+}
+
 // Returns true when the lifecycle changes to the one in param
 // use prevState to determine the transition to
 export function pageLifeCycleTransitionedTo(
-  lifeCycle: PageLifeCycleStates | PageLifeCycleStates[],
+  lifeCycle: PageLifeCycleState | PageLifeCycleState[],
   prevState: AppState,
 ) {
   return (state: AppState): boolean => {
@@ -47,7 +62,7 @@ export function getCurrentPageLifeCycle() {
   };
 }
 
-export function isPageLifeCycleOneOf(lifeCycles: PageLifeCycleStates[]) {
+export function isPageLifeCycleOneOf(lifeCycles: PageLifeCycleState[]) {
   return (state: AppState) => {
     const lf = getCurrentPageLifeCycle()(state);
 

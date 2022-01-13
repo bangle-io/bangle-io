@@ -26,29 +26,11 @@ test('sets up', () => {
       "historyChangedCounter": 0,
       "lifeCycleState": Object {
         "current": undefined,
+        "previous": undefined,
       },
       "location": Object {
         "pathname": "/",
         "search": "",
-      },
-      Symbol(lifecycle): Object {
-        "addEventListener": [MockFunction] {
-          "calls": Array [
-            Array [
-              "statechange",
-              [Function],
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        },
-        "addUnsavedChanges": [MockFunction],
-        "removeEventListener": [MockFunction],
-        "removeUnsavedChanges": [MockFunction],
       },
     }
   `);

@@ -1901,6 +1901,7 @@ __metadata:
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/slice-workspaces-manager": "workspace:*"
+    "@bangle.io/test-utils": "worksapce:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2869,7 +2870,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/test-utils@workspace:*, @bangle.io/test-utils@workspace:lib/test-utils":
+"@bangle.io/test-utils@worksapce:*, @bangle.io/test-utils@workspace:*, @bangle.io/test-utils@workspace:lib/test-utils":
   version: 0.0.0-use.local
   resolution: "@bangle.io/test-utils@workspace:lib/test-utils"
   dependencies:

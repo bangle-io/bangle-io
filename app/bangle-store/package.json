@@ -18,6 +18,9 @@
   },
   "main": "index.ts",
   "module": "index.ts",
+  "devDependencies": {
+    "@bangle.io/test-utils": "worksapce:*"
+  },
   "dependencies": {
     "@bangle.dev/pm": "0.28.5",
     "@bangle.io/constants": "workspace:*",
