@@ -151,25 +151,3 @@ export function historyUpdateOpenedWsPaths(
     });
   };
 }
-
-export function saveToHistoryState(key: string, value: any) {
-  return (state: AppState, dispatch: PageDispatchType): void => {
-    const sliceState = pageSliceKey.getSliceState(state);
-    console.log('NOT IMPLEMEENTED');
-    // if (sliceState?.history) {
-    //   dispatch({
-    //     name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
-    //     value: {
-    //       pendingNavigation: {
-    //         preserve: true,
-    //         location: sliceState.location,
-    //         historyState: {
-    //           [key]: value,
-    //         },
-    //         replaceHistory: true,
-    //       },
-    //     },
-    //   });
-    // }
-  };
-}

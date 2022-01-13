@@ -3,7 +3,6 @@
 import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
 import * as idb from 'idb-keyval';
 
-import { saveToHistoryState } from '@bangle.io/slice-page';
 import { sleep } from '@bangle.io/utils';
 import {
   createStore,
@@ -16,146 +15,11 @@ jest.mock('@bangle.io/slice-page', () => {
   const ops = jest.requireActual('@bangle.io/slice-page');
   return {
     ...ops,
-    saveToHistoryState: jest.fn(() => () => {}),
   };
 });
 
-const saveToHistoryStateMock = saveToHistoryState as jest.MockedFunction<
-  typeof saveToHistoryState
->;
-
 beforeEach(() => {
   mockBabyFs.mockStore.clear();
-  saveToHistoryStateMock.mockImplementation(() => () => {});
-});
-
-describe('saveWorkspaceInfoEffect', () => {
-  test('works when not a nativefs workspace', async () => {
-    const { store, dispatchSpy } = createStore();
-
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
-      value: {
-        workspaceInfos: {
-          testWs: createWsInfo({ name: 'testWs' }),
-        },
-      },
-    });
-
-    await sleep(0);
-
-    expect(saveToHistoryState).toBeCalledTimes(1);
-    expect(saveToHistoryState).nthCalledWith(1, 'workspacesRootDir', []);
-  });
-  test('works when a nativefs workspace', async () => {
-    const { store, dispatchSpy } = createStore();
-
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
-      value: {
-        workspaceInfos: {
-          testWs: createWsInfo({
-            name: 'testWs',
-            type: WorkspaceType.nativefs,
-            metadata: { rootDirHandle: { root: 'handler' } },
-          }),
-        },
-      },
-    });
-
-    await sleep(0);
-
-    expect(saveToHistoryState).toBeCalledTimes(1);
-    expect(saveToHistoryState).nthCalledWith(1, 'workspacesRootDir', [
-      { root: 'handler' },
-    ]);
-  });
-
-  test('destroying should not dispatch action', async () => {
-    const { store, dispatchSpy } = createStore();
-
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
-      value: {
-        workspaceInfos: {
-          testWs: createWsInfo({
-            name: 'testWs',
-            type: WorkspaceType.nativefs,
-            metadata: { rootDirHandle: { root: 'handler' } },
-          }),
-        },
-      },
-    });
-
-    await sleep(0);
-
-    expect(saveToHistoryState).toBeCalledTimes(1);
-
-    store.destroy();
-    await sleep(0);
-    expect(saveToHistoryState).toBeCalledTimes(1);
-  });
-
-  test('dispatching multipe times does not call it again', async () => {
-    const { store, dispatchSpy } = createStore();
-
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
-      value: {
-        workspaceInfos: {
-          testWs: createWsInfo({
-            name: 'testWs',
-            type: WorkspaceType.nativefs,
-            metadata: { rootDirHandle: { root: 'handler' } },
-          }),
-        },
-      },
-    });
-
-    await sleep(0);
-
-    expect(saveToHistoryState).toBeCalledTimes(1);
-    expect(saveToHistoryState).nthCalledWith(1, 'workspacesRootDir', [
-      { root: 'handler' },
-    ]);
-
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
-      value: {
-        workspaceInfos: {
-          testWs: createWsInfo({
-            name: 'testWs',
-            type: WorkspaceType.nativefs,
-            metadata: { rootDirHandle: { root: 'handler' } },
-          }),
-        },
-      },
-    });
-    expect(saveToHistoryState).toBeCalledTimes(1);
-  });
-
-  test('does not save destroyed workspaces', async () => {
-    const { store, dispatchSpy } = createStore();
-
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
-      value: {
-        workspaceInfos: {
-          testWs: createWsInfo({
-            name: 'testWs',
-            deleted: true,
-            type: WorkspaceType.nativefs,
-            metadata: { rootDirHandle: { root: 'handler' } },
-          }),
-        },
-      },
-    });
-
-    await sleep(0);
-
-    expect(saveToHistoryState).toBeCalledTimes(1);
-    expect(saveToHistoryState).nthCalledWith(1, 'workspacesRootDir', []);
-  });
 });
 
 describe('refreshWorkspacesEffect', () => {
