@@ -23,6 +23,8 @@ type DispatchActionType<S, A extends BaseAction> = (
   action: A,
 ) => void;
 
+export type SerializedAction<A> = {};
+
 export class ApplicationStore<S = any, A extends BaseAction = any> {
   private sideEffects: StoreSideEffectType<any, A, S>[] = [];
   private destroyed = false;
@@ -102,6 +104,10 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   };
 
   serializeAction(action: A) {
+    if (action.fromStore) {
+      throw new Error('Cannot serialize an action that came from other store');
+    }
+
     const serializer = this.actionSerializers[action.name];
     if (!serializer) {
       return false;

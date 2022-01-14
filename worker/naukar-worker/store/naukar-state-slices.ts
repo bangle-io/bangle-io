@@ -1,4 +1,5 @@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import { pageSlice } from '@bangle.io/slice-page';
 
 export type NaukarActionTypes = {
   name: string;
@@ -11,6 +12,7 @@ export function naukarStateSlices({
   onUpdate?: (store: ApplicationStore) => void;
 }) {
   return [
+    pageSlice(),
     // keep this at the end
     new Slice({
       sideEffect() {
