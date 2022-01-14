@@ -1855,6 +1855,7 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     react-virtual: ^2.8.2
+    safari-14-idb-fix: ^3.0.0
     vite-plugin-pwa: ^0.11.3
     wouter: ^2.8.0-alpha.2
   peerDependencies:
@@ -14836,6 +14837,13 @@ __metadata:
   version: 1.0.6
   resolution: "safari-14-idb-fix@npm:1.0.6"
   checksum: 588cd632606ff0e47d64d0b71d88f9626f6187177a3187cb063a272ecb0412f7453f4e9321a9e731a1439b7830aa24f907e2338b402e1ef24e8d6a42f7ce8532
+  languageName: node
+  linkType: hard
+
+"safari-14-idb-fix@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "safari-14-idb-fix@npm:3.0.0"
+  checksum: 30d5baf3d9a17b52842b2c3fd3f0001fde7095a36191b6140ac78c19e8e1ff4b2607b9beb3b066c6bec107ccb5399c96e29748a6f5fcd592425f806f5e36f759
   languageName: node
   linkType: hard
 

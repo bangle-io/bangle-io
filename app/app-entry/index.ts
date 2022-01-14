@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 
 import { APP_ENV, RELEASE_ID } from '@bangle.io/config';
 
-import { Entry } from './entry';
+import { LoadingBlock } from './LoadingBlock';
 
 const root = document.getElementById('root');
 
@@ -39,4 +39,5 @@ if (typeof window !== undefined && APP_ENV !== 'local') {
     throw new Error('I am a simulated error');
   };
 }
-ReactDOM.render(React.createElement(Entry, {}), root);
+
+ReactDOM.render(React.createElement(LoadingBlock, {}), root);

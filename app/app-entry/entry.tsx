@@ -15,7 +15,6 @@ import {
 } from '@bangle.io/extension-registry';
 import { BaseHistory, createTo } from '@bangle.io/history';
 import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
-import { polyfills } from '@bangle.io/shared';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
 import { usePageContext } from '@bangle.io/slice-page';
 import { UIManager } from '@bangle.io/slice-ui';
@@ -28,19 +27,6 @@ import { useUsageAnalytics } from './hooks/use-usage-analytics';
 import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
 import { WatchUI } from './watchers/WatchUI';
 import { WatchWorkspace } from './watchers/WatchWorkspace';
-
-function LoadingBlock({ children }) {
-  const [loaded, updateLoaded] = useState(() => {
-    return polyfills.length === 0;
-  });
-  useEffect(() => {
-    if (polyfills.length > 0) {
-      console.debug('Polyfilling ' + polyfills.length + ' features.');
-      Promise.all(polyfills).then(() => [updateLoaded(true)]);
-    }
-  }, []);
-  return loaded ? children : null;
-}
 
 let mountCount = 0;
 
@@ -115,34 +101,30 @@ export function Entry() {
   useUsageAnalytics();
 
   return (
-    <React.StrictMode>
-      <LoadingBlock>
-        <OverlayProvider className="w-full h-full">
-          <Router hook={useRouterHook} matcher={pathMatcher}>
-            <AppStateProvider
-              bangleStore={bangleStore}
-              bangleStoreChanged={bangleStoreChanged}
-            >
-              <UIManager>
-                <ExtensionRegistryContextProvider>
-                  <ExtensionStateContextProvider>
-                    <WorkspaceContextProvider>
-                      <SWReloadPrompt />
-                      <WatchWorkspace />
-                      <WatchUI />
-                      <EditorManager>
-                        <SerialOperationContextProvider>
-                          <AppContainer />
-                        </SerialOperationContextProvider>
-                      </EditorManager>
-                    </WorkspaceContextProvider>
-                  </ExtensionStateContextProvider>
-                </ExtensionRegistryContextProvider>
-              </UIManager>
-            </AppStateProvider>
-          </Router>
-        </OverlayProvider>
-      </LoadingBlock>
-    </React.StrictMode>
+    <OverlayProvider className="w-full h-full">
+      <Router hook={useRouterHook} matcher={pathMatcher}>
+        <AppStateProvider
+          bangleStore={bangleStore}
+          bangleStoreChanged={bangleStoreChanged}
+        >
+          <UIManager>
+            <ExtensionRegistryContextProvider>
+              <ExtensionStateContextProvider>
+                <WorkspaceContextProvider>
+                  <SWReloadPrompt />
+                  <WatchWorkspace />
+                  <WatchUI />
+                  <EditorManager>
+                    <SerialOperationContextProvider>
+                      <AppContainer />
+                    </SerialOperationContextProvider>
+                  </EditorManager>
+                </WorkspaceContextProvider>
+              </ExtensionStateContextProvider>
+            </ExtensionRegistryContextProvider>
+          </UIManager>
+        </AppStateProvider>
+      </Router>
+    </OverlayProvider>
   );
 }
