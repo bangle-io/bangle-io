@@ -2,13 +2,13 @@ import * as Comlink from 'comlink';
 
 import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import { BaseAction, Slice, SliceKey } from '@bangle.io/create-store';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 import {
   assertNonWorkerGlobalScope,
   setStoreSyncSliceReady,
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/utils';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { workerLoaderSliceKey } from './worker-loader-slice';
 

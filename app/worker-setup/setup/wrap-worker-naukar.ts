@@ -5,7 +5,7 @@ import * as Comlink from 'comlink';
 import { assertNonWorkerGlobalScope, sleep } from '@bangle.io/utils';
 
 // eslint-disable-next-line import/no-unresolved
-import Worker from './expose-naukar-worker.worker?worker';
+import Worker from './expose-worker-naukar.worker?worker';
 
 assertNonWorkerGlobalScope();
 

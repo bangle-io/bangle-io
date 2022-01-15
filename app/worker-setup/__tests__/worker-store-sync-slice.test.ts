@@ -1,9 +1,9 @@
 import * as Comlink from 'comlink';
 
 import { Slice } from '@bangle.io/create-store';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { workerLoaderSliceKey } from '../worker-loader-slice';
 import {

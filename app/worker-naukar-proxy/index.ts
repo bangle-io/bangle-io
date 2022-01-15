@@ -1,6 +1,6 @@
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
-import type { WorkerAPI } from '@bangle.io/naukar-worker';
 import { Emitter } from '@bangle.io/utils';
+import type { WorkerAPI } from '@bangle.io/worker-naukar';
 
 let naukar;
 

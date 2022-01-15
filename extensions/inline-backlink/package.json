@@ -20,8 +20,8 @@
   "module": "index.ts",
   "devDependencies": {
     "@bangle.dev/test-helpers": "0.28.5",
-    "@bangle.io/naukar-worker": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/worker-naukar": "workspace:*",
     "@testing-library/dom": "^8.10.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
