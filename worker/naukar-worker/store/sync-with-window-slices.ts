@@ -1,3 +1,4 @@
+import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import { BaseAction, Slice, SliceKey } from '@bangle.io/create-store';
 import {
   asssertNotUndefined,
@@ -7,6 +8,9 @@ import {
 } from '@bangle.io/utils';
 
 import { WorkerStoreOpts } from './types';
+
+const actionFilter = (action: BaseAction) =>
+  workerSyncWhiteListedActions.some((rule) => action.name.startsWith(rule));
 
 export function syncWithWindowSlices() {
   const sliceKey = new SliceKey<StoreSyncConfigType<BaseAction>>(
@@ -21,8 +25,8 @@ export function syncWithWindowSlices() {
           asssertNotUndefined(opts.port, 'port needs to be provided');
           return {
             port: opts.port,
-            actionSendFilter: () => true,
-            actionReceiveFilter: () => true,
+            actionSendFilter: actionFilter,
+            actionReceiveFilter: actionFilter,
           };
         },
       },

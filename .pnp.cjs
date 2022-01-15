@@ -5353,6 +5353,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["comlink", "npm:4.3.1"],
             ["react", "npm:17.0.2"]

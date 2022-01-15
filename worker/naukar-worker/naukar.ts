@@ -92,7 +92,7 @@ function localDiskSetup(
     );
     return doc;
   };
-  const setItem = async (wsPath, doc, version) => {
+  const setItem = async (wsPath, doc) => {
     await FileSystem.saveDoc(wsPath, doc, extensionRegistry.specRegistry);
   };
 

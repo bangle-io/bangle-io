@@ -1,5 +1,6 @@
 import * as Comlink from 'comlink';
 
+import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import { BaseAction, Slice, SliceKey } from '@bangle.io/create-store';
 import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {
@@ -13,19 +14,21 @@ import { workerLoaderSliceKey } from './worker-loader-slice';
 
 assertNonWorkerGlobalScope();
 
-let whiteListedActions = ['action::@bangle.io/slice-page:'];
-
 const actionFilter = (action: BaseAction) =>
-  whiteListedActions.some((rule) => action.name.startsWith(rule));
+  workerSyncWhiteListedActions.some((rule) => action.name.startsWith(rule));
 
-const sliceKey = new SliceKey<
+export const workerSyncKey = new SliceKey<
   { msgChannel: MessageChannel } & StoreSyncConfigType<BaseAction>
 >('workerSetupSlice-stateSyncKey');
 
+/**
+ * A slice which handles handles communication of the store actions with the
+ * worker thread's store.
+ */
 export function workerStoreSyncSlices() {
   return [
     new Slice({
-      key: sliceKey,
+      key: workerSyncKey,
       state: {
         init() {
           let msgChannel = new MessageChannel();
@@ -38,12 +41,6 @@ export function workerStoreSyncSlices() {
         },
       },
       sideEffect(store) {
-        const { msgChannel } = sliceKey.getSliceStateAsserted(store.state);
-
-        naukarWorkerProxy.sendMessagePort(
-          Comlink.transfer(msgChannel.port2, [msgChannel.port2]),
-        );
-
         return {
           update(store, prevState) {
             const workerLoaded = workerLoaderSliceKey.getValueIfChanged(
@@ -53,12 +50,19 @@ export function workerStoreSyncSlices() {
             );
 
             if (workerLoaded) {
+              const { msgChannel } = workerSyncKey.getSliceStateAsserted(
+                store.state,
+              );
+              naukarWorkerProxy.sendMessagePort(
+                Comlink.transfer(msgChannel.port2, [msgChannel.port2]),
+              );
+
               setStoreSyncSliceReady()(store.state, store.dispatch);
             }
           },
         };
       },
     }),
-    storeSyncSlice(sliceKey),
+    storeSyncSlice(workerSyncKey),
   ];
 }

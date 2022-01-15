@@ -27,6 +27,7 @@
     "@bangle.io/naukar-worker": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "comlink": "^4.3.1",
     "react": "^17.0.2"

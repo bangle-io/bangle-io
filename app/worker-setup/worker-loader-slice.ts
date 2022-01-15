@@ -23,6 +23,9 @@ export const workerLoaderSliceKey = new SliceKey<StateType, ActionType>(
 
 type WorkerSetupSideEffect = SliceSideEffect<StateType, ActionType>;
 
+/**
+ * Loads and initializes the worker thread.
+ */
 export function workerLoaderSlice() {
   assertActionName('@bangle.io/worker-setup', workerLoaderSliceKey);
 
