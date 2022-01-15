@@ -5,7 +5,6 @@ import type {
   SliceSideEffect,
 } from '@bangle.io/create-store';
 import type { JsonObject } from '@bangle.io/shared-types';
-import { assertActionType } from '@bangle.io/utils';
 
 import type { OpenedEditorsConfig } from './opened-editors-config';
 

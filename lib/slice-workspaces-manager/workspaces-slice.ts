@@ -1,5 +1,5 @@
 import { Slice } from '@bangle.io/create-store';
-import { assertActionType } from '@bangle.io/utils';
+import { assertActionName } from '@bangle.io/utils';
 
 import {
   WorkspacesSliceAction,
@@ -11,10 +11,7 @@ import { mergeWsInfoRegistries } from './helpers';
 import { refreshWorkspacesEffect } from './side-effects';
 
 export function workspacesSlice() {
-  assertActionType(
-    '@bangle.io/slice-workspaces-manager',
-    {} as WorkspacesSliceAction,
-  );
+  assertActionName('@bangle.io/slice-workspaces-manager', workspacesSliceKey);
   return new Slice<WorkspacesSliceState, WorkspacesSliceAction>({
     key: workspacesSliceKey,
     state: {

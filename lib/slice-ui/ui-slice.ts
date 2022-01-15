@@ -5,7 +5,7 @@ import type {
   ThemeType,
 } from '@bangle.io/shared-types';
 import {
-  assertActionType,
+  assertActionName,
   checkWidescreen,
   rafSchedule,
   useWindowSize,
@@ -112,7 +112,7 @@ export const uiSliceKey = new SliceKey<UISliceState, UiContextAction>(
 );
 
 export function uiSlice(): Slice<UISliceState, UiContextAction> {
-  assertActionType('@bangle.io/slice-ui', {} as UiContextAction);
+  assertActionName('@bangle.io/slice-ui', uiSliceKey);
 
   return new Slice({
     key: uiSliceKey,

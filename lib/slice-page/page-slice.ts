@@ -1,5 +1,5 @@
 import { Slice } from '@bangle.io/create-store';
-import { assertActionType } from '@bangle.io/utils';
+import { assertActionName } from '@bangle.io/utils';
 
 import {
   ExtractPageSliceAction,
@@ -24,7 +24,7 @@ export const pageSliceInitialState: PageSliceStateType = {
 // Monitors the page's lifecycle and navigation
 // See https://developers.google.com/web/updates/2018/07/page-lifecycle-api
 export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
-  assertActionType('@bangle.io/slice-page', {} as PageSliceAction);
+  assertActionName('@bangle.io/slice-page', pageSliceKey);
 
   return new Slice({
     key: pageSliceKey,

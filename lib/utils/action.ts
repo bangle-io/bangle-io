@@ -3,13 +3,7 @@
 
 import { SliceKey } from '@bangle.io/create-store';
 
-// assertActionType('my-pkg', {} as TypeToAssert);
-// assertActionType('my-pkg', {} as TypeToAssert);
-export function assertActionType<
-  R extends string,
-  T extends { name: `action::${R}:${string}` },
->(packageName: R, action: T): void {}
-
+// checks if action name is valid
 export function assertActionName<
   R extends string,
   A extends { name: `action::${R}:${string}` },

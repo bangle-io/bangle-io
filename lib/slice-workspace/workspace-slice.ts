@@ -1,6 +1,6 @@
 import { Slice } from '@bangle.io/create-store';
 import type { JsonValue } from '@bangle.io/shared-types';
-import { assertActionType } from '@bangle.io/utils';
+import { assertActionName } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ActionSerializers } from './action-serializers';
@@ -94,7 +94,7 @@ const applyState = (
 };
 
 export function workspaceSlice() {
-  assertActionType('@bangle.io/slice-workspace', {} as WorkspaceSliceAction);
+  assertActionName('@bangle.io/slice-workspace', workspaceSliceKey);
 
   return new Slice({
     key: workspaceSliceKey,

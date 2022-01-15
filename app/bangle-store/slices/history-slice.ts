@@ -10,7 +10,7 @@ import {
   WorkspacesSliceState,
   WorkspaceType,
 } from '@bangle.io/slice-workspaces-manager';
-import { assertActionType, assertNonWorkerGlobalScope } from '@bangle.io/utils';
+import { assertActionName, assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();
 
@@ -35,7 +35,7 @@ type HistorySliceAction = {
 };
 
 export function historySlice() {
-  assertActionType('@bangle.io/bangle-store', {} as HistorySliceAction);
+  assertActionName('@bangle.io/bangle-store', historySliceKey);
 
   return new Slice<HistoryStateType, HistorySliceAction>({
     key: historySliceKey,
