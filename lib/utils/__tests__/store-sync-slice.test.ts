@@ -1,6 +1,7 @@
-import { Slice, SliceKey } from '@bangle.io/create-store';
+import { Slice, staticSlice } from '@bangle.io/create-store';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 
+import { StoreSyncConfigType } from '..';
 import { setStoreSyncSliceReady, storeSyncSlice } from '../store-sync-slice';
 import { sleep } from '../utility';
 
@@ -67,8 +68,6 @@ let dummySlice = new Slice<{ counter: number }, DummyAction>({
 });
 
 test('works', async () => {
-  const key1 = new SliceKey('key1');
-
   const { port1, port2 } = new MessageChannel();
 
   jest.spyOn(port1, 'postMessage');
@@ -79,13 +78,19 @@ test('works', async () => {
     }
   });
 
-  const { store } = createTestStore([
-    storeSyncSlice({ key: key1, port: port1 as any }),
-    dummySlice,
-  ]);
+  const { key: configKey1, slice: configSlice1 } = staticSlice({
+    actionReceiveFilter: () => true,
+    actionSendFilter: () => true,
+    port: port1 as any,
+  });
+  const slice = storeSyncSlice(configKey1);
+  const { store } = createTestStore([configSlice1, slice, dummySlice]);
   await sleep(0);
 
+  expect(slice.getSliceState(store.state)?.isReady).toBe(false);
   setStoreSyncSliceReady()(store.state, store.dispatch);
+  expect(slice.getSliceState(store.state)?.isReady).toBe(true);
+
   store.dispatch({
     name: 'action::dummy-action:one',
     value: { counter: 'INCREMENT' },
@@ -93,9 +98,14 @@ test('works', async () => {
 
   await sleep(0);
 
-  expect(port2.onmessage).toBeCalledTimes(1);
-
+  expect(port2.onmessage).toBeCalledTimes(2);
   expect(port2.onmessage).nthCalledWith(1, {
+    data: {
+      type: 'ping',
+    },
+  });
+
+  expect(port2.onmessage).lastCalledWith({
     data: {
       action: {
         name: 'action::dummy-action:one',
@@ -105,21 +115,65 @@ test('works', async () => {
       type: 'action',
     },
   });
+  expect(slice.getSliceState(store.state)).toMatchInlineSnapshot(`
+    Object {
+      "isReady": true,
+      "pendingActions": Array [],
+    }
+  `);
 });
 
-test('syncs two store', async () => {
-  const key1 = new SliceKey('key1');
-  const key2 = new SliceKey('key2');
+function setup(
+  store1Config: Partial<StoreSyncConfigType<any>> = {},
+  store2Config: Partial<StoreSyncConfigType<any>> = {},
+) {
   const { port1, port2 } = new MessageChannel();
 
+  port2.onmessage = jest.fn(({ data }) => {
+    if (data?.type === 'ping') {
+      port2.postMessage({ type: 'pong' });
+    }
+  });
+  port1.onmessage = jest.fn(({ data }) => {
+    if (data?.type === 'ping') {
+      port1.postMessage({ type: 'pong' });
+    }
+  });
+
+  const { key: configKey1, slice: configSlice1 } = staticSlice({
+    actionReceiveFilter: () => true,
+    actionSendFilter: () => true,
+    ...store1Config,
+    port: port1 as any,
+  });
+
+  const { key: configKey2, slice: configSlice2 } = staticSlice({
+    actionReceiveFilter: () => true,
+    actionSendFilter: () => true,
+    ...store2Config,
+    port: port2 as any,
+  });
+
   const { store: store1 } = createTestStore([
-    storeSyncSlice({ key: key1, port: port1 as any }),
+    configSlice1,
+    storeSyncSlice(configKey1),
     dummySlice,
   ]);
   const { store: store2 } = createTestStore([
-    storeSyncSlice({ key: key2, port: port2 as any }),
+    configSlice2,
+    storeSyncSlice(configKey2),
     dummySlice,
   ]);
+
+  return {
+    store1,
+    store2,
+  };
+}
+
+test('syncs two store', async () => {
+  const { store1, store2 } = setup();
+
   setStoreSyncSliceReady()(store1.state, store1.dispatch);
   setStoreSyncSliceReady()(store2.state, store2.dispatch);
 
@@ -145,24 +199,13 @@ test('syncs two store', async () => {
 });
 
 test('actionSendFilter works', async () => {
-  const key1 = new SliceKey('key1');
-  const key2 = new SliceKey('key2');
-  const { port1, port2 } = new MessageChannel();
+  const { store1, store2 } = setup({
+    actionReceiveFilter: () => true,
+    actionSendFilter: (action) => {
+      return action.value.counter !== 'DECREMENT';
+    },
+  });
 
-  const { store: store1 } = createTestStore([
-    storeSyncSlice({
-      key: key1,
-      port: port1 as any,
-      actionSendFilter: (action) => {
-        return action.value.counter !== 'DECREMENT';
-      },
-    }),
-    dummySlice,
-  ]);
-  const { store: store2 } = createTestStore([
-    storeSyncSlice({ key: key2, port: port2 as any }),
-    dummySlice,
-  ]);
   setStoreSyncSliceReady()(store1.state, store1.dispatch);
   setStoreSyncSliceReady()(store2.state, store2.dispatch);
 
@@ -188,24 +231,13 @@ test('actionSendFilter works', async () => {
 });
 
 test('actionReceiveFilter works', async () => {
-  const key1 = new SliceKey('key1');
-  const key2 = new SliceKey('key2');
-  const { port1, port2 } = new MessageChannel();
+  const { store1, store2 } = setup({
+    actionSendFilter: () => true,
+    actionReceiveFilter: (action) => {
+      return action.value.counter !== 'DECREMENT';
+    },
+  });
 
-  const { store: store1 } = createTestStore([
-    storeSyncSlice({
-      key: key1,
-      port: port1 as any,
-      actionReceiveFilter: (action) => {
-        return action.value.counter !== 'DECREMENT';
-      },
-    }),
-    dummySlice,
-  ]);
-  const { store: store2 } = createTestStore([
-    storeSyncSlice({ key: key2, port: port2 as any }),
-    dummySlice,
-  ]);
   setStoreSyncSliceReady()(store1.state, store1.dispatch);
   setStoreSyncSliceReady()(store2.state, store2.dispatch);
 
@@ -231,12 +263,36 @@ test('actionReceiveFilter works', async () => {
 });
 
 test('when there is a delay in second store', async () => {
-  const key1 = new SliceKey('key1');
-  const key2 = new SliceKey('key2');
   const { port1, port2 } = new MessageChannel();
 
+  port2.onmessage = jest.fn(({ data }) => {
+    if (data?.type === 'ping') {
+      port2.postMessage({ type: 'pong' });
+    }
+  });
+  port1.onmessage = jest.fn(({ data }) => {
+    if (data?.type === 'ping') {
+      port1.postMessage({ type: 'pong' });
+    }
+  });
+
+  const { key: configKey1, slice: configSlice1 } = staticSlice({
+    actionSendFilter: () => true,
+    actionReceiveFilter: (action) => {
+      return action.value.counter !== 'DECREMENT';
+    },
+    port: port1 as any,
+  });
+
+  const { key: configKey2, slice: configSlice2 } = staticSlice({
+    actionReceiveFilter: () => true,
+    actionSendFilter: () => true,
+    port: port2 as any,
+  });
+
   const { store: store1 } = createTestStore([
-    storeSyncSlice({ key: key1, port: port1 as any }),
+    configSlice1,
+    storeSyncSlice(configKey1),
     dummySlice,
   ]);
 
@@ -260,7 +316,8 @@ test('when there is a delay in second store', async () => {
   expect(dummySlice.getSliceState(store1.state)).toEqual({ counter: 4 });
 
   const { store: store2 } = createTestStore([
-    storeSyncSlice({ key: key2, port: port2 as any }),
+    configSlice2,
+    storeSyncSlice(configKey2),
     dummySlice,
   ]);
   setStoreSyncSliceReady()(store1.state, store1.dispatch);
