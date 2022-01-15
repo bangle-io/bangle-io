@@ -1,5 +1,5 @@
-import { createTo } from '../history/create-to';
-import { MemoryHistory } from '../history/memory-history';
+import { createTo } from '../create-to';
+import { MemoryHistory } from '../memory-history';
 
 test('works 1', () => {
   expect(

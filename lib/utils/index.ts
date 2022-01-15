@@ -6,5 +6,6 @@ export * from './editor-hooks';
 export * from './hooks';
 export * from './random-name';
 export * from './safe-js-callbacks';
+export * from './store-sync-slice';
 export * from './utility';
 export * from './worker';

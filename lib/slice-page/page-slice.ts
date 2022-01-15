@@ -1,28 +1,20 @@
 import { Slice } from '@bangle.io/create-store';
-import type { BangleStateOpts } from '@bangle.io/shared-types';
 import { assertActionType } from '@bangle.io/utils';
 
 import {
   ExtractPageSliceAction,
-  LifeCycle,
   PageSliceAction,
   pageSliceKey,
   PageSliceStateType,
 } from './common';
-import {
-  blockReloadEffect,
-  watchHistoryEffect,
-  watchPageLifeCycleEffect,
-} from './effects';
 
 export const pageSliceInitialState: PageSliceStateType = {
   blockReload: false,
+  pendingNavigation: undefined,
   location: {
     pathname: undefined,
     search: undefined,
   },
-  history: undefined,
-  historyChangedCounter: 0,
   lifeCycleState: {
     current: undefined,
     previous: undefined,
@@ -37,15 +29,9 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
   return new Slice({
     key: pageSliceKey,
     state: {
-      init: (opts: BangleStateOpts) => {
-        if (!opts.lifecycle) {
-          throw new Error('PageSlice expects page lifecycle in opts');
-        }
-
+      init: () => {
         return {
           ...pageSliceInitialState,
-          [LifeCycle]: opts.lifecycle,
-          lifeCycleState: { current: opts.lifecycle.state },
         };
       },
       apply: (action, state) => {
@@ -63,22 +49,17 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
             };
           }
 
-          case 'action::@bangle.io/slice-page:history-set-history': {
-            const history = action.value.history;
-
-            return {
-              ...state,
-              history: action.value.history,
-              location: {
-                pathname: history.pathname,
-                search: history.search,
-              },
-            };
-          }
           case 'action::@bangle.io/slice-page:history-update-location': {
             return {
               ...state,
               location: action.value.location,
+            };
+          }
+
+          case 'action::@bangle.io/slice-page:history-update-pending-navigation': {
+            return {
+              ...state,
+              pendingNavigation: action.value.pendingNavigation,
             };
           }
 
@@ -119,20 +100,6 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
         };
       },
 
-      'action::@bangle.io/slice-page:history-set-history': (actionName) => {
-        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
-          return false as const;
-        };
-        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-          return false as const;
-        };
-
-        return {
-          toJSON,
-          fromJSON,
-        };
-      },
-
       'action::@bangle.io/slice-page:history-update-location': (actionName) => {
         const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
           return {
@@ -156,12 +123,51 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
           fromJSON,
         };
       },
+
+      'action::@bangle.io/slice-page:history-update-pending-navigation': (
+        actionName,
+      ) => {
+        const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
+          const { pendingNavigation } = action.value;
+          if (!pendingNavigation) {
+            return { pendingNavigation: null };
+          }
+          return {
+            pendingNavigation: {
+              location: {
+                pathname: pendingNavigation?.location?.pathname ?? null,
+                search: pendingNavigation?.location?.search ?? null,
+              },
+              replaceHistory: pendingNavigation?.replaceHistory ?? null,
+              preserve: pendingNavigation?.preserve ?? null,
+            },
+          };
+        };
+        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+          let { pendingNavigation } = obj;
+          if (pendingNavigation == null || pendingNavigation.location == null) {
+            return { pendingNavigation: undefined };
+          }
+
+          return {
+            pendingNavigation: {
+              location: {
+                pathname: pendingNavigation.location.pathname ?? undefined,
+                search: pendingNavigation.location.search ?? undefined,
+              },
+              replaceHistory: pendingNavigation.replaceHistory ?? undefined,
+              preserve: pendingNavigation.preserve ?? undefined,
+            },
+          };
+        };
+
+        return {
+          toJSON,
+          fromJSON,
+        };
+      },
     },
 
-    sideEffect: [
-      watchPageLifeCycleEffect,
-      blockReloadEffect,
-      watchHistoryEffect,
-    ],
+    sideEffect: [],
   });
 }

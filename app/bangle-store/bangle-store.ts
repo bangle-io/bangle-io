@@ -1,5 +1,3 @@
-import lifecycle from 'page-lifecycle';
-
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { initExtensionRegistry } from '@bangle.io/shared';
@@ -7,6 +5,7 @@ import type { BangleStateOpts, JsonValue } from '@bangle.io/shared-types';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { uiSlice } from '@bangle.io/slice-ui';
 import {
+  assertNonWorkerGlobalScope,
   safeCancelIdleCallback,
   safeRequestAnimationFrame,
   safeRequestIdleCallback,
@@ -17,6 +16,8 @@ import {
   BangleSliceTypes,
   bangleStateSlices,
 } from './bangle-slices';
+
+assertNonWorkerGlobalScope();
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};
@@ -36,7 +37,6 @@ export function initializeBangleStore({
   const extensionSlices = extensionRegistry.getSlices();
 
   const stateOpts: BangleStateOpts = {
-    lifecycle,
     extensionRegistry,
   };
   const makeStore = () => {
@@ -81,9 +81,11 @@ export function initializeBangleStore({
       state: state,
       dispatchAction: (store, action) => {
         log(action);
+        // log('starting', action.name, (action as any).id);
+
         const newState = store.state.applyAction(action);
         store.updateState(newState);
-        log('finished', action.name, (action as any).id);
+        // log('finished', action.name, (action as any).id);
       },
       scheduler: scheduler(),
     });

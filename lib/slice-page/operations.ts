@@ -1,10 +1,7 @@
 import type { AppState } from '@bangle.io/create-store';
-import { locationSetWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
+import { Location, locationSetWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { PageDispatchType, PageLifeCycleStates, pageSliceKey } from './common';
-import { createTo } from './history/create-to';
-import { historyPush, historyStateUpdate } from './history/helpers';
-import { Location } from './history/types';
+import { PageDispatchType, PageLifeCycleState, pageSliceKey } from './common';
 
 export function blockReload(block: boolean) {
   return (_: AppState, dispatch: PageDispatchType) => {
@@ -15,10 +12,37 @@ export function blockReload(block: boolean) {
   };
 }
 
+export function setPageLifeCycleState(
+  current: PageLifeCycleState,
+  previous: PageLifeCycleState,
+) {
+  return (_: AppState, dispatch: PageDispatchType) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE',
+      value: {
+        current: current,
+        previous: previous,
+      },
+    });
+  };
+}
+
+// to be called when history has navigated to in store pending change
+export function syncPageLocation(location: Location) {
+  return (_: AppState, dispatch: PageDispatchType) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-page:history-update-location',
+      value: {
+        location,
+      },
+    });
+  };
+}
+
 // Returns true when the lifecycle changes to the one in param
 // use prevState to determine the transition to
 export function pageLifeCycleTransitionedTo(
-  lifeCycle: PageLifeCycleStates | PageLifeCycleStates[],
+  lifeCycle: PageLifeCycleState | PageLifeCycleState[],
   prevState: AppState,
 ) {
   return (state: AppState): boolean => {
@@ -47,7 +71,7 @@ export function getCurrentPageLifeCycle() {
   };
 }
 
-export function isPageLifeCycleOneOf(lifeCycles: PageLifeCycleStates[]) {
+export function isPageLifeCycleOneOf(lifeCycles: PageLifeCycleState[]) {
   return (state: AppState) => {
     const lf = getCurrentPageLifeCycle()(state);
 
@@ -63,34 +87,34 @@ export function getPageLocation() {
   };
 }
 
-// returns a string that can be used to to navigate
-// for example /ws/hello?something
-export function getLocationTo() {
-  return (state: AppState) => {
-    const sliceState = pageSliceKey.getSliceState(state);
-    if (sliceState?.location && sliceState?.history) {
-      return createTo(sliceState.location, sliceState.history);
-    }
-
-    return undefined;
-  };
-}
-
 export function goToLocation(
   location: Partial<Location> | string,
   { replace = false }: { replace?: boolean } = {},
 ) {
-  return (state: AppState): void => {
-    const sliceState = pageSliceKey.getSliceState(state);
-
-    if (sliceState?.history) {
-      if (typeof location === 'string') {
-        sliceState.history?.navigate(location, {
-          replace: replace,
-        });
-      } else {
-        historyPush(sliceState?.history, location, { replace });
-      }
+  return (state: AppState, dispatch: PageDispatchType): void => {
+    if (typeof location === 'string') {
+      const [pathname, search] = location.split('?');
+      dispatch({
+        name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+        value: {
+          pendingNavigation: {
+            location: { pathname, search },
+            replaceHistory: replace,
+            preserve: false,
+          },
+        },
+      });
+    } else {
+      dispatch({
+        name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+        value: {
+          pendingNavigation: {
+            location,
+            replaceHistory: replace,
+            preserve: true,
+          },
+        },
+      });
     }
   };
 }
@@ -103,32 +127,27 @@ export function historyUpdateOpenedWsPaths(
     clearSearch = true,
   }: { replace?: boolean; clearSearch?: boolean } = {},
 ) {
-  return (state: AppState): void => {
-    const sliceState = pageSliceKey.getSliceState(state);
-    if (sliceState?.history) {
-      const existingLoc = {
-        ...sliceState.location,
-      };
+  return (state: AppState, dispatch: PageDispatchType): void => {
+    const sliceState = pageSliceKey.getSliceStateAsserted(state);
+    const existingLoc = {
+      ...sliceState.location,
+    };
 
-      if (clearSearch) {
-        existingLoc.search = '';
-      }
-
-      const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
-
-      historyPush(sliceState?.history, location, { replace });
+    if (clearSearch) {
+      existingLoc.search = '';
     }
-  };
-}
 
-export function saveToHistoryState(key: string, value: any) {
-  return (state: AppState): void => {
-    const sliceState = pageSliceKey.getSliceState(state);
+    const location = locationSetWsPath(existingLoc, wsName, openedWsPath);
 
-    if (sliceState?.history) {
-      historyStateUpdate(sliceState?.history, {
-        [key]: value,
-      });
-    }
+    dispatch({
+      name: 'action::@bangle.io/slice-page:history-update-pending-navigation',
+      value: {
+        pendingNavigation: {
+          location,
+          replaceHistory: replace,
+          preserve: false,
+        },
+      },
+    });
   };
 }

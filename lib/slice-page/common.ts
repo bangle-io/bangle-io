@@ -1,12 +1,9 @@
 import {
   ApplicationStore,
-  AppState,
   ExtractAction,
   SliceKey,
 } from '@bangle.io/create-store';
-
-import { BaseHistory } from './history/base-history';
-import { Location } from './history/types';
+import type { Location } from '@bangle.io/ws-path';
 
 export const PAGE_BLOCK_RELOAD_ACTION_NAME =
   'action::@bangle.io/slice-page:BLOCK_RELOAD';
@@ -16,28 +13,32 @@ export type PAGE_BLOCK_RELOAD_ACTION_TYPE = {
   value: { block: boolean };
 };
 
-export const LifeCycle = Symbol('lifecycle');
-
 export type PageDispatchType = ApplicationStore<
   PageSliceStateType,
   PageSliceAction
 >['dispatch'];
 
-export type PageLifeCycleStates =
+export type PageLifeCycleState =
   | 'active'
   | 'passive'
   | 'hidden'
   | 'frozen'
-  | 'terminated';
+  | 'terminated'
+  | undefined;
 
 export interface PageSliceStateType {
   blockReload: boolean;
-  history: BaseHistory | undefined;
   location: Location;
-  historyChangedCounter: number;
+  pendingNavigation:
+    | undefined
+    | {
+        location: Location;
+        replaceHistory?: boolean;
+        preserve?: boolean;
+      };
   lifeCycleState: {
-    current?: PageLifeCycleStates;
-    previous?: PageLifeCycleStates;
+    current?: PageLifeCycleState;
+    previous?: PageLifeCycleState;
   };
 }
 
@@ -45,33 +46,20 @@ export type PageSliceAction =
   | PAGE_BLOCK_RELOAD_ACTION_TYPE
   | {
       name: 'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE';
-      value: { current?: PageLifeCycleStates; previous?: PageLifeCycleStates };
-    }
-  | {
-      name: 'action::@bangle.io/slice-page:history-set-history';
-      value: {
-        history: BaseHistory;
-      };
+      value: { current?: PageLifeCycleState; previous?: PageLifeCycleState };
     }
   | {
       name: 'action::@bangle.io/slice-page:history-update-location';
       value: { location: Location };
+    }
+  | {
+      name: 'action::@bangle.io/slice-page:history-update-pending-navigation';
+      value: { pendingNavigation: PageSliceStateType['pendingNavigation'] };
     };
 
 export const pageSliceKey = new SliceKey<PageSliceStateType, PageSliceAction>(
   'page-slice',
 );
-
-export function getPageLifeCycleObject(state: AppState):
-  | {
-      addUnsavedChanges: (s: Symbol) => void;
-      removeUnsavedChanges: (s: Symbol) => void;
-      addEventListener: (type: string, cb: (event: any) => void) => void;
-      removeEventListener: (type: string, cb: (event: any) => void) => void;
-    }
-  | undefined {
-  return pageSliceKey.getSliceState(state)?.[LifeCycle];
-}
 
 export type ExtractPageSliceAction<ActionName extends PageSliceAction['name']> =
   ExtractAction<PageSliceAction, ActionName>;

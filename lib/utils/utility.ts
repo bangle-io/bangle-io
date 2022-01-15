@@ -423,3 +423,29 @@ export function makeSafeForCSS(name) {
     return '__';
   });
 }
+
+export async function exponentialBackoff(
+  fn: (attempt: number) => boolean,
+  abort: AbortSignal,
+  {
+    maxTry = 8,
+    multiplyFactor = 20,
+  }: {
+    maxTry?: number;
+    multiplyFactor?: number;
+  } = {},
+): Promise<void> {
+  for (let i = 0; i < maxTry; i++) {
+    if (abort.aborted) {
+      return;
+    }
+    const res = await fn(i + 1);
+    if (res === true) {
+      return;
+    }
+    if (abort.aborted) {
+      return;
+    }
+    await sleep(Math.pow(2, i) * multiplyFactor);
+  }
+}

@@ -1,17 +1,34 @@
+import lifeCycleMock from 'page-lifecycle';
+
+import { blockReload, pageSlice, PageSliceAction } from '@bangle.io/slice-page';
+import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 
-import { blockReload, pageSlice } from '..';
-import { BrowserHistory } from '../history/browser-histroy';
-import { createStore, lifeCycleMock } from './test-utils';
+import { pageLifeCycleSlice } from '../page-lifecycle-slice';
+
+jest.mock('page-lifecycle', () => {
+  return {
+    state: 'active' as const,
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    removeUnsavedChanges: jest.fn(),
+    addUnsavedChanges: jest.fn(),
+  };
+});
 
 beforeEach(() => {
   lifeCycleMock.addEventListener.mockImplementation(() => {});
   lifeCycleMock.removeEventListener.mockImplementation(() => {});
+  lifeCycleMock.removeUnsavedChanges.mockImplementation(() => {});
+  lifeCycleMock.addUnsavedChanges.mockImplementation(() => {});
 });
 
 describe('blockReloadEffect', () => {
   test('blocks', async () => {
-    const { store } = createStore();
+    const { store } = createTestStore<PageSliceAction>([
+      pageSlice(),
+      pageLifeCycleSlice(),
+    ]);
     expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(0);
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(0);
 
@@ -29,7 +46,7 @@ describe('blockReloadEffect', () => {
   });
 
   test('repeat calling does not affect', async () => {
-    const { store } = createStore();
+    const { store } = createTestStore([pageSlice(), pageLifeCycleSlice()]);
 
     blockReload(true)(store.state, store.dispatch);
     blockReload(true)(store.state, store.dispatch);
@@ -58,13 +75,26 @@ describe('blockReloadEffect', () => {
 
 describe('watchPageLifeCycleEffect', () => {
   test('initializes & destroys correctly', () => {
-    const { store } = createStore();
+    const { store, actionsDispatched } = createTestStore<PageSliceAction>([
+      pageSlice(),
+      pageLifeCycleSlice(),
+    ]);
     expect(lifeCycleMock.addEventListener).toBeCalledTimes(1);
     expect(lifeCycleMock.addEventListener).nthCalledWith(
       1,
       'statechange',
       expect.any(Function),
     );
+
+    // dispatches the current state on mount
+    expect(actionsDispatched).toContainEqual({
+      id: expect.any(String),
+      name: 'action::@bangle.io/slice-page:UPDATE_PAGE_LIFE_CYCLE_STATE',
+      value: {
+        current: 'active',
+        previous: undefined,
+      },
+    });
 
     store.destroy();
 
@@ -78,7 +108,10 @@ describe('watchPageLifeCycleEffect', () => {
   });
 
   test('dispatches correctly', () => {
-    const { store, dispatchSpy } = createStore();
+    const { store, dispatchSpy } = createTestStore<PageSliceAction>([
+      pageSlice(),
+      pageLifeCycleSlice(),
+    ]);
 
     expect(lifeCycleMock.addEventListener).toBeCalledTimes(1);
     let cb = lifeCycleMock.addEventListener.mock.calls[0][1];
@@ -91,41 +124,6 @@ describe('watchPageLifeCycleEffect', () => {
       value: {
         current: 'active',
         previous: 'passive',
-      },
-    });
-  });
-});
-
-describe('watchHistoryEffect', () => {
-  test('initializes & destroys correctly', async () => {
-    jest.useFakeTimers();
-    const { actionsDispatched } = createStore();
-
-    expect(actionsDispatched).toHaveLength(1);
-
-    expect(actionsDispatched).toEqual([
-      {
-        id: expect.anything(),
-        name: 'action::@bangle.io/slice-page:history-set-history',
-        value: {
-          history: expect.any(BrowserHistory),
-        },
-      },
-    ]);
-
-    window.history.pushState(null, '', '/ws/foo');
-
-    jest.runAllTimers();
-
-    expect(actionsDispatched).toHaveLength(2);
-    expect(actionsDispatched[1]).toEqual({
-      id: expect.anything(),
-      name: 'action::@bangle.io/slice-page:history-update-location',
-      value: {
-        location: {
-          pathname: '/ws/foo',
-          search: '',
-        },
       },
     });
   });

@@ -11,6 +11,7 @@ import {
   getPageLocation,
   goToLocation,
   historyUpdateOpenedWsPaths,
+  pageSliceKey,
 } from '@bangle.io/slice-page';
 import {
   HELP_FS_WORKSPACE_NAME,
@@ -297,13 +298,13 @@ export function workspaceHandleError(wsName: string, error: Error) {
       (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
         error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
     ) {
-      return goToWorkspaceAuthRoute(wsName, error.code)(state);
+      return goToWorkspaceAuthRoute(wsName, error.code)(state, dispatch);
     }
     if (
       error instanceof WorkspaceError &&
       error.code === WORKSPACE_NOT_FOUND_ERROR
     ) {
-      return goToWsNameRouteNotFoundRoute(wsName)(state);
+      return goToWsNameRouteNotFoundRoute(wsName)(state, dispatch);
     }
 
     return undefined;
@@ -341,7 +342,10 @@ export const syncPageLocation = ({
     const validOpenedWsPaths = validateOpenedWsPaths(openedWsPaths);
 
     if (!validOpenedWsPaths.valid) {
-      goToInvalidPathRoute(wsName, validOpenedWsPaths.invalidWsPath)(state);
+      goToInvalidPathRoute(wsName, validOpenedWsPaths.invalidWsPath)(
+        state,
+        dispatch,
+      );
       return;
     }
 
@@ -380,7 +384,7 @@ export const updateOpenedWsPaths = (
       goToInvalidPathRoute(
         sliceState.wsName || 'unknown-ws',
         validity.invalidWsPath,
-      )(state);
+      )(state, dispatch);
       return false;
     }
 
@@ -399,11 +403,15 @@ export const updateOpenedWsPaths = (
 
     if (!newOpened.allBelongToSameWsName(wsName)) {
       console.error('Cannot have different wsNames');
-      goToInvalidPathRoute(wsName)(state);
+      goToInvalidPathRoute(wsName)(state, dispatch);
       return false;
     }
 
-    historyUpdateOpenedWsPaths(newOpened, wsName, opts)(state);
+    historyUpdateOpenedWsPaths(
+      newOpened,
+      wsName,
+      opts,
+    )(state, pageSliceKey.getDispatch(dispatch));
 
     return true;
   };
@@ -426,7 +434,10 @@ export const replaceAnyMatchingOpenedWsPath = (
     if (wsName) {
       const newOpened = openedWsPaths.updateIfFound(targetWsPath, newWsPath);
       if (!newOpened.equal(openedWsPaths)) {
-        historyUpdateOpenedWsPaths(newOpened, wsName, { replace: true })(state);
+        historyUpdateOpenedWsPaths(newOpened, wsName, { replace: true })(
+          state,
+          pageSliceKey.getDispatch(dispatch),
+        );
         return true;
       }
     }
@@ -465,7 +476,8 @@ export const goToWorkspaceHomeRoute = ({
       goToWsNameRoute(lastWsName, { replace })(state, dispatch);
       return;
     }
-    goToLocation('/', { replace })(state);
+
+    goToLocation('/', { replace })(state, pageSliceKey.getDispatch(dispatch));
     return;
   };
 };
@@ -504,12 +516,15 @@ export function goToWsNameRoute(
       }
     }
 
-    goToLocation(wsNameToPathname(wsName), { replace })(state);
+    goToLocation(wsNameToPathname(wsName), { replace })(
+      state,
+      pageSliceKey.getDispatch(dispatch),
+    );
   };
 }
 
 export const goToWorkspaceAuthRoute = (wsName: string, errorCode: string) => {
-  return (state: AppState): void => {
+  return (state: AppState, dispatch: WorkspaceDispatchType): void => {
     const sliceState = workspaceSliceKey.getSliceState(state);
 
     const search = new URLSearchParams([['error_code', errorCode]]);
@@ -525,22 +540,22 @@ export const goToWorkspaceAuthRoute = (wsName: string, errorCode: string) => {
       {
         replace: true,
       },
-    )(state);
+    )(state, pageSliceKey.getDispatch(dispatch));
   };
 };
 
 export const goToInvalidPathRoute = (wsName: string, invalidPath?: string) => {
-  return (state: AppState): void => {
+  return (state: AppState, dispatch: WorkspaceDispatchType): void => {
     return goToLocation(`/ws-invalid-path/${encodeURIComponent(wsName)}`, {
       replace: true,
-    })(state);
+    })(state, pageSliceKey.getDispatch(dispatch));
   };
 };
 
 export function goToWsNameRouteNotFoundRoute(wsName: string) {
-  return (state: AppState) => {
+  return (state: AppState, dispatch: WorkspaceDispatchType) => {
     goToLocation(`/ws-not-found/${encodeURIComponent(wsName)}`, {
       replace: true,
-    })(state);
+    })(state, pageSliceKey.getDispatch(dispatch));
   };
 }

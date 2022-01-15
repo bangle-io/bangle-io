@@ -25,8 +25,10 @@ export class SliceKey<SL = any, A extends BaseAction = any, S = SL> {
     return store as ApplicationStore<SL, A>;
   }
 
-  getDispatch(store: ApplicationStore): ApplicationStore<SL, A>['dispatch'] {
-    return this.getStore(store)['dispatch'];
+  getDispatch(
+    dispatch: ApplicationStore<any, any>['dispatch'],
+  ): ApplicationStore<SL, A>['dispatch'] {
+    return dispatch as ApplicationStore<SL, A>['dispatch'];
   }
 
   getSliceState(
@@ -49,5 +51,27 @@ export class SliceKey<SL = any, A extends BaseAction = any, S = SL> {
     state: AppState<S, A> | Readonly<AppState<S, A>>,
   ): Slice<SL, A, S> | undefined {
     return state.getSliceByKey(this.key);
+  }
+
+  valueChanged(
+    field: keyof SL,
+    state: AppState<any, any> | Readonly<AppState<any, any>>,
+    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+  ): boolean {
+    return (
+      this.getSliceStateAsserted(state)[field] !==
+      this.getSliceStateAsserted(prevState)[field]
+    );
+  }
+
+  // gets the value if it was different from prevState
+  getValueIfChanged<T extends keyof SL>(
+    field: T,
+    state: AppState<any, any> | Readonly<AppState<any, any>>,
+    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+  ): SL[T] | undefined {
+    return this.valueChanged(field, state, prevState)
+      ? this.getSliceStateAsserted(state)[field]
+      : undefined;
   }
 }

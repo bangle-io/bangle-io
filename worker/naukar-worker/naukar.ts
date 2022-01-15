@@ -27,14 +27,15 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
 
   console.debug('Naukar runnings in ', envType);
 
+  let store: ReturnType<typeof initializeNaukarStore> | undefined;
+
   // main-dispatch
-  let _mainDispatch;
   let pendingMainActions: MainActions[] = [];
   let mainDispatch = (action: MainActions) => {
-    if (!_mainDispatch) {
+    if (!store) {
       pendingMainActions.push(action);
     } else {
-      _mainDispatch(action);
+      store.dispatch(action);
     }
   };
   // main-dispatch-end
@@ -46,17 +47,15 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
     return manager.handleRequest(...args);
   };
 
-  let store: ReturnType<typeof initializeNaukarStore> | undefined =
-    initializeNaukarStore({});
-
+  // eslint-disable-next-line no-restricted-globals, no-undef
+  (self as any).store = store;
   return {
-    // main action store
-    registerMainActionDispatch(cb) {
-      _mainDispatch = cb;
+    sendMessagePort(port: MessageChannel['port2']) {
+      store = initializeNaukarStore({ port });
       while (pendingMainActions.length > 0) {
         const value = pendingMainActions.pop();
         if (value) {
-          cb(value);
+          store.dispatch(value);
         }
       }
     },

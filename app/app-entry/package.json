@@ -38,6 +38,7 @@
     "@bangle.io/editor-container": "workspace:*",
     "@bangle.io/editor-core": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/history": "workspace:*",
     "@bangle.io/image-extension": "workspace:*",
     "@bangle.io/inline-backlink": "workspace:*",
     "@bangle.io/inline-command-palette": "workspace:*",
@@ -71,6 +72,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-virtual": "^2.8.2",
+    "safari-14-idb-fix": "^3.0.0",
     "wouter": "^2.8.0-alpha.2"
   },
   "devDependencies": {

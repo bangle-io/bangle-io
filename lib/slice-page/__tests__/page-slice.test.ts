@@ -1,4 +1,4 @@
-import { pageSlice, pageSliceKey } from '..';
+import { pageSliceKey } from '../common';
 import { createStore, lifeCycleMock } from './test-utils';
 
 beforeEach(() => {
@@ -12,44 +12,15 @@ test('sets up', () => {
   expect(pageSliceKey.getSliceState(store.state)).toMatchInlineSnapshot(`
     Object {
       "blockReload": false,
-      "history": BrowserHistory {
-        "base": "",
-        "checkForUpdates": [Function],
-        "currentLoc": Object {
-          "pathname": "/",
-          "search": "",
-        },
-        "historyCounter": 0,
-        "host": [Window],
-        "onChange": [Function],
-      },
-      "historyChangedCounter": 0,
       "lifeCycleState": Object {
         "current": undefined,
+        "previous": undefined,
       },
       "location": Object {
-        "pathname": "/",
-        "search": "",
+        "pathname": undefined,
+        "search": undefined,
       },
-      Symbol(lifecycle): Object {
-        "addEventListener": [MockFunction] {
-          "calls": Array [
-            Array [
-              "statechange",
-              [Function],
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        },
-        "addUnsavedChanges": [MockFunction],
-        "removeEventListener": [MockFunction],
-        "removeUnsavedChanges": [MockFunction],
-      },
+      "pendingNavigation": undefined,
     }
   `);
 });

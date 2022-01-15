@@ -8,10 +8,7 @@ import {
   WorkspacesSliceState,
 } from './common';
 import { mergeWsInfoRegistries } from './helpers';
-import {
-  refreshWorkspacesEffect,
-  saveWorkspaceInfoEffect,
-} from './side-effects';
+import { refreshWorkspacesEffect } from './side-effects';
 
 export function workspacesSlice() {
   assertActionType(
@@ -46,6 +43,6 @@ export function workspacesSlice() {
         }
       },
     },
-    sideEffect: [refreshWorkspacesEffect, saveWorkspaceInfoEffect],
+    sideEffect: [refreshWorkspacesEffect],
   });
 }
