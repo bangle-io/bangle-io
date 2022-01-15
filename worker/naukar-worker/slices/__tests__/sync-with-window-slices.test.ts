@@ -1,7 +1,8 @@
-import { blockReload, pageSliceKey } from '@bangle.io/slice-page';
+import { blockReload, pageSlice, pageSliceKey } from '@bangle.io/slice-page';
+import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 
-import { initializeNaukarStore } from '../initialize-naukar-store';
+import { syncWithWindowSlices } from '../sync-with-window-slices';
 
 const Port = (): MessagePort => ({
   close: jest.fn(),
@@ -19,7 +20,7 @@ const Port = (): MessagePort => ({
 test('sets up', () => {
   const port = Port();
 
-  const store = initializeNaukarStore({
+  const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
     port,
   });
   expect(store.state.config.opts).toMatchObject({
@@ -43,7 +44,7 @@ test('sets up', () => {
 test('destroys', () => {
   const port = Port();
 
-  const store = initializeNaukarStore({
+  const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
     port,
   });
 
@@ -64,7 +65,7 @@ test('sends actions to the port', async () => {
     port.onmessage?.({ data: { type: 'pong' } } as any);
   });
 
-  const store = initializeNaukarStore({
+  const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
     port,
   });
 
@@ -89,7 +90,7 @@ test('sends actions to the port', async () => {
       serializedValue: {
         block: true,
       },
-      storeName: 'worker-store',
+      storeName: 'test-store',
     },
     type: 'action',
   });
@@ -102,7 +103,7 @@ test('handles actions coming from port', async () => {
     port.onmessage?.({ data: { type: 'pong' } } as any);
   });
 
-  const store = initializeNaukarStore({
+  const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
     port,
   });
 
@@ -122,7 +123,7 @@ test('handles actions coming from port', async () => {
         serializedValue: {
           block: true,
         },
-        storeName: 'window-store',
+        storeName: 'test-store',
       },
       type: 'action',
     },
