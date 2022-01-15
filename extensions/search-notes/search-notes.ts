@@ -1,4 +1,4 @@
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { CONCURRENCY } from './constants';
 
@@ -13,7 +13,7 @@ export async function searchNotes(
     totalMatchMax = 2000,
   } = {},
 ) {
-  return naukarWorkerProxy.abortableSearchWsForPmNode(
+  return naukarProxy.abortableSearchWsForPmNode(
     signal,
     wsName,
     query,

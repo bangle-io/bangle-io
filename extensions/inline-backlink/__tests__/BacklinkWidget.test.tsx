@@ -8,7 +8,7 @@ import {
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { BacklinkWidget } from '../BacklinkWidget';
@@ -19,7 +19,7 @@ jest.mock('@bangle.io/slice-editor-manager');
 
 jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
-    naukarWorkerProxy: {
+    naukarProxy: {
       abortableSearchWsForPmNode: jest.fn(),
     },
   };
@@ -37,8 +37,8 @@ let useEditorManagerContextMock =
   >;
 
 let abortableSearchWsForPmNodeMock =
-  naukarWorkerProxy.abortableSearchWsForPmNode as jest.MockedFunction<
-    typeof naukarWorkerProxy.abortableSearchWsForPmNode
+  naukarProxy.abortableSearchWsForPmNode as jest.MockedFunction<
+    typeof naukarProxy.abortableSearchWsForPmNode
   >;
 
 beforeEach(() => {

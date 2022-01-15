@@ -8,7 +8,7 @@ import {
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/utils';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { workerLoaderSliceKey } from './worker-loader-slice';
 
@@ -53,7 +53,7 @@ export function workerStoreSyncSlices() {
               const { msgChannel } = workerSyncKey.getSliceStateAsserted(
                 store.state,
               );
-              naukarWorkerProxy.sendMessagePort(
+              naukarProxy.sendMessagePort(
                 Comlink.transfer(msgChannel.port2, [msgChannel.port2]),
               );
 

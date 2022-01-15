@@ -7,7 +7,7 @@ import {
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 export function downloadWorkspace() {
   return (
@@ -40,7 +40,7 @@ export function downloadWorkspace() {
       },
     });
 
-    naukarWorkerProxy
+    naukarProxy
       .abortableBackupAllFiles(abortController.signal, wsName)
       .then((blob: File) => {
         downloadBlob(blob, blob.name);
@@ -77,7 +77,7 @@ export function restoreWorkspaceFromBackup() {
           },
         });
 
-        return naukarWorkerProxy.abortableCreateWorkspaceFromBackup(
+        return naukarProxy.abortableCreateWorkspaceFromBackup(
           abortController.signal,
           wsName,
           file,

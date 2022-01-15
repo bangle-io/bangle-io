@@ -6,13 +6,13 @@ import {
 } from '@bangle.io/create-store';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
 import { shallowOrderedArrayCompare } from '@bangle.io/utils';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { flushNaukarEffect } from '../bangle-slices';
 
 jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
-    naukarWorkerProxy: { resetManager: jest.fn(), flushDisk: jest.fn() },
+    naukarProxy: { resetManager: jest.fn(), flushDisk: jest.fn() },
   };
 });
 jest.mock('@bangle.io/slice-page', () => {
@@ -77,8 +77,8 @@ describe('flushNaukarEffect', () => {
 
     expect(pageLifeMock).toBeCalledTimes(1);
 
-    expect(naukarWorkerProxy.resetManager).toBeCalledTimes(1);
-    expect(naukarWorkerProxy.flushDisk).toBeCalledTimes(0);
+    expect(naukarProxy.resetManager).toBeCalledTimes(1);
+    expect(naukarProxy.flushDisk).toBeCalledTimes(0);
   });
 
   test('flushDisk testing', () => {
@@ -107,7 +107,7 @@ describe('flushNaukarEffect', () => {
 
     expect(pageLifeMock).toBeCalledTimes(1);
 
-    expect(naukarWorkerProxy.resetManager).toBeCalledTimes(0);
-    expect(naukarWorkerProxy.flushDisk).toBeCalledTimes(1);
+    expect(naukarProxy.resetManager).toBeCalledTimes(0);
+    expect(naukarProxy.flushDisk).toBeCalledTimes(1);
   });
 });

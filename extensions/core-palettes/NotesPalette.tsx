@@ -18,7 +18,7 @@ import {
   UniversalPalette,
 } from '@bangle.io/ui-components';
 import { isAbortError, removeMdExtension } from '@bangle.io/utils';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ExtensionPaletteType } from './config';
@@ -243,9 +243,7 @@ export function useSearchWsPaths(query: string) {
 
 function useSearchNotePaths(query: string, wsName: string | undefined) {
   const [result, updateResult] = useState<
-    | UnPromisify<
-        ReturnType<typeof naukarWorkerProxy.abortableFzfSearchNoteWsPaths>
-      >
+    | UnPromisify<ReturnType<typeof naukarProxy.abortableFzfSearchNoteWsPaths>>
     | undefined
   >(undefined);
 
@@ -253,7 +251,7 @@ function useSearchNotePaths(query: string, wsName: string | undefined) {
     const controller = new AbortController();
     let destroyed = false;
     if (wsName) {
-      naukarWorkerProxy
+      naukarProxy
         .abortableFzfSearchNoteWsPaths(
           controller.signal,
           wsName,

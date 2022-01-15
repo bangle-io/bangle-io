@@ -3,13 +3,13 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { useSearchWsPaths } from '../NotesPalette';
 
 jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
-    naukarWorkerProxy: {
+    naukarProxy: {
       abortableFzfSearchNoteWsPaths: jest.fn(),
     },
   };
@@ -24,8 +24,8 @@ jest.mock('@bangle.io/slice-workspace', () => {
 });
 
 let abortableFzfSearchNoteWsPathsMock =
-  naukarWorkerProxy.abortableFzfSearchNoteWsPaths as jest.MockedFunction<
-    typeof naukarWorkerProxy.abortableFzfSearchNoteWsPaths
+  naukarProxy.abortableFzfSearchNoteWsPaths as jest.MockedFunction<
+    typeof naukarProxy.abortableFzfSearchNoteWsPaths
   >;
 
 let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<

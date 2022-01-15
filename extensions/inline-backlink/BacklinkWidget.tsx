@@ -15,7 +15,7 @@ import {
   safeRequestIdleCallback,
   useClickToNote,
 } from '@bangle.io/utils';
-import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { resolvePath } from '@bangle.io/ws-path';
 
 const IconStyle = {
@@ -149,7 +149,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
         return;
       }
 
-      naukarWorkerProxy
+      naukarProxy
         .abortableSearchWsForPmNode(controller.signal, wsName, 'backlink:*', [
           {
             nodeName: 'wikiLink',
