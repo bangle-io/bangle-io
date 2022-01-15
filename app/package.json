@@ -1,15 +1,16 @@
 {
   "name": "app",
   "workspaces": [
-    "app-entry",
-    "style",
-    "worker-setup",
-    "shared",
     "activitybar",
-    "workspace-sidebar",
+    "app-entry",
+    "bangle-store",
     "editor-container",
     "note-sidebar",
-    "bangle-store"
+    "shared",
+    "style",
+    "worker-naukar-proxy",
+    "worker-setup",
+    "workspace-sidebar"
   ],
   "repository": {
     "directory": "app",

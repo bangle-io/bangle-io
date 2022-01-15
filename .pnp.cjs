@@ -75,6 +75,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app/style"
       },
       {
+        "name": "@bangle.io/naukar-proxy",
+        "reference": "workspace:app/worker-naukar-proxy"
+      },
+      {
         "name": "@bangle.io/worker-setup",
         "reference": "workspace:app/worker-setup"
       },
@@ -283,10 +287,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:tooling/playwright-e2e"
       },
       {
-        "name": "@bangle.io/naukar-proxy",
-        "reference": "workspace:worker/naukar-proxy"
-      },
-      {
         "name": "@bangle.io/naukar-worker",
         "reference": "workspace:worker/naukar-worker"
       }
@@ -324,7 +324,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/inline-emoji", ["workspace:extensions/inline-emoji"]],
       ["@bangle.io/inline-palette", ["workspace:js-lib/inline-palette"]],
       ["@bangle.io/markdown", ["workspace:lib/markdown"]],
-      ["@bangle.io/naukar-proxy", ["workspace:worker/naukar-proxy"]],
+      ["@bangle.io/naukar-proxy", ["workspace:app/worker-naukar-proxy"]],
       ["@bangle.io/naukar-worker", ["workspace:worker/naukar-worker"]],
       ["@bangle.io/note-browser", ["workspace:extensions/note-browser"]],
       ["@bangle.io/note-outline", ["workspace:extensions/note-outline"]],
@@ -3807,7 +3807,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],
             ["@bangle.io/inline-command-palette", "workspace:extensions/inline-command-palette"],
             ["@bangle.io/inline-emoji", "workspace:extensions/inline-emoji"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
@@ -3881,7 +3881,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],
             ["@bangle.io/inline-command-palette", "workspace:extensions/inline-command-palette"],
             ["@bangle.io/inline-emoji", "workspace:extensions/inline-emoji"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/note-sidebar", "virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
@@ -3943,7 +3943,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/history", "workspace:js-lib/history"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/pm-manual-paste", "workspace:js-lib/pm-manual-paste"],
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
@@ -4000,7 +4000,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/utils", "virtual:2d3114db597aad84130317efca088f8ec250f89f12478e5b9ac1b541ce4dd11ff02d9f57091d8a5dd4920ce86d3af644c9d53904402f1455c82546c7ea2cdc88#npm:0.28.5"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"]
           ],
           "linkType": "SOFT",
@@ -4084,7 +4084,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
             ["@bangle.io/shared-operations", "workspace:lib/shared-operations"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
@@ -4116,7 +4116,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/fzf-search", "virtual:b54cdb4c6b042c95d927e384930d91a5009a044e1d3ad93f30d44051a29bc860a2800d453323a8c2830c87ca5a6f98af8f5e2e55330ad98f95cc96086059406e#workspace:js-lib/fzf-search"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
             ["@bangle.io/shared-operations", "workspace:lib/shared-operations"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
@@ -4150,7 +4150,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/fzf-search", "virtual:b54cdb4c6b042c95d927e384930d91a5009a044e1d3ad93f30d44051a29bc860a2800d453323a8c2830c87ca5a6f98af8f5e2e55330ad98f95cc96086059406e#workspace:js-lib/fzf-search"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
             ["@bangle.io/shared-operations", "workspace:lib/shared-operations"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
@@ -4516,7 +4516,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/fzf-search", "virtual:b54cdb4c6b042c95d927e384930d91a5009a044e1d3ad93f30d44051a29bc860a2800d453323a8c2830c87ca5a6f98af8f5e2e55330ad98f95cc96086059406e#workspace:js-lib/fzf-search"],
             ["@bangle.io/inline-palette", "workspace:js-lib/inline-palette"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
@@ -4633,10 +4633,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@bangle.io/naukar-proxy", [
-        ["workspace:worker/naukar-proxy", {
-          "packageLocation": "./worker/naukar-proxy/",
+        ["workspace:app/worker-naukar-proxy", {
+          "packageLocation": "./app/worker-naukar-proxy/",
           "packageDependencies": [
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
@@ -4897,7 +4897,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/contextual-ui-components", "workspace:lib/contextual-ui-components"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/note-tags", "workspace:extensions/note-tags"],
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
@@ -5349,7 +5349,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
-            ["@bangle.io/naukar-proxy", "workspace:worker/naukar-proxy"],
+            ["@bangle.io/naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/naukar-worker", "workspace:worker/naukar-worker"],
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
