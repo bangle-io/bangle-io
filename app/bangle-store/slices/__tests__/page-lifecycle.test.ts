@@ -1,16 +1,20 @@
+import lifeCycleMock from 'page-lifecycle';
+
 import { blockReload, pageSlice, PageSliceAction } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 
 import { pageLifeCycleSlice } from '../page-lifecycle-slice';
 
-export const lifeCycleMock = {
-  state: 'active' as const,
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
-  removeUnsavedChanges: jest.fn(),
-  addUnsavedChanges: jest.fn(),
-};
+jest.mock('page-lifecycle', () => {
+  return {
+    state: 'active' as const,
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    removeUnsavedChanges: jest.fn(),
+    addUnsavedChanges: jest.fn(),
+  };
+});
 
 beforeEach(() => {
   lifeCycleMock.addEventListener.mockImplementation(() => {});
@@ -23,7 +27,7 @@ describe('blockReloadEffect', () => {
   test('blocks', async () => {
     const { store } = createTestStore<PageSliceAction>([
       pageSlice(),
-      pageLifeCycleSlice(lifeCycleMock),
+      pageLifeCycleSlice(),
     ]);
     expect(lifeCycleMock.removeUnsavedChanges).toBeCalledTimes(0);
     expect(lifeCycleMock.addUnsavedChanges).toBeCalledTimes(0);
@@ -42,10 +46,7 @@ describe('blockReloadEffect', () => {
   });
 
   test('repeat calling does not affect', async () => {
-    const { store } = createTestStore([
-      pageSlice(),
-      pageLifeCycleSlice(lifeCycleMock),
-    ]);
+    const { store } = createTestStore([pageSlice(), pageLifeCycleSlice()]);
 
     blockReload(true)(store.state, store.dispatch);
     blockReload(true)(store.state, store.dispatch);
@@ -76,7 +77,7 @@ describe('watchPageLifeCycleEffect', () => {
   test('initializes & destroys correctly', () => {
     const { store, actionsDispatched } = createTestStore<PageSliceAction>([
       pageSlice(),
-      pageLifeCycleSlice(lifeCycleMock),
+      pageLifeCycleSlice(),
     ]);
     expect(lifeCycleMock.addEventListener).toBeCalledTimes(1);
     expect(lifeCycleMock.addEventListener).nthCalledWith(
@@ -109,7 +110,7 @@ describe('watchPageLifeCycleEffect', () => {
   test('dispatches correctly', () => {
     const { store, dispatchSpy } = createTestStore<PageSliceAction>([
       pageSlice(),
-      pageLifeCycleSlice(lifeCycleMock),
+      pageLifeCycleSlice(),
     ]);
 
     expect(lifeCycleMock.addEventListener).toBeCalledTimes(1);

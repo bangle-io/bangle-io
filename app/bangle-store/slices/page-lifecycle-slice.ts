@@ -1,3 +1,7 @@
+/// <reference path="../missing-types.d.ts" />
+
+import lifecycle from 'page-lifecycle';
+
 import { Slice } from '@bangle.io/create-store';
 import {
   PageLifeCycleState,
@@ -14,21 +18,8 @@ type PageLifeCycleEvent = {
   newState: PageLifeCycleState;
   oldState: PageLifeCycleState;
 };
-export interface PageLifeCycle {
-  state: PageLifeCycleState;
-  addUnsavedChanges: (s: Symbol) => void;
-  removeUnsavedChanges: (s: Symbol) => void;
-  addEventListener: (
-    type: string,
-    cb: (event: PageLifeCycleEvent) => void,
-  ) => void;
-  removeEventListener: (
-    type: string,
-    cb: (event: PageLifeCycleEvent) => void,
-  ) => void;
-}
 
-export function pageLifeCycleSlice(lifecycle: PageLifeCycle) {
+export function pageLifeCycleSlice() {
   return new Slice({
     sideEffect: [
       function watchPageLifeCycleEffect(store) {
@@ -50,20 +41,19 @@ export function pageLifeCycleSlice(lifecycle: PageLifeCycle) {
       },
 
       function blockReload() {
-        let lastValue = false;
         return {
-          update(store) {
-            const blockReload = pageSliceKey.getSliceStateAsserted(
+          update(store, prevState) {
+            const blockReload = pageSliceKey.getValueIfChanged(
+              'blockReload',
               store.state,
-            ).blockReload;
+              prevState,
+            );
 
-            if (blockReload === lastValue) {
+            if (blockReload == null) {
               return;
             }
 
-            lastValue = blockReload;
-
-            if (lastValue) {
+            if (blockReload) {
               lifecycle.addUnsavedChanges(pendingSymbol);
             } else {
               lifecycle.removeUnsavedChanges(pendingSymbol);

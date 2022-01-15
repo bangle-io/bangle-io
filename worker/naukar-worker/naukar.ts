@@ -59,16 +59,6 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
         }
       }
     },
-    // // main action store
-    // registerMainActionDispatch(cb) {
-    //   _mainDispatch = cb;
-    //   while (pendingMainActions.length > 0) {
-    //     const value = pendingMainActions.pop();
-    //     if (value) {
-    //       cb(value);
-    //     }
-    //   }
-    // },
 
     // app state
 

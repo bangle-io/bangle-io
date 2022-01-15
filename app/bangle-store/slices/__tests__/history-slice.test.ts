@@ -144,6 +144,28 @@ describe('applyPendingNavigation', () => {
     );
     expect(historyPushSpy).toBeCalledTimes(0);
   });
+
+  test('works when location is string', async () => {
+    const { store } = createTestStore<PageSliceAction>([
+      pageSlice(),
+      historySlice(),
+    ]);
+
+    goToLocation(`/ws/home/my-note.md?secondary=garden2%253A1-rule.md`, {
+      replace: true,
+    })(store.state, store.dispatch);
+    jest.runAllTimers();
+
+    expect(historyReplaceSpy).toBeCalledTimes(1);
+    expect(historyReplaceSpy).nthCalledWith(
+      1,
+      { key: 0, value: null },
+      '',
+      '/ws/home/my-note.md?secondary=garden2%253A1-rule.md',
+    );
+    expect(historyPushSpy).toBeCalledTimes(0);
+  });
+
   test('works with object location', async () => {
     const { store } = createTestStore<PageSliceAction>([
       pageSlice(),

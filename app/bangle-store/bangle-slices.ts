@@ -1,5 +1,3 @@
-import lifecycle from 'page-lifecycle';
-
 import {
   ApplicationStore,
   Slice,
@@ -43,16 +41,12 @@ export function bangleStateSlices({
   onPageInactive: () => void;
   extensionSlices: Slice<any>[];
 }) {
-  const pageBlock = [
-    pageSlice(),
-    historySlice(),
-    pageLifeCycleSlice(lifecycle),
-  ];
+  const pageBlock = [pageSlice(), historySlice(), pageLifeCycleSlice()];
 
   return [
     ...pageBlock,
-    workspacesSlice(),
     ...workerSetupSlices(),
+    workspacesSlice(),
     extensionRegistrySlice(),
     workspaceSlice(),
     uiSlice(),
