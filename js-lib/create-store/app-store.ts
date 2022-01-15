@@ -164,17 +164,19 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       if (runId !== this.currentRunId) {
         return;
       }
-      // pass the previous state that the effect has processed
-      // previously. Some effects can lag behind a couple of state transitions
+      // Some effects can lag behind a couple of state transitions
       // if an effect before them dispatches an action.
       // Note: if it is the first time an effect is running
       // the previouslySeenState would be the initial state
       const previouslySeenState = sideEffect.previouslySeenState;
 
-      // update it before instead of after execution, as the update can end up
-      // dispatching action which can can incorrect previouslySeenState.
+      // `previouslySeenState` needs to always be the one that the effect.update has seen before or the initial state.
+      // Here we are saving the this.state before calling update, because an update can dispatch an action and
+      // causing another run of `runSideEffects`, and giving a stale previouslySeen to those effect update calls.
       sideEffect.previouslySeenState = this.state;
 
+      // effect.update() call should always be the last in this loop, since it can trigger dispatches
+      // which changes the runId causing the loop to break.
       sideEffect.effect.update?.(
         this,
         previouslySeenState,
@@ -229,6 +231,8 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     this.destroySideEffects();
 
+    const previouslySeenState = this._state;
+
     this._state.getSlices().forEach((slice) => {
       if (slice.spec.sideEffect) {
         // since sideEffect can be an array or single
@@ -237,6 +241,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
           .concat(slice.spec.sideEffect)
           .forEach((sideEffect) => {
             let result = sideEffect?.(this);
+
             if (!this.scheduler && result?.deferredUpdate) {
               throw new RangeError(
                 "Scheduler needs to be defined for using Slice's deferredUpdate",
@@ -246,7 +251,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
               this.sideEffects.push({
                 effect: result,
                 key: slice.key,
-                previouslySeenState: this._state,
+                previouslySeenState,
               });
             }
           });

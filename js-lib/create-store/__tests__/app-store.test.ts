@@ -345,6 +345,59 @@ describe('store', () => {
         undefined,
       );
     });
+
+    test('a slice dispatching in effect setup does not change previously seen state for other slices', () => {
+      const slice2Action = (
+        state: AppState,
+        dispatch: ApplicationStore['dispatch'],
+      ) => {
+        dispatch({ name: 'action::mark-ready' });
+      };
+
+      const slice1 = new Slice({
+        key: key1,
+        sideEffect(store) {
+          slice2Action(store.state, store.dispatch);
+          return {};
+        },
+      });
+
+      let seenStates: [number, number][] = [];
+
+      const slice2 = new Slice({
+        key: key2,
+        state: {
+          init: () => {
+            return 0;
+          },
+          apply: (action, state) => {
+            if (action.name === 'action::mark-ready') {
+              return state + 1;
+            }
+            return state;
+          },
+        },
+        sideEffect() {
+          return {
+            update(store, prevState) {
+              seenStates.push([
+                key2.getSliceStateAsserted(store.state),
+                key2.getSliceStateAsserted(prevState),
+              ]);
+            },
+          };
+        },
+      });
+
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state: AppState.create({ slices: [slice1, slice2] }),
+      });
+
+      store.dispatch({});
+
+      expect(seenStates).toEqual([[1, 0]]);
+    });
   });
 
   describe('multiple side effects in a single slice', () => {
