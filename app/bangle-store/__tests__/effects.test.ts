@@ -4,13 +4,13 @@ import {
   Slice,
   SliceSideEffect,
 } from '@bangle.io/create-store';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
 import { shallowOrderedArrayCompare } from '@bangle.io/utils';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { flushNaukarEffect } from '../bangle-slices';
 
-jest.mock('@bangle.io/naukar-proxy', () => {
+jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
     naukarWorkerProxy: { resetManager: jest.fn(), flushDisk: jest.fn() },
   };

@@ -1,13 +1,13 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { useSearchWsPaths } from '../NotesPalette';
 
-jest.mock('@bangle.io/naukar-proxy', () => {
+jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
     naukarWorkerProxy: {
       abortableFzfSearchNoteWsPaths: jest.fn(),

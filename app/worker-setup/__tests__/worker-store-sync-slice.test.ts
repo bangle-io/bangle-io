@@ -1,7 +1,7 @@
 import * as Comlink from 'comlink';
 
 import { Slice } from '@bangle.io/create-store';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 
@@ -11,7 +11,7 @@ import {
   workerSyncKey,
 } from '../worker-store-sync-slices';
 
-jest.mock('@bangle.io/naukar-proxy', () => {
+jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
     naukarWorkerProxy: { sendMessagePort: jest.fn() },
   };

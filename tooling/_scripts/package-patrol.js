@@ -41,7 +41,7 @@ const getDepConstraints = async () => {
     [EXTENSIONS]: [
       jsLibTree.packages(),
       libTree.packages(),
-      '@bangle.io/naukar-proxy',
+      '@bangle.io/worker-naukar-proxy',
     ],
     [APP]: [
       jsLibTree.packages(),

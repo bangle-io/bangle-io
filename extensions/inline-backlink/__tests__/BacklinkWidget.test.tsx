@@ -1,7 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
@@ -9,6 +8,7 @@ import {
   getUseWorkspaceContextReturn,
 } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { BacklinkWidget } from '../BacklinkWidget';
@@ -17,7 +17,7 @@ jest.mock('@bangle.io/slice-workspace');
 
 jest.mock('@bangle.io/slice-editor-manager');
 
-jest.mock('@bangle.io/naukar-proxy', () => {
+jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
     naukarWorkerProxy: {
       abortableSearchWsForPmNode: jest.fn(),

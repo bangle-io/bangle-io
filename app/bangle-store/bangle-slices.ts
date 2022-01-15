@@ -4,7 +4,6 @@ import {
   SliceSideEffect,
 } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {
   EditorManagerAction,
   editorManagerSlice,
@@ -18,6 +17,7 @@ import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 import { workerSetupSlices } from '@bangle.io/worker-setup';
 
 import { e2eHelpers } from './e2e-helpers';

@@ -1821,7 +1821,6 @@ __metadata:
     "@bangle.io/inline-backlink": "workspace:*"
     "@bangle.io/inline-command-palette": "workspace:*"
     "@bangle.io/inline-emoji": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/note-sidebar": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
@@ -1839,6 +1838,7 @@ __metadata:
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/ui-dhancha": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/workspace-sidebar": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -1895,7 +1895,6 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/history": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/pm-manual-paste": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -1906,6 +1905,7 @@ __metadata:
     "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/test-utils": "worksapce:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     fast-deep-equal: ^3.1.3
@@ -1931,8 +1931,8 @@ __metadata:
     "@bangle.dev/utils": 0.28.5
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2005,7 +2005,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
     "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2015,6 +2014,7 @@ __metadata:
     "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
@@ -2035,7 +2035,6 @@ __metadata:
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
     "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2046,6 +2045,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
@@ -2301,7 +2301,6 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
@@ -2311,6 +2310,7 @@ __metadata:
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/dom": ^8.10.1
     "@testing-library/react": ^12.1.2
@@ -2405,18 +2405,6 @@ __metadata:
     "@bangle.dev/utils": 0.28.5
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/naukar-proxy@workspace:*, @bangle.io/naukar-proxy@workspace:app/worker-naukar-proxy":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/naukar-proxy@workspace:app/worker-naukar-proxy"
-  dependencies:
-    "@bangle.io/abortable-worker": "workspace:*"
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/naukar-worker": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2626,7 +2614,6 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/contextual-ui-components": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/note-tags": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
@@ -2638,6 +2625,7 @@ __metadata:
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^7.0.2
@@ -3009,6 +2997,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/worker-naukar-proxy@workspace:*, @bangle.io/worker-naukar-proxy@workspace:app/worker-naukar-proxy":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/worker-naukar-proxy@workspace:app/worker-naukar-proxy"
+  dependencies:
+    "@bangle.io/abortable-worker": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/naukar-worker": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/worker-setup@workspace:*, @bangle.io/worker-setup@workspace:app/worker-setup":
   version: 0.0.0-use.local
   resolution: "@bangle.io/worker-setup@workspace:app/worker-setup"
@@ -3017,12 +3017,12 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/naukar-proxy": "workspace:*"
     "@bangle.io/naukar-worker": "workspace:*"
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
     comlink: ^4.3.1
     react: ^17.0.2
   languageName: unknown

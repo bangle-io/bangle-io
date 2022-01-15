@@ -1,4 +1,4 @@
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { CONCURRENCY } from './constants';
 

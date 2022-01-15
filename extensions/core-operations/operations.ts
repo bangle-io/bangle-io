@@ -1,6 +1,5 @@
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
   refreshWsPaths,
@@ -8,6 +7,7 @@ import {
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 
 export function downloadWorkspace() {
   return (

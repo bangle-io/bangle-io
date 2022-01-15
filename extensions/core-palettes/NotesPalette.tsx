@@ -9,7 +9,6 @@ import React, {
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import type { UnPromisify } from '@bangle.io/shared-types';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
@@ -19,6 +18,7 @@ import {
   UniversalPalette,
 } from '@bangle.io/ui-components';
 import { isAbortError, removeMdExtension } from '@bangle.io/utils';
+import { naukarWorkerProxy } from '@bangle.io/worker-naukar-proxy';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ExtensionPaletteType } from './config';
