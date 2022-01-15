@@ -43,4 +43,6 @@ const injectWaitOnWorkerReadyProxy: WorkerAPI = new Proxy<WorkerAPI>(
 
 const injectAbortable = mainInjectAbortableProxy(injectWaitOnWorkerReadyProxy);
 
+// a proxy to the worker entry, will stall any methods
+// until the worker is marked ready.
 export const naukarWorkerProxy = injectAbortable;

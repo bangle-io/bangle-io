@@ -13,23 +13,21 @@ export function initializeNaukarStore({
   onUpdate,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
-  port: MessageChannel['port2'];
+  port: MessagePort;
 }) {
   const store = ApplicationStore.create({
     storeName: WORKER_STORE_NAME,
-    state: AppState.create({ slices: naukarStateSlices({ onUpdate }) }),
+    state: AppState.create({
+      opts: {
+        port,
+      },
+      slices: naukarStateSlices({ onUpdate }),
+    }),
     dispatchAction: (store, action) => {
       log(action);
       let newState = store.state.applyAction(action);
       store.updateState(newState);
       log(newState);
-
-      if (!action.fromStore) {
-        port.postMessage({
-          type: 'action',
-          action: store.serializeAction(action),
-        });
-      }
     },
     scheduler: (cb) => {
       const id = setTimeout(cb, MAX_DEFERRED_WAIT_TIME);
@@ -38,18 +36,6 @@ export function initializeNaukarStore({
       };
     },
   });
-
-  port.onmessage = ({ data }) => {
-    if (data?.type === 'action') {
-      let parsed = store.parseAction(data.action);
-      if (parsed) {
-        console.debug('action from main', parsed);
-        store.dispatch(parsed);
-      }
-    }
-  };
-
-  port.postMessage('WORKER_READY');
 
   return store;
 }
