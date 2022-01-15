@@ -1,7 +1,11 @@
 import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
-import { workerSlice } from './worker-slice';
+import { workerLoaderSlice } from './worker-loader-slice';
+import { workerStoreSyncSlices } from './worker-store-sync-slices';
 
 assertNonWorkerGlobalScope();
 
-export { workerSlice };
+export const workerSetupSlices = () => [
+  workerLoaderSlice(),
+  ...workerStoreSyncSlices(),
+];

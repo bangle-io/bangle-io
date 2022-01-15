@@ -20,7 +20,7 @@ import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
-import { workerSlice } from '@bangle.io/worker-setup';
+import { workerSetupSlices } from '@bangle.io/worker-setup';
 
 import { e2eHelpers } from './e2e-helpers';
 import { historySlice } from './slices/history-slice';
@@ -52,7 +52,7 @@ export function bangleStateSlices({
   return [
     ...pageBlock,
     workspacesSlice(),
-    workerSlice(),
+    ...workerSetupSlices(),
     extensionRegistrySlice(),
     workspaceSlice(),
     uiSlice(),

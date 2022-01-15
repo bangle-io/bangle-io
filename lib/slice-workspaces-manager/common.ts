@@ -70,7 +70,7 @@ export type WorkspacesSliceAction = {
 export const workspacesSliceKey = new SliceKey<
   WorkspacesSliceState,
   WorkspacesSliceAction
->('slice-workspaces');
+>('slice-workspaces-manager');
 
 export type SideEffect = SliceSideEffect<
   WorkspacesSliceState,
