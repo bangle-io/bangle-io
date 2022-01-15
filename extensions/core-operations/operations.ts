@@ -1,6 +1,5 @@
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
   refreshWsPaths,
@@ -8,6 +7,7 @@ import {
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 export function downloadWorkspace() {
   return (
@@ -40,7 +40,7 @@ export function downloadWorkspace() {
       },
     });
 
-    naukarWorkerProxy
+    naukarProxy
       .abortableBackupAllFiles(abortController.signal, wsName)
       .then((blob: File) => {
         downloadBlob(blob, blob.name);
@@ -77,7 +77,7 @@ export function restoreWorkspaceFromBackup() {
           },
         });
 
-        return naukarWorkerProxy.abortableCreateWorkspaceFromBackup(
+        return naukarProxy.abortableCreateWorkspaceFromBackup(
           abortController.signal,
           wsName,
           file,

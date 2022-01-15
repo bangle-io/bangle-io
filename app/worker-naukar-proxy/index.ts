@@ -1,6 +1,6 @@
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
-import type { WorkerAPI } from '@bangle.io/naukar-worker';
 import { Emitter } from '@bangle.io/utils';
+import type { WorkerAPI } from '@bangle.io/worker-naukar';
 
 let naukar;
 
@@ -45,4 +45,4 @@ const injectAbortable = mainInjectAbortableProxy(injectWaitOnWorkerReadyProxy);
 
 // a proxy to the worker entry, will stall any methods
 // until the worker is marked ready.
-export const naukarWorkerProxy = injectAbortable;
+export const naukarProxy = injectAbortable;

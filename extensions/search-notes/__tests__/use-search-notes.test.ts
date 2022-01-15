@@ -1,14 +1,14 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import { useExtensionState } from '@bangle.io/extension-registry';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { useSearchNotes } from '../hooks';
 
-jest.mock('@bangle.io/naukar-proxy', () => {
+jest.mock('@bangle.io/worker-naukar-proxy', () => {
   return {
-    naukarWorkerProxy: {
+    naukarProxy: {
       abortableSearchWsForPmNode: jest.fn(),
     },
   };
@@ -37,8 +37,8 @@ jest.mock('../constants', () => {
 let useWorkspaceContextReturn, useExtensionStateReturn;
 
 let abortableSearchWsForPmNodeMock =
-  naukarWorkerProxy.abortableSearchWsForPmNode as jest.MockedFunction<
-    typeof naukarWorkerProxy.abortableSearchWsForPmNode
+  naukarProxy.abortableSearchWsForPmNode as jest.MockedFunction<
+    typeof naukarProxy.abortableSearchWsForPmNode
   >;
 
 beforeEach(() => {

@@ -2,13 +2,13 @@ import * as Comlink from 'comlink';
 
 import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import { BaseAction, Slice, SliceKey } from '@bangle.io/create-store';
-import { naukarWorkerProxy } from '@bangle.io/naukar-proxy';
 import {
   assertNonWorkerGlobalScope,
   setStoreSyncSliceReady,
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/utils';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { workerLoaderSliceKey } from './worker-loader-slice';
 
@@ -53,7 +53,7 @@ export function workerStoreSyncSlices() {
               const { msgChannel } = workerSyncKey.getSliceStateAsserted(
                 store.state,
               );
-              naukarWorkerProxy.sendMessagePort(
+              naukarProxy.sendMessagePort(
                 Comlink.transfer(msgChannel.port2, [msgChannel.port2]),
               );
 

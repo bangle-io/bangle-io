@@ -1,7 +1,7 @@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import { pageSlice } from '@bangle.io/slice-page';
 
-import { syncWithWindowSlices } from './sync-with-window-slices';
+import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
 
 export type NaukarActionTypes = {
   name: string;

@@ -20,8 +20,8 @@
   "module": "index.ts",
   "devDependencies": {
     "@bangle.dev/test-helpers": "0.28.5",
-    "@bangle.io/naukar-worker": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
+    "@bangle.io/worker-naukar": "workspace:*",
     "@testing-library/dom": "^8.10.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -42,7 +42,6 @@
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/fzf-search": "workspace:*",
     "@bangle.io/inline-palette": "workspace:*",
-    "@bangle.io/naukar-proxy": "workspace:*",
     "@bangle.io/search-pm-node": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
@@ -50,6 +49,7 @@
     "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
+    "@bangle.io/worker-naukar-proxy": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"

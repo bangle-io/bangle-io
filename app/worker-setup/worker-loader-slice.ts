@@ -1,6 +1,6 @@
 import { Slice, SliceKey, SliceSideEffect } from '@bangle.io/create-store';
-import { setNaukarReady } from '@bangle.io/naukar-proxy';
 import { assertActionName, assertNonWorkerGlobalScope } from '@bangle.io/utils';
+import { setNaukarReady } from '@bangle.io/worker-naukar-proxy';
 
 import { checkModuleWorkerSupport } from './module-support';
 import { workerSetup } from './worker-setup';

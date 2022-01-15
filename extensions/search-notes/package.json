@@ -28,7 +28,6 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/contextual-ui-components": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
-    "@bangle.io/naukar-proxy": "workspace:*",
     "@bangle.io/serial-operation-context": "workspace:*",
     "@bangle.io/shared-operations": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
@@ -37,6 +36,7 @@
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
+    "@bangle.io/worker-naukar-proxy": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "react": "^17.0.2"
   },
