@@ -6,11 +6,12 @@ import {
   SliceKey,
 } from '@bangle.io/create-store';
 
+import { assertActionName } from './action';
 import { exponentialBackoff } from './utility';
 import { isWorkerGlobalScope } from './worker';
 
 type SyncAction = {
-  name: '@bangle.io/utils/store-sync-slice-is-ready';
+  name: 'action::@bangle.io/utils:store-sync-slice-is-ready';
 };
 
 const LOG = false;
@@ -29,7 +30,7 @@ export function setStoreSyncSliceReady() {
     dispatch: ApplicationStore<any, SyncAction>['dispatch'],
   ) => {
     dispatch({
-      name: '@bangle.io/utils/store-sync-slice-is-ready',
+      name: 'action::@bangle.io/utils:store-sync-slice-is-ready',
     });
   };
 }
@@ -44,7 +45,8 @@ export type StoreSyncConfigType<A extends BaseAction = any> = {
 
 /**
  * The slice is set to keep recording actions until `setStoreSyncSliceReady`
- * is called, after which it starts syncing.
+ * is called and the port handshake is successfull, after which it starts a bidirectional
+ * action communication to sync the two stores stores.
  *
  * @param configKey - the key containing the configuration
  */
@@ -52,13 +54,17 @@ export function storeSyncSlice<
   A extends BaseAction,
   C extends StoreSyncConfigType<A>,
 >(configKey: SliceKey<C>) {
+  assertActionName('@bangle.io/utils', {} as SyncAction);
+
   return new Slice<{ pendingActions: A[]; isReady: boolean }, A>({
     state: {
       init() {
         return { pendingActions: [], isReady: false };
       },
       apply(action, sliceState, appState) {
-        if (action.name === '@bangle.io/utils/store-sync-slice-is-ready') {
+        if (
+          action.name === 'action::@bangle.io/utils:store-sync-slice-is-ready'
+        ) {
           return {
             ...sliceState,
             isReady: true,
@@ -102,6 +108,7 @@ export function storeSyncSlice<
         }
       };
 
+      // start pinging the port untill we hear a response from the other side.
       exponentialBackoff(
         (attempt) => {
           log('store sync attempt', attempt);

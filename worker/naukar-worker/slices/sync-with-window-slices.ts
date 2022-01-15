@@ -12,6 +12,9 @@ import { WorkerStoreOpts } from '../store/types';
 const actionFilter = (action: BaseAction) =>
   workerSyncWhiteListedActions.some((rule) => action.name.startsWith(rule));
 
+/**
+ * Sets up syncing of store actions with the window
+ */
 export function syncWithWindowSlices() {
   const sliceKey = new SliceKey<StoreSyncConfigType<BaseAction>>(
     'sync-with-window-stateSyncKey',

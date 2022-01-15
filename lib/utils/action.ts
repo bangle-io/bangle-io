@@ -3,8 +3,7 @@
 
 import { SliceKey } from '@bangle.io/create-store';
 
-// checks if action name is valid
 export function assertActionName<
   R extends string,
   A extends { name: `action::${R}:${string}` },
->(packageName: R, key: SliceKey<any, A>): void {}
+>(packageName: R, key: A | SliceKey<any, A>): void {}
