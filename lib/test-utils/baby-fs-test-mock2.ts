@@ -2,7 +2,7 @@ import idb from 'idb-keyval';
 
 import { IndexedDBFileSystem } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
-import { WorkspaceInfo } from '@bangle.io/shared-types';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 
 import { createPMNode } from './create-pm-node';
 
