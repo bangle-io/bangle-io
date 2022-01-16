@@ -51,29 +51,31 @@ export function workerLoaderSlice() {
   });
 }
 
-const loadWorkerModuleEffect: WorkerSetupSideEffect = (store) => {
-  let terminate: (() => void) | undefined;
-  let destroyed = false;
-
-  workerSetup(loadWebworker).then(async (result) => {
-    if (destroyed) {
-      return;
-    }
-    terminate = result.terminate;
-
-    // Tell the proxy that the worker is ready
-    // this will resolve the promise blocking anyone from
-    // accessing naukar methods
-    setNaukarReady(result.naukar);
-    store.dispatch({
-      name: 'action::@bangle.io/worker-setup:worker-loader:worker-is-ready',
-    });
-  });
-
+const loadWorkerModuleEffect: WorkerSetupSideEffect = () => {
   return {
-    destroy() {
-      destroyed = true;
-      terminate?.();
+    deferredOnce(store, abortSignal) {
+      let terminate: (() => void) | undefined;
+      let destroyed = false;
+
+      workerSetup(loadWebworker).then(async (result) => {
+        if (destroyed) {
+          return;
+        }
+        terminate = result.terminate;
+
+        // Tell the proxy that the worker is ready
+        // this will resolve the promise blocking anyone from
+        // accessing naukar methods
+        setNaukarReady(result.naukar);
+        store.dispatch({
+          name: 'action::@bangle.io/worker-setup:worker-loader:worker-is-ready',
+        });
+      });
+
+      abortSignal.addEventListener('abort', () => {
+        destroyed = true;
+        terminate?.();
+      });
     },
   };
 };

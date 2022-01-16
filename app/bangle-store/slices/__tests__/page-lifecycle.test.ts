@@ -1,4 +1,4 @@
-import lifeCycleMock from 'page-lifecycle';
+import lifeCycle from 'page-lifecycle';
 
 import { blockReload, pageSlice, PageSliceAction } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
@@ -16,11 +16,13 @@ jest.mock('page-lifecycle', () => {
   };
 });
 
+let lifeCycleMock = lifeCycle;
+
 beforeEach(() => {
-  lifeCycleMock.addEventListener.mockImplementation(() => {});
-  lifeCycleMock.removeEventListener.mockImplementation(() => {});
-  lifeCycleMock.removeUnsavedChanges.mockImplementation(() => {});
-  lifeCycleMock.addUnsavedChanges.mockImplementation(() => {});
+  (lifeCycleMock.addEventListener as any).mockImplementation(() => {});
+  (lifeCycleMock.removeEventListener as any).mockImplementation(() => {});
+  (lifeCycleMock.removeUnsavedChanges as any).mockImplementation(() => {});
+  (lifeCycleMock.addUnsavedChanges as any).mockImplementation(() => {});
 });
 
 describe('blockReloadEffect', () => {
@@ -114,7 +116,7 @@ describe('watchPageLifeCycleEffect', () => {
     ]);
 
     expect(lifeCycleMock.addEventListener).toBeCalledTimes(1);
-    let cb = lifeCycleMock.addEventListener.mock.calls[0][1];
+    let cb = (lifeCycleMock.addEventListener as any).mock.calls[0][1];
 
     cb({ newState: 'active', oldState: 'passive' });
     expect(dispatchSpy).toBeCalled();

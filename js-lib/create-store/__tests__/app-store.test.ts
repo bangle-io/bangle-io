@@ -204,7 +204,7 @@ describe('store', () => {
       let store = setup(sideEffect);
 
       expect(sideEffect).toBeCalledTimes(1);
-      expect(sideEffect).nthCalledWith(1, store);
+      expect(sideEffect).nthCalledWith(1, store.state);
       expect(destroy).toBeCalledTimes(0);
       expect(update).toBeCalledTimes(0);
       let originalState = store.state;
@@ -334,7 +334,7 @@ describe('store', () => {
       expect(update1).toBeCalledTimes(1);
 
       expect(sideEffect2).toBeCalledTimes(1);
-      expect(sideEffect2).nthCalledWith(1, store);
+      expect(sideEffect2).nthCalledWith(1, store.state);
       expect(destroy2).toBeCalledTimes(0);
       expect(update2).toBeCalledTimes(1);
       expect(update2).nthCalledWith(
@@ -356,9 +356,12 @@ describe('store', () => {
 
       const slice1 = new Slice({
         key: key1,
-        sideEffect(store) {
-          slice2Action(store.state, store.dispatch);
-          return {};
+        sideEffect() {
+          return {
+            deferredOnce(store) {
+              slice2Action(store.state, store.dispatch);
+            },
+          };
         },
       });
 
@@ -396,7 +399,10 @@ describe('store', () => {
 
       store.dispatch({});
 
-      expect(seenStates).toEqual([[1, 0]]);
+      expect(seenStates).toEqual([
+        [1, 0],
+        [1, 1],
+      ]);
     });
   });
 

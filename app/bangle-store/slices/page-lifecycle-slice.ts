@@ -22,20 +22,22 @@ type PageLifeCycleEvent = {
 export function pageLifeCycleSlice() {
   return new Slice({
     sideEffect: [
-      function watchPageLifeCycleEffect(store) {
-        const handler = (event: PageLifeCycleEvent) => {
-          setPageLifeCycleState(event.newState, event.oldState)(
-            store.state,
-            store.dispatch,
-          );
-        };
-
-        lifecycle.addEventListener('statechange', handler);
-
-        handler({ newState: lifecycle.state, oldState: undefined });
+      function watchPageLifeCycleEffect() {
         return {
-          destroy() {
-            lifecycle.removeEventListener('statechange', handler);
+          deferredOnce(store, abortSignal) {
+            const handler = (event: PageLifeCycleEvent) => {
+              setPageLifeCycleState(event.newState, event.oldState)(
+                store.state,
+                store.dispatch,
+              );
+            };
+
+            lifecycle.addEventListener('statechange', handler);
+
+            handler({ newState: lifecycle.state, oldState: undefined });
+            abortSignal.addEventListener('abort', () => {
+              lifecycle.removeEventListener('statechange', handler);
+            });
           },
         };
       },

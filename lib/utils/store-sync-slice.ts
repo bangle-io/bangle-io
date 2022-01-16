@@ -80,58 +80,66 @@ export function storeSyncSlice<
         return sliceState;
       },
     },
-    sideEffect(store: ApplicationStore) {
-      const { port, actionReceiveFilter } = configKey.getSliceStateAsserted(
-        store.state,
-      );
-
+    sideEffect() {
       let portReady = false;
-      let pingController = new AbortController();
-
-      port.onmessage = ({ data }) => {
-        if (data?.type === 'ping') {
-          port.postMessage({ type: 'pong' });
-          return;
-        }
-        if (data?.type === 'pong') {
-          log('received pong port is ready!');
-          pingController.abort();
-          portReady = true;
-          return;
-        }
-        if (data?.type === 'action') {
-          let parsedAction = store.parseAction(data.action);
-          if (parsedAction && actionReceiveFilter(parsedAction)) {
-            log('received action', parsedAction);
-            store.dispatch(parsedAction);
-          }
-        }
-      };
-
-      // start pinging the port untill we hear a response from the other side.
-      exponentialBackoff(
-        (attempt) => {
-          log('store sync attempt', attempt);
-
-          if (attempt === MAX_PING_PONG_TRY) {
-            throw new Error(
-              'Unable to get a ping response from the other port',
-            );
-          }
-          port.postMessage({ type: 'ping' });
-          return false;
-        },
-        pingController.signal,
-        {
-          maxTry: MAX_PING_PONG_TRY,
-        },
-      );
 
       return {
+        deferredOnce(store, abortSignal) {
+          const { port, actionReceiveFilter } = configKey.getSliceStateAsserted(
+            store.state,
+          );
+
+          let pingController = new AbortController();
+
+          port.onmessage = ({ data }) => {
+            if (data?.type === 'ping') {
+              port.postMessage({ type: 'pong' });
+              return;
+            }
+            if (data?.type === 'pong') {
+              log('received pong port is ready!');
+              pingController.abort();
+              portReady = true;
+              return;
+            }
+            if (data?.type === 'action') {
+              let parsedAction = store.parseAction(data.action);
+              if (parsedAction && actionReceiveFilter(parsedAction)) {
+                log('received action', parsedAction);
+                store.dispatch(parsedAction);
+              }
+            }
+          };
+
+          // start pinging the port untill we hear a response from the other side.
+          exponentialBackoff(
+            (attempt) => {
+              log('store sync attempt', attempt);
+
+              if (attempt === MAX_PING_PONG_TRY) {
+                throw new Error(
+                  'Unable to get a ping response from the other port',
+                );
+              }
+              port.postMessage({ type: 'ping' });
+              return false;
+            },
+            pingController.signal,
+            {
+              maxTry: MAX_PING_PONG_TRY,
+            },
+          );
+
+          abortSignal.addEventListener('abort', () => {
+            pingController.abort();
+            port.close();
+          });
+        },
         update(store, _, sliceState) {
           const isReady = sliceState.isReady && portReady;
 
           if (isReady && sliceState.pendingActions.length > 0) {
+            const { port } = configKey.getSliceStateAsserted(store.state);
             for (const action of sliceState.pendingActions) {
               // If an action has fromStore field, do not send it across as it
               // was received from outside.
@@ -149,10 +157,6 @@ export function storeSyncSlice<
             }
             sliceState.pendingActions = [];
           }
-        },
-        destroy() {
-          pingController.abort();
-          port.close();
         },
       };
     },

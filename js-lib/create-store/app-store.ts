@@ -1,4 +1,4 @@
-import type { AppState } from './app-state';
+import { AppState } from './app-state';
 import type {
   ActionsSerializersType,
   BaseAction,
@@ -36,6 +36,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     >;
   } = {};
   private currentRunId = 0;
+  private destroyController = new AbortController();
 
   static create<S = any, A extends BaseAction = any>({
     storeName,
@@ -154,6 +155,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   }
 
   destroy() {
+    this.destroyController.abort();
     this.destroySideEffects();
     this.destroyed = true;
   }
@@ -231,7 +233,12 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     this.destroySideEffects();
 
-    const previouslySeenState = this._state;
+    const initialAppSate = this._state;
+
+    let allDeferredOnce: Exclude<
+      ReturnType<SliceSideEffect<any, any>>['deferredOnce'],
+      undefined
+    >[] = [];
 
     this._state.getSlices().forEach((slice) => {
       if (slice.spec.sideEffect) {
@@ -240,21 +247,32 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
         ([] as SliceSideEffect<any, A, S>[])
           .concat(slice.spec.sideEffect)
           .forEach((sideEffect) => {
-            let result = sideEffect?.(this);
+            let result = sideEffect?.(initialAppSate);
 
             if (!this.scheduler && result?.deferredUpdate) {
               throw new RangeError(
                 "Scheduler needs to be defined for using Slice's deferredUpdate",
               );
             }
+
             if (result) {
               this.sideEffects.push({
                 effect: result,
                 key: slice.key,
-                previouslySeenState,
+                previouslySeenState: initialAppSate,
               });
+              if (result.deferredOnce) {
+                allDeferredOnce.push(result.deferredOnce);
+              }
             }
           });
+      }
+    });
+
+    // run all the once handlers
+    allDeferredOnce.forEach((def) => {
+      if (!this.destroyController.signal.aborted) {
+        def(this, this.destroyController.signal);
       }
     });
   }

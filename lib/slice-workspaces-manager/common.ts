@@ -1,8 +1,10 @@
+import { WorkspaceType } from '@bangle.io/constants';
 import {
   ApplicationStore,
   SliceKey,
   SliceSideEffect,
 } from '@bangle.io/create-store';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 
 export const WORKSPACE_KEY = 'workspaces/2';
 
@@ -11,12 +13,9 @@ export const HELP_FS_WORKSPACE_NAME = 'bangle-help';
 export const HELP_FS_INDEX_FILE_NAME = 'getting started.md';
 export const HELP_FS_INDEX_WS_PATH = `${HELP_FS_WORKSPACE_NAME}:${HELP_FS_INDEX_FILE_NAME}`;
 
-export enum WorkspaceType {
-  browser = 'browser',
-  nativefs = 'nativefs',
-  githubReadFs = 'github-read-fs',
-  helpfs = 'helpfs',
-}
+export { WorkspaceType } from '@bangle.io/constants';
+
+export type { WorkspaceInfo };
 
 export const helpFSWorkspaceInfo: WorkspaceInfo = {
   metadata: {
@@ -26,27 +25,6 @@ export const helpFSWorkspaceInfo: WorkspaceInfo = {
   type: WorkspaceType.helpfs,
   lastModified: Date.now(),
 };
-
-export type WorkspaceInfo =
-  | {
-      name: string;
-      type: WorkspaceType;
-      deleted?: boolean;
-      lastModified: number;
-      metadata: {
-        [k: string]: any;
-      };
-    }
-  | {
-      name: string;
-      type: WorkspaceType.nativefs;
-      deleted?: boolean;
-      lastModified: number;
-      metadata: {
-        rootDirHandle: any;
-        [k: string]: any;
-      };
-    };
 
 export type WorkspaceInfoReg = {
   [wsName: string]: WorkspaceInfo;

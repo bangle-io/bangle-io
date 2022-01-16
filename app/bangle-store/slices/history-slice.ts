@@ -112,27 +112,29 @@ const applyPendingNavigation: SliceSideEffect<
 const watchHistoryEffect: SliceSideEffect<
   HistoryStateType,
   HistorySliceAction
-> = (store) => {
-  const browserHistory = new BrowserHistory('', (location) => {
-    syncPageLocation(location)(
-      store.state,
-      pageSliceKey.getDispatch(store.dispatch),
-    );
-  });
-
-  store.dispatch({
-    name: 'action::@bangle.io/bangle-store:history-slice-set-history',
-    value: { history: browserHistory },
-  });
-
-  syncPageLocation({
-    search: browserHistory.search,
-    pathname: browserHistory.pathname,
-  })(store.state, pageSliceKey.getDispatch(store.dispatch));
-
+> = () => {
   return {
-    destroy() {
-      browserHistory.destroy();
+    deferredOnce(store, abortSignal) {
+      const browserHistory = new BrowserHistory('', (location) => {
+        syncPageLocation(location)(
+          store.state,
+          pageSliceKey.getDispatch(store.dispatch),
+        );
+      });
+
+      store.dispatch({
+        name: 'action::@bangle.io/bangle-store:history-slice-set-history',
+        value: { history: browserHistory },
+      });
+
+      syncPageLocation({
+        search: browserHistory.search,
+        pathname: browserHistory.pathname,
+      })(store.state, pageSliceKey.getDispatch(store.dispatch));
+
+      abortSignal.addEventListener('abort', () => {
+        browserHistory.destroy();
+      });
     },
   };
 };

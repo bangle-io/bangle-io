@@ -45,7 +45,7 @@ export function initializeBangleStore({
       ...retrieveSessionStorage(),
     };
 
-    const onPageInactive = () => {
+    const onPageInactive = (store) => {
       toLocalStorage(
         store.state.stateToJSON({
           sliceFields: {
@@ -91,9 +91,7 @@ export function initializeBangleStore({
     });
   };
 
-  let store = makeStore();
-
-  return store;
+  return makeStore();
 }
 
 function toLocalStorage(obj: JsonValue) {

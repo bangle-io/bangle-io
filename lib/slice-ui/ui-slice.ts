@@ -274,34 +274,36 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
         return state;
       },
     },
-    sideEffect(store) {
-      const state = uiSliceKey.getSliceState(store.state);
-
-      if (state) {
-        applyTheme(state.theme);
-        setRootWidescreenClass(state.widescreen);
-      }
-
-      // Handler to call on window resize
-      const handleResize = rafSchedule(() => {
-        store.dispatch({
-          name: 'action::@bangle.io/slice-ui:UPDATE_WINDOW_SIZE',
-          value: {
-            windowSize: {
-              width: window.innerWidth,
-              height: window.innerHeight,
-            },
-          },
-        });
-      });
-
-      // Add event listener
-      window.addEventListener('resize', handleResize);
-
+    sideEffect() {
       return {
-        destroy() {
-          handleResize.cancel();
-          window.removeEventListener('resize', handleResize);
+        deferredOnce(store, abortSignal) {
+          const state = uiSliceKey.getSliceState(store.state);
+
+          if (state) {
+            applyTheme(state.theme);
+            setRootWidescreenClass(state.widescreen);
+          }
+
+          // Handler to call on window resize
+          const handleResize = rafSchedule(() => {
+            store.dispatch({
+              name: 'action::@bangle.io/slice-ui:UPDATE_WINDOW_SIZE',
+              value: {
+                windowSize: {
+                  width: window.innerWidth,
+                  height: window.innerHeight,
+                },
+              },
+            });
+          });
+
+          // Add event listener
+          window.addEventListener('resize', handleResize);
+
+          abortSignal.addEventListener('abort', () => {
+            handleResize.cancel();
+            window.removeEventListener('resize', handleResize);
+          });
         },
       };
     },

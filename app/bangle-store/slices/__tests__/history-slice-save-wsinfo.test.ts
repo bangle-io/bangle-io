@@ -1,25 +1,25 @@
+// eslint-disable-next-line simple-import-sort/imports
+import {
+  idbMock,
+  resetIndexeddb,
+} from '@bangle.io/test-utils/baby-fs-test-mock2';
+
 import { BrowserHistory } from '@bangle.io/history';
 import { pageSlice, PageSliceAction } from '@bangle.io/slice-page';
 import {
   WorkspaceInfo,
-  workspacesSliceInitialState,
-  workspacesSliceKey,
+  workspacesSlice,
+  listWorkspaces,
   WorkspaceType,
+  workspacesSliceKey,
+  deleteWorkspace,
 } from '@bangle.io/slice-workspaces-manager';
+
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 
 import { historySlice, historySliceKey } from '../history-slice';
-
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  const other = jest.requireActual('@bangle.io/slice-workspaces-manager');
-  const workspacesSliceKey = other.workspacesSliceKey;
-  workspacesSliceKey.getSliceStateAsserted = jest.fn();
-  return {
-    ...other,
-    workspacesSliceKey,
-  };
-});
+import { ApplicationStore } from '@bangle.io/create-store';
 
 const createWsInfo = (obj: Partial<WorkspaceInfo>): WorkspaceInfo => {
   return {
@@ -31,30 +31,31 @@ const createWsInfo = (obj: Partial<WorkspaceInfo>): WorkspaceInfo => {
   };
 };
 
-const workspacesSliceStateMock = workspacesSliceKey[
-  'getSliceStateAsserted'
-] as jest.MockedFunction<typeof workspacesSliceKey['getSliceStateAsserted']>;
+beforeEach(resetIndexeddb);
 
-let store, history;
-
-beforeEach(() => {
+let setup = () => {
   window.history.replaceState(null, '', '/');
-  ({ store } = createTestStore<PageSliceAction>([pageSlice(), historySlice()]));
+  let { store } = createTestStore<PageSliceAction>([
+    pageSlice(),
+    historySlice(),
+    workspacesSlice(),
+  ]);
 
-  ({ history } = historySliceKey.getSliceStateAsserted(store.state));
+  let { history } = historySliceKey.getSliceStateAsserted(store.state);
 
   jest
     .spyOn(history as BrowserHistory, 'updateHistoryState')
     .mockImplementation(() => {});
-});
+
+  return { store, history };
+};
+beforeEach(() => {});
 
 describe('saveWorkspaceInfoEffect', () => {
   test('works when not a nativefs workspace', async () => {
-    workspacesSliceStateMock.mockImplementation(() => ({
-      ...workspacesSliceInitialState,
-      workspaceInfos: { testWs: createWsInfo({ name: 'testWs' }) },
-    }));
+    idbMock.setupMockWorkspace({ name: 'testWs' });
 
+    const { store, history } = setup();
     store.dispatch({ name: 'action::some-action' } as any);
 
     await sleep(0);
@@ -68,41 +69,34 @@ describe('saveWorkspaceInfoEffect', () => {
   });
 
   test('works when a nativefs workspace', async () => {
-    workspacesSliceStateMock.mockImplementation(() => ({
-      ...workspacesSliceInitialState,
-      workspaceInfos: {
-        testWs: createWsInfo({
-          name: 'testWs',
-          type: WorkspaceType.nativefs,
-          metadata: { rootDirHandle: { root: 'handler' } },
-        }),
-      },
-    }));
+    idbMock.setupMockWorkspace({
+      name: 'testWs',
+      type: WorkspaceType.nativefs,
+      metadata: { rootDirHandle: { root: 'handler' } },
+    });
+
+    const { store, history } = setup();
 
     store.dispatch({ name: 'action::some-action' } as any);
 
     await sleep(0);
 
     expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
-    expect((history as BrowserHistory).updateHistoryState).nthCalledWith(
-      1,
-
-      { workspacesRootDir: [{ root: 'handler' }] },
-    );
+    expect((history as BrowserHistory).updateHistoryState).nthCalledWith(1, {
+      workspacesRootDir: [{ root: 'handler' }],
+    });
   });
 
   test('ignores when a workspace is deleted', async () => {
-    workspacesSliceStateMock.mockImplementation(() => ({
-      ...workspacesSliceInitialState,
-      workspaceInfos: {
-        testWs: createWsInfo({
-          name: 'testWs',
-          type: WorkspaceType.nativefs,
-          deleted: true,
-          metadata: { rootDirHandle: { root: 'handler' } },
-        }),
-      },
-    }));
+    idbMock.setupMockWorkspace(
+      createWsInfo({
+        name: 'testWs',
+        type: WorkspaceType.nativefs,
+        deleted: true,
+        metadata: { rootDirHandle: { root: 'handler' } },
+      }),
+    );
+    const { store, history } = setup();
 
     store.dispatch({ name: 'action::some-action' } as any);
 
@@ -116,6 +110,39 @@ describe('saveWorkspaceInfoEffect', () => {
     );
   });
 
+  test('when a workspace is deleted', async () => {
+    idbMock.setupMockWorkspace(
+      createWsInfo({
+        name: 'testWs',
+        type: WorkspaceType.nativefs,
+        metadata: { rootDirHandle: { root: 'handler' } },
+      }),
+    );
+    const { store, history } = setup();
+
+    await sleep(0);
+    store.dispatch({ name: 'action::some-action' } as any);
+
+    await sleep(0);
+
+    expect((history as BrowserHistory).updateHistoryState).lastCalledWith({
+      workspacesRootDir: [{ root: 'handler' }],
+    });
+
+    let morphedStore = store as ApplicationStore;
+
+    deleteWorkspace('testWs')(
+      morphedStore.state,
+      morphedStore.dispatch,
+      morphedStore,
+    );
+    await sleep(0);
+
+    expect((history as BrowserHistory).updateHistoryState).lastCalledWith({
+      workspacesRootDir: [],
+    });
+  });
+
   test('dispatching multipe times does not call it again', async () => {
     const wsInfo = createWsInfo({
       name: 'testWs',
@@ -127,10 +154,9 @@ describe('saveWorkspaceInfoEffect', () => {
       testWs: wsInfo,
     };
 
-    workspacesSliceStateMock.mockImplementation(() => ({
-      ...workspacesSliceInitialState,
-      workspaceInfos: wsInfos,
-    }));
+    idbMock.setupMockWorkspace(wsInfo);
+
+    const { store, history } = setup();
 
     store.dispatch({ name: 'action::some-action' } as any);
 
@@ -143,10 +169,13 @@ describe('saveWorkspaceInfoEffect', () => {
       { workspacesRootDir: [wsInfo.metadata.rootDirHandle] },
     );
 
-    workspacesSliceStateMock.mockImplementation(() => ({
-      ...workspacesSliceInitialState,
-      workspaceInfos: wsInfos,
-    }));
+    let morphedStore = store as ApplicationStore;
+
+    await listWorkspaces()(
+      morphedStore.state,
+      morphedStore.dispatch,
+      morphedStore,
+    );
 
     store.dispatch({ name: 'action::some-action' } as any);
 

@@ -38,7 +38,7 @@ export function bangleStateSlices({
   extensionSlices,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
-  onPageInactive: () => void;
+  onPageInactive: (store: ApplicationStore) => void;
   extensionSlices: Slice<any>[];
 }) {
   const pageBlock = [pageSlice(), historySlice(), pageLifeCycleSlice()];
@@ -78,7 +78,7 @@ export function bangleStateSlices({
               )(store.state);
 
               if (didChange) {
-                onPageInactive();
+                onPageInactive(store);
               }
             },
           };

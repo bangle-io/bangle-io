@@ -43,7 +43,6 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
       const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
 
       useEffect(() => {
-        console.log('loading workspaces');
         listWorkspaces()(
           bangleStore.state,
           bangleStore.dispatch,

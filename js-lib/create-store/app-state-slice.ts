@@ -41,17 +41,32 @@ export interface SliceStateField<SL, A extends BaseAction, S> {
 }
 
 export type SliceSideEffect<SL, A extends BaseAction, S = SL> = (
-  store: ApplicationStore<S, A>,
+  state: AppState<S, A>,
 ) => {
+  // Called once during the lifetime of an effect
+  // Though not guaranteed to be run first among other methods, it
+  // generally runs around the start of the effect.
+  deferredOnce?: (
+    store: ApplicationStore<S, A>,
+    // the signal is for destruction of the store. Put in any cleanups in the 'abort' signal
+    abortSignal: AbortSignal,
+  ) => void;
   update?: (
     store: ApplicationStore<S, A>,
     prevState: AppState<S, A>,
     sliceState: SL,
     prevSliceState: SL,
   ) => void;
+
+  // called when store is destroyed
   destroy?: () => void;
+
+  // will be called after a state update has been applied, it is not guaranteed
+  // that this will be called right after the state update
   deferredUpdate?: (
     store: ApplicationStore<S, A>,
+    // signal is called if a new deferredUpdate will be called, use this signal for aborting
+    // any async methods.
     abortSignal: AbortSignal,
   ) => void;
 };

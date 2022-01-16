@@ -44,8 +44,8 @@ export const initialSelectionEffect: SideEffect = () => {
 // Since we do not know when will the action for setting the editor
 // at `focusedEditorId` will be dispatched we pause auto focusing on any other editorId
 // for the cooldown period.
-export const focusEditorEffect: SideEffect = (store) => {
-  const initialSliceState = editorManagerSliceKey.getSliceState(store.state);
+export const focusEditorEffect: SideEffect = (state) => {
+  const initialSliceState = editorManagerSliceKey.getSliceState(state);
 
   // This exists to preserve focused editor during page reloads
   let editorNeedsFocusOnPageLoad: number | undefined =
@@ -116,37 +116,39 @@ export const focusEditorEffect: SideEffect = (store) => {
 // note: we cannot simply update the scroll position when editor unmounts
 // like selection because the dom is no longer having height when the editor
 // unmounts
-export const watchEditorScrollEffect: SideEffect = (store) => {
-  const updateScrollPos = () => {
-    for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
-      const currentEditor = getEditor(i)(store.state);
-      if (!currentEditor?.destroyed) {
-        updateScrollPosition(i)(store.state, store.dispatch);
-      }
-    }
-  };
-
-  const deb = debounceFn(updateScrollPos, {
-    wait: 300,
-    maxWait: 600,
-  });
-
-  const opts = {
-    capture: true,
-    passive: true,
-  };
-  const isWindow = typeof window !== 'undefined';
-
-  if (isWindow) {
-    window.addEventListener('scroll', deb, opts);
-  }
-
+export const watchEditorScrollEffect: SideEffect = () => {
   return {
-    destroy() {
-      deb.cancel();
+    deferredOnce(store, abortSignal) {
+      const updateScrollPos = () => {
+        for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
+          const currentEditor = getEditor(i)(store.state);
+          if (!currentEditor?.destroyed) {
+            updateScrollPosition(i)(store.state, store.dispatch);
+          }
+        }
+      };
+
+      const deb = debounceFn(updateScrollPos, {
+        wait: 300,
+        maxWait: 600,
+      });
+
+      const opts = {
+        capture: true,
+        passive: true,
+      };
+      const isWindow = typeof window !== 'undefined';
+
       if (isWindow) {
-        window.removeEventListener('scroll', deb, opts);
+        window.addEventListener('scroll', deb, opts);
       }
+
+      abortSignal.addEventListener('abort', () => {
+        deb.cancel();
+        if (isWindow) {
+          window.removeEventListener('scroll', deb, opts);
+        }
+      });
     },
   };
 };

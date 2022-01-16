@@ -33,9 +33,12 @@ export function syncWithWindowSlices() {
           };
         },
       },
-      sideEffect(store) {
-        setStoreSyncSliceReady()(store.state, store.dispatch);
-        return {};
+      sideEffect() {
+        return {
+          deferredOnce(store) {
+            setStoreSyncSliceReady()(store.state, store.dispatch);
+          },
+        };
       },
     }),
     storeSyncSlice(sliceKey),
