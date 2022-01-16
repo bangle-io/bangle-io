@@ -1,5 +1,6 @@
 {
   "name": "@bangle.io/worker-naukar-proxy",
+  "description": "A proxy to the naukar worker",
   "version": "0.0.0",
   "authors": [
     {

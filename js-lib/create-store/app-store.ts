@@ -244,10 +244,10 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       if (slice.spec.sideEffect) {
         // since sideEffect can be an array or single
         // flatten it for further use
-        ([] as SliceSideEffect<any, A, S>[])
+        ([] as SliceSideEffect<any, A>[])
           .concat(slice.spec.sideEffect)
           .forEach((sideEffect) => {
-            let result = sideEffect?.(initialAppSate);
+            let result = sideEffect?.(initialAppSate, this._state.config.opts);
 
             if (!this.scheduler && result?.deferredUpdate) {
               throw new RangeError(

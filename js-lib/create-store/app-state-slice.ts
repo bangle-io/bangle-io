@@ -40,20 +40,25 @@ export interface SliceStateField<SL, A extends BaseAction, S> {
   ) => SL;
 }
 
-export type SliceSideEffect<SL, A extends BaseAction, S = SL> = (
-  state: AppState<S, A>,
+export type SliceSideEffect<
+  SL,
+  A extends BaseAction,
+  C extends { [key: string]: any } = any,
+> = (
+  state: AppState<SL, A>,
+  opts: C,
 ) => {
   // Called once during the lifetime of an effect
   // Though not guaranteed to be run first among other methods, it
   // generally runs around the start of the effect.
   deferredOnce?: (
-    store: ApplicationStore<S, A>,
+    store: ApplicationStore<SL, A>,
     // the signal is for destruction of the store. Put in any cleanups in the 'abort' signal
     abortSignal: AbortSignal,
   ) => void;
   update?: (
-    store: ApplicationStore<S, A>,
-    prevState: AppState<S, A>,
+    store: ApplicationStore<SL, A>,
+    prevState: AppState<SL, A>,
     sliceState: SL,
     prevSliceState: SL,
   ) => void;
@@ -64,7 +69,7 @@ export type SliceSideEffect<SL, A extends BaseAction, S = SL> = (
   // will be called after a state update has been applied, it is not guaranteed
   // that this will be called right after the state update
   deferredUpdate?: (
-    store: ApplicationStore<S, A>,
+    store: ApplicationStore<SL, A>,
     // signal is called if a new deferredUpdate will be called, use this signal for aborting
     // any async methods.
     abortSignal: AbortSignal,
@@ -84,7 +89,7 @@ export class Slice<SL, A extends BaseAction = any, S = SL> {
       ) => BaseAction | undefined;
       // false if it cannot be serialized
       actions?: ActionsSerializersType<A>;
-      sideEffect?: SliceSideEffect<SL, A, S> | SliceSideEffect<SL, A, S>[];
+      sideEffect?: SliceSideEffect<SL, A> | SliceSideEffect<SL, A>[];
     },
   ) {
     this.key = spec.key ? spec.key.key : createKey('slice');

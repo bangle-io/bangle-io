@@ -90,22 +90,8 @@ test('works', async () => {
     MessageChannel {
       "port1": Object {
         "close": [MockFunction],
-        "onmessage": [Function],
-        "postMessage": [MockFunction] {
-          "calls": Array [
-            Array [
-              Object {
-                "type": "ping",
-              },
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        },
+        "onmessage": undefined,
+        "postMessage": [MockFunction],
       },
       "port2": Object {
         "close": [MockFunction],
@@ -164,7 +150,8 @@ test('sends actions correctly', async () => {
   await sleep(0);
 
   expect(slices[1]?.getSliceState(store.state)).toEqual({
-    isReady: true,
+    portReady: false,
+    startSync: true,
     pendingActions: [
       {
         id: expect.any(String),
@@ -207,7 +194,8 @@ test('sends actions correctly', async () => {
 
   // clears pendingActions
   expect(slices[1]?.getSliceState(store.state)).toEqual({
-    isReady: true,
+    portReady: true,
+    startSync: true,
     pendingActions: [],
   });
 });

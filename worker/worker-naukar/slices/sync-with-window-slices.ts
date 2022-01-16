@@ -2,7 +2,7 @@ import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import { BaseAction, Slice, SliceKey } from '@bangle.io/create-store';
 import {
   asssertNotUndefined,
-  setStoreSyncSliceReady,
+  startStoreSync,
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/utils';
@@ -36,7 +36,7 @@ export function syncWithWindowSlices() {
       sideEffect() {
         return {
           deferredOnce(store) {
-            setStoreSyncSliceReady()(store.state, store.dispatch);
+            startStoreSync()(store.state, store.dispatch);
           },
         };
       },

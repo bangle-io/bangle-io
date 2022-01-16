@@ -30,7 +30,7 @@ test('sets up', () => {
   expect(store.state.config.fields.map((r) => r.name)).toMatchInlineSnapshot(`
     Array [
       "sync-with-window-stateSyncKey$",
-      "slice$",
+      "store-sync-slice$",
       "page-slice$",
     ]
   `);
@@ -41,7 +41,7 @@ test('sets up', () => {
   });
 });
 
-test('destroys', () => {
+test('destroys', async () => {
   const port = Port();
 
   const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
@@ -58,11 +58,11 @@ test('destroys', () => {
   expect(port.close).toBeCalledTimes(1);
 });
 
-test('sends actions to the port', async () => {
+test.only('sends actions to the port', async () => {
   const port = Port();
 
   port.postMessage = jest.fn().mockImplementation(() => {
-    port.onmessage?.({ data: { type: 'pong' } } as any);
+    port.onmessage!({ data: { type: 'pong' } } as any);
   });
 
   const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
