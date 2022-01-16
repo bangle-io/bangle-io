@@ -4,7 +4,7 @@ import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import { BaseAction, Slice, SliceKey } from '@bangle.io/create-store';
 import {
   assertNonWorkerGlobalScope,
-  setStoreSyncSliceReady,
+  startStoreSync,
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/utils';
@@ -40,7 +40,7 @@ export function workerStoreSyncSlices() {
           };
         },
       },
-      sideEffect(store) {
+      sideEffect() {
         return {
           update(store, prevState) {
             const workerLoaded = workerLoaderSliceKey.getValueIfChanged(
@@ -48,7 +48,6 @@ export function workerStoreSyncSlices() {
               store.state,
               prevState,
             );
-
             if (workerLoaded) {
               const { msgChannel } = workerSyncKey.getSliceStateAsserted(
                 store.state,
@@ -56,8 +55,7 @@ export function workerStoreSyncSlices() {
               naukarProxy.sendMessagePort(
                 Comlink.transfer(msgChannel.port2, [msgChannel.port2]),
               );
-
-              setStoreSyncSliceReady()(store.state, store.dispatch);
+              startStoreSync()(store.state, store.dispatch);
             }
           },
         };

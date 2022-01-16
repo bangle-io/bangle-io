@@ -10,9 +10,23 @@ import { assertActionName } from './action';
 import { exponentialBackoff } from './utility';
 import { isWorkerGlobalScope } from './worker';
 
-type SyncAction = {
-  name: 'action::@bangle.io/utils:store-sync-slice-is-ready';
-};
+type SyncAction =
+  | {
+      name: 'action::@bangle.io/utils:store-sync-start-sync';
+    }
+  | {
+      name: 'action::@bangle.io/utils:store-sync-port-ready';
+    };
+
+export interface StoreSyncState<A> {
+  pendingActions: A[];
+  startSync: boolean;
+  portReady: boolean;
+}
+
+const syncStoreKey = new SliceKey<StoreSyncState<any>, SyncAction>(
+  'store-sync-slice',
+);
 
 const LOG = false;
 const log = LOG
@@ -24,14 +38,23 @@ const log = LOG
 
 const MAX_PING_PONG_TRY = 15;
 
-export function setStoreSyncSliceReady() {
+export function startStoreSync() {
   return (
     _: AppState,
     dispatch: ApplicationStore<any, SyncAction>['dispatch'],
   ) => {
     dispatch({
-      name: 'action::@bangle.io/utils:store-sync-slice-is-ready',
+      name: 'action::@bangle.io/utils:store-sync-start-sync',
     });
+  };
+}
+
+export function isStoreSyncReady() {
+  return (state: AppState<StoreSyncState<any>, SyncAction>) => {
+    return (
+      syncStoreKey.getSliceStateAsserted(state).portReady &&
+      syncStoreKey.getSliceStateAsserted(state).startSync
+    );
   };
 }
 
@@ -44,9 +67,9 @@ export type StoreSyncConfigType<A extends BaseAction = any> = {
 };
 
 /**
- * The slice is set to keep recording actions until `setStoreSyncSliceReady`
+ * The slice is set to keep recording actions until `startStoreSync`
  * is called and the port handshake is successfull, after which it starts a bidirectional
- * action communication to sync the two stores stores.
+ * action communication to sync the two stores.
  *
  * @param configKey - the key containing the configuration
  */
@@ -56,20 +79,27 @@ export function storeSyncSlice<
 >(configKey: SliceKey<C>) {
   assertActionName('@bangle.io/utils', {} as SyncAction);
 
-  return new Slice<{ pendingActions: A[]; isReady: boolean }, A>({
+  return new Slice<StoreSyncState<A>, SyncAction>({
+    key: syncStoreKey,
     state: {
       init() {
-        return { pendingActions: [], isReady: false };
+        return { pendingActions: [], portReady: false, startSync: false };
       },
       apply(action, sliceState, appState) {
-        if (
-          action.name === 'action::@bangle.io/utils:store-sync-slice-is-ready'
-        ) {
+        if (action.name === 'action::@bangle.io/utils:store-sync-start-sync') {
           return {
             ...sliceState,
-            isReady: true,
+            startSync: true,
           };
         }
+
+        if (action.name === 'action::@bangle.io/utils:store-sync-port-ready') {
+          return {
+            ...sliceState,
+            portReady: true,
+          };
+        }
+
         if (
           configKey
             .getSliceStateAsserted(appState)
@@ -80,85 +110,110 @@ export function storeSyncSlice<
         return sliceState;
       },
     },
-    sideEffect() {
-      let portReady = false;
 
-      return {
-        deferredOnce(store, abortSignal) {
-          const { port, actionReceiveFilter } = configKey.getSliceStateAsserted(
-            store.state,
-          );
+    sideEffect: [
+      (initialState) => {
+        const pingController = new AbortController();
+        const { port, actionReceiveFilter } =
+          configKey.getSliceStateAsserted(initialState);
 
-          let pingController = new AbortController();
-
-          port.onmessage = ({ data }) => {
-            if (data?.type === 'ping') {
-              port.postMessage({ type: 'pong' });
-              return;
-            }
-            if (data?.type === 'pong') {
-              log('received pong port is ready!');
-              pingController.abort();
-              portReady = true;
-              return;
-            }
-            if (data?.type === 'action') {
-              let parsedAction = store.parseAction(data.action);
-              if (parsedAction && actionReceiveFilter(parsedAction)) {
-                log('received action', parsedAction);
-                store.dispatch(parsedAction);
-              }
-            }
-          };
-
-          // start pinging the port untill we hear a response from the other side.
-          exponentialBackoff(
-            (attempt) => {
-              log('store sync attempt', attempt);
-
-              if (attempt === MAX_PING_PONG_TRY) {
-                throw new Error(
-                  'Unable to get a ping response from the other port',
-                );
-              }
-              port.postMessage({ type: 'ping' });
-              return false;
-            },
-            pingController.signal,
-            {
-              maxTry: MAX_PING_PONG_TRY,
-            },
-          );
-
-          abortSignal.addEventListener('abort', () => {
+        return {
+          destroy() {
             pingController.abort();
             port.close();
-          });
-        },
-        update(store, _, sliceState) {
-          const isReady = sliceState.isReady && portReady;
+          },
 
-          if (isReady && sliceState.pendingActions.length > 0) {
-            const { port } = configKey.getSliceStateAsserted(store.state);
-            for (const action of sliceState.pendingActions) {
-              // If an action has fromStore field, do not send it across as it
-              // was received from outside.
-              if (!action.fromStore) {
-                const serializedAction = store.serializeAction(action);
-                if (serializedAction) {
-                  port.postMessage({
-                    type: 'action',
-                    action: serializedAction,
+          update(store, prevState) {
+            if (
+              syncStoreKey.getValueIfChanged(
+                'startSync',
+                store.state,
+                prevState,
+              ) === true &&
+              !pingController.signal.aborted
+            ) {
+              port.onmessage = ({ data }) => {
+                if (data?.type === 'ping') {
+                  port.postMessage({ type: 'pong' });
+                  return;
+                }
+                if (
+                  data?.type === 'pong' &&
+                  // avoid dispatching again if port is already ready
+                  !syncStoreKey.getSliceStateAsserted(store.state).portReady
+                ) {
+                  log('port is ready!');
+                  pingController.abort();
+                  store.dispatch({
+                    name: 'action::@bangle.io/utils:store-sync-port-ready',
                   });
-                } else {
-                  log('No serialization found for ', action);
+                  return;
+                }
+                if (data?.type === 'action') {
+                  const parsedAction = (store as ApplicationStore).parseAction(
+                    data.action,
+                  );
+                  if (parsedAction && actionReceiveFilter(parsedAction)) {
+                    log('received action', parsedAction);
+                    store.dispatch(parsedAction);
+                  }
+                }
+              };
+
+              // start pinging the port untill we hear a response from the other side.
+              exponentialBackoff(
+                (attempt) => {
+                  log('store sync attempt', attempt);
+
+                  if (attempt === MAX_PING_PONG_TRY) {
+                    throw new Error(
+                      'Unable to get a ping response from the other port',
+                    );
+                  }
+                  port.postMessage({ type: 'ping' });
+                  return false;
+                },
+                pingController.signal,
+                {
+                  maxTry: MAX_PING_PONG_TRY,
+                },
+              );
+            }
+          },
+        };
+      },
+
+      () => {
+        return {
+          update(store, _, sliceState) {
+            const ready = sliceState.startSync && sliceState.portReady;
+
+            if (ready && sliceState.pendingActions.length > 0) {
+              const { port } = configKey.getSliceStateAsserted(store.state);
+
+              for (const action of sliceState.pendingActions) {
+                // If an action has fromStore field, do not send it across as it
+                // was received from outside.
+                if (!action.fromStore) {
+                  const serializedAction = (
+                    store as ApplicationStore
+                  ).serializeAction(action);
+
+                  if (serializedAction) {
+                    port.postMessage({
+                      type: 'action',
+                      action: serializedAction,
+                    });
+                  } else {
+                    log('No serialization found for ', action);
+                  }
                 }
               }
+              sliceState.pendingActions = [];
             }
-            sliceState.pendingActions = [];
-          }
-        },
-      };
-    },
+          },
+        };
+      },
+    ],
   });
 }

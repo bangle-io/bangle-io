@@ -187,7 +187,10 @@ describe('store', () => {
         },
       });
 
-      state = AppState.create({ slices: [slice1, slice2] });
+      state = AppState.create({
+        slices: [slice1, slice2],
+        opts: { test: 'test' },
+      });
       store = ApplicationStore.create({ storeName: 'test-store', state });
 
       return store;
@@ -204,7 +207,7 @@ describe('store', () => {
       let store = setup(sideEffect);
 
       expect(sideEffect).toBeCalledTimes(1);
-      expect(sideEffect).nthCalledWith(1, store.state);
+      expect(sideEffect).nthCalledWith(1, store.state, { test: 'test' });
       expect(destroy).toBeCalledTimes(0);
       expect(update).toBeCalledTimes(0);
       let originalState = store.state;
@@ -334,7 +337,7 @@ describe('store', () => {
       expect(update1).toBeCalledTimes(1);
 
       expect(sideEffect2).toBeCalledTimes(1);
-      expect(sideEffect2).nthCalledWith(1, store.state);
+      expect(sideEffect2).nthCalledWith(1, store.state, undefined);
       expect(destroy2).toBeCalledTimes(0);
       expect(update2).toBeCalledTimes(1);
       expect(update2).nthCalledWith(

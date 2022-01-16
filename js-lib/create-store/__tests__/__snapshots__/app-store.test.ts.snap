@@ -199,6 +199,7 @@ ApplicationStore {
               "calls": Array [
                 Array [
                   [Circular],
+                  undefined,
                 ],
               ],
               "results": Array [
@@ -221,6 +222,7 @@ ApplicationStore {
               "calls": Array [
                 Array [
                   [Circular],
+                  undefined,
                 ],
               ],
               "results": Array [
@@ -263,6 +265,7 @@ ApplicationStore {
                   "calls": Array [
                     Array [
                       [Circular],
+                      undefined,
                     ],
                   ],
                   "results": Array [
@@ -285,6 +288,7 @@ ApplicationStore {
                   "calls": Array [
                     Array [
                       [Circular],
+                      undefined,
                     ],
                   ],
                   "results": Array [

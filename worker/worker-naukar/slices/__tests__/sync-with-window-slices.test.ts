@@ -17,7 +17,7 @@ const Port = (): MessagePort => ({
   },
 });
 
-test('sets up', () => {
+test('sets up', async () => {
   const port = Port();
 
   const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
@@ -30,10 +30,12 @@ test('sets up', () => {
   expect(store.state.config.fields.map((r) => r.name)).toMatchInlineSnapshot(`
     Array [
       "sync-with-window-stateSyncKey$",
-      "slice$",
+      "store-sync-slice$",
       "page-slice$",
     ]
   `);
+
+  await sleep(0);
 
   expect(port.postMessage).toBeCalledTimes(1);
   expect(port.postMessage).nthCalledWith(1, {
@@ -41,12 +43,13 @@ test('sets up', () => {
   });
 });
 
-test('destroys', () => {
+test('destroys', async () => {
   const port = Port();
 
   const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
     port,
   });
+  await sleep(0);
 
   expect(port.postMessage).toBeCalledTimes(1);
   expect(port.postMessage).nthCalledWith(1, {
@@ -62,7 +65,7 @@ test('sends actions to the port', async () => {
   const port = Port();
 
   port.postMessage = jest.fn().mockImplementation(() => {
-    port.onmessage?.({ data: { type: 'pong' } } as any);
+    port.onmessage!({ data: { type: 'pong' } } as any);
   });
 
   const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
@@ -72,6 +75,7 @@ test('sends actions to the port', async () => {
   expect(store.state.config.opts).toMatchObject({
     port,
   });
+  await sleep(0);
 
   expect(port.postMessage).toBeCalledTimes(1);
   expect(port.postMessage).nthCalledWith(1, {
@@ -106,6 +110,7 @@ test('handles actions coming from port', async () => {
   const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
     port,
   });
+  await sleep(0);
 
   expect(port.postMessage).toBeCalledTimes(1);
   expect(port.postMessage).nthCalledWith(1, {
@@ -129,5 +134,73 @@ test('handles actions coming from port', async () => {
     },
   } as any);
 
+  expect(pageSliceKey.getSliceState(store.state)?.blockReload).toBe(true);
+});
+
+test('blocks actions which are not recognized', async () => {
+  const port = Port();
+
+  port.postMessage = jest.fn().mockImplementation(() => {
+    port.onmessage?.({ data: { type: 'pong' } } as any);
+  });
+
+  const { store, actionsDispatched } = createTestStore(
+    [...syncWithWindowSlices(), pageSlice()],
+    {
+      port,
+    },
+  );
+
+  await sleep(0);
+
+  port.onmessage?.({
+    data: {
+      action: {
+        name: 'action::@bangle.io/slice-page:BLOCK_RELOAD',
+        serializedValue: {
+          block: true,
+        },
+        storeName: 'test-store',
+      },
+      type: 'action',
+    },
+  } as any);
+
+  await sleep(0);
+  const expectedActions = [
+    {
+      id: expect.any(String),
+      name: 'action::@bangle.io/utils:store-sync-port-ready',
+    },
+    {
+      id: expect.any(String),
+      name: 'action::@bangle.io/utils:store-sync-start-sync',
+    },
+    {
+      fromStore: 'test-store',
+      id: expect.any(String),
+      name: 'action::@bangle.io/slice-page:BLOCK_RELOAD',
+      value: {
+        block: true,
+      },
+    },
+  ];
+  expect(actionsDispatched).toEqual(expectedActions);
+
+  port.onmessage?.({
+    data: {
+      action: {
+        name: 'action::@bangle.io/suspicious:BLOCK_RELOAD',
+        serializedValue: {
+          block: false,
+        },
+        storeName: 'test-store',
+      },
+      type: 'action',
+    },
+  } as any);
+  await sleep(0);
+
+  expect(actionsDispatched).toEqual(expectedActions);
   expect(pageSliceKey.getSliceState(store.state)?.blockReload).toBe(true);
 });

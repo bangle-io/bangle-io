@@ -2,7 +2,7 @@ import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import { BaseAction, Slice, SliceKey } from '@bangle.io/create-store';
 import {
   asssertNotUndefined,
-  setStoreSyncSliceReady,
+  startStoreSync,
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/utils';
@@ -36,7 +36,10 @@ export function syncWithWindowSlices() {
       sideEffect() {
         return {
           deferredOnce(store) {
-            setStoreSyncSliceReady()(store.state, store.dispatch);
+            // start the store sync in next cycle to let worker stabilize
+            Promise.resolve().then(() => {
+              startStoreSync()(store.state, store.dispatch);
+            });
           },
         };
       },
