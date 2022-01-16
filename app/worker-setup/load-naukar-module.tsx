@@ -2,7 +2,7 @@ import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();
 
-export async function workerSetup(loadWebworker: boolean): Promise<{
+export async function loadNaukarModule(loadWebworker: boolean): Promise<{
   naukar: import('@bangle.io/worker-naukar').WorkerAPI;
   terminate?: () => void;
 }> {

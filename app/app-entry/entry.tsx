@@ -61,11 +61,6 @@ const useRouterHook: BaseLocationHook = () => {
 export function Entry() {
   const [bangleStoreChanged, _setBangleStoreCounter] = useState(0);
   const [bangleStore] = useState(() => {
-    mountCount++;
-    if (mountCount > 1) {
-      console.warn('entry comp remounted');
-    }
-    // TODO the store is not ready for destroying and recreation yet.
     return initializeBangleStore({
       onUpdate: () => _setBangleStoreCounter((c) => c + 1),
     });

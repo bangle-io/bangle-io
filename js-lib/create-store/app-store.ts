@@ -49,7 +49,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     disableSideEffects = false,
   }: {
     state: AppState<S, A>;
-    dispatchAction?: DispatchActionType<S, A>;
+    dispatchAction?: DispatchActionType<S, BaseAction>;
     scheduler?: SchedulerType;
     storeName: string;
     disableSideEffects?: boolean;

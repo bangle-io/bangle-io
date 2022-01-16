@@ -73,7 +73,6 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
       await diskSetup.disk.flushAll();
       console.debug('flushed everything');
     },
-
     ...abortableServices({ extensionRegistry }),
   };
 }

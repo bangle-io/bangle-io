@@ -8,6 +8,7 @@ const emitter = new Emitter();
 
 export const setNaukarReady = (_naukar) => {
   naukar = _naukar;
+
   emitter.emit('ready', undefined);
 };
 

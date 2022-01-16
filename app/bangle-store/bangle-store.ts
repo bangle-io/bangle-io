@@ -20,8 +20,9 @@ import {
 
 assertNonWorkerGlobalScope();
 
-const LOG = false;
-let log = LOG ? console.log.bind(console, 'bangle-store') : () => {};
+const LOG = true || window.location?.hash?.includes('debug_store');
+
+let log = LOG ? console.debug.bind(console, 'bangle-store') : () => {};
 
 const persistKey = 'bangle-store-0.124';
 
@@ -39,7 +40,7 @@ export function initializeBangleStore({
 
   const stateOpts: BangleStateOpts = {
     extensionRegistry,
-    loadWorker: checkModuleWorkerSupport(),
+    useWebWorker: checkModuleWorkerSupport(),
   };
   const makeStore = () => {
     const stateJson = {
@@ -82,12 +83,10 @@ export function initializeBangleStore({
       storeName: MAIN_STORE_NAME,
       state: state,
       dispatchAction: (store, action) => {
-        log(action);
-        // log('starting', action.name, (action as any).id);
+        log(action.fromStore || '', action.name, action.id, action.value);
 
         const newState = store.state.applyAction(action);
         store.updateState(newState);
-        // log('finished', action.name, (action as any).id);
       },
       scheduler: scheduler(),
     });

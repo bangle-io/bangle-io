@@ -50,7 +50,7 @@ export function startStoreSync() {
 }
 
 export function isStoreSyncReady() {
-  return (state: AppState<StoreSyncState<any>, SyncAction>) => {
+  return (state: AppState) => {
     return (
       syncStoreKey.getSliceStateAsserted(state).portReady &&
       syncStoreKey.getSliceStateAsserted(state).startSync

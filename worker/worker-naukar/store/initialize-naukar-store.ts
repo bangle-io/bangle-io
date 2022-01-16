@@ -4,7 +4,7 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { naukarStateSlices } from './naukar-state-slices';
 
 const LOG = false;
-let log = LOG ? console.log.bind(console, 'naukar-store') : () => {};
+let log = LOG ? console.debug.bind(console, 'naukar-store') : () => {};
 
 const MAX_DEFERRED_WAIT_TIME = 200;
 
