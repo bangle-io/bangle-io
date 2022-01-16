@@ -13,7 +13,7 @@ export async function searchNotes(
     totalMatchMax = 2000,
   } = {},
 ) {
-  return naukarProxy.abortableSearchWsForPmNode(
+  return naukarProxy.current.abortableSearchWsForPmNode(
     signal,
     wsName,
     query,

@@ -93,7 +93,7 @@ export const flushNaukarEffect: SliceSideEffect<any, any> = () => {
   return {
     update: (store, prevState) => {
       if (pageLifeCycleTransitionedTo('active', prevState)(store.state)) {
-        naukarProxy.resetManager();
+        naukarProxy.current.resetManager();
         return;
       }
 
@@ -103,7 +103,7 @@ export const flushNaukarEffect: SliceSideEffect<any, any> = () => {
       )(store.state);
 
       if (pageTransitionedToInactive) {
-        naukarProxy.flushDisk();
+        naukarProxy.current.flushDisk();
         return;
       }
     },

@@ -10,13 +10,29 @@ import Worker from './expose-worker-naukar.worker?worker';
 assertNonWorkerGlobalScope();
 
 // TODO fix me
-const worker = new (Worker as any)();
 
-export const wrapper = Comlink.wrap(worker);
-export const terminate = async () => {
-  wrapper[Comlink.releaseProxy]();
-  // wait for comlink to release proxy
-  // if we terminate immediately proxy is not released
-  await sleep(100);
-  worker.terminate();
+let previousWait: Promise<void> | undefined;
+
+export const getWorker = async () => {
+  if (previousWait) {
+    console.log('has previous await');
+    await previousWait;
+  }
+
+  const worker = new (Worker as any)();
+  const wrapper = Comlink.wrap(worker);
+
+  return {
+    wrapper,
+    destroy: async () => {
+      wrapper[Comlink.releaseProxy]();
+      previousWait = sleep(1000);
+      // wait for comlink to release proxy
+      // if we terminate immediately proxy is not released
+      await previousWait;
+
+      previousWait = undefined;
+      worker.terminate();
+    },
+  };
 };

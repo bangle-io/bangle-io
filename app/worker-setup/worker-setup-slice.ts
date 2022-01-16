@@ -16,7 +16,10 @@ import {
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/utils';
-import { setNaukarReady } from '@bangle.io/worker-naukar-proxy';
+import {
+  setNaukarDestroy,
+  setNaukarReady,
+} from '@bangle.io/worker-naukar-proxy';
 
 import { loadNaukarModule } from './load-naukar-module';
 
@@ -82,20 +85,19 @@ const loadWorkerModuleEffect: SideEffect = (_, config) => {
       if (!setNaukarReadyCalled && naukar && isStoreSyncReady()(store.state)) {
         setNaukarReadyCalled = true;
         setNaukarReady(naukar);
-
         log('naukar is ready');
       }
     },
 
     deferredOnce(store: ApplicationStore, abortSignal) {
-      let terminate: (() => void) | undefined;
+      let destroyNaukar: (() => void) | undefined;
       let destroyed = false;
 
       loadNaukarModule(config.useWebWorker).then(async (result) => {
         if (destroyed) {
           return;
         }
-        terminate = result.terminate;
+        destroyNaukar = result.destroy;
 
         const { msgChannel } = workerStoreSyncKey.getSliceStateAsserted(
           store.state,
@@ -111,8 +113,9 @@ const loadWorkerModuleEffect: SideEffect = (_, config) => {
       });
 
       abortSignal.addEventListener('abort', () => {
+        setNaukarDestroy();
         destroyed = true;
-        terminate?.();
+        destroyNaukar?.();
       });
     },
   };

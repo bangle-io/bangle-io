@@ -77,7 +77,7 @@ export function restoreWorkspaceFromBackup() {
           },
         });
 
-        return naukarProxy.abortableCreateWorkspaceFromBackup(
+        return naukarProxy.current.abortableCreateWorkspaceFromBackup(
           abortController.signal,
           wsName,
           file,
