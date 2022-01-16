@@ -36,7 +36,10 @@ export function syncWithWindowSlices() {
       sideEffect() {
         return {
           deferredOnce(store) {
-            startStoreSync()(store.state, store.dispatch);
+            // start the store sync in next cycle to let worker stabilize
+            Promise.resolve().then(() => {
+              startStoreSync()(store.state, store.dispatch);
+            });
           },
         };
       },

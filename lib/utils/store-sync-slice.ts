@@ -69,7 +69,7 @@ export type StoreSyncConfigType<A extends BaseAction = any> = {
 /**
  * The slice is set to keep recording actions until `startStoreSync`
  * is called and the port handshake is successfull, after which it starts a bidirectional
- * action communication to sync the two stores stores.
+ * action communication to sync the two stores.
  *
  * @param configKey - the key containing the configuration
  */
