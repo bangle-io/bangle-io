@@ -74,4 +74,15 @@ export class SliceKey<SL = any, A extends BaseAction = any, S = SL> {
       ? this.getSliceStateAsserted(state)[field]
       : undefined;
   }
+
+  // Helper function for creating an operation with the correct
+  // types.
+  op<T>(
+    cb: (
+      state: AppState<S, A>,
+      dispatch: ApplicationStore<SL, A>['dispatch'],
+    ) => T,
+  ) {
+    return cb;
+  }
 }

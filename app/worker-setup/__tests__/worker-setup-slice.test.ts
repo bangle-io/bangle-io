@@ -28,7 +28,6 @@ interface Port {
   close: () => void;
 }
 
-let sendMessagePortSpy: jest.SpyInstance | undefined;
 beforeEach(() => {
   (window as any).MessageChannel = class MessageChannel {
     port1: Port = {
@@ -185,6 +184,33 @@ test('sends actions correctly', async () => {
   });
 
   await sleep(0);
+
+  expect(actionsDispatched).toEqual([
+    {
+      id: 'test-store-5',
+      name: 'action::@bangle.io/utils:store-sync-start-sync',
+    },
+    {
+      id: 'test-store-8',
+      name: 'action::@bangle.io/slice-page:BLOCK_RELOAD',
+      value: {
+        block: true,
+      },
+    },
+    {
+      id: 'test-store-11',
+      name: 'action::@bangle.io/utils:store-sync-port-ready',
+    },
+
+    // PROXY setup should be after port is marked ready
+    {
+      id: 'test-store-13',
+      name: 'action::@bangle.io/worker-naukar-proxy:naukar',
+      value: {
+        naukar: expect.anything(),
+      },
+    },
+  ]);
 
   // clears pendingActions
   expect(slices[1]?.getSliceState(store.state)).toEqual({

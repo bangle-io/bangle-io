@@ -1,4 +1,4 @@
-import { BaseAction, Slice } from './app-state-slice';
+import { Slice } from './app-state-slice';
 import { SliceKey } from './slice-key';
 
 export function savePreviousValue<T>() {

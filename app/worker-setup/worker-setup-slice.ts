@@ -16,7 +16,7 @@ import {
   StoreSyncConfigType,
   storeSyncSlice,
 } from '@bangle.io/utils';
-import { setNaukarReady } from '@bangle.io/worker-naukar-proxy';
+import { setNaukarProxyState } from '@bangle.io/worker-naukar-proxy';
 
 import { loadNaukarModule } from './load-naukar-module';
 
@@ -81,8 +81,8 @@ const loadWorkerModuleEffect: SideEffect = (_, config) => {
       // accessing naukar methods
       if (!setNaukarReadyCalled && naukar && isStoreSyncReady()(store.state)) {
         setNaukarReadyCalled = true;
-        setNaukarReady(naukar);
 
+        setNaukarProxyState(naukar)(store.state, store.dispatch);
         log('naukar is ready');
       }
     },

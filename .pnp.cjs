@@ -5334,6 +5334,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"]

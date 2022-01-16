@@ -17,7 +17,7 @@ import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
-import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 import { workerSetupSlices } from '@bangle.io/worker-setup';
 
 import { e2eHelpers } from './e2e-helpers';
@@ -45,6 +45,7 @@ export function bangleStateSlices({
 
   return [
     ...pageBlock,
+    naukarProxySlice(),
     ...workerSetupSlices(),
     workspacesSlice(),
     extensionRegistrySlice(),
