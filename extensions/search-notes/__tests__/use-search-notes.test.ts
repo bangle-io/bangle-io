@@ -36,10 +36,10 @@ jest.mock('../constants', () => {
 
 let useWorkspaceContextReturn, useExtensionStateReturn;
 
-let abortableSearchWsForPmNodeMock =
-  naukarProxy.abortableSearchWsForPmNode as jest.MockedFunction<
-    typeof naukarProxy.abortableSearchWsForPmNode
-  >;
+let abortableSearchWsForPmNodeMock = naukarProxy.current
+  .abortableSearchWsForPmNode as jest.MockedFunction<
+  typeof naukarProxy.current.abortableSearchWsForPmNode
+>;
 
 beforeEach(() => {
   useWorkspaceContextReturn = {

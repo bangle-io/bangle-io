@@ -243,7 +243,9 @@ export function useSearchWsPaths(query: string) {
 
 function useSearchNotePaths(query: string, wsName: string | undefined) {
   const [result, updateResult] = useState<
-    | UnPromisify<ReturnType<typeof naukarProxy.abortableFzfSearchNoteWsPaths>>
+    | UnPromisify<
+        ReturnType<typeof naukarProxy.current.abortableFzfSearchNoteWsPaths>
+      >
     | undefined
   >(undefined);
 

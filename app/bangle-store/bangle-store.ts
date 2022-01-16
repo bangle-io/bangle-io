@@ -42,7 +42,8 @@ export function initializeBangleStore({
     extensionRegistry,
     useWebWorker: checkModuleWorkerSupport(),
   };
-  const makeStore = () => {
+
+  const makeState = () => {
     const stateJson = {
       ...retrieveLocalStorage(),
       ...retrieveSessionStorage(),
@@ -79,11 +80,15 @@ export function initializeBangleStore({
       opts: stateOpts,
     });
 
+    return state;
+  };
+  const makeStore = () => {
     return ApplicationStore.create<BangleSliceTypes, BangleActionTypes>({
       storeName: MAIN_STORE_NAME,
-      state: state,
+      state: makeState(),
       dispatchAction: (store, action) => {
         log(action.fromStore || '', action.name, action.id, action.value);
+        // log('starting', action.name, (action as any).id);
 
         const newState = store.state.applyAction(action);
         store.updateState(newState);
@@ -92,7 +97,11 @@ export function initializeBangleStore({
     });
   };
 
-  return makeStore();
+  const store = makeStore();
+  window.zz = () => {
+    store.updateState(makeState());
+  };
+  return store;
 }
 
 function toLocalStorage(obj: JsonValue) {

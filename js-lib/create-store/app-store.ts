@@ -36,7 +36,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     >;
   } = {};
   private currentRunId = 0;
-  private destroyController = new AbortController();
+  private deferredOnceDestroyController: AbortController | undefined;
 
   static create<S = any, A extends BaseAction = any>({
     storeName,
@@ -155,7 +155,6 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   }
 
   destroy() {
-    this.destroyController.abort();
     this.destroySideEffects();
     this.destroyed = true;
   }
@@ -202,6 +201,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     this.sideEffects.forEach(({ effect }) => {
       effect.destroy?.();
     });
+    this.deferredOnceDestroyController?.abort();
     this.sideEffects = [];
   }
 
@@ -269,10 +269,12 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       }
     });
 
+    const deferredOnceDestroyController = new AbortController();
+    this.deferredOnceDestroyController = deferredOnceDestroyController;
     // run all the once handlers
     allDeferredOnce.forEach((def) => {
-      if (!this.destroyController.signal.aborted) {
-        def(this, this.destroyController.signal);
+      if (!deferredOnceDestroyController?.signal.aborted) {
+        def(this, deferredOnceDestroyController.signal);
       }
     });
   }

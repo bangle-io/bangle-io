@@ -23,10 +23,10 @@ jest.mock('@bangle.io/slice-workspace', () => {
   };
 });
 
-let abortableFzfSearchNoteWsPathsMock =
-  naukarProxy.abortableFzfSearchNoteWsPaths as jest.MockedFunction<
-    typeof naukarProxy.abortableFzfSearchNoteWsPaths
-  >;
+let abortableFzfSearchNoteWsPathsMock = naukarProxy.current
+  .abortableFzfSearchNoteWsPaths as jest.MockedFunction<
+  typeof naukarProxy.current.abortableFzfSearchNoteWsPaths
+>;
 
 let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
   typeof useWorkspaceContext

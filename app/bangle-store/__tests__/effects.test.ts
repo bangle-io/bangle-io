@@ -77,8 +77,8 @@ describe('flushNaukarEffect', () => {
 
     expect(pageLifeMock).toBeCalledTimes(1);
 
-    expect(naukarProxy.resetManager).toBeCalledTimes(1);
-    expect(naukarProxy.flushDisk).toBeCalledTimes(0);
+    expect(naukarProxy.current.resetManager).toBeCalledTimes(1);
+    expect(naukarProxy.current.flushDisk).toBeCalledTimes(0);
   });
 
   test('flushDisk testing', () => {
@@ -107,7 +107,7 @@ describe('flushNaukarEffect', () => {
 
     expect(pageLifeMock).toBeCalledTimes(1);
 
-    expect(naukarProxy.resetManager).toBeCalledTimes(0);
-    expect(naukarProxy.flushDisk).toBeCalledTimes(1);
+    expect(naukarProxy.current.resetManager).toBeCalledTimes(0);
+    expect(naukarProxy.current.flushDisk).toBeCalledTimes(1);
   });
 });
