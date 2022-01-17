@@ -24,9 +24,5 @@ export function LoadingBlock() {
     }
   }, []);
 
-  return loaded ? (
-    <React.StrictMode>
-      <Entry />
-    </React.StrictMode>
-  ) : null;
+  return loaded ? <Entry /> : null;
 }

@@ -8,7 +8,7 @@ import {
   SliceKey,
   SliceSideEffect,
 } from '@bangle.io/create-store';
-import type { BangleStateOpts, UnPromisify } from '@bangle.io/shared-types';
+import type { BangleStateConfig, UnPromisify } from '@bangle.io/shared-types';
 import {
   assertNonWorkerGlobalScope,
   isStoreSyncReady,
@@ -37,7 +37,7 @@ export const workerStoreSyncKey = new SliceKey<StateType>(
   'worker-setup-slice-storeSyncKey',
 );
 
-type SideEffect = SliceSideEffect<StateType, any, BangleStateOpts>;
+type SideEffect = SliceSideEffect<StateType, any, BangleStateConfig>;
 
 /**
  * A slice which handles handles communication of the store actions with the

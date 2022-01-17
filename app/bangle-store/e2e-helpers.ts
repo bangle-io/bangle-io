@@ -1,6 +1,6 @@
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
-import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import { Slice } from '@bangle.io/create-store';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
 import * as editorManagerContext from '@bangle.io/slice-editor-manager';
 import {

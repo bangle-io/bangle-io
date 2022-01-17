@@ -1,6 +1,5 @@
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
-import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
 import { workerSetupSlices, workerStoreSyncKey } from '../worker-setup-slice';
 

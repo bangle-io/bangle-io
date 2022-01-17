@@ -1,7 +1,7 @@
 import { MAIN_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { initExtensionRegistry } from '@bangle.io/shared';
-import type { BangleStateOpts, JsonValue } from '@bangle.io/shared-types';
+import type { BangleStateConfig, JsonValue } from '@bangle.io/shared-types';
 import { editorManagerSlice } from '@bangle.io/slice-editor-manager';
 import { uiSlice } from '@bangle.io/slice-ui';
 import {
@@ -38,17 +38,10 @@ export function initializeBangleStore({
   const extensionRegistry = initExtensionRegistry();
   const extensionSlices = extensionRegistry.getSlices();
 
-  const stateOpts: BangleStateOpts = {
+  const stateOpts: BangleStateConfig = {
     extensionRegistry,
     useWebWorker: checkModuleWorkerSupport(),
-  };
-  const makeStore = () => {
-    const stateJson = {
-      ...retrieveLocalStorage(),
-      ...retrieveSessionStorage(),
-    };
-
-    const onPageInactive = (store) => {
+    saveState: (store) => {
       toLocalStorage(
         store.state.stateToJSON({
           sliceFields: {
@@ -63,12 +56,18 @@ export function initializeBangleStore({
           },
         }),
       );
+    },
+  };
+
+  const makeStore = () => {
+    const stateJson = {
+      ...retrieveLocalStorage(),
+      ...retrieveSessionStorage(),
     };
 
     let state = AppState.stateFromJSON({
       slices: bangleStateSlices({
         onUpdate,
-        onPageInactive,
         extensionSlices,
       }),
       json: stateJson,
@@ -83,7 +82,12 @@ export function initializeBangleStore({
       storeName: MAIN_STORE_NAME,
       state: state,
       dispatchAction: (store, action) => {
-        log(action.fromStore || '', action.name, action.id, action.value);
+        log(
+          action.fromStore ? `from=[${action.fromStore}]` : '',
+          action.name,
+          action.id,
+          action.value,
+        );
 
         const newState = store.state.applyAction(action);
         store.updateState(newState);
