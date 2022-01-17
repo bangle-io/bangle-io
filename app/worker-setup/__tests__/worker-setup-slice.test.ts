@@ -1,5 +1,6 @@
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 
 import { workerSetupSlices, workerStoreSyncKey } from '../worker-setup-slice';
 
@@ -35,6 +36,7 @@ const scheduler = (cb) => {
     destroyed = true;
   };
 };
+
 beforeEach(() => {
   jest.useFakeTimers('modern');
 
@@ -172,7 +174,7 @@ test('sends actions correctly', async () => {
   const slices = workerSetupSlices();
 
   const { store, actionsDispatched } = createTestStore(
-    [...slices, pageSlice()],
+    [...slices, pageSlice(), naukarProxySlice()],
     {
       useWebWorker: false,
     },
@@ -180,7 +182,17 @@ test('sends actions correctly', async () => {
   );
 
   blockReload(true)(store.state, store.dispatch);
+
+  // test that naukar-proxy is setup correctly
+  let naukarProxyReady = false;
+  naukarProxy.status().then((result) => {
+    naukarProxyReady = result;
+  });
+
   await Promise.resolve();
+
+  // proxy should resolve
+  expect(naukarProxyReady).toBe(false);
 
   expect(slices[1]?.getSliceState(store.state)).toEqual({
     portReady: false,
@@ -206,7 +218,7 @@ test('sends actions correctly', async () => {
     },
     type: 'action',
   });
-  await waiter();
+
   await waiter();
 
   expect(actionsDispatched).toEqual([
@@ -243,4 +255,6 @@ test('sends actions correctly', async () => {
     startSync: true,
     pendingActions: [],
   });
+
+  expect(naukarProxyReady).toBe(true);
 });

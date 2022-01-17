@@ -43,12 +43,16 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   (self as any).store = store;
   return {
     // app state
-    sendMessagePort(port: MessageChannel['port2']) {
+    async sendMessagePort(port: MessageChannel['port2']) {
       store = initializeNaukarStore({ port, extensionRegistry });
     },
 
     // collab
     handleCollabRequest,
+
+    async status() {
+      return true;
+    },
 
     ...abortableServices({ extensionRegistry }),
   };
