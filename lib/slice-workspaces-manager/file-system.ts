@@ -26,7 +26,7 @@ import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './common';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { readWorkspacesInfoReg } from './helpers';
 
-const getWorkspaceInfoFromIdb = async (wsName) => {
+const getWorkspaceInfoFromIdb = async (wsName: string) => {
   const wsInfo = (await readWorkspacesInfoReg())[wsName];
   if (!wsInfo) {
     throw new WorkspaceError(
@@ -45,6 +45,7 @@ export function listAllNotes(wsName: string): Promise<string[]> {
     wsPaths.filter((wsPath) => isValidNoteWsPath(wsPath)),
   );
 }
+
 export async function listAllFiles(wsName: string) {
   const workspaceInfo = await getWorkspaceInfoFromIdb(wsName);
 
@@ -144,7 +145,11 @@ export async function getFile(wsPath: string): Promise<File> {
   return file;
 }
 
-export async function saveDoc(wsPath: string, doc: any, specRegistry) {
+export async function saveDoc(
+  wsPath: string,
+  doc: Node,
+  specRegistry: SpecRegistry,
+) {
   validateNoteWsPath(wsPath);
   const { fileName } = resolvePath(wsPath);
   const data = markdownSerializer(doc, specRegistry);

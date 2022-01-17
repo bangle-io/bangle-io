@@ -8,6 +8,10 @@ import {
 export function createTestStore<A extends BaseAction = any>(
   slices: Slice<any, any>[],
   opts = {},
+  scheduler = (cb) => {
+    cb();
+    return () => {};
+  },
 ): {
   store: ApplicationStore<any, A>;
   dispatchSpy: jest.SpyInstance;
@@ -15,10 +19,7 @@ export function createTestStore<A extends BaseAction = any>(
 } {
   let actionsDispatched: BaseAction[] = [];
   const store = ApplicationStore.create({
-    scheduler: (cb) => {
-      cb();
-      return () => {};
-    },
+    scheduler: scheduler,
     storeName: 'test-store',
     dispatchAction: (store, action) => {
       let newState = store.state.applyAction(action);

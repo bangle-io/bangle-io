@@ -59,8 +59,6 @@ export function bangleStateSlices({
     // keep this at the end
     new Slice({
       sideEffect: [
-        flushNaukarEffect,
-
         () => {
           return {
             deferredUpdate(store) {
@@ -88,25 +86,3 @@ export function bangleStateSlices({
     }),
   ];
 }
-
-// TODO this can move to the worker's store
-export const flushNaukarEffect: SliceSideEffect<any, any> = () => {
-  return {
-    update: (store, prevState) => {
-      if (pageLifeCycleTransitionedTo('active', prevState)(store.state)) {
-        naukarProxy.resetManager();
-        return;
-      }
-
-      const pageTransitionedToInactive = pageLifeCycleTransitionedTo(
-        ['passive', 'terminated', 'frozen', 'hidden'],
-        prevState,
-      )(store.state);
-
-      if (pageTransitionedToInactive) {
-        naukarProxy.flushDisk();
-        return;
-      }
-    },
-  };
-};

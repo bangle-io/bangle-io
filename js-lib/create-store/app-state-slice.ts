@@ -76,7 +76,12 @@ export type SliceSideEffect<
   ) => void;
 };
 
-export class Slice<SL, A extends BaseAction = any, S = SL> {
+export class Slice<
+  SL,
+  A extends BaseAction = any,
+  S = SL,
+  C extends { [key: string]: any } = any,
+> {
   key: string;
 
   constructor(
@@ -89,7 +94,7 @@ export class Slice<SL, A extends BaseAction = any, S = SL> {
       ) => BaseAction | undefined;
       // false if it cannot be serialized
       actions?: ActionsSerializersType<A>;
-      sideEffect?: SliceSideEffect<SL, A> | SliceSideEffect<SL, A>[];
+      sideEffect?: SliceSideEffect<SL, A, C> | SliceSideEffect<SL, A, C>[];
     },
   ) {
     this.key = spec.key ? spec.key.key : createKey('slice');

@@ -34,7 +34,7 @@ describe('AppState', () => {
   });
 
   test('using same key throws error', () => {
-    const key1 = new SliceKey<number>('one');
+    const key1 = new SliceKey<null>('one');
 
     expect(() =>
       AppState.create({
