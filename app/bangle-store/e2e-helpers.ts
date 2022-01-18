@@ -1,12 +1,13 @@
 import { Slice as EditorSlice } from '@bangle.dev/pm';
 
-import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import { Slice } from '@bangle.io/create-store';
 import { sliceManualPaste } from '@bangle.io/pm-manual-paste';
 import * as editorManagerContext from '@bangle.io/slice-editor-manager';
 import {
   didSomeEditorChange,
   editorManagerSliceKey,
 } from '@bangle.io/slice-editor-manager';
+import { pageSliceKey } from '@bangle.io/slice-page';
 import * as workspaceContext from '@bangle.io/slice-workspace';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 // makes life easier by adding some helpers for e2e tests
@@ -22,6 +23,8 @@ export function e2eHelpers() {
         deferredOnce(store, abortSignal) {
           (window as any)._e2eHelpers = e2eHelpers;
 
+          e2eHelpers._getPageSliceState = () =>
+            pageSliceKey.getSliceStateAsserted(store.state);
           e2eHelpers._sliceManualPaste = sliceManualPaste;
           e2eHelpers._EditorSlice = EditorSlice;
           // for e2e testing

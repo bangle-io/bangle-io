@@ -1,10 +1,6 @@
-import * as Comlink from 'comlink';
-
-import { Slice } from '@bangle.io/create-store';
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
-import { sleep } from '@bangle.io/utils';
-import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
+import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 
 import { workerSetupSlices, workerStoreSyncKey } from '../worker-setup-slice';
 
@@ -28,7 +24,22 @@ interface Port {
   close: () => void;
 }
 
+const scheduler = (cb) => {
+  let destroyed = false;
+  Promise.resolve().then(() => {
+    if (!destroyed) {
+      cb();
+    }
+  });
+
+  return () => {
+    destroyed = true;
+  };
+};
+
 beforeEach(() => {
+  jest.useFakeTimers('modern');
+
   (window as any).MessageChannel = class MessageChannel {
     port1: Port = {
       onmessage: undefined,
@@ -49,7 +60,15 @@ beforeEach(() => {
 
 afterEach(() => {
   (window as any).MessageChannel = undefined;
+  jest.useRealTimers();
 });
+
+let waiter = async () => {
+  for (let i = 0; i < 50; i++) {
+    jest.runOnlyPendingTimers();
+    await Promise.resolve();
+  }
+};
 
 test('works', async () => {
   const { store, actionsDispatched } = createTestStore(
@@ -57,20 +76,25 @@ test('works', async () => {
     {
       useWebWorker: false,
     },
+    scheduler,
   );
 
-  await sleep(100);
+  await waiter();
+
   expect(actionsDispatched).toEqual([
     {
       id: expect.any(String),
       name: 'action::@bangle.io/utils:store-sync-start-sync',
     },
     {
-      fromStore: 'worker-store',
       id: expect.any(String),
-      name: 'action::@bangle.io/slice-page:BLOCK_RELOAD',
+      name: 'action::@bangle.io/utils:store-sync-port-ready',
+    },
+    {
+      id: expect.any(String),
+      name: 'action::@bangle.io/worker-naukar-proxy:naukar',
       value: {
-        block: false,
+        naukar: expect.any(Object),
       },
     },
   ]);
@@ -78,6 +102,43 @@ test('works', async () => {
     .toMatchInlineSnapshot(`
     MessageChannel {
       "port1": Object {
+        "close": [MockFunction],
+        "onmessage": [Function],
+        "postMessage": [MockFunction] {
+          "calls": Array [
+            Array [
+              Object {
+                "type": "ping",
+              },
+            ],
+            Array [
+              Object {
+                "type": "pong",
+              },
+            ],
+            Array [
+              Object {
+                "type": "ping",
+              },
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
+      },
+      "port2": Object {
         "close": [MockFunction],
         "onmessage": [Function],
         "postMessage": [MockFunction] {
@@ -105,41 +166,6 @@ test('works', async () => {
           ],
         },
       },
-      "port2": Object {
-        "close": [MockFunction],
-        "onmessage": [Function],
-        "postMessage": [MockFunction] {
-          "calls": Array [
-            Array [
-              Object {
-                "type": "ping",
-              },
-            ],
-            Array [
-              Object {
-                "action": Object {
-                  "name": "action::@bangle.io/slice-page:BLOCK_RELOAD",
-                  "serializedValue": Object {
-                    "block": false,
-                  },
-                  "storeName": "worker-store",
-                },
-                "type": "action",
-              },
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        },
-      },
     }
   `);
 });
@@ -148,19 +174,29 @@ test('sends actions correctly', async () => {
   const slices = workerSetupSlices();
 
   const { store, actionsDispatched } = createTestStore(
-    [...slices, pageSlice()],
+    [...slices, pageSlice(), naukarProxySlice()],
     {
       useWebWorker: false,
     },
+    scheduler,
   );
-
-  await sleep(0);
 
   blockReload(true)(store.state, store.dispatch);
 
+  // test that naukar-proxy is setup correctly
+  let naukarProxyReady = false;
+  naukarProxy.status().then((result) => {
+    naukarProxyReady = result;
+  });
+
+  await Promise.resolve();
+
+  // proxy should resolve
+  expect(naukarProxyReady).toBe(false);
+
   expect(slices[1]?.getSliceState(store.state)).toEqual({
     portReady: false,
-    startSync: true,
+    startSync: false,
     pendingActions: [
       {
         id: expect.any(String),
@@ -170,7 +206,7 @@ test('sends actions correctly', async () => {
     ],
   });
 
-  await sleep(100);
+  await waiter();
 
   const { msgChannel } = workerStoreSyncKey.getSliceStateAsserted(store.state);
 
@@ -183,31 +219,32 @@ test('sends actions correctly', async () => {
     type: 'action',
   });
 
-  await sleep(0);
+  await waiter();
 
   expect(actionsDispatched).toEqual([
     {
-      id: 'test-store-5',
-      name: 'action::@bangle.io/utils:store-sync-start-sync',
-    },
-    {
-      id: 'test-store-8',
+      id: expect.any(String),
       name: 'action::@bangle.io/slice-page:BLOCK_RELOAD',
       value: {
         block: true,
       },
     },
     {
-      id: 'test-store-11',
+      id: expect.any(String),
+      name: 'action::@bangle.io/utils:store-sync-start-sync',
+    },
+
+    {
+      id: expect.any(String),
       name: 'action::@bangle.io/utils:store-sync-port-ready',
     },
 
     // PROXY setup should be after port is marked ready
     {
-      id: 'test-store-13',
+      id: expect.any(String),
       name: 'action::@bangle.io/worker-naukar-proxy:naukar',
       value: {
-        naukar: expect.anything(),
+        naukar: expect.any(Object),
       },
     },
   ]);
@@ -218,4 +255,6 @@ test('sends actions correctly', async () => {
     startSync: true,
     pendingActions: [],
   });
+
+  expect(naukarProxyReady).toBe(true);
 });

@@ -28,8 +28,6 @@ import { SWReloadPrompt } from './service-worker/SWReloadPrompt';
 import { WatchUI } from './watchers/WatchUI';
 import { WatchWorkspace } from './watchers/WatchWorkspace';
 
-let mountCount = 0;
-
 const useRouterHook: BaseLocationHook = () => {
   const { pageState } = usePageContext();
 
@@ -58,9 +56,17 @@ const useRouterHook: BaseLocationHook = () => {
   return [to, navigate];
 };
 
+let storeInitialized = false;
 export function Entry() {
   const [bangleStoreChanged, _setBangleStoreCounter] = useState(0);
   const [bangleStore] = useState(() => {
+    // there are cases when React will remount components
+    // and we want to avoid reinstantiating our store.
+    if (storeInitialized) {
+      throw new Error('Store as already been initialized');
+    }
+
+    storeInitialized = true;
     return initializeBangleStore({
       onUpdate: () => _setBangleStoreCounter((c) => c + 1),
     });
@@ -96,30 +102,32 @@ export function Entry() {
   useUsageAnalytics();
 
   return (
-    <OverlayProvider className="w-full h-full">
-      <Router hook={useRouterHook} matcher={pathMatcher}>
-        <AppStateProvider
-          bangleStore={bangleStore}
-          bangleStoreChanged={bangleStoreChanged}
-        >
-          <UIManager>
-            <ExtensionRegistryContextProvider>
-              <ExtensionStateContextProvider>
-                <WorkspaceContextProvider>
-                  <SWReloadPrompt />
-                  <WatchWorkspace />
-                  <WatchUI />
-                  <EditorManager>
-                    <SerialOperationContextProvider>
-                      <AppContainer />
-                    </SerialOperationContextProvider>
-                  </EditorManager>
-                </WorkspaceContextProvider>
-              </ExtensionStateContextProvider>
-            </ExtensionRegistryContextProvider>
-          </UIManager>
-        </AppStateProvider>
-      </Router>
-    </OverlayProvider>
+    <React.StrictMode>
+      <OverlayProvider className="w-full h-full">
+        <Router hook={useRouterHook} matcher={pathMatcher}>
+          <AppStateProvider
+            bangleStore={bangleStore}
+            bangleStoreChanged={bangleStoreChanged}
+          >
+            <UIManager>
+              <ExtensionRegistryContextProvider>
+                <ExtensionStateContextProvider>
+                  <WorkspaceContextProvider>
+                    <SWReloadPrompt />
+                    <WatchWorkspace />
+                    <WatchUI />
+                    <EditorManager>
+                      <SerialOperationContextProvider>
+                        <AppContainer />
+                      </SerialOperationContextProvider>
+                    </EditorManager>
+                  </WorkspaceContextProvider>
+                </ExtensionStateContextProvider>
+              </ExtensionRegistryContextProvider>
+            </UIManager>
+          </AppStateProvider>
+        </Router>
+      </OverlayProvider>
+    </React.StrictMode>
   );
 }

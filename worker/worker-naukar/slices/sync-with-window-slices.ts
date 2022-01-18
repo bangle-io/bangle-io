@@ -7,7 +7,7 @@ import {
   storeSyncSlice,
 } from '@bangle.io/utils';
 
-import { WorkerStoreOpts } from '../store/types';
+import { NaukarStoreOpts } from '../store/types';
 
 const actionFilter = (action: BaseAction) =>
   workerSyncWhiteListedActions.some((rule) => action.name.startsWith(rule));
@@ -24,7 +24,7 @@ export function syncWithWindowSlices() {
     new Slice({
       key: sliceKey,
       state: {
-        init(opts: WorkerStoreOpts) {
+        init(opts: NaukarStoreOpts) {
           asssertNotUndefined(opts.port, 'port needs to be provided');
           return {
             port: opts.port,

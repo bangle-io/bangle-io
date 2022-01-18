@@ -1,10 +1,8 @@
 import { sleep } from '@bangle.dev/utils';
 
-import type { ReturnReturnType, UnPromisify } from '@bangle.io/shared-types';
 import { getPageLocation } from '@bangle.io/slice-page';
 import {
   getWorkspaceInfo,
-  WorkspaceInfo,
   WorkspaceType,
 } from '@bangle.io/slice-workspaces-manager';
 import { OpenedWsPaths, wsNameToPathname } from '@bangle.io/ws-path';

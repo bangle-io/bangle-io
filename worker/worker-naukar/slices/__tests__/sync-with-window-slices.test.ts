@@ -75,6 +75,7 @@ test('sends actions to the port', async () => {
   expect(store.state.config.opts).toMatchObject({
     port,
   });
+
   await sleep(0);
 
   expect(port.postMessage).toBeCalledTimes(1);
