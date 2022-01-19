@@ -5,6 +5,7 @@ export {
   checkFileExists,
   createNote,
   deleteNote,
+  getFile,
   getNote,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
@@ -12,6 +13,7 @@ export {
   pushWsPath,
   refreshWsPaths,
   renameNote,
+  saveFile,
   updateOpenedWsPaths,
 } from './operations';
 export { workspaceSlice } from './workspace-slice';

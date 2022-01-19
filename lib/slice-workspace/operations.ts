@@ -238,6 +238,31 @@ export const createNote = (
   };
 };
 
+export const saveFile = (wsPath: string, file: File) => {
+  return async (
+    _: AppState,
+    dispatch: WorkspaceDispatchType,
+    store: ApplicationStore,
+  ) => {
+    const fileOps = wrapFileMethod()(store.state, store.dispatch);
+
+    await fileOps?.saveFile(wsPath, file);
+
+    return true;
+  };
+};
+
+export const getFile = (wsPath: string) => {
+  return async (
+    _: AppState,
+    dispatch: WorkspaceDispatchType,
+    store: ApplicationStore,
+  ) => {
+    const fileOps = wrapFileMethod()(store.state, store.dispatch);
+    return fileOps?.getFile(wsPath);
+  };
+};
+
 export const deleteNote = (wsPathToDelete: Array<string> | string) => {
   return async (
     _: AppState,

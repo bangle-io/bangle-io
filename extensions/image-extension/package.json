@@ -30,7 +30,6 @@
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/slice-workspaces-manager": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "react": "^17.0.2",
