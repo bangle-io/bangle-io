@@ -38,7 +38,6 @@ import {
   savePrevOpenedWsPathsToSearch,
   validateOpenedWsPaths,
 } from './helpers';
-import { getLastWorkspaceUsed } from './last-seen-ws-name';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};
@@ -496,12 +495,6 @@ export const goToWorkspaceHomeRoute = ({
   replace = false,
 }: { replace?: boolean } = {}) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    const lastWsName = getLastWorkspaceUsed() || HELP_FS_WORKSPACE_NAME;
-    if (lastWsName) {
-      goToWsNameRoute(lastWsName, { replace })(state, dispatch);
-      return;
-    }
-
     goToLocation('/', { replace })(state, pageSliceKey.getDispatch(dispatch));
     return;
   };

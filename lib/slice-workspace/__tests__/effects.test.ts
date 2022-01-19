@@ -7,7 +7,6 @@ import {
 } from '@bangle.io/slice-workspaces-manager';
 import { OpenedWsPaths, wsNameToPathname } from '@bangle.io/ws-path';
 
-import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
 import {
   goToInvalidPathRoute,
   refreshWsPaths,
@@ -22,13 +21,6 @@ jest.mock('../operations', () => {
     refreshWsPaths: jest.fn(),
     goToInvalidPathRoute: jest.fn(),
     syncPageLocation: jest.fn(),
-  };
-});
-jest.mock('../last-seen-ws-name', () => {
-  const ops = jest.requireActual('../last-seen-ws-name');
-  return {
-    ...ops,
-    saveLastWorkspaceUsed: jest.fn(),
   };
 });
 
@@ -262,24 +254,5 @@ describe('saveWorkspaceInfoEffect', () => {
       },
     });
     await sleep(0);
-  });
-});
-
-describe('saveLastUsedWorkspace', () => {
-  test('works', async () => {
-    const { store, dispatchSpy } = createStore();
-
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
-      value: {
-        wsName: 'test-ws',
-        openedWsPaths: OpenedWsPaths.createEmpty(),
-      },
-    });
-
-    await sleep(0);
-
-    expect(saveLastWorkspaceUsed).toBeCalledTimes(1);
-    expect(saveLastWorkspaceUsed).nthCalledWith(1, 'test-ws');
   });
 });

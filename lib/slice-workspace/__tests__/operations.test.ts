@@ -13,7 +13,6 @@ import {
 } from '@bangle.io/slice-page';
 import {
   FileSystem,
-  getWorkspaceInfo,
   HELP_FS_WORKSPACE_NAME,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
@@ -23,7 +22,6 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { goToWorkspaceHomeRoute } from '..';
 import { savePrevOpenedWsPathsToSearch } from '../helpers';
-import { saveLastWorkspaceUsed } from '../last-seen-ws-name';
 import {
   checkFileExists,
   createNote,
@@ -1081,30 +1079,7 @@ describe('goToWsNameRoute', () => {
 });
 
 describe('goToWorkspaceHomeRoute', () => {
-  let originalLocalStorage = window.localStorage;
-  beforeEach(() => {
-    let store = {};
-    Object.defineProperty(window, 'localStorage', {
-      value: {
-        getItem: jest.fn((key) => {
-          return store[key] || null;
-        }),
-        setItem: jest.fn((key, value) => {
-          store[key] = value.toString();
-        }),
-        clear() {
-          store = {};
-        },
-      },
-      writable: true,
-    });
-  });
-  afterEach(() => {
-    (window as any).localStorage = originalLocalStorage;
-  });
-
   test('works', () => {
-    saveLastWorkspaceUsed('my-ws');
     let { store } = noSideEffectsStore({
       wsName: undefined,
       openedWsPaths: [],
@@ -1113,20 +1088,6 @@ describe('goToWorkspaceHomeRoute', () => {
     goToWorkspaceHomeRoute()(store.state, store.dispatch);
 
     expect(goToLocationMock).toBeCalledTimes(1);
-    expect(goToLocationMock).nthCalledWith(1, '/ws/my-ws', { replace: false });
-  });
-
-  test('when no saved ws', () => {
-    let { store } = noSideEffectsStore({
-      wsName: undefined,
-      openedWsPaths: [],
-    });
-
-    goToWorkspaceHomeRoute()(store.state, store.dispatch);
-
-    expect(goToLocationMock).toBeCalledTimes(1);
-    expect(goToLocationMock).nthCalledWith(1, '/ws/bangle-help', {
-      replace: false,
-    });
+    expect(goToLocationMock).nthCalledWith(1, '/', { replace: false });
   });
 });
