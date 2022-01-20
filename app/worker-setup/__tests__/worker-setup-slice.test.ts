@@ -1,8 +1,16 @@
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 
 import { workerSetupSlices, workerStoreSyncKey } from '../worker-setup-slice';
+
+jest.mock('idb-keyval', () => {
+  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
+  return fakeIdb;
+});
+
+const dateNow = Date.now;
 
 jest.mock('@bangle.io/constants', () => {
   const rest = jest.requireActual('@bangle.io/constants');
@@ -39,7 +47,7 @@ const scheduler = (cb) => {
 
 beforeEach(() => {
   jest.useFakeTimers('modern');
-
+  Date.now = jest.fn(() => 500);
   (window as any).MessageChannel = class MessageChannel {
     port1: Port = {
       onmessage: undefined,
@@ -61,6 +69,8 @@ beforeEach(() => {
 afterEach(() => {
   (window as any).MessageChannel = undefined;
   jest.useRealTimers();
+  Date.now = dateNow;
+  clearFakeIdb();
 });
 
 let waiter = async () => {

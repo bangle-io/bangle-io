@@ -33,7 +33,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     slices,
     opts,
   }: {
-    slices: SliceArray<S, A>;
+    slices: SliceArray<any, any>;
     opts?: Op;
   }): AppState<S, A, Op> {
     const config = new AppStateConfig(slices, opts);

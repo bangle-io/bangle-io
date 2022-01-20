@@ -1,4 +1,4 @@
-import { Slice } from '@bangle.io/create-store';
+import { ExtractAction, Slice } from '@bangle.io/create-store';
 import { assertActionName } from '@bangle.io/utils';
 
 import {
@@ -38,6 +38,25 @@ export function workspacesSlice() {
             return state;
           }
         }
+      },
+    },
+    actions: {
+      'action::@bangle.io/slice-workspaces-manager:set-workspace-infos': (
+        actionName,
+      ) => {
+        const toJSON = (
+          action: ExtractAction<WorkspacesSliceAction, typeof actionName>,
+        ) => {
+          return action.value;
+        };
+        const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+          return obj;
+        };
+
+        return {
+          toJSON,
+          fromJSON,
+        };
       },
     },
     sideEffect: [refreshWorkspacesEffect],
