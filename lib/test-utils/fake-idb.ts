@@ -20,6 +20,10 @@ class FakeIdb implements IdbType {
     this.keys = jest.fn(this.keys.bind(this));
   }
 
+  getEverything(customStore?: any) {
+    return Array.from((customStore || mockStore).entries());
+  }
+
   clearMocks() {
     this.createStore = jest.fn(this.createStore.bind(this));
     this.get = jest.fn(this.get.bind(this));

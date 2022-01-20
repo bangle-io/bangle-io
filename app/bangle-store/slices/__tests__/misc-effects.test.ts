@@ -1,21 +1,32 @@
-// eslint-disable-next-line simple-import-sort/imports
-import { resetIndexeddb } from '@bangle.io/test-utils/baby-fs-test-mock2';
-
+import { pageSlice } from '@bangle.io/slice-page';
+import {
+  goToWsNameRoute,
+  updateOpenedWsPaths,
+  workspaceSlice,
+} from '@bangle.io/slice-workspace';
 import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
-
-import { lastWorkspaceUsed, miscEffectsSlice } from '../misc-effects-slice';
-import {
-  workspaceSlice,
-  updateOpenedWsPaths,
-  goToWsNameRoute,
-} from '@bangle.io/slice-workspace';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
+import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
+import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { sleep } from '@bangle.io/utils';
-import { pageSlice } from '@bangle.io/slice-page';
-import { historySlice } from '../history-slice';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-beforeEach(resetIndexeddb);
+import { historySlice } from '../history-slice';
+import { lastWorkspaceUsed, miscEffectsSlice } from '../misc-effects-slice';
+
+jest.mock('idb-keyval', () => {
+  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
+  return fakeIdb;
+});
+
+beforeEach(() => {
+  idbHelpers.beforeEachHook();
+});
+
+afterEach(() => {
+  idbHelpers.afterEachHook();
+  clearFakeIdb();
+});
 
 describe('last seen workspace', () => {
   let originalLocalStorage;

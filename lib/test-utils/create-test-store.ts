@@ -18,7 +18,7 @@ export function createTestStore<A extends BaseAction = any>(
   actionsDispatched: BaseAction[];
 } {
   let actionsDispatched: BaseAction[] = [];
-  const store = ApplicationStore.create({
+  const store = ApplicationStore.create<any, any>({
     scheduler: scheduler,
     storeName: 'test-store',
     dispatchAction: (store, action) => {

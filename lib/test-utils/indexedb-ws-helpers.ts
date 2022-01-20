@@ -30,6 +30,7 @@ export const setupMockWorkspace = async (wsInfo: Partial<WorkspaceInfo>) => {
     },
     wsInfo,
   );
+
   const existing = (await idb.get('workspaces/2')) || [];
   if (existing.find((w) => w.name === wsInfo.name)) {
     throw new Error(`${wsInfo.name} workspace already exists`);
@@ -38,8 +39,6 @@ export const setupMockWorkspace = async (wsInfo: Partial<WorkspaceInfo>) => {
 };
 
 const originalFile = global.File;
-
-global.File = originalFile;
 
 export const beforeEachHook = () => {
   (global as any).File = class File {

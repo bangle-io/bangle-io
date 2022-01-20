@@ -3957,6 +3957,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["fast-deep-equal", "npm:3.1.3"],
+            ["idb-keyval", "npm:5.1.5"],
             ["page-lifecycle", "npm:0.1.2"]
           ],
           "linkType": "SOFT",
