@@ -19,7 +19,7 @@ import {
 } from '../common';
 import { NaukarStoreOpts } from '../store/types';
 
-const LOG = true;
+const LOG = false;
 const log = LOG
   ? console.debug.bind(console, 'editor-manager-slice')
   : () => {};
