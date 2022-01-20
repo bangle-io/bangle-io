@@ -2,11 +2,11 @@ import {
   ApplicationStore,
   AppState,
   BaseAction,
-  Slice,
+  SliceArray,
 } from '@bangle.io/create-store';
 
 export function createTestStore<A extends BaseAction = any>(
-  slices: Slice<any, any>[],
+  slices: SliceArray,
   opts = {},
   scheduler = (cb) => {
     cb();

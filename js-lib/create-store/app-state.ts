@@ -3,12 +3,12 @@ import type { JsonObject, JsonValue } from 'type-fest';
 import type { BaseAction, Slice, SliceStateField } from './app-state-slice';
 
 class AppStateConfig<S, A extends BaseAction, Op> {
-  slices: SliceArray<S, A> = [];
+  slices: SliceArray = [];
   slicesByKey: { [k: string]: Slice<any, A, S> } = Object.create(null);
   fields: FieldDesc<S, A, Op>[] = [];
   opts?: Op;
 
-  constructor(slices: SliceArray<S, A>, opts?: Op) {
+  constructor(slices: SliceArray, opts?: Op) {
     this.opts = opts;
 
     slices.forEach((slice) => {
@@ -33,7 +33,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     slices,
     opts,
   }: {
-    slices: SliceArray<any, any>;
+    slices: Slice<any, any, any, any>[];
     opts?: Op;
   }): AppState<S, A, Op> {
     const config = new AppStateConfig(slices, opts);
@@ -55,7 +55,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     sliceFields,
     opts,
   }: {
-    slices: SliceArray<S, A>;
+    slices: SliceArray;
     json: JsonValue;
     sliceFields: { [key: string]: Slice<any, any> };
     opts?: Op;
@@ -204,7 +204,7 @@ function bind(f?: Function, self?: object) {
   return !self || !f ? f : f.bind(self);
 }
 
-type SliceArray<S, A extends BaseAction> = Array<Slice<any, A, S>>;
+export type SliceArray = Array<Slice<any, any, any, any>>;
 
 class FieldDesc<S, A extends BaseAction, Op> {
   init: (
@@ -219,7 +219,7 @@ class FieldDesc<S, A extends BaseAction, Op> {
       init: SliceStateField<any, any, S>['init'];
       apply?: SliceStateField<any, any, S>['apply'];
     },
-    self: SliceArray<S, A>[0],
+    self: SliceArray[0],
   ) {
     this.init = bind(desc.init, self);
 
