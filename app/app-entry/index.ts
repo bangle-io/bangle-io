@@ -3,7 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { APP_ENV, RELEASE_ID } from '@bangle.io/config';
+import { APP_ENV, RELEASE_ID, sentryConfig } from '@bangle.io/config';
 
 import { LoadingBlock } from './LoadingBlock';
 
@@ -17,15 +17,8 @@ if (typeof window !== undefined && APP_ENV !== 'local') {
       '@sentry/tracing'
     ).then(({ Integrations }) => {
       (window as any).Sentry.init({
-        environment: APP_ENV,
-        dsn: 'https://f1a3d53e530e465e8f74f847370b594b@o573373.ingest.sentry.io/5723848',
+        ...sentryConfig,
         integrations: [new Integrations.BrowserTracing()],
-        release: RELEASE_ID,
-        // Set tracesSampleRate to 1.0 to capture 100%
-        // of transactions for performance monitoring.
-        // We recommend adjusting this value in production
-        tracesSampleRate:
-          APP_ENV === 'production' || APP_ENV === 'staging' ? 0.5 : 0,
       });
     });
   });

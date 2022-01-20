@@ -10,18 +10,20 @@ import {
 import { pageSliceKey } from '@bangle.io/slice-page';
 import * as workspaceContext from '@bangle.io/slice-workspace';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
+import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 // makes life easier by adding some helpers for e2e tests
 export function e2eHelpers() {
   return new Slice({
     sideEffect() {
       let e2eHelpers: { [r: string]: any } = {};
-
       return {
         destroy() {
           e2eHelpers = {};
         },
         deferredOnce(store, abortSignal) {
           (window as any)._e2eHelpers = e2eHelpers;
+
+          e2eHelpers._naukarProxy = naukarProxy;
 
           e2eHelpers._getPageSliceState = () =>
             pageSliceKey.getSliceStateAsserted(store.state);

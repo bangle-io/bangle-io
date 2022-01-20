@@ -1,7 +1,14 @@
+import * as Sentry from '@sentry/browser';
+
 import type { Manager } from '@bangle.dev/collab-server';
 
+import { sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import { asssertNotUndefined, getSelfType } from '@bangle.io/utils';
+import {
+  asssertNotUndefined,
+  getSelfType,
+  isWorkerGlobalScope,
+} from '@bangle.io/utils';
 
 import { abortableServices } from './abortable-services';
 import { getEditorManager } from './slices/editor-manager-slice';
@@ -10,6 +17,11 @@ import { initializeNaukarStore } from './store/initialize-naukar-store';
 const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'naukar') : () => {};
+
+// if naukar is running in window, no need to initialize as the app already has one initialized
+if (isWorkerGlobalScope()) {
+  Sentry.init(sentryConfig);
+}
 
 // Things to remember about the return type
 // 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
@@ -52,6 +64,16 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
 
     async status() {
       return true;
+    },
+
+    testThrowError() {
+      throw new Error('[worker] I am a testThrowError');
+    },
+
+    testThrowCallbackError() {
+      setTimeout(() => {
+        throw new Error('[worker] I am a testThrowCallbackError');
+      }, 0);
     },
 
     ...abortableServices({ extensionRegistry }),

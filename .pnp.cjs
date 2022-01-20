@@ -5320,6 +5320,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
+            ["@sentry/browser", "npm:6.16.1"],
             ["@zip.js/zip.js", "npm:2.3.23"],
             ["fast-deep-equal", "npm:3.1.3"],
             ["idb-keyval", "npm:5.1.5"]
@@ -6813,6 +6814,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tslib", "npm:1.14.1"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:6.16.1", {
+          "packageLocation": "./.yarn/cache/@sentry-browser-npm-6.16.1-8d57fd9afd-baae33f5cb.zip/node_modules/@sentry/browser/",
+          "packageDependencies": [
+            ["@sentry/browser", "npm:6.16.1"],
+            ["@sentry/core", "npm:6.16.1"],
+            ["@sentry/types", "npm:6.16.1"],
+            ["@sentry/utils", "npm:6.16.1"],
+            ["tslib", "npm:1.14.1"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@sentry/cli", [
@@ -6842,6 +6854,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tslib", "npm:1.14.1"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:6.16.1", {
+          "packageLocation": "./.yarn/cache/@sentry-core-npm-6.16.1-ccb2712d14-76f49b270d.zip/node_modules/@sentry/core/",
+          "packageDependencies": [
+            ["@sentry/core", "npm:6.16.1"],
+            ["@sentry/hub", "npm:6.16.1"],
+            ["@sentry/minimal", "npm:6.16.1"],
+            ["@sentry/types", "npm:6.16.1"],
+            ["@sentry/utils", "npm:6.16.1"],
+            ["tslib", "npm:1.14.1"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@sentry/hub", [
@@ -6854,6 +6878,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tslib", "npm:1.14.1"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:6.16.1", {
+          "packageLocation": "./.yarn/cache/@sentry-hub-npm-6.16.1-a54b11cd35-032cd76e9d.zip/node_modules/@sentry/hub/",
+          "packageDependencies": [
+            ["@sentry/hub", "npm:6.16.1"],
+            ["@sentry/types", "npm:6.16.1"],
+            ["@sentry/utils", "npm:6.16.1"],
+            ["tslib", "npm:1.14.1"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@sentry/minimal", [
@@ -6863,6 +6897,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/minimal", "npm:6.14.1"],
             ["@sentry/hub", "npm:6.14.1"],
             ["@sentry/types", "npm:6.14.1"],
+            ["tslib", "npm:1.14.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:6.16.1", {
+          "packageLocation": "./.yarn/cache/@sentry-minimal-npm-6.16.1-6e33d9c96c-c928c94ce7.zip/node_modules/@sentry/minimal/",
+          "packageDependencies": [
+            ["@sentry/minimal", "npm:6.16.1"],
+            ["@sentry/hub", "npm:6.16.1"],
+            ["@sentry/types", "npm:6.16.1"],
             ["tslib", "npm:1.14.1"]
           ],
           "linkType": "HARD",
@@ -6917,6 +6961,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@sentry/types", "npm:6.14.1"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:6.16.1", {
+          "packageLocation": "./.yarn/cache/@sentry-types-npm-6.16.1-1ec86a14a4-994791c471.zip/node_modules/@sentry/types/",
+          "packageDependencies": [
+            ["@sentry/types", "npm:6.16.1"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@sentry/utils", [
@@ -6925,6 +6976,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@sentry/utils", "npm:6.14.1"],
             ["@sentry/types", "npm:6.14.1"],
+            ["tslib", "npm:1.14.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:6.16.1", {
+          "packageLocation": "./.yarn/cache/@sentry-utils-npm-6.16.1-1f5a50ce50-6a94b7a470.zip/node_modules/@sentry/utils/",
+          "packageDependencies": [
+            ["@sentry/utils", "npm:6.16.1"],
+            ["@sentry/types", "npm:6.16.1"],
             ["tslib", "npm:1.14.1"]
           ],
           "linkType": "HARD",
