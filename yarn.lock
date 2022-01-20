@@ -2269,7 +2269,6 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2667,6 +2666,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.5
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     type-fest: ^2.8.0
   languageName: unknown
@@ -3028,6 +3028,7 @@ __metadata:
     "@bangle.io/worker-naukar": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     comlink: ^4.3.1
+    idb-keyval: ^5.1.5
     react: ^17.0.2
   languageName: unknown
   linkType: soft

@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@bangle.dev/pm": "0.28.5",
+    "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "type-fest": "^2.8.0"
   },

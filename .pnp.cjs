@@ -4482,7 +4482,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
-            ["@bangle.io/slice-workspaces-manager", "workspace:lib/slice-workspaces-manager"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
@@ -5003,6 +5002,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm", "npm:0.28.5"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["type-fest", "npm:2.8.0"]
           ],
@@ -5360,6 +5360,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["comlink", "npm:4.3.1"],
+            ["idb-keyval", "npm:5.1.5"],
             ["react", "npm:17.0.2"]
           ],
           "linkType": "SOFT",

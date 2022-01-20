@@ -33,7 +33,7 @@ export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
   );
 
   // inject the permanent help workspace type
-  reg[HELP_FS_WORKSPACE_NAME] = helpFSWorkspaceInfo;
+  reg[HELP_FS_WORKSPACE_NAME] = helpFSWorkspaceInfo();
 
   return reg;
 }

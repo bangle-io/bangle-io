@@ -40,7 +40,7 @@ describe('listAllFiles', () => {
     const { store } = createStore();
 
     expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual([
-      helpFSWorkspaceInfo,
+      helpFSWorkspaceInfo(),
     ]);
   });
 
@@ -66,7 +66,7 @@ describe('listAllFiles', () => {
     });
 
     expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual([
-      helpFSWorkspaceInfo,
+      helpFSWorkspaceInfo(),
       {
         deleted: false,
         lastModified: Date.now(),

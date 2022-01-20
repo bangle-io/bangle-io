@@ -11,7 +11,6 @@ import {
   workspacesSlice,
   listWorkspaces,
   WorkspaceType,
-  workspacesSliceKey,
   deleteWorkspace,
 } from '@bangle.io/slice-workspaces-manager';
 
@@ -178,8 +177,8 @@ describe('saveWorkspaceInfoEffect', () => {
     );
 
     store.dispatch({ name: 'action::some-action' } as any);
-
     await sleep(0);
+
     expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
   });
 });
