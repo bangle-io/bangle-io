@@ -89,6 +89,18 @@ export function initializeBangleStore({
           action.value,
         );
 
+        (window as any).Sentry?.addBreadcrumb?.({
+          type: 'action',
+          message: [
+            action.name,
+            action.fromStore ? `[${action.fromStore}]` : '[]',
+            action.id,
+            action.value ? `[${Object.keys(action.value).join(',')}]` : '[]',
+          ].join(' | '),
+          timestamp: Date.now(),
+          level: (window as any).Sentry?.Severity.Info,
+        });
+
         const newState = store.state.applyAction(action);
         store.updateState(newState);
       },

@@ -44,7 +44,6 @@ export function bangleStateSlices({
     uiSlice(),
     editorManagerSlice(),
     saveStateSlice(),
-
     ...extensionSlices,
 
     e2eHelpers(),
