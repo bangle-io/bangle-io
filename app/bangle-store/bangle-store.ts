@@ -98,7 +98,7 @@ export function initializeBangleStore({
             action.value ? `[${Object.keys(action.value).join(',')}]` : '[]',
           ].join(' | '),
           timestamp: Date.now(),
-          level: (window as any).Sentry?.Severity.Info,
+          level: 'info',
         });
 
         const newState = store.state.applyAction(action);
