@@ -12,7 +12,7 @@ export const createState = (
     [K in WorkspaceStateKeys]: JsonPrimitive | JsonArray | undefined;
   }> = {},
 ) => {
-  return AppState.stateFromJSON({
+  return AppState.stateFromJSON<any, any>({
     slices: [workspaceSlice()],
     json: {
       workspace: { version: JSON_SCHEMA_VERSION, data: data },

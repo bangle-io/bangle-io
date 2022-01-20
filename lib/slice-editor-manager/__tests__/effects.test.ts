@@ -69,7 +69,7 @@ const createStore = (jsonData?: {
     },
     storeName: 'editor-store',
     state: jsonData
-      ? AppState.stateFromJSON({
+      ? AppState.stateFromJSON<any, any>({
           slices: [editorManagerSlice()],
           json: {
             editorManagerSlice: {

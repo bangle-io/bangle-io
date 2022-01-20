@@ -116,7 +116,7 @@ describe('AppState', () => {
 
     let action = {
       name: 'for-b',
-      value: 77,
+      value: { no: 77 },
     };
     let newAppState = appState.applyAction(action);
     expect(init).toBeCalledTimes(1);
@@ -136,7 +136,7 @@ describe('AppState', () => {
         init: () => 1,
         apply: (action, value, appState) => {
           if (action.name === 'for-a') {
-            return action.value;
+            return action.value.no;
           }
           return value;
         },
@@ -158,7 +158,7 @@ describe('AppState', () => {
 
     let action = {
       name: 'for-a',
-      value: 77,
+      value: { no: 77 },
     };
     appState.applyAction(action);
     // Should have access to A's state
@@ -187,7 +187,7 @@ describe('AppState', () => {
 
     let action = {
       name: 'for-b',
-      value: 77,
+      value: { no: 77 },
     };
     let newAppState = appState.applyAction(action);
 
@@ -412,7 +412,7 @@ describe('AppState', () => {
 
       let action = {
         name: 'for-b',
-        value: 77,
+        value: { no: 77 },
       };
 
       let newAppState = appState.applyAction(action);
@@ -429,7 +429,7 @@ describe('AppState', () => {
       // should not have any effect
       appState.applyAction({
         name: 'something-else',
-        value: 77,
+        value: { no: 77 },
       });
 
       expect(key1.getSliceState(newAppState)).toEqual(2);
@@ -476,14 +476,14 @@ describe('AppState', () => {
         key: key1,
         state: {
           init: () => 'Slice1:',
-          apply: (action, value) => value + action.value,
+          apply: (action, value) => value + action.value.data,
         },
         appendAction(actions): any {
           slice1Actions.push([...actions]);
           if (actions.some((a) => a.name.startsWith('2-'))) {
             return {
               name: '1-appended',
-              value: '1 ',
+              value: { data: '1 ' },
             };
           }
           return undefined;
@@ -497,7 +497,7 @@ describe('AppState', () => {
         key: key2,
         state: {
           init: () => 'Slice2:',
-          apply: (action, value) => value + action.value,
+          apply: (action, value) => value + action.value.data,
         },
         appendAction(actions): any {
           slice2Actions.push([...actions]);
@@ -508,7 +508,7 @@ describe('AppState', () => {
             times++;
             return {
               name: '2-appended-' + times,
-              value: '2 ',
+              value: { data: '2 ' },
             };
           }
           return undefined;
@@ -518,7 +518,7 @@ describe('AppState', () => {
       const appState = AppState.create({ slices: [slice1, slice2] });
       let newState = appState.applyAction({
         name: 'start',
-        value: 'start ',
+        value: { data: 'start ' },
       });
 
       expect(key1.getSliceState(newState)).toEqual(
@@ -532,35 +532,35 @@ describe('AppState', () => {
         [
           {
             name: 'start',
-            value: 'start ',
+            value: { data: 'start ' },
           },
         ],
         [
           {
             appendedFrom: 'start',
             name: '2-appended-1',
-            value: '2 ',
+            value: { data: '2 ' },
           },
         ],
         [
           {
             appendedFrom: 'start',
             name: '2-appended-2',
-            value: '2 ',
+            value: { data: '2 ' },
           },
         ],
         [
           {
             appendedFrom: 'start',
             name: '2-appended-3',
-            value: '2 ',
+            value: { data: '2 ' },
           },
         ],
         [
           {
             appendedFrom: 'start',
             name: '2-appended-4',
-            value: '2 ',
+            value: { data: '2 ' },
           },
         ],
       ]);
@@ -568,35 +568,35 @@ describe('AppState', () => {
         [
           {
             name: 'start',
-            value: 'start ',
+            value: { data: 'start ' },
           },
         ],
         [
           {
             appendedFrom: 'start',
             name: '1-appended',
-            value: '1 ',
+            value: { data: '1 ' },
           },
         ],
         [
           {
             appendedFrom: 'start',
             name: '1-appended',
-            value: '1 ',
+            value: { data: '1 ' },
           },
         ],
         [
           {
             appendedFrom: 'start',
             name: '1-appended',
-            value: '1 ',
+            value: { data: '1 ' },
           },
         ],
         [
           {
             appendedFrom: 'start',
             name: '1-appended',
-            value: '1 ',
+            value: { data: '1 ' },
           },
         ],
       ]);
