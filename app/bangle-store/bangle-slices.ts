@@ -38,7 +38,11 @@ export function bangleStateSlices({
   onUpdate?: (store: ApplicationStore) => void;
   extensionSlices: Slice<any>[];
 }) {
-  const pageBlock = [pageSlice(), historySlice(), pageLifeCycleSlice()];
+  const pageBlock = [
+    disableSideEffect(pageSlice()),
+    historySlice(),
+    pageLifeCycleSlice(),
+  ];
   return [
     ...pageBlock,
     naukarProxySlice(),

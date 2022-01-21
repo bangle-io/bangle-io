@@ -9,9 +9,9 @@ import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
 export type NaukarActionTypes = {
   name: string;
 };
-export type NaukarSliceTypes = ReturnType<typeof naukarStateSlices>;
+export type NaukarSliceTypes = ReturnType<typeof naukarSlices>;
 
-export function naukarStateSlices({
+export function naukarSlices({
   onUpdate,
 }: {
   onUpdate?: (store: ApplicationStore) => void;

@@ -5,18 +5,18 @@ import { workspaceSliceKey } from '@bangle.io/slice-workspace';
 import { workspacesSliceKey } from '@bangle.io/slice-workspaces-manager';
 import { naukarProxySliceKey } from '@bangle.io/worker-naukar-proxy';
 
-import { historySliceKey } from '..';
 import { bangleStateSlices } from '../bangle-slices';
 import { miscEffectsSlice } from '../slices/misc-effects-slice';
 
-test('all slices', () => {
-  expect(
-    bangleStateSlices({ onUpdate: jest.fn(), extensionSlices: [] }).map(
-      (r) => r.key,
-    ),
-  ).toEqual([
+const mainSlices = bangleStateSlices({
+  onUpdate: jest.fn(),
+  extensionSlices: [],
+});
+
+test('exhaustive slices list', () => {
+  expect(mainSlices.map((r) => r.key)).toEqual([
     pageSliceKey.key,
-    historySliceKey.key,
+    'history-slice$',
     'pageLifeCycleSlice$',
     naukarProxySliceKey.key,
     'worker-setup-slice-storeSyncKey$',
@@ -26,9 +26,27 @@ test('all slices', () => {
     'extension-registry-slice$',
     uiSliceKey.key,
     editorManagerSliceKey.key,
-    'slice$',
+    expect.stringMatching(/slice\$/),
     miscEffectsSlice().key,
-    'slice$1',
-    'slice$2',
+    expect.stringMatching(/slice\$/),
+    expect.stringMatching(/slice\$/),
   ]);
+});
+
+test('side effects disabled for pageLifeCycle', () => {
+  const slice = mainSlices.find((r) => r.key === pageSliceKey.key);
+  expect(slice).toBeTruthy();
+  expect(slice?.spec.sideEffect).toBeUndefined();
+});
+
+test('side effects disabled for workspacesSlice', () => {
+  const slice = mainSlices.find((r) => r.key === workspacesSliceKey.key);
+  expect(slice).toBeTruthy();
+  expect(slice?.spec.sideEffect).toBeUndefined();
+});
+
+test('side effects disabled for workspaceSlice', () => {
+  const slice = mainSlices.find((r) => r.key === workspaceSliceKey.key);
+  expect(slice).toBeTruthy();
+  expect(slice?.spec.sideEffect).toBeUndefined();
 });

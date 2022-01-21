@@ -134,14 +134,14 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     const serializer = this.actionSerializers[name];
 
     if (!serializer) {
-      console.debug('ActionSerialization: No parser found for ' + name);
+      // console.debug('ActionSerialization: No parser found for ' + name);
       return false;
     }
 
     const value = serializer.fromJSON(serializedValue);
 
     if (value === false) {
-      console.debug('ActionSerialization: Parser didnt parse ' + name);
+      // console.debug('ActionSerialization: Parser didnt parse ' + name);
       return false;
     }
 
