@@ -33,7 +33,7 @@ export function initializeNaukarStore({
       log(action);
       let newState = store.state.applyAction(action);
       store.updateState(newState);
-      log(newState);
+      // log(newState);
     },
     scheduler: (cb) => {
       const id = setTimeout(cb, MAX_DEFERRED_WAIT_TIME);

@@ -1,6 +1,16 @@
-import { blockReload, pageSlice } from '@bangle.io/slice-page';
+import {
+  blockReload,
+  pageSlice,
+  syncPageLocation,
+} from '@bangle.io/slice-page';
+import { workspaceSlice } from '@bangle.io/slice-workspace';
+import {
+  listWorkspaces,
+  workspacesSlice,
+} from '@bangle.io/slice-workspaces-manager';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
+import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { exponentialBackoff, sleep } from '@bangle.io/utils';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 
@@ -69,6 +79,7 @@ const scheduler = (cb) => {
 };
 
 beforeEach(() => {
+  idbHelpers.beforeEachHook();
   (window as any).MessageChannel = class MessageChannel {
     port1: Port = {
       onmessage: undefined,
@@ -87,14 +98,17 @@ beforeEach(() => {
   };
 });
 
-afterEach(() => {
+afterEach(async () => {
+  await naukarProxy.testDestroyStore();
+
+  idbHelpers.afterEachHook();
   (window as any).MessageChannel = undefined;
   clearFakeIdb();
 });
 
 test('works', async () => {
   const { store, actionsDispatched } = createTestStore(
-    [...workerSetupSlices(), pageSlice()],
+    [...workerSetupSlices(), pageSlice(), naukarProxySlice()],
     {
       useWebWorker: false,
     },
@@ -232,4 +246,93 @@ test('sends actions correctly', async () => {
   });
 
   expect(naukarProxyReady).toBe(true);
+});
+
+test('sends slice-page action correctly', async () => {
+  const slices = workerSetupSlices();
+
+  const { store } = createTestStore(
+    [...slices, pageSlice(), naukarProxySlice()],
+    {
+      useWebWorker: false,
+    },
+    scheduler,
+  );
+  await sleep(0);
+
+  const workerStore: any = await naukarProxy.testGetStore();
+  const dispatchSpy = jest.spyOn(workerStore, 'dispatch');
+
+  await blockReload(true)(store.state, store.dispatch);
+
+  await sleep(0);
+
+  expect(dispatchSpy).lastCalledWith({
+    fromStore: 'test-store',
+    id: expect.any(String),
+    name: 'action::@bangle.io/slice-page:BLOCK_RELOAD',
+    value: { block: true },
+  });
+});
+
+test('sends workspaces slice action correctly', async () => {
+  const slices = workerSetupSlices();
+
+  const { store } = createTestStore(
+    [...slices, pageSlice(), naukarProxySlice(), workspacesSlice()],
+    {
+      useWebWorker: false,
+    },
+    scheduler,
+  );
+  await sleep(0);
+
+  const workerStore: any = await naukarProxy.testGetStore();
+
+  const dispatchSpy = jest.spyOn(workerStore, 'dispatch');
+
+  await listWorkspaces()(store.state, store.dispatch, store);
+
+  await sleep(0);
+
+  expect(dispatchSpy).lastCalledWith({
+    fromStore: 'test-store',
+    id: expect.any(String),
+    name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+    value: expect.anything(),
+  });
+});
+
+test('sends workspace slice action correctly', async () => {
+  const slices = workerSetupSlices();
+
+  const { store } = createTestStore(
+    [
+      ...slices,
+      pageSlice(),
+      naukarProxySlice(),
+      workspacesSlice(),
+      workspaceSlice(),
+    ],
+    {
+      useWebWorker: false,
+    },
+    scheduler,
+  );
+  await sleep(0);
+
+  const workerStore: any = await naukarProxy.testGetStore();
+
+  const dispatchSpy = jest.spyOn(workerStore, 'dispatch');
+
+  syncPageLocation({ pathname: '/ws/test-1' })(store.state, store.dispatch);
+
+  await sleep(0);
+
+  expect(dispatchSpy).toBeCalledWith({
+    fromStore: 'test-store',
+    id: expect.any(String),
+    name: 'action::@bangle.io/slice-page:history-update-location',
+    value: expect.anything(),
+  });
 });
