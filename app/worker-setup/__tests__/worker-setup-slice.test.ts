@@ -1,6 +1,7 @@
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
+import { exponentialBackoff, sleep } from '@bangle.io/utils';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 
 import { workerSetupSlices, workerStoreSyncKey } from '../worker-setup-slice';
@@ -10,7 +11,29 @@ jest.mock('idb-keyval', () => {
   return fakeIdb;
 });
 
-const dateNow = Date.now;
+jest.mock('@bangle.io/utils', () => {
+  const actual = jest.requireActual('@bangle.io/utils');
+  const rest = Object.assign({}, jest.requireActual('@bangle.io/utils'));
+
+  const noWaitExponentialBackoff: typeof exponentialBackoff = async (
+    fn,
+    abort: AbortSignal,
+    opts,
+  ) => {
+    if (opts?.sleep) {
+      throw new Error('option sleep is reserved for testing');
+    }
+    return actual.exponentialBackoff(fn, abort, {
+      ...opts,
+      sleep: () => Promise.resolve(),
+    });
+  };
+
+  return {
+    ...rest,
+    exponentialBackoff: noWaitExponentialBackoff,
+  };
+});
 
 jest.mock('@bangle.io/constants', () => {
   const rest = jest.requireActual('@bangle.io/constants');
@@ -46,8 +69,6 @@ const scheduler = (cb) => {
 };
 
 beforeEach(() => {
-  jest.useFakeTimers('modern');
-  Date.now = jest.fn(() => 500);
   (window as any).MessageChannel = class MessageChannel {
     port1: Port = {
       onmessage: undefined,
@@ -68,17 +89,8 @@ beforeEach(() => {
 
 afterEach(() => {
   (window as any).MessageChannel = undefined;
-  jest.useRealTimers();
-  Date.now = dateNow;
   clearFakeIdb();
 });
-
-let waiter = async () => {
-  for (let i = 0; i < 50; i++) {
-    jest.runOnlyPendingTimers();
-    await Promise.resolve();
-  }
-};
 
 test('works', async () => {
   const { store, actionsDispatched } = createTestStore(
@@ -89,16 +101,16 @@ test('works', async () => {
     scheduler,
   );
 
-  await waiter();
+  await sleep(0);
 
   expect(actionsDispatched).toEqual([
     {
       id: expect.any(String),
-      name: 'action::@bangle.io/utils:store-sync-start-sync',
+      name: 'action::@bangle.io/store-sync:start-sync',
     },
     {
       id: expect.any(String),
-      name: 'action::@bangle.io/utils:store-sync-port-ready',
+      name: 'action::@bangle.io/store-sync:port-ready',
     },
     {
       id: expect.any(String),
@@ -108,76 +120,32 @@ test('works', async () => {
       },
     },
   ]);
-  expect(workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel)
-    .toMatchInlineSnapshot(`
-    MessageChannel {
-      "port1": Object {
-        "close": [MockFunction],
-        "onmessage": [Function],
-        "postMessage": [MockFunction] {
-          "calls": Array [
-            Array [
-              Object {
-                "type": "ping",
-              },
-            ],
-            Array [
-              Object {
-                "type": "pong",
-              },
-            ],
-            Array [
-              Object {
-                "type": "ping",
-              },
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        },
-      },
-      "port2": Object {
-        "close": [MockFunction],
-        "onmessage": [Function],
-        "postMessage": [MockFunction] {
-          "calls": Array [
-            Array [
-              Object {
-                "type": "ping",
-              },
-            ],
-            Array [
-              Object {
-                "type": "pong",
-              },
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        },
-      },
-    }
-  `);
+
+  expect(
+    workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel.port1
+      .postMessage,
+  ).toBeCalledWith({
+    type: 'pong',
+  });
+  expect(
+    workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel.port1
+      .postMessage,
+  ).toBeCalledWith({
+    type: 'ping',
+  });
+
+  expect(
+    workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel.port2
+      .postMessage,
+  ).toBeCalledWith({
+    type: 'pong',
+  });
+  expect(
+    workerStoreSyncKey.getSliceStateAsserted(store.state)?.msgChannel.port2
+      .postMessage,
+  ).toBeCalledWith({
+    type: 'ping',
+  });
 });
 
 test('sends actions correctly', async () => {
@@ -199,9 +167,6 @@ test('sends actions correctly', async () => {
     naukarProxyReady = result;
   });
 
-  await Promise.resolve();
-
-  // proxy should resolve
   expect(naukarProxyReady).toBe(false);
 
   expect(slices[1]?.getSliceState(store.state)).toEqual({
@@ -216,7 +181,7 @@ test('sends actions correctly', async () => {
     ],
   });
 
-  await waiter();
+  await sleep(0);
 
   const { msgChannel } = workerStoreSyncKey.getSliceStateAsserted(store.state);
 
@@ -229,7 +194,7 @@ test('sends actions correctly', async () => {
     type: 'action',
   });
 
-  await waiter();
+  await sleep(0);
 
   expect(actionsDispatched).toEqual([
     {
@@ -241,12 +206,12 @@ test('sends actions correctly', async () => {
     },
     {
       id: expect.any(String),
-      name: 'action::@bangle.io/utils:store-sync-start-sync',
+      name: 'action::@bangle.io/store-sync:start-sync',
     },
 
     {
       id: expect.any(String),
-      name: 'action::@bangle.io/utils:store-sync-port-ready',
+      name: 'action::@bangle.io/store-sync:port-ready',
     },
 
     // PROXY setup should be after port is marked ready

@@ -37,6 +37,7 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-workspaces-manager": "workspace:*",
+    "@bangle.io/store-sync": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@sentry/browser": "^6.16.1",

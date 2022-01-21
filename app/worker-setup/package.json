@@ -25,6 +25,7 @@
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/store-sync": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/worker-naukar": "workspace:*",

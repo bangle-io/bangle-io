@@ -30,7 +30,7 @@ test('sets up', async () => {
   expect(store.state.config.fields.map((r) => r.name)).toMatchInlineSnapshot(`
     Array [
       "sync-with-window-stateSyncKey$",
-      "store-sync-slice$",
+      "store-sync$",
       "page-slice$",
     ]
   `);
@@ -171,11 +171,11 @@ test('blocks actions which are not recognized', async () => {
   const expectedActions = [
     {
       id: expect.any(String),
-      name: 'action::@bangle.io/utils:store-sync-port-ready',
+      name: 'action::@bangle.io/store-sync:port-ready',
     },
     {
       id: expect.any(String),
-      name: 'action::@bangle.io/utils:store-sync-start-sync',
+      name: 'action::@bangle.io/store-sync:start-sync',
     },
     {
       fromStore: 'test-store',

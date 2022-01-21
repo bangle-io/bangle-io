@@ -1,13 +1,13 @@
 import { Slice, staticSlice } from '@bangle.io/create-store';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import { sleep } from '@bangle.io/utils';
 
 import {
   isStoreSyncReady,
   startStoreSync,
   StoreSyncConfigType,
   storeSyncSlice,
-} from '../store-sync-slice';
-import { sleep } from '../utility';
+} from '../store-sync';
 
 interface Port {
   onmessage: ((o: { data: any }) => void) | undefined;

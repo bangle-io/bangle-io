@@ -247,6 +247,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-workspaces-manager"
       },
       {
+        "name": "@bangle.io/store-sync",
+        "reference": "workspace:lib/store-sync"
+      },
+      {
         "name": "@bangle.io/test-utils",
         "reference": "workspace:lib/test-utils"
       },
@@ -343,6 +347,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],
       ["@bangle.io/slice-workspaces-manager", ["workspace:lib/slice-workspaces-manager"]],
+      ["@bangle.io/store-sync", ["workspace:lib/store-sync"]],
       ["@bangle.io/style", ["workspace:app/style"]],
       ["@bangle.io/test-utils", ["workspace:lib/test-utils"]],
       ["@bangle.io/ui-bangle-button", ["workspace:lib/ui-bangle-button"]],
@@ -5141,6 +5146,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["@bangle.io/store-sync", [
+        ["workspace:lib/store-sync", {
+          "packageLocation": "./lib/store-sync/",
+          "packageDependencies": [
+            ["@bangle.io/store-sync", "workspace:lib/store-sync"],
+            ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],
+            ["@bangle.io/utils", "workspace:lib/utils"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.io/style", [
         ["workspace:app/style", {
           "packageLocation": "./app/style/",
@@ -5318,6 +5336,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-workspaces-manager", "workspace:lib/slice-workspaces-manager"],
+            ["@bangle.io/store-sync", "workspace:lib/store-sync"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
@@ -5356,6 +5375,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
+            ["@bangle.io/store-sync", "workspace:lib/store-sync"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],
