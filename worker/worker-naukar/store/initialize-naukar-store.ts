@@ -1,9 +1,9 @@
 import { WORKER_STORE_NAME } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import type { NaukarStateConfig } from '@bangle.io/shared-types';
 
 import { naukarStateSlices } from './naukar-state-slices';
-import type { NaukarStoreOpts } from './types';
 
 const LOG = false;
 let log = LOG ? console.debug.bind(console, 'naukar-store') : () => {};
@@ -19,7 +19,7 @@ export function initializeNaukarStore({
   port: MessagePort;
   extensionRegistry: ExtensionRegistry;
 }) {
-  const opts: NaukarStoreOpts = {
+  const opts: NaukarStateConfig = {
     port,
     extensionRegistry,
   };

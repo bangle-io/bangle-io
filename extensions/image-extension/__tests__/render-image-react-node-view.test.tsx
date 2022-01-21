@@ -1,8 +1,7 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { FileSystem } from '@bangle.io/slice-workspaces-manager';
+import { getFile, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -15,18 +14,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
   return {
     ...other,
     useWorkspaceContext: jest.fn(),
-  };
-});
-
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  const workspaceThings = jest.requireActual(
-    '@bangle.io/slice-workspaces-manager',
-  );
-  return {
-    ...workspaceThings,
-    FileSystem: {
-      getFile: jest.fn(),
-    },
+    getFile: jest.fn(() => async () => undefined),
   };
 });
 
@@ -37,11 +25,13 @@ class File {
 let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
   typeof useWorkspaceContext
 >;
+let getFileMock = getFile as jest.MockedFunction<typeof getFile>;
 
 beforeEach(() => {
   useWorkspaceContextMock.mockImplementation(() => ({
     ...getUseWorkspaceContextReturn,
   }));
+  getFileMock.mockImplementation(() => async () => undefined);
 });
 
 describe('ImageComponent', () => {
@@ -86,8 +76,8 @@ describe('ImageComponent', () => {
       };
     });
 
-    (FileSystem.getFile as any).mockImplementation(async () => {
-      return new File('I am the content of image', 'google.png', {});
+    getFileMock.mockImplementation(() => async () => {
+      return new File('I am the content of image', 'google.png', {}) as any;
     });
 
     const renderResult = render(
@@ -146,8 +136,8 @@ describe('ImageComponent', () => {
       };
     });
 
-    (FileSystem.getFile as any).mockImplementation(async () => {
-      return new File('I am the content of image', 'google.png', {});
+    getFileMock.mockImplementation(() => async () => {
+      return new File('I am the content of image', 'google.png', {}) as any;
     });
     const renderResult = render(
       <ImageComponent

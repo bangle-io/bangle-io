@@ -1,11 +1,8 @@
 import React, { useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'wouter';
 
-import {
-  getLastWorkspaceUsed,
-  pushWsPath,
-  useWorkspaceContext,
-} from '@bangle.io/slice-workspace';
+import { lastWorkspaceUsed } from '@bangle.io/bangle-store/slices/misc-effects-slice';
+import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
@@ -45,7 +42,7 @@ export function Routes() {
       </Route>
       <Route path="/">
         {() => {
-          const lastWsName = getLastWorkspaceUsed() || HELP_FS_WORKSPACE_NAME;
+          const lastWsName = lastWorkspaceUsed.get() || HELP_FS_WORKSPACE_NAME;
           return <Redirect to={'/ws/' + lastWsName} />;
         }}
       </Route>

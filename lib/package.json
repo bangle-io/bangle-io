@@ -16,6 +16,7 @@
     "slice-ui",
     "slice-workspace",
     "slice-workspaces-manager",
+    "store-sync",
     "test-utils",
     "ui-bangle-button",
     "ui-components",

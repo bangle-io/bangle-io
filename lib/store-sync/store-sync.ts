@@ -5,17 +5,18 @@ import {
   Slice,
   SliceKey,
 } from '@bangle.io/create-store';
-
-import { assertActionName } from './action';
-import { exponentialBackoff } from './utility';
-import { isWorkerGlobalScope } from './worker';
+import {
+  assertActionName,
+  exponentialBackoff,
+  isWorkerGlobalScope,
+} from '@bangle.io/utils';
 
 type SyncAction =
   | {
-      name: 'action::@bangle.io/utils:store-sync-start-sync';
+      name: 'action::@bangle.io/store-sync:start-sync';
     }
   | {
-      name: 'action::@bangle.io/utils:store-sync-port-ready';
+      name: 'action::@bangle.io/store-sync:port-ready';
     };
 
 export interface StoreSyncState<A> {
@@ -25,14 +26,14 @@ export interface StoreSyncState<A> {
 }
 
 const syncStoreKey = new SliceKey<StoreSyncState<any>, SyncAction>(
-  'store-sync-slice',
+  'store-sync',
 );
 
 const LOG = false;
 const log = LOG
   ? console.log.bind(
       console,
-      `${isWorkerGlobalScope() ? '[worker]' : ''} store-sync-slice`,
+      `${isWorkerGlobalScope() ? '[worker]' : ''} store-sync`,
     )
   : () => {};
 
@@ -44,7 +45,7 @@ export function startStoreSync() {
     dispatch: ApplicationStore<any, SyncAction>['dispatch'],
   ) => {
     dispatch({
-      name: 'action::@bangle.io/utils:store-sync-start-sync',
+      name: 'action::@bangle.io/store-sync:start-sync',
     });
   };
 }
@@ -77,7 +78,7 @@ export function storeSyncSlice<
   A extends BaseAction,
   C extends StoreSyncConfigType<A>,
 >(configKey: SliceKey<C>) {
-  assertActionName('@bangle.io/utils', {} as SyncAction);
+  assertActionName('@bangle.io/store-sync', {} as SyncAction);
 
   return new Slice<StoreSyncState<A>, SyncAction>({
     key: syncStoreKey,
@@ -86,14 +87,14 @@ export function storeSyncSlice<
         return { pendingActions: [], portReady: false, startSync: false };
       },
       apply(action, sliceState, appState) {
-        if (action.name === 'action::@bangle.io/utils:store-sync-start-sync') {
+        if (action.name === 'action::@bangle.io/store-sync:start-sync') {
           return {
             ...sliceState,
             startSync: true,
           };
         }
 
-        if (action.name === 'action::@bangle.io/utils:store-sync-port-ready') {
+        if (action.name === 'action::@bangle.io/store-sync:port-ready') {
           return {
             ...sliceState,
             portReady: true,
@@ -145,7 +146,7 @@ export function storeSyncSlice<
                   log('port is ready!');
                   pingController.abort();
                   store.dispatch({
-                    name: 'action::@bangle.io/utils:store-sync-port-ready',
+                    name: 'action::@bangle.io/store-sync:port-ready',
                   });
                   return;
                 }

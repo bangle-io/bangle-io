@@ -5,11 +5,7 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ActionSerializers } from './action-serializers';
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
-import {
-  refreshWsPathsEffect,
-  saveLastUsedWorkspace,
-  updateLocationEffect,
-} from './effects';
+import { refreshWsPathsEffect, updateLocationEffect } from './effects';
 import {
   WorkspaceSliceState,
   WorkspaceStateKeys,
@@ -165,10 +161,6 @@ export function workspaceSlice() {
     },
     actions: ActionSerializers,
 
-    sideEffect: [
-      updateLocationEffect,
-      refreshWsPathsEffect,
-      saveLastUsedWorkspace,
-    ],
+    sideEffect: [updateLocationEffect, refreshWsPathsEffect],
   });
 }

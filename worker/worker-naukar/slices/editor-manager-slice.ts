@@ -4,6 +4,7 @@ import type { Node } from '@bangle.dev/pm';
 
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import type { NaukarStateConfig } from '@bangle.io/shared-types';
 import {
   blockReload,
   pageLifeCycleTransitionedTo,
@@ -17,7 +18,6 @@ import {
   DOC_WRITE_DEBOUNCE_MAX_WAIT,
   DOC_WRITE_DEBOUNCE_WAIT,
 } from '../common';
-import { NaukarStoreOpts } from '../store/types';
 
 const LOG = false;
 const log = LOG
@@ -43,7 +43,7 @@ const editorManagerSliceKey = new SliceKey<
       };
     },
   any,
-  NaukarStoreOpts
+  NaukarStateConfig
 >('editorCollabSlice');
 
 export function diskFlushAll() {

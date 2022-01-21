@@ -13,6 +13,8 @@ export function fileSystemPlus(onError: (error: Error) => void) {
     deleteFile: errorWrapper(FileSystem.deleteFile, onError),
     getDoc: errorWrapper(FileSystem.getDoc, onError),
     saveDoc: errorWrapper(FileSystem.saveDoc, onError),
+    saveFile: errorWrapper(FileSystem.saveFile, onError),
+    getFile: errorWrapper(FileSystem.getFile, onError),
     listAllFiles: errorWrapper(FileSystem.listAllFiles, onError),
     checkFileExists: errorWrapper(FileSystem.checkFileExists, onError),
   };

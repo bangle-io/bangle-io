@@ -204,7 +204,7 @@ function bind(f?: Function, self?: object) {
   return !self || !f ? f : f.bind(self);
 }
 
-type SliceArray<S, A extends BaseAction> = Array<Slice<any, A, S>>;
+export type SliceArray<S, A extends BaseAction> = Array<Slice<any, A, S>>;
 
 class FieldDesc<S, A extends BaseAction, Op> {
   init: (

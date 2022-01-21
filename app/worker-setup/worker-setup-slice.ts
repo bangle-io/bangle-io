@@ -10,12 +10,12 @@ import {
 } from '@bangle.io/create-store';
 import type { BangleStateConfig, UnPromisify } from '@bangle.io/shared-types';
 import {
-  assertNonWorkerGlobalScope,
   isStoreSyncReady,
   startStoreSync,
   StoreSyncConfigType,
   storeSyncSlice,
-} from '@bangle.io/utils';
+} from '@bangle.io/store-sync';
+import { assertNonWorkerGlobalScope } from '@bangle.io/utils';
 import { setNaukarProxyState } from '@bangle.io/worker-naukar-proxy';
 
 import { loadNaukarModule } from './load-naukar-module';

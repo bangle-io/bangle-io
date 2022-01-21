@@ -247,6 +247,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-workspaces-manager"
       },
       {
+        "name": "@bangle.io/store-sync",
+        "reference": "workspace:lib/store-sync"
+      },
+      {
         "name": "@bangle.io/test-utils",
         "reference": "workspace:lib/test-utils"
       },
@@ -343,6 +347,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],
       ["@bangle.io/slice-workspaces-manager", ["workspace:lib/slice-workspaces-manager"]],
+      ["@bangle.io/store-sync", ["workspace:lib/store-sync"]],
       ["@bangle.io/style", ["workspace:app/style"]],
       ["@bangle.io/test-utils", ["workspace:lib/test-utils"]],
       ["@bangle.io/ui-bangle-button", ["workspace:lib/ui-bangle-button"]],
@@ -3957,6 +3962,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/worker-setup", "workspace:app/worker-setup"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["fast-deep-equal", "npm:3.1.3"],
+            ["idb-keyval", "npm:5.1.5"],
             ["page-lifecycle", "npm:0.1.2"]
           ],
           "linkType": "SOFT",
@@ -4482,7 +4488,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
-            ["@bangle.io/slice-workspaces-manager", "workspace:lib/slice-workspaces-manager"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
@@ -5003,6 +5008,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm", "npm:0.28.5"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["type-fest", "npm:2.8.0"]
           ],
@@ -5136,6 +5142,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["idb-keyval", "npm:5.1.5"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/store-sync", [
+        ["workspace:lib/store-sync", {
+          "packageLocation": "./lib/store-sync/",
+          "packageDependencies": [
+            ["@bangle.io/store-sync", "workspace:lib/store-sync"],
+            ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],
+            ["@bangle.io/utils", "workspace:lib/utils"]
           ],
           "linkType": "SOFT",
         }]
@@ -5317,6 +5336,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-workspaces-manager", "workspace:lib/slice-workspaces-manager"],
+            ["@bangle.io/store-sync", "workspace:lib/store-sync"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
@@ -5355,11 +5375,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
+            ["@bangle.io/store-sync", "workspace:lib/store-sync"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-naukar", "workspace:worker/worker-naukar"],
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["comlink", "npm:4.3.1"],
+            ["idb-keyval", "npm:5.1.5"],
             ["react", "npm:17.0.2"]
           ],
           "linkType": "SOFT",

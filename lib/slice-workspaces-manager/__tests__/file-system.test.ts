@@ -1,34 +1,39 @@
 import { Node } from '@bangle.dev/pm';
 
-import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
+import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
+import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 
 import {
   copyWorkspace,
   deleteFile,
+  getDoc,
   listAllFiles,
   saveDoc,
 } from '../file-system';
 
-const originalFile = window.File;
-
-const extensionRegistry = createExtensionRegistry([], { editorCore: true });
+jest.mock('idb-keyval', () => {
+  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
+  return fakeIdb;
+});
 
 beforeEach(() => {
-  (window as any).File = class File {
-    constructor(public content, public fileName, public opts) {}
-  };
+  idbHelpers.beforeEachHook();
 });
 
 afterEach(() => {
-  window.File = originalFile;
+  idbHelpers.afterEachHook();
+  clearFakeIdb();
 });
+
+const extensionRegistry = createExtensionRegistry([], { editorCore: true });
 
 describe('listAllFiles', () => {
   test('works', async () => {
-    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
-    await mockBabyFs.setupMockFile('kujo', 'one.md');
-    await mockBabyFs.setupMockFile('kujo', 'two.md');
+    await idbHelpers.setupMockWorkspace({ name: 'kujo' });
+
+    await idbHelpers.setupMockFile('kujo', 'one.md');
+    await idbHelpers.setupMockFile('kujo', 'two.md');
 
     await expect(listAllFiles('kujo')).resolves.toMatchInlineSnapshot(`
             Array [
@@ -42,10 +47,10 @@ describe('listAllFiles', () => {
 
 describe('copyWorkspace', () => {
   test('works', async () => {
-    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
-    mockBabyFs.setupMockWorkspace({ name: 'kujo-clone' });
-    await mockBabyFs.setupMockFile('kujo', 'one.md');
-    await mockBabyFs.setupMockFile('kujo', 'two.md');
+    await idbHelpers.setupMockWorkspace({ name: 'kujo' });
+    await idbHelpers.setupMockWorkspace({ name: 'kujo-clone' });
+    await idbHelpers.setupMockFile('kujo', 'one.md');
+    await idbHelpers.setupMockFile('kujo', 'two.md');
 
     expect(await listAllFiles('kujo')).toHaveLength(2);
     expect(await listAllFiles('kujo-clone')).toHaveLength(0);
@@ -65,26 +70,30 @@ describe('copyWorkspace', () => {
 
 describe('deleteFile', () => {
   test('works', async () => {
-    await mockBabyFs.setupMockWorkspace({ name: 'kujo' });
-    await mockBabyFs.setupMockFile('kujo', 'one.md');
-    await mockBabyFs.setupMockFile('kujo', 'two.md');
+    await idbHelpers.setupMockWorkspace({ name: 'kujo' });
+    await idbHelpers.setupMockFile('kujo', 'one.md');
+    await idbHelpers.setupMockFile('kujo', 'two.md');
+
+    expect(await listAllFiles('kujo')).toHaveLength(2);
 
     await deleteFile('kujo:one.md');
 
-    expect(mockBabyFs.idbFS.unlink).toBeCalledTimes(1);
-    expect(mockBabyFs.idbFS.unlink).toBeCalledWith('kujo/one.md');
+    expect(await listAllFiles('kujo')).toHaveLength(1);
+    expect(await listAllFiles('kujo')).toEqual(['kujo:two.md']);
   });
 });
 describe('saveDoc', () => {
   test('works', async () => {
-    mockBabyFs.setupMockWorkspace({ name: 'kujo' });
+    await idbHelpers.setupMockWorkspace({ name: 'kujo' });
 
-    const doc = Node.fromJSON(extensionRegistry.specRegistry.schema, {
+    let docJson = {
       type: 'doc',
       content: [
         {
           type: 'heading',
           attrs: {
+            collapseContent: null,
+
             level: 1,
           },
           content: [
@@ -104,13 +113,20 @@ describe('saveDoc', () => {
           ],
         },
       ],
-    });
+    };
+    const doc = Node.fromJSON(extensionRegistry.specRegistry.schema, docJson);
     await saveDoc('kujo:one.md', doc, extensionRegistry.specRegistry);
 
-    expect(mockBabyFs.idbFS.writeFile).toBeCalledTimes(1);
-    expect(mockBabyFs.idbFS.writeFile).toBeCalledWith(
-      'kujo/one.md',
-      new File(['# Hola\n\nHello world!'], 'one.md', { type: 'text/plain' }),
-    );
+    expect(
+      (
+        await getDoc('kujo:one.md', extensionRegistry.specRegistry, [])
+      ).toJSON(),
+    ).toEqual(docJson);
+
+    // expect(idbFS.writeFile).toBeCalledTimes(1);
+    // expect(idbFS.writeFile).toBeCalledWith(
+    //   'kujo/one.md',
+    //   new File(['# Hola\n\nHello world!'], 'one.md', { type: 'text/plain' }),
+    // );
   });
 });

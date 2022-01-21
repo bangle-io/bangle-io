@@ -1,7 +1,13 @@
 import { ApplicationStore } from '@bangle.io/create-store';
+import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 
-export type BangleStateConfig = {
-  readonly extensionRegistry: any;
-  readonly useWebWorker: boolean;
+export interface BangleStateConfig {
+  readonly extensionRegistry: ExtensionRegistry;
   readonly saveState: (store: ApplicationStore) => void;
-};
+  readonly useWebWorker: boolean;
+}
+
+export interface NaukarStateConfig {
+  readonly extensionRegistry: ExtensionRegistry;
+  readonly port: MessagePort;
+}

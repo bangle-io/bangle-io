@@ -4,7 +4,6 @@ import { getPageLocation } from '@bangle.io/slice-page';
 import { shallowEqual } from '@bangle.io/utils';
 
 import { SideEffect, workspaceSliceKey } from './common';
-import { saveLastWorkspaceUsed } from './last-seen-ws-name';
 import { refreshWsPaths, syncPageLocation } from './operations';
 
 export const refreshWsPathsEffect: SideEffect = () => {
@@ -49,20 +48,6 @@ export const updateLocationEffect: SideEffect = () => {
         search: location?.search,
         pathname: location?.pathname,
       })(store.state, store.dispatch);
-    },
-  };
-};
-
-export const saveLastUsedWorkspace: SideEffect = () => {
-  let lastSeenWsName: string | undefined;
-  return {
-    destroy() {},
-    deferredUpdate(store) {
-      const { wsName } = workspaceSliceKey.getSliceState(store.state) || {};
-      if (wsName && wsName !== lastSeenWsName) {
-        lastSeenWsName = wsName;
-        saveLastWorkspaceUsed(wsName);
-      }
     },
   };
 };

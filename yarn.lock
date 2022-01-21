@@ -1909,6 +1909,7 @@ __metadata:
     "@bangle.io/worker-setup": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     fast-deep-equal: ^3.1.3
+    idb-keyval: ^5.1.5
     page-lifecycle: ^0.1.2
   languageName: unknown
   linkType: soft
@@ -2269,7 +2270,6 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2667,6 +2667,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.5
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     type-fest: ^2.8.0
   languageName: unknown
@@ -2822,6 +2823,17 @@ __metadata:
     idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/store-sync@workspace:*, @bangle.io/store-sync@workspace:lib/store-sync":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/store-sync@workspace:lib/store-sync"
+  dependencies:
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -3002,6 +3014,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspaces-manager": "workspace:*"
+    "@bangle.io/store-sync": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -3023,11 +3036,13 @@ __metadata:
     "@bangle.io/shared": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/store-sync": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     comlink: ^4.3.1
+    idb-keyval: ^5.1.5
     react: ^17.0.2
   languageName: unknown
   linkType: soft

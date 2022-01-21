@@ -17,13 +17,23 @@ export { WorkspaceType } from '@bangle.io/constants';
 
 export type { WorkspaceInfo };
 
-export const helpFSWorkspaceInfo: WorkspaceInfo = {
-  metadata: {
-    allowLocalChanges: true,
-  },
-  name: HELP_FS_WORKSPACE_NAME,
-  type: WorkspaceType.helpfs,
-  lastModified: Date.now(),
+// Caching `lastModified` date so that it stays the same
+// during the applications life time.
+// The function exists to help with testing, so that we get the Date.now stubbed.
+let cachedHelpFs: WorkspaceInfo | undefined = undefined;
+export const helpFSWorkspaceInfo = (): WorkspaceInfo => {
+  if (!cachedHelpFs) {
+    cachedHelpFs = {
+      metadata: {
+        allowLocalChanges: true,
+      },
+      name: HELP_FS_WORKSPACE_NAME,
+      type: WorkspaceType.helpfs,
+      lastModified: Date.now(),
+    };
+  }
+
+  return cachedHelpFs;
 };
 
 export type WorkspaceInfoReg = {
@@ -31,13 +41,11 @@ export type WorkspaceInfoReg = {
 };
 
 export const workspacesSliceInitialState: WorkspacesSliceState = {
-  pendingWorkspaceInfos: undefined,
   workspaceInfos: undefined,
 };
 
 export interface WorkspacesSliceState {
   workspaceInfos: WorkspaceInfoReg | undefined;
-  pendingWorkspaceInfos: Promise<WorkspaceInfo[]> | undefined;
 }
 
 export type WorkspacesSliceAction = {

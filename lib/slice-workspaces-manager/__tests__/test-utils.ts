@@ -1,11 +1,12 @@
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { ApplicationStore, AppState, Slice } from '@bangle.io/create-store';
+import { pageSlice } from '@bangle.io/slice-page';
 
 import { WorkspaceInfo, WorkspaceType } from '../common';
 import { workspacesSlice } from '../workspaces-slice';
 
 export const createState = () => {
   return AppState.create({
-    slices: [workspacesSlice()],
+    slices: [workspacesSlice(), pageSlice()] as Slice[],
   });
 };
 
@@ -20,12 +21,19 @@ export const noSideEffectsStore = () => {
 
 export const createStore = (
   scheduler = (cb) => {
-    cb();
-    return () => {};
+    let destroyed = false;
+    Promise.resolve().then(() => {
+      if (!destroyed) {
+        cb();
+      }
+    });
+    return () => {
+      destroyed = true;
+    };
   },
   disableSideEffects = false,
 ) => {
-  const store = ApplicationStore.create({
+  const store = ApplicationStore.create<any, any>({
     scheduler: scheduler,
     storeName: 'workspaces-store',
     state: createState(),

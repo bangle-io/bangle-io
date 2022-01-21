@@ -12,7 +12,7 @@ export const createState = (
     [K in WorkspaceStateKeys]: JsonPrimitive | JsonArray | undefined;
   }> = {},
 ) => {
-  return AppState.stateFromJSON({
+  return AppState.stateFromJSON<any, any>({
     slices: [workspaceSlice()],
     json: {
       workspace: { version: JSON_SCHEMA_VERSION, data: data },
@@ -46,8 +46,15 @@ export const noSideEffectsStore = (
 export const createStore = (
   data?: Parameters<typeof createState>[0],
   scheduler = (cb) => {
-    cb();
-    return () => {};
+    let destroyed = false;
+    Promise.resolve().then(() => {
+      if (!destroyed) {
+        cb();
+      }
+    });
+    return () => {
+      destroyed = true;
+    };
   },
   disableSideEffects = false,
 ) => {

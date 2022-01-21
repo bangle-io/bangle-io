@@ -247,7 +247,7 @@ describe('store', () => {
           init: () => 1,
           apply: (action, value, appState) => {
             if (action.name === 'for-a') {
-              return action.value;
+              return action.value.no;
             }
             return value;
           },
@@ -278,7 +278,7 @@ describe('store', () => {
 
       let prevState = store.state;
 
-      store.dispatch({ name: 'for-a', value: 100 });
+      store.dispatch({ name: 'for-a', value: { no: 100 } });
 
       expect(sideEffect2Update).toBeCalledTimes(1);
       expect(sideEffect2Update).nthCalledWith(1, store, prevState, 2, 2);
@@ -400,7 +400,7 @@ describe('store', () => {
         state: AppState.create({ slices: [slice1, slice2] }),
       });
 
-      store.dispatch({});
+      store.dispatch({ name: 'random' });
 
       expect(seenStates).toEqual([
         [1, 0],
@@ -425,7 +425,7 @@ describe('store', () => {
           init: () => 1,
           apply: (action, value, appState) => {
             if (action.name === 'for-a') {
-              return action.value;
+              return action.value.no;
             }
             return value;
           },
@@ -439,7 +439,7 @@ describe('store', () => {
           init: () => 2,
           apply: (action, value, appState) => {
             if (action.name === 'for-b') {
-              return action.value;
+              return action.value.no;
             }
             return value;
           },
@@ -468,7 +468,7 @@ describe('store', () => {
 
       store.dispatch({
         name: 'for-b',
-        value: 77,
+        value: { no: 77 },
       });
       expect(update1).nthCalledWith(1, store, originalState, 77, 2);
       expect(update2).nthCalledWith(1, store, originalState, 77, 2);
@@ -489,7 +489,7 @@ describe('store', () => {
           if (sliceState === 'value-a') {
             store.dispatch({
               name: 'for-a',
-              value: 'value-b',
+              value: { data: 'value-b' },
             });
           }
         },
@@ -504,7 +504,7 @@ describe('store', () => {
           init: () => '',
           apply: (action, value, appState) => {
             if (action.name === 'for-a') {
-              return action.value;
+              return action.value.data;
             }
             return value;
           },
@@ -522,7 +522,7 @@ describe('store', () => {
           init: () => 0,
           apply: (action, value, appState) => {
             if (action.name === 'for-b') {
-              return action.value;
+              return action.value.data;
             }
             return value;
           },
@@ -545,7 +545,7 @@ describe('store', () => {
       // should update
       store.dispatch({
         name: 'for-a',
-        value: 'value-prep',
+        value: { data: 'value-prep' },
       });
 
       const state1 = store.state;
@@ -563,7 +563,7 @@ describe('store', () => {
 
       store.dispatch({
         name: 'for-a',
-        value: 'value-a',
+        value: { data: 'value-a' },
       });
 
       expect(key1.getSliceState(store.state)).toBe('value-b');

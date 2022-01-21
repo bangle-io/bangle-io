@@ -1,37 +1,43 @@
-// Need to disable sort to make the mocking run first.
-// eslint-disable-next-line simple-import-sort/imports
-import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
+import { goToLocation, syncPageLocation } from '@bangle.io/slice-page';
+import { clearFakeIdb, fakeIdb } from '@bangle.io/test-utils/fake-idb';
+import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 
 import { deleteWorkspace, workspacesSliceKey, WorkspaceType } from '..';
-import { helpFSWorkspaceInfo } from '../common';
+import { helpFSWorkspaceInfo, WORKSPACE_KEY } from '../common';
 import {
   createWorkspace,
   getWorkspaceInfo,
   listWorkspaces,
 } from '../operations';
 import { createStore } from './test-utils';
-import { goToLocation } from '@bangle.io/slice-page';
-
-const dateNow = Date.now;
 
 jest.mock('@bangle.io/slice-page', () => {
-  const remaining = jest.requireActual('@bangle.io/slice-page');
+  const remaining = Object.assign(
+    {},
+    jest.requireActual('@bangle.io/slice-page'),
+  );
   return {
     ...remaining,
-    getPageLocation: jest.fn(() => () => {}),
-    saveToHistoryState: jest.fn(() => () => {}),
-    goToLocation: jest.fn(() => () => {}),
+    goToLocation: jest.spyOn(remaining, 'goToLocation'),
   };
 });
 
-let goToLocationMock = goToLocation as jest.MockedFunction<typeof goToLocation>;
-
-beforeEach(() => {
-  mockBabyFs.mockStore.clear();
-  Date.now = jest.fn(() => 1);
-  goToLocationMock.mockImplementation(() => () => {});
+jest.mock('idb-keyval', () => {
+  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
+  return fakeIdb;
 });
+
+const dateNow = Date.now;
+let counter = 0;
+beforeEach(() => {
+  idbHelpers.beforeEachHook();
+  // This avoids the flakiness with ws deletion
+  Date.now = jest.fn(() => counter++);
+});
+
 afterEach(() => {
+  idbHelpers.afterEachHook();
+  clearFakeIdb();
   Date.now = dateNow;
 });
 
@@ -40,11 +46,11 @@ describe('listAllFiles', () => {
     const { store } = createStore();
 
     expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual([
-      helpFSWorkspaceInfo,
+      helpFSWorkspaceInfo(),
     ]);
   });
 
-  test('when a workspace exists', async () => {
+  test('cerating a workspace', async () => {
     const { store } = createStore();
 
     await createWorkspace('test-1', WorkspaceType['browser'])(
@@ -53,12 +59,14 @@ describe('listAllFiles', () => {
       store,
     );
 
+    expect(goToLocation).toBeCalledTimes(1);
+    expect(goToLocation).nthCalledWith(1, '/ws/test-1');
     expect(
       workspacesSliceKey.getSliceState(store.state)?.workspaceInfos,
     ).toMatchObject({
       'test-1': {
         deleted: false,
-        lastModified: Date.now(),
+        lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
         type: 'browser',
@@ -66,10 +74,10 @@ describe('listAllFiles', () => {
     });
 
     expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual([
-      helpFSWorkspaceInfo,
+      helpFSWorkspaceInfo(),
       {
         deleted: false,
-        lastModified: Date.now(),
+        lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
         type: 'browser',
@@ -94,9 +102,6 @@ describe('listAllFiles', () => {
       await listWorkspaces()(store.state, store.dispatch, store),
     ).toHaveLength(3);
 
-    // advance the clock, as it is needed for the deletion step
-    Date.now = jest.fn(() => 2);
-
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
     expect(
@@ -104,7 +109,7 @@ describe('listAllFiles', () => {
     ).toMatchObject({
       'test-1': {
         deleted: true,
-        lastModified: 2,
+        lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
         type: 'browser',
@@ -132,7 +137,7 @@ describe('createWorkspace', () => {
     ).toMatchObject({
       'test-1': {
         deleted: false,
-        lastModified: Date.now(),
+        lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
         type: 'browser',
@@ -185,7 +190,7 @@ describe('createWorkspace', () => {
       await getWorkspaceInfo('test-1')(store.state, store.dispatch, store),
     ).toEqual({
       deleted: false,
-      lastModified: 1,
+      lastModified: expect.any(Number),
       metadata: {
         rootDirHandle: { root: 'dummy' },
       },
@@ -204,6 +209,46 @@ describe('deleteWorkspace', () => {
     ).rejects.toThrowError(
       `WORKSPACE_NOT_FOUND_ERROR:Workspace test-1 not found`,
     );
+  });
+
+  test('deleting a workspace adds a delete field', async () => {
+    const { store } = createStore();
+    await createWorkspace('test-1', WorkspaceType['nativefs'], {
+      rootDirHandle: { root: 'dummy' },
+    })(store.state, store.dispatch, store);
+
+    syncPageLocation({ pathname: '/ws/test-1' })(store.state, store.dispatch);
+
+    await deleteWorkspace('test-1')(store.state, store.dispatch, store);
+
+    expect(await fakeIdb.get(WORKSPACE_KEY)).toEqual([
+      {
+        deleted: true,
+        lastModified: expect.any(Number),
+        metadata: {
+          rootDirHandle: {
+            root: 'dummy',
+          },
+        },
+        name: 'test-1',
+        type: 'nativefs',
+      },
+    ]);
+  });
+
+  test('takes to home page if deleting currently open workspace', async () => {
+    const { store } = createStore();
+    await createWorkspace('test-1', WorkspaceType['nativefs'], {
+      rootDirHandle: { root: 'dummy' },
+    })(store.state, store.dispatch, store);
+
+    syncPageLocation({ pathname: '/ws/test-1' })(store.state, store.dispatch);
+
+    await deleteWorkspace('test-1')(store.state, store.dispatch, store);
+
+    expect(goToLocation).toBeCalledTimes(2);
+    expect(goToLocation).nthCalledWith(1, '/ws/test-1');
+    expect(goToLocation).nthCalledWith(2, '/ws/bangle-help');
   });
 });
 

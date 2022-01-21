@@ -2,15 +2,22 @@ import {
   ApplicationStore,
   AppState,
   BaseAction,
-  Slice,
+  SliceArray,
 } from '@bangle.io/create-store';
 
 export function createTestStore<A extends BaseAction = any>(
-  slices: Slice<any, any>[],
+  slices: SliceArray<any, any>,
   opts = {},
   scheduler = (cb) => {
-    cb();
-    return () => {};
+    let destroyed = false;
+    Promise.resolve().then(() => {
+      if (!destroyed) {
+        cb();
+      }
+    });
+    return () => {
+      destroyed = true;
+    };
   },
 ): {
   store: ApplicationStore<any, A>;
@@ -18,7 +25,7 @@ export function createTestStore<A extends BaseAction = any>(
   actionsDispatched: BaseAction[];
 } {
   let actionsDispatched: BaseAction[] = [];
-  const store = ApplicationStore.create({
+  const store = ApplicationStore.create<any, any>({
     scheduler: scheduler,
     storeName: 'test-store',
     dispatchAction: (store, action) => {

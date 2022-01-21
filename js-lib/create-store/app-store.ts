@@ -220,7 +220,10 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
           if (this.actionSerializers[act]) {
             throw new Error(`A serializer for ${act} already exists`);
           }
-          this.actionSerializers[act] = actions[act](act);
+          const actionSerializers = actions[act];
+          if (actionSerializers) {
+            this.actionSerializers[act] = actionSerializers(act);
+          }
         }
       }
     }

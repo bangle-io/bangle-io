@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/shared-types",
+  "name": "@bangle.io/store-sync",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/shared-types"
+    "directory": "lib/store-sync"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -23,13 +23,11 @@
   },
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/create-store": "workspace:*",
+    "@bangle.io/utils": "workspace:*"
   },
   "devDependencies": {
-    "@bangle.dev/pm": "0.28.5",
-    "@bangle.io/extension-registry": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "type-fest": "^2.8.0"
+    "@bangle.io/test-utils": "workspace:*"
   },
   "license": "AGPL-3.0-or-later"
 }

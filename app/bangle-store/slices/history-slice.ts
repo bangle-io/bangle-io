@@ -170,7 +170,6 @@ export const saveWorkspaceInfoEffect: SliceSideEffect<
             return undefined;
           })
           .filter((r) => r);
-
         history.updateHistoryState({
           workspacesRootDir: result,
         });

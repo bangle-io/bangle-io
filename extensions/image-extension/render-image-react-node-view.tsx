@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import type { RenderReactNodeView } from '@bangle.io/extension-registry';
-import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { FileSystem } from '@bangle.io/slice-workspaces-manager';
+import { getFile, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { useDestroyRef } from '@bangle.io/utils';
 import { isValidFileWsPath, parseLocalFilePath } from '@bangle.io/ws-path';
 
@@ -31,6 +30,7 @@ export function ImageComponent({ nodeAttrs }) {
   const [imageSrc, updateImageSrc] = useState(null);
   const {
     openedWsPaths: { primaryWsPath },
+    bangleStore,
   } = useWorkspaceContext();
   const imageWsPath =
     primaryWsPath && !isOtherSources(inputSrc)
@@ -61,7 +61,11 @@ export function ImageComponent({ nodeAttrs }) {
         }
 
         if (imageWsPath) {
-          FileSystem.getFile(imageWsPath)
+          getFile(imageWsPath)(
+            bangleStore.state,
+            bangleStore.dispatch,
+            bangleStore,
+          )
             .then((file) => {
               if (!file) {
                 return;
@@ -91,7 +95,7 @@ export function ImageComponent({ nodeAttrs }) {
         window.URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [inputSrc, primaryWsPath, destroyRef, imageWsPath, width]);
+  }, [inputSrc, primaryWsPath, bangleStore, destroyRef, imageWsPath, width]);
 
   let newWidth = width;
   let newHeight = height;

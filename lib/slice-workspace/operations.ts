@@ -38,7 +38,6 @@ import {
   savePrevOpenedWsPathsToSearch,
   validateOpenedWsPaths,
 } from './helpers';
-import { getLastWorkspaceUsed } from './last-seen-ws-name';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};
@@ -235,6 +234,31 @@ export const createNote = (
     }
 
     return refreshWsPaths()(store.state, store.dispatch);
+  };
+};
+
+export const saveFile = (wsPath: string, file: File) => {
+  return async (
+    _: AppState,
+    dispatch: WorkspaceDispatchType,
+    store: ApplicationStore,
+  ) => {
+    const fileOps = wrapFileMethod()(store.state, store.dispatch);
+
+    await fileOps?.saveFile(wsPath, file);
+
+    return true;
+  };
+};
+
+export const getFile = (wsPath: string) => {
+  return async (
+    _: AppState,
+    dispatch: WorkspaceDispatchType,
+    store: ApplicationStore,
+  ) => {
+    const fileOps = wrapFileMethod()(store.state, store.dispatch);
+    return fileOps?.getFile(wsPath);
   };
 };
 
@@ -471,12 +495,6 @@ export const goToWorkspaceHomeRoute = ({
   replace = false,
 }: { replace?: boolean } = {}) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    const lastWsName = getLastWorkspaceUsed() || HELP_FS_WORKSPACE_NAME;
-    if (lastWsName) {
-      goToWsNameRoute(lastWsName, { replace })(state, dispatch);
-      return;
-    }
-
     goToLocation('/', { replace })(state, pageSliceKey.getDispatch(dispatch));
     return;
   };

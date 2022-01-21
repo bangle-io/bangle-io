@@ -1,25 +1,28 @@
-// Need to disable sort to make the mocking run first.
-// eslint-disable-next-line simple-import-sort/imports
-import mockBabyFs from '@bangle.io/test-utils/baby-fs-test-mock';
 import * as idb from 'idb-keyval';
 
+import { WorkspaceType } from '@bangle.io/constants';
+import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
+import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { sleep } from '@bangle.io/utils';
+
 import {
   createStore,
   createWsInfo,
   getActionNamesDispatched,
 } from './test-utils';
-import { WorkspaceType } from '..';
 
-jest.mock('@bangle.io/slice-page', () => {
-  const ops = jest.requireActual('@bangle.io/slice-page');
-  return {
-    ...ops,
-  };
+jest.mock('idb-keyval', () => {
+  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
+  return fakeIdb;
 });
 
 beforeEach(() => {
-  mockBabyFs.mockStore.clear();
+  idbHelpers.beforeEachHook();
+});
+
+afterEach(() => {
+  idbHelpers.afterEachHook();
+  clearFakeIdb();
 });
 
 describe('refreshWorkspacesEffect', () => {
