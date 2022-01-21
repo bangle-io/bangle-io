@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { BrowserHistory } from '@bangle.io/history';
 import {
   goToLocation,

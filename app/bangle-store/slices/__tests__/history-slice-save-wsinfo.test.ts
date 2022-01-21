@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { ApplicationStore } from '@bangle.io/create-store';
 import { BrowserHistory } from '@bangle.io/history';
 import { pageSlice } from '@bangle.io/slice-page';

@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { pageSlice } from '@bangle.io/slice-page';
 import {
   goToWsNameRoute,
@@ -32,10 +35,10 @@ describe('last seen workspace', () => {
   let originalLocalStorage;
 
   beforeEach(() => {
-    originalLocalStorage = window.localStorage;
+    originalLocalStorage = global.localStorage;
     let store = {};
 
-    Object.defineProperty(window, 'localStorage', {
+    Object.defineProperty(global, 'localStorage', {
       value: {
         getItem: jest.fn((key) => {
           return store[key] || null;
@@ -52,7 +55,7 @@ describe('last seen workspace', () => {
   });
 
   afterEach(() => {
-    (window as any).localStorage = originalLocalStorage;
+    (global as any).localStorage = originalLocalStorage;
   });
 
   describe('lastWorkspaceUsed functions', () => {
@@ -63,8 +66,8 @@ describe('last seen workspace', () => {
     test('works 1', () => {
       lastWorkspaceUsed.save('test-ws');
 
-      expect(window.localStorage.setItem).toBeCalledTimes(1);
-      expect(window.localStorage.setItem).nthCalledWith(
+      expect(global.localStorage.setItem).toBeCalledTimes(1);
+      expect(global.localStorage.setItem).nthCalledWith(
         1,
         'workspace-context/last-workspace-used',
         'test-ws',
@@ -72,12 +75,12 @@ describe('last seen workspace', () => {
 
       expect(lastWorkspaceUsed.get()).toBe('test-ws');
 
-      expect(window.localStorage.getItem).toBeCalledTimes(1);
+      expect(global.localStorage.getItem).toBeCalledTimes(1);
     });
   });
   describe('slice', () => {
     beforeEach(() => {
-      window.history.replaceState(null, '', '/');
+      global.history.replaceState(null, '', '/');
     });
     test('saves last workspace used', async () => {
       let { store } = createTestStore([
@@ -94,8 +97,8 @@ describe('last seen workspace', () => {
 
       await sleep(0);
 
-      expect(window.localStorage.setItem).toBeCalledTimes(1);
-      expect(window.localStorage.setItem).nthCalledWith(
+      expect(global.localStorage.setItem).toBeCalledTimes(1);
+      expect(global.localStorage.setItem).nthCalledWith(
         1,
         'workspace-context/last-workspace-used',
         'test-ws',
@@ -106,8 +109,8 @@ describe('last seen workspace', () => {
       goToWsNameRoute('test-ws2')(store.state, store.dispatch);
       await sleep(0);
 
-      expect(window.localStorage.setItem).toBeCalledTimes(2);
-      expect(window.localStorage.setItem).nthCalledWith(
+      expect(global.localStorage.setItem).toBeCalledTimes(2);
+      expect(global.localStorage.setItem).nthCalledWith(
         2,
         'workspace-context/last-workspace-used',
         'test-ws2',
