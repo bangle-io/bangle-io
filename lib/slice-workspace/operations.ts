@@ -476,10 +476,8 @@ export const pushWsPath = (
   secondary = false,
 ) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    if (newTab) {
-      if (typeof window !== 'undefined') {
-        window.open(wsPathToPathname(wsPath));
-      }
+    if (newTab && typeof window !== 'undefined') {
+      window.open(wsPathToPathname(wsPath));
       return true;
     }
     return updateOpenedWsPaths((openedWsPath) => {
@@ -514,10 +512,8 @@ export function goToWsNameRoute(
   } = {},
 ) {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    if (newTab) {
-      if (typeof window !== 'undefined') {
-        window.open(wsNameToPathname(wsName));
-      }
+    if (newTab && typeof window !== 'undefined') {
+      window.open(wsNameToPathname(wsName));
       return;
     }
 

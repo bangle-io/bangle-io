@@ -10,6 +10,7 @@ export const refreshWorkspacesEffect: SideEffect = () => {
     update(store, __, sliceState, prevSliceState) {
       const { workspaceInfos } = sliceState;
       const { workspaceInfos: prevWorkspaceInfos } = prevSliceState;
+
       if (workspaceInfos && workspaceInfos !== prevWorkspaceInfos) {
         saveWorkspacesInfo(store.state);
       }

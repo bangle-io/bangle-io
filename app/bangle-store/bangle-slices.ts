@@ -27,7 +27,7 @@ export type BangleActionTypes =
 export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
 function disableSideEffect(slice: Slice<any>) {
-  // slice.spec.sideEffect = undefined;
+  slice.spec.sideEffect = undefined;
   return slice;
 }
 
@@ -44,8 +44,8 @@ export function bangleStateSlices({
     naukarProxySlice(),
     ...workerSetupSlices(),
     disableSideEffect(workspacesSlice()),
+    disableSideEffect(workspaceSlice()),
     extensionRegistrySlice(),
-    workspaceSlice(),
     uiSlice(),
     editorManagerSlice(),
     saveStateSlice(),

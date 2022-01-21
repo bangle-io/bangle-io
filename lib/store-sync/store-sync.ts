@@ -201,12 +201,13 @@ export function storeSyncSlice<
                   ).serializeAction(action);
 
                   if (serializedAction) {
+                    log('sending message', action.name);
                     port.postMessage({
                       type: 'action',
                       action: serializedAction,
                     });
                   } else {
-                    log('No serialization found for ', action);
+                    log('No serialization found for ', action.name);
                   }
                 }
               }

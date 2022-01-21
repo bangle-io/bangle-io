@@ -5335,6 +5335,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
+            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
             ["@bangle.io/slice-workspaces-manager", "workspace:lib/slice-workspaces-manager"],
             ["@bangle.io/store-sync", "workspace:lib/store-sync"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],

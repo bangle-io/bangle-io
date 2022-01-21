@@ -43,5 +43,7 @@ export function initializeNaukarStore({
     },
   });
 
+  // (self as any)._store = store;
+
   return store;
 }

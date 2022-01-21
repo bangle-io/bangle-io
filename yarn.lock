@@ -3013,6 +3013,7 @@ __metadata:
     "@bangle.io/search-pm-node": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
+    "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/store-sync": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
