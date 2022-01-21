@@ -6,7 +6,7 @@ import {
 } from '@bangle.io/create-store';
 
 export function createTestStore<A extends BaseAction = any>(
-  slices: SliceArray,
+  slices: SliceArray<any, any>,
   opts = {},
   scheduler = (cb) => {
     let destroyed = false;

@@ -1,4 +1,4 @@
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { ApplicationStore, AppState, Slice } from '@bangle.io/create-store';
 import { pageSlice } from '@bangle.io/slice-page';
 
 import { WorkspaceInfo, WorkspaceType } from '../common';
@@ -6,7 +6,7 @@ import { workspacesSlice } from '../workspaces-slice';
 
 export const createState = () => {
   return AppState.create({
-    slices: [workspacesSlice(), pageSlice()],
+    slices: [workspacesSlice(), pageSlice()] as Slice[],
   });
 };
 

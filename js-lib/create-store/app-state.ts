@@ -3,12 +3,12 @@ import type { JsonObject, JsonValue } from 'type-fest';
 import type { BaseAction, Slice, SliceStateField } from './app-state-slice';
 
 class AppStateConfig<S, A extends BaseAction, Op> {
-  slices: SliceArray = [];
+  slices: SliceArray<S, A> = [];
   slicesByKey: { [k: string]: Slice<any, A, S> } = Object.create(null);
   fields: FieldDesc<S, A, Op>[] = [];
   opts?: Op;
 
-  constructor(slices: SliceArray, opts?: Op) {
+  constructor(slices: SliceArray<S, A>, opts?: Op) {
     this.opts = opts;
 
     slices.forEach((slice) => {
@@ -29,11 +29,11 @@ class AppStateConfig<S, A extends BaseAction, Op> {
 }
 
 export class AppState<S = any, A extends BaseAction = any, Op = any> {
-  static create<S = any, A extends BaseAction = any, Op = any>({
+  static create<S, A extends BaseAction, Op = any>({
     slices,
     opts,
   }: {
-    slices: Slice<any, any, any, any>[];
+    slices: SliceArray<S, A>;
     opts?: Op;
   }): AppState<S, A, Op> {
     const config = new AppStateConfig(slices, opts);
@@ -46,7 +46,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     return instance;
   }
 
-  static stateFromJSON<S = any, A extends BaseAction = any, Op = any>({
+  static stateFromJSON<S, A extends BaseAction = any, Op = any>({
     slices,
     json,
     // an object with a unique name for each
@@ -55,11 +55,11 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     sliceFields,
     opts,
   }: {
-    slices: SliceArray;
+    slices: SliceArray<S, A>;
     json: JsonValue;
     sliceFields: { [key: string]: Slice<any, any> };
     opts?: Op;
-  }): AppState<S, A, Op> {
+  }) {
     const config = new AppStateConfig(slices, opts);
     const instance = new AppState(config);
 
@@ -204,7 +204,7 @@ function bind(f?: Function, self?: object) {
   return !self || !f ? f : f.bind(self);
 }
 
-export type SliceArray = Array<Slice<any, any, any, any>>;
+export type SliceArray<S, A extends BaseAction> = Array<Slice<any, A, S>>;
 
 class FieldDesc<S, A extends BaseAction, Op> {
   init: (
@@ -219,7 +219,7 @@ class FieldDesc<S, A extends BaseAction, Op> {
       init: SliceStateField<any, any, S>['init'];
       apply?: SliceStateField<any, any, S>['apply'];
     },
-    self: SliceArray[0],
+    self: SliceArray<S, A>[0],
   ) {
     this.init = bind(desc.init, self);
 

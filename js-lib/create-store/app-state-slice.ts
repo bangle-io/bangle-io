@@ -77,7 +77,7 @@ export type SliceSideEffect<
 };
 
 export class Slice<
-  SL,
+  SL = any,
   A extends BaseAction = any,
   S = SL,
   C extends { [key: string]: any } = any,
