@@ -5,6 +5,7 @@ module.exports = {
     `<rootDir>/tooling/e2e`,
     `<rootDir>/tooling/playwright-e2e`,
   ],
+  testEnvironment: 'jsdom',
   transformIgnorePatterns: [],
   coverageReporters: ['json', 'lcov', 'text', 'clover'],
   coveragePathIgnorePatterns: [`<rootDir>/.yarn`],
