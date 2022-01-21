@@ -6,3 +6,5 @@ if (typeof DOMException === 'undefined') {
   // eslint-disable-next-line no-native-reassign
   global.DOMException = require('domexception');
 }
+
+console.debug = () => {};
