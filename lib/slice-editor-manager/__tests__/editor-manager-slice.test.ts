@@ -23,8 +23,15 @@ jest.mock('@bangle.io/utils', () => {
 let createStore = () =>
   ApplicationStore.create({
     scheduler: (cb) => {
-      cb();
-      return () => {};
+      let destroyed = false;
+      Promise.resolve().then(() => {
+        if (!destroyed) {
+          cb();
+        }
+      });
+      return () => {
+        destroyed = true;
+      };
     },
     storeName: 'editor-store',
     state: AppState.create({ slices: [editorManagerSlice()] }),

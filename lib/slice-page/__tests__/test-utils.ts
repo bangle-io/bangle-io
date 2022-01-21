@@ -17,8 +17,15 @@ export const createStore = () => {
   let actionsDispatched: BaseAction[] = [];
   const store = ApplicationStore.create({
     scheduler: (cb) => {
-      cb();
-      return () => {};
+      let destroyed = false;
+      Promise.resolve().then(() => {
+        if (!destroyed) {
+          cb();
+        }
+      });
+      return () => {
+        destroyed = true;
+      };
     },
     storeName: 'test-store',
     dispatchAction: (store, action) => {

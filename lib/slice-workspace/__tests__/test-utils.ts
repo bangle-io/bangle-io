@@ -46,8 +46,15 @@ export const noSideEffectsStore = (
 export const createStore = (
   data?: Parameters<typeof createState>[0],
   scheduler = (cb) => {
-    cb();
-    return () => {};
+    let destroyed = false;
+    Promise.resolve().then(() => {
+      if (!destroyed) {
+        cb();
+      }
+    });
+    return () => {
+      destroyed = true;
+    };
   },
   disableSideEffects = false,
 ) => {

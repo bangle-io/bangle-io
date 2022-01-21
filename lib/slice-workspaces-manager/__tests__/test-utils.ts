@@ -21,8 +21,15 @@ export const noSideEffectsStore = () => {
 
 export const createStore = (
   scheduler = (cb) => {
-    cb();
-    return () => {};
+    let destroyed = false;
+    Promise.resolve().then(() => {
+      if (!destroyed) {
+        cb();
+      }
+    });
+    return () => {
+      destroyed = true;
+    };
   },
   disableSideEffects = false,
 ) => {

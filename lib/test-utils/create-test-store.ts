@@ -9,8 +9,15 @@ export function createTestStore<A extends BaseAction = any>(
   slices: SliceArray,
   opts = {},
   scheduler = (cb) => {
-    cb();
-    return () => {};
+    let destroyed = false;
+    Promise.resolve().then(() => {
+      if (!destroyed) {
+        cb();
+      }
+    });
+    return () => {
+      destroyed = true;
+    };
   },
 ): {
   store: ApplicationStore<any, A>;

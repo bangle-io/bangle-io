@@ -211,7 +211,7 @@ describe('deleteWorkspace', () => {
     );
   });
 
-  test.only('deleting a workspace adds a delete field', async () => {
+  test('deleting a workspace adds a delete field', async () => {
     const { store } = createStore();
     await createWorkspace('test-1', WorkspaceType['nativefs'], {
       rootDirHandle: { root: 'dummy' },
