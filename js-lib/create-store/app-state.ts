@@ -29,7 +29,7 @@ class AppStateConfig<S, A extends BaseAction, Op> {
 }
 
 export class AppState<S = any, A extends BaseAction = any, Op = any> {
-  static create<S, A extends BaseAction, Op = any>({
+  static create<S = any, A extends BaseAction = any, Op = any>({
     slices,
     opts,
   }: {
@@ -46,7 +46,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     return instance;
   }
 
-  static stateFromJSON<S, A extends BaseAction = any, Op = any>({
+  static stateFromJSON<S = any, A extends BaseAction = any, Op = any>({
     slices,
     json,
     // an object with a unique name for each
@@ -59,7 +59,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     json: JsonValue;
     sliceFields: { [key: string]: Slice<any, any> };
     opts?: Op;
-  }) {
+  }): AppState<S, A, Op> {
     const config = new AppStateConfig(slices, opts);
     const instance = new AppState(config);
 
