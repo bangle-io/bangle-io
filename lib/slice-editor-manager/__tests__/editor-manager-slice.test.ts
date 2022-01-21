@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { Selection } from '@bangle.dev/pm';
 
 import { ApplicationStore, AppState } from '@bangle.io/create-store';

@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import type { JsonObject, JsonPrimitive } from '@bangle.io/shared-types';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
@@ -422,18 +425,18 @@ describe('initialSelectionEffect', () => {
 });
 
 describe('watchEditorScrollEffect', () => {
-  let origAddEventListener = window.addEventListener;
-  let origRemoveEventListener = window.removeEventListener;
+  let origAddEventListener = global.addEventListener;
+  let origRemoveEventListener = global.removeEventListener;
 
   beforeEach(() => {
-    window.addEventListener = jest.fn();
-    window.removeEventListener = jest.fn();
+    global.addEventListener = jest.fn();
+    global.removeEventListener = jest.fn();
     getScrollParentElementMock.mockImplementation(() => undefined);
   });
 
   afterEach(() => {
-    window.addEventListener = origAddEventListener;
-    window.removeEventListener = origRemoveEventListener;
+    global.addEventListener = origAddEventListener;
+    global.removeEventListener = origRemoveEventListener;
   });
 
   test('works', () => {
@@ -454,8 +457,8 @@ describe('watchEditorScrollEffect', () => {
       },
     });
 
-    expect(window.addEventListener).toBeCalledTimes(1);
-    expect(window.addEventListener).nthCalledWith(
+    expect(global.addEventListener).toBeCalledTimes(1);
+    expect(global.addEventListener).nthCalledWith(
       1,
       'scroll',
       expect.any(Function),
@@ -465,7 +468,7 @@ describe('watchEditorScrollEffect', () => {
       },
     );
 
-    const updateScroll = (window.addEventListener as any).mock.calls[0][1];
+    const updateScroll = (global.addEventListener as any).mock.calls[0][1];
 
     updateScroll();
 
@@ -495,8 +498,8 @@ describe('watchEditorScrollEffect', () => {
 
     store.destroy();
 
-    expect(window.addEventListener).toBeCalledTimes(1);
-    expect(window.removeEventListener).toBeCalledTimes(1);
+    expect(global.addEventListener).toBeCalledTimes(1);
+    expect(global.removeEventListener).toBeCalledTimes(1);
   });
 });
 

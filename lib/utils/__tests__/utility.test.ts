@@ -18,12 +18,12 @@ describe('shallowCompareArray', () => {
 });
 
 describe('exponentialBackoff', () => {
-  let originalSetTimeout = window.setTimeout;
+  let originalSetTimeout = global.setTimeout;
   beforeEach(() => {
-    (window as any).setTimeout = jest.fn((cb) => cb());
+    (global as any).setTimeout = jest.fn((cb) => cb());
   });
   afterEach(() => {
-    (window as any).setTimeout = originalSetTimeout;
+    (global as any).setTimeout = originalSetTimeout;
   });
 
   test('works', async () => {

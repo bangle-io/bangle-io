@@ -51,6 +51,7 @@ jest.mock('idb-keyval', () => {
   return idb;
 });
 const originalFile = global.File;
+const originalFetch = global.fetch;
 
 beforeEach(() => {
   mockStore?.clear();
@@ -70,6 +71,7 @@ beforeEach(() => {
 
 afterEach(() => {
   global.File = originalFile;
+  global.fetch = originalFetch;
 });
 
 test('writeFile', async () => {
