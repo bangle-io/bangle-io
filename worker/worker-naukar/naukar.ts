@@ -66,6 +66,15 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
       return true;
     },
 
+    async testGetStore() {
+      return store;
+    },
+
+    async testDestroyStore() {
+      store?.destroy();
+      store = undefined;
+    },
+
     testThrowError() {
       throw new Error('[worker] I am a testThrowError');
     },

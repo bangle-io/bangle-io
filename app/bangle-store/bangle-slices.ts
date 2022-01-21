@@ -27,7 +27,7 @@ export type BangleActionTypes =
 export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
 function disableSideEffect(slice: Slice<any>) {
-  // slice.spec.sideEffect = undefined;
+  slice.spec.sideEffect = undefined;
   return slice;
 }
 
@@ -38,14 +38,18 @@ export function bangleStateSlices({
   onUpdate?: (store: ApplicationStore) => void;
   extensionSlices: Slice<any>[];
 }) {
-  const pageBlock = [pageSlice(), historySlice(), pageLifeCycleSlice()];
+  const pageBlock = [
+    disableSideEffect(pageSlice()),
+    historySlice(),
+    pageLifeCycleSlice(),
+  ];
   return [
     ...pageBlock,
     naukarProxySlice(),
     ...workerSetupSlices(),
     disableSideEffect(workspacesSlice()),
+    disableSideEffect(workspaceSlice()),
     extensionRegistrySlice(),
-    workspaceSlice(),
     uiSlice(),
     editorManagerSlice(),
     saveStateSlice(),

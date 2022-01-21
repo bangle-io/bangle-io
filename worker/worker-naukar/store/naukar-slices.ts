@@ -1,5 +1,7 @@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import { pageSlice } from '@bangle.io/slice-page';
+import { workspaceSlice } from '@bangle.io/slice-workspace';
+import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 
 import { editorManagerSlice } from '../slices/editor-manager-slice';
 import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
@@ -7,9 +9,9 @@ import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
 export type NaukarActionTypes = {
   name: string;
 };
-export type NaukarSliceTypes = ReturnType<typeof naukarStateSlices>;
+export type NaukarSliceTypes = ReturnType<typeof naukarSlices>;
 
-export function naukarStateSlices({
+export function naukarSlices({
   onUpdate,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
@@ -17,7 +19,11 @@ export function naukarStateSlices({
   return [
     ...syncWithWindowSlices(),
     pageSlice(),
+    workspacesSlice(),
+    workspaceSlice(),
+
     editorManagerSlice(),
+
     // keep this at the end
     new Slice({
       sideEffect() {

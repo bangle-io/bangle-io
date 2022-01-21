@@ -191,8 +191,10 @@ export function storeSyncSlice<
 
             if (ready && sliceState.pendingActions.length > 0) {
               const { port } = configKey.getSliceStateAsserted(store.state);
+              const pendingActions = sliceState.pendingActions;
+              sliceState.pendingActions = [];
 
-              for (const action of sliceState.pendingActions) {
+              for (const action of pendingActions) {
                 // If an action has fromStore field, do not send it across as it
                 // was received from outside.
                 if (!action.fromStore) {
@@ -201,16 +203,16 @@ export function storeSyncSlice<
                   ).serializeAction(action);
 
                   if (serializedAction) {
+                    log('sending message', action.name);
                     port.postMessage({
                       type: 'action',
                       action: serializedAction,
                     });
                   } else {
-                    log('No serialization found for ', action);
+                    log('No serialization found for ', action.name);
                   }
                 }
               }
-              sliceState.pendingActions = [];
             }
           },
         };

@@ -2,7 +2,7 @@
 
 import lifecycle from 'page-lifecycle';
 
-import { Slice } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
 import {
   PageLifeCycleState,
   pageSliceKey,
@@ -19,8 +19,11 @@ type PageLifeCycleEvent = {
   oldState: PageLifeCycleState;
 };
 
+const key = new SliceKey('pageLifeCycleSlice');
+
 export function pageLifeCycleSlice() {
   return new Slice({
+    key: key,
     sideEffect: [
       function watchPageLifeCycleEffect() {
         return {

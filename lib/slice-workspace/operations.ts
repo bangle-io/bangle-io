@@ -336,6 +336,9 @@ export function workspaceHandleError(wsName: string, error: Error) {
 }
 
 // Navigation ops
+
+// This is to be called whenever knows when search and pathname have changed
+// Currently this is called `updateLocationEffect`, and should only be called by that
 export const syncPageLocation = ({
   search,
   pathname,
@@ -476,10 +479,8 @@ export const pushWsPath = (
   secondary = false,
 ) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    if (newTab) {
-      if (typeof window !== 'undefined') {
-        window.open(wsPathToPathname(wsPath));
-      }
+    if (newTab && typeof window !== 'undefined') {
+      window.open(wsPathToPathname(wsPath));
       return true;
     }
     return updateOpenedWsPaths((openedWsPath) => {
@@ -514,10 +515,8 @@ export function goToWsNameRoute(
   } = {},
 ) {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    if (newTab) {
-      if (typeof window !== 'undefined') {
-        window.open(wsNameToPathname(wsName));
-      }
+    if (newTab && typeof window !== 'undefined') {
+      window.open(wsNameToPathname(wsName));
       return;
     }
 

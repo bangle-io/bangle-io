@@ -3,7 +3,7 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import type { NaukarStateConfig } from '@bangle.io/shared-types';
 
-import { naukarStateSlices } from './naukar-state-slices';
+import { naukarSlices } from './naukar-slices';
 
 const LOG = false;
 let log = LOG ? console.debug.bind(console, 'naukar-store') : () => {};
@@ -27,13 +27,13 @@ export function initializeNaukarStore({
     storeName: WORKER_STORE_NAME,
     state: AppState.create({
       opts,
-      slices: naukarStateSlices({ onUpdate }),
+      slices: naukarSlices({ onUpdate }),
     }),
     dispatchAction: (store, action) => {
       log(action);
       let newState = store.state.applyAction(action);
       store.updateState(newState);
-      log(newState);
+      // log(newState);
     },
     scheduler: (cb) => {
       const id = setTimeout(cb, MAX_DEFERRED_WAIT_TIME);
@@ -42,6 +42,9 @@ export function initializeNaukarStore({
       };
     },
   });
+
+  // eslint-disable-next-line no-restricted-globals
+  (self as any)._store = store;
 
   return store;
 }
