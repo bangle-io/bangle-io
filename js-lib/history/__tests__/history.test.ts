@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { BrowserHistory } from '../browser-history';
 
 describe('browser-history', () => {

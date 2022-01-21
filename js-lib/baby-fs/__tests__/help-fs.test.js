@@ -40,13 +40,13 @@ jest.mock('idb-keyval', () => {
   });
   return idb;
 });
-const originalFile = window.File;
+const originalFile = global.File;
 
 beforeEach(() => {
   mockStore?.clear();
   mockMetaStore?.clear();
-  window.fetch = undefined;
-  window.File = class File {
+  global.fetch = undefined;
+  global.File = class File {
     constructor(content, fileName, opts) {
       this.content = content;
       this.fileName = fileName;
@@ -59,7 +59,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  window.File = originalFile;
+  global.File = originalFile;
 });
 
 test('readFileAsText', async () => {

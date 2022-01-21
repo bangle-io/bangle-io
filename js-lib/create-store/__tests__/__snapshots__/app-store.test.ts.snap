@@ -82,7 +82,14 @@ ApplicationStore {
   },
   "actionSerializers": Object {},
   "currentRunId": 0,
-  "destroyController": AbortController {},
+  "destroyController": AbortController {
+    Symbol(signal): AbortSignal {
+      Symbol(kEvents): Map {},
+      Symbol(events.maxEventTargetListeners): 10,
+      Symbol(events.maxEventTargetListenersWarned): false,
+      Symbol(kAborted): true,
+    },
+  },
   "destroyed": true,
   "disableSideEffects": false,
   "dispatch": [Function],
@@ -174,7 +181,14 @@ ApplicationStore {
   },
   "actionSerializers": Object {},
   "currentRunId": 0,
-  "destroyController": AbortController {},
+  "destroyController": AbortController {
+    Symbol(signal): AbortSignal {
+      Symbol(kEvents): Map {},
+      Symbol(events.maxEventTargetListeners): 10,
+      Symbol(events.maxEventTargetListenersWarned): false,
+      Symbol(kAborted): false,
+    },
+  },
   "destroyed": false,
   "disableSideEffects": false,
   "dispatch": [Function],
@@ -242,7 +256,14 @@ ApplicationStore {
   },
   "actionSerializers": Object {},
   "currentRunId": 0,
-  "destroyController": AbortController {},
+  "destroyController": AbortController {
+    Symbol(signal): AbortSignal {
+      Symbol(kEvents): Map {},
+      Symbol(events.maxEventTargetListeners): 10,
+      Symbol(events.maxEventTargetListenersWarned): false,
+      Symbol(kAborted): false,
+    },
+  },
   "destroyed": false,
   "disableSideEffects": false,
   "dispatch": [Function],
@@ -326,7 +347,14 @@ ApplicationStore {
   },
   "actionSerializers": Object {},
   "currentRunId": 0,
-  "destroyController": AbortController {},
+  "destroyController": AbortController {
+    Symbol(signal): AbortSignal {
+      Symbol(kEvents): Map {},
+      Symbol(events.maxEventTargetListeners): 10,
+      Symbol(events.maxEventTargetListenersWarned): false,
+      Symbol(kAborted): false,
+    },
+  },
   "destroyed": false,
   "disableSideEffects": false,
   "dispatch": [Function],

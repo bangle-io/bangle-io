@@ -1,4 +1,11 @@
+import crossFetch from 'cross-fetch';
+
 import { GithubReadFileSystem } from '../github-read-fs';
+
+global.fetch = crossFetch;
+global.Response = crossFetch.Response;
+global.Headers = crossFetch.Headers;
+global.Request = crossFetch.Request;
 
 let mockStore = new Map();
 let mockMetaStore = new Map();
@@ -43,13 +50,13 @@ jest.mock('idb-keyval', () => {
   });
   return idb;
 });
-const originalFile = window.File;
+const originalFile = global.File;
 
 beforeEach(() => {
   mockStore?.clear();
   mockMetaStore?.clear();
-  window.fetch = undefined;
-  window.File = class File {
+  global.fetch = undefined;
+  global.File = class File {
     constructor(content, fileName, opts) {
       this.content = content;
       this.fileName = fileName;
@@ -62,7 +69,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  window.File = originalFile;
+  global.File = originalFile;
 });
 
 test('writeFile', async () => {
@@ -93,7 +100,7 @@ test('writeFile', async () => {
 });
 
 test('readFile from github', async () => {
-  window.fetch = jest.fn(async () => {
+  global.fetch = jest.fn(async () => {
     return {
       ok: true,
       status: 200,
@@ -110,8 +117,8 @@ test('readFile from github', async () => {
 
   const data = await fs.readFile(filePath);
 
-  expect(window.fetch).toHaveBeenCalledTimes(1);
-  expect(window.fetch).nthCalledWith(
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(global.fetch).nthCalledWith(
     1,
     `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${githubBranch}/hi`,
   );
@@ -119,7 +126,7 @@ test('readFile from github', async () => {
 });
 
 test('readFile from github 404s', async () => {
-  window.fetch = jest.fn(async () => {
+  global.fetch = jest.fn(async () => {
     return {
       ok: false,
       status: 404,
@@ -139,15 +146,15 @@ test('readFile from github 404s', async () => {
   await expect(data).rejects.toMatchInlineSnapshot(
     `[GithubReadFileSystemError: BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi not found]`,
   );
-  expect(window.fetch).toHaveBeenCalledTimes(1);
-  expect(window.fetch).nthCalledWith(
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(global.fetch).nthCalledWith(
     1,
     `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${githubBranch}/hi`,
   );
 });
 
 test('readFile from github with non 404s', async () => {
-  window.fetch = jest.fn(async () => {
+  global.fetch = jest.fn(async () => {
     return {
       ok: false,
       status: 403,
@@ -169,15 +176,15 @@ test('readFile from github with non 404s', async () => {
   await expect(data).rejects.toMatchInlineSnapshot(
     `[GithubReadFileSystemError: BABY_FS_UPSTREAM_ERROR:Encountered an error making request to github]`,
   );
-  expect(window.fetch).toHaveBeenCalledTimes(1);
-  expect(window.fetch).nthCalledWith(
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(global.fetch).nthCalledWith(
     1,
     `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${githubBranch}/hi`,
   );
   console.error = originalConsoleError;
 });
 test('doesnt readFile from github if one already exists', async () => {
-  window.fetch = jest.fn(async () => {});
+  global.fetch = jest.fn(async () => {});
   const filePath = 'hola/hi';
   const fs = new GithubReadFileSystem({
     githubBranch,
@@ -189,7 +196,7 @@ test('doesnt readFile from github if one already exists', async () => {
 
   const data = await fs.readFile(filePath);
 
-  expect(window.fetch).toHaveBeenCalledTimes(0);
+  expect(global.fetch).toHaveBeenCalledTimes(0);
   expect(data).toMatchInlineSnapshot(`
     File {
       "content": Array [
@@ -210,7 +217,7 @@ test('opendirRecursive hits correct .bangle/files.json', async () => {
     githubOwner,
   });
 
-  window.fetch = jest.fn(async () => {
+  global.fetch = jest.fn(async () => {
     return {
       ok: true,
       json: () => ['other-file'],
@@ -225,8 +232,8 @@ test('opendirRecursive hits correct .bangle/files.json', async () => {
       "/other-file",
     ]
   `);
-  expect(window.fetch).toBeCalledTimes(1);
-  expect(window.fetch).nthCalledWith(
+  expect(global.fetch).toBeCalledTimes(1);
+  expect(global.fetch).nthCalledWith(
     1,
     `https://raw.githubusercontent.com/fake-owner/fake-repo/master/.bangle/files.json`,
   );
@@ -239,7 +246,7 @@ test('opendirRecursive hits github api if no .bangle/files.json', async () => {
     githubOwner,
   });
 
-  window.fetch = jest.fn(async (url) => {
+  global.fetch = jest.fn(async (url) => {
     if (url.endsWith('files.json')) {
       return {
         okay: false,
@@ -263,13 +270,13 @@ test('opendirRecursive hits github api if no .bangle/files.json', async () => {
       "/some/path/in/tree",
     ]
   `);
-  expect(window.fetch).toBeCalledTimes(2);
-  expect(window.fetch).nthCalledWith(
+  expect(global.fetch).toBeCalledTimes(2);
+  expect(global.fetch).nthCalledWith(
     1,
     `https://raw.githubusercontent.com/fake-owner/fake-repo/master/.bangle/files.json`,
   );
 
-  expect(window.fetch).nthCalledWith(
+  expect(global.fetch).nthCalledWith(
     2,
     'https://api.github.com/repos/fake-owner/fake-repo/git/trees/master?recursive=true',
     {
@@ -287,7 +294,7 @@ test('_allowedFile works', async () => {
     allowedFile: (file) => file.endsWith('.md'),
   });
 
-  window.fetch = jest.fn(async () => {
+  global.fetch = jest.fn(async () => {
     return {
       ok: true,
       json: () => ['other-file.md', 'good.exe'],
