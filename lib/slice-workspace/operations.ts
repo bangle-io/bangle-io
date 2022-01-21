@@ -336,6 +336,9 @@ export function workspaceHandleError(wsName: string, error: Error) {
 }
 
 // Navigation ops
+
+// This is to be called whenever knows when search and pathname have changed
+// Currently this is called `updateLocationEffect`, and should only be called by that
 export const syncPageLocation = ({
   search,
   pathname,

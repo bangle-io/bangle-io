@@ -1,9 +1,5 @@
-import {
-  blockReload,
-  pageSlice,
-  syncPageLocation,
-} from '@bangle.io/slice-page';
-import { workspaceSlice } from '@bangle.io/slice-workspace';
+import { blockReload, pageSlice } from '@bangle.io/slice-page';
+import { workspaceSlice, workspaceSliceKey } from '@bangle.io/slice-workspace';
 import {
   listWorkspaces,
   workspacesSlice,
@@ -42,14 +38,6 @@ jest.mock('@bangle.io/utils', () => {
   return {
     ...rest,
     exponentialBackoff: noWaitExponentialBackoff,
-  };
-});
-
-jest.mock('@bangle.io/constants', () => {
-  const rest = jest.requireActual('@bangle.io/constants');
-  return {
-    ...rest,
-    workerSyncWhiteListedActions: ['action::'],
   };
 });
 
@@ -325,14 +313,23 @@ test('sends workspace slice action correctly', async () => {
 
   const dispatchSpy = jest.spyOn(workerStore, 'dispatch');
 
-  syncPageLocation({ pathname: '/ws/test-1' })(store.state, store.dispatch);
+  workspaceSliceKey.getDispatch(store.dispatch)({
+    name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
+    value: {
+      wsName: 'test-ws',
+      recentlyUsedWsPaths: [],
+    },
+  });
 
   await sleep(0);
 
   expect(dispatchSpy).toBeCalledWith({
     fromStore: 'test-store',
     id: expect.any(String),
-    name: 'action::@bangle.io/slice-page:history-update-location',
-    value: expect.anything(),
+    name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
+    value: {
+      wsName: 'test-ws',
+      recentlyUsedWsPaths: [],
+    },
   });
 });

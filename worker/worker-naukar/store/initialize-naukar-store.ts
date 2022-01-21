@@ -43,7 +43,8 @@ export function initializeNaukarStore({
     },
   });
 
-  // (self as any)._store = store;
+  // eslint-disable-next-line no-restricted-globals
+  (self as any)._store = store;
 
   return store;
 }
