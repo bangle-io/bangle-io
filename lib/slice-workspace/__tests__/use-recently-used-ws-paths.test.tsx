@@ -51,9 +51,11 @@ jest.mock('@bangle.io/slice-workspaces-manager', () => {
     getWorkspaceInfo: jest.fn(() => {}),
   };
 });
-const getPageLocationMock = getPageLocation as jest.MockedFunction<
-  typeof getPageLocation
->;
+const location = {};
+
+const getPageLocationMock = jest
+  .mocked(getPageLocation)
+  .mockImplementation(() => () => location);
 
 const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
   typeof getWorkspaceInfo

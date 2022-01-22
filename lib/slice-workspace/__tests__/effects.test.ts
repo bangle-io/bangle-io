@@ -190,9 +190,9 @@ describe('saveWorkspaceInfoEffect', () => {
     });
     await sleep(0);
 
-    expect(getActionNamesDispatched(dispatchSpy)).toEqual([
+    expect(getActionNamesDispatched(dispatchSpy)).toContain(
       'action::@bangle.io/slice-workspace:sync-page-location',
-    ]);
+    );
 
     // an other action doesn't trigger the hook
     store.dispatch({

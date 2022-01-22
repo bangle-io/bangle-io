@@ -27,7 +27,9 @@ export class MemoryHistory extends BaseHistory {
 
     if (!isLocationEqual(newLoc, this.currentLoc)) {
       this.currentLoc = newLoc;
-      this.onChange(newLoc);
+      Promise.resolve().then(() => {
+        this.onChange(newLoc);
+      });
     }
   }
 
