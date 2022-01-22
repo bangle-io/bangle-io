@@ -28,9 +28,25 @@ jest.mock('@bangle.io/slice-workspace', () => {
 });
 
 jest.mock('@bangle.io/utils', () => {
+  const actual = jest.requireActual('@bangle.io/utils');
+  let counter = 0;
+  let destroyMap = new Map();
+
   return {
-    ...jest.requireActual('@bangle.io/utils'),
+    ...actual,
     getEditorPluginMetadata: jest.fn(),
+    safeRequestIdleCallback: jest.fn((cb) => {
+      let c = counter++;
+      destroyMap.set(c, false);
+      Promise.resolve().then(() => {
+        if (destroyMap.get(c) === false) {
+          cb();
+        }
+      });
+    }),
+    safeCancelIdleCallback: jest.fn((id) => {
+      destroyMap.set(id, true);
+    }),
   };
 });
 
@@ -79,6 +95,8 @@ describe('BacklinkNode', () => {
       />,
     );
 
+    await sleep(0);
+
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
@@ -123,6 +141,7 @@ describe('BacklinkNode', () => {
         view={editorView}
       />,
     );
+    await sleep(0);
 
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>

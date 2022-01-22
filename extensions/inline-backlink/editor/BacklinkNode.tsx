@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { EditorView } from '@bangle.dev/pm';
 
@@ -16,6 +16,8 @@ import {
   conditionalSuffix,
   cx,
   getEditorPluginMetadata,
+  safeCancelIdleCallback,
+  safeRequestIdleCallback,
 } from '@bangle.io/utils';
 import {
   filePathToWsPath,
@@ -97,10 +99,30 @@ export function BacklinkNode({
     [backlinkPath, noteWsPaths, primaryWsPath, wsName, bangleStore],
   );
 
-  const backlinksWsPath =
-    wsName &&
-    noteWsPaths &&
-    getMatchingWsPath(wsName, backlinkPath, noteWsPaths);
+  const [backlinksWsPath, updateBacklinksWsPath] = useState<string | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    let timer: undefined | ReturnType<typeof safeRequestIdleCallback> =
+      undefined;
+
+    if (wsName && noteWsPaths) {
+      timer = safeRequestIdleCallback(
+        () => {
+          updateBacklinksWsPath(
+            getMatchingWsPath(wsName, backlinkPath, noteWsPaths),
+          );
+        },
+        { timeout: 250 },
+      );
+    }
+    return () => {
+      if (timer !== undefined) {
+        safeCancelIdleCallback(timer);
+      }
+    };
+  }, [wsName, noteWsPaths, backlinkPath]);
 
   const disablePopup = editorDisplayType === EditorDisplayType.Popup;
 
@@ -253,7 +275,7 @@ function getMatchingWsPath(wsName: string, path: string, allWsPaths: string[]) {
 
     const matches = allWsPaths
       .filter((w) => {
-        const { fileName } = resolvePath(w);
+        const { fileName } = resolvePath(w, true);
         return comparator(fileName, path);
       })
       .sort((a, b) => {
