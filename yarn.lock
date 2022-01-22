@@ -14787,8 +14787,10 @@ __metadata:
   dependencies:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/test-utils": "workspace:*"
     date-fns: ^2.25.0
     domexception: ^4.0.0
+    idb-keyval: ^5.1.5
     prettier: ^2.4.1
   languageName: unknown
   linkType: soft
