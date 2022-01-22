@@ -40,41 +40,29 @@ jest.mock('@bangle.io/slice-workspaces-manager', () => {
     getWorkspaceInfo: jest.fn(() => () => {}),
   };
 });
+const mockLocation = {
+  search: '',
+  pathname: '',
+};
 
-const refreshWsPathsMock = refreshWsPaths as jest.MockedFunction<
-  typeof refreshWsPaths
->;
-const goToInvalidPathRouteMock = goToInvalidPathRoute as jest.MockedFunction<
-  typeof goToInvalidPathRoute
->;
-const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
-  typeof getWorkspaceInfo
->;
+const refreshWsPathsMock = jest
+  .mocked(refreshWsPaths)
+  .mockImplementation(() => () => true);
 
-const getPageLocationMock = getPageLocation as jest.MockedFunction<
-  typeof getPageLocation
->;
-const updateLocationMock = syncPageLocation as jest.MockedFunction<
-  typeof syncPageLocation
->;
+const getPageLocationMock = jest
+  .mocked(getPageLocation)
+  .mockImplementation(() => () => mockLocation);
 
-beforeEach(() => {
-  refreshWsPathsMock.mockImplementation(() => () => true);
-  updateLocationMock.mockImplementation(() => () => true);
-  goToInvalidPathRouteMock.mockImplementation(() => () => {});
-  getWorkspaceInfoMock.mockImplementation(() => async () => ({
-    name: 'test-ws',
-    type: WorkspaceType.browser,
-    metadata: {},
-    lastModified: 1,
-  }));
+jest.mocked(goToInvalidPathRoute).mockImplementation(() => () => {});
 
-  const location = {
-    search: '',
-    pathname: '',
-  };
-  getPageLocationMock.mockImplementation(() => () => location);
-});
+jest.mocked(getWorkspaceInfo).mockImplementation(() => async () => ({
+  name: 'test-ws',
+  type: WorkspaceType.browser,
+  metadata: {},
+  lastModified: 1,
+}));
+
+jest.mocked(syncPageLocation).mockImplementation(() => () => true);
 
 describe('refreshWsPathsEffect', () => {
   test('deferredUpdate: calls refresh in deferred update', async () => {

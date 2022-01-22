@@ -1,5 +1,4 @@
 import { BaseAction } from '@bangle.io/create-store';
-import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
 
 import { WorkspacesSliceAction } from '../common';
 import { createStore, createWsInfo } from './test-utils';

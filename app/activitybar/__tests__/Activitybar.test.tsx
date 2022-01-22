@@ -21,19 +21,21 @@ let changeSidebarMock = changeSidebar as jest.MockedFunction<
   typeof changeSidebar
 >;
 
-beforeEach(() => {
-  (useUIManagerContext as any).mockImplementation(() => {
-    return {
-      changelogHasUpdates: false,
-      sidebar: undefined,
-      dispatch: () => {},
-      widescreen: true,
-    };
-  });
-
-  const changeSidebarRet = jest.fn();
-  changeSidebarMock.mockImplementation(() => changeSidebarRet);
+(useUIManagerContext as any).mockImplementation(() => {
+  return {
+    changelogHasUpdates: false,
+    sidebar: undefined,
+    dispatch: () => {},
+    widescreen: true,
+  };
 });
+
+const changeSidebarRet = jest.fn();
+changeSidebarMock.mockImplementation(() => changeSidebarRet);
+
+// beforeEach(() => {
+
+// });
 
 test('renders when no sidebars', () => {
   let result = render(
