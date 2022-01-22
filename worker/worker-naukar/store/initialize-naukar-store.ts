@@ -8,7 +8,7 @@ import { naukarSlices } from './naukar-slices';
 const LOG = false;
 let log = LOG ? console.debug.bind(console, 'naukar-store') : () => {};
 
-const MAX_DEFERRED_WAIT_TIME = 200;
+const MAX_DEFERRED_WAIT_TIME = 30;
 
 export function initializeNaukarStore({
   port,

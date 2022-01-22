@@ -119,16 +119,10 @@ export function BacklinkNode({
     }
     return () => {
       if (timer !== undefined) {
-        console.log('canceling');
         safeCancelIdleCallback(timer);
       }
     };
   }, [wsName, noteWsPaths, backlinkPath]);
-
-  // const backlinksWsPath =
-  //   wsName &&
-  //   noteWsPaths &&
-  //   getMatchingWsPath(wsName, backlinkPath, noteWsPaths);
 
   const disablePopup = editorDisplayType === EditorDisplayType.Popup;
 
@@ -292,7 +286,6 @@ function getMatchingWsPath(wsName: string, path: string, allWsPaths: string[]) {
     return matches[0];
   }
 
-  console.time('start');
   let match = _findMatch(wsName, path, allWsPaths);
   if (!match) {
     // Fall back to case insensitive if no exact match
@@ -303,8 +296,6 @@ function getMatchingWsPath(wsName: string, path: string, allWsPaths: string[]) {
       (a, b) => a.toLocaleLowerCase() === b.toLocaleLowerCase(),
     );
   }
-
-  console.timeEnd('start');
 
   return match;
 }

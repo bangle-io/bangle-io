@@ -34,7 +34,7 @@ export function fzfSearchNoteWsPaths(
       const chunk = wsPaths.slice(i, i + CHUNK_SIZE);
       const fzf = new Fzf(chunk, {
         limit: limit,
-        selector: (item) => resolvePath(item).filePath,
+        selector: (item) => resolvePath(item, true).filePath,
         tiebreakers: [byLengthAsc],
       });
 
