@@ -4,80 +4,83 @@
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
 import { searchPmNode } from '@bangle.io/search-pm-node';
 import {
-  FileSystem,
-  fzfSearchNoteWsPaths,
-} from '@bangle.io/slice-workspaces-manager';
-import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
+  createBasicStore,
+  setupMockWorkspaceWithNotes,
+} from '@bangle.io/test-basic-store';
 
 import { abortableServices } from '../abortable-services';
 
-jest.mock('@bangle.io/search-pm-node');
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  return {
-    FileSystem: {
-      listAllNotes: jest.fn(async () => []),
-      listAllFiles: jest.fn(async () => []),
-      getDoc: jest.fn(async () => {}),
-      getFile: jest.fn(async () => {}),
-    },
-    fzfSearchNoteWsPaths: jest.fn(async () => {}),
-  };
+jest.mock('@zip.js/zip.js/dist/zip-no-worker.min.js');
+
+jest.mock('@bangle.io/search-pm-node', () => {
+  const rest = Object.assign(
+    {},
+    jest.requireActual('@bangle.io/search-pm-node'),
+  );
+  const searchPmNode = jest.spyOn(rest, 'searchPmNode');
+
+  return { ...rest, searchPmNode };
 });
 
 let setup = () => {
-  let registry = createExtensionRegistry([], { editorCore: true });
+  const { store } = createBasicStore();
+
   let services = mainInjectAbortableProxy(
-    abortableServices({ extensionRegistry: registry }),
+    abortableServices({
+      storeRef: { current: store },
+    }),
   );
-  return { registry, services };
+
+  return { store, services };
 };
-
-let listAllNotesMock = FileSystem.listAllNotes as jest.MockedFunction<
-  typeof FileSystem.listAllNotes
->;
-let listAllFilesMock = FileSystem.listAllFiles as jest.MockedFunction<
-  typeof FileSystem.listAllFiles
->;
-let getDocMock = FileSystem.getDoc as jest.MockedFunction<
-  typeof FileSystem.getDoc
->;
-
-let getFileMock = FileSystem.getFile as jest.MockedFunction<
-  typeof FileSystem.getFile
->;
 
 const textToFile = (str = 'hello world', fileName = 'foo.txt') => {
   var file = new File([str], fileName, { type: 'text/plain' });
   return file;
 };
 
-beforeEach(() => {
-  listAllNotesMock.mockImplementation(async () => []);
-  listAllFilesMock.mockImplementation(async () => []);
-  getFileMock.mockImplementation(async () => textToFile());
-  getDocMock.mockImplementation(async () => {
-    return {} as any;
-  });
-});
-
 describe('searchWsForPmNode', () => {
   test('works', async () => {
-    listAllNotesMock.mockResolvedValue(['test-ws:my-file.md']);
-    let { services } = setup();
+    let { services, store } = setup();
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws', [
+      ['test-ws:my-file.md', `hello world\n wow magic link`],
+    ]);
+
     const controller = new AbortController();
-    await services.abortableSearchWsForPmNode(
+    const result = await services.abortableSearchWsForPmNode(
       controller.signal,
       'test-ws',
-      'backlink:*',
+      'magic',
       [],
       {},
     );
+
+    expect(result).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "matches": Array [
+            Object {
+              "match": Array [
+                "hello world
+      wow ",
+                "magic",
+                " link",
+              ],
+              "parent": "paragraph",
+              "parentPos": 0,
+            },
+          ],
+          "uid": "test-ws:my-file.md",
+        },
+      ]
+    `);
 
     expect(searchPmNode).toBeCalledTimes(1);
     expect(searchPmNode).nthCalledWith(
       1,
       expect.any(AbortSignal),
-      'backlink:*',
+      'magic',
       ['test-ws:my-file.md'],
       expect.any(Function),
       [],
@@ -88,36 +91,50 @@ describe('searchWsForPmNode', () => {
 
 describe('abortableFzfSearchNoteWsPaths', () => {
   test('works', async () => {
-    listAllNotesMock.mockResolvedValue([
-      'test-ws:my-file.md',
-      'test-ws:rando.md',
+    let { services, store } = setup();
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws', [
+      ['test-ws:my-file.md', `hello world\n wow 1 `],
+      ['test-ws:rando.md', `hello world\n wow 2 `],
     ]);
-    let { services } = setup();
+
     const controller = new AbortController();
-    await services.abortableFzfSearchNoteWsPaths(
+    const result = await services.abortableFzfSearchNoteWsPaths(
       controller.signal,
       'test-ws',
       'my-file',
     );
-    expect(fzfSearchNoteWsPaths).toBeCalledTimes(1);
-    expect(fzfSearchNoteWsPaths).nthCalledWith(
-      1,
-      expect.any(AbortSignal),
-      'test-ws',
-      'my-file',
-    );
+    expect(result).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "end": 7,
+          "item": "test-ws:my-file.md",
+          "positions": Set {
+            6,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0,
+          },
+          "score": 176,
+          "start": 0,
+        },
+      ]
+    `);
   });
 });
 
 describe('abortableBackupAllFiles', () => {
   test('works', async () => {
-    listAllNotesMock.mockResolvedValue([
-      'test-ws:my-file.md',
-      'test-ws:rando.md',
-    ]);
-    getFileMock.mockResolvedValue(textToFile('hi', 'file.md'));
+    let { services, store } = setup();
 
-    let { services } = setup();
+    await setupMockWorkspaceWithNotes(store, 'test-ws', [
+      ['test-ws:my-file.md', `hello world\n wow 1 `],
+      ['test-ws:rando.md', `hello world\n wow 2 `],
+    ]);
+
     const controller = new AbortController();
     await services.abortableBackupAllFiles(controller.signal, 'test-ws');
   });

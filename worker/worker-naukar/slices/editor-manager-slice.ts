@@ -10,7 +10,11 @@ import {
   pageLifeCycleTransitionedTo,
   pageSliceKey,
 } from '@bangle.io/slice-page';
-import { FileSystem } from '@bangle.io/slice-workspaces-manager';
+import {
+  getNote,
+  saveDoc,
+  workspaceSliceKey,
+} from '@bangle.io/slice-workspace';
 import { asssertNotUndefined } from '@bangle.io/utils';
 
 import { setupCollabManager } from '../collab-manager';
@@ -129,16 +133,22 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
     deferredOnce(store, abortSignal) {
       const { extensionRegistry } = config;
       const getItem = async (wsPath) => {
-        const doc = await FileSystem.getDoc(
-          wsPath,
-          extensionRegistry.specRegistry,
-          extensionRegistry.markdownItPlugins,
+        const doc = await getNote(wsPath)(
+          store.state,
+          workspaceSliceKey.getDispatch(store.dispatch),
         );
+        if (!doc) {
+          throw new Error(`Note ${wsPath} not found`);
+        }
         return doc;
       };
 
       const setItem = async (wsPath: string, doc: Node) => {
-        await FileSystem.saveDoc(wsPath, doc, extensionRegistry.specRegistry);
+        await saveDoc(wsPath, doc)(
+          store.state,
+          workspaceSliceKey.getDispatch(store.dispatch),
+          store,
+        );
       };
 
       let pendingCall: undefined | ReturnType<typeof setTimeout>;
