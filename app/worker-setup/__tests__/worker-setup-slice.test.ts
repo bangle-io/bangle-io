@@ -8,17 +8,10 @@ import {
   workspacesSlice,
 } from '@bangle.io/slice-workspaces-manager';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
-import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
-import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { exponentialBackoff, sleep } from '@bangle.io/utils';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 
 import { workerSetupSlices, workerStoreSyncKey } from '../worker-setup-slice';
-
-jest.mock('idb-keyval', () => {
-  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
-  return fakeIdb;
-});
 
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
@@ -70,7 +63,6 @@ const scheduler = (cb) => {
 };
 
 beforeEach(() => {
-  idbHelpers.beforeEachHook();
   (global as any).MessageChannel = class MessageChannel {
     port1: Port = {
       onmessage: undefined,
@@ -92,9 +84,7 @@ beforeEach(() => {
 afterEach(async () => {
   await naukarProxy.testDestroyStore();
 
-  idbHelpers.afterEachHook();
   (global as any).MessageChannel = undefined;
-  clearFakeIdb();
 });
 
 test('works', async () => {

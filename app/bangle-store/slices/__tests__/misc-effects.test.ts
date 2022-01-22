@@ -9,27 +9,11 @@ import {
 } from '@bangle.io/slice-workspace';
 import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
-import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
-import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { historySlice } from '../history-slice';
 import { lastWorkspaceUsed, miscEffectsSlice } from '../misc-effects-slice';
-
-jest.mock('idb-keyval', () => {
-  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
-  return fakeIdb;
-});
-
-beforeEach(() => {
-  idbHelpers.beforeEachHook();
-});
-
-afterEach(() => {
-  idbHelpers.afterEachHook();
-  clearFakeIdb();
-});
 
 describe('last seen workspace', () => {
   let originalLocalStorage;

@@ -80,57 +80,49 @@ jest.mock('@bangle.io/extension-registry', () => {
   };
 });
 
-let listAllFilesMock = FileSystem.listAllFiles as jest.MockedFunction<
-  typeof FileSystem.listAllFiles
->;
-let renameFileMock = FileSystem.renameFile as jest.MockedFunction<
-  typeof FileSystem.renameFile
->;
-let checkFileExistsMock = FileSystem.checkFileExists as jest.MockedFunction<
-  typeof FileSystem.checkFileExists
->;
-let saveDocMock = FileSystem.saveDoc as jest.MockedFunction<
-  typeof FileSystem.saveDoc
->;
-let deleteFileMock = FileSystem.deleteFile as jest.MockedFunction<
-  typeof FileSystem.deleteFile
->;
-const getPageLocationMock = getPageLocation as jest.MockedFunction<
-  typeof getPageLocation
->;
-let historyUpdateOpenedWsPathsMock =
-  historyUpdateOpenedWsPaths as jest.MockedFunction<
-    typeof historyUpdateOpenedWsPaths
-  >;
-let goToLocationMock = goToLocation as jest.MockedFunction<typeof goToLocation>;
+let listAllFilesMock = jest
+  .mocked(FileSystem.listAllFiles)
+  .mockResolvedValue([]);
 
-let extensionRegistrySliceKeyGetSliceStateMock =
-  extensionRegistrySliceKey.getSliceStateAsserted as jest.MockedFunction<
-    typeof extensionRegistrySliceKey.getSliceStateAsserted
-  >;
+let renameFileMock = jest
+  .mocked(FileSystem.renameFile)
+  .mockResolvedValue(undefined);
 
-beforeEach(() => {
-  listAllFilesMock.mockResolvedValue([]);
-  renameFileMock.mockResolvedValue(undefined);
-  checkFileExistsMock.mockResolvedValue(false);
-  saveDocMock.mockResolvedValue(undefined);
-  deleteFileMock.mockResolvedValue(undefined);
-  historyUpdateOpenedWsPathsMock.mockImplementation(() => () => {});
-  goToLocationMock.mockImplementation(() => () => {});
+let checkFileExistsMock = jest
+  .mocked(FileSystem.checkFileExists)
+  .mockResolvedValue(false);
 
-  const extensionRegistry: ExtensionRegistry = {
-    specRegistry: {},
-  } as any;
+let saveDocMock = jest.mocked(FileSystem.saveDoc).mockResolvedValue(undefined);
 
-  extensionRegistrySliceKeyGetSliceStateMock.mockImplementation(() => ({
+let deleteFileMock = jest
+  .mocked(FileSystem.deleteFile)
+  .mockResolvedValue(undefined);
+
+let historyUpdateOpenedWsPathsMock = jest
+  .mocked(historyUpdateOpenedWsPaths)
+  .mockImplementation(() => () => {});
+
+const location = {
+  search: '',
+  pathname: '',
+};
+
+const getPageLocationMock = jest
+  .mocked(getPageLocation)
+  .mockImplementation(() => () => location);
+
+let goToLocationMock = jest
+  .mocked(goToLocation)
+  .mockImplementation(() => () => {});
+const extensionRegistry: ExtensionRegistry = {
+  specRegistry: {},
+} as any;
+
+let extensionRegistrySliceKeyGetSliceStateMock = jest
+  .mocked(extensionRegistrySliceKey.getSliceStateAsserted)
+  .mockImplementation(() => ({
     extensionRegistry,
   }));
-  const location = {
-    search: '',
-    pathname: '',
-  };
-  getPageLocationMock.mockImplementation(() => () => location);
-});
 
 describe('updateLocation', () => {
   test('works', () => {

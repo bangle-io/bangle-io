@@ -1,8 +1,6 @@
 import * as idb from 'idb-keyval';
 
 import { WorkspaceType } from '@bangle.io/constants';
-import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
-import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { sleep } from '@bangle.io/utils';
 
 import {
@@ -10,20 +8,6 @@ import {
   createWsInfo,
   getActionNamesDispatched,
 } from './test-utils';
-
-jest.mock('idb-keyval', () => {
-  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
-  return fakeIdb;
-});
-
-beforeEach(() => {
-  idbHelpers.beforeEachHook();
-});
-
-afterEach(() => {
-  idbHelpers.afterEachHook();
-  clearFakeIdb();
-});
 
 describe('refreshWorkspacesEffect', () => {
   test('works', async () => {

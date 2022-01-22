@@ -31,7 +31,7 @@ export function createBasicStore(slices: Slice[] = []) {
   const { store, actionsDispatched, dispatchSpy } = createTestStore(
     [
       extensionRegistrySlice(),
-      memoryHistorySlice(),
+      mockMemoryHistorySlice(),
       pageSlice(),
       workspacesSlice(),
       workspaceSlice(),
@@ -97,7 +97,7 @@ const historySliceKey = new SliceKey<
   }
 >('test-memory-history-slice');
 
-function memoryHistorySlice() {
+export function mockMemoryHistorySlice() {
   assertActionName('@bangle.io/test-basic-store', historySliceKey);
 
   return new Slice({
@@ -122,12 +122,12 @@ function memoryHistorySlice() {
         }
       },
     },
-    sideEffect: [applyPendingNavigation],
+    sideEffect: [mockHistoryEffect],
   });
 }
 
 // sets up history and watches for any changes in it
-const applyPendingNavigation = historySliceKey.effect(() => {
+const mockHistoryEffect = historySliceKey.effect(() => {
   let lastProcessed: PageSliceStateType['pendingNavigation'];
 
   return {

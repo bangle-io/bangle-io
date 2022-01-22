@@ -36,8 +36,17 @@ test('works', async () => {
 
   goToWsNameRoute('test-ws')(store.state, store.dispatch);
 
+  await Promise.resolve();
+
   expect(pageSliceKey.getSliceState(store.state)?.location.pathname).toEqual(
     '/ws/test-ws',
+  );
+
+  // redirects to not found since we never created ws
+  await sleep(0);
+
+  expect(pageSliceKey.getSliceState(store.state)?.location.pathname).toEqual(
+    '/ws-not-found/test-ws',
   );
 });
 
@@ -71,6 +80,7 @@ test('creates workspace and notes 2', async () => {
     doc: createPMNode([], `# Hello World`.trim()),
   })(store.state, store.dispatch, store);
 
+  await sleep(0);
   expect(
     (
       await getNote('test-ws-1:hello.md')(store.state, store.dispatch)
@@ -91,7 +101,7 @@ test('creates workspace and notes 2', async () => {
   ).toContain('test-ws-1');
 
   goToWsNameRoute('test-ws-1')(store.state, store.dispatch);
-
+  await sleep(0);
   expect(
     (
       await getNote('test-ws-1:hello.md')(store.state, store.dispatch)

@@ -47,10 +47,6 @@ beforeEach(() => {
   historyReplaceSpy = jest.spyOn(window.history, 'replaceState');
 });
 
-afterEach(() => {
-  jest.clearAllMocks();
-});
-
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
     const { store, actionsDispatched } = createTestStore<PageSliceAction>([
