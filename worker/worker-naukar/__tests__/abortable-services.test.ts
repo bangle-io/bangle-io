@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
 import { searchPmNode } from '@bangle.io/search-pm-node';
 import {

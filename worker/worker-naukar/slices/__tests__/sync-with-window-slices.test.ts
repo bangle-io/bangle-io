@@ -41,6 +41,7 @@ test('sets up', async () => {
   expect(port.postMessage).nthCalledWith(1, {
     type: 'ping',
   });
+  store.destroy();
 });
 
 test('destroys', async () => {
@@ -99,6 +100,7 @@ test('sends actions to the port', async () => {
     },
     type: 'action',
   });
+  store.destroy();
 });
 
 test('handles actions coming from port', async () => {
@@ -136,6 +138,7 @@ test('handles actions coming from port', async () => {
   } as any);
 
   expect(pageSliceKey.getSliceState(store.state)?.blockReload).toBe(true);
+  store.destroy();
 });
 
 test('blocks actions which are not recognized', async () => {
@@ -204,4 +207,5 @@ test('blocks actions which are not recognized', async () => {
 
   expect(actionsDispatched).toEqual(expectedActions);
   expect(pageSliceKey.getSliceState(store.state)?.blockReload).toBe(true);
+  store.destroy();
 });

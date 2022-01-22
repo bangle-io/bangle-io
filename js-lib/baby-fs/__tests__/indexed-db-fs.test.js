@@ -49,11 +49,11 @@ jest.mock('idb-keyval', () => {
   return idb;
 });
 
-const originalFile = window.File;
+const originalFile = global.File;
 beforeEach(() => {
   mockStore?.clear();
   mockMetaStore?.clear();
-  window.File = class File {
+  global.File = class File {
     constructor(content, fileName, opts) {
       this.content = content;
       this.fileName = fileName;
@@ -66,7 +66,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  window.File = originalFile;
+  global.File = originalFile;
 });
 test('writeFile', async () => {
   const fs = new IndexedDBFileSystem();

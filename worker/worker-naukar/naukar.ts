@@ -51,8 +51,11 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
     return editorManager.handleRequest(...args);
   };
 
-  // eslint-disable-next-line no-restricted-globals, no-undef
-  (self as any).store = store;
+  // eslint-disable-next-line no-restricted-globals
+  if (typeof self !== 'undefined') {
+    // eslint-disable-next-line no-restricted-globals, no-undef
+    (self as any).store = store;
+  }
   return {
     // app state
     async sendMessagePort(port: MessageChannel['port2']) {

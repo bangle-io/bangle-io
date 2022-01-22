@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import {
   BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
@@ -903,12 +906,12 @@ describe('deleteNote', () => {
 });
 
 describe('pushWsPath', () => {
-  let originalOpen = window.open;
+  let originalOpen = global.open;
   beforeEach(() => {
-    window.open = jest.fn();
+    global.open = jest.fn();
   });
   afterEach(() => {
-    window.open = originalOpen;
+    global.open = originalOpen;
   });
 
   test('works with new tab', () => {
@@ -920,8 +923,8 @@ describe('pushWsPath', () => {
 
     expect(getActionNamesDispatched(dispatchSpy)).toEqual([]);
 
-    expect(window.open).toBeCalledTimes(1);
-    expect(window.open).nthCalledWith(1, '/ws/my-ws/test-note.md');
+    expect(global.open).toBeCalledTimes(1);
+    expect(global.open).nthCalledWith(1, '/ws/my-ws/test-note.md');
     expect(historyUpdateOpenedWsPathsMock).toBeCalledTimes(0);
   });
 
@@ -945,7 +948,7 @@ describe('pushWsPath', () => {
       undefined,
     );
 
-    expect(window.open).toBeCalledTimes(0);
+    expect(global.open).toBeCalledTimes(0);
   });
 
   test('works when secondary is true', () => {
@@ -969,7 +972,7 @@ describe('pushWsPath', () => {
       historyUpdateOpenedWsPathsMock.mock.calls[0]?.[0]?.toArray(),
     ).toEqual(['my-ws:some-other-test-note.md', 'my-ws:test-note.md']);
 
-    expect(window.open).toBeCalledTimes(0);
+    expect(global.open).toBeCalledTimes(0);
   });
 });
 

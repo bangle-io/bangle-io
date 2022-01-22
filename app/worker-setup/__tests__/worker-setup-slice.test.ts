@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
 import { workspaceSlice, workspaceSliceKey } from '@bangle.io/slice-workspace';
 import {
@@ -68,7 +71,7 @@ const scheduler = (cb) => {
 
 beforeEach(() => {
   idbHelpers.beforeEachHook();
-  (window as any).MessageChannel = class MessageChannel {
+  (global as any).MessageChannel = class MessageChannel {
     port1: Port = {
       onmessage: undefined,
       postMessage: jest.fn((arg) => {
@@ -90,7 +93,7 @@ afterEach(async () => {
   await naukarProxy.testDestroyStore();
 
   idbHelpers.afterEachHook();
-  (window as any).MessageChannel = undefined;
+  (global as any).MessageChannel = undefined;
   clearFakeIdb();
 });
 

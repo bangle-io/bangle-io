@@ -1,8 +1,10 @@
+/**
+ * @jest-environment jsdom
+ */
 import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { useBangleStoreDispatch } from '@bangle.io/bangle-store-context';
-import { CORE_PALETTES_TOGGLE_NOTES_PALETTE } from '@bangle.io/constants';
 import { toggleNotesPalette } from '@bangle.io/shared-operations';
 
 import { EditorBar } from '../EditorBar';

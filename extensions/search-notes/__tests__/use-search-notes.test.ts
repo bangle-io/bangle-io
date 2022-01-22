@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { renderHook } from '@testing-library/react-hooks';
 
 import { useExtensionState } from '@bangle.io/extension-registry';

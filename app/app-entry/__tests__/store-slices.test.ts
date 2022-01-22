@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { bangleStateSlices } from '@bangle.io/bangle-store';
 import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { pageSliceKey } from '@bangle.io/slice-page';

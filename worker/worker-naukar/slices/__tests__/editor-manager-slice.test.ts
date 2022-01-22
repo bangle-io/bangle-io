@@ -67,6 +67,7 @@ describe('slice', () => {
     expect(slice.getSliceState(store.state)?.editorManager).toBeInstanceOf(
       Manager,
     );
+    store.destroy();
   });
 });
 
@@ -90,6 +91,7 @@ describe('flushNaukarEffect', () => {
     await sleep(0);
 
     expect(flushSpy).toHaveBeenCalledTimes(1);
+    store.destroy();
   });
 
   test('when transitioned to active', async () => {
@@ -111,5 +113,6 @@ describe('flushNaukarEffect', () => {
     await sleep(0);
 
     expect(destroySpy).toHaveBeenCalledTimes(1);
+    store.destroy();
   });
 });
