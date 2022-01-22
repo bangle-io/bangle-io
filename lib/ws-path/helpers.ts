@@ -11,10 +11,12 @@ export type MaybeWsPath = string | undefined;
  * fsPath - /<wsName>/<filePath> - this is what is used internally by the fs module
  */
 // TODO add test where wsPath has `//`
-export function resolvePath(wsPath: string) {
-  validateWsPath(wsPath);
-  // TODO currently this only works for fileWsPaths
-  validateFileWsPath(wsPath);
+export function resolvePath(wsPath: string, skipValidation = false) {
+  if (!skipValidation) {
+    validateWsPath(wsPath);
+    // TODO currently this only works for fileWsPaths
+    validateFileWsPath(wsPath);
+  }
   const [wsName, filePath] = splitWsPath(wsPath);
   const filePathSplitted = filePath.split('/');
   const fileName: string | undefined = getLast(filePathSplitted);
