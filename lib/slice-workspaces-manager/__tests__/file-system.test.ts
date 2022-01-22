@@ -1,7 +1,6 @@
 import { Node } from '@bangle.dev/pm';
 
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
-import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
 import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 
 import {
@@ -11,20 +10,6 @@ import {
   listAllFiles,
   saveDoc,
 } from '../file-system';
-
-jest.mock('idb-keyval', () => {
-  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
-  return fakeIdb;
-});
-
-beforeEach(() => {
-  idbHelpers.beforeEachHook();
-});
-
-afterEach(() => {
-  idbHelpers.afterEachHook();
-  clearFakeIdb();
-});
 
 const extensionRegistry = createExtensionRegistry([], { editorCore: true });
 

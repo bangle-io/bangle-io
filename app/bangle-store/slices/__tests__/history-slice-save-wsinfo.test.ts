@@ -13,29 +13,18 @@ import {
   WorkspaceType,
 } from '@bangle.io/slice-workspaces-manager';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
-import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
-import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { sleep } from '@bangle.io/utils';
 
 import { historySlice, historySliceKey } from '../history-slice';
-
-jest.mock('idb-keyval', () => {
-  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
-  return fakeIdb;
-});
 
 const dateNow = Date.now;
 let counter = 0;
 beforeEach(() => {
   // This avoid flakiness when dealing with deletion
   Date.now = jest.fn(() => counter++);
-  clearFakeIdb();
-  idbHelpers.beforeEachHook();
 });
 
 afterEach(() => {
-  idbHelpers.afterEachHook();
-  clearFakeIdb();
   Date.now = dateNow;
 });
 
@@ -55,7 +44,6 @@ let setup = () => {
 
   return { store, history };
 };
-beforeEach(() => {});
 
 describe('saveWorkspaceInfoEffect', () => {
   test('works when not a nativefs workspace', async () => {

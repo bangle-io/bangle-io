@@ -19,8 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "devDependencies": {
-    "@bangle.io/test-utils": "worksapce:*",
-    "idb-keyval": "^5.1.5"
+    "@bangle.io/test-utils": "worksapce:*"
   },
   "dependencies": {
     "@bangle.dev/pm": "0.28.5",

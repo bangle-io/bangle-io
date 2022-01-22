@@ -4,17 +4,6 @@ import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
 import { WorkspacesSliceAction } from '../common';
 import { createStore, createWsInfo } from './test-utils';
 
-jest.mock('idb-keyval', () => {
-  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
-  return fakeIdb;
-});
-
-beforeEach(() => {});
-
-afterEach(() => {
-  clearFakeIdb();
-});
-
 export type ActionTestFixtureType<A extends BaseAction> = {
   [K in A['name']]: Array<A extends { name: K } ? A : never>;
 };

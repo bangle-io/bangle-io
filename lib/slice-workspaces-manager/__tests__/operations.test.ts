@@ -1,6 +1,5 @@
 import { goToLocation, syncPageLocation } from '@bangle.io/slice-page';
-import { clearFakeIdb, fakeIdb } from '@bangle.io/test-utils/fake-idb';
-import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
+import { fakeIdb } from '@bangle.io/test-utils/fake-idb';
 
 import { deleteWorkspace, workspacesSliceKey, WorkspaceType } from '..';
 import { helpFSWorkspaceInfo, WORKSPACE_KEY } from '../common';
@@ -22,22 +21,14 @@ jest.mock('@bangle.io/slice-page', () => {
   };
 });
 
-jest.mock('idb-keyval', () => {
-  const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
-  return fakeIdb;
-});
-
 const dateNow = Date.now;
 let counter = 0;
 beforeEach(() => {
-  idbHelpers.beforeEachHook();
   // This avoids the flakiness with ws deletion
   Date.now = jest.fn(() => counter++);
 });
 
 afterEach(() => {
-  idbHelpers.afterEachHook();
-  clearFakeIdb();
   Date.now = dateNow;
 });
 
