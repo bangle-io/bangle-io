@@ -12,6 +12,7 @@ export {
   pushWsPath,
   refreshWsPaths,
   renameNote,
+  saveDoc,
   saveFile,
   updateOpenedWsPaths,
 } from './operations';

@@ -1,32 +1,84 @@
 import * as zip from '@zip.js/zip.js/dist/zip-no-worker.min.js';
 
+import type { Node } from '@bangle.dev/pm';
+
 import { workerAbortable } from '@bangle.io/abortable-worker';
 import { BaseError } from '@bangle.io/base-error';
 import { WorkerErrorCode } from '@bangle.io/constants';
-import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { searchPmNode } from '@bangle.io/search-pm-node';
 import {
-  FileSystem,
-  fzfSearchNoteWsPaths,
-} from '@bangle.io/slice-workspaces-manager';
-import { assertSignal } from '@bangle.io/utils';
+  getFile,
+  getNote,
+  saveFile,
+  workspaceSliceKey,
+} from '@bangle.io/slice-workspace';
+import { assertSignal, asssertNotUndefined } from '@bangle.io/utils';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
 
-export function abortableServices({
-  extensionRegistry,
-}: {
-  extensionRegistry: ExtensionRegistry;
-}) {
+import { fzfSearchNoteWsPaths } from './abortable-services/fzf-search-notes-ws-path';
+import type { StoreRef } from './naukar';
+
+type GetWsPaths = () => string[] | undefined;
+export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
   const services = workerAbortable(({ abortWrapper }) => {
+    const getNoteWsPaths: GetWsPaths = () => {
+      const state = storeRef.current?.state;
+      if (!state) {
+        return undefined;
+      }
+      const noteWsPaths =
+        workspaceSliceKey.getSliceStateAsserted(state).noteWsPaths;
+
+      return noteWsPaths;
+    };
+
+    const getWsPaths: GetWsPaths = () => {
+      const state = storeRef.current?.state;
+      if (!state) {
+        return undefined;
+      }
+      const noteWsPaths =
+        workspaceSliceKey.getSliceStateAsserted(state).wsPaths;
+
+      return noteWsPaths;
+    };
+
+    const _getDoc = async (wsPath: string) => {
+      const store = storeRef.current;
+      asssertNotUndefined(store, 'store cannot be undefined');
+
+      return getNote(wsPath)(store.state, store.dispatch);
+    };
+
+    const _getFile = async (wsPath: string) => {
+      const store = storeRef.current;
+
+      asssertNotUndefined(store, 'store cannot be undefined');
+
+      return getFile(wsPath)(store.state, store.dispatch, store);
+    };
+
+    const _saveFile = async (wsPath: string, file: File) => {
+      const store = storeRef.current;
+
+      asssertNotUndefined(store, 'store cannot be undefined');
+
+      await saveFile(wsPath, file)(store.state, store.dispatch, store);
+    };
+
     return {
       abortableSearchWsForPmNode: abortWrapper(
-        searchWsForPmNode(extensionRegistry),
+        searchWsForPmNode(getNoteWsPaths, _getDoc),
       ),
-      abortableFzfSearchNoteWsPaths: abortWrapper(fzfSearchNoteWsPaths),
-      abortableBackupAllFiles: abortWrapper(backupAllFiles()),
+      abortableFzfSearchNoteWsPaths: abortWrapper(
+        fzfSearchNoteWsPaths(getNoteWsPaths),
+      ),
+      abortableBackupAllFiles: abortWrapper(
+        backupAllFiles(getWsPaths, _getFile),
+      ),
       abortableReadAllFilesBackup: abortWrapper(readAllFilesBackup()),
       abortableCreateWorkspaceFromBackup: abortWrapper(
-        createWorkspaceFromBackup(),
+        createWorkspaceFromBackup(getWsPaths, _saveFile),
       ),
     };
   });
@@ -34,7 +86,10 @@ export function abortableServices({
   return services;
 }
 
-function searchWsForPmNode(extensionRegistry: ExtensionRegistry) {
+function searchWsForPmNode(
+  getNoteWsPaths: GetWsPaths,
+  getDoc: (wsPath: string) => Promise<Node | undefined>,
+) {
   return async (
     abortSignal: AbortSignal,
     wsName: string,
@@ -42,15 +97,13 @@ function searchWsForPmNode(extensionRegistry: ExtensionRegistry) {
     atomSearchTypes: Parameters<typeof searchPmNode>[4],
     opts?: Parameters<typeof searchPmNode>[5],
   ) => {
-    const wsPaths = await FileSystem.listAllNotes(wsName);
     assertSignal(abortSignal);
 
-    const getDoc = async (wsPath: string) =>
-      FileSystem.getDoc(
-        wsPath,
-        extensionRegistry.specRegistry,
-        extensionRegistry.markdownItPlugins,
-      );
+    const wsPaths = getNoteWsPaths();
+
+    if (!wsPaths) {
+      return [];
+    }
 
     return searchPmNode(
       abortSignal,
@@ -63,18 +116,30 @@ function searchWsForPmNode(extensionRegistry: ExtensionRegistry) {
   };
 }
 
-function backupAllFiles() {
+function backupAllFiles(
+  getWsPaths: GetWsPaths,
+  getFile: (wsPath: string) => Promise<File | undefined>,
+) {
   return async (abortSignal: AbortSignal, wsName: string): Promise<File> => {
-    const wsPaths = await FileSystem.listAllFiles(wsName);
+    const wsPaths = getWsPaths();
+    if (!wsPaths || wsPaths.length === 0) {
+      throw new BaseError(
+        'Can not backup an empty workspace',
+        WorkerErrorCode.EMPTY_WORKSPACE,
+      );
+    }
+
     let zipWriter = new zip.ZipWriter(new zip.BlobWriter('application/zip'), {
       useWebWorkers: false,
     });
 
-    for (const path of wsPaths) {
-      const fileBlob = await FileSystem.getFile(path);
-
+    for (const wsPath of wsPaths) {
+      const fileBlob = await getFile(wsPath);
+      if (!fileBlob) {
+        continue;
+      }
       await zipWriter.add(
-        encodeURIComponent(path),
+        encodeURIComponent(wsPath),
         new zip.BlobReader(fileBlob),
         {
           bufferedWrite: true,
@@ -125,14 +190,18 @@ function readAllFilesBackup() {
   };
 }
 
-function createWorkspaceFromBackup() {
+function createWorkspaceFromBackup(
+  getWsPaths: GetWsPaths,
+  saveFile: (wsPath, file: File) => Promise<void>,
+) {
   return async (
     abortSignal: AbortSignal,
     wsName: string,
     backupFile: File,
   ): Promise<void> => {
-    const wsPaths = await FileSystem.listAllFiles(wsName);
-    if (wsPaths.length > 0) {
+    const wsPaths = getWsPaths();
+
+    if (!wsPaths || wsPaths.length > 0) {
       throw new BaseError(
         'Can only use backup files on an empty workspace',
         WorkerErrorCode.EMPTY_WORKSPACE_NEEDED,
@@ -144,7 +213,7 @@ function createWorkspaceFromBackup() {
     for (const file of files) {
       const { filePath } = resolvePath(decodeURIComponent(file.name));
       const newWsPath = filePathToWsPath(wsName, filePath);
-      await FileSystem.saveFile(newWsPath, file);
+      await saveFile(newWsPath, file);
     }
   };
 }

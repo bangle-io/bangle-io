@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/browser';
 import type { Manager } from '@bangle.dev/collab-server';
 
 import { sentryConfig } from '@bangle.io/config';
+import { ApplicationStore } from '@bangle.io/create-store';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   asssertNotUndefined,
@@ -23,23 +24,30 @@ if (isWorkerGlobalScope()) {
   Sentry.init(sentryConfig);
 }
 
+export interface StoreRef {
+  current: undefined | ReturnType<typeof initializeNaukarStore>;
+}
+
 // Things to remember about the return type
 // 1. Do not use comlink proxy here, as this function should run in both envs (worker and main)
 // 2. Keep the return type simple and flat. Ie. an object whose values are not object.
 export function createNaukar(extensionRegistry: ExtensionRegistry) {
   const envType = getSelfType();
+  const storeRef: StoreRef = {
+    current: undefined,
+  };
 
   console.debug('Naukar running in ', envType);
-
-  let store: ReturnType<typeof initializeNaukarStore> | undefined;
 
   // main-dispatch-end
 
   const handleCollabRequest: Manager['handleRequest'] = async (...args) => {
     asssertNotUndefined(
-      store,
+      storeRef.current,
       'handleCollabRequest called but store is not yet defined',
     );
+
+    const store = storeRef.current;
 
     let editorManager = getEditorManager()(store.state, store.dispatch);
 
@@ -54,12 +62,13 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
   // eslint-disable-next-line no-restricted-globals
   if (typeof self !== 'undefined') {
     // eslint-disable-next-line no-restricted-globals, no-undef
-    (self as any).store = store;
+    (self as any).storeRef = storeRef;
   }
+
   return {
     // app state
     async sendMessagePort(port: MessageChannel['port2']) {
-      store = initializeNaukarStore({ port, extensionRegistry });
+      storeRef.current = initializeNaukarStore({ port, extensionRegistry });
     },
 
     // collab
@@ -70,12 +79,12 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
     },
 
     async testGetStore() {
-      return store;
+      return storeRef.current;
     },
 
     async testDestroyStore() {
-      store?.destroy();
-      store = undefined;
+      storeRef.current?.destroy();
+      storeRef.current = undefined;
     },
 
     testThrowError() {
@@ -88,7 +97,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
       }, 0);
     },
 
-    ...abortableServices({ extensionRegistry }),
+    ...abortableServices({ storeRef }),
   };
 }
 

@@ -71,7 +71,7 @@ export function historySlice() {
 const applyPendingNavigation: SliceSideEffect<
   HistoryStateType,
   HistorySliceAction
-> = (store) => {
+> = () => {
   let lastProcessed: PageSliceStateType['pendingNavigation'];
 
   return {

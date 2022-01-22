@@ -136,10 +136,8 @@ export class IndexedDBFileSystem extends BaseFileSystem {
   async writeFile(filePath: string, data: File) {
     this._verifyFilePath(filePath);
     this._verifyFileType(data);
-    await catchUpstream(
-      idb.set(filePath, data, this._customStore),
-      'Error writing data',
-    );
+    const prom = idb.set(filePath, data, this._customStore);
+    await catchUpstream(prom, 'Error writing data');
     await this._fileMetadata.set(filePath, new BaseFileMetadata());
   }
 

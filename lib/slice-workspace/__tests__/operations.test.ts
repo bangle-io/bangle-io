@@ -75,7 +75,7 @@ jest.mock('@bangle.io/extension-registry', () => {
   return {
     ...other,
     extensionRegistrySliceKey: {
-      getSliceState: jest.fn(),
+      getSliceStateAsserted: jest.fn(),
     },
   };
 });
@@ -105,8 +105,8 @@ let historyUpdateOpenedWsPathsMock =
 let goToLocationMock = goToLocation as jest.MockedFunction<typeof goToLocation>;
 
 let extensionRegistrySliceKeyGetSliceStateMock =
-  extensionRegistrySliceKey.getSliceState as jest.MockedFunction<
-    typeof extensionRegistrySliceKey.getSliceState
+  extensionRegistrySliceKey.getSliceStateAsserted as jest.MockedFunction<
+    typeof extensionRegistrySliceKey.getSliceStateAsserted
   >;
 
 beforeEach(() => {

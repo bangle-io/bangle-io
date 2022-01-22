@@ -251,6 +251,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/store-sync"
       },
       {
+        "name": "@bangle.io/test-basic-store",
+        "reference": "workspace:lib/test-basic-store"
+      },
+      {
         "name": "@bangle.io/test-utils",
         "reference": "workspace:lib/test-utils"
       },
@@ -349,6 +353,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-workspaces-manager", ["workspace:lib/slice-workspaces-manager"]],
       ["@bangle.io/store-sync", ["workspace:lib/store-sync"]],
       ["@bangle.io/style", ["workspace:app/style"]],
+      ["@bangle.io/test-basic-store", ["workspace:lib/test-basic-store"]],
       ["@bangle.io/test-utils", ["workspace:lib/test-utils"]],
       ["@bangle.io/ui-bangle-button", ["workspace:lib/ui-bangle-button"]],
       ["@bangle.io/ui-components", ["workspace:lib/ui-components"]],
@@ -5202,6 +5207,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["@bangle.io/test-basic-store", [
+        ["workspace:lib/test-basic-store", {
+          "packageLocation": "./lib/test-basic-store/",
+          "packageDependencies": [
+            ["@bangle.io/test-basic-store", "workspace:lib/test-basic-store"],
+            ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/history", "workspace:js-lib/history"],
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/slice-page", "workspace:lib/slice-page"],
+            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
+            ["@bangle.io/slice-workspaces-manager", "workspace:lib/slice-workspaces-manager"],
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["idb-keyval", "npm:5.1.5"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.io/test-utils", [
         ["workspace:lib/test-utils", {
           "packageLocation": "./lib/test-utils/",
@@ -5367,6 +5392,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
             ["@bangle.io/slice-workspaces-manager", "workspace:lib/slice-workspaces-manager"],
             ["@bangle.io/store-sync", "workspace:lib/store-sync"],
+            ["@bangle.io/test-basic-store", "workspace:lib/test-basic-store"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
@@ -19590,8 +19616,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["scripts", "workspace:tooling/_scripts"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["date-fns", "npm:2.25.0"],
             ["domexception", "npm:4.0.0"],
+            ["idb-keyval", "npm:5.1.5"],
             ["prettier", "npm:2.4.1"]
           ],
           "linkType": "SOFT",

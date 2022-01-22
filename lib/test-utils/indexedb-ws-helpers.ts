@@ -41,14 +41,25 @@ export const setupMockWorkspace = async (wsInfo: Partial<WorkspaceInfo>) => {
 const originalFile = global.File;
 
 export const beforeEachHook = () => {
-  (global as any).File = class File {
-    constructor(public content, public fileName, public opts) {
-      this.content = content;
-      this.fileName = fileName;
-      this.opts = opts;
+  interface MockFile {
+    parts: (string | Blob | ArrayBuffer | ArrayBufferView)[];
+    filename: string;
+    properties: FilePropertyBag;
+  }
+
+  // Global file mock
+  (global as any).File = class File implements MockFile {
+    constructor(
+      public parts: MockFile['parts'],
+      public filename: MockFile['filename'],
+      public properties: MockFile['properties'],
+    ) {
+      this.filename = filename;
+      this.properties = properties;
+      this.parts = parts;
     }
     async text() {
-      return this.content?.[0];
+      return this.parts?.[0];
     }
   };
 };

@@ -14,7 +14,6 @@ export {
 } from './common';
 export * from './errors';
 export * as FileSystem from './file-system';
-export * from './fzf-search-notes-ws-path';
 export {
   createWorkspace,
   deleteWorkspace,

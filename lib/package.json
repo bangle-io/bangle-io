@@ -18,6 +18,7 @@
     "slice-workspaces-manager",
     "store-sync",
     "test-utils",
+    "test-basic-store",
     "ui-bangle-button",
     "ui-components",
     "ui-dhancha",

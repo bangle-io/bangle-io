@@ -18,7 +18,6 @@ import {
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from '@bangle.io/slice-workspaces-manager';
-import { asssertNotUndefined } from '@bangle.io/utils';
 import {
   OpenedWsPaths,
   pathnameToWsName,
@@ -170,11 +169,7 @@ export const getNote = (wsPath: string) => {
 
     const sliceState = workspaceSliceKey.getSliceState(state);
     const extensionRegistry =
-      extensionRegistrySliceKey.getSliceState(state)?.extensionRegistry;
-    asssertNotUndefined(
-      extensionRegistry,
-      'extensionRegistry needs to be defined',
-    );
+      extensionRegistrySliceKey.getSliceStateAsserted(state).extensionRegistry;
 
     if (fileOps && sliceState?.wsName) {
       return fileOps.getDoc(
@@ -205,14 +200,9 @@ export const createNote = (
     const fileOps = wrapFileMethod()(store.state, store.dispatch);
     const sliceState = workspaceSliceKey.getSliceState(store.state);
 
-    const extensionRegistry = extensionRegistrySliceKey.getSliceState(
+    const extensionRegistry = extensionRegistrySliceKey.getSliceStateAsserted(
       store.state,
-    )?.extensionRegistry;
-
-    asssertNotUndefined(
-      extensionRegistry,
-      'extensionRegistry needs to be defined',
-    );
+    ).extensionRegistry;
 
     if (!fileOps || !sliceState?.wsName) {
       return false;
@@ -246,6 +236,23 @@ export const saveFile = (wsPath: string, file: File) => {
     const fileOps = wrapFileMethod()(store.state, store.dispatch);
 
     await fileOps?.saveFile(wsPath, file);
+
+    return true;
+  };
+};
+
+export const saveDoc = (wsPath: string, doc: Node) => {
+  return async (
+    _: AppState,
+    dispatch: WorkspaceDispatchType,
+    store: ApplicationStore,
+  ) => {
+    const fileOps = wrapFileMethod()(store.state, store.dispatch);
+    const extensionRegistry = extensionRegistrySliceKey.getSliceStateAsserted(
+      store.state,
+    ).extensionRegistry;
+
+    await fileOps?.saveDoc(wsPath, doc, extensionRegistry.specRegistry);
 
     return true;
   };
