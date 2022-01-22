@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/test-utils"
+    "directory": "lib/test-basic-store"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
