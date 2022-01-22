@@ -1,66 +1,9 @@
 import { HelpFileSystem } from '../help-fs';
 
-let mockStore = new Map();
-let mockMetaStore = new Map();
-
-const getLast = (array) => array[array.length - 1];
-
 const toFile = (str) => {
-  var file = new File(str, 'foo.txt', { type: 'text/plain' });
+  var file = new File([str], 'foo.txt', { type: 'text/plain' });
   return file;
 };
-
-jest.mock('idb-keyval', () => {
-  const idb = {};
-  const dbSuffix = 3;
-
-  idb.createStore = (dbName) => {
-    return dbName;
-  };
-
-  const getStore = (args) => {
-    if (getLast(args) === `baby-idb-meta-${dbSuffix}`) {
-      return mockMetaStore;
-    } else {
-      return mockStore;
-    }
-  };
-
-  idb.get = jest.fn(async (...args) => {
-    return getStore(args).get(...args);
-  });
-  idb.del = jest.fn(async (...args) => {
-    return getStore(args).delete(...args);
-  });
-  idb.set = jest.fn(async (...args) => {
-    return getStore(args).set(...args);
-  });
-  idb.keys = jest.fn(async (...args) => {
-    return Array.from(getStore(args).keys(...args));
-  });
-  return idb;
-});
-const originalFile = global.File;
-
-beforeEach(() => {
-  mockStore?.clear();
-  mockMetaStore?.clear();
-  global.fetch = undefined;
-  global.File = class File {
-    constructor(content, fileName, opts) {
-      this.content = content;
-      this.fileName = fileName;
-      this.opts = opts;
-    }
-    async text() {
-      return this.content;
-    }
-  };
-});
-
-afterEach(() => {
-  global.File = originalFile;
-});
 
 test('readFileAsText', async () => {
   const filePath = 'hola/hi.md';
@@ -110,9 +53,11 @@ test('readFile', async () => {
 
   expect(data).toMatchInlineSnapshot(`
     File {
-      "content": "i am a content",
-      "fileName": "foo.txt",
-      "opts": Object {
+      "filename": "foo.txt",
+      "parts": Array [
+        "i am a content",
+      ],
+      "properties": Object {
         "type": "text/plain",
       },
     }
@@ -183,14 +128,14 @@ test('writeFile works by default', async () => {
   });
 
   await fs.writeFile(filePath, toFile('my-data'));
-  expect(mockStore).toMatchInlineSnapshot(`
-    Map {
-      "hola/hi.md" => File {
-        "content": "my-data",
-        "fileName": "foo.txt",
-        "opts": Object {
-          "type": "text/plain",
-        },
+  expect(await fs.readFile('hola/hi.md')).toMatchInlineSnapshot(`
+    File {
+      "filename": "foo.txt",
+      "parts": Array [
+        "my-data",
+      ],
+      "properties": Object {
+        "type": "text/plain",
       },
     }
   `);

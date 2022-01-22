@@ -30,7 +30,7 @@ export async function searchPmNode(
   signal: AbortSignal,
   query: string,
   docUids: string[],
-  getDoc: (uid: string) => Promise<Node<any>>,
+  getDoc: (uid: string) => Promise<Node<any> | undefined>,
   atomSearchTypes: AtomSearchTypes[] = [],
   {
     concurrency = DEFAULT_CONCURRENCY,
@@ -54,7 +54,7 @@ export async function searchPmNode(
     docUids,
     (uid) => {
       return getDoc(uid).then((doc) => {
-        if (signal.aborted) {
+        if (signal.aborted || !doc) {
           return null;
         }
 

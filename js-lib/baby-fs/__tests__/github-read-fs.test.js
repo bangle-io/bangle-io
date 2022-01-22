@@ -20,60 +20,6 @@ const toFile = (str) => {
   return file;
 };
 
-jest.mock('idb-keyval', () => {
-  const idb = {};
-  const dbSuffix = 3;
-
-  idb.createStore = (dbName) => {
-    return dbName;
-  };
-
-  const getStore = (args) => {
-    if (getLast(args) === `baby-idb-meta-${dbSuffix}`) {
-      return mockMetaStore;
-    } else {
-      return mockStore;
-    }
-  };
-
-  idb.get = jest.fn(async (...args) => {
-    return getStore(args).get(...args);
-  });
-  idb.del = jest.fn(async (...args) => {
-    return getStore(args).delete(...args);
-  });
-  idb.set = jest.fn(async (...args) => {
-    return getStore(args).set(...args);
-  });
-  idb.keys = jest.fn(async (...args) => {
-    return Array.from(getStore(args).keys(...args));
-  });
-  return idb;
-});
-const originalFile = global.File;
-const originalFetch = global.fetch;
-
-beforeEach(() => {
-  mockStore?.clear();
-  mockMetaStore?.clear();
-  global.fetch = undefined;
-  global.File = class File {
-    constructor(content, fileName, opts) {
-      this.content = content;
-      this.fileName = fileName;
-      this.opts = opts;
-    }
-    async text() {
-      return this.content;
-    }
-  };
-});
-
-afterEach(() => {
-  global.File = originalFile;
-  global.fetch = originalFetch;
-});
-
 test('writeFile', async () => {
   const fs = new GithubReadFileSystem({
     githubToken: undefined,
@@ -83,20 +29,18 @@ test('writeFile', async () => {
     allowedFile: undefined,
   });
   await fs.writeFile('hola/hi', toFile('my-data'));
-  expect(mockStore).toMatchInlineSnapshot(`
-    Map {
-      "hola/hi" => File {
-        "content": Array [
-          "my-data",
-        ],
-        "fileName": "foo.txt",
-        "opts": Object {
-          "type": "text/plain",
-        },
+  expect(await fs.readFile('hola/hi')).toMatchInlineSnapshot(`
+    File {
+      "filename": "foo.txt",
+      "parts": Array [
+        "my-data",
+      ],
+      "properties": Object {
+        "type": "text/plain",
       },
     }
   `);
-  expect(mockMetaStore.get('hola/hi')).toEqual({
+  expect(await fs.stat('hola/hi')).toEqual({
     mtimeMs: expect.any(Number),
   });
 });
@@ -201,11 +145,11 @@ test('doesnt readFile from github if one already exists', async () => {
   expect(global.fetch).toHaveBeenCalledTimes(0);
   expect(data).toMatchInlineSnapshot(`
     File {
-      "content": Array [
+      "filename": "foo.txt",
+      "parts": Array [
         "my-data",
       ],
-      "fileName": "foo.txt",
-      "opts": Object {
+      "properties": Object {
         "type": "text/plain",
       },
     }

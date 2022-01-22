@@ -1,11 +1,4 @@
-import * as idb from 'idb-keyval';
-
 import { IndexedDBFileSystem } from '../indexed-db-fs';
-
-let mockStore = new Map();
-let mockMetaStore = new Map();
-
-const getLast = (array) => array[array.length - 1];
 
 const toFile = (str) => {
   var file = new File([str], 'foo.txt', { type: 'text/plain' });
@@ -18,70 +11,23 @@ const serializeMap = (map) => {
   );
 };
 
-jest.mock('idb-keyval', () => {
-  const idb = {};
-  const dbSuffix = 3;
-
-  idb.createStore = (dbName) => {
-    return dbName;
-  };
-
-  const getStore = (args) => {
-    if (getLast(args) === `baby-idb-meta-${dbSuffix}`) {
-      return mockMetaStore;
-    } else {
-      return mockStore;
-    }
-  };
-
-  idb.get = jest.fn(async (...args) => {
-    return getStore(args).get(...args);
-  });
-  idb.del = jest.fn(async (...args) => {
-    return getStore(args).delete(...args);
-  });
-  idb.set = jest.fn(async (...args) => {
-    return getStore(args).set(...args);
-  });
-  idb.keys = jest.fn(async (...args) => {
-    return Array.from(getStore(args).keys(...args));
-  });
-  return idb;
-});
-
-const originalFile = global.File;
-beforeEach(() => {
-  mockStore?.clear();
-  mockMetaStore?.clear();
-  global.File = class File {
-    constructor(content, fileName, opts) {
-      this.content = content;
-      this.fileName = fileName;
-      this.opts = opts;
-    }
-    async text() {
-      return this.content;
-    }
-  };
-});
-
-afterEach(() => {
-  global.File = originalFile;
-});
 test('writeFile', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.writeFile('hola/hi', toFile('my-data'));
-  await expect(serializeMap(mockStore)).resolves.toMatchInlineSnapshot(`
-          Array [
-            Array [
-              "hola/hi",
-              Array [
-                "my-data",
-              ],
-            ],
-          ]
-        `);
-  expect(mockMetaStore.get('hola/hi')).toEqual({
+
+  expect(await fs.readFile('hola/hi')).toMatchInlineSnapshot(`
+    File {
+      "filename": "foo.txt",
+      "parts": Array [
+        "my-data",
+      ],
+      "properties": Object {
+        "type": "text/plain",
+      },
+    }
+  `);
+
+  expect(await fs.stat('hola/hi')).toEqual({
     mtimeMs: expect.any(Number),
   });
 });
@@ -91,11 +37,7 @@ test('readFile', async () => {
   await fs.writeFile('hola/hi', toFile('my-data'));
 
   const data = await fs.readFileAsText('hola/hi');
-  expect(data).toMatchInlineSnapshot(`
-    Array [
-      "my-data",
-    ]
-  `);
+  expect(data).toMatchInlineSnapshot(`"my-data"`);
 });
 
 test('stat', async () => {
@@ -123,15 +65,23 @@ test('rename', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.writeFile('hola/hi', toFile('mydata'));
   await fs.rename('hola/hi', 'ebola/two');
-  await expect(serializeMap(mockStore)).resolves.toMatchInlineSnapshot(`
-          Array [
-            Array [
-              "ebola/two",
-              Array [
-                "mydata",
-              ],
+
+  await expect(
+    fs.readFile('hola/hi'),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi not found"`,
+  );
+
+  await expect(fs.readFile('ebola/two')).resolves.toMatchInlineSnapshot(`
+          File {
+            "filename": "foo.txt",
+            "parts": Array [
+              "mydata",
             ],
-          ]
+            "properties": Object {
+              "type": "text/plain",
+            },
+          }
         `);
 });
 
@@ -161,8 +111,11 @@ test('unlink', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.writeFile('hola/hi', toFile('my-data'));
   await fs.unlink('hola/hi');
-  expect(mockStore.size).toEqual(0);
-  expect(mockMetaStore.size).toEqual(0);
+  await expect(
+    fs.readFile('hola/hi'),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi not found"`,
+  );
 });
 
 test('opendirRecursive root', async () => {
