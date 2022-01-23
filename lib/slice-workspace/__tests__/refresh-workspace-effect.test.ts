@@ -2,9 +2,18 @@ import * as idb from 'idb-keyval';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
+import {
+  getPageLocation,
+  historyUpdateOpenedWsPaths,
+  pageSliceKey,
+} from '@bangle.io/slice-page';
+import { mockMemoryHistorySlice } from '@bangle.io/test-basic-store';
 import { sleep } from '@bangle.io/utils';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
+import { goToWsNameRoute } from '..';
 import { workspaceSliceKey } from '../common';
+import { createWorkspace } from '../workspaces-operations';
 import {
   createStore,
   createWsInfo,
@@ -22,7 +31,7 @@ describe('refreshWorkspacesEffect', () => {
     expect(getActionNamesDispatched(dispatchSpy)).toMatchInlineSnapshot(`
       Array [
         "action::@bangle.io/slice-workspace:set-workspace-infos",
-        "action::@bangle.io/slice-workspace:sync-page-location",
+        "action::@bangle.io/slice-workspace:set-opened-workspace",
       ]
     `);
 
@@ -122,5 +131,73 @@ describe('refreshWorkspacesEffect', () => {
       testWsInfoExisting,
       testWsInfo,
     ]);
+  });
+});
+
+describe('updateLocationEffect', () => {
+  let { store, getActionNames, getAction, dispatchSpy } = createStore(
+    undefined,
+    undefined,
+    undefined,
+    [mockMemoryHistorySlice()],
+  );
+
+  beforeEach(() => {
+    ({ store, getActionNames, getAction, dispatchSpy } = createStore(
+      undefined,
+      undefined,
+      undefined,
+      [mockMemoryHistorySlice()],
+    ));
+  });
+
+  test('opens a newly created workspace', async () => {
+    await createWorkspace('test-ws', WorkspaceType.browser)(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    await sleep(0);
+
+    expect(getActionNames()).toContain(
+      'action::@bangle.io/slice-workspace:set-opened-workspace',
+    );
+
+    expect(
+      getAction('action::@bangle.io/slice-workspace:set-opened-workspace'),
+    ).toEqual([
+      {
+        id: expect.any(String),
+        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+        value: {
+          openedWsPaths: { wsPaths: [undefined, undefined] },
+          wsName: undefined,
+        },
+      },
+      {
+        id: expect.any(String),
+        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+        value: {
+          openedWsPaths: { wsPaths: [undefined, undefined] },
+          wsName: 'test-ws',
+        },
+      },
+    ]);
+  });
+
+  test('opening a not found workspace', async () => {
+    await goToWsNameRoute('/ws/hello')(store.state, store.dispatch);
+
+    await sleep(0);
+
+    expect(
+      await workspaceSliceKey.getSliceStateAsserted(store.state).wsName,
+    ).toEqual(undefined);
+
+    expect(await getPageLocation()(store.state)).toEqual({
+      pathname: '/ws-not-found/%2Fws%2Fhello',
+      search: '',
+    });
   });
 });

@@ -12,10 +12,10 @@ import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { sleep } from '@bangle.io/utils';
 
 import { setupMockWorkspaceWithNotes } from '..';
-import { createBasicStore } from '../test-basic-store';
+import { createBasicTestStore } from '../test-basic-store';
 
 test('works', async () => {
-  const { store } = createBasicStore();
+  const { store } = createBasicTestStore();
 
   expect(pageSliceKey.getSliceState(store.state)).toMatchInlineSnapshot(`
     Object {
@@ -50,7 +50,7 @@ test('works', async () => {
 
 test('creates workspace 1', async () => {
   await idbHelpers.setupMockWorkspace({ name: 'test-ws' });
-  const { store } = createBasicStore();
+  const { store } = createBasicTestStore();
 
   expect(
     (await listWorkspaces()(store.state, store.dispatch, store)).map(
@@ -60,7 +60,7 @@ test('creates workspace 1', async () => {
 });
 
 test('creates workspace and notes 2', async () => {
-  let { store } = createBasicStore();
+  let { store } = createBasicTestStore();
 
   await createWorkspace('test-ws-1', WorkspaceType.browser)(
     store.state,
@@ -79,6 +79,9 @@ test('creates workspace and notes 2', async () => {
   })(store.state, store.dispatch, store);
 
   await sleep(0);
+
+  // expect(await listAllFiles('test-ws-1')).toMatchInlineSnapshot(`Array []`);
+
   expect(
     (
       await getNote('test-ws-1:hello.md')(store.state, store.dispatch)
@@ -90,7 +93,7 @@ test('creates workspace and notes 2', async () => {
   await sleep(0);
 
   // information is persisted
-  ({ store } = createBasicStore());
+  ({ store } = createBasicTestStore());
 
   expect(
     (await listWorkspaces()(store.state, store.dispatch, store)).map(
@@ -108,7 +111,7 @@ test('creates workspace and notes 2', async () => {
 });
 
 test('setupMockWorkspaceWithNotes', async () => {
-  let { store } = createBasicStore();
+  let { store } = createBasicTestStore();
 
   const { wsName, noteWsPaths } = await setupMockWorkspaceWithNotes(store);
 

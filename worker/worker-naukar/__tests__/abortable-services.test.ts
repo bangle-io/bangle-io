@@ -4,7 +4,7 @@
 import { mainInjectAbortableProxy } from '@bangle.io/abortable-worker';
 import { searchPmNode } from '@bangle.io/search-pm-node';
 import {
-  createBasicStore,
+  createBasicTestStore,
   setupMockWorkspaceWithNotes,
 } from '@bangle.io/test-basic-store';
 
@@ -23,7 +23,7 @@ jest.mock('@bangle.io/search-pm-node', () => {
 });
 
 let setup = () => {
-  const { store } = createBasicStore();
+  const { store } = createBasicTestStore();
 
   let services = mainInjectAbortableProxy(
     abortableServices({

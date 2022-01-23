@@ -29,7 +29,6 @@ import {
   pushWsPath,
   refreshWsPaths,
   renameNote,
-  syncPageLocation,
   updateOpenedWsPaths,
   wrapFileMethod,
 } from '../operations';
@@ -122,37 +121,6 @@ let extensionRegistrySliceKeyGetSliceStateMock = jest
   .mockImplementation(() => ({
     extensionRegistry,
   }));
-
-describe('updateLocation', () => {
-  test('works', () => {
-    let state = createState();
-
-    const dispatch = jest.fn();
-
-    syncPageLocation({ search: 'test-search', pathname: 'test-pathname' })(
-      state,
-      dispatch,
-    );
-
-    expect(dispatch).toBeCalledTimes(1);
-  });
-
-  test('with incorrect path', () => {
-    let state = createState();
-
-    const dispatch = jest.fn();
-
-    syncPageLocation({
-      search: 'secondary=bangle-help%253Agetting%2520started',
-      pathname: '/ws/bangle-help',
-    })(state, dispatch);
-
-    expect(goToLocationMock).toBeCalledTimes(1);
-    expect(goToLocationMock).nthCalledWith(1, '/ws-invalid-path/bangle-help', {
-      replace: true,
-    });
-  });
-});
 
 describe('refreshWsPaths', () => {
   test('refreshWsPaths 1', async () => {

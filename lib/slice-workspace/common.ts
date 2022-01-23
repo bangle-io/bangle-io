@@ -23,7 +23,7 @@ export type SideEffect = SliceSideEffect<
 
 export type WorkspaceSliceAction =
   | {
-      name: 'action::@bangle.io/slice-workspace:sync-page-location';
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace';
       value: {
         wsName: string | undefined;
         openedWsPaths: OpenedWsPaths;

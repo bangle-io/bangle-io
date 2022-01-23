@@ -19,6 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "devDependencies": {
+    "@bangle.io/test-basic-store": "workspace:*",
     "@bangle.io/test-utils": "worksapce:*"
   },
   "dependencies": {

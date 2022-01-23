@@ -35,7 +35,7 @@ const applyState = (
   state: WorkspaceSliceState,
 ): WorkspaceSliceState => {
   switch (action.name) {
-    case 'action::@bangle.io/slice-workspace:sync-page-location': {
+    case 'action::@bangle.io/slice-workspace:set-opened-workspace': {
       const newState = WorkspaceSliceState.update(state, {
         wsName: action.value.wsName,
         openedWsPaths: action.value.openedWsPaths,

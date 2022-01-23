@@ -17,3 +17,5 @@ global.afterEach(async () => {
 });
 
 global.fakeIdb = fakeIdb;
+
+global.fetch = async () => ({ ok: false, status: 404 });

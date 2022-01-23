@@ -1,3 +1,5 @@
+import { sleep } from '@bangle.dev/utils';
+
 import { WorkspaceType } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
@@ -151,6 +153,7 @@ export function createWorkspace(
       pageSliceKey.getDispatch(store.dispatch),
     );
 
+    await sleep(0);
     return true;
   };
 }
