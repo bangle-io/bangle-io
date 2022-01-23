@@ -7,6 +7,7 @@ import {
   updateOpenedWsPaths,
   workspaceSlice,
 } from '@bangle.io/slice-workspace';
+import { setupMockWorkspaceWithNotes } from '@bangle.io/test-basic-store';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -65,7 +66,17 @@ describe('last seen workspace', () => {
     beforeEach(() => {
       global.history.replaceState(null, '', '/');
     });
+
     test('saves last workspace used', async () => {
+      // fill db with existing data
+      (
+        await setupMockWorkspaceWithNotes(undefined, 'test-ws', [
+          ['test-ws:hello.md', `hello world`],
+        ])
+      ).store.destroy();
+
+      await sleep(0);
+
       let { store } = createTestStore([
         pageSlice(),
         historySlice(),
@@ -87,18 +98,45 @@ describe('last seen workspace', () => {
       );
 
       expect(lastWorkspaceUsed.get()).toEqual('test-ws');
-
+      // going to a not existing workspace should not be saved
       goToWsNameRoute('test-ws2')(store.state, store.dispatch);
       await sleep(0);
 
-      expect(global.localStorage.setItem).toBeCalledTimes(2);
-      expect(global.localStorage.setItem).nthCalledWith(
-        2,
-        'workspace-context/last-workspace-used',
-        'test-ws2',
-      );
+      expect(global.localStorage.setItem).toBeCalledTimes(1);
 
-      expect(lastWorkspaceUsed.get()).toEqual('test-ws2');
+      expect(lastWorkspaceUsed.get()).toEqual('test-ws');
+    });
+
+    test('going through multiple workspaces', async () => {
+      // fill db with existing data
+      (
+        await setupMockWorkspaceWithNotes(undefined, 'test-ws-1', [
+          ['test-ws-1:hello.md', `hello world`],
+        ])
+      ).store.destroy();
+      (
+        await setupMockWorkspaceWithNotes(undefined, 'test-ws-2', [
+          ['test-ws-2:hello.md', `hello world`],
+        ])
+      ).store.destroy();
+
+      await sleep(0);
+
+      let { store } = createTestStore([
+        pageSlice(),
+        historySlice(),
+        workspaceSlice(),
+        miscEffectsSlice(),
+      ]);
+
+      goToWsNameRoute('test-ws-1')(store.state, store.dispatch);
+      await sleep(0);
+      expect(lastWorkspaceUsed.get()).toEqual('test-ws-1');
+
+      goToWsNameRoute('test-ws-2')(store.state, store.dispatch);
+      await sleep(0);
+
+      expect(lastWorkspaceUsed.get()).toEqual('test-ws-2');
     });
   });
 });

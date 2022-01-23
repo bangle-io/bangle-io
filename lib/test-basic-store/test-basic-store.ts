@@ -22,7 +22,10 @@ import { clearFakeIdb } from '@bangle.io/test-utils/fake-idb';
 import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { assertActionName, sleep } from '@bangle.io/utils';
 
-export function createBasicStore(slices: Slice[] = []) {
+export function createBasicTestStore(
+  slices: Slice[] = [],
+  { useMemoryHistory = true } = {},
+) {
   let extensionRegistry = createExtensionRegistry([], { editorCore: true });
 
   const opts: Omit<NaukarStateConfig, 'port'> = {
@@ -53,7 +56,7 @@ export const jestHooks = {
 };
 
 export async function setupMockWorkspaceWithNotes(
-  store: ApplicationStore,
+  store: ApplicationStore = createBasicTestStore().store,
   wsName = 'test-ws-1',
   // Array of [wsPath, MarkdownString]
   noteWsPaths: [string, string][] = [
@@ -85,7 +88,7 @@ export async function setupMockWorkspaceWithNotes(
 
   await sleep(0);
 
-  return { wsName, noteWsPaths };
+  return { wsName, noteWsPaths, store };
 }
 
 const historySliceKey = new SliceKey<
