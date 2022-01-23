@@ -75,6 +75,8 @@ export async function setupMockWorkspaceWithNotes(
     store,
   );
 
+  await sleep(0);
+
   for (const [noteWsPath, str] of noteWsPaths) {
     await createNote(noteWsPath, {
       doc: createPMNode([], str.trim()),

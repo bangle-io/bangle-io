@@ -7,6 +7,7 @@ import {
   goToWsNameRoute,
   listWorkspaces,
 } from '@bangle.io/slice-workspace';
+import { listAllFiles } from '@bangle.io/slice-workspace/workspaces/file-system';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
 import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { sleep } from '@bangle.io/utils';
@@ -79,6 +80,9 @@ test('creates workspace and notes 2', async () => {
   })(store.state, store.dispatch, store);
 
   await sleep(0);
+
+  // expect(await listAllFiles('test-ws-1')).toMatchInlineSnapshot(`Array []`);
+
   expect(
     (
       await getNote('test-ws-1:hello.md')(store.state, store.dispatch)

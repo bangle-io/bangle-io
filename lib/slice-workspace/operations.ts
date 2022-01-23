@@ -341,55 +341,6 @@ export function workspaceHandleError(wsName: string, error: Error) {
 
 // Navigation ops
 
-// This is to be called whenever knows when search and pathname have changed
-// Currently this is called `updateLocationEffect`, and should only be called by that
-export const setOpenedWorkspace = ({
-  search,
-  pathname,
-}: {
-  search?: string;
-  pathname?: string;
-}) => {
-  return (state: AppState, dispatch: WorkspaceDispatchType) => {
-    // validate
-    const wsName = pathnameToWsName(pathname);
-
-    if (!wsName) {
-      dispatch({
-        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
-        value: {
-          wsName: undefined,
-          openedWsPaths: OpenedWsPaths.createEmpty(),
-        },
-      });
-      return;
-    }
-
-    const openedWsPaths = OpenedWsPaths.createFromArray([
-      pathnameToWsPath(pathname),
-      searchToWsPath(search),
-    ]);
-
-    const validOpenedWsPaths = validateOpenedWsPaths(openedWsPaths);
-
-    if (!validOpenedWsPaths.valid) {
-      goToInvalidPathRoute(wsName, validOpenedWsPaths.invalidWsPath)(
-        state,
-        dispatch,
-      );
-      return;
-    }
-
-    dispatch({
-      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
-      value: {
-        wsName: wsName,
-        openedWsPaths: openedWsPaths,
-      },
-    });
-  };
-};
-
 export const updateOpenedWsPaths = (
   newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),
   opts?: Parameters<typeof historyUpdateOpenedWsPaths>[2],

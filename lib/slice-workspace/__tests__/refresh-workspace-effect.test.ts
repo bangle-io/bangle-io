@@ -2,9 +2,16 @@ import * as idb from 'idb-keyval';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
+import {
+  historyUpdateOpenedWsPaths,
+  pageSliceKey,
+} from '@bangle.io/slice-page';
+import { mockMemoryHistorySlice } from '@bangle.io/test-basic-store';
 import { sleep } from '@bangle.io/utils';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
+import { createWorkspace } from '../workspaces-operations';
 import {
   createStore,
   createWsInfo,
@@ -121,6 +128,59 @@ describe('refreshWorkspacesEffect', () => {
     expect(idb.set).lastCalledWith('workspaces/2', [
       testWsInfoExisting,
       testWsInfo,
+    ]);
+  });
+});
+
+describe('updateLocationEffect', () => {
+  let { store, getActionNames, getAction, dispatchSpy } = createStore(
+    undefined,
+    undefined,
+    undefined,
+    [mockMemoryHistorySlice()],
+  );
+
+  beforeEach(() => {
+    ({ store, getActionNames, getAction, dispatchSpy } = createStore(
+      undefined,
+      undefined,
+      undefined,
+      [mockMemoryHistorySlice()],
+    ));
+  });
+
+  test('opens a newly created workspace', async () => {
+    await createWorkspace('test-ws', WorkspaceType.browser)(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    await sleep(0);
+
+    expect(getActionNames()).toContain(
+      'action::@bangle.io/slice-workspace:set-opened-workspace',
+    );
+
+    expect(
+      getAction('action::@bangle.io/slice-workspace:set-opened-workspace'),
+    ).toEqual([
+      {
+        id: expect.any(String),
+        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+        value: {
+          openedWsPaths: { wsPaths: [undefined, undefined] },
+          wsName: undefined,
+        },
+      },
+      {
+        id: expect.any(String),
+        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+        value: {
+          openedWsPaths: { wsPaths: [undefined, undefined] },
+          wsName: 'test-ws',
+        },
+      },
     ]);
   });
 });

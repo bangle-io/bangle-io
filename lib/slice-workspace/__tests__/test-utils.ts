@@ -13,9 +13,10 @@ export const createState = (
   data: Partial<{
     [K in WorkspaceStateKeys]: JsonPrimitive | JsonArray | undefined;
   }> = {},
+  additionalSlices: Slice[] = [],
 ) => {
   return AppState.stateFromJSON<any, any>({
-    slices: [workspaceSlice(), pageSlice()],
+    slices: [workspaceSlice(), pageSlice(), ...additionalSlices],
     json: {
       workspace: { version: JSON_SCHEMA_VERSION, data: data },
     },
@@ -59,19 +60,35 @@ export const createStore = (
     };
   },
   disableSideEffects = false,
+  additionalSlices: Slice[] = [],
 ) => {
   const store = ApplicationStore.create({
     scheduler: scheduler,
     storeName: 'workspace-store',
     state: data
-      ? createState(data)
-      : AppState.create({ slices: [workspaceSlice(), pageSlice()] as Slice[] }),
+      ? createState(data, additionalSlices)
+      : AppState.create({
+          slices: [
+            workspaceSlice(),
+            pageSlice(),
+            ...additionalSlices,
+          ] as Slice[],
+        }),
     disableSideEffects,
   });
 
   const dispatchSpy = jest.spyOn(store, 'dispatch');
 
-  return { store, dispatchSpy };
+  return {
+    store,
+    dispatchSpy,
+    getActionNames: () => {
+      return getActionNamesDispatched(dispatchSpy);
+    },
+    getAction: (name: string) => {
+      return getActionsDispatched(dispatchSpy, name);
+    },
+  };
 };
 
 export const getActionNamesDispatched = (mockDispatch) =>

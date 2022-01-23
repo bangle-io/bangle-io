@@ -2,13 +2,9 @@ import { sleep } from '@bangle.dev/utils';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { getPageLocation } from '@bangle.io/slice-page';
-import { OpenedWsPaths, wsNameToPathname } from '@bangle.io/ws-path';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import {
-  goToInvalidPathRoute,
-  refreshWsPaths,
-  setOpenedWorkspace,
-} from '../operations';
+import { goToInvalidPathRoute, refreshWsPaths } from '../operations';
 import { getWorkspaceInfo } from '../workspaces-operations';
 import { createStore, getActionNamesDispatched } from './test-utils';
 
@@ -18,7 +14,6 @@ jest.mock('../operations', () => {
     ...ops,
     refreshWsPaths: jest.fn(),
     goToInvalidPathRoute: jest.fn(),
-    setOpenedWorkspace: jest.fn(),
   };
 });
 
@@ -60,8 +55,6 @@ jest.mocked(getWorkspaceInfo).mockImplementation(() => async () => ({
   metadata: {},
   lastModified: 1,
 }));
-
-jest.mocked(setOpenedWorkspace).mockImplementation(() => () => true);
 
 describe('refreshWsPathsEffect', () => {
   test('deferredUpdate: calls refresh in deferred update', async () => {
@@ -146,33 +139,6 @@ describe('refreshWsPathsEffect', () => {
       },
     });
     expect(refreshWsPathsMock).toBeCalledTimes(3);
-  });
-});
-
-describe('updateLocationEffect', () => {
-  test('works', async () => {
-    const location1 = {
-      search: '',
-      pathname: wsNameToPathname('test-ws'),
-    };
-
-    const location2 = {
-      search: '',
-      pathname: wsNameToPathname('test-ws-2'),
-    };
-
-    getPageLocationMock
-      .mockImplementationOnce(() => () => location1)
-      .mockImplementationOnce(() => () => location2);
-
-    const { store } = createStore();
-
-    store.dispatch({
-      name: 'action::some-action',
-    } as any);
-
-    expect(setOpenedWorkspace).toBeCalledTimes(1);
-    expect(setOpenedWorkspace).nthCalledWith(1, location1);
   });
 });
 
