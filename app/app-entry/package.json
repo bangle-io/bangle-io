@@ -52,7 +52,6 @@
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/slice-workspaces-manager": "workspace:*",
     "@bangle.io/style": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",

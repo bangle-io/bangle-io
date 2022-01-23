@@ -6,7 +6,10 @@ import {
 } from '@bangle.io/create-store';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import type { WorkspaceSliceState } from './workspace-slice-state';
+import type {
+  WorkspaceInfoReg,
+  WorkspaceSliceState,
+} from './workspace-slice-state';
 
 export const workspaceSliceKey = new SliceKey<
   WorkspaceSliceState,
@@ -47,13 +50,21 @@ export type WorkspaceSliceAction =
       value: {
         pendingRefreshWsPaths: string | undefined;
       };
+    }
+  | {
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos';
+      value: {
+        workspacesInfo: WorkspaceInfoReg;
+      };
     };
+
+export type WorkspaceAppStore = ApplicationStore<
+  WorkspaceSliceState,
+  WorkspaceSliceAction
+>;
 
 export type ExtractWorkspaceSliceAction<
   ActionName extends WorkspaceSliceAction['name'],
 > = ExtractAction<WorkspaceSliceAction, ActionName>;
 
-export type WorkspaceDispatchType = ApplicationStore<
-  WorkspaceSliceState,
-  WorkspaceSliceAction
->['dispatch'];
+export type WorkspaceDispatchType = WorkspaceAppStore['dispatch'];

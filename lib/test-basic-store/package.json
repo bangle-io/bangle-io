@@ -28,7 +28,6 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-page": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/slice-workspaces-manager": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "idb-keyval": "^5.1.5"

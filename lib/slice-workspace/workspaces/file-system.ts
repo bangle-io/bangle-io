@@ -12,6 +12,7 @@ import {
 } from '@bangle.io/baby-fs';
 import { HELP_DOCS_VERSION } from '@bangle.io/config';
 import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import {
   filePathToWsPath,
   fromFsPath,
@@ -22,9 +23,9 @@ import {
   validateNoteWsPath,
 } from '@bangle.io/ws-path';
 
-import { HELP_FS_WORKSPACE_TYPE, WorkspaceInfo } from './common';
+import { HELP_FS_WORKSPACE_TYPE } from '../help-fs';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
-import { readWorkspacesInfoReg } from './helpers';
+import { readWorkspacesInfoReg } from './read-ws-info';
 
 const getWorkspaceInfoFromIdb = async (wsName: string) => {
   const wsInfo = (await readWorkspacesInfoReg())[wsName];

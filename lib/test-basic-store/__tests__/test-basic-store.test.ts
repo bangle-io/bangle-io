@@ -1,14 +1,12 @@
+import { WorkspaceType } from '@bangle.io/constants';
 import { pageSliceKey } from '@bangle.io/slice-page';
 import {
   createNote,
+  createWorkspace,
   getNote,
   goToWsNameRoute,
-} from '@bangle.io/slice-workspace';
-import {
-  createWorkspace,
   listWorkspaces,
-  WorkspaceType,
-} from '@bangle.io/slice-workspaces-manager';
+} from '@bangle.io/slice-workspace';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
 import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
 import { sleep } from '@bangle.io/utils';

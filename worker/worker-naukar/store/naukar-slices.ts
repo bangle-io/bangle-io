@@ -2,7 +2,6 @@ import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { pageSlice } from '@bangle.io/slice-page';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
-import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 
 import { editorManagerSlice } from '../slices/editor-manager-slice';
 import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
@@ -21,7 +20,6 @@ export function naukarSlices({
     ...syncWithWindowSlices(),
     extensionRegistrySlice(),
     pageSlice(),
-    workspacesSlice(),
     workspaceSlice(),
     editorManagerSlice(),
 

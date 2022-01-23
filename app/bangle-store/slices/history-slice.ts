@@ -1,3 +1,4 @@
+import { WorkspaceType } from '@bangle.io/constants';
 import { Slice, SliceKey, SliceSideEffect } from '@bangle.io/create-store';
 import { BaseHistory, BrowserHistory, createTo } from '@bangle.io/history';
 import {
@@ -6,10 +7,9 @@ import {
   syncPageLocation,
 } from '@bangle.io/slice-page';
 import {
-  workspacesSliceKey,
-  WorkspacesSliceState,
-  WorkspaceType,
-} from '@bangle.io/slice-workspaces-manager';
+  workspaceSliceKey,
+  WorkspaceSliceState,
+} from '@bangle.io/slice-workspace';
 import { assertActionName, assertNonWorkerGlobalScope } from '@bangle.io/utils';
 
 assertNonWorkerGlobalScope();
@@ -145,23 +145,23 @@ export const saveWorkspaceInfoEffect: SliceSideEffect<
   HistoryStateType,
   HistorySliceAction
 > = () => {
-  let lastWorkspaceInfos: WorkspacesSliceState['workspaceInfos'] | undefined =
+  let lastWorkspaceInfos: WorkspaceSliceState['workspacesInfo'] | undefined =
     undefined;
 
   return {
     deferredUpdate(store) {
-      const { workspaceInfos } = workspacesSliceKey.getSliceStateAsserted(
+      const { workspacesInfo } = workspaceSliceKey.getSliceStateAsserted(
         store.state,
       );
 
-      if (workspaceInfos && lastWorkspaceInfos !== workspaceInfos) {
+      if (workspacesInfo && lastWorkspaceInfos !== workspacesInfo) {
         const { history } = historySliceKey.getSliceStateAsserted(store.state);
 
         if (!history || !(history instanceof BrowserHistory)) {
           return;
         }
 
-        const result = Object.values(workspaceInfos)
+        const result = Object.values(workspacesInfo)
           .filter((r) => !r.deleted)
           .map((r) => {
             if (r.type === WorkspaceType['nativefs']) {
@@ -174,7 +174,7 @@ export const saveWorkspaceInfoEffect: SliceSideEffect<
           workspacesRootDir: result,
         });
 
-        lastWorkspaceInfos = workspaceInfos;
+        lastWorkspaceInfos = workspacesInfo;
       }
     },
   };

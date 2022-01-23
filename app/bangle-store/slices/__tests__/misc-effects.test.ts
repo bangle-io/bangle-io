@@ -7,7 +7,6 @@ import {
   updateOpenedWsPaths,
   workspaceSlice,
 } from '@bangle.io/slice-workspace';
-import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
@@ -71,7 +70,6 @@ describe('last seen workspace', () => {
         pageSlice(),
         historySlice(),
         workspaceSlice(),
-        workspacesSlice(),
         miscEffectsSlice(),
       ]);
 

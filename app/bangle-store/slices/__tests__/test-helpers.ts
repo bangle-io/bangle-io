@@ -1,12 +1,14 @@
 import { pageSlice, PageSliceAction } from '@bangle.io/slice-page';
-import { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
-import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
+import {
+  workspaceSlice,
+  WorkspaceSliceAction,
+} from '@bangle.io/slice-workspace';
 import { createTestStore as _createTestStore } from '@bangle.io/test-utils/create-test-store';
 
 import { historySlice } from '../history-slice';
 
 export function createTestStore(
-  slices = [pageSlice(), historySlice(), workspacesSlice()],
+  slices = [pageSlice(), historySlice(), workspaceSlice()],
 ) {
   return _createTestStore<PageSliceAction | WorkspaceSliceAction>(slices);
 }

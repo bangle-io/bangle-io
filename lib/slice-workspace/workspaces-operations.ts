@@ -1,4 +1,6 @@
+import { WorkspaceType } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import {
   getPageLocation,
   goToLocation,
@@ -12,45 +14,44 @@ import {
 } from '@bangle.io/ws-path';
 
 import {
-  HELP_FS_WORKSPACE_NAME,
-  WorkspaceInfo,
-  WorkspacesAppStore,
-  WorkspacesDispatchType,
-  workspacesSliceKey,
-  WorkspaceType,
+  WorkspaceAppStore,
+  WorkspaceDispatchType,
+  workspaceSliceKey,
 } from './common';
+import { HELP_FS_WORKSPACE_NAME } from './help-fs';
 import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
-} from './errors';
-import { readWorkspacesInfoReg, saveWorkspacesInfo } from './helpers';
+} from './workspaces/errors';
+import {
+  readWorkspacesInfoReg,
+  saveWorkspacesInfo,
+} from './workspaces/read-ws-info';
 
 // Lists all the workspaces that have not been deleted workspaces
 export function listWorkspaces() {
-  return async (
-    _: AppState,
-    __: WorkspacesDispatchType,
-    store: WorkspacesAppStore,
-  ): Promise<WorkspaceInfo[]> => {
-    const wsInfosInDb = await readWorkspacesInfoReg();
+  return workspaceSliceKey.asyncOp(
+    async (_, __, store): Promise<WorkspaceInfo[]> => {
+      const wsInfosInDb = await readWorkspacesInfoReg();
 
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
-      value: {
-        workspaceInfos: wsInfosInDb,
-      },
-    });
+      store.dispatch({
+        name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
+        value: {
+          workspacesInfo: wsInfosInDb,
+        },
+      });
 
-    const { workspaceInfos } = workspacesSliceKey.getSliceStateAsserted(
-      store.state,
-    );
+      const { workspacesInfo } = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      );
 
-    asssertNotUndefined(workspaceInfos, 'workspaceInfos cannot be undefined');
+      asssertNotUndefined(workspacesInfo, 'workspacesInfo cannot be undefined');
 
-    // only return the not deleted ones
-    return Object.values(workspaceInfos).filter((r) => !r.deleted);
-  };
+      // only return the not deleted ones
+      return Object.values(workspacesInfo).filter((r) => !r.deleted);
+    },
+  );
 }
 
 export function createWorkspace(
@@ -65,8 +66,8 @@ export function createWorkspace(
 ) {
   return async (
     _: AppState,
-    __: WorkspacesDispatchType,
-    store: WorkspacesAppStore,
+    __: WorkspaceDispatchType,
+    store: WorkspaceAppStore,
   ) => {
     validWsName(wsName);
 
@@ -135,9 +136,9 @@ export function createWorkspace(
     }
 
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsName]: workspace,
         },
       },
@@ -157,19 +158,15 @@ export function createWorkspace(
 export function deleteWorkspace(targetWsName: string) {
   return async (
     _: AppState,
-    __: WorkspacesDispatchType,
-    store: WorkspacesAppStore,
+    __: WorkspaceDispatchType,
+    store: WorkspaceAppStore,
   ): Promise<boolean> => {
-    const targetWsInfo = await getWorkspaceInfo(targetWsName)(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    const targetWsInfo = await getWorkspaceInfo(targetWsName)(store.state);
 
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [targetWsName]: {
             ...targetWsInfo,
             deleted: true,
@@ -202,33 +199,33 @@ export function deleteWorkspace(targetWsName: string) {
 export function getWorkspaceInfo(wsName: string) {
   return async (
     state: AppState,
-    dispatch: WorkspacesDispatchType,
-    store: WorkspacesAppStore,
+    // store: WorkspaceAppStore,
   ): Promise<WorkspaceInfo> => {
-    const workspaces = await listWorkspaces()(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    let wsInfo =
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
 
-    const workspaceInfo = workspaces.find(({ name }) => name === wsName);
+    if (!wsInfo) {
+      const wsInfosInDb = await readWorkspacesInfoReg();
 
-    if (!workspaceInfo) {
-      throw new WorkspaceError(
-        `Workspace ${wsName} not found`,
-        WORKSPACE_NOT_FOUND_ERROR,
-        `Cannot find the workspace ${wsName}`,
-        undefined,
-      );
+      wsInfo = wsInfosInDb[wsName];
+
+      if (!wsInfo) {
+        throw new WorkspaceError(
+          `Workspace ${wsName} not found`,
+          WORKSPACE_NOT_FOUND_ERROR,
+          `Cannot find the workspace ${wsName}`,
+          undefined,
+        );
+      }
     }
 
-    return workspaceInfo;
+    return wsInfo;
   };
 }
 
 // checks if a workspace that has not been deleted exists
 export function hasWorkspace(wsName: string) {
-  return async (_, __, store: WorkspacesAppStore) => {
+  return async (_, __, store: WorkspaceAppStore) => {
     const workspaces = await listWorkspaces()(
       store.state,
       store.dispatch,

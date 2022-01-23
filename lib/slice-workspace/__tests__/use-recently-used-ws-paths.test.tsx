@@ -7,17 +7,15 @@ import {
   initialBangleStore,
   useSliceState,
 } from '@bangle.io/bangle-store-context';
+import { WorkspaceType } from '@bangle.io/constants';
 import { getPageLocation } from '@bangle.io/slice-page';
-import {
-  getWorkspaceInfo,
-  WorkspaceType,
-} from '@bangle.io/slice-workspaces-manager';
 import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
 import { wsPathToPathname, wsPathToSearch } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
 import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
 import { workspaceSliceInitialState } from '../workspace-slice';
+import { getWorkspaceInfo } from '../workspaces-operations';
 import { createStore } from './test-utils';
 
 jest.mock('@bangle.io/slice-page', () => {
@@ -43,14 +41,16 @@ jest.mock('@bangle.io/bangle-store-context', () => {
     useSliceState: jest.fn(),
   };
 });
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  const ops = jest.requireActual('@bangle.io/slice-workspaces-manager');
+
+jest.mock('../workspaces-operations', () => {
+  const ops = jest.requireActual('../workspaces-operations');
 
   return {
     ...ops,
     getWorkspaceInfo: jest.fn(() => {}),
   };
 });
+
 const location = {};
 
 const getPageLocationMock = jest

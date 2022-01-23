@@ -1,4 +1,4 @@
-import { workspacesSliceKey } from '../common';
+import { workspaceSliceKey } from '../common';
 import { createState, createWsInfo } from './test-utils';
 
 describe('state', () => {
@@ -6,14 +6,14 @@ describe('state', () => {
     let state = createState();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {},
+        workspacesInfo: {},
       },
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos,
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
     ).toEqual({});
   });
 
@@ -23,16 +23,16 @@ describe('state', () => {
     const wsInfo = createWsInfo({ name: 'testWs' });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           testWs: createWsInfo({ name: 'testWs' }),
         },
       },
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos,
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
     ).toEqual({ testWs: wsInfo });
   });
 
@@ -40,9 +40,9 @@ describe('state', () => {
     let state = createState();
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           testWs: createWsInfo({ name: 'testWs' }),
           testWs2: createWsInfo({ name: 'testWs2' }),
           testWs3: createWsInfo({ name: 'testWs3' }),
@@ -51,7 +51,7 @@ describe('state', () => {
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos,
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
     ).toEqual({
       testWs: createWsInfo({ name: 'testWs' }),
       testWs2: createWsInfo({ name: 'testWs2' }),
@@ -59,9 +59,9 @@ describe('state', () => {
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           testWs: createWsInfo({ name: 'testWs' }),
           testWs3: createWsInfo({ name: 'testWs3', lastModified: 7 }),
         },
@@ -69,7 +69,7 @@ describe('state', () => {
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos,
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
     ).toEqual({
       testWs: createWsInfo({ name: 'testWs' }),
       testWs2: createWsInfo({ name: 'testWs2' }),
@@ -84,25 +84,25 @@ describe('state', () => {
     const wsInfo2 = createWsInfo({ name: 'testWs2' });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsInfo.name]: wsInfo,
         },
       },
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsInfo2.name]: wsInfo2,
         },
       },
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos,
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
     ).toEqual({
       [wsInfo.name]: wsInfo,
       [wsInfo2.name]: wsInfo2,
@@ -118,25 +118,25 @@ describe('same wsName', () => {
     const wsInfo2 = createWsInfo({ name: 'testWs', lastModified: 3 });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsInfo.name]: wsInfo,
         },
       },
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsInfo2.name]: wsInfo2,
         },
       },
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos,
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
     ).toEqual({
       [wsInfo.name]: wsInfo,
     });
@@ -149,25 +149,25 @@ describe('same wsName', () => {
     const wsInfo2 = createWsInfo({ name: 'testWs', lastModified: 7 });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsInfo.name]: wsInfo,
         },
       },
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsInfo2.name]: wsInfo2,
         },
       },
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos,
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
     ).toEqual({
       [wsInfo.name]: wsInfo2,
     });
@@ -189,31 +189,31 @@ describe('same wsName', () => {
     });
 
     state = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsInfo.name]: wsInfo,
         },
       },
     });
 
     let newState = state.applyAction({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           [wsInfo2.name]: wsInfo2,
         },
       },
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos,
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo,
     ).toEqual({
       [wsInfo.name]: wsInfo,
     });
 
     expect(
-      workspacesSliceKey.getSliceStateAsserted(newState).workspaceInfos,
-    ).toBe(workspacesSliceKey.getSliceStateAsserted(state).workspaceInfos);
+      workspaceSliceKey.getSliceStateAsserted(newState).workspacesInfo,
+    ).toBe(workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo);
   });
 });

@@ -1,21 +1,13 @@
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { AppState } from '@bangle.io/create-store';
 import {
   EditorIdType,
   editorManagerSliceKey,
 } from '@bangle.io/slice-editor-manager';
-import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
-  deleteNote,
   updateOpenedWsPaths,
   WorkspaceDispatchType,
-  WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
-import {
-  deleteWorkspace,
-  HELP_FS_WORKSPACE_NAME,
-} from '@bangle.io/slice-workspaces-manager';
-import { resolvePath } from '@bangle.io/ws-path';
 
 export function getFocusedWsPath() {
   return (state: AppState) => {

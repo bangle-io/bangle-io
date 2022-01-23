@@ -1,10 +1,7 @@
 import { sleep } from '@bangle.dev/utils';
 
+import { WorkspaceType } from '@bangle.io/constants';
 import { getPageLocation } from '@bangle.io/slice-page';
-import {
-  getWorkspaceInfo,
-  WorkspaceType,
-} from '@bangle.io/slice-workspaces-manager';
 import { OpenedWsPaths, wsNameToPathname } from '@bangle.io/ws-path';
 
 import {
@@ -12,6 +9,7 @@ import {
   refreshWsPaths,
   syncPageLocation,
 } from '../operations';
+import { getWorkspaceInfo } from '../workspaces-operations';
 import { createStore, getActionNamesDispatched } from './test-utils';
 
 jest.mock('../operations', () => {
@@ -32,14 +30,15 @@ jest.mock('@bangle.io/slice-page', () => {
   };
 });
 
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  const ops = jest.requireActual('@bangle.io/slice-workspaces-manager');
+jest.mock('../workspaces-operations', () => {
+  const ops = jest.requireActual('../workspaces-operations');
 
   return {
     ...ops,
     getWorkspaceInfo: jest.fn(() => () => {}),
   };
 });
+
 const mockLocation = {
   search: '',
   pathname: '',

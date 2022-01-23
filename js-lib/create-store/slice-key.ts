@@ -91,6 +91,16 @@ export class SliceKey<
     return cb;
   }
 
+  asyncOp<T extends Promise<any>>(
+    cb: (
+      state: AppState<S, A>,
+      dispatch: ApplicationStore<SL, A>['dispatch'],
+      store: ApplicationStore<SL, A>,
+    ) => T,
+  ) {
+    return cb;
+  }
+
   // Helper function create a side effect with the correct type.
   effect(cb: SliceSideEffect<SL, A, C>) {
     return cb;

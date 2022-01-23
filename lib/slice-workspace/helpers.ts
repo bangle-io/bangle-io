@@ -1,9 +1,12 @@
+import { shallowEqual } from '@bangle.io/utils';
 import {
   isValidNoteWsPath,
   OpenedWsPaths,
   pathnameToWsPath,
   searchToWsPath,
 } from '@bangle.io/ws-path';
+
+import { WorkspaceInfoReg } from './workspace-slice-state';
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {

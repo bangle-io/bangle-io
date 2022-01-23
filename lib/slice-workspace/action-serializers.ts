@@ -4,6 +4,20 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 import { ExtractWorkspaceSliceAction, WorkspaceSliceAction } from './common';
 
 export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
+  'action::@bangle.io/slice-workspace:set-workspace-infos': (actionName) => {
+    const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
+      return action.value;
+    };
+    const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+      return obj;
+    };
+
+    return {
+      toJSON,
+      fromJSON,
+    };
+  },
+
   'action::@bangle.io/slice-workspace:sync-page-location': (actionName) => {
     const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
       return {
@@ -23,6 +37,7 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       fromJSON,
     };
   },
+
   'action::@bangle.io/slice-workspace:update-recently-used-ws-paths': (
     actionName,
   ) => {
@@ -44,6 +59,7 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       fromJSON,
     };
   },
+
   'action::@bangle.io/slice-workspace:update-ws-paths': (actionName) => {
     const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
       return {
@@ -62,6 +78,7 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       fromJSON,
     };
   },
+
   'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths': (
     actionName,
   ) => {

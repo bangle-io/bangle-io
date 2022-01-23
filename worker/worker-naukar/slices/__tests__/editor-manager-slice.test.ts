@@ -18,20 +18,6 @@ jest.mock('../../common', () => {
     DOC_WRITE_DEBOUNCE_MAX_WAIT: 0,
   };
 });
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  const rest = jest.requireActual('@bangle.io/slice-workspaces-manager');
-  return {
-    ...rest,
-    FileSystem: {
-      renameFile: jest.fn(),
-      deleteFile: jest.fn(),
-      getDoc: jest.fn(),
-      saveDoc: jest.fn(),
-      listAllFiles: jest.fn(),
-      checkFileExists: jest.fn(),
-    },
-  };
-});
 
 const scheduler = (cb) => {
   let destroyed = false;

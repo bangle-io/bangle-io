@@ -14,16 +14,11 @@ import {
   goToLocation,
   historyUpdateOpenedWsPaths,
 } from '@bangle.io/slice-page';
-import {
-  FileSystem,
-  HELP_FS_WORKSPACE_NAME,
-  WORKSPACE_NOT_FOUND_ERROR,
-  WorkspaceError,
-} from '@bangle.io/slice-workspaces-manager';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { goToWorkspaceHomeRoute } from '..';
+import { HELP_FS_WORKSPACE_NAME } from '../help-fs';
 import { savePrevOpenedWsPathsToSearch } from '../helpers';
 import {
   checkFileExists,
@@ -39,24 +34,27 @@ import {
   wrapFileMethod,
 } from '../operations';
 import {
+  WORKSPACE_NOT_FOUND_ERROR,
+  WorkspaceError,
+} from '../workspaces/errors';
+import * as FileSystem from '../workspaces/file-system';
+import {
   createState,
   createStore,
   getActionNamesDispatched,
   noSideEffectsStore,
 } from './test-utils';
 
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  const rest = jest.requireActual('@bangle.io/slice-workspaces-manager');
+jest.mock('../workspaces/file-system', () => {
+  const rest = jest.requireActual('../workspaces/file-system');
   return {
     ...rest,
-    FileSystem: {
-      renameFile: jest.fn(),
-      deleteFile: jest.fn(),
-      getDoc: jest.fn(),
-      saveDoc: jest.fn(),
-      listAllFiles: jest.fn(),
-      checkFileExists: jest.fn(),
-    },
+    renameFile: jest.fn(),
+    deleteFile: jest.fn(),
+    getDoc: jest.fn(),
+    saveDoc: jest.fn(),
+    listAllFiles: jest.fn(),
+    checkFileExists: jest.fn(),
   };
 });
 
@@ -114,6 +112,7 @@ const getPageLocationMock = jest
 let goToLocationMock = jest
   .mocked(goToLocation)
   .mockImplementation(() => () => {});
+
 const extensionRegistry: ExtensionRegistry = {
   specRegistry: {},
 } as any;

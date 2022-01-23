@@ -1,3 +1,4 @@
+import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore, Slice, SliceKey } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
 import { BaseHistory, createTo, MemoryHistory } from '@bangle.io/history';
@@ -8,13 +9,12 @@ import {
   PageSliceStateType,
   syncPageLocation,
 } from '@bangle.io/slice-page';
-import { createNote, workspaceSlice } from '@bangle.io/slice-workspace';
 import {
+  createNote,
   createWorkspace,
   listWorkspaces,
-  workspacesSlice,
-  WorkspaceType,
-} from '@bangle.io/slice-workspaces-manager';
+  workspaceSlice,
+} from '@bangle.io/slice-workspace';
 import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
@@ -33,7 +33,6 @@ export function createBasicStore(slices: Slice[] = []) {
       extensionRegistrySlice(),
       mockMemoryHistorySlice(),
       pageSlice(),
-      workspacesSlice(),
       workspaceSlice(),
       ...slices,
     ],

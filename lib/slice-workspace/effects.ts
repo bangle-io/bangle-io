@@ -5,6 +5,8 @@ import { shallowEqual } from '@bangle.io/utils';
 
 import { SideEffect, workspaceSliceKey } from './common';
 import { refreshWsPaths, syncPageLocation } from './operations';
+import { saveWorkspacesInfo } from './workspaces/read-ws-info';
+import { listWorkspaces } from './workspaces-operations';
 
 export const refreshWsPathsEffect: SideEffect = () => {
   let loadWsPathsOnMount = true;
@@ -51,3 +53,19 @@ export const updateLocationEffect: SideEffect = () => {
     },
   };
 };
+
+export const refreshWorkspacesEffect = workspaceSliceKey.effect(() => {
+  return {
+    deferredOnce(store) {
+      listWorkspaces()(store.state, store.dispatch, store);
+    },
+    update(store, __, sliceState, prevSliceState) {
+      const { workspacesInfo } = sliceState;
+      const { workspacesInfo: prevWorkspacesInfo } = prevSliceState;
+
+      if (workspacesInfo && workspacesInfo !== prevWorkspacesInfo) {
+        saveWorkspacesInfo(store.state);
+      }
+    },
+  };
+});

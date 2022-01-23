@@ -8,7 +8,6 @@ import { pageSlice, PageSliceAction } from '@bangle.io/slice-page';
 import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
-import { workspacesSlice } from '@bangle.io/slice-workspaces-manager';
 import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 import { workerSetupSlices } from '@bangle.io/worker-setup';
 
@@ -47,7 +46,6 @@ export function bangleStateSlices({
     ...pageBlock,
     naukarProxySlice(),
     ...workerSetupSlices(),
-    disableSideEffect(workspacesSlice()),
     disableSideEffect(workspaceSlice()),
     extensionRegistrySlice(),
     uiSlice(),

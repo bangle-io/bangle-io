@@ -9,7 +9,7 @@ import {
   getDoc,
   listAllFiles,
   saveDoc,
-} from '../file-system';
+} from '../workspaces/file-system';
 
 const extensionRegistry = createExtensionRegistry([], { editorCore: true });
 

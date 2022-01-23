@@ -13,7 +13,7 @@ import {
 } from '@bangle.io/constants';
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { hasWorkspace } from '@bangle.io/slice-workspaces-manager';
+import { hasWorkspace } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
 
