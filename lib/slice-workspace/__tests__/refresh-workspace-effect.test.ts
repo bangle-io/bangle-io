@@ -3,6 +3,7 @@ import * as idb from 'idb-keyval';
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
 import {
+  getPageLocation,
   historyUpdateOpenedWsPaths,
   pageSliceKey,
 } from '@bangle.io/slice-page';
@@ -10,6 +11,7 @@ import { mockMemoryHistorySlice } from '@bangle.io/test-basic-store';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
+import { goToWsNameRoute } from '..';
 import { workspaceSliceKey } from '../common';
 import { createWorkspace } from '../workspaces-operations';
 import {
@@ -182,5 +184,20 @@ describe('updateLocationEffect', () => {
         },
       },
     ]);
+  });
+
+  test('opening a not found workspace', async () => {
+    await goToWsNameRoute('/ws/hello')(store.state, store.dispatch);
+
+    await sleep(0);
+
+    expect(
+      await workspaceSliceKey.getSliceStateAsserted(store.state).wsName,
+    ).toEqual(undefined);
+
+    expect(await getPageLocation()(store.state)).toEqual({
+      pathname: '/ws-not-found/%2Fws%2Fhello',
+      search: '',
+    });
   });
 });
