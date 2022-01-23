@@ -95,12 +95,10 @@ describe('saveWorkspaceInfoEffect', () => {
 
     await sleep(0);
 
-    expect((history as BrowserHistory).updateHistoryState).toBeCalledTimes(1);
-    expect((history as BrowserHistory).updateHistoryState).nthCalledWith(
-      1,
-
-      { workspacesRootDir: [] },
-    );
+    // expect((history as BrowserHistory).updateHistoryState).(1);
+    expect((history as BrowserHistory).updateHistoryState).lastCalledWith({
+      workspacesRootDir: [],
+    });
   });
 
   test('ignores when a workspace is already deleted in the db', async () => {

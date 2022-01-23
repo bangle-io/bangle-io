@@ -1,7 +1,7 @@
 import { savePreviousValue } from '@bangle.io/create-store';
 import type { ReturnReturnType } from '@bangle.io/shared-types';
 import { getPageLocation } from '@bangle.io/slice-page';
-import { shallowEqual } from '@bangle.io/utils';
+import { assertSignal, shallowEqual } from '@bangle.io/utils';
 import {
   OpenedWsPaths,
   pathnameToWsName,
@@ -11,9 +11,14 @@ import {
 
 import { SideEffect, workspaceSliceKey } from './common';
 import { validateOpenedWsPaths } from './helpers';
-import { goToInvalidPathRoute, refreshWsPaths } from './operations';
+import {
+  goToInvalidPathRoute,
+  goToWsNameRouteNotFoundRoute,
+  refreshWsPaths,
+} from './operations';
+import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './workspaces/errors';
 import { saveWorkspacesInfo } from './workspaces/read-ws-info';
-import { listWorkspaces } from './workspaces-operations';
+import { getWorkspaceInfo, listWorkspaces } from './workspaces-operations';
 
 export const refreshWsPathsEffect: SideEffect = () => {
   let loadWsPathsOnMount = true;
@@ -42,8 +47,8 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
   const prevVal = savePreviousValue<ReturnReturnType<typeof getPageLocation>>();
 
   return {
-    deferredUpdate(store) {
-      // assertSignal(abortSignal);
+    async deferredUpdate(store, abortSignal) {
+      assertSignal(abortSignal);
 
       const location = getPageLocation()(store.state);
       const prevLocation = prevVal(location);
@@ -56,9 +61,9 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      // const currentWsName = workspaceSliceKey.getSliceStateAsserted(
-      //   store.state,
-      // ).wsName;
+      const currentWsName = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      ).wsName;
 
       const { pathname, search } = location;
 
@@ -73,6 +78,22 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
           },
         });
         return;
+      }
+
+      if (wsName && !currentWsName) {
+        try {
+          const wsInfo = await getWorkspaceInfo(wsName)(store.state);
+        } catch (error) {
+          assertSignal(abortSignal);
+          if (
+            error instanceof WorkspaceError &&
+            error.code === WORKSPACE_NOT_FOUND_ERROR
+          ) {
+            goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
+            return;
+          }
+          throw error;
+        }
       }
 
       const openedWsPaths = OpenedWsPaths.createFromArray([
