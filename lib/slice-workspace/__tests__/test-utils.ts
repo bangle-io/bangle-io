@@ -1,8 +1,9 @@
 import type { JsonArray } from 'type-fest';
 
 import { WorkspaceType } from '@bangle.io/constants';
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { ApplicationStore, AppState, Slice } from '@bangle.io/create-store';
 import type { JsonPrimitive, WorkspaceInfo } from '@bangle.io/shared-types';
+import { pageSlice } from '@bangle.io/slice-page';
 
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
 import { WorkspaceStateKeys } from '../workspace-slice-state';
@@ -14,7 +15,7 @@ export const createState = (
   }> = {},
 ) => {
   return AppState.stateFromJSON<any, any>({
-    slices: [workspaceSlice()],
+    slices: [workspaceSlice(), pageSlice()],
     json: {
       workspace: { version: JSON_SCHEMA_VERSION, data: data },
     },
@@ -64,7 +65,7 @@ export const createStore = (
     storeName: 'workspace-store',
     state: data
       ? createState(data)
-      : AppState.create({ slices: [workspaceSlice()] }),
+      : AppState.create({ slices: [workspaceSlice(), pageSlice()] as Slice[] }),
     disableSideEffects,
   });
 
