@@ -14,11 +14,6 @@ import {
   pageSliceKey,
 } from '@bangle.io/slice-page';
 import {
-  HELP_FS_WORKSPACE_NAME,
-  WORKSPACE_NOT_FOUND_ERROR,
-  WorkspaceError,
-} from '@bangle.io/slice-workspaces-manager';
-import {
   OpenedWsPaths,
   pathnameToWsName,
   pathnameToWsPath,
@@ -32,11 +27,13 @@ import {
 import { WorkspaceDispatchType, workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
 import { fileSystemPlus, FileSystemType } from './file-system-plus';
+import { HELP_FS_WORKSPACE_NAME } from './help-fs';
 import {
   getPrevOpenedWsPathsFromSearch,
   savePrevOpenedWsPathsToSearch,
   validateOpenedWsPaths,
 } from './helpers';
+import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './workspaces/errors';
 
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};

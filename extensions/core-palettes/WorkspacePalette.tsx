@@ -10,12 +10,8 @@ import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
 import { removeWorkspace } from '@bangle.io/shared-operations';
-import { goToWsNameRoute } from '@bangle.io/slice-workspace';
-import {
-  deleteWorkspace,
-  listWorkspaces,
-  WorkspaceInfo,
-} from '@bangle.io/slice-workspaces-manager';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
+import { goToWsNameRoute, listWorkspaces } from '@bangle.io/slice-workspace';
 import {
   AlbumIcon,
   CloseIcon,

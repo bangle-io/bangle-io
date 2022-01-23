@@ -6,7 +6,6 @@ import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { pageSliceKey } from '@bangle.io/slice-page';
 import { uiSliceKey } from '@bangle.io/slice-ui';
 import { workspaceSliceKey } from '@bangle.io/slice-workspace';
-import { workspacesSliceKey } from '@bangle.io/slice-workspaces-manager';
 import { naukarSlices as getNaukarSlices } from '@bangle.io/worker-naukar';
 import { naukarProxySliceKey } from '@bangle.io/worker-naukar-proxy';
 
@@ -27,7 +26,6 @@ test('exhaustive main slices list', () => {
     naukarProxySliceKey.key,
     'worker-setup-slice-storeSyncKey$',
     'store-sync$',
-    workspacesSliceKey.key,
     workspaceSliceKey.key,
     'extension-registry-slice$',
     uiSliceKey.key,
@@ -45,7 +43,6 @@ test('exhaustive naukar slices list', () => {
     'store-sync$',
     'extension-registry-slice$',
     pageSliceKey.key,
-    workspacesSliceKey.key,
     workspaceSliceKey.key,
     'editorCollabSlice$',
     expect.stringMatching(/slice\$/),
@@ -56,7 +53,6 @@ test('slices common worker and main', () => {
   expect(commonInBoth.map((r) => r.key)).toEqual([
     'page-slice$',
     'store-sync$',
-    'slice-workspaces-manager$',
     'slice-workspace$',
     'extension-registry-slice$',
   ]);

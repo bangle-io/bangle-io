@@ -5,11 +5,16 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ActionSerializers } from './action-serializers';
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
-import { refreshWsPathsEffect, updateLocationEffect } from './effects';
+import {
+  refreshWorkspacesEffect,
+  refreshWsPathsEffect,
+  updateLocationEffect,
+} from './effects';
 import {
   WorkspaceSliceState,
   WorkspaceStateKeys,
 } from './workspace-slice-state';
+import { mergeWsInfoRegistries } from './workspaces/read-ws-info';
 
 export const JSON_SCHEMA_VERSION = 'workspace-slice/2';
 
@@ -22,6 +27,7 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   recentlyUsedWsPaths: undefined,
   wsPaths: undefined,
   pendingRefreshWsPaths: undefined,
+  workspacesInfo: undefined,
 });
 
 const applyState = (
@@ -83,6 +89,19 @@ const applyState = (
       });
     }
 
+    case 'action::@bangle.io/slice-workspace:set-workspace-infos': {
+      const existingWsInfos = state.workspacesInfo || {};
+
+      const newWsInfos = mergeWsInfoRegistries(
+        existingWsInfos,
+        action.value.workspacesInfo,
+      );
+
+      return WorkspaceSliceState.update(state, {
+        workspacesInfo: newWsInfos,
+      });
+    }
+
     default: {
       return state;
     }
@@ -120,6 +139,7 @@ export function workspaceSlice() {
           recentlyUsedWsPaths: val.recentlyUsedWsPaths,
           wsPaths: val.wsPaths,
           pendingRefreshWsPaths: undefined,
+          workspacesInfo: val.workspacesInfo,
         };
 
         const result = Object.fromEntries(
@@ -156,11 +176,16 @@ export function workspaceSlice() {
           recentlyUsedWsPaths: data.recentlyUsedWsPaths || undefined,
           wsPaths: data.wsPaths || undefined,
           pendingRefreshWsPaths: undefined,
+          workspacesInfo: data.workspacesInfo || undefined,
         });
       },
     },
     actions: ActionSerializers,
 
-    sideEffect: [updateLocationEffect, refreshWsPathsEffect],
+    sideEffect: [
+      updateLocationEffect,
+      refreshWsPathsEffect,
+      refreshWorkspacesEffect,
+    ],
   });
 }

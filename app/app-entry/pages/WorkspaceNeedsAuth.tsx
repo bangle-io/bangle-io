@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react';
 
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
+  getWorkspaceInfo,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
   goToWsNameRouteNotFoundRoute,
-} from '@bangle.io/slice-workspace';
-import {
-  getWorkspaceInfo,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
-  WorkspaceInfo,
-} from '@bangle.io/slice-workspaces-manager';
+} from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 import { keybindingsHelper } from '@bangle.io/utils';
@@ -28,11 +26,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   useEffect(() => {
     let destroyed = false;
 
-    getWorkspaceInfo(wsName)(
-      bangleStore.state,
-      bangleStore.dispatch,
-      bangleStore,
-    ).then(
+    getWorkspaceInfo(wsName)(bangleStore.state).then(
       (wsInfo) => {
         if (destroyed) {
           return;

@@ -38,7 +38,9 @@ jest.mock('@bangle.io/utils', () => {
     safeRequestIdleCallback: jest.fn((cb) => {
       let c = counter++;
       destroyMap.set(c, false);
-      Promise.resolve().then(() => {
+      let p = Promise.resolve();
+
+      p.then(() => {
         if (destroyMap.get(c) === false) {
           cb();
         }
@@ -95,7 +97,7 @@ describe('BacklinkNode', () => {
       />,
     );
 
-    await sleep(0);
+    await act(() => sleep(0));
 
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
@@ -141,7 +143,7 @@ describe('BacklinkNode', () => {
         view={editorView}
       />,
     );
-    await sleep(0);
+    await act(() => sleep(0));
 
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
@@ -219,6 +221,7 @@ describe('BacklinkNode', () => {
         </button>
       </div>
     `);
+    await act(() => sleep(0));
   });
 
   describe('clicking', () => {

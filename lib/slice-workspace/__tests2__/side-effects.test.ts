@@ -1,13 +1,18 @@
 import * as idb from 'idb-keyval';
 
 import { WorkspaceType } from '@bangle.io/constants';
+import { ApplicationStore } from '@bangle.io/create-store';
 import { sleep } from '@bangle.io/utils';
 
+import { workspaceSliceKey } from '../common';
 import {
   createStore,
   createWsInfo,
   getActionNamesDispatched,
 } from './test-utils';
+
+const getDispatch = (store: ApplicationStore) =>
+  workspaceSliceKey.getDispatch(store.dispatch);
 
 describe('refreshWorkspacesEffect', () => {
   test('works', async () => {
@@ -16,7 +21,8 @@ describe('refreshWorkspacesEffect', () => {
     await sleep(0);
     expect(getActionNamesDispatched(dispatchSpy)).toMatchInlineSnapshot(`
       Array [
-        "action::@bangle.io/slice-workspaces-manager:set-workspace-infos",
+        "action::@bangle.io/slice-workspace:set-workspace-infos",
+        "action::@bangle.io/slice-workspace:sync-page-location",
       ]
     `);
 
@@ -29,10 +35,10 @@ describe('refreshWorkspacesEffect', () => {
       metadata: { rootDirHandle: { root: 'handler' } },
     });
 
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+    getDispatch(store)({
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           testWs: testWsInfo,
         },
       },
@@ -43,10 +49,10 @@ describe('refreshWorkspacesEffect', () => {
     expect(idb.set).nthCalledWith(2, 'workspaces/2', [testWsInfo]);
 
     // actions which donot result in any update in state donot trigger an idb save
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+    getDispatch(store)({
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           testWs: createWsInfo({
             name: 'testWs',
             type: WorkspaceType.nativefs,
@@ -56,7 +62,7 @@ describe('refreshWorkspacesEffect', () => {
       },
     });
     // non relevant dispatches donot trigger an update to idb
-    store.dispatch({
+    getDispatch(store)({
       name: 'action::@bangle.io/some-package',
       value: {},
     } as any);
@@ -70,10 +76,10 @@ describe('refreshWorkspacesEffect', () => {
       metadata: { rootDirHandle: { root: 'handler' } },
     });
     // actions which have newer lastModified trigger update
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+    getDispatch(store)({
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           testWs: modifiedWsInfo,
         },
       },
@@ -102,10 +108,10 @@ describe('refreshWorkspacesEffect', () => {
     // some other tab writes data to idb
     await idb.set('workspaces/2', [testWsInfoExisting]);
 
-    store.dispatch({
-      name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+    getDispatch(store)({
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
-        workspaceInfos: {
+        workspacesInfo: {
           testWs: testWsInfo,
         },
       },

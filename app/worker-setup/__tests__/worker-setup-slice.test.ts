@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 import { blockReload, pageSlice } from '@bangle.io/slice-page';
-import { workspaceSlice, workspaceSliceKey } from '@bangle.io/slice-workspace';
 import {
   listWorkspaces,
-  workspacesSlice,
-} from '@bangle.io/slice-workspaces-manager';
+  workspaceSlice,
+  workspaceSliceKey,
+} from '@bangle.io/slice-workspace';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { exponentialBackoff, sleep } from '@bangle.io/utils';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
@@ -260,7 +260,7 @@ test('sends workspaces slice action correctly', async () => {
   const slices = workerSetupSlices();
 
   const { store } = createTestStore(
-    [...slices, pageSlice(), naukarProxySlice(), workspacesSlice()],
+    [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
     {
       useWebWorker: false,
     },
@@ -279,7 +279,7 @@ test('sends workspaces slice action correctly', async () => {
   expect(dispatchSpy).lastCalledWith({
     fromStore: 'test-store',
     id: expect.any(String),
-    name: 'action::@bangle.io/slice-workspaces-manager:set-workspace-infos',
+    name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
     value: expect.anything(),
   });
 });
@@ -288,13 +288,7 @@ test('sends workspace slice action correctly', async () => {
   const slices = workerSetupSlices();
 
   const { store } = createTestStore(
-    [
-      ...slices,
-      pageSlice(),
-      naukarProxySlice(),
-      workspacesSlice(),
-      workspaceSlice(),
-    ],
+    [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
     {
       useWebWorker: false,
     },

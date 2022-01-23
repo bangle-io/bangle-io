@@ -16,7 +16,7 @@ import {
 } from '@bangle.io/constants';
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { hasWorkspace } from '@bangle.io/slice-workspaces-manager';
+import { hasWorkspace } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';
 
 import {
@@ -52,10 +52,8 @@ jest.mock('react-dom', () => {
   };
 });
 
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  const workspaceThings = jest.requireActual(
-    '@bangle.io/slice-workspaces-manager',
-  );
+jest.mock('@bangle.io/slice-workspace', () => {
+  const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
   return {
     ...workspaceThings,
     hasWorkspace: jest.fn(() => () => {}),

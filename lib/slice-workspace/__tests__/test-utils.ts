@@ -1,7 +1,8 @@
 import type { JsonArray } from 'type-fest';
 
+import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import type { JsonPrimitive } from '@bangle.io/shared-types';
+import type { JsonPrimitive, WorkspaceInfo } from '@bangle.io/shared-types';
 
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
 import { WorkspaceStateKeys } from '../workspace-slice-state';
@@ -83,4 +84,14 @@ export const getActionsDispatched = (mockDispatch, name) => {
   }
 
   return actions;
+};
+
+export const createWsInfo = (obj: Partial<WorkspaceInfo>): WorkspaceInfo => {
+  return {
+    name: 'test-ws-info',
+    type: WorkspaceType['browser'],
+    lastModified: 0,
+    metadata: {},
+    ...obj,
+  };
 };

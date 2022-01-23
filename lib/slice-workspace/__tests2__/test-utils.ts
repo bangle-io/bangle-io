@@ -1,12 +1,13 @@
+import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore, AppState, Slice } from '@bangle.io/create-store';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { pageSlice } from '@bangle.io/slice-page';
 
-import { WorkspaceInfo, WorkspaceType } from '../common';
-import { workspacesSlice } from '../workspaces-slice';
+import { workspaceSlice } from '../workspace-slice';
 
 export const createState = () => {
   return AppState.create({
-    slices: [workspacesSlice(), pageSlice()] as Slice[],
+    slices: [workspaceSlice(), pageSlice()] as Slice[],
   });
 };
 

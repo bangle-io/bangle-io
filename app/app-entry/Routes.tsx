@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'wouter';
 
 import { lastWorkspaceUsed } from '@bangle.io/bangle-store/slices/misc-effects-slice';
-import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
-} from '@bangle.io/slice-workspaces-manager';
+  pushWsPath,
+  useWorkspaceContext,
+} from '@bangle.io/slice-workspace';
 import { wsNameToPathname } from '@bangle.io/ws-path';
 
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';

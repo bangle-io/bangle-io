@@ -1830,7 +1830,6 @@ __metadata:
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/style": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
@@ -1903,7 +1902,6 @@ __metadata:
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/test-utils": "worksapce:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
@@ -2012,7 +2010,6 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
@@ -2042,7 +2039,6 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2420,7 +2416,6 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2654,7 +2649,6 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
   languageName: unknown
@@ -2777,9 +2771,9 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/markdown": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/test-basic-store": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
@@ -2789,43 +2783,12 @@ __metadata:
     "@types/history": ^4.7.9
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
+    idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     reselect: ^4.1.5
     type-fest: ^2.8.0
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/slice-workspaces-manager@workspace:*, @bangle.io/slice-workspaces-manager@workspace:lib/slice-workspaces-manager":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-workspaces-manager@workspace:lib/slice-workspaces-manager"
-  dependencies:
-    "@bangle.dev/all-base-components": 0.28.5
-    "@bangle.dev/core": 0.28.5
-    "@bangle.dev/pm": 0.28.5
-    "@bangle.dev/utils": 0.28.5
-    "@bangle.io/baby-fs": "workspace:*"
-    "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/config": "workspace:*"
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/create-store": "workspace:*"
-    "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/fzf-search": "workspace:*"
-    "@bangle.io/markdown": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/slice-page": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
-    "@bangle.io/test-utils": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
-    "@bangle.io/ws-path": "workspace:*"
-    "@testing-library/react": ^12.1.2
-    "@types/history": ^4.7.9
-    "@types/react": ^17.0.33
-    "@types/react-dom": ^17.0.10
-    idb-keyval: ^5.1.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -2863,7 +2826,6 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     idb-keyval: ^5.1.5
@@ -2890,7 +2852,6 @@ __metadata:
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
     "@types/react": ^17.0.33
@@ -3035,7 +2996,6 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/store-sync": "workspace:*"
     "@bangle.io/test-basic-store": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
@@ -3060,7 +3020,6 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
-    "@bangle.io/slice-workspaces-manager": "workspace:*"
     "@bangle.io/store-sync": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@bangle.io/utils": "workspace:*"

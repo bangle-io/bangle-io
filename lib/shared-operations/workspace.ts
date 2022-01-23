@@ -1,21 +1,18 @@
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+  WorkspaceType,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
+  createWorkspace,
   deleteNote,
+  deleteWorkspace as _deletedWorkspace,
+  HELP_FS_WORKSPACE_NAME,
   WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
-import {
-  createWorkspace,
-  deleteWorkspace as _deletedWorkspace,
-  HELP_FS_WORKSPACE_NAME,
-  WorkspaceType,
-} from '@bangle.io/slice-workspaces-manager';
-import { WorkspacesSliceAction } from '@bangle.io/slice-workspaces-manager/common';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { getFocusedWsPath } from './core';
@@ -214,7 +211,7 @@ export function createBrowserWorkspace(wsName: string) {
     state: AppState,
     dispatch: ApplicationStore<
       any,
-      WorkspacesSliceAction | UiContextAction
+      WorkspaceSliceAction | UiContextAction
     >['dispatch'],
     store: ApplicationStore,
   ) => {
@@ -252,7 +249,7 @@ export function createNativeFsWorkpsace(rootDirHandle) {
     state: AppState,
     dispatch: ApplicationStore<
       any,
-      WorkspacesSliceAction | UiContextAction
+      WorkspaceSliceAction | UiContextAction
     >['dispatch'],
     store: ApplicationStore,
   ) => {

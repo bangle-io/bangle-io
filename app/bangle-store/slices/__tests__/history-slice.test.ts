@@ -8,26 +8,26 @@ import {
   PageSliceAction,
 } from '@bangle.io/slice-page';
 import {
-  workspacesSliceInitialState,
-  workspacesSliceKey,
-} from '@bangle.io/slice-workspaces-manager';
+  workspaceSliceInitialState,
+  workspaceSliceKey,
+} from '@bangle.io/slice-workspace';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 
 import { historySlice } from '../history-slice';
 
-jest.mock('@bangle.io/slice-workspaces-manager', () => {
-  const other = jest.requireActual('@bangle.io/slice-workspaces-manager');
-  const workspacesSliceKey = other.workspacesSliceKey;
-  workspacesSliceKey.getSliceStateAsserted = jest.fn();
+jest.mock('@bangle.io/slice-workspace', () => {
+  const other = jest.requireActual('@bangle.io/slice-workspace');
+  const workspaceSliceKey = other.workspaceSliceKey;
+  workspaceSliceKey.getSliceStateAsserted = jest.fn();
   return {
     ...other,
-    workspacesSliceKey,
+    workspaceSliceKey,
   };
 });
 
-const workspacesSliceStateMock = workspacesSliceKey[
+const workspaceStateMock = workspaceSliceKey[
   'getSliceStateAsserted'
-] as jest.MockedFunction<typeof workspacesSliceKey['getSliceStateAsserted']>;
+] as jest.MockedFunction<typeof workspaceSliceKey['getSliceStateAsserted']>;
 
 let historyPushSpy, historyReplaceSpy;
 
@@ -36,9 +36,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  workspacesSliceStateMock.mockImplementation(
-    () => workspacesSliceInitialState,
-  );
+  workspaceStateMock.mockImplementation(() => workspaceSliceInitialState);
   window.history.replaceState(null, '', '/');
 
   jest.clearAllMocks();

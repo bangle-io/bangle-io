@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
 import { BrowserHistory } from '@bangle.io/history';
 import { pageSlice } from '@bangle.io/slice-page';
@@ -9,9 +10,8 @@ import {
   deleteWorkspace,
   getWorkspaceInfo,
   listWorkspaces,
-  workspacesSlice,
-  WorkspaceType,
-} from '@bangle.io/slice-workspaces-manager';
+  workspaceSlice,
+} from '@bangle.io/slice-workspace';
 import { createTestStore } from '@bangle.io/test-utils/create-test-store';
 import { sleep } from '@bangle.io/utils';
 
@@ -33,7 +33,7 @@ let setup = () => {
   let { store } = createTestStore([
     pageSlice(),
     historySlice(),
-    workspacesSlice(),
+    workspaceSlice(),
   ]);
 
   let { history } = historySliceKey.getSliceStateAsserted(store.state);
@@ -159,11 +159,7 @@ describe('saveWorkspaceInfoEffect', () => {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
-    const wsInfo = await getWorkspaceInfo('testWs')(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    const wsInfo = await getWorkspaceInfo('testWs')(store.state);
 
     await sleep(0);
 

@@ -25,7 +25,6 @@
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/slice-workspaces-manager": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*"
   },

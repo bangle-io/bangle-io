@@ -1,13 +1,16 @@
+import { WorkspaceType } from '@bangle.io/constants';
 import { goToLocation, syncPageLocation } from '@bangle.io/slice-page';
 import { fakeIdb } from '@bangle.io/test-utils/fake-idb';
 
-import { deleteWorkspace, workspacesSliceKey, WorkspaceType } from '..';
-import { helpFSWorkspaceInfo, WORKSPACE_KEY } from '../common';
+import { workspaceSliceKey } from '../common';
+import { helpFSWorkspaceInfo } from '../help-fs';
+import { WORKSPACE_KEY } from '../workspaces/read-ws-info';
 import {
   createWorkspace,
+  deleteWorkspace,
   getWorkspaceInfo,
   listWorkspaces,
-} from '../operations';
+} from '../workspaces-operations';
 import { createStore } from './test-utils';
 
 jest.mock('@bangle.io/slice-page', () => {
@@ -53,7 +56,7 @@ describe('listAllFiles', () => {
     expect(goToLocation).toBeCalledTimes(1);
     expect(goToLocation).nthCalledWith(1, '/ws/test-1');
     expect(
-      workspacesSliceKey.getSliceState(store.state)?.workspaceInfos,
+      workspaceSliceKey.getSliceState(store.state)?.workspacesInfo,
     ).toMatchObject({
       'test-1': {
         deleted: false,
@@ -96,7 +99,7 @@ describe('listAllFiles', () => {
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
     expect(
-      workspacesSliceKey.getSliceState(store.state)?.workspaceInfos,
+      workspaceSliceKey.getSliceState(store.state)?.workspacesInfo,
     ).toMatchObject({
       'test-1': {
         deleted: true,
@@ -124,7 +127,7 @@ describe('createWorkspace', () => {
     );
 
     expect(
-      workspacesSliceKey.getSliceState(store.state)?.workspaceInfos,
+      workspaceSliceKey.getSliceState(store.state)?.workspacesInfo,
     ).toMatchObject({
       'test-1': {
         deleted: false,
@@ -177,9 +180,7 @@ describe('createWorkspace', () => {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
 
-    expect(
-      await getWorkspaceInfo('test-1')(store.state, store.dispatch, store),
-    ).toEqual({
+    expect(await getWorkspaceInfo('test-1')(store.state)).toEqual({
       deleted: false,
       lastModified: expect.any(Number),
       metadata: {
@@ -247,9 +248,7 @@ describe('getWorkspaceInfo', () => {
   test('throws error if workspace does not exists', async () => {
     const { store } = createStore();
 
-    await expect(
-      getWorkspaceInfo('test-1')(store.state, store.dispatch, store),
-    ).rejects.toThrowError(
+    await expect(getWorkspaceInfo('test-1')(store.state)).rejects.toThrowError(
       `WORKSPACE_NOT_FOUND_ERROR:Workspace test-1 not found`,
     );
   });
@@ -263,11 +262,7 @@ describe('getWorkspaceInfo', () => {
       store,
     );
 
-    const wsInfo = await getWorkspaceInfo('test-1')(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    const wsInfo = await getWorkspaceInfo('test-1')(store.state);
 
     await createWorkspace('test-2', WorkspaceType['browser'])(
       store.state,
@@ -289,8 +284,6 @@ describe('getWorkspaceInfo', () => {
       store,
     );
 
-    expect(
-      await getWorkspaceInfo('test-1')(store.state, store.dispatch, store),
-    ).toBe(wsInfo);
+    expect(await getWorkspaceInfo('test-1')(store.state)).toBe(wsInfo);
   });
 });

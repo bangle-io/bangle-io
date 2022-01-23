@@ -15,7 +15,6 @@
     "slice-page",
     "slice-ui",
     "slice-workspace",
-    "slice-workspaces-manager",
     "store-sync",
     "test-utils",
     "test-basic-store",

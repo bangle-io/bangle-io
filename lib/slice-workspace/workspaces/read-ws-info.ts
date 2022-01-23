@@ -1,16 +1,14 @@
 import * as idb from 'idb-keyval';
 
 import { AppState } from '@bangle.io/create-store';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
 
-import {
-  HELP_FS_WORKSPACE_NAME,
-  helpFSWorkspaceInfo,
-  WORKSPACE_KEY,
-  WorkspaceInfo,
-  WorkspaceInfoReg,
-  workspacesSliceKey,
-} from './common';
+import { workspaceSliceKey } from '../common';
+import { HELP_FS_WORKSPACE_NAME, helpFSWorkspaceInfo } from '../help-fs';
+import { WorkspaceInfoReg } from '../workspace-slice-state';
+
+export const WORKSPACE_KEY = 'workspaces/2';
 
 export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
   let wsInfos: WorkspaceInfo[] = (await idb.get(WORKSPACE_KEY)) || [];
@@ -39,12 +37,12 @@ export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
 }
 
 export async function saveWorkspacesInfo(state: AppState): Promise<void> {
-  const workspacesState = workspacesSliceKey.getSliceStateAsserted(state);
+  const workspacesState = workspaceSliceKey.getSliceStateAsserted(state);
   // read existing data so that we do can do a non destructive merge
   let existing = await readWorkspacesInfoReg();
 
-  if (workspacesState.workspaceInfos) {
-    existing = mergeWsInfoRegistries(existing, workspacesState.workspaceInfos);
+  if (workspacesState.workspacesInfo) {
+    existing = mergeWsInfoRegistries(existing, workspacesState.workspacesInfo);
   }
 
   await idb.set(

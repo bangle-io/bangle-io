@@ -18,10 +18,6 @@ import {
 } from '@bangle.io/shared-operations';
 import { focusEditor } from '@bangle.io/slice-editor-manager';
 import { toggleTheme } from '@bangle.io/slice-ui';
-import {
-  createWorkspace,
-  WorkspaceType,
-} from '@bangle.io/slice-workspaces-manager';
 
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
