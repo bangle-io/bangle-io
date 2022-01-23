@@ -343,7 +343,7 @@ export function workspaceHandleError(wsName: string, error: Error) {
 
 // This is to be called whenever knows when search and pathname have changed
 // Currently this is called `updateLocationEffect`, and should only be called by that
-export const syncPageLocation = ({
+export const setOpenedWorkspace = ({
   search,
   pathname,
 }: {
@@ -356,7 +356,7 @@ export const syncPageLocation = ({
 
     if (!wsName) {
       dispatch({
-        name: 'action::@bangle.io/slice-workspace:sync-page-location',
+        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
         value: {
           wsName: undefined,
           openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -381,7 +381,7 @@ export const syncPageLocation = ({
     }
 
     dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: wsName,
         openedWsPaths: openedWsPaths,

@@ -7,7 +7,7 @@ import { OpenedWsPaths, wsNameToPathname } from '@bangle.io/ws-path';
 import {
   goToInvalidPathRoute,
   refreshWsPaths,
-  syncPageLocation,
+  setOpenedWorkspace,
 } from '../operations';
 import { getWorkspaceInfo } from '../workspaces-operations';
 import { createStore, getActionNamesDispatched } from './test-utils';
@@ -18,7 +18,7 @@ jest.mock('../operations', () => {
     ...ops,
     refreshWsPaths: jest.fn(),
     goToInvalidPathRoute: jest.fn(),
-    syncPageLocation: jest.fn(),
+    setOpenedWorkspace: jest.fn(),
   };
 });
 
@@ -61,7 +61,7 @@ jest.mocked(getWorkspaceInfo).mockImplementation(() => async () => ({
   lastModified: 1,
 }));
 
-jest.mocked(syncPageLocation).mockImplementation(() => () => true);
+jest.mocked(setOpenedWorkspace).mockImplementation(() => () => true);
 
 describe('refreshWsPathsEffect', () => {
   test('deferredUpdate: calls refresh in deferred update', async () => {
@@ -105,7 +105,7 @@ describe('refreshWsPathsEffect', () => {
     expect(refreshWsPathsMock).toBeCalledTimes(1);
 
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -117,7 +117,7 @@ describe('refreshWsPathsEffect', () => {
     expect(refreshWsPathsMock).toBeCalledTimes(2);
 
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: 'test-ws-2',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -128,7 +128,7 @@ describe('refreshWsPathsEffect', () => {
 
     // changing openedWsPaths should not call refresh
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: 'test-ws-2',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -139,7 +139,7 @@ describe('refreshWsPathsEffect', () => {
 
     // setting to undefined should not call refresh
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: undefined,
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -171,8 +171,8 @@ describe('updateLocationEffect', () => {
       name: 'action::some-action',
     } as any);
 
-    expect(syncPageLocation).toBeCalledTimes(1);
-    expect(syncPageLocation).nthCalledWith(1, location1);
+    expect(setOpenedWorkspace).toBeCalledTimes(1);
+    expect(setOpenedWorkspace).nthCalledWith(1, location1);
   });
 });
 
@@ -181,7 +181,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store, dispatchSpy } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -190,7 +190,7 @@ describe('saveWorkspaceInfoEffect', () => {
     await sleep(0);
 
     expect(getActionNamesDispatched(dispatchSpy)).toContain(
-      'action::@bangle.io/slice-workspace:sync-page-location',
+      'action::@bangle.io/slice-workspace:set-opened-workspace',
     );
 
     // an other action doesn't trigger the hook
@@ -207,7 +207,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -224,7 +224,7 @@ describe('saveWorkspaceInfoEffect', () => {
     const { store } = createStore();
 
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: 'test-ws',
         openedWsPaths: OpenedWsPaths.createEmpty(),
@@ -234,7 +234,7 @@ describe('saveWorkspaceInfoEffect', () => {
 
     // change the wsName while the request is to get info is in flight
     store.dispatch({
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         wsName: 'test-ws2',
         openedWsPaths: OpenedWsPaths.createEmpty(),

@@ -42,9 +42,9 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
   ],
 
-  'action::@bangle.io/slice-workspace:sync-page-location': [
+  'action::@bangle.io/slice-workspace:set-opened-workspace': [
     {
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:one.md']),
         wsName: 'test-ws',
@@ -52,7 +52,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         openedWsPaths: OpenedWsPaths.createEmpty(),
         wsName: 'test-ws',
@@ -60,7 +60,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:sync-page-location',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
       value: {
         openedWsPaths: OpenedWsPaths.createEmpty(),
         wsName: undefined,

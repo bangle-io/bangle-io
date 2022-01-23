@@ -29,7 +29,7 @@ import {
   pushWsPath,
   refreshWsPaths,
   renameNote,
-  syncPageLocation,
+  setOpenedWorkspace,
   updateOpenedWsPaths,
   wrapFileMethod,
 } from '../operations';
@@ -123,13 +123,13 @@ let extensionRegistrySliceKeyGetSliceStateMock = jest
     extensionRegistry,
   }));
 
-describe('updateLocation', () => {
+describe('setOpenedWorkspace', () => {
   test('works', () => {
     let state = createState();
 
     const dispatch = jest.fn();
 
-    syncPageLocation({ search: 'test-search', pathname: 'test-pathname' })(
+    setOpenedWorkspace({ search: 'test-search', pathname: 'test-pathname' })(
       state,
       dispatch,
     );
@@ -142,7 +142,7 @@ describe('updateLocation', () => {
 
     const dispatch = jest.fn();
 
-    syncPageLocation({
+    setOpenedWorkspace({
       search: 'secondary=bangle-help%253Agetting%2520started',
       pathname: '/ws/bangle-help',
     })(state, dispatch);

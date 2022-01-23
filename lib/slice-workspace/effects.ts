@@ -4,7 +4,7 @@ import { getPageLocation } from '@bangle.io/slice-page';
 import { shallowEqual } from '@bangle.io/utils';
 
 import { SideEffect, workspaceSliceKey } from './common';
-import { refreshWsPaths, syncPageLocation } from './operations';
+import { refreshWsPaths, setOpenedWorkspace } from './operations';
 import { saveWorkspacesInfo } from './workspaces/read-ws-info';
 import { listWorkspaces } from './workspaces-operations';
 
@@ -46,7 +46,7 @@ export const updateLocationEffect: SideEffect = () => {
         return;
       }
 
-      syncPageLocation({
+      setOpenedWorkspace({
         search: location?.search,
         pathname: location?.pathname,
       })(store.state, store.dispatch);

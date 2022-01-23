@@ -18,7 +18,7 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
     };
   },
 
-  'action::@bangle.io/slice-workspace:sync-page-location': (actionName) => {
+  'action::@bangle.io/slice-workspace:set-opened-workspace': (actionName) => {
     const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
       return {
         openedWsPaths: action.value.openedWsPaths.toArray(),

@@ -22,7 +22,7 @@ describe('refreshWorkspacesEffect', () => {
     expect(getActionNamesDispatched(dispatchSpy)).toMatchInlineSnapshot(`
       Array [
         "action::@bangle.io/slice-workspace:set-workspace-infos",
-        "action::@bangle.io/slice-workspace:sync-page-location",
+        "action::@bangle.io/slice-workspace:set-opened-workspace",
       ]
     `);
 
