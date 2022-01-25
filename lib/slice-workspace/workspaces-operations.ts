@@ -3,17 +3,9 @@ import { sleep } from '@bangle.dev/utils';
 import { WorkspaceType } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import {
-  getPageLocation,
-  goToLocation,
-  pageSliceKey,
-} from '@bangle.io/slice-page';
+import { goToLocation, pageSliceKey } from '@bangle.io/slice-page';
 import { asssertNotUndefined } from '@bangle.io/utils';
-import {
-  pathnameToWsName,
-  validWsName,
-  wsNameToPathname,
-} from '@bangle.io/ws-path';
+import { validWsName, wsNameToPathname } from '@bangle.io/ws-path';
 
 import {
   WorkspaceAppStore,
@@ -167,6 +159,13 @@ export function deleteWorkspace(targetWsName: string) {
   ): Promise<boolean> => {
     const targetWsInfo = await getWorkspaceInfo(targetWsName)(store.state);
 
+    const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
+
+    if (targetWsName === wsName) {
+      goToWorkspaceHomeRoute({ replace: true })(store.state, store.dispatch);
+      await Promise.resolve();
+    }
+
     store.dispatch({
       name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
@@ -181,16 +180,6 @@ export function deleteWorkspace(targetWsName: string) {
     });
 
     await saveWorkspacesInfo(store.state);
-
-    // We cannot use workspace-context for getting wsName
-    // as it will cause cyclic dependency
-    const activeWsName = pathnameToWsName(
-      getPageLocation()(store.state)?.pathname,
-    );
-
-    if (targetWsName === activeWsName) {
-      goToWorkspaceHomeRoute({ replace: true })(store.state, store.dispatch);
-    }
 
     return true;
   };
@@ -267,14 +256,12 @@ export function getWorkspaceInfoSync(wsName: string) {
       workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
 
     if (!wsInfo) {
-      if (!wsInfo) {
-        throw new WorkspaceError(
-          `Workspace ${wsName} not found`,
-          WORKSPACE_NOT_FOUND_ERROR,
-          `Cannot find the workspace ${wsName}`,
-          undefined,
-        );
-      }
+      throw new WorkspaceError(
+        `Workspace ${wsName} not found`,
+        WORKSPACE_NOT_FOUND_ERROR,
+        `Cannot find the workspace ${wsName}`,
+        undefined,
+      );
     }
 
     return wsInfo;

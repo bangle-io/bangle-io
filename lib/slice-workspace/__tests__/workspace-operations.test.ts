@@ -227,7 +227,7 @@ describe('deleteWorkspace', () => {
     ]);
   });
 
-  test('takes to home page if deleting currently open workspace', async () => {
+  test('redirects correctly for a deleted workspace', async () => {
     const { store } = createStore();
     await createWorkspace('test-1', WorkspaceType['nativefs'], {
       rootDirHandle: { root: 'dummy' },
@@ -239,7 +239,9 @@ describe('deleteWorkspace', () => {
 
     expect(goToLocation).toBeCalledTimes(2);
     expect(goToLocation).nthCalledWith(1, '/ws/test-1');
-    expect(goToLocation).nthCalledWith(2, '/', { replace: true });
+    expect(goToLocation).nthCalledWith(2, '/ws-not-found/test-1', {
+      replace: true,
+    });
   });
 });
 

@@ -84,6 +84,11 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
       if (currentWsName !== wsName) {
         try {
           const wsInfo = await getWorkspaceInfo(wsName)(store.state);
+
+          if (wsInfo.deleted) {
+            goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
+            return;
+          }
         } catch (error) {
           assertSignal(abortSignal);
           if (
