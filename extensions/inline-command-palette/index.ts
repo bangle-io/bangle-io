@@ -1,6 +1,6 @@
 import { keymap } from '@bangle.dev/pm';
 
-import { keybindings } from '@bangle.io/config/keybindings';
+import { keybindings } from '@bangle.io/config';
 import { Extension } from '@bangle.io/extension-registry';
 import {
   inlinePalette,

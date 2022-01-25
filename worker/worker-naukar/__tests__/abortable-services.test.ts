@@ -6,7 +6,7 @@ import { searchPmNode } from '@bangle.io/search-pm-node';
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
-} from '@bangle.io/test-basic-store';
+} from '@bangle.io/test-utils';
 
 import { abortableServices } from '../abortable-services';
 

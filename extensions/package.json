@@ -1,6 +1,7 @@
 {
   "name": "extensions",
   "workspaces": [
+    "browser-storage",
     "collab-extension",
     "collapsible-heading",
     "core-operations",

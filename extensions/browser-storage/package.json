@@ -1,7 +1,6 @@
 {
-  "name": "@bangle.io/test-basic-store",
+  "name": "@bangle.io/browser-storage",
   "version": "0.0.0",
-  "description": "Creates a store with core functionality, use only for testing",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -12,25 +11,27 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/test-basic-store"
+    "directory": "extensions/browser-storage"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
   },
-  "publishConfig": {
-    "access": "public"
-  },
+  "main": "index.ts",
+  "module": "index.ts",
   "dependencies": {
+    "@bangle.dev/core": "0.28.5",
+    "@bangle.dev/markdown": "0.28.5",
+    "@bangle.dev/markdown-front-matter": "0.28.5",
+    "@bangle.dev/pm": "0.28.5",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
-    "@bangle.io/history": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/slice-page": "workspace:*",
-    "@bangle.io/slice-workspace": "workspace:*",
-    "@bangle.io/test-utils": "workspace:*",
-    "@bangle.io/utils": "workspace:*",
-    "idb-keyval": "^5.1.5"
+    "@bangle.io/storage": "workspace:*",
+    "@bangle.io/utils": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "restricted"
   },
   "license": "AGPL-3.0-or-later"
 }

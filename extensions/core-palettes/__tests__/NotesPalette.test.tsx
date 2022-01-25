@@ -4,7 +4,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 

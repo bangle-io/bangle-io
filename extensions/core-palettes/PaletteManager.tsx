@@ -5,8 +5,10 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { UniversalPalette } from '@bangle.io/ui-components';
-import { PaletteOnExecuteItem } from '@bangle.io/ui-components/UniversalPalette/hooks';
+import {
+  PaletteOnExecuteItem,
+  UniversalPalette,
+} from '@bangle.io/ui-components';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import {

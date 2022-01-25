@@ -4,7 +4,7 @@
 import { Selection } from '@bangle.dev/pm';
 
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
+import { createPMNode } from '@bangle.io/test-utils';
 import { getScrollParentElement } from '@bangle.io/utils';
 
 import { geEditorScrollPosition, getInitialSelection } from '..';

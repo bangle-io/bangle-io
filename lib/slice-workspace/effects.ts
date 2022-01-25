@@ -10,11 +10,11 @@ import {
 } from '@bangle.io/ws-path';
 
 import { SideEffect, workspaceSliceKey } from './common';
+import { refreshWsPaths } from './file-operations';
 import { validateOpenedWsPaths } from './helpers';
 import {
   goToInvalidPathRoute,
   goToWsNameRouteNotFoundRoute,
-  refreshWsPaths,
 } from './operations';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './workspaces/errors';
 import { saveWorkspacesInfo } from './workspaces/read-ws-info';
@@ -29,13 +29,13 @@ export const refreshWsPathsEffect: SideEffect = () => {
 
       if (loadWsPathsOnMount && sliceState && sliceState.wsPaths == null) {
         loadWsPathsOnMount = false;
-        refreshWsPaths()(store.state, store.dispatch);
+        refreshWsPaths()(store.state, store.dispatch, store);
       }
     },
     update(store, _, sliceState, prevSliceState) {
       // update wsPaths on workspace change
       if (sliceState.wsName && sliceState.wsName !== prevSliceState.wsName) {
-        refreshWsPaths()(store.state, store.dispatch);
+        refreshWsPaths()(store.state, store.dispatch, store);
       }
     },
   };
@@ -84,6 +84,11 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
       if (currentWsName !== wsName) {
         try {
           const wsInfo = await getWorkspaceInfo(wsName)(store.state);
+
+          if (wsInfo.deleted) {
+            goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
+            return;
+          }
         } catch (error) {
           assertSignal(abortSignal);
           if (

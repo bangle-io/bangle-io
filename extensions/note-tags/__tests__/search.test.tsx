@@ -13,7 +13,7 @@ import type { Node } from '@bangle.dev/pm';
 import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 
 import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { editorTagSpec } from '../editor-tag';
@@ -233,7 +233,7 @@ describe('useSearchAllTags', () => {
         </heading>
       </doc>,
     );
-    getNoteMock.mockImplementation((wsPath) => async () => {
+    getNoteMock.mockImplementation((wsPath): any => async () => {
       if (delayGetNotes) {
         await sleep(20);
       }

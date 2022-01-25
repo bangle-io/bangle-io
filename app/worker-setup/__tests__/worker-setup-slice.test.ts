@@ -7,7 +7,7 @@ import {
   workspaceSlice,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
-import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import { createTestStore } from '@bangle.io/test-utils';
 import { exponentialBackoff, sleep } from '@bangle.io/utils';
 import { naukarProxy, naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
 
@@ -88,13 +88,13 @@ afterEach(async () => {
 });
 
 test('works', async () => {
-  const { store, actionsDispatched } = createTestStore(
-    [...workerSetupSlices(), pageSlice(), naukarProxySlice()],
-    {
+  const { store, actionsDispatched } = createTestStore({
+    slices: [...workerSetupSlices(), pageSlice(), naukarProxySlice()],
+    opts: {
       useWebWorker: false,
     },
     scheduler,
-  );
+  });
 
   await sleep(0);
 
@@ -146,13 +146,13 @@ test('works', async () => {
 test('sends actions correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store, actionsDispatched } = createTestStore(
-    [...slices, pageSlice(), naukarProxySlice()],
-    {
+  const { store, actionsDispatched } = createTestStore({
+    slices: [...slices, pageSlice(), naukarProxySlice()],
+    opts: {
       useWebWorker: false,
     },
     scheduler,
-  );
+  });
 
   blockReload(true)(store.state, store.dispatch);
 
@@ -232,13 +232,14 @@ test('sends actions correctly', async () => {
 test('sends slice-page action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store } = createTestStore(
-    [...slices, pageSlice(), naukarProxySlice()],
-    {
+  const { store, actionsDispatched } = createTestStore({
+    slices: [...slices, pageSlice(), naukarProxySlice()],
+    opts: {
       useWebWorker: false,
     },
     scheduler,
-  );
+  });
+
   await sleep(0);
 
   const workerStore: any = await naukarProxy.testGetStore();
@@ -259,13 +260,14 @@ test('sends slice-page action correctly', async () => {
 test('sends workspaces slice action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store } = createTestStore(
-    [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
-    {
+  const { store, actionsDispatched } = createTestStore({
+    slices: [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
+    opts: {
       useWebWorker: false,
     },
     scheduler,
-  );
+  });
+
   await sleep(0);
 
   const workerStore: any = await naukarProxy.testGetStore();
@@ -287,13 +289,14 @@ test('sends workspaces slice action correctly', async () => {
 test('sends workspace slice action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store } = createTestStore(
-    [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
-    {
+  const { store, actionsDispatched } = createTestStore({
+    slices: [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
+    opts: {
       useWebWorker: false,
     },
     scheduler,
-  );
+  });
+
   await sleep(0);
 
   const workerStore: any = await naukarProxy.testGetStore();

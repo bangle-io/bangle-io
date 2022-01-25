@@ -2,7 +2,7 @@ import { BangleEditor } from '@bangle.dev/core';
 import { Selection } from '@bangle.dev/pm';
 
 import { AppState } from '@bangle.io/create-store';
-import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
+import { createPMNode } from '@bangle.io/test-utils';
 import { getScrollParentElement } from '@bangle.io/utils';
 
 import { setEditorUnmounted } from '..';

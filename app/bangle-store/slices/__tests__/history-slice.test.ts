@@ -2,16 +2,12 @@
  * @jest-environment jsdom
  */
 import { BrowserHistory } from '@bangle.io/history';
-import {
-  goToLocation,
-  pageSlice,
-  PageSliceAction,
-} from '@bangle.io/slice-page';
+import { goToLocation, pageSlice, pageSliceKey } from '@bangle.io/slice-page';
 import {
   workspaceSliceInitialState,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
-import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import { createTestStore } from '@bangle.io/test-utils';
 
 import { historySlice } from '../history-slice';
 
@@ -47,10 +43,10 @@ beforeEach(() => {
 
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
-    const { store, actionsDispatched } = createTestStore<PageSliceAction>([
-      pageSlice(),
-      historySlice(),
-    ]);
+    const { store, actionsDispatched } = createTestStore({
+      sliceKey: pageSliceKey,
+      slices: [pageSlice(), historySlice()],
+    });
 
     expect(actionsDispatched).toContainEqual({
       id: expect.anything(),
@@ -80,10 +76,10 @@ describe('watchHistoryEffect', () => {
 describe('applyPendingNavigation', () => {
   test('works', async () => {
     jest.useFakeTimers();
-    const { store } = createTestStore<PageSliceAction>([
-      pageSlice(),
-      historySlice(),
-    ]);
+    const { store } = createTestStore({
+      slices: [pageSlice(), historySlice()],
+      sliceKey: pageSliceKey,
+    });
 
     goToLocation('/ws/home')(store.state, store.dispatch);
     jest.runAllTimers();
@@ -99,10 +95,10 @@ describe('applyPendingNavigation', () => {
   });
 
   test('respects replace', async () => {
-    const { store } = createTestStore<PageSliceAction>([
-      pageSlice(),
-      historySlice(),
-    ]);
+    const { store } = createTestStore({
+      slices: [pageSlice(), historySlice()],
+      sliceKey: pageSliceKey,
+    });
 
     goToLocation('/ws/home', { replace: true })(store.state, store.dispatch);
     jest.runAllTimers();
@@ -118,10 +114,10 @@ describe('applyPendingNavigation', () => {
   });
 
   test('works with object location and replace=true', async () => {
-    const { store } = createTestStore<PageSliceAction>([
-      pageSlice(),
-      historySlice(),
-    ]);
+    const { store } = createTestStore({
+      slices: [pageSlice(), historySlice()],
+      sliceKey: pageSliceKey,
+    });
 
     goToLocation(
       {
@@ -143,10 +139,10 @@ describe('applyPendingNavigation', () => {
   });
 
   test('works when location is string', async () => {
-    const { store } = createTestStore<PageSliceAction>([
-      pageSlice(),
-      historySlice(),
-    ]);
+    const { store } = createTestStore({
+      slices: [pageSlice(), historySlice()],
+      sliceKey: pageSliceKey,
+    });
 
     goToLocation(`/ws/home/my-note.md?secondary=garden2%253A1-rule.md`, {
       replace: true,
@@ -164,10 +160,10 @@ describe('applyPendingNavigation', () => {
   });
 
   test('works with object location', async () => {
-    const { store } = createTestStore<PageSliceAction>([
-      pageSlice(),
-      historySlice(),
-    ]);
+    const { store } = createTestStore({
+      slices: [pageSlice(), historySlice()],
+      sliceKey: pageSliceKey,
+    });
 
     goToLocation(
       {

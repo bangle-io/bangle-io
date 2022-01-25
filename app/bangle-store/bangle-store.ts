@@ -20,7 +20,7 @@ import {
 
 assertNonWorkerGlobalScope();
 
-const LOG = false || window.location?.hash?.includes('debug_store');
+const LOG = true || window.location?.hash?.includes('debug_store');
 
 let log = LOG ? console.debug.bind(console, 'bangle-store') : () => {};
 

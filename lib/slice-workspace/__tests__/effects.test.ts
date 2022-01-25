@@ -1,10 +1,10 @@
 import { sleep } from '@bangle.dev/utils';
 
 import { WorkspaceType } from '@bangle.io/constants';
-import { getPageLocation } from '@bangle.io/slice-page';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { goToInvalidPathRoute, refreshWsPaths } from '../operations';
+import { refreshWsPaths } from '../file-operations';
+import { goToInvalidPathRoute } from '../operations';
 import { getWorkspaceInfo } from '../workspaces-operations';
 import { createStore, getActionNamesDispatched } from './test-utils';
 
@@ -12,8 +12,14 @@ jest.mock('../operations', () => {
   const ops = jest.requireActual('../operations');
   return {
     ...ops,
-    refreshWsPaths: jest.fn(),
     goToInvalidPathRoute: jest.fn(),
+  };
+});
+jest.mock('../file-operations', () => {
+  const ops = jest.requireActual('../operations');
+  return {
+    ...ops,
+    refreshWsPaths: jest.fn(),
   };
 });
 
@@ -21,7 +27,7 @@ jest.mock('@bangle.io/slice-page', () => {
   const ops = jest.requireActual('@bangle.io/slice-page');
   return {
     ...ops,
-    getPageLocation: jest.fn(),
+    getPageLocation: jest.fn(() => () => {}),
   };
 });
 
@@ -34,18 +40,9 @@ jest.mock('../workspaces-operations', () => {
   };
 });
 
-const mockLocation = {
-  search: '',
-  pathname: '',
-};
-
 const refreshWsPathsMock = jest
   .mocked(refreshWsPaths)
-  .mockImplementation(() => () => true);
-
-const getPageLocationMock = jest
-  .mocked(getPageLocation)
-  .mockImplementation(() => () => mockLocation);
+  .mockImplementation(() => async () => true);
 
 jest.mocked(goToInvalidPathRoute).mockImplementation(() => () => {});
 

@@ -46,7 +46,6 @@
     "idb-keyval": "^5.1.5"
   },
   "devDependencies": {
-    "@bangle.io/test-basic-store": "workspace:*",
     "@bangle.io/test-utils": "workspace:*"
   },
   "license": "AGPL-3.0-or-later"

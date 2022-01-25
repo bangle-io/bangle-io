@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
+import { createEditorFromMd } from '@bangle.io/test-utils';
 
 import { getHeadings } from '../watch-headings-plugin';
 

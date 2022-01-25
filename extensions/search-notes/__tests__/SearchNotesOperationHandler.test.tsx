@@ -7,7 +7,7 @@ import React from 'react';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import type { SerialOperationHandler } from '@bangle.io/shared-types';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
-import { getUseUIManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import { getUseUIManagerContextReturn } from '@bangle.io/test-utils';
 
 import {
   EXECUTE_SEARCH_OPERATION as EXECUTE_SEARCH_OP,

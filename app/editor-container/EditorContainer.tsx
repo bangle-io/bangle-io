@@ -111,6 +111,7 @@ export function useHandleWsPath(incomingWsPath) {
       checkFileExists(incomingWsPath)(
         bangleStore.state,
         bangleStore.dispatch,
+        bangleStore,
       ).then((r) => {
         if (!destroyedRef.current) {
           if (r === true) {

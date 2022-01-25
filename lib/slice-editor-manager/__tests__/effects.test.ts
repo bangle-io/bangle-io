@@ -4,7 +4,7 @@
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import type { JsonObject, JsonPrimitive } from '@bangle.io/shared-types';
 import { pageLifeCycleTransitionedTo } from '@bangle.io/slice-page';
-import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
+import { createEditorFromMd } from '@bangle.io/test-utils';
 import {
   getScrollParentElement,
   trimEndWhiteSpaceBeforeCursor,

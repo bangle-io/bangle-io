@@ -1,5 +1,5 @@
 import { Slice, staticSlice } from '@bangle.io/create-store';
-import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import { createTestStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import {
@@ -105,16 +105,12 @@ function setup(
     port: port2 as any,
   });
 
-  const { store: store1 } = createTestStore([
-    configSlice1,
-    storeSyncSlice(configKey1),
-    dummySlice,
-  ]);
-  const { store: store2 } = createTestStore([
-    configSlice2,
-    storeSyncSlice(configKey2),
-    dummySlice,
-  ]);
+  const { store: store1 } = createTestStore({
+    slices: [configSlice1, storeSyncSlice(configKey1), dummySlice],
+  });
+  const { store: store2 } = createTestStore({
+    slices: [configSlice2, storeSyncSlice(configKey2), dummySlice],
+  });
 
   return {
     store1,
@@ -141,7 +137,9 @@ test('works', async () => {
     port: port1 as any,
   });
   const slice = storeSyncSlice(configKey1);
-  const { store } = createTestStore([configSlice1, slice, dummySlice]);
+  const { store } = createTestStore({
+    slices: [configSlice1, slice, dummySlice],
+  });
   await sleep(0);
 
   expect(slice.getSliceState(store.state)?.startSync).toBe(false);
@@ -305,11 +303,9 @@ test('when there is a delay in second store', async () => {
     port: port2 as any,
   });
 
-  const { store: store1 } = createTestStore([
-    configSlice1,
-    storeSyncSlice(configKey1),
-    dummySlice,
-  ]);
+  const { store: store1 } = createTestStore({
+    slices: [configSlice1, storeSyncSlice(configKey1), dummySlice],
+  });
 
   store1.dispatch({
     name: 'action::dummy-action:one',
@@ -330,11 +326,9 @@ test('when there is a delay in second store', async () => {
 
   expect(dummySlice.getSliceState(store1.state)).toEqual({ counter: 4 });
 
-  const { store: store2 } = createTestStore([
-    configSlice2,
-    storeSyncSlice(configKey2),
-    dummySlice,
-  ]);
+  const { store: store2 } = createTestStore({
+    slices: [configSlice2, storeSyncSlice(configKey2), dummySlice],
+  });
   startStoreSync()(store1.state, store1.dispatch);
   startStoreSync()(store2.state, store2.dispatch);
   store1.dispatch({

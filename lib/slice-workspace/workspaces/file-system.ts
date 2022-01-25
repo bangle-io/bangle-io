@@ -23,7 +23,6 @@ import {
   validateNoteWsPath,
 } from '@bangle.io/ws-path';
 
-import { HELP_FS_WORKSPACE_TYPE } from '../help-fs';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { readWorkspacesInfoReg } from './read-ws-info';
 
@@ -170,17 +169,6 @@ export async function saveFile(wsPath: string, fileBlob: File) {
   const path = toFSPath(wsPath);
 
   const fs = getFileSystemFromWsInfo(workspaceInfo);
-  // TODO hack to check if the user actually wrote anything
-  if (
-    workspaceInfo.type === HELP_FS_WORKSPACE_TYPE &&
-    isValidNoteWsPath(wsPath)
-  ) {
-    if (fs instanceof HelpFileSystem) {
-      if (!(await fs.isFileModified(toFSPath(wsPath), fileBlob))) {
-        return;
-      }
-    }
-  }
 
   await fs.writeFile(path, fileBlob);
 }
@@ -246,13 +234,6 @@ export const getFileSystemFromWsInfo = (wsInfo: WorkspaceInfo) => {
       rootDirHandle: rootDirHandle,
       allowedFile: (fileHandle: FileTypeSystemHandle) =>
         allowedFile(fileHandle.name),
-    });
-  }
-
-  if (wsInfo.type === HELP_FS_WORKSPACE_TYPE) {
-    return new HelpFileSystem({
-      allowLocalChanges: wsInfo.metadata.allowLocalChanges ?? true,
-      helpDocsVersion: HELP_DOCS_VERSION,
     });
   }
 

@@ -10,6 +10,7 @@ import type {
   SerialOperationDefinitionType,
   SerialOperationHandler,
 } from '@bangle.io/shared-types';
+import type { BaseStorageProvider } from '@bangle.io/storage';
 
 import { EditorPluginDefinition } from './PluginType';
 
@@ -66,6 +67,7 @@ export interface ApplicationConfig<
   operationHandler?: SerialOperationHandler2<OpType>;
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
   slices?: Array<Slice<any>>;
+  storageProvider?: BaseStorageProvider;
 }
 
 export interface SidebarType {
@@ -101,6 +103,7 @@ export class Extension<
     this.initialState = ext.initialState;
     this.application = ext.application;
   }
+
   static create<
     T = undefined,
     OpType extends SerialOperationDefinitionType = any,
@@ -161,6 +164,7 @@ export class Extension<
       noteSidebarWidgets,
       slices,
       operationHandler,
+      storageProvider,
     } = application;
 
     if (operationHandler && !operations) {
@@ -238,6 +242,17 @@ export class Extension<
       throw new Error(
         'Extension: Invalid ntoe sidebar widget name. Example: "note-sidebar-widget::my-extension-name:xyz"',
       );
+    }
+
+    if (storageProvider) {
+      if (typeof storageProvider.name !== 'string') {
+        throw new Error('Extension: Storage provider must have a valid name');
+      }
+      if (typeof storageProvider.description !== 'string') {
+        throw new Error(
+          'Extension: Storage provider must have a valid description',
+        );
+      }
     }
 
     return new Extension<T, OpType>(

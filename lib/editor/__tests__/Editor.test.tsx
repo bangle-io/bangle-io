@@ -18,9 +18,11 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { createPMNode } from '@bangle.io/test-utils/create-pm-node';
-import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
-import { getUseEditorManagerContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import {
+  createExtensionRegistry,
+  createPMNode,
+  getUseEditorManagerContextReturn,
+} from '@bangle.io/test-utils';
 
 import { Editor, useGetEditorState } from '../Editor';
 

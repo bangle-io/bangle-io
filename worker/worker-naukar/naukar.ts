@@ -3,7 +3,6 @@ import * as Sentry from '@sentry/browser';
 import type { Manager } from '@bangle.dev/collab-server';
 
 import { sentryConfig } from '@bangle.io/config';
-import { ApplicationStore } from '@bangle.io/create-store';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   asssertNotUndefined,

@@ -1,7 +1,6 @@
 import { Node } from '@bangle.dev/pm';
 
-import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
-import * as idbHelpers from '@bangle.io/test-utils/indexedb-ws-helpers';
+import { createExtensionRegistry, idbHelpers } from '@bangle.io/test-utils';
 
 import {
   copyWorkspace,

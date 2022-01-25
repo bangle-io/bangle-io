@@ -3,8 +3,10 @@ import { DebouncedDisk } from '@bangle.dev/disk';
 import { sleep } from '@bangle.dev/utils';
 
 import { pageSlice, setPageLifeCycleState } from '@bangle.io/slice-page';
-import { createTestStore } from '@bangle.io/test-utils/create-test-store';
-import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
+import {
+  createExtensionRegistry,
+  createTestStore,
+} from '@bangle.io/test-utils';
 
 import { editorManagerSlice } from '../editor-manager-slice';
 
@@ -19,24 +21,14 @@ jest.mock('../../common', () => {
   };
 });
 
-const scheduler = (cb) => {
-  let destroyed = false;
-  Promise.resolve().then(() => {
-    if (!destroyed) {
-      cb();
-    }
-  });
-
-  return () => {
-    destroyed = true;
-  };
-};
-
 describe('slice', () => {
   test('works', async () => {
     const slice = editorManagerSlice();
-    const { store } = createTestStore([slice, pageSlice()], {
-      extensionRegistry,
+    const { store } = createTestStore({
+      slices: [slice, pageSlice()],
+      opts: {
+        extensionRegistry,
+      },
     });
 
     expect(slice.getSliceState(store.state)?.disk).toBeInstanceOf(
@@ -52,13 +44,13 @@ describe('slice', () => {
 describe('flushNaukarEffect', () => {
   test('works when transitioned to frozen', async () => {
     const slice = editorManagerSlice();
-    const { store } = createTestStore(
-      [slice, pageSlice()],
-      {
+
+    const { store } = createTestStore({
+      slices: [slice, pageSlice()],
+      opts: {
         extensionRegistry,
       },
-      scheduler,
-    );
+    });
 
     const disk = slice.getSliceState(store.state)!.disk;
     const flushSpy = jest.spyOn(disk!, 'flushAll');
@@ -74,13 +66,13 @@ describe('flushNaukarEffect', () => {
 
   test('when transitioned to active', async () => {
     const slice = editorManagerSlice();
-    const { store } = createTestStore(
-      [slice, pageSlice()],
-      {
+
+    const { store } = createTestStore({
+      slices: [slice, pageSlice()],
+      opts: {
         extensionRegistry,
       },
-      scheduler,
-    );
+    });
 
     const disk = slice.getSliceState(store.state)!.editorManager;
     const destroySpy = jest.spyOn(disk!, 'destroy');

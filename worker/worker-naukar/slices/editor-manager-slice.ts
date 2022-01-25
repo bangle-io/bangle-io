@@ -134,8 +134,9 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
       const { extensionRegistry } = config;
       const getItem = async (wsPath) => {
         const doc = await getNote(wsPath)(
-          store.state,
+          workspaceSliceKey.getStore(store).state,
           workspaceSliceKey.getDispatch(store.dispatch),
+          workspaceSliceKey.getStore(store),
         );
         if (!doc) {
           throw new Error(`Note ${wsPath} not found`);
@@ -145,9 +146,9 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
 
       const setItem = async (wsPath: string, doc: Node) => {
         await saveDoc(wsPath, doc)(
-          store.state,
+          workspaceSliceKey.getState(store),
           workspaceSliceKey.getDispatch(store.dispatch),
-          store,
+          workspaceSliceKey.getStore(store),
         );
       };
 

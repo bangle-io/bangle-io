@@ -13,7 +13,7 @@ import {
 import {
   getEditorPluginMetadataReturn,
   getUseWorkspaceContextReturn,
-} from '@bangle.io/test-utils/function-mock-return';
+} from '@bangle.io/test-utils';
 import { getEditorPluginMetadata, sleep } from '@bangle.io/utils';
 
 import { BacklinkNode } from '../editor/BacklinkNode';
@@ -72,7 +72,7 @@ describe('BacklinkNode', () => {
     }));
 
     pushWsPathMock.mockImplementation(() => () => true);
-    createNoteMock.mockImplementation(() => async () => true);
+    createNoteMock.mockImplementation(() => async () => undefined);
 
     getEditorPluginMetadataMock.mockImplementation(() => ({
       ...getEditorPluginMetadataReturn,

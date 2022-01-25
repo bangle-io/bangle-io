@@ -12,11 +12,11 @@ import {
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
 import {
+  createEditorFromMd,
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
-} from '@bangle.io/test-utils/function-mock-return';
+} from '@bangle.io/test-utils';
 import { getEditorIntersectionObserverPluginState } from '@bangle.io/utils';
 
 import noteOutlineExtension from '..';

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import type { RawSpecs } from '@bangle.dev/core';
 import { SpecRegistry } from '@bangle.dev/core';
 import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@bangle.dev/react';
 
@@ -15,17 +14,19 @@ import type {
 
 import { ApplicationConfig, EditorConfig, Extension } from './Extension';
 
-function filterFlatMap<K>(
-  array: any[],
-  field: string,
+type Unnest<T> = T extends Array<infer U> ? U : T;
+
+function filterFlatMap<R, K extends keyof R>(
+  array: R[],
+  field: K,
   flatten = true,
-): Array<K> {
+): Array<Unnest<Exclude<R[K], undefined>>> {
   let items = array.filter((item) => Boolean(item[field]));
   if (flatten) {
-    return items.flatMap((item) => item[field]);
+    return items.flatMap((item) => item[field]) as any;
   }
 
-  return items.map((item) => item[field]);
+  return items.map((item) => item[field]) as any;
 }
 
 export class ExtensionRegistry {
@@ -44,6 +45,10 @@ export class ExtensionRegistry {
     Exclude<ApplicationConfig['operationHandler'], undefined>
   >;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
+  private storageProviders: {
+    [key: string]: Exclude<ApplicationConfig['storageProvider'], undefined>;
+  };
+
   private slices: Slice<any, any>[];
 
   private editorWatchPluginStates: Exclude<
@@ -70,18 +75,16 @@ export class ExtensionRegistry {
 
     this.editorConfig = extensions.map((e) => e.editor);
     this.specRegistry = new SpecRegistry([
-      ...filterFlatMap<RawSpecs>(this.editorConfig, 'specs'),
+      ...filterFlatMap(this.editorConfig, 'specs'),
     ]);
     this.markdownItPlugins = [
       ..._markdownItPlugins,
       ...filterFlatMap(this.editorConfig, 'markdownItPlugins'),
     ];
     this.renderReactNodeViewLookup = Object.fromEntries(
-      filterFlatMap<any>(
-        this.editorConfig,
-        'renderReactNodeView',
-        false,
-      ).flatMap((obj) => Object.entries(obj)),
+      filterFlatMap(this.editorConfig, 'renderReactNodeView', false).flatMap(
+        (obj) => Object.entries(obj),
+      ),
     );
 
     const applicationConfig = extensions.map((e) => e.application);
@@ -115,6 +118,13 @@ export class ExtensionRegistry {
 
     this.operationKeybindingMapping =
       this._getSerialOperationKeybindingMapping();
+
+    this.storageProviders = Object.fromEntries(
+      filterFlatMap(applicationConfig, 'storageProvider').map((r) => [
+        r.name,
+        r,
+      ]),
+    );
   }
   private validate() {
     if (
@@ -168,6 +178,10 @@ export class ExtensionRegistry {
 
   getSlices() {
     return this.slices;
+  }
+
+  getStorageProvider(name: string) {
+    return this.storageProviders[name];
   }
 
   renderExtensionEditorComponents = () => {

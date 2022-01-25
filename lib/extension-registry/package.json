@@ -30,6 +30,7 @@
     "@bangle.dev/react": "0.28.5",
     "@bangle.dev/utils": "0.28.5",
     "@bangle.io/editor": "workspace:*",
+    "@bangle.io/storage": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@testing-library/react": "^12.1.2",
