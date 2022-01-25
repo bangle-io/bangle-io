@@ -80,7 +80,7 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      // Check if workspace has been created
+      // Check if workspace has been created / switch to
       if (currentWsName !== wsName) {
         try {
           const wsInfo = await getWorkspaceInfo(wsName)(store.state);
