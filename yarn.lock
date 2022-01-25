@@ -1902,6 +1902,7 @@ __metadata:
     "@bangle.io/slice-page": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
+    "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "worksapce:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
@@ -1915,6 +1916,25 @@ __metadata:
 "@bangle.io/base-error@workspace:*, @bangle.io/base-error@workspace:js-lib/base-error":
   version: 0.0.0-use.local
   resolution: "@bangle.io/base-error@workspace:js-lib/base-error"
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/browser-nativefs-storage@workspace:*, @bangle.io/browser-nativefs-storage@workspace:extensions/browser-nativefs-storage":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/browser-nativefs-storage@workspace:extensions/browser-nativefs-storage"
+  dependencies:
+    "@bangle.dev/core": 0.28.5
+    "@bangle.dev/markdown": 0.28.5
+    "@bangle.dev/markdown-front-matter": 0.28.5
+    "@bangle.dev/pm": 0.28.5
+    "@bangle.io/baby-fs": "workspace:*"
+    "@bangle.io/constants": "workspace:*"
+    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/storage": "workspace:*"
+    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2695,6 +2715,7 @@ __metadata:
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/table": 0.28.5
     "@bangle.dev/utils": 0.28.5
+    "@bangle.io/browser-nativefs-storage": "workspace:*"
     "@bangle.io/browser-storage": "workspace:*"
     "@bangle.io/collab-extension": "workspace:*"
     "@bangle.io/collapsible-heading": "workspace:*"

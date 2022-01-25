@@ -1,3 +1,4 @@
+import browserNativefsStorage from '@bangle.io/browser-nativefs-storage';
 import browserStorage from '@bangle.io/browser-storage';
 import collabExtension from '@bangle.io/collab-extension';
 import collapsibleHeading from '@bangle.io/collapsible-heading';
@@ -13,12 +14,12 @@ import noteBrowser from '@bangle.io/note-browser';
 import noteOutline from '@bangle.io/note-outline';
 import noteTags from '@bangle.io/note-tags';
 import searchNotes from '@bangle.io/search-notes';
-
 // TODO move this async, i think a promise should be fine.
 export const initExtensionRegistry = () => {
   return new ExtensionRegistry([
     inlineEmoji,
     browserStorage,
+    browserNativefsStorage,
     editorCore,
     collabExtension,
     inlineCommandPalette,

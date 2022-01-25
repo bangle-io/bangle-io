@@ -87,6 +87,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:app/workspace-sidebar"
       },
       {
+        "name": "@bangle.io/browser-nativefs-storage",
+        "reference": "workspace:extensions/browser-nativefs-storage"
+      },
+      {
         "name": "@bangle.io/browser-storage",
         "reference": "workspace:extensions/browser-storage"
       },
@@ -309,6 +313,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/bangle-store", ["workspace:app/bangle-store"]],
       ["@bangle.io/bangle-store-context", ["workspace:lib/bangle-store-context"]],
       ["@bangle.io/base-error", ["workspace:js-lib/base-error"]],
+      ["@bangle.io/browser-nativefs-storage", ["workspace:extensions/browser-nativefs-storage"]],
       ["@bangle.io/browser-storage", ["workspace:extensions/browser-storage"]],
       ["@bangle.io/collab-extension", ["workspace:extensions/collab-extension"]],
       ["@bangle.io/collapsible-heading", ["workspace:extensions/collapsible-heading"]],
@@ -3987,6 +3992,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
+            ["@bangle.io/storage", "workspace:lib/storage"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],
@@ -4019,6 +4025,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/base-error/",
           "packageDependencies": [
             ["@bangle.io/base-error", "workspace:js-lib/base-error"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/browser-nativefs-storage", [
+        ["workspace:extensions/browser-nativefs-storage", {
+          "packageLocation": "./extensions/browser-nativefs-storage/",
+          "packageDependencies": [
+            ["@bangle.io/browser-nativefs-storage", "workspace:extensions/browser-nativefs-storage"],
+            ["@bangle.dev/core", "virtual:2d3114db597aad84130317efca088f8ec250f89f12478e5b9ac1b541ce4dd11ff02d9f57091d8a5dd4920ce86d3af644c9d53904402f1455c82546c7ea2cdc88#npm:0.28.5"],
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.5"],
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.5"],
+            ["@bangle.dev/pm", "npm:0.28.5"],
+            ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
+            ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/storage", "workspace:lib/storage"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"]
           ],
           "linkType": "SOFT",
         }]
@@ -5001,6 +5028,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/pm", "npm:0.28.5"],
             ["@bangle.dev/table", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.5"],
             ["@bangle.dev/utils", "virtual:2d3114db597aad84130317efca088f8ec250f89f12478e5b9ac1b541ce4dd11ff02d9f57091d8a5dd4920ce86d3af644c9d53904402f1455c82546c7ea2cdc88#npm:0.28.5"],
+            ["@bangle.io/browser-nativefs-storage", "workspace:extensions/browser-nativefs-storage"],
             ["@bangle.io/browser-storage", "workspace:extensions/browser-storage"],
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
             ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],

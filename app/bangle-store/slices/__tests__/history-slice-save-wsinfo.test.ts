@@ -3,6 +3,7 @@
  */
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
+import { Extension } from '@bangle.io/extension-registry';
 import { BrowserHistory } from '@bangle.io/history';
 import {
   createWorkspace,
@@ -10,6 +11,7 @@ import {
   getWorkspaceInfo,
   listWorkspaces,
 } from '@bangle.io/slice-workspace';
+import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createBasicTestStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
@@ -27,9 +29,22 @@ afterEach(() => {
 });
 
 let setup = () => {
+  class NativeFs extends IndexedDbStorageProvider {
+    name = WorkspaceType.nativefs;
+    description = 'test native fs fake';
+  }
+
   window.history.replaceState(null, '', '/');
   let { store } = createBasicTestStore({
     slices: [historySlice()],
+    extensions: [
+      Extension.create({
+        name: 'test-nativefs-storage-provider-ext',
+        application: {
+          storageProvider: new NativeFs(),
+        },
+      }),
+    ],
     useMemoryHistorySlice: false,
   });
 
