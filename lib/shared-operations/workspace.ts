@@ -1,6 +1,7 @@
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+  HELP_FS_WORKSPACE_NAME,
   WorkspaceType,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
@@ -9,7 +10,6 @@ import {
   createWorkspace,
   deleteNote,
   deleteWorkspace as _deletedWorkspace,
-  HELP_FS_WORKSPACE_NAME,
   WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';

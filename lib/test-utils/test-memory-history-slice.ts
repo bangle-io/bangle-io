@@ -1,0 +1,112 @@
+import { Slice, SliceKey } from '@bangle.io/create-store';
+import { BaseHistory, createTo, MemoryHistory } from '@bangle.io/history';
+import {
+  pageSliceKey,
+  PageSliceStateType,
+  syncPageLocation,
+} from '@bangle.io/slice-page';
+import { assertActionName } from '@bangle.io/utils';
+
+const historySliceKey = new SliceKey<
+  { history: BaseHistory | undefined },
+  {
+    name: 'action::@bangle.io/test-utils:history-slice-set-history';
+    value: {
+      history: BaseHistory;
+    };
+  }
+>('test-memory-history-slice');
+
+if (typeof jest === 'undefined') {
+  throw new Error('Can only be with jest');
+}
+
+export function testMemoryHistorySlice() {
+  assertActionName('@bangle.io/test-utils', historySliceKey);
+
+  return new Slice({
+    key: historySliceKey,
+    state: {
+      init() {
+        return {
+          history: undefined,
+        };
+      },
+      apply(action, state) {
+        switch (action.name) {
+          case 'action::@bangle.io/test-utils:history-slice-set-history': {
+            return {
+              ...state,
+              history: action.value.history,
+            };
+          }
+          default: {
+            return state;
+          }
+        }
+      },
+    },
+    sideEffect: [mockHistoryEffect],
+  });
+}
+
+// sets up history and watches for any changes in it
+const mockHistoryEffect = historySliceKey.effect(() => {
+  let lastProcessed: PageSliceStateType['pendingNavigation'];
+
+  return {
+    update(store) {
+      const { pendingNavigation } = pageSliceKey.getSliceStateAsserted(
+        store.state,
+      );
+
+      const { history } = historySliceKey.getSliceStateAsserted(store.state);
+
+      if (!history || !pendingNavigation) {
+        return;
+      }
+
+      if (pendingNavigation === lastProcessed) {
+        return;
+      }
+
+      lastProcessed = pendingNavigation;
+      if (pendingNavigation.preserve) {
+        history?.navigate(createTo(pendingNavigation.location, history), {
+          replace: pendingNavigation.replaceHistory,
+        });
+      } else {
+        let to = pendingNavigation.location.pathname || '';
+        if (pendingNavigation.location.search) {
+          to += '?' + pendingNavigation.location.search;
+        }
+        history?.navigate(to, {
+          replace: pendingNavigation.replaceHistory,
+        });
+      }
+    },
+
+    deferredOnce(store, abortSignal) {
+      const history = new MemoryHistory('', (location) => {
+        syncPageLocation(location)(
+          store.state,
+          pageSliceKey.getDispatch(store.dispatch),
+        );
+      });
+
+      store.dispatch({
+        name: 'action::@bangle.io/test-utils:history-slice-set-history',
+        value: { history: history },
+      });
+
+      syncPageLocation({
+        search: history.search,
+        pathname: history.pathname,
+      })(store.state, pageSliceKey.getDispatch(store.dispatch));
+
+      abortSignal.addEventListener('abort', () => {
+        history.destroy();
+      });
+    },
+  };
+});

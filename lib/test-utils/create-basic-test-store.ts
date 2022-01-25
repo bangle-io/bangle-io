@@ -1,0 +1,135 @@
+import { WorkspaceType } from '@bangle.io/constants';
+import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import {
+  Extension,
+  extensionRegistrySlice,
+} from '@bangle.io/extension-registry';
+import type { NaukarStateConfig } from '@bangle.io/shared-types';
+import { pageSlice } from '@bangle.io/slice-page';
+import {
+  createNote,
+  createWorkspace,
+  listWorkspaces,
+  workspaceSlice,
+} from '@bangle.io/slice-workspace';
+import { IndexedDbStorageProvider } from '@bangle.io/storage';
+import { sleep } from '@bangle.io/utils';
+
+import { createPMNode } from './create-pm-node';
+import { createTestStore } from './create-test-store';
+import { createExtensionRegistry } from './extension-registry';
+import { clearFakeIdb } from './fake-idb';
+import * as idbHelpers from './indexedb-ws-helpers';
+import { testMemoryHistorySlice } from './test-memory-history-slice';
+
+if (typeof jest === 'undefined') {
+  throw new Error('Can only be with jest');
+}
+
+// A batteries included store meant for testing
+// It includes the default slices, routing, extension registry
+export function createBasicTestStore({
+  slices = [],
+  extensions = [],
+  useMemoryHistorySlice = true,
+  useEditorCoreExtension = true,
+}: {
+  slices?: Slice[];
+  extensions?: Extension[];
+  useMemoryHistorySlice?: boolean;
+  useEditorCoreExtension?: boolean;
+} = {}) {
+  let extensionRegistry = createExtensionRegistry(
+    [
+      Extension.create({
+        name: 'test-extension',
+        application: {
+          storageProvider: new IndexedDbStorageProvider(),
+        },
+      }),
+      ...extensions,
+    ],
+    {
+      editorCore: useEditorCoreExtension,
+    },
+  );
+
+  const opts: Omit<NaukarStateConfig, 'port'> = {
+    extensionRegistry,
+  };
+
+  const { store, actionsDispatched, dispatchSpy, getActionNames, getAction } =
+    createTestStore({
+      slices: [
+        extensionRegistrySlice(),
+        useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
+        pageSlice(),
+        workspaceSlice(),
+        ...slices,
+      ].filter((r): r is Slice => Boolean(r)),
+      opts,
+    });
+
+  return {
+    extensionRegistry,
+    store,
+    actionsDispatched,
+    dispatchSpy,
+    getActionNames,
+    getAction,
+  };
+}
+
+export const jestHooks = {
+  beforeEach: () => {
+    idbHelpers.beforeEachHook();
+  },
+  afterEach: () => {
+    idbHelpers.afterEachHook();
+    clearFakeIdb();
+  },
+};
+
+export async function setupMockWorkspaceWithNotes(
+  store?: ApplicationStore,
+  wsName = 'test-ws-1',
+  // Array of [wsPath, MarkdownString]
+  noteWsPaths: [string, string][] = [
+    [`${wsName}:one.md`, `# Hello World 0`],
+    [`${wsName}:two.md`, `# Hello World 1`],
+  ],
+  destroyAfterInit = false,
+) {
+  if (!store) {
+    store = createBasicTestStore().store;
+  }
+  if (
+    (await listWorkspaces()(store.state, store.dispatch, store)).find(
+      (r) => r.name === wsName,
+    )
+  ) {
+    throw new Error(`Workspace ${wsName} already exists`);
+  }
+
+  await createWorkspace(wsName, WorkspaceType.browser)(
+    store.state,
+    store.dispatch,
+    store,
+  );
+
+  await sleep(0);
+
+  for (const [noteWsPath, str] of noteWsPaths) {
+    await createNote(noteWsPath, {
+      doc: createPMNode([], str.trim()),
+    })(store.state, store.dispatch, store);
+  }
+
+  await sleep(0);
+
+  if (destroyAfterInit) {
+    store.destroy();
+  }
+
+  return { wsName, noteWsPaths, store };
+}

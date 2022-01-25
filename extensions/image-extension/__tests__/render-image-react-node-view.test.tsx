@@ -5,7 +5,7 @@ import { act, render } from '@testing-library/react';
 import React from 'react';
 
 import { getFile, useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 

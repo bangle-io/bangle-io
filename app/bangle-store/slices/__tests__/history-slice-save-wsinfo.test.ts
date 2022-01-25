@@ -4,15 +4,13 @@
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
 import { BrowserHistory } from '@bangle.io/history';
-import { pageSlice } from '@bangle.io/slice-page';
 import {
   createWorkspace,
   deleteWorkspace,
   getWorkspaceInfo,
   listWorkspaces,
-  workspaceSlice,
 } from '@bangle.io/slice-workspace';
-import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import { createBasicTestStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { historySlice, historySliceKey } from '../history-slice';
@@ -30,11 +28,10 @@ afterEach(() => {
 
 let setup = () => {
   window.history.replaceState(null, '', '/');
-  let { store } = createTestStore([
-    pageSlice(),
-    historySlice(),
-    workspaceSlice(),
-  ]);
+  let { store } = createBasicTestStore({
+    slices: [historySlice()],
+    useMemoryHistorySlice: false,
+  });
 
   let { history } = historySliceKey.getSliceStateAsserted(store.state);
 

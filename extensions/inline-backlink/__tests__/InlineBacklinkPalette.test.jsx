@@ -13,7 +13,7 @@ import {
   useInlinePaletteQuery,
 } from '@bangle.io/inline-palette';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { createExtensionRegistry } from '@bangle.io/test-utils/extension-registry';
+import { createExtensionRegistry } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { InlineBacklinkPalette } from '../editor/InlineBacklinkPalette';

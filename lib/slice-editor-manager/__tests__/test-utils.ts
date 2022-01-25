@@ -1,4 +1,4 @@
-import { createEditorFromMd } from '@bangle.io/test-utils/create-editor-view';
+import { createEditorFromMd } from '@bangle.io/test-utils';
 
 export const getActionsDispatched = (mockDispatch) =>
   mockDispatch.mock.calls.map((r) => r[0].name);

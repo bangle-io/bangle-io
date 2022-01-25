@@ -9,7 +9,7 @@ import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
-} from '@bangle.io/test-utils/function-mock-return';
+} from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { OpenedWsPaths } from '@bangle.io/ws-path';

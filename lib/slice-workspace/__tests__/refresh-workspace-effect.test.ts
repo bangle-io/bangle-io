@@ -2,14 +2,9 @@ import * as idb from 'idb-keyval';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
-import {
-  getPageLocation,
-  historyUpdateOpenedWsPaths,
-  pageSliceKey,
-} from '@bangle.io/slice-page';
-import { mockMemoryHistorySlice } from '@bangle.io/test-basic-store';
+import { getPageLocation } from '@bangle.io/slice-page';
+import { testMemoryHistorySlice } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { goToWsNameRoute } from '..';
 import { workspaceSliceKey } from '../common';
@@ -139,7 +134,7 @@ describe('updateLocationEffect', () => {
     undefined,
     undefined,
     undefined,
-    [mockMemoryHistorySlice()],
+    [testMemoryHistorySlice()],
   );
 
   beforeEach(() => {
@@ -147,7 +142,7 @@ describe('updateLocationEffect', () => {
       undefined,
       undefined,
       undefined,
-      [mockMemoryHistorySlice()],
+      [testMemoryHistorySlice()],
     ));
   });
 

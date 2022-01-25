@@ -1,3 +1,4 @@
+import browserStorage from '@bangle.io/browser-storage';
 import collabExtension from '@bangle.io/collab-extension';
 import collapsibleHeading from '@bangle.io/collapsible-heading';
 import coreActions from '@bangle.io/core-operations';
@@ -17,6 +18,7 @@ import searchNotes from '@bangle.io/search-notes';
 export const initExtensionRegistry = () => {
   return new ExtensionRegistry([
     inlineEmoji,
+    browserStorage,
     editorCore,
     collabExtension,
     inlineCommandPalette,
@@ -28,6 +30,7 @@ export const initExtensionRegistry = () => {
     coreActions,
     noteBrowser,
     searchNotes,
+
     // NOTE: keep the core palette last
     // as it has note palette in it
     corePalette,

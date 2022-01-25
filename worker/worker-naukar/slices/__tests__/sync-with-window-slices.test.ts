@@ -1,5 +1,5 @@
 import { blockReload, pageSlice, pageSliceKey } from '@bangle.io/slice-page';
-import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import { createTestStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { syncWithWindowSlices } from '../sync-with-window-slices';
@@ -20,8 +20,11 @@ const Port = (): MessagePort => ({
 test('sets up', async () => {
   const port = Port();
 
-  const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
-    port,
+  const { store } = createTestStore({
+    slices: [...syncWithWindowSlices(), pageSlice()],
+    opts: {
+      port,
+    },
   });
   expect(store.state.config.opts).toMatchObject({
     port,
@@ -47,8 +50,11 @@ test('sets up', async () => {
 test('destroys', async () => {
   const port = Port();
 
-  const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
-    port,
+  const { store } = createTestStore({
+    slices: [...syncWithWindowSlices(), pageSlice()],
+    opts: {
+      port,
+    },
   });
   await sleep(0);
 
@@ -69,8 +75,11 @@ test('sends actions to the port', async () => {
     port.onmessage!({ data: { type: 'pong' } } as any);
   });
 
-  const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
-    port,
+  const { store } = createTestStore({
+    slices: [...syncWithWindowSlices(), pageSlice()],
+    opts: {
+      port,
+    },
   });
 
   expect(store.state.config.opts).toMatchObject({
@@ -110,8 +119,11 @@ test('handles actions coming from port', async () => {
     port.onmessage?.({ data: { type: 'pong' } } as any);
   });
 
-  const { store } = createTestStore([...syncWithWindowSlices(), pageSlice()], {
-    port,
+  const { store } = createTestStore({
+    slices: [...syncWithWindowSlices(), pageSlice()],
+    opts: {
+      port,
+    },
   });
   await sleep(0);
 
@@ -148,12 +160,12 @@ test('blocks actions which are not recognized', async () => {
     port.onmessage?.({ data: { type: 'pong' } } as any);
   });
 
-  const { store, actionsDispatched } = createTestStore(
-    [...syncWithWindowSlices(), pageSlice()],
-    {
+  const { store, actionsDispatched } = createTestStore({
+    slices: [...syncWithWindowSlices(), pageSlice()],
+    opts: {
       port,
     },
-  );
+  });
 
   await sleep(0);
 

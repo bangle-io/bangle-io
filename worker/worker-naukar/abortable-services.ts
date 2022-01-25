@@ -47,7 +47,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
       const store = storeRef.current;
       asssertNotUndefined(store, 'store cannot be undefined');
 
-      return getNote(wsPath)(store.state, store.dispatch);
+      return getNote(wsPath)(store.state, store.dispatch, store);
     };
 
     const _getFile = async (wsPath: string) => {

@@ -38,8 +38,6 @@ export const setupMockWorkspace = async (wsInfo: Partial<WorkspaceInfo>) => {
   await idb.set('workspaces/2', [...existing, wsInfo]);
 };
 
-const originalFile = global.File;
-
 export const beforeEachHook = () => {
   interface MockFile {
     parts: (string | Blob | ArrayBuffer | ArrayBufferView)[];
@@ -64,6 +62,4 @@ export const beforeEachHook = () => {
   };
 };
 
-export const afterEachHook = () => {
-  (global as any).File = originalFile;
-};
+export const afterEachHook = () => {};

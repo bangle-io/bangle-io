@@ -13,7 +13,7 @@ import {
 import {
   getUseEditorManagerContextReturn,
   getUseWorkspaceContextReturn,
-} from '@bangle.io/test-utils/function-mock-return';
+} from '@bangle.io/test-utils';
 
 import { EditorContainer } from '../EditorContainer';
 

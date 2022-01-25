@@ -9,7 +9,7 @@ import {
   updateOpenedWsPaths,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
-import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils';
 import { useBroadcastChannel } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -71,7 +71,7 @@ beforeEach(() => {
     updateOpenedWsPathsCallback = cb;
     return true;
   });
-  refreshWsPathsMock.mockImplementation(() => () => true);
+  refreshWsPathsMock.mockImplementation(() => async () => true);
 
   Comp = function Comp() {
     return <WatchWorkspace />;

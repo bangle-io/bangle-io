@@ -6,7 +6,7 @@ import React from 'react';
 
 import type { SearchResultItem } from '@bangle.io/search-pm-node';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils/function-mock-return';
+import { getUseWorkspaceContextReturn } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { SearchNotesSidebar } from '../components/SearchNotesSidebar';

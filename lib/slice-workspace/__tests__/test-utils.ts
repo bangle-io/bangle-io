@@ -2,8 +2,14 @@ import type { JsonArray } from 'type-fest';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore, AppState, Slice } from '@bangle.io/create-store';
+import {
+  Extension,
+  extensionRegistrySlice,
+} from '@bangle.io/extension-registry';
 import type { JsonPrimitive, WorkspaceInfo } from '@bangle.io/shared-types';
 import { pageSlice } from '@bangle.io/slice-page';
+import { IndexedDbStorageProvider } from '@bangle.io/storage';
+import { createExtensionRegistry } from '@bangle.io/test-utils';
 
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
 import { WorkspaceStateKeys } from '../workspace-slice-state';
@@ -14,8 +20,10 @@ export const createState = (
     [K in WorkspaceStateKeys]: JsonPrimitive | JsonArray | undefined;
   }> = {},
   additionalSlices: Slice[] = [],
+  opts?: { [key: string]: any },
 ) => {
   return AppState.stateFromJSON<any, any>({
+    opts,
     slices: [workspaceSlice(), pageSlice(), ...additionalSlices],
     json: {
       workspace: { version: JSON_SCHEMA_VERSION, data: data },
@@ -62,15 +70,35 @@ export const createStore = (
   disableSideEffects = false,
   additionalSlices: Slice[] = [],
 ) => {
+  let extensionRegistry = createExtensionRegistry(
+    [
+      Extension.create({
+        name: 'test-extension',
+        application: {
+          storageProvider: new IndexedDbStorageProvider(),
+        },
+      }),
+    ],
+    {
+      editorCore: false,
+    },
+  );
+
+  let opts = {
+    extensionRegistry,
+  };
+
   const store = ApplicationStore.create({
     scheduler: scheduler,
     storeName: 'workspace-store',
     state: data
-      ? createState(data, additionalSlices)
+      ? createState(data, additionalSlices, opts)
       : AppState.create({
+          opts,
           slices: [
             workspaceSlice(),
             pageSlice(),
+            extensionRegistrySlice(),
             ...additionalSlices,
           ] as Slice[],
         }),

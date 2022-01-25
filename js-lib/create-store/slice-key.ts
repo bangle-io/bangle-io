@@ -36,6 +36,10 @@ export class SliceKey<
     return dispatch as ApplicationStore<SL, A>['dispatch'];
   }
 
+  getState(store: ApplicationStore): ApplicationStore<SL, A>['state'] {
+    return this.getStore(store).state;
+  }
+
   getSliceState(
     state: AppState<any, any> | Readonly<AppState<any, any>>,
   ): SL | undefined {

@@ -16,7 +16,7 @@ export class MemoryHistory extends BaseHistory {
 
   destroy(): void {}
 
-  navigate(to: string): void {
+  navigate(to: string, { replace = false }: { replace?: boolean } = {}): void {
     const parsed = new URL('http://bangle.io' + to);
     const newLoc = {
       pathname: parsed.pathname,

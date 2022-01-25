@@ -1,14 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { pageSlice } from '@bangle.io/slice-page';
 import {
   goToWsNameRoute,
   updateOpenedWsPaths,
-  workspaceSlice,
 } from '@bangle.io/slice-workspace';
-import { setupMockWorkspaceWithNotes } from '@bangle.io/test-basic-store';
-import { createTestStore } from '@bangle.io/test-utils/create-test-store';
+import {
+  createBasicTestStore,
+  setupMockWorkspaceWithNotes,
+} from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -20,18 +20,18 @@ describe('last seen workspace', () => {
 
   beforeEach(() => {
     originalLocalStorage = global.localStorage;
-    let store = {};
+    let localDb = {};
 
     Object.defineProperty(global, 'localStorage', {
       value: {
         getItem: jest.fn((key) => {
-          return store[key] || null;
+          return localDb[key] || null;
         }),
         setItem: jest.fn((key, value) => {
-          store[key] = value.toString();
+          localDb[key] = value.toString();
         }),
         clear() {
-          store = {};
+          localDb = {};
         },
       },
       writable: true,
@@ -77,12 +77,10 @@ describe('last seen workspace', () => {
 
       await sleep(0);
 
-      let { store } = createTestStore([
-        pageSlice(),
-        historySlice(),
-        workspaceSlice(),
-        miscEffectsSlice(),
-      ]);
+      let { store } = createBasicTestStore({
+        slices: [historySlice(), miscEffectsSlice()],
+        useMemoryHistorySlice: false,
+      });
 
       updateOpenedWsPaths(() =>
         OpenedWsPaths.createFromArray(['test-ws:hello.md']),
@@ -122,12 +120,10 @@ describe('last seen workspace', () => {
 
       await sleep(0);
 
-      let { store } = createTestStore([
-        pageSlice(),
-        historySlice(),
-        workspaceSlice(),
-        miscEffectsSlice(),
-      ]);
+      let { store } = createBasicTestStore({
+        slices: [historySlice(), miscEffectsSlice()],
+        useMemoryHistorySlice: false,
+      });
 
       goToWsNameRoute('test-ws-1')(store.state, store.dispatch);
       await sleep(0);
