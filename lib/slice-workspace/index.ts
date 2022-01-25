@@ -1,20 +1,21 @@
 export type { WorkspaceDispatchType, WorkspaceSliceAction } from './common';
 export { workspaceSliceKey } from './common';
-export { HELP_FS_INDEX_WS_PATH, HELP_FS_WORKSPACE_NAME } from './help-fs';
 export {
   checkFileExists,
   createNote,
   deleteNote,
   getFile,
   getNote,
-  goToWorkspaceHomeRoute,
-  goToWsNameRoute,
-  goToWsNameRouteNotFoundRoute,
-  pushWsPath,
   refreshWsPaths,
   renameNote,
   saveDoc,
   saveFile,
+} from './file-operations';
+export {
+  goToWorkspaceHomeRoute,
+  goToWsNameRoute,
+  goToWsNameRouteNotFoundRoute,
+  pushWsPath,
   updateOpenedWsPaths,
 } from './operations';
 export { workspaceSliceInitialState } from './workspace-slice';

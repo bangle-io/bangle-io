@@ -1,9 +1,8 @@
-import { WorkspaceType } from '@bangle.io/constants';
+import { helpFSWorkspaceInfo, WorkspaceType } from '@bangle.io/constants';
 import { goToLocation, syncPageLocation } from '@bangle.io/slice-page';
-import { fakeIdb } from '@bangle.io/test-utils/fake-idb';
+import { fakeIdb } from '@bangle.io/test-utils';
 
 import { workspaceSliceKey } from '../common';
-import { helpFSWorkspaceInfo } from '../help-fs';
 import { WORKSPACE_KEY } from '../workspaces/read-ws-info';
 import {
   createWorkspace,
@@ -240,7 +239,7 @@ describe('deleteWorkspace', () => {
 
     expect(goToLocation).toBeCalledTimes(2);
     expect(goToLocation).nthCalledWith(1, '/ws/test-1');
-    expect(goToLocation).nthCalledWith(2, '/ws/bangle-help');
+    expect(goToLocation).nthCalledWith(2, '/', { replace: true });
   });
 });
 

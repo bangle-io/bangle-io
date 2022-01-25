@@ -20,9 +20,10 @@ import {
   WorkspaceDispatchType,
   workspaceSliceKey,
 } from './common';
-import { HELP_FS_WORKSPACE_NAME } from './help-fs';
+import { goToWorkspaceHomeRoute } from './operations';
 import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
+  WORKSPACE_DELETED_MODIFY_ERROR,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from './workspaces/errors';
@@ -188,17 +189,49 @@ export function deleteWorkspace(targetWsName: string) {
     );
 
     if (targetWsName === activeWsName) {
-      goToLocation(wsNameToPathname(HELP_FS_WORKSPACE_NAME))(
-        store.state,
-        pageSliceKey.getDispatch(store.dispatch),
-      );
+      goToWorkspaceHomeRoute({ replace: true })(store.state, store.dispatch);
     }
 
     return true;
   };
 }
 
-// Will throw an error if workspace is not found
+export function updateWorkspaceMetadata(
+  wsName: string,
+  metadata: { [key: string]: any },
+) {
+  return workspaceSliceKey.op(async (state, dispatch) => {
+    const currentWsInfo = getWorkspaceInfoSync(wsName)(state);
+
+    if (currentWsInfo.deleted) {
+      throw new WorkspaceError(
+        `Cannot modify a deleted workspace.`,
+        WORKSPACE_DELETED_MODIFY_ERROR,
+      );
+    }
+
+    dispatch({
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
+      value: {
+        workspacesInfo: {
+          [wsName]: {
+            ...currentWsInfo,
+            lastModified: Date.now(),
+            metadata: {
+              ...metadata,
+            },
+          },
+        },
+      },
+    });
+
+    // TODO save ws info
+    // await saveWorkspacesInfo(store.state);
+  });
+}
+
+// Will check in store for wsInfo, if not found will then check indexed-db asyncronously
+// if still not found, will throw an error if workspace is not found
 export function getWorkspaceInfo(wsName: string) {
   return async (
     state: AppState,
@@ -212,6 +245,28 @@ export function getWorkspaceInfo(wsName: string) {
 
       wsInfo = wsInfosInDb[wsName];
 
+      if (!wsInfo) {
+        throw new WorkspaceError(
+          `Workspace ${wsName} not found`,
+          WORKSPACE_NOT_FOUND_ERROR,
+          `Cannot find the workspace ${wsName}`,
+          undefined,
+        );
+      }
+    }
+
+    return wsInfo;
+  };
+}
+
+// Syncronously checks if wsInfo exists in state and throws an error
+// if workspace is not found. If not sure, use `getWorkspaceInfo` instead.
+export function getWorkspaceInfoSync(wsName: string) {
+  return (state: AppState): WorkspaceInfo => {
+    let wsInfo =
+      workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
+
+    if (!wsInfo) {
       if (!wsInfo) {
         throw new WorkspaceError(
           `Workspace ${wsName} not found`,
