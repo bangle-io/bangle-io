@@ -2,6 +2,7 @@ import { AppState } from './app-state';
 import type {
   ActionsSerializersType,
   BaseAction,
+  OnErrorType,
   SliceSideEffect,
 } from './app-state-slice';
 
@@ -47,12 +48,14 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       store.updateState(newState);
     },
     disableSideEffects = false,
+    onError,
   }: {
     state: AppState<S, A>;
     dispatchAction?: DispatchActionType<S, BaseAction>;
     scheduler?: SchedulerType;
     storeName: string;
     disableSideEffects?: boolean;
+    onError?: OnErrorType<S, A>;
   }) {
     return new ApplicationStore(
       state,
@@ -60,6 +63,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       storeName,
       scheduler,
       disableSideEffects,
+      onError,
     );
   }
 
@@ -69,6 +73,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     public storeName: string,
     private scheduler?: SchedulerType,
     private disableSideEffects = false,
+    private onError?: OnErrorType<S, A>,
   ) {
     this.setup();
   }
@@ -177,14 +182,24 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       // causing another run of `runSideEffects`, and giving a stale previouslySeen to those effect update calls.
       sideEffect.previouslySeenState = this.state;
 
-      // effect.update() call should always be the last in this loop, since it can trigger dispatches
-      // which changes the runId causing the loop to break.
-      sideEffect.effect.update?.(
-        this,
-        previouslySeenState,
-        this.state.getSliceState(sideEffect.key),
-        previouslySeenState.getSliceState(sideEffect.key),
-      );
+      try {
+        // effect.update() call should always be the last in this loop, since it can trigger dispatches
+        // which changes the runId causing the loop to break.
+        sideEffect.effect.update?.(
+          this,
+          previouslySeenState,
+          this.state.getSliceState(sideEffect.key),
+          previouslySeenState.getSliceState(sideEffect.key),
+        );
+      } catch (err) {
+        // avoid disrupting the update calls of other
+        // side-effects
+        if (err instanceof Error) {
+          this.errorHandler(err, sideEffect.key);
+        } else {
+          throw err;
+        }
+      }
     }
 
     if (this.scheduler) {
@@ -193,7 +208,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
         this.sideEffects,
         this.scheduler,
       );
-      this.deferredRunner.run(this);
+      this.deferredRunner.run(this, this.errorHandler);
     }
   }
 
@@ -238,10 +253,10 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     const initialAppSate = this._state;
 
-    let allDeferredOnce: Exclude<
-      ReturnType<SliceSideEffect<any, any>>['deferredOnce'],
-      undefined
-    >[] = [];
+    let allDeferredOnce: [
+      string,
+      Exclude<ReturnType<SliceSideEffect<any, any>>['deferredOnce'], undefined>,
+    ][] = [];
 
     this._state.getSlices().forEach((slice) => {
       if (slice.spec.sideEffect) {
@@ -265,7 +280,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
                 previouslySeenState: initialAppSate,
               });
               if (result.deferredOnce) {
-                allDeferredOnce.push(result.deferredOnce);
+                allDeferredOnce.push([slice.key, result.deferredOnce]);
               }
             }
           });
@@ -273,12 +288,56 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     });
 
     // run all the once handlers
-    allDeferredOnce.forEach((def) => {
+    allDeferredOnce.forEach(([key, def]) => {
       if (!this.destroyController.signal.aborted) {
-        def(this, this.destroyController.signal);
+        (async () => {
+          return def(this, this.destroyController.signal);
+        })().catch((error) => {
+          this.errorHandler(error, key);
+        });
       }
     });
   }
+
+  public errorHandler = (error: Error, key?: string): void => {
+    if (this.destroyController.signal.aborted) {
+      return;
+    }
+
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      return;
+    }
+
+    // check the store handler first
+    if (this.onError?.(error, this) === true) {
+      return;
+    }
+
+    // after that give priority to the slice it originated from
+    if (typeof key === 'string') {
+      const matchSlice = this._state.getSliceByKey<any, any, any>(key);
+      if (matchSlice?.spec.onError?.(error, this) === true) {
+        return;
+      }
+    }
+    // Note: We are giving every slice an opportunity to handle the error
+    // rather than just the originating slice, because if an effect dispatches an
+    // operation of a different slice, just running the orginating slice's error handlers
+    // will miss the error handling of the slice owning the operation.
+
+    // check if any slice handles it
+    for (const slice of this._state.getSlices()) {
+      if (
+        // avoid calling the originating slice again, since we already called it earlier
+        slice.key !== key &&
+        slice.spec.onError?.(error, this) === true
+      ) {
+        return;
+      }
+    }
+
+    throw error;
+  };
 }
 
 export class DeferredSideEffectsRunner<S, A extends BaseAction> {
@@ -303,7 +362,10 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
     return this.abortController.signal.aborted;
   }
 
-  public run(store: ApplicationStore<S>) {
+  public run(
+    store: ApplicationStore<S>,
+    errorHandler: ApplicationStore['errorHandler'],
+  ) {
     if (this.scheduledCallback) {
       throw new RangeError('Cannot re-run finished deferred side effects');
     }
@@ -316,9 +378,15 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
       if (this.isAborted) {
         return;
       }
-      for await (const { effect } of this.sideEffects) {
+
+      for await (const { effect, key } of this.sideEffects) {
         if (!this.isAborted) {
-          effect.deferredUpdate?.(store, this.abortController.signal);
+          // coverting it to async-iife allows us to handle both sync and async errors
+          (async () => {
+            return effect.deferredUpdate?.(store, this.abortController.signal);
+          })().catch((error) => {
+            errorHandler(error, key);
+          });
         }
       }
     });

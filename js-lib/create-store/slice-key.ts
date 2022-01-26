@@ -77,8 +77,12 @@ export class SliceKey<
   getValueIfChanged<T extends keyof SL>(
     field: T,
     state: AppState<any, any> | Readonly<AppState<any, any>>,
-    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+    prevState: undefined | AppState<any, any> | Readonly<AppState<any, any>>,
   ): SL[T] | undefined {
+    if (prevState === undefined) {
+      return this.getSliceStateAsserted(state)[field];
+    }
+
     return this.valueChanged(field, state, prevState)
       ? this.getSliceStateAsserted(state)[field]
       : undefined;
@@ -92,6 +96,12 @@ export class SliceKey<
       dispatch: ApplicationStore<SL, A>['dispatch'],
     ) => T,
   ) {
+    return cb;
+  }
+
+  // Helper function for creating an operation with the correct
+  // types.
+  queryOp<T>(cb: (state: AppState<S, A>) => T) {
     return cb;
   }
 
