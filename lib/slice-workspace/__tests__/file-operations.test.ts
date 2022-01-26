@@ -1,6 +1,11 @@
 import { WorkspaceType } from '@bangle.io/constants';
 import { goToLocation } from '@bangle.io/slice-page';
-import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
+import {
+  createBasicTestStore,
+  createPMNode,
+  idbHelpers,
+  setupMockWorkspaceWithNotes,
+} from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -11,6 +16,7 @@ import {
   deleteNote,
   ErrorHandlerType,
   getNote,
+  refreshWsPaths,
   renameNote,
   saveDoc,
 } from '../file-operations';
@@ -478,5 +484,24 @@ describe('checkFileExists', () => {
     })(store.state, store.dispatch, store);
 
     expect(result).toBe(false);
+  });
+});
+
+describe('listAllFiles', () => {
+  test('works', async () => {
+    const { store } = await setupMockWorkspaceWithNotes(undefined, 'kujo', [
+      ['kujo:one.md', 'hi'],
+      ['kujo:two.md', 'bye'],
+    ]);
+
+    await refreshWsPaths();
+
+    expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths)
+      .toMatchInlineSnapshot(`
+            Array [
+              "kujo:one.md",
+              "kujo:two.md",
+            ]
+          `);
   });
 });

@@ -27,19 +27,6 @@ import {
 } from '../operations';
 import { getActionNamesDispatched, noSideEffectsStore } from './test-utils';
 
-jest.mock('../workspaces/file-system', () => {
-  const rest = jest.requireActual('../workspaces/file-system');
-  return {
-    ...rest,
-    renameFile: jest.fn(),
-    deleteFile: jest.fn(),
-    getDoc: jest.fn(),
-    saveDoc: jest.fn(),
-    listAllFiles: jest.fn(),
-    checkFileExists: jest.fn(),
-  };
-});
-
 jest.mock('@bangle.io/slice-page', () => {
   const ops = jest.requireActual('@bangle.io/slice-page');
   return {
