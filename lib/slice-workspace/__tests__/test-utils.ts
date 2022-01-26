@@ -76,6 +76,7 @@ export const createStore = (
         name: 'test-extension',
         application: {
           storageProvider: new IndexedDbStorageProvider(),
+          onStorageError: () => false,
         },
       }),
     ],

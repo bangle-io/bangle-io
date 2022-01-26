@@ -1,13 +1,10 @@
 import type { Node } from '@bangle.dev/pm';
 
-import {
-  BaseFileSystemError,
-  NATIVE_BROWSER_PERMISSION_ERROR,
-  NATIVE_BROWSER_USER_ABORTED_ERROR,
-} from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
+import {
+  ExtensionRegistry,
+  extensionRegistrySliceKey,
+} from '@bangle.io/extension-registry';
 import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
 import type { UnPromisify } from '@bangle.io/shared-types';
 import { HelpFsStorageProvider, StorageOpts } from '@bangle.io/storage';
@@ -17,7 +14,6 @@ import { validateNoteWsPath } from '@bangle.io/ws-path';
 import { workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
 import {
-  goToWorkspaceAuthRoute,
   goToWsNameRouteNotFoundRoute,
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
@@ -32,39 +28,27 @@ import {
   updateWorkspaceMetadata,
 } from './workspaces-operations';
 
-export type ErrorHandlerType = (
-  error: BaseError,
-  wsName?: string,
-) => (state: AppState, dispatch: ApplicationStore['dispatch']) => boolean;
-
 interface FileOperationOptions {
-  errorHandler?: ErrorHandlerType;
+  handleError?: boolean;
 }
 
-const workspaceHandleError: ErrorHandlerType = function workspaceHandleError(
-  error,
-  wsName,
-) {
-  return workspaceSliceKey.op((state, dispatch) => {
+type ErrorHandlerType = Exclude<
+  ReturnType<ExtensionRegistry['getOnStorageErrorHandlers']>,
+  undefined
+>;
+
+const workspaceErrorHandler: ErrorHandlerType = (error, store) => {
+  if (
+    error instanceof WorkspaceError &&
+    error.code === WORKSPACE_NOT_FOUND_ERROR
+  ) {
+    const wsName = workspaceSliceKey.getSliceStateAsserted(store.state).wsName;
     if (wsName) {
-      if (
-        error instanceof BaseFileSystemError &&
-        (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
-          error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
-      ) {
-        goToWorkspaceAuthRoute(wsName, error.code)(state, dispatch);
-        return true;
-      }
-      if (
-        error instanceof WorkspaceError &&
-        error.code === WORKSPACE_NOT_FOUND_ERROR
-      ) {
-        goToWsNameRouteNotFoundRoute(wsName)(state, dispatch);
-        return true;
-      }
+      goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
+      return true;
     }
-    return false;
-  });
+  }
+  return false;
 };
 
 function getStorageProvider() {
@@ -95,6 +79,86 @@ function getStorageProvider() {
 
     return provider;
   });
+}
+
+function getStorageErrorHandler() {
+  type T = Exclude<
+    ReturnType<ExtensionRegistry['getOnStorageErrorHandlers']>,
+    undefined
+  >;
+  return workspaceSliceKey.op((state): T => {
+    const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
+
+    if (!wsName) {
+      return (error) => false;
+    }
+
+    const wsInfo = getWorkspaceInfoSync(wsName)(state);
+
+    let errorHandler = extensionRegistrySliceKey
+      .getSliceStateAsserted(state)
+      .extensionRegistry.getOnStorageErrorHandlers(wsInfo.type);
+
+    if (!errorHandler || wsInfo.type === WorkspaceType.helpfs) {
+      errorHandler = (error) => false;
+    }
+
+    return errorHandler;
+  });
+}
+
+function errorHandlerWrapper(handleError: boolean) {
+  if (!handleError) {
+    return <T extends Parameters<typeof workspaceSliceKey.asyncOp>[0]>(op: T) =>
+      op;
+  }
+
+  return <T extends Parameters<typeof workspaceSliceKey.asyncOp>[0]>(op: T) => {
+    return workspaceSliceKey.asyncOp(
+      async (_, __, store): Promise<UnPromisify<ReturnType<T>> | undefined> => {
+        const wsName = workspaceSliceKey.getSliceStateAsserted(
+          store.state,
+        ).wsName;
+
+        if (!wsName) {
+          return undefined;
+        }
+
+        try {
+          return await op(store.state, store.dispatch, store);
+        } catch (error) {
+          const currentWsName = workspaceSliceKey.getSliceStateAsserted(
+            store.state,
+          ).wsName;
+
+          if (error instanceof BaseError) {
+            // give priority to workspace error handler
+            if (workspaceErrorHandler(error, store) === true) {
+              return undefined;
+            }
+
+            // Only handle errors of the current wsName
+            // this avoids showing errors of previously opened workspace due to delay
+            // in processing.
+            if (wsName === currentWsName) {
+              // let the storage provider handle error
+              const errorHandler = getStorageErrorHandler()(
+                store.state,
+                store.dispatch,
+              );
+              if (errorHandler(error, store) === true) {
+                return undefined;
+              }
+            }
+
+            // TODO have a default operation for baseerrors
+          }
+
+          throw error;
+        }
+      },
+    );
+  };
 }
 
 export function getStorageProviderOpts() {
@@ -130,48 +194,10 @@ export function getStorageProviderOpts() {
   });
 }
 
-function errorHandlerWrapper(errorHandler: ErrorHandlerType) {
-  return <T extends Parameters<typeof workspaceSliceKey.asyncOp>[0]>(op: T) => {
-    return workspaceSliceKey.asyncOp(
-      async (_, __, store): Promise<UnPromisify<ReturnType<T>> | undefined> => {
-        const wsName = workspaceSliceKey.getSliceStateAsserted(
-          store.state,
-        ).wsName;
-
-        if (!wsName) {
-          return undefined;
-        }
-
-        try {
-          return await op(store.state, store.dispatch, store);
-        } catch (error) {
-          const currentWsName = workspaceSliceKey.getSliceStateAsserted(
-            store.state,
-          ).wsName;
-          if (error instanceof BaseError) {
-            // Only handle errors of the current wsName
-            // this avoids showing errors of previously opened workspace due to delay
-            // in processing.
-            if (wsName === currentWsName) {
-              if (
-                errorHandler(error, wsName)(store.state, store.dispatch) ===
-                true
-              ) {
-                return undefined;
-              }
-            }
-          }
-          throw error;
-        }
-      },
-    );
-  };
-}
-
 export const refreshWsPaths = ({
-  errorHandler = workspaceHandleError,
+  handleError = true,
 }: FileOperationOptions = {}) => {
-  return errorHandlerWrapper(errorHandler)(
+  return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(async (state, dispatch, store) => {
       const sliceState = workspaceSliceKey.getSliceStateAsserted(state);
       const wsName = sliceState?.wsName;
@@ -239,9 +265,9 @@ export const refreshWsPaths = ({
 export const renameNote = (
   targetWsPath: string,
   newWsPath: string,
-  { errorHandler = workspaceHandleError }: FileOperationOptions = {},
+  { handleError = true }: FileOperationOptions = {},
 ) => {
-  return errorHandlerWrapper(errorHandler)(
+  return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(
       async (state, dispatch, store): Promise<boolean> => {
         const sliceState = workspaceSliceKey.getSliceStateAsserted(state);
@@ -274,7 +300,7 @@ export const renameNote = (
 
 export const getNote = (
   wsPath: string,
-  { errorHandler = workspaceHandleError }: FileOperationOptions = {},
+  { handleError = true }: FileOperationOptions = {},
 ) => {
   const op = workspaceSliceKey.op(async (state, dispatch) => {
     const { wsName } = workspaceSliceKey.getSliceStateAsserted(state);
@@ -290,14 +316,14 @@ export const getNote = (
     );
   });
 
-  return errorHandlerWrapper(errorHandler)(op);
+  return errorHandlerWrapper(handleError)(op);
 };
 
 export const checkFileExists = (
   wsPath: string,
-  { errorHandler = workspaceHandleError }: FileOperationOptions = {},
+  { handleError = true }: FileOperationOptions = {},
 ) => {
-  return errorHandlerWrapper(errorHandler)(
+  return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(async (state, dispatch, store) => {
       const { wsName } = workspaceSliceKey.getSliceStateAsserted(state);
       if (!wsName) {
@@ -319,13 +345,13 @@ export const createNote = (
   {
     open = true,
     doc,
-    errorHandler = workspaceHandleError,
+    handleError = true,
   }: FileOperationOptions & {
     open?: Boolean;
     doc?: Node;
   } = {},
 ) => {
-  return errorHandlerWrapper(errorHandler)(
+  return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(async (state, dispatch, store) => {
       const { wsName } = workspaceSliceKey.getSliceStateAsserted(state);
       if (!wsName) {
@@ -371,9 +397,9 @@ export const createNote = (
 export const saveFile = (
   wsPath: string,
   file: File,
-  { errorHandler = workspaceHandleError }: FileOperationOptions = {},
+  { handleError = true }: FileOperationOptions = {},
 ) => {
-  return errorHandlerWrapper(errorHandler)(
+  return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(
       async (state, dispatch, store): Promise<boolean> => {
         const storageProvider = getStorageProvider()(state, dispatch);
@@ -393,9 +419,9 @@ export const saveFile = (
 export const saveDoc = (
   wsPath: string,
   doc: Node,
-  { errorHandler = workspaceHandleError }: FileOperationOptions = {},
+  { handleError = true }: FileOperationOptions = {},
 ) => {
-  return errorHandlerWrapper(errorHandler)(
+  return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(
       async (state, dispatch, store): Promise<boolean> => {
         const storageProvider = getStorageProvider()(state, dispatch);
@@ -413,9 +439,9 @@ export const saveDoc = (
 
 export const getFile = (
   wsPath: string,
-  { errorHandler = workspaceHandleError }: FileOperationOptions = {},
+  { handleError = true }: FileOperationOptions = {},
 ) => {
-  return errorHandlerWrapper(errorHandler)(
+  return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(async (state, dispatch, store): Promise<File> => {
       const storageProvider = getStorageProvider()(state, dispatch);
 
@@ -429,9 +455,9 @@ export const getFile = (
 
 export const deleteNote = (
   wsPathToDelete: Array<string> | string,
-  { errorHandler = workspaceHandleError }: FileOperationOptions = {},
+  { handleError = true }: FileOperationOptions = {},
 ) => {
-  return errorHandlerWrapper(errorHandler)(
+  return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(async (state, dispatch, store) => {
       const storageProvider = getStorageProvider()(state, dispatch);
       const sliceState = workspaceSliceKey.getSliceStateAsserted(store.state);

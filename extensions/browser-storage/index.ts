@@ -10,6 +10,9 @@ const extension = Extension.create({
   application: {
     slices: [browserStorageSlice()],
     storageProvider: new IndexedDbStorageProvider(),
+    onStorageError: (error, store) => {
+      return false;
+    },
     // operations: [],
     // operationHandler() {
     //   return {

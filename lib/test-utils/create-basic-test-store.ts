@@ -45,6 +45,7 @@ export function createBasicTestStore({
         name: 'test-extension',
         application: {
           storageProvider: new IndexedDbStorageProvider(),
+          onStorageError: () => false,
         },
       }),
       ...extensions,

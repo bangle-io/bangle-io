@@ -29,7 +29,7 @@ afterEach(() => {
 });
 
 let setup = () => {
-  class NativeFs extends IndexedDbStorageProvider {
+  class FakeNativeFs extends IndexedDbStorageProvider {
     name = WorkspaceType.nativefs;
     description = 'test native fs fake';
   }
@@ -41,7 +41,8 @@ let setup = () => {
       Extension.create({
         name: 'test-nativefs-storage-provider-ext',
         application: {
-          storageProvider: new NativeFs(),
+          storageProvider: new FakeNativeFs(),
+          onStorageError: () => false,
         },
       }),
     ],

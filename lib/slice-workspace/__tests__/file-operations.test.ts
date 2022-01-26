@@ -3,7 +3,6 @@ import { goToLocation } from '@bangle.io/slice-page';
 import {
   createBasicTestStore,
   createPMNode,
-  idbHelpers,
   setupMockWorkspaceWithNotes,
 } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
@@ -14,7 +13,6 @@ import {
   checkFileExists,
   createNote,
   deleteNote,
-  ErrorHandlerType,
   getNote,
   refreshWsPaths,
   renameNote,
@@ -39,31 +37,29 @@ describe('renameNote', () => {
 
     await createNote('my-ws:test-note.md', {
       doc: doc,
-      errorHandler,
+      handleError,
     })(store.state, store.dispatch, store);
   });
 
-  test('returns undefined when wsName is not defined', async () => {
-    let { store, dispatchSpy } = noSideEffectsStore({
-      wsName: undefined,
-    });
+  test('returns false when wsName is not defined', async () => {
+    let { store, dispatchSpy } = createBasicTestStore();
 
     const res = await renameNote(
       'my-ws:test-note.md',
       'my-ws:new-test-note.md',
-      { errorHandler },
+      { handleError },
     )(store.state, store.dispatch, store);
 
-    expect(res).toBe(undefined);
+    expect(res).toBe(false);
     expect(dispatchSpy).toBeCalledTimes(0);
   });
 
   test('works when the file to be renamed is opened', async () => {
     await renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md', {
-      errorHandler,
+      handleError,
     })(store.state, store.dispatch, store);
 
-    const newDoc = await getNote('my-ws:new-test-note.md', { errorHandler })(
+    const newDoc = await getNote('my-ws:new-test-note.md', { handleError })(
       store.state,
       store.dispatch,
       store,
@@ -90,7 +86,7 @@ describe('renameNote', () => {
     )(store.state, store.dispatch);
 
     await renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md', {
-      errorHandler,
+      handleError,
     })(store.state, store.dispatch, store);
 
     await sleep(0);
@@ -111,14 +107,14 @@ describe('renameNote', () => {
     expect(openedWsPaths.toArray()).toEqual([null, null]);
 
     await renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md', {
-      errorHandler,
+      handleError,
     })(store.state, store.dispatch, store);
 
     await sleep(0);
 
     ({ openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(store.state));
 
-    const newDoc = await getNote('my-ws:new-test-note.md', { errorHandler })(
+    const newDoc = await getNote('my-ws:new-test-note.md', { handleError })(
       store.state,
       store.dispatch,
       store,
@@ -129,7 +125,7 @@ describe('renameNote', () => {
 
   test('renaming the same file', async () => {
     await expect(
-      renameNote('my-ws:test-note.md', 'my-ws:test-note.md', { errorHandler })(
+      renameNote('my-ws:test-note.md', 'my-ws:test-note.md', { handleError })(
         store.state,
         store.dispatch,
         store,
@@ -138,7 +134,7 @@ describe('renameNote', () => {
       `"BABY_FS_FILE_ALREADY_EXISTS_ERROR:File already exists"`,
     );
 
-    const newDoc = await getNote('my-ws:test-note.md', { errorHandler })(
+    const newDoc = await getNote('my-ws:test-note.md', { handleError })(
       store.state,
       store.dispatch,
       store,
@@ -155,7 +151,7 @@ describe('renameNote', () => {
     )(store.state, store.dispatch);
 
     await renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md', {
-      errorHandler,
+      handleError,
     })(store.state, store.dispatch, store);
 
     await sleep(0);
@@ -183,12 +179,12 @@ describe('getNote', () => {
 
     await createNote('my-ws:test-note.md', {
       doc: doc,
-      errorHandler,
+      handleError,
     })(store.state, store.dispatch, store);
 
     expect(
       (
-        await getNote('my-ws:test-note.md', { errorHandler })(
+        await getNote('my-ws:test-note.md', { handleError })(
           store.state,
           store.dispatch,
           store,
@@ -204,7 +200,7 @@ describe('getNote', () => {
 
     let priorLen = getActionNames().length;
     expect(
-      await getNote('my-ws:test-note.md', { errorHandler })(
+      await getNote('my-ws:test-note.md', { handleError })(
         store.state,
         store.dispatch,
         store,
@@ -232,7 +228,7 @@ describe('createNote', () => {
   test('creates note', async () => {
     const wsPath: string = 'my-ws:new-test-note.md';
 
-    await createNote(wsPath, { doc, errorHandler })(
+    await createNote(wsPath, { doc, handleError })(
       store.state,
       store.dispatch,
       store,
@@ -242,7 +238,7 @@ describe('createNote', () => {
 
     expect(
       (
-        await getNote(wsPath, { errorHandler })(
+        await getNote(wsPath, { handleError })(
           store.state,
           store.dispatch,
           store,
@@ -266,7 +262,7 @@ describe('createNote', () => {
   test('does not overwrrite an existing file', async () => {
     const wsPath: string = 'my-ws:new-test-note.md';
 
-    await createNote(wsPath, { doc, errorHandler })(
+    await createNote(wsPath, { doc, handleError })(
       store.state,
       store.dispatch,
       store,
@@ -275,7 +271,7 @@ describe('createNote', () => {
 
     await saveDoc(wsPath, docModified)(store.state, store.dispatch, store);
 
-    await createNote(wsPath, { doc, errorHandler })(
+    await createNote(wsPath, { doc, handleError })(
       store.state,
       store.dispatch,
       store,
@@ -283,7 +279,7 @@ describe('createNote', () => {
 
     expect(
       (
-        await getNote(wsPath, { errorHandler })(
+        await getNote(wsPath, { handleError })(
           store.state,
           store.dispatch,
           store,
@@ -298,14 +294,14 @@ describe('createNote', () => {
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
-    await createNote(wsPath, { doc, open: false, errorHandler })(
+    await createNote(wsPath, { doc, open: false, handleError })(
       store.state,
       store.dispatch,
       store,
     );
 
     expect(
-      await getNote(wsPath, { errorHandler })(
+      await getNote(wsPath, { handleError })(
         store.state,
         store.dispatch,
         store,
@@ -316,7 +312,7 @@ describe('createNote', () => {
   test('when open is false', async () => {
     const wsPath: string = 'my-ws:new-test-note.md';
 
-    await createNote(wsPath, { doc, open: false, errorHandler })(
+    await createNote(wsPath, { doc, open: false, handleError })(
       store.state,
       store.dispatch,
       store,
@@ -330,7 +326,7 @@ describe('createNote', () => {
   });
 });
 
-const errorHandler: ErrorHandlerType = jest.fn(() => () => false);
+const handleError = false;
 
 describe('deleteNote', () => {
   const doc = createPMNode([], `hello`);
@@ -348,7 +344,7 @@ describe('deleteNote', () => {
   });
 
   test('deletes when the file is opened', async () => {
-    await createNote(wsPath, { doc, errorHandler })(
+    await createNote(wsPath, { doc, handleError })(
       store.state,
       store.dispatch,
       store,
@@ -362,7 +358,7 @@ describe('deleteNote', () => {
         .openedWsPaths.toArray(),
     ).toEqual([wsPath, null]);
 
-    await deleteNote(wsPath, { errorHandler })(
+    await deleteNote(wsPath, { handleError })(
       store.state,
       store.dispatch,
       store,
@@ -371,7 +367,7 @@ describe('deleteNote', () => {
     await sleep(0);
 
     await expect(
-      getNote(wsPath, { errorHandler })(store.state, store.dispatch, store),
+      getNote(wsPath, { handleError })(store.state, store.dispatch, store),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"BABY_FS_FILE_NOT_FOUND_ERROR:File my-ws/test-note.md not found"`,
     );
@@ -384,7 +380,7 @@ describe('deleteNote', () => {
   });
 
   test('deletes when the file is not opened', async () => {
-    await createNote(wsPath, { doc, open: false, errorHandler })(
+    await createNote(wsPath, { doc, open: false, handleError })(
       store.state,
       store.dispatch,
       store,
@@ -398,7 +394,7 @@ describe('deleteNote', () => {
         .openedWsPaths.toArray(),
     ).toEqual([null, null]);
 
-    await deleteNote(wsPath, { errorHandler })(
+    await deleteNote(wsPath, { handleError })(
       store.state,
       store.dispatch,
       store,
@@ -407,7 +403,7 @@ describe('deleteNote', () => {
     await sleep(0);
 
     await expect(
-      getNote(wsPath, { errorHandler })(store.state, store.dispatch, store),
+      getNote(wsPath, { handleError })(store.state, store.dispatch, store),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"BABY_FS_FILE_NOT_FOUND_ERROR:File my-ws/test-note.md not found"`,
     );
@@ -420,14 +416,14 @@ describe('deleteNote', () => {
   });
 
   test('deletes multiple files', async () => {
-    await createNote(wsPath, { doc, open: false, errorHandler })(
+    await createNote(wsPath, { doc, open: false, handleError })(
       store.state,
       store.dispatch,
       store,
     );
     const wsPath2 = 'my-ws:test-note-2.md';
 
-    await createNote(wsPath2, { doc, errorHandler })(
+    await createNote(wsPath2, { doc, handleError })(
       store.state,
       store.dispatch,
       store,
@@ -436,7 +432,7 @@ describe('deleteNote', () => {
     await deleteNote([wsPath, wsPath2])(store.state, store.dispatch, store);
 
     await expect(
-      getNote(wsPath, { errorHandler })(store.state, store.dispatch, store),
+      getNote(wsPath, { handleError })(store.state, store.dispatch, store),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"BABY_FS_FILE_NOT_FOUND_ERROR:File my-ws/test-note.md not found"`,
     );
@@ -465,14 +461,14 @@ describe('checkFileExists', () => {
   });
 
   test('works', async () => {
-    await createNote(wsPath, { doc, errorHandler })(
+    await createNote(wsPath, { doc, handleError })(
       store.state,
       store.dispatch,
       store,
     );
 
     const result = await checkFileExists('my-ws:test-note.md', {
-      errorHandler,
+      handleError,
     })(store.state, store.dispatch, store);
 
     expect(result).toBe(true);
@@ -480,7 +476,7 @@ describe('checkFileExists', () => {
 
   test('false when file does not exists', async () => {
     const result = await checkFileExists('my-ws:test-note.md', {
-      errorHandler,
+      handleError,
     })(store.state, store.dispatch, store);
 
     expect(result).toBe(false);

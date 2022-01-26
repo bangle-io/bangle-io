@@ -12,6 +12,7 @@ export {
   saveFile,
 } from './file-operations';
 export {
+  goToWorkspaceAuthRoute,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
   goToWsNameRouteNotFoundRoute,

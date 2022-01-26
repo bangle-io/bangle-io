@@ -28,6 +28,7 @@
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
+    "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/storage": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*"

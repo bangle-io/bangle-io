@@ -46,7 +46,16 @@ export class ExtensionRegistry {
   >;
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
   private storageProviders: {
-    [key: string]: Exclude<ApplicationConfig['storageProvider'], undefined>;
+    [storageProviderName: string]: Exclude<
+      ApplicationConfig['storageProvider'],
+      undefined
+    >;
+  };
+  private onStorageErrorHandlers: {
+    [storageProviderName: string]: Exclude<
+      ApplicationConfig['onStorageError'],
+      undefined
+    >;
   };
 
   private slices: Slice<any, any>[];
@@ -125,6 +134,11 @@ export class ExtensionRegistry {
         r,
       ]),
     );
+    this.onStorageErrorHandlers = Object.fromEntries(
+      applicationConfig
+        .filter((r) => Boolean(r.storageProvider) && Boolean(r.onStorageError))
+        .map((a) => [a.storageProvider!.name, a.onStorageError!]),
+    );
   }
   private validate() {
     if (
@@ -182,6 +196,10 @@ export class ExtensionRegistry {
 
   getStorageProvider(name: string) {
     return this.storageProviders[name];
+  }
+
+  getOnStorageErrorHandlers(name: string) {
+    return this.onStorageErrorHandlers[name];
   }
 
   renderExtensionEditorComponents = () => {

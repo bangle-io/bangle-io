@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/browser';
 
 import type { Manager } from '@bangle.dev/collab-server';
 
-import { sentryConfig } from '@bangle.io/config';
+import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   asssertNotUndefined,
@@ -19,7 +19,7 @@ const LOG = false;
 const log = LOG ? console.log.bind(console, 'naukar') : () => {};
 
 // if naukar is running in window, no need to initialize as the app already has one initialized
-if (isWorkerGlobalScope()) {
+if (isWorkerGlobalScope() && APP_ENV !== 'local') {
   Sentry.init(sentryConfig);
 }
 
