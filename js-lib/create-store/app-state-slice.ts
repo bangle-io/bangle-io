@@ -13,6 +13,11 @@ type BaseBaseAction = {
   appendedFrom?: string;
 };
 
+export type OnErrorType<SL, A extends BaseAction> = (
+  error: Error,
+  store: ApplicationStore<SL, A>,
+) => boolean;
+
 export interface BaseAction extends BaseBaseAction {}
 
 // A - action
@@ -55,7 +60,7 @@ export type SliceSideEffect<
     store: ApplicationStore<SL, A>,
     // the signal is for destruction of the store. Put in any cleanups in the 'abort' signal
     abortSignal: AbortSignal,
-  ) => void;
+  ) => Promise<void> | void;
   update?: (
     store: ApplicationStore<SL, A>,
     prevState: AppState<SL, A>,
@@ -73,7 +78,7 @@ export type SliceSideEffect<
     // signal is called if a new deferredUpdate will be called, use this signal for aborting
     // any async methods.
     abortSignal: AbortSignal,
-  ) => void;
+  ) => Promise<void> | void;
 };
 
 export class Slice<
@@ -95,6 +100,7 @@ export class Slice<
       // false if it cannot be serialized
       actions?: ActionsSerializersType<A>;
       sideEffect?: SliceSideEffect<SL, A, C> | SliceSideEffect<SL, A, C>[];
+      onError?: OnErrorType<SL, A>;
     },
   ) {
     this.key = spec.key ? spec.key.key : createKey('slice');

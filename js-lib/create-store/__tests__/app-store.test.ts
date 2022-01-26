@@ -50,9 +50,7 @@ describe('store', () => {
 
   test('throws error when deferredUpdate is used without scheduler', () => {
     const state = AppState.create({
-      slices: [
-        new Slice({ sideEffect: () => ({ deferredUpdate: () => ({}) }) }),
-      ],
+      slices: [new Slice({ sideEffect: () => ({ deferredUpdate: () => {} }) })],
     });
 
     expect(() =>
@@ -1129,13 +1127,560 @@ describe('store', () => {
       });
     });
   });
+
+  describe('side effect erroring', () => {
+    // second slice will always throw error
+    const setup = ({
+      errorHandler1,
+      errorHandler2,
+      errorHandler3,
+      rootErrorHandler,
+    }) => {
+      const key1 = new SliceKey<number, any>('one');
+      const key2 = new SliceKey<number, any>('two');
+      const key3 = new SliceKey<number, any>('three');
+      let updateCalls = {
+        one: 0,
+        two: 0,
+        three: 0,
+      };
+      const slice1 = new Slice({
+        key: key1,
+        onError: errorHandler1,
+        state: {
+          init: () => 1,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-a') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            update() {
+              updateCalls.one++;
+            },
+          };
+        },
+      });
+
+      const slice2 = new Slice({
+        key: key2,
+        onError: errorHandler2,
+        state: {
+          init: () => 2,
+          apply: (action, value, appState) => {
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            update() {
+              updateCalls.two++;
+
+              throw new Error('test-error');
+            },
+          };
+        },
+      });
+
+      const slice3 = new Slice({
+        key: key3,
+        onError: errorHandler3,
+        state: {
+          init: () => 3,
+          apply: (action, value, appState) => {
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            update() {
+              updateCalls.three++;
+            },
+          };
+        },
+      });
+
+      let state = AppState.create({
+        slices: [slice1, slice2, slice3],
+        opts: { test: 'test' },
+      });
+
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state,
+        onError: rootErrorHandler,
+      });
+
+      return { store, slice1, slice2, slice3, updateCalls };
+    };
+
+    test('error is handled', () => {
+      const errorHandler1 = jest.fn(() => {
+        return false;
+      });
+      const errorHandler2 = jest.fn(() => {
+        return false;
+      });
+      const errorHandler3 = jest.fn(() => {
+        return false;
+      });
+      const rootErrorHandler = jest.fn((error, store) => {
+        return true;
+      });
+
+      const { store, updateCalls } = setup({
+        errorHandler1,
+        errorHandler2,
+        errorHandler3,
+        rootErrorHandler,
+      });
+
+      expect(() =>
+        store.dispatch({
+          name: 'for-a',
+        }),
+      ).not.toThrowError();
+
+      expect(rootErrorHandler).toBeCalledTimes(1);
+      expect(rootErrorHandler).nthCalledWith(1, expect.any(Error), store);
+      expect(updateCalls).toEqual({
+        one: 1,
+        two: 1,
+        three: 1,
+      });
+    });
+
+    test('error propogates in correct order', () => {
+      let callOrder = '';
+      const errorHandler1 = jest.fn(() => {
+        callOrder += '1';
+        return false;
+      });
+      const errorHandler2 = jest.fn(() => {
+        callOrder += '2';
+        return false;
+      });
+      const errorHandler3 = jest.fn(() => {
+        callOrder += '3';
+        return false;
+      });
+      const rootErrorHandler = jest.fn((error, store) => {
+        callOrder += 'root';
+
+        return false;
+      });
+
+      const { store } = setup({
+        errorHandler1,
+        errorHandler2,
+        errorHandler3,
+        rootErrorHandler,
+      });
+      expect(() =>
+        store.dispatch({
+          name: 'for-b',
+        }),
+      ).toThrowErrorMatchingInlineSnapshot(`"test-error"`);
+
+      expect(rootErrorHandler).toBeCalledTimes(1);
+      expect(errorHandler1).toBeCalledTimes(1);
+      expect(errorHandler2).toBeCalledTimes(1);
+
+      // 2 should be called before 1 & 3 because the error originated there
+      expect(callOrder).toBe('root213');
+    });
+
+    test('if root handles the error, no other handler is called', () => {
+      let callOrder = '';
+      const errorHandler1 = jest.fn(() => {
+        callOrder += '1';
+        return false;
+      });
+      const errorHandler2 = jest.fn(() => {
+        callOrder += '2';
+        return false;
+      });
+      const errorHandler3 = jest.fn(() => {
+        callOrder += '3';
+        return false;
+      });
+      const rootErrorHandler = jest.fn((error, store) => {
+        callOrder += 'root';
+
+        return true;
+      });
+
+      const { store, updateCalls } = setup({
+        errorHandler1,
+        errorHandler2,
+        errorHandler3,
+        rootErrorHandler,
+      });
+      expect(() =>
+        store.dispatch({
+          name: 'for-b',
+        }),
+      ).not.toThrowError();
+
+      expect(rootErrorHandler).toBeCalledTimes(1);
+
+      // 2 should be called before 1 & 3 because the error originated there
+      expect(callOrder).toBe('root');
+      expect(updateCalls).toEqual({
+        one: 1,
+        two: 1,
+        three: 1,
+      });
+    });
+
+    test('if one slice handles error', () => {
+      let callOrder = '';
+      const errorHandler1 = jest.fn(() => {
+        callOrder += '1';
+        return true;
+      });
+      const errorHandler2 = jest.fn(() => {
+        callOrder += '2';
+        return false;
+      });
+      const errorHandler3 = jest.fn(() => {
+        callOrder += '3';
+        return false;
+      });
+      const rootErrorHandler = jest.fn((error, store) => {
+        callOrder += 'root';
+
+        return false;
+      });
+
+      const { store } = setup({
+        errorHandler1,
+        errorHandler2,
+        errorHandler3,
+        rootErrorHandler,
+      });
+      expect(() =>
+        store.dispatch({
+          name: 'for-b',
+        }),
+      ).not.toThrowError();
+
+      expect(rootErrorHandler).toBeCalledTimes(1);
+
+      expect(callOrder).toBe('root21');
+    });
+  });
+
+  describe('deferred sife effects erroring', () => {
+    // second slice will always throw error
+    const setup = ({
+      errorHandler1,
+      errorHandler2,
+      errorHandler3,
+      rootErrorHandler,
+    }) => {
+      const key1 = new SliceKey<number, any>('one');
+      const key2 = new SliceKey<number, any>('two');
+      const key3 = new SliceKey<number, any>('three');
+      let deferredCalls = {
+        one: 0,
+        two: 0,
+        three: 0,
+      };
+
+      const slice1 = new Slice({
+        key: key1,
+        onError: errorHandler1,
+        state: {
+          init: () => 1,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-a') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            update() {},
+            deferredUpdate() {
+              deferredCalls.one++;
+            },
+          };
+        },
+      });
+
+      const slice2 = new Slice({
+        key: key2,
+        onError: errorHandler2,
+        state: {
+          init: () => 2,
+          apply: (action, value, appState) => {
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            deferredUpdate() {
+              deferredCalls.two++;
+              throw new Error('test-error');
+            },
+          };
+        },
+      });
+
+      const slice3 = new Slice({
+        key: key3,
+        onError: errorHandler3,
+        state: {
+          init: () => 3,
+          apply: (action, value, appState) => {
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            update() {},
+            deferredUpdate() {
+              deferredCalls.three++;
+            },
+          };
+        },
+      });
+
+      let state = AppState.create({
+        slices: [slice1, slice2, slice3],
+        opts: { test: 'test' },
+      });
+
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state,
+        scheduler: (cb) => {
+          let destroyed = false;
+          Promise.resolve().then(() => {
+            if (!destroyed) {
+              cb();
+            }
+          });
+          return () => {
+            destroyed = true;
+          };
+        },
+        onError: rootErrorHandler,
+      });
+
+      return { store, slice1, slice2, slice3, deferredCalls };
+    };
+
+    test('error is handled', async () => {
+      let handlerCallOrder = '';
+      const errorHandler1 = jest.fn(() => {
+        handlerCallOrder += '1';
+        return false;
+      });
+      const errorHandler2 = jest.fn(() => {
+        handlerCallOrder += '2';
+        return true;
+      });
+      const errorHandler3 = jest.fn(() => {
+        handlerCallOrder += '3';
+        return false;
+      });
+      const rootErrorHandler = jest.fn((error, store) => {
+        handlerCallOrder += 'root';
+        return false;
+      });
+
+      const { store, deferredCalls } = setup({
+        errorHandler1,
+        errorHandler2,
+        errorHandler3,
+        rootErrorHandler,
+      });
+
+      expect(() =>
+        store.dispatch({
+          name: 'for-a',
+        }),
+      ).not.toThrowError();
+
+      await sleep(0);
+
+      expect(rootErrorHandler).toBeCalledTimes(1);
+      expect(rootErrorHandler).nthCalledWith(1, expect.any(Error), store);
+      expect(handlerCallOrder).toEqual('root2');
+
+      // deferred update calls should still be made
+      expect(deferredCalls).toEqual({
+        one: 1,
+        two: 1,
+        three: 1,
+      });
+    });
+  });
+
+  describe('deferred once sife effect  handles error', () => {
+    // second slice will always throw error
+    const setup = ({
+      errorHandler1,
+      errorHandler2,
+      errorHandler3,
+      rootErrorHandler,
+    }) => {
+      const key1 = new SliceKey<number, any>('one');
+      const key2 = new SliceKey<number, any>('two');
+      const key3 = new SliceKey<number, any>('three');
+      let deferredOnceCalls = {
+        one: 0,
+        two: 0,
+        three: 0,
+      };
+
+      const slice1 = new Slice({
+        key: key1,
+        onError: errorHandler1,
+        state: {
+          init: () => 1,
+          apply: (action, value, appState) => {
+            if (action.name === 'for-a') {
+              return action.value;
+            }
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            deferredOnce() {
+              deferredOnceCalls.one++;
+            },
+          };
+        },
+      });
+
+      const slice2 = new Slice({
+        key: key2,
+        onError: errorHandler2,
+        state: {
+          init: () => 2,
+          apply: (action, value, appState) => {
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            deferredOnce() {
+              deferredOnceCalls.two++;
+              throw new Error('test-error');
+            },
+          };
+        },
+      });
+
+      const slice3 = new Slice({
+        key: key3,
+        onError: errorHandler3,
+        state: {
+          init: () => 3,
+          apply: (action, value, appState) => {
+            return value;
+          },
+        },
+        sideEffect() {
+          return {
+            update() {},
+            deferredOnce() {
+              deferredOnceCalls.three++;
+            },
+          };
+        },
+      });
+
+      let state = AppState.create({
+        slices: [slice1, slice2, slice3],
+        opts: { test: 'test' },
+      });
+
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state,
+        scheduler: (cb) => {
+          let destroyed = false;
+          Promise.resolve().then(() => {
+            if (!destroyed) {
+              cb();
+            }
+          });
+          return () => {
+            destroyed = true;
+          };
+        },
+        onError: rootErrorHandler,
+      });
+
+      return {
+        store,
+        slice1,
+        slice2,
+        slice3,
+        deferredCalls: deferredOnceCalls,
+      };
+    };
+
+    test('a deferred once throwing error should not disrupt other handlers', async () => {
+      let handlerCallOrder = '';
+      const errorHandler1 = jest.fn(() => {
+        handlerCallOrder += '1';
+        return false;
+      });
+      const errorHandler2 = jest.fn(() => {
+        handlerCallOrder += '2';
+        return true;
+      });
+      const errorHandler3 = jest.fn(() => {
+        handlerCallOrder += '3';
+        return false;
+      });
+      const rootErrorHandler = jest.fn((error, store) => {
+        handlerCallOrder += 'root';
+        return false;
+      });
+
+      const { store, deferredCalls } = setup({
+        errorHandler1,
+        errorHandler2,
+        errorHandler3,
+        rootErrorHandler,
+      });
+      store.dispatch({
+        name: 'for-a',
+      });
+
+      await sleep(0);
+
+      expect(rootErrorHandler).toBeCalledTimes(1);
+      expect(handlerCallOrder).toEqual('root2');
+      expect(deferredCalls).toEqual({
+        one: 1,
+        two: 1,
+        three: 1,
+      });
+    });
+  });
 });
 
 describe('DeferredSideEffectsRunner', () => {
+  let onError = jest.fn();
+
   test('calling run again throws error', () => {
     const runner = new DeferredSideEffectsRunner([], () => () => ({}));
-    runner.run({} as any);
-    expect(() => runner.run({} as any)).toThrowErrorMatchingInlineSnapshot(
+    runner.run({} as any, onError);
+    expect(() =>
+      runner.run({} as any, onError),
+    ).toThrowErrorMatchingInlineSnapshot(
       `"Cannot re-run finished deferred side effects"`,
     );
   });
@@ -1144,7 +1689,7 @@ describe('DeferredSideEffectsRunner', () => {
     let scheduler = jest.fn(() => () => ({}));
     const runner = new DeferredSideEffectsRunner([], scheduler);
     runner.abort();
-    runner.run({} as any);
+    runner.run({} as any, onError);
     expect(scheduler).toBeCalledTimes(0);
   });
 
@@ -1165,7 +1710,7 @@ describe('DeferredSideEffectsRunner', () => {
       ],
       scheduler,
     );
-    runner.run({} as any);
+    runner.run({} as any, onError);
     expect(scheduler).toBeCalledTimes(1);
     runner.abort();
     task();
@@ -1189,7 +1734,7 @@ describe('DeferredSideEffectsRunner', () => {
       ],
       scheduler,
     );
-    runner.run({} as any);
+    runner.run({} as any, onError);
     expect(scheduler).toBeCalledTimes(1);
     task();
     await sleep(5);
