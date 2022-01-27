@@ -26,6 +26,11 @@ type DispatchActionType<S, A extends BaseAction> = (
 
 export type SerializedAction<A> = {};
 
+// time in ms, to check how many errors have been thrown since last time.
+// Keep them multiple of 25 please
+export const INFINITE_ERROR_THRESHOLD_TIME = 200;
+export const INFINITE_ERROR_SAMPLE = 25;
+
 export class ApplicationStore<S = any, A extends BaseAction = any> {
   private sideEffects: StoreSideEffectType<any, A, S>[] = [];
   private destroyed = false;
@@ -291,17 +296,50 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     allDeferredOnce.forEach(([key, def]) => {
       if (!this.destroyController.signal.aborted) {
         (async () => {
-          return def(this, this.destroyController.signal);
-        })().catch((error) => {
-          this.errorHandler(error, key);
-        });
+          try {
+            await def(this, this.destroyController.signal);
+          } catch (error) {
+            if (error instanceof Error) {
+              this.errorHandler(error, key);
+            } else if (
+              error instanceof DOMException &&
+              error.name === 'AbortError'
+            ) {
+              return;
+            } else {
+              throw error;
+            }
+          }
+        })();
       }
     });
   }
 
+  private infiniteErrors = {
+    count: 0,
+    lastSeen: 0,
+  };
+
   public errorHandler = (error: Error, key?: string): void => {
     if (this.destroyController.signal.aborted) {
       return;
+    }
+
+    this.infiniteErrors.count++;
+
+    console.debug('store handling error:', error.message);
+
+    if (this.infiniteErrors.count % INFINITE_ERROR_SAMPLE === 0) {
+      if (
+        Date.now() - this.infiniteErrors.lastSeen <=
+        INFINITE_ERROR_THRESHOLD_TIME
+      ) {
+        this.destroy();
+        console.log(`this.infiniteErrors ${this.infiniteErrors.count}`);
+        console.error(error);
+        throw new Error('AppStore: avoiding possible infinite errors');
+      }
+      this.infiniteErrors.lastSeen = Date.now();
     }
 
     if (error instanceof DOMException && error.name === 'AbortError') {
@@ -383,10 +421,21 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
         if (!this.isAborted) {
           // coverting it to async-iife allows us to handle both sync and async errors
           (async () => {
-            return effect.deferredUpdate?.(store, this.abortController.signal);
-          })().catch((error) => {
-            errorHandler(error, key);
-          });
+            try {
+              await effect.deferredUpdate?.(store, this.abortController.signal);
+            } catch (error) {
+              if (!this.isAborted && error instanceof Error) {
+                errorHandler(error, key);
+              } else if (
+                error instanceof DOMException &&
+                error.name === 'AbortError'
+              ) {
+                return;
+              } else {
+                throw error;
+              }
+            }
+          })();
         }
       }
     });

@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { shallowEqual } from '@bangle.io/utils';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 export type WorkspaceStateKeys = keyof ConstructorParameters<
@@ -19,7 +18,7 @@ export class WorkspaceSliceState {
       recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
       wsName: WorkspaceSliceState['wsName'];
       openedWsPaths: WorkspaceSliceState['openedWsPaths'];
-      pendingRefreshWsPaths: WorkspaceSliceState['pendingRefreshWsPaths'];
+      refreshCounter: WorkspaceSliceState['refreshCounter'];
       workspacesInfo: WorkspaceSliceState['workspacesInfo'];
     },
     protected opts: any = {},
@@ -50,8 +49,8 @@ export class WorkspaceSliceState {
   }
 
   // returns the current wsName refreshing for
-  get pendingRefreshWsPaths(): string | undefined {
-    return this.mainFields.pendingRefreshWsPaths;
+  get refreshCounter(): number {
+    return this.mainFields.refreshCounter;
   }
 
   // derived

@@ -1,4 +1,5 @@
 import { savePreviousValue } from '@bangle.io/create-store';
+import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import type { ReturnReturnType } from '@bangle.io/shared-types';
 import { getPageLocation } from '@bangle.io/slice-page';
 import { assertSignal, shallowEqual } from '@bangle.io/utils';
@@ -10,7 +11,7 @@ import {
 } from '@bangle.io/ws-path';
 
 import { SideEffect, workspaceSliceKey } from './common';
-import { refreshWsPaths } from './file-operations';
+import { _getStorageProvider, getStorageProviderOpts } from './file-operations';
 import { validateOpenedWsPaths } from './helpers';
 import {
   goToInvalidPathRoute,
@@ -18,24 +19,50 @@ import {
 } from './operations';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './workspaces/errors';
 import { saveWorkspacesInfo } from './workspaces/read-ws-info';
-import { getWorkspaceInfo, listWorkspaces } from './workspaces-operations';
+import {
+  getWorkspaceInfo,
+  getWorkspaceInfoSync,
+  listWorkspaces,
+} from './workspaces-operations';
 
 export const refreshWsPathsEffect: SideEffect = () => {
-  let loadWsPathsOnMount = true;
-
+  let lastCounter: number | undefined;
+  let lastWsName: string | undefined;
   return {
-    deferredUpdate(store) {
-      const sliceState = workspaceSliceKey.getSliceState(store.state);
+    async deferredUpdate(store, abortSignal) {
+      const { refreshCounter, wsName } =
+        workspaceSliceKey.getSliceStateAsserted(store.state);
 
-      if (loadWsPathsOnMount && sliceState && sliceState.wsPaths == null) {
-        loadWsPathsOnMount = false;
-        refreshWsPaths()(store.state, store.dispatch, store);
+      if (!wsName) {
+        return;
       }
-    },
-    update(store, _, sliceState, prevSliceState) {
-      // update wsPaths on workspace change
-      if (sliceState.wsName && sliceState.wsName !== prevSliceState.wsName) {
-        refreshWsPaths()(store.state, store.dispatch, store);
+
+      if (wsName !== lastWsName || lastCounter !== refreshCounter) {
+        const { state } = store;
+        const wsInfo = await getWorkspaceInfoSync(wsName)(state);
+        const { extensionRegistry } =
+          extensionRegistrySliceKey.getSliceStateAsserted(state);
+
+        const storageProvider = _getStorageProvider(wsInfo, extensionRegistry);
+
+        if (!storageProvider) {
+          return;
+        }
+
+        const items = await storageProvider.listAllFiles(
+          abortSignal,
+          wsName,
+          getStorageProviderOpts()(store.state, store.dispatch),
+        );
+        lastWsName = wsName;
+        lastCounter = refreshCounter;
+        store.dispatch({
+          name: 'action::@bangle.io/slice-workspace:update-ws-paths',
+          value: {
+            wsName,
+            wsPaths: items,
+          },
+        });
       }
     },
   };

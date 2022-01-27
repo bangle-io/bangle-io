@@ -94,6 +94,10 @@ ApplicationStore {
   "disableSideEffects": false,
   "dispatch": [Function],
   "errorHandler": [Function],
+  "infiniteErrors": Object {
+    "count": 0,
+    "lastSeen": 0,
+  },
   "onError": undefined,
   "scheduler": undefined,
   "sideEffects": Array [],
@@ -195,6 +199,10 @@ ApplicationStore {
   "disableSideEffects": false,
   "dispatch": [Function],
   "errorHandler": [Function],
+  "infiniteErrors": Object {
+    "count": 0,
+    "lastSeen": 0,
+  },
   "onError": undefined,
   "scheduler": undefined,
   "sideEffects": Array [],
@@ -272,6 +280,10 @@ ApplicationStore {
   "disableSideEffects": false,
   "dispatch": [Function],
   "errorHandler": [Function],
+  "infiniteErrors": Object {
+    "count": 0,
+    "lastSeen": 0,
+  },
   "onError": undefined,
   "scheduler": [Function],
   "sideEffects": Array [
@@ -365,6 +377,10 @@ ApplicationStore {
   "disableSideEffects": false,
   "dispatch": [Function],
   "errorHandler": [Function],
+  "infiniteErrors": Object {
+    "count": 0,
+    "lastSeen": 0,
+  },
   "onError": undefined,
   "scheduler": undefined,
   "sideEffects": Array [],

@@ -79,18 +79,12 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
     };
   },
 
-  'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths': (
-    actionName,
-  ) => {
+  'action::@bangle.io/slice-workspace:refresh-ws-paths': (actionName) => {
     const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
-      return {
-        pendingRefreshWsPaths: action.value.pendingRefreshWsPaths || null,
-      };
+      return undefined;
     };
     const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-      return {
-        pendingRefreshWsPaths: obj.pendingRefreshWsPaths || undefined,
-      };
+      return undefined;
     };
     return {
       toJSON,

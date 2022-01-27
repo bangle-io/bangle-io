@@ -2,76 +2,30 @@
  * @jest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react-hooks';
+import React from 'react';
 
 import {
-  initialBangleStore,
-  useSliceState,
-} from '@bangle.io/bangle-store-context';
-import { WorkspaceType } from '@bangle.io/constants';
-import { getPageLocation } from '@bangle.io/slice-page';
+  createBasicTestStore,
+  setupMockWorkspaceWithNotes,
+  TestStoreProvider,
+} from '@bangle.io/test-utils';
 import { RecencyRecords, sleep, useRecencyMonitor } from '@bangle.io/utils';
-import { wsPathToPathname, wsPathToSearch } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
+import { getOpenedWsPaths, updateOpenedWsPaths } from '../operations';
 import { useRecentlyUsedWsPaths } from '../use-recently-used-ws-paths';
-import { workspaceSliceInitialState } from '../workspace-slice';
-import { getWorkspaceInfo } from '../workspaces-operations';
-import { createStore } from './test-utils';
-
-jest.mock('@bangle.io/slice-page', () => {
-  const ops = jest.requireActual('@bangle.io/slice-page');
-  return {
-    ...ops,
-    getPageLocation: jest.fn(),
-  };
-});
 
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
   return {
     ...actual,
     useRecencyMonitor: jest.fn(),
+    safeRequestIdleCallback: jest.fn((cb) => {
+      Promise.resolve().then(() => {
+        cb();
+      });
+    }),
   };
-});
-
-jest.mock('@bangle.io/bangle-store-context', () => {
-  const actual = jest.requireActual('@bangle.io/bangle-store-context');
-  return {
-    ...actual,
-    useSliceState: jest.fn(),
-  };
-});
-
-jest.mock('../workspaces-operations', () => {
-  const ops = jest.requireActual('../workspaces-operations');
-
-  return {
-    ...ops,
-    getWorkspaceInfo: jest.fn(() => {}),
-  };
-});
-
-const location = {};
-
-const getPageLocationMock = jest
-  .mocked(getPageLocation)
-  .mockImplementation(() => () => location);
-
-const getWorkspaceInfoMock = getWorkspaceInfo as jest.MockedFunction<
-  typeof getWorkspaceInfo
->;
-
-beforeEach(() => {
-  getWorkspaceInfoMock.mockImplementation(() => async () => ({
-    name: 'test-ws',
-    type: WorkspaceType.browser,
-    metadata: {},
-    lastModified: 1,
-  }));
-  (useSliceState as any).mockImplementation(() => ({
-    sliceState: workspaceSliceInitialState,
-    store: initialBangleStore,
-  }));
 });
 
 test('returns wsPaths correctly', async () => {
@@ -81,19 +35,29 @@ test('returns wsPaths correctly', async () => {
     return { records, updateRecord };
   });
 
-  const { store, dispatchSpy } = createStore({
-    wsName: 'test-ws',
-    openedWsPaths: ['test-ws:note1.md'],
-    wsPaths: ['test-ws:note1.md'],
-  });
-  (useSliceState as any).mockImplementation(() => {
-    return {
-      store,
-      sliceState: workspaceSliceKey.getSliceState(store.state),
-    };
-  });
+  const { store, dispatchSpy } = createBasicTestStore({});
+  const wrapper = ({ children }) => (
+    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+      {children}
+    </TestStoreProvider>
+  );
 
-  renderHook(() => useRecentlyUsedWsPaths());
+  await setupMockWorkspaceWithNotes(store, 'test-ws', [
+    ['test-ws:note1.md', 'i am note'],
+  ]);
+
+  expect(
+    workspaceSliceKey
+      .getSliceStateAsserted(store.state)
+      .openedWsPaths.toArray(),
+  ).toMatchInlineSnapshot(`
+    Array [
+      "test-ws:note1.md",
+      null,
+    ]
+  `);
+
+  renderHook(() => useRecentlyUsedWsPaths(), { wrapper });
 
   expect(dispatchSpy).toBeCalledWith({
     id: expect.any(String),
@@ -105,26 +69,25 @@ test('returns wsPaths correctly', async () => {
   });
 });
 
-test('removes non existent wsPaths', () => {
+test('removes non existent wsPaths', async () => {
   let records: RecencyRecords = [{ key: 'test-ws:note2.md', timestamps: [1] }],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
   });
 
-  const { store, dispatchSpy } = createStore({
-    wsName: 'test-ws',
-    openedWsPaths: ['test-ws:note1.md'],
-    wsPaths: ['test-ws:note1.md'],
-  });
-  (useSliceState as any).mockImplementation(() => {
-    return {
-      store,
-      sliceState: workspaceSliceKey.getSliceState(store.state),
-    };
-  });
+  const { store, dispatchSpy } = createBasicTestStore({});
+  const wrapper = ({ children }) => (
+    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+      {children}
+    </TestStoreProvider>
+  );
 
-  renderHook(() => useRecentlyUsedWsPaths());
+  await setupMockWorkspaceWithNotes(store, 'test-ws', [
+    ['test-ws:note1.md', 'i am note'],
+  ]);
+
+  renderHook(() => useRecentlyUsedWsPaths(), { wrapper });
 
   expect(dispatchSpy).toBeCalledWith({
     id: expect.any(String),
@@ -143,61 +106,66 @@ test('works when no wsName', async () => {
     return { records, updateRecord };
   });
 
-  const { store, dispatchSpy } = createStore({
-    wsName: undefined,
-    wsPaths: ['test-ws:note1.md'],
-  });
-  (useSliceState as any).mockImplementation(() => {
-    return {
-      store,
-      sliceState: workspaceSliceKey.getSliceState(store.state),
-    };
-  });
+  const { store, dispatchSpy } = createBasicTestStore({});
+  const wrapper = ({ children }) => (
+    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+      {children}
+    </TestStoreProvider>
+  );
 
-  renderHook(() => useRecentlyUsedWsPaths());
+  renderHook(() => useRecentlyUsedWsPaths(), { wrapper });
 
   expect(updateRecord).toHaveBeenCalledTimes(0);
   expect(dispatchSpy).toBeCalledTimes(0);
 });
 
 test('updates the newly opened ws path only', async () => {
-  getPageLocationMock.mockImplementation(() => () => ({
-    pathname: wsPathToPathname('test-ws:note1.md'),
-  }));
   let records = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
   });
 
-  const { store } = createStore({
-    wsName: 'test-ws',
-    openedWsPaths: ['test-ws:note1.md'],
-    wsPaths: ['test-ws:note1.md', 'test-ws:note2.md'],
-  });
+  let bangleStoreChanged = 0;
 
-  (useSliceState as any).mockImplementation(() => {
-    return {
-      store,
-      sliceState: workspaceSliceKey.getSliceState(store.state),
-    };
-  });
+  const { store, dispatchSpy } = createBasicTestStore({});
+  const wrapper = ({ children }) => (
+    <TestStoreProvider
+      bangleStore={store}
+      bangleStoreChanged={bangleStoreChanged}
+    >
+      {children}
+    </TestStoreProvider>
+  );
 
-  const { rerender } = renderHook(() => useRecentlyUsedWsPaths());
+  const { createTestNote } = await setupMockWorkspaceWithNotes(
+    store,
+    'test-ws',
+    [['test-ws:note1.md', 'i am note']],
+  );
+
+  const { rerender } = renderHook(() => useRecentlyUsedWsPaths(), { wrapper });
 
   expect(updateRecord).toHaveBeenCalledTimes(1);
   expect(updateRecord).nthCalledWith(1, 'test-ws:note1.md');
 
-  getPageLocationMock.mockImplementation(() => () => ({
-    pathname: wsPathToPathname('test-ws:note1.md'),
-    search: wsPathToSearch('test-ws:note2.md', ''),
-  }));
-  // to trigger the effect that sync location
-  store.dispatch({ name: 'anyaction' } as any);
+  await createTestNote('test-ws:note2.md', 'second note', false);
+
+  await updateOpenedWsPaths((opened) =>
+    opened.updateByIndex(1, 'test-ws:note2.md'),
+  )(store.state, store.dispatch);
 
   await sleep(0);
 
+  expect(getOpenedWsPaths()(store.state).toArray()).toMatchInlineSnapshot(`
+    Array [
+      "test-ws:note1.md",
+      "test-ws:note2.md",
+    ]
+  `);
+
   act(() => {
+    bangleStoreChanged++;
     rerender();
   });
 

@@ -20,7 +20,6 @@ import {
 } from '../file-operations';
 import { updateOpenedWsPaths } from '../operations';
 import { createWorkspace } from '../workspaces-operations';
-import { noSideEffectsStore } from './test-utils';
 
 describe('renameNote', () => {
   const doc = createPMNode([], `hello`);
@@ -39,6 +38,10 @@ describe('renameNote', () => {
       doc: doc,
       handleError,
     })(store.state, store.dispatch, store);
+  });
+
+  afterEach(() => {
+    store.destroy();
   });
 
   test('returns false when wsName is not defined', async () => {
@@ -66,6 +69,8 @@ describe('renameNote', () => {
     );
 
     expect(newDoc?.toJSON()).toEqual(doc.toJSON());
+
+    await sleep(0);
 
     const { noteWsPaths, openedWsPaths } =
       workspaceSliceKey.getSliceStateAsserted(store.state);
@@ -224,6 +229,9 @@ describe('createNote', () => {
       store,
     );
   });
+  afterEach(() => {
+    store.destroy();
+  });
 
   test('creates note', async () => {
     const wsPath: string = 'my-ws:new-test-note.md';
@@ -343,6 +351,10 @@ describe('deleteNote', () => {
     );
   });
 
+  afterEach(() => {
+    store.destroy();
+  });
+
   test('deletes when the file is opened', async () => {
     await createNote(wsPath, { doc, handleError })(
       store.state,
@@ -458,6 +470,10 @@ describe('checkFileExists', () => {
       store.dispatch,
       store,
     );
+  });
+
+  afterEach(() => {
+    store.destroy();
   });
 
   test('works', async () => {

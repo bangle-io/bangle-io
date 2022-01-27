@@ -6,7 +6,7 @@ import {
   extensionRegistrySliceKey,
 } from '@bangle.io/extension-registry';
 import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
-import type { UnPromisify } from '@bangle.io/shared-types';
+import type { UnPromisify, WorkspaceInfo } from '@bangle.io/shared-types';
 import { HelpFsStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { asssertNotUndefined, BaseError } from '@bangle.io/utils';
 import { validateNoteWsPath } from '@bangle.io/ws-path';
@@ -37,7 +37,7 @@ type ErrorHandlerType = Exclude<
   undefined
 >;
 
-const workspaceErrorHandler: ErrorHandlerType = (error, store) => {
+export const workspaceErrorHandler: ErrorHandlerType = (error, store) => {
   if (
     error instanceof WorkspaceError &&
     error.code === WORKSPACE_NOT_FOUND_ERROR
@@ -51,8 +51,19 @@ const workspaceErrorHandler: ErrorHandlerType = (error, store) => {
   return false;
 };
 
-function getStorageProvider() {
-  return workspaceSliceKey.op((state) => {
+export function _getStorageProvider(
+  wsInfo: WorkspaceInfo,
+  extensionRegistry: ExtensionRegistry,
+) {
+  if (wsInfo.type === WorkspaceType.helpfs) {
+    return new HelpFsStorageProvider();
+  }
+
+  return extensionRegistry.getStorageProvider(wsInfo.type);
+}
+
+export function getStorageProvider() {
+  return workspaceSliceKey.queryOp((state) => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
 
     asssertNotUndefined(
@@ -62,13 +73,10 @@ function getStorageProvider() {
 
     const wsInfo = getWorkspaceInfoSync(wsName)(state);
 
-    let provider = extensionRegistrySliceKey
-      .getSliceStateAsserted(state)
-      .extensionRegistry.getStorageProvider(wsInfo.type);
-
-    if (wsInfo.type === WorkspaceType.helpfs) {
-      provider = new HelpFsStorageProvider();
-    }
+    let provider = _getStorageProvider(
+      wsInfo,
+      extensionRegistrySliceKey.getSliceStateAsserted(state).extensionRegistry,
+    );
 
     if (!provider) {
       throw new WorkspaceError(
@@ -81,7 +89,7 @@ function getStorageProvider() {
   });
 }
 
-function getStorageErrorHandler() {
+export function getStorageErrorHandler() {
   type T = Exclude<
     ReturnType<ExtensionRegistry['getOnStorageErrorHandlers']>,
     undefined
@@ -194,72 +202,21 @@ export function getStorageProviderOpts() {
   });
 }
 
-export const refreshWsPaths = ({
-  handleError = true,
-}: FileOperationOptions = {}) => {
-  return errorHandlerWrapper(handleError)(
-    workspaceSliceKey.asyncOp(async (state, dispatch, store) => {
-      const sliceState = workspaceSliceKey.getSliceStateAsserted(state);
-      const wsName = sliceState?.wsName;
+export const refreshWsPaths = () => {
+  return workspaceSliceKey.op((state, dispatch) => {
+    const sliceState = workspaceSliceKey.getSliceStateAsserted(state);
+    const wsName = sliceState?.wsName;
 
-      if (!wsName) {
-        return false;
-      }
+    if (!wsName) {
+      return false;
+    }
 
-      if (
-        workspaceSliceKey.getSliceState(state)?.pendingRefreshWsPaths === wsName
-      ) {
-        return false;
-      }
+    dispatch({
+      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths',
+    });
 
-      dispatch({
-        name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
-        value: {
-          pendingRefreshWsPaths: wsName,
-        },
-      });
-
-      const storageProvider = getStorageProvider()(state, dispatch);
-
-      try {
-        const items = await storageProvider.listAllFiles(
-          new AbortController().signal,
-          wsName,
-          getStorageProviderOpts()(state, dispatch),
-        );
-
-        dispatch({
-          name: 'action::@bangle.io/slice-workspace:update-ws-paths',
-          value: {
-            wsName,
-            wsPaths: items,
-          },
-        });
-        dispatch({
-          name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
-          value: {
-            pendingRefreshWsPaths: undefined,
-          },
-        });
-        return true;
-      } catch (error) {
-        dispatch({
-          name: 'action::@bangle.io/slice-workspace:update-ws-paths',
-          value: {
-            wsName,
-            wsPaths: undefined,
-          },
-        });
-        dispatch({
-          name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
-          value: {
-            pendingRefreshWsPaths: undefined,
-          },
-        });
-        throw error;
-      }
-    }),
-  );
+    return true;
+  });
 };
 
 export const renameNote = (
@@ -277,7 +234,7 @@ export const renameNote = (
           return false;
         }
 
-        const storageProvider = getStorageProvider()(state, dispatch);
+        const storageProvider = getStorageProvider()(state);
 
         await storageProvider.renameFile(
           targetWsPath,
@@ -290,7 +247,7 @@ export const renameNote = (
           store.dispatch,
         );
 
-        refreshWsPaths()(store.state, store.dispatch, store);
+        refreshWsPaths()(store.state, store.dispatch);
 
         return true;
       },
@@ -308,7 +265,7 @@ export const getNote = (
       return undefined;
     }
 
-    const storageProvider = getStorageProvider()(state, dispatch);
+    const storageProvider = getStorageProvider()(state);
 
     return storageProvider.getDoc(
       wsPath,
@@ -330,7 +287,7 @@ export const checkFileExists = (
         return undefined;
       }
 
-      const storageProvider = getStorageProvider()(state, dispatch);
+      const storageProvider = getStorageProvider()(state);
 
       return storageProvider.fileExists(
         wsPath,
@@ -358,7 +315,7 @@ export const createNote = (
         return undefined;
       }
 
-      const storageProvider = getStorageProvider()(state, dispatch);
+      const storageProvider = getStorageProvider()(state);
 
       if (doc == null) {
         doc = defaultDoc(
@@ -386,8 +343,8 @@ export const createNote = (
           return openedWsPath.updateByIndex(0, wsPath);
         })(store.state, store.dispatch);
       }
-      // TODO  refresh should move to effect?
-      await refreshWsPaths()(store.state, store.dispatch, store);
+
+      refreshWsPaths()(store.state, store.dispatch);
 
       return undefined;
     }),
@@ -402,7 +359,7 @@ export const saveFile = (
   return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(
       async (state, dispatch, store): Promise<boolean> => {
-        const storageProvider = getStorageProvider()(state, dispatch);
+        const storageProvider = getStorageProvider()(state);
 
         await storageProvider.saveFile(
           wsPath,
@@ -424,7 +381,7 @@ export const saveDoc = (
   return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(
       async (state, dispatch, store): Promise<boolean> => {
-        const storageProvider = getStorageProvider()(state, dispatch);
+        const storageProvider = getStorageProvider()(state);
 
         await storageProvider.saveDoc(
           wsPath,
@@ -443,7 +400,7 @@ export const getFile = (
 ) => {
   return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(async (state, dispatch, store): Promise<File> => {
-      const storageProvider = getStorageProvider()(state, dispatch);
+      const storageProvider = getStorageProvider()(state);
 
       return storageProvider.getFile(
         wsPath,
@@ -459,7 +416,7 @@ export const deleteNote = (
 ) => {
   return errorHandlerWrapper(handleError)(
     workspaceSliceKey.asyncOp(async (state, dispatch, store) => {
-      const storageProvider = getStorageProvider()(state, dispatch);
+      const storageProvider = getStorageProvider()(state);
       const sliceState = workspaceSliceKey.getSliceStateAsserted(store.state);
 
       if (!sliceState.wsName) {
@@ -489,7 +446,7 @@ export const deleteNote = (
         );
       }
 
-      await refreshWsPaths()(store.state, dispatch, store);
+      refreshWsPaths()(store.state, dispatch);
     }),
   );
 };

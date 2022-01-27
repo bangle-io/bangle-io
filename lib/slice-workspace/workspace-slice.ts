@@ -1,6 +1,6 @@
 import { Slice } from '@bangle.io/create-store';
 import type { JsonValue } from '@bangle.io/shared-types';
-import { assertActionName } from '@bangle.io/utils';
+import { assertActionName, BaseError } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ActionSerializers } from './action-serializers';
@@ -10,6 +10,10 @@ import {
   refreshWsPathsEffect,
   updateLocationEffect,
 } from './effects';
+import {
+  getStorageErrorHandler,
+  workspaceErrorHandler,
+} from './file-operations';
 import {
   WorkspaceSliceState,
   WorkspaceStateKeys,
@@ -26,7 +30,7 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   openedWsPaths: OpenedWsPaths.createEmpty(),
   recentlyUsedWsPaths: undefined,
   wsPaths: undefined,
-  pendingRefreshWsPaths: undefined,
+  refreshCounter: 0,
   workspacesInfo: undefined,
 });
 
@@ -83,9 +87,9 @@ const applyState = (
       return state;
     }
 
-    case 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths': {
+    case 'action::@bangle.io/slice-workspace:refresh-ws-paths': {
       return WorkspaceSliceState.update(state, {
-        pendingRefreshWsPaths: action.value.pendingRefreshWsPaths,
+        refreshCounter: state.refreshCounter + 1,
       });
     }
 
@@ -138,7 +142,7 @@ export function workspaceSlice() {
           openedWsPaths: val.openedWsPaths.toArray(),
           recentlyUsedWsPaths: val.recentlyUsedWsPaths,
           wsPaths: val.wsPaths,
-          pendingRefreshWsPaths: undefined,
+          refreshCounter: val.refreshCounter,
           workspacesInfo: val.workspacesInfo,
         };
 
@@ -175,13 +179,42 @@ export function workspaceSlice() {
           wsName: data.wsName || undefined,
           recentlyUsedWsPaths: data.recentlyUsedWsPaths || undefined,
           wsPaths: data.wsPaths || undefined,
-          pendingRefreshWsPaths: undefined,
+          refreshCounter: data.refreshCounter || 0,
           workspacesInfo: data.workspacesInfo || undefined,
         });
       },
     },
     actions: ActionSerializers,
 
+    onError: (error, store) => {
+      if (error instanceof BaseError) {
+        // give priority to workspace error handler
+        if (workspaceErrorHandler(error, store) === true) {
+          return true;
+        }
+
+        const wsName = workspaceSliceKey.getSliceStateAsserted(
+          store.state,
+        ).wsName;
+        // Only handle errors of the current wsName
+        // this avoids showing errors of previously opened workspace due to delay
+        // in processing.
+        if (wsName) {
+          // let the storage provider handle error
+          const errorHandler = getStorageErrorHandler()(
+            store.state,
+            store.dispatch,
+          );
+          if (errorHandler(error, store) === true) {
+            return true;
+          }
+        }
+
+        // TODO have a default operation for baseerrors
+      }
+
+      return false;
+    },
     sideEffect: [
       updateLocationEffect,
       refreshWsPathsEffect,
