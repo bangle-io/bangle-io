@@ -21,6 +21,11 @@ import {
 const LOG = false;
 let log = LOG ? console.log.bind(console, 'workspaceOps') : () => {};
 
+export const getOpenedWsPaths = () => {
+  return workspaceSliceKey.queryOp((state) => {
+    return workspaceSliceKey.getSliceStateAsserted(state).openedWsPaths;
+  });
+};
 // Navigation ops
 export const updateOpenedWsPaths = (
   newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),

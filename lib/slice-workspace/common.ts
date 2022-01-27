@@ -46,10 +46,9 @@ export type WorkspaceSliceAction =
       };
     }
   | {
-      name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths';
-      value: {
-        pendingRefreshWsPaths: string | undefined;
-      };
+      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths';
+      // TODO : quick fix to keep typescript and serialization happy
+      value?: undefined;
     }
   | {
       name: 'action::@bangle.io/slice-workspace:set-workspace-infos';

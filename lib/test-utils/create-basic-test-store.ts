@@ -1,5 +1,10 @@
 import { WorkspaceType } from '@bangle.io/constants';
-import { ApplicationStore, Slice } from '@bangle.io/create-store';
+import {
+  ApplicationStore,
+  BaseAction,
+  Slice,
+  SliceKey,
+} from '@bangle.io/create-store';
 import {
   Extension,
   extensionRegistrySlice,
@@ -13,7 +18,7 @@ import {
   workspaceSlice,
 } from '@bangle.io/slice-workspace';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
-import { sleep } from '@bangle.io/utils';
+import { asssertNotUndefined, sleep } from '@bangle.io/utils';
 
 import { createPMNode } from './create-pm-node';
 import { createTestStore } from './create-test-store';
@@ -28,16 +33,27 @@ if (typeof jest === 'undefined') {
 
 // A batteries included store meant for testing
 // It includes the default slices, routing, extension registry
-export function createBasicTestStore({
+export function createBasicTestStore<
+  SL = any,
+  A extends BaseAction = any,
+  S = SL,
+  C extends { [key: string]: any } = any,
+>({
   slices = [],
   extensions = [],
   useMemoryHistorySlice = true,
   useEditorCoreExtension = true,
+  // slice key purely for getting the types of the store correct
+  sliceKey,
+  opts,
 }: {
+  // for getting the types right
+  sliceKey?: SliceKey<SL, A, S, C>;
   slices?: Slice[];
   extensions?: Extension[];
   useMemoryHistorySlice?: boolean;
   useEditorCoreExtension?: boolean;
+  opts?: any;
 } = {}) {
   let extensionRegistry = createExtensionRegistry(
     [
@@ -45,6 +61,7 @@ export function createBasicTestStore({
         name: 'test-extension',
         application: {
           storageProvider: new IndexedDbStorageProvider(),
+          onStorageError: () => false,
         },
       }),
       ...extensions,
@@ -54,12 +71,9 @@ export function createBasicTestStore({
     },
   );
 
-  const opts: Omit<NaukarStateConfig, 'port'> = {
-    extensionRegistry,
-  };
-
   const { store, actionsDispatched, dispatchSpy, getActionNames, getAction } =
     createTestStore({
+      sliceKey,
       slices: [
         extensionRegistrySlice(),
         useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
@@ -67,7 +81,10 @@ export function createBasicTestStore({
         workspaceSlice(),
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),
-      opts,
+      opts: {
+        extensionRegistry,
+        ...opts,
+      },
     });
 
   return {
@@ -131,5 +148,16 @@ export async function setupMockWorkspaceWithNotes(
     store.destroy();
   }
 
-  return { wsName, noteWsPaths, store };
+  return {
+    wsName,
+    noteWsPaths,
+    store,
+    createTestNote: async (wsPath, str, open) => {
+      asssertNotUndefined(store, 'store must be defined');
+      await createNote(wsPath, {
+        open,
+        doc: createPMNode([], str.trim()),
+      })(store.state, store.dispatch, store);
+    },
+  };
 }

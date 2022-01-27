@@ -1,44 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-import {
-  BaseFileSystemError,
-  NATIVE_BROWSER_PERMISSION_ERROR,
-} from '@bangle.io/baby-fs';
-import { HELP_FS_WORKSPACE_NAME } from '@bangle.io/constants';
-import {
-  ExtensionRegistry,
-  extensionRegistrySliceKey,
-} from '@bangle.io/extension-registry';
+
 import {
   getPageLocation,
   goToLocation,
   historyUpdateOpenedWsPaths,
 } from '@bangle.io/slice-page';
-import { sleep } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
-import { goToWorkspaceHomeRoute } from '..';
 import { savePrevOpenedWsPathsToSearch } from '../helpers';
 import {
+  goToWorkspaceHomeRoute,
   goToWsNameRoute,
   pushWsPath,
   updateOpenedWsPaths,
 } from '../operations';
 import { getActionNamesDispatched, noSideEffectsStore } from './test-utils';
-
-jest.mock('../workspaces/file-system', () => {
-  const rest = jest.requireActual('../workspaces/file-system');
-  return {
-    ...rest,
-    renameFile: jest.fn(),
-    deleteFile: jest.fn(),
-    getDoc: jest.fn(),
-    saveDoc: jest.fn(),
-    listAllFiles: jest.fn(),
-    checkFileExists: jest.fn(),
-  };
-});
 
 jest.mock('@bangle.io/slice-page', () => {
   const ops = jest.requireActual('@bangle.io/slice-page');
@@ -90,7 +68,7 @@ describe('updateOpenedWsPaths', () => {
   });
 
   test('works when provided with openedWsPaths', () => {
-    let { store, dispatchSpy } = noSideEffectsStore({
+    let { store } = noSideEffectsStore({
       wsName: 'my-ws',
     });
 

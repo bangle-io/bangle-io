@@ -10,6 +10,7 @@ import {
 } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
 import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
+import { assertSignal } from '@bangle.io/utils';
 import { fromFsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
 
 const allowedFile = (name: string) => {
@@ -97,9 +98,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
     const rawPaths: string[] = await this.getFs(opts).opendirRecursive(wsName);
 
-    if (abortSignal.aborted) {
-      return [];
-    }
+    assertSignal(abortSignal);
 
     files = rawPaths
       .map((r) => {

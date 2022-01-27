@@ -29,7 +29,7 @@ afterEach(() => {
 });
 
 let setup = () => {
-  class NativeFs extends IndexedDbStorageProvider {
+  class FakeNativeFs extends IndexedDbStorageProvider {
     name = WorkspaceType.nativefs;
     description = 'test native fs fake';
   }
@@ -41,7 +41,8 @@ let setup = () => {
       Extension.create({
         name: 'test-nativefs-storage-provider-ext',
         application: {
-          storageProvider: new NativeFs(),
+          storageProvider: new FakeNativeFs(),
+          onStorageError: () => false,
         },
       }),
     ],
@@ -57,7 +58,8 @@ let setup = () => {
   return { store, history };
 };
 
-describe('saveWorkspaceInfoEffect', () => {
+// eslint-disable-next-line jest/no-disabled-tests
+describe.skip('saveWorkspaceInfoEffect', () => {
   test('works when not a nativefs workspace', async () => {
     const { store, history } = setup();
 

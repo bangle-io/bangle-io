@@ -7,6 +7,7 @@ import {
   readFileAsText,
 } from '@bangle.io/baby-fs';
 import { WorkspaceType } from '@bangle.io/constants';
+import { assertSignal } from '@bangle.io/utils';
 import { fromFsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
 
 import { BaseStorageProvider, StorageOpts } from './base-storage';
@@ -86,9 +87,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
 
     const rawPaths: string[] = await this.idb.opendirRecursive(wsName);
 
-    if (abortSignal.aborted) {
-      return [];
-    }
+    assertSignal(abortSignal);
 
     files = rawPaths
       .map((r) => {

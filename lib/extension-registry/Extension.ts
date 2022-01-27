@@ -68,6 +68,9 @@ export interface ApplicationConfig<
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
   slices?: Array<Slice<any>>;
   storageProvider?: BaseStorageProvider;
+  // return true if the error was handled by your callback
+  // and false if it cannot be handled
+  onStorageError?: (error: Error, store: ApplicationStore) => boolean;
 }
 
 export interface SidebarType {
@@ -165,6 +168,7 @@ export class Extension<
       slices,
       operationHandler,
       storageProvider,
+      onStorageError,
     } = application;
 
     if (operationHandler && !operations) {
@@ -251,6 +255,11 @@ export class Extension<
       if (typeof storageProvider.description !== 'string') {
         throw new Error(
           'Extension: Storage provider must have a valid description',
+        );
+      }
+      if (typeof onStorageError !== 'function') {
+        throw new Error(
+          'Extension: onStorageError must be defined when storage provider is defined',
         );
       }
     }

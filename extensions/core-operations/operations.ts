@@ -88,7 +88,7 @@ export function restoreWorkspaceFromBackup() {
       })
       .then(
         () => {
-          refreshWsPaths()(store.state, store.dispatch, store);
+          refreshWsPaths()(store.state, store.dispatch);
           store.dispatch({
             name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
             value: {

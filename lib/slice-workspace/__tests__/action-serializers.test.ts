@@ -27,18 +27,12 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
       },
     },
   ],
-  'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths': [
+  'action::@bangle.io/slice-workspace:refresh-ws-paths': [
     {
-      name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
-      value: {
-        pendingRefreshWsPaths: 'test-ws',
-      },
+      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths',
     },
     {
-      name: 'action::@bangle.io/slice-workspace:set-pending-refresh-ws-paths',
-      value: {
-        pendingRefreshWsPaths: undefined,
-      },
+      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths',
     },
   ],
 
@@ -111,7 +105,7 @@ const fixtures = Object.values(testFixtures).flatMap(
 
 const { store } = createStore();
 
-test.each(fixtures)(`%# actions serialization`, (action) => {
+test.each(fixtures)(`%s actions serialization`, (action) => {
   const res = store.parseAction(store.serializeAction(action) as any);
 
   expect(res).toEqual({ ...action, fromStore: 'workspace-store' });

@@ -77,7 +77,7 @@ export class SliceKey<
   getValueIfChanged<T extends keyof SL>(
     field: T,
     state: AppState<any, any> | Readonly<AppState<any, any>>,
-    prevState: undefined | AppState<any, any> | Readonly<AppState<any, any>>,
+    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
   ): SL[T] | undefined {
     if (prevState === undefined) {
       return this.getSliceStateAsserted(state)[field];

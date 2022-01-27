@@ -71,7 +71,7 @@ beforeEach(() => {
     updateOpenedWsPathsCallback = cb;
     return true;
   });
-  refreshWsPathsMock.mockImplementation(() => async () => true);
+  refreshWsPathsMock.mockImplementation(() => () => true);
 
   Comp = function Comp() {
     return <WatchWorkspace />;

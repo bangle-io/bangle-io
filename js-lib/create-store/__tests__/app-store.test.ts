@@ -1,3 +1,4 @@
+import { INFINITE_ERROR_SAMPLE, INFINITE_ERROR_THRESHOLD_TIME } from '..';
 import { AppState } from '../app-state';
 import { Slice, SliceSideEffect } from '../app-state-slice';
 import {
@@ -1668,6 +1669,89 @@ describe('store', () => {
         two: 1,
         three: 1,
       });
+    });
+  });
+
+  describe('infinite errors', () => {
+    test('throws error if many errors are thrown in short span', () => {
+      let state = AppState.create({
+        slices: [],
+        opts: { test: 'test' },
+      });
+
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state,
+        scheduler: (cb) => {
+          let destroyed = false;
+          Promise.resolve().then(() => {
+            if (!destroyed) {
+              cb();
+            }
+          });
+          return () => {
+            destroyed = true;
+          };
+        },
+        onError: () => true,
+      });
+
+      // 2x, since the first time it hits counter % INFINITE_ERROR_SAMPLE == 0, infiniteErrors.lastSeen was 0.
+      for (let i = 0; i < 2 * INFINITE_ERROR_SAMPLE - 1; i++) {
+        store.errorHandler(new Error('test'));
+      }
+      let consoleError = console.error;
+      console.error = jest.fn();
+      expect(() =>
+        store.errorHandler(new Error('final test')),
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"AppStore: avoiding possible infinite errors"`,
+      );
+
+      console.error = consoleError;
+    });
+
+    test('ignores if outside time bound', () => {
+      let state = AppState.create({
+        slices: [],
+        opts: { test: 'test' },
+      });
+
+      let store = ApplicationStore.create({
+        storeName: 'test-store',
+        state,
+        scheduler: (cb) => {
+          let destroyed = false;
+          Promise.resolve().then(() => {
+            if (!destroyed) {
+              cb();
+            }
+          });
+          return () => {
+            destroyed = true;
+          };
+        },
+        onError: () => true,
+      });
+
+      let originalDateNow = Date.now;
+      Date.now = jest.fn(() => INFINITE_ERROR_THRESHOLD_TIME * 2);
+
+      // 2x, since the first time it hits counter % INFINITE_ERROR_SAMPLE == 0, infiniteErrors.lastSeen was 0.
+      for (let i = 0; i < 2 * INFINITE_ERROR_SAMPLE - 1; i++) {
+        store.errorHandler(new Error('test'));
+      }
+
+      Date.now = jest.fn(() => INFINITE_ERROR_THRESHOLD_TIME * 4);
+
+      let consoleError = console.error;
+      console.error = jest.fn();
+      expect(() =>
+        store.errorHandler(new Error('final test')),
+      ).not.toThrowError();
+
+      console.error = consoleError;
+      Date.now = originalDateNow;
     });
   });
 });

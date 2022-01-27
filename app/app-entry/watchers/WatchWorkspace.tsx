@@ -60,11 +60,7 @@ export function WatchWorkspace() {
             payload.lameHash !== weakComputeLameHash(fileWsPaths)
           ) {
             log('refreshing wsPaths');
-            refreshWsPaths()(
-              bangleStore.state,
-              bangleStore.dispatch,
-              bangleStore,
-            );
+            refreshWsPaths()(bangleStore.state, bangleStore.dispatch);
             checkCurrentEditors.current = true;
           }
           break;
