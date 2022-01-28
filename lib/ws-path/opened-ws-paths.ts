@@ -189,6 +189,15 @@ export class OpenedWsPaths {
     }
   }
 
+  update(openedWsPath: OpenedWsPaths): OpenedWsPaths {
+    const result = openedWsPath;
+    // avoid changing instance
+    if (result.equal(this)) {
+      return this;
+    }
+    return result;
+  }
+
   updateIfFound(
     wsPath: MaybeWsPath,
     replaceWsPath: MaybeWsPath,

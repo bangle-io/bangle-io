@@ -5,8 +5,7 @@ import {
   searchToWsPath,
 } from '@bangle.io/ws-path';
 
-import { WorkspaceSliceState } from '.';
-import { workspaceSliceKey } from './common';
+import { WorkspaceSliceState } from './workspace-slice-state';
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {

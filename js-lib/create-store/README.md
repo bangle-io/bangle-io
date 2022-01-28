@@ -102,7 +102,7 @@ const counterSlice = new Slice({
           console.log('State is Negative')
         }
       },
-      deferredUpdate(store, abortSignal) {
+      deferredUpdate(store, prevState, abortSignal) {
         const sliceState = counterSliceKey.getSliceState(store.state);
 
         if (sliceState > 10) {

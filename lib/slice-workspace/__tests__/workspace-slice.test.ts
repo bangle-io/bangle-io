@@ -209,6 +209,26 @@ describe('state', () => {
     ).toEqual(OpenedWsPaths.createEmpty().toArray());
   });
 
+  test('updating ws-name increments refreshCounter', () => {
+    let state = createState();
+
+    let newState = state.applyAction({
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+      value: {
+        wsName: 'test-path',
+        openedWsPaths: OpenedWsPaths.createEmpty(),
+      },
+    });
+
+    expect(workspaceSliceKey.getSliceState(newState)?.wsName).toBe('test-path');
+    expect(
+      workspaceSliceKey.getSliceState(newState)?.openedWsPaths.toArray(),
+    ).toEqual(OpenedWsPaths.createEmpty().toArray());
+    expect(
+      workspaceSliceKey.getSliceStateAsserted(state).refreshCounter + 1,
+    ).toBe(workspaceSliceKey.getSliceStateAsserted(newState).refreshCounter);
+  });
+
   test('change of location does not reset wsPath', () => {
     const wsPaths = ['test-ws:hello-world'];
     let state = createState({

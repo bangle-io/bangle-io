@@ -59,18 +59,12 @@ const applyState = (
 
       if (newState.wsName !== state.wsName) {
         return WorkspaceSliceState.update(newState, {
+          refreshCounter: newState.refreshCounter + 1,
           wsPaths: undefined,
           recentlyUsedWsPaths: undefined,
         });
       }
 
-      console.log(
-        newState.wsName,
-        state.wsName,
-        newState.openedWsPaths,
-        state.openedWsPaths,
-        newState.openedWsPaths.equal(state.openedWsPaths),
-      );
       if (
         newState.wsName &&
         newState.wsName === state.wsName &&

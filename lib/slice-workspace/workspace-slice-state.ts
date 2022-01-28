@@ -30,6 +30,11 @@ export class WorkspaceSliceState {
     existing: WorkspaceSliceState,
     obj: Partial<ConstructorParameters<typeof WorkspaceSliceState>[0]>,
   ) {
+    // retain instance if possible
+    if (obj.openedWsPaths) {
+      obj.openedWsPaths = existing.openedWsPaths.update(obj.openedWsPaths);
+    }
+
     return new WorkspaceSliceState(Object.assign({}, existing.mainFields, obj));
   }
 

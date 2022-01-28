@@ -689,7 +689,7 @@ describe('store', () => {
 
         let signals: AbortSignal[] = [];
 
-        const { store } = setup(scheduler, (store, signal) => {
+        const { store } = setup(scheduler, (store, _, signal) => {
           signals.push(signal);
         });
 
@@ -732,6 +732,8 @@ describe('store', () => {
           deferredUpdate,
         );
 
+        let initialState = store.state;
+
         expect(sideEffect).toBeCalledTimes(1);
         expect(scheduler).toBeCalledTimes(0);
         store.dispatch({
@@ -754,8 +756,13 @@ describe('store', () => {
         await sleep(10);
 
         expect(deferredUpdate).toBeCalledTimes(1);
-        expect(deferredUpdate).nthCalledWith(1, store, expect.any(AbortSignal));
-        expect((deferredUpdate as any).mock.calls[0][1]?.aborted).toBe(false);
+        expect(deferredUpdate).nthCalledWith(
+          1,
+          store,
+          initialState,
+          expect.any(AbortSignal),
+        );
+        expect((deferredUpdate as any).mock.calls[0][2]?.aborted).toBe(false);
       });
     });
 
@@ -1789,7 +1796,7 @@ describe('DeferredSideEffectsRunner', () => {
         {
           key: 'some-key',
           effect: { deferredUpdate: deferredUpdate },
-          previouslySeenState: {} as any,
+          initialState: {} as any,
         },
       ],
       scheduler,
@@ -1808,20 +1815,46 @@ describe('DeferredSideEffectsRunner', () => {
       task = cb;
       return () => ({});
     });
-    const runner = new DeferredSideEffectsRunner(
-      [
-        {
-          key: 'some-key',
-          effect: { deferredUpdate: deferredUpdate },
-          previouslySeenState: {} as any,
-        },
-      ],
-      scheduler,
-    );
-    runner.run({} as any, onError);
+    let initialState = { initialState: 'i am initial state' };
+
+    const effects = [
+      {
+        key: 'some-key',
+        effect: { deferredUpdate: deferredUpdate },
+        initialState: initialState as any,
+      },
+    ];
+    let runner = new DeferredSideEffectsRunner(effects, scheduler);
+
+    let prevState1 = { 'prev-state1': 'i am prev state 1' };
+
+    let store1 = { state: prevState1 } as any;
+    runner.run(store1, onError);
     expect(scheduler).toBeCalledTimes(1);
     task();
     await sleep(5);
     expect(deferredUpdate).toBeCalledTimes(1);
+    expect(deferredUpdate).nthCalledWith(
+      1,
+      store1,
+      initialState,
+      expect.any(AbortSignal),
+    );
+
+    let prevState2 = { 'prev-state2': 'i am prev state 2' };
+
+    let store2 = { state: prevState2 } as any;
+
+    new DeferredSideEffectsRunner(effects, scheduler).run(store2, onError);
+    task();
+    await sleep(5);
+
+    expect(deferredUpdate).toBeCalledTimes(2);
+    expect(deferredUpdate).nthCalledWith(
+      2,
+      store2,
+      prevState1,
+      expect.any(AbortSignal),
+    );
   });
 });
