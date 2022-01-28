@@ -9,12 +9,15 @@ import {
 
 import { SideEffect, workspaceSliceKey } from './common';
 import {
-  _getStorageProvider,
   getStorageErrorHandler,
   getStorageProviderOpts,
   workspaceErrorHandler,
 } from './file-operations';
-import { getWsInfoIfNotDeleted, validateOpenedWsPaths } from './helpers';
+import {
+  getWsInfoIfNotDeleted,
+  storageProviderFromExtensionRegistry,
+  validateOpenedWsPaths,
+} from './helpers';
 import {
   goToInvalidPathRoute,
   goToWorkspaceHomeRoute,
@@ -117,7 +120,10 @@ export const refreshWsPathsEffect: SideEffect = () => {
       const { extensionRegistry } =
         extensionRegistrySliceKey.getSliceStateAsserted(state);
 
-      const storageProvider = _getStorageProvider(wsInfo, extensionRegistry);
+      const storageProvider = storageProviderFromExtensionRegistry(
+        wsInfo,
+        extensionRegistry,
+      );
 
       if (!storageProvider) {
         log('returning early storageProvider');

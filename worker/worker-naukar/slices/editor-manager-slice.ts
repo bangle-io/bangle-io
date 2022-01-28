@@ -136,7 +136,6 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
         const doc = await getNote(wsPath)(
           workspaceSliceKey.getStore(store).state,
           workspaceSliceKey.getDispatch(store.dispatch),
-          workspaceSliceKey.getStore(store),
         );
         if (!doc) {
           throw new Error(`Note ${wsPath} not found`);

@@ -55,11 +55,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
 
   const getNoteForTags = useCallback(
     (wsPath: string) => {
-      return getNote(wsPath)(
-        bangleStore.state,
-        bangleStore.dispatch,
-        bangleStore,
-      );
+      return getNote(wsPath)(bangleStore.state, bangleStore.dispatch);
     },
     [bangleStore],
   );

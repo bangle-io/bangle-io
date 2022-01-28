@@ -1,3 +1,7 @@
+import { WorkspaceType } from '@bangle.io/constants';
+import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
+import { HelpFsStorageProvider } from '@bangle.io/storage';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WorkspaceSliceState } from './workspace-slice-state';
@@ -65,3 +69,14 @@ export const getWsInfoIfNotDeleted = (
 
   return wsInfo?.deleted ? undefined : wsInfo;
 };
+
+export function storageProviderFromExtensionRegistry(
+  wsInfo: WorkspaceInfo,
+  extensionRegistry: ExtensionRegistry,
+) {
+  if (wsInfo.type === WorkspaceType.helpfs) {
+    return new HelpFsStorageProvider();
+  }
+
+  return extensionRegistry.getStorageProvider(wsInfo.type);
+}

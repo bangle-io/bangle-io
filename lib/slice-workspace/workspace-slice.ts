@@ -42,6 +42,7 @@ const applyState = (
   // ignore any action if an error exists unless it sets the error
   if (
     state.error &&
+    action.name.startsWith('action::@bangle.io/slice-workspace:') &&
     action.name !== 'action::@bangle.io/slice-workspace:set-error'
   ) {
     console.log(
@@ -210,7 +211,6 @@ export function workspaceSlice() {
     actions: ActionSerializers,
 
     onError: (error, store) => {
-      console.log(error);
       if (
         error instanceof WorkspaceError ||
         // TODO remove this check of base-error as it is too broad

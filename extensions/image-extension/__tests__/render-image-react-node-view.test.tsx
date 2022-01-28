@@ -34,7 +34,7 @@ beforeEach(() => {
   useWorkspaceContextMock.mockImplementation(() => ({
     ...getUseWorkspaceContextReturn,
   }));
-  getFileMock.mockImplementation(() => async () => undefined);
+  getFileMock.mockImplementation(() => async () => ({} as any));
 });
 
 describe('ImageComponent', () => {
