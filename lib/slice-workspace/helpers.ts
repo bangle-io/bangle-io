@@ -1,9 +1,4 @@
-import {
-  isValidNoteWsPath,
-  OpenedWsPaths,
-  pathnameToWsPath,
-  searchToWsPath,
-} from '@bangle.io/ws-path';
+import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WorkspaceSliceState } from './workspace-slice-state';
 
@@ -35,32 +30,6 @@ export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
     valid: true,
   };
 }
-
-export const findInvalidLocation = (
-  locationPathname?: string,
-  locationSearchQuery?: string,
-) => {
-  // primary
-  if (locationPathname && locationPathname.length > 0) {
-    const primaryWsPath = pathnameToWsPath(locationPathname);
-    if (primaryWsPath && !isValidNoteWsPath(primaryWsPath)) {
-      return primaryWsPath;
-    }
-  }
-
-  // secondary
-  if (locationSearchQuery) {
-    const secondaryWsPath = searchToWsPath(locationSearchQuery);
-    if (secondaryWsPath && !isValidNoteWsPath(secondaryWsPath)) {
-      return secondaryWsPath;
-    }
-
-    // since there can be other things in the search query we can not
-    // mark the whole thing as invalid
-  }
-
-  return undefined;
-};
 
 export function getPrevOpenedWsPathsFromSearch(
   search?: string,

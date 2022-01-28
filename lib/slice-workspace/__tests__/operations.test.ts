@@ -9,6 +9,7 @@ import {
 } from '@bangle.io/slice-page';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
+import { goToWorkspaceAuthRoute } from '..';
 import { savePrevOpenedWsPathsToSearch } from '../helpers';
 import {
   goToWorkspaceHomeRoute,
@@ -330,5 +331,23 @@ describe('goToWorkspaceHomeRoute', () => {
 
     expect(goToLocationMock).toBeCalledTimes(1);
     expect(goToLocationMock).nthCalledWith(1, '/', { replace: false });
+  });
+});
+
+describe('goToWorkspaceAuthRoute', () => {
+  test('works', () => {
+    let { store, dispatchSpy } = noSideEffectsStore({
+      wsName: 'my-ws',
+      openedWsPaths: ['my-ws:some-other-test-note.md'],
+    });
+
+    goToWorkspaceAuthRoute('my-ws', 'SOME_CODE')(store.state, store.dispatch);
+
+    expect(goToLocation).toBeCalledTimes(1);
+    expect(goToLocation).nthCalledWith(
+      1,
+      '/ws-auth/my-ws?error_code=SOME_CODE&ws_paths=%5B%22my-ws%3Asome-other-test-note.md%22%2Cnull%5D',
+      { replace: true },
+    );
   });
 });

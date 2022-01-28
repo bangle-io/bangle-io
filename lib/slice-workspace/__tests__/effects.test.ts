@@ -2,16 +2,24 @@ import * as idb from 'idb-keyval';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
-import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
+import {
+  getPageLocation,
+  pageSliceKey,
+  syncPageLocation,
+} from '@bangle.io/slice-page';
 import {
   createBasicTestStore,
   setupMockWorkspaceWithNotes,
   testMemoryHistorySlice,
 } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
-import { OpenedWsPaths } from '@bangle.io/ws-path';
+import { wsPathToSearch } from '@bangle.io/ws-path';
 
-import { goToWsNameRouteNotFoundRoute } from '..';
+import {
+  goToWsNameRouteNotFoundRoute,
+  WORKSPACE_NOT_FOUND_ERROR,
+  WorkspaceError,
+} from '..';
 import { workspaceSliceKey } from '../common';
 import {
   createNote,
@@ -328,5 +336,76 @@ describe('updateLocationEffect', () => {
       'action::@bangle.io/slice-page:history-update-pending-navigation',
       'action::@bangle.io/slice-page:history-update-pending-navigation',
     ]);
+  });
+
+  test('invalid wsPaths check', async () => {
+    const { store } = createBasicTestStore({
+      sliceKey: workspaceSliceKey,
+    });
+
+    await setupMockWorkspaceWithNotes(store, 'test-ws');
+
+    syncPageLocation({
+      pathname: pageSliceKey.getSliceStateAsserted(store.state).location
+        .pathname,
+      search: wsPathToSearch('test-ws:one.png', ''),
+    })(store.state, pageSliceKey.getDispatch(store.dispatch));
+
+    await sleep(0);
+
+    expect(getPageLocation()(store.state)).toEqual({
+      pathname: '/ws-invalid-path/test-ws',
+      search: '',
+    });
+  });
+});
+
+describe('workspaceErrorHandler', () => {
+  test('handles workspace note found error', async () => {
+    const { store } = createBasicTestStore({
+      sliceKey: workspaceSliceKey,
+    });
+
+    goToWsNameRoute('test-ws')(store.state, store.dispatch);
+
+    await sleep(0);
+
+    expect(getPageLocation()(store.state)).toMatchInlineSnapshot(`
+      Object {
+        "pathname": "/ws-not-found/test-ws",
+        "search": "",
+      }
+    `);
+  });
+  test('handles error', async () => {
+    const { store } = createBasicTestStore({
+      sliceKey: workspaceSliceKey,
+    });
+
+    await createWorkspace('test-ws', WorkspaceType.browser)(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    await sleep(0);
+
+    const consoleLog = console.log;
+    console.log = jest.fn();
+
+    store.errorHandler(
+      new WorkspaceError('not found', WORKSPACE_NOT_FOUND_ERROR),
+    );
+
+    await sleep(0);
+
+    expect(getPageLocation()(store.state)).toMatchInlineSnapshot(`
+      Object {
+        "pathname": "/ws-not-found/test-ws",
+        "search": "",
+      }
+    `);
+
+    console.log = consoleLog;
   });
 });
