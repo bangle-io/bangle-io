@@ -1,6 +1,7 @@
 import { helpFSWorkspaceInfo, WorkspaceType } from '@bangle.io/constants';
-import { goToLocation, syncPageLocation } from '@bangle.io/slice-page';
-import { fakeIdb } from '@bangle.io/test-utils';
+import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
+import { createBasicTestStore, fakeIdb } from '@bangle.io/test-utils';
+import { sleep } from '@bangle.io/utils';
 
 import { workspaceSliceKey } from '../common';
 import { WORKSPACE_KEY } from '../workspaces/read-ws-info';
@@ -10,7 +11,6 @@ import {
   getWorkspaceInfo,
   listWorkspaces,
 } from '../workspaces-operations';
-import { createStore } from './test-utils';
 
 jest.mock('@bangle.io/slice-page', () => {
   const remaining = Object.assign(
@@ -36,7 +36,7 @@ afterEach(() => {
 
 describe('listAllFiles', () => {
   test('when blank has help-fs', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     expect(await listWorkspaces()(store.state, store.dispatch, store)).toEqual([
       helpFSWorkspaceInfo(),
@@ -44,7 +44,7 @@ describe('listAllFiles', () => {
   });
 
   test('cerating a workspace', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     await createWorkspace('test-1', WorkspaceType['browser'])(
       store.state,
@@ -79,7 +79,7 @@ describe('listAllFiles', () => {
   });
 
   test('hides deleted workspaces', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
     await createWorkspace('test-0', WorkspaceType['browser'])(
       store.state,
       store.dispatch,
@@ -117,7 +117,7 @@ describe('listAllFiles', () => {
 
 describe('createWorkspace', () => {
   test('works', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     await createWorkspace('test-1', WorkspaceType['browser'])(
       store.state,
@@ -139,7 +139,7 @@ describe('createWorkspace', () => {
   });
 
   test('throws error when workspace already exists', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     await createWorkspace('test-1', WorkspaceType['browser'])(
       store.state,
@@ -159,7 +159,7 @@ describe('createWorkspace', () => {
   });
 
   test('creates nativefs without dir handle', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     await expect(
       createWorkspace('test-1', WorkspaceType['nativefs'])(
@@ -173,7 +173,7 @@ describe('createWorkspace', () => {
   });
 
   test('creates nativefs with dir handle', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     await createWorkspace('test-1', WorkspaceType['nativefs'], {
       rootDirHandle: { root: 'dummy' },
@@ -193,7 +193,7 @@ describe('createWorkspace', () => {
 
 describe('deleteWorkspace', () => {
   test('throws error if workspace does not exists', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     await expect(
       deleteWorkspace('test-1')(store.state, store.dispatch, store),
@@ -203,12 +203,12 @@ describe('deleteWorkspace', () => {
   });
 
   test('deleting a workspace adds a delete field', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
     await createWorkspace('test-1', WorkspaceType['nativefs'], {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
 
-    syncPageLocation({ pathname: '/ws/test-1' })(store.state, store.dispatch);
+    // syncPageLocation({ pathname: '/ws/test-1' })(store.state, store.dispatch);
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
@@ -228,26 +228,32 @@ describe('deleteWorkspace', () => {
   });
 
   test('redirects correctly for a deleted workspace', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
+
     await createWorkspace('test-1', WorkspaceType['nativefs'], {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
 
-    syncPageLocation({ pathname: '/ws/test-1' })(store.state, store.dispatch);
+    expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+      'test-1',
+    );
+
+    expect(goToLocation).nthCalledWith(1, '/ws/test-1');
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
+    await sleep(0);
 
-    expect(goToLocation).toBeCalledTimes(2);
-    expect(goToLocation).nthCalledWith(1, '/ws/test-1');
-    expect(goToLocation).nthCalledWith(2, '/ws-not-found/test-1', {
-      replace: true,
-    });
+    expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+      undefined,
+    );
+
+    expect(getPageLocation()(store.state)?.pathname).toEqual('/');
   });
 });
 
 describe('getWorkspaceInfo', () => {
   test('throws error if workspace does not exists', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     await expect(getWorkspaceInfo('test-1')(store.state)).rejects.toThrowError(
       `WORKSPACE_NOT_FOUND_ERROR:Workspace test-1 not found`,
@@ -255,7 +261,7 @@ describe('getWorkspaceInfo', () => {
   });
 
   test('retains instance', async () => {
-    const { store } = createStore();
+    const { store } = createBasicTestStore();
 
     await createWorkspace('test-1', WorkspaceType['browser'])(
       store.state,

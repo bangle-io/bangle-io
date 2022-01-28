@@ -141,7 +141,6 @@ describe('refreshWorkspacesEffect', () => {
     expect(getActionNamesDispatched(dispatchSpy)).toMatchInlineSnapshot(`
       Array [
         "action::@bangle.io/slice-workspace:set-workspace-infos",
-        "action::@bangle.io/slice-workspace:set-opened-workspace",
       ]
     `);
 
@@ -281,15 +280,9 @@ describe('updateLocationEffect', () => {
         id: expect.any(String),
         name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
         value: {
-          openedWsPaths: { wsPaths: [undefined, undefined] },
-          wsName: undefined,
-        },
-      },
-      {
-        id: expect.any(String),
-        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
-        value: {
-          openedWsPaths: { wsPaths: [undefined, undefined] },
+          openedWsPaths: {
+            wsPaths: [undefined, undefined],
+          },
           wsName: 'test-ws',
         },
       },

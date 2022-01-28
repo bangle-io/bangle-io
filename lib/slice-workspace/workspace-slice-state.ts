@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 
+import { BaseError } from '@bangle.io/base-error';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -14,12 +15,13 @@ export interface WorkspaceInfoReg {
 export class WorkspaceSliceState {
   constructor(
     protected mainFields: {
-      wsPaths: WorkspaceSliceState['wsPaths'];
-      recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
-      wsName: WorkspaceSliceState['wsName'];
+      error: WorkspaceSliceState['error'];
       openedWsPaths: WorkspaceSliceState['openedWsPaths'];
+      recentlyUsedWsPaths: WorkspaceSliceState['recentlyUsedWsPaths'];
       refreshCounter: WorkspaceSliceState['refreshCounter'];
       workspacesInfo: WorkspaceSliceState['workspacesInfo'];
+      wsName: WorkspaceSliceState['wsName'];
+      wsPaths: WorkspaceSliceState['wsPaths'];
     },
     protected opts: any = {},
   ) {}
@@ -46,6 +48,9 @@ export class WorkspaceSliceState {
   }
   get workspacesInfo(): WorkspaceInfoReg | undefined {
     return this.mainFields.workspacesInfo;
+  }
+  get error(): BaseError | undefined {
+    return this.mainFields.error;
   }
 
   // returns the current wsName refreshing for

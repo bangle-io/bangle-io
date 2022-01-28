@@ -1,3 +1,4 @@
+import { BaseError } from '@bangle.io/base-error';
 import { ActionsSerializersType } from '@bangle.io/create-store';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -10,6 +11,32 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
     };
     const fromJSON = (obj: ReturnType<typeof toJSON>) => {
       return obj;
+    };
+
+    return {
+      toJSON,
+      fromJSON,
+    };
+  },
+
+  'action::@bangle.io/slice-workspace:set-error': (actionName) => {
+    const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
+      if (!action.value.error) {
+        return { error: null };
+      }
+      return {
+        error: action.value.error.toJsonValue(),
+      };
+    };
+
+    const fromJSON = (obj: ReturnType<typeof toJSON>) => {
+      if (obj.error) {
+        return { error: BaseError.fromJsonValue(obj.error) };
+      }
+
+      return {
+        error: undefined,
+      };
     };
 
     return {

@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@bangle.dev/pm": "0.28.5",
+    "@bangle.io/base-error": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",

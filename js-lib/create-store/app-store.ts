@@ -27,9 +27,9 @@ type DispatchActionType<S, A extends BaseAction> = (
 export type SerializedAction<A> = {};
 
 // time in ms, to check how many errors have been thrown since last time.
-// Keep them multiple of 25 please
-export const INFINITE_ERROR_THRESHOLD_TIME = 200;
-export const INFINITE_ERROR_SAMPLE = 25;
+// Keep them multiple of 10 please
+export const INFINITE_ERROR_THRESHOLD_TIME = 500;
+export const INFINITE_ERROR_SAMPLE = 10;
 
 export class ApplicationStore<S = any, A extends BaseAction = any> {
   private sideEffects: StoreSideEffectType<any, A, S>[] = [];
@@ -327,7 +327,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     this.infiniteErrors.count++;
 
-    console.debug('store handling error:', error.message);
+    console.debug('store handling error:', error.message, this.infiniteErrors);
 
     if (this.infiniteErrors.count % INFINITE_ERROR_SAMPLE === 0) {
       if (

@@ -47,6 +47,7 @@ export const getUseWorkspaceContextReturn: Mutable<
   openedWsPaths: OpenedWsPaths.createEmpty(),
   bangleStore: initialBangleStore,
   refreshCounter: 0,
+  error: undefined,
   workspacesInfo: undefined,
 };
 

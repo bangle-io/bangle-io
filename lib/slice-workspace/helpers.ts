@@ -5,6 +5,9 @@ import {
   searchToWsPath,
 } from '@bangle.io/ws-path';
 
+import { WorkspaceSliceState } from '.';
+import { workspaceSliceKey } from './common';
+
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
   | {
       valid: true;
@@ -85,3 +88,12 @@ export function savePrevOpenedWsPathsToSearch(
     searchParams.append('ws_paths', JSON.stringify(openedWsPaths.toArray()));
   }
 }
+
+export const getWsInfoIfNotDeleted = (
+  wsName: string,
+  workspacesInfo: Exclude<WorkspaceSliceState['workspacesInfo'], undefined>,
+) => {
+  const wsInfo = workspacesInfo[wsName];
+
+  return wsInfo?.deleted ? undefined : wsInfo;
+};

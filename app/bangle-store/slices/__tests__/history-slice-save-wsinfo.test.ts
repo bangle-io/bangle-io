@@ -58,8 +58,7 @@ let setup = () => {
   return { store, history };
 };
 
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip('saveWorkspaceInfoEffect', () => {
+describe('saveWorkspaceInfoEffect', () => {
   test('works when not a nativefs workspace', async () => {
     const { store, history } = setup();
 

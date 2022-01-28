@@ -26,6 +26,13 @@ export const getOpenedWsPaths = () => {
     return workspaceSliceKey.getSliceStateAsserted(state).openedWsPaths;
   });
 };
+
+export const sliceHasError = () => {
+  return workspaceSliceKey.queryOp((state) =>
+    Boolean(workspaceSliceKey.getSliceStateAsserted(state).error),
+  );
+};
+
 // Navigation ops
 export const updateOpenedWsPaths = (
   newOpened: OpenedWsPaths | ((arg: OpenedWsPaths) => OpenedWsPaths),
