@@ -1,3 +1,4 @@
+import { BaseError } from '@bangle.io/base-error';
 import {
   ApplicationStore,
   ExtractAction,
@@ -54,6 +55,12 @@ export type WorkspaceSliceAction =
       name: 'action::@bangle.io/slice-workspace:set-workspace-infos';
       value: {
         workspacesInfo: WorkspaceInfoReg;
+      };
+    }
+  | {
+      name: 'action::@bangle.io/slice-workspace:set-error';
+      value: {
+        error: BaseError | undefined;
       };
     };
 

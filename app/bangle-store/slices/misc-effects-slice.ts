@@ -24,8 +24,9 @@ export const saveLastUsedWorkspaceEffect = miscEffectsKey.effect(() => {
   return {
     destroy() {},
     deferredUpdate(store) {
-      const { wsName } = workspaceSliceKey.getSliceState(store.state) || {};
-      if (wsName && wsName !== lastSeenWsName) {
+      const { wsName, error } =
+        workspaceSliceKey.getSliceState(store.state) || {};
+      if (wsName && wsName !== lastSeenWsName && !error) {
         lastSeenWsName = wsName;
         lastWorkspaceUsed.save(wsName);
       }

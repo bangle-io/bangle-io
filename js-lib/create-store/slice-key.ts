@@ -79,13 +79,30 @@ export class SliceKey<
     state: AppState<any, any> | Readonly<AppState<any, any>>,
     prevState: AppState<any, any> | Readonly<AppState<any, any>>,
   ): SL[T] | undefined {
-    if (prevState === undefined) {
-      return this.getSliceStateAsserted(state)[field];
-    }
-
     return this.valueChanged(field, state, prevState)
       ? this.getSliceStateAsserted(state)[field]
       : undefined;
+  }
+
+  didChange<K extends keyof SL>(
+    state: AppState<any, any> | Readonly<AppState<any, any>>,
+    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+  ) {
+    return <T extends Array<K>>(...arr: [...T]) => {
+      let changed = false;
+      let fieldChanged: K | undefined = undefined;
+
+      arr.forEach((field) => {
+        if (changed === false) {
+          changed = this.valueChanged(field, state, prevState);
+          if (changed === true) {
+            fieldChanged = field;
+          }
+        }
+      });
+
+      return [changed, fieldChanged];
+    };
   }
 
   // Helper function for creating an operation with the correct

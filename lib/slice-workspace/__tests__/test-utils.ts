@@ -11,8 +11,12 @@ import { pageSlice } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createExtensionRegistry } from '@bangle.io/test-utils';
 
+import { WorkspaceSliceAction } from '../common';
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
-import { WorkspaceStateKeys } from '../workspace-slice-state';
+import {
+  WorkspaceSliceState,
+  WorkspaceStateKeys,
+} from '../workspace-slice-state';
 
 export const createState = (
   // we are adding JsonPrimitive since we this data to restore state
@@ -22,9 +26,9 @@ export const createState = (
   additionalSlices: Slice[] = [],
   opts?: { [key: string]: any },
 ) => {
-  return AppState.stateFromJSON<any, any>({
+  return AppState.stateFromJSON<WorkspaceSliceState, WorkspaceSliceAction>({
     opts,
-    slices: [workspaceSlice(), pageSlice(), ...additionalSlices],
+    slices: [workspaceSlice(), pageSlice(), ...additionalSlices] as Slice[],
     json: {
       workspace: { version: JSON_SCHEMA_VERSION, data: data },
     },

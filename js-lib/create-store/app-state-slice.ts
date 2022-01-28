@@ -75,6 +75,8 @@ export type SliceSideEffect<
   // that this will be called right after the state update
   deferredUpdate?: (
     store: ApplicationStore<SL, A>,
+    // previously seen state, if running for first time, this is the initial state
+    prevState: ApplicationStore<SL, A>['state'],
     // signal is called if a new deferredUpdate will be called, use this signal for aborting
     // any async methods.
     abortSignal: AbortSignal,

@@ -62,6 +62,7 @@ describe('last seen workspace', () => {
       expect(global.localStorage.getItem).toBeCalledTimes(1);
     });
   });
+
   describe('slice', () => {
     beforeEach(() => {
       global.history.replaceState(null, '', '/');
@@ -105,9 +106,7 @@ describe('last seen workspace', () => {
       expect(lastWorkspaceUsed.get()).toEqual('test-ws');
     });
 
-    // eslint-disable-next-line jest/no-disabled-tests
-    test.skip('going through multiple workspaces', async () => {
-      // fill db with existing data
+    test('going through multiple workspaces', async () => {
       (
         await setupMockWorkspaceWithNotes(undefined, 'test-ws-1', [
           ['test-ws-1:hello.md', `hello world`],
@@ -128,12 +127,52 @@ describe('last seen workspace', () => {
 
       goToWsNameRoute('test-ws-1')(store.state, store.dispatch);
       await sleep(0);
+      // await sleep(0);
       expect(lastWorkspaceUsed.get()).toEqual('test-ws-1');
 
       goToWsNameRoute('test-ws-2')(store.state, store.dispatch);
       await sleep(0);
 
       expect(lastWorkspaceUsed.get()).toEqual('test-ws-2');
+
+      updateOpenedWsPaths(() =>
+        OpenedWsPaths.createFromArray(['test-ws-2:hello.md']),
+      )(store.state, store.dispatch);
+      await sleep(0);
+    });
+
+    test('opening a note', async () => {
+      (
+        await setupMockWorkspaceWithNotes(undefined, 'test-ws-1', [
+          ['test-ws-1:hello.md', `hello world`],
+        ])
+      ).store.destroy();
+      (
+        await setupMockWorkspaceWithNotes(undefined, 'test-ws-2', [
+          ['test-ws-2:hello.md', `hello world`],
+        ])
+      ).store.destroy();
+
+      await sleep(0);
+
+      let { store } = createBasicTestStore({
+        slices: [historySlice(), miscEffectsSlice()],
+        useMemoryHistorySlice: false,
+      });
+
+      updateOpenedWsPaths(() =>
+        OpenedWsPaths.createFromArray(['test-ws-2:hello.md']),
+      )(store.state, store.dispatch);
+      await sleep(0);
+
+      expect(lastWorkspaceUsed.get()).toEqual('test-ws-2');
+
+      updateOpenedWsPaths(() =>
+        OpenedWsPaths.createFromArray(['test-ws-1:hello.md']),
+      )(store.state, store.dispatch);
+      await sleep(0);
+
+      expect(lastWorkspaceUsed.get()).toEqual('test-ws-1');
     });
   });
 });

@@ -1,3 +1,4 @@
+import { BaseError } from '@bangle.io/base-error';
 import { BaseAction } from '@bangle.io/create-store';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -11,6 +12,40 @@ export type ActionTestFixtureType<A extends BaseAction> = {
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively
 // make sure every action's serialization has been tested
 const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
+  'action::@bangle.io/slice-workspace:set-error': [
+    {
+      name: 'action::@bangle.io/slice-workspace:set-error',
+      value: {
+        error: new BaseError(
+          'hello-message',
+          'MY_CODE',
+          'DISPLAY_MESSAGE',
+          null,
+        ),
+      },
+    },
+    {
+      name: 'action::@bangle.io/slice-workspace:set-error',
+      value: {
+        error: new BaseError('hello-message'),
+      },
+    },
+
+    {
+      name: 'action::@bangle.io/slice-workspace:set-error',
+      value: {
+        error: new BaseError('hello-message-2', 'CODE_2'),
+      },
+    },
+
+    {
+      name: 'action::@bangle.io/slice-workspace:set-error',
+      value: {
+        error: undefined,
+      },
+    },
+  ],
+
   'action::@bangle.io/slice-workspace:set-workspace-infos': [
     {
       name: 'action::@bangle.io/slice-workspace:set-workspace-infos',

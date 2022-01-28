@@ -45,8 +45,10 @@ export function createBasicTestStore<
   useEditorCoreExtension = true,
   // slice key purely for getting the types of the store correct
   sliceKey,
+  scheduler,
   opts,
 }: {
+  scheduler?: any;
   // for getting the types right
   sliceKey?: SliceKey<SL, A, S, C>;
   slices?: Slice[];
@@ -74,6 +76,7 @@ export function createBasicTestStore<
   const { store, actionsDispatched, dispatchSpy, getActionNames, getAction } =
     createTestStore({
       sliceKey,
+      scheduler,
       slices: [
         extensionRegistrySlice(),
         useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,

@@ -98,6 +98,7 @@ ApplicationStore {
     "count": 0,
     "lastSeen": 0,
   },
+  "lastSeenStateCache": WeakMap {},
   "onError": undefined,
   "scheduler": undefined,
   "sideEffects": Array [],
@@ -203,6 +204,7 @@ ApplicationStore {
     "count": 0,
     "lastSeen": 0,
   },
+  "lastSeenStateCache": WeakMap {},
   "onError": undefined,
   "scheduler": undefined,
   "sideEffects": Array [],
@@ -284,6 +286,7 @@ ApplicationStore {
     "count": 0,
     "lastSeen": 0,
   },
+  "lastSeenStateCache": WeakMap {},
   "onError": undefined,
   "scheduler": [Function],
   "sideEffects": Array [
@@ -291,8 +294,7 @@ ApplicationStore {
       "effect": Object {
         "deferredUpdate": [MockFunction],
       },
-      "key": "slice$2",
-      "previouslySeenState": AppState {
+      "initialState": AppState {
         "config": AppStateConfig {
           "fields": Array [],
           "opts": undefined,
@@ -345,6 +347,7 @@ ApplicationStore {
         },
         "slicesCurrentState": Object {},
       },
+      "key": "slice$2",
     },
   ],
   "storeName": "test-store",
@@ -381,6 +384,7 @@ ApplicationStore {
     "count": 0,
     "lastSeen": 0,
   },
+  "lastSeenStateCache": WeakMap {},
   "onError": undefined,
   "scheduler": undefined,
   "sideEffects": Array [],

@@ -102,7 +102,7 @@ const counterSlice = new Slice({
           console.log('State is Negative')
         }
       },
-      deferredUpdate(store, abortSignal) {
+      deferredUpdate(store, prevState, abortSignal) {
         const sliceState = counterSliceKey.getSliceState(store.state);
 
         if (sliceState > 10) {
@@ -138,6 +138,19 @@ incrementCounter()(store.state, store.dispatch, store);
 ### Best practices for async Operations 
 
 When creating an async operation it is vital to make sure to use `store.state` after an async operation to get the latest state. It is a good idea to break down your async operation into smaller preferably sync operations and then orchestrating the calls in one big master async operation.
+
+### Best practices for effects
+
+Effects are tricky, which is why we also refer to them as side-effects.
+
+- When using side-effects, try to use `deferredUpdate` over `update` because it runs asyncronously.
+
+- When in side-effect rely on using the slices state as much as possible and avoid making async tasks within the effect. If there is an async task that needs to happen, create a seperate side-effect which runs it and stores it async tasks result in the slice state, so that other effects can use it. Remember it is less bug-prone to deal with syncronous data than async data.
+
+- If you are using certain variables in your side-effect , make sure you have code that ignores them if they show up in next call.
+
+- Be thoughtful of things that can throw error in your effects as this can lead to stack overflow due to an error handler clearing the error and your effect throwing it back. One good rule is to read and save data in the state of slice and early exitting if the required data for the effect is not there.
+
 
 ## Appending an action after actions
 

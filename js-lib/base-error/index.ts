@@ -52,4 +52,29 @@ export class BaseError extends Error {
 
     this.name = this.constructor.name;
   }
+
+  toJsonValue() {
+    let message = this.message;
+
+    if (this.code && this.message.startsWith(this.code + ':')) {
+      message = message.split(this.code + ':')[1] || '';
+    }
+
+    return {
+      code: this.code || null,
+      displayMessage: this.displayMessage || null,
+      message: message,
+      name: this.name,
+      srcError: null,
+    };
+  }
+
+  static fromJsonValue(input: ReturnType<BaseError['toJsonValue']>) {
+    return new BaseError(
+      input.message,
+      input.code,
+      input.displayMessage,
+      input.srcError,
+    );
+  }
 }

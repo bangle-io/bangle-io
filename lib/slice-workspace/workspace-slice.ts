@@ -6,18 +6,18 @@ import { OpenedWsPaths } from '@bangle.io/ws-path';
 import { ActionSerializers } from './action-serializers';
 import { WorkspaceSliceAction, workspaceSliceKey } from './common';
 import {
+  errorHandlerEffect,
   refreshWorkspacesEffect,
   refreshWsPathsEffect,
   updateLocationEffect,
+  wsDeleteEffect,
 } from './effects';
-import {
-  getStorageErrorHandler,
-  workspaceErrorHandler,
-} from './file-operations';
+import { sliceHasError } from './operations';
 import {
   WorkspaceSliceState,
   WorkspaceStateKeys,
 } from './workspace-slice-state';
+import { WorkspaceError } from './workspaces/errors';
 import { mergeWsInfoRegistries } from './workspaces/read-ws-info';
 
 export const JSON_SCHEMA_VERSION = 'workspace-slice/2';
@@ -32,12 +32,24 @@ export const workspaceSliceInitialState = new WorkspaceSliceState({
   wsPaths: undefined,
   refreshCounter: 0,
   workspacesInfo: undefined,
+  error: undefined,
 });
 
 const applyState = (
   action: WorkspaceSliceAction,
   state: WorkspaceSliceState,
 ): WorkspaceSliceState => {
+  // ignore any action if an error exists unless it sets the error
+  if (
+    state.error &&
+    action.name !== 'action::@bangle.io/slice-workspace:set-error'
+  ) {
+    console.log(
+      `slice-workspace: cannot apply action "${action.name}", error "${state.error.message}" exists.`,
+    );
+    return state;
+  }
+
   switch (action.name) {
     case 'action::@bangle.io/slice-workspace:set-opened-workspace': {
       const newState = WorkspaceSliceState.update(state, {
@@ -47,6 +59,7 @@ const applyState = (
 
       if (newState.wsName !== state.wsName) {
         return WorkspaceSliceState.update(newState, {
+          refreshCounter: newState.refreshCounter + 1,
           wsPaths: undefined,
           recentlyUsedWsPaths: undefined,
         });
@@ -85,6 +98,14 @@ const applyState = (
       }
 
       return state;
+    }
+
+    case 'action::@bangle.io/slice-workspace:set-error': {
+      const { error } = action.value;
+
+      return WorkspaceSliceState.update(state, {
+        error,
+      });
     }
 
     case 'action::@bangle.io/slice-workspace:refresh-ws-paths': {
@@ -144,6 +165,7 @@ export function workspaceSlice() {
           wsPaths: val.wsPaths,
           refreshCounter: val.refreshCounter,
           workspacesInfo: val.workspacesInfo,
+          error: undefined,
         };
 
         const result = Object.fromEntries(
@@ -181,41 +203,42 @@ export function workspaceSlice() {
           wsPaths: data.wsPaths || undefined,
           refreshCounter: data.refreshCounter || 0,
           workspacesInfo: data.workspacesInfo || undefined,
+          error: undefined,
         });
       },
     },
     actions: ActionSerializers,
 
     onError: (error, store) => {
-      if (error instanceof BaseError) {
-        // give priority to workspace error handler
-        if (workspaceErrorHandler(error, store) === true) {
-          return true;
-        }
-
-        const wsName = workspaceSliceKey.getSliceStateAsserted(
-          store.state,
-        ).wsName;
-        // Only handle errors of the current wsName
-        // this avoids showing errors of previously opened workspace due to delay
-        // in processing.
-        if (wsName) {
-          // let the storage provider handle error
-          const errorHandler = getStorageErrorHandler()(
-            store.state,
-            store.dispatch,
+      console.log(error);
+      if (
+        error instanceof WorkspaceError ||
+        // TODO remove this check of base-error as it is too broad
+        error instanceof BaseError
+      ) {
+        // Donot handle new errors if there is already an error
+        if (sliceHasError()(store.state)) {
+          console.log(
+            `ignoring error ${error.message} as an error already exists.`,
           );
-          if (errorHandler(error, store) === true) {
-            return true;
-          }
+          return false;
         }
 
-        // TODO have a default operation for baseerrors
+        store.dispatch({
+          name: 'action::@bangle.io/slice-workspace:set-error',
+          value: {
+            error,
+          },
+        });
+
+        return true;
       }
 
       return false;
     },
     sideEffect: [
+      wsDeleteEffect,
+      errorHandlerEffect,
       updateLocationEffect,
       refreshWsPathsEffect,
       refreshWorkspacesEffect,

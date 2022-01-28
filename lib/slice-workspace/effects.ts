@@ -1,8 +1,5 @@
-import { savePreviousValue } from '@bangle.io/create-store';
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
-import type { ReturnReturnType } from '@bangle.io/shared-types';
-import { getPageLocation } from '@bangle.io/slice-page';
-import { assertSignal, shallowEqual } from '@bangle.io/utils';
+import { pageSliceKey } from '@bangle.io/slice-page';
 import {
   OpenedWsPaths,
   pathnameToWsName,
@@ -11,146 +8,254 @@ import {
 } from '@bangle.io/ws-path';
 
 import { SideEffect, workspaceSliceKey } from './common';
-import { _getStorageProvider, getStorageProviderOpts } from './file-operations';
-import { validateOpenedWsPaths } from './helpers';
+import {
+  _getStorageProvider,
+  getStorageErrorHandler,
+  getStorageProviderOpts,
+  workspaceErrorHandler,
+} from './file-operations';
+import { getWsInfoIfNotDeleted, validateOpenedWsPaths } from './helpers';
 import {
   goToInvalidPathRoute,
+  goToWorkspaceHomeRoute,
   goToWsNameRouteNotFoundRoute,
+  sliceHasError,
 } from './operations';
-import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './workspaces/errors';
 import { saveWorkspacesInfo } from './workspaces/read-ws-info';
-import {
-  getWorkspaceInfo,
-  getWorkspaceInfoSync,
-  listWorkspaces,
-} from './workspaces-operations';
+import { listWorkspaces } from './workspaces-operations';
 
-export const refreshWsPathsEffect: SideEffect = () => {
-  let lastCounter: number | undefined;
-  let lastWsName: string | undefined;
+const LOG = true;
+
+const log = LOG
+  ? console.debug.bind(console, 'slice-workspace effects')
+  : () => {};
+
+export const errorHandlerEffect: SideEffect = () => {
   return {
-    async deferredUpdate(store, abortSignal) {
-      const { refreshCounter, wsName } =
-        workspaceSliceKey.getSliceStateAsserted(store.state);
+    async deferredUpdate(store) {
+      const { error } = workspaceSliceKey.getSliceStateAsserted(store.state);
 
-      if (!wsName) {
+      if (!error) {
+        return;
+      }
+      // give priority to workspace error handler
+      if (workspaceErrorHandler(error, store) === true) {
+        store.dispatch({
+          name: 'action::@bangle.io/slice-workspace:set-error',
+          value: {
+            error: undefined,
+          },
+        });
         return;
       }
 
-      if (wsName !== lastWsName || lastCounter !== refreshCounter) {
-        const { state } = store;
-        const wsInfo = await getWorkspaceInfoSync(wsName)(state);
-        const { extensionRegistry } =
-          extensionRegistrySliceKey.getSliceStateAsserted(state);
-
-        const storageProvider = _getStorageProvider(wsInfo, extensionRegistry);
-
-        if (!storageProvider) {
+      const wsName = workspaceSliceKey.getSliceStateAsserted(
+        store.state,
+      ).wsName;
+      // Only handle errors of the current wsName
+      // this avoids showing errors of previously opened workspace due to delay
+      // in processing.
+      if (wsName) {
+        // let the storage provider handle error
+        const errorHandler = getStorageErrorHandler()(
+          store.state,
+          store.dispatch,
+        );
+        if (errorHandler(error, store) === true) {
+          store.dispatch({
+            name: 'action::@bangle.io/slice-workspace:set-error',
+            value: {
+              error: undefined,
+            },
+          });
           return;
         }
-
-        const items = await storageProvider.listAllFiles(
-          abortSignal,
-          wsName,
-          getStorageProviderOpts()(store.state, store.dispatch),
-        );
-        lastWsName = wsName;
-        lastCounter = refreshCounter;
-        store.dispatch({
-          name: 'action::@bangle.io/slice-workspace:update-ws-paths',
-          value: {
-            wsName,
-            wsPaths: items,
-          },
-        });
       }
+      // TODO make this error with a code so root can handle this
+      throw new Error('Unable to handler error ' + error.message);
     },
   };
 };
 
+export const refreshWsPathsEffect: SideEffect = () => {
+  let abort = new AbortController();
+  return {
+    async deferredUpdate(store, prevState) {
+      const [changed, fieldChanged] = workspaceSliceKey.didChange(
+        store.state,
+        prevState,
+      )('refreshCounter', 'error', 'wsName', 'workspacesInfo');
+
+      if (!changed) {
+        return;
+      }
+
+      log('change refreshWsPathsEffect', fieldChanged);
+
+      const { error, wsName, workspacesInfo } =
+        workspaceSliceKey.getSliceStateAsserted(store.state);
+
+      if (error) {
+        log('returning early error');
+        return;
+      }
+
+      if (!wsName || !workspacesInfo) {
+        log('returning early wsName || workspacesInfo');
+        return;
+      }
+
+      const { state } = store;
+
+      const wsInfo = getWsInfoIfNotDeleted(wsName, workspacesInfo);
+
+      if (!wsInfo) {
+        log('returning early wsInfo');
+        return;
+      }
+
+      const { extensionRegistry } =
+        extensionRegistrySliceKey.getSliceStateAsserted(state);
+
+      const storageProvider = _getStorageProvider(wsInfo, extensionRegistry);
+
+      if (!storageProvider) {
+        log('returning early storageProvider');
+        return;
+      }
+
+      abort.abort();
+      abort = new AbortController();
+
+      const items = await storageProvider.listAllFiles(
+        abort.signal,
+        wsName,
+        getStorageProviderOpts()(store.state, store.dispatch),
+      );
+
+      store.dispatch({
+        name: 'action::@bangle.io/slice-workspace:update-ws-paths',
+        value: {
+          wsName,
+          wsPaths: items,
+        },
+      });
+    },
+  };
+};
+
+// react to wsInfo deletion
+export const wsDeleteEffect = workspaceSliceKey.effect(() => {
+  return {
+    update(store, prevState) {
+      if (sliceHasError()(store.state)) {
+        return;
+      }
+
+      const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
+
+      const workspacesInfo = workspaceSliceKey.getValueIfChanged(
+        'workspacesInfo',
+        store.state,
+        prevState,
+      );
+
+      if (wsName && workspacesInfo?.[wsName]?.deleted === true) {
+        goToWorkspaceHomeRoute()(store.state, store.dispatch);
+        return;
+      }
+    },
+  };
+});
+
 // This keeps a copy of location changes within the workspace slice
 // to derive fields like wsName.
 export const updateLocationEffect = workspaceSliceKey.effect(() => {
-  const prevVal = savePreviousValue<ReturnReturnType<typeof getPageLocation>>();
-
   return {
-    async deferredUpdate(store, abortSignal) {
-      assertSignal(abortSignal);
+    deferredUpdate(store, prevState) {
+      const [workspaceSliceChanged, wChangedField] =
+        workspaceSliceKey.didChange(store.state, prevState)(
+          'workspacesInfo',
+          'error',
+        );
 
-      const location = getPageLocation()(store.state);
-      const prevLocation = prevVal(location);
-
-      if (!location) {
-        return;
-      }
-
-      if (prevLocation && shallowEqual(location, prevLocation)) {
-        return;
-      }
-
-      const currentWsName = workspaceSliceKey.getSliceStateAsserted(
+      const [pageSliceChanged, pChangedField] = pageSliceKey.didChange(
         store.state,
-      ).wsName;
+        prevState,
+      )('location');
 
-      const { pathname, search } = location;
-
-      const wsName = pathnameToWsName(location.pathname);
-
-      if (!wsName) {
-        store.dispatch({
-          name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
-          value: {
-            wsName: undefined,
-            openedWsPaths: OpenedWsPaths.createEmpty(),
-          },
-        });
+      if (!pageSliceChanged && !workspaceSliceChanged) {
         return;
       }
 
-      // Check if workspace has been created / switch to
-      if (currentWsName !== wsName) {
-        try {
-          const wsInfo = await getWorkspaceInfo(wsName)(store.state);
+      log('changed updateLocationEffect', wChangedField, pChangedField);
 
-          if (wsInfo.deleted) {
-            goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
-            return;
-          }
-        } catch (error) {
-          assertSignal(abortSignal);
-          if (
-            error instanceof WorkspaceError &&
-            error.code === WORKSPACE_NOT_FOUND_ERROR
-          ) {
-            goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
-            return;
-          }
-          throw error;
-        }
+      const { error } = workspaceSliceKey.getSliceStateAsserted(store.state);
+
+      if (error) {
+        return;
       }
 
-      const openedWsPaths = OpenedWsPaths.createFromArray([
-        pathnameToWsPath(pathname),
-        searchToWsPath(search),
+      const { location } = pageSliceKey.getSliceStateAsserted(store.state);
+      const incomingWsName = pathnameToWsName(location.pathname);
+
+      const { wsName, openedWsPaths, workspacesInfo } =
+        workspaceSliceKey.getSliceStateAsserted(store.state);
+
+      if (!incomingWsName) {
+        if (wsName) {
+          store.dispatch({
+            name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+            value: {
+              wsName: undefined,
+              openedWsPaths: OpenedWsPaths.createEmpty(),
+            },
+          });
+        }
+        return;
+      }
+
+      const incomingOpenedWsPaths = OpenedWsPaths.createFromArray([
+        pathnameToWsPath(location.pathname),
+        searchToWsPath(location.search),
       ]);
 
-      const validOpenedWsPaths = validateOpenedWsPaths(openedWsPaths);
+      if (!workspacesInfo) {
+        return;
+      }
 
-      if (!validOpenedWsPaths.valid) {
-        goToInvalidPathRoute(wsName, validOpenedWsPaths.invalidWsPath)(
+      const wsInfo = getWsInfoIfNotDeleted(incomingWsName, workspacesInfo);
+
+      if (!wsInfo) {
+        goToWsNameRouteNotFoundRoute(incomingWsName)(
           store.state,
           store.dispatch,
         );
         return;
       }
 
-      store.dispatch({
-        name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
-        value: {
-          wsName: wsName,
-          openedWsPaths: openedWsPaths,
-        },
-      });
+      const validOpenedWsPaths = validateOpenedWsPaths(incomingOpenedWsPaths);
+
+      if (!validOpenedWsPaths.valid) {
+        goToInvalidPathRoute(incomingWsName, validOpenedWsPaths.invalidWsPath)(
+          store.state,
+          store.dispatch,
+        );
+        return;
+      }
+
+      if (
+        incomingWsName !== wsName ||
+        !openedWsPaths.equal(incomingOpenedWsPaths)
+      ) {
+        store.dispatch({
+          name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+          value: {
+            wsName: incomingWsName,
+            openedWsPaths: incomingOpenedWsPaths,
+          },
+        });
+      }
     },
   };
 });
@@ -161,6 +266,10 @@ export const refreshWorkspacesEffect = workspaceSliceKey.effect(() => {
       listWorkspaces()(store.state, store.dispatch, store);
     },
     update(store, __, sliceState, prevSliceState) {
+      if (sliceHasError()(store.state)) {
+        return;
+      }
+
       const { workspacesInfo } = sliceState;
       const { workspacesInfo: prevWorkspacesInfo } = prevSliceState;
 

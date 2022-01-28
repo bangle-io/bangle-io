@@ -15,7 +15,7 @@ export type DispatchType<S, A extends BaseAction> = ApplicationStore<
 
 type StoreSideEffectType<SL, A extends BaseAction, S> = {
   key: string;
-  previouslySeenState: AppState<S, A>;
+  initialState: AppState<S, A>;
   effect: ReturnType<SliceSideEffect<SL, A, S>>;
 };
 
@@ -27,9 +27,9 @@ type DispatchActionType<S, A extends BaseAction> = (
 export type SerializedAction<A> = {};
 
 // time in ms, to check how many errors have been thrown since last time.
-// Keep them multiple of 25 please
-export const INFINITE_ERROR_THRESHOLD_TIME = 200;
-export const INFINITE_ERROR_SAMPLE = 25;
+// Keep them multiple of 10 please
+export const INFINITE_ERROR_THRESHOLD_TIME = 500;
+export const INFINITE_ERROR_SAMPLE = 10;
 
 export class ApplicationStore<S = any, A extends BaseAction = any> {
   private sideEffects: StoreSideEffectType<any, A, S>[] = [];
@@ -43,6 +43,10 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   } = {};
   private currentRunId = 0;
   private destroyController = new AbortController();
+  private lastSeenStateCache = new WeakMap<
+    StoreSideEffectType<any, A, S>,
+    AppState<S, A>
+  >();
 
   static create<S = any, A extends BaseAction = any>({
     storeName,
@@ -180,12 +184,13 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       // if an effect before them dispatches an action.
       // Note: if it is the first time an effect is running
       // the previouslySeenState would be the initial state
-      const previouslySeenState = sideEffect.previouslySeenState;
+      const previouslySeenState =
+        this.lastSeenStateCache.get(sideEffect) || sideEffect.initialState;
 
       // `previouslySeenState` needs to always be the one that the effect.update has seen before or the initial state.
       // Here we are saving the this.state before calling update, because an update can dispatch an action and
       // causing another run of `runSideEffects`, and giving a stale previouslySeen to those effect update calls.
-      sideEffect.previouslySeenState = this.state;
+      this.lastSeenStateCache.set(sideEffect, this.state);
 
       try {
         // effect.update() call should always be the last in this loop, since it can trigger dispatches
@@ -282,7 +287,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
               this.sideEffects.push({
                 effect: result,
                 key: slice.key,
-                previouslySeenState: initialAppSate,
+                initialState: initialAppSate,
               });
               if (result.deferredOnce) {
                 allDeferredOnce.push([slice.key, result.deferredOnce]);
@@ -327,7 +332,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     this.infiniteErrors.count++;
 
-    console.debug('store handling error:', error.message);
+    console.debug('store handling error:', error.message, this.infiniteErrors);
 
     if (this.infiniteErrors.count % INFINITE_ERROR_SAMPLE === 0) {
       if (
@@ -381,6 +386,11 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 export class DeferredSideEffectsRunner<S, A extends BaseAction> {
   private scheduledCallback: ReturnType<SchedulerType> | undefined;
 
+  static deferredlastSeenStateCache = new WeakMap<
+    StoreSideEffectType<any, any, any>,
+    AppState<any, any>
+  >();
+
   private abortController = new AbortController();
 
   constructor(
@@ -417,15 +427,29 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
         return;
       }
 
-      for await (const { effect, key } of this.sideEffects) {
+      for await (const _sideEffect of this.sideEffects) {
         if (!this.isAborted) {
           // coverting it to async-iife allows us to handle both sync and async errors
-          (async () => {
+          (async (sideEffect) => {
             try {
-              await effect.deferredUpdate?.(store, this.abortController.signal);
+              const previouslySeenState =
+                DeferredSideEffectsRunner.deferredlastSeenStateCache.get(
+                  sideEffect,
+                ) || sideEffect.initialState;
+
+              DeferredSideEffectsRunner.deferredlastSeenStateCache.set(
+                sideEffect,
+                store.state,
+              );
+
+              await sideEffect.effect.deferredUpdate?.(
+                store,
+                previouslySeenState,
+                this.abortController.signal,
+              );
             } catch (error) {
               if (!this.isAborted && error instanceof Error) {
-                errorHandler(error, key);
+                errorHandler(error, sideEffect.key);
               } else if (
                 error instanceof DOMException &&
                 error.name === 'AbortError'
@@ -435,7 +459,7 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
                 throw error;
               }
             }
-          })();
+          })(_sideEffect);
         }
       }
     });
