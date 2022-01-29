@@ -222,10 +222,7 @@ export function updateWorkspaceMetadata(
 // Will check in store for wsInfo, if not found will then check indexed-db asyncronously
 // if still not found, will throw an error if workspace is not found
 export function getWorkspaceInfo(wsName: string) {
-  return async (
-    state: AppState,
-    // store: WorkspaceAppStore,
-  ): Promise<WorkspaceInfo> => {
+  return async (state: AppState): Promise<WorkspaceInfo> => {
     let wsInfo =
       workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
 
