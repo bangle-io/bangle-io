@@ -1,6 +1,6 @@
 import { Manager } from '@bangle.dev/collab-server';
 import { DebouncedDisk } from '@bangle.dev/disk';
-import type { Node } from '@bangle.dev/pm';
+import { Node } from '@bangle.dev/pm';
 
 import { Slice, SliceKey } from '@bangle.io/create-store';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
@@ -15,6 +15,7 @@ import {
   saveDoc,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
+import { defaultDoc } from '@bangle.io/slice-workspace/default-doc';
 import { asssertNotUndefined } from '@bangle.io/utils';
 
 import { setupCollabManager } from '../collab-manager';
@@ -132,7 +133,7 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
   return {
     deferredOnce(store, abortSignal) {
       const { extensionRegistry } = config;
-      const getItem = async (wsPath) => {
+      const getItem = async (wsPath): Promise<Node> => {
         // TODO the try catch is not ideal, the debouce disk should handl error
         try {
           const doc = await getNote(wsPath)(
@@ -147,10 +148,30 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
           if (error instanceof Error) {
             store.errorHandler(error);
           }
+          console.error(error);
+          // TODO this exists to just keep TS happy. We should remove it
+          // once we have moved to a new Debounced disk
+          return Node.fromJSON(extensionRegistry.specRegistry.schema, {
+            type: 'doc',
+            content: [
+              {
+                type: 'heading',
+                attrs: {
+                  level: 1,
+                },
+                content: [
+                  {
+                    type: 'text',
+                    text: 'There was an error reading your note',
+                  },
+                ],
+              },
+            ],
+          });
         }
       };
 
-      const setItem = async (wsPath: string, doc: Node) => {
+      const setItem = async (wsPath: string, doc: Node): Promise<void> => {
         // TODO the try catch is not ideal, the debouce disk should handl error
         try {
           await saveDoc(wsPath, doc)(
