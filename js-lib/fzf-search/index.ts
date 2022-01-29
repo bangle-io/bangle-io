@@ -13,13 +13,15 @@ export { byLengthAsc, byStartAsc, Fzf };
 export function useFzfSearch<T = string>(
   items: T[],
   query: string,
-  options: FzfOptions<T>,
+  ...options: FzfOptions<T>[]
 ): FzfResultItem<T>[] {
   // TS is just not letting it use the options
   const optionsRef: any = useRef(options);
-  const [fzf, updateFzf] = useState(() => new Fzf(items, optionsRef.current));
+  const [fzf, updateFzf] = useState(
+    () => new Fzf(items, ...optionsRef.current),
+  );
   useEffect(() => {
-    updateFzf(new Fzf(items, optionsRef.current));
+    updateFzf(new Fzf(items, ...optionsRef.current));
   }, [items, optionsRef]);
 
   return useMemo(() => {

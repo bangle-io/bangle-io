@@ -50,7 +50,7 @@ describe('ImageComponent', () => {
         }, 15);
       }
     };
-    window.URL.createObjectURL = jest.fn((file) => 'blob:' + file.content);
+    window.URL.createObjectURL = jest.fn((file: any) => 'blob:' + file.content);
     window.URL.revokeObjectURL = jest.fn();
   });
   afterEach(() => {
