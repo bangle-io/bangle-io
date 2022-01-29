@@ -14,12 +14,10 @@ import { workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
 import { storageProviderFromExtensionRegistry } from './helpers';
 import {
-  goToWsNameRouteNotFoundRoute,
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
 } from './operations';
 import {
-  WORKSPACE_NOT_FOUND_ERROR,
   WORKSPACE_PROVIDER_NOT_FOUND_ERROR,
   WorkspaceError,
 } from './workspaces/errors';
@@ -27,29 +25,6 @@ import {
   getWorkspaceInfoSync,
   updateWorkspaceMetadata,
 } from './workspaces-operations';
-
-interface FileOperationOptions {
-  handleError?: boolean;
-}
-
-type ErrorHandlerType = Exclude<
-  ReturnType<ExtensionRegistry['getOnStorageErrorHandlers']>,
-  undefined
->;
-
-export const workspaceErrorHandler: ErrorHandlerType = (error, store) => {
-  if (
-    error instanceof WorkspaceError &&
-    error.code === WORKSPACE_NOT_FOUND_ERROR
-  ) {
-    const wsName = workspaceSliceKey.getSliceStateAsserted(store.state).wsName;
-    if (wsName) {
-      goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
-      return true;
-    }
-  }
-  return false;
-};
 
 export function getStorageProvider() {
   return workspaceSliceKey.queryOp((state) => {
@@ -221,8 +196,7 @@ export const createNote = (
   {
     open = true,
     doc,
-    handleError = true,
-  }: FileOperationOptions & {
+  }: {
     open?: Boolean;
     doc?: Node;
   } = {},

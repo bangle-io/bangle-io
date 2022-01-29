@@ -36,7 +36,6 @@ describe('renameNote', () => {
 
     await createNote('my-ws:test-note.md', {
       doc: doc,
-      handleError,
     })(store.state, store.dispatch, store);
   });
 
@@ -188,7 +187,6 @@ describe('getNote', () => {
 
     await createNote('my-ws:test-note.md', {
       doc: doc,
-      handleError,
     })(store.state, store.dispatch, store);
 
     expect(
@@ -232,11 +230,7 @@ describe('createNote', () => {
   test('creates note', async () => {
     const wsPath: string = 'my-ws:new-test-note.md';
 
-    await createNote(wsPath, { doc, handleError })(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
     await sleep(0);
 
@@ -260,20 +254,12 @@ describe('createNote', () => {
   test('does not overwrrite an existing file', async () => {
     const wsPath: string = 'my-ws:new-test-note.md';
 
-    await createNote(wsPath, { doc, handleError })(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await createNote(wsPath, { doc })(store.state, store.dispatch, store);
     const docModified = createPMNode([], `hello modified`);
 
     await saveDoc(wsPath, docModified)(store.state, store.dispatch, store);
 
-    await createNote(wsPath, { doc, handleError })(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
     expect(
       (await getNote(wsPath)(store.state, store.dispatch))?.toJSON(),
@@ -286,7 +272,7 @@ describe('createNote', () => {
     const wsPath: string = 'my-ws:new-test-note.md';
     const doc: any = {};
 
-    await createNote(wsPath, { doc, open: false, handleError })(
+    await createNote(wsPath, { doc, open: false })(
       store.state,
       store.dispatch,
       store,
@@ -298,7 +284,7 @@ describe('createNote', () => {
   test('when open is false', async () => {
     const wsPath: string = 'my-ws:new-test-note.md';
 
-    await createNote(wsPath, { doc, open: false, handleError })(
+    await createNote(wsPath, { doc, open: false })(
       store.state,
       store.dispatch,
       store,
@@ -311,8 +297,6 @@ describe('createNote', () => {
     expect(openedWsPaths.toArray()).toEqual([null, null]);
   });
 });
-
-const handleError = false;
 
 describe('deleteNote', () => {
   const doc = createPMNode([], `hello`);
@@ -334,11 +318,7 @@ describe('deleteNote', () => {
   });
 
   test('deletes when the file is opened', async () => {
-    await createNote(wsPath, { doc, handleError })(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
     await sleep(0);
 
@@ -366,7 +346,7 @@ describe('deleteNote', () => {
   });
 
   test('deletes when the file is not opened', async () => {
-    await createNote(wsPath, { doc, open: false, handleError })(
+    await createNote(wsPath, { doc, open: false })(
       store.state,
       store.dispatch,
       store,
@@ -398,18 +378,14 @@ describe('deleteNote', () => {
   });
 
   test('deletes multiple files', async () => {
-    await createNote(wsPath, { doc, open: false, handleError })(
+    await createNote(wsPath, { doc, open: false })(
       store.state,
       store.dispatch,
       store,
     );
     const wsPath2 = 'my-ws:test-note-2.md';
 
-    await createNote(wsPath2, { doc, handleError })(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await createNote(wsPath2, { doc })(store.state, store.dispatch, store);
 
     await deleteNote([wsPath, wsPath2])(store.state, store.dispatch, store);
 
@@ -447,11 +423,7 @@ describe('checkFileExists', () => {
   });
 
   test('works', async () => {
-    await createNote(wsPath, { doc, handleError })(
-      store.state,
-      store.dispatch,
-      store,
-    );
+    await createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
     const result = await checkFileExists('my-ws:test-note.md')(
       store.state,

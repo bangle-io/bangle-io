@@ -8,10 +8,10 @@ import {
 } from '@bangle.io/ws-path';
 
 import { SideEffect, workspaceSliceKey } from './common';
+import { workspaceErrorHandler } from './error-handling';
 import {
   getStorageErrorHandler,
   getStorageProviderOpts,
-  workspaceErrorHandler,
 } from './file-operations';
 import {
   getWsInfoIfNotDeleted,

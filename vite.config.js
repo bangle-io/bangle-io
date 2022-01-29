@@ -29,9 +29,9 @@ const config = ({ command, mode }) => {
 
   const appEnv = envVars.appEnv;
   let sourcemap = true;
-  if (appEnv === 'production') {
-    sourcemap = false;
-  }
+  // if (appEnv === 'production') {
+  //   sourcemap = false;
+  // }
 
   // deleting CHANGELOG_TEXT since it becomes really long when printing
   const printableConfig = Object.assign({}, envVars.appEnvs);
