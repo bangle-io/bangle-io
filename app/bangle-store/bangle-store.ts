@@ -86,7 +86,13 @@ export function initializeBangleStore({
           action.fromStore ? `from=[${action.fromStore}]` : '',
           action.name,
           action.id,
-          action.value,
+
+          // There is a bug most likely in sentry or comlink  where console logging a
+          // proxy gives a cryptic error "Cannot read properties of undefined (reading 'Symbol(Symbol.toPrimitive)')".
+          action.name === 'action::@bangle.io/worker-naukar-proxy:naukar' ||
+            action.name === 'action::@bangle.io/slice-editor-manager:set-editor'
+            ? '[Proxy value redacted]'
+            : action.value,
         );
 
         (window as any).Sentry?.addBreadcrumb?.({
