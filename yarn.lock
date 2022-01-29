@@ -2980,7 +2980,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tailwindcss: ^2.2.17
-    vite: v2.8.0-beta.0
+    vite: v2.8.0-beta.3
   languageName: unknown
   linkType: soft
 
@@ -6018,7 +6018,7 @@ __metadata:
     surge: ^0.23.0
     tailwindcss: ^2.2.17
     typescript: ^4.4.4
-    vite: v2.8.0-beta.0
+    vite: v2.8.0-beta.3
     vite-plugin-html: ^2.1.1
     vite-plugin-pwa: ^0.11.3
     webpack: ^5.60.0
@@ -16658,13 +16658,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:v2.8.0-beta.0":
-  version: 2.8.0-beta.0
-  resolution: "vite@npm:2.8.0-beta.0"
+"vite@npm:v2.8.0-beta.3":
+  version: 2.8.0-beta.3
+  resolution: "vite@npm:2.8.0-beta.3"
   dependencies:
     esbuild: 0.14.3
     fsevents: ~2.3.2
-    json5: ^2.2.0
     postcss: ^8.4.5
     resolve: ^1.20.0
     rollup: ^2.59.0
@@ -16684,7 +16683,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: a910f23d593548f14c96b94a1684fdf34b6afcb9c7d90d39a8e20351cf26e0a13e8320da0ecad4240a2f6b5bb0d6122a0fe8eda66ce18f9a02fea7ae599fe817
+  checksum: 05867518b71a905e94402570a0b42e7b3fc2c056689637f05231b11641de73c2e593564acd46343a652f5056075c12b84ee9bbb2440a5fc5681c03b27c097add
   languageName: node
   linkType: hard
 
