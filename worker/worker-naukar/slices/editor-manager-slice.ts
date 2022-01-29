@@ -133,22 +133,36 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
     deferredOnce(store, abortSignal) {
       const { extensionRegistry } = config;
       const getItem = async (wsPath) => {
-        const doc = await getNote(wsPath)(
-          workspaceSliceKey.getStore(store).state,
-          workspaceSliceKey.getDispatch(store.dispatch),
-        );
-        if (!doc) {
-          throw new Error(`Note ${wsPath} not found`);
+        // TODO the try catch is not ideal, the debouce disk should handl error
+        try {
+          const doc = await getNote(wsPath)(
+            workspaceSliceKey.getStore(store).state,
+            workspaceSliceKey.getDispatch(store.dispatch),
+          );
+          if (!doc) {
+            throw new Error(`Note ${wsPath} not found`);
+          }
+          return doc;
+        } catch (error) {
+          if (error instanceof Error) {
+            store.errorHandler(error);
+          }
         }
-        return doc;
       };
 
       const setItem = async (wsPath: string, doc: Node) => {
-        await saveDoc(wsPath, doc)(
-          workspaceSliceKey.getState(store),
-          workspaceSliceKey.getDispatch(store.dispatch),
-          workspaceSliceKey.getStore(store),
-        );
+        // TODO the try catch is not ideal, the debouce disk should handl error
+        try {
+          await saveDoc(wsPath, doc)(
+            workspaceSliceKey.getState(store),
+            workspaceSliceKey.getDispatch(store.dispatch),
+            workspaceSliceKey.getStore(store),
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            store.errorHandler(error);
+          }
+        }
       };
 
       let pendingCall: undefined | ReturnType<typeof setTimeout>;
