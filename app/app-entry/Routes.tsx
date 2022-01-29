@@ -3,6 +3,7 @@ import { Redirect, Route, Switch, useLocation } from 'wouter';
 
 import { lastWorkspaceUsed } from '@bangle.io/bangle-store';
 import {
+  BANGLE_HOME_PATH,
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
 } from '@bangle.io/constants';
@@ -47,7 +48,7 @@ export function Routes() {
           if (lastWsName && workspacesInfo?.[lastWsName]?.deleted) {
             lastWorkspaceUsed.save(HELP_FS_WORKSPACE_NAME);
 
-            return <Redirect to={'/ws/' + HELP_FS_WORKSPACE_NAME} />;
+            return <Redirect to={BANGLE_HOME_PATH} />;
           }
 
           return <Redirect to={'/ws/' + lastWsName} />;
