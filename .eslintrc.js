@@ -1,5 +1,6 @@
 // .eslintrc.js
 module.exports = {
+  root: true,
   plugins: ['simple-import-sort'],
   extends: [
     'react-app',
@@ -58,6 +59,13 @@ module.exports = {
           '(useKeybindings|useSerialOperationHandler|useMyOtherCustomHook)',
       },
     ],
+    'testing-library/no-container': ['warn'],
+    'testing-library/no-node-access': ['warn'],
+    'testing-library/no-render-in-setup': ['warn'],
+    'testing-library/no-unnecessary-act': ['warn'],
+    'testing-library/no-wait-for-side-effects': ['warn'],
+    'testing-library/prefer-screen-queries': ['warn'],
+    'testing-library/render-result-naming-convention': ['warn'],
 
     'consistent-return': ['warn'],
 

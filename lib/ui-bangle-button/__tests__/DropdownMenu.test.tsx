@@ -75,7 +75,7 @@ test('button clicks', async () => {
     fireEvent.click(screen.getByRole('button'));
   });
 
-  let element = await waitFor(() => screen.getByLabelText('test-label'));
+  let element = await screen.findByLabelText('test-label');
 
   expect(element).toMatchInlineSnapshot(`
     <ul
