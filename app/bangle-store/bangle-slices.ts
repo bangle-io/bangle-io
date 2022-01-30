@@ -5,7 +5,11 @@ import {
   editorManagerSlice,
 } from '@bangle.io/slice-editor-manager';
 import { pageSlice, PageSliceAction } from '@bangle.io/slice-page';
-import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
+import {
+  UiContextAction,
+  uiSlice,
+  uncaughtExceptionNotification,
+} from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 import { naukarProxySlice } from '@bangle.io/worker-naukar-proxy';
@@ -58,6 +62,14 @@ export function bangleStateSlices({
     e2eHelpers(),
     // keep this at the end
     new Slice({
+      onError(error, store) {
+        (window as any).Sentry?.captureException(error);
+        console.error(error);
+        Promise.resolve().then(() => {
+          uncaughtExceptionNotification(error)(store.state, store.dispatch);
+        });
+        return true;
+      },
       sideEffect: [
         () => {
           return {

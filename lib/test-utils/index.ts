@@ -9,3 +9,4 @@ export * from './indexedb-ws-helpers';
 export * as idbHelpers from './indexedb-ws-helpers';
 export * from './test-memory-history-slice';
 export { TestStoreProvider } from './TestStoreProvider';
+export * from './action-serializers';

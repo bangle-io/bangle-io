@@ -1,3 +1,4 @@
+import { ExtractAction } from '.';
 import type { AppState } from './app-state';
 import type { BaseAction, Slice, SliceSideEffect } from './app-state-slice';
 import { ApplicationStore } from './app-store';
@@ -135,5 +136,19 @@ export class SliceKey<
   // Helper function create a side effect with the correct type.
   effect(cb: SliceSideEffect<SL, A, C>) {
     return cb;
+  }
+
+  // serialization type helpers
+  actionSerializer<ANAME extends A['name'], T>(
+    actionName: ANAME,
+    // return the serialzed value of the action
+    toJSON: (action: ExtractAction<A, ANAME>) => T,
+    // return the parsed value of the action
+    fromJSON: (serialActionValue: T) => ExtractAction<A, ANAME>['value'],
+  ) {
+    return {
+      toJSON,
+      fromJSON,
+    };
   }
 }

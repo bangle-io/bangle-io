@@ -1,13 +1,9 @@
 import { BaseError } from '@bangle.io/base-error';
-import { BaseAction } from '@bangle.io/create-store';
+import { ActionTestFixtureType } from '@bangle.io/test-utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WorkspaceSliceAction } from '../common';
 import { createStore, createWsInfo } from './test-utils';
-
-export type ActionTestFixtureType<A extends BaseAction> = {
-  [K in A['name']]: Array<A extends { name: K } ? A : never>;
-};
 
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively
 // make sure every action's serialization has been tested
@@ -24,6 +20,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
         ),
       },
     },
+
     {
       name: 'action::@bangle.io/slice-workspace:set-error',
       value: {

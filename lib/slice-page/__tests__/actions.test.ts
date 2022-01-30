@@ -1,11 +1,8 @@
 import { BaseAction } from '@bangle.io/create-store';
+import type { ActionTestFixtureType } from '@bangle.io/test-utils';
 
 import { PageSliceAction } from '../common';
 import { createStore } from './test-utils';
-
-export type ActionTestFixtureType<A extends BaseAction> = {
-  [K in A['name']]: Array<A extends { name: K } ? A : never>;
-};
 
 // This shape (Record<actionName, action[]>) exists so the we can exhaustively
 // make sure every action's serialization has been tested

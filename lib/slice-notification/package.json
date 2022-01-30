@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/slice-page",
+  "name": "@bangle.io/slice-notification",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/slice-page"
+    "directory": "lib/slice-notification"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -23,14 +23,10 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/utils": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*",
-    "react": "^17.0.2"
+    "@bangle.io/utils": "workspace:*"
   },
   "devDependencies": {
-    "@bangle.io/test-utils": "workspace:*",
-    "@types/react": "^17.0.33",
-    "@types/react-dom": "^17.0.10"
+    "@bangle.io/test-utils": "workspace:*"
   },
   "publishConfig": {
     "access": "public"
