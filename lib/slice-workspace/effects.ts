@@ -11,7 +11,6 @@ import { SideEffect, workspaceSliceKey } from './common';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { getStorageProviderOpts } from './file-operations';
 import {
-  getStorageProviderNameFromError,
   getWsInfoIfNotDeleted,
   storageProviderErrorHandlerFromExtensionRegistry,
   storageProviderFromExtensionRegistry,
@@ -24,6 +23,7 @@ import {
   sliceHasError,
 } from './operations';
 import { saveWorkspacesInfo } from './read-ws-info';
+import { storageProviderHelpers } from './storage-provider-helpers';
 import { listWorkspaces } from './workspaces-operations';
 
 const LOG = true;
@@ -78,7 +78,8 @@ export const errorHandlerEffect: SideEffect = () => {
       const wsName = workspaceSliceKey.getSliceStateAsserted(
         store.state,
       ).wsName;
-      const erroredStorageType = getStorageProviderNameFromError(error);
+      const erroredStorageType =
+        storageProviderHelpers.getStorageProviderNameFromError(error);
 
       // Only handle errors of the current wsName
       // this avoids showing errors of previously opened workspace due to delay
@@ -95,7 +96,7 @@ export const errorHandlerEffect: SideEffect = () => {
             .extensionRegistry,
         );
 
-        if (errorHandler && errorHandler(error, store) === true) {
+        if (errorHandler && errorHandler(error as any, store) === true) {
           store.dispatch({
             name: 'action::@bangle.io/slice-workspace:set-error',
             value: {
@@ -104,6 +105,13 @@ export const errorHandlerEffect: SideEffect = () => {
           });
           return;
         }
+        // if we reach here, we can't throw it back since its a storage error
+        // and no other part of the application can take care of it.
+        console.error(
+          `Storage provider didn't ${erroredStorageType} handle error`,
+          error,
+        );
+        return;
       }
 
       // TODO make this error with a code so root can handle this

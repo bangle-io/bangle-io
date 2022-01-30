@@ -3,10 +3,8 @@ import { Extension } from '@bangle.io/extension-registry';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createExtensionRegistry } from '@bangle.io/test-utils';
 
-import {
-  getStorageProviderNameFromError,
-  storageProviderFromExtensionRegistry,
-} from '../helpers';
+import { storageProviderFromExtensionRegistry } from '../helpers';
+import { storageProviderHelpers } from '../storage-provider-helpers';
 
 describe('storageProviderFromExtensionRegistry', () => {
   test('proxies error correctly', async () => {
@@ -67,7 +65,9 @@ describe('storageProviderFromExtensionRegistry', () => {
       proxiedProvider1?.getDoc('test:abcd', {} as any),
     ).rejects.toMatchInlineSnapshot(`[Error: test error 1]`);
 
-    expect(getStorageProviderNameFromError(error1)).toBe(storageType1);
+    expect(storageProviderHelpers.getStorageProviderNameFromError(error1)).toBe(
+      storageType1,
+    );
 
     const proxiedProvider2 = storageProviderFromExtensionRegistry(
       storageType2,
@@ -78,6 +78,8 @@ describe('storageProviderFromExtensionRegistry', () => {
       proxiedProvider2?.getDoc('test:abcd', {} as any),
     ).rejects.toMatchInlineSnapshot(`[Error: test error 2]`);
 
-    expect(getStorageProviderNameFromError(error2)).toBe(storageType2);
+    expect(storageProviderHelpers.getStorageProviderNameFromError(error2)).toBe(
+      storageType2,
+    );
   });
 });

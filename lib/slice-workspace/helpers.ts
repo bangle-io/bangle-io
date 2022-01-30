@@ -1,9 +1,9 @@
 import { WorkspaceType } from '@bangle.io/constants';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
-import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { BaseStorageProvider, HelpFsStorageProvider } from '@bangle.io/storage';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
+import { storageProviderHelpers } from './storage-provider-helpers';
 import { WorkspaceSliceState } from './workspace-slice-state';
 
 export function validateOpenedWsPaths(openedWsPath: OpenedWsPaths):
@@ -70,22 +70,10 @@ export const getWsInfoIfNotDeleted = (
   return wsInfo?.deleted ? undefined : wsInfo;
 };
 
-const storageProviderError = new WeakMap<
-  Error,
-  { name: BaseStorageProvider['name'] }
->();
-
 const storageProviderProxy = new WeakMap<
   BaseStorageProvider,
   BaseStorageProvider
 >();
-
-export function isStorageProviderError(error: Error) {
-  return storageProviderError.has(error);
-}
-export function getStorageProviderNameFromError(error: Error) {
-  return storageProviderError.get(error)?.name;
-}
 
 export function storageProviderErrorHandlerFromExtensionRegistry(
   workspaceType: string,
@@ -129,18 +117,18 @@ export function storageProviderFromExtensionRegistry(
 
             if (result.then) {
               return result.catch((err: unknown) => {
-                if (err instanceof Error) {
-                  storageProviderError.set(err, { name: target.name });
-                }
+                storageProviderHelpers.markAsStorageProviderError(
+                  err,
+                  target.name,
+                );
+
                 throw err;
               });
             }
 
             return result;
           } catch (err) {
-            if (err instanceof Error) {
-              storageProviderError.set(err, { name: target.name });
-            }
+            storageProviderHelpers.markAsStorageProviderError(err, target.name);
             throw err;
           }
         };
