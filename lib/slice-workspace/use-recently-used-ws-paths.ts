@@ -5,7 +5,6 @@ import { usePrevious, useRecencyMonitor } from '@bangle.io/utils';
 
 import { workspaceSliceKey } from './common';
 import { MAX_ENTRIES, MAX_TIMESTAMPS_PER_ENTRY } from './config';
-import { workspaceSliceInitialState } from './workspace-slice';
 
 export function useRecentlyUsedWsPaths() {
   const { sliceState, store: bangleStore } = useSliceState(workspaceSliceKey);

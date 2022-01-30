@@ -13,7 +13,8 @@ import { fromFsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
 import { BaseStorageProvider, StorageOpts } from './base-storage';
 
 export class IndexedDbStorageProvider implements BaseStorageProvider {
-  name = WorkspaceType.browser;
+  // TODO setting it to string for easier subclassing while testing
+  name: string = WorkspaceType.browser;
   displayName = 'Browser Storage';
   description = 'Saves data in your browsers local storage';
 

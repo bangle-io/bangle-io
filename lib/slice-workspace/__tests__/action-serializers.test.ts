@@ -38,6 +38,13 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     {
       name: 'action::@bangle.io/slice-workspace:set-error',
       value: {
+        error: new Error('vanilla-error'),
+      },
+    },
+
+    {
+      name: 'action::@bangle.io/slice-workspace:set-error',
+      value: {
         error: undefined,
       },
     },

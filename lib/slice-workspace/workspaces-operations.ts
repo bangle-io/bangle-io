@@ -12,17 +12,14 @@ import {
   WorkspaceDispatchType,
   workspaceSliceKey,
 } from './common';
-import { goToWorkspaceHomeRoute } from './operations';
 import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
   WORKSPACE_DELETED_MODIFY_ERROR,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
-} from './workspaces/errors';
-import {
-  readWorkspacesInfoReg,
-  saveWorkspacesInfo,
-} from './workspaces/read-ws-info';
+} from './errors';
+import { goToWorkspaceHomeRoute } from './operations';
+import { readWorkspacesInfoReg, saveWorkspacesInfo } from './read-ws-info';
 
 // Lists all the workspaces that have not been deleted workspaces
 export function listWorkspaces() {
@@ -87,21 +84,6 @@ export function createWorkspace(
           metadata: {},
         };
 
-        break;
-      }
-
-      case 'github-read-fs': {
-        workspace = {
-          deleted: false,
-          lastModified: Date.now(),
-          name: wsName,
-          type,
-          metadata: {
-            githubOwner: opts.githubOwner,
-            githubRepo: opts.githubRepo,
-            githubBranch: opts.githubBranch,
-          },
-        };
         break;
       }
 
@@ -248,7 +230,7 @@ export function getWorkspaceInfo(wsName: string) {
 // Syncronously checks if wsInfo exists in state and throws an error
 // if workspace is not found. If not sure, use `getWorkspaceInfo` instead.
 export function getWorkspaceInfoSync(wsName: string) {
-  return (state: AppState): WorkspaceInfo => {
+  return workspaceSliceKey.queryOp((state): WorkspaceInfo => {
     let wsInfo =
       workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
 
@@ -262,12 +244,12 @@ export function getWorkspaceInfoSync(wsName: string) {
     }
 
     return wsInfo;
-  };
+  });
 }
 
 // checks if a workspace that has not been deleted exists
 export function hasWorkspace(wsName: string) {
-  return async (_, __, store: WorkspaceAppStore) => {
+  return workspaceSliceKey.asyncOp(async (_, __, store) => {
     const workspaces = await listWorkspaces()(
       store.state,
       store.dispatch,
@@ -277,5 +259,5 @@ export function hasWorkspace(wsName: string) {
     const workspaceInfo = workspaces.find(({ name }) => name === wsName);
 
     return Boolean(workspaceInfo);
-  };
+  });
 }

@@ -66,15 +66,22 @@ export class BaseError extends Error {
       message: message,
       name: this.name,
       srcError: null,
+      stack: this.stack,
     };
   }
 
   static fromJsonValue(input: ReturnType<BaseError['toJsonValue']>) {
-    return new BaseError(
+    const error = new BaseError(
       input.message,
       input.code,
       input.displayMessage,
       input.srcError,
     );
+
+    if (input.stack) {
+      error.stack = input.stack;
+    }
+
+    return error;
   }
 }

@@ -12,15 +12,12 @@ import { validateNoteWsPath } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
+import { WORKSPACE_PROVIDER_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { storageProviderFromExtensionRegistry } from './helpers';
 import {
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
 } from './operations';
-import {
-  WORKSPACE_PROVIDER_NOT_FOUND_ERROR,
-  WorkspaceError,
-} from './workspaces/errors';
 import {
   getWorkspaceInfoSync,
   updateWorkspaceMetadata,
@@ -38,7 +35,7 @@ export function getStorageProvider() {
     const wsInfo = getWorkspaceInfoSync(wsName)(state);
 
     let provider = storageProviderFromExtensionRegistry(
-      wsInfo,
+      wsInfo.type,
       extensionRegistrySliceKey.getSliceStateAsserted(state).extensionRegistry,
     );
 

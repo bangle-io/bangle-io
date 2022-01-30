@@ -60,7 +60,7 @@ export type WorkspaceSliceAction =
   | {
       name: 'action::@bangle.io/slice-workspace:set-error';
       value: {
-        error: BaseError | undefined;
+        error: Error | undefined;
       };
     };
 

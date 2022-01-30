@@ -140,7 +140,7 @@ export const getActionsDispatched = (mockDispatch, name) => {
 export const createWsInfo = (obj: Partial<WorkspaceInfo>): WorkspaceInfo => {
   return {
     name: 'test-ws-info',
-    type: WorkspaceType['browser'],
+    type: WorkspaceType.browser,
     lastModified: 0,
     metadata: {},
     ...obj,

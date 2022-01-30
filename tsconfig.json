@@ -32,7 +32,6 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "./js-lib/base-error/*.js",
   ],
   "exclude": [
     ".yarn/__virtual__"

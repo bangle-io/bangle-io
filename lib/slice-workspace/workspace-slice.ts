@@ -1,6 +1,6 @@
 import { Slice } from '@bangle.io/create-store';
 import type { JsonValue } from '@bangle.io/shared-types';
-import { assertActionName, BaseError } from '@bangle.io/utils';
+import { assertActionName } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ActionSerializers } from './action-serializers';
@@ -12,13 +12,14 @@ import {
   updateLocationEffect,
   wsDeleteEffect,
 } from './effects';
+import { WorkspaceError } from './errors';
+import { isStorageProviderError } from './helpers';
 import { sliceHasError } from './operations';
+import { mergeWsInfoRegistries } from './read-ws-info';
 import {
   WorkspaceSliceState,
   WorkspaceStateKeys,
 } from './workspace-slice-state';
-import { WorkspaceError } from './workspaces/errors';
-import { mergeWsInfoRegistries } from './workspaces/read-ws-info';
 
 export const JSON_SCHEMA_VERSION = 'workspace-slice/2';
 
@@ -211,11 +212,7 @@ export function workspaceSlice() {
     actions: ActionSerializers,
 
     onError: (error, store) => {
-      if (
-        error instanceof WorkspaceError ||
-        // TODO remove this check of base-error as it is too broad
-        error instanceof BaseError
-      ) {
+      if (error instanceof WorkspaceError || isStorageProviderError(error)) {
         // Donot handle new errors if there is already an error
         if (sliceHasError()(store.state)) {
           console.log(

@@ -8,13 +8,12 @@ import {
 } from '@bangle.io/ws-path';
 
 import { SideEffect, workspaceSliceKey } from './common';
-import { workspaceErrorHandler } from './error-handling';
+import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';
+import { getStorageProviderOpts } from './file-operations';
 import {
-  getStorageErrorHandler,
-  getStorageProviderOpts,
-} from './file-operations';
-import {
+  getStorageProviderNameFromError,
   getWsInfoIfNotDeleted,
+  storageProviderErrorHandlerFromExtensionRegistry,
   storageProviderFromExtensionRegistry,
   validateOpenedWsPaths,
 } from './helpers';
@@ -24,7 +23,7 @@ import {
   goToWsNameRouteNotFoundRoute,
   sliceHasError,
 } from './operations';
-import { saveWorkspacesInfo } from './workspaces/read-ws-info';
+import { saveWorkspacesInfo } from './read-ws-info';
 import { listWorkspaces } from './workspaces-operations';
 
 const LOG = true;
@@ -34,37 +33,69 @@ const log = LOG
   : () => {};
 
 export const errorHandlerEffect: SideEffect = () => {
+  let lastErrorSeen: Error | undefined;
   return {
     async deferredUpdate(store) {
-      const { error } = workspaceSliceKey.getSliceStateAsserted(store.state);
-
-      if (!error) {
-        return;
-      }
-      // give priority to workspace error handler
-      if (workspaceErrorHandler(error, store) === true) {
+      // TODO take to a better place
+      const reset = (wsName = 'bangle-workspace-errored') => {
+        goToWsNameRouteNotFoundRoute(wsName)(store.state, store.dispatch);
         store.dispatch({
           name: 'action::@bangle.io/slice-workspace:set-error',
           value: {
             error: undefined,
           },
         });
+      };
+      const { error } = workspaceSliceKey.getSliceStateAsserted(store.state);
+
+      if (!error) {
+        if (lastErrorSeen) {
+          lastErrorSeen = undefined;
+        }
         return;
       }
 
+      if (error === lastErrorSeen) {
+        return;
+      }
+
+      lastErrorSeen = error;
+
+      // give priority to workspace error handler
+      if (
+        error instanceof WorkspaceError &&
+        error.code === WORKSPACE_NOT_FOUND_ERROR
+      ) {
+        const wsName = workspaceSliceKey.getSliceStateAsserted(
+          store.state,
+        ).wsName;
+
+        reset(wsName);
+        return;
+      }
+
+      // let the storage provider handle error
       const wsName = workspaceSliceKey.getSliceStateAsserted(
         store.state,
       ).wsName;
+      const erroredStorageType = getStorageProviderNameFromError(error);
+
       // Only handle errors of the current wsName
       // this avoids showing errors of previously opened workspace due to delay
       // in processing.
-      if (wsName) {
-        // let the storage provider handle error
-        const errorHandler = getStorageErrorHandler()(
-          store.state,
-          store.dispatch,
+      if (erroredStorageType) {
+        if (!wsName) {
+          reset(wsName);
+          return;
+        }
+
+        const errorHandler = storageProviderErrorHandlerFromExtensionRegistry(
+          erroredStorageType,
+          extensionRegistrySliceKey.getSliceStateAsserted(store.state)
+            .extensionRegistry,
         );
-        if (errorHandler(error, store) === true) {
+
+        if (errorHandler && errorHandler(error, store) === true) {
           store.dispatch({
             name: 'action::@bangle.io/slice-workspace:set-error',
             value: {
@@ -74,6 +105,7 @@ export const errorHandlerEffect: SideEffect = () => {
           return;
         }
       }
+
       // TODO make this error with a code so root can handle this
       throw new Error('Unable to handler error ' + error.message);
     },
@@ -121,7 +153,7 @@ export const refreshWsPathsEffect: SideEffect = () => {
         extensionRegistrySliceKey.getSliceStateAsserted(state);
 
       const storageProvider = storageProviderFromExtensionRegistry(
-        wsInfo,
+        wsInfo.type,
         extensionRegistry,
       );
 
