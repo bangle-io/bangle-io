@@ -1,6 +1,7 @@
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+  CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
@@ -96,6 +97,11 @@ const extension = Extension.create({
       {
         name: CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
         title: 'Dismiss prompt from service worker to update',
+        hidden: true,
+      },
+      {
+        name: CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
+        title: 'Report an issue on Github',
         hidden: true,
       },
       {
@@ -219,6 +225,11 @@ const extension = Extension.create({
                 bangleStore,
               );
 
+              return true;
+            }
+
+            case CORE_OPERATIONS_OPEN_GITHUB_ISSUE: {
+              window.open(`https://github.com/bangle-io/bangle-io/issues/new`);
               return true;
             }
 

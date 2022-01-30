@@ -26,7 +26,6 @@ export interface UISliceState {
   modal?: string | null;
   modalValue?: undefined | { [key: string]: any };
   noteSidebar: boolean;
-  notifications: NotificationPayloadType[];
   paletteInitialQuery?: string | null;
   paletteMetadata?: any | null;
   paletteType?: CorePalette | null;
@@ -46,14 +45,6 @@ export type UiContextAction =
   | {
       name: 'action::@bangle.io/slice-ui:CHANGE_SIDEBAR';
       value: { type: string | null };
-    }
-  | {
-      name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION';
-      value: NotificationPayloadType;
-    }
-  | {
-      name: 'action::@bangle.io/slice-ui:DISMISS_NOTIFICATION';
-      value: { uid: string };
     }
   | {
       name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE';
@@ -98,7 +89,6 @@ export const initialState: UISliceState = {
   modal: undefined,
   modalValue: undefined,
   noteSidebar: false,
-  notifications: [],
   paletteInitialQuery: undefined,
   paletteMetadata: undefined,
   paletteType: undefined,
@@ -138,32 +128,6 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
               ...state,
               sidebar: action.value.type,
             };
-          }
-
-          case 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION': {
-            const { uid } = action.value;
-
-            // Prevent repeat firing of notifications
-            if (state.notifications.find((n) => n.uid === uid)) {
-              return state;
-            }
-
-            return {
-              ...state,
-              notifications: [...state.notifications, action.value],
-            };
-          }
-
-          case 'action::@bangle.io/slice-ui:DISMISS_NOTIFICATION': {
-            const { uid } = action.value;
-            if (state.notifications.some((n) => n.uid === uid)) {
-              return {
-                ...state,
-                notifications: state.notifications.filter((n) => n.uid !== uid),
-              };
-            }
-
-            return state;
           }
 
           case 'action::@bangle.io/slice-ui:UPDATE_PALETTE': {

@@ -1,5 +1,10 @@
-import type { AppState } from './app-state';
-import type { BaseAction, Slice, SliceSideEffect } from './app-state-slice';
+import { AppState } from './app-state';
+import type {
+  BaseAction,
+  ExtractAction,
+  Slice,
+  SliceSideEffect,
+} from './app-state-slice';
 import { ApplicationStore } from './app-store';
 
 const keys: { [k: string]: number } = Object.create(null);
@@ -30,14 +35,26 @@ export class SliceKey<
     return store as ApplicationStore<SL, A>;
   }
 
+  getStateAndDispatch(store: ApplicationStore) {
+    return {
+      state: this.getState(store),
+      dispatch: this.getDispatch(store.dispatch),
+    };
+  }
+
   getDispatch(
     dispatch: ApplicationStore<any, any>['dispatch'],
   ): ApplicationStore<SL, A>['dispatch'] {
     return dispatch as ApplicationStore<SL, A>['dispatch'];
   }
 
-  getState(store: ApplicationStore): ApplicationStore<SL, A>['state'] {
-    return this.getStore(store).state;
+  getState(
+    storeOrState: ApplicationStore | AppState,
+  ): ApplicationStore<SL, A>['state'] {
+    if (storeOrState instanceof AppState) {
+      return storeOrState;
+    }
+    return this.getStore(storeOrState).state;
   }
 
   getSliceState(
@@ -135,5 +152,19 @@ export class SliceKey<
   // Helper function create a side effect with the correct type.
   effect(cb: SliceSideEffect<SL, A, C>) {
     return cb;
+  }
+
+  // serialization type helpers
+  actionSerializer<ANAME extends A['name'], T>(
+    actionName: ANAME,
+    // return the serialzed value of the action
+    toJSON: (action: ExtractAction<A, ANAME>) => T,
+    // return the parsed value of the action
+    fromJSON: (serialActionValue: T) => ExtractAction<A, ANAME>['value'],
+  ) {
+    return {
+      toJSON,
+      fromJSON,
+    };
   }
 }

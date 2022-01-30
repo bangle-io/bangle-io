@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { bangleStateSlices } from '@bangle.io/bangle-store';
+import { workerSyncWhiteListedActions } from '@bangle.io/constants';
 import { editorManagerSliceKey } from '@bangle.io/slice-editor-manager';
 import { pageSliceKey } from '@bangle.io/slice-page';
 import { uiSliceKey } from '@bangle.io/slice-ui';
@@ -32,6 +33,7 @@ test('exhaustive main slices list', () => {
     editorManagerSliceKey.key,
     expect.stringMatching(/slice\$/),
     'miscEffectsSlice$',
+    'notificationSliceKey$',
     expect.stringMatching(/slice\$/),
     expect.stringMatching(/slice\$/),
   ]);
@@ -45,6 +47,7 @@ test('exhaustive naukar slices list', () => {
     pageSliceKey.key,
     workspaceSliceKey.key,
     'editorCollabSlice$',
+    'notificationSliceKey$',
     expect.stringMatching(/slice\$/),
   ]);
 });
@@ -55,33 +58,74 @@ test('slices common worker and main', () => {
     'store-sync$',
     'slice-workspace$',
     'extension-registry-slice$',
+    'notificationSliceKey$',
   ]);
 });
 
-// test to make sure identical sideEffects aren't running
-test.each(
-  commonInBoth
+describe('worker and window constraints', () => {
+  const fixture = commonInBoth
     .map((r) => r.key)
     .filter(
       (r) =>
-        // store sync needs effect in both places so filter out
-        r !== 'store-sync$' &&
-        // both stores need extension registry
-        r !== 'extension-registry-slice$',
-    ),
-)(
-  `%# %s side effect disabled in main and enabled in worker`,
-  (sliceKeyName) => {
-    const slice = mainSlices.find((r) => r.key === sliceKeyName);
-    const naukarSlice = naukarSlices.find((r) => r.key === sliceKeyName);
+        // store sync needs effect to be runing in both places worker and window, so
+        // we remove it from tests
+        r !== 'store-sync$',
+    );
 
-    expect(slice).toBeTruthy();
-    expect(naukarSlice).toBeTruthy();
+  // test to make sure side-effects only run at one place - workers
+  // unless noted.
+  test.each(fixture)(
+    `%# slice %s must have side effects disabled in window and enabled in worker`,
+    (sliceKeyName) => {
+      const slice = mainSlices.find((r) => r.key === sliceKeyName);
+      const naukarSlice = naukarSlices.find((r) => r.key === sliceKeyName);
 
-    expect(slice!.spec.sideEffect).toBeUndefined();
-    expect(naukarSlice!.spec.sideEffect).toBeTruthy();
-  },
-);
+      expect(slice).toBeTruthy();
+      expect(naukarSlice).toBeTruthy();
+
+      const hasSideEffectInWindow = slice!.spec.sideEffect;
+      const hasSideEffectInWorker = naukarSlice!.spec.sideEffect;
+
+      // if there are side effects, they should only be defined in worker
+      // and not main window
+      if (hasSideEffectInWindow || hasSideEffectInWorker) {
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(hasSideEffectInWindow).toBeUndefined();
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(hasSideEffectInWorker).toBeTruthy();
+      }
+    },
+  );
+
+  test.each(fixture)(
+    `%# slice %s actions must be white listed for sync`,
+    (sliceKeyName) => {
+      const slice = mainSlices.find((r) => r.key === sliceKeyName);
+      const naukarSlice = naukarSlices.find((r) => r.key === sliceKeyName);
+
+      if (
+        slice?.spec.actions == undefined ||
+        naukarSlice?.spec.actions == undefined
+      ) {
+        throw new Error('Actions must be defined');
+      }
+
+      // since slices are instantiated from same class, their specification should be
+      // identical
+      expect(Object.keys(slice?.spec.actions)).toEqual(
+        Object.keys(naukarSlice?.spec.actions),
+      );
+
+      for (const action of Object.keys(naukarSlice?.spec.actions)) {
+        // the action must pass through the sync filter or else states will not be kept
+        // in sync.
+        expect(
+          workerSyncWhiteListedActions.some((rule) => action.startsWith(rule)),
+        ).toBe(true);
+      }
+    },
+  );
+});
 
 test('extension-registry-slice should not have side effects', () => {
   const sliceKeyName = 'extension-registry-slice$';

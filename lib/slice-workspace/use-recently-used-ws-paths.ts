@@ -8,10 +8,7 @@ import { MAX_ENTRIES, MAX_TIMESTAMPS_PER_ENTRY } from './config';
 import { workspaceSliceInitialState } from './workspace-slice';
 
 export function useRecentlyUsedWsPaths() {
-  const { sliceState, store: bangleStore } = useSliceState(
-    workspaceSliceKey,
-    workspaceSliceInitialState,
-  );
+  const { sliceState, store: bangleStore } = useSliceState(workspaceSliceKey);
 
   if (!sliceState) {
     throw new Error('Slice state cannot be undefined');

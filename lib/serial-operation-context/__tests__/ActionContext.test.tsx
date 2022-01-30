@@ -90,6 +90,7 @@ describe('operation handlers', () => {
     useSliceStateMock.mockImplementation(() => ({
       sliceState: { extensionRegistry: initExtensionRegistry() },
       store: {} as any,
+      dispatch: () => {},
     }));
 
     function DispatchSOp() {
@@ -169,6 +170,7 @@ describe('operation handlers', () => {
     useSliceStateMock.mockImplementation(() => ({
       sliceState: { extensionRegistry: initExtensionRegistry() },
       store: {} as any,
+      dispatch: () => {},
     }));
 
     function DispatchSOp() {

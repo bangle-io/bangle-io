@@ -4,19 +4,19 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { useSliceState } from '@bangle.io/bangle-store-context';
 import { sleep } from '@bangle.io/utils';
 
 import { NotificationArea } from '../NotificationArea';
 
-jest.mock('@bangle.io/slice-ui', () => {
-  return { useUIManagerContext: jest.fn() };
+jest.mock('@bangle.io/bangle-store-context', () => {
+  return { useSliceState: jest.fn() };
 });
 
 beforeEach(() => {
-  useUIManagerContext.mockImplementation(() => ({
-    dispatch: jest.fn(),
-    notifications: [],
+  useSliceState.mockImplementation(() => ({
+    store: { dispatch: jest.fn(), state: {} },
+    sliceState: { notifications: [] },
   }));
 });
 
@@ -36,9 +36,9 @@ describe('NotificationArea', () => {
   test('renders with content', async () => {
     const uiDispatchMock = jest.fn();
     let notificationsObj = { notifications: [] };
-    useUIManagerContext.mockImplementation(() => ({
-      dispatch: uiDispatchMock,
-      notifications: notificationsObj.notifications,
+    useSliceState.mockImplementation(() => ({
+      store: { dispatch: uiDispatchMock, state: {} },
+      sliceState: { notifications: notificationsObj.notifications },
     }));
 
     const result = await render(<NotificationArea />);
@@ -53,11 +53,11 @@ describe('NotificationArea', () => {
 
     notificationsObj.notifications = [{ uid: 'one', content: 'hello you!' }];
 
-    expect(useUIManagerContext).toBeCalledTimes(1);
+    expect(useSliceState).toBeCalledTimes(1);
 
     await result.rerender(<NotificationArea />);
 
-    expect(useUIManagerContext).toBeCalledTimes(2);
+    expect(useSliceState).toBeCalledTimes(2);
     expect(result.container.innerHTML.includes('hello you')).toBe(true);
 
     notificationsObj.notifications = [
@@ -69,7 +69,7 @@ describe('NotificationArea', () => {
     ];
 
     await result.rerender(<NotificationArea />);
-    expect(useUIManagerContext).toBeCalledTimes(3);
+    expect(useSliceState).toBeCalledTimes(3);
 
     expect(result.container.innerHTML.includes('hello you')).toBe(true);
     expect(result.container.innerHTML.includes('second!')).toBe(true);
@@ -80,16 +80,16 @@ describe('NotificationArea', () => {
   test('removes notification on clicking', async () => {
     const uiDispatchMock = jest.fn();
     let notificationsObj = { notifications: [] };
-    useUIManagerContext.mockImplementation(() => ({
-      dispatch: uiDispatchMock,
-      notifications: notificationsObj.notifications,
+    useSliceState.mockImplementation(() => ({
+      store: { dispatch: uiDispatchMock, state: {} },
+      sliceState: { notifications: notificationsObj.notifications },
     }));
     const result = await render(<NotificationArea />);
 
     notificationsObj.notifications = [{ uid: 'one', content: 'hello you!' }];
 
     await result.rerender(<NotificationArea />);
-    expect(useUIManagerContext).toBeCalledTimes(2);
+    expect(useSliceState).toBeCalledTimes(2);
 
     expect(result.container.innerHTML.includes('hello you')).toBe(true);
 
@@ -99,7 +99,7 @@ describe('NotificationArea', () => {
 
     expect(uiDispatchMock).toBeCalledTimes(1);
     expect(uiDispatchMock).nthCalledWith(1, {
-      name: 'action::@bangle.io/slice-ui:DISMISS_NOTIFICATION',
+      name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
       value: {
         uid: 'one',
       },

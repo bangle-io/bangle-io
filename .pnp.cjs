@@ -239,6 +239,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-editor-manager"
       },
       {
+        "name": "@bangle.io/slice-notification",
+        "reference": "workspace:lib/slice-notification"
+      },
+      {
         "name": "@bangle.io/slice-page",
         "reference": "workspace:lib/slice-page"
       },
@@ -353,6 +357,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/shared-operations", ["workspace:lib/shared-operations"]],
       ["@bangle.io/shared-types", ["workspace:lib/shared-types"]],
       ["@bangle.io/slice-editor-manager", ["workspace:lib/slice-editor-manager"]],
+      ["@bangle.io/slice-notification", ["workspace:lib/slice-notification"]],
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],
@@ -4003,6 +4008,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-operations", "workspace:lib/shared-operations"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
@@ -4076,6 +4082,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-operations", "workspace:lib/shared-operations"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
@@ -4136,6 +4143,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared", "workspace:app/shared"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
@@ -4318,6 +4326,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-operations", "workspace:lib/shared-operations"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
@@ -5210,6 +5219,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
             ["@bangle.io/utils", "workspace:lib/utils"],
@@ -5263,6 +5273,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["@bangle.io/slice-notification", [
+        ["workspace:lib/slice-notification", {
+          "packageLocation": "./lib/slice-notification/",
+          "packageDependencies": [
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
+            ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],
+            ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],
+            ["@bangle.io/utils", "workspace:lib/utils"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.io/slice-page", [
         ["workspace:lib/slice-page", {
           "packageLocation": "./lib/slice-page/",
@@ -5272,6 +5297,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["@types/react", "npm:17.0.34"],
@@ -5406,6 +5432,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/markdown", "workspace:lib/markdown"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-ui", "workspace:lib/slice-ui"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
@@ -5549,6 +5576,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],
             ["@bangle.io/search-pm-node", "workspace:js-lib/search-pm-node"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-page", "workspace:lib/slice-page"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
             ["@bangle.io/store-sync", "workspace:lib/store-sync"],

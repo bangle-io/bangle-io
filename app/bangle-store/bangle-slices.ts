@@ -4,6 +4,10 @@ import {
   EditorManagerAction,
   editorManagerSlice,
 } from '@bangle.io/slice-editor-manager';
+import {
+  notificationSlice,
+  uncaughtExceptionNotification,
+} from '@bangle.io/slice-notification';
 import { pageSlice, PageSliceAction } from '@bangle.io/slice-page';
 import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';
@@ -52,12 +56,22 @@ export function bangleStateSlices({
     editorManagerSlice(),
     saveStateSlice(),
     miscEffectsSlice(),
+    notificationSlice(),
 
     ...extensionSlices,
 
     e2eHelpers(),
     // keep this at the end
     new Slice({
+      onError(error, store) {
+        (window as any).Sentry?.captureException(error);
+        console.error(error);
+        Promise.resolve().then(() => {
+          uncaughtExceptionNotification(error)(store.state, store.dispatch);
+        });
+
+        return true;
+      },
       sideEffect: [
         () => {
           return {

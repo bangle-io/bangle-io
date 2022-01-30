@@ -1,3 +1,4 @@
+export * from './action-serializers';
 export * from './create-basic-test-store';
 export * from './create-editor-view';
 export * from './create-pm-node';

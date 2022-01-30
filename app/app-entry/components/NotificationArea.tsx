@@ -1,8 +1,12 @@
 import React from 'react';
 
+import { useSliceState } from '@bangle.io/bangle-store-context';
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
+import {
+  dismissNotification,
+  notificationSliceKey,
+} from '@bangle.io/slice-notification';
 import {
   ButtonIcon,
   CheckCircleIcon,
@@ -14,21 +18,21 @@ import {
 } from '@bangle.io/ui-components';
 
 export function NotificationArea({}) {
-  const { notifications, dispatch } = useUIManagerContext();
+  const {
+    store,
+    sliceState: { notifications },
+  } = useSliceState(notificationSliceKey);
   return (
     <div className="fixed bottom-0 right-0 z-50">
       {notifications.map((n) => (
         <Notification
           key={n.uid}
           onDismiss={() => {
-            dispatch({
-              name: 'action::@bangle.io/slice-ui:DISMISS_NOTIFICATION',
-              value: {
-                uid: n.uid,
-              },
-            });
+            dismissNotification({ uid: n.uid })(store.state, store.dispatch);
           }}
-          content={n.content}
+          content={n.content.split('\n').map((r, i) => (
+            <span key={i}>{r}</span>
+          ))}
           severity={n.severity}
           buttons={n.buttons}
         />
@@ -78,7 +82,7 @@ export function Notification({
     >
       <div className=" flex flex-row w-full">
         <span className="mr-2">{Severity[severity]()}</span>
-        <div className="w-full text-sm">
+        <div className="w-full text-sm flex flex-col">
           {typeof content === 'string' ? <span>{content}</span> : content}
         </div>
         <div>

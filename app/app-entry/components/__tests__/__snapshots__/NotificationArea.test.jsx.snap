@@ -31,7 +31,7 @@ exports[`NotificationArea renders with content 2`] = `
           </svg>
         </span>
         <div
-          class="w-full text-sm"
+          class="w-full text-sm flex flex-col"
         >
           <span>
             hello you!
@@ -89,7 +89,7 @@ exports[`NotificationArea renders with content 2`] = `
           </svg>
         </span>
         <div
-          class="w-full text-sm"
+          class="w-full text-sm flex flex-col"
         >
           <span>
             second!

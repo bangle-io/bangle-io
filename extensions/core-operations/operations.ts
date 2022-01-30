@@ -1,5 +1,9 @@
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import {
+  notificationSliceKey,
+  showNotification,
+} from '@bangle.io/slice-notification';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
   refreshWsPaths,
@@ -12,33 +16,25 @@ import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 export function downloadWorkspace() {
   return (
     state: AppState,
-    dispatch: ApplicationStore<
-      any,
-      WorkspaceSliceAction | UiContextAction
-    >['dispatch'],
+    dispatch: ApplicationStore<any, WorkspaceSliceAction>['dispatch'],
   ) => {
     const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
     if (!wsName) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'error',
-          uid: 'new-note-not-no-workspace',
-          content: 'Please first select a workspace',
-        },
-      });
+      showNotification({
+        severity: 'error',
+        uid: 'new-note-not-no-workspace',
+        content: 'Please first select a workspace',
+      })(state, notificationSliceKey.getDispatch(dispatch));
+
       return;
     }
 
     const abortController = new AbortController();
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-      value: {
-        severity: 'info',
-        uid: 'downloading-ws-copy' + wsName,
-        content: 'Hang tight! your backup zip will be downloaded momentarily.',
-      },
-    });
+    showNotification({
+      severity: 'info',
+      uid: 'downloading-ws-copy' + wsName,
+      content: 'Hang tight! your backup zip will be downloaded momentarily.',
+    })(state, notificationSliceKey.getDispatch(dispatch));
 
     naukarProxy
       .abortableBackupAllFiles(abortController.signal, wsName)
@@ -49,33 +45,28 @@ export function downloadWorkspace() {
 }
 
 export function restoreWorkspaceFromBackup() {
-  return (_: AppState, __: UiContextDispatchType, store: ApplicationStore) => {
+  return (_, __, store: ApplicationStore) => {
     const wsName = workspaceSliceKey.getSliceState(store.state)?.wsName;
 
     if (!wsName) {
-      store.dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'error',
-          uid: 'restoreWorkspaceFromBackup-no-workspace',
-          content: 'Please create an empty workspace first',
-        },
-      });
+      showNotification({
+        severity: 'error',
+        uid: 'restoreWorkspaceFromBackup-no-workspace',
+        content: 'Please create an empty workspace first',
+      })(store.state, notificationSliceKey.getDispatch(store.dispatch));
       return false;
     }
 
     filePicker()
       .then((file) => {
         const abortController = new AbortController();
-        store.dispatch({
-          name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-          value: {
-            severity: 'info',
-            uid: 'restoreWorkspaceFromBackup-' + wsName,
-            content:
-              'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
-          },
-        });
+
+        showNotification({
+          severity: 'info',
+          uid: 'restoreWorkspaceFromBackup-' + wsName,
+          content:
+            'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
+        })(store.state, notificationSliceKey.getDispatch(store.dispatch));
 
         return naukarProxy.abortableCreateWorkspaceFromBackup(
           abortController.signal,
@@ -89,28 +80,24 @@ export function restoreWorkspaceFromBackup() {
       .then(
         () => {
           refreshWsPaths()(store.state, store.dispatch);
-          store.dispatch({
-            name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-            value: {
-              severity: 'success',
-              uid: 'recovery-finished-' + wsName,
-              content: 'Your notes have successfully restored.',
-            },
-          });
+
+          showNotification({
+            severity: 'success',
+            uid: 'recovery-finished-' + wsName,
+            content: 'Your notes have successfully restored.',
+          })(store.state, notificationSliceKey.getDispatch(store.dispatch));
         },
         (error) => {
           // comlink is unable to understand custom errors
           if (
             error?.message?.includes(WorkerErrorCode.EMPTY_WORKSPACE_NEEDED)
           ) {
-            store.dispatch({
-              name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-              value: {
-                severity: 'error',
-                uid: 'restoreWorkspaceFromBackup-workspace-has-things',
-                content: 'This operation requires an empty workspace.',
-              },
-            });
+            showNotification({
+              severity: 'error',
+              uid: 'restoreWorkspaceFromBackup-workspace-has-things',
+              content: 'This operation requires an empty workspace.',
+            })(store.state, notificationSliceKey.getDispatch(store.dispatch));
+
             return;
           }
         },

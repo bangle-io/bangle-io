@@ -10,6 +10,7 @@ import {
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
 import type { NaukarStateConfig } from '@bangle.io/shared-types';
+import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import {
   createNote,
@@ -82,6 +83,7 @@ export function createBasicTestStore<
         useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,
         pageSlice(),
         workspaceSlice(),
+        notificationSlice(),
         ...slices,
       ].filter((r): r is Slice => Boolean(r)),
       opts: {

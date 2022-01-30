@@ -2,16 +2,9 @@ import { Slice } from '@bangle.io/create-store';
 import type { BangleStateConfig } from '@bangle.io/shared-types';
 import { assertActionName, asssertNotUndefined } from '@bangle.io/utils';
 
-import {
-  ExtensionRegistryAction,
-  extensionRegistrySliceKey,
-  ExtensionRegistryState,
-} from './common';
+import { extensionRegistrySliceKey, ExtensionRegistryState } from './common';
 
-export function extensionRegistrySlice(): Slice<
-  ExtensionRegistryState,
-  ExtensionRegistryAction
-> {
+export function extensionRegistrySlice(): Slice<ExtensionRegistryState> {
   assertActionName('@bangle.io/extension-registry', extensionRegistrySliceKey);
 
   return new Slice({
@@ -27,5 +20,6 @@ export function extensionRegistrySlice(): Slice<
         };
       },
     },
+    actions: {},
   });
 }
