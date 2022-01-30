@@ -4,7 +4,6 @@ import {
   notificationSliceKey,
   showNotification,
 } from '@bangle.io/slice-notification';
-import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
   refreshWsPaths,
   WorkspaceSliceAction,
@@ -23,7 +22,7 @@ export function downloadWorkspace() {
       showNotification({
         severity: 'error',
         uid: 'new-note-not-no-workspace',
-        content: 'Please first select a workspace',
+        title: 'Please first select a workspace',
       })(state, notificationSliceKey.getDispatch(dispatch));
 
       return;
@@ -33,7 +32,7 @@ export function downloadWorkspace() {
     showNotification({
       severity: 'info',
       uid: 'downloading-ws-copy' + wsName,
-      content: 'Hang tight! your backup zip will be downloaded momentarily.',
+      title: 'Hang tight! your backup zip will be downloaded momentarily.',
     })(state, notificationSliceKey.getDispatch(dispatch));
 
     naukarProxy
@@ -52,7 +51,7 @@ export function restoreWorkspaceFromBackup() {
       showNotification({
         severity: 'error',
         uid: 'restoreWorkspaceFromBackup-no-workspace',
-        content: 'Please create an empty workspace first',
+        title: 'Please create an empty workspace first',
       })(store.state, notificationSliceKey.getDispatch(store.dispatch));
       return false;
     }
@@ -64,7 +63,7 @@ export function restoreWorkspaceFromBackup() {
         showNotification({
           severity: 'info',
           uid: 'restoreWorkspaceFromBackup-' + wsName,
-          content:
+          title:
             'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
         })(store.state, notificationSliceKey.getDispatch(store.dispatch));
 
@@ -84,7 +83,7 @@ export function restoreWorkspaceFromBackup() {
           showNotification({
             severity: 'success',
             uid: 'recovery-finished-' + wsName,
-            content: 'Your notes have successfully restored.',
+            title: 'Your notes have successfully restored.',
           })(store.state, notificationSliceKey.getDispatch(store.dispatch));
         },
         (error) => {
@@ -95,7 +94,7 @@ export function restoreWorkspaceFromBackup() {
             showNotification({
               severity: 'error',
               uid: 'restoreWorkspaceFromBackup-workspace-has-things',
-              content: 'This operation requires an empty workspace.',
+              title: 'This operation requires an empty workspace.',
             })(store.state, notificationSliceKey.getDispatch(store.dispatch));
 
             return;

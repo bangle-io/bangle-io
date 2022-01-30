@@ -34,7 +34,7 @@ export function SWReloadPrompt() {
       showNotification({
         uid: 'offline-' + RELEASE_ID,
         severity: 'info',
-        content: 'Bangle.io is now offline ready.',
+        title: 'Bangle.io is now offline ready.',
       })(bangleStore.state, bangleStore.dispatch);
     }
   }, [shownOfflineReady, offlineReady, bangleStore, updateShownOfflineReady]);
@@ -66,7 +66,8 @@ export function SWReloadPrompt() {
       showNotification({
         severity: 'info',
         uid,
-        content: `📦 There is a new version of Bangle.io available, would you like to update?`,
+        title: '📦 Update available',
+        content: `There is a new version of Bangle.io available, would you like to update?`,
         buttons: [
           {
             title: 'Update',

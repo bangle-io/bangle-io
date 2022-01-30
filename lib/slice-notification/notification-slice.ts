@@ -1,4 +1,4 @@
-import { ExtractAction, Slice, SliceKey } from '@bangle.io/create-store';
+import { Slice, SliceKey } from '@bangle.io/create-store';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import { assertActionName } from '@bangle.io/utils';
 
@@ -29,7 +29,6 @@ export function notificationSlice() {
         switch (action.name) {
           case 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION': {
             const { uid } = action.value;
-            let notifications = state.notifications;
 
             if (state.notifications.find((n) => n.uid === uid)) {
               // Prevent repeat firing of notifications
@@ -67,16 +66,18 @@ export function notificationSlice() {
         return notificationSliceKey.actionSerializer(
           actionName,
           (action) => ({
-            content: action.value.content,
+            content: action.value.content || null,
             buttons: action.value.buttons,
             uid: action.value.uid,
             severity: action.value.severity,
+            title: action.value.title,
           }),
           (serialVal) => ({
-            content: serialVal.content,
+            content: serialVal.content || undefined,
             buttons: serialVal.buttons,
             uid: serialVal.uid,
             severity: serialVal.severity,
+            title: serialVal.title,
           }),
         );
       },

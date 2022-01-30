@@ -20,13 +20,10 @@ const extension = Extension.create({
     storageProvider: new NativsFsStorageProvider(),
     onStorageError: (error, store) => {
       if (
-        error instanceof BaseFileSystemError &&
-        (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
-          error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
+        error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
+        error.code === NATIVE_BROWSER_USER_ABORTED_ERROR
       ) {
-        const wsName = workspaceSliceKey.getSliceStateAsserted(
-          store.state,
-        ).wsName;
+        const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
 
         if (wsName) {
           goToWorkspaceAuthRoute(wsName, error.code)(
@@ -36,6 +33,7 @@ const extension = Extension.create({
           return true;
         }
       }
+      console.log('received error', error);
 
       return false;
     },

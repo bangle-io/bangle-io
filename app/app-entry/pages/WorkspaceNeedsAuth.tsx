@@ -8,9 +8,6 @@ import {
   getWorkspaceInfo,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
-  goToWsNameRouteNotFoundRoute,
-  WORKSPACE_NOT_FOUND_ERROR,
-  WorkspaceError,
 } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
@@ -37,16 +34,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
         if (destroyed) {
           return;
         }
-        if (
-          error instanceof WorkspaceError &&
-          error.code === WORKSPACE_NOT_FOUND_ERROR
-        ) {
-          goToWsNameRouteNotFoundRoute(wsName)(
-            bangleStore.state,
-            bangleStore.dispatch,
-          );
-        }
-        throw error;
+        bangleStore.errorHandler(error);
       },
     );
 
