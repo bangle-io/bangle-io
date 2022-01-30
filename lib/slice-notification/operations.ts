@@ -1,5 +1,6 @@
-import { NotificationPayloadType } from '@bangle.io/shared-types';
+import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import { BaseError } from '@bangle.io/utils';
+
 import { notificationSliceKey } from './notification-slice';
 
 export function showNotification(notification: NotificationPayloadType) {

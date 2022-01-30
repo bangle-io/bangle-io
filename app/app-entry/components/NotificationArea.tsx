@@ -1,7 +1,12 @@
 import React from 'react';
 
+import { useSliceState } from '@bangle.io/bangle-store-context';
 import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
+import {
+  dismissNotification,
+  notificationSliceKey,
+} from '@bangle.io/slice-notification';
 import {
   ButtonIcon,
   CheckCircleIcon,
@@ -11,9 +16,6 @@ import {
   InformationCircleIcon,
   TextButton,
 } from '@bangle.io/ui-components';
-import { useSliceState } from '@bangle.io/bangle-store-context';
-import { notificationSliceKey } from '@bangle.io/slice-notification';
-import { dismissNotification } from '@bangle.io/slice-notification/operations';
 
 export function NotificationArea({}) {
   const {

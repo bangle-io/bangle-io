@@ -1,5 +1,4 @@
-import { BaseAction } from '@bangle.io/create-store';
-import { SliceKey } from '@bangle.io/create-store';
+import { BaseAction , SliceKey } from '@bangle.io/create-store';
 
 export type ActionTestFixtureType<A extends BaseAction> = {
   [K in A['name']]: Array<A extends { name: K } ? A : never>;

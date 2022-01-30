@@ -4,8 +4,7 @@ import {
   EditorManagerAction,
   editorManagerSlice,
 } from '@bangle.io/slice-editor-manager';
-import { notificationSlice } from '@bangle.io/slice-notification';
-import { uncaughtExceptionNotification } from '@bangle.io/slice-notification';
+import { notificationSlice , uncaughtExceptionNotification } from '@bangle.io/slice-notification';
 import { pageSlice, PageSliceAction } from '@bangle.io/slice-page';
 import { UiContextAction, uiSlice } from '@bangle.io/slice-ui';
 import type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';

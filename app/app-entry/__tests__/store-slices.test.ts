@@ -89,7 +89,9 @@ describe('worker and window constraints', () => {
       // if there are side effects, they should only be defined in worker
       // and not main window
       if (hasSideEffectInWindow || hasSideEffectInWorker) {
+        // eslint-disable-next-line jest/no-conditional-expect
         expect(hasSideEffectInWindow).toBeUndefined();
+        // eslint-disable-next-line jest/no-conditional-expect
         expect(hasSideEffectInWorker).toBeTruthy();
       }
     },

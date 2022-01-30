@@ -1,3 +1,4 @@
+export * from './action-serializers';
 export * from './create-basic-test-store';
 export * from './create-editor-view';
 export * from './create-pm-node';
@@ -9,4 +10,3 @@ export * from './indexedb-ws-helpers';
 export * as idbHelpers from './indexedb-ws-helpers';
 export * from './test-memory-history-slice';
 export { TestStoreProvider } from './TestStoreProvider';
-export * from './action-serializers';

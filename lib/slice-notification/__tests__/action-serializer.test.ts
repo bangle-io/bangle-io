@@ -3,6 +3,7 @@ import {
   ActionTestFixtureType,
   createTestStore,
 } from '@bangle.io/test-utils';
+
 import { notificationSlice, notificationSliceKey } from '../notification-slice';
 
 const testFixtures = actionSerializerTestFixture(notificationSliceKey, {

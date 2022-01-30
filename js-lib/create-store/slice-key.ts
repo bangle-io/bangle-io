@@ -1,6 +1,10 @@
-import { ExtractAction } from '.';
 import { AppState } from './app-state';
-import type { BaseAction, Slice, SliceSideEffect } from './app-state-slice';
+import type {
+  BaseAction,
+  ExtractAction,
+  Slice,
+  SliceSideEffect,
+} from './app-state-slice';
 import { ApplicationStore } from './app-store';
 
 const keys: { [k: string]: number } = Object.create(null);

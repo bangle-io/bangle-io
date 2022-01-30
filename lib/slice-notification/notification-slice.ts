@@ -1,5 +1,5 @@
 import { ExtractAction, Slice, SliceKey } from '@bangle.io/create-store';
-import { NotificationPayloadType } from '@bangle.io/shared-types';
+import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import { assertActionName } from '@bangle.io/utils';
 
 export const notificationSliceKey = new SliceKey<

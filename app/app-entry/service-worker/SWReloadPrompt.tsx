@@ -1,21 +1,21 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useEffect } from 'react';
 
+import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { RELEASE_ID } from '@bangle.io/config';
 import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
+import {
+  dismissNotification,
+  showNotification,
+} from '@bangle.io/slice-notification';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { useLocalStorage } from '@bangle.io/utils';
 
 import { useRegisterSW } from './use-sw';
-import {
-  dismissNotification,
-  showNotification,
-} from '@bangle.io/slice-notification/operations';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 
 const uid = 'new-version-' + RELEASE_ID;
 

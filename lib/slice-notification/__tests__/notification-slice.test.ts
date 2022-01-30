@@ -1,4 +1,5 @@
 import { AppState } from '@bangle.io/create-store';
+
 import { notificationSlice, notificationSliceKey } from '..';
 
 test('blank state', () => {
