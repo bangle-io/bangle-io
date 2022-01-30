@@ -80,10 +80,10 @@ const storageProviderProxy = new WeakMap<
   BaseStorageProvider
 >();
 
-export function isStorageProviderError(error) {
+export function isStorageProviderError(error: Error) {
   return storageProviderError.has(error);
 }
-export function getStorageProviderNameFromError(error) {
+export function getStorageProviderNameFromError(error: Error) {
   return storageProviderError.get(error)?.name;
 }
 
@@ -123,12 +123,12 @@ export function storageProviderFromExtensionRegistry(
     get(target, method) {
       let fun = Reflect.get(target, method);
       if (typeof fun === 'function') {
-        return (...args) => {
+        return <T>(...args: T[]) => {
           try {
             const result = Reflect.apply(fun, target, args);
 
             if (result.then) {
-              return result.catch((err) => {
+              return result.catch((err: unknown) => {
                 if (err instanceof Error) {
                   storageProviderError.set(err, { name: target.name });
                 }

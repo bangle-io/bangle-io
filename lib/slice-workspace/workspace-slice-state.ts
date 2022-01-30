@@ -54,7 +54,7 @@ export class WorkspaceSliceState {
   get workspacesInfo(): WorkspaceInfoReg | undefined {
     return this.mainFields.workspacesInfo;
   }
-  get error(): BaseError | undefined {
+  get error(): Error | undefined {
     return this.mainFields.error;
   }
 
