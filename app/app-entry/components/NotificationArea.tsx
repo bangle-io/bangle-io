@@ -30,7 +30,9 @@ export function NotificationArea({}) {
           onDismiss={() => {
             dismissNotification({ uid: n.uid })(store.state, store.dispatch);
           }}
-          content={n.content}
+          content={n.content.split('\n').map((r, i) => (
+            <span key={i}>{r}</span>
+          ))}
           severity={n.severity}
           buttons={n.buttons}
         />
@@ -80,7 +82,7 @@ export function Notification({
     >
       <div className=" flex flex-row w-full">
         <span className="mr-2">{Severity[severity]()}</span>
-        <div className="w-full text-sm">
+        <div className="w-full text-sm flex flex-col">
           {typeof content === 'string' ? <span>{content}</span> : content}
         </div>
         <div>

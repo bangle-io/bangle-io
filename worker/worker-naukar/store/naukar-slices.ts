@@ -1,6 +1,11 @@
+import * as Sentry from '@sentry/browser';
+
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
-import { notificationSlice } from '@bangle.io/slice-notification';
+import {
+  notificationSlice,
+  uncaughtExceptionNotification,
+} from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 
@@ -27,6 +32,15 @@ export function naukarSlices({
 
     // keep this at the end
     new Slice({
+      onError(error, store) {
+        Sentry?.captureException(error);
+        console.error(error);
+        Promise.resolve().then(() => {
+          uncaughtExceptionNotification(error)(store.state, store.dispatch);
+        });
+
+        return true;
+      },
       sideEffect() {
         return {
           deferredUpdate(store) {

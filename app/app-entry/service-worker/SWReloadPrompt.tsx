@@ -12,7 +12,6 @@ import {
   dismissNotification,
   showNotification,
 } from '@bangle.io/slice-notification';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { useLocalStorage } from '@bangle.io/utils';
 
 import { useRegisterSW } from './use-sw';
