@@ -1,5 +1,4 @@
 import {
-  BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
   NATIVE_BROWSER_USER_ABORTED_ERROR,
 } from '@bangle.io/baby-fs';

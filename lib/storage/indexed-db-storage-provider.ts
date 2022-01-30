@@ -20,6 +20,8 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
 
   private idb = new IndexedDBFileSystem();
 
+  async newWorkspaceMetadata(wsName: string, createOpts: any) {}
+
   async fileToDoc(file: File, opts: StorageOpts): Promise<Node> {
     const textContent = await readFileAsText(file);
 

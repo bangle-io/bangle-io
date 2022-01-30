@@ -239,11 +239,12 @@ export function createBrowserWorkspace(wsName: string) {
         store,
       );
       (window as any).fathom?.trackGoal('AISLCLRF', 0);
-    } catch (error) {
+    } catch (error: any) {
       showNotification({
         severity: 'error',
         uid: 'error-create-workspace-' + wsName,
         title: 'Unable to create workspace ' + wsName,
+        content: error.displayMessage || error.message,
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
@@ -271,11 +272,12 @@ export function createNativeFsWorkpsace(rootDirHandle) {
         })(state, dispatch, store);
 
         (window as any).fathom?.trackGoal('K3NFTGWX', 0);
-      } catch (error) {
+      } catch (error: any) {
         showNotification({
           severity: 'error',
           uid: 'error-create-workspace-' + rootDirHandle?.name,
           title: 'Unable to create workspace ' + rootDirHandle?.name,
+          content: error.displayMessage || error.message,
         })(
           notificationSliceKey.getState(state),
           notificationSliceKey.getDispatch(dispatch),

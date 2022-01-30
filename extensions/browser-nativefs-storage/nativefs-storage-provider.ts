@@ -33,6 +33,19 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     });
   }
 
+  async newWorkspaceMetadata(wsName: string, createOpts: any) {
+    const { rootDirHandle } = createOpts;
+    if (!rootDirHandle) {
+      throw new Error(
+        `rootDirHandle is necessary for creating nativefs workspace`,
+      );
+    }
+
+    return {
+      rootDirHandle,
+    };
+  }
+
   async fileToDoc(file: File, opts: StorageOpts): Promise<Node> {
     const textContent = await readFileAsText(file);
     const doc: Node = await opts.formatParser(textContent, opts.specRegistry);

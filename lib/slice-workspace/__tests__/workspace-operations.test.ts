@@ -1,5 +1,7 @@
 import { helpFSWorkspaceInfo, WorkspaceType } from '@bangle.io/constants';
+import { Extension } from '@bangle.io/extension-registry';
 import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
+import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createBasicTestStore, fakeIdb } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
@@ -158,26 +160,39 @@ describe('createWorkspace', () => {
     );
   });
 
-  test('creates nativefs without dir handle', async () => {
-    const { store } = createBasicTestStore();
+  test('saves workspace metadata correctly', async () => {
+    class TestProvider extends IndexedDbStorageProvider {
+      name = WorkspaceType['nativefs'];
 
-    await expect(
-      createWorkspace('test-1', WorkspaceType['nativefs'])(
-        store.state,
-        store.dispatch,
-        store,
-      ),
-    ).rejects.toThrowError(
-      'rootDirHandle is necessary for creating nativefs of workspaces',
+      async newWorkspaceMetadata(wsName: string, createOpts: any) {
+        return createOpts;
+      }
+    }
+
+    const provider = new TestProvider();
+    const newWorkspaceMetadataSpy = jest.spyOn(
+      provider,
+      'newWorkspaceMetadata',
     );
-  });
 
-  test('creates nativefs with dir handle', async () => {
-    const { store } = createBasicTestStore();
+    const { store } = createBasicTestStore({
+      sliceKey: workspaceSliceKey,
+      extensions: [
+        Extension.create({
+          name: 'test-storage-extension',
+          application: {
+            storageProvider: provider,
+            onStorageError: () => false,
+          },
+        }),
+      ],
+    });
 
     await createWorkspace('test-1', WorkspaceType['nativefs'], {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
+
+    expect(newWorkspaceMetadataSpy).toBeCalledTimes(1);
 
     expect(await getWorkspaceInfo('test-1')(store.state)).toEqual({
       deleted: false,
@@ -204,11 +219,11 @@ describe('deleteWorkspace', () => {
 
   test('deleting a workspace adds a delete field', async () => {
     const { store } = createBasicTestStore();
-    await createWorkspace('test-1', WorkspaceType['nativefs'], {
-      rootDirHandle: { root: 'dummy' },
-    })(store.state, store.dispatch, store);
-
-    // syncPageLocation({ pathname: '/ws/test-1' })(store.state, store.dispatch);
+    await createWorkspace('test-1', WorkspaceType['nativefs'], {})(
+      store.state,
+      store.dispatch,
+      store,
+    );
 
     await deleteWorkspace('test-1')(store.state, store.dispatch, store);
 
@@ -216,11 +231,7 @@ describe('deleteWorkspace', () => {
       {
         deleted: true,
         lastModified: expect.any(Number),
-        metadata: {
-          rootDirHandle: {
-            root: 'dummy',
-          },
-        },
+        metadata: {},
         name: 'test-1',
         type: 'nativefs',
       },

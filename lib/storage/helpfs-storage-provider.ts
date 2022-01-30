@@ -52,6 +52,8 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
 
   private idbProvider = new IndexedDbStorageProvider();
 
+  async newWorkspaceMetadata(wsName: string, createOpts: any) {}
+
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
     if (wsPath === HELP_FS_INDEX_WS_PATH) {
       return true;

@@ -30,7 +30,11 @@ export interface BaseStorageProvider {
   readonly hidden?: boolean;
   readonly description: string;
 
-  onCreateWorkspace?: (wsName: string, opts: StorageOpts) => Promise<void>;
+  // return any metadata associated with this newly created workspace
+  newWorkspaceMetadata(
+    wsName: string,
+    createOpts: any,
+  ): Promise<{ [key: string]: any }> | Promise<void> | void;
 
   fileExists(wsPath: WsPath, opts: StorageOpts): Promise<boolean>;
 

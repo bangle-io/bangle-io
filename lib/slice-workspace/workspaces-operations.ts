@@ -2,6 +2,7 @@ import { sleep } from '@bangle.dev/utils';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
+import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { goToLocation, pageSliceKey } from '@bangle.io/slice-page';
 import { asssertNotUndefined } from '@bangle.io/utils';
@@ -18,6 +19,7 @@ import {
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from './errors';
+import { storageProviderFromExtensionRegistry } from './helpers';
 import { goToWorkspaceHomeRoute } from './operations';
 import { readWorkspacesInfoReg, saveWorkspacesInfo } from './read-ws-info';
 
@@ -72,45 +74,22 @@ export function createWorkspace(
       );
     }
 
-    let workspace: WorkspaceInfo;
+    const storageProvider = storageProviderFromExtensionRegistry(
+      type,
+      extensionRegistrySliceKey.getSliceStateAsserted(store.state)
+        .extensionRegistry,
+    );
 
-    switch (type) {
-      case WorkspaceType.browser: {
-        workspace = {
-          deleted: false,
-          lastModified: Date.now(),
-          name: wsName,
-          type,
-          metadata: {},
-        };
+    const wsMetadata =
+      (await storageProvider?.newWorkspaceMetadata?.(wsName, opts)) || {};
 
-        break;
-      }
-
-      case WorkspaceType.nativefs: {
-        const { rootDirHandle } = opts;
-        if (!rootDirHandle) {
-          throw new Error(
-            `rootDirHandle is necessary for creating ${type} of workspaces`,
-          );
-        }
-
-        workspace = {
-          deleted: false,
-          lastModified: Date.now(),
-          name: wsName,
-          type,
-          metadata: {
-            rootDirHandle,
-          },
-        };
-        break;
-      }
-
-      default: {
-        throw new Error('Unknown workspace type ' + type);
-      }
-    }
+    let workspace: WorkspaceInfo = {
+      deleted: false,
+      lastModified: Date.now(),
+      name: wsName,
+      type,
+      metadata: wsMetadata,
+    };
 
     store.dispatch({
       name: 'action::@bangle.io/slice-workspace:set-workspace-infos',

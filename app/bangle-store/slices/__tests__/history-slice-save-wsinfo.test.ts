@@ -32,6 +32,10 @@ let setup = () => {
   class FakeNativeFs extends IndexedDbStorageProvider {
     name = WorkspaceType.nativefs;
     description = 'test native fs fake';
+
+    async newWorkspaceMetadata(wsName: string, createOpts: any) {
+      return createOpts;
+    }
   }
 
   window.history.replaceState(null, '', '/');
