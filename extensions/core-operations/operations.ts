@@ -1,6 +1,9 @@
 import { WorkerErrorCode } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { notificationSliceKey , showNotification } from '@bangle.io/slice-notification';
+import {
+  notificationSliceKey,
+  showNotification,
+} from '@bangle.io/slice-notification';
 import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
 import {
   refreshWsPaths,
