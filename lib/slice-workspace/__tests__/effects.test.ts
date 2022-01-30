@@ -227,7 +227,7 @@ describe('refreshWorkspacesEffect', () => {
   });
 
   test('does not overwrite existing values', async () => {
-    const { store, dispatchSpy } = createStore();
+    const { store } = createStore();
 
     const testWsInfo = createWsInfo({
       name: 'testWs',

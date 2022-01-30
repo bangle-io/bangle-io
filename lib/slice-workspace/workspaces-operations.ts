@@ -53,9 +53,6 @@ export function createWorkspace(
   type: WorkspaceType,
   opts: {
     rootDirHandle?: any;
-    githubOwner?: string;
-    githubRepo?: string;
-    githubBranch?: string;
   } = {},
 ) {
   return async (
