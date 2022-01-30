@@ -12,17 +12,14 @@ import {
   WorkspaceDispatchType,
   workspaceSliceKey,
 } from './common';
-import { goToWorkspaceHomeRoute } from './operations';
 import {
   WORKSPACE_ALREADY_EXISTS_ERROR,
   WORKSPACE_DELETED_MODIFY_ERROR,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
-} from './workspaces/errors';
-import {
-  readWorkspacesInfoReg,
-  saveWorkspacesInfo,
-} from './workspaces/read-ws-info';
+} from './errors';
+import { goToWorkspaceHomeRoute } from './operations';
+import { readWorkspacesInfoReg, saveWorkspacesInfo } from './read-ws-info';
 
 // Lists all the workspaces that have not been deleted workspaces
 export function listWorkspaces() {
@@ -87,21 +84,6 @@ export function createWorkspace(
           metadata: {},
         };
 
-        break;
-      }
-
-      case 'github-read-fs': {
-        workspace = {
-          deleted: false,
-          lastModified: Date.now(),
-          name: wsName,
-          type,
-          metadata: {
-            githubOwner: opts.githubOwner,
-            githubRepo: opts.githubRepo,
-            githubBranch: opts.githubBranch,
-          },
-        };
         break;
       }
 

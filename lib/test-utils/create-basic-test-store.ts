@@ -9,7 +9,6 @@ import {
   Extension,
   extensionRegistrySlice,
 } from '@bangle.io/extension-registry';
-import type { NaukarStateConfig } from '@bangle.io/shared-types';
 import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import {
@@ -18,7 +17,10 @@ import {
   listWorkspaces,
   workspaceSlice,
 } from '@bangle.io/slice-workspace';
-import { IndexedDbStorageProvider } from '@bangle.io/storage';
+import {
+  BaseStorageProvider,
+  IndexedDbStorageProvider,
+} from '@bangle.io/storage';
 import { asssertNotUndefined, sleep } from '@bangle.io/utils';
 
 import { createPMNode } from './create-pm-node';
@@ -48,7 +50,10 @@ export function createBasicTestStore<
   sliceKey,
   scheduler,
   opts,
+  onError,
+  storageProvider = new IndexedDbStorageProvider(),
 }: {
+  storageProvider?: BaseStorageProvider;
   scheduler?: any;
   // for getting the types right
   sliceKey?: SliceKey<SL, A, S, C>;
@@ -56,6 +61,7 @@ export function createBasicTestStore<
   extensions?: Extension[];
   useMemoryHistorySlice?: boolean;
   useEditorCoreExtension?: boolean;
+  onError?: ApplicationStore<SL, A>['onError'];
   opts?: any;
 } = {}) {
   let extensionRegistry = createExtensionRegistry(
@@ -63,7 +69,7 @@ export function createBasicTestStore<
       Extension.create({
         name: 'test-extension',
         application: {
-          storageProvider: new IndexedDbStorageProvider(),
+          storageProvider: storageProvider,
           onStorageError: () => false,
         },
       }),
@@ -78,6 +84,7 @@ export function createBasicTestStore<
     createTestStore({
       sliceKey,
       scheduler,
+      onError,
       slices: [
         extensionRegistrySlice(),
         useMemoryHistorySlice ? testMemoryHistorySlice() : undefined,

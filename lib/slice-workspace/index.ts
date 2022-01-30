@@ -1,5 +1,7 @@
 export type { WorkspaceDispatchType, WorkspaceSliceAction } from './common';
 export { workspaceSliceKey } from './common';
+export { WorkspaceError } from './errors';
+export { WORKSPACE_NOT_FOUND_ERROR } from './errors';
 export {
   checkFileExists,
   createNote,
@@ -27,8 +29,6 @@ export {
   useWorkspaceContext,
   WorkspaceContextProvider,
 } from './WorkspaceContext';
-export { WorkspaceError } from './workspaces/errors';
-export { WORKSPACE_NOT_FOUND_ERROR } from './workspaces/errors';
 export {
   createWorkspace,
   deleteWorkspace,

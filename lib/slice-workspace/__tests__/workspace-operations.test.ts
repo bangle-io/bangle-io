@@ -4,7 +4,7 @@ import { createBasicTestStore, fakeIdb } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
 import { workspaceSliceKey } from '../common';
-import { WORKSPACE_KEY } from '../workspaces/read-ws-info';
+import { WORKSPACE_KEY } from '../read-ws-info';
 import {
   createWorkspace,
   deleteWorkspace,

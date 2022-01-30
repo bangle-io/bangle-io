@@ -2,8 +2,8 @@ import { AppState } from '@bangle.io/create-store';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from '../common';
+import { WorkspaceError } from '../errors';
 import { JSON_SCHEMA_VERSION, workspaceSlice } from '../workspace-slice';
-import { WorkspaceError } from '../workspaces/errors';
 import { createState, createStateWithWsName, createWsInfo } from './test-utils';
 
 describe('serialization works', () => {

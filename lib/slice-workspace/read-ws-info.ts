@@ -8,8 +8,8 @@ import { AppState } from '@bangle.io/create-store';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { shallowEqual } from '@bangle.io/utils';
 
-import { workspaceSliceKey } from '../common';
-import { WorkspaceInfoReg } from '../workspace-slice-state';
+import { workspaceSliceKey } from './common';
+import { WorkspaceInfoReg } from './workspace-slice-state';
 
 export const WORKSPACE_KEY = 'workspaces/2';
 

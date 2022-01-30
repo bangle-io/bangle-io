@@ -2,30 +2,31 @@ import * as idb from 'idb-keyval';
 
 import { WorkspaceType } from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
+import { Extension } from '@bangle.io/extension-registry';
 import {
   getPageLocation,
   pageSliceKey,
   syncPageLocation,
 } from '@bangle.io/slice-page';
+import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import {
   createBasicTestStore,
+  createPMNode,
+  setupMockWorkspace,
   setupMockWorkspaceWithNotes,
   testMemoryHistorySlice,
 } from '@bangle.io/test-utils';
-import { sleep } from '@bangle.io/utils';
+import { BaseError, sleep } from '@bangle.io/utils';
 import { wsPathToSearch } from '@bangle.io/ws-path';
 
 import {
+  getNote,
   goToWsNameRouteNotFoundRoute,
   WORKSPACE_NOT_FOUND_ERROR,
   WorkspaceError,
 } from '..';
 import { workspaceSliceKey } from '../common';
-import {
-  createNote,
-  getStorageProvider,
-  refreshWsPaths,
-} from '../file-operations';
+import { createNote, refreshWsPaths } from '../file-operations';
 import { goToWsNameRoute, updateOpenedWsPaths } from '../operations';
 import { createWorkspace } from '../workspaces-operations';
 import {
@@ -39,13 +40,15 @@ const getDispatch = (store: ApplicationStore) =>
 
 describe('refreshWsPathsEffect', () => {
   test('refreshes on create note', async () => {
-    const { store, dispatchSpy } = createBasicTestStore();
+    const storageProvider = new IndexedDbStorageProvider();
+
+    const { store, dispatchSpy } = createBasicTestStore({
+      storageProvider: storageProvider,
+    });
 
     await setupMockWorkspaceWithNotes(store, 'test-ws', [
       ['test-ws:one.md', 'hello one'],
     ]);
-
-    const storageProvider = getStorageProvider()(store.state);
 
     const listAllFilesSpy = jest.spyOn(storageProvider, 'listAllFiles');
 
@@ -85,13 +88,15 @@ describe('refreshWsPathsEffect', () => {
   });
 
   test('refreshes on dispatching refresh counter', async () => {
-    const { store } = createBasicTestStore();
+    const storageProvider = new IndexedDbStorageProvider();
+
+    const { store, dispatchSpy } = createBasicTestStore({
+      storageProvider: storageProvider,
+    });
 
     await setupMockWorkspaceWithNotes(store, 'test-ws', [
       ['test-ws:one.md', 'hello one'],
     ]);
-
-    const storageProvider = getStorageProvider()(store.state);
 
     const listAllFilesSpy = jest.spyOn(storageProvider, 'listAllFiles');
 
@@ -103,13 +108,15 @@ describe('refreshWsPathsEffect', () => {
   });
 
   test('no workspace no refresh', async () => {
-    const { store } = createBasicTestStore();
+    const storageProvider = new IndexedDbStorageProvider();
+
+    const { store } = createBasicTestStore({
+      storageProvider: storageProvider,
+    });
 
     await setupMockWorkspaceWithNotes(store, 'test-ws', [
       ['test-ws:one.md', 'hello one'],
     ]);
-
-    const storageProvider = getStorageProvider()(store.state);
 
     const listAllFilesSpy = jest.spyOn(storageProvider, 'listAllFiles');
 
@@ -126,10 +133,13 @@ describe('refreshWsPathsEffect', () => {
   });
 
   test('refresh when workspace changes', async () => {
-    const { store } = createBasicTestStore();
+    const storageProvider = new IndexedDbStorageProvider();
+
+    const { store } = createBasicTestStore({
+      storageProvider: storageProvider,
+    });
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-1', []);
-    const storageProvider = getStorageProvider()(store.state);
     const listAllFilesSpy = jest.spyOn(storageProvider, 'listAllFiles');
 
     await setupMockWorkspaceWithNotes(store, 'test-ws-2', []);
@@ -358,15 +368,17 @@ describe('updateLocationEffect', () => {
       search: '',
     });
   });
-});
 
-describe('workspaceErrorHandler', () => {
   test('handles workspace note found error', async () => {
     const { store } = createBasicTestStore({
       sliceKey: workspaceSliceKey,
     });
 
     goToWsNameRoute('test-ws')(store.state, store.dispatch);
+
+    expect(workspaceSliceKey.getSliceStateAsserted(store.state).error).toBe(
+      undefined,
+    );
 
     await sleep(0);
 
@@ -376,7 +388,131 @@ describe('workspaceErrorHandler', () => {
         "search": "",
       }
     `);
+
+    expect(workspaceSliceKey.getSliceStateAsserted(store.state).error).toBe(
+      undefined,
+    );
   });
+});
+
+describe('workspaceErrorHandler', () => {
+  test('storage provider throwing an error', async () => {
+    const storageType = WorkspaceType.testType;
+    const wsName = 'my-ws';
+    class TestProvider extends IndexedDbStorageProvider {
+      name = storageType;
+    }
+
+    const provider = new TestProvider();
+
+    const listAllFilesSpy = jest.spyOn(provider, 'listAllFiles');
+
+    await setupMockWorkspace({
+      name: wsName,
+      type: storageType,
+    });
+
+    const onRootError = jest.fn(() => {
+      return false;
+    });
+    const onStorageError = jest.fn((error, store) => {
+      return true;
+    });
+
+    const { store, actionsDispatched } = createBasicTestStore({
+      sliceKey: workspaceSliceKey,
+      onError: onRootError,
+      extensions: [
+        Extension.create({
+          name: 'test-storage-extension',
+          application: {
+            storageProvider: provider,
+            onStorageError: onStorageError,
+          },
+        }),
+      ],
+    });
+
+    await goToWsNameRoute(wsName)(store.state, store.dispatch);
+    await sleep(0);
+
+    expect(workspaceSliceKey.getSliceStateAsserted(store.state).wsName).toBe(
+      wsName,
+    );
+
+    expect(
+      workspaceSliceKey.getSliceStateAsserted(store.state).workspacesInfo,
+    ).toMatchObject({
+      [wsName]: {
+        deleted: false,
+        lastModified: 1,
+        metadata: {},
+        name: wsName,
+        type: 'testType',
+      },
+    });
+
+    await createNote('my-ws:test-note.md', {
+      doc: createPMNode([], `hello`),
+      open: true,
+    })(store.state, store.dispatch, store);
+    expect(
+      (
+        await getNote('my-ws:test-note.md')(store.state, store.dispatch)
+      )?.toString(),
+    ).toContain('hello');
+
+    // real testing starts here
+    expect(listAllFilesSpy).toBeCalledTimes(1);
+    expect(onStorageError).toBeCalledTimes(0);
+
+    await sleep(0);
+    let actionsBefore = actionsDispatched.slice(0);
+
+    const error = new BaseError('oops everything went wrong');
+    listAllFilesSpy.mockImplementation(async () => {
+      throw error;
+    });
+
+    refreshWsPaths()(store.state, store.dispatch);
+
+    await sleep(0);
+
+    expect(onRootError).toBeCalledTimes(1);
+    expect(onStorageError).toBeCalledTimes(1);
+    expect(onStorageError).nthCalledWith(1, error, store);
+
+    expect(actionsDispatched.slice(actionsBefore.length)).toMatchInlineSnapshot(
+      [
+        { id: expect.any(String) },
+        { id: expect.any(String) },
+        { id: expect.any(String) },
+      ],
+      `
+      Array [
+        Object {
+          "id": Any<String>,
+          "name": "action::@bangle.io/slice-workspace:refresh-ws-paths",
+        },
+        Object {
+          "id": Any<String>,
+          "name": "action::@bangle.io/slice-workspace:set-error",
+          "value": Object {
+            "error": [BaseError: oops everything went wrong],
+          },
+        },
+        Object {
+          "id": Any<String>,
+          "name": "action::@bangle.io/slice-workspace:set-error",
+          "value": Object {
+            "error": undefined,
+          },
+        },
+      ]
+    `,
+    );
+  });
+
   test('handles error', async () => {
     const { store } = createBasicTestStore({
       sliceKey: workspaceSliceKey,

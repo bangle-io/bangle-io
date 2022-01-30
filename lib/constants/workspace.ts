@@ -3,4 +3,5 @@ export enum WorkspaceType {
   nativefs = 'nativefs',
   githubReadFs = 'github-read-fs',
   helpfs = 'helpfs',
+  testType = 'testType',
 }

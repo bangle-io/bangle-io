@@ -23,6 +23,7 @@ export function createTestStore<
   opts,
   // slice key purely for getting the types of the store correct
   sliceKey,
+  onError,
   scheduler = (cb) => {
     let destroyed = false;
     Promise.resolve().then(() => {
@@ -40,6 +41,7 @@ export function createTestStore<
   slices?: SliceArray<any, any>;
   opts?: C;
   scheduler?: ApplicationStore['scheduler'];
+  onError?: ApplicationStore<SL, A>['onError'];
 }): {
   store: ApplicationStore<SL, A>;
   dispatchSpy: jest.SpyInstance;
@@ -51,6 +53,7 @@ export function createTestStore<
   const store = ApplicationStore.create<any, any>({
     scheduler: scheduler,
     storeName: 'test-store',
+    onError,
     dispatchAction: (store, action) => {
       let newState = store.state.applyAction(action);
       store.updateState(newState);

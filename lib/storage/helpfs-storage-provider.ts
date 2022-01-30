@@ -1,6 +1,6 @@
 import type { Node } from '@bangle.dev/pm';
 
-import { HelpFileSystemError, UPSTREAM_ERROR } from '@bangle.io/baby-fs';
+import { BaseError } from '@bangle.io/base-error';
 import { HELP_DOCS_VERSION } from '@bangle.io/config';
 import { HELP_FS_INDEX_WS_PATH, WorkspaceType } from '@bangle.io/constants';
 import { toFSPath } from '@bangle.io/ws-path';
@@ -20,9 +20,8 @@ function readFileFromUnpkg(wsPath) {
           return null;
         }
         return Promise.reject(
-          new HelpFileSystemError(
+          new BaseError(
             `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
-            UPSTREAM_ERROR,
           ),
         );
       }

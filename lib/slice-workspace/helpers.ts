@@ -1,7 +1,7 @@
 import { WorkspaceType } from '@bangle.io/constants';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
-import { HelpFsStorageProvider } from '@bangle.io/storage';
+import { BaseStorageProvider, HelpFsStorageProvider } from '@bangle.io/storage';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WorkspaceSliceState } from './workspace-slice-state';
@@ -70,13 +70,87 @@ export const getWsInfoIfNotDeleted = (
   return wsInfo?.deleted ? undefined : wsInfo;
 };
 
-export function storageProviderFromExtensionRegistry(
-  wsInfo: WorkspaceInfo,
+const storageProviderError = new WeakMap<
+  Error,
+  { name: BaseStorageProvider['name'] }
+>();
+
+const storageProviderProxy = new WeakMap<
+  BaseStorageProvider,
+  BaseStorageProvider
+>();
+
+export function isStorageProviderError(error) {
+  return storageProviderError.has(error);
+}
+export function getStorageProviderNameFromError(error) {
+  return storageProviderError.get(error)?.name;
+}
+
+export function storageProviderErrorHandlerFromExtensionRegistry(
+  workspaceType: string,
   extensionRegistry: ExtensionRegistry,
 ) {
-  if (wsInfo.type === WorkspaceType.helpfs) {
-    return new HelpFsStorageProvider();
+  const errorHandler =
+    extensionRegistry.getOnStorageErrorHandlers(workspaceType);
+
+  return errorHandler;
+}
+
+export function storageProviderFromExtensionRegistry(
+  workspaceType: WorkspaceType,
+  extensionRegistry: ExtensionRegistry,
+) {
+  let provider: BaseStorageProvider | undefined;
+
+  if (workspaceType === WorkspaceType.helpfs) {
+    provider = new HelpFsStorageProvider();
+  } else {
+    provider = extensionRegistry.getStorageProvider(workspaceType);
   }
 
-  return extensionRegistry.getStorageProvider(wsInfo.type);
+  if (!provider) {
+    return undefined;
+  }
+
+  let existingProxy = storageProviderProxy.get(provider);
+
+  if (existingProxy) {
+    return existingProxy;
+  }
+
+  let proxy = new Proxy(provider, {
+    get(target, method) {
+      let fun = Reflect.get(target, method);
+      if (typeof fun === 'function') {
+        return (...args) => {
+          try {
+            const result = Reflect.apply(fun, target, args);
+
+            if (result.then) {
+              return result.catch((err) => {
+                if (err instanceof Error) {
+                  storageProviderError.set(err, { name: target.name });
+                }
+                throw err;
+              });
+            }
+
+            return result;
+          } catch (err) {
+            if (err instanceof Error) {
+              storageProviderError.set(err, { name: target.name });
+            }
+            throw err;
+          }
+        };
+      } else {
+        return fun;
+      }
+    },
+  });
+
+  storageProviderProxy.set(provider, proxy);
+
+  return proxy;
 }
