@@ -72,11 +72,16 @@ function EditorInner({
   useEffect(() => {
     let destroyed = false;
 
-    getNote(wsPath)(bangleStore.state, bangleStore.dispatch).then((doc) => {
-      if (!destroyed) {
-        setInitialDoc(doc);
-      }
-    });
+    getNote(wsPath)(bangleStore.state, bangleStore.dispatch).then(
+      (doc) => {
+        if (!destroyed) {
+          setInitialDoc(doc);
+        }
+      },
+      (err) => {
+        bangleStore.errorHandler(err);
+      },
+    );
     return () => {
       destroyed = true;
     };

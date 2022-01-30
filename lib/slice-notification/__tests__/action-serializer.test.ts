@@ -19,17 +19,26 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
     {
       name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION',
       value: {
-        content: 'hello',
+        title: 'hello',
         uid: 'test-1',
         severity: 'error',
         buttons: [],
       },
     },
-
     {
       name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION',
       value: {
-        content: 'hello',
+        title: 'hello 3',
+        content: 'i am content',
+        uid: 'test-1',
+        severity: 'error',
+        buttons: [],
+      },
+    },
+    {
+      name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION',
+      value: {
+        title: 'hello',
         uid: 'test-1',
         severity: 'info',
         buttons: [

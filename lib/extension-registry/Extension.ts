@@ -70,7 +70,10 @@ export interface ApplicationConfig<
   storageProvider?: BaseStorageProvider;
   // return true if the error was handled by your callback
   // and false if it cannot be handled
-  onStorageError?: (error: Error, store: ApplicationStore) => boolean;
+  onStorageError?: (
+    error: Error & { code: string },
+    store: ApplicationStore,
+  ) => boolean;
 }
 
 export interface SidebarType {

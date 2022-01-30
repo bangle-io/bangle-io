@@ -369,7 +369,7 @@ describe('updateLocationEffect', () => {
     });
   });
 
-  test('handles workspace note found error', async () => {
+  test('handles workspace not found error', async () => {
     const { store } = createBasicTestStore({
       sliceKey: workspaceSliceKey,
     });
@@ -514,8 +514,26 @@ describe('workspaceErrorHandler', () => {
   });
 
   test('handles error', async () => {
+    const storageType = WorkspaceType.testType;
+    class TestProvider extends IndexedDbStorageProvider {
+      name = storageType;
+    }
+
+    const provider = new TestProvider();
+    const onStorageError = jest.fn((error, store) => {
+      return true;
+    });
     const { store } = createBasicTestStore({
       sliceKey: workspaceSliceKey,
+      extensions: [
+        Extension.create({
+          name: 'test-storage-extension',
+          application: {
+            storageProvider: provider,
+            onStorageError: onStorageError,
+          },
+        }),
+      ],
     });
 
     await createWorkspace('test-ws', WorkspaceType.browser)(
@@ -542,6 +560,7 @@ describe('workspaceErrorHandler', () => {
       }
     `);
 
+    expect(onStorageError).toBeCalledTimes(0);
     console.log = consoleLog;
   });
 });

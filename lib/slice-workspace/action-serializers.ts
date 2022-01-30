@@ -3,6 +3,7 @@ import { ActionsSerializersType } from '@bangle.io/create-store';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ExtractWorkspaceSliceAction, WorkspaceSliceAction } from './common';
+import { storageProviderHelpers } from './storage-provider-helpers';
 
 export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
   'action::@bangle.io/slice-workspace:set-workspace-infos': (actionName) => {
@@ -22,39 +23,63 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
   'action::@bangle.io/slice-workspace:set-error': (actionName) => {
     const toJSON = (action: ExtractWorkspaceSliceAction<typeof actionName>) => {
       if (!action.value.error) {
-        return { isBaseError: false as const, error: null };
+        return {
+          storageProviderError: null,
+          isBaseError: false as const,
+          error: null,
+        };
       }
+
       const { error } = action.value;
 
+      const storageProviderError =
+        storageProviderHelpers.getStorageProviderNameFromError(error) ?? null;
+
       if (error instanceof BaseError) {
-        return { isBaseError: true as const, error: error.toJsonValue() };
+        return {
+          storageProviderError,
+          isBaseError: true as const,
+          error: error.toJsonValue(),
+        };
       }
 
       return {
+        storageProviderError,
         isBaseError: false as const,
         error: {
           message: error.message,
           name: error.name,
           stack: error.stack,
+          code: (error as any).code,
         },
       };
     };
 
     const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-      if (obj.isBaseError) {
-        return { error: BaseError.fromJsonValue(obj.error) };
-      }
-
-      const { error } = obj;
-      if (error == null) {
+      if (obj.error == null) {
         return {
           error: undefined,
         };
       }
 
-      return {
-        error: Object.assign(new Error(error.message), error),
-      };
+      const { storageProviderError, error } = obj;
+
+      let result: { error: Error | undefined };
+
+      if (obj.isBaseError) {
+        result = { error: BaseError.fromJsonValue(obj.error) };
+      } else {
+        result = { error: Object.assign(new Error(error.message), error) };
+      }
+
+      if (storageProviderError) {
+        storageProviderHelpers.markAsStorageProviderError(
+          result.error,
+          storageProviderError,
+        );
+      }
+
+      return result;
     };
 
     return {

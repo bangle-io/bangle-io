@@ -13,9 +13,9 @@ import {
   wsDeleteEffect,
 } from './effects';
 import { WorkspaceError } from './errors';
-import { isStorageProviderError } from './helpers';
 import { sliceHasError } from './operations';
 import { mergeWsInfoRegistries } from './read-ws-info';
+import { storageProviderHelpers } from './storage-provider-helpers';
 import {
   WorkspaceSliceState,
   WorkspaceStateKeys,
@@ -212,7 +212,10 @@ export function workspaceSlice() {
     actions: ActionSerializers,
 
     onError: (error, store) => {
-      if (error instanceof WorkspaceError || isStorageProviderError(error)) {
+      if (
+        error instanceof WorkspaceError ||
+        storageProviderHelpers.isStorageProviderError(error)
+      ) {
         // Donot handle new errors if there is already an error
         if (sliceHasError()(store.state)) {
           console.log(

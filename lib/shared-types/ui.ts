@@ -2,7 +2,8 @@ import type { SerialOperationNameType } from './extension-registry';
 
 export interface NotificationPayloadType {
   uid: string;
-  content: string;
+  title: string;
+  content?: string;
   severity?: 'error' | 'warning' | 'info' | 'success';
   buttons?: Array<{
     title: string;

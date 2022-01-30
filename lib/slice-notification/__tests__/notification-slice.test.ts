@@ -19,8 +19,9 @@ test('updating and removing notifications', () => {
     name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION' as const,
     value: {
       uid: 'test-1',
-      content: 'hello',
+      title: 'hello',
       severity: 'error' as const,
+      content: 'hello world',
       buttons: [],
     },
   };
@@ -32,8 +33,9 @@ test('updating and removing notifications', () => {
       "notifications": Array [
         Object {
           "buttons": Array [],
-          "content": "hello",
+          "content": "hello world",
           "severity": "error",
+          "title": "hello",
           "uid": "test-1",
         },
       ],
@@ -44,9 +46,10 @@ test('updating and removing notifications', () => {
     name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION' as const,
     value: {
       uid: 'test-1',
-      content: 'hello I am a duplicate',
+      title: 'hello I am a duplicate',
       severity: 'error' as const,
       buttons: [],
+      content: 'hello world again',
     },
   };
 
@@ -61,8 +64,9 @@ test('updating and removing notifications', () => {
     name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION' as const,
     value: {
       uid: 'test-2',
-      content: 'hello2',
+      title: 'hello2',
       severity: 'error' as const,
+      content: 'hello world 2',
       buttons: [],
     },
   };
@@ -73,13 +77,15 @@ test('updating and removing notifications', () => {
     notifications: [
       {
         buttons: [],
-        content: 'hello',
+        title: 'hello',
+        content: 'hello world',
         severity: 'error',
         uid: 'test-1',
       },
       {
         buttons: [],
-        content: 'hello2',
+        title: 'hello2',
+        content: 'hello world 2',
         severity: 'error',
         uid: 'test-2',
       },
@@ -99,7 +105,8 @@ test('updating and removing notifications', () => {
     notifications: [
       {
         buttons: [],
-        content: 'hello2',
+        title: 'hello2',
+        content: 'hello world 2',
         severity: 'error',
         uid: 'test-2',
       },
@@ -114,7 +121,7 @@ test('removing not found notification preserves state instance', () => {
     name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION' as const,
     value: {
       uid: 'test-1',
-      content: 'hello',
+      title: 'hello',
       severity: 'error' as const,
       buttons: [],
     },

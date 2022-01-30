@@ -17,7 +17,7 @@ import {
   TextButton,
 } from '@bangle.io/ui-components';
 
-export function NotificationArea({}) {
+export function NotificationArea() {
   const {
     store,
     sliceState: { notifications },
@@ -30,7 +30,8 @@ export function NotificationArea({}) {
           onDismiss={() => {
             dismissNotification({ uid: n.uid })(store.state, store.dispatch);
           }}
-          content={n.content.split('\n').map((r, i) => (
+          title={n.title}
+          content={n.content?.split('\n').map((r, i) => (
             <span key={i}>{r}</span>
           ))}
           severity={n.severity}
@@ -61,10 +62,12 @@ const Severity: Record<
 
 export function Notification({
   content = '',
+  title,
   buttons,
   severity = 'info',
   onDismiss,
 }: {
+  title?: string;
   content: React.ReactNode;
   severity?: NotificationPayloadType['severity'];
   buttons?: NotificationPayloadType['buttons'];
@@ -80,21 +83,24 @@ export function Notification({
         boxShadow: '0px 0px 4px 2px rgba(0, 0, 0, 0.15)',
       }}
     >
-      <div className=" flex flex-row w-full">
-        <span className="mr-2">{Severity[severity]()}</span>
+      <div className="flex flex-col w-full">
+        <div className="flex flex-row">
+          <div className="mr-2">{Severity[severity]()}</div>
+          <div className="flex-grow">{title}</div>
+          <div>
+            <ButtonIcon
+              hint="dismiss"
+              hintPos="left"
+              onClick={async (e) => {
+                onDismiss();
+              }}
+            >
+              <CloseIcon style={{ height: 16, width: 16 }} />
+            </ButtonIcon>
+          </div>
+        </div>
         <div className="w-full text-sm flex flex-col">
           {typeof content === 'string' ? <span>{content}</span> : content}
-        </div>
-        <div>
-          <ButtonIcon
-            hint="dismiss"
-            hintPos="left"
-            onClick={async (e) => {
-              onDismiss();
-            }}
-          >
-            <CloseIcon style={{ height: 16, width: 16 }} />
-          </ButtonIcon>
         </div>
       </div>
       <div className="flex flex-row-reverse w-full mt-3">

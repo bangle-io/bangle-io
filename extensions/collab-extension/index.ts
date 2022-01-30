@@ -54,9 +54,7 @@ function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
     },
     onFatalError(error) {
       if (error.errorCode >= 500) {
-        console.log('received fatal error');
-        // TODO show a user notification
-        console.error(error);
+        metadata.bangleStore.errorHandler(error);
       }
       return true;
     },

@@ -33,7 +33,7 @@ export function newNote(initialValue?: string) {
       showNotification({
         severity: 'error',
         uid: 'new-note-not-no-workspace',
-        content: 'Please first select a workspace',
+        title: 'Please first select a workspace',
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
@@ -67,7 +67,7 @@ export function renameActiveNote() {
       showNotification({
         severity: 'error',
         uid: 'delete-wsPath-not-found',
-        content: 'Cannot rename because there is no active note',
+        title: 'Cannot rename because there is no active note',
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
@@ -108,7 +108,7 @@ export function deleteActiveNote() {
       showNotification({
         severity: 'error',
         uid: 'delete-wsPath-not-found',
-        content: 'Cannot delete because there is no active note',
+        title: 'Cannot delete because there is no active note',
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
@@ -134,7 +134,7 @@ export function deleteActiveNote() {
           showNotification({
             severity: 'success',
             uid: 'success-delete-' + focusedWsPath,
-            content: 'Successfully deleted ' + focusedWsPath,
+            title: 'Successfully deleted ' + focusedWsPath,
           })(
             notificationSliceKey.getState(state),
             notificationSliceKey.getDispatch(dispatch),
@@ -144,7 +144,7 @@ export function deleteActiveNote() {
           showNotification({
             severity: 'error',
             uid: 'delete-' + deleteActiveNote,
-            content: error.displayMessage || error.message,
+            title: error.displayMessage || error.message,
           })(
             notificationSliceKey.getState(state),
             notificationSliceKey.getDispatch(dispatch),
@@ -176,7 +176,7 @@ export function removeWorkspace(wsName?: string) {
       showNotification({
         severity: 'error',
         uid: 'removeWorkspace-no-workspace',
-        content: 'Please open a workspace first',
+        title: 'Please open a workspace first',
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
@@ -189,7 +189,7 @@ export function removeWorkspace(wsName?: string) {
       showNotification({
         severity: 'error',
         uid: 'removeWorkspace-not-allowed',
-        content: 'Cannot remove help workspace',
+        title: 'Cannot remove help workspace',
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
@@ -208,7 +208,7 @@ export function removeWorkspace(wsName?: string) {
       showNotification({
         severity: 'success',
         uid: 'success-removed-' + wsName,
-        content: 'Successfully removed ' + wsName,
+        title: 'Successfully removed ' + wsName,
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
@@ -243,7 +243,7 @@ export function createBrowserWorkspace(wsName: string) {
       showNotification({
         severity: 'error',
         uid: 'error-create-workspace-' + wsName,
-        content: 'Unable to create workspace ' + wsName,
+        title: 'Unable to create workspace ' + wsName,
       })(
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
@@ -275,7 +275,7 @@ export function createNativeFsWorkpsace(rootDirHandle) {
         showNotification({
           severity: 'error',
           uid: 'error-create-workspace-' + rootDirHandle?.name,
-          content: 'Unable to create workspace ' + rootDirHandle?.name,
+          title: 'Unable to create workspace ' + rootDirHandle?.name,
         })(
           notificationSliceKey.getState(state),
           notificationSliceKey.getDispatch(dispatch),

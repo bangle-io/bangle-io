@@ -2019,10 +2019,12 @@ __metadata:
     "@bangle.dev/markdown": 0.28.5
     "@bangle.dev/markdown-front-matter": 0.28.5
     "@bangle.dev/pm": 0.28.5
+    "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/utils": "workspace:*"
   languageName: unknown

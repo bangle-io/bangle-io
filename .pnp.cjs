@@ -4215,10 +4215,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.5"],
             ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.5"],
             ["@bangle.dev/pm", "npm:0.28.5"],
+            ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/storage", "workspace:lib/storage"],
             ["@bangle.io/utils", "workspace:lib/utils"]
           ],
