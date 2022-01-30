@@ -30,11 +30,10 @@ export function useBangleStoreDispatch<
 
 export function useSliceState<SL, A extends BaseAction, S = SL>(
   sliceKey: SliceKey<SL, A, S>,
-  initialState?: SL,
 ) {
-  const store = useBangleStoreContext();
-  const [sliceState, updateSliceState] = useState<SL | undefined>(() => {
-    return initialState ?? sliceKey.getSliceState(store.state);
+  const store: ApplicationStore<S, A> = useBangleStoreContext();
+  const [sliceState, updateSliceState] = useState<SL>(() => {
+    return sliceKey.getSliceStateAsserted(store.state);
   });
   const storeChanged = useContext(BangleStoreChanged);
 
@@ -45,5 +44,9 @@ export function useSliceState<SL, A extends BaseAction, S = SL>(
     }
   }, [storeChanged, sliceKey, sliceState, store]);
 
-  return { sliceState, store: store as ApplicationStore<S, A> };
+  return {
+    sliceState,
+    store: store,
+    dispatch: store.dispatch,
+  };
 }

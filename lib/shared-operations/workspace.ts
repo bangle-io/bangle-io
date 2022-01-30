@@ -5,7 +5,13 @@ import {
   WorkspaceType,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { UiContextAction, UiContextDispatchType } from '@bangle.io/slice-ui';
+import { notificationSliceKey } from '@bangle.io/slice-notification';
+import { showNotification } from '@bangle.io/slice-notification/operations';
+import {
+  UiContextAction,
+  UiContextDispatchType,
+  uiSliceKey,
+} from '@bangle.io/slice-ui';
 import {
   createWorkspace,
   deleteNote,
@@ -18,18 +24,18 @@ import { resolvePath } from '@bangle.io/ws-path';
 import { getFocusedWsPath } from './core';
 
 export function newNote(initialValue?: string) {
-  return (state: AppState, dispatch: UiContextDispatchType) => {
+  return uiSliceKey.op((state, dispatch) => {
     const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
 
     if (!wsName) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'error',
-          uid: 'new-note-not-no-workspace',
-          content: 'Please first select a workspace',
-        },
-      });
+      showNotification({
+        severity: 'error',
+        uid: 'new-note-not-no-workspace',
+        content: 'Please first select a workspace',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
       return;
     }
 
@@ -48,7 +54,7 @@ export function newNote(initialValue?: string) {
         },
       },
     });
-  };
+  });
 }
 
 export function renameActiveNote() {
@@ -56,14 +62,15 @@ export function renameActiveNote() {
     const focusedWsPath = getFocusedWsPath()(state);
 
     if (!focusedWsPath) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'error',
-          uid: 'delete-wsPath-not-found',
-          content: 'Cannot rename because there is no active note',
-        },
-      });
+      showNotification({
+        severity: 'error',
+        uid: 'delete-wsPath-not-found',
+        content: 'Cannot rename because there is no active note',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+
       return true;
     }
 
@@ -96,14 +103,14 @@ export function deleteActiveNote() {
     const focusedWsPath = getFocusedWsPath()(state);
 
     if (!focusedWsPath) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'error',
-          uid: 'delete-wsPath-not-found',
-          content: 'Cannot delete because there is no active note',
-        },
-      });
+      showNotification({
+        severity: 'error',
+        uid: 'delete-wsPath-not-found',
+        content: 'Cannot delete because there is no active note',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
       return true;
     }
 
@@ -122,24 +129,24 @@ export function deleteActiveNote() {
     ) {
       deleteNote(focusedWsPath)(state, dispatch, store)
         .then((error) => {
-          dispatch({
-            name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-            value: {
-              severity: 'success',
-              uid: 'success-delete-' + focusedWsPath,
-              content: 'Successfully deleted ' + focusedWsPath,
-            },
-          });
+          showNotification({
+            severity: 'success',
+            uid: 'success-delete-' + focusedWsPath,
+            content: 'Successfully deleted ' + focusedWsPath,
+          })(
+            notificationSliceKey.getState(state),
+            notificationSliceKey.getDispatch(dispatch),
+          );
         })
         .catch((error) => {
-          dispatch({
-            name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-            value: {
-              severity: 'error',
-              uid: 'delete-' + deleteActiveNote,
-              content: error.displayMessage || error.message,
-            },
-          });
+          showNotification({
+            severity: 'error',
+            uid: 'delete-' + deleteActiveNote,
+            content: error.displayMessage || error.message,
+          })(
+            notificationSliceKey.getState(state),
+            notificationSliceKey.getDispatch(dispatch),
+          );
         });
     }
     return true;
@@ -164,26 +171,28 @@ export function removeWorkspace(wsName?: string) {
     wsName = wsName || workspaceSliceKey.getSliceState(state)?.wsName;
 
     if (!wsName) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'error',
-          uid: 'removeWorkspace-no-workspace',
-          content: 'Please open a workspace first',
-        },
-      });
+      showNotification({
+        severity: 'error',
+        uid: 'removeWorkspace-no-workspace',
+        content: 'Please open a workspace first',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+
       return;
     }
 
     if (wsName === HELP_FS_WORKSPACE_NAME) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'error',
-          uid: 'removeWorkspace-not-allowed',
-          content: 'Cannot remove help workspace',
-        },
-      });
+      showNotification({
+        severity: 'error',
+        uid: 'removeWorkspace-not-allowed',
+        content: 'Cannot remove help workspace',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+
       return;
     }
 
@@ -194,14 +203,14 @@ export function removeWorkspace(wsName?: string) {
     ) {
       await _deletedWorkspace(wsName)(state, dispatch, store);
 
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'success',
-          uid: 'success-removed-' + wsName,
-          content: 'Successfully removed ' + wsName,
-        },
-      });
+      showNotification({
+        severity: 'success',
+        uid: 'success-removed-' + wsName,
+        content: 'Successfully removed ' + wsName,
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
     }
   };
 }
@@ -229,14 +238,14 @@ export function createBrowserWorkspace(wsName: string) {
       );
       (window as any).fathom?.trackGoal('AISLCLRF', 0);
     } catch (error) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-        value: {
-          severity: 'error',
-          uid: 'error-create-workspace-' + wsName,
-          content: 'Unable to create workspace ' + wsName,
-        },
-      });
+      showNotification({
+        severity: 'error',
+        uid: 'error-create-workspace-' + wsName,
+        content: 'Unable to create workspace ' + wsName,
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
       throw error;
     }
 
@@ -261,14 +270,15 @@ export function createNativeFsWorkpsace(rootDirHandle) {
 
         (window as any).fathom?.trackGoal('K3NFTGWX', 0);
       } catch (error) {
-        store.dispatch({
-          name: 'action::@bangle.io/slice-ui:SHOW_NOTIFICATION',
-          value: {
-            severity: 'error',
-            uid: 'error-create-workspace-' + rootDirHandle?.name,
-            content: 'Unable to create workspace ' + rootDirHandle?.name,
-          },
-        });
+        showNotification({
+          severity: 'error',
+          uid: 'error-create-workspace-' + rootDirHandle?.name,
+          content: 'Unable to create workspace ' + rootDirHandle?.name,
+        })(
+          notificationSliceKey.getState(state),
+          notificationSliceKey.getDispatch(dispatch),
+        );
+
         throw error;
       }
     } else {

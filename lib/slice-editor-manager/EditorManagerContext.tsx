@@ -33,7 +33,6 @@ export function useEditorManagerContext() {
 export function EditorManager({ children }) {
   const { sliceState: editorManager, store } = useSliceState(
     editorManagerSliceKey,
-    initialEditorSliceState,
   );
 
   const value = useMemo(() => {

@@ -12,7 +12,7 @@ export function usePageContext() {
   const { sliceState: pageState, store } = useSliceState<
     PageSliceStateType,
     PageSliceAction
-  >(pageSliceKey, pageSliceInitialState);
+  >(pageSliceKey);
 
   return {
     store,

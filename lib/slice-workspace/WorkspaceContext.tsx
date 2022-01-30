@@ -40,10 +40,7 @@ export function WorkspaceContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { sliceState, store } = useSliceState(
-    workspaceSliceKey,
-    workspaceSliceInitialState,
-  );
+  const { sliceState, store } = useSliceState(workspaceSliceKey);
 
   if (!sliceState) {
     throw new Error('Slice state cannot be undefined');

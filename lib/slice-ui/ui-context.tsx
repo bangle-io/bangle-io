@@ -35,7 +35,7 @@ export function UIManager({ children }) {
   const { sliceState: uiState, store } = useSliceState<
     UISliceState,
     UiContextAction
-  >(uiSliceKey, initialState);
+  >(uiSliceKey);
 
   const value = useMemo(() => {
     return {

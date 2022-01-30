@@ -1,5 +1,6 @@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import { extensionRegistrySlice } from '@bangle.io/extension-registry';
+import { notificationSlice } from '@bangle.io/slice-notification';
 import { pageSlice } from '@bangle.io/slice-page';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 
@@ -22,6 +23,7 @@ export function naukarSlices({
     pageSlice(),
     workspaceSlice(),
     editorManagerSlice(),
+    notificationSlice(),
 
     // keep this at the end
     new Slice({

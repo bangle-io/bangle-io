@@ -1,5 +1,5 @@
 import { ExtractAction } from '.';
-import type { AppState } from './app-state';
+import { AppState } from './app-state';
 import type { BaseAction, Slice, SliceSideEffect } from './app-state-slice';
 import { ApplicationStore } from './app-store';
 
@@ -31,14 +31,26 @@ export class SliceKey<
     return store as ApplicationStore<SL, A>;
   }
 
+  getStateAndDispatch(store: ApplicationStore) {
+    return {
+      state: this.getState(store),
+      dispatch: this.getDispatch(store.dispatch),
+    };
+  }
+
   getDispatch(
     dispatch: ApplicationStore<any, any>['dispatch'],
   ): ApplicationStore<SL, A>['dispatch'] {
     return dispatch as ApplicationStore<SL, A>['dispatch'];
   }
 
-  getState(store: ApplicationStore): ApplicationStore<SL, A>['state'] {
-    return this.getStore(store).state;
+  getState(
+    storeOrState: ApplicationStore | AppState,
+  ): ApplicationStore<SL, A>['state'] {
+    if (storeOrState instanceof AppState) {
+      return storeOrState;
+    }
+    return this.getStore(storeOrState).state;
   }
 
   getSliceState(
