@@ -1,9 +1,9 @@
-import type { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeHelp, WorkspaceTypeNative } from '@bangle.io/constants';
 
 export type WorkspaceInfo =
   | {
       name: string;
-      type: WorkspaceType;
+      type: string;
       deleted?: boolean;
       lastModified: number;
       metadata: {
@@ -12,11 +12,20 @@ export type WorkspaceInfo =
     }
   | {
       name: string;
-      type: WorkspaceType.nativefs;
+      type: typeof WorkspaceTypeNative;
       deleted?: boolean;
       lastModified: number;
       metadata: {
         rootDirHandle: any;
+        [k: string]: any;
+      };
+    }
+  | {
+      name: string;
+      type: typeof WorkspaceTypeHelp;
+      deleted?: boolean;
+      lastModified: number;
+      metadata: {
         [k: string]: any;
       };
     };

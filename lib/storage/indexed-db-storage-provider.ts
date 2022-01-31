@@ -6,7 +6,7 @@ import {
   IndexedDBFileSystem,
   readFileAsText,
 } from '@bangle.io/baby-fs';
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import { assertSignal } from '@bangle.io/utils';
 import { fromFsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
 
@@ -14,7 +14,7 @@ import { BaseStorageProvider, StorageOpts } from './base-storage';
 
 export class IndexedDbStorageProvider implements BaseStorageProvider {
   // TODO setting it to string for easier subclassing while testing
-  name: string = WorkspaceType.browser;
+  name: string = WorkspaceTypeBrowser;
   displayName = 'Browser Storage';
   description = 'Saves data in your browsers local storage';
 

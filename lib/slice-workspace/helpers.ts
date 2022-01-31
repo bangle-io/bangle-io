@@ -1,4 +1,4 @@
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeHelp } from '@bangle.io/constants';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import { BaseStorageProvider, HelpFsStorageProvider } from '@bangle.io/storage';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
@@ -86,12 +86,12 @@ export function storageProviderErrorHandlerFromExtensionRegistry(
 }
 
 export function storageProviderFromExtensionRegistry(
-  workspaceType: WorkspaceType,
+  workspaceType: string,
   extensionRegistry: ExtensionRegistry,
 ) {
   let provider: BaseStorageProvider | undefined;
 
-  if (workspaceType === WorkspaceType.helpfs) {
+  if (workspaceType === WorkspaceTypeHelp) {
     provider = new HelpFsStorageProvider();
   } else {
     provider = extensionRegistry.getStorageProvider(workspaceType);

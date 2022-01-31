@@ -1,6 +1,6 @@
 import type { JsonArray } from 'type-fest';
 
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import { ApplicationStore, AppState, Slice } from '@bangle.io/create-store';
 import {
   Extension,
@@ -140,7 +140,7 @@ export const getActionsDispatched = (mockDispatch, name) => {
 export const createWsInfo = (obj: Partial<WorkspaceInfo>): WorkspaceInfo => {
   return {
     name: 'test-ws-info',
-    type: WorkspaceType.browser,
+    type: WorkspaceTypeBrowser,
     lastModified: 0,
     metadata: {},
     ...obj,

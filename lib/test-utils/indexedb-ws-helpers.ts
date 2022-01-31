@@ -1,7 +1,7 @@
 import * as idb from 'idb-keyval';
 
 import { IndexedDBFileSystem } from '@bangle.io/baby-fs';
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -26,7 +26,7 @@ export const setupMockWorkspace = async (wsInfo: Partial<WorkspaceInfo>) => {
       lastModified: 1,
       deleted: false,
       metadata: {},
-      type: WorkspaceType['browser'],
+      type: WorkspaceTypeBrowser,
     },
     wsInfo,
   );

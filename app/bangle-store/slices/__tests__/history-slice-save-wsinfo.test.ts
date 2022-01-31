@@ -1,7 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { WorkspaceType } from '@bangle.io/constants';
+import {
+  WorkspaceTypeBrowser,
+  WorkspaceTypeNative,
+} from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import { BrowserHistory } from '@bangle.io/history';
@@ -30,7 +33,7 @@ afterEach(() => {
 
 let setup = () => {
   class FakeNativeFs extends IndexedDbStorageProvider {
-    name = WorkspaceType.nativefs;
+    name = WorkspaceTypeNative;
     description = 'test native fs fake';
 
     async newWorkspaceMetadata(wsName: string, createOpts: any) {
@@ -66,7 +69,7 @@ describe('saveWorkspaceInfoEffect', () => {
   test('works when not a nativefs workspace', async () => {
     const { store, history } = setup();
 
-    await createWorkspace('testWs', WorkspaceType.browser, {})(
+    await createWorkspace('testWs', WorkspaceTypeBrowser, {})(
       store.state,
       store.dispatch,
       store,
@@ -85,7 +88,7 @@ describe('saveWorkspaceInfoEffect', () => {
   test('works when a nativefs workspace', async () => {
     const { store, history } = setup();
 
-    await createWorkspace('testWs', WorkspaceType.nativefs, {
+    await createWorkspace('testWs', WorkspaceTypeNative, {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
@@ -102,7 +105,7 @@ describe('saveWorkspaceInfoEffect', () => {
   test('ignores when a workspace is deleted', async () => {
     const { store, history } = setup();
 
-    await createWorkspace('testWs', WorkspaceType.nativefs, {
+    await createWorkspace('testWs', WorkspaceTypeNative, {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
@@ -122,7 +125,7 @@ describe('saveWorkspaceInfoEffect', () => {
     let { store, history } = setup();
 
     const deletedWsName = 'testWs';
-    await createWorkspace(deletedWsName, WorkspaceType.nativefs, {
+    await createWorkspace(deletedWsName, WorkspaceTypeNative, {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
@@ -145,7 +148,7 @@ describe('saveWorkspaceInfoEffect', () => {
 
     await sleep(0);
 
-    await createWorkspace('testWs2', WorkspaceType.nativefs, {
+    await createWorkspace('testWs2', WorkspaceTypeNative, {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
@@ -170,7 +173,7 @@ describe('saveWorkspaceInfoEffect', () => {
   test('dispatching multipe times does not call it again', async () => {
     const { store, history } = setup();
 
-    await createWorkspace('testWs', WorkspaceType.nativefs, {
+    await createWorkspace('testWs', WorkspaceTypeNative, {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 

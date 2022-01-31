@@ -1,6 +1,6 @@
 import type { Node } from '@bangle.dev/pm';
 
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeHelp } from '@bangle.io/constants';
 import {
   ExtensionRegistry,
   extensionRegistrySliceKey,
@@ -68,7 +68,7 @@ export function getStorageErrorHandler() {
       .getSliceStateAsserted(state)
       .extensionRegistry.getOnStorageErrorHandlers(wsInfo.type);
 
-    if (!errorHandler || wsInfo.type === WorkspaceType.helpfs) {
+    if (!errorHandler || wsInfo.type === WorkspaceTypeHelp) {
       errorHandler = (error) => false;
     }
 
