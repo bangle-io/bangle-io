@@ -1,5 +1,4 @@
 import { AppState } from '@bangle.io/create-store';
-import { BaseError } from '@bangle.io/utils';
 
 import {
   UI_CONTEXT_TOGGLE_THEME,

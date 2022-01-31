@@ -1,4 +1,4 @@
-import { ElementHandle, expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 import os from 'os';
 import prettier from 'prettier';
 

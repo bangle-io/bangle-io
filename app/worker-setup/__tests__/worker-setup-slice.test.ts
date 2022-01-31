@@ -232,7 +232,7 @@ test('sends actions correctly', async () => {
 test('sends slice-page action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store, actionsDispatched } = createTestStore({
+  const { store } = createTestStore({
     slices: [...slices, pageSlice(), naukarProxySlice()],
     opts: {
       useWebWorker: false,
@@ -260,7 +260,7 @@ test('sends slice-page action correctly', async () => {
 test('sends workspaces slice action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store, actionsDispatched } = createTestStore({
+  const { store } = createTestStore({
     slices: [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
     opts: {
       useWebWorker: false,
@@ -289,7 +289,7 @@ test('sends workspaces slice action correctly', async () => {
 test('sends workspace slice action correctly', async () => {
   const slices = workerSetupSlices();
 
-  const { store, actionsDispatched } = createTestStore({
+  const { store } = createTestStore({
     slices: [...slices, pageSlice(), naukarProxySlice(), workspaceSlice()],
     opts: {
       useWebWorker: false,

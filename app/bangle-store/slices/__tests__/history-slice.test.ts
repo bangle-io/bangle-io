@@ -43,7 +43,7 @@ beforeEach(() => {
 
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
-    const { store, actionsDispatched } = createTestStore({
+    const { actionsDispatched } = createTestStore({
       sliceKey: pageSliceKey,
       slices: [pageSlice(), historySlice()],
     });

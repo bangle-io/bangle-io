@@ -1,6 +1,5 @@
 import { WORKER_ABORTABLE_SERVICE_ABORTED } from '../util';
 import { workerAbortable } from '../worker-abortable';
-import { AbortableFunc } from '../worker-abortable-function-wrapper';
 
 let originalConsoleWarn = console.warn;
 let originalConsoleDebug = console.debug;

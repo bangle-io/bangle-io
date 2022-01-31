@@ -31,16 +31,14 @@ let workspaces: WorkspaceInfo[] = [
   },
 ];
 
-let listWorkspacesMock = jest
-  .mocked(listWorkspaces)
-  .mockImplementation(() => async () => workspaces);
+jest.mocked(listWorkspaces).mockImplementation(() => async () => workspaces);
 
 let dismissPalette = jest.fn(),
   onSelect = jest.fn(),
   getActivePaletteItem = jest.fn();
 
 test('Component renders correctly', async () => {
-  const result = render(
+  const { container } = render(
     <workspacePalette.ReactComponent
       query=""
       paletteType={undefined}
@@ -59,6 +57,6 @@ test('Component renders correctly', async () => {
 
   await act(() => prom);
 
-  expect(result.container).toMatchSnapshot();
-  expect(result.container.innerHTML.includes('test-ws1')).toBe(true);
+  expect(container).toMatchSnapshot();
+  expect(container.innerHTML.includes('test-ws1')).toBe(true);
 });

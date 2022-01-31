@@ -1,15 +1,11 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import {
-  clearEditor,
   createNewNote,
   createWorkspace,
-  getEditorDebugString,
   getEditorHTML,
-  getEditorJSON,
   getEditorLocator,
   longSleep,
-  SELECTOR_TIMEOUT,
   sleep,
 } from '../helpers';
 

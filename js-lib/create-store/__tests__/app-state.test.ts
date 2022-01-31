@@ -189,7 +189,7 @@ describe('AppState', () => {
       name: 'for-b',
       value: { no: 77 },
     };
-    let newAppState = appState.applyAction(action);
+    appState.applyAction(action);
 
     expect(initThis).toBe(slice);
     expect(applyThis).toBe(slice);

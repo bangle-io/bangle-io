@@ -128,7 +128,7 @@ describe('useLocalStorage', () => {
   });
 
   test('handles null value', async () => {
-    const { result, rerender } = renderHook(
+    const { result } = renderHook(
       ({ key, value }) => useLocalStorage<string | null>(key, value),
       {
         initialProps: { key: 'first-key', value: 'first-value' },

@@ -30,7 +30,7 @@ function readFileFromUnpkg(wsPath: string) {
   }
 
   const splitted = filePath.split('/');
-  const [wsName, ...path] = splitted;
+  const [, ...path] = splitted;
 
   return fetchHelpFiles(path.join('/'))
     .then((r) => r?.blob())

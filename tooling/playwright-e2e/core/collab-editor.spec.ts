@@ -3,11 +3,9 @@ import { expect, test } from '@playwright/test';
 import {
   createNewNote,
   createWorkspace,
-  ctrlKey,
   getEditorDebugString,
   getEditorLocator,
   longSleep,
-  sleep,
   splitScreen,
 } from '../helpers';
 

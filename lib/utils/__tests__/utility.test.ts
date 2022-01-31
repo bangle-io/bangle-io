@@ -37,7 +37,7 @@ describe('exponentialBackoff', () => {
       return false;
     });
 
-    let prom = await exponentialBackoff(cb, abort.signal);
+    await exponentialBackoff(cb, abort.signal);
 
     expect(cb).toBeCalledTimes(5);
     expect(setTimeout).toBeCalledTimes(4);
@@ -58,7 +58,7 @@ describe('exponentialBackoff', () => {
       return false;
     });
 
-    let prom = await exponentialBackoff(cb, abort.signal);
+    await exponentialBackoff(cb, abort.signal);
 
     expect(cb).toBeCalledTimes(2);
     expect(setTimeout).toBeCalledTimes(1);
@@ -66,14 +66,13 @@ describe('exponentialBackoff', () => {
   });
 
   test('max try is respected', async () => {
-    let count = 0;
     const abort = new AbortController();
 
     let cb = jest.fn(() => {
       return false;
     });
 
-    let prom = await exponentialBackoff(cb, abort.signal, { maxTry: 8 });
+    await exponentialBackoff(cb, abort.signal, { maxTry: 8 });
 
     expect(cb).toBeCalledTimes(8);
     expect(setTimeout).toBeCalledTimes(8);

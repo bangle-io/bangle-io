@@ -1,4 +1,3 @@
-import { BaseError } from '@bangle.io/base-error';
 import {
   ApplicationStore,
   ExtractAction,

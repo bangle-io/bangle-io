@@ -7,7 +7,7 @@ import {
   RawSpecs,
 } from '@bangle.dev/core';
 import { inlineNodeParser } from '@bangle.dev/markdown';
-import { EditorState, EditorView, keymap, Transaction } from '@bangle.dev/pm';
+import { EditorState, EditorView, keymap } from '@bangle.dev/pm';
 
 import { RenderReactNodeView } from '@bangle.io/extension-registry';
 import {

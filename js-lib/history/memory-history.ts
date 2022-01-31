@@ -2,7 +2,6 @@ import { BaseHistory } from './base-history';
 import { Location } from './types';
 
 export class MemoryHistory extends BaseHistory {
-  private host = typeof window !== 'undefined' ? window : undefined;
   private currentLoc: Location;
 
   // TODO implement base

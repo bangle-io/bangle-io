@@ -1,11 +1,6 @@
 import lifeCycle from 'page-lifecycle';
 
-import {
-  blockReload,
-  pageSlice,
-  PageSliceAction,
-  pageSliceKey,
-} from '@bangle.io/slice-page';
+import { blockReload, pageSlice, pageSliceKey } from '@bangle.io/slice-page';
 import { createTestStore } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
@@ -117,7 +112,7 @@ describe('watchPageLifeCycleEffect', () => {
   });
 
   test('dispatches correctly', () => {
-    const { store, dispatchSpy } = createTestStore({
+    const { dispatchSpy } = createTestStore({
       sliceKey: pageSliceKey,
       slices: [pageSlice(), pageLifeCycleSlice()],
     });

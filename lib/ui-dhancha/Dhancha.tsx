@@ -1,6 +1,6 @@
 import './style.css';
 
-import React, { ReactNode, useEffect, useMemo, useRef } from 'react';
+import React, { ReactNode, useRef } from 'react';
 
 import { useStickyNavigation } from './use-sticky-navigation';
 

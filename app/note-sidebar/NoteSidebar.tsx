@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import type { NoteSidebarWidget } from '@bangle.io/shared-types';
 import {
@@ -6,7 +6,7 @@ import {
   ButtonContent,
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
-import { ChevronRightIcon, MoreSmallListIcon } from '@bangle.io/ui-components';
+import { ChevronRightIcon } from '@bangle.io/ui-components';
 
 export function NoteSidebar({
   onDismiss,

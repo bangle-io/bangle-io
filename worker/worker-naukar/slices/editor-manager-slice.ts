@@ -15,7 +15,6 @@ import {
   saveDoc,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
-import { defaultDoc } from '@bangle.io/slice-workspace/default-doc';
 import { asssertNotUndefined } from '@bangle.io/utils';
 
 import { setupCollabManager } from '../collab-manager';

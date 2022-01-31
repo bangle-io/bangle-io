@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { act, render } from '@testing-library/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Extension } from '../Extension';
 import { ExtensionRegistry } from '../ExtensionRegistry';
@@ -43,10 +43,8 @@ test('state is intialized', () => {
     return <span>hi</span>;
   }
 
-  let result;
-
   act(() => {
-    result = render(
+    render(
       <ExtensionStateContextProvider>
         <MyComp />
       </ExtensionStateContextProvider>,
@@ -95,10 +93,8 @@ test('forwards correct state to each extension', () => {
     return <span>hi</span>;
   }
 
-  let result;
-
   act(() => {
-    result = render(
+    render(
       <ExtensionStateContextProvider>
         <>
           <MyComp1 />

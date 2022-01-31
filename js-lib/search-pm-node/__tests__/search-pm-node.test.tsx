@@ -8,7 +8,6 @@
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';
-import type { Node } from '@bangle.dev/pm';
 import { psx, renderTestEditor } from '@bangle.dev/test-helpers';
 import { wikiLink } from '@bangle.dev/wiki-link';
 

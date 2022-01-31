@@ -212,7 +212,7 @@ test('Error actions serialization of base error', () => {
   );
 
   const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
+    name: 'action::@bangle.io/slice-workspace:set-error' as const,
     value: {
       error,
     },
@@ -229,7 +229,7 @@ test('Error actions serialization with storage provider error', () => {
   storageProviderHelpers.markAsStorageProviderError(error, 'test-provider');
 
   const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
+    name: 'action::@bangle.io/slice-workspace:set-error' as const,
     value: {
       error,
     },

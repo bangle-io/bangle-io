@@ -9,7 +9,7 @@ var lastTime = 0;
 const safeRequestAnimationFrame =
   typeof window !== 'undefined' && window.requestAnimationFrame
     ? window.requestAnimationFrame
-    : function (callback) {
+    : function (callback: (n: number) => void) {
         var currTime = new Date().getTime();
         var timeToCall = Math.max(0, 16 - (currTime - lastTime));
         var id = window.setTimeout(function () {
@@ -22,7 +22,7 @@ const safeRequestAnimationFrame =
 const safeCancelAnimationFrame =
   typeof window !== 'undefined' && window.cancelAnimationFrame
     ? window.cancelAnimationFrame
-    : function (id) {
+    : function (id: number) {
         clearTimeout(id);
       };
 
@@ -169,11 +169,13 @@ export function intersectionObserverPlugin({
         calcPosition();
       };
 
-      let raf;
+      let raf: number | null = null;
 
       return {
         destroy() {
-          cancelAnimationFrame(raf);
+          if (raf !== null) {
+            cancelAnimationFrame(raf);
+          }
           observer?.disconnect();
           observingSet.clear();
         },
@@ -183,7 +185,9 @@ export function intersectionObserverPlugin({
           if (lastState === state) {
             return;
           }
-          safeCancelAnimationFrame(raf);
+          if (raf !== null) {
+            safeCancelAnimationFrame(raf);
+          }
           raf = safeRequestAnimationFrame(updateNodes);
         },
       };

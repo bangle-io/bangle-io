@@ -56,7 +56,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     opts,
   }: {
     slices: SliceArray<S, A>;
-    json: JsonValue;
+    json: JsonObject;
     sliceFields: { [key: string]: Slice<any, any> };
     opts?: Op;
   }) {
@@ -74,11 +74,12 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
           state.stateFromJSON &&
           Object.prototype.hasOwnProperty.call(json, prop)
         ) {
+          let val = json[prop];
           // This field belongs to a plugin mapped to a JSON field, read it from there.
           instance.slicesCurrentState[f.name] = state.stateFromJSON.call(
             slice,
             config,
-            json![prop],
+            val!,
             instance,
           );
           return;
@@ -95,7 +96,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
   }: {
     sliceFields?: { [key: string]: Slice<any, any> };
   }): JsonObject {
-    let result = {};
+    let result: { [rec: string]: JsonValue } = {};
     for (var prop in sliceFields) {
       const slice = sliceFields[prop];
       const state = slice?.spec.state;

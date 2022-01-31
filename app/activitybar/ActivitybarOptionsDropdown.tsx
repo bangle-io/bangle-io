@@ -14,7 +14,7 @@ import {
   toggleWorkspacePalette,
 } from '@bangle.io/shared-operations';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
-import { toggleTheme, useUIManagerContext } from '@bangle.io/slice-ui';
+import { toggleTheme } from '@bangle.io/slice-ui';
 import {
   DropdownMenu,
   MenuItem,
@@ -60,7 +60,6 @@ export function ActivitybarOptionsDropdown({
   operationKeybindings: SerialOperationKeybindingMapping;
 }) {
   const store = useBangleStoreContext();
-  const { dispatch: dispatchUiAction } = useUIManagerContext();
 
   const handleDropdown = useCallback(
     (k: any) => {

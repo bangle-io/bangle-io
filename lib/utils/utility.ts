@@ -1,15 +1,14 @@
 import _debounceFn from 'debounce-fn';
 import { keyName } from 'w3c-keyname';
 
+import { EditorView } from '@bangle.dev/pm';
 import { Emitter } from '@bangle.dev/utils';
 
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
-import { safeRequestIdleCallback } from './safe-js-callbacks';
-
 export { Emitter };
 
-export function getLast(array) {
+export function getLast<T>(array: T[]): T | undefined {
   return array[array.length - 1];
 }
 
@@ -23,10 +22,14 @@ export const checkWidescreen = (
 // [`keymap`](#keymap.keymap), return a [keydown
 // handler](#view.EditorProps.handleKeyDown) that handles them.
 
-export function keybindingsHelper(bindings) {
+export function keybindingsHelper(bindings: {
+  [key: string]: (view: EditorView, event: Event) => boolean;
+}) {
   let map = normalize(bindings);
 
-  function normalize(map) {
+  function normalize(map: {
+    [key: string]: (view: EditorView, event: Event) => boolean;
+  }) {
     let copy = Object.create(null);
     for (let prop in map) {
       copy[normalizeKeyName(prop)] = map[prop];
@@ -34,7 +37,7 @@ export function keybindingsHelper(bindings) {
     return copy;
   }
 
-  function modifiers(name, event, shift) {
+  function modifiers(name: string, event: KeyboardEvent, shift: boolean) {
     if (event.altKey) {
       name = 'Alt-' + name;
     }
@@ -50,24 +53,25 @@ export function keybindingsHelper(bindings) {
     return name;
   }
 
-  function normalizeKeyName(name) {
+  function normalizeKeyName(name: string): string {
     let parts = name.split(/-(?!$)/),
-      result = parts[parts.length - 1];
+      result = parts[parts.length - 1]!;
     if (result === 'Space') {
       result = ' ';
     }
     let alt, ctrl, shift, meta;
     for (let i = 0; i < parts.length - 1; i++) {
       let mod = parts[i];
-      if (/^(cmd|meta|m)$/i.test(mod)) {
+
+      if (typeof mod === 'string' && /^(cmd|meta|m)$/i.test(mod)) {
         meta = true;
-      } else if (/^a(lt)?$/i.test(mod)) {
+      } else if (typeof mod === 'string' && /^a(lt)?$/i.test(mod)) {
         alt = true;
-      } else if (/^(c|ctrl|control)$/i.test(mod)) {
+      } else if (typeof mod === 'string' && /^(c|ctrl|control)$/i.test(mod)) {
         ctrl = true;
-      } else if (/^s(hift)?$/i.test(mod)) {
+      } else if (typeof mod === 'string' && /^s(hift)?$/i.test(mod)) {
         shift = true;
-      } else if (/^mod$/i.test(mod)) {
+      } else if (typeof mod === 'string' && /^mod$/i.test(mod)) {
         if (isMac) {
           meta = true;
         } else {
@@ -91,7 +95,7 @@ export function keybindingsHelper(bindings) {
     }
     return result;
   }
-  return function (event) {
+  return function (event: KeyboardEvent) {
     let name = keyName(event),
       isChar = name.length === 1 && name !== ' ';
     const direct = map[modifiers(name, event, !isChar)];
@@ -122,9 +126,9 @@ export function sleep(t = 20): Promise<void> {
  * @param {Function} fn - A unary function whose paramater is non-primitive,
  *                        so that it can be cached using WeakMap
  */
-export function weakCache(fn) {
+export function weakCache<T extends (arg: any) => any>(fn: T): T {
   const cache = new WeakMap();
-  return (arg) => {
+  const res = (arg: any) => {
     let value = cache.get(arg);
     if (value) {
       return value;
@@ -133,9 +137,11 @@ export function weakCache(fn) {
     cache.set(arg, value);
     return value;
   };
+
+  return res as T;
 }
 
-export function dedupeArray(array) {
+export function dedupeArray<T>(array: T[]) {
   return [...new Set(array)];
 }
 
@@ -168,40 +174,22 @@ export function isTouchDevice() {
   return hasTouchScreen;
 }
 
-export function serialExecuteQueue() {
-  let prev = Promise.resolve();
-  return {
-    add: (cb) => {
-      return new Promise((resolve, reject) => {
-        prev = prev.then(() => {
-          return Promise.resolve(cb()).then(
-            (resultCb) => {
-              resolve(resultCb);
-            },
-            (err) => {
-              reject(err);
-            },
-          );
-        });
-      });
-    },
-  };
-}
-
-let dayJs;
-export async function getDayJs({} = {}) {
+let dayJs: typeof import('dayjs') | undefined;
+export async function getDayJs({} = {}): Promise<typeof import('dayjs')> {
   if (dayJs) {
     return dayJs;
   }
-  let [_dayjs, _localizedFormat] = (await Promise.all([
+  let [_dayjs, _localizedFormat]: [any, any] = (await Promise.all([
     import('dayjs'),
     import('dayjs/plugin/localizedFormat'),
   ])) as [any, any];
 
   dayJs = _dayjs.default || _dayjs;
   _localizedFormat = _localizedFormat.default || _localizedFormat;
-  dayJs.extend(_localizedFormat);
-
+  dayJs?.extend(_localizedFormat);
+  if (!dayJs) {
+    throw new Error('dayJs cannot be undefined');
+  }
   return dayJs;
 }
 
@@ -228,7 +216,7 @@ export function removeMdExtension(str: string) {
 
 // Shallow compares array in an out of order fashion.
 // For example [1,2] and [2,1] will be equal.
-export function shallowCompareArray(array1, array2) {
+export function shallowCompareArray(array1: any[], array2: any[]) {
   if (array1.length !== array2.length) {
     return false;
   }
@@ -256,36 +244,6 @@ export function randomStr(len = 10) {
 }
 
 export const debounceFn = _debounceFn;
-
-// Note: worker doesn't have requestIdleCallback
-export function rIdleDebounce(func) {
-  var timeout, timestamp;
-  var wait = 99;
-  var run = function () {
-    timeout = null;
-    func();
-  };
-  var later = function () {
-    var last = Date.now() - timestamp;
-    if (last < wait) {
-      setTimeout(later, wait - last);
-    } else {
-      if (safeRequestIdleCallback) {
-        safeRequestIdleCallback(run);
-      } else {
-        run();
-      }
-    }
-  };
-
-  return function () {
-    timestamp = Date.now();
-
-    if (!timeout) {
-      timeout = setTimeout(later, wait);
-    }
-  };
-}
 
 export function insertAt<T>(arr: T[], index: number, newItem: T): T[] {
   return [
@@ -377,7 +335,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * when any key has values which are not strictly equal between the arguments.
  * Returns true when the values of all keys are strictly equal.
  */
-export function shallowEqual<T extends {}>(objA: T, objB: T): boolean {
+export function shallowEqual<T extends {}>(objA: any, objB: any): boolean {
   if (Object.is(objA, objB)) {
     return true;
   }
@@ -391,8 +349,8 @@ export function shallowEqual<T extends {}>(objA: T, objB: T): boolean {
     return false;
   }
 
-  const keysA = Object.keys(objA);
-  const keysB = Object.keys(objB);
+  const keysA: any = Object.keys(objA);
+  const keysB: any = Object.keys(objB);
 
   if (keysA.length !== keysB.length) {
     return false;
@@ -411,7 +369,7 @@ export function shallowEqual<T extends {}>(objA: T, objB: T): boolean {
   return true;
 }
 
-export function makeSafeForCSS(name) {
+export function makeSafeForCSS(name: string) {
   return name.replace(/[^a-z0-9]/g, function (s: string) {
     let c = s.charCodeAt(0);
     if (c === 32) {

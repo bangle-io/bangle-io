@@ -1,10 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { act, fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React from 'react';
-
-import { useUIManagerContext } from '@bangle.io/slice-ui';
 
 import {
   ERROR_PICKING_DIRECTORY_ERROR,

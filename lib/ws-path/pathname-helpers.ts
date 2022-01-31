@@ -1,12 +1,13 @@
+/// <reference path="./missing-types.d.ts" />
 // Note: pathname in this file refers to the one used in window.location.pathname
-import { pathToRegexp } from 'path-to-regexp';
+import { Key, pathToRegexp } from 'path-to-regexp';
 import makeMatcher from 'wouter/matcher';
 
 import { resolvePath } from './helpers';
 import type { Location, OpenedWsPaths } from './opened-ws-paths';
 
-const convertPathToRegexp = (path) => {
-  let keys = [];
+const convertPathToRegexp = (path: string) => {
+  let keys: Key[] = [];
   // we use original pathToRegexp package here with keys
   const regexp = pathToRegexp(path, keys, { strict: true, end: false });
   return { keys, regexp };

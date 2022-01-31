@@ -1,11 +1,10 @@
-import { chromium, expect, Page, test } from '@playwright/test';
+import { chromium, expect, test } from '@playwright/test';
 import fs from 'fs/promises';
 import path from 'path';
 
 import {
   createWorkspaceFromBackup,
   getAllWsPaths,
-  longSleep,
   pushWsPathToPrimary,
   sleep,
   waitForNotification,
@@ -28,7 +27,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     path.resolve(__dirname, 'fixture', '100-notes.zip'),
   );
 
-  const wsName = await createWorkspaceFromBackup(page, {
+  await createWorkspaceFromBackup(page, {
     name: '100-notes.zip',
     mimeType: 'application/archive',
     buffer: f,

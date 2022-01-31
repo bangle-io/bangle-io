@@ -5,21 +5,18 @@
 /// <reference path="../../../missing-test-types.d.ts" />
 /// <reference path="./missing-test-types.d.ts" />
 
-import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
+import { defaultSpecs } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';
 import {
   getDefaultMarkdownItTokenizer,
   markdownParser,
   markdownSerializer,
 } from '@bangle.dev/markdown';
-import { Node } from '@bangle.dev/pm';
 import { psx } from '@bangle.dev/test-helpers';
 
-import { MARKDOWN_REGEX } from '../config';
 import { editorTagSpec, noteTagsMarkdownItPlugin } from '../editor-tag';
 
 const specRegistry = new SpecRegistry([...defaultSpecs(), editorTagSpec()]);
-const plugins = [...defaultPlugins()];
 
 const serialize = async (doc: any) => {
   let content = doc;

@@ -15,7 +15,7 @@ import { readFileAsText as readFileAsTextHelper } from './native-browser-fs-help
 const idbSuffix = 3;
 export const BASE_IDB_NAME_PREFIX = 'baby-idb';
 
-function catchUpstream(idbPromise, errorMessage) {
+function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
   return idbPromise.catch((error) => {
     return Promise.reject(
       new IndexedDBFileSystemError(errorMessage, UPSTREAM_ERROR, null, error),

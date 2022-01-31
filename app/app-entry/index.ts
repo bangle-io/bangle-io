@@ -3,7 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { APP_ENV, RELEASE_ID, sentryConfig } from '@bangle.io/config';
+import { APP_ENV, sentryConfig } from '@bangle.io/config';
 
 import { LoadingBlock } from './LoadingBlock';
 

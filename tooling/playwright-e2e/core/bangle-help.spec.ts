@@ -1,10 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import {
-  getEditorLocator,
-  sleep,
-  waitForEditorTextToContain,
-} from '../helpers';
+import { getEditorLocator, waitForEditorTextToContain } from '../helpers';
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });

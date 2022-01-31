@@ -1,4 +1,3 @@
-import { BaseAction } from '@bangle.io/create-store';
 import type { ActionTestFixtureType } from '@bangle.io/test-utils';
 
 import { PageSliceAction } from '../common';

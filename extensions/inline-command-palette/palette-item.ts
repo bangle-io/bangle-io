@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Command } from '@bangle.dev/pm';
 
 export const PALETTE_ITEM_REGULAR_TYPE = 'REGULAR_TYPE';

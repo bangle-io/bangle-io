@@ -58,13 +58,13 @@ export abstract class BaseFileSystem {
 
   // TODO
   // Ensures that the directory exists. If the directory structure does not exist, it is created.
-  async mkdirp(filePath) {}
+  async mkdirp(filePath: string) {}
 
   //Remove directory
   async rmdir(): Promise<void> {}
 
   // fs.extra https://github.com/jprichardson/node-fs-extra/blob/master/docs/move.md
-  async move(src, dest) {}
+  async move(src: string, dest: string) {}
 
   // https://github.com/jprichardson/node-fs-extra/blob/master/docs/copy.md
   // Copy a file or directory. The directory can have contents.

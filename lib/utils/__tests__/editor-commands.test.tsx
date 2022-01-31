@@ -19,7 +19,7 @@ describe('trimEndWhiteSpaceBeforeCursor', () => {
       plugins: defaultPlugins(),
     });
 
-    const { container, view } = testEditor(
+    const { view } = testEditor(
       <doc>
         <para>hello []</para>
       </doc>,
@@ -40,7 +40,7 @@ describe('trimEndWhiteSpaceBeforeCursor', () => {
       plugins: defaultPlugins(),
     });
 
-    const { container, view } = testEditor(
+    const { view } = testEditor(
       <doc>
         <para>hello []world</para>
       </doc>,
@@ -61,7 +61,7 @@ describe('trimEndWhiteSpaceBeforeCursor', () => {
       plugins: [],
     });
 
-    const { container, view } = testEditor(
+    const { view } = testEditor(
       <doc>
         <para> []</para>
       </doc>,
@@ -82,7 +82,7 @@ describe('trimEndWhiteSpaceBeforeCursor', () => {
       plugins: [],
     });
 
-    const { container, view } = testEditor(
+    const { view } = testEditor(
       <doc>
         <ul>
           <li>
@@ -111,7 +111,7 @@ describe('trimEndWhiteSpaceBeforeCursor', () => {
       plugins: [],
     });
 
-    const { container, view } = testEditor(
+    const { view } = testEditor(
       <doc>
         <blockquote>
           <para> []</para>
@@ -135,7 +135,7 @@ describe('trimEndWhiteSpaceBeforeCursor', () => {
       plugins: [],
     });
 
-    const { container, view } = testEditor(
+    const { view } = testEditor(
       <doc>
         <ul>
           <li>

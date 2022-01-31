@@ -93,7 +93,7 @@ describe('refreshWsPathsEffect', () => {
   test('refreshes on dispatching refresh counter', async () => {
     const storageProvider = new IndexedDbStorageProvider();
 
-    const { store, dispatchSpy } = createBasicTestStore({
+    const { store } = createBasicTestStore({
       storageProvider: storageProvider,
     });
 
@@ -265,7 +265,7 @@ describe('refreshWorkspacesEffect', () => {
 });
 
 describe('updateLocationEffect', () => {
-  let { store, getActionNames, getAction, dispatchSpy } = createStore(
+  let { store, getActionNames, getAction } = createStore(
     undefined,
     undefined,
     undefined,
@@ -273,7 +273,7 @@ describe('updateLocationEffect', () => {
   );
 
   beforeEach(() => {
-    ({ store, getActionNames, getAction, dispatchSpy } = createStore(
+    ({ store, getActionNames, getAction } = createStore(
       undefined,
       undefined,
       undefined,
@@ -326,7 +326,7 @@ describe('updateLocationEffect', () => {
   });
 
   test('dispatching same location does not trigger update', async () => {
-    const { store, dispatchSpy, getActionNames } = createBasicTestStore({
+    const { store, getActionNames } = createBasicTestStore({
       sliceKey: workspaceSliceKey,
     });
 

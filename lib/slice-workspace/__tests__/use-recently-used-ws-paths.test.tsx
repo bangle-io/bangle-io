@@ -128,7 +128,7 @@ test('updates the newly opened ws path only', async () => {
 
   let bangleStoreChanged = 0;
 
-  const { store, dispatchSpy } = createBasicTestStore({});
+  const { store } = createBasicTestStore({});
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider
       bangleStore={store}

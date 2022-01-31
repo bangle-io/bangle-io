@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { EditorState, EditorView, NodeSelection } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';

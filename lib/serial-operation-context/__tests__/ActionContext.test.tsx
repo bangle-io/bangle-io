@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { act, render } from '@testing-library/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { defaultSpecs } from '@bangle.dev/all-base-components';
 
@@ -162,10 +162,9 @@ describe('operation handlers', () => {
         }),
       ]);
 
-    let result,
-      dispatchSOp: ReturnType<
-        typeof useSerialOperationContext
-      >['dispatchSerialOperation'];
+    let dispatchSOp: ReturnType<
+      typeof useSerialOperationContext
+    >['dispatchSerialOperation'];
 
     useSliceStateMock.mockImplementation(() => ({
       sliceState: { extensionRegistry: initExtensionRegistry() },
@@ -179,7 +178,7 @@ describe('operation handlers', () => {
       return null;
     }
     act(() => {
-      result = render(
+      render(
         <ExtensionRegistryContextProvider>
           <SerialOperationContextProvider>
             <DispatchSOp />

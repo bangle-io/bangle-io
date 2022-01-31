@@ -15,7 +15,7 @@ let lastTime = 0;
 export const safeRequestAnimationFrame =
   typeof window !== 'undefined' && window.requestAnimationFrame
     ? window.requestAnimationFrame
-    : function (callback) {
+    : function (callback: (r: number) => void) {
         var currTime = new Date().getTime();
         var timeToCall = Math.max(0, 16 - (currTime - lastTime));
         var id = window.setTimeout(function () {
@@ -28,7 +28,7 @@ export const safeRequestAnimationFrame =
 export const safeCancelAnimationFrame =
   typeof window !== 'undefined' && window.cancelAnimationFrame
     ? window.cancelAnimationFrame
-    : function (id) {
+    : function (id: Parameters<typeof cancelIdleCallback>[0]) {
         clearTimeout(id);
       };
 
@@ -59,11 +59,11 @@ export const safeCancelIdleCallback: typeof cancelIdleCallback =
  * Throttles the function and calls it with the latest argument
  * @param {Function} fn
  */
-export function rafSchedule(fn) {
+export function rafSchedule<F, T extends (...args: F[]) => void>(fn: T) {
   let lastArgs: any[] = [];
   let frameId: null | number = null;
 
-  const wrapperFn = (...args) => {
+  const wrapperFn = (...args: F[]) => {
     // Always capture the latest value
     lastArgs = args;
 

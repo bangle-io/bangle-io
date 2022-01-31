@@ -6,7 +6,6 @@ import {
   pageSliceKey,
   PageSliceStateType,
 } from './common';
-import { pageSliceInitialState } from './page-slice';
 
 export function usePageContext() {
   const { sliceState: pageState, store } = useSliceState<
