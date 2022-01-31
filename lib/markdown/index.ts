@@ -9,9 +9,10 @@ const LOG = false;
 let log = LOG ? console.log.bind(console, 'editor/markdown-parser') : () => {};
 
 const setupSerializer = () => {
-  let _serializer, _specRegistry;
+  let _serializer: undefined | ReturnType<typeof markdown.markdownSerializer>,
+    _specRegistry: undefined | SpecRegistry;
 
-  return (specRegistry) => {
+  return (specRegistry: SpecRegistry) => {
     if (specRegistry !== _specRegistry) {
       log('setting up serializer');
       _serializer = markdown.markdownSerializer(specRegistry);
@@ -21,7 +22,10 @@ const setupSerializer = () => {
 };
 
 const setupGetParser = () => {
-  const setupParser = (specRegistry, markdownItPlugins) => {
+  const setupParser = (
+    specRegistry: SpecRegistry,
+    markdownItPlugins: any[],
+  ) => {
     log('setting up parser');
     let tokenizer = markdown.getDefaultMarkdownItTokenizer();
     markdownItPlugins.forEach((plugin) => {
@@ -35,9 +39,11 @@ const setupGetParser = () => {
     return markdown.markdownParser(specRegistry, tokenizer);
   };
 
-  let _parser, _specRegistry, _markdownItPlugins;
+  let _parser: undefined | ReturnType<typeof setupParser>,
+    _specRegistry: SpecRegistry | undefined,
+    _markdownItPlugins: any[] | undefined;
 
-  return (specRegistry, markdownItPlugins) => {
+  return (specRegistry: SpecRegistry, markdownItPlugins: any[]) => {
     if (
       specRegistry !== _specRegistry ||
       markdownItPlugins !== _markdownItPlugins
@@ -71,7 +77,7 @@ export const markdownSerializer = (doc: Node, specRegistry: SpecRegistry) => {
 };
 
 // TODO need to improve this
-function listCollapsedHeading(doc, specRegistry) {
+function listCollapsedHeading(doc: Node, specRegistry: SpecRegistry) {
   return findChildren(
     doc,
     (node) =>

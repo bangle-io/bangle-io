@@ -2,19 +2,14 @@ import { expect, test } from '@playwright/test';
 
 import { resolvePath } from '../bangle-helpers';
 import {
-  clickItemInPalette,
   createNewNote,
   createWorkspace,
   getAllWsPaths,
   getEditorLocator,
-  getItemsInPalette,
-  getPrimaryEditorHandler,
   getWsPathsShownInFilePalette,
   longSleep,
-  openWorkspacePalette,
   pushWsPathToSecondary,
   runOperation,
-  sleep,
   waitForEditorFocus,
 } from '../helpers';
 

@@ -65,7 +65,7 @@ describe('abortable worker', () => {
   test('doesnt touch methods that donot start with abortable', async () => {
     let otherMethod = jest.fn(async (count: number) => {
       return new Promise<number>((res, rej) => {
-        let timer = setTimeout(() => {
+        setTimeout(() => {
           res(count);
         }, 500);
       });

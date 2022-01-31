@@ -19,29 +19,28 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
     const { injectRecency, updateRecency } = useRecencyWatcher(storageKey);
 
     const items = useMemo(() => {
-      let operations = injectRecency(
-        extensionRegistry
-          .getRegisteredOperations()
-          .filter((obj) => !obj.hidden)
-          .map((operationDefinition) => {
-            return {
-              uid: operationDefinition.name,
-              title: operationDefinition.title || operationDefinition.name,
-              data: operationDefinition,
-              keywords: operationDefinition.keywords,
-            };
-          })
-          .filter((obj) => {
-            if (strMatch(obj.title, query)) {
-              return true;
-            }
-            if (obj.keywords) {
-              return strMatch(obj.keywords, query);
-            }
+      const rec = extensionRegistry
+        .getRegisteredOperations()
+        .filter((obj) => !obj.hidden)
+        .map((operationDefinition) => {
+          return {
+            uid: operationDefinition.name,
+            title: operationDefinition.title || operationDefinition.name,
+            data: operationDefinition,
+            keywords: operationDefinition.keywords,
+          };
+        })
+        .filter((obj) => {
+          if (strMatch(obj.title, query)) {
+            return true;
+          }
+          if (obj.keywords) {
+            return strMatch(obj.keywords, query);
+          }
 
-            return false;
-          }),
-      );
+          return false;
+        });
+      let operations = injectRecency(rec);
 
       return operations.slice(0, 50);
     }, [extensionRegistry, injectRecency, query]);
@@ -113,7 +112,7 @@ export const operationPalette: ExtensionPaletteType = {
   ReactComponent: ActionPaletteUIComponent,
 };
 
-function strMatch(a, b) {
+function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));

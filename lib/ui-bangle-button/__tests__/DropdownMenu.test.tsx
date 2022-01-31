@@ -1,16 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-
-import { sleep } from '@bangle.io/utils';
 
 import { DropdownMenu, MenuItem, MenuSection } from '../DropdownMenu';
 
@@ -24,7 +16,7 @@ jest.mock('react-dom', () => {
   };
 });
 
-let result, onAction;
+let result: ReturnType<typeof render>, onAction;
 beforeEach(() => {
   onAction = jest.fn();
   result = render(

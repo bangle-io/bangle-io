@@ -192,7 +192,7 @@ function readAllFilesBackup() {
 
 function createWorkspaceFromBackup(
   getWsPaths: GetWsPaths,
-  saveFile: (wsPath, file: File) => Promise<void>,
+  saveFile: (wsPath: string, file: File) => Promise<void>,
 ) {
   return async (
     abortSignal: AbortSignal,

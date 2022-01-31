@@ -1,21 +1,15 @@
 import { expect, test } from '@playwright/test';
 
-import { resolvePath } from '../bangle-helpers';
 import {
   clickItemInPalette,
   createNewNote,
   createWorkspace,
-  getAllWsPaths,
-  getEditorLocator,
   getItemsInPalette,
   getPrimaryEditorHandler,
   getWsPathsShownInFilePalette,
-  longSleep,
   openWorkspacePalette,
-  pushWsPathToSecondary,
   runOperation,
   sleep,
-  waitForEditorFocus,
   waitForNotification,
 } from '../helpers';
 
@@ -35,7 +29,7 @@ test.describe.parallel('workspaces', () => {
     const wsPathsOfWsName1 = await getWsPathsShownInFilePalette(page);
     expect(wsPathsOfWsName1).toEqual([n2, n1]);
 
-    const wsName2 = await createWorkspace(page);
+    await createWorkspace(page);
 
     const wsPathsOfWsName2 = await getWsPathsShownInFilePalette(page);
     expect(wsPathsOfWsName2).toEqual([]);
@@ -52,7 +46,7 @@ test.describe.parallel('workspaces', () => {
   test('switching a workspace using the palette', async ({ page, baseURL }) => {
     test.slow();
     const wsName1 = await createWorkspace(page);
-    const n1 = await createNewNote(page, wsName1, 'file-1');
+    await createNewNote(page, wsName1, 'file-1');
 
     const wsName2 = await createWorkspace(page);
 

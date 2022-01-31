@@ -1,8 +1,8 @@
-import { Extension } from '@bangle.io/extension-registry';
+import { Extension, RenderReactNodeView } from '@bangle.io/extension-registry';
 
 const extensionName = 'extension-example';
 
-const renderReactNodeView = {
+const renderReactNodeView: RenderReactNodeView = {
   // params
   // 1. nodeViewRenderArg object
   //  - https://bangle.dev/docs/api/react#bangleeditor-reactelement

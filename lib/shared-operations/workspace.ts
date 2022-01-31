@@ -257,7 +257,7 @@ export function createBrowserWorkspace(wsName: string) {
   };
 }
 
-export function createNativeFsWorkpsace(rootDirHandle) {
+export function createNativeFsWorkpsace(rootDirHandle: any) {
   return async (
     state: AppState,
     dispatch: ApplicationStore<

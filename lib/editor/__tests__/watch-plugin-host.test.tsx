@@ -7,7 +7,7 @@
 
 import { defaultPlugins, defaultSpecs } from '@bangle.dev/all-base-components';
 import { SpecRegistry } from '@bangle.dev/core';
-import type { EditorState } from '@bangle.dev/pm';
+import type { EditorState, EditorView } from '@bangle.dev/pm';
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { psx, renderTestEditor, typeText } from '@bangle.dev/test-helpers';
 
@@ -82,7 +82,8 @@ describe('plugin state assertions', () => {
     customPlugins: Plugin | Plugin[],
     watchPluginStates: EditorWatchPluginState[],
   ) => void;
-  let dispatchSerialOperation, view;
+  let dispatchSerialOperation = jest.fn();
+  let view: EditorView;
 
   beforeEach(() => {
     dispatchSerialOperation = jest.fn();

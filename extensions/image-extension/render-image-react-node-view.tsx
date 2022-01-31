@@ -10,13 +10,18 @@ import {
   imageDimensionFromWsPath,
 } from './image-file-helpers';
 
+interface ImageNodeAttrs {
+  src: string;
+  alt?: string;
+}
 export const renderImageReactNodeView: RenderReactNodeView = {
   image: ({ nodeViewRenderArg }) => {
-    return <ImageComponent nodeAttrs={nodeViewRenderArg.node.attrs} />;
+    let { src, alt } = nodeViewRenderArg.node.attrs;
+    return <ImageComponent nodeAttrs={{ src, alt }} />;
   },
 };
 
-const isOtherSources = (src) => {
+const isOtherSources = (src?: string) => {
   return (
     !src ||
     src.startsWith('http://') ||
@@ -25,9 +30,9 @@ const isOtherSources = (src) => {
   );
 };
 
-export function ImageComponent({ nodeAttrs }) {
+export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
   const { src: inputSrc, alt } = nodeAttrs;
-  const [imageSrc, updateImageSrc] = useState(null);
+  const [imageSrc, updateImageSrc] = useState<string | null>(null);
   const {
     openedWsPaths: { primaryWsPath },
     bangleStore,
@@ -50,7 +55,7 @@ export function ImageComponent({ nodeAttrs }) {
   const destroyRef = useDestroyRef();
 
   useEffect(() => {
-    let objectUrl;
+    let objectUrl: string | null = null;
 
     if (primaryWsPath) {
       if (isOtherSources(inputSrc)) {
@@ -99,11 +104,16 @@ export function ImageComponent({ nodeAttrs }) {
 
   let newWidth = width;
   let newHeight = height;
-  if (width && height && alt && /.*scale\d.\d\d$/.test(alt)) {
-    const perc = parseFloat(alt.split('scale')[1]);
+  if (alt) {
+    if (width && height && /.*scale\d.\d\d$/.test(alt)) {
+      const scaled = alt.split('scale')[1];
+      if (scaled) {
+        const perc = parseFloat(scaled);
 
-    newWidth = perc * width;
-    newHeight = perc * height;
+        newWidth = perc * width;
+        newHeight = perc * height;
+      }
+    }
   }
 
   return (

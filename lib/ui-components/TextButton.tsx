@@ -8,6 +8,12 @@ export function TextButton({
   hint,
   hintPos = 'bottom',
   onClick,
+}: {
+  className?: string;
+  children: React.ReactNode;
+  hint?: string;
+  hintPos?: 'top' | 'bottom' | 'left' | 'right';
+  onClick?: () => void;
 }) {
   return (
     <button

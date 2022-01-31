@@ -35,10 +35,10 @@ jest.mock('@bangle.io/slice-workspace', () => {
   };
 });
 
-let Comp;
+let Comp: React.FC;
 let useWorkspaceContextReturn: Partial<typeof getUseWorkspaceContextReturn>;
-let useBroadcastChannelReturn;
-let updateOpenedWsPathsCallback;
+let useBroadcastChannelReturn: any;
+let updateOpenedWsPathsCallback: any;
 
 const updateOpenedWsPathsMock = updateOpenedWsPaths as jest.MockedFunction<
   typeof updateOpenedWsPaths

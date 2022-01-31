@@ -34,11 +34,6 @@ let setup = () => {
   return { store, services };
 };
 
-const textToFile = (str = 'hello world', fileName = 'foo.txt') => {
-  var file = new File([str], fileName, { type: 'text/plain' });
-  return file;
-};
-
 describe('searchWsForPmNode', () => {
   test('works', async () => {
     let { services, store } = setup();

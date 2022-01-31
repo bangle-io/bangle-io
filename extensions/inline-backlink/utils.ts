@@ -6,7 +6,7 @@ import {
   validateWsPath,
 } from '@bangle.io/ws-path';
 
-export function wsPathFromQuery(query, wsName) {
+export function wsPathFromQuery(query: string, wsName: string) {
   let filePath = query.split(']]').join('');
   filePath = filePath.trim();
   filePath = conditionalSuffix(filePath, '.md');
@@ -20,7 +20,7 @@ export function wsPathFromQuery(query, wsName) {
   return wsPath;
 }
 
-export function getBacklinkPath(wsPath, allWsPaths) {
+export function getBacklinkPath(wsPath: string, allWsPaths: string[]) {
   const { fileName, filePath } = resolvePath(wsPath);
   const matchingFilenames = allWsPaths.filter(
     (w) => resolvePath(w).fileName === fileName,

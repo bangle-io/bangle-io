@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, {
   useCallback,
   useEffect,
@@ -7,22 +6,10 @@ import React, {
   useState,
 } from 'react';
 
-import { sleep, useDestroyRef } from '@bangle.io/utils';
+import { BaseError, sleep, useDestroyRef } from '@bangle.io/utils';
 
 import { NullIcon, SpinnerIcon } from '../Icons';
 import { UniversalPalette } from '../UniversalPalette';
-
-InputPalette.propTypes = {
-  placeholder: PropTypes.string,
-  initialValue: PropTypes.string,
-  onDismiss: PropTypes.func.isRequired,
-  onExecute: PropTypes.func.isRequired,
-  updateError: PropTypes.func.isRequired,
-  error: PropTypes.object,
-  children: PropTypes.element,
-  widescreen: PropTypes.bool.isRequired,
-  selectOnMount: PropTypes.bool,
-};
 
 export function InputPalette({
   placeholder,
@@ -36,6 +23,17 @@ export function InputPalette({
   selectOnMount,
   widescreen,
   className = '',
+}: {
+  placeholder?: string;
+  initialValue?: string;
+  onDismiss: () => void;
+  onExecute: (inputValue: string) => void;
+  updateError: (error: Error | undefined) => void;
+  error: Error | undefined;
+  children: React.ReactNode;
+  selectOnMount?: boolean;
+  widescreen: boolean;
+  className?: string;
 }) {
   const destroyedRef = useDestroyRef();
   const [showSpinner, updateSpinner] = useState(false);
@@ -62,7 +60,10 @@ export function InputPalette({
   const errorItem = error && {
     uid: 'error',
     title: '🤦‍♀️ Error',
-    description: error.displayMessage || error.message,
+    description:
+      error instanceof BaseError
+        ? error.displayMessage || error.message
+        : error.message,
   };
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export function InputPalette({
   const { inputProps, resetCounter, onSelect, counter } =
     UniversalPalette.usePaletteDriver(onDismiss, onExecuteItem);
 
-  const onInputValueChange = (value) => {
+  const onInputValueChange = (value: string) => {
     _onInputValueChange(value);
     resetCounter();
   };

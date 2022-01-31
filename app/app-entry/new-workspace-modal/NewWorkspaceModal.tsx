@@ -2,10 +2,7 @@ import './NewWorkspaceModal.css';
 
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
-import {
-  DirTypeSystemHandle,
-  supportsNativeBrowserFs,
-} from '@bangle.io/baby-fs';
+import { supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
@@ -44,7 +41,7 @@ interface ModalState {
 }
 
 type WorkspaceType =
-  | { type: typeof FILE_SYSTEM; rootDir?: DirTypeSystemHandle }
+  | { type: typeof FILE_SYSTEM; rootDir?: FileSystemDirectoryHandle }
   | { type: typeof BROWSER; wsName?: string };
 
 type ModalStateAction =
@@ -123,7 +120,7 @@ export function NewWorkspaceModalContainer({
   }, []);
 
   const updateRootDirHandle = useCallback(
-    (value: DirTypeSystemHandle | undefined) => {
+    (value: FileSystemDirectoryHandle | undefined) => {
       updateModalState({
         type: 'update_workspace',
         workspace: { type: FILE_SYSTEM, rootDir: value },

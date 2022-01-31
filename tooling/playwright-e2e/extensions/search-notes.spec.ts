@@ -1,15 +1,11 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import {
-  clearEditor,
   createNewNote,
   createWorkspace,
-  getEditorDebugString,
   getEditorHTML,
-  getEditorJSON,
   getEditorLocator,
   longSleep,
-  SELECTOR_TIMEOUT,
   sleep,
 } from '../helpers';
 
@@ -81,6 +77,6 @@ test('Is able to search for a note', async ({ page }) => {
   ).toBe(1);
 });
 
-function countOcurrences(string, match) {
+function countOcurrences(string: string, match: string) {
   return string.split(match).length - 1;
 }

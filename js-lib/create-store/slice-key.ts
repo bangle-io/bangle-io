@@ -9,7 +9,7 @@ import { ApplicationStore } from './app-store';
 
 const keys: { [k: string]: number } = Object.create(null);
 
-export function createKey(name) {
+export function createKey(name: string) {
   if (name in keys) {
     return name + '$' + ++keys[name];
   }
@@ -31,8 +31,8 @@ export class SliceKey<
 
   // is a type helper to make it easy calling external operations
   // while keeping TS happy.
-  getStore(store: ApplicationStore) {
-    return store as ApplicationStore<SL, A>;
+  getStore(store: ApplicationStore): ApplicationStore<SL, A> {
+    return store;
   }
 
   getStateAndDispatch(store: ApplicationStore) {

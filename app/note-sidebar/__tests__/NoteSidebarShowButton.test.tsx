@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { NoteSidebarShowButton } from '../NoteSidebarShowButton';

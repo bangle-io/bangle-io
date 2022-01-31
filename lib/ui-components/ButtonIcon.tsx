@@ -1,17 +1,6 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import { cx } from '@bangle.io/utils';
-
-ButtonIcon.propTypes = {
-  className: PropTypes.string,
-  hint: PropTypes.string,
-  hintPos: PropTypes.string,
-  onClick: PropTypes.func,
-  children: PropTypes.node.isRequired,
-  active: PropTypes.bool,
-  style: PropTypes.object,
-};
 
 export function ButtonIcon({
   className = '',
@@ -22,6 +11,15 @@ export function ButtonIcon({
   active,
   style,
   removeFocus = true,
+}: {
+  className?: string;
+  hint?: string;
+  hintPos?: string;
+  children: React.ReactNode;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  active?: boolean;
+  style?: React.CSSProperties;
+  removeFocus?: boolean;
 }) {
   return (
     <button

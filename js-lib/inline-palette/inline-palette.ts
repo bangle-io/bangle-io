@@ -1,5 +1,11 @@
-import { BaseRawMarkSpec, PluginKey } from '@bangle.dev/core';
-import type { Command, EditorState } from '@bangle.dev/pm';
+import { BaseRawMarkSpec, PluginKey, SpecRegistry } from '@bangle.dev/core';
+import type {
+  Command,
+  EditorState,
+  EditorView,
+  Fragment,
+  Node,
+} from '@bangle.dev/pm';
 import {
   createTooltipDOM,
   suggestTooltip,
@@ -46,7 +52,13 @@ function pluginsFactory({
   markName: string;
   tooltipRenderOpts: SuggestTooltipRenderOpts;
 }) {
-  return ({ schema, specRegistry }) => {
+  return ({
+    schema,
+    specRegistry,
+  }: {
+    schema: EditorState['schema'];
+    specRegistry: SpecRegistry;
+  }) => {
     const { trigger } = specRegistry.options[markName];
     const suggestTooltipKey = new PluginKey('suggestTooltipKey');
 
@@ -65,9 +77,13 @@ function pluginsFactory({
     }
 
     const updateCounter = (key = 'UP') => {
-      return (state, dispatch, view) => {
+      return (
+        state: EditorState,
+        dispatch: EditorView['dispatch'] | undefined,
+        view: EditorView | undefined,
+      ) => {
         safeRequestAnimationFrame(() => {
-          view.focus();
+          view?.focus();
         });
         if (key === 'UP' ? !getIsTop() : getIsTop()) {
           return decrementSuggestTooltipCounter(suggestTooltipKey)(
@@ -85,7 +101,7 @@ function pluginsFactory({
       };
     };
 
-    let executeItemCommand;
+    let executeItemCommand: Command | undefined;
     return [
       valuePlugin(key, {
         // We are setting this callback which returns us the
@@ -95,7 +111,7 @@ function pluginsFactory({
         // any update or anything - dont confuse it will setState in react.
         // its a simple swap of a closure variable which the enter handler
         // can then use if pressed.
-        setExecuteItemCommand: (command) => {
+        setExecuteItemCommand: (command: Command) => {
           executeItemCommand = command;
         },
         tooltipContentDOM: tooltipDOMSpec.contentDOM,
@@ -111,8 +127,14 @@ function pluginsFactory({
           ...tooltipRenderOpts,
           tooltipDOMSpec,
         },
-        onEnter: (state, dispatch, view) => {
-          return executeItemCommand?.(state, dispatch, view);
+        onEnter: (
+          state: EditorState,
+          dispatch: EditorView['dispatch'] | undefined,
+          view: EditorView | undefined,
+        ) => {
+          return executeItemCommand
+            ? executeItemCommand(state, dispatch, view)
+            : false;
         },
         onArrowDown: updateCounter('DOWN'),
         onArrowUp: updateCounter('UP'),
@@ -127,8 +149,15 @@ export function getSuggestTooltipKey(key: PluginKey) {
   };
 }
 
-export function replaceSuggestionMarkWith(key, replaceWith): Command {
-  return (state, dispatch, view) => {
+export function replaceSuggestionMarkWith(
+  key: PluginKey,
+  replaceWith?: string | Node | Fragment,
+): Command {
+  return (
+    state: EditorState,
+    dispatch: EditorView['dispatch'] | undefined,
+    view: EditorView | undefined,
+  ) => {
     const suggestTooltipKey = getSuggestTooltipKey(key)(state);
     return suggestTooltip.replaceSuggestMarkWith(
       suggestTooltipKey,
@@ -137,14 +166,14 @@ export function replaceSuggestionMarkWith(key, replaceWith): Command {
   };
 }
 
-export function queryInlinePaletteActive(key) {
+export function queryInlinePaletteActive(key: PluginKey) {
   return (state: EditorState) => {
     const suggestTooltipKey = getSuggestTooltipKey(key)(state);
     return queryIsSuggestTooltipActive(suggestTooltipKey)(state);
   };
 }
 
-export function queryInlinePaletteText(key) {
+export function queryInlinePaletteText(key: PluginKey) {
   return (state: EditorState) => {
     const suggestTooltipKey = getSuggestTooltipKey(key)(state);
     return suggestTooltip.queryTriggerText(suggestTooltipKey)(state);

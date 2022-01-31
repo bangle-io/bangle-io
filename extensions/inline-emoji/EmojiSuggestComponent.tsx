@@ -6,7 +6,6 @@ import { PluginKey } from '@bangle.dev/pm';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import {
   GetEmojiGroupsType,
-  getSuggestTooltipKey,
   selectEmoji,
 } from '@bangle.dev/react-emoji-suggest/dist/emoji-suggest';
 import {

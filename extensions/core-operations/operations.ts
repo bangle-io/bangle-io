@@ -44,7 +44,7 @@ export function downloadWorkspace() {
 }
 
 export function restoreWorkspaceFromBackup() {
-  return (_, __, store: ApplicationStore) => {
+  return workspaceSliceKey.asyncOp(async (_, __, store) => {
     const wsName = workspaceSliceKey.getSliceState(store.state)?.wsName;
 
     if (!wsName) {
@@ -52,7 +52,10 @@ export function restoreWorkspaceFromBackup() {
         severity: 'error',
         uid: 'restoreWorkspaceFromBackup-no-workspace',
         title: 'Please create an empty workspace first',
-      })(store.state, notificationSliceKey.getDispatch(store.dispatch));
+      })(
+        notificationSliceKey.getState(store.state),
+        notificationSliceKey.getDispatch(store.dispatch),
+      );
       return false;
     }
 
@@ -65,7 +68,10 @@ export function restoreWorkspaceFromBackup() {
           uid: 'restoreWorkspaceFromBackup-' + wsName,
           title:
             'Hang tight! Bangle is processing your notes. Please do not reload or close this tab.',
-        })(store.state, notificationSliceKey.getDispatch(store.dispatch));
+        })(
+          notificationSliceKey.getState(store.state),
+          notificationSliceKey.getDispatch(store.dispatch),
+        );
 
         return naukarProxy.abortableCreateWorkspaceFromBackup(
           abortController.signal,
@@ -84,7 +90,10 @@ export function restoreWorkspaceFromBackup() {
             severity: 'success',
             uid: 'recovery-finished-' + wsName,
             title: 'Your notes have successfully restored.',
-          })(store.state, notificationSliceKey.getDispatch(store.dispatch));
+          })(
+            notificationSliceKey.getState(store.state),
+            notificationSliceKey.getDispatch(store.dispatch),
+          );
         },
         (error) => {
           // comlink is unable to understand custom errors
@@ -95,7 +104,10 @@ export function restoreWorkspaceFromBackup() {
               severity: 'error',
               uid: 'restoreWorkspaceFromBackup-workspace-has-things',
               title: 'This operation requires an empty workspace.',
-            })(store.state, notificationSliceKey.getDispatch(store.dispatch));
+            })(
+              notificationSliceKey.getState(store.state),
+              notificationSliceKey.getDispatch(store.dispatch),
+            );
 
             return;
           }
@@ -103,7 +115,7 @@ export function restoreWorkspaceFromBackup() {
       );
 
     return true;
-  };
+  });
 }
 
 function filePicker(): Promise<File> {

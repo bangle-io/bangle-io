@@ -26,7 +26,8 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
         level: number;
         title: string;
       }> = [];
-      primaryEditor.view.state.doc.forEach((node, offset, i) => {
+
+      primaryEditor.view.state.doc.forEach((node, offset) => {
         if (node.type.name === 'heading') {
           headingNodes.push({
             offset,
@@ -125,7 +126,7 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
   },
 );
 
-function strMatch(a, b) {
+function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));

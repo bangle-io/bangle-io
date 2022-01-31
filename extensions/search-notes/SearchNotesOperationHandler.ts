@@ -41,7 +41,7 @@ export function SearchNotesOperationHandler() {
 }
 
 function showSidebar(
-  sidebar,
+  sidebar: string | undefined | null,
   bangleStore: ReturnType<typeof useUIManagerContext>['bangleStore'],
 ) {
   if (sidebar === SIDEBAR_NAME) {

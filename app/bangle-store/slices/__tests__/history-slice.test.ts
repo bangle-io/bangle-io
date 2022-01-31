@@ -25,7 +25,7 @@ const workspaceStateMock = workspaceSliceKey[
   'getSliceStateAsserted'
 ] as jest.MockedFunction<typeof workspaceSliceKey['getSliceStateAsserted']>;
 
-let historyPushSpy, historyReplaceSpy;
+let historyPushSpy: jest.SpyInstance, historyReplaceSpy: jest.SpyInstance;
 
 beforeAll(() => {
   jest.useFakeTimers();
@@ -43,7 +43,7 @@ beforeEach(() => {
 
 describe('watchHistoryEffect', () => {
   test('initializes & destroys correctly', async () => {
-    const { store, actionsDispatched } = createTestStore({
+    const { actionsDispatched } = createTestStore({
       sliceKey: pageSliceKey,
       slices: [pageSlice(), historySlice()],
     });

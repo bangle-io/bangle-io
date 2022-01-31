@@ -1,11 +1,10 @@
-import { chromium, expect, Page, test } from '@playwright/test';
+import { chromium, expect, test } from '@playwright/test';
 import fs from 'fs/promises';
 import path from 'path';
 
 import {
   createWorkspaceFromBackup,
   getAllWsPaths,
-  longSleep,
   pushWsPathToPrimary,
   sleep,
   waitForNotification,
@@ -28,7 +27,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     path.resolve(__dirname, 'fixture', '100-notes.zip'),
   );
 
-  const wsName = await createWorkspaceFromBackup(page, {
+  await createWorkspaceFromBackup(page, {
     name: '100-notes.zip',
     mimeType: 'application/archive',
     buffer: f,
@@ -90,12 +89,12 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
 
   // deref all the weak references to get a count of persisted editors
   // in memory.
-  const getEditorCountInMemory = async (attempt = 0) => {
+  const getEditorCountInMemory = async (attempt = 0): Promise<number> => {
     await page.evaluate(() => (window as any).gc());
     await sleep(500);
 
     const size = await page.evaluate(() => {
-      return new Set((window as any).refs.map((r) => r.deref())).size;
+      return new Set((window as any).refs.map((r: any) => r.deref())).size;
     });
     if (size > FINAL_EDITORS_IN_MEMORY && attempt < 2) {
       return getEditorCountInMemory(attempt + 1);

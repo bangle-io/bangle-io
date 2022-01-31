@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { replaceSuggestionMarkWith } from '@bangle.io/inline-palette';
+import type { UnPromisify } from '@bangle.io/shared-types';
 import { getDayJs, useDestroyRef } from '@bangle.io/utils';
 
 import { palettePluginKey } from './config';
@@ -8,7 +9,7 @@ import { PALETTE_ITEM_HINT_TYPE, PaletteItem } from './palette-item';
 
 const OneDayMilliseconds = 24 * 60 * 60 * 1000;
 
-const prettyPrintDate = (dayjs, date) => {
+const prettyPrintDate = (dayjs: any, date: any) => {
   const dayjsInputDate = dayjs(date);
   const startOfDay = dayjsInputDate.startOf('day');
 
@@ -37,12 +38,14 @@ const baseItem = PaletteItem.create({
   },
 });
 
-interface ChronoLibrariesType {
-  chrono: any;
-  dayjs: any;
-}
-let _libraries;
-async function getTimeLibrary(): Promise<ChronoLibrariesType> {
+type ChronoLibrariesType = UnPromisify<ReturnType<typeof getTimeLibrary>>;
+let _libraries:
+  | undefined
+  | {
+      chrono: typeof import('chrono-node');
+      dayjs: UnPromisify<ReturnType<typeof getDayJs>>;
+    } = undefined;
+async function getTimeLibrary() {
   if (!_libraries) {
     let [chrono, dayjs] = (await Promise.all([
       import('chrono-node'),
@@ -51,7 +54,7 @@ async function getTimeLibrary(): Promise<ChronoLibrariesType> {
 
     chrono = chrono.default || chrono;
 
-    _libraries = { chrono: chrono, dayjs: dayjs };
+    _libraries = { chrono, dayjs: dayjs };
   }
   return _libraries;
 }
@@ -74,7 +77,7 @@ export function useDateItems(query: string) {
   const items = useMemo(() => {
     if (parsedDateObj) {
       const { parsedDates, dayjs } = parsedDateObj;
-      return parsedDates.map((p, i) =>
+      return parsedDates.map((p: any, i: number) =>
         PaletteItem.create({
           uid: 'parsedDate' + i,
           highPriority: true,
@@ -118,7 +121,8 @@ export function useDateItems(query: string) {
   useEffect(() => {
     if (query && chronoLoadStatus === 'loaded' && chronoRef.current) {
       const { chrono, dayjs } = chronoRef.current;
-      const parsedDates = chrono.parse(query, dayjs().startOf('day'));
+      let startOfDay = dayjs().startOf('day').toDate();
+      const parsedDates = chrono.parse(query, startOfDay);
       if (parsedDates.length > 0) {
         updateParsedDate({ parsedDates, chrono, dayjs });
       } else {

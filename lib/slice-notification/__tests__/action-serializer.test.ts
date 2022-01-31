@@ -1,6 +1,5 @@
 import {
   actionSerializerTestFixture,
-  ActionTestFixtureType,
   createTestStore,
 } from '@bangle.io/test-utils';
 

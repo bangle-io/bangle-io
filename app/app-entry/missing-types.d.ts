@@ -25,3 +25,5 @@ interface BeforeInstallPromptEvent extends Event {
 interface WindowEventMap {
   beforeinstallprompt: BeforeInstallPromptEvent;
 }
+
+declare module 'prosemirror-dev-tools';

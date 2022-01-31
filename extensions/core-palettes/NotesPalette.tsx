@@ -28,7 +28,13 @@ const RECENT_SHOW_LIMIT = 6;
 const MAX_RECENTLY_USED_ITEMS = 3;
 const MAX_RECENTLY_USED_ITEMS_NO_QUERY = 10;
 
-const createPaletteObject = ({ wsPath, onClick }) => {
+const createPaletteObject = ({
+  wsPath,
+  onClick,
+}: {
+  wsPath: string;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}) => {
   const { fileName, dirPath } = resolvePath(wsPath);
   return {
     uid: wsPath,
@@ -183,7 +189,7 @@ export const notesPalette: ExtensionPaletteType = {
   ReactComponent: NotesPalette,
 };
 
-const EMPTY_ARRAY = [];
+const EMPTY_ARRAY: string[] = [];
 /**
  * Runs Fzf search on recent and all wsPaths.
  * @param query

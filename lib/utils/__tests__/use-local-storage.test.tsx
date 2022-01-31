@@ -6,14 +6,14 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { KEY_PREFIX, useLocalStorage } from '../use-local-storage';
 
 describe('useLocalStorage', () => {
-  let originalLocalStorage;
+  let originalLocalStorage: typeof localStorage;
   const dateNow = Date.now;
 
   beforeEach(() => {
     Date.now = jest.fn(() => 99);
 
     originalLocalStorage = window.localStorage;
-    let store = {};
+    let store: any = {};
     Object.defineProperty(window, 'localStorage', {
       value: {
         getItem: jest.fn((key) => {
@@ -128,7 +128,7 @@ describe('useLocalStorage', () => {
   });
 
   test('handles null value', async () => {
-    const { result, rerender } = renderHook(
+    const { result } = renderHook(
       ({ key, value }) => useLocalStorage<string | null>(key, value),
       {
         initialProps: { key: 'first-key', value: 'first-value' },

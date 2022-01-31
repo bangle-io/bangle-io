@@ -336,7 +336,7 @@ describe('goToWorkspaceHomeRoute', () => {
 
 describe('goToWorkspaceAuthRoute', () => {
   test('works', () => {
-    let { store, dispatchSpy } = noSideEffectsStore({
+    let { store } = noSideEffectsStore({
       wsName: 'my-ws',
       openedWsPaths: ['my-ws:some-other-test-note.md'],
     });

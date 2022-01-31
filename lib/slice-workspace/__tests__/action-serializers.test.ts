@@ -155,7 +155,7 @@ const fixtures = Object.values(testFixtures).flatMap(
 const { store } = createStore();
 
 test.each(fixtures)(`%s actions serialization`, (action) => {
-  const res = store.parseAction(store.serializeAction(action) as any);
+  const res: any = store.parseAction(store.serializeAction(action) as any);
 
   expect(res).toEqual({ ...action, fromStore: 'workspace-store' });
 });
@@ -172,7 +172,7 @@ test('Error actions serialization with code', () => {
   };
 
   expect(error.code).toEqual('MY_CODE');
-  const res = store.parseAction(store.serializeAction(action) as any);
+  const res: any = store.parseAction(store.serializeAction(action) as any);
   expect(res.value.error.code).toEqual(error.code);
 });
 
@@ -185,7 +185,7 @@ test('Error actions serialization with name', () => {
     },
   };
 
-  const res = store.parseAction(store.serializeAction(action) as any);
+  const res: any = store.parseAction(store.serializeAction(action) as any);
   expect(res.value.error.name).toEqual(error.name);
 });
 
@@ -200,7 +200,7 @@ test('Error actions serialization with stack', () => {
     },
   };
 
-  const res = store.parseAction(store.serializeAction(action) as any);
+  const res: any = store.parseAction(store.serializeAction(action) as any);
   expect(res.value.error.stack).toEqual(error.stack);
 });
 
@@ -212,13 +212,13 @@ test('Error actions serialization of base error', () => {
   );
 
   const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
+    name: 'action::@bangle.io/slice-workspace:set-error' as const,
     value: {
       error,
     },
   };
 
-  const res = store.parseAction(store.serializeAction(action) as any);
+  const res: any = store.parseAction(store.serializeAction(action) as any);
   expect(res.value.error.code).toEqual(error.code);
   expect(res.value.error.displayMessage).toEqual(error.displayMessage);
 });
@@ -229,13 +229,13 @@ test('Error actions serialization with storage provider error', () => {
   storageProviderHelpers.markAsStorageProviderError(error, 'test-provider');
 
   const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
+    name: 'action::@bangle.io/slice-workspace:set-error' as const,
     value: {
       error,
     },
   };
 
-  const res = store.parseAction(store.serializeAction(action) as any);
+  const res: any = store.parseAction(store.serializeAction(action) as any);
   expect(
     storageProviderHelpers.getStorageProviderNameFromError(res.value.error),
   ).toEqual('test-provider');

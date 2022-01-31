@@ -10,7 +10,7 @@ import {
   sleep,
 } from '../helpers';
 
-let wsName;
+let wsName: string;
 
 test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
@@ -24,8 +24,8 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 async function getTagsFromDoc(page: Page) {
   // A contrived way to search and get the tag object
   return (await getEditorJSON(page, 0)).content
-    ?.flatMap((r) =>
-      r.content?.flatMap((rr) => (rr.type === 'tag' ? rr : undefined)),
+    ?.flatMap((r: any) =>
+      r.content?.flatMap((rr: any) => (rr.type === 'tag' ? rr : undefined)),
     )
     .filter(Boolean);
 }

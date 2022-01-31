@@ -2,12 +2,7 @@ import React from 'react';
 
 import { cx, isTouchDevice } from '@bangle.io/utils';
 
-import { UniversalPalette } from '../UniversalPalette';
 import { ItemType } from '../UniversalPalette/PaletteItem';
-
-Row2.propType = {
-  item: UniversalPalette.ItemPropTypes,
-};
 
 export function Row2({
   item,

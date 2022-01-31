@@ -5,7 +5,6 @@ import {
   createNewNote,
   createWorkspace,
   getEditorLocator,
-  longSleep,
   runOperation,
   SELECTOR_TIMEOUT,
   sleep,
@@ -22,7 +21,7 @@ test.describe.parallel('backlink workflow', () => {
 
     const wsPath = await createNewNote(page, wsName, 'note-0');
 
-    const editorLocator = await getEditorLocator(page, 0, {
+    await getEditorLocator(page, 0, {
       focus: true,
       wsPath,
     });
@@ -58,7 +57,7 @@ test.describe.parallel('backlink workflow', () => {
   };
 
   test('Creating', async ({ page }) => {
-    const wsName = await setup(page);
+    await setup(page);
     // make sure the backlink created is for note-0
 
     await expect(page.locator('.inline-backlink_backlink')).toHaveText(
@@ -69,7 +68,7 @@ test.describe.parallel('backlink workflow', () => {
 
   test('Hovering and clicking works', async ({ page }) => {
     test.slow();
-    const wsName = await setup(page);
+    await setup(page);
     // make sure we are on note-1's page
     expect(await page.url()).toContain('note-1');
     // // Hover to see if it is correctly shown

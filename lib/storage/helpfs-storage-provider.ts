@@ -8,10 +8,10 @@ import { toFSPath } from '@bangle.io/ws-path';
 import { BaseStorageProvider, StorageOpts } from './base-storage';
 import { IndexedDbStorageProvider } from './indexed-db-storage-provider';
 
-function readFileFromUnpkg(wsPath) {
+function readFileFromUnpkg(wsPath: string) {
   const filePath = toFSPath(wsPath);
 
-  function fetchHelpFiles(path, json = false) {
+  function fetchHelpFiles(path: string, json = false) {
     return fetch(
       `https://unpkg.com/bangle-io-help@${HELP_DOCS_VERSION}/docs/` + path,
     ).then((r) => {
@@ -30,7 +30,7 @@ function readFileFromUnpkg(wsPath) {
   }
 
   const splitted = filePath.split('/');
-  const [wsName, ...path] = splitted;
+  const [, ...path] = splitted;
 
   return fetchHelpFiles(path.join('/'))
     .then((r) => r?.blob())

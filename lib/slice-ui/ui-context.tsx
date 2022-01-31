@@ -31,7 +31,7 @@ export function useUIManagerContext() {
   return useContext(UIManagerContext);
 }
 
-export function UIManager({ children }) {
+export function UIManager({ children }: { children: React.ReactNode }) {
   const { sliceState: uiState, store } = useSliceState<
     UISliceState,
     UiContextAction

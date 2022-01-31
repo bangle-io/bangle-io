@@ -1,20 +1,8 @@
+import { Command } from '@bangle.dev/pm';
+
 export const PALETTE_ITEM_REGULAR_TYPE = 'REGULAR_TYPE';
 export const PALETTE_ITEM_HINT_TYPE = 'HINT_TYPE';
 const allTypes = [PALETTE_ITEM_HINT_TYPE, PALETTE_ITEM_REGULAR_TYPE];
-
-interface PaletteItemType {
-  uid: string;
-  title: string;
-  type: string;
-  description: string;
-  keywords: string[];
-  disabled: (state) => boolean;
-  hidden: boolean;
-  editorExecuteCommand: Function;
-  group: string;
-  highPriority: boolean;
-  skipFiltering: boolean;
-}
 
 export class PaletteItem {
   static create(obj: any) {
@@ -24,10 +12,12 @@ export class PaletteItem {
   title: string;
   type: string;
   description: string;
+  rightHoverIcon?: JSX.Element;
+  keybinding?: string;
   keywords: string[];
-  disabled: (state) => boolean;
-  hidden: boolean;
-  editorExecuteCommand: Function;
+  disabled: (state: any) => boolean;
+  hidden: boolean | ((state: any) => boolean);
+  editorExecuteCommand: (arg: { item: any; itemIndex: number }) => Command;
   group: string;
   highPriority: boolean;
   skipFiltering: boolean;

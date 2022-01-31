@@ -1,9 +1,6 @@
 import { CorePalette } from '@bangle.io/constants';
 import { ApplicationStore, Slice, SliceKey } from '@bangle.io/create-store';
-import type {
-  NotificationPayloadType,
-  ThemeType,
-} from '@bangle.io/shared-types';
+import type { ThemeType } from '@bangle.io/shared-types';
 import {
   assertActionName,
   checkWidescreen,
@@ -283,7 +280,7 @@ function getThemePreference() {
     : 'light';
 }
 
-function setRootWidescreenClass(widescreen) {
+function setRootWidescreenClass(widescreen?: boolean) {
   const root = document.getElementById('root');
   const body = document.body;
   if (widescreen) {

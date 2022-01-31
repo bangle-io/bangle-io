@@ -3,6 +3,7 @@ import {
   Decoration,
   DecorationSet,
   EditorState,
+  EditorView,
   Plugin,
   PluginKey,
   Selection,
@@ -66,7 +67,7 @@ function filterOutsideIntersection(
   return result;
 }
 
-function buildDeco(state) {
+function buildDeco(state: EditorState) {
   const collapsedHeadingSet = new Set(
     filterOutsideIntersection(heading.listCollapsedHeading(state), state).map(
       (r) => r.node,
@@ -86,18 +87,21 @@ function buildDeco(state) {
       };
     });
 
-  function getNode(n, v) {
-    n = document.createElementNS('http://www.w3.org/2000/svg', n);
+  function getNode<K extends keyof SVGElementTagNameMap>(
+    n: K,
+    v: { [k: string]: any },
+  ) {
+    let result = document.createElementNS('http://www.w3.org/2000/svg', n);
     for (var p in v) {
-      n.setAttributeNS(null, p, v[p]);
+      result.setAttributeNS(null, p, v[p]);
     }
-    return n;
+    return result;
   }
 
   const decos = headings.map((match) => {
     return Decoration.widget(
       match.pos + 1,
-      (view) => {
+      (view: EditorView) => {
         let wrapper = document.createElement('span');
         wrapper.className = 'deco-collapse-positioner';
         // wrapper.setAttribute('data-bangle-pos', match.pos + '');

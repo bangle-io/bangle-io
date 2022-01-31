@@ -60,7 +60,7 @@ export const noSideEffectsStore = (
 
 export const createStore = (
   data?: Parameters<typeof createState>[0],
-  scheduler = (cb) => {
+  scheduler = (cb: () => void) => {
     let destroyed = false;
     Promise.resolve().then(() => {
       if (!destroyed) {
@@ -124,10 +124,13 @@ export const createStore = (
   };
 };
 
-export const getActionNamesDispatched = (mockDispatch) =>
+export const getActionNamesDispatched = (mockDispatch: jest.SpyInstance) =>
   mockDispatch.mock.calls.map((r) => r[0].name);
 
-export const getActionsDispatched = (mockDispatch, name) => {
+export const getActionsDispatched = (
+  mockDispatch: jest.SpyInstance,
+  name: string,
+) => {
   const actions = mockDispatch.mock.calls.map((r) => r[0]);
 
   if (name) {

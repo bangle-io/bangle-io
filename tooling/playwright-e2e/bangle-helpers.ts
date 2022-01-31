@@ -11,7 +11,7 @@ export function splitWsPath(wsPath: string): [string, string] {
   return [wsName, filePath];
 }
 
-export function getLast(array) {
+export function getLast<T>(array: T[]): T | undefined {
   return array[array.length - 1];
 }
 

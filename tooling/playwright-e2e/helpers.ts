@@ -1,4 +1,4 @@
-import { ElementHandle, expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 import os from 'os';
 import prettier from 'prettier';
 
@@ -18,7 +18,7 @@ export function uuid(len = 10) {
 /**
  * Only runs actions visible in the palette
  */
-export async function runOperation(page, actionId) {
+export async function runOperation(page: Page, actionId: string) {
   await page.keyboard.press('Escape');
   await page.keyboard.down(ctrlKey);
   await page.keyboard.down('Shift');
@@ -336,7 +336,9 @@ export async function getEditorDebugString(
 export async function getEditorSelectionJson(page: Page, editorId: number) {
   return await page.evaluate(
     async ([editorId]) =>
-      window[`editor-${editorId}`]?.editor?.view.state.selection.toJSON(),
+      (window as any)[
+        `editor-${editorId}`
+      ]?.editor?.view.state.selection.toJSON(),
     [editorId],
   );
 }
@@ -352,7 +354,7 @@ export async function getEditorHTML(editorHandle: Locator) {
   return await frmtHTML(await editorHandle.evaluate((node) => node.innerHTML));
 }
 
-function frmtHTML(doc) {
+function frmtHTML(doc: string) {
   return prettier.format(doc, {
     semi: false,
     parser: 'html',
@@ -374,7 +376,7 @@ export async function waitForEditorTextToContain(
   editorId: number,
   text: string,
   attempt = 0,
-) {
+): Promise<boolean> {
   if (
     (
       await page.innerText(
@@ -453,8 +455,8 @@ export async function getWsPathsShownInFilePalette(page: Page) {
 export async function getEditorJSON(page: Page, editorId: number) {
   await getEditorLocator(page, editorId);
   return page.evaluate(
-    async (editorId) =>
-      window[`editor-${editorId}`]?.editor.view.state.doc.toJSON(),
+    async (editorId: number) =>
+      (window as any)[`editor-${editorId}`]?.editor.view.state.doc.toJSON(),
     editorId,
   );
 }

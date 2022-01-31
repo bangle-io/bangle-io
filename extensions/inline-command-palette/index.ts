@@ -1,4 +1,4 @@
-import { keymap } from '@bangle.dev/pm';
+import { EditorView, keymap } from '@bangle.dev/pm';
 
 import { keybindings } from '@bangle.io/config';
 import { Extension } from '@bangle.io/extension-registry';
@@ -10,8 +10,8 @@ import {
 import { extensionName, paletteMarkName, palettePluginKey } from './config';
 import { InlineCommandPalette } from './InlineCommandPalette';
 
-const getScrollContainer = (view) => {
-  return view.dom.parentElement;
+const getScrollContainer = (view: EditorView) => {
+  return view.dom.parentElement!;
 };
 
 const trigger = '/';

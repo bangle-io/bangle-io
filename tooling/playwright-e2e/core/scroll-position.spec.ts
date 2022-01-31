@@ -1,4 +1,4 @@
-import { expect, Locator, Page, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 
 import {
   clearEditor,
@@ -13,7 +13,6 @@ import {
   sleep,
   splitScreen,
   waitForEditorFocus,
-  waitForEditorIdToLoad,
   waitForEditorTextToContain,
   waitForWsPathToLoad,
 } from '../helpers';

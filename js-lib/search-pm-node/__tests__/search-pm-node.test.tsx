@@ -31,7 +31,7 @@ describe('Plain text search', () => {
     plugins,
   });
 
-  const makeDoc = (doc) => {
+  const makeDoc = (doc: any) => {
     return testEditor(doc).view.state.doc;
   };
 
@@ -137,7 +137,7 @@ describe('Plain text search', () => {
 
   describe('Works with simple data', () => {
     const getResult = async (
-      query,
+      query: string,
       fileData: Array<{ name: string; node: any }>,
     ) => {
       return searchPmNode(
@@ -610,12 +610,12 @@ describe('understands atom node searching', () => {
     plugins: [],
   });
 
-  const makeDoc = (doc) => {
+  const makeDoc = (doc: any) => {
     return testEditor(doc).view.state.doc;
   };
 
   const getResult = async (
-    query,
+    query: string,
     fileData: Array<{ name: string; node: any }>,
   ) => {
     return searchPmNode(

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import reactDOM from 'react-dom';
 
+import { EditorView } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 
 import {
@@ -34,11 +35,11 @@ const staticHints = [
   }),
 ];
 function getItemsAndHints(
-  view,
-  query,
-  editorItems,
-  timestampItems,
-  isItemDisabled,
+  view: EditorView,
+  query: string,
+  editorItems: PaletteItem[],
+  timestampItems: PaletteItem[],
+  isItemDisabled: (item: PaletteItem) => boolean,
 ) {
   let items = [...timestampItems, ...editorItems];
   if (!items.every((item) => item instanceof PaletteItem)) {
@@ -55,7 +56,7 @@ function getItemsAndHints(
 
   // TODO This is hacky
   items.forEach((item) => {
-    item._isItemDisabled = isItemDisabled(item);
+    (item as any)._isItemDisabled = isItemDisabled(item);
   });
 
   let hintItems = [
@@ -149,8 +150,8 @@ export function InlineCommandPalette() {
             <InlinePaletteRow
               key={item.uid}
               dataId={item.uid}
-              disabled={item._isItemDisabled}
-              title={(item._isItemDisabled ? '🚫 ' : '') + item.title}
+              disabled={(item as any)._isItemDisabled}
+              title={((item as any)._isItemDisabled ? '🚫 ' : '') + item.title}
               description={item.description}
               rightHoverIcon={item.rightHoverIcon}
               rightIcon={
@@ -193,7 +194,15 @@ export function InlineCommandPalette() {
   );
 }
 
-function queryMatch(command, query) {
+function queryMatch<
+  T extends {
+    skipFiltering: boolean;
+    title: string;
+    keywords?: string[] | string;
+    description: string;
+    group: string;
+  },
+>(command: T, query: string) {
   if (command.skipFiltering) {
     return command;
   }
@@ -217,7 +226,7 @@ function queryMatch(command, query) {
   return undefined;
 }
 
-function strMatch(a, b) {
+function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));
@@ -229,7 +238,12 @@ function strMatch(a, b) {
 
 // returning -1 means keep order [a, b]
 // returning 1 means reverse order ie [b, a]
-function fieldExistenceSort(a, b, field, reverse = false) {
+function fieldExistenceSort(
+  a: { [key: string]: any },
+  b: { [key: string]: any },
+  field: string,
+  reverse = false,
+) {
   if (a[field] && !b[field]) {
     return reverse ? 1 : -1;
   }

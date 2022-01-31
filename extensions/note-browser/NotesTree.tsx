@@ -230,7 +230,7 @@ const RenderItems = ({
     const depth = splittedPath.length;
     const name = removeMdExtension(splittedPath.pop() || 'Unknown file name');
 
-    const onClick = (event) => {
+    const onClick = (event: React.MouseEvent<any, MouseEvent>) => {
       if (isDir) {
         toggleCollapse((array) => {
           if (array.includes(path)) {
@@ -301,16 +301,16 @@ function RenderRow({
   onClick,
   createNewFile,
 }: {
-  virtualRow;
-  path;
-  isDir;
-  wsPath;
-  name;
-  depth;
-  isActive;
-  isCollapsed;
+  virtualRow: any;
+  path: string;
+  isDir: boolean;
+  wsPath: string;
+  name: string;
+  depth: number;
+  isActive: boolean;
+  isCollapsed: boolean;
   bangleStore: WorkspaceContextType['bangleStore'];
-  onClick;
+  onClick: (event: React.MouseEvent<any, MouseEvent>) => void;
   createNewFile: (path?: string) => void;
 }) {
   const elementRef = useRef<HTMLDivElement>(null);

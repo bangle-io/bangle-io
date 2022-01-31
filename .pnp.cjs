@@ -409,8 +409,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:12.1.2"],
             ["@testing-library/user-event", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:13.5.0"],
             ["@types/jest", "npm:27.4.0"],
+            ["@types/prettier", "npm:2.4.3"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
+            ["@types/wicg-file-system-access", "npm:2020.9.5"],
             ["@typescript-eslint/eslint-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.10.1"],
             ["@typescript-eslint/parser", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.10.1"],
             ["@vitejs/plugin-react-refresh", "npm:1.3.6"],
@@ -5033,6 +5035,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["@playwright/test", "npm:1.17.1"],
+            ["@types/prettier", "npm:2.4.3"],
             ["http-server", "npm:0.12.3"],
             ["prettier", "npm:2.4.1"]
           ],
@@ -7996,6 +7999,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/wicg-file-system-access", [
+        ["npm:2020.9.5", {
+          "packageLocation": "./.yarn/cache/@types-wicg-file-system-access-npm-2020.9.5-384d8d4b25-56243705df.zip/node_modules/@types/wicg-file-system-access/",
+          "packageDependencies": [
+            ["@types/wicg-file-system-access", "npm:2020.9.5"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@types/yargs", [
         ["npm:15.0.14", {
           "packageLocation": "./.yarn/cache/@types-yargs-npm-15.0.14-07ba249dbb-8e358aeb8f.zip/node_modules/@types/yargs/",
@@ -9715,8 +9727,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:12.1.2"],
             ["@testing-library/user-event", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:13.5.0"],
             ["@types/jest", "npm:27.4.0"],
+            ["@types/prettier", "npm:2.4.3"],
             ["@types/react", "npm:17.0.34"],
             ["@types/react-dom", "npm:17.0.11"],
+            ["@types/wicg-file-system-access", "npm:2020.9.5"],
             ["@typescript-eslint/eslint-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.10.1"],
             ["@typescript-eslint/parser", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.10.1"],
             ["@vitejs/plugin-react-refresh", "npm:1.3.6"],

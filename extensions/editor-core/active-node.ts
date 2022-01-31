@@ -14,7 +14,7 @@ export function activeNode() {
       },
     },
     props: {
-      decorations(state) {
+      decorations(state: EditorState) {
         return this.getState(state);
       },
     },

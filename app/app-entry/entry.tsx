@@ -106,7 +106,7 @@ export function Entry() {
     <React.StrictMode>
       <ErrorBoundary store={bangleStore}>
         <OverlayProvider className="w-full h-full">
-          <Router hook={useRouterHook} matcher={pathMatcher}>
+          <Router hook={useRouterHook} matcher={pathMatcher as any}>
             <AppStateProvider
               bangleStore={bangleStore}
               bangleStoreChanged={bangleStoreChanged}

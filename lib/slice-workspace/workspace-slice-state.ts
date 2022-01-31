@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 
-import { BaseError } from '@bangle.io/base-error';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 

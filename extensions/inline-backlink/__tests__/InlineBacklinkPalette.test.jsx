@@ -63,6 +63,7 @@ beforeEach(async () => {
   });
   useWorkspaceContext.mockImplementation(() => ({
     wsName: 'test-ws',
+    wsName: 'test-ws',
     noteWsPaths: [],
   }));
   useInlinePaletteItems.mockImplementation(() => {
@@ -82,6 +83,7 @@ test('Initial render', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
 
   useWorkspaceContext.mockImplementation(() => ({
+    wsName: 'test-ws',
     noteWsPaths,
   }));
 
@@ -101,6 +103,7 @@ test('Hides when isVisible is false', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
 
   useWorkspaceContext.mockImplementation(() => ({
+    wsName: 'test-ws',
     noteWsPaths,
   }));
 
@@ -113,6 +116,7 @@ test('Renders palette rows correctly', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
 
   useWorkspaceContext.mockImplementation(() => ({
+    wsName: 'test-ws',
     noteWsPaths,
   }));
   query = 'my';
@@ -138,6 +142,7 @@ test('Renders filtering correct', async () => {
   const noteWsPaths = ['test-ws:my-file.md', 'test-ws:my-other-file.md'];
 
   useWorkspaceContext.mockImplementation(() => ({
+    wsName: 'test-ws',
     noteWsPaths,
   }));
   query = 'my';
@@ -163,6 +168,7 @@ test('If exact match does not show create', async () => {
   const noteWsPaths = ['test-ws:my-file.md', 'test-ws:my-other-file.md'];
 
   useWorkspaceContext.mockImplementation(() => ({
+    wsName: 'test-ws',
     noteWsPaths,
   }));
   query = 'my-file';
@@ -180,6 +186,7 @@ test('Handles malformed query', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
 
   useWorkspaceContext.mockImplementation(() => ({
+    wsName: 'test-ws',
     noteWsPaths,
   }));
   query = ']]';
@@ -194,6 +201,7 @@ test('Handles malformed query', async () => {
 test('Creates a backlink node when closed by typing ]]', async () => {
   const noteWsPaths = ['test-ws:my-file.md'];
   useWorkspaceContext.mockImplementation(() => ({
+    wsName: 'test-ws',
     noteWsPaths,
   }));
   // NOTE: its not [[better]], because [[ is part of the suggest query mark

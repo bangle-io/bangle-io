@@ -91,14 +91,14 @@ const generateDoc = (text = 'Hello world! I am a test') =>
     ],
   });
 
-let getNoteMock, result: ReturnType<typeof render>;
+let getNoteMock = jest
+  .mocked(getNote)
+  .mockImplementation(() => async () => testDocNode);
+
+let result: ReturnType<typeof render>;
 
 const testDocNode = generateDoc();
 beforeEach(() => {
-  getNoteMock = (getNote as any).mockImplementation(
-    () => async () => testDocNode,
-  );
-
   (useWorkspaceContext as any).mockImplementation(() => {
     return {
       bangleStore: { state: {}, dispatch: jest.fn() },

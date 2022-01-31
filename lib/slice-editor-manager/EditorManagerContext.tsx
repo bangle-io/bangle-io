@@ -30,7 +30,7 @@ export function useEditorManagerContext() {
 /**
  * Should be parent of all editors.
  */
-export function EditorManager({ children }) {
+export function EditorManager({ children }: { children: React.ReactNode }) {
   const { sliceState: editorManager, store } = useSliceState(
     editorManagerSliceKey,
   );

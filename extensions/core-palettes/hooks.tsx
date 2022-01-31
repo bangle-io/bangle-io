@@ -10,17 +10,16 @@ const MAX_ENTRIES = 10;
  * @returns
  */
 export function useRecencyWatcher(
-  uniqueStoreId,
+  uniqueStoreId: string,
   { maxEntries = MAX_ENTRIES } = {},
 ) {
-  const [operationHistory, updateOperationHistory] = useLocalStorage(
-    uniqueStoreId,
-    {},
-  );
+  const [operationHistory, updateOperationHistory] = useLocalStorage<{
+    [r: string]: number;
+  }>(uniqueStoreId, {});
 
   const updateRecency = useCallback(
-    (uid) => {
-      updateOperationHistory((obj) => {
+    (uid: string) => {
+      updateOperationHistory((obj: { [r: string]: number }) => {
         const entries = Object.entries(obj || {}).sort((a, b) => {
           if (typeof a[1] === 'number' && typeof b[1] === 'number') {
             return b[1] - a[1];
@@ -37,7 +36,17 @@ export function useRecencyWatcher(
   );
 
   const injectRecency = useCallback(
-    (items) => {
+    <
+      R extends {
+        uid: string;
+        title: string;
+        rightNode?: any;
+        showDividerAbove?: boolean;
+      },
+      T extends R[],
+    >(
+      items: T,
+    ) => {
       const newItems = items.sort((a, b) => {
         const aRank = operationHistory[a.uid];
         const bRank = operationHistory[b.uid];

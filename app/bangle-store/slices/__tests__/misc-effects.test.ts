@@ -16,11 +16,11 @@ import { historySlice } from '../history-slice';
 import { lastWorkspaceUsed, miscEffectsSlice } from '../misc-effects-slice';
 
 describe('last seen workspace', () => {
-  let originalLocalStorage;
+  let originalLocalStorage: typeof localStorage;
 
   beforeEach(() => {
     originalLocalStorage = global.localStorage;
-    let localDb = {};
+    let localDb: any = {};
 
     Object.defineProperty(global, 'localStorage', {
       value: {

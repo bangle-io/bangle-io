@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import reactDOM from 'react-dom';
 
+import { EditorState, EditorView } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
@@ -24,8 +25,12 @@ import { getBacklinkPath, wsPathFromQuery } from '../utils';
 const FZF_SEARCH_LIMIT = 12;
 
 // Creating this also closes the palette
-const createBacklinkNode = (wsPath, allNoteWsPaths) => {
-  return (state, dispatch, view) => {
+const createBacklinkNode = (wsPath: string, allNoteWsPaths: string[]) => {
+  return (
+    state: EditorState,
+    dispatch: EditorView['dispatch'] | undefined,
+    view: EditorView | undefined,
+  ) => {
     const nodeType = state.schema.nodes[backlinkNodeName];
     const backlinkPath = getBacklinkPath(wsPath, allNoteWsPaths);
 
@@ -65,7 +70,7 @@ export function InlineBacklinkPalette() {
   );
 }
 
-const EMPTY_ARRAY = [];
+const EMPTY_ARRAY: string[] = [];
 
 function InlineBacklinkPaletteInner({
   query,
@@ -102,7 +107,7 @@ function InlineBacklinkPaletteInner({
         conditionalSuffix(query, '.md') === resolvePath(item.wsPath).filePath,
     );
 
-    if (!exactMatch && query.length > 0) {
+    if (!exactMatch && query.length > 0 && wsName) {
       const wsPath = wsPathFromQuery(query, wsName);
 
       let createItem = {
@@ -127,6 +132,9 @@ function InlineBacklinkPaletteInner({
   );
 
   useEffect(() => {
+    if (!wsName) {
+      return;
+    }
     if (query === ']]' || query.includes('[[')) {
       replaceSuggestionMarkWith(palettePluginKey, '')(
         view.state,

@@ -12,7 +12,7 @@ export const historyEvents = [eventPopstate, eventPushState, eventReplaceState];
 //
 // See https://stackoverflow.com/a/4585031
 if (typeof window !== 'undefined' && typeof window.history !== 'undefined') {
-  const history = window.history;
+  const history: any = window.history;
 
   for (const type of [eventPushState, eventReplaceState]) {
     const original = history[type];

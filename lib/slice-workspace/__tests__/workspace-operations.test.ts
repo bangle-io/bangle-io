@@ -68,7 +68,7 @@ describe('listAllFiles', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
-        type: 'browser',
+        type: WorkspaceTypeBrowser,
       },
     });
 
@@ -79,7 +79,7 @@ describe('listAllFiles', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
-        type: 'browser',
+        type: WorkspaceTypeBrowser,
       },
     ]);
   });
@@ -111,7 +111,7 @@ describe('listAllFiles', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
-        type: 'browser',
+        type: WorkspaceTypeBrowser,
       },
     });
 
@@ -139,7 +139,7 @@ describe('createWorkspace', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
-        type: 'browser',
+        type: WorkspaceTypeBrowser,
       },
     });
   });
@@ -237,7 +237,7 @@ describe('deleteWorkspace', () => {
         lastModified: expect.any(Number),
         metadata: {},
         name: 'test-1',
-        type: 'nativefs',
+        type: WorkspaceTypeNative,
       },
     ]);
   });

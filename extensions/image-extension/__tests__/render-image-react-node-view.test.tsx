@@ -22,7 +22,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
 });
 
 class File {
-  constructor(public content, public fileName, public opts) {}
+  constructor(public content: any, public fileName: any, public opts: any) {}
 }
 
 let useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
@@ -43,7 +43,7 @@ describe('ImageComponent', () => {
     (window as any).Image = class Image {
       height = 300;
       width = 200;
-      onload;
+      onload = () => {};
       constructor() {
         setTimeout(() => {
           this.onload();

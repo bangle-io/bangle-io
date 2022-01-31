@@ -112,7 +112,7 @@ test('renders when no headings found', async () => {
 });
 
 describe('with editor', () => {
-  let editor;
+  let editor: ReturnType<typeof createEditorFromMd>;
   beforeEach(() => {
     editor = createEditorFromMd(
       `
@@ -214,8 +214,10 @@ para 2
 
     beforeEach(() => {
       dispatchSOpCb = undefined;
-      (getEditorState as any).mockImplementation(() => () => editor.view.state);
-      (getEditor as any).mockImplementation(() => () => editor);
+      jest
+        .mocked(getEditorState)
+        .mockImplementation(() => () => editor.view.state);
+      jest.mocked(getEditor).mockImplementation(() => () => editor);
       useSerialOperationHandlerMock.mockImplementation((cb) => {
         dispatchSOpCb = cb;
       });

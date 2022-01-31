@@ -36,7 +36,7 @@ test('returns wsPaths correctly', async () => {
   });
 
   const { store, dispatchSpy } = createBasicTestStore({});
-  const wrapper = ({ children }) => (
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       {children}
     </TestStoreProvider>
@@ -77,7 +77,7 @@ test('removes non existent wsPaths', async () => {
   });
 
   const { store, dispatchSpy } = createBasicTestStore({});
-  const wrapper = ({ children }) => (
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       {children}
     </TestStoreProvider>
@@ -100,14 +100,14 @@ test('removes non existent wsPaths', async () => {
 });
 
 test('works when no wsName', async () => {
-  let records = [],
+  let records: RecencyRecords = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
   });
 
   const { store, dispatchSpy } = createBasicTestStore({});
-  const wrapper = ({ children }) => (
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
       {children}
     </TestStoreProvider>
@@ -120,7 +120,7 @@ test('works when no wsName', async () => {
 });
 
 test('updates the newly opened ws path only', async () => {
-  let records = [],
+  let records: RecencyRecords = [],
     updateRecord = jest.fn();
   (useRecencyMonitor as any).mockImplementation(() => {
     return { records, updateRecord };
@@ -128,8 +128,8 @@ test('updates the newly opened ws path only', async () => {
 
   let bangleStoreChanged = 0;
 
-  const { store, dispatchSpy } = createBasicTestStore({});
-  const wrapper = ({ children }) => (
+  const { store } = createBasicTestStore({});
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
     <TestStoreProvider
       bangleStore={store}
       bangleStoreChanged={bangleStoreChanged}

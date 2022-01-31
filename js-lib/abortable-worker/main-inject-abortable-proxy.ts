@@ -31,7 +31,7 @@ export function mainInjectAbortableProxy<
         typeof prop === 'string' &&
         prop.startsWith(abortableMethodIdentifier)
       ) {
-        return (abortSignal, ...args) => {
+        return (abortSignal: unknown, ...args: unknown[]) => {
           if (!(abortSignal instanceof AbortSignal)) {
             throw new Error(
               `An abortable methods (${prop}) first param must be an "AbortSignal"`,
@@ -50,7 +50,7 @@ export function mainInjectAbortableProxy<
           return Reflect.apply(Reflect.get(_target, prop), null, [
             uid,
             ...args,
-          ]).catch((error) => {
+          ]).catch((error: unknown) => {
             if (error === WORKER_ABORTABLE_SERVICE_ABORTED) {
               throw new DOMException('Aborted', 'AbortError');
             }

@@ -198,7 +198,7 @@ describe('search tag across wsPaths', () => {
 });
 
 describe('useSearchAllTags', () => {
-  let abortSpy;
+  let abortSpy: jest.SpyInstance;
   let delayGetNotes = false;
 
   beforeEach(() => {
@@ -259,7 +259,7 @@ describe('useSearchAllTags', () => {
   });
 
   test('works', async () => {
-    let result, waitForNextUpdate;
+    let result: any, waitForNextUpdate: any;
     act(() => {
       ({ result, waitForNextUpdate } = renderHook(() =>
         useSearchAllTags('', true),
@@ -267,7 +267,7 @@ describe('useSearchAllTags', () => {
     });
 
     await waitForNextUpdate();
-    expect(result.current).toEqual([
+    expect(result?.current).toEqual([
       'hi',
       'third',
       'fifth',
@@ -277,16 +277,16 @@ describe('useSearchAllTags', () => {
   });
 
   test('no result when not visible', async () => {
-    let result;
+    let result: any;
     act(() => {
       ({ result } = renderHook(() => useSearchAllTags('', false)));
     });
 
-    expect(result.current).toEqual([]);
+    expect(result?.current).toEqual([]);
   });
 
   test('filters correctly', async () => {
-    let result, waitForNextUpdate;
+    let result: any, waitForNextUpdate: any;
     act(() => {
       ({ result, waitForNextUpdate } = renderHook(() =>
         useSearchAllTags('i', true),
@@ -297,11 +297,11 @@ describe('useSearchAllTags', () => {
 
     expect(abortSpy).toBeCalledTimes(0);
 
-    expect(result.current).toEqual(['hi', 'third', 'fifth']);
+    expect(result?.current).toEqual(['hi', 'third', 'fifth']);
   });
 
   test('aborts correctly', async () => {
-    let result, rerender;
+    let result: any, rerender: any;
     delayGetNotes = true;
     act(() => {
       ({ result, rerender } = renderHook(
@@ -316,6 +316,6 @@ describe('useSearchAllTags', () => {
 
     expect(abortSpy).toBeCalledTimes(1);
 
-    expect(result.current).toEqual([]);
+    expect(result?.current).toEqual([]);
   });
 });

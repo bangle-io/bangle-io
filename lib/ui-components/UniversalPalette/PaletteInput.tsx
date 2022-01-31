@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { useCallback, useEffect } from 'react';
 
 import { Input } from '../Input';
@@ -91,11 +90,3 @@ export const PaletteInput = React.forwardRef<
     );
   },
 );
-
-PaletteInput.propTypes = {
-  onSpecialKey: PropTypes.func.isRequired,
-  specialKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
-  inputValue: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  onInputValueChange: PropTypes.func.isRequired,
-};

@@ -90,7 +90,15 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   );
 }
 
-function PermissionModal({ permissionDenied, requestFSPermission, wsName }) {
+function PermissionModal({
+  permissionDenied,
+  requestFSPermission,
+  wsName,
+}: {
+  permissionDenied: boolean;
+  requestFSPermission: () => Promise<boolean>;
+  wsName: string;
+}) {
   const { paletteType, modal } = useUIManagerContext();
   const isPaletteActive = Boolean(paletteType);
   useEffect(() => {

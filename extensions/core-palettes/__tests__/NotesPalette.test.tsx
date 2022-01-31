@@ -49,7 +49,7 @@ beforeEach(async () => {
 
 describe('useSearchWsPaths', () => {
   test('works correctly', async () => {
-    const EMPTY_ARRAY = [];
+    const EMPTY_ARRAY: string[] = [];
     useWorkspaceContextMock.mockImplementation(() => {
       return {
         ...getUseWorkspaceContextReturn,
@@ -64,7 +64,7 @@ describe('useSearchWsPaths', () => {
     await act(async () => {
       await waitForNextUpdate();
     });
-    expect(result.current).toEqual({ other: [], recent: [] });
+    expect(result?.current).toEqual({ other: [], recent: [] });
   });
 
   test('renders correctly', async () => {
@@ -82,7 +82,8 @@ describe('useSearchWsPaths', () => {
       };
     });
 
-    let result, waitForNextUpdate;
+    let result: ReturnType<typeof renderHook>['result'] | undefined,
+      waitForNextUpdate: ReturnType<typeof renderHook>['waitForNextUpdate'];
 
     act(() => {
       ({ result, waitForNextUpdate } = renderHook(() => useSearchWsPaths('')));
@@ -94,7 +95,7 @@ describe('useSearchWsPaths', () => {
 
     expect(abortableFzfSearchNoteWsPathsMock).toBeCalledTimes(1);
 
-    expect(result.current).toEqual({
+    expect(result?.current).toEqual({
       other: ['test-ws:note1.md'],
       recent: ['test-ws:note2.md'],
     });
@@ -115,7 +116,8 @@ describe('useSearchWsPaths', () => {
       };
     });
 
-    let result, waitForNextUpdate;
+    let result: ReturnType<typeof renderHook>['result'] | undefined,
+      waitForNextUpdate: ReturnType<typeof renderHook>['waitForNextUpdate'];
 
     act(() => {
       ({ result, waitForNextUpdate } = renderHook(() => useSearchWsPaths('2')));
@@ -134,7 +136,7 @@ describe('useSearchWsPaths', () => {
       64,
     );
 
-    expect(result.current).toEqual({
+    expect(result?.current).toEqual({
       other: ['test-ws:note1.md'],
       recent: ['test-ws:note2.md'],
     });
@@ -159,7 +161,8 @@ describe('useSearchWsPaths', () => {
       };
     });
 
-    let result, waitForNextUpdate;
+    let result: ReturnType<typeof renderHook>['result'] | undefined,
+      waitForNextUpdate: ReturnType<typeof renderHook>['waitForNextUpdate'];
 
     act(() => {
       ({ result, waitForNextUpdate } = renderHook(() => useSearchWsPaths('')));
@@ -168,7 +171,7 @@ describe('useSearchWsPaths', () => {
       await waitForNextUpdate();
     });
 
-    expect(result.current).toEqual({
+    expect(result?.current).toEqual({
       other: ['test-ws:note1.md'],
       recent: ['test-ws:note2.md', 'test-ws:note3.md'],
     });

@@ -1,6 +1,13 @@
 import type { Options } from 'debounce-fn';
 import debounceFn from 'debounce-fn';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  DependencyList,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { rafSchedule } from './safe-js-callbacks';
 import { keybindingsHelper } from './utility';
@@ -49,7 +56,10 @@ export function useWindowSize() {
  * @param {Function} cb
  * @param {Array} deps
  */
-export function useKeybindings(cb, deps) {
+export function useKeybindings<T extends (...args: any[]) => any>(
+  cb: T,
+  deps: DependencyList,
+) {
   // Using a callback to get a memoized version of bindings
   // which is only invalidated if deps change
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,12 +74,12 @@ export function useKeybindings(cb, deps) {
 }
 
 export function useWatchClickOutside(
-  ref,
+  ref: React.RefObject<HTMLElement>,
   onClickOutside?: () => void,
   onClickInside?: () => void,
 ) {
   useEffect(() => {
-    const handler = (e) => {
+    const handler = (e: MouseEvent) => {
       if (!ref.current) {
         return;
       }
@@ -77,7 +87,7 @@ export function useWatchClickOutside(
       let inside =
         typeof e.composedPath === 'function'
           ? e.composedPath().includes(ref.current)
-          : ref.current.contains(e.target);
+          : ref.current.contains(e.target as Node);
 
       if (inside) {
         onClickInside?.();
@@ -96,7 +106,9 @@ export function useWatchClickOutside(
 /**
  * Catches unhandled sync and async error
  */
-export function useCatchRejection(callback) {
+export function useCatchRejection(
+  callback: (event: PromiseRejectionEvent) => void,
+) {
   useEffect(() => {
     window.addEventListener('unhandledrejection', callback);
     return () => {
@@ -123,7 +135,7 @@ const INFINITE_RECURSION_SEND_COUNT = 12;
 const INFINITE_RECURSION_TIME_THRESHOLD = 50;
 
 export function useBroadcastChannel<T>(
-  channelName,
+  channelName: string,
 ): [T | undefined, (data: T) => void] {
   const infiniteRecurseRef = useRef(0);
   const lastSentRef = useRef<Number | undefined>();

@@ -37,7 +37,13 @@ jest.mock('../constants', () => {
   };
 });
 
-let useWorkspaceContextReturn, useExtensionStateReturn;
+let useWorkspaceContextReturn: { wsName: string | undefined } = {
+  wsName: undefined,
+};
+let useExtensionStateReturn = [
+  { searchQuery: '', searchResults: null, pendingSearch: false },
+  jest.fn(),
+];
 
 let abortableSearchWsForPmNodeMock =
   naukarProxy.abortableSearchWsForPmNode as jest.MockedFunction<

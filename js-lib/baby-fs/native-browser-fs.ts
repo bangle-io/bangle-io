@@ -14,20 +14,21 @@ import {
 } from './error-codes';
 import {
   createFile,
-  DirTypeSystemHandle,
-  FileTypeSystemHandle,
   hasPermission,
   readFileAsText as readFileAsTextHelper,
   recurseDirHandle,
   writeFile,
 } from './native-browser-fs-helpers';
 
-const dirToChildMap = new WeakMap();
+const dirToChildMap = new WeakMap<
+  FileSystemDirectoryHandle,
+  Array<FileSystemDirectoryHandle | FileSystemFileHandle>
+>();
 
-const isNotFoundDOMException = (error) =>
+const isNotFoundDOMException = (error: Error) =>
   error.name === 'NotFoundError' && error instanceof DOMException;
 
-function catchUpstreamError(promise, errorMessage) {
+function catchUpstreamError<T>(promise: Promise<T>, errorMessage: string) {
   return promise.catch((error) => {
     if (error instanceof NativeBrowserFileSystemError) {
       throw error;
@@ -53,15 +54,15 @@ function catchUpstreamError(promise, errorMessage) {
 }
 
 export class NativeBrowserFileSystem extends BaseFileSystem {
-  private _allowedFile: (f: FileTypeSystemHandle) => boolean;
-  private _allowedDir: (entry: DirTypeSystemHandle) => boolean;
+  private _allowedFile: (f: FileSystemFileHandle) => boolean;
+  private _allowedDir: (entry: FileSystemDirectoryHandle) => boolean;
   private _resolveFileHandle: ReturnType<typeof resolveFileHandle>;
-  private _rootDirHandle: DirTypeSystemHandle;
+  private _rootDirHandle: FileSystemDirectoryHandle;
 
   constructor(opts: {
-    rootDirHandle: DirTypeSystemHandle;
-    allowedFile?: (f: FileTypeSystemHandle) => boolean;
-    allowedDir?: (entry: DirTypeSystemHandle) => boolean;
+    rootDirHandle: FileSystemDirectoryHandle;
+    allowedFile?: (f: FileSystemFileHandle) => boolean;
+    allowedDir?: (entry: FileSystemDirectoryHandle) => boolean;
   }) {
     super();
 
@@ -134,7 +135,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     this._verifyFileType(data);
     await verifyPermission(this._rootDirHandle, filePath);
 
-    let fileHandle;
+    let fileHandle: FileSystemFileHandle | undefined;
     let shouldCreateFile = false;
 
     try {
@@ -159,6 +160,10 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
         this._rootDirHandle,
         filePath,
       ));
+    }
+
+    if (!fileHandle) {
+      throw new Error('fileHandle must be defined');
     }
 
     await writeFile(fileHandle, data);
@@ -235,7 +240,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 export class NativeBrowserFileSystemError extends BaseFileSystemError {}
 
 async function verifyPermission(
-  rootDirHandle: DirTypeSystemHandle,
+  rootDirHandle: FileSystemDirectoryHandle,
   filePath = '',
 ) {
   let permission = await hasPermission(rootDirHandle);
@@ -253,12 +258,12 @@ async function verifyPermission(
  * Will throw error if file is not found.
  */
 function resolveFileHandle({
-  allowedDir = (dirHandle: DirTypeSystemHandle): boolean => true,
-  allowedFile = (fileHandle: FileTypeSystemHandle): boolean => true,
+  allowedDir = (dirHandle: FileSystemDirectoryHandle): boolean => true,
+  allowedFile = (fileHandle: FileSystemFileHandle): boolean => true,
 }) {
   const getChildHandle = async (
     childName: string,
-    dirHandle: DirTypeSystemHandle,
+    dirHandle: FileSystemDirectoryHandle,
   ) => {
     const recalcuteChildren = async () => {
       let children = await asyncIteratorToArray(dirHandle.values());
@@ -294,7 +299,12 @@ function resolveFileHandle({
     return findChild();
   };
 
-  const recurse = async (path, dirHandle, absolutePath, parents) => {
+  const recurse = async (
+    path: string[],
+    dirHandle: FileSystemDirectoryHandle | FileSystemFileHandle,
+    absolutePath: string[],
+    parents: FileSystemDirectoryHandle[],
+  ): Promise<FileSystemFileHandle> => {
     if (dirHandle.kind !== 'directory') {
       throw new NativeBrowserFileSystemError(
         `Cannot get Path "${path.join('/')}" as "${
@@ -307,7 +317,9 @@ function resolveFileHandle({
     parents.push(dirHandle);
 
     const [parentName, ...rest] = path;
-
+    if (!parentName) {
+      throw new Error('Parent name must be defined');
+    }
     if (path.length === 1) {
       return dirHandle
         .getFileHandle(parentName, {
@@ -330,11 +342,11 @@ function resolveFileHandle({
   };
 
   return async (
-    rootDirHandle: DirTypeSystemHandle,
+    rootDirHandle: FileSystemDirectoryHandle,
     path: string | string[],
   ): Promise<{
-    fileHandle: FileTypeSystemHandle;
-    parentHandles: DirTypeSystemHandle[];
+    fileHandle: FileSystemFileHandle;
+    parentHandles: FileSystemDirectoryHandle[];
   }> => {
     if (typeof path === 'string') {
       path = path.split('/');
@@ -346,7 +358,7 @@ function resolveFileHandle({
       );
     }
 
-    let parentHandles = [];
+    let parentHandles: FileSystemDirectoryHandle[] = [];
 
     const fileHandle = await recurse(
       path.slice(1),
@@ -362,8 +374,8 @@ function resolveFileHandle({
   };
 }
 
-function handleNotFoundDOMException(arrayFilePath) {
-  return (error) => {
+function handleNotFoundDOMException(arrayFilePath: string[]) {
+  return (error: Error) => {
     if (isNotFoundDOMException(error)) {
       throw new NativeBrowserFileSystemError(
         `Path "${arrayFilePath.join('/')}" not found`,
@@ -376,7 +388,7 @@ function handleNotFoundDOMException(arrayFilePath) {
   };
 }
 
-async function asyncIteratorToArray<T>(iter: Iterable<T>): Promise<T[]> {
+async function asyncIteratorToArray<T>(iter: AsyncIterable<T>): Promise<T[]> {
   const arr: T[] = [];
   for await (const i of iter) {
     arr.push(i);
@@ -386,7 +398,7 @@ async function asyncIteratorToArray<T>(iter: Iterable<T>): Promise<T[]> {
 
 export async function pickADirectory() {
   try {
-    let dirHandle: DirTypeSystemHandle = await (
+    let dirHandle: FileSystemDirectoryHandle = await (
       window as any
     ).showDirectoryPicker();
     let permission = await requestNativeBrowserFSPermission(dirHandle);
@@ -413,7 +425,7 @@ export async function pickADirectory() {
 }
 
 export async function requestNativeBrowserFSPermission(
-  dirHandle: DirTypeSystemHandle,
+  dirHandle: FileSystemDirectoryHandle,
 ) {
   const opts: any = {};
   opts.writable = true;

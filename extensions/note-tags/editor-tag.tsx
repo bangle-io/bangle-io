@@ -7,7 +7,7 @@ import {
   RawSpecs,
 } from '@bangle.dev/core';
 import { inlineNodeParser } from '@bangle.dev/markdown';
-import { keymap } from '@bangle.dev/pm';
+import { EditorState, EditorView, keymap } from '@bangle.dev/pm';
 
 import { RenderReactNodeView } from '@bangle.io/extension-registry';
 import {
@@ -29,8 +29,8 @@ import {
 } from './config';
 
 const MAX_MATCH = 500;
-const getScrollContainer = (view) => {
-  return view.dom.parentElement;
+const getScrollContainer = (view: EditorView) => {
+  return view.dom.parentElement!;
 };
 
 export function editorTagPlugins() {
@@ -69,15 +69,19 @@ export function editorTagHighPriorityPlugins() {
   ];
 }
 
-function breakTag(key) {
-  return (state, dispatch, view) => {
+function breakTag(key: string) {
+  return (
+    state: EditorState,
+    dispatch: EditorView['dispatch'] | undefined,
+    view: EditorView | undefined,
+  ) => {
     if (queryInlinePaletteActive(palettePluginKey)(state)) {
       const text = queryInlinePaletteText(palettePluginKey)(state);
       const { $from } = state.selection;
       let textBefore = $from.parent.textBetween(
         Math.max(0, $from.parentOffset - MAX_MATCH),
         $from.parentOffset,
-        null,
+        undefined,
         '\ufffc',
       );
 
@@ -153,7 +157,7 @@ export function editorTagSpec(): RawSpecs {
       parseMarkdown: {
         note_tag: {
           block: tagNodeName,
-          getAttrs: (tok) => {
+          getAttrs: (tok: { payload: unknown }) => {
             if (typeof tok.payload === 'string') {
               return { tagValue: tok.payload };
             }
@@ -192,7 +196,7 @@ export const renderReactNodeView: RenderReactNodeView = {
   },
 };
 
-function TagComponent({ tagValue }) {
+function TagComponent({ tagValue }: { tagValue: string }) {
   const { dispatchSerialOperation } = useSerialOperationContext();
 
   const onClick = useCallback(() => {

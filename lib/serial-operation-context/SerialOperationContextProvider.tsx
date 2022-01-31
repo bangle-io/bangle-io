@@ -24,7 +24,11 @@ export interface SerialOperationContextType {
   dispatchSerialOperation: DispatchSerialOperationType;
 }
 
-export function SerialOperationContextProvider({ children }) {
+export function SerialOperationContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const bangleStore = useBangleStoreContext();
   const extensionRegistry = useExtensionRegistryContext();
 
