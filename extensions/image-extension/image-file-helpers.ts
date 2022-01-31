@@ -10,7 +10,7 @@ export interface Dimension {
   height: number;
 }
 
-export function calcImageDimensions(blobUrl): Promise<Dimension> {
+export function calcImageDimensions(blobUrl: string): Promise<Dimension> {
   const image = new Image();
   image.src = blobUrl;
   return new Promise((res) => {
@@ -24,7 +24,9 @@ export function calcImageDimensions(blobUrl): Promise<Dimension> {
  * Take hint about image dimensions from the wsPAth
  * example a file named my-pic-343x500.png means width = 343 and height = 500
  */
-export function imageDimensionFromWsPath(imageWsPath): Dimension | undefined {
+export function imageDimensionFromWsPath(
+  imageWsPath: string,
+): Dimension | undefined {
   const { fileName } = resolvePath(imageWsPath);
   const dimensionRegex = /.*-(\d+x\d+)\..*/;
   const result = dimensionRegex.exec(fileName);
@@ -91,7 +93,7 @@ export async function setImageMetadataInWsPath(
   return updateFileName(imageWsPath, newFileName);
 }
 
-export function parseTimestamp(timestamp) {
+export function parseTimestamp(timestamp: string) {
   let [year, month, day, hour, minute, second, milliseconds] = [
     timestamp.slice(0, 4),
     timestamp.slice(4, 6),
@@ -112,7 +114,7 @@ export function parseTimestamp(timestamp) {
   };
 }
 
-function validTimestamp(timestamp) {
+function validTimestamp(timestamp: string) {
   let { year, month, day, hour, minute, second, milliseconds } =
     parseTimestamp(timestamp);
 
@@ -136,7 +138,7 @@ function validTimestamp(timestamp) {
 
 const scaleRegex = /.*-scale(\d.+)$/;
 
-export function getImageAltScaleFactor(alt) {
+export function getImageAltScaleFactor(alt?: string) {
   if (!alt) {
     alt = '';
   }
@@ -148,14 +150,14 @@ export function getImageAltScaleFactor(alt) {
   return 1;
 }
 
-export function updateImageAltScaleFactor(alt, scaleFactor = 1) {
+export function updateImageAltScaleFactor(alt?: string, scaleFactor = 1) {
   // so that null is also covered
   if (!alt) {
     alt = '';
   }
   const match = scaleRegex.exec(alt);
   if (match && match[1]) {
-    alt = alt.replaceAll(`-scale${match[1]}`, '');
+    alt = alt.split(`-scale${match[1]}`).join('');
   }
 
   if (scaleFactor === 1) {

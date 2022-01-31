@@ -2,9 +2,7 @@ import type { Node } from '@bangle.dev/pm';
 
 import {
   BaseFileSystemError,
-  DirTypeSystemHandle,
   FILE_NOT_FOUND_ERROR,
-  FileTypeSystemHandle,
   NativeBrowserFileSystem,
   readFileAsText,
 } from '@bangle.io/baby-fs';
@@ -23,12 +21,12 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   description = 'Saves data in your file system';
 
   private getFs(opts: StorageOpts) {
-    const rootDirHandle: DirTypeSystemHandle =
+    const rootDirHandle: FileSystemDirectoryHandle =
       opts.readWorkspaceMetadata().rootDirHandle;
 
     return new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
-      allowedFile: (fileHandle: FileTypeSystemHandle) =>
+      allowedFile: (fileHandle: FileSystemFileHandle) =>
         allowedFile(fileHandle.name),
     });
   }

@@ -123,10 +123,10 @@ describe('helper functions', () => {
 });
 
 describe('useRecencyMonitor', () => {
-  let originalLocalStorage;
+  let originalLocalStorage: typeof localStorage;
   beforeEach(() => {
     originalLocalStorage = window.localStorage;
-    let store = {};
+    let store: any = {};
     Object.defineProperty(window, 'localStorage', {
       value: {
         getItem: jest.fn((key) => {

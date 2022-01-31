@@ -186,7 +186,7 @@ export function useAutomaticScrollNodeIntoView(
   }, [lastClickedOnHeading]);
 
   useEffect(() => {
-    let callbackId;
+    let callbackId: number | null = null;
     if (!scrollIntoViewInProgress.current) {
       scrollIntoViewInProgress.current = true;
       callbackId = safeRequestIdleCallback(scrollHeadingNodeIntoView);

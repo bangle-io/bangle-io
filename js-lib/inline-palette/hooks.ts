@@ -1,12 +1,17 @@
 import { useCallback, useEffect } from 'react';
 
-import type { Command, PluginKey } from '@bangle.dev/pm';
+import type {
+  Command,
+  EditorState,
+  EditorView,
+  PluginKey,
+} from '@bangle.dev/pm';
 import { useEditorViewContext, usePluginState } from '@bangle.dev/react';
 import { suggestTooltip } from '@bangle.dev/tooltip';
 
 import { getSuggestTooltipKey } from './inline-palette';
 
-export function useInlinePaletteQuery(inlinePaletteKey) {
+export function useInlinePaletteQuery(inlinePaletteKey: PluginKey) {
   const view = useEditorViewContext();
   // TODO show is a bad name
   const {
@@ -64,10 +69,14 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
 
       if (isItemDisabled?.(item)) {
         // still handle the key
-        return (state) => true;
+        return (state: any) => true;
       }
 
-      return (state, dispatch, view) => {
+      return (
+        state: EditorState,
+        dispatch: EditorView['dispatch'] | undefined,
+        view: EditorView | undefined,
+      ) => {
         return item.editorExecuteCommand({
           item,
           itemIndex,
@@ -80,14 +89,20 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
   useEffect(() => {
     // Save the callback to get the active item so that the plugin
     // can execute an enter on the active item
-    setExecuteItemCommand((state, dispatch, view) => {
-      const result = executeHandler(getActiveIndex(counter, items.length))(
-        state,
-        dispatch,
-        view,
-      );
-      return result;
-    });
+    setExecuteItemCommand(
+      (
+        state: EditorState,
+        dispatch: EditorView['dispatch'] | undefined,
+        view: EditorView | undefined,
+      ) => {
+        const result = executeHandler(getActiveIndex(counter, items.length))(
+          state,
+          dispatch,
+          view,
+        );
+        return result;
+      },
+    );
     return () => {
       setExecuteItemCommand(undefined);
     };
@@ -113,7 +128,7 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
   };
 }
 
-function getActiveIndex(counter, size): number {
+function getActiveIndex(counter: number, size: number): number {
   const r = counter % size;
   return r < 0 ? r + size : r;
 }

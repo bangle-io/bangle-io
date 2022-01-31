@@ -133,7 +133,7 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
   return {
     deferredOnce(store, abortSignal) {
       const { extensionRegistry } = config;
-      const getItem = async (wsPath): Promise<Node> => {
+      const getItem = async (wsPath: string): Promise<Node> => {
         // TODO the try catch is not ideal, the debouce disk should handl error
         try {
           const doc = await getNote(wsPath)(

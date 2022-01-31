@@ -80,10 +80,13 @@ export function createTestStore<
   };
 }
 
-export const getActionNamesDispatched = (mockDispatch) =>
+export const getActionNamesDispatched = (mockDispatch: jest.SpyInstance) =>
   mockDispatch.mock.calls.map((r) => r[0].name);
 
-export const getActionsDispatched = (mockDispatch, name) => {
+export const getActionsDispatched = (
+  mockDispatch: jest.SpyInstance,
+  name: string,
+) => {
   const actions = mockDispatch.mock.calls.map((r) => r[0]);
 
   if (name) {

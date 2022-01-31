@@ -1,3 +1,4 @@
+import { EditorView } from '@bangle.dev/pm';
 import { wikiLink, wikiLinkMarkdownItPlugin } from '@bangle.dev/wiki-link';
 
 import { Extension } from '@bangle.io/extension-registry';
@@ -9,8 +10,8 @@ import { renderReactNodeView } from './editor/BacklinkNode';
 import { inlineBacklinkPlugin } from './editor/inline-backlink-plugin';
 import { InlineBacklinkPalette } from './editor/InlineBacklinkPalette';
 
-const getScrollContainer = (view) => {
-  return view.dom.parentElement;
+const getScrollContainer = (view: EditorView) => {
+  return view.dom.parentElement!;
 };
 
 // TODO there is a bug in firefox https://github.com/ProseMirror/prosemirror/issues/1220

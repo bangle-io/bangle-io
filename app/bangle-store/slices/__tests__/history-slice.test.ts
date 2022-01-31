@@ -25,7 +25,7 @@ const workspaceStateMock = workspaceSliceKey[
   'getSliceStateAsserted'
 ] as jest.MockedFunction<typeof workspaceSliceKey['getSliceStateAsserted']>;
 
-let historyPushSpy, historyReplaceSpy;
+let historyPushSpy: jest.SpyInstance, historyReplaceSpy: jest.SpyInstance;
 
 beforeAll(() => {
   jest.useFakeTimers();

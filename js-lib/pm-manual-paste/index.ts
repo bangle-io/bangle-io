@@ -1,6 +1,8 @@
 import {
   __parseFromClipboard,
   __serializeForClipboard,
+  // Cant get the type to work
+  // @ts-ignore
 } from 'prosemirror-view';
 
 import { DOMSerializer, EditorView, Slice } from '@bangle.dev/pm';
@@ -14,7 +16,7 @@ export function sliceManualPaste(editorView: EditorView, slice: Slice) {
 
 // copied from prosemirror to simulate a paste event
 export function htmlManualPaste(editorView: EditorView, htmlStr: string) {
-  function sliceSingleNode(slice) {
+  function sliceSingleNode(slice: Slice) {
     return slice.openStart === 0 &&
       slice.openEnd === 0 &&
       slice.content.childCount === 1
@@ -22,7 +24,12 @@ export function htmlManualPaste(editorView: EditorView, htmlStr: string) {
       : null;
   }
 
-  function doPaste(view: EditorView, text, html: string, e) {
+  function doPaste(
+    view: EditorView,
+    text: string | null,
+    html: string,
+    e: any,
+  ) {
     let slice = __parseFromClipboard(
       view,
       text,

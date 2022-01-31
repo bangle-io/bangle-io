@@ -82,7 +82,7 @@ describe('operation handlers', () => {
         }),
       ]);
 
-    let result,
+    let result: ReturnType<typeof render> | undefined,
       dispatchSOp: ReturnType<
         typeof useSerialOperationContext
       >['dispatchSerialOperation'];
@@ -109,19 +109,19 @@ describe('operation handlers', () => {
       );
     });
 
-    expect(result.container.innerHTML.includes('result-0')).toBe(true);
+    expect(result?.container.innerHTML.includes('result-0')).toBe(true);
 
     act(() => {
       dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar' });
     });
 
-    expect(result.container.innerHTML.includes('result-1')).toBe(true);
+    expect(result?.container.innerHTML.includes('result-1')).toBe(true);
 
     act(() => {
       dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar2' });
     });
 
-    expect(result.container.innerHTML.includes('result-1')).toBe(true);
+    expect(result?.container.innerHTML.includes('result-1')).toBe(true);
   });
 
   test('operation handler works', async () => {

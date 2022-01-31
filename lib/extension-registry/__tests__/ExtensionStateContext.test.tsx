@@ -70,7 +70,9 @@ test('forwards correct state to each extension', () => {
     ]);
   });
 
-  let receivedState1, receivedState2, updateState2;
+  let receivedState1,
+    receivedState2,
+    updateState2: ReturnType<typeof useExtensionState>[1];
 
   let comp1RenderCount = 0;
   let comp1UniqueUpdateCalls = new Set();

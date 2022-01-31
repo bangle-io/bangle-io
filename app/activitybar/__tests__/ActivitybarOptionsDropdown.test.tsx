@@ -64,7 +64,7 @@ test('clicking the button shows dropdown', async () => {
     fireEvent.click(result.getByLabelText('options menu'));
   });
 
-  let targetOption;
+  let targetOption: ReturnType<typeof result.getByLabelText> | undefined;
   await waitFor(() => {
     targetOption = result.getByLabelText('options dropdown');
     expect(targetOption).toBeTruthy();
@@ -73,7 +73,7 @@ test('clicking the button shows dropdown', async () => {
   // check if keyboard shortcut is shown
   // note: kbd utility prettifies 'Ctrl-P' to 'Ctrl-⇧'
   expect(
-    [...targetOption.querySelectorAll('li[data-key]')].find((t) =>
+    [...(targetOption?.querySelectorAll('li[data-key]') || [])].find((t) =>
       t.innerHTML.includes('⇧'),
     ),
   ).toBeTruthy();

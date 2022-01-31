@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 
 import {
   BaseFileSystemError,
-  DirTypeSystemHandle,
   NATIVE_BROWSER_PERMISSION_ERROR,
   NATIVE_BROWSER_USER_ABORTED_ERROR,
   pickADirectory,
@@ -24,7 +23,9 @@ export function PickStorageDirectory({
   dirName,
 }: {
   setError: (error: WorkspaceCreateErrorTypes) => void;
-  updateRootDirHandle: (fileStorage: DirTypeSystemHandle | undefined) => void;
+  updateRootDirHandle: (
+    fileStorage: FileSystemDirectoryHandle | undefined,
+  ) => void;
   dirName: string | undefined;
 }) {
   const handlePickDirectory = useCallback(async () => {

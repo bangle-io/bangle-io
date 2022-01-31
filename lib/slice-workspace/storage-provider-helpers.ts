@@ -12,7 +12,7 @@ export const storageProviderHelpers = {
       error instanceof Error &&
       Object.prototype.hasOwnProperty.call(error, STORAGE_PROVIDER_ERROR_KEY)
     ) {
-      const value = error[STORAGE_PROVIDER_ERROR_KEY];
+      const value = (error as any)[STORAGE_PROVIDER_ERROR_KEY];
       if (typeof value === 'string') {
         return value;
       }
@@ -25,7 +25,7 @@ export const storageProviderHelpers = {
     name: BaseStorageProvider['name'],
   ) {
     if (error instanceof Error) {
-      error[STORAGE_PROVIDER_ERROR_KEY] = name;
+      (error as any)[STORAGE_PROVIDER_ERROR_KEY] = name;
     }
   },
 };

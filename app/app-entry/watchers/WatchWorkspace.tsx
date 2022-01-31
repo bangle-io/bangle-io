@@ -15,7 +15,7 @@ const LOG = false;
 
 const log = LOG ? console.log.bind(console, 'WatchWorkspace') : () => {};
 
-const weakComputeLameHash = weakCache((fileWsPaths) =>
+const weakComputeLameHash = weakCache((fileWsPaths: string[]) =>
   fileWsPaths.sort((a, b) => a.localeCompare(b)).join(','),
 );
 

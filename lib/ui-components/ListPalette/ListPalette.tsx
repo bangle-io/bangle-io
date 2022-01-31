@@ -25,7 +25,12 @@ export function ListPalette({
   widescreen: any;
 }) {
   const [inputValue, _onInputValueChange] = useState(initialValue);
-  items = items.filter((obj) => strMatch(obj.title, inputValue));
+  items = items.filter((obj) => {
+    if (typeof obj.title === 'string') {
+      return strMatch(obj.title, inputValue);
+    }
+    return false;
+  });
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -57,7 +62,7 @@ export function ListPalette({
 
   const activeItem = UniversalPalette.useActivePaletteItem(items, counter);
 
-  const onInputValueChange = (value) => {
+  const onInputValueChange = (value: string) => {
     _onInputValueChange(value);
     resetCounter();
   };
@@ -105,7 +110,7 @@ export function ListPalette({
   );
 }
 
-function strMatch(a, b) {
+function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));

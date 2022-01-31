@@ -66,7 +66,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
                       height: 16,
                       width: 16,
                     }}
-                    onClick={async (e) => {
+                    onClick={async (e: React.MouseEvent<any, MouseEvent>) => {
                       e.stopPropagation();
                       await removeWorkspace(workspace.name)(
                         bangleStore.state,
@@ -144,7 +144,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
     },
   );
 
-function strMatch(a, b) {
+function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase().trim();
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));

@@ -11,7 +11,9 @@ export interface PaletteManagerReactComponentProps {
   dismissPalette: (focusEditor?: boolean) => void;
   onSelect: ReturnType<typeof UniversalPalette.usePaletteDriver>['onSelect'];
   counter: number;
-  getActivePaletteItem: (items) => undefined | UniversalPalette.ItemType;
+  getActivePaletteItem: (
+    items: UniversalPalette.ItemType[],
+  ) => undefined | UniversalPalette.ItemType;
   updateCounter: ReturnType<
     typeof UniversalPalette.usePaletteDriver
   >['updateCounter'];

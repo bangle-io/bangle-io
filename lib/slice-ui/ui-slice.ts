@@ -283,7 +283,7 @@ function getThemePreference() {
     : 'light';
 }
 
-function setRootWidescreenClass(widescreen) {
+function setRootWidescreenClass(widescreen?: boolean) {
   const root = document.getElementById('root');
   const body = document.body;
   if (widescreen) {

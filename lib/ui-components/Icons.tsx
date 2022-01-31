@@ -6,7 +6,12 @@ export const Svg = ({
   size,
   className = '',
   ...props
-}) => (
+}: {
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+  size?: number;
+  className?: string;
+} & React.SVGProps<SVGSVGElement>) => (
   <svg
     style={style}
     viewBox="0 0 24 24"
@@ -18,13 +23,13 @@ export const Svg = ({
   </svg>
 );
 
-export const ChevronDownIcon = (props) => (
+export const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <Svg {...props}>
     <path d="M6.343 7.757L4.93 9.172 12 16.242l7.071-7.07-1.414-1.415L12 13.414 6.343 7.757z" />
   </Svg>
 );
 
-export const CloseIcon = (props) => (
+export const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <Svg {...props}>
     <path
       d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
@@ -33,7 +38,7 @@ export const CloseIcon = (props) => (
   </Svg>
 );
 
-export function TerminalIcon(props) {
+export function TerminalIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <Svg {...props}>
       <path
@@ -51,7 +56,7 @@ export function TerminalIcon(props) {
   );
 }
 
-export function InfobarIcon(props) {
+export function InfobarIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <Svg {...props}>
       <path d="M16 7C15.4477 7 15 7.44772 15 8C15 8.55228 15.4477 9 16 9H19C19.5523 9 20 8.55228 20 8C20 7.44772 19.5523 7 19 7H16Z" />
@@ -66,7 +71,7 @@ export function InfobarIcon(props) {
   );
 }
 
-export function AlbumIcon(props) {
+export function AlbumIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <Svg {...props}>
       <path
@@ -79,7 +84,7 @@ export function AlbumIcon(props) {
   );
 }
 
-export function BrowseIcon(props) {
+export function BrowseIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <Svg {...props}>
       <path
@@ -100,7 +105,7 @@ export function BrowseIcon(props) {
   );
 }
 
-export function FileDocumentIcon(props) {
+export function FileDocumentIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <Svg {...props}>
       <path d="M7 18H17V16H7V18Z" fill="currentColor" />
@@ -116,7 +121,7 @@ export function FileDocumentIcon(props) {
   );
 }
 
-export function SecondaryEditorIcon(props) {
+export function SecondaryEditorIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
       <path
@@ -129,7 +134,7 @@ export function SecondaryEditorIcon(props) {
   );
 }
 
-export function MoreAltIcon(props) {
+export function MoreAltIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <Svg {...props} fill="none">
       <path
@@ -148,7 +153,7 @@ export function MoreAltIcon(props) {
   );
 }
 
-export function ChevronDoubleRightIcon(props) {
+export function ChevronDoubleRightIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none">
       <path
@@ -163,7 +168,7 @@ export function ChevronDoubleRightIcon(props) {
   );
 }
 
-export function NullIcon(props) {
+export function NullIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -175,7 +180,7 @@ export function NullIcon(props) {
   );
 }
 
-export function DocumentAddIcon(props) {
+export function DocumentAddIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +199,7 @@ export function DocumentAddIcon(props) {
   );
 }
 
-export function MenuIcon(props) {
+export function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -335,7 +340,7 @@ export function QuestionIcon({ className = 'w-6 h-6', ...props }) {
   );
 }
 
-export function HomeIcon(props) {
+export function HomeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -377,7 +382,7 @@ export function SingleCharIcon({ char, ...props }: { char: string } & any) {
   );
 }
 
-export function FolderIcon(props) {
+export function FolderIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -396,7 +401,7 @@ export function FolderIcon(props) {
   );
 }
 
-export function NewNoteIcon(props) {
+export function NewNoteIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -415,7 +420,7 @@ export function NewNoteIcon(props) {
   );
 }
 
-export function NoteIcon(props) {
+export function NoteIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -429,7 +434,7 @@ export function NoteIcon(props) {
   );
 }
 
-export function SearchIcon(props) {
+export function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

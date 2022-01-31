@@ -291,7 +291,7 @@ test('when there is a delay in second store', async () => {
 
   const { key: configKey1, slice: configSlice1 } = staticSlice({
     actionSendFilter: () => true,
-    actionReceiveFilter: (action) => {
+    actionReceiveFilter: (action: any) => {
       return action.value.counter !== 'DECREMENT';
     },
     port: port1 as any,

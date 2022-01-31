@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { NodeSelection } from '@bangle.dev/pm';
+import { EditorState, EditorView, NodeSelection } from '@bangle.dev/pm';
 import { useEditorViewContext } from '@bangle.dev/react';
 import {
   FloatingMenu,
@@ -15,7 +15,15 @@ import {
   updateImageAltScaleFactor,
 } from './image-file-helpers';
 
-function ScaleButton({ scaleFactor, view, isActive }) {
+function ScaleButton({
+  scaleFactor,
+  view,
+  isActive,
+}: {
+  scaleFactor: number;
+  view: EditorView;
+  isActive: boolean;
+}) {
   const scaleDisplay = Math.ceil(scaleFactor * 100);
 
   return (
@@ -93,7 +101,11 @@ export function ImageEditorReactComponent() {
 // TODO move this to bangle.dev, the only change here is that attr can be a function
 const updateImageNodeAttribute =
   (attr = {}) =>
-  (state, dispatch, view) => {
+  (
+    state: EditorState,
+    dispatch: EditorView['dispatch'] | undefined,
+    view: EditorView | undefined,
+  ) => {
     if (!(state.selection instanceof NodeSelection) || !state.selection.node) {
       return false;
     }
@@ -114,7 +126,7 @@ const updateImageNodeAttribute =
     return true;
   };
 
-function getSelectedImageNodeScale(state) {
+function getSelectedImageNodeScale(state: EditorState) {
   if (!(state.selection instanceof NodeSelection) || !state.selection.node) {
     return undefined;
   }

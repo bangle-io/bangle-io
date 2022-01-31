@@ -17,7 +17,7 @@ jest.mock('@bangle.io/contextual-ui-components', () => {
 
   return {
     ...actual,
-    NoteLink: ({ children }) => {
+    NoteLink: ({ children }: { children: React.ReactNode }) => {
       return <span>{children}</span>;
     },
   };

@@ -4,7 +4,7 @@ import { useLocalStorage } from './use-local-storage';
 
 export type RecencyRecords = Array<{ key: string; timestamps: number[] }>;
 
-const EMPTY_ARRAY = [];
+const EMPTY_ARRAY: RecencyRecords = [];
 /**
  *
  * A hook for monitoring strings recently used. It persists data

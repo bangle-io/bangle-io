@@ -18,7 +18,7 @@ const extension = Extension.create({
 
 function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
   // TODO fix types of collab plugin
-  const sendRequest = (type: CollabRequestType, payload): any =>
+  const sendRequest = (type: CollabRequestType, payload: any): any =>
     naukarProxy.handleCollabRequest(type, payload).then((obj) => {
       return parseCollabResponse(obj);
     });

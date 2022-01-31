@@ -8,7 +8,7 @@ import { PALETTE_ITEM_HINT_TYPE, PaletteItem } from './palette-item';
 
 const OneDayMilliseconds = 24 * 60 * 60 * 1000;
 
-const prettyPrintDate = (dayjs, date) => {
+const prettyPrintDate = (dayjs: any, date: any) => {
   const dayjsInputDate = dayjs(date);
   const startOfDay = dayjsInputDate.startOf('day');
 
@@ -41,7 +41,7 @@ interface ChronoLibrariesType {
   chrono: any;
   dayjs: any;
 }
-let _libraries;
+let _libraries: ChronoLibrariesType | null = null;
 async function getTimeLibrary(): Promise<ChronoLibrariesType> {
   if (!_libraries) {
     let [chrono, dayjs] = (await Promise.all([
@@ -74,7 +74,7 @@ export function useDateItems(query: string) {
   const items = useMemo(() => {
     if (parsedDateObj) {
       const { parsedDates, dayjs } = parsedDateObj;
-      return parsedDates.map((p, i) =>
+      return parsedDates.map((p: any, i: number) =>
         PaletteItem.create({
           uid: 'parsedDate' + i,
           highPriority: true,

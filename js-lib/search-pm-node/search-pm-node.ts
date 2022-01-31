@@ -17,7 +17,7 @@ export interface AtomSearchTypes {
 }
 
 function getAtomSearchType(
-  query,
+  query: string,
   atomSearchTypes: AtomSearchTypes[],
 ): AtomSearchTypes | undefined {
   return atomSearchTypes.find(
@@ -177,7 +177,7 @@ export function matchText(
   let count = 0;
   while ((match = regex1.exec(text)) !== null) {
     count++;
-    const [start, end] = [match.index, match.index + match[0].length];
+    const [start, end] = [match.index, match.index + match[0]!.length];
     if (limit && count > limit) {
       break;
     }

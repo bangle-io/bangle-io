@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { useRef } from 'react';
 
 import { cx, useWatchClickOutside } from '@bangle.io/utils';
@@ -10,6 +9,13 @@ export function PaletteContainer({
   children,
   widescreen,
   className = '',
+}: {
+  paletteType?: string | null;
+  onClickOutside?: () => void;
+  onClickInside?: () => void;
+  children: React.ReactNode;
+  widescreen?: boolean;
+  className?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -27,10 +33,3 @@ export function PaletteContainer({
     </div>
   );
 }
-
-PaletteContainer.propTypes = {
-  paletteType: PropTypes.string.isRequired,
-  onClickOutside: PropTypes.func.isRequired,
-  onClickInside: PropTypes.func.isRequired,
-  widescreen: PropTypes.bool.isRequired,
-};

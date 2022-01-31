@@ -1,4 +1,5 @@
 import { emoji, emojiMarkdownItPlugin } from '@bangle.dev/emoji';
+import { EditorView } from '@bangle.dev/pm';
 import { emojiSuggest } from '@bangle.dev/react-emoji-suggest';
 
 import { Extension } from '@bangle.io/extension-registry';
@@ -7,8 +8,8 @@ import { emojiSuggestKey, emojiSuggestMarkName, extensionName } from './config';
 import { aliasEmojiPair, aliasToEmojiObj } from './emoji-data';
 import { EmojiSuggestComponent } from './EmojiSuggestComponent';
 
-const getScrollContainer = (view) => {
-  return view.dom.parentElement;
+const getScrollContainer = (view: EditorView) => {
+  return view.dom.parentElement!;
 };
 
 const maxItems = 500;

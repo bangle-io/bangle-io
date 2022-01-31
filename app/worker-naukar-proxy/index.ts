@@ -82,7 +82,7 @@ const injectWaitOnWorkerReadyProxy: WorkerAPI = new Proxy<WorkerAPI>(
       // untill naukar is not ready
       // wrap the it in a promise which resolves
       // when it is ready.
-      return (...args) => {
+      return <T>(...args: T[]) => {
         return new Promise((res, rej) => {
           const callback = () => {
             emitter.off('ready', callback);

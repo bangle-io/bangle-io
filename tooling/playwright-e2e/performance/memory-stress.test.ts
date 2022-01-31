@@ -90,12 +90,12 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
 
   // deref all the weak references to get a count of persisted editors
   // in memory.
-  const getEditorCountInMemory = async (attempt = 0) => {
+  const getEditorCountInMemory = async (attempt = 0): Promise<number> => {
     await page.evaluate(() => (window as any).gc());
     await sleep(500);
 
     const size = await page.evaluate(() => {
-      return new Set((window as any).refs.map((r) => r.deref())).size;
+      return new Set((window as any).refs.map((r: any) => r.deref())).size;
     });
     if (size > FINAL_EDITORS_IN_MEMORY && attempt < 2) {
       return getEditorCountInMemory(attempt + 1);

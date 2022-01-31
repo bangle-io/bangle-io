@@ -16,7 +16,13 @@ import {
   resolvePath,
 } from '@bangle.io/ws-path';
 
-export function NewNoteInputModal({ initialValue, onDismiss }) {
+export function NewNoteInputModal({
+  initialValue,
+  onDismiss,
+}: {
+  initialValue: string;
+  onDismiss: () => void;
+}) {
   const destroyedRef = useDestroyRef();
   const { wsName, bangleStore } = useWorkspaceContext();
   const [error, updateError] = useState<Error | undefined>();
@@ -84,7 +90,7 @@ export function NewNoteInputModal({ initialValue, onDismiss }) {
   );
 }
 
-export function RenameNoteInputModal({ onDismiss }) {
+export function RenameNoteInputModal({ onDismiss }: { onDismiss: () => void }) {
   const destroyedRef = useDestroyRef();
   const { widescreen } = useUIManagerContext();
 

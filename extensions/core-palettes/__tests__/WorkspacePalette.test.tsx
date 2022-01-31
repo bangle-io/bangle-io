@@ -31,19 +31,13 @@ let workspaces: WorkspaceInfo[] = [
   },
 ];
 
-let listWorkspacesMock = listWorkspaces as jest.MockedFunction<
-  typeof listWorkspaces
->;
+let listWorkspacesMock = jest
+  .mocked(listWorkspaces)
+  .mockImplementation(() => async () => workspaces);
 
-let dismissPalette, onSelect, getActivePaletteItem;
-
-beforeEach(async () => {
-  onSelect = jest.fn();
+let dismissPalette = jest.fn(),
+  onSelect = jest.fn(),
   getActivePaletteItem = jest.fn();
-
-  listWorkspacesMock.mockImplementation(() => async () => workspaces);
-  dismissPalette = jest.fn();
-});
 
 test('Component renders correctly', async () => {
   const result = render(

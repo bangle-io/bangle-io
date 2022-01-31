@@ -24,7 +24,7 @@ jest.mock('react-dom', () => {
   };
 });
 
-let result, onAction;
+let result: ReturnType<typeof render>, onAction;
 beforeEach(() => {
   onAction = jest.fn();
   result = render(

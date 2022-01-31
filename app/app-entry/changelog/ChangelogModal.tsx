@@ -22,7 +22,10 @@ import {
   text,
   underline,
 } from '@bangle.dev/base-components';
-import { SpecRegistry } from '@bangle.dev/core';
+import {
+  BangleEditor as CoreBangleEditor,
+  SpecRegistry,
+} from '@bangle.dev/core';
 import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 
@@ -86,7 +89,7 @@ export function ChangelogModal() {
 const parser = markdownParser(specRegistry);
 const serializer = markdownSerializer(specRegistry);
 
-export function serializeMarkdown(editor) {
+export function serializeMarkdown(editor: CoreBangleEditor) {
   return serializer.serialize(editor.view.state.doc);
 }
 

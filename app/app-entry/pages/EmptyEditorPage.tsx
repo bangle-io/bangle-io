@@ -63,7 +63,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
   );
 }
 
-const EMPTY_ARRAY = [];
+const EMPTY_ARRAY: string[] = [];
 export function EmptyEditorPage() {
   const {
     wsName,

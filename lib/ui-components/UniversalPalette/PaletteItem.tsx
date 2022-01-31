@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { ReactNode, useEffect, useRef } from 'react';
 
 import { safeScrollIntoViewIfNeeded } from '@bangle.io/utils';
@@ -15,29 +14,6 @@ export interface ItemType {
   extraInfo?: ReactNode;
   isDisabled?: boolean;
 }
-
-export const ItemPropTypes = PropTypes.exact({
-  uid: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  data: PropTypes.object,
-  leftNode: PropTypes.node,
-  rightNode: PropTypes.node,
-  rightHoverNode: PropTypes.node,
-  showDividerAbove: PropTypes.bool,
-  description: PropTypes.node,
-  extraInfo: PropTypes.node,
-  isDisabled: PropTypes.bool,
-  keywords: PropTypes.array,
-});
-
-PaletteItemUI.propTypes = {
-  item: ItemPropTypes.isRequired,
-  onClick: PropTypes.func.isRequired,
-  isActive: PropTypes.bool,
-  className: PropTypes.string,
-  scrollIntoViewIfNeeded: PropTypes.bool,
-  style: PropTypes.object,
-};
 
 export function PaletteItemUI({
   item,

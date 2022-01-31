@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import ReactDOM from 'react-dom';
 
-import type { Command } from '@bangle.dev/pm';
+import type { Command, EditorState, EditorView } from '@bangle.dev/pm';
 
 import {
   replaceSuggestionMarkWith,
@@ -15,7 +15,11 @@ import { useSearchAllTags } from './search';
 
 export const createTagNode = (tagValue: string): Command => {
   tagValue = tagValue.trim();
-  return (state, dispatch, view) => {
+  return (
+    state: EditorState,
+    dispatch: EditorView['dispatch'] | undefined,
+    view: EditorView | undefined,
+  ) => {
     const nodeType = state.schema.nodes[tagNodeName];
     if (tagValue === '') {
       return false;
@@ -40,7 +44,7 @@ export function TagPickerInlinePalette() {
         description: '',
         uid: 'create-tag',
         title: 'Create a tag "' + query + '"',
-        editorExecuteCommand: ({ item }) => {
+        editorExecuteCommand: () => {
           return createTagNode(query);
         },
       };
@@ -51,7 +55,7 @@ export function TagPickerInlinePalette() {
           description: z,
           uid: 'existing-tag-' + z,
           title: z,
-          editorExecuteCommand: ({ item }) => {
+          editorExecuteCommand: () => {
             return createTagNode(z);
           },
         };

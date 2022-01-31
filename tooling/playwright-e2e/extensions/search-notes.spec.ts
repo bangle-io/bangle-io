@@ -81,6 +81,6 @@ test('Is able to search for a note', async ({ page }) => {
   ).toBe(1);
 });
 
-function countOcurrences(string, match) {
+function countOcurrences(string: string, match: string) {
   return string.split(match).length - 1;
 }

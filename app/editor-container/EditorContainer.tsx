@@ -96,7 +96,7 @@ export function EditorContainer({
  * @param {*} incomingWsPath
  * @returns
  */
-export function useHandleWsPath(incomingWsPath) {
+export function useHandleWsPath(incomingWsPath?: string) {
   const [wsPath, updateWsPath] = useState<string | undefined>(undefined);
   const [noteExists, updateFileExists] = useState<
     'LOADING' | 'FOUND' | 'NOT_FOUND' | 'NO_WS_PATH'

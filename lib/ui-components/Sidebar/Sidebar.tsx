@@ -7,6 +7,10 @@ export function ItemContainer({
   className = '',
   children,
   ...props
+}: {
+  hoverBgColorChange?: boolean;
+  className?: string;
+  children: React.ReactNode;
 }) {
   return (
     <div
@@ -22,7 +26,13 @@ export function ItemContainer({
   );
 }
 
-export function Title({ children, className = '' }) {
+export function Title({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <ItemContainer className={'font-semibold text-sm uppercase ' + className}>
       {children}
@@ -30,7 +40,13 @@ export function Title({ children, className = '' }) {
   );
 }
 
-export function Container({ className = '', children }) {
+export function Container({
+  className = '',
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div
       className={'flex flex-col h-full ' + className}
@@ -43,7 +59,11 @@ export function Container({ className = '', children }) {
   );
 }
 
-export function ScrollableContainer({ children }) {
+export function ScrollableContainer({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div
       className="flex-grow"

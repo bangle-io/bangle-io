@@ -1,4 +1,4 @@
-import { Plugin } from '@bangle.dev/pm';
+import { EditorView, Plugin } from '@bangle.dev/pm';
 
 import type { EditorPlugin } from '@bangle.io/shared-types';
 import { updateFocusedEditor } from '@bangle.io/slice-editor-manager';
@@ -8,7 +8,7 @@ export const watchEditorFocus: EditorPlugin = function watchEditorFocus() {
   return new Plugin({
     props: {
       handleDOMEvents: {
-        focus: (view, event) => {
+        focus: (view: EditorView, event: Event) => {
           const { bangleStore, editorId } = getEditorPluginMetadata(view.state);
 
           updateFocusedEditor(editorId)(

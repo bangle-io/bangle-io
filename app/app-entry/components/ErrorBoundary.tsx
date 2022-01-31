@@ -1,27 +1,22 @@
 import React from 'react';
 
 import { initializeBangleStore } from '@bangle.io/bangle-store';
+import { BaseError } from '@bangle.io/utils';
 
-export class ErrorBoundary extends React.Component<
-  {
-    store: ReturnType<typeof initializeBangleStore>;
-  },
-  {
-    hasError: boolean;
-    error?: any;
-  }
-> {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+export class ErrorBoundary extends React.Component<{
+  store: ReturnType<typeof initializeBangleStore>;
+}> {
+  state: { hasError: boolean; error: Error | undefined | BaseError } = {
+    hasError: false,
+    error: undefined,
+  };
 
   static getDerivedStateFromError(error: Error) {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }
 
-  componentDidCatch(error) {
+  componentDidCatch(error: Error) {
     (window as any).Sentry?.captureException(error);
   }
 
@@ -45,7 +40,9 @@ export class ErrorBoundary extends React.Component<
               </a>
               <div className="w-full text-sm italic text-center">
                 Error:{' '}
-                {this.state.error?.displayMessage ||
+                {(this.state.error instanceof BaseError
+                  ? this.state.error?.displayMessage
+                  : undefined) ||
                   this.state.error?.message ||
                   this.state.error?.name}
               </div>

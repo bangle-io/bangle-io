@@ -156,7 +156,7 @@ describe('store', () => {
     const key1 = new SliceKey<number>('one');
     const key2 = new SliceKey<number>('two');
 
-    const setup = (effects1) => {
+    const setup = (effects1: any) => {
       let state: AppState<any, any>, store: ApplicationStore<any>;
 
       const slice1 = new Slice({
@@ -716,7 +716,7 @@ describe('store', () => {
 
       test('calls deferred update correctly', async () => {
         let cancelScheduler;
-        let task;
+        let task: any;
         const scheduler = jest.fn((cb) => {
           task = cb;
           cancelScheduler = jest.fn(() => {
@@ -1143,7 +1143,7 @@ describe('store', () => {
       errorHandler2,
       errorHandler3,
       rootErrorHandler,
-    }) => {
+    }: any) => {
       const key1 = new SliceKey<number, any>('one');
       const key2 = new SliceKey<number, any>('two');
       const key3 = new SliceKey<number, any>('three');
@@ -1389,7 +1389,7 @@ describe('store', () => {
       errorHandler2,
       errorHandler3,
       rootErrorHandler,
-    }) => {
+    }: any) => {
       const key1 = new SliceKey<number, any>('one');
       const key2 = new SliceKey<number, any>('two');
       const key3 = new SliceKey<number, any>('three');
@@ -1538,7 +1538,7 @@ describe('store', () => {
       errorHandler2,
       errorHandler3,
       rootErrorHandler,
-    }) => {
+    }: any) => {
       const key1 = new SliceKey<number, any>('one');
       const key2 = new SliceKey<number, any>('two');
       const key3 = new SliceKey<number, any>('three');
@@ -1785,7 +1785,7 @@ describe('DeferredSideEffectsRunner', () => {
   });
 
   test('aborting after scheduled started', () => {
-    let task;
+    let task: any;
     let deferredUpdate = jest.fn(() => {});
     let scheduler = jest.fn((cb) => {
       task = cb;
@@ -1809,7 +1809,7 @@ describe('DeferredSideEffectsRunner', () => {
   });
 
   test('task runs', async () => {
-    let task;
+    let task: any;
     let deferredUpdate = jest.fn(() => {});
     let scheduler = jest.fn((cb) => {
       task = cb;

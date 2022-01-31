@@ -94,7 +94,7 @@ export const questionPalette: ExtensionPaletteType = {
   ReactComponent: QuestionPaletteUIComponent,
 };
 
-function strMatch(a, b) {
+function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));

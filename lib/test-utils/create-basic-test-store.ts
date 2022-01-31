@@ -164,7 +164,7 @@ export async function setupMockWorkspaceWithNotes(
     wsName,
     noteWsPaths,
     store,
-    createTestNote: async (wsPath, str, open) => {
+    createTestNote: async (wsPath: string, str: string, open: boolean) => {
       asssertNotUndefined(store, 'store must be defined');
       await createNote(wsPath, {
         open,

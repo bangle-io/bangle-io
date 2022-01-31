@@ -49,7 +49,7 @@ interface Port {
   close: () => void;
 }
 
-const scheduler = (cb) => {
+const scheduler = (cb: () => void) => {
   let destroyed = false;
   Promise.resolve().then(() => {
     if (!destroyed) {

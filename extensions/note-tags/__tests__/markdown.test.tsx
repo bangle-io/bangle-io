@@ -12,6 +12,7 @@ import {
   markdownParser,
   markdownSerializer,
 } from '@bangle.dev/markdown';
+import { Node } from '@bangle.dev/pm';
 import { psx } from '@bangle.dev/test-helpers';
 
 import { MARKDOWN_REGEX } from '../config';
@@ -20,7 +21,7 @@ import { editorTagSpec, noteTagsMarkdownItPlugin } from '../editor-tag';
 const specRegistry = new SpecRegistry([...defaultSpecs(), editorTagSpec()]);
 const plugins = [...defaultPlugins()];
 
-const serialize = async (doc) => {
+const serialize = async (doc: any) => {
   let content = doc;
   if (typeof doc === 'function') {
     content = doc(specRegistry.schema);
@@ -28,7 +29,7 @@ const serialize = async (doc) => {
   return markdownSerializer(specRegistry).serialize(content);
 };
 
-const parse = async (md) =>
+const parse = async (md: string) =>
   markdownParser(
     specRegistry,
     getDefaultMarkdownItTokenizer().use(noteTagsMarkdownItPlugin),

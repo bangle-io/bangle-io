@@ -1,41 +1,53 @@
-interface FSHandle {
-  readonly name: string;
+// interface FSHandle {
+//   readonly name: string;
 
-  isSameEntry: (other: FSHandle) => Promise<boolean>;
+//   isSameEntry: (other: FSHandle) => Promise<boolean>;
 
-  queryPermission: (
-    descriptor?: FileSystemHandlePermissionDescriptor,
-  ) => Promise<PermissionState>;
-  requestPermission: (
-    descriptor?: FileSystemHandlePermissionDescriptor,
-  ) => Promise<PermissionState>;
-}
+//   queryPermission: (
+//     descriptor?: FileSystemHandlePermissionDescriptor,
+//   ) => Promise<PermissionState>;
+//   requestPermission: (
+//     descriptor?: FileSystemHandlePermissionDescriptor,
+//   ) => Promise<PermissionState>;
+// }
 
-export interface FileTypeSystemHandle extends FSHandle {
-  readonly kind: 'file';
-  getFile(): Promise<File>;
-}
+// export interface FileSystemFileHandle extends FSHandle {
+//   readonly kind: 'file';
+//   getFile(): Promise<File>;
+// }
 
-export interface DirTypeSystemHandle extends FSHandle {
-  readonly kind: 'directory';
-  values(): FileSystemHandle[];
-  removeEntry(name: string): void;
-}
+// export interface FileSystemDirectoryHandle extends FSHandle {
+//   readonly kind: 'directory';
+//   values(): FileSystemHandle[];
+//   removeEntry(name: string): void;
+//   getFileHandle(
+//     name: string,
+//     opt: { create?: boolean },
+//   ): Promise<FileSystemFileHandle>;
+// }
 
-type FileSystemHandle = FileTypeSystemHandle | DirTypeSystemHandle;
+// export type FileSystemHandle = FileSystemFileHandle | FileSystemDirectoryHandle;
 
 export interface FileSystemHandlePermissionDescriptor {
   mode?: 'read' | 'readwrite';
 }
 
-export async function createFile(rootDirHandle, path) {
+export async function createFile(
+  rootDirHandle: FileSystemDirectoryHandle,
+  path: string | string[],
+) {
   if (typeof path === 'string') {
     path = path.split('/');
   }
 
-  const recurse = async (path, dirHandle) => {
+  const recurse = async (
+    path: string[],
+    dirHandle: FileSystemDirectoryHandle,
+  ): Promise<FileSystemFileHandle> => {
     const [parentName, ...rest] = path;
-
+    if (!parentName) {
+      throw new Error('parentName cannot be empty');
+    }
     if (path.length === 1) {
       return dirHandle.getFileHandle(parentName, { create: true });
     }
@@ -55,11 +67,14 @@ export async function createFile(rootDirHandle, path) {
   return recurse(path.slice(1), rootDirHandle);
 }
 
-export async function writeFile(fileHandle, contents) {
+export async function writeFile(
+  fileHandle: FileSystemFileHandle,
+  contents: any,
+) {
   // Support for Chrome 82 and earlier.
-  if (fileHandle.createWriter) {
+  if ((fileHandle as any).createWriter) {
     // Create a writer (request permission if necessary).
-    const writer = await fileHandle.createWriter();
+    const writer = await (fileHandle as any).createWriter();
     // Write the full length of the contents
     await writer.write(0, contents);
     // Close the file and write the contents to disk
@@ -79,7 +94,7 @@ export async function writeFile(fileHandle, contents) {
   await writable.close();
 }
 
-export function readFileAsText(file): Promise<string> {
+export function readFileAsText(file: File | Blob): Promise<string> {
   // If the new .text() reader is available, use it.
   if (file.text) {
     return file.text();
@@ -95,7 +110,7 @@ export function readFileAsText(file): Promise<string> {
  * @param {File} file
  * @return {Promise<string>} A promise that resolves to the parsed string.
  */
-function _readFileLegacy(file): Promise<string> {
+function _readFileLegacy(file: File | Blob): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.addEventListener('loadend', (e) => {
@@ -106,7 +121,9 @@ function _readFileLegacy(file): Promise<string> {
   });
 }
 
-export async function hasPermission(dirHandle): Promise<boolean> {
+export async function hasPermission(
+  dirHandle: FileSystemDirectoryHandle,
+): Promise<boolean> {
   const opts: any = {};
   opts.writable = true;
   // For Chrome 86 and later...
@@ -115,8 +132,8 @@ export async function hasPermission(dirHandle): Promise<boolean> {
 }
 
 export type RecurseDirResult = [
-  ...DirTypeSystemHandle[],
-  FileTypeSystemHandle,
+  ...FileSystemDirectoryHandle[],
+  FileSystemFileHandle,
 ][];
 
 /**
@@ -128,14 +145,14 @@ export type RecurseDirResult = [
  *           being the direct parent of file.
  */
 export async function recurseDirHandle(
-  rootDir: DirTypeSystemHandle,
+  rootDir: FileSystemDirectoryHandle,
   {
-    allowedFile = (fileHandle: FileTypeSystemHandle): boolean => true,
-    allowedDir = (dirHandle: DirTypeSystemHandle): boolean => true,
+    allowedFile = (fileHandle: FileSystemFileHandle): boolean => true,
+    allowedDir = (dirHandle: FileSystemDirectoryHandle): boolean => true,
   } = {},
 ) {
   const _recurse = async (
-    dirHandle: DirTypeSystemHandle,
+    dirHandle: FileSystemDirectoryHandle,
   ): Promise<RecurseDirResult> => {
     let result: RecurseDirResult = [];
     for await (const entry of dirHandle.values()) {
