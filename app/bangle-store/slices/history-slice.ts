@@ -1,4 +1,4 @@
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeNative } from '@bangle.io/constants';
 import { Slice, SliceKey, SliceSideEffect } from '@bangle.io/create-store';
 import { BaseHistory, BrowserHistory, createTo } from '@bangle.io/history';
 import {
@@ -164,7 +164,7 @@ export const saveWorkspaceInfoEffect: SliceSideEffect<
         const result = Object.values(workspacesInfo)
           .filter((r) => !r.deleted)
           .map((r) => {
-            if (r.type === WorkspaceType['nativefs']) {
+            if (r.type === WorkspaceTypeNative) {
               return r?.metadata?.rootDirHandle;
             }
             return undefined;

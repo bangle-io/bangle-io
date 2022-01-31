@@ -1,7 +1,3 @@
-export enum WorkspaceType {
-  browser = 'browser',
-  nativefs = 'nativefs',
-  githubReadFs = 'github-read-fs',
-  helpfs = 'helpfs',
-  testType = 'testType',
-}
+export const WorkspaceTypeHelp = 'helpfs';
+export const WorkspaceTypeNative = 'nativefs';
+export const WorkspaceTypeBrowser = 'browser';

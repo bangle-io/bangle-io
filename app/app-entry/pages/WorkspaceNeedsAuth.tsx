@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { requestNativeBrowserFSPermission } from '@bangle.io/baby-fs';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import { WorkspaceTypeNative } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
@@ -54,7 +55,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     if (!wsInfo) {
       throw new Error('workspace not found');
     }
-    if (wsInfo.type !== 'nativefs') {
+    if (wsInfo.type !== WorkspaceTypeNative) {
       onGranted();
       return true;
     }

@@ -1,4 +1,8 @@
-import { helpFSWorkspaceInfo, WorkspaceType } from '@bangle.io/constants';
+import {
+  helpFSWorkspaceInfo,
+  WorkspaceTypeBrowser,
+  WorkspaceTypeNative,
+} from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import { getPageLocation, goToLocation } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
@@ -48,7 +52,7 @@ describe('listAllFiles', () => {
   test('cerating a workspace', async () => {
     const { store } = createBasicTestStore();
 
-    await createWorkspace('test-1', WorkspaceType['browser'])(
+    await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
@@ -82,12 +86,12 @@ describe('listAllFiles', () => {
 
   test('hides deleted workspaces', async () => {
     const { store } = createBasicTestStore();
-    await createWorkspace('test-0', WorkspaceType['browser'])(
+    await createWorkspace('test-0', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
     );
-    await createWorkspace('test-1', WorkspaceType['browser'])(
+    await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
@@ -121,7 +125,7 @@ describe('createWorkspace', () => {
   test('works', async () => {
     const { store } = createBasicTestStore();
 
-    await createWorkspace('test-1', WorkspaceType['browser'])(
+    await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
@@ -143,14 +147,14 @@ describe('createWorkspace', () => {
   test('throws error when workspace already exists', async () => {
     const { store } = createBasicTestStore();
 
-    await createWorkspace('test-1', WorkspaceType['browser'])(
+    await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
     );
 
     await expect(
-      createWorkspace('test-1', WorkspaceType['browser'])(
+      createWorkspace('test-1', WorkspaceTypeBrowser)(
         store.state,
         store.dispatch,
         store,
@@ -162,7 +166,7 @@ describe('createWorkspace', () => {
 
   test('saves workspace metadata correctly', async () => {
     class TestProvider extends IndexedDbStorageProvider {
-      name = WorkspaceType['nativefs'];
+      name = WorkspaceTypeNative;
 
       async newWorkspaceMetadata(wsName: string, createOpts: any) {
         return createOpts;
@@ -188,7 +192,7 @@ describe('createWorkspace', () => {
       ],
     });
 
-    await createWorkspace('test-1', WorkspaceType['nativefs'], {
+    await createWorkspace('test-1', WorkspaceTypeNative, {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
 
@@ -219,7 +223,7 @@ describe('deleteWorkspace', () => {
 
   test('deleting a workspace adds a delete field', async () => {
     const { store } = createBasicTestStore();
-    await createWorkspace('test-1', WorkspaceType['nativefs'], {})(
+    await createWorkspace('test-1', WorkspaceTypeNative, {})(
       store.state,
       store.dispatch,
       store,
@@ -241,7 +245,7 @@ describe('deleteWorkspace', () => {
   test('redirects correctly for a deleted workspace', async () => {
     const { store } = createBasicTestStore();
 
-    await createWorkspace('test-1', WorkspaceType['nativefs'], {
+    await createWorkspace('test-1', WorkspaceTypeNative, {
       rootDirHandle: { root: 'dummy' },
     })(store.state, store.dispatch, store);
 
@@ -274,7 +278,7 @@ describe('getWorkspaceInfo', () => {
   test('retains instance', async () => {
     const { store } = createBasicTestStore();
 
-    await createWorkspace('test-1', WorkspaceType['browser'])(
+    await createWorkspace('test-1', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
@@ -282,13 +286,13 @@ describe('getWorkspaceInfo', () => {
 
     const wsInfo = await getWorkspaceInfo('test-1')(store.state);
 
-    await createWorkspace('test-2', WorkspaceType['browser'])(
+    await createWorkspace('test-2', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
     );
 
-    await createWorkspace('test-3', WorkspaceType['browser'])(
+    await createWorkspace('test-3', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
@@ -296,7 +300,7 @@ describe('getWorkspaceInfo', () => {
 
     await deleteWorkspace('test-2')(store.state, store.dispatch, store);
 
-    await createWorkspace('test-4', WorkspaceType['browser'])(
+    await createWorkspace('test-4', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,

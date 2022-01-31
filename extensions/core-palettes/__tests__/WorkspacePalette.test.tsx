@@ -4,7 +4,7 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeNative } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { listWorkspaces } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';
@@ -23,9 +23,11 @@ jest.mock('@bangle.io/slice-workspace', () => {
 let workspaces: WorkspaceInfo[] = [
   {
     name: 'test-ws1',
-    type: WorkspaceType['nativefs'],
+    type: WorkspaceTypeNative,
     lastModified: 0,
-    metadata: {},
+    metadata: {
+      rootDirHandle: {},
+    },
   },
 ];
 

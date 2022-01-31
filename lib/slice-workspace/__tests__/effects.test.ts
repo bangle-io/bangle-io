@@ -1,6 +1,9 @@
 import * as idb from 'idb-keyval';
 
-import { WorkspaceType } from '@bangle.io/constants';
+import {
+  WorkspaceTypeBrowser,
+  WorkspaceTypeNative,
+} from '@bangle.io/constants';
 import { ApplicationStore } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import {
@@ -167,7 +170,7 @@ describe('refreshWorkspacesEffect', () => {
 
     const testWsInfo = createWsInfo({
       name: 'testWs',
-      type: WorkspaceType.nativefs,
+      type: WorkspaceTypeNative,
       metadata: { rootDirHandle: { root: 'handler' } },
     });
 
@@ -191,7 +194,7 @@ describe('refreshWorkspacesEffect', () => {
         workspacesInfo: {
           testWs: createWsInfo({
             name: 'testWs',
-            type: WorkspaceType.nativefs,
+            type: WorkspaceTypeNative,
             metadata: { rootDirHandle: { root: 'handler' } },
           }),
         },
@@ -207,7 +210,7 @@ describe('refreshWorkspacesEffect', () => {
 
     const modifiedWsInfo = createWsInfo({
       name: 'testWs',
-      type: WorkspaceType.nativefs,
+      type: WorkspaceTypeNative,
       lastModified: 100,
       metadata: { rootDirHandle: { root: 'handler' } },
     });
@@ -231,13 +234,13 @@ describe('refreshWorkspacesEffect', () => {
 
     const testWsInfo = createWsInfo({
       name: 'testWs',
-      type: WorkspaceType.nativefs,
+      type: WorkspaceTypeNative,
       metadata: { rootDirHandle: { root: 'handler' } },
     });
 
     const testWsInfoExisting = createWsInfo({
       name: 'testWsExisting',
-      type: WorkspaceType.nativefs,
+      type: WorkspaceTypeNative,
       metadata: { rootDirHandle: { root: 'handler' } },
     });
 
@@ -279,7 +282,7 @@ describe('updateLocationEffect', () => {
   });
 
   test('opens a newly created workspace', async () => {
-    await createWorkspace('test-ws', WorkspaceType.browser)(
+    await createWorkspace('test-ws', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,
@@ -397,7 +400,7 @@ describe('updateLocationEffect', () => {
 
 describe('workspaceErrorHandler', () => {
   test('storage provider throwing an error', async () => {
-    const storageType = WorkspaceType.testType;
+    const storageType = 'testType';
     const wsName = 'my-ws';
     class TestProvider extends IndexedDbStorageProvider {
       name = storageType;
@@ -514,7 +517,7 @@ describe('workspaceErrorHandler', () => {
   });
 
   test('handles error', async () => {
-    const storageType = WorkspaceType.testType;
+    const storageType = 'testType';
     class TestProvider extends IndexedDbStorageProvider {
       name = storageType;
     }
@@ -536,7 +539,7 @@ describe('workspaceErrorHandler', () => {
       ],
     });
 
-    await createWorkspace('test-ws', WorkspaceType.browser)(
+    await createWorkspace('test-ws', WorkspaceTypeBrowser)(
       store.state,
       store.dispatch,
       store,

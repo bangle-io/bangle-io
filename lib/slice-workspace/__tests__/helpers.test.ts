@@ -1,4 +1,4 @@
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeNative } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createExtensionRegistry } from '@bangle.io/test-utils';
@@ -8,7 +8,7 @@ import { storageProviderHelpers } from '../storage-provider-helpers';
 
 describe('storageProviderFromExtensionRegistry', () => {
   test('proxies error correctly', async () => {
-    const storageType1 = WorkspaceType.testType;
+    const storageType1 = 'testType';
     class TestProvider1 extends IndexedDbStorageProvider {
       name = storageType1;
     }
@@ -19,7 +19,7 @@ describe('storageProviderFromExtensionRegistry', () => {
       throw error1;
     });
 
-    const storageType2 = WorkspaceType.nativefs;
+    const storageType2 = WorkspaceTypeNative;
     class TestProvider2 extends IndexedDbStorageProvider {
       name = storageType2;
     }

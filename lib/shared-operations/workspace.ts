@@ -2,7 +2,8 @@ import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   HELP_FS_WORKSPACE_NAME,
-  WorkspaceType,
+  WorkspaceTypeBrowser,
+  WorkspaceTypeNative,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import {
@@ -233,7 +234,7 @@ export function createBrowserWorkspace(wsName: string) {
     }
 
     try {
-      await createWorkspace(wsName, WorkspaceType.browser, {})(
+      await createWorkspace(wsName, WorkspaceTypeBrowser, {})(
         state,
         dispatch,
         store,
@@ -267,7 +268,7 @@ export function createNativeFsWorkpsace(rootDirHandle) {
   ) => {
     if (typeof rootDirHandle?.name === 'string') {
       try {
-        await createWorkspace(rootDirHandle.name, WorkspaceType.nativefs, {
+        await createWorkspace(rootDirHandle.name, WorkspaceTypeNative, {
           rootDirHandle,
         })(state, dispatch, store);
 

@@ -1,4 +1,4 @@
-import { WorkspaceType } from '@bangle.io/constants';
+import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import {
   ApplicationStore,
   BaseAction,
@@ -140,7 +140,7 @@ export async function setupMockWorkspaceWithNotes(
     throw new Error(`Workspace ${wsName} already exists`);
   }
 
-  await createWorkspace(wsName, WorkspaceType.browser)(
+  await createWorkspace(wsName, WorkspaceTypeBrowser)(
     store.state,
     store.dispatch,
     store,
