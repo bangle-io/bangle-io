@@ -24,15 +24,27 @@
     "@bangle.dev/markdown-front-matter": "0.28.5",
     "@bangle.dev/pm": "0.28.5",
     "@bangle.io/baby-fs": "workspace:*",
+    "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/serial-operation-context": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/storage": "workspace:*",
+    "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
-    "@bangle.io/ws-path": "workspace:*"
+    "@bangle.io/ws-path": "workspace:*",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@bangle.io/test-utils": "workspace:*",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/react-hooks": "^7.0.2",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10"
   },
   "publishConfig": {
     "access": "restricted"

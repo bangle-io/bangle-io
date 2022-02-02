@@ -1,20 +1,22 @@
 import {} from '@bangle.io/baby-fs';
 import { Extension } from '@bangle.io/extension-registry';
 import {
-  notificationSliceKey,
   showNotification,
   uncaughtExceptionNotification,
 } from '@bangle.io/slice-notification';
-import { createWorkspace } from '@bangle.io/slice-workspace';
 import { IndexedDbStorageError } from '@bangle.io/storage';
 
+import { OPERATION_NEW_GITUB_WORKSPACE } from './common';
+import { GithubStorageComponent } from './components/GithubStorageComponent';
 import {
   ErrorCodesType,
+  GITHUB_API_ERROR,
   INVALID_GITHUB_CONFIGURATION,
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
 } from './errors';
+import { getRepos } from './github-api-helpers';
 import { GithubStorageProvider } from './github-storage-provider';
 
 const extensionName = '@bangle.io/github-storage';
@@ -22,11 +24,20 @@ const extensionName = '@bangle.io/github-storage';
 const extension = Extension.create({
   name: extensionName,
   application: {
+    ReactComponent: GithubStorageComponent,
     slices: [],
     storageProvider: new GithubStorageProvider(),
     onStorageError: (error, store) => {
       const errorCode = error.code as ErrorCodesType;
       switch (errorCode) {
+        case GITHUB_API_ERROR: {
+          showNotification({
+            severity: 'error',
+            title: error.message,
+            uid: `github-storage-error-${errorCode}`,
+          })(store.state, store.dispatch);
+          break;
+        }
         case INVALID_GITHUB_FILE_FORMAT: {
           showNotification({
             severity: 'error',
@@ -132,7 +143,7 @@ const extension = Extension.create({
     },
     operations: [
       {
-        name: 'operation::@bangle.io/github-storage:new-workspace',
+        name: OPERATION_NEW_GITUB_WORKSPACE,
         title: 'New Github workspace',
       },
     ],
@@ -141,23 +152,23 @@ const extension = Extension.create({
         handle(operation, payload, store) {
           switch (operation.name) {
             case 'operation::@bangle.io/github-storage:new-workspace': {
-              const token = localStorage.getItem('github_token');
+              const token = localStorage.getItem('github_token')!;
 
-              createWorkspace('github-test-notes', 'github-storage', {
-                githubToken: token,
-                owner: 'kepta',
-                branch: 'master',
-              })(store.state, store.dispatch, store).catch((error) => {
-                showNotification({
-                  severity: 'error',
-                  uid: 'error-create-workspace-github',
-                  title: 'Unable to create workspace ',
-                  content: error.displayMessage || error.message,
-                })(
-                  notificationSliceKey.getState(store.state),
-                  notificationSliceKey.getDispatch(store.dispatch),
-                );
-              });
+              // createWorkspace('github-test-notes', 'github-storage', {
+              //   githubToken: token,
+              //   owner: 'kepta',
+              //   branch: 'master',
+              // })(store.state, store.dispatch, store).catch((error) => {
+              //   showNotification({
+              //     severity: 'error',
+              //     uid: 'error-create-workspace-github',
+              //     title: 'Unable to create workspace ',
+              //     content: error.displayMessage || error.message,
+              //   })(
+              //     notificationSliceKey.getState(store.state),
+              //     notificationSliceKey.getDispatch(store.dispatch),
+              //   );
+              // });
 
               return true;
             }
