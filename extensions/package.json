@@ -9,6 +9,7 @@
     "core-palettes",
     "editor-core",
     "example-extension",
+    "github-storage",
     "image-extension",
     "inline-backlink",
     "inline-command-palette",

@@ -1,14 +1,10 @@
-import {
-  FILE_ALREADY_EXISTS_ERROR,
-  FILE_NOT_FOUND_ERROR,
-  NOT_A_DIRECTORY_ERROR,
-  NOT_ALLOWED_ERROR,
-  UPSTREAM_ERROR,
-  VALIDATION_ERROR,
-} from '@bangle.io/baby-fs';
 import { Extension } from '@bangle.io/extension-registry';
 import { showNotification } from '@bangle.io/slice-notification';
-import { IndexedDbStorageProvider } from '@bangle.io/storage';
+import {
+  IndexedDbStorageError,
+  IndexedDbStorageErrorType,
+  IndexedDbStorageProvider,
+} from '@bangle.io/storage';
 
 import { browserStorageSlice } from './browser-storage-slice';
 
@@ -20,8 +16,10 @@ const extension = Extension.create({
     slices: [browserStorageSlice()],
     storageProvider: new IndexedDbStorageProvider(),
     onStorageError: (error, store) => {
-      switch (error.code) {
-        case VALIDATION_ERROR: {
+      const errorCode = error.code as IndexedDbStorageErrorType;
+
+      switch (errorCode) {
+        case IndexedDbStorageError.VALIDATION_ERROR: {
           showNotification({
             severity: 'error',
             title: 'Invalid data',
@@ -30,7 +28,7 @@ const extension = Extension.create({
           break;
         }
 
-        case FILE_NOT_FOUND_ERROR: {
+        case IndexedDbStorageError.FILE_NOT_FOUND_ERROR: {
           showNotification({
             severity: 'error',
             title: 'File not found',
@@ -39,7 +37,7 @@ const extension = Extension.create({
           break;
         }
 
-        case UPSTREAM_ERROR: {
+        case IndexedDbStorageError.UPSTREAM_ERROR: {
           console.error(error);
           showNotification({
             severity: 'error',
@@ -49,7 +47,7 @@ const extension = Extension.create({
           break;
         }
 
-        case FILE_ALREADY_EXISTS_ERROR: {
+        case IndexedDbStorageError.FILE_ALREADY_EXISTS_ERROR: {
           showNotification({
             severity: 'error',
             title: 'File already exists',
@@ -58,7 +56,7 @@ const extension = Extension.create({
           break;
         }
 
-        case NOT_ALLOWED_ERROR: {
+        case IndexedDbStorageError.NOT_ALLOWED_ERROR: {
           showNotification({
             severity: 'error',
             title: 'Not allowed',
@@ -67,7 +65,7 @@ const extension = Extension.create({
           break;
         }
 
-        case NOT_A_DIRECTORY_ERROR: {
+        case IndexedDbStorageError.NOT_A_DIRECTORY_ERROR: {
           showNotification({
             severity: 'error',
             title: 'NOT_A_DIRECTORY_ERROR',
@@ -77,11 +75,17 @@ const extension = Extension.create({
         }
 
         default: {
+          // hack to catch switch slipping
+          let val: never = errorCode;
+
           console.error(error);
+
           showNotification({
             severity: 'error',
-            title: 'IndexedDB provider encountered an unknown error',
-            uid: 'unknown-error',
+            title: `Browser storage provider encountered an unknown error: ${
+              val || error.name
+            }`,
+            uid: 'unknown-error' + val || error.name,
           })(store.state, store.dispatch);
           return false;
         }

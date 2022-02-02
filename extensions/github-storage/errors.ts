@@ -1,0 +1,13 @@
+import { IndexedDbStorageErrorType } from '@bangle.io/storage';
+
+export const INVALID_GITHUB_TOKEN = 'INVALID_GITHUB_TOKEN';
+export const INVALID_GITHUB_CONFIGURATION = 'INVALID_GITHUB_CONFIGURATION';
+export const INVALID_GITHUB_RESPONSE = 'INVALID_GITHUB_RESPONSE';
+export const INVALID_GITHUB_FILE_FORMAT = 'INVALID_GITHUB_FILE_FORMAT';
+
+export type ErrorCodesType =
+  | typeof INVALID_GITHUB_TOKEN
+  | typeof INVALID_GITHUB_CONFIGURATION
+  | typeof INVALID_GITHUB_RESPONSE
+  | typeof INVALID_GITHUB_FILE_FORMAT
+  | IndexedDbStorageErrorType;

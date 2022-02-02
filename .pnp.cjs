@@ -119,6 +119,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/example-extension"
       },
       {
+        "name": "@bangle.io/github-storage",
+        "reference": "workspace:extensions/github-storage"
+      },
+      {
         "name": "@bangle.io/image-extension",
         "reference": "workspace:extensions/image-extension"
       },
@@ -335,6 +339,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/example-extension", ["workspace:extensions/example-extension"]],
       ["@bangle.io/extension-registry", ["workspace:lib/extension-registry"]],
       ["@bangle.io/fzf-search", ["virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search", "workspace:js-lib/fzf-search"]],
+      ["@bangle.io/github-storage", ["workspace:extensions/github-storage"]],
       ["@bangle.io/history", ["workspace:js-lib/history"]],
       ["@bangle.io/image-extension", ["workspace:extensions/image-extension"]],
       ["@bangle.io/inline-backlink", ["workspace:extensions/inline-backlink"]],
@@ -4694,6 +4699,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["@bangle.io/github-storage", [
+        ["workspace:extensions/github-storage", {
+          "packageLocation": "./extensions/github-storage/",
+          "packageDependencies": [
+            ["@bangle.io/github-storage", "workspace:extensions/github-storage"],
+            ["@bangle.dev/core", "virtual:2d3114db597aad84130317efca088f8ec250f89f12478e5b9ac1b541ce4dd11ff02d9f57091d8a5dd4920ce86d3af644c9d53904402f1455c82546c7ea2cdc88#npm:0.28.5"],
+            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.5"],
+            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.5"],
+            ["@bangle.dev/pm", "npm:0.28.5"],
+            ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
+            ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
+            ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
+            ["@bangle.io/storage", "workspace:lib/storage"],
+            ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@bangle.io/ws-path", "workspace:lib/ws-path"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.io/history", [
         ["workspace:js-lib/history", {
           "packageLocation": "./js-lib/history/",
@@ -5200,6 +5228,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/editor-core", "workspace:extensions/editor-core"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/github-storage", "workspace:extensions/github-storage"],
             ["@bangle.io/image-extension", "workspace:extensions/image-extension"],
             ["@bangle.io/inline-backlink", "workspace:extensions/inline-backlink"],
             ["@bangle.io/inline-command-palette", "workspace:extensions/inline-command-palette"],
