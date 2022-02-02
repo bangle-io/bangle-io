@@ -6,6 +6,7 @@ import coreActions from '@bangle.io/core-operations';
 import corePalette from '@bangle.io/core-palettes';
 import editorCore from '@bangle.io/editor-core';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import githubStorage from '@bangle.io/github-storage';
 import imageExtension from '@bangle.io/image-extension';
 import inlineBacklinkPalette from '@bangle.io/inline-backlink';
 import inlineCommandPalette from '@bangle.io/inline-command-palette';
@@ -14,6 +15,7 @@ import noteBrowser from '@bangle.io/note-browser';
 import noteOutline from '@bangle.io/note-outline';
 import noteTags from '@bangle.io/note-tags';
 import searchNotes from '@bangle.io/search-notes';
+
 // TODO move this async, i think a promise should be fine.
 export const initExtensionRegistry = () => {
   return new ExtensionRegistry([
@@ -31,6 +33,7 @@ export const initExtensionRegistry = () => {
     coreActions,
     noteBrowser,
     searchNotes,
+    githubStorage,
 
     // NOTE: keep the core palette last
     // as it has note palette in it

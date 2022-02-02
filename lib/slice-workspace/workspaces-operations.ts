@@ -51,7 +51,7 @@ export function createWorkspace(
   wsName: string,
   type: string,
   opts: {
-    rootDirHandle?: any;
+    [rec: string]: any;
   } = {},
 ) {
   return async (
@@ -230,7 +230,6 @@ export function hasWorkspace(wsName: string) {
       store.dispatch,
       store,
     );
-
     const workspaceInfo = workspaces.find(({ name }) => name === wsName);
 
     return Boolean(workspaceInfo);

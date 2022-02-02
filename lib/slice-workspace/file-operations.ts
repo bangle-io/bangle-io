@@ -249,7 +249,6 @@ export const saveFile = (wsPath: string, file: File) => {
         file,
         getStorageProviderOpts()(state, dispatch),
       );
-      console.log('here');
       return true;
     },
   );

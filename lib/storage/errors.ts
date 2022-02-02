@@ -1,0 +1,25 @@
+import {
+  FILE_ALREADY_EXISTS_ERROR,
+  FILE_NOT_FOUND_ERROR,
+  NOT_A_DIRECTORY_ERROR,
+  NOT_ALLOWED_ERROR,
+  UPSTREAM_ERROR,
+  VALIDATION_ERROR,
+} from '@bangle.io/baby-fs';
+
+export {
+  FILE_ALREADY_EXISTS_ERROR,
+  FILE_NOT_FOUND_ERROR,
+  NOT_A_DIRECTORY_ERROR,
+  NOT_ALLOWED_ERROR,
+  UPSTREAM_ERROR,
+  VALIDATION_ERROR,
+} from '@bangle.io/baby-fs';
+
+export type IndexedDbStorageErrorType =
+  | typeof FILE_ALREADY_EXISTS_ERROR
+  | typeof FILE_NOT_FOUND_ERROR
+  | typeof NOT_A_DIRECTORY_ERROR
+  | typeof NOT_ALLOWED_ERROR
+  | typeof UPSTREAM_ERROR
+  | typeof VALIDATION_ERROR;
