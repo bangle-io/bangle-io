@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { InputPalette, UniversalPalette } from '@bangle.io/ui-components';
@@ -18,13 +18,11 @@ export function GithubStorageComponent() {
     return false;
   }, []);
 
-  return showPicker ? (
-    <TokenInput
-      onDismiss={() => {
-        updateShowPicker(false);
-      }}
-    />
-  ) : null;
+  const onDismiss = useCallback(() => {
+    updateShowPicker(false);
+  }, []);
+
+  return showPicker ? <TokenInput onDismiss={onDismiss} /> : null;
 }
 
 function TokenInput({ onDismiss }: { onDismiss: () => void }) {
@@ -33,6 +31,15 @@ function TokenInput({ onDismiss }: { onDismiss: () => void }) {
   });
   let lastToken = useRef<string | undefined>();
   const [error, updateError] = React.useState<Error | undefined>();
+  const _onDismiss = useCallback(
+    (clear?: boolean) => {
+      if (clear) {
+        localStorage.removeItem('github_token');
+      }
+      onDismiss();
+    },
+    [onDismiss],
+  );
 
   useEffect(() => {
     if (token && token !== lastToken.current) {
@@ -44,6 +51,7 @@ function TokenInput({ onDismiss }: { onDismiss: () => void }) {
       localStorage.removeItem('github_token');
     }
   }, [token]);
+
   useEffect(() => {
     let destroyed = false;
     if (!token) {
@@ -69,7 +77,7 @@ function TokenInput({ onDismiss }: { onDismiss: () => void }) {
         onExecute={(inputValue) => {
           updateToken(inputValue);
         }}
-        onDismiss={onDismiss}
+        onDismiss={_onDismiss}
         updateError={updateError}
         error={error}
         initialValue={token || undefined}
@@ -85,15 +93,5 @@ function TokenInput({ onDismiss }: { onDismiss: () => void }) {
     );
   }
 
-  return (
-    <RepoPicker
-      githubToken={token}
-      onDismiss={(clear) => {
-        if (clear) {
-          localStorage.removeItem('github_token');
-        }
-        onDismiss();
-      }}
-    />
-  );
+  return <RepoPicker githubToken={token} onDismiss={_onDismiss} />;
 }

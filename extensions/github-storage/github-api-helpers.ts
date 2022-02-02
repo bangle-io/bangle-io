@@ -102,11 +102,11 @@ export async function* getRepos(
             name: r.node?.name,
             owner: r.node?.nameWithOwner?.split('/')[0],
             branch: r.node?.defaultBranchRef?.name,
-            description: r.node?.description,
+            description: r.node?.description || '',
           };
         })
         .filter((r: RepositoryInfo) => {
-          return Object.values(r).every((v) => typeof v === 'string');
+          return r.name && r.owner && r.branch;
         }),
     );
     yield result;

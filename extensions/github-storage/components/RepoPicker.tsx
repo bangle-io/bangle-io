@@ -31,7 +31,7 @@ export function RepoPicker({
 
   const [query, updateQuery] = useState('');
   const [repoList, updateRepoList] = useState<RepositoryInfo[]>([]);
-
+  console.log(repoList.length);
   const inputRef = useRef<HTMLInputElement>(null);
   const items = useMemo(() => {
     return repoList
@@ -54,6 +54,7 @@ export function RepoPicker({
   useEffect(() => {
     (async () => {
       try {
+        console.log('called');
         let repoIterator = getRepos({ githubToken });
         for await (const repos of repoIterator) {
           updateRepoList(repos);
