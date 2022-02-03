@@ -28,12 +28,16 @@ export interface EditorSliceState {
   editorConfig: OpenedEditorsConfig;
   primaryEditor: BangleEditor | undefined;
   secondaryEditor: BangleEditor | undefined;
+  editingAllowed: boolean;
 }
 
 export type EditorManagerAction =
   | {
       name: 'action::@bangle.io/slice-editor-manager:set-editor';
       value: { editor: BangleEditor | undefined; editorId: number };
+    }
+  | {
+      name: 'action::@bangle.io/slice-editor-manager:toggle-editing';
     }
   | {
       name: 'action::@bangle.io/slice-editor-manager:on-focus-update';

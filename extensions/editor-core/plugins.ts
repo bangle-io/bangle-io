@@ -32,6 +32,7 @@ import { intersectionObserverPluginKey } from '@bangle.io/constants';
 import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
 
 import { activeNode } from './active-node';
+import { editingAllowedPlugin } from './editing-allowed';
 import { watchEditorFocus } from './watch-editor-focus';
 
 export const menuKey = new PluginKey('menuKey');
@@ -109,6 +110,7 @@ export const getPlugins = () => {
       },
     }),
     activeNode(),
+    editingAllowedPlugin,
     watchEditorFocus,
     blockKeyPresses(),
   ];
