@@ -6,8 +6,11 @@ import {
 } from '@bangle.io/slice-notification';
 import { IndexedDbStorageError } from '@bangle.io/storage';
 
-import { OPERATION_NEW_GITUB_WORKSPACE } from './common';
-import { GithubStorageComponent } from './components/GithubStorageComponent';
+import {
+  OPERATION_NEW_GITUB_WORKSPACE,
+  OPERATION_UPDATE_GITHUB_TOKEN,
+} from './common';
+import { Router } from './components/Router';
 import {
   ErrorCodesType,
   GITHUB_API_ERROR,
@@ -16,7 +19,6 @@ import {
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
 } from './errors';
-import { getRepos } from './github-api-helpers';
 import { GithubStorageProvider } from './github-storage-provider';
 
 const extensionName = '@bangle.io/github-storage';
@@ -24,13 +26,31 @@ const extensionName = '@bangle.io/github-storage';
 const extension = Extension.create({
   name: extensionName,
   application: {
-    ReactComponent: GithubStorageComponent,
+    ReactComponent: Router,
     slices: [],
     storageProvider: new GithubStorageProvider(),
     onStorageError: (error, store) => {
       const errorCode = error.code as ErrorCodesType;
       switch (errorCode) {
         case GITHUB_API_ERROR: {
+          if (error.message.includes('Bad credentials')) {
+            showNotification({
+              severity: 'error',
+              title: 'Bad Github credentials',
+              content:
+                'Please check your Github token has correct permissions and try again.',
+              uid: `github-storage-error-${errorCode}`,
+              buttons: [
+                {
+                  title: 'Update token',
+                  hint: `Update your Github token`,
+                  operation: OPERATION_UPDATE_GITHUB_TOKEN,
+                },
+              ],
+            })(store.state, store.dispatch);
+
+            break;
+          }
           showNotification({
             severity: 'error',
             title: error.message,
@@ -144,14 +164,18 @@ const extension = Extension.create({
     operations: [
       {
         name: OPERATION_NEW_GITUB_WORKSPACE,
-        title: 'New Github workspace',
+        title: 'Github: New workspace',
+      },
+      {
+        name: OPERATION_UPDATE_GITHUB_TOKEN,
+        title: 'Github: Update personal access token',
       },
     ],
     operationHandler() {
       return {
         handle(operation, payload, store) {
           switch (operation.name) {
-            case 'operation::@bangle.io/github-storage:new-workspace': {
+            case OPERATION_NEW_GITUB_WORKSPACE: {
               const token = localStorage.getItem('github_token')!;
 
               // createWorkspace('github-test-notes', 'github-storage', {
