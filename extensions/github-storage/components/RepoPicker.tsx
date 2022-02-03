@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import type { UnPromisify } from '@bangle.io/shared-types';
 import {
   notificationSliceKey,
   showNotification,
@@ -19,19 +18,16 @@ import {
 } from '@bangle.io/ui-components';
 
 import { getRepos, RepositoryInfo } from '../github-api-helpers';
+import { readGithubTokenFromStore } from '../helpers';
+import { TokenInput } from './TokenInput';
 
-export function RepoPicker({
-  onDismiss,
-  githubToken,
-}: {
-  githubToken: string;
-  onDismiss: (clear?: boolean) => void;
-}) {
-  const store = useBangleStoreContext();
-
+export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
+  const bangleStore = useBangleStoreContext();
+  const [githubToken, updateGithubToken] = useState<string | undefined>(() => {
+    return readGithubTokenFromStore()(bangleStore.state);
+  });
   const [query, updateQuery] = useState('');
   const [repoList, updateRepoList] = useState<RepositoryInfo[]>([]);
-  console.log(repoList.length);
   const inputRef = useRef<HTMLInputElement>(null);
   const items = useMemo(() => {
     return repoList
@@ -53,20 +49,26 @@ export function RepoPicker({
 
   useEffect(() => {
     (async () => {
-      try {
-        console.log('called');
-        let repoIterator = getRepos({ githubToken });
-        for await (const repos of repoIterator) {
-          updateRepoList(repos);
-        }
-      } catch (e) {
-        onDismiss(true);
-        if (e instanceof Error) {
-          store.errorHandler(e);
+      if (githubToken) {
+        try {
+          let repoIterator = getRepos({ githubToken });
+          for await (const repos of repoIterator) {
+            updateRepoList(repos);
+          }
+        } catch (e) {
+          onDismiss();
+          if (e instanceof Error) {
+            showNotification({
+              uid: 'failure-list-repos',
+              title: 'Unable to list repos',
+              content: e.message,
+              severity: 'error',
+            })(bangleStore.state, bangleStore.dispatch);
+          }
         }
       }
     })();
-  }, [githubToken, onDismiss, store]);
+  }, [githubToken, onDismiss, bangleStore]);
 
   const onExecuteItem = useCallback<PaletteOnExecuteItem>(
     (getItemUid) => {
@@ -78,20 +80,22 @@ export function RepoPicker({
           githubToken: githubToken,
           owner: matchingRepo.owner,
           branch: matchingRepo.branch,
-        })(store.state, store.dispatch, store).catch((error) => {
-          showNotification({
-            severity: 'error',
-            uid: 'error-create-workspace-github',
-            title: 'Unable to create workspace ',
-            content: error.displayMessage || error.message,
-          })(
-            notificationSliceKey.getState(store.state),
-            notificationSliceKey.getDispatch(store.dispatch),
-          );
-        });
+        })(bangleStore.state, bangleStore.dispatch, bangleStore).catch(
+          (error) => {
+            showNotification({
+              severity: 'error',
+              uid: 'error-create-workspace-github',
+              title: 'Unable to create workspace ',
+              content: error.displayMessage || error.message,
+            })(
+              notificationSliceKey.getState(bangleStore.state),
+              notificationSliceKey.getDispatch(bangleStore.dispatch),
+            );
+          },
+        );
       }
     },
-    [onDismiss, items, githubToken, store],
+    [onDismiss, items, githubToken, bangleStore],
   );
 
   const { inputProps, updateCounter, resetCounter, counter, onSelect } =
@@ -121,8 +125,11 @@ export function RepoPicker({
     },
     [counter],
   );
-
   const activeItem = getActivePaletteItem(items);
+
+  if (!githubToken) {
+    return <TokenInput onDismiss={onDismiss} updateToken={updateGithubToken} />;
+  }
 
   return (
     <UniversalPalette.PaletteContainer

@@ -175,28 +175,6 @@ const extension = Extension.create({
       return {
         handle(operation, payload, store) {
           switch (operation.name) {
-            case OPERATION_NEW_GITUB_WORKSPACE: {
-              const token = localStorage.getItem('github_token')!;
-
-              // createWorkspace('github-test-notes', 'github-storage', {
-              //   githubToken: token,
-              //   owner: 'kepta',
-              //   branch: 'master',
-              // })(store.state, store.dispatch, store).catch((error) => {
-              //   showNotification({
-              //     severity: 'error',
-              //     uid: 'error-create-workspace-github',
-              //     title: 'Unable to create workspace ',
-              //     content: error.displayMessage || error.message,
-              //   })(
-              //     notificationSliceKey.getState(store.state),
-              //     notificationSliceKey.getDispatch(store.dispatch),
-              //   );
-              // });
-
-              return true;
-            }
-
             default: {
               return false;
             }
