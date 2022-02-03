@@ -14,6 +14,7 @@ export {
   saveFile,
 } from './file-operations';
 export {
+  getWsName,
   goToWorkspaceAuthRoute,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
@@ -32,6 +33,10 @@ export {
   createWorkspace,
   deleteWorkspace,
   getWorkspaceInfo,
+  getWorkspaceInfoSync,
+  getWorkspaceMetadata,
+  getWorkspaceType,
   listWorkspaces,
+  updateWorkspaceMetadata,
 } from './workspaces-operations';
 export { hasWorkspace } from './workspaces-operations';

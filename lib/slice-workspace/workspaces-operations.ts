@@ -144,7 +144,11 @@ export function deleteWorkspace(targetWsName: string) {
 
 export function updateWorkspaceMetadata(
   wsName: string,
-  metadata: { [key: string]: any },
+  metadata:
+    | WorkspaceInfo['metadata']
+    | ((
+        existingMetadata: WorkspaceInfo['metadata'],
+      ) => WorkspaceInfo['metadata']),
 ) {
   return workspaceSliceKey.op(async (state, dispatch) => {
     const currentWsInfo = getWorkspaceInfoSync(wsName)(state);
@@ -156,6 +160,15 @@ export function updateWorkspaceMetadata(
       );
     }
 
+    const newMetadata =
+      typeof metadata === 'function'
+        ? metadata(currentWsInfo.metadata)
+        : metadata;
+
+    if (newMetadata === currentWsInfo.metadata) {
+      return false;
+    }
+
     dispatch({
       name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
@@ -164,15 +177,30 @@ export function updateWorkspaceMetadata(
             ...currentWsInfo,
             lastModified: Date.now(),
             metadata: {
-              ...metadata,
+              ...newMetadata,
             },
           },
         },
       },
     });
 
+    return true;
+
     // TODO save ws info
     // await saveWorkspacesInfo(store.state);
+  });
+}
+
+export function getWorkspaceMetadata(wsName: string) {
+  return workspaceSliceKey.queryOp((state) => {
+    let wsMetadata = getWorkspaceInfoSync(wsName)(state).metadata;
+    return wsMetadata;
+  });
+}
+
+export function getWorkspaceType(wsName: string) {
+  return workspaceSliceKey.queryOp((state) => {
+    return getWorkspaceInfoSync(wsName)(state).type;
   });
 }
 
