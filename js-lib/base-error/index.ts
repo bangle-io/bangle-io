@@ -41,13 +41,13 @@ export class BaseError extends Error {
       this.srcError = srcError;
     }
 
-    if (code) {
-      this.code = code;
-    }
-
     this.displayMessage = displayMessage;
 
     this.name = this.constructor.name;
+    if (code) {
+      this.code = code;
+      this.name = `${this.name} ${code}`;
+    }
   }
 
   toJsonValue() {

@@ -6,7 +6,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
   await page.goto(baseURL!, { waitUntil: 'networkidle' });
 });
 
-test.describe.parallel('workspace', () => {
+test.describe.parallel('worker', () => {
   test('Typing a note should enable blockReload', async ({ page }) => {
     const wsName1 = await createWorkspace(page);
 
@@ -50,5 +50,15 @@ test.describe.parallel('workspace', () => {
         (window as any)._e2eHelpers._getPageSliceState().blockReload === false
       );
     });
+  });
+
+  test('worker health check', async ({ page }) => {
+    await createWorkspace(page);
+    const result = JSON.parse(
+      await page.evaluate(async () =>
+        JSON.stringify(await (window as any)._e2eHelpers.e2eHealthCheck()),
+      ),
+    );
+    expect(result).toBe(true);
   });
 });

@@ -6,6 +6,7 @@ import { APP_ENV, sentryConfig } from '@bangle.io/config';
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
 import {
   asssertNotUndefined,
+  BaseError,
   getSelfType,
   isWorkerGlobalScope,
 } from '@bangle.io/utils';
@@ -86,11 +87,24 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
       storeRef.current = undefined;
     },
 
-    testThrowError() {
+    async testIsWorkerEnv() {
+      return isWorkerGlobalScope();
+    },
+
+    async testThrowError() {
       throw new Error('[worker] I am a testThrowError');
     },
 
-    testThrowCallbackError() {
+    async testHandlesBaseError(e: BaseError) {
+      // send back the base error to test if transfer is working
+      if (e instanceof BaseError) {
+        return new BaseError('Send me to main', 'TEST_CODE');
+      }
+
+      return false;
+    },
+
+    async testThrowCallbackError() {
       setTimeout(() => {
         throw new Error('[worker] I am a testThrowCallbackError');
       }, 0);

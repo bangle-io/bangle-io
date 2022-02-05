@@ -1,3 +1,5 @@
+import '../comlink-transfer-handlers';
+
 import * as Comlink from 'comlink';
 
 import { polyfills } from '@bangle.io/shared/polyfill';
