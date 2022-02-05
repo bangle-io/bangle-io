@@ -159,9 +159,7 @@ describe('createWorkspace', () => {
         store.dispatch,
         store,
       ),
-    ).rejects.toThrowError(
-      `WORKSPACE_ALREADY_EXISTS_ERROR:Cannot create "test-1" as it already exists`,
-    );
+    ).rejects.toThrowError(`Cannot create "test-1" as it already exists`);
   });
 
   test('saves workspace metadata correctly', async () => {
@@ -216,9 +214,7 @@ describe('deleteWorkspace', () => {
 
     await expect(
       deleteWorkspace('test-1')(store.state, store.dispatch, store),
-    ).rejects.toThrowError(
-      `WORKSPACE_NOT_FOUND_ERROR:Workspace test-1 not found`,
-    );
+    ).rejects.toThrowError(`Workspace test-1 not found`);
   });
 
   test('deleting a workspace adds a delete field', async () => {
@@ -271,7 +267,7 @@ describe('getWorkspaceInfo', () => {
     const { store } = createBasicTestStore();
 
     await expect(getWorkspaceInfo('test-1')(store.state)).rejects.toThrowError(
-      `WORKSPACE_NOT_FOUND_ERROR:Workspace test-1 not found`,
+      `Workspace test-1 not found`,
     );
   });
 

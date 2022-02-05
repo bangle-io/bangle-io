@@ -15,9 +15,6 @@ export class BaseError extends Error {
     displayMessage: string | null = null,
     srcError: Error | null = null,
   ) {
-    if (code != null) {
-      message = code + ':' + message;
-    }
     // 'Error' breaks prototype chain here
     super(message);
 
