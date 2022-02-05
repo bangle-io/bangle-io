@@ -80,8 +80,11 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
           githubToken: githubToken,
           owner: matchingRepo.owner,
           branch: matchingRepo.branch,
-        })(bangleStore.state, bangleStore.dispatch, bangleStore).catch(
-          (error) => {
+        })(bangleStore.state, bangleStore.dispatch, bangleStore)
+          .then(() => {
+            (window as any).fathom.trackGoal('U5Z8DSJ2', 0);
+          })
+          .catch((error) => {
             showNotification({
               severity: 'error',
               uid: 'error-create-workspace-github',
@@ -91,8 +94,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
               notificationSliceKey.getState(bangleStore.state),
               notificationSliceKey.getDispatch(bangleStore.dispatch),
             );
-          },
-        );
+          });
       }
     },
     [onDismiss, items, githubToken, bangleStore],

@@ -164,7 +164,7 @@ const extension = Extension.create({
     operations: [
       {
         name: OPERATION_NEW_GITUB_WORKSPACE,
-        title: 'Github: New workspace (Experimental)',
+        title: 'Github: New READONLY workspace (Experimental)',
       },
       {
         name: OPERATION_UPDATE_GITHUB_TOKEN,

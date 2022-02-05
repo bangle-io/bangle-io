@@ -1,3 +1,7 @@
+### Feb 4, 2022
+
+- **Feature:** We are launching experimental support for storing your notes on Github.
+
 ### Jan 9, 2022
 
 - **Bug:** Fixed a bug when doing a File system authorization, bangle will forget the opened opened editors.

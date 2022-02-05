@@ -26,9 +26,13 @@ export function Router() {
 
   useSerialOperationHandler((sOperation) => {
     if (sOperation.name === OPERATION_NEW_GITUB_WORKSPACE) {
-      window.confirm(
-        'Creating a Github workspace is experimental and may not work as expected. Continue?',
-      ) && _updateRoute('repo-picker');
+      if (
+        window.confirm(
+          'Creating a Github workspace is experimental and may not work as expected. Continue?',
+        )
+      ) {
+        _updateRoute('repo-picker');
+      }
       return true;
     }
 
