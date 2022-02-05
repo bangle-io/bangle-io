@@ -76,3 +76,15 @@ export const isMac =
 export const isFirefox = browserInfo.includes('firefox');
 export const isSafari = browserInfo.includes('safari');
 export const isChrome = browserInfo.includes('chrome');
+
+export const isAndroid =
+  typeof navigator != 'undefined'
+    ? /Android \d/.test(navigator.userAgent)
+    : false;
+export const isIOS =
+  typeof navigator != 'undefined'
+    ? /AppleWebKit/.test(navigator.userAgent) &&
+      /Mobile\/\w+/.test(navigator.userAgent)
+    : false;
+
+export const isMobile = isAndroid || isIOS;

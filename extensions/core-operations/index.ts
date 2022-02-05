@@ -17,7 +17,12 @@ import {
   renameActiveNote,
   splitEditor,
 } from '@bangle.io/shared-operations';
-import { focusEditor } from '@bangle.io/slice-editor-manager';
+import {
+  focusEditor,
+  isEditingAllowed,
+  toggleEditing,
+} from '@bangle.io/slice-editor-manager';
+import { showNotification } from '@bangle.io/slice-notification';
 import { toggleTheme } from '@bangle.io/slice-ui';
 
 import {
@@ -119,6 +124,10 @@ const extension = Extension.create({
       {
         name: 'operation::@bangle.io/core-operations:focus-secondary-editor',
         title: 'Editor: Focus on secondary editor',
+      },
+      {
+        name: 'operation::@bangle.io/core-operations:toggle-editing-mode',
+        title: 'Editor: Toggle editing mode',
       },
     ],
     ReactComponent: CoreActionsHandler,
@@ -230,6 +239,17 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_OPEN_GITHUB_ISSUE: {
               window.open(`https://github.com/bangle-io/bangle-io/issues/new`);
+              return true;
+            }
+
+            case 'operation::@bangle.io/core-operations:toggle-editing-mode': {
+              toggleEditing()(bangleStore.state, bangleStore.dispatch);
+              let isEditing = isEditingAllowed()(bangleStore.state);
+              showNotification({
+                severity: isEditing ? 'info' : 'warning',
+                uid: 'editing-mode' + isEditing + Date.now(),
+                title: 'Editing mode is now ' + (isEditing ? 'on' : 'off'),
+              })(bangleStore.state, bangleStore.dispatch);
               return true;
             }
 

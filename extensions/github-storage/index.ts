@@ -1,15 +1,19 @@
 import {} from '@bangle.io/baby-fs';
 import { Extension } from '@bangle.io/extension-registry';
 import {
-  notificationSliceKey,
   showNotification,
   uncaughtExceptionNotification,
 } from '@bangle.io/slice-notification';
-import { createWorkspace } from '@bangle.io/slice-workspace';
 import { IndexedDbStorageError } from '@bangle.io/storage';
 
 import {
+  OPERATION_NEW_GITUB_WORKSPACE,
+  OPERATION_UPDATE_GITHUB_TOKEN,
+} from './common';
+import { Router } from './components/Router';
+import {
   ErrorCodesType,
+  GITHUB_API_ERROR,
   INVALID_GITHUB_CONFIGURATION,
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_RESPONSE,
@@ -22,11 +26,38 @@ const extensionName = '@bangle.io/github-storage';
 const extension = Extension.create({
   name: extensionName,
   application: {
+    ReactComponent: Router,
     slices: [],
     storageProvider: new GithubStorageProvider(),
     onStorageError: (error, store) => {
       const errorCode = error.code as ErrorCodesType;
       switch (errorCode) {
+        case GITHUB_API_ERROR: {
+          if (error.message.includes('Bad credentials')) {
+            showNotification({
+              severity: 'error',
+              title: 'Bad Github credentials',
+              content:
+                'Please check your Github token has correct permissions and try again.',
+              uid: `github-storage-error-${errorCode}`,
+              buttons: [
+                {
+                  title: 'Update token',
+                  hint: `Update your Github token`,
+                  operation: OPERATION_UPDATE_GITHUB_TOKEN,
+                },
+              ],
+            })(store.state, store.dispatch);
+
+            break;
+          }
+          showNotification({
+            severity: 'error',
+            title: error.message,
+            uid: `github-storage-error-${errorCode}`,
+          })(store.state, store.dispatch);
+          break;
+        }
         case INVALID_GITHUB_FILE_FORMAT: {
           showNotification({
             severity: 'error',
@@ -132,36 +163,18 @@ const extension = Extension.create({
     },
     operations: [
       {
-        name: 'operation::@bangle.io/github-storage:new-workspace',
-        title: 'New Github workspace',
+        name: OPERATION_NEW_GITUB_WORKSPACE,
+        title: 'Github: New workspace',
+      },
+      {
+        name: OPERATION_UPDATE_GITHUB_TOKEN,
+        title: 'Github: Update personal access token',
       },
     ],
     operationHandler() {
       return {
         handle(operation, payload, store) {
           switch (operation.name) {
-            case 'operation::@bangle.io/github-storage:new-workspace': {
-              const token = localStorage.getItem('github_token');
-
-              createWorkspace('github-test-notes', 'github-storage', {
-                githubToken: token,
-                owner: 'kepta',
-                branch: 'master',
-              })(store.state, store.dispatch, store).catch((error) => {
-                showNotification({
-                  severity: 'error',
-                  uid: 'error-create-workspace-github',
-                  title: 'Unable to create workspace ',
-                  content: error.displayMessage || error.message,
-                })(
-                  notificationSliceKey.getState(store.state),
-                  notificationSliceKey.getDispatch(store.dispatch),
-                );
-              });
-
-              return true;
-            }
-
             default: {
               return false;
             }

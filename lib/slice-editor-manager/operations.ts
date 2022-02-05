@@ -10,6 +10,20 @@ import { editorManagerSliceKey } from './constants';
 import { EditorDispatchType, EditorIdType } from './types';
 import { calculateScrollPosition, calculateSelection } from './utils';
 
+export function toggleEditing() {
+  return editorManagerSliceKey.op((_, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-editor-manager:toggle-editing',
+    });
+  });
+}
+
+export function isEditingAllowed() {
+  return editorManagerSliceKey.queryOp((state) => {
+    return editorManagerSliceKey.getSliceStateAsserted(state).editingAllowed;
+  });
+}
+
 export function getEditor(editorId: EditorIdType) {
   return (state: AppState): BangleEditor | undefined => {
     if (editorId == null) {

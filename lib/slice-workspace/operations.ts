@@ -27,6 +27,11 @@ export const getOpenedWsPaths = () => {
   });
 };
 
+export const getWsName = () =>
+  workspaceSliceKey.queryOp((state): string | undefined => {
+    return workspaceSliceKey.getSliceStateAsserted(state).wsName;
+  });
+
 export const sliceHasError = () => {
   return workspaceSliceKey.queryOp((state) =>
     Boolean(workspaceSliceKey.getSliceStateAsserted(state).error),

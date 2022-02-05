@@ -1,3 +1,4 @@
+import { isMobile } from '@bangle.io/config';
 import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { Slice } from '@bangle.io/create-store';
 import { assertActionName, createEmptyArray } from '@bangle.io/utils';
@@ -27,16 +28,22 @@ export const initialEditorSliceState: EditorSliceState = {
   }),
   primaryEditor: undefined,
   secondaryEditor: undefined,
+  // for now disabling editing for mobile by default
+  // as it causes a lot of jumps due to keyboard
+  editingAllowed: !isMobile,
 };
 
 const applyState = (
   action: EditorManagerAction,
   state: EditorSliceState,
 ): EditorSliceState => {
-  if (action.name.startsWith('action::@bangle.io/slice-editor-manager:')) {
-    log(action.name, action.value);
-  }
   switch (action.name) {
+    case 'action::@bangle.io/slice-editor-manager:toggle-editing': {
+      return {
+        ...state,
+        editingAllowed: !state.editingAllowed,
+      };
+    }
     case 'action::@bangle.io/slice-editor-manager:set-editor': {
       const { editorId, editor } = action.value;
       if (editorId >= MAX_OPEN_EDITORS) {

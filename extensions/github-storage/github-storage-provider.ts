@@ -9,7 +9,9 @@ import {
 import { BaseError, getLast } from '@bangle.io/utils';
 import { fromFsPath, resolvePath } from '@bangle.io/ws-path';
 
+import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import {
+  GITHUB_API_ERROR,
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
@@ -41,7 +43,7 @@ const allowedFile = (path: string) => {
 };
 
 export class GithubStorageProvider implements BaseStorageProvider {
-  name = 'github-storage';
+  name = GITHUB_STORAGE_PROVIDER_NAME;
   displayName = 'Help documentation';
   description = '';
   hidden = true;
@@ -137,8 +139,21 @@ export class GithubStorageProvider implements BaseStorageProvider {
         },
       },
     )
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((r) => {
+            throw new BaseError(r.message, GITHUB_API_ERROR);
+          });
+        }
+        return res.json();
+      })
       .then(async (res) => {
+        if (res.truncated) {
+          throw new BaseError(
+            'Github response is truncated',
+            INVALID_GITHUB_RESPONSE,
+          );
+        }
         if (res.tree) {
           this.fileBlobs?.clear();
           this.fileBlobs = new Map();
@@ -170,18 +185,18 @@ export class GithubStorageProvider implements BaseStorageProvider {
         if (e.name === 'AbortError') {
           return [];
         }
-        throw new BaseError(e.message, INVALID_GITHUB_RESPONSE);
+        throw e;
       });
   }
 
   async saveDoc(wsPath: string, doc: Node, opts: StorageOpts): Promise<void> {
     const { fileName } = resolvePath(wsPath);
 
-    const metadata = opts.readWorkspaceMetadata() as WsMetadata;
+    // const metadata = opts.readWorkspaceMetadata() as WsMetadata;
 
-    const file = await this.idbProvider.docToFile(doc, fileName, opts);
+    // const file = await this.idbProvider.docToFile(doc, fileName, opts);
 
-    const text = await file.text();
+    // const text = await file.text();
   }
 
   async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
@@ -199,37 +214,3 @@ export class GithubStorageProvider implements BaseStorageProvider {
     await this.idbProvider.renameFile(wsPath, newWsPath, opts);
   }
 }
-
-// let r = await fetch('https://api.github.com/graphql', {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//     'Authorization': `bearer ${metadata.githubToken}`,
-//   },
-//   body: JSON.stringify({
-//     query: `
-// query {
-//   repository(owner: "octocat", name: "Hello-World") {
-//     issues(last: 20, states: CLOSED) {
-//       edges {
-//         node {
-//           title
-//           url
-//           labels(first: 5) {
-//             edges {
-//               node {
-//                 name
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
-// `,
-//     variables: {},
-//   }),
-// });
-
-// await this.idbProvider.saveDoc(wsPath, doc, opts);

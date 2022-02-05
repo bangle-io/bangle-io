@@ -127,7 +127,6 @@ export function InputPalette({
       onClickInside={() => {
         inputRef.current?.focus();
       }}
-      widescreen={widescreen}
       className={'input-palette ' + className}
     >
       <UniversalPalette.PaletteInput
