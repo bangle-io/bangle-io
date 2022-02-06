@@ -15,6 +15,7 @@ import {
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
+  NOT_SUPPORTED,
 } from './errors';
 
 interface WsMetadata {
@@ -89,11 +90,16 @@ export class GithubStorageProvider implements BaseStorageProvider {
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    if (wsPath === HELP_FS_INDEX_WS_PATH) {
-      return;
-    }
+    throw new BaseError({
+      message: 'Deleting of file is not supported',
+      code: NOT_SUPPORTED,
+    });
 
-    await this.idbProvider.deleteFile(wsPath, opts);
+    // if (wsPath === HELP_FS_INDEX_WS_PATH) {
+    //   return;
+    // }
+
+    // await this.idbProvider.deleteFile(wsPath, opts);
   }
 
   async getDoc(wsPath: string, opts: StorageOpts) {
@@ -217,9 +223,14 @@ export class GithubStorageProvider implements BaseStorageProvider {
     newWsPath: string,
     opts: StorageOpts,
   ): Promise<void> {
-    if (wsPath === HELP_FS_INDEX_WS_PATH) {
-      return;
-    }
-    await this.idbProvider.renameFile(wsPath, newWsPath, opts);
+    throw new BaseError({
+      message: 'Renaming of file is not supported',
+      code: NOT_SUPPORTED,
+    });
+
+    // if (wsPath === HELP_FS_INDEX_WS_PATH) {
+    //   return;
+    // }
+    // await this.idbProvider.renameFile(wsPath, newWsPath, opts);
   }
 }

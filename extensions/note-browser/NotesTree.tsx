@@ -391,7 +391,9 @@ function RenderRow({
                     bangleStore.state,
                     bangleStore.dispatch,
                     bangleStore,
-                  );
+                  ).catch((error) => {
+                    bangleStore.errorHandler(error);
+                  });
                 }
               }}
             >

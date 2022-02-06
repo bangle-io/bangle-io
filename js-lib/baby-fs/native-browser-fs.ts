@@ -9,7 +9,6 @@ import {
   FILE_NOT_FOUND_ERROR,
   NATIVE_BROWSER_PERMISSION_ERROR,
   NATIVE_BROWSER_USER_ABORTED_ERROR,
-  NOT_A_DIRECTORY_ERROR,
   UPSTREAM_ERROR,
 } from './error-codes';
 import {
@@ -300,12 +299,11 @@ function resolveFileHandle({
     parents: FileSystemDirectoryHandle[],
   ): Promise<FileSystemFileHandle> => {
     if (dirHandle.kind !== 'directory') {
-      throw new NativeBrowserFileSystemError({
-        message: `Cannot get Path "${path.join('/')}" as "${
+      throw new Error(
+        `Cannot get Path "${path.join('/')}" as "${
           dirHandle.name
         }" is not a directory`,
-        code: NOT_A_DIRECTORY_ERROR,
-      });
+      );
     }
 
     parents.push(dirHandle);
@@ -409,7 +407,6 @@ export async function pickADirectory() {
         });
       }
       throw new Error(err.message);
-      console.error(err);
     }
     throw err;
   }

@@ -1,7 +1,8 @@
 import {
-  FILE_NOT_FOUND_ERROR,
+  BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
   NATIVE_BROWSER_USER_ABORTED_ERROR,
+  NativeBrowserFileSystemError,
 } from '@bangle.io/baby-fs';
 import { Extension } from '@bangle.io/extension-registry';
 import { showNotification } from '@bangle.io/slice-notification';
@@ -20,7 +21,6 @@ const extension = Extension.create({
     slices: [],
     storageProvider: new NativsFsStorageProvider(),
     onStorageError: (error, store) => {
-      console.log(error.name);
       if (
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
         error.code === NATIVE_BROWSER_USER_ABORTED_ERROR
@@ -36,12 +36,16 @@ const extension = Extension.create({
         }
       }
 
-      if (error.code === FILE_NOT_FOUND_ERROR) {
+      if (
+        error.name === NativeBrowserFileSystemError.name ||
+        error.name === BaseFileSystemError.name
+      ) {
+        console.debug(error.code, error.name, error.stack);
         showNotification({
           severity: 'error',
-          title: 'File not found',
+          title: 'File system error',
           content: error.message,
-          uid: 'FILE_NOT_FOUND_ERROR',
+          uid: 'NativefsStorageProviderError' + Math.random(),
         })(store.state, store.dispatch);
         return true;
       }
