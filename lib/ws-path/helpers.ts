@@ -41,20 +41,14 @@ export class PathValidationError extends BaseError {}
 
 export function validWsName(wsName: string) {
   if (wsName === '') {
-    throw new PathValidationError(
-      'Invalid wsName "' + wsName + '" .',
-      undefined,
-      'Workspace name cannot be empty',
-      undefined,
-    );
+    throw new PathValidationError({
+      message: 'Invalid wsName "' + wsName + '" .',
+    });
   }
   if (wsName.includes(':')) {
-    throw new PathValidationError(
-      'Invalid wsName "' + wsName + '" .',
-      undefined,
-      'Please avoid using special characters',
-      undefined,
-    );
+    throw new PathValidationError({
+      message: 'Invalid characters in  "' + wsName + '" .',
+    });
   }
 }
 
@@ -83,39 +77,26 @@ export function isValidFileWsPath(wsPath: string) {
 
 export function validateWsPath(wsPath: string) {
   if (wsPath.split('/').some((r) => r.length === 0)) {
-    throw new PathValidationError(
-      'Invalid path ' + wsPath,
-      undefined,
-      'The file path is not valid.',
-      undefined,
-    );
+    throw new PathValidationError({ message: 'Invalid path ' + wsPath });
   }
 
   const [wsName, filePath, ...others] = wsPath.split(':');
 
   if (others.length > 0) {
-    throw new PathValidationError(
-      'Semicolon not allowed',
-      undefined,
-      'Your file path cannot contain `:` (semicolon)',
-      undefined,
-    );
+    throw new PathValidationError({
+      message: 'Semicolon not allowed file path',
+    });
   }
 
   if (!wsName || !filePath) {
-    throw new PathValidationError(
-      'Invalid wsPath ' + wsPath,
-      undefined,
-      'You provided any empty file path',
-      undefined,
-    );
+    throw new PathValidationError({ message: 'Invalid wsPath ' + wsPath });
   }
 }
 
 // a file wsPath is workspace path to a file
 export function validateFileWsPath(wsPath: string) {
   if (!isValidFileWsPath(wsPath)) {
-    throw new PathValidationError('Invalid path ' + wsPath);
+    throw new PathValidationError({ message: 'Invalid wsPath ' + wsPath });
   }
 
   validateWsPath(wsPath);
@@ -126,7 +107,9 @@ export function validateFileWsPath(wsPath: string) {
 export function validateNoteWsPath(wsPath: string) {
   validateFileWsPath(wsPath);
   if (!isValidNoteWsPath(wsPath)) {
-    throw new PathValidationError('Notes can only be saved in .md format');
+    throw new PathValidationError({
+      message: 'Notes can only be saved in .md format',
+    });
   }
 }
 
@@ -180,11 +163,11 @@ export function fromFsPath(fsPath: string) {
 export function splitWsPath(wsPath: string): [string, string] {
   const [wsName, filePath] = wsPath.split(':');
   if (!wsName) {
-    throw new PathValidationError('Invalid wsName');
+    throw new PathValidationError({ message: 'Invalid wsName' });
   }
 
   if (!filePath) {
-    throw new PathValidationError('Invalid filePath');
+    throw new PathValidationError({ message: 'Invalid filePath' });
   }
 
   return [wsName, filePath];

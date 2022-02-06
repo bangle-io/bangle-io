@@ -20,19 +20,19 @@ export class BaseFileMetadata {
 export abstract class BaseFileSystem {
   _verifyFileType(file: File) {
     if (!(file instanceof File)) {
-      throw new BaseFileSystemError(
-        'Provided data is not of File type',
-        VALIDATION_ERROR,
-      );
+      throw new BaseFileSystemError({
+        message: 'Provided data is not of File type',
+        code: VALIDATION_ERROR,
+      });
     }
   }
 
   _verifyFilePath(filePath: string) {
     if (filePath.startsWith('/')) {
-      throw new BaseFileSystemError(
-        'filePath must not start with /',
-        VALIDATION_ERROR,
-      );
+      throw new BaseFileSystemError({
+        message: 'filePath must not start with /',
+        code: VALIDATION_ERROR,
+      });
     }
   }
 

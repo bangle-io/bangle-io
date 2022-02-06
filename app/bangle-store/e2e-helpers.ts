@@ -9,7 +9,7 @@ import {
 } from '@bangle.io/slice-editor-manager';
 import { pageSliceKey } from '@bangle.io/slice-page';
 import * as workspaceContext from '@bangle.io/slice-workspace';
-import { getEditorPluginMetadata } from '@bangle.io/utils';
+import { BaseError, getEditorPluginMetadata } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 // makes life easier by adding some helpers for e2e tests
 export function e2eHelpers() {
@@ -45,7 +45,35 @@ export function e2eHelpers() {
             editorManagerContext.editorManagerSliceKey.getSliceState(
               store.state,
             )?.editors;
+
+          e2eHelpers.e2eHealthCheck = async () => {
+            assertOk(
+              (await naukarProxy.status()) === true,
+              'naukarProxy.status failed',
+            );
+
+            assertOk(
+              (await naukarProxy.testHandlesBaseError(
+                new BaseError({ message: 'test' }),
+              )) instanceof BaseError,
+              'naukarProxy.testHandlesBaseError failed',
+            );
+            assertOk(
+              (await naukarProxy.testIsWorkerEnv()) === true,
+              'naukarProxy.testIsWorkerEnv failed',
+            );
+
+            // one more status at end to make sure worker is
+            // still alive
+            assertOk(
+              (await naukarProxy.status()) === true,
+              'naukarProxy.status failed',
+            );
+
+            return true;
+          };
         },
+
         update(store, prevState) {
           if (prevState && !didSomeEditorChange(prevState)(store.state)) {
             return;
@@ -66,4 +94,10 @@ export function e2eHelpers() {
       };
     },
   });
+}
+
+function assertOk(value: boolean, message?: string) {
+  if (!value) {
+    throw new Error(message || 'assertion failed');
+  }
 }

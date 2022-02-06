@@ -20,9 +20,9 @@ function readFileFromUnpkg(wsPath: string) {
           return null;
         }
         return Promise.reject(
-          new BaseError(
-            `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
-          ),
+          new BaseError({
+            message: `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
+          }),
         );
       }
       return r;

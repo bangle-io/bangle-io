@@ -18,7 +18,10 @@ export const BASE_IDB_NAME_PREFIX = 'baby-idb';
 function catchUpstream<T>(idbPromise: Promise<T>, errorMessage: string) {
   return idbPromise.catch((error) => {
     return Promise.reject(
-      new IndexedDBFileSystemError(errorMessage, UPSTREAM_ERROR, null, error),
+      new IndexedDBFileSystemError({
+        message: errorMessage,
+        code: UPSTREAM_ERROR,
+      }),
     );
   });
 }
@@ -123,11 +126,10 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     );
 
     if (result == null) {
-      throw new IndexedDBFileSystemError(
-        `File ${filePath} not found`,
-        FILE_NOT_FOUND_ERROR,
-        `File ${filePath} not found`,
-      );
+      throw new IndexedDBFileSystemError({
+        message: `File ${filePath} not found`,
+        code: FILE_NOT_FOUND_ERROR,
+      });
     }
 
     return result;
@@ -169,11 +171,10 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     }
 
     if (existingFile) {
-      throw new IndexedDBFileSystemError(
-        'File already exists',
-        FILE_ALREADY_EXISTS_ERROR,
-        'Cannot rename as a file with the same name already exists',
-      );
+      throw new IndexedDBFileSystemError({
+        message: 'File already exists',
+        code: FILE_ALREADY_EXISTS_ERROR,
+      });
     }
     await this.writeFile(newFilePath, file);
     await this.unlink(oldFilePath);

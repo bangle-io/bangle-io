@@ -27,3 +27,11 @@ interface WindowEventMap {
 }
 
 declare module 'prosemirror-dev-tools';
+
+// interface Error {
+//   name: string;
+//   message: string;
+//   stack?: string;
+//   code?: string;
+//   thrower?: string;
+// }

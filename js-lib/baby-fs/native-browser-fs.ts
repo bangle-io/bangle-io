@@ -34,20 +34,16 @@ function catchUpstreamError<T>(promise: Promise<T>, errorMessage: string) {
       throw error;
     } else {
       if (isNotFoundDOMException(error)) {
-        throw new NativeBrowserFileSystemError(
-          `Not found`,
-          FILE_NOT_FOUND_ERROR,
-          `The requested resource was not found`,
-          error,
-        );
+        throw new NativeBrowserFileSystemError({
+          message: `The requested resource was not found`,
+          code: FILE_NOT_FOUND_ERROR,
+        });
       }
       return Promise.reject(
-        new NativeBrowserFileSystemError(
-          errorMessage,
-          UPSTREAM_ERROR,
-          null,
-          error,
-        ),
+        new NativeBrowserFileSystemError({
+          message: errorMessage,
+          code: UPSTREAM_ERROR,
+        }),
       );
     }
   });
@@ -202,11 +198,10 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     }
 
     if (existingFile) {
-      throw new NativeBrowserFileSystemError(
-        'File already exists',
-        FILE_ALREADY_EXISTS_ERROR,
-        'Cannot rename as a file with the same name already exists',
-      );
+      throw new NativeBrowserFileSystemError({
+        message: 'Cannot rename as a file with the same name already exists',
+        code: FILE_ALREADY_EXISTS_ERROR,
+      });
     }
 
     await this.writeFile(newFilePath, file);
@@ -245,11 +240,10 @@ async function verifyPermission(
 ) {
   let permission = await hasPermission(rootDirHandle);
   if (!permission) {
-    throw new NativeBrowserFileSystemError(
-      `Permission rejected to read ${rootDirHandle.name}`,
-      NATIVE_BROWSER_PERMISSION_ERROR,
-      `Please grant permission to access "${filePath}"`,
-    );
+    throw new NativeBrowserFileSystemError({
+      message: `Permission rejected to read ${rootDirHandle.name}`,
+      code: NATIVE_BROWSER_PERMISSION_ERROR,
+    });
   }
 }
 
@@ -306,12 +300,12 @@ function resolveFileHandle({
     parents: FileSystemDirectoryHandle[],
   ): Promise<FileSystemFileHandle> => {
     if (dirHandle.kind !== 'directory') {
-      throw new NativeBrowserFileSystemError(
-        `Cannot get Path "${path.join('/')}" as "${
+      throw new NativeBrowserFileSystemError({
+        message: `Cannot get Path "${path.join('/')}" as "${
           dirHandle.name
         }" is not a directory`,
-        NOT_A_DIRECTORY_ERROR,
-      );
+        code: NOT_A_DIRECTORY_ERROR,
+      });
     }
 
     parents.push(dirHandle);
@@ -331,11 +325,10 @@ function resolveFileHandle({
     const handle = await getChildHandle(parentName, dirHandle);
 
     if (!handle) {
-      throw new NativeBrowserFileSystemError(
-        `Path "${absolutePath.join('/')}" not found`,
-        FILE_NOT_FOUND_ERROR,
-        `File not found`,
-      );
+      throw new NativeBrowserFileSystemError({
+        message: `Path "${absolutePath.join('/')}" not found`,
+        code: FILE_NOT_FOUND_ERROR,
+      });
     }
 
     return recurse(rest, handle, absolutePath, parents);
@@ -377,12 +370,10 @@ function resolveFileHandle({
 function handleNotFoundDOMException(arrayFilePath: string[]) {
   return (error: Error) => {
     if (isNotFoundDOMException(error)) {
-      throw new NativeBrowserFileSystemError(
-        `Path "${arrayFilePath.join('/')}" not found`,
-        FILE_NOT_FOUND_ERROR,
-        'File not found',
-        error,
-      );
+      throw new NativeBrowserFileSystemError({
+        message: `Path "${arrayFilePath.join('/')}" not found`,
+        code: FILE_NOT_FOUND_ERROR,
+      });
     }
     throw error;
   };
@@ -403,19 +394,19 @@ export async function pickADirectory() {
     ).showDirectoryPicker();
     let permission = await requestNativeBrowserFSPermission(dirHandle);
     if (!permission) {
-      throw new NativeBrowserFileSystemError(
-        'The permission to edit directory was denied',
-        NATIVE_BROWSER_PERMISSION_ERROR,
-      );
+      throw new NativeBrowserFileSystemError({
+        message: 'The permission to edit directory was denied',
+        code: NATIVE_BROWSER_PERMISSION_ERROR,
+      });
     }
     return dirHandle;
   } catch (err) {
     if (err instanceof Error) {
       if (err instanceof DOMException && err.name === 'AbortError') {
-        throw new NativeBrowserFileSystemError(
-          'The user aborted.',
-          NATIVE_BROWSER_USER_ABORTED_ERROR,
-        );
+        throw new NativeBrowserFileSystemError({
+          message: 'The user aborted.',
+          code: NATIVE_BROWSER_USER_ABORTED_ERROR,
+        });
       }
       throw new Error(err.message);
       console.error(err);

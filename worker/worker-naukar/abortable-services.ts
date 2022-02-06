@@ -123,10 +123,10 @@ function backupAllFiles(
   return async (abortSignal: AbortSignal, wsName: string): Promise<File> => {
     const wsPaths = getWsPaths();
     if (!wsPaths || wsPaths.length === 0) {
-      throw new BaseError(
-        'Can not backup an empty workspace',
-        WorkerErrorCode.EMPTY_WORKSPACE,
-      );
+      throw new BaseError({
+        message: 'Can not backup an empty workspace',
+        code: WorkerErrorCode.EMPTY_WORKSPACE,
+      });
     }
 
     let zipWriter = new zip.ZipWriter(new zip.BlobWriter('application/zip'), {
@@ -202,10 +202,10 @@ function createWorkspaceFromBackup(
     const wsPaths = getWsPaths();
 
     if (!wsPaths || wsPaths.length > 0) {
-      throw new BaseError(
-        'Can only use backup files on an empty workspace',
-        WorkerErrorCode.EMPTY_WORKSPACE_NEEDED,
-      );
+      throw new BaseError({
+        message: 'Can only use backup files on an empty workspace',
+        code: WorkerErrorCode.EMPTY_WORKSPACE_NEEDED,
+      });
     }
 
     const files = await readAllFilesBackup()(abortSignal, backupFile);

@@ -56,9 +56,7 @@ test('stat throws error if file not found', async () => {
 
   await expect(
     fs.stat('hola/unknown'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"BABY_FS_FILE_NOT_FOUND_ERROR:File hola/unknown not found"`,
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File hola/unknown not found"`);
 });
 
 test('rename', async () => {
@@ -68,9 +66,7 @@ test('rename', async () => {
 
   await expect(
     fs.readFile('hola/hi'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi not found"`,
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File hola/hi not found"`);
 
   await expect(fs.readFile('ebola/two')).resolves.toMatchInlineSnapshot(`
           File {
@@ -90,9 +86,7 @@ test('rename throws error if old file not found', async () => {
 
   await expect(
     fs.rename('hola/hi', 'ebola/two'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi not found"`,
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File hola/hi not found"`);
 });
 
 test('rename throws error if new file already exists', async () => {
@@ -102,9 +96,7 @@ test('rename throws error if new file already exists', async () => {
 
   await expect(
     fs.rename('hola/hi', 'ebola/two'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"BABY_FS_FILE_ALREADY_EXISTS_ERROR:File already exists"`,
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File already exists"`);
 });
 
 test('unlink', async () => {
@@ -113,9 +105,7 @@ test('unlink', async () => {
   await fs.unlink('hola/hi');
   await expect(
     fs.readFile('hola/hi'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"BABY_FS_FILE_NOT_FOUND_ERROR:File hola/hi not found"`,
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File hola/hi not found"`);
 });
 
 test('opendirRecursive root', async () => {

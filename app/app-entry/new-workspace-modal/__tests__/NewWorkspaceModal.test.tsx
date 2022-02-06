@@ -313,10 +313,10 @@ describe('NewWorkspaceModalContainer', () => {
         return { dispatchSerialOperation };
       });
 
-      let error = new BaseFileSystemError(
-        `Permission rejected `,
-        NATIVE_BROWSER_PERMISSION_ERROR,
-      );
+      let error = new BaseFileSystemError({
+        message: `Permission rejected `,
+        code: NATIVE_BROWSER_PERMISSION_ERROR,
+      });
 
       (pickADirectory as any).mockRejectedValue(error);
 
@@ -358,10 +358,10 @@ describe('NewWorkspaceModalContainer', () => {
         return { dispatchSerialOperation };
       });
 
-      let error = new BaseFileSystemError(
-        `Permission rejected `,
-        NATIVE_BROWSER_PERMISSION_ERROR,
-      );
+      let error = new BaseFileSystemError({
+        message: `Permission rejected `,
+        code: NATIVE_BROWSER_PERMISSION_ERROR,
+      });
 
       (pickADirectory as any)
         .mockRejectedValueOnce(error)

@@ -382,7 +382,7 @@ describe('error cases', () => {
     state = state.applyAction({
       name: 'action::@bangle.io/slice-workspace:set-error',
       value: {
-        error: new WorkspaceError('failed'),
+        error: new WorkspaceError({ message: 'failed' }),
       },
     });
 
@@ -427,7 +427,7 @@ describe('error cases', () => {
     state = state.applyAction({
       name: 'action::@bangle.io/slice-workspace:set-error',
       value: {
-        error: new WorkspaceError('failed'),
+        error: new WorkspaceError({ message: 'failed' }),
       },
     });
 

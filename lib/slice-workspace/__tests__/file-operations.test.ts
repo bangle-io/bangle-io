@@ -137,9 +137,7 @@ describe('renameNote', () => {
         store.dispatch,
         store,
       ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"BABY_FS_FILE_ALREADY_EXISTS_ERROR:File already exists"`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`"File already exists"`);
 
     const newDoc = await getNote('my-ws:test-note.md')(
       store.state,
@@ -335,7 +333,7 @@ describe('deleteNote', () => {
     await expect(
       getNote(wsPath)(store.state, store.dispatch),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"BABY_FS_FILE_NOT_FOUND_ERROR:File my-ws/test-note.md not found"`,
+      `"File my-ws/test-note.md not found"`,
     );
 
     expect(
@@ -367,7 +365,7 @@ describe('deleteNote', () => {
     await expect(
       getNote(wsPath)(store.state, store.dispatch),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"BABY_FS_FILE_NOT_FOUND_ERROR:File my-ws/test-note.md not found"`,
+      `"File my-ws/test-note.md not found"`,
     );
 
     expect(
@@ -392,13 +390,13 @@ describe('deleteNote', () => {
     await expect(
       getNote(wsPath)(store.state, store.dispatch),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"BABY_FS_FILE_NOT_FOUND_ERROR:File my-ws/test-note.md not found"`,
+      `"File my-ws/test-note.md not found"`,
     );
 
     await expect(
       getNote(wsPath2)(store.state, store.dispatch),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"BABY_FS_FILE_NOT_FOUND_ERROR:File my-ws/test-note-2.md not found"`,
+      `"File my-ws/test-note-2.md not found"`,
     );
   });
 });

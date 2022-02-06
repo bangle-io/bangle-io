@@ -49,7 +49,7 @@ describe('saveFile / getFile', () => {
     await expect(
       idbProvider.getFile('hello:one.md', opts),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"BABY_FS_FILE_NOT_FOUND_ERROR:File hello/one.md not found"`,
+      `"File hello/one.md not found"`,
     );
   });
 

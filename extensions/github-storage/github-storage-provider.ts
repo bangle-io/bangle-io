@@ -54,10 +54,16 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {
     if (!createOpts.githubToken) {
-      throw new BaseError('Github token is required', INVALID_GITHUB_TOKEN);
+      throw new BaseError({
+        message: 'Github token is required',
+        code: INVALID_GITHUB_TOKEN,
+      });
     }
     if (!createOpts.owner) {
-      throw new BaseError('Github owner is required', INVALID_GITHUB_TOKEN);
+      throw new BaseError({
+        message: 'Github owner is required',
+        code: INVALID_GITHUB_TOKEN,
+      });
     }
     return {
       githubToken: createOpts.githubToken,
@@ -142,17 +148,17 @@ export class GithubStorageProvider implements BaseStorageProvider {
       .then((res) => {
         if (!res.ok) {
           return res.json().then((r) => {
-            throw new BaseError(r.message, GITHUB_API_ERROR);
+            throw new BaseError({ message: r.message, code: GITHUB_API_ERROR });
           });
         }
         return res.json();
       })
       .then(async (res) => {
         if (res.truncated) {
-          throw new BaseError(
-            'Github response is truncated',
-            INVALID_GITHUB_RESPONSE,
-          );
+          throw new BaseError({
+            message: 'Github response is truncated',
+            code: INVALID_GITHUB_RESPONSE,
+          });
         }
         if (res.tree) {
           this.fileBlobs?.clear();
@@ -167,10 +173,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
               const wsPath = fromFsPath(wsName + '/' + e.path);
               if (!wsPath) {
-                throw new BaseError(
-                  `Your repository contains a file name "${e.path}" which is not supported`,
-                  INVALID_GITHUB_FILE_FORMAT,
-                );
+                throw new BaseError({
+                  message: `Your repository contains a file name "${e.path}" which is not supported`,
+                  code: INVALID_GITHUB_FILE_FORMAT,
+                });
               }
               this.fileBlobs?.set(wsPath, e.url);
               return wsPath;
@@ -178,7 +184,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
             .filter((wsPath: string | undefined) => Boolean(wsPath));
         }
 
-        throw new BaseError(res.message, INVALID_GITHUB_RESPONSE);
+        throw new BaseError({
+          message: res.message,
+          code: INVALID_GITHUB_RESPONSE,
+        });
       })
 
       .catch((e) => {

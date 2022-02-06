@@ -472,7 +472,7 @@ describe('workspaceErrorHandler', () => {
     await sleep(0);
     let actionsBefore = actionsDispatched.slice(0);
 
-    const error = new BaseError('oops everything went wrong');
+    const error = new BaseError({ message: 'oops everything went wrong' });
     listAllFilesSpy.mockImplementation(async () => {
       throw error;
     });
@@ -551,7 +551,10 @@ describe('workspaceErrorHandler', () => {
     console.log = jest.fn();
 
     store.errorHandler(
-      new WorkspaceError('not found', WORKSPACE_NOT_FOUND_ERROR),
+      new WorkspaceError({
+        message: 'not found',
+        code: WORKSPACE_NOT_FOUND_ERROR,
+      }),
     );
 
     await sleep(0);
