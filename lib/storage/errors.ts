@@ -4,7 +4,6 @@ import {
   NOT_A_DIRECTORY_ERROR,
   NOT_ALLOWED_ERROR,
   UPSTREAM_ERROR,
-  VALIDATION_ERROR,
 } from '@bangle.io/baby-fs';
 
 export {
@@ -13,7 +12,6 @@ export {
   NOT_A_DIRECTORY_ERROR,
   NOT_ALLOWED_ERROR,
   UPSTREAM_ERROR,
-  VALIDATION_ERROR,
 } from '@bangle.io/baby-fs';
 
 export type IndexedDbStorageErrorType =
@@ -21,5 +19,4 @@ export type IndexedDbStorageErrorType =
   | typeof FILE_NOT_FOUND_ERROR
   | typeof NOT_A_DIRECTORY_ERROR
   | typeof NOT_ALLOWED_ERROR
-  | typeof UPSTREAM_ERROR
-  | typeof VALIDATION_ERROR;
+  | typeof UPSTREAM_ERROR;

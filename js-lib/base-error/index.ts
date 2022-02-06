@@ -42,7 +42,6 @@ export class BaseError extends Error {
     this.name = this.constructor.name;
     if (code) {
       this.code = code;
-      this.name = `${this.name}:${code}`;
     }
     this.thrower = thrower;
   }

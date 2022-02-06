@@ -19,19 +19,11 @@ const extension = Extension.create({
       const errorCode = error.code as IndexedDbStorageErrorType;
 
       switch (errorCode) {
-        case IndexedDbStorageError.VALIDATION_ERROR: {
-          showNotification({
-            severity: 'error',
-            title: 'Invalid data',
-            uid: 'VALIDATION_ERROR',
-          })(store.state, store.dispatch);
-          break;
-        }
-
         case IndexedDbStorageError.FILE_NOT_FOUND_ERROR: {
           showNotification({
             severity: 'error',
             title: 'File not found',
+            content: error.message,
             uid: 'FILE_NOT_FOUND_ERROR',
           })(store.state, store.dispatch);
           break;
@@ -41,7 +33,8 @@ const extension = Extension.create({
           console.error(error);
           showNotification({
             severity: 'error',
-            title: 'upstream error',
+            title: 'An error occurred with the storage',
+            content: error.message,
             uid: 'UPSTREAM_ERROR',
           })(store.state, store.dispatch);
           break;

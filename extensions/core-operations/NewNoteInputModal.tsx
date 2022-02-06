@@ -133,17 +133,17 @@ export function RenameNoteInputModal({ onDismiss }: { onDismiss: () => void }) {
         );
         onDismiss();
       } catch (error) {
+        if (destroyedRef.current) {
+          return;
+        }
+        onDismiss();
+
         if (!(error instanceof Error)) {
           throw error;
         }
 
-        if (destroyedRef.current) {
-          return;
-        }
-        updateError(error);
-        if (!(error instanceof PathValidationError)) {
-          throw error;
-        }
+        // pass it to the store to let the storage handler handle it
+        bangleStore.errorHandler(error);
       }
     },
     [targetWsPath, onDismiss, bangleStore, destroyedRef, wsName],

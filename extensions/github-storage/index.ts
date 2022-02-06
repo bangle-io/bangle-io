@@ -93,15 +93,6 @@ const extension = Extension.create({
           break;
         }
 
-        case IndexedDbStorageError.VALIDATION_ERROR: {
-          showNotification({
-            severity: 'error',
-            title: 'Invalid data',
-            uid: 'VALIDATION_ERROR',
-          })(store.state, store.dispatch);
-          break;
-        }
-
         case IndexedDbStorageError.FILE_NOT_FOUND_ERROR: {
           showNotification({
             severity: 'error',
@@ -125,6 +116,7 @@ const extension = Extension.create({
           showNotification({
             severity: 'error',
             title: 'File already exists',
+            content: error.message,
             uid: 'FILE_ALREADY_EXISTS_ERROR',
           })(store.state, store.dispatch);
           break;

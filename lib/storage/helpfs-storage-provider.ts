@@ -100,8 +100,10 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<string[]> {
     return [
-      HELP_FS_INDEX_WS_PATH,
-      ...(await this.idbProvider.listAllFiles(abortSignal, wsName, opts)),
+      ...new Set([
+        HELP_FS_INDEX_WS_PATH,
+        ...(await this.idbProvider.listAllFiles(abortSignal, wsName, opts)),
+      ]),
     ];
   }
 

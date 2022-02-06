@@ -96,7 +96,9 @@ test('rename throws error if new file already exists', async () => {
 
   await expect(
     fs.rename('hola/hi', 'ebola/two'),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(`"File already exists"`);
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"Cannot rename; File \\"hola/hi\\" already exists"`,
+  );
 });
 
 test('unlink', async () => {

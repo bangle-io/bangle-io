@@ -15,6 +15,7 @@ import { defaultDoc } from './default-doc';
 import { WORKSPACE_PROVIDER_NOT_FOUND_ERROR, WorkspaceError } from './errors';
 import { storageProviderFromExtensionRegistry } from './helpers';
 import {
+  getWsName,
   replaceAnyMatchingOpenedWsPath,
   updateOpenedWsPaths,
 } from './operations';
@@ -256,7 +257,10 @@ export const saveFile = (wsPath: string, file: File) => {
 
 export const saveDoc = (wsPath: string, doc: Node) => {
   return workspaceSliceKey.asyncOp(
-    async (state, dispatch, store): Promise<boolean> => {
+    async (state, dispatch): Promise<boolean> => {
+      if (!getWsName()(state)) {
+        return false;
+      }
       const storageProvider = getStorageProvider()(state);
 
       await storageProvider.saveDoc(

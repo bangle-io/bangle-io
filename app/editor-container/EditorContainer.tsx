@@ -112,16 +112,21 @@ export function useHandleWsPath(incomingWsPath?: string) {
         bangleStore.state,
         bangleStore.dispatch,
         bangleStore,
-      ).then((r) => {
-        if (!destroyedRef.current) {
-          if (r === true) {
-            updateFileExists('FOUND');
-          } else {
-            updateFileExists('NOT_FOUND');
+      ).then(
+        (r) => {
+          if (!destroyedRef.current) {
+            if (r === true) {
+              updateFileExists('FOUND');
+            } else {
+              updateFileExists('NOT_FOUND');
+            }
+            updateWsPath(incomingWsPath);
           }
-          updateWsPath(incomingWsPath);
-        }
-      });
+        },
+        () => {
+          // silence any errors here as other part of code will handle them
+        },
+      );
     }
     if (incomingWsPath == null && wsPath) {
       updateFileExists('NO_WS_PATH');

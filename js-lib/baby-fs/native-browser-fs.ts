@@ -35,7 +35,7 @@ function catchUpstreamError<T>(promise: Promise<T>, errorMessage: string) {
     } else {
       if (isNotFoundDOMException(error)) {
         throw new NativeBrowserFileSystemError({
-          message: `The requested resource was not found`,
+          message: `The requested file was not found`,
           code: FILE_NOT_FOUND_ERROR,
         });
       }
@@ -326,7 +326,7 @@ function resolveFileHandle({
 
     if (!handle) {
       throw new NativeBrowserFileSystemError({
-        message: `Path "${absolutePath.join('/')}" not found`,
+        message: `File at "${absolutePath.join('/')}" not found`,
         code: FILE_NOT_FOUND_ERROR,
       });
     }
@@ -371,7 +371,7 @@ function handleNotFoundDOMException(arrayFilePath: string[]) {
   return (error: Error) => {
     if (isNotFoundDOMException(error)) {
       throw new NativeBrowserFileSystemError({
-        message: `Path "${arrayFilePath.join('/')}" not found`,
+        message: `File at "${arrayFilePath.join('/')}" not found`,
         code: FILE_NOT_FOUND_ERROR,
       });
     }

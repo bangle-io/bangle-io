@@ -49,7 +49,7 @@ describe('saveFile / getFile', () => {
     await expect(
       idbProvider.getFile('hello:one.md', opts),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"File hello/one.md not found"`,
+      `"File \\"hello/one.md\\" not found"`,
     );
   });
 

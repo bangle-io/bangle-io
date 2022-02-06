@@ -127,7 +127,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 
     if (result == null) {
       throw new IndexedDBFileSystemError({
-        message: `File ${filePath} not found`,
+        message: `File "${filePath}" not found`,
         code: FILE_NOT_FOUND_ERROR,
       });
     }
@@ -172,7 +172,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 
     if (existingFile) {
       throw new IndexedDBFileSystemError({
-        message: 'File already exists',
+        message: `Cannot rename; File "${oldFilePath}" already exists`,
         code: FILE_ALREADY_EXISTS_ERROR,
       });
     }

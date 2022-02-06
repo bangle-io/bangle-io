@@ -15,7 +15,7 @@ test('saves all the fields', () => {
 
   expect(Object.assign({}, error)).toEqual({
     code: 'code',
-    name: 'BaseError:code',
+    name: 'BaseError',
     thrower: 'thrower',
   });
 
@@ -23,7 +23,7 @@ test('saves all the fields', () => {
 
   expect(Object.assign({}, clonedError)).toEqual({
     code: 'code',
-    name: 'BaseError:code',
+    name: 'BaseError',
     thrower: 'thrower',
   });
 });
