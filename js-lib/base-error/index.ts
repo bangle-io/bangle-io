@@ -1,20 +1,22 @@
 export class BaseError extends Error {
-  srcError?: Error | null;
-  displayMessage?: string | null;
-  code?: string | null;
+  public code?: string;
+  public thrower?: string;
   /**
    *
    * @param {*} message
    * @param {*} code - error code
-   * @param {*} displayMessage - one that will be shown to the user, generally a non fatal error
-   * @param {*} srcError - if error encapsulates another error
+   * @param {*} thrower - the name of the function that threw the error,
+   *                       useful for enforcing boundaries for extensions.
    */
-  constructor(
-    message: string,
-    code: string | null = null,
-    displayMessage: string | null = null,
-    srcError: Error | null = null,
-  ) {
+  constructor({
+    message,
+    code,
+    thrower,
+  }: {
+    message: string;
+    code?: string;
+    thrower?: string;
+  }) {
     // 'Error' breaks prototype chain here
     super(message);
 
@@ -37,43 +39,36 @@ export class BaseError extends Error {
       (this as any).__proto__ = actualProto;
     }
 
-    if (srcError) {
-      this.srcError = srcError;
-    }
-
-    this.displayMessage = displayMessage;
-
     this.name = this.constructor.name;
     if (code) {
       this.code = code;
-      this.name = `${this.name} ${code}`;
+      this.name = `${this.name}:${code}`;
     }
+    this.thrower = thrower;
   }
 
   toJsonValue() {
     let message = this.message;
 
-    if (this.code && this.message.startsWith(this.code + ':')) {
-      message = message.split(this.code + ':')[1] || '';
-    }
+    let name = this.name;
 
     return {
+      name,
+      message,
+      thrower: this.thrower,
       code: this.code || null,
-      displayMessage: this.displayMessage || null,
-      message: message,
-      name: this.name,
-      srcError: null,
       stack: this.stack,
     };
   }
 
   static fromJsonValue(input: ReturnType<BaseError['toJsonValue']>) {
-    const error = new BaseError(
-      input.message,
-      input.code,
-      input.displayMessage,
-      input.srcError,
-    );
+    const error = new BaseError({
+      message: input.message,
+      code: input.code || undefined,
+      thrower: input.thrower || undefined,
+    });
+
+    error.name = input.name;
 
     if (input.stack) {
       error.stack = input.stack;

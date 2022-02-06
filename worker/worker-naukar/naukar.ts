@@ -98,7 +98,7 @@ export function createNaukar(extensionRegistry: ExtensionRegistry) {
     async testHandlesBaseError(e: BaseError) {
       // send back the base error to test if transfer is working
       if (e instanceof BaseError) {
-        return new BaseError('Send me to main', 'TEST_CODE');
+        return new BaseError({ message: 'Send me to main', code: 'TEST_CODE' });
       }
 
       return false;

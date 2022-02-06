@@ -62,12 +62,10 @@ export function createWorkspace(
     validWsName(wsName);
 
     if (await hasWorkspace(wsName)(store.state, store.dispatch, store)) {
-      throw new WorkspaceError(
-        `Cannot create "${wsName}" as it already exists`,
-        WORKSPACE_ALREADY_EXISTS_ERROR,
-        undefined,
-        undefined,
-      );
+      throw new WorkspaceError({
+        message: `Cannot create "${wsName}" as it already exists`,
+        code: WORKSPACE_ALREADY_EXISTS_ERROR,
+      });
     }
 
     const storageProvider = storageProviderFromExtensionRegistry(
@@ -154,10 +152,10 @@ export function updateWorkspaceMetadata(
     const currentWsInfo = getWorkspaceInfoSync(wsName)(state);
 
     if (currentWsInfo.deleted) {
-      throw new WorkspaceError(
-        `Cannot modify a deleted workspace.`,
-        WORKSPACE_DELETED_MODIFY_ERROR,
-      );
+      throw new WorkspaceError({
+        message: `Cannot modify a deleted workspace.`,
+        code: WORKSPACE_DELETED_MODIFY_ERROR,
+      });
     }
 
     const newMetadata =
@@ -217,12 +215,10 @@ export function getWorkspaceInfo(wsName: string) {
       wsInfo = wsInfosInDb[wsName];
 
       if (!wsInfo) {
-        throw new WorkspaceError(
-          `Workspace ${wsName} not found`,
-          WORKSPACE_NOT_FOUND_ERROR,
-          `Cannot find the workspace ${wsName}`,
-          undefined,
-        );
+        throw new WorkspaceError({
+          message: `Workspace ${wsName} not found`,
+          code: WORKSPACE_NOT_FOUND_ERROR,
+        });
       }
     }
 
@@ -238,12 +234,10 @@ export function getWorkspaceInfoSync(wsName: string) {
       workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
 
     if (!wsInfo) {
-      throw new WorkspaceError(
-        `Workspace ${wsName} not found`,
-        WORKSPACE_NOT_FOUND_ERROR,
-        `Cannot find the workspace ${wsName}`,
-        undefined,
-      );
+      throw new WorkspaceError({
+        message: `Workspace ${wsName} not found`,
+        code: WORKSPACE_NOT_FOUND_ERROR,
+      });
     }
 
     return wsInfo;

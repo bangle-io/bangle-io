@@ -32,7 +32,7 @@ export class ErrorBoundary extends React.Component<{
               Help improve Bangle.io by reporting this on{' '}
               <a
                 target="_blank"
-                rel="noreferrer"
+                rel="noreferrer noopener"
                 className="font-extrabold underline"
                 href="https://github.com/bangle-io/bangle-io/issues/new"
               >
@@ -40,11 +40,7 @@ export class ErrorBoundary extends React.Component<{
               </a>
               <div className="w-full text-sm italic text-center">
                 Error:{' '}
-                {(this.state.error instanceof BaseError
-                  ? this.state.error?.displayMessage
-                  : undefined) ||
-                  this.state.error?.message ||
-                  this.state.error?.name}
+                {this.state.error?.name + ':' + this.state.error?.message}
               </div>
             </div>
           </div>

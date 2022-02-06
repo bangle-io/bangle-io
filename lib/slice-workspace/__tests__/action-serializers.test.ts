@@ -13,26 +13,29 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     {
       name: 'action::@bangle.io/slice-workspace:set-error',
       value: {
-        error: new BaseError(
-          'hello-message',
-          'MY_CODE',
-          'DISPLAY_MESSAGE',
-          null,
-        ),
+        error: new BaseError({
+          message: 'hello-message',
+          code: 'MY_CODE',
+        }),
       },
     },
 
     {
       name: 'action::@bangle.io/slice-workspace:set-error',
       value: {
-        error: new BaseError('hello-message'),
+        error: new BaseError({
+          message: 'hello-message',
+        }),
       },
     },
 
     {
       name: 'action::@bangle.io/slice-workspace:set-error',
       value: {
-        error: new BaseError('hello-message-2', 'CODE_2'),
+        error: new BaseError({
+          message: 'hello-message-2',
+          code: 'CODE_2',
+        }),
       },
     },
 
@@ -160,35 +163,6 @@ test.each(fixtures)(`%s actions serialization`, (action) => {
   expect(res).toEqual({ ...action, fromStore: 'workspace-store' });
 });
 
-test('Error actions serialization with code', () => {
-  const error = Object.assign(new Error('vanilla-error-with-code'), {
-    code: 'MY_CODE',
-  });
-  const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
-    value: {
-      error,
-    },
-  };
-
-  expect(error.code).toEqual('MY_CODE');
-  const res: any = store.parseAction(store.serializeAction(action) as any);
-  expect(res.value.error.code).toEqual(error.code);
-});
-
-test('Error actions serialization with name', () => {
-  const error = Object.assign(new Error('vanilla-error-with-name'));
-  const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
-    value: {
-      error,
-    },
-  };
-
-  const res: any = store.parseAction(store.serializeAction(action) as any);
-  expect(res.value.error.name).toEqual(error.name);
-});
-
 test('Error actions serialization with stack', () => {
   const error = Object.assign(new Error('vanilla-error-with-stack'), {
     stack: `stack`,
@@ -205,11 +179,11 @@ test('Error actions serialization with stack', () => {
 });
 
 test('Error actions serialization of base error', () => {
-  const error = new BaseError(
-    'vanilla-error-with-stack',
-    'MY_CODE',
-    'my dispaly message',
-  );
+  const error = new BaseError({
+    message: 'vanilla-error-with-stack',
+    code: 'MY_CODE',
+    thrower: 'test_thrower',
+  });
 
   const action = {
     name: 'action::@bangle.io/slice-workspace:set-error' as const,
@@ -220,7 +194,7 @@ test('Error actions serialization of base error', () => {
 
   const res: any = store.parseAction(store.serializeAction(action) as any);
   expect(res.value.error.code).toEqual(error.code);
-  expect(res.value.error.displayMessage).toEqual(error.displayMessage);
+  expect(res.value.error.thrower).toEqual(error.thrower);
 });
 
 test('Error actions serialization with storage provider error', () => {

@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 
-import { BaseError, sleep, useDestroyRef } from '@bangle.io/utils';
+import { sleep, useDestroyRef } from '@bangle.io/utils';
 
 import { NullIcon, SpinnerIcon } from '../Icons';
 import { UniversalPalette } from '../UniversalPalette';
@@ -60,10 +60,7 @@ export function InputPalette({
   const errorItem = error && {
     uid: 'error',
     title: '🤦‍♀️ Error',
-    description:
-      error instanceof BaseError
-        ? error.displayMessage || error.message
-        : error.message,
+    description: error.message,
   };
 
   useEffect(() => {

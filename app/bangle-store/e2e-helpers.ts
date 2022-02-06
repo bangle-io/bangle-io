@@ -54,7 +54,7 @@ export function e2eHelpers() {
 
             assertOk(
               (await naukarProxy.testHandlesBaseError(
-                new BaseError('test'),
+                new BaseError({ message: 'test' }),
               )) instanceof BaseError,
               'naukarProxy.testHandlesBaseError failed',
             );

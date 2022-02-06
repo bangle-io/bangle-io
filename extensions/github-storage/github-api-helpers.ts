@@ -38,15 +38,18 @@ function makeGraphql(
       if (r.ok) {
         return r.json();
       }
-      throw new BaseError(
-        'Github responded with an invalid status code',
-        GITHUB_API_ERROR,
-      );
+      throw new BaseError({
+        message: 'Github responded with an invalid status code',
+        code: GITHUB_API_ERROR,
+      });
     })
     .then((r) => {
       if (r.errors && r.errors.length > 0) {
         console.log('Github Graphql API error', r.errors[0]);
-        throw new BaseError(r.errors[0].message, GITHUB_API_ERROR);
+        throw new BaseError({
+          message: r.errors[0].message,
+          code: GITHUB_API_ERROR,
+        });
       }
       return r.data;
     });

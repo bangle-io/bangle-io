@@ -40,10 +40,10 @@ export function getStorageProvider() {
     );
 
     if (!provider) {
-      throw new WorkspaceError(
-        `Storage provider "${wsInfo.type}" not found.`,
-        WORKSPACE_PROVIDER_NOT_FOUND_ERROR,
-      );
+      throw new WorkspaceError({
+        message: `Storage provider "${wsInfo.type}" not found.`,
+        code: WORKSPACE_PROVIDER_NOT_FOUND_ERROR,
+      });
     }
 
     return provider;

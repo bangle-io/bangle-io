@@ -1,5 +1,5 @@
-import { BaseError } from '@bangle.io/base-error';
 import { ActionsSerializersType } from '@bangle.io/create-store';
+import { errorParse, errorSerialize } from '@bangle.io/utils';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { ExtractWorkspaceSliceAction, WorkspaceSliceAction } from './common';
@@ -25,7 +25,6 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       if (!action.value.error) {
         return {
           storageProviderError: null,
-          isBaseError: false as const,
           error: null,
         };
       }
@@ -35,51 +34,25 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
       const storageProviderError =
         storageProviderHelpers.getStorageProviderNameFromError(error) ?? null;
 
-      if (error instanceof BaseError) {
-        return {
-          storageProviderError,
-          isBaseError: true as const,
-          error: error.toJsonValue(),
-        };
-      }
-
       return {
         storageProviderError,
-        isBaseError: false as const,
-        error: {
-          message: error.message,
-          name: error.name,
-          stack: error.stack,
-          code: (error as any).code,
-        },
+        error: errorSerialize(error),
       };
     };
 
     const fromJSON = (obj: ReturnType<typeof toJSON>) => {
-      if (obj.error == null) {
-        return {
-          error: undefined,
-        };
-      }
+      const error = obj.error ? errorParse(obj.error) : undefined;
 
-      const { storageProviderError, error } = obj;
-
-      let result: { error: Error | undefined };
-
-      if (obj.isBaseError) {
-        result = { error: BaseError.fromJsonValue(obj.error) };
-      } else {
-        result = { error: Object.assign(new Error(error.message), error) };
-      }
-
-      if (storageProviderError) {
+      if (error && obj.storageProviderError) {
         storageProviderHelpers.markAsStorageProviderError(
-          result.error,
-          storageProviderError,
+          error,
+          obj.storageProviderError,
         );
       }
 
-      return result;
+      return {
+        error,
+      };
     };
 
     return {
