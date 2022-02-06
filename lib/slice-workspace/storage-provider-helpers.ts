@@ -1,6 +1,7 @@
 import { BaseStorageProvider } from '@bangle.io/storage';
 
-const STORAGE_PROVIDER_ERROR_KEY = '@BANGLE.IO/STORAGE_PROVIDER_ERROR';
+const STORAGE_PROVIDER_ERROR_PREFIX =
+  '@bangle.io/slice-workspace:storage-provider-error:';
 
 export const storageProviderHelpers = {
   isStorageProviderError(error: unknown): boolean {
@@ -10,12 +11,9 @@ export const storageProviderHelpers = {
   getStorageProviderNameFromError(error: unknown): string | undefined {
     if (
       error instanceof Error &&
-      Object.prototype.hasOwnProperty.call(error, STORAGE_PROVIDER_ERROR_KEY)
+      error.thrower?.startsWith(STORAGE_PROVIDER_ERROR_PREFIX)
     ) {
-      const value = (error as any)[STORAGE_PROVIDER_ERROR_KEY];
-      if (typeof value === 'string') {
-        return value;
-      }
+      return error.thrower.split(STORAGE_PROVIDER_ERROR_PREFIX)[1];
     }
     return undefined;
   },
@@ -24,8 +22,20 @@ export const storageProviderHelpers = {
     error: unknown,
     name: BaseStorageProvider['name'],
   ) {
-    if (error instanceof Error) {
-      (error as any)[STORAGE_PROVIDER_ERROR_KEY] = name;
+    if (!(error instanceof Error)) {
+      return;
     }
+
+    if (
+      storageProviderHelpers.getStorageProviderNameFromError(error) === name
+    ) {
+      return;
+    }
+
+    if (error.thrower) {
+      console.warn(`${error.name} already has a thrower: ${error.thrower}`);
+    }
+
+    error.thrower = STORAGE_PROVIDER_ERROR_PREFIX + name;
   },
 };

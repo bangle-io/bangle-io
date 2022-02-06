@@ -163,6 +163,40 @@ test.each(fixtures)(`%s actions serialization`, (action) => {
   expect(res).toEqual({ ...action, fromStore: 'workspace-store' });
 });
 
+test('Vanilla Error actions serialization with code', () => {
+  const error = Object.assign(new Error('vanilla-error-with-code'), {
+    code: 'MY_CODE',
+  });
+  const action = {
+    name: 'action::@bangle.io/slice-workspace:set-error',
+    value: {
+      error,
+    },
+  };
+
+  expect(error.code).toEqual('MY_CODE');
+  const res: any = store.parseAction(store.serializeAction(action) as any);
+  expect(res.value.error.code).toEqual(error.code);
+});
+
+test('Vanilla Error actions serialization with thrower', () => {
+  const error = Object.assign(new Error('vanilla-error-with-code'), {
+    thrower: 'I_THREW_IT',
+  });
+  const action = {
+    name: 'action::@bangle.io/slice-workspace:set-error',
+    value: {
+      error,
+    },
+  };
+
+  expect(error.code).toBeUndefined();
+  expect(error.thrower).toBe('I_THREW_IT');
+  const res: any = store.parseAction(store.serializeAction(action) as any);
+  expect(res.value.error.code).toEqual(error.code);
+  expect(res.value.error.thrower).toEqual(error.thrower);
+});
+
 test('Error actions serialization with stack', () => {
   const error = Object.assign(new Error('vanilla-error-with-stack'), {
     stack: `stack`,

@@ -14,6 +14,8 @@ export function errorSerialize(error: Error | BaseError) {
         message: e.message,
         name: e.name,
         stack: e.stack,
+        thrower: e.thrower,
+        code: e.code,
       },
     };
   } else {

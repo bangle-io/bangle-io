@@ -28,10 +28,15 @@ interface WindowEventMap {
 
 declare module 'prosemirror-dev-tools';
 
-// interface Error {
-//   name: string;
-//   message: string;
-//   stack?: string;
-//   code?: string;
-//   thrower?: string;
-// }
+interface Error {
+  name: string;
+  message: string;
+  stack?: string;
+  // we add these two non-standard properties:
+  // adds additional information to the error
+  code?: string;
+  // the name of the entity that threw the error
+  // this is used by bangle internally to let a given extension / module
+  // handle the error first.
+  thrower?: string;
+}
