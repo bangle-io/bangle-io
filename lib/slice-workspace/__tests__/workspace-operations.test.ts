@@ -14,7 +14,7 @@ import { WORKSPACE_KEY } from '../read-ws-info';
 import {
   createWorkspace,
   deleteWorkspace,
-  getWorkspaceInfo,
+  getWorkspaceInfoAsync,
   listWorkspaces,
 } from '../workspaces-operations';
 
@@ -196,7 +196,7 @@ describe('createWorkspace', () => {
 
     expect(newWorkspaceMetadataSpy).toBeCalledTimes(1);
 
-    expect(await getWorkspaceInfo('test-1')(store.state)).toEqual({
+    expect(await getWorkspaceInfoAsync('test-1')(store.state)).toEqual({
       deleted: false,
       lastModified: expect.any(Number),
       metadata: {
@@ -266,9 +266,9 @@ describe('getWorkspaceInfo', () => {
   test('throws error if workspace does not exists', async () => {
     const { store } = createBasicTestStore();
 
-    await expect(getWorkspaceInfo('test-1')(store.state)).rejects.toThrowError(
-      `Workspace test-1 not found`,
-    );
+    await expect(
+      getWorkspaceInfoAsync('test-1')(store.state),
+    ).rejects.toThrowError(`Workspace test-1 not found`);
   });
 
   test('retains instance', async () => {
@@ -280,7 +280,7 @@ describe('getWorkspaceInfo', () => {
       store,
     );
 
-    const wsInfo = await getWorkspaceInfo('test-1')(store.state);
+    const wsInfo = await getWorkspaceInfoAsync('test-1')(store.state);
 
     await createWorkspace('test-2', WorkspaceTypeBrowser)(
       store.state,
@@ -302,6 +302,6 @@ describe('getWorkspaceInfo', () => {
       store,
     );
 
-    expect(await getWorkspaceInfo('test-1')(store.state)).toBe(wsInfo);
+    expect(await getWorkspaceInfoAsync('test-1')(store.state)).toBe(wsInfo);
   });
 });

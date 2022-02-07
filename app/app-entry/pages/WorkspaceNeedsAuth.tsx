@@ -6,7 +6,7 @@ import { WorkspaceTypeNative } from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
-  getWorkspaceInfo,
+  getWorkspaceInfoAsync,
   goToWorkspaceHomeRoute,
   goToWsNameRoute,
 } from '@bangle.io/slice-workspace';
@@ -24,7 +24,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
   useEffect(() => {
     let destroyed = false;
 
-    getWorkspaceInfo(wsName)(bangleStore.state).then(
+    getWorkspaceInfoAsync(wsName)(bangleStore.state).then(
       (wsInfo) => {
         if (destroyed) {
           return;

@@ -11,7 +11,7 @@ import { BrowserHistory } from '@bangle.io/history';
 import {
   createWorkspace,
   deleteWorkspace,
-  getWorkspaceInfo,
+  getWorkspaceInfoAsync,
   listWorkspaces,
 } from '@bangle.io/slice-workspace';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
@@ -177,7 +177,7 @@ describe('saveWorkspaceInfoEffect', () => {
       rootDirHandle: { root: 'handler' },
     })(store.state, store.dispatch, store);
 
-    const wsInfo = await getWorkspaceInfo('testWs')(store.state);
+    const wsInfo = await getWorkspaceInfoAsync('testWs')(store.state);
 
     await sleep(0);
 

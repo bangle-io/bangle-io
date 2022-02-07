@@ -20,7 +20,7 @@ import {
   updateOpenedWsPaths,
 } from './operations';
 import {
-  getWorkspaceInfoSync,
+  getWorkspaceInfo,
   updateWorkspaceMetadata,
 } from './workspaces-operations';
 
@@ -33,7 +33,7 @@ export function getStorageProvider() {
       'wsName must be defined before accessing storage provider',
     );
 
-    const wsInfo = getWorkspaceInfoSync(wsName)(state);
+    const wsInfo = getWorkspaceInfo(wsName)(state);
 
     let provider = storageProviderFromExtensionRegistry(
       wsInfo.type,
@@ -63,7 +63,7 @@ export function getStorageErrorHandler() {
       return (error) => false;
     }
 
-    const wsInfo = getWorkspaceInfoSync(wsName)(state);
+    const wsInfo = getWorkspaceInfo(wsName)(state);
 
     let errorHandler = extensionRegistrySliceKey
       .getSliceStateAsserted(state)
@@ -99,7 +99,7 @@ export function getStorageProviderOpts() {
       formatSerializer: (doc, specRegistry) =>
         markdownSerializer(doc, specRegistry),
       readWorkspaceMetadata: () => {
-        return getWorkspaceInfoSync(wsName)(state).metadata;
+        return getWorkspaceInfo(wsName)(state).metadata;
       },
       updateWorkspaceMetadata: (metadata) => {
         updateWorkspaceMetadata(wsName, metadata)(state, dispatch);

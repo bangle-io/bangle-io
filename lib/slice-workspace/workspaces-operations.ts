@@ -112,7 +112,7 @@ export function deleteWorkspace(targetWsName: string) {
     __: WorkspaceDispatchType,
     store: WorkspaceAppStore,
   ): Promise<boolean> => {
-    const targetWsInfo = await getWorkspaceInfo(targetWsName)(store.state);
+    const targetWsInfo = await getWorkspaceInfoAsync(targetWsName)(store.state);
 
     const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
 
@@ -149,7 +149,7 @@ export function updateWorkspaceMetadata(
       ) => WorkspaceInfo['metadata']),
 ) {
   return workspaceSliceKey.op(async (state, dispatch) => {
-    const currentWsInfo = getWorkspaceInfoSync(wsName)(state);
+    const currentWsInfo = getWorkspaceInfo(wsName)(state);
 
     if (currentWsInfo.deleted) {
       throw new WorkspaceError({
@@ -191,20 +191,20 @@ export function updateWorkspaceMetadata(
 
 export function getWorkspaceMetadata(wsName: string) {
   return workspaceSliceKey.queryOp((state) => {
-    let wsMetadata = getWorkspaceInfoSync(wsName)(state).metadata;
+    let wsMetadata = getWorkspaceInfo(wsName)(state).metadata;
     return wsMetadata;
   });
 }
 
 export function getWorkspaceType(wsName: string) {
   return workspaceSliceKey.queryOp((state) => {
-    return getWorkspaceInfoSync(wsName)(state).type;
+    return getWorkspaceInfo(wsName)(state).type;
   });
 }
 
 // Will check in store for wsInfo, if not found will then check indexed-db asyncronously
 // if still not found, will throw an error if workspace is not found
-export function getWorkspaceInfo(wsName: string) {
+export function getWorkspaceInfoAsync(wsName: string) {
   return async (state: AppState): Promise<WorkspaceInfo> => {
     let wsInfo =
       workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];
@@ -228,7 +228,7 @@ export function getWorkspaceInfo(wsName: string) {
 
 // Syncronously checks if wsInfo exists in state and throws an error
 // if workspace is not found. If not sure, use `getWorkspaceInfo` instead.
-export function getWorkspaceInfoSync(wsName: string) {
+export function getWorkspaceInfo(wsName: string) {
   return workspaceSliceKey.queryOp((state): WorkspaceInfo => {
     let wsInfo =
       workspaceSliceKey.getSliceStateAsserted(state).workspacesInfo?.[wsName];

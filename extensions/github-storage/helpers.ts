@@ -1,5 +1,5 @@
 import {
-  getWorkspaceInfoSync,
+  getWorkspaceInfo,
   getWorkspaceMetadata,
   getWsName,
   workspaceSliceKey,
@@ -12,7 +12,7 @@ export const readGithubTokenFromStore = () => {
     const wsName = getWsName()(state);
 
     if (wsName) {
-      const wsInfo = getWorkspaceInfoSync(wsName)(state);
+      const wsInfo = getWorkspaceInfo(wsName)(state);
 
       if (wsInfo && wsInfo.type === GITHUB_STORAGE_PROVIDER_NAME) {
         let metadata = getWorkspaceMetadata(wsName)(state);

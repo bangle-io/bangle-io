@@ -33,7 +33,7 @@ export {
   createWorkspace,
   deleteWorkspace,
   getWorkspaceInfo,
-  getWorkspaceInfoSync,
+  getWorkspaceInfoAsync,
   getWorkspaceMetadata,
   getWorkspaceType,
   listWorkspaces,
