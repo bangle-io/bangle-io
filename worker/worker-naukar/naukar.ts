@@ -12,7 +12,7 @@ import {
 } from '@bangle.io/utils';
 
 import { abortableServices } from './abortable-services';
-import { getEditorManager } from './slices/editor-manager-slice';
+import { getEditorManager } from './slices/worker-editor-slice';
 import { initializeNaukarStore } from './store/initialize-naukar-store';
 
 const LOG = false;

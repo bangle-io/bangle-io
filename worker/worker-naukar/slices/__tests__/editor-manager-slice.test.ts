@@ -8,7 +8,7 @@ import {
   createTestStore,
 } from '@bangle.io/test-utils';
 
-import { editorManagerSlice } from '../editor-manager-slice';
+import { editorManagerSlice } from '../worker-editor-slice';
 
 const extensionRegistry = createExtensionRegistry([], { editorCore: true });
 

@@ -24,50 +24,42 @@ import {
 } from '../common';
 
 const LOG = false;
-const log = LOG
-  ? console.debug.bind(console, 'editor-manager-slice')
-  : () => {};
+const log = LOG ? console.debug.bind(console, 'worker-editor-slice') : () => {};
 
-const editorManagerSliceKey = new SliceKey<
+const workerEditorSliceKey = new SliceKey<
   {
     editorManager: Manager | undefined;
     disk: DebouncedDisk | undefined;
   },
-  | {
-      name: 'action::@bangle.io/worker-naukar:editor-manager:flush-all';
-    }
-  | {
-      name: 'action::@bangle.io/worker-naukar:editor-manager:reset-manager';
-    }
-  | {
-      name: 'action::@bangle.io/worker-naukar:set-editor-manager';
-      value: {
-        editorManager: Manager;
-        disk: DebouncedDisk;
-      };
-    },
+  {
+    name: 'action::@bangle.io/worker-naukar:set-editor-manager';
+    value: {
+      editorManager: Manager;
+      disk: DebouncedDisk;
+    };
+  },
   any,
   NaukarStateConfig
->('editorCollabSlice');
+>('workerEditorSlice');
 
 export function diskFlushAll() {
-  return editorManagerSliceKey.op((state) => {
+  return workerEditorSliceKey.op((state) => {
     log('diskFlushAll called');
-    return editorManagerSliceKey.getSliceStateAsserted(state).disk?.flushAll();
+    return workerEditorSliceKey.getSliceStateAsserted(state).disk?.flushAll();
   });
 }
 
 export function getEditorManager() {
-  return editorManagerSliceKey.op((state, dispatch) => {
-    return editorManagerSliceKey.getSliceStateAsserted(state).editorManager;
+  return workerEditorSliceKey.op((state, dispatch) => {
+    return workerEditorSliceKey.getSliceStateAsserted(state).editorManager;
   });
 }
 
 export function editorManagerReset(extensionRegistry: ExtensionRegistry) {
-  return editorManagerSliceKey.op((state, dispatch) => {
-    const disk = editorManagerSliceKey.getSliceStateAsserted(state).disk;
+  return workerEditorSliceKey.op((state, dispatch) => {
+    const disk = workerEditorSliceKey.getSliceStateAsserted(state).disk;
     const editorManager =
-      editorManagerSliceKey.getSliceStateAsserted(state).editorManager;
+      workerEditorSliceKey.getSliceStateAsserted(state).editorManager;
 
     asssertNotUndefined(
       editorManager,
@@ -93,7 +85,7 @@ export function editorManagerReset(extensionRegistry: ExtensionRegistry) {
  */
 export function editorManagerSlice() {
   return new Slice({
-    key: editorManagerSliceKey,
+    key: workerEditorSliceKey,
     state: {
       init() {
         return {
@@ -123,7 +115,7 @@ export function editorManagerSlice() {
   });
 }
 
-export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
+export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
   asssertNotUndefined(
     config.extensionRegistry,
     'extensionRegistry needs to be defined',
@@ -213,7 +205,7 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
 
       abortSignal.addEventListener('abort', () => {
         const { disk, editorManager } =
-          editorManagerSliceKey.getSliceStateAsserted(store.state);
+          workerEditorSliceKey.getSliceStateAsserted(store.state);
         disk?.flushAll();
         editorManager?.destroy();
       });
@@ -221,7 +213,7 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
   };
 });
 
-export const flushNaukarEffect = editorManagerSliceKey.effect(
+export const flushNaukarEffect = workerEditorSliceKey.effect(
   (state, config) => {
     asssertNotUndefined(
       config.extensionRegistry,

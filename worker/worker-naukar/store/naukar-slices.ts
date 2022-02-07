@@ -9,8 +9,8 @@ import {
 import { pageSlice } from '@bangle.io/slice-page';
 import { workspaceSlice } from '@bangle.io/slice-workspace';
 
-import { editorManagerSlice } from '../slices/editor-manager-slice';
 import { syncWithWindowSlices } from '../slices/sync-with-window-slices';
+import { editorManagerSlice } from '../slices/worker-editor-slice';
 
 export type NaukarActionTypes = {
   name: string;

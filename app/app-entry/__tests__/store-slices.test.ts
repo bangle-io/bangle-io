@@ -46,7 +46,7 @@ test('exhaustive naukar slices list', () => {
     'extension-registry-slice$',
     pageSliceKey.key,
     workspaceSliceKey.key,
-    'editorCollabSlice$',
+    'workerEditorSlice$',
     'notificationSliceKey$',
     expect.stringMatching(/slice\$/),
   ]);
