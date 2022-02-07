@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "importHelpers": true,
     "allowJs": false,
     "checkJs": false,
     "composite": true,

@@ -35,7 +35,9 @@
   },
   "dependencies": {
     "@bangle.dev/pm": "0.28.5",
-    "prosemirror-view": "^1.10.0"
+    "prosemirror-view": "^1.10.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   },
   "type": "module"
 }

@@ -42,7 +42,9 @@
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   },
   "devDependencies": {
     "@types/react": "^17.0.33",

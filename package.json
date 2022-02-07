@@ -60,7 +60,9 @@
     "@bangle.io/app-entry": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "punycode": "^2.1.1"
+    "punycode": "^2.1.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   },
   "devDependencies": {
     "@babel/core": "^7.16.12",
@@ -130,7 +132,6 @@
     "style-loader": "^2.0.0",
     "surge": "^0.23.0",
     "tailwindcss": "^2.2.17",
-    "typescript": "4.5.5",
     "vite": "v2.8.0-beta.3",
     "vite-plugin-html": "^2.1.1",
     "vite-plugin-pwa": "^0.11.3",

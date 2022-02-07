@@ -26,7 +26,9 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
-    "@bangle.io/utils": "workspace:*"
+    "@bangle.io/utils": "workspace:*",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   },
   "publishConfig": {
     "access": "restricted"

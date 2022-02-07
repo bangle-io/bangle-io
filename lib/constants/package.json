@@ -23,7 +23,9 @@
   },
   "dependencies": {
     "@bangle.dev/pm": "0.28.5",
-    "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/create-store": "workspace:*",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   },
   "devDependencies": {
     "@bangle.io/pm-plugins": "workspace:*",
