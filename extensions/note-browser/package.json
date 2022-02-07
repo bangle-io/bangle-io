@@ -31,7 +31,9 @@
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "react": "^17.0.2",
-    "react-virtual": "^2.8.2"
+    "react-virtual": "^2.8.2",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*",

@@ -26,7 +26,9 @@
   },
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   },
   "license": "AGPL-3.0-or-later"
 }
