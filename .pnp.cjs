@@ -4205,6 +4205,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
+            ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
             ["@bangle.io/storage", "workspace:lib/storage"],
             ["@bangle.io/utils", "workspace:lib/utils"],

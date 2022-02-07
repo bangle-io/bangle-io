@@ -4,7 +4,7 @@ import {
   showNotification,
   uncaughtExceptionNotification,
 } from '@bangle.io/slice-notification';
-import { IndexedDbStorageError } from '@bangle.io/storage';
+import { isIndexedDbException } from '@bangle.io/storage';
 
 import {
   OPERATION_NEW_GITUB_WORKSPACE,
@@ -18,6 +18,7 @@ import {
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
+  NOT_SUPPORTED,
 } from './errors';
 import { GithubStorageProvider } from './github-storage-provider';
 
@@ -31,6 +32,18 @@ const extension = Extension.create({
     storageProvider: new GithubStorageProvider(),
     onStorageError: (error, store) => {
       const errorCode = error.code as ErrorCodesType;
+
+      if (isIndexedDbException(error)) {
+        console.debug(error.code, error.name);
+        showNotification({
+          severity: 'error',
+          title: 'Error writing to browser storage',
+          content: error.message,
+          uid: error.code + Math.random(),
+        })(store.state, store.dispatch);
+        return true;
+      }
+
       switch (errorCode) {
         case GITHUB_API_ERROR: {
           if (error.message.includes('Bad credentials')) {
@@ -83,7 +96,6 @@ const extension = Extension.create({
           })(store.state, store.dispatch);
           break;
         }
-
         case INVALID_GITHUB_RESPONSE: {
           showNotification({
             severity: 'error',
@@ -93,57 +105,12 @@ const extension = Extension.create({
           break;
         }
 
-        case IndexedDbStorageError.VALIDATION_ERROR: {
+        case NOT_SUPPORTED: {
           showNotification({
             severity: 'error',
-            title: 'Invalid data',
-            uid: 'VALIDATION_ERROR',
-          })(store.state, store.dispatch);
-          break;
-        }
-
-        case IndexedDbStorageError.FILE_NOT_FOUND_ERROR: {
-          showNotification({
-            severity: 'error',
-            title: 'File not found',
-            uid: 'FILE_NOT_FOUND_ERROR',
-          })(store.state, store.dispatch);
-          break;
-        }
-
-        case IndexedDbStorageError.UPSTREAM_ERROR: {
-          console.error(error);
-          showNotification({
-            severity: 'error',
-            title: 'upstream error',
-            uid: 'UPSTREAM_ERROR',
-          })(store.state, store.dispatch);
-          break;
-        }
-
-        case IndexedDbStorageError.FILE_ALREADY_EXISTS_ERROR: {
-          showNotification({
-            severity: 'error',
-            title: 'File already exists',
-            uid: 'FILE_ALREADY_EXISTS_ERROR',
-          })(store.state, store.dispatch);
-          break;
-        }
-
-        case IndexedDbStorageError.NOT_ALLOWED_ERROR: {
-          showNotification({
-            severity: 'error',
-            title: 'Not allowed',
-            uid: 'NOT_ALLOWED_ERROR',
-          })(store.state, store.dispatch);
-          break;
-        }
-
-        case IndexedDbStorageError.NOT_A_DIRECTORY_ERROR: {
-          showNotification({
-            severity: 'error',
-            title: 'NOT_A_DIRECTORY_ERROR',
-            uid: 'NOT_A_DIRECTORY_ERROR',
+            title: 'Not supported',
+            content: error.message,
+            uid: NOT_SUPPORTED,
           })(store.state, store.dispatch);
           break;
         }

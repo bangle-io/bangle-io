@@ -9,7 +9,6 @@ import {
   FILE_NOT_FOUND_ERROR,
   NATIVE_BROWSER_PERMISSION_ERROR,
   NATIVE_BROWSER_USER_ABORTED_ERROR,
-  NOT_A_DIRECTORY_ERROR,
   UPSTREAM_ERROR,
 } from './error-codes';
 import {
@@ -35,7 +34,7 @@ function catchUpstreamError<T>(promise: Promise<T>, errorMessage: string) {
     } else {
       if (isNotFoundDOMException(error)) {
         throw new NativeBrowserFileSystemError({
-          message: `The requested resource was not found`,
+          message: `The requested file was not found`,
           code: FILE_NOT_FOUND_ERROR,
         });
       }
@@ -300,12 +299,11 @@ function resolveFileHandle({
     parents: FileSystemDirectoryHandle[],
   ): Promise<FileSystemFileHandle> => {
     if (dirHandle.kind !== 'directory') {
-      throw new NativeBrowserFileSystemError({
-        message: `Cannot get Path "${path.join('/')}" as "${
+      throw new Error(
+        `Cannot get Path "${path.join('/')}" as "${
           dirHandle.name
         }" is not a directory`,
-        code: NOT_A_DIRECTORY_ERROR,
-      });
+      );
     }
 
     parents.push(dirHandle);
@@ -326,7 +324,7 @@ function resolveFileHandle({
 
     if (!handle) {
       throw new NativeBrowserFileSystemError({
-        message: `Path "${absolutePath.join('/')}" not found`,
+        message: `File at "${absolutePath.join('/')}" not found`,
         code: FILE_NOT_FOUND_ERROR,
       });
     }
@@ -371,7 +369,7 @@ function handleNotFoundDOMException(arrayFilePath: string[]) {
   return (error: Error) => {
     if (isNotFoundDOMException(error)) {
       throw new NativeBrowserFileSystemError({
-        message: `Path "${arrayFilePath.join('/')}" not found`,
+        message: `File at "${arrayFilePath.join('/')}" not found`,
         code: FILE_NOT_FOUND_ERROR,
       });
     }
@@ -409,7 +407,6 @@ export async function pickADirectory() {
         });
       }
       throw new Error(err.message);
-      console.error(err);
     }
     throw err;
   }

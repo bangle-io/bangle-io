@@ -147,26 +147,8 @@ export const setupEditorManager = editorManagerSliceKey.effect((_, config) => {
           if (error instanceof Error) {
             store.errorHandler(error);
           }
-          console.error(error);
-          // TODO this exists to just keep TS happy. We should remove it
-          // once we have moved to a new Debounced disk
-          return Node.fromJSON(extensionRegistry.specRegistry.schema, {
-            type: 'doc',
-            content: [
-              {
-                type: 'heading',
-                attrs: {
-                  level: 1,
-                },
-                content: [
-                  {
-                    type: 'text',
-                    text: 'There was an error reading your note',
-                  },
-                ],
-              },
-            ],
-          });
+          // TODO we need to silence this error but also be careful about not losing any user data
+          throw error;
         }
       };
 

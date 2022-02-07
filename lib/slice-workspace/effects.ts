@@ -108,7 +108,7 @@ export const errorHandlerEffect: SideEffect = () => {
         // if we reach here, we can't throw it back since its a storage error
         // and no other part of the application can take care of it.
         console.error(
-          `Storage provider didn't ${erroredStorageType} handle error`,
+          `Storage provider (${erroredStorageType}) didn't  handle error`,
           error,
         );
         return;

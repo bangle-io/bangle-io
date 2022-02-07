@@ -2,8 +2,6 @@
 
 import { BaseError } from '@bangle.io/base-error';
 
-import { VALIDATION_ERROR } from './error-codes';
-
 // ctimeMs is not supported by native browser fs, so only focusing on mTime
 export class BaseFileMetadata {
   public mtimeMs: number;
@@ -20,19 +18,13 @@ export class BaseFileMetadata {
 export abstract class BaseFileSystem {
   _verifyFileType(file: File) {
     if (!(file instanceof File)) {
-      throw new BaseFileSystemError({
-        message: 'Provided data is not of File type',
-        code: VALIDATION_ERROR,
-      });
+      throw Error('BabyFs: Provided data is not of File type');
     }
   }
 
   _verifyFilePath(filePath: string) {
     if (filePath.startsWith('/')) {
-      throw new BaseFileSystemError({
-        message: 'filePath must not start with /',
-        code: VALIDATION_ERROR,
-      });
+      throw Error('BabyFs: filePath must not start with /');
     }
   }
 
