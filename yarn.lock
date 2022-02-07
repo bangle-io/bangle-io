@@ -6355,7 +6355,7 @@ __metadata:
     surge: ^0.23.0
     tailwindcss: ^2.2.17
     tslib: ^2.3.1
-    typescript: 4.5.5
+    typescript: ^4.5.5
     vite: v2.8.0-beta.3
     vite-plugin-html: ^2.1.1
     vite-plugin-pwa: ^0.11.3
@@ -16656,7 +16656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.5.5, typescript@npm:^4.5.5":
+"typescript@npm:^4.5.5":
   version: 4.5.5
   resolution: "typescript@npm:4.5.5"
   bin:
@@ -16666,7 +16666,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
   version: 4.5.5
   resolution: "typescript@patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"
   bin:
