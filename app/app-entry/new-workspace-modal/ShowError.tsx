@@ -5,6 +5,7 @@ import { toggleWorkspacePalette } from '@bangle.io/shared-operations';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import {
+  CLICKED_TOO_SOON_ERROR,
   ERROR_PICKING_DIRECTORY_ERROR,
   INVALID_WORKSPACE_NAME_ERROR,
   UNKNOWN_ERROR,
@@ -25,13 +26,13 @@ export function ShowError({
     return null;
   }
 
-  let content;
+  let content, title;
 
   switch (errorType) {
     case WORKSPACE_NAME_ALREADY_EXISTS_ERROR: {
+      title = 'A workspace with the same name already exists.';
       content = (
-        <span>
-          A workspace with the same name already exists.{' '}
+        <div>
           <button
             className="underline"
             onClick={() => {
@@ -47,50 +48,59 @@ export function ShowError({
             Click here
           </button>{' '}
           to open it
-        </span>
+        </div>
       );
       break;
     }
 
     case ERROR_PICKING_DIRECTORY_ERROR: {
+      title = 'There was an error opening your notes folder.';
       content = (
-        <span>
-          There was an error opening your notes folder. Please make sure your
-          notes folder inside a common location like Documents or Desktop.
-        </span>
+        <div>
+          Please make sure your notes folder inside a common location like
+          Documents or Desktop.
+        </div>
       );
       break;
     }
+
+    case CLICKED_TOO_SOON_ERROR: {
+      title = 'That didn’t work';
+      content = <div>Please try clicking the Browse button again.</div>;
+      break;
+    }
     case INVALID_WORKSPACE_NAME_ERROR: {
+      title = 'Invalid workspace name';
       content = (
-        <span>
-          Invalid workspace name. Workspace cannot have <code>:</code> in its
-          name.
-        </span>
+        <div>
+          Workspace cannot have <code>:</code> in its name.
+        </div>
       );
       break;
     }
     case WORKSPACE_AUTH_REJECTED_ERROR: {
+      title = 'Bangle.io was denied access to your notes.';
       content = (
-        <span>
-          Bangle.io was denied access to your notes. Please try again and press
-          allow Bangle.io access to your locally saved notes.
-        </span>
+        <div>
+          Please try again and press allow Bangle.io access to your locally
+          saved notes.
+        </div>
       );
       break;
     }
     case UNKNOWN_ERROR: {
+      title = 'An unknown error occurred.';
       content = (
-        <span>
-          An unknown error occurred. Please reload window and try again. If the
-          problem still persists open an issue at{' '}
+        <div>
+          Please reload window and try again. If the problem still persists open
+          an issue at{' '}
           <a
             href="https://github.com/bangle-io/bangle-io/issues"
             className="underline"
           >
             Github
           </a>{' '}
-        </span>
+        </div>
       );
       break;
     }
@@ -104,14 +114,15 @@ export function ShowError({
 
   return (
     <div
-      className="w-full px-4 text-center"
+      className="w-full px-4 text-center rounded"
       data-testid={errorType}
       style={{
         backgroundColor: 'var(--severity-error-color)',
         color: 'white',
       }}
     >
-      {content}
+      <div className="font-semibold text-left">{title}</div>
+      <div className="text-left">{content}</div>
     </div>
   );
 }
