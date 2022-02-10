@@ -82,7 +82,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
           branch: matchingRepo.branch,
         })(bangleStore.state, bangleStore.dispatch, bangleStore)
           .then(() => {
-            (window as any).fathom?.trackGoal('U5Z8DSJ2', 0);
+            (window as any).fathom?.trackGoal('JSUCQKTL', 0);
           })
           .catch((error) => {
             showNotification({
