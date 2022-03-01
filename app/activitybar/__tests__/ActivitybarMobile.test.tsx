@@ -80,7 +80,7 @@ test('dispatches operation', () => {
     </div>,
   );
   act(() => {
-    fireEvent.click(result.getByRole('button'));
+    fireEvent.click(result.getByLabelText('See files palette'));
   });
   expect(dispatch).toBeCalledTimes(1);
 });
