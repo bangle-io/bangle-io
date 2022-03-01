@@ -1,6 +1,10 @@
 import React, { ReactNode, useEffect, useRef } from 'react';
 
-import { safeScrollIntoViewIfNeeded } from '@bangle.io/utils';
+import {
+  cx,
+  isTouchDevice,
+  safeScrollIntoViewIfNeeded,
+} from '@bangle.io/utils';
 
 export interface ItemType {
   uid: string;
@@ -22,8 +26,10 @@ export function PaletteItemUI({
   isActive,
   className = '',
   scrollIntoViewIfNeeded = true,
+  allowHover = !isTouchDevice(),
   style,
 }: {
+  allowHover?: boolean;
   item: ItemType;
   onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   isActive?: boolean;
@@ -56,11 +62,14 @@ export function PaletteItemUI({
       data-id={item.uid}
       ref={ref}
       onClick={onClick}
-      className={`universal-palette-item ${className} ${
-        isActive ? 'active' : ''
-      } ${item.isDisabled ? 'disabled' : ''} ${
-        item.showDividerAbove ? 'b-divider' : ''
-      }`}
+      className={cx(
+        'universal-palette-item',
+        className,
+        isActive && 'active',
+        item.isDisabled && 'disabled',
+        item.showDividerAbove && 'b-divider',
+        allowHover && 'allow-hover',
+      )}
       style={{
         cursor: 'pointer',
         display: 'flex',

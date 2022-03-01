@@ -1,6 +1,5 @@
 import { CORE_OPERATIONS_OPEN_GITHUB_ISSUE } from '@bangle.io/constants';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
-import { BaseError } from '@bangle.io/utils';
 
 import { notificationSliceKey } from './notification-slice';
 
