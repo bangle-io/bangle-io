@@ -1848,6 +1848,7 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-operations": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
+    "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
@@ -2435,8 +2436,11 @@ __metadata:
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.33
     "@types/react-dom": ^17.0.10
+    base64-js: ^1.5.1
+    idb-keyval: ^5.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
+    ts-pattern: ^3.3.5
     tslib: ^2.3.1
     typescript: ^4.5.5
   languageName: unknown
@@ -6369,7 +6373,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"base64-js@npm:^1.3.1":
+"base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
@@ -16519,6 +16523,13 @@ __metadata:
   bin:
     tree-kill: cli.js
   checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^3.3.5":
+  version: 3.3.5
+  resolution: "ts-pattern@npm:3.3.5"
+  checksum: c6f7b9b9014b3f1a7c896267c1b227c7bea46bdc323dd66ac990e3b81f385aeb8abe5de2e694351fe13ae03c2dccb0e0a6869e43007cbe8516762700b309f43d
   languageName: node
   linkType: hard
 
