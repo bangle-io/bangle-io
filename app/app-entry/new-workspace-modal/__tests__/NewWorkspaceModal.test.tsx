@@ -190,21 +190,28 @@ describe('NewWorkspaceModalContainer', () => {
       expect(result.getByTestId(WORKSPACE_NAME_ALREADY_EXISTS_ERROR))
         .toMatchInlineSnapshot(`
         <div
-          class="w-full px-4 text-center"
+          class="w-full px-4 text-center rounded"
           data-testid="WORKSPACE_NAME_ALREADY_EXISTS"
           style="color: white;"
         >
-          <span>
+          <div
+            class="font-semibold text-left"
+          >
             A workspace with the same name already exists.
-             
-            <button
-              class="underline"
-            >
-              Click here
-            </button>
-             
-            to open it
-          </span>
+          </div>
+          <div
+            class="text-left"
+          >
+            <div>
+              <button
+                class="underline"
+              >
+                Click here
+              </button>
+               
+              to open it
+            </div>
+          </div>
         </div>
       `);
     });
@@ -337,13 +344,22 @@ describe('NewWorkspaceModalContainer', () => {
       expect(result.getByTestId(WORKSPACE_AUTH_REJECTED_ERROR))
         .toMatchInlineSnapshot(`
         <div
-          class="w-full px-4 text-center"
+          class="w-full px-4 text-center rounded"
           data-testid="WORKSPACE_AUTH_REJECTED"
           style="color: white;"
         >
-          <span>
-            Bangle.io was denied access to your notes. Please try again and press allow Bangle.io access to your locally saved notes.
-          </span>
+          <div
+            class="font-semibold text-left"
+          >
+            Bangle.io was denied access to your notes.
+          </div>
+          <div
+            class="text-left"
+          >
+            <div>
+              Please try again and press allow Bangle.io access to your locally saved notes.
+            </div>
+          </div>
         </div>
       `);
 

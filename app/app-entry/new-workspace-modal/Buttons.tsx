@@ -11,6 +11,7 @@ import { CloseIcon } from '@bangle.io/ui-components';
 
 import {
   BROWSE_BUTTON_ID,
+  CLICKED_TOO_SOON_ERROR,
   ERROR_PICKING_DIRECTORY_ERROR,
   UNKNOWN_ERROR,
   WORKSPACE_AUTH_REJECTED_ERROR,
@@ -33,6 +34,15 @@ export function PickStorageDirectory({
       const rootDirHandle = await pickADirectory();
       updateRootDirHandle(rootDirHandle);
     } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message
+          .toLocaleLowerCase()
+          .includes('user activation is required')
+      ) {
+        setError(CLICKED_TOO_SOON_ERROR);
+        return;
+      }
       if (
         error instanceof BaseFileSystemError &&
         (error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
