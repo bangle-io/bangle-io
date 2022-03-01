@@ -16,7 +16,9 @@ describe('store', () => {
   test('empty store', () => {
     const state = AppState.create({ slices: [] });
     const store = ApplicationStore.create({ storeName: 'test-store', state });
-    expect(store).toMatchSnapshot();
+    expect(store as any).toMatchSnapshot({
+      destroyController: expect.any(AbortController),
+    });
   });
 
   test('adds id to action', () => {
@@ -108,7 +110,9 @@ describe('store', () => {
     });
 
     test('sets up properly', () => {
-      expect(store).toMatchSnapshot();
+      expect(store as any).toMatchSnapshot({
+        destroyController: expect.any(AbortController),
+      });
     });
 
     test('updates', () => {
@@ -133,7 +137,9 @@ describe('store', () => {
     test('destroys', () => {
       store.destroy();
       expect((store as any).destroyed).toBe(true);
-      expect(store).toMatchSnapshot();
+      expect(store as any).toMatchSnapshot({
+        destroyController: expect.any(AbortController),
+      });
 
       let newState = AppState.create<any, ActionType>({ slices: [] });
       store.updateState(newState);
@@ -600,7 +606,9 @@ describe('store', () => {
           return () => {};
         },
       });
-      expect(store).toMatchSnapshot();
+      expect(store as any).toMatchSnapshot({
+        destroyController: expect.any(AbortController),
+      });
       expect(sideEffect).toBeCalledTimes(1);
       store.dispatch({
         name: 'hello',

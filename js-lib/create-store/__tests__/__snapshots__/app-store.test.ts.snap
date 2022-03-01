@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`store basic tests destroys 1`] = `
-ApplicationStore {
+Object {
   "_dispatchAction": [Function],
   "_state": AppState {
     "config": AppStateConfig {
@@ -82,14 +82,7 @@ ApplicationStore {
   },
   "actionSerializers": Object {},
   "currentRunId": 0,
-  "destroyController": AbortController {
-    Symbol(signal): AbortSignal {
-      Symbol(kEvents): Map {},
-      Symbol(events.maxEventTargetListeners): 10,
-      Symbol(events.maxEventTargetListenersWarned): false,
-      Symbol(kAborted): true,
-    },
-  },
+  "destroyController": Any<AbortController>,
   "destroyed": true,
   "disableSideEffects": false,
   "dispatch": [Function],
@@ -107,7 +100,7 @@ ApplicationStore {
 `;
 
 exports[`store basic tests sets up properly 1`] = `
-ApplicationStore {
+Object {
   "_dispatchAction": [Function],
   "_state": AppState {
     "config": AppStateConfig {
@@ -188,14 +181,7 @@ ApplicationStore {
   },
   "actionSerializers": Object {},
   "currentRunId": 0,
-  "destroyController": AbortController {
-    Symbol(signal): AbortSignal {
-      Symbol(kEvents): Map {},
-      Symbol(events.maxEventTargetListeners): 10,
-      Symbol(events.maxEventTargetListenersWarned): false,
-      Symbol(kAborted): false,
-    },
-  },
+  "destroyController": Any<AbortController>,
   "destroyed": false,
   "disableSideEffects": false,
   "dispatch": [Function],
@@ -213,7 +199,7 @@ ApplicationStore {
 `;
 
 exports[`store deferred side effects does not call deferred update when scheduler is not provided 1`] = `
-ApplicationStore {
+Object {
   "_dispatchAction": [Function],
   "_state": AppState {
     "config": AppStateConfig {
@@ -270,14 +256,7 @@ ApplicationStore {
   },
   "actionSerializers": Object {},
   "currentRunId": 0,
-  "destroyController": AbortController {
-    Symbol(signal): AbortSignal {
-      Symbol(kEvents): Map {},
-      Symbol(events.maxEventTargetListeners): 10,
-      Symbol(events.maxEventTargetListenersWarned): false,
-      Symbol(kAborted): false,
-    },
-  },
+  "destroyController": Any<AbortController>,
   "destroyed": false,
   "disableSideEffects": false,
   "dispatch": [Function],
@@ -355,7 +334,7 @@ ApplicationStore {
 `;
 
 exports[`store empty store 1`] = `
-ApplicationStore {
+Object {
   "_dispatchAction": [Function],
   "_state": AppState {
     "config": AppStateConfig {
@@ -368,14 +347,7 @@ ApplicationStore {
   },
   "actionSerializers": Object {},
   "currentRunId": 0,
-  "destroyController": AbortController {
-    Symbol(signal): AbortSignal {
-      Symbol(kEvents): Map {},
-      Symbol(events.maxEventTargetListeners): 10,
-      Symbol(events.maxEventTargetListenersWarned): false,
-      Symbol(kAborted): false,
-    },
-  },
+  "destroyController": Any<AbortController>,
   "destroyed": false,
   "disableSideEffects": false,
   "dispatch": [Function],
