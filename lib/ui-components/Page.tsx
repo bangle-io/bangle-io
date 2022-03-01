@@ -8,6 +8,7 @@ import { cx } from '@bangle.io/utils';
  *
  */
 export function Page({
+  widescreen,
   childClassName,
   children,
   className,
@@ -15,6 +16,7 @@ export function Page({
   headerBgColor = 'var(--window-bg-color-0)',
   stickyHeader,
 }: {
+  widescreen: boolean;
   childClassName?: string;
   children: ReactNode;
   className?: string;
@@ -42,7 +44,9 @@ export function Page({
         className={cx('w-full', childClassName)}
         style={{
           maxWidth: 'min(var(--page-maxWidth), 100vw)',
-          padding: 'var(--window-page-padding)',
+          padding: widescreen
+            ? 'var(--window-page-padding)'
+            : 'var(--window-page-mobile-padding)',
         }}
       >
         {children}
