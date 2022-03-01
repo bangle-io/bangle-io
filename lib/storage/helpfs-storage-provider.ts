@@ -74,16 +74,6 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     await this.idbProvider.deleteFile(wsPath, opts);
   }
 
-  async getDoc(wsPath: string, opts: StorageOpts) {
-    const upstreamFile = await readFileFromUnpkg(wsPath);
-
-    if (upstreamFile) {
-      return this.idbProvider.fileToDoc(upstreamFile, opts);
-    }
-
-    return this.idbProvider.getDoc(wsPath, opts);
-  }
-
   async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
     const res = await readFileFromUnpkg(wsPath);
 
@@ -107,16 +97,11 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     ];
   }
 
-  async saveDoc(wsPath: string, doc: Node, opts: StorageOpts): Promise<void> {
+  async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
     if (wsPath === HELP_FS_INDEX_WS_PATH) {
       return;
     }
-
-    await this.idbProvider.saveDoc(wsPath, doc, opts);
-  }
-
-  async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
-    return this.idbProvider.saveFile(wsPath, file, opts);
+    await this.idbProvider.saveFile(wsPath, file, opts);
   }
 
   async renameFile(

@@ -6,6 +6,7 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import type {
   EditorWatchPluginState,
+  NoteFormatProvider,
   NoteSidebarWidget,
   SerialOperationDefinitionType,
   SerialOperationHandler,
@@ -68,6 +69,7 @@ export interface ApplicationConfig<
   noteSidebarWidgets?: Array<NoteSidebarWidget>;
   slices?: Array<Slice<any>>;
   storageProvider?: BaseStorageProvider;
+  noteFormatProvider?: NoteFormatProvider;
   // return true if the error was handled by your callback
   // and false if it cannot be handled
   onStorageError?: (
@@ -171,6 +173,7 @@ export class Extension<
       slices,
       operationHandler,
       storageProvider,
+      noteFormatProvider,
       onStorageError,
     } = application;
 
@@ -249,6 +252,25 @@ export class Extension<
       throw new Error(
         'Extension: Invalid ntoe sidebar widget name. Example: "note-sidebar-widget::my-extension-name:xyz"',
       );
+    }
+
+    if (noteFormatProvider) {
+      if (typeof noteFormatProvider.name !== 'string') {
+        throw new Error('Extension: noteFormatProvider must have a valid name');
+      }
+      if (typeof noteFormatProvider.description !== 'string') {
+        throw new Error(
+          'Extension: noteFormatProvider must have a description name',
+        );
+      }
+      if (
+        typeof noteFormatProvider.parseNote !== 'function' ||
+        typeof noteFormatProvider.serializeNote !== 'function'
+      ) {
+        throw new Error(
+          'Extension: noteFormatProvider must have parseNote and serializeNote functions',
+        );
+      }
     }
 
     if (storageProvider) {

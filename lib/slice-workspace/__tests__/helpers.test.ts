@@ -13,9 +13,9 @@ describe('storageProviderFromExtensionRegistry', () => {
       name = storageType1;
     }
     const provider1 = new TestProvider1();
-    const getDocSpy1 = jest.spyOn(provider1, 'getDoc');
+    const getFileSpy1 = jest.spyOn(provider1, 'getFile');
     let error1 = new Error('test error 1');
-    getDocSpy1.mockImplementation(async () => {
+    getFileSpy1.mockImplementation(async () => {
       throw error1;
     });
 
@@ -24,9 +24,9 @@ describe('storageProviderFromExtensionRegistry', () => {
       name = storageType2;
     }
     const provider2 = new TestProvider2();
-    const getDocSpy2 = jest.spyOn(provider2, 'getDoc');
+    const getFileSpy2 = jest.spyOn(provider2, 'getFile');
     let error2 = new Error('test error 2');
-    getDocSpy2.mockImplementation(async () => {
+    getFileSpy2.mockImplementation(async () => {
       throw error2;
     });
 
@@ -62,7 +62,7 @@ describe('storageProviderFromExtensionRegistry', () => {
     );
 
     await expect(
-      proxiedProvider1?.getDoc('test:abcd', {} as any),
+      proxiedProvider1?.getFile('test:abcd', {} as any),
     ).rejects.toMatchInlineSnapshot(`[Error: test error 1]`);
 
     expect(storageProviderHelpers.getStorageProviderNameFromError(error1)).toBe(
@@ -75,7 +75,7 @@ describe('storageProviderFromExtensionRegistry', () => {
     );
 
     await expect(
-      proxiedProvider2?.getDoc('test:abcd', {} as any),
+      proxiedProvider2?.getFile('test:abcd', {} as any),
     ).rejects.toMatchInlineSnapshot(`[Error: test error 2]`);
 
     expect(storageProviderHelpers.getStorageProviderNameFromError(error2)).toBe(

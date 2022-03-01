@@ -1,5 +1,7 @@
 import { WorkspaceTypeHelp } from '@bangle.io/constants';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
+import type { NoteFormatProvider } from '@bangle.io/shared-types';
 import { BaseStorageProvider, HelpFsStorageProvider } from '@bangle.io/storage';
 import { isValidNoteWsPath, OpenedWsPaths } from '@bangle.io/ws-path';
 
@@ -142,3 +144,17 @@ export function storageProviderFromExtensionRegistry(
 
   return proxy;
 }
+
+export const markdownFormatProvider: NoteFormatProvider = {
+  name: 'markdown-format-provider',
+  description: 'Saves notes in Markdown format',
+  extensions: ['md'],
+
+  serializeNote(doc, specRegistry) {
+    return markdownSerializer(doc, specRegistry);
+  },
+
+  parseNote(value, specRegistry, plugins) {
+    return markdownParser(value, specRegistry, plugins);
+  },
+};

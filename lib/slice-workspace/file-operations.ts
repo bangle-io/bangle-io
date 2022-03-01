@@ -1,19 +1,26 @@
 import type { Node } from '@bangle.dev/pm';
 
+import { readFileAsText } from '@bangle.io/baby-fs';
 import { WorkspaceTypeHelp } from '@bangle.io/constants';
 import {
   ExtensionRegistry,
   extensionRegistrySliceKey,
 } from '@bangle.io/extension-registry';
-import { markdownParser, markdownSerializer } from '@bangle.io/markdown';
 import { StorageOpts } from '@bangle.io/storage';
 import { asssertNotUndefined } from '@bangle.io/utils';
-import { validateNoteWsPath } from '@bangle.io/ws-path';
+import { resolvePath, validateNoteWsPath } from '@bangle.io/ws-path';
 
 import { workspaceSliceKey } from './common';
 import { defaultDoc } from './default-doc';
-import { WORKSPACE_PROVIDER_NOT_FOUND_ERROR, WorkspaceError } from './errors';
-import { storageProviderFromExtensionRegistry } from './helpers';
+import {
+  NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR,
+  WORKSPACE_PROVIDER_NOT_FOUND_ERROR,
+  WorkspaceError,
+} from './errors';
+import {
+  markdownFormatProvider,
+  storageProviderFromExtensionRegistry,
+} from './helpers';
 import {
   getWsName,
   replaceAnyMatchingOpenedWsPath,
@@ -51,6 +58,29 @@ export function getStorageProvider() {
   });
 }
 
+export function getNoteFormatProvider() {
+  return workspaceSliceKey.queryOp((state) => {
+    const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
+
+    asssertNotUndefined(
+      wsName,
+      'wsName must be defined before accessing getNoteFormatProvider',
+    );
+
+    // TODO implement custom format provider
+    let provider = markdownFormatProvider;
+
+    if (!provider) {
+      throw new WorkspaceError({
+        message: `Note storage provider  not found.`,
+        code: NOTE_FORMAT_PROVIDER_NOT_FOUND_ERROR,
+      });
+    }
+
+    return provider;
+  });
+}
+
 export function getStorageErrorHandler() {
   type T = Exclude<
     ReturnType<ExtensionRegistry['getOnStorageErrorHandlers']>,
@@ -79,7 +109,7 @@ export function getStorageErrorHandler() {
 
 export function getStorageProviderOpts() {
   return workspaceSliceKey.op((state, dispatch) => {
-    const { specRegistry, markdownItPlugins } =
+    const { specRegistry } =
       extensionRegistrySliceKey.getSliceStateAsserted(state).extensionRegistry;
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
 
@@ -94,10 +124,6 @@ export function getStorageProviderOpts() {
     // and even if wsName has changed, while they were doing `async` work, it should be fine.
     const opt: StorageOpts = {
       specRegistry: specRegistry,
-      formatParser: (value, specRegistry) =>
-        markdownParser(value, specRegistry, markdownItPlugins),
-      formatSerializer: (doc, specRegistry) =>
-        markdownSerializer(doc, specRegistry),
       readWorkspaceMetadata: () => {
         return getWorkspaceInfo(wsName)(state).metadata;
       },
@@ -166,10 +192,27 @@ export const getNote = (wsPath: string) => {
 
     const storageProvider = getStorageProvider()(state);
 
-    return storageProvider.getDoc(
+    const file = await storageProvider.getFile(
       wsPath,
       getStorageProviderOpts()(state, dispatch),
     );
+
+    if (file) {
+      const { specRegistry, markdownItPlugins } =
+        extensionRegistrySliceKey.getSliceStateAsserted(
+          state,
+        ).extensionRegistry;
+
+      const textContent = await readFileAsText(file);
+      const doc = getNoteFormatProvider()(state).parseNote(
+        textContent,
+        specRegistry,
+        markdownItPlugins,
+      );
+
+      return doc;
+    }
+    return undefined;
   });
 };
 
@@ -221,11 +264,7 @@ export const createNote = (
     );
 
     if (!fileExists) {
-      await storageProvider.saveDoc(
-        wsPath,
-        doc,
-        getStorageProviderOpts()(state, dispatch),
-      );
+      await saveDoc(wsPath, doc)(state, dispatch, store);
     }
 
     if (open) {
@@ -242,7 +281,7 @@ export const createNote = (
 
 export const saveFile = (wsPath: string, file: File) => {
   return workspaceSliceKey.asyncOp(
-    async (state, dispatch, store): Promise<boolean> => {
+    async (state, dispatch): Promise<boolean> => {
       const storageProvider = getStorageProvider()(state);
 
       await storageProvider.saveFile(
@@ -257,17 +296,26 @@ export const saveFile = (wsPath: string, file: File) => {
 
 export const saveDoc = (wsPath: string, doc: Node) => {
   return workspaceSliceKey.asyncOp(
-    async (state, dispatch): Promise<boolean> => {
-      if (!getWsName()(state)) {
-        return false;
-      }
-      const storageProvider = getStorageProvider()(state);
+    async (state, dispatch, store): Promise<boolean> => {
+      const { specRegistry } =
+        extensionRegistrySliceKey.getSliceStateAsserted(
+          state,
+        ).extensionRegistry;
+      const { fileName } = resolvePath(wsPath);
 
-      await storageProvider.saveDoc(
-        wsPath,
+      const serialValue = getNoteFormatProvider()(state).serializeNote(
         doc,
-        getStorageProviderOpts()(state, dispatch),
+        specRegistry,
+        fileName,
       );
+
+      await saveFile(
+        wsPath,
+        new File([serialValue], fileName, {
+          type: 'text/plain',
+        }),
+      )(state, dispatch, store);
+
       return true;
     },
   );

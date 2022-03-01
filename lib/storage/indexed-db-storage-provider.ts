@@ -1,14 +1,11 @@
-import type { Node } from '@bangle.dev/pm';
-
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
   IndexedDBFileSystem,
-  readFileAsText,
 } from '@bangle.io/baby-fs';
 import { WorkspaceTypeBrowser } from '@bangle.io/constants';
 import { assertSignal } from '@bangle.io/utils';
-import { fromFsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
+import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
 
 import { BaseStorageProvider, StorageOpts } from './base-storage';
 
@@ -21,26 +18,6 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
   private idb = new IndexedDBFileSystem();
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {}
-
-  async fileToDoc(file: File, opts: StorageOpts): Promise<Node> {
-    const textContent = await readFileAsText(file);
-
-    const doc: Node = await opts.formatParser(textContent, opts.specRegistry);
-
-    return doc;
-  }
-
-  async docToFile(
-    doc: Node,
-    fileName: string,
-    opts: StorageOpts,
-  ): Promise<File> {
-    const data = await opts.formatSerializer(doc, opts.specRegistry);
-
-    return new File([data], fileName, {
-      type: 'text/plain',
-    });
-  }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
     const path = toFSPath(wsPath);
@@ -70,13 +47,6 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     await this.idb.unlink(toFSPath(wsPath));
   }
 
-  async getDoc(wsPath: string, opts: StorageOpts): Promise<Node> {
-    const file = await this.getFile(wsPath, opts);
-    const doc = await this.fileToDoc(file, opts);
-
-    return doc;
-  }
-
   async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
     return this.idb.readFile(toFSPath(wsPath));
   }
@@ -102,14 +72,6 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     const result = files.sort((a, b) => a.localeCompare(b));
 
     return result;
-  }
-
-  async saveDoc(wsPath: string, doc: Node, opts: StorageOpts): Promise<void> {
-    const { fileName } = resolvePath(wsPath);
-
-    const file = await this.docToFile(doc, fileName, opts);
-
-    await this.saveFile(wsPath, file, opts);
   }
 
   async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {

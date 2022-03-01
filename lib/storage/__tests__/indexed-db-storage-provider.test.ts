@@ -1,24 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import { Node } from '@bangle.dev/pm';
-
-import { createEditorFromMd, createPMNode } from '@bangle.io/test-utils';
 
 import { StorageOpts } from '../base-storage';
 import { IndexedDbStorageProvider } from '../indexed-db-storage-provider';
 
 let idbProvider = new IndexedDbStorageProvider();
 
-const editor = createEditorFromMd(`test doc`);
-
 const opts: StorageOpts = {
-  formatParser: jest.fn((value) => {
-    return Node.fromJSON(editor.view.state.schema, value);
-  }),
-  formatSerializer: jest.fn((node: Node) => {
-    return node.toJSON();
-  }),
   specRegistry: {} as any,
   readWorkspaceMetadata: jest.fn(),
   updateWorkspaceMetadata: jest.fn(),
@@ -94,60 +83,5 @@ describe('fileStat', () => {
       ctime: expect.any(Number),
       mtime: expect.any(Number),
     });
-  });
-});
-
-describe('saveDoc / readDoc', () => {
-  test('works', async () => {
-    const wsPath = 'test:one.file';
-    const editor = createEditorFromMd(`test doc`);
-
-    const doc = editor.view.state.doc;
-
-    const opts: StorageOpts = {
-      formatParser: jest.fn((value) => {
-        return Node.fromJSON(editor.view.state.schema, value);
-      }),
-      formatSerializer: jest.fn((node: Node) => {
-        return node.toJSON();
-      }),
-      specRegistry: {} as any,
-      readWorkspaceMetadata: jest.fn(),
-      updateWorkspaceMetadata: jest.fn(),
-    };
-
-    await idbProvider.saveDoc(wsPath, doc, opts);
-
-    expect((await idbProvider.getDoc(wsPath, opts)).toJSON()).toEqual(
-      doc.toJSON(),
-    );
-  });
-
-  test('works with other serializer', async () => {
-    const wsPath = 'test:one.file';
-    const editor = createEditorFromMd(`test doc`);
-
-    const doc = editor.view.state.doc;
-
-    const opts: StorageOpts = {
-      formatParser: jest.fn((value) => {
-        if (value === `I was serialized correctly`) {
-          return createPMNode([], `I was parsed correctly`);
-        }
-        throw new Error('invalid');
-      }),
-      formatSerializer: jest.fn((node: Node) => {
-        return `I was serialized correctly`;
-      }),
-      specRegistry: {} as any,
-      readWorkspaceMetadata: jest.fn(),
-      updateWorkspaceMetadata: jest.fn(),
-    };
-
-    await idbProvider.saveDoc(wsPath, doc, opts);
-
-    expect((await idbProvider.getDoc(wsPath, opts)).toString()).toEqual(
-      'doc(paragraph("I was parsed correctly"))',
-    );
   });
 });

@@ -102,16 +102,6 @@ export class GithubStorageProvider implements BaseStorageProvider {
     // await this.idbProvider.deleteFile(wsPath, opts);
   }
 
-  async getDoc(wsPath: string, opts: StorageOpts) {
-    const file = await this.getFile(wsPath, opts);
-
-    if (file) {
-      return this.idbProvider.fileToDoc(file, opts);
-    }
-
-    throw new Error('File not found');
-  }
-
   async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
     const r = opts.readWorkspaceMetadata() as WsMetadata;
     const { wsName, fileName } = resolvePath(wsPath);
@@ -202,16 +192,6 @@ export class GithubStorageProvider implements BaseStorageProvider {
         }
         throw e;
       });
-  }
-
-  async saveDoc(wsPath: string, doc: Node, opts: StorageOpts): Promise<void> {
-    const { fileName } = resolvePath(wsPath);
-
-    // const metadata = opts.readWorkspaceMetadata() as WsMetadata;
-
-    // const file = await this.idbProvider.docToFile(doc, fileName, opts);
-
-    // const text = await file.text();
   }
 
   async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {

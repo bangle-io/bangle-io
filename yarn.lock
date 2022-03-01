@@ -2901,6 +2901,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/shared-types@workspace:lib/shared-types"
   dependencies:
+    "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
@@ -3037,6 +3038,7 @@ __metadata:
     "@bangle.dev/core": 0.28.5
     "@bangle.dev/pm": 0.28.5
     "@bangle.dev/utils": 0.28.5
+    "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/base-error": "workspace:*"
     "@bangle.io/config": "workspace:*"

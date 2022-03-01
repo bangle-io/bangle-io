@@ -17,8 +17,6 @@ export interface FileStat {
 
 export interface StorageOpts {
   specRegistry: SpecRegistry;
-  formatSerializer: (doc: Node, specRegistry: SpecRegistry) => any;
-  formatParser: (value: any, specRegistry: SpecRegistry) => Node;
   readWorkspaceMetadata: () => { [key: string]: any };
   updateWorkspaceMetadata: (metadata: { [key: string]: any }) => void;
 }
@@ -42,8 +40,6 @@ export interface BaseStorageProvider {
 
   deleteFile(wsPath: WsPath, opts: StorageOpts): Promise<void>;
 
-  getDoc(wsPath: WsPath, opts: StorageOpts): Promise<Node>;
-
   getFile(wsPath: WsPath, opts: StorageOpts): Promise<File>;
 
   listAllFiles(
@@ -51,8 +47,6 @@ export interface BaseStorageProvider {
     wsName: WsName,
     opts: StorageOpts,
   ): Promise<WsPath[]>;
-
-  saveDoc(wsPath: WsPath, doc: Node, opts: StorageOpts): Promise<void>;
 
   saveFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
 
