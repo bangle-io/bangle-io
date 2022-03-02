@@ -319,7 +319,7 @@ export const getFile = (wsPath: string) => {
     async (_, dispatch, store): Promise<File> => {
       const storageProvider = getStorageProvider()(store.state);
 
-      return storageProvider.getFile(
+      return storageProvider.readFile(
         wsPath,
         getStorageProviderOpts()(store.state, dispatch),
       );

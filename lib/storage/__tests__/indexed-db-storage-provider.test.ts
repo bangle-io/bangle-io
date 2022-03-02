@@ -33,10 +33,10 @@ describe('listAllFiles', () => {
   });
 });
 
-describe('saveFile / getFile', () => {
+describe('saveFile / readFile', () => {
   test('file not found', async () => {
     await expect(
-      idbProvider.getFile('hello:one.md', opts),
+      idbProvider.readFile('hello:one.md', opts),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"File \\"hello/one.md\\" not found"`,
     );
@@ -47,7 +47,7 @@ describe('saveFile / getFile', () => {
     const wsPath = 'test:one.file';
 
     await idbProvider.saveFile(wsPath, file, opts);
-    expect(await idbProvider.getFile(wsPath, opts)).toBe(file);
+    expect(await idbProvider.readFile(wsPath, opts)).toBe(file);
 
     expect(await idbProvider.fileExists(wsPath, opts)).toBe(true);
 
@@ -63,11 +63,11 @@ describe('rename', () => {
     const wsPath = 'test:one.file';
 
     await idbProvider.saveFile(wsPath, file, opts);
-    expect(await idbProvider.getFile(wsPath, opts)).toBe(file);
+    expect(await idbProvider.readFile(wsPath, opts)).toBe(file);
 
     await idbProvider.renameFile(wsPath, 'test:one-renamed.md', opts);
 
-    expect(await idbProvider.getFile('test:one-renamed.md', opts)).toBe(file);
+    expect(await idbProvider.readFile('test:one-renamed.md', opts)).toBe(file);
     expect(await idbProvider.fileExists('test:one.md', opts)).toBe(false);
   });
 });

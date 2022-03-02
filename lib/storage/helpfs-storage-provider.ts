@@ -74,14 +74,14 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     await this.idbProvider.deleteFile(wsPath, opts);
   }
 
-  async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File> {
     const res = await readFileFromUnpkg(wsPath);
 
     if (res) {
       return res;
     }
 
-    return this.idbProvider.getFile(wsPath, opts);
+    return this.idbProvider.readFile(wsPath, opts);
   }
 
   async listAllFiles(

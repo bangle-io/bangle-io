@@ -47,7 +47,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     await this.idb.unlink(toFSPath(wsPath));
   }
 
-  async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File> {
     return this.idb.readFile(toFSPath(wsPath));
   }
 

@@ -78,7 +78,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
       return true;
     }
 
-    if (await this.getFile(wsPath, opts)) {
+    if (await this.readFile(wsPath, opts)) {
       return true;
     }
 
@@ -102,7 +102,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     // await this.idbProvider.deleteFile(wsPath, opts);
   }
 
-  async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File> {
     const r = opts.readWorkspaceMetadata() as WsMetadata;
     const { wsName, fileName } = resolvePath(wsPath);
     if (!this.fileBlobs) {

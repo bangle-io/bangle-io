@@ -22,25 +22,21 @@ export interface StorageOpts {
 }
 
 export interface BaseStorageProvider {
-  readonly name: string;
+  readonly description: string;
   readonly displayName: string;
   // hide creating a workspace of this type
   readonly hidden?: boolean;
-  readonly description: string;
+  readonly name: string;
 
-  // return any metadata associated with this newly created workspace
-  newWorkspaceMetadata(
-    wsName: string,
-    createOpts: any,
-  ): Promise<{ [key: string]: any }> | Promise<void> | void;
+  createFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
+
+  deleteFile(wsPath: WsPath, opts: StorageOpts): Promise<void>;
 
   fileExists(wsPath: WsPath, opts: StorageOpts): Promise<boolean>;
 
   fileStat(wsPath: WsPath, opts: StorageOpts): Promise<FileStat>;
 
-  deleteFile(wsPath: WsPath, opts: StorageOpts): Promise<void>;
-
-  getFile(wsPath: WsPath, opts: StorageOpts): Promise<File>;
+  readFile(wsPath: WsPath, opts: StorageOpts): Promise<File>;
 
   listAllFiles(
     abortSignal: AbortSignal,
@@ -48,13 +44,19 @@ export interface BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<WsPath[]>;
 
-  saveFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
+  // return any metadata associated with this newly created workspace
+  newWorkspaceMetadata(
+    wsName: string,
+    createOpts: any,
+  ): Promise<{ [key: string]: any }> | Promise<void> | void;
 
   renameFile(
     wsPath: WsPath,
     newWsPath: WsPath,
     opts: StorageOpts,
   ): Promise<void>;
+
+  saveFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
 
   searchFile?: (
     abortSignal: AbortSignal,
