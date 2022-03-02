@@ -461,7 +461,7 @@ describe('workspaceErrorHandler', () => {
     })(store.state, store.dispatch, store);
     expect(
       (
-        await getNote('my-ws:test-note.md')(store.state, store.dispatch)
+        await getNote('my-ws:test-note.md')(store.state, store.dispatch, store)
       )?.toString(),
     ).toContain('hello');
 

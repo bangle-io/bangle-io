@@ -55,12 +55,14 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
 
   const getNoteForTags = useCallback(
     (wsPath: string) => {
-      return getNote(wsPath)(bangleStore.state, bangleStore.dispatch).catch(
-        (error) => {
-          bangleStore.errorHandler(error);
-          return undefined;
-        },
-      );
+      return getNote(wsPath)(
+        bangleStore.state,
+        bangleStore.dispatch,
+        bangleStore,
+      ).catch((error) => {
+        bangleStore.errorHandler(error);
+        return undefined;
+      });
     },
     [bangleStore],
   );
