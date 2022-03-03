@@ -14,19 +14,27 @@ function readFileFromUnpkg(wsPath: string) {
   function fetchHelpFiles(path: string, json = false) {
     return fetch(
       `https://unpkg.com/bangle-io-help@${HELP_DOCS_VERSION}/docs/` + path,
-    ).then((r) => {
-      if (!r.ok) {
-        if (r.status === 404) {
-          return null;
-        }
-        return Promise.reject(
-          new BaseError({
+    )
+      .then((r) => {
+        if (!r.ok) {
+          if (r.status === 404) {
+            return null;
+          }
+
+          throw new BaseError({
             message: `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
-          }),
-        );
-      }
-      return r;
-    });
+          });
+        }
+        return r;
+      })
+      .catch((z) => {
+        if (z.message === 'Failed to fetch') {
+          throw new BaseError({
+            message: `Encountered an error making request to unpkg.com`,
+          });
+        }
+        throw z;
+      });
   }
 
   const splitted = filePath.split('/');
