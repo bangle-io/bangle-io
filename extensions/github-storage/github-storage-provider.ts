@@ -200,8 +200,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
       });
   }
 
-  async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
-    return this.idbProvider.saveFile(wsPath, file, opts);
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    return this.idbProvider.writeFile(wsPath, file, opts);
   }
 
   async renameFile(

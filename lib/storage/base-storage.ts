@@ -56,7 +56,7 @@ export interface BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void>;
 
-  saveFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
+  writeFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
 
   searchFile?: (
     abortSignal: AbortSignal,

@@ -1,6 +1,6 @@
 import type { EditorView, NodeType } from '@bangle.dev/pm';
 
-import { saveFile } from '@bangle.io/slice-workspace';
+import { writeFile } from '@bangle.io/slice-workspace';
 import { getEditorPluginMetadata } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -28,7 +28,7 @@ export async function createImageNodes(
         dimensions,
       );
 
-      await saveFile(wsPath, file)(
+      await writeFile(wsPath, file)(
         bangleStore.state,
         bangleStore.dispatch,
         bangleStore,

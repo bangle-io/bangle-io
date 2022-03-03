@@ -16,7 +16,7 @@ import {
   getNote,
   refreshWsPaths,
   renameNote,
-  saveDoc,
+  writeNote,
 } from '../file-operations';
 import { updateOpenedWsPaths } from '../operations';
 import { createWorkspace } from '../workspaces-operations';
@@ -260,7 +260,7 @@ describe('createNote', () => {
     await createNote(wsPath, { doc })(store.state, store.dispatch, store);
     const docModified = createPMNode([], `hello modified`);
 
-    await saveDoc(wsPath, docModified)(store.state, store.dispatch, store);
+    await writeNote(wsPath, docModified)(store.state, store.dispatch, store);
 
     await createNote(wsPath, { doc })(store.state, store.dispatch, store);
 

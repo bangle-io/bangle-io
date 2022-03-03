@@ -9,8 +9,8 @@ import { searchPmNode } from '@bangle.io/search-pm-node';
 import {
   getFile,
   getNote,
-  saveFile,
   workspaceSliceKey,
+  writeFile,
 } from '@bangle.io/slice-workspace';
 import { assertSignal, asssertNotUndefined } from '@bangle.io/utils';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
@@ -63,7 +63,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
 
       asssertNotUndefined(store, 'store cannot be undefined');
 
-      await saveFile(wsPath, file)(store.state, store.dispatch, store);
+      await writeFile(wsPath, file)(store.state, store.dispatch, store);
     };
 
     return {

@@ -71,7 +71,7 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
-    await this.saveFile(wsPath, file, opts);
+    await this.writeFile(wsPath, file, opts);
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
@@ -105,11 +105,15 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     ];
   }
 
-  async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
     if (wsPath === HELP_FS_INDEX_WS_PATH) {
       return;
     }
-    await this.idbProvider.saveFile(wsPath, file, opts);
+    await this.idbProvider.writeFile(wsPath, file, opts);
   }
 
   async renameFile(

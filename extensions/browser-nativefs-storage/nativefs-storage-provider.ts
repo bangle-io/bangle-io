@@ -70,8 +70,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
-    debugger;
-    await this.saveFile(wsPath, file, opts);
+    await this.writeFile(wsPath, file, opts);
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
@@ -105,7 +104,11 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     return result;
   }
 
-  async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
     const path = toFSPath(wsPath);
     await this.getFs(opts).writeFile(path, file);
   }

@@ -289,12 +289,12 @@ export const createNote = (
   });
 };
 
-export const saveFile = (wsPath: string, file: File) => {
+export const writeFile = (wsPath: string, file: File) => {
   return workspaceSliceKey.asyncOp(
     async (_, dispatch, store): Promise<boolean> => {
       const storageProvider = getStorageProvider()(store.state);
 
-      await storageProvider.saveFile(
+      await storageProvider.writeFile(
         wsPath,
         file,
         getStorageProviderOpts()(store.state, dispatch),
@@ -304,7 +304,7 @@ export const saveFile = (wsPath: string, file: File) => {
   );
 };
 
-export const saveDoc = (wsPath: string, doc: Node) => {
+export const writeNote = (wsPath: string, doc: Node) => {
   return workspaceSliceKey.asyncOp(
     async (_, dispatch, store): Promise<boolean> => {
       const { specRegistry } = extensionRegistrySliceKey.getSliceStateAsserted(
@@ -318,7 +318,7 @@ export const saveDoc = (wsPath: string, doc: Node) => {
         fileName,
       );
 
-      await saveFile(
+      await writeFile(
         wsPath,
         new File([serialValue], fileName, {
           type: 'text/plain',
