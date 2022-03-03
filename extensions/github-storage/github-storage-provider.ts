@@ -85,6 +85,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
     return this.idbProvider.fileExists(wsPath, opts);
   }
 
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {}
+
   async fileStat(wsPath: string, opts: StorageOpts) {
     return this.idbProvider.fileStat(wsPath, opts);
   }

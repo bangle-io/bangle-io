@@ -65,6 +65,15 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     };
   }
 
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    debugger;
+    await this.saveFile(wsPath, file, opts);
+  }
+
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     await this.getFs(opts).unlink(toFSPath(wsPath));
   }

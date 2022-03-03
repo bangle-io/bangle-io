@@ -42,6 +42,13 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
       mtime: stat.mtimeMs,
     };
   }
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    await this.saveFile(wsPath, file, opts);
+  }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     await this.idb.unlink(toFSPath(wsPath));

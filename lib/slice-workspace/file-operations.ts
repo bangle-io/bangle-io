@@ -30,7 +30,7 @@ import {
   updateWorkspaceMetadata,
 } from './workspaces-operations';
 
-export function getStorageProvider() {
+function getStorageProvider() {
   return workspaceSliceKey.queryOp((state) => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
 
@@ -41,7 +41,7 @@ export function getStorageProvider() {
 
     const wsInfo = getWorkspaceInfo(wsName)(state);
 
-    let provider = storageProviderFromExtensionRegistry(
+    const provider = storageProviderFromExtensionRegistry(
       wsInfo.type,
       extensionRegistrySliceKey.getSliceStateAsserted(state).extensionRegistry,
     );
@@ -57,7 +57,7 @@ export function getStorageProvider() {
   });
 }
 
-export function getNoteFormatProvider() {
+function getNoteFormatProvider() {
   return workspaceSliceKey.queryOp((state) => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
 
@@ -244,21 +244,37 @@ export const createNote = (
 
     const storageProvider = getStorageProvider()(store.state);
 
-    if (doc == null) {
-      doc = defaultDoc(
-        wsPath,
-        extensionRegistrySliceKey.getSliceStateAsserted(store.state)
-          .extensionRegistry,
-      );
-    }
-
     const fileExists = await storageProvider.fileExists(
       wsPath,
       getStorageProviderOpts()(store.state, dispatch),
     );
 
     if (!fileExists) {
-      await saveDoc(wsPath, doc)(store.state, dispatch, store);
+      if (doc == null) {
+        doc = defaultDoc(
+          wsPath,
+          extensionRegistrySliceKey.getSliceStateAsserted(store.state)
+            .extensionRegistry,
+        );
+      }
+
+      const { specRegistry } = extensionRegistrySliceKey.getSliceStateAsserted(
+        store.state,
+      ).extensionRegistry;
+      const { fileName } = resolvePath(wsPath);
+      const serialValue = getNoteFormatProvider()(store.state).serializeNote(
+        doc,
+        specRegistry,
+        fileName,
+      );
+
+      await storageProvider.createFile(
+        wsPath,
+        new File([serialValue], fileName, {
+          type: 'text/plain',
+        }),
+        getStorageProviderOpts()(store.state, dispatch),
+      );
     }
 
     if (open) {

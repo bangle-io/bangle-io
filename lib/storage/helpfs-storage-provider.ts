@@ -66,6 +66,14 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     return this.idbProvider.fileStat(wsPath, opts);
   }
 
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    await this.saveFile(wsPath, file, opts);
+  }
+
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     if (wsPath === HELP_FS_INDEX_WS_PATH) {
       return;
