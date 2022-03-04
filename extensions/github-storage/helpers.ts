@@ -1,3 +1,4 @@
+import { readFileAsText } from '@bangle.io/baby-fs';
 import {
   getWorkspaceInfo,
   getWorkspaceMetadata,
@@ -22,3 +23,26 @@ export const readGithubTokenFromStore = () => {
     return undefined;
   });
 };
+
+export async function getVanilaFileSha(file: File) {
+  const buffer = await crypto.subtle.digest('SHA-1', await file.arrayBuffer());
+  const sha = Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+  return sha;
+}
+
+export async function getGitFileSha(file: File) {
+  const textContent = await readFileAsText(file);
+
+  var uint8array = new TextEncoder().encode(
+    `blob ${textContent.length}\0${textContent}`,
+  );
+
+  const buffer = await crypto.subtle.digest('SHA-1', uint8array.buffer);
+
+  const sha = Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+  return sha;
+}

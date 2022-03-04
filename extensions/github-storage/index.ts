@@ -14,11 +14,11 @@ import { Router } from './components/Router';
 import {
   ErrorCodesType,
   GITHUB_API_ERROR,
+  GITHUB_NOT_SUPPORTED,
   INVALID_GITHUB_CONFIGURATION,
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
-  NOT_SUPPORTED,
 } from './errors';
 import { GithubStorageProvider } from './github-storage-provider';
 
@@ -66,7 +66,8 @@ const extension = Extension.create({
           }
           showNotification({
             severity: 'error',
-            title: error.message,
+            title: 'Github API error',
+            content: error.message,
             uid: `github-storage-error-${errorCode}`,
           })(store.state, store.dispatch);
           break;
@@ -74,7 +75,8 @@ const extension = Extension.create({
         case INVALID_GITHUB_FILE_FORMAT: {
           showNotification({
             severity: 'error',
-            title: error.message,
+            title: 'Invalid file format',
+            content: error.message,
             uid: `github-file-format`,
           })(store.state, store.dispatch);
           break;
@@ -83,6 +85,7 @@ const extension = Extension.create({
           showNotification({
             severity: 'error',
             title: 'Github token is invalid',
+            content: error.message,
             uid: 'Invalid github token',
           })(store.state, store.dispatch);
           break;
@@ -92,6 +95,7 @@ const extension = Extension.create({
           showNotification({
             severity: 'error',
             title: 'Invalid github workspace configuration',
+            content: error.message,
             uid: INVALID_GITHUB_CONFIGURATION,
           })(store.state, store.dispatch);
           break;
@@ -100,17 +104,18 @@ const extension = Extension.create({
           showNotification({
             severity: 'error',
             title: 'Received invalid response from Github',
+            content: error.message,
             uid: INVALID_GITHUB_RESPONSE,
           })(store.state, store.dispatch);
           break;
         }
 
-        case NOT_SUPPORTED: {
+        case GITHUB_NOT_SUPPORTED: {
           showNotification({
             severity: 'error',
             title: 'Not supported',
             content: error.message,
-            uid: NOT_SUPPORTED,
+            uid: GITHUB_NOT_SUPPORTED,
           })(store.state, store.dispatch);
           break;
         }
@@ -153,35 +158,3 @@ const extension = Extension.create({
 });
 
 export default extension;
-
-// let r = await fetch('https://api.github.com/graphql', {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//     'Authorization': `bearer ${token}`,
-//   },
-//   body: JSON.stringify({
-//     query: `
-//     query {
-//       repository(owner: "octocat", name: "Hello-World") {
-//         issues(last: 20, states: CLOSED) {
-//           edges {
-//             node {
-//               title
-//               url
-//               labels(first: 5) {
-//                 edges {
-//                   node {
-//                     name
-//                   }
-//                 }
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//     `,
-//     variables: {},
-//   }),
-// });

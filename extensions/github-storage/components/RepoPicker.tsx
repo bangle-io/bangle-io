@@ -51,7 +51,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
     (async () => {
       if (githubToken) {
         try {
-          let repoIterator = getRepos({ githubToken });
+          let repoIterator = getRepos({ token: githubToken });
           for await (const repos of repoIterator) {
             updateRepoList(repos);
           }
