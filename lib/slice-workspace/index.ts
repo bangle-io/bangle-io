@@ -10,8 +10,8 @@ export {
   getNote,
   refreshWsPaths,
   renameNote,
-  saveDoc,
-  saveFile,
+  writeFile,
+  writeNote,
 } from './file-operations';
 export {
   getWsName,

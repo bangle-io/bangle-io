@@ -17,34 +17,26 @@ export interface FileStat {
 
 export interface StorageOpts {
   specRegistry: SpecRegistry;
-  formatSerializer: (doc: Node, specRegistry: SpecRegistry) => any;
-  formatParser: (value: any, specRegistry: SpecRegistry) => Node;
   readWorkspaceMetadata: () => { [key: string]: any };
   updateWorkspaceMetadata: (metadata: { [key: string]: any }) => void;
 }
 
 export interface BaseStorageProvider {
-  readonly name: string;
+  readonly description: string;
   readonly displayName: string;
   // hide creating a workspace of this type
   readonly hidden?: boolean;
-  readonly description: string;
+  readonly name: string;
 
-  // return any metadata associated with this newly created workspace
-  newWorkspaceMetadata(
-    wsName: string,
-    createOpts: any,
-  ): Promise<{ [key: string]: any }> | Promise<void> | void;
+  createFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
+
+  deleteFile(wsPath: WsPath, opts: StorageOpts): Promise<void>;
 
   fileExists(wsPath: WsPath, opts: StorageOpts): Promise<boolean>;
 
   fileStat(wsPath: WsPath, opts: StorageOpts): Promise<FileStat>;
 
-  deleteFile(wsPath: WsPath, opts: StorageOpts): Promise<void>;
-
-  getDoc(wsPath: WsPath, opts: StorageOpts): Promise<Node>;
-
-  getFile(wsPath: WsPath, opts: StorageOpts): Promise<File>;
+  readFile(wsPath: WsPath, opts: StorageOpts): Promise<File>;
 
   listAllFiles(
     abortSignal: AbortSignal,
@@ -52,15 +44,19 @@ export interface BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<WsPath[]>;
 
-  saveDoc(wsPath: WsPath, doc: Node, opts: StorageOpts): Promise<void>;
-
-  saveFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
+  // return any metadata associated with this newly created workspace
+  newWorkspaceMetadata(
+    wsName: string,
+    createOpts: any,
+  ): Promise<{ [key: string]: any }> | Promise<void> | void;
 
   renameFile(
     wsPath: WsPath,
     newWsPath: WsPath,
     opts: StorageOpts,
   ): Promise<void>;
+
+  writeFile(wsPath: WsPath, file: File, opts: StorageOpts): Promise<void>;
 
   searchFile?: (
     abortSignal: AbortSignal,

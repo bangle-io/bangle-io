@@ -14,19 +14,27 @@ function readFileFromUnpkg(wsPath: string) {
   function fetchHelpFiles(path: string, json = false) {
     return fetch(
       `https://unpkg.com/bangle-io-help@${HELP_DOCS_VERSION}/docs/` + path,
-    ).then((r) => {
-      if (!r.ok) {
-        if (r.status === 404) {
-          return null;
-        }
-        return Promise.reject(
-          new BaseError({
+    )
+      .then((r) => {
+        if (!r.ok) {
+          if (r.status === 404) {
+            return null;
+          }
+
+          throw new BaseError({
             message: `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
-          }),
-        );
-      }
-      return r;
-    });
+          });
+        }
+        return r;
+      })
+      .catch((z) => {
+        if (z.message === 'Failed to fetch') {
+          throw new BaseError({
+            message: `Encountered an error making request to unpkg.com`,
+          });
+        }
+        throw z;
+      });
   }
 
   const splitted = filePath.split('/');
@@ -66,6 +74,14 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     return this.idbProvider.fileStat(wsPath, opts);
   }
 
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    await this.writeFile(wsPath, file, opts);
+  }
+
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     if (wsPath === HELP_FS_INDEX_WS_PATH) {
       return;
@@ -74,24 +90,14 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     await this.idbProvider.deleteFile(wsPath, opts);
   }
 
-  async getDoc(wsPath: string, opts: StorageOpts) {
-    const upstreamFile = await readFileFromUnpkg(wsPath);
-
-    if (upstreamFile) {
-      return this.idbProvider.fileToDoc(upstreamFile, opts);
-    }
-
-    return this.idbProvider.getDoc(wsPath, opts);
-  }
-
-  async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File> {
     const res = await readFileFromUnpkg(wsPath);
 
     if (res) {
       return res;
     }
 
-    return this.idbProvider.getFile(wsPath, opts);
+    return this.idbProvider.readFile(wsPath, opts);
   }
 
   async listAllFiles(
@@ -107,16 +113,15 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     ];
   }
 
-  async saveDoc(wsPath: string, doc: Node, opts: StorageOpts): Promise<void> {
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
     if (wsPath === HELP_FS_INDEX_WS_PATH) {
       return;
     }
-
-    await this.idbProvider.saveDoc(wsPath, doc, opts);
-  }
-
-  async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
-    return this.idbProvider.saveFile(wsPath, file, opts);
+    await this.idbProvider.writeFile(wsPath, file, opts);
   }
 
   async renameFile(

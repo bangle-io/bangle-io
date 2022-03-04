@@ -51,6 +51,12 @@ export class ExtensionRegistry {
       undefined
     >;
   };
+  private noteFormatProviders: {
+    [noteFormatProviderName: string]: Exclude<
+      ApplicationConfig['noteFormatProvider'],
+      undefined
+    >;
+  };
   private onStorageErrorHandlers: {
     [storageProviderName: string]: Exclude<
       ApplicationConfig['onStorageError'],
@@ -134,6 +140,14 @@ export class ExtensionRegistry {
         r,
       ]),
     );
+
+    this.noteFormatProviders = Object.fromEntries(
+      filterFlatMap(applicationConfig, 'noteFormatProvider').map((r) => [
+        r.name,
+        r,
+      ]),
+    );
+
     this.onStorageErrorHandlers = Object.fromEntries(
       applicationConfig
         .filter((r) => Boolean(r.storageProvider) && Boolean(r.onStorageError))
@@ -196,6 +210,10 @@ export class ExtensionRegistry {
 
   getStorageProvider(name: string) {
     return this.storageProviders[name];
+  }
+
+  getNoteFormatProvider(name: string) {
+    return this.noteFormatProviders[name];
   }
 
   getOnStorageErrorHandlers(name: string) {

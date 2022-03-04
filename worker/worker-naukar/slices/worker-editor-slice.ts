@@ -12,8 +12,8 @@ import {
 } from '@bangle.io/slice-page';
 import {
   getNote,
-  saveDoc,
   workspaceSliceKey,
+  writeNote,
 } from '@bangle.io/slice-workspace';
 import { asssertNotUndefined } from '@bangle.io/utils';
 
@@ -130,6 +130,7 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
           const doc = await getNote(wsPath)(
             workspaceSliceKey.getStore(store).state,
             workspaceSliceKey.getDispatch(store.dispatch),
+            workspaceSliceKey.getStore(store),
           );
           if (!doc) {
             throw new Error(`Note ${wsPath} not found`);
@@ -147,7 +148,7 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
       const setItem = async (wsPath: string, doc: Node): Promise<void> => {
         // TODO the try catch is not ideal, the debouce disk should handl error
         try {
-          await saveDoc(wsPath, doc)(
+          await writeNote(wsPath, doc)(
             workspaceSliceKey.getState(store),
             workspaceSliceKey.getDispatch(store.dispatch),
             workspaceSliceKey.getStore(store),

@@ -78,12 +78,18 @@ export class GithubStorageProvider implements BaseStorageProvider {
       return true;
     }
 
-    if (await this.getFile(wsPath, opts)) {
+    if (await this.readFile(wsPath, opts)) {
       return true;
     }
 
     return this.idbProvider.fileExists(wsPath, opts);
   }
+
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {}
 
   async fileStat(wsPath: string, opts: StorageOpts) {
     return this.idbProvider.fileStat(wsPath, opts);
@@ -102,17 +108,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     // await this.idbProvider.deleteFile(wsPath, opts);
   }
 
-  async getDoc(wsPath: string, opts: StorageOpts) {
-    const file = await this.getFile(wsPath, opts);
-
-    if (file) {
-      return this.idbProvider.fileToDoc(file, opts);
-    }
-
-    throw new Error('File not found');
-  }
-
-  async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File> {
     const r = opts.readWorkspaceMetadata() as WsMetadata;
     const { wsName, fileName } = resolvePath(wsPath);
     if (!this.fileBlobs) {
@@ -204,18 +200,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
       });
   }
 
-  async saveDoc(wsPath: string, doc: Node, opts: StorageOpts): Promise<void> {
-    const { fileName } = resolvePath(wsPath);
-
-    // const metadata = opts.readWorkspaceMetadata() as WsMetadata;
-
-    // const file = await this.idbProvider.docToFile(doc, fileName, opts);
-
-    // const text = await file.text();
-  }
-
-  async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
-    return this.idbProvider.saveFile(wsPath, file, opts);
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    return this.idbProvider.writeFile(wsPath, file, opts);
   }
 
   async renameFile(

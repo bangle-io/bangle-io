@@ -16,7 +16,7 @@ import {
   getNote,
   refreshWsPaths,
   renameNote,
-  saveDoc,
+  writeNote,
 } from '../file-operations';
 import { updateOpenedWsPaths } from '../operations';
 import { createWorkspace } from '../workspaces-operations';
@@ -65,6 +65,7 @@ describe('renameNote', () => {
     const newDoc = await getNote('my-ws:new-test-note.md')(
       store.state,
       store.dispatch,
+      store,
     );
 
     expect(newDoc?.toJSON()).toEqual(doc.toJSON());
@@ -125,6 +126,7 @@ describe('renameNote', () => {
     const newDoc = await getNote('my-ws:new-test-note.md')(
       store.state,
       store.dispatch,
+      store,
     );
 
     expect(newDoc?.toJSON()).toEqual(doc.toJSON());
@@ -144,6 +146,7 @@ describe('renameNote', () => {
     const newDoc = await getNote('my-ws:test-note.md')(
       store.state,
       store.dispatch,
+      store,
     );
     expect(newDoc?.toJSON()).toEqual(doc.toJSON());
   });
@@ -191,7 +194,7 @@ describe('getNote', () => {
 
     expect(
       (
-        await getNote('my-ws:test-note.md')(store.state, store.dispatch)
+        await getNote('my-ws:test-note.md')(store.state, store.dispatch, store)
       )?.toJSON(),
     ).toEqual(doc.toJSON());
   });
@@ -203,7 +206,7 @@ describe('getNote', () => {
 
     let priorLen = getActionNames().length;
     expect(
-      await getNote('my-ws:test-note.md')(store.state, store.dispatch),
+      await getNote('my-ws:test-note.md')(store.state, store.dispatch, store),
     ).toEqual(undefined);
 
     expect(getActionNames().length).toBe(priorLen);
@@ -235,7 +238,7 @@ describe('createNote', () => {
     await sleep(0);
 
     expect(
-      (await getNote(wsPath)(store.state, store.dispatch))?.toString(),
+      (await getNote(wsPath)(store.state, store.dispatch, store))?.toString(),
     ).toMatchInlineSnapshot(`"doc(paragraph(\\"hello\\"))"`);
 
     const { noteWsPaths } = workspaceSliceKey.getSliceStateAsserted(
@@ -257,12 +260,12 @@ describe('createNote', () => {
     await createNote(wsPath, { doc })(store.state, store.dispatch, store);
     const docModified = createPMNode([], `hello modified`);
 
-    await saveDoc(wsPath, docModified)(store.state, store.dispatch, store);
+    await writeNote(wsPath, docModified)(store.state, store.dispatch, store);
 
     await createNote(wsPath, { doc })(store.state, store.dispatch, store);
 
     expect(
-      (await getNote(wsPath)(store.state, store.dispatch))?.toJSON(),
+      (await getNote(wsPath)(store.state, store.dispatch, store))?.toJSON(),
     ).toEqual(docModified.toJSON());
   });
 
@@ -278,7 +281,9 @@ describe('createNote', () => {
       store,
     );
 
-    expect(await getNote(wsPath)(store.state, store.dispatch)).toBe(undefined);
+    expect(await getNote(wsPath)(store.state, store.dispatch, store)).toBe(
+      undefined,
+    );
   });
 
   test('when open is false', async () => {
@@ -333,7 +338,7 @@ describe('deleteNote', () => {
     await sleep(0);
 
     await expect(
-      getNote(wsPath)(store.state, store.dispatch),
+      getNote(wsPath)(store.state, store.dispatch, store),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"File \\"my-ws/test-note.md\\" not found"`,
     );
@@ -365,7 +370,7 @@ describe('deleteNote', () => {
     await sleep(0);
 
     await expect(
-      getNote(wsPath)(store.state, store.dispatch),
+      getNote(wsPath)(store.state, store.dispatch, store),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"File \\"my-ws/test-note.md\\" not found"`,
     );
@@ -390,13 +395,13 @@ describe('deleteNote', () => {
     await deleteNote([wsPath, wsPath2])(store.state, store.dispatch, store);
 
     await expect(
-      getNote(wsPath)(store.state, store.dispatch),
+      getNote(wsPath)(store.state, store.dispatch, store),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"File \\"my-ws/test-note.md\\" not found"`,
     );
 
     await expect(
-      getNote(wsPath2)(store.state, store.dispatch),
+      getNote(wsPath2)(store.state, store.dispatch, store),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `"File \\"my-ws/test-note-2.md\\" not found"`,
     );

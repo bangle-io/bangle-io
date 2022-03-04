@@ -1,4 +1,5 @@
-import type { PluginKey } from '@bangle.dev/pm';
+import type { SpecRegistry } from '@bangle.dev/core';
+import type { Node, PluginKey } from '@bangle.dev/pm';
 
 export type SerialOperationNameType = `operation::${string}`;
 export interface SerialOperationType {
@@ -39,4 +40,26 @@ export interface EditorWatchPluginState {
   operation: SerialOperationNameType;
   // The pluginKey of the plugin's state to watch
   pluginKey: PluginKey;
+}
+
+export interface NoteFormatProvider {
+  name: string;
+
+  extensions: string[];
+
+  description: string;
+
+  serializeNote(
+    doc: Node,
+    specRegistry: SpecRegistry,
+    fileName: string,
+  ): string;
+
+  // Return PMNode if parsing is successful, otherwise return undefined
+  parseNote(
+    value: string,
+    specRegistry: SpecRegistry,
+    // only applicable if dealing with prosemirror specific markdown
+    markdownPlugins: any[],
+  ): Node | undefined;
 }

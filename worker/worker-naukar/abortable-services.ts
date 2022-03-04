@@ -9,8 +9,8 @@ import { searchPmNode } from '@bangle.io/search-pm-node';
 import {
   getFile,
   getNote,
-  saveFile,
   workspaceSliceKey,
+  writeFile,
 } from '@bangle.io/slice-workspace';
 import { assertSignal, asssertNotUndefined } from '@bangle.io/utils';
 import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
@@ -47,7 +47,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
       const store = storeRef.current;
       asssertNotUndefined(store, 'store cannot be undefined');
 
-      return getNote(wsPath)(store.state, store.dispatch);
+      return getNote(wsPath)(store.state, store.dispatch, store);
     };
 
     const _getFile = async (wsPath: string) => {
@@ -63,7 +63,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
 
       asssertNotUndefined(store, 'store cannot be undefined');
 
-      await saveFile(wsPath, file)(store.state, store.dispatch, store);
+      await writeFile(wsPath, file)(store.state, store.dispatch, store);
     };
 
     return {

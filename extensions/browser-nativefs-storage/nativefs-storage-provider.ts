@@ -1,15 +1,12 @@
-import type { Node } from '@bangle.dev/pm';
-
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
   NativeBrowserFileSystem,
-  readFileAsText,
 } from '@bangle.io/baby-fs';
 import { WorkspaceTypeNative } from '@bangle.io/constants';
 import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { assertSignal } from '@bangle.io/utils';
-import { fromFsPath, resolvePath, toFSPath } from '@bangle.io/ws-path';
+import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
 
 const allowedFile = (name: string) => {
   return name.endsWith('.md') || name.endsWith('.png');
@@ -44,23 +41,6 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     };
   }
 
-  async fileToDoc(file: File, opts: StorageOpts): Promise<Node> {
-    const textContent = await readFileAsText(file);
-    const doc: Node = await opts.formatParser(textContent, opts.specRegistry);
-    return doc;
-  }
-
-  async docToFile(
-    doc: Node,
-    fileName: string,
-    opts: StorageOpts,
-  ): Promise<File> {
-    const data = await opts.formatSerializer(doc, opts.specRegistry);
-    return new File([data], fileName, {
-      type: 'text/plain',
-    });
-  }
-
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
     const path = toFSPath(wsPath);
     try {
@@ -85,18 +65,19 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     };
   }
 
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    await this.writeFile(wsPath, file, opts);
+  }
+
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     await this.getFs(opts).unlink(toFSPath(wsPath));
   }
 
-  async getDoc(wsPath: string, opts: StorageOpts): Promise<Node> {
-    const file = await this.getFile(wsPath, opts);
-    const doc = await this.fileToDoc(file, opts);
-
-    return doc;
-  }
-
-  async getFile(wsPath: string, opts: StorageOpts): Promise<File> {
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File> {
     return this.getFs(opts).readFile(toFSPath(wsPath));
   }
 
@@ -123,15 +104,11 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     return result;
   }
 
-  async saveDoc(wsPath: string, doc: Node, opts: StorageOpts): Promise<void> {
-    const { fileName } = resolvePath(wsPath);
-
-    const file = await this.docToFile(doc, fileName, opts);
-
-    await this.saveFile(wsPath, file, opts);
-  }
-
-  async saveFile(wsPath: string, file: File, opts: StorageOpts): Promise<void> {
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
     const path = toFSPath(wsPath);
     await this.getFs(opts).writeFile(path, file);
   }

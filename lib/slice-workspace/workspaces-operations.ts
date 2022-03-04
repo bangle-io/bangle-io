@@ -27,7 +27,6 @@ export function listWorkspaces() {
   return workspaceSliceKey.asyncOp(
     async (_, __, store): Promise<WorkspaceInfo[]> => {
       const wsInfosInDb = await readWorkspacesInfoReg();
-
       store.dispatch({
         name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
         value: {

@@ -72,7 +72,7 @@ function EditorInner({
   useEffect(() => {
     let destroyed = false;
 
-    getNote(wsPath)(bangleStore.state, bangleStore.dispatch).then(
+    getNote(wsPath)(bangleStore.state, bangleStore.dispatch, bangleStore).then(
       (doc) => {
         if (!destroyed) {
           setInitialDoc(doc);
