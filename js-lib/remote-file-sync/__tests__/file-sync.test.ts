@@ -12,7 +12,7 @@ const createFileEntry = (
   fileEntry: Partial<SyncFileEntry> = {},
 ): SyncFileEntry => ({
   file: createFile(),
-  wsPath: 'test:one.md',
+  uid: 'test:one.md',
   deleted: undefined,
   sha: '3edsds',
   ...fileEntry,

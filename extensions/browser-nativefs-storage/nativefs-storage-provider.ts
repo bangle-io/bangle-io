@@ -77,7 +77,10 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     await this.getFs(opts).unlink(toFSPath(wsPath));
   }
 
-  async readFile(wsPath: string, opts: StorageOpts): Promise<File> {
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
+    if (!(await this.fileExists(wsPath, opts))) {
+      return undefined;
+    }
     return this.getFs(opts).readFile(toFSPath(wsPath));
   }
 

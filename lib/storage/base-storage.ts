@@ -36,7 +36,7 @@ export interface BaseStorageProvider {
 
   fileStat(wsPath: WsPath, opts: StorageOpts): Promise<FileStat>;
 
-  readFile(wsPath: WsPath, opts: StorageOpts): Promise<File>;
+  readFile(wsPath: WsPath, opts: StorageOpts): Promise<File | undefined>;
 
   listAllFiles(
     abortSignal: AbortSignal,
