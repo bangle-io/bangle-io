@@ -1,7 +1,7 @@
 import { match } from 'ts-pattern';
 
 export interface SyncFileEntry {
-  readonly wsPath: string;
+  readonly uid: string;
   readonly sha: string;
   readonly file: File;
   readonly deleted: number | undefined;

@@ -19,27 +19,22 @@ export class LocalFileEntryManager {
     },
   ) {}
 
-  private async getFileEntry(
-    wsPath: string,
-  ): Promise<LocalFileEntry | undefined> {
-    const obj = await this.persistenceProvider.get(wsPath);
+  private async getFileEntry(uid: string): Promise<LocalFileEntry | undefined> {
+    const obj = await this.persistenceProvider.get(uid);
 
     if (obj) {
-      return LocalFileEntry.fromIndexedDbObj(obj);
+      return LocalFileEntry.fromPlainObj(obj);
     }
     return undefined;
   }
 
   private async updateFileEntry(fileEntry: LocalFileEntry): Promise<void> {
-    return this.persistenceProvider.set(
-      fileEntry.wsPath,
-      fileEntry.toIndexedDbObj(),
-    );
+    return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
   }
 
   private async getAllEntries(): Promise<LocalFileEntry[]> {
     return this.persistenceProvider.entries().then((entries) => {
-      return entries.map((r) => LocalFileEntry.fromIndexedDbObj(r[1]));
+      return entries.map((r) => LocalFileEntry.fromPlainObj(r[1]));
     });
   }
 
@@ -50,7 +45,7 @@ export class LocalFileEntryManager {
     );
   }
 
-  // returns all local and remote files that have not been deleted
+  // returns all local and remote file uids that have not been deleted
   async listFiles(listRemoteFiles: () => Promise<string[]>): Promise<string[]> {
     let localEntries = await this.getAllEntries();
     const localFiles = localEntries
@@ -58,12 +53,12 @@ export class LocalFileEntryManager {
         // only include files that are modified and not deleted
         return fileEntry.isModified === true && fileEntry.deleted == null;
       })
-      .map((r) => r.wsPath);
+      .map((r) => r.uid);
 
     const locallyDeletedFiles = new Set(
       localEntries
         .filter((r) => typeof r.deleted === 'number')
-        .map((r) => r.wsPath),
+        .map((r) => r.uid),
     );
 
     const remoteFiles = (await listRemoteFiles()).filter(
@@ -75,12 +70,10 @@ export class LocalFileEntryManager {
   }
 
   async deleteFile(
-    wsPath: string,
-    getRemoteFileEntry?: (
-      wsPath: string,
-    ) => Promise<RemoteFileEntry | undefined>,
+    uid: string,
+    getRemoteFileEntry?: (uid: string) => Promise<RemoteFileEntry | undefined>,
   ) {
-    const fileEntry = await this.getFileEntry(wsPath);
+    const fileEntry = await this.getFileEntry(uid);
 
     if (fileEntry) {
       if (fileEntry.deleted) {
@@ -91,7 +84,7 @@ export class LocalFileEntryManager {
       }
       await this.updateFileEntry(fileEntry.markDeleted());
     } else {
-      const remoteFileEntry = await getRemoteFileEntry?.(wsPath);
+      const remoteFileEntry = await getRemoteFileEntry?.(uid);
       if (remoteFileEntry) {
         if (remoteFileEntry.deleted) {
           throw new BaseError({
@@ -107,21 +100,18 @@ export class LocalFileEntryManager {
   }
 
   async readFile(
-    wsPath: string,
-    getRemoteFileEntry: (
-      wsPath: string,
-    ) => Promise<RemoteFileEntry | undefined>,
+    uid: string,
+    getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
   ) {
-    const fileEntry = await this.getFileEntry(wsPath);
+    const fileEntry = await this.getFileEntry(uid);
 
     if (fileEntry) {
       if (fileEntry.deleted) {
         return undefined;
       }
 
-      const remoteFileEntry = await getRemoteFileEntry?.(wsPath);
-
       if (fileEntry.isModified === false) {
+        const remoteFileEntry = await getRemoteFileEntry?.(uid);
         // if file is not modified and remote file has been deleted, mark the local file deleted
         if (remoteFileEntry && remoteFileEntry.deleted) {
           const newEntry = remoteFileEntry.fork();
@@ -130,11 +120,7 @@ export class LocalFileEntryManager {
         }
 
         // if file is not modified and remote file has changed, update the local file
-        if (
-          remoteFileEntry &&
-          remoteFileEntry.sha !== fileEntry.sha &&
-          !remoteFileEntry.deleted
-        ) {
+        if (remoteFileEntry && remoteFileEntry.sha !== fileEntry.sha) {
           const newEntry = remoteFileEntry.fork();
           await this.updateFileEntry(newEntry);
           return newEntry.file;
@@ -143,7 +129,7 @@ export class LocalFileEntryManager {
 
       return fileEntry.file;
     } else {
-      const remoteFileEntry = await getRemoteFileEntry?.(wsPath);
+      const remoteFileEntry = await getRemoteFileEntry?.(uid);
 
       if (remoteFileEntry) {
         // update our local entry
@@ -155,13 +141,11 @@ export class LocalFileEntryManager {
   }
 
   async createFile(
-    wsPath: string,
+    uid: string,
     file: File,
-    getRemoteFileEntry: (
-      wsPath: string,
-    ) => Promise<RemoteFileEntry | undefined>,
+    getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
   ) {
-    const existingFile = await this.readFile(wsPath, getRemoteFileEntry);
+    const existingFile = await this.readFile(uid, getRemoteFileEntry);
 
     if (existingFile) {
       throw new BaseError({
@@ -172,14 +156,14 @@ export class LocalFileEntryManager {
 
     await this.updateFileEntry(
       await LocalFileEntry.newFile({
-        wsPath,
+        uid,
         file,
       }),
     );
   }
 
-  async writeFile(wsPath: string, file: File) {
-    const fileEntry = await this.getFileEntry(wsPath);
+  async writeFile(uid: string, file: File) {
+    const fileEntry = await this.getFileEntry(uid);
 
     if (this.isRecentlyDeleted(fileEntry)) {
       throw new BaseError({
@@ -205,40 +189,40 @@ interface SourceType {
 }
 
 class BaseFileEntry {
-  public readonly wsPath: string;
+  public readonly uid: string;
   public readonly sha: string;
   public readonly file: File;
   public readonly deleted: number | undefined;
 
   constructor({
-    wsPath,
+    uid,
     sha,
     file,
     deleted,
   }: {
-    wsPath: BaseFileEntry['wsPath'];
+    uid: BaseFileEntry['uid'];
     sha: BaseFileEntry['sha'];
     file: BaseFileEntry['file'];
     deleted: BaseFileEntry['deleted'];
   }) {
-    this.wsPath = wsPath;
+    this.uid = uid;
     this.sha = sha;
     this.file = file;
     this.deleted = deleted;
   }
 
-  toIndexedDbObj(): {
+  toPlainObj(): {
     [k in keyof ConstructorParameters<typeof BaseFileEntry>[0]]: any;
   } {
     return {
-      wsPath: this.wsPath,
+      uid: this.uid,
       sha: this.sha,
       file: this.file,
       deleted: this.deleted,
     };
   }
 
-  static fromIndexedDbObj(obj: ConstructorParameters<typeof BaseFileEntry>[0]) {
+  static fromPlainObj(obj: ConstructorParameters<typeof BaseFileEntry>[0]) {
     return new BaseFileEntry(obj);
   }
 }
@@ -253,15 +237,14 @@ class LocalFileEntry extends BaseFileEntry {
     return new LocalFileEntry({
       ...obj,
       sha: await calculateGitFileSha(obj.file),
+      // a new locally created file cannot be created as deleted
       deleted: undefined,
       // a new file does not have source
       source: undefined,
     });
   }
 
-  static fromIndexedDbObj(
-    obj: ConstructorParameters<typeof LocalFileEntry>[0],
-  ) {
+  static fromPlainObj(obj: ConstructorParameters<typeof LocalFileEntry>[0]) {
     return new LocalFileEntry(obj);
   }
 
@@ -282,11 +265,11 @@ class LocalFileEntry extends BaseFileEntry {
     this.source = obj.source;
   }
 
-  toIndexedDbObj(): {
+  toPlainObj(): {
     [k in keyof ConstructorParameters<typeof LocalFileEntry>[0]]: any;
   } {
     return {
-      wsPath: this.wsPath,
+      uid: this.uid,
       sha: this.sha,
       file: this.file,
       deleted: this.deleted,
