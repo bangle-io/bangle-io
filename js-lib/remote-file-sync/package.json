@@ -1,0 +1,33 @@
+{
+  "name": "@bangle.io/remote-file-sync",
+  "version": "0.0.0",
+  "authors": [
+    {
+      "name": "Kushan Joshi",
+      "email": "0o3ko0@gmail.com",
+      "web": "http://github.com/kepta"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bangle-io/bangle-io.git",
+    "directory": "js-lib/remote-file-sync"
+  },
+  "bugs": {
+    "url": "https://github.com/bangle-io/bangle-io/issues"
+  },
+  "main": "index.ts",
+  "module": "index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@bangle.io/base-error": "workspace:*",
+    "base64-js": "^1.5.1",
+    "ts-pattern": "^3.3.5"
+  },
+  "devDependencies": {
+    "type-fest": "^2.8.0"
+  },
+  "license": "AGPL-3.0-or-later"
+}

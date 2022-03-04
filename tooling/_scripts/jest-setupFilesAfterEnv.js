@@ -1,4 +1,6 @@
 const { fakeIdb, clearFakeIdb } = require('@bangle.io/test-utils/fake-idb');
+const { webcrypto } = require('crypto');
+const { Blob } = require('buffer');
 
 const idbHelpers = require('@bangle.io/test-utils/indexedb-ws-helpers');
 
@@ -19,3 +21,7 @@ global.afterEach(async () => {
 global.fakeIdb = fakeIdb;
 
 global.fetch = async () => ({ ok: false, status: 404 });
+
+global.crypto = webcrypto;
+
+global.Blob = Blob;

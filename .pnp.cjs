@@ -195,6 +195,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/pm-plugins"
       },
       {
+        "name": "@bangle.io/remote-file-sync",
+        "reference": "workspace:js-lib/remote-file-sync"
+      },
+      {
         "name": "@bangle.io/search-pm-node",
         "reference": "workspace:js-lib/search-pm-node"
       },
@@ -355,6 +359,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/playwright-e2e", ["workspace:tooling/playwright-e2e"]],
       ["@bangle.io/pm-manual-paste", ["workspace:js-lib/pm-manual-paste"]],
       ["@bangle.io/pm-plugins", ["workspace:js-lib/pm-plugins"]],
+      ["@bangle.io/remote-file-sync", ["workspace:js-lib/remote-file-sync"]],
       ["@bangle.io/search-notes", ["workspace:extensions/search-notes"]],
       ["@bangle.io/search-pm-node", ["workspace:js-lib/search-pm-node"]],
       ["@bangle.io/serial-operation-context", ["virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context", "workspace:lib/serial-operation-context"]],
@@ -4775,6 +4780,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
@@ -4792,7 +4798,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["idb-keyval", "npm:5.1.5"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
-            ["ts-pattern", "npm:3.3.5"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
           ],
@@ -5206,6 +5211,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/remote-file-sync", [
+        ["workspace:js-lib/remote-file-sync", {
+          "packageLocation": "./js-lib/remote-file-sync/",
+          "packageDependencies": [
+            ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],
+            ["@bangle.io/base-error", "workspace:js-lib/base-error"],
+            ["base64-js", "npm:1.5.1"],
+            ["ts-pattern", "npm:3.3.5"],
+            ["type-fest", "npm:2.8.0"]
           ],
           "linkType": "SOFT",
         }]
