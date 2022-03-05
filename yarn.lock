@@ -2401,7 +2401,7 @@ __metadata:
   resolution: "@bangle.io/fzf-search@workspace:js-lib/fzf-search"
   dependencies:
     "@types/react": ^17.0.39
-    fzf: ^0.4.1
+    fzf: ^0.5.1
     react: ^17.0.2
     tslib: ^2.3.1
     typescript: ^4.5.5
@@ -9718,10 +9718,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fzf@npm:^0.4.1":
-  version: 0.4.1
-  resolution: "fzf@npm:0.4.1"
-  checksum: 4e0a8ecdf8d00f028cab0ab89f4488bece9371e0e82970332e958dfed099a04a2fb78f14df9d72e34380913ed91cb0775182cc7b41ba8a1dd645c1c42d925c31
+"fzf@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "fzf@npm:0.5.1"
+  checksum: 5c5f56ec9fdd83c7edba58425aa3fadd587aeb9d18b013b8a0f14c80f8eef6b068249786b2e3707be9306fe877f21107f9dce5b4aabb58ee7f488de32191e62a
   languageName: node
   linkType: hard
 
