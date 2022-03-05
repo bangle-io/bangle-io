@@ -12,8 +12,6 @@
 </ul>
 <p>
   <br
-    class="
-      ProseMirror-trailingBreak
-    "
+    class="ProseMirror-trailingBreak"
   />
 </p>

@@ -32,13 +32,13 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "@playwright/test": "^1.17.1",
-    "prettier": "^2.4.1",
+    "@playwright/test": "^1.19.2",
+    "prettier": "^2.5.1",
     "tslib": "^2.3.1",
     "typescript": "^4.5.5"
   },
   "devDependencies": {
-    "@types/prettier": "^2.0.0",
+    "@types/prettier": "^2.4.4",
     "http-server": "^0.12.3"
   },
   "license": "AGPL-3.0-or-later"
