@@ -37,9 +37,7 @@ describe('saveFile / readFile', () => {
   test('file not found', async () => {
     await expect(
       idbProvider.readFile('hello:one.md', opts),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"File \\"hello/one.md\\" not found"`,
-    );
+    ).resolves.toBeUndefined();
   });
 
   test('works', async () => {

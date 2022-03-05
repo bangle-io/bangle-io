@@ -1,22 +1,20 @@
-import type { Node } from '@bangle.dev/pm';
+import * as idb from 'idb-keyval';
 
-import { HELP_FS_INDEX_WS_PATH } from '@bangle.io/constants';
 import {
-  BaseStorageProvider,
-  IndexedDbStorageProvider,
-  StorageOpts,
-} from '@bangle.io/storage';
+  LocalFileEntryManager,
+  RemoteFileEntry,
+} from '@bangle.io/remote-file-sync';
+import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError, getLast } from '@bangle.io/utils';
-import { fromFsPath, resolvePath } from '@bangle.io/ws-path';
+import { fromFsPath, isValidFileWsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import {
-  GITHUB_API_ERROR,
+  GITHUB_STORAGE_NOT_ALLOWED,
   INVALID_GITHUB_FILE_FORMAT,
-  INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
-  NOT_SUPPORTED,
 } from './errors';
+import { getAllFiles, getFileBlob } from './github-api-helpers';
 
 interface WsMetadata {
   githubToken: string;
@@ -45,13 +43,68 @@ const allowedFile = (path: string) => {
 
 export class GithubStorageProvider implements BaseStorageProvider {
   name = GITHUB_STORAGE_PROVIDER_NAME;
-  displayName = 'Help documentation';
+  displayName = 'Github storage';
   description = '';
   hidden = true;
 
-  fileBlobs: Map<string, string> | undefined;
+  ghFileBlobsMap: Map<string, string> | undefined;
+  fileEntryManager = new LocalFileEntryManager({
+    get: (key: string) => {
+      return idb.get(`gh-store-1:${key}`);
+    },
+    set: (key, entry) => {
+      return idb.set(`gh-store-1:${key}`, entry);
+    },
+    entries: () => {
+      return idb.entries().then((entries) => {
+        return entries
+          .filter(([key]) => {
+            if (typeof key === 'string') {
+              return key.startsWith('gh-store-1:');
+            }
+            return false;
+          })
+          .map(([key, value]) => [key, value] as [string, any]);
+      });
+    },
+    delete: (key) => {
+      return idb.del(`gh-store-1:${key}`);
+    },
+  });
 
-  private idbProvider = new IndexedDbStorageProvider();
+  private makeGetRemoteFileEntryCb(wsPath: string, opts: StorageOpts) {
+    return async () => {
+      const { wsName, fileName } = resolvePath(wsPath);
+
+      if (!this.ghFileBlobsMap) {
+        await this.listAllFiles(new AbortController().signal, wsName, opts);
+      }
+
+      const path = this.ghFileBlobsMap?.get(wsPath);
+
+      if (!path) {
+        return undefined;
+      }
+      const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
+
+      const file = await getFileBlob({
+        fileBlobUrl: path,
+        fileName,
+        config: {
+          branch: wsMetadata.branch,
+          owner: wsMetadata.owner,
+          githubToken: wsMetadata.githubToken,
+          repoName: wsName,
+        },
+      });
+
+      return RemoteFileEntry.newFile({
+        uid: wsPath,
+        file,
+        deleted: undefined,
+      });
+    };
+  }
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {
     if (!createOpts.githubToken) {
@@ -68,64 +121,51 @@ export class GithubStorageProvider implements BaseStorageProvider {
     }
     return {
       githubToken: createOpts.githubToken,
-      owner: createOpts.owner || 'kepta',
-      branch: createOpts.branch || 'master',
+      owner: createOpts.owner,
+      branch: createOpts.branch,
     };
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
-    if (wsPath === HELP_FS_INDEX_WS_PATH) {
-      return true;
-    }
-
-    if (await this.readFile(wsPath, opts)) {
-      return true;
-    }
-
-    return this.idbProvider.fileExists(wsPath, opts);
+    return Boolean(await this.readFile(wsPath, opts));
   }
 
   async createFile(
     wsPath: string,
     file: File,
     opts: StorageOpts,
-  ): Promise<void> {}
+  ): Promise<void> {
+    await this.fileEntryManager.createFile(
+      wsPath,
+      file,
+      this.makeGetRemoteFileEntryCb(wsPath, opts),
+    );
+  }
 
   async fileStat(wsPath: string, opts: StorageOpts) {
-    return this.idbProvider.fileStat(wsPath, opts);
+    throw new BaseError({
+      message: 'fileStat is not supported',
+      code: GITHUB_STORAGE_NOT_ALLOWED,
+    });
+    return {} as any;
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    throw new BaseError({
-      message: 'Deleting of file is not supported',
-      code: NOT_SUPPORTED,
-    });
-
-    // if (wsPath === HELP_FS_INDEX_WS_PATH) {
-    //   return;
-    // }
-
-    // await this.idbProvider.deleteFile(wsPath, opts);
+    await this.fileEntryManager.deleteFile(
+      wsPath,
+      this.makeGetRemoteFileEntryCb(wsPath, opts),
+    );
   }
 
-  async readFile(wsPath: string, opts: StorageOpts): Promise<File> {
-    const r = opts.readWorkspaceMetadata() as WsMetadata;
-    const { wsName, fileName } = resolvePath(wsPath);
-    if (!this.fileBlobs) {
-      await this.listAllFiles(new AbortController().signal, wsName, opts);
-    }
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
+    const file = await this.fileEntryManager.readFile(
+      wsPath,
+      this.makeGetRemoteFileEntryCb(wsPath, opts),
+    );
 
-    const file = await fetch(this.fileBlobs?.get(wsPath) || '', {
-      method: 'GET',
-      headers: {
-        Accept: 'application/vnd.github.v3.raw+json',
-        Authorization: `token ${r.githubToken}`,
-      },
-    })
-      .then((r) => r.blob())
-      .then((r) => {
-        return new File([r], fileName);
-      });
+    if (!file) {
+      return undefined;
+    }
 
     return file;
   }
@@ -135,69 +175,52 @@ export class GithubStorageProvider implements BaseStorageProvider {
     wsName: string,
     opts: StorageOpts,
   ): Promise<string[]> {
-    const r = opts.readWorkspaceMetadata() as WsMetadata;
-
-    return fetch(
-      `https://api.github.com/repos/${r.owner}/${wsName}/git/trees/${r.branch}?recursive=1`,
-      {
-        method: 'GET',
-        signal: abortSignal,
-        headers: {
-          Authorization: `token ${r.githubToken}`,
+    const getRemoteFiles = async () => {
+      const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
+      const data = await getAllFiles({
+        abortSignal,
+        config: {
+          branch: wsMetadata.branch,
+          owner: wsMetadata.owner,
+          githubToken: wsMetadata.githubToken,
+          repoName: wsName,
         },
-      },
-    )
-      .then((res) => {
-        if (!res.ok) {
-          return res.json().then((r) => {
-            throw new BaseError({ message: r.message, code: GITHUB_API_ERROR });
-          });
-        }
-        return res.json();
-      })
-      .then(async (res) => {
-        if (res.truncated) {
-          throw new BaseError({
-            message: 'Github response is truncated',
-            code: INVALID_GITHUB_RESPONSE,
-          });
-        }
-        if (res.tree) {
-          this.fileBlobs?.clear();
-          this.fileBlobs = new Map();
-
-          return res.tree
-            .map((e: any): string | undefined => {
-              const path = e.path;
-              if (!allowedFile(path)) {
-                return undefined;
-              }
-
-              const wsPath = fromFsPath(wsName + '/' + e.path);
-              if (!wsPath) {
-                throw new BaseError({
-                  message: `Your repository contains a file name "${e.path}" which is not supported`,
-                  code: INVALID_GITHUB_FILE_FORMAT,
-                });
-              }
-              this.fileBlobs?.set(wsPath, e.url);
-              return wsPath;
-            })
-            .filter((wsPath: string | undefined) => Boolean(wsPath));
-        }
-
-        throw new BaseError({
-          message: res.message,
-          code: INVALID_GITHUB_RESPONSE,
-        });
-      })
-
-      .catch((e) => {
-        if (e.name === 'AbortError') {
-          return [];
-        }
-        throw e;
+        treeSha: wsMetadata.branch,
       });
+
+      this.ghFileBlobsMap?.clear();
+      this.ghFileBlobsMap = new Map();
+
+      return data
+        .map((item): string | undefined => {
+          const path = item.path;
+          if (!allowedFile(path)) {
+            return undefined;
+          }
+
+          const wsPath = fromFsPath(wsName + '/' + item.path);
+
+          if (!wsPath) {
+            throw new BaseError({
+              message: `Your repository contains a file name "${item.path}" which is not supported`,
+              code: INVALID_GITHUB_FILE_FORMAT,
+            });
+          }
+          if (!isValidFileWsPath(wsPath)) {
+            return undefined;
+          }
+
+          this.ghFileBlobsMap?.set(wsPath, item.url);
+          return wsPath;
+        })
+        .filter(
+          (wsPath: string | undefined): wsPath is string =>
+            typeof wsPath === 'string',
+        );
+    };
+
+    const files = await this.fileEntryManager.listFiles(getRemoteFiles);
+    return files;
   }
 
   async writeFile(
@@ -205,7 +228,37 @@ export class GithubStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
-    return this.idbProvider.writeFile(wsPath, file, opts);
+    await this.fileEntryManager.writeFile(wsPath, file);
+
+    // const writer = this.manager.getWriter(wsName);
+    // writer.addFile(wsPath, file);
+    // console.log(
+    //   'saving file',
+    //   wsPath,
+    //   (await this.idbProvider.fileToDoc(file, opts)).toString(),
+    // );
+
+    // if (await this.fileExists(wsPath, opts)) {
+    //   const oldSha = await getFileSha(await this.getFile(wsPath, opts));
+    //   const newSha = await getFileSha(file);
+
+    //   if (oldSha === newSha) {
+    //     console.warn('same data ' + wsPath);
+    //     return;
+    //   }
+    // }
+
+    // const updatedShas = await writer.commit(wsName, {
+    //   repoName: wsName,
+    //   branch: githubConfig.branch,
+    //   githubToken: githubConfig.githubToken,
+    //   owner: githubConfig.owner,
+    // });
+
+    // updatedShas.forEach(async ([filePath, apiUrl]) => {
+    //   const wsPath = fromFsPath(wsName + '/' + filePath)!;
+    //   this.fileBlobs?.set(wsPath, apiUrl);
+    // });
   }
 
   async renameFile(
@@ -213,14 +266,15 @@ export class GithubStorageProvider implements BaseStorageProvider {
     newWsPath: string,
     opts: StorageOpts,
   ): Promise<void> {
-    throw new BaseError({
-      message: 'Renaming of file is not supported',
-      code: NOT_SUPPORTED,
-    });
+    const file = await this.readFile(wsPath, opts);
+    if (!file) {
+      throw new BaseError({
+        message: 'Cannot rename as file not found',
+        code: GITHUB_STORAGE_NOT_ALLOWED,
+      });
+    }
 
-    // if (wsPath === HELP_FS_INDEX_WS_PATH) {
-    //   return;
-    // }
-    // await this.idbProvider.renameFile(wsPath, newWsPath, opts);
+    await this.createFile(newWsPath, file, opts);
+    await this.deleteFile(wsPath, opts);
   }
 }

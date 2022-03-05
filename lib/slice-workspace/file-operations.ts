@@ -332,7 +332,7 @@ export const writeNote = (wsPath: string, doc: Node) => {
 
 export const getFile = (wsPath: string) => {
   return workspaceSliceKey.asyncOp(
-    async (_, dispatch, store): Promise<File> => {
+    async (_, dispatch, store): Promise<File | undefined> => {
       const storageProvider = getStorageProvider()(store.state);
 
       return storageProvider.readFile(

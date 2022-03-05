@@ -1,5 +1,8 @@
-import {} from '@bangle.io/baby-fs';
 import { Extension } from '@bangle.io/extension-registry';
+import {
+  ErrorCode as RemoteSyncErrorCode,
+  ErrorCodeType as RemoteFileSyncErrorCodeType,
+} from '@bangle.io/remote-file-sync';
 import {
   showNotification,
   uncaughtExceptionNotification,
@@ -14,11 +17,10 @@ import { Router } from './components/Router';
 import {
   ErrorCodesType,
   GITHUB_API_ERROR,
-  INVALID_GITHUB_CONFIGURATION,
+  GITHUB_STORAGE_NOT_ALLOWED,
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
-  NOT_SUPPORTED,
 } from './errors';
 import { GithubStorageProvider } from './github-storage-provider';
 
@@ -31,7 +33,9 @@ const extension = Extension.create({
     slices: [],
     storageProvider: new GithubStorageProvider(),
     onStorageError: (error, store) => {
-      const errorCode = error.code as ErrorCodesType;
+      const errorCode = error.code as
+        | ErrorCodesType
+        | RemoteFileSyncErrorCodeType;
 
       if (isIndexedDbException(error)) {
         console.debug(error.code, error.name);
@@ -66,7 +70,8 @@ const extension = Extension.create({
           }
           showNotification({
             severity: 'error',
-            title: error.message,
+            title: 'Github API error',
+            content: error.message,
             uid: `github-storage-error-${errorCode}`,
           })(store.state, store.dispatch);
           break;
@@ -74,7 +79,8 @@ const extension = Extension.create({
         case INVALID_GITHUB_FILE_FORMAT: {
           showNotification({
             severity: 'error',
-            title: error.message,
+            title: 'Invalid file format',
+            content: error.message,
             uid: `github-file-format`,
           })(store.state, store.dispatch);
           break;
@@ -83,34 +89,39 @@ const extension = Extension.create({
           showNotification({
             severity: 'error',
             title: 'Github token is invalid',
+            content: error.message,
             uid: 'Invalid github token',
           })(store.state, store.dispatch);
           break;
         }
 
-        case INVALID_GITHUB_CONFIGURATION: {
-          showNotification({
-            severity: 'error',
-            title: 'Invalid github workspace configuration',
-            uid: INVALID_GITHUB_CONFIGURATION,
-          })(store.state, store.dispatch);
-          break;
-        }
         case INVALID_GITHUB_RESPONSE: {
           showNotification({
             severity: 'error',
             title: 'Received invalid response from Github',
+            content: error.message,
             uid: INVALID_GITHUB_RESPONSE,
           })(store.state, store.dispatch);
           break;
         }
 
-        case NOT_SUPPORTED: {
+        case GITHUB_STORAGE_NOT_ALLOWED: {
           showNotification({
             severity: 'error',
-            title: 'Not supported',
+            title: 'Not allowed',
             content: error.message,
-            uid: NOT_SUPPORTED,
+            uid: GITHUB_STORAGE_NOT_ALLOWED + error.message,
+          })(store.state, store.dispatch);
+          break;
+        }
+
+        case RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR: {
+          showNotification({
+            severity: 'error',
+            title: 'Not allowed',
+            content: error.message,
+            uid:
+              RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR + error.message,
           })(store.state, store.dispatch);
           break;
         }
@@ -153,35 +164,3 @@ const extension = Extension.create({
 });
 
 export default extension;
-
-// let r = await fetch('https://api.github.com/graphql', {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//     'Authorization': `bearer ${token}`,
-//   },
-//   body: JSON.stringify({
-//     query: `
-//     query {
-//       repository(owner: "octocat", name: "Hello-World") {
-//         issues(last: 20, states: CLOSED) {
-//           edges {
-//             node {
-//               title
-//               url
-//               labels(first: 5) {
-//                 edges {
-//                   node {
-//                     name
-//                   }
-//                 }
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//     `,
-//     variables: {},
-//   }),
-// });

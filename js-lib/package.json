@@ -4,16 +4,16 @@
   "workspaces": [
     "abortable-worker",
     "baby-fs",
-    "create-store",
     "base-error",
+    "create-store",
     "fzf-search",
+    "history",
     "inline-palette",
     "object-uid",
-    "pm-plugins",
     "pm-manual-paste",
-    "history",
-    "search-pm-node",
-    "create-store"
+    "pm-plugins",
+    "remote-file-sync",
+    "search-pm-node"
   ],
   "repository": {
     "directory": "js-lib",

@@ -339,9 +339,7 @@ describe('deleteNote', () => {
 
     await expect(
       getNote(wsPath)(store.state, store.dispatch, store),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"File \\"my-ws/test-note.md\\" not found"`,
-    );
+    ).resolves.toBeUndefined();
 
     expect(
       workspaceSliceKey
@@ -371,9 +369,7 @@ describe('deleteNote', () => {
 
     await expect(
       getNote(wsPath)(store.state, store.dispatch, store),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"File \\"my-ws/test-note.md\\" not found"`,
-    );
+    ).resolves.toBeUndefined();
 
     expect(
       workspaceSliceKey
@@ -396,15 +392,11 @@ describe('deleteNote', () => {
 
     await expect(
       getNote(wsPath)(store.state, store.dispatch, store),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"File \\"my-ws/test-note.md\\" not found"`,
-    );
+    ).resolves.toBeUndefined();
 
     await expect(
       getNote(wsPath2)(store.state, store.dispatch, store),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"File \\"my-ws/test-note-2.md\\" not found"`,
-    );
+    ).resolves.toBeUndefined();
   });
 });
 
