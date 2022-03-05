@@ -7,6 +7,7 @@ import { dispatchEditorCommand } from '@bangle.io/slice-editor-manager';
 import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
+import { youtubeMarkdownItPlugin } from './youtube';
 
 const extensionName = '@bangle.io/editor-core';
 
@@ -16,7 +17,7 @@ const extension = Extension.create({
     specs: rawSpecs,
     plugins: [getPlugins],
     ReactComponent: MenuComp,
-    markdownItPlugins: [frontMatterMarkdownItPlugin],
+    markdownItPlugins: [youtubeMarkdownItPlugin, frontMatterMarkdownItPlugin],
   },
   application: {
     operations: [

@@ -21,6 +21,8 @@ import { RawSpecs } from '@bangle.dev/core';
 import { markdownFrontMatter } from '@bangle.dev/markdown-front-matter';
 import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
 
+import { youtubeSchema } from './youtube.ts';
+
 const headingSpec = (() => {
   const spec = heading.spec();
   if (spec) {
@@ -44,6 +46,7 @@ export const rawSpecs: RawSpecs[] = [
   codeBlock.spec(),
   hardBreak.spec(),
   headingSpec,
+  youtubeSchema(),
   horizontalRule.spec(),
   listItem.spec(),
   orderedList.spec(),
