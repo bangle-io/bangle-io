@@ -77,21 +77,12 @@ export class LocalFileEntryManager {
 
     if (fileEntry) {
       if (fileEntry.deleted) {
-        throw new BaseError({
-          message: 'File already deleted',
-          code: REMOTE_SYNC_NOT_ALLOWED_ERROR,
-        });
+        return;
       }
       await this.updateFileEntry(fileEntry.markDeleted());
     } else {
       const remoteFileEntry = await getRemoteFileEntry?.(uid);
       if (remoteFileEntry) {
-        if (remoteFileEntry.deleted) {
-          throw new BaseError({
-            message: 'File already deleted',
-            code: REMOTE_SYNC_NOT_ALLOWED_ERROR,
-          });
-        }
         await this.updateFileEntry(remoteFileEntry.fork().markDeleted());
       }
       // if file doesn't exist locally or source
@@ -134,6 +125,10 @@ export class LocalFileEntryManager {
       if (remoteFileEntry) {
         // update our local entry
         await this.updateFileEntry(remoteFileEntry.fork());
+
+        if (remoteFileEntry.deleted) {
+          return undefined;
+        }
       }
 
       return remoteFileEntry?.file;
@@ -188,7 +183,7 @@ interface SourceType {
   sha: string;
 }
 
-class BaseFileEntry {
+export class BaseFileEntry {
   public readonly uid: string;
   public readonly sha: string;
   public readonly file: File;
@@ -227,7 +222,7 @@ class BaseFileEntry {
   }
 }
 
-class LocalFileEntry extends BaseFileEntry {
+export class LocalFileEntry extends BaseFileEntry {
   static async newFile(
     obj: Omit<
       ConstructorParameters<typeof BaseFileEntry>[0],
@@ -301,7 +296,7 @@ class LocalFileEntry extends BaseFileEntry {
 
     const newSha = await calculateGitFileSha(file);
 
-    if (newSha === this.sha) {
+    if (newSha === this.sha && this.deleted == null) {
       return this;
     }
 
@@ -310,7 +305,7 @@ class LocalFileEntry extends BaseFileEntry {
       // unset deleted if file is updated
       deleted: undefined,
       file: file,
-      sha: await calculateGitFileSha(file),
+      sha: newSha,
     });
   }
 }

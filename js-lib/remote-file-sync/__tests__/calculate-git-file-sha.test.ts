@@ -4,12 +4,7 @@
 import { readFile } from 'fs/promises';
 
 import { calculateGitFileSha } from '../calculate-git-file-sha';
-
-const readFileBlob = async (filename: string) =>
-  new Blob(
-    [await readFile(require('path').join(__dirname, `fixtures/${filename}`))],
-    { type: 'text/plain' },
-  );
+import { readFileBlob } from './test-helpers';
 
 test('hashed file-a', async () => {
   const blob = await readFileBlob('file-a.json');
