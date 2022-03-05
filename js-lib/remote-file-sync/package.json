@@ -27,7 +27,7 @@
     "ts-pattern": "^3.3.5"
   },
   "devDependencies": {
-    "type-fest": "^2.8.0"
+    "type-fest": "^2.12.0"
   },
   "license": "AGPL-3.0-or-later"
 }

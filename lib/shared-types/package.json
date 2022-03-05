@@ -32,7 +32,7 @@
     "@bangle.dev/pm": "0.28.5",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
-    "type-fest": "^2.8.0"
+    "type-fest": "^2.12.0"
   },
   "license": "AGPL-3.0-or-later"
 }
