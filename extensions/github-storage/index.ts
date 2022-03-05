@@ -1,5 +1,8 @@
-import {} from '@bangle.io/baby-fs';
 import { Extension } from '@bangle.io/extension-registry';
+import {
+  ErrorCode as RemoteSyncErrorCode,
+  ErrorCodeType as RemoteFileSyncErrorCodeType,
+} from '@bangle.io/remote-file-sync';
 import {
   showNotification,
   uncaughtExceptionNotification,
@@ -14,8 +17,7 @@ import { Router } from './components/Router';
 import {
   ErrorCodesType,
   GITHUB_API_ERROR,
-  GITHUB_NOT_SUPPORTED,
-  INVALID_GITHUB_CONFIGURATION,
+  GITHUB_STORAGE_NOT_ALLOWED,
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
@@ -31,7 +33,9 @@ const extension = Extension.create({
     slices: [],
     storageProvider: new GithubStorageProvider(),
     onStorageError: (error, store) => {
-      const errorCode = error.code as ErrorCodesType;
+      const errorCode = error.code as
+        | ErrorCodesType
+        | RemoteFileSyncErrorCodeType;
 
       if (isIndexedDbException(error)) {
         console.debug(error.code, error.name);
@@ -91,15 +95,6 @@ const extension = Extension.create({
           break;
         }
 
-        case INVALID_GITHUB_CONFIGURATION: {
-          showNotification({
-            severity: 'error',
-            title: 'Invalid github workspace configuration',
-            content: error.message,
-            uid: INVALID_GITHUB_CONFIGURATION,
-          })(store.state, store.dispatch);
-          break;
-        }
         case INVALID_GITHUB_RESPONSE: {
           showNotification({
             severity: 'error',
@@ -110,12 +105,23 @@ const extension = Extension.create({
           break;
         }
 
-        case GITHUB_NOT_SUPPORTED: {
+        case GITHUB_STORAGE_NOT_ALLOWED: {
           showNotification({
             severity: 'error',
-            title: 'Not supported',
+            title: 'Not allowed',
             content: error.message,
-            uid: GITHUB_NOT_SUPPORTED,
+            uid: GITHUB_STORAGE_NOT_ALLOWED + error.message,
+          })(store.state, store.dispatch);
+          break;
+        }
+
+        case RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR: {
+          showNotification({
+            severity: 'error',
+            title: 'Not allowed',
+            content: error.message,
+            uid:
+              RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR + error.message,
           })(store.state, store.dispatch);
           break;
         }

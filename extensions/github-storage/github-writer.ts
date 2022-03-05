@@ -3,7 +3,7 @@ import base64 from 'base64-js';
 import { BaseError } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { GITHUB_FILE_NOT_FOUND_ERROR } from './errors';
+import { GITHUB_STORAGE_NOT_ALLOWED } from './errors';
 import { getBranchHead, GithubConfig, pushChanges } from './github-api-helpers';
 
 const fileToBase64 = async (file: File) => {
@@ -52,7 +52,7 @@ export class GithubWriter {
     if (this.deletions.has(wsPath)) {
       throw new BaseError({
         message: 'File not found',
-        code: GITHUB_FILE_NOT_FOUND_ERROR,
+        code: GITHUB_STORAGE_NOT_ALLOWED,
       });
     }
     console.log(Object.keys(this.additions), wsPath);
