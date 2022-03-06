@@ -19,9 +19,9 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.dev/core": "0.28.5",
-    "@bangle.dev/pm": "0.28.5",
-    "@bangle.dev/utils": "0.28.5",
+    "@bangle.dev/core": "0.28.6",
+    "@bangle.dev/pm": "0.28.6",
+    "@bangle.dev/utils": "0.28.6",
     "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/config": "workspace:*",

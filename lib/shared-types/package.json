@@ -28,8 +28,8 @@
     "typescript": "^4.5.5"
   },
   "devDependencies": {
-    "@bangle.dev/core": "0.28.5",
-    "@bangle.dev/pm": "0.28.5",
+    "@bangle.dev/core": "0.28.6",
+    "@bangle.dev/pm": "0.28.6",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "type-fest": "^2.12.0"
