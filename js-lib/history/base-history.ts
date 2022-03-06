@@ -1,16 +1,9 @@
-import { Location } from './types';
+export interface BaseHistory {
+  readonly pathname: string | undefined;
 
-export abstract class BaseHistory {
-  constructor(
-    protected base = '',
-    protected onChange: (location: Location) => void,
-  ) {}
+  readonly search: string | undefined;
 
-  public abstract readonly pathname: string | undefined;
+  destroy(): void;
 
-  public abstract readonly search: string | undefined;
-
-  public abstract destroy(): void;
-
-  public abstract navigate(to: string, obj?: { replace?: boolean }): void;
+  navigate(to: string, obj?: { replace?: boolean }): void;
 }

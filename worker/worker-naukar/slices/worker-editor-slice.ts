@@ -124,8 +124,7 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
   return {
     deferredOnce(store, abortSignal) {
       const { extensionRegistry } = config;
-      const getItem = async (wsPath: string): Promise<Node> => {
-        // TODO the try catch is not ideal, the debouce disk should handl error
+      const getItem = async (wsPath: string): Promise<Node | undefined> => {
         try {
           const doc = await getNote(wsPath)(
             workspaceSliceKey.getStore(store).state,
@@ -133,19 +132,23 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
             workspaceSliceKey.getStore(store),
           );
           if (!doc) {
-            throw new Error(`Note ${wsPath} not found`);
+            console.warn('doc not found', wsPath);
+            return undefined;
           }
           return doc;
         } catch (error) {
           if (error instanceof Error) {
             store.errorHandler(error);
           }
-          // TODO we need to silence this error but also be careful about not losing any user data
-          throw error;
+          return undefined;
         }
       };
 
-      const setItem = async (wsPath: string, doc: Node): Promise<void> => {
+      const setItem = async (
+        wsPath: string,
+        doc: Node,
+        version: number,
+      ): Promise<void> => {
         // TODO the try catch is not ideal, the debouce disk should handl error
         try {
           await writeNote(wsPath, doc)(
@@ -155,6 +158,7 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
           );
         } catch (error) {
           if (error instanceof Error) {
+            console.log('received error while setting item', error.message);
             store.errorHandler(error);
           }
         }
@@ -170,6 +174,7 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
           );
         }, 100);
       };
+
       const disk = new DebouncedDisk(getItem, setItem, {
         debounceWait: DOC_WRITE_DEBOUNCE_WAIT,
         debounceMaxWait: DOC_WRITE_DEBOUNCE_MAX_WAIT,

@@ -55,6 +55,11 @@ function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
     onFatalError(error) {
       if (error.errorCode >= 500) {
         metadata.bangleStore.errorHandler(error);
+        console.log(
+          'editor received fatal error not restarting',
+          error.message,
+        );
+        return false;
       }
       return true;
     },
