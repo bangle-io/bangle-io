@@ -267,13 +267,9 @@ describe('useSearchAllTags', () => {
     });
 
     await waitForNextUpdate();
-    expect(result?.current).toEqual([
-      'hi',
-      'third',
-      'fifth',
-      'second',
-      'fourth',
-    ]);
+    expect(result?.current.sort()).toEqual(
+      ['hi', 'third', 'fifth', 'second', 'fourth'].sort(),
+    );
   });
 
   test('no result when not visible', async () => {
