@@ -4746,7 +4746,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/fzf-search", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search"],
             ["@types/react", "npm:17.0.39"],
-            ["fzf", "npm:0.4.1"],
+            ["fzf", "npm:0.5.1"],
             ["react", "npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
@@ -4758,7 +4758,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/fzf-search", "workspace:js-lib/fzf-search"],
             ["@types/react", "npm:17.0.39"],
-            ["fzf", "npm:0.4.1"],
+            ["fzf", "npm:0.5.1"],
             ["react", "npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
@@ -13919,10 +13919,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["fzf", [
-        ["npm:0.4.1", {
-          "packageLocation": "./.yarn/cache/fzf-npm-0.4.1-6423e93341-4e0a8ecdf8.zip/node_modules/fzf/",
+        ["npm:0.5.1", {
+          "packageLocation": "./.yarn/cache/fzf-npm-0.5.1-2ffc9daa4c-5c5f56ec9f.zip/node_modules/fzf/",
           "packageDependencies": [
-            ["fzf", "npm:0.4.1"]
+            ["fzf", "npm:0.5.1"]
           ],
           "linkType": "HARD",
         }]

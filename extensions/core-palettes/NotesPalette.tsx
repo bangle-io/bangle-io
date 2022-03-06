@@ -204,7 +204,7 @@ export function useSearchWsPaths(query: string) {
   // 2. use fzf to shortlist recently used notes
   // 3. Merge them and show in palette
 
-  const recentFzfItems = useFzfSearch(recentlyUsedWsPaths, query, {
+  const recentFzfItems = useFzfSearch<string>(recentlyUsedWsPaths, query, {
     limit: FZF_SEARCH_LIMIT,
     selector: (item) => resolvePath(item).filePath,
     tiebreakers: [byLengthAsc],

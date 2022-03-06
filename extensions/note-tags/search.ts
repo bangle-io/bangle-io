@@ -86,9 +86,10 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
     };
   }, [noteWsPaths, getNoteForTags, isVisible]);
 
-  const fzfItems = useFzfSearch(allTags, query, {
+  const fzfItems = useFzfSearch<string>(allTags, query, {
     limit: FZF_SEARCH_LIMIT,
     tiebreakers: [byLengthAsc],
+    selector: (item) => item,
   });
 
   return useMemo(() => {

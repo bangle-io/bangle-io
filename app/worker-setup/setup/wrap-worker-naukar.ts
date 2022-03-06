@@ -4,13 +4,11 @@ import * as Comlink from 'comlink';
 
 import { assertNonWorkerGlobalScope, sleep } from '@bangle.io/utils';
 
-// eslint-disable-next-line import/no-unresolved
-import Worker from './expose-worker-naukar.worker?worker';
-
 assertNonWorkerGlobalScope();
 
-// TODO fix me
-const worker = new (Worker as any)();
+const worker = new Worker(new URL('./worker.ts', import.meta.url), {
+  type: 'module',
+});
 
 export const wrapper = Comlink.wrap(worker);
 export const terminate = async () => {
