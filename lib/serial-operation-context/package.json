@@ -30,10 +30,10 @@
     "react": "*"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.28.6",
-    "@bangle.dev/core": "0.28.6",
-    "@bangle.dev/pm": "0.28.6",
-    "@bangle.dev/utils": "0.28.6",
+    "@bangle.dev/all-base-components": "0.28.7",
+    "@bangle.dev/core": "0.28.7",
+    "@bangle.dev/pm": "0.28.7",
+    "@bangle.dev/utils": "0.28.7",
     "@bangle.io/extension-registry": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@testing-library/react": "^12.1.3",

@@ -19,7 +19,7 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.dev/pm": "0.28.6",
+    "@bangle.dev/pm": "0.28.7",
     "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
@@ -36,8 +36,8 @@
     "typescript": "^4.5.5"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.28.6",
-    "@bangle.dev/test-helpers": "0.28.6",
+    "@bangle.dev/all-base-components": "0.28.7",
+    "@bangle.dev/test-helpers": "0.28.7",
     "@bangle.io/test-utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
     "@testing-library/react": "^12.1.3",
