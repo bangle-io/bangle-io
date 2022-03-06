@@ -7,16 +7,17 @@ import {
 } from './patch-history';
 import { Location } from './types';
 
-export class BrowserHistory extends BaseHistory {
+export class BrowserHistory implements BaseHistory {
   private host = typeof window !== 'undefined' ? window : undefined;
   private currentLoc: Location;
 
   private historyState: any;
   private historyCounter = 0;
 
-  constructor(base = '', onChange: (location: Location) => void) {
-    super(base, onChange);
-
+  constructor(
+    private base = '',
+    private onChange: (location: Location) => void,
+  ) {
     historyEvents.forEach((e) =>
       this.host?.addEventListener(e, this.checkForUpdates),
     );

@@ -105,6 +105,12 @@ module.exports = (env, argv) => {
     ].filter(Boolean),
     module: {
       rules: [
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         // {
         //   test: /\.tsx?$/,
         //   use: 'ts-loader',

@@ -1,5 +1,5 @@
 import { Manager } from '@bangle.dev/collab-server';
-import { DebouncedDisk } from '@bangle.dev/disk';
+import { DebouncedDisk, Disk } from '@bangle.dev/disk';
 import { sleep } from '@bangle.dev/utils';
 
 import { pageSlice, setPageLifeCycleState } from '@bangle.io/slice-page';

@@ -1,12 +1,14 @@
 import { BaseHistory } from './base-history';
 import { Location } from './types';
 
-export class MemoryHistory extends BaseHistory {
+export class MemoryHistory implements BaseHistory {
   private currentLoc: Location;
 
   // TODO implement base
-  constructor(base = '', onChange: (location: Location) => void) {
-    super(base, onChange);
+  constructor(
+    private base = '',
+    private onChange: (location: Location) => void,
+  ) {
     this.currentLoc = {
       pathname: '',
       search: '',
