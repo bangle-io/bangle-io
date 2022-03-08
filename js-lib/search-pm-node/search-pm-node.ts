@@ -1,8 +1,9 @@
 import type { Node } from '@bangle.dev/pm';
 
+import { pMap } from '@bangle.io/p-map';
+
 import { DEFAULT_CONCURRENCY } from './config';
 import { genericAtomNodeSearch } from './generic-atom-node-search';
-import { pMap } from './p-map';
 import type { SearchResultItem } from './types';
 
 export interface AtomSearchTypes {
