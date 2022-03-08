@@ -2782,6 +2782,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/p-map@workspace:*, @bangle.io/p-map@workspace:js-lib/p-map":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/p-map@workspace:js-lib/p-map"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/playwright-e2e@workspace:tooling/playwright-e2e":
   version: 0.0.0-use.local
   resolution: "@bangle.io/playwright-e2e@workspace:tooling/playwright-e2e"
@@ -2890,6 +2896,7 @@ __metadata:
     "@bangle.dev/test-helpers": 0.28.7
     "@bangle.dev/utils": 0.28.7
     "@bangle.dev/wiki-link": 0.28.7
+    "@bangle.io/p-map": "workspace:*"
     tslib: ^2.3.1
     typescript: ^4.5.5
   languageName: unknown

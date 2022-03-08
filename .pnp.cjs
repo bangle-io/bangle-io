@@ -187,6 +187,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/object-uid"
       },
       {
+        "name": "@bangle.io/p-map",
+        "reference": "workspace:js-lib/p-map"
+      },
+      {
         "name": "@bangle.io/pm-manual-paste",
         "reference": "workspace:js-lib/pm-manual-paste"
       },
@@ -356,6 +360,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/note-sidebar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/note-sidebar", "workspace:app/note-sidebar"]],
       ["@bangle.io/note-tags", ["workspace:extensions/note-tags"]],
       ["@bangle.io/object-uid", ["workspace:js-lib/object-uid"]],
+      ["@bangle.io/p-map", ["workspace:js-lib/p-map"]],
       ["@bangle.io/playwright-e2e", ["workspace:tooling/playwright-e2e"]],
       ["@bangle.io/pm-manual-paste", ["workspace:js-lib/pm-manual-paste"]],
       ["@bangle.io/pm-plugins", ["workspace:js-lib/pm-plugins"]],
@@ -5615,6 +5620,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
+      ["@bangle.io/p-map", [
+        ["workspace:js-lib/p-map", {
+          "packageLocation": "./js-lib/p-map/",
+          "packageDependencies": [
+            ["@bangle.io/p-map", "workspace:js-lib/p-map"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
       ["@bangle.io/playwright-e2e", [
         ["workspace:tooling/playwright-e2e", {
           "packageLocation": "./tooling/playwright-e2e/",
@@ -5734,6 +5748,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.dev/test-helpers", "npm:0.28.7"],
             ["@bangle.dev/utils", "virtual:c71d1a445e6d949cdda418b527a43e51c12f459980a124794026b095fe67f694c61e9cb396d25f2ad9c9dba03093cbb17cc5959dda5cebd254621c1863dc72ca#npm:0.28.7"],
             ["@bangle.dev/wiki-link", "virtual:498949cae67a52d4e9ec4c229984a5e207183ae5ecbbdbd8f33fefe870461165302e341e6c316c5a43dfa201a83642583bfc49ca98f6505d3cfee05909fd8b34#npm:0.28.7"],
+            ["@bangle.io/p-map", "workspace:js-lib/p-map"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
           ],
