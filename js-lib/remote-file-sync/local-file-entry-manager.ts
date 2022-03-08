@@ -32,7 +32,7 @@ export class LocalFileEntryManager {
     return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
   }
 
-  private async getAllEntries(): Promise<LocalFileEntry[]> {
+  async getAllEntries(): Promise<LocalFileEntry[]> {
     return this.persistenceProvider.entries().then((entries) => {
       return entries.map((r) => LocalFileEntry.fromPlainObj(r[1]));
     });
@@ -155,6 +155,19 @@ export class LocalFileEntryManager {
         file,
       }),
     );
+  }
+
+  async updateFileSource(uid: string, sourceFile: File) {
+    const fileEntry = await this.getFileEntry(uid);
+
+    if (fileEntry) {
+      await this.updateFileEntry(await fileEntry.updateSource(sourceFile));
+    } else {
+      throw new BaseError({
+        message: 'Cannot updateFileSource as file does not exist',
+        code: REMOTE_SYNC_NOT_ALLOWED_ERROR,
+      });
+    }
   }
 
   async writeFile(uid: string, file: File) {
@@ -284,6 +297,24 @@ export class LocalFileEntry extends BaseFileEntry {
     return new LocalFileEntry({
       ...this,
       deleted: Date.now(),
+    });
+  }
+
+  async updateSource(file: File) {
+    const newSha = await calculateGitFileSha(file);
+
+    if (this.source?.sha === newSha) {
+      return this;
+    }
+
+    return new LocalFileEntry({
+      ...this,
+      file: file,
+      sha: newSha,
+      source: {
+        sha: newSha,
+        file: file,
+      },
     });
   }
 

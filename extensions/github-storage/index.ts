@@ -10,7 +10,7 @@ import {
 import { isIndexedDbException } from '@bangle.io/storage';
 
 import {
-  OPERATION_NEW_GITUB_WORKSPACE,
+  OPERATION_NEW_GITHUB_WORKSPACE,
   OPERATION_UPDATE_GITHUB_TOKEN,
 } from './common';
 import { Router } from './components/Router';
@@ -141,7 +141,7 @@ const extension = Extension.create({
     },
     operations: [
       {
-        name: OPERATION_NEW_GITUB_WORKSPACE,
+        name: OPERATION_NEW_GITHUB_WORKSPACE,
         title: 'Github: New READONLY workspace (Experimental)',
       },
       {

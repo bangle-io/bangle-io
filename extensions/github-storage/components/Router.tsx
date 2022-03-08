@@ -12,7 +12,7 @@ import {
 
 import {
   GITHUB_STORAGE_PROVIDER_NAME,
-  OPERATION_NEW_GITUB_WORKSPACE,
+  OPERATION_NEW_GITHUB_WORKSPACE,
   OPERATION_UPDATE_GITHUB_TOKEN,
 } from '../common';
 import { RepoPicker } from './RepoPicker';
@@ -25,7 +25,7 @@ export function Router() {
   const bangleStore = useBangleStoreContext();
 
   useSerialOperationHandler((sOperation) => {
-    if (sOperation.name === OPERATION_NEW_GITUB_WORKSPACE) {
+    if (sOperation.name === OPERATION_NEW_GITHUB_WORKSPACE) {
       if (
         window.confirm(
           'Creating a Github workspace is experimental and may not work as expected. Continue?',

@@ -2433,6 +2433,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/p-map": "workspace:*"
     "@bangle.io/remote-file-sync": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"

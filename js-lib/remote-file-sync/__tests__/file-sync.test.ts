@@ -80,9 +80,7 @@ describe('File states', () => {
         createFileEntry({ sha: 'def' }),
       );
 
-      await expect(result).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"Merge conflict both created files"`,
-      );
+      await expect(result).resolves.toEqual({ action: 'conflict' });
     });
 
     test('Case D.1.1 no change', async () => {
@@ -100,7 +98,7 @@ describe('File states', () => {
       const result = fileSync(
         createFileEntry({ sha: 'abc' }),
         createFileEntry({ sha: 'bcd', file: createFile('file-a') }),
-        async () => createFileEntry({ sha: 'abc' }),
+        createFileEntry({ sha: 'abc' }),
       );
 
       await expect(result).resolves.toEqual({
@@ -120,7 +118,7 @@ describe('File states', () => {
       const result = fileSync(
         createFileEntry({ sha: 'abc' }),
         createFileEntry({ sha: 'bcd', deleted: 12 }),
-        async () => createFileEntry({ sha: 'abc' }),
+        createFileEntry({ sha: 'abc' }),
       );
 
       await expect(result).resolves.toEqual({
@@ -138,7 +136,9 @@ describe('File states', () => {
         sha: 'abc',
         file: createFile('file-b'),
       });
-      const result = fileSync(fileEntryA, fileEntryB, async () =>
+      const result = fileSync(
+        fileEntryA,
+        fileEntryB,
         createFileEntry({ sha: 'abc' }),
       );
 
@@ -157,19 +157,17 @@ describe('File states', () => {
       const result = fileSync(
         createFileEntry({ sha: 'abc' }),
         createFileEntry({ sha: 'def' }),
-        async () => createFileEntry({ sha: 'xyz' }),
+        createFileEntry({ sha: 'xyz' }),
       );
 
-      await expect(result).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"Merge conflict both files modified at the same time"`,
-      );
+      await expect(result).resolves.toEqual({ action: 'conflict' });
     });
 
     test('Case D.1.6 A:modified, B:deleted; should target b', async () => {
       const result = fileSync(
         createFileEntry({ sha: 'abc', file: createFile('file-a') }),
         createFileEntry({ sha: 'def', deleted: 12 }),
-        async () => createFileEntry({ sha: 'xyz' }),
+        createFileEntry({ sha: 'xyz' }),
       );
 
       await expect(result).resolves.toEqual({
@@ -187,7 +185,7 @@ describe('File states', () => {
       const result = fileSync(
         createFileEntry({ sha: 'xyz', deleted: 12 }),
         createFileEntry({ sha: 'abc' }),
-        async () => createFileEntry({ sha: 'abc' }),
+        createFileEntry({ sha: 'abc' }),
       );
 
       await expect(result).resolves.toEqual({
@@ -200,7 +198,7 @@ describe('File states', () => {
       const result = fileSync(
         createFileEntry({ sha: 'abc', deleted: 12 }),
         createFileEntry({ sha: 'def', file: createFile('file-b') }),
-        async () => createFileEntry({ sha: 'xyz' }),
+        createFileEntry({ sha: 'xyz' }),
       );
 
       await expect(result).resolves.toEqual({
@@ -218,7 +216,7 @@ describe('File states', () => {
       const result = fileSync(
         createFileEntry({ sha: 'xyz', deleted: 12 }),
         createFileEntry({ sha: 'abc', deleted: 12 }),
-        async () => createFileEntry({ sha: 'abc' }),
+        createFileEntry({ sha: 'abc' }),
       );
 
       await expect(result).resolves.toEqual(undefined);
