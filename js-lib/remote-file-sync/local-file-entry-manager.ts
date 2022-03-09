@@ -32,17 +32,17 @@ export class LocalFileEntryManager {
     return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
   }
 
-  async getAllEntries(): Promise<LocalFileEntry[]> {
-    return this.persistenceProvider.entries().then((entries) => {
-      return entries.map((r) => LocalFileEntry.fromPlainObj(r[1]));
-    });
-  }
-
   private isRecentlyDeleted(fileEntry: LocalFileEntry | undefined) {
     return (
       typeof fileEntry?.deleted === 'number' &&
       Date.now() - fileEntry.deleted < DELETE_TOLERANCE
     );
+  }
+
+  async getAllEntries(): Promise<LocalFileEntry[]> {
+    return this.persistenceProvider.entries().then((entries) => {
+      return entries.map((r) => LocalFileEntry.fromPlainObj(r[1]));
+    });
   }
 
   // returns all local and remote file uids that have not been deleted
@@ -93,46 +93,26 @@ export class LocalFileEntryManager {
   async readFile(
     uid: string,
     getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
-  ) {
+  ): Promise<File | undefined> {
     const fileEntry = await this.getFileEntry(uid);
 
     if (fileEntry) {
       if (fileEntry.deleted) {
         return undefined;
       }
-
-      if (fileEntry.isModified === false) {
-        const remoteFileEntry = await getRemoteFileEntry?.(uid);
-        // if file is not modified and remote file has been deleted, mark the local file deleted
-        if (remoteFileEntry && remoteFileEntry.deleted) {
-          const newEntry = remoteFileEntry.fork();
-          await this.updateFileEntry(newEntry);
-          return undefined;
-        }
-
-        // if file is not modified and remote file has changed, update the local file
-        if (remoteFileEntry && remoteFileEntry.sha !== fileEntry.sha) {
-          const newEntry = remoteFileEntry.fork();
-          await this.updateFileEntry(newEntry);
-          return newEntry.file;
-        }
-      }
-
       return fileEntry.file;
-    } else {
-      const remoteFileEntry = await getRemoteFileEntry?.(uid);
-
-      if (remoteFileEntry) {
-        // update our local entry
-        await this.updateFileEntry(remoteFileEntry.fork());
-
-        if (remoteFileEntry.deleted) {
-          return undefined;
-        }
-      }
-
-      return remoteFileEntry?.file;
     }
+
+    const remoteFileEntry = await getRemoteFileEntry?.(uid);
+
+    if (remoteFileEntry) {
+      // update our local entry
+      await this.updateFileEntry(remoteFileEntry.fork());
+
+      return this.readFile(uid, getRemoteFileEntry);
+    }
+
+    return undefined;
   }
 
   async createFile(

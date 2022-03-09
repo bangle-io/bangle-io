@@ -132,3 +132,49 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
     return updatedShas;
   }
 }
+
+export async function commitToGithub(
+  additions: [string, File][],
+  deletions: string[],
+  _wsName: string,
+  config: GithubConfig,
+) {
+  const commitBody = `
+Files Added:
+- ${additions.map((r) => r[0]).join('\n- ')}
+
+Files Deleted:
+${deletions.length > 0 ? `- Deleted ${deletions.join('\n- ')}` : ''}`.trim();
+
+  if (deletions.length === 0 && Object.keys(additions).length === 0) {
+    return [];
+  }
+
+  const updatedShas = await pushChanges({
+    headSha: await getBranchHead({
+      config: config,
+    }),
+    commitMessage: {
+      headline: 'Bangle.io: update ' + config.repoName,
+      body: commitBody,
+    },
+    additions: await Promise.all(
+      additions.map(async ([wsPath, file]) => {
+        return {
+          base64Content: await fileToBase64(file),
+          path: resolvePath(wsPath).filePath,
+        };
+      }),
+    ),
+    deletions: deletions.map((wsPath) => {
+      const { filePath, wsName } = resolvePath(wsPath);
+      if (_wsName !== wsName) {
+        throw new Error('Workspace name mismatch');
+      }
+      return { path: filePath };
+    }),
+    config: config,
+  });
+
+  return updatedShas;
+}

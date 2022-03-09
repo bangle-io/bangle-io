@@ -1,4 +1,5 @@
 import { BaseError } from '@bangle.io/utils';
+import { fromFsPath, resolvePath } from '@bangle.io/ws-path';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
 
@@ -337,4 +338,63 @@ export async function getFileBlob({
   }).then((r) => {
     return new File([r], fileName);
   });
+}
+
+export async function readGhFile({
+  wsPath,
+  config,
+}: {
+  wsPath: string;
+  config: GithubConfig;
+}) {
+  const { wsName } = resolvePath(wsPath);
+  return makeV3Api({
+    isBlob: true,
+    path: `/repos/${config.owner}/${config.repoName}/contents/${
+      resolvePath(wsPath).filePath
+    }?ref=${config.branch}&cacheBust=${Date.now()}`,
+    token: config.githubToken,
+    headers: {
+      Accept: 'application/vnd.github.v3.raw+json',
+    },
+  }).then(
+    (r) => {
+      return new File([r], resolvePath(wsPath).fileName);
+    },
+    (error) => {
+      if (
+        error instanceof Error &&
+        error.message.includes(
+          'The requested blob is too large to fetch via the API',
+        )
+      ) {
+        return getAllFiles({
+          abortSignal: new AbortController().signal,
+          config: {
+            branch: config.branch,
+            owner: config.owner,
+            githubToken: config.githubToken,
+            repoName: wsName,
+          },
+          treeSha: config.branch,
+        }).then((result) => {
+          const matchingItem = result.find((item) => {
+            return wsPath === fromFsPath(wsName + '/' + item.path);
+          });
+
+          if (!matchingItem) {
+            throw error;
+          }
+
+          return getFileBlob({
+            fileBlobUrl: matchingItem.url,
+            config,
+            fileName: resolvePath(wsPath).fileName,
+          });
+        });
+      } else {
+        throw error;
+      }
+    },
+  );
 }

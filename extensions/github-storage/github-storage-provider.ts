@@ -14,13 +14,8 @@ import {
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_TOKEN,
 } from './errors';
-import { getAllFiles, getFileBlob } from './github-api-helpers';
-
-interface WsMetadata {
-  githubToken: string;
-  owner: string;
-  branch: string;
-}
+import { getAllFiles, readGhFile } from './github-api-helpers';
+import { WsMetadata } from './helpers';
 
 const allowedFile = (path: string) => {
   if (path.includes(':')) {
@@ -72,7 +67,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     },
   });
 
-  private makeGetRemoteFileEntryCb(wsPath: string, opts: StorageOpts) {
+  public makeGetRemoteFileEntryCb(wsPath: string, opts: StorageOpts) {
     return async () => {
       const { wsName, fileName } = resolvePath(wsPath);
 
@@ -87,9 +82,8 @@ export class GithubStorageProvider implements BaseStorageProvider {
       }
       const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
 
-      const file = await getFileBlob({
-        fileBlobUrl: path,
-        fileName,
+      const file = await readGhFile({
+        wsPath,
         config: {
           branch: wsMetadata.branch,
           owner: wsMetadata.owner,
@@ -97,6 +91,17 @@ export class GithubStorageProvider implements BaseStorageProvider {
           repoName: wsName,
         },
       });
+      console.log({ file });
+      // const file = await getFileBlob({
+      //   fileBlobUrl: path,
+      //   fileName,
+      //   config: {
+      //     branch: wsMetadata.branch,
+      //     owner: wsMetadata.owner,
+      //     githubToken: wsMetadata.githubToken,
+      //     repoName: wsName,
+      //   },
+      // });
 
       return RemoteFileEntry.newFile({
         uid: wsPath,
@@ -229,36 +234,6 @@ export class GithubStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this.fileEntryManager.writeFile(wsPath, file);
-
-    // const writer = this.manager.getWriter(wsName);
-    // writer.addFile(wsPath, file);
-    // console.log(
-    //   'saving file',
-    //   wsPath,
-    //   (await this.idbProvider.fileToDoc(file, opts)).toString(),
-    // );
-
-    // if (await this.fileExists(wsPath, opts)) {
-    //   const oldSha = await getFileSha(await this.getFile(wsPath, opts));
-    //   const newSha = await getFileSha(file);
-
-    //   if (oldSha === newSha) {
-    //     console.warn('same data ' + wsPath);
-    //     return;
-    //   }
-    // }
-
-    // const updatedShas = await writer.commit(wsName, {
-    //   repoName: wsName,
-    //   branch: githubConfig.branch,
-    //   githubToken: githubConfig.githubToken,
-    //   owner: githubConfig.owner,
-    // });
-
-    // updatedShas.forEach(async ([filePath, apiUrl]) => {
-    //   const wsPath = fromFsPath(wsName + '/' + filePath)!;
-    //   this.fileBlobs?.set(wsPath, apiUrl);
-    // });
   }
 
   async renameFile(
