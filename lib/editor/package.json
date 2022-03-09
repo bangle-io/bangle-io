@@ -23,10 +23,10 @@
     "react-dom": "*"
   },
   "dependencies": {
-    "@bangle.dev/core": "0.28.7",
-    "@bangle.dev/pm": "0.28.7",
-    "@bangle.dev/react": "0.28.7",
-    "@bangle.dev/utils": "0.28.7",
+    "@bangle.dev/core": "0.28.8",
+    "@bangle.dev/pm": "0.28.8",
+    "@bangle.dev/react": "0.28.8",
+    "@bangle.dev/utils": "0.28.8",
     "@bangle.io/bangle-store-context": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
@@ -44,8 +44,8 @@
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
-    "@bangle.dev/all-base-components": "0.28.7",
-    "@bangle.dev/test-helpers": "0.28.7",
+    "@bangle.dev/all-base-components": "0.28.8",
+    "@bangle.dev/test-helpers": "0.28.8",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react": "^12.1.3",
