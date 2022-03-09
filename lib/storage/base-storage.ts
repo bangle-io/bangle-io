@@ -17,6 +17,7 @@ export interface FileStat {
 
 export interface StorageOpts {
   specRegistry: SpecRegistry;
+  storageProviderName: string;
   readWorkspaceMetadata: () => { [key: string]: any };
   updateWorkspaceMetadata: (metadata: { [key: string]: any }) => void;
 }
