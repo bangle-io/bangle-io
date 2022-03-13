@@ -1,5 +1,5 @@
-import { BaseError } from '@bangle.io/utils';
-import { fromFsPath, resolvePath } from '@bangle.io/ws-path';
+import { BaseError, getLast } from '@bangle.io/utils';
+import { fromFsPath } from '@bangle.io/ws-path';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
 
@@ -12,6 +12,29 @@ export interface GithubConfig extends GithubTokenConfig {
   branch: string;
   repoName: string;
 }
+
+const allowedFilePath = (path: string) => {
+  if (path.includes(':')) {
+    return false;
+  }
+  if (path.includes('//')) {
+    return false;
+  }
+  if (path.length > 150) {
+    return false;
+  }
+
+  const fileName = getLast(path.split('/'));
+  if (fileName === undefined) {
+    return false;
+  }
+
+  if (fileName.startsWith('.')) {
+    return false;
+  }
+
+  return true;
+};
 
 const RATELIMIT_STRING = `
 rateLimit {
@@ -222,64 +245,48 @@ export async function getTree({
   wsName: string;
   config: GithubConfig;
   treeSha: string;
-}): Promise<{
-  tree: Array<{
-    path: string;
-    url: string;
-    getFileBlob(): ReturnType<typeof getFileBlob>;
-  }>;
-  sha: string;
-}> {
-  try {
-    const { truncated, tree, sha } = await makeV3Api({
-      path: `/repos/${config.owner}/${
-        config.repoName
-      }/git/trees/${treeSha}?recursive=1&cacheBust=${Math.floor(
-        Date.now() / 1000,
-      )}`,
-      token: config.githubToken,
-      abortSignal,
+}) {
+  const { truncated, tree, sha } = await makeV3Api({
+    path: `/repos/${config.owner}/${
+      config.repoName
+    }/git/trees/${treeSha}?recursive=1&cacheBust=${Math.floor(
+      Date.now() / 1000,
+    )}`,
+    token: config.githubToken,
+    abortSignal,
+  });
+
+  if (truncated || !tree) {
+    throw new BaseError({
+      message: 'Github response is truncated',
+      code: INVALID_GITHUB_RESPONSE,
+    });
+  }
+
+  const list = (tree as any[])
+    .filter((t) => {
+      return allowedFilePath(t.path);
+    })
+    .map((t: any) => {
+      const wsPath = fromFsPath(wsName + '/' + t.path);
+
+      if (!wsPath) {
+        throw new BaseError({
+          message: 'File path contains invalid characters :' + t.path,
+          code: INVALID_GITHUB_RESPONSE,
+        });
+      }
+
+      return {
+        url: t.url,
+        wsPath,
+      };
     });
 
-    if (truncated || !tree) {
-      throw new BaseError({
-        message: 'Github response is truncated',
-        code: INVALID_GITHUB_RESPONSE,
-      });
-    }
-
-    return {
-      sha,
-      tree: (tree as any[]).map(
-        (
-          t: any,
-        ): {
-          path: string;
-          url: string;
-          getFileBlob(): ReturnType<typeof getFileBlob>;
-        } => ({
-          path: t.path,
-          url: t.url,
-          getFileBlob: () => {
-            const wsPath = fromFsPath(wsName + '/' + t.path);
-            if (!wsPath) {
-              throw new BaseError({
-                message: 'File path contains invalid characters :' + t.path,
-                code: INVALID_GITHUB_RESPONSE,
-              });
-            }
-            return getFileBlob({
-              config,
-              fileBlobUrl: t.url,
-              fileName: resolvePath(wsPath).fileName,
-            });
-          },
-        }),
-      ),
-    };
-  } catch (error) {
-    throw error;
-  }
+  return {
+    sha,
+    tree: list,
+  };
 }
 
 export async function pushChanges({
@@ -371,61 +378,61 @@ export async function getFileBlob({
   });
 }
 
-export async function readGhFile({
-  wsPath,
-  config,
-}: {
-  wsPath: string;
-  config: GithubConfig;
-}) {
-  const { wsName } = resolvePath(wsPath);
-  return makeV3Api({
-    isBlob: true,
-    path: `/repos/${config.owner}/${config.repoName}/contents/${
-      resolvePath(wsPath).filePath
-    }?ref=${config.branch}`,
-    token: config.githubToken,
-    headers: {
-      Accept: 'application/vnd.github.v3.raw+json',
-    },
-  }).then(
-    (r) => {
-      return new File([r], resolvePath(wsPath).fileName);
-    },
-    (error) => {
-      if (
-        error instanceof Error &&
-        error.message.includes(
-          'The requested blob is too large to fetch via the API',
-        )
-      ) {
-        return getTree({
-          wsName,
-          abortSignal: new AbortController().signal,
-          config: {
-            branch: config.branch,
-            owner: config.owner,
-            githubToken: config.githubToken,
-            repoName: wsName,
-          },
-          treeSha: config.branch,
-        }).then((result) => {
-          const matchingItem = result.tree.find((item) => {
-            return wsPath === fromFsPath(wsName + '/' + item.path);
-          });
+// export async function readGhFile({
+//   wsPath,
+//   config,
+// }: {
+//   wsPath: string;
+//   config: GithubConfig;
+// }) {
+//   const { wsName } = resolvePath(wsPath);
+//   return makeV3Api({
+//     isBlob: true,
+//     path: `/repos/${config.owner}/${config.repoName}/contents/${
+//       resolvePath(wsPath).filePath
+//     }?ref=${config.branch}`,
+//     token: config.githubToken,
+//     headers: {
+//       Accept: 'application/vnd.github.v3.raw+json',
+//     },
+//   }).then(
+//     (r) => {
+//       return new File([r], resolvePath(wsPath).fileName);
+//     },
+//     (error) => {
+//       if (
+//         error instanceof Error &&
+//         error.message.includes(
+//           'The requested blob is too large to fetch via the API',
+//         )
+//       ) {
+//         return getTree({
+//           wsName,
+//           abortSignal: new AbortController().signal,
+//           config: {
+//             branch: config.branch,
+//             owner: config.owner,
+//             githubToken: config.githubToken,
+//             repoName: wsName,
+//           },
+//           treeSha: config.branch,
+//         }).then((result) => {
+//           const matchingItem = result.tree.find((item) => {
+//             return wsPath === fromFsPath(wsName + '/' + item.path);
+//           });
 
-          if (!matchingItem) {
-            throw error;
-          }
+//           if (!matchingItem) {
+//             throw error;
+//           }
 
-          return matchingItem.getFileBlob();
-        });
-      } else {
-        throw error;
-      }
-    },
-  );
-}
+//           return matchingItem.getFileBlob();
+//         });
+//       } else {
+//         throw error;
+//       }
+//     },
+//   );
+// }
 
 export async function getLatestCommitSha({ config }: { config: GithubConfig }) {
   return makeV3Api({

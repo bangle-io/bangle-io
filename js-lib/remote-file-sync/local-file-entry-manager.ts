@@ -35,9 +35,12 @@ export class LocalFileEntryManager {
     );
   }
 
+  // overwrites the current entry with the provided one
+  // use with caution!!
   public async updateFileEntry(fileEntry: LocalFileEntry): Promise<void> {
     return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
   }
+
   public async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
     return this.persistenceProvider.delete(uid);
   }
@@ -52,7 +55,7 @@ export class LocalFileEntryManager {
 
   // returns all local and remote file uids that have not been deleted
   async listFiles(
-    listRemoteFiles: () => Promise<string[]>,
+    remoteFileUids: string[],
     uidPrefix: string = '',
   ): Promise<string[]> {
     let localEntries = await this.getAllEntries(uidPrefix);
@@ -69,7 +72,7 @@ export class LocalFileEntryManager {
         .map((r) => r.uid),
     );
 
-    const remoteFiles = (await listRemoteFiles()).filter(
+    const remoteFiles = remoteFileUids.filter(
       // omit files that were locally deleted
       (r) => !locallyDeletedFiles.has(r),
     );
@@ -273,6 +276,21 @@ export class LocalFileEntry extends BaseFileEntry {
     };
   }
 
+  get isUntouched() {
+    if (this.isNew) {
+      return false;
+    }
+    if (this.deleted) {
+      return false;
+    }
+    if (this.isModified) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // a 'file.isModified == true' means that it was modified locally w.r.t its source content
   get isModified() {
     return this.sha !== this.source?.sha;
   }

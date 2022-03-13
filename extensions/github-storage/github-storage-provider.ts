@@ -1,41 +1,12 @@
-import * as idb from 'idb-keyval';
-
-import {
-  LocalFileEntryManager,
-  RemoteFileEntry,
-} from '@bangle.io/remote-file-sync';
-import type { UnPromisify } from '@bangle.io/shared-types';
+import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
-import { BaseError, getLast } from '@bangle.io/utils';
-import { fromFsPath, isValidFileWsPath, resolvePath } from '@bangle.io/ws-path';
+import { BaseError } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
-import {
-  GITHUB_STORAGE_NOT_ALLOWED,
-  INVALID_GITHUB_FILE_FORMAT,
-  INVALID_GITHUB_TOKEN,
-} from './errors';
-import { getTree } from './github-api-helpers';
+import { GITHUB_STORAGE_NOT_ALLOWED, INVALID_GITHUB_TOKEN } from './errors';
+import { localFileEntryManager } from './file-entry-manager';
+import { GithubRepoTree } from './github-repo-tree';
 import { WsMetadata } from './helpers';
-
-const allowedFile = (path: string) => {
-  if (path.includes(':')) {
-    return false;
-  }
-  if (path.includes('//')) {
-    return false;
-  }
-  const fileName = getLast(path.split('/'));
-  if (fileName === undefined) {
-    return false;
-  }
-
-  if (fileName.startsWith('.')) {
-    return false;
-  }
-
-  return true;
-};
 
 export class GithubStorageProvider implements BaseStorageProvider {
   name = GITHUB_STORAGE_PROVIDER_NAME;
@@ -43,73 +14,19 @@ export class GithubStorageProvider implements BaseStorageProvider {
   description = '';
   hidden = true;
 
-  ghTreeMap:
-    | Map<string, UnPromisify<ReturnType<typeof getTree>>['tree'][0]>
-    | undefined;
-  fileEntryManager = new LocalFileEntryManager({
-    get: (key: string) => {
-      return idb.get(`gh-store-1:${key}`);
-    },
-    set: (key, entry) => {
-      return idb.set(`gh-store-1:${key}`, entry);
-    },
-    entries: () => {
-      return idb.entries().then((entries) => {
-        return entries
-          .filter(([key]) => {
-            if (typeof key === 'string') {
-              return key.startsWith('gh-store-1:');
-            }
-            return false;
-          })
-          .map(([key, value]) => [key, value] as [string, any]);
-      });
-    },
-    delete: (key) => {
-      return idb.del(`gh-store-1:${key}`);
-    },
-  });
+  private fileEntryManager = localFileEntryManager;
 
-  public makeGetRemoteFileEntryCb(wsPath: string, opts: StorageOpts) {
-    return async () => {
-      const { wsName } = resolvePath(wsPath);
+  private makeGetRemoteFileEntryCb(wsMetadata: WsMetadata) {
+    return async (wsPath: string) => {
+      const file = await GithubRepoTree.getFileBlob(wsPath, wsMetadata);
 
-      if (!this.ghTreeMap) {
-        await this.listAllFiles(new AbortController().signal, wsName, opts);
-      }
-
-      const item = this.ghTreeMap?.get(wsPath);
-
-      if (!item) {
+      if (!file) {
         return undefined;
       }
 
-      // const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
-
-      // const file = await readGhFile({
-      //   wsPath,
-      //   config: {
-      //     branch: wsMetadata.branch,
-      //     owner: wsMetadata.owner,
-      //     githubToken: wsMetadata.githubToken,
-      //     repoName: wsName,
-      //   },
-      // });
-      // // console.log({ file });
-      // // const file = await getFileBlob({
-      // //   fileBlobUrl: path,
-      // //   fileName,
-      // //   config: {
-      // //     branch: wsMetadata.branch,
-      // //     owner: wsMetadata.owner,
-      // //     githubToken: wsMetadata.githubToken,
-      // //     repoName: wsName,
-      // //   },
-      // // });
-
       return RemoteFileEntry.newFile({
         uid: wsPath,
-        file: await item.getFileBlob(),
+        file: file,
         deleted: undefined,
       });
     };
@@ -147,7 +64,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     await this.fileEntryManager.createFile(
       wsPath,
       file,
-      this.makeGetRemoteFileEntryCb(wsPath, opts),
+      this.makeGetRemoteFileEntryCb(opts.readWorkspaceMetadata() as WsMetadata),
     );
   }
 
@@ -162,14 +79,14 @@ export class GithubStorageProvider implements BaseStorageProvider {
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     await this.fileEntryManager.deleteFile(
       wsPath,
-      this.makeGetRemoteFileEntryCb(wsPath, opts),
+      this.makeGetRemoteFileEntryCb(opts.readWorkspaceMetadata() as WsMetadata),
     );
   }
 
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
     const file = await this.fileEntryManager.readFile(
       wsPath,
-      this.makeGetRemoteFileEntryCb(wsPath, opts),
+      this.makeGetRemoteFileEntryCb(opts.readWorkspaceMetadata() as WsMetadata),
     );
 
     if (!file) {
@@ -184,53 +101,11 @@ export class GithubStorageProvider implements BaseStorageProvider {
     wsName: string,
     opts: StorageOpts,
   ): Promise<string[]> {
-    const getRemoteFiles = async () => {
-      const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
-      const { tree } = await getTree({
-        wsName,
-        abortSignal,
-        config: {
-          branch: wsMetadata.branch,
-          owner: wsMetadata.owner,
-          githubToken: wsMetadata.githubToken,
-          repoName: wsName,
-        },
-        treeSha: wsMetadata.branch,
-      });
-
-      this.ghTreeMap?.clear();
-      this.ghTreeMap = new Map();
-
-      return tree
-        .map((item): string | undefined => {
-          const path = item.path;
-          if (!allowedFile(path)) {
-            return undefined;
-          }
-
-          const wsPath = fromFsPath(wsName + '/' + item.path);
-
-          if (!wsPath) {
-            throw new BaseError({
-              message: `Your repository contains a file name "${item.path}" which is not supported`,
-              code: INVALID_GITHUB_FILE_FORMAT,
-            });
-          }
-          if (!isValidFileWsPath(wsPath)) {
-            return undefined;
-          }
-
-          this.ghTreeMap?.set(wsPath, item);
-          return wsPath;
-        })
-        .filter(
-          (wsPath: string | undefined): wsPath is string =>
-            typeof wsPath === 'string',
-        );
-    };
+    const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
+    await GithubRepoTree.refreshCache(wsName, wsMetadata);
 
     const files = await this.fileEntryManager.listFiles(
-      getRemoteFiles,
+      await GithubRepoTree.getWsPaths(wsName, wsMetadata),
       wsName + ':',
     );
     return files;

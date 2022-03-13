@@ -30,6 +30,12 @@ import {
   updateWorkspaceMetadata,
 } from './workspaces-operations';
 
+export function getStorageProviderName(wsName: string) {
+  return workspaceSliceKey.queryOp((state) => {
+    return getWorkspaceInfo(wsName)(state).type;
+  });
+}
+
 function getStorageProvider() {
   return workspaceSliceKey.queryOp((state) => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;

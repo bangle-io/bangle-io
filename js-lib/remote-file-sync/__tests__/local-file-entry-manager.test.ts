@@ -131,11 +131,11 @@ describe('LocalFileEntryManager', () => {
       const file = await readFileBlob('file-a.json');
       await manager.createFile('foo', file, async () => undefined);
 
-      expect(await manager.listFiles(async () => [])).toEqual(['foo']);
+      expect(await manager.listFiles([])).toEqual(['foo']);
 
       await manager.deleteFile('foo');
 
-      expect(await manager.listFiles(async () => [])).toEqual([]);
+      expect(await manager.listFiles([])).toEqual([]);
 
       expect(store.size).toBe(1);
       expect(store.get('foo')).toEqual({
@@ -378,7 +378,7 @@ describe('LocalFileEntryManager', () => {
         });
       });
 
-      const files = await manager.listFiles(() => Promise.resolve([]));
+      const files = await manager.listFiles([]);
 
       expect(files).toEqual([]);
     });
@@ -396,15 +396,11 @@ describe('LocalFileEntryManager', () => {
         });
       });
 
-      expect(
-        await manager.listFiles(() => Promise.resolve(['foo', 'bar'])),
-      ).toEqual(['bar', 'foo']);
+      expect(await manager.listFiles(['foo', 'bar'])).toEqual(['bar', 'foo']);
 
       await manager.deleteFile('foo');
 
-      expect(
-        await manager.listFiles(() => Promise.resolve(['foo', 'bar'])),
-      ).toEqual(['bar']);
+      expect(await manager.listFiles(['foo', 'bar'])).toEqual(['bar']);
     });
 
     test('accounts for newly created local files', async () => {
@@ -418,9 +414,11 @@ describe('LocalFileEntryManager', () => {
         },
       );
 
-      expect(
-        await manager.listFiles(() => Promise.resolve(['zoo', 'bar'])),
-      ).toEqual(['bar', 'foo', 'zoo']);
+      expect(await manager.listFiles(['zoo', 'bar'])).toEqual([
+        'bar',
+        'foo',
+        'zoo',
+      ]);
     });
   });
 });

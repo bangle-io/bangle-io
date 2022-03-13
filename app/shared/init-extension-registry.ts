@@ -18,27 +18,25 @@ import searchNotes from '@bangle.io/search-notes';
 
 // TODO move this async, i think a promise should be fine.
 export const initExtensionRegistry = () => {
-  return new ExtensionRegistry(
-    [
-      inlineEmoji,
-      browserStorage,
-      browserNativefsStorage,
-      editorCore,
-      collabExtension,
-      inlineCommandPalette,
-      noteOutline,
-      inlineBacklinkPalette,
-      noteTags,
-      collapsibleHeading,
-      imageExtension,
-      coreActions,
-      noteBrowser,
-      searchNotes,
-      githubStorage,
+  return new ExtensionRegistry([
+    inlineEmoji,
+    browserStorage,
+    browserNativefsStorage,
+    editorCore,
+    collabExtension,
+    inlineCommandPalette,
+    noteOutline,
+    inlineBacklinkPalette,
+    noteTags,
+    collapsibleHeading,
+    imageExtension,
+    coreActions,
+    noteBrowser,
+    searchNotes,
+    githubStorage,
 
-      // NOTE: keep the core palette last
-      // as it has note palette in it
-      corePalette,
-    ].map((r): Extension => (typeof r === 'function' ? r() : r)),
-  );
+    // NOTE: keep the core palette last
+    // as it has note palette in it
+    corePalette,
+  ]);
 };

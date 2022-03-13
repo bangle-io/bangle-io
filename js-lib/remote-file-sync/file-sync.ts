@@ -33,7 +33,7 @@ const isModifiedWrtAncestor = ({
 
 /**
  * Definitions:
- * - Undefined: A file doesnt exist after looking back some amount of history.
+ * - Undefined: A file doesn't exist after looking back some amount of history.
  * - Defined: A file existed though it may or may not be deleted.
  *
  * Case A: Both files are defined and are equal

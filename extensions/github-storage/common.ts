@@ -5,5 +5,9 @@ export const OPERATION_UPDATE_GITHUB_TOKEN =
   'operation::@bangle.io/github-storage:update-github-token';
 export const OPERATION_PUSH_GITHUB_CHANGES =
   'operation::@bangle.io/github-storage:push-github-changes';
+
+export const OPERATION_SYNC_GITHUB_CHANGES =
+  'operation::@bangle.io/github-storage:sync-github-changes';
+
 export const OPERATION_PULL_GITHUB_CHANGES =
   'operation::@bangle.io/github-storage:OPERATION_PULL_GITHUB_CHANGES';
