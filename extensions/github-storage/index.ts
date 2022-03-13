@@ -7,10 +7,16 @@ import {
   showNotification,
   uncaughtExceptionNotification,
 } from '@bangle.io/slice-notification';
+import {
+  getStorageProviderOpts,
+  workspaceSliceKey,
+} from '@bangle.io/slice-workspace';
 import { isIndexedDbException } from '@bangle.io/storage';
 
 import {
   OPERATION_NEW_GITHUB_WORKSPACE,
+  OPERATION_PULL_GITHUB_CHANGES,
+  OPERATION_PUSH_GITHUB_CHANGES,
   OPERATION_UPDATE_GITHUB_TOKEN,
 } from './common';
 import { Router } from './components/Router';
@@ -22,8 +28,11 @@ import {
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
 } from './errors';
+import { getLatestCommitSha } from './github-api-helpers';
 import { GithubStorageProvider } from './github-storage-provider';
 import { githubStorageSlice } from './github-storage-slice';
+import { WsMetadata } from './helpers';
+import { pushModifiedOrCreatedEntries, syncUntouchedEntries } from './sync';
 
 const extensionName = '@bangle.io/github-storage';
 
@@ -152,11 +161,127 @@ const extension = () => {
           name: OPERATION_UPDATE_GITHUB_TOKEN,
           title: 'Github: Update personal access token',
         },
+        {
+          name: OPERATION_PULL_GITHUB_CHANGES,
+          title: 'Github: Pull changes',
+        },
+        {
+          name: OPERATION_PUSH_GITHUB_CHANGES,
+          title: 'Github: Push changes',
+        },
       ],
       operationHandler() {
         return {
           handle(operation, payload, store) {
             switch (operation.name) {
+              case OPERATION_PULL_GITHUB_CHANGES: {
+                const wsName = workspaceSliceKey.getSliceStateAsserted(
+                  store.state,
+                ).wsName;
+
+                if (!wsName) {
+                  return false;
+                }
+
+                const storageOpts = getStorageProviderOpts()(
+                  store.state,
+                  store.dispatch,
+                );
+
+                if (storageOpts.storageProviderName !== storageProvider.name) {
+                  return false;
+                }
+                const wsMetadata =
+                  storageOpts.readWorkspaceMetadata() as WsMetadata;
+
+                getLatestCommitSha({
+                  config: {
+                    branch: wsMetadata.branch,
+                    owner: wsMetadata.owner,
+                    githubToken: wsMetadata.githubToken,
+                    repoName: wsName,
+                  },
+                }).then((r) => {
+                  console.log(r);
+                });
+
+                syncUntouchedEntries(
+                  new AbortController().signal,
+                  storageProvider.fileEntryManager,
+                  wsName,
+                  (uid) => {
+                    return storageProvider.makeGetRemoteFileEntryCb(
+                      uid,
+                      storageOpts,
+                    )();
+                  },
+                ).then(
+                  (result) => {
+                    showNotification({
+                      severity: 'info',
+                      title: `Updated ${result} entries`,
+                      uid: 'sync done ' + Math.random(),
+                    })(store.state, store.dispatch);
+                  },
+                  (error) => {
+                    showNotification({
+                      severity: 'error',
+                      title: 'Error syncing',
+                      content: error.message,
+                      uid: 'sync error ' + Math.random(),
+                    })(store.state, store.dispatch);
+                  },
+                );
+                return true;
+              }
+              case OPERATION_PUSH_GITHUB_CHANGES: {
+                const wsName = workspaceSliceKey.getSliceStateAsserted(
+                  store.state,
+                ).wsName;
+
+                if (!wsName) {
+                  return false;
+                }
+
+                const storageOpts = getStorageProviderOpts()(
+                  store.state,
+                  store.dispatch,
+                );
+
+                if (storageOpts.storageProviderName !== storageProvider.name) {
+                  return false;
+                }
+
+                pushModifiedOrCreatedEntries(
+                  new AbortController().signal,
+                  storageProvider.fileEntryManager,
+                  wsName,
+                  storageOpts.readWorkspaceMetadata() as WsMetadata,
+                  (uid) => {
+                    return storageProvider.makeGetRemoteFileEntryCb(
+                      uid,
+                      storageOpts,
+                    )();
+                  },
+                ).then(
+                  (result) => {
+                    showNotification({
+                      severity: 'info',
+                      title: `Pushed ${result} entries`,
+                      uid: 'push done ' + Math.random(),
+                    })(store.state, store.dispatch);
+                  },
+                  (error) => {
+                    showNotification({
+                      severity: 'error',
+                      title: 'Error pushing changes',
+                      content: error.message,
+                      uid: 'push error ' + Math.random(),
+                    })(store.state, store.dispatch);
+                  },
+                );
+                return true;
+              }
               default: {
                 return false;
               }

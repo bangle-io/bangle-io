@@ -4,6 +4,7 @@ import {
   LocalFileEntryManager,
   RemoteFileEntry,
 } from '@bangle.io/remote-file-sync';
+import type { UnPromisify } from '@bangle.io/shared-types';
 import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError, getLast } from '@bangle.io/utils';
 import { fromFsPath, isValidFileWsPath, resolvePath } from '@bangle.io/ws-path';
@@ -14,7 +15,7 @@ import {
   INVALID_GITHUB_FILE_FORMAT,
   INVALID_GITHUB_TOKEN,
 } from './errors';
-import { getAllFiles, readGhFile } from './github-api-helpers';
+import { getTree } from './github-api-helpers';
 import { WsMetadata } from './helpers';
 
 const allowedFile = (path: string) => {
@@ -42,7 +43,9 @@ export class GithubStorageProvider implements BaseStorageProvider {
   description = '';
   hidden = true;
 
-  ghFileBlobsMap: Map<string, string> | undefined;
+  ghTreeMap:
+    | Map<string, UnPromisify<ReturnType<typeof getTree>>['tree'][0]>
+    | undefined;
   fileEntryManager = new LocalFileEntryManager({
     get: (key: string) => {
       return idb.get(`gh-store-1:${key}`);
@@ -69,32 +72,22 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
   public makeGetRemoteFileEntryCb(wsPath: string, opts: StorageOpts) {
     return async () => {
-      const { wsName, fileName } = resolvePath(wsPath);
+      const { wsName } = resolvePath(wsPath);
 
-      if (!this.ghFileBlobsMap) {
+      if (!this.ghTreeMap) {
         await this.listAllFiles(new AbortController().signal, wsName, opts);
       }
 
-      const path = this.ghFileBlobsMap?.get(wsPath);
+      const item = this.ghTreeMap?.get(wsPath);
 
-      if (!path) {
+      if (!item) {
         return undefined;
       }
-      const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
 
-      const file = await readGhFile({
-        wsPath,
-        config: {
-          branch: wsMetadata.branch,
-          owner: wsMetadata.owner,
-          githubToken: wsMetadata.githubToken,
-          repoName: wsName,
-        },
-      });
-      console.log({ file });
-      // const file = await getFileBlob({
-      //   fileBlobUrl: path,
-      //   fileName,
+      // const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
+
+      // const file = await readGhFile({
+      //   wsPath,
       //   config: {
       //     branch: wsMetadata.branch,
       //     owner: wsMetadata.owner,
@@ -102,10 +95,21 @@ export class GithubStorageProvider implements BaseStorageProvider {
       //     repoName: wsName,
       //   },
       // });
+      // // console.log({ file });
+      // // const file = await getFileBlob({
+      // //   fileBlobUrl: path,
+      // //   fileName,
+      // //   config: {
+      // //     branch: wsMetadata.branch,
+      // //     owner: wsMetadata.owner,
+      // //     githubToken: wsMetadata.githubToken,
+      // //     repoName: wsName,
+      // //   },
+      // // });
 
       return RemoteFileEntry.newFile({
         uid: wsPath,
-        file,
+        file: await item.getFileBlob(),
         deleted: undefined,
       });
     };
@@ -182,7 +186,8 @@ export class GithubStorageProvider implements BaseStorageProvider {
   ): Promise<string[]> {
     const getRemoteFiles = async () => {
       const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
-      const data = await getAllFiles({
+      const { tree } = await getTree({
+        wsName,
         abortSignal,
         config: {
           branch: wsMetadata.branch,
@@ -193,10 +198,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
         treeSha: wsMetadata.branch,
       });
 
-      this.ghFileBlobsMap?.clear();
-      this.ghFileBlobsMap = new Map();
+      this.ghTreeMap?.clear();
+      this.ghTreeMap = new Map();
 
-      return data
+      return tree
         .map((item): string | undefined => {
           const path = item.path;
           if (!allowedFile(path)) {
@@ -215,7 +220,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
             return undefined;
           }
 
-          this.ghFileBlobsMap?.set(wsPath, item.url);
+          this.ghTreeMap?.set(wsPath, item);
           return wsPath;
         })
         .filter(
@@ -224,7 +229,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
         );
     };
 
-    const files = await this.fileEntryManager.listFiles(getRemoteFiles);
+    const files = await this.fileEntryManager.listFiles(
+      getRemoteFiles,
+      wsName + ':',
+    );
     return files;
   }
 

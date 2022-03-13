@@ -212,20 +212,31 @@ export async function* getRepos({
   } while (hasNextPage);
 }
 
-export async function getAllFiles({
+export async function getTree({
   abortSignal,
+  wsName,
   config,
   treeSha,
 }: {
   abortSignal: AbortSignal;
+  wsName: string;
   config: GithubConfig;
   treeSha: string;
-}): Promise<Array<{ path: string; url: string }>> {
+}): Promise<{
+  tree: Array<{
+    path: string;
+    url: string;
+    getFileBlob(): ReturnType<typeof getFileBlob>;
+  }>;
+  sha: string;
+}> {
   try {
-    const { truncated, tree } = await makeV3Api({
+    const { truncated, tree, sha } = await makeV3Api({
       path: `/repos/${config.owner}/${
         config.repoName
-      }/git/trees/${treeSha}?recursive=1&cacheBust=${Date.now()}`,
+      }/git/trees/${treeSha}?recursive=1&cacheBust=${Math.floor(
+        Date.now() / 1000,
+      )}`,
       token: config.githubToken,
       abortSignal,
     });
@@ -237,16 +248,36 @@ export async function getAllFiles({
       });
     }
 
-    return (tree as any[]).map((t: any): { path: string; url: string } => ({
-      path: t.path,
-      url: t.url,
-    }));
+    return {
+      sha,
+      tree: (tree as any[]).map(
+        (
+          t: any,
+        ): {
+          path: string;
+          url: string;
+          getFileBlob(): ReturnType<typeof getFileBlob>;
+        } => ({
+          path: t.path,
+          url: t.url,
+          getFileBlob: () => {
+            const wsPath = fromFsPath(wsName + '/' + t.path);
+            if (!wsPath) {
+              throw new BaseError({
+                message: 'File path contains invalid characters :' + t.path,
+                code: INVALID_GITHUB_RESPONSE,
+              });
+            }
+            return getFileBlob({
+              config,
+              fileBlobUrl: t.url,
+              fileName: resolvePath(wsPath).fileName,
+            });
+          },
+        }),
+      ),
+    };
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        return [];
-      }
-    }
     throw error;
   }
 }
@@ -352,7 +383,7 @@ export async function readGhFile({
     isBlob: true,
     path: `/repos/${config.owner}/${config.repoName}/contents/${
       resolvePath(wsPath).filePath
-    }?ref=${config.branch}&cacheBust=${Date.now()}`,
+    }?ref=${config.branch}`,
     token: config.githubToken,
     headers: {
       Accept: 'application/vnd.github.v3.raw+json',
@@ -368,7 +399,8 @@ export async function readGhFile({
           'The requested blob is too large to fetch via the API',
         )
       ) {
-        return getAllFiles({
+        return getTree({
+          wsName,
           abortSignal: new AbortController().signal,
           config: {
             branch: config.branch,
@@ -378,7 +410,7 @@ export async function readGhFile({
           },
           treeSha: config.branch,
         }).then((result) => {
-          const matchingItem = result.find((item) => {
+          const matchingItem = result.tree.find((item) => {
             return wsPath === fromFsPath(wsName + '/' + item.path);
           });
 
@@ -386,15 +418,23 @@ export async function readGhFile({
             throw error;
           }
 
-          return getFileBlob({
-            fileBlobUrl: matchingItem.url,
-            config,
-            fileName: resolvePath(wsPath).fileName,
-          });
+          return matchingItem.getFileBlob();
         });
       } else {
         throw error;
       }
     },
   );
+}
+
+export async function getLatestCommitSha({ config }: { config: GithubConfig }) {
+  return makeV3Api({
+    path: `/repos/${config.owner}/${config.repoName}/commits/${
+      config.branch
+    }?cacheBust=${Math.floor(Date.now() / 1000)}`,
+    token: config.githubToken,
+    headers: {
+      Accept: 'application/vnd.github.v3.raw+json',
+    },
+  });
 }

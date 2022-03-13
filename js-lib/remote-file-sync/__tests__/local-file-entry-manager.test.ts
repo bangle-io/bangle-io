@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { readFile } from 'fs/promises';
 
 import { RemoteFileEntry } from '..';
 import {
@@ -252,7 +251,7 @@ describe('LocalFileEntryManager', () => {
       });
     });
 
-    test('updates an unmodified file if remote file has changed', async () => {
+    test('does not update an unmodified file if remote file has changed', async () => {
       const { manager, store } = createManager();
 
       const remoteFile1 = await readFileBlob('file-b.md');
@@ -265,7 +264,7 @@ describe('LocalFileEntryManager', () => {
           deleted: undefined,
         });
       });
-
+      // first set the file in store
       expect(file1).toBe(remoteFile1);
 
       const file2 = await manager.readFile('foo', async (uid) => {
@@ -276,45 +275,8 @@ describe('LocalFileEntryManager', () => {
         });
       });
 
-      expect(file2).toBe(remoteFile2);
-    });
-
-    test('updates an unmodified file if remote file has been deleted', async () => {
-      const { manager, store } = createManager();
-
-      const remoteFile1 = await readFileBlob('file-b.md');
-      const remoteFile2 = await readFileBlob('file-e.md');
-
-      const file1 = await manager.readFile('foo', async (uid) => {
-        return RemoteFileEntry.newFile({
-          file: remoteFile1,
-          uid,
-          deleted: undefined,
-        });
-      });
-
-      expect(file1).toBe(remoteFile1);
-
-      const file2 = await manager.readFile('foo', async (uid) => {
-        return RemoteFileEntry.newFile({
-          file: remoteFile2,
-          uid,
-          deleted: 2423,
-        });
-      });
-
-      expect(file2).toBe(undefined);
-
-      expect(store.get('foo')).toEqual({
-        deleted: 2423,
-        file: remoteFile2,
-        sha: '0339c1e590ea445ae79aa43ed435b34ffb8286c8',
-        source: {
-          file: remoteFile2,
-          sha: '0339c1e590ea445ae79aa43ed435b34ffb8286c8',
-        },
-        uid: 'foo',
-      });
+      expect(file2).toBe(remoteFile1);
+      expect(file2).not.toBe(remoteFile2);
     });
 
     test('ignore remote file is local is modified', async () => {

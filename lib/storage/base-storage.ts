@@ -1,5 +1,4 @@
 import { SpecRegistry } from '@bangle.dev/core';
-import type { Node } from '@bangle.dev/pm';
 
 export type WsPath = string;
 export type WsName = string;

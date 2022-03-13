@@ -28,10 +28,6 @@ export class LocalFileEntryManager {
     return undefined;
   }
 
-  private async updateFileEntry(fileEntry: LocalFileEntry): Promise<void> {
-    return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
-  }
-
   private isRecentlyDeleted(fileEntry: LocalFileEntry | undefined) {
     return (
       typeof fileEntry?.deleted === 'number' &&
@@ -39,15 +35,27 @@ export class LocalFileEntryManager {
     );
   }
 
-  async getAllEntries(): Promise<LocalFileEntry[]> {
+  public async updateFileEntry(fileEntry: LocalFileEntry): Promise<void> {
+    return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
+  }
+  public async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
+    return this.persistenceProvider.delete(uid);
+  }
+
+  async getAllEntries(uidPrefix: string = ''): Promise<LocalFileEntry[]> {
     return this.persistenceProvider.entries().then((entries) => {
-      return entries.map((r) => LocalFileEntry.fromPlainObj(r[1]));
+      return entries
+        .map((r) => LocalFileEntry.fromPlainObj(r[1]))
+        .filter((r) => r.uid.startsWith(uidPrefix));
     });
   }
 
   // returns all local and remote file uids that have not been deleted
-  async listFiles(listRemoteFiles: () => Promise<string[]>): Promise<string[]> {
-    let localEntries = await this.getAllEntries();
+  async listFiles(
+    listRemoteFiles: () => Promise<string[]>,
+    uidPrefix: string = '',
+  ): Promise<string[]> {
+    let localEntries = await this.getAllEntries(uidPrefix);
     const localFiles = localEntries
       .filter((fileEntry) => {
         // only include files that are modified and not deleted
