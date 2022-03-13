@@ -6,7 +6,6 @@ const isCI = (process.env as any).CI;
 
 const config: PlaywrightTestConfig = {
   forbidOnly: !!isCI,
-  retries: isCI ? 2 : 0,
   timeout: 20000,
   expect: {
     timeout: 2000,
@@ -32,9 +31,17 @@ const config: PlaywrightTestConfig = {
   projects: [
     {
       name: 'chromium',
-
+      testIgnore: [/performance/],
+      retries: isCI ? 2 : 0,
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'performance',
+      testMatch: /performance/,
+      retries: isCI ? 4 : 0,
+      use: { ...devices['Desktop Chrome'] },
+    },
+
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },

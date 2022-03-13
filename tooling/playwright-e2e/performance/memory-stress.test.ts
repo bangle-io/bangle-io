@@ -13,6 +13,7 @@ import {
 test('Openning a lot of notes should not leak', async ({ baseURL }) => {
   test.slow();
   test.setTimeout(2 * 60000);
+
   const browser = await chromium.launch({
     // this is needed to run `window.gc()`
     args: ['--js-flags=--expose-gc'],
@@ -96,7 +97,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     const size = await page.evaluate(() => {
       return new Set((window as any).refs.map((r: any) => r.deref())).size;
     });
-    if (size > FINAL_EDITORS_IN_MEMORY && attempt < 2) {
+    if (size > FINAL_EDITORS_IN_MEMORY && attempt < 10) {
       return getEditorCountInMemory(attempt + 1);
     }
     return size;

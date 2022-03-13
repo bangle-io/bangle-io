@@ -61,6 +61,13 @@ jobs:
           name: playwright trace
           path: tooling/playwright-e2e/
           retention-days: 3
+      # compressed size diff
+      - uses: preactjs/compressed-size-action@v2
+        if: matrix.test-kind == 'build'
+        with:
+          pattern: '**/build/**/*.{js,css,html,json}'
+          exclude: '{**/*.map,**/node_modules/**}'
+          strip-hash: "\\b\\w{8}\\."
       - name: Upload coverage report
         if: matrix.test-kind == 'test-ci'
         uses: codecov/codecov-action@v2
