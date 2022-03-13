@@ -266,3 +266,18 @@ export function useClickToNote<T>(
   );
   return makeOnClick;
 }
+export function useInterval<T extends (...args: any[]) => any>(
+  callback: T,
+  deps: DependencyList,
+  delay: number,
+) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoCb = useCallback(callback, deps);
+
+  useEffect(() => {
+    let id = setInterval(memoCb, delay);
+    return () => {
+      clearInterval(id);
+    };
+  }, [memoCb, delay]);
+}
