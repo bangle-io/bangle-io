@@ -35,6 +35,7 @@
     "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/storage": "workspace:*",
+    "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
