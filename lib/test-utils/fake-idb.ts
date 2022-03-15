@@ -12,27 +12,11 @@ interface IdbType {
 }
 
 class FakeIdb implements IdbType {
-  constructor() {
-    this.createStore = jest.fn(this.createStore.bind(this));
-    this.get = jest.fn(this.get.bind(this));
-    this.del = jest.fn(this.del.bind(this));
-    this.set = jest.fn(this.set.bind(this));
-    this.keys = jest.fn(this.keys.bind(this));
-  }
-
-  getEverything(customStore?: any) {
+  getEverything = (customStore?: any) => {
     return Array.from((customStore || mockStore).entries());
-  }
+  };
 
-  clearMocks() {
-    this.createStore = jest.fn(this.createStore.bind(this));
-    this.get = jest.fn(this.get.bind(this));
-    this.del = jest.fn(this.del.bind(this));
-    this.set = jest.fn(this.set.bind(this));
-    this.keys = jest.fn(this.keys.bind(this));
-  }
-
-  createStore(dbName: string, storeName: string): any {
+  createStore = (dbName: string, storeName: string): any => {
     const hash = dbName + '$' + storeName;
     if (customStores.has(hash)) {
       return customStores.get(hash);
@@ -42,30 +26,35 @@ class FakeIdb implements IdbType {
     customStores.set(hash, store);
 
     return store as any;
-  }
+  };
 
-  async get(key: IDBValidKey, customStore?: any) {
+  get = async (key: IDBValidKey, customStore?: any) => {
     return (customStore || mockStore).get(key);
-  }
+  };
 
-  async del(key: IDBValidKey, customStore?: any) {
+  del = async (key: IDBValidKey, customStore?: any) => {
     (customStore || mockStore).delete(key);
     return;
-  }
+  };
 
-  async set(key: IDBValidKey, value: any, customStore?: any) {
+  set = async (key: IDBValidKey, value: any, customStore?: any) => {
     (customStore || mockStore).set(key, value);
-  }
+  };
 
-  async keys(customStore?: any): Promise<any[]> {
+  keys = async (customStore?: any): Promise<any[]> => {
     return Array.from((customStore || mockStore).keys() as any);
-  }
+  };
+
+  getMany = async (keys: IDBValidKey[], customStore?: any) => {
+    return Promise.resolve(
+      Promise.all(keys.map((key) => this.get(key, customStore))),
+    );
+  };
 }
 
 export const fakeIdb = new FakeIdb();
 
 export function clearFakeIdb() {
-  fakeIdb.clearMocks();
   mockStore.clear();
   customStores.forEach((map) => {
     map.clear();

@@ -1,3 +1,4 @@
+require('cross-fetch/polyfill');
 const { fakeIdb, clearFakeIdb } = require('@bangle.io/test-utils/fake-idb');
 const { webcrypto } = require('crypto');
 const { Blob } = require('buffer');
@@ -20,7 +21,7 @@ global.afterEach(async () => {
 
 global.fakeIdb = fakeIdb;
 
-global.fetch = async () => ({ ok: false, status: 404 });
+// global.fetch = async () => ({ ok: false, status: 404 });
 
 global.crypto = webcrypto;
 

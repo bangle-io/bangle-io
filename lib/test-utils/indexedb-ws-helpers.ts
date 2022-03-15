@@ -57,7 +57,13 @@ export const beforeEachHook = () => {
       this.parts = parts;
     }
     async text() {
-      return this.parts?.[0];
+      if (typeof this.parts[0] === 'string') {
+        return this.parts[0];
+      }
+      return (this.parts[0] as any).text();
+    }
+    async arrayBuffer() {
+      return (this.parts[0] as any).arrayBuffer();
     }
   };
 };
