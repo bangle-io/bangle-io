@@ -2455,6 +2455,7 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.3.1
     typescript: ^4.5.5
+    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -14849,6 +14850,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
+    cross-fetch: ^3.1.5
     date-fns: ^2.25.0
     domexception: ^4.0.0
     idb-keyval: ^5.1.5
@@ -16673,6 +16675,13 @@ __metadata:
   dependencies:
     xml-name-validator: ^3.0.0
   checksum: ae25c51cf71f1fb2516df1ab33a481f83461a117565b95e3d0927432522323f93b1b2846cbb60196d337970c421adb604fc2d0d180c6a47a839da01db5b9973b
+  languageName: node
+  linkType: hard
+
+"wait-for-expect@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "wait-for-expect@npm:3.0.2"
+  checksum: 2ec1ebd78023fa10bdcf53d78bbd65feea68fdfa0de0b00f3a72f3df089118b91517839ff3926e5ef6cfd1ede65085326d85b0378d4db62c266cc9c859c2de56
   languageName: node
   linkType: hard
 

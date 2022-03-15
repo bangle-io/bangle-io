@@ -5200,7 +5200,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
-            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"],
+            ["wait-for-expect", "npm:3.0.2"]
           ],
           "linkType": "SOFT",
         }]
@@ -20223,6 +20224,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
+            ["cross-fetch", "npm:3.1.5"],
             ["date-fns", "npm:2.28.0"],
             ["domexception", "npm:4.0.0"],
             ["idb-keyval", "npm:5.1.5"],
@@ -22330,6 +22332,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["w3c-xmlserializer", "npm:2.0.0"],
             ["xml-name-validator", "npm:3.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["wait-for-expect", [
+        ["npm:3.0.2", {
+          "packageLocation": "./.yarn/cache/wait-for-expect-npm-3.0.2-40c9e7eb3e-2ec1ebd780.zip/node_modules/wait-for-expect/",
+          "packageDependencies": [
+            ["wait-for-expect", "npm:3.0.2"]
           ],
           "linkType": "HARD",
         }]
