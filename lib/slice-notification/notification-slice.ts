@@ -92,6 +92,14 @@ export function notificationSlice() {
         );
       },
 
+      'action::@bangle.io/slice-notification:CLEAR_ALL': (actionName) => {
+        return notificationSliceKey.actionSerializer(
+          actionName,
+          (action) => ({}),
+          (serialVal) => ({}),
+        );
+      },
+
       'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION': (
         actionName,
       ) => {
