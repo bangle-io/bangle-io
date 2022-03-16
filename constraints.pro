@@ -1,5 +1,8 @@
 
 
+% Yarn Constraints https://yarnpkg.com/features/constraints
+% check with "yarn constraints" (fix w/ "yarn constraints --fix")
+
 % This rule will enforce that all packages must have a "AGPL-3.0-or-later" license field
 gen_enforced_field(WorkspaceCwd, 'license', 'AGPL-3.0-or-later').
 
