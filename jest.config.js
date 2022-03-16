@@ -2,7 +2,6 @@ module.exports = {
   testRunner: 'jest-circus/runner',
   testPathIgnorePatterns: [
     `<rootDir>/.yarn`,
-    `<rootDir>/tooling/e2e`,
     `<rootDir>/tooling/playwright-e2e`,
   ],
   transformIgnorePatterns: [],
