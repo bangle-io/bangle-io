@@ -436,6 +436,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.3"],
             ["bangle-io-help", "npm:1.11.0"],
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],
+            ["concurrently", "npm:7.0.0"],
             ["copy-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.1.1"],
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.7"],
             ["date-fns", "npm:2.25.0"],
@@ -10488,6 +10489,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.2.3"],
             ["bangle-io-help", "npm:1.11.0"],
             ["case-sensitive-paths-webpack-plugin", "npm:2.4.0"],
+            ["concurrently", "npm:7.0.0"],
             ["copy-webpack-plugin", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:8.1.1"],
             ["css-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.2.7"],
             ["date-fns", "npm:2.25.0"],
@@ -11520,6 +11522,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["concurrently", [
+        ["npm:7.0.0", {
+          "packageLocation": "./.yarn/cache/concurrently-npm-7.0.0-c402b003bc-1be78f24bf.zip/node_modules/concurrently/",
+          "packageDependencies": [
+            ["concurrently", "npm:7.0.0"],
+            ["chalk", "npm:4.1.2"],
+            ["date-fns", "npm:2.28.0"],
+            ["lodash", "npm:4.17.21"],
+            ["rxjs", "npm:6.6.7"],
+            ["spawn-command", "npm:0.0.2"],
+            ["supports-color", "npm:8.1.1"],
+            ["tree-kill", "npm:1.2.2"],
+            ["yargs", "npm:16.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["confusing-browser-globals", [
         ["npm:1.0.11", {
           "packageLocation": "./.yarn/cache/confusing-browser-globals-npm-1.0.11-b3ff8e9483-3afc635abd.zip/node_modules/confusing-browser-globals/",
@@ -11945,6 +11964,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/date-fns-npm-2.25.0-fe211b387d-8896dc1dde.zip/node_modules/date-fns/",
           "packageDependencies": [
             ["date-fns", "npm:2.25.0"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:2.28.0", {
+          "packageLocation": "./.yarn/cache/date-fns-npm-2.28.0-c19c5add1b-a0516b2e4f.zip/node_modules/date-fns/",
+          "packageDependencies": [
+            ["date-fns", "npm:2.28.0"]
           ],
           "linkType": "HARD",
         }]
@@ -21336,6 +21362,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/sourcemap-codec-npm-1.4.8-3a1a9e60b1-b57981c056.zip/node_modules/sourcemap-codec/",
           "packageDependencies": [
             ["sourcemap-codec", "npm:1.4.8"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["spawn-command", [
+        ["npm:0.0.2", {
+          "packageLocation": "./.yarn/cache/spawn-command-npm-0.0.2-014d4d5d9f-e35c5d2817.zip/node_modules/spawn-command/",
+          "packageDependencies": [
+            ["spawn-command", "npm:0.0.2"]
           ],
           "linkType": "HARD",
         }]
