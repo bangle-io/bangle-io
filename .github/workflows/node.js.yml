@@ -55,6 +55,10 @@ jobs:
         if: matrix.test-kind == 'g:e2e'
         run: yarn g:playwright-dep
       - run: yarn ${{ matrix.test-kind }}
+        with:
+          env:
+            GITHUB_OWNER: ${{ secrets.GH_OWNER }}
+            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:

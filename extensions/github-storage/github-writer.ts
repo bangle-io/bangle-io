@@ -8,6 +8,7 @@ import { getBranchHead, GithubConfig, pushChanges } from './github-api-helpers';
 
 const fileToBase64 = async (file: File) => {
   const buffer = await file.arrayBuffer();
+
   return base64.fromByteArray(new Uint8Array(buffer));
 };
 

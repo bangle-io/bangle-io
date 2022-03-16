@@ -6,7 +6,7 @@ import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { GITHUB_STORAGE_NOT_ALLOWED, INVALID_GITHUB_TOKEN } from './errors';
 import { localFileEntryManager } from './file-entry-manager';
 import { GithubRepoTree } from './github-repo-tree';
-import { WsMetadata } from './helpers';
+import { GithubWsMetadata } from './helpers';
 
 export class GithubStorageProvider implements BaseStorageProvider {
   name = GITHUB_STORAGE_PROVIDER_NAME;
@@ -16,7 +16,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
   private fileEntryManager = localFileEntryManager;
 
-  private makeGetRemoteFileEntryCb(wsMetadata: WsMetadata) {
+  private makeGetRemoteFileEntryCb(
+    wsMetadata: GithubWsMetadata,
+    useCache: boolean,
+  ) {
     return async (wsPath: string) => {
       const file = await GithubRepoTree.getFileBlob(wsPath, wsMetadata);
 
@@ -64,7 +67,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
     await this.fileEntryManager.createFile(
       wsPath,
       file,
-      this.makeGetRemoteFileEntryCb(opts.readWorkspaceMetadata() as WsMetadata),
+      this.makeGetRemoteFileEntryCb(
+        opts.readWorkspaceMetadata() as GithubWsMetadata,
+        false,
+      ),
     );
   }
 
@@ -79,14 +85,20 @@ export class GithubStorageProvider implements BaseStorageProvider {
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
     await this.fileEntryManager.deleteFile(
       wsPath,
-      this.makeGetRemoteFileEntryCb(opts.readWorkspaceMetadata() as WsMetadata),
+      this.makeGetRemoteFileEntryCb(
+        opts.readWorkspaceMetadata() as GithubWsMetadata,
+        false,
+      ),
     );
   }
 
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
     const file = await this.fileEntryManager.readFile(
       wsPath,
-      this.makeGetRemoteFileEntryCb(opts.readWorkspaceMetadata() as WsMetadata),
+      this.makeGetRemoteFileEntryCb(
+        opts.readWorkspaceMetadata() as GithubWsMetadata,
+        false,
+      ),
     );
 
     if (!file) {
@@ -101,8 +113,8 @@ export class GithubStorageProvider implements BaseStorageProvider {
     wsName: string,
     opts: StorageOpts,
   ): Promise<string[]> {
-    const wsMetadata = opts.readWorkspaceMetadata() as WsMetadata;
-    await GithubRepoTree.refreshCache(wsName, wsMetadata);
+    const wsMetadata = opts.readWorkspaceMetadata() as GithubWsMetadata;
+    await GithubRepoTree.refreshCachedData(wsName, wsMetadata);
 
     const files = await this.fileEntryManager.listFiles(
       await GithubRepoTree.getWsPaths(wsName, wsMetadata),

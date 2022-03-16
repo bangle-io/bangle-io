@@ -8,9 +8,9 @@ import { assertSignal, shuffleArray } from '@bangle.io/utils';
 
 import { GithubRepoTree } from './github-repo-tree';
 import { commitToGithub } from './github-writer';
-import { WsMetadata } from './helpers';
+import { GithubWsMetadata } from './helpers';
 
-const LOG = true;
+const LOG = false;
 
 const log = LOG ? console.info.bind(console, 'GithubSync') : () => {};
 
@@ -18,7 +18,7 @@ export async function syncUntouchedEntries(
   abortSignal: AbortSignal,
   fileEntryManager: LocalFileEntryManager,
   wsName: string,
-  wsMetadata: WsMetadata,
+  wsMetadata: GithubWsMetadata,
 ) {
   const allEntries = await fileEntryManager.getAllEntries(wsName + ':');
   log('all Entries', allEntries);
@@ -69,7 +69,7 @@ export async function pushModifiedOrCreatedEntries(
   abortSignal: AbortSignal,
   fileEntryManager: LocalFileEntryManager,
   wsName: string,
-  wsMetadata: WsMetadata,
+  wsMetadata: GithubWsMetadata,
   getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
 ) {
   const entries = (await fileEntryManager.getAllEntries(wsName + ':')).filter(

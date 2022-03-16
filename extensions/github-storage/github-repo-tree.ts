@@ -3,7 +3,7 @@ import * as idb from 'idb-keyval';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { getFileBlob, getTree } from './github-api-helpers';
-import { WsMetadata } from './helpers';
+import { GithubWsMetadata } from './helpers';
 
 interface Leaf {
   wsPath: string;
@@ -20,7 +20,7 @@ interface GHData {
 export class GithubRepoTree {
   private static async fetchData(
     wsName: string,
-    wsMetadata: WsMetadata,
+    wsMetadata: GithubWsMetadata,
   ): Promise<GHData> {
     // TODO can move to checking if the gitsha is different using
     // graphql to optimize the request and save v3 api calls
@@ -33,7 +33,6 @@ export class GithubRepoTree {
         githubToken: wsMetadata.githubToken,
         repoName: wsName,
       },
-      treeSha: wsMetadata.branch,
     });
 
     return {
@@ -57,7 +56,7 @@ export class GithubRepoTree {
 
   private static async getData(
     wsName: string,
-    wsMetadata: WsMetadata,
+    wsMetadata: GithubWsMetadata,
     useCache = true,
   ): Promise<GHData> {
     if (useCache) {
@@ -66,11 +65,10 @@ export class GithubRepoTree {
         return data;
       }
     }
-
-    return await GithubRepoTree.refreshCache(wsName, wsMetadata);
+    return GithubRepoTree.refreshCachedData(wsName, wsMetadata);
   }
 
-  static async getFileBlob(wsPath: string, wsMetadata: WsMetadata) {
+  static async getFileBlob(wsPath: string, wsMetadata: GithubWsMetadata) {
     const { wsName, fileName } = resolvePath(wsPath);
     const data = await GithubRepoTree.getData(
       resolvePath(wsPath).wsName,
@@ -94,12 +92,12 @@ export class GithubRepoTree {
     });
   }
 
-  static async getWsPaths(wsName: string, wsMetadata: WsMetadata) {
+  static async getWsPaths(wsName: string, wsMetadata: GithubWsMetadata) {
     const data = await GithubRepoTree.getData(wsName, wsMetadata);
     return data.tree.map((r) => r.wsPath);
   }
 
-  static async refreshCache(wsName: string, wsMetadata: WsMetadata) {
+  static async refreshCachedData(wsName: string, wsMetadata: GithubWsMetadata) {
     const data = await GithubRepoTree.fetchData(wsName, wsMetadata);
     await idb.set(IDB_PREFIX + wsName, data);
     return data;

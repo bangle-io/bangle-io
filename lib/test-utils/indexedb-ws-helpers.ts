@@ -52,6 +52,9 @@ export const beforeEachHook = () => {
       public filename: MockFile['filename'],
       public properties: MockFile['properties'],
     ) {
+      if (typeof this.parts[0] === 'string') {
+        this.parts[0] = new Blob(this.parts, this.properties);
+      }
       this.filename = filename;
       this.properties = properties;
       this.parts = parts;

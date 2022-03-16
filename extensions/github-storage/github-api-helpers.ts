@@ -1,4 +1,4 @@
-import { BaseError, getLast } from '@bangle.io/utils';
+import { BaseError, getLast, serialExecuteQueue } from '@bangle.io/utils';
 import { fromFsPath } from '@bangle.io/ws-path';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
@@ -44,7 +44,7 @@ rateLimit {
   resetAt
 }`;
 
-function makeV3Api<T = any>({
+async function makeV3GetApi<T = any>({
   path,
   token,
   abortSignal,
@@ -60,21 +60,23 @@ function makeV3Api<T = any>({
   const url = path.includes('https://')
     ? path
     : `https://api.github.com${path}`;
-  return fetch(url, {
+
+  const res = await fetch(url, {
     method: 'GET',
     signal: abortSignal,
     headers: {
       Authorization: `token ${token}`,
       ...(headers || {}),
     },
-  }).then((res) => {
-    if (!res.ok) {
-      return res.json().then((r) => {
-        throw new BaseError({ message: r.message, code: GITHUB_API_ERROR });
-      });
-    }
-    return isBlob ? res.blob() : res.json();
   });
+
+  if (!res.ok) {
+    return res.json().then((r) => {
+      console.log('Github API error', r.message);
+      throw new BaseError({ message: r.message, code: GITHUB_API_ERROR });
+    });
+  }
+  return isBlob ? res.blob() : res.json();
 }
 
 function makeGraphql({
@@ -239,22 +241,57 @@ export async function getTree({
   abortSignal,
   wsName,
   config,
-  treeSha,
 }: {
-  abortSignal: AbortSignal;
+  abortSignal?: AbortSignal;
   wsName: string;
   config: GithubConfig;
-  treeSha: string;
-}) {
-  const { truncated, tree, sha } = await makeV3Api({
-    path: `/repos/${config.owner}/${
-      config.repoName
-    }/git/trees/${treeSha}?recursive=1&cacheBust=${Math.floor(
-      Date.now() / 1000,
-    )}`,
-    token: config.githubToken,
-    abortSignal,
-  });
+}): Promise<{ sha: string; tree: Array<{ url: string; wsPath: string }> }> {
+  const makeRequest = async (
+    attempt = 0,
+    lastErrorMessage?: string,
+  ): Promise<{
+    truncated: boolean;
+    tree: Array<{ url: string; wsPath: string }>;
+    sha: string;
+  }> => {
+    console.log('getTree attempt', attempt);
+
+    if (attempt > 3) {
+      throw new BaseError({
+        message: lastErrorMessage || `Could not get tree for ${wsName}`,
+        code: INVALID_GITHUB_RESPONSE,
+      });
+    }
+
+    try {
+      return await makeV3GetApi({
+        path: `/repos/${config.owner}/${config.repoName}/git/trees/${
+          config.branch
+        }?recursive=1&cacheBust=${Math.floor(Date.now() / 1000)}`,
+        token: config.githubToken,
+        abortSignal,
+      });
+    } catch (error) {
+      if (error instanceof Error || error instanceof BaseError) {
+        if (error.message.includes('Git Repository is empty.')) {
+          let errorMessage = error.message;
+          return initializeRepo({ config }).then((sha) => {
+            return makeRequest(attempt + 1, errorMessage);
+          });
+        }
+        // this is thrown when repo is initialized but has no files
+        if (error.message === 'Not Found') {
+          return getLatestCommitSha({ config }).then((sha) => ({
+            truncated: false,
+            tree: [],
+            sha: sha,
+          }));
+        }
+      }
+      throw error;
+    }
+  };
+  const { truncated, tree, sha } = await makeRequest(0);
 
   if (truncated || !tree) {
     throw new BaseError({
@@ -282,7 +319,6 @@ export async function getTree({
         wsPath,
       };
     });
-
   return {
     sha,
     tree: list,
@@ -339,7 +375,7 @@ export async function pushChanges({
 
   const commitHash = result.createCommitOnBranch?.commit?.oid;
 
-  const result2 = await makeV3Api({
+  const result2 = await makeV3GetApi({
     path: `/repos/${config.owner}/${config.repoName}/commits/${commitHash}`,
     token: config.githubToken,
   });
@@ -366,7 +402,7 @@ export async function getFileBlob({
   fileBlobUrl: string;
   config: GithubConfig;
 }) {
-  return makeV3Api({
+  return makeV3GetApi({
     isBlob: true,
     path: fileBlobUrl,
     token: config.githubToken,
@@ -435,13 +471,106 @@ export async function getFileBlob({
 // }
 
 export async function getLatestCommitSha({ config }: { config: GithubConfig }) {
-  return makeV3Api({
-    path: `/repos/${config.owner}/${config.repoName}/commits/${
-      config.branch
-    }?cacheBust=${Math.floor(Date.now() / 1000)}`,
-    token: config.githubToken,
+  let path = `/repos/${config.owner}/${config.repoName}/commits/${
+    config.branch
+  }?cacheBust=${Math.floor(Date.now() / 1000)}`;
+
+  const makeRequest = () => {
+    return makeV3GetApi({
+      path,
+      token: config.githubToken,
+      headers: {
+        Accept: 'application/vnd.github.v3.raw+json',
+      },
+    });
+  };
+
+  return makeRequest().then(
+    (r) => r.sha,
+    (error) => {
+      if (error.message.includes('Git Repository is empty.')) {
+        return initializeRepo({ config }).then((sha) => {
+          return makeRequest();
+        });
+      }
+      throw error;
+    },
+  );
+}
+
+export async function initializeRepo({
+  config,
+}: {
+  config: GithubConfig;
+}): Promise<void> {
+  const fileContent = `## Welcome to Bangle.io\n This is a sample note to get things started.`;
+  const filePath = 'welcome-to-bangle.md';
+  const res = await fetch(
+    `https://api.github.com/repos/${config.owner}/${config.repoName}/contents/` +
+      filePath,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${config.githubToken}`,
+        Accept: 'application/vnd.github.v3.raw+json',
+      },
+      body: JSON.stringify({
+        message: 'Bangle.io first commit',
+        content: btoa(fileContent),
+        branch: config.branch,
+      }),
+    },
+  );
+
+  if (!res.ok) {
+    const message = await res.json().then((data) => {
+      return data.message;
+    });
+    if (
+      // if the file already exists
+      message === 'reference already exists' ||
+      // if a file already exists github expects you to provide a sha
+      message.includes(`"sha" wasn't supplied`) ||
+      // this is thrown when repo is initialized but has no files
+      message === 'Not Found'
+    ) {
+      return;
+    }
+
+    throw new BaseError({
+      message: message,
+      code: GITHUB_API_ERROR,
+    });
+  }
+}
+
+export async function createRepo({
+  config,
+  description = 'Created automatically by Bangle.io',
+}: {
+  config: GithubConfig;
+  description?: string;
+}): Promise<void> {
+  const res = await fetch(`https://api.github.com/user/repos`, {
+    method: 'POST',
     headers: {
+      Authorization: `token ${config.githubToken}`,
       Accept: 'application/vnd.github.v3.raw+json',
     },
+    body: JSON.stringify({
+      name: config.repoName,
+      private: true,
+      homepage: `https://${config.owner}.github.io/${config.repoName}/`,
+      description: description,
+    }),
   });
+
+  if (!res.ok) {
+    throw new BaseError({
+      message: await res
+        .json()
+        .then((data) => data.message || data.errors?.[0]?.message),
+      code: GITHUB_API_ERROR,
+    });
+  }
 }

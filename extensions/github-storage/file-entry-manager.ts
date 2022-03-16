@@ -11,17 +11,16 @@ export const localFileEntryManager = new LocalFileEntryManager({
   set: (key, entry) => {
     return idb.set(IDB_PREFIX + key, entry);
   },
-  entries: () => {
-    return idb.entries().then((entries) => {
-      return entries
-        .filter(([key]) => {
-          if (typeof key === 'string') {
-            return key.startsWith(IDB_PREFIX);
-          }
-          return false;
-        })
-        .map(([key, value]) => [key, value] as [string, any])
-        .map(([key, value]) => [key.slice(IDB_PREFIX.length), value]);
+  getValues: async () => {
+    return idb.keys().then(async (keys) => {
+      const filteredKeys: string[] = keys.filter((key): key is string => {
+        if (typeof key === 'string') {
+          return key.startsWith(IDB_PREFIX);
+        }
+        return false;
+      });
+
+      return idb.getMany(filteredKeys);
     });
   },
   delete: (key) => {

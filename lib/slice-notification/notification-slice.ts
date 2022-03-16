@@ -14,6 +14,9 @@ export const notificationSliceKey = new SliceKey<
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION';
       value: { uid: string };
     }
+  | {
+      name: 'action::@bangle.io/slice-notification:CLEAR_ALL';
+    }
 >('notificationSliceKey');
 
 export function notificationSlice() {
@@ -38,6 +41,13 @@ export function notificationSlice() {
             return {
               ...state,
               notifications: [...state.notifications, action.value],
+            };
+          }
+
+          case 'action::@bangle.io/slice-notification:CLEAR_ALL': {
+            return {
+              ...state,
+              notifications: [],
             };
           }
 

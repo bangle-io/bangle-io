@@ -31,7 +31,7 @@ export async function getVanilaFileSha(file: File) {
     .join('');
   return sha;
 }
-export interface WsMetadata {
+export interface GithubWsMetadata {
   githubToken: string;
   owner: string;
   branch: string;

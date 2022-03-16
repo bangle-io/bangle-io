@@ -6,6 +6,8 @@ import { Emitter } from '@bangle.dev/utils';
 
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
+export { serialExecuteQueue } from '@bangle.dev/utils';
+
 export { Emitter };
 
 export function getLast<T>(array: T[]): T | undefined {

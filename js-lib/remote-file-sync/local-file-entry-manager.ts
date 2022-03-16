@@ -14,7 +14,7 @@ export class LocalFileEntryManager {
     private persistenceProvider: {
       get: (key: string) => Promise<any | undefined>;
       set: (key: string, obj: any) => Promise<void>;
-      entries: () => Promise<[string, any][]>;
+      getValues: () => Promise<any[]>;
       delete: (key: string) => Promise<void>;
     },
   ) {}
@@ -46,9 +46,9 @@ export class LocalFileEntryManager {
   }
 
   async getAllEntries(uidPrefix: string = ''): Promise<LocalFileEntry[]> {
-    return this.persistenceProvider.entries().then((entries) => {
+    return this.persistenceProvider.getValues().then((entries) => {
       return entries
-        .map((r) => LocalFileEntry.fromPlainObj(r[1]))
+        .map((r) => LocalFileEntry.fromPlainObj(r))
         .filter((r) => r.uid.startsWith(uidPrefix));
     });
   }

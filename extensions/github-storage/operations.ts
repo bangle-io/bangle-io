@@ -10,7 +10,7 @@ import {
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { GithubRepoTree } from './github-repo-tree';
-import { WsMetadata } from './helpers';
+import { GithubWsMetadata } from './helpers';
 import { syncUntouchedEntries } from './sync';
 
 // export function syncGithubChanges() {
@@ -124,9 +124,10 @@ export function pullGithubChanges(fileEntryManager: LocalFileEntryManager) {
       return false;
     }
 
-    const wsMetadata = storageOpts.readWorkspaceMetadata() as WsMetadata;
+    const wsMetadata = storageOpts.readWorkspaceMetadata() as GithubWsMetadata;
 
-    GithubRepoTree.refreshCache(wsName, wsMetadata)
+    // TODO: should we refresh data here or in the syncUntouchedEntries?
+    GithubRepoTree.refreshCachedData(wsName, wsMetadata)
       .then(() => {
         return syncUntouchedEntries(
           new AbortController().signal,
