@@ -28,21 +28,35 @@ import { pullGithubChanges } from '../operations';
 
 let githubWsMetadata: GithubWsMetadata;
 
-jest.setTimeout(300000);
+jest.setTimeout(30000);
+
+// NOTE: This test requires a github account to be set up.
+//       It will fail if you don't have one.
+
+// eslint-disable-next-line no-process-env
+const githubOwner = process.env.GITHUB_OWNER as string;
+// eslint-disable-next-line no-process-env
+const githubToken = process.env.GITHUB_TOKEN as string;
+
+if (!githubOwner) {
+  throw new Error('Github owner is not set');
+}
+if (!githubToken) {
+  throw new Error('Github token is not set');
+}
 
 beforeEach(() => {
   githubWsMetadata = {
-    // eslint-disable-next-line no-process-env
-    owner: process.env.GITHUB_OWNER as string,
+    owner: githubOwner,
     branch: 'main',
-    // eslint-disable-next-line no-process-env
-    githubToken: process.env.GITHUB_TOKEN as string,
+    githubToken: githubToken,
   };
 });
 
 let wsName: string, store: ApplicationStore;
 
 describe('pull changes', () => {
+  beforeAll(() => {});
   beforeEach(async () => {
     wsName = 'bangle-test-' + Date.now();
     await createRepo({

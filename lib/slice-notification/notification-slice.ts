@@ -16,6 +16,7 @@ export const notificationSliceKey = new SliceKey<
     }
   | {
       name: 'action::@bangle.io/slice-notification:CLEAR_ALL';
+      value: {};
     }
 >('notificationSliceKey');
 

@@ -31,6 +31,7 @@ export function clearAllNotifications() {
   return notificationSliceKey.op((_, dispatch) => {
     dispatch({
       name: 'action::@bangle.io/slice-notification:CLEAR_ALL',
+      value: {},
     });
   });
 }
