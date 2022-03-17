@@ -5178,6 +5178,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/github-storage/",
           "packageDependencies": [
             ["@bangle.io/github-storage", "workspace:extensions/github-storage"],
+            ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/p-map", "workspace:js-lib/p-map"],

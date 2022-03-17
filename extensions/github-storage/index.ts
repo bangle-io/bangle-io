@@ -9,6 +9,7 @@ import {
   showNotification,
   uncaughtExceptionNotification,
 } from '@bangle.io/slice-notification';
+import { getStorageProviderOpts, getWsName } from '@bangle.io/slice-workspace';
 import { isIndexedDbException } from '@bangle.io/storage';
 import { GithubIcon } from '@bangle.io/ui-components';
 
@@ -32,7 +33,8 @@ import {
 import { localFileEntryManager } from './file-entry-manager';
 import { GithubStorageProvider } from './github-storage-provider';
 import { githubStorageSlice } from './github-storage-slice';
-import { pullGithubChanges } from './operations';
+import { GithubWsMetadata, isGithubStorageProvider } from './helpers';
+import { pullGithubChanges } from './pull-github-changes';
 
 const extensionName = '@bangle.io/github-storage';
 
@@ -183,22 +185,58 @@ const extension = Extension.create({
       },
     ],
     operationHandler() {
+      let abortController = new AbortController();
       return {
         handle(operation, payload, store) {
           switch (operation.name) {
             case OPERATION_PULL_GITHUB_CHANGES: {
-              return pullGithubChanges(localFileEntryManager)(
+              abortController.abort();
+              abortController = new AbortController();
+              const wsName = getWsName()(store.state);
+
+              if (!wsName) {
+                return false;
+              }
+
+              const storageOpts = getStorageProviderOpts()(
                 store.state,
                 store.dispatch,
-                store,
               );
+
+              if (!isGithubStorageProvider()(store.state)) {
+                return false;
+              }
+
+              const wsMetadata =
+                storageOpts.readWorkspaceMetadata() as GithubWsMetadata;
+
+              pullGithubChanges(
+                wsName,
+                localFileEntryManager,
+                wsMetadata,
+                abortController.signal,
+              ).then(
+                (result) => {
+                  showNotification({
+                    severity: 'info',
+                    title: `Synced ${result} entries`,
+                    uid: 'sync done ' + Math.random(),
+                  })(store.state, store.dispatch);
+                },
+                (error) => {
+                  showNotification({
+                    severity: 'error',
+                    title: 'Error syncing',
+                    content: error.message,
+                    uid: 'sync error ' + Math.random(),
+                  })(store.state, store.dispatch);
+                },
+              );
+
+              return true;
             }
             case OPERATION_SYNC_GITHUB_CHANGES: {
-              return pullGithubChanges(localFileEntryManager)(
-                store.state,
-                store.dispatch,
-                store,
-              );
+              return false;
             }
             default: {
               return false;

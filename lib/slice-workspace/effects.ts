@@ -124,16 +124,16 @@ export const refreshWsPathsEffect: SideEffect = () => {
   let abort = new AbortController();
   return {
     async deferredUpdate(store, prevState) {
-      const [changed, fieldChanged] = workspaceSliceKey.didChange(
-        store.state,
-        prevState,
-      )('refreshCounter', 'error', 'wsName', 'workspacesInfo');
+      const [changed] = workspaceSliceKey.didChange(store.state, prevState)(
+        'refreshCounter',
+        'error',
+        'wsName',
+        'workspacesInfo',
+      );
 
       if (!changed) {
         return;
       }
-
-      log('change refreshWsPathsEffect', fieldChanged);
 
       const { error, wsName, workspacesInfo } =
         workspaceSliceKey.getSliceStateAsserted(store.state);
@@ -219,22 +219,19 @@ export const wsDeleteEffect = workspaceSliceKey.effect(() => {
 export const updateLocationEffect = workspaceSliceKey.effect(() => {
   return {
     deferredUpdate(store, prevState) {
-      const [workspaceSliceChanged, wChangedField] =
-        workspaceSliceKey.didChange(store.state, prevState)(
-          'workspacesInfo',
-          'error',
-        );
+      const [workspaceOrErrorChanged] = workspaceSliceKey.didChange(
+        store.state,
+        prevState,
+      )('workspacesInfo', 'error');
 
-      const [pageSliceChanged, pChangedField] = pageSliceKey.didChange(
+      const [locationChanged] = pageSliceKey.didChange(
         store.state,
         prevState,
       )('location');
 
-      if (!pageSliceChanged && !workspaceSliceChanged) {
+      if (!locationChanged && !workspaceOrErrorChanged) {
         return;
       }
-
-      log('changed updateLocationEffect', wChangedField, pChangedField);
 
       const { error } = workspaceSliceKey.getSliceStateAsserted(store.state);
 

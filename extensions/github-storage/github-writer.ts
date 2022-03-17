@@ -82,7 +82,11 @@ export class GithubWriter {
     this.deletions.add(wsPath);
   }
 
-  async commit(_wsName: string, config: GithubConfig) {
+  async commit(
+    _wsName: string,
+    config: GithubConfig,
+    abortSignal: AbortSignal,
+  ) {
     const additions = Object.entries(this.additions);
     const deletions = [...this.deletions];
 
@@ -96,6 +100,7 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
     }
 
     const updatedShas = await pushChanges({
+      abortSignal,
       headSha: await getBranchHead({
         config: config,
       }),
@@ -139,6 +144,7 @@ export async function commitToGithub(
   deletions: string[],
   _wsName: string,
   config: GithubConfig,
+  abortSignal: AbortSignal,
 ) {
   const commitBody = `
 Files Added:
@@ -152,6 +158,7 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join('\n- ')}` : ''}`.trim();
   }
 
   const updatedShas = await pushChanges({
+    abortSignal,
     headSha: await getBranchHead({
       config: config,
     }),

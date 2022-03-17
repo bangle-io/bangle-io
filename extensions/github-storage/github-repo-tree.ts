@@ -21,12 +21,13 @@ export class GithubRepoTree {
   private static async fetchData(
     wsName: string,
     wsMetadata: GithubWsMetadata,
+    abortSignal: AbortSignal,
   ): Promise<GHData> {
     // TODO can move to checking if the gitsha is different using
     // graphql to optimize the request and save v3 api calls
     const ghRepoTree = await getTree({
       wsName,
-      abortSignal: new AbortController().signal,
+      abortSignal: abortSignal,
       config: {
         branch: wsMetadata.branch,
         owner: wsMetadata.owner,
@@ -57,6 +58,7 @@ export class GithubRepoTree {
   private static async getData(
     wsName: string,
     wsMetadata: GithubWsMetadata,
+    abortSignal: AbortSignal,
     useCache = true,
   ): Promise<GHData> {
     if (useCache) {
@@ -65,14 +67,19 @@ export class GithubRepoTree {
         return data;
       }
     }
-    return GithubRepoTree.refreshCachedData(wsName, wsMetadata);
+    return GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
   }
 
-  static async getFileBlob(wsPath: string, wsMetadata: GithubWsMetadata) {
+  static async getFileBlob(
+    wsPath: string,
+    wsMetadata: GithubWsMetadata,
+    abortSignal: AbortSignal,
+  ) {
     const { wsName, fileName } = resolvePath(wsPath);
     const data = await GithubRepoTree.getData(
       resolvePath(wsPath).wsName,
       wsMetadata,
+      abortSignal,
     );
     const match = data.tree.find((r) => r.wsPath === wsPath);
 
@@ -87,18 +94,31 @@ export class GithubRepoTree {
         githubToken: wsMetadata.githubToken,
         repoName: wsName,
       },
+      abortSignal,
       fileBlobUrl: match.url,
       fileName: fileName,
     });
   }
 
-  static async getWsPaths(wsName: string, wsMetadata: GithubWsMetadata) {
-    const data = await GithubRepoTree.getData(wsName, wsMetadata);
+  static async getWsPaths(
+    wsName: string,
+    wsMetadata: GithubWsMetadata,
+    abortSignal: AbortSignal,
+  ) {
+    const data = await GithubRepoTree.getData(wsName, wsMetadata, abortSignal);
     return data.tree.map((r) => r.wsPath);
   }
 
-  static async refreshCachedData(wsName: string, wsMetadata: GithubWsMetadata) {
-    const data = await GithubRepoTree.fetchData(wsName, wsMetadata);
+  static async refreshCachedData(
+    wsName: string,
+    wsMetadata: GithubWsMetadata,
+    abortSignal: AbortSignal,
+  ) {
+    const data = await GithubRepoTree.fetchData(
+      wsName,
+      wsMetadata,
+      abortSignal,
+    );
     await idb.set(IDB_PREFIX + wsName, data);
     return data;
   }

@@ -1,10 +1,7 @@
 import waitForExpect from 'wait-for-expect';
 
 import { ApplicationStore } from '@bangle.io/create-store';
-import {
-  clearAllNotifications,
-  notificationSliceKey,
-} from '@bangle.io/slice-notification';
+import { clearAllNotifications } from '@bangle.io/slice-notification';
 import {
   createWorkspace,
   getNote,
@@ -25,7 +22,7 @@ import {
 } from '../github-api-helpers';
 import { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
-import { pullGithubChanges } from '../operations';
+import { pullGithubChanges } from '../pull-github-changes';
 
 let githubWsMetadata: GithubWsMetadata;
 
@@ -98,17 +95,12 @@ describe('pull changes', () => {
 
   const pullChanges = async () => {
     clearAllNotifications()(store.state, store.dispatch);
-    await pullGithubChanges(localFileEntryManager, abortController.signal)(
-      store.state,
-      store.dispatch,
-      store,
+    await pullGithubChanges(
+      wsName,
+      localFileEntryManager,
+      githubWsMetadata,
+      abortController.signal,
     );
-    // wait for success/failure notification
-    await waitForExpect(() => {
-      expect(
-        notificationSliceKey.getSliceStateAsserted(store.state).notifications,
-      ).toHaveLength(1);
-    }, 7000);
   };
 
   const getNoteAsString = async (

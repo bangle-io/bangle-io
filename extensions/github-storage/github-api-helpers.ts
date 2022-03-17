@@ -1,4 +1,4 @@
-import { BaseError, getLast, serialExecuteQueue } from '@bangle.io/utils';
+import { BaseError, getLast } from '@bangle.io/utils';
 import { fromFsPath } from '@bangle.io/ws-path';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
@@ -53,7 +53,7 @@ async function makeV3GetApi<T = any>({
 }: {
   isBlob?: boolean;
   path: string;
-  abortSignal?: AbortSignal;
+  abortSignal: AbortSignal;
   token: string;
   headers?: { [r: string]: string };
 }): Promise<T> {
@@ -72,10 +72,13 @@ async function makeV3GetApi<T = any>({
 
   if (!res.ok) {
     return res.json().then((r) => {
-      console.log('Github API error', r.message);
       throw new BaseError({ message: r.message, code: GITHUB_API_ERROR });
     });
   }
+  console.debug(
+    'Github API limit left',
+    res.headers.get('X-RateLimit-Remaining'),
+  );
   return isBlob ? res.blob() : res.json();
 }
 
@@ -116,6 +119,7 @@ function makeGraphql({
           code: GITHUB_API_ERROR,
         });
       }
+      console.debug('Github Graphql limit left', r.data?.rateLimit?.remaining);
       return r.data;
     });
 }
@@ -242,10 +246,11 @@ export async function getTree({
   wsName,
   config,
 }: {
-  abortSignal?: AbortSignal;
+  abortSignal: AbortSignal;
   wsName: string;
   config: GithubConfig;
 }): Promise<{ sha: string; tree: Array<{ url: string; wsPath: string }> }> {
+  await getLatestCommitSha({ config, abortSignal });
   const makeRequest = async (
     attempt = 0,
     lastErrorMessage?: string,
@@ -254,8 +259,6 @@ export async function getTree({
     tree: Array<{ url: string; wsPath: string }>;
     sha: string;
   }> => {
-    console.log('getTree attempt', attempt);
-
     if (attempt > 3) {
       throw new BaseError({
         message: lastErrorMessage || `Could not get tree for ${wsName}`,
@@ -281,7 +284,7 @@ export async function getTree({
         }
         // this is thrown when repo is initialized but has no files
         if (error.message === 'Not Found') {
-          return getLatestCommitSha({ config }).then((sha) => ({
+          return getLatestCommitSha({ config, abortSignal }).then((sha) => ({
             truncated: false,
             tree: [],
             sha: sha,
@@ -331,7 +334,9 @@ export async function pushChanges({
   additions,
   deletions,
   config,
+  abortSignal,
 }: {
+  abortSignal: AbortSignal;
   headSha: string;
   commitMessage: {
     headline: string;
@@ -378,6 +383,7 @@ export async function pushChanges({
   const result2 = await makeV3GetApi({
     path: `/repos/${config.owner}/${config.repoName}/commits/${commitHash}`,
     token: config.githubToken,
+    abortSignal,
   });
 
   return result2.files.map((r: any) => {
@@ -397,15 +403,18 @@ export async function getFileBlob({
   fileBlobUrl,
   config,
   fileName,
+  abortSignal,
 }: {
   fileName: string;
   fileBlobUrl: string;
   config: GithubConfig;
+  abortSignal: AbortSignal;
 }) {
   return makeV3GetApi({
     isBlob: true,
     path: fileBlobUrl,
     token: config.githubToken,
+    abortSignal,
     headers: {
       Accept: 'application/vnd.github.v3.raw+json',
     },
@@ -470,7 +479,13 @@ export async function getFileBlob({
 //   );
 // }
 
-export async function getLatestCommitSha({ config }: { config: GithubConfig }) {
+export async function getLatestCommitSha({
+  config,
+  abortSignal,
+}: {
+  config: GithubConfig;
+  abortSignal: AbortSignal;
+}) {
   let path = `/repos/${config.owner}/${config.repoName}/commits/${
     config.branch
   }?cacheBust=${Math.floor(Date.now() / 1000)}`;
@@ -479,6 +494,7 @@ export async function getLatestCommitSha({ config }: { config: GithubConfig }) {
     return makeV3GetApi({
       path,
       token: config.githubToken,
+      abortSignal,
       headers: {
         Accept: 'application/vnd.github.v3.raw+json',
       },
@@ -486,7 +502,9 @@ export async function getLatestCommitSha({ config }: { config: GithubConfig }) {
   };
 
   return makeRequest().then(
-    (r) => r.sha,
+    (r) => {
+      return r.sha;
+    },
     (error) => {
       if (error.message.includes('Git Repository is empty.')) {
         return initializeRepo({ config }).then((sha) => {

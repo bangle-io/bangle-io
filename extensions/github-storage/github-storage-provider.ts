@@ -19,9 +19,14 @@ export class GithubStorageProvider implements BaseStorageProvider {
   private makeGetRemoteFileEntryCb(
     wsMetadata: GithubWsMetadata,
     useCache: boolean,
+    abortSignal: AbortSignal = new AbortController().signal,
   ) {
     return async (wsPath: string) => {
-      const file = await GithubRepoTree.getFileBlob(wsPath, wsMetadata);
+      const file = await GithubRepoTree.getFileBlob(
+        wsPath,
+        wsMetadata,
+        abortSignal,
+      );
 
       if (!file) {
         return undefined;
@@ -114,10 +119,10 @@ export class GithubStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<string[]> {
     const wsMetadata = opts.readWorkspaceMetadata() as GithubWsMetadata;
-    await GithubRepoTree.refreshCachedData(wsName, wsMetadata);
+    await GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
 
     const files = await this.fileEntryManager.listFiles(
-      await GithubRepoTree.getWsPaths(wsName, wsMetadata),
+      await GithubRepoTree.getWsPaths(wsName, wsMetadata, abortSignal),
       wsName + ':',
     );
     return files;

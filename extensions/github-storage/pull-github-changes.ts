@@ -1,14 +1,6 @@
-import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { LocalFileEntryManager } from '@bangle.io/remote-file-sync';
-import { showNotification } from '@bangle.io/slice-notification';
-import {
-  getStorageProviderName,
-  getStorageProviderOpts,
-  refreshWsPaths,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
+import { isAbortError } from '@bangle.io/utils';
 
-import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 import { GithubRepoTree } from './github-repo-tree';
 import { GithubWsMetadata } from './helpers';
 import { syncUntouchedEntries } from './sync';
@@ -92,71 +84,25 @@ import { syncUntouchedEntries } from './sync';
 //   };
 // }
 
-export function isGithubStorageProvider() {
-  return (state: AppState) => {
-    const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
-
-    if (!wsName) {
-      return false;
-    }
-
-    return (
-      getStorageProviderName(wsName)(state) === GITHUB_STORAGE_PROVIDER_NAME
+export async function pullGithubChanges(
+  wsName: string,
+  fileEntryManager: LocalFileEntryManager,
+  wsMetadata: GithubWsMetadata,
+  abortSignal: AbortSignal,
+) {
+  try {
+    await GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
+    const syncedEntries = await syncUntouchedEntries(
+      abortSignal,
+      fileEntryManager,
+      wsName,
+      wsMetadata,
     );
-  };
-}
-
-export function pullGithubChanges(fileEntryManager: LocalFileEntryManager) {
-  return (
-    _: AppState,
-    __: ApplicationStore['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    const wsName = workspaceSliceKey.getSliceStateAsserted(store.state).wsName;
-
-    if (!wsName) {
-      return false;
+    return syncedEntries;
+  } catch (error) {
+    if (isAbortError(error)) {
+      return undefined;
     }
-
-    const storageOpts = getStorageProviderOpts()(store.state, store.dispatch);
-
-    if (storageOpts.storageProviderName !== GITHUB_STORAGE_PROVIDER_NAME) {
-      return false;
-    }
-
-    const wsMetadata = storageOpts.readWorkspaceMetadata() as GithubWsMetadata;
-
-    // TODO: should we refresh data here or in the syncUntouchedEntries?
-    GithubRepoTree.refreshCachedData(wsName, wsMetadata)
-      .then(() => {
-        return syncUntouchedEntries(
-          new AbortController().signal,
-          fileEntryManager,
-          wsName,
-          wsMetadata,
-        );
-      })
-      .then(
-        (result) => {
-          showNotification({
-            severity: 'info',
-            title: `Synced ${result} entries`,
-            uid: 'sync done ' + Math.random(),
-          })(store.state, store.dispatch);
-        },
-        (error) => {
-          showNotification({
-            severity: 'error',
-            title: 'Error syncing',
-            content: error.message,
-            uid: 'sync error ' + Math.random(),
-          })(store.state, store.dispatch);
-        },
-      )
-      .finally(() => {
-        refreshWsPaths()(store.state, store.dispatch);
-      });
-
-    return true;
-  };
+    throw error;
+  }
 }
