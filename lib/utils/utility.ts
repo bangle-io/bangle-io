@@ -7,6 +7,7 @@ import { Emitter } from '@bangle.dev/utils';
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
 export { serialExecuteQueue } from '@bangle.dev/utils';
+export { isAbortError } from '@bangle.io/is-abort-error';
 
 export { Emitter };
 
@@ -310,13 +311,6 @@ export function asssertNotUndefined(
   if (value === undefined) {
     throw new Error(`assertion failed: ${message}`);
   }
-}
-
-export function isAbortError(error: unknown): boolean {
-  if (error instanceof DOMException && error.name === 'AbortError') {
-    return true;
-  }
-  return false;
 }
 
 export function cloneMap<K, V>(map: Map<K, V>) {

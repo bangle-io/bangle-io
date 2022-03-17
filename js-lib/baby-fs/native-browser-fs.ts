@@ -1,3 +1,5 @@
+import { isAbortError } from '@bangle.io/is-abort-error';
+
 import {
   BaseFileMetadata,
   BaseFileSystem,
@@ -400,12 +402,13 @@ export async function pickADirectory() {
     return dirHandle;
   } catch (err) {
     if (err instanceof Error) {
-      if (err instanceof DOMException && err.name === 'AbortError') {
+      if (isAbortError(err)) {
         throw new NativeBrowserFileSystemError({
           message: 'The user aborted.',
           code: NATIVE_BROWSER_USER_ABORTED_ERROR,
         });
       }
+
       throw new Error(err.message);
     }
     throw err;

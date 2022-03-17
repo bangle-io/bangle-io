@@ -36,7 +36,11 @@ export async function syncUntouchedEntries(
   await pMap(
     untouchedEntries,
     async (entry) => {
-      const file = await GithubRepoTree.getFileBlob(entry.uid, wsMetadata);
+      const file = await GithubRepoTree.getFileBlob(
+        entry.uid,
+        wsMetadata,
+        abortSignal,
+      );
 
       const remoteFileEntry =
         file &&
@@ -137,6 +141,7 @@ export async function pushModifiedOrCreatedEntries(
         githubToken: wsMetadata.githubToken,
         repoName: wsName,
       },
+      abortSignal,
     );
   }
 

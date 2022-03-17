@@ -179,6 +179,7 @@ describe('syncUntouchedEntries', () => {
       fileBlobUrl: 'https://github.com/blob/foo.txt',
       config: { ...wsMetadata, repoName: 'my-ws' },
       fileName: 'foo.txt',
+      abortSignal: controller.signal,
     });
 
     file = await manager.readFile('my-ws:foo.txt', remoteCallback2);

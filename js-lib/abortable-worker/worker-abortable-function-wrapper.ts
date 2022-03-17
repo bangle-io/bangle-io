@@ -1,3 +1,5 @@
+import { isAbortError } from '@bangle.io/is-abort-error';
+
 import { AbortControllers, WORKER_ABORTABLE_SERVICE_ABORTED } from './util';
 
 export type AbortableFunc<R extends any[], X> = (
@@ -53,13 +55,14 @@ export function workerAbortableMethodWrapper(
           // it will be deleted from Map anyway, but if the `abortableFunc`
           // throws error it will not be.
           abortControllers.delete(uniqueAbortId);
-          if (error instanceof DOMException && error.name === 'AbortError') {
+          if (isAbortError(error)) {
             console.debug(uniqueAbortId + ' threw Abort Error');
             // if the function aborted with an `AbortError`
             // tell the main thread by returning a unique string
             // which it will check for and throw an AbortError on its end.
             throw WORKER_ABORTABLE_SERVICE_ABORTED;
           }
+
           throw error;
         },
       );

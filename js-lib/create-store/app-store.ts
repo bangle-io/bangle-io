@@ -1,3 +1,5 @@
+import { isAbortError } from '@bangle.io/is-abort-error';
+
 import { AppState } from './app-state';
 import type {
   ActionsSerializersType,
@@ -306,10 +308,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
           } catch (error) {
             if (error instanceof Error) {
               this.errorHandler(error, key);
-            } else if (
-              error instanceof DOMException &&
-              error.name === 'AbortError'
-            ) {
+            } else if (isAbortError(error)) {
               return;
             } else {
               throw error;
@@ -347,7 +346,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       this.infiniteErrors.lastSeen = Date.now();
     }
 
-    if (error instanceof DOMException && error.name === 'AbortError') {
+    if (isAbortError(error)) {
       return;
     }
 
@@ -448,13 +447,10 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
                 this.abortController.signal,
               );
             } catch (error) {
-              if (!this.isAborted && error instanceof Error) {
-                errorHandler(error, sideEffect.key);
-              } else if (
-                error instanceof DOMException &&
-                error.name === 'AbortError'
-              ) {
+              if (isAbortError(error)) {
                 return;
+              } else if (!this.isAborted && error instanceof Error) {
+                errorHandler(error, sideEffect.key);
               } else {
                 throw error;
               }

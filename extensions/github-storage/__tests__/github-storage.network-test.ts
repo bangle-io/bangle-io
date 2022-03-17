@@ -13,6 +13,7 @@ import {
   writeNote,
 } from '@bangle.io/slice-workspace';
 import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
+import { sleep } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
@@ -30,8 +31,9 @@ let githubWsMetadata: GithubWsMetadata;
 
 jest.setTimeout(30000);
 
-// NOTE: This test requires a github account to be set up.
-//       It will fail if you don't have one.
+// WARNING: This is a network test and depends on github API.
+//          It will create a bunch of repositories and commits.
+//          It is recommended to use a dummy account.
 
 // eslint-disable-next-line no-process-env
 const githubOwner = process.env.GITHUB_OWNER as string;
@@ -54,10 +56,20 @@ beforeEach(() => {
 });
 
 let wsName: string, store: ApplicationStore;
-
+let abortController = new AbortController();
 describe('pull changes', () => {
-  beforeAll(() => {});
+  afterAll(async () => {
+    // wait for network requests to finish
+    await sleep(100);
+  });
+
+  afterEach(async () => {
+    abortController.abort();
+    store.destroy();
+  });
+
   beforeEach(async () => {
+    abortController = new AbortController();
     wsName = 'bangle-test-' + Date.now();
     await createRepo({
       description: 'Created by Bangle.io tests',
@@ -86,7 +98,7 @@ describe('pull changes', () => {
 
   const pullChanges = async () => {
     clearAllNotifications()(store.state, store.dispatch);
-    await pullGithubChanges(localFileEntryManager)(
+    await pullGithubChanges(localFileEntryManager, abortController.signal)(
       store.state,
       store.dispatch,
       store,
@@ -96,7 +108,7 @@ describe('pull changes', () => {
       expect(
         notificationSliceKey.getSliceStateAsserted(store.state).notifications,
       ).toHaveLength(1);
-    });
+    }, 7000);
   };
 
   const getNoteAsString = async (
@@ -127,17 +139,20 @@ describe('pull changes', () => {
 
     // SHAs via these two APIs should always match as per Github API
     const sha = await getLatestCommitSha({
+      abortSignal: abortController.signal,
       config: { ...githubWsMetadata, repoName: wsName },
     });
     const tree = await getTree({
       config: { ...githubWsMetadata, repoName: wsName },
       wsName,
+      abortSignal: abortController.signal,
     });
 
     expect(sha).toEqual(tree.sha);
 
     // Make a direct remote change outside the realm of our app
     await pushChanges({
+      abortSignal: abortController.signal,
       headSha: sha,
       commitMessage: { headline: 'Test: external update' },
       config: { ...githubWsMetadata, repoName: wsName },
@@ -183,11 +198,13 @@ describe('pull changes', () => {
 
   test('if last remote note is deleted and repo becomes empty', async () => {
     const sha = await getLatestCommitSha({
+      abortSignal: abortController.signal,
       config: { ...githubWsMetadata, repoName: wsName },
     });
 
     // Make a direct remote change outside the realm of our app
     await pushChanges({
+      abortSignal: abortController.signal,
       headSha: sha,
       commitMessage: { headline: 'Test: external update' },
       config: { ...githubWsMetadata, repoName: wsName },
@@ -215,7 +232,9 @@ describe('pull changes', () => {
   test('remote changes: deleted and another is modified', async () => {
     // Make a direct remote change outside the realm of our app
     await pushChanges({
+      abortSignal: abortController.signal,
       headSha: await getLatestCommitSha({
+        abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 1' },
@@ -249,7 +268,9 @@ describe('pull changes', () => {
 
     // delete one and modify the other
     await pushChanges({
+      abortSignal: abortController.signal,
       headSha: await getLatestCommitSha({
+        abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 2' },
@@ -286,7 +307,9 @@ describe('pull changes', () => {
   test('a note which was locally modified should not updated when pulling changes', async () => {
     // Make a direct remote change outside the realm of our app
     await pushChanges({
+      abortSignal: abortController.signal,
       headSha: await getLatestCommitSha({
+        abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 1' },
@@ -325,7 +348,9 @@ describe('pull changes', () => {
     expect(await getNoteAsString('test-2.md')).toContain(modifiedText);
 
     await pushChanges({
+      abortSignal: abortController.signal,
       headSha: await getLatestCommitSha({
+        abortSignal: abortController.signal,
         config: { ...githubWsMetadata, repoName: wsName },
       }),
       commitMessage: { headline: 'Test: external update 1' },

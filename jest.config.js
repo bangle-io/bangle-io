@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
   testRunner: 'jest-circus/runner',
   testPathIgnorePatterns: [
     `<rootDir>/.yarn`,
@@ -20,5 +20,18 @@ module.exports = {
       '<rootDir>/tooling/_scripts/fileMock.js',
     '\\.(css)$': '<rootDir>/tooling/_scripts/styleMock.js',
   },
-  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
+};
+module.exports = {
+  projects: [
+    {
+      displayName: 'regular-test',
+      testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
+      ...config,
+    },
+    {
+      displayName: 'network',
+      testMatch: ['**/?(*.)+(network-test).[jt]s?(x)'],
+      ...config,
+    },
+  ],
 };

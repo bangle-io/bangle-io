@@ -10,6 +10,7 @@ import {
   Sidebar,
 } from '@bangle.io/ui-components';
 import {
+  isAbortError,
   removeMdExtension,
   safeCancelIdleCallback,
   safeRequestIdleCallback,
@@ -185,9 +186,10 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
             );
           },
           (error) => {
-            if (error instanceof DOMException && error.name === 'AbortError') {
+            if (isAbortError(error)) {
               return;
             }
+
             throw error;
           },
         );

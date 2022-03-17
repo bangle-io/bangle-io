@@ -183,6 +183,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/inline-palette"
       },
       {
+        "name": "@bangle.io/is-abort-error",
+        "reference": "workspace:js-lib/is-abort-error"
+      },
+      {
         "name": "@bangle.io/object-uid",
         "reference": "workspace:js-lib/object-uid"
       },
@@ -349,6 +353,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["@bangle.io/inline-emoji", ["workspace:extensions/inline-emoji"]],
       ["@bangle.io/inline-palette", ["workspace:js-lib/inline-palette"]],
+      ["@bangle.io/is-abort-error", ["workspace:js-lib/is-abort-error"]],
       ["@bangle.io/markdown", ["workspace:lib/markdown"]],
       ["@bangle.io/note-browser", ["workspace:extensions/note-browser"]],
       ["@bangle.io/note-outline", ["workspace:extensions/note-outline"]],
@@ -4350,6 +4355,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],
             ["@bangle.dev/pm", "npm:0.28.8"],
             ["@bangle.dev/utils", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],
             ["@bangle.io/object-uid", "workspace:js-lib/object-uid"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
@@ -4567,6 +4573,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],
             ["cross-fetch", "npm:3.1.5"],
             ["idb-keyval", "npm:5.1.5"],
             ["tslib", "npm:2.3.1"],
@@ -4888,6 +4895,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/create-store/",
           "packageDependencies": [
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],
             ["@testing-library/react-hooks", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:7.0.2"],
             ["@types/react", "npm:17.0.39"],
@@ -5370,6 +5378,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/is-abort-error", [
+        ["workspace:js-lib/is-abort-error", {
+          "packageLocation": "./js-lib/is-abort-error/",
+          "packageDependencies": [
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"]
           ],
           "linkType": "SOFT",
         }]
@@ -6153,6 +6170,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],
