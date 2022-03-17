@@ -4,8 +4,8 @@ import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import { notificationSliceKey } from './notification-slice';
 
 export function showNotification(notification: NotificationPayloadType) {
-  return notificationSliceKey.op((_, disptach) => {
-    disptach({
+  return notificationSliceKey.op((_, dispatch) => {
+    dispatch({
       name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION',
       value: notification,
     });
@@ -17,12 +17,21 @@ export function dismissNotification({
 }: {
   uid: NotificationPayloadType['uid'];
 }) {
-  return notificationSliceKey.op((_, disptach) => {
-    disptach({
+  return notificationSliceKey.op((_, dispatch) => {
+    dispatch({
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION',
       value: {
         uid,
       },
+    });
+  });
+}
+
+export function clearAllNotifications() {
+  return notificationSliceKey.op((_, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-notification:CLEAR_ALL',
+      value: {},
     });
   });
 }

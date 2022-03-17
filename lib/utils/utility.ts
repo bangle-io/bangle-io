@@ -6,6 +6,9 @@ import { Emitter } from '@bangle.dev/utils';
 
 import { isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
+export { serialExecuteQueue } from '@bangle.dev/utils';
+export { isAbortError } from '@bangle.io/is-abort-error';
+
 export { Emitter };
 
 export function getLast<T>(array: T[]): T | undefined {
@@ -310,13 +313,6 @@ export function asssertNotUndefined(
   }
 }
 
-export function isAbortError(error: unknown): boolean {
-  if (error instanceof DOMException && error.name === 'AbortError') {
-    return true;
-  }
-  return false;
-}
-
 export function cloneMap<K, V>(map: Map<K, V>) {
   return new Map(map.entries());
 }
@@ -380,4 +376,15 @@ export function makeSafeForCSS(name: string) {
     }
     return '__';
   });
+}
+
+export function shuffleArray<T>(a: T[]): T[] {
+  let array: any[] = a.slice(0);
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+    // swap elements array[i] and array[j]
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
 }

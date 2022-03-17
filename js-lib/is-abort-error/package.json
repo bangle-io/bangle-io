@@ -1,5 +1,5 @@
 {
-  "name": "@bangle.io/baby-fs",
+  "name": "@bangle.io/is-abort-error",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "js-lib/baby-fs"
+    "directory": "js-lib/is-abort-error"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -20,16 +20,6 @@
   "module": "index.ts",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@bangle.io/base-error": "workspace:*",
-    "@bangle.io/is-abort-error": "workspace:*",
-    "idb-keyval": "^5.1.5",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.5"
-  },
-  "devDependencies": {
-    "cross-fetch": "^3.1.5"
   },
   "license": "AGPL-3.0-or-later"
 }

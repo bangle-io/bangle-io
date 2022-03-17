@@ -14,6 +14,12 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
       },
     },
   ],
+  'action::@bangle.io/slice-notification:CLEAR_ALL': [
+    {
+      name: 'action::@bangle.io/slice-notification:CLEAR_ALL',
+      value: {},
+    },
+  ],
   'action::@bangle.io/slice-notification:SHOW_NOTIFICATION': [
     {
       name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION',
@@ -34,6 +40,7 @@ const testFixtures = actionSerializerTestFixture(notificationSliceKey, {
         buttons: [],
       },
     },
+
     {
       name: 'action::@bangle.io/slice-notification:SHOW_NOTIFICATION',
       value: {

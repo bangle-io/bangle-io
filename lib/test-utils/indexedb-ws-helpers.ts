@@ -52,12 +52,21 @@ export const beforeEachHook = () => {
       public filename: MockFile['filename'],
       public properties: MockFile['properties'],
     ) {
+      if (typeof this.parts[0] === 'string') {
+        this.parts[0] = new Blob(this.parts, this.properties);
+      }
       this.filename = filename;
       this.properties = properties;
       this.parts = parts;
     }
     async text() {
-      return this.parts?.[0];
+      if (typeof this.parts[0] === 'string') {
+        return this.parts[0];
+      }
+      return (this.parts[0] as any).text();
+    }
+    async arrayBuffer() {
+      return (this.parts[0] as any).arrayBuffer();
     }
   };
 };

@@ -6,7 +6,7 @@ import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionState } from '@bangle.io/extension-registry';
 import { forEachEditor } from '@bangle.io/slice-editor-manager';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { useDebouncedValue } from '@bangle.io/utils';
+import { isAbortError, useDebouncedValue } from '@bangle.io/utils';
 
 import {
   DEBOUNCE_MAX_WAIT,
@@ -101,7 +101,7 @@ export function useSearchNotes() {
         if (startCounter === counterRef.current) {
           updatePendingSearch(false);
         }
-        if (error instanceof DOMException && error.name === 'AbortError') {
+        if (isAbortError(error)) {
           return;
         }
         throw error;

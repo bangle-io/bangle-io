@@ -1,5 +1,4 @@
 import { SpecRegistry } from '@bangle.dev/core';
-import type { Node } from '@bangle.dev/pm';
 
 export type WsPath = string;
 export type WsName = string;
@@ -17,6 +16,7 @@ export interface FileStat {
 
 export interface StorageOpts {
   specRegistry: SpecRegistry;
+  storageProviderName: string;
   readWorkspaceMetadata: () => { [key: string]: any };
   updateWorkspaceMetadata: (metadata: { [key: string]: any }) => void;
 }

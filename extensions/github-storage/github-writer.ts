@@ -8,6 +8,7 @@ import { getBranchHead, GithubConfig, pushChanges } from './github-api-helpers';
 
 const fileToBase64 = async (file: File) => {
   const buffer = await file.arrayBuffer();
+
   return base64.fromByteArray(new Uint8Array(buffer));
 };
 
@@ -81,7 +82,11 @@ export class GithubWriter {
     this.deletions.add(wsPath);
   }
 
-  async commit(_wsName: string, config: GithubConfig) {
+  async commit(
+    _wsName: string,
+    config: GithubConfig,
+    abortSignal: AbortSignal,
+  ) {
     const additions = Object.entries(this.additions);
     const deletions = [...this.deletions];
 
@@ -95,6 +100,7 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
     }
 
     const updatedShas = await pushChanges({
+      abortSignal,
       headSha: await getBranchHead({
         config: config,
       }),
@@ -131,4 +137,52 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
 
     return updatedShas;
   }
+}
+
+export async function commitToGithub(
+  additions: [string, File][],
+  deletions: string[],
+  _wsName: string,
+  config: GithubConfig,
+  abortSignal: AbortSignal,
+) {
+  const commitBody = `
+Files Added:
+- ${additions.map((r) => r[0]).join('\n- ')}
+
+Files Deleted:
+${deletions.length > 0 ? `- Deleted ${deletions.join('\n- ')}` : ''}`.trim();
+
+  if (deletions.length === 0 && Object.keys(additions).length === 0) {
+    return [];
+  }
+
+  const updatedShas = await pushChanges({
+    abortSignal,
+    headSha: await getBranchHead({
+      config: config,
+    }),
+    commitMessage: {
+      headline: 'Bangle.io: update ' + config.repoName,
+      body: commitBody,
+    },
+    additions: await Promise.all(
+      additions.map(async ([wsPath, file]) => {
+        return {
+          base64Content: await fileToBase64(file),
+          path: resolvePath(wsPath).filePath,
+        };
+      }),
+    ),
+    deletions: deletions.map((wsPath) => {
+      const { filePath, wsName } = resolvePath(wsPath);
+      if (_wsName !== wsName) {
+        throw new Error('Workspace name mismatch');
+      }
+      return { path: filePath };
+    }),
+    config: config,
+  });
+
+  return updatedShas;
 }

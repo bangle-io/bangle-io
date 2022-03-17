@@ -183,6 +183,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/inline-palette"
       },
       {
+        "name": "@bangle.io/is-abort-error",
+        "reference": "workspace:js-lib/is-abort-error"
+      },
+      {
         "name": "@bangle.io/object-uid",
         "reference": "workspace:js-lib/object-uid"
       },
@@ -349,6 +353,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/inline-command-palette", ["workspace:extensions/inline-command-palette"]],
       ["@bangle.io/inline-emoji", ["workspace:extensions/inline-emoji"]],
       ["@bangle.io/inline-palette", ["workspace:js-lib/inline-palette"]],
+      ["@bangle.io/is-abort-error", ["workspace:js-lib/is-abort-error"]],
       ["@bangle.io/markdown", ["workspace:lib/markdown"]],
       ["@bangle.io/note-browser", ["workspace:extensions/note-browser"]],
       ["@bangle.io/note-outline", ["workspace:extensions/note-outline"]],
@@ -4350,6 +4355,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/abortable-worker", "workspace:js-lib/abortable-worker"],
             ["@bangle.dev/pm", "npm:0.28.8"],
             ["@bangle.dev/utils", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],
             ["@bangle.io/object-uid", "workspace:js-lib/object-uid"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
@@ -4567,6 +4573,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/base-error", "workspace:js-lib/base-error"],
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],
             ["cross-fetch", "npm:3.1.5"],
             ["idb-keyval", "npm:5.1.5"],
             ["tslib", "npm:2.3.1"],
@@ -4888,6 +4895,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./js-lib/create-store/",
           "packageDependencies": [
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],
             ["@testing-library/react-hooks", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:7.0.2"],
             ["@types/react", "npm:17.0.39"],
@@ -5170,22 +5178,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./extensions/github-storage/",
           "packageDependencies": [
             ["@bangle.io/github-storage", "workspace:extensions/github-storage"],
-            ["@bangle.dev/core", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
-            ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.8"],
-            ["@bangle.dev/markdown-front-matter", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.8"],
-            ["@bangle.dev/pm", "npm:0.28.8"],
-            ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
+            ["@bangle.io/p-map", "workspace:js-lib/p-map"],
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],
             ["@bangle.io/serial-operation-context", "virtual:89010b89eadb146f70c7222759dbd585952891d186e7ebec70e4f7937144c245ad9195ce287cbd2ecd7d40d22820310c261237cd695cbe4be78861b80266a4ec#workspace:lib/serial-operation-context"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-notification", "workspace:lib/slice-notification"],
             ["@bangle.io/slice-workspace", "workspace:lib/slice-workspace"],
             ["@bangle.io/storage", "workspace:lib/storage"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
+            ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],
             ["@bangle.io/ui-components", "workspace:lib/ui-components"],
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
@@ -5198,7 +5201,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
-            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"],
+            ["wait-for-expect", "npm:3.0.2"]
           ],
           "linkType": "SOFT",
         }]
@@ -5367,6 +5371,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/is-abort-error", [
+        ["workspace:js-lib/is-abort-error", {
+          "packageLocation": "./js-lib/is-abort-error/",
+          "packageDependencies": [
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"]
           ],
           "linkType": "SOFT",
         }]
@@ -6150,6 +6163,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
+            ["@bangle.io/is-abort-error", "workspace:js-lib/is-abort-error"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@testing-library/react-hooks", "virtual:9620cb3b19c73747b202c2b21a429732380a1b39737076d044d78b2663f2a7e7e920aabf48e047b43f2ecae863b9d054995f3b69f739e4482282c76b2ec38c62#npm:7.0.2"],
@@ -20221,6 +20235,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
+            ["cross-fetch", "npm:3.1.5"],
             ["date-fns", "npm:2.28.0"],
             ["domexception", "npm:4.0.0"],
             ["idb-keyval", "npm:5.1.5"],
@@ -22328,6 +22343,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["w3c-xmlserializer", "npm:2.0.0"],
             ["xml-name-validator", "npm:3.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["wait-for-expect", [
+        ["npm:3.0.2", {
+          "packageLocation": "./.yarn/cache/wait-for-expect-npm-3.0.2-40c9e7eb3e-2ec1ebd780.zip/node_modules/wait-for-expect/",
+          "packageDependencies": [
+            ["wait-for-expect", "npm:3.0.2"]
           ],
           "linkType": "HARD",
         }]

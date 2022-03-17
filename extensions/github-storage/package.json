@@ -19,21 +19,16 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@bangle.dev/core": "0.28.8",
-    "@bangle.dev/markdown": "0.28.8",
-    "@bangle.dev/markdown-front-matter": "0.28.8",
-    "@bangle.dev/pm": "0.28.8",
-    "@bangle.io/baby-fs": "workspace:*",
     "@bangle.io/bangle-store-context": "workspace:*",
-    "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
+    "@bangle.io/p-map": "workspace:*",
     "@bangle.io/remote-file-sync": "workspace:*",
     "@bangle.io/serial-operation-context": "workspace:*",
-    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",
     "@bangle.io/storage": "workspace:*",
+    "@bangle.io/ui-bangle-button": "workspace:*",
     "@bangle.io/ui-components": "workspace:*",
     "@bangle.io/utils": "workspace:*",
     "@bangle.io/ws-path": "workspace:*",
@@ -49,7 +44,8 @@
     "@testing-library/react": "^12.1.3",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.13"
+    "@types/react-dom": "^17.0.13",
+    "wait-for-expect": "^3.0.2"
   },
   "publishConfig": {
     "access": "restricted"

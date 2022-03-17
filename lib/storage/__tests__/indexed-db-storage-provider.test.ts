@@ -9,6 +9,7 @@ let idbProvider = new IndexedDbStorageProvider();
 
 const opts: StorageOpts = {
   specRegistry: {} as any,
+  storageProviderName: 'my-name',
   readWorkspaceMetadata: jest.fn(),
   updateWorkspaceMetadata: jest.fn(),
 };

@@ -56,7 +56,7 @@ module.exports = {
       'error',
       {
         additionalHooks:
-          '(useKeybindings|useSerialOperationHandler|useMyOtherCustomHook)',
+          '(useKeybindings|useSerialOperationHandler|useInterval|useMyOtherCustomHook)',
       },
     ],
     'testing-library/no-container': ['warn'],

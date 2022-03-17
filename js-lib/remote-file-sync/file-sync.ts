@@ -33,7 +33,7 @@ const isModifiedWrtAncestor = ({
 
 /**
  * Definitions:
- * - Undefined: A file doesnt exist after looking back some amount of history.
+ * - Undefined: A file doesn't exist after looking back some amount of history.
  * - Defined: A file existed though it may or may not be deleted.
  *
  * Case A: Both files are defined and are equal
@@ -44,9 +44,12 @@ const isModifiedWrtAncestor = ({
 export async function fileSync<T extends SyncFileEntry>(
   fileEntryA?: T,
   fileEntryB?: T,
-  getCommonAncestorFileEntry?: () => Promise<T | undefined>,
+  ancestorFileEntry?: T,
 ): Promise<
   | undefined
+  | {
+      action: 'conflict';
+    }
   | {
       action: 'delete';
       // the target identifier to take action on
@@ -81,33 +84,29 @@ export async function fileSync<T extends SyncFileEntry>(
 
   // Case D files are both defined
   else if (fileEntryA && fileEntryB) {
-    return syncBothAreDefined(
-      fileEntryA,
-      fileEntryB,
-      getCommonAncestorFileEntry,
-    );
+    return syncBothAreDefined(fileEntryA, fileEntryB, ancestorFileEntry);
   }
 
-  // Our cases abvoe should be exhaustive i.e. it should
+  // Our cases above should be exhaustive i.e. it should
   // not be possible to hit this condition unless we introduce a bug
   // in our logic.
   else {
-    throw new Error('improssible condition');
+    throw new Error('impossible file-sync condition');
   }
 }
 
 async function syncBothAreDefined(
   fileEntryA: SyncFileEntry,
   fileEntryB: SyncFileEntry,
-  getCommonAncestorFileEntry?: () => Promise<SyncFileEntry | undefined>,
+  ancestorFileEntry?: SyncFileEntry | undefined,
 ) {
-  let ancestorFileEntry = await getCommonAncestorFileEntry?.();
-
   // Case D.2 ancestorFileEntry is not defined
   if (!ancestorFileEntry) {
     // this happens when a new file is created
     // at both places at the same time
-    throw new Error('Merge conflict both created files');
+    return {
+      action: 'conflict' as const,
+    };
   }
 
   // Case D.1 ancestorFileEntry is defined
@@ -191,7 +190,9 @@ async function syncBothAreDefined(
       })
       // Case D.1.5
       .with([FileState.Modified, FileState.Modified], () => {
-        throw new Error('Merge conflict both files modified at the same time');
+        return {
+          action: 'conflict' as const,
+        };
       })
       // Case D.1.6
       .with([FileState.Modified, FileState.Deleted], () => {

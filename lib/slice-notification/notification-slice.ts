@@ -14,6 +14,10 @@ export const notificationSliceKey = new SliceKey<
       name: 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION';
       value: { uid: string };
     }
+  | {
+      name: 'action::@bangle.io/slice-notification:CLEAR_ALL';
+      value: {};
+    }
 >('notificationSliceKey');
 
 export function notificationSlice() {
@@ -38,6 +42,13 @@ export function notificationSlice() {
             return {
               ...state,
               notifications: [...state.notifications, action.value],
+            };
+          }
+
+          case 'action::@bangle.io/slice-notification:CLEAR_ALL': {
+            return {
+              ...state,
+              notifications: [],
             };
           }
 
@@ -79,6 +90,14 @@ export function notificationSlice() {
             severity: serialVal.severity,
             title: serialVal.title,
           }),
+        );
+      },
+
+      'action::@bangle.io/slice-notification:CLEAR_ALL': (actionName) => {
+        return notificationSliceKey.actionSerializer(
+          actionName,
+          (action) => ({}),
+          (serialVal) => ({}),
         );
       },
 

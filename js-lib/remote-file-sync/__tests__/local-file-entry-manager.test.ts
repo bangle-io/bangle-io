@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { readFile } from 'fs/promises';
 
 import { RemoteFileEntry } from '..';
 import {
@@ -19,7 +18,7 @@ const createManager = () => {
       store.set(key, obj);
       return Promise.resolve();
     },
-    entries: () => Promise.resolve(Array.from(store.entries())),
+    getValues: () => Promise.resolve(Array.from(store.values())),
     delete: (key: string) => {
       store.delete(key);
       return Promise.resolve();
@@ -132,11 +131,11 @@ describe('LocalFileEntryManager', () => {
       const file = await readFileBlob('file-a.json');
       await manager.createFile('foo', file, async () => undefined);
 
-      expect(await manager.listFiles(async () => [])).toEqual(['foo']);
+      expect(await manager.listFiles([])).toEqual(['foo']);
 
       await manager.deleteFile('foo');
 
-      expect(await manager.listFiles(async () => [])).toEqual([]);
+      expect(await manager.listFiles([])).toEqual([]);
 
       expect(store.size).toBe(1);
       expect(store.get('foo')).toEqual({
@@ -252,7 +251,7 @@ describe('LocalFileEntryManager', () => {
       });
     });
 
-    test('updates an unmodified file if remote file has changed', async () => {
+    test('does not update an unmodified file if remote file has changed', async () => {
       const { manager, store } = createManager();
 
       const remoteFile1 = await readFileBlob('file-b.md');
@@ -265,7 +264,7 @@ describe('LocalFileEntryManager', () => {
           deleted: undefined,
         });
       });
-
+      // first set the file in store
       expect(file1).toBe(remoteFile1);
 
       const file2 = await manager.readFile('foo', async (uid) => {
@@ -276,45 +275,8 @@ describe('LocalFileEntryManager', () => {
         });
       });
 
-      expect(file2).toBe(remoteFile2);
-    });
-
-    test('updates an unmodified file if remote file has been deleted', async () => {
-      const { manager, store } = createManager();
-
-      const remoteFile1 = await readFileBlob('file-b.md');
-      const remoteFile2 = await readFileBlob('file-e.md');
-
-      const file1 = await manager.readFile('foo', async (uid) => {
-        return RemoteFileEntry.newFile({
-          file: remoteFile1,
-          uid,
-          deleted: undefined,
-        });
-      });
-
-      expect(file1).toBe(remoteFile1);
-
-      const file2 = await manager.readFile('foo', async (uid) => {
-        return RemoteFileEntry.newFile({
-          file: remoteFile2,
-          uid,
-          deleted: 2423,
-        });
-      });
-
-      expect(file2).toBe(undefined);
-
-      expect(store.get('foo')).toEqual({
-        deleted: 2423,
-        file: remoteFile2,
-        sha: '0339c1e590ea445ae79aa43ed435b34ffb8286c8',
-        source: {
-          file: remoteFile2,
-          sha: '0339c1e590ea445ae79aa43ed435b34ffb8286c8',
-        },
-        uid: 'foo',
-      });
+      expect(file2).toBe(remoteFile1);
+      expect(file2).not.toBe(remoteFile2);
     });
 
     test('ignore remote file is local is modified', async () => {
@@ -416,7 +378,7 @@ describe('LocalFileEntryManager', () => {
         });
       });
 
-      const files = await manager.listFiles(() => Promise.resolve([]));
+      const files = await manager.listFiles([]);
 
       expect(files).toEqual([]);
     });
@@ -434,15 +396,11 @@ describe('LocalFileEntryManager', () => {
         });
       });
 
-      expect(
-        await manager.listFiles(() => Promise.resolve(['foo', 'bar'])),
-      ).toEqual(['bar', 'foo']);
+      expect(await manager.listFiles(['foo', 'bar'])).toEqual(['bar', 'foo']);
 
       await manager.deleteFile('foo');
 
-      expect(
-        await manager.listFiles(() => Promise.resolve(['foo', 'bar'])),
-      ).toEqual(['bar']);
+      expect(await manager.listFiles(['foo', 'bar'])).toEqual(['bar']);
     });
 
     test('accounts for newly created local files', async () => {
@@ -456,9 +414,11 @@ describe('LocalFileEntryManager', () => {
         },
       );
 
-      expect(
-        await manager.listFiles(() => Promise.resolve(['zoo', 'bar'])),
-      ).toEqual(['bar', 'foo', 'zoo']);
+      expect(await manager.listFiles(['zoo', 'bar'])).toEqual([
+        'bar',
+        'foo',
+        'zoo',
+      ]);
     });
   });
 });

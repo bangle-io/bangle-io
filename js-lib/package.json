@@ -9,6 +9,7 @@
     "fzf-search",
     "history",
     "inline-palette",
+    "is-abort-error",
     "object-uid",
     "p-map",
     "pm-manual-paste",

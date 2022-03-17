@@ -41,6 +41,13 @@ import {
 const getDispatch = (store: ApplicationStore) =>
   workspaceSliceKey.getDispatch(store.dispatch);
 
+let idbSetSpy: jest.SpyInstance;
+
+beforeEach(() => {
+  idbSetSpy?.mockClear();
+  idbSetSpy = jest.spyOn(idb, 'set');
+});
+
 describe('refreshWsPathsEffect', () => {
   test('refreshes on create note', async () => {
     const storageProvider = new IndexedDbStorageProvider();
@@ -165,8 +172,7 @@ describe('refreshWorkspacesEffect', () => {
       ]
     `);
 
-    expect(idb.set).toBeCalledTimes(1);
-    expect(idb.set).nthCalledWith(1, 'workspaces/2', []);
+    expect(await idb.get('workspaces/2')).toMatchInlineSnapshot(`Array []`);
 
     const testWsInfo = createWsInfo({
       name: 'testWs',
@@ -184,29 +190,40 @@ describe('refreshWorkspacesEffect', () => {
     });
 
     await sleep(0);
-    expect(idb.set).toHaveBeenCalledTimes(2);
-    expect(idb.set).nthCalledWith(2, 'workspaces/2', [testWsInfo]);
+    expect(await idb.get('workspaces/2')).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "lastModified": 0,
+          "metadata": Object {
+            "rootDirHandle": Object {
+              "root": "handler",
+            },
+          },
+          "name": "testWs",
+          "type": "nativefs",
+        },
+      ]
+    `);
 
-    // actions which donot result in any update in state donot trigger an idb save
+    let wsInfo2 = createWsInfo({
+      name: 'testWs',
+      type: WorkspaceTypeNative,
+      metadata: { rootDirHandle: { root: 'handler' } },
+    });
     getDispatch(store)({
       name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
       value: {
         workspacesInfo: {
-          testWs: createWsInfo({
-            name: 'testWs',
-            type: WorkspaceTypeNative,
-            metadata: { rootDirHandle: { root: 'handler' } },
-          }),
+          testWs: wsInfo2,
         },
       },
     });
-    // non relevant dispatches donot trigger an update to idb
     getDispatch(store)({
       name: 'action::@bangle.io/some-package',
       value: {},
     } as any);
 
-    expect(idb.set).toHaveBeenCalledTimes(2);
+    expect(await idb.get('workspaces/2')).toEqual([wsInfo2]);
 
     const modifiedWsInfo = createWsInfo({
       name: 'testWs',
@@ -225,8 +242,7 @@ describe('refreshWorkspacesEffect', () => {
     });
     await sleep(0);
 
-    expect(idb.set).toHaveBeenCalledTimes(3);
-    expect(idb.set).nthCalledWith(3, 'workspaces/2', [modifiedWsInfo]);
+    expect(await idb.get('workspaces/2')).toEqual([modifiedWsInfo]);
   });
 
   test('does not overwrite existing values', async () => {
@@ -257,7 +273,8 @@ describe('refreshWorkspacesEffect', () => {
     });
 
     await sleep(0);
-    expect(idb.set).lastCalledWith('workspaces/2', [
+
+    expect(await idb.get('workspaces/2')).toEqual([
       testWsInfoExisting,
       testWsInfo,
     ]);

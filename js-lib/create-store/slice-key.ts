@@ -91,6 +91,9 @@ export class SliceKey<
   }
 
   // gets the value if it was different from prevState
+  // WARNING! it will return undefined if the value is the same
+  //  which can be problematic if your field can have `undefined`.
+  //  use `valueChanged` if you expect `undefined` to be a valid value.
   getValueIfChanged<T extends keyof SL>(
     field: T,
     state: AppState<any, any> | Readonly<AppState<any, any>>,
@@ -101,15 +104,19 @@ export class SliceKey<
       : undefined;
   }
 
+  // Similar to getValueIfChanged but instead takes a list of dependencies
+  // and returns a two tuple of whether there was any change and the first field that changed.
+  // return[0] - true if any of them changed
+  // return[1] - the first dependency name that change
   didChange<K extends keyof SL>(
     state: AppState<any, any> | Readonly<AppState<any, any>>,
     prevState: AppState<any, any> | Readonly<AppState<any, any>>,
   ) {
-    return <T extends Array<K>>(...arr: [...T]) => {
+    return <T extends Array<K>>(...dependencies: [...T]) => {
       let changed = false;
       let fieldChanged: K | undefined = undefined;
 
-      arr.forEach((field) => {
+      dependencies.forEach((field) => {
         if (changed === false) {
           changed = this.valueChanged(field, state, prevState);
           if (changed === true) {

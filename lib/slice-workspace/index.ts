@@ -8,6 +8,8 @@ export {
   deleteNote,
   getFile,
   getNote,
+  getStorageProviderName,
+  getStorageProviderOpts,
   refreshWsPaths,
   renameNote,
   writeFile,

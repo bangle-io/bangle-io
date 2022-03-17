@@ -30,6 +30,7 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
+    "cross-fetch": "^3.1.5",
     "date-fns": "^2.25.0",
     "domexception": "^4.0.0",
     "idb-keyval": "^5.1.5",

@@ -4,17 +4,13 @@ import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { ApplicationStore } from '@bangle.io/create-store';
 import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import { showNotification } from '@bangle.io/slice-notification';
-import {
-  getWorkspaceType,
-  getWsName,
-  updateWorkspaceMetadata,
-} from '@bangle.io/slice-workspace';
+import { getWsName, updateWorkspaceMetadata } from '@bangle.io/slice-workspace';
 
 import {
-  GITHUB_STORAGE_PROVIDER_NAME,
-  OPERATION_NEW_GITUB_WORKSPACE,
+  OPERATION_NEW_GITHUB_WORKSPACE,
   OPERATION_UPDATE_GITHUB_TOKEN,
 } from '../common';
+import { isGithubStorageProvider } from '../helpers';
 import { RepoPicker } from './RepoPicker';
 import { TokenInput } from './TokenInput';
 
@@ -25,7 +21,7 @@ export function Router() {
   const bangleStore = useBangleStoreContext();
 
   useSerialOperationHandler((sOperation) => {
-    if (sOperation.name === OPERATION_NEW_GITUB_WORKSPACE) {
+    if (sOperation.name === OPERATION_NEW_GITHUB_WORKSPACE) {
       if (
         window.confirm(
           'Creating a Github workspace is experimental and may not work as expected. Continue?',
@@ -77,10 +73,7 @@ const updateGithubToken =
     dispatch: ApplicationStore['dispatch'],
   ) => {
     const wsName = getWsName()(state);
-    if (
-      wsName &&
-      getWorkspaceType(wsName)(state) === GITHUB_STORAGE_PROVIDER_NAME
-    ) {
+    if (wsName && isGithubStorageProvider()(state)) {
       updateWorkspaceMetadata(wsName, (existing) => {
         if (existing.githubToken !== token) {
           return {

@@ -11,7 +11,8 @@ on:
 
 env:
   SENTRY_NO_PROGRESS_BAR: 1
-
+  GITHUB_OWNER: ${{ secrets.GH_OWNER }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 jobs:
   yarn-validate:
     name: Validate Yarn dependencies and constraints

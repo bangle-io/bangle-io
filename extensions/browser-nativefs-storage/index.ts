@@ -6,10 +6,7 @@ import {
 } from '@bangle.io/baby-fs';
 import { Extension } from '@bangle.io/extension-registry';
 import { showNotification } from '@bangle.io/slice-notification';
-import {
-  goToWorkspaceAuthRoute,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
+import { getWsName, goToWorkspaceAuthRoute } from '@bangle.io/slice-workspace';
 
 import { NativsFsStorageProvider } from './nativefs-storage-provider';
 
@@ -25,7 +22,7 @@ const extension = Extension.create({
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
         error.code === NATIVE_BROWSER_USER_ABORTED_ERROR
       ) {
-        const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
+        const wsName = getWsName()(store.state);
 
         if (wsName) {
           goToWorkspaceAuthRoute(wsName, error.code)(

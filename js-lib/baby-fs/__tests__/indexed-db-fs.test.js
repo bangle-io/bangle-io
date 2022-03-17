@@ -15,17 +15,9 @@ test('writeFile', async () => {
   const fs = new IndexedDBFileSystem();
   await fs.writeFile('hola/hi', toFile('my-data'));
 
-  expect(await fs.readFile('hola/hi')).toMatchInlineSnapshot(`
-    File {
-      "filename": "foo.txt",
-      "parts": Array [
-        "my-data",
-      ],
-      "properties": Object {
-        "type": "text/plain",
-      },
-    }
-  `);
+  await expect(
+    (await fs.readFile('hola/hi'))?.text(),
+  ).resolves.toMatchInlineSnapshot(`"my-data"`);
 
   expect(await fs.stat('hola/hi')).toEqual({
     mtimeMs: expect.any(Number),
@@ -72,17 +64,9 @@ test('rename', async () => {
     `"File \\"hola/hi\\" not found"`,
   );
 
-  await expect(fs.readFile('ebola/two')).resolves.toMatchInlineSnapshot(`
-          File {
-            "filename": "foo.txt",
-            "parts": Array [
-              "mydata",
-            ],
-            "properties": Object {
-              "type": "text/plain",
-            },
-          }
-        `);
+  await expect(
+    (await fs.readFile('ebola/two'))?.text(),
+  ).resolves.toMatchInlineSnapshot(`"mydata"`);
 });
 
 test('rename throws error if old file not found', async () => {

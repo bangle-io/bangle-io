@@ -5,7 +5,7 @@ import collapsibleHeading from '@bangle.io/collapsible-heading';
 import coreActions from '@bangle.io/core-operations';
 import corePalette from '@bangle.io/core-palettes';
 import editorCore from '@bangle.io/editor-core';
-import { ExtensionRegistry } from '@bangle.io/extension-registry';
+import { Extension, ExtensionRegistry } from '@bangle.io/extension-registry';
 import githubStorage from '@bangle.io/github-storage';
 import imageExtension from '@bangle.io/image-extension';
 import inlineBacklinkPalette from '@bangle.io/inline-backlink';

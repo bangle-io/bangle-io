@@ -1,4 +1,5 @@
-import { BaseError } from '@bangle.io/utils';
+import { BaseError, getLast } from '@bangle.io/utils';
+import { fromFsPath } from '@bangle.io/ws-path';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
 
@@ -12,6 +13,29 @@ export interface GithubConfig extends GithubTokenConfig {
   repoName: string;
 }
 
+const allowedFilePath = (path: string) => {
+  if (path.includes(':')) {
+    return false;
+  }
+  if (path.includes('//')) {
+    return false;
+  }
+  if (path.length > 150) {
+    return false;
+  }
+
+  const fileName = getLast(path.split('/'));
+  if (fileName === undefined) {
+    return false;
+  }
+
+  if (fileName.startsWith('.')) {
+    return false;
+  }
+
+  return true;
+};
+
 const RATELIMIT_STRING = `
 rateLimit {
   limit
@@ -20,7 +44,7 @@ rateLimit {
   resetAt
 }`;
 
-function makeV3Api<T = any>({
+async function makeV3GetApi<T = any>({
   path,
   token,
   abortSignal,
@@ -29,28 +53,33 @@ function makeV3Api<T = any>({
 }: {
   isBlob?: boolean;
   path: string;
-  abortSignal?: AbortSignal;
+  abortSignal: AbortSignal;
   token: string;
   headers?: { [r: string]: string };
 }): Promise<T> {
   const url = path.includes('https://')
     ? path
     : `https://api.github.com${path}`;
-  return fetch(url, {
+
+  const res = await fetch(url, {
     method: 'GET',
     signal: abortSignal,
     headers: {
       Authorization: `token ${token}`,
       ...(headers || {}),
     },
-  }).then((res) => {
-    if (!res.ok) {
-      return res.json().then((r) => {
-        throw new BaseError({ message: r.message, code: GITHUB_API_ERROR });
-      });
-    }
-    return isBlob ? res.blob() : res.json();
   });
+
+  if (!res.ok) {
+    return res.json().then((r) => {
+      throw new BaseError({ message: r.message, code: GITHUB_API_ERROR });
+    });
+  }
+  console.debug(
+    'Github API limit left',
+    res.headers.get('X-RateLimit-Remaining'),
+  );
+  return isBlob ? res.blob() : res.json();
 }
 
 function makeGraphql({
@@ -90,6 +119,7 @@ function makeGraphql({
           code: GITHUB_API_ERROR,
         });
       }
+      console.debug('Github Graphql limit left', r.data?.rateLimit?.remaining);
       return r.data;
     });
 }
@@ -211,43 +241,91 @@ export async function* getRepos({
   } while (hasNextPage);
 }
 
-export async function getAllFiles({
+export async function getTree({
   abortSignal,
+  wsName,
   config,
-  treeSha,
 }: {
   abortSignal: AbortSignal;
+  wsName: string;
   config: GithubConfig;
-  treeSha: string;
-}): Promise<Array<{ path: string; url: string }>> {
-  try {
-    const { truncated, tree } = await makeV3Api({
-      path: `/repos/${config.owner}/${
-        config.repoName
-      }/git/trees/${treeSha}?recursive=1&cacheBust=${Date.now()}`,
-      token: config.githubToken,
-      abortSignal,
-    });
-
-    if (truncated || !tree) {
+}): Promise<{ sha: string; tree: Array<{ url: string; wsPath: string }> }> {
+  await getLatestCommitSha({ config, abortSignal });
+  const makeRequest = async (
+    attempt = 0,
+    lastErrorMessage?: string,
+  ): Promise<{
+    truncated: boolean;
+    tree: Array<{ url: string; wsPath: string }>;
+    sha: string;
+  }> => {
+    if (attempt > 3) {
       throw new BaseError({
-        message: 'Github response is truncated',
+        message: lastErrorMessage || `Could not get tree for ${wsName}`,
         code: INVALID_GITHUB_RESPONSE,
       });
     }
 
-    return (tree as any[]).map((t: any): { path: string; url: string } => ({
-      path: t.path,
-      url: t.url,
-    }));
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        return [];
+    try {
+      return await makeV3GetApi({
+        path: `/repos/${config.owner}/${config.repoName}/git/trees/${
+          config.branch
+        }?recursive=1&cacheBust=${Math.floor(Date.now() / 1000)}`,
+        token: config.githubToken,
+        abortSignal,
+      });
+    } catch (error) {
+      if (error instanceof Error || error instanceof BaseError) {
+        if (error.message.includes('Git Repository is empty.')) {
+          let errorMessage = error.message;
+          return initializeRepo({ config }).then((sha) => {
+            return makeRequest(attempt + 1, errorMessage);
+          });
+        }
+        // this is thrown when repo is initialized but has no files
+        if (error.message === 'Not Found') {
+          return getLatestCommitSha({ config, abortSignal }).then((sha) => ({
+            truncated: false,
+            tree: [],
+            sha: sha,
+          }));
+        }
       }
+      throw error;
     }
-    throw error;
+  };
+  const { truncated, tree, sha } = await makeRequest(0);
+
+  if (truncated || !tree) {
+    throw new BaseError({
+      message: 'Github response is truncated',
+      code: INVALID_GITHUB_RESPONSE,
+    });
   }
+
+  const list = (tree as any[])
+    .filter((t) => {
+      return allowedFilePath(t.path);
+    })
+    .map((t: any) => {
+      const wsPath = fromFsPath(wsName + '/' + t.path);
+
+      if (!wsPath) {
+        throw new BaseError({
+          message: 'File path contains invalid characters :' + t.path,
+          code: INVALID_GITHUB_RESPONSE,
+        });
+      }
+
+      return {
+        url: t.url,
+        wsPath,
+      };
+    });
+  return {
+    sha,
+    tree: list,
+  };
 }
 
 export async function pushChanges({
@@ -256,7 +334,9 @@ export async function pushChanges({
   additions,
   deletions,
   config,
+  abortSignal,
 }: {
+  abortSignal: AbortSignal;
   headSha: string;
   commitMessage: {
     headline: string;
@@ -300,9 +380,10 @@ export async function pushChanges({
 
   const commitHash = result.createCommitOnBranch?.commit?.oid;
 
-  const result2 = await makeV3Api({
+  const result2 = await makeV3GetApi({
     path: `/repos/${config.owner}/${config.repoName}/commits/${commitHash}`,
     token: config.githubToken,
+    abortSignal,
   });
 
   return result2.files.map((r: any) => {
@@ -322,19 +403,192 @@ export async function getFileBlob({
   fileBlobUrl,
   config,
   fileName,
+  abortSignal,
 }: {
   fileName: string;
   fileBlobUrl: string;
   config: GithubConfig;
+  abortSignal: AbortSignal;
 }) {
-  return makeV3Api({
+  return makeV3GetApi({
     isBlob: true,
     path: fileBlobUrl,
     token: config.githubToken,
+    abortSignal,
     headers: {
       Accept: 'application/vnd.github.v3.raw+json',
     },
   }).then((r) => {
     return new File([r], fileName);
   });
+}
+
+// export async function readGhFile({
+//   wsPath,
+//   config,
+// }: {
+//   wsPath: string;
+//   config: GithubConfig;
+// }) {
+//   const { wsName } = resolvePath(wsPath);
+//   return makeV3Api({
+//     isBlob: true,
+//     path: `/repos/${config.owner}/${config.repoName}/contents/${
+//       resolvePath(wsPath).filePath
+//     }?ref=${config.branch}`,
+//     token: config.githubToken,
+//     headers: {
+//       Accept: 'application/vnd.github.v3.raw+json',
+//     },
+//   }).then(
+//     (r) => {
+//       return new File([r], resolvePath(wsPath).fileName);
+//     },
+//     (error) => {
+//       if (
+//         error instanceof Error &&
+//         error.message.includes(
+//           'The requested blob is too large to fetch via the API',
+//         )
+//       ) {
+//         return getTree({
+//           wsName,
+//           abortSignal: new AbortController().signal,
+//           config: {
+//             branch: config.branch,
+//             owner: config.owner,
+//             githubToken: config.githubToken,
+//             repoName: wsName,
+//           },
+//           treeSha: config.branch,
+//         }).then((result) => {
+//           const matchingItem = result.tree.find((item) => {
+//             return wsPath === fromFsPath(wsName + '/' + item.path);
+//           });
+
+//           if (!matchingItem) {
+//             throw error;
+//           }
+
+//           return matchingItem.getFileBlob();
+//         });
+//       } else {
+//         throw error;
+//       }
+//     },
+//   );
+// }
+
+export async function getLatestCommitSha({
+  config,
+  abortSignal,
+}: {
+  config: GithubConfig;
+  abortSignal: AbortSignal;
+}) {
+  let path = `/repos/${config.owner}/${config.repoName}/commits/${
+    config.branch
+  }?cacheBust=${Math.floor(Date.now() / 1000)}`;
+
+  const makeRequest = () => {
+    return makeV3GetApi({
+      path,
+      token: config.githubToken,
+      abortSignal,
+      headers: {
+        Accept: 'application/vnd.github.v3.raw+json',
+      },
+    });
+  };
+
+  return makeRequest().then(
+    (r) => {
+      return r.sha;
+    },
+    (error) => {
+      if (error.message.includes('Git Repository is empty.')) {
+        return initializeRepo({ config }).then((sha) => {
+          return makeRequest();
+        });
+      }
+      throw error;
+    },
+  );
+}
+
+export async function initializeRepo({
+  config,
+}: {
+  config: GithubConfig;
+}): Promise<void> {
+  const fileContent = `## Welcome to Bangle.io\n This is a sample note to get things started.`;
+  const filePath = 'welcome-to-bangle.md';
+  const res = await fetch(
+    `https://api.github.com/repos/${config.owner}/${config.repoName}/contents/` +
+      filePath,
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${config.githubToken}`,
+        Accept: 'application/vnd.github.v3.raw+json',
+      },
+      body: JSON.stringify({
+        message: 'Bangle.io first commit',
+        content: btoa(fileContent),
+        branch: config.branch,
+      }),
+    },
+  );
+
+  if (!res.ok) {
+    const message = await res.json().then((data) => {
+      return data.message;
+    });
+    if (
+      // if the file already exists
+      message === 'reference already exists' ||
+      // if a file already exists github expects you to provide a sha
+      message.includes(`"sha" wasn't supplied`) ||
+      // this is thrown when repo is initialized but has no files
+      message === 'Not Found'
+    ) {
+      return;
+    }
+
+    throw new BaseError({
+      message: message,
+      code: GITHUB_API_ERROR,
+    });
+  }
+}
+
+export async function createRepo({
+  config,
+  description = 'Created automatically by Bangle.io',
+}: {
+  config: GithubConfig;
+  description?: string;
+}): Promise<void> {
+  const res = await fetch(`https://api.github.com/user/repos`, {
+    method: 'POST',
+    headers: {
+      Authorization: `token ${config.githubToken}`,
+      Accept: 'application/vnd.github.v3.raw+json',
+    },
+    body: JSON.stringify({
+      name: config.repoName,
+      private: true,
+      homepage: `https://${config.owner}.github.io/${config.repoName}/`,
+      description: description,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new BaseError({
+      message: await res
+        .json()
+        .then((data) => data.message || data.errors?.[0]?.message),
+      code: GITHUB_API_ERROR,
+    });
+  }
 }

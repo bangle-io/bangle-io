@@ -4,6 +4,7 @@ import type { Node } from '@bangle.dev/pm';
 
 import { byLengthAsc, useFzfSearch } from '@bangle.io/fzf-search';
 import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
+import { isAbortError } from '@bangle.io/utils';
 
 const FZF_SEARCH_LIMIT = 16;
 
@@ -75,7 +76,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
           setAllTags(tags);
         })
         .catch((error) => {
-          if (error instanceof DOMException && error.name === 'AbortError') {
+          if (isAbortError(error)) {
             return;
           }
           throw error;

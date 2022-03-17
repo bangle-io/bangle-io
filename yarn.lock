@@ -1865,6 +1865,7 @@ __metadata:
   dependencies:
     "@bangle.dev/pm": 0.28.8
     "@bangle.dev/utils": 0.28.8
+    "@bangle.io/is-abort-error": "workspace:*"
     "@bangle.io/object-uid": "workspace:*"
     tslib: ^2.3.1
     typescript: ^4.5.5
@@ -1975,6 +1976,7 @@ __metadata:
   resolution: "@bangle.io/baby-fs@workspace:js-lib/baby-fs"
   dependencies:
     "@bangle.io/base-error": "workspace:*"
+    "@bangle.io/is-abort-error": "workspace:*"
     cross-fetch: ^3.1.5
     idb-keyval: ^5.1.5
     tslib: ^2.3.1
@@ -2237,6 +2239,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/create-store@workspace:js-lib/create-store"
   dependencies:
+    "@bangle.io/is-abort-error": "workspace:*"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.39
@@ -2424,22 +2427,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bangle.io/github-storage@workspace:extensions/github-storage"
   dependencies:
-    "@bangle.dev/core": 0.28.8
-    "@bangle.dev/markdown": 0.28.8
-    "@bangle.dev/markdown-front-matter": 0.28.8
-    "@bangle.dev/pm": 0.28.8
-    "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
+    "@bangle.io/p-map": "workspace:*"
     "@bangle.io/remote-file-sync": "workspace:*"
     "@bangle.io/serial-operation-context": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/storage": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
+    "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/ui-components": "workspace:*"
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
@@ -2453,6 +2451,7 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.3.1
     typescript: ^4.5.5
+    wait-for-expect: ^3.0.2
   languageName: unknown
   linkType: soft
 
@@ -2609,6 +2608,12 @@ __metadata:
     react-dom: ^17.0.2
     tslib: ^2.3.1
     typescript: ^4.5.5
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/is-abort-error@workspace:*, @bangle.io/is-abort-error@workspace:js-lib/is-abort-error":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/is-abort-error@workspace:js-lib/is-abort-error"
   languageName: unknown
   linkType: soft
 
@@ -3275,6 +3280,7 @@ __metadata:
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/is-abort-error": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     "@testing-library/react-hooks": ^7.0.2
@@ -14847,6 +14853,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
+    cross-fetch: ^3.1.5
     date-fns: ^2.25.0
     domexception: ^4.0.0
     idb-keyval: ^5.1.5
@@ -16671,6 +16678,13 @@ __metadata:
   dependencies:
     xml-name-validator: ^3.0.0
   checksum: ae25c51cf71f1fb2516df1ab33a481f83461a117565b95e3d0927432522323f93b1b2846cbb60196d337970c421adb604fc2d0d180c6a47a839da01db5b9973b
+  languageName: node
+  linkType: hard
+
+"wait-for-expect@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "wait-for-expect@npm:3.0.2"
+  checksum: 2ec1ebd78023fa10bdcf53d78bbd65feea68fdfa0de0b00f3a72f3df089118b91517839ff3926e5ef6cfd1ede65085326d85b0378d4db62c266cc9c859c2de56
   languageName: node
   linkType: hard
 

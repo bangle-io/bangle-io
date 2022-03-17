@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Extension } from '@bangle.io/extension-registry';
 import {
   ErrorCode as RemoteSyncErrorCode,
@@ -7,12 +9,18 @@ import {
   showNotification,
   uncaughtExceptionNotification,
 } from '@bangle.io/slice-notification';
+import { getStorageProviderOpts, getWsName } from '@bangle.io/slice-workspace';
 import { isIndexedDbException } from '@bangle.io/storage';
+import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
-  OPERATION_NEW_GITUB_WORKSPACE,
+  OPERATION_NEW_GITHUB_WORKSPACE,
+  OPERATION_PULL_GITHUB_CHANGES,
+  OPERATION_PUSH_GITHUB_CHANGES,
+  OPERATION_SYNC_GITHUB_CHANGES,
   OPERATION_UPDATE_GITHUB_TOKEN,
 } from './common';
+import { GithubSidebar } from './components/GithubSidebar';
 import { Router } from './components/Router';
 import {
   ErrorCodesType,
@@ -22,7 +30,11 @@ import {
   INVALID_GITHUB_RESPONSE,
   INVALID_GITHUB_TOKEN,
 } from './errors';
+import { localFileEntryManager } from './file-entry-manager';
 import { GithubStorageProvider } from './github-storage-provider';
+import { githubStorageSlice } from './github-storage-slice';
+import { GithubWsMetadata, isGithubStorageProvider } from './helpers';
+import { pullGithubChanges } from './pull-github-changes';
 
 const extensionName = '@bangle.io/github-storage';
 
@@ -30,8 +42,17 @@ const extension = Extension.create({
   name: extensionName,
   application: {
     ReactComponent: Router,
-    slices: [],
+    slices: [githubStorageSlice()],
     storageProvider: new GithubStorageProvider(),
+    sidebars: [
+      {
+        title: 'Github sync',
+        name: 'sidebar::@bangle.io/github-storage:sidebar',
+        ReactComponent: GithubSidebar,
+        activitybarIcon: React.createElement(GithubIcon, {}),
+        hint: 'Sync your local workspace with Github',
+      },
+    ],
     onStorageError: (error, store) => {
       const errorCode = error.code as
         | ErrorCodesType
@@ -141,18 +162,82 @@ const extension = Extension.create({
     },
     operations: [
       {
-        name: OPERATION_NEW_GITUB_WORKSPACE,
+        name: OPERATION_NEW_GITHUB_WORKSPACE,
         title: 'Github: New READONLY workspace (Experimental)',
       },
       {
         name: OPERATION_UPDATE_GITHUB_TOKEN,
         title: 'Github: Update personal access token',
       },
+      {
+        name: OPERATION_PULL_GITHUB_CHANGES,
+        title: 'Github: Pull changes',
+        hidden: false,
+      },
+      {
+        name: OPERATION_PUSH_GITHUB_CHANGES,
+        title: 'Github: Push changes',
+        hidden: true,
+      },
+      {
+        name: OPERATION_SYNC_GITHUB_CHANGES,
+        title: 'Github: Sync changes',
+      },
     ],
     operationHandler() {
+      let abortController = new AbortController();
       return {
         handle(operation, payload, store) {
           switch (operation.name) {
+            case OPERATION_PULL_GITHUB_CHANGES: {
+              abortController.abort();
+              abortController = new AbortController();
+              const wsName = getWsName()(store.state);
+
+              if (!wsName) {
+                return false;
+              }
+
+              const storageOpts = getStorageProviderOpts()(
+                store.state,
+                store.dispatch,
+              );
+
+              if (!isGithubStorageProvider()(store.state)) {
+                return false;
+              }
+
+              const wsMetadata =
+                storageOpts.readWorkspaceMetadata() as GithubWsMetadata;
+
+              pullGithubChanges(
+                wsName,
+                localFileEntryManager,
+                wsMetadata,
+                abortController.signal,
+              ).then(
+                (result) => {
+                  showNotification({
+                    severity: 'info',
+                    title: `Synced ${result} entries`,
+                    uid: 'sync done ' + Math.random(),
+                  })(store.state, store.dispatch);
+                },
+                (error) => {
+                  showNotification({
+                    severity: 'error',
+                    title: 'Error syncing',
+                    content: error.message,
+                    uid: 'sync error ' + Math.random(),
+                  })(store.state, store.dispatch);
+                },
+              );
+
+              return true;
+            }
+            case OPERATION_SYNC_GITHUB_CHANGES: {
+              return false;
+            }
             default: {
               return false;
             }
@@ -162,5 +247,4 @@ const extension = Extension.create({
     },
   },
 });
-
 export default extension;

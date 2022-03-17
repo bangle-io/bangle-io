@@ -30,6 +30,12 @@ import {
   updateWorkspaceMetadata,
 } from './workspaces-operations';
 
+export function getStorageProviderName(wsName: string) {
+  return workspaceSliceKey.queryOp((state) => {
+    return getWorkspaceInfo(wsName)(state).type;
+  });
+}
+
 function getStorageProvider() {
   return workspaceSliceKey.queryOp((state) => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
@@ -123,6 +129,7 @@ export function getStorageProviderOpts() {
     // and even if wsName has changed, while they were doing `async` work, it should be fine.
     const opt: StorageOpts = {
       specRegistry: specRegistry,
+      storageProviderName: getWorkspaceInfo(wsName)(state).type,
       readWorkspaceMetadata: () => {
         return getWorkspaceInfo(wsName)(state).metadata;
       },
