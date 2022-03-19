@@ -56,15 +56,18 @@ const specRegistry = new SpecRegistry([
 ]);
 
 export function ChangelogModal() {
-  const { modal, dispatch } = useUIManagerContext();
+  const { dialogName, dispatch } = useUIManagerContext();
 
-  const showChangelog = modal === '@modal/changelog';
+  const showChangelog = dialogName === 'changelog-modal';
 
   useLastSeenChangelog(showChangelog);
 
   const onDismiss = useCallback(() => {
     dispatch({
-      name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
+      name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
+      value: {
+        dialogName: 'changelog-modal',
+      },
     });
   }, [dispatch]);
 

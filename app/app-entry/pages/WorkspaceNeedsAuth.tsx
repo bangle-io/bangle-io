@@ -99,12 +99,12 @@ function PermissionModal({
   requestFSPermission: () => Promise<boolean>;
   wsName: string;
 }) {
-  const { paletteType, modal } = useUIManagerContext();
+  const { paletteType, dialogName } = useUIManagerContext();
   const isPaletteActive = Boolean(paletteType);
   useEffect(() => {
     let callback = keybindingsHelper({
       Enter: () => {
-        if (isPaletteActive || modal) {
+        if (isPaletteActive || dialogName) {
           return false;
         }
         requestFSPermission();
@@ -115,7 +115,7 @@ function PermissionModal({
     return () => {
       document.removeEventListener('keydown', callback);
     };
-  }, [requestFSPermission, isPaletteActive, modal]);
+  }, [requestFSPermission, isPaletteActive, dialogName]);
 
   return (
     <CenteredBoxedPage

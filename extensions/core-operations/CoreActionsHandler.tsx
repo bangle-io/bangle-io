@@ -6,13 +6,16 @@ import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { NewNoteInputModal, RenameNoteInputModal } from './NewNoteInputModal';
 
 export function CoreActionsHandler() {
-  const { dispatch, modal, modalValue } = useUIManagerContext();
+  const { dispatch, dialogName, dialogMetadata } = useUIManagerContext();
   const { primaryEditor } = useEditorManagerContext();
 
   const onDismiss = useCallback(
     (focusEditor = true) => {
       dispatch({
-        name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
+        name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
+        value: {
+          dialogName: ['new-note-modal', 'rename-note-modal'],
+        },
       });
       if (focusEditor) {
         primaryEditor?.focusView();
@@ -21,16 +24,16 @@ export function CoreActionsHandler() {
     [primaryEditor, dispatch],
   );
 
-  if (modal === 'new-note') {
+  if (dialogName === 'new-note-modal') {
     return (
       <NewNoteInputModal
         onDismiss={onDismiss}
-        initialValue={modalValue?.initialValue}
+        initialValue={dialogMetadata?.initialValue}
       />
     );
   }
 
-  if (modal === 'rename-note') {
+  if (dialogName === 'rename-note-modal') {
     return <RenameNoteInputModal onDismiss={onDismiss} />;
   }
 

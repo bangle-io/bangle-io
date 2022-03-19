@@ -37,11 +37,17 @@ const githubOwner = process.env.GITHUB_OWNER as string;
 // eslint-disable-next-line no-process-env
 const githubToken = process.env.GITHUB_TOKEN as string;
 
-if (!githubOwner) {
-  throw new Error('Github owner is not set');
-}
 if (!githubToken) {
-  throw new Error('Github token is not set');
+  console.error(
+    `Running this test will spam your account with a bunch of repos, it is strongly recommended to use a dummy account or run this test in CI.
+Please make sure your Github token has write repo access.`,
+  );
+  throw new Error('env var GITHUB_TOKEN is not set.');
+}
+if (!githubOwner) {
+  throw new Error(
+    'env var GITHUB_OWNER is not set. This is the owner of the github token.',
+  );
 }
 
 beforeEach(() => {

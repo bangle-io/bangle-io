@@ -38,6 +38,8 @@
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
     "test-ci": "yarn jest --ci --coverage",
     "test": "yarn jest",
+    "test:regular": "yarn jest --selectProjects regular",
+    "test:network": "yarn jest --selectProjects network",
     "tsc-check": "yarn tsc -b",
     "tsc-watch": "yarn tsc -b -w",
     "update-css-vars": "yarn node tooling/_scripts/generate-apply-theme.js",

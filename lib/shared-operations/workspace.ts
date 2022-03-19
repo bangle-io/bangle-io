@@ -49,10 +49,10 @@ export function newNote(initialValue?: string) {
     });
 
     dispatch({
-      name: 'action::@bangle.io/slice-ui:SHOW_MODAL',
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
       value: {
-        modal: 'new-note',
-        modalValue: {
+        dialogName: 'new-note-modal',
+        metadata: {
           initialValue: initialValue,
         },
       },
@@ -84,9 +84,9 @@ export function renameActiveNote() {
     });
 
     dispatch({
-      name: 'action::@bangle.io/slice-ui:SHOW_MODAL',
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
       value: {
-        modal: 'rename-note',
+        dialogName: 'rename-note-modal',
       },
     });
 
@@ -159,8 +159,8 @@ export function deleteActiveNote() {
 export function newWorkspace() {
   return (state: AppState, dispatch: UiContextDispatchType) => {
     dispatch({
-      name: 'action::@bangle.io/slice-ui:SHOW_MODAL',
-      value: { modal: '@modal/new-workspace' },
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+      value: { dialogName: 'new-workspace-dialog' },
     });
   };
 }
