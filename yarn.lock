@@ -3028,6 +3028,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/slice-overlay@workspace:lib/slice-overlay":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/slice-overlay@workspace:lib/slice-overlay"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/slice-page@workspace:*, @bangle.io/slice-page@workspace:lib/slice-page":
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-page@workspace:lib/slice-page"

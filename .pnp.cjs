@@ -259,6 +259,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-notification"
       },
       {
+        "name": "@bangle.io/slice-overlay",
+        "reference": "workspace:lib/slice-overlay"
+      },
+      {
         "name": "@bangle.io/slice-page",
         "reference": "workspace:lib/slice-page"
       },
@@ -373,6 +377,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/shared-types", ["workspace:lib/shared-types"]],
       ["@bangle.io/slice-editor-manager", ["workspace:lib/slice-editor-manager"]],
       ["@bangle.io/slice-notification", ["workspace:lib/slice-notification"]],
+      ["@bangle.io/slice-overlay", ["workspace:lib/slice-overlay"]],
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],
@@ -5886,6 +5891,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/slice-overlay", [
+        ["workspace:lib/slice-overlay", {
+          "packageLocation": "./lib/slice-overlay/",
+          "packageDependencies": [
+            ["@bangle.io/slice-overlay", "workspace:lib/slice-overlay"]
           ],
           "linkType": "SOFT",
         }]
