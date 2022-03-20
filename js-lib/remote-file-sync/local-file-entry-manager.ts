@@ -188,6 +188,9 @@ interface SourceType {
 }
 
 export class BaseFileEntry {
+  static fromPlainObj(obj: ConstructorParameters<typeof BaseFileEntry>[0]) {
+    return new BaseFileEntry(obj);
+  }
   public readonly uid: string;
   public readonly sha: string;
   public readonly file: File;
@@ -219,10 +222,6 @@ export class BaseFileEntry {
       file: this.file,
       deleted: this.deleted,
     };
-  }
-
-  static fromPlainObj(obj: ConstructorParameters<typeof BaseFileEntry>[0]) {
-    return new BaseFileEntry(obj);
   }
 }
 

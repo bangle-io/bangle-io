@@ -91,6 +91,8 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     return instance;
   }
 
+  protected slicesCurrentState: { [k: string]: any } = Object.create(null);
+  constructor(public config: AppStateConfig<S, A, Op>) {}
   stateToJSON({
     sliceFields,
   }: {
@@ -110,10 +112,6 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
 
     return result;
   }
-
-  protected slicesCurrentState: { [k: string]: any } = Object.create(null);
-
-  constructor(public config: AppStateConfig<S, A, Op>) {}
 
   applyAction(rootAction: A): AppState<S, A, Op> {
     let newInstance = this.applyInner(rootAction);

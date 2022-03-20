@@ -259,10 +259,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:lib/slice-notification"
       },
       {
-        "name": "@bangle.io/slice-overlay",
-        "reference": "workspace:lib/slice-overlay"
-      },
-      {
         "name": "@bangle.io/slice-page",
         "reference": "workspace:lib/slice-page"
       },
@@ -377,7 +373,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/shared-types", ["workspace:lib/shared-types"]],
       ["@bangle.io/slice-editor-manager", ["workspace:lib/slice-editor-manager"]],
       ["@bangle.io/slice-notification", ["workspace:lib/slice-notification"]],
-      ["@bangle.io/slice-overlay", ["workspace:lib/slice-overlay"]],
       ["@bangle.io/slice-page", ["workspace:lib/slice-page"]],
       ["@bangle.io/slice-ui", ["workspace:lib/slice-ui"]],
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],
@@ -457,6 +452,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.29.3"],
             ["eslint-plugin-react-hooks", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:4.3.0"],
             ["eslint-plugin-simple-import-sort", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.0.0"],
+            ["eslint-plugin-sort-class-members", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.14.1"],
             ["eslint-plugin-testing-library", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.6"],
             ["file-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.2.0"],
             ["git-revision-webpack-plugin", "npm:3.0.6"],
@@ -5895,15 +5891,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
-      ["@bangle.io/slice-overlay", [
-        ["workspace:lib/slice-overlay", {
-          "packageLocation": "./lib/slice-overlay/",
-          "packageDependencies": [
-            ["@bangle.io/slice-overlay", "workspace:lib/slice-overlay"]
-          ],
-          "linkType": "SOFT",
-        }]
-      ]],
       ["@bangle.io/slice-page", [
         ["workspace:lib/slice-page", {
           "packageLocation": "./lib/slice-page/",
@@ -10395,6 +10382,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.29.3"],
             ["eslint-plugin-react-hooks", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:4.3.0"],
             ["eslint-plugin-simple-import-sort", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.0.0"],
+            ["eslint-plugin-sort-class-members", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.14.1"],
             ["eslint-plugin-testing-library", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:5.0.6"],
             ["file-loader", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:6.2.0"],
             ["git-revision-webpack-plugin", "npm:3.0.6"],
@@ -13192,6 +13180,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/eslint-plugin-simple-import-sort-virtual-3f50676d1d/0/cache/eslint-plugin-simple-import-sort-npm-7.0.0-45d08a8927-6aacb7179c.zip/node_modules/eslint-plugin-simple-import-sort/",
           "packageDependencies": [
             ["eslint-plugin-simple-import-sort", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:7.0.0"],
+            ["@types/eslint", null],
+            ["eslint", "npm:8.11.0"]
+          ],
+          "packagePeers": [
+            "@types/eslint",
+            "eslint"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["eslint-plugin-sort-class-members", [
+        ["npm:1.14.1", {
+          "packageLocation": "./.yarn/cache/eslint-plugin-sort-class-members-npm-1.14.1-9a82c56799-8def863d76.zip/node_modules/eslint-plugin-sort-class-members/",
+          "packageDependencies": [
+            ["eslint-plugin-sort-class-members", "npm:1.14.1"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.14.1", {
+          "packageLocation": "./.yarn/__virtual__/eslint-plugin-sort-class-members-virtual-a765453578/0/cache/eslint-plugin-sort-class-members-npm-1.14.1-9a82c56799-8def863d76.zip/node_modules/eslint-plugin-sort-class-members/",
+          "packageDependencies": [
+            ["eslint-plugin-sort-class-members", "virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:1.14.1"],
             ["@types/eslint", null],
             ["eslint", "npm:8.11.0"]
           ],

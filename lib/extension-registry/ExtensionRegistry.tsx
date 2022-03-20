@@ -77,6 +77,37 @@ export class ExtensionRegistry {
   >;
 
   public extensionsInitialState: { [name: string]: any };
+  renderExtensionEditorComponents = () => {
+    const result = this.editorConfig
+      .map((e) => {
+        const { ReactComponent } = e;
+        if (ReactComponent) {
+          return <ReactComponent key={e.name} />;
+        }
+        return undefined;
+      })
+      .filter((e): e is JSX.Element => Boolean(e));
+    return result;
+  };
+  renderApplicationComponents = () => {
+    const result = this.extensions
+      .map((extension) => {
+        const { ReactComponent } = extension.application;
+        if (ReactComponent) {
+          return <ReactComponent key={extension.name} />;
+        }
+        return undefined;
+      })
+      .filter((e): e is JSX.Element => Boolean(e));
+
+    return result;
+  };
+  registerSerialOperationHandler = (cb: SerialOperationHandler) => {
+    this.serialOperationHandlers.add(cb);
+    return () => {
+      this.serialOperationHandlers.delete(cb);
+    };
+  };
   constructor(
     private extensions: Extension[] = [],
     // TODO move this to an extension
@@ -163,14 +194,6 @@ export class ExtensionRegistry {
     }
   }
 
-  private _getSerialOperationKeybindingMapping(): SerialOperationKeybindingMapping {
-    const operations = this.getRegisteredOperations()
-      .filter((r) => typeof r.keybinding === 'string')
-      .map((r): [SerialOperationNameType, string] => [r.name, r.keybinding!]);
-
-    return Object.fromEntries(operations);
-  }
-
   renderReactNodeViews({
     nodeViewRenderArg,
   }: {
@@ -180,96 +203,56 @@ export class ExtensionRegistry {
       nodeViewRenderArg,
     });
   }
-
   getPlugins() {
     return [
       ...filterFlatMap(this.editorConfig, 'highPriorityPlugins'),
       ...filterFlatMap(this.editorConfig, 'plugins'),
     ];
   }
-
   getSidebars() {
     return this.sidebars;
   }
-
   getNoteSidebarWidgets() {
     return this.noteSidebarWidgets;
   }
-
   getSerialOperationKeybindingMapping() {
     return this.operationKeybindingMapping;
   }
-
   getEditorWatchPluginStates(): EditorWatchPluginState[] {
     return this.editorWatchPluginStates;
   }
-
   getSlices() {
     return this.slices;
   }
-
   getStorageProvider(name: string) {
     return this.storageProviders[name];
   }
-
   getNoteFormatProvider(name: string) {
     return this.noteFormatProviders[name];
   }
-
   getOnStorageErrorHandlers(name: string) {
     return this.onStorageErrorHandlers[name];
   }
-
-  renderExtensionEditorComponents = () => {
-    const result = this.editorConfig
-      .map((e) => {
-        const { ReactComponent } = e;
-        if (ReactComponent) {
-          return <ReactComponent key={e.name} />;
-        }
-        return undefined;
-      })
-      .filter((e): e is JSX.Element => Boolean(e));
-    return result;
-  };
-
   getRegisteredOperations(): Readonly<SerialOperationDefinitionType[]> {
     return this.registeredSerialOperations;
   }
-
   getRegisteredOperationKeybinding(
     name: SerialOperationNameType,
   ): string | undefined {
     return this.registeredSerialOperations.find((a) => a.name === name)
       ?.keybinding;
   }
-
   getOperationHandlers() {
     return this.operationHandlers;
   }
-
   getSerialOperationHandlers() {
     return this.serialOperationHandlers;
   }
+  private _getSerialOperationKeybindingMapping(): SerialOperationKeybindingMapping {
+    const operations = this.getRegisteredOperations()
+      .filter((r) => typeof r.keybinding === 'string')
+      .map((r): [SerialOperationNameType, string] => [r.name, r.keybinding!]);
 
-  renderApplicationComponents = () => {
-    const result = this.extensions
-      .map((extension) => {
-        const { ReactComponent } = extension.application;
-        if (ReactComponent) {
-          return <ReactComponent key={extension.name} />;
-        }
-        return undefined;
-      })
-      .filter((e): e is JSX.Element => Boolean(e));
-
-    return result;
-  };
-
-  registerSerialOperationHandler = (cb: SerialOperationHandler) => {
-    this.serialOperationHandlers.add(cb);
-    return () => {
-      this.serialOperationHandlers.delete(cb);
-    };
-  };
+    return Object.fromEntries(operations);
+  }
 }

@@ -14,6 +14,15 @@ export class BrowserHistory implements BaseHistory {
   private historyState: any;
   private historyCounter = 0;
 
+  private checkForUpdates = () => {
+    const current = calcLocation(this.base);
+
+    if (!isLocationEqual(current, this.currentLoc)) {
+      this.currentLoc = current;
+      this.onChange(current);
+    }
+    this.refreshHistoryState();
+  };
   constructor(
     private base = '',
     private onChange: (location: Location) => void,
@@ -83,16 +92,6 @@ export class BrowserHistory implements BaseHistory {
   get search() {
     return this.currentLoc.search;
   }
-
-  private checkForUpdates = () => {
-    const current = calcLocation(this.base);
-
-    if (!isLocationEqual(current, this.currentLoc)) {
-      this.currentLoc = current;
-      this.onChange(current);
-    }
-    this.refreshHistoryState();
-  };
 }
 
 const getCurrentPathname = (): string => {

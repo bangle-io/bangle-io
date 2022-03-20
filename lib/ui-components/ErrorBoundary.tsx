@@ -1,15 +1,14 @@
 import React from 'react';
 
 export class ErrorBoundary extends React.Component {
-  state: { hasError: boolean; error: any } = {
-    hasError: false,
-    error: undefined,
-  };
-
   static getDerivedStateFromError(error: Error) {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }
+  state: { hasError: boolean; error: any } = {
+    hasError: false,
+    error: undefined,
+  };
 
   componentDidCatch(error: Error, errorInfo: any) {
     // You can also log the error to an error reporting service

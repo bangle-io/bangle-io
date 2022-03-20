@@ -5,6 +5,14 @@ import { createEmptyArray } from '@bangle.io/utils';
 import type { EditorIdType } from './types';
 
 export class OpenedEditorsConfig {
+  static fromJsonObj(val: any) {
+    const { selections = [], scrollPositions = [] } = val;
+
+    return new OpenedEditorsConfig({
+      selections: selections,
+      scrollPositions: scrollPositions,
+    });
+  }
   private selections: ({ [wsPath: string]: JsonObject | null } | null)[];
   private scrollPositions: ({ [wsPath: string]: number | null } | null)[];
 
@@ -94,15 +102,6 @@ export class OpenedEditorsConfig {
     return new OpenedEditorsConfig({
       selections: this.selections,
       scrollPositions: newScrollPositions,
-    });
-  }
-
-  static fromJsonObj(val: any) {
-    const { selections = [], scrollPositions = [] } = val;
-
-    return new OpenedEditorsConfig({
-      selections: selections,
-      scrollPositions: scrollPositions,
     });
   }
 

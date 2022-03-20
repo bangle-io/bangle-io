@@ -34,22 +34,6 @@ export const INFINITE_ERROR_THRESHOLD_TIME = 500;
 export const INFINITE_ERROR_SAMPLE = 10;
 
 export class ApplicationStore<S = any, A extends BaseAction = any> {
-  private sideEffects: StoreSideEffectType<any, A, S>[] = [];
-  private destroyed = false;
-
-  private deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
-  private actionSerializers: {
-    [k: string]: ReturnType<
-      ActionsSerializersType<any>[keyof ActionsSerializersType<any>]
-    >;
-  } = {};
-  private currentRunId = 0;
-  private destroyController = new AbortController();
-  private lastSeenStateCache = new WeakMap<
-    StoreSideEffectType<any, A, S>,
-    AppState<S, A>
-  >();
-
   static create<S = any, A extends BaseAction = any>({
     storeName,
     state,
@@ -77,7 +61,91 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       onError,
     );
   }
+  private sideEffects: StoreSideEffectType<any, A, S>[] = [];
+  private destroyed = false;
 
+  private deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
+  private actionSerializers: {
+    [k: string]: ReturnType<
+      ActionsSerializersType<any>[keyof ActionsSerializersType<any>]
+    >;
+  } = {};
+  private currentRunId = 0;
+  private destroyController = new AbortController();
+  private lastSeenStateCache = new WeakMap<
+    StoreSideEffectType<any, A, S>,
+    AppState<S, A>
+  >();
+
+  dispatch = (action: A) => {
+    if (this.destroyed) {
+      return;
+    }
+
+    (action as any).id = this.storeName + '-' + incrementalId();
+
+    this._dispatchAction(this, action);
+  };
+  private infiniteErrors = {
+    count: 0,
+    lastSeen: 0,
+  };
+  public errorHandler = (error: Error, key?: string): void => {
+    if (this.destroyController.signal.aborted) {
+      return;
+    }
+
+    this.infiniteErrors.count++;
+
+    console.debug('store handling error:', error.message, this.infiniteErrors);
+
+    if (this.infiniteErrors.count % INFINITE_ERROR_SAMPLE === 0) {
+      if (
+        Date.now() - this.infiniteErrors.lastSeen <=
+        INFINITE_ERROR_THRESHOLD_TIME
+      ) {
+        this.destroy();
+        console.log(`this.infiniteErrors ${this.infiniteErrors.count}`);
+        console.error(error);
+        throw new Error('AppStore: avoiding possible infinite errors');
+      }
+      this.infiniteErrors.lastSeen = Date.now();
+    }
+
+    if (isAbortError(error)) {
+      return;
+    }
+
+    // check the store handler first
+    if (this.onError?.(error, this) === true) {
+      return;
+    }
+
+    // after that give priority to the slice it originated from
+    if (typeof key === 'string') {
+      const matchSlice = this._state.getSliceByKey<any, any, any>(key);
+      if (matchSlice?.spec.onError?.(error, this) === true) {
+        return;
+      }
+    }
+    // Note: We are giving every slice an opportunity to handle the error
+    // rather than just the originating slice, because if an effect dispatches an
+    // operation of a different slice, just running the orginating slice's error handlers
+    // will miss the error handling of the slice owning the operation.
+
+    // check if any slice handles it
+    for (const slice of this._state.getSlices()) {
+      if (
+        // avoid calling the originating slice again, since we already called it earlier
+        slice.key !== key &&
+        slice.spec.onError?.(error, this) === true
+      ) {
+        return;
+      }
+    }
+
+    throw error;
+  };
   constructor(
     private _state: AppState<S, A>,
     private _dispatchAction: DispatchActionType<S, A>,
@@ -109,16 +177,6 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
   get state(): AppState<S, A> {
     return this._state;
   }
-
-  dispatch = (action: A) => {
-    if (this.destroyed) {
-      return;
-    }
-
-    (action as any).id = this.storeName + '-' + incrementalId();
-
-    this._dispatchAction(this, action);
-  };
 
   serializeAction(action: A) {
     if (action.fromStore) {
@@ -318,77 +376,14 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       }
     });
   }
-
-  private infiniteErrors = {
-    count: 0,
-    lastSeen: 0,
-  };
-
-  public errorHandler = (error: Error, key?: string): void => {
-    if (this.destroyController.signal.aborted) {
-      return;
-    }
-
-    this.infiniteErrors.count++;
-
-    console.debug('store handling error:', error.message, this.infiniteErrors);
-
-    if (this.infiniteErrors.count % INFINITE_ERROR_SAMPLE === 0) {
-      if (
-        Date.now() - this.infiniteErrors.lastSeen <=
-        INFINITE_ERROR_THRESHOLD_TIME
-      ) {
-        this.destroy();
-        console.log(`this.infiniteErrors ${this.infiniteErrors.count}`);
-        console.error(error);
-        throw new Error('AppStore: avoiding possible infinite errors');
-      }
-      this.infiniteErrors.lastSeen = Date.now();
-    }
-
-    if (isAbortError(error)) {
-      return;
-    }
-
-    // check the store handler first
-    if (this.onError?.(error, this) === true) {
-      return;
-    }
-
-    // after that give priority to the slice it originated from
-    if (typeof key === 'string') {
-      const matchSlice = this._state.getSliceByKey<any, any, any>(key);
-      if (matchSlice?.spec.onError?.(error, this) === true) {
-        return;
-      }
-    }
-    // Note: We are giving every slice an opportunity to handle the error
-    // rather than just the originating slice, because if an effect dispatches an
-    // operation of a different slice, just running the orginating slice's error handlers
-    // will miss the error handling of the slice owning the operation.
-
-    // check if any slice handles it
-    for (const slice of this._state.getSlices()) {
-      if (
-        // avoid calling the originating slice again, since we already called it earlier
-        slice.key !== key &&
-        slice.spec.onError?.(error, this) === true
-      ) {
-        return;
-      }
-    }
-
-    throw error;
-  };
 }
 
 export class DeferredSideEffectsRunner<S, A extends BaseAction> {
-  private scheduledCallback: ReturnType<SchedulerType> | undefined;
-
   static deferredlastSeenStateCache = new WeakMap<
     StoreSideEffectType<any, any, any>,
     AppState<any, any>
   >();
+  private scheduledCallback: ReturnType<SchedulerType> | undefined;
 
   private abortController = new AbortController();
 

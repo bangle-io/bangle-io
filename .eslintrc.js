@@ -1,7 +1,7 @@
 // .eslintrc.js
 module.exports = {
   root: true,
-  plugins: ['simple-import-sort'],
+  plugins: ['simple-import-sort', 'sort-class-members'],
   extends: [
     'react-app',
     'react-app/jest',
@@ -84,6 +84,33 @@ module.exports = {
       },
     ],
     'simple-import-sort/exports': 'error',
+
+    'sort-class-members/sort-class-members': [
+      2,
+      {
+        order: [
+          '[static-properties]',
+          '[static-methods]',
+          '[properties]',
+          '[conventional-private-properties]',
+          'constructor',
+          '[methods]',
+          '[conventional-private-methods]',
+        ],
+        accessorPairPositioning: 'getThenSet',
+      },
+    ],
+
+    'no-multiple-empty-lines': ['error'],
+
+    // 'padding-line-between-statements': [
+    //   'error',
+    //   {
+    //     blankLine: 'always',
+    //     prev: '*',
+    //     next: 'return',
+    //   },
+    // ],
   },
   settings: {
     'jest': {

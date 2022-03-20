@@ -3028,12 +3028,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/slice-overlay@workspace:lib/slice-overlay":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/slice-overlay@workspace:lib/slice-overlay"
-  languageName: unknown
-  linkType: soft
-
 "@bangle.io/slice-page@workspace:*, @bangle.io/slice-page@workspace:lib/slice-page":
   version: 0.0.0-use.local
   resolution: "@bangle.io/slice-page@workspace:lib/slice-page"
@@ -6351,6 +6345,7 @@ __metadata:
     eslint-plugin-react: ^7.29.3
     eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-simple-import-sort: ^7.0.0
+    eslint-plugin-sort-class-members: ^1.14.1
     eslint-plugin-testing-library: ^5.0.6
     file-loader: ^6.2.0
     git-revision-webpack-plugin: ^3.0.6
@@ -8681,6 +8676,15 @@ __metadata:
   peerDependencies:
     eslint: ">=5.0.0"
   checksum: 6aacb7179c213cd2081950630368d1f3b1dcb4f5674d8b989fe7839e7b317ee521d74761676e8b1a7cab49f20405dbcc9aac05358ae804e6bcba6cbf1daccb3d
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-sort-class-members@npm:^1.14.1":
+  version: 1.14.1
+  resolution: "eslint-plugin-sort-class-members@npm:1.14.1"
+  peerDependencies:
+    eslint: ">=0.8.0"
+  checksum: 8def863d7658535f7879701f831c517ddc5947cef549a190f5216e1087dd01b2e02ef984dd68b7a8c16d4dbcc31d1a7392c49f71f3baa6bd644446d888746a8a
   languageName: node
   linkType: hard
 

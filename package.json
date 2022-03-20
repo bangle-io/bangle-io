@@ -111,6 +111,7 @@
     "eslint-plugin-react": "^7.29.3",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-sort-class-members": "^1.14.1",
     "eslint-plugin-testing-library": "^5.0.6",
     "file-loader": "^6.2.0",
     "git-revision-webpack-plugin": "^3.0.6",

@@ -12,6 +12,17 @@ export interface WorkspaceInfoReg {
 }
 
 export class WorkspaceSliceState {
+  static update(
+    existing: WorkspaceSliceState,
+    obj: Partial<ConstructorParameters<typeof WorkspaceSliceState>[0]>,
+  ) {
+    // retain instance if possible
+    if (obj.openedWsPaths) {
+      obj.openedWsPaths = existing.openedWsPaths.update(obj.openedWsPaths);
+    }
+
+    return new WorkspaceSliceState(Object.assign({}, existing.mainFields, obj));
+  }
   constructor(
     protected mainFields: {
       error: WorkspaceSliceState['error'];
@@ -24,18 +35,6 @@ export class WorkspaceSliceState {
     },
     protected opts: any = {},
   ) {}
-
-  static update(
-    existing: WorkspaceSliceState,
-    obj: Partial<ConstructorParameters<typeof WorkspaceSliceState>[0]>,
-  ) {
-    // retain instance if possible
-    if (obj.openedWsPaths) {
-      obj.openedWsPaths = existing.openedWsPaths.update(obj.openedWsPaths);
-    }
-
-    return new WorkspaceSliceState(Object.assign({}, existing.mainFields, obj));
-  }
 
   // mainFields
   get wsPaths(): string[] | undefined {

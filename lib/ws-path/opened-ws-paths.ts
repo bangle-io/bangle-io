@@ -24,14 +24,6 @@ function compare<T>(a: T[], b: T[]): boolean {
 }
 
 export class OpenedWsPaths {
-  constructor(private wsPaths: MaybeWsPath[]) {
-    if (wsPaths.length !== MAX_OPEN_EDITORS) {
-      throw new Error(
-        `Only support ${MAX_OPEN_EDITORS} editors opened at a time`,
-      );
-    }
-  }
-
   static createFromArray(array: (string | null | undefined)[]) {
     let safeArray = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
       return array[k] || undefined;
@@ -39,11 +31,17 @@ export class OpenedWsPaths {
 
     return new OpenedWsPaths(safeArray);
   }
-
   static createEmpty() {
     const wsPaths = createEmptyArray(MAX_OPEN_EDITORS);
 
     return new OpenedWsPaths(wsPaths);
+  }
+  constructor(private wsPaths: MaybeWsPath[]) {
+    if (wsPaths.length !== MAX_OPEN_EDITORS) {
+      throw new Error(
+        `Only support ${MAX_OPEN_EDITORS} editors opened at a time`,
+      );
+    }
   }
 
   get primaryWsPath() {

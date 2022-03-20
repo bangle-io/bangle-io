@@ -97,21 +97,6 @@ export class Extension<
   T = unknown,
   OpType extends SerialOperationDefinitionType = any,
 > {
-  name: string;
-  editor: EditorConfig;
-  initialState?: any;
-  application: ApplicationConfig<T, OpType>;
-
-  constructor(ext: Config<T, OpType>, check: typeof _check) {
-    if (check !== _check) {
-      throw new Error('Instantiate class via `Extension.create({})`');
-    }
-    this.name = ext.name;
-    this.editor = ext.editor;
-    this.initialState = ext.initialState;
-    this.application = ext.application;
-  }
-
   static create<
     T = undefined,
     OpType extends SerialOperationDefinitionType = any,
@@ -293,6 +278,20 @@ export class Extension<
       { name, editor, application, initialState },
       _check,
     );
+  }
+  name: string;
+  editor: EditorConfig;
+  initialState?: any;
+  application: ApplicationConfig<T, OpType>;
+
+  constructor(ext: Config<T, OpType>, check: typeof _check) {
+    if (check !== _check) {
+      throw new Error('Instantiate class via `Extension.create({})`');
+    }
+    this.name = ext.name;
+    this.editor = ext.editor;
+    this.initialState = ext.initialState;
+    this.application = ext.application;
   }
 }
 
