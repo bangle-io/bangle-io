@@ -44,6 +44,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
       mtime: stat.mtimeMs,
     };
   }
+
   async createFile(
     wsPath: string,
     file: File,

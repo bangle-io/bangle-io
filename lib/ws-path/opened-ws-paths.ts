@@ -32,11 +32,13 @@ export class OpenedWsPaths {
 
     return new OpenedWsPaths(safeArray);
   }
+
   static createEmpty() {
     const wsPaths = createEmptyArray(MAX_OPEN_EDITORS);
 
     return new OpenedWsPaths(wsPaths);
   }
+
   constructor(private wsPaths: MaybeWsPath[]) {
     if (wsPaths.length !== MAX_OPEN_EDITORS) {
       throw new Error(

@@ -211,6 +211,7 @@ class FieldDesc<S, A extends BaseAction, Op> {
     config: undefined | { [key: string]: any },
     appState: AppState<S, A, Op>,
   ) => any;
+
   apply?: (action: any, value: any, appState: AppState<S, A, Op>) => any;
 
   constructor(

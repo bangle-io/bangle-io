@@ -280,6 +280,7 @@ export class Extension<
       _check,
     );
   }
+
   name: string;
   editor: EditorConfig;
   initialState?: any;

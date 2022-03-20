@@ -14,6 +14,7 @@ export class BaseError extends Error {
 
     return error;
   }
+
   public code?: string;
   public thrower?: string;
   /**

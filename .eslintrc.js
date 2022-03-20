@@ -111,6 +111,12 @@ module.exports = {
         next: 'return',
       },
     ],
+
+    'lines-between-class-members': [
+      'error',
+      'always',
+      { exceptAfterSingleLine: true },
+    ],
   },
   settings: {
     'jest': {

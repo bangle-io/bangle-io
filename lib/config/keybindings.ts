@@ -30,6 +30,7 @@ class KeyBinding {
   constructor({ key }: { key: string }) {
     this.key = key;
   }
+
   get displayValue() {
     return keyDisplayValue(this.key);
   }

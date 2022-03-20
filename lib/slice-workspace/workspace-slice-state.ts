@@ -23,6 +23,7 @@ export class WorkspaceSliceState {
 
     return new WorkspaceSliceState(Object.assign({}, existing.mainFields, obj));
   }
+
   constructor(
     protected mainFields: {
       error: WorkspaceSliceState['error'];
@@ -40,18 +41,23 @@ export class WorkspaceSliceState {
   get wsPaths(): string[] | undefined {
     return this.mainFields.wsPaths;
   }
+
   get recentlyUsedWsPaths(): string[] | undefined {
     return this.mainFields.recentlyUsedWsPaths;
   }
+
   get wsName(): string | undefined {
     return this.mainFields.wsName;
   }
+
   get openedWsPaths(): OpenedWsPaths {
     return this.mainFields.openedWsPaths;
   }
+
   get workspacesInfo(): WorkspaceInfoReg | undefined {
     return this.mainFields.workspacesInfo;
   }
+
   get error(): Error | undefined {
     return this.mainFields.error;
   }

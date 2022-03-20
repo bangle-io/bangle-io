@@ -35,6 +35,7 @@ class FileMetadata {
       `${BASE_IDB_NAME_PREFIX}-meta-store${idbSuffix}`,
     );
   }
+
   // get the metadata, if not exists
   // save the given `fallback` and return it
   async get(

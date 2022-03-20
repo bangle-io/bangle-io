@@ -61,6 +61,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       onError,
     );
   }
+
   private sideEffects: StoreSideEffectType<any, A, S>[] = [];
   private destroyed = false;
 
@@ -70,6 +71,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       ActionsSerializersType<any>[keyof ActionsSerializersType<any>]
     >;
   } = {};
+
   private currentRunId = 0;
   private destroyController = new AbortController();
   private lastSeenStateCache = new WeakMap<
@@ -86,10 +88,12 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     this._dispatchAction(this, action);
   };
+
   private infiniteErrors = {
     count: 0,
     lastSeen: 0,
   };
+
   public errorHandler = (error: Error, key?: string): void => {
     if (this.destroyController.signal.aborted) {
       return;
@@ -146,6 +150,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     throw error;
   };
+
   constructor(
     private _state: AppState<S, A>,
     private _dispatchAction: DispatchActionType<S, A>,
@@ -383,6 +388,7 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
     StoreSideEffectType<any, any, any>,
     AppState<any, any>
   >();
+
   private scheduledCallback: ReturnType<SchedulerType> | undefined;
 
   private abortController = new AbortController();

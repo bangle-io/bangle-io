@@ -13,6 +13,7 @@ export class OpenedEditorsConfig {
       scrollPositions: scrollPositions,
     });
   }
+
   private selections: ({ [wsPath: string]: JsonObject | null } | null)[];
   private scrollPositions: ({ [wsPath: string]: number | null } | null)[];
 

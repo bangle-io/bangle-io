@@ -23,6 +23,7 @@ export class BrowserHistory implements BaseHistory {
     }
     this.refreshHistoryState();
   };
+
   constructor(
     private base = '',
     private onChange: (location: Location) => void,
@@ -53,6 +54,7 @@ export class BrowserHistory implements BaseHistory {
       );
     }, 0);
   }
+
   // we do a simple managed history state, where we assume
   // any state added to history is by us.
   refreshHistoryState() {

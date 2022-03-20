@@ -59,6 +59,7 @@ export const beforeEachHook = () => {
       this.properties = properties;
       this.parts = parts;
     }
+
     async text() {
       if (typeof this.parts[0] === 'string') {
         return this.parts[0];
@@ -66,6 +67,7 @@ export const beforeEachHook = () => {
 
       return (this.parts[0] as any).text();
     }
+
     async arrayBuffer() {
       return (this.parts[0] as any).arrayBuffer();
     }

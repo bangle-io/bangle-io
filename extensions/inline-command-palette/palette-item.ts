@@ -8,6 +8,7 @@ export class PaletteItem {
   static create(obj: any) {
     return new PaletteItem(obj);
   }
+
   uid: string;
   title: string;
   type: string;

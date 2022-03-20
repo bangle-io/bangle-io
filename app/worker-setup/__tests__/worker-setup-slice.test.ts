@@ -72,6 +72,7 @@ beforeEach(() => {
       }),
       close: jest.fn(),
     };
+
     port2: Port = {
       onmessage: undefined,
       postMessage: jest.fn((arg) => {
