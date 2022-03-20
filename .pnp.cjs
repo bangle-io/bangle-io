@@ -211,6 +211,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:js-lib/search-pm-node"
       },
       {
+        "name": "@bangle.io/api",
+        "reference": "workspace:lib/api"
+      },
+      {
         "name": "@bangle.io/bangle-store-context",
         "reference": "workspace:lib/bangle-store-context"
       },
@@ -324,6 +328,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "fallbackExclusionList": [
       ["@bangle.io/abortable-worker", ["workspace:js-lib/abortable-worker"]],
       ["@bangle.io/activitybar", ["virtual:d1b5e8020e267a5b48226fff0d7e0f62d70b2f583bfbb86c4b0eef5d67a493d95dbccd5bb310355c60e363d6898d534dc2e76a670f0aa2bc0155043f74b344c5#workspace:app/activitybar", "workspace:app/activitybar"]],
+      ["@bangle.io/api", ["workspace:lib/api"]],
       ["@bangle.io/app-entry", ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#workspace:app/app-entry", "workspace:app/app-entry"]],
       ["@bangle.io/baby-fs", ["workspace:js-lib/baby-fs"]],
       ["@bangle.io/bangle-store", ["workspace:app/bangle-store"]],
@@ -4420,6 +4425,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/api", [
+        ["workspace:lib/api", {
+          "packageLocation": "./lib/api/",
+          "packageDependencies": [
+            ["@bangle.io/api", "workspace:lib/api"]
           ],
           "linkType": "SOFT",
         }]

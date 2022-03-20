@@ -1901,6 +1901,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/api@workspace:lib/api":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/api@workspace:lib/api"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/app-entry@workspace:*, @bangle.io/app-entry@workspace:app/app-entry":
   version: 0.0.0-use.local
   resolution: "@bangle.io/app-entry@workspace:app/app-entry"

@@ -1,6 +1,7 @@
 {
   "name": "lib",
   "workspaces": [
+    "api",
     "bangle-store-context",
     "config",
     "constants",
