@@ -36,13 +36,8 @@ const paletteByType = Object.fromEntries(
 );
 
 export function PaletteManager() {
-  const {
-    paletteMetadata,
-    paletteType,
-    paletteInitialQuery,
-    dispatch,
-    widescreen,
-  } = useUIManagerContext();
+  const { paletteMetadata, paletteType, paletteInitialQuery, dispatch } =
+    useUIManagerContext();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, updateQuery] = useState(paletteInitialQuery || '');
   const { bangleStore } = useEditorManagerContext();

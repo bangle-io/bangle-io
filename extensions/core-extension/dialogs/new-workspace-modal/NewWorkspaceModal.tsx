@@ -26,7 +26,7 @@ import { ShowError } from './ShowError';
 import { StorageTypeDropdown } from './StorageTypeDropdown';
 
 export const NEW_WORKSPACE_DIALOG_NAME =
-  'dialog::@bangle.io/core-operations:new-workspace-dialog';
+  'dialog::@bangle.io/core-extension:new-workspace-dialog';
 
 interface ModalState {
   defaultStorageType: WorkspaceStorageType;

@@ -80,7 +80,7 @@ export function Activitybar({
           dispatch({
             name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
             value: {
-              dialogName: 'dialog::@bangle.io/core-operations:changelog-modal',
+              dialogName: 'dialog::@bangle.io/core-extension:changelog-modal',
             },
           });
         }}

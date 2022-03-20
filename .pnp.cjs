@@ -103,8 +103,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/collapsible-heading"
       },
       {
-        "name": "@bangle.io/core-operations",
-        "reference": "workspace:extensions/core-operations"
+        "name": "@bangle.io/core-extension",
+        "reference": "workspace:extensions/core-extension"
       },
       {
         "name": "@bangle.io/core-palettes",
@@ -337,7 +337,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/config", ["workspace:lib/config"]],
       ["@bangle.io/constants", ["workspace:lib/constants"]],
       ["@bangle.io/contextual-ui-components", ["workspace:lib/contextual-ui-components"]],
-      ["@bangle.io/core-operations", ["workspace:extensions/core-operations"]],
+      ["@bangle.io/core-extension", ["workspace:extensions/core-extension"]],
       ["@bangle.io/core-palettes", ["virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes", "workspace:extensions/core-palettes"]],
       ["@bangle.io/create-store", ["workspace:js-lib/create-store"]],
       ["@bangle.io/editor", ["virtual:d731905ba47bdcbb11d3b7ce88655aa56fcc9b833103178969924cedde5a24a30dc988e896e672cb63106fdba34b3dabd49a0d0e4bc5ff8308b0097985ccbc10#workspace:lib/editor", "workspace:lib/editor"]],
@@ -4807,11 +4807,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
-      ["@bangle.io/core-operations", [
-        ["workspace:extensions/core-operations", {
-          "packageLocation": "./extensions/core-operations/",
+      ["@bangle.io/core-extension", [
+        ["workspace:extensions/core-extension", {
+          "packageLocation": "./extensions/core-extension/",
           "packageDependencies": [
-            ["@bangle.io/core-operations", "workspace:extensions/core-operations"],
+            ["@bangle.io/core-extension", "workspace:extensions/core-extension"],
             ["@bangle.dev/base-components", "virtual:61e8bf15ead0605b938e056ccc2a7427658f3e8765d89407c601cdfd9be63d1a92579e68d1e1cddea359d2c7ab5e2bc9db0612ed4c208d3be1a251a67a2f7c8d#npm:0.28.8"],
             ["@bangle.dev/core", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
             ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.8"],
@@ -5813,7 +5813,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
             ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/core-operations", "workspace:extensions/core-operations"],
+            ["@bangle.io/core-extension", "workspace:extensions/core-extension"],
             ["@bangle.io/core-palettes", "virtual:55ba814afb25ffe6b5f262a6fbea4eb5d42907bd590bc925cf47c3ed7ab10107823f3901d84a9e9ac5ff215c585af2f0449096ae29648b4dcecabd3f65579bd4#workspace:extensions/core-palettes"],
             ["@bangle.io/create-store", "workspace:js-lib/create-store"],
             ["@bangle.io/editor-core", "workspace:extensions/editor-core"],

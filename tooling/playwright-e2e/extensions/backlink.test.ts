@@ -115,7 +115,7 @@ test.describe.parallel('backlink workflow', () => {
 
     await runOperation(
       page,
-      'operation::@bangle.io/core-operations:NOTE_TOGGLE_SIDEBAR',
+      'operation::@bangle.io/core-extension:NOTE_TOGGLE_SIDEBAR',
     );
 
     await Promise.all([

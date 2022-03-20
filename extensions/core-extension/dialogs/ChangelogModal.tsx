@@ -54,7 +54,7 @@ const specRegistry = new SpecRegistry([
 ]);
 
 export const CHANGELOG_MODAL_NAME =
-  'dialog::@bangle.io/core-operations:changelog-modal';
+  'dialog::@bangle.io/core-extension:changelog-modal';
 
 export function ChangelogModal() {
   const { dispatch } = useUIManagerContext();

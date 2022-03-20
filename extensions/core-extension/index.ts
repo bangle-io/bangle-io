@@ -136,15 +136,15 @@ const extension = Extension.create({
         title: 'Restore this workspace from a backup file',
       },
       {
-        name: 'operation::@bangle.io/core-operations:focus-primary-editor',
+        name: 'operation::@bangle.io/core-extension:focus-primary-editor',
         title: 'Editor: Focus on primary editor',
       },
       {
-        name: 'operation::@bangle.io/core-operations:focus-secondary-editor',
+        name: 'operation::@bangle.io/core-extension:focus-secondary-editor',
         title: 'Editor: Focus on secondary editor',
       },
       {
-        name: 'operation::@bangle.io/core-operations:toggle-editing-mode',
+        name: 'operation::@bangle.io/core-extension:toggle-editing-mode',
         title: 'Editor: Toggle editing mode',
       },
     ],
@@ -232,13 +232,13 @@ const extension = Extension.create({
 
               return true;
             }
-            case 'operation::@bangle.io/core-operations:focus-primary-editor': {
+            case 'operation::@bangle.io/core-extension:focus-primary-editor': {
               focusEditor(0)(bangleStore.state);
 
               return true;
             }
 
-            case 'operation::@bangle.io/core-operations:focus-secondary-editor': {
+            case 'operation::@bangle.io/core-extension:focus-secondary-editor': {
               focusEditor(1)(bangleStore.state);
 
               return true;
@@ -279,7 +279,7 @@ const extension = Extension.create({
               return true;
             }
 
-            case 'operation::@bangle.io/core-operations:toggle-editing-mode': {
+            case 'operation::@bangle.io/core-extension:toggle-editing-mode': {
               toggleEditing()(bangleStore.state, bangleStore.dispatch);
               let isEditing = isEditingAllowed()(bangleStore.state);
               showNotification({

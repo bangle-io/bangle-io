@@ -18,10 +18,10 @@ import {
 } from '@bangle.io/ws-path';
 
 export const NEW_NOTE_DIALOG_NAME =
-  'dialog::@bangle.io/core-operations:new-note-modal';
+  'dialog::@bangle.io/core-extension:new-note-modal';
 
 export const RENAME_NOTE_DIALOG_NAME =
-  'dialog::@bangle.io/core-operations:rename-note-modal';
+  'dialog::@bangle.io/core-extension:rename-note-modal';
 
 export function NewNoteInputModal() {
   const { dispatch, dialogName, dialogMetadata } = useUIManagerContext();
@@ -93,7 +93,7 @@ export function NewNoteInputModal() {
     [onDismiss, bangleStore, destroyedRef, wsName],
   );
 
-  if (dialogName !== 'dialog::@bangle.io/core-operations:new-note-modal') {
+  if (dialogName !== 'dialog::@bangle.io/core-extension:new-note-modal') {
     return null;
   }
 

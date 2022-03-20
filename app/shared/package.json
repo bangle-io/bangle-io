@@ -31,7 +31,7 @@
     "@bangle.io/collab-extension": "workspace:*",
     "@bangle.io/collapsible-heading": "workspace:*",
     "@bangle.io/constants": "workspace:*",
-    "@bangle.io/core-operations": "workspace:*",
+    "@bangle.io/core-extension": "workspace:*",
     "@bangle.io/core-palettes": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/editor-core": "workspace:*",

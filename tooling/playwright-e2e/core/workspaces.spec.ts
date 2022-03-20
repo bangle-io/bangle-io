@@ -108,7 +108,7 @@ test.describe.parallel('workspaces', () => {
       page.waitForNavigation(),
       runOperation(
         page,
-        'operation::@bangle.io/core-operations:REMOVE_ACTIVE_WORKSPACE',
+        'operation::@bangle.io/core-extension:REMOVE_ACTIVE_WORKSPACE',
       ),
     ]);
 
