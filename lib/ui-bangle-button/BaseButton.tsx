@@ -109,6 +109,7 @@ export const BaseButton = ({
     },
     [onElementReady],
   );
+
   return (
     <button
       id={id}

@@ -14,7 +14,7 @@ const IDB_PREFIX = 'gh-tree-1:';
 
 interface GHData {
   sha: string;
-  tree: Array<Leaf>;
+  tree: Leaf[];
 }
 
 export class GithubRepoTree {
@@ -67,6 +67,7 @@ export class GithubRepoTree {
         return data;
       }
     }
+
     return GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
   }
 
@@ -106,6 +107,7 @@ export class GithubRepoTree {
     abortSignal: AbortSignal,
   ) {
     const data = await GithubRepoTree.getData(wsName, wsMetadata, abortSignal);
+
     return data.tree.map((r) => r.wsPath);
   }
 
@@ -120,6 +122,7 @@ export class GithubRepoTree {
       abortSignal,
     );
     await idb.set(IDB_PREFIX + wsName, data);
+
     return data;
   }
 }

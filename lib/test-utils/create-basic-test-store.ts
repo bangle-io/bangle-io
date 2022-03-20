@@ -123,7 +123,7 @@ export async function setupMockWorkspaceWithNotes(
   store?: ApplicationStore,
   wsName = 'test-ws-1',
   // Array of [wsPath, MarkdownString]
-  noteWsPaths: [string, string][] = [
+  noteWsPaths: Array<[string, string]> = [
     [`${wsName}:one.md`, `# Hello World 0`],
     [`${wsName}:two.md`, `# Hello World 1`],
   ],

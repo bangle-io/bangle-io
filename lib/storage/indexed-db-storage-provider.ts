@@ -17,12 +17,23 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
 
   private idb = new IndexedDBFileSystem();
 
-  async newWorkspaceMetadata(wsName: string, createOpts: any) {}
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    await this.writeFile(wsPath, file, opts);
+  }
+
+  async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
+    await this.idb.unlink(toFSPath(wsPath));
+  }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
     const path = toFSPath(wsPath);
     try {
       await this.idb.stat(path);
+
       return true;
     } catch (error) {
       if (error instanceof BaseFileSystemError) {
@@ -37,28 +48,11 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
   async fileStat(wsPath: string, opts: StorageOpts) {
     const path = toFSPath(wsPath);
     const stat = await this.idb.stat(path);
+
     return {
       ctime: stat.mtimeMs,
       mtime: stat.mtimeMs,
     };
-  }
-  async createFile(
-    wsPath: string,
-    file: File,
-    opts: StorageOpts,
-  ): Promise<void> {
-    await this.writeFile(wsPath, file, opts);
-  }
-
-  async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    await this.idb.unlink(toFSPath(wsPath));
-  }
-
-  async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
-    if (!(await this.fileExists(wsPath, opts))) {
-      return undefined;
-    }
-    return this.idb.readFile(toFSPath(wsPath));
   }
 
   async listAllFiles(
@@ -75,6 +69,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     files = rawPaths
       .map((r) => {
         const wsPath = fromFsPath(r);
+
         return wsPath;
       })
       .filter((r): r is string => Boolean(r));
@@ -84,13 +79,14 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     return result;
   }
 
-  async writeFile(
-    wsPath: string,
-    file: File,
-    opts: StorageOpts,
-  ): Promise<void> {
-    const path = toFSPath(wsPath);
-    await this.idb.writeFile(path, file);
+  async newWorkspaceMetadata(wsName: string, createOpts: any) {}
+
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
+    if (!(await this.fileExists(wsPath, opts))) {
+      return undefined;
+    }
+
+    return this.idb.readFile(toFSPath(wsPath));
   }
 
   async renameFile(
@@ -99,5 +95,14 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this.idb.rename(toFSPath(wsPath), toFSPath(newWsPath));
+  }
+
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    const path = toFSPath(wsPath);
+    await this.idb.writeFile(path, file);
   }
 }

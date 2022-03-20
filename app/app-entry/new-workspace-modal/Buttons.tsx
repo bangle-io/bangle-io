@@ -41,6 +41,7 @@ export function PickStorageDirectory({
           .includes('user activation is required')
       ) {
         setError(CLICKED_TOO_SOON_ERROR);
+
         return;
       }
       if (
@@ -49,10 +50,12 @@ export function PickStorageDirectory({
           error.code === NATIVE_BROWSER_USER_ABORTED_ERROR)
       ) {
         setError(WORKSPACE_AUTH_REJECTED_ERROR);
+
         return;
       }
       if (error instanceof BaseFileSystemError) {
         setError(ERROR_PICKING_DIRECTORY_ERROR);
+
         return;
       }
       setError(UNKNOWN_ERROR);

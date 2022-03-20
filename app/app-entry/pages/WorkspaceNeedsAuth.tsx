@@ -57,6 +57,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     }
     if (wsInfo.type !== WorkspaceTypeNative) {
       onGranted();
+
       return true;
     }
     const result = await requestNativeBrowserFSPermission(
@@ -64,9 +65,11 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     );
     if (result) {
       onGranted();
+
       return true;
     } else {
       updatePermissionDenied(true);
+
       return false;
     }
   };
@@ -99,23 +102,25 @@ function PermissionModal({
   requestFSPermission: () => Promise<boolean>;
   wsName: string;
 }) {
-  const { paletteType, modal } = useUIManagerContext();
+  const { paletteType, dialogName } = useUIManagerContext();
   const isPaletteActive = Boolean(paletteType);
   useEffect(() => {
     let callback = keybindingsHelper({
       Enter: () => {
-        if (isPaletteActive || modal) {
+        if (isPaletteActive || dialogName) {
           return false;
         }
         requestFSPermission();
+
         return true;
       },
     });
     document.addEventListener('keydown', callback);
+
     return () => {
       document.removeEventListener('keydown', callback);
     };
-  }, [requestFSPermission, isPaletteActive, modal]);
+  }, [requestFSPermission, isPaletteActive, dialogName]);
 
   return (
     <CenteredBoxedPage

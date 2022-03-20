@@ -100,6 +100,7 @@ function breakTag(key: string) {
           )(state, dispatch, view);
         }
         const nodeType = state.schema.nodes[tagNodeName];
+
         return replaceSuggestionMarkWith(
           palettePluginKey,
           nodeType.create({
@@ -109,11 +110,13 @@ function breakTag(key: string) {
 
         // return false;
       }
+
       return replaceSuggestionMarkWith(
         palettePluginKey,
         state.schema.text('#' + text + key),
       )(state, dispatch, view);
     }
+
     return false;
   };
 }
@@ -161,6 +164,7 @@ export function editorTagSpec(): RawSpecs {
             if (typeof tok.payload === 'string') {
               return { tagValue: tok.payload };
             }
+
             return { tagValue: undefined };
           },
           noCloseToken: true,
@@ -168,6 +172,7 @@ export function editorTagSpec(): RawSpecs {
       },
     },
   };
+
   return [
     inlinePalette.spec({ markName: paletteMarkName, trigger: TRIGGER }),
     spec,
@@ -185,6 +190,7 @@ export function noteTagsMarkdownItPlugin(md: any) {
         // in the match
         match = match.trim();
       }
+
       return { payload: match.slice(1), markup: match.slice(1) };
     },
   });

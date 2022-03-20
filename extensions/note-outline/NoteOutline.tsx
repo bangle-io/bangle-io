@@ -53,6 +53,7 @@ export function NoteOutline() {
       focusedEditorId != null && getEditorState(focusedEditorId)(store.state);
     if (!state) {
       updateHeadingsState(undefined);
+
       return;
     }
     const watchHeadingsPluginState = watchHeadingsPluginKey.getState(state);
@@ -61,6 +62,7 @@ export function NoteOutline() {
       return;
     }
     updateHeadingsState(watchHeadingsPluginState.headings);
+
     return;
   }, [focusedEditorId, store]);
 
@@ -74,6 +76,7 @@ export function NoteOutline() {
           return false;
         }
         updateHeadingNodes();
+
         return true;
       }
 
@@ -191,6 +194,7 @@ export function useAutomaticScrollNodeIntoView(
       scrollIntoViewInProgress.current = true;
       callbackId = safeRequestIdleCallback(scrollHeadingNodeIntoView);
     }
+
     return () => {
       if (callbackId != null) {
         safeCancelIdleCallback(callbackId);

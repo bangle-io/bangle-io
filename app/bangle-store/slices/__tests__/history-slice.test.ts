@@ -15,6 +15,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
   const other = jest.requireActual('@bangle.io/slice-workspace');
   const workspaceSliceKey = other.workspaceSliceKey;
   workspaceSliceKey.getSliceStateAsserted = jest.fn();
+
   return {
     ...other,
     workspaceSliceKey,

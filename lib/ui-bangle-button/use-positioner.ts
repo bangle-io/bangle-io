@@ -51,6 +51,7 @@ export function useTooltipPositioner({
   const hideTooltip = React.useCallback(() => {
     if (immediateClose) {
       state.close(true);
+
       return;
     }
     state.close(delay === 0 ? true : false);

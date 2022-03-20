@@ -46,6 +46,7 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
           ) {
             return r.level === parseInt(query);
           }
+
           return strMatch(r.title + ' ' + r.level, query);
         })
         .map((r, i) => {
@@ -133,6 +134,7 @@ function strMatch(a: string[] | string, b: string): boolean {
   }
 
   a = a.toLocaleLowerCase();
+
   return a.includes(b) || b.includes(a);
 }
 
@@ -145,6 +147,7 @@ export const headingPalette: ExtensionPaletteType = {
     if (identifierPrefix && rawQuery.startsWith(identifierPrefix)) {
       return rawQuery.slice(1);
     }
+
     return null;
   },
   ReactComponent: HeadingPalette,

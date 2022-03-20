@@ -2,6 +2,7 @@ const { walkWorkspace } = require('./map-files');
 
 const capitalize = (str) => {
   const c = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
   return str
     .split('-')
     .map((r) => c(r))

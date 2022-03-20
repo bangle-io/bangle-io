@@ -12,6 +12,18 @@ export interface WorkspaceInfoReg {
 }
 
 export class WorkspaceSliceState {
+  static update(
+    existing: WorkspaceSliceState,
+    obj: Partial<ConstructorParameters<typeof WorkspaceSliceState>[0]>,
+  ) {
+    // retain instance if possible
+    if (obj.openedWsPaths) {
+      obj.openedWsPaths = existing.openedWsPaths.update(obj.openedWsPaths);
+    }
+
+    return new WorkspaceSliceState(Object.assign({}, existing.mainFields, obj));
+  }
+
   constructor(
     protected mainFields: {
       error: WorkspaceSliceState['error'];
@@ -25,36 +37,21 @@ export class WorkspaceSliceState {
     protected opts: any = {},
   ) {}
 
-  static update(
-    existing: WorkspaceSliceState,
-    obj: Partial<ConstructorParameters<typeof WorkspaceSliceState>[0]>,
-  ) {
-    // retain instance if possible
-    if (obj.openedWsPaths) {
-      obj.openedWsPaths = existing.openedWsPaths.update(obj.openedWsPaths);
-    }
-
-    return new WorkspaceSliceState(Object.assign({}, existing.mainFields, obj));
+  get error(): Error | undefined {
+    return this.mainFields.error;
   }
 
-  // mainFields
-  get wsPaths(): string[] | undefined {
-    return this.mainFields.wsPaths;
+  // derived
+  get noteWsPaths(): string[] | undefined {
+    return selectNoteWsPaths(this);
   }
-  get recentlyUsedWsPaths(): string[] | undefined {
-    return this.mainFields.recentlyUsedWsPaths;
-  }
-  get wsName(): string | undefined {
-    return this.mainFields.wsName;
-  }
+
   get openedWsPaths(): OpenedWsPaths {
     return this.mainFields.openedWsPaths;
   }
-  get workspacesInfo(): WorkspaceInfoReg | undefined {
-    return this.mainFields.workspacesInfo;
-  }
-  get error(): Error | undefined {
-    return this.mainFields.error;
+
+  get recentlyUsedWsPaths(): string[] | undefined {
+    return this.mainFields.recentlyUsedWsPaths;
   }
 
   // returns the current wsName refreshing for
@@ -62,9 +59,17 @@ export class WorkspaceSliceState {
     return this.mainFields.refreshCounter;
   }
 
-  // derived
-  get noteWsPaths(): string[] | undefined {
-    return selectNoteWsPaths(this);
+  get workspacesInfo(): WorkspaceInfoReg | undefined {
+    return this.mainFields.workspacesInfo;
+  }
+
+  get wsName(): string | undefined {
+    return this.mainFields.wsName;
+  }
+
+  // mainFields
+  get wsPaths(): string[] | undefined {
+    return this.mainFields.wsPaths;
   }
 }
 

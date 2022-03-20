@@ -37,6 +37,7 @@ export function initializeNaukarStore({
     },
     scheduler: (cb) => {
       const id = setTimeout(cb, MAX_DEFERRED_WAIT_TIME);
+
       return () => {
         clearTimeout(id);
       };

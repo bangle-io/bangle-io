@@ -172,6 +172,7 @@ const RenderItems = ({
         (path) =>
           dirSet.has(path) && path.split('/').length === DEFAULT_FOLD_DEPTH,
       );
+
       return result;
     },
   );
@@ -206,6 +207,7 @@ const RenderItems = ({
       ) {
         return false;
       }
+
       return true;
     });
   }, [filesAndDirList, collapsed]);
@@ -239,6 +241,7 @@ const RenderItems = ({
             return [...array, path];
           }
         });
+
         return;
       }
       if (event.metaKey) {

@@ -37,6 +37,7 @@ export class ExtensionRegistry {
     EditorConfig['renderReactNodeView'],
     undefined
   >;
+
   private serialOperationHandlers: Set<SerialOperationHandler>;
   private registeredSerialOperations: SerialOperationDefinitionType[];
   private editorConfig: EditorConfig[];
@@ -44,6 +45,7 @@ export class ExtensionRegistry {
   private operationHandlers: Array<
     Exclude<ApplicationConfig['operationHandler'], undefined>
   >;
+
   private sidebars: Exclude<ApplicationConfig['sidebars'], undefined>;
   private storageProviders: {
     [storageProviderName: string]: Exclude<
@@ -51,20 +53,21 @@ export class ExtensionRegistry {
       undefined
     >;
   };
+
   private noteFormatProviders: {
     [noteFormatProviderName: string]: Exclude<
       ApplicationConfig['noteFormatProvider'],
       undefined
     >;
   };
+
+  private slices: Array<Slice<any, any>>;
   private onStorageErrorHandlers: {
     [storageProviderName: string]: Exclude<
       ApplicationConfig['onStorageError'],
       undefined
     >;
   };
-
-  private slices: Slice<any, any>[];
 
   private editorWatchPluginStates: Exclude<
     EditorConfig['watchPluginStates'],
@@ -76,7 +79,45 @@ export class ExtensionRegistry {
     undefined
   >;
 
-  public extensionsInitialState: { [name: string]: any };
+  extensionsInitialState: { [name: string]: any };
+  renderExtensionEditorComponents = () => {
+    const result = this.editorConfig
+      .map((e) => {
+        const { ReactComponent } = e;
+        if (ReactComponent) {
+          return <ReactComponent key={e.name} />;
+        }
+
+        return undefined;
+      })
+      .filter((e): e is JSX.Element => Boolean(e));
+
+    return result;
+  };
+
+  renderApplicationComponents = () => {
+    const result = this.extensions
+      .map((extension) => {
+        const { ReactComponent } = extension.application;
+        if (ReactComponent) {
+          return <ReactComponent key={extension.name} />;
+        }
+
+        return undefined;
+      })
+      .filter((e): e is JSX.Element => Boolean(e));
+
+    return result;
+  };
+
+  registerSerialOperationHandler = (cb: SerialOperationHandler) => {
+    this.serialOperationHandlers.add(cb);
+
+    return () => {
+      this.serialOperationHandlers.delete(cb);
+    };
+  };
+
   constructor(
     private extensions: Extension[] = [],
     // TODO move this to an extension
@@ -154,6 +195,75 @@ export class ExtensionRegistry {
         .map((a) => [a.storageProvider!.name, a.onStorageError!]),
     );
   }
+
+  getEditorWatchPluginStates(): EditorWatchPluginState[] {
+    return this.editorWatchPluginStates;
+  }
+
+  getNoteFormatProvider(name: string) {
+    return this.noteFormatProviders[name];
+  }
+
+  getNoteSidebarWidgets() {
+    return this.noteSidebarWidgets;
+  }
+
+  getOnStorageErrorHandlers(name: string) {
+    return this.onStorageErrorHandlers[name];
+  }
+
+  getOperationHandlers() {
+    return this.operationHandlers;
+  }
+
+  getPlugins() {
+    return [
+      ...filterFlatMap(this.editorConfig, 'highPriorityPlugins'),
+      ...filterFlatMap(this.editorConfig, 'plugins'),
+    ];
+  }
+
+  getRegisteredOperationKeybinding(
+    name: SerialOperationNameType,
+  ): string | undefined {
+    return this.registeredSerialOperations.find((a) => a.name === name)
+      ?.keybinding;
+  }
+
+  getRegisteredOperations(): Readonly<SerialOperationDefinitionType[]> {
+    return this.registeredSerialOperations;
+  }
+
+  getSerialOperationHandlers() {
+    return this.serialOperationHandlers;
+  }
+
+  getSerialOperationKeybindingMapping() {
+    return this.operationKeybindingMapping;
+  }
+
+  getSidebars() {
+    return this.sidebars;
+  }
+
+  getSlices() {
+    return this.slices;
+  }
+
+  getStorageProvider(name: string) {
+    return this.storageProviders[name];
+  }
+
+  renderReactNodeViews({
+    nodeViewRenderArg,
+  }: {
+    nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
+  }): React.ReactNode {
+    return this.renderReactNodeViewLookup[nodeViewRenderArg.node.type.name]?.({
+      nodeViewRenderArg,
+    });
+  }
+
   private validate() {
     if (
       new Set(this.extensions.filter((r) => Boolean(r.name)).map((r) => r.name))
@@ -170,106 +280,4 @@ export class ExtensionRegistry {
 
     return Object.fromEntries(operations);
   }
-
-  renderReactNodeViews({
-    nodeViewRenderArg,
-  }: {
-    nodeViewRenderArg: Parameters<BangleRenderNodeViewsFunction>[0];
-  }): React.ReactNode {
-    return this.renderReactNodeViewLookup[nodeViewRenderArg.node.type.name]?.({
-      nodeViewRenderArg,
-    });
-  }
-
-  getPlugins() {
-    return [
-      ...filterFlatMap(this.editorConfig, 'highPriorityPlugins'),
-      ...filterFlatMap(this.editorConfig, 'plugins'),
-    ];
-  }
-
-  getSidebars() {
-    return this.sidebars;
-  }
-
-  getNoteSidebarWidgets() {
-    return this.noteSidebarWidgets;
-  }
-
-  getSerialOperationKeybindingMapping() {
-    return this.operationKeybindingMapping;
-  }
-
-  getEditorWatchPluginStates(): EditorWatchPluginState[] {
-    return this.editorWatchPluginStates;
-  }
-
-  getSlices() {
-    return this.slices;
-  }
-
-  getStorageProvider(name: string) {
-    return this.storageProviders[name];
-  }
-
-  getNoteFormatProvider(name: string) {
-    return this.noteFormatProviders[name];
-  }
-
-  getOnStorageErrorHandlers(name: string) {
-    return this.onStorageErrorHandlers[name];
-  }
-
-  renderExtensionEditorComponents = () => {
-    const result = this.editorConfig
-      .map((e) => {
-        const { ReactComponent } = e;
-        if (ReactComponent) {
-          return <ReactComponent key={e.name} />;
-        }
-        return undefined;
-      })
-      .filter((e): e is JSX.Element => Boolean(e));
-    return result;
-  };
-
-  getRegisteredOperations(): Readonly<SerialOperationDefinitionType[]> {
-    return this.registeredSerialOperations;
-  }
-
-  getRegisteredOperationKeybinding(
-    name: SerialOperationNameType,
-  ): string | undefined {
-    return this.registeredSerialOperations.find((a) => a.name === name)
-      ?.keybinding;
-  }
-
-  getOperationHandlers() {
-    return this.operationHandlers;
-  }
-
-  getSerialOperationHandlers() {
-    return this.serialOperationHandlers;
-  }
-
-  renderApplicationComponents = () => {
-    const result = this.extensions
-      .map((extension) => {
-        const { ReactComponent } = extension.application;
-        if (ReactComponent) {
-          return <ReactComponent key={extension.name} />;
-        }
-        return undefined;
-      })
-      .filter((e): e is JSX.Element => Boolean(e));
-
-    return result;
-  };
-
-  registerSerialOperationHandler = (cb: SerialOperationHandler) => {
-    this.serialOperationHandlers.add(cb);
-    return () => {
-      this.serialOperationHandlers.delete(cb);
-    };
-  };
 }

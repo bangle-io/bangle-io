@@ -34,6 +34,7 @@ describe('exponentialBackoff', () => {
       if (count++ === 4) {
         return true;
       }
+
       return false;
     });
 
@@ -55,6 +56,7 @@ describe('exponentialBackoff', () => {
       if (count++ === 1) {
         abort.abort();
       }
+
       return false;
     });
 

@@ -25,6 +25,7 @@ export function ActivitybarMobile({
 }) {
   const bangleStore = useBangleStoreContext();
   const { editingAllowed } = useEditorManagerContext();
+
   return (
     <div className="flex flex-row ml-3 text-gray-100 align-center activitybar w-full mr-3">
       <div className="flex flex-row items-center flex-none">

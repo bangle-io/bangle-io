@@ -13,6 +13,7 @@ export async function pMap<Element, NewElement>(
   }: { concurrency?: number; abortSignal: AbortSignal },
 ): Promise<NewElement[]> {
   assertSignal(abortSignal);
+
   return new Promise((resolve, reject) => {
     if (typeof mapper !== 'function') {
       throw new TypeError('Mapper function is required');
@@ -30,7 +31,7 @@ export async function pMap<Element, NewElement>(
     }
     assertSignal(abortSignal);
 
-    const result: Array<NewElement> = [];
+    const result: NewElement[] = [];
     const iterator = iterable[Symbol.iterator]();
     let isRejected = false;
     let isIterableDone = false;

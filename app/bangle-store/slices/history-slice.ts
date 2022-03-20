@@ -167,6 +167,7 @@ export const saveWorkspaceInfoEffect: SliceSideEffect<
             if (r.type === WorkspaceTypeNative) {
               return r?.metadata?.rootDirHandle;
             }
+
             return undefined;
           })
           .filter((r) => r);

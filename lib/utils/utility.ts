@@ -37,6 +37,7 @@ export function keybindingsHelper(bindings: {
     for (let prop in map) {
       copy[normalizeKeyName(prop)] = map[prop];
     }
+
     return copy;
   }
 
@@ -53,6 +54,7 @@ export function keybindingsHelper(bindings: {
     if (shift !== false && event.shiftKey) {
       name = 'Shift-' + name;
     }
+
     return name;
   }
 
@@ -96,8 +98,10 @@ export function keybindingsHelper(bindings: {
     if (shift) {
       result = 'Shift-' + result;
     }
+
     return result;
   }
+
   return function (event: KeyboardEvent) {
     let name = keyName(event),
       isChar = name.length === 1 && name !== ' ';
@@ -105,6 +109,7 @@ export function keybindingsHelper(bindings: {
     // if the handler returns true prevent default it
     if (direct && direct()) {
       event.preventDefault();
+
       return;
     }
   };
@@ -118,6 +123,7 @@ export function cx(...args: any[]) {
     }
     classes.push(arg);
   }
+
   return classes.join(' ');
 }
 
@@ -138,6 +144,7 @@ export function weakCache<T extends (arg: any) => any>(fn: T): T {
     }
     value = fn(arg);
     cache.set(arg, value);
+
     return value;
   };
 
@@ -174,6 +181,7 @@ export function isTouchDevice() {
         /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
     }
   }
+
   return hasTouchScreen;
 }
 
@@ -193,6 +201,7 @@ export async function getDayJs({} = {}): Promise<typeof import('dayjs')> {
   if (!dayJs) {
     throw new Error('dayJs cannot be undefined');
   }
+
   return dayJs;
 }
 
@@ -200,6 +209,7 @@ export function conditionalPrefix(str: string, part: string) {
   if (str.startsWith(part)) {
     return str;
   }
+
   return part + str;
 }
 
@@ -207,6 +217,7 @@ export function conditionalSuffix(str: string, part: string) {
   if (str.endsWith(part)) {
     return str;
   }
+
   return str + part;
 }
 
@@ -214,6 +225,7 @@ export function removeMdExtension(str: string) {
   if (str.endsWith('.md')) {
     return str.slice(0, -3);
   }
+
   return str;
 }
 
@@ -268,6 +280,7 @@ export function findWrappingScrollable(node: Element): Element | undefined {
       }
     }
   }
+
   return undefined;
 }
 
@@ -282,6 +295,7 @@ export function keyDisplayValue(key: string): string {
       if (/^[A-Z]$/.test(r)) {
         return `Shift-${r.toLocaleLowerCase()}`;
       }
+
       return r;
     })
     .join('-');
@@ -289,6 +303,7 @@ export function keyDisplayValue(key: string): string {
   if (key.includes('Shift')) {
     key = key.split('Shift').join('⇧');
   }
+
   return key;
 }
 
@@ -374,6 +389,7 @@ export function makeSafeForCSS(name: string) {
     if (c >= 65 && c <= 90) {
       return '_' + s.toLowerCase();
     }
+
     return '__';
   });
 }

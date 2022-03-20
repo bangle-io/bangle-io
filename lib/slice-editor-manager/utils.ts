@@ -7,6 +7,7 @@ import {
 
 export const calculateSelection = (editorId: number, editor: BangleEditor) => {
   const selection = editor.view.state.selection;
+
   return {
     wsPath: getEditorPluginMetadata(editor.view.state).wsPath,
     editorId: editorId,

@@ -67,6 +67,7 @@ export function useKeybindings<T extends (...args: any[]) => any>(
   useEffect(() => {
     const keyHandler = keybindingsHelper(memoCb());
     document.addEventListener('keydown', keyHandler);
+
     return () => {
       document.removeEventListener('keydown', keyHandler);
     };
@@ -91,12 +92,15 @@ export function useWatchClickOutside(
 
       if (inside) {
         onClickInside?.();
+
         return;
       }
       onClickOutside?.();
+
       return;
     };
     document.addEventListener('click', handler);
+
     return () => {
       document.removeEventListener('click', handler);
     };
@@ -111,6 +115,7 @@ export function useCatchRejection(
 ) {
   useEffect(() => {
     window.addEventListener('unhandledrejection', callback);
+
     return () => {
       window.removeEventListener('unhandledrejection', callback);
     };
@@ -138,7 +143,7 @@ export function useBroadcastChannel<T>(
   channelName: string,
 ): [T | undefined, (data: T) => void] {
   const infiniteRecurseRef = useRef(0);
-  const lastSentRef = useRef<Number | undefined>();
+  const lastSentRef = useRef<number | undefined>();
   const destroyedRef = useRef(false);
   const [lastMessage, updateEvent] = useState<T | undefined>();
   const [bChannel] = useState(() => {
@@ -148,6 +153,7 @@ export function useBroadcastChannel<T>(
     if (typeof window !== 'undefined' && window.BroadcastChannel) {
       return new BroadcastChannel(channelName);
     }
+
     return undefined;
   });
 
@@ -232,6 +238,7 @@ export function usePrevious<T>(value: T | undefined): T | undefined {
   useEffect(() => {
     ref.current = value;
   }, [value]); // Only re-run if value changes
+
   // Return previous value (happens before update in useEffect above)
   return ref.current;
 }
@@ -264,6 +271,7 @@ export function useClickToNote<T>(
     },
     [pushWsPath],
   );
+
   return makeOnClick;
 }
 export function useInterval<T extends (...args: any[]) => any>(
@@ -276,6 +284,7 @@ export function useInterval<T extends (...args: any[]) => any>(
 
   useEffect(() => {
     let id = setInterval(memoCb, delay);
+
     return () => {
       clearInterval(id);
     };

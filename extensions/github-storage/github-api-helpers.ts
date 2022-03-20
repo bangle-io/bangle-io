@@ -79,6 +79,7 @@ async function makeV3GetApi<T = any>({
     'Github API limit left',
     res.headers.get('X-RateLimit-Remaining'),
   );
+
   return isBlob ? res.blob() : res.json();
 }
 
@@ -120,6 +121,7 @@ function makeGraphql({
         });
       }
       console.debug('Github Graphql limit left', r.data?.rateLimit?.remaining);
+
       return r.data;
     });
 }
@@ -278,6 +280,7 @@ export async function getTree({
       if (error instanceof Error || error instanceof BaseError) {
         if (error.message.includes('Git Repository is empty.')) {
           let errorMessage = error.message;
+
           return initializeRepo({ config }).then((sha) => {
             return makeRequest(attempt + 1, errorMessage);
           });
@@ -322,6 +325,7 @@ export async function getTree({
         wsPath,
       };
     });
+
   return {
     sha,
     tree: list,
@@ -395,6 +399,7 @@ export async function pushChanges({
         code: INVALID_GITHUB_RESPONSE,
       });
     }
+
     return [r.filename, r.contents_url];
   });
 }

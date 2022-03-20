@@ -37,6 +37,7 @@ export async function createImageNodes(
       return srcUrl;
     }),
   );
+
   return sources.filter(Boolean).map((source) => {
     return imageType.create({
       src: source,

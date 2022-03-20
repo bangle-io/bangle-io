@@ -32,6 +32,7 @@ const headingSpec = (() => {
       },
     };
   }
+
   return spec;
 })();
 

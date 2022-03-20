@@ -17,6 +17,7 @@ class WorkTree {
   constructor(name) {
     this.name = name;
   }
+
   async packages() {
     return (await getWorktreeWorkspaces(this.name)).map((r) => r.name);
   }

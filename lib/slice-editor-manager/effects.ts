@@ -76,6 +76,7 @@ export const focusEditorEffect: SideEffect = (state) => {
         if (editorNeedsFocusOnPageLoad === i && isNewEditor) {
           currentEditor.focusView();
           editorNeedsFocusOnPageLoad = undefined;
+
           return;
         }
 
@@ -83,6 +84,7 @@ export const focusEditorEffect: SideEffect = (state) => {
         // This is so as to avoid competing with the `editorNeedsFocusOnPageLoad`.
         if (!editorNeedsFocusOnPageLoad && isNewEditor && !cooldown) {
           currentEditor.focusView();
+
           return;
         }
       }

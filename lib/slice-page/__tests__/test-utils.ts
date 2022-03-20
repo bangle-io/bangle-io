@@ -23,6 +23,7 @@ export const createStore = () => {
           cb();
         }
       });
+
       return () => {
         destroyed = true;
       };

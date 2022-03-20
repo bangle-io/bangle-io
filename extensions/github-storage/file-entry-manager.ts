@@ -17,6 +17,7 @@ export const localFileEntryManager = new LocalFileEntryManager({
         if (typeof key === 'string') {
           return key.startsWith(IDB_PREFIX);
         }
+
         return false;
       });
 

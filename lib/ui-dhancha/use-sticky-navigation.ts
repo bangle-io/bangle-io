@@ -9,6 +9,7 @@ export function useStickyNavigation(
     if (!widescreen && activitybarRef.current) {
       callback = setupStickyNavigation(activitybarRef.current);
     }
+
     return () => {
       callback?.();
     };

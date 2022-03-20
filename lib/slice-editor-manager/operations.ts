@@ -39,8 +39,10 @@ export function focusEditor(editorId: EditorIdType = 0) {
     const editor = getEditor(editorId)(state);
     if (editor) {
       editor?.focusView();
+
       return true;
     }
+
     return false;
   };
 }
@@ -52,6 +54,7 @@ export function updateFocusedEditor(editorId: EditorIdType = 0) {
         editorId,
       },
     });
+
     return true;
   };
 }
@@ -71,6 +74,7 @@ export function updateInitialSelection(editorId: EditorIdType) {
         name: 'action::@bangle.io/slice-editor-manager:update-initial-selection-json',
         value: value,
       });
+
       return true;
     }
 
@@ -123,6 +127,7 @@ export function geEditorScrollPosition(editorId: EditorIdType, wsPath: string) {
     if (!sliceState) {
       return undefined;
     }
+
     return sliceState.editorConfig.getScrollPosition(wsPath, editorId);
   };
 }
@@ -197,6 +202,7 @@ export function setEditorUnmounted(
           editorId,
         },
       });
+
       return true;
     }
 
@@ -232,6 +238,7 @@ export function getInitialSelection(
       } else {
         selection = Selection.near(doc.resolve(from));
       }
+
       return selection;
     }
 
@@ -273,6 +280,7 @@ export function dispatchEditorCommand<T>(
     }
 
     const view = currentEditor.view;
+
     return cmdCallback(view.state, view.dispatch, view);
   };
 }

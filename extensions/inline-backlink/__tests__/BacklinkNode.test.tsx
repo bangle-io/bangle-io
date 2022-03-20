@@ -240,6 +240,7 @@ describe('BacklinkNode', () => {
 
       // wait for the promise in click to resolve
       await act(() => prom);
+
       return renderResult;
     };
 

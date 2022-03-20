@@ -16,6 +16,60 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
   private fileEntryManager = localFileEntryManager;
 
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    await this.fileEntryManager.createFile(
+      wsPath,
+      file,
+      this.makeGetRemoteFileEntryCb(
+        opts.readWorkspaceMetadata() as GithubWsMetadata,
+        false,
+      ),
+    );
+  }
+
+  async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
+    await this.fileEntryManager.deleteFile(
+      wsPath,
+      this.makeGetRemoteFileEntryCb(
+        opts.readWorkspaceMetadata() as GithubWsMetadata,
+        false,
+      ),
+    );
+  }
+
+  async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
+    return Boolean(await this.readFile(wsPath, opts));
+  }
+
+  async fileStat(wsPath: string, opts: StorageOpts) {
+    throw new BaseError({
+      message: 'fileStat is not supported',
+      code: GITHUB_STORAGE_NOT_ALLOWED,
+    });
+
+    return {} as any;
+  }
+
+  async listAllFiles(
+    abortSignal: AbortSignal,
+    wsName: string,
+    opts: StorageOpts,
+  ): Promise<string[]> {
+    const wsMetadata = opts.readWorkspaceMetadata() as GithubWsMetadata;
+    await GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
+
+    const files = await this.fileEntryManager.listFiles(
+      await GithubRepoTree.getWsPaths(wsName, wsMetadata, abortSignal),
+      wsName + ':',
+    );
+
+    return files;
+  }
+
   private makeGetRemoteFileEntryCb(
     wsMetadata: GithubWsMetadata,
     useCache: boolean,
@@ -53,48 +107,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
         code: INVALID_GITHUB_TOKEN,
       });
     }
+
     return {
       githubToken: createOpts.githubToken,
       owner: createOpts.owner,
       branch: createOpts.branch,
     };
-  }
-
-  async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
-    return Boolean(await this.readFile(wsPath, opts));
-  }
-
-  async createFile(
-    wsPath: string,
-    file: File,
-    opts: StorageOpts,
-  ): Promise<void> {
-    await this.fileEntryManager.createFile(
-      wsPath,
-      file,
-      this.makeGetRemoteFileEntryCb(
-        opts.readWorkspaceMetadata() as GithubWsMetadata,
-        false,
-      ),
-    );
-  }
-
-  async fileStat(wsPath: string, opts: StorageOpts) {
-    throw new BaseError({
-      message: 'fileStat is not supported',
-      code: GITHUB_STORAGE_NOT_ALLOWED,
-    });
-    return {} as any;
-  }
-
-  async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    await this.fileEntryManager.deleteFile(
-      wsPath,
-      this.makeGetRemoteFileEntryCb(
-        opts.readWorkspaceMetadata() as GithubWsMetadata,
-        false,
-      ),
-    );
   }
 
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
@@ -113,29 +131,6 @@ export class GithubStorageProvider implements BaseStorageProvider {
     return file;
   }
 
-  async listAllFiles(
-    abortSignal: AbortSignal,
-    wsName: string,
-    opts: StorageOpts,
-  ): Promise<string[]> {
-    const wsMetadata = opts.readWorkspaceMetadata() as GithubWsMetadata;
-    await GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
-
-    const files = await this.fileEntryManager.listFiles(
-      await GithubRepoTree.getWsPaths(wsName, wsMetadata, abortSignal),
-      wsName + ':',
-    );
-    return files;
-  }
-
-  async writeFile(
-    wsPath: string,
-    file: File,
-    opts: StorageOpts,
-  ): Promise<void> {
-    await this.fileEntryManager.writeFile(wsPath, file);
-  }
-
   async renameFile(
     wsPath: string,
     newWsPath: string,
@@ -151,5 +146,13 @@ export class GithubStorageProvider implements BaseStorageProvider {
 
     await this.createFile(newWsPath, file, opts);
     await this.deleteFile(wsPath, opts);
+  }
+
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    await this.fileEntryManager.writeFile(wsPath, file);
   }
 }

@@ -46,6 +46,7 @@ export function WatchWorkspace() {
       const { type, tabName, payload } = lastMessage;
       if (payload.wsName !== wsName) {
         log('different wsName', payload.wsName);
+
         return;
       }
       log('received from', tabName, 'type =', type, payload.size);

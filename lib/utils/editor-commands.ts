@@ -24,6 +24,7 @@ export function trimEndWhiteSpaceBeforeCursor(): Command {
             state.selection.from,
           ),
         );
+
         return true;
       }
     }

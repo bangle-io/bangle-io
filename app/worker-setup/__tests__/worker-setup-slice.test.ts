@@ -25,6 +25,7 @@ jest.mock('@bangle.io/utils', () => {
     if (opts?.sleep) {
       throw new Error('option sleep is reserved for testing');
     }
+
     return actual.exponentialBackoff(fn, abort, {
       ...opts,
       sleep: () => Promise.resolve(),
@@ -71,6 +72,7 @@ beforeEach(() => {
       }),
       close: jest.fn(),
     };
+
     port2: Port = {
       onmessage: undefined,
       postMessage: jest.fn((arg) => {

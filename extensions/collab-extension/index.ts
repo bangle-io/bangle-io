@@ -59,8 +59,10 @@ function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
           'editor received fatal error not restarting',
           error.message,
         );
+
         return false;
       }
+
       return true;
     },
   });

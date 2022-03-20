@@ -64,6 +64,7 @@ function filterOutsideIntersection(
       r.pos >= intersectionState.minStartPosition &&
       r.pos <= intersectionState.maxStartPosition,
   );
+
   return result;
 }
 
@@ -95,6 +96,7 @@ function buildDeco(state: EditorState) {
     for (var p in v) {
       result.setAttributeNS(null, p, v[p]);
     }
+
     return result;
   }
 
@@ -140,6 +142,7 @@ function buildDeco(state: EditorState) {
               : 'M6.34317 7.75732L4.92896 9.17154L12 16.2426L19.0711 9.17157L17.6569 7.75735L12 13.4142L6.34317 7.75732Z',
           }),
         );
+
         return wrapper;
       },
       {

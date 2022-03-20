@@ -34,6 +34,7 @@ class FakeIdb implements IdbType {
 
   del = async (key: IDBValidKey, customStore?: any) => {
     (customStore || mockStore).delete(key);
+
     return;
   };
 

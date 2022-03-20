@@ -14,6 +14,16 @@ export class BrowserHistory implements BaseHistory {
   private historyState: any;
   private historyCounter = 0;
 
+  private checkForUpdates = () => {
+    const current = calcLocation(this.base);
+
+    if (!isLocationEqual(current, this.currentLoc)) {
+      this.currentLoc = current;
+      this.onChange(current);
+    }
+    this.refreshHistoryState();
+  };
+
   constructor(
     private base = '',
     private onChange: (location: Location) => void,
@@ -22,6 +32,19 @@ export class BrowserHistory implements BaseHistory {
       this.host?.addEventListener(e, this.checkForUpdates),
     );
     this.currentLoc = calcLocation(this.base);
+  }
+
+  // we do a simple managed history state, where we assume
+  get pathname() {
+    return this.currentLoc.pathname;
+  }
+
+  get search() {
+    return this.currentLoc.search;
+  }
+
+  private createHistoryState() {
+    return { key: this.historyCounter++, value: this.historyState || null };
   }
 
   destroy(): void {
@@ -44,7 +67,7 @@ export class BrowserHistory implements BaseHistory {
       );
     }, 0);
   }
-  // we do a simple managed history state, where we assume
+
   // any state added to history is by us.
   refreshHistoryState() {
     // In certain cases like historyPop, the job of this function is
@@ -71,28 +94,6 @@ export class BrowserHistory implements BaseHistory {
       );
     }, 0);
   }
-
-  private createHistoryState() {
-    return { key: this.historyCounter++, value: this.historyState || null };
-  }
-
-  get pathname() {
-    return this.currentLoc.pathname;
-  }
-
-  get search() {
-    return this.currentLoc.search;
-  }
-
-  private checkForUpdates = () => {
-    const current = calcLocation(this.base);
-
-    if (!isLocationEqual(current, this.currentLoc)) {
-      this.currentLoc = current;
-      this.onChange(current);
-    }
-    this.refreshHistoryState();
-  };
 }
 
 const getCurrentPathname = (): string => {
@@ -116,6 +117,7 @@ const calcLocation = (base: string): Location => {
   if (search.startsWith('?')) {
     search = search.slice(1);
   }
+
   return { pathname, search };
 };
 

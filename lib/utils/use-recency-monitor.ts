@@ -36,6 +36,7 @@ export function useRecencyMonitor({
         save((prevValue) => {
           let records = updateRecords(prevValue, key, maxTimestampsPerEntry);
           records = trimRecords(records, maxEntries);
+
           return records;
         });
       },

@@ -15,6 +15,7 @@ import { useSearchAllTags } from './search';
 
 export const createTagNode = (tagValue: string): Command => {
   tagValue = tagValue.trim();
+
   return (
     state: EditorState,
     dispatch: EditorView['dispatch'] | undefined,
@@ -64,8 +65,10 @@ export function TagPickerInlinePalette() {
       if (!filteredTags.includes(query)) {
         return [newTag, ...result];
       }
+
       return result;
     }
+
     return [];
   }, [query, filteredTags]);
 

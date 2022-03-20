@@ -31,6 +31,7 @@ export function createTestStore<
         cb();
       }
     });
+
     return () => {
       destroyed = true;
     };

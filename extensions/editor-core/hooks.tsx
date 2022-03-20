@@ -4,6 +4,7 @@ import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 
 export function useDispatchPrimaryEditor(dry = true) {
   const { primaryEditor } = useEditorManagerContext();
+
   return useCallback(
     (editorCommand, ...params) => {
       if (!primaryEditor || primaryEditor.destroyed) {
@@ -12,6 +13,7 @@ export function useDispatchPrimaryEditor(dry = true) {
       const { dispatch, state } = primaryEditor.view;
       if (dry) {
         const result = editorCommand(...params)(state);
+
         return result;
       }
 

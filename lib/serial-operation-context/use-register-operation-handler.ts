@@ -8,7 +8,7 @@ import type { SerialOperationHandler } from '@bangle.io/shared-types';
  */
 export function useSerialOperationHandler<T>(
   cb: SerialOperationHandler,
-  deps: Array<T>,
+  deps: T[],
 ) {
   const extensionRegistry = useExtensionRegistryContext();
 
@@ -17,6 +17,7 @@ export function useSerialOperationHandler<T>(
 
   useEffect(() => {
     const removeCb = extensionRegistry.registerSerialOperationHandler(memoCb);
+
     return () => {
       removeCb();
     };

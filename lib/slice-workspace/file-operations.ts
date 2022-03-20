@@ -91,6 +91,7 @@ export function getStorageErrorHandler() {
     ReturnType<ExtensionRegistry['getOnStorageErrorHandlers']>,
     undefined
   >;
+
   return workspaceSliceKey.op((state): T => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
 
@@ -213,6 +214,7 @@ export const getNote = (wsPath: string) => {
 
       return doc;
     }
+
     return undefined;
   });
 };
@@ -239,7 +241,7 @@ export const createNote = (
     open = true,
     doc,
   }: {
-    open?: Boolean;
+    open?: boolean;
     doc?: Node;
   } = {},
 ) => {
@@ -306,6 +308,7 @@ export const writeFile = (wsPath: string, file: File) => {
         file,
         getStorageProviderOpts()(store.state, dispatch),
       );
+
       return true;
     },
   );
@@ -350,7 +353,7 @@ export const getFile = (wsPath: string) => {
   );
 };
 
-export const deleteNote = (wsPathToDelete: Array<string> | string) => {
+export const deleteNote = (wsPathToDelete: string[] | string) => {
   return workspaceSliceKey.asyncOp(async (_, dispatch, store) => {
     const storageProvider = getStorageProvider()(store.state);
     const sliceState = workspaceSliceKey.getSliceStateAsserted(store.state);

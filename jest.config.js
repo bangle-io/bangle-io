@@ -24,7 +24,7 @@ const config = {
 module.exports = {
   projects: [
     {
-      displayName: 'regular-test',
+      displayName: 'regular',
       testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
       ...config,
     },

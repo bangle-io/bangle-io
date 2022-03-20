@@ -116,6 +116,7 @@ export function useSearchNotes() {
 
   useEffect(() => {
     destroyedRef.current = false;
+
     return () => {
       destroyedRef.current = true;
       controllerRef.current?.abort();

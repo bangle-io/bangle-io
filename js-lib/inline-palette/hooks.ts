@@ -100,9 +100,11 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
           dispatch,
           view,
         );
+
         return result;
       },
     );
+
     return () => {
       setExecuteItemCommand(undefined);
     };
@@ -130,6 +132,7 @@ export function useInlinePaletteItems<T extends InlinePaletteItem>(
 
 function getActiveIndex(counter: number, size: number): number {
   const r = counter % size;
+
   return r < 0 ? r + size : r;
 }
 

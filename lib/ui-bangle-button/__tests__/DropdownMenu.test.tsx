@@ -8,6 +8,7 @@ import { DropdownMenu, MenuItem, MenuSection } from '../DropdownMenu';
 
 jest.mock('react-dom', () => {
   const otherThings = jest.requireActual('react-dom');
+
   return {
     ...otherThings,
     createPortal: jest.fn((element, node) => {

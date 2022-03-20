@@ -25,6 +25,7 @@ export function syncWithWindowSlices() {
       state: {
         init(opts: NaukarStateConfig) {
           asssertNotUndefined(opts.port, 'port needs to be provided');
+
           return {
             port: opts.port,
             actionSendFilter: actionFilter,

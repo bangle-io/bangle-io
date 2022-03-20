@@ -20,7 +20,7 @@ import {
 
 assertNonWorkerGlobalScope();
 
-const LOG = false || window.location?.hash?.includes('debug_store');
+const LOG = true || window.location?.hash?.includes('debug_store');
 
 let log = LOG ? console.debug.bind(console, 'bangle-store') : () => {};
 
@@ -139,11 +139,13 @@ function retrieveLocalStorage(): any {
       if (val.schema === SCHEMA_VERSION) {
         return val.data;
       }
+
       return {};
     }
   } catch (error) {
     console.error(error);
   }
+
   return {};
 }
 
@@ -155,11 +157,13 @@ function retrieveSessionStorage(): any {
       if (val.schema === SCHEMA_VERSION) {
         return val.data;
       }
+
       return {};
     }
   } catch (error) {
     console.error(error);
   }
+
   return {};
 }
 
@@ -179,6 +183,7 @@ function scheduler() {
         timeout: MAX_DEFERRED_WAIT_TIME,
       },
     );
+
     return () => {
       destroyed = true;
       safeCancelIdleCallback(id);

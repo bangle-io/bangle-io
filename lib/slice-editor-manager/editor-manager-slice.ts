@@ -146,6 +146,7 @@ export function editorManagerSlice(): Slice<
             focusedEditorId: data.focusedEditorId,
           },
         );
+
         return sliceState;
       },
 

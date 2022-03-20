@@ -49,6 +49,7 @@ export function useLocalStorage<S>(
         } catch (error) {
           console.log(error);
         }
+
         return valueToStore;
       });
     },
@@ -69,13 +70,16 @@ function retrieveValue<T>(key: string, _defaultValue: T | (() => T)): T {
       const defValue = getDefValue();
       // if item does not exist save it in local storage
       localStorageSetItem(key, defValue);
+
       return defValue;
     }
+
     return item;
   } catch (error) {
     // If error also return initialValue
     console.log(error);
     localStorageDeleteItem(key);
+
     return getDefValue();
   }
 }

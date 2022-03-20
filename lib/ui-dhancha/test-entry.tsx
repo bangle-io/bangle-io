@@ -10,6 +10,7 @@ ReactDOM.render(React.createElement(Entry, {}), root);
 function Entry() {
   const [noteSidebarOpen, toggleNoteSidebar] = useState(true);
   const [workspaceSidebarOpen, toggleWorkspaceSidebar] = useState(true);
+
   return (
     <Dhancha
       widescreen={true}

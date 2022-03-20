@@ -64,6 +64,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
         if (!editor) {
           return false;
         }
+
         return (
           win._e2eHelpers._getEditorPluginMetadata(editor.view.state)
             ?.wsPath === w
@@ -100,6 +101,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     if (size > FINAL_EDITORS_IN_MEMORY && attempt < 10) {
       return getEditorCountInMemory(attempt + 1);
     }
+
     return size;
   };
 

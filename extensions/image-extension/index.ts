@@ -30,6 +30,7 @@ const extension = Extension.create({
           ) {
             return 'imageMenu';
           }
+
           return null;
         },
       }),

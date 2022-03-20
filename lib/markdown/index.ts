@@ -17,6 +17,7 @@ const setupSerializer = () => {
       log('setting up serializer');
       _serializer = markdown.markdownSerializer(specRegistry);
     }
+
     return _serializer;
   };
 };
@@ -36,6 +37,7 @@ const setupGetParser = () => {
         tokenizer = tokenizer.use(plugin);
       }
     });
+
     return markdown.markdownParser(specRegistry, tokenizer);
   };
 
@@ -101,6 +103,7 @@ function uncollapseHeadings(doc: Node, specRegistry: SpecRegistry) {
   doc.forEach((node) => {
     if (!collapsedHeadingSet.has(node)) {
       frag = frag.append(Fragment.from(node));
+
       return;
     }
 

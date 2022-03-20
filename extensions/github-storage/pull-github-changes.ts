@@ -98,6 +98,7 @@ export async function pullGithubChanges(
       wsName,
       wsMetadata,
     );
+
     return syncedEntries;
   } catch (error) {
     if (isAbortError(error)) {

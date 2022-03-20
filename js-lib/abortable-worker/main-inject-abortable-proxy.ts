@@ -58,6 +58,7 @@ export function mainInjectAbortableProxy<
           });
         };
       }
+
       return Reflect.get(_target, prop);
     },
   });

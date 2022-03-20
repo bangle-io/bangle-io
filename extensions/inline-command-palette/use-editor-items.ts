@@ -33,6 +33,7 @@ const setHeadingBlockType =
   (level: number) =>
   (state: EditorState, dispatch: EditorView['dispatch'] | undefined) => {
     const type = state.schema.nodes.heading;
+
     return setBlockType(type, { level })(state, dispatch);
   };
 
@@ -57,6 +58,7 @@ export function useEditorItems() {
             if (view) {
               rafCommandExec(view, chainedInsertParagraphBelow());
             }
+
             return replaceSuggestionMarkWith(palettePluginKey, '')(
               state,
               dispatch,
@@ -83,6 +85,7 @@ export function useEditorItems() {
             if (view) {
               rafCommandExec(view, chainedInsertParagraphAbove());
             }
+
             return replaceSuggestionMarkWith(palettePluginKey, '')(
               state,
               dispatch,
@@ -120,6 +123,7 @@ export function useEditorItems() {
                   if (queryIsOrderedListActive()(state)) {
                     return toggleOrderedList()(state, dispatch, view);
                   }
+
                   return convertToParagraph()(state, dispatch, view);
                 },
               );
@@ -149,6 +153,7 @@ export function useEditorItems() {
             if (view) {
               rafCommandExec(view, toggleBulletList());
             }
+
             return replaceSuggestionMarkWith(palettePluginKey, '')(
               state,
               dispatch,
@@ -173,6 +178,7 @@ export function useEditorItems() {
             if (view) {
               rafCommandExec(view, toggleTodoList());
             }
+
             return replaceSuggestionMarkWith(palettePluginKey, '')(
               state,
               dispatch,
@@ -197,6 +203,7 @@ export function useEditorItems() {
             if (view) {
               rafCommandExec(view, toggleOrderedList());
             }
+
             return replaceSuggestionMarkWith(palettePluginKey, '')(
               state,
               dispatch,
@@ -224,6 +231,7 @@ export function useEditorItems() {
             if (view) {
               rafCommandExec(view, insertEmptySiblingListAbove());
             }
+
             return replaceSuggestionMarkWith(palettePluginKey, '')(
               state,
               dispatch,
@@ -253,6 +261,7 @@ export function useEditorItems() {
                 rafCommandExec(view, insertEmptySiblingListBelow());
               }
             }
+
             return replaceSuggestionMarkWith(palettePluginKey, '')(
               state,
               dispatch,
@@ -264,6 +273,7 @@ export function useEditorItems() {
 
       ...Array.from({ length: 3 }, (_, i) => {
         const level = i + 1;
+
         return PaletteItem.create({
           uid: 'headingConvert' + level,
           title: 'H' + level,
@@ -271,6 +281,7 @@ export function useEditorItems() {
           description: 'Convert the current block to heading level ' + level,
           disabled: (state: any) => {
             const result = isList()(state);
+
             return result;
           },
           editorExecuteCommand: () => {
@@ -282,6 +293,7 @@ export function useEditorItems() {
               if (view) {
                 rafCommandExec(view, setHeadingBlockType(level));
               }
+
               return replaceSuggestionMarkWith(palettePluginKey, '')(
                 state,
                 dispatch,

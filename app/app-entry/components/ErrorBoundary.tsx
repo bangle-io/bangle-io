@@ -6,15 +6,15 @@ import { BaseError } from '@bangle.io/utils';
 export class ErrorBoundary extends React.Component<{
   store: ReturnType<typeof initializeBangleStore>;
 }> {
-  state: { hasError: boolean; error: Error | undefined | BaseError } = {
-    hasError: false,
-    error: undefined,
-  };
-
   static getDerivedStateFromError(error: Error) {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }
+
+  state: { hasError: boolean; error: Error | undefined | BaseError } = {
+    hasError: false,
+    error: undefined,
+  };
 
   componentDidCatch(error: Error) {
     (window as any).Sentry?.captureException(error);

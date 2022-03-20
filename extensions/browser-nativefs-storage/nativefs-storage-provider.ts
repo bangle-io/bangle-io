@@ -17,34 +17,23 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   displayName = 'File system storage';
   description = 'Saves data in your file system';
 
-  private getFs(opts: StorageOpts) {
-    const rootDirHandle: FileSystemDirectoryHandle =
-      opts.readWorkspaceMetadata().rootDirHandle;
-
-    return new NativeBrowserFileSystem({
-      rootDirHandle: rootDirHandle,
-      allowedFile: (fileHandle: FileSystemFileHandle) =>
-        allowedFile(fileHandle.name),
-    });
+  async createFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    await this.writeFile(wsPath, file, opts);
   }
 
-  async newWorkspaceMetadata(wsName: string, createOpts: any) {
-    const { rootDirHandle } = createOpts;
-    if (!rootDirHandle) {
-      throw new Error(
-        `rootDirHandle is necessary for creating nativefs workspace`,
-      );
-    }
-
-    return {
-      rootDirHandle,
-    };
+  async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
+    await this.getFs(opts).unlink(toFSPath(wsPath));
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
     const path = toFSPath(wsPath);
     try {
       await this.getFs(opts).stat(path);
+
       return true;
     } catch (error) {
       if (error instanceof BaseFileSystemError) {
@@ -59,29 +48,22 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   async fileStat(wsPath: string, opts: StorageOpts) {
     const path = toFSPath(wsPath);
     const stat = await this.getFs(opts).stat(path);
+
     return {
       ctime: stat.mtimeMs,
       mtime: stat.mtimeMs,
     };
   }
 
-  async createFile(
-    wsPath: string,
-    file: File,
-    opts: StorageOpts,
-  ): Promise<void> {
-    await this.writeFile(wsPath, file, opts);
-  }
+  private getFs(opts: StorageOpts) {
+    const rootDirHandle: FileSystemDirectoryHandle =
+      opts.readWorkspaceMetadata().rootDirHandle;
 
-  async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    await this.getFs(opts).unlink(toFSPath(wsPath));
-  }
-
-  async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
-    if (!(await this.fileExists(wsPath, opts))) {
-      return undefined;
-    }
-    return this.getFs(opts).readFile(toFSPath(wsPath));
+    return new NativeBrowserFileSystem({
+      rootDirHandle: rootDirHandle,
+      allowedFile: (fileHandle: FileSystemFileHandle) =>
+        allowedFile(fileHandle.name),
+    });
   }
 
   async listAllFiles(
@@ -98,6 +80,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     files = rawPaths
       .map((r) => {
         const wsPath = fromFsPath(r);
+
         return wsPath;
       })
       .filter((r): r is string => Boolean(r));
@@ -107,13 +90,25 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     return result;
   }
 
-  async writeFile(
-    wsPath: string,
-    file: File,
-    opts: StorageOpts,
-  ): Promise<void> {
-    const path = toFSPath(wsPath);
-    await this.getFs(opts).writeFile(path, file);
+  async newWorkspaceMetadata(wsName: string, createOpts: any) {
+    const { rootDirHandle } = createOpts;
+    if (!rootDirHandle) {
+      throw new Error(
+        `rootDirHandle is necessary for creating nativefs workspace`,
+      );
+    }
+
+    return {
+      rootDirHandle,
+    };
+  }
+
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
+    if (!(await this.fileExists(wsPath, opts))) {
+      return undefined;
+    }
+
+    return this.getFs(opts).readFile(toFSPath(wsPath));
   }
 
   async renameFile(
@@ -122,5 +117,14 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     await this.getFs(opts).rename(toFSPath(wsPath), toFSPath(newWsPath));
+  }
+
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    const path = toFSPath(wsPath);
+    await this.getFs(opts).writeFile(path, file);
   }
 }

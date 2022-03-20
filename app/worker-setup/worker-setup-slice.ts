@@ -50,6 +50,7 @@ export function workerSetupSlices() {
       state: {
         init() {
           let msgChannel = new MessageChannel();
+
           return {
             port: msgChannel.port1,
             msgChannel,

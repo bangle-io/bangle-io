@@ -35,6 +35,7 @@ jest.mock('@bangle.io/serial-operation-context', () => {
 
 jest.mock('../hooks', () => {
   const actual = jest.requireActual('../hooks');
+
   return {
     ...actual,
     useSearchNotes: jest.fn(),

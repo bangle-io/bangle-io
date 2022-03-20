@@ -100,6 +100,7 @@ export function SerialOperationContextProvider({
     const val: SerialOperationContextType = {
       dispatchSerialOperation,
     };
+
     return val;
   }, [dispatchSerialOperation]);
 
@@ -114,10 +115,12 @@ export function SerialOperationContextProvider({
             dispatchSerialOperation({
               name: r.name,
             });
+
             return true;
           },
         ]),
     );
+
     return keys;
   }, [extensionRegistry, dispatchSerialOperation]);
 

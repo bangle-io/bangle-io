@@ -20,6 +20,7 @@ export function TokenInput({
           ?.focus();
       }
     });
+
     return () => {
       destroyed = true;
     };

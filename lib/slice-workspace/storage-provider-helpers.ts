@@ -15,6 +15,7 @@ export const storageProviderHelpers = {
     ) {
       return error.thrower.split(STORAGE_PROVIDER_ERROR_PREFIX)[1];
     }
+
     return undefined;
   },
 

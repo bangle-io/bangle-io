@@ -26,7 +26,7 @@ const IconStyle = {
 
 interface BacklinkSearchResult {
   wsPath: string;
-  matches: Array<SearchMatch>;
+  matches: SearchMatch[];
 }
 
 export function BacklinkWidget() {
@@ -83,10 +83,12 @@ export function BacklinkWidget() {
                           if (items.has(r.wsPath)) {
                             const clone = new Set(items);
                             clone.delete(r.wsPath);
+
                             return clone;
                           } else {
                             const clone = new Set(items);
                             clone.add(r.wsPath);
+
                             return clone;
                           }
                         });
@@ -174,6 +176,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
                     if (highlightTextMatch) {
                       return highlightTextMatch.includes(fileName);
                     }
+
                     return false;
                   });
 
@@ -201,6 +204,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
     if (focusedEditorId != null) {
       return openedWsPaths.getByIndex(focusedEditorId);
     }
+
     return undefined;
   }, [openedWsPaths, focusedEditorId]);
 

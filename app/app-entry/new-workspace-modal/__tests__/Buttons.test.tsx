@@ -8,6 +8,7 @@ import { PickStorageDirectory } from '../Buttons';
 
 jest.mock('@bangle.io/slice-ui', () => {
   const otherThings = jest.requireActual('@bangle.io/slice-ui');
+
   return {
     ...otherThings,
     useUIManagerContext: jest.fn(() => ({})),

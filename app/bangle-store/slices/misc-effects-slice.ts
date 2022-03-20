@@ -21,6 +21,7 @@ export function miscEffectsSlice() {
 
 export const saveLastUsedWorkspaceEffect = miscEffectsKey.effect(() => {
   let lastSeenWsName: string | undefined;
+
   return {
     destroy() {},
     deferredUpdate(store) {

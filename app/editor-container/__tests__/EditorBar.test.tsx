@@ -11,6 +11,7 @@ import { EditorBar } from '../EditorBar';
 
 jest.mock('@bangle.io/bangle-store-context', () => {
   const obj = jest.requireActual('@bangle.io/bangle-store-context');
+
   return {
     ...obj,
     useBangleStoreDispatch: jest.fn(() => () => {}),

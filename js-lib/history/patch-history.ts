@@ -23,6 +23,7 @@ if (typeof window !== 'undefined' && typeof window.history !== 'undefined') {
       (event as any).arguments = arguments;
 
       dispatchEvent(event);
+
       return result;
     };
   }

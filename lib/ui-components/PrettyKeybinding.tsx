@@ -4,6 +4,7 @@ import { keyDisplayValue } from '@bangle.io/utils';
 
 export function PrettyKeybinding({ rawKey }: { rawKey: string }) {
   let format = keyDisplayValue(rawKey).split('-');
+
   return (
     <span
       className="inline ui-components_pretty-keybinding"

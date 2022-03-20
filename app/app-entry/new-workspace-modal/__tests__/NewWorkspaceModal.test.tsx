@@ -27,6 +27,7 @@ import { NewWorkspaceModalContainer } from '../NewWorkspaceModal';
 
 jest.mock('@bangle.io/slice-ui', () => {
   const otherThings = jest.requireActual('@bangle.io/slice-ui');
+
   return {
     ...otherThings,
     useUIManagerContext: jest.fn(() => ({})),
@@ -35,6 +36,7 @@ jest.mock('@bangle.io/slice-ui', () => {
 
 jest.mock('@bangle.io/baby-fs', () => {
   const otherThings = jest.requireActual('@bangle.io/baby-fs');
+
   return {
     ...otherThings,
     supportsNativeBrowserFs: jest.fn(() => false),
@@ -44,6 +46,7 @@ jest.mock('@bangle.io/baby-fs', () => {
 
 jest.mock('react-dom', () => {
   const otherThings = jest.requireActual('react-dom');
+
   return {
     ...otherThings,
     createPortal: jest.fn((element, node) => {
@@ -54,6 +57,7 @@ jest.mock('react-dom', () => {
 
 jest.mock('@bangle.io/slice-workspace', () => {
   const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
+
   return {
     ...workspaceThings,
     hasWorkspace: jest.fn(() => () => {}),
@@ -62,6 +66,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
 
 jest.mock('@bangle.io/serial-operation-context', () => {
   const otherThings = jest.requireActual('@bangle.io/serial-operation-context');
+
   return {
     ...otherThings,
     useSerialOperationContext: jest.fn(() => ({})),
@@ -79,6 +84,7 @@ beforeEach(() => {
 
   (useUIManagerContext as any).mockImplementation(() => {
     const dispatch = jest.fn();
+
     return {
       dispatch: dispatch,
     };

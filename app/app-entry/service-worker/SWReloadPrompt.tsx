@@ -53,8 +53,10 @@ export function SWReloadPrompt() {
           uid,
         })(bangleStore.state, bangleStore.dispatch);
         closePrompt();
+
         return true;
       }
+
       return false;
     },
     [acceptPrompt, bangleStore, closePrompt],

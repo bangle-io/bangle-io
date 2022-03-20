@@ -216,6 +216,7 @@ export function startStringWithWord(str: string) {
   if (whiteSpaceIndex === -1) {
     return str;
   }
+
   // trim in case there is more white space at start
   return str.slice(whiteSpaceIndex + 1).trimStart();
 }
@@ -225,6 +226,7 @@ export function endStringWithWord(str: string) {
   if (whiteSpaceIndex === -1) {
     return str;
   }
+
   // trim in case there is more white space at end
   return str.slice(0, whiteSpaceIndex).trimEnd();
 }

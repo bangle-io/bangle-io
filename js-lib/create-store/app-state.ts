@@ -5,7 +5,7 @@ import type { BaseAction, Slice, SliceStateField } from './app-state-slice';
 class AppStateConfig<S, A extends BaseAction, Op> {
   slices: SliceArray<S, A> = [];
   slicesByKey: { [k: string]: Slice<any, A, S> } = Object.create(null);
-  fields: FieldDesc<S, A, Op>[] = [];
+  fields: Array<FieldDesc<S, A, Op>> = [];
   opts?: Op;
 
   constructor(slices: SliceArray<S, A>, opts?: Op) {
@@ -82,6 +82,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
             val!,
             instance,
           );
+
           return;
         }
       }
@@ -91,35 +92,13 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     return instance;
   }
 
-  stateToJSON({
-    sliceFields,
-  }: {
-    sliceFields?: { [key: string]: Slice<any, any> };
-  }): JsonObject {
-    let result: { [rec: string]: JsonValue } = {};
-    for (var prop in sliceFields) {
-      const slice = sliceFields[prop];
-      const state = slice?.spec.state;
-      if (state && state.stateToJSON) {
-        result[prop] = state.stateToJSON.call(
-          slice,
-          this.getSliceState(slice.key)!,
-        );
-      }
-    }
-
-    return result;
-  }
-
   protected slicesCurrentState: { [k: string]: any } = Object.create(null);
-
   constructor(public config: AppStateConfig<S, A, Op>) {}
-
   applyAction(rootAction: A): AppState<S, A, Op> {
     let newInstance = this.applyInner(rootAction);
 
     let actions: A[] = [rootAction];
-    let seen: { state: AppState; n: number }[] | null = null;
+    let seen: Array<{ state: AppState; n: number }> | null = null;
 
     for (;;) {
       let haveNew = false;
@@ -186,21 +165,42 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     return newInstance;
   }
 
-  getSlices() {
-    return this.config.slices;
-  }
-
   getSliceByKey<SL, A extends BaseAction, S>(
     key: string,
   ): Slice<SL, A, S> | undefined {
     return this.config.slicesByKey[key] as any;
   }
 
+  getSlices() {
+    return this.config.slices;
+  }
+
   getSliceState<SL>(key: string): SL | undefined {
     return this.slicesCurrentState[key];
   }
+
+  stateToJSON({
+    sliceFields,
+  }: {
+    sliceFields?: { [key: string]: Slice<any, any> };
+  }): JsonObject {
+    let result: { [rec: string]: JsonValue } = {};
+    for (var prop in sliceFields) {
+      const slice = sliceFields[prop];
+      const state = slice?.spec.state;
+      if (state && state.stateToJSON) {
+        result[prop] = state.stateToJSON.call(
+          slice,
+          this.getSliceState(slice.key)!,
+        );
+      }
+    }
+
+    return result;
+  }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function bind(f?: Function, self?: object) {
   return !self || !f ? f : f.bind(self);
 }
@@ -212,6 +212,7 @@ class FieldDesc<S, A extends BaseAction, Op> {
     config: undefined | { [key: string]: any },
     appState: AppState<S, A, Op>,
   ) => any;
+
   apply?: (action: any, value: any, appState: AppState<S, A, Op>) => any;
 
   constructor(

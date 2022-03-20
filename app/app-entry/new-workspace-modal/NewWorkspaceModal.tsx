@@ -28,8 +28,8 @@ import { ShowError } from './ShowError';
 import { StorageTypeDropdown } from './StorageTypeDropdown';
 
 export function NewWorkspaceModal() {
-  const { modal } = useUIManagerContext();
-  const showModal = modal === '@modal/new-workspace';
+  const { dialogName } = useUIManagerContext();
+  const showModal = dialogName === 'new-workspace-dialog';
 
   return showModal ? <NewWorkspaceModalContainer /> : null;
 }
@@ -155,14 +155,20 @@ export function NewWorkspaceModalContainer({
     }
 
     dispatch({
-      name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
+      name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
+      value: {
+        dialogName: 'new-workspace-dialog',
+      },
     });
   }, [dispatchSerialOperation, modalState, dispatch]);
 
   const onDismiss = useCallback(() => {
     if (!isDropdownOpenRef.current) {
       dispatch({
-        name: 'action::@bangle.io/slice-ui:DISMISS_MODAL',
+        name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
+        value: {
+          dialogName: 'new-workspace-dialog',
+        },
       });
     }
   }, [dispatch]);
@@ -293,6 +299,7 @@ function getWorkspaceName(modal: ModalState): string | undefined {
       return modal.workspace.wsName;
     }
   }
+
   return undefined;
 }
 

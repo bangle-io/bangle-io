@@ -15,6 +15,7 @@ export function _listTags(doc: Node) {
       results.add(node.attrs.tagValue);
     }
   });
+
   return results;
 }
 
@@ -62,6 +63,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
         bangleStore,
       ).catch((error) => {
         bangleStore.errorHandler(error);
+
         return undefined;
       });
     },
@@ -82,6 +84,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
           throw error;
         });
     }
+
     return () => {
       controller.abort();
     };

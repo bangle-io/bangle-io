@@ -13,6 +13,7 @@ export function keyDisplayValue(key: string) {
       if (/^[A-Z]$/.test(r)) {
         return `Shift-${r.toLocaleLowerCase()}`;
       }
+
       return r;
     })
     .join('-');
@@ -20,6 +21,7 @@ export function keyDisplayValue(key: string) {
   if (key.includes('Shift')) {
     key = key.split('Shift').join('⇧');
   }
+
   return key;
 }
 
@@ -28,6 +30,7 @@ class KeyBinding {
   constructor({ key }: { key: string }) {
     this.key = key;
   }
+
   get displayValue() {
     return keyDisplayValue(this.key);
   }

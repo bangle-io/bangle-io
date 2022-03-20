@@ -19,6 +19,7 @@ export function SearchNotesOperationHandler() {
       switch (operation.name) {
         case SHOW_SEARCH_SIDEBAR_OPERATION: {
           showSidebar(sidebar, bangleStore);
+
           return true;
         }
         case EXECUTE_SEARCH_OPERATION: {
@@ -27,6 +28,7 @@ export function SearchNotesOperationHandler() {
             ...state,
             searchQuery: operation.value,
           }));
+
           return true;
         }
         default: {

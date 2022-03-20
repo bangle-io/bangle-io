@@ -22,6 +22,7 @@ export function NotificationArea() {
     store,
     sliceState: { notifications },
   } = useSliceState(notificationSliceKey);
+
   return (
     <div className="fixed bottom-0 right-0 z-50">
       {notifications.map((n) => (

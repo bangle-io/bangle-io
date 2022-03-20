@@ -87,6 +87,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value.n;
             }
+
             return value;
           },
         },
@@ -100,6 +101,7 @@ describe('store', () => {
             if (action.name === 'for-b') {
               return action.value.n;
             }
+
             return value;
           },
         },
@@ -173,6 +175,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value;
             }
+
             return value;
           },
         },
@@ -187,6 +190,7 @@ describe('store', () => {
             if (action.name === 'for-b') {
               return action.value;
             }
+
             return value;
           },
         },
@@ -254,6 +258,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value.no;
             }
+
             return value;
           },
         },
@@ -373,7 +378,7 @@ describe('store', () => {
         },
       });
 
-      let seenStates: [number, number][] = [];
+      let seenStates: Array<[number, number]> = [];
 
       const slice2 = new Slice({
         key: key2,
@@ -385,6 +390,7 @@ describe('store', () => {
             if (action.name === 'action::mark-ready') {
               return state + 1;
             }
+
             return state;
           },
         },
@@ -432,6 +438,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value.no;
             }
+
             return value;
           },
         },
@@ -446,6 +453,7 @@ describe('store', () => {
             if (action.name === 'for-b') {
               return action.value.no;
             }
+
             return value;
           },
         },
@@ -511,6 +519,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value.data;
             }
+
             return value;
           },
         },
@@ -529,6 +538,7 @@ describe('store', () => {
             if (action.name === 'for-b') {
               return action.value.data;
             }
+
             return value;
           },
         },
@@ -649,6 +659,7 @@ describe('store', () => {
           state: state,
           scheduler,
         });
+
         return {
           counterKey,
           store,
@@ -692,6 +703,7 @@ describe('store', () => {
         let cancelScheduler = jest.fn(() => {});
         const scheduler = jest.fn((cb) => {
           cb();
+
           return cancelScheduler;
         });
 
@@ -730,6 +742,7 @@ describe('store', () => {
           cancelScheduler = jest.fn(() => {
             task = undefined;
           });
+
           return cancelScheduler;
         });
 
@@ -851,6 +864,7 @@ describe('store', () => {
                 cb();
               }
             });
+
             return () => {
               destroyed = true;
             };
@@ -912,6 +926,7 @@ describe('store', () => {
               cb();
             }
           });
+
           return () => {
             destroyed = true;
           };
@@ -948,6 +963,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value.n;
             }
+
             return value;
           },
         },
@@ -987,6 +1003,7 @@ describe('store', () => {
             if (action.name === 'for-b') {
               return action.value.z.i;
             }
+
             return value;
           },
         },
@@ -1169,6 +1186,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value;
             }
+
             return value;
           },
         },
@@ -1273,14 +1291,17 @@ describe('store', () => {
       let callOrder = '';
       const errorHandler1 = jest.fn(() => {
         callOrder += '1';
+
         return false;
       });
       const errorHandler2 = jest.fn(() => {
         callOrder += '2';
+
         return false;
       });
       const errorHandler3 = jest.fn(() => {
         callOrder += '3';
+
         return false;
       });
       const rootErrorHandler = jest.fn((error, store) => {
@@ -1313,14 +1334,17 @@ describe('store', () => {
       let callOrder = '';
       const errorHandler1 = jest.fn(() => {
         callOrder += '1';
+
         return false;
       });
       const errorHandler2 = jest.fn(() => {
         callOrder += '2';
+
         return false;
       });
       const errorHandler3 = jest.fn(() => {
         callOrder += '3';
+
         return false;
       });
       const rootErrorHandler = jest.fn((error, store) => {
@@ -1356,14 +1380,17 @@ describe('store', () => {
       let callOrder = '';
       const errorHandler1 = jest.fn(() => {
         callOrder += '1';
+
         return true;
       });
       const errorHandler2 = jest.fn(() => {
         callOrder += '2';
+
         return false;
       });
       const errorHandler3 = jest.fn(() => {
         callOrder += '3';
+
         return false;
       });
       const rootErrorHandler = jest.fn((error, store) => {
@@ -1416,6 +1443,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value;
             }
+
             return value;
           },
         },
@@ -1482,6 +1510,7 @@ describe('store', () => {
               cb();
             }
           });
+
           return () => {
             destroyed = true;
           };
@@ -1496,18 +1525,22 @@ describe('store', () => {
       let handlerCallOrder = '';
       const errorHandler1 = jest.fn(() => {
         handlerCallOrder += '1';
+
         return false;
       });
       const errorHandler2 = jest.fn(() => {
         handlerCallOrder += '2';
+
         return true;
       });
       const errorHandler3 = jest.fn(() => {
         handlerCallOrder += '3';
+
         return false;
       });
       const rootErrorHandler = jest.fn((error, store) => {
         handlerCallOrder += 'root';
+
         return false;
       });
 
@@ -1565,6 +1598,7 @@ describe('store', () => {
             if (action.name === 'for-a') {
               return action.value;
             }
+
             return value;
           },
         },
@@ -1630,6 +1664,7 @@ describe('store', () => {
               cb();
             }
           });
+
           return () => {
             destroyed = true;
           };
@@ -1650,18 +1685,22 @@ describe('store', () => {
       let handlerCallOrder = '';
       const errorHandler1 = jest.fn(() => {
         handlerCallOrder += '1';
+
         return false;
       });
       const errorHandler2 = jest.fn(() => {
         handlerCallOrder += '2';
+
         return true;
       });
       const errorHandler3 = jest.fn(() => {
         handlerCallOrder += '3';
+
         return false;
       });
       const rootErrorHandler = jest.fn((error, store) => {
         handlerCallOrder += 'root';
+
         return false;
       });
 
@@ -1704,6 +1743,7 @@ describe('store', () => {
               cb();
             }
           });
+
           return () => {
             destroyed = true;
           };
@@ -1742,6 +1782,7 @@ describe('store', () => {
               cb();
             }
           });
+
           return () => {
             destroyed = true;
           };
@@ -1797,6 +1838,7 @@ describe('DeferredSideEffectsRunner', () => {
     let deferredUpdate = jest.fn(() => {});
     let scheduler = jest.fn((cb) => {
       task = cb;
+
       return () => ({});
     });
     const runner = new DeferredSideEffectsRunner(
@@ -1821,6 +1863,7 @@ describe('DeferredSideEffectsRunner', () => {
     let deferredUpdate = jest.fn(() => {});
     let scheduler = jest.fn((cb) => {
       task = cb;
+
       return () => ({});
     });
     let initialState = { initialState: 'i am initial state' };

@@ -151,6 +151,7 @@ function strMatch(a: string[] | string, b: string): boolean {
   }
 
   a = a.toLocaleLowerCase().trim();
+
   return a.includes(b) || b.includes(a);
 }
 
@@ -163,6 +164,7 @@ export const workspacePalette: ExtensionPaletteType = {
     if (identifierPrefix && rawQuery.startsWith(identifierPrefix)) {
       return rawQuery.slice(3);
     }
+
     return null;
   },
   ReactComponent: WorkspacePaletteUIComponent,

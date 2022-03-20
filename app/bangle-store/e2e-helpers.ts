@@ -16,6 +16,7 @@ export function e2eHelpers() {
   return new Slice({
     sideEffect() {
       let e2eHelpers: { [r: string]: any } = {};
+
       return {
         destroy() {
           e2eHelpers = {};

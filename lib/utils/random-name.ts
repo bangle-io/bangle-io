@@ -1521,5 +1521,6 @@ export function randomName() {
     name1[getRandomInt(0, name1.length + 1)] +
     '-' +
     name2[getRandomInt(0, name2.length + 1)];
+
   return name;
 }

@@ -20,8 +20,8 @@ export type UiContextDispatchType = ApplicationStore<
 
 export interface UISliceState {
   changelogHasUpdates: boolean;
-  modal?: string | null;
-  modalValue?: undefined | { [key: string]: any };
+  dialogName?: string | null;
+  dialogMetadata?: undefined | { [key: string]: any };
   noteSidebar: boolean;
   paletteInitialQuery?: string | null;
   paletteMetadata?: any | null;
@@ -61,14 +61,16 @@ export type UiContextAction =
       value: { windowSize: ReturnType<typeof useWindowSize> };
     }
   | {
-      name: 'action::@bangle.io/slice-ui:SHOW_MODAL';
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG';
       value: {
-        modal: string | null;
-        modalValue?: undefined | { [key: string]: any };
+        dialogName: string;
+        metadata?: undefined | { [key: string]: any };
       };
     }
   | {
-      name: 'action::@bangle.io/slice-ui:DISMISS_MODAL';
+      name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG';
+      // pass an array to dismiss any dialog that matches with it
+      value: { dialogName: string | string[] };
     }
   | {
       name: 'action::@bangle.io/slice-ui:UPDATE_NEW_CHANGELOG';
@@ -83,8 +85,8 @@ export type UiContextAction =
 export const initialState: UISliceState = {
   // UI
   changelogHasUpdates: false,
-  modal: undefined,
-  modalValue: undefined,
+  dialogName: undefined,
+  dialogMetadata: undefined,
   noteSidebar: false,
   paletteInitialQuery: undefined,
   paletteMetadata: undefined,
@@ -114,6 +116,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             const sidebar = Boolean(state.sidebar)
               ? undefined
               : action.value.type;
+
             return {
               ...state,
               sidebar,
@@ -147,6 +150,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           case UI_CONTEXT_TOGGLE_THEME: {
             const theme: ThemeType = state.theme === 'dark' ? 'light' : 'dark';
             applyTheme(theme);
+
             return {
               ...state,
               theme,
@@ -155,6 +159,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
 
           case 'action::@bangle.io/slice-ui:UPDATE_THEME': {
             applyTheme(action.value.theme);
+
             return {
               ...state,
               theme: action.value.theme,
@@ -165,26 +170,35 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             const { windowSize } = action.value;
             const widescreen = checkWidescreen(windowSize.width);
             setRootWidescreenClass(widescreen);
+
             return {
               ...state,
               widescreen,
             };
           }
 
-          case 'action::@bangle.io/slice-ui:SHOW_MODAL': {
+          case 'action::@bangle.io/slice-ui:SHOW_DIALOG': {
             return {
               ...state,
-              modal: action.value.modal,
-              modalValue: action.value.modalValue,
+              dialogName: action.value.dialogName,
+              dialogMetadata: action.value.metadata,
             };
           }
 
-          case 'action::@bangle.io/slice-ui:DISMISS_MODAL': {
-            return {
-              ...state,
-              modal: undefined,
-              modalValue: undefined,
-            };
+          case 'action::@bangle.io/slice-ui:DISMISS_DIALOG': {
+            const dialogNames = Array.isArray(action.value.dialogName)
+              ? action.value.dialogName
+              : [action.value.dialogName];
+
+            if (state.dialogName && dialogNames.includes(state.dialogName)) {
+              return {
+                ...state,
+                dialogName: undefined,
+                dialogMetadata: undefined,
+              };
+            }
+
+            return state;
           }
 
           case 'action::@bangle.io/slice-ui:UPDATE_NEW_CHANGELOG': {
@@ -232,6 +246,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           noteSidebar: value.noteSidebar,
           widescreen: checkWidescreen(),
         });
+
         return state;
       },
     },
@@ -275,6 +290,7 @@ function getThemePreference() {
   if (typeof window === 'undefined') {
     return 'light';
   }
+
   return window?.matchMedia?.('(prefers-color-scheme: dark)').matches
     ? 'dark'
     : 'light';

@@ -14,6 +14,7 @@ import {
 
 jest.mock('../ExtensionRegistryContext', () => {
   const actual = jest.requireActual('../ExtensionRegistryContext');
+
   return {
     ...actual,
     useExtensionRegistryContext: jest.fn(),
@@ -40,6 +41,7 @@ test('state is intialized', () => {
   function MyComp() {
     const [state] = useExtensionState('my-ext');
     receivedState = state;
+
     return <span>hi</span>;
   }
 
@@ -83,6 +85,7 @@ test('forwards correct state to each extension', () => {
     receivedState1 = state;
     comp1UniqueStates.add(state);
     comp1UniqueUpdateCalls.add(update);
+
     return <span>hi</span>;
   }
 
@@ -90,6 +93,7 @@ test('forwards correct state to each extension', () => {
     const [state, update] = useExtensionState('my-ext-2');
     receivedState2 = state;
     updateState2 = update;
+
     return <span>hi</span>;
   }
 

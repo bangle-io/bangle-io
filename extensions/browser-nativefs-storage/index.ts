@@ -29,6 +29,7 @@ const extension = Extension.create({
             store.state,
             store.dispatch,
           );
+
           return true;
         }
       }
@@ -44,6 +45,7 @@ const extension = Extension.create({
           content: error.message,
           uid: 'NativefsStorageProviderError' + Math.random(),
         })(store.state, store.dispatch);
+
         return true;
       }
 

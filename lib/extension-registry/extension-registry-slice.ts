@@ -15,6 +15,7 @@ export function extensionRegistrySlice(): Slice<ExtensionRegistryState> {
           opts.extensionRegistry,
           'extensionRegistry needs to be provided',
         );
+
         return {
           extensionRegistry: opts.extensionRegistry,
         };

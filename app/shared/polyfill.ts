@@ -1,6 +1,6 @@
 import { isWorkerGlobalScope } from '@bangle.io/utils';
 
-const polyfills: Promise<any>[] = [];
+const polyfills: Array<Promise<any>> = [];
 
 // WARNING this will be executed in worker too
 //  SO dont include polyfills that fill DOM
@@ -10,6 +10,7 @@ if (!isWorkerGlobalScope()) {
     console.debug('polyfilling idle callback');
     window.requestIdleCallback = function (cb, options) {
       var start = Date.now();
+
       return setTimeout(
         function () {
           cb({

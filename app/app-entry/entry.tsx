@@ -37,7 +37,7 @@ const useRouterHook: BaseLocationHook = () => {
 
   const to =
     history && pageState ? createTo(pageState.location, history) || '' : '';
-  const pendingCalls = useRef<Parameters<BaseHistory['navigate']>[]>([]);
+  const pendingCalls = useRef<Array<Parameters<BaseHistory['navigate']>>>([]);
 
   const navigate = history
     ? history.navigate.bind(history)
@@ -68,6 +68,7 @@ export function Entry() {
     }
 
     storeInitialized = true;
+
     return initializeBangleStore({
       onUpdate: () => _setBangleStoreCounter((c) => c + 1),
     });
@@ -85,6 +86,7 @@ export function Entry() {
       event.preventDefault();
     };
     window.addEventListener('beforeinstallprompt', installCallback);
+
     return () => {
       window.removeEventListener('beforeinstallprompt', installCallback);
     };
@@ -95,6 +97,7 @@ export function Entry() {
       console.debug('appinstalled ');
     };
     window.addEventListener('appinstalled', appInstalledCb);
+
     return () => {
       window.removeEventListener('appinstalled', appInstalledCb);
     };

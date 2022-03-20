@@ -19,6 +19,7 @@ export function NoteSidebarShowButton({
   if (!widescreen || isNoteSidebarShown) {
     return null;
   }
+
   return (
     <ActionButton
       ariaLabel="show note sidebar"

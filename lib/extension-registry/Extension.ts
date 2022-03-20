@@ -63,10 +63,10 @@ export interface ApplicationConfig<
   ReactComponent?: React.ComponentType<{
     key: string;
   }>;
-  operations?: Array<OpType>;
-  sidebars?: Array<SidebarType>;
+  operations?: OpType[];
+  sidebars?: SidebarType[];
   operationHandler?: SerialOperationHandler2<OpType>;
-  noteSidebarWidgets?: Array<NoteSidebarWidget>;
+  noteSidebarWidgets?: NoteSidebarWidget[];
   slices?: Array<Slice<any>>;
   storageProvider?: BaseStorageProvider;
   noteFormatProvider?: NoteFormatProvider;
@@ -97,21 +97,6 @@ export class Extension<
   T = unknown,
   OpType extends SerialOperationDefinitionType = any,
 > {
-  name: string;
-  editor: EditorConfig;
-  initialState?: any;
-  application: ApplicationConfig<T, OpType>;
-
-  constructor(ext: Config<T, OpType>, check: typeof _check) {
-    if (check !== _check) {
-      throw new Error('Instantiate class via `Extension.create({})`');
-    }
-    this.name = ext.name;
-    this.editor = ext.editor;
-    this.initialState = ext.initialState;
-    this.application = ext.application;
-  }
-
   static create<
     T = undefined,
     OpType extends SerialOperationDefinitionType = any,
@@ -215,6 +200,7 @@ export class Extension<
           const validIcon = Boolean(s.activitybarIcon);
           const validComponent = Boolean(s.ReactComponent);
           const validHint = typeof s.hint === 'string';
+
           return (
             validName && validIcon && validIcon && validComponent && validHint
           );
@@ -294,6 +280,21 @@ export class Extension<
       _check,
     );
   }
+
+  name: string;
+  editor: EditorConfig;
+  initialState?: any;
+  application: ApplicationConfig<T, OpType>;
+
+  constructor(ext: Config<T, OpType>, check: typeof _check) {
+    if (check !== _check) {
+      throw new Error('Instantiate class via `Extension.create({})`');
+    }
+    this.name = ext.name;
+    this.editor = ext.editor;
+    this.initialState = ext.initialState;
+    this.application = ext.application;
+  }
 }
 
 function hasCorrectScheme(scheme: string, slug: string) {
@@ -311,6 +312,7 @@ function resolveSlug(slug: string) {
 
   const [scheme, restString] = slug.split('::');
   const [pkgName, localSlug] = restString?.split(':') || [];
+
   return {
     scheme,
     pkgName,

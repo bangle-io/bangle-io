@@ -49,6 +49,7 @@ const applyState = (
     console.log(
       `slice-workspace: cannot apply action "${action.name}", error "${state.error.message}" exists.`,
     );
+
     return state;
   }
 
@@ -179,6 +180,7 @@ export function workspaceSlice() {
             if (Array.isArray(val)) {
               return [key, val.map((r) => (r == null ? null : r))];
             }
+
             return [key, val];
           }),
         );
@@ -221,6 +223,7 @@ export function workspaceSlice() {
           console.log(
             `ignoring error ${error.message} as an error already exists.`,
           );
+
           return false;
         }
 

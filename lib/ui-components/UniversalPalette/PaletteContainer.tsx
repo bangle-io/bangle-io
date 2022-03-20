@@ -20,6 +20,7 @@ export function PaletteContainer({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useWatchClickOutside(containerRef, onClickOutside, onClickInside);
+
   return (
     <div
       data-palette-type={paletteType}

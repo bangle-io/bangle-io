@@ -19,30 +19,47 @@ export class LocalFileEntryManager {
     },
   ) {}
 
-  private async getFileEntry(uid: string): Promise<LocalFileEntry | undefined> {
-    const obj = await this.persistenceProvider.get(uid);
+  async createFile(
+    uid: string,
+    file: File,
+    getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
+  ) {
+    const existingFile = await this.readFile(uid, getRemoteFileEntry);
 
-    if (obj) {
-      return LocalFileEntry.fromPlainObj(obj);
+    if (existingFile) {
+      throw new BaseError({
+        message: 'Cannot create as file already exists',
+        code: REMOTE_SYNC_NOT_ALLOWED_ERROR,
+      });
     }
-    return undefined;
-  }
 
-  private isRecentlyDeleted(fileEntry: LocalFileEntry | undefined) {
-    return (
-      typeof fileEntry?.deleted === 'number' &&
-      Date.now() - fileEntry.deleted < DELETE_TOLERANCE
+    await this.updateFileEntry(
+      await LocalFileEntry.newFile({
+        uid,
+        file,
+      }),
     );
   }
 
-  // overwrites the current entry with the provided one
-  // use with caution!!
-  public async updateFileEntry(fileEntry: LocalFileEntry): Promise<void> {
-    return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
-  }
+  async deleteFile(
+    uid: string,
+    getRemoteFileEntry?: (uid: string) => Promise<RemoteFileEntry | undefined>,
+  ) {
+    const fileEntry = await this.getFileEntry(uid);
 
-  public async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
-    return this.persistenceProvider.delete(uid);
+    if (fileEntry) {
+      if (fileEntry.deleted) {
+        return;
+      }
+      await this.updateFileEntry(fileEntry.markDeleted());
+    } else {
+      const remoteFileEntry = await getRemoteFileEntry?.(uid);
+      if (remoteFileEntry) {
+        await this.updateFileEntry(remoteFileEntry.fork().markDeleted());
+      }
+      // if file doesn't exist locally or source
+      // do nothing
+    }
   }
 
   async getAllEntries(uidPrefix: string = ''): Promise<LocalFileEntry[]> {
@@ -51,6 +68,23 @@ export class LocalFileEntryManager {
         .map((r) => LocalFileEntry.fromPlainObj(r))
         .filter((r) => r.uid.startsWith(uidPrefix));
     });
+  }
+
+  private async getFileEntry(uid: string): Promise<LocalFileEntry | undefined> {
+    const obj = await this.persistenceProvider.get(uid);
+
+    if (obj) {
+      return LocalFileEntry.fromPlainObj(obj);
+    }
+
+    return undefined;
+  }
+
+  private isRecentlyDeleted(fileEntry: LocalFileEntry | undefined) {
+    return (
+      typeof fileEntry?.deleted === 'number' &&
+      Date.now() - fileEntry.deleted < DELETE_TOLERANCE
+    );
   }
 
   // returns all local and remote file uids that have not been deleted
@@ -80,27 +114,6 @@ export class LocalFileEntryManager {
     return Array.from(new Set([...localFiles, ...remoteFiles])).sort();
   }
 
-  async deleteFile(
-    uid: string,
-    getRemoteFileEntry?: (uid: string) => Promise<RemoteFileEntry | undefined>,
-  ) {
-    const fileEntry = await this.getFileEntry(uid);
-
-    if (fileEntry) {
-      if (fileEntry.deleted) {
-        return;
-      }
-      await this.updateFileEntry(fileEntry.markDeleted());
-    } else {
-      const remoteFileEntry = await getRemoteFileEntry?.(uid);
-      if (remoteFileEntry) {
-        await this.updateFileEntry(remoteFileEntry.fork().markDeleted());
-      }
-      // if file doesn't exist locally or source
-      // do nothing
-    }
-  }
-
   async readFile(
     uid: string,
     getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
@@ -111,6 +124,7 @@ export class LocalFileEntryManager {
       if (fileEntry.deleted) {
         return undefined;
       }
+
       return fileEntry.file;
     }
 
@@ -126,26 +140,14 @@ export class LocalFileEntryManager {
     return undefined;
   }
 
-  async createFile(
-    uid: string,
-    file: File,
-    getRemoteFileEntry: (uid: string) => Promise<RemoteFileEntry | undefined>,
-  ) {
-    const existingFile = await this.readFile(uid, getRemoteFileEntry);
+  // overwrites the current entry with the provided one
+  async removeFileEntry(uid: LocalFileEntry['uid']): Promise<void> {
+    return this.persistenceProvider.delete(uid);
+  }
 
-    if (existingFile) {
-      throw new BaseError({
-        message: 'Cannot create as file already exists',
-        code: REMOTE_SYNC_NOT_ALLOWED_ERROR,
-      });
-    }
-
-    await this.updateFileEntry(
-      await LocalFileEntry.newFile({
-        uid,
-        file,
-      }),
-    );
+  // use with caution!!
+  async updateFileEntry(fileEntry: LocalFileEntry): Promise<void> {
+    return this.persistenceProvider.set(fileEntry.uid, fileEntry.toPlainObj());
   }
 
   async updateFileSource(uid: string, sourceFile: File) {
@@ -188,10 +190,14 @@ interface SourceType {
 }
 
 export class BaseFileEntry {
-  public readonly uid: string;
-  public readonly sha: string;
-  public readonly file: File;
-  public readonly deleted: number | undefined;
+  static fromPlainObj(obj: ConstructorParameters<typeof BaseFileEntry>[0]) {
+    return new BaseFileEntry(obj);
+  }
+
+  readonly uid: string;
+  readonly sha: string;
+  readonly file: File;
+  readonly deleted: number | undefined;
 
   constructor({
     uid,
@@ -220,13 +226,13 @@ export class BaseFileEntry {
       deleted: this.deleted,
     };
   }
-
-  static fromPlainObj(obj: ConstructorParameters<typeof BaseFileEntry>[0]) {
-    return new BaseFileEntry(obj);
-  }
 }
 
 export class LocalFileEntry extends BaseFileEntry {
+  static fromPlainObj(obj: ConstructorParameters<typeof LocalFileEntry>[0]) {
+    return new LocalFileEntry(obj);
+  }
+
   static async newFile(
     obj: Omit<
       ConstructorParameters<typeof BaseFileEntry>[0],
@@ -243,11 +249,7 @@ export class LocalFileEntry extends BaseFileEntry {
     });
   }
 
-  static fromPlainObj(obj: ConstructorParameters<typeof LocalFileEntry>[0]) {
-    return new LocalFileEntry(obj);
-  }
-
-  public readonly source: // source will be undefined for a file that was newly created
+  readonly source: // source will be undefined for a file that was newly created
   | undefined
     | {
         readonly sha: string;
@@ -264,16 +266,13 @@ export class LocalFileEntry extends BaseFileEntry {
     this.source = obj.source;
   }
 
-  toPlainObj(): {
-    [k in keyof ConstructorParameters<typeof LocalFileEntry>[0]]: any;
-  } {
-    return {
-      uid: this.uid,
-      sha: this.sha,
-      file: this.file,
-      deleted: this.deleted,
-      source: this.source,
-    };
+  // a 'file.isModified == true' means that it was modified locally w.r.t its source content
+  get isModified() {
+    return this.sha !== this.source?.sha;
+  }
+
+  get isNew() {
+    return this.source == null;
   }
 
   get isUntouched() {
@@ -290,15 +289,6 @@ export class LocalFileEntry extends BaseFileEntry {
     return true;
   }
 
-  // a 'file.isModified == true' means that it was modified locally w.r.t its source content
-  get isModified() {
-    return this.sha !== this.source?.sha;
-  }
-
-  get isNew() {
-    return this.source == null;
-  }
-
   markDeleted() {
     return new LocalFileEntry({
       ...this,
@@ -306,22 +296,16 @@ export class LocalFileEntry extends BaseFileEntry {
     });
   }
 
-  async updateSource(file: File) {
-    const newSha = await calculateGitFileSha(file);
-
-    if (this.source?.sha === newSha) {
-      return this;
-    }
-
-    return new LocalFileEntry({
-      ...this,
-      file: file,
-      sha: newSha,
-      source: {
-        sha: newSha,
-        file: file,
-      },
-    });
+  toPlainObj(): {
+    [k in keyof ConstructorParameters<typeof LocalFileEntry>[0]]: any;
+  } {
+    return {
+      uid: this.uid,
+      sha: this.sha,
+      file: this.file,
+      deleted: this.deleted,
+      source: this.source,
+    };
   }
 
   async updateFile(file: File): Promise<LocalFileEntry> {
@@ -343,6 +327,24 @@ export class LocalFileEntry extends BaseFileEntry {
       deleted: undefined,
       file: file,
       sha: newSha,
+    });
+  }
+
+  async updateSource(file: File) {
+    const newSha = await calculateGitFileSha(file);
+
+    if (this.source?.sha === newSha) {
+      return this;
+    }
+
+    return new LocalFileEntry({
+      ...this,
+      file: file,
+      sha: newSha,
+      source: {
+        sha: newSha,
+        file: file,
+      },
     });
   }
 }

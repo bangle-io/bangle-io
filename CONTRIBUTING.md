@@ -18,17 +18,16 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 - `yarn start` to start bangle on `localhost:4000`
 
-- `yarn jest` to run the tests
+- `yarn test:regular`: To run the regular tests.
 
-- `yarn g:playwright-dep` to install playwright dependencies if you want to run integration testing.
+- `yarn test:network`: To run the network based tests. Please note this will hit Github API and may take a while. Make sure you have `GITHUB_OWNER` and `GITHUB_TOKEN` set in your environment variables.
 
-- `yarn g:e2e` to run the integration tests.
+- `yarn g:playwright-dep` to install playwright dependencies if you want to run e2e testing.
+
+- `yarn g:e2e` to run the e2e tests.
 
 - `yarn g:build-prod-serve` to start a production optimized version of bangle on `localhost:1234`.
 
-More commands in the `package.json`.
-
-> Sometimes when running locally, the app might get stuck on loading, this is a known issue, try reloading the page a few times.
 
 # Architecture
 

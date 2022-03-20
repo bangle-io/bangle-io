@@ -79,6 +79,7 @@ export function ActionButton({
     },
     [setTriggerElement],
   );
+
   return (
     <>
       <BaseButton

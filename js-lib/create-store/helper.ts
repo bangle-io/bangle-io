@@ -4,6 +4,7 @@ export function savePreviousValue<T>() {
   return (val: T) => {
     const result = prev;
     prev = val;
+
     return result;
   };
 }

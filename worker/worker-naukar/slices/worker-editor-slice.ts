@@ -45,6 +45,7 @@ const workerEditorSliceKey = new SliceKey<
 export function diskFlushAll() {
   return workerEditorSliceKey.op((state) => {
     log('diskFlushAll called');
+
     return workerEditorSliceKey.getSliceStateAsserted(state).disk?.flushAll();
   });
 }
@@ -99,6 +100,7 @@ export function editorManagerSlice() {
             if (state.editorManager && !state.editorManager.destroyed) {
               state.editorManager.destroy();
             }
+
             return {
               ...state,
               editorManager: action.value.editorManager,
@@ -133,13 +135,16 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
           );
           if (!doc) {
             console.warn('doc not found', wsPath);
+
             return undefined;
           }
+
           return doc;
         } catch (error) {
           if (error instanceof Error) {
             store.errorHandler(error);
           }
+
           return undefined;
         }
       };
@@ -233,6 +238,7 @@ export const flushNaukarEffect = workerEditorSliceKey.effect(
             store.state,
             store.dispatch,
           );
+
           return;
         }
 
@@ -243,6 +249,7 @@ export const flushNaukarEffect = workerEditorSliceKey.effect(
 
         if (pageTransitionedToInactive) {
           diskFlushAll()(store.state, store.dispatch);
+
           return;
         }
       },

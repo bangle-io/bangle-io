@@ -34,6 +34,7 @@ export function Activitybar({
 
   const sidebarItems = sidebars.map((r) => {
     const active = sidebar === r.name;
+
     return (
       <ActivitybarButton
         isActive={active}
@@ -77,8 +78,8 @@ export function Activitybar({
         hint={"What's new"}
         onPress={() => {
           dispatch({
-            name: 'action::@bangle.io/slice-ui:SHOW_MODAL',
-            value: { modal: '@modal/changelog' },
+            name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+            value: { dialogName: 'changelog-modal' },
           });
         }}
       />
