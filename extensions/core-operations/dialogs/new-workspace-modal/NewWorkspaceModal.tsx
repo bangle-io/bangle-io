@@ -1,8 +1,5 @@
-import './NewWorkspaceModal.css';
-
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
-import { supportsNativeBrowserFs } from '@bangle.io/baby-fs';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
@@ -18,6 +15,7 @@ import { PickStorageDirectory, WorkspaceNameInput } from './Buttons';
 import {
   BROWSER,
   CREATE_BUTTON_ID,
+  defaultStorageType,
   FILE_SYSTEM,
   INVALID_WORKSPACE_NAME_ERROR,
   WORKSPACE_NAME_ALREADY_EXISTS_ERROR,
@@ -27,12 +25,8 @@ import {
 import { ShowError } from './ShowError';
 import { StorageTypeDropdown } from './StorageTypeDropdown';
 
-export function NewWorkspaceModal() {
-  const { dialogName } = useUIManagerContext();
-  const showModal = dialogName === 'new-workspace-dialog';
-
-  return showModal ? <NewWorkspaceModalContainer /> : null;
-}
+export const NEW_WORKSPACE_DIALOG_NAME =
+  'dialog::@bangle.io/core-operations:new-workspace-dialog';
 
 interface ModalState {
   defaultStorageType: WorkspaceStorageType;
@@ -77,11 +71,7 @@ const modalReducer = (
   }
 };
 
-export function NewWorkspaceModalContainer({
-  defaultStorageType = supportsNativeBrowserFs() ? FILE_SYSTEM : BROWSER,
-}: {
-  defaultStorageType?: WorkspaceStorageType;
-}) {
+export function NewWorkspaceModal() {
   const [modalState, updateModalState] = useReducer(modalReducer, {
     error: undefined,
     defaultStorageType: defaultStorageType,
@@ -157,7 +147,7 @@ export function NewWorkspaceModalContainer({
     dispatch({
       name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
       value: {
-        dialogName: 'new-workspace-dialog',
+        dialogName: NEW_WORKSPACE_DIALOG_NAME,
       },
     });
   }, [dispatchSerialOperation, modalState, dispatch]);
@@ -167,7 +157,7 @@ export function NewWorkspaceModalContainer({
       dispatch({
         name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
         value: {
-          dialogName: 'new-workspace-dialog',
+          dialogName: NEW_WORKSPACE_DIALOG_NAME,
         },
       });
     }

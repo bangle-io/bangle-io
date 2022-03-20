@@ -80,6 +80,8 @@ export class ExtensionRegistry {
     undefined
   >;
 
+  private dialogs: Exclude<ApplicationConfig['dialogs'], undefined>;
+
   extensionsInitialState: { [name: string]: any };
   renderExtensionEditorComponents = () => {
     const result = this.editorConfig
@@ -149,6 +151,7 @@ export class ExtensionRegistry {
     const applicationConfig = extensions.map((e) => e.application);
 
     this.serialOperationHandlers = new Set();
+
     this.editorWatchPluginStates = filterFlatMap(
       this.editorConfig,
       'watchPluginStates',
@@ -158,10 +161,16 @@ export class ExtensionRegistry {
       'operations',
     );
     this.sidebars = filterFlatMap(applicationConfig, 'sidebars');
+    assertUniqueName(this.sidebars, 'sidebars');
+
+    this.dialogs = filterFlatMap(applicationConfig, 'dialogs');
+    assertUniqueName(this.dialogs, 'dialogs');
+
     this.noteSidebarWidgets = filterFlatMap(
       applicationConfig,
       'noteSidebarWidgets',
     );
+    assertUniqueName(this.noteSidebarWidgets, 'noteSidebarWidgets');
 
     this.slices = filterFlatMap(applicationConfig, 'slices');
     this.operationHandlers = extensions
@@ -178,11 +187,13 @@ export class ExtensionRegistry {
     this.operationKeybindingMapping =
       this._getSerialOperationKeybindingMapping();
 
+    const storageProviders = filterFlatMap(
+      applicationConfig,
+      'storageProvider',
+    );
+    assertUniqueName(storageProviders, 'storageProviders');
     this.storageProviders = Object.fromEntries(
-      filterFlatMap(applicationConfig, 'storageProvider').map((r) => [
-        r.name,
-        r,
-      ]),
+      storageProviders.map((r) => [r.name, r]),
     );
 
     this.noteFormatProviders = Object.fromEntries(
@@ -197,6 +208,10 @@ export class ExtensionRegistry {
         .filter((r) => Boolean(r.storageProvider) && Boolean(r.onStorageError))
         .map((a) => [a.storageProvider!.name, a.onStorageError!]),
     );
+  }
+
+  getDialog(name: string) {
+    return this.dialogs.find((d) => d.name === name);
   }
 
   getEditorWatchPluginStates(): EditorWatchPluginState[] {
@@ -268,12 +283,7 @@ export class ExtensionRegistry {
   }
 
   private validate() {
-    if (
-      new Set(this.extensions.filter((r) => Boolean(r.name)).map((r) => r.name))
-        .size !== this.extensions.length
-    ) {
-      throw new Error('Extension name must be unique');
-    }
+    assertUniqueName(this.extensions, 'extensions');
   }
 
   private _getSerialOperationKeybindingMapping(): SerialOperationKeybindingMapping {
@@ -282,5 +292,16 @@ export class ExtensionRegistry {
       .map((r): [SerialOperationNameType, string] => [r.name, r.keybinding!]);
 
     return Object.fromEntries(operations);
+  }
+}
+
+function assertUniqueName<T extends { name: string }>(
+  items: T[],
+  debugString: string,
+) {
+  if (new Set(items.map((r) => r.name)).size !== items.length) {
+    throw new Error(
+      `In "${debugString}" there is an existing entity with same name.`,
+    );
   }
 }

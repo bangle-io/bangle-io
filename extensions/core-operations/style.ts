@@ -1,0 +1,1 @@
+import './dialogs/ChangelogModal.css';

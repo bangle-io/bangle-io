@@ -79,7 +79,9 @@ export function Activitybar({
         onPress={() => {
           dispatch({
             name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-            value: { dialogName: 'changelog-modal' },
+            value: {
+              dialogName: 'dialog::@bangle.io/core-operations:changelog-modal',
+            },
           });
         }}
       />

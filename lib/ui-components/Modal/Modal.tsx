@@ -89,6 +89,6 @@ export function Modal({
         </div>
       </div>
     </div>,
-    document.getElementById('dropdown-container')!,
+    document.getElementById('modal-container')!,
   );
 }

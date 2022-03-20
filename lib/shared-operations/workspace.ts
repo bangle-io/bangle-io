@@ -52,7 +52,7 @@ export function newNote(initialValue?: string) {
     dispatch({
       name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
       value: {
-        dialogName: 'new-note-modal',
+        dialogName: 'dialog::@bangle.io/core-operations:new-note-modal',
         metadata: {
           initialValue: initialValue,
         },
@@ -87,7 +87,7 @@ export function renameActiveNote() {
     dispatch({
       name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
       value: {
-        dialogName: 'rename-note-modal',
+        dialogName: 'dialog::@bangle.io/core-operations:rename-note-modal',
       },
     });
 
@@ -163,7 +163,9 @@ export function newWorkspace() {
   return (state: AppState, dispatch: UiContextDispatchType) => {
     dispatch({
       name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-      value: { dialogName: 'new-workspace-dialog' },
+      value: {
+        dialogName: 'dialog::@bangle.io/core-operations:new-workspace-dialog',
+      },
     });
   };
 }
