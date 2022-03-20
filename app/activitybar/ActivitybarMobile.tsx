@@ -1,11 +1,12 @@
 import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { toggleNotesPalette } from '@bangle.io/shared-operations';
+import { CorePalette } from '@bangle.io/constants';
 import {
   toggleEditing,
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   EditIcon,
   FileDocumentIcon,
@@ -33,7 +34,10 @@ export function ActivitybarMobile({
           hint="See files palette"
           widescreen={false}
           onPress={() => {
-            toggleNotesPalette()(bangleStore.state, bangleStore.dispatch);
+            togglePaletteType(CorePalette.Notes)(
+              bangleStore.state,
+              bangleStore.dispatch,
+            );
           }}
           icon={<FileDocumentIcon className="w-5 h-5" />}
         />
@@ -41,7 +45,10 @@ export function ActivitybarMobile({
       <div
         className="flex flex-row items-center flex-none"
         onClick={() => {
-          toggleNotesPalette()(bangleStore.state, bangleStore.dispatch);
+          togglePaletteType(CorePalette.Notes)(
+            bangleStore.state,
+            bangleStore.dispatch,
+          );
         }}
       >
         <span>

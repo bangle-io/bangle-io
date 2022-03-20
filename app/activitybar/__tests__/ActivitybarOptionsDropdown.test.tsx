@@ -4,17 +4,20 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
+import { workspace } from '@bangle.io/api';
 import { CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE } from '@bangle.io/constants';
-import { newNote } from '@bangle.io/shared-operations';
 
 import { ActivitybarOptionsDropdown } from '../ActivitybarOptionsDropdown';
 
-jest.mock('@bangle.io/shared-operations', () => {
-  const operations = jest.requireActual('@bangle.io/shared-operations');
+jest.mock('@bangle.io/api', () => {
+  const operations = jest.requireActual('@bangle.io/api');
 
   return {
     ...operations,
-    newNote: jest.fn(() => () => {}),
+    workspace: {
+      ...operations.workspace,
+      newNote: jest.fn(() => () => {}),
+    },
   };
 });
 jest.mock('react-dom', () => {
@@ -32,7 +35,9 @@ const operationKeybindings = {
   [CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE]: 'Ctrl-P',
 };
 
-let newNoteMock = newNote as jest.MockedFunction<typeof newNote>;
+let newNoteMock = workspace.newNote as jest.MockedFunction<
+  typeof workspace.newNote
+>;
 
 beforeEach(() => {
   newNoteMock.mockImplementation(() => () => {});

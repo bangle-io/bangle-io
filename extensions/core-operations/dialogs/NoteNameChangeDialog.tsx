@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import { getFocusedWsPath } from '@bangle.io/shared-operations';
+import { editor } from '@bangle.io/api';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
@@ -142,7 +142,7 @@ export function RenameNoteInputModal() {
 
   const { wsName, bangleStore } = useWorkspaceContext();
 
-  const targetWsPath = getFocusedWsPath()(bangleStore.state);
+  const targetWsPath = editor.getFocusedWsPath()(bangleStore.state);
 
   const [error, updateError] = useState<Error | undefined>();
   const onExecute = useCallback(

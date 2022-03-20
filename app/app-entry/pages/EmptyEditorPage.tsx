@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 
+import { workspace } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
+import { CorePalette } from '@bangle.io/constants';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ActionButton,
@@ -93,7 +95,7 @@ export function EmptyEditorPage() {
               tooltipPlacement="right"
               tooltip={<TooltipWrapper>Switch workspace</TooltipWrapper>}
               onPress={() => {
-                toggleWorkspacePalette()(
+                togglePaletteType(CorePalette.Workspace)(
                   bangleStore.state,
                   bangleStore.dispatch,
                 );
@@ -109,7 +111,7 @@ export function EmptyEditorPage() {
           <ActionButton
             ariaLabel="create note"
             onPress={() => {
-              newNote()(bangleStore.state, bangleStore.dispatch);
+              workspace.newNote()(bangleStore.state, bangleStore.dispatch);
             }}
           >
             <ButtonContent text="Create note" icon={<NewNoteIcon />} />

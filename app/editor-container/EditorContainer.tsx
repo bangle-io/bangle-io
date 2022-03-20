@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { editor } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { Editor } from '@bangle.io/editor';
-import { closeEditor, splitEditor } from '@bangle.io/shared-operations';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import {
   checkFileExists,
@@ -31,11 +31,11 @@ export function EditorContainer({
   const isSplitEditorOpen = openedWsPaths.openCount > 0;
 
   const onPressSecondaryEditor = useCallback(() => {
-    splitEditor()(bangleStore.state, bangleStore.dispatch);
+    editor.splitEditor()(bangleStore.state, bangleStore.dispatch);
   }, [bangleStore]);
 
   const onClose = useCallback(() => {
-    closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
+    editor.closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
   }, [bangleStore, editorId]);
 
   let children;

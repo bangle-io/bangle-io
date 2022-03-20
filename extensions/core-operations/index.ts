@@ -1,3 +1,4 @@
+import { editor, workspace } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
@@ -6,17 +7,6 @@ import {
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
-import {
-  closeEditor,
-  createBrowserWorkspace,
-  createNativeFsWorkpsace,
-  deleteActiveNote,
-  newNote,
-  newWorkspace,
-  removeWorkspace,
-  renameActiveNote,
-  splitEditor,
-} from '@bangle.io/shared-operations';
 import {
   focusEditor,
   isEditingAllowed,
@@ -163,19 +153,22 @@ const extension = Extension.create({
         handle(operation, payload, bangleStore) {
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
-              newNote()(bangleStore.state, bangleStore.dispatch);
+              workspace.newNote()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_NEW_WORKSPACE: {
-              newWorkspace()(bangleStore.state, bangleStore.dispatch);
+              workspace.newWorkspace()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
-              renameActiveNote()(bangleStore.state, bangleStore.dispatch);
+              workspace.renameActiveNote()(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
 
               return true;
             }
@@ -189,7 +182,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_DELETE_ACTIVE_NOTE: {
-              deleteActiveNote()(
+              workspace.deleteActiveNote()(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -199,14 +192,17 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
-              splitEditor()(bangleStore.state, bangleStore.dispatch);
+              editor.splitEditor()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               const editorId = payload;
-              closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
+              editor.closeEditor(editorId)(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
 
               return true;
             }
@@ -228,7 +224,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE: {
-              removeWorkspace()(
+              workspace.removeWorkspace()(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -257,7 +253,7 @@ const extension = Extension.create({
             case CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE: {
               const { wsName } = payload || {};
 
-              createBrowserWorkspace(wsName)(
+              workspace.createBrowserWorkspace(wsName)(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -268,7 +264,7 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
               const { rootDirHandle } = payload || {};
-              createNativeFsWorkpsace(rootDirHandle)(
+              workspace.createNativeFsWorkpsace(rootDirHandle)(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,

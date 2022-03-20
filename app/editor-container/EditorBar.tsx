@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { toggleNotesPalette } from '@bangle.io/shared-operations';
+import { CorePalette } from '@bangle.io/constants';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 import {
   ActionButton,
   ButtonContent,
@@ -37,7 +38,10 @@ export function EditorBar({
   }
 
   const openNotesPalette = useCallback(() => {
-    toggleNotesPalette()(bangleStore.state, bangleStore.dispatch);
+    togglePaletteType(CorePalette.Notes)(
+      bangleStore.state,
+      bangleStore.dispatch,
+    );
   }, [bangleStore]);
 
   return (

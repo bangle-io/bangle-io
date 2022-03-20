@@ -24,7 +24,11 @@ import {
 } from '@bangle.io/slice-workspace';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { getFocusedWsPath } from './core';
+import { getFocusedWsPath } from './editor';
+
+export function getWorkspaceState() {
+  return (state: AppState) => workspaceSliceKey.getSliceStateAsserted(state);
+}
 
 export function newNote(initialValue?: string) {
   return uiSliceKey.op((state, dispatch) => {
