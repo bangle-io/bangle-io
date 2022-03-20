@@ -17,6 +17,7 @@ interface ImageNodeAttrs {
 export const renderImageReactNodeView: RenderReactNodeView = {
   image: ({ nodeViewRenderArg }) => {
     let { src, alt } = nodeViewRenderArg.node.attrs;
+
     return <ImageComponent nodeAttrs={{ src, alt }} />;
   },
 };
@@ -46,6 +47,7 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
     if (imageWsPath) {
       return imageDimensionFromWsPath(imageWsPath);
     }
+
     return undefined;
   });
   let height: number | undefined, width: number | undefined;
@@ -95,6 +97,7 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
         }
       }
     }
+
     return () => {
       if (objectUrl) {
         window.URL.revokeObjectURL(objectUrl);

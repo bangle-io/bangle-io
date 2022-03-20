@@ -10,6 +10,7 @@ export const editingAllowedPlugin: EditorPlugin =
       props: {
         editable(state) {
           const { bangleStore } = getEditorPluginMetadata(state);
+
           return isEditingAllowed()(bangleStore.state);
         },
       },

@@ -20,6 +20,7 @@ jest.mock('@bangle.io/worker-naukar-proxy', () => {
 
 jest.mock('@bangle.io/slice-workspace', () => {
   const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
+
   return {
     ...workspaceThings,
     useWorkspaceContext: jest.fn(),
@@ -151,6 +152,7 @@ describe('useSearchWsPaths', () => {
     const recentWsPaths = ['test-ws:note2.md', 'test-ws:note3.md'];
     abortableFzfSearchNoteWsPathsMock.mockImplementation(async () => {
       await sleep(100);
+
       return noteWsPaths.map((r) => ({ item: r } as any));
     });
 

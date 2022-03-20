@@ -53,6 +53,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
         code: INVALID_GITHUB_TOKEN,
       });
     }
+
     return {
       githubToken: createOpts.githubToken,
       owner: createOpts.owner,
@@ -84,6 +85,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
       message: 'fileStat is not supported',
       code: GITHUB_STORAGE_NOT_ALLOWED,
     });
+
     return {} as any;
   }
 
@@ -125,6 +127,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
       await GithubRepoTree.getWsPaths(wsName, wsMetadata, abortSignal),
       wsName + ':',
     );
+
     return files;
   }
 

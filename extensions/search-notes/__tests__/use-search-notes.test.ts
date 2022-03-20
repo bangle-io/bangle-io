@@ -25,11 +25,13 @@ jest.mock('@bangle.io/slice-workspace', () => {
 
 jest.mock('@bangle.io/extension-registry', () => {
   const actual = jest.requireActual('@bangle.io/extension-registry');
+
   return { ...actual, useExtensionState: jest.fn() };
 });
 
 jest.mock('../constants', () => {
   const actual = jest.requireActual('../constants');
+
   return {
     ...actual,
     DEBOUNCE_WAIT: 0,

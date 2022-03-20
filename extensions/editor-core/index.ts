@@ -50,6 +50,7 @@ const extension = Extension.create({
                 0,
                 toggleHeadingCollapse(),
               )(bangleStore.state);
+
               return true;
             }
 
@@ -58,16 +59,19 @@ const extension = Extension.create({
                 0,
                 uncollapseAllHeadings(),
               )(bangleStore.state);
+
               return true;
             }
 
             case 'operation::@bangle.io/editor-core:move-list-up': {
               dispatchEditorCommand(0, moveListItemUp())(bangleStore.state);
+
               return true;
             }
 
             case 'operation::@bangle.io/editor-core:move-list-down': {
               dispatchEditorCommand(0, moveListItemDown())(bangleStore.state);
+
               return true;
             }
 

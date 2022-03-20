@@ -63,6 +63,7 @@ export const beforeEachHook = () => {
       if (typeof this.parts[0] === 'string') {
         return this.parts[0];
       }
+
       return (this.parts[0] as any).text();
     }
     async arrayBuffer() {

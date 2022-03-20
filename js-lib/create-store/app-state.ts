@@ -82,6 +82,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
             val!,
             instance,
           );
+
           return;
         }
       }

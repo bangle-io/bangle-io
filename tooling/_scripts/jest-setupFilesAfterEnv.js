@@ -7,6 +7,7 @@ const idbHelpers = require('@bangle.io/test-utils/indexedb-ws-helpers');
 
 jest.mock('idb-keyval', () => {
   const { fakeIdb } = jest.requireActual('@bangle.io/test-utils/fake-idb');
+
   return fakeIdb;
 });
 

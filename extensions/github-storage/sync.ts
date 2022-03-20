@@ -113,6 +113,7 @@ export async function pushModifiedOrCreatedEntries(
           : undefined;
 
         const sync = await fileSync(entryA, entryB, source);
+
         return {
           entryA: entryA,
           entryB: entryB,

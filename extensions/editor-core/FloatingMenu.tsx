@@ -45,7 +45,9 @@ export function MenuComp() {
         </Menu>
       );
     }
+
     return null;
   }, []);
+
   return <FloatingMenu menuKey={menuKey} renderMenuType={renderMenuType} />;
 }

@@ -200,6 +200,7 @@ export class Extension<
           const validIcon = Boolean(s.activitybarIcon);
           const validComponent = Boolean(s.ReactComponent);
           const validHint = typeof s.hint === 'string';
+
           return (
             validName && validIcon && validIcon && validComponent && validHint
           );
@@ -310,6 +311,7 @@ function resolveSlug(slug: string) {
 
   const [scheme, restString] = slug.split('::');
   const [pkgName, localSlug] = restString?.split(':') || [];
+
   return {
     scheme,
     pkgName,

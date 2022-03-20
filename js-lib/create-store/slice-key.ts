@@ -14,6 +14,7 @@ export function createKey(name: string) {
     return name + '$' + ++keys[name];
   }
   keys[name] = 0;
+
   return name + '$';
 }
 
@@ -54,6 +55,7 @@ export class SliceKey<
     if (storeOrState instanceof AppState) {
       return storeOrState;
     }
+
     return this.getStore(storeOrState).state;
   }
 
@@ -70,6 +72,7 @@ export class SliceKey<
     if (sliceState === undefined) {
       throw new Error(`Slice state for "${this.key}"" cannot be undefined`);
     }
+
     return sliceState;
   }
 

@@ -299,6 +299,7 @@ function getWorkspaceName(modal: ModalState): string | undefined {
       return modal.workspace.wsName;
     }
   }
+
   return undefined;
 }
 

@@ -40,6 +40,7 @@ function catchUpstreamError<T>(promise: Promise<T>, errorMessage: string) {
           code: FILE_NOT_FOUND_ERROR,
         });
       }
+
       return Promise.reject(
         new NativeBrowserFileSystemError({
           message: errorMessage,
@@ -112,6 +113,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
 
     const file = await this.readFile(filePath);
     const textContent = await readFileAsTextHelper(file);
+
     return textContent;
   }
 
@@ -280,6 +282,7 @@ function resolveFileHandle({
         return undefined;
       }
       const match = children.find((entry) => entry.name === childName);
+
       return match;
     };
 
@@ -384,6 +387,7 @@ async function asyncIteratorToArray<T>(iter: AsyncIterable<T>): Promise<T[]> {
   for await (const i of iter) {
     arr.push(i);
   }
+
   return arr;
 }
 
@@ -399,6 +403,7 @@ export async function pickADirectory() {
         code: NATIVE_BROWSER_PERMISSION_ERROR,
       });
     }
+
     return dirHandle;
   } catch (err) {
     if (err instanceof Error) {

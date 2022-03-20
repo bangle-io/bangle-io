@@ -68,6 +68,7 @@ export const getPlugins = () => {
         if (state.selection.empty) {
           return null;
         }
+
         return 'defaultMenu';
       },
     }),

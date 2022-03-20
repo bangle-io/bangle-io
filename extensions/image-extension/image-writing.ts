@@ -20,6 +20,7 @@ export async function createImage(
   let imageWsPath = filePathToWsPath(wsName, IMAGE_SAVE_DIR + '/' + fileName);
 
   imageWsPath = await setImageMetadataInWsPath(imageWsPath, dimension, true);
+
   // pre-pending a / to make it an absolute URL
   // since we are returning a web url we need to encode it
   return {

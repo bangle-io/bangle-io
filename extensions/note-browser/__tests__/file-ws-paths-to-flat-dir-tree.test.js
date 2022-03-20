@@ -60,11 +60,14 @@ function understandOldFunc(data) {
           if (b.children) {
             return 1;
           }
+
           return a.name.localeCompare(b.name);
         })
         .flatMap((i) => recurse(i));
+
       return [obj.id, ...childResult];
     }
+
     return [obj.path];
   };
 

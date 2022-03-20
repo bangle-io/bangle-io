@@ -23,6 +23,7 @@ let getNoteMock = getNote as jest.MockedFunction<typeof getNote>;
 
 jest.mock('@bangle.io/slice-workspace', () => {
   const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
+
   return {
     ...workspaceThings,
     bangleStore: {
@@ -181,6 +182,7 @@ describe('search tag across wsPaths', () => {
       }
       if (wsPath === 't:2') {
         controller.abort();
+
         return new Promise((res) => setTimeout(res, 0)).then(() => {
           return view2.state.doc;
         });

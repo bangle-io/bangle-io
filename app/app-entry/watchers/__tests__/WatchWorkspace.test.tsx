@@ -20,6 +20,7 @@ const ourFileWsPath = ourWsName + ':hi.md';
 
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
+
   return {
     ...actual,
     useBroadcastChannel: jest.fn(),
@@ -27,6 +28,7 @@ jest.mock('@bangle.io/utils', () => {
 });
 jest.mock('@bangle.io/slice-workspace', () => {
   const actual = jest.requireActual('@bangle.io/slice-workspace');
+
   return {
     ...actual,
     refreshWsPaths: jest.fn(),
@@ -69,6 +71,7 @@ beforeEach(() => {
 
   updateOpenedWsPathsMock.mockImplementation((cb) => () => {
     updateOpenedWsPathsCallback = cb;
+
     return true;
   });
   refreshWsPathsMock.mockImplementation(() => () => true);

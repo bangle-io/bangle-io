@@ -36,6 +36,7 @@ const createPaletteObject = ({
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
   const { fileName, dirPath } = resolvePath(wsPath);
+
   return {
     uid: wsPath,
     title: removeMdExtension(fileName),
@@ -86,6 +87,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
         if (i === 0) {
           (obj as any).rightNode = 'Recent';
         }
+
         return obj;
       });
 
@@ -111,6 +113,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
           if (i === 0 && recentlyUsedItems.length > 0) {
             (obj as any).showDividerAbove = true;
           }
+
           return obj;
         }),
       ];
@@ -142,6 +145,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
     );
 
     const activeItem = getActivePaletteItem(items);
+
     return (
       <>
         <UniversalPalette.PaletteItemsContainer>
@@ -233,10 +237,12 @@ export function useSearchWsPaths(query: string) {
     if (!filteredFzfItems) {
       return [];
     }
+
     return filteredFzfItems
       .filter((r) => !shownInRecentSet.has(r.item))
       .map((fzfItem, i) => {
         const wsPath = fzfItem.item;
+
         return wsPath;
       });
   }, [filteredFzfItems, filteredRecentWsPaths]);
@@ -277,6 +283,7 @@ function useSearchNotePaths(query: string, wsName: string | undefined) {
           throw error;
         });
     }
+
     return () => {
       destroyed = true;
       controller.abort();

@@ -132,6 +132,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
           if (!pendingNavigation) {
             return { pendingNavigation: null };
           }
+
           return {
             pendingNavigation: {
               location: {

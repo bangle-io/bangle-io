@@ -54,6 +54,7 @@ const extension = Extension.create({
             false,
           );
           dispatch?.(tr);
+
           return true;
         },
       }),

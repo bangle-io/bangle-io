@@ -107,6 +107,7 @@ export const operationPalette: ExtensionPaletteType = {
     if (identifierPrefix && rawQuery.startsWith(identifierPrefix)) {
       return rawQuery.slice(1);
     }
+
     return null;
   },
   ReactComponent: ActionPaletteUIComponent,
@@ -119,5 +120,6 @@ function strMatch(a: string[] | string, b: string): boolean {
   }
 
   a = a.toLocaleLowerCase();
+
   return a.includes(b) || b.includes(a);
 }

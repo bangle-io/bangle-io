@@ -101,6 +101,7 @@ export function createWorkspace(
     );
 
     await sleep(0);
+
     return true;
   };
 }
@@ -191,6 +192,7 @@ export function updateWorkspaceMetadata(
 export function getWorkspaceMetadata(wsName: string) {
   return workspaceSliceKey.queryOp((state) => {
     let wsMetadata = getWorkspaceInfo(wsName)(state).metadata;
+
     return wsMetadata;
   });
 }

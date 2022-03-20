@@ -36,6 +36,7 @@ afterEach(() => {
 
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
+
   return {
     ...actual,
     debounceFn: jest.fn((cb, opts) => {
@@ -43,6 +44,7 @@ jest.mock('@bangle.io/utils', () => {
         cb();
       });
       (fn as any).cancel = jest.fn();
+
       return fn;
     }),
   };
@@ -183,6 +185,7 @@ describe('plugin state assertions', () => {
               if (stopPlugin2StateUpdates) {
                 return pluginState;
               }
+
               return { counter: pluginState.counter + 1 };
             },
           },

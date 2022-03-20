@@ -31,13 +31,16 @@ export function Modal({
     return {
       Escape: () => {
         onDismiss();
+
         return true;
       },
       Enter: () => {
         if (onPressEnter) {
           onPressEnter();
+
           return true;
         }
+
         return false;
       },
     };

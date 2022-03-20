@@ -10,6 +10,7 @@ if (!isWorkerGlobalScope()) {
     console.debug('polyfilling idle callback');
     window.requestIdleCallback = function (cb, options) {
       var start = Date.now();
+
       return setTimeout(
         function () {
           cb({

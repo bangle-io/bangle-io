@@ -26,6 +26,7 @@ const getScrollParentElementMock =
 
 jest.mock('@bangle.io/slice-page', () => {
   const actual = jest.requireActual('@bangle.io/slice-page');
+
   return {
     ...actual,
     pageLifeCycleTransitionedTo: jest.fn(() => {
@@ -36,6 +37,7 @@ jest.mock('@bangle.io/slice-page', () => {
 
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
+
   return {
     ...actual,
     getScrollParentElement: jest.fn(),
@@ -45,6 +47,7 @@ jest.mock('@bangle.io/utils', () => {
         cb();
       };
       foo.cancel = () => {};
+
       return foo;
     }),
   };
@@ -73,6 +76,7 @@ const createStore = (jsonData?: {
           cb();
         }
       });
+
       return () => {
         destroyed = true;
       };
@@ -510,6 +514,7 @@ describe('trimWhiteSpaceEffect', () => {
       if (lifecycle?.[0] === 'passive' && lifecycle[1] === 'hidden') {
         return pageLifeMock;
       }
+
       return () => false;
     });
 

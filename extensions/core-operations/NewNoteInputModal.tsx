@@ -36,10 +36,12 @@ export function NewNoteInputModal({
         inputValue.endsWith('/.md')
       ) {
         updateError(new Error('Must provide a note name'));
+
         return;
       }
       if (!wsName) {
         updateError(new Error('No workspace open'));
+
         return;
       }
       let newWsPath = filePathToWsPath(wsName, inputValue);
@@ -107,16 +109,19 @@ export function RenameNoteInputModal({ onDismiss }: { onDismiss: () => void }) {
         inputValue.endsWith('/.md')
       ) {
         updateError(new Error('Must provide a note name'));
+
         return;
       }
 
       if (!wsName) {
         updateError(new Error('No workspace open'));
+
         return;
       }
 
       if (!targetWsPath) {
         updateError(new Error('No note active'));
+
         return;
       }
 
@@ -150,6 +155,7 @@ export function RenameNoteInputModal({ onDismiss }: { onDismiss: () => void }) {
   );
 
   const initialValue = targetWsPath ? resolvePath(targetWsPath).filePath : '';
+
   return (
     <InputPalette
       placeholder="Enter the new name"

@@ -34,6 +34,7 @@ export function Activitybar({
 
   const sidebarItems = sidebars.map((r) => {
     const active = sidebar === r.name;
+
     return (
       <ActivitybarButton
         isActive={active}

@@ -19,6 +19,7 @@ export function removeMdExtension(str: string) {
   if (str.endsWith('.md')) {
     return str.slice(0, -3);
   }
+
   return str;
 }
 
@@ -37,6 +38,7 @@ export function resolvePath(wsPath: string) {
     .slice(0, filePathSplitted.length - 1)
     .filter(Boolean)
     .join('/');
+
   return {
     wsName,
     filePath, // wsName:filePath
@@ -50,5 +52,6 @@ export function filePathToWsPath(wsName: string, filePath: string) {
   if (filePath.startsWith('/')) {
     filePath = filePath.slice(1);
   }
+
   return wsName + ':' + filePath;
 }

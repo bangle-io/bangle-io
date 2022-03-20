@@ -56,6 +56,7 @@ export function restoreWorkspaceFromBackup() {
         notificationSliceKey.getState(store.state),
         notificationSliceKey.getDispatch(store.dispatch),
       );
+
       return false;
     }
 

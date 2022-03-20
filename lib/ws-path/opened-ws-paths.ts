@@ -18,6 +18,7 @@ function compare<T>(a: T[], b: T[]): boolean {
       if (value == null && b[index] == null) {
         return true;
       }
+
       return value === b[index];
     })
   );
@@ -59,6 +60,7 @@ export class OpenedWsPaths {
         count++;
       }
     });
+
     return count;
   }
 
@@ -121,6 +123,7 @@ export class OpenedWsPaths {
 
     const items = this.wsPaths.slice(0);
     items[index] = wsPath;
+
     return this.updateAllWsPaths(items);
   }
 
@@ -142,6 +145,7 @@ export class OpenedWsPaths {
     if (result.equal(this)) {
       return this;
     }
+
     return result;
   }
 
@@ -149,6 +153,7 @@ export class OpenedWsPaths {
     if (compare(this.wsPaths, compareWith.wsPaths)) {
       return true;
     }
+
     return false;
   }
 
@@ -160,6 +165,7 @@ export class OpenedWsPaths {
     if (wsPath == null) {
       return false;
     }
+
     return this.wsPaths.includes(wsPath);
   }
 
@@ -193,6 +199,7 @@ export class OpenedWsPaths {
     if (result.equal(this)) {
       return this;
     }
+
     return result;
   }
 
@@ -207,6 +214,7 @@ export class OpenedWsPaths {
         ret = ret.updateByIndex(i, replaceWsPath);
       }
     });
+
     return ret;
   }
 

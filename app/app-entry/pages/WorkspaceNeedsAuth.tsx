@@ -57,6 +57,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     }
     if (wsInfo.type !== WorkspaceTypeNative) {
       onGranted();
+
       return true;
     }
     const result = await requestNativeBrowserFSPermission(
@@ -64,9 +65,11 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     );
     if (result) {
       onGranted();
+
       return true;
     } else {
       updatePermissionDenied(true);
+
       return false;
     }
   };
@@ -108,10 +111,12 @@ function PermissionModal({
           return false;
         }
         requestFSPermission();
+
         return true;
       },
     });
     document.addEventListener('keydown', callback);
+
     return () => {
       document.removeEventListener('keydown', callback);
     };

@@ -23,6 +23,7 @@ const extension = Extension.create({
           content: error.message,
           uid: error.code + Math.random(),
         })(store.state, store.dispatch);
+
         return true;
       }
 

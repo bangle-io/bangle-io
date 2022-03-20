@@ -102,6 +102,7 @@ function pluginsFactory({
     };
 
     let executeItemCommand: Command | undefined;
+
     return [
       valuePlugin(key, {
         // We are setting this callback which returns us the
@@ -159,6 +160,7 @@ export function replaceSuggestionMarkWith(
     view: EditorView | undefined,
   ) => {
     const suggestTooltipKey = getSuggestTooltipKey(key)(state);
+
     return suggestTooltip.replaceSuggestMarkWith(
       suggestTooltipKey,
       replaceWith,
@@ -169,6 +171,7 @@ export function replaceSuggestionMarkWith(
 export function queryInlinePaletteActive(key: PluginKey) {
   return (state: EditorState) => {
     const suggestTooltipKey = getSuggestTooltipKey(key)(state);
+
     return queryIsSuggestTooltipActive(suggestTooltipKey)(state);
   };
 }
@@ -176,6 +179,7 @@ export function queryInlinePaletteActive(key: PluginKey) {
 export function queryInlinePaletteText(key: PluginKey) {
   return (state: EditorState) => {
     const suggestTooltipKey = getSuggestTooltipKey(key)(state);
+
     return suggestTooltip.queryTriggerText(suggestTooltipKey)(state);
   };
 }

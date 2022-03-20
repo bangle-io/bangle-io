@@ -10,6 +10,7 @@ const convertPathToRegexp = (path: string) => {
   let keys: Key[] = [];
   // we use original pathToRegexp package here with keys
   const regexp = pathToRegexp(path, keys, { strict: true, end: false });
+
   return { keys, regexp };
 };
 
@@ -45,6 +46,7 @@ export function pathnameToWsPath(pathname?: string) {
   if (result.length === 0) {
     return undefined;
   }
+
   return `${wsName}:${result}`;
 }
 
@@ -61,6 +63,7 @@ export function pathnameToWsName(pathname?: string): string | undefined {
 
   if (isMatched) {
     const { wsName } = match;
+
     return decodeURIComponent(wsName);
   }
 
@@ -70,6 +73,7 @@ export function pathnameToWsName(pathname?: string): string | undefined {
 export function wsPathToSearch(wsPath: string, search: string) {
   const newSearch = new URLSearchParams(search);
   newSearch.set('secondary', encodeURIComponent(wsPath));
+
   return newSearch.toString();
 }
 
@@ -83,6 +87,7 @@ export function searchToWsPath(search?: string) {
   if (res) {
     return decodeURIComponent(res);
   }
+
   return undefined;
 }
 

@@ -48,8 +48,10 @@ class FileMetadata {
 
     if (result == null) {
       await this.set(filePath, fallback);
+
       return fallback;
     }
+
     return result;
   }
 
@@ -106,6 +108,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       filePath,
       new BaseFileMetadata(),
     );
+
     return result;
   }
 
@@ -114,6 +117,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
 
     const file = await this.readFile(filePath);
     const textContent = await readFileAsTextHelper(file);
+
     return textContent;
   }
 
@@ -200,6 +204,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
     }
 
     const result = dirPath ? keys.filter((k) => k.startsWith(dirPath)) : keys;
+
     return result;
   }
 }

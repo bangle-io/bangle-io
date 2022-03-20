@@ -35,14 +35,17 @@ const createManager = () => {
     get: (key: string) => Promise.resolve(store.get(key)),
     set: (key: string, obj: any) => {
       store.set(key, obj);
+
       return Promise.resolve();
     },
     getValues: async () => Promise.resolve(Array.from(store.values())),
     delete: (key: string) => {
       store.delete(key);
+
       return Promise.resolve();
     },
   });
+
   return { manager, store };
 };
 

@@ -85,8 +85,10 @@ function getItemsAndHints(
       if (a.group === b.group) {
         return a.title.localeCompare(b.title);
       }
+
       return a.group.localeCompare(b.group);
     });
+
   return { items, hintItems };
 }
 
@@ -233,6 +235,7 @@ function strMatch(a: string[] | string, b: string): boolean {
   }
 
   a = a.toLocaleLowerCase();
+
   return a.includes(b) || b.includes(a);
 }
 

@@ -114,6 +114,7 @@ export function PaletteManager() {
       resetCounter();
       if (!match) {
         dismissPalette();
+
         return;
       }
 

@@ -118,6 +118,7 @@ export async function getAllWsPaths(
 
   if (result == null || (Array.isArray(result) && result.length < lowerBound)) {
     await longSleep();
+
     return getAllWsPaths(page, { lowerBound, attempt: attempt + 1 });
   }
 
@@ -254,6 +255,7 @@ export async function clearEditor(page: Page, editorId: number, attempt = 0) {
   if (text.trim() !== '') {
     if (attempt < RECURSIVE_RETRY_MAX) {
       await clearEditor(page, editorId, attempt + 1);
+
       return;
     } else {
       throw new Error('cant clearPrimaryEditor');
@@ -325,6 +327,7 @@ export async function getEditorDebugString(
   { wsPath }: { wsPath?: string } = {},
 ) {
   await getEditorLocator(page, editorId, { wsPath });
+
   // TODO fix the as any
   return page.evaluate(
     async (editorId) =>
@@ -389,6 +392,7 @@ export async function waitForEditorTextToContain(
 
   if (attempt < RECURSIVE_RETRY_MAX) {
     await sleep();
+
     return waitForEditorTextToContain(page, editorId, text, attempt + 1);
   }
 
@@ -415,6 +419,7 @@ export async function getItemsInPalette(
   // wait a little more if items are not showing up
   if (result.length === 0) {
     await longSleep();
+
     return locator.evaluateAll((nodes) =>
       [...nodes].map((n) => n.getAttribute('data-id')),
     );
@@ -454,6 +459,7 @@ export async function getWsPathsShownInFilePalette(page: Page) {
 
 export async function getEditorJSON(page: Page, editorId: number) {
   await getEditorLocator(page, editorId);
+
   return page.evaluate(
     async (editorId: number) =>
       (window as any)[`editor-${editorId}`]?.editor.view.state.doc.toJSON(),
@@ -480,6 +486,7 @@ export async function isIntersectingViewport(loc: Locator) {
       // there are rafs.
       requestAnimationFrame(() => {});
     });
+
     return visibleRatio > 0;
   });
 }

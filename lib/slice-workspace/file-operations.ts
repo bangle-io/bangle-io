@@ -91,6 +91,7 @@ export function getStorageErrorHandler() {
     ReturnType<ExtensionRegistry['getOnStorageErrorHandlers']>,
     undefined
   >;
+
   return workspaceSliceKey.op((state): T => {
     const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
 
@@ -213,6 +214,7 @@ export const getNote = (wsPath: string) => {
 
       return doc;
     }
+
     return undefined;
   });
 };
@@ -306,6 +308,7 @@ export const writeFile = (wsPath: string, file: File) => {
         file,
         getStorageProviderOpts()(store.state, dispatch),
       );
+
       return true;
     },
   );

@@ -27,6 +27,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
       return resolvePath(wsPath);
     });
   }, [wsPaths]);
+
   return (
     <div className="mb-3">
       <div className="flex flex-row mt-6">
@@ -79,6 +80,7 @@ export function EmptyEditorPage() {
       ),
     ),
   );
+
   return (
     <CenteredBoxedPage
       title={

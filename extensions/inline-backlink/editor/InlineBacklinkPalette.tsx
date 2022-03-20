@@ -91,6 +91,7 @@ function InlineBacklinkPaletteInner({
   const items = useMemo(() => {
     let res = match.map((r) => {
       const wsPath = r.item;
+
       return {
         wsPath: wsPath,
         uid: wsPath,

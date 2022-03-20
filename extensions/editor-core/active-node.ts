@@ -10,6 +10,7 @@ export function activeNode() {
         if (!tr.selectionSet) {
           return old;
         }
+
         return buildDeco(newState);
       },
     },
@@ -31,5 +32,6 @@ function buildDeco(state: EditorState): DecorationSet {
         }),
       ]
     : [];
+
   return DecorationSet.create(state.doc, decorations);
 }

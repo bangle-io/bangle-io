@@ -108,6 +108,7 @@ export function storeSyncSlice<
         ) {
           sliceState.pendingActions.push(action as A);
         }
+
         return sliceState;
       },
     },
@@ -136,6 +137,7 @@ export function storeSyncSlice<
               port.onmessage = ({ data }) => {
                 if (data?.type === 'ping') {
                   port.postMessage({ type: 'pong' });
+
                   return;
                 }
                 if (
@@ -148,6 +150,7 @@ export function storeSyncSlice<
                   store.dispatch({
                     name: 'action::@bangle.io/store-sync:port-ready',
                   });
+
                   return;
                 }
                 if (data?.type === 'action') {
@@ -172,6 +175,7 @@ export function storeSyncSlice<
                     );
                   }
                   port.postMessage({ type: 'ping' });
+
                   return false;
                 },
                 pingController.signal,

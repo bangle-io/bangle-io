@@ -14,6 +14,7 @@ const extensionRegistry = createExtensionRegistry([], { editorCore: true });
 
 jest.mock('../../common', () => {
   const rest = jest.requireActual('../../common');
+
   return {
     ...rest,
     DOC_WRITE_DEBOUNCE_WAIT: 0,

@@ -36,5 +36,6 @@ export function assertNonWorkerGlobalScope() {
   ) {
     throw new Error('Script cannot run in worker environment');
   }
+
   return;
 }

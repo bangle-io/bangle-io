@@ -38,6 +38,7 @@ const extension = Extension.create({
                 bangleStore.state,
                 bangleStore.dispatch,
               );
+
               return true;
             }
             default: {

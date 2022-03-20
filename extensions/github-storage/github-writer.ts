@@ -57,6 +57,7 @@ export class GithubWriter {
       });
     }
     console.log(Object.keys(this.additions), wsPath);
+
     return this.additions[wsPath];
   }
 
@@ -121,6 +122,7 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
         if (_wsName !== wsName) {
           throw new Error('Workspace name mismatch');
         }
+
         return { path: filePath };
       }),
       config: config,
@@ -179,6 +181,7 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join('\n- ')}` : ''}`.trim();
       if (_wsName !== wsName) {
         throw new Error('Workspace name mismatch');
       }
+
       return { path: filePath };
     }),
     config: config,

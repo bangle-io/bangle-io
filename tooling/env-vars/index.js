@@ -32,6 +32,7 @@ function getAppEnv(isProd) {
       if (branch === 'production') {
         return 'production';
       }
+
       return branch;
     }
 
@@ -41,6 +42,7 @@ function getAppEnv(isProd) {
       if (branch === 'staging') {
         return 'staging';
       }
+
       return 'dev/' + branch;
     }
 
@@ -79,6 +81,7 @@ function getFavicon(appEnv) {
 
 module.exports = ({ isProduction, isVite = false }) => {
   const appEnv = getAppEnv(isProduction);
+
   return {
     helpDocsVersion,
     appEnv,

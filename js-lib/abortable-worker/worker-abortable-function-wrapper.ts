@@ -39,6 +39,7 @@ export function workerAbortableMethodWrapper(
       }
 
       console.debug(uniqueAbortId + ' about to start');
+
       return abortableFunc(abortController.signal, ...args).then(
         (result) => {
           // if successful cleanup the controller from Map
@@ -47,6 +48,7 @@ export function workerAbortableMethodWrapper(
             uniqueAbortId + ' finished successfully',
             abortController?.signal.aborted,
           );
+
           return result;
         },
         (error) => {

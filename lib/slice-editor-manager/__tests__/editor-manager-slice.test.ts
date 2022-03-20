@@ -15,6 +15,7 @@ import { createTestEditor } from './test-utils';
 
 jest.mock('@bangle.io/utils', () => {
   const actual = jest.requireActual('@bangle.io/utils');
+
   return {
     ...actual,
     getScrollParentElement: jest.fn(() => {
@@ -32,6 +33,7 @@ let createStore = () =>
           cb();
         }
       });
+
       return () => {
         destroyed = true;
       };

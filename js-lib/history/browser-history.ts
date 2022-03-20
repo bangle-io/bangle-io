@@ -115,6 +115,7 @@ const calcLocation = (base: string): Location => {
   if (search.startsWith('?')) {
     search = search.slice(1);
   }
+
   return { pathname, search };
 };
 

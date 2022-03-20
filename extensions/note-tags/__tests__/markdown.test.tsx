@@ -23,6 +23,7 @@ const serialize = async (doc: any) => {
   if (typeof doc === 'function') {
     content = doc(specRegistry.schema);
   }
+
   return markdownSerializer(specRegistry).serialize(content);
 };
 

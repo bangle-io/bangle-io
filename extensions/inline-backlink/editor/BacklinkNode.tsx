@@ -90,6 +90,7 @@ export function BacklinkNode({
         (error) => {
           if (error instanceof PathValidationError) {
             updatedInvalidLink(true);
+
             return;
           }
           throw error;
@@ -117,6 +118,7 @@ export function BacklinkNode({
         { timeout: 250 },
       );
     }
+
     return () => {
       if (timer !== undefined) {
         safeCancelIdleCallback(timer);
@@ -213,6 +215,7 @@ async function handleClick({
   ) {
     const matchedWsPath = parseLocalFilePath(backlinkPath, currentWsPath);
     validateNoteWsPath(matchedWsPath);
+
     return matchedWsPath;
   }
 
@@ -235,6 +238,7 @@ async function handleClick({
     bangleStore.dispatch,
     bangleStore,
   );
+
   return newWsPath;
 }
 
@@ -244,6 +248,7 @@ export const renderReactNodeView: RenderReactNodeView = {
     if (typeof path !== 'string') {
       return <span>Invalid Path</span>;
     }
+
     return (
       <BacklinkNode nodeAttrs={{ path, title }} view={nodeViewRenderArg.view} />
     );
@@ -276,6 +281,7 @@ function getMatchingWsPath(wsName: string, path: string, allWsPaths: string[]) {
     const matches = allWsPaths
       .filter((w) => {
         const { fileName } = resolvePath(w, true);
+
         return comparator(fileName, path);
       })
       .sort((a, b) => {

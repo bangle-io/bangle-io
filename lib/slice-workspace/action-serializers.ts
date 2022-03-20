@@ -116,6 +116,7 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
         wsPaths: obj.wsPaths || undefined,
       };
     };
+
     return {
       toJSON,
       fromJSON,
@@ -129,6 +130,7 @@ export const ActionSerializers: ActionsSerializersType<WorkspaceSliceAction> = {
     const fromJSON = (obj: ReturnType<typeof toJSON>) => {
       return undefined;
     };
+
     return {
       toJSON,
       fromJSON,

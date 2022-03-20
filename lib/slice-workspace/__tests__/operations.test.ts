@@ -21,6 +21,7 @@ import { getActionNamesDispatched, noSideEffectsStore } from './test-utils';
 
 jest.mock('@bangle.io/slice-page', () => {
   const ops = jest.requireActual('@bangle.io/slice-page');
+
   return {
     ...ops,
     historyUpdateOpenedWsPaths: jest.fn(),
@@ -31,6 +32,7 @@ jest.mock('@bangle.io/slice-page', () => {
 
 jest.mock('@bangle.io/extension-registry', () => {
   const other = jest.requireActual('@bangle.io/extension-registry');
+
   return {
     ...other,
     extensionRegistrySliceKey: {
@@ -122,6 +124,7 @@ describe('updateOpenedWsPaths', () => {
     let existingOpenedWsPaths: OpenedWsPaths | undefined;
     const res = updateOpenedWsPaths((r) => {
       existingOpenedWsPaths = r;
+
       return r.updateByIndex(0, 'my-ws:two.md');
     })(store.state, store.dispatch);
 

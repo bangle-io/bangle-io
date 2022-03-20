@@ -19,6 +19,7 @@ import { EditorContainer } from '../EditorContainer';
 
 jest.mock('@bangle.io/slice-workspace', () => {
   const actual = jest.requireActual('@bangle.io/slice-workspace');
+
   return {
     ...actual,
     checkFileExists: jest.fn(() => () => Promise.resolve(true)),
@@ -28,6 +29,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
 
 jest.mock('@bangle.io/slice-editor-manager', () => {
   const actual = jest.requireActual('@bangle.io/slice-editor-manager');
+
   return {
     ...actual,
     useEditorManagerContext: jest.fn(),
@@ -36,6 +38,7 @@ jest.mock('@bangle.io/slice-editor-manager', () => {
 
 jest.mock('@bangle.io/editor', () => {
   const actual = jest.requireActual('@bangle.io/editor');
+
   return {
     ...actual,
     Editor: jest.fn(),
@@ -44,6 +47,7 @@ jest.mock('@bangle.io/editor', () => {
 
 jest.mock('../config', () => {
   const actual = jest.requireActual('../config');
+
   return {
     ...actual,
     EDITOR_LOAD_WAIT_TIME: 0,

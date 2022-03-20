@@ -29,11 +29,13 @@ export function Router() {
       ) {
         _updateRoute('repo-picker');
       }
+
       return true;
     }
 
     if (sOperation.name === OPERATION_UPDATE_GITHUB_TOKEN) {
       _updateRoute('token-update');
+
       return true;
     }
 
@@ -81,6 +83,7 @@ const updateGithubToken =
             githubToken: token,
           };
         }
+
         return existing;
       })(state, dispatch);
       showNotification({
@@ -88,6 +91,7 @@ const updateGithubToken =
         title: 'Github successfully token updated',
         severity: 'success',
       })(state, dispatch);
+
       return true;
     }
 
@@ -97,5 +101,6 @@ const updateGithubToken =
       content: 'Please open a Github workspace before updating the token.',
       severity: 'error',
     })(state, dispatch);
+
     return false;
   };

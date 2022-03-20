@@ -14,6 +14,7 @@ const fileEqual = (
   if (a && b) {
     return a.sha === b.sha;
   }
+
   return undefined;
 };
 
@@ -28,6 +29,7 @@ const isModifiedWrtAncestor = ({
   if (typeof res === 'boolean') {
     return !res;
   }
+
   return undefined;
 };
 

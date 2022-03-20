@@ -45,6 +45,7 @@ const extension = Extension.create({
     operationHandler() {
       const getType = (state: AppState, type: CorePalette) => {
         const uiState = uiSliceKey.getSliceState(state);
+
         return uiState?.paletteType === type ? null : type;
       };
 
@@ -58,6 +59,7 @@ const extension = Extension.create({
                   type: getType(bangleStore.state, operationPalette.type),
                 },
               });
+
               return true;
             }
 
@@ -68,6 +70,7 @@ const extension = Extension.create({
                   type: getType(bangleStore.state, workspacePalette.type),
                 },
               });
+
               return true;
             }
 
@@ -78,6 +81,7 @@ const extension = Extension.create({
                   type: getType(bangleStore.state, notesPalette.type),
                 },
               });
+
               return true;
             }
             default: {

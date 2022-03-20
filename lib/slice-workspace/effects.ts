@@ -34,6 +34,7 @@ const log = LOG
 
 export const errorHandlerEffect: SideEffect = () => {
   let lastErrorSeen: Error | undefined;
+
   return {
     async deferredUpdate(store) {
       // TODO take to a better place
@@ -52,6 +53,7 @@ export const errorHandlerEffect: SideEffect = () => {
         if (lastErrorSeen) {
           lastErrorSeen = undefined;
         }
+
         return;
       }
 
@@ -71,6 +73,7 @@ export const errorHandlerEffect: SideEffect = () => {
         ).wsName;
 
         reset(wsName);
+
         return;
       }
 
@@ -87,6 +90,7 @@ export const errorHandlerEffect: SideEffect = () => {
       if (erroredStorageType) {
         if (!wsName) {
           reset(wsName);
+
           return;
         }
 
@@ -103,6 +107,7 @@ export const errorHandlerEffect: SideEffect = () => {
               error: undefined,
             },
           });
+
           return;
         }
         // if we reach here, we can't throw it back since its a storage error
@@ -111,6 +116,7 @@ export const errorHandlerEffect: SideEffect = () => {
           `Storage provider (${erroredStorageType}) didn't  handle error`,
           error,
         );
+
         return;
       }
 
@@ -122,6 +128,7 @@ export const errorHandlerEffect: SideEffect = () => {
 
 export const refreshWsPathsEffect: SideEffect = () => {
   let abort = new AbortController();
+
   return {
     async deferredUpdate(store, prevState) {
       const [changed] = workspaceSliceKey.didChange(store.state, prevState)(
@@ -140,11 +147,13 @@ export const refreshWsPathsEffect: SideEffect = () => {
 
       if (error) {
         log('returning early error');
+
         return;
       }
 
       if (!wsName || !workspacesInfo) {
         log('returning early wsName || workspacesInfo');
+
         return;
       }
 
@@ -154,6 +163,7 @@ export const refreshWsPathsEffect: SideEffect = () => {
 
       if (!wsInfo) {
         log('returning early wsInfo');
+
         return;
       }
 
@@ -167,6 +177,7 @@ export const refreshWsPathsEffect: SideEffect = () => {
 
       if (!storageProvider) {
         log('returning early storageProvider');
+
         return;
       }
 
@@ -208,6 +219,7 @@ export const wsDeleteEffect = workspaceSliceKey.effect(() => {
 
       if (wsName && workspacesInfo?.[wsName]?.deleted === true) {
         goToWorkspaceHomeRoute()(store.state, store.dispatch);
+
         return;
       }
     },
@@ -255,6 +267,7 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
             },
           });
         }
+
         return;
       }
 
@@ -274,6 +287,7 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
           store.state,
           store.dispatch,
         );
+
         return;
       }
 
@@ -284,6 +298,7 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
           store.state,
           store.dispatch,
         );
+
         return;
       }
 

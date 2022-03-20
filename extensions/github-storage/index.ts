@@ -66,6 +66,7 @@ const extension = Extension.create({
           content: error.message,
           uid: error.code + Math.random(),
         })(store.state, store.dispatch);
+
         return true;
       }
 
@@ -186,6 +187,7 @@ const extension = Extension.create({
     ],
     operationHandler() {
       let abortController = new AbortController();
+
       return {
         handle(operation, payload, store) {
           switch (operation.name) {

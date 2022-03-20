@@ -28,6 +28,7 @@ function walk(dir, done) {
         file.includes('build')
       ) {
         next();
+
         return;
       }
       file = dir + '/' + file;

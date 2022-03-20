@@ -16,6 +16,7 @@ const safeRequestAnimationFrame =
           callback(currTime + timeToCall);
         }, timeToCall);
         lastTime = currTime + timeToCall;
+
         return id;
       };
 
@@ -80,6 +81,7 @@ export function intersectionObserverPlugin({
             ),
           };
         }
+
         return oldPluginState;
       },
     },
@@ -212,6 +214,7 @@ export function getDocsChildren(view: EditorView): Set<Element> {
     }
     offset = offset + child.size;
   }
+
   return list1;
 }
 
@@ -221,5 +224,6 @@ function isIntersectionAPIAvailable() {
       return true;
     }
   }
+
   return false;
 }

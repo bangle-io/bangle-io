@@ -20,6 +20,7 @@ import { SerialOperationContextProvider } from '../SerialOperationContextProvide
 
 jest.mock('@bangle.io/bangle-store-context', () => {
   const obj = jest.requireActual('@bangle.io/bangle-store-context');
+
   return {
     ...obj,
     useSliceState: jest.fn(),
@@ -28,6 +29,7 @@ jest.mock('@bangle.io/bangle-store-context', () => {
 
 function ApplicationComponents() {
   const extensionRegistry = useExtensionRegistryContext();
+
   return <>{extensionRegistry.renderApplicationComponents()}</>;
 }
 
@@ -38,6 +40,7 @@ function TestHandler() {
     switch (operation.name) {
       case 'operation::bangle-io-core:show-search-sidebar': {
         updateSidebar((c) => c + 1);
+
         return true;
       }
       default: {
@@ -96,6 +99,7 @@ describe('operation handlers', () => {
     function DispatchSOp() {
       let obj = useSerialOperationContext();
       dispatchSOp = obj.dispatchSerialOperation;
+
       return null;
     }
     act(() => {
@@ -149,6 +153,7 @@ describe('operation handlers', () => {
                   switch (operation.name) {
                     case 'operation::bangle-io-core:show-search-sidebar': {
                       operationMatch();
+
                       return true;
                     }
                     default: {
@@ -175,6 +180,7 @@ describe('operation handlers', () => {
     function DispatchSOp() {
       let obj = useSerialOperationContext();
       dispatchSOp = obj.dispatchSerialOperation;
+
       return null;
     }
     act(() => {

@@ -25,11 +25,13 @@ export class OpenedEditorsConfig {
   }) {
     this.selections = createEmptyArray(MAX_OPEN_EDITORS).map((r, i) => {
       let res = selections[i];
+
       return res == null ? null : res;
     });
 
     this.scrollPositions = createEmptyArray(MAX_OPEN_EDITORS).map((r, i) => {
       let res = scrollPositions[i];
+
       return res == null ? null : res;
     });
   }
@@ -40,6 +42,7 @@ export class OpenedEditorsConfig {
     }
 
     const result = this.selections[editorId]?.[wsPath];
+
     return result == null ? undefined : result;
   }
 
@@ -108,6 +111,7 @@ export class OpenedEditorsConfig {
   toJsonObj() {
     const selections = this.selections;
     const scrollPositions = this.scrollPositions;
+
     return { selections, scrollPositions };
   }
 }

@@ -138,16 +138,19 @@ const extension = Extension.create({
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
               newNote()(bangleStore.state, bangleStore.dispatch);
+
               return true;
             }
 
             case CORE_OPERATIONS_NEW_WORKSPACE: {
               newWorkspace()(bangleStore.state, bangleStore.dispatch);
+
               return true;
             }
 
             case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
               renameActiveNote()(bangleStore.state, bangleStore.dispatch);
+
               return true;
             }
 
@@ -155,6 +158,7 @@ const extension = Extension.create({
               bangleStore.dispatch({
                 name: 'action::@bangle.io/slice-ui:TOGGLE_NOTE_SIDEBAR',
               });
+
               return true;
             }
 
@@ -164,22 +168,26 @@ const extension = Extension.create({
                 bangleStore.dispatch,
                 bangleStore,
               );
+
               return true;
             }
 
             case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
               splitEditor()(bangleStore.state, bangleStore.dispatch);
+
               return true;
             }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               const editorId = payload;
               closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
+
               return true;
             }
 
             case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {
               downloadWorkspace()(bangleStore.state, bangleStore.dispatch);
+
               return true;
             }
 
@@ -189,6 +197,7 @@ const extension = Extension.create({
                 bangleStore.dispatch,
                 bangleStore,
               );
+
               return true;
             }
 
@@ -198,20 +207,24 @@ const extension = Extension.create({
                 bangleStore.dispatch,
                 bangleStore,
               );
+
               return true;
             }
             case 'operation::@bangle.io/core-operations:focus-primary-editor': {
               focusEditor(0)(bangleStore.state);
+
               return true;
             }
 
             case 'operation::@bangle.io/core-operations:focus-secondary-editor': {
               focusEditor(1)(bangleStore.state);
+
               return true;
             }
 
             case CORE_OPERATIONS_TOGGLE_UI_THEME: {
               toggleTheme()(bangleStore.state, bangleStore.dispatch);
+
               return true;
             }
 
@@ -223,6 +236,7 @@ const extension = Extension.create({
                 bangleStore.dispatch,
                 bangleStore,
               );
+
               return true;
             }
 
@@ -239,6 +253,7 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_OPEN_GITHUB_ISSUE: {
               window.open(`https://github.com/bangle-io/bangle-io/issues/new`);
+
               return true;
             }
 
@@ -250,6 +265,7 @@ const extension = Extension.create({
                 uid: 'editing-mode' + isEditing + Date.now(),
                 title: 'Editing mode is now ' + (isEditing ? 'on' : 'off'),
               })(bangleStore.state, bangleStore.dispatch);
+
               return true;
             }
 

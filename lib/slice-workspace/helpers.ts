@@ -45,6 +45,7 @@ export function getPrevOpenedWsPathsFromSearch(
   if (prev) {
     try {
       let openedWsPaths = OpenedWsPaths.createFromArray(JSON.parse(prev));
+
       return openedWsPaths;
     } catch (err) {
       return undefined;

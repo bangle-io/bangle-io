@@ -25,6 +25,7 @@ test('handles error', () => {
           activitybarIcon: <span>test-icon</span>,
           ReactComponent: () => {
             throw new Error('Blah blah');
+
             return <span>something</span>;
           },
           hint: 'test-hint',

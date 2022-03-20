@@ -2,6 +2,7 @@ import { IndexedDBFileSystem } from '../indexed-db-fs';
 
 const toFile = (str) => {
   var file = new File([str], 'foo.txt', { type: 'text/plain' });
+
   return file;
 };
 

@@ -17,6 +17,7 @@ export function useSerialOperationHandler<T>(
 
   useEffect(() => {
     const removeCb = extensionRegistry.registerSerialOperationHandler(memoCb);
+
     return () => {
       removeCb();
     };

@@ -43,6 +43,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
           return true;
         }
         let lowerQuery = query.toLocaleLowerCase();
+
         return r.uid.includes(lowerQuery);
       });
   }, [repoList, query]);
@@ -112,6 +113,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
           ?.focus();
       }
     });
+
     return () => {
       destroyed = true;
     };

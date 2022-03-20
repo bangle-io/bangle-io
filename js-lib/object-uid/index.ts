@@ -15,6 +15,7 @@ class ObjectUID extends WeakMap {
     }
     uid = (counter++).toString() + '-' + unique;
     this.set(obj, uid);
+
     return uid;
   }
 }

@@ -116,6 +116,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             const sidebar = Boolean(state.sidebar)
               ? undefined
               : action.value.type;
+
             return {
               ...state,
               sidebar,
@@ -149,6 +150,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           case UI_CONTEXT_TOGGLE_THEME: {
             const theme: ThemeType = state.theme === 'dark' ? 'light' : 'dark';
             applyTheme(theme);
+
             return {
               ...state,
               theme,
@@ -157,6 +159,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
 
           case 'action::@bangle.io/slice-ui:UPDATE_THEME': {
             applyTheme(action.value.theme);
+
             return {
               ...state,
               theme: action.value.theme,
@@ -167,6 +170,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
             const { windowSize } = action.value;
             const widescreen = checkWidescreen(windowSize.width);
             setRootWidescreenClass(widescreen);
+
             return {
               ...state,
               widescreen,
@@ -242,6 +246,7 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           noteSidebar: value.noteSidebar,
           widescreen: checkWidescreen(),
         });
+
         return state;
       },
     },
@@ -285,6 +290,7 @@ function getThemePreference() {
   if (typeof window === 'undefined') {
     return 'light';
   }
+
   return window?.matchMedia?.('(prefers-color-scheme: dark)').matches
     ? 'dark'
     : 'light';

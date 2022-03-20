@@ -23,6 +23,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     const path = toFSPath(wsPath);
     try {
       await this.idb.stat(path);
+
       return true;
     } catch (error) {
       if (error instanceof BaseFileSystemError) {
@@ -37,6 +38,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
   async fileStat(wsPath: string, opts: StorageOpts) {
     const path = toFSPath(wsPath);
     const stat = await this.idb.stat(path);
+
     return {
       ctime: stat.mtimeMs,
       mtime: stat.mtimeMs,
@@ -58,6 +60,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     if (!(await this.fileExists(wsPath, opts))) {
       return undefined;
     }
+
     return this.idb.readFile(toFSPath(wsPath));
   }
 
@@ -75,6 +78,7 @@ export class IndexedDbStorageProvider implements BaseStorageProvider {
     files = rawPaths
       .map((r) => {
         const wsPath = fromFsPath(r);
+
         return wsPath;
       })
       .filter((r): r is string => Boolean(r));

@@ -32,6 +32,7 @@ const extensionRegistry = createExtensionRegistry([], {
 
 jest.mock('@bangle.io/slice-workspace', () => {
   const actual = jest.requireActual('@bangle.io/slice-workspace');
+
   return {
     ...actual,
     useWorkspaceContext: jest.fn(),
@@ -41,6 +42,7 @@ jest.mock('@bangle.io/slice-workspace', () => {
 
 jest.mock('@bangle.io/slice-editor-manager', () => {
   const actual = jest.requireActual('@bangle.io/slice-editor-manager');
+
   return {
     ...actual,
     getInitialSelection: jest.fn(() => () => {}),
@@ -57,6 +59,7 @@ let useEditorManagerContextMock =
 
 jest.mock('@bangle.io/extension-registry', () => {
   const actual = jest.requireActual('@bangle.io/extension-registry');
+
   return {
     ...actual,
     useExtensionRegistryContext: jest.fn(),

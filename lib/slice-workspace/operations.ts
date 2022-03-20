@@ -65,6 +65,7 @@ export const updateOpenedWsPaths = (
         sliceState.wsName || 'unknown-ws',
         validity.invalidWsPath,
       )(state, dispatch);
+
       return false;
     }
 
@@ -74,16 +75,19 @@ export const updateOpenedWsPaths = (
     if (!wsName) {
       if (sliceState.wsName) {
         goToWsNameRoute(sliceState.wsName, opts)(state, dispatch);
+
         return true;
       }
 
       goToWorkspaceHomeRoute(opts)(state, dispatch);
+
       return true;
     }
 
     if (!newOpened.allBelongToSameWsName(wsName)) {
       console.error('Cannot have different wsNames');
       goToInvalidPathRoute(wsName)(state, dispatch);
+
       return false;
     }
 
@@ -118,6 +122,7 @@ export const replaceAnyMatchingOpenedWsPath = (
           state,
           pageSliceKey.getDispatch(dispatch),
         );
+
         return true;
       }
     }
@@ -134,12 +139,15 @@ export const pushWsPath = (
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
     if (newTab && typeof window !== 'undefined') {
       window.open(wsPathToPathname(wsPath));
+
       return true;
     }
+
     return updateOpenedWsPaths((openedWsPath) => {
       if (secondary) {
         return openedWsPath.updateByIndex(1, wsPath);
       }
+
       return openedWsPath.updateByIndex(0, wsPath);
     })(state, dispatch);
   };
@@ -150,6 +158,7 @@ export const goToWorkspaceHomeRoute = ({
 }: { replace?: boolean } = {}) => {
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
     goToLocation('/', { replace })(state, pageSliceKey.getDispatch(dispatch));
+
     return;
   };
 };
@@ -170,6 +179,7 @@ export function goToWsNameRoute(
   return (state: AppState, dispatch: WorkspaceDispatchType) => {
     if (newTab && typeof window !== 'undefined') {
       window.open(wsNameToPathname(wsName));
+
       return;
     }
 
@@ -182,6 +192,7 @@ export function goToWsNameRoute(
           state,
           dispatch,
         );
+
         return;
       }
     }

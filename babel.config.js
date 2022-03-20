@@ -39,5 +39,6 @@ module.exports = (api, ...args) => {
   if (DEBUG) {
     console.info(config);
   }
+
   return config;
 };

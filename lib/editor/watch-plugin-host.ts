@@ -28,6 +28,7 @@ export function watchPluginHost(
   const key = new PluginKey<Set<SerialOperationNameType>>(
     'editor_watchPluginHost',
   );
+
   return new Plugin({
     key,
     state: {

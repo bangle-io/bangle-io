@@ -23,6 +23,7 @@ export function watchHeadingsPlugin() {
           'note-outline expects editorIntersectionObserverPluginState',
         );
       }
+
       return {
         headings: getHeadings(state, intersectionState),
       };
@@ -42,6 +43,7 @@ export function watchHeadingsPlugin() {
           headings: getHeadings(newState, intersectionState),
         };
       }
+
       return old;
     },
   };
@@ -140,6 +142,7 @@ export function getHeadings(
       }
     }
   }
+
   return headingNodes;
 }
 
@@ -184,6 +187,7 @@ function isPositionInsideIntersection(
   if (!intersectionState) {
     return false;
   }
+
   return (
     pos >= intersectionState.minStartPosition &&
     pos <= intersectionState.maxStartPosition

@@ -92,6 +92,7 @@ export function usePaletteDriver(
   const inputProps = useMemo(() => {
     return { onSpecialKey, specialKeys };
   }, [onSpecialKey, specialKeys]);
+
   return {
     inputProps,
     counter,
@@ -103,5 +104,6 @@ export function usePaletteDriver(
 
 export function getActiveIndex(counter: number, size: number) {
   const r = counter % size;
+
   return r < 0 ? r + size : r;
 }

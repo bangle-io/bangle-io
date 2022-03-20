@@ -7,6 +7,7 @@ export const safeScrollIntoViewIfNeeded = (
       ? (element as any).scrollIntoViewIfNeeded(centerIfNeeded)
       : scrollIntoViewIfNeededPolyfill(element, centerIfNeeded);
   }
+
   return () => {};
 };
 
@@ -22,6 +23,7 @@ export const safeRequestAnimationFrame =
           callback(currTime + timeToCall);
         }, timeToCall);
         lastTime = currTime + timeToCall;
+
         return id;
       };
 
@@ -37,6 +39,7 @@ export const safeRequestIdleCallback: typeof requestIdleCallback =
     ? window.requestIdleCallback
     : function (cb) {
         var start = Date.now();
+
         return setTimeout(function () {
           cb({
             didTimeout: false,

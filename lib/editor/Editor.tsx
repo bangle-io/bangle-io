@@ -82,6 +82,7 @@ function EditorInner({
         bangleStore.errorHandler(err);
       },
     );
+
     return () => {
       destroyed = true;
     };

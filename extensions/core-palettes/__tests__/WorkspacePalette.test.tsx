@@ -13,6 +13,7 @@ import { workspacePalette } from '../WorkspacePalette';
 
 jest.mock('@bangle.io/slice-workspace', () => {
   const workspaceThings = jest.requireActual('@bangle.io/slice-workspace');
+
   return {
     ...workspaceThings,
     deleteWorkspace: jest.fn(() => () => {}),

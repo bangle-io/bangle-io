@@ -28,8 +28,10 @@ export const readGithubTokenFromStore = () => {
 
     if (wsName && isGithubStorageProvider()(state)) {
       const metadata = getWorkspaceMetadata(wsName)(state);
+
       return metadata?.githubToken as string | undefined;
     }
+
     return undefined;
   });
 };
@@ -39,6 +41,7 @@ export async function getVanilaFileSha(file: File) {
   const sha = Array.from(new Uint8Array(buffer))
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
+
   return sha;
 }
 export interface GithubWsMetadata {

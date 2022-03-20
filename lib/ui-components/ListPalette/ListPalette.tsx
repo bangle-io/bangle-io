@@ -29,6 +29,7 @@ export function ListPalette({
     if (typeof obj.title === 'string') {
       return strMatch(obj.title, inputValue);
     }
+
     return false;
   });
   const inputRef = useRef<HTMLInputElement>(null);
@@ -117,5 +118,6 @@ function strMatch(a: string[] | string, b: string): boolean {
   }
 
   a = a.toLocaleLowerCase();
+
   return a.includes(b) || b.includes(a);
 }

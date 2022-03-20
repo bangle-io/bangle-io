@@ -29,6 +29,7 @@ export async function readWorkspacesInfoReg(): Promise<WorkspaceInfoReg> {
       if (typeof r.deleted === undefined) {
         r.deleted = false;
       }
+
       return [r.name, r];
     }),
   );

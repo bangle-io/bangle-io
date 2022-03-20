@@ -56,6 +56,7 @@ function ScaleButton({
 
 export function ImageEditorReactComponent() {
   const view = useEditorViewContext();
+
   return (
     <>
       <FloatingMenu
@@ -63,6 +64,7 @@ export function ImageEditorReactComponent() {
         renderMenuType={({ type }) => {
           if (type === 'imageMenu') {
             const currentScaleFactor = getSelectedImageNodeScale(view.state);
+
             return (
               <Menu>
                 <MenuGroup>
@@ -123,6 +125,7 @@ const updateImageNodeAttribute =
         }),
       );
     }
+
     return true;
   };
 
@@ -135,5 +138,6 @@ function getSelectedImageNodeScale(state: EditorState) {
     return undefined;
   }
   const { alt } = node.attrs ?? {};
+
   return getImageAltScaleFactor(alt);
 }

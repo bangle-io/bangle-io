@@ -23,6 +23,7 @@ const prettyPrintDate = (dayjs: any, date: any) => {
   ) {
     return dayjsInputDate.format('ll');
   }
+
   return dayjsInputDate.format('ll LT');
 };
 const baseItem = PaletteItem.create({
@@ -56,6 +57,7 @@ async function getTimeLibrary() {
 
     _libraries = { chrono, dayjs: dayjs };
   }
+
   return _libraries;
 }
 
@@ -77,6 +79,7 @@ export function useDateItems(query: string) {
   const items = useMemo(() => {
     if (parsedDateObj) {
       const { parsedDates, dayjs } = parsedDateObj;
+
       return parsedDates.map((p: any, i: number) =>
         PaletteItem.create({
           uid: 'parsedDate' + i,
@@ -94,6 +97,7 @@ export function useDateItems(query: string) {
         }),
       );
     }
+
     return [baseItem];
   }, [parsedDateObj]);
 
@@ -137,5 +141,6 @@ export function useDateItems(query: string) {
       updateParsedDate(undefined);
     }
   }, [query, parsedDateObj]);
+
   return items;
 }

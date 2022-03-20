@@ -18,6 +18,7 @@ function getEmojis(queryText = '') {
   let result = aliasEmojiPair
     .filter(([item]) => item?.includes(queryText))
     .slice(0, maxItems);
+
   return [
     {
       name: '',
@@ -42,6 +43,7 @@ const extension = Extension.create({
         key: emojiSuggestKey,
         getEmojiGroups: (queryText) => {
           const result = getEmojis(queryText);
+
           return result;
         },
         markName: emojiSuggestMarkName,

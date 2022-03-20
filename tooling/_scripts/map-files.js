@@ -34,6 +34,7 @@ async function walk(dir, { ignore }) {
       results.push(newPath);
     }
   }
+
   return results;
 }
 
@@ -79,10 +80,12 @@ async function getWorktreeWorkspaces(worktreeName) {
 }
 async function getWorktrees() {
   const workspaces = await walkWorkspace();
+
   return workspaces.filter((w) => {
     if (w.name !== ROOT_PKG_NAME && Array.isArray(w.packageJSON.workspaces)) {
       return true;
     }
+
     return false;
   });
 }
@@ -114,6 +117,7 @@ async function walkWorkspace({ skipRootWorkspace = true } = {}) {
           topLevelItems.map(async (item) => {
             const newPath = path.join(_path, item);
             const stat = await fs.stat(newPath);
+
             return {
               isDirectory: stat.isDirectory(),
               isFile: stat.isFile(),
@@ -150,6 +154,7 @@ async function walkWorkspace({ skipRootWorkspace = true } = {}) {
           topFiles: items.filter((i) => i.isFile).map((r) => r.name),
           topDirectories: items.filter((i) => i.isDirectory).map((r) => r.name),
         };
+
         return obj;
       }),
   );
@@ -158,6 +163,7 @@ async function walkWorkspace({ skipRootWorkspace = true } = {}) {
     if (skipRootWorkspace) {
       return r.name !== ROOT_PKG_NAME;
     }
+
     return r;
   });
 }

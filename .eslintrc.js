@@ -103,14 +103,14 @@ module.exports = {
 
     'no-multiple-empty-lines': ['error'],
 
-    // 'padding-line-between-statements': [
-    //   'error',
-    //   {
-    //     blankLine: 'always',
-    //     prev: '*',
-    //     next: 'return',
-    //   },
-    // ],
+    'padding-line-between-statements': [
+      'error',
+      {
+        blankLine: 'always',
+        prev: '*',
+        next: 'return',
+      },
+    ],
   },
   settings: {
     'jest': {

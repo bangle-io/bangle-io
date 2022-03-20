@@ -49,6 +49,7 @@ export function fileWsPathsToFlatDirTree(wsFilePaths: string[]) {
         if (!dirSet.has(b) && bSplit[i + 1] === undefined) {
           return -1;
         }
+
         return aSide.localeCompare(bSide);
       }
     }

@@ -31,6 +31,7 @@ export type BangleSliceTypes = ReturnType<typeof bangleStateSlices>;
 
 function disableSideEffect(slice: Slice<any>) {
   slice.spec.sideEffect = undefined;
+
   return slice;
 }
 
@@ -46,6 +47,7 @@ export function bangleStateSlices({
     historySlice(),
     pageLifeCycleSlice(),
   ];
+
   return [
     ...pageBlock,
     naukarProxySlice(),

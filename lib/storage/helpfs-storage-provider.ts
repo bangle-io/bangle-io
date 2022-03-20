@@ -25,6 +25,7 @@ function readFileFromUnpkg(wsPath: string) {
             message: `Encountered an error making request to unpkg.com ${r.status} ${r.statusText}`,
           });
         }
+
         return r;
       })
       .catch((z) => {
@@ -48,6 +49,7 @@ function readFileFromUnpkg(wsPath: string) {
       }
       const name = splitted[splitted.length - 1]!;
       const file = new File([r], name);
+
       return file;
     });
 }

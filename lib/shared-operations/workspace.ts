@@ -39,6 +39,7 @@ export function newNote(initialValue?: string) {
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
       );
+
       return;
     }
 
@@ -114,6 +115,7 @@ export function deleteActiveNote() {
         notificationSliceKey.getState(state),
         notificationSliceKey.getDispatch(dispatch),
       );
+
       return true;
     }
 
@@ -152,6 +154,7 @@ export function deleteActiveNote() {
           );
         });
     }
+
     return true;
   };
 }
@@ -292,6 +295,7 @@ export function createNativeFsWorkpsace(rootDirHandle: any) {
           CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
       );
     }
+
     return true;
   };
 }

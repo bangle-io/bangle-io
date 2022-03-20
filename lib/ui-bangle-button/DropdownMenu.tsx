@@ -165,6 +165,7 @@ function InternalDropdownMenu({
     return {
       Escape: () => {
         onClose();
+
         return true;
       },
     };

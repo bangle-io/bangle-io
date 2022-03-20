@@ -25,6 +25,7 @@ export class LocalFileEntryManager {
     if (obj) {
       return LocalFileEntry.fromPlainObj(obj);
     }
+
     return undefined;
   }
 
@@ -111,6 +112,7 @@ export class LocalFileEntryManager {
       if (fileEntry.deleted) {
         return undefined;
       }
+
       return fileEntry.file;
     }
 

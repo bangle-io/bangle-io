@@ -13,6 +13,7 @@ export interface Dimension {
 export function calcImageDimensions(blobUrl: string): Promise<Dimension> {
   const image = new Image();
   image.src = blobUrl;
+
   return new Promise((res) => {
     image.onload = () => {
       res({ width: image.width, height: image.height });
@@ -32,8 +33,10 @@ export function imageDimensionFromWsPath(
   const result = dimensionRegex.exec(fileName);
   if (result?.[1]) {
     const [width, height] = result[1].split('x').map((r) => parseInt(r, 10));
+
     return { width: width!, height: height! };
   }
+
   return undefined;
 }
 
@@ -50,6 +53,7 @@ export function parseFileName(fileName: string) {
   const dotIndex = fileName.lastIndexOf('.');
   const name = dotIndex === -1 ? fileName : fileName.slice(0, dotIndex);
   const ext = dotIndex === -1 ? '' : fileName.slice(dotIndex);
+
   return { name, ext };
 }
 
@@ -103,6 +107,7 @@ export function parseTimestamp(timestamp: string) {
     timestamp.slice(12, 14),
     timestamp.slice(14),
   ];
+
   return {
     year: parseInt(year),
     month: parseInt(month),

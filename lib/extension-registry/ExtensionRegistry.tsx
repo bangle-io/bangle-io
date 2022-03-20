@@ -84,9 +84,11 @@ export class ExtensionRegistry {
         if (ReactComponent) {
           return <ReactComponent key={e.name} />;
         }
+
         return undefined;
       })
       .filter((e): e is JSX.Element => Boolean(e));
+
     return result;
   };
   renderApplicationComponents = () => {
@@ -96,6 +98,7 @@ export class ExtensionRegistry {
         if (ReactComponent) {
           return <ReactComponent key={extension.name} />;
         }
+
         return undefined;
       })
       .filter((e): e is JSX.Element => Boolean(e));
@@ -104,6 +107,7 @@ export class ExtensionRegistry {
   };
   registerSerialOperationHandler = (cb: SerialOperationHandler) => {
     this.serialOperationHandlers.add(cb);
+
     return () => {
       this.serialOperationHandlers.delete(cb);
     };

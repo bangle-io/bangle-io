@@ -64,6 +64,7 @@ export async function createFile(
       `getFile Error: root parent ${path[0]} must be the rootDirHandle ${rootDirHandle.name}`,
     );
   }
+
   return recurse(path.slice(1), rootDirHandle);
 }
 
@@ -79,6 +80,7 @@ export async function writeFile(
     await writer.write(0, contents);
     // Close the file and write the contents to disk
     await writer.close();
+
     return;
   }
   // For Chrome 83 and later.
@@ -99,6 +101,7 @@ export function readFileAsText(file: File | Blob): Promise<string> {
   if (file.text) {
     return file.text();
   }
+
   // Otherwise use the traditional file reading technique.
   return _readFileLegacy(file);
 }
@@ -128,6 +131,7 @@ export async function hasPermission(
   opts.writable = true;
   // For Chrome 86 and later...
   opts.mode = 'readwrite';
+
   return (await dirHandle.queryPermission(opts)) === 'granted';
 }
 
@@ -169,6 +173,7 @@ export async function recurseDirHandle(
         result = result.concat(children);
       }
     }
+
     return result.filter((r) => r.length > 0);
   };
 

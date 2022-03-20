@@ -23,6 +23,7 @@ jest.mock('@bangle.io/slice-page', () => {
     {},
     jest.requireActual('@bangle.io/slice-page'),
   );
+
   return {
     ...remaining,
     goToLocation: jest.spyOn(remaining, 'goToLocation'),

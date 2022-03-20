@@ -27,6 +27,7 @@ export function resolvePath(wsPath: string, skipValidation = false) {
     .slice(0, filePathSplitted.length - 1)
     .filter(Boolean)
     .join('/');
+
   return {
     wsPath,
     wsName,
@@ -59,6 +60,7 @@ export function isWsPath(wsPath: string) {
   if (wsPath.split(':').length !== 2) {
     return false;
   }
+
   return true;
 }
 
@@ -142,12 +144,14 @@ export function parseLocalFilePath(filePath: string, wsPath: string) {
   if (webPath.startsWith('/')) {
     webPath = webPath.slice(1);
   }
+
   // need to decode uri as filesystems dont do encoding
   return filePathToWsPath(wsName, decodeURIComponent(webPath));
 }
 
 export const toFSPath = (wsPath: string) => {
   const { wsName, filePath } = resolvePath(wsPath);
+
   return [wsName, filePath].join('/');
 };
 
@@ -183,5 +187,6 @@ export function filePathToWsPath(wsName: string, filePath: string) {
   if (filePath.startsWith('/')) {
     filePath = filePath.slice(1);
   }
+
   return wsName + ':' + filePath;
 }

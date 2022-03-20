@@ -22,11 +22,13 @@ export function getEditorPluginMetadata(state: EditorState) {
   if (!result) {
     throw new Error('EditorPluginMetadata cannot be undefined');
   }
+
   return result;
 }
 
 export function getEditorIntersectionObserverPluginState(state: EditorState) {
   const result = intersectionObserverPluginKey.getState(state);
+
   return result;
 }
 

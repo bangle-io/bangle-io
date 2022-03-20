@@ -11,12 +11,14 @@ export async function loadNaukarModule(loadWebworker: boolean): Promise<{
   // we instantiate a worker and the other will run it in main thread.
   if (loadWebworker) {
     const mod = await import('./setup/wrap-worker-naukar');
+
     return {
       naukar: mod.wrapper as any,
       terminate: mod.terminate,
     };
   } else {
     const { default: res } = await import('./setup/naukar-init');
+
     return { naukar: res };
   }
 }

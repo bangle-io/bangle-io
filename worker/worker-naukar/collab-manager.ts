@@ -15,5 +15,6 @@ export function setupCollabManager(
     userWaitTimeout: SLOW_FACTOR * 500,
     instanceCleanupTimeout: SLOW_FACTOR * 2000,
   });
+
   return manager;
 }

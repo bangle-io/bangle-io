@@ -24,11 +24,13 @@ export function useRecencyWatcher(
           if (typeof a[1] === 'number' && typeof b[1] === 'number') {
             return b[1] - a[1];
           }
+
           return 0;
         });
         // trim the object to contain its size
         const newObj = Object.fromEntries(entries.slice(0, maxEntries));
         newObj[uid] = Date.now();
+
         return newObj;
       });
     },

@@ -73,6 +73,7 @@ function ModifiedEntries({
           if (!shallowCompareArray(newWsPaths, oldWsPaths)) {
             return result;
           }
+
           return prevEntries;
         });
       }
