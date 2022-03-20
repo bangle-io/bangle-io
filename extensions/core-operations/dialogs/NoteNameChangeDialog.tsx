@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import { getFocusedWsPath } from '@bangle.io/shared-operations';
+import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   createNote,
@@ -16,13 +17,32 @@ import {
   resolvePath,
 } from '@bangle.io/ws-path';
 
-export function NewNoteInputModal({
-  initialValue,
-  onDismiss,
-}: {
-  initialValue: string;
-  onDismiss: () => void;
-}) {
+export const NEW_NOTE_DIALOG_NAME =
+  'dialog::@bangle.io/core-operations:new-note-modal';
+
+export const RENAME_NOTE_DIALOG_NAME =
+  'dialog::@bangle.io/core-operations:rename-note-modal';
+
+export function NewNoteInputModal() {
+  const { dispatch, dialogName, dialogMetadata } = useUIManagerContext();
+  const { primaryEditor } = useEditorManagerContext();
+
+  const onDismiss = useCallback(
+    (focusEditor = true) => {
+      dispatch({
+        name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
+        value: {
+          dialogName: [NEW_NOTE_DIALOG_NAME],
+        },
+      });
+
+      if (focusEditor) {
+        primaryEditor?.focusView();
+      }
+    },
+    [primaryEditor, dispatch],
+  );
+
   const destroyedRef = useDestroyRef();
   const { wsName, bangleStore } = useWorkspaceContext();
   const [error, updateError] = useState<Error | undefined>();
@@ -73,6 +93,10 @@ export function NewNoteInputModal({
     [onDismiss, bangleStore, destroyedRef, wsName],
   );
 
+  if (dialogName !== 'dialog::@bangle.io/core-operations:new-note-modal') {
+    return null;
+  }
+
   return (
     <InputPalette
       placeholder="Enter the name of your note"
@@ -81,7 +105,7 @@ export function NewNoteInputModal({
       updateError={updateError}
       error={error}
       widescreen={widescreen}
-      initialValue={initialValue || randomName()}
+      initialValue={dialogMetadata?.initialValue || randomName()}
       selectOnMount={true}
     >
       <UniversalPalette.PaletteInfo>
@@ -93,7 +117,26 @@ export function NewNoteInputModal({
   );
 }
 
-export function RenameNoteInputModal({ onDismiss }: { onDismiss: () => void }) {
+export function RenameNoteInputModal() {
+  const { dispatch } = useUIManagerContext();
+  const { primaryEditor } = useEditorManagerContext();
+
+  const onDismiss = useCallback(
+    (focusEditor = true) => {
+      dispatch({
+        name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
+        value: {
+          dialogName: [RENAME_NOTE_DIALOG_NAME],
+        },
+      });
+
+      if (focusEditor) {
+        primaryEditor?.focusView();
+      }
+    },
+    [primaryEditor, dispatch],
+  );
+
   const destroyedRef = useDestroyRef();
   const { widescreen } = useUIManagerContext();
 

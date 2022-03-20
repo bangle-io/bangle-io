@@ -1,5 +1,3 @@
-import './ChangelogModal.css';
-
 import React, { useCallback, useEffect } from 'react';
 
 import {
@@ -55,23 +53,24 @@ const specRegistry = new SpecRegistry([
   underline.spec(),
 ]);
 
+export const CHANGELOG_MODAL_NAME =
+  'dialog::@bangle.io/core-operations:changelog-modal';
+
 export function ChangelogModal() {
-  const { dialogName, dispatch } = useUIManagerContext();
+  const { dispatch } = useUIManagerContext();
 
-  const showChangelog = dialogName === 'changelog-modal';
-
-  useLastSeenChangelog(showChangelog);
+  useLastSeenChangelog(true);
 
   const onDismiss = useCallback(() => {
     dispatch({
       name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
       value: {
-        dialogName: 'changelog-modal',
+        dialogName: CHANGELOG_MODAL_NAME,
       },
     });
   }, [dispatch]);
 
-  return showChangelog ? (
+  return (
     <Modal
       title="🎁 What's new?"
       onDismiss={onDismiss}
@@ -87,7 +86,7 @@ export function ChangelogModal() {
         <ChangelogDisplay />
       </div>
     </Modal>
-  ) : null;
+  );
 }
 const parser = markdownParser(specRegistry);
 const serializer = markdownSerializer(specRegistry);

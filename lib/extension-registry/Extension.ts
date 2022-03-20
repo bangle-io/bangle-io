@@ -65,6 +65,7 @@ export interface ApplicationConfig<
   }>;
   operations?: OpType[];
   sidebars?: SidebarType[];
+  dialogs?: DialogType[];
   operationHandler?: SerialOperationHandler2<OpType>;
   noteSidebarWidgets?: NoteSidebarWidget[];
   slices?: Array<Slice<any>>;
@@ -84,6 +85,11 @@ export interface SidebarType {
   name: `sidebar::${string}`;
   ReactComponent: React.ComponentType<{}>;
   title: string;
+}
+
+export interface DialogType {
+  name: `dialog::${string}`;
+  ReactComponent: React.ComponentType<{}>;
 }
 
 interface Config<T, OpType extends SerialOperationDefinitionType> {
@@ -154,6 +160,7 @@ export class Extension<
     const {
       operations,
       sidebars,
+      dialogs,
       noteSidebarWidgets,
       slices,
       operationHandler,
@@ -236,7 +243,22 @@ export class Extension<
       })
     ) {
       throw new Error(
-        'Extension: Invalid ntoe sidebar widget name. Example: "note-sidebar-widget::my-extension-name:xyz"',
+        'Extension: Invalid note sidebar widget name. Example: "note-sidebar-widget::my-extension-name:xyz"',
+      );
+    }
+
+    if (
+      dialogs &&
+      !dialogs.every((s) => {
+        const validName =
+          hasCorrectScheme('dialog', s.name) &&
+          hasCorrectPackageName(name, s.name);
+
+        return validName;
+      })
+    ) {
+      throw new Error(
+        'Extension: Invalid dialog name. Example: "dialog::my-extension-name:xyz"',
       );
     }
 

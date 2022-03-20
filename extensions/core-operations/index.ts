@@ -39,12 +39,40 @@ import {
   CORE_OPERATIONS_TOGGLE_UI_THEME,
   extensionName,
 } from './config';
-import { CoreActionsHandler } from './CoreActionsHandler';
+import { CHANGELOG_MODAL_NAME, ChangelogModal } from './dialogs/ChangelogModal';
+import {
+  NEW_WORKSPACE_DIALOG_NAME,
+  NewWorkspaceModal,
+} from './dialogs/new-workspace-modal';
+import {
+  NEW_NOTE_DIALOG_NAME,
+  NewNoteInputModal,
+  RENAME_NOTE_DIALOG_NAME,
+  RenameNoteInputModal,
+} from './dialogs/NoteNameChangeDialog';
 import { downloadWorkspace, restoreWorkspaceFromBackup } from './operations';
 
 const extension = Extension.create({
   name: extensionName,
   application: {
+    dialogs: [
+      {
+        name: CHANGELOG_MODAL_NAME,
+        ReactComponent: ChangelogModal,
+      },
+      {
+        name: NEW_NOTE_DIALOG_NAME,
+        ReactComponent: NewNoteInputModal,
+      },
+      {
+        name: RENAME_NOTE_DIALOG_NAME,
+        ReactComponent: RenameNoteInputModal,
+      },
+      {
+        name: NEW_WORKSPACE_DIALOG_NAME,
+        ReactComponent: NewWorkspaceModal,
+      },
+    ],
     operations: [
       {
         name: CORE_OPERATIONS_CLOSE_EDITOR,
@@ -130,8 +158,6 @@ const extension = Extension.create({
         title: 'Editor: Toggle editing mode',
       },
     ],
-    ReactComponent: CoreActionsHandler,
-
     operationHandler() {
       return {
         handle(operation, payload, bangleStore) {

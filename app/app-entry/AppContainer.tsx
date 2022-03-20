@@ -8,11 +8,10 @@ import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { Dhancha } from '@bangle.io/ui-dhancha';
 import { WorkspaceSidebar } from '@bangle.io/workspace-sidebar';
 
-import { ChangelogModal } from './changelog/ChangelogModal';
+import { DialogArea } from './components/DialogArea';
 import { NotificationArea } from './components/NotificationArea';
 import { ApplicationComponents } from './extension-glue/ApplicationComponents';
 import { useSetDocumentTitle } from './misc/use-set-document-title';
-import { NewWorkspaceModal } from './new-workspace-modal/NewWorkspaceModal';
 import { Routes } from './Routes';
 
 export function AppContainer() {
@@ -56,8 +55,7 @@ export function AppContainer() {
 
   return (
     <>
-      <ChangelogModal />
-      <NewWorkspaceModal />
+      <DialogArea />
       <ApplicationComponents />
       <NoteSidebarShowButton
         isNoteSidebarShown={Boolean(noteSidebar)}

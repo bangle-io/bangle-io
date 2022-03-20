@@ -1,3 +1,5 @@
+import { supportsNativeBrowserFs } from '@bangle.io/baby-fs';
+
 export const FILE_SYSTEM = 'file-system';
 export const BROWSER = 'browser';
 export type WorkspaceStorageType = typeof FILE_SYSTEM | typeof BROWSER;
@@ -37,3 +39,7 @@ export function getStorageDescription(storageType: WorkspaceStorageType) {
     }
   }
 }
+
+export const defaultStorageType = supportsNativeBrowserFs()
+  ? FILE_SYSTEM
+  : BROWSER;
