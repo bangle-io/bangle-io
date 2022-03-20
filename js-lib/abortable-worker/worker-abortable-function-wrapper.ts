@@ -29,6 +29,7 @@ export function workerAbortableMethodWrapper(
       }
 
       let abortController = abortControllers.get(uniqueAbortId);
+
       // this is an indication reuse the previous abort controller
       // this happens when the host uses the same signal
       if (!abortController) {
@@ -57,6 +58,7 @@ export function workerAbortableMethodWrapper(
           // it will be deleted from Map anyway, but if the `abortableFunc`
           // throws error it will not be.
           abortControllers.delete(uniqueAbortId);
+
           if (isAbortError(error)) {
             console.debug(uniqueAbortId + ' threw Abort Error');
             // if the function aborted with an `AbortError`

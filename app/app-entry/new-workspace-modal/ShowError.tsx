@@ -22,6 +22,7 @@ export function ShowError({
   closeModal: () => void;
 }) {
   const bangleStore = useBangleStoreContext();
+
   if (!errorType) {
     return null;
   }

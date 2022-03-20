@@ -128,6 +128,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     // after that give priority to the slice it originated from
     if (typeof key === 'string') {
       const matchSlice = this._state.getSliceByKey<any, any, any>(key);
+
       if (matchSlice?.spec.onError?.(error, this) === true) {
         return;
       }
@@ -266,6 +267,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     }
 
     const serializer = this.actionSerializers[action.name];
+
     if (!serializer) {
       return false;
     }
@@ -288,12 +290,14 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     for (const slice of this._state.getSlices()) {
       const actions = slice.spec.actions;
+
       if (actions) {
         for (const act in actions) {
           if (this.actionSerializers[act]) {
             throw new Error(`A serializer for ${act} already exists`);
           }
           const actionSerializers = (actions as any)[act];
+
           if (actionSerializers) {
             this.actionSerializers[act] = actionSerializers(act);
           }
@@ -342,6 +346,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
                 key: slice.key,
                 initialState: initialAppSate,
               });
+
               if (result.deferredOnce) {
                 allDeferredOnce.push([slice.key, result.deferredOnce]);
               }

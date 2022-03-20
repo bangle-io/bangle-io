@@ -20,6 +20,7 @@ export function resolvePath(wsPath: string, skipValidation = false) {
   const [wsName, filePath] = splitWsPath(wsPath);
   const filePathSplitted = filePath.split('/');
   const fileName: string | undefined = getLast(filePathSplitted);
+
   if (typeof fileName !== 'string') {
     throw new Error('fileName undefined');
   }
@@ -70,6 +71,7 @@ export function isValidFileWsPath(wsPath: string) {
   }
 
   const items = wsPath.split('/');
+
   if (items[items.length - 1]?.includes('.')) {
     return true;
   }
@@ -108,6 +110,7 @@ export function validateFileWsPath(wsPath: string) {
 // but restricted to only .md for now
 export function validateNoteWsPath(wsPath: string) {
   validateFileWsPath(wsPath);
+
   if (!isValidNoteWsPath(wsPath)) {
     throw new PathValidationError({
       message: 'Notes can only be saved in .md format',
@@ -136,6 +139,7 @@ export function parseLocalFilePath(filePath: string, wsPath: string) {
   }
   const { wsName, dirPath } = resolvePath(wsPath);
   let sampleDomain = 'https://bangle.io';
+
   if (dirPath) {
     sampleDomain += '/' + dirPath + '/';
   }
@@ -157,6 +161,7 @@ export const toFSPath = (wsPath: string) => {
 
 export function fromFsPath(fsPath: string) {
   const [_wsName, ...f] = fsPath.split('/');
+
   if (!_wsName || _wsName.includes(':')) {
     return undefined;
   }
@@ -166,6 +171,7 @@ export function fromFsPath(fsPath: string) {
 
 export function splitWsPath(wsPath: string): [string, string] {
   const [wsName, filePath] = wsPath.split(':');
+
   if (!wsName) {
     throw new PathValidationError({ message: 'Invalid wsName' });
   }

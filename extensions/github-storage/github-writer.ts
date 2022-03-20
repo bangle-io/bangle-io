@@ -49,6 +49,7 @@ export class GithubWriter {
     let _wsName = resolvePath(wsPath).wsName;
     Object.keys(this.additions).forEach((wsPath) => {
       const { wsName } = resolvePath(wsPath);
+
       if (_wsName !== wsName) {
         throw new Error('Workspace name mismatch');
       }
@@ -92,6 +93,7 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
       ),
       deletions: [...this.deletions].map((wsPath) => {
         const { filePath, wsName } = resolvePath(wsPath);
+
         if (_wsName !== wsName) {
           throw new Error('Workspace name mismatch');
         }
@@ -117,6 +119,7 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
     let _wsName = resolvePath(wsPath).wsName;
     this.deletions.forEach((wsPath) => {
       const { wsName } = resolvePath(wsPath);
+
       if (_wsName !== wsName) {
         throw new Error('Workspace name mismatch');
       }
@@ -178,6 +181,7 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join('\n- ')}` : ''}`.trim();
     ),
     deletions: deletions.map((wsPath) => {
       const { filePath, wsName } = resolvePath(wsPath);
+
       if (_wsName !== wsName) {
         throw new Error('Workspace name mismatch');
       }

@@ -54,6 +54,7 @@ export class LocalFileEntryManager {
       await this.updateFileEntry(fileEntry.markDeleted());
     } else {
       const remoteFileEntry = await getRemoteFileEntry?.(uid);
+
       if (remoteFileEntry) {
         await this.updateFileEntry(remoteFileEntry.fork().markDeleted());
       }

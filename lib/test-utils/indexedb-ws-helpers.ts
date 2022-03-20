@@ -32,6 +32,7 @@ export const setupMockWorkspace = async (wsInfo: Partial<WorkspaceInfo>) => {
   );
 
   const existing = (await idb.get('workspaces/2')) || [];
+
   if (existing.find((w: WorkspaceInfo) => w.name === wsInfo.name)) {
     throw new Error(`${wsInfo.name} workspace already exists`);
   }

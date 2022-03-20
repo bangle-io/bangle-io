@@ -10,6 +10,7 @@ const unique = generateUid(4);
 class ObjectUID extends WeakMap {
   get(obj: any): string {
     let uid = super.get(obj);
+
     if (uid) {
       return uid;
     }

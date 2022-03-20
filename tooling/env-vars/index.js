@@ -39,6 +39,7 @@ function getAppEnv(isProd) {
     case 'deploy-preview':
     case 'branch-deploy': {
       const branch = process.env.BRANCH;
+
       if (branch === 'staging') {
         return 'staging';
       }

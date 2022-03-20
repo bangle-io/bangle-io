@@ -79,6 +79,7 @@ async function checkDepConstraints() {
     const allowedDeps = depConstraints[parentWorktree.name];
     const actualDeps = w.workspaceDeps;
     const outsideDep = actualDeps.find((r) => !allowedDeps.includes(r));
+
     if (outsideDep) {
       throw new Error(`${outsideDep} is not allowed for ${w.name}`);
     }
@@ -104,6 +105,7 @@ function checkMultipleInstances() {
     );
 
   const faultyDeps = output.filter((r) => r.children.Instances > 1);
+
   if (faultyDeps.length > 0) {
     console.log('\nPackages with more than one instances');
     console.log(

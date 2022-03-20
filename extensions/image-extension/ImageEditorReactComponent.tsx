@@ -112,6 +112,7 @@ const updateImageNodeAttribute =
       return false;
     }
     const { node } = state.selection;
+
     if (node.type !== state.schema.nodes.image) {
       return false;
     }
@@ -134,6 +135,7 @@ function getSelectedImageNodeScale(state: EditorState) {
     return undefined;
   }
   const { node } = state.selection;
+
   if (node.type !== state.schema.nodes.image) {
     return undefined;
   }

@@ -86,6 +86,7 @@ test.describe.parallel('backlink workflow', () => {
       '.editor_editor-display-popup .bangle-editor p',
     );
     const coOrdinates = await popupPara?.boundingBox();
+
     if (!coOrdinates) {
       throw new Error('Coordinates not set');
     }

@@ -34,6 +34,7 @@ export function useRegisterSW() {
         },
         onRegistered(r: ServiceWorkerRegistration | undefined) {
           log('on registered');
+
           if (intervalRef) {
             clearInterval(intervalRef);
             intervalRef = null;

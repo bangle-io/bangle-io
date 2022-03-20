@@ -488,6 +488,7 @@ describe('AppState', () => {
         },
         appendAction(actions): any {
           slice1Actions.push([...actions]);
+
           if (actions.some((a) => a.name.startsWith('2-'))) {
             return {
               name: '1-appended',
@@ -510,6 +511,7 @@ describe('AppState', () => {
         },
         appendAction(actions): any {
           slice2Actions.push([...actions]);
+
           if (
             (actions.some((a) => a.name.startsWith('1-')) && times < 4) ||
             actions[0].name === 'start'

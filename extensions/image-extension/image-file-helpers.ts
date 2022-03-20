@@ -31,6 +31,7 @@ export function imageDimensionFromWsPath(
   const { fileName } = resolvePath(imageWsPath);
   const dimensionRegex = /.*-(\d+x\d+)\..*/;
   const result = dimensionRegex.exec(fileName);
+
   if (result?.[1]) {
     const [width, height] = result[1].split('x').map((r) => parseInt(r, 10));
 
@@ -64,6 +65,7 @@ export async function setImageMetadataInWsPath(
 ) {
   const existingDimension = imageDimensionFromWsPath(imageWsPath);
   let { fileName } = resolvePath(imageWsPath);
+
   if (addTimestamp) {
     const matches = matchAllPlus(/-\d{17}/g, fileName).filter((r) => r.match); // Array.from(fileName.matchAll(/-\d{17}/g));
     for (const match of matches) {
@@ -81,6 +83,7 @@ export async function setImageMetadataInWsPath(
     );
   }
   let timestamp = '';
+
   if (addTimestamp) {
     const dayJs = await getDayJs();
     timestamp = '-' + dayJs(Date.now()).format(dayFormat);
@@ -148,6 +151,7 @@ export function getImageAltScaleFactor(alt?: string) {
     alt = '';
   }
   const result = scaleRegex.exec(alt);
+
   if (result?.[1]) {
     return parseFloat(result[1]);
   }
@@ -161,6 +165,7 @@ export function updateImageAltScaleFactor(alt?: string, scaleFactor = 1) {
     alt = '';
   }
   const match = scaleRegex.exec(alt);
+
   if (match && match[1]) {
     alt = alt.split(`-scale${match[1]}`).join('');
   }

@@ -44,12 +44,14 @@ export function genericAtomNodeSearch(
   }
 
   let parentName = parent.type.name;
+
   if (parentName === 'doc') {
     parentName = node.type.name;
   }
 
   const prevNode = doc.resolve(pos).nodeBefore;
   let textBefore = '';
+
   if (!prevNode) {
     textBefore = '';
   } else {
@@ -67,6 +69,7 @@ export function genericAtomNodeSearch(
   let textAfter = '';
   // adding 1 to position to skip past the node
   const nextNode = doc.resolve(pos + 1).nodeAfter;
+
   if (!nextNode) {
     textAfter = '';
   } else {

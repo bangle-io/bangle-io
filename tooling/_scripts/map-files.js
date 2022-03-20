@@ -59,6 +59,7 @@ async function mapFiles(dir = '.', mapper, { ignore = () => false } = {}) {
   );
   for (const [filePath, content] of fileData) {
     const newContent = await mapper(filePath, content);
+
     if (newContent !== content) {
       await fs.writeFile(filePath, newContent, 'utf-8');
     }
@@ -68,6 +69,7 @@ async function mapFiles(dir = '.', mapper, { ignore = () => false } = {}) {
 async function getWorktreeWorkspaces(worktreeName) {
   const workspaces = await walkWorkspace();
   const worktree = (await getWorktrees()).find((w) => w.name === worktreeName);
+
   if (!worktree) {
     throw new Error(`Cannot find worktree ${worktreeName} .`);
   }
@@ -93,6 +95,7 @@ async function getParentWorktree(workspaceName) {
   const worktrees = await getWorktrees();
   for (const worktree of worktrees) {
     const workspaces = await getWorktreeWorkspaces(worktree.name);
+
     if (workspaces.find((w) => w.name === workspaceName)) {
       return worktree;
     }

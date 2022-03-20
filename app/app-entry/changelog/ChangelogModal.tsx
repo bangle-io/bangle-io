@@ -139,6 +139,7 @@ function useLastSeenChangelog(showChangelog: boolean) {
   // Update the last seen whenever a user sees a changelog
   useEffect(() => {
     const topHeading = getTopHeading();
+
     if (showChangelog && topHeading && lastSeenHeading !== topHeading) {
       updateLastSeenHeading(topHeading);
     }
@@ -147,6 +148,7 @@ function useLastSeenChangelog(showChangelog: boolean) {
   // sync the current state with the global ui store
   useEffect(() => {
     const hasUpdates = lastSeenHeading !== getTopHeading();
+
     if (hasUpdates !== changelogHasUpdates) {
       dispatch({
         name: 'action::@bangle.io/slice-ui:UPDATE_NEW_CHANGELOG',

@@ -24,6 +24,7 @@ export const initialSelectionEffect: SideEffect = () => {
       for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
         const currentEditor = getEditor(i)(store.state);
         const prevEditor = getEditor(i)(prevState);
+
         if (prevEditor && currentEditor !== prevEditor) {
           updateInitialSelection(i)(prevState, store.dispatch);
         }
@@ -124,6 +125,7 @@ export const watchEditorScrollEffect: SideEffect = () => {
       const updateScrollPos = () => {
         for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
           const currentEditor = getEditor(i)(store.state);
+
           if (!currentEditor?.destroyed) {
             updateScrollPosition(i)(store.state, store.dispatch);
           }
@@ -147,6 +149,7 @@ export const watchEditorScrollEffect: SideEffect = () => {
 
       abortSignal.addEventListener('abort', () => {
         deb.cancel();
+
         if (isWindow) {
           window.removeEventListener('scroll', deb, opts);
         }

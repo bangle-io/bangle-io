@@ -64,6 +64,7 @@ export function NewNoteInputModal({
           return;
         }
         updateError(error);
+
         if (!(error instanceof PathValidationError)) {
           throw error;
         }

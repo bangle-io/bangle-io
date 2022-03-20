@@ -134,6 +134,7 @@ export async function pushWsPathToPrimary(
     ([wsPath]) => (window as any)._e2eHelpers._pushWsPath(wsPath),
     [wsPath],
   );
+
   if (waitForEditorToLoad) {
     await waitForEditorIdToLoad(page, 0);
   }
@@ -147,6 +148,7 @@ export async function pushWsPathToSecondary(
     ([wsPath]) => (window as any)._e2eHelpers._pushWsPath(wsPath, true),
     [wsPath],
   );
+
   if (waitForEditorToLoad) {
     await waitForEditorIdToLoad(page, 1);
   }

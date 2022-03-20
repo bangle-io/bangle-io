@@ -113,6 +113,7 @@ function EditorInner({
   useEffect(() => {
     return () => {
       const editorProxy = editorRef.current;
+
       if (editorProxy) {
         setEditorUnmounted(editorId, editorProxy.proxy as any)(
           bangleStore.state,

@@ -45,6 +45,7 @@ const extension = Extension.create({
           const mark = schema.mark(paletteMarkName, { trigger });
 
           const textBefore = selection.$from.nodeBefore?.text;
+
           // Insert a space so we follow the convention of <space> trigger
           if (textBefore && !textBefore.endsWith(' ')) {
             tr.replaceSelectionWith(schema.text(' '), false);

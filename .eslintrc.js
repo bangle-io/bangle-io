@@ -171,6 +171,9 @@ module.exports = {
         prev: '*',
         next: 'return',
       },
+
+      { blankLine: 'always', prev: '*', next: 'if' },
+      { blankLine: 'any', prev: 'block-like', next: 'if' },
     ],
 
     'lines-between-class-members': [
@@ -181,7 +184,7 @@ module.exports = {
   },
   settings: {
     'jest': {
-      version: '26',
+      version: '27',
     },
     'react': {
       version: '17',

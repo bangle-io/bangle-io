@@ -51,6 +51,7 @@ export function NoteOutline() {
   const updateHeadingNodes = useCallback(() => {
     const state =
       focusedEditorId != null && getEditorState(focusedEditorId)(store.state);
+
     if (!state) {
       updateHeadingsState(undefined);
 
@@ -70,6 +71,7 @@ export function NoteOutline() {
     (sOperation) => {
       if (sOperation.name === WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP) {
         const editorId: unknown = sOperation.value?.editorId;
+
         // change is from an editor which doesnt have id or the operation
         // is for a different editorId
         if (typeof editorId !== 'number' || editorId !== focusedEditorId) {
@@ -89,6 +91,7 @@ export function NoteOutline() {
     (item: HeadingNodes[0]) => {
       const focusedEditor =
         focusedEditorId != null && getEditor(focusedEditorId)(store.state);
+
       if (focusedEditor) {
         if (!focusedEditor || focusedEditor.destroyed) {
           return;
@@ -131,6 +134,7 @@ export function NoteOutline() {
       {headingNodes?.map((r, i) => {
         let isQuiet: Parameters<typeof ActionButton>[0]['isQuiet'] = 'hoverBg';
         let className = '';
+
         if (firstNodeInViewPort === r) {
           isQuiet = false;
           className = 'note-outline_first-node-in-viewport';
@@ -190,6 +194,7 @@ export function useAutomaticScrollNodeIntoView(
 
   useEffect(() => {
     let callbackId: number | null = null;
+
     if (!scrollIntoViewInProgress.current) {
       scrollIntoViewInProgress.current = true;
       callbackId = safeRequestIdleCallback(scrollHeadingNodeIntoView);

@@ -134,8 +134,10 @@ function toSessionStorage(obj: JsonValue) {
 function retrieveLocalStorage(): any {
   try {
     const item = localStorage.getItem(persistKey);
+
     if (typeof item === 'string') {
       const val = JSON.parse(item);
+
       if (val.schema === SCHEMA_VERSION) {
         return val.data;
       }
@@ -152,8 +154,10 @@ function retrieveLocalStorage(): any {
 function retrieveSessionStorage(): any {
   try {
     const item = sessionStorage.getItem(persistKey);
+
     if (typeof item === 'string') {
       const val = JSON.parse(item);
+
       if (val.schema === SCHEMA_VERSION) {
         return val.data;
       }

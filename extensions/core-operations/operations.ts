@@ -18,6 +18,7 @@ export function downloadWorkspace() {
     dispatch: ApplicationStore<any, WorkspaceSliceAction>['dispatch'],
   ) => {
     const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
+
     if (!wsName) {
       showNotification({
         severity: 'error',
@@ -129,6 +130,7 @@ function filePicker(): Promise<File> {
       'change',
       () => {
         const file = input.files?.[0];
+
         if (file) {
           res(file);
         } else {

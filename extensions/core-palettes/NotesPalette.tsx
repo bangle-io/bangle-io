@@ -123,6 +123,7 @@ const NotesPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
       (getUid, sourceInfo) => {
         const uid = getUid(items);
         const item = items.find((item) => item.uid === uid);
+
         if (item) {
           pushWsPath(
             item.data.wsPath,
@@ -234,6 +235,7 @@ export function useSearchWsPaths(query: string) {
 
   const filteredOtherWsPaths = useMemo(() => {
     const shownInRecentSet = new Set(filteredRecentWsPaths);
+
     if (!filteredFzfItems) {
       return [];
     }
@@ -262,6 +264,7 @@ function useSearchNotePaths(query: string, wsName: string | undefined) {
   useEffect(() => {
     const controller = new AbortController();
     let destroyed = false;
+
     if (wsName) {
       naukarProxy
         .abortableFzfSearchNoteWsPaths(

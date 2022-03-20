@@ -299,6 +299,7 @@ function getThemePreference() {
 function setRootWidescreenClass(widescreen?: boolean) {
   const root = document.getElementById('root');
   const body = document.body;
+
   if (widescreen) {
     root?.classList.add('widescreen');
     body?.classList.add('widescreen');

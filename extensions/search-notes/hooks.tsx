@@ -92,6 +92,7 @@ export function useSearchNotes() {
       .then((result) => {
         if (startCounter === counterRef.current) {
           updatePendingSearch(false);
+
           if (!controller.signal.aborted) {
             updateResults(result);
           }

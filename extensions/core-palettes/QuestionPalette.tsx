@@ -31,6 +31,7 @@ const QuestionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
         (getUid, sourceInfo) => {
           const uid = getUid(items);
           const item = items.find((item) => item.uid === uid);
+
           if (item) {
             updatePalette(item.data.type);
           }
@@ -97,6 +98,7 @@ export const questionPalette: ExtensionPaletteType = {
 
 function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
+
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));
   }

@@ -22,6 +22,7 @@ function filterFlatMap<R, K extends keyof R>(
   flatten = true,
 ): Array<Unnest<Exclude<R[K], undefined>>> {
   let items = array.filter((item) => Boolean(item[field]));
+
   if (flatten) {
     return items.flatMap((item) => item[field]) as any;
   }
@@ -84,6 +85,7 @@ export class ExtensionRegistry {
     const result = this.editorConfig
       .map((e) => {
         const { ReactComponent } = e;
+
         if (ReactComponent) {
           return <ReactComponent key={e.name} />;
         }
@@ -99,6 +101,7 @@ export class ExtensionRegistry {
     const result = this.extensions
       .map((extension) => {
         const { ReactComponent } = extension.application;
+
         if (ReactComponent) {
           return <ReactComponent key={extension.name} />;
         }

@@ -52,6 +52,7 @@ export function useRecencyWatcher(
       const newItems = items.sort((a, b) => {
         const aRank = operationHistory[a.uid];
         const bRank = operationHistory[b.uid];
+
         if (aRank && bRank) {
           return bRank - aRank;
         }
@@ -75,6 +76,7 @@ export function useRecencyWatcher(
         const firstNotRecent = newItems.find(
           (a) => operationHistory[a.uid] == null,
         );
+
         if (firstNotRecent) {
           firstNotRecent.showDividerAbove = true;
         }

@@ -157,6 +157,7 @@ export function storeSyncSlice<
                   const parsedAction = (store as ApplicationStore).parseAction(
                     data.action,
                   );
+
                   if (parsedAction && actionReceiveFilter(parsedAction)) {
                     log('received action', parsedAction);
                     store.dispatch(parsedAction);

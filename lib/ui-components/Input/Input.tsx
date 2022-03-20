@@ -37,6 +37,7 @@ export const Input = React.forwardRef<
     ref,
   ) => {
     let valueLength = 0;
+
     // The following if else exists for cases we want to use uncontrolled
     // input component i.e. `value` prop will be undefined
     if (value) {

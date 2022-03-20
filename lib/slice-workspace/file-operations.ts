@@ -193,6 +193,7 @@ export const renameNote = (targetWsPath: string, newWsPath: string) => {
 export const getNote = (wsPath: string) => {
   return workspaceSliceKey.asyncOp(async (_, dispatch, store) => {
     const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
+
     if (!wsName) {
       return undefined;
     }
@@ -222,6 +223,7 @@ export const getNote = (wsPath: string) => {
 export const checkFileExists = (wsPath: string) => {
   return workspaceSliceKey.asyncOp(async (_, dispatch, store) => {
     const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
+
     if (!wsName) {
       return undefined;
     }
@@ -247,6 +249,7 @@ export const createNote = (
 ) => {
   return workspaceSliceKey.asyncOp(async (_, dispatch, store) => {
     const { wsName } = workspaceSliceKey.getSliceStateAsserted(store.state);
+
     if (!wsName) {
       return undefined;
     }

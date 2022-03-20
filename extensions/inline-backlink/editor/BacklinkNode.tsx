@@ -58,11 +58,13 @@ export function BacklinkNode({
   const onClick = useCallback(
     (event) => {
       event.preventDefault();
+
       if (!wsName || !noteWsPaths) {
         return;
       }
       let newTab = false;
       let shift = false;
+
       if (
         event.ctrlKey ||
         event.metaKey || // apple
@@ -245,6 +247,7 @@ async function handleClick({
 export const renderReactNodeView: RenderReactNodeView = {
   [backlinkNodeName]: ({ nodeViewRenderArg }) => {
     const { path, title } = nodeViewRenderArg.node.attrs;
+
     if (typeof path !== 'string') {
       return <span>Invalid Path</span>;
     }
@@ -293,6 +296,7 @@ function getMatchingWsPath(wsName: string, path: string, allWsPaths: string[]) {
   }
 
   let match = _findMatch(wsName, path, allWsPaths);
+
   if (!match) {
     // Fall back to case insensitive if no exact match
     match = _findMatch(

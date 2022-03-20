@@ -17,6 +17,7 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
 
     const items = useMemo(() => {
       const { primaryEditor } = editorContext;
+
       if (!primaryEditor || primaryEditor.destroyed) {
         return [];
       }
@@ -65,6 +66,7 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
 
         const uid = getUid(items);
         const item = items.find((item) => item.uid === uid);
+
         if (item) {
           // Using this to wait for editor to get focused
           safeRequestAnimationFrame(() => {
@@ -129,6 +131,7 @@ const HeadingPalette: ExtensionPaletteType['ReactComponent'] = React.forwardRef(
 
 function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
+
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));
   }

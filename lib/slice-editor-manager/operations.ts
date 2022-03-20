@@ -37,6 +37,7 @@ export function getEditor(editorId: EditorIdType) {
 export function focusEditor(editorId: EditorIdType = 0) {
   return (state: AppState): boolean => {
     const editor = getEditor(editorId)(state);
+
     if (editor) {
       editor?.focusView();
 
@@ -124,6 +125,7 @@ export function getEditorState(editorId: EditorIdType) {
 export function geEditorScrollPosition(editorId: EditorIdType, wsPath: string) {
   return (state: AppState): number | undefined => {
     const sliceState = editorManagerSliceKey.getSliceState(state);
+
     if (!sliceState) {
       return undefined;
     }
@@ -217,6 +219,7 @@ export function getInitialSelection(
 ) {
   return (state: AppState): Selection | undefined => {
     const sliceState = editorManagerSliceKey.getSliceState(state);
+
     if (!sliceState) {
       return undefined;
     }
@@ -233,6 +236,7 @@ export function getInitialSelection(
           ? Selection.atEnd(doc)
           : Selection.fromJSON(doc, initialSelection);
       let { from } = selection;
+
       if (from >= doc.content.size) {
         selection = Selection.atEnd(doc);
       } else {
@@ -275,6 +279,7 @@ export function dispatchEditorCommand<T>(
 ) {
   return (state: AppState): T | false => {
     const currentEditor = getEditor(editorId)(state);
+
     if (!currentEditor) {
       return false;
     }

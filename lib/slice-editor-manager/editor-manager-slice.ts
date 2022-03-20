@@ -46,6 +46,7 @@ const applyState = (
     }
     case 'action::@bangle.io/slice-editor-manager:set-editor': {
       const { editorId, editor } = action.value;
+
       if (editorId >= MAX_OPEN_EDITORS) {
         throw new Error('editorId is out of range');
       }
@@ -62,6 +63,7 @@ const applyState = (
 
     case 'action::@bangle.io/slice-editor-manager:on-focus-update': {
       const editorId = action.value.editorId;
+
       if (typeof editorId === 'number' && editorId >= MAX_OPEN_EDITORS) {
         throw new Error('editorId is out of range');
       }
@@ -121,6 +123,7 @@ export function editorManagerSlice(): Slice<
       },
       apply(action, state) {
         const newState = applyState(action, state);
+
         if (newState === state) {
           return state;
         }
@@ -154,6 +157,7 @@ export function editorManagerSlice(): Slice<
         let newEditorConfig = sliceState.editorConfig;
         for (let i = 0; i < MAX_OPEN_EDITORS; i++) {
           const editor = sliceState.editors[i];
+
           if (editor) {
             const { editorId, selectionJson, wsPath } = calculateSelection(
               i,

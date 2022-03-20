@@ -19,12 +19,14 @@ function oldPathToTree(files) {
     for (const part of path) {
       counter++;
       let match = chain.find(({ name }) => name === part);
+
       if (!match) {
         match = {
           name: part,
           children: [],
           id: path.slice(0, counter).join('/'),
         };
+
         if (counter === path.length) {
           match.path = f;
           delete match.children;
@@ -77,6 +79,7 @@ function understandOldFunc(data) {
       // TODO the prepending of .md is a hack because
       // resolvePath doesnt do dirs right now
       const endsWithMd = r.endsWith('.md');
+
       if (!endsWithMd) {
         r += '.md';
       }

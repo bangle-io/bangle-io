@@ -44,6 +44,7 @@ export function WatchWorkspace() {
   useEffect(() => {
     if (lastMessage) {
       const { type, tabName, payload } = lastMessage;
+
       if (payload.wsName !== wsName) {
         log('different wsName', payload.wsName);
 

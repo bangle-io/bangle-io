@@ -18,6 +18,7 @@ export function ButtonContent({
   const hasText = Boolean(text);
   const hasIcon = Boolean(icon);
   let iconSize = '';
+
   if (size === 'small') {
     iconSize = 'w-4 h-4';
   } else if (size === 'medium') {

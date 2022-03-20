@@ -137,6 +137,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     const file = await this.readFile(wsPath, opts);
+
     if (!file) {
       throw new BaseError({
         message: 'Cannot rename as file not found',

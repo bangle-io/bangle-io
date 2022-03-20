@@ -11,6 +11,7 @@ export function useDispatchPrimaryEditor(dry = true) {
         return false;
       }
       const { dispatch, state } = primaryEditor.view;
+
       if (dry) {
         const result = editorCommand(...params)(state);
 

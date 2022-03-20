@@ -19,6 +19,7 @@ export function fileWsPathsToFlatDirTree(wsFilePaths: string[]) {
     let pos;
     while ((pos = str.lastIndexOf('/')) !== -1) {
       str = str.substring(0, pos);
+
       // if parent set has the str
       // it has already worked on this before
       // and we can safely skip it.
@@ -37,6 +38,7 @@ export function fileWsPathsToFlatDirTree(wsFilePaths: string[]) {
     for (let i = 0; i < till; i++) {
       const aSide = aSplit[i];
       const bSide = bSplit[i];
+
       if (aSide === bSide) {
         continue;
       }

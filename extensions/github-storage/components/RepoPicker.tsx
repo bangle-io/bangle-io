@@ -58,6 +58,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
           }
         } catch (e) {
           onDismiss();
+
           if (e instanceof Error) {
             showNotification({
               uid: 'failure-list-repos',
@@ -76,6 +77,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
       onDismiss();
       const uid = getItemUid(items);
       const matchingRepo = items.find((r) => r.uid === uid)?.data;
+
       if (matchingRepo) {
         createWorkspace(matchingRepo.name, 'github-storage', {
           githubToken: githubToken,

@@ -92,6 +92,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
   async newWorkspaceMetadata(wsName: string, createOpts: any) {
     const { rootDirHandle } = createOpts;
+
     if (!rootDirHandle) {
       throw new Error(
         `rootDirHandle is necessary for creating nativefs workspace`,

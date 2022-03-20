@@ -54,6 +54,7 @@ export function notificationSlice() {
 
           case 'action::@bangle.io/slice-notification:DISMISS_NOTIFICATION': {
             const { uid } = action.value;
+
             if (state.notifications.some((n) => n.uid === uid)) {
               return {
                 ...state,

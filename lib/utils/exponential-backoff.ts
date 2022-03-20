@@ -18,6 +18,7 @@ export async function exponentialBackoff(
       return;
     }
     const res = await fn(i + 1);
+
     if (res === true) {
       return;
     }

@@ -10,13 +10,16 @@ export function trimEndWhiteSpaceBeforeCursor(): Command {
     }
     const nodeBefore = state.selection.$from.nodeBefore;
     const nodeAfter = state.selection.$from.nodeAfter;
+
     // if nodeAfter exists the selection is not at the end
     if (nodeAfter) {
       return false;
     }
     const textBefore = nodeBefore?.text;
+
     if (textBefore && nodeBefore?.type.name === 'text') {
       const whiteSpaceChars = textBefore.length - textBefore.trimEnd().length;
+
       if (whiteSpaceChars > 0) {
         dispatch?.(
           state.tr.delete(

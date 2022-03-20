@@ -23,6 +23,7 @@ import { table, tableCell, tableHeader, tableRow } from '@bangle.dev/table';
 
 const headingSpec = (() => {
   const spec = heading.spec();
+
   if (spec) {
     return {
       ...spec,

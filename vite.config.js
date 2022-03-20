@@ -13,6 +13,7 @@ const config = ({ command, mode }) => {
 
   const hot = JSON.parse(envVars.appEnvs['process.env.BANGLE_HOT']);
   const port = argv.port;
+
   // NOTE: we are relying on cli passing port
   // as I couldnt find a reliable way to get the port
   // from vite. and we need port to do the proxy hack below
@@ -98,6 +99,7 @@ const config = ({ command, mode }) => {
 function generateManifest(appEnv) {
   const isProd = appEnv === 'production';
   let icons = [];
+
   if (isProd) {
     icons = [
       {

@@ -109,6 +109,7 @@ export class IndexedDBFileSystem extends BaseFileSystem {
       idb.keys(this._customStore),
       'Error listing files',
     );
+
     if (keys == null) {
       keys = [];
     }

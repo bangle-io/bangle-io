@@ -35,6 +35,7 @@ export function workerAbortHandler<T extends { [key: string]: any }>(
     ...workerMethods,
     __signalWorkerToAbort: (uniqueAbortId: string) => {
       const abort = abortControllers.get(uniqueAbortId);
+
       if (abort) {
         console.debug('aborted' + uniqueAbortId);
         abort.abort();

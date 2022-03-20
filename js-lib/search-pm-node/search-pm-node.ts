@@ -71,6 +71,7 @@ export async function searchPmNode(
           }
 
           let parentName = parent.type.name;
+
           if (parentName === 'doc') {
             parentName = node.type.name;
           }
@@ -122,6 +123,7 @@ export async function searchPmNode(
                 printAfter: atomSearchType.printAfter,
               },
             );
+
             if (result) {
               results.matches.push(result);
             }
@@ -179,6 +181,7 @@ export function matchText(
   while ((match = regex1.exec(text)) !== null) {
     count++;
     const [start, end] = [match.index, match.index + match[0]!.length];
+
     if (limit && count > limit) {
       break;
     }
@@ -196,6 +199,7 @@ export function getMatchFragment(
 ) {
   const prefixStart = Math.max(0, start - maxChars);
   let prefix = str.substring(prefixStart, start).trimStart();
+
   if (prefixStart > 0) {
     // to avoid cutting of words start from
     prefix = startStringWithWord(prefix);
@@ -203,6 +207,7 @@ export function getMatchFragment(
   }
 
   let suffix = str.substr(end, maxChars).trimEnd();
+
   if (end + maxChars < str.length) {
     suffix = endStringWithWord(suffix);
     suffix += '…';
@@ -213,6 +218,7 @@ export function getMatchFragment(
 
 export function startStringWithWord(str: string) {
   const whiteSpaceIndex = str.indexOf(' ');
+
   if (whiteSpaceIndex === -1) {
     return str;
   }
@@ -223,6 +229,7 @@ export function startStringWithWord(str: string) {
 
 export function endStringWithWord(str: string) {
   const whiteSpaceIndex = str.lastIndexOf(' ');
+
   if (whiteSpaceIndex === -1) {
     return str;
   }

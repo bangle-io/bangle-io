@@ -191,6 +191,7 @@ const RenderItems = ({
       const parentsToKeep = collapsedRef.current.filter((r) => {
         return !activeFilePath.startsWith(r + '/');
       });
+
       if (parentsToKeep.length < collapsedRef.current.length) {
         toggleCollapse(parentsToKeep);
       }
@@ -371,6 +372,7 @@ function RenderRow({
               hint="New file"
               onClick={async (e) => {
                 e.stopPropagation();
+
                 if (depth === 0) {
                   createNewFile();
                 } else {
@@ -387,6 +389,7 @@ function RenderRow({
               hintPos="bottom-right"
               onClick={async (e) => {
                 e.stopPropagation();
+
                 if (
                   window.confirm(`Are you sure you want to delete "${name}"? `)
                 ) {

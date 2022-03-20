@@ -56,6 +56,7 @@ export function watchPluginHost(
             () => {
               const state = view.state;
               const pluginState = key.getState(state);
+
               if (pluginState && pluginState?.size > 0) {
                 pluginState.forEach((operation) => {
                   // Avoid sending any thing related to editor instance

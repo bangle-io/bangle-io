@@ -17,6 +17,7 @@ export function CoreActionsHandler() {
           dialogName: ['new-note-modal', 'rename-note-modal'],
         },
       });
+
       if (focusEditor) {
         primaryEditor?.focusView();
       }

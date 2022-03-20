@@ -45,6 +45,7 @@ export async function createFile(
     dirHandle: FileSystemDirectoryHandle,
   ): Promise<FileSystemFileHandle> => {
     const [parentName, ...rest] = path;
+
     if (!parentName) {
       throw new Error('parentName cannot be empty');
     }

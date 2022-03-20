@@ -17,6 +17,7 @@ module.exports = (env, argv) => {
 
   const mode = isProduction ? 'production' : 'development';
   const buildPath = path.resolve(__dirname, 'build');
+
   // eslint-disable-next-line no-process-env
   if (isProduction && process.env.NODE_ENV !== 'production') {
     throw new Error('NODE_ENV not production');

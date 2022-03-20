@@ -48,6 +48,7 @@ export function StorageTypeDropdown({
       }
       onAction={(key) => {
         let _key = key.toString();
+
         if (BROWSER === _key || FILE_SYSTEM === _key) {
           updateStorageType(_key);
         } else {

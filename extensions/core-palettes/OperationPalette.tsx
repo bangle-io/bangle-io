@@ -49,6 +49,7 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
       (getUid, sourceInfo) => {
         const uid = getUid(items);
         const item = items.find((item) => item.uid === uid);
+
         if (item) {
           dispatchSerialOperation({ name: item.data.name });
           updateRecency(uid);
@@ -115,6 +116,7 @@ export const operationPalette: ExtensionPaletteType = {
 
 function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
+
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));
   }

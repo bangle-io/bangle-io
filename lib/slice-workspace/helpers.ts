@@ -42,6 +42,7 @@ export function getPrevOpenedWsPathsFromSearch(
 ): OpenedWsPaths | undefined {
   let searchParams = new URLSearchParams(search);
   let prev = searchParams.get('ws_paths');
+
   if (prev) {
     try {
       let openedWsPaths = OpenedWsPaths.createFromArray(JSON.parse(prev));
@@ -113,6 +114,7 @@ export function storageProviderFromExtensionRegistry(
   let proxy = new Proxy(provider, {
     get(target, method) {
       let fun = Reflect.get(target, method);
+
       if (typeof fun === 'function') {
         return <T>(...args: T[]) => {
           try {

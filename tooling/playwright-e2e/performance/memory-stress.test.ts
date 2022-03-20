@@ -61,6 +61,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
       ([w]) => {
         const win: any = window;
         const editor = win._e2eHelpers._getEditors()?.[0];
+
         if (!editor) {
           return false;
         }
@@ -98,6 +99,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
     const size = await page.evaluate(() => {
       return new Set((window as any).refs.map((r: any) => r.deref())).size;
     });
+
     if (size > FINAL_EDITORS_IN_MEMORY && attempt < 10) {
       return getEditorCountInMemory(attempt + 1);
     }

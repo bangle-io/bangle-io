@@ -90,6 +90,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
         (getUid, sourceInfo) => {
           const uid = getUid(items);
           const item = items.find((item) => item.uid === uid);
+
           if (item) {
             goToWsNameRoute(item.data.workspace.name, {
               newTab: sourceInfo.metaKey,
@@ -146,6 +147,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
 
 function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase().trim();
+
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));
   }

@@ -63,6 +63,7 @@ export function WorkspaceNativefsAuthBlockade({ wsName }: { wsName: string }) {
     const result = await requestNativeBrowserFSPermission(
       wsInfo.metadata.rootDirHandle,
     );
+
     if (result) {
       onGranted();
 

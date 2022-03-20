@@ -61,6 +61,7 @@ export function keybindingsHelper(bindings: {
   function normalizeKeyName(name: string): string {
     let parts = name.split(/-(?!$)/),
       result = parts[parts.length - 1]!;
+
     if (result === 'Space') {
       result = ' ';
     }
@@ -106,6 +107,7 @@ export function keybindingsHelper(bindings: {
     let name = keyName(event),
       isChar = name.length === 1 && name !== ' ';
     const direct = map[modifiers(name, event, !isChar)];
+
     // if the handler returns true prevent default it
     if (direct && direct()) {
       event.preventDefault();
@@ -139,6 +141,7 @@ export function weakCache<T extends (arg: any) => any>(fn: T): T {
   const cache = new WeakMap();
   const res = (arg: any) => {
     let value = cache.get(arg);
+
     if (value) {
       return value;
     }
@@ -158,6 +161,7 @@ export function dedupeArray<T>(array: T[]) {
 /** Based on https://developer.mozilla.org/docs/Web/HTTP/Browser_detection_using_the_user_agent */
 export function isTouchDevice() {
   var hasTouchScreen = false;
+
   if ('maxTouchPoints' in navigator) {
     hasTouchScreen = navigator.maxTouchPoints > 0;
   } else if ('msMaxTouchPoints' in navigator) {
@@ -168,6 +172,7 @@ export function isTouchDevice() {
       typeof window !== 'undefined' &&
       window.matchMedia &&
       matchMedia('(pointer:coarse)');
+
     if (mQ && mQ.media === '(pointer:coarse)') {
       hasTouchScreen = !!mQ.matches;
     } else if ('orientation' in window) {
@@ -198,6 +203,7 @@ export async function getDayJs({} = {}): Promise<typeof import('dayjs')> {
   dayJs = _dayjs.default || _dayjs;
   _localizedFormat = _localizedFormat.default || _localizedFormat;
   dayJs?.extend(_localizedFormat);
+
   if (!dayJs) {
     throw new Error('dayJs cannot be undefined');
   }
@@ -383,6 +389,7 @@ export function shallowEqual<T extends {}>(objA: any, objB: any): boolean {
 export function makeSafeForCSS(name: string) {
   return name.replace(/[^a-z0-9]/g, function (s: string) {
     let c = s.charCodeAt(0);
+
     if (c === 32) {
       return '-';
     }

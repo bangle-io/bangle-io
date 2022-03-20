@@ -34,6 +34,7 @@ export function pathnameToWsPath(pathname?: string) {
   }
 
   const wsName = pathnameToWsName(pathname);
+
   if (!wsName) {
     return undefined;
   }
@@ -84,6 +85,7 @@ export function searchToWsPath(search?: string) {
 
   const newSearch = new URLSearchParams(search);
   const res = newSearch.get('secondary');
+
   if (res) {
     return decodeURIComponent(res);
   }

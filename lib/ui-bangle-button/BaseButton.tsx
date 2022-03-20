@@ -76,6 +76,7 @@ export const BaseButton = ({
 
   style = { ...style };
   style.color = color;
+
   if (isActive) {
     style.color = activeColor;
   }
@@ -86,6 +87,7 @@ export const BaseButton = ({
 
   if (isHovered) {
     style.color = hoverColor;
+
     if (!isQuiet || isQuiet === 'hoverBg') {
       style.backgroundColor = hoverBgColor;
     }
@@ -93,6 +95,7 @@ export const BaseButton = ({
 
   if (isPressed) {
     style.backgroundColor = pressedBgColor;
+
     if (animateOnPress) {
       style.transform = 'scale(var(--uiBangleButton-depression))';
     }

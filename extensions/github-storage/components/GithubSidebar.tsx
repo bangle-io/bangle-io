@@ -70,6 +70,7 @@ function ModifiedEntries({
         updateModifiedEntries((prevEntries) => {
           const newWsPaths = result.map((e) => e.uid);
           const oldWsPaths = prevEntries?.map((e) => e.uid) || [];
+
           if (!shallowCompareArray(newWsPaths, oldWsPaths)) {
             return result;
           }

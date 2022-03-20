@@ -173,6 +173,7 @@ export class OpenedWsPaths {
 
   update(openedWsPath: OpenedWsPaths): OpenedWsPaths {
     const result = openedWsPath;
+
     // avoid changing instance
     if (result.equal(this)) {
       return this;
@@ -183,6 +184,7 @@ export class OpenedWsPaths {
 
   updateAllWsPaths(wsPaths: MaybeWsPath[]) {
     const result = new OpenedWsPaths(wsPaths);
+
     // avoid changing instance
     if (result.equal(this)) {
       return this;

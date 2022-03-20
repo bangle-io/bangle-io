@@ -23,6 +23,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
   const services = workerAbortable(({ abortWrapper }) => {
     const getNoteWsPaths: GetWsPaths = () => {
       const state = storeRef.current?.state;
+
       if (!state) {
         return undefined;
       }
@@ -34,6 +35,7 @@ export function abortableServices({ storeRef }: { storeRef: StoreRef }) {
 
     const getWsPaths: GetWsPaths = () => {
       const state = storeRef.current?.state;
+
       if (!state) {
         return undefined;
       }
@@ -122,6 +124,7 @@ function backupAllFiles(
 ) {
   return async (abortSignal: AbortSignal, wsName: string): Promise<File> => {
     const wsPaths = getWsPaths();
+
     if (!wsPaths || wsPaths.length === 0) {
       throw new BaseError({
         message: 'Can not backup an empty workspace',
@@ -135,6 +138,7 @@ function backupAllFiles(
 
     for (const wsPath of wsPaths) {
       const fileBlob = await getFile(wsPath);
+
       if (!fileBlob) {
         continue;
       }

@@ -176,6 +176,7 @@ export function useBroadcastChannel<T>(
     (data: T) => {
       if (!destroyedRef.current) {
         const lastSent = lastSentRef.current;
+
         if (
           lastSent &&
           Date.now() - (lastSent as number) < INFINITE_RECURSION_TIME_THRESHOLD
@@ -256,6 +257,7 @@ export function useClickToNote<T>(
         }
         let newTab = false;
         let shift = false;
+
         if (
           event.ctrlKey ||
           event.metaKey || // apple

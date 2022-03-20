@@ -20,6 +20,7 @@ const specRegistry = new SpecRegistry([...defaultSpecs(), editorTagSpec()]);
 
 const serialize = async (doc: any) => {
   let content = doc;
+
   if (typeof doc === 'function') {
     content = doc(specRegistry.schema);
   }

@@ -31,6 +31,7 @@ export function AppStateProvider({
         const primaryEditor = editorManagerSliceKey.getSliceState(
           bangleStore.state,
         )?.primaryEditor;
+
         if (primaryEditor) {
           console.log('debugging pm');
           import(

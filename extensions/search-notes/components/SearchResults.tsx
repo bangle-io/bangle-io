@@ -31,6 +31,7 @@ function useCollapseMarker(
         const onClick = () => {
           updateCache((c) => {
             const s = new Set(c);
+
             if (s.has(r)) {
               s.delete(r);
             } else {
@@ -86,11 +87,13 @@ export function SearchResults({
 
   useEffect(() => {
     let cancelled = false;
+
     if (currentlyClicked && primaryWsPath === currentlyClicked.wsPath) {
       // TODO this is a mess, we need a better api to know when the editor is ready
       setTimeout(() => {
         safeRequestAnimationFrame(() => {
           const editor = primaryEditor;
+
           if (cancelled || !editor || editor.destroyed) {
             return;
           }
@@ -112,6 +115,7 @@ export function SearchResults({
             //  - after some time set a text selection clearing the rectangle
 
             const parentNode = tr.doc.nodeAt(currentlyClicked.match.parentPos);
+
             if (parentNode) {
               tr = tr.setSelection(
                 NodeSelection.create(tr.doc, currentlyClicked.match.parentPos),

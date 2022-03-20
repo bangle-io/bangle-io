@@ -71,6 +71,7 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     } = opts;
 
     this._rootDirHandle = rootDirHandle;
+
     if (!this._rootDirHandle) {
       throw new Error('rootDirHandle must be provided');
     }
@@ -242,6 +243,7 @@ async function verifyPermission(
   filePath = '',
 ) {
   let permission = await hasPermission(rootDirHandle);
+
   if (!permission) {
     throw new NativeBrowserFileSystemError({
       message: `Permission rejected to read ${rootDirHandle.name}`,
@@ -278,6 +280,7 @@ function resolveFileHandle({
 
     const findChild = () => {
       const children = dirToChildMap.get(dirHandle);
+
       if (!children) {
         return undefined;
       }
@@ -314,6 +317,7 @@ function resolveFileHandle({
     parents.push(dirHandle);
 
     const [parentName, ...rest] = path;
+
     if (!parentName) {
       throw new Error('Parent name must be defined');
     }
@@ -397,6 +401,7 @@ export async function pickADirectory() {
       window as any
     ).showDirectoryPicker();
     let permission = await requestNativeBrowserFSPermission(dirHandle);
+
     if (!permission) {
       throw new NativeBrowserFileSystemError({
         message: 'The permission to edit directory was denied',

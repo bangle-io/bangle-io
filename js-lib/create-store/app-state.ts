@@ -67,6 +67,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
       for (var prop in sliceFields) {
         const slice = sliceFields[prop];
         const state = slice?.spec.state;
+
         if (
           slice &&
           slice.key === f.name &&
@@ -105,6 +106,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
       let i = -1;
       for (const slice of this.config.slices) {
         i++;
+
         if (!slice.spec.appendAction) {
           continue;
         }
@@ -117,6 +119,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
             n ? actions.slice(n) : actions,
             newInstance,
           );
+
         if (newAction) {
           newAction.appendedFrom = rootAction.name;
 
@@ -188,6 +191,7 @@ export class AppState<S = any, A extends BaseAction = any, Op = any> {
     for (var prop in sliceFields) {
       const slice = sliceFields[prop];
       const state = slice?.spec.state;
+
       if (state && state.stateToJSON) {
         result[prop] = state.stateToJSON.call(
           slice,

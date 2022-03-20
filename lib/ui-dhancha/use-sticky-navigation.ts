@@ -6,6 +6,7 @@ export function useStickyNavigation(
 ) {
   useEffect(() => {
     let callback: undefined | (() => void);
+
     if (!widescreen && activitybarRef.current) {
       callback = setupStickyNavigation(activitybarRef.current);
     }

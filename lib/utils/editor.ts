@@ -19,6 +19,7 @@ export function getScrollParentElement(editorId: number) {
 
 export function getEditorPluginMetadata(state: EditorState) {
   const result = EditorPluginMetadataKey.getState(state);
+
   if (!result) {
     throw new Error('EditorPluginMetadata cannot be undefined');
   }

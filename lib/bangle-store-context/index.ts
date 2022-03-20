@@ -39,6 +39,7 @@ export function useSliceState<SL, A extends BaseAction, S = SL>(
 
   useEffect(() => {
     const newState = sliceKey.getSliceState(store.state);
+
     if (newState && sliceState !== newState) {
       updateSliceState(newState);
     }

@@ -42,6 +42,7 @@ function getItemsAndHints(
   isItemDisabled: (item: PaletteItem) => boolean,
 ) {
   let items = [...timestampItems, ...editorItems];
+
   if (!items.every((item) => item instanceof PaletteItem)) {
     throw new Error(
       `uid: "${
@@ -230,6 +231,7 @@ function queryMatch<
 
 function strMatch(a: string[] | string, b: string): boolean {
   b = b.toLocaleLowerCase();
+
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));
   }

@@ -67,6 +67,7 @@ const createEvent = (
   options: { bubbles?: boolean; cancelable?: boolean; composed?: boolean } = {},
 ) => {
   let event;
+
   if (options.bubbles === undefined) {
     options.bubbles = true;
   }

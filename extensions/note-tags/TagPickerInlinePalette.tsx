@@ -22,6 +22,7 @@ export const createTagNode = (tagValue: string): Command => {
     view: EditorView | undefined,
   ) => {
     const nodeType = state.schema.nodes[tagNodeName];
+
     if (tagValue === '') {
       return false;
     }

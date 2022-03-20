@@ -83,6 +83,7 @@ export function InputPalette({
       const uid = getUid(items);
 
       let resolved = false;
+
       if (uid === 'input-confirm' && !error) {
         sleep(250).then(() => {
           if (!resolved) {

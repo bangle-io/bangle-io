@@ -65,6 +65,7 @@ export function mergeWsInfoRegistries(
 
   Object.entries(incomingReg).forEach(([wsName, wsInfo]) => {
     const existing = existingReg[wsName];
+
     if (!existing || existing.lastModified < wsInfo.lastModified) {
       newReg[wsName] = wsInfo;
     }

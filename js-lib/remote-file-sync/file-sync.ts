@@ -26,6 +26,7 @@ const isModifiedWrtAncestor = ({
   ancestorFileEntry: SyncFileEntry;
 }) => {
   const res = fileEqual(fileEntry, ancestorFileEntry);
+
   if (typeof res === 'boolean') {
     return !res;
   }
@@ -133,6 +134,7 @@ async function syncBothAreDefined(
       ancestorFileEntry,
       fileEntry,
     });
+
     if (isModified === true) {
       return FileState.Modified;
     } else if (isModified === false) {

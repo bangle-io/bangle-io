@@ -18,6 +18,7 @@ const getBrowserInfo = () => {
   } else if ((verOffset = nAgt.indexOf('Opera')) !== -1) {
     // In older Opera, version is after "Opera" or after "Version"
     browserName = 'Opera';
+
     if ((verOffset = nAgt.indexOf('Version')) !== -1) {
       browserVersion = nAgt.substring(verOffset + 8);
     } else {
@@ -34,6 +35,7 @@ const getBrowserInfo = () => {
   } else if ((verOffset = nAgt.indexOf('Safari')) !== -1) {
     // In Safari, version is after "Safari" or after "Version"
     browserName = 'Safari';
+
     if ((verOffset = nAgt.indexOf('Version')) !== -1) {
       browserVersion = nAgt.substring(verOffset + 8);
     } else {
@@ -50,6 +52,7 @@ const getBrowserInfo = () => {
     // In most other browsers, "name/version" is at the end of userAgent
     browserName = nAgt.substring(nameOffset, verOffset);
     browserVersion = nAgt.substring(verOffset + 1);
+
     if (browserName.toLowerCase() === browserName.toUpperCase()) {
       browserName = navigator.appName;
     }

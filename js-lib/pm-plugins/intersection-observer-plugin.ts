@@ -56,6 +56,7 @@ export function intersectionObserverPlugin({
 
       apply(tr, oldPluginState, oldState, newState) {
         const meta = tr.getMeta(pluginKey) as IntersectionObserverPluginState;
+
         if (meta) {
           let { minStartPosition: minPosition, maxStartPosition: maxPosition } =
             meta;
@@ -106,6 +107,7 @@ export function intersectionObserverPlugin({
 
           if (typeof ratio === 'number' && ratio > 0) {
             intersection++;
+
             if (typeof pos === 'number') {
               if (pos < state.minStartPosition) {
                 state.minStartPosition = pos;
@@ -208,6 +210,7 @@ export function getDocsChildren(view: EditorView): Set<Element> {
       child = child.children[0];
     }
     const node = child.nodeDOM;
+
     if (node instanceof Element) {
       positionMap.set(node, offset);
       list1.add(node);

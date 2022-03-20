@@ -129,6 +129,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
       ) => {
         const toJSON = (action: ExtractPageSliceAction<typeof actionName>) => {
           const { pendingNavigation } = action.value;
+
           if (!pendingNavigation) {
             return { pendingNavigation: null };
           }
@@ -146,6 +147,7 @@ export function pageSlice(): Slice<PageSliceStateType, PageSliceAction> {
         };
         const fromJSON = (obj: ReturnType<typeof toJSON>) => {
           let { pendingNavigation } = obj;
+
           if (pendingNavigation == null || pendingNavigation.location == null) {
             return { pendingNavigation: undefined };
           }

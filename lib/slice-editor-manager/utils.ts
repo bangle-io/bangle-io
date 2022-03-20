@@ -20,6 +20,7 @@ export const calculateScrollPosition = (
   editor: BangleEditor,
 ) => {
   const top = getScrollParentElement(editorId)?.scrollTop;
+
   if (typeof top === 'number') {
     return {
       wsPath: getEditorPluginMetadata(editor.view.state).wsPath,

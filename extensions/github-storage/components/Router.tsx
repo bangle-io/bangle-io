@@ -75,6 +75,7 @@ const updateGithubToken =
     dispatch: ApplicationStore['dispatch'],
   ) => {
     const wsName = getWsName()(state);
+
     if (wsName && isGithubStorageProvider()(state)) {
       updateWorkspaceMetadata(wsName, (existing) => {
         if (existing.githubToken !== token) {

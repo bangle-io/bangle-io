@@ -173,6 +173,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
                 .map((r) => {
                   const newMatches = r.matches.filter((match) => {
                     const [, highlightTextMatch] = match.match;
+
                     if (highlightTextMatch) {
                       return highlightTextMatch.includes(fileName);
                     }
@@ -221,6 +222,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
 
     return () => {
       controller.abort();
+
       if (cb) {
         safeCancelIdleCallback(cb);
       }

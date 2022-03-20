@@ -25,6 +25,7 @@ const allowedFilePath = (path: string) => {
   }
 
   const fileName = getLast(path.split('/'));
+
   if (fileName === undefined) {
     return false;
   }
@@ -164,6 +165,7 @@ export async function getBranchHead({ config }: { config: GithubConfig }) {
   });
 
   const oid = result?.repository?.ref?.target?.oid;
+
   if (typeof oid === 'string') {
     return oid;
   }
@@ -214,6 +216,7 @@ export async function* getRepos({
       variables: { after: endCursor },
       token,
     });
+
     if (calls++ > 20) {
       break;
     }
@@ -393,6 +396,7 @@ export async function pushChanges({
   return result2.files.map((r: any) => {
     const blobUrl = r.blob_url.split('/');
     const blob = blobUrl[blobUrl.indexOf('blob') + 1];
+
     if (typeof blob !== 'string' || blob.length !== 40) {
       throw new BaseError({
         message: 'Invalid github blob returned',
@@ -549,6 +553,7 @@ export async function initializeRepo({
     const message = await res.json().then((data) => {
       return data.message;
     });
+
     if (
       // if the file already exists
       message === 'reference already exists' ||

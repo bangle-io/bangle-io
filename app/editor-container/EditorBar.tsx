@@ -30,6 +30,7 @@ export function EditorBar({
   let path = removeMdExtension(resolvePath(wsPath).filePath);
   const bangleStore = useBangleStoreContext();
   let p = path.split('/');
+
   if (p.length > MAX_ENTRIES) {
     p = p.slice(-1 * MAX_ENTRIES);
     p.unshift('…');

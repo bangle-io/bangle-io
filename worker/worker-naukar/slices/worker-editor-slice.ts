@@ -133,6 +133,7 @@ export const setupEditorManager = workerEditorSliceKey.effect((_, config) => {
             workspaceSliceKey.getDispatch(store.dispatch),
             workspaceSliceKey.getStore(store),
           );
+
           if (!doc) {
             console.warn('doc not found', wsPath);
 

@@ -27,6 +27,7 @@ export const saveLastUsedWorkspaceEffect = miscEffectsKey.effect(() => {
     deferredUpdate(store) {
       const { wsName, error } =
         workspaceSliceKey.getSliceState(store.state) || {};
+
       if (wsName && wsName !== lastSeenWsName && !error) {
         lastSeenWsName = wsName;
         lastWorkspaceUsed.save(wsName);
@@ -50,6 +51,7 @@ export const lastWorkspaceUsed = {
     }
 
     const result = window.localStorage.getItem(lastWorkspaceUsedKey);
+
     if (result && typeof result === 'string') {
       return result;
     }

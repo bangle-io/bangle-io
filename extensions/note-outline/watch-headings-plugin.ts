@@ -18,6 +18,7 @@ export function watchHeadingsPlugin() {
   let state: StateField<WatchPluginState> = {
     init(_, state) {
       const intersectionState = getEditorIntersectionObserverPluginState(state);
+
       if (!intersectionState) {
         console.warn(
           'note-outline expects editorIntersectionObserverPluginState',
@@ -120,6 +121,7 @@ export function getHeadings(
     state.selection.from,
     headingNodes,
   );
+
   if (nearestActiveHeading) {
     nearestActiveHeading.isActive = true;
   }
@@ -137,6 +139,7 @@ export function getHeadings(
         intersectionState.minStartPosition,
         headingNodes,
       );
+
       if (nearestNode) {
         nearestNode.hasContentInsideViewport = true;
       }
@@ -162,6 +165,7 @@ function findLeftNearestHeading(
 
   for (const heading of headingNodes) {
     let diff = position - heading.offset;
+
     if (diff >= 0 && diff < closestHeadingDiff) {
       closestHeadingDiff = diff;
       closestHeading = heading;

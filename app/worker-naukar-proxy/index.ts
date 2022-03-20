@@ -61,6 +61,7 @@ export function naukarProxySlice() {
             store.state,
             prevState,
           );
+
           if (incomingNaukar != null) {
             naukarRef.current = incomingNaukar;
             emitter.emit('ready', undefined);

@@ -113,6 +113,7 @@ const getDocumentLocation = (): Document['location'] => {
 const calcLocation = (base: string): Location => {
   const pathname = currentPathname(base);
   let search = getDocumentLocation().search;
+
   // keep search free of `?`
   if (search.startsWith('?')) {
     search = search.slice(1);

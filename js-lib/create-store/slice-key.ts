@@ -67,6 +67,7 @@ export class SliceKey<
       dependencies.forEach((field) => {
         if (changed === false) {
           changed = this.valueChanged(field, state, prevState);
+
           if (changed === true) {
             fieldChanged = field;
           }
@@ -104,6 +105,7 @@ export class SliceKey<
     state: AppState<any, any> | Readonly<AppState<any, any>>,
   ): SL {
     const sliceState: SL | undefined = state.getSliceState(this.key);
+
     if (sliceState === undefined) {
       throw new Error(`Slice state for "${this.key}"" cannot be undefined`);
     }

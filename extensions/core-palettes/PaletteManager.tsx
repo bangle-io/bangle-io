@@ -53,6 +53,7 @@ export function PaletteManager() {
       dispatch({
         name: 'action::@bangle.io/slice-ui:RESET_PALETTE',
       });
+
       if (focus) {
         safeRequestAnimationFrame(() => {
           focusEditor()(bangleStore.state);
@@ -80,6 +81,7 @@ export function PaletteManager() {
         name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
         value: { type, initialQuery },
       });
+
       if (type) {
         document
           .querySelector<HTMLInputElement>('.universal-palette-container input')
@@ -112,6 +114,7 @@ export function PaletteManager() {
       );
 
       resetCounter();
+
       if (!match) {
         dismissPalette();
 
@@ -119,6 +122,7 @@ export function PaletteManager() {
       }
 
       const query = match.parseRawQuery(rawQuery);
+
       // if some other palette parses this query, switch to it
       if (match.type !== paletteType) {
         updatePalette(match.type, query || '');

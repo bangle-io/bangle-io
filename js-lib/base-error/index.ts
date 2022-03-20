@@ -42,6 +42,7 @@ export class BaseError extends Error {
       (Error as any).captureStackTrace(this, BaseError);
     } else {
       const stack = new Error().stack;
+
       if (stack) {
         this.stack = stack;
       }
@@ -49,6 +50,7 @@ export class BaseError extends Error {
 
     // restore prototype chain
     const actualProto = new.target.prototype;
+
     if (Object.setPrototypeOf) {
       Object.setPrototypeOf(this, actualProto);
     } else {
@@ -56,6 +58,7 @@ export class BaseError extends Error {
     }
 
     this.name = this.constructor.name;
+
     if (code) {
       this.code = code;
     }

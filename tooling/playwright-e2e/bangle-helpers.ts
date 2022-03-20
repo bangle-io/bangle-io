@@ -1,5 +1,6 @@
 export function splitWsPath(wsPath: string): [string, string] {
   const [wsName, filePath] = wsPath.split(':');
+
   if (!wsName) {
     throw new Error('Invalid wsName');
   }

@@ -18,6 +18,7 @@ function walk(dir, done) {
     var i = 0;
     (function next() {
       var file = list[i++];
+
       if (!file) {
         return done(null, results);
       }
@@ -78,6 +79,7 @@ walk(config.targetDir, function (err, results) {
     // store it
     matchedFiles.push(file);
     outputFile = targetFile;
+
     if (
       fs.readFileSync(file).includes(`'react'`) &&
       targetFile.endsWith('.js')

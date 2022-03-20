@@ -18,6 +18,7 @@ class FakeIdb implements IdbType {
 
   createStore = (dbName: string, storeName: string): any => {
     const hash = dbName + '$' + storeName;
+
     if (customStores.has(hash)) {
       return customStores.get(hash);
     }

@@ -76,6 +76,7 @@ export class OpenedEditorsConfig {
     const newScrollPositions = [...this.scrollPositions];
 
     let result = newScrollPositions[editorId];
+
     if (!result) {
       result = {};
     }

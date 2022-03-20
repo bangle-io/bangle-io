@@ -51,6 +51,7 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
     return undefined;
   });
   let height: number | undefined, width: number | undefined;
+
   if (dim) {
     ({ height, width } = dim);
   }
@@ -78,6 +79,7 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
                 return;
               }
               objectUrl = window.URL.createObjectURL(file);
+
               if (!width) {
                 calcImageDimensions(objectUrl).then((dim) => {
                   if (!destroyRef.current) {
@@ -107,9 +109,11 @@ export function ImageComponent({ nodeAttrs }: { nodeAttrs: ImageNodeAttrs }) {
 
   let newWidth = width;
   let newHeight = height;
+
   if (alt) {
     if (width && height && /.*scale\d.\d\d$/.test(alt)) {
       const scaled = alt.split('scale')[1];
+
       if (scaled) {
         const perc = parseFloat(scaled);
 

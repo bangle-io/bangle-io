@@ -63,6 +63,7 @@ export class GithubRepoTree {
   ): Promise<GHData> {
     if (useCache) {
       const data = await GithubRepoTree.getCachedData(wsName);
+
       if (data) {
         return data;
       }

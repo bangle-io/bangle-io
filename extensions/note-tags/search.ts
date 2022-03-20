@@ -39,6 +39,7 @@ export async function listAllTags(
       throw new DOMException('Aborted', 'AbortError');
     }
     const doc = await getDoc(wsPath);
+
     if (destroyed) {
       throw new DOMException('Aborted', 'AbortError');
     }
@@ -72,6 +73,7 @@ export function useSearchAllTags(query: string, isVisible: boolean): string[] {
 
   useEffect(() => {
     const controller = new AbortController();
+
     if (isVisible) {
       listAllTags(noteWsPaths, getNoteForTags, controller.signal)
         .then((tags) => {

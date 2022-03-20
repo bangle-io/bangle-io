@@ -56,6 +56,7 @@ function filterOutsideIntersection(
   state: EditorState,
 ) {
   const intersectionState = intersectionObserverPluginKey.getState(state);
+
   if (!intersectionState) {
     return headings;
   }

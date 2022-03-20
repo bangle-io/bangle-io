@@ -127,6 +127,7 @@ export function useDateItems(query: string) {
       const { chrono, dayjs } = chronoRef.current;
       let startOfDay = dayjs().startOf('day').toDate();
       const parsedDates = chrono.parse(query, startOfDay);
+
       if (parsedDates.length > 0) {
         updateParsedDate({ parsedDates, chrono, dayjs });
       } else {

@@ -54,6 +54,7 @@ const refreshGithubCounterEffect = sliceKey.effect(() => {
         store.state,
         prevState,
       );
+
       if (!wsName) {
         return;
       }
