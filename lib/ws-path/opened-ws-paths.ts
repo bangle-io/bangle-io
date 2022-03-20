@@ -25,18 +25,18 @@ function compare<T>(a: T[], b: T[]): boolean {
 }
 
 export class OpenedWsPaths {
-  static createFromArray(array: (string | null | undefined)[]) {
+  static createEmpty() {
+    const wsPaths = createEmptyArray(MAX_OPEN_EDITORS);
+
+    return new OpenedWsPaths(wsPaths);
+  }
+
+  static createFromArray(array: Array<string | null | undefined>) {
     let safeArray = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
       return array[k] || undefined;
     });
 
     return new OpenedWsPaths(safeArray);
-  }
-
-  static createEmpty() {
-    const wsPaths = createEmptyArray(MAX_OPEN_EDITORS);
-
-    return new OpenedWsPaths(wsPaths);
   }
 
   constructor(private wsPaths: MaybeWsPath[]) {
@@ -45,14 +45,6 @@ export class OpenedWsPaths {
         `Only support ${MAX_OPEN_EDITORS} editors opened at a time`,
       );
     }
-  }
-
-  get primaryWsPath() {
-    return this.wsPaths[0] ?? undefined;
-  }
-
-  get secondaryWsPath() {
-    return this.wsPaths[1] ?? undefined;
   }
 
   get openCount() {
@@ -66,8 +58,14 @@ export class OpenedWsPaths {
     return count;
   }
 
-  // check  opened editors (if any) belong to the same workspace
-  // in case there no opened editors, returns true.
+  get primaryWsPath() {
+    return this.wsPaths[0] ?? undefined;
+  }
+
+  get secondaryWsPath() {
+    return this.wsPaths[1] ?? undefined;
+  }
+
   // if no wsName is provided, will match against the internal wsName
   allBelongToSameWsName(wsName?: string) {
     if (!this.hasSomeOpenedWsPaths()) {
@@ -82,16 +80,30 @@ export class OpenedWsPaths {
     return wsNames.length === 1 && wsName === wsNames[0];
   }
 
-  // Returns the unique wsName (workspace name) of all the paths.
-  getWsNames(): string[] {
-    let wsNames: Set<string> = new Set();
-    this.forEachWsPath((wsPath) => {
-      if (wsPath) {
-        wsNames.add(resolvePath(wsPath).wsName);
-      }
-    });
+  // check  opened editors (if any) belong to the same workspace
+  closeAll() {
+    let newObj = OpenedWsPaths.createEmpty();
 
-    return [...wsNames];
+    // avoid changing instance
+    if (newObj.equal(this)) {
+      return this;
+    } else {
+      return newObj;
+    }
+  }
+
+  // in case there no opened editors, returns true.
+  closeIfFound(wsPath: MaybeWsPath): OpenedWsPaths {
+    return this.updateIfFound(wsPath, undefined);
+  }
+
+  // does not shrink the size but filters out
+  equal(compareWith: OpenedWsPaths) {
+    if (compare(this.wsPaths, compareWith.wsPaths)) {
+      return true;
+    }
+
+    return false;
   }
 
   forEachWsPath(cb: (wsPath: MaybeWsPath, index: number) => void) {
@@ -102,14 +114,6 @@ export class OpenedWsPaths {
     });
   }
 
-  updatePrimaryWsPath(wsPath: MaybeWsPath) {
-    return this.updateByIndex(0, wsPath);
-  }
-
-  updateSecondaryWsPath(wsPath: MaybeWsPath) {
-    return this.updateByIndex(1, wsPath);
-  }
-
   getByIndex(index: number) {
     if (index >= this.wsPaths.length) {
       throw new Error('getByIndex: Out of bound operation');
@@ -118,45 +122,16 @@ export class OpenedWsPaths {
     return this.wsPaths[index];
   }
 
-  updateByIndex(index: number, wsPath: MaybeWsPath) {
-    if (index >= this.wsPaths.length) {
-      throw new Error('updateByIndex: Out of bound operation');
-    }
-
-    const items = this.wsPaths.slice(0);
-    items[index] = wsPath;
-
-    return this.updateAllWsPaths(items);
-  }
-
-  // does not shrink the size but filters out
-  // starting undefined wsPaths
-  shrink() {
-    const items = this.wsPaths.filter((r) => r);
-
-    const arr: any = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
-      return items[k] || undefined;
+  // Returns the unique wsName (workspace name) of all the paths.
+  getWsNames(): string[] {
+    let wsNames: Set<string> = new Set();
+    this.forEachWsPath((wsPath) => {
+      if (wsPath) {
+        wsNames.add(resolvePath(wsPath).wsName);
+      }
     });
 
-    return this.updateAllWsPaths(arr);
-  }
-
-  updateAllWsPaths(wsPaths: MaybeWsPath[]) {
-    const result = new OpenedWsPaths(wsPaths);
-    // avoid changing instance
-    if (result.equal(this)) {
-      return this;
-    }
-
-    return result;
-  }
-
-  equal(compareWith: OpenedWsPaths) {
-    if (compare(this.wsPaths, compareWith.wsPaths)) {
-      return true;
-    }
-
-    return false;
+    return [...wsNames];
   }
 
   /**
@@ -180,19 +155,20 @@ export class OpenedWsPaths {
     });
   }
 
-  closeIfFound(wsPath: MaybeWsPath): OpenedWsPaths {
-    return this.updateIfFound(wsPath, undefined);
+  // starting undefined wsPaths
+  shrink() {
+    const items = this.wsPaths.filter((r) => r);
+
+    const arr: any = Array.from({ length: MAX_OPEN_EDITORS }, (_, k) => {
+      return items[k] || undefined;
+    });
+
+    return this.updateAllWsPaths(arr);
   }
 
-  closeAll() {
-    let newObj = OpenedWsPaths.createEmpty();
-
-    // avoid changing instance
-    if (newObj.equal(this)) {
-      return this;
-    } else {
-      return newObj;
-    }
+  toArray() {
+    // mapping undefined to null since undefined is not serializable
+    return Array.from(this.wsPaths).map((r) => (r ? r : null));
   }
 
   update(openedWsPath: OpenedWsPaths): OpenedWsPaths {
@@ -203,6 +179,27 @@ export class OpenedWsPaths {
     }
 
     return result;
+  }
+
+  updateAllWsPaths(wsPaths: MaybeWsPath[]) {
+    const result = new OpenedWsPaths(wsPaths);
+    // avoid changing instance
+    if (result.equal(this)) {
+      return this;
+    }
+
+    return result;
+  }
+
+  updateByIndex(index: number, wsPath: MaybeWsPath) {
+    if (index >= this.wsPaths.length) {
+      throw new Error('updateByIndex: Out of bound operation');
+    }
+
+    const items = this.wsPaths.slice(0);
+    items[index] = wsPath;
+
+    return this.updateAllWsPaths(items);
   }
 
   updateIfFound(
@@ -220,8 +217,11 @@ export class OpenedWsPaths {
     return ret;
   }
 
-  toArray() {
-    // mapping undefined to null since undefined is not serializable
-    return Array.from(this.wsPaths).map((r) => (r ? r : null));
+  updatePrimaryWsPath(wsPath: MaybeWsPath) {
+    return this.updateByIndex(0, wsPath);
+  }
+
+  updateSecondaryWsPath(wsPath: MaybeWsPath) {
+    return this.updateByIndex(1, wsPath);
   }
 }

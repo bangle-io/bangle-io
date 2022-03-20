@@ -26,7 +26,7 @@ const IconStyle = {
 
 interface BacklinkSearchResult {
   wsPath: string;
-  matches: Array<SearchMatch>;
+  matches: SearchMatch[];
 }
 
 export function BacklinkWidget() {

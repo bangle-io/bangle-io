@@ -37,7 +37,7 @@ const useRouterHook: BaseLocationHook = () => {
 
   const to =
     history && pageState ? createTo(pageState.location, history) || '' : '';
-  const pendingCalls = useRef<Parameters<BaseHistory['navigate']>[]>([]);
+  const pendingCalls = useRef<Array<Parameters<BaseHistory['navigate']>>>([]);
 
   const navigate = history
     ? history.navigate.bind(history)

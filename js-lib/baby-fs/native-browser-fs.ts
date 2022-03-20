@@ -96,25 +96,27 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
       catchUpstreamError(opendirRecursive(...args), 'Unable to open dir');
   }
 
-  async stat(filePath: string) {
-    await verifyPermission(this._rootDirHandle, filePath);
-    const { fileHandle } = await this._resolveFileHandle(
-      this._rootDirHandle,
-      filePath,
-    );
+  async opendirRecursive(dirPath: string) {
+    if (!dirPath) {
+      throw new Error('dirPath must be defined');
+    }
 
-    const file = await fileHandle.getFile();
+    await verifyPermission(this._rootDirHandle);
 
-    return new BaseFileMetadata({ mtimeMs: file.lastModified });
-  }
+    const data = await recurseDirHandle(this._rootDirHandle, {
+      allowedFile: this._allowedFile,
+      allowedDir: this._allowedDir,
+    });
 
-  async readFileAsText(filePath: string): Promise<string> {
-    this._verifyFilePath(filePath);
+    if (!dirPath.endsWith('/')) {
+      dirPath += '/';
+    }
 
-    const file = await this.readFile(filePath);
-    const textContent = await readFileAsTextHelper(file);
+    let files = data.map((r) => r.map((f) => f.name).join('/'));
 
-    return textContent;
+    files = dirPath ? files.filter((k) => k.startsWith(dirPath)) : files;
+
+    return files;
   }
 
   async readFile(filePath: string): Promise<File> {
@@ -127,6 +129,70 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     );
 
     return fileHandle.getFile();
+  }
+
+  async readFileAsText(filePath: string): Promise<string> {
+    this._verifyFilePath(filePath);
+
+    const file = await this.readFile(filePath);
+    const textContent = await readFileAsTextHelper(file);
+
+    return textContent;
+  }
+
+  async rename(oldFilePath: string, newFilePath: string) {
+    this._verifyFilePath(oldFilePath);
+    this._verifyFilePath(newFilePath);
+
+    const file = await this.readFile(oldFilePath);
+    let existingFile;
+
+    try {
+      existingFile = await this.readFile(newFilePath);
+    } catch (error) {
+      if (!(error instanceof BaseFileSystemError)) {
+        throw error;
+      }
+      if (error.code !== FILE_NOT_FOUND_ERROR) {
+        throw error;
+      }
+    }
+
+    if (existingFile) {
+      throw new NativeBrowserFileSystemError({
+        message: 'Cannot rename as a file with the same name already exists',
+        code: FILE_ALREADY_EXISTS_ERROR,
+      });
+    }
+
+    await this.writeFile(newFilePath, file);
+    await this.unlink(oldFilePath);
+  }
+
+  async stat(filePath: string) {
+    await verifyPermission(this._rootDirHandle, filePath);
+    const { fileHandle } = await this._resolveFileHandle(
+      this._rootDirHandle,
+      filePath,
+    );
+
+    const file = await fileHandle.getFile();
+
+    return new BaseFileMetadata({ mtimeMs: file.lastModified });
+  }
+
+  async unlink(filePath: string) {
+    this._verifyFilePath(filePath);
+
+    await verifyPermission(this._rootDirHandle, filePath);
+
+    const { fileHandle, parentHandles } = await this._resolveFileHandle(
+      this._rootDirHandle,
+      filePath,
+    );
+
+    const parentHandle = parentHandles[parentHandles.length - 1];
+    await parentHandle?.removeEntry(fileHandle.name);
   }
 
   async writeFile(filePath: string, data: File) {
@@ -166,72 +232,6 @@ export class NativeBrowserFileSystem extends BaseFileSystem {
     }
 
     await writeFile(fileHandle, data);
-  }
-
-  async unlink(filePath: string) {
-    this._verifyFilePath(filePath);
-
-    await verifyPermission(this._rootDirHandle, filePath);
-
-    const { fileHandle, parentHandles } = await this._resolveFileHandle(
-      this._rootDirHandle,
-      filePath,
-    );
-
-    const parentHandle = parentHandles[parentHandles.length - 1];
-    await parentHandle?.removeEntry(fileHandle.name);
-  }
-
-  async rename(oldFilePath: string, newFilePath: string) {
-    this._verifyFilePath(oldFilePath);
-    this._verifyFilePath(newFilePath);
-
-    const file = await this.readFile(oldFilePath);
-    let existingFile;
-
-    try {
-      existingFile = await this.readFile(newFilePath);
-    } catch (error) {
-      if (!(error instanceof BaseFileSystemError)) {
-        throw error;
-      }
-      if (error.code !== FILE_NOT_FOUND_ERROR) {
-        throw error;
-      }
-    }
-
-    if (existingFile) {
-      throw new NativeBrowserFileSystemError({
-        message: 'Cannot rename as a file with the same name already exists',
-        code: FILE_ALREADY_EXISTS_ERROR,
-      });
-    }
-
-    await this.writeFile(newFilePath, file);
-    await this.unlink(oldFilePath);
-  }
-
-  async opendirRecursive(dirPath: string) {
-    if (!dirPath) {
-      throw new Error('dirPath must be defined');
-    }
-
-    await verifyPermission(this._rootDirHandle);
-
-    const data = await recurseDirHandle(this._rootDirHandle, {
-      allowedFile: this._allowedFile,
-      allowedDir: this._allowedDir,
-    });
-
-    if (!dirPath.endsWith('/')) {
-      dirPath += '/';
-    }
-
-    let files = data.map((r) => r.map((f) => f.name).join('/'));
-
-    files = dirPath ? files.filter((k) => k.startsWith(dirPath)) : files;
-
-    return files;
   }
 }
 

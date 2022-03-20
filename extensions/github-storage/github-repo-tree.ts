@@ -14,7 +14,7 @@ const IDB_PREFIX = 'gh-tree-1:';
 
 interface GHData {
   sha: string;
-  tree: Array<Leaf>;
+  tree: Leaf[];
 }
 
 export class GithubRepoTree {

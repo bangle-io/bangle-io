@@ -40,7 +40,7 @@ export const setupMockWorkspace = async (wsInfo: Partial<WorkspaceInfo>) => {
 
 export const beforeEachHook = () => {
   interface MockFile {
-    parts: (string | Blob | ArrayBuffer | ArrayBufferView)[];
+    parts: Array<string | Blob | ArrayBuffer | ArrayBufferView>;
     filename: string;
     properties: FilePropertyBag;
   }
@@ -60,16 +60,16 @@ export const beforeEachHook = () => {
       this.parts = parts;
     }
 
+    async arrayBuffer() {
+      return (this.parts[0] as any).arrayBuffer();
+    }
+
     async text() {
       if (typeof this.parts[0] === 'string') {
         return this.parts[0];
       }
 
       return (this.parts[0] as any).text();
-    }
-
-    async arrayBuffer() {
-      return (this.parts[0] as any).arrayBuffer();
     }
   };
 };

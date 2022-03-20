@@ -31,7 +31,7 @@ export async function pMap<Element, NewElement>(
     }
     assertSignal(abortSignal);
 
-    const result: Array<NewElement> = [];
+    const result: NewElement[] = [];
     const iterator = iterable[Symbol.iterator]();
     let isRejected = false;
     let isIterableDone = false;

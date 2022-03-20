@@ -15,6 +15,14 @@ export class MemoryHistory implements BaseHistory {
     };
   }
 
+  get pathname() {
+    return this.currentLoc.pathname;
+  }
+
+  get search() {
+    return this.currentLoc.search;
+  }
+
   destroy(): void {}
 
   navigate(to: string, { replace = false }: { replace?: boolean } = {}): void {
@@ -32,14 +40,6 @@ export class MemoryHistory implements BaseHistory {
         this.onChange(newLoc);
       });
     }
-  }
-
-  get pathname() {
-    return this.currentLoc.pathname;
-  }
-
-  get search() {
-    return this.currentLoc.search;
   }
 }
 

@@ -8,7 +8,7 @@ import type { SerialOperationHandler } from '@bangle.io/shared-types';
  */
 export function useSerialOperationHandler<T>(
   cb: SerialOperationHandler,
-  deps: Array<T>,
+  deps: T[],
 ) {
   const extensionRegistry = useExtensionRegistryContext();
 

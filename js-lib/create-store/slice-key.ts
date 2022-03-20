@@ -30,17 +30,56 @@ export class SliceKey<
     this.key = createKey(name);
   }
 
-  // is a type helper to make it easy calling external operations
-  // while keeping TS happy.
-  getStore(store: ApplicationStore): ApplicationStore<SL, A> {
-    return store;
+  // serialization type helpers
+  actionSerializer<ANAME extends A['name'], T>(
+    actionName: ANAME,
+    // return the serialzed value of the action
+    toJSON: (action: ExtractAction<A, ANAME>) => T,
+    // return the parsed value of the action
+    fromJSON: (serialActionValue: T) => ExtractAction<A, ANAME>['value'],
+  ) {
+    return {
+      toJSON,
+      fromJSON,
+    };
   }
 
-  getStateAndDispatch(store: ApplicationStore) {
-    return {
-      state: this.getState(store),
-      dispatch: this.getDispatch(store.dispatch),
+  // Helper function for creating an operation with the correct
+  asyncOp<T extends Promise<any>>(
+    cb: (
+      state: AppState<S, A>,
+      dispatch: ApplicationStore<SL, A>['dispatch'],
+      store: ApplicationStore<SL, A>,
+    ) => T,
+  ) {
+    return cb;
+  }
+
+  // return[1] - the first dependency name that change
+  didChange<K extends keyof SL>(
+    state: AppState<any, any> | Readonly<AppState<any, any>>,
+    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+  ) {
+    return <T extends K[]>(...dependencies: [...T]) => {
+      let changed = false;
+      let fieldChanged: K | undefined = undefined;
+
+      dependencies.forEach((field) => {
+        if (changed === false) {
+          changed = this.valueChanged(field, state, prevState);
+          if (changed === true) {
+            fieldChanged = field;
+          }
+        }
+      });
+
+      return [changed, fieldChanged];
     };
+  }
+
+  // Helper function create a side effect with the correct type.
+  effect(cb: SliceSideEffect<SL, A, C>) {
+    return cb;
   }
 
   getDispatch(
@@ -49,14 +88,10 @@ export class SliceKey<
     return dispatch as ApplicationStore<SL, A>['dispatch'];
   }
 
-  getState(
-    storeOrState: ApplicationStore | AppState,
-  ): ApplicationStore<SL, A>['state'] {
-    if (storeOrState instanceof AppState) {
-      return storeOrState;
-    }
-
-    return this.getStore(storeOrState).state;
+  getSlice(
+    state: AppState<S, A> | Readonly<AppState<S, A>>,
+  ): Slice<SL, A, S, C> | undefined {
+    return state.getSliceByKey(this.key);
   }
 
   getSliceState(
@@ -76,10 +111,53 @@ export class SliceKey<
     return sliceState;
   }
 
-  getSlice(
-    state: AppState<S, A> | Readonly<AppState<S, A>>,
-  ): Slice<SL, A, S, C> | undefined {
-    return state.getSliceByKey(this.key);
+  getState(
+    storeOrState: ApplicationStore | AppState,
+  ): ApplicationStore<SL, A>['state'] {
+    if (storeOrState instanceof AppState) {
+      return storeOrState;
+    }
+
+    return this.getStore(storeOrState).state;
+  }
+
+  // is a type helper to make it easy calling external operations
+  getStateAndDispatch(store: ApplicationStore) {
+    return {
+      state: this.getState(store),
+      dispatch: this.getDispatch(store.dispatch),
+    };
+  }
+
+  // while keeping TS happy.
+  getStore(store: ApplicationStore): ApplicationStore<SL, A> {
+    return store;
+  }
+
+  //  use `valueChanged` if you expect `undefined` to be a valid value.
+  getValueIfChanged<T extends keyof SL>(
+    field: T,
+    state: AppState<any, any> | Readonly<AppState<any, any>>,
+    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
+  ): SL[T] | undefined {
+    return this.valueChanged(field, state, prevState)
+      ? this.getSliceStateAsserted(state)[field]
+      : undefined;
+  }
+
+  // types.
+  op<T>(
+    cb: (
+      state: AppState<S, A>,
+      dispatch: ApplicationStore<SL, A>['dispatch'],
+    ) => T,
+  ) {
+    return cb;
+  }
+
+  // types.
+  queryOp<T>(cb: (state: AppState<S, A>) => T) {
+    return cb;
   }
 
   valueChanged(
@@ -96,85 +174,10 @@ export class SliceKey<
   // gets the value if it was different from prevState
   // WARNING! it will return undefined if the value is the same
   //  which can be problematic if your field can have `undefined`.
-  //  use `valueChanged` if you expect `undefined` to be a valid value.
-  getValueIfChanged<T extends keyof SL>(
-    field: T,
-    state: AppState<any, any> | Readonly<AppState<any, any>>,
-    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
-  ): SL[T] | undefined {
-    return this.valueChanged(field, state, prevState)
-      ? this.getSliceStateAsserted(state)[field]
-      : undefined;
-  }
 
   // Similar to getValueIfChanged but instead takes a list of dependencies
   // and returns a two tuple of whether there was any change and the first field that changed.
   // return[0] - true if any of them changed
-  // return[1] - the first dependency name that change
-  didChange<K extends keyof SL>(
-    state: AppState<any, any> | Readonly<AppState<any, any>>,
-    prevState: AppState<any, any> | Readonly<AppState<any, any>>,
-  ) {
-    return <T extends Array<K>>(...dependencies: [...T]) => {
-      let changed = false;
-      let fieldChanged: K | undefined = undefined;
-
-      dependencies.forEach((field) => {
-        if (changed === false) {
-          changed = this.valueChanged(field, state, prevState);
-          if (changed === true) {
-            fieldChanged = field;
-          }
-        }
-      });
-
-      return [changed, fieldChanged];
-    };
-  }
 
   // Helper function for creating an operation with the correct
-  // types.
-  op<T>(
-    cb: (
-      state: AppState<S, A>,
-      dispatch: ApplicationStore<SL, A>['dispatch'],
-    ) => T,
-  ) {
-    return cb;
-  }
-
-  // Helper function for creating an operation with the correct
-  // types.
-  queryOp<T>(cb: (state: AppState<S, A>) => T) {
-    return cb;
-  }
-
-  asyncOp<T extends Promise<any>>(
-    cb: (
-      state: AppState<S, A>,
-      dispatch: ApplicationStore<SL, A>['dispatch'],
-      store: ApplicationStore<SL, A>,
-    ) => T,
-  ) {
-    return cb;
-  }
-
-  // Helper function create a side effect with the correct type.
-  effect(cb: SliceSideEffect<SL, A, C>) {
-    return cb;
-  }
-
-  // serialization type helpers
-  actionSerializer<ANAME extends A['name'], T>(
-    actionName: ANAME,
-    // return the serialzed value of the action
-    toJSON: (action: ExtractAction<A, ANAME>) => T,
-    // return the parsed value of the action
-    fromJSON: (serialActionValue: T) => ExtractAction<A, ANAME>['value'],
-  ) {
-    return {
-      toJSON,
-      fromJSON,
-    };
-  }
 }

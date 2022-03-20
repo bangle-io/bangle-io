@@ -14,8 +14,8 @@ export class OpenedEditorsConfig {
     });
   }
 
-  private selections: ({ [wsPath: string]: JsonObject | null } | null)[];
-  private scrollPositions: ({ [wsPath: string]: number | null } | null)[];
+  private selections: Array<{ [wsPath: string]: JsonObject | null } | null>;
+  private scrollPositions: Array<{ [wsPath: string]: number | null } | null>;
 
   constructor({
     selections,
@@ -37,16 +37,6 @@ export class OpenedEditorsConfig {
     });
   }
 
-  getSelection(wsPath: string, editorId: EditorIdType): JsonObject | undefined {
-    if (typeof editorId !== 'number') {
-      return undefined;
-    }
-
-    const result = this.selections[editorId]?.[wsPath];
-
-    return result == null ? undefined : result;
-  }
-
   getScrollPosition(wsPath: string, editorId: EditorIdType) {
     if (typeof editorId !== 'number') {
       return undefined;
@@ -57,30 +47,21 @@ export class OpenedEditorsConfig {
     return result == null ? undefined : result;
   }
 
-  updateSelection(
-    selection: JsonObject | undefined,
-    wsPath: string,
-    editorId: EditorIdType,
-  ): OpenedEditorsConfig {
+  getSelection(wsPath: string, editorId: EditorIdType): JsonObject | undefined {
     if (typeof editorId !== 'number') {
-      return this;
-    }
-    const newSelections = [...this.selections];
-
-    let result = newSelections[editorId];
-
-    if (!result) {
-      result = {};
+      return undefined;
     }
 
-    newSelections[editorId] = result;
+    const result = this.selections[editorId]?.[wsPath];
 
-    result[wsPath] = selection == null ? null : selection;
+    return result == null ? undefined : result;
+  }
 
-    return new OpenedEditorsConfig({
-      selections: newSelections,
-      scrollPositions: this.scrollPositions,
-    });
+  toJsonObj() {
+    const selections = this.selections;
+    const scrollPositions = this.scrollPositions;
+
+    return { selections, scrollPositions };
   }
 
   updateScrollPosition(
@@ -109,10 +90,29 @@ export class OpenedEditorsConfig {
     });
   }
 
-  toJsonObj() {
-    const selections = this.selections;
-    const scrollPositions = this.scrollPositions;
+  updateSelection(
+    selection: JsonObject | undefined,
+    wsPath: string,
+    editorId: EditorIdType,
+  ): OpenedEditorsConfig {
+    if (typeof editorId !== 'number') {
+      return this;
+    }
+    const newSelections = [...this.selections];
 
-    return { selections, scrollPositions };
+    let result = newSelections[editorId];
+
+    if (!result) {
+      result = {};
+    }
+
+    newSelections[editorId] = result;
+
+    result[wsPath] = selection == null ? null : selection;
+
+    return new OpenedEditorsConfig({
+      selections: newSelections,
+      scrollPositions: this.scrollPositions,
+    });
   }
 }

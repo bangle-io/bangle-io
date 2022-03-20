@@ -62,20 +62,6 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
 
   private idbProvider = new IndexedDbStorageProvider();
 
-  async newWorkspaceMetadata(wsName: string, createOpts: any) {}
-
-  async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
-    if (wsPath === HELP_FS_INDEX_WS_PATH) {
-      return true;
-    }
-
-    return this.idbProvider.fileExists(wsPath, opts);
-  }
-
-  async fileStat(wsPath: string, opts: StorageOpts) {
-    return this.idbProvider.fileStat(wsPath, opts);
-  }
-
   async createFile(
     wsPath: string,
     file: File,
@@ -92,14 +78,16 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     await this.idbProvider.deleteFile(wsPath, opts);
   }
 
-  async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
-    const res = await readFileFromUnpkg(wsPath);
-
-    if (res) {
-      return res;
+  async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
+    if (wsPath === HELP_FS_INDEX_WS_PATH) {
+      return true;
     }
 
-    return this.idbProvider.readFile(wsPath, opts);
+    return this.idbProvider.fileExists(wsPath, opts);
+  }
+
+  async fileStat(wsPath: string, opts: StorageOpts) {
+    return this.idbProvider.fileStat(wsPath, opts);
   }
 
   async listAllFiles(
@@ -115,15 +103,16 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
     ];
   }
 
-  async writeFile(
-    wsPath: string,
-    file: File,
-    opts: StorageOpts,
-  ): Promise<void> {
-    if (wsPath === HELP_FS_INDEX_WS_PATH) {
-      return;
+  async newWorkspaceMetadata(wsName: string, createOpts: any) {}
+
+  async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
+    const res = await readFileFromUnpkg(wsPath);
+
+    if (res) {
+      return res;
     }
-    await this.idbProvider.writeFile(wsPath, file, opts);
+
+    return this.idbProvider.readFile(wsPath, opts);
   }
 
   async renameFile(
@@ -135,5 +124,16 @@ export class HelpFsStorageProvider implements BaseStorageProvider {
       return;
     }
     await this.idbProvider.renameFile(wsPath, newWsPath, opts);
+  }
+
+  async writeFile(
+    wsPath: string,
+    file: File,
+    opts: StorageOpts,
+  ): Promise<void> {
+    if (wsPath === HELP_FS_INDEX_WS_PATH) {
+      return;
+    }
+    await this.idbProvider.writeFile(wsPath, file, opts);
   }
 }

@@ -40,7 +40,7 @@ export function bangleStateSlices({
   extensionSlices,
 }: {
   onUpdate?: (store: ApplicationStore) => void;
-  extensionSlices: Slice<any>[];
+  extensionSlices: Array<Slice<any>>;
 }) {
   const pageBlock = [
     disableSideEffect(pageSlice()),

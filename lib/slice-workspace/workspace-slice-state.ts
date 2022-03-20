@@ -37,29 +37,21 @@ export class WorkspaceSliceState {
     protected opts: any = {},
   ) {}
 
-  // mainFields
-  get wsPaths(): string[] | undefined {
-    return this.mainFields.wsPaths;
+  get error(): Error | undefined {
+    return this.mainFields.error;
   }
 
-  get recentlyUsedWsPaths(): string[] | undefined {
-    return this.mainFields.recentlyUsedWsPaths;
-  }
-
-  get wsName(): string | undefined {
-    return this.mainFields.wsName;
+  // derived
+  get noteWsPaths(): string[] | undefined {
+    return selectNoteWsPaths(this);
   }
 
   get openedWsPaths(): OpenedWsPaths {
     return this.mainFields.openedWsPaths;
   }
 
-  get workspacesInfo(): WorkspaceInfoReg | undefined {
-    return this.mainFields.workspacesInfo;
-  }
-
-  get error(): Error | undefined {
-    return this.mainFields.error;
+  get recentlyUsedWsPaths(): string[] | undefined {
+    return this.mainFields.recentlyUsedWsPaths;
   }
 
   // returns the current wsName refreshing for
@@ -67,9 +59,17 @@ export class WorkspaceSliceState {
     return this.mainFields.refreshCounter;
   }
 
-  // derived
-  get noteWsPaths(): string[] | undefined {
-    return selectNoteWsPaths(this);
+  get workspacesInfo(): WorkspaceInfoReg | undefined {
+    return this.mainFields.workspacesInfo;
+  }
+
+  get wsName(): string | undefined {
+    return this.mainFields.wsName;
+  }
+
+  // mainFields
+  get wsPaths(): string[] | undefined {
+    return this.mainFields.wsPaths;
   }
 }
 

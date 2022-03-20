@@ -32,7 +32,7 @@ export class GithubWorkspaceManager {
     return match;
   }
 
-  public getWriter(wsName: string) {
+  getWriter(wsName: string) {
     return this.getMatch(wsName).writer;
   }
 }
@@ -45,22 +45,6 @@ export class GithubWriter {
     private deletions: Set<string>,
   ) {}
 
-  updateFileCache(cache: GithubWriter['fileBlobCache']) {
-    this.fileBlobCache = cache;
-  }
-
-  async getFile(wsPath: string): Promise<File | undefined> {
-    if (this.deletions.has(wsPath)) {
-      throw new BaseError({
-        message: 'File not found',
-        code: GITHUB_STORAGE_NOT_ALLOWED,
-      });
-    }
-    console.log(Object.keys(this.additions), wsPath);
-
-    return this.additions[wsPath];
-  }
-
   addFile(wsPath: string, file: File): void {
     let _wsName = resolvePath(wsPath).wsName;
     Object.keys(this.additions).forEach((wsPath) => {
@@ -70,17 +54,6 @@ export class GithubWriter {
       }
     });
     this.additions[wsPath] = file;
-  }
-
-  deleteFile(wsPath: string): void {
-    let _wsName = resolvePath(wsPath).wsName;
-    this.deletions.forEach((wsPath) => {
-      const { wsName } = resolvePath(wsPath);
-      if (_wsName !== wsName) {
-        throw new Error('Workspace name mismatch');
-      }
-    });
-    this.deletions.add(wsPath);
   }
 
   async commit(
@@ -139,10 +112,37 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
 
     return updatedShas;
   }
+
+  deleteFile(wsPath: string): void {
+    let _wsName = resolvePath(wsPath).wsName;
+    this.deletions.forEach((wsPath) => {
+      const { wsName } = resolvePath(wsPath);
+      if (_wsName !== wsName) {
+        throw new Error('Workspace name mismatch');
+      }
+    });
+    this.deletions.add(wsPath);
+  }
+
+  async getFile(wsPath: string): Promise<File | undefined> {
+    if (this.deletions.has(wsPath)) {
+      throw new BaseError({
+        message: 'File not found',
+        code: GITHUB_STORAGE_NOT_ALLOWED,
+      });
+    }
+    console.log(Object.keys(this.additions), wsPath);
+
+    return this.additions[wsPath];
+  }
+
+  updateFileCache(cache: GithubWriter['fileBlobCache']) {
+    this.fileBlobCache = cache;
+  }
 }
 
 export async function commitToGithub(
-  additions: [string, File][],
+  additions: Array<[string, File]>,
   deletions: string[],
   _wsName: string,
   config: GithubConfig,

@@ -101,7 +101,7 @@ export class Slice<
       ) => BaseAction | undefined;
       // false if it cannot be serialized
       actions?: ActionsSerializersType<A>;
-      sideEffect?: SliceSideEffect<SL, A, C> | SliceSideEffect<SL, A, C>[];
+      sideEffect?: SliceSideEffect<SL, A, C> | Array<SliceSideEffect<SL, A, C>>;
       onError?: OnErrorType<SL, A>;
     },
   ) {

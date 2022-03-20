@@ -63,10 +63,10 @@ export interface ApplicationConfig<
   ReactComponent?: React.ComponentType<{
     key: string;
   }>;
-  operations?: Array<OpType>;
-  sidebars?: Array<SidebarType>;
+  operations?: OpType[];
+  sidebars?: SidebarType[];
   operationHandler?: SerialOperationHandler2<OpType>;
-  noteSidebarWidgets?: Array<NoteSidebarWidget>;
+  noteSidebarWidgets?: NoteSidebarWidget[];
   slices?: Array<Slice<any>>;
   storageProvider?: BaseStorageProvider;
   noteFormatProvider?: NoteFormatProvider;

@@ -15,8 +15,8 @@ export class BaseError extends Error {
     return error;
   }
 
-  public code?: string;
-  public thrower?: string;
+  code?: string;
+  thrower?: string;
   /**
    *
    * @param {*} message

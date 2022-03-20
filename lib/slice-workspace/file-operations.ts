@@ -241,7 +241,7 @@ export const createNote = (
     open = true,
     doc,
   }: {
-    open?: Boolean;
+    open?: boolean;
     doc?: Node;
   } = {},
 ) => {
@@ -353,7 +353,7 @@ export const getFile = (wsPath: string) => {
   );
 };
 
-export const deleteNote = (wsPathToDelete: Array<string> | string) => {
+export const deleteNote = (wsPathToDelete: string[] | string) => {
   return workspaceSliceKey.asyncOp(async (_, dispatch, store) => {
     const storageProvider = getStorageProvider()(store.state);
     const sliceState = workspaceSliceKey.getSliceStateAsserted(store.state);

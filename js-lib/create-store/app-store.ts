@@ -62,7 +62,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     );
   }
 
-  private sideEffects: StoreSideEffectType<any, A, S>[] = [];
+  private sideEffects: Array<StoreSideEffectType<any, A, S>> = [];
   private destroyed = false;
 
   private deferredRunner: undefined | DeferredSideEffectsRunner<S, A>;
@@ -94,7 +94,7 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     lastSeen: 0,
   };
 
-  public errorHandler = (error: Error, key?: string): void => {
+  errorHandler = (error: Error, key?: string): void => {
     if (this.destroyController.signal.aborted) {
       return;
     }
@@ -162,43 +162,22 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     this.setup();
   }
 
-  updateState(state: AppState<S, A>) {
-    if (this.destroyed) {
-      return;
-    }
-
-    const prevState = this._state;
-
-    this._state = state;
-
-    if (!this.disableSideEffects) {
-      if (prevState.config !== this._state.config) {
-        this.setup();
-      }
-      this.runSideEffects(++this.currentRunId);
-    }
-  }
-
   get state(): AppState<S, A> {
     return this._state;
   }
 
-  serializeAction(action: A) {
-    if (action.fromStore) {
-      throw new Error('Cannot serialize an action that came from other store');
-    }
+  destroy() {
+    this.destroyController.abort();
+    this.destroySideEffects();
+    this.destroyed = true;
+  }
 
-    const serializer = this.actionSerializers[action.name];
-    if (!serializer) {
-      return false;
-    }
-    const serializedValue = serializer.toJSON(action);
-
-    if (serializedValue === false) {
-      return false;
-    }
-
-    return { name: action.name, serializedValue, storeName: this.storeName };
+  private destroySideEffects() {
+    this.deferredRunner?.abort();
+    this.sideEffects.forEach(({ effect }) => {
+      effect.destroy?.();
+    });
+    this.sideEffects = [];
   }
 
   parseAction({
@@ -231,12 +210,6 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     } as A;
 
     return action;
-  }
-
-  destroy() {
-    this.destroyController.abort();
-    this.destroySideEffects();
-    this.destroyed = true;
   }
 
   private runSideEffects(runId: number) {
@@ -287,12 +260,22 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
     }
   }
 
-  private destroySideEffects() {
-    this.deferredRunner?.abort();
-    this.sideEffects.forEach(({ effect }) => {
-      effect.destroy?.();
-    });
-    this.sideEffects = [];
+  serializeAction(action: A) {
+    if (action.fromStore) {
+      throw new Error('Cannot serialize an action that came from other store');
+    }
+
+    const serializer = this.actionSerializers[action.name];
+    if (!serializer) {
+      return false;
+    }
+    const serializedValue = serializer.toJSON(action);
+
+    if (serializedValue === false) {
+      return false;
+    }
+
+    return { name: action.name, serializedValue, storeName: this.storeName };
   }
 
   private setup() {
@@ -328,16 +311,21 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
 
     const initialAppSate = this._state;
 
-    let allDeferredOnce: [
-      string,
-      Exclude<ReturnType<SliceSideEffect<any, any>>['deferredOnce'], undefined>,
-    ][] = [];
+    let allDeferredOnce: Array<
+      [
+        string,
+        Exclude<
+          ReturnType<SliceSideEffect<any, any>>['deferredOnce'],
+          undefined
+        >,
+      ]
+    > = [];
 
     this._state.getSlices().forEach((slice) => {
       if (slice.spec.sideEffect) {
         // since sideEffect can be an array or single
         // flatten it for further use
-        ([] as SliceSideEffect<any, A>[])
+        ([] as Array<SliceSideEffect<any, A>>)
           .concat(slice.spec.sideEffect)
           .forEach((sideEffect) => {
             let result = sideEffect?.(initialAppSate, this._state.config.opts);
@@ -381,6 +369,23 @@ export class ApplicationStore<S = any, A extends BaseAction = any> {
       }
     });
   }
+
+  updateState(state: AppState<S, A>) {
+    if (this.destroyed) {
+      return;
+    }
+
+    const prevState = this._state;
+
+    this._state = state;
+
+    if (!this.disableSideEffects) {
+      if (prevState.config !== this._state.config) {
+        this.setup();
+      }
+      this.runSideEffects(++this.currentRunId);
+    }
+  }
 }
 
 export class DeferredSideEffectsRunner<S, A extends BaseAction> {
@@ -402,15 +407,15 @@ export class DeferredSideEffectsRunner<S, A extends BaseAction> {
     });
   }
 
-  public abort() {
-    this.abortController.abort();
-  }
-
   private get isAborted() {
     return this.abortController.signal.aborted;
   }
 
-  public run(
+  abort() {
+    this.abortController.abort();
+  }
+
+  run(
     store: ApplicationStore<S>,
     errorHandler: ApplicationStore['errorHandler'],
   ) {

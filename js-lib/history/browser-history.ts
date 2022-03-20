@@ -34,6 +34,19 @@ export class BrowserHistory implements BaseHistory {
     this.currentLoc = calcLocation(this.base);
   }
 
+  // we do a simple managed history state, where we assume
+  get pathname() {
+    return this.currentLoc.pathname;
+  }
+
+  get search() {
+    return this.currentLoc.search;
+  }
+
+  private createHistoryState() {
+    return { key: this.historyCounter++, value: this.historyState || null };
+  }
+
   destroy(): void {
     historyEvents.forEach((e) =>
       this.host?.removeEventListener(e, this.checkForUpdates),
@@ -55,7 +68,6 @@ export class BrowserHistory implements BaseHistory {
     }, 0);
   }
 
-  // we do a simple managed history state, where we assume
   // any state added to history is by us.
   refreshHistoryState() {
     // In certain cases like historyPop, the job of this function is
@@ -81,18 +93,6 @@ export class BrowserHistory implements BaseHistory {
         this.base + to,
       );
     }, 0);
-  }
-
-  private createHistoryState() {
-    return { key: this.historyCounter++, value: this.historyState || null };
-  }
-
-  get pathname() {
-    return this.currentLoc.pathname;
-  }
-
-  get search() {
-    return this.currentLoc.search;
   }
 }
 

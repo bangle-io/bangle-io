@@ -15,16 +15,60 @@ module.exports = {
     {
       files: '*.jsx',
     },
+
     {
-      files: '*.tsx',
-    },
-    {
-      files: '*.ts',
-    },
-    {
-      files: ['tooling/**/*.spec.ts'],
+      files: ['**/*.ts?(x)'],
       rules: {
-        'jest/no-done-callback': 'off',
+        '@typescript-eslint/array-type': [
+          'error',
+          {
+            default: 'array-simple',
+          },
+        ],
+        '@typescript-eslint/explicit-member-accessibility': [
+          'error',
+          {
+            accessibility: 'no-public',
+            overrides: {
+              parameterProperties: 'off',
+            },
+          },
+        ],
+        '@typescript-eslint/consistent-type-assertions': [
+          'error',
+          {
+            assertionStyle: 'as',
+          },
+        ],
+        '@typescript-eslint/ban-types': [
+          'error',
+          {
+            types: {
+              Object: "Use {} or 'object' instead.",
+              String: "Use 'string' instead.",
+              Number: "Use 'number' instead.",
+              Boolean: "Use 'boolean' instead.",
+              Function: 'Avoid the Function type',
+            },
+            extendDefaults: false,
+          },
+        ],
+
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'class',
+            format: ['PascalCase'],
+          },
+          {
+            selector: 'interface',
+            format: ['PascalCase'],
+            custom: {
+              regex: '^I[A-Z]',
+              match: false,
+            },
+          },
+        ],
       },
     },
   ],
@@ -94,10 +138,27 @@ module.exports = {
           '[properties]',
           '[conventional-private-properties]',
           'constructor',
+          '[accessor-pairs]',
+          '[accessors]',
           '[methods]',
           '[conventional-private-methods]',
         ],
         accessorPairPositioning: 'getThenSet',
+        groups: {
+          'accessor-pairs': [{ accessorPair: true, sort: 'alphabetical' }],
+          'accessors': [
+            { kind: 'get', accessorPair: false, sort: 'alphabetical' },
+            { kind: 'set', accessorPair: false, sort: 'alphabetical' },
+          ],
+
+          'methods': [{ type: 'method', sort: 'alphabetical' }],
+          'static-methods': [
+            { type: 'method', sort: 'alphabetical', static: true },
+          ],
+          'static-properties': [
+            { type: 'property', sort: 'alphabetical', static: true },
+          ],
+        },
       },
     ],
 

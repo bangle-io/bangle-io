@@ -61,7 +61,7 @@ export class ExtensionRegistry {
     >;
   };
 
-  private slices: Slice<any, any>[];
+  private slices: Array<Slice<any, any>>;
   private onStorageErrorHandlers: {
     [storageProviderName: string]: Exclude<
       ApplicationConfig['onStorageError'],
@@ -79,7 +79,7 @@ export class ExtensionRegistry {
     undefined
   >;
 
-  public extensionsInitialState: { [name: string]: any };
+  extensionsInitialState: { [name: string]: any };
   renderExtensionEditorComponents = () => {
     const result = this.editorConfig
       .map((e) => {
@@ -196,13 +196,62 @@ export class ExtensionRegistry {
     );
   }
 
-  private validate() {
-    if (
-      new Set(this.extensions.filter((r) => Boolean(r.name)).map((r) => r.name))
-        .size !== this.extensions.length
-    ) {
-      throw new Error('Extension name must be unique');
-    }
+  getEditorWatchPluginStates(): EditorWatchPluginState[] {
+    return this.editorWatchPluginStates;
+  }
+
+  getNoteFormatProvider(name: string) {
+    return this.noteFormatProviders[name];
+  }
+
+  getNoteSidebarWidgets() {
+    return this.noteSidebarWidgets;
+  }
+
+  getOnStorageErrorHandlers(name: string) {
+    return this.onStorageErrorHandlers[name];
+  }
+
+  getOperationHandlers() {
+    return this.operationHandlers;
+  }
+
+  getPlugins() {
+    return [
+      ...filterFlatMap(this.editorConfig, 'highPriorityPlugins'),
+      ...filterFlatMap(this.editorConfig, 'plugins'),
+    ];
+  }
+
+  getRegisteredOperationKeybinding(
+    name: SerialOperationNameType,
+  ): string | undefined {
+    return this.registeredSerialOperations.find((a) => a.name === name)
+      ?.keybinding;
+  }
+
+  getRegisteredOperations(): Readonly<SerialOperationDefinitionType[]> {
+    return this.registeredSerialOperations;
+  }
+
+  getSerialOperationHandlers() {
+    return this.serialOperationHandlers;
+  }
+
+  getSerialOperationKeybindingMapping() {
+    return this.operationKeybindingMapping;
+  }
+
+  getSidebars() {
+    return this.sidebars;
+  }
+
+  getSlices() {
+    return this.slices;
+  }
+
+  getStorageProvider(name: string) {
+    return this.storageProviders[name];
   }
 
   renderReactNodeViews({
@@ -215,62 +264,13 @@ export class ExtensionRegistry {
     });
   }
 
-  getPlugins() {
-    return [
-      ...filterFlatMap(this.editorConfig, 'highPriorityPlugins'),
-      ...filterFlatMap(this.editorConfig, 'plugins'),
-    ];
-  }
-
-  getSidebars() {
-    return this.sidebars;
-  }
-
-  getNoteSidebarWidgets() {
-    return this.noteSidebarWidgets;
-  }
-
-  getSerialOperationKeybindingMapping() {
-    return this.operationKeybindingMapping;
-  }
-
-  getEditorWatchPluginStates(): EditorWatchPluginState[] {
-    return this.editorWatchPluginStates;
-  }
-
-  getSlices() {
-    return this.slices;
-  }
-
-  getStorageProvider(name: string) {
-    return this.storageProviders[name];
-  }
-
-  getNoteFormatProvider(name: string) {
-    return this.noteFormatProviders[name];
-  }
-
-  getOnStorageErrorHandlers(name: string) {
-    return this.onStorageErrorHandlers[name];
-  }
-
-  getRegisteredOperations(): Readonly<SerialOperationDefinitionType[]> {
-    return this.registeredSerialOperations;
-  }
-
-  getRegisteredOperationKeybinding(
-    name: SerialOperationNameType,
-  ): string | undefined {
-    return this.registeredSerialOperations.find((a) => a.name === name)
-      ?.keybinding;
-  }
-
-  getOperationHandlers() {
-    return this.operationHandlers;
-  }
-
-  getSerialOperationHandlers() {
-    return this.serialOperationHandlers;
+  private validate() {
+    if (
+      new Set(this.extensions.filter((r) => Boolean(r.name)).map((r) => r.name))
+        .size !== this.extensions.length
+    ) {
+      throw new Error('Extension name must be unique');
+    }
   }
 
   private _getSerialOperationKeybindingMapping(): SerialOperationKeybindingMapping {

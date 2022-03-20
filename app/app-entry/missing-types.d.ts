@@ -5,7 +5,7 @@ interface BeforeInstallPromptEvent extends Event {
    * for example, "web" or "play" which would allow the user to chose between a web version or
    * an Android version.
    */
-  readonly platforms: Array<string>;
+  readonly platforms: string[];
 
   /**
    * Returns a Promise that resolves to a DOMString containing either "accepted" or "dismissed".

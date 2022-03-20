@@ -24,7 +24,7 @@ export interface EditorSliceState {
   // Please see https://github.com/bangle-io/bangle-io/blob/dev/lib/editor/Editor.tsx for
   // an indepth explaination.
   focusedEditorId: number | undefined;
-  editors: (BangleEditor | undefined)[];
+  editors: Array<BangleEditor | undefined>;
   editorConfig: OpenedEditorsConfig;
   primaryEditor: BangleEditor | undefined;
   secondaryEditor: BangleEditor | undefined;

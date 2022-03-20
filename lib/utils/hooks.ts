@@ -143,7 +143,7 @@ export function useBroadcastChannel<T>(
   channelName: string,
 ): [T | undefined, (data: T) => void] {
   const infiniteRecurseRef = useRef(0);
-  const lastSentRef = useRef<Number | undefined>();
+  const lastSentRef = useRef<number | undefined>();
   const destroyedRef = useRef(false);
   const [lastMessage, updateEvent] = useState<T | undefined>();
   const [bChannel] = useState(() => {

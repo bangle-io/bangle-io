@@ -378,7 +378,7 @@ describe('store', () => {
         },
       });
 
-      let seenStates: [number, number][] = [];
+      let seenStates: Array<[number, number]> = [];
 
       const slice2 = new Slice({
         key: key2,

@@ -13,8 +13,8 @@ export { byLengthAsc, byStartAsc, Fzf };
 export function useFzfSearch<T = string>(
   items: T[],
   query: string,
-  ...options: FzfOptions<T>[]
-): FzfResultItem<T>[] {
+  ...options: Array<FzfOptions<T>>
+): Array<FzfResultItem<T>> {
   // TS is just not letting it use the options
   const optionsRef: any = useRef(options);
   const [fzf, updateFzf] = useState(

@@ -9,17 +9,17 @@ class AllExtensionStore {
     this.store = Object.assign({}, initialValues);
   }
 
-  public updateExtensionState<T>(key: string, value: T) {
+  getExtensionState<T>(key: string): T {
+    return this.store[key];
+  }
+
+  updateExtensionState<T>(key: string, value: T) {
     let newValue =
       typeof value === 'function' ? value(this.getExtensionState(key)) : value;
 
     return new AllExtensionStore(
       Object.assign({}, this.store, { [key]: newValue }),
     );
-  }
-
-  public getExtensionState<T>(key: string): T {
-    return this.store[key];
   }
 }
 
