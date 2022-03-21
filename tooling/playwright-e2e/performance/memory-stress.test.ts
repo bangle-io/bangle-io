@@ -47,7 +47,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
   });
 
   const EDITORS_TO_OPEN = 100;
-  const FINAL_EDITORS_IN_MEMORY = 5;
+  const FINAL_EDITORS_IN_MEMORY = 50;
 
   for (const w of noteWsPaths.slice(0, EDITORS_TO_OPEN)) {
     // open every editor in list
