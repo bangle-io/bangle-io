@@ -28,7 +28,6 @@
     "@bangle.io/api": "workspace:*",
     "@bangle.io/browser-nativefs-storage": "workspace:*",
     "@bangle.io/browser-storage": "workspace:*",
-    "@bangle.io/collab-extension": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/core-editor": "workspace:*",
     "@bangle.io/core-extension": "workspace:*",

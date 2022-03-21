@@ -95,10 +95,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/browser-storage"
       },
       {
-        "name": "@bangle.io/collab-extension",
-        "reference": "workspace:extensions/collab-extension"
-      },
-      {
         "name": "@bangle.io/core-editor",
         "reference": "workspace:extensions/core-editor"
       },
@@ -328,7 +324,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/base-error", ["workspace:js-lib/base-error"]],
       ["@bangle.io/browser-nativefs-storage", ["workspace:extensions/browser-nativefs-storage"]],
       ["@bangle.io/browser-storage", ["workspace:extensions/browser-storage"]],
-      ["@bangle.io/collab-extension", ["workspace:extensions/collab-extension"]],
       ["@bangle.io/config", ["workspace:lib/config"]],
       ["@bangle.io/constants", ["workspace:lib/constants"]],
       ["@bangle.io/contextual-ui-components", ["workspace:lib/contextual-ui-components"]],
@@ -4457,7 +4452,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],
-            ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],
@@ -4531,7 +4525,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/baby-fs", "workspace:js-lib/baby-fs"],
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],
-            ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],
@@ -4707,27 +4700,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT",
         }]
       ]],
-      ["@bangle.io/collab-extension", [
-        ["workspace:extensions/collab-extension", {
-          "packageLocation": "./extensions/collab-extension/",
-          "packageDependencies": [
-            ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
-            ["@bangle.dev/collab-client", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#npm:0.28.8"],
-            ["@bangle.dev/collab-server", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#npm:0.28.8"],
-            ["@bangle.dev/core", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
-            ["@bangle.dev/disk", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#npm:0.28.8"],
-            ["@bangle.dev/pm", "npm:0.28.8"],
-            ["@bangle.dev/utils", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
-            ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],
-            ["tslib", "npm:2.3.1"],
-            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
-          ],
-          "linkType": "SOFT",
-        }]
-      ]],
       ["@bangle.io/config", [
         ["workspace:lib/config", {
           "packageLocation": "./lib/config/",
@@ -4787,6 +4759,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],
             ["@bangle.dev/base-components", "virtual:61e8bf15ead0605b938e056ccc2a7427658f3e8765d89407c601cdfd9be63d1a92579e68d1e1cddea359d2c7ab5e2bc9db0612ed4c208d3be1a251a67a2f7c8d#npm:0.28.8"],
+            ["@bangle.dev/collab-client", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#npm:0.28.8"],
+            ["@bangle.dev/collab-server", "virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#npm:0.28.8"],
             ["@bangle.dev/core", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
             ["@bangle.dev/emoji", "virtual:5ffa1b41435764149864c7644e60c9fafc4f966ba9c0fb5479cadc17f4c64a07daa01a13ebed33495dd5cbab5768c47ed82f1a151c48f64a0b00befa8432be9c#npm:0.28.8"],
             ["@bangle.dev/markdown", "virtual:74a1a5ee89b810329109b08ee4381ae8a9cad72c07a756bc86fe1ab8c0bccd92702e785aea4dfb8fc2e370cc3e9bf23ede60268b59af7b79c10dec6a9950b124#npm:0.28.8"],
@@ -4808,6 +4782,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/slice-editor-manager", "workspace:lib/slice-editor-manager"],
             ["@bangle.io/utils", "workspace:lib/utils"],
+            ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@types/react", "npm:17.0.39"],
             ["@types/react-dom", "npm:17.0.13"],
             ["react", "npm:17.0.2"],
@@ -5784,7 +5759,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/api", "workspace:lib/api"],
             ["@bangle.io/browser-nativefs-storage", "workspace:extensions/browser-nativefs-storage"],
             ["@bangle.io/browser-storage", "workspace:extensions/browser-storage"],
-            ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],
             ["@bangle.io/core-extension", "workspace:extensions/core-extension"],

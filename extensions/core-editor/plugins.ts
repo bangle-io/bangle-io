@@ -32,6 +32,7 @@ import { intersectionObserverPluginKey } from '@bangle.io/constants';
 import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
 
 import { activeNode } from './active-node';
+import { collabPlugin } from './collab-plugin';
 import { pluginsFactory } from './collapsible-heading-deco';
 import { editingAllowedPlugin } from './editing-allowed';
 import { watchEditorFocus } from './watch-editor-focus';
@@ -43,6 +44,7 @@ const getScrollContainer = (view: EditorView) => {
 };
 
 const { queryIsSelectionAroundLink, queryIsLinkActive } = link;
+
 export const getPlugins = () => {
   return [
     typeof window !== 'undefined' &&
@@ -54,6 +56,7 @@ export const getPlugins = () => {
           threshold: 0,
         },
       }),
+
     floatingMenu.plugins({
       key: menuKey,
       tooltipRenderOpts: {
@@ -73,17 +76,12 @@ export const getPlugins = () => {
         return 'defaultMenu';
       },
     }),
-
-    bold.plugins(),
-    code.plugins(),
-    italic.plugins(),
-    strike.plugins(),
-    link.plugins(),
-    underline.plugins(),
-    paragraph.plugins(),
     blockquote.plugins(),
+    bold.plugins(),
     bulletList.plugins(),
+    code.plugins(),
     codeBlock.plugins(),
+    collabPlugin,
     hardBreak.plugins(),
     heading.plugins({
       keybindings: {
@@ -94,14 +92,18 @@ export const getPlugins = () => {
         toH6: undefined,
       },
     }),
+    history.plugins(),
     horizontalRule.plugins(),
+    italic.plugins(),
+    link.plugins(),
     listItem.plugins(),
     orderedList.plugins(),
-    history.plugins(),
+    paragraph.plugins(),
+    strike.plugins(),
     tablePlugins(),
-    // stopwatch.plugins(),
-    trailingNode.plugins(),
     timestamp.plugins(),
+    trailingNode.plugins(),
+    underline.plugins(),
     new Plugin({
       props: {
         // This is needed by jumping to a heading to atleast show up

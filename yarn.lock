@@ -1936,7 +1936,6 @@ __metadata:
     "@bangle.io/baby-fs": "workspace:*"
     "@bangle.io/bangle-store": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
-    "@bangle.io/collab-extension": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-editor": "workspace:*"
@@ -2101,25 +2100,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@bangle.io/collab-extension@workspace:*, @bangle.io/collab-extension@workspace:extensions/collab-extension":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/collab-extension@workspace:extensions/collab-extension"
-  dependencies:
-    "@bangle.dev/collab-client": 0.28.8
-    "@bangle.dev/collab-server": 0.28.8
-    "@bangle.dev/core": 0.28.8
-    "@bangle.dev/disk": 0.28.8
-    "@bangle.dev/pm": 0.28.8
-    "@bangle.dev/utils": 0.28.8
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/worker-naukar-proxy": "workspace:*"
-    tslib: ^2.3.1
-    typescript: ^4.5.5
-  languageName: unknown
-  linkType: soft
-
 "@bangle.io/config@workspace:*, @bangle.io/config@workspace:lib/config":
   version: 0.0.0-use.local
   resolution: "@bangle.io/config@workspace:lib/config"
@@ -2172,6 +2152,8 @@ __metadata:
   resolution: "@bangle.io/core-editor@workspace:extensions/core-editor"
   dependencies:
     "@bangle.dev/base-components": 0.28.8
+    "@bangle.dev/collab-client": 0.28.8
+    "@bangle.dev/collab-server": 0.28.8
     "@bangle.dev/core": 0.28.8
     "@bangle.dev/emoji": 0.28.8
     "@bangle.dev/markdown": 0.28.8
@@ -2193,6 +2175,7 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/utils": "workspace:*"
+    "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@types/react": ^17.0.39
     "@types/react-dom": ^17.0.13
     react: ^17.0.2
@@ -2950,7 +2933,6 @@ __metadata:
     "@bangle.io/api": "workspace:*"
     "@bangle.io/browser-nativefs-storage": "workspace:*"
     "@bangle.io/browser-storage": "workspace:*"
-    "@bangle.io/collab-extension": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-editor": "workspace:*"
     "@bangle.io/core-extension": "workspace:*"

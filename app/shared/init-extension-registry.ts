@@ -1,6 +1,5 @@
 import browserNativefsStorage from '@bangle.io/browser-nativefs-storage';
 import browserStorage from '@bangle.io/browser-storage';
-import collabExtension from '@bangle.io/collab-extension';
 import editorCore from '@bangle.io/core-editor';
 import coreActions from '@bangle.io/core-extension';
 import corePalette from '@bangle.io/core-palettes';
@@ -22,7 +21,6 @@ export const initExtensionRegistry = () => {
     browserStorage,
     browserNativefsStorage,
     editorCore,
-    collabExtension,
     inlineCommandPalette,
     noteOutline,
     inlineBacklinkPalette,

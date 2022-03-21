@@ -3,20 +3,10 @@ import { parseCollabResponse } from '@bangle.dev/collab-server';
 import { CollabRequestType } from '@bangle.dev/collab-server/dist/types';
 import { uuid } from '@bangle.dev/utils';
 
-import { Extension } from '@bangle.io/extension-registry';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 
-const extensionName = '@bangle.io/collab-extension';
-
-const extension = Extension.create({
-  name: extensionName,
-  editor: {
-    plugins: [collabPlugin],
-  },
-});
-
-function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
+export function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
   // TODO fix types of collab plugin
   const sendRequest = (type: CollabRequestType, payload: any): any =>
     naukarProxy.handleCollabRequest(type, payload).then((obj) => {
@@ -67,5 +57,3 @@ function collabPlugin({ metadata }: { metadata: EditorPluginMetadata }) {
     },
   });
 }
-
-export default extension;
