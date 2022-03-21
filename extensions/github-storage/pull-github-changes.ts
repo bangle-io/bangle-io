@@ -1,3 +1,4 @@
+import { wsPathHelpers } from '@bangle.io/api';
 import { LocalFileEntryManager } from '@bangle.io/remote-file-sync';
 import { isAbortError } from '@bangle.io/utils';
 
@@ -11,13 +12,13 @@ import { syncUntouchedEntries } from './sync';
 //     __: ApplicationStore['dispatch'],
 //     store: ApplicationStore,
 //   ) => {
-//     const wsName = workspaceSliceKey.getSliceStateAsserted(store.state).wsName;
+//     const wsName = workspace.workspaceSliceKey.getSliceStateAsserted(store.state).wsName;
 
 //     if (!wsName) {
 //       return false;
 //     }
 
-//     const storageOpts = getStorageProviderOpts()(store.state, store.dispatch);
+//     const storageOpts = workspace.getStorageProviderOpts()(store.state, store.dispatch);
 
 //     const storageProvider = getStorageProviderName(wsName)(store.state) as
 //       | GithubStorageProvider
@@ -38,14 +39,14 @@ import { syncUntouchedEntries } from './sync';
 //     )
 //       .then(
 //         (result) => {
-//           showNotification({
+//           notification.showNotification({
 //             severity: 'info',
 //             title: `Pushed ${result} entries`,
 //             uid: 'push done ' + Math.random(),
 //           })(store.state, store.dispatch);
 //         },
 //         (error) => {
-//           showNotification({
+//           notification.showNotification({
 //             severity: 'error',
 //             title: 'Error pushing changes',
 //             content: error.message,
@@ -63,14 +64,14 @@ import { syncUntouchedEntries } from './sync';
 //           },
 //         ).then(
 //           (result) => {
-//             showNotification({
+//             notification.showNotification({
 //               severity: 'info',
 //               title: `Pulled ${result} entries`,
 //               uid: 'pull done ' + Math.random(),
 //             })(store.state, store.dispatch);
 //           },
 //           (error) => {
-//             showNotification({
+//             notification.showNotification({
 //               severity: 'error',
 //               title: 'Error pulling changes',
 //               content: error.message,
@@ -92,18 +93,36 @@ export async function pullGithubChanges(
 ) {
   try {
     await GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
-    const syncedEntries = await syncUntouchedEntries(
+    const synced = await syncUntouchedEntries(
       abortSignal,
       fileEntryManager,
       wsName,
       wsMetadata,
     );
 
-    return syncedEntries;
+    return synced;
   } catch (error) {
     if (isAbortError(error)) {
-      return undefined;
+      return {
+        updatedWsPaths: [],
+        deletedWsPaths: [],
+      };
     }
     throw error;
   }
+}
+
+export function needsEditorReset({
+  openedWsPaths,
+  updatedWsPaths,
+  deletedWsPaths,
+}: {
+  openedWsPaths: wsPathHelpers.OpenedWsPaths;
+  updatedWsPaths: string[];
+  deletedWsPaths: string[];
+}) {
+  return (
+    updatedWsPaths.some((path) => openedWsPaths.has(path)) ||
+    deletedWsPaths.some((path) => openedWsPaths.has(path))
+  );
 }

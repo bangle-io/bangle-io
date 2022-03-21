@@ -1,10 +1,13 @@
 import React from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { ApplicationStore } from '@bangle.io/create-store';
-import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
-import { showNotification } from '@bangle.io/slice-notification';
-import { getWsName, updateWorkspaceMetadata } from '@bangle.io/slice-workspace';
+import {
+  BangleAppDispatch,
+  BangleAppState,
+  notification,
+  useBangleStoreContext,
+  useSerialOperationHandler,
+  workspace,
+} from '@bangle.io/api';
 
 import {
   OPERATION_NEW_GITHUB_WORKSPACE,
@@ -69,15 +72,11 @@ export function Router() {
 }
 
 const updateGithubToken =
-  (token: string) =>
-  (
-    state: ApplicationStore['state'],
-    dispatch: ApplicationStore['dispatch'],
-  ) => {
-    const wsName = getWsName()(state);
+  (token: string) => (state: BangleAppState, dispatch: BangleAppDispatch) => {
+    const wsName = workspace.getWsName()(state);
 
     if (wsName && isGithubStorageProvider()(state)) {
-      updateWorkspaceMetadata(wsName, (existing) => {
+      workspace.updateWorkspaceMetadata(wsName, (existing) => {
         if (existing.githubToken !== token) {
           return {
             ...existing,
@@ -87,7 +86,7 @@ const updateGithubToken =
 
         return existing;
       })(state, dispatch);
-      showNotification({
+      notification.showNotification({
         uid: 'success-update-github-token',
         title: 'Github successfully token updated',
         severity: 'success',
@@ -96,7 +95,7 @@ const updateGithubToken =
       return true;
     }
 
-    showNotification({
+    notification.showNotification({
       uid: 'failure-update-github-token-no-wsname',
       title: 'Github token not updated',
       content: 'Please open a Github workspace before updating the token.',

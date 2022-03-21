@@ -11,7 +11,7 @@ import { createStore, createWsInfo } from './test-utils';
 const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
   'action::@bangle.io/slice-workspace:set-error': [
     {
-      name: 'action::@bangle.io/slice-workspace:set-error',
+      name: 'action::@bangle.io/slice-workspace:set-error' as const,
       value: {
         error: new BaseError({
           message: 'hello-message',
@@ -21,7 +21,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:set-error',
+      name: 'action::@bangle.io/slice-workspace:set-error' as const,
       value: {
         error: new BaseError({
           message: 'hello-message',
@@ -30,7 +30,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:set-error',
+      name: 'action::@bangle.io/slice-workspace:set-error' as const,
       value: {
         error: new BaseError({
           message: 'hello-message-2',
@@ -40,14 +40,14 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:set-error',
+      name: 'action::@bangle.io/slice-workspace:set-error' as const,
       value: {
         error: new Error('vanilla-error'),
       },
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:set-error',
+      name: 'action::@bangle.io/slice-workspace:set-error' as const,
       value: {
         error: Object.assign(new Error('vanilla-error-with-code'), {
           code: 'MY_CODE',
@@ -56,7 +56,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:set-error',
+      name: 'action::@bangle.io/slice-workspace:set-error' as const,
       value: {
         error: undefined,
       },
@@ -65,13 +65,13 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
 
   'action::@bangle.io/slice-workspace:set-workspace-infos': [
     {
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos' as const,
       value: {
         workspacesInfo: {},
       },
     },
     {
-      name: 'action::@bangle.io/slice-workspace:set-workspace-infos',
+      name: 'action::@bangle.io/slice-workspace:set-workspace-infos' as const,
       value: {
         workspacesInfo: {
           testWs: createWsInfo({ name: 'testWs' }),
@@ -81,16 +81,16 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
   ],
   'action::@bangle.io/slice-workspace:refresh-ws-paths': [
     {
-      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths' as const,
     },
     {
-      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:refresh-ws-paths' as const,
     },
   ],
 
   'action::@bangle.io/slice-workspace:set-opened-workspace': [
     {
-      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace' as const,
       value: {
         openedWsPaths: OpenedWsPaths.createFromArray(['test-ws:one.md']),
         wsName: 'test-ws',
@@ -98,7 +98,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace' as const,
       value: {
         openedWsPaths: OpenedWsPaths.createEmpty(),
         wsName: 'test-ws',
@@ -106,7 +106,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:set-opened-workspace',
+      name: 'action::@bangle.io/slice-workspace:set-opened-workspace' as const,
       value: {
         openedWsPaths: OpenedWsPaths.createEmpty(),
         wsName: undefined,
@@ -116,7 +116,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
 
   'action::@bangle.io/slice-workspace:update-recently-used-ws-paths': [
     {
-      name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths' as const,
       value: {
         recentlyUsedWsPaths: [],
         wsName: 'test-ws',
@@ -124,7 +124,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-recently-used-ws-paths' as const,
       value: {
         recentlyUsedWsPaths: ['test-ws:one.md'],
         wsName: 'test-ws',
@@ -134,7 +134,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
 
   'action::@bangle.io/slice-workspace:update-ws-paths': [
     {
-      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths' as const,
       value: {
         wsName: 'test-ws',
         wsPaths: ['test-ws:one.md'],
@@ -142,7 +142,7 @@ const testFixtures: ActionTestFixtureType<WorkspaceSliceAction> = {
     },
 
     {
-      name: 'action::@bangle.io/slice-workspace:update-ws-paths',
+      name: 'action::@bangle.io/slice-workspace:update-ws-paths' as const,
       value: {
         wsName: 'test-ws',
         wsPaths: undefined,
@@ -168,7 +168,7 @@ test('Vanilla Error actions serialization with code', () => {
     code: 'MY_CODE',
   });
   const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
+    name: 'action::@bangle.io/slice-workspace:set-error' as const,
     value: {
       error,
     },
@@ -184,7 +184,7 @@ test('Vanilla Error actions serialization with thrower', () => {
     thrower: 'I_THREW_IT',
   });
   const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
+    name: 'action::@bangle.io/slice-workspace:set-error' as const,
     value: {
       error,
     },
@@ -202,7 +202,7 @@ test('Error actions serialization with stack', () => {
     stack: `stack`,
   });
   const action = {
-    name: 'action::@bangle.io/slice-workspace:set-error',
+    name: 'action::@bangle.io/slice-workspace:set-error' as const,
     value: {
       error,
     },

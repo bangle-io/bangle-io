@@ -7,3 +7,5 @@ export type WorkspaceInfo = {
     [k: string]: any;
   };
 };
+
+export type { WorkspaceSliceAction } from '@bangle.io/slice-workspace';

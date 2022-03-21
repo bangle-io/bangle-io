@@ -1,12 +1,8 @@
 import {
-  CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
-  CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   HELP_FS_WORKSPACE_NAME,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
-  WorkspaceTypeBrowser,
-  WorkspaceTypeNative,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import {
@@ -19,7 +15,6 @@ import {
   uiSliceKey,
 } from '@bangle.io/slice-ui';
 import {
-  createWorkspace,
   deleteNote,
   deleteWorkspace as _deletedWorkspace,
   WorkspaceSliceAction,
@@ -29,11 +24,26 @@ import { resolvePath } from '@bangle.io/ws-path';
 
 import { getFocusedWsPath } from './editor';
 
+export {
+  createWorkspace,
+  deleteNote,
+  getNote,
+  getStorageProviderName,
+  getStorageProviderOpts,
+  getWorkspaceMetadata,
+  getWsName,
+  pushWsPath,
+  refreshWsPaths,
+  updateWorkspaceMetadata,
+  workspaceSliceKey,
+  writeNote,
+} from '@bangle.io/slice-workspace';
+
 export function getWorkspaceState() {
   return (state: AppState) => workspaceSliceKey.getSliceStateAsserted(state);
 }
 
-export function newNote(initialValue?: string) {
+export function openNewNoteDialog(initialValue?: string) {
   return uiSliceKey.op((state, dispatch) => {
     const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
 
@@ -166,17 +176,6 @@ export function deleteActiveNote() {
   };
 }
 
-export function newWorkspace() {
-  return (state: AppState, dispatch: UiContextDispatchType) => {
-    dispatch({
-      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
-      value: {
-        dialogName: NEW_WORKSPACE_DIALOG_NAME,
-      },
-    });
-  };
-}
-
 export function removeWorkspace(wsName?: string) {
   return async (
     state: AppState,
@@ -230,81 +229,13 @@ export function removeWorkspace(wsName?: string) {
   };
 }
 
-export function createBrowserWorkspace(wsName: string) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore<
-      any,
-      WorkspaceSliceAction | UiContextAction
-    >['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    if (typeof wsName !== 'string') {
-      throw new Error(
-        'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
-      );
-    }
-
-    try {
-      await createWorkspace(wsName, WorkspaceTypeBrowser, {})(
-        state,
-        dispatch,
-        store,
-      );
-      (window as any).fathom?.trackGoal('AISLCLRF', 0);
-    } catch (error: any) {
-      showNotification({
-        severity: 'error',
-        uid: 'error-create-workspace-' + wsName,
-        title: 'Unable to create workspace ' + wsName,
-        content: error.displayMessage || error.message,
-      })(
-        notificationSliceKey.getState(state),
-        notificationSliceKey.getDispatch(dispatch),
-      );
-      throw error;
-    }
-
-    return true;
-  };
-}
-
-export function createNativeFsWorkpsace(rootDirHandle: any) {
-  return async (
-    state: AppState,
-    dispatch: ApplicationStore<
-      any,
-      WorkspaceSliceAction | UiContextAction
-    >['dispatch'],
-    store: ApplicationStore,
-  ) => {
-    if (typeof rootDirHandle?.name === 'string') {
-      try {
-        await createWorkspace(rootDirHandle.name, WorkspaceTypeNative, {
-          rootDirHandle,
-        })(state, dispatch, store);
-
-        (window as any).fathom?.trackGoal('K3NFTGWX', 0);
-      } catch (error: any) {
-        showNotification({
-          severity: 'error',
-          uid: 'error-create-workspace-' + rootDirHandle?.name,
-          title: 'Unable to create workspace ' + rootDirHandle?.name,
-          content: error.displayMessage || error.message,
-        })(
-          notificationSliceKey.getState(state),
-          notificationSliceKey.getDispatch(dispatch),
-        );
-
-        throw error;
-      }
-    } else {
-      throw new Error(
-        'Incorrect parameters for ' +
-          CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
-      );
-    }
-
-    return true;
+export function openNewWorkspaceDialog() {
+  return (state: AppState, dispatch: UiContextDispatchType) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+      value: {
+        dialogName: NEW_WORKSPACE_DIALOG_NAME,
+      },
+    });
   };
 }

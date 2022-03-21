@@ -59,7 +59,18 @@ describe('syncUntouchedEntries', () => {
   test('blank test case', async () => {
     const controller = new AbortController();
     const { manager } = createManager();
-    await syncUntouchedEntries(controller.signal, manager, 'my-ws', wsMetadata);
+    let result = await syncUntouchedEntries(
+      controller.signal,
+      manager,
+      'my-ws',
+      wsMetadata,
+    );
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "deletedWsPaths": Array [],
+        "updatedWsPaths": Array [],
+      }
+    `);
   });
 
   test('does not sync newly created files', async () => {
@@ -71,7 +82,18 @@ describe('syncUntouchedEntries', () => {
       async () => undefined,
     );
 
-    await syncUntouchedEntries(controller.signal, manager, 'my-ws', wsMetadata);
+    let result = await syncUntouchedEntries(
+      controller.signal,
+      manager,
+      'my-ws',
+      wsMetadata,
+    );
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "deletedWsPaths": Array [],
+        "updatedWsPaths": Array [],
+      }
+    `);
 
     const file = await manager.readFile('my-ws:foo.txt', async () => undefined);
 
@@ -97,7 +119,18 @@ describe('syncUntouchedEntries', () => {
       await manager.readFile('my-ws:foo.txt', remoteCallback),
     ).toBeUndefined();
 
-    await syncUntouchedEntries(controller.signal, manager, 'my-ws', wsMetadata);
+    let result = await syncUntouchedEntries(
+      controller.signal,
+      manager,
+      'my-ws',
+      wsMetadata,
+    );
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "deletedWsPaths": Array [],
+        "updatedWsPaths": Array [],
+      }
+    `);
 
     const file = await manager.readFile('my-ws:foo.txt', async () => undefined);
 
@@ -127,7 +160,20 @@ describe('syncUntouchedEntries', () => {
     expect(remoteCallback2).toHaveBeenCalledTimes(0);
 
     // syncing should delete the entry
-    await syncUntouchedEntries(controller.signal, manager, 'my-ws', wsMetadata);
+    let result = await syncUntouchedEntries(
+      controller.signal,
+      manager,
+      'my-ws',
+      wsMetadata,
+    );
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "deletedWsPaths": Array [
+          "my-ws:foo.txt",
+        ],
+        "updatedWsPaths": Array [],
+      }
+    `);
 
     expect(
       await manager.readFile('my-ws:foo.txt', remoteCallback2),
@@ -176,7 +222,20 @@ describe('syncUntouchedEntries', () => {
 
     // sync with remote entry returning different content
     // for file foo
-    await syncUntouchedEntries(controller.signal, manager, 'my-ws', wsMetadata);
+    let result = await syncUntouchedEntries(
+      controller.signal,
+      manager,
+      'my-ws',
+      wsMetadata,
+    );
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "deletedWsPaths": Array [],
+        "updatedWsPaths": Array [
+          "my-ws:foo.txt",
+        ],
+      }
+    `);
     expect(getFileBlobMock).toHaveBeenCalledTimes(1);
     expect(getFileBlobMock).nthCalledWith(1, {
       fileBlobUrl: 'https://github.com/blob/foo.txt',

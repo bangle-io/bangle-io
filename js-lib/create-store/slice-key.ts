@@ -55,6 +55,28 @@ export class SliceKey<
     return cb;
   }
 
+  callAsyncOp<T>(
+    store: ApplicationStore<any, any>,
+    asyncOp: (
+      state: AppState<any, any>,
+      dispatch: ApplicationStore<any, any>['dispatch'],
+      store: ApplicationStore<any, any>,
+    ) => T,
+  ) {
+    return asyncOp(store.state, store.dispatch, store);
+  }
+
+  callOp<T>(
+    state: AppState<any, any>,
+    dispatch: ApplicationStore<any, any>['dispatch'],
+    op: (
+      state: AppState<any, any>,
+      dispatch: ApplicationStore<any, any>['dispatch'],
+    ) => T,
+  ) {
+    return op(state, dispatch);
+  }
+
   // return[1] - the first dependency name that change
   didChange<K extends keyof SL>(
     state: AppState<any, any> | Readonly<AppState<any, any>>,

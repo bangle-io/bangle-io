@@ -4,13 +4,9 @@ import { useVirtual } from 'react-virtual';
 import { workspace } from '@bangle.io/api';
 import { isFirefox } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
+import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
-import {
-  deleteNote,
-  pushWsPath,
-  useWorkspaceContext,
-  WorkspaceContextType,
-} from '@bangle.io/slice-workspace';
+import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
   ButtonIcon,
   ChevronDownIcon,
@@ -67,7 +63,10 @@ export function NotesTree() {
 
   const createNewFile = useCallback(
     (path) => {
-      workspace.newNote(path)(bangleStore.state, bangleStore.dispatch);
+      workspace.openNewNoteDialog(path)(
+        bangleStore.state,
+        bangleStore.dispatch,
+      );
     },
     [bangleStore],
   );
@@ -126,7 +125,7 @@ export function GenericFileBrowser({
 }: {
   wsName: string;
   files: string[];
-  bangleStore: WorkspaceContextType['bangleStore'];
+  bangleStore: BangleApplicationStore;
   activeFilePath?: string;
   closeSidebar: () => void;
   createNewFile: (path?: string) => void;
@@ -164,7 +163,7 @@ const RenderItems = ({
   wsName: string;
   filesAndDirList: string[];
   dirSet: Set<string>;
-  bangleStore: WorkspaceContextType['bangleStore'];
+  bangleStore: BangleApplicationStore;
   activeFilePath?: string;
   closeSidebar: () => void;
   createNewFile: (path?: string) => void;
@@ -250,15 +249,18 @@ const RenderItems = ({
         return;
       }
       if (event.metaKey) {
-        pushWsPath(wsPath, true)(bangleStore.state, bangleStore.dispatch);
+        workspace.pushWsPath(wsPath, true)(
+          bangleStore.state,
+          bangleStore.dispatch,
+        );
       } else if (event.shiftKey) {
-        pushWsPath(
+        workspace.pushWsPath(
           wsPath,
           false,
           true,
         )(bangleStore.state, bangleStore.dispatch);
       } else {
-        pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
+        workspace.pushWsPath(wsPath)(bangleStore.state, bangleStore.dispatch);
       }
       closeSidebar();
     };
@@ -317,7 +319,7 @@ function RenderRow({
   depth: number;
   isActive: boolean;
   isCollapsed: boolean;
-  bangleStore: WorkspaceContextType['bangleStore'];
+  bangleStore: BangleApplicationStore;
   onClick: (event: React.MouseEvent<any, MouseEvent>) => void;
   createNewFile: (path?: string) => void;
 }) {
@@ -397,13 +399,15 @@ function RenderRow({
                 if (
                   window.confirm(`Are you sure you want to delete "${name}"? `)
                 ) {
-                  deleteNote(wsPath)(
-                    bangleStore.state,
-                    bangleStore.dispatch,
-                    bangleStore,
-                  ).catch((error) => {
-                    bangleStore.errorHandler(error);
-                  });
+                  workspace
+                    .deleteNote(wsPath)(
+                      bangleStore.state,
+                      bangleStore.dispatch,
+                      bangleStore,
+                    )
+                    .catch((error) => {
+                      bangleStore.errorHandler(error);
+                    });
                 }
               }}
             >

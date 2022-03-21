@@ -1,5 +1,5 @@
+import { wsPathHelpers } from '@bangle.io/api';
 import { BaseError, getLast } from '@bangle.io/utils';
-import { fromFsPath } from '@bangle.io/ws-path';
 
 import { GITHUB_API_ERROR, INVALID_GITHUB_RESPONSE } from './errors';
 
@@ -314,7 +314,7 @@ export async function getTree({
       return allowedFilePath(t.path);
     })
     .map((t: any) => {
-      const wsPath = fromFsPath(wsName + '/' + t.path);
+      const wsPath = wsPathHelpers.fromFsPath(wsName + '/' + t.path);
 
       if (!wsPath) {
         throw new BaseError({

@@ -65,11 +65,11 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case NewNoteKey: {
-          workspace.newNote()(store.state, store.dispatch);
+          workspace.openNewNoteDialog()(store.state, store.dispatch);
           break;
         }
         case NewWorkspaceKey: {
-          workspace.newWorkspace()(store.state, store.dispatch);
+          workspace.openNewWorkspaceDialog()(store.state, store.dispatch);
           break;
         }
         case NotesPaletteKey: {
