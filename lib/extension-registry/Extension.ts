@@ -120,7 +120,7 @@ export class Extension<
 
     if (!/^[a-z0-9-_@/\.]+$/.test(name)) {
       throw new Error(
-        'Extension name must be npm package name which can only have the follow characters "a..z" "0..9" "@" "." "-" and "_"',
+        `Extension "${name}": Extension's name can oly have the following characters "a..z" "0..9" "@" "." "-" and "_"`,
       );
     }
 
@@ -137,23 +137,27 @@ export class Extension<
     } = editor;
 
     if (specs && !Array.isArray(specs)) {
-      throw new Error('Extension: specs must be an array');
+      throw new Error(`Extension "${name}": specs must be an array`);
     }
     if (plugins && !Array.isArray(plugins)) {
-      throw new Error('Extension: plugins must be an array');
+      throw new Error(`Extension "${name}": plugins must be an array`);
     }
     if (highPriorityPlugins && !Array.isArray(highPriorityPlugins)) {
-      throw new Error('Extension: highPriorityPlugins must be an array');
+      throw new Error(
+        `Extension "${name}": highPriorityPlugins must be an array`,
+      );
     }
     if (markdownItPlugins && !Array.isArray(markdownItPlugins)) {
-      throw new Error('Extension: markdownItPlugins must be an array');
+      throw new Error(
+        `Extension "${name}": markdownItPlugins must be an array`,
+      );
     }
     if (
       renderReactNodeView &&
       Object.values(renderReactNodeView).some((r) => typeof r !== 'function')
     ) {
       throw new Error(
-        'Extension: renderReactNodeView must be an Object<string, function> where the function returns a react element',
+        `Extension "${name}": renderReactNodeView must be an Object<string, function> where the function returns a react element`,
       );
     }
 
@@ -171,7 +175,7 @@ export class Extension<
 
     if (operationHandler && !operations) {
       throw new Error(
-        'Extension: operationHandler is required when defining operations',
+        `Extension "${name}": operationHandler is required when defining operations`,
       );
     }
 
@@ -184,18 +188,18 @@ export class Extension<
         )
       ) {
         throw new Error(
-          `An operation must have a name with the following schema operation::<extension_pkg_name:xyz. For example 'operation::@bangle.io/example:hello-world'`,
+          `Extension "${name}": An operation must have a name with the following schema operation::<extension_pkg_name:xyz. For example 'operation::@bangle.io/example:hello-world'`,
         );
       }
 
       if (operations.length !== new Set(operations.map((r) => r.name)).size) {
-        throw new Error('Operation name must be unique');
+        throw new Error(`Extension "${name}": Operation name must be unique`);
       }
     }
 
     if (sidebars) {
       if (!Array.isArray(sidebars)) {
-        throw new Error('Extension: sidebars must be an array');
+        throw new Error(`Extension "${name}": sidebars must be an array`);
       }
 
       if (
@@ -213,7 +217,7 @@ export class Extension<
           );
         })
       ) {
-        throw new Error('Extension: Invalid sidebars config.');
+        throw new Error(`Extension "${name}": Invalid sidebars config.`);
       }
     }
 
@@ -227,7 +231,7 @@ export class Extension<
         )
       ) {
         throw new Error(
-          `Extension: invalid slice. Slice key must be prefixed with extension name followed by a semicolon (:). For example, "new SliceKey(\'slice::my-extension-name:xyz\')"`,
+          `Extension "${name}": invalid slice. Slice key must be prefixed with extension name followed by a semicolon (:). For example, "new SliceKey(\'slice::my-extension-name:xyz\')"`,
         );
       }
     }
@@ -243,7 +247,7 @@ export class Extension<
       })
     ) {
       throw new Error(
-        'Extension: Invalid note sidebar widget name. Example: "note-sidebar-widget::my-extension-name:xyz"',
+        `Extension "${name}": Invalid note sidebar widget name. Example: "note-sidebar-widget::my-extension-name:xyz"`,
       );
     }
 
@@ -258,7 +262,7 @@ export class Extension<
       })
     ) {
       throw new Error(
-        'Extension: Invalid dialog name. Example: "dialog::my-extension-name:xyz"',
+        `Extension "${name}" : Invalid dialog name. Example: "dialog::my-extension-name:xyz"`,
       );
     }
 

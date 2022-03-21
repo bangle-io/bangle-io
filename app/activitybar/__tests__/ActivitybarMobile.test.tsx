@@ -4,8 +4,7 @@
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { toggleNotesPalette } from '@bangle.io/shared-operations';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
 
 import { Activitybar } from '../Activitybar';
 
@@ -15,20 +14,12 @@ jest.mock('@bangle.io/slice-ui', () => {
   return {
     ...otherThings,
     useUIManagerContext: jest.fn(() => ({})),
+    togglePaletteType: jest.fn(() => () => {}),
   };
 });
 
-jest.mock('@bangle.io/shared-operations', () => {
-  const operations = jest.requireActual('@bangle.io/shared-operations');
-
-  return {
-    ...operations,
-    toggleNotesPalette: jest.fn(() => () => {}),
-  };
-});
-
-let toggleNotesPaletteMock = toggleNotesPalette as jest.MockedFunction<
-  typeof toggleNotesPalette
+let togglePaletteTypeMock = togglePaletteType as jest.MockedFunction<
+  typeof togglePaletteType
 >;
 
 beforeEach(() => {
@@ -40,7 +31,7 @@ beforeEach(() => {
       widescreen: false,
     };
   });
-  toggleNotesPaletteMock.mockImplementation(() => () => {});
+  togglePaletteTypeMock.mockImplementation(() => () => {});
 });
 
 test('renders mobile view', () => {
@@ -69,7 +60,7 @@ test('renders primaryWsPath', () => {
 
 test('dispatches operation', () => {
   const dispatch = jest.fn();
-  toggleNotesPaletteMock.mockImplementation(() => dispatch);
+  togglePaletteTypeMock.mockImplementation(() => dispatch);
 
   let result = render(
     <div>

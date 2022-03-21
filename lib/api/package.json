@@ -1,6 +1,7 @@
 {
-  "name": "@bangle.io/shared-operations",
+  "name": "@bangle.io/api",
   "version": "0.0.0",
+  "description": "API for bangle.io extensions",
   "authors": [
     {
       "name": "Kushan Joshi",
@@ -11,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "lib/shared-operations"
+    "directory": "lib/api"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"

@@ -1,22 +1,16 @@
+import { editor, workspace } from '@bangle.io/api';
 import {
+  CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
+  NEW_NOTE_DIALOG_NAME,
+  NEW_WORKSPACE_DIALOG_NAME,
+  RENAME_NOTE_DIALOG_NAME,
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
-import {
-  closeEditor,
-  createBrowserWorkspace,
-  createNativeFsWorkpsace,
-  deleteActiveNote,
-  newNote,
-  newWorkspace,
-  removeWorkspace,
-  renameActiveNote,
-  splitEditor,
-} from '@bangle.io/shared-operations';
 import {
   focusEditor,
   isEditingAllowed,
@@ -39,15 +33,10 @@ import {
   CORE_OPERATIONS_TOGGLE_UI_THEME,
   extensionName,
 } from './config';
-import { CHANGELOG_MODAL_NAME, ChangelogModal } from './dialogs/ChangelogModal';
+import { ChangelogModal } from './dialogs/ChangelogModal';
+import { NewWorkspaceModal } from './dialogs/new-workspace-modal';
 import {
-  NEW_WORKSPACE_DIALOG_NAME,
-  NewWorkspaceModal,
-} from './dialogs/new-workspace-modal';
-import {
-  NEW_NOTE_DIALOG_NAME,
   NewNoteInputModal,
-  RENAME_NOTE_DIALOG_NAME,
   RenameNoteInputModal,
 } from './dialogs/NoteNameChangeDialog';
 import { downloadWorkspace, restoreWorkspaceFromBackup } from './operations';
@@ -146,15 +135,15 @@ const extension = Extension.create({
         title: 'Restore this workspace from a backup file',
       },
       {
-        name: 'operation::@bangle.io/core-operations:focus-primary-editor',
+        name: 'operation::@bangle.io/core-extension:focus-primary-editor',
         title: 'Editor: Focus on primary editor',
       },
       {
-        name: 'operation::@bangle.io/core-operations:focus-secondary-editor',
+        name: 'operation::@bangle.io/core-extension:focus-secondary-editor',
         title: 'Editor: Focus on secondary editor',
       },
       {
-        name: 'operation::@bangle.io/core-operations:toggle-editing-mode',
+        name: 'operation::@bangle.io/core-extension:toggle-editing-mode',
         title: 'Editor: Toggle editing mode',
       },
     ],
@@ -163,19 +152,22 @@ const extension = Extension.create({
         handle(operation, payload, bangleStore) {
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
-              newNote()(bangleStore.state, bangleStore.dispatch);
+              workspace.newNote()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_NEW_WORKSPACE: {
-              newWorkspace()(bangleStore.state, bangleStore.dispatch);
+              workspace.newWorkspace()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
-              renameActiveNote()(bangleStore.state, bangleStore.dispatch);
+              workspace.renameActiveNote()(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
 
               return true;
             }
@@ -189,7 +181,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_DELETE_ACTIVE_NOTE: {
-              deleteActiveNote()(
+              workspace.deleteActiveNote()(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -199,14 +191,17 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
-              splitEditor()(bangleStore.state, bangleStore.dispatch);
+              editor.splitEditor()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               const editorId = payload;
-              closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
+              editor.closeEditor(editorId)(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
 
               return true;
             }
@@ -228,7 +223,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE: {
-              removeWorkspace()(
+              workspace.removeWorkspace()(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -236,13 +231,13 @@ const extension = Extension.create({
 
               return true;
             }
-            case 'operation::@bangle.io/core-operations:focus-primary-editor': {
+            case 'operation::@bangle.io/core-extension:focus-primary-editor': {
               focusEditor(0)(bangleStore.state);
 
               return true;
             }
 
-            case 'operation::@bangle.io/core-operations:focus-secondary-editor': {
+            case 'operation::@bangle.io/core-extension:focus-secondary-editor': {
               focusEditor(1)(bangleStore.state);
 
               return true;
@@ -257,7 +252,7 @@ const extension = Extension.create({
             case CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE: {
               const { wsName } = payload || {};
 
-              createBrowserWorkspace(wsName)(
+              workspace.createBrowserWorkspace(wsName)(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -268,7 +263,7 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
               const { rootDirHandle } = payload || {};
-              createNativeFsWorkpsace(rootDirHandle)(
+              workspace.createNativeFsWorkpsace(rootDirHandle)(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -283,7 +278,7 @@ const extension = Extension.create({
               return true;
             }
 
-            case 'operation::@bangle.io/core-operations:toggle-editing-mode': {
+            case 'operation::@bangle.io/core-extension:toggle-editing-mode': {
               toggleEditing()(bangleStore.state, bangleStore.dispatch);
               let isEditing = isEditingAllowed()(bangleStore.state);
               showNotification({

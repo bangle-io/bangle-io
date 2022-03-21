@@ -1,15 +1,37 @@
 import {
+  HELP_FS_WORKSPACE_NAME,
+  WorkspaceTypeHelp,
+} from '@bangle.io/constants';
+import {
   ApplicationStore,
   ExtractAction,
   SliceKey,
   SliceSideEffect,
 } from '@bangle.io/create-store';
+import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import type {
   WorkspaceInfoReg,
   WorkspaceSliceState,
 } from './workspace-slice-state';
+
+let cachedHelpFs: WorkspaceInfo | undefined = undefined;
+
+export const helpFSWorkspaceInfo = (): WorkspaceInfo => {
+  if (!cachedHelpFs) {
+    cachedHelpFs = {
+      metadata: {
+        allowLocalChanges: true,
+      },
+      name: HELP_FS_WORKSPACE_NAME,
+      type: WorkspaceTypeHelp,
+      lastModified: Date.now(),
+    };
+  }
+
+  return cachedHelpFs;
+};
 
 export const workspaceSliceKey = new SliceKey<
   WorkspaceSliceState,

@@ -1,5 +1,4 @@
 import {
-  helpFSWorkspaceInfo,
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
@@ -9,7 +8,7 @@ import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import { createBasicTestStore, fakeIdb } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
-import { workspaceSliceKey } from '../common';
+import { helpFSWorkspaceInfo, workspaceSliceKey } from '../common';
 import { WORKSPACE_KEY } from '../read-ws-info';
 import {
   createWorkspace,

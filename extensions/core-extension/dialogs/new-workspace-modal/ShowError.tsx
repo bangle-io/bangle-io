@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { toggleWorkspacePalette } from '@bangle.io/shared-operations';
+import { CorePalette } from '@bangle.io/constants';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 import { safeRequestAnimationFrame } from '@bangle.io/utils';
 
 import {
@@ -39,7 +40,7 @@ export function ShowError({
             onClick={() => {
               closeModal();
               safeRequestAnimationFrame(() => {
-                toggleWorkspacePalette()(
+                togglePaletteType(CorePalette.Workspace)(
                   bangleStore.state,
                   bangleStore.dispatch,
                 );

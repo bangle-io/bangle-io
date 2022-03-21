@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
+import { workspace } from '@bangle.io/api';
 import { isFirefox } from '@bangle.io/config';
-import { newNote, toggleWorkspacePalette } from '@bangle.io/shared-operations';
-import { useUIManagerContext } from '@bangle.io/slice-ui';
+import { CorePalette } from '@bangle.io/constants';
+import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
 import {
   deleteNote,
   pushWsPath,
@@ -66,7 +67,7 @@ export function NotesTree() {
 
   const createNewFile = useCallback(
     (path) => {
-      newNote(path)(bangleStore.state, bangleStore.dispatch);
+      workspace.newNote(path)(bangleStore.state, bangleStore.dispatch);
     },
     [bangleStore],
   );
@@ -77,7 +78,10 @@ export function NotesTree() {
         <span
           className="text-sm font-extrabold cursor-pointer bangle-io_textColorLighter"
           onClick={() => {
-            toggleWorkspacePalette()(bangleStore.state, bangleStore.dispatch);
+            togglePaletteType(CorePalette.Workspace)(
+              bangleStore.state,
+              bangleStore.dispatch,
+            );
           }}
         >
           Please open a workspace

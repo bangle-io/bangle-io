@@ -1,20 +1,15 @@
 import React, { useCallback } from 'react';
 
+import { workspace } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
   CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
+  CorePalette,
 } from '@bangle.io/constants';
-import {
-  newNote,
-  newWorkspace,
-  toggleActionPalette,
-  toggleNotesPalette,
-  toggleWorkspacePalette,
-} from '@bangle.io/shared-operations';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
-import { toggleTheme } from '@bangle.io/slice-ui';
+import { togglePaletteType, toggleTheme } from '@bangle.io/slice-ui';
 import {
   DropdownMenu,
   MenuItem,
@@ -66,19 +61,19 @@ export function ActivitybarOptionsDropdown({
       let key: AllKeysType = k;
       switch (key) {
         case ActionPaletteKey: {
-          toggleActionPalette()(store.state, store.dispatch);
+          togglePaletteType(CorePalette.Operation)(store.state, store.dispatch);
           break;
         }
         case NewNoteKey: {
-          newNote()(store.state, store.dispatch);
+          workspace.newNote()(store.state, store.dispatch);
           break;
         }
         case NewWorkspaceKey: {
-          newWorkspace()(store.state, store.dispatch);
+          workspace.newWorkspace()(store.state, store.dispatch);
           break;
         }
         case NotesPaletteKey: {
-          toggleNotesPalette()(store.state, store.dispatch);
+          togglePaletteType(CorePalette.Notes)(store.state, store.dispatch);
           break;
         }
         case ReportIssueKey: {
@@ -89,7 +84,7 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case SwitchWorkspaceKey: {
-          toggleWorkspacePalette()(store.state, store.dispatch);
+          togglePaletteType(CorePalette.Workspace)(store.state, store.dispatch);
           break;
         }
         case ToggleThemeKey: {

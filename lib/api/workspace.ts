@@ -2,6 +2,9 @@ import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   HELP_FS_WORKSPACE_NAME,
+  NEW_NOTE_DIALOG_NAME,
+  NEW_WORKSPACE_DIALOG_NAME,
+  RENAME_NOTE_DIALOG_NAME,
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
 } from '@bangle.io/constants';
@@ -24,7 +27,11 @@ import {
 } from '@bangle.io/slice-workspace';
 import { resolvePath } from '@bangle.io/ws-path';
 
-import { getFocusedWsPath } from './core';
+import { getFocusedWsPath } from './editor';
+
+export function getWorkspaceState() {
+  return (state: AppState) => workspaceSliceKey.getSliceStateAsserted(state);
+}
 
 export function newNote(initialValue?: string) {
   return uiSliceKey.op((state, dispatch) => {
@@ -52,7 +59,7 @@ export function newNote(initialValue?: string) {
     dispatch({
       name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
       value: {
-        dialogName: 'dialog::@bangle.io/core-operations:new-note-modal',
+        dialogName: NEW_NOTE_DIALOG_NAME,
         metadata: {
           initialValue: initialValue,
         },
@@ -87,7 +94,7 @@ export function renameActiveNote() {
     dispatch({
       name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
       value: {
-        dialogName: 'dialog::@bangle.io/core-operations:rename-note-modal',
+        dialogName: RENAME_NOTE_DIALOG_NAME,
       },
     });
 
@@ -164,7 +171,7 @@ export function newWorkspace() {
     dispatch({
       name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
       value: {
-        dialogName: 'dialog::@bangle.io/core-operations:new-workspace-dialog',
+        dialogName: NEW_WORKSPACE_DIALOG_NAME,
       },
     });
   };

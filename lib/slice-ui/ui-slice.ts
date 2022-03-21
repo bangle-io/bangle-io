@@ -50,6 +50,12 @@ export type UiContextAction =
         initialQuery?: string;
       };
     }
+  | {
+      name: 'action::@bangle.io/slice-ui:TOGGLE_PALETTE';
+      value: {
+        type: CorePalette | null;
+      };
+    }
   | { name: 'action::@bangle.io/slice-ui:RESET_PALETTE' }
   | { name: typeof UI_CONTEXT_TOGGLE_THEME }
   | {
@@ -135,6 +141,15 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
               ...state,
               paletteType: action.value.type,
               paletteInitialQuery: action.value.initialQuery,
+            };
+          }
+          case 'action::@bangle.io/slice-ui:TOGGLE_PALETTE': {
+            const { type } = action.value;
+
+            return {
+              ...state,
+              paletteType: state.paletteType === type ? null : type,
+              paletteInitialQuery: undefined,
             };
           }
 

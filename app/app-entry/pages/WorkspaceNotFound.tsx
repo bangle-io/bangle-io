@@ -1,10 +1,9 @@
 import React from 'react';
 
+import { workspace } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import {
-  newWorkspace,
-  toggleWorkspacePalette,
-} from '@bangle.io/shared-operations';
+import { CorePalette } from '@bangle.io/constants';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 
@@ -29,7 +28,10 @@ export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
           <ActionButton
             ariaLabel="open another workspace"
             onPress={() => {
-              toggleWorkspacePalette()(bangleStore.state, bangleStore.dispatch);
+              togglePaletteType(CorePalette.Workspace)(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
             }}
           >
             <ButtonContent text="Switch workspace" />
@@ -37,7 +39,7 @@ export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
           <ActionButton
             ariaLabel="new workspace"
             onPress={() => {
-              newWorkspace()(bangleStore.state, bangleStore.dispatch);
+              workspace.newWorkspace()(bangleStore.state, bangleStore.dispatch);
             }}
           >
             <ButtonContent text="New workspace" />

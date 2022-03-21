@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { toggleWorkspacePalette } from '@bangle.io/shared-operations';
+import { CorePalette } from '@bangle.io/constants';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { ButtonIcon, Sidebar, SpinnerIcon } from '@bangle.io/ui-components';
 
@@ -40,7 +41,10 @@ export function SearchNotesSidebar() {
           className="text-sm font-extrabold cursor-pointer"
           style={{ color: 'var(--textColor-1)' }}
           onClick={() => {
-            toggleWorkspacePalette()(bangleStore.state, bangleStore.dispatch);
+            togglePaletteType(CorePalette.Workspace)(
+              bangleStore.state,
+              bangleStore.dispatch,
+            );
           }}
         >
           Please open a workspace to search

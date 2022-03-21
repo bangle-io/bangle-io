@@ -5,7 +5,7 @@ import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { useBangleStoreDispatch } from '@bangle.io/bangle-store-context';
-import { toggleNotesPalette } from '@bangle.io/shared-operations';
+import { togglePaletteType } from '@bangle.io/slice-ui';
 
 import { EditorBar } from '../EditorBar';
 
@@ -18,22 +18,22 @@ jest.mock('@bangle.io/bangle-store-context', () => {
   };
 });
 
-jest.mock('@bangle.io/shared-operations', () => {
-  const operations = jest.requireActual('@bangle.io/shared-operations');
+jest.mock('@bangle.io/slice-ui', () => {
+  const operations = jest.requireActual('@bangle.io/slice-ui');
 
   return {
     ...operations,
-    toggleNotesPalette: jest.fn(() => () => {}),
+    togglePaletteType: jest.fn(() => () => {}),
   };
 });
 
-const toggleNotesPaletteMock = toggleNotesPalette as jest.MockedFunction<
-  typeof toggleNotesPalette
+const togglePaletteTypeMock = togglePaletteType as jest.MockedFunction<
+  typeof togglePaletteType
 >;
 
 beforeEach(() => {
   (useBangleStoreDispatch as any).mockImplementation(() => () => {});
-  toggleNotesPaletteMock.mockImplementation(() => () => {});
+  togglePaletteTypeMock.mockImplementation(() => () => {});
 });
 
 test('renders correctly', () => {
@@ -91,7 +91,7 @@ test('truncates large wsPath', () => {
   expect(result.getByLabelText('note path')).toMatchSnapshot();
 });
 
-test('dispatches toggleNotesPalette on clicking wsPath', () => {
+test('dispatches togglePaletteType on clicking wsPath', () => {
   let result = render(
     <div>
       <EditorBar
@@ -107,7 +107,7 @@ test('dispatches toggleNotesPalette on clicking wsPath', () => {
 
   fireEvent.click(result.getByLabelText('note path'));
 
-  expect(toggleNotesPaletteMock).toBeCalledTimes(1);
+  expect(togglePaletteTypeMock).toBeCalledTimes(1);
 });
 
 test('renders splitscreen', () => {

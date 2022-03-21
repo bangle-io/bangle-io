@@ -6,10 +6,10 @@ import React, {
   useState,
 } from 'react';
 
+import { workspace } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { keyDisplayValue } from '@bangle.io/config';
 import { CorePalette } from '@bangle.io/constants';
-import { removeWorkspace } from '@bangle.io/shared-operations';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { goToWsNameRoute, listWorkspaces } from '@bangle.io/slice-workspace';
 import {
@@ -54,12 +54,12 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
             .filter((ws) => {
               return strMatch(ws.name, query);
             })
-            .map((workspace, i) => {
+            .map((workspaceObj, i) => {
               return {
-                uid: `${workspace.name}-(${workspace.type})`,
-                title: workspace.name,
-                extraInfo: workspace.type,
-                data: { workspace },
+                uid: `${workspaceObj.name}-(${workspaceObj.type})`,
+                title: workspaceObj.name,
+                extraInfo: workspaceObj.type,
+                data: { workspace: workspaceObj },
                 rightHoverNode: (
                   <CloseIcon
                     style={{
@@ -68,7 +68,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
                     }}
                     onClick={async (e: React.MouseEvent<any, MouseEvent>) => {
                       e.stopPropagation();
-                      await removeWorkspace(workspace.name)(
+                      await workspace.removeWorkspace(workspaceObj.name)(
                         bangleStore.state,
                         bangleStore.dispatch,
                         bangleStore,
