@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  useBangleStoreContext,
+  useSerialOperationContext,
+  workspace,
+  wsPathHelpers,
+} from '@bangle.io/api';
 import { LocalFileEntry } from '@bangle.io/remote-file-sync/local-file-entry-manager';
-import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
-import { pushWsPath, workspaceSliceKey } from '@bangle.io/slice-workspace';
 import {
   ActionButton,
   ButtonContent,
@@ -11,11 +14,6 @@ import {
 } from '@bangle.io/ui-bangle-button';
 import { Sidebar } from '@bangle.io/ui-components';
 import { shallowCompareArray, useInterval } from '@bangle.io/utils';
-import {
-  isValidNoteWsPath,
-  OpenedWsPaths,
-  resolvePath,
-} from '@bangle.io/ws-path';
 
 import { OPERATION_SYNC_GITHUB_CHANGES } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
@@ -29,9 +27,8 @@ const REFRESH_INTERVAL = 3000;
 
 export function GithubSidebar() {
   const store = useBangleStoreContext();
-  const { wsName, openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(
-    store.state,
-  );
+  const { wsName, openedWsPaths } =
+    workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
 
   const correctStorageProvider = isGithubStorageProvider()(store.state);
 
@@ -51,7 +48,7 @@ function ModifiedEntries({
   openedWsPaths,
 }: {
   wsName: string;
-  openedWsPaths: OpenedWsPaths;
+  openedWsPaths: wsPathHelpers.OpenedWsPaths;
 }) {
   const store = useBangleStoreContext();
   const [modifiedEntries, updateModifiedEntries] = useState<
@@ -136,16 +133,19 @@ function ModifiedEntries({
             className={'rounded text-sm truncate py-1 select-none pl-3'}
             extraInfoClassName="ml-1 text-sm"
             onClick={() => {
-              if (isValidNoteWsPath(r.uid) && !r.deleted) {
-                pushWsPath(r.uid)(store.state, store.dispatch);
+              if (wsPathHelpers.isValidNoteWsPath(r.uid) && !r.deleted) {
+                workspace.pushWsPath(r.uid)(store.state, store.dispatch);
               }
             }}
             item={{
               uid: r.uid,
-              isDisabled: !isValidNoteWsPath(r.uid) || r.deleted ? true : false,
+              isDisabled:
+                !wsPathHelpers.isValidNoteWsPath(r.uid) || r.deleted
+                  ? true
+                  : false,
               showDividerAbove: false,
               title: `${r.deleted ? '(deleted)' : ''}  ${
-                resolvePath(r.uid).filePath
+                wsPathHelpers.resolvePath(r.uid).filePath
               }`,
             }}
           />

@@ -6,12 +6,7 @@ import React, {
   useState,
 } from 'react';
 
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import {
-  notificationSliceKey,
-  showNotification,
-} from '@bangle.io/slice-notification';
-import { createWorkspace } from '@bangle.io/slice-workspace';
+import { notification, useBangleStoreContext, workspace } from '@bangle.io/api';
 import {
   PaletteOnExecuteItem,
   UniversalPalette,
@@ -60,7 +55,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
           onDismiss();
 
           if (e instanceof Error) {
-            showNotification({
+            notification.showNotification({
               uid: 'failure-list-repos',
               title: 'Unable to list repos',
               content: e.message,
@@ -79,31 +74,31 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
       const matchingRepo = items.find((r) => r.uid === uid)?.data;
 
       if (matchingRepo) {
-        createWorkspace(matchingRepo.name, 'github-storage', {
-          githubToken: githubToken,
-          owner: matchingRepo.owner,
-          branch: matchingRepo.branch,
-        })(bangleStore.state, bangleStore.dispatch, bangleStore)
+        workspace
+          .createWorkspace(matchingRepo.name, 'github-storage', {
+            githubToken: githubToken,
+            owner: matchingRepo.owner,
+            branch: matchingRepo.branch,
+          })(bangleStore.state, bangleStore.dispatch, bangleStore)
           .then(() => {
             (window as any).fathom?.trackGoal('JSUCQKTL', 0);
           })
           .catch((error) => {
-            showNotification({
+            const notificationStore =
+              notification.notificationSliceKey.getStore(bangleStore);
+            notification.showNotification({
               severity: 'error',
               uid: 'error-create-workspace-github',
               title: 'Unable to create workspace ',
               content: error.displayMessage || error.message,
-            })(
-              notificationSliceKey.getState(bangleStore.state),
-              notificationSliceKey.getDispatch(bangleStore.dispatch),
-            );
+            })(notificationStore.state, notificationStore.dispatch);
           });
       }
     },
     [onDismiss, items, githubToken, bangleStore],
   );
 
-  const { inputProps, updateCounter, resetCounter, counter, onSelect } =
+  const { inputProps, resetCounter, counter, onSelect } =
     UniversalPalette.usePaletteDriver(onDismiss, onExecuteItem);
 
   useEffect(() => {

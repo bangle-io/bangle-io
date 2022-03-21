@@ -111,7 +111,10 @@ export function EmptyEditorPage() {
           <ActionButton
             ariaLabel="create note"
             onPress={() => {
-              workspace.newNote()(bangleStore.state, bangleStore.dispatch);
+              workspace.openNewNoteDialog()(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
             }}
           >
             <ButtonContent text="Create note" icon={<NewNoteIcon />} />

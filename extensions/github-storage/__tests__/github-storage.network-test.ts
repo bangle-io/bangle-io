@@ -1,14 +1,10 @@
 import waitForExpect from 'wait-for-expect';
 
-import { ApplicationStore } from '@bangle.io/create-store';
-import { clearAllNotifications } from '@bangle.io/slice-notification';
 import {
-  createWorkspace,
-  getNote,
-  refreshWsPaths,
-  workspaceSliceKey,
-  writeNote,
-} from '@bangle.io/slice-workspace';
+  BangleApplicationStore,
+  notification,
+  workspace,
+} from '@bangle.io/api';
 import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
 import { sleep } from '@bangle.io/utils';
 
@@ -58,7 +54,7 @@ beforeEach(() => {
   };
 });
 
-let wsName: string, store: ApplicationStore;
+let wsName: string, store: BangleApplicationStore;
 let abortController = new AbortController();
 describe('pull changes', () => {
   afterAll(async () => {
@@ -90,7 +86,7 @@ describe('pull changes', () => {
       },
     }));
 
-    await createWorkspace(
+    await workspace.createWorkspace(
       wsName,
       GITHUB_STORAGE_PROVIDER_NAME,
       githubWsMetadata,
@@ -100,7 +96,7 @@ describe('pull changes', () => {
   });
 
   const pullChanges = async () => {
-    clearAllNotifications()(store.state, store.dispatch);
+    notification.clearAllNotifications()(store.state, store.dispatch);
     await pullGithubChanges(
       wsName,
       localFileEntryManager,
@@ -113,7 +109,11 @@ describe('pull changes', () => {
     fileName: string,
   ): Promise<string | undefined> => {
     return (
-      await getNote(`${wsName}:${fileName}`)(store.state, store.dispatch, store)
+      await workspace.getNote(`${wsName}:${fileName}`)(
+        store.state,
+        store.dispatch,
+        store,
+      )
     )?.toString();
   };
 
@@ -293,11 +293,12 @@ describe('pull changes', () => {
       `"doc(paragraph(\\"I am test-2 but modified\\"))"`,
     );
 
-    refreshWsPaths()(store.state, store.dispatch);
+    workspace.refreshWsPaths()(store.state, store.dispatch);
 
     await waitForExpect(async () => {
       expect(
-        await workspaceSliceKey.getSliceStateAsserted(store.state).wsPaths,
+        await workspace.workspaceSliceKey.getSliceStateAsserted(store.state)
+          .wsPaths,
       ).toEqual([`${wsName}:test-2.md`, `${wsName}:welcome-to-bangle.md`]);
     });
   });
@@ -333,7 +334,7 @@ describe('pull changes', () => {
     const modifiedText = `test-2 hello I am modified`;
     const docModified = createPMNode([], modifiedText);
 
-    await writeNote(`${wsName}:test-2.md`, docModified)(
+    await workspace.writeNote(`${wsName}:test-2.md`, docModified)(
       store.state,
       store.dispatch,
       store,

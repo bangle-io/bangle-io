@@ -33,7 +33,10 @@ export function WorkspaceInvalidPath() {
           <ActionButton
             ariaLabel="new workspace"
             onPress={() => {
-              workspace.newWorkspace()(bangleStore.state, bangleStore.dispatch);
+              workspace.openNewWorkspaceDialog()(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
             }}
           >
             <ButtonContent text="New workspace" />

@@ -32,7 +32,8 @@ export async function syncUntouchedEntries(
   log('untouchedEntries', untouchedEntries);
 
   assertSignal(abortSignal);
-
+  let updatedWsPaths: string[] = [];
+  let deletedWsPaths: string[] = [];
   await pMap(
     untouchedEntries,
     async (entry) => {
@@ -54,10 +55,17 @@ export async function syncUntouchedEntries(
 
       if (remoteFileEntry) {
         log('updating entry', entry.uid);
+
         await fileEntryManager.updateFileEntry(remoteFileEntry.fork());
+
+        // only count files which actually needed to be updated
+        if (entry.sha !== remoteFileEntry.sha) {
+          updatedWsPaths.push(entry.uid);
+        }
       } else {
         log('removing entry', entry.uid);
         await fileEntryManager.removeFileEntry(entry.uid);
+        deletedWsPaths.push(entry.uid);
       }
     },
     {
@@ -66,7 +74,10 @@ export async function syncUntouchedEntries(
     },
   );
 
-  return untouchedEntries.length;
+  return {
+    updatedWsPaths,
+    deletedWsPaths,
+  };
 }
 
 export async function pushModifiedOrCreatedEntries(

@@ -8,6 +8,11 @@ import { localFileEntryManager } from './file-entry-manager';
 import { GithubRepoTree } from './github-repo-tree';
 import { GithubWsMetadata } from './helpers';
 
+const LOG = false;
+const log = LOG
+  ? console.debug.bind(console, 'github-storage-provider')
+  : () => {};
+
 export class GithubStorageProvider implements BaseStorageProvider {
   name = GITHUB_STORAGE_PROVIDER_NAME;
   displayName = 'Github storage';
@@ -154,6 +159,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
+    log('writeFile', wsPath, file);
     await this.fileEntryManager.writeFile(wsPath, file);
   }
 }

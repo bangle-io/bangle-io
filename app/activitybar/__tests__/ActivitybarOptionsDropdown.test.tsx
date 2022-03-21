@@ -16,7 +16,7 @@ jest.mock('@bangle.io/api', () => {
     ...operations,
     workspace: {
       ...operations.workspace,
-      newNote: jest.fn(() => () => {}),
+      openNewNoteDialog: jest.fn(() => () => {}),
     },
   };
 });
@@ -35,12 +35,12 @@ const operationKeybindings = {
   [CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE]: 'Ctrl-P',
 };
 
-let newNoteMock = workspace.newNote as jest.MockedFunction<
-  typeof workspace.newNote
+let openNewNoteDialogMock = workspace.openNewNoteDialog as jest.MockedFunction<
+  typeof workspace.openNewNoteDialog
 >;
 
 beforeEach(() => {
-  newNoteMock.mockImplementation(() => () => {});
+  openNewNoteDialogMock.mockImplementation(() => () => {});
 });
 
 test('renders correctly', () => {
@@ -90,7 +90,7 @@ test('clicking the button shows dropdown', async () => {
 test('clicking items in dropdown dispatches event', async () => {
   const dispatch = jest.fn();
 
-  newNoteMock.mockImplementation(() => dispatch);
+  openNewNoteDialogMock.mockImplementation(() => dispatch);
 
   let result = render(
     <div>

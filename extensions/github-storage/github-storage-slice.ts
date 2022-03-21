@@ -1,9 +1,9 @@
-import { Slice, SliceKey } from '@bangle.io/create-store';
 import {
-  getStorageProviderOpts,
-  getWsName,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
+  BangleApplicationStore,
+  Slice,
+  SliceKey,
+  workspace,
+} from '@bangle.io/api';
 
 import { localFileEntryManager } from './file-entry-manager';
 import { GithubWsMetadata, isGithubStorageProvider } from './helpers';
@@ -49,7 +49,7 @@ export function githubStorageSlice() {
 const refreshGithubCounterEffect = sliceKey.effect(() => {
   return {
     deferredUpdate(store, prevState) {
-      const wsName = workspaceSliceKey.getValueIfChanged(
+      const wsName = workspace.workspaceSliceKey.getValueIfChanged(
         'wsName',
         store.state,
         prevState,
@@ -84,7 +84,9 @@ const pullGithubChangesEffect = sliceKey.effect(() => {
         return;
       }
 
-      const wsName = getWsName()(workspaceSliceKey.getState(store.state));
+      const wsName = workspace.getWsName()(
+        workspace.workspaceSliceKey.getState(store.state),
+      );
 
       if (!wsName) {
         return;
@@ -94,20 +96,25 @@ const pullGithubChangesEffect = sliceKey.effect(() => {
         return;
       }
 
-      const storageOpts = getStorageProviderOpts()(
-        workspaceSliceKey.getState(store.state),
-        workspaceSliceKey.getDispatch(store.dispatch),
+      const workspaceStore = workspace.workspaceSliceKey.getStore(store);
+      const storageOpts = workspace.getStorageProviderOpts()(
+        workspaceStore.state,
+        workspaceStore.dispatch,
       );
 
       const wsMetadata =
         storageOpts.readWorkspaceMetadata() as GithubWsMetadata;
 
-      await pullGithubChanges(
+      const { updatedWsPaths, deletedWsPaths } = await pullGithubChanges(
         wsName,
         localFileEntryManager,
         wsMetadata,
         new AbortController().signal,
       );
+
+      if (updatedWsPaths.length + deletedWsPaths.length > 0) {
+        // TODO do something
+      }
     },
   };
 });

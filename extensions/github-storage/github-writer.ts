@@ -1,7 +1,7 @@
 import base64 from 'base64-js';
 
+import { wsPathHelpers } from '@bangle.io/api';
 import { BaseError } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
 
 import { GITHUB_STORAGE_NOT_ALLOWED } from './errors';
 import { getBranchHead, GithubConfig, pushChanges } from './github-api-helpers';
@@ -46,9 +46,9 @@ export class GithubWriter {
   ) {}
 
   addFile(wsPath: string, file: File): void {
-    let _wsName = resolvePath(wsPath).wsName;
+    let _wsName = wsPathHelpers.resolvePath(wsPath).wsName;
     Object.keys(this.additions).forEach((wsPath) => {
-      const { wsName } = resolvePath(wsPath);
+      const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
       if (_wsName !== wsName) {
         throw new Error('Workspace name mismatch');
@@ -87,12 +87,12 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
         additions.map(async ([wsPath, file]) => {
           return {
             base64Content: await fileToBase64(file),
-            path: resolvePath(wsPath).filePath,
+            path: wsPathHelpers.resolvePath(wsPath).filePath,
           };
         }),
       ),
       deletions: [...this.deletions].map((wsPath) => {
-        const { filePath, wsName } = resolvePath(wsPath);
+        const { filePath, wsName } = wsPathHelpers.resolvePath(wsPath);
 
         if (_wsName !== wsName) {
           throw new Error('Workspace name mismatch');
@@ -116,9 +116,9 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join(', ')}` : ''}`.trim();
   }
 
   deleteFile(wsPath: string): void {
-    let _wsName = resolvePath(wsPath).wsName;
+    let _wsName = wsPathHelpers.resolvePath(wsPath).wsName;
     this.deletions.forEach((wsPath) => {
-      const { wsName } = resolvePath(wsPath);
+      const { wsName } = wsPathHelpers.resolvePath(wsPath);
 
       if (_wsName !== wsName) {
         throw new Error('Workspace name mismatch');
@@ -175,12 +175,12 @@ ${deletions.length > 0 ? `- Deleted ${deletions.join('\n- ')}` : ''}`.trim();
       additions.map(async ([wsPath, file]) => {
         return {
           base64Content: await fileToBase64(file),
-          path: resolvePath(wsPath).filePath,
+          path: wsPathHelpers.resolvePath(wsPath).filePath,
         };
       }),
     ),
     deletions: deletions.map((wsPath) => {
-      const { filePath, wsName } = resolvePath(wsPath);
+      const { filePath, wsName } = wsPathHelpers.resolvePath(wsPath);
 
       if (_wsName !== wsName) {
         throw new Error('Workspace name mismatch');

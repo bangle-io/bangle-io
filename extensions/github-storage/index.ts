@@ -1,15 +1,11 @@
 import React from 'react';
 
-import { Extension } from '@bangle.io/extension-registry';
+import { Extension, notification, workspace } from '@bangle.io/api';
+import { CORE_OPERATIONS_OPEN_GITHUB_ISSUE } from '@bangle.io/constants';
 import {
   ErrorCode as RemoteSyncErrorCode,
   ErrorCodeType as RemoteFileSyncErrorCodeType,
 } from '@bangle.io/remote-file-sync';
-import {
-  showNotification,
-  uncaughtExceptionNotification,
-} from '@bangle.io/slice-notification';
-import { getStorageProviderOpts, getWsName } from '@bangle.io/slice-workspace';
 import { isIndexedDbException } from '@bangle.io/storage';
 import { GithubIcon } from '@bangle.io/ui-components';
 
@@ -34,7 +30,7 @@ import { localFileEntryManager } from './file-entry-manager';
 import { GithubStorageProvider } from './github-storage-provider';
 import { githubStorageSlice } from './github-storage-slice';
 import { GithubWsMetadata, isGithubStorageProvider } from './helpers';
-import { pullGithubChanges } from './pull-github-changes';
+import { needsEditorReset, pullGithubChanges } from './pull-github-changes';
 
 const extensionName = '@bangle.io/github-storage';
 
@@ -60,7 +56,7 @@ const extension = Extension.create({
 
       if (isIndexedDbException(error)) {
         console.debug(error.code, error.name);
-        showNotification({
+        notification.showNotification({
           severity: 'error',
           title: 'Error writing to browser storage',
           content: error.message,
@@ -73,7 +69,7 @@ const extension = Extension.create({
       switch (errorCode) {
         case GITHUB_API_ERROR: {
           if (error.message.includes('Bad credentials')) {
-            showNotification({
+            notification.showNotification({
               severity: 'error',
               title: 'Bad Github credentials',
               content:
@@ -90,7 +86,7 @@ const extension = Extension.create({
 
             break;
           }
-          showNotification({
+          notification.showNotification({
             severity: 'error',
             title: 'Github API error',
             content: error.message,
@@ -99,7 +95,7 @@ const extension = Extension.create({
           break;
         }
         case INVALID_GITHUB_FILE_FORMAT: {
-          showNotification({
+          notification.showNotification({
             severity: 'error',
             title: 'Invalid file format',
             content: error.message,
@@ -108,7 +104,7 @@ const extension = Extension.create({
           break;
         }
         case INVALID_GITHUB_TOKEN: {
-          showNotification({
+          notification.showNotification({
             severity: 'error',
             title: 'Github token is invalid',
             content: error.message,
@@ -118,7 +114,7 @@ const extension = Extension.create({
         }
 
         case INVALID_GITHUB_RESPONSE: {
-          showNotification({
+          notification.showNotification({
             severity: 'error',
             title: 'Received invalid response from Github',
             content: error.message,
@@ -128,7 +124,7 @@ const extension = Extension.create({
         }
 
         case GITHUB_STORAGE_NOT_ALLOWED: {
-          showNotification({
+          notification.showNotification({
             severity: 'error',
             title: 'Not allowed',
             content: error.message,
@@ -138,7 +134,7 @@ const extension = Extension.create({
         }
 
         case RemoteSyncErrorCode.REMOTE_SYNC_NOT_ALLOWED_ERROR: {
-          showNotification({
+          notification.showNotification({
             severity: 'error',
             title: 'Not allowed',
             content: error.message,
@@ -153,7 +149,20 @@ const extension = Extension.create({
           let val: never = errorCode;
 
           console.error(error);
-          uncaughtExceptionNotification(error)(store.state, store.dispatch);
+
+          notification.showNotification({
+            severity: 'error',
+            title: 'Bangle.io encountered a problem.',
+            uid: `uncaughtExceptionNotification-` + error.name,
+            buttons: [
+              {
+                title: 'Report issue',
+                hint: `Report an issue on Github`,
+                operation: CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
+              },
+            ],
+            content: error.message,
+          })(store.state, store.dispatch);
 
           return false;
         }
@@ -194,13 +203,13 @@ const extension = Extension.create({
             case OPERATION_PULL_GITHUB_CHANGES: {
               abortController.abort();
               abortController = new AbortController();
-              const wsName = getWsName()(store.state);
+              const wsName = workspace.getWsName()(store.state);
 
               if (!wsName) {
                 return false;
               }
 
-              const storageOpts = getStorageProviderOpts()(
+              const storageOpts = workspace.getStorageProviderOpts()(
                 store.state,
                 store.dispatch,
               );
@@ -219,14 +228,40 @@ const extension = Extension.create({
                 abortController.signal,
               ).then(
                 (result) => {
-                  showNotification({
-                    severity: 'info',
-                    title: `Synced ${result} entries`,
-                    uid: 'sync done ' + Math.random(),
-                  })(store.state, store.dispatch);
+                  const { openedWsPaths } =
+                    workspace.workspaceSliceKey.getSliceStateAsserted(
+                      store.state,
+                    );
+
+                  console.log(
+                    'needsEditorReset',
+                    needsEditorReset({
+                      openedWsPaths,
+                      updatedWsPaths: result?.updatedWsPaths || [],
+                      deletedWsPaths: result?.deletedWsPaths || [],
+                    }),
+                  );
+
+                  const total =
+                    (result?.updatedWsPaths.length || 0) +
+                    (result?.deletedWsPaths.length || 0);
+
+                  if (total === 0) {
+                    notification.showNotification({
+                      severity: 'info',
+                      title: 'Everything upto date',
+                      uid: 'no-changes',
+                    })(store.state, store.dispatch);
+                  } else {
+                    notification.showNotification({
+                      severity: 'info',
+                      title: `Synced ${total} file${total === 1 ? '' : 's'}`,
+                      uid: 'sync done ' + Math.random(),
+                    })(store.state, store.dispatch);
+                  }
                 },
                 (error) => {
-                  showNotification({
+                  notification.showNotification({
                     severity: 'error',
                     title: 'Error syncing',
                     content: error.message,

@@ -1,33 +1,28 @@
-import { AppState } from '@bangle.io/create-store';
-import {
-  getStorageProviderName,
-  getWorkspaceMetadata,
-  getWsName,
-  workspaceSliceKey,
-} from '@bangle.io/slice-workspace';
+import { BangleAppState, workspace } from '@bangle.io/api';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
 
 export function isGithubStorageProvider() {
-  return (state: AppState) => {
-    const wsName = getWsName()(state);
+  return (state: BangleAppState) => {
+    const wsName = workspace.getWsName()(state);
 
     if (!wsName) {
       return false;
     }
 
     return (
-      getStorageProviderName(wsName)(state) === GITHUB_STORAGE_PROVIDER_NAME
+      workspace.getStorageProviderName(wsName)(state) ===
+      GITHUB_STORAGE_PROVIDER_NAME
     );
   };
 }
 
 export const readGithubTokenFromStore = () => {
-  return workspaceSliceKey.queryOp((state) => {
-    const wsName = getWsName()(state);
+  return workspace.workspaceSliceKey.queryOp((state) => {
+    const wsName = workspace.getWsName()(state);
 
     if (wsName && isGithubStorageProvider()(state)) {
-      const metadata = getWorkspaceMetadata(wsName)(state);
+      const metadata = workspace.getWorkspaceMetadata(wsName)(state);
 
       return metadata?.githubToken as string | undefined;
     }

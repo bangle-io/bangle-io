@@ -1,6 +1,6 @@
 import * as idb from 'idb-keyval';
 
-import { resolvePath } from '@bangle.io/ws-path';
+import { wsPathHelpers } from '@bangle.io/api';
 
 import { getFileBlob, getTree } from './github-api-helpers';
 import { GithubWsMetadata } from './helpers';
@@ -77,9 +77,9 @@ export class GithubRepoTree {
     wsMetadata: GithubWsMetadata,
     abortSignal: AbortSignal,
   ) {
-    const { wsName, fileName } = resolvePath(wsPath);
+    const { wsName, fileName } = wsPathHelpers.resolvePath(wsPath);
     const data = await GithubRepoTree.getData(
-      resolvePath(wsPath).wsName,
+      wsPathHelpers.resolvePath(wsPath).wsName,
       wsMetadata,
       abortSignal,
     );

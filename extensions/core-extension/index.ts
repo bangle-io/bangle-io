@@ -9,15 +9,22 @@ import {
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
+  WorkspaceTypeBrowser,
+  WorkspaceTypeNative,
 } from '@bangle.io/constants';
+import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
+import type { WorkspaceSliceAction } from '@bangle.io/shared-types';
 import {
   focusEditor,
   isEditingAllowed,
   toggleEditing,
 } from '@bangle.io/slice-editor-manager';
-import { showNotification } from '@bangle.io/slice-notification';
-import { toggleTheme } from '@bangle.io/slice-ui';
+import {
+  notificationSliceKey,
+  showNotification,
+} from '@bangle.io/slice-notification';
+import { toggleTheme, UiContextAction } from '@bangle.io/slice-ui';
 
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -146,19 +153,29 @@ const extension = Extension.create({
         name: 'operation::@bangle.io/core-extension:toggle-editing-mode',
         title: 'Editor: Toggle editing mode',
       },
+      {
+        name: 'operation::@bangle.io/core-extension:reload-application',
+        title: 'Reload application',
+      },
     ],
     operationHandler() {
       return {
         handle(operation, payload, bangleStore) {
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
-              workspace.newNote()(bangleStore.state, bangleStore.dispatch);
+              workspace.openNewNoteDialog()(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
 
               return true;
             }
 
             case CORE_OPERATIONS_NEW_WORKSPACE: {
-              workspace.newWorkspace()(bangleStore.state, bangleStore.dispatch);
+              workspace.openNewWorkspaceDialog()(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
 
               return true;
             }
@@ -252,7 +269,7 @@ const extension = Extension.create({
             case CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE: {
               const { wsName } = payload || {};
 
-              workspace.createBrowserWorkspace(wsName)(
+              createBrowserWorkspace(wsName)(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -263,7 +280,7 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
               const { rootDirHandle } = payload || {};
-              workspace.createNativeFsWorkpsace(rootDirHandle)(
+              createNativeFsWorkspace(rootDirHandle)(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -290,6 +307,12 @@ const extension = Extension.create({
               return true;
             }
 
+            case 'operation::@bangle.io/core-extension:reload-application': {
+              window.location.reload();
+
+              return true;
+            }
+
             default: {
               return false;
             }
@@ -301,3 +324,86 @@ const extension = Extension.create({
 });
 
 export default extension;
+
+function createNativeFsWorkspace(rootDirHandle: any) {
+  return async (
+    state: AppState,
+    dispatch: ApplicationStore<
+      any,
+      WorkspaceSliceAction | UiContextAction
+    >['dispatch'],
+    store: ApplicationStore,
+  ) => {
+    if (typeof rootDirHandle?.name === 'string') {
+      try {
+        await workspace.createWorkspace(
+          rootDirHandle.name,
+          WorkspaceTypeNative,
+          {
+            rootDirHandle,
+          },
+        )(state, dispatch, store);
+
+        (window as any).fathom?.trackGoal('K3NFTGWX', 0);
+      } catch (error: any) {
+        showNotification({
+          severity: 'error',
+          uid: 'error-create-workspace-' + rootDirHandle?.name,
+          title: 'Unable to create workspace ' + rootDirHandle?.name,
+          content: error.displayMessage || error.message,
+        })(
+          notificationSliceKey.getState(store.state),
+          notificationSliceKey.getDispatch(store.dispatch),
+        );
+
+        throw error;
+      }
+    } else {
+      throw new Error(
+        'Incorrect parameters for ' +
+          CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+      );
+    }
+
+    return true;
+  };
+}
+
+function createBrowserWorkspace(wsName: string) {
+  return async (
+    state: AppState,
+    dispatch: ApplicationStore<
+      any,
+      WorkspaceSliceAction | UiContextAction
+    >['dispatch'],
+    store: ApplicationStore,
+  ) => {
+    if (typeof wsName !== 'string') {
+      throw new Error(
+        'Incorrect parameters for ' + CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+      );
+    }
+
+    try {
+      await workspace.createWorkspace(wsName, WorkspaceTypeBrowser, {})(
+        state,
+        dispatch,
+        store,
+      );
+      (window as any).fathom?.trackGoal('AISLCLRF', 0);
+    } catch (error: any) {
+      showNotification({
+        severity: 'error',
+        uid: 'error-create-workspace-' + wsName,
+        title: 'Unable to create workspace ' + wsName,
+        content: error.displayMessage || error.message,
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+      throw error;
+    }
+
+    return true;
+  };
+}
