@@ -9,6 +9,11 @@ import {
 import { inlineNodeParser } from '@bangle.dev/markdown';
 import { EditorState, EditorView, keymap } from '@bangle.dev/pm';
 
+import {
+  search,
+  useBangleStoreContext,
+  useSerialOperationContext,
+} from '@bangle.io/api';
 import { RenderReactNodeView } from '@bangle.io/extension-registry';
 import {
   inlinePalette,
@@ -16,7 +21,6 @@ import {
   queryInlinePaletteText,
   replaceSuggestionMarkWith,
 } from '@bangle.io/inline-palette';
-import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 
 import {
   BANNED_CHARS,
@@ -204,13 +208,10 @@ export const renderReactNodeView: RenderReactNodeView = {
 
 function TagComponent({ tagValue }: { tagValue: string }) {
   const { dispatchSerialOperation } = useSerialOperationContext();
-
+  const bangleStore = useBangleStoreContext();
   const onClick = useCallback(() => {
-    dispatchSerialOperation({
-      name: 'operation::@bangle.io/search-notes:execute-search',
-      value: `tag:${tagValue}`,
-    });
-  }, [tagValue, dispatchSerialOperation]);
+    search.searchByTag(dispatchSerialOperation, tagValue)(bangleStore.state);
+  }, [tagValue, dispatchSerialOperation, bangleStore]);
 
   return (
     <span className="inline-note-tag" onClick={onClick}>
