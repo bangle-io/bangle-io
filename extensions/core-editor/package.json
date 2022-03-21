@@ -1,5 +1,6 @@
 {
-  "name": "@bangle.io/editor-core",
+  "name": "@bangle.io/core-editor",
+  "description": "The core extension that sets up the editor",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "extensions/editor-core"
+    "directory": "extensions/core-editor"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
