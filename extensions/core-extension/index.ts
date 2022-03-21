@@ -1,10 +1,14 @@
 import { editor, workspace } from '@bangle.io/api';
 import {
+  CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
+  NEW_NOTE_DIALOG_NAME,
+  NEW_WORKSPACE_DIALOG_NAME,
+  RENAME_NOTE_DIALOG_NAME,
 } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import {
@@ -29,15 +33,10 @@ import {
   CORE_OPERATIONS_TOGGLE_UI_THEME,
   extensionName,
 } from './config';
-import { CHANGELOG_MODAL_NAME, ChangelogModal } from './dialogs/ChangelogModal';
+import { ChangelogModal } from './dialogs/ChangelogModal';
+import { NewWorkspaceModal } from './dialogs/new-workspace-modal';
 import {
-  NEW_WORKSPACE_DIALOG_NAME,
-  NewWorkspaceModal,
-} from './dialogs/new-workspace-modal';
-import {
-  NEW_NOTE_DIALOG_NAME,
   NewNoteInputModal,
-  RENAME_NOTE_DIALOG_NAME,
   RenameNoteInputModal,
 } from './dialogs/NoteNameChangeDialog';
 import { downloadWorkspace, restoreWorkspaceFromBackup } from './operations';

@@ -28,6 +28,7 @@ import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
 import { BangleEditor, useEditorState } from '@bangle.dev/react';
 
 import { CHANGELOG_TEXT } from '@bangle.io/config';
+import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { Modal } from '@bangle.io/ui-components';
 import { useLocalStorage } from '@bangle.io/utils';
@@ -52,9 +53,6 @@ const specRegistry = new SpecRegistry([
   text.spec(),
   underline.spec(),
 ]);
-
-export const CHANGELOG_MODAL_NAME =
-  'dialog::@bangle.io/core-extension:changelog-modal';
 
 export function ChangelogModal() {
   const { dispatch } = useUIManagerContext();

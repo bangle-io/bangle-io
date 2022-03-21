@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import type { SidebarType } from '@bangle.io/extension-registry';
 import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
@@ -80,7 +81,7 @@ export function Activitybar({
           dispatch({
             name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
             value: {
-              dialogName: 'dialog::@bangle.io/core-extension:changelog-modal',
+              dialogName: CHANGELOG_MODAL_NAME,
             },
           });
         }}

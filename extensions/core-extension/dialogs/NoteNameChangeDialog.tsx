@@ -1,6 +1,10 @@
 import React, { useCallback, useState } from 'react';
 
 import { editor } from '@bangle.io/api';
+import {
+  NEW_NOTE_DIALOG_NAME,
+  RENAME_NOTE_DIALOG_NAME,
+} from '@bangle.io/constants';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import {
@@ -16,12 +20,6 @@ import {
   PathValidationError,
   resolvePath,
 } from '@bangle.io/ws-path';
-
-export const NEW_NOTE_DIALOG_NAME =
-  'dialog::@bangle.io/core-extension:new-note-modal';
-
-export const RENAME_NOTE_DIALOG_NAME =
-  'dialog::@bangle.io/core-extension:rename-note-modal';
 
 export function NewNoteInputModal() {
   const { dispatch, dialogName, dialogMetadata } = useUIManagerContext();
@@ -93,7 +91,7 @@ export function NewNoteInputModal() {
     [onDismiss, bangleStore, destroyedRef, wsName],
   );
 
-  if (dialogName !== 'dialog::@bangle.io/core-extension:new-note-modal') {
+  if (dialogName !== NEW_NOTE_DIALOG_NAME) {
     return null;
   }
 
