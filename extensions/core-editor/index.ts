@@ -8,7 +8,7 @@ import { MenuComp } from './FloatingMenu';
 import { getPlugins } from './plugins';
 import { rawSpecs } from './spec-sheet';
 
-const extensionName = '@bangle.io/editor-core';
+const extensionName = '@bangle.io/core-editor';
 
 const extension = Extension.create({
   name: extensionName,
@@ -21,19 +21,19 @@ const extension = Extension.create({
   application: {
     operations: [
       {
-        name: 'operation::@bangle.io/editor-core:collapse-heading',
+        name: 'operation::@bangle.io/core-editor:collapse-heading',
         title: 'Editor: Collapse heading',
       },
       {
-        name: 'operation::@bangle.io/editor-core:uncollapse-all-heading',
+        name: 'operation::@bangle.io/core-editor:uncollapse-all-heading',
         title: 'Editor: Uncollapse all headings',
       },
       {
-        name: 'operation::@bangle.io/editor-core:move-list-up',
+        name: 'operation::@bangle.io/core-editor:move-list-up',
         title: 'Editor: Move list up',
       },
       {
-        name: 'operation::@bangle.io/editor-core:move-list-down',
+        name: 'operation::@bangle.io/core-editor:move-list-down',
         title: 'Editor: Move list down',
       },
     ],
@@ -45,7 +45,7 @@ const extension = Extension.create({
       return {
         handle(operation, payload, bangleStore) {
           switch (operation.name) {
-            case 'operation::@bangle.io/editor-core:collapse-heading': {
+            case 'operation::@bangle.io/core-editor:collapse-heading': {
               dispatchEditorCommand(
                 0,
                 toggleHeadingCollapse(),
@@ -54,7 +54,7 @@ const extension = Extension.create({
               return true;
             }
 
-            case 'operation::@bangle.io/editor-core:uncollapse-all-heading': {
+            case 'operation::@bangle.io/core-editor:uncollapse-all-heading': {
               dispatchEditorCommand(
                 0,
                 uncollapseAllHeadings(),
@@ -63,13 +63,13 @@ const extension = Extension.create({
               return true;
             }
 
-            case 'operation::@bangle.io/editor-core:move-list-up': {
+            case 'operation::@bangle.io/core-editor:move-list-up': {
               dispatchEditorCommand(0, moveListItemUp())(bangleStore.state);
 
               return true;
             }
 
-            case 'operation::@bangle.io/editor-core:move-list-down': {
+            case 'operation::@bangle.io/core-editor:move-list-down': {
               dispatchEditorCommand(0, moveListItemDown())(bangleStore.state);
 
               return true;

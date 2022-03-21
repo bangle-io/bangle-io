@@ -98,7 +98,7 @@ A file path in Bangle is denoted by a string with the following syntax:
 2. That then becomes a wsPath derived from history.location
 3. An `<Editor />` gets mounted with new wsPath
 4. At this point the editor is loaded with empty doc.
-5. `@bangle.dev/collab-extension`'s collab-client sets up communication with worker thread.
+5. `@bangle.dev/core-editor`'s collab-client sets up communication with worker thread.
 6. Worker thread has a collab-manager instance running.
 7. When collab-client calls getDocument, it is passed on to worker thread's manager
 8. manager calls localDisk.getItem to get the document from indexdb.

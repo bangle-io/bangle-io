@@ -1,10 +1,8 @@
 import browserNativefsStorage from '@bangle.io/browser-nativefs-storage';
 import browserStorage from '@bangle.io/browser-storage';
-import collabExtension from '@bangle.io/collab-extension';
-import collapsibleHeading from '@bangle.io/collapsible-heading';
+import editorCore from '@bangle.io/core-editor';
 import coreActions from '@bangle.io/core-extension';
 import corePalette from '@bangle.io/core-palettes';
-import editorCore from '@bangle.io/editor-core';
 import { ExtensionRegistry } from '@bangle.io/extension-registry';
 import githubStorage from '@bangle.io/github-storage';
 import imageExtension from '@bangle.io/image-extension';
@@ -23,12 +21,10 @@ export const initExtensionRegistry = () => {
     browserStorage,
     browserNativefsStorage,
     editorCore,
-    collabExtension,
     inlineCommandPalette,
     noteOutline,
     inlineBacklinkPalette,
     noteTags,
-    collapsibleHeading,
     imageExtension,
     coreActions,
     noteBrowser,

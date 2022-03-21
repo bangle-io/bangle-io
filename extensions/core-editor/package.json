@@ -1,5 +1,6 @@
 {
-  "name": "@bangle.io/editor-core",
+  "name": "@bangle.io/core-editor",
+  "description": "The core extension that sets up the editor",
   "version": "0.0.0",
   "authors": [
     {
@@ -11,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/bangle-io/bangle-io.git",
-    "directory": "extensions/editor-core"
+    "directory": "extensions/core-editor"
   },
   "bugs": {
     "url": "https://github.com/bangle-io/bangle-io/issues"
@@ -20,6 +21,8 @@
   "module": "index.ts",
   "dependencies": {
     "@bangle.dev/base-components": "0.28.8",
+    "@bangle.dev/collab-client": "0.28.8",
+    "@bangle.dev/collab-server": "0.28.8",
     "@bangle.dev/core": "0.28.8",
     "@bangle.dev/emoji": "0.28.8",
     "@bangle.dev/markdown": "0.28.8",
@@ -41,6 +44,7 @@
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/utils": "workspace:*",
+    "@bangle.io/worker-naukar-proxy": "workspace:*",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "tslib": "^2.3.1",

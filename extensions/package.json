@@ -1,14 +1,11 @@
 {
   "name": "extensions",
   "workspaces": [
-    "api",
     "browser-nativefs-storage",
     "browser-storage",
-    "collab-extension",
-    "collapsible-heading",
+    "core-editor",
     "core-extension",
     "core-palettes",
-    "editor-core",
     "example-extension",
     "github-storage",
     "image-extension",

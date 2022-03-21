@@ -57,3 +57,44 @@
 .bangle-tooltip {
   z-index: var(--window-tooltip-zIndex);
 }
+
+/* collapse styles */
+.deco-collapse-positioner {
+  position: relative;
+}
+
+.deco-collapse {
+  display: flex;
+  position: absolute;
+  left: -1.5rem;
+}
+
+h1 .deco-collapse {
+  top: calc((3rem / 2) - 10px);
+}
+
+h2 .deco-collapse {
+  top: calc((1.875rem / 2) - 10px);
+}
+
+h3 .deco-collapse {
+  top: calc((1.25rem / 2) - 10px);
+}
+
+h4 .deco-collapse {
+  top: calc((1.125rem / 2) - 10px);
+}
+
+h5 .deco-collapse {
+  top: calc((0.75rem / 2) - 10px);
+}
+
+.deco-collapse-child {
+  height: 1.25rem;
+  width: 1.25rem;
+  fill: currentcolor;
+  align-self: center;
+  cursor: pointer;
+}
+
+/* collapse styles end*/

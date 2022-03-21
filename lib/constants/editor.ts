@@ -10,7 +10,7 @@ export const EditorPluginMetadataKey = new PluginKey<EditorPluginMetadata>(
 );
 export const intersectionObserverPluginKey =
   new PluginKey<IntersectionObserverPluginState>(
-    'editor-core_intersectionObserverPlugin',
+    'core-editor_intersectionObserverPlugin',
   );
 
 export enum EditorDisplayType {

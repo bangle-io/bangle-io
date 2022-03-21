@@ -1,4 +1,4 @@
-import { EditorView, Plugin } from '@bangle.dev/pm';
+import { Plugin } from '@bangle.dev/pm';
 
 import type { EditorPlugin } from '@bangle.io/shared-types';
 import { isEditingAllowed } from '@bangle.io/slice-editor-manager';
