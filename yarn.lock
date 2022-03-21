@@ -1908,6 +1908,8 @@ __metadata:
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/create-store": "workspace:*"
+    "@bangle.io/serial-operation-context": "workspace:*"
+    "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-editor-manager": "workspace:*"
     "@bangle.io/slice-notification": "workspace:*"
     "@bangle.io/slice-ui": "workspace:*"
@@ -2724,13 +2726,13 @@ __metadata:
     "@bangle.dev/react": 0.28.8
     "@bangle.dev/test-helpers": 0.28.8
     "@bangle.dev/utils": 0.28.8
+    "@bangle.io/api": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/fzf-search": "workspace:*"
     "@bangle.io/inline-palette": "workspace:*"
     "@bangle.io/search-pm-node": "workspace:*"
-    "@bangle.io/serial-operation-context": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/slice-workspace": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"

@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { keyDisplayValue } from '@bangle.io/config';
+import { EXECUTE_SEARCH_OPERATION } from '@bangle.io/constants';
 import { Extension } from '@bangle.io/extension-registry';
 import { SearchIcon } from '@bangle.io/ui-components';
 
 import { SearchNotesSidebar } from './components/SearchNotesSidebar';
 import {
-  EXECUTE_SEARCH_OPERATION,
   extensionName,
   SearchNotesExtensionState,
   SHOW_SEARCH_SIDEBAR_OPERATION,
