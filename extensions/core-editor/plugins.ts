@@ -32,6 +32,7 @@ import { intersectionObserverPluginKey } from '@bangle.io/constants';
 import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
 
 import { activeNode } from './active-node';
+import { pluginsFactory } from './collapsible-heading-deco';
 import { editingAllowedPlugin } from './editing-allowed';
 import { watchEditorFocus } from './watch-editor-focus';
 
@@ -110,6 +111,7 @@ export const getPlugins = () => {
         scrollMargin: Math.floor(window.innerHeight / 4),
       },
     }),
+    pluginsFactory(),
     activeNode(),
     editingAllowedPlugin,
     watchEditorFocus,

@@ -1,4 +1,3 @@
-import '@bangle.io/collapsible-heading/style';
 import '@bangle.io/core-extension/style';
 import '@bangle.io/core-editor/style';
 import '@bangle.io/inline-backlink/style';

@@ -99,10 +99,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:extensions/collab-extension"
       },
       {
-        "name": "@bangle.io/collapsible-heading",
-        "reference": "workspace:extensions/collapsible-heading"
-      },
-      {
         "name": "@bangle.io/core-editor",
         "reference": "workspace:extensions/core-editor"
       },
@@ -333,7 +329,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/browser-nativefs-storage", ["workspace:extensions/browser-nativefs-storage"]],
       ["@bangle.io/browser-storage", ["workspace:extensions/browser-storage"]],
       ["@bangle.io/collab-extension", ["workspace:extensions/collab-extension"]],
-      ["@bangle.io/collapsible-heading", ["workspace:extensions/collapsible-heading"]],
       ["@bangle.io/config", ["workspace:lib/config"]],
       ["@bangle.io/constants", ["workspace:lib/constants"]],
       ["@bangle.io/contextual-ui-components", ["workspace:lib/contextual-ui-components"]],
@@ -4463,7 +4458,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
-            ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],
@@ -4538,7 +4532,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/bangle-store", "workspace:app/bangle-store"],
             ["@bangle.io/bangle-store-context", "workspace:lib/bangle-store-context"],
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
-            ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.io/config", "workspace:lib/config"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],
@@ -4729,25 +4722,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],
-            ["tslib", "npm:2.3.1"],
-            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
-          ],
-          "linkType": "SOFT",
-        }]
-      ]],
-      ["@bangle.io/collapsible-heading", [
-        ["workspace:extensions/collapsible-heading", {
-          "packageLocation": "./extensions/collapsible-heading/",
-          "packageDependencies": [
-            ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
-            ["@bangle.dev/base-components", "virtual:61e8bf15ead0605b938e056ccc2a7427658f3e8765d89407c601cdfd9be63d1a92579e68d1e1cddea359d2c7ab5e2bc9db0612ed4c208d3be1a251a67a2f7c8d#npm:0.28.8"],
-            ["@bangle.dev/core", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
-            ["@bangle.dev/pm", "npm:0.28.8"],
-            ["@bangle.dev/utils", "virtual:6f0df859b92a736d8ab5b336bfdf38661425a413f31860eb085cbdf4cd6373864a68618704a2b0f54bc2d3143f348461755775224bf1dd1619b86f6766eb8dbf#npm:0.28.8"],
-            ["@bangle.io/constants", "workspace:lib/constants"],
-            ["@bangle.io/extension-registry", "workspace:lib/extension-registry"],
-            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
-            ["@bangle.io/utils", "workspace:lib/utils"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
           ],
@@ -5811,7 +5785,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/browser-nativefs-storage", "workspace:extensions/browser-nativefs-storage"],
             ["@bangle.io/browser-storage", "workspace:extensions/browser-storage"],
             ["@bangle.io/collab-extension", "workspace:extensions/collab-extension"],
-            ["@bangle.io/collapsible-heading", "workspace:extensions/collapsible-heading"],
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/core-editor", "workspace:extensions/core-editor"],
             ["@bangle.io/core-extension", "workspace:extensions/core-extension"],

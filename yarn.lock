@@ -1937,7 +1937,6 @@ __metadata:
     "@bangle.io/bangle-store": "workspace:*"
     "@bangle.io/bangle-store-context": "workspace:*"
     "@bangle.io/collab-extension": "workspace:*"
-    "@bangle.io/collapsible-heading": "workspace:*"
     "@bangle.io/config": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-editor": "workspace:*"
@@ -2116,23 +2115,6 @@ __metadata:
     "@bangle.io/extension-registry": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
-    tslib: ^2.3.1
-    typescript: ^4.5.5
-  languageName: unknown
-  linkType: soft
-
-"@bangle.io/collapsible-heading@workspace:*, @bangle.io/collapsible-heading@workspace:extensions/collapsible-heading":
-  version: 0.0.0-use.local
-  resolution: "@bangle.io/collapsible-heading@workspace:extensions/collapsible-heading"
-  dependencies:
-    "@bangle.dev/base-components": 0.28.8
-    "@bangle.dev/core": 0.28.8
-    "@bangle.dev/pm": 0.28.8
-    "@bangle.dev/utils": 0.28.8
-    "@bangle.io/constants": "workspace:*"
-    "@bangle.io/extension-registry": "workspace:*"
-    "@bangle.io/shared-types": "workspace:*"
-    "@bangle.io/utils": "workspace:*"
     tslib: ^2.3.1
     typescript: ^4.5.5
   languageName: unknown
@@ -2969,7 +2951,6 @@ __metadata:
     "@bangle.io/browser-nativefs-storage": "workspace:*"
     "@bangle.io/browser-storage": "workspace:*"
     "@bangle.io/collab-extension": "workspace:*"
-    "@bangle.io/collapsible-heading": "workspace:*"
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/core-editor": "workspace:*"
     "@bangle.io/core-extension": "workspace:*"
