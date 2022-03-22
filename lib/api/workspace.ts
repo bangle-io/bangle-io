@@ -10,6 +10,7 @@ export {
   getStorageProviderOpts,
   getWorkspaceMetadata,
   getWsName,
+  goToWorkspaceAuthRoute,
   pushWsPath,
   refreshWsPaths,
   updateWorkspaceMetadata,

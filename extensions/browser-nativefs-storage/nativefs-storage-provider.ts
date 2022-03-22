@@ -1,3 +1,4 @@
+import { wsPathHelpers } from '@bangle.io/api';
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
@@ -6,7 +7,6 @@ import {
 import { WorkspaceTypeNative } from '@bangle.io/constants';
 import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { assertSignal } from '@bangle.io/utils';
-import { fromFsPath, toFSPath } from '@bangle.io/ws-path';
 
 const allowedFile = (name: string) => {
   return name.endsWith('.md') || name.endsWith('.png');
@@ -26,11 +26,11 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    await this.getFs(opts).unlink(toFSPath(wsPath));
+    await this.getFs(opts).unlink(wsPathHelpers.toFSPath(wsPath));
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
-    const path = toFSPath(wsPath);
+    const path = wsPathHelpers.toFSPath(wsPath);
     try {
       await this.getFs(opts).stat(path);
 
@@ -46,7 +46,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   }
 
   async fileStat(wsPath: string, opts: StorageOpts) {
-    const path = toFSPath(wsPath);
+    const path = wsPathHelpers.toFSPath(wsPath);
     const stat = await this.getFs(opts).stat(path);
 
     return {
@@ -79,7 +79,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
     files = rawPaths
       .map((r) => {
-        const wsPath = fromFsPath(r);
+        const wsPath = wsPathHelpers.fromFsPath(r);
 
         return wsPath;
       })
@@ -109,7 +109,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
       return undefined;
     }
 
-    return this.getFs(opts).readFile(toFSPath(wsPath));
+    return this.getFs(opts).readFile(wsPathHelpers.toFSPath(wsPath));
   }
 
   async renameFile(
@@ -117,7 +117,10 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     newWsPath: string,
     opts: StorageOpts,
   ): Promise<void> {
-    await this.getFs(opts).rename(toFSPath(wsPath), toFSPath(newWsPath));
+    await this.getFs(opts).rename(
+      wsPathHelpers.toFSPath(wsPath),
+      wsPathHelpers.toFSPath(newWsPath),
+    );
   }
 
   async writeFile(
@@ -125,7 +128,7 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
-    const path = toFSPath(wsPath);
+    const path = wsPathHelpers.toFSPath(wsPath);
     await this.getFs(opts).writeFile(path, file);
   }
 }

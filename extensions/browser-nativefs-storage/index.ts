@@ -1,12 +1,10 @@
+import { Extension, notification, workspace } from '@bangle.io/api';
 import {
   BaseFileSystemError,
   NATIVE_BROWSER_PERMISSION_ERROR,
   NATIVE_BROWSER_USER_ABORTED_ERROR,
   NativeBrowserFileSystemError,
 } from '@bangle.io/baby-fs';
-import { Extension } from '@bangle.io/extension-registry';
-import { showNotification } from '@bangle.io/slice-notification';
-import { getWsName, goToWorkspaceAuthRoute } from '@bangle.io/slice-workspace';
 
 import { NativsFsStorageProvider } from './nativefs-storage-provider';
 
@@ -22,10 +20,10 @@ const extension = Extension.create({
         error.code === NATIVE_BROWSER_PERMISSION_ERROR ||
         error.code === NATIVE_BROWSER_USER_ABORTED_ERROR
       ) {
-        const wsName = getWsName()(store.state);
+        const wsName = workspace.getWsName()(store.state);
 
         if (wsName) {
-          goToWorkspaceAuthRoute(wsName, error.code)(
+          workspace.goToWorkspaceAuthRoute(wsName, error.code)(
             store.state,
             store.dispatch,
           );
@@ -39,7 +37,7 @@ const extension = Extension.create({
         error.name === BaseFileSystemError.name
       ) {
         console.debug(error.code, error.name, error.stack);
-        showNotification({
+        notification.showNotification({
           severity: 'error',
           title: 'File system error',
           content: error.message,
