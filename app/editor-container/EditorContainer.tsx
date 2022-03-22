@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { editor } from '@bangle.io/api';
+import { editor, useSerialOperationContext } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import {
+  CORE_OPERATIONS_CLOSE_EDITOR,
+  CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
+} from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
 import {
@@ -26,17 +30,22 @@ export function EditorContainer({
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { openedWsPaths } = useWorkspaceContext();
   const { focusedEditorId } = useEditorManagerContext();
-  const bangleStore = useBangleStoreContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
 
   const isSplitEditorOpen = openedWsPaths.openCount > 0;
 
   const onPressSecondaryEditor = useCallback(() => {
-    editor.splitEditor()(bangleStore.state, bangleStore.dispatch);
-  }, [bangleStore]);
+    dispatchSerialOperation({
+      name: CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
+    });
+  }, [dispatchSerialOperation]);
 
   const onClose = useCallback(() => {
-    editor.closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
-  }, [bangleStore, editorId]);
+    dispatchSerialOperation({
+      name: CORE_OPERATIONS_CLOSE_EDITOR,
+      value: editorId,
+    });
+  }, [dispatchSerialOperation, editorId]);
 
   let children;
 

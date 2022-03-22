@@ -21,3 +21,9 @@ export const CORE_OPERATIONS_NEW_NOTE =
 
 export const CORE_OPERATIONS_NEW_WORKSPACE =
   'operation::@bangle.io/core-extension:NEW_WORKSPACE';
+
+export const CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT =
+  'operation::@bangle.io/core-extension:TOGGLE_EDITOR_SPLIT';
+
+export const CORE_OPERATIONS_CLOSE_EDITOR =
+  'operation::@bangle.io/core-extension:CLOSE_EDITOR';

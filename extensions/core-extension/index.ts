@@ -1,6 +1,7 @@
 import { editor, workspace } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
+  CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   CORE_OPERATIONS_NEW_NOTE,
@@ -9,6 +10,7 @@ import {
   CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
+  CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
@@ -30,12 +32,10 @@ import {
 import { toggleTheme, UiContextAction } from '@bangle.io/slice-ui';
 
 import {
-  CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_DELETE_ACTIVE_NOTE,
   CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY,
   CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP,
   CORE_OPERATIONS_RENAME_ACTIVE_NOTE,
-  CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
   CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_OPERATIONS_TOGGLE_UI_THEME,
   extensionName,
@@ -47,6 +47,7 @@ import {
   RenameNoteInputModal,
 } from './dialogs/NoteNameChangeDialog';
 import {
+  closeEditor,
   deleteActiveNote,
   downloadWorkspace,
   openNewNoteDialog,
@@ -54,6 +55,7 @@ import {
   removeWorkspace,
   renameActiveNote,
   restoreWorkspaceFromBackup,
+  splitEditor,
 } from './operations';
 
 const extension = Extension.create({
@@ -212,20 +214,19 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
-              editor.splitEditor()(bangleStore.state, bangleStore.dispatch);
+              splitEditor()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               if (typeof payload === 'number') {
-                editor.closeEditor(payload)(
-                  bangleStore.state,
-                  bangleStore.dispatch,
-                );
+                closeEditor(payload)(bangleStore.state, bangleStore.dispatch);
+
+                return true;
               }
 
-              return true;
+              return false;
             }
 
             case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {

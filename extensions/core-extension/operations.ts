@@ -7,6 +7,7 @@ import {
   WorkerErrorCode,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
   notificationSliceKey,
   showNotification,
@@ -18,6 +19,8 @@ import {
 } from '@bangle.io/slice-ui';
 import {
   refreshWsPaths,
+  updateOpenedWsPaths,
+  WorkspaceDispatchType,
   WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
@@ -269,6 +272,48 @@ export function openNewWorkspaceDialog() {
         dialogName: NEW_WORKSPACE_DIALOG_NAME,
       },
     });
+  };
+}
+
+export function splitEditor() {
+  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
+    const workspaceSliceState = workspaceSliceKey.getSliceState(state);
+
+    if (!workspaceSliceState) {
+      return false;
+    }
+
+    const { primaryWsPath, secondaryWsPath } =
+      workspaceSliceState.openedWsPaths;
+
+    if (secondaryWsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateSecondaryWsPath(undefined),
+      )(state, dispatch);
+    } else if (primaryWsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateSecondaryWsPath(primaryWsPath),
+      )(state, dispatch);
+    }
+
+    return true;
+  };
+}
+
+export function closeEditor(editorId: EditorIdType) {
+  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
+    if (typeof editorId === 'number') {
+      updateOpenedWsPaths((openedWsPaths) =>
+        openedWsPaths.updateByIndex(editorId, undefined).shrink(),
+      )(state, dispatch);
+    } else {
+      updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll())(
+        state,
+        dispatch,
+      );
+    }
+
+    return true;
   };
 }
 
