@@ -26,7 +26,7 @@ import { saveWorkspacesInfo } from './read-ws-info';
 import { storageProviderHelpers } from './storage-provider-helpers';
 import { listWorkspaces } from './workspaces-operations';
 
-const LOG = true;
+const LOG = false;
 
 const log = LOG
   ? console.debug.bind(console, 'slice-workspace effects')

@@ -12,7 +12,7 @@ import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
 
 const LOG = true;
-let log = LOG ? console.log.bind(console, 'SerialOperationCotext') : () => {};
+let log = LOG ? console.debug.bind(console, 'SerialOperationCotext') : () => {};
 
 export const SerialOperationContext = createContext<SerialOperationContextType>(
   {
