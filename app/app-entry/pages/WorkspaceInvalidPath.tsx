@@ -1,14 +1,18 @@
 import React from 'react';
 
-import { workspace } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { CorePalette } from '@bangle.io/constants';
+import {
+  CORE_OPERATIONS_NEW_WORKSPACE,
+  CorePalette,
+} from '@bangle.io/constants';
+import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
 
 export function WorkspaceInvalidPath() {
   const bangleStore = useBangleStoreContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
 
   return (
     <CenteredBoxedPage
@@ -33,10 +37,9 @@ export function WorkspaceInvalidPath() {
           <ActionButton
             ariaLabel="new workspace"
             onPress={() => {
-              workspace.openNewWorkspaceDialog()(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              dispatchSerialOperation({
+                name: CORE_OPERATIONS_NEW_WORKSPACE,
+              });
             }}
           >
             <ButtonContent text="New workspace" />

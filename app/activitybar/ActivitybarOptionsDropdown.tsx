@@ -1,8 +1,10 @@
 import React, { useCallback } from 'react';
 
-import { workspace } from '@bangle.io/api';
+import { useSerialOperationContext } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
+  CORE_OPERATIONS_NEW_NOTE,
+  CORE_OPERATIONS_NEW_WORKSPACE,
   CORE_PALETTES_TOGGLE_NOTES_PALETTE,
   CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
   CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE,
@@ -56,6 +58,8 @@ export function ActivitybarOptionsDropdown({
 }) {
   const store = useBangleStoreContext();
 
+  const { dispatchSerialOperation } = useSerialOperationContext();
+
   const handleDropdown = useCallback(
     (k: any) => {
       let key: AllKeysType = k;
@@ -65,11 +69,15 @@ export function ActivitybarOptionsDropdown({
           break;
         }
         case NewNoteKey: {
-          workspace.openNewNoteDialog()(store.state, store.dispatch);
+          dispatchSerialOperation({
+            name: CORE_OPERATIONS_NEW_NOTE,
+          });
           break;
         }
         case NewWorkspaceKey: {
-          workspace.openNewWorkspaceDialog()(store.state, store.dispatch);
+          dispatchSerialOperation({
+            name: CORE_OPERATIONS_NEW_WORKSPACE,
+          });
           break;
         }
         case NotesPaletteKey: {

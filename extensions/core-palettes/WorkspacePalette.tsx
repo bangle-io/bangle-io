@@ -6,10 +6,13 @@ import React, {
   useState,
 } from 'react';
 
-import { workspace } from '@bangle.io/api';
+import { useSerialOperationContext } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { keyDisplayValue } from '@bangle.io/config';
-import { CorePalette } from '@bangle.io/constants';
+import {
+  CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
+  CorePalette,
+} from '@bangle.io/constants';
 import type { WorkspaceInfo } from '@bangle.io/shared-types';
 import { goToWsNameRoute, listWorkspaces } from '@bangle.io/slice-workspace';
 import {
@@ -38,6 +41,7 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
 
       const [workspaces, updateWorkspaces] = useState<WorkspaceInfo[]>([]);
 
+      const { dispatchSerialOperation } = useSerialOperationContext();
       useEffect(() => {
         listWorkspaces()(
           bangleStore.state,
@@ -68,11 +72,10 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
                     }}
                     onClick={async (e: React.MouseEvent<any, MouseEvent>) => {
                       e.stopPropagation();
-                      await workspace.removeWorkspace(workspaceObj.name)(
-                        bangleStore.state,
-                        bangleStore.dispatch,
-                        bangleStore,
-                      );
+                      dispatchSerialOperation({
+                        name: CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
+                        value: workspaceObj.name,
+                      });
                       dismissPalette();
                     }}
                   />
@@ -82,7 +85,13 @@ const WorkspacePaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
         );
 
         return _items;
-      }, [bangleStore, query, dismissPalette, workspaces, injectRecency]);
+      }, [
+        query,
+        dismissPalette,
+        dispatchSerialOperation,
+        workspaces,
+        injectRecency,
+      ]);
 
       const activeItem = getActivePaletteItem(items);
 

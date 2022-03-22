@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtual } from 'react-virtual';
 
-import { workspace } from '@bangle.io/api';
+import { useSerialOperationContext, workspace } from '@bangle.io/api';
 import { isFirefox } from '@bangle.io/config';
-import { CorePalette } from '@bangle.io/constants';
+import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
 import type { BangleApplicationStore } from '@bangle.io/shared-types';
 import { togglePaletteType, useUIManagerContext } from '@bangle.io/slice-ui';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
@@ -47,6 +47,8 @@ export function NotesTree() {
     noteWsPaths = [],
   } = useWorkspaceContext();
 
+  const { dispatchSerialOperation } = useSerialOperationContext();
+
   const { primaryWsPath } = openedWsPaths;
   const activeFilePath = primaryWsPath
     ? resolvePath(primaryWsPath).filePath
@@ -63,12 +65,14 @@ export function NotesTree() {
 
   const createNewFile = useCallback(
     (path) => {
-      workspace.openNewNoteDialog(path)(
-        bangleStore.state,
-        bangleStore.dispatch,
-      );
+      dispatchSerialOperation({
+        name: CORE_OPERATIONS_NEW_NOTE,
+        value: {
+          path: path,
+        },
+      });
     },
-    [bangleStore],
+    [dispatchSerialOperation],
   );
 
   if (!wsName) {
