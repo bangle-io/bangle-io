@@ -4,9 +4,9 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
+import { useSerialOperationContext } from '@bangle.io/api';
 import { pickADirectory } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE } from '@bangle.io/constants';
-import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { hasWorkspace } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';
@@ -51,8 +51,8 @@ jest.mock('@bangle.io/slice-workspace', () => {
   };
 });
 
-jest.mock('@bangle.io/serial-operation-context', () => {
-  const otherThings = jest.requireActual('@bangle.io/serial-operation-context');
+jest.mock('@bangle.io/api', () => {
+  const otherThings = jest.requireActual('@bangle.io/api');
 
   return {
     ...otherThings,

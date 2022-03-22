@@ -44,7 +44,6 @@
     "@bangle.io/inline-command-palette": "workspace:*",
     "@bangle.io/inline-emoji": "workspace:*",
     "@bangle.io/note-sidebar": "workspace:*",
-    "@bangle.io/serial-operation-context": "workspace:*",
     "@bangle.io/shared": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",

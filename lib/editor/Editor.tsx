@@ -15,6 +15,7 @@ import {
 } from '@bangle.dev/react';
 import { valuePlugin } from '@bangle.dev/utils';
 
+import { useSerialOperationContext } from '@bangle.io/api';
 import {
   EditorDisplayType,
   EditorPluginMetadataKey,
@@ -23,7 +24,6 @@ import {
   ExtensionRegistry,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
-import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import type {
   DispatchSerialOperationType,
   EditorPluginMetadata,

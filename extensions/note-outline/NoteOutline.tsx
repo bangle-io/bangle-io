@@ -8,8 +8,8 @@ import React, {
 
 import { Selection } from '@bangle.dev/pm';
 
+import { useSerialOperationHandler } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import {
   getEditor,
   getEditorState,

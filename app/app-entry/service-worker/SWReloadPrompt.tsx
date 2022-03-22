@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 
+import { useSerialOperationHandler } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { RELEASE_ID } from '@bangle.io/config';
 import {
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
 } from '@bangle.io/constants';
-import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import {
   dismissNotification,
   showNotification,

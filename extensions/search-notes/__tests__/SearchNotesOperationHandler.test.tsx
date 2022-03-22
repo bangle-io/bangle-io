@@ -4,8 +4,8 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 
+import { useSerialOperationHandler } from '@bangle.io/api';
 import { EXECUTE_SEARCH_OPERATION as EXECUTE_SEARCH_OP } from '@bangle.io/constants';
-import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
 import type { SerialOperationHandler } from '@bangle.io/shared-types';
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
 import { getUseUIManagerContextReturn } from '@bangle.io/test-utils';
@@ -27,8 +27,11 @@ jest.mock('@bangle.io/slice-ui', () => {
   };
 });
 
-jest.mock('@bangle.io/serial-operation-context', () => {
+jest.mock('@bangle.io/api', () => {
+  const actual = jest.requireActual('../hooks');
+
   return {
+    ...actual,
     useSerialOperationHandler: jest.fn(),
   };
 });
