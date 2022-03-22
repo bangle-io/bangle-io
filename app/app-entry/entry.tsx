@@ -3,7 +3,7 @@ import './style';
 import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
-import { SerialOperationContextProvider } from '@bangle.io/api';
+import { SerialOperationContextProvider } from '@bangle.io/api/internal';
 import {
   historySliceKey,
   initializeBangleStore,

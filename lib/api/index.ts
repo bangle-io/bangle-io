@@ -4,10 +4,9 @@ export * as editor from './editor';
 export * as notification from './notification';
 export * as search from './search';
 export {
-  SerialOperationContextProvider,
   useSerialOperationContext,
   useSerialOperationHandler,
-} from './serial-operation';
+} from './serial-operation-context';
 export * as workspace from './workspace';
 export * as wsPathHelpers from './ws-path-helpers';
 export { useBangleStoreContext } from '@bangle.io/bangle-store-context';
