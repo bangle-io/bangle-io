@@ -114,7 +114,7 @@ export function ActivitybarOptionsDropdown({
         }
       }
     },
-    [store],
+    [store, dispatchSerialOperation],
   );
 
   return (
