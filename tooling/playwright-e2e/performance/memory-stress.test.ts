@@ -100,7 +100,7 @@ test('Openning a lot of notes should not leak', async ({ baseURL }) => {
       return new Set((window as any).refs.map((r: any) => r.deref())).size;
     });
 
-    if (size > FINAL_EDITORS_IN_MEMORY && attempt < 10) {
+    if (size > FINAL_EDITORS_IN_MEMORY && attempt < 40) {
       return getEditorCountInMemory(attempt + 1);
     }
 
