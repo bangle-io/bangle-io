@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-kind: ['lint', 'test-ci', 'g:e2e', 'build']
+        test-kind: ['lint', 'test-ci', 'build']
     steps:
       - uses: actions/checkout@v2
       - name: Run test "${{ matrix.test-kind }}"
@@ -52,17 +52,8 @@ jobs:
           node-version: 16.x
       - name: yarn install
         run: yarn install --immutable --immutable-cache
-      - name: Install playwright dependencies
-        if: matrix.test-kind == 'g:e2e'
-        run: yarn g:playwright-dep
+
       - run: yarn ${{ matrix.test-kind }}
-      - uses: actions/upload-artifact@v2
-        if: ${{ failure() }}
-        with:
-          name: playwright trace
-          path: tooling/playwright-e2e/
-          retention-days: 3
-      # compressed size diff
       - uses: preactjs/compressed-size-action@v2
         if: matrix.test-kind == 'build'
         with:
@@ -78,3 +69,26 @@ jobs:
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
 
+  tests-e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-kind:
+          ['g:e2e --shard=1/3', 'g:e2e --shard=2/3', 'g:e2e --shard=3/3']
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run e2e tests "${{ matrix.test-kind }}"
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: yarn install
+        run: yarn install --immutable --immutable-cache
+      - name: Install playwright dependencies
+        run: yarn g:playwright-dep
+      - run: yarn ${{ matrix.test-kind }}
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: playwright trace
+          path: tooling/playwright-e2e/
+          retention-days: 3
