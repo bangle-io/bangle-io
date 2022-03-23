@@ -10,9 +10,7 @@ export function nativeFsStorageSlice() {
 
     sideEffect() {
       return {
-        update() {
-          // console.log('hi');
-        },
+        update() {},
       };
     },
   });

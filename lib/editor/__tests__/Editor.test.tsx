@@ -8,20 +8,12 @@ import React from 'react';
 import { BangleEditor } from '@bangle.dev/core';
 import { Node, Selection } from '@bangle.dev/pm';
 
-import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
-import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import { getInitialSelection } from '@bangle.io/slice-editor-manager';
 import {
-  getInitialSelection,
-  setEditorReady,
-  setEditorUnmounted,
-  useEditorManagerContext,
-} from '@bangle.io/slice-editor-manager';
-import { getNote, useWorkspaceContext } from '@bangle.io/slice-workspace';
-import {
+  createBasicTestStore,
   createExtensionRegistry,
   createPMNode,
-  getUseEditorManagerContextReturn,
 } from '@bangle.io/test-utils';
 
 import { Editor, useGetEditorState } from '../Editor';
@@ -30,39 +22,12 @@ const extensionRegistry = createExtensionRegistry([], {
   editorCore: true,
 });
 
-jest.mock('@bangle.io/slice-workspace', () => {
-  const actual = jest.requireActual('@bangle.io/slice-workspace');
-
-  return {
-    ...actual,
-    useWorkspaceContext: jest.fn(),
-    getNote: jest.fn(() => async () => {}),
-  };
-});
-
 jest.mock('@bangle.io/slice-editor-manager', () => {
   const actual = jest.requireActual('@bangle.io/slice-editor-manager');
 
   return {
     ...actual,
     getInitialSelection: jest.fn(() => () => {}),
-    setEditorReady: jest.fn(() => () => {}),
-    setEditorUnmounted: jest.fn(() => () => {}),
-    useEditorManagerContext: jest.fn(),
-  };
-});
-
-let useEditorManagerContextMock =
-  useEditorManagerContext as jest.MockedFunction<
-    typeof useEditorManagerContext
-  >;
-
-jest.mock('@bangle.io/extension-registry', () => {
-  const actual = jest.requireActual('@bangle.io/extension-registry');
-
-  return {
-    ...actual,
-    useExtensionRegistryContext: jest.fn(),
   };
 });
 
@@ -94,29 +59,16 @@ const generateDoc = (text = 'Hello world! I am a test') =>
     ],
   });
 
-let getNoteMock = jest
-  .mocked(getNote)
-  .mockImplementation(() => async () => testDocNode);
+let getNoteMock = jest.fn().mockImplementation(async () => testDocNode);
 
 let result: ReturnType<typeof render>;
 
 const testDocNode = generateDoc();
+let { store: bangleStore } = createBasicTestStore({});
+
+let dispatchSerialOperation = jest.fn();
 beforeEach(() => {
-  (useWorkspaceContext as any).mockImplementation(() => {
-    return {
-      bangleStore: { state: {}, dispatch: jest.fn() },
-    };
-  });
-
-  (useExtensionRegistryContext as any).mockImplementation(() => {
-    return extensionRegistry;
-  });
-
-  useEditorManagerContextMock.mockImplementation(() => {
-    return {
-      ...getUseEditorManagerContextReturn,
-    };
-  });
+  ({ store: bangleStore } = createBasicTestStore({}));
 });
 
 test('basic renders', async () => {
@@ -127,6 +79,10 @@ test('basic renders', async () => {
           editorId={1}
           wsPath="something:blah.md"
           className="test-class"
+          bangleStore={bangleStore}
+          getDocument={getNoteMock}
+          dispatchSerialOperation={dispatchSerialOperation}
+          extensionRegistry={extensionRegistry}
         />
       </div>,
     );
@@ -148,6 +104,10 @@ test('calls getInitialSelection correctly', async () => {
           editorId={1}
           wsPath="something:blah.md"
           className="test-class"
+          bangleStore={bangleStore}
+          getDocument={getNoteMock}
+          dispatchSerialOperation={dispatchSerialOperation}
+          extensionRegistry={extensionRegistry}
         />
       </div>,
     );
@@ -167,6 +127,8 @@ test('calls getInitialSelection correctly', async () => {
 });
 
 test('mounting unmounting calls setEditorUnmounted', async () => {
+  let onEditorReady = jest.fn();
+  let onEditorUnmount = jest.fn();
   act(() => {
     result = render(
       <div>
@@ -174,6 +136,12 @@ test('mounting unmounting calls setEditorUnmounted', async () => {
           editorId={1}
           wsPath="something:blah.md"
           className="test-class"
+          bangleStore={bangleStore}
+          getDocument={getNoteMock}
+          dispatchSerialOperation={dispatchSerialOperation}
+          extensionRegistry={extensionRegistry}
+          onEditorReady={onEditorReady}
+          onEditorUnmount={onEditorUnmount}
         />
       </div>,
     );
@@ -183,32 +151,30 @@ test('mounting unmounting calls setEditorUnmounted', async () => {
     expect(result.container.innerHTML).toContain('class="test-class');
   });
 
-  expect(setEditorReady).toBeCalledTimes(1);
-  expect(setEditorReady).nthCalledWith(
-    1,
-    1,
-    'something:blah.md',
-    expect.any(BangleEditor),
-  );
+  expect(onEditorReady).toBeCalledTimes(1);
+  expect(onEditorReady).nthCalledWith(1, expect.any(BangleEditor), 1);
 
-  expect(setEditorUnmounted).toBeCalledTimes(0);
-
-  const editorRef = (setEditorReady as any).mock.calls[0][2];
-  expect(editorRef).not.toBeFalsy();
+  expect(onEditorUnmount).toBeCalledTimes(0);
 
   result.unmount();
 
-  expect(setEditorReady).toBeCalledTimes(1);
-  expect(setEditorUnmounted).toBeCalledTimes(1);
-  expect(setEditorUnmounted).nthCalledWith(1, 1, expect.any(BangleEditor));
-  expect((setEditorUnmounted as any).mock.calls[0][1]).toBe(editorRef);
+  expect(onEditorReady).toBeCalledTimes(1);
+  expect(onEditorUnmount).toBeCalledTimes(1);
+  expect(onEditorUnmount).nthCalledWith(1, expect.any(BangleEditor), 1);
 });
 
 test('works without editorId', async () => {
   act(() => {
     result = render(
       <div>
-        <Editor wsPath="something:blah.md" className="test-class" />
+        <Editor
+          wsPath="something:blah.md"
+          className="test-class"
+          dispatchSerialOperation={dispatchSerialOperation}
+          extensionRegistry={extensionRegistry}
+          bangleStore={bangleStore}
+          getDocument={getNoteMock}
+        />
       </div>,
     );
   });
@@ -221,8 +187,51 @@ test('works without editorId', async () => {
   expect(result!.container).toMatchSnapshot();
 });
 
+test('revokes editor proxy', async () => {
+  let onEditorReady = jest.fn();
+  let onEditorUnmount = jest.fn();
+  jest.useFakeTimers();
+
+  let revokeSpy = jest.fn();
+  let spy = jest
+    .spyOn(global.Proxy, 'revocable')
+    .mockImplementation((r) => ({ proxy: r, revoke: revokeSpy }));
+
+  act(() => {
+    result = render(
+      <div>
+        <Editor
+          editorId={1}
+          wsPath="something:blah.md"
+          className="test-class"
+          bangleStore={bangleStore}
+          getDocument={getNoteMock}
+          dispatchSerialOperation={dispatchSerialOperation}
+          extensionRegistry={extensionRegistry}
+          onEditorReady={onEditorReady}
+          onEditorUnmount={onEditorUnmount}
+        />
+      </div>,
+    );
+  });
+
+  await waitFor(() => {
+    expect(result.container.innerHTML).toContain('class="test-class');
+  });
+
+  act(() => {
+    result.unmount();
+  });
+
+  jest.runAllTimers();
+
+  expect(spy).toBeCalledTimes(1);
+
+  expect(revokeSpy).toBeCalledTimes(1);
+});
+
 test('changing of wsPath works', async () => {
-  getNoteMock.mockImplementation((wsPath) => async () => {
+  getNoteMock.mockImplementation(async (wsPath) => {
     if (wsPath.endsWith('one.md')) {
       return generateDoc('one note');
     }
@@ -235,7 +244,15 @@ test('changing of wsPath works', async () => {
   act(() => {
     result = render(
       <div>
-        <Editor editorId={1} className="test-class" wsPath="something:one.md" />
+        <Editor
+          editorId={1}
+          className="test-class"
+          wsPath="something:one.md"
+          dispatchSerialOperation={dispatchSerialOperation}
+          extensionRegistry={extensionRegistry}
+          bangleStore={bangleStore}
+          getDocument={getNoteMock}
+        />
       </div>,
     );
   });
@@ -249,7 +266,15 @@ test('changing of wsPath works', async () => {
   act(() => {
     result.rerender(
       <div>
-        <Editor editorId={1} wsPath="something:two.md" className="test-class" />
+        <Editor
+          editorId={1}
+          wsPath="something:two.md"
+          className="test-class"
+          dispatchSerialOperation={dispatchSerialOperation}
+          extensionRegistry={extensionRegistry}
+          bangleStore={bangleStore}
+          getDocument={getNoteMock}
+        />
       </div>,
     );
   });
@@ -258,7 +283,7 @@ test('changing of wsPath works', async () => {
     expect(result.container.innerHTML).toContain('class="test-class');
   });
 
-  expect(getNote).toBeCalledTimes(2);
+  expect(getNoteMock).toBeCalledTimes(2);
 
   expect(result!.container.innerHTML).toContain('two note');
 });
@@ -273,7 +298,7 @@ describe('useGetEditorState', () => {
         wsPath: 'something:one.md',
         editorDisplayType: EditorDisplayType.Page,
         dispatchSerialOperation: jest.fn(),
-        bangleStore: initialBangleStore,
+        bangleStore: bangleStore,
         initialSelection: undefined,
       }),
     );
@@ -309,7 +334,7 @@ describe('useGetEditorState', () => {
         wsPath: 'something:one.md',
         editorDisplayType: EditorDisplayType.Page,
         dispatchSerialOperation: jest.fn(),
-        bangleStore: initialBangleStore,
+        bangleStore: bangleStore,
         initialSelection: Selection.fromJSON(pmNode, {
           anchor: 5,
           head: 5,
