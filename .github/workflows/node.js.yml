@@ -83,13 +83,17 @@ jobs:
           node-version: 16.x
       - name: yarn install
         run: yarn install --immutable --immutable-cache
+      - name: Set the cache key
+        id: set-cache-key
+        run: |
+          echo "PLAYWRIGHT_CACHE_KEY=$(yarn workspace @bangle.io/playwright-e2e info @playwright/test --name-only)" >> $GITHUB_ENV
       - name: cache playwright deps
         uses: actions/cache@v3
         id: cache
         with:
           path: |
             ~/.cache/ms-playwright/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ env.PLAYWRIGHT_CACHE_KEY }}
       - name: debug
         run: |
           echo "${{steps.cache.outputs.cache-hit}}"
