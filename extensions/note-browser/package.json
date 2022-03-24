@@ -23,7 +23,6 @@
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
-    "@bangle.io/serial-operation-context": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-ui": "workspace:*",
     "@bangle.io/slice-workspace": "workspace:*",

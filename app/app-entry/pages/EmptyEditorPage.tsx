@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
-import { workspace } from '@bangle.io/api';
+import { useSerialOperationContext } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { CorePalette } from '@bangle.io/constants';
+import { CORE_OPERATIONS_NEW_NOTE, CorePalette } from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
 import {
@@ -73,6 +73,7 @@ export function EmptyEditorPage() {
     recentlyUsedWsPaths = EMPTY_ARRAY,
     noteWsPaths,
   } = useWorkspaceContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
   const bangleStore = useBangleStoreContext();
   const paths = Array.from(
     new Set(
@@ -111,10 +112,9 @@ export function EmptyEditorPage() {
           <ActionButton
             ariaLabel="create note"
             onPress={() => {
-              workspace.openNewNoteDialog()(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              dispatchSerialOperation({
+                name: CORE_OPERATIONS_NEW_NOTE,
+              });
             }}
           >
             <ButtonContent text="Create note" icon={<NewNoteIcon />} />

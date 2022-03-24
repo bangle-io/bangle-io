@@ -2,9 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { EditorView } from '@bangle.dev/pm';
 
+import { useSerialOperationContext, workspace } from '@bangle.io/api';
 import { EditorDisplayType } from '@bangle.io/constants';
 import { PopupEditor } from '@bangle.io/editor';
-import type { RenderReactNodeView } from '@bangle.io/extension-registry';
+import {
+  RenderReactNodeView,
+  useExtensionRegistryContext,
+} from '@bangle.io/extension-registry';
 import {
   createNote,
   pushWsPath,
@@ -42,6 +46,10 @@ export function BacklinkNode({
   const { wsPath: primaryWsPath, editorDisplayType } = getEditorPluginMetadata(
     view.state,
   );
+
+  const extensionRegistry = useExtensionRegistryContext();
+
+  const { dispatchSerialOperation } = useSerialOperationContext();
 
   const { wsName, noteWsPaths, bangleStore } = useWorkspaceContext();
 
@@ -104,6 +112,22 @@ export function BacklinkNode({
 
   const [backlinksWsPath, updateBacklinksWsPath] = useState<string | undefined>(
     undefined,
+  );
+
+  const getDocument = useCallback(
+    (wsPath: string) => {
+      return workspace
+        .getNote(wsPath)(bangleStore.state, bangleStore.dispatch, bangleStore)
+        .then(
+          (doc) => {
+            return doc;
+          },
+          (err) => {
+            return undefined;
+          },
+        );
+    },
+    [bangleStore],
   );
 
   useEffect(() => {
@@ -172,7 +196,13 @@ export function BacklinkNode({
       {isTooltipVisible && backlinksWsPath && (
         <PopupEditor
           ref={setTooltipElement}
-          editorProps={{ wsPath: backlinksWsPath }}
+          editorProps={{
+            wsPath: backlinksWsPath,
+            bangleStore,
+            getDocument,
+            extensionRegistry,
+            dispatchSerialOperation,
+          }}
           popupContainerProps={{
             style: tooltipProps.style,
             className: 'inline-backlink_popup-editor',

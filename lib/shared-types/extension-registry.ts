@@ -1,6 +1,8 @@
 import type { SpecRegistry } from '@bangle.dev/core';
 import type { Node, PluginKey } from '@bangle.dev/pm';
 
+export type { ExtensionRegistry } from '@bangle.io/extension-registry';
+
 export type SerialOperationNameType = `operation::${string}`;
 export interface SerialOperationType {
   name: SerialOperationNameType;

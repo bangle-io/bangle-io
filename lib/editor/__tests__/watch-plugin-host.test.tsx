@@ -11,9 +11,9 @@ import type { EditorState, EditorView } from '@bangle.dev/pm';
 import { Plugin, PluginKey } from '@bangle.dev/pm';
 import { psx, renderTestEditor, typeText } from '@bangle.dev/test-helpers';
 
-import { initialBangleStore } from '@bangle.io/bangle-store-context';
 import { EditorDisplayType } from '@bangle.io/constants';
 import type { EditorWatchPluginState } from '@bangle.io/shared-types';
+import { createBasicTestStore } from '@bangle.io/test-utils';
 
 import { watchPluginHost } from '../watch-plugin-host';
 
@@ -49,6 +49,8 @@ jest.mock('@bangle.io/utils', () => {
     }),
   };
 });
+
+const { store: initialBangleStore } = createBasicTestStore({});
 
 test('works', async () => {
   const testEditor = render(

@@ -11,8 +11,8 @@ import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
 
-const LOG = false;
-let log = LOG ? console.log.bind(console, 'SerialOperationCotext') : () => {};
+const LOG = true;
+let log = LOG ? console.debug.bind(console, 'SerialOperationCotext') : () => {};
 
 export const SerialOperationContext = createContext<SerialOperationContextType>(
   {
@@ -60,7 +60,7 @@ export function SerialOperationContextProvider({
   >(
     (operation) => {
       const { name, value, ...others } = operation;
-      log(name);
+      log(name, value);
 
       (window as any).Sentry?.addBreadcrumb?.({
         type: 'operation',
@@ -82,7 +82,11 @@ export function SerialOperationContextProvider({
       }
 
       for (const handler of operationHandlers) {
-        handler.handle(operation, value, bangleStore);
+        let result = handler.handle(operation, value, bangleStore);
+
+        if (result) {
+          return;
+        }
       }
 
       // Converting to array so that we have a fixed operation handlers for the current operation

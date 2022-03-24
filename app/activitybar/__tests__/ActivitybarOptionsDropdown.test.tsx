@@ -4,22 +4,20 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { workspace } from '@bangle.io/api';
+import { useSerialOperationContext } from '@bangle.io/api';
 import { CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE } from '@bangle.io/constants';
 
 import { ActivitybarOptionsDropdown } from '../ActivitybarOptionsDropdown';
 
 jest.mock('@bangle.io/api', () => {
-  const operations = jest.requireActual('@bangle.io/api');
+  const rest = jest.requireActual('@bangle.io/api');
 
   return {
-    ...operations,
-    workspace: {
-      ...operations.workspace,
-      openNewNoteDialog: jest.fn(() => () => {}),
-    },
+    ...rest,
+    useSerialOperationContext: jest.fn(() => ({})),
   };
 });
+
 jest.mock('react-dom', () => {
   const otherThings = jest.requireActual('react-dom');
 
@@ -35,12 +33,17 @@ const operationKeybindings = {
   [CORE_PALETTES_TOGGLE_WORKSPACE_PALETTE]: 'Ctrl-P',
 };
 
-let openNewNoteDialogMock = workspace.openNewNoteDialog as jest.MockedFunction<
-  typeof workspace.openNewNoteDialog
->;
+let useSerialOperationContextMock =
+  useSerialOperationContext as jest.MockedFunction<
+    typeof useSerialOperationContext
+  >;
 
+let dispatchSerialOperationMock = jest.fn();
 beforeEach(() => {
-  openNewNoteDialogMock.mockImplementation(() => () => {});
+  dispatchSerialOperationMock = jest.fn();
+  useSerialOperationContextMock.mockImplementation(() => {
+    return { dispatchSerialOperation: dispatchSerialOperationMock };
+  });
 });
 
 test('renders correctly', () => {
@@ -88,10 +91,6 @@ test('clicking the button shows dropdown', async () => {
 });
 
 test('clicking items in dropdown dispatches event', async () => {
-  const dispatch = jest.fn();
-
-  openNewNoteDialogMock.mockImplementation(() => dispatch);
-
   let result = render(
     <div>
       <ActivitybarOptionsDropdown
@@ -114,5 +113,5 @@ test('clicking items in dropdown dispatches event', async () => {
     fireEvent.click(targetOption);
   });
 
-  expect(dispatch).toBeCalledTimes(1);
+  expect(dispatchSerialOperationMock).toBeCalledTimes(1);
 });

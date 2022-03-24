@@ -1,11 +1,22 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { editor } from '@bangle.io/api';
-import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
+import type { BangleEditor as CoreBangleEditor } from '@bangle.dev/core';
+
+import { useSerialOperationContext } from '@bangle.io/api';
+import {
+  CORE_OPERATIONS_CLOSE_EDITOR,
+  CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
+} from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
-import { useEditorManagerContext } from '@bangle.io/slice-editor-manager';
+import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
+import {
+  setEditorReady,
+  setEditorUnmounted,
+  useEditorManagerContext,
+} from '@bangle.io/slice-editor-manager';
 import {
   checkFileExists,
+  getNote,
   useWorkspaceContext,
 } from '@bangle.io/slice-workspace';
 import { Page } from '@bangle.io/ui-components';
@@ -25,18 +36,67 @@ export function EditorContainer({
 }) {
   const { noteExists, wsPath } = useHandleWsPath(incomingWsPath);
   const { openedWsPaths } = useWorkspaceContext();
-  const { focusedEditorId } = useEditorManagerContext();
-  const bangleStore = useBangleStoreContext();
+  const { focusedEditorId, bangleStore } = useEditorManagerContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
+  const extensionRegistry = useExtensionRegistryContext();
+
+  const getDocument = useCallback(
+    (wsPath: string) => {
+      return getNote(wsPath)(
+        bangleStore.state,
+        bangleStore.dispatch,
+        bangleStore,
+      ).catch((err) => {
+        bangleStore.errorHandler(err);
+
+        return undefined;
+      });
+    },
+    [bangleStore],
+  );
 
   const isSplitEditorOpen = openedWsPaths.openCount > 0;
 
   const onPressSecondaryEditor = useCallback(() => {
-    editor.splitEditor()(bangleStore.state, bangleStore.dispatch);
-  }, [bangleStore]);
+    dispatchSerialOperation({
+      name: CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
+    });
+  }, [dispatchSerialOperation]);
 
   const onClose = useCallback(() => {
-    editor.closeEditor(editorId)(bangleStore.state, bangleStore.dispatch);
-  }, [bangleStore, editorId]);
+    dispatchSerialOperation({
+      name: CORE_OPERATIONS_CLOSE_EDITOR,
+      value: editorId,
+    });
+  }, [dispatchSerialOperation, editorId]);
+
+  const onEditorReady = useCallback(
+    (editor: CoreBangleEditor, editorId?: number) => {
+      if (wsPath) {
+        setEditorReady(
+          editorId,
+          wsPath,
+          editor,
+        )(bangleStore.state, bangleStore.dispatch);
+
+        // TODO this is currently used by the integration tests
+        // we need a better way to do this
+        if (typeof window !== 'undefined') {
+          (window as any)[`editor-${editorId}`] = { editor, wsPath };
+        }
+      }
+    },
+    [wsPath, bangleStore],
+  );
+  const onEditorUnmount = useCallback(
+    (editor: CoreBangleEditor, editorId?: number) => {
+      setEditorUnmounted(editorId, editor)(
+        bangleStore.state,
+        bangleStore.dispatch,
+      );
+    },
+    [bangleStore],
+  );
 
   let children;
 
@@ -55,7 +115,13 @@ export function EditorContainer({
       <Editor
         editorId={editorId}
         wsPath={wsPath}
+        bangleStore={bangleStore}
+        dispatchSerialOperation={dispatchSerialOperation}
+        extensionRegistry={extensionRegistry}
         className={`editor-container_editor editor-container_editor-${editorId}`}
+        getDocument={getDocument}
+        onEditorReady={onEditorReady}
+        onEditorUnmount={onEditorUnmount}
       />
     );
   }

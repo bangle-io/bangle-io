@@ -9,7 +9,6 @@
     "editor",
     "extension-registry",
     "markdown",
-    "serial-operation-context",
     "shared-operations",
     "shared-types",
     "slice-editor-manager",

@@ -14,9 +14,9 @@ import {
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
 
-import { useSerialOperationHandler } from '..';
 import { useSerialOperationContext } from '../SerialOperationContext';
 import { SerialOperationContextProvider } from '../SerialOperationContextProvider';
+import { useSerialOperationHandler } from '../use-register-operation-handler';
 
 jest.mock('@bangle.io/bangle-store-context', () => {
   const obj = jest.requireActual('@bangle.io/bangle-store-context');

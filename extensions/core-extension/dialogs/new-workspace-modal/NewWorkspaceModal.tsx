@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
+import { useSerialOperationContext } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import {
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   NEW_WORKSPACE_DIALOG_NAME,
 } from '@bangle.io/constants';
-import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { hasWorkspace } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';

@@ -38,7 +38,7 @@ const config: PlaywrightTestConfig = {
     {
       name: 'performance',
       testMatch: /performance/,
-      retries: isCI ? 4 : 0,
+      retries: isCI ? 2 : 0,
       use: { ...devices['Desktop Chrome'] },
     },
 

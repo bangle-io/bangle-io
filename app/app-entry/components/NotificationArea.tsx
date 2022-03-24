@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { useSerialOperationContext } from '@bangle.io/api';
 import { useSliceState } from '@bangle.io/bangle-store-context';
-import { useSerialOperationContext } from '@bangle.io/serial-operation-context';
 import type { NotificationPayloadType } from '@bangle.io/shared-types';
 import {
   dismissNotification,

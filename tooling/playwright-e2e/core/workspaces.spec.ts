@@ -36,6 +36,7 @@ test.describe.parallel('workspaces', () => {
     await page.goBack({ waitUntil: 'networkidle' });
 
     expect(await page.url()).toMatch(baseURL + '/ws/' + wsName1);
+
     await getPrimaryEditorHandler(page);
 
     expect((await getWsPathsShownInFilePalette(page)).sort()).toEqual(

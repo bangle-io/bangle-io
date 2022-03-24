@@ -1,11 +1,16 @@
 import { editor, workspace } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
+  CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+  CORE_OPERATIONS_NEW_NOTE,
+  CORE_OPERATIONS_NEW_WORKSPACE,
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
+  CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
+  CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
@@ -27,15 +32,10 @@ import {
 import { toggleTheme, UiContextAction } from '@bangle.io/slice-ui';
 
 import {
-  CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_DELETE_ACTIVE_NOTE,
   CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY,
-  CORE_OPERATIONS_NEW_NOTE,
-  CORE_OPERATIONS_NEW_WORKSPACE,
   CORE_OPERATIONS_NEW_WORKSPACE_FROM_BACKUP,
-  CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CORE_OPERATIONS_RENAME_ACTIVE_NOTE,
-  CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
   CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
   CORE_OPERATIONS_TOGGLE_UI_THEME,
   extensionName,
@@ -46,7 +46,17 @@ import {
   NewNoteInputModal,
   RenameNoteInputModal,
 } from './dialogs/NoteNameChangeDialog';
-import { downloadWorkspace, restoreWorkspaceFromBackup } from './operations';
+import {
+  closeEditor,
+  deleteActiveNote,
+  downloadWorkspace,
+  openNewNoteDialog,
+  openNewWorkspaceDialog,
+  removeWorkspace,
+  renameActiveNote,
+  restoreWorkspaceFromBackup,
+  splitEditor,
+} from './operations';
 
 const extension = Extension.create({
   name: extensionName,
@@ -160,31 +170,27 @@ const extension = Extension.create({
     ],
     operationHandler() {
       return {
-        handle(operation, payload, bangleStore) {
+        handle(operation, payload: unknown, bangleStore) {
           switch (operation.name) {
             case CORE_OPERATIONS_NEW_NOTE: {
-              workspace.openNewNoteDialog()(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              // TODO fix payload as any
+              const { path } = (payload as any) || {};
+
+              let _path = typeof path === 'string' ? path : undefined;
+
+              openNewNoteDialog(_path)(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_NEW_WORKSPACE: {
-              workspace.openNewWorkspaceDialog()(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              openNewWorkspaceDialog()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_RENAME_ACTIVE_NOTE: {
-              workspace.renameActiveNote()(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              renameActiveNote()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
@@ -198,7 +204,7 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_DELETE_ACTIVE_NOTE: {
-              workspace.deleteActiveNote()(
+              deleteActiveNote()(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -208,19 +214,19 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
-              editor.splitEditor()(bangleStore.state, bangleStore.dispatch);
+              splitEditor()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
-              const editorId = payload;
-              editor.closeEditor(editorId)(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              if (typeof payload === 'number') {
+                closeEditor(payload)(bangleStore.state, bangleStore.dispatch);
 
-              return true;
+                return true;
+              }
+
+              return false;
             }
 
             case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {
@@ -240,7 +246,10 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE: {
-              workspace.removeWorkspace()(
+              const targetWsName =
+                typeof payload === 'string' ? payload : undefined;
+
+              removeWorkspace(targetWsName)(
                 bangleStore.state,
                 bangleStore.dispatch,
                 bangleStore,
@@ -267,7 +276,8 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE: {
-              const { wsName } = payload || {};
+              // TODO fix payload as any
+              const { wsName } = (payload as any) || {};
 
               createBrowserWorkspace(wsName)(
                 bangleStore.state,
@@ -279,7 +289,8 @@ const extension = Extension.create({
             }
 
             case CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE: {
-              const { rootDirHandle } = payload || {};
+              // TODO fix payload as any
+              const { rootDirHandle } = (payload as any) || {};
               createNativeFsWorkspace(rootDirHandle)(
                 bangleStore.state,
                 bangleStore.dispatch,
@@ -323,6 +334,7 @@ const extension = Extension.create({
   },
 });
 
+export * from './operations';
 export default extension;
 
 function createNativeFsWorkspace(rootDirHandle: any) {

@@ -3,6 +3,7 @@ import './style';
 import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
+import { SerialOperationContextProvider } from '@bangle.io/api/internal';
 import {
   historySliceKey,
   initializeBangleStore,
@@ -14,7 +15,6 @@ import {
   ExtensionStateContextProvider,
 } from '@bangle.io/extension-registry';
 import { BaseHistory, createTo } from '@bangle.io/history';
-import { SerialOperationContextProvider } from '@bangle.io/serial-operation-context';
 import { EditorManager } from '@bangle.io/slice-editor-manager';
 import { usePageContext } from '@bangle.io/slice-page';
 import { UIManager } from '@bangle.io/slice-ui';

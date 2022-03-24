@@ -4,7 +4,7 @@
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
-import { useSerialOperationHandler } from '@bangle.io/serial-operation-context';
+import { useSerialOperationHandler } from '@bangle.io/api';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 import {
   getEditor,
@@ -24,7 +24,7 @@ import { WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP } from '../config';
 import { NoteOutline } from '../NoteOutline';
 
 jest.mock('@bangle.io/slice-workspace');
-jest.mock('@bangle.io/serial-operation-context');
+jest.mock('@bangle.io/api');
 jest.mock('@bangle.io/slice-editor-manager', () => {
   return {
     useEditorManagerContext: jest.fn(),

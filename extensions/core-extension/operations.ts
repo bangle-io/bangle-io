@@ -1,16 +1,32 @@
-import { WorkerErrorCode } from '@bangle.io/constants';
+import { editor, workspace } from '@bangle.io/api';
+import {
+  HELP_FS_WORKSPACE_NAME,
+  NEW_NOTE_DIALOG_NAME,
+  NEW_WORKSPACE_DIALOG_NAME,
+  RENAME_NOTE_DIALOG_NAME,
+  WorkerErrorCode,
+} from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
+import { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
   notificationSliceKey,
   showNotification,
 } from '@bangle.io/slice-notification';
 import {
+  UiContextAction,
+  UiContextDispatchType,
+  uiSliceKey,
+} from '@bangle.io/slice-ui';
+import {
   refreshWsPaths,
+  updateOpenedWsPaths,
+  WorkspaceDispatchType,
   WorkspaceSliceAction,
   workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import { sleep } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
+import { resolvePath } from '@bangle.io/ws-path';
 
 export function downloadWorkspace() {
   return (
@@ -118,6 +134,240 @@ export function restoreWorkspaceFromBackup() {
 
     return true;
   });
+}
+
+export function openNewNoteDialog(initialValue?: string) {
+  return uiSliceKey.op((state, dispatch) => {
+    const wsName = workspaceSliceKey.getSliceState(state)?.wsName;
+
+    if (!wsName) {
+      showNotification({
+        severity: 'error',
+        uid: 'new-note-not-no-workspace',
+        title: 'Please first select a workspace',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+
+      return;
+    }
+
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+      value: {
+        dialogName: NEW_NOTE_DIALOG_NAME,
+        metadata: {
+          initialValue: initialValue,
+        },
+      },
+    });
+  });
+}
+
+export function renameActiveNote() {
+  return (state: AppState, dispatch: UiContextDispatchType): boolean => {
+    const focusedWsPath = editor.getFocusedWsPath()(state);
+
+    if (!focusedWsPath) {
+      showNotification({
+        severity: 'error',
+        uid: 'delete-wsPath-not-found',
+        title: 'Cannot rename because there is no active note',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+
+      return true;
+    }
+
+    // To avoid overlapping
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
+      value: { type: null },
+    });
+
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+      value: {
+        dialogName: RENAME_NOTE_DIALOG_NAME,
+      },
+    });
+
+    return true;
+  };
+}
+
+export function deleteActiveNote() {
+  return (
+    state: AppState,
+    dispatch: ApplicationStore<
+      any,
+      WorkspaceSliceAction | UiContextAction
+    >['dispatch'],
+    store: ApplicationStore,
+  ): boolean => {
+    const focusedWsPath = editor.getFocusedWsPath()(state);
+
+    if (!focusedWsPath) {
+      showNotification({
+        severity: 'error',
+        uid: 'delete-wsPath-not-found',
+        title: 'Cannot delete because there is no active note',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+
+      return true;
+    }
+
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:UPDATE_PALETTE',
+      value: { type: null },
+    });
+
+    if (
+      typeof window !== 'undefined' &&
+      window.confirm(
+        `Are you sure you want to remove "${
+          resolvePath(focusedWsPath).filePath
+        }"? It cannot be undone.`,
+      )
+    ) {
+      workspace
+        .deleteNote(focusedWsPath)(state, dispatch, store)
+        .then((error) => {
+          showNotification({
+            severity: 'success',
+            uid: 'success-delete-' + focusedWsPath,
+            title: 'Successfully deleted ' + focusedWsPath,
+          })(
+            notificationSliceKey.getState(state),
+            notificationSliceKey.getDispatch(dispatch),
+          );
+        })
+        .catch((error) => {
+          showNotification({
+            severity: 'error',
+            uid: 'delete-' + deleteActiveNote,
+            title: error.displayMessage || error.message,
+          })(
+            notificationSliceKey.getState(state),
+            notificationSliceKey.getDispatch(dispatch),
+          );
+        });
+    }
+
+    return true;
+  };
+}
+
+export function openNewWorkspaceDialog() {
+  return (state: AppState, dispatch: UiContextDispatchType) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+      value: {
+        dialogName: NEW_WORKSPACE_DIALOG_NAME,
+      },
+    });
+  };
+}
+
+export function splitEditor() {
+  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
+    const workspaceSliceState = workspaceSliceKey.getSliceState(state);
+
+    if (!workspaceSliceState) {
+      return false;
+    }
+
+    const { primaryWsPath, secondaryWsPath } =
+      workspaceSliceState.openedWsPaths;
+
+    if (secondaryWsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateSecondaryWsPath(undefined),
+      )(state, dispatch);
+    } else if (primaryWsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateSecondaryWsPath(primaryWsPath),
+      )(state, dispatch);
+    }
+
+    return true;
+  };
+}
+
+export function closeEditor(editorId: EditorIdType) {
+  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
+    if (typeof editorId === 'number') {
+      updateOpenedWsPaths((openedWsPaths) =>
+        openedWsPaths.updateByIndex(editorId, undefined).shrink(),
+      )(state, dispatch);
+    } else {
+      updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll())(
+        state,
+        dispatch,
+      );
+    }
+
+    return true;
+  };
+}
+
+export function removeWorkspace(wsName?: string) {
+  return async (
+    state: AppState,
+    dispatch: ApplicationStore['dispatch'],
+    store: ApplicationStore,
+  ) => {
+    wsName = wsName || workspaceSliceKey.getSliceState(state)?.wsName;
+
+    if (!wsName) {
+      showNotification({
+        severity: 'error',
+        uid: 'removeWorkspace-no-workspace',
+        title: 'Please open a workspace first',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+
+      return;
+    }
+
+    if (wsName === HELP_FS_WORKSPACE_NAME) {
+      showNotification({
+        severity: 'error',
+        uid: 'removeWorkspace-not-allowed',
+        title: 'Cannot remove help workspace',
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+
+      return;
+    }
+
+    if (
+      window.confirm(
+        `Are you sure you want to remove "${wsName}"? Removing a workspace does not delete any files inside it.`,
+      )
+    ) {
+      await workspace.deleteWorkspace(wsName)(state, dispatch, store);
+
+      showNotification({
+        severity: 'success',
+        uid: 'success-removed-' + wsName,
+        title: 'Successfully removed ' + wsName,
+      })(
+        notificationSliceKey.getState(state),
+        notificationSliceKey.getDispatch(dispatch),
+      );
+    }
+  };
 }
 
 function filePicker(): Promise<File> {

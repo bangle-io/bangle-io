@@ -6,7 +6,7 @@ import {
   workspace,
 } from '@bangle.io/api';
 import { createBasicTestStore, createPMNode } from '@bangle.io/test-utils';
-import { sleep } from '@bangle.io/utils';
+import { randomStr, sleep } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
@@ -69,7 +69,7 @@ describe('pull changes', () => {
 
   beforeEach(async () => {
     abortController = new AbortController();
-    wsName = 'bangle-test-' + Date.now();
+    wsName = 'bangle-test-' + randomStr() + Date.now();
     await createRepo({
       description: 'Created by Bangle.io tests',
       config: {

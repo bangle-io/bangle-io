@@ -19,7 +19,7 @@ import { OPERATION_SYNC_GITHUB_CHANGES } from '../common';
 import { localFileEntryManager } from '../file-entry-manager';
 import { isGithubStorageProvider } from '../helpers';
 
-const LOG = true;
+const LOG = false;
 
 const log = LOG ? console.info.bind(console, 'GithubSidebar') : () => {};
 

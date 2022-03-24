@@ -1,8 +1,11 @@
 import React from 'react';
 
-import { workspace } from '@bangle.io/api';
+import { useSerialOperationContext } from '@bangle.io/api';
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
-import { CorePalette } from '@bangle.io/constants';
+import {
+  CORE_OPERATIONS_NEW_WORKSPACE,
+  CorePalette,
+} from '@bangle.io/constants';
 import { togglePaletteType } from '@bangle.io/slice-ui';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { CenteredBoxedPage } from '@bangle.io/ui-components';
@@ -12,6 +15,7 @@ import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
   // wsName can't be read here from the store because it is not found
   const bangleStore = useBangleStoreContext();
+  const { dispatchSerialOperation } = useSerialOperationContext();
 
   wsName = decodeURIComponent(wsName || '');
 
@@ -39,10 +43,9 @@ export function WorkspaceNotFound({ wsName }: { wsName?: string }) {
           <ActionButton
             ariaLabel="new workspace"
             onPress={() => {
-              workspace.openNewWorkspaceDialog()(
-                bangleStore.state,
-                bangleStore.dispatch,
-              );
+              dispatchSerialOperation({
+                name: CORE_OPERATIONS_NEW_WORKSPACE,
+              });
             }}
           >
             <ButtonContent text="New workspace" />

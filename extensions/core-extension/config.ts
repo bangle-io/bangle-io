@@ -1,14 +1,5 @@
 export const extensionName = '@bangle.io/core-extension';
 
-export const CORE_OPERATIONS_NEW_NOTE =
-  'operation::@bangle.io/core-extension:NEW_NOTE';
-
-export const CORE_OPERATIONS_NEW_WORKSPACE =
-  'operation::@bangle.io/core-extension:NEW_WORKSPACE';
-
-export const CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE =
-  'operation::@bangle.io/core-extension:REMOVE_ACTIVE_WORKSPACE';
-
 export const CORE_OPERATIONS_RENAME_ACTIVE_NOTE =
   'operation::@bangle.io/core-extension:RENAME_ACTIVE_NOTE';
 
@@ -17,12 +8,6 @@ export const CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR =
 
 export const CORE_OPERATIONS_TOGGLE_UI_THEME =
   'operation::@bangle.io/core-extension:TOGGLE_UI_THEME';
-
-export const CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT =
-  'operation::@bangle.io/core-extension:TOGGLE_EDITOR_SPLIT';
-
-export const CORE_OPERATIONS_CLOSE_EDITOR =
-  'operation::@bangle.io/core-extension:CLOSE_EDITOR';
 
 export const CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY =
   'operation::@bangle.io/core-extension:DOWNLOAD_WORKSPACE_COPY';

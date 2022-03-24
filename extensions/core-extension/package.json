@@ -32,7 +32,6 @@
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/create-store": "workspace:*",
     "@bangle.io/extension-registry": "workspace:*",
-    "@bangle.io/serial-operation-context": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/slice-editor-manager": "workspace:*",
     "@bangle.io/slice-notification": "workspace:*",

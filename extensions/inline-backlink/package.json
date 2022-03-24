@@ -35,6 +35,7 @@
     "@bangle.dev/react": "0.28.8",
     "@bangle.dev/utils": "0.28.8",
     "@bangle.dev/wiki-link": "0.28.8",
+    "@bangle.io/api": "workspace:*",
     "@bangle.io/config": "workspace:*",
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/contextual-ui-components": "workspace:*",

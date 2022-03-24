@@ -12,7 +12,7 @@ export interface PopupEditorProps {
     className?: string;
     positionProps: { [k: string]: any };
   };
-  editorProps: EditorProps;
+  editorProps: Omit<EditorProps, 'editorDisplayType'>;
   noContent?: React.ReactNode;
 }
 

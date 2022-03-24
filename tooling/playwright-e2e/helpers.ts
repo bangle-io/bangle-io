@@ -509,7 +509,22 @@ export async function waitForWsPathToLoad(
 export async function waitForEditorIdToLoad(page: Page, editorId: number) {
   return page.waitForFunction(
     ({ editorId }) => {
-      return (window as any)[`editor-${editorId}`]?.editor?.destroyed === false;
+      try {
+        return (
+          (window as any)[`editor-${editorId}`]?.editor?.destroyed === false
+        );
+      } catch (error) {
+        if (
+          // we wrap an editor in a revocable proxy, when an editor is unmounted
+          // and a new editor hasn't been mounted yet, accessing the window.editor will throw an error
+          // since the proxy was revoked.
+          error instanceof Error &&
+          error.message.includes('on a proxy that has been revoked')
+        ) {
+          return false;
+        }
+        throw error;
+      }
     },
     { editorId },
   );
