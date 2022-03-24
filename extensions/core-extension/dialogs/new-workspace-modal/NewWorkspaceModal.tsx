@@ -126,18 +126,22 @@ export function NewWorkspaceModal() {
 
     switch (modalState.workspace.type) {
       case FILE_SYSTEM: {
-        dispatchSerialOperation({
-          name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
-          value: { rootDirHandle: modalState.workspace.rootDir },
-        });
+        if (modalState.workspace.rootDir) {
+          dispatchSerialOperation({
+            name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
+            value: { rootDirHandle: modalState.workspace.rootDir },
+          });
+        }
         break;
       }
 
       case BROWSER: {
-        dispatchSerialOperation({
-          name: CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
-          value: { wsName: modalState.workspace.wsName },
-        });
+        if (modalState.workspace.wsName) {
+          dispatchSerialOperation({
+            name: CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
+            value: { wsName: modalState.workspace.wsName },
+          });
+        }
         break;
       }
     }

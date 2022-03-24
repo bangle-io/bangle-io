@@ -5,7 +5,7 @@ import { act, render } from '@testing-library/react';
 import React from 'react';
 
 import { useSerialOperationHandler } from '@bangle.io/api';
-import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
+import { CORE_OPERATIONS_NEW_NOTE } from '@bangle.io/constants';
 import {
   getEditor,
   getEditorState,
@@ -20,7 +20,10 @@ import {
 import { getEditorIntersectionObserverPluginState } from '@bangle.io/utils';
 
 import noteOutlineExtension from '..';
-import { WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP } from '../config';
+import {
+  NoteOutlineDispatchSerialOpType,
+  WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP,
+} from '../config';
 import { NoteOutline } from '../NoteOutline';
 
 jest.mock('@bangle.io/slice-workspace');
@@ -210,7 +213,7 @@ para 2
   });
 
   describe('operations', () => {
-    let dispatchSOpCb: DispatchSerialOperationType | undefined;
+    let dispatchSOpCb: NoteOutlineDispatchSerialOpType | undefined;
 
     beforeEach(() => {
       dispatchSOpCb = undefined;
@@ -292,10 +295,7 @@ para 2
 
       act(() => {
         dispatchSOpCb?.({
-          name: 'operation::random',
-          value: {
-            editorId: 1,
-          },
+          name: CORE_OPERATIONS_NEW_NOTE,
         });
       });
       expect(getEditorState).toBeCalledTimes(1);

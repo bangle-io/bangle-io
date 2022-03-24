@@ -8,11 +8,16 @@ import { defaultSpecs } from '@bangle.dev/all-base-components';
 
 import { useSliceState } from '@bangle.io/bangle-store-context';
 import {
+  CORE_PALETTES_TOGGLE_NOTES_PALETTE,
+  CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
+} from '@bangle.io/constants';
+import {
   Extension,
   ExtensionRegistry,
   ExtensionRegistryContextProvider,
   useExtensionRegistryContext,
 } from '@bangle.io/extension-registry';
+import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
 
 import { useSerialOperationContext } from '../SerialOperationContext';
 import { SerialOperationContextProvider } from '../SerialOperationContextProvider';
@@ -38,7 +43,7 @@ function TestHandler() {
 
   useSerialOperationHandler((operation) => {
     switch (operation.name) {
-      case 'operation::bangle-io-core:show-search-sidebar': {
+      case CORE_PALETTES_TOGGLE_OPERATION_PALETTE: {
         updateSidebar((c) => c + 1);
 
         return true;
@@ -65,16 +70,16 @@ describe('operation handlers', () => {
     const initExtensionRegistry = () =>
       new ExtensionRegistry([
         Extension.create({
-          name: 'bangle-io-core',
+          name: '@bangle.io/core-palettes',
           application: {
             ReactComponent: TestHandler,
             operations: [
               {
-                name: 'operation::bangle-io-core:show-search-sidebar',
+                name: CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
                 title: 'show title bar',
               },
               {
-                name: 'operation::bangle-io-core:show-search-sidebar2',
+                name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
                 title: 'show title bar',
               },
             ],
@@ -86,9 +91,7 @@ describe('operation handlers', () => {
       ]);
 
     let result: ReturnType<typeof render> | undefined,
-      dispatchSOp: ReturnType<
-        typeof useSerialOperationContext
-      >['dispatchSerialOperation'];
+      dispatchSOp: DispatchSerialOperationType;
 
     useSliceStateMock.mockImplementation(() => ({
       sliceState: { extensionRegistry: initExtensionRegistry() },
@@ -116,13 +119,15 @@ describe('operation handlers', () => {
     expect(result?.container.innerHTML.includes('result-0')).toBe(true);
 
     act(() => {
-      dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar' });
+      dispatchSOp({
+        name: CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
+      });
     });
 
     expect(result?.container.innerHTML.includes('result-1')).toBe(true);
 
     act(() => {
-      dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar2' });
+      dispatchSOp({ name: CORE_PALETTES_TOGGLE_NOTES_PALETTE });
     });
 
     expect(result?.container.innerHTML.includes('result-1')).toBe(true);
@@ -134,15 +139,15 @@ describe('operation handlers', () => {
     const initExtensionRegistry = () =>
       new ExtensionRegistry([
         Extension.create({
-          name: 'bangle-io-core',
+          name: '@bangle.io/core-palettes',
           application: {
             operations: [
               {
-                name: 'operation::bangle-io-core:show-search-sidebar',
+                name: CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
                 title: 'show title bar',
               },
               {
-                name: 'operation::bangle-io-core:show-search-sidebar2',
+                name: CORE_PALETTES_TOGGLE_NOTES_PALETTE,
                 title: 'show title bar',
               },
             ],
@@ -151,7 +156,7 @@ describe('operation handlers', () => {
                 handle(operation) {
                   operationsReceived.push(operation);
                   switch (operation.name) {
-                    case 'operation::bangle-io-core:show-search-sidebar': {
+                    case CORE_PALETTES_TOGGLE_OPERATION_PALETTE: {
                       operationMatch();
 
                       return true;
@@ -167,9 +172,9 @@ describe('operation handlers', () => {
         }),
       ]);
 
-    let dispatchSOp: ReturnType<
-      typeof useSerialOperationContext
-    >['dispatchSerialOperation'];
+    let dispatchSOp: DispatchSerialOperationType<{
+      name: 'operation::test-boo:sample-operation';
+    }>;
 
     useSliceStateMock.mockImplementation(() => ({
       sliceState: { extensionRegistry: initExtensionRegistry() },
@@ -178,7 +183,9 @@ describe('operation handlers', () => {
     }));
 
     function DispatchSOp() {
-      let obj = useSerialOperationContext();
+      let obj = useSerialOperationContext<{
+        name: 'operation::test-boo:sample-operation';
+      }>();
       dispatchSOp = obj.dispatchSerialOperation;
 
       return null;
@@ -197,13 +204,15 @@ describe('operation handlers', () => {
     expect(operationMatch).toBeCalledTimes(0);
 
     act(() => {
-      dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar' });
+      dispatchSOp({
+        name: CORE_PALETTES_TOGGLE_OPERATION_PALETTE,
+      });
     });
 
     expect(operationMatch).toBeCalledTimes(1);
 
     act(() => {
-      dispatchSOp({ name: 'operation::bangle-io-core:show-search-sidebar2' });
+      dispatchSOp({ name: 'operation::test-boo:sample-operation' });
     });
 
     expect(operationMatch).toBeCalledTimes(1);
@@ -211,10 +220,10 @@ describe('operation handlers', () => {
     expect(operationsReceived).toMatchInlineSnapshot(`
       Array [
         Object {
-          "name": "operation::bangle-io-core:show-search-sidebar",
+          "name": "operation::@bangle.io/core-palettes:TOGGLE_OPERATION_PALETTE",
         },
         Object {
-          "name": "operation::bangle-io-core:show-search-sidebar2",
+          "name": "operation::test-boo:sample-operation",
         },
       ]
     `);

@@ -1,7 +1,14 @@
 import { useContext } from 'react';
 
-import { SerialOperationContext } from './SerialOperationContextProvider';
+import type { SerialOperationType } from '@bangle.io/shared-types';
 
-export function useSerialOperationContext() {
+import {
+  SerialOperationContext,
+  SerialOperationContextType,
+} from './SerialOperationContextProvider';
+
+export function useSerialOperationContext<
+  R extends SerialOperationType = never,
+>(): SerialOperationContextType<R> {
   return useContext(SerialOperationContext);
 }

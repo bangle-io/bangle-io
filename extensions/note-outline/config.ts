@@ -1,6 +1,8 @@
 import type { EditorState } from '@bangle.dev/pm';
 import { PluginKey } from '@bangle.dev/pm';
 
+import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
+
 export const watchHeadingsPluginKey = new PluginKey<WatchPluginState>(
   'note-outline_watchHeadingsPluginKey',
 );
@@ -32,3 +34,10 @@ export function getWatchPluginState(state: EditorState) {
 // Time to wait after a click to
 // scroll to currently viewing heading.
 export const HEADING_AUTO_SCROLL_INTO_VIEW_COOLDOWN = 2500;
+
+export type NoteOutlineDispatchSerialOpType = DispatchSerialOperationType<{
+  name: typeof WATCH_HEADINGS_PLUGIN_STATE_UPDATE_OP;
+  value: {
+    editorId: number;
+  };
+}>;

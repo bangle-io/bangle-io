@@ -1,4 +1,6 @@
+export * from './core-operations';
 export * from './editor';
+export * from './exposed-operations';
 export * from './extension-registry';
 export * from './helper';
 export * from './store';

@@ -112,7 +112,7 @@ export function Notification({
               hintPos="left"
               className="ml-3"
               onClick={async () => {
-                dispatchSerialOperation({ name: b.operation });
+                dispatchSerialOperation({ name: b.operation as any });
               }}
               hint={b.hint}
             >

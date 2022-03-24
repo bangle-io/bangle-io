@@ -1,6 +1,8 @@
 import type { SpecRegistry } from '@bangle.dev/core';
 import type { Node, PluginKey } from '@bangle.dev/pm';
 
+import { ExposedOperationsType } from './exposed-operations';
+
 export type { ExtensionRegistry } from '@bangle.io/extension-registry';
 
 export type SerialOperationNameType = `operation::${string}`;
@@ -16,9 +18,8 @@ export interface SerialOperationDefinitionType {
   // when true, will hide it from the user
   hidden?: boolean;
 }
-export type DispatchSerialOperationType = (
-  sOperation: SerialOperationType,
-) => void;
+export type DispatchSerialOperationType<T extends SerialOperationType = never> =
+  (sOperation: ExposedOperationsType | T) => void;
 
 export type SerialOperationHandler = (
   sOperation: SerialOperationType,

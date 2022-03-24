@@ -66,7 +66,7 @@ export function watchPluginHost(
                     value: {
                       editorId: editorPluginMetadata.editorId,
                     },
-                  });
+                  } as any);
                 });
                 pluginState.clear();
               }

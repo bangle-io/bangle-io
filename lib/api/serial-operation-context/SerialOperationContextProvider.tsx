@@ -8,7 +8,10 @@ import React, {
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
-import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
+import type {
+  DispatchSerialOperationType,
+  SerialOperationType,
+} from '@bangle.io/shared-types';
 import { useKeybindings } from '@bangle.io/utils';
 
 const LOG = true;
@@ -20,8 +23,10 @@ export const SerialOperationContext = createContext<SerialOperationContextType>(
   },
 );
 
-export interface SerialOperationContextType {
-  dispatchSerialOperation: DispatchSerialOperationType;
+export interface SerialOperationContextType<
+  F extends SerialOperationType = SerialOperationType,
+> {
+  dispatchSerialOperation: DispatchSerialOperationType<F>;
 }
 
 export function SerialOperationContextProvider({
@@ -55,9 +60,7 @@ export function SerialOperationContextProvider({
     };
   }, [abort, operationHandlers]);
 
-  const dispatchSerialOperation = useCallback<
-    SerialOperationContextType['dispatchSerialOperation']
-  >(
+  const dispatchSerialOperation = useCallback<DispatchSerialOperationType>(
     (operation) => {
       const { name, value, ...others } = operation;
       log(name, value);
@@ -101,7 +104,7 @@ export function SerialOperationContextProvider({
   );
 
   const value = useMemo(() => {
-    const val: SerialOperationContextType = {
+    const val = {
       dispatchSerialOperation,
     };
 

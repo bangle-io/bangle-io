@@ -51,7 +51,7 @@ const ActionPaletteUIComponent: ExtensionPaletteType['ReactComponent'] =
         const item = items.find((item) => item.uid === uid);
 
         if (item) {
-          dispatchSerialOperation({ name: item.data.name });
+          dispatchSerialOperation({ name: item.data.name as any });
           updateRecency(uid);
         }
       },

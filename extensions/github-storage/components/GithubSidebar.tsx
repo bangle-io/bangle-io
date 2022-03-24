@@ -57,7 +57,8 @@ function ModifiedEntries({
 
   const [refreshEntries, updateRefreshEntries] = useState(0);
 
-  const { dispatchSerialOperation } = useSerialOperationContext();
+  const { dispatchSerialOperation } =
+    useSerialOperationContext<{ name: typeof OPERATION_SYNC_GITHUB_CHANGES }>();
 
   useEffect(() => {
     let destroyed = false;
@@ -103,7 +104,9 @@ function ModifiedEntries({
         <ActionButton
           allowFocus={false}
           onPress={() => {
-            dispatchSerialOperation({ name: OPERATION_SYNC_GITHUB_CHANGES });
+            dispatchSerialOperation({
+              name: OPERATION_SYNC_GITHUB_CHANGES,
+            });
           }}
           ariaLabel="Press sync to push any local changes and pull any new remote changes"
           tooltip={
