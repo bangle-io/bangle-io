@@ -1,25 +1,22 @@
 .bangle-heading-collapsed {
-  background-color: var(--window-bgColor-2);
+  background-color: var(--window-bg-color-2);
   border-radius: 8px;
-}
-
-.bangle-editor li[data-bangle-is-todo] > span:first-child > input {
-  margin-top: 0.45rem;
 }
 
 .bangle-editor .selected-node {
   animation-duration: 0.75s;
-  animation-name: editorSelectedNode;
+  animation-name: editor-selected-node;
   animation-timing-function: ease-out;
 }
 
-@keyframes editorSelectedNode {
+@keyframes editor-selected-node {
   from {
     border-radius: 4px;
-    background-color: var(--editorCore-selectionChange-bgColor);
+    background-color: var(--editor-core-selection-change-bg-color);
   }
 
   to {
+    background-color: unset;
   }
 }
 
@@ -34,15 +31,16 @@
 
 .bangle-editor p > code {
   background-color: var(--base-300);
-  color: var(--textColor-1);
+  color: var(--text-color-1);
 }
+
 .bangle-editor pre {
   background-color: var(--base-300);
 }
 
 .bangle-editor blockquote {
   background-color: var(--base-300);
-  color: var(--textColor-1);
+  color: var(--text-color-1);
 }
 
 .bangle-editor li[data-bangle-is-todo] > span:first-child > input {
@@ -51,11 +49,11 @@
 
 .bangle-editor .ProseMirror-selectednode {
   outline: 2px solid var(--window-link-color);
-  border-radius: var(--window-pill-borderRadius);
+  border-radius: var(--window-pill-border-radius);
 }
 
 .bangle-tooltip {
-  z-index: var(--window-tooltip-zIndex);
+  z-index: var(--window-tooltip-z-index);
 }
 
 /* collapse styles */
@@ -97,4 +95,4 @@ h5 .deco-collapse {
   cursor: pointer;
 }
 
-/* collapse styles end*/
+/* collapse styles end */

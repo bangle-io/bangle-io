@@ -1,4 +1,5 @@
 # Stylelint runs on everything by default
+LICENSE
 *.*
 !*.css
 build/

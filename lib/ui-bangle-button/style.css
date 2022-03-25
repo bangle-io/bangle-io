@@ -1,15 +1,15 @@
 .ui-bangle-button_tooltip {
-  background-color: var(--window-tooltip-bgColor);
+  background-color: var(--window-tooltip-bg-color);
   color: var(--window-tooltip-color);
-  z-index: var(--window-tooltip-zIndex);
+  z-index: var(--window-tooltip-z-index);
 }
 
 .ui-bangle-button_dropdown-menu {
   min-width: 300px;
-  background-color: var(--window-dropdown-bgColor-0);
+  background-color: var(--window-dropdown-bg-color-0);
   color: var(--window-dropdown-color);
-  z-index: var(--window-tooltip-zIndex);
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 28px;
+  z-index: var(--window-tooltip-z-index);
+  box-shadow: rgb(0 0 0 / 30%) 0 4px 28px;
 }
 
 .ui-bangle-button_dropdown-menu-item.is-focused {
@@ -17,7 +17,7 @@
 }
 
 .ui-bangle-button_button {
-  border-radius: var(--uiBangleButton-radius);
+  border-radius: var(--ui-bangle-button-radius);
   flex-shrink: 0;
   display: inline-flex;
   box-sizing: border-box;

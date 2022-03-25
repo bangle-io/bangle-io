@@ -1,15 +1,15 @@
 .inline-palette-wrapper {
   display: flex;
   flex-direction: column;
-  background-color: var(--window-bgColor-1);
-  max-width: var(--inlineUniversalPalette-maxWidth);
-  min-width: var(--inlineUniversalPalette-maxWidth);
+  background-color: var(--window-bg-color-1);
+  max-width: var(--inline-universal-palette-max-width);
+  min-width: var(--inline-universal-palette-max-width);
 }
 
 .inline-palette-items-wrapper {
   display: flex;
   flex-direction: column;
-  max-height: var(--inlineUniversalPalette-maxHeight);
+  max-height: var(--inline-universal-palette-max-height);
   overflow-y: scroll;
 }
 

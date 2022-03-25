@@ -2,6 +2,7 @@
 .b-sidebar-row2.hover:hover {
   background-color: var(--accent-secondary);
 }
+
 .b-sidebar-row2.active {
   background-color: var(--accent-primary-1);
 }
@@ -12,12 +13,13 @@
 }
 
 .b-sidebar-row2.disable {
-  color: var(--textColor-1);
+  color: var(--text-color-1);
   cursor: not-allowed;
-  background-color: var(--universal-palette-item-disabled-bgColor);
+  background-color: var(--universal-palette-item-disabled-bg-color);
 }
+
 .b-sidebar-row2.disable.hover:hover {
-  background-color: var(--universal-palette-item-disabled-bgColor);
+  background-color: var(--universal-palette-item-disabled-bg-color);
 }
 
 /* node positioning */
@@ -26,6 +28,7 @@
   flex-direction: row;
   justify-content: center;
 }
+
 .b-sidebar-row2 .b-right-node {
   display: inline-flex;
   flex-direction: row;
@@ -47,9 +50,9 @@
 }
 
 .b-sidebar-row2 .b-extra-info {
-  color: var(--textColor-1);
+  color: var(--text-color-1);
 }
 
 .b-sidebar-row2 .b-description {
-  color: var(--textColor-1);
+  color: var(--text-color-1);
 }

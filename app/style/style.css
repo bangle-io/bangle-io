@@ -1,6 +1,7 @@
 body {
-  color: var(--textColor-0);
+  color: var(--text-color-0);
 }
+
 body.widescreen {
   /* this prevents the spring bounciness which moves the entire app
    when on mac laptops */

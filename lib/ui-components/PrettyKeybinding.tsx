@@ -8,7 +8,7 @@ export function PrettyKeybinding({ rawKey }: { rawKey: string }) {
   return (
     <span
       className="inline ui-components_pretty-keybinding"
-      style={{ color: 'var(--textColor-1)' }}
+      style={{ color: 'var(--text-color-1)' }}
     >
       {format.map((r, i) => (
         <kbd

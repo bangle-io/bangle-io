@@ -1,5 +1,5 @@
 .activitybar_button.widescreen {
-  border-left: 2px solid var(--activitybar-bgColor);
+  border-left: 2px solid var(--activitybar-bg-color);
 }
 
 .activitybar_button.widescreen.is-active {
@@ -7,9 +7,9 @@
 }
 
 .activitybar.widescreen {
-  border-right: 1px solid var(--window-borderColor-0);
+  border-right: 1px solid var(--window-border-color-0);
 }
 
 .activitybar {
-  background-color: var(--activitybar-bgColor);
+  background-color: var(--activitybar-bg-color);
 }

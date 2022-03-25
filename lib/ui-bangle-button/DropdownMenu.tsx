@@ -244,7 +244,7 @@ function MenuItemSection({
           {...separatorProps}
           className="mx-1 my-2"
           style={{
-            borderTop: '1px solid var(--window-borderColor-0)',
+            borderTop: '1px solid var(--window-border-color-0)',
           }}
         />
       )}

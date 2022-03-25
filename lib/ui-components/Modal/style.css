@@ -1,19 +1,18 @@
 .ui-components_modal-container {
-  background-color: var(--window-bgColor-1);
+  background-color: var(--window-bg-color-1);
   overscroll-behavior-y: contain;
 }
 
 .ui-components_modal-header {
-  border-bottom: 2px solid var(--window-borderColor-0);
+  border-bottom: 2px solid var(--window-border-color-0);
 }
 
 .ui-components_modal-overlay {
-  background-color: var(--window-modal-overlay-bgColor);
-  -webkit-backdrop-filter: blur(2px);
+  background-color: var(--window-modal-overlay-bg-color);
   backdrop-filter: blur(2px);
 }
 
-@keyframes fadeInScale {
+@keyframes fade-in-scale {
   0% {
     opacity: 0;
     transform: scale(0.97, 0.97);
@@ -27,6 +26,6 @@
 
 .ui-components_modal-fadeInScaleAnimation {
   animation-duration: 0.1s;
-  animation-name: fadeInScale;
+  animation-name: fade-in-scale;
   animation-timing-function: ease-out;
 }

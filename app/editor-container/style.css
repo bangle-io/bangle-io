@@ -7,11 +7,11 @@
 }
 
 .editor-container_editor-bar {
-  color: var(--uiBangleButton-color);
+  color: var(--ui-bangle-button-color);
 }
 
 .editor-container_ws-path {
-  color: var(--uiBangleButton-color);
+  color: var(--ui-bangle-button-color);
   justify-content: center;
   display: flex;
   align-items: center;

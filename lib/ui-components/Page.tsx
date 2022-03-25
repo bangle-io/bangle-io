@@ -43,7 +43,7 @@ export function Page({
       <div
         className={cx('w-full', childClassName)}
         style={{
-          maxWidth: 'min(var(--page-maxWidth), 100vw)',
+          maxWidth: 'min(var(--page-max-width), 100vw)',
           padding: widescreen
             ? 'var(--window-page-padding)'
             : 'var(--window-page-mobile-padding)',

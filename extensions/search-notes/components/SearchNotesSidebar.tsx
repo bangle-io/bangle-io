@@ -39,7 +39,7 @@ export function SearchNotesSidebar() {
       <div className="flex flex-col items-center justify-center h-full">
         <span
           className="text-sm font-extrabold cursor-pointer"
-          style={{ color: 'var(--textColor-1)' }}
+          style={{ color: 'var(--text-color-1)' }}
           onClick={() => {
             togglePaletteType(CorePalette.Workspace)(
               bangleStore.state,

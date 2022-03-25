@@ -1,10 +1,10 @@
 :root {
-  --ui-dhancha_ws-sidebar-width: var(--workspaceSidebar-width, 15rem);
-  --ui-dhancha_activitybar-width: var(--activitybar-width, 40px);
-  --ui-dhancha_activitybar-mobile-width: var(--activitybar-mobile-height, 30px);
-  --ui-dhancha_note-sidebar-width: var(--noteSidebar-width, 15rem);
-  --ui-dhancha_note-border-color: var(--window-borderColor-0, grey);
-  --ui-dhancha_activitybar-bgColor: var(--activitybar-bgColor, magenta);
+  --ui-dhancha-ws-sidebar-width: var(--workspace-sidebar-width, 15rem);
+  --ui-dhancha-activitybar-width: var(--activitybar-width, 40px);
+  --ui-dhancha-activitybar-mobile-width: var(--activitybar-mobile-height, 30px);
+  --ui-dhancha-note-sidebar-width: var(--note-sidebar-width, 15rem);
+  --ui-dhancha-note-border-color: var(--window-border-color-0, grey);
+  --ui-dhancha-activitybar-bg-color: var(--activitybar-bg-color, magenta);
 }
 
 body {
@@ -52,7 +52,7 @@ body {
 .ui-dhancha_multi-column-main-content > * {
   box-sizing: border-box;
   min-width: 100%;
-  border-right: 1px solid var(--ui-dhancha_note-border-color);
+  border-right: 1px solid var(--ui-dhancha-note-border-color);
 }
 
 .ui-dhancha_multi-column-main-content > *:last-child {
@@ -70,8 +70,8 @@ body {
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
-  height: var(--ui-dhancha_activitybar-mobile-width);
-  background-color: var(--ui-dhancha_activitybar-bgColor);
+  height: var(--ui-dhancha-activitybar-mobile-width);
+  background-color: var(--ui-dhancha-activitybar-bg-color);
   position: sticky;
   top: 0;
   width: 100%;
@@ -79,7 +79,7 @@ body {
 }
 
 .ui-dhancha_activitybar.widescreen {
-  flex-basis: var(--ui-dhancha_activitybar-width);
+  flex-basis: var(--ui-dhancha-activitybar-width);
   flex-direction: column;
   height: 100vh;
   position: relative;
@@ -89,33 +89,34 @@ body {
 .ui-dhancha_ws-sidebar {
   flex-shrink: 0;
   height: 100vh;
-  width: var(--ui-dhancha_ws-sidebar-width);
+  width: var(--ui-dhancha-ws-sidebar-width);
   z-index: 5;
-  border-right: 1px solid var(--ui-dhancha_note-border-color);
+  border-right: 1px solid var(--ui-dhancha-note-border-color);
 }
 
 .ui-dhancha_note-sidebar {
   flex-shrink: 0;
   height: 100vh;
-  width: var(--ui-dhancha_note-sidebar-width);
+  width: var(--ui-dhancha-note-sidebar-width);
   z-index: 5;
-  border-left: 1px solid var(--ui-dhancha_note-border-color);
+  border-left: 1px solid var(--ui-dhancha-note-border-color);
 }
 
 /* The position of the menu when not hidden (and default) */
+
 /* the .up and .down are added in small screens */
 .ui-dhancha_activitybar.up {
   /* How long to get back up */
-  transition-timing-function: ease-in;
   transition: transform 0.25s;
+  transition-timing-function: ease-in;
   transform: translate(0, 0);
   will-change: transform;
 }
 
 .ui-dhancha_activitybar.down {
   /* How long to scroll down */
-  transition-timing-function: ease-in;
   transition: transform 0.6s;
+  transition-timing-function: ease-in;
   transform: translate(0, -6rem);
   will-change: transform;
 }

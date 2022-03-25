@@ -36,7 +36,7 @@ export function NoteSidebar({
       <div>
         {widgets.map((r) => (
           <div key={r.name} className="note-sidebar_widget-container">
-            <div className="note-sidebar_widget-titlebar flex flex-row justify-between px-2 mt-2">
+            <div className="flex flex-row justify-between px-2 mt-2">
               <span className="ml-1 font-semibold">{r.title}</span>
               <div>
                 {/* <ActionButton

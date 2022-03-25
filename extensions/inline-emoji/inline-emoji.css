@@ -1,16 +1,17 @@
 .bangle-io-emoji-suggest-container {
-  background-color: var(--window-bgColor-1);
+  background-color: var(--window-bg-color-1);
 }
 
 .bangle-emoji-suggest {
-  color: var(--textColor-0);
-  background-color: var(--window-bgColor-1);
+  color: var(--text-color-0);
+  background-color: var(--window-bg-color-1);
+
   /* width: 500px; */
   border: 0;
 }
 
 .bangle-io-palette-info {
-  background-color: var(--window-bgColor-1);
+  background-color: var(--window-bg-color-1);
 }
 
 .bangle-emoji-suggest-container .bangle-emoji-square.bangle-is-selected {

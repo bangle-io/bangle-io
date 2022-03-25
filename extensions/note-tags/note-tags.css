@@ -1,8 +1,8 @@
 .inline-note-tag {
-  background-color: var(--noteTags-bgColor);
+  background-color: var(--note-tags-bg-color);
   border-radius: 4rem;
   padding: 0.125rem 0.5rem;
   margin: 0 0.125rem;
-  color: var(--noteTags-color);
+  color: var(--note-tags-color);
   cursor: pointer;
 }

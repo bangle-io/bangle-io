@@ -33,15 +33,15 @@ export function CenteredBoxedPage({
         className="w-full rounded-lg"
         style={{
           padding: 'var(--window-page-box-padding)',
-          backgroundColor: 'var(--window-bgColor-1)',
-          maxWidth: 'min(var(--page-maxWidth), 100vw)',
-          border: '1px solid var(--window-borderColor-1)',
+          backgroundColor: 'var(--window-bg-color-1)',
+          maxWidth: 'min(var(--page-max-width), 100vw)',
+          border: '1px solid var(--window-border-color-1)',
         }}
       >
         <div
           className={cx('w-full', childClassName)}
           style={{
-            maxWidth: 'min(var(--page-maxWidth), 100vw)',
+            maxWidth: 'min(var(--page-max-width), 100vw)',
           }}
         >
           {title && (
