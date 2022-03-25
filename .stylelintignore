@@ -1,0 +1,8 @@
+# Stylelint runs on everything by default
+*.*
+!*.css
+build/
+node_modules/
+coverage/
+.yarn/
+tooling/
