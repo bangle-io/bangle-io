@@ -33,13 +33,14 @@
     "g:vite-serve": "vite preview",
     "hot-start": "BANGLE_HOT=yes yarn start",
     "lint": "yarn concurrently -m 2 \"yarn g:package-patrol\" \"yarn prettier --check .\" \"yarn eslint .\" \"yarn tsc-check\" \"yarn stylelint .\"",
+    "postinstall": "husky install",
     "remove-portals": "yarn node ./tooling/_scripts/remove-portals && yarn install",
     "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
     "test-ci": "yarn jest --ci --coverage",
-    "test": "yarn jest",
-    "test:regular": "yarn jest --selectProjects regular",
     "test:network": "yarn jest --selectProjects network",
+    "test:regular": "yarn jest --selectProjects regular",
+    "test": "yarn jest",
     "tsc-check": "yarn tsc -b",
     "tsc-watch": "yarn tsc -b -w",
     "update-css-vars": "yarn node tooling/_scripts/generate-apply-theme.js",
@@ -117,8 +118,10 @@
     "git-revision-webpack-plugin": "^3.0.6",
     "html-webpack-plugin": "^5.5.0",
     "http-server": "^0.12.3",
+    "husky": ">=7",
     "jest": "^27.5.1",
     "jest-circus": "^27.5.1",
+    "lint-staged": ">=12",
     "mini-css-extract-plugin": "^1.6.2",
     "minimist": "^1.2.5",
     "pnp-webpack-plugin": "^1.7.0",
@@ -155,5 +158,17 @@
     "printWidth": 80
   },
   "packageManager": "yarn@3.1.1",
-  "license": "AGPL-3.0-or-later"
+  "license": "AGPL-3.0-or-later",
+  "lint-staged": {
+    "*.md": "yarn prettier --write",
+    "{app,extensions,js-lib,lib,tooling,worker}/**/*.{js,ts,jsx,tsx}": [
+      "yarn prettier --write",
+      "yarn eslint --fix"
+    ],
+    "*.css": [
+      "yarn stylelint --fix",
+      "yarn prettier --write"
+    ],
+    "*.json": "yarn prettier --write"
+  }
 }
