@@ -6351,10 +6351,10 @@ __metadata:
     git-revision-webpack-plugin: ^3.0.6
     html-webpack-plugin: ^5.5.0
     http-server: ^0.12.3
-    husky: ">=6"
+    husky: ">=7"
     jest: ^27.5.1
     jest-circus: ^27.5.1
-    lint-staged: ">=10"
+    lint-staged: ">=12"
     mini-css-extract-plugin: ^1.6.2
     minimist: ^1.2.5
     pnp-webpack-plugin: ^1.7.0
@@ -10359,7 +10359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:>=6":
+"husky@npm:>=7":
   version: 7.0.4
   resolution: "husky@npm:7.0.4"
   bin:
@@ -12104,7 +12104,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:>=10":
+"lint-staged@npm:>=12":
   version: 12.3.7
   resolution: "lint-staged@npm:12.3.7"
   dependencies:
@@ -15350,6 +15350,7 @@ __metadata:
     cross-fetch: ^3.1.5
     date-fns: ^2.25.0
     domexception: ^4.0.0
+    globby: ^11.0.4
     idb-keyval: ^5.1.5
     prettier: ^2.6.0
     tslib: ^2.3.1

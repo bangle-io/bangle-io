@@ -20785,6 +20785,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["cross-fetch", "npm:3.1.5"],
             ["date-fns", "npm:2.28.0"],
             ["domexception", "npm:4.0.0"],
+            ["globby", "npm:11.1.0"],
             ["idb-keyval", "npm:5.1.5"],
             ["prettier", "npm:2.6.0"],
             ["tslib", "npm:2.3.1"],

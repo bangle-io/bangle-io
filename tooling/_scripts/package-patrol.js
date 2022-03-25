@@ -1,27 +1,17 @@
-const LIB = 'lib';
-const JS_LIB = 'js-lib';
-const WORKER = 'worker';
-const EXTENSIONS = 'extensions';
-const APP = 'app';
-const TOOLING = 'tooling';
+const { walkWorkspace, getParentWorktree } = require('./lib/map-files');
+const { WorkTree } = require('./lib/work-tree');
+const { yarnGetVirtuals } = require('./lib/yarn-utils');
 const {
-  walkWorkspace,
-  getParentWorktree,
-  getWorktreeWorkspaces,
-} = require('./map-files');
+  LIB,
+  JS_LIB,
+  WORKER,
+  APP,
+  TOOLING,
+  EXTENSIONS,
+} = require('./constants');
 
 checkDepConstraints();
 checkMultipleInstances();
-
-class WorkTree {
-  constructor(name) {
-    this.name = name;
-  }
-
-  async packages() {
-    return (await getWorktreeWorkspaces(this.name)).map((r) => r.name);
-  }
-}
 
 const libTree = new WorkTree(LIB);
 const jsLibTree = new WorkTree(JS_LIB);
@@ -36,28 +26,32 @@ const extensionTree = new WorkTree(EXTENSIONS);
  */
 const getDepConstraints = async () => {
   const obj = {
-    [JS_LIB]: [jsLibTree.packages()],
-    [LIB]: [jsLibTree.packages(), libTree.packages()],
-    [WORKER]: [jsLibTree.packages(), libTree.packages(), workerTree.packages()],
+    [JS_LIB]: [jsLibTree.getPackageNames()],
+    [LIB]: [jsLibTree.getPackageNames(), libTree.getPackageNames()],
+    [WORKER]: [
+      jsLibTree.getPackageNames(),
+      libTree.getPackageNames(),
+      workerTree.getPackageNames(),
+    ],
     [EXTENSIONS]: [
-      jsLibTree.packages(),
-      libTree.packages(),
+      jsLibTree.getPackageNames(),
+      libTree.getPackageNames(),
       '@bangle.io/worker-naukar-proxy',
     ],
     [APP]: [
-      jsLibTree.packages(),
-      libTree.packages(),
-      workerTree.packages(),
-      extensionTree.packages(),
-      appTree.packages(),
+      jsLibTree.getPackageNames(),
+      libTree.getPackageNames(),
+      workerTree.getPackageNames(),
+      extensionTree.getPackageNames(),
+      appTree.getPackageNames(),
     ],
     [TOOLING]: [
-      jsLibTree.packages(),
-      libTree.packages(),
-      workerTree.packages(),
-      extensionTree.packages(),
-      appTree.packages(),
-      toolingTree.packages(),
+      jsLibTree.getPackageNames(),
+      libTree.getPackageNames(),
+      workerTree.getPackageNames(),
+      extensionTree.getPackageNames(),
+      appTree.getPackageNames(),
+      toolingTree.getPackageNames(),
     ],
   };
 
@@ -88,21 +82,15 @@ async function checkDepConstraints() {
 }
 
 function checkMultipleInstances() {
-  const output = require('child_process')
-    .execSync(`yarn info --virtuals --all --json `)
-    .toString()
-    .split('\n')
-    .filter(Boolean)
-    .map((r) => JSON.parse(r))
-    .filter(
-      (r) =>
-        r.value.startsWith('@bangle.io/') ||
-        r.value.startsWith('@bangle.dev/') ||
-        r.value.startsWith('prosemirror-') ||
-        r.value.startsWith('react-router-dom@') ||
-        r.value.startsWith('react@') ||
-        r.value.startsWith('react-dom@'),
-    );
+  const output = yarnGetVirtuals().filter(
+    (r) =>
+      r.value.startsWith('@bangle.io/') ||
+      r.value.startsWith('@bangle.dev/') ||
+      r.value.startsWith('prosemirror-') ||
+      r.value.startsWith('react-router-dom@') ||
+      r.value.startsWith('react@') ||
+      r.value.startsWith('react-dom@'),
+  );
 
   const faultyDeps = output.filter((r) => r.children.Instances > 1);
 
