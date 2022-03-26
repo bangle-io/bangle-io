@@ -10,6 +10,8 @@ const EXTENSIONS = 'extensions';
 const APP = 'app';
 const TOOLING = 'tooling';
 
+const ALL_TREES = [LIB, JS_LIB, WORKER, EXTENSIONS, APP, TOOLING];
+
 module.exports = {
   rootDir,
   rootPackagePath,
@@ -19,4 +21,5 @@ module.exports = {
   LIB,
   TOOLING,
   WORKER,
+  ALL_TREES,
 };

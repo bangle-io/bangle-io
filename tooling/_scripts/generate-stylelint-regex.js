@@ -20,7 +20,7 @@ async function run() {
       const result = (
         await Promise.all(
           packages.map(async (pkg) => {
-            if ((await pkg.getCssFiles()).length > 0) {
+            if ((await pkg.getCSSFiles()).length > 0) {
               return pkg;
             }
           }),

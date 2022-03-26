@@ -1,25 +1,12 @@
 const globby = require('globby');
 const { getWorktreeWorkspaces } = require('./map-files');
 const { yarnWorkspacesList } = require('./yarn-utils');
-const { rootDir } = require('../constants');
+const { rootDir, ALL_TREES } = require('../constants');
+const { readFile, writeFile } = require('fs/promises');
 
 class WorkTree {
   constructor(name) {
     this.name = name;
-  }
-
-  async getAllFiles(workspaceName) {
-    const files = await this.packages();
-    console.log(files);
-    const workspace = files.find((r) => r.name === workspaceName);
-
-    if (workspace) {
-      console.log(`${rootDir}/${workspace.location}/**`);
-
-      return globby.sync(`${rootDir}/${workspace.location}/**`);
-    }
-
-    return [];
   }
 
   /**
@@ -46,17 +33,8 @@ class WorkTree {
       .map((r) => {
         return new Package(r);
       });
-
-    return currentPackages;
   }
 }
-
-let r = {
-  location: 'tooling/env-vars',
-  name: '@bangle.io/env-vars',
-  workspaceDependencies: ['lib/constants', 'lib/shared-types'],
-  mismatchedWorkspaceDependencies: [],
-};
 
 class Package {
   allFilesCache = undefined;
@@ -73,24 +51,85 @@ class Package {
     this.mismatchedWorkspaceDependencies = mismatchedWorkspaceDependencies;
   }
 
+  /**
+   *
+   * @returns {Promise<FileWrapper[]>}
+   */
   async getAllFiles() {
     if (this.allFilesCache) {
       return this.allFilesCache;
     }
 
-    this.allFilesCache = globby.sync(`${rootDir}/${this.location}/**`);
+    const filePaths = globby.sync(`${rootDir}/${this.location}/**`);
 
-    return this.allFilesCache;
+    this.allFilesCache = filePaths.map((r) => new FileWrapper(r));
+
+    return this.getAllFiles();
   }
 
-  async getCssFiles() {
-    return (await this.getAllFiles()).filter((r) => r.endsWith('.css'));
+  async getCSSFiles() {
+    return (await this.getAllFiles()).filter((r) => {
+      return r.isCSS();
+    });
   }
 
-  async getTsFiles() {
-    return (await this.getAllFiles()).filter(
-      (r) => r.endsWith('.ts') || r.endsWith('.tsx'),
-    );
+  async getTSFiles() {
+    return (await this.getAllFiles()).filter((r) => r.isTS());
   }
 }
-module.exports = { WorkTree };
+
+class FileWrapper {
+  /** string */
+  filePath;
+  /**
+   *
+   * @param {string} filePath
+   */
+  constructor(filePath) {
+    this.filePath = filePath;
+  }
+
+  isCSS() {
+    return this.filePath.endsWith('.css');
+  }
+
+  isTS() {
+    return this.filePath.endsWith('.ts') || this.filePath.endsWith('.tsx');
+  }
+
+  /**
+   *
+   * @returns {Promise<string>}
+   */
+  async readFile() {
+    return readFile(this.filePath, 'utf8');
+  }
+
+  /**
+   * Given a string, replace the contents of the file.
+   *
+   * @param {(fn:string) => string} fn
+   */
+  async transformFile(fn) {
+    const content = await this.readFile();
+    const transformed = fn(content);
+
+    await writeFile(this.filePath, transformed, 'utf8');
+  }
+}
+
+/**
+ *
+ * @returns {Promise<Package[]>}
+ */
+async function getAllPackages() {
+  return (
+    await Promise.all(
+      ALL_TREES.map((r) => new WorkTree(r)).map((r) => {
+        return r.packages();
+      }),
+    )
+  ).flatMap((r) => r);
+}
+
+module.exports = { WorkTree, getAllPackages, FileWrapper };
