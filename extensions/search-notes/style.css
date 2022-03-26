@@ -1,24 +1,28 @@
-.search-notes .search-result-note-match:not(:nth-of-type(1)) {
+.b-search-notes_search-notes
+  .b-search-notes_search-result-note-match:not(:nth-of-type(1)) {
   margin-top: 0.75rem;
 }
 
-.search-notes .highlight-text:nth-of-type(2n) {
+.b-search-notes_search-notes .b-search-notes_highlight-text:nth-of-type(2n) {
   background-color: var(--window-highlight-bg-color);
 }
 
-.bangle-search-match {
+.b-search-notes_bangle-search-match {
   background-color: var(--window-highlight-bg-color);
 }
 
-.search-notes .search-result-note-match.active {
+.b-search-notes_search-notes
+  .b-search-notes_search-result-note-match.bu_active {
   background-color: var(--window-accent-primary-0);
 }
 
-.search-notes .search-result-text-match.last-item {
+.b-search-notes_search-notes
+  .b-search-notes_search-result-text-match.b-search-notes_last-item {
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--window-border-color-0);
 }
 
-.search-notes .search-result-text-match.previously-clicked {
+.b-search-notes_search-notes
+  .b-search-notes_search-result-text-match.b-search-notes_previously-clicked {
   background-color: var(--accent-secondary);
 }

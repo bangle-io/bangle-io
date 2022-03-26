@@ -1,10 +1,10 @@
-.ui-bangle-button_tooltip {
+.b-ui-bangle-button_tooltip {
   background-color: var(--window-tooltip-bg-color);
   color: var(--window-tooltip-color);
   z-index: var(--window-tooltip-z-index);
 }
 
-.ui-bangle-button_dropdown-menu {
+.b-ui-bangle-button_dropdown-menu {
   min-width: 300px;
   background-color: var(--window-dropdown-bg-color-0);
   color: var(--window-dropdown-color);
@@ -12,11 +12,11 @@
   box-shadow: rgb(0 0 0 / 30%) 0 4px 28px;
 }
 
-.ui-bangle-button_dropdown-menu-item.is-focused {
+.b-ui-bangle-button_dropdown-menu-item.bu_is-focused {
   background-color: var(--accent-secondary);
 }
 
-.ui-bangle-button_button {
+.b-ui-bangle-button_button {
   border-radius: var(--ui-bangle-button-radius);
   flex-shrink: 0;
   display: inline-flex;
@@ -24,15 +24,15 @@
   align-items: center;
 }
 
-.ui-bangle-button_button span {
+.b-ui-bangle-button_button span {
   padding: 0 0.25rem;
   display: block;
 }
 
-.ui-bangle-button_button svg {
+.b-ui-bangle-button_button svg {
   display: block;
 }
 
-.ui-bangle-button_button svg.has-text {
+.b-ui-bangle-button_button svg.bu_has-text {
   margin-left: 0.125rem;
 }

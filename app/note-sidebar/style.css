@@ -1,10 +1,10 @@
-.note-sidebar_widget-content {
+.b-note-sidebar_widget-content {
   background-color: var(--window-bg-color-1);
   max-height: 400px;
   min-height: 30px;
   border: 1px solid var(--window-border-color-1);
 }
 
-.note-sidebar {
+.b-note-sidebar_note-sidebar {
   color: var(--text-color-1);
 }
