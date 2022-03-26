@@ -41,5 +41,14 @@
     "titleBar.inactiveForeground": "#e7e7e799"
   },
   "peacock.color": "#6b2347",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "CSSNavigation.excludeGlobPatterns": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/coverage/**",
+    "**/.yarn/**"
+  ],
+  "CSSNavigation.ignoreSameNameCSSFile": false,
+  "CSSNavigation.enableLogLevelMessage": true
 }

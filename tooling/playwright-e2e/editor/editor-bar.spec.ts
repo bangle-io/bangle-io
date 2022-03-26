@@ -15,7 +15,7 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 const isEditorBarFocused = async (page: Page, editorId: number) => {
   return Boolean(
     await page.$(
-      `.editor-container_editor-container-${editorId} .editor-container_editor-bar > .active`,
+      `.b-editor-container_editor-container-${editorId} .b-editor-container_editor-bar  > .bu_active`,
     ),
   );
 };
@@ -23,7 +23,7 @@ const isEditorBarFocused = async (page: Page, editorId: number) => {
 const waitForEditorBarFocused = async (page: Page, editorId: number) => {
   await page
     .locator(
-      `.editor-container_editor-container-${editorId} .editor-container_editor-bar > .active`,
+      `.b-editor-container_editor-container-${editorId} .b-editor-container_editor-bar  > .bu_active`,
     )
     .waitFor();
 };

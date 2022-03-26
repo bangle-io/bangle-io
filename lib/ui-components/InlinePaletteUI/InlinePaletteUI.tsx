@@ -70,12 +70,12 @@ export function InlinePaletteRow({
         onMouseLeave={mouseLeave}
         ref={ref}
         className={cx(
-          'flex flex-row items-center inline-palette-row',
+          'flex flex-row items-center b-ui-components_inline-palette-row',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
           className,
-          isActive && 'active',
-          allowHover && 'hover-allowed',
-          disabled && 'disabled',
+          isActive && 'bu_active',
+          allowHover && 'bu_hover-allowed',
+          disabled && 'bu_disabled',
         )}
         style={{
           paddingLeft: depth * basePadding,

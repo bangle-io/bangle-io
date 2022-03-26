@@ -43,14 +43,14 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
 
   await expect(
     page.locator(
-      '.ui-components_modal-container input[aria-label="workspace name input"]',
+      '.b-ui-components_modal-container input[aria-label="workspace name input"]',
     ),
   ).toHaveValue(wsName);
 
   await Promise.all([
     page.waitForNavigation(), // The promise resolves after navigation has finished
     page.click(
-      '.ui-components_modal-container button[aria-label="create workspace"]',
+      '.b-ui-components_modal-container button[aria-label="create workspace"]',
     ),
   ]);
 
@@ -157,8 +157,8 @@ export async function pushWsPathToSecondary(
 export async function openWorkspacePalette(page: Page) {
   await page.keyboard.press(ctrlKey + '+p');
 
-  await page.locator('.universal-palette-container').waitFor();
-  await page.type('.universal-palette-input', 'ws:');
+  await page.locator('.b-ui-components_universal-palette-container').waitFor();
+  await page.type('.b-ui-components_universal-palette-input', 'ws:');
 
   await page
     .locator('[data-palette-type="bangle-io-core-palettes/workspace"]')
@@ -168,7 +168,9 @@ export async function openWorkspacePalette(page: Page) {
 }
 
 export async function clickPaletteRow(page: Page, id: string) {
-  await page.locator(`.universal-palette-item[data-id="${id}"]`).click();
+  await page
+    .locator(`.b-ui-components_universal-palette-item[data-id="${id}"]`)
+    .click();
 }
 
 export async function createNewNote(
@@ -183,7 +185,7 @@ export async function createNewNote(
   }
 
   await page.fill(
-    '.universal-palette-container [placeholder="Enter the name of your note"]',
+    '.b-ui-components_universal-palette-container [placeholder="Enter the name of your note"]',
     noteName,
   );
 
@@ -211,7 +213,7 @@ export async function createNewNote(
 }
 
 async function waitForPrimaryEditorFocus(page: Page) {
-  await page.isVisible('.editor-container_editor-0 .ProseMirror-focused');
+  await page.isVisible('.b-editor-container_editor-0 .ProseMirror-focused');
 }
 export async function waitForEditorFocus(
   page: Page,
@@ -219,7 +221,7 @@ export async function waitForEditorFocus(
   { wsPath }: { wsPath?: string } = {},
 ) {
   await page
-    .locator(`.editor-container_editor-${editorId} .ProseMirror-focused`)
+    .locator(`.b-editor-container_editor-${editorId} .ProseMirror-focused`)
     .waitFor();
 
   if (wsPath) {
@@ -227,7 +229,7 @@ export async function waitForEditorFocus(
   }
 
   await page.isVisible(
-    `.editor-container_editor-${editorId} .ProseMirror-focused`,
+    `.b-editor-container_editor-${editorId} .ProseMirror-focused`,
   );
 }
 
@@ -251,7 +253,7 @@ export async function clearEditor(page: Page, editorId: number, attempt = 0) {
   await sleep();
 
   text = await page
-    .locator('.editor-container_editor-0 .bangle-editor')
+    .locator('.b-editor-container_editor-0 .bangle-editor')
     .innerText();
 
   if (text.trim() !== '') {
@@ -269,7 +271,7 @@ export async function getPrimaryEditorHandler(
   page: Page,
   { focus = false } = {},
 ) {
-  await page.isVisible(`.editor-container_editor-0 .bangle-editor`);
+  await page.isVisible(`.b-editor-container_editor-0 .bangle-editor`);
 
   await waitForEditorIdToLoad(page, 0);
 
@@ -284,7 +286,7 @@ export async function getPrimaryEditorHandler(
     await waitForPrimaryEditorFocus(page);
   }
 
-  return page.$('.editor-container_editor-0 .bangle-editor');
+  return page.$('.b-editor-container_editor-0 .bangle-editor');
 }
 
 export async function getEditorLocator(
@@ -292,7 +294,7 @@ export async function getEditorLocator(
   editorId: number,
   { focus = false, wsPath }: { focus?: boolean; wsPath?: string } = {},
 ) {
-  const loc = page.locator(`.editor-container_editor-${0} .bangle-editor`);
+  const loc = page.locator(`.b-editor-container_editor-${0} .bangle-editor`);
 
   await loc.waitFor();
 
@@ -312,7 +314,7 @@ export async function getEditorLocator(
     await waitForEditorFocus(page, editorId);
   }
 
-  return page.locator(`.editor-container_editor-${editorId} .bangle-editor`);
+  return page.locator(`.b-editor-container_editor-${editorId} .bangle-editor`);
 }
 
 export function sleep(t = 20) {
@@ -385,7 +387,7 @@ export async function waitForEditorTextToContain(
   if (
     (
       await page.innerText(
-        `.editor-container_editor-${editorId} .bangle-editor`,
+        `.b-editor-container_editor-${editorId} .bangle-editor`,
       )
     ).includes(text)
   ) {
@@ -405,9 +407,11 @@ export async function getItemsInPalette(
   page: Page,
   { hasItems = false }: { hasItems?: boolean } = {},
 ) {
-  await page.locator('.universal-palette-container').waitFor();
+  await page.locator('.b-ui-components_universal-palette-container').waitFor();
 
-  const locator = page.locator('.universal-palette-item[data-id]');
+  const locator = page.locator(
+    '.b-ui-components_universal-palette-item[data-id]',
+  );
 
   if (hasItems) {
     await locator.first().waitFor();
@@ -431,9 +435,11 @@ export async function getItemsInPalette(
 }
 
 export async function clickItemInPalette(page: Page, dataId: string) {
-  await page.locator('.universal-palette-container').waitFor();
+  await page.locator('.b-ui-components_universal-palette-container').waitFor();
 
-  const locator = page.locator(`.universal-palette-item[data-id="${dataId}"]`);
+  const locator = page.locator(
+    `.b-ui-components_universal-palette-item[data-id="${dataId}"]`,
+  );
 
   return locator.click();
 }
@@ -444,9 +450,11 @@ export async function getWsPathsShownInFilePalette(page: Page) {
   await page.keyboard.press('p');
   await page.keyboard.up(ctrlKey);
 
-  await page.locator('.universal-palette-container').waitFor();
+  await page.locator('.b-ui-components_universal-palette-container').waitFor();
 
-  const locator = page.locator('.universal-palette-item[data-id]');
+  const locator = page.locator(
+    '.b-ui-components_universal-palette-item[data-id]',
+  );
 
   await sleep();
 

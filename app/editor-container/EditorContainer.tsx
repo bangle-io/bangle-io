@@ -118,7 +118,7 @@ export function EditorContainer({
         bangleStore={bangleStore}
         dispatchSerialOperation={dispatchSerialOperation}
         extensionRegistry={extensionRegistry}
-        className={`editor-container_editor editor-container_editor-${editorId}`}
+        className={`b-editor-container_editor b-editor-container_editor-${editorId}`}
         getDocument={getDocument}
         onEditorReady={onEditorReady}
         onEditorUnmount={onEditorUnmount}
@@ -145,8 +145,8 @@ export function EditorContainer({
         )
       }
       className={cx(
-        'editor-container_editor-container',
-        'editor-container_editor-container-' + editorId,
+        'b-editor-container_editor-container',
+        'b-editor-container_editor-container-' + editorId,
         widescreen && 'overflow-y-scroll',
       )}
     >

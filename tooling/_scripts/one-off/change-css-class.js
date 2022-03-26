@@ -39,7 +39,11 @@ async function run() {
     const prefix = 'b-' + pkg.name.split('@bangle.io/')[1] + '_';
 
     for (const className of knownCssClasses) {
-      await replaceStringAcrossFiles(files, className, prefix + className);
+      await replaceStringAcrossFiles(
+        files.filter((r) => r.isCSS()),
+        className,
+        prefix + className,
+      );
     }
 
     // // await replaceStringAcrossFiles(files, 'kushan', 'kushan');

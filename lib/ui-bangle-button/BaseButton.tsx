@@ -118,13 +118,13 @@ export const BaseButton = ({
       id={id}
       autoFocus={autoFocus}
       {...otherProps}
+      disabled={isDisabled}
       className={cx(
         className,
-        'ui-bangle-button_button p-1 ',
+        'b-ui-bangle-button_button p-1 ',
         'transition-all duration-100',
         animateOnPress && 'animate-on-press',
-        isActive && 'is-active',
-        isDisabled && 'is-disabled',
+        isActive && 'bu_is-active',
         isDisabled && 'cursor-not-allowed',
         isHovered && 'is-hovered',
         isPressed && 'is-pressed',

@@ -4,7 +4,7 @@ exports[`renders 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow h-full overflow-y-scroll workspace-sidebar"
+      class="flex flex-col flex-grow h-full overflow-y-scroll b-workspace-sidebar_workspace-sidebar"
     >
       <div
         class="flex flex-row justify-between px-2 mt-2"
@@ -17,7 +17,7 @@ exports[`renders 1`] = `
         <span>
           <button
             aria-label="hide search notes"
-            class="ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
+            class="b-ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
             type="button"
           >
             <svg

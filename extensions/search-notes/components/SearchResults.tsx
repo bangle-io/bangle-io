@@ -164,8 +164,8 @@ export function SearchResults({
             <Sidebar.Row2
               titleClassName="text-sm font-bold"
               className={cx(
-                `search-result-note-match pl-1 pr-3  select-none`,
-                primaryWsPath === r.uid && 'active',
+                `b-search-notes_search-result-note-match pl-1 pr-3  select-none`,
+                primaryWsPath === r.uid && 'bu_active',
               )}
               extraInfoClassName="text-sm"
               extraInfoOnNewLine
@@ -202,12 +202,14 @@ export function SearchResults({
                   <NoteLink
                     wsPath={r.uid}
                     className={cx(
-                      'rounded-sm block search-result-text-match ',
+                      'rounded-sm block b-search-notes_search-result-text-match ',
                       primaryWsPath === r.uid &&
                         prevClicked?.matchIndex === j &&
-                        'previously-clicked',
+                        'b-search-notes_previously-clicked',
                       j === 0 ? 'mt-3' : 'mt-4',
-                      j === r.matches.length - 1 ? 'last-item' : '',
+                      j === r.matches.length - 1
+                        ? 'b-search-notes_last-item'
+                        : '',
                     )}
                     onClick={() => {
                       if (primaryEditor && primaryEditor.destroyed !== true) {

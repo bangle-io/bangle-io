@@ -106,7 +106,9 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
     requestAnimationFrame(() => {
       if (!destroyed) {
         document
-          .querySelector<HTMLInputElement>('.universal-palette-container input')
+          .querySelector<HTMLInputElement>(
+            '.b-ui-components_universal-palette-container input',
+          )
           ?.focus();
       }
     });
@@ -138,7 +140,9 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
       onClickOutside={onDismiss}
       onClickInside={() => {
         document
-          .querySelector<HTMLInputElement>('.universal-palette-container input')
+          .querySelector<HTMLInputElement>(
+            '.b-ui-components_universal-palette-container input',
+          )
           ?.focus();
       }}
     >

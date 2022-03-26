@@ -8,9 +8,9 @@ export function HighlightText({
   highlightText: HighlightTextType;
 }) {
   return (
-    <div className="highlight-text-container">
+    <div className="b-search-notes_highlight-text-container">
       {highlightText.map((t, i) => (
-        <span key={i} className="highlight-text text-sm">
+        <span key={i} className="b-search-notes_highlight-text text-sm">
           {t}
         </span>
       ))}

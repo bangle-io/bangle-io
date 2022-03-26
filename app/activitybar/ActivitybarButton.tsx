@@ -38,8 +38,8 @@ export function ActivitybarButton({
       isActive={isActive}
       styling={buttonStyling}
       className={cx(
-        'w-full py-3 rounded-sm flex justify-center activitybar_button',
-        widescreen && 'widescreen',
+        'w-full py-3 rounded-sm flex justify-center b-activitybar_button',
+        widescreen && 'bu_widescreen',
       )}
       onPress={onPress}
       ariaLabel={hint}

@@ -50,7 +50,7 @@ export function PaletteItemUI({
         {item.title}
       </span>
       {item.extraInfo && (
-        <span className="b-extra-info text-base font-light">
+        <span className="b-ui-components_extra-info text-base font-light">
           {item.extraInfo}
         </span>
       )}
@@ -63,12 +63,12 @@ export function PaletteItemUI({
       ref={ref}
       onClick={onClick}
       className={cx(
-        'universal-palette-item',
+        'b-ui-components_universal-palette-item',
         className,
-        isActive && 'active',
-        item.isDisabled && 'disabled',
-        item.showDividerAbove && 'b-divider',
-        allowHover && 'allow-hover',
+        isActive && 'bu_active',
+        item.isDisabled && 'bu_disabled',
+        item.showDividerAbove && 'bu_divider',
+        allowHover && 'bu_allow-hover',
       )}
       style={{
         cursor: 'pointer',
@@ -79,19 +79,23 @@ export function PaletteItemUI({
       }}
     >
       <div className="flex flex-row">
-        <div className="b-left-node">{item.leftNode}</div>
+        <div className="b-ui-components_left-node">{item.leftNode}</div>
         {item.description ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {titleElement}
-            <span className="b-description text-sm">{item.description}</span>
+            <span className="b-ui-components_description text-sm">
+              {item.description}
+            </span>
           </div>
         ) : (
           titleElement
         )}
       </div>
       <div className="flex flex-row">
-        <span className="b-right-node">{item.rightNode}</span>
-        <span className="b-right-hover-node">{item.rightHoverNode}</span>
+        <span className="b-ui-components_right-node">{item.rightNode}</span>
+        <span className="b-ui-components_right-hover-node">
+          {item.rightHoverNode}
+        </span>
       </div>
     </div>
   );

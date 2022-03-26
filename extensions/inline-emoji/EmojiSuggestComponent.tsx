@@ -51,7 +51,7 @@ export function EmojiSuggest({
   } = usePluginState(suggestTooltipKey);
 
   return reactDOM.createPortal(
-    <div className="shadow-2xl bangle-io-emoji-suggest-container">
+    <div className="shadow-2xl b-inline-emoji_suggest-container">
       <div className="bangle-emoji-suggest" style={{ padding: palettePadding }}>
         <div
           style={{
@@ -76,7 +76,7 @@ export function EmojiSuggest({
           )}
         </div>
       </div>
-      <UniversalPalette.PaletteInfo className="bangle-io-palette-info">
+      <UniversalPalette.PaletteInfo className="b-inline-emoji_palette-info">
         <UniversalPalette.PaletteInfoItem>
           <kbd className="font-normal">←↑↓→</kbd> Navigate
         </UniversalPalette.PaletteInfoItem>

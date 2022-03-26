@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 
+import { cx } from '@bangle.io/utils';
+
 import { Input } from '../Input';
 
 export const PaletteInput = React.forwardRef<
@@ -63,13 +65,14 @@ export const PaletteInput = React.forwardRef<
 
     return (
       <div
-        className={
-          'universal-palette-input-wrapper ' + (className ? className : '')
-        }
+        className={cx(
+          'b-ui-components_universal-palette-input-wrapper',
+          className,
+        )}
         style={{ display: 'flex' }}
       >
         {leftNode && (
-          <div className="b-left-node">
+          <div className="b-ui-components_left-node">
             <span className="w-5 h-5">{leftNode}</span>
           </div>
         )}
@@ -81,8 +84,8 @@ export const PaletteInput = React.forwardRef<
           autoCapitalize={false}
           spellCheck={false}
           autoCorrect={false}
-          label="universal-palette-input"
-          className={'universal-palette-input'}
+          label="Palette Input"
+          className={'b-ui-components_universal-palette-input'}
           value={inputValue}
           onChange={onChange}
         />

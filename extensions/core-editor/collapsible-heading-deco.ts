@@ -106,10 +106,10 @@ function buildDeco(state: EditorState) {
       match.pos + 1,
       (view: EditorView) => {
         let wrapper = document.createElement('span');
-        wrapper.className = 'deco-collapse-positioner';
+        wrapper.className = 'b-core-editor_deco-collapse-positioner';
         // wrapper.setAttribute('data-bangle-pos', match.pos + '');
         const child = document.createElement('span');
-        child.className = 'deco-collapse';
+        child.className = 'b-core-editor_deco-collapse';
 
         wrapper.appendChild(child);
 
@@ -134,7 +134,7 @@ function buildDeco(state: EditorState) {
 
         child.appendChild(svg);
 
-        svg.setAttribute('class', 'deco-collapse-child');
+        svg.setAttribute('class', 'b-core-editor_deco-collapse-child');
 
         svg.appendChild(
           getNode('path', {

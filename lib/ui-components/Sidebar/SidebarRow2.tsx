@@ -34,8 +34,8 @@ export function Row2({
       {item.extraInfo && (
         <span
           className={cx(
-            'b-extra-info ' + extraInfoClassName,
-            extraInfoOnNewLine && 'extra-info-on-new-line',
+            'b-ui-components_extra-info ' + extraInfoClassName,
+            extraInfoOnNewLine && 'b-ui-components_extra-info-on-new-line',
           )}
         >
           {item.extraInfo}
@@ -50,11 +50,11 @@ export function Row2({
       data-id={item.uid}
       onClick={onClick}
       className={cx(
-        'b-sidebar-row2',
-        allowHover && 'hover',
-        isActive && 'active',
-        item.isDisabled && 'disabled',
-        item.showDividerAbove && 'b-divider',
+        'b-ui-components_sidebar-row2',
+        allowHover && 'bu_hover',
+        isActive && 'bu_active',
+        item.isDisabled && 'bu_disabled',
+        item.showDividerAbove && 'bu_divider',
         className,
       )}
       style={{
@@ -66,11 +66,13 @@ export function Row2({
       }}
     >
       <div className="flex flex-row">
-        <div className="b-left-node">{item.leftNode}</div>
+        <div className="b-ui-components_left-node">{item.leftNode}</div>
         {item.description ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {titleElement}
-            <span className={'b-description ' + descriptionClassName}>
+            <span
+              className={'b-ui-components_description ' + descriptionClassName}
+            >
               {item.description}
             </span>
           </div>
@@ -79,8 +81,10 @@ export function Row2({
         )}
       </div>
       <div className="flex flex-row">
-        <span className="b-right-node">{item.rightNode}</span>
-        <span className="b-right-hover-node">{item.rightHoverNode}</span>
+        <span className="b-ui-components_right-node">{item.rightNode}</span>
+        <span className="b-ui-components_right-hover-node">
+          {item.rightHoverNode}
+        </span>
       </div>
     </div>
   );

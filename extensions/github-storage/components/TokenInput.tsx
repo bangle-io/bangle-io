@@ -16,7 +16,9 @@ export function TokenInput({
     requestAnimationFrame(() => {
       if (!destroyed) {
         document
-          .querySelector<HTMLInputElement>('.universal-palette-container input')
+          .querySelector<HTMLInputElement>(
+            '.b-ui-components_universal-palette-container input',
+          )
           ?.focus();
       }
     });

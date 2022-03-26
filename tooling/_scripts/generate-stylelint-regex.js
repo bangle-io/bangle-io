@@ -33,8 +33,11 @@ async function run() {
 
   result = result
     .flatMap((r) => r)
-    .sort()
-    .map((r) => 'b-' + r.split('@bangle.io/')[1] + '_');
+    .map((r) => 'b-' + r.split('@bangle.io/')[1]);
+
+  result.push('bu');
+
+  result.sort();
 
   let folders = result;
   styleLint.rules['selector-class-pattern'] = [

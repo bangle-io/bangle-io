@@ -16,7 +16,7 @@ export function NoteSidebar({
   widgets: NoteSidebarWidget[];
 }) {
   return (
-    <div className="flex flex-col flex-grow h-full overflow-y-scroll note-sidebar">
+    <div className="flex flex-col flex-grow h-full overflow-y-scroll b-note-sidebar_note-sidebar">
       <div className="flex flex-row justify-between px-2 mt-2">
         <span className="font-bold self-center">Widgets</span>
         <span>
@@ -35,7 +35,7 @@ export function NoteSidebar({
 
       <div>
         {widgets.map((r) => (
-          <div key={r.name} className="note-sidebar_widget-container">
+          <div key={r.name} className="">
             <div className="flex flex-row justify-between px-2 mt-2">
               <span className="ml-1 font-semibold">{r.title}</span>
               <div>
@@ -48,7 +48,7 @@ export function NoteSidebar({
                 </ActionButton> */}
               </div>
             </div>
-            <div className="note-sidebar_widget-content flex flex-col rounded-md p-1 mx-2 mt-1 overflow-y-auto">
+            <div className="b-note-sidebar_widget-content flex flex-col rounded-md p-1 mx-2 mt-1 overflow-y-auto">
               <r.ReactComponent />
             </div>
           </div>

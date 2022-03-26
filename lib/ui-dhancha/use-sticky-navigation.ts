@@ -19,13 +19,13 @@ export function useStickyNavigation(
 
 function setupStickyNavigation(element: HTMLElement) {
   const removeUp = () => {
-    element?.classList.add('down');
-    element?.classList.remove('up');
+    element?.classList.add('b-ui-dhancha_down');
+    element?.classList.remove('b-ui-dhancha_up');
   };
 
   const addUp = () => {
-    element?.classList.add('up');
-    element?.classList.remove('down');
+    element?.classList.add('b-ui-dhancha_up');
+    element?.classList.remove('b-ui-dhancha_down');
   };
   let previousY = 9999;
 

@@ -14,7 +14,7 @@ export function ActionButton({
   children,
   variant,
   className = '',
-  isActive, // adds an `is-active` class that can be used for extra styling
+  isActive, // adds an `bu_is-active` class that can be used for extra styling
   isDisabled,
   isQuiet, // avoids rendering the button background color
   onPress,

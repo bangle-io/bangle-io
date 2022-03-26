@@ -4,11 +4,11 @@ exports[`renders when no sidebars 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow pt-2 pb-3 activitybar widescreen"
+      class="flex flex-col flex-grow pt-2 pb-3 b-activitybar_activitybar bu_widescreen"
     >
       <button
         aria-label="Workspace Home"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu_widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
         type="button"
       >
         <svg
@@ -41,7 +41,7 @@ exports[`renders when no sidebars 1`] = `
       />
       <button
         aria-label="What's new"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu_widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
         type="button"
       >
         <svg
@@ -62,7 +62,7 @@ exports[`renders when no sidebars 1`] = `
       <button
         aria-label="options menu"
         aria-pressed="false"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet focus:outline-none focus:ring focus:border-blue-300"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu-widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet focus:outline-none focus:ring focus:border-blue-300"
         type="button"
       >
         <svg
@@ -91,11 +91,11 @@ exports[`renders when sidebar is active 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow pt-2 pb-3 activitybar widescreen"
+      class="flex flex-col flex-grow pt-2 pb-3 b-activitybar_activitybar bu_widescreen"
     >
       <button
         aria-label="Workspace Home"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu_widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
         type="button"
       >
         <svg
@@ -125,7 +125,7 @@ exports[`renders when sidebar is active 1`] = `
       </button>
       <button
         aria-label="test-hint"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-active is-quiet"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu_widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press bu_is-active is-quiet"
         type="button"
       >
         <span
@@ -139,7 +139,7 @@ exports[`renders when sidebar is active 1`] = `
       />
       <button
         aria-label="What's new"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu_widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
         type="button"
       >
         <svg
@@ -160,7 +160,7 @@ exports[`renders when sidebar is active 1`] = `
       <button
         aria-label="options menu"
         aria-pressed="false"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet focus:outline-none focus:ring focus:border-blue-300"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu-widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet focus:outline-none focus:ring focus:border-blue-300"
         type="button"
       >
         <svg
@@ -189,11 +189,11 @@ exports[`renders when there is sidebar 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-col flex-grow pt-2 pb-3 activitybar widescreen"
+      class="flex flex-col flex-grow pt-2 pb-3 b-activitybar_activitybar bu_widescreen"
     >
       <button
         aria-label="Workspace Home"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu_widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
         type="button"
       >
         <svg
@@ -223,7 +223,7 @@ exports[`renders when there is sidebar 1`] = `
       </button>
       <button
         aria-label="test-hint"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu_widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
         type="button"
       >
         <span
@@ -237,7 +237,7 @@ exports[`renders when there is sidebar 1`] = `
       />
       <button
         aria-label="What's new"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu_widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet"
         type="button"
       >
         <svg
@@ -258,7 +258,7 @@ exports[`renders when there is sidebar 1`] = `
       <button
         aria-label="options menu"
         aria-pressed="false"
-        class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet focus:outline-none focus:ring focus:border-blue-300"
+        class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu-widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet focus:outline-none focus:ring focus:border-blue-300"
         type="button"
       >
         <svg
