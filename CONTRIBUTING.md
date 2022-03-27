@@ -61,7 +61,9 @@ Each extension must have the following top level files:
 
 ### CSS conventions
 
-You are expected to write your own css and not rely on any of the css classes available throughout Bangle as they are internal and subject to change.
+- Any CSS class name is prefixed with a `B-` followed by the extension name / package name followed by a `_` and then a valid string. For example `B-my-extension_my-class`. 
+
+- There is also utility helpers which start `BU_` followed by the name of the helper, for example, `BU_my-helper`.
 
 ### Contexts
 
