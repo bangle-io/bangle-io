@@ -168,7 +168,7 @@
       "yarn eslint --fix"
     ],
     "*.css": [
-      "yarn g:stylelint-regex",
+      "yarn g:stylelint-update-regex",
       "yarn stylelint --fix",
       "yarn prettier --write"
     ],

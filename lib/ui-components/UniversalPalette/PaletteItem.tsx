@@ -46,11 +46,9 @@ export function PaletteItemUI({
 
   const titleElement = (
     <span>
-      <span className="b-palette-title text-base font-normal">
-        {item.title}
-      </span>
+      <span className="text-base font-normal">{item.title}</span>
       {item.extraInfo && (
-        <span className="b-ui-components_extra-info text-base font-light">
+        <span className="B-ui-components_extra-info text-base font-light">
           {item.extraInfo}
         </span>
       )}
@@ -63,12 +61,12 @@ export function PaletteItemUI({
       ref={ref}
       onClick={onClick}
       className={cx(
-        'b-ui-components_universal-palette-item',
+        'B-ui-components_universal-palette-item',
         className,
-        isActive && 'bu_active',
-        item.isDisabled && 'bu_disabled',
-        item.showDividerAbove && 'bu_divider',
-        allowHover && 'bu_allow-hover',
+        isActive && 'BU_active',
+        item.isDisabled && 'BU_disabled',
+        item.showDividerAbove && 'BU_divider',
+        allowHover && 'BU_allow-hover',
       )}
       style={{
         cursor: 'pointer',
@@ -79,11 +77,11 @@ export function PaletteItemUI({
       }}
     >
       <div className="flex flex-row">
-        <div className="b-ui-components_left-node">{item.leftNode}</div>
+        <div className="B-ui-components_left-node">{item.leftNode}</div>
         {item.description ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {titleElement}
-            <span className="b-ui-components_description text-sm">
+            <span className="B-ui-components_description text-sm">
               {item.description}
             </span>
           </div>
@@ -92,8 +90,8 @@ export function PaletteItemUI({
         )}
       </div>
       <div className="flex flex-row">
-        <span className="b-ui-components_right-node">{item.rightNode}</span>
-        <span className="b-ui-components_right-hover-node">
+        <span className="B-ui-components_right-node">{item.rightNode}</span>
+        <span className="B-ui-components_right-hover-node">
           {item.rightHoverNode}
         </span>
       </div>

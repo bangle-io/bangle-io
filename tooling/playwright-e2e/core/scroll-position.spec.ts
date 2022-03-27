@@ -22,8 +22,8 @@ test.beforeEach(async ({ page, baseURL }, testInfo) => {
 });
 
 const getTopAndLastElement = async (page: Page) => {
-  const topLocator = page.locator('.b-editor-container_editor-0 h2');
-  const lastLocator = page.locator('.b-editor-container_editor-0 h3');
+  const topLocator = page.locator('.B-editor-container_editor-0 h2');
+  const lastLocator = page.locator('.B-editor-container_editor-0 h3');
 
   await expect(topLocator).toHaveText('top element', { useInnerText: true });
 
@@ -72,7 +72,7 @@ test.describe.parallel('scroll', () => {
         await getEditorLocator(page, 1);
 
         // eslint-disable-next-line jest/no-conditional-expect
-        expect(await page.$('.b-editor-container_editor-1')).not.toBeNull();
+        expect(await page.$('.B-editor-container_editor-1')).not.toBeNull();
       }
 
       await typeScrollableThings(page);

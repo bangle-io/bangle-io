@@ -196,7 +196,7 @@ function InternalDropdownMenu({
       {...menuProps}
       ref={ref}
       className={cx(
-        'flex flex-col b-ui-bangle-button_dropdown-menu p-1 py-2 rounded-md',
+        'flex flex-col B-ui-bangle-button_dropdown-menu p-1 py-2 rounded-md',
         className,
       )}
       style={style}
@@ -307,8 +307,8 @@ function MenuItemWrapper({
       {...mergeProps(menuItemProps, focusProps)}
       ref={ref}
       className={cx(
-        'b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1',
-        isFocused && 'bu_is-focused',
+        'B-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1',
+        isFocused && 'BU_is-focused',
       )}
     >
       <span className="inline-flex justify-between w-full">

@@ -1,10 +1,10 @@
-.b-ui-components_input-container {
+.B-ui-components_input-container {
   display: flex;
   flex-direction: row;
   width: 100%;
 }
 
-.b-ui-components_input {
+.B-ui-components_input {
   color: var(--text-color-0);
   background-color: var(--window-bg-color-0);
   padding: 0.25rem 0.5rem;
@@ -14,7 +14,7 @@
   width: 100%;
 }
 
-.b-ui-components_input:focus {
+.B-ui-components_input:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
   border: 1px solid transparent;
@@ -32,14 +32,14 @@
     var(--bangle-shadow, 0 0 #0000);
 }
 
-.b-ui-components_input-clear {
+.B-ui-components_input-clear {
   position: absolute;
   left: -20px;
   cursor: pointer;
   color: var(--text-color-1);
 }
 
-.b-ui-components_input-clear::before {
+.B-ui-components_input-clear::before {
   font-size: 22px;
   content: '\00D7';
 }

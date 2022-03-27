@@ -14,7 +14,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
       >
         <div
           aria-hidden="true"
-          class="fixed w-full h-full transition-opacity b-ui-components_modal-overlay"
+          class="fixed w-full h-full transition-opacity B-ui-components_modal-overlay"
         />
         <span
           aria-hidden="true"
@@ -23,14 +23,14 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
           ​
         </span>
         <div
-          class="b-ui-components_modal-container h-full b-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl "
+          class="B-ui-components_modal-container h-full B-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl "
           style="width: 30rem; max-width: 30rem;"
         >
           <div
             class="w-full px-6 my-2 select-none "
           >
             <div
-              class="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 b-ui-components_modal-header "
+              class="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 B-ui-components_modal-header "
             >
               <span>
                 New Workspace
@@ -94,16 +94,16 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
                   <button
                     aria-label="select storage type"
                     aria-pressed="false"
-                    class="test-button-class  b-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+                    class="test-button-class  B-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
                     type="button"
                   >
                     <span
-                      class="bu_has-icon"
+                      class="BU_has-icon"
                     >
                       Browser
                     </span>
                     <svg
-                      class="fill-current  bu_has-text mr-1 w-4 h-4"
+                      class="fill-current  BU_has-text mr-1 w-4 h-4"
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"
                     >
@@ -141,7 +141,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
               >
                 <button
                   aria-label="create workspace"
-                  class="px-4 b-ui-bangle-button_button p-1  transition-all duration-100 cursor-not-allowed focus:outline-none focus:ring focus:border-blue-300"
+                  class="px-4 B-ui-bangle-button_button p-1  transition-all duration-100 cursor-not-allowed focus:outline-none focus:ring focus:border-blue-300"
                   disabled=""
                   id="new-workspace-modal_create-button"
                   type="button"

@@ -6,6 +6,6 @@ export function searchPlugin() {
   return search.plugins({
     query: undefined,
     key: searchPluginKey,
-    className: 'b-search-notes_bangle-search-match',
+    className: 'B-search-notes_bangle-search-match',
   });
 }

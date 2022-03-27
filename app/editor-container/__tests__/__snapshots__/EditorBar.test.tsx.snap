@@ -4,11 +4,11 @@ exports[`renders correctly 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full b-editor-container_editor-bar "
+      class="flex flex-row justify-between w-full B-editor-container_editor-bar "
     >
       <div
         aria-label="note path"
-        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded b-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
       >
         <span
           class="break-all"
@@ -32,7 +32,7 @@ exports[`renders correctly 1`] = `
       >
         <button
           aria-label="Close"
-          class="b-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
+          class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
           type="button"
         >
           <svg
@@ -56,11 +56,11 @@ exports[`renders correctly when active 1`] = `
 <div>
   <div>
     <div
-      class="flex flex-row justify-between w-full b-editor-container_editor-bar "
+      class="flex flex-row justify-between w-full B-editor-container_editor-bar "
     >
       <div
         aria-label="note path"
-        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded b-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline bu_active"
+        class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline BU_active"
       >
         <span
           class="break-all"
@@ -84,7 +84,7 @@ exports[`renders correctly when active 1`] = `
       >
         <button
           aria-label="Close"
-          class="b-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
+          class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
           type="button"
         >
           <svg
@@ -107,7 +107,7 @@ exports[`renders correctly when active 1`] = `
 exports[`truncates large wsPath 1`] = `
 <div
   aria-label="note path"
-  class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded b-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+  class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
 >
   <span
     class="break-all"

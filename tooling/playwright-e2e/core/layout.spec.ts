@@ -24,7 +24,7 @@ test('split screen shortcut works', async ({ page }) => {
   await sleep();
 
   await getEditorLocator(page, 1);
-  expect(await page.$('.b-editor-container_editor-1')).not.toBeNull();
+  expect(await page.$('.B-editor-container_editor-1')).not.toBeNull();
 });
 
 test('shows note sidebar correctly', async ({ page }) => {
@@ -37,9 +37,9 @@ test('shows note sidebar correctly', async ({ page }) => {
     'operation::@bangle.io/core-extension:NOTE_TOGGLE_SIDEBAR',
   );
 
-  await page.waitForSelector('.b-ui-dhancha_note-sidebar', {
+  await page.waitForSelector('.B-ui-dhancha_note-sidebar', {
     timeout: 4 * SELECTOR_TIMEOUT,
   });
 
-  expect(await page.$('.b-ui-dhancha_note-sidebar')).not.toBeNull();
+  expect(await page.$('.B-ui-dhancha_note-sidebar')).not.toBeNull();
 });

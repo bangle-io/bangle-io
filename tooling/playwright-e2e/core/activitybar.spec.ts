@@ -42,7 +42,7 @@ test('clicking on new workspace', async ({ page }) => {
     '[aria-label="options dropdown"] li[data-key="NewWorkspace"]',
   );
 
-  await page.waitForSelector('.b-ui-components_modal-container', {
+  await page.waitForSelector('.B-ui-components_modal-container', {
     timeout: SELECTOR_TIMEOUT,
   });
   expect(Boolean(await page.$('[aria-label="select storage type"]'))).toBe(

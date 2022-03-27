@@ -1,22 +1,22 @@
 /* The relative position is super important for absolutely positioned div inside
   or else it will cause weird scrolling issues.
 */
-.b-editor-container_editor {
+.B-editor-container_editor {
   position: relative;
   width: 100%;
 }
 
-.b-editor-container_editor-bar {
+.B-editor-container_editor-bar {
   color: var(--ui-bangle-button-color);
 }
 
-.b-editor-container_ws-path {
+.B-editor-container_ws-path {
   color: var(--ui-bangle-button-color);
   justify-content: center;
   display: flex;
   align-items: center;
 }
 
-.b-editor-container_ws-path.bu_active {
+.B-editor-container_ws-path.BU_active {
   background-color: var(--base-300);
 }

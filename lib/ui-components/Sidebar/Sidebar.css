@@ -1,58 +1,58 @@
 /* sidebar row2 */
-.b-ui-components_sidebar-row2.bu_hover:hover {
+.B-ui-components_sidebar-row2.BU_hover:hover {
   background-color: var(--accent-secondary);
 }
 
-.b-ui-components_sidebar-row2.bu_active {
+.B-ui-components_sidebar-row2.BU_active {
   background-color: var(--accent-primary-1);
 }
 
 /* prevent hover overwriting allowed */
-.b-ui-components_sidebar-row2.bu_hover.bu_active {
+.B-ui-components_sidebar-row2.BU_hover.BU_active {
   background-color: var(--accent-primary-1);
 }
 
-.b-ui-components_sidebar-row2.bu_disable {
+.B-ui-components_sidebar-row2.BU_disable {
   color: var(--text-color-1);
   cursor: not-allowed;
   background-color: var(--universal-palette-item-disabled-bg-color);
 }
 
-.b-ui-components_sidebar-row2.bu_disable.bu_hover:hover {
+.B-ui-components_sidebar-row2.BU_disable.BU_hover:hover {
   background-color: var(--universal-palette-item-disabled-bg-color);
 }
 
 /* node positioning */
-.b-ui-components_sidebar-row2 .b-ui-components_left-node {
+.B-ui-components_sidebar-row2 .B-ui-components_left-node {
   display: inline-flex;
   flex-direction: row;
   justify-content: center;
 }
 
-.b-ui-components_sidebar-row2 .b-ui-components_right-node {
+.B-ui-components_sidebar-row2 .B-ui-components_right-node {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
 }
 
-.b-ui-components_sidebar-row2:hover .b-ui-components_right-node {
+.B-ui-components_sidebar-row2:hover .B-ui-components_right-node {
   display: none;
 }
 
-.b-ui-components_sidebar-row2 .b-ui-components_right-hover-node {
+.B-ui-components_sidebar-row2 .B-ui-components_right-hover-node {
   display: none;
 }
 
-.b-ui-components_sidebar-row2:hover .b-ui-components_right-hover-node {
+.B-ui-components_sidebar-row2:hover .B-ui-components_right-hover-node {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
 }
 
-.b-ui-components_sidebar-row2 .b-ui-components_extra-info {
+.B-ui-components_sidebar-row2 .B-ui-components_extra-info {
   color: var(--text-color-1);
 }
 
-.b-ui-components_sidebar-row2 .b-ui-components_description {
+.B-ui-components_sidebar-row2 .B-ui-components_description {
   color: var(--text-color-1);
 }

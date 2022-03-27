@@ -30,12 +30,12 @@ export function Row2({
 }) {
   const titleElement = (
     <span className={cx(extraInfoOnNewLine && 'flex flex-col')}>
-      <span className={'b-title ' + titleClassName}>{item.title}</span>
+      <span className={titleClassName}>{item.title}</span>
       {item.extraInfo && (
         <span
           className={cx(
-            'b-ui-components_extra-info ' + extraInfoClassName,
-            extraInfoOnNewLine && 'b-ui-components_extra-info-on-new-line',
+            'B-ui-components_extra-info ' + extraInfoClassName,
+            extraInfoOnNewLine && 'B-ui-components_extra-info-on-new-line',
           )}
         >
           {item.extraInfo}
@@ -50,11 +50,11 @@ export function Row2({
       data-id={item.uid}
       onClick={onClick}
       className={cx(
-        'b-ui-components_sidebar-row2',
-        allowHover && 'bu_hover',
-        isActive && 'bu_active',
-        item.isDisabled && 'bu_disabled',
-        item.showDividerAbove && 'bu_divider',
+        'B-ui-components_sidebar-row2',
+        allowHover && 'BU_hover',
+        isActive && 'BU_active',
+        item.isDisabled && 'BU_disabled',
+        item.showDividerAbove && 'BU_divider',
         className,
       )}
       style={{
@@ -66,12 +66,12 @@ export function Row2({
       }}
     >
       <div className="flex flex-row">
-        <div className="b-ui-components_left-node">{item.leftNode}</div>
+        <div className="B-ui-components_left-node">{item.leftNode}</div>
         {item.description ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {titleElement}
             <span
-              className={'b-ui-components_description ' + descriptionClassName}
+              className={'B-ui-components_description ' + descriptionClassName}
             >
               {item.description}
             </span>
@@ -81,8 +81,8 @@ export function Row2({
         )}
       </div>
       <div className="flex flex-row">
-        <span className="b-ui-components_right-node">{item.rightNode}</span>
-        <span className="b-ui-components_right-hover-node">
+        <span className="B-ui-components_right-node">{item.rightNode}</span>
+        <span className="B-ui-components_right-hover-node">
           {item.rightHoverNode}
         </span>
       </div>

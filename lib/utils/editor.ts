@@ -9,7 +9,7 @@ import { findWrappingScrollable } from './utility';
 
 export function getScrollParentElement(editorId: number) {
   const editor = document.querySelector(
-    '.b-editor-container_editor-' + editorId,
+    '.B-editor-container_editor-' + editorId,
   );
 
   if (editor) {

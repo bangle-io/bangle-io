@@ -1,4 +1,4 @@
-.b-ui-components_spinner-icon {
+.B-ui-components_spinner-icon {
   animation: 2s linear infinite spinner-icon-svg-animation;
   max-width: 100px;
 }
@@ -13,9 +13,9 @@
   }
 }
 
-.b-ui-components_spinner-icon circle {
+.B-ui-components_spinner-icon circle {
   animation: 1.4s ease-in-out infinite both
-    b-ui-components_spinner-icon-circle-animation;
+    B-ui-components_spinner-icon-circle-animation;
   display: block;
   fill: transparent;
   stroke: #2f3d4c;
@@ -26,7 +26,7 @@
   transform-origin: 50% 50%;
 }
 
-@keyframes b-ui-components_spinner-icon-circle-animation {
+@keyframes B-ui-components_spinner-icon-circle-animation {
   0%,
   25% {
     stroke-dashoffset: 280;

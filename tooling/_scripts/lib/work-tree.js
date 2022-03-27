@@ -55,26 +55,37 @@ class Package {
    *
    * @returns {Promise<FileWrapper[]>}
    */
-  async getAllFiles() {
+  async getAllTextFiles() {
     if (this.allFilesCache) {
       return this.allFilesCache;
     }
 
-    const filePaths = globby.sync(`${rootDir}/${this.location}/**`);
+    const filePaths = globby
+      .sync(`${rootDir}/${this.location}/**`)
+      .filter(
+        (r) =>
+          r.endsWith('.json') ||
+          r.endsWith('.js') ||
+          r.endsWith('.ts') ||
+          r.endsWith('.tsx') ||
+          r.endsWith('.jsx') ||
+          r.endsWith('.snap') ||
+          r.endsWith('.css'),
+      );
 
     this.allFilesCache = filePaths.map((r) => new FileWrapper(r));
 
-    return this.getAllFiles();
+    return this.getAllTextFiles();
   }
 
   async getCSSFiles() {
-    return (await this.getAllFiles()).filter((r) => {
+    return (await this.getAllTextFiles()).filter((r) => {
       return r.isCSS();
     });
   }
 
   async getTSFiles() {
-    return (await this.getAllFiles()).filter((r) => r.isTS());
+    return (await this.getAllTextFiles()).filter((r) => r.isTS());
   }
 }
 
@@ -120,7 +131,7 @@ class FileWrapper {
 
 /**
  *
- * @returns {Promise<Package[]>}
+ * @returns {Promise<FileWrapper[]>}
  */
 async function getAllPackages() {
   return (
@@ -132,4 +143,21 @@ async function getAllPackages() {
   ).flatMap((r) => r);
 }
 
-module.exports = { WorkTree, getAllPackages, FileWrapper };
+/**
+ *
+ * @returns {Promise<Package[]>}
+ */
+async function getAllTextFiles() {
+  const packages = await getAllPackages();
+
+  let result = new Map();
+  for (const pkg of packages) {
+    for (const file of await pkg.getAllTextFiles()) {
+      result.set(file.filePath, file);
+    }
+  }
+
+  return Array.from(result.values());
+}
+
+module.exports = { WorkTree, getAllPackages, getAllTextFiles, FileWrapper };

@@ -20,7 +20,7 @@ export function TextButton({
       type="button"
       className={cx(
         className,
-        'b-ui-components_text-button',
+        'B-ui-components_text-button',
         'py-1 px-2 border border-transparent rounded-sm focus:ring-1 focus:ring-offset-2 focus:ring-offset-white focus:ring-gray-900 focus:outline-none transition-colors duration-200',
       )}
       aria-label={hint}

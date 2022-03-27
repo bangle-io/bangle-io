@@ -107,7 +107,7 @@ test('show search results', async () => {
   expect(
     Array.from(
       renderResult.container.querySelectorAll(
-        '.b-search-notes_search-result-note-match',
+        '.B-search-notes_search-result-note-match',
       ),
     ).length,
   ).toBe(1);
@@ -174,7 +174,7 @@ test('pendingSearch shows a spinner', async () => {
 
   expect(
     Boolean(
-      renderResult.container.querySelector('.b-ui-components_spinner-icon'),
+      renderResult.container.querySelector('.B-ui-components_spinner-icon'),
     ),
   ).toBe(true);
 });
@@ -198,7 +198,7 @@ test('pendingSearch=false does not show spinner', async () => {
 
   expect(
     Boolean(
-      renderResult.container.querySelector('.b-ui-components_spinner-icon'),
+      renderResult.container.querySelector('.B-ui-components_spinner-icon'),
     ),
   ).toBe(false);
 });

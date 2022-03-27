@@ -33,7 +33,7 @@ export function ButtonContent({
     React.cloneElement(icon, {
       className: cx(
         icon.props.className,
-        hasText && 'bu_has-text',
+        hasText && 'BU_has-text',
 
         hasText && isLeft && 'ml-1',
         hasText && isRight && 'mr-1',
@@ -45,7 +45,7 @@ export function ButtonContent({
     <>
       {iconPos === 'left' && iconComp}
       {text && (
-        <span className={cx(textClassName, hasIcon && 'bu_has-icon')}>
+        <span className={cx(textClassName, hasIcon && 'BU_has-icon')}>
           {text}
         </span>
       )}

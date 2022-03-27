@@ -316,10 +316,10 @@ function setRootWidescreenClass(widescreen?: boolean) {
   const body = document.body;
 
   if (widescreen) {
-    root?.classList.add('bu_widescreen');
-    body?.classList.add('bu_widescreen');
+    root?.classList.add('BU_widescreen');
+    body?.classList.add('BU_widescreen');
   } else {
-    root?.classList.remove('bu_widescreen');
-    body?.classList.remove('bu_widescreen');
+    root?.classList.remove('BU_widescreen');
+    body?.classList.remove('BU_widescreen');
   }
 }

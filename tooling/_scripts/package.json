@@ -24,7 +24,7 @@
   "module": "index.js",
   "scripts": {
     "g:package-patrol": "yarn node package-patrol",
-    "g:stylelint-regex": "yarn node generate-stylelint-regex"
+    "g:stylelint-update-regex": "yarn node generate-stylelint-regex"
   },
   "publishConfig": {},
   "dependencies": {

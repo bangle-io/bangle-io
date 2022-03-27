@@ -47,12 +47,12 @@ test.describe.parallel('workspace', () => {
 
     await expect(
       page.locator(
-        '.b-ui-components_universal-palette-container input[aria-label]',
+        '.B-ui-components_universal-palette-container input[aria-label]',
       ),
     ).toHaveValue(resolvePath(n1).filePath);
 
     await page.fill(
-      '.b-ui-components_universal-palette-container input[aria-label]',
+      '.B-ui-components_universal-palette-container input[aria-label]',
       'file-1-renamed',
     );
 

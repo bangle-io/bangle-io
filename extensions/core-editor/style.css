@@ -1,44 +1,44 @@
-.b-core-editor_bangle-heading-collapsed {
+.B-core-editor_bangle-heading-collapsed {
   background-color: var(--window-bg-color-2);
   border-radius: 8px;
 }
 
-.b-core-editor_bangle-tooltip {
+.B-core-editor_bangle-tooltip {
   z-index: var(--window-tooltip-z-index);
 }
 
 /* collapse styles */
-.b-core-editor_deco-collapse-positioner {
+.B-core-editor_deco-collapse-positioner {
   position: relative;
 }
 
-.b-core-editor_deco-collapse {
+.B-core-editor_deco-collapse {
   display: flex;
   position: absolute;
   left: -1.5rem;
 }
 
-h1 .b-core-editor_deco-collapse {
+h1 .B-core-editor_deco-collapse {
   top: calc((3rem / 2) - 10px);
 }
 
-h2 .b-core-editor_deco-collapse {
+h2 .B-core-editor_deco-collapse {
   top: calc((1.875rem / 2) - 10px);
 }
 
-h3 .b-core-editor_deco-collapse {
+h3 .B-core-editor_deco-collapse {
   top: calc((1.25rem / 2) - 10px);
 }
 
-h4 .b-core-editor_deco-collapse {
+h4 .B-core-editor_deco-collapse {
   top: calc((1.125rem / 2) - 10px);
 }
 
-h5 .b-core-editor_deco-collapse {
+h5 .B-core-editor_deco-collapse {
   top: calc((0.75rem / 2) - 10px);
 }
 
-.b-core-editor_deco-collapse-child {
+.B-core-editor_deco-collapse-child {
   height: 1.25rem;
   width: 1.25rem;
   fill: currentcolor;
@@ -48,13 +48,13 @@ h5 .b-core-editor_deco-collapse {
 
 /* collapse styles end */
 
-.b-core-editor_selected-node {
+.B-core-editor_selected-node {
   animation-duration: 0.75s;
-  animation-name: b-core-editor_editor-selected-node;
+  animation-name: B-core-editor_editor-selected-node;
   animation-timing-function: ease-out;
 }
 
-@keyframes b-core-editor_editor-selected-node {
+@keyframes B-core-editor_editor-selected-node {
   from {
     border-radius: 4px;
     background-color: var(--editor-core-selection-change-bg-color);

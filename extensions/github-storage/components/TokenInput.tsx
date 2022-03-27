@@ -17,7 +17,7 @@ export function TokenInput({
       if (!destroyed) {
         document
           .querySelector<HTMLInputElement>(
-            '.b-ui-components_universal-palette-container input',
+            '.B-ui-components_universal-palette-container input',
           )
           ?.focus();
       }

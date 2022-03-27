@@ -39,7 +39,7 @@ test('Is able to search note tags', async ({ page }) => {
 
   await page
     .locator(
-      '.b-search-notes_search-notes .b-search-notes_search-result-note-match',
+      '.B-search-notes_search-notes .B-search-notes_search-result-note-match',
     )
     .waitFor();
   await page.locator('div[data-id^="search-notes-result-"]').first().waitFor();
@@ -56,13 +56,13 @@ test('clicking on a note tag in editor searches for it', async ({ page }) => {
   await page.keyboard.type(' #cosmic .', { delay: 10 });
   await sleep();
 
-  const tag = await page.waitForSelector('.b-note-tags_inline-note-tag', {
+  const tag = await page.waitForSelector('.B-note-tags_inline-note-tag', {
     timeout: 2 * SELECTOR_TIMEOUT,
   });
 
   await tag.click();
 
-  await page.waitForSelector('.b-search-notes_search-notes', {
+  await page.waitForSelector('.B-search-notes_search-notes', {
     timeout: SELECTOR_TIMEOUT,
   });
 

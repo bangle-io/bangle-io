@@ -75,7 +75,7 @@ test('renders with blank data', async () => {
     <div>
       <div>
         <div
-          class="b-inline-backlink_widget-container flex flex-col"
+          class="B-inline-backlink_widget-container flex flex-col"
         >
           <span>
             🐒 No backlinks found!
@@ -139,7 +139,7 @@ test('handles abort error', async () => {
     <div>
       <div>
         <div
-          class="b-inline-backlink_widget-container flex flex-col"
+          class="B-inline-backlink_widget-container flex flex-col"
         >
           <span>
             🐒 No backlinks found!
@@ -246,13 +246,13 @@ test('renders backlinks', async () => {
 
   expect(
     renderResult.container.querySelector(
-      '.b-search-notes_highlight-text-container',
+      '.B-search-notes_highlight-text-container',
     ),
   ).toMatchSnapshot();
 
   await fireEvent.click(
     renderResult.container.querySelector(
-      '.b-search-notes_highlight-text-container',
+      '.B-search-notes_highlight-text-container',
     )!,
   );
   expect(pushWsPath).toBeCalledTimes(2);

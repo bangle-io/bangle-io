@@ -2,7 +2,7 @@ body {
   color: var(--text-color-0);
 }
 
-body.bu_widescreen {
+body.BU_widescreen {
   /* this prevents the spring bounciness which moves the entire app
    when on mac laptops */
   overflow: hidden;

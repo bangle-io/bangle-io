@@ -1,18 +1,18 @@
-.b-ui-components_modal-container {
+.B-ui-components_modal-container {
   background-color: var(--window-bg-color-1);
   overscroll-behavior-y: contain;
 }
 
-.b-ui-components_modal-header {
+.B-ui-components_modal-header {
   border-bottom: 2px solid var(--window-border-color-0);
 }
 
-.b-ui-components_modal-overlay {
+.B-ui-components_modal-overlay {
   background-color: var(--window-modal-overlay-bg-color);
   backdrop-filter: blur(2px);
 }
 
-@keyframes b-ui-components_fade-in-scale {
+@keyframes B-ui-components_fade-in-scale {
   0% {
     opacity: 0;
     transform: scale(0.97, 0.97);
@@ -24,8 +24,8 @@
   }
 }
 
-.b-ui-components_modal-fadeInScaleAnimation {
+.B-ui-components_modal-fadeInScaleAnimation {
   animation-duration: 0.1s;
-  animation-name: b-ui-components_fade-in-scale;
+  animation-name: B-ui-components_fade-in-scale;
   animation-timing-function: ease-out;
 }

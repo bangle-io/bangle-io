@@ -4,17 +4,17 @@ exports[`basic renders 1`] = `
 <div>
   <div>
     <div
-      class="w-full h-full flex flex-col items-center b-editor-container_editor-container b-editor-container_editor-container-1 overflow-y-scroll"
+      class="w-full h-full flex flex-col items-center B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll"
     >
       <div
         class="w-full px-2 py-1 lg:px-4 sticky top-0 z-10"
       >
         <div
-          class="flex flex-row justify-between w-full b-editor-container_editor-bar "
+          class="flex flex-row justify-between w-full B-editor-container_editor-bar "
         >
           <div
             aria-label="note path"
-            class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded b-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+            class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
           >
             <span
               class="break-all"
@@ -27,7 +27,7 @@ exports[`basic renders 1`] = `
           >
             <button
               aria-label="Close"
-              class="b-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
+              class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
               type="button"
             >
               <svg
@@ -63,17 +63,17 @@ exports[`renders correctly when file does not exist 1`] = `
 <div>
   <div>
     <div
-      class="w-full h-full flex flex-col items-center b-editor-container_editor-container b-editor-container_editor-container-1 overflow-y-scroll"
+      class="w-full h-full flex flex-col items-center B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll"
     >
       <div
         class="w-full px-2 py-1 lg:px-4 sticky top-0 z-10"
       >
         <div
-          class="flex flex-row justify-between w-full b-editor-container_editor-bar "
+          class="flex flex-row justify-between w-full B-editor-container_editor-bar "
         >
           <div
             aria-label="note path"
-            class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded b-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
+            class="flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline"
           >
             <span
               class="break-all"
@@ -86,7 +86,7 @@ exports[`renders correctly when file does not exist 1`] = `
           >
             <button
               aria-label="Close"
-              class="b-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
+              class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
               type="button"
             >
               <svg
@@ -128,7 +128,7 @@ exports[`renders when no wsPath is provided 1`] = `
 <div>
   <div>
     <div
-      class="w-full h-full flex flex-col items-center b-editor-container_editor-container b-editor-container_editor-container-1 overflow-y-scroll"
+      class="w-full h-full flex flex-col items-center B-editor-container_editor-container B-editor-container_editor-container-1 overflow-y-scroll"
     >
       <div
         class="w-full"

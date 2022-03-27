@@ -13,14 +13,7 @@ export function ItemContainer({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={cx(
-        'b-item-container',
-        hoverBgColorChange && 'bu_hover',
-        className,
-      )}
-      {...props}
-    >
+    <div className={cx(hoverBgColorChange && 'BU_hover', className)} {...props}>
       {children}
     </div>
   );

@@ -121,10 +121,10 @@ export const BaseButton = ({
       disabled={isDisabled}
       className={cx(
         className,
-        'b-ui-bangle-button_button p-1 ',
+        'B-ui-bangle-button_button p-1 ',
         'transition-all duration-100',
         animateOnPress && 'animate-on-press',
-        isActive && 'bu_is-active',
+        isActive && 'BU_is-active',
         isDisabled && 'cursor-not-allowed',
         isHovered && 'is-hovered',
         isPressed && 'is-pressed',

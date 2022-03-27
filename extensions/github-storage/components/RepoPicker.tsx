@@ -107,7 +107,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
       if (!destroyed) {
         document
           .querySelector<HTMLInputElement>(
-            '.b-ui-components_universal-palette-container input',
+            '.B-ui-components_universal-palette-container input',
           )
           ?.focus();
       }
@@ -141,7 +141,7 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
       onClickInside={() => {
         document
           .querySelector<HTMLInputElement>(
-            '.b-ui-components_universal-palette-container input',
+            '.B-ui-components_universal-palette-container input',
           )
           ?.focus();
       }}

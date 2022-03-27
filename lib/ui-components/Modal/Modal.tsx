@@ -55,7 +55,7 @@ export function Modal({
     >
       <div className="flex justify-center min-h-screen pb-20 text-center sm:block sm:p-0">
         <div
-          className="fixed w-full h-full transition-opacity b-ui-components_modal-overlay"
+          className="fixed w-full h-full transition-opacity B-ui-components_modal-overlay"
           aria-hidden="true"
         ></div>
 
@@ -70,12 +70,12 @@ export function Modal({
           ref={containerRef}
           style={style}
           className={cx(
-            'b-ui-components_modal-container h-full b-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl ',
+            'B-ui-components_modal-container h-full B-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl ',
             className,
           )}
         >
           <div className="w-full px-6 my-2 select-none ">
-            <div className="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 b-ui-components_modal-header ">
+            <div className="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 B-ui-components_modal-header ">
               <span>{title}</span>
               <ButtonIcon onClick={onDismiss} removeFocus={true}>
                 <CloseIcon className="w-6 h-6 rounded-sm hover:bangle-io_accentSecondary" />

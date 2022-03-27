@@ -1,8 +1,8 @@
-.b-ui-components_pretty-keybinding > *:last-child {
+.B-ui-components_pretty-keybinding > *:last-child {
   margin-right: 0;
 }
 
-.b-ui-components_pretty-keybinding-kbd {
+.B-ui-components_pretty-keybinding-kbd {
   display: inline-block;
   background-color: var(--window-kbd-bg-color);
   margin-right: 0.25rem;

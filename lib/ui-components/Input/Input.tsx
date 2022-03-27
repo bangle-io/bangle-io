@@ -49,14 +49,14 @@ export const Input = React.forwardRef<
     }
 
     return (
-      <div className="b-ui-components_input-container">
+      <div className="B-ui-components_input-container">
         <input
           onKeyDown={onKeyDown}
           aria-label={label}
           type="text"
           onChange={onChange}
           ref={ref}
-          className={cx('b-ui-components_input', className)}
+          className={cx('B-ui-components_input', className)}
           style={style}
           value={value}
           placeholder={placeholder}
@@ -68,7 +68,7 @@ export const Input = React.forwardRef<
         <div style={{ position: 'relative', display: 'flex' }}>
           {showClear && valueLength > 0 && (
             <button
-              className="b-ui-components_input-clear"
+              className="B-ui-components_input-clear"
               aria-label="Clear search"
               onMouseDown={onClear}
             />

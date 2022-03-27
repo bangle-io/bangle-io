@@ -29,7 +29,7 @@ export function Dhancha({
   return (
     <div
       className={
-        'b-ui-dhancha_container' + (widescreen ? ' bu_widescreen' : '')
+        'B-ui-dhancha_container' + (widescreen ? ' BU_widescreen' : '')
       }
     >
       <div
@@ -37,24 +37,24 @@ export function Dhancha({
         aria-label="Activity Bar"
         ref={activitybarRef}
         className={
-          'b-ui-dhancha_activitybar' + (widescreen ? ' bu_widescreen' : '')
+          'B-ui-dhancha_activitybar' + (widescreen ? ' BU_widescreen' : '')
         }
       >
         {activitybar}
       </div>
       {widescreen && workspaceSidebar && (
-        <header className="b-ui-dhancha_ws-sidebar">{workspaceSidebar}</header>
+        <header className="B-ui-dhancha_ws-sidebar">{workspaceSidebar}</header>
       )}
 
       <main
         className={
-          'b-ui-dhancha_main-content' + (widescreen ? ' bu_widescreen' : '')
+          'B-ui-dhancha_main-content' + (widescreen ? ' BU_widescreen' : '')
         }
       >
         {mainContent}
       </main>
       {widescreen && noteSidebar && (
-        <aside className="b-ui-dhancha_note-sidebar">{noteSidebar}</aside>
+        <aside className="B-ui-dhancha_note-sidebar">{noteSidebar}</aside>
       )}
     </div>
   );
@@ -62,6 +62,6 @@ export function Dhancha({
 
 export function MultiColumnMainContent({ children }: { children: ReactNode }) {
   return (
-    <div className="b-ui-dhancha_multi-column-main-content">{children}</div>
+    <div className="B-ui-dhancha_multi-column-main-content">{children}</div>
   );
 }

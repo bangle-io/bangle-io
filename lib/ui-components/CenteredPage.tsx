@@ -51,7 +51,7 @@ export function CenteredBoxedPage({
           )}
           <div className="text-base font-medium sm:mb-1">{children}</div>
           {actions && (
-            <div className="flex flex-row mt-6 b-ui-components_centered-page-actions">
+            <div className="flex flex-row mt-6 B-ui-components_centered-page-actions">
               {actions}
             </div>
           )}

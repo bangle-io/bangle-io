@@ -4,7 +4,7 @@ exports[`basic renders 1`] = `
 <div>
   <div>
     <div
-      class="test-class b-core-editor_display-page"
+      class="test-class B-core-editor_display-page"
     >
       <div
         class="ProseMirror bangle-editor"
@@ -27,7 +27,7 @@ exports[`works without editorId 1`] = `
 <div>
   <div>
     <div
-      class="test-class b-core-editor_display-page"
+      class="test-class B-core-editor_display-page"
     >
       <div
         class="ProseMirror bangle-editor"

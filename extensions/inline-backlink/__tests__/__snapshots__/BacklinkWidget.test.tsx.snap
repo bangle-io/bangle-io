@@ -4,10 +4,10 @@ exports[`renders backlinks 1`] = `
 <div>
   <div>
     <div
-      class="b-inline-backlink_widget-container flex flex-col"
+      class="B-inline-backlink_widget-container flex flex-col"
     >
       <div
-        class="b-ui-components_sidebar-row2 bu_hover rounded text-sm truncate py-1 select-none"
+        class="B-ui-components_sidebar-row2 BU_hover rounded text-sm truncate py-1 select-none"
         data-id="test-back-ws:my-linked-note-2.md"
         role="button"
         style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
@@ -16,7 +16,7 @@ exports[`renders backlinks 1`] = `
           class="flex flex-row"
         >
           <div
-            class="b-ui-components_left-node"
+            class="B-ui-components_left-node"
           >
             <button
               class="focus:outline-none"
@@ -46,7 +46,7 @@ exports[`renders backlinks 1`] = `
             class=""
           >
             <span
-              class="b-title "
+              class=""
             >
               my-linked-note-2
             </span>
@@ -56,10 +56,10 @@ exports[`renders backlinks 1`] = `
           class="flex flex-row"
         >
           <span
-            class="b-ui-components_right-node"
+            class="B-ui-components_right-node"
           >
             <button
-              class="focus:outline-none text-xs font-semibold rounded b-inline-backlink_widget-occurrence-count"
+              class="focus:outline-none text-xs font-semibold rounded B-inline-backlink_widget-occurrence-count"
               data-bangle-editor-break="true"
               data-bangle-editor-pos="bottom"
               type="button"
@@ -68,10 +68,10 @@ exports[`renders backlinks 1`] = `
             </button>
           </span>
           <span
-            class="b-ui-components_right-hover-node"
+            class="B-ui-components_right-hover-node"
           >
             <button
-              class="focus:outline-none text-xs font-semibold rounded b-inline-backlink_widget-occurrence-count"
+              class="focus:outline-none text-xs font-semibold rounded B-inline-backlink_widget-occurrence-count"
               data-bangle-editor-break="true"
               data-bangle-editor-pos="bottom"
               type="button"
@@ -88,18 +88,18 @@ exports[`renders backlinks 1`] = `
 
 exports[`renders backlinks 2`] = `
 <div
-  class="b-search-notes_highlight-text-container"
+  class="B-search-notes_highlight-text-container"
 >
   <span
-    class="b-search-notes_highlight-text text-sm"
+    class="B-search-notes_highlight-text text-sm"
   />
   <span
-    class="b-search-notes_highlight-text text-sm"
+    class="B-search-notes_highlight-text text-sm"
   >
     [[my-linked-note-1]]
   </span>
   <span
-    class="b-search-notes_highlight-text text-sm"
+    class="B-search-notes_highlight-text text-sm"
   >
      some content
   </span>

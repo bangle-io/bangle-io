@@ -54,7 +54,7 @@ export function SearchNotesSidebar() {
   }
 
   return (
-    <Sidebar.Container className="b-search-notes_search-notes">
+    <Sidebar.Container className="B-search-notes_search-notes">
       <Sidebar.ItemContainer className="px-2 mt-2">
         <SearchInput
           searchQuery={searchQuery}

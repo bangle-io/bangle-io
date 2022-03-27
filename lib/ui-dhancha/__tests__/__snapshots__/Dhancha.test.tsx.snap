@@ -4,7 +4,7 @@ exports[`MultiColumnMainContent renders 1`] = `
 <div>
   <div>
     <div
-      class="b-ui-dhancha_multi-column-main-content"
+      class="B-ui-dhancha_multi-column-main-content"
     >
       Hello
     </div>
@@ -16,11 +16,11 @@ exports[`renders 1`] = `
 <div>
   <div>
     <div
-      class="b-ui-dhancha_container bu_widescreen"
+      class="B-ui-dhancha_container BU_widescreen"
     >
       <div
         aria-label="Activity Bar"
-        class="b-ui-dhancha_activitybar bu_widescreen"
+        class="B-ui-dhancha_activitybar BU_widescreen"
         role="navigation"
       >
         <div>
@@ -28,21 +28,21 @@ exports[`renders 1`] = `
         </div>
       </div>
       <header
-        class="b-ui-dhancha_ws-sidebar"
+        class="B-ui-dhancha_ws-sidebar"
       >
         <div>
           Workspace sidebar
         </div>
       </header>
       <main
-        class="b-ui-dhancha_main-content bu_widescreen"
+        class="B-ui-dhancha_main-content BU_widescreen"
       >
         <div>
           Main content
         </div>
       </main>
       <aside
-        class="b-ui-dhancha_note-sidebar"
+        class="B-ui-dhancha_note-sidebar"
       >
         <div>
           Note sidebar
@@ -57,11 +57,11 @@ exports[`renders when widescreen=false 1`] = `
 <div>
   <div>
     <div
-      class="b-ui-dhancha_container"
+      class="B-ui-dhancha_container"
     >
       <div
         aria-label="Activity Bar"
-        class="b-ui-dhancha_activitybar"
+        class="B-ui-dhancha_activitybar"
         role="navigation"
       >
         <div>
@@ -69,7 +69,7 @@ exports[`renders when widescreen=false 1`] = `
         </div>
       </div>
       <main
-        class="b-ui-dhancha_main-content"
+        class="B-ui-dhancha_main-content"
       >
         <div>
           Main content

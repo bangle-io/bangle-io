@@ -1,4 +1,4 @@
-.b-inline-backlink_backlink {
+.B-inline-backlink_backlink {
   padding: 0 0.4rem;
   border-radius: var(--window-pill-border-radius);
   background-color: var(--backlink-backlink-bg-color);
@@ -6,20 +6,20 @@
   text-align: start;
 }
 
-.b-inline-backlink_backlink:hover {
+.B-inline-backlink_backlink:hover {
   text-decoration: underline;
   background-color: var(--backlink-backlink-hover-bg-color);
 }
 
-.b-inline-backlink_backlinkNotFound {
+.B-inline-backlink_backlinkNotFound {
   background-color: var(--backlink-backlink-not-found-bg-color);
 }
 
-.b-inline-backlink_backlinkNotFound:hover {
+.B-inline-backlink_backlinkNotFound:hover {
   background-color: var(--backlink-backlink-not-found-hover-bg-color);
 }
 
-.b-inline-backlink_backlink > svg {
+.B-inline-backlink_backlink > svg {
   color: var(--window-link-color);
   fill: var(--backlink-backlink-bg-color);
   height: 1.2em;
@@ -31,7 +31,7 @@
   position: relative;
 }
 
-.b-inline-backlink_popup-editor {
+.B-inline-backlink_popup-editor {
   background-color: var(--window-popup-editor-bg-color);
   color: var(--window-popup-editor-color);
 
@@ -45,12 +45,12 @@
   box-shadow: rgb(0 0 0 / 30%) 0 4px 28px;
 }
 
-.b-inline-backlink_widget-container
-  .b-inline-backlink_highlight-text:nth-of-type(2n) {
+.B-inline-backlink_widget-container
+  .B-inline-backlink_highlight-text:nth-of-type(2n) {
   background-color: var(--window-highlight-bg-color);
 }
 
-.b-inline-backlink_widget-container .b-inline-backlink_widget-occurrence-count {
+.B-inline-backlink_widget-container .B-inline-backlink_widget-occurrence-count {
   background-color: var(--window-bg-color-2);
   padding: 0.125rem;
 }

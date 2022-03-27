@@ -28,7 +28,7 @@ export function ActivitybarMobile({
   const { editingAllowed } = useEditorManagerContext();
 
   return (
-    <div className="flex flex-row ml-3 text-gray-100 align-center b-activitybar_activitybar w-full mr-3">
+    <div className="flex flex-row ml-3 text-gray-100 align-center B-activitybar_activitybar w-full mr-3">
       <div className="flex flex-row items-center flex-none">
         <ActivitybarButton
           hint="See files palette"

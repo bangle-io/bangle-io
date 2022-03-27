@@ -47,8 +47,8 @@ export function InlineBacklinkPalette() {
     useInlinePaletteQuery(palettePluginKey);
 
   return reactDOM.createPortal(
-    <div className="shadow-2xl b-ui-components_inline-palette-wrapper">
-      <div className="b-ui-components_inline-palette-items-wrapper">
+    <div className="shadow-2xl B-ui-components_inline-palette-wrapper">
+      <div className="B-ui-components_inline-palette-items-wrapper">
         {/* TODO I am unable to hide inner when palette is invisible */}
         {isVisible && (
           <InlineBacklinkPaletteInner query={query} counter={counter} />

@@ -163,7 +163,7 @@ para 2
           >
             <button
               aria-label="hello 1"
-              class="note-outline_first-node-in-viewport b-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+              class="note-outline_first-node-in-viewport B-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
               style="padding-left: 0px; padding-top: 4px; padding-bottom: 4px;"
               type="button"
             >
@@ -175,7 +175,7 @@ para 2
             </button>
             <button
               aria-label="hello 2"
-              class="b-ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
+              class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
               style="padding-left: 12px; padding-top: 4px; padding-bottom: 4px;"
               type="button"
             >

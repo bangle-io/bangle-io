@@ -66,13 +66,13 @@ export const PaletteInput = React.forwardRef<
     return (
       <div
         className={cx(
-          'b-ui-components_universal-palette-input-wrapper',
+          'B-ui-components_universal-palette-input-wrapper',
           className,
         )}
         style={{ display: 'flex' }}
       >
         {leftNode && (
-          <div className="b-ui-components_left-node">
+          <div className="B-ui-components_left-node">
             <span className="w-5 h-5">{leftNode}</span>
           </div>
         )}
@@ -85,7 +85,7 @@ export const PaletteInput = React.forwardRef<
           spellCheck={false}
           autoCorrect={false}
           label="Palette Input"
-          className={'b-ui-components_universal-palette-input'}
+          className={'B-ui-components_universal-palette-input'}
           value={inputValue}
           onChange={onChange}
         />

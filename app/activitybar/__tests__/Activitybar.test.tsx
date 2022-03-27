@@ -67,7 +67,7 @@ test('renders when there is sidebar', () => {
   );
 
   expect(result.container).toMatchSnapshot();
-  expect(result.container.innerHTML).not.toContain('bu_is-active');
+  expect(result.container.innerHTML).not.toContain('BU_is-active');
 });
 
 test('renders when sidebar is active', () => {
@@ -98,7 +98,7 @@ test('renders when sidebar is active', () => {
   );
 
   expect(result.container).toMatchSnapshot();
-  expect(result.container.innerHTML).toContain('bu_is-active');
+  expect(result.container.innerHTML).toContain('BU_is-active');
 });
 
 test('inactive sidebar is dispatched correctly', () => {

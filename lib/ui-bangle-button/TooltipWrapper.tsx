@@ -12,7 +12,7 @@ export function TooltipWrapper({
   return (
     <div
       className={cx(
-        'py-1 px-2 shadow-lg rounded-md b-ui-bangle-button_tooltip text-sm font-semibold',
+        'py-1 px-2 shadow-lg rounded-md B-ui-bangle-button_tooltip text-sm font-semibold',
         wrapWords ? 'whitespace-normal' : 'whitespace-nowrap',
       )}
     >

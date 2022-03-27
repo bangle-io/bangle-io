@@ -221,7 +221,7 @@ export function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
 export function SpinnerIcon({ className = '', ...props }) {
   return (
     <svg
-      className={'b-ui-components_spinner-icon ' + className}
+      className={'B-ui-components_spinner-icon ' + className}
       viewBox="0 0 100 100"
       xmlns="http://www.w3.org/2000/svg"
       stroke="currentColor"

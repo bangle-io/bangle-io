@@ -214,7 +214,7 @@ function TagComponent({ tagValue }: { tagValue: string }) {
   }, [tagValue, dispatchSerialOperation, bangleStore]);
 
   return (
-    <span className="b-note-tags_inline-note-tag" onClick={onClick}>
+    <span className="B-note-tags_inline-note-tag" onClick={onClick}>
       #{tagValue}
     </span>
   );
