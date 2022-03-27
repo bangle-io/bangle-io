@@ -42,7 +42,7 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
                 type="button"
               >
                 <svg
-                  class="fill-current  w-6 h-6 rounded-sm hover:bangle-io_accentSecondary"
+                  class="fill-current  w-6 h-6 rounded-sm"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >

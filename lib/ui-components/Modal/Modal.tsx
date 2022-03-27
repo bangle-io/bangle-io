@@ -78,7 +78,7 @@ export function Modal({
             <div className="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 B-ui-components_modal-header ">
               <span>{title}</span>
               <ButtonIcon onClick={onDismiss} removeFocus={true}>
-                <CloseIcon className="w-6 h-6 rounded-sm hover:bangle-io_accentSecondary" />
+                <CloseIcon className="w-6 h-6 rounded-sm" />
               </ButtonIcon>
             </div>
           </div>
