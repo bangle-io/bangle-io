@@ -2,10 +2,10 @@ div:focus {
   outline: none;
 }
 
-button:focus {
+button {
   outline: none;
 }
 
-button {
+button:focus {
   outline: none;
 }

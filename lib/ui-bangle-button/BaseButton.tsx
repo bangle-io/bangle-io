@@ -53,25 +53,25 @@ export const BaseButton = ({
   const {
     animateOnPress = false,
     activeColor = variant === 'secondary'
-      ? 'var(--uiBangleButton-active-color)'
-      : 'var(--uiBangleButton-primary-active-color)',
+      ? 'var(--ui-bangle-button-active-color)'
+      : 'var(--ui-bangle-button-primary-active-color)',
     color = variant === 'secondary'
-      ? 'var(--uiBangleButton-color)'
-      : 'var(--uiBangleButton-primary-color)',
+      ? 'var(--ui-bangle-button-color)'
+      : 'var(--ui-bangle-button-primary-color)',
     buttonBgColor = variant === 'secondary'
-      ? 'var(--uiBangleButton-bgColor)'
-      : 'var(--uiBangleButton-primary-bgColor)',
+      ? 'var(--ui-bangle-button-bg-color)'
+      : 'var(--ui-bangle-button-primary-bg-color)',
     hoverBgColor = variant === 'secondary'
-      ? 'var(--uiBangleButton-hover-bgColor)'
-      : 'var(--uiBangleButton-primary-hover-bgColor)',
+      ? 'var(--ui-bangle-button-hover-bg-color)'
+      : 'var(--ui-bangle-button-primary-hover-bg-color)',
     hoverColor = variant === 'secondary'
-      ? 'var(--uiBangleButton-hover-color)'
-      : 'var(--uiBangleButton-primary-hover-color)',
+      ? 'var(--ui-bangle-button-hover-color)'
+      : 'var(--ui-bangle-button-primary-hover-color)',
     pressedBgColor = variant === 'secondary'
-      ? 'var(--uiBangleButton-pressed-bgColor)'
-      : 'var(--uiBangleButton-primary-pressed-bgColor)',
-    disabledBgColor = 'var(--uiBangleButton-disabled-bgColor)',
-    disabledColor = 'var(--uiBangleButton-disabled-color)',
+      ? 'var(--ui-bangle-button-pressed-bg-color)'
+      : 'var(--ui-bangle-button-primary-pressed-bg-color)',
+    disabledBgColor = 'var(--ui-bangle-button-disabled-bg-color)',
+    disabledColor = 'var(--ui-bangle-button-disabled-color)',
   } = styling;
 
   style = { ...style };
@@ -97,7 +97,7 @@ export const BaseButton = ({
     style.backgroundColor = pressedBgColor;
 
     if (animateOnPress) {
-      style.transform = 'scale(var(--uiBangleButton-depression))';
+      style.transform = 'scale(var(--ui-bangle-button-depression))';
     }
   }
 
@@ -118,13 +118,13 @@ export const BaseButton = ({
       id={id}
       autoFocus={autoFocus}
       {...otherProps}
+      disabled={isDisabled}
       className={cx(
         className,
-        'ui-bangle-button_button p-1 ',
+        'b-ui-bangle-button_button p-1 ',
         'transition-all duration-100',
         animateOnPress && 'animate-on-press',
-        isActive && 'is-active',
-        isDisabled && 'is-disabled',
+        isActive && 'bu_is-active',
         isDisabled && 'cursor-not-allowed',
         isHovered && 'is-hovered',
         isPressed && 'is-pressed',

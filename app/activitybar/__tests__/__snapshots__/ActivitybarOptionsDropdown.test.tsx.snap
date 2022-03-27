@@ -3,7 +3,7 @@
 exports[`clicking the button shows dropdown 1`] = `
 <ul
   aria-label="options dropdown"
-  class="flex flex-col ui-bangle-button_dropdown-menu p-1 py-2 rounded-md"
+  class="flex flex-col b-ui-bangle-button_dropdown-menu p-1 py-2 rounded-md"
   role="menu"
   tabindex="0"
 >
@@ -18,7 +18,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="new note"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="NewNote"
         role="menuitem"
         tabindex="-1"
@@ -32,7 +32,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="new workspace"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="NewWorkspace"
         role="menuitem"
         tabindex="-1"
@@ -46,7 +46,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="switch workspace"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="SwitchWorkspace"
         role="menuitem"
         tabindex="-1"
@@ -58,20 +58,20 @@ exports[`clicking the button shows dropdown 1`] = `
             Switch workspace
           </span>
           <span
-            class="inline ui-components_pretty-keybinding"
+            class="inline b-ui-components_pretty-keybinding"
           >
             <kbd
-              class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+              class="px-1 font-sans capitalize rounded-sm b-ui-components_pretty-keybinding-kbd"
             >
               Ctrl
             </kbd>
             <kbd
-              class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+              class="px-1 font-sans capitalize rounded-sm b-ui-components_pretty-keybinding-kbd"
             >
               ⇧
             </kbd>
             <kbd
-              class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+              class="px-1 font-sans capitalize rounded-sm b-ui-components_pretty-keybinding-kbd"
             >
               p
             </kbd>
@@ -95,7 +95,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="toggle dark theme"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="ToggleTheme"
         role="menuitem"
         tabindex="-1"
@@ -123,7 +123,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="notes palette"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="NotesPalette"
         role="menuitem"
         tabindex="-1"
@@ -135,10 +135,10 @@ exports[`clicking the button shows dropdown 1`] = `
             Notes palette
           </span>
           <span
-            class="inline ui-components_pretty-keybinding"
+            class="inline b-ui-components_pretty-keybinding"
           >
             <kbd
-              class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+              class="px-1 font-sans capitalize rounded-sm b-ui-components_pretty-keybinding-kbd"
             />
           </span>
         </span>
@@ -146,7 +146,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="operation palette"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="ActionPalette"
         role="menuitem"
         tabindex="-1"
@@ -158,10 +158,10 @@ exports[`clicking the button shows dropdown 1`] = `
             Operation palette
           </span>
           <span
-            class="inline ui-components_pretty-keybinding"
+            class="inline b-ui-components_pretty-keybinding"
           >
             <kbd
-              class="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+              class="px-1 font-sans capitalize rounded-sm b-ui-components_pretty-keybinding-kbd"
             />
           </span>
         </span>
@@ -183,7 +183,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="report issue"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="ReportIssue"
         role="menuitem"
         tabindex="-1"
@@ -261,7 +261,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="follow twitter"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="Twitter"
         role="menuitem"
         tabindex="-1"
@@ -286,7 +286,7 @@ exports[`clicking the button shows dropdown 1`] = `
       <li
         aria-disabled="false"
         aria-label="join discord"
-        class="ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
+        class="b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1"
         data-key="Discord"
         role="menuitem"
         tabindex="-1"
@@ -325,7 +325,7 @@ exports[`renders correctly 1`] = `
     <button
       aria-label="options menu"
       aria-pressed="false"
-      class="w-full py-3 rounded-sm flex justify-center activitybar_button widescreen ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet focus:outline-none focus:ring focus:border-blue-300"
+      class="w-full py-3 rounded-sm flex justify-center b-activitybar_button bu-widescreen b-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press is-quiet focus:outline-none focus:ring focus:border-blue-300"
       type="button"
     >
       <svg

@@ -11,9 +11,9 @@ export const buttonStyling = {
   animateOnPress: true,
   activeColor: 'var(--activitybar-button-active-color)',
   color: 'var(--activitybar-button-color)',
-  hoverBgColor: 'var(--activitybar-button-hover-bgColor)',
+  hoverBgColor: 'var(--activitybar-button-hover-bg-color)',
   hoverColor: 'var(--activitybar-button-hover-color)',
-  pressedBgColor: 'var(--activitybar-button-pressed-bgColor)',
+  pressedBgColor: 'var(--activitybar-button-pressed-bg-color)',
 };
 
 export function ActivitybarButton({
@@ -38,8 +38,8 @@ export function ActivitybarButton({
       isActive={isActive}
       styling={buttonStyling}
       className={cx(
-        'w-full py-3 rounded-sm flex justify-center activitybar_button',
-        widescreen && 'widescreen',
+        'w-full py-3 rounded-sm flex justify-center b-activitybar_button',
+        widescreen && 'bu_widescreen',
       )}
       onPress={onPress}
       ariaLabel={hint}

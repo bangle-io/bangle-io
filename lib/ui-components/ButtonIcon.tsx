@@ -28,7 +28,7 @@ export function ButtonIcon({
       data-bangle-editor-pos={hintPos}
       data-bangle-editor-break={true}
       className={cx(
-        active && 'active',
+        active && 'bu_active',
         removeFocus && 'focus:outline-none',
         className,
       )}

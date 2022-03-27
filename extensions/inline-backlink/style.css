@@ -1,53 +1,56 @@
-.inline-backlink_backlink {
+.b-inline-backlink_backlink {
   padding: 0 0.4rem;
-  border-radius: var(--window-pill-borderRadius);
-  background-color: var(--backlink-backlink-bgColor);
+  border-radius: var(--window-pill-border-radius);
+  background-color: var(--backlink-backlink-bg-color);
   margin: 0 0.2rem;
   text-align: start;
 }
 
-.inline-backlink_backlink:hover {
+.b-inline-backlink_backlink:hover {
   text-decoration: underline;
-  background-color: var(--backlink-backlink-hover-bgColor);
+  background-color: var(--backlink-backlink-hover-bg-color);
 }
 
-.inline-backlink_backlinkNotFound {
-  background-color: var(--backlink-backlinkNotFound-bgColor);
+.b-inline-backlink_backlinkNotFound {
+  background-color: var(--backlink-backlink-not-found-bg-color);
 }
 
-.inline-backlink_backlinkNotFound:hover {
-  background-color: var(--backlink-backlinkNotFound-hover-bgColor);
+.b-inline-backlink_backlinkNotFound:hover {
+  background-color: var(--backlink-backlink-not-found-hover-bg-color);
 }
 
-.inline-backlink_backlink > svg {
+.b-inline-backlink_backlink > svg {
   color: var(--window-link-color);
-  fill: var(--backlink-backlink-bgColor);
+  fill: var(--backlink-backlink-bg-color);
   height: 1.2em;
   width: 1.2em;
+
   /* adding a bit of padding to just align this thing well */
   padding-bottom: 0.15em;
   vertical-align: middle;
   position: relative;
 }
 
-.inline-backlink_popup-editor {
-  background-color: var(--window-popupEditor-bgColor);
-  color: var(--window-popupEditor-color);
+.b-inline-backlink_popup-editor {
+  background-color: var(--window-popup-editor-bg-color);
+  color: var(--window-popup-editor-color);
+
   /* setting width and height are important otherwise
     tippy confuses and causes issue with scroll
   */
   width: 400px;
   height: 400px;
-  z-index: var(--window-popupEditor-zIndex);
-  border: 1px solid var(--window-borderColor-0);
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 28px;
+  z-index: var(--window-popup-editor-z-index);
+  border: 1px solid var(--window-border-color-0);
+  box-shadow: rgb(0 0 0 / 30%) 0 4px 28px;
 }
 
-.inline-backlink_widget-container .highlight-text:nth-of-type(2n) {
-  background-color: var(--window-highlight-bgColor);
+.b-inline-backlink_widget-container
+  .b-inline-backlink_highlight-text:nth-of-type(2n) {
+  background-color: var(--window-highlight-bg-color);
 }
 
-.inline-backlink_widget-container .inline-backlink_widget-occurrence-count {
-  background-color: var(--window-bgColor-2);
+.b-inline-backlink_widget-container .b-inline-backlink_widget-occurrence-count {
+  background-color: var(--window-bg-color-2);
   padding: 0.125rem;
 }

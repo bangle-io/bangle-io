@@ -196,7 +196,7 @@ function InternalDropdownMenu({
       {...menuProps}
       ref={ref}
       className={cx(
-        'flex flex-col ui-bangle-button_dropdown-menu p-1 py-2 rounded-md',
+        'flex flex-col b-ui-bangle-button_dropdown-menu p-1 py-2 rounded-md',
         className,
       )}
       style={style}
@@ -244,7 +244,7 @@ function MenuItemSection({
           {...separatorProps}
           className="mx-1 my-2"
           style={{
-            borderTop: '1px solid var(--window-borderColor-0)',
+            borderTop: '1px solid var(--window-border-color-0)',
           }}
         />
       )}
@@ -307,8 +307,8 @@ function MenuItemWrapper({
       {...mergeProps(menuItemProps, focusProps)}
       ref={ref}
       className={cx(
-        'ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1',
-        isFocused && 'is-focused',
+        'b-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1',
+        isFocused && 'bu_is-focused',
       )}
     >
       <span className="inline-flex justify-between w-full">

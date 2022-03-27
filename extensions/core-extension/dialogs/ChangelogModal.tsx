@@ -109,7 +109,7 @@ function ChangelogDisplay() {
     <BangleEditor
       state={editorState}
       focusOnInit={false}
-      className="px-5 changelog-modal_container"
+      className="px-5 b-ui-components_changelog-modal-container"
       renderNodeViews={() => {
         return null;
       }}

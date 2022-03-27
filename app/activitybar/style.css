@@ -1,15 +1,15 @@
-.activitybar_button.widescreen {
-  border-left: 2px solid var(--activitybar-bgColor);
+.b-activitybar_button {
+  border-left: 2px solid var(--activitybar-bg-color);
 }
 
-.activitybar_button.widescreen.is-active {
+.b-activitybar_button.bu_widescreen.bu_is-active {
   border-left: 2px solid var(--accent-primary-0);
 }
 
-.activitybar.widescreen {
-  border-right: 1px solid var(--window-borderColor-0);
+.b-activitybar_activitybar.bu_widescreen {
+  border-right: 1px solid var(--window-border-color-0);
 }
 
-.activitybar {
-  background-color: var(--activitybar-bgColor);
+.b-activitybar_activitybar {
+  background-color: var(--activitybar-bg-color);
 }

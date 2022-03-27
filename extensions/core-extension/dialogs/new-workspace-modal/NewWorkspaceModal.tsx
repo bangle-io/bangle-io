@@ -216,7 +216,7 @@ export function NewWorkspaceModal() {
         <div className="flex flex-col mb-5">
           <div className="mb-2">
             <h2 className="text-lg font-medium">Storage type</h2>
-            <span className="text-sm" style={{ color: 'var(--textColor-1)' }}>
+            <span className="text-sm" style={{ color: 'var(--text-color-1)' }}>
               Bangle.io strongly recommends you choose <b>File system</b>{' '}
               storage because it is safer and portable. Read more at{' '}
               <a href="https://bangle.io/" className="underline">

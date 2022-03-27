@@ -1,13 +1,10 @@
-.note-sidebar_widget-titlebar {
-}
-
-.note-sidebar_widget-content {
-  background-color: var(--window-bgColor-1);
+.b-note-sidebar_widget-content {
+  background-color: var(--window-bg-color-1);
   max-height: 400px;
   min-height: 30px;
-  border: 1px solid var(--window-borderColor-1);
+  border: 1px solid var(--window-border-color-1);
 }
 
-.note-sidebar {
-  color: var(--textColor-1);
+.b-note-sidebar_note-sidebar {
+  color: var(--text-color-1);
 }

@@ -181,8 +181,8 @@ export function BacklinkNode({
         ref={setTriggerElement}
         {...hoverProps}
         className={cx(
-          'inline-backlink_backlink',
-          !backlinksWsPath && `inline-backlink_backlinkNotFound`,
+          'b-inline-backlink_backlink',
+          !backlinksWsPath && 'b-inline-backlink_backlinkNotFound',
         )}
         // prevent the button from being dragged, which messes up our system
         // we want the node view to be dragged so the dom serializers can kick in
@@ -205,7 +205,7 @@ export function BacklinkNode({
           }}
           popupContainerProps={{
             style: tooltipProps.style,
-            className: 'inline-backlink_popup-editor',
+            className: 'b-inline-backlink_popup-editor',
             positionProps: {
               ...tooltipHoverProps,
               ...tooltipProps.attributes,

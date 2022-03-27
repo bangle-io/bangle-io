@@ -1,22 +1,24 @@
-.bangle-io-emoji-suggest-container {
-  background-color: var(--window-bgColor-1);
+.b-inline-emoji_suggest-container {
+  background-color: var(--window-bg-color-1);
 }
 
+.b-inline-emoji_palette-info {
+  background-color: var(--window-bg-color-1);
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest {
-  color: var(--textColor-0);
-  background-color: var(--window-bgColor-1);
-  /* width: 500px; */
+  color: var(--text-color-0);
+  background-color: var(--window-bg-color-1);
   border: 0;
 }
 
-.bangle-io-palette-info {
-  background-color: var(--window-bgColor-1);
-}
-
+/* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest-container .bangle-emoji-square.bangle-is-selected {
   background-color: var(--accent-primary-1);
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest-container .bangle-emoji-square:hover {
   background-color: var(--accent-secondary);
 }

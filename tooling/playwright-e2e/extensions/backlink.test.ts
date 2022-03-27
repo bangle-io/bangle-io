@@ -49,7 +49,7 @@ test.describe.parallel('backlink workflow', () => {
 
     await page.keyboard.press('Enter', { delay: 30 });
 
-    await page.waitForSelector('.inline-backlink_backlink', {
+    await page.waitForSelector('.b-inline-backlink_backlink', {
       timeout: 4 * SELECTOR_TIMEOUT,
     });
 
@@ -60,7 +60,7 @@ test.describe.parallel('backlink workflow', () => {
     await setup(page);
     // make sure the backlink created is for note-0
 
-    await expect(page.locator('.inline-backlink_backlink')).toHaveText(
+    await expect(page.locator('.b-inline-backlink_backlink')).toHaveText(
       'note-0',
       { useInnerText: true },
     );
@@ -72,18 +72,18 @@ test.describe.parallel('backlink workflow', () => {
     // make sure we are on note-1's page
     expect(await page.url()).toContain('note-1');
     // // Hover to see if it is correctly shown
-    await page.hover('.inline-backlink_backlink');
+    await page.hover('.b-inline-backlink_backlink');
 
-    await page.locator('.editor_editor-display-popup').waitFor();
+    await page.locator('.b-core-editor_display-popup').waitFor();
 
-    await expect(page.locator('.editor_editor-display-popup')).toHaveText(
+    await expect(page.locator('.b-core-editor_display-popup')).toHaveText(
       /this is the zeroth note note-1/,
       { useInnerText: true },
     );
 
     // // This block exists because I was unable to click using regular way
     const popupPara = await page.$(
-      '.editor_editor-display-popup .bangle-editor p',
+      '.b-core-editor_display-popup .bangle-editor p',
     );
     const coOrdinates = await popupPara?.boundingBox();
 
@@ -121,7 +121,7 @@ test.describe.parallel('backlink workflow', () => {
     await Promise.all([
       page.waitForNavigation(),
       page.click(
-        `.inline-backlink_widget-container [data-id="${wsName}:note-0.md"]`,
+        `.b-inline-backlink_widget-container [data-id="${wsName}:note-0.md"]`,
       ),
     ]);
 

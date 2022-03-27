@@ -50,7 +50,9 @@ test('renders correctly', () => {
     </div>,
   );
 
-  expect(result.getByLabelText('note path').className).not.toContain('active');
+  expect(result.getByLabelText('note path').className).not.toContain(
+    'bu_active',
+  );
 
   expect(result.container).toMatchSnapshot();
 });
@@ -69,7 +71,7 @@ test('renders correctly when active', () => {
     </div>,
   );
 
-  expect(result.getByLabelText('note path').className).toContain('active');
+  expect(result.getByLabelText('note path').className).toContain('bu_active');
 
   expect(result.container).toMatchSnapshot();
 });
@@ -126,7 +128,7 @@ test('renders splitscreen', () => {
 
   const splitButton = () => result.getByLabelText('Split screen');
 
-  expect([...splitButton().classList.values()]).toContain('is-active');
+  expect([...splitButton().classList.values()]).toContain('bu_is-active');
 
   result.rerender(
     <div>
@@ -141,5 +143,5 @@ test('renders splitscreen', () => {
     </div>,
   );
 
-  expect([...splitButton().classList.values()]).not.toContain('is-active');
+  expect([...splitButton().classList.values()]).not.toContain('bu_is-active');
 });

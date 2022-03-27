@@ -16,7 +16,7 @@ export function ItemContainer({
     <div
       className={cx(
         'b-item-container',
-        hoverBgColorChange && 'hover',
+        hoverBgColorChange && 'bu_hover',
         className,
       )}
       {...props}

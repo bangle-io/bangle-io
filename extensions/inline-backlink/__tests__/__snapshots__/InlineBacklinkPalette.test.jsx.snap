@@ -3,10 +3,10 @@
 exports[`Hides when isVisible is false 1`] = `
 <div>
   <div
-    class="shadow-2xl inline-palette-wrapper"
+    class="shadow-2xl b-ui-components_inline-palette-wrapper"
   >
     <div
-      class="inline-palette-items-wrapper"
+      class="b-ui-components_inline-palette-items-wrapper"
     >
       <div
         class="flex flex-row justify-center my-1 space"
@@ -50,13 +50,13 @@ exports[`Hides when isVisible is false 1`] = `
 exports[`Initial render 1`] = `
 <div>
   <div
-    class="shadow-2xl inline-palette-wrapper"
+    class="shadow-2xl b-ui-components_inline-palette-wrapper"
   >
     <div
-      class="inline-palette-items-wrapper"
+      class="b-ui-components_inline-palette-items-wrapper"
     >
       <div
-        class="flex flex-row items-center inline-palette-row cursor-pointer palette-row hover-allowed"
+        class="flex flex-row items-center b-ui-components_inline-palette-row cursor-pointer palette-row bu_hover-allowed"
         data-id="searchNote"
         style="padding-left: 16px; padding-right: 16px;"
       >
@@ -77,7 +77,7 @@ exports[`Initial render 1`] = `
         />
       </div>
       <div
-        class="flex flex-row items-center inline-palette-row cursor-pointer palette-row hover-allowed"
+        class="flex flex-row items-center b-ui-components_inline-palette-row cursor-pointer palette-row bu_hover-allowed"
         data-id="test-ws:my-file.md"
         style="padding-left: 16px; padding-right: 16px;"
       >

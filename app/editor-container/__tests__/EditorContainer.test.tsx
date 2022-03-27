@@ -105,7 +105,7 @@ test('basic renders', async () => {
     {
       editorId: 1,
       wsPath: 'something:blah.md',
-      className: `editor-container_editor editor-container_editor-1`,
+      className: `b-editor-container_editor b-editor-container_editor-1`,
       extensionRegistry: undefined,
       getDocument: expect.any(Function),
       onEditorReady: expect.any(Function),
@@ -177,7 +177,7 @@ test('changing of wsPath works', async () => {
     {
       editorId: 1,
       wsPath: 'something:one.md',
-      className: `editor-container_editor editor-container_editor-1`,
+      className: `b-editor-container_editor b-editor-container_editor-1`,
       extensionRegistry: undefined,
       getDocument: expect.any(Function),
       onEditorReady: expect.any(Function),
@@ -208,7 +208,7 @@ test('changing of wsPath works', async () => {
     {
       editorId: 1,
       wsPath: 'something:two.md',
-      className: `editor-container_editor editor-container_editor-1`,
+      className: `b-editor-container_editor b-editor-container_editor-1`,
       extensionRegistry: undefined,
       getDocument: expect.any(Function),
       onEditorReady: expect.any(Function),

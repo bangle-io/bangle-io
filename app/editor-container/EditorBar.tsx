@@ -45,12 +45,12 @@ export function EditorBar({
   }, [bangleStore]);
 
   return (
-    <div className="flex flex-row justify-between w-full editor-container_editor-bar">
+    <div className="flex flex-row justify-between w-full b-editor-container_editor-bar ">
       <div
         aria-label="note path"
         className={cx(
-          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline',
-          isActive && 'active',
+          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded b-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline',
+          isActive && 'bu_active',
         )}
         onClick={openNotesPalette}
       >

@@ -3,11 +3,11 @@
 exports[`Component renders correctly 1`] = `
 <div>
   <div
-    class="universal-palette-items-container"
+    class=""
     style="overflow-y: scroll;"
   >
     <div
-      class="universal-palette-item allow-hover"
+      class="b-ui-components_universal-palette-item bu_allow-hover"
       data-id="test-ws1-(nativefs)"
       style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
     >
@@ -15,7 +15,7 @@ exports[`Component renders correctly 1`] = `
         class="flex flex-row"
       >
         <div
-          class="b-left-node"
+          class="b-ui-components_left-node"
         />
         <span>
           <span
@@ -24,7 +24,7 @@ exports[`Component renders correctly 1`] = `
             test-ws1
           </span>
           <span
-            class="b-extra-info text-base font-light"
+            class="b-ui-components_extra-info text-base font-light"
           >
             nativefs
           </span>
@@ -34,10 +34,10 @@ exports[`Component renders correctly 1`] = `
         class="flex flex-row"
       >
         <span
-          class="b-right-node"
+          class="b-ui-components_right-node"
         />
         <span
-          class="b-right-hover-node"
+          class="b-ui-components_right-hover-node"
         >
           <svg
             class="fill-current  "

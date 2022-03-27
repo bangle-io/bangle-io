@@ -26,8 +26,8 @@ export function PaletteContainer({
       data-palette-type={paletteType}
       ref={containerRef}
       className={
-        'universal-palette-container ' +
-        cx(widescreen && ' widescreen', className)
+        'b-ui-components_universal-palette-container ' +
+        cx(widescreen && ' bu_widescreen', className)
       }
     >
       {children}

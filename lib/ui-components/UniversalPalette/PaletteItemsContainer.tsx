@@ -7,7 +7,7 @@ export function PaletteItemsContainer({
 }) {
   return (
     <div
-      className="universal-palette-items-container"
+      className=""
       style={{
         overflowY: 'scroll',
       }}

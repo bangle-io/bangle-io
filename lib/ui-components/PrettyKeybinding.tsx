@@ -7,13 +7,13 @@ export function PrettyKeybinding({ rawKey }: { rawKey: string }) {
 
   return (
     <span
-      className="inline ui-components_pretty-keybinding"
-      style={{ color: 'var(--textColor-1)' }}
+      className="inline b-ui-components_pretty-keybinding"
+      style={{ color: 'var(--text-color-1)' }}
     >
       {format.map((r, i) => (
         <kbd
           key={i}
-          className="px-1 font-sans capitalize rounded-sm ui-components_pretty-keybinding-kbd"
+          className="px-1 font-sans capitalize rounded-sm b-ui-components_pretty-keybinding-kbd"
         >
           {r}
         </kbd>

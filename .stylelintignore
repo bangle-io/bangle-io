@@ -1,0 +1,9 @@
+# Stylelint runs on everything by default
+LICENSE
+*.*
+!*.css
+build/
+node_modules/
+coverage/
+.yarn/
+tooling/

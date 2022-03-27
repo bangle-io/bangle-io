@@ -27,33 +27,41 @@ export function Dhancha({
   useStickyNavigation(widescreen, activitybarRef);
 
   return (
-    <div className={'ui-dhancha_container' + (widescreen ? ' widescreen' : '')}>
+    <div
+      className={
+        'b-ui-dhancha_container' + (widescreen ? ' bu_widescreen' : '')
+      }
+    >
       <div
         role="navigation"
         aria-label="Activity Bar"
         ref={activitybarRef}
-        className={'ui-dhancha_activitybar' + (widescreen ? ' widescreen' : '')}
+        className={
+          'b-ui-dhancha_activitybar' + (widescreen ? ' bu_widescreen' : '')
+        }
       >
         {activitybar}
       </div>
       {widescreen && workspaceSidebar && (
-        <header className="ui-dhancha_ws-sidebar">{workspaceSidebar}</header>
+        <header className="b-ui-dhancha_ws-sidebar">{workspaceSidebar}</header>
       )}
 
       <main
         className={
-          'ui-dhancha_main-content' + (widescreen ? ' widescreen' : '')
+          'b-ui-dhancha_main-content' + (widescreen ? ' bu_widescreen' : '')
         }
       >
         {mainContent}
       </main>
       {widescreen && noteSidebar && (
-        <aside className="ui-dhancha_note-sidebar">{noteSidebar}</aside>
+        <aside className="b-ui-dhancha_note-sidebar">{noteSidebar}</aside>
       )}
     </div>
   );
 }
 
 export function MultiColumnMainContent({ children }: { children: ReactNode }) {
-  return <div className="ui-dhancha_multi-column-main-content">{children}</div>;
+  return (
+    <div className="b-ui-dhancha_multi-column-main-content">{children}</div>
+  );
 }

@@ -79,7 +79,9 @@ export function PaletteManager() {
 
       if (type) {
         document
-          .querySelector<HTMLInputElement>('.universal-palette-container input')
+          .querySelector<HTMLInputElement>(
+            '.b-ui-components_universal-palette-container input',
+          )
           ?.focus();
       }
     },
@@ -148,7 +150,9 @@ export function PaletteManager() {
       onClickOutside={dismissPalette}
       onClickInside={() => {
         document
-          .querySelector<HTMLInputElement>('.universal-palette-container input')
+          .querySelector<HTMLInputElement>(
+            '.b-ui-components_universal-palette-container input',
+          )
           ?.focus();
       }}
     >

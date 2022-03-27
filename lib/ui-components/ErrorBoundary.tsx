@@ -21,7 +21,7 @@ export class ErrorBoundary extends React.Component {
       // You can render any custom fallback UI
       return (
         <div style={{}} className="w-full p-4 ">
-          <div className="w-full p-4 rounded-md bangle-error-boundary">
+          <div className="w-full p-4 rounded-md b-ui-components_bangle-error-boundary">
             <div className="w-full text-5xl text-center">🤕</div>
 
             <h1 className="w-full my-4 text-center">Something went wrong!</h1>

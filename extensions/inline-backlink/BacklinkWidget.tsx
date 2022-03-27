@@ -53,7 +53,7 @@ export function BacklinkWidget() {
   );
 
   return (
-    <div className="inline-backlink_widget-container flex flex-col">
+    <div className="b-inline-backlink_widget-container flex flex-col">
       {!backlinkSearchResult || backlinkSearchResult.length === 0 ? (
         <span>
           🐒 No backlinks found!
@@ -104,12 +104,12 @@ export function BacklinkWidget() {
                     </ButtonIcon>
                   ),
                   rightNode: (
-                    <ButtonIcon className="text-xs font-semibold rounded inline-backlink_widget-occurrence-count">
+                    <ButtonIcon className="text-xs font-semibold rounded b-inline-backlink_widget-occurrence-count">
                       {r.matches.length}
                     </ButtonIcon>
                   ),
                   rightHoverNode: (
-                    <ButtonIcon className="text-xs font-semibold rounded inline-backlink_widget-occurrence-count">
+                    <ButtonIcon className="text-xs font-semibold rounded b-inline-backlink_widget-occurrence-count">
                       {r.matches.length}
                     </ButtonIcon>
                   ),
@@ -120,7 +120,7 @@ export function BacklinkWidget() {
                   <Sidebar.Row2
                     key={j}
                     className={
-                      'search-result-text-match ml-1 pl-3 rounded ' +
+                      'b-search-notes_search-result-text-match ml-1 pl-3 rounded ' +
                       (j === 0 ? 'mt-0' : 'mt-1')
                     }
                     onClick={makeOnClick(r.wsPath)}
@@ -238,9 +238,9 @@ function HighlightText({
   highlightText: HighlightTextType;
 }) {
   return (
-    <div className="highlight-text-container">
+    <div className="b-search-notes_highlight-text-container">
       {highlightText.map((t, i) => (
-        <span key={i} className="highlight-text text-sm">
+        <span key={i} className="b-search-notes_highlight-text text-sm">
           {t}
         </span>
       ))}

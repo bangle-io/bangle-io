@@ -32,14 +32,17 @@
     "g:vite-build": "vite build",
     "g:vite-serve": "vite preview",
     "hot-start": "BANGLE_HOT=yes yarn start",
-    "lint": "yarn concurrently -m 2 \"yarn g:package-patrol\" \"yarn prettier --check .\" \"yarn eslint .\" \"yarn tsc-check\"",
+    "lint": "yarn concurrently -m 2 \"yarn g:package-patrol\" \"yarn prettier --check .\" \"yarn lint:js\" \"yarn tsc-check\" \"yarn lint:css\"",
+    "lint:js": "yarn eslint .",
+    "lint:css": "yarn stylelint .",
+    "postinstall": "husky install",
     "remove-portals": "yarn node ./tooling/_scripts/remove-portals && yarn install",
     "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
     "test-ci": "yarn jest --ci --coverage",
-    "test": "yarn jest",
-    "test:regular": "yarn jest --selectProjects regular",
     "test:network": "yarn jest --selectProjects network",
+    "test:regular": "yarn jest --selectProjects regular",
+    "test": "yarn jest",
     "tsc-check": "yarn tsc -b",
     "tsc-watch": "yarn tsc -b -w",
     "update-css-vars": "yarn node tooling/_scripts/generate-apply-theme.js",
@@ -117,8 +120,10 @@
     "git-revision-webpack-plugin": "^3.0.6",
     "html-webpack-plugin": "^5.5.0",
     "http-server": "^0.12.3",
+    "husky": ">=7",
     "jest": "^27.5.1",
     "jest-circus": "^27.5.1",
+    "lint-staged": ">=12",
     "mini-css-extract-plugin": "^1.6.2",
     "minimist": "^1.2.5",
     "pnp-webpack-plugin": "^1.7.0",
@@ -132,6 +137,9 @@
     "serve": "^12.0.1",
     "servor": "github:kepta/servor#master",
     "style-loader": "^2.0.0",
+    "stylelint": "^14.6.0",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-standard": "^25.0.0",
     "surge": "^0.23.0",
     "tailwindcss": "^2.2.19",
     "vite": "^2.8.6",
@@ -152,5 +160,18 @@
     "printWidth": 80
   },
   "packageManager": "yarn@3.1.1",
-  "license": "AGPL-3.0-or-later"
+  "license": "AGPL-3.0-or-later",
+  "lint-staged": {
+    "*.md": "yarn prettier --write",
+    "{app,extensions,js-lib,lib,tooling,worker}/**/*.{js,ts,jsx,tsx}": [
+      "yarn prettier --write",
+      "yarn eslint --fix"
+    ],
+    "*.css": [
+      "yarn g:stylelint-regex",
+      "yarn stylelint --fix",
+      "yarn prettier --write"
+    ],
+    "*.json": "yarn prettier --write"
+  }
 }

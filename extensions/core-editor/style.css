@@ -1,95 +1,44 @@
-.bangle-heading-collapsed {
-  background-color: var(--window-bgColor-2);
+.b-core-editor_bangle-heading-collapsed {
+  background-color: var(--window-bg-color-2);
   border-radius: 8px;
 }
 
-.bangle-editor li[data-bangle-is-todo] > span:first-child > input {
-  margin-top: 0.45rem;
-}
-
-.bangle-editor .selected-node {
-  animation-duration: 0.75s;
-  animation-name: editorSelectedNode;
-  animation-timing-function: ease-out;
-}
-
-@keyframes editorSelectedNode {
-  from {
-    border-radius: 4px;
-    background-color: var(--editorCore-selectionChange-bgColor);
-  }
-
-  to {
-  }
-}
-
-.bangle-editor a {
-  color: var(--window-link-color);
-  text-decoration: underline;
-}
-
-.bangle-editor li {
-  margin-bottom: 0.25rem;
-}
-
-.bangle-editor p > code {
-  background-color: var(--base-300);
-  color: var(--textColor-1);
-}
-.bangle-editor pre {
-  background-color: var(--base-300);
-}
-
-.bangle-editor blockquote {
-  background-color: var(--base-300);
-  color: var(--textColor-1);
-}
-
-.bangle-editor li[data-bangle-is-todo] > span:first-child > input {
-  margin-top: 0.45rem;
-}
-
-.bangle-editor .ProseMirror-selectednode {
-  outline: 2px solid var(--window-link-color);
-  border-radius: var(--window-pill-borderRadius);
-}
-
-.bangle-tooltip {
-  z-index: var(--window-tooltip-zIndex);
+.b-core-editor_bangle-tooltip {
+  z-index: var(--window-tooltip-z-index);
 }
 
 /* collapse styles */
-.deco-collapse-positioner {
+.b-core-editor_deco-collapse-positioner {
   position: relative;
 }
 
-.deco-collapse {
+.b-core-editor_deco-collapse {
   display: flex;
   position: absolute;
   left: -1.5rem;
 }
 
-h1 .deco-collapse {
+h1 .b-core-editor_deco-collapse {
   top: calc((3rem / 2) - 10px);
 }
 
-h2 .deco-collapse {
+h2 .b-core-editor_deco-collapse {
   top: calc((1.875rem / 2) - 10px);
 }
 
-h3 .deco-collapse {
+h3 .b-core-editor_deco-collapse {
   top: calc((1.25rem / 2) - 10px);
 }
 
-h4 .deco-collapse {
+h4 .b-core-editor_deco-collapse {
   top: calc((1.125rem / 2) - 10px);
 }
 
-h5 .deco-collapse {
+h5 .b-core-editor_deco-collapse {
   top: calc((0.75rem / 2) - 10px);
 }
 
-.deco-collapse-child {
+.b-core-editor_deco-collapse-child {
   height: 1.25rem;
   width: 1.25rem;
   fill: currentcolor;
@@ -97,4 +46,59 @@ h5 .deco-collapse {
   cursor: pointer;
 }
 
-/* collapse styles end*/
+/* collapse styles end */
+
+.b-core-editor_selected-node {
+  animation-duration: 0.75s;
+  animation-name: b-core-editor_editor-selected-node;
+  animation-timing-function: ease-out;
+}
+
+@keyframes b-core-editor_editor-selected-node {
+  from {
+    border-radius: 4px;
+    background-color: var(--editor-core-selection-change-bg-color);
+  }
+
+  to {
+    background-color: unset;
+  }
+}
+/* stylelint-disable-next-line selector-class-pattern */
+.bangle-editor a {
+  color: var(--window-link-color);
+  text-decoration: underline;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.bangle-editor li {
+  margin-bottom: 0.25rem;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.bangle-editor p > code {
+  background-color: var(--base-300);
+  color: var(--text-color-1);
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.bangle-editor pre {
+  background-color: var(--base-300);
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.bangle-editor blockquote {
+  background-color: var(--base-300);
+  color: var(--text-color-1);
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.bangle-editor li[data-bangle-is-todo] > span:first-child > input {
+  margin-top: 0.45rem;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.bangle-editor .ProseMirror-selectednode {
+  outline: 2px solid var(--window-link-color);
+  border-radius: var(--window-pill-border-radius);
+}

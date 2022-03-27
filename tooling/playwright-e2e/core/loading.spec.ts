@@ -24,7 +24,7 @@ test.describe.parallel('loading', () => {
   });
 
   test('Activity bar', async ({ page }) => {
-    const handle = await page.$('.activitybar');
+    const handle = await page.$('.b-activitybar_activitybar');
     expect(handle).not.toBe(null);
   });
 
@@ -34,14 +34,16 @@ test.describe.parallel('loading', () => {
   });
 
   test('shows file palette', async ({ page }) => {
-    let handle = await page.$('.universal-palette-container');
+    let handle = await page.$('.b-ui-components_universal-palette-container');
     expect(handle).toBe(null);
 
     await page.keyboard.down(ctrlKey);
     await page.keyboard.press('p');
     await page.keyboard.up(ctrlKey);
 
-    const locator = page.locator('.universal-palette-container');
+    const locator = page.locator(
+      '.b-ui-components_universal-palette-container',
+    );
 
     expect(await locator.textContent()).toMatch('NavigateEnter');
   });
@@ -53,13 +55,16 @@ test.describe.parallel('loading', () => {
     await page.keyboard.up('Shift');
     await page.keyboard.up(ctrlKey);
 
-    let handle = await page.waitForSelector('.universal-palette-container', {
-      timeout: 2 * SELECTOR_TIMEOUT,
-    });
+    let handle = await page.waitForSelector(
+      '.b-ui-components_universal-palette-container',
+      {
+        timeout: 2 * SELECTOR_TIMEOUT,
+      },
+    );
     expect(handle).not.toBe(null);
     expect(
       (
-        await page.$$eval('.universal-palette-item', (nodes) =>
+        await page.$$eval('.b-ui-components_universal-palette-item', (nodes) =>
           nodes.map((n) => n.getAttribute('data-id')),
         )
       ).includes('operation::@bangle.io/core-extension:TOGGLE_UI_THEME'),
