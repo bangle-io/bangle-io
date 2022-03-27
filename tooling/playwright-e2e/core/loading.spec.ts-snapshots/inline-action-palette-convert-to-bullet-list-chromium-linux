@@ -4,7 +4,9 @@
     class="bangle-nv-container"
   >
     <span class="bangle-nv-content"
-      ><p class="selected-node">
+      ><p
+        class="b-core-editor_selected-node"
+      >
         I should a bullet list
       </p></span
     >

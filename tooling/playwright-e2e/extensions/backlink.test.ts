@@ -74,16 +74,16 @@ test.describe.parallel('backlink workflow', () => {
     // // Hover to see if it is correctly shown
     await page.hover('.b-inline-backlink_backlink');
 
-    await page.locator('.editor_editor-display-popup').waitFor();
+    await page.locator('.b-core-editor_display-popup').waitFor();
 
-    await expect(page.locator('.editor_editor-display-popup')).toHaveText(
+    await expect(page.locator('.b-core-editor_display-popup')).toHaveText(
       /this is the zeroth note note-1/,
       { useInnerText: true },
     );
 
     // // This block exists because I was unable to click using regular way
     const popupPara = await page.$(
-      '.editor_editor-display-popup .bangle-editor p',
+      '.b-core-editor_display-popup .bangle-editor p',
     );
     const coOrdinates = await popupPara?.boundingBox();
 

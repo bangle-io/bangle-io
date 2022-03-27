@@ -1,7 +1,7 @@
-.ui-components_centered-page-actions > * {
+.b-ui-components_centered-page-actions > * {
   margin-right: 0.5rem;
 }
 
-.ui-components_centered-page-actions > *:last-child {
+.b-ui-components_centered-page-actions > *:last-child {
   margin-right: 0;
 }

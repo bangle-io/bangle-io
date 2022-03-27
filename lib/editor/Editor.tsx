@@ -189,14 +189,14 @@ function EditorInner2({
     [extensionRegistry],
   );
 
-  let displayClass = 'editor_editor-display-page';
+  let displayClass = 'b-core-editor_display-page';
   switch (editorDisplayType) {
     case EditorDisplayType.Page: {
-      displayClass = 'editor_editor-display-page';
+      displayClass = 'b-core-editor_display-page';
       break;
     }
     case EditorDisplayType.Popup: {
-      displayClass = 'editor_editor-display-popup';
+      displayClass = 'b-core-editor_display-popup';
       break;
     }
   }
