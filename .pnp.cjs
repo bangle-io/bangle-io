@@ -307,6 +307,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:tooling/playwright-e2e"
       },
       {
+        "name": "@bangle.io/storybook",
+        "reference": "workspace:tooling/storybook"
+      },
+      {
         "name": "@bangle.io/worker-naukar",
         "reference": "workspace:worker/worker-naukar"
       }
@@ -369,6 +373,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/slice-workspace", ["workspace:lib/slice-workspace"]],
       ["@bangle.io/storage", ["workspace:lib/storage"]],
       ["@bangle.io/store-sync", ["workspace:lib/store-sync"]],
+      ["@bangle.io/storybook", ["workspace:tooling/storybook"]],
       ["@bangle.io/style", ["workspace:app/style"]],
       ["@bangle.io/test-utils", ["workspace:lib/test-utils"]],
       ["@bangle.io/ui-bangle-button", ["workspace:lib/ui-bangle-button"]],
@@ -5939,6 +5944,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/storybook", [
+        ["workspace:tooling/storybook", {
+          "packageLocation": "./tooling/storybook/",
+          "packageDependencies": [
+            ["@bangle.io/storybook", "workspace:tooling/storybook"]
           ],
           "linkType": "SOFT",
         }]

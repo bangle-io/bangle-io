@@ -3111,6 +3111,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@bangle.io/storybook@workspace:tooling/storybook":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/storybook@workspace:tooling/storybook"
+  languageName: unknown
+  linkType: soft
+
 "@bangle.io/style@workspace:*, @bangle.io/style@workspace:app/style":
   version: 0.0.0-use.local
   resolution: "@bangle.io/style@workspace:app/style"
