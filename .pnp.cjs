@@ -7749,6 +7749,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/storybook", "workspace:tooling/storybook"],
             ["@babel/core", "npm:7.17.8"],
+            ["@bangle.io/env-vars", "workspace:tooling/env-vars"],
+            ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],
             ["@mdx-js/react", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:1.6.22"],
             ["@storybook/addon-actions", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.19"],
             ["@storybook/addon-docs", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.19"],

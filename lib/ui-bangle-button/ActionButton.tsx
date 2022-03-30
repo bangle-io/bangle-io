@@ -8,6 +8,10 @@ import reactDOM from 'react-dom';
 import { BaseButton, BaseButtonProps, StylingProps } from './BaseButton';
 import { useTooltipPositioner } from './use-positioner';
 
+export function Foo({}) {
+  return <div>hello world</div>;
+}
+
 export function ActionButton({
   id,
   ariaLabel,

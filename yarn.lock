@@ -3376,6 +3376,8 @@ __metadata:
   resolution: "@bangle.io/storybook@workspace:tooling/storybook"
   dependencies:
     "@babel/core": ^7.17.8
+    "@bangle.io/env-vars": "workspace:*"
+    "@bangle.io/ui-bangle-button": "workspace:*"
     "@mdx-js/react": ^1.6.22
     "@storybook/addon-actions": ^6.4.19
     "@storybook/addon-docs": ^6.4.19
