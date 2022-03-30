@@ -35,11 +35,17 @@
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
     "@types/babel__core": "^7",
+    "@types/react": "^17",
+    "@types/react-dom": "^17",
     "babel-loader": "^8.2.4",
     "webpack": "^5.70.0"
   },
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
+  },
+  "dependencies": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   }
 }
