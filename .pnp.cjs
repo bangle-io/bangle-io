@@ -20738,6 +20738,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
+            ["concurrently", "npm:7.0.0"],
             ["cross-fetch", "npm:3.1.5"],
             ["date-fns", "npm:2.28.0"],
             ["domexception", "npm:4.0.0"],

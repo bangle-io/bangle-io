@@ -22,7 +22,7 @@ const config: PlaywrightTestConfig = {
     // },
   },
   webServer: {
-    command: 'yarn g:build-prod-serve',
+    command: 'yarn build-prod-serve',
     port: 1234,
     // port: 4000,
     timeout: 120 * 1000,

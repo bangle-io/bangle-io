@@ -24,13 +24,16 @@
   "module": "index.js",
   "scripts": {
     "g:package-patrol": "yarn node package-patrol",
-    "g:stylelint-update-regex": "yarn node generate-stylelint-regex"
+    "g:run-scripts": "yarn concurrently -m 1 \"yarn g:package-patrol\" \"yarn g:css:stylelint-update-regex\" \"yarn g:css:update-css-vars\"",
+    "g:css:stylelint-update-regex": "yarn node generate-stylelint-regex",
+    "g:css:update-css-vars": "yarn node generate-apply-theme.js"
   },
   "publishConfig": {},
   "dependencies": {
     "@bangle.io/constants": "workspace:*",
     "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
+    "concurrently": "^7.0.0",
     "cross-fetch": "^3.1.5",
     "date-fns": "^2.25.0",
     "domexception": "^4.0.0",

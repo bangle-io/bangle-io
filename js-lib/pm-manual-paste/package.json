@@ -28,11 +28,6 @@
     "module": "dist/index.js",
     "types": "dist/index.d.ts"
   },
-  "scripts": {
-    "compile-ts": "yarn g:tsc --build $INIT_CWD",
-    "watch-ts": "yarn g:tsc -p $INIT_CWD -w",
-    "prepack": "yarn compile-ts"
-  },
   "dependencies": {
     "@bangle.dev/pm": "0.28.8",
     "prosemirror-view": "^1.10.0",

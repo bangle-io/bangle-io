@@ -24,31 +24,24 @@
   "scripts": {
     "add-portals": "yarn link -A -r ../bangle-play",
     "build-serve": "yarn build && yarn run serve build",
-    "build": "yarn vite-build",
-    "g:build-dev-serve": "NODE_ENV=development yarn g:vite-build -m development && yarn g:e2e-serve",
-    "g:build-prod-serve": "NODE_ENV=production yarn g:vite-build && yarn g:e2e-serve",
-    "g:e2e-serve": "cp build/index.html build/404.html && yarn servor build index.html 1234",
-    "g:tsc": "yarn tsc",
-    "g:vite-build": "vite build",
-    "g:vite-serve": "vite preview",
+    "build": "NODE_ENV=production yarn vite build",
+    "build-dev-serve": "NODE_ENV=development yarn vite build -m development && yarn e2e-serve",
+    "build-prod-serve": "NODE_ENV=production yarn vite build && yarn e2e-serve",
+    "e2e-serve": "cp build/index.html build/404.html && yarn servor build index.html 1234",
     "hot-start": "BANGLE_HOT=yes yarn start",
-    "lint": "yarn concurrently -m 2 \"yarn g:package-patrol\" \"yarn prettier --check .\" \"yarn lint:js\" \"yarn tsc-check\" \"yarn lint:css\"",
-    "lint:js": "yarn eslint .",
     "lint:css": "yarn stylelint .",
+    "lint:js": "yarn eslint .",
+    "lint": "yarn concurrently -m 2 \"yarn prettier --check .\" \"yarn lint:js\" \"yarn tsc-check\" \"yarn lint:css\"",
     "postinstall": "husky install",
     "remove-portals": "yarn node ./tooling/_scripts/remove-portals && yarn install",
     "snapshot": "yarn build && yarn node ./tooling/_scripts/snapshot",
     "start": "BROWSERSLIST_ENV=development yarn vite --port 4000",
-    "test-ci": "yarn jest --ci --coverage",
+    "test:ci": "yarn jest --ci --coverage",
     "test:network": "yarn jest --selectProjects network",
     "test:regular": "yarn jest --selectProjects regular",
     "test": "yarn jest",
     "tsc-check": "yarn tsc -b",
-    "tsc-watch": "yarn tsc -b -w",
-    "update-css-vars": "yarn node tooling/_scripts/generate-apply-theme.js",
-    "vite-build": "NODE_ENV=production yarn g:vite-build",
-    "webpack-build": "NODE_ENV=production yarn webpack --env production",
-    "webpack-start": "BROWSERSLIST_ENV=development yarn webpack serve --env development"
+    "tsc-watch": "yarn tsc -b -w"
   },
   "browserslist": {
     "production": [
@@ -168,7 +161,8 @@
       "yarn eslint --fix"
     ],
     "*.css": [
-      "yarn g:stylelint-update-regex",
+      "yarn g:css:update-css-vars",
+      "yarn g:css:stylelint-update-regex",
       "yarn stylelint --fix",
       "yarn prettier --write"
     ],
