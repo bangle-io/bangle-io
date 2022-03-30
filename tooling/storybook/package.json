@@ -41,7 +41,7 @@
     "webpack": "^5.70.0"
   },
   "scripts": {
-    "storybook": "start-storybook -p 6006",
+    "g:storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
   "dependencies": {

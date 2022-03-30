@@ -167,5 +167,8 @@
       "yarn prettier --write"
     ],
     "*.json": "yarn prettier --write"
+  },
+  "resolutions": {
+    "@storybook/react/webpack": "5.70.0"
   }
 }
