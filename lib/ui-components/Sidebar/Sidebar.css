@@ -1,25 +1,25 @@
 /* sidebar row2 */
 .B-ui-components_sidebar-row2.BU_hover:hover {
-  background-color: var(--accent-secondary);
+  background-color: var(--BV-accent-secondary);
 }
 
 .B-ui-components_sidebar-row2.BU_active {
-  background-color: var(--accent-primary-1);
+  background-color: var(--BV-accent-primary-1);
 }
 
 /* prevent hover overwriting allowed */
 .B-ui-components_sidebar-row2.BU_hover.BU_active {
-  background-color: var(--accent-primary-1);
+  background-color: var(--BV-accent-primary-1);
 }
 
 .B-ui-components_sidebar-row2.BU_disable {
-  color: var(--text-color-1);
+  color: var(--BV-text-color-1);
   cursor: not-allowed;
-  background-color: var(--universal-palette-item-disabled-bg-color);
+  background-color: var(--BV-universal-palette-item-disabled-bg-color);
 }
 
 .B-ui-components_sidebar-row2.BU_disable.BU_hover:hover {
-  background-color: var(--universal-palette-item-disabled-bg-color);
+  background-color: var(--BV-universal-palette-item-disabled-bg-color);
 }
 
 /* node positioning */
@@ -50,9 +50,9 @@
 }
 
 .B-ui-components_sidebar-row2 .B-ui-components_extra-info {
-  color: var(--text-color-1);
+  color: var(--BV-text-color-1);
 }
 
 .B-ui-components_sidebar-row2 .B-ui-components_description {
-  color: var(--text-color-1);
+  color: var(--BV-text-color-1);
 }

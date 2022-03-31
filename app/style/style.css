@@ -1,5 +1,5 @@
 body {
-  color: var(--text-color-0);
+  color: var(--BV-text-color-0);
 }
 
 body.BU_widescreen {

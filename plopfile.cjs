@@ -2,6 +2,7 @@ function addToWorkspaces(obj, packageName) {
   const workspaces = [...new Set(obj.workspaces || [])];
   workspaces.push(packageName);
   obj.workspaces = workspaces.sort();
+
   return obj;
 }
 module.exports = function main(plop) {
@@ -30,7 +31,6 @@ module.exports = function main(plop) {
         type: 'modify',
         path: 'js-lib/package.json',
         transform: (fileContents, data) => {
-          console.log(data);
           return JSON.stringify(
             addToWorkspaces(JSON.parse(fileContents), data.name),
             null,

@@ -1,8 +1,11 @@
 /* eslint-disable no-process-env */
 const path = require('path');
 const fs = require('fs');
+const { extractCSSVars } = require('@bangle.io/extract-css-vars');
 
 const releaseVersion = require('../../package.json').version;
+
+const pathToCSSVars = path.resolve(__dirname, '..', 'public', 'variables.css');
 
 const helpDocsVersion = JSON.parse(
   require('child_process')
@@ -80,13 +83,25 @@ function getFavicon(appEnv) {
     <link rel="mask-icon" href="/favicon-dev.svg" color="#FFF0F4" />`;
 }
 
-module.exports = ({ isProduction, isVite = false }) => {
+async function getCssVars() {
+  let result = [];
+  const data = await extractCSSVars(fs.readFileSync(pathToCSSVars, 'utf8'));
+
+  data.forEach(([varName, value]) => {
+    result.push(`--${varName}: ${value};`);
+  });
+
+  return [`<style>:root {`, ...result, `}</style>`].join('\n');
+}
+
+module.exports = async ({ isProduction, isVite = false }) => {
   const appEnv = getAppEnv(isProduction);
 
   return {
     helpDocsVersion,
     appEnv,
     htmlInjections: {
+      cssVars: await getCssVars(),
       favicon: getFavicon(appEnv),
       sentry: isProduction
         ? `<script

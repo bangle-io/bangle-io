@@ -151,7 +151,7 @@ export function InputPalette({
             isActive={false}
             onClick={() => {}}
             style={{
-              backgroundColor: 'var(--error-bg-color)',
+              backgroundColor: 'var(--BV-error-bg-color)',
             }}
           />
         )}

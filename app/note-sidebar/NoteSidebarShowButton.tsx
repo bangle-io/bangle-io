@@ -25,7 +25,7 @@ export function NoteSidebarShowButton({
       ariaLabel="show note sidebar"
       className="fixed right-0 top-10 z-30 border-r-0"
       style={{
-        border: '1px solid var(--window-border-color-0)',
+        border: '1px solid var(--BV-window-border-color-0)',
         borderRight: 0,
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,

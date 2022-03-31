@@ -145,7 +145,7 @@ async function getAllPackages() {
 
 /**
  *
- * @returns {Promise<Package[]>}
+ * @returns {Promise<FileWrapper[]>}
  */
 async function getAllTextFiles() {
   const packages = await getAllPackages();

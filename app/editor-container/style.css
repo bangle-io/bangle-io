@@ -7,16 +7,16 @@
 }
 
 .B-editor-container_editor-bar {
-  color: var(--ui-bangle-button-color);
+  color: var(--BV-ui-bangle-button-color);
 }
 
 .B-editor-container_ws-path {
-  color: var(--ui-bangle-button-color);
+  color: var(--BV-ui-bangle-button-color);
   justify-content: center;
   display: flex;
   align-items: center;
 }
 
 .B-editor-container_ws-path.BU_active {
-  background-color: var(--base-300);
+  background-color: var(--BV-base-300);
 }

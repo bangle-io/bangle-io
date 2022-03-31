@@ -7,9 +7,12 @@ import getEnvVars from '@bangle.io/env-vars';
 
 const argv = require('minimist')(process.argv.slice(2));
 
-const config = ({ command, mode }) => {
+const config = async ({ command, mode }) => {
   const isProduction = mode === 'production';
-  const envVars = getEnvVars({ isProduction: isProduction, isVite: true });
+  const envVars = await getEnvVars({
+    isProduction: isProduction,
+    isVite: true,
+  });
 
   const hot = JSON.parse(envVars.appEnvs['process.env.BANGLE_HOT']);
   const port = argv.port;

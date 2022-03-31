@@ -48,16 +48,18 @@ const Severity: Record<
   () => React.ReactNode
 > = {
   error: () => (
-    <ExclamationCircleIcon style={{ color: 'var(--severity-error-color)' }} />
+    <ExclamationCircleIcon
+      style={{ color: 'var(--BV-severity-error-color)' }}
+    />
   ),
   warning: () => (
-    <ExclamationIcon style={{ color: 'var(--severity-warning-color)' }} />
+    <ExclamationIcon style={{ color: 'var(--BV-severity-warning-color)' }} />
   ),
   info: () => (
-    <InformationCircleIcon style={{ color: 'var(--severity-info-color)' }} />
+    <InformationCircleIcon style={{ color: 'var(--BV-severity-info-color)' }} />
   ),
   success: () => (
-    <CheckCircleIcon style={{ color: 'var(--severity-success-color)' }} />
+    <CheckCircleIcon style={{ color: 'var(--BV-severity-success-color)' }} />
   ),
 };
 
@@ -80,7 +82,7 @@ export function Notification({
     <div
       className="app-entry_notification w-96 relative p-2 mx-4 my-4 transition duration-100 ease-in-out shadow"
       style={{
-        backgroundColor: 'var(--window-bg-color-1)',
+        backgroundColor: 'var(--BV-window-bg-color-1)',
         boxShadow: '0px 0px 4px 2px rgba(0, 0, 0, 0.15)',
       }}
     >

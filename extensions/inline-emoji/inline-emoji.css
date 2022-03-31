@@ -1,24 +1,24 @@
 .B-inline-emoji_suggest-container {
-  background-color: var(--window-bg-color-1);
+  background-color: var(--BV-window-bg-color-1);
 }
 
 .B-inline-emoji_palette-info {
-  background-color: var(--window-bg-color-1);
+  background-color: var(--BV-window-bg-color-1);
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest {
-  color: var(--text-color-0);
-  background-color: var(--window-bg-color-1);
+  color: var(--BV-text-color-0);
+  background-color: var(--BV-window-bg-color-1);
   border: 0;
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest-container .bangle-emoji-square.bangle-is-selected {
-  background-color: var(--accent-primary-1);
+  background-color: var(--BV-accent-primary-1);
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
 .bangle-emoji-suggest-container .bangle-emoji-square:hover {
-  background-color: var(--accent-secondary);
+  background-color: var(--BV-accent-secondary);
 }

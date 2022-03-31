@@ -38,12 +38,14 @@ jobs:
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: |
           yarn dedupe --check
+      - name: 'Run scripts'
+        run: yarn g:run-scripts
 
   tests-matrix:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        test-kind: ['lint', 'test-ci', 'build']
+        test-kind: ['lint', 'test:ci', 'build']
     steps:
       - uses: actions/checkout@v2
       - name: Run test "${{ matrix.test-kind }}"
@@ -61,7 +63,7 @@ jobs:
           exclude: '{**/*.map,**/node_modules/**}'
           strip-hash: "\\b\\w{8}\\."
       - name: Upload coverage report
-        if: matrix.test-kind == 'test-ci'
+        if: matrix.test-kind == 'test:ci'
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos

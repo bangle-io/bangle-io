@@ -270,7 +270,7 @@ export function useGetEditorState({
     },
     editorProps: {},
     dropCursorOpts: {
-      color: 'var(--accent-primary-0)',
+      color: 'var(--BV-accent-primary-0)',
       width: 2,
     },
   });

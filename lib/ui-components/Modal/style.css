@@ -1,14 +1,14 @@
 .B-ui-components_modal-container {
-  background-color: var(--window-bg-color-1);
+  background-color: var(--BV-window-bg-color-1);
   overscroll-behavior-y: contain;
 }
 
 .B-ui-components_modal-header {
-  border-bottom: 2px solid var(--window-border-color-0);
+  border-bottom: 2px solid var(--BV-window-border-color-0);
 }
 
 .B-ui-components_modal-overlay {
-  background-color: var(--window-modal-overlay-bg-color);
+  background-color: var(--BV-window-modal-overlay-bg-color);
   backdrop-filter: blur(2px);
 }
 

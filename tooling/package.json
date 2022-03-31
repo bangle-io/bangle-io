@@ -3,7 +3,8 @@
   "workspaces": [
     "env-vars",
     "_scripts",
-    "playwright-e2e"
+    "playwright-e2e",
+    "extract-css-vars"
   ],
   "repository": {
     "directory": "tooling",

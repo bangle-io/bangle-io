@@ -60,7 +60,7 @@ export function StorageTypeDropdown({
       }}
       style={{
         // because this is a modal need more contrast
-        backgroundColor: 'var(--window-dropdown-bg-color-1)',
+        backgroundColor: 'var(--BV-window-dropdown-bg-color-1)',
       }}
     >
       <MenuSection aria-label="misc-test">

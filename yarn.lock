@@ -2351,6 +2351,7 @@ __metadata:
   resolution: "@bangle.io/env-vars@workspace:tooling/env-vars"
   dependencies:
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/extract-css-vars": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.3.1
     typescript: ^4.5.5
@@ -2394,6 +2395,19 @@ __metadata:
     "@types/react-dom": ^17.0.13
     react: ^17.0.2
     react-dom: ^17.0.2
+    tslib: ^2.3.1
+    typescript: ^4.5.5
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/extract-css-vars@workspace:*, @bangle.io/extract-css-vars@workspace:tooling/extract-css-vars":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/extract-css-vars@workspace:tooling/extract-css-vars"
+  dependencies:
+    postcss: ^8.4.12
+    postcss-custom-properties: ^12.1.5
+    postcss-discard-comments: ^5.1.1
+    prettier: ^2.6.0
     tslib: ^2.3.1
     typescript: ^4.5.5
   languageName: unknown
@@ -3084,7 +3098,7 @@ __metadata:
     "@bangle.io/constants": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     autoprefixer: ^10.3.7
-    postcss: ^8.4.7
+    postcss: ^8.4.12
     tailwindcss: ^2.2.19
     tslib: ^2.3.1
     typescript: ^4.5.5
@@ -3194,8 +3208,8 @@ __metadata:
     "@types/react-dom": ^17.0.13
     autoprefixer: ^10.3.7
     framer-motion: ^5.0.1
-    postcss: ^8.4.7
-    postcss-import: ^14.0.2
+    postcss: ^8.4.12
+    postcss-import: ^14.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
     tailwindcss: ^2.2.19
@@ -6346,9 +6360,9 @@ __metadata:
     mini-css-extract-plugin: ^1.6.2
     minimist: ^1.2.5
     pnp-webpack-plugin: ^1.7.0
-    postcss: ^8.4.7
-    postcss-custom-properties: ^11.0.0
-    postcss-import: ^14.0.2
+    postcss: ^8.4.12
+    postcss-custom-properties: ^12.1.5
+    postcss-import: ^14.1.0
     postcss-loader: ^6.2.1
     postcss-nested: ^5.0.6
     prettier: ^2.6.0
@@ -7099,7 +7113,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-name@npm:^1.0.0, color-name@npm:^1.1.4, color-name@npm:~1.1.4":
+"color-name@npm:^1.0.0, color-name@npm:~1.1.4":
   version: 1.1.4
   resolution: "color-name@npm:1.1.4"
   checksum: b0445859521eb4021cd0fb0cc1a75cecf67fceecae89b63f62b201cca8d345baf8b952c966862a9d9a2632987d4f6581f0ec8d957dfacece86f0a7919316f610
@@ -11042,13 +11056,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-url-superb@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "is-url-superb@npm:4.0.0"
-  checksum: fd55e91c96349acb0d688f95fcb1ac67450e5db934976e3a8ff13ef446841e779a6f4d18b15f02331f05a3429c8fdaba2382ac1ab444059e86e9ffcde1ec8db0
-  languageName: node
-  linkType: hard
-
 "is-weakref@npm:^1.0.1":
   version: 1.0.1
   resolution: "is-weakref@npm:1.0.1"
@@ -13632,13 +13639,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picocolors@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "picocolors@npm:0.2.1"
-  checksum: 3b0f441f0062def0c0f39e87b898ae7461c3a16ffc9f974f320b44c799418cabff17780ee647fda42b856a1dc45897e2c62047e1b546d94d6d5c6962f45427b2
-  languageName: node
-  linkType: hard
-
 "picocolors@npm:^1.0.0":
   version: 1.0.0
   resolution: "picocolors@npm:1.0.0"
@@ -13809,27 +13809,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-custom-properties@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "postcss-custom-properties@npm:11.0.0"
+"postcss-custom-properties@npm:^12.1.5":
+  version: 12.1.5
+  resolution: "postcss-custom-properties@npm:12.1.5"
   dependencies:
-    postcss-values-parser: ^4.0.0
+    postcss-value-parser: ^4.2.0
   peerDependencies:
-    postcss: ^8.1.0
-  checksum: 1fa54763af9e747f2539111d64b49c99947a1917d2fd49436701db953e6e3a5f95fec7d8d676d6b8ad52e00aab00f9214b1b82989b7883517ed6763219aa8cef
+    postcss: ^8.4
+  checksum: de43ef9fe8f61fc3d2eccb45e1d7359ce69908732bfd8e0155c5ad29b1caff2586f1e77a246c46748233b39020b41b4ea756da977ab5625449689bd953fa25b5
   languageName: node
   linkType: hard
 
-"postcss-import@npm:^14.0.2":
-  version: 14.0.2
-  resolution: "postcss-import@npm:14.0.2"
+"postcss-discard-comments@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "postcss-discard-comments@npm:5.1.1"
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: 578c3cb3e8c6194cf8b5f2170abd6636bf2fe1ec9ba6e03431f5a7e4aae22c6c6605a5e8e2731e824df07c1188f3defa2f4ba28da4adafe45c068af1189f1f2c
+  languageName: node
+  linkType: hard
+
+"postcss-import@npm:^14.1.0":
+  version: 14.1.0
+  resolution: "postcss-import@npm:14.1.0"
   dependencies:
     postcss-value-parser: ^4.0.0
     read-cache: ^1.0.0
     resolve: ^1.1.7
   peerDependencies:
     postcss: ^8.0.0
-  checksum: e9f42b5956b1231f8516da11268021222d61969befc142bb7d0a65d9d3e53bdc574e51486b6ffdf72c0b395ce19060663eab5b5504b3d0855c173357425f9fb5
+  checksum: cd45d406e90f67cdab9524352e573cc6b4462b790934a05954e929a6653ebd31288ceebc8ce3c3ed7117ae672d9ebbec57df0bceec0a56e9b259c2e71d47ca86
   languageName: node
   linkType: hard
 
@@ -13975,28 +13984,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-values-parser@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "postcss-values-parser@npm:4.0.0"
-  dependencies:
-    color-name: ^1.1.4
-    is-url-superb: ^4.0.0
-    postcss: ^7.0.5
-  checksum: 8838a8667957feec6c127c85331c82582cff6194b948e1388d34e4c64daa347f6ef31ec6ecfb1ef192c3a1d15ed57c0caf352f7828deb26b9ec4d3d666401204
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^7.0.5":
-  version: 7.0.39
-  resolution: "postcss@npm:7.0.39"
-  dependencies:
-    picocolors: ^0.2.1
-    source-map: ^0.6.1
-  checksum: 4ac793f506c23259189064bdc921260d869a115a82b5e713973c5af8e94fbb5721a5cc3e1e26840500d7e1f1fa42a209747c5b1a151918a9bc11f0d7ed9048e3
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.1.6, postcss@npm:^8.2.1, postcss@npm:^8.2.15, postcss@npm:^8.4.12, postcss@npm:^8.4.6, postcss@npm:^8.4.7":
+"postcss@npm:^8.1.6, postcss@npm:^8.2.1, postcss@npm:^8.2.15, postcss@npm:^8.4.12, postcss@npm:^8.4.6":
   version: 8.4.12
   resolution: "postcss@npm:8.4.12"
   dependencies:
@@ -15298,8 +15286,10 @@ __metadata:
   resolution: "scripts@workspace:tooling/_scripts"
   dependencies:
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/extract-css-vars": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
+    concurrently: ^7.0.0
     cross-fetch: ^3.1.5
     date-fns: ^2.25.0
     domexception: ^4.0.0
