@@ -9,11 +9,11 @@ import { cx } from '@bangle.io/utils';
 
 export const buttonStyling = {
   animateOnPress: true,
-  activeColor: 'var(--activitybar-button-active-color)',
-  color: 'var(--activitybar-button-color)',
-  hoverBgColor: 'var(--activitybar-button-hover-bg-color)',
-  hoverColor: 'var(--activitybar-button-hover-color)',
-  pressedBgColor: 'var(--activitybar-button-pressed-bg-color)',
+  activeColor: 'var(--BV-activitybar-button-active-color)',
+  color: 'var(--BV-activitybar-button-color)',
+  hoverBgColor: 'var(--BV-activitybar-button-hover-bg-color)',
+  hoverColor: 'var(--BV-activitybar-button-hover-color)',
+  pressedBgColor: 'var(--BV-activitybar-button-pressed-bg-color)',
 };
 
 export function ActivitybarButton({

@@ -1,7 +1,7 @@
 .B-ui-components_text-button {
-  background-color: var(--accent-secondary);
+  background-color: var(--BV-accent-secondary);
 }
 
 .B-ui-components_text-button:hover {
-  background-color: var(--accent-primary-1);
+  background-color: var(--BV-accent-primary-1);
 }

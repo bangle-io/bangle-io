@@ -46,7 +46,7 @@ exports[`basic renders 1`] = `
       </div>
       <div
         class="w-full"
-        style="max-width: min(var(--page-max-width), 100vw);"
+        style="max-width: min(var(--BV-page-max-width), 100vw);"
       >
         <div
           data-testid="mock-editor"
@@ -105,7 +105,7 @@ exports[`renders correctly when file does not exist 1`] = `
       </div>
       <div
         class="w-full"
-        style="max-width: min(var(--page-max-width), 100vw);"
+        style="max-width: min(var(--BV-page-max-width), 100vw);"
       >
         <div
           class="flex flex-col justify-center h-full px-3 align-middle"
@@ -132,7 +132,7 @@ exports[`renders when no wsPath is provided 1`] = `
     >
       <div
         class="w-full"
-        style="max-width: min(var(--page-max-width), 100vw);"
+        style="max-width: min(var(--BV-page-max-width), 100vw);"
       >
         <div>
           Nothing was found here

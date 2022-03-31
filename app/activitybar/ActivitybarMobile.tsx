@@ -69,7 +69,7 @@ export function ActivitybarMobile({
             editingAllowed ? (
               <EditIcon
                 className={'w-5 h-5'}
-                fill={'var(--accent-primary-1)'}
+                fill={'var(--BV-accent-primary-1)'}
               />
             ) : (
               <NoEditIcon className="w-5 h-5" />

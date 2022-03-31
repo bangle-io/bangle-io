@@ -471,7 +471,7 @@ export function GiftIcon({ showDot = false, ...props }) {
       {showDot && (
         <circle
           cx="21"
-          style={{ fill: 'var(--accent-primary-0)' }}
+          style={{ fill: 'var(--BV-accent-primary-0)' }}
           cy="3"
           r="3"
           strokeWidth={0}

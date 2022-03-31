@@ -13,7 +13,7 @@ export function Page({
   children,
   className,
   header,
-  headerBgColor = 'var(--window-bg-color-0)',
+  headerBgColor = 'var(--BV-window-bg-color-0)',
   stickyHeader,
 }: {
   widescreen: boolean;
@@ -43,10 +43,10 @@ export function Page({
       <div
         className={cx('w-full', childClassName)}
         style={{
-          maxWidth: 'min(var(--page-max-width), 100vw)',
+          maxWidth: 'min(var(--BV-page-max-width), 100vw)',
           padding: widescreen
-            ? 'var(--window-page-padding)'
-            : 'var(--window-page-mobile-padding)',
+            ? 'var(--BV-window-page-padding)'
+            : 'var(--BV-window-page-mobile-padding)',
         }}
       >
         {children}

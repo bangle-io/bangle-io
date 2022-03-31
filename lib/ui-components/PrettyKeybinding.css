@@ -4,7 +4,7 @@
 
 .B-ui-components_pretty-keybinding-kbd {
   display: inline-block;
-  background-color: var(--window-kbd-bg-color);
+  background-color: var(--BV-window-kbd-bg-color);
   margin-right: 0.25rem;
   text-align: center;
   vertical-align: baseline;

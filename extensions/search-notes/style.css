@@ -4,25 +4,25 @@
 }
 
 .B-search-notes_search-notes .B-search-notes_highlight-text:nth-of-type(2n) {
-  background-color: var(--window-highlight-bg-color);
+  background-color: var(--BV-window-highlight-bg-color);
 }
 
 .B-search-notes_bangle-search-match {
-  background-color: var(--window-highlight-bg-color);
+  background-color: var(--BV-window-highlight-bg-color);
 }
 
 .B-search-notes_search-notes
   .B-search-notes_search-result-note-match.BU_active {
-  background-color: var(--window-accent-primary-0);
+  background-color: var(--BV-accent-primary-0);
 }
 
 .B-search-notes_search-notes
   .B-search-notes_search-result-text-match.B-search-notes_last-item {
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--window-border-color-0);
+  border-bottom: 1px solid var(--BV-window-border-color-0);
 }
 
 .B-search-notes_search-notes
   .B-search-notes_search-result-text-match.B-search-notes_previously-clicked {
-  background-color: var(--accent-secondary);
+  background-color: var(--BV-accent-secondary);
 }

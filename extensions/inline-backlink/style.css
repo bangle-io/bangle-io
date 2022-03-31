@@ -1,27 +1,27 @@
 .B-inline-backlink_backlink {
   padding: 0 0.4rem;
-  border-radius: var(--window-pill-border-radius);
-  background-color: var(--backlink-backlink-bg-color);
+  border-radius: var(--BV-window-pill-border-radius);
+  background-color: var(--BV-backlink-backlink-bg-color);
   margin: 0 0.2rem;
   text-align: start;
 }
 
 .B-inline-backlink_backlink:hover {
   text-decoration: underline;
-  background-color: var(--backlink-backlink-hover-bg-color);
+  background-color: var(--BV-backlink-backlink-hover-bg-color);
 }
 
 .B-inline-backlink_backlinkNotFound {
-  background-color: var(--backlink-backlink-not-found-bg-color);
+  background-color: var(--BV-backlink-backlink-not-found-bg-color);
 }
 
 .B-inline-backlink_backlinkNotFound:hover {
-  background-color: var(--backlink-backlink-not-found-hover-bg-color);
+  background-color: var(--BV-backlink-backlink-not-found-hover-bg-color);
 }
 
 .B-inline-backlink_backlink > svg {
-  color: var(--window-link-color);
-  fill: var(--backlink-backlink-bg-color);
+  color: var(--BV-window-link-color);
+  fill: var(--BV-backlink-backlink-bg-color);
   height: 1.2em;
   width: 1.2em;
 
@@ -32,25 +32,25 @@
 }
 
 .B-inline-backlink_popup-editor {
-  background-color: var(--window-popup-editor-bg-color);
-  color: var(--window-popup-editor-color);
+  background-color: var(--BV-window-popup-editor-bg-color);
+  color: var(--BV-window-popup-editor-color);
 
   /* setting width and height are important otherwise
     tippy confuses and causes issue with scroll
   */
   width: 400px;
   height: 400px;
-  z-index: var(--window-popup-editor-z-index);
-  border: 1px solid var(--window-border-color-0);
+  z-index: var(--BV-window-popup-editor-z-index);
+  border: 1px solid var(--BV-window-border-color-0);
   box-shadow: rgb(0 0 0 / 30%) 0 4px 28px;
 }
 
 .B-inline-backlink_widget-container
   .B-inline-backlink_highlight-text:nth-of-type(2n) {
-  background-color: var(--window-highlight-bg-color);
+  background-color: var(--BV-window-highlight-bg-color);
 }
 
 .B-inline-backlink_widget-container .B-inline-backlink_widget-occurrence-count {
-  background-color: var(--window-bg-color-2);
+  background-color: var(--BV-window-bg-color-2);
   padding: 0.125rem;
 }

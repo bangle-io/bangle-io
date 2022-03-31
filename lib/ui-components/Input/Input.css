@@ -5,10 +5,10 @@
 }
 
 .B-ui-components_input {
-  color: var(--text-color-0);
-  background-color: var(--window-bg-color-0);
+  color: var(--BV-text-color-0);
+  background-color: var(--BV-window-bg-color-0);
   padding: 0.25rem 0.5rem;
-  border: 1px solid var(--window-border-color-0);
+  border: 1px solid var(--BV-window-border-color-0);
   border-radius: 0.125rem;
   outline-offset: 2px;
   width: 100%;
@@ -19,24 +19,24 @@
   outline-offset: 2px;
   border: 1px solid transparent;
 
-  --bangle-ring-offset-width: 0;
-  --bangle-ring-offset-color: #fff;
-  --bangle-ring-color: var(--accent-primary-0);
-  --bangle-ring-offset-shadow: 0 0 0 var(--bangle-ring-offset-width)
-    var(--bangle-ring-offset-color);
-  --bangle-ring-shadow: 0 0 0 calc(1.5px + var(--bangle-ring-offset-width))
-    var(--bangle-ring-color);
-  --bangle-shadow: 0 0 #0000;
+  --BV-bangle-ring-offset-width: 0;
+  --BV-bangle-ring-offset-color: #fff;
+  --BV-bangle-ring-color: var(--BV-accent-primary-0);
+  --BV-bangle-ring-offset-shadow: 0 0 0 var(--BV-bangle-ring-offset-width)
+    var(--BV-bangle-ring-offset-color);
+  --BV-bangle-ring-shadow: 0 0 0
+    calc(1.5px + var(--BV-bangle-ring-offset-width)) var(--BV-bangle-ring-color);
+  --BV-bangle-shadow: 0 0 #0000;
 
-  box-shadow: var(--bangle-ring-offset-shadow), var(--bangle-ring-shadow),
-    var(--bangle-shadow, 0 0 #0000);
+  box-shadow: var(--BV-bangle-ring-offset-shadow), var(--BV-bangle-ring-shadow),
+    var(--BV-bangle-shadow, 0 0 #0000);
 }
 
 .B-ui-components_input-clear {
   position: absolute;
   left: -20px;
   cursor: pointer;
-  color: var(--text-color-1);
+  color: var(--BV-text-color-1);
 }
 
 .B-ui-components_input-clear::before {

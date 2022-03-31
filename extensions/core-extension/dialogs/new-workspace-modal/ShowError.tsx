@@ -119,7 +119,7 @@ export function ShowError({
       className="w-full px-4 text-center rounded"
       data-testid={errorType}
       style={{
-        backgroundColor: 'var(--severity-error-color)',
+        backgroundColor: 'var(--BV-severity-error-color)',
         color: 'white',
       }}
     >

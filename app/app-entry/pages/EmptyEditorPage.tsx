@@ -52,7 +52,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
                 {r.dirPath && (
                   <span
                     className="font-light"
-                    style={{ color: 'var(--text-color-1)' }}
+                    style={{ color: 'var(--BV-text-color-1)' }}
                   >
                     {r.dirPath}
                   </span>

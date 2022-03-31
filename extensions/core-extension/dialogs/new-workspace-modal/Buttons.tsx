@@ -67,7 +67,7 @@ export function PickStorageDirectory({
     <>
       <div className="mb-2">
         <h2 className="text-lg font-medium">Location</h2>
-        <span className="text-sm" style={{ color: 'var(--text-color-1)' }}>
+        <span className="text-sm" style={{ color: 'var(--BV-text-color-1)' }}>
           Select a folder where Bangle.io will put all your notes. You can use
           an existing folder which has Markdown notes or create a new folder.
         </span>
@@ -119,7 +119,10 @@ export function WorkspaceNameInput({
     <>
       <div className="mb-2">
         <h2 className="text-lg font-medium">Workspace name</h2>
-        <div className="mt-2 text-lg" style={{ color: 'var(--text-color-1)' }}>
+        <div
+          className="mt-2 text-lg"
+          style={{ color: 'var(--BV-text-color-1)' }}
+        >
           <input
             aria-label="workspace name input"
             className="pl-2"
@@ -134,8 +137,8 @@ export function WorkspaceNameInput({
               }
             }}
             style={{
-              border: '1px solid var(--window-border-color-0)',
-              backgroundColor: 'var(--window-bg-color-0)',
+              border: '1px solid var(--BV-window-border-color-0)',
+              backgroundColor: 'var(--BV-window-bg-color-0)',
             }}
           />
         </div>

@@ -129,7 +129,7 @@ export function EditorContainer({
   return (
     <Page
       widescreen={widescreen}
-      headerBgColor="var(--window-bg-color-0) "
+      headerBgColor="var(--BV-window-bg-color-0) "
       stickyHeader={Boolean(widescreen)}
       header={
         widescreen &&

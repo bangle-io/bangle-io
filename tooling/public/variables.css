@@ -1,6 +1,6 @@
 :root {
   /* variable syntax */
-  /* --<theme>-<pkgName>-<componentName>-<sorted asc pseudo class or modifiers?>-<type>-<strength?> */
+  /* --BV-<theme>-<pkgName>-<componentName>-<sorted asc pseudo class or modifiers?>-<type>-<strength?> */
   /*  theme light / dark */
   /*  prefer camel casing for naming */
   /*  pseudo class or modifiers- things like hover active pressed etc */
@@ -9,211 +9,213 @@
   /*  strength? - number 0 being strongest and weaker from their */
 
   /* alternate bg */
-  --dark-base-50: #080808;
-  --dark-base-75: #1a1a1a;
+  --BV-dark-base-50: #080808;
+  --BV-dark-base-75: #1a1a1a;
   /* base bg */
-  --dark-base-100: #1e1e1e;
+  --BV-dark-base-100: #1e1e1e;
   /* base bg sidebar */
-  --dark-base-150: #252525;
-  --dark-base-200: #2c2c2c;
-  --dark-base-300: #393939;
-  --dark-base-400: #494949;
+  --BV-dark-base-150: #252525;
+  --BV-dark-base-200: #2c2c2c;
+  --BV-dark-base-300: #393939;
+  --BV-dark-base-400: #494949;
   /* disabled text */
-  --dark-base-500: #5c5c5c;
+  --BV-dark-base-500: #5c5c5c;
   /* placeholder text */
-  --dark-base-600: #7c7c7c;
+  --BV-dark-base-600: #7c7c7c;
   /* text content */
-  --dark-base-700: #a2a2a2;
-  --dark-base-800: #c8c8c8;
-  --dark-base-900: #efefef;
+  --BV-dark-base-700: #a2a2a2;
+  --BV-dark-base-800: #c8c8c8;
+  --BV-dark-base-900: #efefef;
 
-  --light-base-50: #ffffff;
-  --light-base-75: #fafafa;
-  --light-base-100: #f5f5f5;
-  --light-base-150: #f0f0f0;
-  --light-base-200: #eaeaea;
-  --light-base-300: #e1e1e1;
-  --light-base-400: #cacaca;
-  --light-base-500: #b3b3b3;
-  --light-base-600: #8e8e8e;
-  --light-base-700: #6e6e6e;
-  --light-base-800: #4b4b4b;
-  --light-base-900: #2c2c2c;
+  --BV-light-base-50: #ffffff;
+  --BV-light-base-75: #fafafa;
+  --BV-light-base-100: #f5f5f5;
+  --BV-light-base-150: #f0f0f0;
+  --BV-light-base-200: #eaeaea;
+  --BV-light-base-300: #e1e1e1;
+  --BV-light-base-400: #cacaca;
+  --BV-light-base-500: #b3b3b3;
+  --BV-light-base-600: #8e8e8e;
+  --BV-light-base-700: #6e6e6e;
+  --BV-light-base-800: #4b4b4b;
+  --BV-light-base-900: #2c2c2c;
 
-  --light-text-color-0: var(--base-900);
-  --light-text-color-1: var(--base-800);
-  --dark-text-color-0: var(--base-900);
-  --dark-text-color-1: var(--base-800);
+  --BV-light-text-color-0: var(--BV-base-900);
+  --BV-light-text-color-1: var(--BV-base-800);
+  --BV-dark-text-color-0: var(--BV-base-900);
+  --BV-dark-text-color-1: var(--BV-base-800);
 
-  --light-accent-primary-0: rgb(88, 204, 240);
-  --light-accent-primary-1: rgb(136, 223, 250);
+  --BV-light-accent-primary-0: rgb(88, 204, 240);
+  --BV-light-accent-primary-1: rgb(136, 223, 250);
 
-  --dark-accent-primary-0: rgb(223, 50, 130);
-  --dark-accent-primary-1: rgb(229, 92, 156);
+  --BV-dark-accent-primary-0: rgb(223, 50, 130);
+  --BV-dark-accent-primary-1: rgb(229, 92, 156);
 
-  --light-accent-secondary: rgb(232, 232, 232);
-  --dark-accent-secondary: rgb(57, 62, 63);
+  --BV-light-accent-secondary: rgb(232, 232, 232);
+  --BV-dark-accent-secondary: rgb(57, 62, 63);
 
-  --light-severity-error-color: #f44336;
-  --dark-severity-error-color: #f44336;
-  --light-severity-warning-color: #ff9800;
-  --dark-severity-warning-color: #ff9800;
-  --light-severity-info-color: #2196f3;
-  --dark-severity-info-color: #2196f3;
-  --light-severity-success-color: #4caf50;
-  --dark-severity-success-color: #4caf50;
+  --BV-light-severity-error-color: #f44336;
+  --BV-dark-severity-error-color: #f44336;
+  --BV-light-severity-warning-color: #ff9800;
+  --BV-dark-severity-warning-color: #ff9800;
+  --BV-light-severity-info-color: #2196f3;
+  --BV-dark-severity-info-color: #2196f3;
+  --BV-light-severity-success-color: #4caf50;
+  --BV-dark-severity-success-color: #4caf50;
 
-  --light-error-bg-color: rgb(254, 241, 240);
-  --dark-error-bg-color: rgb(37, 2, 1);
+  --BV-light-error-bg-color: rgb(254, 241, 240);
+  --BV-dark-error-bg-color: rgb(37, 2, 1);
 
   /* window */
 
   /* The minimum screen size needed to allow for split screen */
-  --window-widescreen-minWidth: 760px;
-  --window-pill-border-radius: 5px;
+  --BV-window-widescreen-minWidth: 760px;
+  --BV-window-pill-border-radius: 5px;
 
-  --window-modal-z-index: 500;
-  --window-popup-editor-z-index: 300;
-  --window-tooltip-z-index: 1000;
+  --BV-window-modal-z-index: 500;
+  --BV-window-popup-editor-z-index: 300;
+  --BV-window-tooltip-z-index: 1000;
 
-  --light-window-bg-color-0: var(--base-100);
-  --dark-window-bg-color-0: var(--base-100);
+  --BV-light-window-bg-color-0: var(--BV-base-100);
+  --BV-dark-window-bg-color-0: var(--BV-base-100);
 
-  --light-window-bg-color-1: var(--base-75);
-  --dark-window-bg-color-1: var(--base-75);
+  --BV-light-window-bg-color-1: var(--BV-base-75);
+  --BV-dark-window-bg-color-1: var(--BV-base-75);
 
-  --light-window-bg-color-2: var(--base-50);
-  --dark-window-bg-color-2: var(--base-50);
+  --BV-light-window-bg-color-2: var(--BV-base-50);
+  --BV-dark-window-bg-color-2: var(--BV-base-50);
 
-  --light-window-link-color: #4299e1;
-  --dark-window-link-color: #4299e1;
+  --BV-light-window-link-color: #4299e1;
+  --BV-dark-window-link-color: #4299e1;
 
-  --light-window-highlight-bg-color: yellow;
-  --dark-window-highlight-bg-color: rgba(255, 255, 0, 0.5);
+  --BV-light-window-highlight-bg-color: yellow;
+  --BV-dark-window-highlight-bg-color: rgba(255, 255, 0, 0.5);
 
-  --light-window-tooltip-bg-color: var(--base-50);
-  --dark-window-tooltip-bg-color: var(--base-50);
-  --light-window-tooltip-color: var(--text-color-1);
-  --dark-window-tooltip-color: var(--text-color-0);
+  --BV-light-window-tooltip-bg-color: var(--BV-base-50);
+  --BV-dark-window-tooltip-bg-color: var(--BV-base-50);
+  --BV-light-window-tooltip-color: var(--BV-text-color-1);
+  --BV-dark-window-tooltip-color: var(--BV-text-color-0);
 
-  --dark-window-dropdown-bg-color-0: var(--base-75);
-  --dark-window-dropdown-bg-color-1: var(--base-50);
-  --dark-window-dropdown-color: var(--text-color-1);
-  --light-window-dropdown-bg-color-0: var(--base-75);
-  --light-window-dropdown-bg-color-1: var(--base-50);
-  --light-window-dropdown-color: var(--text-color-1);
+  --BV-dark-window-dropdown-bg-color-0: var(--BV-base-75);
+  --BV-dark-window-dropdown-bg-color-1: var(--BV-base-50);
+  --BV-dark-window-dropdown-color: var(--BV-text-color-1);
+  --BV-light-window-dropdown-bg-color-0: var(--BV-base-75);
+  --BV-light-window-dropdown-bg-color-1: var(--BV-base-50);
+  --BV-light-window-dropdown-color: var(--BV-text-color-1);
 
-  --light-window-popup-editor-bg-color: var(--base-75);
-  --light-window-popup-editor-color: var(--text-color-1);
-  --dark-window-popup-editor-bg-color: var(--base-75);
-  --dark-window-popup-editor-color: var(--text-color-1);
+  --BV-light-window-popup-editor-bg-color: var(--BV-base-75);
+  --BV-light-window-popup-editor-color: var(--BV-text-color-1);
+  --BV-dark-window-popup-editor-bg-color: var(--BV-base-75);
+  --BV-dark-window-popup-editor-color: var(--BV-text-color-1);
 
-  --light-window-kbd-bg-color: var(--base-300);
-  --light-window-kbd-color: var(--text-color-1);
-  --dark-window-kbd-bg-color: var(--base-400);
-  --dark-window-kbd-color: var(--text-color-1);
+  --BV-light-window-kbd-bg-color: var(--BV-base-300);
+  --BV-light-window-kbd-color: var(--BV-text-color-1);
+  --BV-dark-window-kbd-bg-color: var(--BV-base-400);
+  --BV-dark-window-kbd-color: var(--BV-text-color-1);
 
-  --light-window-border-color-0: var(--base-300);
-  --dark-window-border-color-0: var(--base-400);
+  --BV-light-window-border-color-0: var(--BV-base-300);
+  --BV-dark-window-border-color-0: var(--BV-base-400);
 
-  --light-window-border-color-1: var(--base-300);
-  --dark-window-border-color-1: var(--base-400);
+  --BV-light-window-border-color-1: var(--BV-base-300);
+  --BV-dark-window-border-color-1: var(--BV-base-400);
 
-  --light-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
-  --dark-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
+  --BV-light-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
+  --BV-dark-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
 
   /* page is a wrapper that wraps around editor or similar content */
-  --window-page-padding: 3rem 30px 3rem 30px;
-  --window-page-mobile-padding: 1.5rem 10px 2rem 25px;
+  --BV-window-page-padding: 3rem 30px 3rem 30px;
+  --BV-window-page-mobile-padding: 1.5rem 10px 2rem 25px;
 
-  --page-max-width: 700px;
-  --window-page-box-padding: 2rem;
+  --BV-page-max-width: 700px;
+  --BV-window-page-box-padding: 2rem;
 
   /* workspace-sidebar */
-  --workspace-sidebar-width: 300px;
-  --light-workspace-sidebar-bg-color: var(--base-150);
-  --dark-workspace-sidebar-bg-color: var(--base-150);
-  --note-sidebar-width: 300px;
+  --BV-workspace-sidebar-width: 300px;
+  --BV-light-workspace-sidebar-bg-color: var(--BV-base-150);
+  --BV-dark-workspace-sidebar-bg-color: var(--BV-base-150);
+  --BV-note-sidebar-width: 300px;
 
-  --universal-palette-max-width: 620px;
-  --light-universal-palette-bg-color: var(--window-bg-color-1);
-  --dark-universal-palette-bg-color: var(--window-bg-color-1);
+  --BV-universal-palette-max-width: 620px;
+  --BV-light-universal-palette-bg-color: var(--BV-window-bg-color-1);
+  --BV-dark-universal-palette-bg-color: var(--BV-window-bg-color-1);
 
-  --inline-universal-palette-max-width: 350px;
-  --inline-universal-palette-max-height: 33vh;
+  --BV-inline-universal-palette-max-width: 350px;
+  --BV-inline-universal-palette-max-height: 33vh;
 
   /* Extension: Editor core */
   /* the background that fades away when you select a block */
-  --light-editor-core-selection-change-bg-color: var(--base-300);
-  --dark-editor-core-selection-change-bg-color: var(--base-300);
+  --BV-light-editor-core-selection-change-bg-color: var(--BV-base-300);
+  --BV-dark-editor-core-selection-change-bg-color: var(--BV-base-300);
 
   /* Extension: Note tag */
-  --light-note-tags-color: rgb(226, 226, 226);
-  --light-note-tags-bg-color: rgb(105, 105, 105);
-  --dark-note-tags-color: rgb(66, 66, 66);
-  --dark-note-tags-bg-color: rgb(205, 205, 205);
+  --BV-light-note-tags-color: rgb(226, 226, 226);
+  --BV-light-note-tags-bg-color: rgb(105, 105, 105);
+  --BV-dark-note-tags-color: rgb(66, 66, 66);
+  --BV-dark-note-tags-bg-color: rgb(205, 205, 205);
 
   /* activitybar */
-  --activitybar-width: 50px;
-  --activitybar-mobile-height: 50px;
-  --light-activitybar-bg-color: rgb(26, 32, 44);
-  --dark-activitybar-bg-color: rgb(31, 30, 30);
+  --BV-activitybar-width: 50px;
+  --BV-activitybar-mobile-height: 50px;
+  --BV-light-activitybar-bg-color: rgb(26, 32, 44);
+  --BV-dark-activitybar-bg-color: rgb(31, 30, 30);
 
-  --light-activitybar-button-active-color: var(--base-200);
-  --light-activitybar-button-hover-bg-color: var(--base-100);
-  --light-activitybar-button-hover-color: var(--base-200);
-  --light-activitybar-button-color: var(--base-300);
-  --light-activitybar-button-pressed-bg-color: var(--base-800);
+  --BV-light-activitybar-button-active-color: var(--BV-base-200);
+  --BV-light-activitybar-button-hover-bg-color: var(--BV-base-100);
+  --BV-light-activitybar-button-hover-color: var(--BV-base-200);
+  --BV-light-activitybar-button-color: var(--BV-base-300);
+  --BV-light-activitybar-button-pressed-bg-color: var(--BV-base-800);
 
-  --dark-activitybar-button-active-color: var(--base-800);
-  --dark-activitybar-button-hover-bg-color: var(--base-400);
-  --dark-activitybar-button-hover-color: var(--base-900);
-  --dark-activitybar-button-color: var(--base-700);
-  --dark-activitybar-button-pressed-bg-color: var(--base-100);
+  --BV-dark-activitybar-button-active-color: var(--BV-base-800);
+  --BV-dark-activitybar-button-hover-bg-color: var(--BV-base-400);
+  --BV-dark-activitybar-button-hover-color: var(--BV-base-900);
+  --BV-dark-activitybar-button-color: var(--BV-base-700);
+  --BV-dark-activitybar-button-pressed-bg-color: var(--BV-base-100);
 
   /* ui-bangle-button */
-  --ui-bangle-button-depression: 0.96;
-  --ui-bangle-button-radius: 0.25rem;
+  --BV-ui-bangle-button-depression: 0.96;
+  --BV-ui-bangle-button-radius: 0.25rem;
 
-  --light-ui-bangle-button-active-color: var(--base-900);
-  --light-ui-bangle-button-bg-color: var(--base-300);
-  --light-ui-bangle-button-color: var(--base-800);
-  --light-ui-bangle-button-disabled-bg-color: var(--base-100);
-  --light-ui-bangle-button-disabled-color: var(--base-700);
-  --light-ui-bangle-button-hover-bg-color: var(--base-400);
-  --light-ui-bangle-button-hover-color: var(--base-900);
-  --light-ui-bangle-button-pressed-bg-color: var(--base-400);
+  --BV-light-ui-bangle-button-active-color: var(--BV-base-900);
+  --BV-light-ui-bangle-button-bg-color: var(--BV-base-300);
+  --BV-light-ui-bangle-button-color: var(--BV-base-800);
+  --BV-light-ui-bangle-button-disabled-bg-color: var(--BV-base-100);
+  --BV-light-ui-bangle-button-disabled-color: var(--BV-base-700);
+  --BV-light-ui-bangle-button-hover-bg-color: var(--BV-base-400);
+  --BV-light-ui-bangle-button-hover-color: var(--BV-base-900);
+  --BV-light-ui-bangle-button-pressed-bg-color: var(--BV-base-400);
 
-  --dark-ui-bangle-button-active-color: var(--base-900);
-  --dark-ui-bangle-button-bg-color: var(--base-200);
-  --dark-ui-bangle-button-color: var(--base-800);
-  --dark-ui-bangle-button-disabled-bg-color: var(--base-100);
-  --dark-ui-bangle-button-disabled-color: var(--base-700);
-  --dark-ui-bangle-button-hover-bg-color: var(--base-400);
-  --dark-ui-bangle-button-hover-color: var(--base-900);
-  --dark-ui-bangle-button-pressed-bg-color: var(--base-400);
+  --BV-dark-ui-bangle-button-active-color: var(--BV-base-900);
+  --BV-dark-ui-bangle-button-bg-color: var(--BV-base-200);
+  --BV-dark-ui-bangle-button-color: var(--BV-base-800);
+  --BV-dark-ui-bangle-button-disabled-bg-color: var(--BV-base-100);
+  --BV-dark-ui-bangle-button-disabled-color: var(--BV-base-700);
+  --BV-dark-ui-bangle-button-hover-bg-color: var(--BV-base-400);
+  --BV-dark-ui-bangle-button-hover-color: var(--BV-base-900);
+  --BV-dark-ui-bangle-button-pressed-bg-color: var(--BV-base-400);
 
-  --light-ui-bangle-button-primary-active-color: var(--base-900);
-  --light-ui-bangle-button-primary-bg-color: var(--accent-primary-0);
-  --light-ui-bangle-button-primary-color: var(--base-800);
-  --light-ui-bangle-button-primary-hover-bg-color: var(--accent-primary-1);
-  --light-ui-bangle-button-primary-hover-color: var(--base-900);
-  --light-ui-bangle-button-primary-pressed-bg-color: var(--base-400);
+  --BV-light-ui-bangle-button-primary-active-color: var(--BV-base-900);
+  --BV-light-ui-bangle-button-primary-bg-color: var(--BV-accent-primary-0);
+  --BV-light-ui-bangle-button-primary-color: var(--BV-base-800);
+  --BV-light-ui-bangle-button-primary-hover-bg-color: var(
+    --BV-accent-primary-1
+  );
+  --BV-light-ui-bangle-button-primary-hover-color: var(--BV-base-900);
+  --BV-light-ui-bangle-button-primary-pressed-bg-color: var(--BV-base-400);
 
-  --dark-ui-bangle-button-primary-active-color: var(--base-900);
-  --dark-ui-bangle-button-primary-bg-color: var(--accent-primary-0);
-  --dark-ui-bangle-button-primary-color: var(--base-800);
-  --dark-ui-bangle-button-primary-hover-bg-color: var(--accent-primary-1);
-  --dark-ui-bangle-button-primary-hover-color: var(--base-900);
-  --dark-ui-bangle-button-primary-pressed-bg-color: var(--base-400);
+  --BV-dark-ui-bangle-button-primary-active-color: var(--BV-base-900);
+  --BV-dark-ui-bangle-button-primary-bg-color: var(--BV-accent-primary-0);
+  --BV-dark-ui-bangle-button-primary-color: var(--BV-base-800);
+  --BV-dark-ui-bangle-button-primary-hover-bg-color: var(--BV-accent-primary-1);
+  --BV-dark-ui-bangle-button-primary-hover-color: var(--BV-base-900);
+  --BV-dark-ui-bangle-button-primary-pressed-bg-color: var(--BV-base-400);
 
-  --light-backlink-backlink-bg-color: rgb(208, 238, 252);
-  --dark-backlink-backlink-bg-color: rgba(56, 139, 253, 0.15);
-  --light-backlink-backlink-hover-bg-color: rgb(225, 242, 250);
-  --dark-backlink-backlink-hover-bg-color: rgba(56, 139, 253, 0.4);
+  --BV-light-backlink-backlink-bg-color: rgb(208, 238, 252);
+  --BV-dark-backlink-backlink-bg-color: rgba(56, 139, 253, 0.15);
+  --BV-light-backlink-backlink-hover-bg-color: rgb(225, 242, 250);
+  --BV-dark-backlink-backlink-hover-bg-color: rgba(56, 139, 253, 0.4);
 
-  --light-backlink-backlink-not-found-bg-color: var(--base-300);
-  --dark-backlink-backlink-not-found-bg-color: var(--base-300);
-  --light-backlink-backlink-not-found-hover-bg-color: var(--base-400);
-  --dark-backlink-backlink-not-found-hover-bg-color: var(--base-400);
+  --BV-light-backlink-backlink-not-found-bg-color: var(--BV-base-300);
+  --BV-dark-backlink-backlink-not-found-bg-color: var(--BV-base-300);
+  --BV-light-backlink-backlink-not-found-hover-bg-color: var(--BV-base-400);
+  --BV-dark-backlink-backlink-not-found-hover-bg-color: var(--BV-base-400);
 }
