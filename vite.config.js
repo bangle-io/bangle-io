@@ -42,7 +42,6 @@ const config = async ({ command, mode }) => {
   delete printableConfig['process.env.CHANGELOG_TEXT'];
   console.table(printableConfig);
 
-  console.log(envVars.htmlInjections);
   /**
    * @type {import('vite').UserConfig}
    */
