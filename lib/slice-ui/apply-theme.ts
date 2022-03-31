@@ -15,5 +15,5 @@ function updateStyleHelper(
   cssVar: string,
   element: HTMLElement,
 ) {
-  element.style.setProperty(`--${cssVar}`, `var(--${theme}-${cssVar})`);
+  element.style.setProperty(`--BV-${cssVar}`, `var(--BV-${theme}-${cssVar})`);
 }

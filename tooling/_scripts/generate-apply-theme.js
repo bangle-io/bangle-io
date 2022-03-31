@@ -12,15 +12,15 @@ async function run() {
   );
 
   let data = cssVars.filter(([varName]) => {
-    return varName.startsWith('dark') || varName.startsWith('light');
+    return varName.startsWith('BV-dark') || varName.startsWith('BV-light');
   });
 
   let result = data.map(([item, value]) => {
-    if (item.startsWith('dark-')) {
-      item = item.slice('dark-'.length);
+    if (item.startsWith('BV-dark-')) {
+      item = item.slice('BV-dark-'.length);
     }
-    if (item.startsWith('light-')) {
-      item = item.slice('light-'.length);
+    if (item.startsWith('BV-light-')) {
+      item = item.slice('BV-light-'.length);
     }
 
     return item;
