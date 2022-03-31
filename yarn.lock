@@ -2351,6 +2351,7 @@ __metadata:
   resolution: "@bangle.io/env-vars@workspace:tooling/env-vars"
   dependencies:
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/extract-css-vars": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     tslib: ^2.3.1
     typescript: ^4.5.5
@@ -2394,6 +2395,19 @@ __metadata:
     "@types/react-dom": ^17.0.13
     react: ^17.0.2
     react-dom: ^17.0.2
+    tslib: ^2.3.1
+    typescript: ^4.5.5
+  languageName: unknown
+  linkType: soft
+
+"@bangle.io/extract-css-vars@workspace:*, @bangle.io/extract-css-vars@workspace:tooling/extract-css-vars":
+  version: 0.0.0-use.local
+  resolution: "@bangle.io/extract-css-vars@workspace:tooling/extract-css-vars"
+  dependencies:
+    postcss: ^8.4.12
+    postcss-custom-properties: ^12.1.5
+    postcss-discard-comments: ^5.1.1
+    prettier: ^2.6.0
     tslib: ^2.3.1
     typescript: ^4.5.5
   languageName: unknown
@@ -13820,6 +13834,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-custom-properties@npm:^12.1.5":
+  version: 12.1.5
+  resolution: "postcss-custom-properties@npm:12.1.5"
+  dependencies:
+    postcss-value-parser: ^4.2.0
+  peerDependencies:
+    postcss: ^8.4
+  checksum: de43ef9fe8f61fc3d2eccb45e1d7359ce69908732bfd8e0155c5ad29b1caff2586f1e77a246c46748233b39020b41b4ea756da977ab5625449689bd953fa25b5
+  languageName: node
+  linkType: hard
+
+"postcss-discard-comments@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "postcss-discard-comments@npm:5.1.1"
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: 578c3cb3e8c6194cf8b5f2170abd6636bf2fe1ec9ba6e03431f5a7e4aae22c6c6605a5e8e2731e824df07c1188f3defa2f4ba28da4adafe45c068af1189f1f2c
+  languageName: node
+  linkType: hard
+
 "postcss-import@npm:^14.0.2":
   version: 14.0.2
   resolution: "postcss-import@npm:14.0.2"
@@ -15298,6 +15332,7 @@ __metadata:
   resolution: "scripts@workspace:tooling/_scripts"
   dependencies:
     "@bangle.io/constants": "workspace:*"
+    "@bangle.io/extract-css-vars": "workspace:*"
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/test-utils": "workspace:*"
     concurrently: ^7.0.0

@@ -299,6 +299,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:tooling/env-vars"
       },
       {
+        "name": "@bangle.io/extract-css-vars",
+        "reference": "workspace:tooling/extract-css-vars"
+      },
+      {
         "name": "@bangle.io/playwright-e2e",
         "reference": "workspace:tooling/playwright-e2e"
       },
@@ -332,6 +336,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@bangle.io/env-vars", ["workspace:tooling/env-vars"]],
       ["@bangle.io/example-extension", ["workspace:extensions/example-extension"]],
       ["@bangle.io/extension-registry", ["workspace:lib/extension-registry"]],
+      ["@bangle.io/extract-css-vars", ["workspace:tooling/extract-css-vars"]],
       ["@bangle.io/fzf-search", ["virtual:419d10ba3c185e9d35fa4ff80c0924f0c0d48e9a3e2b4f0a256a5b08937e0679f17c89b9fbe6e5d3d9a0d0291ef5fae96d681a64427b7c54772981c798d87367#workspace:js-lib/fzf-search", "workspace:js-lib/fzf-search"]],
       ["@bangle.io/github-storage", ["workspace:extensions/github-storage"]],
       ["@bangle.io/history", ["workspace:js-lib/history"]],
@@ -5067,6 +5072,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@bangle.io/env-vars", "workspace:tooling/env-vars"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/extract-css-vars", "workspace:tooling/extract-css-vars"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
@@ -5114,6 +5120,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:17.0.13"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
+            ["tslib", "npm:2.3.1"],
+            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@bangle.io/extract-css-vars", [
+        ["workspace:tooling/extract-css-vars", {
+          "packageLocation": "./tooling/extract-css-vars/",
+          "packageDependencies": [
+            ["@bangle.io/extract-css-vars", "workspace:tooling/extract-css-vars"],
+            ["postcss", "npm:8.4.12"],
+            ["postcss-custom-properties", "virtual:58b73c44316fe274713f223e266093d039c09c26449c95f8b8906886f627c11d90796f02242e471460d8726cd56fe397f4bb70421c70905b1693ab4f20bfb108#npm:12.1.5"],
+            ["postcss-discard-comments", "virtual:58b73c44316fe274713f223e266093d039c09c26449c95f8b8906886f627c11d90796f02242e471460d8726cd56fe397f4bb70421c70905b1693ab4f20bfb108#npm:5.1.1"],
+            ["prettier", "npm:2.6.0"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
           ],
@@ -18912,6 +18933,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
+        ["npm:12.1.5", {
+          "packageLocation": "./.yarn/cache/postcss-custom-properties-npm-12.1.5-4549881789-de43ef9fe8.zip/node_modules/postcss-custom-properties/",
+          "packageDependencies": [
+            ["postcss-custom-properties", "npm:12.1.5"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:58b73c44316fe274713f223e266093d039c09c26449c95f8b8906886f627c11d90796f02242e471460d8726cd56fe397f4bb70421c70905b1693ab4f20bfb108#npm:12.1.5", {
+          "packageLocation": "./.yarn/__virtual__/postcss-custom-properties-virtual-5daf439974/0/cache/postcss-custom-properties-npm-12.1.5-4549881789-de43ef9fe8.zip/node_modules/postcss-custom-properties/",
+          "packageDependencies": [
+            ["postcss-custom-properties", "virtual:58b73c44316fe274713f223e266093d039c09c26449c95f8b8906886f627c11d90796f02242e471460d8726cd56fe397f4bb70421c70905b1693ab4f20bfb108#npm:12.1.5"],
+            ["@types/postcss", null],
+            ["postcss", "npm:8.4.12"],
+            ["postcss-value-parser", "npm:4.2.0"]
+          ],
+          "packagePeers": [
+            "@types/postcss",
+            "postcss"
+          ],
+          "linkType": "HARD",
+        }],
         ["virtual:a0e84116df92a68962258c1f9eb799e018e889721126fae4b2523a6da7dd54ac42155e649bc61d1684a9335106d87480c78a53bbd3d6ed93a5f1cb972ebd5ebf#npm:11.0.0", {
           "packageLocation": "./.yarn/__virtual__/postcss-custom-properties-virtual-16dec083ff/0/cache/postcss-custom-properties-npm-11.0.0-6e3f29ef4a-1fa54763af.zip/node_modules/postcss-custom-properties/",
           "packageDependencies": [
@@ -18919,6 +18961,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/postcss", null],
             ["postcss", "npm:8.4.12"],
             ["postcss-values-parser", "npm:4.0.0"]
+          ],
+          "packagePeers": [
+            "@types/postcss",
+            "postcss"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["postcss-discard-comments", [
+        ["npm:5.1.1", {
+          "packageLocation": "./.yarn/cache/postcss-discard-comments-npm-5.1.1-81e5c07fcf-578c3cb3e8.zip/node_modules/postcss-discard-comments/",
+          "packageDependencies": [
+            ["postcss-discard-comments", "npm:5.1.1"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:58b73c44316fe274713f223e266093d039c09c26449c95f8b8906886f627c11d90796f02242e471460d8726cd56fe397f4bb70421c70905b1693ab4f20bfb108#npm:5.1.1", {
+          "packageLocation": "./.yarn/__virtual__/postcss-discard-comments-virtual-4d01d374ec/0/cache/postcss-discard-comments-npm-5.1.1-81e5c07fcf-578c3cb3e8.zip/node_modules/postcss-discard-comments/",
+          "packageDependencies": [
+            ["postcss-discard-comments", "virtual:58b73c44316fe274713f223e266093d039c09c26449c95f8b8906886f627c11d90796f02242e471460d8726cd56fe397f4bb70421c70905b1693ab4f20bfb108#npm:5.1.1"],
+            ["@types/postcss", null],
+            ["postcss", "npm:8.4.12"]
           ],
           "packagePeers": [
             "@types/postcss",
@@ -20736,6 +20800,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["scripts", "workspace:tooling/_scripts"],
             ["@bangle.io/constants", "workspace:lib/constants"],
+            ["@bangle.io/extract-css-vars", "workspace:tooling/extract-css-vars"],
             ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["concurrently", "npm:7.0.0"],

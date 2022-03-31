@@ -163,7 +163,7 @@
     "*.css": [
       "yarn g:css:update-css-vars",
       "yarn g:css:stylelint-update-regex",
-      "yarn stylelint --fix",
+      "yarn stylelint --fix --allow-empty-input",
       "yarn prettier --write"
     ],
     "*.json": "yarn prettier --write"

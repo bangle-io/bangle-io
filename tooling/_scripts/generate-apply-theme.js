@@ -2,28 +2,26 @@ const fs = require('fs');
 const path = require('path');
 const prettier = require('prettier');
 
-function run() {
-  const indexHtml = fs.readFileSync(
-    path.resolve(__dirname, '..', '..', 'index.html'),
-    'utf-8',
+const { extractCSSVars } = require('@bangle.io/extract-css-vars');
+const { publicDir } = require('./constants');
+
+async function run() {
+  const cssVars = await extractCSSVars(
+    fs.readFileSync(path.join(publicDir, 'variables.css')),
+    'utf8',
   );
 
-  let data = indexHtml
-    .split('\n')
-    .map((r) => r.trim())
-    .filter((r) => {
-      return r.startsWith('--dark') || r.startsWith('--light');
-    });
+  let data = cssVars.filter(([varName]) => {
+    return varName.startsWith('dark') || varName.startsWith('light');
+  });
 
-  let result = data.map((item) => {
-    if (item.includes('--dark-')) {
-      item = item.split('--dark-').join('');
+  let result = data.map(([item, value]) => {
+    if (item.startsWith('dark-')) {
+      item = item.slice('dark-'.length);
     }
-    if (item.includes('--light-')) {
-      item = item.split('--light-').join('');
+    if (item.startsWith('light-')) {
+      item = item.slice('light-'.length);
     }
-
-    item = item.slice(0, item.indexOf(':'));
 
     return item;
   });
