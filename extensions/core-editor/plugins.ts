@@ -46,6 +46,32 @@ const getScrollContainer = (view: EditorView) => {
 const { queryIsSelectionAroundLink, queryIsLinkActive } = link;
 
 export const getPlugins = () => {
+  // The order of the plugins is important.
+
+  const bdDevPlugins = [
+    bold.plugins(),
+    code.plugins(),
+    italic.plugins(),
+    strike.plugins(),
+    link.plugins(),
+    underline.plugins(),
+    paragraph.plugins(),
+    blockquote.plugins(),
+    bulletList.plugins(),
+    codeBlock.plugins(),
+    hardBreak.plugins(),
+    heading.plugins({
+      keybindings: {
+        toH6: undefined,
+      },
+    }),
+    horizontalRule.plugins(),
+    listItem.plugins(),
+    orderedList.plugins(),
+    history.plugins(),
+    tablePlugins(),
+  ];
+
   return [
     typeof window !== 'undefined' &&
       intersectionObserverPlugin({
@@ -76,34 +102,13 @@ export const getPlugins = () => {
         return 'defaultMenu';
       },
     }),
-    blockquote.plugins(),
-    bold.plugins(),
-    bulletList.plugins(),
-    code.plugins(),
-    codeBlock.plugins(),
-    collabPlugin,
-    hardBreak.plugins(),
-    heading.plugins({
-      keybindings: {
-        ...heading.defaultKeys,
-        toggleCollapse: 'Shift-Meta-1',
-        toH4: undefined,
-        toH5: undefined,
-        toH6: undefined,
-      },
-    }),
-    history.plugins(),
-    horizontalRule.plugins(),
-    italic.plugins(),
-    link.plugins(),
-    listItem.plugins(),
-    orderedList.plugins(),
-    paragraph.plugins(),
-    strike.plugins(),
-    tablePlugins(),
-    timestamp.plugins(),
+
+    ...bdDevPlugins,
+
+    // stopwatch.plugins(),
     trailingNode.plugins(),
-    underline.plugins(),
+    timestamp.plugins(),
+    collabPlugin,
     new Plugin({
       props: {
         // This is needed by jumping to a heading to atleast show up
