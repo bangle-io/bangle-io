@@ -9,6 +9,14 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
+    {
+      name: '@storybook/addon-postcss',
+      options: {
+        postcssLoaderOptions: {
+          implementation: require('postcss'),
+        },
+      },
+    },
   ],
   framework: '@storybook/react',
   core: {
@@ -54,6 +62,8 @@ module.exports = {
         fullySpecified: false,
       },
     });
+
+    console.log(envVars.appEnvs);
 
     config.plugins.push(
       new webpack.DefinePlugin({
