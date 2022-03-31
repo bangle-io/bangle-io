@@ -24,9 +24,8 @@
   "module": "index.js",
   "scripts": {
     "g:package-patrol": "yarn node package-patrol",
-    "g:run-scripts": "yarn concurrently -m 1 \"yarn g:package-patrol\" \"yarn g:css:stylelint-update-regex\" \"yarn g:css:update-css-vars\"",
-    "g:css:stylelint-update-regex": "yarn node generate-stylelint-regex",
-    "g:css:update-css-vars": "yarn node generate-apply-theme.js"
+    "g:run-scripts": "yarn concurrently -m 1 \"yarn g:package-patrol\" \"yarn g:css:stylelint-update-regex\"",
+    "g:css:stylelint-update-regex": "yarn node generate-stylelint-regex"
   },
   "publishConfig": {},
   "dependencies": {

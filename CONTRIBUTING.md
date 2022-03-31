@@ -69,7 +69,9 @@ Each extension must have the following top level files:
 
 - Any CSS class name is prefixed with a `B-` followed by the extension name / package name followed by a `_` and then a valid string. For example `B-my-extension_my-class`. 
 
-- There is also utility helpers which start `BU_` followed by the name of the helper, for example, `BU_my-helper`.
+- A utility class helper starts with `BU_` followed by the name of the helper, for example, `BU_my-helper`.
+
+- A css variable starts with `BV-` followed by the name of the variable, for example, `var(--BV-my-variable)`.
 
 ### Contexts
 

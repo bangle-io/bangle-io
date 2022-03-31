@@ -5,7 +5,7 @@ const { extractCSSVars } = require('@bangle.io/extract-css-vars');
 
 const releaseVersion = require('../../package.json').version;
 
-const pathToCSSVars = path.resolve(__dirname, '..', 'public', 'variables.css');
+const pathToCSSVars = path.resolve(__dirname, '..', 'public', 'main.css');
 
 const helpDocsVersion = JSON.parse(
   require('child_process')

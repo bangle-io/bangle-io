@@ -161,7 +161,6 @@
       "yarn eslint --fix"
     ],
     "*.css": [
-      "yarn g:css:update-css-vars",
       "yarn g:css:stylelint-update-regex",
       "yarn stylelint --fix --allow-empty-input",
       "yarn prettier --write"
