@@ -27,13 +27,11 @@ export function ActivitybarButton({
   widescreen: boolean;
   hint: string;
   isActive?: boolean;
-  // key if used in dropdowndow menu
-  onPress: (k?: React.Key) => void;
+  onPress: () => void;
   icon: any;
 }) {
   return (
     <ActionButton
-      allowFocus={false}
       isQuiet
       isActive={isActive}
       styling={buttonStyling}
@@ -46,6 +44,7 @@ export function ActivitybarButton({
       tooltip={<TooltipWrapper>{hint}</TooltipWrapper>}
       tooltipDelay={150}
       tooltipPlacement="right"
+      autoFocus={false}
     >
       <ButtonContent size="custom" icon={icon}></ButtonContent>
     </ActionButton>

@@ -19,7 +19,7 @@
   outline-offset: 2px;
   border: 1px solid transparent;
 
-  --BV-bangle-ring-offset-width: 0;
+  --BV-bangle-ring-offset-width: 0px;
   --BV-bangle-ring-offset-color: #fff;
   --BV-bangle-ring-color: var(--BV-accent-primary-0);
   --BV-bangle-ring-offset-shadow: 0 0 0 var(--BV-bangle-ring-offset-width)

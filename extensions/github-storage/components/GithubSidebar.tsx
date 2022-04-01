@@ -101,7 +101,6 @@ function ModifiedEntries({
     <div>
       <div className="px-4 my-4">
         <ActionButton
-          allowFocus={false}
           onPress={() => {
             dispatchSerialOperation({ name: OPERATION_SYNC_GITHUB_CHANGES });
           }}

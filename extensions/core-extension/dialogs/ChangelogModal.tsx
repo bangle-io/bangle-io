@@ -22,6 +22,7 @@ import {
 } from '@bangle.dev/base-components';
 import {
   BangleEditor as CoreBangleEditor,
+  Plugin,
   SpecRegistry,
 } from '@bangle.dev/core';
 import { markdownParser, markdownSerializer } from '@bangle.dev/markdown';
@@ -100,8 +101,13 @@ function getMarkdown() {
 function ChangelogDisplay() {
   const editorState = useEditorState({
     specRegistry,
-    // TODO remove as any
-    plugins: () => [],
+    plugins: () => [
+      new Plugin({
+        props: {
+          editable: () => false,
+        },
+      }),
+    ],
     initialValue: parser.parse(getMarkdown()),
   });
 
@@ -113,7 +119,6 @@ function ChangelogDisplay() {
       renderNodeViews={() => {
         return null;
       }}
-      id="abced"
       children={null}
     />
   );

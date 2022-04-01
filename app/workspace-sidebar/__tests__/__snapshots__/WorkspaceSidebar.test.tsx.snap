@@ -17,7 +17,7 @@ exports[`renders 1`] = `
         <span>
           <button
             aria-label="hide search notes"
-            class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet focus:outline-none focus:ring focus:border-blue-300"
+            class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
             type="button"
           >
             <svg

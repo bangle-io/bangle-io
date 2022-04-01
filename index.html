@@ -23,18 +23,21 @@
     <!--  -->
 
     <link rel="stylesheet" href="/main.css" />
-    <style>
-      :root {
-        background-color: var(--BV-window-bg-color-0);
-      }
-    </style>
+
     <title>Bangle App</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <div id="tooltip-container" style="position: fixed; z-index: 1500"></div>
-    <div id="modal-container" style="position: fixed; z-index: 1000"></div>
+    <!-- Keep these in sync with preview-body.html in storybook -->
+    <div
+      id="tooltip-container"
+      style="position: fixed; z-index: var(--BV-window-tooltip-z-index)"
+    ></div>
+    <div
+      id="modal-container"
+      style="position: fixed; z-index: var(--BV-window-modal-z-index)"
+    ></div>
     <%- viteJsEntry %>
     <!--  -->
     <%- fathom %>

@@ -68,7 +68,6 @@ export function EditorBar({
       <div className="flex flex-row">
         {showSplitEditor && (
           <ActionButton
-            allowFocus={false}
             isQuiet="hoverBg"
             onPress={onPressSecondaryEditor}
             styling={{}}
@@ -87,7 +86,6 @@ export function EditorBar({
           </ActionButton>
         )}
         <ActionButton
-          allowFocus={false}
           isQuiet="hoverBg"
           ariaLabel="Close"
           onPress={onClose}

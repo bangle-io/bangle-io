@@ -42,3 +42,18 @@ export function togglePaletteType(type: CorePalette | undefined) {
     });
   };
 }
+
+export function showDialog(
+  dialogName: string,
+  metadata?: undefined | { [key: string]: any },
+) {
+  return uiSliceKey.op((_, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:SHOW_DIALOG',
+      value: {
+        dialogName,
+        metadata,
+      },
+    });
+  });
+}

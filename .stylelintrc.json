@@ -5,10 +5,27 @@
     "at-rule-no-unknown": null,
     "keyframes-name-pattern": null,
     "custom-property-pattern": "^BV-[a-z0-9A-Z\\-]+$",
+    "length-zero-no-unit": [
+      true,
+      {
+        "ignore": ["custom-properties"]
+      }
+    ],
     "selector-class-pattern": [
       "^(B-activitybar|B-core-editor|B-core-extension|B-editor-container|B-inline-backlink|B-inline-emoji|B-note-sidebar|B-note-tags|B-search-notes|B-style|B-ui-bangle-button|B-ui-components|B-ui-dhancha|B-workspace-sidebar|BU)_[a-z0-9A-Z\\-]+$",
       {
         "message": "Selector should start with the package name followed by an underscore and then the selector name containing only lowercase letters, numbers and hyphens."
+      }
+    ],
+    "declaration-block-no-redundant-longhand-properties": [
+      true,
+      {
+        "ignoreShorthands": [
+          "grid-template",
+          "grid-template-areas",
+          "grid-template-rows",
+          "grid-template-columns"
+        ]
       }
     ]
   }

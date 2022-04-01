@@ -1,3 +1,4 @@
+import { FocusRing } from '@react-aria/focus';
 import React, { ReactNode, useCallback } from 'react';
 
 import { cx } from '@bangle.io/utils';
@@ -18,7 +19,7 @@ export type StylingProps = {
 
 export type BaseButtonProps = {
   id?: string;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'destructive';
   styling: StylingProps;
   children: ReactNode;
   className: string;
@@ -28,9 +29,7 @@ export type BaseButtonProps = {
   isHovered: boolean;
   isPressed: boolean;
   style: React.CSSProperties;
-  allowFocus?: boolean;
   onElementReady?: (el: HTMLButtonElement) => void;
-  autoFocus?: boolean;
 };
 
 export const BaseButton = ({
@@ -46,33 +45,57 @@ export const BaseButton = ({
   isQuiet,
   style,
   onElementReady,
-  allowFocus = true,
-  autoFocus = false,
   ...otherProps
 }: BaseButtonProps) => {
-  const {
+  let {
     animateOnPress = false,
-    activeColor = variant === 'secondary'
-      ? 'var(--BV-ui-bangle-button-active-color)'
-      : 'var(--BV-ui-bangle-button-primary-active-color)',
-    color = variant === 'secondary'
-      ? 'var(--BV-ui-bangle-button-color)'
-      : 'var(--BV-ui-bangle-button-primary-color)',
-    buttonBgColor = variant === 'secondary'
-      ? 'var(--BV-ui-bangle-button-bg-color)'
-      : 'var(--BV-ui-bangle-button-primary-bg-color)',
-    hoverBgColor = variant === 'secondary'
-      ? 'var(--BV-ui-bangle-button-hover-bg-color)'
-      : 'var(--BV-ui-bangle-button-primary-hover-bg-color)',
-    hoverColor = variant === 'secondary'
-      ? 'var(--BV-ui-bangle-button-hover-color)'
-      : 'var(--BV-ui-bangle-button-primary-hover-color)',
-    pressedBgColor = variant === 'secondary'
-      ? 'var(--BV-ui-bangle-button-pressed-bg-color)'
-      : 'var(--BV-ui-bangle-button-primary-pressed-bg-color)',
+    activeColor,
+    color,
+    buttonBgColor,
+    hoverBgColor,
+    hoverColor,
+    pressedBgColor,
     disabledBgColor = 'var(--BV-ui-bangle-button-disabled-bg-color)',
     disabledColor = 'var(--BV-ui-bangle-button-disabled-color)',
   } = styling;
+
+  switch (variant) {
+    case 'secondary': {
+      ({
+        activeColor = 'var(--BV-ui-bangle-button-active-color)',
+        color = 'var(--BV-ui-bangle-button-color)',
+        buttonBgColor = 'var(--BV-ui-bangle-button-bg-color)',
+        hoverBgColor = 'var(--BV-ui-bangle-button-hover-bg-color)',
+        hoverColor = 'var(--BV-ui-bangle-button-hover-color)',
+        pressedBgColor = 'var(--BV-ui-bangle-button-pressed-bg-color)',
+      } = styling);
+      break;
+    }
+
+    case 'primary': {
+      ({
+        activeColor = 'var(--BV-ui-bangle-button-primary-active-color)',
+        color = 'var(--BV-ui-bangle-button-primary-color)',
+        buttonBgColor = 'var(--BV-ui-bangle-button-primary-bg-color)',
+        hoverBgColor = 'var(--BV-ui-bangle-button-primary-hover-bg-color)',
+        hoverColor = 'var(--BV-ui-bangle-button-primary-hover-color)',
+        pressedBgColor = 'var(--BV-ui-bangle-button-primary-pressed-bg-color)',
+      } = styling);
+      break;
+    }
+
+    case 'destructive': {
+      ({
+        activeColor = 'var(--BV-ui-bangle-button-destructive-active-color)',
+        color = 'var(--BV-ui-bangle-button-destructive-color)',
+        buttonBgColor = 'var(--BV-ui-bangle-button-destructive-bg-color)',
+        hoverBgColor = 'var(--BV-ui-bangle-button-destructive-hover-bg-color)',
+        hoverColor = 'var(--BV-ui-bangle-button-destructive-hover-color)',
+        pressedBgColor = 'var(--BV-ui-bangle-button-destructive-pressed-bg-color)',
+      } = styling);
+      break;
+    }
+  }
 
   style = { ...style };
   style.color = color;
@@ -114,28 +137,29 @@ export const BaseButton = ({
   );
 
   return (
-    <button
-      id={id}
-      autoFocus={autoFocus}
-      {...otherProps}
-      disabled={isDisabled}
-      className={cx(
-        className,
-        'B-ui-bangle-button_button p-1 ',
-        'transition-all duration-100',
-        animateOnPress && 'animate-on-press',
-        isActive && 'BU_is-active',
-        isDisabled && 'cursor-not-allowed',
-        isHovered && 'is-hovered',
-        isPressed && 'is-pressed',
-        isHovered && 'bg-on-hover',
-        isQuiet && 'is-quiet',
-        allowFocus && 'focus:outline-none focus:ring focus:border-blue-300',
-      )}
-      style={style}
-      ref={_onElementReady}
-    >
-      {children}
-    </button>
+    <FocusRing focusRingClass="B-ui-bangle-button_show-focus-ring">
+      <button
+        type="button"
+        id={id}
+        {...otherProps}
+        disabled={isDisabled}
+        className={cx(
+          className,
+          'B-ui-bangle-button_button p-1 ',
+          'transition-all duration-100',
+          animateOnPress && 'animate-on-press',
+          isActive && 'BU_is-active',
+          isDisabled && 'cursor-not-allowed',
+          isHovered && 'is-hovered',
+          isPressed && 'is-pressed',
+          isHovered && 'bg-on-hover',
+          isQuiet && 'is-quiet',
+        )}
+        style={style}
+        ref={_onElementReady}
+      >
+        {children}
+      </button>
+    </FocusRing>
   );
 };
