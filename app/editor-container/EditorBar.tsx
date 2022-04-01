@@ -49,7 +49,7 @@ export function EditorBar({
       <div
         aria-label="note path"
         className={cx(
-          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm overflow-ellipsis hover:underline',
+          'flex flex-row flex-wrap text-xs cursor-pointer transition-colors px-2 rounded B-editor-container_ws-path lg:text-sm text-ellipsis hover:underline',
           isActive && 'BU_active',
         )}
         onClick={openNotesPalette}

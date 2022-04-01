@@ -1,7 +1,7 @@
 const globby = require('globby');
 const { getWorktreeWorkspaces } = require('./map-files');
 const { yarnWorkspacesList } = require('./yarn-utils');
-const { rootDir, ALL_TREES } = require('../constants');
+const { rootDir, ALL_TOP_LEVEL_DIRS } = require('../constants');
 const { readFile, writeFile } = require('fs/promises');
 
 class WorkTree {
@@ -136,7 +136,7 @@ class FileWrapper {
 async function getAllPackages() {
   return (
     await Promise.all(
-      ALL_TREES.map((r) => new WorkTree(r)).map((r) => {
+      ALL_TOP_LEVEL_DIRS.map((r) => new WorkTree(r)).map((r) => {
         return r.packages();
       }),
     )

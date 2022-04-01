@@ -11,10 +11,10 @@ const EXTENSIONS = 'extensions';
 const APP = 'app';
 const TOOLING = 'tooling';
 
-const ALL_TREES = [LIB, JS_LIB, WORKER, EXTENSIONS, APP, TOOLING];
+const ALL_TOP_LEVEL_DIRS = [LIB, JS_LIB, WORKER, EXTENSIONS, APP, TOOLING];
 
 module.exports = {
-  ALL_TREES,
+  ALL_TOP_LEVEL_DIRS,
   APP,
   EXTENSIONS,
   JS_LIB,
