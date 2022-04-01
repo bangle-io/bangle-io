@@ -2,6 +2,7 @@ import type { Placement } from '@popperjs/core';
 import { useButton } from '@react-aria/button';
 import { useHover } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
+import type { PressEvents } from '@react-types/shared';
 import React, { MutableRefObject, ReactNode, useCallback, useRef } from 'react';
 import reactDOM from 'react-dom';
 
@@ -25,20 +26,18 @@ export function ActionButton({
   tooltipPlacement = 'bottom',
   tooltipXOffset = 5,
   tooltipYOffset = 0,
-  allowFocus = true,
   autoFocus,
 }: {
   id?: string;
-  allowFocus?: boolean;
   autoFocus?: boolean;
-  variant?: 'primary' | 'secondary';
+  variant?: BaseButtonProps['variant'];
   ariaLabel: string;
   children: ReactNode;
   className?: string;
   isQuiet?: BaseButtonProps['isQuiet'];
   isActive?: boolean;
   isDisabled?: boolean;
-  onPress: () => void;
+  onPress: PressEvents['onPress'];
   style?: React.CSSProperties;
   styling?: StylingProps;
   tooltip?: ReactNode;
@@ -54,7 +53,7 @@ export function ActionButton({
   const { hoverProps, isHovered } = useHover({ isDisabled });
 
   const { buttonProps, isPressed } = useButton(
-    { 'aria-label': ariaLabel, onPress, isDisabled },
+    { 'aria-label': ariaLabel, onPress, isDisabled, autoFocus },
     ref,
   );
 
@@ -93,7 +92,6 @@ export function ActionButton({
         isDisabled={isDisabled}
         isHovered={isHovered}
         isPressed={isPressed}
-        allowFocus={allowFocus}
         autoFocus={autoFocus}
         onElementReady={setButtonElement}
         style={{ ...style, ...buttonProps.style, ...hoverProps.style }}

@@ -23,7 +23,6 @@ export {
 
 export function DropdownMenu({
   ariaLabel,
-  buttonAllowFocus,
   buttonAriaLabel,
   buttonChildren,
   buttonAutoFocus,
@@ -44,7 +43,6 @@ export function DropdownMenu({
   variant,
 }: {
   ariaLabel: string;
-  buttonAllowFocus?: boolean;
   buttonAriaLabel: string;
   buttonAutoFocus?: boolean;
   buttonChildren: ReactNode;
@@ -104,7 +102,6 @@ export function DropdownMenu({
         {...mergedProps}
         variant={variant}
         isQuiet={isButtonQuiet}
-        allowFocus={buttonAllowFocus}
         autoFocus={buttonAutoFocus}
         className={buttonClassName}
         styling={buttonStyling}

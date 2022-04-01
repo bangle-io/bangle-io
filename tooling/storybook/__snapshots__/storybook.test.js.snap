@@ -3,10 +3,11 @@
 exports[`Storyshots ui-bangle-button/ActionButton Primary 1`] = `
 <button
   aria-label="hi brother"
-  autoFocus={false}
-  className="B-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+  className="B-ui-bangle-button_button p-1  transition-all duration-100"
+  onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
+  onFocus={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
   onMouseDown={[Function]}
@@ -36,10 +37,11 @@ exports[`Storyshots ui-bangle-button/ActionButton Primary 1`] = `
 exports[`Storyshots ui-bangle-button/DropdownMenu Primary 1`] = `
 <button
   aria-pressed={false}
-  autoFocus={false}
-  className="B-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+  className="B-ui-bangle-button_button p-1  transition-all duration-100"
+  onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
+  onFocus={[Function]}
   onKeyDown={[Function]}
   onKeyUp={[Function]}
   onMouseDown={[Function]}

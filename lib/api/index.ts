@@ -7,6 +7,7 @@ export {
   useSerialOperationContext,
   useSerialOperationHandler,
 } from './serial-operation-context';
+export * as ui from './ui';
 export * as workspace from './workspace';
 export * as wsPathHelpers from './ws-path-helpers';
 export { useBangleStoreContext } from '@bangle.io/bangle-store-context';

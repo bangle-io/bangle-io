@@ -94,7 +94,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
                   <button
                     aria-label="select storage type"
                     aria-pressed="false"
-                    class="test-button-class  B-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+                    class="test-button-class  B-ui-bangle-button_button p-1  transition-all duration-100 B-ui-bangle-button_show-focus-ring"
                     type="button"
                   >
                     <span
@@ -141,7 +141,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
               >
                 <button
                   aria-label="create workspace"
-                  class="px-4 B-ui-bangle-button_button p-1  transition-all duration-100 cursor-not-allowed focus:outline-none focus:ring focus:border-blue-300"
+                  class="px-4 B-ui-bangle-button_button p-1  transition-all duration-100 cursor-not-allowed"
                   disabled=""
                   id="new-workspace-modal_create-button"
                   type="button"
