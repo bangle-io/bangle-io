@@ -33,23 +33,23 @@
     "@storybook/addon-interactions": "^6.4.19",
     "@storybook/addon-links": "^6.4.19",
     "@storybook/addon-postcss": "^2.0.0",
+    "@storybook/addon-storyshots": "^6.4.19",
     "@storybook/builder-webpack5": "^6.4.19",
     "@storybook/manager-webpack5": "^6.4.19",
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
-    "@types/babel__core": "^7",
-    "@types/react": "^17",
-    "@types/react-dom": "^17",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
     "babel-loader": "^8.2.4",
-    "postcss": "^8",
+    "postcss": "^8.4.12",
     "webpack": "^5.70.0"
   },
   "scripts": {
-    "g:storybook": "start-storybook -p 6006",
+    "g:storybook": "start-storybook -p 6006 --no-open",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }
