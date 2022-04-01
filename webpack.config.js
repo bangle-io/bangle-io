@@ -13,7 +13,7 @@ process.env.WEBPACK = true;
 
 module.exports = async (env, argv) => {
   const isProduction = env && env.production;
-  const envVars = await require('@bangle.io/env-vars')({ isProduction });
+  const envVars = require('@bangle.io/env-vars')({ isProduction });
 
   const mode = isProduction ? 'production' : 'development';
   const buildPath = path.resolve(__dirname, 'build');

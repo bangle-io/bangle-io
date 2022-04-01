@@ -73,4 +73,38 @@ module.exports = function main(plop) {
       },
     ],
   });
+
+  plop.setGenerator('tooling', {
+    description: 'Create tooling package',
+    prompts: [
+      {
+        type: 'input',
+        name: 'name',
+        message: 'package name please',
+      },
+    ],
+    actions: [
+      {
+        type: 'add',
+        path: 'tooling/{{name}}/package.json',
+        templateFile: 'tooling/plop-templates/new-js-lib/package-json.hbs',
+      },
+      {
+        type: 'add',
+        path: 'tooling/{{name}}/index.ts',
+        templateFile: 'tooling/plop-templates/new-js-lib/index-ts.hbs',
+      },
+      {
+        type: 'modify',
+        path: 'tooling/package.json',
+        transform: (fileContents, data) => {
+          return JSON.stringify(
+            addToWorkspaces(JSON.parse(fileContents), data.name),
+            null,
+            2,
+          );
+        },
+      },
+    ],
+  });
 };

@@ -5,6 +5,7 @@ module.exports = {
   extends: [
     'react-app',
     'react-app/jest',
+    'plugin:storybook/recommended',
 
     // 'plugin:jest/recommended',
     'plugin:import/errors',

@@ -31,8 +31,8 @@
   },
   "devDependencies": {
     "@bangle.io/test-utils": "workspace:*",
-    "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.13"
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14"
   },
   "publishConfig": {
     "access": "public"

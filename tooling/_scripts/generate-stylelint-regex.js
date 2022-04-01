@@ -1,12 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const { WorkTree } = require('./lib/work-tree');
-const { LIB, APP, EXTENSIONS } = require('./constants');
+const { LIB, APP, EXTENSIONS, TOOLING } = require('./constants');
 const prettier = require('prettier');
 
 const libTree = new WorkTree(LIB);
 const appTree = new WorkTree(APP);
 const extensionTree = new WorkTree(EXTENSIONS);
+const toolingTree = new WorkTree(TOOLING);
 
 const lintFilePath = path.resolve(__dirname, '..', '..', '.stylelintrc.json');
 
@@ -14,7 +15,7 @@ async function run() {
   const styleLint = JSON.parse(fs.readFileSync(lintFilePath, 'utf-8'));
 
   let result = await Promise.all(
-    [libTree, appTree, extensionTree].flatMap(async (wTree) => {
+    [libTree, appTree, extensionTree, toolingTree].flatMap(async (wTree) => {
       const packages = await wTree.packages({ detailed: true });
 
       const result = (

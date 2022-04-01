@@ -1,10 +1,11 @@
 {
   "name": "tooling",
   "workspaces": [
-    "env-vars",
     "_scripts",
+    "env-vars",
+    "extract-css-vars",
     "playwright-e2e",
-    "extract-css-vars"
+    "storybook"
   ],
   "repository": {
     "directory": "tooling",

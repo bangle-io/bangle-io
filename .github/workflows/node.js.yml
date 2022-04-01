@@ -15,7 +15,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 jobs:
   yarn-validate:
-    name: Validate Yarn dependencies and constraints
+    name: Validate dependencies and storybook
     runs-on: ubuntu-latest
 
     steps:
@@ -40,6 +40,8 @@ jobs:
           yarn dedupe --check
       - name: 'Run scripts'
         run: yarn g:run-scripts
+      - name: 'build storybook'
+        run: yarn g:storybook --ci --smoke-test
 
   tests-matrix:
     runs-on: ubuntu-latest

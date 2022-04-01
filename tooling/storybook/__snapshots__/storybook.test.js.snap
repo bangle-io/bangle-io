@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ui-bangle-button/ActionButton Primary 1`] = `
+<button
+  aria-label="hi brother"
+  autoFocus={false}
+  className="B-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+  onClick={[Function]}
+  onDragStart={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  onMouseUp={[Function]}
+  onTouchCancel={[Function]}
+  onTouchEnd={[Function]}
+  onTouchMove={[Function]}
+  onTouchStart={[Function]}
+  style={
+    Object {
+      "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
+      "color": "var(--BV-ui-bangle-button-color)",
+    }
+  }
+  type="button"
+>
+  <span
+    className=""
+  >
+    hi brothers from another mother
+  </span>
+</button>
+`;
+
+exports[`Storyshots ui-bangle-button/DropdownMenu Primary 1`] = `
+<button
+  aria-pressed={false}
+  autoFocus={false}
+  className="B-ui-bangle-button_button p-1  transition-all duration-100 focus:outline-none focus:ring focus:border-blue-300"
+  onClick={[Function]}
+  onDragStart={[Function]}
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  onMouseDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  onMouseUp={[Function]}
+  onTouchCancel={[Function]}
+  onTouchEnd={[Function]}
+  onTouchMove={[Function]}
+  onTouchStart={[Function]}
+  style={
+    Object {
+      "backgroundColor": "var(--BV-ui-bangle-button-bg-color)",
+      "color": "var(--BV-ui-bangle-button-color)",
+    }
+  }
+  type="button"
+>
+  <span
+    className=""
+  >
+    wow
+  </span>
+</button>
+`;
+
+exports[`Storyshots ui-components/LocationBreadCrumb Primary 1`] = `
+<div
+  className="z-10 w-full py-1 pl-2"
+>
+  <span>
+    hi
+  </span>
+  <span
+    className="px-1"
+  >
+    &gt;
+  </span>
+  <span>
+    brothers
+  </span>
+</div>
+`;

@@ -6,4 +6,7 @@ build/
 node_modules/
 coverage/
 .yarn/
-tooling/
+tooling/public
+tooling/_scripts
+tooling/playwright-e2e
+tooling/plop-templates
