@@ -4,4 +4,5 @@ export * from './helper';
 export * from './store';
 export * from './theme';
 export * from './ui';
+export * from './utils';
 export * from './workspace';

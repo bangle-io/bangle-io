@@ -1,9 +1,12 @@
 const webpack = require('webpack');
 
+const { ALL_TOP_LEVEL_DIRS } = require('@bangle.io/scripts/constants');
+
 module.exports = {
   stories: [
-    '../stories/**/*.stories.mdx',
-    '../stories/**/*.stories.@(js|jsx|ts|tsx)',
+    ...ALL_TOP_LEVEL_DIRS.map(
+      (dir) => `../../../${dir}/**/*.stories.@(js|jsx|ts|tsx)`,
+    ),
   ],
   addons: [
     '@storybook/addon-links',
@@ -29,7 +32,6 @@ module.exports = {
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
       propFilter: (prop) => {
-        console.log(prop.parent?.fileName);
         if (prop.parent) {
           if (!/node_modules/.test(prop.parent.fileName)) {
             return true;
@@ -48,13 +50,6 @@ module.exports = {
   webpackFinal: (config) => {
     config.resolve.plugins = config.resolve.plugins || [];
     const envVars = require('@bangle.io/env-vars')({ isProduction: false });
-    // config.resolve.plugins.push(new TsconfigPathsPlugin());
-
-    // config.resolve.fallback = {
-    //   stream: false,
-    //   path: false,
-    //   process: false,
-    // };
 
     config.module.rules.push({
       test: /\.m?js/,
@@ -63,19 +58,11 @@ module.exports = {
       },
     });
 
-    console.log(envVars.appEnvs);
-
     config.plugins.push(
       new webpack.DefinePlugin({
         ...envVars.appEnvs,
       }),
     );
-
-    // config.plugins.push(
-    //   new ProvidePlugin({
-    //     process: require.resolve('process/browser'),
-    //   }),
-    // );
 
     return config;
   },
