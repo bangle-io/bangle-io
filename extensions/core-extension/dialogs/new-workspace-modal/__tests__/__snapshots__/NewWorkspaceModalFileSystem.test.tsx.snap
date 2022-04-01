@@ -23,7 +23,7 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
           ​
         </span>
         <div
-          class="B-ui-components_modal-container h-full B-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transition-all sm:my-8 sm:align-middle max-w-2xl "
+          class="B-ui-components_modal-container h-full B-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl "
           style="width: 30rem; max-width: 30rem;"
         >
           <div
