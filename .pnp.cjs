@@ -665,7 +665,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.16.12"],
             ["@babel/helper-validator-option", "npm:7.16.7"],
             ["@types/babel__core", null],
-            ["browserslist", "npm:4.19.1"],
+            ["browserslist", "npm:4.20.2"],
             ["semver", "npm:6.3.0"]
           ],
           "packagePeers": [
@@ -682,7 +682,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.17.7"],
             ["@babel/helper-validator-option", "npm:7.16.7"],
             ["@types/babel__core", null],
-            ["browserslist", "npm:4.19.1"],
+            ["browserslist", "npm:4.20.2"],
             ["semver", "npm:6.3.0"]
           ],
           "packagePeers": [
@@ -10630,18 +10630,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["browserslist", [
-        ["npm:4.19.1", {
-          "packageLocation": "./.yarn/cache/browserslist-npm-4.19.1-e9de2a4009-c0777fd483.zip/node_modules/browserslist/",
-          "packageDependencies": [
-            ["browserslist", "npm:4.19.1"],
-            ["caniuse-lite", "npm:1.0.30001303"],
-            ["electron-to-chromium", "npm:1.4.57"],
-            ["escalade", "npm:3.1.1"],
-            ["node-releases", "npm:2.0.1"],
-            ["picocolors", "npm:1.0.0"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:4.20.2", {
           "packageLocation": "./.yarn/cache/browserslist-npm-4.20.2-9e0a0d0265-18e09beeae.zip/node_modules/browserslist/",
           "packageDependencies": [
@@ -10838,13 +10826,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["caniuse-lite", [
-        ["npm:1.0.30001303", {
-          "packageLocation": "./.yarn/cache/caniuse-lite-npm-1.0.30001303-170ddd75cd-fe77fb680c.zip/node_modules/caniuse-lite/",
-          "packageDependencies": [
-            ["caniuse-lite", "npm:1.0.30001303"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:1.0.30001323", {
           "packageLocation": "./.yarn/cache/caniuse-lite-npm-1.0.30001323-d052655422-053cffe1f3.zip/node_modules/caniuse-lite/",
           "packageDependencies": [
@@ -11543,7 +11524,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/core-js-compat-npm-3.20.3-b7b0eec0ac-ebb7af23e7.zip/node_modules/core-js-compat/",
           "packageDependencies": [
             ["core-js-compat", "npm:3.20.3"],
-            ["browserslist", "npm:4.19.1"],
+            ["browserslist", "npm:4.20.2"],
             ["semver", "npm:7.0.0"]
           ],
           "linkType": "HARD",
@@ -12466,13 +12447,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/electron-to-chromium-npm-1.4.103-5c9e680d2a-ae5783cafb.zip/node_modules/electron-to-chromium/",
           "packageDependencies": [
             ["electron-to-chromium", "npm:1.4.103"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:1.4.57", {
-          "packageLocation": "./.yarn/cache/electron-to-chromium-npm-1.4.57-0f10c11932-42a922c688.zip/node_modules/electron-to-chromium/",
-          "packageDependencies": [
-            ["electron-to-chromium", "npm:1.4.57"]
           ],
           "linkType": "HARD",
         }]
@@ -17898,13 +17872,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["node-releases", [
-        ["npm:2.0.1", {
-          "packageLocation": "./.yarn/cache/node-releases-npm-2.0.1-77b8e327f7-b20dd8d4bc.zip/node_modules/node-releases/",
-          "packageDependencies": [
-            ["node-releases", "npm:2.0.1"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:2.0.2", {
           "packageLocation": "./.yarn/cache/node-releases-npm-2.0.2-a4dc82058a-da858bf86b.zip/node_modules/node-releases/",
           "packageDependencies": [
@@ -23105,7 +23072,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@webassemblyjs/wasm-parser", "npm:1.11.1"],
             ["acorn", "npm:8.7.0"],
             ["acorn-import-assertions", "virtual:a719780ea2d2fc63af2111a1c2739ef34b53a62bd00814ff4001f0bef566d4530337c2afc6c9af8faec45913655a9dda1593656ad7841ba914f0bc66cda42935#npm:1.8.0"],
-            ["browserslist", "npm:4.19.1"],
+            ["browserslist", "npm:4.20.2"],
             ["chrome-trace-event", "npm:1.0.3"],
             ["enhanced-resolve", "npm:5.9.2"],
             ["es-module-lexer", "npm:0.9.3"],
