@@ -4751,17 +4751,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/pluginutils@npm:^4.1.1":
-  version: 4.1.2
-  resolution: "@rollup/pluginutils@npm:4.1.2"
-  dependencies:
-    estree-walker: ^2.0.1
-    picomatch: ^2.2.2
-  checksum: 498d67e7b48c707e3e0d9f7ddaa405833d77575b2d9607cd1914be40455ed534235e0512f9d046bf0e4ed1740e7816fd32ab1c673195e897c4fa180bcbfd7283
-  languageName: node
-  linkType: hard
-
-"@rollup/pluginutils@npm:^4.2.0":
+"@rollup/pluginutils@npm:^4.1.1, @rollup/pluginutils@npm:^4.2.0":
   version: 4.2.0
   resolution: "@rollup/pluginutils@npm:4.2.0"
   dependencies:
@@ -10655,20 +10645,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-select@npm:^4.1.3":
-  version: 4.1.3
-  resolution: "css-select@npm:4.1.3"
-  dependencies:
-    boolbase: ^1.0.0
-    css-what: ^5.0.0
-    domhandler: ^4.2.0
-    domutils: ^2.6.0
-    nth-check: ^2.0.0
-  checksum: 40928f1aa6c71faf36430e7f26bcbb8ab51d07b98b754caacb71906400a195df5e6c7020a94f2982f02e52027b9bd57c99419220cf7020968c3415f14e4be5f8
-  languageName: node
-  linkType: hard
-
-"css-select@npm:^4.2.1":
+"css-select@npm:^4.1.3, css-select@npm:^4.2.1":
   version: 4.3.0
   resolution: "css-select@npm:4.3.0"
   dependencies:
@@ -10678,13 +10655,6 @@ __metadata:
     domutils: ^2.8.0
     nth-check: ^2.0.1
   checksum: d6202736839194dd7f910320032e7cfc40372f025e4bf21ca5bf6eb0a33264f322f50ba9c0adc35dadd342d3d6fae5ca244779a4873afbfa76561e343f2058e0
-  languageName: node
-  linkType: hard
-
-"css-what@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "css-what@npm:5.1.0"
-  checksum: 0b75d1bac95c885c168573c85744a6c6843d8c33345f54f717218b37ea6296b0e99bb12105930ea170fd4a921990392a7c790c16c585c1d8960c49e2b7ec39f7
   languageName: node
   linkType: hard
 
@@ -11277,16 +11247,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domhandler@npm:^4.0.0, domhandler@npm:^4.2.0":
-  version: 4.2.2
-  resolution: "domhandler@npm:4.2.2"
-  dependencies:
-    domelementtype: ^2.2.0
-  checksum: ad782fef984eca5a6fdd4ce70b90c38aff335ae4d6a51223ac82bd371b6674614efdcfff2dbb1126a7395634357906781f179e4ec028c7c578bb7f2beef8a4a5
-  languageName: node
-  linkType: hard
-
-"domhandler@npm:^4.3.1":
+"domhandler@npm:^4.0.0, domhandler@npm:^4.2.0, domhandler@npm:^4.3.1":
   version: 4.3.1
   resolution: "domhandler@npm:4.3.1"
   dependencies:
@@ -11295,7 +11256,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domutils@npm:^2.5.2, domutils@npm:^2.6.0, domutils@npm:^2.8.0":
+"domutils@npm:^2.5.2, domutils@npm:^2.8.0":
   version: 2.8.0
   resolution: "domutils@npm:2.8.0"
   dependencies:
@@ -17709,7 +17670,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nth-check@npm:^2.0.0, nth-check@npm:^2.0.1":
+"nth-check@npm:^2.0.1":
   version: 2.0.1
   resolution: "nth-check@npm:2.0.1"
   dependencies:
@@ -20491,21 +20452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.43.1, rollup@npm:^2.59.0":
-  version: 2.63.0
-  resolution: "rollup@npm:2.63.0"
-  dependencies:
-    fsevents: ~2.3.2
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    rollup: dist/bin/rollup
-  checksum: 23db16ea9d222ad5ae9620ba51d4f45c834927038c1e43d87f7dd3d240aa54422e51c2660437479af4b771e13f9529df236a3d43a3b9f4229bf241347d5f2c8f
-  languageName: node
-  linkType: hard
-
-"rollup@npm:^2.60.2":
+"rollup@npm:^2.43.1, rollup@npm:^2.59.0, rollup@npm:^2.60.2":
   version: 2.70.1
   resolution: "rollup@npm:2.70.1"
   dependencies:
@@ -23967,13 +23914,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workbox-core@npm:6.4.0":
-  version: 6.4.0
-  resolution: "workbox-core@npm:6.4.0"
-  checksum: 30d3b45a6984d104f6eb089b4b045c28fe01d88c5abeb93f909deb431c77fcfe30a426c5dca8892131b8c81ef70d098abfdc9603a2a539c520fb8e0d8ae2ca40
-  languageName: node
-  linkType: hard
-
 "workbox-core@npm:6.5.2":
   version: 6.5.2
   resolution: "workbox-core@npm:6.5.2"
@@ -24081,23 +24021,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workbox-window@npm:6.5.2, workbox-window@npm:^6.4.2":
+"workbox-window@npm:6.5.2, workbox-window@npm:^6.3.0, workbox-window@npm:^6.4.2":
   version: 6.5.2
   resolution: "workbox-window@npm:6.5.2"
   dependencies:
     "@types/trusted-types": ^2.0.2
     workbox-core: 6.5.2
   checksum: f6fe30c1d7abe996f05fac6a026be97023719feae2cdcb3c2c9dcec875748a9865930ba6efc24bc28f764dba7eb71f9c786d696c4d8689e7ddab69ae8044e631
-  languageName: node
-  linkType: hard
-
-"workbox-window@npm:^6.3.0":
-  version: 6.4.0
-  resolution: "workbox-window@npm:6.4.0"
-  dependencies:
-    "@types/trusted-types": ^2.0.2
-    workbox-core: 6.4.0
-  checksum: f4208e944600760a95e6b15a3133732f372dd879dc01e286b13d1f3ac248b63851aa7429468d63beebef3652370f67d6ace0c7d95f90e6dd8341ff98f0a23177
   languageName: node
   linkType: hard
 
