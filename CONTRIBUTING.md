@@ -37,6 +37,8 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 # Architecture
 
+![overview](diagram.svg)
+
 The repository is divided into multiple smaller node packages which are linked to each other via `yarn`.
 
 ### Directory structure
