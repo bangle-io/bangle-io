@@ -102,7 +102,6 @@ export function DropdownMenu({
         {...mergedProps}
         variant={variant}
         isQuiet={isButtonQuiet}
-        autoFocus={buttonAutoFocus}
         className={buttonClassName}
         styling={buttonStyling}
         isActive={state.isSelected}
