@@ -1,6 +1,6 @@
 /* eslint-disable no-process-env */
 import reactRefresh from '@vitejs/plugin-react-refresh';
-import { injectHtml, minifyHtml } from 'vite-plugin-html';
+import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
 
 import getEnvVars from '@bangle.io/env-vars';
@@ -57,10 +57,10 @@ const config = async ({ command, mode }) => {
       format: 'es',
     },
     plugins: [
-      minifyHtml(),
-      injectHtml({
-        injectData: {
-          ...envVars.htmlInjections,
+      createHtmlPlugin({
+        minify: isProduction,
+        inject: {
+          data: { ...envVars.htmlInjections },
         },
       }),
       hot && reactRefresh(),
