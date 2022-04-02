@@ -29,3 +29,94 @@
   animation-name: B-ui-components_fade-in-scale;
   animation-timing-function: ease-out;
 }
+
+.B-ui-components_alert-modal-content-container {
+  overscroll-behavior-y: contain;
+  max-height: calc(100vh * 0.8);
+  display: grid;
+  grid-template-columns:
+    var(--BV-window-dialog-padding-x) auto 1fr auto minmax(0, auto)
+    var(--BV-window-dialog-padding-x);
+  grid-template-rows: auto var(--BV-window-dialog-padding-y) auto auto 1fr auto var(
+      --BV-window-dialog-padding-y
+    );
+  grid-template-areas:
+    'hero hero hero hero hero hero'
+    '. . . . . .'
+    '. heading header header typeIcon .'
+    '. divider divider divider divider .'
+    '. content content content content .'
+    '. footer footer buttonGroup buttonGroup .'
+    '. . . . . .';
+  background-color: var(--BV-window-bg-color-1);
+  border-radius: 6px;
+  box-shadow: rgb(11 19 22 / 38%) 0 10px 39px -11px,
+    rgb(11 19 22 / 21%) 0 10px 20px -14px;
+}
+
+.B-ui-components_alert-modal-content-container.BU_small {
+  width: 400px;
+}
+
+.B-ui-components_alert-modal-content-container.BU_medium {
+  width: 500px;
+}
+
+.B-ui-components_alert-modal-content-container.BU_large {
+  width: 640px;
+}
+
+.B-ui-components_alert-modal-hero {
+  grid-area: hero;
+  overflow: hidden;
+  background-position: 50%;
+  background-size: cover;
+  max-height: 120px;
+}
+
+.B-ui-components_alert-modal-hero > img {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  object-fit: cover;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.B-ui-components_alert-modal-heading {
+  grid-area: heading-start/heading-start/header-end/header-end;
+}
+
+.B-ui-components_alert-modal-divider {
+  grid-area: divider;
+  margin: 1.1rem 0 1.2rem;
+  border-radius: 0.25rem;
+  border: 0;
+  align-self: stretch;
+  background-color: var(--BV-window-separator-color);
+  width: 100%;
+  height: 2px;
+}
+
+.B-ui-components_alert-modal-button-group {
+  grid-area: footer-start/footer-start/buttonGroup-end/buttonGroup-end;
+}
+
+.B-ui-components_alert-modal-content {
+  grid-area: content;
+}
+
+.B-ui-components_alert-modal-underlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  inset: 0;
+  background-color: var(--BV-window-modal-overlay-bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--BV-window-modal-z-index);
+}

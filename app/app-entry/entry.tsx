@@ -1,5 +1,6 @@
 import './style';
 
+import { OverlayProvider } from '@react-aria/overlays';
 import React, { useEffect, useRef, useState } from 'react';
 import { BaseLocationHook, Router } from 'wouter';
 
@@ -118,31 +119,32 @@ export function Entry() {
   return (
     <React.StrictMode>
       <ErrorBoundary store={bangleStore}>
-        {/* <OverlayProvider className="w-full h-full"> */}
         <Router hook={useRouterHook} matcher={pathMatcher as any}>
-          <AppStateProvider
-            bangleStore={bangleStore}
-            bangleStoreChanged={bangleStoreChanged}
-          >
-            <UIManager>
-              <ExtensionRegistryContextProvider>
-                <ExtensionStateContextProvider>
-                  <WorkspaceContextProvider>
-                    <SWReloadPrompt />
-                    <WatchWorkspace />
-                    <WatchUI />
-                    <EditorManager>
-                      <SerialOperationContextProvider>
-                        <AppContainer />
-                      </SerialOperationContextProvider>
-                    </EditorManager>
-                  </WorkspaceContextProvider>
-                </ExtensionStateContextProvider>
-              </ExtensionRegistryContextProvider>
-            </UIManager>
-          </AppStateProvider>
+          {/* Used by OverlayContainer -- any modal or popover */}
+          <OverlayProvider>
+            <AppStateProvider
+              bangleStore={bangleStore}
+              bangleStoreChanged={bangleStoreChanged}
+            >
+              <UIManager>
+                <ExtensionRegistryContextProvider>
+                  <ExtensionStateContextProvider>
+                    <WorkspaceContextProvider>
+                      <SWReloadPrompt />
+                      <WatchWorkspace />
+                      <WatchUI />
+                      <EditorManager>
+                        <SerialOperationContextProvider>
+                          <AppContainer />
+                        </SerialOperationContextProvider>
+                      </EditorManager>
+                    </WorkspaceContextProvider>
+                  </ExtensionStateContextProvider>
+                </ExtensionRegistryContextProvider>
+              </UIManager>
+            </AppStateProvider>
+          </OverlayProvider>
         </Router>
-        {/* </OverlayProvider> */}
       </ErrorBoundary>
     </React.StrictMode>
   );

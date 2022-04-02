@@ -1,4 +1,4 @@
-import { editor, workspace } from '@bangle.io/api';
+import { ui, workspace } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CLOSE_EDITOR,
@@ -13,6 +13,7 @@ import {
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
+  RELOAD_APPLICATION_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
   WorkspaceTypeBrowser,
   WorkspaceTypeNative,
@@ -46,6 +47,7 @@ import {
   NewNoteInputModal,
   RenameNoteInputModal,
 } from './dialogs/NoteNameChangeDialog';
+import { ReloadApplicationDialog } from './dialogs/ReloadApplicationDialog';
 import {
   closeEditor,
   deleteActiveNote,
@@ -77,6 +79,10 @@ const extension = Extension.create({
       {
         name: NEW_WORKSPACE_DIALOG_NAME,
         ReactComponent: NewWorkspaceModal,
+      },
+      {
+        name: RELOAD_APPLICATION_DIALOG_NAME,
+        ReactComponent: ReloadApplicationDialog,
       },
     ],
     operations: [
@@ -319,7 +325,10 @@ const extension = Extension.create({
             }
 
             case 'operation::@bangle.io/core-extension:reload-application': {
-              window.location.reload();
+              ui.showDialog(RELOAD_APPLICATION_DIALOG_NAME)(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
 
               return true;
             }

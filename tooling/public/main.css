@@ -1,12 +1,24 @@
+#modal-container {
+  isolation: isolate;
+  background: transparent;
+  color-scheme: light;
+}
+
+html[data-theme='dark'] #modal-container {
+  color-scheme: dark;
+}
+
 :root {
   --BV-window-widescreen-minWidth: 760px;
   --BV-window-pill-border-radius: 5px;
-  --BV-window-modal-z-index: 500;
+  --BV-window-modal-z-index: 700;
   --BV-window-popup-editor-z-index: 300;
-  --BV-window-tooltip-z-index: 1000;
+  --BV-window-tooltip-z-index: 800;
   --BV-window-page-padding: 3rem 30px 3rem 30px;
   --BV-window-page-mobile-padding: 1.5rem 10px 2rem 25px;
   --BV-window-page-box-padding: 2rem;
+  --BV-window-dialog-padding-x: 40px;
+  --BV-window-dialog-padding-y: 40px;
 
   --BV-page-max-width: 700px;
 
@@ -47,6 +59,8 @@
   --BV-accent-primary-0: rgb(88, 204, 240);
   --BV-accent-primary-1: rgb(136, 223, 250);
   --BV-accent-secondary: rgb(232, 232, 232);
+  --BV-accent-destructive-0: rgb(198, 69, 69);
+  --BV-accent-destructive-1: rgb(197, 74, 74);
 
   --BV-severity-error-color: #f44336;
   --BV-severity-warning-color: #ff9800;
@@ -57,20 +71,21 @@
   --BV-window-bg-color-0: var(--BV-base-100);
   --BV-window-bg-color-1: var(--BV-base-75);
   --BV-window-bg-color-2: var(--BV-base-50);
-  --BV-window-link-color: #4299e1;
-  --BV-window-highlight-bg-color: yellow;
-  --BV-window-tooltip-bg-color: var(--BV-base-50);
-  --BV-window-tooltip-color: var(--BV-text-color-1);
+  --BV-window-border-color-0: var(--BV-base-300);
+  --BV-window-border-color-1: var(--BV-base-300);
   --BV-window-dropdown-bg-color-0: var(--BV-base-75);
   --BV-window-dropdown-bg-color-1: var(--BV-base-50);
   --BV-window-dropdown-color: var(--BV-text-color-1);
-  --BV-window-popup-editor-bg-color: var(--BV-base-75);
-  --BV-window-popup-editor-color: var(--BV-text-color-1);
+  --BV-window-highlight-bg-color: yellow;
   --BV-window-kbd-bg-color: var(--BV-base-300);
   --BV-window-kbd-color: var(--BV-text-color-1);
-  --BV-window-border-color-0: var(--BV-base-300);
-  --BV-window-border-color-1: var(--BV-base-300);
+  --BV-window-link-color: #4299e1;
   --BV-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
+  --BV-window-popup-editor-bg-color: var(--BV-base-75);
+  --BV-window-popup-editor-color: var(--BV-text-color-1);
+  --BV-window-separator-color: var(--BV-base-300);
+  --BV-window-tooltip-bg-color: var(--BV-base-50);
+  --BV-window-tooltip-color: var(--BV-text-color-1);
 
   --BV-workspace-sidebar-bg-color: var(--BV-base-150);
 
@@ -102,6 +117,14 @@
   --BV-ui-bangle-button-primary-hover-bg-color: var(--BV-accent-primary-1);
   --BV-ui-bangle-button-primary-hover-color: var(--BV-base-900);
   --BV-ui-bangle-button-primary-pressed-bg-color: var(--BV-base-400);
+  --BV-ui-bangle-button-destructive-active-color: var(--BV-base-900);
+  --BV-ui-bangle-button-destructive-bg-color: var(--BV-accent-destructive-0);
+  --BV-ui-bangle-button-destructive-color: var(--BV-base-200);
+  --BV-ui-bangle-button-destructive-hover-bg-color: var(
+    --BV-accent-destructive-1
+  );
+  --BV-ui-bangle-button-destructive-hover-color: var(--BV-base-200);
+  --BV-ui-bangle-button-destructive-pressed-bg-color: var(--BV-base-400);
 
   --BV-backlink-backlink-bg-color: rgb(208, 238, 252);
   --BV-backlink-backlink-hover-bg-color: rgb(225, 242, 250);
@@ -130,6 +153,8 @@ html[data-theme='dark'] {
   --BV-accent-primary-0: rgb(223, 50, 130);
   --BV-accent-primary-1: rgb(229, 92, 156);
   --BV-accent-secondary: rgb(57, 62, 63);
+  --BV-accent-destructive-0: rgb(219, 101, 100);
+  --BV-accent-destructive-1: rgb(218, 110, 108);
 
   --BV-severity-error-color: #f44336;
   --BV-severity-warning-color: #ff9800;
@@ -140,20 +165,21 @@ html[data-theme='dark'] {
   --BV-window-bg-color-0: var(--BV-base-100);
   --BV-window-bg-color-1: var(--BV-base-75);
   --BV-window-bg-color-2: var(--BV-base-50);
-  --BV-window-link-color: #4299e1;
-  --BV-window-highlight-bg-color: rgba(255, 255, 0, 0.5);
-  --BV-window-tooltip-bg-color: var(--BV-base-50);
-  --BV-window-tooltip-color: var(--BV-text-color-0);
+  --BV-window-border-color-0: var(--BV-base-400);
+  --BV-window-border-color-1: var(--BV-base-400);
   --BV-window-dropdown-bg-color-0: var(--BV-base-75);
   --BV-window-dropdown-bg-color-1: var(--BV-base-50);
   --BV-window-dropdown-color: var(--BV-text-color-1);
-  --BV-window-popup-editor-bg-color: var(--BV-base-75);
-  --BV-window-popup-editor-color: var(--BV-text-color-1);
+  --BV-window-highlight-bg-color: rgba(255, 255, 0, 0.5);
   --BV-window-kbd-bg-color: var(--BV-base-400);
   --BV-window-kbd-color: var(--BV-text-color-1);
-  --BV-window-border-color-0: var(--BV-base-400);
-  --BV-window-border-color-1: var(--BV-base-400);
+  --BV-window-link-color: #4299e1;
   --BV-window-modal-overlay-bg-color: rgba(0, 0, 0, 0.6);
+  --BV-window-popup-editor-bg-color: var(--BV-base-75);
+  --BV-window-popup-editor-color: var(--BV-text-color-1);
+  --BV-window-separator-color: var(--BV-base-300);
+  --BV-window-tooltip-bg-color: var(--BV-base-50);
+  --BV-window-tooltip-color: var(--BV-text-color-0);
 
   --BV-workspace-sidebar-bg-color: var(--BV-base-150);
 
@@ -185,6 +211,14 @@ html[data-theme='dark'] {
   --BV-ui-bangle-button-primary-hover-bg-color: var(--BV-accent-primary-1);
   --BV-ui-bangle-button-primary-hover-color: var(--BV-base-900);
   --BV-ui-bangle-button-primary-pressed-bg-color: var(--BV-base-400);
+  --BV-ui-bangle-button-destructive-active-color: var(--BV-base-900);
+  --BV-ui-bangle-button-destructive-bg-color: var(--BV-accent-destructive-0);
+  --BV-ui-bangle-button-destructive-color: var(--BV-base-200);
+  --BV-ui-bangle-button-destructive-hover-bg-color: var(
+    --BV-accent-destructive-1
+  );
+  --BV-ui-bangle-button-destructive-hover-color: var(--BV-base-200);
+  --BV-ui-bangle-button-destructive-pressed-bg-color: var(--BV-base-400);
 
   --BV-backlink-backlink-bg-color: rgba(56, 139, 253, 0.15);
   --BV-backlink-backlink-hover-bg-color: rgba(56, 139, 253, 0.4);

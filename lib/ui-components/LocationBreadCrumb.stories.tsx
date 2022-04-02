@@ -14,11 +14,11 @@ export default {
   },
 };
 
-export const Primary: Story<FirstParameter<typeof LocationBreadCrumb>> = (
-  args,
-) => {
+const Template: Story<FirstParameter<typeof LocationBreadCrumb>> = (args) => {
   return <LocationBreadCrumb {...args} />;
 };
+
+export const Primary = Template.bind({});
 
 Primary.args = {
   filePath: 'hi/brothers',

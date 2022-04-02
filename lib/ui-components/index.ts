@@ -1,3 +1,4 @@
+export * from './Button/Button';
 export * from './ButtonIcon';
 export * from './CenteredPage';
 export * from './ErrorBoundary';
