@@ -33,7 +33,7 @@ import { intersectionObserverPlugin } from '@bangle.io/pm-plugins';
 
 import { activeNode } from './active-node';
 import { collabPlugin } from './collab-plugin';
-import { pluginsFactory } from './collapsible-heading-deco';
+import { collapsibleHeading } from './collapsible-heading-deco';
 import { editingAllowedPlugin } from './editing-allowed';
 import { watchEditorFocus } from './watch-editor-focus';
 
@@ -44,10 +44,7 @@ const getScrollContainer = (view: EditorView) => {
 };
 
 const { queryIsSelectionAroundLink, queryIsLinkActive } = link;
-
 export const getPlugins = () => {
-  // The order of the plugins is important.
-
   const bdDevPlugins = [
     bold.plugins(),
     code.plugins(),
@@ -62,6 +59,10 @@ export const getPlugins = () => {
     hardBreak.plugins(),
     heading.plugins({
       keybindings: {
+        ...heading.defaultKeys,
+        toggleCollapse: 'Shift-Meta-1',
+        toH4: undefined,
+        toH5: undefined,
         toH6: undefined,
       },
     }),
@@ -82,7 +83,6 @@ export const getPlugins = () => {
           threshold: 0,
         },
       }),
-
     floatingMenu.plugins({
       key: menuKey,
       tooltipRenderOpts: {
@@ -104,11 +104,9 @@ export const getPlugins = () => {
     }),
 
     ...bdDevPlugins,
-
     // stopwatch.plugins(),
     trailingNode.plugins(),
     timestamp.plugins(),
-    collabPlugin,
     new Plugin({
       props: {
         // This is needed by jumping to a heading to atleast show up
@@ -118,11 +116,12 @@ export const getPlugins = () => {
         scrollMargin: Math.floor(window.innerHeight / 4),
       },
     }),
-    pluginsFactory(),
     activeNode(),
     editingAllowedPlugin,
     watchEditorFocus,
     blockKeyPresses(),
+    collabPlugin,
+    collapsibleHeading(),
   ];
 };
 

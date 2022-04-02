@@ -16,7 +16,7 @@ const name = 'collapsible_heading_deco';
 // TODO even after optimizations, this is far for perfect
 // every keystroke triggers a redundant layout shift of
 // collapsibles.
-export function pluginsFactory() {
+export function collapsibleHeading() {
   const plugin = new PluginKey(name);
 
   return [
