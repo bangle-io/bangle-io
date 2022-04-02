@@ -20,7 +20,7 @@ This document covers how to setup [bangle.io](http://bangle.io) locally and also
 
 - `yarn test:regular`: To run the regular tests.
 
-- `yarn test:network`: To run the network based tests. Please note this will hit Github API and may take a while. Make sure you have `GITHUB_OWNER` and `GITHUB_TOKEN` set in your environment variables.
+- `yarn test:network`: To run the network based tests. Please note these tests will hit Github API and may **create bunch of test repositories**. Make sure you have `GITHUB_OWNER` and `GITHUB_TOKEN` set in your environment variables.
 
 - `yarn g:playwright-dep` to install playwright dependencies if you want to run e2e testing.
 

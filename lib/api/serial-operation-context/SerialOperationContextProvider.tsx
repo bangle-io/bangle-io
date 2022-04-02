@@ -9,6 +9,7 @@ import React, {
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
 import type { DispatchSerialOperationType } from '@bangle.io/shared-types';
+import { uiSliceKey } from '@bangle.io/slice-ui';
 import { useKeybindings } from '@bangle.io/utils';
 
 const LOG = true;
@@ -116,9 +117,18 @@ export function SerialOperationContextProvider({
         .map((r) => [
           r.keybinding,
           () => {
-            dispatchSerialOperation({
-              name: r.name,
-            });
+            const { dialogName } = uiSliceKey.getSliceStateAsserted(
+              bangleStore.state,
+            );
+
+            // DONOT listen for keys if we are in a dialog
+            if (!dialogName) {
+              dispatchSerialOperation({
+                name: r.name,
+              });
+            } else {
+              console.debug('Ignoring keybinding', r.name, r.keybinding);
+            }
 
             return true;
           },
@@ -126,7 +136,7 @@ export function SerialOperationContextProvider({
     );
 
     return keys;
-  }, [extensionRegistry, dispatchSerialOperation]);
+  }, [extensionRegistry, bangleStore, dispatchSerialOperation]);
 
   return (
     <SerialOperationContext.Provider value={value}>

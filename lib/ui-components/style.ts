@@ -10,3 +10,4 @@ import './PrettyKeybinding.css';
 import './UniversalPalette/UniversalPalette.css';
 import './Modal/style.css';
 import './CenteredPage.css';
+import './Button/Button.css';

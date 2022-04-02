@@ -9,3 +9,6 @@ export const CHANGELOG_MODAL_NAME =
 
 export const NEW_WORKSPACE_DIALOG_NAME =
   'dialog::@bangle.io/core-extension:new-workspace-dialog';
+
+export const RELOAD_APPLICATION_DIALOG_NAME =
+  'dialog::@bangle.io/core-extension:reload-application-dialog';
