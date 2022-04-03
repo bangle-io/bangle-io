@@ -64,6 +64,7 @@ jobs:
           pattern: '**/build/**/*.{js,css,html,json}'
           exclude: '{**/*.map,**/node_modules/**}'
           strip-hash: "\\b\\w{8}\\."
+          minimum-change-threshold: 30
       - name: Upload coverage report
         if: matrix.test-kind == 'test:ci'
         uses: codecov/codecov-action@v2
