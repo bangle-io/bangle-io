@@ -25,8 +25,6 @@
     "@bangle.io/utils": "workspace:*",
     "@heroicons/react": "^1.0.6",
     "@popperjs/core": "^2.11.4",
-    "@radix-ui/colors": "^0.1.8",
-    "@radix-ui/react-dropdown-menu": "^0.1.6",
     "@react-aria/button": "^3.4.3",
     "@react-aria/dialog": "^3.1.8",
     "@react-aria/focus": "^3.5.4",
