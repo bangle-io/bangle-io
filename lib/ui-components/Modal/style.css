@@ -32,7 +32,7 @@
 
 .B-ui-components_alert-modal-content-container {
   overscroll-behavior-y: contain;
-  max-height: calc(100vh * 0.8);
+  max-height: calc(100vh * 0.9);
   display: grid;
   grid-template-columns:
     var(--BV-window-dialog-padding-x) auto 1fr auto minmax(0, auto)

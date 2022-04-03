@@ -71,8 +71,9 @@ export function ChangelogModal() {
 
   return (
     <AlertModal
+      heroImageUrl="https://user-images.githubusercontent.com/6966254/161450081-27ee5c2e-cd45-4091-be1d-7c6790a8b9fd.png"
       isDismissable
-      headingTitle="🎁 What's new?"
+      headingTitle="What's new?"
       onClose={onDismiss}
       size="large"
     >
@@ -116,7 +117,7 @@ function ChangelogDisplay() {
     <BangleEditor
       state={editorState}
       focusOnInit={false}
-      className="px-5 B-core-extension_changelog-modal-container"
+      className="px-5 B-core-extension_changelog-modal-container text-sm"
       renderNodeViews={() => {
         return null;
       }}
