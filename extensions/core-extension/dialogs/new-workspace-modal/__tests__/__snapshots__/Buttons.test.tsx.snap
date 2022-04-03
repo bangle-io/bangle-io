@@ -20,17 +20,17 @@ exports[`clear rootDirHandle 1`] = `
     <div>
       <button
         aria-label="pick directory"
-        class="B-ui-bangle-button_button p-1  transition-all duration-100 B-ui-components_misc-button-ring"
+        class="B-ui-bangle-button_button p-1  transition-all duration-100  B-ui-components_misc-button-ring"
         id="new-workspace-modal_browse-button"
         type="button"
       >
         <span
-          class="BU_has-icon"
+          class="BU_has-icon "
         >
           test-handle
         </span>
         <svg
-          class="fill-current  BU_has-text mr-1 w-4 h-4"
+          class="fill-current  BU_has-text mr-1 w-4 h-4 "
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -65,17 +65,17 @@ exports[`renders correctly 1`] = `
     <div>
       <button
         aria-label="pick directory"
-        class="B-ui-bangle-button_button p-1  transition-all duration-100 B-ui-components_misc-button-ring"
+        class="B-ui-bangle-button_button p-1  transition-all duration-100  B-ui-components_misc-button-ring"
         id="new-workspace-modal_browse-button"
         type="button"
       >
         <span
-          class="BU_has-icon"
+          class="BU_has-icon "
         >
           test-handle
         </span>
         <svg
-          class="fill-current  BU_has-text mr-1 w-4 h-4"
+          class="fill-current  BU_has-text mr-1 w-4 h-4 "
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >

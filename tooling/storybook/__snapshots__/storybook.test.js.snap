@@ -3,7 +3,7 @@
 exports[`Storyshots ui-bangle-button/ActionButton Primary 1`] = `
 <button
   aria-label="hi brother"
-  className="B-ui-bangle-button_button p-1  transition-all duration-100"
+  className="B-ui-bangle-button_button p-1  transition-all duration-100 "
   onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
@@ -37,7 +37,7 @@ exports[`Storyshots ui-bangle-button/ActionButton Primary 1`] = `
 exports[`Storyshots ui-bangle-button/DropdownMenu Primary 1`] = `
 <button
   aria-pressed={false}
-  className="B-ui-bangle-button_button p-1  transition-all duration-100"
+  className="B-ui-bangle-button_button p-1  transition-all duration-100 "
   onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
@@ -72,7 +72,7 @@ exports[`Storyshots ui-components/AlertModal Destructive 1`] = `
 <div>
   <button
     aria-label="open"
-    className="B-ui-bangle-button_button p-1  transition-all duration-100"
+    className="B-ui-bangle-button_button p-1  transition-all duration-100 "
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -130,7 +130,7 @@ exports[`Storyshots ui-components/AlertModal Scrollable Parent 1`] = `
   </div>
   <button
     aria-label="open"
-    className="B-ui-bangle-button_button p-1  transition-all duration-100"
+    className="B-ui-bangle-button_button p-1  transition-all duration-100 "
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -184,7 +184,7 @@ exports[`Storyshots ui-components/AlertModal Simple Submit 1`] = `
 <div>
   <button
     aria-label="open"
-    className="B-ui-bangle-button_button p-1  transition-all duration-100"
+    className="B-ui-bangle-button_button p-1  transition-all duration-100 "
     onBlur={[Function]}
     onClick={[Function]}
     onDragStart={[Function]}
@@ -222,7 +222,7 @@ exports[`Storyshots ui-components/AlertModal Simple Submit 1`] = `
 
 exports[`Storyshots ui-components/BaseButton Primary 1`] = `
 <button
-  className="transition-all duration-100 cursor-default  BU_is-hovered BU_is-pressed"
+  className="transition-all duration-100 cursor-default  BU_is-hovered BU_is-pressed "
   style={
     Object {
       "transform": "scale(var(--BV-ui-bangle-button-depression))",
@@ -236,7 +236,7 @@ exports[`Storyshots ui-components/BaseButton Primary 1`] = `
 
 exports[`Storyshots ui-components/BaseButton Secondary 1`] = `
 <button
-  className="transition-all duration-100 cursor-default "
+  className="transition-all duration-100 cursor-default  "
   type="button"
 >
   Hello
@@ -246,7 +246,7 @@ exports[`Storyshots ui-components/BaseButton Secondary 1`] = `
 exports[`Storyshots ui-components/Button Basic Test 1`] = `
 <button
   aria-label="Hi brother"
-  className="B-ui-components_button p-1 px-2 select-none BU_variant-secondary i-am-a-class transition-all duration-100 cursor-default "
+  className="B-ui-components_button p-1 px-2 select-none BU_variant-secondary i-am-a-class  transition-all duration-100 cursor-default  "
   onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
@@ -276,7 +276,7 @@ exports[`Storyshots ui-components/Button Basic Test 1`] = `
 exports[`Storyshots ui-components/Button Destructive Button 1`] = `
 <button
   aria-label="Hi brother"
-  className="B-ui-components_button p-1 px-2 select-none BU_variant-destructive transition-all duration-100 cursor-default "
+  className="B-ui-components_button p-1 px-2 select-none BU_variant-destructive  transition-all duration-100 cursor-default  "
   onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
@@ -306,7 +306,7 @@ exports[`Storyshots ui-components/Button Destructive Button 1`] = `
 exports[`Storyshots ui-components/Button Disabled Button 1`] = `
 <button
   aria-label="Hi brother"
-  className="B-ui-components_button p-1 px-2 select-none BU_variant-secondary i-am-a-class transition-all duration-100 cursor-default  cursor-not-allowed"
+  className="B-ui-components_button p-1 px-2 select-none BU_variant-secondary i-am-a-class  transition-all duration-100 cursor-default  cursor-not-allowed "
   disabled={true}
   onBlur={[Function]}
   onClick={[Function]}
@@ -337,7 +337,7 @@ exports[`Storyshots ui-components/Button Disabled Button 1`] = `
 exports[`Storyshots ui-components/Button Primary Button 1`] = `
 <button
   aria-label="Hi brother"
-  className="B-ui-components_button p-1 px-2 select-none BU_variant-primary transition-all duration-100 cursor-default "
+  className="B-ui-components_button p-1 px-2 select-none BU_variant-primary  transition-all duration-100 cursor-default  "
   onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
@@ -367,7 +367,7 @@ exports[`Storyshots ui-components/Button Primary Button 1`] = `
 exports[`Storyshots ui-components/Button Quiet Button 1`] = `
 <button
   aria-label="Hi brother"
-  className="B-ui-components_button p-1 px-2 select-none BU_variant-secondary transition-all duration-100 cursor-default "
+  className="B-ui-components_button p-1 px-2 select-none BU_variant-secondary  transition-all duration-100 cursor-default  "
   onBlur={[Function]}
   onClick={[Function]}
   onDragStart={[Function]}
@@ -413,7 +413,7 @@ exports[`Storyshots ui-components/LocationBreadCrumb Primary 1`] = `
 
 exports[`Storyshots ui-components/Select Basic Example 1`] = `
 <div
-  className="inline-flex flex-col relative mt-4 w-56"
+  className="inline-flex flex-col relative mt-4 w-56 "
 >
   <div
     className="B-ui-components_select-label text-sm font-medium cursor-default"
@@ -462,32 +462,32 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
         <option
           value="red panda"
         >
-          Red Panda
+          red
         </option>
         <option
           value="cat"
         >
-          Cat
+          cat
         </option>
         <option
           value="dog"
         >
-          Dog
+          dog
         </option>
         <option
           value="aardvark"
         >
-          Aardvark
+          aardvark
         </option>
         <option
           value="kangaroo"
         >
-          Really really really really big Kangaroo
+          kangaroo
         </option>
         <option
           value="snake"
         >
-          Snake
+          snake
         </option>
       </select>
     </label>
@@ -497,7 +497,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
-    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none"
+    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
     id="react-aria-test-generated-id"
     onBlur={[Function]}
     onClick={[Function]}
@@ -556,7 +556,7 @@ exports[`Storyshots ui-components/Select Basic Example 1`] = `
 
 exports[`Storyshots ui-components/Select Controlled State 1`] = `
 <div
-  className="inline-flex flex-col relative mt-4 w-56"
+  className="inline-flex flex-col relative mt-4 w-56 "
 >
   <div
     className="B-ui-components_select-label text-sm font-medium cursor-default"
@@ -605,32 +605,32 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
         <option
           value="red panda"
         >
-          Red Panda
+          red
         </option>
         <option
           value="cat"
         >
-          Cat
+          cat
         </option>
         <option
           value="dog"
         >
-          Dog
+          dog
         </option>
         <option
           value="aardvark"
         >
-          Aardvark
+          aardvark
         </option>
         <option
           value="kangaroo"
         >
-          Really really really really big Kangaroo
+          kangaroo
         </option>
         <option
           value="snake"
         >
-          Snake
+          snake
         </option>
       </select>
     </label>
@@ -640,7 +640,7 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
-    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none"
+    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
     id="react-aria-test-generated-id"
     onBlur={[Function]}
     onClick={[Function]}
@@ -699,7 +699,7 @@ exports[`Storyshots ui-components/Select Controlled State 1`] = `
 
 exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
 <div
-  className="inline-flex flex-col relative mt-4 w-56"
+  className="inline-flex flex-col relative mt-4 w-56 "
 >
   <div
     className="B-ui-components_select-label text-sm font-medium cursor-default"
@@ -748,32 +748,32 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
         <option
           value="red panda"
         >
-          Red Panda
+          red
         </option>
         <option
           value="cat"
         >
-          Cat
+          cat
         </option>
         <option
           value="dog"
         >
-          Dog
+          dog
         </option>
         <option
           value="aardvark"
         >
-          Aardvark
+          aardvark
         </option>
         <option
           value="kangaroo"
         >
-          Really really really really big Kangaroo
+          kangaroo
         </option>
         <option
           value="snake"
         >
-          Snake
+          snake
         </option>
       </select>
     </label>
@@ -783,7 +783,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
-    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none"
+    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
     id="react-aria-test-generated-id"
     onBlur={[Function]}
     onClick={[Function]}
@@ -842,7 +842,7 @@ exports[`Storyshots ui-components/Select Disabled Keys 1`] = `
 
 exports[`Storyshots ui-components/Select Section Example 1`] = `
 <div
-  className="inline-flex flex-col relative mt-4 w-56"
+  className="inline-flex flex-col relative mt-4 w-56 "
 >
   <div
     className="B-ui-components_select-label text-sm font-medium cursor-default"
@@ -896,7 +896,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
         <option
           value="tagchat"
         >
-          Tagchat
+          tagchat
         </option>
         <option
           value="$.0.2"
@@ -916,27 +916,27 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
         <option
           value="$.1.0"
         >
-          Theodor Dawber
+          Theodor
         </option>
         <option
           value="$.1.1"
         >
-          Dwight Stollenberg
+          Dwight
         </option>
         <option
           value="$.1.2"
         >
-          Maddalena Prettjohn
+          Maddalena
         </option>
         <option
           value="$.1.3"
         >
-          Maureen Fassan
+          Maureen
         </option>
         <option
           value="$.1.4"
         >
-          Abbie Binyon
+          Abbie
         </option>
       </select>
     </label>
@@ -946,7 +946,7 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
     aria-expanded={false}
     aria-haspopup="listbox"
     aria-labelledby="react-aria-test-generated-id react-aria-test-generated-id"
-    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none"
+    className="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
     id="react-aria-test-generated-id"
     onBlur={[Function]}
     onClick={[Function]}

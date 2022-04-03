@@ -17,7 +17,7 @@ test('renders correctly', () => {
     <div>
       <div>
         <div
-          class="py-1 px-2 shadow-lg rounded-md B-ui-bangle-button_tooltip text-sm font-semibold whitespace-nowrap"
+          class="py-1 px-2 shadow-lg rounded-md B-ui-bangle-button_tooltip text-sm font-semibold whitespace-nowrap "
         >
           Hello world
         </div>

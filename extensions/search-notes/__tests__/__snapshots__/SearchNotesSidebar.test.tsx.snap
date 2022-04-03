@@ -7,7 +7,7 @@ exports[`renders correctly workspace is opened 1`] = `
     style="overflow-y: auto;"
   >
     <div
-      class="px-2 mt-2"
+      class="px-2 mt-2 "
     >
       <div
         class="B-ui-components_input-container"
@@ -16,7 +16,7 @@ exports[`renders correctly workspace is opened 1`] = `
           aria-label="Search"
           autocapitalize="off"
           autocorrect="off"
-          class="B-ui-components_input B-ui-components_misc-input-ring "
+          class="B-ui-components_input  B-ui-components_misc-input-ring "
           placeholder="Search"
           type="text"
           value=""
@@ -27,7 +27,7 @@ exports[`renders correctly workspace is opened 1`] = `
       </div>
     </div>
     <div
-      class="flex flex-row justify-between px-2 my-1 text-xs"
+      class="flex flex-row justify-between px-2 my-1 text-xs "
     />
     <div
       class="flex-grow"
@@ -44,7 +44,7 @@ exports[`show search results 1`] = `
     style="overflow-y: auto;"
   >
     <div
-      class="px-2 mt-2"
+      class="px-2 mt-2 "
     >
       <div
         class="B-ui-components_input-container"
@@ -53,7 +53,7 @@ exports[`show search results 1`] = `
           aria-label="Search"
           autocapitalize="off"
           autocorrect="off"
-          class="B-ui-components_input B-ui-components_misc-input-ring "
+          class="B-ui-components_input  B-ui-components_misc-input-ring "
           placeholder="Search"
           type="text"
           value=""
@@ -64,7 +64,7 @@ exports[`show search results 1`] = `
       </div>
     </div>
     <div
-      class="flex flex-row justify-between px-2 my-1 text-xs"
+      class="flex flex-row justify-between px-2 my-1 text-xs "
     >
       <span
         class=""
@@ -72,7 +72,7 @@ exports[`show search results 1`] = `
         Found 1 notes
       </span>
       <button
-        class="focus:outline-none"
+        class="focus:outline-none "
         data-bangle-editor-break="true"
         data-bangle-editor-pos="bottom"
         type="button"
@@ -85,7 +85,7 @@ exports[`show search results 1`] = `
       style="overflow-y: auto;"
     >
       <div
-        class="B-ui-components_sidebar-row2 BU_hover B-search-notes_search-result-note-match pl-1 pr-3  select-none"
+        class="B-ui-components_sidebar-row2 BU_hover B-search-notes_search-result-note-match pl-1 pr-3  select-none  "
         data-id="search-notes-result-0"
         role="button"
         style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
@@ -97,7 +97,7 @@ exports[`show search results 1`] = `
             class="B-ui-components_left-node"
           >
             <button
-              class="focus:outline-none"
+              class="focus:outline-none "
               data-bangle-editor-break="true"
               data-bangle-editor-pos="bottom"
               type="button"
@@ -115,7 +115,7 @@ exports[`show search results 1`] = `
             </button>
           </div>
           <span
-            class="flex flex-col"
+            class="flex flex-col "
           >
             <span
               class="text-sm font-bold"
@@ -132,7 +132,7 @@ exports[`show search results 1`] = `
             class="B-ui-components_right-node"
           >
             <button
-              class="focus:outline-none text-xs font-semibold"
+              class="focus:outline-none text-xs font-semibold "
               data-bangle-editor-break="true"
               data-bangle-editor-pos="bottom"
               type="button"
@@ -144,7 +144,7 @@ exports[`show search results 1`] = `
             class="B-ui-components_right-hover-node"
           >
             <button
-              class="focus:outline-none text-xs font-semibold"
+              class="focus:outline-none text-xs font-semibold "
               data-bangle-editor-break="true"
               data-bangle-editor-pos="bottom"
               type="button"
@@ -156,7 +156,7 @@ exports[`show search results 1`] = `
       </div>
       <span>
         <div
-          class="B-ui-components_sidebar-row2 BU_hover pl-3"
+          class="B-ui-components_sidebar-row2 BU_hover pl-3 "
           data-id="search-result-text-match-0"
           role="button"
           style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"

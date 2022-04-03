@@ -9,10 +9,10 @@ exports[`Hides when isVisible is false 1`] = `
       class="B-ui-components_inline-palette-items-wrapper"
     >
       <div
-        class="flex flex-row justify-center my-1 space"
+        class="flex flex-row justify-center my-1 space "
       >
         <span
-          class="text-xs ml-2 mr-2 font-light"
+          class="text-xs ml-2 mr-2 font-light "
         >
           <kbd
             class="font-normal"
@@ -22,7 +22,7 @@ exports[`Hides when isVisible is false 1`] = `
            Navigate
         </span>
         <span
-          class="text-xs ml-2 mr-2 font-light"
+          class="text-xs ml-2 mr-2 font-light "
         >
           <kbd
             class="font-normal"
@@ -32,7 +32,7 @@ exports[`Hides when isVisible is false 1`] = `
            Create link
         </span>
         <span
-          class="text-xs ml-2 mr-2 font-light"
+          class="text-xs ml-2 mr-2 font-light "
         >
           <kbd
             class="font-normal"
@@ -56,7 +56,7 @@ exports[`Initial render 1`] = `
       class="B-ui-components_inline-palette-items-wrapper"
     >
       <div
-        class="flex flex-row items-center B-ui-components_inline-palette-row cursor-pointer palette-row BU_hover-allowed"
+        class="flex flex-row items-center B-ui-components_inline-palette-row cursor-pointer palette-row BU_hover-allowed "
         data-id="searchNote"
         style="padding-left: 16px; padding-right: 16px;"
       >
@@ -64,12 +64,12 @@ exports[`Initial render 1`] = `
           class="flex flex-col"
         >
           <span
-            class="text-base font-bold truncate select-none"
+            class="text-base font-bold truncate select-none "
           >
             💡 Search for a note to link it
           </span>
           <span
-            class="text-sm font-normal select-none"
+            class="text-sm font-normal select-none "
           />
         </span>
         <span
@@ -77,7 +77,7 @@ exports[`Initial render 1`] = `
         />
       </div>
       <div
-        class="flex flex-row items-center B-ui-components_inline-palette-row cursor-pointer palette-row BU_hover-allowed"
+        class="flex flex-row items-center B-ui-components_inline-palette-row cursor-pointer palette-row BU_hover-allowed "
         data-id="test-ws:my-file.md"
         style="padding-left: 16px; padding-right: 16px;"
       >
@@ -85,10 +85,10 @@ exports[`Initial render 1`] = `
           class="flex flex-col"
         >
           <span
-            class="text-base font-bold truncate select-none"
+            class="text-base font-bold truncate select-none "
           />
           <span
-            class="text-sm font-normal select-none"
+            class="text-sm font-normal select-none "
           >
             my-file
           </span>
@@ -98,10 +98,10 @@ exports[`Initial render 1`] = `
         />
       </div>
       <div
-        class="flex flex-row justify-center my-1 space"
+        class="flex flex-row justify-center my-1 space "
       >
         <span
-          class="text-xs ml-2 mr-2 font-light"
+          class="text-xs ml-2 mr-2 font-light "
         >
           <kbd
             class="font-normal"
@@ -111,7 +111,7 @@ exports[`Initial render 1`] = `
            Navigate
         </span>
         <span
-          class="text-xs ml-2 mr-2 font-light"
+          class="text-xs ml-2 mr-2 font-light "
         >
           <kbd
             class="font-normal"
@@ -121,7 +121,7 @@ exports[`Initial render 1`] = `
            Create link
         </span>
         <span
-          class="text-xs ml-2 mr-2 font-light"
+          class="text-xs ml-2 mr-2 font-light "
         >
           <kbd
             class="font-normal"

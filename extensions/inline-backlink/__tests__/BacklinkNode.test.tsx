@@ -102,7 +102,7 @@ describe('BacklinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="B-inline-backlink_backlink"
+          class="B-inline-backlink_backlink "
           draggable="false"
         >
           <svg
@@ -148,7 +148,7 @@ describe('BacklinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="B-inline-backlink_backlink"
+          class="B-inline-backlink_backlink "
           draggable="false"
         >
           <svg
@@ -197,7 +197,7 @@ describe('BacklinkNode', () => {
     expect(renderResult.container).toMatchInlineSnapshot(`
       <div>
         <button
-          class="B-inline-backlink_backlink B-inline-backlink_backlinkNotFound"
+          class="B-inline-backlink_backlink B-inline-backlink_backlinkNotFound "
           draggable="false"
         >
           <svg

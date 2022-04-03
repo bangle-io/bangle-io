@@ -29,7 +29,7 @@ test('renders correctly', () => {
     <div>
       <div>
         <button
-          class="test-class B-ui-bangle-button_button p-1  transition-all duration-100 BU_is-active is-hovered is-pressed bg-on-hover"
+          class="test-class B-ui-bangle-button_button p-1  transition-all duration-100 BU_is-active is-hovered is-pressed bg-on-hover "
           type="button"
         >
           Hello world
