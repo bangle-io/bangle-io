@@ -177,7 +177,7 @@ export const Button = ({
       isPressed={isPressed}
       className={cx(
         'B-ui-components_button p-1 px-2 select-none',
-        isFocusVisible && 'BU_show-focus-ring',
+        isFocusVisible && 'B-ui-components_misc-button-ring',
         variantClassName,
         className,
       )}

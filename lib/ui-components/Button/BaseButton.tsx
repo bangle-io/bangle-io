@@ -34,7 +34,7 @@ export const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonType>(
         type="button"
         className={cx(
           className,
-          'transition-all duration-100',
+          'transition-all duration-100 cursor-default ',
           otherProps.disabled && 'cursor-not-allowed',
           isHovered && 'BU_is-hovered',
           isPressed && 'BU_is-pressed',

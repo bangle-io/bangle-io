@@ -5,17 +5,3 @@
   box-sizing: border-box;
   align-items: center;
 }
-
-.B-ui-components_button.BU_show-focus-ring {
-  --BV-bangle-ring-offset-width: 2px;
-  --BV-bangle-ring-offset-color: var(--BV-window-bg-color-1);
-  --BV-bangle-ring-color: var(--BV-accent-primary-0);
-  --BV-bangle-ring-offset-shadow: 0 0 0 var(--BV-bangle-ring-offset-width)
-    var(--BV-bangle-ring-offset-color);
-  --BV-bangle-ring-shadow: 0 0 0
-    calc(1.5px + var(--BV-bangle-ring-offset-width)) var(--BV-bangle-ring-color);
-  --BV-bangle-shadow: 0 0 #0000;
-
-  box-shadow: var(--BV-bangle-ring-offset-shadow), var(--BV-bangle-ring-shadow),
-    var(--BV-bangle-shadow, 0 0 #0000);
-}
