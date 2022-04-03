@@ -173,6 +173,11 @@ const extension = Extension.create({
         name: 'operation::@bangle.io/core-extension:reload-application',
         title: 'Reload application',
       },
+      {
+        name: 'operation::@bangle.io/core-extension:show-changelog',
+        title: 'Show Changelog',
+        keywords: ['update', 'what is new'],
+      },
     ],
     operationHandler() {
       return {
@@ -326,6 +331,14 @@ const extension = Extension.create({
 
             case 'operation::@bangle.io/core-extension:reload-application': {
               ui.showDialog(RELOAD_APPLICATION_DIALOG_NAME)(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
+
+              return true;
+            }
+            case 'operation::@bangle.io/core-extension:show-changelog': {
+              ui.showDialog(CHANGELOG_MODAL_NAME)(
                 bangleStore.state,
                 bangleStore.dispatch,
               );
