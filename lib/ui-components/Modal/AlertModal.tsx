@@ -59,7 +59,11 @@ export function AlertModal({
 
   return (
     <OverlayContainer
-      portalContainer={document.getElementById('modal-container')!}
+      portalContainer={
+        // since getElementById returns null, fallback to undefined
+        // for tests
+        document.getElementById('modal-container') || undefined
+      }
     >
       <div
         className="B-ui-components_alert-modal-underlay transition-opacity"

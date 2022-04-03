@@ -16,3 +16,4 @@ export * from './Sidebar';
 export * from './TextButton';
 export * from './UniversalPalette';
 export { FocusRing } from '@react-aria/focus';
+export { OverlayProvider } from '@react-aria/overlays';

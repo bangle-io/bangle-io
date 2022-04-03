@@ -119,4 +119,5 @@
   align-items: center;
   justify-content: center;
   z-index: var(--BV-window-modal-z-index);
+  backdrop-filter: blur(2px);
 }
