@@ -73,7 +73,7 @@ test('button clicks', async () => {
   expect(element).toMatchInlineSnapshot(`
     <ul
       aria-label="test-label"
-      class="flex flex-col B-ui-bangle-button_dropdown-menu p-1 py-2 rounded-md"
+      class="flex flex-col B-ui-bangle-button_dropdown-menu B-ui-components_misc-dropdown-shadow p-1 py-2 rounded-md"
       role="menu"
       tabindex="0"
     >

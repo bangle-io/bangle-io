@@ -1,0 +1,10 @@
+.B-ui-components_select-label {
+  display: block;
+  color: var(--BV-text-color-1);
+  text-align: left;
+}
+
+.B-ui-components_select-button {
+  flex-shrink: 0;
+  box-sizing: border-box;
+}

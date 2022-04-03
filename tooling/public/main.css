@@ -2,10 +2,18 @@
   isolation: isolate;
   background: transparent;
   color-scheme: light;
+  position: fixed;
+  z-index: var(--BV-window-modal-z-index);
 }
 
 html[data-theme='dark'] #modal-container {
   color-scheme: dark;
+}
+
+#tooltip-container {
+  isolation: isolate;
+  position: fixed;
+  z-index: var(--BV-window-tooltip-z-index);
 }
 
 :root {
@@ -76,6 +84,7 @@ html[data-theme='dark'] #modal-container {
   --BV-window-dropdown-bg-color-0: var(--BV-base-75);
   --BV-window-dropdown-bg-color-1: var(--BV-base-50);
   --BV-window-dropdown-color: var(--BV-text-color-1);
+  --BV-window-dropdown-radius: var(--BV-ui-bangle-button-radius);
   --BV-window-highlight-bg-color: yellow;
   --BV-window-kbd-bg-color: var(--BV-base-300);
   --BV-window-kbd-color: var(--BV-text-color-1);

@@ -11,6 +11,7 @@ import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { hasWorkspace } from '@bangle.io/slice-workspace';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 import { Modal } from '@bangle.io/ui-components';
+import { useDebouncedValue } from '@bangle.io/utils';
 
 import { PickStorageDirectory, WorkspaceNameInput } from './Buttons';
 import {
@@ -83,8 +84,6 @@ export function NewWorkspaceModal() {
   const { dispatch } = useUIManagerContext();
   const { dispatchSerialOperation } = useSerialOperationContext();
 
-  const isDropdownOpenRef = useRef(false);
-
   const storageType = modalState.workspace.type;
 
   const updateStorageType = useCallback((val: WorkspaceStorageType) => {
@@ -118,6 +117,10 @@ export function NewWorkspaceModal() {
   );
 
   const newWorkspaceName = getWorkspaceName(modalState);
+  const debouncedNewWorkspaceName = useDebouncedValue(newWorkspaceName, {
+    wait: 150,
+    maxWait: 300,
+  });
 
   const createWorkspace = useCallback(() => {
     if (isCreateDisabled(modalState)) {
@@ -151,14 +154,12 @@ export function NewWorkspaceModal() {
   }, [dispatchSerialOperation, modalState, dispatch]);
 
   const onDismiss = useCallback(() => {
-    if (!isDropdownOpenRef.current) {
-      dispatch({
-        name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
-        value: {
-          dialogName: NEW_WORKSPACE_DIALOG_NAME,
-        },
-      });
-    }
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
+      value: {
+        dialogName: NEW_WORKSPACE_DIALOG_NAME,
+      },
+    });
   }, [dispatch]);
 
   // focus on create button
@@ -174,13 +175,22 @@ export function NewWorkspaceModal() {
 
   // set error if wsName already exists
   useEffect(() => {
-    if (newWorkspaceName) {
+    let destroyed = false;
+
+    if (debouncedNewWorkspaceName) {
       (async () => {
-        const existingWorkspace = await hasWorkspace(newWorkspaceName)(
+        if (destroyed) {
+          return;
+        }
+        const existingWorkspace = await hasWorkspace(debouncedNewWorkspaceName)(
           bangleStore.state,
           bangleStore.dispatch,
           bangleStore,
         );
+
+        if (destroyed) {
+          return;
+        }
 
         if (existingWorkspace) {
           setError(WORKSPACE_NAME_ALREADY_EXISTS_ERROR);
@@ -189,7 +199,11 @@ export function NewWorkspaceModal() {
         }
       })();
     }
-  }, [bangleStore, newWorkspaceName, errorType, setError]);
+
+    return () => {
+      destroyed = true;
+    };
+  }, [bangleStore, debouncedNewWorkspaceName, errorType, setError]);
 
   useEffect(() => {
     if (newWorkspaceName) {
@@ -232,11 +246,6 @@ export function NewWorkspaceModal() {
             <StorageTypeDropdown
               storageType={storageType}
               updateStorageType={updateStorageType}
-              updateIsDropdownOpen={(val) => {
-                // using ref as we donot need to rerender when
-                // dropdown state changes
-                isDropdownOpenRef.current = val;
-              }}
             />
           </div>
         </div>
@@ -269,9 +278,7 @@ export function NewWorkspaceModal() {
             className="px-4"
             variant="primary"
             isDisabled={isCreateDisabled(modalState)}
-            onPress={() => {
-              createWorkspace();
-            }}
+            onPress={createWorkspace}
           >
             <ButtonContent text="Create Workspace" />
           </ActionButton>

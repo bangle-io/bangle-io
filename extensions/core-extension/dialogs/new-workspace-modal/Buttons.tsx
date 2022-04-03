@@ -7,7 +7,7 @@ import {
   pickADirectory,
 } from '@bangle.io/baby-fs';
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { CloseIcon } from '@bangle.io/ui-components';
+import { CloseIcon, FocusRing } from '@bangle.io/ui-components';
 
 import {
   BROWSE_BUTTON_ID,
@@ -123,24 +123,27 @@ export function WorkspaceNameInput({
           className="mt-2 text-lg"
           style={{ color: 'var(--BV-text-color-1)' }}
         >
-          <input
-            aria-label="workspace name input"
-            className="pl-2"
-            disabled={isDisabled}
-            value={value}
-            onChange={(e) => {
-              updateValue?.(e.target.value);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                onPressEnter?.();
-              }
-            }}
-            style={{
-              border: '1px solid var(--BV-window-border-color-0)',
-              backgroundColor: 'var(--BV-window-bg-color-0)',
-            }}
-          />
+          <FocusRing focusClass="B-ui-components_misc-input-ring">
+            <input
+              aria-label="workspace name input"
+              className="p-1 pl-2"
+              disabled={isDisabled}
+              value={value}
+              onChange={(e) => {
+                updateValue?.(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  onPressEnter?.();
+                }
+              }}
+              style={{
+                borderRadius: 'var(--BV-ui-bangle-button-radius)',
+                border: '1px solid var(--BV-window-border-color-0)',
+                backgroundColor: 'var(--BV-window-bg-color-0)',
+              }}
+            />
+          </FocusRing>
         </div>
       </div>
     </>

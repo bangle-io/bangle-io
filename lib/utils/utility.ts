@@ -118,6 +118,15 @@ export function keybindingsHelper(bindings: {
 }
 
 export function cx(...args: any[]) {
+  // let classes: string = '';
+  // for (const arg of args) {
+  //   if (!arg) {
+  //     continue;
+  //   }
+  //   classes += arg + ' ';
+  // }
+
+  // return classes;
   const classes: string[] = [];
   for (const arg of args) {
     if (!arg) {

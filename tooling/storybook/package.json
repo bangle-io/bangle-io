@@ -28,6 +28,7 @@
     "@bangle.io/scripts": "workspace:*",
     "@bangle.io/ui-bangle-button": "workspace:*",
     "@mdx-js/react": "^1.6.22",
+    "@react-aria/ssr": "^3.1.2",
     "@storybook/addon-actions": "^6.4.19",
     "@storybook/addon-docs": "^6.4.19",
     "@storybook/addon-essentials": "^6.4.19",
@@ -39,10 +40,12 @@
     "@storybook/manager-webpack5": "^6.4.19",
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
+    "@storybook/theming": "^6.4.20",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "babel-loader": "^8.2.4",
     "postcss": "^8.4.12",
+    "storybook-dark-mode": "^1.0.9",
     "webpack": "^5.70.0"
   },
   "scripts": {

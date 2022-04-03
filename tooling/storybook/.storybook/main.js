@@ -9,6 +9,7 @@ module.exports = {
     ),
   ],
   addons: [
+    'storybook-dark-mode',
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',

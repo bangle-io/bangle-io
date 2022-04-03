@@ -1,3 +1,5 @@
+import { FocusRing } from '@react-aria/focus';
+import { useFocusVisible } from '@react-aria/interactions';
 import React from 'react';
 
 import { cx } from '@bangle.io/utils';
@@ -50,21 +52,23 @@ export const Input = React.forwardRef<
 
     return (
       <div className="B-ui-components_input-container">
-        <input
-          onKeyDown={onKeyDown}
-          aria-label={label}
-          type="text"
-          onChange={onChange}
-          ref={ref}
-          className={cx('B-ui-components_input', className)}
-          style={style}
-          value={value}
-          placeholder={placeholder}
-          onFocus={onFocus}
-          autoCapitalize={autoCapitalize ? 'on' : 'off'}
-          autoCorrect={autoCorrect ? 'on' : 'off'}
-          spellCheck={spellCheck}
-        />
+        <FocusRing focusClass="B-ui-components_misc-input-ring">
+          <input
+            onKeyDown={onKeyDown}
+            aria-label={label}
+            type="text"
+            onChange={onChange}
+            ref={ref}
+            className={cx('B-ui-components_input', className)}
+            style={style}
+            value={value}
+            placeholder={placeholder}
+            onFocus={onFocus}
+            autoCapitalize={autoCapitalize ? 'on' : 'off'}
+            autoCorrect={autoCorrect ? 'on' : 'off'}
+            spellCheck={spellCheck}
+          />
+        </FocusRing>
         <div style={{ position: 'relative', display: 'flex' }}>
           {showClear && valueLength > 0 && (
             <button

@@ -17,6 +17,15 @@ import { hasWorkspace } from '@bangle.io/slice-workspace';
 import { WORKSPACE_AUTH_REJECTED_ERROR } from '../common';
 import { NewWorkspaceModal } from '../NewWorkspaceModal';
 
+jest.mock('@react-aria/ssr/dist/main', () => {
+  return {
+    ...jest.requireActual('@react-aria/ssr/dist/main'),
+    // react aria generates a bunch of random ids, this
+    // makes the snapshot stable.
+    useSSRSafeId: () => 'react-aria-test-id',
+  };
+});
+
 jest.mock('@bangle.io/slice-ui', () => {
   const otherThings = jest.requireActual('@bangle.io/slice-ui');
 
@@ -105,8 +114,8 @@ describe('NewWorkspaceModalFileSystem', () => {
         <NewWorkspaceModal />
       </div>,
     );
-    expect(result.getByLabelText('select storage type').innerHTML).toContain(
-      'File system',
+    expect(result.getByLabelText('Select storage type').innerHTML).toContain(
+      'File System',
     );
 
     expect(result.container).toMatchSnapshot();
@@ -119,23 +128,34 @@ describe('NewWorkspaceModalFileSystem', () => {
       </div>,
     );
 
-    expect(result.getByLabelText('select storage type').innerHTML).toContain(
-      'File system',
+    expect(result.getByLabelText('Select storage type').innerHTML).toContain(
+      'File System',
     );
 
     act(() => {
-      fireEvent.click(result.getByLabelText('select storage type'));
+      fireEvent.click(result.getByLabelText('Select storage type'));
     });
 
     await waitFor(() => {
-      const dropdown = result.getAllByLabelText('storage type dropdown');
-
+      const dropdown = result.getByRole('listbox');
       expect(dropdown).toBeTruthy();
-
-      fireEvent.click(result.getByLabelText('browser storage type'));
     });
 
-    expect(result.getByLabelText('select storage type').innerHTML).toContain(
+    expect(result.getAllByRole('option').map((r) => r.getAttribute('data-key')))
+      .toMatchInlineSnapshot(`
+      Array [
+        "file-system",
+        "browser",
+      ]
+    `);
+
+    const browserOpt = result
+      .getAllByRole('option')
+      .find((r) => r.getAttribute('data-key') === 'browser');
+
+    fireEvent.click(browserOpt!);
+
+    expect(result.getByLabelText('Select storage type').innerHTML).toContain(
       'Browser',
     );
   });

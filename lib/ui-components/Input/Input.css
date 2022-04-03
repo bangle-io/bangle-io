@@ -14,24 +14,6 @@
   width: 100%;
 }
 
-.B-ui-components_input:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  border: 1px solid transparent;
-
-  --BV-bangle-ring-offset-width: 0px;
-  --BV-bangle-ring-offset-color: #fff;
-  --BV-bangle-ring-color: var(--BV-accent-primary-0);
-  --BV-bangle-ring-offset-shadow: 0 0 0 var(--BV-bangle-ring-offset-width)
-    var(--BV-bangle-ring-offset-color);
-  --BV-bangle-ring-shadow: 0 0 0
-    calc(1.5px + var(--BV-bangle-ring-offset-width)) var(--BV-bangle-ring-color);
-  --BV-bangle-shadow: 0 0 #0000;
-
-  box-shadow: var(--BV-bangle-ring-offset-shadow), var(--BV-bangle-ring-shadow),
-    var(--BV-bangle-shadow, 0 0 #0000);
-}
-
 .B-ui-components_input-clear {
   position: absolute;
   left: -20px;

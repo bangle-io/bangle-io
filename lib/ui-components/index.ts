@@ -11,6 +11,8 @@ export * from './LocationBreadCrumb';
 export * from './Modal';
 export * from './Page';
 export * from './PrettyKeybinding';
+export * from './Select/Select';
 export * from './Sidebar';
 export * from './TextButton';
 export * from './UniversalPalette';
+export { FocusRing } from '@react-aria/focus';
