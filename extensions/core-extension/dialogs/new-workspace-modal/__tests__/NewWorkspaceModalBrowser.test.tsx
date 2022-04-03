@@ -9,10 +9,18 @@ import { pickADirectory } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { hasWorkspace } from '@bangle.io/slice-workspace';
-import { sleep } from '@bangle.io/utils';
 
 import { WORKSPACE_NAME_ALREADY_EXISTS_ERROR } from '../common';
 import { NewWorkspaceModal } from '../NewWorkspaceModal';
+
+jest.mock('@react-aria/ssr/dist/main', () => {
+  return {
+    ...jest.requireActual('@react-aria/ssr/dist/main'),
+    // react aria generates a bunch of random ids, this
+    // makes the snapshot stable.
+    useSSRSafeId: () => `react-aria-test-id`,
+  };
+});
 
 jest.mock('@bangle.io/slice-ui', () => {
   const otherThings = jest.requireActual('@bangle.io/slice-ui');
@@ -113,7 +121,7 @@ describe('NewWorkspaceModalBrowser', () => {
           <NewWorkspaceModal />
         </div>,
       );
-      expect(result.getByLabelText('select storage type').innerHTML).toContain(
+      expect(result.getByLabelText('Select storage type').innerHTML).toContain(
         'Browser',
       );
     });
@@ -159,6 +167,8 @@ describe('NewWorkspaceModalBrowser', () => {
     });
 
     test('shows error if name already exists', async () => {
+      jest.useFakeTimers();
+
       hasWorkspaceMock.mockImplementation(() => async () => true);
 
       let result = render(
@@ -176,7 +186,11 @@ describe('NewWorkspaceModalBrowser', () => {
 
         expect(input).toBeTruthy();
         fireEvent.change(input, { target: { value: 'my-existing-ws' } });
-        await sleep(10);
+      });
+
+      await act(async () => {
+        jest.runAllTimers();
+        await Promise.resolve();
       });
 
       expect(

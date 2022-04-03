@@ -91,27 +91,72 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
                   </span>
                 </div>
                 <div>
-                  <button
-                    aria-label="select storage type"
-                    aria-pressed="false"
-                    class="test-button-class  B-ui-bangle-button_button p-1  transition-all duration-100"
-                    type="button"
+                  <div
+                    class="inline-flex flex-col relative mt-4 w-64"
                   >
-                    <span
-                      class="BU_has-icon"
+                    <div
+                      class="B-ui-components_select-label text-sm font-medium cursor-default"
+                    />
+                    <div
+                      aria-hidden="true"
+                      style="border: 0px; clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
                     >
-                      File system
-                    </span>
-                    <svg
-                      class="fill-current  BU_has-text mr-1 w-4 h-4"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6.343 7.757L4.93 9.172 12 16.242l7.071-7.07-1.414-1.415L12 13.414 6.343 7.757z"
+                      <input
+                        style="font-size: 16px;"
+                        tabindex="-1"
+                        type="text"
                       />
-                    </svg>
-                  </button>
+                      <label>
+                        <select
+                          size="2"
+                          tabindex="-1"
+                        >
+                          <option />
+                          <option
+                            value="file-system"
+                          />
+                          <option
+                            value="browser"
+                          >
+                            Browser
+                          </option>
+                        </select>
+                      </label>
+                    </div>
+                    <button
+                      aria-describedby="react-aria-test-id react-aria-test-id"
+                      aria-expanded="false"
+                      aria-haspopup="listbox"
+                      aria-label="Select storage type"
+                      aria-labelledby="react-aria-test-id react-aria-test-id"
+                      class="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none"
+                      id="react-aria-test-id"
+                      style="border-radius: var(--BV-ui-bangle-button-radius);"
+                      type="button"
+                    >
+                      <span
+                        class="text-md text-left px-1 w-64 truncate overflow-ellipsis "
+                        id="react-aria-test-id"
+                      >
+                        File System
+                         
+                        (Only on Chromium browsers)
+                      </span>
+                      <svg
+                        aria-hidden="true"
+                        class="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
               <div
@@ -134,7 +179,7 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
                 <div>
                   <button
                     aria-label="pick directory"
-                    class="B-ui-bangle-button_button p-1  transition-all duration-100 B-ui-bangle-button_show-focus-ring"
+                    class="B-ui-bangle-button_button p-1  transition-all duration-100 B-ui-components_misc-button-ring"
                     id="new-workspace-modal_browse-button"
                     type="button"
                   >
