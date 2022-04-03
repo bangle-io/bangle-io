@@ -43,17 +43,17 @@ type ChronoLibrariesType = UnPromisify<ReturnType<typeof getTimeLibrary>>;
 let _libraries:
   | undefined
   | {
-      chrono: typeof import('chrono-node');
+      chrono: ReturnType<typeof import('./chrono').getChrono>;
       dayjs: UnPromisify<ReturnType<typeof getDayJs>>;
     } = undefined;
 async function getTimeLibrary() {
   if (!_libraries) {
     let [chrono, dayjs] = (await Promise.all([
-      import('chrono-node'),
+      import('./chrono').then((r) => {
+        return r.getChrono();
+      }),
       getDayJs(),
     ])) as any;
-
-    chrono = chrono.default || chrono;
 
     _libraries = { chrono, dayjs: dayjs };
   }

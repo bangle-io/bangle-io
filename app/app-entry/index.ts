@@ -11,11 +11,7 @@ const root = document.getElementById('root');
 
 if (typeof window !== undefined && APP_ENV !== 'local') {
   (window as any).Sentry?.onLoad(function () {
-    import(
-      /* webpackChunkName: "@sentry/tracing" */
-      /* webpackPrefetch: true */
-      '@sentry/tracing'
-    ).then(({ Integrations }) => {
+    import('./SentryTracing').then(({ Integrations }) => {
       (window as any).Sentry.init({
         ...sentryConfig,
         integrations: [new Integrations.BrowserTracing()],
