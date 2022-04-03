@@ -31,7 +31,7 @@ import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import { CHANGELOG_TEXT } from '@bangle.io/config';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { Modal } from '@bangle.io/ui-components';
+import { AlertModal } from '@bangle.io/ui-components';
 import { useLocalStorage } from '@bangle.io/utils';
 
 const specRegistry = new SpecRegistry([
@@ -70,21 +70,22 @@ export function ChangelogModal() {
   }, [dispatch]);
 
   return (
-    <Modal
-      title="🎁 What's new?"
-      onDismiss={onDismiss}
-      className="w-full md:max-w-2xl"
+    <AlertModal
+      isDismissable
+      headingTitle="🎁 What's new?"
+      onClose={onDismiss}
+      size="large"
     >
       <div
         className="overflow-y-scroll"
         style={{
-          maxHeight: '60vh',
-          minHeight: '60vh',
+          maxHeight: 'min(50vh, 500px)',
+          minHeight: 'min(50vh, 500px)',
         }}
       >
         <ChangelogDisplay />
       </div>
-    </Modal>
+    </AlertModal>
   );
 }
 const parser = markdownParser(specRegistry);
