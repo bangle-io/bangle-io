@@ -163,24 +163,24 @@ para 2
           >
             <button
               aria-label="hello 1"
-              class="note-outline_first-node-in-viewport B-ui-bangle-button_button p-1  transition-all duration-100"
+              class="note-outline_first-node-in-viewport B-ui-bangle-button_button p-1  transition-all duration-100 "
               style="padding-left: 0px; padding-top: 4px; padding-bottom: 4px;"
               type="button"
             >
               <span
-                class="text-sm truncate"
+                class="text-sm truncate  "
               >
                 hello 1
               </span>
             </button>
             <button
               aria-label="hello 2"
-              class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
+              class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
               style="padding-left: 12px; padding-top: 4px; padding-bottom: 4px;"
               type="button"
             >
               <span
-                class="text-sm truncate"
+                class="text-sm truncate  "
               >
                 hello 2
               </span>

@@ -17,11 +17,11 @@ exports[`renders correctly 1`] = `
         <span>
           <button
             aria-label="hide"
-            class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet"
+            class="B-ui-bangle-button_button p-1  transition-all duration-100 is-quiet "
             type="button"
           >
             <svg
-              class="w-5 h-5"
+              class="w-5 h-5 "
               fill="currentColor"
               viewBox="0 0 18 18"
               xmlns="http://www.w3.org/2000/svg"

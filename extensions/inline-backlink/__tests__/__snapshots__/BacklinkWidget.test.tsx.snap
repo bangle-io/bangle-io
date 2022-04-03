@@ -7,7 +7,7 @@ exports[`renders backlinks 1`] = `
       class="B-inline-backlink_widget-container flex flex-col"
     >
       <div
-        class="B-ui-components_sidebar-row2 BU_hover rounded text-sm truncate py-1 select-none"
+        class="B-ui-components_sidebar-row2 BU_hover rounded text-sm truncate py-1 select-none "
         data-id="test-back-ws:my-linked-note-2.md"
         role="button"
         style="cursor: pointer; display: flex; justify-content: space-between; user-select: none;"
@@ -19,7 +19,7 @@ exports[`renders backlinks 1`] = `
             class="B-ui-components_left-node"
           >
             <button
-              class="focus:outline-none"
+              class="focus:outline-none "
               data-bangle-editor-break="true"
               data-bangle-editor-pos="bottom"
               type="button"
@@ -59,7 +59,7 @@ exports[`renders backlinks 1`] = `
             class="B-ui-components_right-node"
           >
             <button
-              class="focus:outline-none text-xs font-semibold rounded B-inline-backlink_widget-occurrence-count"
+              class="focus:outline-none text-xs font-semibold rounded B-inline-backlink_widget-occurrence-count "
               data-bangle-editor-break="true"
               data-bangle-editor-pos="bottom"
               type="button"
@@ -71,7 +71,7 @@ exports[`renders backlinks 1`] = `
             class="B-ui-components_right-hover-node"
           >
             <button
-              class="focus:outline-none text-xs font-semibold rounded B-inline-backlink_widget-occurrence-count"
+              class="focus:outline-none text-xs font-semibold rounded B-inline-backlink_widget-occurrence-count "
               data-bangle-editor-break="true"
               data-bangle-editor-pos="bottom"
               type="button"

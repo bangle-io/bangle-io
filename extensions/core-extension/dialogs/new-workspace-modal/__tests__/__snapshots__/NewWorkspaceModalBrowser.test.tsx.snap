@@ -6,7 +6,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
     <div
       aria-labelledby="modal-title"
       aria-modal="true"
-      class="fixed z-50 inset-0 overflow-y-auto"
+      class="fixed z-50 inset-0 overflow-y-auto "
       role="dialog"
     >
       <div
@@ -23,7 +23,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
           ​
         </span>
         <div
-          class="B-ui-components_modal-container h-full B-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl "
+          class="B-ui-components_modal-container h-full B-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl  "
           style="width: 30rem; max-width: 30rem;"
         >
           <div
@@ -36,7 +36,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
                 New Workspace
               </span>
               <button
-                class="focus:outline-none"
+                class="focus:outline-none "
                 data-bangle-editor-break="true"
                 data-bangle-editor-pos="bottom"
                 type="button"
@@ -92,7 +92,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
                 </div>
                 <div>
                   <div
-                    class="inline-flex flex-col relative mt-4 w-64"
+                    class="inline-flex flex-col relative mt-4 w-64 "
                   >
                     <div
                       class="B-ui-components_select-label text-sm font-medium cursor-default"
@@ -114,7 +114,9 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
                           <option />
                           <option
                             value="file-system"
-                          />
+                          >
+                            File System
+                          </option>
                           <option
                             value="browser"
                           >
@@ -129,7 +131,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
                       aria-haspopup="listbox"
                       aria-label="Select storage type"
                       aria-labelledby="react-aria-test-id react-aria-test-id"
-                      class="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none"
+                      class="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
                       id="react-aria-test-id"
                       style="border-radius: var(--BV-ui-bangle-button-radius);"
                       type="button"
@@ -185,7 +187,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
               >
                 <button
                   aria-label="create workspace"
-                  class="px-4 B-ui-bangle-button_button p-1  transition-all duration-100 cursor-not-allowed"
+                  class="px-4 B-ui-bangle-button_button p-1  transition-all duration-100 cursor-not-allowed "
                   disabled=""
                   id="new-workspace-modal_create-button"
                   type="button"

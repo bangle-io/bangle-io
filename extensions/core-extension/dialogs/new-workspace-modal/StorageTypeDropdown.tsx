@@ -22,7 +22,7 @@ export function StorageTypeDropdown({
       }}
       disabledKeys={supportsNativeBrowserFs() ? undefined : ['file-system']}
     >
-      <Item key={FILE_SYSTEM}>
+      <Item key={FILE_SYSTEM} textValue="File System">
         File System{' '}
         {!supportsNativeBrowserFs() && '(Only on Chromium browsers)'}
       </Item>

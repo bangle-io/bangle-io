@@ -39,7 +39,7 @@ exports[`NotificationArea renders with content 2`] = `
           <div>
             <button
               aria-label="dismiss"
-              class="focus:outline-none"
+              class="focus:outline-none "
               data-bangle-editor-break="true"
               data-bangle-editor-pos="left"
               type="button"
@@ -104,7 +104,7 @@ exports[`NotificationArea renders with content 2`] = `
           <div>
             <button
               aria-label="dismiss"
-              class="focus:outline-none"
+              class="focus:outline-none "
               data-bangle-editor-break="true"
               data-bangle-editor-pos="left"
               type="button"
