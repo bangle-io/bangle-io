@@ -2341,6 +2341,7 @@ __metadata:
     "@bangle.io/utils": "workspace:*"
     "@bangle.io/worker-naukar-proxy": "workspace:*"
     "@bangle.io/ws-path": "workspace:*"
+    "@react-aria/ssr": ^3.1.2
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": ^7.0.2
     "@types/react": ^17.0.43
@@ -3245,6 +3246,7 @@ __metadata:
     "@bangle.io/scripts": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@mdx-js/react": ^1.6.22
+    "@react-aria/ssr": ^3.1.2
     "@storybook/addon-actions": ^6.4.19
     "@storybook/addon-docs": ^6.4.19
     "@storybook/addon-essentials": ^6.4.19
@@ -3256,6 +3258,7 @@ __metadata:
     "@storybook/manager-webpack5": ^6.4.19
     "@storybook/react": ^6.4.19
     "@storybook/testing-library": ^0.0.9
+    "@storybook/theming": ^6.4.20
     "@types/react": ^17.0.43
     "@types/react-dom": ^17.0.14
     babel-loader: ^8.2.4
@@ -6327,6 +6330,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/client-logger@npm:6.4.20":
+  version: 6.4.20
+  resolution: "@storybook/client-logger@npm:6.4.20"
+  dependencies:
+    core-js: ^3.8.2
+    global: ^4.4.0
+  checksum: 1b6f89ebce09ee6021de9f0acdf6c499570723f733d8081478ef449581337d12ef016ab66891f2b9a5e833f3847185cb430d586206f12f3df21c288a26a96c8b
+  languageName: node
+  linkType: hard
+
 "@storybook/client-logger@npm:6.5.0-alpha.51, @storybook/client-logger@npm:^6.4.0 || >=6.5.0-0":
   version: 6.5.0-alpha.51
   resolution: "@storybook/client-logger@npm:6.5.0-alpha.51"
@@ -6998,6 +7011,29 @@ __metadata:
     react: ^16.8.0 || ^17.0.0
     react-dom: ^16.8.0 || ^17.0.0
   checksum: fc4bf2a24133bb0c86211e058a3e35a97507734654a29cc3167249c622665c13df29aa89872035fde500a04f6b9fd5d585a4cf6a52143cee8af56ff970332c9f
+  languageName: node
+  linkType: hard
+
+"@storybook/theming@npm:^6.4.20":
+  version: 6.4.20
+  resolution: "@storybook/theming@npm:6.4.20"
+  dependencies:
+    "@emotion/core": ^10.1.1
+    "@emotion/is-prop-valid": ^0.8.6
+    "@emotion/styled": ^10.0.27
+    "@storybook/client-logger": 6.4.20
+    core-js: ^3.8.2
+    deep-object-diff: ^1.1.0
+    emotion-theming: ^10.0.27
+    global: ^4.4.0
+    memoizerific: ^1.11.3
+    polished: ^4.0.5
+    resolve-from: ^5.0.0
+    ts-dedent: ^2.0.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  checksum: 38c73bac73e6c9d42673d60cf52aa835c051a7508de316b1f4d051d66fc3d4063342ae7d3b8bb65044b3ec632c8c564994915d6add7e3c9decd219c671b66b6a
   languageName: node
   linkType: hard
 

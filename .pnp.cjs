@@ -5204,6 +5204,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/utils", "workspace:lib/utils"],
             ["@bangle.io/worker-naukar-proxy", "workspace:app/worker-naukar-proxy"],
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
+            ["@react-aria/ssr", "virtual:0027198873aab37eba6c4faa262d9e36b3b81cee214dc3be572ec086cae5176d49a4c98cd64b82ba7d41a891044c5ad48c63d10a5f7be7fc03908dd323959e68#npm:3.1.2"],
             ["@testing-library/react", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:12.1.3"],
             ["@testing-library/react-hooks", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:7.0.2"],
             ["@types/react", "npm:17.0.43"],
@@ -6328,6 +6329,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/scripts", "workspace:tooling/_scripts"],
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],
             ["@mdx-js/react", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:1.6.22"],
+            ["@react-aria/ssr", "virtual:0027198873aab37eba6c4faa262d9e36b3b81cee214dc3be572ec086cae5176d49a4c98cd64b82ba7d41a891044c5ad48c63d10a5f7be7fc03908dd323959e68#npm:3.1.2"],
             ["@storybook/addon-actions", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.19"],
             ["@storybook/addon-docs", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.19"],
             ["@storybook/addon-essentials", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.19"],
@@ -6339,6 +6341,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@storybook/manager-webpack5", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.19"],
             ["@storybook/react", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.19"],
             ["@storybook/testing-library", "npm:0.0.9"],
+            ["@storybook/theming", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.20"],
             ["@types/react", "npm:17.0.43"],
             ["@types/react-dom", "npm:17.0.14"],
             ["babel-loader", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:8.2.4"],
@@ -11066,6 +11069,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
+        ["npm:6.4.20", {
+          "packageLocation": "./.yarn/cache/@storybook-client-logger-npm-6.4.20-f7367055c0-1b6f89ebce.zip/node_modules/@storybook/client-logger/",
+          "packageDependencies": [
+            ["@storybook/client-logger", "npm:6.4.20"],
+            ["core-js", "npm:3.21.1"],
+            ["global", "npm:4.4.0"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:6.5.0-alpha.51", {
           "packageLocation": "./.yarn/cache/@storybook-client-logger-npm-6.5.0-alpha.51-3189653165-f295fa00f1.zip/node_modules/@storybook/client-logger/",
           "packageDependencies": [
@@ -12476,6 +12488,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
+        ["npm:6.4.20", {
+          "packageLocation": "./.yarn/cache/@storybook-theming-npm-6.4.20-47429c2351-38c73bac73.zip/node_modules/@storybook/theming/",
+          "packageDependencies": [
+            ["@storybook/theming", "npm:6.4.20"]
+          ],
+          "linkType": "SOFT",
+        }],
         ["npm:6.5.0-alpha.51", {
           "packageLocation": "./.yarn/cache/@storybook-theming-npm-6.5.0-alpha.51-660cc3aafa-fc4bf2a241.zip/node_modules/@storybook/theming/",
           "packageDependencies": [
@@ -12540,6 +12559,35 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@emotion/is-prop-valid", "npm:0.8.8"],
             ["@emotion/styled", "virtual:26e25a627b7917cd6b950a837d3715a5271da9eb75444db5613a848ca7f52dc7db4f9f46d4081cace9b896a7469a87fc8c42f66a043fda0cdcab8907c9e73ffa#npm:10.3.0"],
             ["@storybook/client-logger", "npm:6.4.19"],
+            ["@types/react", "npm:17.0.43"],
+            ["@types/react-dom", "npm:17.0.14"],
+            ["core-js", "npm:3.21.1"],
+            ["deep-object-diff", "npm:1.1.7"],
+            ["emotion-theming", "virtual:26e25a627b7917cd6b950a837d3715a5271da9eb75444db5613a848ca7f52dc7db4f9f46d4081cace9b896a7469a87fc8c42f66a043fda0cdcab8907c9e73ffa#npm:10.3.0"],
+            ["global", "npm:4.4.0"],
+            ["memoizerific", "npm:1.11.3"],
+            ["polished", "npm:4.1.4"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
+            ["resolve-from", "npm:5.0.0"],
+            ["ts-dedent", "npm:2.2.0"]
+          ],
+          "packagePeers": [
+            "@types/react-dom",
+            "@types/react",
+            "react-dom",
+            "react"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.20", {
+          "packageLocation": "./.yarn/__virtual__/@storybook-theming-virtual-1cd1b7bf7a/0/cache/@storybook-theming-npm-6.4.20-47429c2351-38c73bac73.zip/node_modules/@storybook/theming/",
+          "packageDependencies": [
+            ["@storybook/theming", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.20"],
+            ["@emotion/core", "virtual:26e25a627b7917cd6b950a837d3715a5271da9eb75444db5613a848ca7f52dc7db4f9f46d4081cace9b896a7469a87fc8c42f66a043fda0cdcab8907c9e73ffa#npm:10.3.1"],
+            ["@emotion/is-prop-valid", "npm:0.8.8"],
+            ["@emotion/styled", "virtual:26e25a627b7917cd6b950a837d3715a5271da9eb75444db5613a848ca7f52dc7db4f9f46d4081cace9b896a7469a87fc8c42f66a043fda0cdcab8907c9e73ffa#npm:10.3.0"],
+            ["@storybook/client-logger", "npm:6.4.20"],
             ["@types/react", "npm:17.0.43"],
             ["@types/react-dom", "npm:17.0.14"],
             ["core-js", "npm:3.21.1"],
@@ -30847,7 +30895,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@storybook/api", null],
             ["@storybook/components", null],
             ["@storybook/core-events", null],
-            ["@storybook/theming", null],
+            ["@storybook/theming", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:6.4.20"],
             ["@types/storybook__addons", null],
             ["@types/storybook__api", null],
             ["@types/storybook__components", null],
