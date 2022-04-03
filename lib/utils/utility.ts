@@ -4,7 +4,7 @@ import { keyName } from 'w3c-keyname';
 import { EditorView } from '@bangle.dev/pm';
 import { Emitter } from '@bangle.dev/utils';
 
-import { isMac, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
+import { isMac, isMobile, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
 export { serialExecuteQueue } from '@bangle.dev/utils';
 export { isAbortError } from '@bangle.io/is-abort-error';
@@ -17,7 +17,13 @@ export function getLast<T>(array: T[]): T | undefined {
 
 export const checkWidescreen = (
   width = typeof window !== 'undefined' ? window.innerWidth : undefined,
-) => (width ? SPLIT_SCREEN_MIN_WIDTH <= width : false);
+) => {
+  if (isMobile) {
+    return false;
+  }
+
+  return width ? SPLIT_SCREEN_MIN_WIDTH <= width : false;
+};
 
 // typeof navigator != 'undefined' ? /Mac/.test(navigator.platform) : false;
 // :: (Object) → (view: EditorView, event: dom.Event) → bool
