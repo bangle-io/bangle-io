@@ -6345,6 +6345,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["postcss", "npm:8.4.12"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:46b40943440cce2ed02853a92c0710ae565cd9e34b7e53e09ac1efc0f9ccafc2635c9b5c1f1380d99638d0f5e2d673557fc491f7dc29ad7cb6a2002d2dc2f41d#npm:17.0.2"],
+            ["storybook-dark-mode", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:1.0.9"],
             ["webpack", "virtual:6b048d41f2b1ca7bd58e0c56724fa6fd2ddbbe677f543449a4e8ea72adf8eae65295303eb7e75c4fc6d4d8917075243642120be88d773bc0b048e62ef1c80f31#npm:5.70.0"]
           ],
           "linkType": "SOFT",
@@ -6461,6 +6462,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@react-aria/menu", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.4.3"],
             ["@react-aria/overlays", "virtual:b68f95893d6c967ed3eea5f1913a5410a866913b82a24620fd6ea74ab02443ad851597e4460418edb08fcf8d03bcd5c2b8f336b6282a3657ca782c7e0fb76acd#npm:3.8.1"],
             ["@react-aria/select", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:3.6.4"],
+            ["@react-aria/separator", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.1.6"],
             ["@react-aria/utils", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.11.3"],
             ["@react-spectrum/utils", "virtual:4ebbddb6a5cea00c84b642735d5e04c21375c8cfa0535291d167950ca97535af4acf5ac1074158a9f0cd98b806ec23a4e4c5d8b48072a60864100d4fdc1b8e02#npm:3.6.7"],
             ["@react-stately/collections", "virtual:998f5f53756e01626d32285fa76fa6c13505979ac768d9cf3d2995592b3686c40383db578c805443d7b1a5ccb42bfae5f43e480229478b4d678941051bcfe058#npm:3.3.7"],
@@ -30825,6 +30827,46 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/store2-npm-2.13.2-3a5342d311-9e760ea2a7.zip/node_modules/store2/",
           "packageDependencies": [
             ["store2", "npm:2.13.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["storybook-dark-mode", [
+        ["npm:1.0.9", {
+          "packageLocation": "./.yarn/cache/storybook-dark-mode-npm-1.0.9-73642a7866-e73d2cff9b.zip/node_modules/storybook-dark-mode/",
+          "packageDependencies": [
+            ["storybook-dark-mode", "npm:1.0.9"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:1.0.9", {
+          "packageLocation": "./.yarn/__virtual__/storybook-dark-mode-virtual-84af6ae985/0/cache/storybook-dark-mode-npm-1.0.9-73642a7866-e73d2cff9b.zip/node_modules/storybook-dark-mode/",
+          "packageDependencies": [
+            ["storybook-dark-mode", "virtual:e56cd107fcf7ea9e84b3cb91a2992c0ee77adea99a30cd232dae49b22ad0ec0058582f54ce8962318c03ecd4d189ca3139e624cf546664bbd857e36dc9cd410f#npm:1.0.9"],
+            ["@storybook/addons", null],
+            ["@storybook/api", null],
+            ["@storybook/components", null],
+            ["@storybook/core-events", null],
+            ["@storybook/theming", null],
+            ["@types/storybook__addons", null],
+            ["@types/storybook__api", null],
+            ["@types/storybook__components", null],
+            ["@types/storybook__core-events", null],
+            ["@types/storybook__theming", null],
+            ["fast-deep-equal", "npm:3.1.3"],
+            ["memoizerific", "npm:1.11.3"]
+          ],
+          "packagePeers": [
+            "@storybook/addons",
+            "@storybook/api",
+            "@storybook/components",
+            "@storybook/core-events",
+            "@storybook/theming",
+            "@types/storybook__addons",
+            "@types/storybook__api",
+            "@types/storybook__components",
+            "@types/storybook__core-events",
+            "@types/storybook__theming"
           ],
           "linkType": "HARD",
         }]
