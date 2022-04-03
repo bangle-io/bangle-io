@@ -3358,11 +3358,10 @@ __metadata:
     "@bangle.io/shared-types": "workspace:*"
     "@bangle.io/ui-bangle-button": "workspace:*"
     "@bangle.io/utils": "workspace:*"
-    "@chakra-ui/popper": ^2.4.3
+    "@heroicons/react": ^1.0.6
     "@popperjs/core": ^2.11.4
     "@radix-ui/colors": ^0.1.8
     "@radix-ui/react-dropdown-menu": ^0.1.6
-    "@radix-ui/react-icons": ^1.1.0
     "@react-aria/button": ^3.4.3
     "@react-aria/dialog": ^3.1.8
     "@react-aria/focus": ^3.5.4
@@ -3370,14 +3369,17 @@ __metadata:
     "@react-aria/listbox": ^3.4.4
     "@react-aria/menu": ^3.4.3
     "@react-aria/overlays": ^3.8.1
+    "@react-aria/select": ^3.6.4
     "@react-aria/utils": ^3.11.3
     "@react-spectrum/utils": ^3.6.7
     "@react-stately/collections": ^3.3.7
     "@react-stately/list": ^3.4.4
     "@react-stately/menu": ^3.2.6
+    "@react-stately/select": ^3.1.6
     "@react-stately/tree": ^3.2.3
     "@react-types/dialog": ^3.3.4
     "@react-types/menu": ^3.5.2
+    "@react-types/select": ^3.5.4
     "@react-types/shared": ^3.11.2
     "@stitches/react": ^1.2.7
     "@storybook/react": ^6.4.19
@@ -3580,41 +3582,6 @@ __metadata:
   version: 0.2.3
   resolution: "@bcoe/v8-coverage@npm:0.2.3"
   checksum: 850f9305536d0f2bd13e9e0881cb5f02e4f93fad1189f7b2d4bebf694e3206924eadee1068130d43c11b750efcc9405f88a8e42ef098b6d75239c0f047de1a27
-  languageName: node
-  linkType: hard
-
-"@chakra-ui/popper@npm:^2.4.3":
-  version: 2.4.3
-  resolution: "@chakra-ui/popper@npm:2.4.3"
-  dependencies:
-    "@chakra-ui/react-utils": 1.2.3
-    "@popperjs/core": ^2.9.3
-  peerDependencies:
-    react: ">=16.8.6"
-  checksum: 5c946de4893411f82a43c0dd425279ab36488c9dfaebf73b1cccd6af5c016351b73046a1524084c56e21e7319c52f0e502d304fca7ec26e92f40937c5b2ace31
-  languageName: node
-  linkType: hard
-
-"@chakra-ui/react-utils@npm:1.2.3":
-  version: 1.2.3
-  resolution: "@chakra-ui/react-utils@npm:1.2.3"
-  dependencies:
-    "@chakra-ui/utils": ^1.10.4
-  peerDependencies:
-    react: ">=16.8.6"
-  checksum: 3ebf400422d4c76bd81da75815eeb86908c155602c781f27ced781e4335313c0d8c7804a7a81b40810ee5f4d296ce447247629524236e050a1adfaf7feb8e0b7
-  languageName: node
-  linkType: hard
-
-"@chakra-ui/utils@npm:^1.10.4":
-  version: 1.10.4
-  resolution: "@chakra-ui/utils@npm:1.10.4"
-  dependencies:
-    "@types/lodash.mergewith": 4.6.6
-    css-box-model: 1.2.1
-    framesync: 5.3.0
-    lodash.mergewith: 4.6.2
-  checksum: a97bf839b6569c1b420825fcab4a0b9d599d0c3752839cd01d72f4b8c2191e32da72a10727a84f5b13784ee1985083412c98855c25a42427dfb28290f37e8214
   languageName: node
   linkType: hard
 
@@ -3845,6 +3812,15 @@ __metadata:
   version: 1.1.2
   resolution: "@gar/promisify@npm:1.1.2"
   checksum: d05081e0887a49c178b75ee3067bd6ee086f73c154d121b854fb2e044e8a89cb1cbb6de3a0dd93a519b80f0531fda68b099dd7256205f7fbb3490324342f2217
+  languageName: node
+  linkType: hard
+
+"@heroicons/react@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@heroicons/react@npm:1.0.6"
+  peerDependencies:
+    react: ">= 16"
+  checksum: 372b1eda3ce735ef069777bc96304f70de585ebb71a6d1cedc121bb695f9bca235619112e3ee14e8779e95a03096813cbbe3b755927a54b7580d1ce084fa4096
   languageName: node
   linkType: hard
 
@@ -4383,7 +4359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@popperjs/core@npm:^2.11.4, @popperjs/core@npm:^2.5.4, @popperjs/core@npm:^2.6.0, @popperjs/core@npm:^2.9.3":
+"@popperjs/core@npm:^2.11.4, @popperjs/core@npm:^2.5.4, @popperjs/core@npm:^2.6.0":
   version: 2.11.4
   resolution: "@popperjs/core@npm:2.11.4"
   checksum: 36168d274aa164368a50aef2e7b2f858e1b9145d9250af9dc1315ff719d874a367177760f8285efb75c8cf48267194a50e7dc9cdb41bf0b1958c38805c13564c
@@ -4523,15 +4499,6 @@ __metadata:
   peerDependencies:
     react: ^16.8 || ^17.0
   checksum: b15f15d9c1b41b54c4d3d3649ff9b0284057d5229ca2f212c4d0025f13cb15b86ff7d7cca6c76894f11ca66424bb8a1e3710036eaa4891559b78f1a1beec4a8e
-  languageName: node
-  linkType: hard
-
-"@radix-ui/react-icons@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@radix-ui/react-icons@npm:1.1.0"
-  peerDependencies:
-    react: ^16.x || ^17.x
-  checksum: 82ba2af842f93b2c4f72edaaaf0d7c0a822c280e97f11e07598fb4c47075c8c41e869aaea4b950e1375b2328eac0f12603299f2f11c60e53d3f1929bc548361a
   languageName: node
   linkType: hard
 
@@ -4927,6 +4894,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-aria/select@npm:^3.6.4":
+  version: 3.6.4
+  resolution: "@react-aria/select@npm:3.6.4"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    "@react-aria/i18n": ^3.3.8
+    "@react-aria/interactions": ^3.8.3
+    "@react-aria/label": ^3.2.4
+    "@react-aria/listbox": ^3.4.4
+    "@react-aria/menu": ^3.4.3
+    "@react-aria/selection": ^3.8.1
+    "@react-aria/utils": ^3.11.3
+    "@react-aria/visually-hidden": ^3.2.7
+    "@react-stately/select": ^3.1.6
+    "@react-types/button": ^3.4.4
+    "@react-types/select": ^3.5.4
+    "@react-types/shared": ^3.11.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+    react-dom: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 9a26498a7fc304c19f5bd22fb2f9ea73cffe6d5469910bbdb814187227c09466403dcbe4483a271d3ca81a0eac4974f0c25e0f15f8eddbbb0888f76b59e72471
+  languageName: node
+  linkType: hard
+
 "@react-aria/selection@npm:^3.8.1":
   version: 3.8.1
   resolution: "@react-aria/selection@npm:3.8.1"
@@ -5086,6 +5077,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-stately/select@npm:^3.1.6":
+  version: 3.1.6
+  resolution: "@react-stately/select@npm:3.1.6"
+  dependencies:
+    "@babel/runtime": ^7.6.2
+    "@react-stately/collections": ^3.3.7
+    "@react-stately/list": ^3.4.4
+    "@react-stately/menu": ^3.2.6
+    "@react-stately/selection": ^3.9.3
+    "@react-stately/utils": ^3.4.1
+    "@react-types/select": ^3.5.4
+    "@react-types/shared": ^3.11.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: 282255a84265d43928c9a3a2f6b5d2343936f7e832deb239758c8dcef45c24aa9cee0f5be09213a3e42c000234d857ad9102d0490415b5203f3c93e65a7e6268
+  languageName: node
+  linkType: hard
+
 "@react-stately/selection@npm:^3.9.3":
   version: 3.9.3
   resolution: "@react-stately/selection@npm:3.9.3"
@@ -5230,6 +5239,17 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1
   checksum: 8b1297e0859a6e21f561ad83202202033aaf438ea8f820c34f45aa1ecf47555c74361e9c4cf460206d1518d2fe6c5a2c327e55aa0e4f466053af4bb4b055d03a
+  languageName: node
+  linkType: hard
+
+"@react-types/select@npm:^3.5.4":
+  version: 3.5.4
+  resolution: "@react-types/select@npm:3.5.4"
+  dependencies:
+    "@react-types/shared": ^3.11.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1
+  checksum: c57644c126b0dcf112e9c06da019f99b5fc3b27995db0409ae181be7c17e9b60ac4a61f46adac0f46d6a10259393d345e7d5437cf8cdeb8bc6bc0f1f84feffac
   languageName: node
   linkType: hard
 
@@ -7343,22 +7363,6 @@ __metadata:
   version: 3.0.2
   resolution: "@types/linkify-it@npm:3.0.2"
   checksum: dff8f10fafb885422474e456596f12d518ec4cdd6c33cca7a08e7c86b912d301ed91cf5a7613e148c45a12600dc9ab3d85ad16d5b48dc1aaeda151a68f16b536
-  languageName: node
-  linkType: hard
-
-"@types/lodash.mergewith@npm:4.6.6":
-  version: 4.6.6
-  resolution: "@types/lodash.mergewith@npm:4.6.6"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: d57d0404679308893f89fbf66e2a70f569f701ddcd895e642388977664a7e1df6212698818598537ed0d0f5ccd0eb121c778260a3697b7e6b965d23526c60fe2
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:*":
-  version: 4.14.181
-  resolution: "@types/lodash@npm:4.14.181"
-  checksum: 0d1863d8383fd2f8bb42e9e3fc1d6255bb88ff034d6df848941063698944313dae944fc1270315613e3d303fae7c7a9a86085ad3235ed6204c56c4b0b3699aa9
   languageName: node
   linkType: hard
 
@@ -11190,15 +11194,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-box-model@npm:1.2.1":
-  version: 1.2.1
-  resolution: "css-box-model@npm:1.2.1"
-  dependencies:
-    tiny-invariant: ^1.0.6
-  checksum: 4d113f26fed6b9150e2c314502d00dabe06f12ae43a01a7e9b6e57f3de49b4281dbb0dc46a1158a7349618f8f34d9250af57cb43d7337e9485e73e6b821e470e
-  languageName: node
-  linkType: hard
-
 "css-functions-list@npm:^3.0.1":
   version: 3.0.1
   resolution: "css-functions-list@npm:3.0.1"
@@ -13720,15 +13715,6 @@ __metadata:
     "@emotion/is-prop-valid":
       optional: true
   checksum: e19e1eb063617965ad6783b62ae2437e69f6718244a5800c7c8cbe9d14b8c259bfd90edf33d34c02bcf37d5c4d03a41ef7f478f0ba16a17b57375d5dcc334379
-  languageName: node
-  linkType: hard
-
-"framesync@npm:5.3.0":
-  version: 5.3.0
-  resolution: "framesync@npm:5.3.0"
-  dependencies:
-    tslib: ^2.1.0
-  checksum: 9ebbb2863e6a1cfd2e9dd1b73af427d23caa03c92dd49ea767ebdd208c3a573bba4a1026f67068d856a21704f79adcdf2f750cc852ff73bc1f0e80edaaecded8
   languageName: node
   linkType: hard
 
@@ -17149,13 +17135,6 @@ __metadata:
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: ad580b4bdbb7ca1f7abf7e1bce63a9a0b98e370cf40194b03380a46b4ed799c9573029599caebc1b14e3f24b111aef72b96674a56cfa105e0f5ac70546cdc005
-  languageName: node
-  linkType: hard
-
-"lodash.mergewith@npm:4.6.2":
-  version: 4.6.2
-  resolution: "lodash.mergewith@npm:4.6.2"
-  checksum: a6db2a9339752411f21b956908c404ec1e088e783a65c8b29e30ae5b3b6384f82517662d6f425cc97c2070b546cc2c7daaa8d33f78db7b6e9be06cd834abdeb8
   languageName: node
   linkType: hard
 
@@ -22975,13 +22954,6 @@ __metadata:
   dependencies:
     setimmediate: ^1.0.4
   checksum: ec37ae299066bef6c464dcac29c7adafba1999e7227a9bdc4e105a459bee0f0b27234a46bfd7ab4041da79619e06a58433472867a913d01c26f8a203f87cee70
-  languageName: node
-  linkType: hard
-
-"tiny-invariant@npm:^1.0.6":
-  version: 1.2.0
-  resolution: "tiny-invariant@npm:1.2.0"
-  checksum: e09a718a7c4a499ba592cdac61f015d87427a0867ca07f50c11fd9b623f90cdba18937b515d4a5e4f43dac92370498d7bdaee0d0e7a377a61095e02c4a92eade
   languageName: node
   linkType: hard
 
