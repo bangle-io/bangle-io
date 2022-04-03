@@ -4,6 +4,8 @@
     Content-Type = "application/manifest+json"
 
 [build]
-  NODE_VERSION = "16"
   publish = "build"
-  command = "yarn build"  
+  command = "yarn build" 
+
+[build.environment]
+  NODE_VERSION = "16"
