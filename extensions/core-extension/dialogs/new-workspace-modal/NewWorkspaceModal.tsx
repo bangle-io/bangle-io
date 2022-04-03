@@ -84,8 +84,6 @@ export function NewWorkspaceModal() {
   const { dispatch } = useUIManagerContext();
   const { dispatchSerialOperation } = useSerialOperationContext();
 
-  // const isDropdownOpenRef = useRef(false);
-
   const storageType = modalState.workspace.type;
 
   const updateStorageType = useCallback((val: WorkspaceStorageType) => {

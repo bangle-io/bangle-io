@@ -21,11 +21,6 @@ export function StorageTypeDropdown({
         updateStorageType(r.toString() as WorkspaceStorageType);
       }}
       disabledKeys={supportsNativeBrowserFs() ? undefined : ['file-system']}
-      onKeyUp={(e) => {
-        if (e.key === 'Escape') {
-          console.log('here');
-        }
-      }}
     >
       <Item key={FILE_SYSTEM}>
         File System{' '}
