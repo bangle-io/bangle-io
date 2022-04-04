@@ -9,6 +9,7 @@ import { pickADirectory } from '@bangle.io/baby-fs';
 import { CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { hasWorkspace } from '@bangle.io/slice-workspace';
+import { OverlayProvider } from '@bangle.io/ui-components';
 
 import { WORKSPACE_NAME_ALREADY_EXISTS_ERROR } from '../common';
 import { NewWorkspaceModal } from '../NewWorkspaceModal';
@@ -107,9 +108,9 @@ describe('NewWorkspaceModalBrowser', () => {
   describe('browsers storage type', () => {
     test('renders correctly', () => {
       let result = render(
-        <div>
+        <OverlayProvider>
           <NewWorkspaceModal />
-        </div>,
+        </OverlayProvider>,
       );
 
       expect(result.container).toMatchSnapshot();
@@ -118,7 +119,9 @@ describe('NewWorkspaceModalBrowser', () => {
     test('renders workspace input when browser', () => {
       let result = render(
         <div>
-          <NewWorkspaceModal />
+          <OverlayProvider>
+            <NewWorkspaceModal />
+          </OverlayProvider>
         </div>,
       );
       expect(result.getByLabelText('Select storage type').innerHTML).toContain(
@@ -134,12 +137,14 @@ describe('NewWorkspaceModalBrowser', () => {
 
       let result = render(
         <div>
-          <NewWorkspaceModal />
+          <OverlayProvider>
+            <NewWorkspaceModal />
+          </OverlayProvider>
         </div>,
       );
 
       expect(
-        result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+        result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
       ).toBe(true);
 
       await waitFor(() => {
@@ -150,11 +155,11 @@ describe('NewWorkspaceModalBrowser', () => {
       });
 
       expect(
-        result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+        result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
       ).toBe(false);
 
       act(() => {
-        fireEvent.click(result.getByLabelText('create workspace'));
+        fireEvent.click(result.getByLabelText('Create workspace'));
       });
 
       expect(dispatchSerialOperation).toBeCalledTimes(1);
@@ -173,12 +178,14 @@ describe('NewWorkspaceModalBrowser', () => {
 
       let result = render(
         <div>
-          <NewWorkspaceModal />
+          <OverlayProvider>
+            <NewWorkspaceModal />
+          </OverlayProvider>
         </div>,
       );
 
       expect(
-        result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+        result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
       ).toBe(true);
 
       await waitFor(async () => {
@@ -194,7 +201,7 @@ describe('NewWorkspaceModalBrowser', () => {
       });
 
       expect(
-        result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+        result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
       ).toBe(true);
 
       expect(

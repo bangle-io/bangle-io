@@ -13,6 +13,7 @@ import {
 import { CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { hasWorkspace } from '@bangle.io/slice-workspace';
+import { OverlayProvider } from '@bangle.io/ui-components';
 
 import { WORKSPACE_AUTH_REJECTED_ERROR } from '../common';
 import { NewWorkspaceModal } from '../NewWorkspaceModal';
@@ -111,7 +112,9 @@ describe('NewWorkspaceModalFileSystem', () => {
   test('renders correctly', async () => {
     let result = render(
       <div>
-        <NewWorkspaceModal />
+        <OverlayProvider>
+          <NewWorkspaceModal />
+        </OverlayProvider>
       </div>,
     );
     expect(result.getByLabelText('Select storage type').innerHTML).toContain(
@@ -124,7 +127,9 @@ describe('NewWorkspaceModalFileSystem', () => {
   test('allows switching of storage type', async () => {
     let result = render(
       <div>
-        <NewWorkspaceModal />
+        <OverlayProvider>
+          <NewWorkspaceModal />
+        </OverlayProvider>
       </div>,
     );
 
@@ -170,12 +175,14 @@ describe('NewWorkspaceModalFileSystem', () => {
 
     let result = render(
       <div>
-        <NewWorkspaceModal />
+        <OverlayProvider>
+          <NewWorkspaceModal />
+        </OverlayProvider>
       </div>,
     );
 
     expect(
-      result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
     ).toBe(true);
 
     act(() => {
@@ -191,11 +198,11 @@ describe('NewWorkspaceModalFileSystem', () => {
     expect(pickADirectory).toBeCalledTimes(1);
 
     expect(
-      result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
     ).toBe(false);
 
     act(() => {
-      fireEvent.click(result.getByLabelText('create workspace'));
+      fireEvent.click(result.getByLabelText('Create workspace'));
     });
 
     expect(dispatchSerialOperation).toBeCalledTimes(1);
@@ -224,7 +231,9 @@ describe('NewWorkspaceModalFileSystem', () => {
 
     let result = render(
       <div>
-        <NewWorkspaceModal />
+        <OverlayProvider>
+          <NewWorkspaceModal />
+        </OverlayProvider>
       </div>,
     );
 
@@ -259,7 +268,7 @@ describe('NewWorkspaceModalFileSystem', () => {
       `);
 
     expect(
-      result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
     ).toBe(true);
   });
 
@@ -280,7 +289,9 @@ describe('NewWorkspaceModalFileSystem', () => {
 
     let result = render(
       <div>
-        <NewWorkspaceModal />
+        <OverlayProvider>
+          <NewWorkspaceModal />
+        </OverlayProvider>
       </div>,
     );
 
@@ -295,7 +306,7 @@ describe('NewWorkspaceModalFileSystem', () => {
     expect(pickADirectory).toBeCalledTimes(1);
 
     expect(
-      result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
     ).toBe(true);
 
     act(() => {
@@ -311,7 +322,7 @@ describe('NewWorkspaceModalFileSystem', () => {
     expect(pickADirectory).toBeCalledTimes(2);
 
     expect(
-      result.getByLabelText('create workspace')?.hasAttribute('disabled'),
+      result.getByLabelText('Create workspace')?.hasAttribute('disabled'),
     ).toBe(false);
   });
 });

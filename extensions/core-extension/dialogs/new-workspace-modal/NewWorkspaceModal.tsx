@@ -9,14 +9,12 @@ import {
 } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { hasWorkspace } from '@bangle.io/slice-workspace';
-import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
-import { Modal } from '@bangle.io/ui-components';
+import { AlertModal } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
 
 import { PickStorageDirectory, WorkspaceNameInput } from './Buttons';
 import {
   BROWSER,
-  CREATE_BUTTON_ID,
   defaultStorageType,
   FILE_SYSTEM,
   INVALID_WORKSPACE_NAME_ERROR,
@@ -162,17 +160,6 @@ export function NewWorkspaceModal() {
     });
   }, [dispatch]);
 
-  // focus on create button
-  useEffect(() => {
-    if (
-      modalState.workspace.type === FILE_SYSTEM &&
-      modalState.workspace.rootDir &&
-      !isCreateDisabled(modalState)
-    ) {
-      document?.getElementById(CREATE_BUTTON_ID)?.focus();
-    }
-  }, [modalState]);
-
   // set error if wsName already exists
   useEffect(() => {
     let destroyed = false;
@@ -216,75 +203,64 @@ export function NewWorkspaceModal() {
   }, [newWorkspaceName, setError, errorType]);
 
   return (
-    <Modal
-      title="New Workspace"
-      onDismiss={onDismiss}
-      style={{ width: '30rem', maxWidth: '30rem' }}
+    <AlertModal
+      isDismissable
+      headingTitle="New Workspace"
+      onClose={onDismiss}
+      size="medium"
+      primaryButtonConfig={{
+        disabled: isCreateDisabled(modalState),
+        onPress: createWorkspace,
+        text: 'Create workspace',
+      }}
     >
-      <div className="px-6 py-4 select-none">
-        {errorType && (
-          <div className="mb-5">
-            <ShowError errorType={errorType} closeModal={onDismiss} />
-          </div>
-        )}
-        <div className="flex flex-col mb-5">
-          <div className="mb-2">
-            <h2 className="text-lg font-medium">Storage type</h2>
-            <span
-              className="text-sm"
-              style={{ color: 'var(--BV-text-color-1)' }}
-            >
-              Bangle.io strongly recommends you choose <b>File system</b>{' '}
-              storage because it is safer and portable. Read more at{' '}
-              <a href="https://bangle.io/" className="underline">
-                https://bangle.io
-              </a>
-              .
-            </span>
-          </div>
-          <div>
-            <StorageTypeDropdown
-              storageType={storageType}
-              updateStorageType={updateStorageType}
-            />
-          </div>
+      {errorType && (
+        <div className="mb-5">
+          <ShowError errorType={errorType} closeModal={onDismiss} />
         </div>
-        {storageType === FILE_SYSTEM && (
-          <div className="flex flex-col mb-5">
-            <PickStorageDirectory
-              setError={setError}
-              dirName={modalState.workspace.rootDir?.name}
-              updateRootDirHandle={updateRootDirHandle}
-            />
-          </div>
-        )}
-        {storageType === BROWSER && (
-          <div className="flex flex-col mb-5">
-            <WorkspaceNameInput
-              // prevent changing the name when using other name browser
-              isDisabled={modalState.workspace.type !== BROWSER}
-              value={newWorkspaceName}
-              updateValue={updateInputWorkspaceName}
-              onPressEnter={
-                isCreateDisabled(modalState) ? undefined : createWorkspace
-              }
-            />
-          </div>
-        )}
-        <div className="flex flex-row justify-center">
-          <ActionButton
-            id={CREATE_BUTTON_ID}
-            ariaLabel="create workspace"
-            className="px-4"
-            variant="primary"
-            isDisabled={isCreateDisabled(modalState)}
-            onPress={createWorkspace}
-          >
-            <ButtonContent text="Create Workspace" />
-          </ActionButton>
+      )}
+      <div className="flex flex-col mb-5">
+        <div className="mb-2">
+          <h2 className="text-lg font-medium">Storage type</h2>
+          <span className="text-sm" style={{ color: 'var(--BV-text-color-1)' }}>
+            Bangle.io strongly recommends you choose <b>File system</b> storage
+            because it is safer and portable. Read more at{' '}
+            <a href="https://bangle.io/" className="underline">
+              https://bangle.io
+            </a>
+            .
+          </span>
+        </div>
+        <div>
+          <StorageTypeDropdown
+            storageType={storageType}
+            updateStorageType={updateStorageType}
+          />
         </div>
       </div>
-    </Modal>
+      {storageType === FILE_SYSTEM && (
+        <div className="flex flex-col mb-5">
+          <PickStorageDirectory
+            setError={setError}
+            dirName={modalState.workspace.rootDir?.name}
+            updateRootDirHandle={updateRootDirHandle}
+          />
+        </div>
+      )}
+      {storageType === BROWSER && (
+        <div className="flex flex-col mb-5">
+          <WorkspaceNameInput
+            // prevent changing the name when using other name browser
+            isDisabled={modalState.workspace.type !== BROWSER}
+            value={newWorkspaceName}
+            updateValue={updateInputWorkspaceName}
+            onPressEnter={
+              isCreateDisabled(modalState) ? undefined : createWorkspace
+            }
+          />
+        </div>
+      )}
+    </AlertModal>
   );
 }
 

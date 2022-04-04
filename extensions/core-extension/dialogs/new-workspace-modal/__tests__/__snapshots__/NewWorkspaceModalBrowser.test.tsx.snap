@@ -2,206 +2,184 @@
 
 exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = `
 <div>
-  <div>
+  <div
+    data-overlay-container="true"
+  >
     <div
-      aria-labelledby="modal-title"
-      aria-modal="true"
-      class="fixed z-50 inset-0 overflow-y-auto "
-      role="dialog"
+      data-overlay-container="true"
     >
       <div
-        class="flex justify-center min-h-screen pb-20 text-center sm:block sm:p-0"
+        class="B-ui-components_alert-modal-underlay transition-opacity"
       >
-        <div
-          aria-hidden="true"
-          class="fixed w-full h-full transition-opacity B-ui-components_modal-overlay"
-        />
         <span
-          aria-hidden="true"
-          class="hidden sm:inline-block sm:align-middle sm:h-screen"
-        >
-          ​
-        </span>
+          data-focus-scope-start="true"
+          hidden=""
+        />
         <div
-          class="B-ui-components_modal-container h-full B-ui-components_modal-fadeInScaleAnimation  inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle max-w-2xl  "
-          style="width: 30rem; max-width: 30rem;"
+          aria-labelledby="react-aria-test-id"
+          class="B-ui-components_alert-modal-content-container BU_medium "
+          data-ismodal="true"
+          role="alertdialog"
+          tabindex="-1"
         >
+          <h2
+            class="B-ui-components_alert-modal-heading text-xl font-semibold break-all"
+            id="react-aria-test-id"
+          >
+            New Workspace
+          </h2>
+          <hr
+            class="B-ui-components_alert-modal-divider"
+          />
           <div
-            class="w-full px-6 my-2 select-none "
+            class="B-ui-components_alert-modal-content"
           >
             <div
-              class="flex flex-row justify-between pt-2 pb-2 text-3xl border-b-2 B-ui-components_modal-header "
-            >
-              <span>
-                New Workspace
-              </span>
-              <button
-                class="focus:outline-none "
-                data-bangle-editor-break="true"
-                data-bangle-editor-pos="bottom"
-                type="button"
-              >
-                <svg
-                  class="fill-current  w-6 h-6 rounded-sm"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div
-            class=""
-          >
-            <div
-              class="px-6 py-4 select-none"
+              class="flex flex-col mb-5"
             >
               <div
-                class="flex flex-col mb-5"
+                class="mb-2"
               >
-                <div
-                  class="mb-2"
+                <h2
+                  class="text-lg font-medium"
                 >
-                  <h2
-                    class="text-lg font-medium"
+                  Storage type
+                </h2>
+                <span
+                  class="text-sm"
+                >
+                  Bangle.io strongly recommends you choose 
+                  <b>
+                    File system
+                  </b>
+                   storage because it is safer and portable. Read more at
+                   
+                  <a
+                    class="underline"
+                    href="https://bangle.io/"
                   >
-                    Storage type
-                  </h2>
-                  <span
-                    class="text-sm"
-                  >
-                    Bangle.io strongly recommends you choose 
-                    <b>
-                      File system
-                    </b>
-                     
-                    storage because it is safer and portable. Read more at
-                     
-                    <a
-                      class="underline"
-                      href="https://bangle.io/"
-                    >
-                      https://bangle.io
-                    </a>
-                    .
-                  </span>
-                </div>
-                <div>
-                  <div
-                    class="inline-flex flex-col relative mt-4 w-64 "
-                  >
-                    <div
-                      class="B-ui-components_select-label text-sm font-medium cursor-default"
-                    />
-                    <div
-                      aria-hidden="true"
-                      style="border: 0px; clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
-                    >
-                      <input
-                        style="font-size: 16px;"
-                        tabindex="-1"
-                        type="text"
-                      />
-                      <label>
-                        <select
-                          size="2"
-                          tabindex="-1"
-                        >
-                          <option />
-                          <option
-                            value="file-system"
-                          >
-                            File System
-                          </option>
-                          <option
-                            value="browser"
-                          >
-                            Browser
-                          </option>
-                        </select>
-                      </label>
-                    </div>
-                    <button
-                      aria-describedby="react-aria-test-id react-aria-test-id"
-                      aria-expanded="false"
-                      aria-haspopup="listbox"
-                      aria-label="Select storage type"
-                      aria-labelledby="react-aria-test-id react-aria-test-id"
-                      class="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
-                      id="react-aria-test-id"
-                      style="border-radius: var(--BV-ui-bangle-button-radius);"
-                      type="button"
-                    >
-                      <span
-                        class="text-md text-left px-1 w-64 truncate overflow-ellipsis "
-                        id="react-aria-test-id"
-                      >
-                        Browser
-                      </span>
-                      <svg
-                        aria-hidden="true"
-                        class="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          clip-rule="evenodd"
-                          d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                          fill-rule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+                    https://bangle.io
+                  </a>
+                  .
+                </span>
               </div>
-              <div
-                class="flex flex-col mb-5"
-              >
+              <div>
                 <div
-                  class="mb-2"
+                  class="inline-flex flex-col relative mt-4 w-64 "
                 >
-                  <h2
-                    class="text-lg font-medium"
-                  >
-                    Workspace name
-                  </h2>
                   <div
-                    class="mt-2 text-lg"
+                    class="B-ui-components_select-label text-sm font-medium cursor-default"
+                  />
+                  <div
+                    aria-hidden="true"
+                    style="border: 0px; clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
                   >
                     <input
-                      aria-label="workspace name input"
-                      class="p-1 pl-2"
-                      style="border-radius: var(--BV-ui-bangle-button-radius);"
-                      value=""
+                      style="font-size: 16px;"
+                      tabindex="-1"
+                      type="text"
                     />
+                    <label>
+                      <select
+                        size="2"
+                        tabindex="-1"
+                      >
+                        <option />
+                        <option
+                          value="file-system"
+                        >
+                          File System
+                        </option>
+                        <option
+                          value="browser"
+                        >
+                          Browser
+                        </option>
+                      </select>
+                    </label>
                   </div>
+                  <button
+                    aria-describedby="react-aria-test-id react-aria-test-id"
+                    aria-expanded="false"
+                    aria-haspopup="listbox"
+                    aria-label="Select storage type"
+                    aria-labelledby="react-aria-test-id react-aria-test-id"
+                    class="B-ui-components_select-button p-1 relative inline-flex flex-row items-center justify-between overflow-hidden cursor-default shadow-sm outline-none "
+                    id="react-aria-test-id"
+                    style="border-radius: var(--BV-ui-bangle-button-radius);"
+                    type="button"
+                  >
+                    <span
+                      class="text-md text-left px-1 w-64 truncate overflow-ellipsis "
+                      id="react-aria-test-id"
+                    >
+                      Browser
+                    </span>
+                    <svg
+                      aria-hidden="true"
+                      class="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
+            </div>
+            <div
+              class="flex flex-col mb-5"
+            >
               <div
-                class="flex flex-row justify-center"
+                class="mb-2"
               >
-                <button
-                  aria-label="create workspace"
-                  class="px-4 B-ui-bangle-button_button p-1  transition-all duration-100 cursor-not-allowed "
-                  disabled=""
-                  id="new-workspace-modal_create-button"
-                  type="button"
+                <h2
+                  class="text-lg font-medium"
                 >
-                  <span
-                    class=""
-                  >
-                    Create Workspace
-                  </span>
-                </button>
+                  Workspace name
+                </h2>
+                <div
+                  class="mt-2 text-lg"
+                >
+                  <input
+                    aria-label="workspace name input"
+                    class="p-1 pl-2"
+                    style="border-radius: var(--BV-ui-bangle-button-radius);"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
           </div>
+          <div
+            class="B-ui-components_alert-modal-button-group flex flex-row-reverse justify-start pt-12 pl-6"
+          >
+            <button
+              aria-label="Create workspace"
+              class="B-ui-components_button p-1 px-2 select-none BU_variant-primary ml-3  transition-all duration-100 cursor-default  cursor-not-allowed "
+              disabled=""
+              type="button"
+            >
+              Create workspace
+            </button>
+            <button
+              aria-label="dismiss"
+              class="B-ui-components_button p-1 px-2 select-none BU_variant-secondary  transition-all duration-100 cursor-default  "
+              type="button"
+            >
+              Close
+            </button>
+          </div>
         </div>
+        <span
+          data-focus-scope-end="true"
+          hidden=""
+        />
       </div>
     </div>
   </div>

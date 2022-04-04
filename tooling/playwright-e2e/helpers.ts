@@ -43,14 +43,14 @@ export async function createWorkspace(page: Page, wsName = 'test' + uuid(4)) {
 
   await expect(
     page.locator(
-      '.B-ui-components_modal-container input[aria-label="workspace name input"]',
+      '.B-ui-components_alert-modal-content-container input[aria-label="workspace name input"]',
     ),
   ).toHaveValue(wsName);
 
   await Promise.all([
     page.waitForNavigation(), // The promise resolves after navigation has finished
     page.click(
-      '.B-ui-components_modal-container button[aria-label="create workspace"]',
+      '.B-ui-components_alert-modal-content-container button[aria-label="Create workspace"]',
     ),
   ]);
 
