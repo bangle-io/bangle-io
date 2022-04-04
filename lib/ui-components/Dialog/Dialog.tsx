@@ -19,7 +19,7 @@ export type CTAConfig = {
   disabled?: boolean;
 };
 
-export function AlertModal({
+export function Dialog({
   // CTA - call to action
   primaryButtonConfig,
   children,
@@ -62,17 +62,17 @@ export function AlertModal({
       portalContainer={
         // since getElementById returns null, fallback to undefined
         // for tests
-        document.getElementById('modal-container') || undefined
+        document.getElementById('dialog-container') || undefined
       }
     >
       <div
-        className="B-ui-components_alert-modal-underlay transition-opacity"
+        className="B-ui-components_dialog-underlay transition-opacity"
         {...underlayProps}
       >
         <FocusScope contain restoreFocus autoFocus>
           <div
             className={cx(
-              'B-ui-components_alert-modal-content-container',
+              'B-ui-components_dialog-content-container',
               size === 'small' && 'BU_small',
               size === 'medium' && 'BU_medium',
               size === 'large' && 'BU_large',
@@ -83,21 +83,21 @@ export function AlertModal({
             ref={ref}
           >
             {heroImageUrl && (
-              <div className="B-ui-components_alert-modal-hero">
+              <div className="B-ui-components_dialog-hero">
                 <img src={heroImageUrl} alt="hero" />
               </div>
             )}
             <h2
-              className="B-ui-components_alert-modal-heading text-xl font-semibold break-all"
+              className="B-ui-components_dialog-heading text-xl font-semibold break-all"
               {...titleProps}
             >
               {headingTitle}
             </h2>
-            <hr className="B-ui-components_alert-modal-divider" />
-            <div className="B-ui-components_alert-modal-content">
+            <hr className="B-ui-components_dialog-divider" />
+            <div className="B-ui-components_dialog-content">
               {typeof children === 'string' ? <p>{children}</p> : children}
             </div>
-            <div className="B-ui-components_alert-modal-button-group flex flex-row-reverse justify-start pt-12 pl-6">
+            <div className="B-ui-components_dialog-button-group flex flex-row-reverse justify-start pt-12 pl-6">
               {primaryButtonConfig && (
                 <Button
                   className="ml-3"

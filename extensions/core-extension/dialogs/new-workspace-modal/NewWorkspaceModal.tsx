@@ -9,7 +9,7 @@ import {
 } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
 import { hasWorkspace } from '@bangle.io/slice-workspace';
-import { AlertModal } from '@bangle.io/ui-components';
+import { Dialog } from '@bangle.io/ui-components';
 import { useDebouncedValue } from '@bangle.io/utils';
 
 import { PickStorageDirectory, WorkspaceNameInput } from './Buttons';
@@ -203,7 +203,7 @@ export function NewWorkspaceModal() {
   }, [newWorkspaceName, setError, errorType]);
 
   return (
-    <AlertModal
+    <Dialog
       isDismissable
       headingTitle="New Workspace"
       onClose={onDismiss}
@@ -260,7 +260,7 @@ export function NewWorkspaceModal() {
           />
         </div>
       )}
-    </AlertModal>
+    </Dialog>
   );
 }
 

@@ -5,7 +5,7 @@ import './ErrorBoundary.css';
 import './Icons.css';
 import './InlinePaletteUI/InlinePaletteUI.css';
 import './Input/Input.css';
-import './Modal/style.css';
+import './Dialog/style.css';
 import './PrettyKeybinding.css';
 import './Select/Select.css';
 import './Sidebar/Sidebar.css';

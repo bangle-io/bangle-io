@@ -31,7 +31,7 @@ import { BangleEditor, useEditorState } from '@bangle.dev/react';
 import { CHANGELOG_TEXT } from '@bangle.io/config';
 import { CHANGELOG_MODAL_NAME } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { AlertModal } from '@bangle.io/ui-components';
+import { Dialog } from '@bangle.io/ui-components';
 import { useLocalStorage } from '@bangle.io/utils';
 
 const specRegistry = new SpecRegistry([
@@ -70,7 +70,7 @@ export function ChangelogModal() {
   }, [dispatch]);
 
   return (
-    <AlertModal
+    <Dialog
       heroImageUrl="https://user-images.githubusercontent.com/6966254/161450081-27ee5c2e-cd45-4091-be1d-7c6790a8b9fd.png"
       isDismissable
       headingTitle="What's new?"
@@ -86,7 +86,7 @@ export function ChangelogModal() {
       >
         <ChangelogDisplay />
       </div>
-    </AlertModal>
+    </Dialog>
   );
 }
 const parser = markdownParser(specRegistry);
@@ -117,7 +117,7 @@ function ChangelogDisplay() {
     <BangleEditor
       state={editorState}
       focusOnInit={false}
-      className="px-5 B-core-extension_changelog-modal-container text-sm"
+      className="px-5 B-core-extension_changelog-dialog-container text-sm"
       renderNodeViews={() => {
         return null;
       }}

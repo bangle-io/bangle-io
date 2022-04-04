@@ -1,6 +1,7 @@
 export * from './Button/Button';
 export * from './ButtonIcon';
 export * from './CenteredPage';
+export * from './Dialog';
 export * from './ErrorBoundary';
 export * from './Icons';
 export * from './InlinePaletteUI/InlinePaletteUI';
@@ -8,7 +9,6 @@ export * from './Input';
 export * from './InputPalette';
 export * from './ListPalette';
 export * from './LocationBreadCrumb';
-export * from './Modal';
 export * from './Page';
 export * from './PrettyKeybinding';
 export * from './Select/Select';

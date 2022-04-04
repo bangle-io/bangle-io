@@ -6,18 +6,18 @@ import React, { useCallback } from 'react';
 
 import { ActionButton, ButtonContent } from '@bangle.io/ui-bangle-button';
 
-import { AlertModal } from './AlertModal';
+import { Dialog } from './Dialog';
 
 export default {
-  title: 'ui-components/AlertModal',
-  component: AlertModal,
+  title: 'ui-components/Dialog',
+  component: Dialog,
 
   argTypes: {
     backgroundColor: { control: 'color' },
   },
 };
 
-const Template: Story<Parameters<typeof AlertModal>[0]> = (args) => {
+const Template: Story<Parameters<typeof Dialog>[0]> = (args) => {
   const [show, setShow] = React.useState(false);
 
   args.onClose = useCallback(() => setShow(false), []);
@@ -32,9 +32,7 @@ const Template: Story<Parameters<typeof AlertModal>[0]> = (args) => {
       >
         <ButtonContent text="Open modal" />
       </ActionButton>
-      <OverlayProvider>
-        {show && <AlertModal {...args}></AlertModal>}
-      </OverlayProvider>
+      <OverlayProvider>{show && <Dialog {...args}></Dialog>}</OverlayProvider>
     </div>
   );
 };
@@ -66,7 +64,7 @@ Destructive.args = {
   },
 };
 
-export const ScrollableParent: Story<Parameters<typeof AlertModal>[0]> = () => {
+export const ScrollableParent: Story<Parameters<typeof Dialog>[0]> = () => {
   const [show, setShow] = React.useState(false);
 
   const onClose = useCallback(() => setShow(false), []);
@@ -129,9 +127,9 @@ export const ScrollableParent: Story<Parameters<typeof AlertModal>[0]> = () => {
         }}
       >
         {show && (
-          <AlertModal onClose={onClose} isDismissable={true} headingTitle="Wow">
+          <Dialog onClose={onClose} isDismissable={true} headingTitle="Wow">
             I am the modal content
-          </AlertModal>
+          </Dialog>
         )}
       </OverlayProvider>
     </div>

@@ -68,7 +68,7 @@ exports[`Storyshots ui-bangle-button/DropdownMenu Primary 1`] = `
 </button>
 `;
 
-exports[`Storyshots ui-components/AlertModal Destructive 1`] = `
+exports[`Storyshots ui-components/Dialog Destructive 1`] = `
 <div>
   <button
     aria-label="open"
@@ -108,7 +108,7 @@ exports[`Storyshots ui-components/AlertModal Destructive 1`] = `
 </div>
 `;
 
-exports[`Storyshots ui-components/AlertModal Scrollable Parent 1`] = `
+exports[`Storyshots ui-components/Dialog Scrollable Parent 1`] = `
 <div
   style={
     Object {
@@ -180,7 +180,7 @@ exports[`Storyshots ui-components/AlertModal Scrollable Parent 1`] = `
 </div>
 `;
 
-exports[`Storyshots ui-components/AlertModal Simple Submit 1`] = `
+exports[`Storyshots ui-components/Dialog Simple Submit 1`] = `
 <div>
   <button
     aria-label="open"

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 
 import { RELOAD_APPLICATION_DIALOG_NAME } from '@bangle.io/constants';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
-import { AlertModal } from '@bangle.io/ui-components';
+import { Dialog } from '@bangle.io/ui-components';
 
 export function ReloadApplicationDialog() {
   const { dispatch } = useUIManagerContext();
@@ -17,7 +17,7 @@ export function ReloadApplicationDialog() {
   }, [dispatch]);
 
   return (
-    <AlertModal
+    <Dialog
       onClose={onDismiss}
       primaryButtonConfig={{
         text: 'Reload',
@@ -30,6 +30,6 @@ export function ReloadApplicationDialog() {
       headingTitle="Reload Application"
     >
       Are you sure you want to reload the application?
-    </AlertModal>
+    </Dialog>
   );
 }

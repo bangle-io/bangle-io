@@ -10,7 +10,7 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
         data-overlay-container="true"
       >
         <div
-          class="B-ui-components_alert-modal-underlay transition-opacity"
+          class="B-ui-components_dialog-underlay transition-opacity"
         >
           <span
             data-focus-scope-start="true"
@@ -18,22 +18,22 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
           />
           <div
             aria-labelledby="react-aria-test-id"
-            class="B-ui-components_alert-modal-content-container BU_medium "
+            class="B-ui-components_dialog-content-container BU_medium "
             data-ismodal="true"
             role="alertdialog"
             tabindex="-1"
           >
             <h2
-              class="B-ui-components_alert-modal-heading text-xl font-semibold break-all"
+              class="B-ui-components_dialog-heading text-xl font-semibold break-all"
               id="react-aria-test-id"
             >
               New Workspace
             </h2>
             <hr
-              class="B-ui-components_alert-modal-divider"
+              class="B-ui-components_dialog-divider"
             />
             <div
-              class="B-ui-components_alert-modal-content"
+              class="B-ui-components_dialog-content"
             >
               <div
                 class="flex flex-col mb-5"
@@ -169,7 +169,7 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
               </div>
             </div>
             <div
-              class="B-ui-components_alert-modal-button-group flex flex-row-reverse justify-start pt-12 pl-6"
+              class="B-ui-components_dialog-button-group flex flex-row-reverse justify-start pt-12 pl-6"
             >
               <button
                 aria-label="Create workspace"
