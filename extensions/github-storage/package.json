@@ -35,6 +35,7 @@
     "typescript": "^4.5.5"
   },
   "devDependencies": {
+    "@bangle.io/shared-types": "workspace:*",
     "@bangle.io/test-utils": "workspace:*",
     "@testing-library/react": "^12.1.3",
     "@testing-library/react-hooks": "^7.0.2",

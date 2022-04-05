@@ -84,7 +84,7 @@ async function makeV3GetApi<T = any>({
   return isBlob ? res.blob() : res.json();
 }
 
-function makeGraphql({
+async function makeGraphql({
   query,
   variables,
   token,
@@ -93,7 +93,7 @@ function makeGraphql({
   variables: { [r: string]: any };
   token: string;
 }): Promise<any> {
-  return fetch('https://api.github.com/graphql', {
+  const res = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -103,28 +103,28 @@ function makeGraphql({
       query: query,
       variables: variables,
     }),
-  })
-    .then((r) => {
-      if (r.ok) {
-        return r.json();
-      }
-      throw new BaseError({
-        message: 'Github responded with an invalid status code',
-        code: GITHUB_API_ERROR,
-      });
-    })
-    .then((r) => {
-      if (r.errors && r.errors.length > 0) {
-        console.log('Github Graphql API error', r.errors[0]);
-        throw new BaseError({
-          message: r.errors[0].message,
-          code: GITHUB_API_ERROR,
-        });
-      }
-      console.debug('Github Graphql limit left', r.data?.rateLimit?.remaining);
+  });
 
-      return r.data;
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new BaseError({
+      // json.message contains the Bad credentials error which is needed to ask for new tokens
+      message: json.message || 'Github responded with an invalid status code',
+      code: GITHUB_API_ERROR,
     });
+  }
+
+  if (json.errors && json.errors.length > 0) {
+    console.log('Github Graphql API error', json.errors[0]);
+    throw new BaseError({
+      message: json.errors[0].message,
+      code: GITHUB_API_ERROR,
+    });
+  }
+  console.debug('Github Graphql limit left', json.data?.rateLimit?.remaining);
+
+  return json.data;
 }
 
 export type RepositoryInfo = {
