@@ -18,7 +18,7 @@ import {
 } from '../github-api-helpers';
 import { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
-import { pullGithubChanges } from '../pull-github-changes';
+import { syncWithGithub } from '../operations';
 
 let githubWsMetadata: GithubWsMetadata;
 
@@ -97,11 +97,10 @@ describe('pull changes', () => {
 
   const pullChanges = async () => {
     notification.clearAllNotifications()(store.state, store.dispatch);
-    await pullGithubChanges(
-      wsName,
-      localFileEntryManager,
-      githubWsMetadata,
-      abortController.signal,
+    await syncWithGithub(wsName, abortController.signal, localFileEntryManager)(
+      store.state,
+      store.dispatch,
+      store,
     );
   };
 

@@ -1,19 +1,15 @@
 import React from 'react';
 
 import {
-  BangleAppDispatch,
-  BangleAppState,
-  notification,
   useBangleStoreContext,
   useSerialOperationHandler,
-  workspace,
 } from '@bangle.io/api';
 
 import {
   OPERATION_NEW_GITHUB_WORKSPACE,
   OPERATION_UPDATE_GITHUB_TOKEN,
 } from '../common';
-import { isGithubStorageProvider } from '../helpers';
+import { updateGithubToken } from '../operations';
 import { RepoPicker } from './RepoPicker';
 import { TokenInput } from './TokenInput';
 
@@ -70,37 +66,3 @@ export function Router() {
     }
   }
 }
-
-const updateGithubToken =
-  (token: string) => (state: BangleAppState, dispatch: BangleAppDispatch) => {
-    const wsName = workspace.getWsName()(state);
-
-    if (wsName && isGithubStorageProvider()(state)) {
-      workspace.updateWorkspaceMetadata(wsName, (existing) => {
-        if (existing.githubToken !== token) {
-          return {
-            ...existing,
-            githubToken: token,
-          };
-        }
-
-        return existing;
-      })(state, dispatch);
-      notification.showNotification({
-        uid: 'success-update-github-token',
-        title: 'Github successfully token updated',
-        severity: 'success',
-      })(state, dispatch);
-
-      return true;
-    }
-
-    notification.showNotification({
-      uid: 'failure-update-github-token-no-wsname',
-      title: 'Github token not updated',
-      content: 'Please open a Github workspace before updating the token.',
-      severity: 'error',
-    })(state, dispatch);
-
-    return false;
-  };
