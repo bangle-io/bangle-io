@@ -57,3 +57,14 @@ export function showDialog(
     });
   });
 }
+
+export function dismissDialog(dialogName?: string) {
+  return uiSliceKey.op((_, dispatch) => {
+    dispatch({
+      name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG',
+      value: {
+        dialogName,
+      },
+    });
+  });
+}

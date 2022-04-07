@@ -1,15 +1,18 @@
 import React from 'react';
 
-import { Extension, notification, workspace } from '@bangle.io/api';
+import { Extension, ui, workspace } from '@bangle.io/api';
 import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
+  DISCARD_LOCAL_CHANGES_DIALOG,
+  OPERATION_DISCARD_LOCAL_CHANGES,
   OPERATION_NEW_GITHUB_WORKSPACE,
   OPERATION_PULL_GITHUB_CHANGES,
   OPERATION_PUSH_GITHUB_CHANGES,
   OPERATION_SYNC_GITHUB_CHANGES,
   OPERATION_UPDATE_GITHUB_TOKEN,
 } from './common';
+import { DiscardLocalChangesDialog } from './components/DiscardLocalChangesDialog';
 import { GithubSidebar } from './components/GithubSidebar';
 import { Router } from './components/Router';
 import { handleError } from './error-handling';
@@ -26,6 +29,12 @@ const extension = Extension.create({
     ReactComponent: Router,
     slices: [githubStorageSlice()],
     storageProvider: new GithubStorageProvider(),
+    dialogs: [
+      {
+        name: DISCARD_LOCAL_CHANGES_DIALOG,
+        ReactComponent: DiscardLocalChangesDialog,
+      },
+    ],
     sidebars: [
       {
         title: 'Github sync',
@@ -61,6 +70,10 @@ const extension = Extension.create({
         name: OPERATION_SYNC_GITHUB_CHANGES,
         title: 'Github: Sync changes',
       },
+      {
+        name: OPERATION_DISCARD_LOCAL_CHANGES,
+        title: 'Github: Reset local changes',
+      },
     ],
     operationHandler() {
       let abortController = new AbortController();
@@ -91,6 +104,14 @@ const extension = Extension.create({
             }
             case OPERATION_SYNC_GITHUB_CHANGES: {
               return false;
+            }
+            case OPERATION_DISCARD_LOCAL_CHANGES: {
+              ui.showDialog(DISCARD_LOCAL_CHANGES_DIALOG)(
+                store.state,
+                store.dispatch,
+              );
+
+              return true;
             }
             default: {
               return false;

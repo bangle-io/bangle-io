@@ -11,3 +11,9 @@ export const OPERATION_SYNC_GITHUB_CHANGES =
 
 export const OPERATION_PULL_GITHUB_CHANGES =
   'operation::@bangle.io/github-storage:OPERATION_PULL_GITHUB_CHANGES';
+
+export const OPERATION_DISCARD_LOCAL_CHANGES =
+  'operation::@bangle.io/github-storage:OPERATION_DISCARD_LOCAL_CHANGES';
+
+export const DISCARD_LOCAL_CHANGES_DIALOG =
+  'dialog::@bangle.io/github-storage:discard-local-changes';

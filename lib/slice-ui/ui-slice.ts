@@ -76,7 +76,7 @@ export type UiContextAction =
   | {
       name: 'action::@bangle.io/slice-ui:DISMISS_DIALOG';
       // pass an array to dismiss any dialog that matches with it
-      value: { dialogName: string | string[] };
+      value: { dialogName: undefined | string | string[] };
     }
   | {
       name: 'action::@bangle.io/slice-ui:UPDATE_NEW_CHANGELOG';
@@ -201,6 +201,13 @@ export function uiSlice(): Slice<UISliceState, UiContextAction> {
           }
 
           case 'action::@bangle.io/slice-ui:DISMISS_DIALOG': {
+            if (!action.value.dialogName) {
+              return {
+                ...state,
+                dialogName: undefined,
+                dialogMetadata: undefined,
+              };
+            }
             const dialogNames = Array.isArray(action.value.dialogName)
               ? action.value.dialogName
               : [action.value.dialogName];

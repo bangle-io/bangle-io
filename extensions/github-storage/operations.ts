@@ -3,10 +3,16 @@ import {
   BangleApplicationStore,
   BangleAppState,
   notification,
+  ui,
   workspace,
   wsPathHelpers,
 } from '@bangle.io/api';
-import { LocalFileEntryManager } from '@bangle.io/remote-file-sync';
+import { RELOAD_APPLICATION_DIALOG_NAME } from '@bangle.io/constants';
+import { pMap } from '@bangle.io/p-map';
+import {
+  LocalFileEntryManager,
+  RemoteFileEntry,
+} from '@bangle.io/remote-file-sync';
 import { BaseError, isAbortError } from '@bangle.io/utils';
 
 import { GITHUB_STORAGE_PROVIDER_NAME } from './common';
@@ -14,6 +20,11 @@ import { handleError } from './error-handling';
 import { GithubRepoTree } from './github-repo-tree';
 import { GithubWsMetadata } from './helpers';
 import { syncUntouchedEntries } from './sync';
+
+const LOG = true;
+const log = LOG
+  ? console.debug.bind(console, 'github-storage operations')
+  : () => {};
 
 export function isCurrentWorkspaceGithubStored() {
   return (state: BangleAppState) => {
@@ -120,6 +131,20 @@ export function syncWithGithub(
         wsMetadata,
       );
 
+      if (
+        needsEditorReset({
+          openedWsPaths: workspace.workspaceSliceKey.getSliceStateAsserted(
+            workspaceStore.state,
+          ).openedWsPaths,
+          updatedWsPaths,
+          deletedWsPaths,
+        })
+      ) {
+        ui.showDialog(RELOAD_APPLICATION_DIALOG_NAME)(state, dispatch);
+
+        return;
+      }
+
       const total = (updatedWsPaths.length || 0) + (deletedWsPaths.length || 0);
 
       if (showNotification) {
@@ -179,4 +204,62 @@ function needsEditorReset({
     updatedWsPaths.some((path) => openedWsPaths.has(path)) ||
     deletedWsPaths.some((path) => openedWsPaths.has(path))
   );
+}
+
+export function discardLocalChanges(
+  wsName: string,
+  fileEntryManager: LocalFileEntryManager,
+) {
+  return async (
+    state: BangleAppState,
+    dispatch: BangleAppDispatch,
+    store: BangleApplicationStore,
+  ) => {
+    try {
+      if (!isCurrentWorkspaceGithubStored()(state)) {
+        return;
+      }
+
+      const allEntries = await fileEntryManager.getAllEntries(wsName + ':');
+
+      await pMap(
+        allEntries.filter((r) => {
+          return r.isModified || r.isNew;
+        }),
+        async (entry) => {
+          if (entry.source?.file) {
+            const remoteFileEntry = await RemoteFileEntry.newFile({
+              uid: entry.uid,
+              file: entry.source.file,
+              deleted: undefined,
+            });
+            log('resetting file entry', entry.uid);
+            await fileEntryManager.updateFileEntry(remoteFileEntry.fork());
+          } else {
+            log('removing file entry', entry.uid);
+            await fileEntryManager.removeFileEntry(entry.uid);
+          }
+        },
+        {
+          concurrency: 10,
+          abortSignal: new AbortController().signal,
+        },
+      );
+
+      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        notification.showNotification({
+          severity: 'error',
+          title: 'Error discarding local changes',
+          content: error.message,
+          uid: 'discard error ' + Math.random(),
+        })(store.state, store.dispatch);
+      }
+
+      if (!(error instanceof BaseError)) {
+        throw error;
+      }
+    }
+  };
 }
