@@ -33,24 +33,30 @@ export function Activitybar({
     return <ActivitybarMobile wsName={wsName} primaryWsPath={primaryWsPath} />;
   }
 
-  const sidebarItems = sidebars.map((r) => {
-    const active = sidebar === r.name;
+  const sidebarItems = sidebars
+    .filter((r) => {
+      return r.activitybarIconShow
+        ? r.activitybarIconShow(bangleStore.state)
+        : true;
+    })
+    .map((r) => {
+      const active = sidebar === r.name;
 
-    return (
-      <ActivitybarButton
-        isActive={active}
-        hint={r.hint}
-        icon={React.cloneElement(r.activitybarIcon, {
-          className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
-        })}
-        key={r.name}
-        widescreen={widescreen}
-        onPress={() => {
-          changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
-        }}
-      />
-    );
-  });
+      return (
+        <ActivitybarButton
+          isActive={active}
+          hint={r.hint}
+          icon={React.cloneElement(r.activitybarIcon, {
+            className: (r.activitybarIcon.props.className || '') + ' w-7 h-7',
+          })}
+          key={r.name}
+          widescreen={widescreen}
+          onPress={() => {
+            changeSidebar(r.name)(bangleStore.state, bangleStore.dispatch);
+          }}
+        />
+      );
+    });
 
   return (
     <div className="flex flex-col flex-grow pt-2 pb-3 B-activitybar_activitybar BU_widescreen">
