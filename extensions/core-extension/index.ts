@@ -114,16 +114,20 @@ const extension = Extension.create({
       { name: CORE_OPERATIONS_RENAME_ACTIVE_NOTE, title: 'Rename active note' },
       {
         name: CORE_OPERATIONS_TOGGLE_NOTE_SIDEBAR,
-        title: 'Toggle Note sidebar',
-        keywords: ['hide'],
+        title: 'Show/Hide Note Widget Sidebar',
+        keywords: ['hide', 'outline', 'toc', 'backlink', 'right sidebar'],
       },
       {
         name: CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
-        title: 'Toggle editor split screen',
+        title: 'Show/Hide editor split screen',
         keybinding: 'Mod-\\',
         keywords: ['hide'],
       },
-      { name: CORE_OPERATIONS_TOGGLE_UI_THEME, title: 'Toggle theme' },
+      {
+        name: CORE_OPERATIONS_TOGGLE_UI_THEME,
+        title: 'Switch Light/Dark theme',
+        keywords: ['darkmode', 'lightmode', 'color'],
+      },
       {
         name: CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
         title: 'Create native fs workspace',

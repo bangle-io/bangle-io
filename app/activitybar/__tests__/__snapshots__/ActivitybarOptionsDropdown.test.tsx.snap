@@ -103,7 +103,7 @@ exports[`clicking the button shows dropdown 1`] = `
         <span
           class="inline-flex justify-between w-full"
         >
-          Toggle dark theme
+          Switch Dark/Light theme
         </span>
       </li>
     </ul>

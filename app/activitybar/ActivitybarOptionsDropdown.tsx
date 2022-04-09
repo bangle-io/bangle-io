@@ -153,7 +153,7 @@ export function ActivitybarOptionsDropdown({
       </MenuSection>
       <MenuSection aria-label="ui section">
         <MenuItem aria-label="toggle dark theme" key={ToggleThemeKey}>
-          Toggle dark theme
+          Switch Dark/Light theme
         </MenuItem>
       </MenuSection>
       <MenuSection aria-label="palettes">
