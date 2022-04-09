@@ -159,8 +159,8 @@
   "lint-staged": {
     "*.md": "yarn prettier --write",
     "{app,extensions,js-lib,lib,tooling,worker}/**/*.{js,ts,jsx,tsx}": [
-      "yarn prettier --write",
-      "yarn eslint --fix"
+      "yarn eslint --fix",
+      "yarn prettier --write"
     ],
     "*.css": [
       "yarn g:css:stylelint-update-regex",
