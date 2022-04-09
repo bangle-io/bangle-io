@@ -376,7 +376,7 @@ describe('pull changes', () => {
   });
 });
 
-describe.only('discard local changes', () => {
+describe('discard local changes', () => {
   test('new file that does not exist upstream is removed', async () => {
     const wsPath = `${wsName}:test-2.md`;
 
