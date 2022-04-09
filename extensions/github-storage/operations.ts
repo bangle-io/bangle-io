@@ -224,7 +224,7 @@ export function discardLocalChanges(
 
       await pMap(
         allEntries.filter((r) => {
-          return r.isModified || r.isNew;
+          return r.isModified || r.isNew || r.isDeleted;
         }),
         async (entry) => {
           if (entry.source?.file) {

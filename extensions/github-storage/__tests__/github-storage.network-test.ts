@@ -18,7 +18,7 @@ import {
 } from '../github-api-helpers';
 import { GithubWsMetadata } from '../helpers';
 import GithubStorageExt from '../index';
-import { syncWithGithub } from '../operations';
+import { discardLocalChanges, syncWithGithub } from '../operations';
 
 let githubWsMetadata: GithubWsMetadata;
 
@@ -46,79 +46,72 @@ if (!githubOwner) {
   );
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   githubWsMetadata = {
     owner: githubOwner,
     branch: 'main',
     githubToken: githubToken,
   };
+
+  abortController = new AbortController();
+  wsName = 'bangle-test-' + randomStr() + Date.now();
+  await createRepo({
+    description: 'Created by Bangle.io tests',
+    config: {
+      ...githubWsMetadata,
+      repoName: wsName,
+    },
+  });
+
+  ({ store } = createBasicTestStore({
+    slices: [],
+    extensions: [GithubStorageExt],
+    onError: (err) => {
+      throw err;
+    },
+  }));
+
+  await workspace.createWorkspace(
+    wsName,
+    GITHUB_STORAGE_PROVIDER_NAME,
+    githubWsMetadata,
+  )(store.state, store.dispatch, store);
+
+  await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
 });
 
 let wsName: string, store: BangleApplicationStore;
 let abortController = new AbortController();
+
+afterAll(async () => {
+  // wait for network requests to finish
+  await sleep(100);
+});
+
+afterEach(async () => {
+  abortController.abort();
+  store.destroy();
+});
+
+const getNoteAsString = async (wsPath: string): Promise<string | undefined> => {
+  return (
+    await workspace.getNote(wsPath)(store.state, store.dispatch, store)
+  )?.toString();
+};
+
+const pullChanges = async () => {
+  notification.clearAllNotifications()(store.state, store.dispatch);
+  await syncWithGithub(wsName, abortController.signal, localFileEntryManager)(
+    store.state,
+    store.dispatch,
+    store,
+  );
+};
+
 describe('pull changes', () => {
-  afterAll(async () => {
-    // wait for network requests to finish
-    await sleep(100);
-  });
-
-  afterEach(async () => {
-    abortController.abort();
-    store.destroy();
-  });
-
-  beforeEach(async () => {
-    abortController = new AbortController();
-    wsName = 'bangle-test-' + randomStr() + Date.now();
-    await createRepo({
-      description: 'Created by Bangle.io tests',
-      config: {
-        ...githubWsMetadata,
-        repoName: wsName,
-      },
-    });
-
-    ({ store } = createBasicTestStore({
-      slices: [],
-      extensions: [GithubStorageExt],
-      onError: (err) => {
-        throw err;
-      },
-    }));
-
-    await workspace.createWorkspace(
-      wsName,
-      GITHUB_STORAGE_PROVIDER_NAME,
-      githubWsMetadata,
-    )(store.state, store.dispatch, store);
-
-    await getNoteAsString(`welcome-to-bangle.md`);
-  });
-
-  const pullChanges = async () => {
-    notification.clearAllNotifications()(store.state, store.dispatch);
-    await syncWithGithub(wsName, abortController.signal, localFileEntryManager)(
-      store.state,
-      store.dispatch,
-      store,
-    );
-  };
-
-  const getNoteAsString = async (
-    fileName: string,
-  ): Promise<string | undefined> => {
-    return (
-      await workspace.getNote(`${wsName}:${fileName}`)(
-        store.state,
-        store.dispatch,
-        store,
-      )
-    )?.toString();
-  };
-
   test('if remote note changes, its updates are applied correctly', async () => {
     // this note is automatically created when setting up the workspace
-    let note = await getNoteAsString(`welcome-to-bangle.md`);
+    let note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
     expect(note?.toString()).toContain('Welcome to Bangle.io');
 
     expect(await localFileEntryManager.getAllEntries()).toEqual([
@@ -163,14 +156,14 @@ describe('pull changes', () => {
     });
 
     // try getting the note
-    note = await getNoteAsString(`welcome-to-bangle.md`);
+    note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
     // note should still point to the old content
     // because we have not synced yet.
     expect(note?.toString()).toContain('Welcome to Bangle.io');
 
     await pullChanges();
 
-    note = await getNoteAsString(`welcome-to-bangle.md`);
+    note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
 
     // note should now be updated
     expect(note?.toString()).toEqual('doc(paragraph("I am changed content"))');
@@ -214,14 +207,14 @@ describe('pull changes', () => {
     });
 
     // try getting the note
-    let note = await getNoteAsString(`welcome-to-bangle.md`);
+    let note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
     // note should still point to the old content
     // because we have not synced yet.
     expect(note?.toString()).toContain('Welcome to Bangle.io');
 
     await pullChanges();
 
-    note = await getNoteAsString(`welcome-to-bangle.md`);
+    note = await getNoteAsString(wsName + ':' + `welcome-to-bangle.md`);
     // note should now be deleted
     expect(note).toBeUndefined();
   });
@@ -251,15 +244,15 @@ describe('pull changes', () => {
 
     // since we haven't pulled the changes yet, the note should still point to the old content
     // where test-X notes donot exist
-    expect(await getNoteAsString('test-1.md')).toBeUndefined();
-    expect(await getNoteAsString('test-2.md')).toBeUndefined();
+    expect(await getNoteAsString(wsName + ':test-1.md')).toBeUndefined();
+    expect(await getNoteAsString(wsName + ':test-2.md')).toBeUndefined();
 
     await pullChanges();
 
-    expect(await getNoteAsString('test-1.md')).toMatchInlineSnapshot(
+    expect(await getNoteAsString(wsName + ':test-1.md')).toMatchInlineSnapshot(
       `"doc(paragraph(\\"I am test-1\\"))"`,
     );
-    expect(await getNoteAsString('test-2.md')).toMatchInlineSnapshot(
+    expect(await getNoteAsString(wsName + ':test-2.md')).toMatchInlineSnapshot(
       `"doc(paragraph(\\"I am test-2\\"))"`,
     );
 
@@ -287,8 +280,8 @@ describe('pull changes', () => {
 
     await pullChanges();
 
-    expect(await getNoteAsString('test-1.md')).toBeUndefined();
-    expect(await getNoteAsString('test-2.md')).toMatchInlineSnapshot(
+    expect(await getNoteAsString(wsName + ':test-1.md')).toBeUndefined();
+    expect(await getNoteAsString(wsName + ':test-2.md')).toMatchInlineSnapshot(
       `"doc(paragraph(\\"I am test-2 but modified\\"))"`,
     );
 
@@ -328,7 +321,7 @@ describe('pull changes', () => {
     await pullChanges();
 
     // get note to create a locally entry which is needed for writing
-    await getNoteAsString('test-2.md');
+    await getNoteAsString(wsName + ':test-2.md');
 
     const modifiedText = `test-2 hello I am modified`;
     const docModified = createPMNode([], modifiedText);
@@ -339,11 +332,15 @@ describe('pull changes', () => {
       store,
     );
 
-    expect(await getNoteAsString('test-2.md')).toContain(modifiedText);
+    expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
+      modifiedText,
+    );
 
     await pullChanges();
 
-    expect(await getNoteAsString('test-2.md')).toContain(modifiedText);
+    expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
+      modifiedText,
+    );
 
     await pushChanges({
       abortSignal: abortController.signal,
@@ -369,10 +366,132 @@ describe('pull changes', () => {
     await pullChanges();
 
     // only test-1 file's content should be updated
-    expect(await getNoteAsString('test-1.md')).toContain(
+    expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
       'I am test-1 updated remotely',
     );
 
-    expect(await getNoteAsString('test-2.md')).toContain(modifiedText);
+    expect(await getNoteAsString(wsName + ':test-2.md')).toContain(
+      modifiedText,
+    );
+  });
+});
+
+describe.only('discard local changes', () => {
+  test('new file that does not exist upstream is removed', async () => {
+    const wsPath = `${wsName}:test-2.md`;
+
+    await workspace.createNote(wsPath)(store.state, store.dispatch, store);
+
+    expect(await getNoteAsString(wsPath)).toEqual(
+      `doc(heading("test-2"), paragraph("Hello world!"))`,
+    );
+
+    const modifiedText = `test-2 hello I am modified`;
+    const doc = createPMNode([], modifiedText);
+
+    await workspace.writeNote(wsPath, doc)(store.state, store.dispatch, store);
+
+    expect(await getNoteAsString(wsPath)).toEqual(
+      `doc(paragraph("test-2 hello I am modified"))`,
+    );
+
+    await discardLocalChanges(wsName, localFileEntryManager)(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    expect(await getNoteAsString(wsPath)).toEqual(undefined);
+  });
+
+  test('updated file local is reverted', async () => {
+    // Make a direct remote change outside the realm of our app
+    await pushChanges({
+      abortSignal: abortController.signal,
+      headSha: await getLatestCommitSha({
+        abortSignal: abortController.signal,
+        config: { ...githubWsMetadata, repoName: wsName },
+      }),
+      commitMessage: { headline: 'Test: external update 1' },
+      config: { ...githubWsMetadata, repoName: wsName },
+      additions: [
+        {
+          path: 'test-1.md',
+          base64Content: btoa('I am test-1'),
+        },
+      ],
+      deletions: [],
+    });
+
+    await pullChanges();
+
+    expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
+      'I am test-1',
+    );
+
+    const doc = createPMNode([], 'I am modified');
+    await workspace.writeNote(wsName + ':test-1.md', doc)(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
+      'I am modified',
+    );
+
+    await discardLocalChanges(wsName, localFileEntryManager)(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
+      'I am test-1',
+    );
+  });
+
+  test('deleted file locally is placed back', async () => {
+    // Make a direct remote change outside the realm of our app
+    await pushChanges({
+      abortSignal: abortController.signal,
+      headSha: await getLatestCommitSha({
+        abortSignal: abortController.signal,
+        config: { ...githubWsMetadata, repoName: wsName },
+      }),
+      commitMessage: { headline: 'Test: external update 1' },
+      config: { ...githubWsMetadata, repoName: wsName },
+      additions: [
+        {
+          path: 'test-1.md',
+          base64Content: btoa('I am test-1'),
+        },
+      ],
+      deletions: [],
+    });
+
+    await pullChanges();
+
+    expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
+      'I am test-1',
+    );
+
+    await workspace.deleteNote(wsName + ':test-1.md')(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    expect(await getNoteAsString(wsName + ':test-1.md')).toBe(undefined);
+
+    await discardLocalChanges(wsName, localFileEntryManager)(
+      store.state,
+      store.dispatch,
+      store,
+    );
+
+    expect(await getNoteAsString(wsName + ':test-1.md')).toContain(
+      'I am test-1',
+    );
   });
 });
