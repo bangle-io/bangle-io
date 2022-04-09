@@ -115,13 +115,17 @@ export const operationPalette: ExtensionPaletteType = {
 };
 
 function strMatch(a: string[] | string, b: string): boolean {
-  b = b.toLocaleLowerCase();
+  b = b.toLocaleLowerCase().trim();
+
+  b = b.split(' ').filter(Boolean).join(' ');
 
   if (Array.isArray(a)) {
     return a.filter(Boolean).some((str) => strMatch(str, b));
   }
 
-  a = a.toLocaleLowerCase();
+  a = a.toLocaleLowerCase().trim();
+
+  a = a.split(' ').filter(Boolean).join(' ');
 
   return a.includes(b) || b.includes(a);
 }

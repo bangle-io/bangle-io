@@ -94,7 +94,7 @@ exports[`clicking the button shows dropdown 1`] = `
     >
       <li
         aria-disabled="false"
-        aria-label="toggle dark theme"
+        aria-label="Switch Dark/Light theme"
         class="B-ui-bangle-button_dropdown-menu-item outline-none cursor-pointer text-sm rounded-md px-2 py-1 "
         data-key="ToggleTheme"
         role="menuitem"
@@ -103,7 +103,7 @@ exports[`clicking the button shows dropdown 1`] = `
         <span
           class="inline-flex justify-between w-full"
         >
-          Toggle dark theme
+          Switch Dark/Light theme
         </span>
       </li>
     </ul>

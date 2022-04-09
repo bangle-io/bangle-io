@@ -16,15 +16,25 @@ const extension = Extension.create({
     operations: [
       {
         name: 'operation::@bangle.io/note-browser:toggle-note-browser',
-        title: 'Toggle Notes Browser',
+        title: 'Show/Hide Notes Browser',
         keybinding: key,
+        keywords: [
+          'hide',
+          'note browser',
+          'note sidebar',
+          'notes sidebar',
+          'all notes',
+          'file',
+          'files',
+          'explorer',
+        ],
       },
     ],
     sidebars: [
       {
         name: 'sidebar::@bangle.io/note-browser:note-browser',
         title: '🗒 Notes browser',
-        hint: `Note browser\n` + keyDisplayValue(key),
+        hint: `Notes browser\n` + keyDisplayValue(key),
         activitybarIcon: React.createElement(FolderIcon, {}),
         ReactComponent: NoteBrowserSidebar,
       },

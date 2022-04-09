@@ -25,7 +25,7 @@ test('lists options', async ({ page }) => {
       'New note',
       'New workspace',
       isDarwin ? 'Switch workspace\nCtrlR' : 'Switch workspace\nCtrlH',
-      'Toggle dark theme',
+      'Switch Dark/Light theme',
       'Notes palette\nCtrlP',
       'Operation palette\nCtrl⇧P',
       'Report issue',

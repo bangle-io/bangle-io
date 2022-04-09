@@ -5,6 +5,7 @@ import type { RenderNodeViewsFunction as BangleRenderNodeViewsFunction } from '@
 
 import { ApplicationStore, Slice } from '@bangle.io/create-store';
 import type {
+  BangleApplicationStore,
   EditorWatchPluginState,
   NoteFormatProvider,
   NoteSidebarWidget,
@@ -81,6 +82,9 @@ export interface ApplicationConfig<
 
 export interface SidebarType {
   activitybarIcon: JSX.Element;
+  // if provided will be used to decide whether to show the sidebar icon in activitybar
+  // or not. If not provided, the icon will always be shown.
+  activitybarIconShow?: (state: BangleApplicationStore['state']) => boolean;
   hint: string;
   name: `sidebar::${string}`;
   ReactComponent: React.ComponentType<{}>;

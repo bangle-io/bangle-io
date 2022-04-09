@@ -42,6 +42,9 @@ const extension = Extension.create({
         ReactComponent: GithubSidebar,
         activitybarIcon: React.createElement(GithubIcon, {}),
         hint: 'Sync your local workspace with Github',
+        activitybarIconShow: (appState) => {
+          return isCurrentWorkspaceGithubStored()(appState);
+        },
       },
     ],
     onStorageError: (error, store) => {

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
 import { changeSidebar, useUIManagerContext } from '@bangle.io/slice-ui';
@@ -169,4 +169,74 @@ test('active sidebar is toggled off correctly', () => {
 
   expect(changeSidebarMock).toBeCalledTimes(1);
   expect(changeSidebarMock).nthCalledWith(1, 'sidebar::test-123');
+});
+
+test('activitybarIconShow is respected', async () => {
+  let dispatch = jest.fn();
+  (useUIManagerContext as any).mockImplementation(() => {
+    return {
+      changelogHasUpdates: false,
+      sidebar: 'sidebar::test-123',
+      dispatch,
+      widescreen: true,
+    };
+  });
+
+  let activitybarIconShow = jest.fn(() => false);
+
+  let { rerender } = render(
+    <div>
+      <Activitybar
+        operationKeybindings={{}}
+        sidebars={[
+          {
+            name: 'sidebar::test-123',
+            title: 'search notes',
+            activitybarIcon: <span>test-icon</span>,
+            ReactComponent: () => null,
+            hint: 'search the notes',
+            activitybarIconShow,
+          },
+        ]}
+      ></Activitybar>
+    </div>,
+  );
+
+  expect(screen.queryAllByLabelText('search the notes')).toEqual([]);
+
+  activitybarIconShow.mockImplementation(() => true);
+
+  rerender(
+    <div>
+      <Activitybar
+        operationKeybindings={{}}
+        sidebars={[
+          {
+            name: 'sidebar::test-123',
+            title: 'search notes',
+            activitybarIcon: <span>test-icon</span>,
+            ReactComponent: () => null,
+            hint: 'search the notes',
+            activitybarIconShow,
+          },
+        ]}
+      ></Activitybar>
+    </div>,
+  );
+
+  expect(screen.queryAllByLabelText('search the notes')).toMatchInlineSnapshot(`
+    Array [
+      <button
+        aria-label="search the notes"
+        class="w-full py-3 rounded-sm flex justify-center B-activitybar_button BU_widescreen  B-ui-bangle-button_button p-1  transition-all duration-100 animate-on-press BU_is-active is-quiet "
+        type="button"
+      >
+        <span
+          class=" w-7 h-7 "
+        >
+          test-icon
+        </span>
+      </button>,
+    ]
+  `);
 });
