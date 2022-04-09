@@ -6,24 +6,31 @@ import React, {
   useState,
 } from 'react';
 
-import { notification, useBangleStoreContext, workspace } from '@bangle.io/api';
+import {
+  notification,
+  useBangleStoreContext,
+  useSerialOperationContext,
+  workspace,
+} from '@bangle.io/api';
 import {
   PaletteOnExecuteItem,
   UniversalPalette,
 } from '@bangle.io/ui-components';
 
 import { getRepos, RepositoryInfo } from '../github-api-helpers';
-import { readGithubTokenFromStore } from '../helpers';
+import { readGithubTokenFromStore, updateGithubToken } from '../operations';
 import { TokenInput } from './TokenInput';
 
 export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
   const bangleStore = useBangleStoreContext();
-  const [githubToken, updateGithubToken] = useState<string | undefined>(() => {
+  const [githubToken, _updateGithubToken] = useState<string | undefined>(() => {
     return readGithubTokenFromStore()(bangleStore.state);
   });
   const [query, updateQuery] = useState('');
   const [repoList, updateRepoList] = useState<RepositoryInfo[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { dispatchSerialOperation } = useSerialOperationContext();
+
   const items = useMemo(() => {
     return repoList
       .map((repo) => ({
@@ -44,17 +51,30 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
   }, [repoList, query]);
 
   useEffect(() => {
+    let destroyed = false;
+
     (async () => {
       if (githubToken) {
         try {
           let repoIterator = getRepos({ token: githubToken });
           for await (const repos of repoIterator) {
-            updateRepoList(repos);
+            if (!destroyed) {
+              updateRepoList(repos);
+            }
           }
         } catch (e) {
+          if (destroyed) {
+            return;
+          }
           onDismiss();
 
           if (e instanceof Error) {
+            if (e.message.includes('Bad credentials')) {
+              updateGithubToken(undefined)(
+                bangleStore.state,
+                bangleStore.dispatch,
+              );
+            }
             notification.showNotification({
               uid: 'failure-list-repos',
               title: 'Unable to list repos',
@@ -65,7 +85,11 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
         }
       }
     })();
-  }, [githubToken, onDismiss, bangleStore]);
+
+    return () => {
+      destroyed = true;
+    };
+  }, [githubToken, onDismiss, bangleStore, dispatchSerialOperation]);
 
   const onExecuteItem = useCallback<PaletteOnExecuteItem>(
     (getItemUid) => {
@@ -131,7 +155,9 @@ export function RepoPicker({ onDismiss }: { onDismiss: () => void }) {
   const activeItem = getActivePaletteItem(items);
 
   if (!githubToken) {
-    return <TokenInput onDismiss={onDismiss} updateToken={updateGithubToken} />;
+    return (
+      <TokenInput onDismiss={onDismiss} updateToken={_updateGithubToken} />
+    );
   }
 
   return (

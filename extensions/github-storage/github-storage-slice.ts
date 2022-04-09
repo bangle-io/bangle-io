@@ -1,13 +1,13 @@
-import {
-  BangleApplicationStore,
-  Slice,
-  SliceKey,
-  workspace,
-} from '@bangle.io/api';
+import { Slice, SliceKey, workspace } from '@bangle.io/api';
 
+import { handleError } from './error-handling';
 import { localFileEntryManager } from './file-entry-manager';
-import { GithubWsMetadata, isGithubStorageProvider } from './helpers';
-import { pullGithubChanges } from './pull-github-changes';
+import { isCurrentWorkspaceGithubStored, syncWithGithub } from './operations';
+
+const LOG = true;
+const debug = LOG
+  ? console.debug.bind(console, 'github-storage-slice')
+  : () => {};
 
 const sliceKey = new SliceKey<
   {
@@ -42,13 +42,16 @@ export function githubStorageSlice() {
         }
       },
     },
-    sideEffect: [refreshGithubCounterEffect, pullGithubChangesEffect],
+    sideEffect: [pullGithubChangesEffect],
+    onError: (error: any, store) => {
+      return handleError(error, store);
+    },
   });
 }
 
-const refreshGithubCounterEffect = sliceKey.effect(() => {
+const pullGithubChangesEffect = sliceKey.effect(() => {
   return {
-    deferredUpdate(store, prevState) {
+    async deferredUpdate(store, prevState) {
       const wsName = workspace.workspaceSliceKey.getValueIfChanged(
         'wsName',
         store.state,
@@ -59,62 +62,17 @@ const refreshGithubCounterEffect = sliceKey.effect(() => {
         return;
       }
 
-      if (!isGithubStorageProvider()(store.state)) {
+      if (!isCurrentWorkspaceGithubStored()(store.state)) {
         return;
       }
 
-      store.dispatch({
-        name: 'action::@bangle.io/github-storage:INCREMENT_REFRESH_GITHUB_COUNTER',
-        value: {},
-      });
-    },
-  };
-});
+      debug('running pullGithubChangesEffect');
 
-const pullGithubChangesEffect = sliceKey.effect(() => {
-  return {
-    async deferredUpdate(store, prevState) {
-      const refreshGithubCounter = sliceKey.getValueIfChanged(
-        'refreshGithubCounter',
-        store.state,
-        prevState,
-      );
-
-      if (refreshGithubCounter == null) {
-        return;
-      }
-
-      const wsName = workspace.getWsName()(
-        workspace.workspaceSliceKey.getState(store.state),
-      );
-
-      if (!wsName) {
-        return;
-      }
-
-      if (!isGithubStorageProvider()(store.state)) {
-        return;
-      }
-
-      const workspaceStore = workspace.workspaceSliceKey.getStore(store);
-      const storageOpts = workspace.getStorageProviderOpts()(
-        workspaceStore.state,
-        workspaceStore.dispatch,
-      );
-
-      const wsMetadata =
-        storageOpts.readWorkspaceMetadata() as GithubWsMetadata;
-
-      const { updatedWsPaths, deletedWsPaths } = await pullGithubChanges(
+      await syncWithGithub(
         wsName,
-        localFileEntryManager,
-        wsMetadata,
         new AbortController().signal,
-      );
-
-      if (updatedWsPaths.length + deletedWsPaths.length > 0) {
-        // TODO do something
-      }
+        localFileEntryManager,
+      )(store.state, store.dispatch, store);
     },
   };
 });

@@ -69,7 +69,7 @@ export async function syncUntouchedEntries(
       }
     },
     {
-      concurrency: 3,
+      concurrency: 15,
       abortSignal,
     },
   );

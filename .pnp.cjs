@@ -5553,6 +5553,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/constants", "workspace:lib/constants"],
             ["@bangle.io/p-map", "workspace:js-lib/p-map"],
             ["@bangle.io/remote-file-sync", "workspace:js-lib/remote-file-sync"],
+            ["@bangle.io/shared-types", "workspace:lib/shared-types"],
             ["@bangle.io/storage", "workspace:lib/storage"],
             ["@bangle.io/test-utils", "workspace:lib/test-utils"],
             ["@bangle.io/ui-bangle-button", "workspace:lib/ui-bangle-button"],

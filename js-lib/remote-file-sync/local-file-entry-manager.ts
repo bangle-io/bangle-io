@@ -267,6 +267,10 @@ export class LocalFileEntry extends BaseFileEntry {
     this.source = obj.source;
   }
 
+  get isDeleted() {
+    return typeof this.deleted === 'number';
+  }
+
   // a 'file.isModified == true' means that it was modified locally w.r.t its source content
   get isModified() {
     return this.sha !== this.source?.sha;
