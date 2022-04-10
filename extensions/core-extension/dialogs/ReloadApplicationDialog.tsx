@@ -18,7 +18,7 @@ export function ReloadApplicationDialog() {
 
   return (
     <Dialog
-      onClose={onDismiss}
+      onDismiss={onDismiss}
       primaryButtonConfig={{
         text: 'Reload',
         onPress: () => {

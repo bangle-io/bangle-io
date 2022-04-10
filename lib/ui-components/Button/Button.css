@@ -4,4 +4,9 @@
   display: inline-flex;
   box-sizing: border-box;
   align-items: center;
+  cursor: pointer;
+}
+
+.B-ui-components_button:disabled {
+  cursor: not-allowed;
 }

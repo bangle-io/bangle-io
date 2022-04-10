@@ -15,6 +15,7 @@ export function DiscardLocalChangesDialog() {
   const wsName = workspace.getWsName()(bangleStore.state);
 
   const [isProcessing, updateIsProcessing] = useState(false);
+  const [manuallyReload, updateManuallyReload] = useState(false);
 
   const [isGithubWorkspace, updateIsGithubWorkspace] = useState(
     isCurrentWorkspaceGithubStored()(bangleStore.state),
@@ -37,14 +38,26 @@ export function DiscardLocalChangesDialog() {
     }
   }, [bangleStore, wsName, isGithubWorkspace]);
 
-  if (!isGithubWorkspace || !wsName) {
+  if (manuallyReload) {
     return (
       <Dialog
         isDismissable
         headingTitle="Not a Github workspace"
-        onClose={() => {
+        onDismiss={() => {
           dismiss();
         }}
+      >
+        Please reload the application manually.
+      </Dialog>
+    );
+  }
+
+  if (!isGithubWorkspace || !wsName) {
+    return (
+      <Dialog
+        isDismissable={false}
+        onDismiss={() => {}}
+        headingTitle="Confirm discarding of local changes"
       >
         This action can only occur in a workspace that is stored in Github.
         Please open one and try again.
@@ -56,6 +69,7 @@ export function DiscardLocalChangesDialog() {
     <Dialog
       isDismissable
       headingTitle="Confirm discarding of local changes"
+      isLoading={isProcessing}
       primaryButtonConfig={{
         isDestructive: true,
         text: 'Discard',
@@ -71,10 +85,15 @@ export function DiscardLocalChangesDialog() {
               bangleStore,
             );
             window.location.reload();
+
+            // if we reach here ask user to reload manually
+            setTimeout(() => {
+              updateManuallyReload(true);
+            }, 2000);
           }
         },
       }}
-      onClose={() => {
+      onDismiss={() => {
         dismiss();
       }}
     >

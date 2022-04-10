@@ -23,6 +23,9 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
             role="alertdialog"
             tabindex="-1"
           >
+            <div
+              class="B-ui-components_dialog-header-icon "
+            />
             <h2
               class="B-ui-components_dialog-heading text-xl font-semibold break-all"
               id="react-aria-test-id"

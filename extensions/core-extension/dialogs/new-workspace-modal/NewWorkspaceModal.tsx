@@ -206,7 +206,7 @@ export function NewWorkspaceModal() {
     <Dialog
       isDismissable
       headingTitle="New Workspace"
-      onClose={onDismiss}
+      onDismiss={onDismiss}
       size="medium"
       primaryButtonConfig={{
         disabled: isCreateDisabled(modalState),

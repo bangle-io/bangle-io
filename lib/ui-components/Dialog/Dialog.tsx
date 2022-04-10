@@ -6,11 +6,12 @@ import {
   useOverlay,
   usePreventScroll,
 } from '@react-aria/overlays';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { cx } from '@bangle.io/utils';
 
 import { Button } from '../Button/Button';
+import { LoadingCircleIcon } from '../Icons';
 
 export type CTAConfig = {
   isDestructive?: boolean;
@@ -20,32 +21,42 @@ export type CTAConfig = {
 };
 
 export function Dialog({
-  // CTA - call to action
-  primaryButtonConfig,
   children,
   dismissText = 'Close',
   headingTitle,
   heroImageUrl,
   isDismissable = false,
   isKeyboardDismissDisabled = !isDismissable,
-  onClose,
+  // if true prevents dismissing the dialog and shows
+  // loading state to user.
+  isLoading = false,
+  onDismiss,
+  primaryButtonConfig,
   size = 'medium',
 }: {
-  primaryButtonConfig?: CTAConfig;
   children: React.ReactNode;
   dismissText?: string;
   headingTitle: string;
   heroImageUrl?: string;
   isDismissable: boolean;
   isKeyboardDismissDisabled?: boolean;
-  onClose: () => void;
+  isLoading?: boolean;
+  onDismiss: () => void;
+  primaryButtonConfig?: CTAConfig;
   size?: 'small' | 'medium' | 'large';
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
+
+  const _onDismiss = useCallback(() => {
+    if (!isLoading) {
+      onDismiss();
+    }
+  }, [isLoading, onDismiss]);
+
   const { overlayProps, underlayProps } = useOverlay(
     {
       isOpen: true,
-      onClose: onClose,
+      onClose: _onDismiss,
       isDismissable,
       isKeyboardDismissDisabled,
     },
@@ -87,6 +98,17 @@ export function Dialog({
                 <img src={heroImageUrl} alt="hero" />
               </div>
             )}
+            <div className="B-ui-components_dialog-header-icon ">
+              {isLoading ? (
+                <div
+                  role="progressbar"
+                  className="inline-block"
+                  aria-label="Loading..."
+                >
+                  <LoadingCircleIcon className="w-6 h-6" />
+                </div>
+              ) : null}
+            </div>
             <h2
               className="B-ui-components_dialog-heading text-xl font-semibold break-all"
               {...titleProps}
@@ -106,7 +128,7 @@ export function Dialog({
                       ? 'destructive'
                       : 'primary'
                   }
-                  isDisabled={primaryButtonConfig.disabled}
+                  isDisabled={isLoading || primaryButtonConfig.disabled}
                   ariaLabel={primaryButtonConfig.text}
                   onPress={() => {
                     primaryButtonConfig.onPress();
@@ -119,7 +141,8 @@ export function Dialog({
                 <Button
                   variant="secondary"
                   ariaLabel={'dismiss'}
-                  onPress={onClose}
+                  isDisabled={isLoading}
+                  onPress={_onDismiss}
                   autoFocus={primaryButtonConfig?.isDestructive}
                 >
                   {dismissText}
