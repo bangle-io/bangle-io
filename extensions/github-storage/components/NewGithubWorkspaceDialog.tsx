@@ -248,6 +248,7 @@ export function NewGithubWorkspaceRepoPickerDialog() {
         <div className="my-4">
           <ComboBox
             size="full"
+            label="Select repository"
             menuTrigger="focus"
             onKeyUp={(e) => {
               if (e.key === 'Enter') {
