@@ -20,7 +20,7 @@ export default {
 const Template: Story<Parameters<typeof Dialog>[0]> = (args) => {
   const [show, setShow] = React.useState(false);
 
-  args.onClose = useCallback(() => setShow(false), []);
+  args.onDismiss = useCallback(() => setShow(false), []);
 
   return (
     <div>
@@ -64,10 +64,24 @@ Destructive.args = {
   },
 };
 
+export const LoadingDialog = Template.bind({});
+
+LoadingDialog.args = {
+  children: `I am loading...`,
+  isDismissable: true,
+  isLoading: true,
+  headingTitle: 'Oh no',
+  primaryButtonConfig: {
+    onPress: () => {},
+    isDestructive: true,
+    text: 'Delete',
+  },
+};
+
 export const ScrollableParent: Story<Parameters<typeof Dialog>[0]> = () => {
   const [show, setShow] = React.useState(false);
 
-  const onClose = useCallback(() => setShow(false), []);
+  const onDismiss = useCallback(() => setShow(false), []);
 
   return (
     <div style={{ maxWidth: 300 }}>
@@ -127,7 +141,7 @@ export const ScrollableParent: Story<Parameters<typeof Dialog>[0]> = () => {
         }}
       >
         {show && (
-          <Dialog onClose={onClose} isDismissable={true} headingTitle="Wow">
+          <Dialog onDismiss={onDismiss} isDismissable={true} headingTitle="Wow">
             I am the modal content
           </Dialog>
         )}

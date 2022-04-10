@@ -23,7 +23,7 @@
   grid-template-areas:
     'hero hero hero hero hero hero'
     '. . . . . .'
-    '. heading header header typeIcon .'
+    '. heading header header headerIcon .'
     '. divider divider divider divider .'
     '. content content content content .'
     '. footer footer buttonGroup buttonGroup .'
@@ -52,6 +52,12 @@
   background-position: 50%;
   background-size: cover;
   max-height: 120px;
+}
+
+.B-ui-components_dialog-header-icon {
+  grid-area: headerIcon;
+  display: flex;
+  align-items: center;
 }
 
 .B-ui-components_dialog-hero > img {

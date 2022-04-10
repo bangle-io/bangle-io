@@ -74,7 +74,7 @@ export function ChangelogModal() {
       heroImageUrl="https://user-images.githubusercontent.com/6966254/161450081-27ee5c2e-cd45-4091-be1d-7c6790a8b9fd.png"
       isDismissable
       headingTitle="What's new?"
-      onClose={onDismiss}
+      onDismiss={onDismiss}
       size="large"
     >
       <div

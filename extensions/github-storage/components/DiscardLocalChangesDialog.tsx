@@ -42,7 +42,7 @@ export function DiscardLocalChangesDialog() {
       <Dialog
         isDismissable
         headingTitle="Not a Github workspace"
-        onClose={() => {
+        onDismiss={() => {
           dismiss();
         }}
       >
@@ -74,7 +74,7 @@ export function DiscardLocalChangesDialog() {
           }
         },
       }}
-      onClose={() => {
+      onDismiss={() => {
         dismiss();
       }}
     >
