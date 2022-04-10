@@ -18,7 +18,6 @@ const Template: Story<Parameters<typeof ErrorBanner>[0]> = (args) => {
 export const Primary = Template.bind({});
 
 Primary.args = {
-  className: '',
   content: 'There was an error',
   dataTestId: '',
   title: 'Error',

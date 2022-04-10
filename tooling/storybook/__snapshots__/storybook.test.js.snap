@@ -241,6 +241,178 @@ exports[`Storyshots ui-components/Button Quiet Button 1`] = `
 </button>
 `;
 
+exports[`Storyshots ui-components/ComboBox Disabled Case 1`] = `
+<div
+  className="B-ui-components_combo-box flex flex-col relative w-56 "
+>
+  <label
+    className="block select-none text-sm font-medium text-left"
+    htmlFor="react-aria-test-generated-id"
+    id="react-aria-test-generated-id"
+    style={
+      Object {
+        "color": "var(--BV-text-color-1)",
+      }
+    }
+  >
+    ComboBox
+  </label>
+  <div
+    className="B-ui-components_combo-box-input-wrapper relative inline-flex flex-row rounded-md overflow-hidden "
+  >
+    <input
+      aria-autocomplete="list"
+      aria-expanded={false}
+      aria-labelledby="react-aria-test-generated-id"
+      autoComplete="off"
+      autoCorrect="off"
+      className="w-full outline-none px-3 py-1 bg-inherit "
+      disabled={false}
+      id="react-aria-test-generated-id"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onTouchEnd={[Function]}
+      readOnly={false}
+      role="combobox"
+      spellCheck="false"
+      type="text"
+      value=""
+    />
+    <button
+      aria-controls={null}
+      aria-expanded={false}
+      aria-haspopup="listbox"
+      aria-label="Show suggestions"
+      aria-labelledby="react-aria-test-generated-id"
+      className="px-1 cursor-pointer"
+      id="react-aria-test-generated-id"
+      onBlur={null}
+      onClick={[Function]}
+      onDragStart={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={-1}
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        className="w-5 h-5"
+        fill="currentColor"
+        style={
+          Object {
+            "color": "var(--BV-ui-bangle-button-color)",
+          }
+        }
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          clipRule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          fillRule="evenodd"
+        />
+      </svg>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots ui-components/ComboBox Primary 1`] = `
+<div
+  className="B-ui-components_combo-box flex flex-col relative w-56 "
+>
+  <label
+    className="block select-none text-sm font-medium text-left"
+    htmlFor="react-aria-test-generated-id"
+    id="react-aria-test-generated-id"
+    style={
+      Object {
+        "color": "var(--BV-text-color-1)",
+      }
+    }
+  >
+    ComboBox
+  </label>
+  <div
+    className="B-ui-components_combo-box-input-wrapper relative inline-flex flex-row rounded-md overflow-hidden "
+  >
+    <input
+      aria-autocomplete="list"
+      aria-expanded={false}
+      aria-labelledby="react-aria-test-generated-id"
+      autoComplete="off"
+      autoCorrect="off"
+      className="w-full outline-none px-3 py-1 bg-inherit "
+      disabled={false}
+      id="react-aria-test-generated-id"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onTouchEnd={[Function]}
+      readOnly={false}
+      role="combobox"
+      spellCheck="false"
+      type="text"
+      value=""
+    />
+    <button
+      aria-controls={null}
+      aria-expanded={false}
+      aria-haspopup="listbox"
+      aria-label="Show suggestions"
+      aria-labelledby="react-aria-test-generated-id"
+      className="px-1 cursor-pointer"
+      id="react-aria-test-generated-id"
+      onBlur={null}
+      onClick={[Function]}
+      onDragStart={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchCancel={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={-1}
+      type="button"
+    >
+      <svg
+        aria-hidden="true"
+        className="w-5 h-5"
+        fill="currentColor"
+        style={
+          Object {
+            "color": "var(--BV-ui-bangle-button-color)",
+          }
+        }
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          clipRule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          fillRule="evenodd"
+        />
+      </svg>
+    </button>
+  </div>
+</div>
+`;
+
 exports[`Storyshots ui-components/Dialog Destructive 1`] = `
 <div>
   <button
@@ -439,8 +611,8 @@ exports[`Storyshots ui-components/ErrorBanner Primary 1`] = `
   data-testid=""
   style={
     Object {
-      "backgroundColor": "var(--BV-severity-error-color)",
-      "color": "white",
+      "backgroundColor": "var(--BV-error-bg-color)",
+      "color": "var(--BV-error-color)",
     }
   }
 >
@@ -454,6 +626,29 @@ exports[`Storyshots ui-components/ErrorBanner Primary 1`] = `
   >
     There was an error
   </div>
+</div>
+`;
+
+exports[`Storyshots ui-components/Input Primary 1`] = `
+<div
+  className="B-ui-components_input-container"
+>
+  <input
+    autoCapitalize="off"
+    autoCorrect="off"
+    className="B-ui-components_input "
+    onBlur={[Function]}
+    onFocus={[Function]}
+    type="text"
+  />
+  <div
+    style={
+      Object {
+        "display": "flex",
+        "position": "relative",
+      }
+    }
+  />
 </div>
 `;
 
@@ -1064,5 +1259,120 @@ exports[`Storyshots ui-components/Select Section Example 1`] = `
       />
     </svg>
   </button>
+</div>
+`;
+
+exports[`Storyshots ui-components/TextField Case 2 1`] = `
+<div
+  className=""
+  style={
+    Object {
+      "display": "flex",
+      "flexDirection": "column",
+    }
+  }
+>
+  <label
+    className="text-sm"
+    htmlFor="react-aria-test-generated-id"
+    id="react-aria-test-generated-id"
+    style={
+      Object {
+        "color": "var(--BV-text-color-1)",
+      }
+    }
+  >
+    Email
+  </label>
+  <input
+    aria-labelledby="react-aria-test-generated-id"
+    className="outline-none"
+    disabled={false}
+    id="react-aria-test-generated-id"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    placeholder="abc@example.com"
+    readOnly={false}
+    style={
+      Object {
+        "backgroundColor": "var(--BV-window-bg-color-0)",
+        "border": "1px solid var(--BV-window-border-color-0)",
+        "borderRadius": "0.125rem",
+        "color": "var(--BV-text-color-0)",
+        "outlineOffset": 2,
+        "padding": "0.5rem 0.75rem",
+      }
+    }
+    type="text"
+  />
+  <div
+    className="text-sm"
+    id={null}
+    style={
+      Object {
+        "color": "var(--BV-text-color-1)",
+      }
+    }
+  >
+    Enter an email for us to contact you about your order.
+  </div>
+</div>
+`;
+
+exports[`Storyshots ui-components/TextField Primary 1`] = `
+<div
+  className=""
+  style={
+    Object {
+      "display": "flex",
+      "flexDirection": "column",
+    }
+  }
+>
+  <label
+    className="text-sm"
+    htmlFor="react-aria-test-generated-id"
+    id="react-aria-test-generated-id"
+    style={
+      Object {
+        "color": "var(--BV-text-color-1)",
+      }
+    }
+  >
+    I am label
+  </label>
+  <input
+    aria-labelledby="react-aria-test-generated-id"
+    className="outline-none"
+    disabled={false}
+    id="react-aria-test-generated-id"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    readOnly={false}
+    style={
+      Object {
+        "backgroundColor": "var(--BV-window-bg-color-0)",
+        "border": "1px solid var(--BV-window-border-color-0)",
+        "borderRadius": "0.125rem",
+        "color": "var(--BV-text-color-0)",
+        "outlineOffset": 2,
+        "padding": "0.5rem 0.75rem",
+      }
+    }
+    type="text"
+  />
+  <div
+    className="text-sm"
+    id={null}
+    style={
+      Object {
+        "color": "var(--BV-severity-error-color)",
+      }
+    }
+  >
+    errored
+  </div>
 </div>
 `;

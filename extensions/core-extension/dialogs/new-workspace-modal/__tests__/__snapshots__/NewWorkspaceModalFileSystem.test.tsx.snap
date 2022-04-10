@@ -24,7 +24,7 @@ exports[`NewWorkspaceModalFileSystem renders correctly 1`] = `
             tabindex="-1"
           >
             <div
-              class="B-ui-components_dialog-header-icon "
+              class="B-ui-components_dialog-header-icon w-6 h-6"
             />
             <h2
               class="B-ui-components_dialog-heading text-xl font-semibold break-all"

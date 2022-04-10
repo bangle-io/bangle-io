@@ -1,12 +1,10 @@
 import React from 'react';
 
 export function ErrorBanner({
-  className,
   dataTestId,
   title,
   content,
 }: {
-  className?: string;
   dataTestId?: string;
   title: string;
   content: string;
@@ -16,8 +14,8 @@ export function ErrorBanner({
       className="m-3 p-4 rounded"
       data-testid={dataTestId}
       style={{
-        backgroundColor: 'var(--BV-severity-error-color)',
-        color: 'white',
+        backgroundColor: 'var(--BV-error-bg-color)',
+        color: 'var(--BV-error-color)',
       }}
     >
       <div className="font-semibold text-lg text-left">{title}</div>
