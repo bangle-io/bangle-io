@@ -34,6 +34,7 @@ export const SearchInput = ({
     <Input
       label="Search"
       ref={inputRef}
+      className="w-full"
       showClear
       value={searchQuery}
       onClear={onClear}

@@ -85,7 +85,7 @@ export const PaletteInput = React.forwardRef<
           spellCheck={false}
           autoCorrect={false}
           label="Palette Input"
-          className={'B-ui-components_universal-palette-input'}
+          className="B-ui-components_universal-palette-input w-full"
           value={inputValue}
           onChange={onChange}
         />

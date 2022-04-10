@@ -25,7 +25,7 @@ export function InlinePaletteRow({
   style = {},
   disabled,
   // on touch devices having :hover forces you to click twice
-  allowHover = !isTouchDevice(),
+  allowHover = !isTouchDevice,
 }: {
   dataId: string;
   title?: string;

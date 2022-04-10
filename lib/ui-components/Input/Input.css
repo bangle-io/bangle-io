@@ -11,7 +11,6 @@
   border: 1px solid var(--BV-window-border-color-0);
   border-radius: 0.125rem;
   outline-offset: 2px;
-  width: 100%;
 }
 
 .B-ui-components_input-clear {

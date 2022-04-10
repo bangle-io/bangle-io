@@ -26,7 +26,7 @@ export function PaletteItemUI({
   isActive,
   className = '',
   scrollIntoViewIfNeeded = true,
-  allowHover = !isTouchDevice(),
+  allowHover = !isTouchDevice,
   style,
 }: {
   allowHover?: boolean;

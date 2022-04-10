@@ -2,6 +2,7 @@ export * from './Button/Button';
 export * from './ButtonIcon';
 export * from './CenteredPage';
 export * from './Dialog';
+export * from './ErrorBanner';
 export * from './ErrorBoundary';
 export * from './ExternalLink';
 export * from './Icons';

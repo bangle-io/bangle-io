@@ -1,5 +1,4 @@
 import { FocusRing } from '@react-aria/focus';
-import { useFocusVisible } from '@react-aria/interactions';
 import React from 'react';
 
 import { cx } from '@bangle.io/utils';

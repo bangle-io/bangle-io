@@ -70,7 +70,7 @@ html[data-theme='dark'] #dialog-container {
   --BV-accent-destructive-0: rgb(198, 69, 69);
   --BV-accent-destructive-1: rgb(197, 74, 74);
 
-  --BV-severity-error-color: #f44336;
+  --BV-severity-error-color: var(--BV-accent-destructive-0);
   --BV-severity-warning-color: #ff9800;
   --BV-severity-info-color: #2196f3;
   --BV-severity-success-color: #4caf50;
@@ -165,7 +165,7 @@ html[data-theme='dark'] {
   --BV-accent-destructive-0: rgb(219, 101, 100);
   --BV-accent-destructive-1: rgb(218, 110, 108);
 
-  --BV-severity-error-color: #f44336;
+  --BV-severity-error-color: var(--BV-accent-destructive-0);
   --BV-severity-warning-color: #ff9800;
   --BV-severity-info-color: #2196f3;
   --BV-severity-success-color: #4caf50;
