@@ -20,23 +20,23 @@ export function Router() {
   const bangleStore = useBangleStoreContext();
 
   useSerialOperationHandler((sOperation) => {
-    if (sOperation.name === OPERATION_NEW_GITHUB_WORKSPACE) {
-      if (
-        window.confirm(
-          'Creating a Github workspace is experimental and may not work as expected. Continue?',
-        )
-      ) {
-        _updateRoute('repo-picker');
-      }
+    // if (sOperation.name === 'garbag') {
+    //   if (
+    //     window.confirm(
+    //       'Creating a Github workspace is experimental and may not work as expected. Continue?',
+    //     )
+    //   ) {
+    //     _updateRoute('repo-picker');
+    //   }
 
-      return true;
-    }
+    //   return true;
+    // }
 
-    if (sOperation.name === OPERATION_UPDATE_GITHUB_TOKEN) {
-      _updateRoute('token-update');
+    // if (sOperation.name === OPERATION_UPDATE_GITHUB_TOKEN) {
+    //   _updateRoute('token-update');
 
-      return true;
-    }
+    //   return true;
+    // }
 
     return false;
   }, []);

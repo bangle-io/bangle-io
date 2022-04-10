@@ -54,6 +54,13 @@
   max-height: 120px;
 }
 
+.B-ui-components_dialog-footer {
+  grid-area: footer;
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+}
+
 .B-ui-components_dialog-header-icon {
   grid-area: headerIcon;
   display: flex;
@@ -86,7 +93,7 @@
 }
 
 .B-ui-components_dialog-button-group {
-  grid-area: footer-start/footer-start/buttonGroup-end/buttonGroup-end;
+  grid-area: buttonGroup;
 }
 
 .B-ui-components_dialog-content {

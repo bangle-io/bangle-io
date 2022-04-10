@@ -17,3 +17,6 @@ export const OPERATION_DISCARD_LOCAL_CHANGES =
 
 export const DISCARD_LOCAL_CHANGES_DIALOG =
   'dialog::@bangle.io/github-storage:discard-local-changes';
+
+export const NEW_GITHUB_WORKSPACE_DIALOG =
+  'dialog::@bangle.io/github-storage:NEW_GITHUB_WORKSPACE_DIALOG';

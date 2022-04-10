@@ -124,6 +124,7 @@ export function syncWithGithub(
         wsMetadata,
         new AbortController().signal,
       );
+
       const { deletedWsPaths, updatedWsPaths } = await syncUntouchedEntries(
         abortSignal,
         fileEntryManager,

@@ -700,9 +700,10 @@ export function BangleIcon(props: any) {
   );
 }
 
-export function GithubIcon() {
+export function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
+      {...props}
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 64 64"
