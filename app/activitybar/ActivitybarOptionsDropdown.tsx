@@ -120,7 +120,7 @@ export function ActivitybarOptionsDropdown({
   return (
     <DropdownMenu
       isButtonQuiet
-      menuPlacement="right-start"
+      menuPlacement={widescreen ? 'right-start' : 'bottom-start'}
       ariaLabel={'options dropdown'}
       buttonAriaLabel={'options menu'}
       buttonStyling={buttonStyling}

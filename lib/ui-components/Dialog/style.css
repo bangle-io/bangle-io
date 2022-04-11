@@ -11,6 +11,8 @@
 }
 
 .B-ui-components_dialog-content-container {
+  /* for mobile screens */
+  margin-top: 7vh;
   overscroll-behavior-y: contain;
   max-height: calc(100vh * 0.9);
   display: grid;
@@ -32,6 +34,10 @@
   border-radius: 6px;
   box-shadow: rgb(11 19 22 / 38%) 0 10px 39px -11px,
     rgb(11 19 22 / 21%) 0 10px 20px -14px;
+}
+
+body.BU_widescreen .B-ui-components_dialog-content-container {
+  margin-top: unset;
 }
 
 .B-ui-components_dialog-content-container.BU_small {
@@ -109,8 +115,12 @@
   inset: 0;
   background-color: var(--BV-window-modal-overlay-bg-color);
   display: flex;
-  align-items: center;
   justify-content: center;
   z-index: var(--BV-window-modal-z-index);
   backdrop-filter: blur(2px);
+  align-items: flex-start;
+}
+
+body.BU_widescreen .B-ui-components_dialog-underlay {
+  align-items: center;
 }

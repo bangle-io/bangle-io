@@ -30,7 +30,13 @@ export function Activitybar({
   const { bangleStore } = useWorkspaceContext();
 
   if (!widescreen) {
-    return <ActivitybarMobile wsName={wsName} primaryWsPath={primaryWsPath} />;
+    return (
+      <ActivitybarMobile
+        operationKeybindings={operationKeybindings}
+        wsName={wsName}
+        primaryWsPath={primaryWsPath}
+      />
+    );
   }
 
   const sidebarItems = sidebars

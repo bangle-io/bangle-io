@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useBangleStoreContext } from '@bangle.io/bangle-store-context';
 import { CorePalette } from '@bangle.io/constants';
+import type { SerialOperationKeybindingMapping } from '@bangle.io/shared-types';
 import {
   toggleEditing,
   useEditorManagerContext,
@@ -16,13 +17,16 @@ import { cx } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
 import { ActivitybarButton } from './ActivitybarButton';
+import { ActivitybarOptionsDropdown } from './ActivitybarOptionsDropdown';
 
 export function ActivitybarMobile({
   primaryWsPath,
   wsName,
+  operationKeybindings,
 }: {
   primaryWsPath?: string;
   wsName?: string;
+  operationKeybindings: SerialOperationKeybindingMapping;
 }) {
   const bangleStore = useBangleStoreContext();
   const { editingAllowed } = useEditorManagerContext();
@@ -59,23 +63,31 @@ export function ActivitybarMobile({
       </div>
       <div className="flex-1"></div>
       <div className="flex flex-row items-center flex-none">
-        <ActivitybarButton
-          hint={editingAllowed ? 'Disable edit' : 'Enable edit'}
-          widescreen={false}
-          onPress={() => {
-            toggleEditing()(bangleStore.state, bangleStore.dispatch);
-          }}
-          icon={
-            editingAllowed ? (
-              <EditIcon
-                className={'w-5 h-5'}
-                fill={'var(--BV-accent-primary-1)'}
-              />
-            ) : (
-              <NoEditIcon className="w-5 h-5" />
-            )
-          }
-        />
+        <div className="mr-2">
+          <ActivitybarOptionsDropdown
+            operationKeybindings={operationKeybindings}
+            widescreen={false}
+          />
+        </div>
+        <div className="mr-2">
+          <ActivitybarButton
+            hint={editingAllowed ? 'Disable edit' : 'Enable edit'}
+            widescreen={false}
+            onPress={() => {
+              toggleEditing()(bangleStore.state, bangleStore.dispatch);
+            }}
+            icon={
+              editingAllowed ? (
+                <EditIcon
+                  className={'w-5 h-5'}
+                  fill={'var(--BV-accent-primary-1)'}
+                />
+              ) : (
+                <NoEditIcon className="w-5 h-5" />
+              )
+            }
+          />
+        </div>
       </div>
     </div>
   );
