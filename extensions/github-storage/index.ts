@@ -5,6 +5,8 @@ import { GithubIcon } from '@bangle.io/ui-components';
 
 import {
   DISCARD_LOCAL_CHANGES_DIALOG,
+  NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
+  NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
   OPERATION_DISCARD_LOCAL_CHANGES,
   OPERATION_NEW_GITHUB_WORKSPACE,
   OPERATION_PULL_GITHUB_CHANGES,
@@ -14,6 +16,10 @@ import {
 } from './common';
 import { DiscardLocalChangesDialog } from './components/DiscardLocalChangesDialog';
 import { GithubSidebar } from './components/GithubSidebar';
+import {
+  NewGithubWorkspaceRepoPickerDialog,
+  NewGithubWorkspaceTokenDialog,
+} from './components/NewGithubWorkspaceDialog';
 import { Router } from './components/Router';
 import { handleError } from './error-handling';
 import { localFileEntryManager } from './file-entry-manager';
@@ -33,6 +39,14 @@ const extension = Extension.create({
       {
         name: DISCARD_LOCAL_CHANGES_DIALOG,
         ReactComponent: DiscardLocalChangesDialog,
+      },
+      {
+        name: NEW_GITHUB_WORKSPACE_TOKEN_DIALOG,
+        ReactComponent: NewGithubWorkspaceTokenDialog,
+      },
+      {
+        name: NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
+        ReactComponent: NewGithubWorkspaceRepoPickerDialog,
       },
     ],
     sidebars: [
@@ -107,6 +121,15 @@ const extension = Extension.create({
             }
             case OPERATION_SYNC_GITHUB_CHANGES: {
               return false;
+            }
+
+            case OPERATION_NEW_GITHUB_WORKSPACE: {
+              ui.showDialog(NEW_GITHUB_WORKSPACE_TOKEN_DIALOG)(
+                store.state,
+                store.dispatch,
+              );
+
+              return true;
             }
             case OPERATION_DISCARD_LOCAL_CHANGES: {
               ui.showDialog(DISCARD_LOCAL_CHANGES_DIALOG)(

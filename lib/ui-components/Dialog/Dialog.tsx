@@ -12,6 +12,7 @@ import { cx } from '@bangle.io/utils';
 
 import { Button } from '../Button/Button';
 import { LoadingCircleIcon } from '../Icons';
+import { SizeType } from '../misc';
 
 export type CTAConfig = {
   isDestructive?: boolean;
@@ -24,6 +25,8 @@ export function Dialog({
   children,
   dismissText = 'Close',
   headingTitle,
+  headingIcon = null,
+  footer = null,
   heroImageUrl,
   isDismissable = false,
   isKeyboardDismissDisabled = !isDismissable,
@@ -35,7 +38,9 @@ export function Dialog({
   size = 'medium',
 }: {
   children: React.ReactNode;
+  headingIcon?: React.ReactNode;
   dismissText?: string;
+  footer?: React.ReactNode;
   headingTitle: string;
   heroImageUrl?: string;
   isDismissable: boolean;
@@ -43,7 +48,7 @@ export function Dialog({
   isLoading?: boolean;
   onDismiss: () => void;
   primaryButtonConfig?: CTAConfig;
-  size?: 'small' | 'medium' | 'large';
+  size?: SizeType;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -87,6 +92,7 @@ export function Dialog({
               size === 'small' && 'BU_small',
               size === 'medium' && 'BU_medium',
               size === 'large' && 'BU_large',
+              size === 'full' && 'w-full',
             )}
             {...overlayProps}
             {...dialogProps}
@@ -98,7 +104,7 @@ export function Dialog({
                 <img src={heroImageUrl} alt="hero" />
               </div>
             )}
-            <div className="B-ui-components_dialog-header-icon ">
+            <div className="B-ui-components_dialog-header-icon w-6 h-6">
               {isLoading ? (
                 <div
                   role="progressbar"
@@ -107,7 +113,9 @@ export function Dialog({
                 >
                   <LoadingCircleIcon className="w-6 h-6" />
                 </div>
-              ) : null}
+              ) : (
+                headingIcon
+              )}
             </div>
             <h2
               className="B-ui-components_dialog-heading text-xl font-semibold break-all"
@@ -119,6 +127,7 @@ export function Dialog({
             <div className="B-ui-components_dialog-content">
               {typeof children === 'string' ? <p>{children}</p> : children}
             </div>
+
             <div className="B-ui-components_dialog-button-group flex flex-row-reverse justify-start pt-12 pl-6">
               {primaryButtonConfig && (
                 <Button
@@ -149,6 +158,7 @@ export function Dialog({
                 </Button>
               )}
             </div>
+            <footer className="B-ui-components_dialog-footer">{footer}</footer>
           </div>
         </FocusScope>
       </div>

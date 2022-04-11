@@ -23,6 +23,7 @@ import { discardLocalChanges, syncWithGithub } from '../operations';
 let githubWsMetadata: GithubWsMetadata;
 
 jest.setTimeout(30000);
+jest.retryTimes(3);
 
 // WARNING: This is a network test and depends on github API.
 //          It will create a bunch of repositories and commits.

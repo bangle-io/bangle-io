@@ -165,7 +165,11 @@ export function dedupeArray<T>(array: T[]) {
 }
 
 /** Based on https://developer.mozilla.org/docs/Web/HTTP/Browser_detection_using_the_user_agent */
-export function isTouchDevice() {
+export function calcIsTouchDevice(): boolean {
+  if (typeof navigator === 'undefined' || typeof window === 'undefined') {
+    return false;
+  }
+
   var hasTouchScreen = false;
 
   if ('maxTouchPoints' in navigator) {
@@ -195,6 +199,8 @@ export function isTouchDevice() {
 
   return hasTouchScreen;
 }
+
+export const isTouchDevice = calcIsTouchDevice();
 
 let dayJs: typeof import('dayjs') | undefined;
 export async function getDayJs({} = {}): Promise<typeof import('dayjs')> {

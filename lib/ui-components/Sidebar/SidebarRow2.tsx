@@ -14,7 +14,7 @@ export function Row2({
   isActive,
   style,
   // on touch devices having :hover forces you to click twice
-  allowHover = !isTouchDevice(),
+  allowHover = !isTouchDevice,
   extraInfoOnNewLine = false,
 }: {
   item: ItemType;

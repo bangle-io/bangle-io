@@ -23,7 +23,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
           tabindex="-1"
         >
           <div
-            class="B-ui-components_dialog-header-icon "
+            class="B-ui-components_dialog-header-icon w-6 h-6"
           />
           <h2
             class="B-ui-components_dialog-heading text-xl font-semibold break-all"
@@ -164,7 +164,7 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
           >
             <button
               aria-label="Create workspace"
-              class="B-ui-components_button p-1 px-2 select-none BU_variant-primary ml-3  transition-all duration-100 cursor-default  cursor-not-allowed "
+              class="B-ui-components_button select-none py-1 px-3 BU_variant-primary ml-3  transition-all duration-100 cursor-default  cursor-not-allowed "
               disabled=""
               type="button"
             >
@@ -172,12 +172,15 @@ exports[`NewWorkspaceModalBrowser browsers storage type renders correctly 1`] = 
             </button>
             <button
               aria-label="dismiss"
-              class="B-ui-components_button p-1 px-2 select-none BU_variant-secondary  transition-all duration-100 cursor-default  "
+              class="B-ui-components_button select-none py-1 px-3 BU_variant-secondary  transition-all duration-100 cursor-default  "
               type="button"
             >
               Close
             </button>
           </div>
+          <footer
+            class="B-ui-components_dialog-footer"
+          />
         </div>
         <span
           data-focus-scope-end="true"

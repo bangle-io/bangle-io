@@ -10,13 +10,14 @@ import React from 'react';
 
 import { cx } from '@bangle.io/utils';
 
+import { SizeType } from '../misc';
 import { ListBox } from './ListBox';
 import { Popover } from './Popover';
 
 export { Item, Section } from '@react-stately/collections';
 
 export function Select<T extends object>(
-  props: AriaSelectProps<T> & { size?: 'small' | 'medium' | 'large' },
+  props: AriaSelectProps<T> & { size?: SizeType },
 ) {
   // Create state based on the incoming props
   let state = useSelectState(props);
@@ -43,6 +44,7 @@ export function Select<T extends object>(
         size === 'small' && 'w-40',
         size === 'medium' && 'w-56',
         size === 'large' && 'w-64',
+        size === 'full' && 'w-full',
       )}
     >
       <div

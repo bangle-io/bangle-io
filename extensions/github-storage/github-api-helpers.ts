@@ -45,7 +45,7 @@ rateLimit {
   resetAt
 }`;
 
-async function makeV3GetApi<T = any>({
+async function makeV3GetApi({
   path,
   token,
   abortSignal,
@@ -54,10 +54,10 @@ async function makeV3GetApi<T = any>({
 }: {
   isBlob?: boolean;
   path: string;
-  abortSignal: AbortSignal;
+  abortSignal?: AbortSignal;
   token: string;
   headers?: { [r: string]: string };
-}): Promise<T> {
+}): Promise<{ data: any; headers: Response['headers'] }> {
   const url = path.includes('https://')
     ? path
     : `https://api.github.com${path}`;
@@ -81,7 +81,12 @@ async function makeV3GetApi<T = any>({
     res.headers.get('X-RateLimit-Remaining'),
   );
 
-  return isBlob ? res.blob() : res.json();
+  const data = isBlob ? res.blob() : res.json();
+
+  return {
+    data: await data,
+    headers: res.headers,
+  };
 }
 
 async function makeGraphql({
@@ -134,7 +139,13 @@ export type RepositoryInfo = {
   description: string;
 };
 
-export async function getBranchHead({ config }: { config: GithubConfig }) {
+export async function getBranchHead({
+  config,
+  abortSignal,
+}: {
+  config: GithubConfig;
+  abortSignal?: AbortSignal;
+}) {
   const query = `query ($repoName: String!, $branchName: String!, $owner: String!) {
     rateLimit {
       limit
@@ -175,6 +186,21 @@ export async function getBranchHead({ config }: { config: GithubConfig }) {
   });
 }
 
+export async function getScopes({
+  abortSignal,
+  token,
+}: {
+  token: GithubTokenConfig['githubToken'];
+  abortSignal?: AbortSignal;
+}) {
+  const { headers } = await makeV3GetApi({
+    path: '',
+    token: token,
+    abortSignal,
+  });
+
+  return headers.get('X-OAuth-Scopes');
+}
 export async function* getRepos({
   token,
 }: {
@@ -272,13 +298,15 @@ export async function getTree({
     }
 
     try {
-      return await makeV3GetApi({
-        path: `/repos/${config.owner}/${config.repoName}/git/trees/${
-          config.branch
-        }?recursive=1&cacheBust=${Math.floor(Date.now() / 1000)}`,
-        token: config.githubToken,
-        abortSignal,
-      });
+      return (
+        await makeV3GetApi({
+          path: `/repos/${config.owner}/${config.repoName}/git/trees/${
+            config.branch
+          }?recursive=1&cacheBust=${Math.floor(Date.now() / 1000)}`,
+          token: config.githubToken,
+          abortSignal,
+        })
+      ).data;
     } catch (error) {
       if (error instanceof Error || error instanceof BaseError) {
         if (error.message.includes('Git Repository is empty.')) {
@@ -387,7 +415,7 @@ export async function pushChanges({
 
   const commitHash = result.createCommitOnBranch?.commit?.oid;
 
-  const result2 = await makeV3GetApi({
+  const { data: result2 } = await makeV3GetApi({
     path: `/repos/${config.owner}/${config.repoName}/commits/${commitHash}`,
     token: config.githubToken,
     abortSignal,
@@ -428,7 +456,7 @@ export async function getFileBlob({
       Accept: 'application/vnd.github.v3.raw+json',
     },
   }).then((r) => {
-    return new File([r], fileName);
+    return new File([r.data], fileName);
   });
 }
 
@@ -499,15 +527,17 @@ export async function getLatestCommitSha({
     config.branch
   }?cacheBust=${Math.floor(Date.now() / 1000)}`;
 
-  const makeRequest = () => {
-    return makeV3GetApi({
-      path,
-      token: config.githubToken,
-      abortSignal,
-      headers: {
-        Accept: 'application/vnd.github.v3.raw+json',
-      },
-    });
+  const makeRequest = async () => {
+    return (
+      await makeV3GetApi({
+        path,
+        token: config.githubToken,
+        abortSignal,
+        headers: {
+          Accept: 'application/vnd.github.v3.raw+json',
+        },
+      })
+    ).data;
   };
 
   return makeRequest().then(

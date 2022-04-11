@@ -18,7 +18,7 @@ export function StorageTypeDropdown({
       selectedKey={storageType}
       size="large"
       onSelectionChange={(r) => {
-        updateStorageType(r.toString() as WorkspaceStorageType);
+        updateStorageType(r?.toString() as WorkspaceStorageType);
       }}
       disabledKeys={supportsNativeBrowserFs() ? undefined : ['file-system']}
     >

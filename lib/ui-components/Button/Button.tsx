@@ -5,7 +5,7 @@ import { mergeProps } from '@react-aria/utils';
 import React, { ReactNode, useMemo, useRef } from 'react';
 
 import type { FirstParameter } from '@bangle.io/shared-types';
-import { cx } from '@bangle.io/utils';
+import { cx, isTouchDevice } from '@bangle.io/utils';
 
 import { BaseButton } from './BaseButton';
 
@@ -176,7 +176,8 @@ export const Button = ({
       isHovered={isHovered}
       isPressed={isPressed}
       className={cx(
-        'B-ui-components_button p-1 px-2 select-none',
+        'B-ui-components_button select-none',
+        isTouchDevice ? 'py-2 px-4' : 'py-1 px-3',
         isFocusVisible && 'B-ui-components_misc-button-ring',
         variantClassName,
         className,
