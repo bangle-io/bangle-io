@@ -42,8 +42,8 @@ test('renders when widescreen=false', () => {
   );
 
   expect(result.container.innerHTML).toContain('Activitybar');
-  expect(result.container.innerHTML).not.toContain('Note sidebar');
-  expect(result.container.innerHTML).toContain('Main content');
+  expect(result.container.innerHTML).toContain('Note sidebar');
+  expect(result.container.innerHTML).not.toContain('Main content');
   expect(result.container.innerHTML).not.toContain('Workspace sidebar');
 
   expect(result.container).toMatchSnapshot();

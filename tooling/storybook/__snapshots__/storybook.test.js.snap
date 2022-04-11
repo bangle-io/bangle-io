@@ -413,6 +413,1178 @@ exports[`Storyshots ui-components/ComboBox Primary 1`] = `
 </div>
 `;
 
+exports[`Storyshots ui-components/Dhancha Primary 1`] = `
+<div
+  className="B-ui-dhancha_container BU_widescreen"
+>
+  <div
+    aria-label="Activity Bar"
+    className="B-ui-dhancha_activitybar BU_widescreen"
+    role="navigation"
+  >
+    <span>
+       H
+    </span>
+  </div>
+  <header
+    className="B-ui-dhancha_ws-sidebar"
+  >
+    <div
+      style={
+        Object {
+          "backgroundColor": "lightgreen",
+          "height": "100vh",
+          "overflowY": "scroll",
+        }
+      }
+    >
+      Hello
+    </div>
+  </header>
+  <main
+    className="B-ui-dhancha_main-content BU_widescreen"
+  >
+    <div
+      style={
+        Object {
+          "backgroundColor": "pink",
+          "height": "100%",
+          "overflowY": "scroll",
+        }
+      }
+    >
+      <div>
+        Main content
+        <button
+          onClick={[Function]}
+        >
+          Note Sidebar
+        </button>
+        <button
+          onClick={[Function]}
+        >
+          Workspace Sidebar
+        </button>
+        <div>
+          <div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "1rem",
+                }
+              }
+            >
+              Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <aside
+    className="B-ui-dhancha_note-sidebar"
+  >
+    <div
+      style={
+        Object {
+          "backgroundColor": "lightblue",
+          "height": "100vh",
+          "overflowY": "scroll",
+        }
+      }
+    >
+      <div>
+        Note sidebar
+      </div>
+      <div>
+        <div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+          <div
+            style={
+              Object {
+                "marginTop": "1rem",
+              }
+            }
+          >
+            Tabbed UI Premise: make it clear which file I am working on and improve the top level ogranization of the app. I think it is time to just create a master UI skeleton that I can try out independently and progressively enhance it for the user. Again prone to the itch of creation, I need to think about what skeleton will work best for me. MemUI, logSeq and many more in my notes, have decent UI , I just need to capture it. Dhancha the main skeleton of the app. headerSection mainSection primaryColumn sidebar Notes nThis will be a good exercise to break up things in app directory, keep the in mind good article on css styling https://www.baldurbjarnason.com/2021/100-things-every-web-developer-should-know/ also do some research on styling.
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+`;
+
 exports[`Storyshots ui-components/Dialog Destructive 1`] = `
 <div>
   <button

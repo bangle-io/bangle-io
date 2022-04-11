@@ -15,70 +15,34 @@ function Entry() {
     <Dhancha
       widescreen={true}
       activitybar={[<span key={1}> H</span>, <span key={2}> B</span>]}
-      mainContent={[
-        {
-          key: '1',
-          reactNode: (
-            <div
-              style={{
-                backgroundColor: 'pink',
-                overflowY: 'scroll',
-                height: '100%',
+      mainContent={
+        <div
+          style={{
+            backgroundColor: 'pink',
+            overflowY: 'scroll',
+            height: '100%',
+          }}
+        >
+          <div>
+            Main content
+            <button
+              onClick={() => {
+                toggleNoteSidebar((r) => !r);
               }}
             >
-              <div>
-                Main content
-                <button
-                  onClick={() => {
-                    toggleNoteSidebar((r) => !r);
-                  }}
-                >
-                  Note Sidebar
-                </button>
-                <button
-                  onClick={() => {
-                    toggleWorkspaceSidebar((r) => !r);
-                  }}
-                >
-                  Workspace Sidebar
-                </button>
-                <div>{GenerateText({ lines: 111 })}</div>
-              </div>
-            </div>
-          ),
-        },
-        {
-          key: '2',
-          reactNode: (
-            <div
-              style={{
-                backgroundColor: 'pink',
-                overflowY: 'scroll',
-                height: '100%',
+              Note Sidebar
+            </button>
+            <button
+              onClick={() => {
+                toggleWorkspaceSidebar((r) => !r);
               }}
             >
-              <div>
-                Main content
-                <button
-                  onClick={() => {
-                    toggleNoteSidebar((r) => !r);
-                  }}
-                >
-                  Note Sidebar
-                </button>
-                <button
-                  onClick={() => {
-                    toggleWorkspaceSidebar((r) => !r);
-                  }}
-                >
-                  Workspace Sidebar
-                </button>
-              </div>
-              <div>{GenerateText({ lines: 1 })}</div>
-            </div>
-          ),
-        },
-      ]}
+              Workspace Sidebar
+            </button>
+            <div>{GenerateText({ lines: 111 })}</div>
+          </div>
+        </div>
+      }
       noteSidebar={
         noteSidebarOpen && (
           <div

@@ -26,6 +26,40 @@ export function Dhancha({
 
   useStickyNavigation(widescreen, activitybarRef);
 
+  const main = (
+    <main
+      className={
+        'B-ui-dhancha_main-content' + (widescreen ? ' BU_widescreen' : '')
+      }
+    >
+      {mainContent}
+    </main>
+  );
+
+  let body;
+
+  if (widescreen) {
+    body = (
+      <>
+        {workspaceSidebar && (
+          <header className="B-ui-dhancha_ws-sidebar">
+            {workspaceSidebar}
+          </header>
+        )}
+        {main}
+        {noteSidebar && (
+          <aside className="B-ui-dhancha_note-sidebar">{noteSidebar}</aside>
+        )}
+      </>
+    );
+  } else {
+    if (workspaceSidebar || noteSidebar) {
+      body = noteSidebar || workspaceSidebar;
+    } else {
+      body = main;
+    }
+  }
+
   return (
     <div
       className={
@@ -42,20 +76,7 @@ export function Dhancha({
       >
         {activitybar}
       </div>
-      {widescreen && workspaceSidebar && (
-        <header className="B-ui-dhancha_ws-sidebar">{workspaceSidebar}</header>
-      )}
-
-      <main
-        className={
-          'B-ui-dhancha_main-content' + (widescreen ? ' BU_widescreen' : '')
-        }
-      >
-        {mainContent}
-      </main>
-      {widescreen && noteSidebar && (
-        <aside className="B-ui-dhancha_note-sidebar">{noteSidebar}</aside>
-      )}
+      {body}
     </div>
   );
 }
