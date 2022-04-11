@@ -73,21 +73,33 @@ const getBrowserInfo = () => {
 
 const browserInfo = getBrowserInfo();
 
-export const isMac =
-  typeof navigator != 'undefined' ? /Mac/.test(navigator.platform) : false;
-
 export const isFirefox = browserInfo.includes('firefox');
 export const isSafari = browserInfo.includes('safari');
 export const isChrome = browserInfo.includes('chrome');
 
-export const isAndroid =
+function testPlatform(re: RegExp) {
+  return typeof window !== 'undefined' && window.navigator != null
+    ? re.test(
+        ((window.navigator as any)['userAgentData'] || window.navigator)
+          .platform,
+      )
+    : false;
+}
+
+const isAndroid =
   typeof navigator != 'undefined'
     ? /Android \d/.test(navigator.userAgent)
     : false;
-export const isIOS =
-  typeof navigator != 'undefined'
-    ? /AppleWebKit/.test(navigator.userAgent) &&
-      /Mobile\/\w+/.test(navigator.userAgent)
-    : false;
+
+export const isMac = testPlatform(/^Mac/i);
+
+const isIPhone = testPlatform(/^iPhone/i);
+
+const isIPad =
+  testPlatform(/^iPad/i) ||
+  // iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
+  (isMac && navigator.maxTouchPoints > 1);
+
+const isIOS = isIPhone || isIPad;
 
 export const isMobile = isAndroid || isIOS;
