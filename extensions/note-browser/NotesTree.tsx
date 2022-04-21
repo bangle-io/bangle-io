@@ -17,7 +17,7 @@ import {
   Sidebar,
 } from '@bangle.io/ui-components';
 import {
-  removeMdExtension,
+  removeExtension,
   safeScrollIntoViewIfNeeded,
   useLocalStorage,
 } from '@bangle.io/utils';
@@ -238,7 +238,7 @@ const RenderItems = ({
     const wsPath = filePathToWsPath(wsName, path);
     const splittedPath = path.split('/');
     const depth = splittedPath.length;
-    const name = removeMdExtension(splittedPath.pop() || 'Unknown file name');
+    const name = removeExtension(splittedPath.pop() || 'Unknown file name');
 
     const onClick = (event: React.MouseEvent<any, MouseEvent>) => {
       if (isDir) {

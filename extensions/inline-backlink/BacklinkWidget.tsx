@@ -11,7 +11,7 @@ import {
 } from '@bangle.io/ui-components';
 import {
   isAbortError,
-  removeMdExtension,
+  removeExtension,
   safeCancelIdleCallback,
   safeRequestIdleCallback,
   useClickToNote,
@@ -164,7 +164,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
         ])
         .then(
           (result) => {
-            const fileName = removeMdExtension(
+            const fileName = removeExtension(
               resolvePath(focusedWsPath).fileName,
             );
 

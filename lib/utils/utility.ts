@@ -223,14 +223,6 @@ export async function getDayJs({} = {}): Promise<typeof import('dayjs')> {
   return dayJs;
 }
 
-export function conditionalPrefix(str: string, part: string) {
-  if (str.startsWith(part)) {
-    return str;
-  }
-
-  return part + str;
-}
-
 export function conditionalSuffix(str: string, part: string) {
   if (str.endsWith(part)) {
     return str;
@@ -239,12 +231,14 @@ export function conditionalSuffix(str: string, part: string) {
   return str + part;
 }
 
-export function removeMdExtension(str: string) {
-  if (str.endsWith('.md')) {
-    return str.slice(0, -3);
-  }
+export function suffixWithNoteExtension(str: string) {
+  return conditionalSuffix(str, '.md');
+}
 
-  return str;
+export function removeExtension(str: string) {
+  const dotIndex = str.lastIndexOf('.');
+
+  return dotIndex === -1 ? str : str.slice(0, dotIndex);
 }
 
 // Shallow compares array in an out of order fashion.

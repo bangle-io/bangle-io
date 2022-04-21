@@ -1,4 +1,4 @@
-import { BaseError, getLast, removeMdExtension } from '@bangle.io/utils';
+import { BaseError, getLast, removeExtension } from '@bangle.io/utils';
 
 export const NOTE_WS_PATH_EXTENSION = /.+\.md$/;
 
@@ -35,7 +35,7 @@ export function resolvePath(wsPath: string, skipValidation = false) {
     filePath, // wsName:filePath
     dirPath, // wsName:dirPath/fileName
     fileName,
-    fileNameWithoutExt: removeMdExtension(fileName),
+    fileNameWithoutExt: removeExtension(fileName),
   };
 }
 

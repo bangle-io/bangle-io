@@ -17,7 +17,7 @@ import {
   SecondaryEditorIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
-import { isAbortError, removeMdExtension } from '@bangle.io/utils';
+import { isAbortError, removeExtension } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -39,7 +39,7 @@ const createPaletteObject = ({
 
   return {
     uid: wsPath,
-    title: removeMdExtension(fileName),
+    title: removeExtension(fileName),
     rightNode: undefined,
     showDividerAbove: false,
     extraInfo: dirPath,

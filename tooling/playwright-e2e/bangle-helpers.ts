@@ -16,7 +16,7 @@ export function getLast<T>(array: T[]): T | undefined {
   return array[array.length - 1];
 }
 
-export function removeMdExtension(str: string) {
+export function removeExtension(str: string) {
   if (str.endsWith('.md')) {
     return str.slice(0, -3);
   }
@@ -45,7 +45,7 @@ export function resolvePath(wsPath: string) {
     filePath, // wsName:filePath
     dirPath, // wsName:dirPath/fileName
     fileName,
-    fileNameWithoutExt: removeMdExtension(fileName),
+    fileNameWithoutExt: removeExtension(fileName),
   };
 }
 

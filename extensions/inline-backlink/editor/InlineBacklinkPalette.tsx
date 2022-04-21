@@ -13,9 +13,9 @@ import {
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
 import {
-  conditionalSuffix,
   insertAt,
-  removeMdExtension,
+  removeExtension,
+  suffixWithNoteExtension,
 } from '@bangle.io/utils';
 import { resolvePath } from '@bangle.io/ws-path';
 
@@ -95,7 +95,7 @@ function InlineBacklinkPaletteInner({
       return {
         wsPath: wsPath,
         uid: wsPath,
-        title: removeMdExtension(resolvePath(wsPath).filePath),
+        title: removeExtension(resolvePath(wsPath).filePath),
         editorExecuteCommand: () => {
           return createBacklinkNode(wsPath, noteWsPaths);
         },
@@ -105,7 +105,7 @@ function InlineBacklinkPaletteInner({
     const exactMatch = res.find(
       (item) =>
         item.title === query ||
-        conditionalSuffix(query, '.md') === resolvePath(item.wsPath).filePath,
+        suffixWithNoteExtension(query) === resolvePath(item.wsPath).filePath,
     );
 
     if (!exactMatch && query.length > 0 && wsName) {
@@ -114,7 +114,7 @@ function InlineBacklinkPaletteInner({
       let createItem = {
         uid: 'create-' + wsPath,
         wsPath: wsPath,
-        title: 'Create: ' + removeMdExtension(resolvePath(wsPath).filePath),
+        title: 'Create: ' + removeExtension(resolvePath(wsPath).filePath),
         editorExecuteCommand: () => {
           return createBacklinkNode(wsPath, noteWsPaths);
         },
