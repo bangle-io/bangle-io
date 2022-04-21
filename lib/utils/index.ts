@@ -1,4 +1,5 @@
 export * from './action';
+export * from './duo-weak-map';
 export * from './editor';
 export * from './editor-commands';
 export * from './editor-hooks';
