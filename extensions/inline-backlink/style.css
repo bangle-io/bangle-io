@@ -2,7 +2,7 @@
   padding: 0 0.4rem;
   border-radius: var(--BV-window-pill-border-radius);
   background-color: var(--BV-backlink-backlink-bg-color);
-  margin: 0 0.2rem;
+  margin: 0.1rem 0.2rem;
   text-align: start;
 }
 

@@ -17,9 +17,9 @@ import {
   SecondaryEditorIcon,
   UniversalPalette,
 } from '@bangle.io/ui-components';
-import { isAbortError, removeExtension } from '@bangle.io/utils';
+import { isAbortError } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
-import { resolvePath } from '@bangle.io/ws-path';
+import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 import { ExtensionPaletteType } from './config';
 

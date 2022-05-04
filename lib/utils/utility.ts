@@ -6,6 +6,8 @@ import { Emitter } from '@bangle.dev/utils';
 
 import { isMac, isMobile, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
+import { DuoWeakMap } from './duo-weak-map';
+
 export { serialExecuteQueue } from '@bangle.dev/utils';
 export { isAbortError } from '@bangle.io/is-abort-error';
 
@@ -140,24 +142,49 @@ export function sleep(t = 20): Promise<void> {
 }
 
 /**
- * @param {Function} fn - A unary function whose paramater is non-primitive,
+ * @param {Function} fn - A unary function whose parameter is non-primitive,
  *                        so that it can be cached using WeakMap
  */
-export function weakCache<T extends (arg: any) => any>(fn: T): T {
-  const cache = new WeakMap();
-  const res = (arg: any) => {
-    let value = cache.get(arg);
-
-    if (value) {
-      return value;
+export function weakCache<R, T extends (arg: any) => R>(fn: T): T {
+  const cache = new WeakMap<any, R>();
+  const res = (arg: any): R => {
+    if (cache.has(arg)) {
+      return cache.get(arg)!;
     }
-    value = fn(arg);
+
+    let value = fn(arg);
     cache.set(arg, value);
 
     return value;
   };
 
   return res as T;
+}
+
+/**
+ * Like weakCache but works on functions that take two arguments
+ * @param fn - A function with arity=2 whose parameters are non-primitive,
+ * @returns
+ */
+export function weakCacheDuo<R, P extends (arg1: any, arg2: any) => R>(
+  fn: P,
+): P {
+  const cache = new DuoWeakMap<any, any, R>();
+
+  const res = (arg1: any, arg2: any): R => {
+    let value = cache.get([arg1, arg2]);
+
+    if (value !== undefined) {
+      return value;
+    }
+
+    value = fn(arg1, arg2);
+    cache.set([arg1, arg2], value);
+
+    return value;
+  };
+
+  return res as P;
 }
 
 export function dedupeArray<T>(array: T[]) {
@@ -229,16 +256,6 @@ export function conditionalSuffix(str: string, part: string) {
   }
 
   return str + part;
-}
-
-export function suffixWithNoteExtension(str: string) {
-  return conditionalSuffix(str, '.md');
-}
-
-export function removeExtension(str: string) {
-  const dotIndex = str.lastIndexOf('.');
-
-  return dotIndex === -1 ? str : str.slice(0, dotIndex);
 }
 
 // Shallow compares array in an out of order fashion.

@@ -9,8 +9,8 @@ import {
   TooltipWrapper,
 } from '@bangle.io/ui-bangle-button';
 import { CloseIcon, SecondaryEditorIcon } from '@bangle.io/ui-components';
-import { cx, removeExtension } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+import { cx } from '@bangle.io/utils';
+import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 const MAX_ENTRIES = 3;
 export function EditorBar({

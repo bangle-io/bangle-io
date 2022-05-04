@@ -1,8 +1,7 @@
 import { Node } from '@bangle.dev/pm';
 
 import type { ExtensionRegistry } from '@bangle.io/extension-registry';
-import { removeExtension } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 export function defaultDoc(
   wsPath: string,

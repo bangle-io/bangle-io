@@ -16,12 +16,12 @@ import {
   NullIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
+import { safeScrollIntoViewIfNeeded, useLocalStorage } from '@bangle.io/utils';
 import {
+  filePathToWsPath,
   removeExtension,
-  safeScrollIntoViewIfNeeded,
-  useLocalStorage,
-} from '@bangle.io/utils';
-import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
+  resolvePath,
+} from '@bangle.io/ws-path';
 
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 

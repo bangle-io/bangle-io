@@ -1,8 +1,9 @@
-import { removeExtension, suffixWithNoteExtension } from '@bangle.io/utils';
 import {
   filePathToWsPath,
+  removeExtension,
   resolvePath,
   sanitizeFilePath,
+  suffixWithNoteExtension,
   validateWsPath,
 } from '@bangle.io/ws-path';
 

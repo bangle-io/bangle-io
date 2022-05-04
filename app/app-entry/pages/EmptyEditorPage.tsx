@@ -15,8 +15,7 @@ import {
   ChevronDownIcon,
   NewNoteIcon,
 } from '@bangle.io/ui-components';
-import { removeExtension } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 
