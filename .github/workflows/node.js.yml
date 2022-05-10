@@ -20,9 +20,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Use Node.js latest
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
       - name: 'Check Yarn validate cache'
@@ -49,9 +49,9 @@ jobs:
       matrix:
         test-kind: ['lint', 'test:ci', 'build']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Run test "${{ matrix.test-kind }}"
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
       - name: yarn install
@@ -76,14 +76,17 @@ jobs:
 
   tests-e2e:
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/playwright:v1.20.0-focal
+    container: mcr.microsoft.com/playwright:v1.21.1-focal
     strategy:
       matrix:
         test-kind: ['g:e2e --shard=1/2', 'g:e2e --shard=2/2']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Set git safe directory
+        # This is added as a fix for https://github.com/actions/checkout/issues/766
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Run e2e tests "${{ matrix.test-kind }}"
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
       - name: yarn install
