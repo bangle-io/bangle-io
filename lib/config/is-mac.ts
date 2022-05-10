@@ -78,12 +78,15 @@ export const isSafari = browserInfo.includes('safari');
 export const isChrome = browserInfo.includes('chrome');
 
 function testPlatform(re: RegExp) {
-  return typeof window !== 'undefined' && window.navigator != null
-    ? re.test(
-        ((window.navigator as any)['userAgentData'] || window.navigator)
-          .platform,
-      )
-    : false;
+  if (typeof window !== 'undefined' && window.navigator != null) {
+    const platform =
+      (window.navigator as any)['userAgentData']?.platform ||
+      window.navigator?.platform;
+
+    return re.test(platform);
+  }
+
+  return false;
 }
 
 const isAndroid =
