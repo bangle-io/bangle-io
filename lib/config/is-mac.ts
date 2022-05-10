@@ -106,5 +106,3 @@ const isIPad =
 const isIOS = isIPhone || isIPad;
 
 export const isMobile = isAndroid || isIOS;
-
-console.log({ isMobile, isIOS, isAndroid, isMac });
