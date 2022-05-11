@@ -154,7 +154,7 @@
     "arrowParens": "always",
     "printWidth": 80
   },
-  "packageManager": "yarn@3.1.1",
+  "packageManager": "yarn@3.2.0",
   "license": "AGPL-3.0-or-later",
   "lint-staged": {
     "*.md": "yarn prettier --write",
