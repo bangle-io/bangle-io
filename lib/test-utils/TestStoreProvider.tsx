@@ -5,6 +5,7 @@ import {
   BangleStoreContext,
 } from '@bangle.io/bangle-store-context';
 import { ApplicationStore } from '@bangle.io/create-store';
+import { WorkspaceContextProvider } from '@bangle.io/slice-workspace';
 
 export function TestStoreProvider({
   bangleStore,
@@ -18,7 +19,7 @@ export function TestStoreProvider({
   return (
     <BangleStoreContext.Provider value={bangleStore}>
       <BangleStoreChanged.Provider value={bangleStoreChanged}>
-        {children}
+        <WorkspaceContextProvider>{children}</WorkspaceContextProvider>
       </BangleStoreChanged.Provider>
     </BangleStoreContext.Provider>
   );

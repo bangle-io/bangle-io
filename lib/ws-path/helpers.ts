@@ -9,6 +9,10 @@ export function hasValidNoteExtension(str: string) {
 }
 
 export function getExtension(str: string) {
+  if (str.includes('/')) {
+    str = str.slice(str.lastIndexOf('/') + 1);
+  }
+
   const dotIndex = str.lastIndexOf('.');
 
   return dotIndex === -1 ? undefined : str.slice(dotIndex);
@@ -142,9 +146,9 @@ export function validateNoteWsPath(wsPath: string) {
 
   if (!isValidNoteWsPath(wsPath)) {
     throw new PathValidationError({
-      message: `Notes can only be saved in ${VALID_NOTE_EXTENSIONS.join(
+      message: `Bangle.io support the following file extensions for notes: ${VALID_NOTE_EXTENSIONS.join(
         ', ',
-      )} format`,
+      )}`,
     });
   }
 }
@@ -165,6 +169,12 @@ export function sanitizeFilePath(filePath: string) {
  * @returns {String} a valid wsPath to it
  */
 export function parseLocalFilePath(filePath: string, wsPath: string) {
+  if (filePath.includes(':')) {
+    throw new PathValidationError({
+      message: 'Invalid character ":" in  "' + filePath + '" .',
+    });
+  }
+
   if (filePath.startsWith('./')) {
     filePath = filePath.slice(2);
   }

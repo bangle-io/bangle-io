@@ -145,11 +145,21 @@ export function sleep(t = 20): Promise<void> {
  * @param {Function} fn - A unary function whose parameter is non-primitive,
  *                        so that it can be cached using WeakMap
  */
-export function weakCache<R, T extends (arg: any) => R>(fn: T): T {
+export function weakCache<R, T extends (arg: any) => R>(
+  fn: T,
+  debugName?: string,
+): T {
   const cache = new WeakMap<any, R>();
   const res = (arg: any): R => {
     if (cache.has(arg)) {
+      if (debugName) {
+        console.debug(debugName, 'cache hit');
+      }
+
       return cache.get(arg)!;
+    }
+    if (debugName) {
+      console.debug(debugName, 'cache miss');
     }
 
     let value = fn(arg);
@@ -367,8 +377,6 @@ export function createEmptyArray(size: number) {
   });
 }
 
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-
 /**
  * From react https://github.com/facebook/fbjs/blob/main/packages/fbjs/src/core/shallowEqual.js#L39-L67
  * Performs equality by iterating through keys on an object and returning false
@@ -399,7 +407,7 @@ export function shallowEqual<T extends {}>(objA: any, objB: any): boolean {
   // Test for A's keys different from B.
   for (let i = 0; i < keysA.length; i++) {
     if (
-      !hasOwnProperty.call(objB, keysA[i]!) ||
+      !Object.prototype.hasOwnProperty.call(objB, keysA[i]!) ||
       !Object.is(objA[keysA[i]!], objB[keysA[i]!])
     ) {
       return false;
@@ -433,4 +441,26 @@ export function shuffleArray<T>(a: T[]): T[] {
   }
 
   return array;
+}
+
+export enum MouseClick {
+  NewTab = 'NewTab',
+  ShiftClick = 'ShiftClick',
+  Click = 'Click',
+}
+
+export function getMouseClickType<T = Element>(
+  event: React.MouseEvent<T>,
+): MouseClick {
+  if (
+    event.ctrlKey ||
+    event.metaKey || // apple
+    (event.button && event.button === 1) // middle click, >IE9 + everyone else
+  ) {
+    return MouseClick.NewTab;
+  } else if (event.shiftKey) {
+    return MouseClick.ShiftClick;
+  }
+
+  return MouseClick.Click;
 }

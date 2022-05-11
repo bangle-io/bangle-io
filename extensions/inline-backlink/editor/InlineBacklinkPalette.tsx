@@ -12,12 +12,12 @@ import {
 } from '@bangle.io/inline-palette';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
+import { insertAt } from '@bangle.io/utils';
 import {
-  insertAt,
   removeExtension,
+  resolvePath,
   suffixWithNoteExtension,
-} from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+} from '@bangle.io/ws-path';
 
 import { backlinkNodeName, palettePluginKey } from '../config';
 import { getBacklinkPath, wsPathFromQuery } from '../utils';
@@ -84,7 +84,7 @@ function InlineBacklinkPaletteInner({
 
   const match = useFzfSearch<string>(noteWsPaths, query, {
     limit: FZF_SEARCH_LIMIT,
-    selector: (item) => resolvePath(item).filePath,
+    selector: (item) => resolvePath(item, true).filePath,
     tiebreakers: [byLengthAsc],
   });
 
@@ -95,7 +95,7 @@ function InlineBacklinkPaletteInner({
       return {
         wsPath: wsPath,
         uid: wsPath,
-        title: removeExtension(resolvePath(wsPath).filePath),
+        title: removeExtension(resolvePath(wsPath, true).filePath),
         editorExecuteCommand: () => {
           return createBacklinkNode(wsPath, noteWsPaths);
         },
@@ -105,7 +105,8 @@ function InlineBacklinkPaletteInner({
     const exactMatch = res.find(
       (item) =>
         item.title === query ||
-        suffixWithNoteExtension(query) === resolvePath(item.wsPath).filePath,
+        suffixWithNoteExtension(query) ===
+          resolvePath(item.wsPath, true).filePath,
     );
 
     if (!exactMatch && query.length > 0 && wsName) {

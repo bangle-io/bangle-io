@@ -35,6 +35,7 @@ export function useWorkspaceContext() {
   return useContext(WorkspaceHooksContext);
 }
 
+// TODO: remove these slice providers as they are just pulling state from the outer context.
 export function WorkspaceContextProvider({
   children,
 }: {
