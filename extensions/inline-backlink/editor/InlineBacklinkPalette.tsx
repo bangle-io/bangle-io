@@ -12,12 +12,12 @@ import {
 } from '@bangle.io/inline-palette';
 import { useWorkspaceContext } from '@bangle.io/slice-workspace';
 import { InlinePaletteRow, UniversalPalette } from '@bangle.io/ui-components';
+import { insertAt } from '@bangle.io/utils';
 import {
-  conditionalSuffix,
-  insertAt,
-  removeMdExtension,
-} from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+  removeExtension,
+  resolvePath,
+  suffixWithNoteExtension,
+} from '@bangle.io/ws-path';
 
 import { backlinkNodeName, palettePluginKey } from '../config';
 import { getBacklinkPath, wsPathFromQuery } from '../utils';
@@ -84,7 +84,7 @@ function InlineBacklinkPaletteInner({
 
   const match = useFzfSearch<string>(noteWsPaths, query, {
     limit: FZF_SEARCH_LIMIT,
-    selector: (item) => resolvePath(item).filePath,
+    selector: (item) => resolvePath(item, true).filePath,
     tiebreakers: [byLengthAsc],
   });
 
@@ -95,7 +95,7 @@ function InlineBacklinkPaletteInner({
       return {
         wsPath: wsPath,
         uid: wsPath,
-        title: removeMdExtension(resolvePath(wsPath).filePath),
+        title: removeExtension(resolvePath(wsPath, true).filePath),
         editorExecuteCommand: () => {
           return createBacklinkNode(wsPath, noteWsPaths);
         },
@@ -105,7 +105,8 @@ function InlineBacklinkPaletteInner({
     const exactMatch = res.find(
       (item) =>
         item.title === query ||
-        conditionalSuffix(query, '.md') === resolvePath(item.wsPath).filePath,
+        suffixWithNoteExtension(query) ===
+          resolvePath(item.wsPath, true).filePath,
     );
 
     if (!exactMatch && query.length > 0 && wsName) {
@@ -114,7 +115,7 @@ function InlineBacklinkPaletteInner({
       let createItem = {
         uid: 'create-' + wsPath,
         wsPath: wsPath,
-        title: 'Create: ' + removeMdExtension(resolvePath(wsPath).filePath),
+        title: 'Create: ' + removeExtension(resolvePath(wsPath).filePath),
         editorExecuteCommand: () => {
           return createBacklinkNode(wsPath, noteWsPaths);
         },

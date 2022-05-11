@@ -15,8 +15,7 @@ import {
   ChevronDownIcon,
   NewNoteIcon,
 } from '@bangle.io/ui-components';
-import { removeMdExtension } from '@bangle.io/utils';
-import { resolvePath } from '@bangle.io/ws-path';
+import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 import { WorkspaceSpan } from './WorkspaceNeedsAuth';
 
@@ -48,7 +47,7 @@ function RecentNotes({ wsPaths }: { wsPaths: string[] }) {
                 }}
                 className="py-1 hover:underline"
               >
-                <span>{removeMdExtension(r.fileName)} </span>
+                <span>{removeExtension(r.fileName)} </span>
                 {r.dirPath && (
                   <span
                     className="font-light"

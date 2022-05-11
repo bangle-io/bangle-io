@@ -6,6 +6,8 @@ import { Emitter } from '@bangle.dev/utils';
 
 import { isMac, isMobile, SPLIT_SCREEN_MIN_WIDTH } from '@bangle.io/config';
 
+import { DuoWeakMap } from './duo-weak-map';
+
 export { serialExecuteQueue } from '@bangle.dev/utils';
 export { isAbortError } from '@bangle.io/is-abort-error';
 
@@ -140,24 +142,59 @@ export function sleep(t = 20): Promise<void> {
 }
 
 /**
- * @param {Function} fn - A unary function whose paramater is non-primitive,
+ * @param {Function} fn - A unary function whose parameter is non-primitive,
  *                        so that it can be cached using WeakMap
  */
-export function weakCache<T extends (arg: any) => any>(fn: T): T {
-  const cache = new WeakMap();
-  const res = (arg: any) => {
-    let value = cache.get(arg);
+export function weakCache<R, T extends (arg: any) => R>(
+  fn: T,
+  debugName?: string,
+): T {
+  const cache = new WeakMap<any, R>();
+  const res = (arg: any): R => {
+    if (cache.has(arg)) {
+      if (debugName) {
+        console.debug(debugName, 'cache hit');
+      }
 
-    if (value) {
-      return value;
+      return cache.get(arg)!;
     }
-    value = fn(arg);
+    if (debugName) {
+      console.debug(debugName, 'cache miss');
+    }
+
+    let value = fn(arg);
     cache.set(arg, value);
 
     return value;
   };
 
   return res as T;
+}
+
+/**
+ * Like weakCache but works on functions that take two arguments
+ * @param fn - A function with arity=2 whose parameters are non-primitive,
+ * @returns
+ */
+export function weakCacheDuo<R, P extends (arg1: any, arg2: any) => R>(
+  fn: P,
+): P {
+  const cache = new DuoWeakMap<any, any, R>();
+
+  const res = (arg1: any, arg2: any): R => {
+    let value = cache.get([arg1, arg2]);
+
+    if (value !== undefined) {
+      return value;
+    }
+
+    value = fn(arg1, arg2);
+    cache.set([arg1, arg2], value);
+
+    return value;
+  };
+
+  return res as P;
 }
 
 export function dedupeArray<T>(array: T[]) {
@@ -223,28 +260,12 @@ export async function getDayJs({} = {}): Promise<typeof import('dayjs')> {
   return dayJs;
 }
 
-export function conditionalPrefix(str: string, part: string) {
-  if (str.startsWith(part)) {
-    return str;
-  }
-
-  return part + str;
-}
-
 export function conditionalSuffix(str: string, part: string) {
   if (str.endsWith(part)) {
     return str;
   }
 
   return str + part;
-}
-
-export function removeMdExtension(str: string) {
-  if (str.endsWith('.md')) {
-    return str.slice(0, -3);
-  }
-
-  return str;
 }
 
 // Shallow compares array in an out of order fashion.
@@ -356,8 +377,6 @@ export function createEmptyArray(size: number) {
   });
 }
 
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-
 /**
  * From react https://github.com/facebook/fbjs/blob/main/packages/fbjs/src/core/shallowEqual.js#L39-L67
  * Performs equality by iterating through keys on an object and returning false
@@ -388,7 +407,7 @@ export function shallowEqual<T extends {}>(objA: any, objB: any): boolean {
   // Test for A's keys different from B.
   for (let i = 0; i < keysA.length; i++) {
     if (
-      !hasOwnProperty.call(objB, keysA[i]!) ||
+      !Object.prototype.hasOwnProperty.call(objB, keysA[i]!) ||
       !Object.is(objA[keysA[i]!], objB[keysA[i]!])
     ) {
       return false;
@@ -422,4 +441,26 @@ export function shuffleArray<T>(a: T[]): T[] {
   }
 
   return array;
+}
+
+export enum MouseClick {
+  NewTab = 'NewTab',
+  ShiftClick = 'ShiftClick',
+  Click = 'Click',
+}
+
+export function getMouseClickType<T = Element>(
+  event: React.MouseEvent<T>,
+): MouseClick {
+  if (
+    event.ctrlKey ||
+    event.metaKey || // apple
+    (event.button && event.button === 1) // middle click, >IE9 + everyone else
+  ) {
+    return MouseClick.NewTab;
+  } else if (event.shiftKey) {
+    return MouseClick.ShiftClick;
+  }
+
+  return MouseClick.Click;
 }

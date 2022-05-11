@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { act, renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
 
 import {
@@ -147,7 +147,7 @@ test('updates the newly opened ws path only', async () => {
 
   const { rerender } = renderHook(() => useRecentlyUsedWsPaths(), { wrapper });
 
-  expect(updateRecord).toHaveBeenCalledTimes(1);
+  expect(updateRecord).toHaveBeenCalledTimes(2);
   expect(updateRecord).nthCalledWith(1, 'test-ws:note1.md');
 
   await createTestNote('test-ws:note2.md', 'second note', false);
@@ -165,11 +165,9 @@ test('updates the newly opened ws path only', async () => {
     ]
   `);
 
-  act(() => {
-    bangleStoreChanged++;
-    rerender();
-  });
+  bangleStoreChanged++;
+  rerender();
 
-  expect(updateRecord).toHaveBeenCalledTimes(2);
-  expect(updateRecord).nthCalledWith(2, 'test-ws:note2.md');
+  expect(updateRecord).toHaveBeenCalledTimes(4);
+  expect(updateRecord).lastCalledWith('test-ws:note2.md');
 });

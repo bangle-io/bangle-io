@@ -1,108 +1,91 @@
 /**
  * @jest-environment jsdom
  */
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
-import { EditorDisplayType } from '@bangle.io/constants';
+import { notification } from '@bangle.io/api';
+import { Editor } from '@bangle.io/editor';
 import {
-  createNote,
+  getNote,
   pushWsPath,
-  useWorkspaceContext,
+  workspaceSliceKey,
 } from '@bangle.io/slice-workspace';
 import {
-  getEditorPluginMetadataReturn,
-  getUseWorkspaceContextReturn,
+  createBasicTestStore,
+  setupMockWorkspaceWithNotes,
+  TestStoreProvider,
 } from '@bangle.io/test-utils';
-import { getEditorPluginMetadata, sleep } from '@bangle.io/utils';
+import { sleep } from '@bangle.io/utils';
+import { resolvePath } from '@bangle.io/ws-path';
 
-import { BacklinkNode } from '../editor/BacklinkNode';
+import inlineBackLinkExtension from '../index';
 
-jest.mock('@bangle.io/slice-workspace', () => {
-  return {
-    ...jest.requireActual('@bangle.io/slice-workspace'),
-    pushWsPath: jest.fn(),
-    createNote: jest.fn(),
-    useWorkspaceContext: jest.fn(),
-  };
-});
+const setup = async ([firstNote, ...otherNotes]: Array<
+  [string, string]
+> = []) => {
+  let { store, extensionRegistry } = createBasicTestStore({
+    extensions: [inlineBackLinkExtension],
+  });
+  const [wsPath, md] = firstNote || [];
 
-jest.mock('@bangle.io/utils', () => {
-  const actual = jest.requireActual('@bangle.io/utils');
-  let counter = 0;
-  let destroyMap = new Map();
+  if (!wsPath || !md) {
+    throw new Error('Invalid setup');
+  }
 
-  return {
-    ...actual,
-    getEditorPluginMetadata: jest.fn(),
-    safeRequestIdleCallback: jest.fn((cb) => {
-      let c = counter++;
-      destroyMap.set(c, false);
-      let p = Promise.resolve();
+  const { wsName } = resolvePath(wsPath);
+  await setupMockWorkspaceWithNotes(store, wsName, [
+    [wsPath, md],
+    ...otherNotes,
+  ]);
 
-      p.then(() => {
-        if (destroyMap.get(c) === false) {
-          cb();
+  let { container } = render(
+    <TestStoreProvider bangleStore={store} bangleStoreChanged={0}>
+      <Editor
+        editorId={1}
+        wsPath={wsPath}
+        className="test-class"
+        dispatchSerialOperation={() => {}}
+        extensionRegistry={extensionRegistry}
+        bangleStore={store}
+        getDocument={(wsPath) =>
+          getNote(wsPath)(store.state, store.dispatch, store)
         }
-      });
-    }),
-    safeCancelIdleCallback: jest.fn((id) => {
-      destroyMap.set(id, true);
-    }),
+      />
+    </TestStoreProvider>,
+  );
+
+  return {
+    container,
+    store,
+    extensionRegistry,
   };
-});
-
-let editorView: any = { state: {} };
-
-const getEditorPluginMetadataMock =
-  getEditorPluginMetadata as jest.MockedFunction<
-    typeof getEditorPluginMetadata
-  >;
-
-const useWorkspaceContextMock = useWorkspaceContext as jest.MockedFunction<
-  typeof useWorkspaceContext
->;
-const pushWsPathMock = pushWsPath as jest.MockedFunction<typeof pushWsPath>;
-const createNoteMock = createNote as jest.MockedFunction<typeof createNote>;
+};
 
 describe('BacklinkNode', () => {
-  beforeEach(() => {
-    useWorkspaceContextMock.mockImplementation(() => ({
-      ...getUseWorkspaceContextReturn,
-    }));
+  test('renders when no link found', async () => {
+    const wsPath = 'test-ws:hi.md';
+    await setup([[wsPath, `hello world`]]);
 
-    pushWsPathMock.mockImplementation(() => () => true);
-    createNoteMock.mockImplementation(() => async () => undefined);
-
-    getEditorPluginMetadataMock.mockImplementation(() => ({
-      ...getEditorPluginMetadataReturn,
-      wsPath: 'test-ws:my-current-note.md',
-      editorDisplayType: EditorDisplayType.Page,
-    }));
+    await act(() => sleep(0));
+    expect(
+      screen.queryByTestId('inline-backlink-button'),
+    ).toMatchInlineSnapshot(`null`);
   });
 
-  test('renders correctly', async () => {
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        ...getUseWorkspaceContextReturn,
-        noteWsPaths: ['test-ws:some/path.md'],
-      };
-    });
-
-    const renderResult = render(
-      <BacklinkNode
-        nodeAttrs={{ path: 'some/path', title: undefined }}
-        view={editorView}
-      />,
-    );
+  test('renders correctly when match', async () => {
+    const wsPath = 'test-ws:hi.md';
+    await setup([[wsPath, `hello world [[hi]]`]]);
 
     await act(() => sleep(0));
 
-    expect(renderResult.container).toMatchInlineSnapshot(`
-      <div>
+    expect(await screen.findAllByTestId('inline-backlink-button'))
+      .toMatchInlineSnapshot(`
+      Array [
         <button
+          aria-label="hi"
           class="B-inline-backlink_backlink "
+          data-testid="inline-backlink-button"
           draggable="false"
         >
           <svg
@@ -121,34 +104,26 @@ describe('BacklinkNode', () => {
           <span
             class="inline"
           >
-            some/path
+            hi
           </span>
-        </button>
-      </div>
+        </button>,
+      ]
     `);
   });
 
   test('renders title if it exists', async () => {
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        wsName: 'test-ws',
-        noteWsPaths: ['test-ws:some/path.md'],
-      };
-    });
+    const wsPath = 'test-ws:my/note-path.md';
+    await setup([[wsPath, `hello world [[my/note-path|monako]]`]]);
 
-    const renderResult = render(
-      <BacklinkNode
-        nodeAttrs={{ path: 'some/path', title: 'monako' }}
-        view={editorView}
-      />,
-    );
     await act(() => sleep(0));
 
-    expect(renderResult.container).toMatchInlineSnapshot(`
-      <div>
+    expect(await screen.findAllByTestId('inline-backlink-button'))
+      .toMatchInlineSnapshot(`
+      Array [
         <button
+          aria-label="monako"
           class="B-inline-backlink_backlink "
+          data-testid="inline-backlink-button"
           draggable="false"
         >
           <svg
@@ -169,487 +144,329 @@ describe('BacklinkNode', () => {
           >
             monako
           </span>
-        </button>
-      </div>
+        </button>,
+      ]
     `);
   });
 
   test('styles not found notes differently', async () => {
-    useWorkspaceContextMock.mockImplementation(() => {
-      return {
-        ...getUseWorkspaceContextReturn,
-        wsName: 'test-ws',
-        noteWsPaths: [],
-      };
-    });
+    const wsPath = 'test-ws:tea.md';
+    const { container } = await setup([[wsPath, `hello world [[bubble]]`]]);
 
-    const renderResult = render(
-      <BacklinkNode
-        nodeAttrs={{ path: 'some/path', title: 'monako' }}
-        view={editorView}
-      />,
-    );
-
-    expect(renderResult.container.innerHTML).toContain(
-      'B-inline-backlink_backlinkNotFound',
-    );
-
-    expect(renderResult.container).toMatchInlineSnapshot(`
-      <div>
-        <button
-          class="B-inline-backlink_backlink B-inline-backlink_backlinkNotFound "
-          draggable="false"
-        >
-          <svg
-            class="inline-block"
-            stroke="currentColor"
-            viewBox="0 0 18 18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10,5.5V1H3.5a.5.5,0,0,0-.5.5v15a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5V6H10.5A.5.5,0,0,1,10,5.5Z"
-            />
-            <path
-              d="M11,1h.043a.5.5,0,0,1,.3535.1465l3.457,3.457A.5.5,0,0,1,15,4.957V5H11Z"
-            />
-          </svg>
-          <span
-            class="inline"
-          >
-            monako
-          </span>
-        </button>
-      </div>
-    `);
     await act(() => sleep(0));
+
+    expect(container.innerHTML).toContain('B-inline-backlink_backlinkNotFound');
+  });
+});
+
+describe('clicking node', () => {
+  const clickSetup = async (
+    element: Element,
+    clickOpts?: Parameters<typeof fireEvent.click>[1],
+  ) => {
+    const prom = sleep();
+    fireEvent.click(element, clickOpts);
+
+    // wait for the promise in click to resolve
+    await act(() => prom);
+  };
+
+  test('clicks correctly when there is a match', async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[monako]]`],
+      ['test-ws:monako.md', 'monako content'],
+    ]);
+    pushWsPath(wsPath)(store.state, store.dispatch);
+    await act(() => sleep(0));
+    // make sure current path is hello-world.md
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual(wsPath);
+
+    await clickSetup(screen.getByText(/monako/i));
+    await act(() => sleep(0));
+
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:monako.md');
   });
 
-  describe('clicking', () => {
-    const clickSetup = async (
-      { path, title = 'monako' }: { path: string; title?: string },
-      clickOpts?: Parameters<typeof fireEvent.click>[1],
-    ) => {
-      const renderResult = render(
-        <BacklinkNode
-          nodeAttrs={{ path, title: 'monako' }}
-          view={editorView}
-        />,
-      );
-      const prom = sleep();
-      fireEvent.click(renderResult.getByText(/monako/i), clickOpts);
+  test('picks the least nested when there are two matches', async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[note1]]`],
+      ['test-ws:magic/note1.md', 'some content'],
+      ['test-ws:magic/some/note1.md', 'some other content'],
+    ]);
+    pushWsPath(wsPath)(store.state, store.dispatch);
+    await act(() => sleep(0));
 
-      // wait for the promise in click to resolve
-      await act(() => prom);
+    await clickSetup(screen.getByText(/note1/i));
+    await act(() => sleep(0));
 
-      return renderResult;
-    };
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:magic/note1.md');
+  });
 
-    test('clicks correctly when there is a match', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: ['test-ws:magic/some/path.md'],
-        };
-      });
+  test('works if there is a matching extension', async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[note1.md]]`],
+      ['test-ws:magic/note1.md', 'some content'],
+      ['test-ws:magic/some/note1.md', 'some other content'],
+    ]);
+    pushWsPath(wsPath)(store.state, store.dispatch);
+    await act(() => sleep(0));
 
-      // wait for the promise in click to resolve
-      await clickSetup({ path: 'magic/some/path' });
+    await clickSetup(screen.getByText(/note1/i));
+    await act(() => sleep(0));
 
-      expect(createNoteMock).toBeCalledTimes(0);
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:magic/note1.md');
+  });
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/some/path.md',
-        false,
-        false,
-      );
+  test('does not work if not a matching extension', async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[note1.txt]]`],
+      ['test-ws:magic/note1.md', 'some content'],
+      ['test-ws:magic/some/note1.md', 'some other content'],
+    ]);
+    pushWsPath(wsPath)(store.state, store.dispatch);
+    await act(() => sleep(0));
+
+    await clickSetup(screen.getByText(/note1/i));
+    await act(() => sleep(0));
+
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual(wsPath);
+
+    expect(
+      notification.notificationSliceKey.getSliceState(store.state)
+        ?.notifications[0],
+    ).toMatchObject({
+      content: 'Bangle.io support the following file extensions for notes: .md',
+      severity: 'error',
+      title: 'Invalid backlink path',
+      uid: expect.any(String),
     });
+  });
 
-    test('picks the top most when there are two matches match', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/note1.md',
-            'test-ws:magic/some/note1.md',
-          ],
-        };
-      });
+  test('fall backs to  case insensitive if no case sensitive match', async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[Note1]]`],
+      ['test-ws:magic/note1.md', 'some content'],
+    ]);
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-      await clickSetup({ path: 'note1' });
-      expect(createNoteMock).toBeCalledTimes(0);
+    await act(() => sleep(0));
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/note1.md',
-        false,
-        false,
-      );
-    });
+    await clickSetup(screen.getByText(/Note1/i));
+    await act(() => sleep(0));
 
-    test('doesnt add md if already there', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/note1.md',
-            'test-ws:magic/some/note1.md',
-          ],
-        };
-      });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:magic/note1.md');
+  });
 
-      await clickSetup({ path: 'note1.md' });
+  test('Gets the exact match if it exists', async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[NoTe1]]`],
+      ['test-ws:magic/NoTe1.md', 'content a'],
+      ['test-ws:note1.md', 'content b'],
+    ]);
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/note1.md',
-        false,
-        false,
-      );
-    });
+    await act(() => sleep(0));
 
-    test('picks the least nested when there are three matches match', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/some/note1.md',
-            'test-ws:magic/some-other/place/dig/note1.md',
-          ],
-        };
-      });
+    await clickSetup(screen.getByText(/NoTe1/i));
+    await act(() => sleep(0));
 
-      await clickSetup({ path: 'note1' });
-      expect(createNoteMock).toBeCalledTimes(0);
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:magic/NoTe1.md');
+  });
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/some/note1.md',
-        false,
-        false,
-      );
-    });
+  test("doesn't confuse if match ends with same", async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[note1]]`],
+      ['test-ws:magic/some-place/hotel/something-note1.md', 'content a'],
+      ['test-ws:magic/some-other/place/dig/some-else-note1.md', 'content b'],
+    ]);
 
-    test('fall backs to  case insensitive if no case sensitive match', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: ['test-ws:magic/note1.md'],
-        };
-      });
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-      await clickSetup({ path: 'Note1' });
-      expect(createNoteMock).toBeCalledTimes(0);
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note1/i));
+    await act(() => sleep(0));
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/note1.md',
-        false,
-        false,
-      );
-    });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:note1.md');
+  });
 
-    test('Get the exact match if it exists', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: ['test-ws:magic/NoTe1.md', 'test-ws:note1.md'],
-        };
-      });
+  test('doesnt confuse if a subdirectory path match partially matches 2', async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[tel/note1]]`],
+      ['test-ws:magic/some-place/hotel/note1.md', 'content a'],
+      ['test-ws:magic/tel/note1.md', 'content b'],
+    ]);
 
-      await clickSetup({ path: 'NoTe1' });
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/NoTe1.md',
-        false,
-        false,
-      );
-    });
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note1/i));
+    await act(() => sleep(0));
 
-    test("doesn't confuse if match ends with same", async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/something-note1.md',
-            'test-ws:magic/some-other/place/dig/some-else-note1.md',
-          ],
-        };
-      });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:tel/note1.md');
+  });
 
-      await clickSetup({ path: 'note1' });
+  test('opens sidebar on shift click', async () => {
+    const wsPath = 'test-ws:hello-world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[note1]]`],
+      ['test-ws:note1.md', 'content b'],
+    ]);
+    pushWsPath(wsPath)(store.state, store.dispatch);
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note1/i), { shiftKey: true });
+    await act(() => sleep(0));
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note1.md', false, false);
-    });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual(wsPath);
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(1),
+    ).toEqual('test-ws:note1.md');
+  });
 
-    test('doesnt confuse if a subdirectory path match partially matches 1', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/some-other/place/dig/some-else-note1.md',
-          ],
-        };
-      });
+  test('matches if relative path 1', async () => {
+    const wsPath = 'test-ws:magic/hello/beautiful/world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[../note2]]`],
+      ['test-ws:magic/some-place/hotel/note1.md', 'content'],
+      ['test-ws:magic/some/note2.md', 'content'],
+      ['test-ws:magic/note2.md', 'content'],
+    ]);
 
-      // notice the `tel` and `hotel`
-      await clickSetup({ path: 'tel/note1' });
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:tel/note1.md',
-        false,
-        false,
-      );
-    });
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note2/i));
+    await act(() => sleep(0));
 
-    test('doesnt confuse if a subdirectory path match partially matches 2', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/tel/note1.md',
-          ],
-        };
-      });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:magic/hello/note2.md');
+  });
 
-      await clickSetup({ path: 'tel/note1' });
+  test('matches if relative path 2', async () => {
+    const wsPath = 'test-ws:magic/hello/beautiful/world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[../../note2]]`],
+      ['test-ws:magic/some-place/hotel/note1.md', 'content'],
+      ['test-ws:magic/some/note2.md', 'content'],
+      ['test-ws:magic/note2.md', 'content'],
+    ]);
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:tel/note1.md',
-        false,
-        false,
-      );
-    });
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-    test('matches file name', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/tel/note1.md',
-          ],
-        };
-      });
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note2/i));
+    await act(() => sleep(0));
 
-      await clickSetup({ path: 'note1' });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:magic/note2.md');
+  });
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/tel/note1.md',
-        false,
-        false,
-      );
-    });
+  test('matches if relative path 3', async () => {
+    const wsPath = 'test-ws:magic/hello/beautiful/world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[../../../note2]]`],
+      ['test-ws:magic/some-place/hotel/note1.md', 'content'],
+      ['test-ws:magic/some/note2.md', 'content'],
+      ['test-ws:magic/note2.md', 'content'],
+    ]);
 
-    test('if no file name match', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/tel/note1.md',
-          ],
-        };
-      });
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-      await clickSetup({ path: 'note2' });
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note2/i));
+    await act(() => sleep(0));
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note2.md', false, false);
-    });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:note2.md');
+  });
 
-    test('opens sidebar on shift click', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/some/note1.md',
-            'test-ws:magic/some-other/place/dig/note1.md',
-          ],
-        };
-      });
+  test('if relative is outside', async () => {
+    const wsPath = 'test-ws:magic/hello/beautiful/world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[../../../../note2]]`],
+      ['test-ws:magic/some-place/hotel/note1.md', 'content'],
+      ['test-ws:magic/some/note2.md', 'content'],
+      ['test-ws:magic/note2.md', 'content'],
+    ]);
 
-      await clickSetup({ path: 'note1' }, { shiftKey: true });
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/some/note1.md',
-        false,
-        true,
-      );
-    });
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note2/i));
+    await act(() => sleep(0));
 
-    test('opens new tab on shift click', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/some/note1.md',
-            'test-ws:magic/some-other/place/dig/note1.md',
-          ],
-        };
-      });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:note2.md');
+  });
 
-      await clickSetup({ path: 'note1' }, { metaKey: true });
+  test('if path starts with /', async () => {
+    const wsPath = 'test-ws:magic/hello/beautiful/world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[/note2]]`],
+      ['test-ws:magic/some-place/hotel/note1.md', 'content'],
+      ['test-ws:magic/some/note2.md', 'content'],
+      ['test-ws:magic/note2.md', 'content'],
+    ]);
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/some/note1.md',
-        true,
-        false,
-      );
-    });
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-    test('no click if path validation fails', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: ['test-ws:magic/some/note1.md'],
-        };
-      });
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note2/i));
+    await act(() => sleep(0));
 
-      const renderResult = await clickSetup({ path: 'note:#:.s2:1' });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:note2.md');
+  });
 
-      expect(pushWsPathMock).toBeCalledTimes(0);
-      expect(renderResult.container.innerHTML).toContain(
-        `Invalid link (monako)`,
-      );
-      expect(renderResult.container).toMatchSnapshot();
-    });
-    test('if no match still clicks', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/some/note1.md',
-            'test-ws:magic/some-other/place/dig/note1.md',
-          ],
-        };
-      });
+  test('if path starts with / and has directory', async () => {
+    const wsPath = 'test-ws:magic/hello/beautiful/world.md';
+    const { store } = await setup([
+      [wsPath, `hello world [[/magic/some/note2]]`],
+      ['test-ws:magic/some-place/hotel/note1.md', 'content'],
+      ['test-ws:magic/some/note2.md', 'content'],
+      ['test-ws:magic/note2.md', 'content'],
+    ]);
 
-      await clickSetup({ path: 'note2' });
+    pushWsPath(wsPath)(store.state, store.dispatch);
 
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note2.md', false, false);
-    });
+    await act(() => sleep(0));
+    await clickSetup(screen.getByText(/note2/i));
+    await act(() => sleep(0));
 
-    test('if no match still clicks 2', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/some/note1.md',
-            'test-ws:magic/some-other/place/dig/note1.md',
-          ],
-        };
-      });
-
-      await clickSetup({ path: 'some-place/note2' });
-
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:some-place/note2.md',
-        false,
-        false,
-      );
-    });
-
-    test('matches if path follows local file system style', async () => {
-      getEditorPluginMetadataMock.mockImplementation(() => {
-        return {
-          ...getEditorPluginMetadataReturn,
-          wsPath: 'test-ws:magic/hello/beautiful/world.md',
-          editorDisplayType: EditorDisplayType.Popup,
-        };
-      });
-
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/some/note2.md',
-            'test-ws:magic/hello/beautiful/world.md',
-            'test-ws:magic/note2.md',
-          ],
-        };
-      });
-
-      await clickSetup({ path: '../note2' });
-
-      expect(createNoteMock).toBeCalledTimes(0);
-
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(
-        1,
-        'test-ws:magic/hello/note2.md',
-        false,
-        false,
-      );
-    });
-
-    test('if no match creates note', async () => {
-      useWorkspaceContextMock.mockImplementation(() => {
-        return {
-          ...getUseWorkspaceContextReturn,
-          wsName: 'test-ws',
-          noteWsPaths: [
-            'test-ws:magic/some-place/hotel/note1.md',
-            'test-ws:magic/some/note1.md',
-            'test-ws:magic/some-other/place/dig/note1.md',
-          ],
-        };
-      });
-
-      await clickSetup({ path: 'note2' });
-
-      expect(createNoteMock).toBeCalledTimes(1);
-      expect(createNoteMock).nthCalledWith(1, 'test-ws:note2.md', {
-        open: false,
-      });
-      expect(pushWsPathMock).toBeCalledTimes(1);
-      expect(pushWsPathMock).nthCalledWith(1, 'test-ws:note2.md', false, false);
-    });
+    expect(
+      workspaceSliceKey.getSliceState(store.state)?.openedWsPaths.getByIndex(0),
+    ).toEqual('test-ws:magic/some/note2.md');
   });
 });

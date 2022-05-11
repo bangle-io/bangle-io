@@ -1,6 +1,40 @@
-import { BaseError, getLast, removeMdExtension } from '@bangle.io/utils';
+import { BaseError, getLast } from '@bangle.io/utils';
 
-export const NOTE_WS_PATH_EXTENSION = /.+\.md$/;
+export const DEFAULT_NOTE_EXTENSION = '.md';
+export const VALID_NOTE_EXTENSIONS = [DEFAULT_NOTE_EXTENSION];
+
+// works on any string
+export function hasValidNoteExtension(str: string) {
+  return VALID_NOTE_EXTENSIONS.some((ext) => str.endsWith(ext));
+}
+
+export function getExtension(str: string) {
+  if (str.includes('/')) {
+    str = str.slice(str.lastIndexOf('/') + 1);
+  }
+
+  const dotIndex = str.lastIndexOf('.');
+
+  return dotIndex === -1 ? undefined : str.slice(dotIndex);
+}
+
+function conditionalSuffix(str: string, part: string) {
+  if (str.endsWith(part)) {
+    return str;
+  }
+
+  return str + part;
+}
+
+export function suffixWithNoteExtension(str: string) {
+  return conditionalSuffix(str, DEFAULT_NOTE_EXTENSION);
+}
+
+export function removeExtension(str: string) {
+  const dotIndex = str.lastIndexOf('.');
+
+  return dotIndex === -1 ? str : str.slice(0, dotIndex);
+}
 
 export type MaybeWsPath = string | undefined;
 
@@ -35,7 +69,7 @@ export function resolvePath(wsPath: string, skipValidation = false) {
     filePath, // wsName:filePath
     dirPath, // wsName:dirPath/fileName
     fileName,
-    fileNameWithoutExt: removeMdExtension(fileName),
+    fileNameWithoutExt: removeExtension(fileName),
   };
 }
 
@@ -106,20 +140,21 @@ export function validateFileWsPath(wsPath: string) {
   validateWsPath(wsPath);
 }
 
-// a note wsPath is every what a file wsPath is
-// but restricted to only .md for now
+// a note wsPath is any wsPath that is a note i.e. ends with VALID_NOTE_EXTENSIONS
 export function validateNoteWsPath(wsPath: string) {
   validateFileWsPath(wsPath);
 
   if (!isValidNoteWsPath(wsPath)) {
     throw new PathValidationError({
-      message: 'Notes can only be saved in .md format',
+      message: `Bangle.io support the following file extensions for notes: ${VALID_NOTE_EXTENSIONS.join(
+        ', ',
+      )}`,
     });
   }
 }
 
 export function isValidNoteWsPath(wsPath: string) {
-  return NOTE_WS_PATH_EXTENSION.test(wsPath);
+  return hasValidNoteExtension(wsPath);
 }
 
 export function sanitizeFilePath(filePath: string) {
@@ -134,6 +169,12 @@ export function sanitizeFilePath(filePath: string) {
  * @returns {String} a valid wsPath to it
  */
 export function parseLocalFilePath(filePath: string, wsPath: string) {
+  if (filePath.includes(':')) {
+    throw new PathValidationError({
+      message: 'Invalid character ":" in  "' + filePath + '" .',
+    });
+  }
+
   if (filePath.startsWith('./')) {
     filePath = filePath.slice(2);
   }

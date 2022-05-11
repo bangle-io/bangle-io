@@ -244,38 +244,6 @@ export function usePrevious<T>(value: T | undefined): T | undefined {
   return ref.current;
 }
 
-// helper hook that returns a callback that
-// will automatically open the note in the right place
-export function useClickToNote<T>(
-  pushWsPath: (wsPath: any, newTab?: any, secondary?: any) => void,
-) {
-  const makeOnClick = useCallback(
-    (wsPath?: string) => {
-      return (event: React.MouseEvent<T, MouseEvent>) => {
-        if (!wsPath) {
-          return;
-        }
-        let newTab = false;
-        let shift = false;
-
-        if (
-          event.ctrlKey ||
-          event.metaKey || // apple
-          (event.button && event.button === 1) // middle click, >IE9 + everyone else
-        ) {
-          newTab = true;
-        } else if (event.shiftKey) {
-          shift = true;
-        }
-
-        pushWsPath(wsPath, newTab, shift);
-      };
-    },
-    [pushWsPath],
-  );
-
-  return makeOnClick;
-}
 export function useInterval<T extends (...args: any[]) => any>(
   callback: T,
   deps: DependencyList,

@@ -10,14 +10,14 @@ import {
   Sidebar,
 } from '@bangle.io/ui-components';
 import {
+  getMouseClickType,
   isAbortError,
-  removeMdExtension,
+  MouseClick,
   safeCancelIdleCallback,
   safeRequestIdleCallback,
-  useClickToNote,
 } from '@bangle.io/utils';
 import { naukarProxy } from '@bangle.io/worker-naukar-proxy';
-import { resolvePath } from '@bangle.io/ws-path';
+import { removeExtension, resolvePath } from '@bangle.io/ws-path';
 
 const IconStyle = {
   height: 16,
@@ -32,18 +32,24 @@ interface BacklinkSearchResult {
 export function BacklinkWidget() {
   const backlinkSearchResult = useBacklinkSearch();
   const { bangleStore } = useWorkspaceContext();
-  const _pushWsPath: (...args: Parameters<typeof pushWsPath>) => void =
-    useCallback(
-      (wsPath, newTab, secondary) => {
+
+  const makeOnClick = useCallback(
+    (wsPath?: string) => {
+      return (event: React.MouseEvent<any>) => {
+        if (!wsPath) {
+          return;
+        }
+        const clickType = getMouseClickType(event);
         pushWsPath(
           wsPath,
-          newTab,
-          secondary,
+          clickType === MouseClick.NewTab,
+          clickType === MouseClick.ShiftClick,
         )(bangleStore.state, bangleStore.dispatch);
-      },
-      [bangleStore],
-    );
-  const makeOnClick = useClickToNote(_pushWsPath);
+      };
+    },
+    [bangleStore],
+  );
+
   const [openedItems, updateOpenedItems] = useState(() => new Set<string>());
   const isCollapsed = useCallback(
     (r: BacklinkSearchResult) => {
@@ -164,7 +170,7 @@ function useBacklinkSearch(): BacklinkSearchResult[] | undefined {
         ])
         .then(
           (result) => {
-            const fileName = removeMdExtension(
+            const fileName = removeExtension(
               resolvePath(focusedWsPath).fileName,
             );
 

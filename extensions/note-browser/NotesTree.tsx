@@ -16,12 +16,12 @@ import {
   NullIcon,
   Sidebar,
 } from '@bangle.io/ui-components';
+import { safeScrollIntoViewIfNeeded, useLocalStorage } from '@bangle.io/utils';
 import {
-  removeMdExtension,
-  safeScrollIntoViewIfNeeded,
-  useLocalStorage,
-} from '@bangle.io/utils';
-import { filePathToWsPath, resolvePath } from '@bangle.io/ws-path';
+  filePathToWsPath,
+  removeExtension,
+  resolvePath,
+} from '@bangle.io/ws-path';
 
 import { fileWsPathsToFlatDirTree } from './file-ws-paths-to-flat-dir-tree';
 
@@ -238,7 +238,7 @@ const RenderItems = ({
     const wsPath = filePathToWsPath(wsName, path);
     const splittedPath = path.split('/');
     const depth = splittedPath.length;
-    const name = removeMdExtension(splittedPath.pop() || 'Unknown file name');
+    const name = removeExtension(splittedPath.pop() || 'Unknown file name');
 
     const onClick = (event: React.MouseEvent<any, MouseEvent>) => {
       if (isDir) {

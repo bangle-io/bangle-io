@@ -104,7 +104,7 @@ module.exports = {
           '(useKeybindings|useSerialOperationHandler|useInterval|useMyOtherCustomHook)',
       },
     ],
-    'testing-library/no-container': ['warn'],
+    'testing-library/no-container': ['off'],
     'testing-library/no-node-access': ['warn'],
     'testing-library/no-render-in-setup': ['warn'],
     'testing-library/no-unnecessary-act': ['warn'],
@@ -115,6 +115,7 @@ module.exports = {
     'consistent-return': ['warn'],
 
     'jest/no-disabled-tests': 'error',
+
     'import/newline-after-import': ['error', { count: 1 }],
     'simple-import-sort/imports': [
       'error',
