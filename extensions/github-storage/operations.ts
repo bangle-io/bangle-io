@@ -116,8 +116,9 @@ export function syncWithGithub(
         workspaceStore.state,
         workspaceStore.dispatch,
       );
-      const wsMetadata =
-        storageOpts.readWorkspaceMetadata() as GithubWsMetadata;
+      const wsMetadata = storageOpts.readWorkspaceMetadata(
+        wsName,
+      ) as GithubWsMetadata;
 
       await GithubRepoTree.refreshCachedData(
         wsName,
