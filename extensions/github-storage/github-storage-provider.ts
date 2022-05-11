@@ -1,3 +1,4 @@
+import { resolvePath } from '@bangle.io/api/ws-path-helpers';
 import { RemoteFileEntry } from '@bangle.io/remote-file-sync';
 import { BaseStorageProvider, StorageOpts } from '@bangle.io/storage';
 import { BaseError } from '@bangle.io/utils';
@@ -26,21 +27,25 @@ export class GithubStorageProvider implements BaseStorageProvider {
     file: File,
     opts: StorageOpts,
   ): Promise<void> {
+    const { wsName } = resolvePath(wsPath);
+
     await this.fileEntryManager.createFile(
       wsPath,
       file,
       this.makeGetRemoteFileEntryCb(
-        opts.readWorkspaceMetadata() as GithubWsMetadata,
+        opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
         false,
       ),
     );
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
+    const { wsName } = resolvePath(wsPath);
+
     await this.fileEntryManager.deleteFile(
       wsPath,
       this.makeGetRemoteFileEntryCb(
-        opts.readWorkspaceMetadata() as GithubWsMetadata,
+        opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
         false,
       ),
     );
@@ -64,7 +69,7 @@ export class GithubStorageProvider implements BaseStorageProvider {
     wsName: string,
     opts: StorageOpts,
   ): Promise<string[]> {
-    const wsMetadata = opts.readWorkspaceMetadata() as GithubWsMetadata;
+    const wsMetadata = opts.readWorkspaceMetadata(wsName) as GithubWsMetadata;
     await GithubRepoTree.refreshCachedData(wsName, wsMetadata, abortSignal);
 
     const files = await this.fileEntryManager.listFiles(
@@ -121,10 +126,12 @@ export class GithubStorageProvider implements BaseStorageProvider {
   }
 
   async readFile(wsPath: string, opts: StorageOpts): Promise<File | undefined> {
+    const { wsName } = resolvePath(wsPath);
+
     const file = await this.fileEntryManager.readFile(
       wsPath,
       this.makeGetRemoteFileEntryCb(
-        opts.readWorkspaceMetadata() as GithubWsMetadata,
+        opts.readWorkspaceMetadata(wsName) as GithubWsMetadata,
         false,
       ),
     );

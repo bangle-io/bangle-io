@@ -117,12 +117,6 @@ export function getStorageProviderOpts() {
   return workspaceSliceKey.op((state, dispatch) => {
     const { specRegistry } =
       extensionRegistrySliceKey.getSliceStateAsserted(state).extensionRegistry;
-    const wsName = workspaceSliceKey.getSliceStateAsserted(state).wsName;
-
-    asssertNotUndefined(
-      wsName,
-      'wsName must be defined before accessing getStorageProviderOpts',
-    );
 
     // WARNING: we are passing methods with the state in scope
     // this might possible get stale if careful thought is not put in while modifying this API
@@ -130,11 +124,10 @@ export function getStorageProviderOpts() {
     // and even if wsName has changed, while they were doing `async` work, it should be fine.
     const opt: StorageOpts = {
       specRegistry: specRegistry,
-      storageProviderName: getWorkspaceInfo(wsName)(state).type,
-      readWorkspaceMetadata: () => {
+      readWorkspaceMetadata: (wsName: string) => {
         return getWorkspaceInfo(wsName)(state).metadata;
       },
-      updateWorkspaceMetadata: (metadata) => {
+      updateWorkspaceMetadata: (wsName, metadata) => {
         updateWorkspaceMetadata(wsName, metadata)(state, dispatch);
       },
     };

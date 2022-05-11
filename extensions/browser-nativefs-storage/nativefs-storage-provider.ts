@@ -1,4 +1,5 @@
 import { wsPathHelpers } from '@bangle.io/api';
+import { resolvePath } from '@bangle.io/api/ws-path-helpers';
 import {
   BaseFileSystemError,
   FILE_NOT_FOUND_ERROR,
@@ -26,13 +27,17 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   }
 
   async deleteFile(wsPath: string, opts: StorageOpts): Promise<void> {
-    await this.getFs(opts).unlink(wsPathHelpers.toFSPath(wsPath));
+    const { wsName } = resolvePath(wsPath);
+
+    await this.getFs(wsName, opts).unlink(wsPathHelpers.toFSPath(wsPath));
   }
 
   async fileExists(wsPath: string, opts: StorageOpts): Promise<boolean> {
     const path = wsPathHelpers.toFSPath(wsPath);
+    const { wsName } = resolvePath(wsPath);
+
     try {
-      await this.getFs(opts).stat(path);
+      await this.getFs(wsName, opts).stat(path);
 
       return true;
     } catch (error) {
@@ -47,7 +52,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
 
   async fileStat(wsPath: string, opts: StorageOpts) {
     const path = wsPathHelpers.toFSPath(wsPath);
-    const stat = await this.getFs(opts).stat(path);
+    const { wsName } = resolvePath(wsPath);
+
+    const stat = await this.getFs(wsName, opts).stat(path);
 
     return {
       ctime: stat.mtimeMs,
@@ -55,9 +62,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     };
   }
 
-  private getFs(opts: StorageOpts) {
+  private getFs(wsName: string, opts: StorageOpts) {
     const rootDirHandle: FileSystemDirectoryHandle =
-      opts.readWorkspaceMetadata().rootDirHandle;
+      opts.readWorkspaceMetadata(wsName).rootDirHandle;
 
     return new NativeBrowserFileSystem({
       rootDirHandle: rootDirHandle,
@@ -73,7 +80,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
   ): Promise<string[]> {
     let files: string[] = [];
 
-    const rawPaths: string[] = await this.getFs(opts).opendirRecursive(wsName);
+    const rawPaths: string[] = await this.getFs(wsName, opts).opendirRecursive(
+      wsName,
+    );
 
     assertSignal(abortSignal);
 
@@ -109,7 +118,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
       return undefined;
     }
 
-    return this.getFs(opts).readFile(wsPathHelpers.toFSPath(wsPath));
+    const { wsName } = resolvePath(wsPath);
+
+    return this.getFs(wsName, opts).readFile(wsPathHelpers.toFSPath(wsPath));
   }
 
   async renameFile(
@@ -117,7 +128,9 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     newWsPath: string,
     opts: StorageOpts,
   ): Promise<void> {
-    await this.getFs(opts).rename(
+    const { wsName } = resolvePath(wsPath);
+
+    await this.getFs(wsName, opts).rename(
       wsPathHelpers.toFSPath(wsPath),
       wsPathHelpers.toFSPath(newWsPath),
     );
@@ -129,6 +142,8 @@ export class NativsFsStorageProvider implements BaseStorageProvider {
     opts: StorageOpts,
   ): Promise<void> {
     const path = wsPathHelpers.toFSPath(wsPath);
-    await this.getFs(opts).writeFile(path, file);
+    const { wsName } = resolvePath(wsPath);
+
+    await this.getFs(wsName, opts).writeFile(path, file);
   }
 }
