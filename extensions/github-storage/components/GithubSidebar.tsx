@@ -30,7 +30,9 @@ export function GithubSidebar() {
   const { wsName, openedWsPaths } =
     workspace.workspaceSliceKey.getSliceStateAsserted(store.state);
 
-  const correctStorageProvider = isCurrentWorkspaceGithubStored()(store.state);
+  const correctStorageProvider = wsName
+    ? isCurrentWorkspaceGithubStored(wsName)(store.state)
+    : false;
 
   return wsName ? (
     !correctStorageProvider ? (

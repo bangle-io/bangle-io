@@ -13,14 +13,13 @@ import {
   OPERATION_PUSH_GITHUB_CHANGES,
   OPERATION_SYNC_GITHUB_CHANGES,
   OPERATION_UPDATE_GITHUB_TOKEN,
+  UPDATE_GITHUB_TOKEN_DIALOG,
 } from './common';
 import { DiscardLocalChangesDialog } from './components/DiscardLocalChangesDialog';
 import { GithubSidebar } from './components/GithubSidebar';
-import {
-  NewGithubWorkspaceRepoPickerDialog,
-  NewGithubWorkspaceTokenDialog,
-} from './components/NewGithubWorkspaceDialog';
-import { Router } from './components/Router';
+import { NewGithubWorkspaceTokenDialog } from './components/NewGithubWorkspaceDialog';
+import { NewGithubWorkspaceRepoPickerDialog } from './components/NewGithubWorkspaceRepoPickerDialog';
+import { UpdateTokenDialog } from './components/UpdateTokenDialog';
 import { handleError } from './error-handling';
 import { localFileEntryManager } from './file-entry-manager';
 import { GithubStorageProvider } from './github-storage-provider';
@@ -32,7 +31,6 @@ const extensionName = '@bangle.io/github-storage';
 const extension = Extension.create({
   name: extensionName,
   application: {
-    ReactComponent: Router,
     slices: [githubStorageSlice()],
     storageProvider: new GithubStorageProvider(),
     dialogs: [
@@ -48,6 +46,10 @@ const extension = Extension.create({
         name: NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG,
         ReactComponent: NewGithubWorkspaceRepoPickerDialog,
       },
+      {
+        name: UPDATE_GITHUB_TOKEN_DIALOG,
+        ReactComponent: UpdateTokenDialog,
+      },
     ],
     sidebars: [
       {
@@ -57,7 +59,11 @@ const extension = Extension.create({
         activitybarIcon: React.createElement(GithubIcon, {}),
         hint: 'Sync your local workspace with Github',
         activitybarIconShow: (appState) => {
-          return isCurrentWorkspaceGithubStored()(appState);
+          const wsName = workspace.getWsName()(appState);
+
+          return wsName
+            ? isCurrentWorkspaceGithubStored(wsName)(appState)
+            : false;
         },
       },
     ],
@@ -89,7 +95,7 @@ const extension = Extension.create({
       },
       {
         name: OPERATION_DISCARD_LOCAL_CHANGES,
-        title: 'Github: Reset local changes',
+        title: 'Github: Discard local changes',
       },
     ],
     operationHandler() {
@@ -107,7 +113,7 @@ const extension = Extension.create({
                 return false;
               }
 
-              if (!isCurrentWorkspaceGithubStored()(store.state)) {
+              if (!isCurrentWorkspaceGithubStored(wsName)(store.state)) {
                 return false;
               }
 
@@ -133,6 +139,15 @@ const extension = Extension.create({
             }
             case OPERATION_DISCARD_LOCAL_CHANGES: {
               ui.showDialog(DISCARD_LOCAL_CHANGES_DIALOG)(
+                store.state,
+                store.dispatch,
+              );
+
+              return true;
+            }
+
+            case OPERATION_UPDATE_GITHUB_TOKEN: {
+              ui.showDialog(UPDATE_GITHUB_TOKEN_DIALOG)(
                 store.state,
                 store.dispatch,
               );

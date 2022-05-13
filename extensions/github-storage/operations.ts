@@ -26,14 +26,8 @@ const log = LOG
   ? console.debug.bind(console, 'github-storage operations')
   : () => {};
 
-export function isCurrentWorkspaceGithubStored() {
+export function isCurrentWorkspaceGithubStored(wsName: string) {
   return (state: BangleAppState) => {
-    const wsName = workspace.getWsName()(state);
-
-    if (!wsName) {
-      return false;
-    }
-
     return (
       workspace.getStorageProviderName(wsName)(state) ===
       GITHUB_STORAGE_PROVIDER_NAME
@@ -45,7 +39,7 @@ export const readGithubTokenFromStore = () => {
   return workspace.workspaceSliceKey.queryOp((state) => {
     const wsName = workspace.getWsName()(state);
 
-    if (wsName && isCurrentWorkspaceGithubStored()(state)) {
+    if (wsName && isCurrentWorkspaceGithubStored(wsName)(state)) {
       const metadata = workspace.getWorkspaceMetadata(wsName)(state);
 
       return metadata?.githubToken as string | undefined;
@@ -56,11 +50,9 @@ export const readGithubTokenFromStore = () => {
 };
 
 export const updateGithubToken =
-  (token: string | undefined, showNotification = false) =>
+  (wsName: string, token: string | undefined, showNotification = false) =>
   (state: BangleAppState, dispatch: BangleAppDispatch) => {
-    const wsName = workspace.getWsName()(state);
-
-    if (wsName && isCurrentWorkspaceGithubStored()(state)) {
+    if (isCurrentWorkspaceGithubStored(wsName)(state)) {
       workspace.updateWorkspaceMetadata(wsName, (existing) => {
         if (existing.githubToken !== token) {
           return {
@@ -107,7 +99,7 @@ export function syncWithGithub(
     store: BangleApplicationStore,
   ) => {
     try {
-      if (!isCurrentWorkspaceGithubStored()(state)) {
+      if (!isCurrentWorkspaceGithubStored(wsName)(state)) {
         return undefined;
       }
 
@@ -218,7 +210,7 @@ export function discardLocalChanges(
     store: BangleApplicationStore,
   ) => {
     try {
-      if (!isCurrentWorkspaceGithubStored()(state)) {
+      if (!isCurrentWorkspaceGithubStored(wsName)(state)) {
         return;
       }
 

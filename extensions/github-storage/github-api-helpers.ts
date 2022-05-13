@@ -13,6 +13,9 @@ export interface GithubConfig extends GithubTokenConfig {
   repoName: string;
 }
 
+// Only one of them is required
+export const ALLOWED_GH_SCOPES = ['repo', 'public_repo'];
+
 const allowedFilePath = (path: string) => {
   if (path.includes(':')) {
     return false;
@@ -184,6 +187,19 @@ export async function getBranchHead({
     message: `Could not get branch head of ${config.repoName}.`,
     code: INVALID_GITHUB_RESPONSE,
   });
+}
+
+export async function hasValidGithubScope({
+  abortSignal,
+  token,
+}: {
+  token: GithubTokenConfig['githubToken'];
+  abortSignal?: AbortSignal;
+}) {
+  let scopeStr = (await getScopes({ token, abortSignal })) || '';
+  let scopes = scopeStr.split(',').map((s) => s.trim());
+
+  return ALLOWED_GH_SCOPES.some((s) => scopes.includes(s));
 }
 
 export async function getScopes({

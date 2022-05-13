@@ -23,3 +23,6 @@ export const NEW_GITHUB_WORKSPACE_TOKEN_DIALOG =
 
 export const NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG =
   'dialog::@bangle.io/github-storage:NEW_GITHUB_WORKSPACE_REPO_PICKER_DIALOG';
+
+export const UPDATE_GITHUB_TOKEN_DIALOG =
+  'dialog::@bangle.io/github-storage:UPDATE_GITHUB_TOKEN_DIALOG';

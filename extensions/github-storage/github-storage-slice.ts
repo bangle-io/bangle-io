@@ -62,7 +62,7 @@ const pullGithubChangesEffect = sliceKey.effect(() => {
         return;
       }
 
-      if (!isCurrentWorkspaceGithubStored()(store.state)) {
+      if (!isCurrentWorkspaceGithubStored(wsName)(store.state)) {
         return;
       }
 

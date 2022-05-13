@@ -1326,6 +1326,7 @@ exports[`Storyshots ui-components/TextField Case 2 1`] = `
     onFocus={[Function]}
     placeholder="abc@example.com"
     readOnly={false}
+    spellCheck={true}
     style={
       Object {
         "backgroundColor": "var(--BV-window-bg-color-0)",
@@ -1383,6 +1384,7 @@ exports[`Storyshots ui-components/TextField Primary 1`] = `
     onChange={[Function]}
     onFocus={[Function]}
     readOnly={false}
+    spellCheck={true}
     style={
       Object {
         "backgroundColor": "var(--BV-window-bg-color-0)",

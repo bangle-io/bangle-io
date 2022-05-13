@@ -7,7 +7,10 @@ import { cx } from '@bangle.io/utils';
 import { SizeType } from '../misc';
 
 export function TextField(
-  props: AriaTextFieldOptions<'input'> & { size?: SizeType },
+  props: AriaTextFieldOptions<'input'> & {
+    size?: SizeType;
+    spellCheck?: boolean;
+  },
 ) {
   let { label, size } = props;
   let ref = React.useRef<HTMLInputElement>(null);
@@ -40,6 +43,7 @@ export function TextField(
         <input
           {...inputProps}
           ref={ref}
+          spellCheck={props.spellCheck === undefined ? true : props.spellCheck}
           className="outline-none"
           style={{
             color: 'var(--BV-text-color-0)',
