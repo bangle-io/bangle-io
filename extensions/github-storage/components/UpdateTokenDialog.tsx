@@ -89,8 +89,8 @@ export function UpdateTokenDialog() {
   if (!isGithubWorkspace || !wsName) {
     return (
       <Dialog
-        isDismissable={false}
-        onDismiss={() => {}}
+        isDismissable
+        onDismiss={dismiss}
         headingTitle="Update Github token"
       >
         This action can only occur in a workspace that is stored in Github.
