@@ -199,6 +199,11 @@ function EditorInner2({
       displayClass = 'B-core-editor_display-popup';
       break;
     }
+    default: {
+      // hack to catch switch slipping
+      let val: never = editorDisplayType;
+      throw new Error('Unknown error type ' + val);
+    }
   }
 
   return (
