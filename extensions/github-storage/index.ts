@@ -113,10 +113,6 @@ const extension = Extension.create({
                 return false;
               }
 
-              if (!isCurrentWorkspaceGithubStored(wsName)(store.state)) {
-                return false;
-              }
-
               syncWithGithub(
                 wsName,
                 abortController.signal,

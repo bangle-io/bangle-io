@@ -122,6 +122,7 @@ export class GithubRepoTree {
       wsMetadata,
       abortSignal,
     );
+
     await idb.set(IDB_PREFIX + wsName, data);
 
     return data;
