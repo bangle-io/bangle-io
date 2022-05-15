@@ -4,12 +4,10 @@ import {
   goToLocation,
   historyUpdateOpenedWsPaths,
   pageSliceKey,
-} from '@bangle.io/slice-page';
-import {
-  OpenedWsPaths,
   wsNameToPathname,
   wsPathToPathname,
-} from '@bangle.io/ws-path';
+} from '@bangle.io/slice-page';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { WorkspaceDispatchType, workspaceSliceKey } from './common';
 import {

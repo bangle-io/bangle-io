@@ -10,6 +10,7 @@ export const MAX_OPEN_EDITORS = 3;
 export const PRIMARY_EDITOR_INDEX = 0;
 // secondary editor is generally the one on the split screen right side
 export const SECONDARY_EDITOR_INDEX = 1;
+export const MINI_EDITOR_INDEX = 2;
 
 export const EditorPluginMetadataKey = new PluginKey<EditorPluginMetadata>(
   'EditorPluginMetadataKey',

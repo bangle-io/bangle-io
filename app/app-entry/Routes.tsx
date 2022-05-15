@@ -7,8 +7,8 @@ import {
   HELP_FS_INDEX_WS_PATH,
   HELP_FS_WORKSPACE_NAME,
 } from '@bangle.io/constants';
+import { wsNameToPathname } from '@bangle.io/slice-page';
 import { pushWsPath, useWorkspaceContext } from '@bangle.io/slice-workspace';
-import { wsNameToPathname } from '@bangle.io/ws-path';
 
 import { WorkspaceInvalidPath } from './pages/WorkspaceInvalidPath';
 import { WorkspaceNativefsAuthBlockade } from './pages/WorkspaceNeedsAuth';

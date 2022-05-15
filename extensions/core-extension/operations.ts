@@ -300,6 +300,26 @@ export function splitEditor() {
   };
 }
 
+export function openMiniEditor() {
+  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
+    const workspaceSliceState = workspaceSliceKey.getSliceStateAsserted(state);
+
+    const targetWsPath =
+      editor.getFocusedWsPath()(state) ||
+      workspaceSliceState.openedWsPaths.primaryWsPath;
+
+    if (targetWsPath) {
+      updateOpenedWsPaths((openedWsPath) =>
+        openedWsPath.updateMiniEditorWsPath(targetWsPath),
+      )(state, dispatch);
+
+      return true;
+    }
+
+    return false;
+  };
+}
+
 export function closeEditor(editorId: EditorIdType) {
   return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
     if (typeof editorId === 'number') {

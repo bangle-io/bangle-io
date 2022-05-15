@@ -6216,9 +6216,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@bangle.io/ws-path", "workspace:lib/ws-path"],
             ["@types/react", "npm:17.0.43"],
             ["@types/react-dom", "npm:17.0.14"],
+            ["path-to-regexp", "npm:6.2.0"],
             ["react", "npm:17.0.2"],
             ["tslib", "npm:2.3.1"],
-            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
+            ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"],
+            ["wouter", "virtual:fc576370d10ec49c5ed62ef35806ef2377be0caa2702afa0bfcab3aa738c5be461dd5f96460236396125493c2942b64728b69b55a6b3ac5483f068556c84839f#npm:2.8.0-alpha.2"]
           ],
           "linkType": "SOFT",
         }]

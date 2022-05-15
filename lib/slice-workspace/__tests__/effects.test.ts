@@ -11,6 +11,7 @@ import {
   getPageLocation,
   pageSliceKey,
   syncPageLocation,
+  wsPathToSearch,
 } from '@bangle.io/slice-page';
 import { IndexedDbStorageProvider } from '@bangle.io/storage';
 import {
@@ -21,7 +22,6 @@ import {
   testMemoryHistorySlice,
 } from '@bangle.io/test-utils';
 import { BaseError, createEmptyArray, sleep } from '@bangle.io/utils';
-import { wsPathToSearch } from '@bangle.io/ws-path';
 
 import {
   getNote,

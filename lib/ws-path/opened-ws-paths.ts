@@ -1,16 +1,12 @@
 import {
   MAX_OPEN_EDITORS,
+  MINI_EDITOR_INDEX,
   PRIMARY_EDITOR_INDEX,
   SECONDARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import { MaybeWsPath, resolvePath } from './helpers';
-
-export interface Location {
-  pathname?: string;
-  search?: string;
-}
 
 /**
  * This exists to keep null and undefined value interchangeable
@@ -221,6 +217,10 @@ export class OpenedWsPaths {
     });
 
     return ret;
+  }
+
+  updateMiniEditorWsPath(wsPath: MaybeWsPath) {
+    return this.updateByIndex(MINI_EDITOR_INDEX, wsPath);
   }
 
   updatePrimaryWsPath(wsPath: MaybeWsPath) {

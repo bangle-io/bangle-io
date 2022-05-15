@@ -1,11 +1,11 @@
 import { extensionRegistrySliceKey } from '@bangle.io/extension-registry';
-import { pageSliceKey } from '@bangle.io/slice-page';
 import {
-  OpenedWsPaths,
+  pageSliceKey,
   pathnameToWsName,
   pathnameToWsPath,
   searchToWsPath,
-} from '@bangle.io/ws-path';
+} from '@bangle.io/slice-page';
+import { OpenedWsPaths } from '@bangle.io/ws-path';
 
 import { SideEffect, workspaceSliceKey } from './common';
 import { WORKSPACE_NOT_FOUND_ERROR, WorkspaceError } from './errors';

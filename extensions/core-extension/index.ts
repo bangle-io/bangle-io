@@ -7,6 +7,7 @@ import {
   CORE_OPERATIONS_NEW_NOTE,
   CORE_OPERATIONS_NEW_WORKSPACE,
   CORE_OPERATIONS_OPEN_GITHUB_ISSUE,
+  CORE_OPERATIONS_OPEN_IN_MINI_EDITOR,
   CORE_OPERATIONS_REMOVE_ACTIVE_WORKSPACE,
   CORE_OPERATIONS_SERVICE_WORKER_DISMISS_UPDATE,
   CORE_OPERATIONS_SERVICE_WORKER_RELOAD,
@@ -53,6 +54,7 @@ import {
   closeEditor,
   deleteActiveNote,
   downloadWorkspace,
+  openMiniEditor,
   openNewNoteDialog,
   openNewWorkspaceDialog,
   removeWorkspace,
@@ -123,6 +125,11 @@ const extension = Extension.create({
         title: 'Show/Hide editor split screen',
         keybinding: 'Mod-\\',
         keywords: ['hide'],
+      },
+      {
+        name: CORE_OPERATIONS_OPEN_IN_MINI_EDITOR,
+        title: 'Editor: Open in mini editor',
+        keywords: ['preview'],
       },
       {
         name: CORE_OPERATIONS_TOGGLE_UI_THEME,
@@ -231,6 +238,12 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT: {
               splitEditor()(bangleStore.state, bangleStore.dispatch);
+
+              return true;
+            }
+
+            case CORE_OPERATIONS_OPEN_IN_MINI_EDITOR: {
+              openMiniEditor()(bangleStore.state, bangleStore.dispatch);
 
               return true;
             }
