@@ -1,4 +1,8 @@
-import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
+import {
+  MAX_OPEN_EDITORS,
+  PRIMARY_EDITOR_INDEX,
+  SECONDARY_EDITOR_INDEX,
+} from '@bangle.io/constants';
 import { createEmptyArray } from '@bangle.io/utils';
 
 import { MaybeWsPath, resolvePath } from './helpers';
@@ -59,11 +63,11 @@ export class OpenedWsPaths {
   }
 
   get primaryWsPath() {
-    return this.wsPaths[0] ?? undefined;
+    return this.wsPaths[PRIMARY_EDITOR_INDEX] ?? undefined;
   }
 
   get secondaryWsPath() {
-    return this.wsPaths[1] ?? undefined;
+    return this.wsPaths[SECONDARY_EDITOR_INDEX] ?? undefined;
   }
 
   // if no wsName is provided, will match against the internal wsName
@@ -220,10 +224,10 @@ export class OpenedWsPaths {
   }
 
   updatePrimaryWsPath(wsPath: MaybeWsPath) {
-    return this.updateByIndex(0, wsPath);
+    return this.updateByIndex(PRIMARY_EDITOR_INDEX, wsPath);
   }
 
   updateSecondaryWsPath(wsPath: MaybeWsPath) {
-    return this.updateByIndex(1, wsPath);
+    return this.updateByIndex(SECONDARY_EDITOR_INDEX, wsPath);
   }
 }

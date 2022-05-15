@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
-  focusEditor,
+  focusPrimaryEditor,
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
@@ -51,7 +51,7 @@ export function PaletteManager() {
 
       if (focus) {
         safeRequestAnimationFrame(() => {
-          focusEditor()(bangleStore.state);
+          focusPrimaryEditor()(bangleStore.state);
         });
       }
     },

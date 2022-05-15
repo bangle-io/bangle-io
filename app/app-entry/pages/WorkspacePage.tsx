@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { EditorContainer } from '@bangle.io/editor-container';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
@@ -13,12 +13,9 @@ export function WorkspacePage() {
 
   const { primaryWsPath, secondaryWsPath } = openedWsPaths;
 
-  if (!primaryWsPath && !secondaryWsPath) {
-    return <EmptyEditorPage />;
-  }
-
   return (
     <MultiColumnMainContent>
+      {!primaryWsPath && !secondaryWsPath && <EmptyEditorPage />}
       {primaryWsPath && (
         <EditorContainer
           widescreen={widescreen}

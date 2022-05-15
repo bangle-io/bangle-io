@@ -22,7 +22,8 @@ import { ApplicationStore, AppState } from '@bangle.io/create-store';
 import { Extension } from '@bangle.io/extension-registry';
 import type { WorkspaceSliceAction } from '@bangle.io/shared-types';
 import {
-  focusEditor,
+  focusPrimaryEditor,
+  focusSecondaryEditor,
   isEditingAllowed,
   toggleEditing,
 } from '@bangle.io/slice-editor-manager';
@@ -273,13 +274,13 @@ const extension = Extension.create({
               return true;
             }
             case 'operation::@bangle.io/core-extension:focus-primary-editor': {
-              focusEditor(0)(bangleStore.state);
+              focusPrimaryEditor()(bangleStore.state);
 
               return true;
             }
 
             case 'operation::@bangle.io/core-extension:focus-secondary-editor': {
-              focusEditor(1)(bangleStore.state);
+              focusSecondaryEditor()(bangleStore.state);
 
               return true;
             }

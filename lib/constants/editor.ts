@@ -5,6 +5,12 @@ import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 
 export const MAX_OPEN_EDITORS = 2;
 
+// Warning!: Donot change the indices unless you are really sure of what you are doing.
+// This warning exists because a lot of places are directly using the integer values.
+export const PRIMARY_EDITOR_INDEX = 0;
+// secondary editor is generally the one on the split screen right side
+export const SECONDARY_EDITOR_INDEX = 1;
+
 export const EditorPluginMetadataKey = new PluginKey<EditorPluginMetadata>(
   'EditorPluginMetadataKey',
 );
