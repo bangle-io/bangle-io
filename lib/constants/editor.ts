@@ -3,7 +3,7 @@ import { PluginKey } from '@bangle.dev/pm';
 import type { IntersectionObserverPluginState } from '@bangle.io/pm-plugins';
 import type { EditorPluginMetadata } from '@bangle.io/shared-types';
 
-export const MAX_OPEN_EDITORS = 2;
+export const MAX_OPEN_EDITORS = 3;
 
 // Warning!: Donot change the indices unless you are really sure of what you are doing.
 // This warning exists because a lot of places are directly using the integer values.

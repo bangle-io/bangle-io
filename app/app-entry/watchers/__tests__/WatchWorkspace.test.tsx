@@ -137,7 +137,7 @@ test('if a deleted file is open, it closes it and rest remains unaffected', asyn
 
   expect(refreshWsPathsMock).toBeCalledTimes(1);
   expect(updateOpenedWsPathsMock).toBeCalledTimes(1);
-  const openedWsPaths = new OpenedWsPaths([
+  const openedWsPaths = OpenedWsPaths.createFromArray([
     ourFileWsPath,
     'ws:xyz/some-other-file',
   ]);
@@ -145,7 +145,8 @@ test('if a deleted file is open, it closes it and rest remains unaffected', asyn
     updateOpenedWsPathsCallback(openedWsPaths);
 
   // the secondary wsPath comes to first as we shrink things
-  expect(newOpenedWsPaths.toArray()).toEqual(['ws:xyz/some-other-file', null]);
+  expect(newOpenedWsPaths.toArray()[0]).toEqual('ws:xyz/some-other-file');
+  expect(newOpenedWsPaths.toArray()[1]).toEqual(null);
 });
 
 test('if a deleted file is open in both primary and secondary', async () => {
@@ -171,7 +172,10 @@ test('if a deleted file is open in both primary and secondary', async () => {
   expect(refreshWsPathsMock).toBeCalledTimes(1);
   expect(refreshWsPathsMock).toBeCalledTimes(1);
   expect(updateOpenedWsPathsMock).toBeCalledTimes(1);
-  const openedWsPaths = new OpenedWsPaths([ourFileWsPath, ourFileWsPath]);
+  const openedWsPaths = OpenedWsPaths.createFromArray([
+    ourFileWsPath,
+    ourFileWsPath,
+  ]);
   const newOpenedWsPaths = updateOpenedWsPathsCallback(openedWsPaths);
   expect(newOpenedWsPaths.primaryWsPath).toBe(undefined);
   expect(newOpenedWsPaths.secondaryWsPath).toBe(undefined);

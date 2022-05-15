@@ -102,7 +102,7 @@ test('handles abort error', async () => {
   abortableSearchWsForPmNodeMock.mockImplementation(async () => {
     throw new DOMException('Aborted', 'AbortError');
   });
-  const openedWsPaths = new OpenedWsPaths([
+  const openedWsPaths = OpenedWsPaths.createFromArray([
     'test-back-ws:my-linked-note-1.md',
     undefined,
   ]);
@@ -166,7 +166,7 @@ test('renders backlinks', async () => {
   // We have opened note-1
   // which is referenced by note-2
 
-  const openedWsPaths = new OpenedWsPaths([
+  const openedWsPaths = OpenedWsPaths.createFromArray([
     'test-back-ws:my-linked-note-1.md',
     undefined,
   ]);

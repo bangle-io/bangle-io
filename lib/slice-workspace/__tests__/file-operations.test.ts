@@ -83,8 +83,8 @@ describe('renameNote', () => {
     let { openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(
       store.state,
     );
-
-    expect(openedWsPaths.toArray()).toEqual(['my-ws:test-note.md', null]);
+    expect(openedWsPaths.primaryWsPath).toEqual('my-ws:test-note.md');
+    expect(openedWsPaths.secondaryWsPath).toBeFalsy();
 
     await updateOpenedWsPaths(
       OpenedWsPaths.createFromArray([null, 'my-ws:test-note.md']),
@@ -100,7 +100,8 @@ describe('renameNote', () => {
 
     ({ openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(store.state));
 
-    expect(openedWsPaths.toArray()).toEqual([null, 'my-ws:new-test-note.md']);
+    expect(openedWsPaths.primaryWsPath).toBeFalsy();
+    expect(openedWsPaths.secondaryWsPath).toEqual('my-ws:new-test-note.md');
   });
 
   test('works when the file to be renamed is not opened', async () => {
@@ -111,7 +112,7 @@ describe('renameNote', () => {
       store.state,
     );
 
-    expect(openedWsPaths.toArray()).toEqual([null, null]);
+    expect(openedWsPaths.toArray().filter(Boolean)).toEqual([]);
 
     await renameNote('my-ws:test-note.md', 'my-ws:new-test-note.md')(
       store.state,
@@ -171,10 +172,8 @@ describe('renameNote', () => {
       store.state,
     );
 
-    expect(openedWsPaths.toArray()).toEqual([
-      'my-ws:new-test-note.md',
-      'my-ws:new-test-note.md',
-    ]);
+    expect(openedWsPaths.primaryWsPath).toEqual('my-ws:new-test-note.md');
+    expect(openedWsPaths.secondaryWsPath).toEqual('my-ws:new-test-note.md');
   });
 });
 
@@ -248,8 +247,8 @@ describe('createNote', () => {
     const { openedWsPaths } = workspaceSliceKey.getSliceStateAsserted(
       store.state,
     );
-
-    expect(openedWsPaths.toArray()).toEqual(['my-ws:new-test-note.md', null]);
+    expect(openedWsPaths.primaryWsPath).toEqual('my-ws:new-test-note.md');
+    expect(openedWsPaths.secondaryWsPath).toBeFalsy();
 
     expect(noteWsPaths).toContain('my-ws:new-test-note.md');
   });
@@ -299,7 +298,7 @@ describe('createNote', () => {
       store.state,
     );
 
-    expect(openedWsPaths.toArray()).toEqual([null, null]);
+    expect(openedWsPaths.toArray().filter(Boolean)).toEqual([]);
   });
 });
 
@@ -327,11 +326,12 @@ describe('deleteNote', () => {
 
     await sleep(0);
 
-    expect(
-      workspaceSliceKey
-        .getSliceStateAsserted(store.state)
-        .openedWsPaths.toArray(),
-    ).toEqual([wsPath, null]);
+    const openedWsPaths = workspaceSliceKey.getSliceStateAsserted(
+      store.state,
+    ).openedWsPaths;
+
+    expect(openedWsPaths.primaryWsPath).toBe(wsPath);
+    expect(openedWsPaths.secondaryWsPath).toBeFalsy();
 
     await deleteNote(wsPath)(store.state, store.dispatch, store);
 
@@ -344,8 +344,8 @@ describe('deleteNote', () => {
     expect(
       workspaceSliceKey
         .getSliceStateAsserted(store.state)
-        .openedWsPaths.toArray(),
-    ).toEqual([null, null]);
+        .openedWsPaths.hasSomeOpenedWsPaths(),
+    ).toEqual(false);
   });
 
   test('deletes when the file is not opened', async () => {
@@ -360,8 +360,8 @@ describe('deleteNote', () => {
     expect(
       workspaceSliceKey
         .getSliceStateAsserted(store.state)
-        .openedWsPaths.toArray(),
-    ).toEqual([null, null]);
+        .openedWsPaths.hasSomeOpenedWsPaths(),
+    ).toBe(false);
 
     await deleteNote(wsPath)(store.state, store.dispatch, store);
 
@@ -374,8 +374,8 @@ describe('deleteNote', () => {
     expect(
       workspaceSliceKey
         .getSliceStateAsserted(store.state)
-        .openedWsPaths.toArray(),
-    ).toEqual([null, null]);
+        .openedWsPaths.hasSomeOpenedWsPaths(),
+    ).toEqual(false);
   });
 
   test('deletes multiple files', async () => {

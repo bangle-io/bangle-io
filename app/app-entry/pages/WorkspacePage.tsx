@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 import { EditorContainer } from '@bangle.io/editor-container';
 import { useUIManagerContext } from '@bangle.io/slice-ui';
