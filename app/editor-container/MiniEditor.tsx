@@ -11,7 +11,6 @@ import {
   setEditorUnmounted,
   useEditorManagerContext,
 } from '@bangle.io/slice-editor-manager';
-import { updateOpenedWsPaths } from '@bangle.io/slice-workspace';
 import {
   ActionButton,
   ButtonContent,
@@ -78,7 +77,7 @@ export function MiniEditor({ wsPath }: { wsPath: string }) {
   );
 
   return (
-    <div className="B-editor-container_mini-editor ">
+    <div className="B-editor-container_mini-editor">
       <div
         className="flex flex-row px-2 py-1 text-sm  justify-between"
         style={{
