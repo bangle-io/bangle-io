@@ -11,7 +11,7 @@ export function WorkspacePage() {
   const { openedWsPaths } = useWorkspaceContext();
   const { widescreen } = useUIManagerContext();
 
-  const { primaryWsPath, secondaryWsPath } = openedWsPaths;
+  const { primaryWsPath, secondaryWsPath, miniEditorWsPath } = openedWsPaths;
 
   return (
     <MultiColumnMainContent>
@@ -30,6 +30,20 @@ export function WorkspacePage() {
           editorId={1}
           wsPath={secondaryWsPath}
         />
+      )}
+      {miniEditorWsPath && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            right: 0,
+            width: 300,
+            height: 300,
+            backgroundColor: 'red',
+          }}
+        >
+          {miniEditorWsPath}
+        </div>
       )}
     </MultiColumnMainContent>
   );

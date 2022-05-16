@@ -129,7 +129,6 @@ export function historyUpdateOpenedWsPaths(
   }: { replace?: boolean; clearSearch?: boolean } = {},
 ) {
   return (state: AppState, dispatch: PageDispatchType): void => {
-    debugger;
     const sliceState = pageSliceKey.getSliceStateAsserted(state);
     const existingLoc = {
       ...sliceState.location,

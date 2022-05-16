@@ -1,6 +1,7 @@
-import { editor, workspace } from '@bangle.io/api';
+import { editor } from '@bangle.io/api';
 import {
   HELP_FS_WORKSPACE_NAME,
+  MINI_EDITOR_INDEX,
   NEW_NOTE_DIALOG_NAME,
   NEW_WORKSPACE_DIALOG_NAME,
   RENAME_NOTE_DIALOG_NAME,
@@ -18,6 +19,8 @@ import {
   uiSliceKey,
 } from '@bangle.io/slice-ui';
 import {
+  deleteNote,
+  deleteWorkspace,
   refreshWsPaths,
   updateOpenedWsPaths,
   WorkspaceDispatchType,
@@ -236,8 +239,7 @@ export function deleteActiveNote() {
         }"? It cannot be undone.`,
       )
     ) {
-      workspace
-        .deleteNote(focusedWsPath)(state, dispatch, store)
+      deleteNote(focusedWsPath)(state, dispatch, store)
         .then((error) => {
           showNotification({
             severity: 'success',
@@ -320,11 +322,17 @@ export function openMiniEditor() {
   };
 }
 
+export function closeMiniEditor() {
+  return workspaceSliceKey.op((state, dispatch) => {
+    return closeEditor(MINI_EDITOR_INDEX)(state, dispatch);
+  });
+}
+
 export function closeEditor(editorId: EditorIdType) {
   return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
     if (typeof editorId === 'number') {
       updateOpenedWsPaths((openedWsPaths) =>
-        openedWsPaths.updateByIndex(editorId, undefined).shrink(),
+        openedWsPaths.updateByIndex(editorId, undefined).optimizeSpace(),
       )(state, dispatch);
     } else {
       updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll())(
@@ -376,7 +384,7 @@ export function removeWorkspace(wsName?: string) {
         `Are you sure you want to remove "${wsName}"? Removing a workspace does not delete any files inside it.`,
       )
     ) {
-      await workspace.deleteWorkspace(wsName)(state, dispatch, store);
+      await deleteWorkspace(wsName)(state, dispatch, store);
 
       showNotification({
         severity: 'success',

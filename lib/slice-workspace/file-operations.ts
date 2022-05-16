@@ -366,7 +366,7 @@ export const deleteNote = (wsPathToDelete: string[] | string) => {
 
     wsPathToDelete.forEach((w) => {
       validateNoteWsPath(w);
-      newOpenedWsPaths = newOpenedWsPaths.closeIfFound(w).shrink();
+      newOpenedWsPaths = newOpenedWsPaths.closeIfFound(w).optimizeSpace();
     });
 
     updateOpenedWsPaths(newOpenedWsPaths, { replace: true })(

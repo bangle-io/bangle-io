@@ -271,10 +271,10 @@ export const updateLocationEffect = workspaceSliceKey.effect(() => {
         return;
       }
 
-      const incomingOpenedWsPaths = OpenedWsPaths.createFromArray([
-        pathnameToWsPath(location.pathname),
-        searchToWsPath(location.search),
-      ]);
+      // Only touch primary and secondary in case of a location update
+      const incomingOpenedWsPaths = openedWsPaths
+        .updatePrimaryWsPath(pathnameToWsPath(location.pathname))
+        .updateSecondaryWsPath(searchToWsPath(location.search));
 
       if (!workspacesInfo) {
         return;

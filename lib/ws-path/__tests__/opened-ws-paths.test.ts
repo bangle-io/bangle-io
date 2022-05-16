@@ -196,22 +196,6 @@ describe('OpenedWsPaths', () => {
     ).toBe(true);
   });
 
-  test('shrink', () => {
-    let result = OpenedWsPaths.createFromArray([undefined, 'a']);
-
-    expect(
-      result.shrink().equal(OpenedWsPaths.createFromArray(['a', undefined])),
-    ).toBe(true);
-
-    result = OpenedWsPaths.createFromArray([undefined, undefined]);
-
-    expect(
-      result
-        .shrink()
-        .equal(OpenedWsPaths.createFromArray([undefined, undefined])),
-    ).toBe(true);
-  });
-
   test('close all', () => {
     let result = OpenedWsPaths.createFromArray([undefined, 'a']);
 
@@ -236,5 +220,43 @@ describe('OpenedWsPaths', () => {
         .updateByIndex(1, 'c')
         .equal(OpenedWsPaths.createFromArray([undefined, 'c'])),
     ).toBe(true);
+  });
+
+  describe('tryUpgradeSecondary', () => {
+    test('works', () => {
+      let result = OpenedWsPaths.createFromArray([undefined, 'a']);
+
+      expect(
+        result
+          .tryUpgradeSecondary()
+          .equal(OpenedWsPaths.createFromArray(['a', undefined])),
+      ).toBe(true);
+
+      result = OpenedWsPaths.createFromArray([undefined, undefined]);
+
+      expect(
+        result
+          .tryUpgradeSecondary()
+          .equal(OpenedWsPaths.createFromArray([undefined, undefined])),
+      ).toBe(true);
+    });
+
+    test('only affects primary and secondary', () => {
+      let result = OpenedWsPaths.createFromArray([undefined, 'a', 'b']);
+
+      expect(
+        result
+          .tryUpgradeSecondary()
+          .equal(OpenedWsPaths.createFromArray(['a', undefined, 'b'])),
+      ).toBe(true);
+
+      result = OpenedWsPaths.createFromArray([undefined, undefined, 'b']);
+
+      expect(
+        result
+          .tryUpgradeSecondary()
+          .equal(OpenedWsPaths.createFromArray([undefined, undefined, 'b'])),
+      ).toBe(true);
+    });
   });
 });

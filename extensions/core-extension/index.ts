@@ -2,6 +2,7 @@ import { ui, workspace } from '@bangle.io/api';
 import {
   CHANGELOG_MODAL_NAME,
   CORE_OPERATIONS_CLOSE_EDITOR,
+  CORE_OPERATIONS_CLOSE_MINI_EDITOR,
   CORE_OPERATIONS_CREATE_BROWSER_WORKSPACE,
   CORE_OPERATIONS_CREATE_NATIVE_FS_WORKSPACE,
   CORE_OPERATIONS_NEW_NOTE,
@@ -52,6 +53,7 @@ import {
 import { ReloadApplicationDialog } from './dialogs/ReloadApplicationDialog';
 import {
   closeEditor,
+  closeMiniEditor,
   deleteActiveNote,
   downloadWorkspace,
   openMiniEditor,
@@ -130,6 +132,11 @@ const extension = Extension.create({
         name: CORE_OPERATIONS_OPEN_IN_MINI_EDITOR,
         title: 'Editor: Open in mini editor',
         keywords: ['preview'],
+      },
+      {
+        name: CORE_OPERATIONS_CLOSE_MINI_EDITOR,
+        title: 'Editor: Close mini editor',
+        keywords: ['hide'],
       },
       {
         name: CORE_OPERATIONS_TOGGLE_UI_THEME,
@@ -247,15 +254,20 @@ const extension = Extension.create({
 
               return true;
             }
+            case CORE_OPERATIONS_CLOSE_MINI_EDITOR: {
+              return closeMiniEditor()(bangleStore.state, bangleStore.dispatch);
+            }
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               if (typeof payload === 'number') {
                 closeEditor(payload)(bangleStore.state, bangleStore.dispatch);
 
                 return true;
-              }
+              } else {
+                closeEditor(undefined)(bangleStore.state, bangleStore.dispatch);
 
-              return false;
+                return true;
+              }
             }
 
             case CORE_OPERATIONS_DOWNLOAD_WORKSPACE_COPY: {

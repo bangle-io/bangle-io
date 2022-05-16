@@ -92,7 +92,7 @@ export function WatchWorkspace() {
             }
           });
 
-          return newOpenedWsPaths.shrink();
+          return newOpenedWsPaths.optimizeSpace();
         },
         { replace: true },
       )(bangleStore.state, bangleStore.dispatch);
