@@ -6,6 +6,7 @@ import { useSerialOperationContext } from '@bangle.io/api';
 import {
   CORE_OPERATIONS_CLOSE_EDITOR,
   CORE_OPERATIONS_TOGGLE_EDITOR_SPLIT,
+  PRIMARY_EDITOR_INDEX,
 } from '@bangle.io/constants';
 import { Editor } from '@bangle.io/editor';
 import { useExtensionRegistryContext } from '@bangle.io/extension-registry';
@@ -55,7 +56,7 @@ export function EditorContainer({
     [bangleStore],
   );
 
-  const isSplitEditorOpen = openedWsPaths.openCount > 0;
+  const isSplitEditorOpen = Boolean(openedWsPaths.secondaryWsPath);
 
   const onPressSecondaryEditor = useCallback(() => {
     dispatchSerialOperation({
@@ -138,7 +139,7 @@ export function EditorContainer({
             isActive={focusedEditorId === editorId}
             wsPath={wsPath}
             onClose={onClose}
-            showSplitEditor={editorId === 0}
+            showSplitEditor={editorId === PRIMARY_EDITOR_INDEX}
             onPressSecondaryEditor={onPressSecondaryEditor}
             isSplitEditorOpen={isSplitEditorOpen}
           />

@@ -1,4 +1,4 @@
-import { editor } from '@bangle.io/api';
+import { editor, workspace } from '@bangle.io/api';
 import {
   HELP_FS_WORKSPACE_NAME,
   MINI_EDITOR_INDEX,
@@ -8,7 +8,6 @@ import {
   WorkerErrorCode,
 } from '@bangle.io/constants';
 import { ApplicationStore, AppState } from '@bangle.io/create-store';
-import { EditorIdType } from '@bangle.io/slice-editor-manager';
 import {
   notificationSliceKey,
   showNotification,
@@ -324,25 +323,8 @@ export function openMiniEditor() {
 
 export function closeMiniEditor() {
   return workspaceSliceKey.op((state, dispatch) => {
-    return closeEditor(MINI_EDITOR_INDEX)(state, dispatch);
+    return workspace.closeWsPath(MINI_EDITOR_INDEX)(state, dispatch);
   });
-}
-
-export function closeEditor(editorId: EditorIdType) {
-  return (state: AppState, dispatch: WorkspaceDispatchType): boolean => {
-    if (typeof editorId === 'number') {
-      updateOpenedWsPaths((openedWsPaths) =>
-        openedWsPaths.updateByIndex(editorId, undefined).optimizeSpace(),
-      )(state, dispatch);
-    } else {
-      updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll())(
-        state,
-        dispatch,
-      );
-    }
-
-    return true;
-  };
 }
 
 export function removeWorkspace(wsName?: string) {

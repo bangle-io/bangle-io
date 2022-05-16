@@ -52,7 +52,6 @@ import {
 } from './dialogs/NoteNameChangeDialog';
 import { ReloadApplicationDialog } from './dialogs/ReloadApplicationDialog';
 import {
-  closeEditor,
   closeMiniEditor,
   deleteActiveNote,
   downloadWorkspace,
@@ -130,12 +129,12 @@ const extension = Extension.create({
       },
       {
         name: CORE_OPERATIONS_OPEN_IN_MINI_EDITOR,
-        title: 'Editor: Open in mini editor',
+        title: 'Open in mini editor',
         keywords: ['preview'],
       },
       {
         name: CORE_OPERATIONS_CLOSE_MINI_EDITOR,
-        title: 'Editor: Close mini editor',
+        title: 'Close mini editor',
         keywords: ['hide'],
       },
       {
@@ -260,11 +259,17 @@ const extension = Extension.create({
 
             case CORE_OPERATIONS_CLOSE_EDITOR: {
               if (typeof payload === 'number') {
-                closeEditor(payload)(bangleStore.state, bangleStore.dispatch);
+                workspace.closeWsPath(payload)(
+                  bangleStore.state,
+                  bangleStore.dispatch,
+                );
 
                 return true;
               } else {
-                closeEditor(undefined)(bangleStore.state, bangleStore.dispatch);
+                workspace.closeWsPath(undefined)(
+                  bangleStore.state,
+                  bangleStore.dispatch,
+                );
 
                 return true;
               }

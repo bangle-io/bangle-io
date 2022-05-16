@@ -1,3 +1,4 @@
+import { MAX_OPEN_EDITORS } from '@bangle.io/constants';
 import { AppState } from '@bangle.io/create-store';
 import {
   getPageLocation,
@@ -35,6 +36,27 @@ export const sliceHasError = () => {
     Boolean(workspaceSliceKey.getSliceStateAsserted(state).error),
   );
 };
+
+// removes the wsPath at index from the currently opened wsPaths
+export function closeWsPath(index?: number) {
+  return workspaceSliceKey.op((state, dispatch) => {
+    if (typeof index === 'number') {
+      if (index >= MAX_OPEN_EDITORS) {
+        return false;
+      }
+      updateOpenedWsPaths((openedWsPaths) =>
+        openedWsPaths.updateByIndex(index, undefined).optimizeSpace(),
+      )(state, dispatch);
+    } else {
+      updateOpenedWsPaths((openedWsPaths) => openedWsPaths.closeAll())(
+        state,
+        dispatch,
+      );
+    }
+
+    return true;
+  });
+}
 
 // Navigation ops
 export const updateOpenedWsPaths = (
